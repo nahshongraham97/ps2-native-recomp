@@ -152,28 +152,44 @@ void dump_frame() {
     std::fclose(f);
 }
 
-void apply_presses() {
-    // Once the last press is over the pad is left alone, so the web page's live input works after a scripted start.
-    std::uint64_t last = 0;
-    for (const Press &p : g_options.presses) last = std::max<std::uint64_t>(last, p.frame + p.frames);
-    if (!g_options.presses.empty() && g_frames <= last) {
-        std::uint16_t mask = 0;
-        std::uint8_t stick = 0;
-        for (const Press &p : g_options.presses)
-            if (g_frames >= p.frame && g_frames < p.frame + p.frames) {
-                mask |= p.buttons;
-                stick |= p.stick;
-            }
-        set_pad_buttons(mask, 0);
-        set_pad_axis(2, (stick & 4u) ? 0x00 : (stick & 8u) ? 0xFF : 0x80, 0);
-        set_pad_axis(3, (stick & 1u) ? 0x00 : (stick & 2u) ? 0xFF : 0x80, 0);
+void apply_presses(PadSample &pad, unsigned &apply) {
+    // Scripted intro inputs supplement the live keyboard/controller. Writing
+    // them through set_pad_buttons used to erase the user's keys every frame
+    // until the last scheduled press, including frames with no scripted hold.
+    std::uint16_t mask = 0;
+    std::uint8_t stick = 0;
+    for (const Press &p : g_options.presses)
+        if (g_frames >= p.frame && g_frames < p.frame + p.frames) {
+            mask |= p.buttons;
+            stick |= p.stick;
+        }
+    std::uint8_t axes[4] = {0x80, 0x80, 0x80, 0x80};
+    bool axis_active[4] = {};
+    if (stick & (4u | 8u)) {
+        axes[2] = (stick & 4u) ? 0x00 : 0xFF;
+        axis_active[2] = true;
     }
-    if (!g_options.axis_presses.empty()) {
-        // Outside a hold the stick rests; within one it takes the given tilt.
-        std::uint8_t axes[4] = {0x80, 0x80, 0x80, 0x80};
-        for (const AxisPress &p : g_options.axis_presses)
-            if (g_frames >= p.frame && g_frames < p.frame + p.frames) axes[p.axis] = p.value;
-        for (int a = 0; a < 4; ++a) set_pad_axis(a, axes[a], 0);
+    if (stick & (1u | 2u)) {
+        axes[3] = (stick & 1u) ? 0x00 : 0xFF;
+        axis_active[3] = true;
+    }
+    for (const AxisPress &p : g_options.axis_presses)
+        if (g_frames >= p.frame && g_frames < p.frame + p.frames) {
+            axes[p.axis] = p.value;
+            axis_active[p.axis] = true;
+        }
+    static std::uint16_t previous_mask = 0;
+    static std::uint8_t previous_axes[4] = {0x80, 0x80, 0x80, 0x80};
+    static bool previous_active[4] = {};
+    if (mask != previous_mask) apply |= 1u;
+    previous_mask = mask;
+    pad.buttons |= mask;
+    for (int axis = 0; axis < 4; ++axis) {
+        if (axis_active[axis] != previous_active[axis] ||
+            (axis_active[axis] && axes[axis] != previous_axes[axis])) apply |= 1u;
+        if (axis_active[axis]) pad.axes[axis] = axes[axis];
+        previous_active[axis] = axis_active[axis];
+        previous_axes[axis] = axes[axis];
     }
 }
 
@@ -200,6 +216,7 @@ void latch_pads() {
         apply = g_pad_dirty;
         g_pad_dirty = 0;
     }
+    apply_presses(pads[0], apply);
     quick::pads_hook(pads, apply);
     for (int p = 0; p < 2; ++p) {
         if (!(apply & (1u << p))) continue;
@@ -290,7 +307,6 @@ void vblank() {
     ++g_frames;
     report_load();
     time_frames();
-    apply_presses();
     latch_pads();
     quick::frame_check();
     apply_patches(false);
@@ -403,7 +419,7 @@ std::uint32_t video_options() { return g_video_options.load(std::memory_order_re
 namespace {
 
 constexpr char kStateMagic[8] = {'P', 'S', '2', 'S', 'T', 'A', 'T', 'E'};
-constexpr std::uint32_t kStateVersion = 6;
+constexpr std::uint32_t kStateVersion = 8;
 
 std::function<void()> event_action(int id, std::uint64_t at) {
     if (id == hw::kEventVblank) return vblank;
@@ -430,7 +446,9 @@ void machine_state(state::Stream &s) {
     if (std::memcmp(magic, kStateMagic, sizeof magic) != 0) throw std::runtime_error("not a state file");
     // Our version 4 differs from upstream's 4 (Cpu and thread layouts); 5 adds upstream's waiting HLE RPC replies; 6 adds the disc stream
     // of the IOP (sceCdSt*, where it is and whether it runs), so a state saved while a film or a music stream plays goes on streaming.
-    if (version != kStateVersion && !(s.loading() && (version == 4 || version == 5))) throw std::runtime_error("state file from another version");
+    // 7 preserves the guest SIF RPC endpoint map and DMA marker count; 8 adds
+    // IOP-owned request packet storage for reverse RPC completions.
+    if (version != kStateVersion && !(s.loading() && (version == 4 || version == 5 || version == 6 || version == 7))) throw std::runtime_error("state file from another version");
     s.set_version(version);
     s.tag("ee");
     s.pod(g_cpu);

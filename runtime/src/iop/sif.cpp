@@ -11,9 +11,12 @@
 #include "ps2/state.hpp"
 
 #include <algorithm>
+#include <array>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <deque>
+#include <limits>
 #include <stdexcept>
 #include <map>
 #include <vector>
@@ -27,6 +30,9 @@ constexpr std::uint32_t kServerXor = 0xACACACACu;
 constexpr std::uint32_t kCmdBuffer = 0x0001E000u;
 constexpr std::uint32_t kCmdRend = 0x80000008u;
 constexpr std::uint32_t kCmdSetSreg = 0x80000001u;
+constexpr std::uint32_t kCmdSetDmaMarker = 0x80000004u;
+constexpr std::uint32_t kIopRpcPacketSize = 64u;
+constexpr std::uint32_t kIopRpcPacketCount = 32u;
 // An HLE server answers after about the time a call takes on a real IOP. Games
 // depend on it: the calling thread blocks meanwhile and lower priority threads
 // run, as Downhill Domination's loader needs its worker to reach SleepThread.
@@ -50,7 +56,7 @@ struct Rend {
 struct Server {
     bool hle = false;
     HleServer invoke;
-    std::uint32_t sd = 0, func = 0, buf = 0, queue = 0;
+    std::uint32_t sd = 0, sid = 0, func = 0, buf = 0, cfunc = 0, cbuf = 0, queue = 0;
 };
 
 struct Request {
@@ -73,7 +79,16 @@ std::uint32_t g_ee_recv = 0;
 std::uint32_t g_data_addr = 0;
 bool g_processed = true;
 std::deque<std::vector<std::uint8_t>> g_outgoing;
+// g_servers is the endpoint selected by SID for binding. Guest RPC calls carry
+// the server-data pointer returned by that bind, so retain every registered
+// guest endpoint independently instead of redirecting calls by SID.
 std::map<std::uint32_t, Server> g_servers;
+std::map<std::uint32_t, Server> g_guest_servers;
+std::map<std::uint32_t, std::vector<std::uint32_t>> g_server_order;
+// A host endpoint can deliberately supersede a guest IRX server for selected
+// protocols. Keep these separate because the guest still registers its own
+// server metadata during startup.
+std::map<std::uint32_t, HleServer> g_hle_overrides;
 std::map<std::uint32_t, PendingBind> g_binds;
 std::map<std::uint32_t, Call> g_held_calls;
 std::deque<Call> g_hle_replies;
@@ -83,6 +98,61 @@ std::map<std::uint32_t, CmdHandler> g_cmd_handlers;
 std::uint32_t g_sreg[32] = {};
 std::map<std::uint32_t, int> g_iop_clients;
 std::uint32_t g_iop_rpc_id = 1;
+std::uint32_t g_iop_rpc_packets = 0;
+std::uint32_t g_iop_rpc_next_packet = 0;
+std::array<std::uint8_t, kIopRpcPacketCount> g_iop_rpc_packet_busy{};
+std::array<std::uint32_t, kIopRpcPacketCount> g_iop_rpc_packet_reply{};
+
+std::uint32_t acquire_iop_rpc_packet(std::uint32_t reply) {
+    for (std::uint32_t n = 0; n < kIopRpcPacketCount; ++n) {
+        const std::uint32_t slot = (g_iop_rpc_next_packet + n) % kIopRpcPacketCount;
+        if (g_iop_rpc_packet_busy[slot]) continue;
+        g_iop_rpc_packet_busy[slot] = 1;
+        g_iop_rpc_packet_reply[slot] = reply;
+        g_iop_rpc_next_packet = (slot + 1) % kIopRpcPacketCount;
+        const std::uint32_t address = g_iop_rpc_packets + slot * kIopRpcPacketSize;
+        std::memset(iop::ram_ptr(address), 0, kIopRpcPacketSize);
+        return address;
+    }
+    std::fprintf(stderr, "[sif:iop-rpc] no free IOP request packet\n");
+    return 0;
+}
+
+void release_iop_rpc_packet(std::uint32_t destination) {
+    if (!g_iop_rpc_packets) return;
+    const std::uint32_t end = g_iop_rpc_packets + kIopRpcPacketCount * kIopRpcPacketSize;
+    if (destination >= g_iop_rpc_packets && destination < end &&
+        (destination - g_iop_rpc_packets) % kIopRpcPacketSize == 0) {
+        const std::uint32_t slot = (destination - g_iop_rpc_packets) / kIopRpcPacketSize;
+        g_iop_rpc_packet_busy[slot] = 0;
+        g_iop_rpc_packet_reply[slot] = 0;
+        return;
+    }
+    for (std::uint32_t slot = 0; slot < kIopRpcPacketCount; ++slot) {
+        if (!g_iop_rpc_packet_busy[slot] || !g_iop_rpc_packet_reply[slot] ||
+            g_iop_rpc_packet_reply[slot] != destination) continue;
+        g_iop_rpc_packet_busy[slot] = 0;
+        g_iop_rpc_packet_reply[slot] = 0;
+        // An rmode=0 call with a result writes only to recvbuf; its packet
+        // header must report completion to sceSifCheckStatRpc as well.
+        iop::write32(g_iop_rpc_packets + slot * kIopRpcPacketSize + 16u, 0);
+        iop::write32(g_iop_rpc_packets + slot * kIopRpcPacketSize + 24u, 0);
+        return;
+    }
+}
+
+std::uint32_t begin_iop_rpc_packet(std::uint32_t client, std::uint32_t reply, std::uint32_t &record_id) {
+    const std::uint32_t address = acquire_iop_rpc_packet(reply);
+    if (!address) return 0;
+    const std::uint32_t slot = (address - g_iop_rpc_packets) / kIopRpcPacketSize;
+    record_id = (slot << 16u) | 5u; // allocated packet with a ring index
+    const std::uint32_t rpc_id = g_iop_rpc_id++;
+    iop::write32(address + 16u, record_id);
+    iop::write32(address + 24u, rpc_id);
+    iop::write32(client + 0u, address);
+    iop::write32(client + 4u, rpc_id);
+    return address;
+}
 std::uint32_t g_loop_stub = 0, g_finish_stub = 0, g_exec_stub = 0;
 // A server thread that runs its own loop (sceSifGetNextRequest, then sceSifExecRequest, then SleepThread) instead of sceSifRpcLoop: the
 // requests it has taken but not run yet (by handle), and where each thread goes on after the request it runs.
@@ -91,6 +161,7 @@ std::map<int, std::uint32_t> g_exec_return;
 std::uint32_t g_next_handle = 0;
 std::uint32_t g_iop_dma_id = 1, g_ee_dma_id = 1;
 std::uint64_t g_ee_dma_done = 0;
+std::uint64_t g_dma_marker_count = 0;
 
 template <typename T>
 T ee_read(std::uint32_t a) {
@@ -143,6 +214,48 @@ void deliver_request(std::uint32_t queue) {
     }
 }
 
+const Server *first_guest_server(std::uint32_t sid) {
+    const auto order = g_server_order.find(sid);
+    if (order != g_server_order.end()) {
+        for (const std::uint32_t sd : order->second) {
+            const auto server = g_guest_servers.find(sd);
+            if (server != g_guest_servers.end()) return &server->second;
+        }
+    }
+    const auto server = g_servers.find(sid);
+    return server != g_servers.end() && !server->second.hle ? &server->second : nullptr;
+}
+
+bool fill_bind_endpoint(Rend &reply, std::uint32_t sid) {
+    if (g_hle_overrides.count(sid)) {
+        reply.server_data = sid ^ kServerXor;
+        reply.buffer = kRpcRecvAddr;
+        reply.cbuffer = 0xDEADCAFEu;
+        return true;
+    }
+    if (const Server *server = first_guest_server(sid)) {
+        reply.server_data = server->sd;
+        reply.buffer = server->buf;
+        reply.cbuffer = server->cbuf;
+        return true;
+    }
+    const auto server = g_servers.find(sid);
+    if (server != g_servers.end() && server->second.hle) {
+        reply.server_data = sid ^ kServerXor;
+        reply.buffer = kRpcRecvAddr;
+        reply.cbuffer = 0xDEADCAFEu;
+        return true;
+    }
+    return false;
+}
+
+void complete_pending_bind(std::uint32_t sid) {
+    auto bind = g_binds.find(sid);
+    if (bind == g_binds.end() || !fill_bind_endpoint(bind->second.reply, sid)) return;
+    send(&bind->second.reply, sizeof(Rend));
+    g_binds.erase(bind);
+}
+
 void bind(const std::uint8_t *packet) {
     const auto *h = reinterpret_cast<const Header *>(packet);
     std::uint32_t record, paddr, rpc, client, server;
@@ -152,10 +265,7 @@ void bind(const std::uint8_t *packet) {
     std::memcpy(&client, packet + 28, 4);
     std::memcpy(&server, packet + 32, 4);
     Rend r = make_rend(*h, record, paddr, rpc, client, 0x80000009u);
-    r.server_data = server ^ kServerXor;
-    r.buffer = kRpcRecvAddr;
-    r.cbuffer = 0xDEADCAFEu;
-    if (g_servers.count(server)) {
+    if (fill_bind_endpoint(r, server)) {
         send(&r, sizeof r);
         return;
     }
@@ -166,31 +276,56 @@ void bind(const std::uint8_t *packet) {
 void call(const std::uint8_t *packet) {
     Call c;
     std::memcpy(&c, packet, sizeof c);
-    const std::uint32_t server = c.server_data ^ kServerXor;
-    auto it = g_servers.find(server);
-    if (it == g_servers.end()) {
-        std::fprintf(stderr, "[sif] call %u to unknown server 0x%08X\n", c.rpc_number, server);
-        reply_call(c);
-        return;
-    }
-    if (it->second.hle) {
+    const auto guest = g_guest_servers.find(c.server_data);
+    if (guest == g_guest_servers.end()) {
+        const std::uint32_t sid = c.server_data ^ kServerXor;
+        const auto it = g_servers.find(sid);
+        const auto override = g_hle_overrides.find(sid);
+        if (override == g_hle_overrides.end() && (it == g_servers.end() || !it->second.hle)) {
+            std::fprintf(stderr, "[sif] call %u to unknown endpoint 0x%08X\n", c.rpc_number, c.server_data);
+            reply_call(c);
+            return;
+        }
         // The IOP runs behind the EE by up to a slice; catch it up so the reply
         // latency counts from the moment of the call.
         sync_iop();
-        g_held_calls[server] = c;
-        if (it->second.invoke(c.rpc_number, g_data_addr, c.send_size, c.recv & (kRamSize - 1), c.recv_size)) {
-            g_held_calls.erase(server);
+        g_held_calls[sid] = c;
+        const HleServer &invoke = override != g_hle_overrides.end() ? override->second : it->second.invoke;
+        if (invoke(c.rpc_number, g_data_addr, c.send_size, c.recv & (kRamSize - 1), c.recv_size)) {
+            g_held_calls.erase(sid);
             g_hle_replies.push_back(c);
             iop::kernel::schedule(iop::kernel::now() + iop::kernel::usec_to_cycles(kHleReplyUsec), iop::kernel::Job{iop::kernel::kJobSifReply});
         }
         return;
     }
-    const Server &s = it->second;
+    const Server &s = guest->second;
     Request request{c, c.send_size, {}};
     if (s.buf) {
+        if (c.send_size > std::numeric_limits<std::uint32_t>::max() - 15u) {
+            std::fprintf(stderr, "[sif] reject RPC fn %u: send size 0x%08X overflows alignment\n", c.rpc_number, c.send_size);
+            return;
+        }
         const std::uint32_t size = (c.send_size + 15u) & ~15u;
-        const std::uint32_t from = g_data_addr & (kRamSize - 1);
-        request.data.assign(g_ram + from, g_ram + from + std::min(size, kRamSize - from));
+        const std::uint32_t from = iop::phys(s.buf) & (iop::kRamSize - 1u);
+        if (size > iop::kRamSize - from) {
+            std::fprintf(stderr,
+                         "[sif] reject RPC fn %u: guest server 0x%08X buffer 0x%08X size 0x%X exceeds IOP RAM\n",
+                         c.rpc_number, s.sd, s.buf, size);
+            return;
+        }
+        const std::uint8_t *source = iop::ram_ptr(s.buf);
+        request.data.assign(source, source + size);
+        if (iop::kernel::g_trace_modules && (s.sid == 0x000F0001u || s.sid == 0x90000200u)) {
+            std::fprintf(stderr,
+                         "[sif:guest-request] sid 0x%08X sd 0x%08X fn %u send %u from IOP 0x%08X data",
+                         s.sid, s.sd, c.rpc_number, c.send_size, s.buf);
+            for (std::uint32_t i = 0; i < std::min<std::uint32_t>(8u, size / 4u); ++i)
+                std::fprintf(stderr, " %08X", iop::read32(s.buf + i * 4u));
+            std::fprintf(stderr, " (stale EE source 0x%08X:", g_data_addr);
+            for (std::uint32_t i = 0; i < std::min<std::uint32_t>(4u, (c.send_size + 3u) / 4u); ++i)
+                std::fprintf(stderr, " %08X", ee_read<std::uint32_t>(g_data_addr + i * 4u));
+            std::fprintf(stderr, ")\n");
+        }
     }
     g_requests[s.queue].push_back(std::move(request));
     deliver_request(s.queue);
@@ -217,19 +352,47 @@ void command(std::uint32_t src, std::uint32_t size) {
     if (g_options.trace_iop_modules) {
         std::uint32_t words[14];
         std::memcpy(words, packet, sizeof words);
+        const bool quiet_lgkbm_poll = h->cid == 0x8000000Au &&
+            words[13] == (0x61766973u ^ kServerXor) && words[8] == 2u;
+        if (!quiet_lgkbm_poll) {
         if (h->cid == 0x8000000Au) {
-            std::fprintf(stderr, "[sif] call server 0x%08X fn %u send %u recv %u mode %u args", words[13] ^ kServerXor, words[8], words[9], words[11], words[12]);
-            for (int i = 0; i < 8; ++i) std::fprintf(stderr, " %08X", ee_read<std::uint32_t>(g_data_addr + i * 4));
+            const auto endpoint = g_guest_servers.find(words[13]);
+            const std::uint32_t iop_buffer = endpoint == g_guest_servers.end() ? 0u : endpoint->second.buf;
+            const bool guest_buffer = iop_buffer != 0;
+            std::fprintf(stderr, "[sif] call endpoint 0x%08X fn %u send %u recv %u mode %u %s buffer 0x%08X args",
+                         words[13], words[8], words[9], words[11], words[12],
+                         guest_buffer ? "IOP" : "EE", guest_buffer ? iop_buffer : g_data_addr);
+            for (std::uint32_t i = 0; i < 8u && i * 4u < words[9]; ++i) {
+                const std::uint32_t value = guest_buffer ? iop::read32(iop_buffer + i * 4u)
+                                                         : ee_read<std::uint32_t>(g_data_addr + i * 4u);
+                std::fprintf(stderr, " %08X", value);
+            }
             std::fprintf(stderr, "\n");
+            if (endpoint != g_guest_servers.end() && endpoint->second.sid == 0x000F0001u &&
+                words[8] == 5u && words[9] == 524u) {
+                std::fprintf(stderr, "[sif:mwfilefr-request] endpoint 0x%08X fn %u bytes %u from IOP 0x%08X",
+                             words[13], words[8], words[9], iop_buffer);
+                for (std::uint32_t i = 0; i < words[9] / 4u; ++i) {
+                    if ((i & 7u) == 0) std::fprintf(stderr, "\n +0x%03X", i * 4u);
+                    std::fprintf(stderr, " %08X", iop::read32(iop_buffer + i * 4u));
+                }
+                std::fprintf(stderr, "\n");
+            }
         }
         else if (h->cid == 0x80000009u) std::fprintf(stderr, "[sif] bind 0x%08X\n", words[8]);
-        else {
+        else if (h->cid != kCmdSetDmaMarker) {
             std::fprintf(stderr, "[sif] command 0x%08X:", h->cid);
             for (int i = 0; i < 14; ++i) std::fprintf(stderr, " %08X", words[i]);
             std::fprintf(stderr, "\n");
         }
+        }
     }
     switch (h->cid) {
+    case kCmdSetDmaMarker:
+        // sceSifSetDmaInternal emits this command for interrupt notification.
+        // The IOP's system-command table has no guest handler at index 4.
+        ++g_dma_marker_count;
+        break;
     case 0x80000001u: {
         std::uint32_t index, value;
         std::memcpy(&index, packet + 16, 4);
@@ -252,6 +415,7 @@ void command(std::uint32_t src, std::uint32_t size) {
         std::uint32_t words[12];
         std::memcpy(words, packet, sizeof words);
         const std::uint32_t client = words[7], cmd = words[8];
+        release_iop_rpc_packet(words[5]);
         if (cmd == 0x80000009u) {
             iop::write32(client + 36, words[9]);
             iop::write32(client + 20, words[10]);
@@ -324,8 +488,25 @@ void def(const char *library, std::uint32_t index, const char *name, std::functi
 
 // Hands a request to its server: the data into the server's buffer, then the server's function is called with `ret` as its return address.
 void start_request(iop::Cpu &c, iop::kernel::Thread &t, const Request &request, std::uint32_t ret) {
-    const std::uint32_t server = request.call.server_data ^ kServerXor;
-    const Server &s = g_servers[server];
+    const std::uint32_t server = request.call.server_data;
+    const auto endpoint = g_guest_servers.find(server);
+    if (endpoint == g_guest_servers.end()) {
+        std::fprintf(stderr, "[sif] queued call %u lost endpoint 0x%08X\n", request.call.rpc_number, server);
+        reply_call(request.call);
+        return;
+    }
+    const Server &s = endpoint->second;
+    if (s.sid == 0x90000200u) {
+        std::fprintf(stderr,
+                     "[sif:target-rpc] dispatch sid 0x%08X sd 0x%08X fn %u thread %d func 0x%08X buf 0x%08X queue 0x%08X send %u data",
+                     s.sid, server, request.call.rpc_number, t.id, s.func, s.buf, s.queue, request.size);
+        for (std::uint32_t i = 0; i < std::min<std::uint32_t>(8u, static_cast<std::uint32_t>(request.data.size()) / 4u); ++i) {
+            std::uint32_t word = 0;
+            std::memcpy(&word, request.data.data() + 4u * i, sizeof word);
+            std::fprintf(stderr, " %08X", word);
+        }
+        std::fprintf(stderr, "\n");
+    }
     if (s.buf && !request.data.empty()) {
         iop::watch_copy("RPC data", s.buf, 0, static_cast<std::uint32_t>(request.data.size()), 0);
         std::memcpy(iop::ram_ptr(s.buf), request.data.data(), request.data.size());
@@ -347,6 +528,15 @@ void finish_request(iop::Cpu &c, iop::kernel::Thread &t) {
     const Call call = it->second;
     g_held_calls.erase(it);
     const std::uint32_t result = c.r[2];
+    const auto endpoint = g_guest_servers.find(call.server_data);
+    if (endpoint != g_guest_servers.end() && endpoint->second.sid == 0x90000200u) {
+        std::fprintf(stderr,
+                     "[sif:target-rpc] finish sid 0x%08X sd 0x%08X fn %u thread %d result 0x%08X reply",
+                     endpoint->second.sid, call.server_data, call.rpc_number, t.id, result);
+        for (std::uint32_t i = 0; result && i < std::min<std::uint32_t>(8u, (call.recv_size + 3u) / 4u); ++i)
+            std::fprintf(stderr, " %08X", iop::read32(result + 4u * i));
+        std::fprintf(stderr, "\n");
+    }
     if (iop::kernel::g_trace_modules && result && call.recv_size >= 4) {
         // --trace-iop: the first words the server answers with (the memory card's results are what a save is judged by)
         std::fprintf(stderr, "[sif] reply server 0x%08X fn %u:", call.server_data ^ kServerXor, call.rpc_number);
@@ -357,6 +547,30 @@ void finish_request(iop::Cpu &c, iop::kernel::Thread &t) {
     if (call.recv && result && call.recv_size) {
         std::memcpy(g_ram + (call.recv & (kRamSize - 1)), iop::ram_ptr(result), (call.recv_size + 3u) & ~3u);
         watch_span(call.recv, (call.recv_size + 3u) & ~3u, "sif:rpc_finish");
+
+        // Targeted RPC tracing avoids dumping every SIF packet when one EE
+        // receive buffer is under investigation. Example: PS2_TRACE_RPC_BUFFER=0x978B40.
+        static const std::uint32_t trace_buffer = [] {
+            const char *value = std::getenv("PS2_TRACE_RPC_BUFFER");
+            if (!value) return kRamSize;
+            char *end = nullptr;
+            const unsigned long parsed = std::strtoul(value, &end, 0);
+            if (end == value || *end != '\0' || parsed >= kRamSize) return kRamSize;
+            return static_cast<std::uint32_t>(parsed);
+        }();
+        const std::uint32_t recv_addr = call.recv & (kRamSize - 1u);
+        if (trace_buffer < kRamSize && recv_addr == trace_buffer) {
+            std::uint32_t words[4] = {};
+            const std::uint32_t word_count = std::min<std::uint32_t>(4u, (call.recv_size + 3u) / 4u);
+            for (std::uint32_t i = 0; i < word_count; ++i)
+                words[i] = ee_read<std::uint32_t>(recv_addr + 4u * i);
+            std::fprintf(stderr,
+                         "[sif:rpc-buffer] frame %llu iop_thread %d sid 0x%08X fn %u send %u recv 0x%08X size %u result 0x%08X words %08X %08X %08X %08X\n",
+                         static_cast<unsigned long long>(frame_count()), t.id,
+                         endpoint == g_guest_servers.end() ? call.server_data ^ kServerXor : endpoint->second.sid,
+                         call.rpc_number, call.send_size,
+                         recv_addr, call.recv_size, result, words[0], words[1], words[2], words[3]);
+        }
     }
     reply_call(call);
 }
@@ -405,6 +619,12 @@ void install_iop_side() {
     g_loop_stub = iop::kernel::hle_stub(rpc_loop);
     g_finish_stub = iop::kernel::hle_stub(rpc_finish);
     g_exec_stub = iop::kernel::hle_stub(exec_finish);
+    // The EE sends completion DMA to the request packet's pkt_addr. It must
+    // never alias the caller's SifRpcClientData_t, whose buf field lives at +20.
+    g_iop_rpc_packets = iop::kernel::kernel_alloc(kIopRpcPacketCount * kIopRpcPacketSize);
+    g_iop_rpc_next_packet = 0;
+    g_iop_rpc_packet_busy.fill(0);
+    g_iop_rpc_packet_reply.fill(0);
 
     iop::kernel::register_hle_library("sifman", 0x0101);
     def("sifman", 4, "sceSifDma2Init", [](iop::Cpu &c) { c.r[2] = 0; });
@@ -419,6 +639,14 @@ void install_iop_side() {
                 for (std::uint32_t k = 0; k < size; ++k) nonzero += iop::ram_ptr(src)[k] != 0;
                 std::fprintf(stderr, "[sif] iop dma 0x%08X -> ee 0x%08X size 0x%X nonzero %u words %08X %08X %08X %08X\n", src, dst, size, nonzero,
                              iop::read32(src), iop::read32(src + 4), iop::read32(src + 8), iop::read32(src + 12));
+            }
+            if (g_options.trace_iop_modules && size == 0x880u) {
+                std::fprintf(stderr,
+                             "[sif:dtx-dma] frame %llu IOP 0x%08X -> EE 0x%08X size 0x%X seq %08X count %08X entry %08X %08X %08X %08X\n",
+                             static_cast<unsigned long long>(frame_count()), src, dst, size,
+                             iop::read32(src + size - 4u), iop::read32(src),
+                             iop::read32(src + 0x10u), iop::read32(src + 0x14u),
+                             iop::read32(src + 0x18u), iop::read32(src + 0x1Cu));
             }
             std::memcpy(g_ram + (dst & (kRamSize - 1)), iop::ram_ptr(src), std::min(size, kRamSize - (dst & (kRamSize - 1))));
             watch_span(dst, std::min(size, kRamSize - (dst & (kRamSize - 1))), "sif:iop_dma");
@@ -460,10 +688,13 @@ void install_iop_side() {
     def("sifcmd", 14, "sceSifInitRpc", [](iop::Cpu &c) { c.r[2] = 0; });
     def("sifcmd", 15, "sceSifBindRpc", [](iop::Cpu &c) {
         const std::uint32_t client = arg(c, 0), server = arg(c, 1), mode = arg(c, 2);
+        std::uint32_t record_id = 0;
+        const std::uint32_t packet_addr = begin_iop_rpc_packet(client, 0, record_id);
+        if (!packet_addr) { c.r[2] = static_cast<std::uint32_t>(-1); return; }
         iop::write32(client + 36, 0);
-        iop::write32(client + 4, g_iop_rpc_id);
-        iop::write32(client + 0, 1);
-        const std::uint32_t packet[9] = {0x24u, 0, 0x80000009u, 0, 0, client, g_iop_rpc_id++, client, server};
+        iop::write32(client + 8, 0xFFFFFFFFu);
+        const std::uint32_t packet[9] = {0x24u, 0, 0x80000009u, 0, record_id, packet_addr,
+                                         iop::read32(client + 4), client, server};
         send(packet, sizeof packet);
         c.r[2] = 0;
         if (!(mode & 1u) && iop::kernel::current()) {
@@ -474,15 +705,53 @@ void install_iop_side() {
     def("sifcmd", 16, "sceSifCallRpc", [](iop::Cpu &c) {
         const std::uint32_t client = arg(c, 0), fn = arg(c, 1), mode = arg(c, 2);
         const std::uint32_t send_ptr = arg(c, 3), send_size = arg(c, 4), recv = arg(c, 5), recv_size = arg(c, 6);
-        iop::write32(client + 28, arg(c, 7));
+        const std::uint32_t end_function = arg(c, 7);
+        iop::write32(client + 28, end_function);
         iop::write32(client + 32, arg(c, 8));
-        const std::uint32_t buff = iop::read32(client + 20) & (kRamSize - 1);
-        if (send_size && buff) { std::memcpy(g_ram + buff, iop::ram_ptr(send_ptr), std::min(send_size, kRamSize - buff)); watch_span(buff, send_size, "sif:call_rpc"); }
-        iop::write32(client + 0, 1);
-        // rmode 1 makes the EE answer with an RPC end command, which is what wakes the caller
-        // and runs its end function. Every call asks for it: with rmode 0 the EE would write
-        // the end packet straight over the client structure and nobody would be told.
-        const std::uint32_t packet[14] = {0x38u, 0, 0x8000000Au, 0, 0, client, g_iop_rpc_id++, client, fn, send_size, recv, recv_size, 1, iop::read32(client + 36)};
+        const bool nowait = (mode & 1u) != 0;
+        if (nowait) iop::write32(client + 8, 0xFFFFFFFFu); // PS2SDK stores sema_id=-1 for NOWAIT.
+        const std::uint32_t rmode = nowait ? static_cast<std::uint32_t>(end_function != 0) : 1u;
+        const std::uint32_t destination = iop::read32(client + 20);
+        const std::uint32_t ee_destination = destination & (kRamSize - 1u);
+        if (send_size) {
+            if (!destination || ee_destination >= kRamSize || send_size > kRamSize - ee_destination) {
+                std::fprintf(stderr,
+                             "[sif:iop-rpc] reject fn %u client 0x%08X EE buffer 0x%08X send 0x%08X from IOP 0x%08X\n",
+                             fn, client, destination, send_size, send_ptr);
+                c.r[2] = static_cast<std::uint32_t>(-1);
+                return;
+            }
+            if (g_options.trace_iop_modules) {
+                std::uint32_t words[4] = {};
+                for (std::uint32_t i = 0; i < std::min<std::uint32_t>(4u, send_size / 4u); ++i)
+                    words[i] = iop::read32(send_ptr + i * 4u);
+                std::fprintf(stderr,
+                             "[sif:iop-rpc] fn %u ra 0x%08X client 0x%08X sd 0x%08X send 0x%08X -> EE 0x%08X size 0x%X data %08X %08X %08X %08X\n",
+                             fn, c.r[31], client, iop::read32(client + 36), send_ptr, destination, send_size,
+                             words[0], words[1], words[2], words[3]);
+                if (fn == 100u && send_size >= 4u) {
+                    for (std::uint32_t i = 4; i < send_size / 4u; ++i) {
+                        if ((i & 3u) == 0) std::fprintf(stderr, "[sif:iop-rpc-data] +0x%02X", i * 4u);
+                        std::fprintf(stderr, " %08X", iop::read32(send_ptr + i * 4u));
+                        if ((i & 3u) == 3u || i + 1u == send_size / 4u) std::fprintf(stderr, "\n");
+                    }
+                }
+            }
+            std::memcpy(g_ram + ee_destination, iop::ram_ptr(send_ptr), send_size);
+            watch_span(destination, send_size, "sif:iop_rpc_send");
+        }
+        std::uint32_t record_id = 0;
+        const std::uint32_t packet_addr = begin_iop_rpc_packet(client, !rmode && recv_size ? recv : 0, record_id);
+        if (!packet_addr) { c.r[2] = static_cast<std::uint32_t>(-1); return; }
+        // sceSifSendCmd carries send_size in the upper header bits and the EE
+        // destination in header.dest, in addition to the payload transfer.
+        const std::uint32_t packet[14] = {(0x38u & 0xFFu) | (send_size << 8), destination, 0x8000000Au,
+                                          0, record_id, packet_addr, iop::read32(client + 4), client, fn, send_size, recv, recv_size, rmode,
+                                          iop::read32(client + 36)};
+        if (g_options.trace_iop_modules && nowait)
+            std::fprintf(stderr,
+                         "[sif:reverse-rpc] fn %u mode %u end 0x%08X rmode %u dest 0x%08X bytes %u\n",
+                         fn, mode, end_function, rmode, packet[1], send_size);
         send(packet, sizeof packet);
         c.r[2] = 0;
         if (!(mode & 1u) && iop::kernel::current()) {
@@ -490,28 +759,72 @@ void install_iop_side() {
             iop::kernel::block(c, iop::kernel::kWaitRpc, 0);
         }
     });
-    def("sifcmd", 18, "sceSifCheckStatRpc", [](iop::Cpu &c) { c.r[2] = iop::read32(arg(c, 0)) ? 1u : 0u; });
+    def("sifcmd", 18, "sceSifCheckStatRpc", [](iop::Cpu &c) {
+        const std::uint32_t client = arg(c, 0);
+        const std::uint32_t packet = iop::read32(client);
+        const std::uint32_t phys = iop::phys(packet);
+        if (!packet || phys >= iop::kRamSize || phys > iop::kRamSize - kIopRpcPacketSize) {
+            c.r[2] = 0;
+            return;
+        }
+        c.r[2] = iop::read32(client + 4u) == iop::read32(packet + 24u) &&
+                 (iop::read32(packet + 16u) & 1u) ? 1u : 0u;
+    });
     def("sifcmd", 17, "sceSifRegisterRpc", [](iop::Cpu &c) {
         const std::uint32_t sd = arg(c, 0), id = arg(c, 1);
         Server s;
         s.sd = sd;
+        s.sid = id;
         s.func = arg(c, 2);
         s.buf = arg(c, 3);
+        s.cfunc = arg(c, 4);
+        s.cbuf = arg(c, 5);
         s.queue = arg(c, 6);
+        // PS2SDK's SifRpcServerData_t is 68 bytes. Its trailing fields are
+        // rid (+52), link (+56), next (+60), and base (+64).
+        iop::write32(sd + 56, 0);
+        iop::write32(sd + 60, 0);
         iop::write32(sd + 0, id);
         iop::write32(sd + 4, s.func);
         iop::write32(sd + 8, s.buf);
-        g_servers[id] = s;
-        if (iop::kernel::g_trace_modules) std::fprintf(stderr, "[sif] server 0x%08X registered (func 0x%08X buf 0x%08X)\n", id, s.func, s.buf);
-        auto b = g_binds.find(id);
-        if (b != g_binds.end()) {
-            send(&b->second.reply, sizeof(Rend));
-            g_binds.erase(b);
+        iop::write32(sd + 16, s.cfunc);
+        iop::write32(sd + 20, s.cbuf);
+        iop::write32(sd + 64, s.queue);
+        std::uint32_t tail = iop::read32(s.queue + 8);
+        if (!tail) {
+            iop::write32(s.queue + 8, sd);
+        } else {
+            for (std::uint32_t traversed = 0; traversed < 256; ++traversed) {
+                if (tail == sd) break;
+                const std::uint32_t next = iop::read32(tail + 56);
+                if (!next) {
+                    iop::write32(tail + 56, sd);
+                    break;
+                }
+                tail = next;
+            }
         }
+        g_guest_servers[sd] = s;
+        auto &registered = g_server_order[id];
+        if (std::find(registered.begin(), registered.end(), sd) == registered.end()) registered.push_back(sd);
+        const auto active = g_servers.find(id);
+        if (active == g_servers.end() || active->second.hle) g_servers[id] = s;
+        if (id == 0x90000200u)
+            std::fprintf(stderr, "[sif:target-rpc] register sid 0x%08X func 0x%08X buf 0x%08X queue 0x%08X sd 0x%08X (instances %zu)\n",
+                         id, s.func, s.buf, s.queue, sd, registered.size());
+        if (iop::kernel::g_trace_modules) std::fprintf(stderr, "[sif] server 0x%08X registered (func 0x%08X buf 0x%08X)\n", id, s.func, s.buf);
+        complete_pending_bind(id);
         c.r[2] = 0;
     });
     def("sifcmd", 19, "sceSifSetRpcQueue", [](iop::Cpu &c) {
-        g_queue_threads[arg(c, 0)] = static_cast<int>(arg(c, 1));
+        const std::uint32_t qd = arg(c, 0), thread_id = arg(c, 1);
+        iop::write32(qd + 0, thread_id);
+        iop::write32(qd + 4, 0);
+        iop::write32(qd + 8, 0);
+        iop::write32(qd + 12, 0);
+        iop::write32(qd + 16, 0);
+        iop::write32(qd + 20, 0);
+        g_queue_threads[qd] = static_cast<int>(thread_id);
         c.r[2] = 0;
     });
     // A server thread that runs its own loop: sceSifGetNextRequest takes the next request of the queue (0 when there is none), a handle
@@ -546,8 +859,24 @@ void install_iop_side() {
         c.r[2] = 0;
     });
     def("sifcmd", 24, "sceSifRemoveRpc", [](iop::Cpu &c) {
-        for (auto it = g_servers.begin(); it != g_servers.end(); ++it)
-            if (it->second.sd == arg(c, 0)) { g_servers.erase(it); break; }
+        const std::uint32_t sd = arg(c, 0);
+        const auto endpoint = g_guest_servers.find(sd);
+        if (endpoint != g_guest_servers.end()) {
+            const std::uint32_t sid = endpoint->second.sid;
+            g_guest_servers.erase(endpoint);
+            auto order = g_server_order.find(sid);
+            if (order != g_server_order.end()) {
+                auto &registered = order->second;
+                registered.erase(std::remove(registered.begin(), registered.end(), sd), registered.end());
+                if (registered.empty()) g_server_order.erase(order);
+            }
+            auto active = g_servers.find(sid);
+            if (active != g_servers.end() && !active->second.hle && active->second.sd == sd) {
+                const Server *next = first_guest_server(sid);
+                if (next) active->second = *next;
+                else g_servers.erase(active);
+            }
+        }
         c.r[2] = 0;
     });
     def("sifcmd", 25, "sceSifRemoveRpcQueue", [](iop::Cpu &c) { g_queue_threads.erase(arg(c, 0)); c.r[2] = 0; });
@@ -636,6 +965,11 @@ bool fileio_async(std::uint32_t method, std::uint32_t args, std::uint32_t, std::
         fileio_reply(args, method, {static_cast<std::uint32_t>(-1), 0, 0, 0});
         return true;
     }
+}
+
+void register_hle_override(std::uint32_t id, HleServer server) {
+    g_hle_overrides[id] = std::move(server);
+    complete_pending_bind(id);
 }
 
 void install_servers() {
@@ -790,6 +1124,67 @@ void install_servers() {
         }
         return true;
     });
+
+    // LGKBM (SID 0x61766973) is loaded as a guest IRX, but its method 1 request
+    // remains in the guest server loop in this runtime. Route this protocol
+    // through the ordinary SIF HLE reply machinery. The reply fields follow
+    // the Armageddon HLE contract and the KillzoneRecomp protocol findings;
+    // the active endpoint is inert and emits no keyboard events.
+    register_hle_override(0x61766973u, [](std::uint32_t method, std::uint32_t args, std::uint32_t args_size,
+                                         std::uint32_t ret, std::uint32_t ret_size) {
+        const std::uint32_t request = args & (kRamSize - 1u);
+        const std::uint32_t reply = ret & (kRamSize - 1u);
+        const auto valid = [](std::uint32_t address, std::uint32_t size) {
+            return address != 0 && size != 0 && address < kRamSize && size <= kRamSize - address;
+        };
+        const auto reject = [method, args_size, ret_size](const char *why) {
+            std::fprintf(stderr, "[lgkbm] reject %s: method %u send 0x%X reply 0x%X\n",
+                         why, method, args_size, ret_size);
+            return false;
+        };
+
+        if (method == 3u) {
+            if (args_size != 0x20u || ret_size != 0x20u || !valid(request, args_size) || !valid(reply, ret_size))
+                return reject("handshake-size-or-buffer");
+            const std::uint32_t version = ee_read<std::uint32_t>(request + 4u);
+            std::memset(g_ram + reply, 0, 0x20u);
+            std::memcpy(g_ram + reply + 0x04u, &version, sizeof version);
+            std::memcpy(g_ram + reply + 0x0Au, &version, sizeof version);
+            const std::uint16_t acceptedEndpoints = 1u;
+            std::memcpy(g_ram + reply + 0x0Eu, &acceptedEndpoints, sizeof acceptedEndpoints);
+            std::fprintf(stderr, "[lgkbm] handshake version 0x%08X accepted_endpoints 1\n", version);
+            return true;
+        }
+
+        if (method == 1u) {
+            if (args_size != 0x90u || ret_size != 0x90u || !valid(request, args_size) || !valid(reply, ret_size))
+                return reject("device-list-size-or-buffer");
+            std::memset(g_ram + reply, 0, 0x90u);
+            g_ram[reply] = 1u;  // active endpoint; deliberately has no host input events
+            const std::uint16_t count = 1u, keyboardType = 1u, keyboardId = 1u;
+            std::memcpy(g_ram + reply + 0x06u, &count, sizeof count);
+            std::memcpy(g_ram + reply + 0x0Au, &keyboardType, sizeof keyboardType);
+            std::memcpy(g_ram + reply + 0x0Cu, &keyboardId, sizeof keyboardId);
+            std::fprintf(stderr, "[lgkbm] device-list reply: one inert keyboard endpoint\n");
+            return true;
+        }
+
+        if (method == 2u) {
+            if (args_size != 0x1D0u || ret_size != 0x1D0u || !valid(request, args_size) || !valid(reply, ret_size))
+                return reject("event-poll-size-or-buffer");
+            std::memset(g_ram + reply, 0, 0x1D0u);
+            g_ram[reply] = 1u;  // endpoint active; event count at +2 remains zero
+            static std::uint64_t pollCount = 0;
+            ++pollCount;
+            if (pollCount == 1u || pollCount % 1000u == 0u)
+                std::fprintf(stderr, "[lgkbm] event-poll reply: zero events (poll %llu)\n",
+                             static_cast<unsigned long long>(pollCount));
+            return true;
+        }
+
+        std::fprintf(stderr, "[lgkbm] unsupported method %u; override leaves the RPC pending\n", method);
+        return false;
+    });
 }
 
 }
@@ -801,6 +1196,9 @@ void reset() {
     g_processed = true;
     g_outgoing.clear();
     g_servers.clear();
+    g_guest_servers.clear();
+    g_server_order.clear();
+    g_hle_overrides.clear();
     g_binds.clear();
     g_held_calls.clear();
     g_hle_replies.clear();
@@ -812,8 +1210,13 @@ void reset() {
     g_iop_clients.clear();
     std::memset(g_sreg, 0, sizeof g_sreg);
     g_iop_dma_id = g_ee_dma_id = 1;
+    g_dma_marker_count = 0;
     g_ee_dma_done = 0;
     g_iop_rpc_id = 1;
+    g_iop_rpc_packets = 0;
+    g_iop_rpc_next_packet = 0;
+    g_iop_rpc_packet_busy.fill(0);
+    g_iop_rpc_packet_reply.fill(0);
     g_fileio_async = false;
     g_fileio_result = 0;
 }
@@ -848,8 +1251,28 @@ std::uint32_t set_dma(std::uint32_t transfers, std::uint32_t count) {
         else if (dst == 0) reboot(src);
         else if (dst == kCmdBuffer) command(src, size);
         else {
+            if (g_options.trace_iop_modules && size == 0x880u) {
+                std::fprintf(stderr,
+                             "[sif:dtx-dma] frame %llu EE 0x%08X -> IOP 0x%08X size 0x%X seq %08X count %08X entry %08X %08X %08X %08X\n",
+                             static_cast<unsigned long long>(frame_count()), src, dst, size,
+                             ee_read<std::uint32_t>(src + size - 4u), ee_read<std::uint32_t>(src),
+                             ee_read<std::uint32_t>(src + 0x10u), ee_read<std::uint32_t>(src + 0x14u),
+                             ee_read<std::uint32_t>(src + 0x18u), ee_read<std::uint32_t>(src + 0x1Cu));
+            }
+            if (g_options.trace_iop_modules) {
+                const auto endpoint = std::find_if(g_guest_servers.begin(), g_guest_servers.end(),
+                                                   [dst](const auto &entry) { return entry.second.buf == dst; });
+                if (endpoint != g_guest_servers.end()) {
+                    std::fprintf(stderr, "[sif:ee-iop-dma] sid 0x%08X sd 0x%08X EE 0x%08X -> IOP 0x%08X size 0x%X data",
+                                 endpoint->second.sid, endpoint->second.sd, src, dst, size);
+                    for (std::uint32_t word = 0; word < std::min<std::uint32_t>(8u, size / 4u); ++word)
+                        std::fprintf(stderr, " %08X", ee_read<std::uint32_t>(src + word * 4u));
+                    std::fprintf(stderr, "\n");
+                }
+            }
             iop::watch_copy("EE DMA (sceSifSetDma)", dst, src, size, 0);
             std::memcpy(iop::ram_ptr(dst), g_ram + src, std::min(size, iop::kRamSize - (iop::phys(dst) & (iop::kRamSize - 1))));
+            release_iop_rpc_packet(dst);
         }
     }
     g_ee_dma_done = std::max(g_ee_dma_done, now()) + 256u + bytes * 2u;
@@ -878,7 +1301,12 @@ void pump() {
     }
     if (g_options.trace_iop_hle && !g_outgoing.empty() && !g_processed) std::fprintf(stderr, "[sif] %zu packets wait for the EE\n", g_outgoing.size());
     if (!g_processed || g_outgoing.empty() || !g_ee_recv) return;
-    if (g_options.trace_iop_modules) {
+    // A polling server can return tens of thousands of ordinary RPC_END
+    // packets during an intro. Trace requests and unusual commands instead.
+    std::uint32_t outgoing_cid = 0;
+    if (g_outgoing.front().size() >= 12u)
+        std::memcpy(&outgoing_cid, g_outgoing.front().data() + 8, sizeof outgoing_cid);
+    if (g_options.trace_iop_modules && outgoing_cid != kCmdRend) {
         std::uint32_t cid;
         std::memcpy(&cid, g_outgoing.front().data() + 8, 4);
         std::fprintf(stderr, "[sif] to EE: command 0x%08X:", cid);
@@ -900,21 +1328,20 @@ void pump() {
 void register_hle_server(std::uint32_t id, HleServer server) {
     Server s;
     s.hle = true;
+    s.sid = id;
     s.invoke = std::move(server);
     g_servers[id] = std::move(s);
-    auto b = g_binds.find(id);
-    if (b != g_binds.end()) {
-        send(&b->second.reply, sizeof(Rend));
-        g_binds.erase(b);
-    }
+    complete_pending_bind(id);
 }
 
 void dump() {
-    for (const auto &[id, c] : g_held_calls) std::fprintf(stderr, "[sif] call to 0x%08X fn %u is waiting for its reply\n", id, c.rpc_number);
+    for (const auto &[id, c] : g_held_calls) std::fprintf(stderr, "[sif] endpoint 0x%08X call fn %u is waiting for its reply\n", id, c.rpc_number);
     for (const auto &[queue, list] : g_requests)
         if (!list.empty()) std::fprintf(stderr, "[sif] queue 0x%08X has %zu requests\n", queue, list.size());
     for (const auto &[id, b] : g_binds) std::fprintf(stderr, "[sif] bind to 0x%08X is waiting\n", id);
     std::fprintf(stderr, "[sif] %zu packets wait for the EE (processed %d)\n", g_outgoing.size(), g_processed ? 1 : 0);
+    std::fprintf(stderr, "[sif] DMA marker 0x80000004 observed %llu times (no guest handler)\n",
+                 static_cast<unsigned long long>(g_dma_marker_count));
 }
 
 void complete_call(std::uint32_t id) {
@@ -949,23 +1376,48 @@ void state(ps2::state::Stream &s) {
     s.pod(g_data_addr);
     s.pod(g_processed);
     s.deque(g_outgoing, [&s](std::vector<std::uint8_t> &packet) { s.vec(packet); });
-    std::map<std::uint32_t, Server> servers;
-    if (s.saving()) servers = g_servers;
-    s.map(servers, [&s](Server &server) {
+    const auto state_server = [&s](Server &server) {
         s.pod(server.hle);
         s.pod(server.sd);
         s.pod(server.func);
         s.pod(server.buf);
         s.pod(server.queue);
-    });
+        if (s.version() >= 7) {
+            s.pod(server.sid);
+            s.pod(server.cfunc);
+            s.pod(server.cbuf);
+        }
+    };
+    std::map<std::uint32_t, Server> servers;
+    if (s.saving()) servers = g_servers;
+    s.map(servers, state_server);
     if (s.loading()) {
         for (auto &[id, server] : servers) {
+            if (s.version() < 7) server.sid = id;
             if (!server.hle) continue;
             const auto it = g_servers.find(id);
             if (it == g_servers.end() || !it->second.hle) throw std::runtime_error("an HLE RPC server is missing");
             server.invoke = it->second.invoke;
         }
         g_servers = std::move(servers);
+    }
+    if (s.version() >= 7) {
+        std::map<std::uint32_t, Server> guest_servers;
+        if (s.saving()) guest_servers = g_guest_servers;
+        s.map(guest_servers, state_server);
+        if (s.loading()) g_guest_servers = std::move(guest_servers);
+        s.map(g_server_order, [&s](std::vector<std::uint32_t> &order) { s.vec(order); });
+    } else if (s.loading()) {
+        // Older states stored only the most recently registered server for each
+        // SID. Recover that single endpoint as the binding selected in that state.
+        g_guest_servers.clear();
+        g_server_order.clear();
+        for (auto &[sid, server] : g_servers) {
+            if (server.hle || !server.sd) continue;
+            server.sid = sid;
+            g_guest_servers[server.sd] = server;
+            g_server_order[sid].push_back(server.sd);
+        }
     }
     s.map(g_binds);
     s.map(g_held_calls);
@@ -981,6 +1433,17 @@ void state(ps2::state::Stream &s) {
     s.pod(g_sreg);
     s.map(g_iop_clients);
     s.pod(g_iop_rpc_id);
+    if (s.version() >= 8) {
+        s.pod(g_iop_rpc_packets);
+        s.pod(g_iop_rpc_next_packet);
+        s.pod(g_iop_rpc_packet_busy);
+        s.pod(g_iop_rpc_packet_reply);
+    } else if (s.loading()) {
+        g_iop_rpc_packets = iop::kernel::kernel_alloc(kIopRpcPacketCount * kIopRpcPacketSize);
+        g_iop_rpc_next_packet = 0;
+        g_iop_rpc_packet_busy.fill(0);
+        g_iop_rpc_packet_reply.fill(0);
+    }
     s.pod(g_loop_stub);
     s.pod(g_finish_stub);
     s.pod(g_iop_dma_id);
@@ -994,6 +1457,8 @@ void state(ps2::state::Stream &s) {
     // waiting, and a load into a running program must not keep the replies of the time before the load.
     if (s.version() >= 5) s.deque(g_hle_replies, [&s](Call &c) { s.pod(c); });
     else if (s.loading()) g_hle_replies.clear();
+    if (s.version() >= 7) s.pod(g_dma_marker_count);
+    else if (s.loading()) g_dma_marker_count = 0;
 }
 
 }

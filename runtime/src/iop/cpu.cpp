@@ -60,8 +60,33 @@ std::uint32_t fetch(std::uint32_t pc) {
 
 void execute(Cpu &c, std::int64_t &budget) {
     static const bool probing = load_probes();
+    static bool traced_mwfilefr_callback = false;
+    static bool traced_mwfilefr_context = false;
+    static bool traced_mwfilefr_request_context = false;
     while (budget-- > 0) {
         const std::uint32_t pc = c.pc;
+        if (!traced_mwfilefr_request_context && pc == 0x00023B1Cu && kernel::g_trace_modules) {
+            traced_mwfilefr_request_context = true;
+            std::fprintf(stderr,
+                         "[iop:mwfilefr-request-context] entry 0x%08X ra 0x%08X a0 %08X a1 %08X a2 %08X a3 %08X sp %08X stack+10 %08X +14 %08X +18 %08X +1C %08X\n",
+                         pc, c.r[31], c.r[4], c.r[5], c.r[6], c.r[7], c.r[29],
+                         read32(c.r[29] + 0x10u), read32(c.r[29] + 0x14u), read32(c.r[29] + 0x18u),
+                         read32(c.r[29] + 0x1Cu));
+        }
+        if (!traced_mwfilefr_context && pc >= 0x00023B80u && pc < 0x00023BC0u && kernel::g_trace_modules) {
+            traced_mwfilefr_context = true;
+            std::fprintf(stderr,
+                         "[iop:mwfilefr-context] pc 0x%08X ra 0x%08X a0 %08X a1 %08X a2 %08X a3 %08X sp %08X stack+10 %08X +14 %08X +18 %08X +1C %08X +20 %08X +24 %08X\n",
+                         pc, c.r[31], c.r[4], c.r[5], c.r[6], c.r[7], c.r[29],
+                         read32(c.r[29] + 0x10u), read32(c.r[29] + 0x14u), read32(c.r[29] + 0x18u),
+                         read32(c.r[29] + 0x1Cu), read32(c.r[29] + 0x20u), read32(c.r[29] + 0x24u));
+        }
+        if (!traced_mwfilefr_callback && pc == 0x00021978u && kernel::g_trace_modules) {
+            traced_mwfilefr_callback = true;
+            std::fprintf(stderr,
+                         "[iop:rpc-callback] entry 0x%08X ra 0x%08X a0 0x%08X a1 0x%08X a2 0x%08X a3 0x%08X sp 0x%08X\n",
+                         pc, c.r[31], c.r[4], c.r[5], c.r[6], c.r[7], c.r[29]);
+        }
         if (probing) {
             const std::uint32_t a = pc & (kRamSize - 1);
             if (g_probes[a >> 5] & (1u << ((a >> 2) & 7u))) probe(c, pc);
