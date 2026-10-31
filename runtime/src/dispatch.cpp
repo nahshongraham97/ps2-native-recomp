@@ -1,6 +1,7 @@
 #include "ps2/ee_live.hpp"
 #include "ps2/generated.hpp"
 #include "ps2/observer_hook.hpp"
+#include "ps2/native_hook.hpp"
 #include "ps2/os.hpp"
 #include "ps2/system.hpp"
 
@@ -219,6 +220,7 @@ void dispatch(Cpu &c, std::uint32_t, std::uint32_t depth) {
         return;
     }
     ps2::hook::notify_observer(c, depth);
+    if (const auto h = ps2::hook::find_hook(pc)) { h(c); return; }
     const UnitInfo *u = unit_for(pc);
     const std::uint16_t id = u ? u->entries[(pc - u->base) >> 2] : 0;
     if (!id) {

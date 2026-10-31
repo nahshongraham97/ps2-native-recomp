@@ -47,6 +47,8 @@ else()
         runtime/src/memory.cpp
         runtime/src/dispatch.cpp
         runtime/src/observer_hook.cpp
+        runtime/src/native_hook.cpp
+        runtime/src/native_vertex_hook.cpp
         runtime/src/system.cpp
         runtime/src/kernel.cpp
         runtime/src/hw.cpp
@@ -102,7 +104,7 @@ endif()
 if(NOT WIN32 AND NOT EMSCRIPTEN)
     target_link_libraries(ps2runtime ${PS2_API} ${CMAKE_DL_LIBS})  # vu_live.cpp loads libraries with dlopen
 endif()
-target_include_directories(ps2runtime ${PS2_API} "${CMAKE_CURRENT_SOURCE_DIR}/runtime/include")
+target_include_directories(ps2runtime ${PS2_API} "${CMAKE_CURRENT_SOURCE_DIR}/runtime/include" "${CMAKE_CURRENT_SOURCE_DIR}/runtime/src")
 
 set(PS2_WGPU_DIR "${CMAKE_SOURCE_DIR}/third_party/wgpu-native" CACHE PATH "wgpu-native release folder")
 if(EMSCRIPTEN OR EXISTS "${PS2_WGPU_DIR}/lib/libwgpu_native.a")
@@ -197,6 +199,10 @@ if(PS2_GENERATED)
             set_target_properties(ps2run PROPERTIES WIN32_EXECUTABLE ON)
         endif()
         # the game controller path tested with SDL's virtual controllers, no game needed: ninja -C build/native-<game> ps2padtest
+        add_executable(test_native_hook EXCLUDE_FROM_ALL tests/test_native_hook.cpp)
+        target_include_directories(test_native_hook PRIVATE runtime/include runtime/src)
+        target_link_libraries(test_native_hook PRIVATE ps2runtime)
+
         add_executable(test_observer_hook EXCLUDE_FROM_ALL tests/test_observer_hook.cpp)
         target_include_directories(test_observer_hook PRIVATE runtime/include runtime/src)
         target_link_libraries(test_observer_hook PRIVATE ps2runtime)

@@ -6,6 +6,7 @@
 #include "../hw.hpp"
 #ifdef PS2_GPU
 #include "gpu/gpu.hpp"
+#include "ps2/native_vertex_hook.hpp"
 #endif
 
 #include "ps2/hitch.hpp"
@@ -550,6 +551,7 @@ void flush() {
 void frame_start(std::uint64_t frame) {
     if (spec()) flush();
     g_frame = frame;
+    ps2::vertex::flush();
     g_number = 0;
     raster::g_probe.on = false;
 }
@@ -681,7 +683,7 @@ void kick(bool draw) {
         if (trace::draw(s, needed)) {
             if (cpu_raster()) raster::draw(s, s.queue, needed);
 #ifdef PS2_GPU
-            if (gpu_on()) gpu::draw(s, s.queue, needed);
+            if (gpu_on()) { if (!ps2::vertex::submit_primitive(s, s.queue, needed)) gpu::draw(s, s.queue, needed); }
 #endif
         }
         ++g_primitives;
