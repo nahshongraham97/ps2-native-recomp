@@ -20,6 +20,7 @@ void frame_tick() {}
 #include "ps2/memory.hpp"
 #include "ps2/os.hpp"
 #include "ps2/system.hpp"
+#include "ps2/observer_hook.hpp"
 
 #include <algorithm>
 #include <atomic>
@@ -1099,6 +1100,10 @@ bool translate_missing(std::uint32_t pc) {
     }
     if (!flat) remember(name, base, image, {pc}, region);   // a loaded program is not an overlay of the build: eerecomp checks those word for word
     if (quick) queue_upgrade(base, name, std::move(image));
+    if (ps2::profile::profiler_enabled()) {
+        const auto ns = static_cast<std::uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - began).count());
+        ps2::profile::record_ee_live(ns);
+    }
     return true;
 }
 

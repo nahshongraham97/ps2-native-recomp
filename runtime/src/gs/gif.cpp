@@ -4,6 +4,8 @@
 #include "queue.hpp"
 
 #include "ps2/state.hpp"
+#include "ps2/observer_hook.hpp"
+#include <chrono>
 
 #include <algorithm>
 #include <cstdio>
@@ -241,8 +243,17 @@ void render_reset() {
 }
 
 void render(int path, const std::uint8_t *data, std::uint32_t qwc) {
-    GsSink sink{path};
-    walk(g_paths[path], data, qwc, sink);
+    if (ps2::profile::profiler_enabled()) {
+        const auto t0 = std::chrono::steady_clock::now();
+        GsSink sink{path};
+        walk(g_paths[path], data, qwc, sink);
+        const auto t1 = std::chrono::steady_clock::now();
+        const auto ns = static_cast<std::uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count());
+        ps2::profile::record_gs_draw(ns);
+    } else {
+        GsSink sink{path};
+        walk(g_paths[path], data, qwc, sink);
+    }
 }
 
 void transfer(int path, const std::uint8_t *data, std::uint32_t qwc) {

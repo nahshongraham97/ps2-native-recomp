@@ -887,13 +887,13 @@ namespace ps2 {
 
 void syscall(Cpu &c, std::uint32_t pc) {
     ++hw::g_slow_seq;  // a system call is something a waiting loop is not skipped over (hw.cpp, spin_watch)
-    if (ps2::hook::observer_hooks_enabled()) {
+    if (ps2::hook::is_enabled()) {
         std::uint32_t n = c.r[3].w[0];
         if (n & 0x80000000u) n = 0u - n;
         if (n == 69) {
-            ps2::hook::notify_observer_pc(0x0010C830u, c, 0); // PollSema
+            ps2::hook::notify_syscall_trap(69, "PollSema", c, 5, 2000);
         } else if (n == 115) {
-            ps2::hook::notify_observer_pc(0x0010CB50u, c, 0); // SetVSyncFlag
+            ps2::hook::notify_syscall_trap(115, "SetVSyncFlag", c, 5, 120);
         }
     }
     kernel::handle_syscall(c, pc);
