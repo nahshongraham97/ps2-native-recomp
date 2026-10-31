@@ -888,7 +888,8 @@ void note_audio();
 
 void pace() {
     static bool stuck = false;  // the device took no sound for a second; the clock paces the game until it takes some again
-    if (g_audio && !(stuck && g_pipe->full())) {
+    static const bool audio_pace_off = ps2::os::env("PS2_AUDIO_PACE") == "0";
+    if (g_audio && !audio_pace_off && !(stuck && g_pipe->full())) {
         // The audio device clock paces emulation: wait while more than ~80 ms of sound is waiting. The pipe times the game between
         // the frames (how much it slows down decides how much the sound is stretched) and does not count this wait as slowness.
         g_pipe->frame(audio_seconds());
