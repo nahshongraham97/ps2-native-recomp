@@ -609,7 +609,15 @@ void exec_finish(iop::Cpu &c) {
 }
 
 void install_iop_side() {
-    iop::kernel::register_job(iop::kernel::kJobSifDmaCallback, [](const iop::kernel::Job &j) { iop::kernel::call_guest(j.a, j.b); });
+    iop::kernel::register_job(iop::kernel::kJobSifDmaCallback, [](const iop::kernel::Job &j) {
+        // Guard against a stale callback pointer: the EE-side teardown can clear
+        // callback object slots (e.g. CRI ADXI at 0x0083AC30) between the time
+        // sceSifSetDmaIntr registers the job and the IOP scheduler fires it.
+        // Invoking address 0 causes a "missing code at 0x00000000 (ra 0x007E4E1C)"
+        // crash that manifests in multithreaded mode during movie teardown.
+        if (j.a == 0) return;
+        iop::kernel::call_guest(j.a, j.b);
+    });
     iop::kernel::register_job(iop::kernel::kJobSifReply, [](const iop::kernel::Job &) {
         if (g_hle_replies.empty()) return;
         const Call c = g_hle_replies.front();
