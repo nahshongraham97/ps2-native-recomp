@@ -655,11 +655,23 @@ int main(int argc, char **argv) {
             return 1;
         }
         ps2::boot(entry, args);
-        if (ps2::hook::observer_hooks_enabled()) {
+        if (ps2::hook::is_enabled()) {
             ps2::hook::register_observer(entry, [](const ps2::hook::GuestCallContext &ctx) {
-                std::fprintf(stderr, "[observer-hook] Observed guest entry 0x%08X (name: %s, RA: 0x%08X, SP: 0x%08X, Depth: %u)\n",
+                std::fprintf(stderr, "[observer-hook] Observed ELF boot entry 0x%08X (name: %s, RA: 0x%08X, SP: 0x%08X, Depth: %u)\n",
                     ctx.pc, ctx.name, ctx.ra, ctx.sp, ctx.depth);
-            }, "guest_boot_entry", 3);
+            }, "elf_boot_entry", 3, 0);
+
+            // Register real gameplay function observer: PollSema (0x0010C830)
+            ps2::hook::register_observer(0x0010C830u, [](const ps2::hook::GuestCallContext &ctx) {
+                std::fprintf(stderr, "[gameplay-observer] PollSema (0x%08X) called! Count=%llu, Caller RA=0x%08X, SemaID A0=%u, SP=0x%08X\n",
+                    ctx.pc, static_cast<unsigned long long>(ctx.call_count), ctx.ra, ctx.cpu.r[4].w[0], ctx.sp);
+            }, "PollSema_gameplay", 5, 2000);
+
+            // Register SetVSyncFlag observer: 0x0010CB50
+            ps2::hook::register_observer(0x0010CB50u, [](const ps2::hook::GuestCallContext &ctx) {
+                std::fprintf(stderr, "[gameplay-observer] SetVSyncFlag (0x%08X) called! Count=%llu, Caller RA=0x%08X, Mode A0=%u\n",
+                    ctx.pc, static_cast<unsigned long long>(ctx.call_count), ctx.ra, ctx.cpu.r[4].w[0]);
+            }, "SetVSyncFlag_gameplay", 5, 120);
         }
         if (load_path == "newest") {  // the newest quick save (F5) of this game
             load_path = ps2::quick_newest_state();

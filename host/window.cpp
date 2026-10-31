@@ -1,6 +1,7 @@
 #include "window.hpp"
 
 #include "ps2/system.hpp"
+#include "ps2/observer_hook.hpp"
 
 #ifdef _WIN32
 #define NOMINMAX
@@ -1024,7 +1025,13 @@ FrameLog g_frame_log;
 void on_vblank() {
     show_speed();
     poll();
+    const auto t0 = WaitLog::Clock::now();
     present();
+    const auto t1 = WaitLog::Clock::now();
+    if (ps2::profile::profiler_enabled()) {
+        ps2::profile::record_d3d12_present(static_cast<std::uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count()));
+        ps2::profile::dump_summary_if_due(ps2::frames_run());
+    }
     pace();
     if (g_frame_log.file) g_frame_log.frame(0.0, 0.0, queued_ms());
 }
@@ -1414,6 +1421,10 @@ int run_window(const std::function<int()> &emulate) {
         const auto t0 = WaitLog::Clock::now();
         ps2::post_present();
         const auto t1 = WaitLog::Clock::now();
+        if (ps2::profile::profiler_enabled()) {
+            ps2::profile::record_d3d12_present(static_cast<std::uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count()));
+            ps2::profile::dump_summary_if_due(ps2::frames_run());
+        }
         pace();
         if (ps2::hitch::on()) {  // PS2_HITCH_LOG=<ms>: a frame of the emulation thread that took long, and what it waited for (docs/hitches.md)
             static auto last = WaitLog::Clock::now();

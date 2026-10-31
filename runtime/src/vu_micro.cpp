@@ -11,6 +11,7 @@
 #include "ps2/vu.hpp"
 #include "ps2/vu_live.hpp"
 #include "ps2/vu_ops.hpp"
+#include "ps2/observer_hook.hpp"
 
 #include "ps2/state.hpp"
 
@@ -940,7 +941,12 @@ void run_entry(int unit, std::uint32_t pc) {
                 return;
             }
             if (jit && jit != fn && ++sampled % 32 == 0) check_jit(fn, jit);
-            else fn(g_vu1, g_vu1_mem);
+            else if (profile::profiler_enabled()) {
+                const auto t0 = std::chrono::steady_clock::now();
+                fn(g_vu1, g_vu1_mem);
+                const auto t1 = std::chrono::steady_clock::now();
+                profile::record_vu_compiled(static_cast<std::uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count()));
+            } else fn(g_vu1, g_vu1_mem);
             return;
         }
     }
@@ -954,7 +960,14 @@ void run_entry(int unit, std::uint32_t pc) {
             std::fprintf(stderr, "\n");
         }
     }
-    run_fast(unit, pc, diag_key);
+    if (profile::profiler_enabled()) {
+        const auto t0 = std::chrono::steady_clock::now();
+        run_fast(unit, pc, diag_key);
+        const auto t1 = std::chrono::steady_clock::now();
+        profile::record_vu_interpret(static_cast<std::uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count()));
+    } else {
+        run_fast(unit, pc, diag_key);
+    }
 }
 
 ProgramFn lookup(std::uint32_t address) {

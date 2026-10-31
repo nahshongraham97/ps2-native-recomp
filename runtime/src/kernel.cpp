@@ -5,6 +5,7 @@
 #include "ps2/generated.hpp"
 #include "ps2/memory.hpp"
 #include "ps2/system.hpp"
+#include "ps2/observer_hook.hpp"
 
 #include "ps2/state.hpp"
 
@@ -886,6 +887,15 @@ namespace ps2 {
 
 void syscall(Cpu &c, std::uint32_t pc) {
     ++hw::g_slow_seq;  // a system call is something a waiting loop is not skipped over (hw.cpp, spin_watch)
+    if (ps2::hook::observer_hooks_enabled()) {
+        std::uint32_t n = c.r[3].w[0];
+        if (n & 0x80000000u) n = 0u - n;
+        if (n == 69) {
+            ps2::hook::notify_observer_pc(0x0010C830u, c, 0); // PollSema
+        } else if (n == 115) {
+            ps2::hook::notify_observer_pc(0x0010CB50u, c, 0); // SetVSyncFlag
+        }
+    }
     kernel::handle_syscall(c, pc);
 }
 
