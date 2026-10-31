@@ -14,7 +14,9 @@
 
 #include "ps2/state.hpp"
 
+#include <algorithm>
 #include <atomic>
+#include <vector>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -681,7 +683,7 @@ void set_tops(std::uint32_t top, std::uint32_t itop) {
     g_itop = itop;
 }
 
-void run_fast(int n, std::uint32_t address);
+void run_fast(int n, std::uint32_t address, std::uint64_t diag_key = 0);
 
 std::unordered_map<std::uint64_t, ProgramFn> g_programs;
 
@@ -835,8 +837,21 @@ void interpret(int unit, std::uint32_t pc) {
         return;
     }
     g_chaining = true;
+    static const bool mka_vu_diag = std::getenv("PS2_MKA_VU_DIAG") != nullptr;
     for (;;) {
+        const std::uint32_t entry = pc;
+        std::uint32_t before = 0;
+        if (mka_vu_diag) std::memcpy(&before, g_vu1_mem + 16, 4);
         run_entry(1, pc);
+        if (mka_vu_diag) {
+            std::uint32_t after = 0;
+            std::memcpy(&after, g_vu1_mem + 16, 4);
+            if (before == 0x56EEu || after == 0x56EEu)
+                std::fprintf(stderr, "[vu1-mka] chained qword1.x %08X -> %08X entry=%04X key=%016llX frame=%llu\n",
+                             before, after, entry,
+                             static_cast<unsigned long long>(g_entries[(entry & 16383u) >> 3].key),
+                             static_cast<unsigned long long>(frame_count()));
+        }
         if (g_chained < 0) break;
         pc = static_cast<std::uint32_t>(g_chained);
         g_chained = -1;
@@ -853,10 +868,24 @@ void run_entry(int unit, std::uint32_t pc) {
     static const bool count = std::getenv("PS2_VU_COUNT") != nullptr;
     static std::uint64_t compiled = 0, interpreted = 0;
     static std::unordered_map<std::uint32_t, std::uint64_t> misses;
+    std::uint64_t diag_key = 0;
     if (unit == 1 && !interpret_only) {
         if (live::ready()) install_live();
         const ProgramFn fn = lookup(pc);
-        if (fn) {
+        const std::uint64_t current_key = g_entries[(pc & 16383u) >> 3].key;
+        static const bool mka_vu_diag = std::getenv("PS2_MKA_VU_DIAG") != nullptr;
+        static const bool writer_trace = std::getenv("PS2_MKA_VU_WRITER_TRACE") != nullptr;
+        std::uint32_t qword1_x = 0;
+        if (writer_trace) std::memcpy(&qword1_x, g_vu1_mem + 16, sizeof qword1_x);
+        const bool writer_target = writer_trace && current_key == 0x9028E7D14D829E58ULL &&
+                                   frame_count() == 4420 && qword1_x == 0x2Au;
+        const bool is_target_diag = writer_target || (mka_vu_diag && (current_key == 0x9028E7D14D829E58ULL ||
+                                     current_key == 0x8CEA8B7D7AAD14B5ULL ||
+                                     current_key == 0xD4CF384265359438ULL ||
+                                     current_key == 0x701EEB56CC994B3BULL ||
+                                      current_key == 0x8655151BBA7F02CAULL));
+        if (is_target_diag) diag_key = current_key;
+        if (fn && !is_target_diag) {
             ++compiled;
             const ProgramFn jit = g_entries[(pc & 16383u) >> 3].jit;
             static std::uint64_t sampled = 0;
@@ -925,19 +954,23 @@ void run_entry(int unit, std::uint32_t pc) {
             std::fprintf(stderr, "\n");
         }
     }
-    run_fast(unit, pc);
+    run_fast(unit, pc, diag_key);
 }
 
 ProgramFn lookup(std::uint32_t address) {
     EntryCache &e = g_entries[(address & 16383u) >> 3];
     g_last_key = 0;
-    if (e.generation == g_generation[1]) return e.function;
+    if (e.generation == g_generation[1]) {
+        g_last_key = e.key;
+        return e.function;
+    }
     e.generation = g_generation[1];
     for (const Candidate &c : e.candidates)
         if (candidate_matches(c)) {
             e.function = c.function;
             e.jit = c.jit;
             e.key = c.key;
+            g_last_key = e.key;
             return e.function;
         }
     const std::vector<std::uint32_t> pcs = reachable(g_vu1_code, 16383u, address);
@@ -975,7 +1008,7 @@ ProgramFn lookup(std::uint32_t address) {
     return e.function;
 }
 
-void run_fast(int n, std::uint32_t address) {
+void run_fast(int n, std::uint32_t address, std::uint64_t diag_key) {
     Unit u = unit_of(n);
     Vu0Regs &r = *u.regs;
     if (g_scan[n]) scan_flags(n, u.code, u.code_mask + 1);
@@ -993,7 +1026,78 @@ void run_fast(int n, std::uint32_t address) {
     static const bool record_jumps = !ps2::os::env("PS2_VU_RECORD").empty() || static_cast<bool>(g_options.on_vu_program);
     if (count && ++calls % 20000 == 0) std::fprintf(stderr, "[vu1] %llu calls, %llu instructions\n", (unsigned long long)calls, (unsigned long long)total);
     BranchView view;
-    for (std::uint32_t steps = 0; steps < 1'000'000; ++steps, ++total) {
+    struct BranchEvent {
+        std::uint32_t from_pc;
+        std::uint32_t target_pc;
+        std::uint16_t vi1;
+        std::uint16_t vi4;
+        std::uint16_t vi5;
+        std::uint16_t vi6;
+        std::uint16_t vi7;
+        const char *op;
+        bool taken;
+    };
+    const bool diagnostic = n == 1 && diag_key != 0;
+    std::uint32_t pc_hits[2048];
+    BranchEvent branch_ring[16];
+    std::size_t branch_count = 0;
+    struct Vi6Write { std::uint32_t pc, lo; std::uint16_t before, after; };
+    Vi6Write vi6_first[12], vi6_last[16];
+    std::size_t vi6_writes = 0;
+    struct SourceSample {
+        std::uint32_t pc;
+        std::uint16_t vi3;
+        std::uint32_t qword[4];
+        std::uint32_t vf10_x;
+    };
+    SourceSample source_loads[4], source_mtirs[4];
+    std::size_t source_load_count = 0, source_mtir_count = 0;
+    struct MemWrite { std::uint32_t pc, lo, before, after; };
+    MemWrite qword1_first[8], qword1_last[8];
+    std::size_t qword1_writes = 0;
+    struct Vf25Write { std::uint32_t pc, hi, lo, before, after; };
+    Vf25Write vf25_last[16];
+    std::size_t vf25_writes = 0;
+    bool reported_vf25_source = false;
+    bool reported_loop_setup = false;
+    std::uint32_t initial_qword1_x = 0;
+    if (diagnostic) std::memcpy(&initial_qword1_x, u.data + 16, 4);
+    std::uint16_t init_vi[16];
+    if (diagnostic) {
+        std::memset(pc_hits, 0, sizeof pc_hits);
+        std::memcpy(init_vi, r.vi, sizeof init_vi);
+    }
+    const std::uint32_t init_status = r.status, init_mac = r.mac, init_clip = r.clip;
+    std::uint32_t entries_31f8 = 0;
+    std::uint32_t entries_1ee8 = 0, entries_2120 = 0;
+    std::uint16_t first_1ee8_vi6 = 0, first_2120_vi6 = 0;
+    bool reached_xgkick = false;
+    bool reached_ebit = false;
+    const std::uint64_t current_prog_key = diag_key;
+    const auto report_normal = [&](std::uint32_t steps) {
+        if (!diagnostic) return;
+        static std::unordered_map<std::uint64_t, unsigned> reports;
+        const unsigned call = ++reports[diag_key];
+        if (call > 3) return;
+        std::uint32_t max_pc = 0, max_count = 0;
+        for (std::uint32_t i = 0; i < 2048; ++i)
+            if (pc_hits[i] > max_count) { max_count = pc_hits[i]; max_pc = i * 8u; }
+        std::fprintf(stderr, "[vu1-diag] normal key %016llX entry %04X call %u steps %u top %04X:%u loops 1EE8:%u 2120:%u 31F8:%u vi1 %04X->%04X vi6 %04X->%04X vi7 %04X->%04X xgkick %d ebit %d branches %zu\n",
+                     static_cast<unsigned long long>(diag_key), address & u.code_mask, call, steps,
+                     max_pc, max_count, entries_1ee8, entries_2120, entries_31f8,
+                     init_vi[1], r.vi[1], init_vi[6], r.vi[6], init_vi[7], r.vi[7],
+                     reached_xgkick ? 1 : 0, reached_ebit ? 1 : 0, branch_count);
+        if (call == 1) {
+            for (std::size_t i = branch_count > 16 ? branch_count - 16 : 0; i < branch_count; ++i) {
+                const auto &ev = branch_ring[i % 16];
+                std::fprintf(stderr, "[vu1-diag] branch %04X -> %04X %s taken=%d vi1=%04X vi4=%04X vi5=%04X vi6=%04X vi7=%04X\n",
+                             ev.from_pc, ev.target_pc, ev.op, ev.taken ? 1 : 0, ev.vi1, ev.vi4, ev.vi5, ev.vi6, ev.vi7);
+            }
+        }
+    };
+    const std::uint32_t step_limit = diag_key == 0x9028E7D14D829E58ULL &&
+                                     std::getenv("PS2_MKA_VU_WRITER_TRACE") ? 3'000'000u : 1'000'000u;
+    for (std::uint32_t steps = 0; steps < step_limit; ++steps, ++total) {
         if (!(steps & 0xFFu) && halted()) return;  // the window was closed: a program that does not end must not hold the close up for seconds
         std::uint32_t lo, hi;
         std::memcpy(&lo, u.code + pc, 4);
@@ -1004,6 +1108,41 @@ void run_fast(int n, std::uint32_t address) {
             if (g_scan[n]) scan_flags(n, u.code, u.code_mask + 1);
         }
         const std::uint32_t current = pc;
+        std::uint32_t prior_qword1_x = 0;
+        const std::uint32_t prior_vf25_x = diagnostic ? r.vf[25].w[0] : 0;
+        std::uint32_t source_vf[4] = {};
+        std::uint16_t source_base_vi = 0;
+        if (diagnostic) {
+            std::memcpy(&prior_qword1_x, u.data + 16, 4);
+            std::memcpy(source_vf, r.vf[(lo >> 11) & 31u].w, sizeof source_vf);
+            source_base_vi = r.vi[(lo >> 16) & 15u];
+            pc_hits[(current & u.code_mask) >> 3]++;
+            if (current == 0x1DD0u && source_load_count < 4) {
+                auto &sample = source_loads[source_load_count++];
+                sample.pc = current;
+                sample.vi3 = r.vi[3];
+                std::memcpy(sample.qword, qword(u, r.vi[3] + 1u), sizeof sample.qword);
+                sample.vf10_x = r.vf[10].w[0];
+            }
+            if (current == 0x1DF0u && source_mtir_count < 4) {
+                auto &sample = source_mtirs[source_mtir_count++];
+                sample.pc = current;
+                sample.vi3 = r.vi[3];
+                std::memcpy(sample.qword, qword(u, r.vi[3] + 1u), sizeof sample.qword);
+                sample.vf10_x = r.vf[10].w[0];
+            }
+            if (current == 0x31F8u) ++entries_31f8;
+            if (current == 0x1EE8u) { if (++entries_1ee8 == 1) first_1ee8_vi6 = r.vi[6]; }
+            if (current == 0x2120u) { if (++entries_2120 == 1) first_2120_vi6 = r.vi[6]; }
+            if (hi & 0x40000000u) reached_ebit = true;
+            if (current == 0x2CB0u && !reported_loop_setup) {
+                std::uint32_t header[4];
+                std::memcpy(header, qword(u, r.vi[3] + 1u), sizeof header);
+                std::fprintf(stderr, "[vu1-mka] loop header pc=2CB0 TOP=%04X qword[%04X]=%08X %08X %08X %08X prior-vi4=%04X\n",
+                             r.vi[3], static_cast<std::uint16_t>(r.vi[3] + 1u),
+                             header[0], header[1], header[2], header[3], r.vi[4]);
+            }
+        }
         pc = npc;
         npc = (npc + 8u) & u.code_mask;
         if (clock) {
@@ -1025,6 +1164,55 @@ void run_fast(int n, std::uint32_t address) {
             lower(u, lo, current, target, branch);
             if (branch) npc = target;
             if (branch && record_jumps && n == 1 && ((lo >> 25) == 0x24u || (lo >> 25) == 0x25u)) lookup(target);
+            if (diagnostic) {
+                const unsigned op = lo >> 25;
+                const char *bname = nullptr;
+                switch (op) {
+                case 0x20: bname = "B"; break;
+                case 0x21: bname = "BAL"; break;
+                case 0x24: bname = "JR"; break;
+                case 0x25: bname = "JALR"; break;
+                case 0x28: bname = "IBEQ"; break;
+                case 0x29: bname = "IBNE"; break;
+                case 0x2C: bname = "IBLTZ"; break;
+                case 0x2D: bname = "IBGTZ"; break;
+                case 0x2E: bname = "IBLEZ"; break;
+                case 0x2F: bname = "IBGEZ"; break;
+                default: break;
+                }
+                if (bname) {
+                    auto &ev = branch_ring[branch_count % 16];
+                    ev.from_pc = current;
+                    ev.target_pc = branch ? target : npc;
+                    ev.vi1 = was[1];
+                    ev.vi4 = was[4];
+                    ev.vi5 = was[5];
+                    ev.vi6 = was[6];
+                    ev.vi7 = was[7];
+                    ev.op = bname;
+                    ev.taken = branch;
+                    ++branch_count;
+                }
+                if (op == 0x40u && ((lo >> 6) & 31u) == 27 && (lo & 3u) == 0) {
+                    reached_xgkick = true;
+                }
+            }
+        }
+        if (diagnostic && r.vi[6] != was[6]) {
+            const Vi6Write change{current, lo, was[6], r.vi[6]};
+            if (vi6_writes < 12) vi6_first[vi6_writes] = change;
+            vi6_last[vi6_writes % 16] = change;
+            ++vi6_writes;
+        }
+        if (diagnostic && !reported_loop_setup && (current == 0x2CB0u || current == 0x2CB8u || current == 0x2CC0u)) {
+            std::fprintf(stderr, "[vu1-mka] loop prelude pc=%04X lo=%08X vi3=%04X vi4=%04X->%04X vi5=%04X->%04X branch-view-vi4=%04X next=%04X\n",
+                         current, lo, r.vi[3], was[4], r.vi[4], was[5], r.vi[5],
+                         u.branch_vi ? u.branch_vi[4] : was[4], npc);
+        }
+        if (diagnostic && current == 0x2CC8u && !reported_loop_setup) {
+            std::fprintf(stderr, "[vu1-mka] loop setup pc=2CC8 vi3=%04X vi4=%04X vi5=%04X vi6=%04X count16=%d\n",
+                         r.vi[3], r.vi[4], r.vi[5], r.vi[6], static_cast<std::int16_t>(r.vi[4]));
+            reported_loop_setup = true;
         }
         u.branch_vi = nullptr;
         view.commit(was, lo, !(hi & 0x80000000u));
@@ -1045,14 +1233,141 @@ void run_fast(int n, std::uint32_t address) {
         r.vf[0].w[2] = 0;
         r.vf[0].w[3] = fp::kOne;
         r.vi[0] = 0;
+        if (diagnostic) {
+            if (r.vf[25].w[0] != prior_vf25_x) {
+                vf25_last[vf25_writes % 16] = {current, hi, lo, prior_vf25_x, r.vf[25].w[0]};
+                ++vf25_writes;
+                if (!reported_vf25_source && current == 0x2DB0u && r.vf[25].w[0] == 0x56EEu) {
+                    const std::uint16_t base = was[11];
+                    const std::uint16_t index = static_cast<std::uint16_t>(base + 1u);
+                    std::uint32_t source[4];
+                    std::memcpy(source, qword(u, index), sizeof source);
+                    std::fprintf(stderr, "[vu1-mka] VF25.x first 56EE LQ pc=%04X lo=%08X step=%u vi11=%04X source-index=%04X source=%08X %08X %08X %08X vi4=%04X vi5=%04X vi7=%04X\n",
+                                 current, lo, steps, base, index, source[0], source[1], source[2], source[3],
+                                 was[4], was[5], was[7]);
+                    reported_vf25_source = true;
+                }
+            }
+            std::uint32_t next_qword1_x = 0;
+            std::memcpy(&next_qword1_x, u.data + 16, 4);
+            if (next_qword1_x != prior_qword1_x) {
+                const MemWrite change{current, lo, prior_qword1_x, next_qword1_x};
+                if (qword1_writes < 8) qword1_first[qword1_writes] = change;
+                qword1_last[qword1_writes % 8] = change;
+                ++qword1_writes;
+                if (next_qword1_x == 0x56EEu) {
+                    std::fprintf(stderr, "[vu1-mka] qword1.x exact writer key=%016llX pc=%04X hi=%08X lo=%08X prior=%08X source-vf=%08X %08X %08X %08X base-vi=%04X imm11=%d\n",
+                                 static_cast<unsigned long long>(diag_key), current, hi, lo, prior_qword1_x,
+                                 source_vf[0], source_vf[1], source_vf[2], source_vf[3], source_base_vi,
+                                 static_cast<std::int32_t>(lo << 21) >> 21);
+                    for (std::size_t i = vf25_writes > 16 ? vf25_writes - 16 : 0; i < vf25_writes; ++i) {
+                        const auto &w = vf25_last[i % 16];
+                        std::fprintf(stderr, "[vu1-mka] VF25.x provenance pc=%04X hi=%08X lo=%08X %08X -> %08X\n",
+                                     w.pc, w.hi, w.lo, w.before, w.after);
+                    }
+                }
+            }
+        }
         if (ending) {
             pipe.flush_q(r);
             r.tpc = pc;
+            report_normal(steps + 1);
             return;
         }
         if (hi & 0x40000000u) ending = true;
     }
     std::fprintf(stderr, "[vu%d] program at 0x%04X did not end\n", n, address);
+    if (diagnostic) {
+        static int diag_reports = 0;
+        if (diag_reports < 5) {
+            ++diag_reports;
+            std::fprintf(stderr, "\n[vu1-diag] ==================== VU1 TIMEOUT REPORT #%d ====================\n", diag_reports);
+            std::fprintf(stderr, "[vu1-diag] Program key: %016llX | Entry: 0x%04X | Steps: 1000000\n",
+                         static_cast<unsigned long long>(current_prog_key), address & u.code_mask);
+            std::fprintf(stderr, "[vu1-diag] Init VI:  0:%04X  1:%04X  2:%04X  3:%04X  4:%04X  5:%04X  6:%04X  7:%04X\n",
+                         init_vi[0], init_vi[1], init_vi[2], init_vi[3], init_vi[4], init_vi[5], init_vi[6], init_vi[7]);
+            std::fprintf(stderr, "[vu1-diag]           8:%04X  9:%04X 10:%04X 11:%04X 12:%04X 13:%04X 14:%04X 15:%04X\n",
+                         init_vi[8], init_vi[9], init_vi[10], init_vi[11], init_vi[12], init_vi[13], init_vi[14], init_vi[15]);
+            std::fprintf(stderr, "[vu1-diag] Final VI: 0:%04X  1:%04X  2:%04X  3:%04X  4:%04X  5:%04X  6:%04X  7:%04X\n",
+                         r.vi[0], r.vi[1], r.vi[2], r.vi[3], r.vi[4], r.vi[5], r.vi[6], r.vi[7]);
+            std::fprintf(stderr, "[vu1-diag]           8:%04X  9:%04X 10:%04X 11:%04X 12:%04X 13:%04X 14:%04X 15:%04X\n",
+                         r.vi[8], r.vi[9], r.vi[10], r.vi[11], r.vi[12], r.vi[13], r.vi[14], r.vi[15]);
+            std::fprintf(stderr, "[vu1-diag] Flags: Init st=%03X mac=%04X clip=%06X | Final st=%03X mac=%04X clip=%06X\n",
+                         init_status, init_mac, init_clip, r.status, r.mac, r.clip);
+            std::fprintf(stderr, "[vu1-diag] Loop entries: 1EE8=%u (first vi6=%04X) 2120=%u (first vi6=%04X) 31F8=%u | XGKICK: %s | E-bit: %s\n",
+                         entries_1ee8, first_1ee8_vi6, entries_2120, first_2120_vi6, entries_31f8,
+                         reached_xgkick ? "YES" : "NO", reached_ebit ? "YES" : "NO");
+            std::fprintf(stderr, "[vu1-diag] vi6 writes: %zu; first %zu:\n", vi6_writes, std::min<std::size_t>(12, vi6_writes));
+            std::fprintf(stderr, "[vu1-diag] qword1.x initial=%08X writes=%zu\n", initial_qword1_x, qword1_writes);
+            for (std::size_t i = 0; i < std::min<std::size_t>(8, qword1_writes); ++i) {
+                const auto &w = qword1_first[i];
+                std::fprintf(stderr, "[vu1-diag] qword1.x first-write %04X %08X %08X -> %08X\n", w.pc, w.lo, w.before, w.after);
+            }
+            for (std::size_t i = qword1_writes > 8 ? qword1_writes - 8 : 0; i < qword1_writes; ++i) {
+                const auto &w = qword1_last[i % 8];
+                std::fprintf(stderr, "[vu1-diag] qword1.x last-write %04X %08X %08X -> %08X\n", w.pc, w.lo, w.before, w.after);
+            }
+            for (std::size_t i = 0; i < source_load_count; ++i) {
+                const auto &s = source_loads[i];
+                std::fprintf(stderr, "[vu1-diag] LQ source pc=%04X vi3=%04X qword=%08X %08X %08X %08X prior-vf10x=%08X\n",
+                             s.pc, s.vi3, s.qword[0], s.qword[1], s.qword[2], s.qword[3], s.vf10_x);
+            }
+            for (std::size_t i = 0; i < source_mtir_count; ++i) {
+                const auto &s = source_mtirs[i];
+                std::fprintf(stderr, "[vu1-diag] MTIR source pc=%04X vi3=%04X qword=%08X %08X %08X %08X vf10x=%08X\n",
+                             s.pc, s.vi3, s.qword[0], s.qword[1], s.qword[2], s.qword[3], s.vf10_x);
+            }
+            for (std::size_t i = 0; i < std::min<std::size_t>(12, vi6_writes); ++i) {
+                const auto &w = vi6_first[i];
+                std::fprintf(stderr, "  %04X %08X %04X -> %04X\n", w.pc, w.lo, w.before, w.after);
+            }
+            std::fprintf(stderr, "[vu1-diag] last %zu vi6 writes:\n", std::min<std::size_t>(16, vi6_writes));
+            for (std::size_t i = vi6_writes > 16 ? vi6_writes - 16 : 0; i < vi6_writes; ++i) {
+                const auto &w = vi6_last[i % 16];
+                std::fprintf(stderr, "  %04X %08X %04X -> %04X\n", w.pc, w.lo, w.before, w.after);
+            }
+
+            struct HitEntry { std::uint32_t pc; std::uint32_t count; };
+            std::vector<HitEntry> top_hits;
+            top_hits.reserve(2048);
+            for (std::uint32_t i = 0; i < 2048; ++i) {
+                if (pc_hits[i] > 0) top_hits.push_back({ i * 8u, pc_hits[i] });
+            }
+            std::sort(top_hits.begin(), top_hits.end(), [](const HitEntry &a, const HitEntry &b) { return a.count > b.count; });
+            const std::size_t top_count = std::min<std::size_t>(10, top_hits.size());
+            std::fprintf(stderr, "[vu1-diag] Top %zu executed instructions:\n", top_count);
+            for (std::size_t i = 0; i < top_count; ++i) {
+                const std::uint32_t a = top_hits[i].pc;
+                std::uint32_t lo = 0, hi = 0;
+                std::memcpy(&lo, u.code + a, 4);
+                std::memcpy(&hi, u.code + a + 4, 4);
+                std::fprintf(stderr, "  #%zu: PC 0x%04X - %7u hits (%5.2f%%) [hi:%08X lo:%08X]\n",
+                             i + 1, a, top_hits[i].count, (top_hits[i].count * 100.0) / 1000000.0, hi, lo);
+            }
+
+            const std::size_t ev_total = std::min<std::size_t>(16, branch_count);
+            std::fprintf(stderr, "[vu1-diag] Last %zu branch/jump events (chronological):\n", ev_total);
+            const std::size_t start_idx = (branch_count > 16) ? (branch_count - 16) : 0;
+            for (std::size_t i = 0; i < ev_total; ++i) {
+                const auto &ev = branch_ring[(start_idx + i) % 16];
+                std::fprintf(stderr, "  [%02zu] 0x%04X -> 0x%04X %-5s taken=%d | vi1=%04X vi4=%04X vi5=%04X vi6=%04X vi7=%04X\n",
+                             i + 1, ev.from_pc, ev.target_pc, ev.op, ev.taken ? 1 : 0,
+                             ev.vi1, ev.vi4, ev.vi5, ev.vi6, ev.vi7);
+            }
+            std::fprintf(stderr, "[vu1-diag] ==============================================================\n\n");
+        } else if (diag_reports == 5) {
+            ++diag_reports;
+            std::fprintf(stderr, "[vu1-diag] (Further detailed timeout reports suppressed; logging 1-line summaries)\n");
+        } else {
+            std::uint32_t max_pc = 0, max_count = 0;
+            for (std::uint32_t i = 0; i < 2048; ++i) {
+                if (pc_hits[i] > max_count) { max_count = pc_hits[i]; max_pc = i * 8u; }
+            }
+            std::fprintf(stderr, "[vu1-diag] key %016llX timeout: top PC 0x%04X (%u hits), vi6=%04X vi7=%04X, loops 1EE8:%u 2120:%u 31F8:%u\n",
+                         static_cast<unsigned long long>(current_prog_key), max_pc, max_count,
+                         r.vi[6], r.vi[7], entries_1ee8, entries_2120, entries_31f8);
+        }
+    }
     if (std::getenv("PS2_VU_TRACE_STUCK")) {  // where a program that never ends is stuck
         std::fprintf(stderr, "[vu%d] stuck at pc 0x%04X, vi:", n, pc);
         for (int i = 0; i < 16; ++i) std::fprintf(stderr, " %04X", r.vi[i]);
@@ -1071,7 +1386,18 @@ void run_fast(int n, std::uint32_t address) {
 void run(int n, std::uint32_t address) {
     static const bool exact = std::getenv("PS2_VU_EXACT") != nullptr;
     if (n == 1 && !exact) {
+        static const bool mka_vu_diag = std::getenv("PS2_MKA_VU_DIAG") != nullptr;
+        std::uint32_t before = 0;
+        if (mka_vu_diag) std::memcpy(&before, g_vu1_mem + 16, 4);
         interpret(n, address);
+        if (mka_vu_diag) {
+            std::uint32_t after = 0;
+            std::memcpy(&after, g_vu1_mem + 16, 4);
+            if (after != before)
+                std::fprintf(stderr, "[vu1-mka] qword1.x %08X -> %08X entry=%04X last-key=%016llX frame=%llu\n",
+                             before, after, address, static_cast<unsigned long long>(g_last_key),
+                             static_cast<unsigned long long>(frame_count()));
+        }
         return;
     }
     Unit u = unit_of(n);

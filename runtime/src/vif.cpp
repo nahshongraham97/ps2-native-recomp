@@ -9,6 +9,7 @@
 #include "ps2/state.hpp"
 
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <vector>
 
@@ -267,7 +268,20 @@ void execute(int unit, std::uint32_t cmd, const std::uint32_t *data) {
         else gif::transfer(2, reinterpret_cast<const std::uint8_t *>(data), imm ? imm : 0x10000u);
         break;
     default:
-        if ((op & 0x60u) == 0x60u) unpack(unit, cmd, data);
+        if ((op & 0x60u) == 0x60u) {
+            static const bool mka_vu_diag = std::getenv("PS2_MKA_VU_DIAG") != nullptr;
+            const bool trace_qword1 = unit == 1 && !shadow(unit) && mka_vu_diag;
+            std::uint32_t before = 0;
+            if (trace_qword1) std::memcpy(&before, g_vu1_mem + 16, 4);
+            unpack(unit, cmd, data);
+            if (trace_qword1) {
+                std::uint32_t after = 0;
+                std::memcpy(&after, g_vu1_mem + 16, 4);
+                if (after != before && (before > 0x1000u || after > 0x1000u))
+                    std::fprintf(stderr, "[vif1-mka] qword1.x %08X -> %08X cmd=%08X cycle=%04X mode=%u tops=%03X mask=%08X\n",
+                                 before, after, cmd, u.cycle, u.mode, u.tops, u.mask);
+            }
+        }
         else std::fprintf(stderr, "[vif%d] unknown command 0x%08X\n", unit, cmd);
         break;
     }
