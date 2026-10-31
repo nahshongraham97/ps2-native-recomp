@@ -632,10 +632,8 @@ void install_iop_side() {
     def("sifman", 6, "sceSifSetDChain", [](iop::Cpu &c) { c.r[2] = 0; });
     auto set_dma = [](iop::Cpu &c, std::uint32_t callback, std::uint32_t data) {
         const std::uint32_t list = arg(c, 0), count = arg(c, 1);
-        std::uint32_t total_size = 0;
         for (std::uint32_t i = 0; i < count; ++i) {
             const std::uint32_t src = iop::read32(list + i * 16), dst = iop::read32(list + i * 16 + 4), size = iop::read32(list + i * 16 + 8);
-            total_size += size;
             if (g_options.trace_iop_hle) {
                 std::uint32_t nonzero = 0;
                 for (std::uint32_t k = 0; k < size; ++k) nonzero += iop::ram_ptr(src)[k] != 0;
@@ -654,7 +652,7 @@ void install_iop_side() {
             watch_span(dst, std::min(size, kRamSize - (dst & (kRamSize - 1))), "sif:iop_dma");
         }
         c.r[2] = g_iop_dma_id++;
-        if (callback) iop::kernel::schedule(iop::kernel::now() + std::max<std::uint64_t>(32, total_size * 2), iop::kernel::Job{iop::kernel::kJobSifDmaCallback, callback, data});
+        if (callback) iop::kernel::schedule(iop::kernel::now() + 32, iop::kernel::Job{iop::kernel::kJobSifDmaCallback, callback, data});
     };
     def("sifman", 7, "sceSifSetDma", [set_dma](iop::Cpu &c) { set_dma(c, 0, 0); });
     def("sifman", 8, "sceSifDmaStat", [](iop::Cpu &c) { c.r[2] = static_cast<std::uint32_t>(-1); });
