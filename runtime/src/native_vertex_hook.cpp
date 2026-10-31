@@ -11,11 +11,12 @@ namespace ps2::vertex {
 
 namespace {
 
-bool g_enabled = true;
+// Disabled by default: experimental optimization requiring separate validation
+bool g_enabled = false;
 std::atomic<std::uint64_t> g_batched_vertices{0};
 std::atomic<std::uint64_t> g_draw_calls_saved{0};
 
-// Current active batch
+// Current active batch tracking
 gs::State g_batch_state{};
 bool g_has_batch = false;
 std::uint64_t g_batch_key = 0;
@@ -26,23 +27,14 @@ inline std::uint64_t state_key(const gs::State &s) {
     return attr ^ c.tex0 ^ c.frame ^ c.zbuf ^ (c.alpha << 16) ^ (c.test << 32);
 }
 
-inline void dispatch_direct(const gs::State &st, const gs::Vertex *v, int count) {
-#ifdef PS2_GPU
-    if (gs::gpu::mode() != gs::gpu::Mode::off) {
-        gs::gpu::draw(st, v, count);
-    }
-#else
-    (void)st; (void)v; (void)count;
-#endif
-}
-
 } // namespace
 
 bool is_enabled() {
     static bool checked_env = false;
     if (!checked_env) {
+        // Explicitly opt-in only via PS2_NATIVE_VERTEX=1
         const std::string env = ps2::os::env("PS2_NATIVE_VERTEX");
-        if (env == "0" || env == "off") g_enabled = false;
+        g_enabled = (env == "1" || env == "on");
         checked_env = true;
     }
     return g_enabled;
@@ -53,11 +45,11 @@ void set_enabled(bool enabled) {
 }
 
 bool submit_primitive(const gs::State &st, const gs::Vertex *v, int count) {
+    // When disabled (default), return false immediately so authentic gpu::draw handles all rendering
     if (!is_enabled() || count <= 0) return false;
 
     const std::uint64_t key = state_key(st);
 
-    // If batching is active and state matches, we track batching telemetry
     if (g_has_batch && g_batch_key == key) {
         g_batched_vertices.fetch_add(count, std::memory_order_relaxed);
         g_draw_calls_saved.fetch_add(1, std::memory_order_relaxed);
@@ -67,7 +59,13 @@ bool submit_primitive(const gs::State &st, const gs::Vertex *v, int count) {
         g_has_batch = true;
     }
 
-    dispatch_direct(st, v, count);
+#ifdef PS2_GPU
+    if (gs::gpu::mode() != gs::gpu::Mode::off) {
+        gs::gpu::draw(st, v, count);
+    }
+#else
+    (void)v;
+#endif
     return true;
 }
 

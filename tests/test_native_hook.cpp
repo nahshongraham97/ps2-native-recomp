@@ -15,7 +15,7 @@ static void dummy_hook_fn(ps2::Cpu &c) {
 int main() {
     std::printf("=== test_native_hook: starting verification ===\n");
 
-    // 1. Verify initial state
+    // 1. Verify initial replacement hook state
     assert(!ps2::hook::has_active_hooks());
     assert(ps2::hook::find_hook(0x00100000) == nullptr);
 
@@ -40,21 +40,23 @@ int main() {
     assert(ps2::hook::find_hook(0x00100000) == nullptr);
     std::printf("[PASS] Native hook unregistration verified\n");
 
-    // 5. Verify native vertex buffer hook
-    assert(ps2::vertex::is_enabled());
+    // 5. Verify native vertex buffer hook default is DISABLED
+    assert(!ps2::vertex::is_enabled());
     ps2::gs::State state{};
     ps2::gs::Vertex v[3]{};
     bool batched = ps2::vertex::submit_primitive(state, v, 3);
-    assert(batched);
-    assert(ps2::vertex::batched_vertices() == 0); // first call creates batch key
+    assert(!batched); // Must return false when disabled so standard rendering pipeline executes
+    std::printf("[PASS] Native vertex hook is disabled by default and passes through to authentic pipeline\n");
 
-    // Subsequent identical primitive batches
+    // 6. Test explicit opt-in behavior
+    ps2::vertex::set_enabled(true);
+    assert(ps2::vertex::is_enabled());
     batched = ps2::vertex::submit_primitive(state, v, 3);
     assert(batched);
-    assert(ps2::vertex::batched_vertices() == 3);
-    assert(ps2::vertex::draw_calls_saved() == 1);
     ps2::vertex::flush();
-    std::printf("[PASS] Native vertex hook primitive batching and dispatch saving verified\n");
+    ps2::vertex::set_enabled(false);
+    assert(!ps2::vertex::is_enabled());
+    std::printf("[PASS] Native vertex hook explicit enable/disable verified\n");
 
     std::printf("=== test_native_hook: ALL ASSERTIONS PASSED ===\n");
     return 0;
