@@ -1,5 +1,6 @@
 #include "ps2/ee_live.hpp"
 #include "ps2/generated.hpp"
+#include "ps2/observer_hook.hpp"
 #include "ps2/os.hpp"
 #include "ps2/system.hpp"
 
@@ -208,6 +209,7 @@ void dispatch(Cpu &c, std::uint32_t, std::uint32_t depth) {
     const std::uint32_t pc = c.pc;
     if (pc & kUnwind) return;
     if (pc == kHandlerReturn || pc == kIdle) return;
+    ps2::hook::notify_observer(c, depth);
     const UnitInfo *u = unit_for(pc);
     const std::uint16_t id = u ? u->entries[(pc - u->base) >> 2] : 0;
     if (!id) {

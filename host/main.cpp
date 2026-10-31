@@ -2,6 +2,7 @@
 #include "ps2/system.hpp"
 #include "ps2/ee_live.hpp"
 #include "ps2/vu_live.hpp"
+#include "ps2/observer_hook.hpp"
 
 #ifdef PS2_WINDOW
 #include "window.hpp"
@@ -654,6 +655,12 @@ int main(int argc, char **argv) {
             return 1;
         }
         ps2::boot(entry, args);
+        if (ps2::hook::observer_hooks_enabled()) {
+            ps2::hook::register_observer(entry, [](const ps2::hook::GuestCallContext &ctx) {
+                std::fprintf(stderr, "[observer-hook] Observed guest entry 0x%08X (name: %s, RA: 0x%08X, SP: 0x%08X, Depth: %u)\n",
+                    ctx.pc, ctx.name, ctx.ra, ctx.sp, ctx.depth);
+            }, "guest_boot_entry", 3);
+        }
         if (load_path == "newest") {  // the newest quick save (F5) of this game
             load_path = ps2::quick_newest_state();
             if (load_path.empty()) std::fprintf(stderr, "[state] there is no quick save yet: starting from the beginning\n");

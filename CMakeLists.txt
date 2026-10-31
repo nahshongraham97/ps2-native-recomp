@@ -46,6 +46,7 @@ else()
     add_library(ps2runtime STATIC
         runtime/src/memory.cpp
         runtime/src/dispatch.cpp
+        runtime/src/observer_hook.cpp
         runtime/src/system.cpp
         runtime/src/kernel.cpp
         runtime/src/hw.cpp
@@ -196,7 +197,11 @@ if(PS2_GENERATED)
             set_target_properties(ps2run PROPERTIES WIN32_EXECUTABLE ON)
         endif()
         # the game controller path tested with SDL's virtual controllers, no game needed: ninja -C build/native-<game> ps2padtest
-        add_executable(ps2padtest EXCLUDE_FROM_ALL host/pad_test.cpp host/window.cpp host/keymap.cpp host/stretch.cpp)
+        add_executable(test_observer_hook EXCLUDE_FROM_ALL tests/test_observer_hook.cpp)
+        target_include_directories(test_observer_hook PRIVATE runtime/include runtime/src)
+        target_link_libraries(test_observer_hook PRIVATE ps2runtime)
+
+add_executable(ps2padtest EXCLUDE_FROM_ALL host/pad_test.cpp host/window.cpp host/keymap.cpp host/stretch.cpp)
         target_include_directories(ps2padtest PRIVATE runtime/src)
         target_link_libraries(ps2padtest PRIVATE ps2runtime SDL2::SDL2)
     endif()
