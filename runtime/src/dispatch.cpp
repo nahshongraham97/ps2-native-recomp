@@ -209,6 +209,15 @@ void dispatch(Cpu &c, std::uint32_t, std::uint32_t depth) {
     const std::uint32_t pc = c.pc;
     if (pc & kUnwind) return;
     if (pc == kHandlerReturn || pc == kIdle) return;
+    if (pc == 0 && c.r[31].w[0] != 0) {
+        static std::uint32_t last_logged_ra = 0;
+        if (last_logged_ra != c.r[31].w[0]) {
+            std::fprintf(stderr, "[ee] null indirect call at 0x00000000 intercepted (ra 0x%08X); returning cleanly\n", c.r[31].w[0]);
+            last_logged_ra = c.r[31].w[0];
+        }
+        c.pc = c.r[31].w[0];
+        return;
+    }
     ps2::hook::notify_observer(c, depth);
     const UnitInfo *u = unit_for(pc);
     const std::uint16_t id = u ? u->entries[(pc - u->base) >> 2] : 0;
