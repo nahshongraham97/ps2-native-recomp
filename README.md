@@ -27,6 +27,8 @@ and the runtime started as his. What I added:
   has to be installed.
 - **Code translated while you play:** game code and graphics programs the first build did not see are translated in the
   background while the game runs, and kept for the next start.
+- **Offline runtime inspection:** developers can request exact screenshot frames and opt-in EE RAM window captures
+  for repeatable offline recompilation work. See [`docs/aot-window-capture.md`](docs/aot-window-capture.md).
 - **More games:** God of War, Gran Turismo 4 (US), Silent Hill 2, Resident Evil 4 and Shadow of the Colossus run too,
   with fixes in the runtime where they needed them.
 - **Playing:** keyboard and mouse controls with a key card, quick saves, sound that is stretched instead of chopped when
