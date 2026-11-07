@@ -3,6 +3,7 @@
 #include "ps2/ee_live.hpp"
 #include "ps2/vu_live.hpp"
 #include "ps2/observer_hook.hpp"
+#include "mka_combat_hooks.hpp"
 
 #ifdef PS2_WINDOW
 #include "window.hpp"
@@ -665,6 +666,9 @@ int main(int argc, char **argv) {
             return 1;
         }
         ps2::boot(entry, args);
+        if (const auto mka_env = ps2::os::env("MKA_INTERCEPT_COMBAT"); !mka_env.empty() && mka_env != "0" && mka_env != "off") {
+            mka::combat::register_mka_combat_hooks();
+        }
         if (ps2::hook::is_enabled()) {
             ps2::hook::register_observer(entry, [](const ps2::hook::GuestCallContext &ctx) {
                 std::fprintf(stderr, "[observer-hook] Observed ELF boot entry 0x%08X (name: %s, RA: 0x%08X, SP: 0x%08X, Depth: %u)\n",
