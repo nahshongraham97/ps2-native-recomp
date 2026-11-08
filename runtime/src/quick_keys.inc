@@ -129,10 +129,25 @@ bool write_whole(const fs::path &target, const void *data, std::size_t size, std
             return false;
         }
     }
-    fs::rename(temp, target, error);
-    if (error) {
+    bool replaced = false;
+    for (int attempt = 0; attempt < 20; ++attempt) {
+        fs::rename(temp, target, error);
+        if (!error) {
+            replaced = true;
+            break;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(25));
+    }
+    if (!replaced) {
+        fs::remove(target, error);
+        error.clear();
+        fs::rename(temp, target, error);
+        if (!error) {
+            replaced = true;
+        }
+    }
+    if (!replaced) {
         why = "cannot replace " + os::utf8(target) + ": " + error.message();
-        fs::remove(temp, error);
         return false;
     }
     return true;
