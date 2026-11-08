@@ -1149,7 +1149,10 @@ void mix_beep(std::int16_t *samples, std::size_t frames) {
 }
 
 // The sound chip's batches of 32 frames arrive here on the emulation thread.
+extern "C" void mka_process_audio(const std::int16_t *samples, std::size_t frames);
+
 void queue_audio(const std::int16_t *samples, std::size_t frames) {
+    mka_process_audio(samples, frames);
     const double now = audio_seconds();
     g_pushlog.add(0, static_cast<int>(frames), now);
     g_pipe->push(samples, frames, now);

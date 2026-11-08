@@ -4,6 +4,7 @@
 #include "../../../../include/armageddon/retail_health.hpp"
 #include "../../../../include/armageddon/stage_hazards.hpp"
 #include "../../../../include/armageddon/video_stream_registry.hpp"
+#include "../../../../include/armageddon/audio_sink_registry.hpp"
 #include "ps2/native_hook.hpp"
 #include "ps2/generated.hpp"
 #include "ps2/system.hpp"
@@ -38,6 +39,14 @@ inline armageddon::retail::ComboHistoryTracker g_combo_tracker;
 // Native Phase 3 Subsystem Managers
 inline armageddon::StageHazardManager g_stage_hazard_manager;
 inline armageddon::VideoStreamRegistry g_video_stream_registry;
+
+// Native Phase 4 Audio Sink Registry (outside RDRAM)
+inline armageddon::audio::AudioSinkRegistry g_audio_registry;
+
+inline void process_audio(const std::int16_t *samples, std::size_t frames) {
+    if (!is_interception_enabled()) return;
+    g_audio_registry.on_audio_samples(samples, frames);
+}
 
 // Portable C++17 bit reinterpretation primitives
 inline float from_bits(std::uint32_t bits) {
@@ -95,6 +104,7 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
     }
 
     if (!is_target_combat) {
+        g_audio_registry.evaluate_combat_audio_state(0.0f, effective_delta, false, true);
         real_unit_0025(c, 204u, depth);
         return;
     }
@@ -125,11 +135,14 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
                 if (hazard_hit.is_lethal) {
                     std::fprintf(stderr, "[mka-hazard] Lethal deathtrap fatality [%s]! Delegating to authentic unit_0025\n",
                                  hazard_hit.fatality_cinematic_name.c_str());
+                    g_audio_registry.evaluate_combat_audio_state(0.0f, effective_delta, false, true);
                     real_unit_0025(c, 204u, depth);
                     return;
                 }
             }
         }
+
+        g_audio_registry.evaluate_combat_audio_state(new_health, effective_delta, g_combo_tracker.detect_hapkido_string(), false);
 
         std::fprintf(stderr, "[health] delta %.4ff (mult=%.1fx) applied to current %.4ff -> new %.4ff (mode=%u)\n",
                      effective_delta, combo_mult, current, new_health, mode);
@@ -200,6 +213,7 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
 
         if (g_combo_tracker.detect_hapkido_string()) {
             std::fprintf(stderr, "[mka-combo] DETECTED HAPKIDO STRING (Square -> Triangle -> Cross) at tick 0x%04X!\n", tick);
+            g_audio_registry.evaluate_combat_audio_state(1.0f, 0.0f, true, false);
         }
 
         ps2::st32(kWriteIndexAddr,  pad_ch.write_index);
@@ -298,6 +312,8 @@ inline void hook_subzero_health(ps2::Cpu &c) {
                 return;
             }
         }
+
+        g_audio_registry.evaluate_combat_audio_state(new_health, effective_delta, g_combo_tracker.detect_hapkido_string(), false);
 
         std::fprintf(stderr, "[health] delta %.4ff (mult=%.1fx) applied to current %.4ff -> new %.4ff (mode=%u)\n",
                      effective_delta, combo_mult, current, new_health, mode);

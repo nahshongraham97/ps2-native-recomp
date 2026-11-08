@@ -53,4 +53,9 @@ void __wrap__ZN3gen9unit_0025ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, st
     __real__ZN3gen9unit_0025ERN3ps23CpuEjj(c, entry, depth);
 }
 
+// Native Phase 4 SPU2 Audio Processing Tap
+void mka_process_audio(const std::int16_t *samples, std::size_t frames) {
+    mka::combat::process_audio(samples, frames);
+}
+
 } // extern "C"
