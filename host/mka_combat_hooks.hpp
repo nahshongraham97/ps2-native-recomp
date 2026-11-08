@@ -114,6 +114,31 @@ constexpr std::uint32_t kModeWordAddr        = 0x0064dea4u;
 constexpr std::uint32_t kGatekeeperFlagsAddr = 0x00660080u;
 constexpr std::uint32_t kPlayer2ObjPtr       = 0x006601a4u;
 
+// Helper: Checks if the engine is currently in an active 1v1 combat match
+// Returns true only for Arcade 1v1, Versus 1v1, Practice 1v1, or Konquest 1v1 arena bouts.
+// Returns false in Main Menus, Options, Character Select, and Konquest 3rd-person exploration.
+inline bool is_active_combat_match() {
+    const std::uint32_t mode        = ps2::ld32(kModeWordAddr);
+    const std::uint8_t flags_660080 = static_cast<std::uint8_t>(ps2::ld32(kGatekeeperFlagsAddr));
+    const std::uint8_t flags_660084 = static_cast<std::uint8_t>(ps2::ld32(kGatekeeperFlagsAddr + 4));
+
+    if (!armageddon::retail::is_active_combat_mode(mode, flags_660080, flags_660084)) {
+        return false;
+    }
+
+    const std::uint32_t p2 = ps2::ld32(kPlayer2ObjPtr);
+    if (p2 < 0x00100000u || p2 >= 0x02000000u) {
+        return false;
+    }
+
+    const float p2_health = from_bits(ps2::ld32(kSubZeroHealthAddr));
+    if (!std::isfinite(p2_health) || p2_health <= 0.0f || p2_health > 1.5f) {
+        return false;
+    }
+
+    return true;
+}
+
 // 1. Health Scalar & Stage Hazard Interception (Linker Wrapped unit_0025 @ entry 204u)
 inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
                                   void (*real_unit_0025)(ps2::Cpu&, std::uint32_t, std::uint32_t)) {
@@ -129,7 +154,7 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
 
     // Gatekeeper: Non-standard / knockout modes (health depletion <= 0) delegate explicitly to authentic unit_0025
     static std::uint64_t s_health_calls = 0;
-    const bool is_target_combat = (mode < 2 && (flags_660080 & 4u) != 0 && (flags_660084 & 4u) == 0 &&
+    const bool is_target_combat = (armageddon::retail::is_active_combat_mode(mode, flags_660080, flags_660084) &&
                                    std::isfinite(current) && std::isfinite(effective_delta) &&
                                    effective_delta < 0.0f && current > 0.0f && (current + effective_delta) > 0.0f);
 
@@ -207,7 +232,7 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
             // Phase 8 Projectile Collision Evaluation (Target at p2 + 0x50, 0x54, 0x58)
             auto proj_hit = g_projectile_manager.update_and_collide(p2_x, p2_y, p2_z, 0u);
             if (proj_hit == armageddon::projectile::ProjectileHitResult::DirectHit) {
-                std::fprintf(stderr, "[mka-proj] %s collided with Player 2! (freeze=%u frames, dmg=%.2f)\n",
+                std::fprintf(stderr, "[mka-proj] P1's %s struck Opponent (P2)! (freeze=%u frames, dmg=%.2f)\n",
                              armageddon::projectile::projectile_type_name(g_projectile_manager.last_hit_type()),
                              g_projectile_manager.target_frozen_ticks(), g_projectile_manager.last_hit_damage());
                 g_camera_registry.on_combat_hit(-g_projectile_manager.last_hit_damage(), false, false);
@@ -300,7 +325,14 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
     const std::uint32_t mapping_index = c.r[8].w[0];
     const std::uint32_t ret_addr      = c.r[31].w[0];
 
-    // Gatekeeper: Intercept Player 1 combat cluster:
+    // Gatekeeper 1: Non-combat context (menus, options, character select, Konquest exploration)
+    // Pass all pad events completely untouched to authentic engine
+    if (!is_active_combat_match()) {
+        real_unit_0018(c, 309u, depth);
+        return;
+    }
+
+    // Gatekeeper 2: Intercept Player 1 combat cluster:
     // 4 (Triangle), 5 (Circle), 6 (Cross), 7 (Square), 9 (R2 Block), 10 (L1 Style Change)
     // Also intercept directional buttons (0..3) if a Kreate-A-Fatality sequence is active
     static std::uint64_t s_pad_events = 0;
@@ -318,8 +350,8 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
 
     if (++s_pad_events <= 25 || is_target_combat) {
         const auto btn_enum = armageddon::retail::to_combat_button(button_code);
-        std::fprintf(stderr, "[mka-pad] event #%llu: ch=%u btn=%u [%s] (target=%s)\n",
-                     static_cast<unsigned long long>(s_pad_events), channel, button_code,
+        std::fprintf(stderr, "[mka-pad] P1 (ch=%u) event #%llu: btn=%u [%s] (target=%s)\n",
+                     channel, static_cast<unsigned long long>(s_pad_events), button_code,
                      armageddon::retail::combat_button_name(btn_enum),
                      is_target_combat ? "COMBAT_INTERCEPT" : "delegate");
     }
@@ -436,7 +468,7 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
                         float p2_x = from_bits(ps2::ld32(p2 + 0x50));
                         p2_x += g_defense_matrix.breaker().knockback_impulse_x;
                         ps2::st32(p2 + 0x50, to_bits(p2_x));
-                        std::fprintf(stderr, "[mka-defense] Applied Breaker knockback (+%.1fm) -> new P2 X=%.2f\n",
+                        std::fprintf(stderr, "[mka-defense] Applied Breaker knockback to Opponent (P2) (+%.1fm) -> new P2 X=%.2f\n",
                                      g_defense_matrix.breaker().knockback_impulse_x, p2_x);
                         if (g_stage_transition_manager.evaluate_wall_impact(p2_x, 1.5f, tick)) {
                             std::fprintf(stderr, "[mka-stage] BREAKER KNOCKBACK SHATTERED PERIMETER BARRIER! (P2 X=%.2f)\n", p2_x);
@@ -453,7 +485,7 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
         const bool recent_up = (tick >= s_last_dir_tick && (tick - s_last_dir_tick) <= 30u && s_last_dir_code == 0u);
         if (button_code == 7u && recent_up) { // Up + Square -> Launcher Strike
             g_air_combat_manager.on_launcher_strike(tick);
-            std::fprintf(stderr, "[mka-air] LAUNCHER STRIKE at tick 0x%04X! P2 launched into air (vy=%.1fm/s)\n",
+            std::fprintf(stderr, "[mka-air] LAUNCHER STRIKE at tick 0x%04X! Opponent (P2) launched into air (vy=%.1fm/s)\n",
                          tick, g_air_combat_manager.p2().vy);
             g_camera_registry.on_combat_hit(-0.08f, false, true);
             g_camera_registry.advance_frame();
@@ -465,7 +497,7 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
                    (button_code == 4u || button_code == 5u || button_code == 7u)) {
             float air_scale = 1.0f;
             if (g_air_combat_manager.on_aerial_combo_hit(tick, air_scale)) {
-                std::fprintf(stderr, "[mka-air] AERIAL STRIKE connected at tick 0x%04X! Juggle #%u (scaling=%.0f%%)\n",
+                std::fprintf(stderr, "[mka-air] AERIAL STRIKE connected at tick 0x%04X on Opponent (P2)! Juggle #%u (scaling=%.0f%%)\n",
                              tick, g_air_combat_manager.p2().juggle_hits, air_scale * 100.0f);
                 g_camera_registry.on_combat_hit(-0.05f * air_scale, false, true);
                 g_camera_registry.advance_frame();
@@ -539,7 +571,23 @@ inline void handle_video_stream(ps2::Cpu &c, std::uint32_t depth,
                      stream_id_raw, static_cast<unsigned long long>(s_video_calls));
     }
 
-    // Pass through to authentic CRI ADX / SFD video player in unit_0020
+    // Bypass idle attract demo (ID=3) and idle promotional trailers (ID=5, 6, 7)
+    // When idling at the main menu, triggering or skipping the attract video causes
+    // CRI ADX/SFD in IOP to exhaust memory ("[iop] out of memory allocating 0x8300").
+    // Bypassing idle attract streams keeps the game stably in the main menu without crashing.
+    const bool is_idle_attract = (stream_id == armageddon::VideoStreamId::AttractDemo ||
+                                  stream_id == armageddon::VideoStreamId::StrangeHoldTrailer ||
+                                  stream_id == armageddon::VideoStreamId::SpyHunterTrailer ||
+                                  stream_id == armageddon::VideoStreamId::BlitzTrailer);
+    if (is_idle_attract) {
+        std::fprintf(stderr, "[mka-video] Bypassing idle attract/trailer stream %u to prevent IOP memory exhaustion in main menu\n",
+                     stream_id_raw);
+        c.r[2].w[0] = 0;
+        c.pc = c.r[31].w[0];
+        return;
+    }
+
+    // Pass through opening cinematic, intros, and Krypt videos to authentic CRI ADX / SFD video player
     real_unit_0020(c, 126u, depth);
 }
 
@@ -555,7 +603,7 @@ inline void hook_subzero_health(ps2::Cpu &c) {
     const float combo_mult = g_combo_tracker.get_damage_multiplier();
     const float effective_delta = delta * combo_mult;
 
-    const bool is_target_combat = (mode < 2 && (flags_660080 & 4u) != 0 && (flags_660084 & 4u) == 0 &&
+    const bool is_target_combat = (armageddon::retail::is_active_combat_mode(mode, flags_660080, flags_660084) &&
                                    std::isfinite(current) && std::isfinite(effective_delta) &&
                                    effective_delta < 0.0f && current > 0.0f && (current + effective_delta) > 0.0f);
     if (!is_target_combat) {
@@ -600,7 +648,7 @@ inline void hook_subzero_health(ps2::Cpu &c) {
 
             auto proj_hit = g_projectile_manager.update_and_collide(p2_x, p2_y, p2_z, 0u);
             if (proj_hit == armageddon::projectile::ProjectileHitResult::DirectHit) {
-                std::fprintf(stderr, "[mka-proj] %s collided with Player 2! (freeze=%u frames, dmg=%.2f)\n",
+                std::fprintf(stderr, "[mka-proj] P1's %s struck Opponent (P2)! (freeze=%u frames, dmg=%.2f)\n",
                              armageddon::projectile::projectile_type_name(g_projectile_manager.last_hit_type()),
                              g_projectile_manager.target_frozen_ticks(), g_projectile_manager.last_hit_damage());
             }
@@ -658,7 +706,7 @@ inline void hook_subzero_health(ps2::Cpu &c) {
 inline void hook_pad_scanner_event(ps2::Cpu &c) {
     const std::uint32_t channel     = c.r[4].w[0];
     const std::uint32_t button_code = c.r[5].w[0];
-    const bool is_target_combat = (channel == 0 &&
+    const bool is_target_combat = (is_active_combat_match() && channel == 0 &&
         (button_code == 4u || button_code == 5u || button_code == 6u || button_code == 7u ||
          button_code == 9u || button_code == 10u));
 
