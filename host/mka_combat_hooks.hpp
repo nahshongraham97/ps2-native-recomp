@@ -2,6 +2,8 @@
 
 #include "../../../../include/armageddon/retail_pad_event.hpp"
 #include "../../../../include/armageddon/retail_health.hpp"
+#include "../../../../include/armageddon/stage_hazards.hpp"
+#include "../../../../include/armageddon/video_stream_registry.hpp"
 #include "ps2/native_hook.hpp"
 #include "ps2/generated.hpp"
 #include "ps2/system.hpp"
@@ -33,6 +35,10 @@ inline bool is_interception_enabled() {
 // Native Phase 2 Combo History Tracker (outside RDRAM)
 inline armageddon::retail::ComboHistoryTracker g_combo_tracker;
 
+// Native Phase 3 Subsystem Managers
+inline armageddon::StageHazardManager g_stage_hazard_manager;
+inline armageddon::VideoStreamRegistry g_video_stream_registry;
+
 // Portable C++17 bit reinterpretation primitives
 inline float from_bits(std::uint32_t bits) {
     float result = 0.0f;
@@ -49,6 +55,7 @@ inline std::uint32_t to_bits(float value) {
 // Guest PC Constants: Cross-Unit Boundaries
 constexpr std::uint32_t kPadScannerGuestPc   = 0x001637D0u; // From unit_0008 (entry 328u in unit_0018)
 constexpr std::uint32_t kHealthScalarGuestPc = 0x00197BC0u; // From unit_0041 (Hit Dispatcher, RA 0x00207728)
+constexpr std::uint32_t kVideoStreamGuestPc  = 0x00181F90u; // Video stream dispatcher (entry 126u in unit_0020)
 
 // RDRAM Layout (Strict Authentic 30-entry Ring & 5-entry Recent Map)
 constexpr std::uint32_t kRingBufferAddr       = 0x0065ed40u;
@@ -62,7 +69,7 @@ constexpr std::uint32_t kModeWordAddr        = 0x0064dea4u;
 constexpr std::uint32_t kGatekeeperFlagsAddr = 0x00660080u;
 constexpr std::uint32_t kPlayer2ObjPtr       = 0x006601a4u;
 
-// 1. Health Scalar Interception Implementation (Linker Wrapped)
+// 1. Health Scalar & Stage Hazard Interception (Linker Wrapped unit_0025 @ entry 204u)
 inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
                                   void (*real_unit_0025)(ps2::Cpu&, std::uint32_t, std::uint32_t)) {
     const std::uint32_t mode        = ps2::ld32(kModeWordAddr);
@@ -103,6 +110,25 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
         if (p2 != 0) {
             const float old_acc = from_bits(ps2::ld32(p2 + 0x3dc));
             ps2::st32(p2 + 0x3dc, to_bits(old_acc - effective_delta));
+
+            // Stage Hazard Collision Check (Position at p2 + 0x50, 0x54, 0x58)
+            const float p2_x = from_bits(ps2::ld32(p2 + 0x50));
+            const float p2_y = from_bits(ps2::ld32(p2 + 0x54));
+            const float p2_z = from_bits(ps2::ld32(p2 + 0x58));
+
+            auto hazard_hit = g_stage_hazard_manager.check_point_collision(p2_x, p2_y, p2_z);
+            if (hazard_hit.triggered) {
+                std::fprintf(stderr, "[mka-hazard] Triggered %s at (%.1f, %.1f, %.1f) (damage=%.1f, lethal=%d)\n",
+                             hazard_hit.hazard_name.c_str(), p2_x, p2_y, p2_z,
+                             hazard_hit.total_damage, hazard_hit.is_lethal);
+
+                if (hazard_hit.is_lethal) {
+                    std::fprintf(stderr, "[mka-hazard] Lethal deathtrap fatality [%s]! Delegating to authentic unit_0025\n",
+                                 hazard_hit.fatality_cinematic_name.c_str());
+                    real_unit_0025(c, 204u, depth);
+                    return;
+                }
+            }
         }
 
         std::fprintf(stderr, "[health] delta %.4ff (mult=%.1fx) applied to current %.4ff -> new %.4ff (mode=%u)\n",
@@ -115,7 +141,7 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
     }
 }
 
-// 2. PAD Event Interception Implementation (Linker Wrapped)
+// 2. PAD Event Interception Implementation (Linker Wrapped unit_0018 @ entry 309u)
 inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
                              void (*real_unit_0018)(ps2::Cpu&, std::uint32_t, std::uint32_t)) {
     const std::uint32_t channel       = c.r[19].w[0]; // channel loop index (0 = P1)
@@ -202,7 +228,32 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
     }
 }
 
-// 3. Fallback Dispatch Hooks (for any dynamic guest PC dispatch)
+// 3. Video Stream Interception Implementation (Linker Wrapped unit_0020 @ entry 126u)
+inline void handle_video_stream(ps2::Cpu &c, std::uint32_t depth,
+                                void (*real_unit_0020)(ps2::Cpu&, std::uint32_t, std::uint32_t)) {
+    const std::uint32_t stream_id_raw = c.r[4].w[0];
+    const std::uint32_t callback_ra   = c.r[5].w[0];
+    const auto stream_id = static_cast<armageddon::VideoStreamId>(stream_id_raw);
+    const bool is_known = g_video_stream_registry.has(stream_id);
+
+    static std::uint64_t s_video_calls = 0;
+    ++s_video_calls;
+
+    if (is_known) {
+        const auto &def = g_video_stream_registry.get(stream_id);
+        std::fprintf(stderr, "[mka-video] stream request #%llu: ID=%u (%s, loops=%d, skippable=%d, cb=0x%08X)\n",
+                     static_cast<unsigned long long>(s_video_calls), stream_id_raw,
+                     def.normal_path.c_str(), def.loops, def.skippable, callback_ra);
+    } else {
+        std::fprintf(stderr, "[mka-video] unknown stream ID %u (calls=%llu)\n",
+                     stream_id_raw, static_cast<unsigned long long>(s_video_calls));
+    }
+
+    // Pass through to authentic CRI ADX / SFD video player in unit_0020
+    real_unit_0020(c, 126u, depth);
+}
+
+// 4. Fallback Dispatch Hooks (for any dynamic guest PC dispatch)
 inline void hook_subzero_health(ps2::Cpu &c) {
     const std::uint32_t mode        = ps2::ld32(kModeWordAddr);
     const std::uint8_t flags_660080 = static_cast<std::uint8_t>(ps2::ld32(kGatekeeperFlagsAddr));
@@ -234,6 +285,18 @@ inline void hook_subzero_health(ps2::Cpu &c) {
         if (p2 != 0) {
             const float old_acc = from_bits(ps2::ld32(p2 + 0x3dc));
             ps2::st32(p2 + 0x3dc, to_bits(old_acc - effective_delta));
+
+            const float p2_x = from_bits(ps2::ld32(p2 + 0x50));
+            const float p2_y = from_bits(ps2::ld32(p2 + 0x54));
+            const float p2_z = from_bits(ps2::ld32(p2 + 0x58));
+
+            auto hazard_hit = g_stage_hazard_manager.check_point_collision(p2_x, p2_y, p2_z);
+            if (hazard_hit.triggered && hazard_hit.is_lethal) {
+                ps2::hook::unregister_hook(kHealthScalarGuestPc);
+                ps2::call(c, kHealthScalarGuestPc, 0);
+                ps2::hook::register_hook(kHealthScalarGuestPc, hook_subzero_health, "MKA_HealthDeduction");
+                return;
+            }
         }
 
         std::fprintf(stderr, "[health] delta %.4ff (mult=%.1fx) applied to current %.4ff -> new %.4ff (mode=%u)\n",
@@ -262,7 +325,7 @@ inline void hook_pad_scanner_event(ps2::Cpu &c) {
     }
 }
 
-// 4. Registration Trigger
+// 5. Registration Trigger
 inline void register_mka_combat_hooks() {
     g_combat_interception_active = true;
     ps2::hook::register_hook(kPadScannerGuestPc, hook_pad_scanner_event, "MKA_PadScanner");
