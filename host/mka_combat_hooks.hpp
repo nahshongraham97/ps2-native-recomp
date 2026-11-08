@@ -13,6 +13,7 @@
 #include "../../../../include/armageddon/air_combat_engine.hpp"
 #include "../../../../include/armageddon/aggressor_weapon_matrix.hpp"
 #include "../../../../include/armageddon/stage_transition_engine.hpp"
+#include "../../../../include/armageddon/render_bridge.hpp"
 #include "ps2/native_hook.hpp"
 #include "ps2/generated.hpp"
 #include "ps2/system.hpp"
@@ -74,6 +75,9 @@ inline armageddon::aggressor::AggressorMatrixRegistry g_aggressor_matrix;
 
 // Native Phase 12 Stage Transition & Multi-Tier Engine (outside RDRAM)
 inline armageddon::stage_transition::StageTransitionManager g_stage_transition_manager;
+
+// Native Phase 13 Render Bridge Coordinator (outside RDRAM)
+inline armageddon::render_bridge::RenderBridgeCoordinator g_render_bridge;
 
 inline void process_audio(const std::int16_t *samples, std::size_t frames) {
     if (!is_interception_enabled()) return;
@@ -252,6 +256,8 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
             g_defense_matrix.advance_frame();
             g_air_combat_manager.advance_frame(0u);
             g_aggressor_matrix.advance_frame();
+            g_render_bridge.trigger_camera_zoom(38.0f, armageddon::render_bridge::CameraViewportBridge::Mode::Normal);
+            g_render_bridge.advance_frame();
         } else {
             g_audio_registry.evaluate_combat_audio_state(new_health, active_delta, is_combo, false);
             g_camera_registry.on_combat_hit(active_delta, false, is_combo);
@@ -259,6 +265,8 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
             g_defense_matrix.advance_frame();
             g_air_combat_manager.advance_frame(0u);
             g_aggressor_matrix.advance_frame();
+            g_render_bridge.trigger_camera_zoom(55.0f, armageddon::render_bridge::CameraViewportBridge::Mode::ZoomedIn);
+            g_render_bridge.advance_frame();
         }
 
         std::fprintf(stderr, "[health] delta %.4ff (mult=%.1fx, parried=%d) applied to current %.4ff -> new %.4ff (mode=%u)\n",
@@ -268,6 +276,12 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
                      g_camera_registry.hit_stop().time_dilation(),
                      static_cast<unsigned>(g_camera_registry.shake().active_tier),
                      g_camera_registry.matrix_buffer().latest().fov);
+        std::fprintf(stderr, "[mka-render] Viewport: %s (focal=%.1fmm), Actor: %s (lean=%.1f deg), Entities: %u\n",
+                     armageddon::render_bridge::CameraViewportBridge::mode_name(g_render_bridge.camera().latest().mode_idx),
+                     g_render_bridge.camera().latest().focal_length,
+                     armageddon::render_bridge::ActorAnimationBridge::blend_mode_name(g_render_bridge.actor().latest().blend_idx),
+                     g_render_bridge.actor().latest().lean_angle,
+                     g_render_bridge.entities().frames_recorded());
 
         c.pc = c.r[31].w[0]; // Clean unwind to caller RA (0x00207728)
     } catch (const std::exception &e) {
@@ -347,6 +361,7 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
             g_audio_registry.evaluate_combat_audio_state(1.0f, 0.0f, true, false);
             g_camera_registry.on_combat_hit(-0.10f, false, true);
             g_camera_registry.advance_frame();
+            g_render_bridge.trigger_camera_zoom(58.0f, armageddon::render_bridge::CameraViewportBridge::Mode::ZoomedIn);
             std::fprintf(stderr, "[mka-camera] Combo string camera pulse: FOV=%.1f, shake=%u\n",
                          g_camera_registry.matrix_buffer().latest().fov,
                          static_cast<unsigned>(g_camera_registry.shake().active_tier));
@@ -358,6 +373,13 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
             if (switched) {
                 std::fprintf(stderr, "[mka-stance] Switched stance to %s (L1 at tick 0x%04X, cooldown=8f)\n",
                              armageddon::special_moves::stance_name(g_stance_registry.current_stance()), tick);
+                if (g_stance_registry.current_stance() == armageddon::special_moves::StanceType::Dragon) {
+                    g_render_bridge.trigger_stance_blend(armageddon::render_bridge::ActorAnimationBridge::BlendMode::Guarded, 42.0f);
+                } else if (g_stance_registry.current_stance() == armageddon::special_moves::StanceType::KoriBlade) {
+                    g_render_bridge.trigger_stance_blend(armageddon::render_bridge::ActorAnimationBridge::BlendMode::Lungeing, 28.0f);
+                } else {
+                    g_render_bridge.trigger_stance_blend(armageddon::render_bridge::ActorAnimationBridge::BlendMode::Idle, 35.0f);
+                }
             }
         }
 
@@ -385,10 +407,12 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
         // Square (button 7) in Shotokan stance: spawn stationary Ice Clone trap
         if (button_code == 6u) {
             g_projectile_manager.spawn_freeze_ball(armageddon::projectile::Vec3::create(0.0f, 1.2f, 0.0f), 1.0f);
+            g_render_bridge.spawn_entity(armageddon::render_bridge::EntityPoolBridge::EntityType::FreezeBall, 0.0f, 1.2f, 0.0f);
             std::fprintf(stderr, "[mka-proj] Spawned Freeze Ball at tick 0x%04X (active=%zu)\n",
                          tick, g_projectile_manager.active_count());
         } else if (button_code == 7u && g_stance_registry.current_stance() == armageddon::special_moves::StanceType::Shotokan) {
             g_projectile_manager.spawn_ice_clone(armageddon::projectile::Vec3::create(0.0f, 0.8f, 0.0f));
+            g_render_bridge.spawn_entity(armageddon::render_bridge::EntityPoolBridge::EntityType::IceClone, 0.0f, 0.8f, 0.0f);
             std::fprintf(stderr, "[mka-proj] Spawned Ice Clone trap at tick 0x%04X (active=%zu)\n",
                          tick, g_projectile_manager.active_count());
         }
