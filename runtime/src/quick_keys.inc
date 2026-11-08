@@ -15,7 +15,7 @@ namespace quick {
 namespace fs = std::filesystem;
 using Clock = std::chrono::steady_clock;
 
-constexpr std::size_t kKeepQuick = 20;           // quick saves kept in the states folder
+constexpr std::size_t kKeepQuick = 128;          // quick saves kept in the states folder (expanded to support full 62-character roster)
 constexpr std::size_t kReportLines = 300;        // lines of the log in a report
 constexpr unsigned kSave = 1, kLoad = 2, kReport = 4, kHang = 8;  // kHang: only for tests, see test_keys()
 constexpr std::int64_t kGiveUpMs = 4000;         // a request the emulation has not answered in this time is dropped (the game hangs)
