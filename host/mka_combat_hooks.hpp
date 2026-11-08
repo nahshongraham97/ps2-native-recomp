@@ -790,17 +790,31 @@ inline void handle_video_stream(ps2::Cpu &c, std::uint32_t depth,
                      stream_id_raw, static_cast<unsigned long long>(s_video_calls));
     }
 
-    // Bypass idle attract demo (ID=3) and idle promotional trailers (ID=5, 6, 7)
-    // When idling at the main menu, triggering or skipping the attract video causes
-    // CRI ADX/SFD in IOP to exhaust memory ("[iop] out of memory allocating 0x8300").
-    // Bypassing idle attract streams keeps the game stably in the main menu without crashing.
-    const bool is_idle_attract = (stream_id == armageddon::VideoStreamId::AttractDemo ||
-                                  stream_id == armageddon::VideoStreamId::StrangeHoldTrailer ||
-                                  stream_id == armageddon::VideoStreamId::SpyHunterTrailer ||
-                                  stream_id == armageddon::VideoStreamId::BlitzTrailer);
-    if (is_idle_attract) {
-        std::fprintf(stderr, "[mka-video] Bypassing idle attract/trailer stream %u to prevent IOP memory exhaustion in main menu\n",
-                     stream_id_raw);
+    // Bypass idle attract demo (ID=3), quad main menu loop (ID=4), and idle trailers (ID=5, 6, 7).
+    // Also bypass looping back to Title Screen (ID=1) or Opening Cinematic (ID=2) once title has booted.
+    // In MKA, idling at the main menu triggers video streams that repeatedly re-instantiate
+    // CRI ADX/SFD on the IOP without clean teardown, eventually causing "[iop] out of memory allocating 0x8300".
+    // Bypassing idle attract/loop streams keeps the game stably in the main menu without crashing or interruption.
+    static bool s_has_booted_title = false;
+    if (stream_id == armageddon::VideoStreamId::TitleScreen && !s_has_booted_title) {
+        s_has_booted_title = true;
+        real_unit_0020(c, 126u, depth);
+        return;
+    }
+
+    const bool is_idle_attract_or_loop = (
+        stream_id == armageddon::VideoStreamId::AttractDemo ||
+        stream_id == armageddon::VideoStreamId::QuadMainMenu ||
+        stream_id == armageddon::VideoStreamId::StrangeHoldTrailer ||
+        stream_id == armageddon::VideoStreamId::SpyHunterTrailer ||
+        stream_id == armageddon::VideoStreamId::BlitzTrailer ||
+        (s_has_booted_title && (stream_id == armageddon::VideoStreamId::TitleScreen ||
+                                stream_id == armageddon::VideoStreamId::OpeningCinematic))
+    );
+
+    if (is_idle_attract_or_loop) {
+        std::fprintf(stderr, "[mka-video] Bypassing idle attract/loop stream %u (%s) to prevent IOP memory exhaustion\n",
+                     stream_id_raw, is_known ? g_video_stream_registry.get(stream_id).normal_path.c_str() : "unknown");
         c.r[2].w[0] = 0;
         c.pc = c.r[31].w[0];
         return;
