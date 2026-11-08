@@ -8,6 +8,7 @@
 #include "../../../../include/armageddon/camera_registry.hpp"
 #include "../../../../include/armageddon/special_move_state.hpp"
 #include "../../../../include/armageddon/fatality_sequencer.hpp"
+#include "../../../../include/armageddon/projectile_manager.hpp"
 #include "ps2/native_hook.hpp"
 #include "ps2/generated.hpp"
 #include "ps2/system.hpp"
@@ -54,6 +55,9 @@ inline armageddon::special_moves::SpecialMoveRegistry g_stance_registry;
 
 // Native Phase 7 Kreate-A-Fatality Sequencer (outside RDRAM)
 inline armageddon::fatality::FatalitySequencer g_fatality_sequencer;
+
+// Native Phase 8 Projectile Manager (outside RDRAM)
+inline armageddon::projectile::ProjectileManager g_projectile_manager;
 
 inline void process_audio(const std::int16_t *samples, std::size_t frames) {
     if (!is_interception_enabled()) return;
@@ -157,6 +161,16 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
                     real_unit_0025(c, 204u, depth);
                     return;
                 }
+            }
+
+            // Phase 8 Projectile Collision Evaluation (Target at p2 + 0x50, 0x54, 0x58)
+            auto proj_hit = g_projectile_manager.update_and_collide(p2_x, p2_y, p2_z, 0u);
+            if (proj_hit == armageddon::projectile::ProjectileHitResult::DirectHit) {
+                std::fprintf(stderr, "[mka-proj] %s collided with Player 2! (freeze=%u frames, dmg=%.2f)\n",
+                             armageddon::projectile::projectile_type_name(g_projectile_manager.last_hit_type()),
+                             g_projectile_manager.target_frozen_ticks(), g_projectile_manager.last_hit_damage());
+                g_camera_registry.on_combat_hit(-g_projectile_manager.last_hit_damage(), false, false);
+                g_camera_registry.advance_frame();
             }
         }
 
@@ -277,6 +291,19 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
             }
         }
 
+        // Phase 8 Projectile Spawning on Special Inputs
+        // Cross (button 6): spawn Freeze Ball
+        // Square (button 7) in Shotokan stance: spawn stationary Ice Clone trap
+        if (button_code == 6u) {
+            g_projectile_manager.spawn_freeze_ball(armageddon::projectile::Vec3::create(0.0f, 1.2f, 0.0f), 1.0f);
+            std::fprintf(stderr, "[mka-proj] Spawned Freeze Ball at tick 0x%04X (active=%zu)\n",
+                         tick, g_projectile_manager.active_count());
+        } else if (button_code == 7u && g_stance_registry.current_stance() == armageddon::special_moves::StanceType::Shotokan) {
+            g_projectile_manager.spawn_ice_clone(armageddon::projectile::Vec3::create(0.0f, 0.8f, 0.0f));
+            std::fprintf(stderr, "[mka-proj] Spawned Ice Clone trap at tick 0x%04X (active=%zu)\n",
+                         tick, g_projectile_manager.active_count());
+        }
+
         ps2::st32(kWriteIndexAddr,  pad_ch.write_index);
         ps2::st32(kRecentIndexAddr, pad_ch.recent_index);
         ps2::st32(kLastTickAddr,    pad_ch.last_event_tick);
@@ -371,6 +398,13 @@ inline void hook_subzero_health(ps2::Cpu &c) {
                 ps2::call(c, kHealthScalarGuestPc, 0);
                 ps2::hook::register_hook(kHealthScalarGuestPc, hook_subzero_health, "MKA_HealthDeduction");
                 return;
+            }
+
+            auto proj_hit = g_projectile_manager.update_and_collide(p2_x, p2_y, p2_z, 0u);
+            if (proj_hit == armageddon::projectile::ProjectileHitResult::DirectHit) {
+                std::fprintf(stderr, "[mka-proj] %s collided with Player 2! (freeze=%u frames, dmg=%.2f)\n",
+                             armageddon::projectile::projectile_type_name(g_projectile_manager.last_hit_type()),
+                             g_projectile_manager.target_frozen_ticks(), g_projectile_manager.last_hit_damage());
             }
         }
 
