@@ -14,7 +14,7 @@ namespace ps2::iop {
 
 void state(ps2::state::Stream &s);
 
-inline constexpr std::uint32_t kRamSize = 8u << 20;
+inline constexpr std::uint32_t kRamSize = 2u << 20;
 inline constexpr std::uint32_t kClockDivider = 8;
 inline constexpr std::uint32_t kHleOpcode = 0x3Fu;
 
