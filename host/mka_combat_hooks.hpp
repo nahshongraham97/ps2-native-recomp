@@ -7,6 +7,7 @@
 #include "../../../../include/armageddon/audio_sink_registry.hpp"
 #include "../../../../include/armageddon/camera_registry.hpp"
 #include "../../../../include/armageddon/special_move_state.hpp"
+#include "../../../../include/armageddon/fatality_sequencer.hpp"
 #include "ps2/native_hook.hpp"
 #include "ps2/generated.hpp"
 #include "ps2/system.hpp"
@@ -50,6 +51,9 @@ inline armageddon::camera::CameraRegistry g_camera_registry;
 
 // Native Phase 6 Special Move & Stance Registry (outside RDRAM)
 inline armageddon::special_moves::SpecialMoveRegistry g_stance_registry;
+
+// Native Phase 7 Kreate-A-Fatality Sequencer (outside RDRAM)
+inline armageddon::fatality::FatalitySequencer g_fatality_sequencer;
 
 inline void process_audio(const std::int16_t *samples, std::size_t frames) {
     if (!is_interception_enabled()) return;
@@ -115,6 +119,7 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
         g_audio_registry.evaluate_combat_audio_state(0.0f, effective_delta, false, true);
         g_camera_registry.on_combat_hit(effective_delta, true, false);
         g_camera_registry.advance_frame();
+        g_fatality_sequencer.start_fatality(0u);
         real_unit_0025(c, 204u, depth);
         return;
     }
@@ -148,6 +153,7 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
                     g_audio_registry.evaluate_combat_audio_state(0.0f, effective_delta, false, true);
                     g_camera_registry.on_combat_hit(effective_delta, true, false);
                     g_camera_registry.advance_frame();
+                    g_fatality_sequencer.start_fatality(0u);
                     real_unit_0025(c, 204u, depth);
                     return;
                 }
@@ -186,10 +192,12 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
 
     // Gatekeeper: Intercept Player 1 combat cluster:
     // 4 (Triangle), 5 (Circle), 6 (Cross), 7 (Square), 9 (R2 Block), 10 (L1 Style Change)
+    // Also intercept directional buttons (0..3) if a Kreate-A-Fatality sequence is active
     static std::uint64_t s_pad_events = 0;
     const bool is_target_combat = (channel == 0 &&
         (button_code == 4u || button_code == 5u || button_code == 6u || button_code == 7u ||
-         button_code == 9u || button_code == 10u));
+         button_code == 9u || button_code == 10u ||
+         (g_fatality_sequencer.is_active() && button_code <= 3u)));
 
     if (++s_pad_events <= 25 || is_target_combat) {
         const auto btn_enum = armageddon::retail::to_combat_button(button_code);
@@ -247,6 +255,25 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
             if (switched) {
                 std::fprintf(stderr, "[mka-stance] Switched stance to %s (L1 at tick 0x%04X, cooldown=8f)\n",
                              armageddon::special_moves::stance_name(g_stance_registry.current_stance()), tick);
+            }
+        }
+
+        // Phase 7 Kreate-A-Fatality Processing
+        if (g_fatality_sequencer.is_active()) {
+            const bool matched = g_fatality_sequencer.on_pad_event(button_code, tick);
+            if (matched && g_fatality_sequencer.phase() == armageddon::fatality::FatalityPhase::ExecutingMove) {
+                std::fprintf(stderr, "[mka-fatality] Executed %s (Tier %u, Score=%u)\n",
+                             armageddon::fatality::fatality_move_name(g_fatality_sequencer.active_move()),
+                             g_fatality_sequencer.current_tier(), g_fatality_sequencer.total_score());
+                g_camera_registry.on_combat_hit(-0.15f, false, true);
+                g_camera_registry.advance_frame();
+            } else if (matched && g_fatality_sequencer.phase() == armageddon::fatality::FatalityPhase::FinalFinisherExecuting) {
+                std::fprintf(stderr, "[mka-fatality] FINAL FINISHER: %s! (Score=%u)\n",
+                             armageddon::fatality::fatality_move_name(g_fatality_sequencer.active_move()),
+                             g_fatality_sequencer.total_score());
+                g_audio_registry.evaluate_combat_audio_state(0.0f, -0.30f, false, true);
+                g_camera_registry.on_combat_hit(-0.30f, true, false);
+                g_camera_registry.advance_frame();
             }
         }
 
