@@ -10,6 +10,7 @@
 #include "../../../../include/armageddon/fatality_sequencer.hpp"
 #include "../../../../include/armageddon/projectile_manager.hpp"
 #include "../../../../include/armageddon/breaker_parry_engine.hpp"
+#include "../../../../include/armageddon/air_combat_engine.hpp"
 #include "ps2/native_hook.hpp"
 #include "ps2/generated.hpp"
 #include "ps2/system.hpp"
@@ -62,6 +63,9 @@ inline armageddon::projectile::ProjectileManager g_projectile_manager;
 
 // Native Phase 9 Defense Matrix Registry (outside RDRAM)
 inline armageddon::defense::DefenseMatrixRegistry g_defense_matrix;
+
+// Native Phase 10 Air Combat Manager (outside RDRAM)
+inline armageddon::air_combat::AirCombatManager g_air_combat_manager;
 
 inline void process_audio(const std::int16_t *samples, std::size_t frames) {
     if (!is_interception_enabled()) return;
@@ -187,6 +191,11 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
                 g_camera_registry.on_combat_hit(-g_projectile_manager.last_hit_damage(), false, false);
                 g_camera_registry.advance_frame();
             }
+
+            // Phase 10 Aerial Kinematics Synchronization (Y at p2 + 0x54)
+            if (g_air_combat_manager.p2().is_airborne()) {
+                ps2::st32(p2 + 0x54, to_bits(g_air_combat_manager.p2().y));
+            }
         }
 
         const bool is_combo = g_combo_tracker.detect_hapkido_string();
@@ -195,11 +204,13 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
             g_camera_registry.on_combat_hit(0.0f, false, true);
             g_camera_registry.advance_frame();
             g_defense_matrix.advance_frame();
+            g_air_combat_manager.advance_frame(0u);
         } else {
             g_audio_registry.evaluate_combat_audio_state(new_health, active_delta, is_combo, false);
             g_camera_registry.on_combat_hit(active_delta, false, is_combo);
             g_camera_registry.advance_frame();
             g_defense_matrix.advance_frame();
+            g_air_combat_manager.advance_frame(0u);
         }
 
         std::fprintf(stderr, "[health] delta %.4ff (mult=%.1fx, parried=%d) applied to current %.4ff -> new %.4ff (mode=%u)\n",
@@ -362,6 +373,29 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
             }
         }
 
+        // Phase 10 Air Combat Launcher & Jump Pursuit Processing
+        const bool recent_up = (tick >= s_last_dir_tick && (tick - s_last_dir_tick) <= 30u && s_last_dir_code == 0u);
+        if (button_code == 7u && recent_up) { // Up + Square -> Launcher Strike
+            g_air_combat_manager.on_launcher_strike(tick);
+            std::fprintf(stderr, "[mka-air] LAUNCHER STRIKE at tick 0x%04X! P2 launched into air (vy=%.1fm/s)\n",
+                         tick, g_air_combat_manager.p2().vy);
+            g_camera_registry.on_combat_hit(-0.08f, false, true);
+            g_camera_registry.advance_frame();
+        } else if (button_code == 6u && recent_up) { // Up + Cross -> Jump Pursuit
+            g_air_combat_manager.on_jump_pursuit(tick);
+            std::fprintf(stderr, "[mka-air] JUMP PURSUIT at tick 0x%04X! P1 airborne (vy=%.1fm/s)\n",
+                         tick, g_air_combat_manager.p1().vy);
+        } else if (g_air_combat_manager.p2().is_airborne() &&
+                   (button_code == 4u || button_code == 5u || button_code == 7u)) {
+            float air_scale = 1.0f;
+            if (g_air_combat_manager.on_aerial_combo_hit(tick, air_scale)) {
+                std::fprintf(stderr, "[mka-air] AERIAL STRIKE connected at tick 0x%04X! Juggle #%u (scaling=%.0f%%)\n",
+                             tick, g_air_combat_manager.p2().juggle_hits, air_scale * 100.0f);
+                g_camera_registry.on_combat_hit(-0.05f * air_scale, false, true);
+                g_camera_registry.advance_frame();
+            }
+        }
+
         ps2::st32(kWriteIndexAddr,  pad_ch.write_index);
         ps2::st32(kRecentIndexAddr, pad_ch.recent_index);
         ps2::st32(kLastTickAddr,    pad_ch.last_event_tick);
@@ -474,8 +508,14 @@ inline void hook_subzero_health(ps2::Cpu &c) {
                              armageddon::projectile::projectile_type_name(g_projectile_manager.last_hit_type()),
                              g_projectile_manager.target_frozen_ticks(), g_projectile_manager.last_hit_damage());
             }
+
+            // Phase 10 Aerial Kinematics Synchronization (Y at p2 + 0x54)
+            if (g_air_combat_manager.p2().is_airborne()) {
+                ps2::st32(p2 + 0x54, to_bits(g_air_combat_manager.p2().y));
+            }
         }
 
+        g_air_combat_manager.advance_frame(0u);
         g_audio_registry.evaluate_combat_audio_state(new_health, effective_delta, g_combo_tracker.detect_hapkido_string(), false);
 
         std::fprintf(stderr, "[health] delta %.4ff (mult=%.1fx) applied to current %.4ff -> new %.4ff (mode=%u)\n",
