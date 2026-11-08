@@ -426,10 +426,13 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
         const std::uint32_t p1_id_hit = ps2::ld32(kPlayer1CharIdAddr);
         const std::uint32_t p2_id_hit = ps2::ld32(kPlayer2CharIdAddr);
         const std::uint32_t p2_hit_anim = p2_motion.anim_id;
-        std::fprintf(stderr, "[mka-telemetry] HIT REGISTERED: Attacker='%s' (0x%02X) -> Target='%s' (0x%02X) Dmg=%.4f (Scale=%.0f%%) TargetAnim=0x%04X Health: %.4f -> %.4f\n",
+        const float hit_dx = p1_motion.x - p2_motion.x;
+        const float hit_dz = p1_motion.z - p2_motion.z;
+        const float hit_dist = std::sqrt(hit_dx * hit_dx + hit_dz * hit_dz);
+        std::fprintf(stderr, "[mka-telemetry] HIT REGISTERED: Attacker='%s' (0x%02X) -> Target='%s' (0x%02X) Dist=%.2f Dmg=%.4f (Scale=%.0f%%) TargetAnim=0x%04X Health: %.4f -> %.4f\n",
                      get_fighter_name_from_ram(p1_id_hit).c_str(), p1_id_hit,
                      get_fighter_name_from_ram(p2_id_hit).c_str(), p2_id_hit,
-                     -active_delta, combo_scaling * 100.0f, p2_hit_anim, current, new_health);
+                     hit_dist, -active_delta, combo_scaling * 100.0f, p2_hit_anim, current, new_health);
 
         c.pc = c.r[31].w[0]; // Clean unwind to caller RA (0x00207728)
     } catch (const std::exception &e) {
@@ -573,10 +576,14 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
         const float cur_p1_z = p1_motion.z;
         const float cur_p2_x = p2_motion.x;
 
+        const float dx = cur_p1_x - p2_motion.x;
+        const float dz = cur_p1_z - p2_motion.z;
+        const float p1_p2_dist = std::sqrt(dx * dx + dz * dz);
+
         // Log authentic actor telemetry on every combat event
-        std::fprintf(stderr, "[mka-actor] P1='%s' (0x%02X) AnimID=0x%04X Phase=%.2f Pos=(%.2f, %.2f, %.2f) Opponent='%s' (0x%02X)\n",
+        std::fprintf(stderr, "[mka-actor] P1='%s' (0x%02X) AnimID=0x%04X Phase=%.2f Pos=(%.2f, %.2f, %.2f) Dist=%.2f Opponent='%s' (0x%02X)\n",
                      get_fighter_name_from_ram(p1_id).c_str(), p1_id, p1_motion.anim_id, p1_motion.phase, cur_p1_x, cur_p1_y, cur_p1_z,
-                     get_fighter_name_from_ram(p2_id).c_str(), p2_id);
+                     p1_p2_dist, get_fighter_name_from_ram(p2_id).c_str(), p2_id);
 
         // Update Phase 14 Roster Registry Coordinator
         g_roster_coordinator.trigger_fighter_switch(tick, static_cast<uint8_t>(p1_id));
