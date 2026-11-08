@@ -50,7 +50,15 @@ inline void hook_subzero_health(ps2::Cpu &c) {
     const std::uint8_t flags_660084 = static_cast<std::uint8_t>(ps2::ld32(kGatekeeperFlagsAddr + 4));
 
     // Gatekeeper: Non-standard / knockout modes delegate explicitly to authentic unit code
-    if (mode >= 2 || (flags_660080 & 4u) == 0 || (flags_660084 & 4u) != 0) {
+    static std::uint64_t s_health_calls = 0;
+    const bool is_target_combat = (mode < 2 && (flags_660080 & 4u) != 0 && (flags_660084 & 4u) == 0);
+    if (++s_health_calls <= 5 || is_target_combat) {
+        std::fprintf(stderr, "[mka-health] invocation #%llu: mode=%u flags=0x%02X/0x%02X (%s)\n",
+                     static_cast<unsigned long long>(s_health_calls), mode, flags_660080, flags_660084,
+                     is_target_combat ? "intercepting" : "delegating");
+    }
+
+    if (!is_target_combat) {
         ps2::hook::unregister_hook(kHealthScalarGuestPc);
         ps2::call(c, kHealthScalarGuestPc, 0);
         ps2::hook::register_hook(kHealthScalarGuestPc, hook_subzero_health, "MKA_HealthDeduction");
@@ -89,7 +97,15 @@ inline void hook_pad_scanner_event(ps2::Cpu &c) {
     const std::uint32_t ret_addr      = c.r[31].w[0];
 
     // Gatekeeper: Non-target buttons delegate to authentic unit_0018
-    if (channel != 0 || button_code != 4) {
+    static std::uint64_t s_pad_events = 0;
+    const bool is_target_triangle = (channel == 0 && button_code == 4);
+    if (++s_pad_events <= 5 || is_target_triangle) {
+        std::fprintf(stderr, "[mka-pad] event #%llu: ch=%u btn=%u (target=%s)\n",
+                     static_cast<unsigned long long>(s_pad_events), channel, button_code,
+                     is_target_triangle ? "TRIANGLE_HIT" : "delegate");
+    }
+
+    if (!is_target_triangle) {
         ps2::hook::unregister_hook(kPadScannerGuestPc);
         ps2::call(c, kPadScannerGuestPc, 0);
         ps2::hook::register_hook(kPadScannerGuestPc, hook_pad_scanner_event, "MKA_PadScanner");
