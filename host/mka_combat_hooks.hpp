@@ -244,10 +244,27 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
             // Phase 8 Projectile Collision Evaluation (Target at p2 + 0x50, 0x54, 0x58)
             auto proj_hit = g_projectile_manager.update_and_collide(p2_x, p2_y, p2_z, 0u);
             if (proj_hit == armageddon::projectile::ProjectileHitResult::DirectHit) {
-                std::fprintf(stderr, "[mka-proj] P1's %s struck Opponent (P2)! (freeze=%u frames, dmg=%.2f)\n",
-                             armageddon::projectile::projectile_type_name(g_projectile_manager.last_hit_type()),
-                             g_projectile_manager.target_frozen_ticks(), g_projectile_manager.last_hit_damage());
-                g_camera_registry.on_combat_hit(-g_projectile_manager.last_hit_damage(), false, false);
+                const auto hit_type = g_projectile_manager.last_hit_type();
+                const float hit_dmg = g_projectile_manager.last_hit_damage();
+                if (hit_type == armageddon::projectile::ProjectileType::ScorpionSpear) {
+                    std::fprintf(stderr, "[mka-proj] SCORPION'S SPEAR IMPALED OPPONENT! \"GET OVER HERE!\" (tether=%u frames, dmg=%.2f)\n",
+                                 g_projectile_manager.target_tethered_ticks(), hit_dmg);
+                    const std::uint32_t p1 = ps2::ld32(kPlayer1ObjPtr);
+                    if (p1 != 0) {
+                        const float p1_x = from_bits(ps2::ld32(p1 + 0x50));
+                        const float pull_target_x = (p1_x < p2_x) ? (p1_x + 1.6f) : (p1_x - 1.6f);
+                        ps2::st32(p2 + 0x50, to_bits(pull_target_x));
+                        std::fprintf(stderr, "[mka-proj] Opponent reeled in to point-blank range -> new P2 X=%.2f\n", pull_target_x);
+                    }
+                } else if (hit_type == armageddon::projectile::ProjectileType::HellfirePillar) {
+                    std::fprintf(stderr, "[mka-proj] HELLFIRE PILLAR ERUPTION! Opponent engulfed in flames (dmg=%.2f)\n", hit_dmg);
+                    ps2::st32(p2 + 0x54, to_bits(2.5f));
+                } else {
+                    std::fprintf(stderr, "[mka-proj] P1's %s struck Opponent (P2)! (freeze=%u frames, dmg=%.2f)\n",
+                                 armageddon::projectile::projectile_type_name(hit_type),
+                                 g_projectile_manager.target_frozen_ticks(), hit_dmg);
+                }
+                g_camera_registry.on_combat_hit(-hit_dmg, false, false);
                 g_camera_registry.advance_frame();
             }
 
@@ -353,11 +370,17 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
     // 4 (Triangle), 5 (Circle), 6 (Cross), 7 (Square), 9 (R2 Block), 10 (L1 Style Change)
     // Also intercept directional buttons (0..3) if a Kreate-A-Fatality sequence is active
     // Direction mapping: 0 = Up, 1 = Right, 2 = Down, 3 = Left
+    struct DirRecord {
+        std::uint32_t code = 0xFFFFFFFFu;
+        std::uint32_t tick = 0u;
+    };
     static std::uint64_t s_pad_events = 0;
     static std::uint32_t s_last_dir_code = 0xFFFFFFFFu;
     static std::uint32_t s_last_dir_tick = 0u;
     static std::uint32_t s_last_fwd_tick = 0u;
     static std::uint32_t s_dash_active_until_tick = 0u;
+    static std::array<DirRecord, 16> s_dir_history{};
+    static std::size_t s_dir_total = 0;
 
     const std::uint32_t p1_ptr = ps2::ld32(kPlayer1ObjPtr);
     const std::uint32_t p2_ptr = ps2::ld32(kPlayer2ObjPtr);
@@ -381,6 +404,8 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
     if (channel == 0 && button_code <= 3u) {
         s_last_dir_code = button_code;
         s_last_dir_tick = tick;
+        s_dir_history[s_dir_total % s_dir_history.size()] = { button_code, tick };
+        ++s_dir_total;
 
         // Forward double-tap dash tracking (Forward, Forward)
         if (button_code == fwd_code || button_code == 1u) {
@@ -391,6 +416,16 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
             s_last_fwd_tick = tick;
         }
     }
+
+    // Helper: detect 2-direction motion executed within timing window
+    auto match_2dir_motion = [&](std::uint32_t d1, std::uint32_t d2, std::uint32_t cur_tick, std::uint32_t window = 45u) -> bool {
+        if (s_dir_total < 2u) return false;
+        const auto &last0 = s_dir_history[(s_dir_total - 1u) % s_dir_history.size()];
+        const auto &last1 = s_dir_history[(s_dir_total - 2u) % s_dir_history.size()];
+        if (cur_tick < last0.tick || (cur_tick - last0.tick) > window) return false;
+        if (last0.tick < last1.tick || (last0.tick - last1.tick) > 35u) return false;
+        return (last1.code == d1 && last0.code == d2);
+    };
 
     // Check if Up is pressed during an active dash: Dash-Cancel Jump (Forward, Forward, Up)
     const bool is_dash_cancel_jump = (channel == 0 && button_code == 0u &&
@@ -464,11 +499,12 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
         if (button_code == 10u) { // L1 Style Change / Stance Switch
             const bool switched = g_stance_registry.on_button_press(button_code, tick);
             if (switched) {
+                const auto st = g_stance_registry.current_stance();
                 std::fprintf(stderr, "[mka-stance] Switched stance to %s (L1 at tick 0x%04X, cooldown=8f)\n",
-                             armageddon::special_moves::stance_name(g_stance_registry.current_stance()), tick);
-                if (g_stance_registry.current_stance() == armageddon::special_moves::StanceType::Dragon) {
+                             armageddon::special_moves::stance_name(st), tick);
+                if (st == armageddon::special_moves::StanceType::Dragon) {
                     g_render_bridge.trigger_stance_blend(armageddon::render_bridge::ActorAnimationBridge::BlendMode::Guarded, 42.0f);
-                } else if (g_stance_registry.current_stance() == armageddon::special_moves::StanceType::KoriBlade) {
+                } else if (st == armageddon::special_moves::StanceType::KoriBlade || st == armageddon::special_moves::StanceType::MugaiRyu) {
                     g_render_bridge.trigger_stance_blend(armageddon::render_bridge::ActorAnimationBridge::BlendMode::Lungeing, 28.0f);
                 } else {
                     g_render_bridge.trigger_stance_blend(armageddon::render_bridge::ActorAnimationBridge::BlendMode::Idle, 35.0f);
@@ -495,19 +531,77 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
             }
         }
 
-        // Phase 8 Projectile Spawning on Special Inputs
-        // Cross (button 6): spawn Freeze Ball
-        // Square (button 7) in Shotokan stance: spawn stationary Ice Clone trap
-        if (button_code == 6u) {
-            g_projectile_manager.spawn_freeze_ball(armageddon::projectile::Vec3::create(0.0f, 1.2f, 0.0f), 1.0f);
-            g_render_bridge.spawn_entity(armageddon::render_bridge::EntityPoolBridge::EntityType::FreezeBall, 0.0f, 1.2f, 0.0f);
-            std::fprintf(stderr, "[mka-proj] Spawned Freeze Ball at tick 0x%04X (active=%zu)\n",
-                         tick, g_projectile_manager.active_count());
-        } else if (button_code == 7u && g_stance_registry.current_stance() == armageddon::special_moves::StanceType::Shotokan) {
-            g_projectile_manager.spawn_ice_clone(armageddon::projectile::Vec3::create(0.0f, 0.8f, 0.0f));
-            g_render_bridge.spawn_entity(armageddon::render_bridge::EntityPoolBridge::EntityType::IceClone, 0.0f, 0.8f, 0.0f);
-            std::fprintf(stderr, "[mka-proj] Spawned Ice Clone trap at tick 0x%04X (active=%zu)\n",
-                         tick, g_projectile_manager.active_count());
+        // Phase 8 Authentic Special Move & Projectile Spawning
+        const float cur_p1_x = (p1_ptr >= 0x00100000u) ? from_bits(ps2::ld32(p1_ptr + 0x50)) : 0.0f;
+        const float cur_p2_x = (p2_ptr >= 0x00100000u) ? from_bits(ps2::ld32(p2_ptr + 0x50)) : 0.0f;
+        const std::uint32_t down_code = 2u;
+        const std::uint32_t up_code = 0u;
+
+        if (button_code == 7u) { // Square (Attack 1)
+            if (match_2dir_motion(back_code, fwd_code, tick)) {
+                // Scorpion Bloody Spear: Back, Forward + 1
+                g_stance_registry.trigger_special_move(armageddon::special_moves::SpecialMoveId::BloodySpear, tick);
+                g_projectile_manager.spawn_scorpion_spear(armageddon::projectile::Vec3::create(cur_p1_x, 1.2f, 0.0f), fwd_dir_sign);
+                g_render_bridge.spawn_entity(armageddon::render_bridge::EntityPoolBridge::EntityType::ScorpionSpear, cur_p1_x, 1.2f, 0.0f);
+                std::fprintf(stderr, "[mka-special] SCORPION: BLOODY SPEAR (Back, Forward + 1) unleashed at tick 0x%04X! \"GET OVER HERE!\"\n", tick);
+                g_audio_registry.evaluate_combat_audio_state(1.0f, -0.09f, false, false);
+                g_camera_registry.on_combat_hit(-0.09f, false, true);
+                g_camera_registry.advance_frame();
+            } else if (match_2dir_motion(down_code, back_code, tick)) {
+                // Sub-Zero Ice Clone: Down, Back + 1
+                g_stance_registry.trigger_special_move(armageddon::special_moves::SpecialMoveId::IceClone, tick);
+                g_projectile_manager.spawn_ice_clone(armageddon::projectile::Vec3::create(cur_p1_x, 0.8f, 0.0f));
+                g_render_bridge.spawn_entity(armageddon::render_bridge::EntityPoolBridge::EntityType::IceClone, cur_p1_x, 0.8f, 0.0f);
+                std::fprintf(stderr, "[mka-special] SUB-ZERO: ICE CLONE (Down, Back + 1) deployed at tick 0x%04X!\n", tick);
+            }
+        } else if (button_code == 4u) { // Triangle (Attack 2)
+            if (match_2dir_motion(down_code, back_code, tick)) {
+                // Scorpion Hellfire: Down, Back + 2
+                g_stance_registry.trigger_special_move(armageddon::special_moves::SpecialMoveId::Hellfire, tick);
+                g_projectile_manager.spawn_hellfire_pillar(armageddon::projectile::Vec3::create(cur_p2_x, 0.0f, 0.0f));
+                g_render_bridge.spawn_entity(armageddon::render_bridge::EntityPoolBridge::EntityType::HellfirePillar, cur_p2_x, 0.0f, 0.0f);
+                std::fprintf(stderr, "[mka-special] SCORPION: HELLFIRE (Down, Back + 2) ignited at tick 0x%04X! Unblockable flame eruption beneath opponent!\n", tick);
+                g_audio_registry.evaluate_combat_audio_state(1.0f, -0.11f, false, false);
+                g_camera_registry.on_combat_hit(-0.11f, false, true);
+                g_camera_registry.advance_frame();
+            } else if (match_2dir_motion(down_code, up_code, tick)) {
+                // Sub-Zero Icy Pillar / Tombstone: Down, Up + 2
+                g_stance_registry.trigger_special_move(armageddon::special_moves::SpecialMoveId::TombstoneTeleport, tick);
+                std::fprintf(stderr, "[mka-special] SUB-ZERO: ICY PILLAR / TOMBSTONE TELEPORT (Down, Up + 2) at tick 0x%04X!\n", tick);
+            }
+        } else if (button_code == 6u) { // Cross (Attack 3)
+            if (match_2dir_motion(down_code, fwd_code, tick)) {
+                // Sub-Zero Freeze Ball: Down, Forward + 3
+                g_stance_registry.trigger_special_move(armageddon::special_moves::SpecialMoveId::FreezeBall, tick);
+                g_projectile_manager.spawn_freeze_ball(armageddon::projectile::Vec3::create(cur_p1_x, 1.2f, 0.0f), fwd_dir_sign);
+                g_render_bridge.spawn_entity(armageddon::render_bridge::EntityPoolBridge::EntityType::FreezeBall, cur_p1_x, 1.2f, 0.0f);
+                std::fprintf(stderr, "[mka-special] SUB-ZERO: FREEZE BALL (Down, Forward + 3) hurled at tick 0x%04X!\n", tick);
+            } else if (match_2dir_motion(fwd_code, back_code, tick)) {
+                // Scorpion Backflip Kick: Forward, Back + 3
+                g_stance_registry.trigger_special_move(armageddon::special_moves::SpecialMoveId::BackflipKick, tick);
+                std::fprintf(stderr, "[mka-special] SCORPION: BACKFLIP KICK (Forward, Back + 3) executed at tick 0x%04X!\n", tick);
+                g_air_combat_manager.p1_mutable().vy = 6.0f;
+                g_camera_registry.on_combat_hit(-0.08f, false, true);
+                g_camera_registry.advance_frame();
+            }
+        } else if (button_code == 5u) { // Circle (Attack 4)
+            if (match_2dir_motion(back_code, fwd_code, tick)) {
+                // Sub-Zero Cold Shoulder: Back, Forward + 4
+                g_stance_registry.trigger_special_move(armageddon::special_moves::SpecialMoveId::ColdShoulder, tick);
+                std::fprintf(stderr, "[mka-special] SUB-ZERO: COLD SHOULDER (Back, Forward + 4) executed at tick 0x%04X!\n", tick);
+                g_camera_registry.on_combat_hit(-0.12f, false, true);
+                g_camera_registry.advance_frame();
+            } else if (match_2dir_motion(fwd_code, back_code, tick)) {
+                // Scorpion Hellfire Punch: Forward, Back + 4
+                g_stance_registry.trigger_special_move(armageddon::special_moves::SpecialMoveId::HellfirePunch, tick);
+                if (p1_ptr >= 0x00100000u && p2_ptr >= 0x00100000u) {
+                    const float new_p1_x = cur_p2_x - fwd_dir_sign * 1.2f;
+                    ps2::st32(p1_ptr + 0x50, to_bits(new_p1_x));
+                    std::fprintf(stderr, "[mka-special] SCORPION: HELLFIRE PUNCH (Forward, Back + 4) teleported behind P2 to X=%.2f!\n", new_p1_x);
+                }
+                g_camera_registry.on_combat_hit(-0.10f, false, true);
+                g_camera_registry.advance_frame();
+            }
         }
 
         // Phase 9 Defense Matrix Processing (R2 Block = button 9)
@@ -728,9 +822,26 @@ inline void hook_subzero_health(ps2::Cpu &c) {
 
             auto proj_hit = g_projectile_manager.update_and_collide(p2_x, p2_y, p2_z, 0u);
             if (proj_hit == armageddon::projectile::ProjectileHitResult::DirectHit) {
-                std::fprintf(stderr, "[mka-proj] P1's %s struck Opponent (P2)! (freeze=%u frames, dmg=%.2f)\n",
-                             armageddon::projectile::projectile_type_name(g_projectile_manager.last_hit_type()),
-                             g_projectile_manager.target_frozen_ticks(), g_projectile_manager.last_hit_damage());
+                const auto hit_type = g_projectile_manager.last_hit_type();
+                const float hit_dmg = g_projectile_manager.last_hit_damage();
+                if (hit_type == armageddon::projectile::ProjectileType::ScorpionSpear) {
+                    std::fprintf(stderr, "[mka-proj] SCORPION'S SPEAR IMPALED OPPONENT! \"GET OVER HERE!\" (tether=%u frames, dmg=%.2f)\n",
+                                 g_projectile_manager.target_tethered_ticks(), hit_dmg);
+                    const std::uint32_t p1 = ps2::ld32(kPlayer1ObjPtr);
+                    if (p1 != 0) {
+                        const float p1_x = from_bits(ps2::ld32(p1 + 0x50));
+                        const float pull_target_x = (p1_x < p2_x) ? (p1_x + 1.6f) : (p1_x - 1.6f);
+                        ps2::st32(p2 + 0x50, to_bits(pull_target_x));
+                        std::fprintf(stderr, "[mka-proj] Opponent reeled in to point-blank range -> new P2 X=%.2f\n", pull_target_x);
+                    }
+                } else if (hit_type == armageddon::projectile::ProjectileType::HellfirePillar) {
+                    std::fprintf(stderr, "[mka-proj] HELLFIRE PILLAR ERUPTION! Opponent engulfed in flames (dmg=%.2f)\n", hit_dmg);
+                    ps2::st32(p2 + 0x54, to_bits(2.5f));
+                } else {
+                    std::fprintf(stderr, "[mka-proj] P1's %s struck Opponent (P2)! (freeze=%u frames, dmg=%.2f)\n",
+                                 armageddon::projectile::projectile_type_name(hit_type),
+                                 g_projectile_manager.target_frozen_ticks(), hit_dmg);
+                }
             }
 
             // Phase 10 Aerial Kinematics Synchronization (Y at p2 + 0x54)
@@ -801,9 +912,10 @@ inline void hook_pad_scanner_event(ps2::Cpu &c) {
 // 5. Registration Trigger
 inline void register_mka_combat_hooks() {
     g_combat_interception_active = true;
+    g_stance_registry.set_active_fighter(armageddon::special_moves::FighterId::Scorpion);
     ps2::hook::register_hook(kPadScannerGuestPc, hook_pad_scanner_event, "MKA_PadScanner");
     ps2::hook::register_hook(kHealthScalarGuestPc, hook_subzero_health, "MKA_HealthDeduction");
-    std::fprintf(stderr, "[mka-hooks] Combat interception armed for guest PCs 0x%08X and 0x%08X (Linker Wrappers Active)\n",
+    std::fprintf(stderr, "[mka-hooks] Combat interception armed for guest PCs 0x%08X and 0x%08X (Linker Wrappers Active, P1=Scorpion)\n",
                  kPadScannerGuestPc, kHealthScalarGuestPc);
 }
 
