@@ -118,6 +118,26 @@ constexpr std::uint32_t kModeWordAddr        = 0x0064dea4u;
 constexpr std::uint32_t kGatekeeperFlagsAddr = 0x00660080u;
 constexpr std::uint32_t kPlayer1ObjPtr       = 0x0066015cu;
 constexpr std::uint32_t kPlayer2ObjPtr       = 0x006601a4u;
+constexpr std::uint32_t kPlayer1CharIdAddr   = 0x00660158u;
+constexpr std::uint32_t kPlayer2CharIdAddr   = 0x006601a0u;
+constexpr std::uint32_t kRosterTableBaseAddr = 0x0059FE60u;
+
+// Helper: Resolve authentic uppercase character name from internal MKA table at 0x0059FE60
+inline std::string get_fighter_name_from_ram(std::uint32_t char_id) {
+    if (char_id >= 64u) return "UNKNOWN";
+    const std::uint32_t entry = kRosterTableBaseAddr + char_id * 0x14u;
+    const std::uint32_t name_ptr = ps2::ld32(entry);
+    if (name_ptr >= 0x00100000u && name_ptr < 0x02000000u) {
+        char buf[32]{};
+        for (int i = 0; i < 31; ++i) {
+            const char ch = static_cast<char>(ps2::ld8(name_ptr + static_cast<std::uint32_t>(i)));
+            if (ch == '\0') break;
+            buf[i] = ch;
+        }
+        return std::string(buf);
+    }
+    return "UNKNOWN";
+}
 
 // Helper: Checks if the engine is currently in an active 1v1 combat match
 // Returns true only for Arcade 1v1, Versus 1v1, Practice 1v1, or Konquest 1v1 arena bouts.
@@ -350,6 +370,14 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
                      g_render_bridge.actor().latest().lean_angle,
                      g_render_bridge.entities().frames_recorded());
 
+        const std::uint32_t p1_id_hit = ps2::ld32(kPlayer1CharIdAddr);
+        const std::uint32_t p2_id_hit = ps2::ld32(kPlayer2CharIdAddr);
+        const std::uint32_t p2_hit_anim = (p2 != 0) ? ps2::ld32(p2 + 0x3Cu) : 0u;
+        std::fprintf(stderr, "[mka-telemetry] HIT REGISTERED: Attacker='%s' (0x%02X) -> Target='%s' (0x%02X) Dmg=%.4f (Scale=%.0f%%) TargetAnim=0x%04X Health: %.4f -> %.4f\n",
+                     get_fighter_name_from_ram(p1_id_hit).c_str(), p1_id_hit,
+                     get_fighter_name_from_ram(p2_id_hit).c_str(), p2_id_hit,
+                     -active_delta, combo_scaling * 100.0f, p2_hit_anim, current, new_health);
+
         c.pc = c.r[31].w[0]; // Clean unwind to caller RA (0x00207728)
     } catch (const std::exception &e) {
         std::fprintf(stderr, "[mka-health] delegated on exception (%s)\n", e.what());
@@ -484,6 +512,23 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
         armageddon::retail::append_pad_event(pad_ch, button_code, tick, label_addr, 0u, mapping_index);
         g_combo_tracker.record(button_code, tick);
 
+        const std::uint32_t p1_id = ps2::ld32(kPlayer1CharIdAddr);
+        const std::uint32_t p2_id = ps2::ld32(kPlayer2CharIdAddr);
+        const std::uint32_t p1_anim = (p1_ptr >= 0x00100000u) ? ps2::ld32(p1_ptr + 0x3Cu) : 0u;
+        const float p1_frame = (p1_ptr >= 0x00100000u) ? from_bits(ps2::ld32(p1_ptr + 0x40u)) : 0.0f;
+        const float cur_p1_x = (p1_ptr >= 0x00100000u) ? from_bits(ps2::ld32(p1_ptr + 0x50u)) : 0.0f;
+        const float cur_p1_y = (p1_ptr >= 0x00100000u) ? from_bits(ps2::ld32(p1_ptr + 0x54u)) : 0.0f;
+        const float cur_p1_z = (p1_ptr >= 0x00100000u) ? from_bits(ps2::ld32(p1_ptr + 0x58u)) : 0.0f;
+        const float cur_p2_x = (p2_ptr >= 0x00100000u) ? from_bits(ps2::ld32(p2_ptr + 0x50u)) : 0.0f;
+
+        // Log authentic actor telemetry on every combat event
+        std::fprintf(stderr, "[mka-actor] P1='%s' (0x%02X) AnimID=0x%04X Phase=%.2f Pos=(%.2f, %.2f, %.2f) Opponent='%s' (0x%02X)\n",
+                     get_fighter_name_from_ram(p1_id).c_str(), p1_id, p1_anim, p1_frame, cur_p1_x, cur_p1_y, cur_p1_z,
+                     get_fighter_name_from_ram(p2_id).c_str(), p2_id);
+
+        // Update Phase 14 Roster Registry Coordinator
+        g_roster_coordinator.trigger_fighter_switch(tick, static_cast<uint8_t>(p1_id));
+
         // Combo string & 3+ hit combo detection with scaling and visual logs
         const std::uint32_t combo_hits = g_combo_tracker.combo_hit_count();
         const float combo_scaling = g_combo_tracker.get_combo_scaling();
@@ -540,8 +585,6 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
         }
 
         // Phase 8 Authentic Special Move & Projectile Spawning
-        const float cur_p1_x = (p1_ptr >= 0x00100000u) ? from_bits(ps2::ld32(p1_ptr + 0x50)) : 0.0f;
-        const float cur_p2_x = (p2_ptr >= 0x00100000u) ? from_bits(ps2::ld32(p2_ptr + 0x50)) : 0.0f;
         const std::uint32_t down_code = 2u;
         const std::uint32_t up_code = 0u;
 
