@@ -14,6 +14,7 @@
 #include "../../../../include/armageddon/aggressor_weapon_matrix.hpp"
 #include "../../../../include/armageddon/stage_transition_engine.hpp"
 #include "../../../../include/armageddon/render_bridge.hpp"
+#include "../../../../include/armageddon/roster_registry.hpp"
 #include "ps2/native_hook.hpp"
 #include "ps2/generated.hpp"
 #include "ps2/system.hpp"
@@ -78,6 +79,9 @@ inline armageddon::stage_transition::StageTransitionManager g_stage_transition_m
 
 // Native Phase 13 Render Bridge Coordinator (outside RDRAM)
 inline armageddon::render_bridge::RenderBridgeCoordinator g_render_bridge;
+
+// Native Phase 14 Roster Registry Coordinator (outside RDRAM)
+inline armageddon::roster_registry::RosterRegistryCoordinator g_roster_coordinator;
 
 inline void process_audio(const std::int16_t *samples, std::size_t frames) {
     if (!is_interception_enabled()) return;
