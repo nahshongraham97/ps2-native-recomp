@@ -9,6 +9,7 @@
 #include "../../../../include/armageddon/special_move_state.hpp"
 #include "../../../../include/armageddon/fatality_sequencer.hpp"
 #include "../../../../include/armageddon/projectile_manager.hpp"
+#include "../../../../include/armageddon/breaker_parry_engine.hpp"
 #include "ps2/native_hook.hpp"
 #include "ps2/generated.hpp"
 #include "ps2/system.hpp"
@@ -58,6 +59,9 @@ inline armageddon::fatality::FatalitySequencer g_fatality_sequencer;
 
 // Native Phase 8 Projectile Manager (outside RDRAM)
 inline armageddon::projectile::ProjectileManager g_projectile_manager;
+
+// Native Phase 9 Defense Matrix Registry (outside RDRAM)
+inline armageddon::defense::DefenseMatrixRegistry g_defense_matrix;
 
 inline void process_audio(const std::int16_t *samples, std::size_t frames) {
     if (!is_interception_enabled()) return;
@@ -129,16 +133,27 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
     }
 
     try {
+        // Phase 9 Defense Matrix: Parry Evaluation (Down + Block)
+        float active_delta = effective_delta;
+        float mitigated_dmg = 0.0f;
+        const bool parried = (effective_delta < 0.0f &&
+                              g_defense_matrix.evaluate_incoming_hit(-effective_delta, 0u, mitigated_dmg));
+        if (parried) {
+            std::fprintf(stderr, "[mka-defense] PARRY DEFLECT! Incoming strike of %.4ff mitigated to 0.0f (attacker stagger=18f)!\n",
+                         -effective_delta);
+            active_delta = 0.0f;
+        }
+
         // Standard Hit Path: Bit-cast delta and commit with IEEE-754 integrity
         const float new_health = armageddon::retail::apply_observed_hit_to_health(
-            current, effective_delta, mode, flags_660080, flags_660084);
+            current, active_delta, mode, flags_660080, flags_660084);
 
         ps2::st32(kSubZeroHealthAddr, to_bits(new_health)); // Preserves 0x3f6d288d
 
         const std::uint32_t p2 = ps2::ld32(kPlayer2ObjPtr);
         if (p2 != 0) {
             const float old_acc = from_bits(ps2::ld32(p2 + 0x3dc));
-            ps2::st32(p2 + 0x3dc, to_bits(old_acc - effective_delta));
+            ps2::st32(p2 + 0x3dc, to_bits(old_acc - active_delta));
 
             // Stage Hazard Collision Check (Position at p2 + 0x50, 0x54, 0x58)
             const float p2_x = from_bits(ps2::ld32(p2 + 0x50));
@@ -175,12 +190,20 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
         }
 
         const bool is_combo = g_combo_tracker.detect_hapkido_string();
-        g_audio_registry.evaluate_combat_audio_state(new_health, effective_delta, is_combo, false);
-        g_camera_registry.on_combat_hit(effective_delta, false, is_combo);
-        g_camera_registry.advance_frame();
+        if (parried) {
+            g_audio_registry.evaluate_combat_audio_state(new_health, 0.0f, false, false);
+            g_camera_registry.on_combat_hit(0.0f, false, true);
+            g_camera_registry.advance_frame();
+            g_defense_matrix.advance_frame();
+        } else {
+            g_audio_registry.evaluate_combat_audio_state(new_health, active_delta, is_combo, false);
+            g_camera_registry.on_combat_hit(active_delta, false, is_combo);
+            g_camera_registry.advance_frame();
+            g_defense_matrix.advance_frame();
+        }
 
-        std::fprintf(stderr, "[health] delta %.4ff (mult=%.1fx) applied to current %.4ff -> new %.4ff (mode=%u)\n",
-                     effective_delta, combo_mult, current, new_health, mode);
+        std::fprintf(stderr, "[health] delta %.4ff (mult=%.1fx, parried=%d) applied to current %.4ff -> new %.4ff (mode=%u)\n",
+                     active_delta, combo_mult, parried ? 1 : 0, current, new_health, mode);
         std::fprintf(stderr, "[mka-camera] Hit-stop: %s (dilation=%.2f, shake=%u, fov=%.1f)\n",
                      armageddon::camera::hit_stop_state_name(g_camera_registry.hit_stop().state),
                      g_camera_registry.hit_stop().time_dilation(),
@@ -208,6 +231,13 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
     // 4 (Triangle), 5 (Circle), 6 (Cross), 7 (Square), 9 (R2 Block), 10 (L1 Style Change)
     // Also intercept directional buttons (0..3) if a Kreate-A-Fatality sequence is active
     static std::uint64_t s_pad_events = 0;
+    static std::uint32_t s_last_dir_code = 0xFFFFFFFFu;
+    static std::uint32_t s_last_dir_tick = 0u;
+    if (channel == 0 && button_code <= 3u) {
+        s_last_dir_code = button_code;
+        s_last_dir_tick = tick;
+    }
+
     const bool is_target_combat = (channel == 0 &&
         (button_code == 4u || button_code == 5u || button_code == 6u || button_code == 7u ||
          button_code == 9u || button_code == 10u ||
@@ -304,6 +334,34 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
                          tick, g_projectile_manager.active_count());
         }
 
+        // Phase 9 Defense Matrix Processing (R2 Block = button 9)
+        if (button_code == 9u) {
+            const bool recent_dir = (tick >= s_last_dir_tick && (tick - s_last_dir_tick) <= 30u);
+            if (recent_dir && s_last_dir_code == 2u) { // Down + R2 -> Parry
+                const bool opened = g_defense_matrix.try_parry_input(tick);
+                if (opened) {
+                    std::fprintf(stderr, "[mka-defense] Opened 4-frame Parry Window at tick 0x%04X (Down + R2)\n", tick);
+                }
+            } else if (recent_dir && s_last_dir_code == 1u) { // Forward + R2 -> Breaker
+                const bool broken = g_defense_matrix.try_combo_breaker(tick, true, true);
+                if (broken) {
+                    std::fprintf(stderr, "[mka-defense] COMBO BREAKER TRIGGERED at tick 0x%04X! Charges remaining=%u\n",
+                                 tick, g_defense_matrix.breaker().charges_remaining);
+                    g_combo_tracker.clear();
+                    const std::uint32_t p2 = ps2::ld32(kPlayer2ObjPtr);
+                    if (p2 != 0) {
+                        float p2_x = from_bits(ps2::ld32(p2 + 0x50));
+                        p2_x += g_defense_matrix.breaker().knockback_impulse_x;
+                        ps2::st32(p2 + 0x50, to_bits(p2_x));
+                        std::fprintf(stderr, "[mka-defense] Applied Breaker knockback (+%.1fm) -> new P2 X=%.2f\n",
+                                     g_defense_matrix.breaker().knockback_impulse_x, p2_x);
+                    }
+                    g_camera_registry.on_combat_hit(-0.05f, false, true);
+                    g_camera_registry.advance_frame();
+                }
+            }
+        }
+
         ps2::st32(kWriteIndexAddr,  pad_ch.write_index);
         ps2::st32(kRecentIndexAddr, pad_ch.recent_index);
         ps2::st32(kLastTickAddr,    pad_ch.last_event_tick);
@@ -378,15 +436,25 @@ inline void hook_subzero_health(ps2::Cpu &c) {
     }
 
     try {
+        float active_delta = effective_delta;
+        float mitigated_dmg = 0.0f;
+        const bool parried = (effective_delta < 0.0f &&
+                              g_defense_matrix.evaluate_incoming_hit(-effective_delta, 0u, mitigated_dmg));
+        if (parried) {
+            std::fprintf(stderr, "[mka-defense] PARRY DEFLECT! Incoming strike of %.4ff mitigated to 0.0f!\n",
+                         -effective_delta);
+            active_delta = 0.0f;
+        }
+
         const float new_health = armageddon::retail::apply_observed_hit_to_health(
-            current, effective_delta, mode, flags_660080, flags_660084);
+            current, active_delta, mode, flags_660080, flags_660084);
 
         ps2::st32(kSubZeroHealthAddr, to_bits(new_health));
 
         const std::uint32_t p2 = ps2::ld32(kPlayer2ObjPtr);
         if (p2 != 0) {
             const float old_acc = from_bits(ps2::ld32(p2 + 0x3dc));
-            ps2::st32(p2 + 0x3dc, to_bits(old_acc - effective_delta));
+            ps2::st32(p2 + 0x3dc, to_bits(old_acc - active_delta));
 
             const float p2_x = from_bits(ps2::ld32(p2 + 0x50));
             const float p2_y = from_bits(ps2::ld32(p2 + 0x54));
