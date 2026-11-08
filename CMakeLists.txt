@@ -165,8 +165,12 @@ if(PS2_GENERATED)
         return()
     endif()
 
-    add_executable(ps2run host/main.cpp)
+    add_executable(ps2run host/main.cpp host/mka_unit_wrappers.cpp)
     target_link_libraries(ps2run PRIVATE ps2game ps2runtime)
+    target_link_options(ps2run PRIVATE
+        "-Wl,--wrap=_ZN3gen9unit_0018ERN3ps23CpuEjj"
+        "-Wl,--wrap=_ZN3gen9unit_0025ERN3ps23CpuEjj"
+    )
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
         target_sources(ps2run PRIVATE host/profile.cpp)
         target_compile_definitions(ps2run PRIVATE PS2_PROFILE)

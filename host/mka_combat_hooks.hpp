@@ -7,12 +7,27 @@
 #include "ps2/system.hpp"
 #include "ps2/memory.hpp"
 #include "ps2/cpu.hpp"
+#include "ps2/os.hpp"
 
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <string>
 
 namespace mka::combat {
+
+// Interception Activation State
+inline bool g_combat_interception_active = false;
+
+inline bool is_interception_enabled() {
+    if (g_combat_interception_active) return true;
+    const std::string env = ps2::os::env("MKA_INTERCEPT_COMBAT");
+    if (!env.empty() && env != "0" && env != "off") {
+        g_combat_interception_active = true;
+        return true;
+    }
+    return false;
+}
 
 // Portable C++17 bit reinterpretation primitives
 inline float from_bits(std::uint32_t bits) {
@@ -43,8 +58,9 @@ constexpr std::uint32_t kModeWordAddr        = 0x0064dea4u;
 constexpr std::uint32_t kGatekeeperFlagsAddr = 0x00660080u;
 constexpr std::uint32_t kPlayer2ObjPtr       = 0x006601a4u;
 
-// 1. Health Scalar Hook (Sub-Zero Damage Deduction)
-inline void hook_subzero_health(ps2::Cpu &c) {
+// 1. Health Scalar Interception Implementation (Linker Wrapped)
+inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
+                                  void (*real_unit_0025)(ps2::Cpu&, std::uint32_t, std::uint32_t)) {
     const std::uint32_t mode        = ps2::ld32(kModeWordAddr);
     const std::uint8_t flags_660080 = static_cast<std::uint8_t>(ps2::ld32(kGatekeeperFlagsAddr));
     const std::uint8_t flags_660084 = static_cast<std::uint8_t>(ps2::ld32(kGatekeeperFlagsAddr + 4));
@@ -59,9 +75,7 @@ inline void hook_subzero_health(ps2::Cpu &c) {
     }
 
     if (!is_target_combat) {
-        ps2::hook::unregister_hook(kHealthScalarGuestPc);
-        ps2::call(c, kHealthScalarGuestPc, 0);
-        ps2::hook::register_hook(kHealthScalarGuestPc, hook_subzero_health, "MKA_HealthDeduction");
+        real_unit_0025(c, 204u, depth);
         return;
     }
 
@@ -84,31 +98,30 @@ inline void hook_subzero_health(ps2::Cpu &c) {
     std::fprintf(stderr, "[health] delta %.4ff applied to current %.4ff -> new %.4ff (mode=%u)\n",
                  delta, current, new_health, mode);
 
-    c.pc = ret_addr; // Clean unwind to unit_0041 RA (0x00207728)
+    c.pc = ret_addr; // Clean unwind to caller RA (0x00207728)
 }
 
-// 2. PAD Scanner Input Hook (Player 1 Triangle Press)
-inline void hook_pad_scanner_event(ps2::Cpu &c) {
-    const std::uint32_t channel       = c.r[4].w[0]; // a0
-    const std::uint32_t button_code   = c.r[5].w[0]; // a1 (4 = PAD_RUP / Triangle)
-    const std::uint32_t tick          = c.r[6].w[0]; // a2
-    const std::uint32_t label_addr    = c.r[7].w[0]; // a3
-    const std::uint32_t mapping_index = c.r[8].w[0]; // t0
+// 2. PAD Event Interception Implementation (Linker Wrapped)
+inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
+                             void (*real_unit_0018)(ps2::Cpu&, std::uint32_t, std::uint32_t)) {
+    const std::uint32_t channel       = c.r[19].w[0]; // channel loop index (0 = P1)
+    const std::uint32_t button_code   = c.r[5].w[0];  // button index (4 = PAD_RUP / Triangle)
+    const std::uint32_t tick          = c.r[6].w[0];
+    const std::uint32_t label_addr    = c.r[7].w[0];
+    const std::uint32_t mapping_index = c.r[8].w[0];
     const std::uint32_t ret_addr      = c.r[31].w[0];
 
     // Gatekeeper: Non-target buttons delegate to authentic unit_0018
     static std::uint64_t s_pad_events = 0;
     const bool is_target_triangle = (channel == 0 && button_code == 4);
-    if (++s_pad_events <= 5 || is_target_triangle) {
+    if (++s_pad_events <= 10 || is_target_triangle) {
         std::fprintf(stderr, "[mka-pad] event #%llu: ch=%u btn=%u (target=%s)\n",
                      static_cast<unsigned long long>(s_pad_events), channel, button_code,
                      is_target_triangle ? "TRIANGLE_HIT" : "delegate");
     }
 
     if (!is_target_triangle) {
-        ps2::hook::unregister_hook(kPadScannerGuestPc);
-        ps2::call(c, kPadScannerGuestPc, 0);
-        ps2::hook::register_hook(kPadScannerGuestPc, hook_pad_scanner_event, "MKA_PadScanner");
+        real_unit_0018(c, 309u, depth);
         return;
     }
 
@@ -149,14 +162,63 @@ inline void hook_pad_scanner_event(ps2::Cpu &c) {
     std::fprintf(stderr, "[ring] write_index advanced from %u to %u (tick=0x%04X, button=%u)\n",
                  prev_index, pad_ch.write_index, tick, button_code);
 
-    c.pc = ret_addr; // Clean unwind to caller RA
+    c.pc = ret_addr; // Clean unwind to caller RA (0x001638E8)
 }
 
-// 3. Registration Trigger
+// 3. Fallback Dispatch Hooks (for any dynamic guest PC dispatch)
+inline void hook_subzero_health(ps2::Cpu &c) {
+    const std::uint32_t mode        = ps2::ld32(kModeWordAddr);
+    const std::uint8_t flags_660080 = static_cast<std::uint8_t>(ps2::ld32(kGatekeeperFlagsAddr));
+    const std::uint8_t flags_660084 = static_cast<std::uint8_t>(ps2::ld32(kGatekeeperFlagsAddr + 4));
+
+    const bool is_target_combat = (mode < 2 && (flags_660080 & 4u) != 0 && (flags_660084 & 4u) == 0);
+    if (!is_target_combat) {
+        ps2::hook::unregister_hook(kHealthScalarGuestPc);
+        ps2::call(c, kHealthScalarGuestPc, 0);
+        ps2::hook::register_hook(kHealthScalarGuestPc, hook_subzero_health, "MKA_HealthDeduction");
+        return;
+    }
+
+    const float delta   = from_bits(c.f[12]);
+    const float current = from_bits(ps2::ld32(kSubZeroHealthAddr));
+    const std::uint32_t ret_addr = c.r[31].w[0];
+
+    const float new_health = armageddon::retail::apply_observed_hit_to_health(
+        current, delta, mode, flags_660080, flags_660084);
+
+    ps2::st32(kSubZeroHealthAddr, to_bits(new_health));
+
+    const std::uint32_t p2 = ps2::ld32(kPlayer2ObjPtr);
+    if (p2 != 0) {
+        const float old_acc = from_bits(ps2::ld32(p2 + 0x3dc));
+        ps2::st32(p2 + 0x3dc, to_bits(old_acc - delta));
+    }
+
+    std::fprintf(stderr, "[health] delta %.4ff applied to current %.4ff -> new %.4ff (mode=%u)\n",
+                 delta, current, new_health, mode);
+
+    c.pc = ret_addr;
+}
+
+inline void hook_pad_scanner_event(ps2::Cpu &c) {
+    const std::uint32_t channel     = c.r[4].w[0];
+    const std::uint32_t button_code = c.r[5].w[0];
+    const bool is_target_triangle = (channel == 0 && button_code == 4);
+
+    if (!is_target_triangle) {
+        ps2::hook::unregister_hook(kPadScannerGuestPc);
+        ps2::call(c, kPadScannerGuestPc, 0);
+        ps2::hook::register_hook(kPadScannerGuestPc, hook_pad_scanner_event, "MKA_PadScanner");
+        return;
+    }
+}
+
+// 4. Registration Trigger
 inline void register_mka_combat_hooks() {
+    g_combat_interception_active = true;
     ps2::hook::register_hook(kPadScannerGuestPc, hook_pad_scanner_event, "MKA_PadScanner");
     ps2::hook::register_hook(kHealthScalarGuestPc, hook_subzero_health, "MKA_HealthDeduction");
-    std::fprintf(stderr, "[mka-hooks] Combat interception armed for guest PCs 0x%08X and 0x%08X\n",
+    std::fprintf(stderr, "[mka-hooks] Combat interception armed for guest PCs 0x%08X and 0x%08X (Linker Wrappers Active)\n",
                  kPadScannerGuestPc, kHealthScalarGuestPc);
 }
 
