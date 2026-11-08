@@ -112,6 +112,7 @@ constexpr std::uint32_t kLastTickAddr         = 0x0064e0e4u;
 constexpr std::uint32_t kSubZeroHealthAddr   = 0x00660180u;
 constexpr std::uint32_t kModeWordAddr        = 0x0064dea4u;
 constexpr std::uint32_t kGatekeeperFlagsAddr = 0x00660080u;
+constexpr std::uint32_t kPlayer1ObjPtr       = 0x0066015cu;
 constexpr std::uint32_t kPlayer2ObjPtr       = 0x006601a4u;
 
 // Helper: Checks if the engine is currently in an active 1v1 combat match
@@ -120,9 +121,12 @@ constexpr std::uint32_t kPlayer2ObjPtr       = 0x006601a4u;
 inline bool is_active_combat_match() {
     const std::uint32_t mode        = ps2::ld32(kModeWordAddr);
     const std::uint8_t flags_660080 = static_cast<std::uint8_t>(ps2::ld32(kGatekeeperFlagsAddr));
-    const std::uint8_t flags_660084 = static_cast<std::uint8_t>(ps2::ld32(kGatekeeperFlagsAddr + 4));
 
-    if (!armageddon::retail::is_active_combat_mode(mode, flags_660080, flags_660084)) {
+    // Valid combat modes: mode < 2 (Arcade, Versus, Practice)
+    // and combat active gatekeeper flag bit 2 (0x04) in flags_660080.
+    // In Practice Mode, bit 2 of flags_660084 is set by the engine to lock dummy health,
+    // so we must not reject matches based on flags_660084!
+    if (mode >= 2u || (flags_660080 & 4u) == 0u) {
         return false;
     }
 
@@ -152,16 +156,19 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
     const float combo_mult = g_combo_tracker.get_damage_multiplier();
     const float effective_delta = delta * combo_mult;
 
+    const bool is_practice = ((flags_660084 & 4u) != 0u);
     // Gatekeeper: Non-standard / knockout modes (health depletion <= 0) delegate explicitly to authentic unit_0025
+    // In Practice Mode, dummy health is preserved, so allow hits without requiring depletion delta
     static std::uint64_t s_health_calls = 0;
-    const bool is_target_combat = (armageddon::retail::is_active_combat_mode(mode, flags_660080, flags_660084) &&
+    const bool is_target_combat = (mode < 2u && (flags_660080 & 4u) != 0u &&
                                    std::isfinite(current) && std::isfinite(effective_delta) &&
-                                   effective_delta < 0.0f && current > 0.0f && (current + effective_delta) > 0.0f);
+                                   effective_delta < 0.0f && current > 0.0f &&
+                                   (is_practice || (current + effective_delta) > 0.0f));
 
     if (++s_health_calls <= 25 || is_target_combat) {
-        std::fprintf(stderr, "[mka-health] invocation #%llu: mode=%u flags=0x%02X/0x%02X cur=%.4f delta=%.4f (mult=%.1fx) (%s)\n",
+        std::fprintf(stderr, "[mka-health] invocation #%llu: mode=%u flags=0x%02X/0x%02X cur=%.4f delta=%.4f (mult=%.1fx, practice=%d) (%s)\n",
                      static_cast<unsigned long long>(s_health_calls), mode, flags_660080, flags_660084,
-                     current, effective_delta, combo_mult, is_target_combat ? "intercepting" : "delegating");
+                     current, effective_delta, combo_mult, is_practice ? 1 : 0, is_target_combat ? "intercepting" : "delegating");
     }
 
     if (!is_target_combat) {
@@ -196,10 +203,15 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
         }
 
         // Standard Hit Path: Bit-cast delta and commit with IEEE-754 integrity
-        const float new_health = armageddon::retail::apply_observed_hit_to_health(
-            current, active_delta, mode, flags_660080, flags_660084);
-
-        ps2::st32(kSubZeroHealthAddr, to_bits(new_health)); // Preserves 0x3f6d288d
+        float new_health = current;
+        if (!is_practice) {
+            new_health = armageddon::retail::apply_observed_hit_to_health(
+                current, active_delta, mode, flags_660080, flags_660084);
+            ps2::st32(kSubZeroHealthAddr, to_bits(new_health)); // Preserves 0x3f6d288d
+        } else {
+            // Authentic MKA Practice Mode preserves dummy health
+            new_health = current;
+        }
 
         const std::uint32_t p2 = ps2::ld32(kPlayer2ObjPtr);
         if (p2 != 0) {
@@ -273,7 +285,12 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
             }
         }
 
-        const bool is_combo = g_combo_tracker.detect_hapkido_string();
+        const bool is_combo = g_combo_tracker.is_combo_active();
+        const float combo_scaling = g_combo_tracker.get_combo_scaling();
+        if (is_combo) {
+            std::fprintf(stderr, "[mka-combo] Combat hit registered during %u-hit combo! (applied scaling=%.0f%%)\n",
+                         g_combo_tracker.combo_hit_count(), combo_scaling * 100.0f);
+        }
         if (parried) {
             g_audio_registry.evaluate_combat_audio_state(new_health, 0.0f, false, false);
             g_camera_registry.on_combat_hit(0.0f, false, true);
@@ -335,17 +352,53 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
     // Gatekeeper 2: Intercept Player 1 combat cluster:
     // 4 (Triangle), 5 (Circle), 6 (Cross), 7 (Square), 9 (R2 Block), 10 (L1 Style Change)
     // Also intercept directional buttons (0..3) if a Kreate-A-Fatality sequence is active
+    // Direction mapping: 0 = Up, 1 = Right, 2 = Down, 3 = Left
     static std::uint64_t s_pad_events = 0;
     static std::uint32_t s_last_dir_code = 0xFFFFFFFFu;
     static std::uint32_t s_last_dir_tick = 0u;
+    static std::uint32_t s_last_fwd_tick = 0u;
+    static std::uint32_t s_dash_active_until_tick = 0u;
+
+    const std::uint32_t p1_ptr = ps2::ld32(kPlayer1ObjPtr);
+    const std::uint32_t p2_ptr = ps2::ld32(kPlayer2ObjPtr);
+    std::uint32_t fwd_code = 1u;  // default Right
+    std::uint32_t back_code = 3u; // default Left
+    float fwd_dir_sign = 1.0f;
+    if (p1_ptr >= 0x00100000u && p2_ptr >= 0x00100000u) {
+        const float p1_x = from_bits(ps2::ld32(p1_ptr + 0x50));
+        const float p2_x = from_bits(ps2::ld32(p2_ptr + 0x50));
+        if (p1_x <= p2_x) {
+            fwd_code = 1u;  // Right
+            back_code = 3u; // Left (away from opponent)
+            fwd_dir_sign = 1.0f;
+        } else {
+            fwd_code = 3u;  // Left
+            back_code = 1u; // Right (away from opponent)
+            fwd_dir_sign = -1.0f;
+        }
+    }
+
     if (channel == 0 && button_code <= 3u) {
         s_last_dir_code = button_code;
         s_last_dir_tick = tick;
+
+        // Forward double-tap dash tracking (Forward, Forward)
+        if (button_code == fwd_code || button_code == 1u) {
+            if (tick >= s_last_fwd_tick && (tick - s_last_fwd_tick) <= 25u && (tick - s_last_fwd_tick) > 0u) {
+                s_dash_active_until_tick = tick + 35u;
+                std::fprintf(stderr, "[mka-air] FORWARD DASH DETECTED at tick 0x%04X (Dash-Cancel Jump window armed for 35 frames)!\n", tick);
+            }
+            s_last_fwd_tick = tick;
+        }
     }
+
+    // Check if Up is pressed during an active dash: Dash-Cancel Jump (Forward, Forward, Up)
+    const bool is_dash_cancel_jump = (channel == 0 && button_code == 0u &&
+                                      tick <= s_dash_active_until_tick && s_dash_active_until_tick > 0u);
 
     const bool is_target_combat = (channel == 0 &&
         (button_code == 4u || button_code == 5u || button_code == 6u || button_code == 7u ||
-         button_code == 9u || button_code == 10u ||
+         button_code == 9u || button_code == 10u || is_dash_cancel_jump ||
          (g_fatality_sequencer.is_active() && button_code <= 3u)));
 
     if (++s_pad_events <= 25 || is_target_combat) {
@@ -388,12 +441,20 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
         armageddon::retail::append_pad_event(pad_ch, button_code, tick, label_addr, 0u, mapping_index);
         g_combo_tracker.record(button_code, tick);
 
-        if (g_combo_tracker.detect_hapkido_string()) {
-            std::fprintf(stderr, "[mka-combo] DETECTED HAPKIDO STRING (Square -> Triangle -> Cross) at tick 0x%04X!\n", tick);
+        // Combo string & 3+ hit combo detection with scaling and visual logs
+        const std::uint32_t combo_hits = g_combo_tracker.combo_hit_count();
+        const float combo_scaling = g_combo_tracker.get_combo_scaling();
+        const bool is_hapkido = g_combo_tracker.detect_hapkido_string();
+        const bool is_generic_combo = (combo_hits >= 3u);
+
+        if (is_hapkido || is_generic_combo) {
+            std::fprintf(stderr, "[mka-combo] %u-HIT COMBO DETECTED! (scaling=%.0f%%, mult=%.2fx%s) at tick 0x%04X!\n",
+                         combo_hits, combo_scaling * 100.0f, combo_scaling,
+                         is_hapkido ? " [Hapkido String]" : "", tick);
             g_audio_registry.evaluate_combat_audio_state(1.0f, 0.0f, true, false);
-            g_camera_registry.on_combat_hit(-0.10f, false, true);
+            g_camera_registry.on_combat_hit(-0.06f * combo_scaling, false, true);
             g_camera_registry.advance_frame();
-            g_render_bridge.trigger_camera_zoom(58.0f, armageddon::render_bridge::CameraViewportBridge::Mode::ZoomedIn);
+            g_render_bridge.trigger_camera_zoom(56.0f, armageddon::render_bridge::CameraViewportBridge::Mode::ZoomedIn);
             std::fprintf(stderr, "[mka-camera] Combo string camera pulse: FOV=%.1f, shake=%u\n",
                          g_camera_registry.matrix_buffer().latest().fov,
                          static_cast<unsigned>(g_camera_registry.shake().active_tier));
@@ -452,12 +513,15 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
         // Phase 9 Defense Matrix Processing (R2 Block = button 9)
         if (button_code == 9u) {
             const bool recent_dir = (tick >= s_last_dir_tick && (tick - s_last_dir_tick) <= 30u);
-            if (recent_dir && s_last_dir_code == 2u) { // Down + R2 -> Parry
+            const bool is_back = recent_dir && (s_last_dir_code == back_code || s_last_dir_code == 3u);
+            const bool is_forward = recent_dir && (s_last_dir_code == fwd_code || s_last_dir_code == 1u);
+
+            if (is_back) { // Back (holding away from opponent) + Block -> Parry
                 const bool opened = g_defense_matrix.try_parry_input(tick);
                 if (opened) {
-                    std::fprintf(stderr, "[mka-defense] Opened 4-frame Parry Window at tick 0x%04X (Down + R2)\n", tick);
+                    std::fprintf(stderr, "[mka-defense] Opened 4-frame Parry Window at tick 0x%04X (Back + R2 Block)\n", tick);
                 }
-            } else if (recent_dir && s_last_dir_code == 1u) { // Forward + R2 -> Breaker
+            } else if (is_forward) { // Forward + R2 -> Breaker
                 const bool broken = g_defense_matrix.try_combo_breaker(tick, true, true);
                 if (broken) {
                     std::fprintf(stderr, "[mka-defense] COMBO BREAKER TRIGGERED at tick 0x%04X! Charges remaining=%u\n",
@@ -483,16 +547,22 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
 
         // Phase 10 Air Combat Launcher & Jump Pursuit Processing
         const bool recent_up = (tick >= s_last_dir_tick && (tick - s_last_dir_tick) <= 30u && s_last_dir_code == 0u);
-        if (button_code == 7u && recent_up) { // Up + Square -> Launcher Strike
+        if (is_dash_cancel_jump) { // Dash-Cancel Super Jump (Forward, Forward, Up)
+            s_dash_active_until_tick = 0u; // consume the dash
+            g_air_combat_manager.on_jump_pursuit(tick);
+            g_air_combat_manager.p1_mutable().vx = fwd_dir_sign * 5.5f;
+            g_air_combat_manager.p1_mutable().vy = 9.5f; // massive forward-arching Super Jump
+            std::fprintf(stderr, "[mka-air] DASH-CANCEL SUPER JUMP triggered (Forward, Forward, Up) at tick 0x%04X! P1 launched in forward arch (vy=%.1fm/s, vx=%.1fm/s)\n",
+                         tick, g_air_combat_manager.p1().vy, g_air_combat_manager.p1().vx);
+            g_camera_registry.on_combat_hit(-0.05f, false, true);
+            g_camera_registry.advance_frame();
+            g_render_bridge.trigger_camera_zoom(52.0f, armageddon::render_bridge::CameraViewportBridge::Mode::Normal);
+        } else if (button_code == 7u && recent_up) { // Up + Square -> Launcher Strike
             g_air_combat_manager.on_launcher_strike(tick);
             std::fprintf(stderr, "[mka-air] LAUNCHER STRIKE at tick 0x%04X! Opponent (P2) launched into air (vy=%.1fm/s)\n",
                          tick, g_air_combat_manager.p2().vy);
             g_camera_registry.on_combat_hit(-0.08f, false, true);
             g_camera_registry.advance_frame();
-        } else if (button_code == 6u && recent_up) { // Up + Cross -> Jump Pursuit
-            g_air_combat_manager.on_jump_pursuit(tick);
-            std::fprintf(stderr, "[mka-air] JUMP PURSUIT at tick 0x%04X! P1 airborne (vy=%.1fm/s)\n",
-                         tick, g_air_combat_manager.p1().vy);
         } else if (g_air_combat_manager.p2().is_airborne() &&
                    (button_code == 4u || button_code == 5u || button_code == 7u)) {
             float air_scale = 1.0f;
@@ -508,6 +578,10 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
         if (button_code == 4u || button_code == 5u || button_code == 6u || button_code == 7u) {
             const float gain = (button_code == 4u || button_code == 5u) ? 8.0f : 5.0f;
             const bool reached_full = g_aggressor_matrix.add_meter(gain, tick);
+            const float cur_meter = g_aggressor_matrix.meter();
+            std::fprintf(stderr, "[mka-aggressor] Meter: %.1f%% (+%.1f%%) [state=%s]\n",
+                         cur_meter, gain,
+                         g_aggressor_matrix.is_awakened() ? "AWAKENED" : (reached_full ? "FULL" : "BUILDING"));
             if (reached_full) {
                 std::fprintf(stderr, "[mka-aggressor] METER FULL at tick 0x%04X! Aggressor meter reached 100.0f (Awakening ready via L1)\n", tick);
             }
@@ -603,9 +677,11 @@ inline void hook_subzero_health(ps2::Cpu &c) {
     const float combo_mult = g_combo_tracker.get_damage_multiplier();
     const float effective_delta = delta * combo_mult;
 
-    const bool is_target_combat = (armageddon::retail::is_active_combat_mode(mode, flags_660080, flags_660084) &&
+    const bool is_practice = ((flags_660084 & 4u) != 0u);
+    const bool is_target_combat = (mode < 2u && (flags_660080 & 4u) != 0u &&
                                    std::isfinite(current) && std::isfinite(effective_delta) &&
-                                   effective_delta < 0.0f && current > 0.0f && (current + effective_delta) > 0.0f);
+                                   effective_delta < 0.0f && current > 0.0f &&
+                                   (is_practice || (current + effective_delta) > 0.0f));
     if (!is_target_combat) {
         ps2::hook::unregister_hook(kHealthScalarGuestPc);
         ps2::call(c, kHealthScalarGuestPc, 0);
@@ -624,10 +700,14 @@ inline void hook_subzero_health(ps2::Cpu &c) {
             active_delta = 0.0f;
         }
 
-        const float new_health = armageddon::retail::apply_observed_hit_to_health(
-            current, active_delta, mode, flags_660080, flags_660084);
-
-        ps2::st32(kSubZeroHealthAddr, to_bits(new_health));
+        float new_health = current;
+        if (!is_practice) {
+            new_health = armageddon::retail::apply_observed_hit_to_health(
+                current, active_delta, mode, flags_660080, flags_660084);
+            ps2::st32(kSubZeroHealthAddr, to_bits(new_health));
+        } else {
+            new_health = current;
+        }
 
         const std::uint32_t p2 = ps2::ld32(kPlayer2ObjPtr);
         if (p2 != 0) {
@@ -690,7 +770,7 @@ inline void hook_subzero_health(ps2::Cpu &c) {
         }
 
         g_air_combat_manager.advance_frame(0u);
-        g_audio_registry.evaluate_combat_audio_state(new_health, effective_delta, g_combo_tracker.detect_hapkido_string(), false);
+        g_audio_registry.evaluate_combat_audio_state(new_health, effective_delta, g_combo_tracker.is_combo_active(), false);
 
         std::fprintf(stderr, "[health] delta %.4ff (mult=%.1fx) applied to current %.4ff -> new %.4ff (mode=%u)\n",
                      effective_delta, combo_mult, current, new_health, mode);
