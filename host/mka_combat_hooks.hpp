@@ -148,10 +148,11 @@ inline bool is_active_combat_match() {
     const std::uint32_t p2 = ps2::ld32(kPlayer2ObjPtr);
     const float p2_health = from_bits(ps2::ld32(kSubZeroHealthAddr));
 
-    // Valid combat modes: mode < 2 (Arcade, Versus, Practice)
-    // and combat active gatekeeper flags: bit 2 (0x04) in Arcade/Versus, or 0x42 in Practice mode.
+    // Valid combat modes: mode < 2 (Arcade, Versus), mode == 4 (Practice)
+    // and combat active gatekeeper flags: bit 2 (0x04) in Arcade/Versus, or 0x42/0x46 in Practice mode.
     // In menus/attract mode, p1/p2 objects are NULL (0) or outside RDRAM (0x00100000..0x02000000).
-    if (mode >= 2u || (flags_660080 & 0x46u) == 0u) {
+    const bool is_combat_mode = (mode < 2u || mode == 4u);
+    if (!is_combat_mode || (flags_660080 & 0x46u) == 0u) {
         return false;
     }
 
@@ -184,11 +185,11 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
     const float combo_mult = g_combo_tracker.get_damage_multiplier();
     const float effective_delta = delta * combo_mult;
 
-    const bool is_practice = ((flags_660084 & 4u) != 0u);
+    const bool is_practice = (mode == 4u) || ((flags_660084 & 4u) != 0u);
     // Gatekeeper: Non-standard / knockout modes (health depletion <= 0) delegate explicitly to authentic unit_0025
-    // In Practice Mode, dummy health is preserved, so allow hits without requiring depletion delta
+    // In Practice Mode, dummy health is preserved/reset, so allow hits without requiring depletion delta
     static std::uint64_t s_health_calls = 0;
-    const bool is_target_combat = (mode < 2u && (flags_660080 & 0x46u) != 0u &&
+    const bool is_target_combat = ((mode < 2u || mode == 4u) && (flags_660080 & 0x46u) != 0u &&
                                    std::isfinite(current) && std::isfinite(effective_delta) &&
                                    effective_delta < 0.0f && current > 0.0f &&
                                    (is_practice || (current + effective_delta) > 0.0f));
@@ -237,8 +238,15 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
                 current, active_delta, mode, flags_660080, flags_660084);
             ps2::st32(kSubZeroHealthAddr, to_bits(new_health)); // Preserves 0x3f6d288d
         } else {
-            // Authentic MKA Practice Mode preserves dummy health
-            new_health = current;
+            // Authentic MKA Practice Mode: deduct scaled damage so health bar updates,
+            // but reset to 1.0f when low (<= 0.05f) so practice dummy is never knocked out
+            float dummy_health = current + active_delta;
+            if (dummy_health <= 0.05f) {
+                dummy_health = 1.0f;
+                std::fprintf(stderr, "[mka-health] Practice dummy health reset to 1.0f\n");
+            }
+            new_health = dummy_health;
+            ps2::st32(kSubZeroHealthAddr, to_bits(new_health));
         }
 
         const std::uint32_t p2 = ps2::ld32(kPlayer2ObjPtr);
@@ -836,8 +844,8 @@ inline void hook_subzero_health(ps2::Cpu &c) {
     const float combo_mult = g_combo_tracker.get_damage_multiplier();
     const float effective_delta = delta * combo_mult;
 
-    const bool is_practice = ((flags_660084 & 4u) != 0u);
-    const bool is_target_combat = (mode < 2u && (flags_660080 & 0x46u) != 0u &&
+    const bool is_practice = (mode == 4u) || ((flags_660084 & 4u) != 0u);
+    const bool is_target_combat = ((mode < 2u || mode == 4u) && (flags_660080 & 0x46u) != 0u &&
                                    std::isfinite(current) && std::isfinite(effective_delta) &&
                                    effective_delta < 0.0f && current > 0.0f &&
                                    (is_practice || (current + effective_delta) > 0.0f));
@@ -865,7 +873,13 @@ inline void hook_subzero_health(ps2::Cpu &c) {
                 current, active_delta, mode, flags_660080, flags_660084);
             ps2::st32(kSubZeroHealthAddr, to_bits(new_health));
         } else {
-            new_health = current;
+            float dummy_health = current + active_delta;
+            if (dummy_health <= 0.05f) {
+                dummy_health = 1.0f;
+                std::fprintf(stderr, "[mka-health] Practice dummy health reset to 1.0f\n");
+            }
+            new_health = dummy_health;
+            ps2::st32(kSubZeroHealthAddr, to_bits(new_health));
         }
 
         const std::uint32_t p2 = ps2::ld32(kPlayer2ObjPtr);
