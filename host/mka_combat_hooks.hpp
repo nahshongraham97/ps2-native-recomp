@@ -11,6 +11,8 @@
 #include "../../../../include/armageddon/projectile_manager.hpp"
 #include "../../../../include/armageddon/breaker_parry_engine.hpp"
 #include "../../../../include/armageddon/air_combat_engine.hpp"
+#include "../../../../include/armageddon/aggressor_weapon_matrix.hpp"
+#include "../../../../include/armageddon/stage_transition_engine.hpp"
 #include "ps2/native_hook.hpp"
 #include "ps2/generated.hpp"
 #include "ps2/system.hpp"
@@ -66,6 +68,12 @@ inline armageddon::defense::DefenseMatrixRegistry g_defense_matrix;
 
 // Native Phase 10 Air Combat Manager (outside RDRAM)
 inline armageddon::air_combat::AirCombatManager g_air_combat_manager;
+
+// Native Phase 11 Aggressor & Weapon Awakening Matrix (outside RDRAM)
+inline armageddon::aggressor::AggressorMatrixRegistry g_aggressor_matrix;
+
+// Native Phase 12 Stage Transition & Multi-Tier Engine (outside RDRAM)
+inline armageddon::stage_transition::StageTransitionManager g_stage_transition_manager;
 
 inline void process_audio(const std::int16_t *samples, std::size_t frames) {
     if (!is_interception_enabled()) return;
@@ -148,6 +156,16 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
             active_delta = 0.0f;
         }
 
+        // Phase 11 Aggressor Light Armor Absorption
+        float armor_absorbed_dmg = 0.0f;
+        const bool armor_absorbed = (!parried && active_delta < 0.0f &&
+                                     g_aggressor_matrix.try_absorb_damage(-active_delta, armor_absorbed_dmg, 0u));
+        if (armor_absorbed) {
+            std::fprintf(stderr, "[mka-aggressor] LIGHT ARMOR ABSORPTION! Incoming strike of %.4ff reduced to %.4ff (armor remaining=%u)\n",
+                         -active_delta, armor_absorbed_dmg, g_aggressor_matrix.armor_hits_remaining());
+            active_delta = -armor_absorbed_dmg;
+        }
+
         // Standard Hit Path: Bit-cast delta and commit with IEEE-754 integrity
         const float new_health = armageddon::retail::apply_observed_hit_to_health(
             current, active_delta, mode, flags_660080, flags_660084);
@@ -196,6 +214,34 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
             if (g_air_combat_manager.p2().is_airborne()) {
                 ps2::st32(p2 + 0x54, to_bits(g_air_combat_manager.p2().y));
             }
+
+            // Phase 12 Stage Transition & Multi-Tier Breach Evaluation
+            const bool wall_breached = g_stage_transition_manager.evaluate_wall_impact(p2_x, 1.0f);
+            if (wall_breached) {
+                std::fprintf(stderr, "[mka-stage] ARENA PERIMETER BREACHED at X=%.2f! Transitioning to Freefall Tier 2\n", p2_x);
+                g_stage_transition_manager.trigger_tier_fall(1u, p2_y);
+                g_camera_registry.on_combat_hit(-0.25f, false, true);
+                g_camera_registry.advance_frame();
+            } else if (g_stage_transition_manager.is_in_transition()) {
+                const bool landed_tier2 = g_stage_transition_manager.step_fall_physics();
+                if (landed_tier2) {
+                    bool is_fatal = false;
+                    const float impact_dmg = g_stage_transition_manager.calculate_impact_damage(current, is_fatal);
+                    std::fprintf(stderr, "[mka-stage] TIER 2 IMPACT LANDING! Impact dmg=%.2ff (lethal=%d, new Tier=2)\n",
+                                 impact_dmg, is_fatal ? 1 : 0);
+                    if (is_fatal) {
+                        std::fprintf(stderr, "[mka-stage] Lethal tier drop fatality! Delegating to authentic unit_0025\n");
+                        g_audio_registry.evaluate_combat_audio_state(0.0f, -impact_dmg, false, true);
+                        g_camera_registry.on_combat_hit(-impact_dmg, true, false);
+                        g_camera_registry.advance_frame();
+                        g_fatality_sequencer.start_fatality(0u);
+                        real_unit_0025(c, 204u, depth);
+                        return;
+                    }
+                    g_camera_registry.on_combat_hit(-impact_dmg, false, true);
+                    g_camera_registry.advance_frame();
+                }
+            }
         }
 
         const bool is_combo = g_combo_tracker.detect_hapkido_string();
@@ -205,12 +251,14 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
             g_camera_registry.advance_frame();
             g_defense_matrix.advance_frame();
             g_air_combat_manager.advance_frame(0u);
+            g_aggressor_matrix.advance_frame();
         } else {
             g_audio_registry.evaluate_combat_audio_state(new_health, active_delta, is_combo, false);
             g_camera_registry.on_combat_hit(active_delta, false, is_combo);
             g_camera_registry.advance_frame();
             g_defense_matrix.advance_frame();
             g_air_combat_manager.advance_frame(0u);
+            g_aggressor_matrix.advance_frame();
         }
 
         std::fprintf(stderr, "[health] delta %.4ff (mult=%.1fx, parried=%d) applied to current %.4ff -> new %.4ff (mode=%u)\n",
@@ -366,6 +414,10 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
                         ps2::st32(p2 + 0x50, to_bits(p2_x));
                         std::fprintf(stderr, "[mka-defense] Applied Breaker knockback (+%.1fm) -> new P2 X=%.2f\n",
                                      g_defense_matrix.breaker().knockback_impulse_x, p2_x);
+                        if (g_stage_transition_manager.evaluate_wall_impact(p2_x, 1.5f, tick)) {
+                            std::fprintf(stderr, "[mka-stage] BREAKER KNOCKBACK SHATTERED PERIMETER BARRIER! (P2 X=%.2f)\n", p2_x);
+                            g_stage_transition_manager.trigger_tier_fall(1u, 0.0f, tick);
+                        }
                     }
                     g_camera_registry.on_combat_hit(-0.05f, false, true);
                     g_camera_registry.advance_frame();
@@ -392,6 +444,26 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
                 std::fprintf(stderr, "[mka-air] AERIAL STRIKE connected at tick 0x%04X! Juggle #%u (scaling=%.0f%%)\n",
                              tick, g_air_combat_manager.p2().juggle_hits, air_scale * 100.0f);
                 g_camera_registry.on_combat_hit(-0.05f * air_scale, false, true);
+                g_camera_registry.advance_frame();
+            }
+        }
+
+        // Phase 11 Aggressor Super Meter & Awakening Activation
+        if (button_code == 4u || button_code == 5u || button_code == 6u || button_code == 7u) {
+            const float gain = (button_code == 4u || button_code == 5u) ? 8.0f : 5.0f;
+            const bool reached_full = g_aggressor_matrix.add_meter(gain, tick);
+            if (reached_full) {
+                std::fprintf(stderr, "[mka-aggressor] METER FULL at tick 0x%04X! Aggressor meter reached 100.0f (Awakening ready via L1)\n", tick);
+            }
+        }
+        if (button_code == 10u && g_aggressor_matrix.is_full()) {
+            const bool awakened = g_aggressor_matrix.trigger_awakening(tick);
+            if (awakened) {
+                const bool in_weapon = (g_stance_registry.current_stance() == armageddon::special_moves::StanceType::KoriBlade);
+                const float boost = g_aggressor_matrix.evaluate_offensive_multiplier(in_weapon, tick);
+                std::fprintf(stderr, "[mka-aggressor] AWAKENING ACTIVATED at tick 0x%04X! (duration=240f, armor=2 hits, boost=%.2fx, weapon_synergy=%d)\n",
+                             tick, boost, in_weapon ? 1 : 0);
+                g_camera_registry.on_combat_hit(-0.12f, false, true);
                 g_camera_registry.advance_frame();
             }
         }
@@ -512,6 +584,36 @@ inline void hook_subzero_health(ps2::Cpu &c) {
             // Phase 10 Aerial Kinematics Synchronization (Y at p2 + 0x54)
             if (g_air_combat_manager.p2().is_airborne()) {
                 ps2::st32(p2 + 0x54, to_bits(g_air_combat_manager.p2().y));
+            }
+
+            // Phase 12 Stage Transition & Multi-Tier Breach Evaluation
+            const bool wall_breached = g_stage_transition_manager.evaluate_wall_impact(p2_x, 1.0f);
+            if (wall_breached) {
+                std::fprintf(stderr, "[mka-stage] ARENA PERIMETER BREACHED at X=%.2f! Transitioning to Freefall Tier 2\n", p2_x);
+                g_stage_transition_manager.trigger_tier_fall(1u, p2_y);
+                g_camera_registry.on_combat_hit(-0.25f, false, true);
+                g_camera_registry.advance_frame();
+            } else if (g_stage_transition_manager.is_in_transition()) {
+                const bool landed_tier2 = g_stage_transition_manager.step_fall_physics();
+                if (landed_tier2) {
+                    bool is_fatal = false;
+                    const float impact_dmg = g_stage_transition_manager.calculate_impact_damage(current, is_fatal);
+                    std::fprintf(stderr, "[mka-stage] TIER 2 IMPACT LANDING! Impact dmg=%.2ff (lethal=%d, new Tier=2)\n",
+                                 impact_dmg, is_fatal ? 1 : 0);
+                    if (is_fatal) {
+                        std::fprintf(stderr, "[mka-stage] Lethal tier drop fatality! Delegating to authentic unit_0025\n");
+                        g_audio_registry.evaluate_combat_audio_state(0.0f, -impact_dmg, false, true);
+                        g_camera_registry.on_combat_hit(-impact_dmg, true, false);
+                        g_camera_registry.advance_frame();
+                        g_fatality_sequencer.start_fatality(0u);
+                        ps2::hook::unregister_hook(kHealthScalarGuestPc);
+                        ps2::call(c, kHealthScalarGuestPc, 0);
+                        ps2::hook::register_hook(kHealthScalarGuestPc, hook_subzero_health, "MKA_HealthDeduction");
+                        return;
+                    }
+                    g_camera_registry.on_combat_hit(-impact_dmg, false, true);
+                    g_camera_registry.advance_frame();
+                }
             }
         }
 
