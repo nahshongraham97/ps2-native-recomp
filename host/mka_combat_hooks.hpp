@@ -120,6 +120,8 @@ constexpr std::uint32_t kPlayer1ObjPtr       = 0x0066015cu;
 constexpr std::uint32_t kPlayer2ObjPtr       = 0x006601a4u;
 constexpr std::uint32_t kPlayer1CharIdAddr   = 0x00660158u;
 constexpr std::uint32_t kPlayer2CharIdAddr   = 0x006601a0u;
+constexpr std::uint32_t kPlayer1MotionAddr   = 0x00660160u;
+constexpr std::uint32_t kPlayer2MotionAddr   = 0x006601a8u;
 constexpr std::uint32_t kRosterTableBaseAddr = 0x0059FE60u;
 
 // Helper: Resolve authentic uppercase character name from internal MKA table at 0x0059FE60
@@ -137,6 +139,46 @@ inline std::string get_fighter_name_from_ram(std::uint32_t char_id) {
         return std::string(buf);
     }
     return "UNKNOWN";
+}
+
+// Authentic MKA Fighter Motion & Kinematics Telemetry
+struct FighterMotionTelemetry {
+    std::uint32_t motion_ptr = 0u;
+    std::uint32_t anim_id    = 0u;
+    float phase  = 0.0f;
+    float x      = 0.0f;
+    float y      = 0.0f;
+    float z      = 0.0f;
+    float rot_y  = 0.0f;
+};
+
+inline FighterMotionTelemetry get_fighter_motion(std::uint32_t actor_ptr, std::uint32_t motion_table_addr) {
+    FighterMotionTelemetry m{};
+    std::uint32_t ptr = 0u;
+    if (actor_ptr >= 0x00100000u && actor_ptr < 0x02000000u) {
+        ptr = ps2::ld32(actor_ptr + 0x30u);
+    }
+    if (ptr < 0x00100000u || ptr >= 0x02000000u) {
+        ptr = ps2::ld32(motion_table_addr);
+    }
+    if (ptr >= 0x00100000u && ptr < 0x02000000u) {
+        m.motion_ptr = ptr;
+        m.phase   = from_bits(ps2::ld32(ptr + 0x80u));
+        m.anim_id = ps2::ld32(ptr + 0x88u);
+        m.x       = from_bits(ps2::ld32(ptr + 0xC0u));
+        m.y       = from_bits(ps2::ld32(ptr + 0xC4u));
+        m.z       = from_bits(ps2::ld32(ptr + 0xC8u));
+        m.rot_y   = from_bits(ps2::ld32(ptr + 0xF4u));
+    }
+    return m;
+}
+
+inline void set_fighter_position(std::uint32_t motion_ptr, float x, float y, float z) {
+    if (motion_ptr >= 0x00100000u && motion_ptr < 0x02000000u) {
+        ps2::st32(motion_ptr + 0xC0u, to_bits(x));
+        ps2::st32(motion_ptr + 0xC4u, to_bits(y));
+        ps2::st32(motion_ptr + 0xC8u, to_bits(z));
+    }
 }
 
 // Helper: Checks if the engine is currently in an active 1v1 combat match
@@ -249,15 +291,19 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
             ps2::st32(kSubZeroHealthAddr, to_bits(new_health));
         }
 
+        const std::uint32_t p1 = ps2::ld32(kPlayer1ObjPtr);
         const std::uint32_t p2 = ps2::ld32(kPlayer2ObjPtr);
+        auto p1_motion = get_fighter_motion(p1, kPlayer1MotionAddr);
+        auto p2_motion = get_fighter_motion(p2, kPlayer2MotionAddr);
+
         if (p2 != 0) {
             const float old_acc = from_bits(ps2::ld32(p2 + 0x3dc));
             ps2::st32(p2 + 0x3dc, to_bits(old_acc - active_delta));
 
-            // Stage Hazard Collision Check (Position at p2 + 0x50, 0x54, 0x58)
-            const float p2_x = from_bits(ps2::ld32(p2 + 0x50));
-            const float p2_y = from_bits(ps2::ld32(p2 + 0x54));
-            const float p2_z = from_bits(ps2::ld32(p2 + 0x58));
+            // Stage Hazard Collision Check (Position from authentic Motion Controller)
+            const float p2_x = p2_motion.x;
+            const float p2_y = p2_motion.y;
+            const float p2_z = p2_motion.z;
 
             auto hazard_hit = g_stage_hazard_manager.check_point_collision(p2_x, p2_y, p2_z);
             if (hazard_hit.triggered) {
@@ -277,7 +323,7 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
                 }
             }
 
-            // Phase 8 Projectile Collision Evaluation (Target at p2 + 0x50, 0x54, 0x58)
+            // Phase 8 Projectile Collision Evaluation (Target from authentic Motion Controller)
             auto proj_hit = g_projectile_manager.update_and_collide(p2_x, p2_y, p2_z, 0u);
             if (proj_hit == armageddon::projectile::ProjectileHitResult::DirectHit) {
                 const auto hit_type = g_projectile_manager.last_hit_type();
@@ -285,16 +331,15 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
                 if (hit_type == armageddon::projectile::ProjectileType::ScorpionSpear) {
                     std::fprintf(stderr, "[mka-proj] SCORPION'S SPEAR IMPALED OPPONENT! \"GET OVER HERE!\" (tether=%u frames, dmg=%.2f)\n",
                                  g_projectile_manager.target_tethered_ticks(), hit_dmg);
-                    const std::uint32_t p1 = ps2::ld32(kPlayer1ObjPtr);
                     if (p1 != 0) {
-                        const float p1_x = from_bits(ps2::ld32(p1 + 0x50));
+                        const float p1_x = p1_motion.x;
                         const float pull_target_x = (p1_x < p2_x) ? (p1_x + 1.6f) : (p1_x - 1.6f);
-                        ps2::st32(p2 + 0x50, to_bits(pull_target_x));
+                        set_fighter_position(p2_motion.motion_ptr, pull_target_x, p2_y, p2_z);
                         std::fprintf(stderr, "[mka-proj] Opponent reeled in to point-blank range -> new P2 X=%.2f\n", pull_target_x);
                     }
                 } else if (hit_type == armageddon::projectile::ProjectileType::HellfirePillar) {
                     std::fprintf(stderr, "[mka-proj] HELLFIRE PILLAR ERUPTION! Opponent engulfed in flames (dmg=%.2f)\n", hit_dmg);
-                    ps2::st32(p2 + 0x54, to_bits(2.5f));
+                    set_fighter_position(p2_motion.motion_ptr, p2_x, 2.5f, p2_z);
                 } else {
                     std::fprintf(stderr, "[mka-proj] P1's %s struck Opponent (P2)! (freeze=%u frames, dmg=%.2f)\n",
                                  armageddon::projectile::projectile_type_name(hit_type),
@@ -380,7 +425,7 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
 
         const std::uint32_t p1_id_hit = ps2::ld32(kPlayer1CharIdAddr);
         const std::uint32_t p2_id_hit = ps2::ld32(kPlayer2CharIdAddr);
-        const std::uint32_t p2_hit_anim = (p2 != 0) ? ps2::ld32(p2 + 0x3Cu) : 0u;
+        const std::uint32_t p2_hit_anim = p2_motion.anim_id;
         std::fprintf(stderr, "[mka-telemetry] HIT REGISTERED: Attacker='%s' (0x%02X) -> Target='%s' (0x%02X) Dmg=%.4f (Scale=%.0f%%) TargetAnim=0x%04X Health: %.4f -> %.4f\n",
                      get_fighter_name_from_ram(p1_id_hit).c_str(), p1_id_hit,
                      get_fighter_name_from_ram(p2_id_hit).c_str(), p2_id_hit,
@@ -428,13 +473,14 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
 
     const std::uint32_t p1_ptr = ps2::ld32(kPlayer1ObjPtr);
     const std::uint32_t p2_ptr = ps2::ld32(kPlayer2ObjPtr);
+    auto p1_motion = get_fighter_motion(p1_ptr, kPlayer1MotionAddr);
+    auto p2_motion = get_fighter_motion(p2_ptr, kPlayer2MotionAddr);
+
     std::uint32_t fwd_code = 1u;  // default Right
     std::uint32_t back_code = 3u; // default Left
     float fwd_dir_sign = 1.0f;
-    if (p1_ptr >= 0x00100000u && p2_ptr >= 0x00100000u) {
-        const float p1_x = from_bits(ps2::ld32(p1_ptr + 0x50));
-        const float p2_x = from_bits(ps2::ld32(p2_ptr + 0x50));
-        if (p1_x <= p2_x) {
+    if (p1_motion.motion_ptr != 0u && p2_motion.motion_ptr != 0u) {
+        if (p1_motion.x <= p2_motion.x) {
             fwd_code = 1u;  // Right
             back_code = 3u; // Left (away from opponent)
             fwd_dir_sign = 1.0f;
@@ -522,16 +568,14 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
 
         const std::uint32_t p1_id = ps2::ld32(kPlayer1CharIdAddr);
         const std::uint32_t p2_id = ps2::ld32(kPlayer2CharIdAddr);
-        const std::uint32_t p1_anim = (p1_ptr >= 0x00100000u) ? ps2::ld32(p1_ptr + 0x3Cu) : 0u;
-        const float p1_frame = (p1_ptr >= 0x00100000u) ? from_bits(ps2::ld32(p1_ptr + 0x40u)) : 0.0f;
-        const float cur_p1_x = (p1_ptr >= 0x00100000u) ? from_bits(ps2::ld32(p1_ptr + 0x50u)) : 0.0f;
-        const float cur_p1_y = (p1_ptr >= 0x00100000u) ? from_bits(ps2::ld32(p1_ptr + 0x54u)) : 0.0f;
-        const float cur_p1_z = (p1_ptr >= 0x00100000u) ? from_bits(ps2::ld32(p1_ptr + 0x58u)) : 0.0f;
-        const float cur_p2_x = (p2_ptr >= 0x00100000u) ? from_bits(ps2::ld32(p2_ptr + 0x50u)) : 0.0f;
+        const float cur_p1_x = p1_motion.x;
+        const float cur_p1_y = p1_motion.y;
+        const float cur_p1_z = p1_motion.z;
+        const float cur_p2_x = p2_motion.x;
 
         // Log authentic actor telemetry on every combat event
         std::fprintf(stderr, "[mka-actor] P1='%s' (0x%02X) AnimID=0x%04X Phase=%.2f Pos=(%.2f, %.2f, %.2f) Opponent='%s' (0x%02X)\n",
-                     get_fighter_name_from_ram(p1_id).c_str(), p1_id, p1_anim, p1_frame, cur_p1_x, cur_p1_y, cur_p1_z,
+                     get_fighter_name_from_ram(p1_id).c_str(), p1_id, p1_motion.anim_id, p1_motion.phase, cur_p1_x, cur_p1_y, cur_p1_z,
                      get_fighter_name_from_ram(p2_id).c_str(), p2_id);
 
         // Update Phase 14 Roster Registry Coordinator
@@ -653,9 +697,9 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
             } else if (match_2dir_motion(fwd_code, back_code, tick)) {
                 // Scorpion Hellfire Punch: Forward, Back + 4
                 g_stance_registry.trigger_special_move(armageddon::special_moves::SpecialMoveId::HellfirePunch, tick);
-                if (p1_ptr >= 0x00100000u && p2_ptr >= 0x00100000u) {
+                if (p1_motion.motion_ptr != 0u && p2_motion.motion_ptr != 0u) {
                     const float new_p1_x = cur_p2_x - fwd_dir_sign * 1.2f;
-                    ps2::st32(p1_ptr + 0x50, to_bits(new_p1_x));
+                    set_fighter_position(p1_motion.motion_ptr, new_p1_x, p1_motion.y, p1_motion.z);
                     std::fprintf(stderr, "[mka-special] SCORPION: HELLFIRE PUNCH (Forward, Back + 4) teleported behind P2 to X=%.2f!\n", new_p1_x);
                 }
                 g_camera_registry.on_combat_hit(-0.10f, false, true);
@@ -680,11 +724,9 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
                     std::fprintf(stderr, "[mka-defense] COMBO BREAKER TRIGGERED at tick 0x%04X! Charges remaining=%u\n",
                                  tick, g_defense_matrix.breaker().charges_remaining);
                     g_combo_tracker.clear();
-                    const std::uint32_t p2 = ps2::ld32(kPlayer2ObjPtr);
-                    if (p2 != 0) {
-                        float p2_x = from_bits(ps2::ld32(p2 + 0x50));
-                        p2_x += g_defense_matrix.breaker().knockback_impulse_x;
-                        ps2::st32(p2 + 0x50, to_bits(p2_x));
+                    if (p2_motion.motion_ptr != 0u) {
+                        float p2_x = cur_p2_x + g_defense_matrix.breaker().knockback_impulse_x;
+                        set_fighter_position(p2_motion.motion_ptr, p2_x, p2_motion.y, p2_motion.z);
                         std::fprintf(stderr, "[mka-defense] Applied Breaker knockback to Opponent (P2) (+%.1fm) -> new P2 X=%.2f\n",
                                      g_defense_matrix.breaker().knockback_impulse_x, p2_x);
                         if (g_stage_transition_manager.evaluate_wall_impact(p2_x, 1.5f, tick)) {
@@ -883,13 +925,17 @@ inline void hook_subzero_health(ps2::Cpu &c) {
         }
 
         const std::uint32_t p2 = ps2::ld32(kPlayer2ObjPtr);
+        const std::uint32_t p1 = ps2::ld32(kPlayer1ObjPtr);
+        auto p1_motion = get_fighter_motion(p1, kPlayer1MotionAddr);
+        auto p2_motion = get_fighter_motion(p2, kPlayer2MotionAddr);
+
         if (p2 != 0) {
             const float old_acc = from_bits(ps2::ld32(p2 + 0x3dc));
             ps2::st32(p2 + 0x3dc, to_bits(old_acc - active_delta));
 
-            const float p2_x = from_bits(ps2::ld32(p2 + 0x50));
-            const float p2_y = from_bits(ps2::ld32(p2 + 0x54));
-            const float p2_z = from_bits(ps2::ld32(p2 + 0x58));
+            const float p2_x = p2_motion.x;
+            const float p2_y = p2_motion.y;
+            const float p2_z = p2_motion.z;
 
             auto hazard_hit = g_stage_hazard_manager.check_point_collision(p2_x, p2_y, p2_z);
             if (hazard_hit.triggered && hazard_hit.is_lethal) {
@@ -906,16 +952,15 @@ inline void hook_subzero_health(ps2::Cpu &c) {
                 if (hit_type == armageddon::projectile::ProjectileType::ScorpionSpear) {
                     std::fprintf(stderr, "[mka-proj] SCORPION'S SPEAR IMPALED OPPONENT! \"GET OVER HERE!\" (tether=%u frames, dmg=%.2f)\n",
                                  g_projectile_manager.target_tethered_ticks(), hit_dmg);
-                    const std::uint32_t p1 = ps2::ld32(kPlayer1ObjPtr);
                     if (p1 != 0) {
-                        const float p1_x = from_bits(ps2::ld32(p1 + 0x50));
+                        const float p1_x = p1_motion.x;
                         const float pull_target_x = (p1_x < p2_x) ? (p1_x + 1.6f) : (p1_x - 1.6f);
-                        ps2::st32(p2 + 0x50, to_bits(pull_target_x));
+                        set_fighter_position(p2_motion.motion_ptr, pull_target_x, p2_y, p2_z);
                         std::fprintf(stderr, "[mka-proj] Opponent reeled in to point-blank range -> new P2 X=%.2f\n", pull_target_x);
                     }
                 } else if (hit_type == armageddon::projectile::ProjectileType::HellfirePillar) {
                     std::fprintf(stderr, "[mka-proj] HELLFIRE PILLAR ERUPTION! Opponent engulfed in flames (dmg=%.2f)\n", hit_dmg);
-                    ps2::st32(p2 + 0x54, to_bits(2.5f));
+                    set_fighter_position(p2_motion.motion_ptr, p2_x, 2.5f, p2_z);
                 } else {
                     std::fprintf(stderr, "[mka-proj] P1's %s struck Opponent (P2)! (freeze=%u frames, dmg=%.2f)\n",
                                  armageddon::projectile::projectile_type_name(hit_type),
