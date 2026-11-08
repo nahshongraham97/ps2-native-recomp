@@ -6,6 +6,7 @@
 #include "../../../../include/armageddon/video_stream_registry.hpp"
 #include "../../../../include/armageddon/audio_sink_registry.hpp"
 #include "../../../../include/armageddon/camera_registry.hpp"
+#include "../../../../include/armageddon/special_move_state.hpp"
 #include "ps2/native_hook.hpp"
 #include "ps2/generated.hpp"
 #include "ps2/system.hpp"
@@ -46,6 +47,9 @@ inline armageddon::audio::AudioSinkRegistry g_audio_registry;
 
 // Native Phase 5 Director's Cut Camera Registry (outside RDRAM)
 inline armageddon::camera::CameraRegistry g_camera_registry;
+
+// Native Phase 6 Special Move & Stance Registry (outside RDRAM)
+inline armageddon::special_moves::SpecialMoveRegistry g_stance_registry;
 
 inline void process_audio(const std::int16_t *samples, std::size_t frames) {
     if (!is_interception_enabled()) return;
@@ -235,6 +239,15 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
             std::fprintf(stderr, "[mka-camera] Combo string camera pulse: FOV=%.1f, shake=%u\n",
                          g_camera_registry.matrix_buffer().latest().fov,
                          static_cast<unsigned>(g_camera_registry.shake().active_tier));
+        }
+
+        // Phase 6 Stance & Special Move Processing
+        if (button_code == 10u) { // L1 Style Change / Stance Switch
+            const bool switched = g_stance_registry.on_button_press(button_code, tick);
+            if (switched) {
+                std::fprintf(stderr, "[mka-stance] Switched stance to %s (L1 at tick 0x%04X, cooldown=8f)\n",
+                             armageddon::special_moves::stance_name(g_stance_registry.current_stance()), tick);
+            }
         }
 
         ps2::st32(kWriteIndexAddr,  pad_ch.write_index);
