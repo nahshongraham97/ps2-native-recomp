@@ -149,7 +149,7 @@ Config defaults() {
     set(DpadUp, {SDL_SCANCODE_UP}), set(DpadDown, {SDL_SCANCODE_DOWN}), set(DpadLeft, {SDL_SCANCODE_LEFT}), set(DpadRight, {SDL_SCANCODE_RIGHT});
     set(LeftUp, {SDL_SCANCODE_UP}), set(LeftDown, {SDL_SCANCODE_DOWN}), set(LeftLeft, {SDL_SCANCODE_LEFT}), set(LeftRight, {SDL_SCANCODE_RIGHT});
     set(RightUp, {SDL_SCANCODE_I}), set(RightDown, {SDL_SCANCODE_K}), set(RightLeft, {SDL_SCANCODE_J}), set(RightRight, {SDL_SCANCODE_L});
-    set(Cross, {SDL_SCANCODE_Z, SDL_SCANCODE_SPACE, SDL_SCANCODE_RETURN, SDL_SCANCODE_KP_ENTER});
+    set(Cross, {SDL_SCANCODE_Z, SDL_SCANCODE_SPACE});
     set(Circle, {SDL_SCANCODE_X});
     set(Square, {SDL_SCANCODE_A});
     set(Triangle, {SDL_SCANCODE_S});
@@ -159,8 +159,8 @@ Config defaults() {
     set(R2, {SDL_SCANCODE_P});
     set(L3, {SDL_SCANCODE_B});
     set(R3, {SDL_SCANCODE_C});
-    set(Start, {SDL_SCANCODE_ESCAPE});
-    set(Select, {SDL_SCANCODE_TAB, SDL_SCANCODE_BACKSPACE});
+    set(Start, {SDL_SCANCODE_RETURN, SDL_SCANCODE_KP_ENTER, SDL_SCANCODE_ESCAPE});
+    set(Select, {SDL_SCANCODE_RSHIFT, SDL_SCANCODE_TAB, SDL_SCANCODE_BACKSPACE});
     set(Roll, {SDL_SCANCODE_LCTRL, kMouseX1});
     set(Rage, {SDL_SCANCODE_V});
     set(Help, {SDL_SCANCODE_H});

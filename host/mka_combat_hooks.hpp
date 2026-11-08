@@ -121,21 +121,25 @@ constexpr std::uint32_t kPlayer2ObjPtr       = 0x006601a4u;
 inline bool is_active_combat_match() {
     const std::uint32_t mode        = ps2::ld32(kModeWordAddr);
     const std::uint8_t flags_660080 = static_cast<std::uint8_t>(ps2::ld32(kGatekeeperFlagsAddr));
+    const std::uint32_t p2 = ps2::ld32(kPlayer2ObjPtr);
+    const float p2_health = from_bits(ps2::ld32(kSubZeroHealthAddr));
 
     // Valid combat modes: mode < 2 (Arcade, Versus, Practice)
-    // and combat active gatekeeper flag bit 2 (0x04) in flags_660080.
-    // In Practice Mode, bit 2 of flags_660084 is set by the engine to lock dummy health,
-    // so we must not reject matches based on flags_660084!
-    if (mode >= 2u || (flags_660080 & 4u) == 0u) {
+    // and combat active gatekeeper flags: bit 2 (0x04) in Arcade/Versus, or 0x42 in Practice mode.
+    // In menus/attract mode, p1/p2 objects are NULL (0) or outside RDRAM (0x00100000..0x02000000).
+    if (mode >= 2u || (flags_660080 & 0x46u) == 0u) {
         return false;
     }
 
-    const std::uint32_t p2 = ps2::ld32(kPlayer2ObjPtr);
+    const std::uint32_t p1 = ps2::ld32(kPlayer1ObjPtr);
+    if (p1 < 0x00100000u || p1 >= 0x02000000u) {
+        return false;
+    }
+
     if (p2 < 0x00100000u || p2 >= 0x02000000u) {
         return false;
     }
 
-    const float p2_health = from_bits(ps2::ld32(kSubZeroHealthAddr));
     if (!std::isfinite(p2_health) || p2_health <= 0.0f || p2_health > 1.5f) {
         return false;
     }
@@ -160,7 +164,7 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
     // Gatekeeper: Non-standard / knockout modes (health depletion <= 0) delegate explicitly to authentic unit_0025
     // In Practice Mode, dummy health is preserved, so allow hits without requiring depletion delta
     static std::uint64_t s_health_calls = 0;
-    const bool is_target_combat = (mode < 2u && (flags_660080 & 4u) != 0u &&
+    const bool is_target_combat = (mode < 2u && (flags_660080 & 0x46u) != 0u &&
                                    std::isfinite(current) && std::isfinite(effective_delta) &&
                                    effective_delta < 0.0f && current > 0.0f &&
                                    (is_practice || (current + effective_delta) > 0.0f));
@@ -772,7 +776,7 @@ inline void hook_subzero_health(ps2::Cpu &c) {
     const float effective_delta = delta * combo_mult;
 
     const bool is_practice = ((flags_660084 & 4u) != 0u);
-    const bool is_target_combat = (mode < 2u && (flags_660080 & 4u) != 0u &&
+    const bool is_target_combat = (mode < 2u && (flags_660080 & 0x46u) != 0u &&
                                    std::isfinite(current) && std::isfinite(effective_delta) &&
                                    effective_delta < 0.0f && current > 0.0f &&
                                    (is_practice || (current + effective_delta) > 0.0f));
