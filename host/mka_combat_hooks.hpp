@@ -487,29 +487,29 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
     auto p1_motion = get_fighter_motion(p1_ptr, kPlayer1MotionAddr);
     auto p2_motion = get_fighter_motion(p2_ptr, kPlayer2MotionAddr);
 
-    std::uint32_t fwd_code = 1u;  // default Right
-    std::uint32_t back_code = 3u; // default Left
+    std::uint32_t fwd_code = 13u;  // default Right
+    std::uint32_t back_code = 15u; // default Left
     float fwd_dir_sign = 1.0f;
     if (p1_motion.motion_ptr != 0u && p2_motion.motion_ptr != 0u) {
         if (p1_motion.x <= p2_motion.x) {
-            fwd_code = 1u;  // Right
-            back_code = 3u; // Left (away from opponent)
+            fwd_code = 13u;  // Right
+            back_code = 15u; // Left (away from opponent)
             fwd_dir_sign = 1.0f;
         } else {
-            fwd_code = 3u;  // Left
-            back_code = 1u; // Right (away from opponent)
+            fwd_code = 15u;  // Left
+            back_code = 13u; // Right (away from opponent)
             fwd_dir_sign = -1.0f;
         }
     }
 
-    if (channel == 0 && button_code <= 3u) {
+    if (channel == 0 && (button_code >= 12u && button_code <= 15u)) {
         s_last_dir_code = button_code;
         s_last_dir_tick = tick;
         s_dir_history[s_dir_total % s_dir_history.size()] = { button_code, tick };
         ++s_dir_total;
 
         // Forward double-tap dash tracking (Forward, Forward)
-        if (button_code == fwd_code || button_code == 1u) {
+        if (button_code == fwd_code || button_code == 13u) {
             if (tick >= s_last_fwd_tick && (tick - s_last_fwd_tick) <= 25u && (tick - s_last_fwd_tick) > 0u) {
                 s_dash_active_until_tick = tick + 35u;
                 std::fprintf(stderr, "[mka-air] FORWARD DASH DETECTED at tick 0x%04X (Dash-Cancel Jump window armed for 35 frames)!\n", tick);
@@ -528,14 +528,44 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
         return (last1.code == d1 && last0.code == d2);
     };
 
+    auto match_3dir_motion = [&](std::uint32_t d1, std::uint32_t d2, std::uint32_t d3, std::uint32_t cur_tick, std::uint32_t window = 45u) -> bool {
+        if (s_dir_total < 3u) return false;
+        const auto &last0 = s_dir_history[(s_dir_total - 1u) % s_dir_history.size()];
+        const auto &last1 = s_dir_history[(s_dir_total - 2u) % s_dir_history.size()];
+        const auto &last2 = s_dir_history[(s_dir_total - 3u) % s_dir_history.size()];
+        if (cur_tick < last0.tick || (cur_tick - last0.tick) > window) return false;
+        if (last0.tick < last1.tick || (last0.tick - last1.tick) > 35u) return false;
+        if (last1.tick < last2.tick || (last1.tick - last2.tick) > 35u) return false;
+        return (last2.code == d1 && last1.code == d2 && last0.code == d3);
+    };
+
+    auto get_dir_label = [&](std::uint32_t code) -> const char* {
+        if (code == 12u) return "Up";
+        if (code == 14u) return "Down";
+        if (code == fwd_code) return "Forward";
+        if (code == back_code) return "Back";
+        return "?";
+    };
+
+    auto get_attack_label = [](std::uint32_t code) -> const char* {
+        switch (code) {
+            case 7u: return "1";
+            case 4u: return "2";
+            case 6u: return "3";
+            case 5u: return "4";
+            default: return "?";
+        }
+    };
+
     // Check if Up is pressed during an active dash: Dash-Cancel Jump (Forward, Forward, Up)
-    const bool is_dash_cancel_jump = (channel == 0 && button_code == 0u &&
+    const bool is_dash_cancel_jump = (channel == 0 && button_code == 12u &&
                                       tick <= s_dash_active_until_tick && s_dash_active_until_tick > 0u);
 
     const bool is_target_combat = (channel == 0 &&
         (button_code == 4u || button_code == 5u || button_code == 6u || button_code == 7u ||
+         button_code == 1u || button_code == 2u || button_code == 3u ||
          button_code == 9u || button_code == 10u || is_dash_cancel_jump ||
-         (g_fatality_sequencer.is_active() && button_code <= 3u)));
+         (button_code >= 12u && button_code <= 15u)));
 
     if (++s_pad_events <= 25 || is_target_combat) {
         const auto btn_enum = armageddon::retail::to_combat_button(button_code);
@@ -623,11 +653,11 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
         // Update Phase 14 Roster Registry Coordinator
         g_roster_coordinator.trigger_fighter_switch(tick, static_cast<uint8_t>(p1_id));
 
-        // Combo string & 3+ hit combo detection with scaling and visual logs
+        // Combo string & 2+ hit combo detection with scaling and visual logs
         const std::uint32_t combo_hits = g_combo_tracker.combo_hit_count();
         const float combo_scaling = g_combo_tracker.get_combo_scaling();
         const bool is_hapkido = g_combo_tracker.detect_hapkido_string();
-        const bool is_generic_combo = (combo_hits >= 3u);
+        const bool is_generic_combo = (combo_hits >= 2u);
 
         if (is_hapkido || is_generic_combo) {
             std::fprintf(stderr, "[mka-combo] %u-HIT COMBO DETECTED! (scaling=%.0f%%, mult=%.2fx%s) at tick 0x%04X!\n",
@@ -643,7 +673,7 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
         }
 
         // Phase 6 Stance & Special Move Processing
-        if (button_code == 10u) { // L1 Style Change / Stance Switch
+        if (button_code == 2u || button_code == 10u) { // L1 Style Change / Stance Switch
             const bool switched = g_stance_registry.on_button_press(button_code, tick);
             if (switched) {
                 const auto st = g_stance_registry.current_stance();
@@ -679,11 +709,13 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
         }
 
         // Phase 8 Authentic Special Move & Projectile Spawning
-        const std::uint32_t down_code = 2u;
-        const std::uint32_t up_code = 0u;
+        const std::uint32_t down_code = 14u;
+        const std::uint32_t up_code = 12u;
+        bool special_handled = false;
+        const std::string p1_name_str = get_fighter_name_from_ram(p1_id);
 
         if (button_code == 7u) { // Square (Attack 1)
-            if (match_2dir_motion(back_code, fwd_code, tick)) {
+            if (p1_id == 0x30u && match_2dir_motion(back_code, fwd_code, tick)) {
                 // Scorpion Bloody Spear: Back, Forward + 1
                 g_stance_registry.trigger_special_move(armageddon::special_moves::SpecialMoveId::BloodySpear, tick);
                 g_projectile_manager.spawn_scorpion_spear(armageddon::projectile::Vec3::create(cur_p1_x, 1.2f, 0.0f), fwd_dir_sign);
@@ -692,15 +724,33 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
                 g_audio_registry.evaluate_combat_audio_state(1.0f, -0.09f, false, false);
                 g_camera_registry.on_combat_hit(-0.09f, false, true);
                 g_camera_registry.advance_frame();
-            } else if (match_2dir_motion(down_code, back_code, tick)) {
+                special_handled = true;
+            } else if (p1_id == 0x3Bu && match_2dir_motion(down_code, back_code, tick)) {
                 // Sub-Zero Ice Clone: Down, Back + 1
                 g_stance_registry.trigger_special_move(armageddon::special_moves::SpecialMoveId::IceClone, tick);
                 g_projectile_manager.spawn_ice_clone(armageddon::projectile::Vec3::create(cur_p1_x, 0.8f, 0.0f));
                 g_render_bridge.spawn_entity(armageddon::render_bridge::EntityPoolBridge::EntityType::IceClone, cur_p1_x, 0.8f, 0.0f);
                 std::fprintf(stderr, "[mka-special] SUB-ZERO: ICE CLONE (Down, Back + 1) deployed at tick 0x%04X!\n", tick);
+                special_handled = true;
+            } else if (p1_id == 0x2Eu && match_2dir_motion(back_code, fwd_code, tick)) {
+                // Reptile Acid Spit: Back, Forward + 1
+                std::fprintf(stderr, "[mka-special] REPTILE: ACID SPIT (Back, Forward + 1) spit at tick 0x%04X!\n", tick);
+                special_handled = true;
+            } else if (p1_id == 0x2Cu && match_2dir_motion(back_code, fwd_code, tick)) {
+                // Rain Water Blast: Back, Forward + 1
+                std::fprintf(stderr, "[mka-special] RAIN: WATER BLAST (Back, Forward + 1) unleashed at tick 0x%04X!\n", tick);
+                special_handled = true;
+            } else if (p1_id == 0x0Cu && match_2dir_motion(down_code, back_code, tick)) {
+                // Ermac Hado-Energy: Down, Back + 1
+                std::fprintf(stderr, "[mka-special] ERMAC: HADO-ENERGY (Down, Back + 1) fired at tick 0x%04X!\n", tick);
+                special_handled = true;
+            } else if (p1_id == 0x05u && match_2dir_motion(down_code, back_code, tick)) {
+                // Chameleon Green Wave: Down, Back + 1
+                std::fprintf(stderr, "[mka-special] CHAMELEON: GREEN WAVE (Down, Back + 1) projected at tick 0x%04X!\n", tick);
+                special_handled = true;
             }
         } else if (button_code == 4u) { // Triangle (Attack 2)
-            if (match_2dir_motion(down_code, back_code, tick)) {
+            if (p1_id == 0x30u && match_2dir_motion(down_code, back_code, tick)) {
                 // Scorpion Hellfire: Down, Back + 2
                 g_stance_registry.trigger_special_move(armageddon::special_moves::SpecialMoveId::Hellfire, tick);
                 g_projectile_manager.spawn_hellfire_pillar(armageddon::projectile::Vec3::create(cur_p2_x, 0.0f, 0.0f));
@@ -709,34 +759,75 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
                 g_audio_registry.evaluate_combat_audio_state(1.0f, -0.11f, false, false);
                 g_camera_registry.on_combat_hit(-0.11f, false, true);
                 g_camera_registry.advance_frame();
-            } else if (match_2dir_motion(down_code, up_code, tick)) {
+                special_handled = true;
+            } else if (p1_id == 0x3Bu && match_2dir_motion(down_code, up_code, tick)) {
                 // Sub-Zero Icy Pillar / Tombstone: Down, Up + 2
                 g_stance_registry.trigger_special_move(armageddon::special_moves::SpecialMoveId::TombstoneTeleport, tick);
                 std::fprintf(stderr, "[mka-special] SUB-ZERO: ICY PILLAR / TOMBSTONE TELEPORT (Down, Up + 2) at tick 0x%04X!\n", tick);
+                special_handled = true;
+            } else if (p1_id == 0x2Eu && match_2dir_motion(up_code, down_code, tick)) {
+                // Reptile Chameleon: Up, Down + 2
+                std::fprintf(stderr, "[mka-special] REPTILE: CHAMELEON INVISIBILITY (Up, Down + 2) at tick 0x%04X!\n", tick);
+                special_handled = true;
+            } else if (p1_id == 0x2Cu && match_2dir_motion(down_code, up_code, tick)) {
+                // Rain Shocking Bolt: Down, Up + 2
+                std::fprintf(stderr, "[mka-special] RAIN: SHOCKING BOLT (Down, Up + 2) called down at tick 0x%04X!\n", tick);
+                special_handled = true;
+            } else if (p1_id == 0x0Cu && match_2dir_motion(fwd_code, back_code, tick)) {
+                // Ermac Telekinetic Throw: Forward, Back + 2
+                std::fprintf(stderr, "[mka-special] ERMAC: TELEKINETIC THROW (Forward, Back + 2) grabbed at tick 0x%04X!\n", tick);
+                special_handled = true;
+            } else if (p1_id == 0x05u && match_2dir_motion(down_code, up_code, tick)) {
+                // Chameleon Lizard Lightning: Down, Up + 2
+                std::fprintf(stderr, "[mka-special] CHAMELEON: LIZARD LIGHTNING (Down, Up + 2) shocked at tick 0x%04X!\n", tick);
+                special_handled = true;
             }
         } else if (button_code == 6u) { // Cross (Attack 3)
-            if (match_2dir_motion(down_code, fwd_code, tick)) {
+            if (p1_id == 0x3Bu && match_2dir_motion(down_code, fwd_code, tick)) {
                 // Sub-Zero Freeze Ball: Down, Forward + 3
                 g_stance_registry.trigger_special_move(armageddon::special_moves::SpecialMoveId::FreezeBall, tick);
                 g_projectile_manager.spawn_freeze_ball(armageddon::projectile::Vec3::create(cur_p1_x, 1.2f, 0.0f), fwd_dir_sign);
                 g_render_bridge.spawn_entity(armageddon::render_bridge::EntityPoolBridge::EntityType::FreezeBall, cur_p1_x, 1.2f, 0.0f);
                 std::fprintf(stderr, "[mka-special] SUB-ZERO: FREEZE BALL (Down, Forward + 3) hurled at tick 0x%04X!\n", tick);
-            } else if (match_2dir_motion(fwd_code, back_code, tick)) {
+                special_handled = true;
+            } else if (p1_id == 0x30u && match_2dir_motion(fwd_code, back_code, tick)) {
                 // Scorpion Backflip Kick: Forward, Back + 3
                 g_stance_registry.trigger_special_move(armageddon::special_moves::SpecialMoveId::BackflipKick, tick);
                 std::fprintf(stderr, "[mka-special] SCORPION: BACKFLIP KICK (Forward, Back + 3) executed at tick 0x%04X!\n", tick);
                 g_air_combat_manager.p1_mutable().vy = 6.0f;
                 g_camera_registry.on_combat_hit(-0.08f, false, true);
                 g_camera_registry.advance_frame();
+                special_handled = true;
+            } else if (p1_id == 0x2Eu && match_2dir_motion(back_code, fwd_code, tick)) {
+                // Reptile Running Serpent: Back, Forward + 3
+                std::fprintf(stderr, "[mka-special] REPTILE: RUNNING SERPENT (Back, Forward + 3) rushed at tick 0x%04X!\n", tick);
+                special_handled = true;
+            } else if (p1_id == 0x2Cu && match_2dir_motion(up_code, down_code, tick)) {
+                // Rain Mystic Vapors: Up, Down + 3
+                std::fprintf(stderr, "[mka-special] RAIN: MYSTIC VAPORS (Up, Down + 3) vanished at tick 0x%04X!\n", tick);
+                special_handled = true;
+            } else if (p1_id == 0x0Cu && match_2dir_motion(down_code, up_code, tick)) {
+                // Ermac Mystic Float: Down, Up + 3
+                std::fprintf(stderr, "[mka-special] ERMAC: MYSTIC FLOAT (Down, Up + 3) levitated at tick 0x%04X!\n", tick);
+                special_handled = true;
+            } else if (p1_id == 0x05u && match_2dir_motion(back_code, fwd_code, tick)) {
+                // Chameleon Speedy Serpent: Back, Forward + 3
+                std::fprintf(stderr, "[mka-special] CHAMELEON: SPEEDY SERPENT (Back, Forward + 3) charged at tick 0x%04X!\n", tick);
+                special_handled = true;
+            } else if (p1_id == 0x05u && match_2dir_motion(down_code, back_code, tick)) {
+                // Chameleon Vanishing Kick: Down, Back + 3
+                std::fprintf(stderr, "[mka-special] CHAMELEON: VANISHING KICK (Down, Back + 3) executed at tick 0x%04X!\n", tick);
+                special_handled = true;
             }
         } else if (button_code == 5u) { // Circle (Attack 4)
-            if (match_2dir_motion(back_code, fwd_code, tick)) {
+            if (p1_id == 0x3Bu && match_2dir_motion(back_code, fwd_code, tick)) {
                 // Sub-Zero Cold Shoulder: Back, Forward + 4
                 g_stance_registry.trigger_special_move(armageddon::special_moves::SpecialMoveId::ColdShoulder, tick);
                 std::fprintf(stderr, "[mka-special] SUB-ZERO: COLD SHOULDER (Back, Forward + 4) executed at tick 0x%04X!\n", tick);
                 g_camera_registry.on_combat_hit(-0.12f, false, true);
                 g_camera_registry.advance_frame();
-            } else if (match_2dir_motion(fwd_code, back_code, tick)) {
+                special_handled = true;
+            } else if (p1_id == 0x30u && match_2dir_motion(fwd_code, back_code, tick)) {
                 // Scorpion Hellfire Punch: Forward, Back + 4
                 g_stance_registry.trigger_special_move(armageddon::special_moves::SpecialMoveId::HellfirePunch, tick);
                 if (p1_motion.motion_ptr != 0u && p2_motion.motion_ptr != 0u) {
@@ -746,14 +837,57 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
                 }
                 g_camera_registry.on_combat_hit(-0.10f, false, true);
                 g_camera_registry.advance_frame();
+                special_handled = true;
+            } else if (p1_id == 0x2Eu && match_2dir_motion(down_code, back_code, tick)) {
+                // Reptile Rolling Spikes: Down, Back + 4
+                std::fprintf(stderr, "[mka-special] REPTILE: ROLLING SPIKES (Down, Back + 4) tumbled at tick 0x%04X!\n", tick);
+                special_handled = true;
+            } else if (p1_id == 0x2Cu && match_2dir_motion(back_code, fwd_code, tick)) {
+                // Rain Windy Feet: Back, Forward + 4
+                std::fprintf(stderr, "[mka-special] RAIN: WINDY FEET (Back, Forward + 4) propelled at tick 0x%04X!\n", tick);
+                special_handled = true;
+            } else if (p1_id == 0x0Cu && (match_3dir_motion(back_code, down_code, back_code, tick) || match_2dir_motion(down_code, back_code, tick))) {
+                // Ermac Tele-Kinetic Slam: Back, Down, Back + 4
+                std::fprintf(stderr, "[mka-special] ERMAC: TELE-KINETIC SLAM (Back, Down, Back + 4) slammed opponent at tick 0x%04X!\n", tick);
+                special_handled = true;
+            } else if (p1_id == 0x05u && match_2dir_motion(back_code, fwd_code, tick)) {
+                // Chameleon Freezing Charge: Back, Forward + 4
+                std::fprintf(stderr, "[mka-special] CHAMELEON: FREEZING CHARGE (Back, Forward + 4) dashed at tick 0x%04X!\n", tick);
+                special_handled = true;
             }
         }
 
-        // Phase 9 Defense Matrix Processing (R2 Block = button 9)
-        if (button_code == 9u) {
+        // Generic special detection for any fighter across the whole roster
+        if (!special_handled && (button_code == 4u || button_code == 5u || button_code == 6u || button_code == 7u)) {
+            if (s_dir_total >= 3u) {
+                const auto &l0 = s_dir_history[(s_dir_total - 1u) % s_dir_history.size()];
+                const auto &l1 = s_dir_history[(s_dir_total - 2u) % s_dir_history.size()];
+                const auto &l2 = s_dir_history[(s_dir_total - 3u) % s_dir_history.size()];
+                if (tick >= l0.tick && (tick - l0.tick) <= 45u &&
+                    l0.tick >= l1.tick && (l0.tick - l1.tick) <= 35u &&
+                    l1.tick >= l2.tick && (l1.tick - l2.tick) <= 35u) {
+                    std::fprintf(stderr, "[mka-special] %s: SPECIAL MOVE (%s, %s, %s + %s) executed at tick 0x%04X!\n",
+                                 p1_name_str.c_str(), get_dir_label(l2.code), get_dir_label(l1.code), get_dir_label(l0.code), get_attack_label(button_code), tick);
+                    special_handled = true;
+                }
+            }
+            if (!special_handled && s_dir_total >= 2u) {
+                const auto &l0 = s_dir_history[(s_dir_total - 1u) % s_dir_history.size()];
+                const auto &l1 = s_dir_history[(s_dir_total - 2u) % s_dir_history.size()];
+                if (tick >= l0.tick && (tick - l0.tick) <= 45u &&
+                    l0.tick >= l1.tick && (l0.tick - l1.tick) <= 35u) {
+                    std::fprintf(stderr, "[mka-special] %s: SPECIAL MOVE (%s, %s + %s) executed at tick 0x%04X!\n",
+                                 p1_name_str.c_str(), get_dir_label(l1.code), get_dir_label(l0.code), get_attack_label(button_code), tick);
+                    special_handled = true;
+                }
+            }
+        }
+
+        // Phase 9 Defense Matrix Processing (R2 Block = button 1 or legacy 9)
+        if (button_code == 1u || button_code == 9u) {
             const bool recent_dir = (tick >= s_last_dir_tick && (tick - s_last_dir_tick) <= 30u);
-            const bool is_back = recent_dir && (s_last_dir_code == back_code || s_last_dir_code == 3u);
-            const bool is_forward = recent_dir && (s_last_dir_code == fwd_code || s_last_dir_code == 1u);
+            const bool is_back = recent_dir && (s_last_dir_code == back_code || s_last_dir_code == 15u || s_last_dir_code == 3u);
+            const bool is_forward = recent_dir && (s_last_dir_code == fwd_code || s_last_dir_code == 13u || s_last_dir_code == 1u);
 
             if (is_back) { // Back (holding away from opponent) + Block -> Parry
                 const bool opened = g_defense_matrix.try_parry_input(tick);
@@ -835,26 +969,10 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
             }
         }
 
-        ps2::st32(kWriteIndexAddr,  pad_ch.write_index);
-        ps2::st32(kRecentIndexAddr, pad_ch.recent_index);
-        ps2::st32(kLastTickAddr,    pad_ch.last_event_tick);
-
-        const std::uint32_t write_record_addr = kRingBufferAddr + (pad_ch.write_index * 20);
-        const auto &rec = pad_ch.records[pad_ch.write_index];
-        ps2::st32(write_record_addr + 0,  rec.code);
-        ps2::st32(write_record_addr + 4,  rec.tick);
-        ps2::st32(write_record_addr + 8,  rec.label_address);
-        ps2::st32(write_record_addr + 12, rec.context);
-        ps2::st32(write_record_addr + 16, rec.mapping_index);
-
-        const std::uint32_t recent_entry_addr = kRecentRingAddr + (pad_ch.recent_index * 4);
-        ps2::st32(recent_entry_addr, pad_ch.recent_mappings[pad_ch.recent_index]);
-
-        std::fprintf(stderr, "[ring] write_index advanced from %u to %u (tick=0x%04X, button=%u [%s])\n",
-                     prev_index, pad_ch.write_index, tick, button_code,
-                     armageddon::retail::combat_button_name(armageddon::retail::to_combat_button(button_code)));
-
-        c.pc = ret_addr; // Clean unwind to caller RA (0x001638E8)
+        // Pass control to authentic retail MKA combat input dispatcher (unit_0018 @ entry 309u / 0x00162E70)
+        // This ensures the authentic Midway combat engine executes move selection, dial-a-combos, and specials!
+        real_unit_0018(c, 309u, depth);
+        return;
     } catch (const std::exception &e) {
         std::fprintf(stderr, "[mka-pad] delegated on exception (%s)\n", e.what());
         real_unit_0018(c, 309u, depth);
@@ -1065,7 +1183,9 @@ inline void hook_pad_scanner_event(ps2::Cpu &c) {
     const std::uint32_t button_code = c.r[5].w[0];
     const bool is_target_combat = (is_active_combat_match() && channel == 0 &&
         (button_code == 4u || button_code == 5u || button_code == 6u || button_code == 7u ||
-         button_code == 9u || button_code == 10u));
+         button_code == 1u || button_code == 2u || button_code == 3u ||
+         button_code == 9u || button_code == 10u ||
+         (button_code >= 12u && button_code <= 15u)));
 
     if (!is_target_combat) {
         ps2::hook::unregister_hook(kPadScannerGuestPc);
@@ -1079,10 +1199,9 @@ inline void hook_pad_scanner_event(ps2::Cpu &c) {
 inline void register_mka_combat_hooks() {
     g_combat_interception_active = true;
     g_stance_registry.set_active_fighter(armageddon::special_moves::FighterId::Scorpion);
-    ps2::hook::register_hook(kPadScannerGuestPc, hook_pad_scanner_event, "MKA_PadScanner");
     ps2::hook::register_hook(kHealthScalarGuestPc, hook_subzero_health, "MKA_HealthDeduction");
-    std::fprintf(stderr, "[mka-hooks] Combat interception armed for guest PCs 0x%08X and 0x%08X (Linker Wrappers Active, P1=Scorpion)\n",
-                 kPadScannerGuestPc, kHealthScalarGuestPc);
+    std::fprintf(stderr, "[mka-hooks] Combat telemetry armed for guest PC 0x%08X (Linker Wrappers Active)\n",
+                 kHealthScalarGuestPc);
 }
 
 } // namespace mka::combat
