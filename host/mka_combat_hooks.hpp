@@ -312,14 +312,22 @@ inline void handle_subzero_health(ps2::Cpu &c, std::uint32_t depth,
                              hazard_hit.total_damage, hazard_hit.is_lethal);
 
                 if (hazard_hit.is_lethal) {
-                    std::fprintf(stderr, "[mka-hazard] Lethal deathtrap fatality [%s]! Delegating to authentic unit_0025\n",
-                                 hazard_hit.fatality_cinematic_name.c_str());
-                    g_audio_registry.evaluate_combat_audio_state(0.0f, effective_delta, false, true);
-                    g_camera_registry.on_combat_hit(effective_delta, true, false);
-                    g_camera_registry.advance_frame();
-                    g_fatality_sequencer.start_fatality(0u);
-                    real_unit_0025(c, 204u, depth);
-                    return;
+                    if (is_practice) {
+                        std::fprintf(stderr, "[mka-hazard-interrupted] Practice Mode: Intercepted lethal %s at (%.1f, %.1f, %.1f)! Recovering dummy\n",
+                                     hazard_hit.hazard_name.c_str(), p2_x, p2_y, p2_z);
+                        new_health = 1.0f;
+                        set_fighter_position(p1_motion.motion_ptr, -0.55f, p1_motion.y, p1_motion.z);
+                        set_fighter_position(p2_motion.motion_ptr, +0.55f, p1_motion.y, p1_motion.z);
+                    } else {
+                        std::fprintf(stderr, "[mka-hazard] Lethal deathtrap fatality [%s]! Delegating to authentic unit_0025\n",
+                                     hazard_hit.fatality_cinematic_name.c_str());
+                        g_audio_registry.evaluate_combat_audio_state(0.0f, effective_delta, false, true);
+                        g_camera_registry.on_combat_hit(effective_delta, true, false);
+                        g_camera_registry.advance_frame();
+                        g_fatality_sequencer.start_fatality(0u);
+                        real_unit_0025(c, 204u, depth);
+                        return;
+                    }
                 }
             }
 
@@ -597,7 +605,15 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
         if (is_practice_mode && channel == 0u && button_code != 10u && p2_motion.motion_ptr != 0u) {
             if (button_code >= 4u && button_code <= 11u) {
                 if (p1_p2_dist > 1.25f || p1_p2_dist < 0.65f || (cur_p2_x < cur_p1_x)) {
-                    const float snap_p2_x = cur_p1_x + 1.10f;
+                    float snap_p2_x = cur_p1_x + 1.10f;
+                    // Hazard boundary safety check:
+                    // If snapping to snap_p2_x would intersect a stage hazard or stage edge,
+                    // center both fighters in the safe fighting ring floor away from hazards.
+                    auto hz_check = g_stage_hazard_manager.check_point_collision(snap_p2_x, cur_p1_y, cur_p1_z);
+                    if (hz_check.triggered || std::abs(snap_p2_x) > 8.0f) {
+                        set_fighter_position(p1_motion.motion_ptr, -0.55f, cur_p1_y, cur_p1_z);
+                        snap_p2_x = +0.55f;
+                    }
                     set_fighter_position(p2_motion.motion_ptr, snap_p2_x, cur_p1_y, cur_p1_z);
                     std::fprintf(stderr, "[mka-practice-snap] Aligned dummy P2 to strike range (Dist: %.2f -> 1.10, X=%.2f)\n", p1_p2_dist, snap_p2_x);
                 }
