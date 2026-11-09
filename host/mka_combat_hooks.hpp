@@ -585,6 +585,25 @@ inline void handle_pad_event(ps2::Cpu &c, std::uint32_t depth,
                      get_fighter_name_from_ram(p1_id).c_str(), p1_id, p1_motion.anim_id, p1_motion.phase, cur_p1_x, cur_p1_y, cur_p1_z,
                      p1_p2_dist, get_fighter_name_from_ram(p2_id).c_str(), p2_id);
 
+        // Practice Mode Strike Alignment:
+        // Automatically align training dummy (P2) to point-blank striking range (1.10f)
+        // on P1's right side whenever an attack, combo, or special is initiated.
+        // This eliminates whiffing caused by throws, knockback drift, teleports, or side-swaps,
+        // and guarantees all chained dial-a-combo hits connect reliably!
+        const std::uint32_t current_mode = ps2::ld32(kModeWordAddr);
+        const std::uint32_t current_flags_84 = ps2::ld32(kGatekeeperFlagsAddr + 4);
+        const bool is_practice_mode = (current_mode == 4u) || ((current_flags_84 & 4u) != 0u);
+
+        if (is_practice_mode && channel == 0u && button_code != 10u && p2_motion.motion_ptr != 0u) {
+            if (button_code >= 4u && button_code <= 11u) {
+                if (p1_p2_dist > 1.25f || p1_p2_dist < 0.65f || (cur_p2_x < cur_p1_x)) {
+                    const float snap_p2_x = cur_p1_x + 1.10f;
+                    set_fighter_position(p2_motion.motion_ptr, snap_p2_x, cur_p1_y, cur_p1_z);
+                    std::fprintf(stderr, "[mka-practice-snap] Aligned dummy P2 to strike range (Dist: %.2f -> 1.10, X=%.2f)\n", p1_p2_dist, snap_p2_x);
+                }
+            }
+        }
+
         // Update Phase 14 Roster Registry Coordinator
         g_roster_coordinator.trigger_fighter_switch(tick, static_cast<uint8_t>(p1_id));
 
