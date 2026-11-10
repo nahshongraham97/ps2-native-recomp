@@ -6,15 +6,21 @@
 #include "spu2.hpp"
 #include "../load_stats.hpp"
 
+#include "ps2/os.hpp"
 #include "ps2/state.hpp"
 
 #include <algorithm>
+#include <cctype>
 #include <cstdio>
 #include <deque>
+#include <filesystem>
+#include <fstream>
+#include <iomanip>
 #include <map>
 #include <memory>
 #include <queue>
 #include <set>
+#include <sstream>
 #include <stdexcept>
 
 namespace ps2::iop {
@@ -59,6 +65,8 @@ std::map<std::pair<std::string, std::uint32_t>, std::uint32_t> g_hle_ids;
 std::vector<std::pair<std::uint32_t, std::uint32_t>> g_hle_stubs;
 std::map<std::string, std::uint32_t> g_hle_versions;
 std::map<std::string, std::uint32_t> g_libraries;
+// Host-compiled module replacements are process configuration, not guest IOP
+// state. Keep them registered across kernel::boot()/iop::reset().
 std::map<std::string, HleModuleStart> g_hle_modules;
 std::map<int, Module> g_modules;
 int g_next_module = 1;
@@ -239,6 +247,125 @@ std::string module_name_of(const std::string &path) {
     if (dot != std::string::npos) name = name.substr(0, dot);
     for (char &ch : name) ch = static_cast<char>(std::toupper(static_cast<unsigned char>(ch)));
     return name;
+}
+
+bool iop_module_name_from_elf(const std::vector<std::uint8_t> &data, std::string &name) {
+    // This intentionally reads only enough of a little-endian ELF32 program
+    // header table to identify its IOPMOD record. It does not load or execute
+    // guest code, and bounds-checks every offset before reading it.
+    if (data.size() < 52 || std::memcmp(data.data(), "\x7f" "ELF", 4) != 0 || data[4] != 1 || data[5] != 1) return false;
+    const auto u16 = [&data](std::size_t at) -> std::uint16_t {
+        return static_cast<std::uint16_t>(data[at]) | (static_cast<std::uint16_t>(data[at + 1]) << 8);
+    };
+    const auto u32 = [&data](std::size_t at) -> std::uint32_t {
+        return static_cast<std::uint32_t>(data[at]) | (static_cast<std::uint32_t>(data[at + 1]) << 8) |
+               (static_cast<std::uint32_t>(data[at + 2]) << 16) | (static_cast<std::uint32_t>(data[at + 3]) << 24);
+    };
+
+    const std::size_t phoff = u32(28);
+    const std::size_t phentsize = u16(42);
+    const std::size_t phnum = u16(44);
+    if (!phentsize || phentsize < 8 || !phnum || phoff > data.size() || phnum > (data.size() - phoff) / phentsize) return false;
+
+    for (std::size_t i = 0; i < phnum; ++i) {
+        const std::size_t ph = phoff + i * phentsize;
+        if (u32(ph) != 0x70000080u) continue;
+        const std::size_t iopmod = u32(ph + 4);
+        if (iopmod > data.size() || data.size() - iopmod <= 26) return false;
+        const std::size_t name_at = iopmod + 26;
+        const std::size_t limit = std::min<std::size_t>(56, data.size() - name_at);
+        std::size_t length = 0;
+        while (length < limit && data[name_at + length] != 0) ++length;
+        if (!length) return false;
+        std::string raw(reinterpret_cast<const char *>(data.data() + name_at), length);
+        for (const unsigned char ch : raw) {
+            if (ch < 0x21 || ch > 0x7E || ch == '/' || ch == '\\' || ch == ':') return false;
+        }
+        name = module_name_of(raw);
+        return !name.empty();
+    }
+    return false;
+}
+
+std::uint64_t fnv1a64(const std::uint8_t *bytes, std::size_t size) {
+    std::uint64_t hash = 0xCBF29CE484222325ull;
+    for (std::size_t i = 0; i < size; ++i) hash = (hash ^ bytes[i]) * 0x100000001B3ull;
+    return hash;
+}
+
+void dump_native_module(const std::string &module_name, std::uint32_t base, std::uint32_t text_size) {
+    const std::string root = os::env("PS2_IOP_DUMP_MODULES");
+    if (root.empty()) return;
+    if (!text_size || base >= kRamSize || text_size > kRamSize - base) {
+        std::fprintf(stderr, "[iop-aot-dump] refusing invalid module range %s base=0x%08X text=0x%X\n",
+                     module_name.c_str(), base, text_size);
+        return;
+    }
+
+    const std::uint8_t *bytes = ram_ptr(base);
+    const std::uint64_t hash = fnv1a64(bytes, text_size);
+    std::ostringstream key;
+    for (const unsigned char ch : module_name)
+        key << (std::isalnum(ch) || ch == '_' ? static_cast<char>(ch) : '_');
+    key << "_B" << std::uppercase << std::hex << std::setw(8) << std::setfill('0') << base
+        << "_H" << std::setw(16) << hash;
+    const std::string capture_name = key.str();
+    const std::filesystem::path directory(root);
+    const std::filesystem::path binary = directory / (capture_name + ".bin");
+    const std::filesystem::path manifest = directory / "modules.txt";
+
+    std::error_code ec;
+    std::filesystem::create_directories(directory, ec);
+    if (ec) {
+        std::fprintf(stderr, "[iop-aot-dump] cannot create %s: %s\n", root.c_str(), ec.message().c_str());
+        return;
+    }
+
+    bool already_listed = false;
+    {
+        std::ifstream existing(manifest);
+        std::string line, listed_name, trailing;
+        std::uint64_t listed_base = 0, listed_size = 0, listed_hash = 0;
+        while (std::getline(existing, line)) {
+            std::istringstream row(line);
+            if (row >> listed_name >> std::hex >> listed_base >> listed_size >> listed_hash &&
+                !(row >> trailing) && listed_name == capture_name && listed_base == base &&
+                listed_size == text_size && listed_hash == hash) {
+                already_listed = true;
+                break;
+            }
+        }
+    }
+    bool binary_matches = false;
+    ec.clear();
+    if (already_listed && std::filesystem::is_regular_file(binary, ec) && !ec) {
+        ec.clear();
+        if (std::filesystem::file_size(binary, ec) == text_size && !ec) {
+            std::ifstream existing(binary, std::ios::binary);
+            std::vector<std::uint8_t> saved(text_size);
+            existing.read(reinterpret_cast<char *>(saved.data()), static_cast<std::streamsize>(saved.size()));
+            binary_matches = existing.gcount() == static_cast<std::streamsize>(saved.size()) &&
+                             fnv1a64(saved.data(), saved.size()) == hash;
+        }
+    }
+    if (!binary_matches) {
+        std::ofstream out(binary, std::ios::binary | std::ios::trunc);
+        out.write(reinterpret_cast<const char *>(bytes), static_cast<std::streamsize>(text_size));
+        if (!out) {
+            std::fprintf(stderr, "[iop-aot-dump] failed writing %s\n", binary.string().c_str());
+            return;
+        }
+    }
+    if (!already_listed) {
+        std::ofstream out(manifest, std::ios::app);
+        out << capture_name << ' ' << std::hex << std::uppercase << base << ' ' << text_size << ' ' << hash << '\n';
+        if (!out) {
+            std::fprintf(stderr, "[iop-aot-dump] failed updating %s\n", manifest.string().c_str());
+            return;
+        }
+    }
+    std::fprintf(stderr, "[iop-aot-dump] %s base=0x%08X text=0x%X fnv1a=%016llX -> %s\n",
+                 module_name.c_str(), base, text_size, static_cast<unsigned long long>(hash), binary.string().c_str());
 }
 
 }
@@ -480,9 +607,30 @@ void register_hle_library(const std::string &name, std::uint32_t version) { g_hl
 
 bool library_exists(const std::string &name) { return g_libraries.count(name) || g_hle_versions.count(name); }
 
+bool resolve_native_module_name(const std::vector<std::uint8_t> &data, const std::string &path, std::string &name) {
+    name.clear();
+    if (path == "buffer") return iop_module_name_from_elf(data, name);
+    name = module_name_of(path);
+    return !name.empty();
+}
+
 const std::map<int, Module> &modules() { return g_modules; }
 
-void register_hle_module(const std::string &name, HleModuleStart start) { g_hle_modules[name] = std::move(start); }
+void register_hle_module(const std::string &name, HleModuleStart start) {
+    const std::string key = module_name_of(name);
+    if (!key.empty()) g_hle_modules[key] = std::move(start);
+}
+
+bool native_strict() {
+    static const bool enabled = [] {
+        const char *raw = std::getenv("PS2_IOP_NATIVE_STRICT");
+        if (!raw) return false;
+        std::string value(raw);
+        std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+        return !value.empty() && value != "0" && value != "off" && value != "false" && value != "no";
+    }();
+    return enabled;
+}
 
 void register_interrupt(unsigned line, std::uint32_t handler, std::uint32_t arg, std::uint32_t mode) {
     if (g_trace_modules) std::fprintf(stderr, "[iop] interrupt %u -> 0x%08X (arg 0x%X)\n", line, handler, arg);
@@ -523,7 +671,6 @@ void boot() {
     g_hle_stubs.clear();
     g_hle_versions.clear();
     g_libraries.clear();
-    g_hle_modules.clear();
     g_modules.clear();
     g_threads.clear();
     g_used.clear();
@@ -653,15 +800,30 @@ void raise_interrupt(unsigned line) { hw::raise_interrupt(line); }
 std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std::string &path, const std::string &args,
                                 std::function<void(int, int)> done) {
     using namespace kernel;
-    const std::string name = module_name_of(path);
-    auto hle = g_hle_modules.find(name);
-    if (hle != g_hle_modules.end()) {
-        if (g_trace_modules) std::fprintf(stderr, "[iop] %s handled natively\n", name.c_str());
-        const int id = g_next_module++;
-        g_modules[id] = Module{id, name, 0, 0, 0, 0};
-        if (hle->second) hle->second();
-        if (done) done(id, 0);
-        return id;
+    std::string name;
+    const bool resolved_name = resolve_native_module_name(data, path, name);
+    if (!resolved_name) name = module_name_of(path);
+    if (!resolved_name && native_strict() && path == "buffer") {
+        std::fprintf(stderr, "[iop-native-stop] cannot identify buffer-loaded module from ELF IOPMOD header\n");
+        std::fflush(stderr);
+        std::abort();
+    }
+    if (resolved_name) {
+        auto hle = g_hle_modules.find(name);
+        if (hle != g_hle_modules.end()) {
+            if (g_trace_modules) std::fprintf(stderr, "[iop] %s handled natively\n", name.c_str());
+            const int id = g_next_module++;
+            g_modules[id] = Module{id, name, 0, 0, 0, 0};
+            if (hle->second) hle->second();
+            if (done) done(id, 0);
+            return id;
+        }
+    }
+    if (native_strict()) {
+        std::fprintf(stderr, "[iop-native-stop] no host-native replacement registered for module %s (path %s)\n",
+                     name.c_str(), path.c_str());
+        std::fflush(stderr);
+        std::abort();
     }
     if (data.size() < 52 || std::memcmp(data.data(), "\x7f" "ELF", 4) != 0) {
         std::fprintf(stderr, "[iop] %s is not an ELF module\n", path.c_str());
@@ -693,7 +855,6 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
     std::memset(ram_ptr(base), 0, total);
     std::memcpy(ram_ptr(base), data.data() + load_off, load_size);
     relocate(elf, base, total, type == 0xFF81u);
-    link_imports(base, total);
 
     // A module the EE sent as a buffer has no file name: it is known by the name in its own header (the iopmod record, version first,
     // then the name), which is what SearchModuleByName looks for (Tekken 5 asks the IOP for "mcserv" before it starts the memory card).
@@ -702,6 +863,10 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
         const char *text = reinterpret_cast<const char *>(data.data() + iopmod + 26);
         module_name.assign(text, strnlen(text, std::min<std::size_t>(data.size() - iopmod - 26, 56)));
     }
+    // Capture relocated text before import stubs are rewritten to runtime HLE opcodes. This produces
+    // the exact load-address image an offline IOP-to-C++ compiler needs to identify and translate.
+    dump_native_module(module_name, base, elf.u32(iopmod + 12));
+    link_imports(base, total);
     const int id = g_next_module++;
     g_modules[id] = Module{id, module_name, base, total, base + entry, base + gp};
     if (g_trace_modules) std::fprintf(stderr, "[iop] module %d %s at 0x%08X size 0x%X entry 0x%08X\n", id, module_name.c_str(), base, total, base + entry);

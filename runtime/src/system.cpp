@@ -678,8 +678,15 @@ void boot(std::uint32_t entry, const std::vector<std::string> &args) {
     init_watch();
     hw::reset();
     kernel::reset();
-    if (!g_options.disc_path.empty() && !disc::open(g_options.disc_path))
-        std::fprintf(stderr, "[ee] cannot open disc image %s\n", g_options.disc_path.c_str());
+    if (disc::extracted_files_strict() || !g_options.disc_path.empty()) {
+        if (!disc::open(g_options.disc_path)) {
+            std::fprintf(stderr, "[ee] cannot open disc source %s\n", g_options.disc_path.c_str());
+            if (disc::extracted_files_strict()) {
+                halt("strict filesystem disc source unavailable");
+                return;
+            }
+        }
+    }
     iop::set_trace(g_options.trace_iop_modules, g_options.trace_iop_hle);
     iop::reset();
     std::vector<std::string> guest_args = args;

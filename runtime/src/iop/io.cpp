@@ -2,11 +2,13 @@
 #include "kernel.hpp"
 
 #include "ps2/disc.hpp"
+#include "ps2/os.hpp"
 
 #include "ps2/state.hpp"
 
 #include <algorithm>
 #include <cstdio>
+#include <fstream>
 #include <map>
 
 namespace ps2::iop::io {
@@ -49,6 +51,10 @@ int open(const std::string &path, std::uint32_t flags) {
     if (device == "cdrom") {
         const auto entry = disc::find(path);
         if (!entry || entry->directory) return kNoEntry;
+        if (disc::extracted_files_strict() && !disc::extracted_file_path(path)) {
+            std::fprintf(stderr, "[disc-vfs-stop] extracted file unavailable or size mismatch: %s\n", path.c_str());
+            return kNoEntry;
+        }
         f.sector = entry->sector;
         f.size = entry->size;
     } else if (device == "rom") {
@@ -85,6 +91,23 @@ int read(int fd, std::uint8_t *out, std::uint32_t size) {
     if (f.in_memory) {
         std::memcpy(out, f.memory.data() + f.position, n);
     } else {
+        if (const auto host_path = disc::extracted_file_path(f.sector, f.size)) {
+            std::ifstream file(*host_path, std::ios::binary);
+            if (file) {
+                file.seekg(static_cast<std::streamoff>(f.position), std::ios::beg);
+                file.read(reinterpret_cast<char *>(out), static_cast<std::streamsize>(n));
+                const std::streamsize got = file.gcount();
+                if (got < static_cast<std::streamsize>(n)) std::memset(out + got, 0, n - static_cast<std::uint32_t>(got));
+                f.position += n;
+                if (!os::env("PS2_TRACE_DISC_FILES").empty())
+                    std::fprintf(stderr, "[disc-vfs] ioman read %s (%u bytes) from extracted file\n", host_path->c_str(), n);
+                return static_cast<int>(n);
+            }
+        }
+        if (disc::extracted_files_strict()) {
+            std::fprintf(stderr, "[disc-vfs-stop] extracted file disappeared during read (sector %u size %u)\n", f.sector, f.size);
+            return kNoEntry;
+        }
         const std::uint64_t start = f.position, end = f.position + n;
         const std::uint32_t first = static_cast<std::uint32_t>(start / disc::kSector);
         const std::uint32_t last = static_cast<std::uint32_t>((end + disc::kSector - 1) / disc::kSector);

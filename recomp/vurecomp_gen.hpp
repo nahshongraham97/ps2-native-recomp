@@ -23,7 +23,7 @@ struct Input {
 struct Result {
     std::size_t programs = 0;      // programs written, jump targets included
     std::size_t jump_targets = 0;  // of them, programs that no input named but an input jumps to
-    std::size_t skipped = 0;       // left to the interpreter (too many pipeline states)
+    std::size_t skipped = 0;       // omitted from the static C++ table (unsupported op or pipeline analysis failure)
     std::vector<std::uint64_t> keys;
 };
 
@@ -33,7 +33,8 @@ struct Result {
 // found in the runner.
 // with_targets adds the programs the inputs jump to (JALR-style calls), which a game build wants so they need no recording of their own;
 // live compiling leaves them out and builds a target when the game really gets there.
-Result generate_files(std::vector<Input> inputs, const std::filesystem::path &out_dir, std::uint64_t live_stamp, std::size_t per_file = 16, bool with_targets = true);
+Result generate_files(std::vector<Input> inputs, const std::filesystem::path &out_dir, std::uint64_t live_stamp, std::size_t per_file = 16,
+                      bool with_targets = true, bool require_complete = false);
 
 // The fingerprint a loadable library carries with its programs, so a library made by another version of the generator, the
 // headers or the compiler flags is not loaded again (vu_live.cpp mixes it into the stamp).

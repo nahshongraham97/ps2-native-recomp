@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <atomic>
+#include <cctype>
 #include <chrono>
 #include <stdexcept>
 #include <string>
@@ -53,10 +54,29 @@ constexpr std::uint64_t kFinishDelay = 1000; // EE cycles from the FINISH write 
 #ifdef PS2_GPU
 bool gpu_on() { return gpu::mode() != gpu::Mode::off; }
 bool cpu_raster() { return gpu::mode() != gpu::Mode::primary; }
+bool gpu_primary() { return gpu::mode() == gpu::Mode::primary; }
 #else
 constexpr bool gpu_on() { return false; }
 constexpr bool cpu_raster() { return true; }
+constexpr bool gpu_primary() { return false; }
 #endif
+
+bool strict_native_gpu() {
+    static const bool enabled = [] {
+        const char *raw = std::getenv("PS2_GS_NATIVE_STRICT");
+        if (!raw) return false;
+        std::string value(raw);
+        std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+        return !value.empty() && value != "0" && value != "off" && value != "false" && value != "no";
+    }();
+    return enabled;
+}
+
+[[noreturn]] void strict_native_gpu_stop(const char *reason) {
+    std::fprintf(stderr, "[gs-native-stop] %s\n", reason);
+    std::fflush(stderr);
+    std::abort();
+}
 
 bool trace_display() {
     static const bool enabled = std::getenv("PS2_TRACE_DISPLAY") != nullptr;
@@ -466,9 +486,20 @@ void init() {
     build_tables();
     built = true;
 #ifdef PS2_GPU
+    const bool strict = strict_native_gpu();
     const char *backend = std::getenv("PS2_GS");
-    const gpu::Mode wanted = !backend || std::strcmp(backend, "gpu") == 0 ? gpu::Mode::primary : std::strcmp(backend, "both") == 0 ? gpu::Mode::mirror : gpu::Mode::off;
-    if (wanted != gpu::Mode::off && !gpu::init(wanted)) std::fprintf(stderr, "[gs] WebGPU unavailable, using the software renderer\n");
+    const gpu::Mode wanted = strict ? gpu::Mode::primary :
+        !backend || std::strcmp(backend, "gpu") == 0 ? gpu::Mode::primary :
+        std::strcmp(backend, "both") == 0 ? gpu::Mode::mirror : gpu::Mode::off;
+    if (wanted != gpu::Mode::off && !gpu::init(wanted)) {
+        if (strict) strict_native_gpu_stop("WebGPU initialization failed; strict mode forbids the software-raster fallback");
+        std::fprintf(stderr, "[gs] WebGPU unavailable, using the software renderer\n");
+    }
+    if (strict && !gpu_primary())
+        strict_native_gpu_stop("native WebGPU primary mode is not active");
+#else
+    if (strict_native_gpu())
+        strict_native_gpu_stop("this build has no PS2_GPU WebGPU renderer");
 #endif
 }
 
@@ -680,6 +711,8 @@ void kick(bool draw) {
     const int needed = prim == 0 ? 1 : (prim == 1 || prim == 2 || prim == 6) ? 2 : prim == 7 ? 1 : 3;
     if (s.count < needed) return;
     if (draw) {
+        if (strict_native_gpu() && (!gpu_on() || !gpu_primary()))
+            strict_native_gpu_stop("a GS primitive would not be submitted exclusively to the native GPU renderer");
         if (trace::draw(s, needed)) {
             if (cpu_raster()) raster::draw(s, s.queue, needed);
 #ifdef PS2_GPU

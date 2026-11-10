@@ -26,6 +26,13 @@ bool is_open();
 bool read(std::uint32_t sector, std::uint32_t count, void *out);
 bool ready(std::uint32_t sector, std::uint32_t count);
 std::optional<Entry> find(const std::string &path);
+// Optional native filesystem source for disc files. The path is accepted only when it
+// resolves to an indexed file in the mounted disc image and its extracted size matches.
+bool extracted_files_enabled();
+bool extracted_files_strict();
+std::optional<std::string> extracted_file_path(const std::string &path);
+std::optional<std::string> extracted_file_path(std::uint32_t sector, std::uint32_t size);
+bool read_file(const std::string &path, std::vector<std::uint8_t> &out);
 std::uint32_t layer1_start();
 std::uint64_t sector_count();
 

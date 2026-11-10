@@ -350,6 +350,40 @@ int main(int argc, char **argv) {
         std::ofstream(out / std::format("{}.wasm", test), std::ios::binary).write(reinterpret_cast<const char *>(wasm.data()), wasm.size());
     }
 
+    // A partly lowered program cannot be registered: its generated interpreter
+    // escape would re-enter the same unsupported PC while the VU chain is active.
+    {
+        Program p{0xBADu, 0, std::vector<std::uint8_t>(16384)};
+        const std::uint32_t unsupported = 0x3Fu << 25;
+        const std::uint32_t end = 0x40000000u;
+        std::memcpy(p.code.data(), &unsupported, 4);
+        std::memcpy(p.code.data() + 4, &end, 4);
+        std::string name, failure;
+        const std::string body = generate(p, name, &failure);
+        if (!name.empty() || !body.empty() || failure.find("unsupported lower opcode") == std::string::npos) {
+            std::fprintf(stderr, "unsupported lower op was not rejected as a whole program: %s\n", failure.c_str());
+            return 1;
+        }
+    }
+
+    // Strict generation must reject incomplete input before deleting an existing static table.
+    {
+        const fs::path strict_out = out / "strict-output";
+        fs::create_directories(strict_out);
+        const std::string sentinel = "existing generated output";
+        std::ofstream(strict_out / "vu1_table.cpp", std::ios::binary) << sentinel;
+        ps2::vurecomp::Input bad{0xBADu, 0, std::vector<std::uint8_t>(16384)};
+        const ps2::vurecomp::Result strict = ps2::vurecomp::generate_files({std::move(bad)}, strict_out, 0, 16, true, true);
+        std::ifstream preserved_file(strict_out / "vu1_table.cpp", std::ios::binary);
+        std::string preserved;
+        std::getline(preserved_file, preserved);
+        if (strict.programs != 0 || strict.skipped != 1 || preserved != sentinel) {
+            std::fprintf(stderr, "strict VU generation did not preserve prior output: programs=%zu skipped=%zu content=%s\n",
+                         strict.programs, strict.skipped, preserved.c_str());
+            return 1;
+        }
+    }
+
     // The pipeline stall cases: compiled here, run by the interpreter harness, the native main and node.
     const auto programs = [&](const std::vector<tc::Pair> &pairs, std::uint64_t key) {
         Program p{key, 0, std::vector<std::uint8_t>(16384)};
@@ -462,7 +496,10 @@ INTERP = r'''
 #include "hw.hpp"
 #include "gs/gif.hpp"
 #include "gs/queue.hpp"
+#include "ps2/observer_hook.hpp"
 #include "ps2/system.hpp"
+#include "ps2/vu_live.hpp"
+#include "vif.hpp"
 #include "vu_micro.hpp"
 #include <chrono>
 #include <cstdlib>
@@ -477,6 +514,21 @@ Ring &vu() { static Ring ring; return ring; }
 Role &role() { static Role r = Role::Emulation; return r; }
 bool vu_active() { return false; }
 void Ring::post(Type, std::uint32_t, std::uint32_t, const void *, std::uint32_t) {}
+}
+bool halted() { return false; }
+std::uint64_t frame_count() { return 0; }
+namespace profile {
+bool profiler_enabled() { return false; }
+void record_vu_interpret(std::uint64_t) {}
+void record_vu_compiled(std::uint64_t) {}
+}
+namespace vif { std::uint32_t itop(int) { return 0; } }
+namespace vu::live {
+std::atomic<bool> g_ready{false};
+bool active() { return false; }
+void unknown(std::uint64_t, std::uint32_t, const std::uint8_t *) {}
+void note_call(std::uint64_t) {}
+std::vector<Program> take() { return {}; }
 }
 }
 

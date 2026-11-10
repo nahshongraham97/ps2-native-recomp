@@ -71,11 +71,8 @@ bool start_read(std::uint32_t lsn, std::uint32_t sectors, std::uint32_t buffer, 
 }
 
 std::vector<std::uint8_t> read_disc_file(const std::string &path) {
-    const auto entry = disc::find(path);
-    if (!entry || entry->directory) return {};
-    std::vector<std::uint8_t> data((entry->size + disc::kSector - 1) / disc::kSector * disc::kSector);
-    disc::read(entry->sector, static_cast<std::uint32_t>(data.size() / disc::kSector), data.data());
-    data.resize(entry->size);
+    std::vector<std::uint8_t> data;
+    if (!disc::read_file(path, data)) return {};
     return data;
 }
 

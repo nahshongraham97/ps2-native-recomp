@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <fstream>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #ifdef _WIN32
@@ -32,8 +33,16 @@ int main(int argc, char **argv) {
         argv = utf8_argv.data();
     }
 #endif
+    bool require_complete = false;
+    for (int i = 3; i < argc; ++i) {
+        if (std::string_view(argv[i]) == "--require-complete") require_complete = true;
+        else {
+            std::fprintf(stderr, "usage: vurecomp <recorded programs dir> <out dir> [--require-complete]\n");
+            return 1;
+        }
+    }
     if (argc < 3) {
-        std::fprintf(stderr, "usage: vurecomp <recorded programs dir> <out dir>\n");
+        std::fprintf(stderr, "usage: vurecomp <recorded programs dir> <out dir> [--require-complete]\n");
         return 1;
     }
     const fs::path in_dir = ps2::os::path(argv[1]), out_dir = ps2::os::path(argv[2]);
@@ -48,7 +57,13 @@ int main(int argc, char **argv) {
         f.read(reinterpret_cast<char *>(in.code.data()), static_cast<std::streamsize>(in.code.size()));
         inputs.push_back(std::move(in));
     }
-    const ps2::vurecomp::Result result = ps2::vurecomp::generate_files(std::move(inputs), out_dir, 0);
-    std::printf("%zu VU1 programs, %zu of them jump targets%s\n", result.programs, result.jump_targets, result.skipped ? ", the rest left to the interpreter" : "");
+    if (require_complete && inputs.empty()) {
+        std::fprintf(stderr, "[vurecomp] strict static output requires at least one recorded VU1 program\n");
+        return 2;
+    }
+    const ps2::vurecomp::Result result = ps2::vurecomp::generate_files(std::move(inputs), out_dir, 0, 16, true, require_complete);
+    std::printf("%zu VU1 programs, %zu jump targets, %zu omitted from generated C++\n",
+                result.programs, result.jump_targets, result.skipped);
+    if (require_complete && result.skipped != 0) return 2;
     return 0;
 }

@@ -17,6 +17,7 @@
 
 #include <algorithm>
 #include <atomic>
+#include <cctype>
 #include <vector>
 #include <cmath>
 #include <cstdio>
@@ -777,6 +778,24 @@ std::atomic<std::uint64_t> g_interpreted_calls{0};
 
 std::uint64_t interpreted_calls() { return g_interpreted_calls.load(std::memory_order_relaxed); }
 
+bool strict_aot_enabled() {
+    static const bool enabled = [] {
+        const char *raw = std::getenv("PS2_VU_AOT_STRICT");
+        if (!raw) return false;
+        std::string value(raw);
+        std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+        return !value.empty() && value != "0" && value != "off" && value != "false" && value != "no";
+    }();
+    return enabled;
+}
+
+[[noreturn]] void strict_aot_stop(std::uint32_t pc, std::uint64_t key, const char *reason) {
+    std::fprintf(stderr, "[vu1-aot-stop] pc=%04X key=%016llX: %s\n", pc & 16383u,
+                 static_cast<unsigned long long>(key), reason);
+    std::fflush(stderr);
+    std::abort();
+}
+
 void check_jit(ProgramFn compiled, ProgramFn jit) {
     static std::uint64_t calls = 0, escapes = 0, mismatches = 0;
     static std::uint8_t before_mem[16384], jit_mem[16384];
@@ -864,15 +883,20 @@ void interpret(int unit, std::uint32_t pc) {
 void run_entry(int unit, std::uint32_t pc) {
     if (unit == 1) g_trace_vu1_pc = pc;
     if (unit == 1) { static const bool log_runs = std::getenv("PS2_TRACE_VU1RUN") != nullptr; if (log_runs) std::fprintf(stderr, "[vu1-run] pc %X\n", pc); }
+    const bool strict_aot = unit == 1 && strict_aot_enabled();
     // Compiled programs are the default; retain an interpreter override for
     // differential checks and diagnosing newly recorded programs.
     static const bool interpret_only = std::getenv("PS2_VU_INTERPRET") != nullptr;
+    if (strict_aot && interpret_only)
+        strict_aot_stop(pc, 0, "PS2_VU_INTERPRET requests VU1 interpretation");
+    if (strict_aot && std::getenv("PS2_VU_CHECK") != nullptr)
+        strict_aot_stop(pc, 0, "PS2_VU_CHECK requires the VU1 interpreter reference");
     static const bool count = std::getenv("PS2_VU_COUNT") != nullptr;
     static std::uint64_t compiled = 0, interpreted = 0;
     static std::unordered_map<std::uint32_t, std::uint64_t> misses;
     std::uint64_t diag_key = 0;
     if (unit == 1 && !interpret_only) {
-        if (live::ready()) install_live();
+        if (!strict_aot && live::ready()) install_live();
         const ProgramFn fn = lookup(pc);
         const std::uint64_t current_key = g_entries[(pc & 16383u) >> 3].key;
         static const bool mka_vu_diag = std::getenv("PS2_MKA_VU_DIAG") != nullptr;
@@ -950,7 +974,10 @@ void run_entry(int unit, std::uint32_t pc) {
             } else fn(g_vu1, g_vu1_mem);
             return;
         }
+        if (strict_aot)
+            strict_aot_stop(pc, current_key, fn ? "diagnostic path would interpret the VU1 program" : "no statically registered C++ VU1 program");
     }
+    if (strict_aot) strict_aot_stop(pc, 0, "VU1 execution reached interpreter fallback");
     if (unit == 1) g_interpreted_calls.fetch_add(1, std::memory_order_relaxed);
     if (unit == 1 && !interpret_only && live::active()) live::note_call(g_entries[(pc & 16383u) >> 3].key);
     if (count && unit == 1) {
@@ -994,16 +1021,21 @@ ProgramFn lookup(std::uint32_t address) {
     const auto it = g_programs.find(key);
     e.function = it == g_programs.end() ? nullptr : it->second;
     e.jit = nullptr;
-    const int jit_mode = jit::mode();
-    if (jit_mode == 2 || (jit_mode >= 1 && !e.function)) e.function = jit_program(key, address);
-    else if (jit_mode == 3) e.jit = jit_program(key, address);
+    if (strict_aot_enabled()) {
+        e.function = it == g_programs.end() ? nullptr : it->second;
+        e.jit = nullptr;
+    } else {
+        const int jit_mode = jit::mode();
+        if (jit_mode == 2 || (jit_mode >= 1 && !e.function)) e.function = jit_program(key, address);
+        else if (jit_mode == 3) e.jit = jit_program(key, address);
+    }
     Candidate c = make_candidate(pcs);
     c.key = key;
     c.function = e.function;
     c.jit = e.jit;
     if (e.candidates.size() < 8) e.candidates.push_back(std::move(c));
     else e.candidates[e.next++ % 8] = std::move(c);
-    if (!e.function) live::unknown(key, address & 16383u, g_vu1_code);
+    if (!e.function && !strict_aot_enabled()) live::unknown(key, address & 16383u, g_vu1_code);
     static const std::string record = ps2::os::env("PS2_VU_RECORD");
     if (!e.function && (!record.empty() || g_options.on_vu_program)) {
         char name[64];
@@ -1023,6 +1055,8 @@ ProgramFn lookup(std::uint32_t address) {
 }
 
 void run_fast(int n, std::uint32_t address, std::uint64_t diag_key) {
+    if (n == 1 && strict_aot_enabled())
+        strict_aot_stop(address, g_last_key, "run_fast is the VU1 interpreter");
     Unit u = unit_of(n);
     Vu0Regs &r = *u.regs;
     if (g_scan[n]) scan_flags(n, u.code, u.code_mask + 1);

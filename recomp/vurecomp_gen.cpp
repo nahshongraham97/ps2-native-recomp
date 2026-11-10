@@ -484,18 +484,28 @@ int vi_written(const std::string &code) {
     return std::atoi(code.c_str() + at + 10);
 }
 
-std::string generate(const Program &p, std::string &name) {
+std::string generate(const Program &p, std::string &name, std::string *failure = nullptr) {
     name.clear();
+    if (failure) failure->clear();
     const std::vector<std::uint32_t> pcs = ps2::vu::reachable(p.code.data(), kMask, p.entry);
     const ps2::vu::StallPlan plan = ps2::vu::stall_plan(p.code.data(), kMask, pcs, p.entry);
-    if (!plan.ok) return {};
+    if (!plan.ok) {
+        if (failure) *failure = "pipeline state analysis failed";
+        return {};
+    }
     std::set<std::uint32_t> in(pcs.begin(), pcs.end());
     std::map<std::uint32_t, Lower> lowers;
     bool any_status = false, any_flags = false, any_q = false;
     for (std::uint32_t pc : pcs) {
         const std::uint32_t lo = word(p.code, pc), hi = word(p.code, pc + 4);
         Lower l;
-        if (!(hi & 0x80000000u)) l = lower(lo, pc);
+        if (!(hi & 0x80000000u)) {
+            l = lower(lo, pc);
+            if (!l.supported) {
+                if (failure) *failure = std::format("unsupported lower opcode 0x{:08X} at PC 0x{:04X}", lo, pc);
+                return {};
+            }
+        }
         any_status = any_status || l.reads_status;
         any_flags = any_flags || l.reads_flags;
         any_q = any_q || l.code.find("fl.end_q(") != std::string::npos;
@@ -662,16 +672,19 @@ namespace ps2::vurecomp {
 
 // Bump this when the generated code changes in a way the headers do not show (a change in this file): libraries made earlier
 // are then left alone and built again (vu_live.cpp).
-const char *const kGeneratorVersion = "vurecomp 1";
+const char *const kGeneratorVersion = "vurecomp 3";
 
-Result generate_files(std::vector<Input> inputs, const fs::path &out_dir, std::uint64_t live_stamp, std::size_t per_file, bool with_targets) {
+Result generate_files(std::vector<Input> inputs, const fs::path &out_dir, std::uint64_t live_stamp, std::size_t per_file,
+                      bool with_targets, bool require_complete) {
     std::vector<Program> programs;
+    std::size_t skipped = 0;
     for (Input &in : inputs) {
         Program p{in.key, in.entry, std::move(in.code)};
         p.code.resize(kMask + 1);
         const auto pcs = ps2::vu::reachable(p.code.data(), kMask, p.entry);
         if (ps2::vu::program_key(p.code.data(), pcs, p.entry) != p.key) {
             std::fprintf(stderr, "%016llX_%04X: key mismatch, skipped\n", static_cast<unsigned long long>(p.key), p.entry);
+            ++skipped;
             continue;
         }
         programs.push_back(std::move(p));
@@ -694,14 +707,15 @@ Result generate_files(std::vector<Input> inputs, const fs::path &out_dir, std::u
         }
     }
     std::sort(programs.begin(), programs.end(), [](const Program &a, const Program &b) { return a.key < b.key; });
-    fs::create_directories(out_dir);
-    for (const auto &e : fs::directory_iterator(out_dir))
-        if (ps2::os::utf8(e.path().filename()).rfind("vu1_", 0) == 0) fs::remove(e.path());
     std::vector<std::string> names, bodies;
     for (std::size_t i = 0; i < programs.size(); ++i) {
-        std::string name, body = generate(programs[i], name);
+        std::string name, failure;
+        std::string body = generate(programs[i], name, &failure);
         if (name.empty()) {
-            std::fprintf(stderr, "vu1 %016llX at %04X: too many pipeline states to compile, it stays with the interpreter\n", static_cast<unsigned long long>(programs[i].key), programs[i].entry);
+            std::fprintf(stderr, "vu1 %016llX at %04X: %s; whole program omitted from generated C++\n",
+                         static_cast<unsigned long long>(programs[i].key), programs[i].entry,
+                         failure.empty() ? "could not produce a complete translation" : failure.c_str());
+            ++skipped;
             continue;
         }
         if (names.size() != i) programs[names.size()] = std::move(programs[i]);
@@ -709,8 +723,18 @@ Result generate_files(std::vector<Input> inputs, const fs::path &out_dir, std::u
         bodies.push_back(std::move(body));
     }
     Result result;
-    result.skipped = programs.size() - names.size();
+    result.skipped = skipped;
     result.jump_targets = programs.size() - recorded;
+    result.programs = names.size();
+    for (std::size_t i = 0; i < names.size(); ++i) result.keys.push_back(programs[i].key);
+    if (require_complete && result.skipped != 0) {
+        std::fprintf(stderr, "[vurecomp] strict static output rejected: %zu program(s) were omitted; existing output left unchanged\n", result.skipped);
+        return result;
+    }
+
+    fs::create_directories(out_dir);
+    for (const auto &e : fs::directory_iterator(out_dir))
+        if (ps2::os::utf8(e.path().filename()).rfind("vu1_", 0) == 0) fs::remove(e.path());
     programs.resize(names.size());
     for (std::size_t first = 0; first < programs.size(); first += per_file) {
         std::string text = "#include \"ps2/vu_ops.hpp\"\n\nnamespace gen {\n\nusing namespace ps2;\nusing namespace ps2::vuops;\n\n";
@@ -756,8 +780,6 @@ PS2_LIVE_EXPORT const ps2::vu::Program *ps2_vu_live_init(const ps2::vu::LiveHost
 )", live_stamp, programs.size());
     }
     std::ofstream(out_dir / "vu1_table.cpp", std::ios::binary) << table;
-    result.programs = programs.size();
-    for (const Program &p : programs) result.keys.push_back(p.key);
     return result;
 }
 

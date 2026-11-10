@@ -4,9 +4,13 @@
 #include "load_stats.hpp"
 
 #include <algorithm>
+#include <array>
 #include <cctype>
 #include <cstdio>
 #include <cstring>
+#include <filesystem>
+#include <fstream>
+#include <iterator>
 #include <map>
 
 namespace ps2::disc {
@@ -19,6 +23,18 @@ Probe g_probe;
 std::uint64_t g_size = 0;
 std::uint32_t g_layer1 = 0;
 std::map<std::string, Entry> g_index;
+std::map<std::pair<std::uint32_t, std::uint32_t>, std::string> g_file_paths_by_extent;
+std::string g_extracted_root;
+struct ExtractedFile {
+    std::uint32_t sector = 0;
+    std::uint32_t size = 0;
+    std::uint32_t end_sector = 0;
+    std::string path;
+};
+std::vector<ExtractedFile> g_extracted_files;
+std::map<std::uint32_t, std::array<std::uint8_t, kSector>> g_extracted_meta;
+std::map<std::string, std::ifstream> g_extracted_handles;
+bool g_extracted_ready = false;
 bool g_indexed = false;  // the reads while the file system is being read are not the game's
 
 std::uint32_t u32(const std::uint8_t *p) {
@@ -54,6 +70,7 @@ void walk(std::uint32_t base, std::uint32_t lba, std::uint32_t size, const std::
         const bool dir = rec[25] & 2;
         const Entry entry{base + u32(rec + 2), u32(rec + 10), dir};
         g_index[path] = entry;
+        if (!dir) g_file_paths_by_extent[{entry.sector, entry.size}] = path;
         if (dir) walk(base, u32(rec + 2), u32(rec + 10), path + "/", depth + 1);
     }
 }
@@ -65,10 +82,63 @@ void index_layer(std::uint32_t pvd_sector, std::uint32_t base) {
 }
 
 void self_check();
+bool open_extracted(const std::string &root, const std::string &name);
+bool read_extracted_sectors(std::uint32_t sector, std::uint32_t count, void *out);
+std::optional<std::string> extracted_path_for_indexed_file(const std::string &indexed_path, const Entry &entry);
+std::string configured_extracted_root();
+
+void clear_source_state() {
+    g_reader = {};
+    g_probe = {};
+    g_size = 0;
+    g_layer1 = 0;
+    g_index.clear();
+    g_file_paths_by_extent.clear();
+    g_extracted_root.clear();
+    g_extracted_files.clear();
+    g_extracted_meta.clear();
+    g_extracted_handles.clear();
+    g_extracted_ready = false;
+    g_indexed = false;
+}
 
 }
 
 bool open(const std::string &path) {
+    if (g_file) {
+        std::fclose(g_file);
+        g_file = nullptr;
+    }
+    clear_source_state();
+    const bool strict = extracted_files_strict();
+    std::string extracted_root = os::env("PS2_DISC_FILES");
+    if (extracted_root.empty()) {
+        const std::filesystem::path adjacent = std::filesystem::path(path).parent_path() / "disc-files";
+        std::error_code ec;
+        if (std::filesystem::is_regular_file(adjacent / ".disc_layout", ec) && !ec &&
+            std::filesystem::is_regular_file(adjacent / ".disc_meta", ec) && !ec)
+            extracted_root = adjacent.string();
+    }
+    if (!extracted_root.empty()) {
+        g_extracted_root = extracted_root;
+        if (open_extracted(extracted_root, path)) {
+            std::fprintf(stderr, "[disc] %s: %zu files, %llu sectors, layer 1 at %u (filesystem source)\n", path.c_str(), g_index.size(),
+                         static_cast<unsigned long long>(g_size / kSector), g_layer1);
+            if (!os::env("PS2_DISC_CHECK").empty()) self_check();
+            return true;
+        }
+        if (strict) {
+            std::fprintf(stderr, "[disc-vfs-stop] extracted layout could not be opened from %s\n", extracted_root.c_str());
+            clear_source_state();
+            return false;
+        }
+        clear_source_state();
+        std::fprintf(stderr, "[disc-vfs] extracted layout unavailable; using the ISO reader\n");
+    }
+    if (strict) {
+        std::fprintf(stderr, "[disc-vfs-stop] strict filesystem mode requires PS2_DISC_FILES or an adjacent disc-files layout\n");
+        return false;
+    }
     g_file = os::open(path, "rb");
     if (!g_file) return false;
 #if defined(_WIN32)
@@ -90,10 +160,20 @@ bool open(const std::string &path) {
 }
 
 bool open(const std::string &name, std::uint64_t size, Reader reader, Probe probe) {
+    clear_source_state();
+    if (extracted_files_strict()) {
+        std::fprintf(stderr, "[disc-vfs-stop] strict filesystem mode rejects raw disc readers (%s)\n", name.c_str());
+        return false;
+    }
     g_reader = std::move(reader);
     g_probe = std::move(probe);
     g_size = size;
     g_index.clear();
+    g_file_paths_by_extent.clear();
+    g_extracted_files.clear();
+    g_extracted_meta.clear();
+    g_extracted_handles.clear();
+    g_extracted_ready = false;
     g_indexed = false;
     index_layer(16, 0);
     std::uint8_t pvd[kSector];
@@ -109,14 +189,27 @@ bool open(const std::string &name, std::uint64_t size, Reader reader, Probe prob
     }
     std::fprintf(stderr, "[disc] %s: %zu files, %llu sectors, layer 1 at %u\n", name.c_str(), g_index.size(),
                  static_cast<unsigned long long>(g_size / kSector), g_layer1);
+    if (extracted_files_enabled())
+        std::fprintf(stderr, "[disc-vfs] extracted file root %s%s\n", os::env("PS2_DISC_FILES").c_str(),
+                     extracted_files_strict() ? " (strict file reads)" : "");
     g_indexed = true;
     if (!os::env("PS2_DISC_CHECK").empty()) self_check();
     return true;
 }
 
-bool is_open() { return static_cast<bool>(g_reader); }
+bool is_open() { return g_extracted_ready || static_cast<bool>(g_reader); }
 
 bool read(std::uint32_t sector, std::uint32_t count, void *out) {
+    if (g_extracted_ready) return read_extracted_sectors(sector, count, out);
+    if (extracted_files_strict()) {
+        if (count) std::memset(out, 0, static_cast<std::size_t>(count) * kSector);
+        static bool reported = false;
+        if (!reported) {
+            std::fprintf(stderr, "[disc-vfs-stop] strict filesystem read requested without an extracted source\n");
+            reported = true;
+        }
+        return false;
+    }
     if (!g_reader) return false;
     const cost::Timer time_it(cost::kDisc);
     const std::size_t want = static_cast<std::size_t>(count) * kSector;
@@ -168,6 +261,7 @@ void self_check() {
 }
 
 bool ready(std::uint32_t sector, std::uint32_t count) {
+    if (extracted_files_strict() && !g_extracted_ready) return false;
     return !g_probe || g_probe(static_cast<std::uint64_t>(sector) * kSector, static_cast<std::size_t>(count) * kSector);
 }
 
@@ -182,6 +276,269 @@ std::optional<Entry> find(const std::string &raw) {
     auto it = g_index.find(upper(path));
     if (it == g_index.end()) return std::nullopt;
     return it->second;
+}
+
+bool extracted_files_enabled() { return !configured_extracted_root().empty(); }
+
+bool extracted_files_strict() {
+    const std::string value = upper(os::env("PS2_DISC_FILES_STRICT"));
+    return !value.empty() && value != "0" && value != "OFF" && value != "FALSE" && value != "NO";
+}
+
+namespace {
+
+std::string configured_extracted_root() {
+    return g_extracted_root.empty() ? os::env("PS2_DISC_FILES") : g_extracted_root;
+}
+
+std::optional<std::string> extracted_path_for_indexed_file(const std::string &indexed_path, const Entry &entry) {
+    const std::string root = configured_extracted_root();
+    if (entry.directory || root.empty()) return std::nullopt;
+    std::filesystem::path relative;
+    std::size_t start = 0;
+    while (start < indexed_path.size()) {
+        const std::size_t end = indexed_path.find('/', start);
+        const std::string component = indexed_path.substr(start, end == std::string::npos ? end : end - start);
+        if (component.empty() || component == "." || component == ".." || component.find(':') != std::string::npos)
+            return std::nullopt;
+        relative /= component;
+        if (end == std::string::npos) break;
+        start = end + 1;
+    }
+
+    std::error_code ec;
+    const std::filesystem::path candidate = std::filesystem::path(root) / relative;
+    if (!std::filesystem::is_regular_file(candidate, ec) || ec) return std::nullopt;
+    const std::uintmax_t host_size = std::filesystem::file_size(candidate, ec);
+    if (ec || host_size != entry.size) return std::nullopt;
+    return candidate.string();
+}
+
+bool read_host_file(const std::string &path, std::vector<std::uint8_t> &out, std::uint32_t size) {
+    std::ifstream file(path, std::ios::binary);
+    if (!file) return false;
+    out.resize(size);
+    if (size) file.read(reinterpret_cast<char *>(out.data()), static_cast<std::streamsize>(size));
+    if (!file || static_cast<std::uint32_t>(file.gcount()) != size) {
+        out.clear();
+        return false;
+    }
+    return true;
+}
+
+bool open_extracted(const std::string &root, const std::string &name) {
+    g_extracted_root = root;
+    g_index.clear();
+    g_file_paths_by_extent.clear();
+    g_extracted_files.clear();
+    g_extracted_meta.clear();
+    g_extracted_handles.clear();
+    g_extracted_ready = false;
+    g_indexed = false;
+
+    std::ifstream layout(std::filesystem::path(root) / ".disc_layout");
+    if (!layout) return false;
+    std::uint64_t total_sectors = 0;
+    std::uint32_t layer1 = 0;
+    std::string kind;
+    while (layout >> kind) {
+        if (kind == "sectors") {
+            if (!(layout >> total_sectors)) return false;
+        } else if (kind == "layer1") {
+            if (!(layout >> layer1)) return false;
+        } else if (kind == "file") {
+            std::uint32_t sector = 0, size = 0;
+            std::string path;
+            if (!(layout >> sector >> size)) return false;
+            std::getline(layout, path);
+            const auto first = path.find_first_not_of(" \t");
+            if (first == std::string::npos) return false;
+            path = upper(path.substr(first));
+            if (path.find('\\') != std::string::npos || path.front() == '/' || path.find("..") != std::string::npos)
+                return false;
+            const std::uint64_t sectors = (static_cast<std::uint64_t>(size) + kSector - 1) / kSector;
+            if (static_cast<std::uint64_t>(sector) + sectors > total_sectors) return false;
+            const Entry entry{sector, size, false};
+            g_index[path] = entry;
+            g_file_paths_by_extent[{sector, size}] = path;
+            for (std::size_t slash = path.find('/'); slash != std::string::npos; slash = path.find('/', slash + 1))
+                g_index.try_emplace(path.substr(0, slash), Entry{0, 0, true});
+        } else {
+            return false;
+        }
+    }
+    if (!layout.eof() || total_sectors == 0 || layer1 >= total_sectors) return false;
+
+    for (const auto &[path, entry] : g_index) {
+        if (entry.directory) continue;
+        const auto host_path = extracted_path_for_indexed_file(path, entry);
+        if (!host_path) {
+            std::fprintf(stderr, "[disc-vfs] missing or wrong-sized extracted file: %s\n", path.c_str());
+            return false;
+        }
+        const std::uint64_t end = static_cast<std::uint64_t>(entry.sector) + (entry.size + kSector - 1) / kSector;
+        g_extracted_files.push_back(ExtractedFile{entry.sector, entry.size, static_cast<std::uint32_t>(end), *host_path});
+    }
+    std::sort(g_extracted_files.begin(), g_extracted_files.end(), [](const ExtractedFile &a, const ExtractedFile &b) {
+        return a.sector < b.sector;
+    });
+    for (std::size_t i = 1; i < g_extracted_files.size(); ++i) {
+        if (g_extracted_files[i].sector < g_extracted_files[i - 1].end_sector) {
+            std::fprintf(stderr, "[disc-vfs] overlapping extracted file extents: %s and %s\n",
+                         g_extracted_files[i - 1].path.c_str(), g_extracted_files[i].path.c_str());
+            return false;
+        }
+    }
+
+    std::ifstream metadata(std::filesystem::path(root) / ".disc_meta", std::ios::binary);
+    if (!metadata) return false;
+    while (metadata.peek() != std::char_traits<char>::eof()) {
+        std::uint8_t word[4]{};
+        metadata.read(reinterpret_cast<char *>(word), sizeof(word));
+        if (metadata.gcount() != static_cast<std::streamsize>(sizeof(word))) return false;
+        const std::uint32_t sector = static_cast<std::uint32_t>(word[0]) |
+            (static_cast<std::uint32_t>(word[1]) << 8u) | (static_cast<std::uint32_t>(word[2]) << 16u) |
+            (static_cast<std::uint32_t>(word[3]) << 24u);
+        if (sector >= total_sectors) return false;
+        std::array<std::uint8_t, kSector> data{};
+        metadata.read(reinterpret_cast<char *>(data.data()), data.size());
+        if (metadata.gcount() != static_cast<std::streamsize>(data.size())) return false;
+        if (!g_extracted_meta.emplace(sector, data).second) {
+            std::fprintf(stderr, "[disc-vfs] duplicate extracted metadata sector %u\n", sector);
+            return false;
+        }
+    }
+    for (const auto &[sector, data] : g_extracted_meta) {
+        (void)data;
+        const auto next = std::upper_bound(g_extracted_files.begin(), g_extracted_files.end(), sector,
+            [](std::uint32_t value, const ExtractedFile &file) { return value < file.sector; });
+        if (next != g_extracted_files.begin()) {
+            const ExtractedFile &file = *std::prev(next);
+            if (sector >= file.sector && sector < file.end_sector) {
+                std::fprintf(stderr, "[disc-vfs] metadata sector %u overlaps extracted file %s\n", sector, file.path.c_str());
+                return false;
+            }
+        }
+    }
+
+    g_reader = {};
+    g_probe = {};
+    g_size = total_sectors * kSector;
+    g_layer1 = layer1;
+    g_indexed = true;
+    g_extracted_ready = true;
+    if (!os::env("PS2_TRACE_DISC_FILES").empty())
+        std::fprintf(stderr, "[disc-vfs] opened %s: %zu files, %zu nonzero metadata sectors\n", root.c_str(),
+                     g_extracted_files.size(), g_extracted_meta.size());
+    (void)name;
+    return true;
+}
+
+bool read_extracted_sectors(std::uint32_t sector, std::uint32_t count, void *out) {
+    if (count) std::memset(out, 0, static_cast<std::size_t>(count) * kSector);
+    auto *dst = static_cast<std::uint8_t *>(out);
+    std::uint32_t remaining = count;
+    bool in_range = true;
+    while (remaining) {
+        if (static_cast<std::uint64_t>(sector) >= g_size / kSector) {
+            std::memset(dst, 0, static_cast<std::size_t>(remaining) * kSector);
+            in_range = false;
+            break;
+        }
+        const auto next_file = std::upper_bound(g_extracted_files.begin(), g_extracted_files.end(), sector,
+            [](std::uint32_t value, const ExtractedFile &file) { return value < file.sector; });
+        const ExtractedFile *file = next_file == g_extracted_files.begin() ? nullptr : &*std::prev(next_file);
+        if (file && sector >= file->sector && sector < file->end_sector) {
+            const std::uint32_t run = std::min(remaining, file->end_sector - sector);
+            const std::uint64_t offset = static_cast<std::uint64_t>(sector - file->sector) * kSector;
+            const std::uint64_t run_bytes = static_cast<std::uint64_t>(run) * kSector;
+            const std::uint64_t read_bytes = offset < file->size ? std::min<std::uint64_t>(run_bytes, file->size - offset) : 0;
+            if (read_bytes) {
+                auto [handle, inserted] = g_extracted_handles.try_emplace(file->path, file->path, std::ios::binary);
+                (void)inserted;
+                std::ifstream &input = handle->second;
+                input.clear();
+                input.seekg(static_cast<std::streamoff>(offset), std::ios::beg);
+                input.read(reinterpret_cast<char *>(dst), static_cast<std::streamsize>(read_bytes));
+                if (input.gcount() != static_cast<std::streamsize>(read_bytes)) return false;
+            }
+            if (read_bytes < run_bytes)
+                std::memset(dst + read_bytes, 0, static_cast<std::size_t>(run_bytes - read_bytes));
+            sector += run;
+            remaining -= run;
+            dst += run_bytes;
+            continue;
+        }
+        const auto meta = g_extracted_meta.find(sector);
+        if (meta != g_extracted_meta.end()) {
+            std::memcpy(dst, meta->second.data(), kSector);
+            ++sector;
+            --remaining;
+            dst += kSector;
+            continue;
+        }
+
+        std::uint32_t run = remaining;
+        if (next_file != g_extracted_files.end() && next_file->sector > sector)
+            run = std::min(run, next_file->sector - sector);
+        const auto next_meta = g_extracted_meta.lower_bound(sector);
+        if (next_meta != g_extracted_meta.end() && next_meta->first > sector)
+            run = std::min(run, next_meta->first - sector);
+        if (!run) run = 1;
+        std::memset(dst, 0, static_cast<std::size_t>(run) * kSector);
+        sector += run;
+        remaining -= run;
+        dst += static_cast<std::size_t>(run) * kSector;
+    }
+    if (!os::env("PS2_TRACE_DISC_FILES").empty())
+        std::fprintf(stderr, "[disc-vfs] read sectors from extracted filesystem\n");
+    return in_range;
+}
+
+}
+
+std::optional<std::string> extracted_file_path(const std::string &raw) {
+    const auto entry = find(raw);
+    if (!entry) return std::nullopt;
+    std::string path = raw;
+    const auto colon = path.find(':');
+    if (colon != std::string::npos) path = path.substr(colon + 1);
+    std::replace(path.begin(), path.end(), '\\', '/');
+    const auto semi = path.find(';');
+    if (semi != std::string::npos) path = path.substr(0, semi);
+    while (!path.empty() && path.front() == '/') path.erase(path.begin());
+    return extracted_path_for_indexed_file(upper(path), *entry);
+}
+
+std::optional<std::string> extracted_file_path(std::uint32_t sector, std::uint32_t size) {
+    const auto it = g_file_paths_by_extent.find({sector, size});
+    if (it == g_file_paths_by_extent.end()) return std::nullopt;
+    const auto indexed = g_index.find(it->second);
+    if (indexed == g_index.end()) return std::nullopt;
+    return extracted_path_for_indexed_file(it->second, indexed->second);
+}
+
+bool read_file(const std::string &path, std::vector<std::uint8_t> &out) {
+    const auto entry = find(path);
+    if (!entry || entry->directory) return false;
+    if (const auto host_path = extracted_file_path(path)) {
+        if (read_host_file(*host_path, out, entry->size)) {
+            if (!os::env("PS2_TRACE_DISC_FILES").empty())
+                std::fprintf(stderr, "[disc-vfs] read %s (%u bytes) from %s\n", path.c_str(), entry->size, host_path->c_str());
+            return true;
+        }
+    }
+    if (extracted_files_strict()) {
+        std::fprintf(stderr, "[disc-vfs-stop] extracted file unavailable or size mismatch: %s\n", path.c_str());
+        return false;
+    }
+    out.resize((entry->size + kSector - 1) / kSector * kSector);
+    if (!read(entry->sector, static_cast<std::uint32_t>(out.size() / kSector), out.data())) {
+        out.clear();
+        return false;
+    }
+    out.resize(entry->size);
+    return true;
 }
 
 std::uint32_t layer1_start() { return g_layer1; }

@@ -172,6 +172,11 @@ if(PS2_GENERATED)
         "-Wl,--wrap=_ZN3gen9unit_0020ERN3ps23CpuEjj"
         "-Wl,--wrap=_ZN3gen9unit_0025ERN3ps23CpuEjj"
     )
+    add_executable(test_disc_vfs EXCLUDE_FROM_ALL tests/test_disc_vfs.cpp)
+    target_link_libraries(test_disc_vfs PRIVATE ps2runtime)
+    add_executable(test_iop_native_module EXCLUDE_FROM_ALL tests/test_iop_native_module.cpp)
+    target_include_directories(test_iop_native_module PRIVATE runtime/src)
+    target_link_libraries(test_iop_native_module PRIVATE ps2runtime)
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
         target_sources(ps2run PRIVATE host/profile.cpp)
         target_compile_definitions(ps2run PRIVATE PS2_PROFILE)

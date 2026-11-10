@@ -98,6 +98,10 @@ void register_library(const std::string &name, std::uint32_t table);
 void register_hle_library(const std::string &name, std::uint32_t version);
 bool library_exists(const std::string &name);
 
+// Resolve the registry key for a module load. Buffer-loaded IRXs are named by
+// their IOPMOD header, not by the SIF loader's placeholder path ("buffer").
+bool resolve_native_module_name(const std::vector<std::uint8_t> &data, const std::string &path, std::string &name);
+
 struct Module {
     int id;
     std::string name;
@@ -106,6 +110,8 @@ struct Module {
 const std::map<int, Module> &modules();
 using HleModuleStart = std::function<void()>;
 void register_hle_module(const std::string &name, HleModuleStart start);
+// Opt-in fail-fast check for routes that must not load or execute guest IRX code.
+bool native_strict();
 
 void register_interrupt(unsigned line, std::uint32_t handler, std::uint32_t arg, std::uint32_t mode);
 void release_interrupt(unsigned line);

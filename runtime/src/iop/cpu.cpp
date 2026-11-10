@@ -59,6 +59,13 @@ std::uint32_t fetch(std::uint32_t pc) {
 }
 
 void execute(Cpu &c, std::int64_t &budget) {
+    if (kernel::native_strict()) {
+        const kernel::Thread *thread = kernel::current();
+        std::fprintf(stderr, "[iop-native-stop] guest IOP instruction execution at pc=0x%08X thread=%d\n",
+                     c.pc, thread ? thread->id : 0);
+        std::fflush(stderr);
+        std::abort();
+    }
     static const bool probing = load_probes();
     static bool traced_mwfilefr_callback = false;
     static bool traced_mwfilefr_context = false;

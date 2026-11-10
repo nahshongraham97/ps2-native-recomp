@@ -7,6 +7,9 @@
 
 namespace ps2::vu {
 
+// True when VU1 must execute only statically registered C++ microprograms.
+bool strict_aot_enabled();
+
 inline bool lane(unsigned dest, int i) { return dest & (8u >> i); }
 
 template <typename F>

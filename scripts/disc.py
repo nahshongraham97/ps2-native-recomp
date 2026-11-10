@@ -95,7 +95,32 @@ def listing(image):
         print('%d %10d %12d  %s' % (layer.index, sector, size, path))
 
 
-def extract(image, destination, patterns, limit):
+def write_layout(image, destination):
+    os.makedirs(destination, exist_ok=True)
+    files = list(image.files())
+    total_sectors = image.size // SECTOR
+    layer1 = image.layers[1].base if len(image.layers) > 1 else 0
+    covered = sorted((sector, sector + (size + SECTOR - 1) // SECTOR) for _, _, sector, size in files)
+    metadata_sectors = 0
+    cursor = 0
+    with open(os.path.join(destination, '.disc_meta'), 'wb') as meta:
+        for start, end in covered + [(total_sectors, total_sectors)]:
+            for sector in range(cursor, min(start, total_sectors)):
+                data = image.read(sector, 1)
+                if len(data) == SECTOR and any(data):
+                    meta.write(struct.pack('<I', sector))
+                    meta.write(data)
+                    metadata_sectors += 1
+            cursor = max(cursor, end)
+    with open(os.path.join(destination, '.disc_layout'), 'w', newline='\n') as layout:
+        layout.write('sectors %d\n' % total_sectors)
+        layout.write('layer1 %d\n' % layer1)
+        for path, _, sector, size in sorted(files, key=lambda entry: entry[2]):
+            layout.write('file %d %d %s\n' % (sector, size, path))
+    print('%d files, %d nonzero metadata sectors written to %s' % (len(files), metadata_sectors, destination))
+
+
+def extract(image, destination, patterns, limit, layout):
     count = 0
     for entry in image.files():
         path, _, _, size = entry
@@ -107,6 +132,8 @@ def extract(image, destination, patterns, limit):
         image.copy(entry, os.path.join(destination, path))
         count += 1
     print('%d files extracted to %s' % (count, destination))
+    if layout:
+        write_layout(image, destination)
 
 
 def read_at(image, sector, offset, size):
@@ -142,6 +169,7 @@ def main():
     parser.add_argument('destination', nargs='?')
     parser.add_argument('patterns', nargs='*', help='paths or globs to extract, everything below --limit if omitted')
     parser.add_argument('--limit', type=int, default=64, help='MiB; larger files stay in the image unless named')
+    parser.add_argument('--layout', action='store_true', help='write .disc_layout and .disc_meta for native file-backed sector reads')
     args = parser.parse_args()
     image = Image(args.image)
     if args.command == 'info':
@@ -155,7 +183,7 @@ def main():
     else:
         if not args.destination:
             parser.error('extract needs a destination folder')
-        extract(image, args.destination, args.patterns, args.limit << 20)
+        extract(image, args.destination, args.patterns, args.limit << 20, args.layout)
 
 
 if __name__ == '__main__':

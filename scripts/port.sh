@@ -217,9 +217,10 @@ fi
 
 echo "== [5/6] vector unit programs"
 if compgen -G "$game/vu1/*.bin" > /dev/null; then
-  "$tools/vurecomp" "$game/vu1" "$generated" | tail -1
+  "$tools/vurecomp" "$game/vu1" "$generated" --require-complete | tail -1
 else
-  echo "none recorded, the native runner interprets them and the page compiles them on the fly"
+  echo "no VU1 programs recorded; refusing to build a runner that can fall back to the VU1 interpreter" >&2
+  exit 1
 fi
 
 echo "== [6/6] builds"
@@ -235,4 +236,4 @@ fi
 play=$(printf '%q %q --disc %q --window' "build/native-$name/ps2run" "${elf#$ROOT/}" "${iso#$ROOT/}")
 [ ${#wide[@]} -eq 0 ] || play="$play --widescreen"
 [ ${#patches[@]} -eq 0 ] || play="$play --patches $(printf '%q' "games/$name/patches.txt")"
-echo "Play it natively:  $play"
+echo "Play it with VU1 AOT strict (no VU1 interpreter fallback):  PS2_VU_AOT_STRICT=1 $play"

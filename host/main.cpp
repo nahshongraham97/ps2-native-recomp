@@ -2,6 +2,7 @@
 #include "ps2/system.hpp"
 #include "ps2/ee_live.hpp"
 #include "ps2/vu_live.hpp"
+#include "ps2/vu.hpp"
 #include "ps2/observer_hook.hpp"
 #include "mka_combat_hooks.hpp"
 
@@ -616,7 +617,8 @@ int main(int argc, char **argv) {
     // The libraries go next to the game: the game folder that port.sh made (the one with the vu1 folder), else the program's own folder.
     {
         const std::string setting = ps2::os::env("PS2_VU_LIVE");
-        if (setting != "0" && setting != "off" && (window || !setting.empty())) {
+        const bool strict_aot = ps2::vu::strict_aot_enabled();
+        if (!strict_aot && setting != "0" && setting != "off" && (window || !setting.empty())) {
             std::string cache = setting == "1" || setting == "on" ? std::string() : setting;
             if (cache.empty()) {
                 std::error_code error;
@@ -630,6 +632,8 @@ int main(int argc, char **argv) {
                 cache = ps2::os::utf8((place / "vu1-live").lexically_normal());
             }
             ps2::vu::live::start(cache);
+        } else if (strict_aot) {
+            std::fprintf(stderr, "[vu1-aot] strict mode: live microprogram compilation disabled\n");
         }
     }
     register_generated_code();
