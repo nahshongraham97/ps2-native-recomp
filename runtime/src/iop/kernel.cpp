@@ -22,6 +22,7 @@
 #include <set>
 #include <sstream>
 #include <stdexcept>
+#include <tuple>
 
 namespace ps2::iop {
 
@@ -65,8 +66,12 @@ std::map<std::pair<std::string, std::uint32_t>, std::uint32_t> g_hle_ids;
 std::vector<std::pair<std::uint32_t, std::uint32_t>> g_hle_stubs;
 std::map<std::string, std::uint32_t> g_hle_versions;
 std::map<std::string, std::uint32_t> g_libraries;
-// Host-compiled module replacements are process configuration, not guest IOP
-// state. Keep them registered across kernel::boot()/iop::reset().
+// Native C++ modules are process configuration. Their active exports are
+// runtime state and are reactivated when each module is loaded after boot.
+using NativeIopExportKey = std::tuple<std::string, std::uint16_t, std::uint32_t>;
+std::map<std::string, NativeIopModule> g_native_modules;
+std::map<NativeIopExportKey, std::pair<std::string, NativeIopFunction>> g_native_exports;
+// Legacy callbacks remain available only on the non-strict diagnostic path.
 std::map<std::string, HleModuleStart> g_hle_modules;
 std::map<int, Module> g_modules;
 int g_next_module = 1;
@@ -621,6 +626,50 @@ void register_hle_module(const std::string &name, HleModuleStart start) {
     if (!key.empty()) g_hle_modules[key] = std::move(start);
 }
 
+void register_native_module(NativeIopModule module) {
+    const std::string key = module_name_of(module.name);
+    if (key.empty()) throw std::invalid_argument("native IOP module has an empty name");
+    module.name = key;
+
+    bool has_implementation = static_cast<bool>(module.start);
+    std::set<std::pair<std::string, std::uint16_t>> libraries;
+    std::set<NativeIopExportKey> exports;
+    for (const NativeIopLibrary &library : module.libraries) {
+        if (library.name.empty()) throw std::invalid_argument("native IOP library has an empty name");
+        if (!libraries.emplace(library.name, library.version).second)
+            throw std::invalid_argument("native IOP module repeats a library version");
+        for (const NativeIopExport &entry : library.exports) {
+            if (!entry.function) throw std::invalid_argument("native IOP export has no implementation");
+            has_implementation = true;
+            const NativeIopExportKey export_key{library.name, library.version, entry.ordinal};
+            if (!exports.insert(export_key).second)
+                throw std::invalid_argument("native IOP module repeats an export ordinal");
+        }
+    }
+    if (!has_implementation)
+        throw std::invalid_argument("native IOP module must provide a start routine or exports");
+    if (!g_native_modules.emplace(key, std::move(module)).second)
+        throw std::invalid_argument("native IOP module was registered more than once");
+}
+
+bool invoke_native_import(const std::string &library, std::uint16_t version, std::uint32_t ordinal, Cpu &c) {
+    const auto it = g_native_exports.find(NativeIopExportKey{library, version, ordinal});
+    if (it == g_native_exports.end()) {
+        if (native_strict()) {
+            std::fprintf(stderr, "[iop-native-stop] unresolved compiled C++ import %s v%04X ordinal %u\n",
+                         library.c_str(), version, ordinal);
+            std::fflush(stderr);
+            std::abort();
+        }
+        return false;
+    }
+    if (g_trace_modules)
+        std::fprintf(stderr, "[iop-native-call] %s v%04X ordinal %u owner %s\n", library.c_str(), version,
+                     ordinal, it->second.first.c_str());
+    it->second.second(c);
+    return true;
+}
+
 bool native_strict() {
     static const bool enabled = [] {
         const char *raw = std::getenv("PS2_IOP_NATIVE_STRICT");
@@ -671,6 +720,7 @@ void boot() {
     g_hle_stubs.clear();
     g_hle_versions.clear();
     g_libraries.clear();
+    g_native_exports.clear();
     g_modules.clear();
     g_threads.clear();
     g_used.clear();
@@ -683,6 +733,7 @@ void boot() {
     g_nesting = 0;
     g_interrupts.clear();
     std::memset(&g_cpu, 0, sizeof g_cpu);
+    install_native_modules();
     g_return_stub = hle_stub([](Cpu &) { g_nested_done = true; });
     g_exit_stub = hle_stub([](Cpu &c) {
         Thread *t = current();
@@ -809,6 +860,48 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
         std::abort();
     }
     if (resolved_name) {
+        auto native = g_native_modules.find(name);
+        if (native != g_native_modules.end()) {
+            for (const NativeIopLibrary &library : native->second.libraries) {
+                for (const NativeIopExport &entry : library.exports) {
+                    const NativeIopExportKey key{library.name, library.version, entry.ordinal};
+                    const auto active = g_native_exports.find(key);
+                    if (active != g_native_exports.end() && active->second.first != name) {
+                        std::fprintf(stderr,
+                                     "[iop-native-stop] native export collision %s v%04X ordinal %u (%s vs %s)\n",
+                                     library.name.c_str(), library.version, entry.ordinal,
+                                     active->second.first.c_str(), name.c_str());
+                        if (native_strict()) {
+                            std::fflush(stderr);
+                            std::abort();
+                        }
+                        if (done) done(-1, -1);
+                        return -1;
+                    }
+                }
+            }
+            if (native->second.start && !native->second.start(args)) {
+                std::fprintf(stderr, "[iop-native-stop] compiled C++ module start failed for %s\n", name.c_str());
+                if (done) done(-1, -1);
+                return -1;
+            }
+            const int id = g_next_module++;
+            g_modules[id] = Module{id, name, 0, 0, 0, 0};
+            for (const NativeIopLibrary &library : native->second.libraries) {
+                for (const NativeIopExport &entry : library.exports) {
+                    const NativeIopExportKey key{library.name, library.version, entry.ordinal};
+                    g_native_exports[key] = {name, entry.function};
+                }
+            }
+            if (g_trace_modules)
+                std::fprintf(stderr, "[iop-native] loaded compiled C++ module %s as %d (%zu libraries)\n",
+                             name.c_str(), id, native->second.libraries.size());
+            if (done) done(id, 0);
+            return id;
+        }
+        // A void module-start callback carries no import/export ABI. Keep it
+        // only for the old non-strict diagnostic path; it cannot pass strict.
+        if (!native_strict()) {
         auto hle = g_hle_modules.find(name);
         if (hle != g_hle_modules.end()) {
             if (g_trace_modules) std::fprintf(stderr, "[iop] %s handled natively\n", name.c_str());
@@ -817,6 +910,7 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
             if (hle->second) hle->second();
             if (done) done(id, 0);
             return id;
+        }
         }
     }
     if (native_strict()) {

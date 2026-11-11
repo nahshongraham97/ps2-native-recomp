@@ -108,6 +108,40 @@ struct Module {
     std::uint32_t base, size, entry, gp;
 };
 const std::map<int, Module> &modules();
+
+// A native IOP module replaces a selected guest module with host C++: start is
+// a host-side activation callback and exports are direct host functions. These
+// callbacks are not IOP HLE opcodes or guest-memory jump stubs. An offline IRX
+// to C++ generator is not present yet; current coverage is per registered
+// service, and direct import dispatch is only exercised by synthetic tests.
+using NativeIopFunction = std::function<void(Cpu &)>;
+using NativeIopModuleStart = std::function<bool(const std::string &)>;
+struct NativeIopExport {
+    std::uint32_t ordinal{};
+    NativeIopFunction function;
+};
+struct NativeIopLibrary {
+    std::string name;
+    std::uint16_t version{};
+    std::vector<NativeIopExport> exports;
+};
+struct NativeIopModule {
+    std::string name;
+    NativeIopModuleStart start;
+    std::vector<NativeIopLibrary> libraries;
+};
+void register_native_module(NativeIopModule module);
+// Intended for AOT-generated IOP C++ callers to invoke a host export directly.
+// It is not connected to link_imports; ordinary guest imports still use guest
+// library addresses or HLE stubs, and no production IOP AOT caller exists yet.
+// In native-strict mode, an unresolved direct import stops instead of falling back.
+bool invoke_native_import(const std::string &library, std::uint16_t version, std::uint32_t ordinal, Cpu &c);
+// Installs built-in host-native module/service descriptors. Called during
+// IOP kernel boot; this does not load or execute guest IRX instructions.
+void install_native_modules();
+
+// Legacy callback seam retained for non-strict diagnostics. Strict native
+// module loading intentionally does not accept callback-only registrations.
 using HleModuleStart = std::function<void()>;
 void register_hle_module(const std::string &name, HleModuleStart start);
 // Opt-in fail-fast check for routes that must not load or execute guest IRX code.
