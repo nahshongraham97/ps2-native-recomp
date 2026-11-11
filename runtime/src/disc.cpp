@@ -11,6 +11,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iterator>
+#include <limits>
 #include <map>
 
 namespace ps2::disc {
@@ -291,6 +292,49 @@ std::string configured_extracted_root() {
     return g_extracted_root.empty() ? os::env("PS2_DISC_FILES") : g_extracted_root;
 }
 
+std::optional<std::string> native_overlay_path_for(const std::string &raw) {
+    const std::string root_setting = os::env("PS2_NATIVE_VFS_ROOT");
+    if (root_setting.empty()) return std::nullopt;
+
+    std::string path = raw;
+    const auto colon = path.find(':');
+    if (colon == std::string::npos) return std::nullopt;
+    std::string device = upper(path.substr(0, colon));
+    while (!device.empty() && std::isdigit(static_cast<unsigned char>(device.back()))) device.pop_back();
+    if (device != "CDROM") return std::nullopt;
+
+    path.erase(0, colon + 1);
+    std::replace(path.begin(), path.end(), '\\', '/');
+    const auto semi = path.find(';');
+    if (semi != std::string::npos) path.resize(semi);
+    while (!path.empty() && path.front() == '/') path.erase(path.begin());
+    if (path.empty() || path.find('\0') != std::string::npos) return std::nullopt;
+
+    std::filesystem::path relative;
+    std::size_t start = 0;
+    while (start < path.size()) {
+        const std::size_t end = path.find('/', start);
+        const std::string component = path.substr(start, end == std::string::npos ? end : end - start);
+        if (component.empty() || component == "." || component == ".." || component.find(':') != std::string::npos)
+            return std::nullopt;
+        relative /= upper(component);
+        if (end == std::string::npos) break;
+        start = end + 1;
+    }
+
+    std::error_code ec;
+    const std::filesystem::path root = std::filesystem::canonical(root_setting, ec);
+    if (ec || !std::filesystem::is_directory(root, ec) || ec) return std::nullopt;
+    const std::filesystem::path candidate = std::filesystem::canonical(root / relative, ec);
+    if (ec || !std::filesystem::is_regular_file(candidate, ec) || ec) return std::nullopt;
+
+    const std::filesystem::path within_root = candidate.lexically_relative(root);
+    if (within_root.empty() || within_root.is_absolute()) return std::nullopt;
+    for (const auto &component : within_root)
+        if (component == "..") return std::nullopt;
+    return candidate.string();
+}
+
 std::optional<std::string> extracted_path_for_indexed_file(const std::string &indexed_path, const Entry &entry) {
     const std::string root = configured_extracted_root();
     if (entry.directory || root.empty()) return std::nullopt;
@@ -518,7 +562,24 @@ std::optional<std::string> extracted_file_path(std::uint32_t sector, std::uint32
     return extracted_path_for_indexed_file(it->second, indexed->second);
 }
 
+std::optional<std::string> native_vfs_path(const std::string &path) {
+    return native_overlay_path_for(path);
+}
+
 bool read_file(const std::string &path, std::vector<std::uint8_t> &out) {
+    if (const auto host_path = native_vfs_path(path)) {
+        std::error_code ec;
+        const std::uintmax_t host_size = std::filesystem::file_size(*host_path, ec);
+        if (ec || host_size > std::numeric_limits<std::uint32_t>::max()) return false;
+        if (read_host_file(*host_path, out, static_cast<std::uint32_t>(host_size))) {
+            if (!os::env("PS2_TRACE_DISC_FILES").empty())
+                std::fprintf(stderr, "[disc-vfs-overlay] read %s (%llu bytes) from %s\n", path.c_str(),
+                             static_cast<unsigned long long>(host_size), host_path->c_str());
+            return true;
+        }
+        return false;
+    }
+
     const auto entry = find(path);
     if (!entry || entry->directory) return false;
     if (const auto host_path = extracted_file_path(path)) {

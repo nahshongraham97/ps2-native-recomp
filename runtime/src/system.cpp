@@ -502,7 +502,7 @@ std::uint32_t video_options() { return g_video_options.load(std::memory_order_re
 namespace {
 
 constexpr char kStateMagic[8] = {'P', 'S', '2', 'S', 'T', 'A', 'T', 'E'};
-constexpr std::uint32_t kStateVersion = 8;
+constexpr std::uint32_t kStateVersion = 9;
 
 std::function<void()> event_action(int id, std::uint64_t at) {
     if (id == hw::kEventVblank) return vblank;
@@ -530,8 +530,9 @@ void machine_state(state::Stream &s) {
     // Our version 4 differs from upstream's 4 (Cpu and thread layouts); 5 adds upstream's waiting HLE RPC replies; 6 adds the disc stream
     // of the IOP (sceCdSt*, where it is and whether it runs), so a state saved while a film or a music stream plays goes on streaming.
     // 7 preserves the guest SIF RPC endpoint map and DMA marker count; 8 adds
-    // IOP-owned request packet storage for reverse RPC completions.
-    if (version != kStateVersion && !(s.loading() && (version == 4 || version == 5 || version == 6 || version == 7))) throw std::runtime_error("state file from another version");
+    // IOP-owned request packet storage for reverse RPC completions; 9 records
+    // native VFS paths for open IOP files.
+    if (version != kStateVersion && !(s.loading() && (version == 4 || version == 5 || version == 6 || version == 7 || version == 8))) throw std::runtime_error("state file from another version");
     s.set_version(version);
     s.tag("ee");
     s.pod(g_cpu);

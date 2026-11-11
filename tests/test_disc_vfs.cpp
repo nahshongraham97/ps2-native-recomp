@@ -46,11 +46,16 @@ int main() {
     const auto work = temp_root / ("ps2-native-disc-vfs-test-" + std::to_string(unique));
     const auto extracted = work / "valid";
     const auto overlapping = work / "overlap";
+    const auto native_overlay = work / "native-overlay";
+    const auto outside = work / "outside";
     std::filesystem::create_directories(extracted);
     std::filesystem::create_directories(overlapping);
+    std::filesystem::create_directories(native_overlay / "NEW");
+    std::filesystem::create_directories(outside);
 
     bool ok = set_env("PS2_DISC_FILES_STRICT", "1") &&
               set_env("PS2_DISC_FILES", nullptr) &&
+              set_env("PS2_NATIVE_VFS_ROOT", nullptr) &&
               set_env("PS2_DISC_CHECK", nullptr) &&
               check(!open((work / "missing.iso").string()), "strict mode accepted an ISO path without an extracted root") &&
               check(!is_open(), "failed strict mount left a source open");
@@ -86,6 +91,24 @@ int main() {
          check(file == std::vector<std::uint8_t>({'A', 'B', 'C'}), "extracted file read returned wrong bytes") &&
          check(!read_file("cdrom0:/MISSING.BIN", file), "strict mode accepted an unlisted extracted file");
 
+    ok = ok && write_bytes(native_overlay / "NEW" / "CUSTOM.BIN", {'N', 'E', 'W', '!'}) &&
+         write_bytes(native_overlay / "TEST.BIN", {'X', 'Y', 'Z', '1', '2'}) &&
+         write_bytes(outside / "ESCAPE.BIN", {'O', 'U', 'T'});
+    ok = ok && set_env("PS2_NATIVE_VFS_ROOT", native_overlay.string().c_str());
+    const auto overlay_path = native_vfs_path("cdrom0:\\new\\custom.bin;1");
+    ok = ok && check(overlay_path.has_value(), "native overlay did not resolve an unindexed path") &&
+         check(read_file("cdrom0:/NEW/CUSTOM.BIN", file), "native overlay read failed for an unindexed path") &&
+         check(file == std::vector<std::uint8_t>({'N', 'E', 'W', '!'}), "native overlay returned wrong unindexed bytes") &&
+         check(read_file("cdrom0:/TEST.BIN", file), "native overlay did not override an indexed file") &&
+         check(file == std::vector<std::uint8_t>({'X', 'Y', 'Z', '1', '2'}), "native overlay did not use the host file size") &&
+         check(!native_vfs_path("cdrom0:/../TEST.BIN"), "native overlay accepted a parent traversal") &&
+         check(!read_file("cdrom0:/UNREFERENCED.BIN", file), "strict mode accepted a missing overlay/index path");
+
+    std::error_code symlink_error;
+    std::filesystem::create_directory_symlink(outside, native_overlay / "LINK", symlink_error);
+    if (!symlink_error)
+        ok = ok && check(!native_vfs_path("cdrom0:/LINK/ESCAPE.BIN"), "native overlay followed a symlink outside its root");
+
     ok = ok && write_text(overlapping / ".disc_layout",
                           "sectors 4\nlayer1 0\nfile 1 3 FIRST.BIN\nfile 1 3 SECOND.BIN\n") &&
          write_bytes(overlapping / "FIRST.BIN", {'A', 'B', 'C'}) &&
@@ -97,6 +120,7 @@ int main() {
 
     set_env("PS2_DISC_FILES", nullptr);
     set_env("PS2_DISC_FILES_STRICT", nullptr);
+    set_env("PS2_NATIVE_VFS_ROOT", nullptr);
     std::error_code ec;
     const auto canonical_temp = std::filesystem::weakly_canonical(temp_root, ec);
     const auto canonical_parent = std::filesystem::weakly_canonical(work.parent_path(), ec);

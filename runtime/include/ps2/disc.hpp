@@ -32,6 +32,9 @@ bool extracted_files_enabled();
 bool extracted_files_strict();
 std::optional<std::string> extracted_file_path(const std::string &path);
 std::optional<std::string> extracted_file_path(std::uint32_t sector, std::uint32_t size);
+// Optional direct host overlay for requested cdrom0: paths. Unlike the
+// extracted-disc mapping, this does not require an ISO index entry or size match.
+std::optional<std::string> native_vfs_path(const std::string &path);
 bool read_file(const std::string &path, std::vector<std::uint8_t> &out);
 std::uint32_t layer1_start();
 std::uint64_t sector_count();

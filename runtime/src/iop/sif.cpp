@@ -975,7 +975,7 @@ bool fileio_async(std::uint32_t method, std::uint32_t args, std::uint32_t, std::
     }
 }
 
-void register_hle_override(std::uint32_t id, HleServer server) {
+void register_hle_override_internal(std::uint32_t id, HleServer server) {
     g_hle_overrides[id] = std::move(server);
     complete_pending_bind(id);
 }
@@ -1138,7 +1138,7 @@ void install_servers() {
     // through the ordinary SIF HLE reply machinery. The reply fields follow
     // the Armageddon HLE contract and the KillzoneRecomp protocol findings;
     // the active endpoint is inert and emits no keyboard events.
-    register_hle_override(0x61766973u, [](std::uint32_t method, std::uint32_t args, std::uint32_t args_size,
+    register_hle_override_internal(0x61766973u, [](std::uint32_t method, std::uint32_t args, std::uint32_t args_size,
                                          std::uint32_t ret, std::uint32_t ret_size) {
         const std::uint32_t request = args & (kRamSize - 1u);
         const std::uint32_t reply = ret & (kRamSize - 1u);
@@ -1195,6 +1195,82 @@ void install_servers() {
     });
 }
 
+}
+
+void register_hle_override(std::uint32_t id, HleServer server) {
+    register_hle_override_internal(id, std::move(server));
+}
+
+bool native_bind_rpc_nowait(std::uint32_t client, std::uint32_t server) {
+    const std::uint32_t client_phys = iop::phys(client);
+    if (!client || (client_phys & 3u) != 0 || client_phys > iop::kRamSize - 40u) return false;
+
+    std::uint32_t record_id = 0;
+    const std::uint32_t packet_addr = begin_iop_rpc_packet(client, 0, record_id);
+    if (!packet_addr) return false;
+
+    iop::write32(client + 36u, 0);
+    iop::write32(client + 8u, 0xFFFFFFFFu);
+    const std::uint32_t packet[9] = {0x24u, 0, 0x80000009u, 0, record_id, packet_addr,
+                                     iop::read32(client + 4u), client, server};
+    send(packet, sizeof packet);
+    return true;
+}
+
+bool native_call_rpc_nowait(std::uint32_t client, std::uint32_t rpc_number,
+                            std::uint32_t send_buffer, std::uint32_t send_size,
+                            std::uint32_t recv_buffer, std::uint32_t recv_size) {
+    const std::uint32_t client_phys = iop::phys(client);
+    if (!client || (client_phys & 3u) != 0 || client_phys > iop::kRamSize - 40u ||
+        send_size > iop::kRamSize || recv_size > iop::kRamSize) return false;
+    if ((send_size && !send_buffer) || (recv_size && !recv_buffer)) return false;
+
+    const std::uint32_t recv_phys = iop::phys(recv_buffer) & (iop::kRamSize - 1u);
+    if (recv_size && recv_phys > iop::kRamSize - recv_size) return false;
+
+    const std::uint32_t destination = iop::read32(client + 20u);
+    const std::uint32_t ee_destination = destination & (kRamSize - 1u);
+    if (send_size && (!destination || send_size > kRamSize - ee_destination)) return false;
+
+    std::uint32_t record_id = 0;
+    const std::uint32_t packet_addr = begin_iop_rpc_packet(client, recv_size ? recv_buffer : 0, record_id);
+    if (!packet_addr) return false;
+
+    iop::write32(client + 8u, 0xFFFFFFFFu);
+    iop::write32(client + 28u, 0);
+    iop::write32(client + 32u, 0);
+    if (send_size) {
+        const std::uint32_t send_phys = iop::phys(send_buffer) & (iop::kRamSize - 1u);
+        const std::uint32_t first = std::min(send_size, iop::kRamSize - send_phys);
+        std::memcpy(g_ram + ee_destination, iop::g_ram + send_phys, first);
+        if (first < send_size) std::memcpy(g_ram + ee_destination + first, iop::g_ram, send_size - first);
+        watch_span(destination, send_size, "sif:native_iop_rpc_send");
+    }
+
+    // Native modules use NOWAIT with no guest completion function. The EE reply
+    // writes recv_buffer and releases this packet through the ordinary SIF DMA path.
+    const std::uint32_t packet[14] = {(0x38u & 0xFFu) | (send_size << 8u), destination, 0x8000000Au,
+                                      0, record_id, packet_addr, iop::read32(client + 4u), client,
+                                      rpc_number, send_size, recv_buffer, recv_size, 0,
+                                      iop::read32(client + 36u)};
+    send(packet, sizeof packet);
+    return true;
+}
+
+bool native_rpc_bound(std::uint32_t client) {
+    const std::uint32_t client_phys = iop::phys(client);
+    if (!client || (client_phys & 3u) != 0 || client_phys > iop::kRamSize - 40u) return false;
+    return iop::read32(client + 36u) != 0;
+}
+
+bool native_rpc_pending(std::uint32_t client) {
+    const std::uint32_t client_phys = iop::phys(client);
+    if (!client || (client_phys & 3u) != 0 || client_phys > iop::kRamSize - 40u) return false;
+    const std::uint32_t packet = iop::read32(client);
+    const std::uint32_t packet_phys = iop::phys(packet);
+    if (!packet || packet_phys >= iop::kRamSize || packet_phys > iop::kRamSize - kIopRpcPacketSize) return false;
+    return iop::read32(client + 4u) == iop::read32(packet + 24u) &&
+           (iop::read32(packet + 16u) & 1u) != 0;
 }
 
 void reset() {

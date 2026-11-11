@@ -23,6 +23,19 @@ void pump();
 void dump();
 
 void register_hle_server(std::uint32_t id, HleServer server);
+// Host-native IOP modules register their EE-facing RPC replacement here.
+void register_hle_override(std::uint32_t id, HleServer server);
 void complete_call(std::uint32_t id);
+
+// Host-native IOP modules use guest IOP addresses for client/buffer arguments.
+// These asynchronous helpers reuse the runtime's SIF packet and reply lifecycle;
+// they do not execute an IOP guest syscall or block an IOP guest thread. Call
+// them on the SIF/emulation thread; the SIF queues and packet slots are not synchronized.
+bool native_bind_rpc_nowait(std::uint32_t iop_client, std::uint32_t server_id);
+bool native_call_rpc_nowait(std::uint32_t iop_client, std::uint32_t rpc_number,
+                            std::uint32_t iop_send_buffer, std::uint32_t send_size,
+                            std::uint32_t iop_recv_buffer, std::uint32_t recv_size);
+bool native_rpc_bound(std::uint32_t iop_client);
+bool native_rpc_pending(std::uint32_t iop_client);
 
 }

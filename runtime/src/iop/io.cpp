@@ -8,7 +8,9 @@
 
 #include <algorithm>
 #include <cstdio>
+#include <filesystem>
 #include <fstream>
+#include <limits>
 #include <map>
 
 namespace ps2::iop::io {
@@ -24,6 +26,7 @@ struct File {
     std::uint32_t size = 0;
     std::uint64_t position = 0;
     std::vector<std::uint8_t> memory;
+    std::string native_vfs_request;
     bool in_memory = false;
 };
 
@@ -49,14 +52,22 @@ int open(const std::string &path, std::uint32_t flags) {
     const std::string device = device_of(path);
     File f;
     if (device == "cdrom") {
-        const auto entry = disc::find(path);
-        if (!entry || entry->directory) return kNoEntry;
-        if (disc::extracted_files_strict() && !disc::extracted_file_path(path)) {
-            std::fprintf(stderr, "[disc-vfs-stop] extracted file unavailable or size mismatch: %s\n", path.c_str());
-            return kNoEntry;
+        if (const auto native_path = disc::native_vfs_path(path)) {
+            std::error_code ec;
+            const std::uintmax_t native_size = std::filesystem::file_size(*native_path, ec);
+            if (ec || native_size > std::numeric_limits<std::uint32_t>::max()) return kNoEntry;
+            f.native_vfs_request = path;
+            f.size = static_cast<std::uint32_t>(native_size);
+        } else {
+            const auto entry = disc::find(path);
+            if (!entry || entry->directory) return kNoEntry;
+            if (disc::extracted_files_strict() && !disc::extracted_file_path(path)) {
+                std::fprintf(stderr, "[disc-vfs-stop] extracted file unavailable or size mismatch: %s\n", path.c_str());
+                return kNoEntry;
+            }
+            f.sector = entry->sector;
+            f.size = entry->size;
         }
-        f.sector = entry->sector;
-        f.size = entry->size;
     } else if (device == "rom") {
         std::string name = path.substr(path.find(':') + 1);
         if (name == "ROMVER") {
@@ -90,6 +101,21 @@ int read(int fd, std::uint8_t *out, std::uint32_t size) {
     const std::uint32_t n = static_cast<std::uint32_t>(std::min<std::uint64_t>(size, f.size - f.position));
     if (f.in_memory) {
         std::memcpy(out, f.memory.data() + f.position, n);
+    } else if (!f.native_vfs_request.empty()) {
+        const auto host_path = disc::native_vfs_path(f.native_vfs_request);
+        if (!host_path) return kNoEntry;
+        std::ifstream file(*host_path, std::ios::binary);
+        if (!file) return kNoEntry;
+        file.seekg(static_cast<std::streamoff>(f.position), std::ios::beg);
+        if (!file) return kNoEntry;
+        file.read(reinterpret_cast<char *>(out), static_cast<std::streamsize>(n));
+        const std::streamsize got = file.gcount();
+        if (got < 0) return kNoEntry;
+        f.position += static_cast<std::uint64_t>(got);
+        if (!os::env("PS2_TRACE_DISC_FILES").empty())
+            std::fprintf(stderr, "[disc-vfs-overlay] ioman read %s (%lld bytes) from %s\n",
+                         f.native_vfs_request.c_str(), static_cast<long long>(got), host_path->c_str());
+        return static_cast<int>(got);
     } else {
         if (const auto host_path = disc::extracted_file_path(f.sector, f.size)) {
             std::ifstream file(*host_path, std::ios::binary);
@@ -136,6 +162,14 @@ std::int64_t seek(int fd, std::int64_t offset, int whence) {
 
 bool stat(const std::string &path, std::uint32_t &mode, std::uint32_t &size) {
     if (device_of(path) != "cdrom") return false;
+    if (const auto native_path = disc::native_vfs_path(path)) {
+        std::error_code ec;
+        const std::uintmax_t native_size = std::filesystem::file_size(*native_path, ec);
+        if (ec || native_size > std::numeric_limits<std::uint32_t>::max()) return false;
+        mode = 0x0017u;
+        size = static_cast<std::uint32_t>(native_size);
+        return true;
+    }
     const auto entry = disc::find(path);
     if (!entry) return false;
     mode = entry->directory ? 0x0027u : 0x0017u;
@@ -205,6 +239,8 @@ void state(ps2::state::Stream &s) {
         s.pod(f.position);
         s.vec(f.memory);
         s.pod(f.in_memory);
+        if (s.version() >= 9) s.str(f.native_vfs_request);
+        else if (s.loading()) f.native_vfs_request.clear();
     });
 }
 
