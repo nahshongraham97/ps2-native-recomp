@@ -454,10 +454,9 @@ std::uint32_t g_fileio_result = 0;
 char g_loadfile_version[4] = {'3', '0', '0', '0'};
 
 void read_reboot_image(const std::string &image_path) {
-    const auto entry = disc::find(image_path);
-    if (!entry || entry->directory) return;
-    std::vector<std::uint8_t> image((entry->size + disc::kSector - 1) / disc::kSector * disc::kSector);
-    if (image.empty() || !disc::read(entry->sector, static_cast<std::uint32_t>(image.size() / disc::kSector), image.data())) return;
+    std::vector<std::uint8_t> image;
+    if (!disc::read_file(image_path, image) || image.empty()) return;
+    image.resize((image.size() + disc::kSector - 1) / disc::kSector * disc::kSector, 0);
     for (std::size_t at = 0; at + 16 <= image.size() && image[at]; at += 16)
         if (std::memcmp(&image[at], "FILEIO\0", 7) == 0) g_fileio_async = true;
     static const char kTag[] = "PsIIloadfile";
@@ -722,7 +721,11 @@ void install_iop_side() {
         const std::uint32_t destination = iop::read32(client + 20);
         const std::uint32_t ee_destination = destination & (kRamSize - 1u);
         if (send_size) {
-            if (!destination || ee_destination >= kRamSize || send_size > kRamSize - ee_destination) {
+            // PS2SDK forwards cd->buf to sceSifSendCmd without treating address
+            // zero as a null pointer. SIF DMA addresses are physical RDRAM
+            // offsets, so EE address 0 is a valid destination for a nonempty
+            // transfer when the guest's client structure specifies it.
+            if (send_size > kRamSize - ee_destination) {
                 std::fprintf(stderr,
                              "[sif:iop-rpc] reject fn %u client 0x%08X EE buffer 0x%08X send 0x%08X from IOP 0x%08X\n",
                              fn, client, destination, send_size, send_ptr);
@@ -1230,7 +1233,9 @@ bool native_call_rpc_nowait(std::uint32_t client, std::uint32_t rpc_number,
 
     const std::uint32_t destination = iop::read32(client + 20u);
     const std::uint32_t ee_destination = destination & (kRamSize - 1u);
-    if (send_size && (!destination || send_size > kRamSize - ee_destination)) return false;
+    // Match sceSifCallRpc: the EE DMA destination is a physical address, and
+    // zero is valid when the caller's SifRpcClientData_t.buf field is zero.
+    if (send_size && send_size > kRamSize - ee_destination) return false;
 
     std::uint32_t record_id = 0;
     const std::uint32_t packet_addr = begin_iop_rpc_packet(client, recv_size ? recv_buffer : 0, record_id);

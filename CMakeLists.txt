@@ -26,13 +26,21 @@ if(NOT EMSCRIPTEN)
         recomp/eerecomp_gen.cpp
         recomp/snr2.cpp)
     target_include_directories(eerecomp PRIVATE runtime/include)
-    target_compile_options(eerecomp PRIVATE -Wall -Wextra)
+    if(MSVC)
+        target_compile_options(eerecomp PRIVATE /W4)
+    else()
+        target_compile_options(eerecomp PRIVATE -Wall -Wextra)
+    endif()
 
     add_executable(vujit_dump recomp/vujit_dump.cpp runtime/src/vu_jit.cpp)
     target_include_directories(vujit_dump PRIVATE runtime/include runtime/src)
     add_executable(vurecomp recomp/vurecomp.cpp recomp/vurecomp_gen.cpp)
     target_include_directories(vurecomp PRIVATE runtime/include)
-    target_compile_options(vurecomp PRIVATE -Wall -Wextra)
+    if(MSVC)
+        target_compile_options(vurecomp PRIVATE /W4)
+    else()
+        target_compile_options(vurecomp PRIVATE -Wall -Wextra)
+    endif()
 endif()
 
 if(PS2_RUNTIME_LIB AND NOT EMSCRIPTEN)
@@ -70,6 +78,7 @@ else()
         runtime/src/iop/cpu.cpp
         runtime/src/iop/kernel.cpp
         runtime/src/iop/native_modules.cpp
+        runtime/src/iop/mwfilefr.cpp
         runtime/src/iop/libs.cpp
         runtime/src/iop/hw.cpp
         runtime/src/iop/spu2.cpp
@@ -78,7 +87,11 @@ else()
         runtime/src/iop/cdvd.cpp
         runtime/src/iop/sif.cpp
         runtime/src/iop/cdvdfsv.cpp)
-    target_compile_options(ps2runtime PRIVATE -Wall -Wextra)
+    if(MSVC)
+        target_compile_options(ps2runtime PRIVATE /W4)
+    else()
+        target_compile_options(ps2runtime PRIVATE -Wall -Wextra)
+    endif()
     if(NOT EMSCRIPTEN)
         # Vector programs the build does not know are compiled while the game runs (runtime/src/vu_live.cpp, docs/vu-live.md): the
         # generator is the one of the vurecomp tool, and the headers its output includes are embedded in the runner.
@@ -144,7 +157,11 @@ if(PS2_GENERATED)
     add_library(ps2game STATIC ${PS2_UNITS})
     target_include_directories(ps2game PRIVATE "${PS2_GENERATED}")
     target_link_libraries(ps2game PUBLIC ps2runtime)
-    target_compile_options(ps2game PRIVATE -Wno-unused-label -Wno-unused-variable)
+    if(MSVC)
+        target_compile_options(ps2game PRIVATE /wd4100 /wd4101)
+    else()
+        target_compile_options(ps2game PRIVATE -Wno-unused-label -Wno-unused-variable)
+    endif()
 
     if(EMSCRIPTEN)
         set(PS2_WEB_ELF "" CACHE FILEPATH "Game executable preloaded as /game/core.elf")
@@ -181,6 +198,9 @@ if(PS2_GENERATED)
     add_executable(test_iop_native_module EXCLUDE_FROM_ALL tests/test_iop_native_module.cpp)
     target_include_directories(test_iop_native_module PRIVATE runtime/src)
     target_link_libraries(test_iop_native_module PRIVATE ps2runtime)
+    add_executable(test_iop_native_import_link EXCLUDE_FROM_ALL tests/test_iop_native_import_link.cpp)
+    target_include_directories(test_iop_native_import_link PRIVATE runtime/src)
+    target_link_libraries(test_iop_native_import_link PRIVATE ps2runtime)
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
         target_sources(ps2run PRIVATE host/profile.cpp)
         target_compile_definitions(ps2run PRIVATE PS2_PROFILE)

@@ -55,6 +55,11 @@ int main() {
     set_strict_mode();
     assert(ps2::iop::kernel::native_strict());
 
+    // Reset boots the runtime and installs its production native-module table.
+    // Register synthetic fixtures afterward so they do not collide with the
+    // built-in MWFILEFR replacement or its filename/header alias.
+    ps2::iop::reset();
+
     const auto irx = make_iopmod_elf("synthetic_native");
     std::string name;
     assert(ps2::iop::kernel::resolve_native_module_name(irx, "buffer", name));
@@ -82,9 +87,9 @@ int main() {
     library.exports.push_back({7, [](ps2::iop::Cpu &c) { c.r[2] = c.r[4] + c.r[5]; }});
     native.libraries.push_back(std::move(library));
     ps2::iop::kernel::register_native_module(std::move(native));
+
     // A legacy callback with the same name must not be accepted in strict mode.
     ps2::iop::kernel::register_hle_module("Synthetic_Native", [&] { ++legacy_starts; });
-    ps2::iop::reset();
     const int id = ps2::iop::load_module_buffer(irx, "buffer", "native-fixture", [&](int module, int result) {
         callback_id = module;
         callback_result = result;
@@ -99,6 +104,25 @@ int main() {
     assert(module->second.name == "SYNTHETIC_NATIVE");
     assert(module->second.base == 0);
     assert(module->second.entry == 0);
+
+    // MWFILEFR is requested by its disc filename but identifies itself as
+    // "mwFile_module" in the IRX IOPMOD header. Both names must select the
+    // same host-native replacement, and the loaded module keeps one identity.
+    const int mwfilefr_path_id = ps2::iop::load_module_buffer(
+        {}, "cdrom0:\\MODULES\\MWFILEFR.IRX;1", "");
+    assert(mwfilefr_path_id > 0);
+    const auto mwfilefr_path_module = ps2::iop::kernel::modules().find(mwfilefr_path_id);
+    assert(mwfilefr_path_module != ps2::iop::kernel::modules().end());
+    assert(mwfilefr_path_module->second.name == "MWFILEFR");
+    assert(mwfilefr_path_module->second.base == 0);
+
+    const auto mwfilefr_header = make_iopmod_elf("mwFile_module");
+    const int mwfilefr_header_id = ps2::iop::load_module_buffer(mwfilefr_header, "buffer", "");
+    assert(mwfilefr_header_id > 0);
+    const auto mwfilefr_header_module = ps2::iop::kernel::modules().find(mwfilefr_header_id);
+    assert(mwfilefr_header_module != ps2::iop::kernel::modules().end());
+    assert(mwfilefr_header_module->second.name == "MWFILEFR");
+    assert(mwfilefr_header_module->second.base == 0);
 
     ps2::iop::Cpu caller{};
     caller.r[4] = 19;

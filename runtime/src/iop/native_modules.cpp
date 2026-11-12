@@ -1,5 +1,6 @@
 #include "iop.hpp"
 #include "kernel.hpp"
+#include "mwfilefr.hpp"
 #include "sio2.hpp"
 
 #include <cstdint>
@@ -180,6 +181,7 @@ NativeIopLibrary sio2man_library(std::uint16_t version, bool memory_card_imports
 
 void install_native_modules() {
     g_sio2man_started = false;
+    register_native_mwfilefr_job();
     if (g_native_modules_registered) return;
 
     NativeIopModule sio2man;
@@ -195,6 +197,18 @@ void install_native_modules() {
     sio2man.libraries.push_back(sio2man_library(0x0204u, false));
     sio2man.libraries.push_back(sio2man_library(0x0207u, true));
     register_native_module(std::move(sio2man));
+
+    NativeIopModule mwfilefr;
+    mwfilefr.name = "MWFILEFR";
+    // module_name_of() strips the extension from disc paths, so MWFILEFR.IRX
+    // already resolves through the canonical MWFILEFR key. Only the distinct
+    // IOPMOD-header spelling needs an explicit alias.
+    mwfilefr.aliases = {"mwFile_module"};
+    mwfilefr.start = [](const std::string &) {
+        install_native_mwfilefr_service();
+        return true;
+    };
+    register_native_module(std::move(mwfilefr));
     g_native_modules_registered = true;
 }
 

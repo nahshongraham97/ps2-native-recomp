@@ -65,6 +65,9 @@ enum JobKind : std::uint32_t {
     kJobFsvIopRead,
     kJobSifDmaCallback,
     kJobSifReply,
+    kJobMwfilefrBindPoll,
+    kJobMwfilefrWork,
+    kJobMwfilefrCallbackPoll,
     kJobCount
 };
 struct Job {
@@ -127,14 +130,17 @@ struct NativeIopLibrary {
 };
 struct NativeIopModule {
     std::string name;
+    // Filename and IOPMOD-header spellings that resolve to this canonical name.
+    std::vector<std::string> aliases;
     NativeIopModuleStart start;
     std::vector<NativeIopLibrary> libraries;
 };
 void register_native_module(NativeIopModule module);
-// Intended for AOT-generated IOP C++ callers to invoke a host export directly.
-// It is not connected to link_imports; ordinary guest imports still use guest
-// library addresses or HLE stubs, and no production IOP AOT caller exists yet.
-// In native-strict mode, an unresolved direct import stops instead of falling back.
+// Direct entry used by AOT-generated IOP C++ callers. In the mixed diagnostic
+// runtime, link_imports can also route a matching guest import stub through an
+// HLE trampoline to this native export. That path still requires guest IOP
+// execution and is rejected by native-strict mode; no production IOP AOT caller
+// exists yet. In native-strict mode, an unresolved direct import stops.
 bool invoke_native_import(const std::string &library, std::uint16_t version, std::uint32_t ordinal, Cpu &c);
 // Installs built-in host-native module/service descriptors. Called during
 // IOP kernel boot; this does not load or execute guest IRX instructions.

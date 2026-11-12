@@ -2,6 +2,7 @@
 
 #include "hw.hpp"
 #include "io.hpp"
+#include "mwfilefr.hpp"
 #include "sio2.hpp"
 #include "spu2.hpp"
 #include "../load_stats.hpp"
@@ -139,25 +140,43 @@ std::uint32_t hle_id_for(const std::string &library, std::uint32_t index) {
     });
 }
 
+std::uint32_t native_import_hle_id_for(const std::string &library, std::uint16_t version, std::uint32_t ordinal) {
+    const std::string hle_library = "native_import:" + library + ":" + std::to_string(version);
+    return register_hle(hle_library, ordinal, [library, version, ordinal](Cpu &c) {
+        if (!invoke_native_import(library, version, ordinal, c) && !native_strict()) c.r[2] = 0;
+    });
+}
+
+std::uint32_t import_hle_id_for(const std::string &library, std::uint16_t version, std::uint32_t ordinal) {
+    const NativeIopExportKey key{library, version, ordinal};
+    // Strict mode must route even unresolved imports through the native
+    // resolver so invoke_native_import() stops instead of the generic missing
+    // HLE handler silently returning zero.
+    if (native_strict() || g_native_exports.find(key) != g_native_exports.end())
+        return native_import_hle_id_for(library, version, ordinal);
+    return hle_id_for(library, ordinal);
+}
+
 void link_imports(std::uint32_t base, std::uint32_t size) {
     for (std::uint32_t a = base; a + 20 <= base + size; a += 4) {
         if (ram32(a) != 0x41E00000u) continue;
         char raw[9] = {};
         std::memcpy(raw, ram_ptr(a + 12), 8);
         const std::string library(raw);
+        const auto version = static_cast<std::uint16_t>(ram32(a + 8));
         const auto guest = g_libraries.find(library);
         for (std::uint32_t stub = a + 20; stub + 8 <= base + size; stub += 8) {
             const std::uint32_t w0 = ram32(stub), w1 = ram32(stub + 4);
             if (w0 != 0x03E00008u || (w1 & 0xFFFF0000u) != 0x24000000u) break;
             const std::uint32_t index = w1 & 0xFFFFu;
-            if (guest != g_libraries.end()) {
+            if (guest != g_libraries.end() && !native_strict()) {
                 const std::uint32_t target = ram32(guest->second + 20 + index * 4);
                 set_ram32(stub, 0x08000000u | ((target >> 2) & 0x03FFFFFFu));
                 set_ram32(stub + 4, 0);
             } else {
                 if (!g_hle_versions.count(library) && g_trace_modules)
                     std::fprintf(stderr, "[iop] import from unknown library %s #%u\n", library.c_str(), index);
-                set_ram32(stub, (kHleOpcode << 26) | hle_id_for(library, index));
+                set_ram32(stub, (kHleOpcode << 26) | import_hle_id_for(library, version, index));
             }
         }
     }
@@ -170,11 +189,12 @@ void relink_hle_imports() {
             char raw[9] = {};
             std::memcpy(raw, ram_ptr(a + 12), 8);
             const std::string library(raw);
+            const auto version = static_cast<std::uint16_t>(ram32(a + 8));
             for (std::uint32_t stub = a + 20; stub + 8 <= m.base + m.size; stub += 8) {
                 const std::uint32_t w0 = ram32(stub), w1 = ram32(stub + 4);
                 if ((w0 >> 26) == 2u && w1 == 0) continue;
                 if ((w0 >> 26) != kHleOpcode || (w1 & 0xFFFF0000u) != 0x24000000u) break;
-                set_ram32(stub, (kHleOpcode << 26) | hle_id_for(library, w1 & 0xFFFFu));
+                set_ram32(stub, (kHleOpcode << 26) | import_hle_id_for(library, version, w1 & 0xFFFFu));
             }
         }
     }
@@ -627,9 +647,21 @@ void register_hle_module(const std::string &name, HleModuleStart start) {
 }
 
 void register_native_module(NativeIopModule module) {
-    const std::string key = module_name_of(module.name);
-    if (key.empty()) throw std::invalid_argument("native IOP module has an empty name");
-    module.name = key;
+    const std::string canonical_name = module_name_of(module.name);
+    if (canonical_name.empty()) throw std::invalid_argument("native IOP module has an empty name");
+
+    std::set<std::string> module_keys{canonical_name};
+    for (const std::string &alias : module.aliases) {
+        const std::string key = module_name_of(alias);
+        if (key.empty()) throw std::invalid_argument("native IOP module has an empty alias");
+        if (!module_keys.insert(key).second)
+            throw std::invalid_argument("native IOP module repeats a name or alias");
+    }
+    for (const std::string &key : module_keys) {
+        if (g_native_modules.find(key) != g_native_modules.end())
+            throw std::invalid_argument("native IOP module name or alias was registered more than once");
+    }
+    module.name = canonical_name;
 
     bool has_implementation = static_cast<bool>(module.start);
     std::set<std::pair<std::string, std::uint16_t>> libraries;
@@ -648,8 +680,7 @@ void register_native_module(NativeIopModule module) {
     }
     if (!has_implementation)
         throw std::invalid_argument("native IOP module must provide a start routine or exports");
-    if (!g_native_modules.emplace(key, std::move(module)).second)
-        throw std::invalid_argument("native IOP module was registered more than once");
+    for (const std::string &key : module_keys) g_native_modules.emplace(key, module);
 }
 
 bool invoke_native_import(const std::string &library, std::uint16_t version, std::uint32_t ordinal, Cpu &c) {
@@ -862,15 +893,16 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
     if (resolved_name) {
         auto native = g_native_modules.find(name);
         if (native != g_native_modules.end()) {
+            const std::string &native_name = native->second.name;
             for (const NativeIopLibrary &library : native->second.libraries) {
                 for (const NativeIopExport &entry : library.exports) {
                     const NativeIopExportKey key{library.name, library.version, entry.ordinal};
                     const auto active = g_native_exports.find(key);
-                    if (active != g_native_exports.end() && active->second.first != name) {
+                    if (active != g_native_exports.end() && active->second.first != native_name) {
                         std::fprintf(stderr,
                                      "[iop-native-stop] native export collision %s v%04X ordinal %u (%s vs %s)\n",
                                      library.name.c_str(), library.version, entry.ordinal,
-                                     active->second.first.c_str(), name.c_str());
+                                     active->second.first.c_str(), native_name.c_str());
                         if (native_strict()) {
                             std::fflush(stderr);
                             std::abort();
@@ -881,21 +913,22 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
                 }
             }
             if (native->second.start && !native->second.start(args)) {
-                std::fprintf(stderr, "[iop-native-stop] compiled C++ module start failed for %s\n", name.c_str());
+                std::fprintf(stderr, "[iop-native-stop] compiled C++ module start failed for %s\n", native_name.c_str());
                 if (done) done(-1, -1);
                 return -1;
             }
             const int id = g_next_module++;
-            g_modules[id] = Module{id, name, 0, 0, 0, 0};
+            g_modules[id] = Module{id, native_name, 0, 0, 0, 0};
             for (const NativeIopLibrary &library : native->second.libraries) {
                 for (const NativeIopExport &entry : library.exports) {
                     const NativeIopExportKey key{library.name, library.version, entry.ordinal};
-                    g_native_exports[key] = {name, entry.function};
+                    g_native_exports[key] = {native_name, entry.function};
                 }
             }
+            relink_hle_imports();
             if (g_trace_modules)
                 std::fprintf(stderr, "[iop-native] loaded compiled C++ module %s as %d (%zu libraries)\n",
-                             name.c_str(), id, native->second.libraries.size());
+                             native_name.c_str(), id, native->second.libraries.size());
             if (done) done(id, 0);
             return id;
         }
@@ -1079,6 +1112,7 @@ void state(ps2::state::Stream &s) {
     s.pod(g_nested_done);
     s.pod(g_return_stub);
     s.pod(g_exit_stub);
+    mwfilefr_state(s);
     if (s.loading()) relink_hle_imports();
 }
 
