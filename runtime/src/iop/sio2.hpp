@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <array>
 #include <vector>
 
 namespace ps2::state {
@@ -8,6 +9,13 @@ class Stream;
 }
 
 namespace ps2::iop::sio2 {
+
+struct ControllerState {
+    std::uint16_t buttons{};
+    std::array<std::uint8_t, 4> axes{{0x80, 0x80, 0x80, 0x80}};
+    std::array<std::uint8_t, 16> pressure{};
+    bool connected{};
+};
 
 void state(ps2::state::Stream &s);
 
@@ -19,6 +27,7 @@ void set_buttons(int pad, std::uint16_t pressed_mask);
 void set_axis(int pad, int axis, std::uint8_t value);
 void set_pressure(int pad, int button, std::uint8_t value);
 void set_connected(int pad, bool connected);
+bool controller_state(int pad, ControllerState &out);
 std::uint16_t rumble(int pad);
 void flush_cards();
 void flush_cards_now(bool hurry);

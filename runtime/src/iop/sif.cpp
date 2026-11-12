@@ -1204,6 +1204,10 @@ void register_hle_override(std::uint32_t id, HleServer server) {
     register_hle_override_internal(id, std::move(server));
 }
 
+void unregister_hle_override(std::uint32_t id) {
+    g_hle_overrides.erase(id);
+}
+
 bool native_bind_rpc_nowait(std::uint32_t client, std::uint32_t server) {
     const std::uint32_t client_phys = iop::phys(client);
     if (!client || (client_phys & 3u) != 0 || client_phys > iop::kRamSize - 40u) return false;

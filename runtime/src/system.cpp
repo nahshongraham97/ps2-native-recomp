@@ -6,6 +6,7 @@
 #include "gs/queue.hpp"
 #include "hw.hpp"
 #include "iop/iop.hpp"
+#include "iop/padman.hpp"
 #include "iop/sif.hpp"
 #include "iop/sio2.hpp"
 #include "iop/spu2.hpp"
@@ -391,6 +392,7 @@ void vblank() {
     report_load();
     time_frames();
     latch_pads();
+    iop::padman::frame_tick();
     quick::frame_check();
     apply_patches(false);
     track_words();
@@ -502,7 +504,7 @@ std::uint32_t video_options() { return g_video_options.load(std::memory_order_re
 namespace {
 
 constexpr char kStateMagic[8] = {'P', 'S', '2', 'S', 'T', 'A', 'T', 'E'};
-constexpr std::uint32_t kStateVersion = 11;
+constexpr std::uint32_t kStateVersion = 12;
 
 std::function<void()> event_action(int id, std::uint64_t at) {
     if (id == hw::kEventVblank) return vblank;
@@ -532,8 +534,9 @@ void machine_state(state::Stream &s) {
     // 7 preserves the guest SIF RPC endpoint map and DMA marker count; 8 adds
     // IOP-owned request packet storage for reverse RPC completions; 9 records
     // native VFS paths for open IOP files; 10 records the first MWFILEFR
-    // experiment; 11 records native MWFILEFR work items and callback queues.
-    if (version != kStateVersion && !(s.loading() && (version == 4 || version == 5 || version == 6 || version == 7 || version == 8 || version == 9 || version == 10))) throw std::runtime_error("state file from another version");
+    // experiment; 11 records native MWFILEFR work items and callback queues;
+    // 12 records native PADMAN endpoint and open-pad state.
+    if (version != kStateVersion && !(s.loading() && (version == 4 || version == 5 || version == 6 || version == 7 || version == 8 || version == 9 || version == 10 || version == 11))) throw std::runtime_error("state file from another version");
     s.set_version(version);
     s.tag("ee");
     s.pod(g_cpu);
@@ -562,6 +565,7 @@ void machine_state(state::Stream &s) {
     gif::state(s);
     iop::state(s);
     sif::state(s);
+    if (s.loading()) iop::padman::restore_sif_overrides();
     s.tag("end");
 }
 

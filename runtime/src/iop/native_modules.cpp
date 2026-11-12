@@ -1,6 +1,7 @@
 #include "iop.hpp"
 #include "kernel.hpp"
 #include "mwfilefr.hpp"
+#include "padman.hpp"
 #include "sio2.hpp"
 
 #include <cstdint>
@@ -181,6 +182,7 @@ NativeIopLibrary sio2man_library(std::uint16_t version, bool memory_card_imports
 
 void install_native_modules() {
     g_sio2man_started = false;
+    padman::reset();
     register_native_mwfilefr_job();
     if (g_native_modules_registered) return;
 
@@ -197,6 +199,14 @@ void install_native_modules() {
     sio2man.libraries.push_back(sio2man_library(0x0204u, false));
     sio2man.libraries.push_back(sio2man_library(0x0207u, true));
     register_native_module(std::move(sio2man));
+
+    NativeIopModule padman_module;
+    padman_module.name = "PADMAN";
+    padman_module.start = [](const std::string &) {
+        padman::activate();
+        return true;
+    };
+    register_native_module(std::move(padman_module));
 
     NativeIopModule mwfilefr;
     mwfilefr.name = "MWFILEFR";

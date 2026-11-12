@@ -789,8 +789,8 @@ bool strict_aot_enabled() {
     return enabled;
 }
 
-[[noreturn]] void strict_aot_stop(std::uint32_t pc, std::uint64_t key, const char *reason) {
-    std::fprintf(stderr, "[vu1-aot-stop] pc=%04X key=%016llX: %s\n", pc & 16383u,
+[[noreturn]] void strict_aot_stop(int unit, std::uint32_t pc, std::uint64_t key, const char *reason) {
+    std::fprintf(stderr, "[vu%d-aot-stop] pc=%04X key=%016llX: %s\n", unit, pc & 16383u,
                  static_cast<unsigned long long>(key), reason);
     std::fflush(stderr);
     std::abort();
@@ -888,9 +888,9 @@ void run_entry(int unit, std::uint32_t pc) {
     // differential checks and diagnosing newly recorded programs.
     static const bool interpret_only = std::getenv("PS2_VU_INTERPRET") != nullptr;
     if (strict_aot && interpret_only)
-        strict_aot_stop(pc, 0, "PS2_VU_INTERPRET requests VU1 interpretation");
+        strict_aot_stop(1, pc, 0, "PS2_VU_INTERPRET requests VU1 interpretation");
     if (strict_aot && std::getenv("PS2_VU_CHECK") != nullptr)
-        strict_aot_stop(pc, 0, "PS2_VU_CHECK requires the VU1 interpreter reference");
+        strict_aot_stop(1, pc, 0, "PS2_VU_CHECK requires the VU1 interpreter reference");
     static const bool count = std::getenv("PS2_VU_COUNT") != nullptr;
     static std::uint64_t compiled = 0, interpreted = 0;
     static std::unordered_map<std::uint32_t, std::uint64_t> misses;
@@ -975,9 +975,9 @@ void run_entry(int unit, std::uint32_t pc) {
             return;
         }
         if (strict_aot)
-            strict_aot_stop(pc, current_key, fn ? "diagnostic path would interpret the VU1 program" : "no statically registered C++ VU1 program");
+            strict_aot_stop(1, pc, current_key, fn ? "diagnostic path would interpret the VU1 program" : "no statically registered C++ VU1 program");
     }
-    if (strict_aot) strict_aot_stop(pc, 0, "VU1 execution reached interpreter fallback");
+    if (strict_aot) strict_aot_stop(1, pc, 0, "VU1 execution reached interpreter fallback");
     if (unit == 1) g_interpreted_calls.fetch_add(1, std::memory_order_relaxed);
     if (unit == 1 && !interpret_only && live::active()) live::note_call(g_entries[(pc & 16383u) >> 3].key);
     if (count && unit == 1) {
@@ -1055,8 +1055,14 @@ ProgramFn lookup(std::uint32_t address) {
 }
 
 void run_fast(int n, std::uint32_t address, std::uint64_t diag_key) {
-    if (n == 1 && strict_aot_enabled())
-        strict_aot_stop(address, g_last_key, "run_fast is the VU1 interpreter");
+    // The strict acceptance path must never execute either VU interpreter.
+    // VU0 currently has no static C++ dispatcher, so its first call stops here.
+    if (strict_aot_enabled()) {
+        const char *reason = n == 1 ? "run_fast is the VU1 interpreter" :
+                             n == 0 ? "run_fast is the VU0 interpreter; no VU0 AOT dispatcher is registered" :
+                                      "run_fast has no native AOT dispatcher for this VU unit";
+        strict_aot_stop(n, address, g_last_key, reason);
+    }
     Unit u = unit_of(n);
     Vu0Regs &r = *u.regs;
     if (g_scan[n]) scan_flags(n, u.code, u.code_mask + 1);

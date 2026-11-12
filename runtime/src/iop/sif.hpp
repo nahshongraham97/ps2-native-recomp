@@ -25,6 +25,7 @@ void dump();
 void register_hle_server(std::uint32_t id, HleServer server);
 // Host-native IOP modules register their EE-facing RPC replacement here.
 void register_hle_override(std::uint32_t id, HleServer server);
+void unregister_hle_override(std::uint32_t id);
 void complete_call(std::uint32_t id);
 
 // Host-native IOP modules use guest IOP addresses for client/buffer arguments.

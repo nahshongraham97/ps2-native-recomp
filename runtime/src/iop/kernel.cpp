@@ -3,6 +3,7 @@
 #include "hw.hpp"
 #include "io.hpp"
 #include "mwfilefr.hpp"
+#include "padman.hpp"
 #include "sio2.hpp"
 #include "spu2.hpp"
 #include "../load_stats.hpp"
@@ -1130,6 +1131,7 @@ void state(ps2::state::Stream &s) {
     kernel::cdvdfsv_state(s);
     hw::state(s);
     sio2::state(s);
+    padman::state(s);
     spu2::state(s);
     io::state(s);
 }

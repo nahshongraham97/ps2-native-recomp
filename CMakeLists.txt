@@ -78,6 +78,7 @@ else()
         runtime/src/iop/cpu.cpp
         runtime/src/iop/kernel.cpp
         runtime/src/iop/native_modules.cpp
+        runtime/src/iop/padman.cpp
         runtime/src/iop/mwfilefr.cpp
         runtime/src/iop/libs.cpp
         runtime/src/iop/hw.cpp

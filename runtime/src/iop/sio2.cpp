@@ -585,6 +585,15 @@ void set_connected(int pad, bool connected) {
     if (pad >= 0 && pad < 2) g_pads[pad].connected = g_plugged[pad] = connected;
 }
 
+bool controller_state(int pad, ControllerState &out) {
+    if (pad < 0 || pad >= 2) return false;
+    out.buttons = g_pads[pad].buttons;
+    std::copy(std::begin(g_pads[pad].axes), std::end(g_pads[pad].axes), out.axes.begin());
+    std::copy(std::begin(g_feel[pad].pressure), std::end(g_feel[pad].pressure), out.pressure.begin());
+    out.connected = g_pads[pad].connected;
+    return true;
+}
+
 std::uint16_t rumble(int pad) { return pad >= 0 && pad < 2 ? g_feel[pad].rumble.load(std::memory_order_relaxed) : 0; }
 
 }
