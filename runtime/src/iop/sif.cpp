@@ -19,6 +19,7 @@
 #include <limits>
 #include <stdexcept>
 #include <map>
+#include <set>
 #include <vector>
 
 namespace ps2::sif {
@@ -31,6 +32,7 @@ constexpr std::uint32_t kCmdBuffer = 0x0001E000u;
 constexpr std::uint32_t kCmdRend = 0x80000008u;
 constexpr std::uint32_t kCmdSetSreg = 0x80000001u;
 constexpr std::uint32_t kCmdSetDmaMarker = 0x80000004u;
+constexpr std::uint32_t kMcservSid = 0x80000400u;
 constexpr std::uint32_t kIopRpcPacketSize = 64u;
 constexpr std::uint32_t kIopRpcPacketCount = 32u;
 // An HLE server answers after about the time a call takes on a real IOP. Games
@@ -92,6 +94,9 @@ std::map<std::uint32_t, HleServer> g_hle_overrides;
 std::map<std::uint32_t, PendingBind> g_binds;
 std::map<std::uint32_t, Call> g_held_calls;
 std::deque<Call> g_hle_replies;
+// Diagnostic-only correlation for the first host MCSERV reply through the
+// delayed HLE completion and EE receive-buffer delivery.
+std::set<std::uint32_t> g_mcsrv_trace_rpc_ids;
 std::map<std::uint32_t, std::deque<Request>> g_requests;
 std::map<std::uint32_t, int> g_queue_threads;
 std::map<std::uint32_t, CmdHandler> g_cmd_handlers;
@@ -292,6 +297,15 @@ void call(const std::uint8_t *packet) {
         g_held_calls[sid] = c;
         const HleServer &invoke = override != g_hle_overrides.end() ? override->second : it->second.invoke;
         if (invoke(c.rpc_number, g_data_addr, c.send_size, c.recv & (kRamSize - 1), c.recv_size)) {
+            if (sid == kMcservSid) {
+                g_mcsrv_trace_rpc_ids.insert(c.rpc_id);
+                const std::uint32_t result = c.recv_size >= sizeof(std::uint32_t)
+                    ? ee_read<std::uint32_t>(c.recv & (kRamSize - 1u)) : 0u;
+                std::fprintf(stderr,
+                             "[sif:mcsrv] HLE handled method 0x%08X rpc %u; receive 0x%08X size %u result 0x%08X; queued for reply job at IOP cycle %llu\n",
+                             c.rpc_number, c.rpc_id, c.recv & (kRamSize - 1u), c.recv_size, result,
+                             static_cast<unsigned long long>(iop::kernel::now()));
+            }
             g_held_calls.erase(sid);
             g_hle_replies.push_back(c);
             iop::kernel::schedule(iop::kernel::now() + iop::kernel::usec_to_cycles(kHleReplyUsec), iop::kernel::Job{iop::kernel::kJobSifReply});
@@ -621,6 +635,12 @@ void install_iop_side() {
         if (g_hle_replies.empty()) return;
         const Call c = g_hle_replies.front();
         g_hle_replies.pop_front();
+        if ((c.server_data ^ kServerXor) == kMcservSid) {
+            std::fprintf(stderr,
+                         "[sif:mcsrv] reply job fired for method 0x%08X rpc %u at IOP cycle %llu\n",
+                         c.rpc_number, c.rpc_id,
+                         static_cast<unsigned long long>(iop::kernel::now()));
+        }
         reply_call(c);
     });
     g_loop_stub = iop::kernel::hle_stub(rpc_loop);
@@ -1295,6 +1315,7 @@ void reset() {
     g_binds.clear();
     g_held_calls.clear();
     g_hle_replies.clear();
+    g_mcsrv_trace_rpc_ids.clear();
     g_requests.clear();
     g_taken.clear();
     g_exec_return.clear();
@@ -1414,6 +1435,19 @@ void pump() {
     g_outgoing.pop_front();
     std::memcpy(g_ram + g_ee_recv, packet.data(), packet.size());
     watch_span(g_ee_recv, static_cast<std::uint32_t>(packet.size()), "sif:pump");
+    if (outgoing_cid == kCmdRend && packet.size() >= 28u) {
+        std::uint32_t rpc_id = 0;
+        std::memcpy(&rpc_id, packet.data() + 24u, sizeof rpc_id);
+        if (g_mcsrv_trace_rpc_ids.erase(rpc_id) != 0) {
+            std::uint32_t command_word = 0;
+            if (packet.size() >= 36u)
+                std::memcpy(&command_word, packet.data() + 32u, sizeof command_word);
+            std::fprintf(stderr,
+                         "[sif:mcsrv] Rend copied to EE receive buffer 0x%08X for rpc %u (reply command 0x%08X) at EE cycle %llu\n",
+                         g_ee_recv, rpc_id, command_word,
+                         static_cast<unsigned long long>(now()));
+        }
+    }
     g_processed = false;
     hw::dmac_raise(5);
 }
@@ -1550,6 +1584,7 @@ void state(ps2::state::Stream &s) {
     // waiting, and a load into a running program must not keep the replies of the time before the load.
     if (s.version() >= 5) s.deque(g_hle_replies, [&s](Call &c) { s.pod(c); });
     else if (s.loading()) g_hle_replies.clear();
+    if (s.loading()) g_mcsrv_trace_rpc_ids.clear();
     if (s.version() >= 7) s.pod(g_dma_marker_count);
     else if (s.loading()) g_dma_marker_count = 0;
 }

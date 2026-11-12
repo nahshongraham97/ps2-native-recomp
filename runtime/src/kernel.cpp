@@ -216,11 +216,25 @@ void run_intc(Cpu &c, unsigned cause) {
 void run_dmac(Cpu &c, unsigned channel) {
     hw::dmac_ack(channel);
     static const bool trace = std::getenv("PS2_TRACE_DMA") != nullptr;
-    if (trace) std::fprintf(stderr, "[dmac] interrupt ch%u thread %d\n", channel, g_current);
+    if (trace) {
+        std::fprintf(stderr,
+                     "[dmac] interrupt ch%u thread %d resume pc 0x%08X ra 0x%08X\n",
+                     channel, g_current, c.pc, c.r[31].w[0]);
+    }
     const std::vector<Handler> handlers = g_dmac_handlers;
     for (const Handler &h : handlers) {
         if (h.cause != channel) continue;
+        if (trace) {
+            std::fprintf(stderr,
+                         "[dmac] dispatch ch%u guest handler 0x%08X arg 0x%08X gp 0x%08X\n",
+                         channel, h.address, h.arg, h.gp);
+        }
         const std::int32_t result = static_cast<std::int32_t>(run_guest(c, h.address, channel, h.arg, 0, h.gp));
+        if (trace) {
+            std::fprintf(stderr,
+                         "[dmac] return ch%u guest handler 0x%08X result %d resume pc 0x%08X ra 0x%08X\n",
+                         channel, h.address, result, c.pc, c.r[31].w[0]);
+        }
         if (result < 0) break;
     }
 }

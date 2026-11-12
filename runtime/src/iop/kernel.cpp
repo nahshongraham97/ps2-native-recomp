@@ -928,7 +928,7 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
             }
             relink_hle_imports();
             if (g_trace_modules)
-                std::fprintf(stderr, "[iop-native] loaded compiled C++ module %s as %d (%zu libraries)\n",
+                std::fprintf(stderr, "[iop-native] loaded host-native module replacement %s as %d (%zu libraries)\n",
                              native_name.c_str(), id, native->second.libraries.size());
             if (done) done(id, 0);
             return id;

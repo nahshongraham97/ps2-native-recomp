@@ -7,6 +7,7 @@
 #include "hw.hpp"
 #include "iop/iop.hpp"
 #include "iop/padman.hpp"
+#include "iop/mcserv.hpp"
 #include "iop/sif.hpp"
 #include "iop/sio2.hpp"
 #include "iop/spu2.hpp"
@@ -565,7 +566,10 @@ void machine_state(state::Stream &s) {
     gif::state(s);
     iop::state(s);
     sif::state(s);
-    if (s.loading()) iop::padman::restore_sif_overrides();
+    if (s.loading()) {
+        iop::padman::restore_sif_overrides();
+        iop::mcserv::restore_sif_override();
+    }
     s.tag("end");
 }
 

@@ -61,7 +61,7 @@ namespace {
 int usage() {
     std::fprintf(stderr,
                  "usage: ps2run <elf> [--arg text]... [--frames n] [--ntsc] [--misses file]\n"
-                 "              [--disc image.iso] [--memcard card.ps2] [--pal | --ntsc] [--trace-syscalls] [--trace-io] [--trace-threads]\n"
+                 "              [--disc image.iso | --disc-files extracted-disc-dir] [--memcard card.ps2] [--pal | --ntsc] [--trace-syscalls] [--trace-io] [--trace-threads]\n"
                  "              [--trace-iop] [--trace-iop-hle] [--frames-dir dir] [--frame-every n] [--frame-at n]...\n"
                  "              [--press frame:button[+button][:frames]]... [--window] [--fullscreen]\n"
                  "              [--save-state frame:file] [--load-state file|newest] [--quick-dir dir] [--widescreen] [--patches file]\n"
@@ -509,7 +509,8 @@ int main(int argc, char **argv) {
     std::vector<std::string> args{argv[1]};
     [[maybe_unused]] bool window = false, fullscreen = false;
     std::string load_path;
-    bool no_record = false;
+    std::string disc_files_path;
+    bool disc_files_requested = false, no_record = false;
     ps2::g_options.program_path = argv[1];
     for (int i = 0; i < argc; ++i) {
         const std::string a = argv[i];
@@ -532,6 +533,10 @@ int main(int argc, char **argv) {
         else if (a == "--trace-io") ps2::g_options.trace_io = true;
         else if (a == "--trace-threads") ps2::g_options.trace_threads = true;
         else if (a == "--disc" && i + 1 < argc) ps2::g_options.disc_path = argv[++i];
+        else if (a == "--disc-files" && i + 1 < argc) {
+            disc_files_requested = true;
+            disc_files_path = argv[++i];
+        }
         else if (a == "--memcard" && i + 1 < argc) ps2::g_options.memcard_path = argv[++i];
         else if (a == "--trace-iop") ps2::g_options.trace_iop_modules = true;
         else if (a == "--trace-iop-hle") ps2::g_options.trace_iop_hle = true;
@@ -567,6 +572,32 @@ int main(int argc, char **argv) {
         else if (a == "--rtc" && i + 1 < argc) ps2::g_options.rtc_epoch = std::strtoull(argv[++i], nullptr, 10);
         else if (a == "--quick-dir" && i + 1 < argc) ps2::g_options.quick_dir = argv[++i];
         else return usage();
+    }
+    if (disc_files_requested) {
+        if (disc_files_path.empty()) {
+            std::fprintf(stderr, "--disc-files requires a directory path\n");
+            return usage();
+        }
+        if (!ps2::g_options.disc_path.empty()) {
+            std::fprintf(stderr, "--disc-files cannot be combined with --disc; the extracted filesystem is the complete disc source\n");
+            return usage();
+        }
+        std::error_code error;
+        const std::filesystem::path root = std::filesystem::absolute(ps2::os::path(disc_files_path), error);
+        if (error || !std::filesystem::is_directory(root, error) || error ||
+            !std::filesystem::is_regular_file(root / ".disc_layout", error) || error ||
+            !std::filesystem::is_regular_file(root / ".disc_meta", error) || error) {
+            std::fprintf(stderr, "--disc-files requires an extracted disc directory with .disc_layout and .disc_meta: %s\n",
+                         disc_files_path.c_str());
+            return 2;
+        }
+        if (!ps2::os::set_env("PS2_DISC_FILES", ps2::os::utf8(root)) ||
+            !ps2::os::set_env("PS2_DISC_FILES_STRICT", "1")) {
+            std::fprintf(stderr, "cannot enable strict extracted-disc mode\n");
+            return 2;
+        }
+        std::fprintf(stderr, "[disc-vfs] strict extracted filesystem selected; raw ISO fallback disabled (%s)\n",
+                     ps2::os::utf8(root).c_str());
     }
     std::sort(ps2::g_options.frame_capture_frames.begin(), ps2::g_options.frame_capture_frames.end());
     ps2::g_options.frame_capture_frames.erase(

@@ -1,5 +1,6 @@
 #include "iop.hpp"
 #include "kernel.hpp"
+#include "mcserv.hpp"
 #include "mwfilefr.hpp"
 #include "padman.hpp"
 #include "sio2.hpp"
@@ -183,6 +184,7 @@ NativeIopLibrary sio2man_library(std::uint16_t version, bool memory_card_imports
 void install_native_modules() {
     g_sio2man_started = false;
     padman::reset();
+    mcserv::reset();
     register_native_mwfilefr_job();
     if (g_native_modules_registered) return;
 
@@ -207,6 +209,22 @@ void install_native_modules() {
         return true;
     };
     register_native_module(std::move(padman_module));
+
+    NativeIopModule mcman;
+    mcman.name = "MCMAN";
+    mcman.start = [](const std::string &) {
+        std::fprintf(stderr, "[iop-native] MCMAN host replacement active; guest IRX is not loaded\n");
+        return true;
+    };
+    register_native_module(std::move(mcman));
+
+    NativeIopModule mcserv_module;
+    mcserv_module.name = "MCSERV";
+    mcserv_module.start = [](const std::string &) {
+        mcserv::activate();
+        return true;
+    };
+    register_native_module(std::move(mcserv_module));
 
     NativeIopModule mwfilefr;
     mwfilefr.name = "MWFILEFR";
