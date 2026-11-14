@@ -688,12 +688,34 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
                                     static_cast<char>(pixel >> 16)};
                 file.write(rgb, sizeof(rgb));
             }
+            // The RGB dump cannot show alpha, and whether the front-end font
+            // has holes is an alpha question. Write the alpha channel as its
+            // own grayscale image and summarise it in the log line.
+            const std::string alpha_path = texture_dump_dir + "/texture_" + std::to_string(serial) + "_alpha.ppm";
+            std::ofstream alpha_file(alpha_path, std::ios::binary);
+            alpha_file << "P6\n" << width << " " << height << "\n255\n";
+            std::uint32_t alpha_hist[256] = {};
+            for (const std::uint32_t pixel : rgba) {
+                const std::uint8_t a = static_cast<std::uint8_t>(pixel >> 24);
+                alpha_hist[a]++;
+                const char gray[] = {static_cast<char>(a), static_cast<char>(a), static_cast<char>(a)};
+                alpha_file.write(gray, sizeof(gray));
+            }
+            std::uint32_t distinct = 0, amin = 255, amax = 0;
+            for (unsigned i = 0; i < 256; ++i) {
+                if (!alpha_hist[i]) continue;
+                distinct++;
+                if (i < amin) amin = i;
+                if (i > amax) amax = i;
+            }
+            const std::uint32_t opaque = alpha_hist[255], transparent = alpha_hist[0];
             std::fprintf(stderr,
-                         "[native-gl-texture] primitive=%llu dump=%u %s TEX0=%016llX TEX1=%016llX PSM=%u size=%ux%u MMIN=%u MMAG=%u TFX=%u TCC=%u saved=%d\n",
+                         "[native-gl-texture] primitive=%llu dump=%u %s TEX0=%016llX TEX1=%016llX PSM=%u size=%ux%u MMIN=%u MMAG=%u TFX=%u TCC=%u saved=%d alpha distinct=%u min=%u max=%u opaque=%u transparent=%u %s\n",
                          static_cast<unsigned long long>(primitive_index), serial, path.c_str(),
                          static_cast<unsigned long long>(context.tex0),
                          static_cast<unsigned long long>(context.tex1), tpsm, width, height,
-                         mmin, mmag, tfx, static_cast<unsigned>((context.tex0 >> 34) & 1u), file.good() ? 1 : 0);
+                         mmin, mmag, tfx, static_cast<unsigned>((context.tex0 >> 34) & 1u), file.good() ? 1 : 0,
+                         distinct, amin, amax, opaque, transparent, alpha_path.c_str());
         }
 
         const std::uint32_t minu = static_cast<std::uint32_t>(context.clamp >> 4) & 0x3FFu;
@@ -713,6 +735,14 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
             }
         }
         glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+        // The GS alpha range is 0..128 with 128 meaning opaque; OpenGL is
+        // 0..255. Uploading the byte unchanged put every texture at half
+        // opacity (128 -> 0.502), which washes out text and UI and makes thin
+        // strokes look broken. Scale it, saturating at opaque.
+        for (std::uint32_t &pixel : rgba) {
+            const std::uint32_t a = (pixel >> 24) & 0xFFu;
+            pixel = (pixel & 0x00FFFFFFu) | (std::min<std::uint32_t>(255u, a * 2u) << 24);
+        }
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(width), static_cast<GLsizei>(height),
                      0, GL_RGBA, GL_UNSIGNED_BYTE, rgba.data());
         g_texture.tex0 = context.tex0;
@@ -1751,9 +1781,11 @@ bool submit(const State &st, const Vertex *verts, int count) {
             if (((context.tex0 >> 35) & 3u) >= 2u && g_multi_texcoord4f)
                 g_multi_texcoord4f(GL_TEXTURE1, s, t, 0.0f, q);
         }
+        // RGBAQ.A is also 0..128 with 128 opaque on the GS, so the same
+        // saturation applies to the vertex colour, not just to the texture.
         const GLubyte alpha = framebuffer_16 && (!textured || !tex_alpha_enabled)
             ? (color.a >= 0x80u ? 0xFFu : 0u)
-            : color.a;
+            : static_cast<GLubyte>(std::min<int>(255, static_cast<int>(color.a) * 2));
         glColor4ub(color.r, color.g, color.b, alpha);
         glVertex3f(fx, fy, fz);
     };
