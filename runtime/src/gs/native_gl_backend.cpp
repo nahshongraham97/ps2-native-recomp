@@ -1732,8 +1732,17 @@ bool submit(const State &st, const Vertex *verts, int count) {
     const bool fst = (attr & (1ull << 8)) != 0;
     const auto emit = [&](const Vertex &v, const Vertex &color, std::uint32_t x, std::uint32_t y,
                           float s, float t, float q) {
-        const float fx = static_cast<float>(static_cast<int>(x) - ofx) / 16.0f;
-        const float fy = static_cast<float>(static_cast<int>(y) - ofy) / 16.0f;
+        // The GS samples the texture at the *pixel* coordinate (the GS User's
+        // Manual puts texel centres at .5; jbit's pixel-perfect sprite notes
+        // put pixel centres at .0), while OpenGL samples at the fragment
+        // centre, i+0.5. Without this half-picture-pixel shift every textured
+        // primitive was sampled half a pixel to the right of the hardware's
+        // sample point: glyph strokes and border sprites came out split and
+        // column-sliced - the text defect the pre-native-GL renderer did not
+        // have. The shift leaves the covered pixels alone, because GL excludes
+        // the right and bottom edge exactly as the GS leaves them undrawn.
+        const float fx = static_cast<float>(static_cast<int>(x) - ofx) / 16.0f + 0.5f;
+        const float fy = static_cast<float>(static_cast<int>(y) - ofy) / 16.0f + 0.5f;
         const std::uint32_t z = std::min(v.z, zmax);
         const float z01 = static_cast<float>(static_cast<double>(z) / static_cast<double>(zmax));
         const float fz = z01 * 2.0f - 1.0f;

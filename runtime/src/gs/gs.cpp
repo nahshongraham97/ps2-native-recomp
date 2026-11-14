@@ -101,7 +101,6 @@ void note_guest_write(std::uint32_t base, std::uint32_t psm,
                       std::uint32_t x, std::uint32_t y,
                       std::uint32_t w, std::uint32_t h) {
     if (!w || !h) return;
-    count_transfer_dest(base, w * h);
     GuestWrite &write = g_guest_writes[g_guest_write_next];
     g_guest_write_next = (g_guest_write_next + 1) % kGuestWriteHistory;
     write.generation = ++g_guest_write_generation;
@@ -1042,6 +1041,16 @@ void write(std::uint32_t reg, std::uint64_t value) {
             else if ((value & 3u) == 1 && !cpu_raster()) download_source(s);
         }
 #endif
+        // Count the destination on every backend. Where the guest sends a
+        // frame is a fact about the game, not about which renderer is active;
+        // gating it on cpu_raster() left the histogram empty in a WebGPU run
+        // and hid where a movie frame actually lands.
+        if ((value & 3u) == 0 || (value & 3u) == 2) {
+            const std::uint64_t buf0 = s.bitbltbuf, reg0 = s.trxreg;
+            count_transfer_dest(static_cast<std::uint32_t>(buf0 >> 32) & 0x3FFFu,
+                                (static_cast<std::uint32_t>(reg0) & 0xFFFu) *
+                                (static_cast<std::uint32_t>(reg0 >> 32) & 0xFFFu));
+        }
         if ((value & 3u) == 0) {
             g_transfer.active = true;
             if (cpu_raster()) {
