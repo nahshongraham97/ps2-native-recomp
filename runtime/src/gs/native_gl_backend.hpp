@@ -27,6 +27,15 @@ bool present_current();
 // line prims, 1 for points; count is the vertex count.
 bool submit(const State &st, const Vertex *verts, int count);
 
+// Copies a rectangle the guest wrote straight into VRAM (an image transfer or
+// a local copy) onto the native scene surface, at the same coordinates the
+// primitives use. This is how a buffer clear and a movie frame reach the
+// picture the window shows: both arrive as transfers, not as primitives.
+// Returns false when the backend is off or the pixel format is unsupported.
+bool draw_guest_rect(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
+                     std::uint32_t x, std::uint32_t y,
+                     std::uint32_t width, std::uint32_t height);
+
 // Flushes pending readback of the GL framebuffer into GS memory. Called from
 // the backend itself on an internal cadence; exposed for host code that wants
 // an explicit sync point.

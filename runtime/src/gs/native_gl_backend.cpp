@@ -1113,6 +1113,101 @@ bool draw_vram_display(const std::uint32_t *rgba, int width, int height,
     return true;
 }
 
+// Copies a rectangle the guest wrote straight into VRAM onto the native scene
+// surface. A buffer clear and a movie frame both arrive as image transfers
+// rather than as primitives, so without this the surface keeps whatever the
+// primitives last drew: a stale ghost of an earlier frame, or nothing at all.
+// Runs on the render thread, which is the thread that drains GIF packets and
+// owns the WGL context.
+bool draw_guest_rect(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
+                     std::uint32_t x, std::uint32_t y,
+                     std::uint32_t width, std::uint32_t height) {
+#if defined(_WIN32)
+    if (!g_enabled || !g_hdc || !g_hrc || !g_scene_target.ready) return false;
+    if (!width || !height || x >= static_cast<std::uint32_t>(kWidth) ||
+        y >= static_cast<std::uint32_t>(kHeight))
+        return false;
+    const std::uint32_t clipped_w = std::min<std::uint32_t>(width, static_cast<std::uint32_t>(kWidth) - x);
+    const std::uint32_t clipped_h = std::min<std::uint32_t>(height, static_cast<std::uint32_t>(kHeight) - y);
+    if (!clipped_w || !clipped_h) return false;
+
+    static std::vector<std::uint32_t> pixels;
+    pixels.resize(static_cast<std::size_t>(clipped_w) * clipped_h);
+    if (!gs::read_rect_rgba(psm, base, bw, x, y, clipped_w, clipped_h, false, pixels.data())) {
+        static bool warned = false;
+        if (!warned) {
+            warned = true;
+            std::fprintf(stderr, "[native-gl] guest VRAM write pixel format %u cannot reach the native surface\n", psm);
+        }
+        return false;
+    }
+
+    if (wglGetCurrentContext() != g_hrc && !wglMakeCurrent(g_hdc, g_hrc)) {
+        std::fprintf(stderr, "[native-gl] could not make the WGL context current for a guest VRAM write\n");
+        return false;
+    }
+
+    static GLuint texture = 0;
+    static int texture_width = 0, texture_height = 0;
+    if (!texture) {
+        glGenTextures(1, &texture);
+        if (!texture) return false;
+    }
+    if (g_active_texture) g_active_texture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    if (static_cast<int>(clipped_w) != texture_width || static_cast<int>(clipped_h) != texture_height) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(clipped_w), static_cast<GLsizei>(clipped_h),
+                     0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        texture_width = static_cast<int>(clipped_w);
+        texture_height = static_cast<int>(clipped_h);
+    } else {
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, static_cast<GLsizei>(clipped_w), static_cast<GLsizei>(clipped_h),
+                        GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+    }
+
+    // The scene surface uses the same top-left GS coordinate space the
+    // primitives are submitted in, so the transferred rectangle lands exactly
+    // where the guest addressed it.
+    g_bind_framebuffer(GL_FRAMEBUFFER, g_scene_target.framebuffer);
+    glDrawBuffer(GL_COLOR_ATTACHMENT0);
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    glViewport(0, 0, kWidth, kHeight);
+    glDisable(GL_SCISSOR_TEST);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(0.0, kWidth, kHeight, 0.0, -1.0, 1.0);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f); glVertex2i(static_cast<GLint>(x), static_cast<GLint>(y));
+    glTexCoord2f(1.0f, 0.0f); glVertex2i(static_cast<GLint>(x + clipped_w), static_cast<GLint>(y));
+    glTexCoord2f(1.0f, 1.0f); glVertex2i(static_cast<GLint>(x + clipped_w), static_cast<GLint>(y + clipped_h));
+    glTexCoord2f(0.0f, 1.0f); glVertex2i(static_cast<GLint>(x), static_cast<GLint>(y + clipped_h));
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    return true;
+#else
+    (void)psm; (void)base; (void)bw; (void)x; (void)y; (void)width; (void)height;
+    return false;
+#endif
+}
+
 bool present_frame(const DisplayRegs &regs) {
 #if defined(_WIN32)
     if (!direct_window() || !g_scene_target.ready || !g_hdc || !g_hwnd || !g_blit_framebuffer) return false;

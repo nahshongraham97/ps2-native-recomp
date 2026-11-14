@@ -76,6 +76,14 @@ bool read_display_rgba(std::uint32_t psm, std::uint32_t fbp, std::uint32_t fbw,
                        std::uint32_t dbx, std::uint32_t dby,
                        std::uint32_t width, std::uint32_t height,
                        bool halved_field, std::uint32_t *rgba);
+// Same decode for an arbitrary rectangle: base is in 256-byte units, bw is the
+// surface pitch in 64-pixel units, and x/y are the rectangle origin inside that
+// surface. A guest image transfer lands here, so this is the read that lets a
+// transferred frame reach the native surface.
+bool read_rect_rgba(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
+                    std::uint32_t x, std::uint32_t y,
+                    std::uint32_t width, std::uint32_t height,
+                    bool halved_field, std::uint32_t *rgba);
 
 // A guest VRAM write that did not come from the primitive pipeline: an image
 // transfer or a local copy. The newest recorded write carries the highest

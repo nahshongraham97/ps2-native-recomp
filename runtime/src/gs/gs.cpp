@@ -360,6 +360,28 @@ void exact_download() {
 #endif
 }
 
+// Hands a completed guest VRAM write to the native surface when it targets the
+// surface the GS is displaying. Buffer clears and movie frames arrive this way;
+// texture uploads land in other surfaces and must not be painted over the
+// picture. Runs on the render thread, which owns the GL context.
+void apply_display_write(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
+                         std::uint32_t x, std::uint32_t y,
+                         std::uint32_t w, std::uint32_t h) {
+    if (!native_gl::enabled() || !w || !h) return;
+    const int circuit = (g_pmode & 2u) ? 1 : (g_pmode & 1u) ? 0 : -1;
+    if (circuit < 0) return;
+    const std::uint32_t display_base = (static_cast<std::uint32_t>(g_dispfb[circuit]) & 0x1FFu) * 32u;
+    if (base != display_base) return;
+    static auto last_report = std::chrono::steady_clock::time_point{};
+    const auto now = std::chrono::steady_clock::now();
+    if (std::chrono::duration_cast<std::chrono::milliseconds>(now - last_report).count() >= 500) {
+        last_report = now;
+        std::fprintf(stderr, "[gs] display-surface write applied to the native surface: psm=%u base=%u rect=%u,%u %ux%u\n",
+                     psm, base, x, y, w, h);
+    }
+    native_gl::draw_guest_rect(psm, base, bw, x, y, w, h);
+}
+
 void transfer_pixel(std::uint32_t value) {
     const std::uint64_t buf = g_state.bitbltbuf, pos = g_state.trxpos, reg = g_state.trxreg;
     const std::uint32_t dbp = static_cast<std::uint32_t>(buf >> 32) & 0x3FFFu;
@@ -374,7 +396,10 @@ void transfer_pixel(std::uint32_t value) {
     ++g_vram_generation;
     if (++g_transfer.x >= rrw) {
         g_transfer.x = 0;
-        if (++g_transfer.y >= rrh) g_transfer.active = false;
+        if (++g_transfer.y >= rrh) {
+            g_transfer.active = false;
+            apply_display_write(dpsm, dbp, dbw, dsax, dsay, rrw, rrh);
+        }
     }
 }
 
@@ -428,6 +453,7 @@ void local_copy() {
         }
     }
     ++g_vram_generation;
+    apply_display_write(dpsm, dbp, dbw, dsax, dsay, rrw, rrh);
 }
 
 void load_clut(std::uint64_t tex0) {
@@ -576,15 +602,15 @@ void write_pixel(std::uint32_t psm, std::uint32_t bp, std::uint32_t bw, std::uin
     }
 }
 
-// Reads a display rectangle out of GS VRAM as opaque RGBA8, one 32-bit word
-// per pixel with the low byte red (the byte order GL_RGBA wants in memory).
-// Row 0 is the top GS scanline, matching DISPFB.DBY increasing downward.
-// Image-transfer frames (movies, stills) land in VRAM without passing through
-// the primitive pipeline, so presentation needs this direct VRAM view.
-bool read_display_rgba(std::uint32_t psm, std::uint32_t fbp, std::uint32_t fbw,
-                       std::uint32_t dbx, std::uint32_t dby,
-                       std::uint32_t width, std::uint32_t height,
-                       bool halved_field, std::uint32_t *rgba) {
+// Reads a rectangle out of GS VRAM as opaque RGBA8, one 32-bit word per pixel
+// with the low byte red (the byte order GL_RGBA wants in memory). Row 0 is the
+// top GS scanline. Image-transfer frames (movies, stills, and the game's own
+// buffer clears) land in VRAM without passing through the primitive pipeline,
+// so the native surface needs this direct VRAM view to receive them.
+bool read_rect_rgba(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
+                    std::uint32_t x, std::uint32_t y,
+                    std::uint32_t width, std::uint32_t height,
+                    bool halved_field, std::uint32_t *rgba) {
     if (!rgba || !width || !height) return false;
     switch (psm) {
     case PSMCT32: case PSMCT24: case PSMCT16: case PSMCT16S:
@@ -592,17 +618,24 @@ bool read_display_rgba(std::uint32_t psm, std::uint32_t fbp, std::uint32_t fbw,
     default:
         return false;
     }
-    const std::uint32_t bp = fbp * 32u;
-    for (std::uint32_t y = 0; y < height; ++y) {
-        const std::uint32_t source_y = dby + (halved_field ? y / 2u : y);
-        for (std::uint32_t x = 0; x < width; ++x) {
-            std::uint32_t c = read_pixel(psm, bp, fbw, dbx + x, source_y);
+    for (std::uint32_t row = 0; row < height; ++row) {
+        const std::uint32_t source_y = y + (halved_field ? row / 2u : row);
+        for (std::uint32_t col = 0; col < width; ++col) {
+            std::uint32_t c = read_pixel(psm, base, bw, x + col, source_y);
             if (psm == PSMCT16 || psm == PSMCT16S)
                 c = ((c & 0x1Fu) << 3) | ((c & 0x3E0u) << 6) | ((c & 0x7C00u) << 9);
-            rgba[static_cast<std::size_t>(y) * width + x] = c | 0xFF000000u;
+            rgba[static_cast<std::size_t>(row) * width + col] = c | 0xFF000000u;
         }
     }
     return true;
+}
+
+bool read_display_rgba(std::uint32_t psm, std::uint32_t fbp, std::uint32_t fbw,
+                       std::uint32_t dbx, std::uint32_t dby,
+                       std::uint32_t width, std::uint32_t height,
+                       bool halved_field, std::uint32_t *rgba) {
+    // DISPFB.FBP is in 8192-byte pages; read_rect_rgba takes 256-byte units.
+    return read_rect_rgba(psm, fbp * 32u, fbw, dbx, dby, width, height, halved_field, rgba);
 }
 
 void init() {
