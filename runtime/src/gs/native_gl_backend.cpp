@@ -1253,6 +1253,21 @@ bool present_frame(const DisplayRegs &regs) {
     const int display_width = (static_cast<int>((disp >> 32) & 0xFFFu) + 1) / magh;
     int height = (static_cast<int>((disp >> 44) & 0x7FFu) + 1) / magv;
     if ((regs.smode2 & 3u) == 1u && height > 576) height /= 2;
+    // The display registers can describe a wider buffer than the game draws
+    // into. The front end renders inside a 640x448 scissor while DISPFB reads
+    // 832 columns of an 832-pixel-wide buffer; presenting those extra columns
+    // showed 192 pixels the game never drew and forced a 1.538x scale, whose
+    // uneven 1/2/3-pixel doubling is what blurs the text. Clamp the displayed
+    // rectangle to the area the GS scissor actually allows the game to draw.
+    const std::uint64_t scissor = g_state.ctx[circuit].scissor;
+    const int scissor_x0 = static_cast<int>(scissor & 0x7FFu);
+    const int scissor_x1 = static_cast<int>((scissor >> 16) & 0x7FFu);
+    const int scissor_y0 = static_cast<int>((scissor >> 32) & 0x7FFu);
+    const int scissor_y1 = static_cast<int>((scissor >> 48) & 0x7FFu);
+    const int picture_width = scissor_x1 >= scissor_x0 ? scissor_x1 - scissor_x0 + 1 : display_width;
+    const int picture_height = scissor_y1 >= scissor_y0 ? scissor_y1 - scissor_y0 + 1 : height;
+    const int width = std::min(display_width, picture_width);
+    height = std::min(height, picture_height);
     const bool halved_field = (regs.smode2 & 3u) == 3u;
     const int source_height = halved_field ? (height + 1) / 2 : height;
     const int active_frame_width = g_active_frame_width.load(std::memory_order_relaxed);
@@ -1265,13 +1280,6 @@ bool present_frame(const DisplayRegs &regs) {
     // implied by a wider DISPLAY.DW. Keep DISPLAY.DW as the fallback before
     // the first accepted primitive and whenever the active surface is wider.
     const bool display_is_primitive_surface = display_fbp == active_frame_fbp;
-    // The presented rectangle comes from the display registers alone. Taking
-    // it from the FRAME pitch of the last submitted primitive made the width
-    // jump between frames: the game renders into several surfaces (the front
-    // end alone presents 832, 640 and 256 pixels wide in one run) and the
-    // displayed picture rescaled on every switch, which shows up on screen as
-    // column shifting and comb-like tearing.
-    const int width = display_width;
     if (width <= 0 || height <= 0 || dbx < 0 || dby < 0 || dbx + width > kWidth || dby + source_height > kHeight) {
         static bool warned = false;
         if (!warned) {
