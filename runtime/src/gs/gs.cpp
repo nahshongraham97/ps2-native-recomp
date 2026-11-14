@@ -495,6 +495,35 @@ void write_pixel(std::uint32_t psm, std::uint32_t bp, std::uint32_t bw, std::uin
     }
 }
 
+// Reads a display rectangle out of GS VRAM as opaque RGBA8, one 32-bit word
+// per pixel with the low byte red (the byte order GL_RGBA wants in memory).
+// Row 0 is the top GS scanline, matching DISPFB.DBY increasing downward.
+// Image-transfer frames (movies, stills) land in VRAM without passing through
+// the primitive pipeline, so presentation needs this direct VRAM view.
+bool read_display_rgba(std::uint32_t psm, std::uint32_t fbp, std::uint32_t fbw,
+                       std::uint32_t dbx, std::uint32_t dby,
+                       std::uint32_t width, std::uint32_t height,
+                       bool halved_field, std::uint32_t *rgba) {
+    if (!rgba || !width || !height) return false;
+    switch (psm) {
+    case PSMCT32: case PSMCT24: case PSMCT16: case PSMCT16S:
+        break;
+    default:
+        return false;
+    }
+    const std::uint32_t bp = fbp * 32u;
+    for (std::uint32_t y = 0; y < height; ++y) {
+        const std::uint32_t source_y = dby + (halved_field ? y / 2u : y);
+        for (std::uint32_t x = 0; x < width; ++x) {
+            std::uint32_t c = read_pixel(psm, bp, fbw, dbx + x, source_y);
+            if (psm == PSMCT16 || psm == PSMCT16S)
+                c = ((c & 0x1Fu) << 3) | ((c & 0x3E0u) << 6) | ((c & 0x7C00u) << 9);
+            rgba[static_cast<std::size_t>(y) * width + x] = c | 0xFF000000u;
+        }
+    }
+    return true;
+}
+
 void init() {
     static bool built = false;
     if (built) return;

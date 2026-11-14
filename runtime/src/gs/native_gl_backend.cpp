@@ -1058,6 +1058,61 @@ bool direct_window() {
     return g_enabled && g_direct_window_context;
 }
 
+// Draws a VRAM display rectangle into the visible back buffer as a textured
+// quad. Nearest filtering keeps the integer-scaled pixels exact. Restores the
+// fixed-function state the primitive path leaves behind (texture unit, texenv,
+// matrices) so the next submitted primitive sees the same context it expects.
+bool draw_vram_display(const std::uint32_t *rgba, int width, int height,
+                       int output_width, int output_height,
+                       int draw_x, int draw_y, int draw_width, int draw_height) {
+    static GLuint texture = 0;
+    static int texture_width = 0, texture_height = 0;
+    if (!texture) {
+        glGenTextures(1, &texture);
+        if (!texture) return false;
+    }
+    if (g_active_texture) g_active_texture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    if (width != texture_width || height != texture_height) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        texture_width = width;
+        texture_height = height;
+    } else {
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, rgba);
+    }
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(0.0, output_width, output_height, 0.0, -1.0, 1.0);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+    glDisable(GL_SCISSOR_TEST);
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f); glVertex2i(draw_x, draw_y);
+    glTexCoord2f(1.0f, 0.0f); glVertex2i(draw_x + draw_width, draw_y);
+    glTexCoord2f(1.0f, 1.0f); glVertex2i(draw_x + draw_width, draw_y + draw_height);
+    glTexCoord2f(0.0f, 1.0f); glVertex2i(draw_x, draw_y + draw_height);
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    return true;
+}
+
 bool present_frame(const DisplayRegs &regs) {
 #if defined(_WIN32)
     if (!direct_window() || !g_scene_target.ready || !g_hdc || !g_hwnd || !g_blit_framebuffer) return false;
@@ -1108,11 +1163,18 @@ bool present_frame(const DisplayRegs &regs) {
     const int active_frame_width = g_active_frame_width.load(std::memory_order_relaxed);
     const std::uint32_t active_frame_fbp = g_active_frame_fbp.load(std::memory_order_relaxed);
     const std::uint32_t display_fbp = static_cast<std::uint32_t>(fb) & 0x1FFu;
+    const std::uint32_t display_fbw = static_cast<std::uint32_t>(fb >> 9) & 0x3Fu;
+    const std::uint32_t display_psm = static_cast<std::uint32_t>(fb >> 15) & 0x1Fu;
     // FRAME.FBW is the actual draw surface pitch in 64-pixel units. The
     // current direct FBO captures that surface's geometry, not empty columns
     // implied by a wider DISPLAY.DW. Keep DISPLAY.DW as the fallback before
     // the first accepted primitive and whenever the active surface is wider.
-    const int width = active_frame_width > 0 ? std::min(display_width, active_frame_width) : display_width;
+    // A display surface the primitive stream never rendered into (movie or
+    // still image transfers) has to use DISPLAY.DW: the FBO describes a
+    // different surface entirely.
+    const bool display_is_primitive_surface = display_fbp == active_frame_fbp;
+    const int fbo_width = active_frame_width > 0 ? std::min(display_width, active_frame_width) : display_width;
+    const int width = display_is_primitive_surface ? fbo_width : display_width;
     if (width <= 0 || height <= 0 || dbx < 0 || dby < 0 || dbx + width > kWidth || dby + source_height > kHeight) {
         static bool warned = false;
         if (!warned) {
@@ -1127,17 +1189,71 @@ bool present_frame(const DisplayRegs &regs) {
         return false;
     }
 
-    const double scale = std::min(static_cast<double>(output_width) / width,
-                                  static_cast<double>(output_height) / height);
+    // Movie and still-image frames are written straight into GS VRAM by the
+    // IMAGE transfer path and never reach the primitive scene target. Present
+    // the display rectangle from VRAM when the display surface is not the one
+    // the primitive stream rendered into, or when VRAM changed without a new
+    // primitive. The primitive path keeps the FBO authoritative otherwise so
+    // depth-tested 3D output is not replaced by a stale compatibility readback.
+    static std::uint64_t last_present_primitives = 0;
+    static std::uint64_t last_present_vram = 0;
+    static int last_present_source = -1;
+    static std::vector<std::uint32_t> vram_pixels;
+    const std::uint64_t primitives = g_prims_drawn.load(std::memory_order_relaxed);
+    const std::uint64_t vram_generation = gs::g_vram_generation;
+    const bool vram_written = vram_generation != last_present_vram;
+    const bool primitives_drawn = primitives != last_present_primitives;
+    const bool present_from_vram = vram_written && (!display_is_primitive_surface || !primitives_drawn);
+    last_present_primitives = primitives;
+    last_present_vram = vram_generation;
+    bool presented_from_vram = false;
+    if (present_from_vram) {
+        vram_pixels.resize(static_cast<std::size_t>(width) * source_height);
+        if (gs::read_display_rgba(display_psm, display_fbp, display_fbw, static_cast<std::uint32_t>(dbx),
+                                  static_cast<std::uint32_t>(dby), static_cast<std::uint32_t>(width),
+                                  static_cast<std::uint32_t>(source_height), halved_field, vram_pixels.data()))
+            presented_from_vram = true;
+    }
+    if (present_from_vram && !presented_from_vram) {
+        static bool warned_vram = false;
+        if (!warned_vram) {
+            warned_vram = true;
+            std::fprintf(stderr, "[native-gl] cannot present DISPFB from VRAM: pixel format %u is unsupported; using the scene target\n",
+                         display_psm);
+        }
+    }
+
+    const double fit = std::min(static_cast<double>(output_width) / width,
+                                static_cast<double>(output_height) / height);
+    // Integer scaling keeps the GS pixels square: 1.5x nearest mixes doubled
+    // and single lines, which is what makes front-end text look uneven. Below
+    // 2x there is no integer step worth taking, so fill the window instead.
+    const double scale = fit >= 2.0 ? std::floor(fit) : fit;
     const int draw_width = std::max(1, static_cast<int>(std::lround(width * scale)));
     const int draw_height = std::max(1, static_cast<int>(std::lround(height * scale)));
     const int draw_x = (output_width - draw_width) / 2;
     const int draw_y = (output_height - draw_height) / 2;
     const int source_y0 = kHeight - dby - source_height;
     const int source_y1 = kHeight - dby;
-    g_blit_framebuffer(dbx, source_y0, dbx + width, source_y1,
-                       draw_x, draw_y, draw_x + draw_width, draw_y + draw_height,
-                       GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    if (presented_from_vram) {
+        draw_vram_display(vram_pixels.data(), width, source_height, output_width, output_height,
+                          draw_x, draw_y, draw_width, draw_height);
+    } else {
+        g_blit_framebuffer(dbx, source_y0, dbx + width, source_y1,
+                           draw_x, draw_y, draw_x + draw_width, draw_y + draw_height,
+                           GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    }
+    const int present_source = presented_from_vram ? 1 : 0;
+    if (present_source != last_present_source) {
+        last_present_source = present_source;
+        std::fprintf(stderr,
+                     "[native-gl] present source: %s %dx%d DISPFB FBP=%u PSM=%u DBX=%d DBY=%d, scene FBP=%u width=%d, primitives=%llu vram=%llu, scale=%.3f (%s) -> %d,%d %dx%d\n",
+                     presented_from_vram ? "vram" : "scene", width, source_height, display_fbp, display_psm,
+                     dbx, dby, active_frame_fbp, active_frame_width,
+                     static_cast<unsigned long long>(primitives),
+                     static_cast<unsigned long long>(vram_generation), scale,
+                     fit >= 2.0 ? "integer" : "fit", draw_x, draw_y, draw_width, draw_height);
+    }
     static const bool diagnose_present = [] {
         const std::string value = ps2::os::env("PS2_NATIVE_GL_DIAGNOSTICS");
         return !value.empty() && value != "0" && value != "off" && value != "false";

@@ -69,6 +69,13 @@ bool interlaced_odd_field();
 std::uint32_t address32(std::uint32_t bp, std::uint32_t bw, std::uint32_t x, std::uint32_t y);
 std::uint32_t read_pixel(std::uint32_t psm, std::uint32_t bp, std::uint32_t bw, std::uint32_t x, std::uint32_t y);
 void write_pixel(std::uint32_t psm, std::uint32_t bp, std::uint32_t bw, std::uint32_t x, std::uint32_t y, std::uint32_t value);
+// Decodes a DISPFB rectangle straight out of VRAM as opaque RGBA8 words whose
+// low byte is red, row 0 being the top scanline. Returns false for a pixel
+// format the host cannot present.
+bool read_display_rgba(std::uint32_t psm, std::uint32_t fbp, std::uint32_t fbw,
+                       std::uint32_t dbx, std::uint32_t dby,
+                       std::uint32_t width, std::uint32_t height,
+                       bool halved_field, std::uint32_t *rgba);
 
 struct DisplayRegs {
     std::uint64_t pmode, smode2, dispfb[2], display[2];

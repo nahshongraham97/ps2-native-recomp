@@ -1276,7 +1276,7 @@ bool open_window(bool fullscreen) {
     const Uint32 flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI |
                          (g_direct_gl ? SDL_WINDOW_OPENGL : 0u) |
                          (fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0u);
-    g_window = SDL_CreateWindow("ps2-native-recomp", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, ps2::g_options.widescreen ? 1280 : 960, 720, flags);
+    g_window = SDL_CreateWindow("ps2-native-recomp", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, ps2::g_options.widescreen ? 720 : 960, flags);
     if (!g_window) {
         std::fprintf(stderr, "SDL: %s\n", SDL_GetError());
         return false;
