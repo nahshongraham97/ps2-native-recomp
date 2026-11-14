@@ -1762,17 +1762,15 @@ bool submit(const State &st, const Vertex *verts, int count) {
     const bool fst = (attr & (1ull << 8)) != 0;
     const auto emit = [&](const Vertex &v, const Vertex &color, std::uint32_t x, std::uint32_t y,
                           float s, float t, float q) {
-        // The GS samples the texture at the *pixel* coordinate (the GS User's
-        // Manual puts texel centres at .5; jbit's pixel-perfect sprite notes
-        // put pixel centres at .0), while OpenGL samples at the fragment
-        // centre, i+0.5. Without this half-picture-pixel shift every textured
-        // primitive was sampled half a pixel to the right of the hardware's
-        // sample point: glyph strokes and border sprites came out split and
-        // column-sliced - the text defect the pre-native-GL renderer did not
-        // have. The shift leaves the covered pixels alone, because GL excludes
-        // the right and bottom edge exactly as the GS leaves them undrawn.
-        const float fx = static_cast<float>(static_cast<int>(x) - ofx) / 16.0f + 0.5f;
-        const float fy = static_cast<float>(static_cast<int>(y) - ofy) / 16.0f + 0.5f;
+        // Pixel-centre alignment. The GS samples at the pixel's own coordinate;
+        // GL samples at the fragment centre, half a pixel further on. This
+        // shift moves the native path onto the GS sample point.
+        static const float pixel_shift = [] {
+            const char *value = std::getenv("PS2_NATIVE_GL_PIXEL_SHIFT");
+            return value ? static_cast<float>(std::atof(value)) : 0.0f;
+        }();
+        const float fx = static_cast<float>(static_cast<int>(x) - ofx) / 16.0f + pixel_shift;
+        const float fy = static_cast<float>(static_cast<int>(y) - ofy) / 16.0f + pixel_shift;
         const std::uint32_t z = std::min(v.z, zmax);
         const float z01 = static_cast<float>(static_cast<double>(z) / static_cast<double>(zmax));
         const float fz = z01 * 2.0f - 1.0f;
@@ -1790,12 +1788,25 @@ bool submit(const State &st, const Vertex *verts, int count) {
         glVertex3f(fx, fy, fz);
     };
     const auto uv = [&](const Vertex &v) {
+        // Sampling alignment. The GS samples at the pixel's own coordinate and
+        // its texel centres sit at the fractional .5 position; GL samples at
+        // the fragment centre and blends around p-0.5. These two offsets make
+        // the native path land on the same texel as the software rasterizer,
+        // which is the reference implementation of the GS sampling rules.
+        // tests/test_gl_vs_raster.cpp measures the agreement.
+        static const float texel_offset = [] {
+            const char *value = std::getenv("PS2_NATIVE_GL_TEXEL_OFFSET");
+            return value ? static_cast<float>(std::atof(value)) : 0.0f;
+        }();
         if (fst) {
             return std::array<float, 2>{
-                static_cast<float>(v.u) / (16.0f * static_cast<float>(texture_width)),
-                static_cast<float>(v.v) / (16.0f * static_cast<float>(texture_height))};
+                static_cast<float>(v.u) / (16.0f * static_cast<float>(texture_width)) +
+                    texel_offset / static_cast<float>(texture_width),
+                static_cast<float>(v.v) / (16.0f * static_cast<float>(texture_height)) +
+                    texel_offset / static_cast<float>(texture_height)};
         }
-        return std::array<float, 2>{v.s, v.t};
+        return std::array<float, 2>{v.s + texel_offset / static_cast<float>(texture_width),
+                                    v.t + texel_offset / static_cast<float>(texture_height)};
     };
     const Vertex &flat_color = verts[count - 1];
     if (zte) {
@@ -1841,10 +1852,30 @@ bool submit(const State &st, const Vertex *verts, int count) {
         const Vertex &a = verts[0], &b = verts[1];
         const auto auv = uv(a), buv = uv(b);
         const float q = fst || b.q == 0.0f ? 1.0f : b.q;
-        emit(a, b, a.x, a.y, auv[0], auv[1], q);
-        emit(b, b, b.x, a.y, buv[0], auv[1], q);
-        emit(a, b, a.x, b.y, auv[0], buv[1], q);
-        emit(b, b, b.x, b.y, buv[0], buv[1], q);
+        // Half-picture-pixel UV correction. The GS samples at the pixel's own
+        // coordinate; GL samples at the fragment centre, half a pixel further
+        // on. Shifting the UV by half a picture pixel (in this sprite's UV
+        // space, so it scales with the sprite) puts the native path on the
+        // same texel as the software rasterizer. The geometry is left alone,
+        // so the covered pixels do not move.
+        const float span_x = static_cast<float>(static_cast<int>(b.x) - static_cast<int>(a.x)) / 16.0f;
+        const float span_y = static_cast<float>(static_cast<int>(b.y) - static_cast<int>(a.y)) / 16.0f;
+        static const float shift_x = [] {
+            const char *value = std::getenv("PS2_NATIVE_GL_SPRITE_SHIFT_X");
+            return value ? static_cast<float>(std::atof(value)) : 0.0f;
+        }();
+        static const float shift_y = [] {
+            const char *value = std::getenv("PS2_NATIVE_GL_SPRITE_SHIFT_Y");
+            return value ? static_cast<float>(std::atof(value)) : 0.0f;
+        }();
+        const float shift_u = span_x != 0.0f ? shift_x * (buv[0] - auv[0]) / span_x : 0.0f;
+        const float shift_v = span_y != 0.0f ? shift_y * (buv[1] - auv[1]) / span_y : 0.0f;
+        const float su = auv[0] + shift_u, sv = auv[1] + shift_v;
+        const float tu = buv[0] + shift_u, tv = buv[1] + shift_v;
+        emit(a, b, a.x, a.y, su, sv, q);
+        emit(b, b, b.x, a.y, tu, sv, q);
+        emit(a, b, a.x, b.y, su, tv, q);
+        emit(b, b, b.x, b.y, tu, tv, q);
     } else {
         for (int i = 0; i < count; ++i) {
             const auto texcoord = uv(verts[i]);

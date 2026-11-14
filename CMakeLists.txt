@@ -276,6 +276,9 @@ if(PS2_GENERATED)
         add_executable(test_native_gl_alpha EXCLUDE_FROM_ALL tests/test_native_gl_alpha.cpp)
         target_include_directories(test_native_gl_alpha PRIVATE runtime/include runtime/src)
         target_link_libraries(test_native_gl_alpha PRIVATE ps2runtime)
+        add_executable(test_gl_vs_raster EXCLUDE_FROM_ALL tests/test_gl_vs_raster.cpp)
+        target_include_directories(test_gl_vs_raster PRIVATE runtime/include runtime/src)
+        target_link_libraries(test_gl_vs_raster PRIVATE ps2runtime)
     endif()
     # These tests use assert for both checks and calls under test. Keep those
     # expressions active even when the surrounding build is Release.
