@@ -1488,6 +1488,7 @@ void install_sif() {
     sif::reset();
     sif::install_iop_side();
     sif::install_servers();
+    install_cdvd_native();
 }
 
 }

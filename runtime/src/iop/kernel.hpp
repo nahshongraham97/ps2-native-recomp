@@ -175,6 +175,12 @@ void install_libraries();
 void vblank_edge(bool start);
 void install_sif();
 void install_io();
+// Native CDVD/content service: serves the guest libcdvd SIF endpoints and the
+// IOP cdvdman library from mka::content's sector-addressed volume. Transitional
+// while retail libcdvd still binds the SIF endpoint.
+void install_cdvd_native();
+void cdvd_state(ps2::state::Stream &s);
+void cdvdfsv_state(ps2::state::Stream &s);
 
 void trace_hle(const char *library, const char *function, const Cpu &c);
 extern bool g_trace_hle;

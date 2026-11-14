@@ -13,6 +13,22 @@ if(WIN32)
     add_link_options(-static-libgcc -static-libstdc++)
 endif()
 
+# Build identity. ps2run prints this at startup so every run log names the commit
+# and working-tree state that produced the binary; two runs are then comparable
+# without guessing which build they came from.
+set(PS2_BUILD_STAMP_DIR "${CMAKE_BINARY_DIR}/build-stamp")
+set(PS2_BUILD_STAMP_HEADER "${PS2_BUILD_STAMP_DIR}/build_stamp.hpp")
+add_custom_target(ps2_build_stamp
+    COMMAND "${CMAKE_COMMAND}"
+        "-DPS2_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
+        "-DPS2_OUTPUT=${PS2_BUILD_STAMP_HEADER}"
+        "-DPS2_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+        "-DPS2_COMPILER=${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/build_stamp.cmake"
+    BYPRODUCTS "${PS2_BUILD_STAMP_HEADER}"
+    COMMENT "Writing build stamp"
+    VERBATIM)
+
 if(EMSCRIPTEN)
     add_compile_options(-msimd128 -mtail-call -fwasm-exceptions -sWASM_LEGACY_EXCEPTIONS=0 -pthread)
     add_link_options(-msimd128 -mtail-call -fwasm-exceptions -sWASM_LEGACY_EXCEPTIONS=0 -pthread)
@@ -60,6 +76,7 @@ else()
         runtime/src/native_hook.cpp
         runtime/src/native_vertex_hook.cpp
         runtime/src/native/content_vfs.cpp
+        runtime/src/port_config.cpp
         runtime/src/system.cpp
         runtime/src/kernel.cpp
         runtime/src/hw.cpp
@@ -94,6 +111,7 @@ else()
         runtime/src/iop/spu2.cpp
         runtime/src/iop/sio2.cpp
         runtime/src/iop/io.cpp
+        runtime/src/iop/cdvd_native.cpp
         runtime/src/iop/native_module_loader.cpp
         runtime/src/iop/native_legacy_state.cpp
         runtime/src/iop/sif.cpp
@@ -222,6 +240,8 @@ if(PS2_GENERATED)
 
     add_executable(ps2run host/main.cpp host/mka_unit_wrappers.cpp)
     target_link_libraries(ps2run PRIVATE ps2game ps2runtime)
+    target_include_directories(ps2run PRIVATE "${PS2_BUILD_STAMP_DIR}")
+    add_dependencies(ps2run ps2_build_stamp)
     target_link_options(ps2run PRIVATE
         "-Wl,--wrap=_ZN3gen9unit_0018ERN3ps23CpuEjj"
         "-Wl,--wrap=_ZN3gen9unit_0020ERN3ps23CpuEjj"
@@ -229,6 +249,8 @@ if(PS2_GENERATED)
     )
     add_executable(test_disc_vfs EXCLUDE_FROM_ALL tests/test_disc_vfs.cpp)
     target_link_libraries(test_disc_vfs PRIVATE ps2runtime)
+    add_executable(test_content_volume EXCLUDE_FROM_ALL tests/test_content_volume.cpp)
+    target_link_libraries(test_content_volume PRIVATE ps2runtime)
     add_executable(test_iop_io_overlay EXCLUDE_FROM_ALL tests/test_iop_io_overlay.cpp)
     target_include_directories(test_iop_io_overlay PRIVATE runtime/src)
     target_link_libraries(test_iop_io_overlay PRIVATE ps2runtime)
