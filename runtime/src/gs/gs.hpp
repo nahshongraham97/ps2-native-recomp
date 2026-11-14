@@ -93,12 +93,13 @@ struct GuestWrite {
     std::uint64_t generation;
     std::uint32_t base;   // 256-byte units
     std::uint32_t psm;
+    std::uint32_t bw;     // buffer width in 64-pixel units
     std::uint32_t x, y, w, h;
 };
 // All recorded guest writes; scan them and keep the highest generation.
 const GuestWrite *guest_writes(std::size_t &count);
 // Records that the guest filled a surface itself (image transfer, local copy).
-void note_guest_write(std::uint32_t base, std::uint32_t psm,
+void note_guest_write(std::uint32_t base, std::uint32_t psm, std::uint32_t bw,
                       std::uint32_t x, std::uint32_t y,
                       std::uint32_t w, std::uint32_t h);
 // Records that the primitive pipeline rendered into a surface.

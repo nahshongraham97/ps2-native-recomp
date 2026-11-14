@@ -219,6 +219,8 @@ struct SceneTarget {
 };
 static constexpr std::size_t kMaxSceneTargets = 4;
 SceneTarget g_scene_targets[kMaxSceneTargets];
+GLuint g_shared_depth_buffer = 0;
+bool g_evicted_color[512]{};
 std::uint64_t g_scene_target_age = 0;
 static std::atomic<std::uint64_t> g_scene_write_tick{0};
 
@@ -273,12 +275,27 @@ void release_scene_target() {
     for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
         if (g_scene_targets[i].framebuffer && g_delete_framebuffers)
             g_delete_framebuffers(1, &g_scene_targets[i].framebuffer);
-        if (g_scene_targets[i].depth_buffer && g_delete_renderbuffers)
-            g_delete_renderbuffers(1, &g_scene_targets[i].depth_buffer);
         if (g_scene_targets[i].color_texture)
             glDeleteTextures(1, &g_scene_targets[i].color_texture);
         g_scene_targets[i] = SceneTarget{};
     }
+    if (g_shared_depth_buffer && g_delete_renderbuffers)
+        g_delete_renderbuffers(1, &g_shared_depth_buffer);
+    g_shared_depth_buffer = 0;
+}
+
+void clear_bound_scene_target(bool clear_depth = true) {
+    // glClear respects scissor and write masks left by the previous draw.
+    // A newly assigned surface must be cleared in its entirety.
+    glPushAttrib(GL_SCISSOR_BIT | GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_VIEWPORT_BIT);
+    glDisable(GL_SCISSOR_TEST);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glDepthMask(GL_TRUE);
+    glViewport(0, 0, kWidth, kHeight);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearDepth(1.0);
+    glClear(GL_COLOR_BUFFER_BIT | (clear_depth ? GL_DEPTH_BUFFER_BIT : 0));
+    glPopAttrib();
 }
 
 bool allocate_scene_target(SceneTarget &t) {
@@ -294,7 +311,9 @@ bool allocate_scene_target(SceneTarget &t) {
 
     glGenTextures(1, &t.color_texture);
     g_gen_framebuffers(1, &t.framebuffer);
-    g_gen_renderbuffers(1, &t.depth_buffer);
+    const bool new_depth = g_shared_depth_buffer == 0;
+    if (new_depth) g_gen_renderbuffers(1, &g_shared_depth_buffer);
+    t.depth_buffer = g_shared_depth_buffer;
     if (!t.color_texture || !t.framebuffer || !t.depth_buffer) {
         std::fprintf(stderr, "[native-gl] direct scene target allocation failed\n");
         return false;
@@ -311,7 +330,7 @@ bool allocate_scene_target(SceneTarget &t) {
     g_framebuffer_texture_2d(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                              t.color_texture, 0);
     g_bind_renderbuffer(GL_RENDERBUFFER, t.depth_buffer);
-    g_renderbuffer_storage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, kWidth, kHeight);
+    if (new_depth) g_renderbuffer_storage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, kWidth, kHeight);
     g_framebuffer_renderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
                                t.depth_buffer);
     glDrawBuffer(GL_COLOR_ATTACHMENT0);
@@ -325,10 +344,7 @@ bool allocate_scene_target(SceneTarget &t) {
         return false;
     }
     t.ready = true;
-    glViewport(0, 0, kWidth, kHeight);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClearDepth(1.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    clear_bound_scene_target(new_depth);
     return true;
 }
 
@@ -370,13 +386,25 @@ SceneTarget *ensure_scene_target(std::uint32_t fbp = 0) {
         std::fprintf(stderr, "[native-gl] direct GS scene target %d: %dx%d color + depth FBO for FBP=%u\n",
                      best_slot, kWidth, kHeight, fbp);
     } else {
+        // Preserve GPU-only pixels before reusing the surface. The existing
+        // readback routine restores the active draw target when it finishes.
+        if (!target.cpu_synced && !sync_surface_to_cpu(target.fbp)) {
+            std::fprintf(stderr, "[native-gl] cannot preserve dirty scene target FBP=%u before reuse\n", target.fbp);
+            return nullptr;
+        }
+        if (target.last_write_tick && target.fbp < 512) g_evicted_color[target.fbp] = true;
         g_bind_framebuffer(GL_FRAMEBUFFER, target.framebuffer);
-        glViewport(0, 0, kWidth, kHeight);
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClearDepth(1.0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        clear_bound_scene_target(false);
         std::fprintf(stderr, "[native-gl] recycled scene target %d for FBP=%u (cleared)\n", best_slot, fbp);
     }
+    // A recycled GL surface is now an empty surface for a different FBP.
+    // Its previous owner's write age and readback state must not make the
+    // cleared surface appear to contain a newer frame.
+    target.prim_count = 0;
+    target.write_count = 0;
+    target.last_write_tick = 0;
+    target.cpu_synced = true;
+    target.last_draw_readback_state = {};
     target.fbp = fbp;
     target.last_use = ++g_scene_target_age;
     return &target;
@@ -581,6 +609,7 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
             glTexEnvi(GL_TEXTURE_ENV, GL_ALPHA_SCALE, 1);
         }
     } else if (tfx == 1) {
+        glTexEnvi(GL_TEXTURE_ENV, GL_RGB_SCALE, 1);
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_REPLACE);
         glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_TEXTURE);
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR);
@@ -843,13 +872,11 @@ std::uint32_t active_frame_fbp() {
 
 void clear_surfaces() {
 #if defined(_WIN32)
+    std::fill(std::begin(g_evicted_color), std::end(g_evicted_color), false);
     for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
         if (g_scene_targets[i].ready && g_scene_targets[i].framebuffer) {
             g_bind_framebuffer(GL_FRAMEBUFFER, g_scene_targets[i].framebuffer);
-            glViewport(0, 0, kWidth, kHeight);
-            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-            glClearDepth(1.0);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            clear_bound_scene_target();
             g_scene_targets[i].prim_count = 0;
             g_scene_targets[i].write_count = 0;
             g_scene_targets[i].last_write_tick = 0;
@@ -857,6 +884,7 @@ void clear_surfaces() {
         }
     }
     g_pending_readback_state_valid = false;
+    g_depth_key_valid = false;
     std::fprintf(stderr, "[native-gl] scene boundary: cleared all native surfaces\n");
 #endif
 }
@@ -1546,6 +1574,26 @@ bool submit(const State &st, const Vertex *verts, int count) {
     const std::uint32_t active_fbp = frame & 0x1FFu;
     if (g_direct_window_context) {
         bind_draw_target(active_fbp);
+        if (g_evicted_color[active_fbp]) {
+            // Restore exact stored RGBA for the supported 32-bit path. Other
+            // formats require their own alpha conversion and remain rejected.
+            if (fpsm != gs::PSMCT32)
+                return reject_packet(st, attr, prim_type, count, 25, "evicted framebuffer format cannot be restored yet");
+            SceneTarget *target = find_scene_target(active_fbp);
+            if (!target) return reject_packet(st, attr, prim_type, count, 25, "evicted framebuffer target unavailable");
+            const int width = std::min(kWidth, static_cast<int>(fbw * 64u));
+            std::vector<std::uint32_t> rgba(static_cast<std::size_t>(width) * kHeight);
+            for (int y = 0; y < kHeight; ++y)
+                for (int x = 0; x < width; ++x)
+                    rgba[static_cast<std::size_t>(kHeight - 1 - y) * width + x] =
+                        gs::read_pixel(fpsm, active_fbp * 32u, fbw, x, y);
+            GLint previous_texture = 0;
+            glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous_texture);
+            glBindTexture(GL_TEXTURE_2D, target->color_texture);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, kHeight, GL_RGBA, GL_UNSIGNED_BYTE, rgba.data());
+            glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(previous_texture));
+            g_evicted_color[active_fbp] = false;
+        }
     }
     // Build-specific diagnostic snapshot: raw state and vertices, GS memory,
     // and the actual GL destination before this draw (RGBA8, bottom row first).
@@ -1656,9 +1704,12 @@ bool submit(const State &st, const Vertex *verts, int count) {
         if (g_depth_key_valid && zbuf_key != g_depth_key)
             return reject_packet(st, attr, prim_type, count, 24, "multiple GS ZBUF surfaces are not implemented yet");
         if (!g_depth_key_valid) {
+            glPushAttrib(GL_SCISSOR_BIT | GL_DEPTH_BUFFER_BIT);
+            glDisable(GL_SCISSOR_TEST);
             glDepthMask(GL_TRUE);
             glClearDepth(1.0);
             glClear(GL_DEPTH_BUFFER_BIT);
+            glPopAttrib();
             g_depth_key = zbuf_key;
             g_depth_key_valid = true;
         }
@@ -1934,6 +1985,7 @@ void flush() {
 
 void shutdown() {
 #if defined(_WIN32)
+    std::fill(std::begin(g_evicted_color), std::end(g_evicted_color), false);
     if (g_hrc && g_hdc) {
         if (wglGetCurrentContext() != g_hrc) wglMakeCurrent(g_hdc, g_hrc);
         release_scene_target();

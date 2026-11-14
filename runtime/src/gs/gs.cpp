@@ -97,7 +97,7 @@ void note_surface_write(std::uint32_t base, bool guest) {
     write.guest = guest;
 }
 
-void note_guest_write(std::uint32_t base, std::uint32_t psm,
+void note_guest_write(std::uint32_t base, std::uint32_t psm, std::uint32_t bw,
                       std::uint32_t x, std::uint32_t y,
                       std::uint32_t w, std::uint32_t h) {
     if (!w || !h) return;
@@ -106,6 +106,7 @@ void note_guest_write(std::uint32_t base, std::uint32_t psm,
     write.generation = ++g_guest_write_generation;
     write.base = base;
     write.psm = psm;
+    write.bw = bw;
     write.x = x;
     write.y = y;
     write.w = w;
@@ -440,6 +441,7 @@ void transfer_pixel(std::uint32_t value) {
         g_transfer.x = 0;
         if (++g_transfer.y >= rrh) {
             g_transfer.active = false;
+            note_guest_write(dbp, dpsm, dbw, dsax, dsay, rrw, rrh);
             apply_display_write(dpsm, dbp, dbw, dsax, dsay, rrw, rrh);
         }
     }
@@ -482,7 +484,6 @@ void local_copy() {
     const std::uint32_t dsax = static_cast<std::uint32_t>(pos >> 32) & 0x7FFu, dsay = static_cast<std::uint32_t>(pos >> 48) & 0x7FFu;
     const std::uint32_t dir = static_cast<std::uint32_t>(pos >> 59) & 3u;
     const std::uint32_t rrw = static_cast<std::uint32_t>(reg) & 0xFFFu, rrh = static_cast<std::uint32_t>(reg >> 32) & 0xFFFu;
-    note_guest_write(dbp, dpsm, dsax, dsay, rrw, rrh);
     std::vector<std::uint32_t> pixels(static_cast<std::size_t>(rrw) * rrh);
     for (std::uint32_t y = 0; y < rrh; ++y)
         for (std::uint32_t x = 0; x < rrw; ++x)
@@ -495,6 +496,7 @@ void local_copy() {
         }
     }
     ++g_vram_generation;
+    note_guest_write(dbp, dpsm, dbw, dsax, dsay, rrw, rrh);
     apply_display_write(dpsm, dbp, dbw, dsax, dsay, rrw, rrh);
 }
 
@@ -1081,6 +1083,11 @@ void write(std::uint32_t reg, std::uint64_t value) {
         if ((value & 3u) == 0) {
             const std::uint64_t buf = s.bitbltbuf, pos = s.trxpos, reg = s.trxreg;
             const std::uint32_t dbp = static_cast<std::uint32_t>(buf >> 32) & 0x3FFFu;
+            // Preserve earlier GPU draws before the incoming CPU transfer can
+            // modify the same framebuffer. A later readback must not overwrite
+            // newer transferred pixels with stale GPU contents.
+            if (cpu_raster() && native_gl::enabled() && (dbp % 32u) == 0)
+                native_gl::sync_surface_to_cpu(dbp / 32u);
             const std::uint32_t dpsm = static_cast<std::uint32_t>(buf >> 56) & 0x3Fu;
             const std::uint32_t dsax = static_cast<std::uint32_t>(pos >> 32) & 0x7FFu;
             const std::uint32_t dsay = static_cast<std::uint32_t>(pos >> 48) & 0x7FFu;
@@ -1093,9 +1100,6 @@ void write(std::uint32_t reg, std::uint64_t value) {
                              dbp, dbp / 32u, dpsm, dsax, dsay, rrw, rrh);
             }
             g_transfer.active = true;
-            if (cpu_raster()) {
-                note_guest_write(dbp, dpsm, dsax, dsay, rrw, rrh);
-            }
         }
         else if ((value & 3u) == 2) {
             const std::uint64_t buf = s.bitbltbuf, reg = s.trxreg;
@@ -1110,7 +1114,8 @@ void write(std::uint32_t reg, std::uint64_t value) {
                              sbp, dbp, dbp / 32u, rrw, rrh);
             }
             if (native_gl::enabled()) {
-                native_gl::sync_surface_to_cpu(sbp / 32u);
+                if ((sbp % 32u) == 0) native_gl::sync_surface_to_cpu(sbp / 32u);
+                if ((dbp % 32u) == 0 && dbp != sbp) native_gl::sync_surface_to_cpu(dbp / 32u);
             }
             if (cpu_raster()) local_copy();
         }

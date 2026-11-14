@@ -273,6 +273,31 @@ int main() {
     }
     state.ctx[0].alpha = 0x44u;
 
+    if (std::getenv("MKA_TEST_COMBINER_PARITY")) {
+        for (std::uint64_t tfx = 0; tfx < 4; ++tfx) {
+            for (std::uint64_t tcc = 0; tcc < 2; ++tcc) {
+                const std::uint32_t texture_base = 0x500u + static_cast<std::uint32_t>((tfx * 2 + tcc) * 0x20u);
+                ps2::gs::write_pixel(ps2::gs::PSMCT32, texture_base, 1u, 0, 0, 0x405080A0u);
+                state.ctx[0].tex0 = texture_base | (1ull << 14) | (tcc << 34) | (tfx << 35);
+                clear_target();
+                draw_triangle(state, 4u | 8u | (1u << 4) | (1u << 8), 96, 64, 32, 64, false);
+                const auto reference = ps2::gs::read_pixel(ps2::gs::PSMCT32, 0x5Bu * 32u, 10u, 20u, 20u);
+                clear_target();
+                draw_triangle(state, 4u | 8u | (1u << 4) | (1u << 8), 96, 64, 32, 64, true);
+                ps2::gs::native_gl::sync_surface_to_cpu(0x5Bu);
+                const auto actual = ps2::gs::read_pixel(ps2::gs::PSMCT32, 0x5Bu * 32u, 10u, 20u, 20u);
+                for (int ch = 0; ch < 4; ++ch) {
+                    const int expected_channel = ch == 3 ? std::min(255u, ((reference >> 24) & 255u) * 2u)
+                                                         : ((reference >> (ch * 8)) & 255u);
+                    if (std::abs(static_cast<int>((actual >> (ch * 8)) & 255u) - expected_channel) > 2) {
+                        std::fprintf(stderr, "combiner mismatch tfx=%llu tcc=%llu ref=%08X GL=%08X\n",
+                                     static_cast<unsigned long long>(tfx), static_cast<unsigned long long>(tcc), reference, actual);
+                        return 1;
+                    }
+                }
+            }
+        }
+    }
     clear_target();
     const std::uint32_t expected = run_sequence(state, false);
     clear_target();
