@@ -1170,13 +1170,19 @@ bool present_frame(const DisplayRegs &regs) {
     // implied by a wider DISPLAY.DW. Keep DISPLAY.DW as the fallback before
     // the first accepted primitive and whenever the active surface is wider.
     const bool display_is_primitive_surface = display_fbp == active_frame_fbp;
-    const int scene_width = active_frame_width > 0 ? std::min(display_width, active_frame_width) : display_width;
-    if (scene_width <= 0 || height <= 0 || dbx < 0 || dby < 0 || dbx + scene_width > kWidth || dby + source_height > kHeight) {
+    // The presented rectangle comes from the display registers alone. Taking
+    // it from the FRAME pitch of the last submitted primitive made the width
+    // jump between frames: the game renders into several surfaces (the front
+    // end alone presents 832, 640 and 256 pixels wide in one run) and the
+    // displayed picture rescaled on every switch, which shows up on screen as
+    // column shifting and comb-like tearing.
+    const int width = display_width;
+    if (width <= 0 || height <= 0 || dbx < 0 || dby < 0 || dbx + width > kWidth || dby + source_height > kHeight) {
         static bool warned = false;
         if (!warned) {
             warned = true;
             std::fprintf(stderr, "[native-gl] GS display rectangle is outside the direct scene target: x=%d y=%d w=%d h=%d field_h=%d\n",
-                         dbx, dby, scene_width, height, source_height);
+                         dbx, dby, width, height, source_height);
         }
         g_bind_framebuffer(GL_FRAMEBUFFER, g_scene_target.framebuffer);
         glDrawBuffer(GL_COLOR_ATTACHMENT0);
@@ -1210,7 +1216,6 @@ bool present_frame(const DisplayRegs &regs) {
 
     static int last_present_source = -1;
     static std::vector<std::uint32_t> vram_pixels;
-    const int width = present_from_vram ? display_width : scene_width;
     bool presented_from_vram = false;
     if (present_from_vram) {
         vram_pixels.resize(static_cast<std::size_t>(width) * source_height);
@@ -1244,7 +1249,7 @@ bool present_frame(const DisplayRegs &regs) {
         draw_vram_display(vram_pixels.data(), width, source_height, output_width, output_height,
                           draw_x, draw_y, draw_width, draw_height);
     } else {
-        g_blit_framebuffer(dbx, source_y0, dbx + scene_width, source_y1,
+        g_blit_framebuffer(dbx, source_y0, dbx + width, source_y1,
                            draw_x, draw_y, draw_x + draw_width, draw_y + draw_height,
                            GL_COLOR_BUFFER_BIT, GL_NEAREST);
     }
