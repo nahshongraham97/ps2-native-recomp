@@ -1544,16 +1544,8 @@ bool submit(const State &st, const Vertex *verts, int count) {
         return reject_packet(st, attr, prim_type, count, 5, "framebuffer pixel format is unsupported");
 
     const std::uint32_t active_fbp = frame & 0x1FFu;
-    g_active_frame_fbp.store(active_fbp, std::memory_order_relaxed);
     if (g_direct_window_context) {
         bind_draw_target(active_fbp);
-        SceneTarget *draw_target = find_scene_target(active_fbp);
-        if (draw_target) {
-            ++draw_target->prim_count;
-            draw_target->last_write_tick = ++g_scene_write_tick;
-            draw_target->cpu_synced = false;
-            draw_target->last_draw_readback_state = ReadbackState{context.frame, st.dimx, st.dthe, st.colclamp};
-        }
     }
     // Build-specific diagnostic snapshot: raw state and vertices, GS memory,
     // and the actual GL destination before this draw (RGBA8, bottom row first).
@@ -1604,9 +1596,13 @@ bool submit(const State &st, const Vertex *verts, int count) {
         // factor is exact once the alpha channel is quantized on each write.
         // Other tuples need custom GS arithmetic and remain fail-closed.
         const bool identity_blend = a == b && a <= 2 && d == 0;
+        // ALPHA=0xA8 with FIX=0x80: (Cs - 0) * 128 / 128 + 0 = Cs.
+        // This is a source replacement, not a standard alpha blend.
+        const bool fixed_source_identity = a == 0 && b == 2 && c == 2 && d == 2 &&
+                                           ((context.alpha >> 32) & 0xFFu) == 0x80u;
         const bool exact_destination_alpha_fade = framebuffer_16 && a == 2 && b == 1 && c == 1 && d == 1;
         const bool gs_source_over = a == 0 && b == 1 && c == 0 && d == 1;
-        if (identity_blend) {
+        if (identity_blend || fixed_source_identity) {
             glDisable(GL_BLEND);
         } else if (exact_destination_alpha_fade && !(textured && (tex_alpha_enabled || tfx != 0)) &&
                    g_blend_func_separate) {
@@ -1642,9 +1638,10 @@ bool submit(const State &st, const Vertex *verts, int count) {
     const bool zmsk = (context.zbuf & (1ull << 32)) != 0;
     if (test & 1u) {
         // With AFAIL=FB_ONLY, failed alpha tests still write color and only
-        // suppress depth. The test is therefore inert when depth is disabled,
-        // or when ZTST is ALWAYS and ZBUF masks every depth write.
-        const bool no_depth_change = !zte || (ztst == 1u && zmsk);
+        // suppress depth. If depth testing is disabled or all depth writes
+        // are masked, both alpha outcomes have the same framebuffer and depth
+        // effects. The depth comparison still applies to both outcomes.
+        const bool no_depth_change = !zte || zmsk;
         if (afail != 1u || !no_depth_change)
             return reject_packet(st, attr, prim_type, count, 15, "GS alpha test changes framebuffer or depth results");
     }
@@ -1666,7 +1663,12 @@ bool submit(const State &st, const Vertex *verts, int count) {
             g_depth_key_valid = true;
         }
     }
-    if ((context.frame >> 32) != 0) return reject_packet(st, attr, prim_type, count, 18, "GS framebuffer write mask is not implemented yet");
+    const std::uint32_t fbmask = static_cast<std::uint32_t>(context.frame >> 32);
+    // A whole alpha-byte mask maps exactly to the GL channel write mask on
+    // PSMCT32. Partial-bit masks and other framebuffer formats still need a
+    // bitwise compositor and must not be approximated.
+    if (fbmask != 0 && !(fpsm == gs::PSMCT32 && fbmask == 0xFF000000u))
+        return reject_packet(st, attr, prim_type, count, 18, "GS framebuffer write mask is not implemented yet");
     if (context.fba & 1u) return reject_packet(st, attr, prim_type, count, 19, "GS framebuffer alpha expansion is not implemented yet");
     if (st.pabe & 1u) return reject_packet(st, attr, prim_type, count, 20, "GS per-pixel alpha blend enable is not implemented yet");
     if ((st.scanmsk & 3u) != 0) return reject_packet(st, attr, prim_type, count, 21, "GS scan mask is not implemented yet");
@@ -1791,6 +1793,7 @@ bool submit(const State &st, const Vertex *verts, int count) {
         g_last_readback = clock_t_::now();
     }
 
+    if (fbmask) glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
     glBegin(mode);
     if (prim_type == 6) {
         // A GS sprite is encoded by two opposite corners. Expand it into a
@@ -1870,10 +1873,13 @@ bool submit(const State &st, const Vertex *verts, int count) {
         }
     }
     glEnd();
+    if (fbmask) glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     g_pending_readback_state = readback_state;
     g_pending_readback_state_valid = true;
     SceneTarget *active_target = find_scene_target(frame & 0x1FFu);
     if (active_target) {
+        ++active_target->prim_count;
+        active_target->last_write_tick = ++g_scene_write_tick;
         active_target->cpu_synced = false;
         active_target->last_draw_readback_state = readback_state;
     }
