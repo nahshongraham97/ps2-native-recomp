@@ -279,6 +279,9 @@ if(PS2_GENERATED)
         add_executable(test_gl_vs_raster EXCLUDE_FROM_ALL tests/test_gl_vs_raster.cpp)
         target_include_directories(test_gl_vs_raster PRIVATE runtime/include runtime/src)
         target_link_libraries(test_gl_vs_raster PRIVATE ps2runtime)
+        add_executable(test_gl_lazy_readback EXCLUDE_FROM_ALL tests/test_gl_lazy_readback.cpp)
+        target_include_directories(test_gl_lazy_readback PRIVATE runtime/include runtime/src)
+        target_link_libraries(test_gl_lazy_readback PRIVATE ps2runtime)
     endif()
     # These tests use assert for both checks and calls under test. Keep those
     # expressions active even when the surrounding build is Release.

@@ -1,4 +1,5 @@
 #include "raster.hpp"
+#include "native_gl_backend.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -497,6 +498,9 @@ bool decode_texture_rgba(const State &st, std::vector<std::uint32_t> &pixels, st
         break;
     default:
         return false;
+    }
+    if (native_gl::enabled()) {
+        native_gl::sync_surface_to_cpu(s.tbp / 32u);
     }
     width = 1u << s.tw;
     height = 1u << s.th;

@@ -41,6 +41,20 @@ bool draw_guest_rect(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
 // an explicit sync point.
 void flush();
 
+// Clears all native scene surfaces to black. Called at scene boundaries (e.g.
+// SetGsCrt or video mode reconfiguration) to eliminate stale frame ghosts.
+void clear_surfaces();
+
+// Synchronizes a GPU scene surface back to CPU VRAM on demand if it was dirtied
+// by GPU primitive rendering. Returns true if a sync occurred, false if clean or absent.
+bool sync_surface_to_cpu(std::uint32_t fbp);
+
+// Synchronizes all dirty GPU scene surfaces back to CPU VRAM.
+void sync_all_surfaces_to_cpu();
+
+// The active drawing buffer's FBP (frame buffer pointer).
+std::uint32_t active_frame_fbp();
+
 // Tears down the GL context. Safe to call multiple times.
 void shutdown();
 

@@ -60,6 +60,7 @@ void write_image(const std::uint8_t *data, std::uint32_t qwords);
 void read_image(std::uint8_t *data, std::uint32_t qwords);
 void render_read_image(std::uint8_t *data, std::uint32_t qwords);
 void render_reset();
+void on_scene_boundary();
 
 std::uint64_t read_privileged(std::uint32_t address);
 void write_privileged(std::uint32_t address, std::uint64_t value);

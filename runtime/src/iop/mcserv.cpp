@@ -4,6 +4,8 @@
 #include "sif.hpp"
 #include "sio2.hpp"
 #include "ps2/memory.hpp"
+#include "ps2/system.hpp"
+#include "ps2/os.hpp"
 
 #include <algorithm>
 #include <array>
@@ -12,7 +14,10 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
+#include <fstream>
 #include <limits>
+#include <string>
 #include <vector>
 
 namespace ps2::iop::mcserv {
@@ -222,6 +227,346 @@ std::int32_t mc_get_info2(const McDescParam &request, McEndParam2 &reply) {
     return 0;
 }
 
+#pragma pack(push, 1)
+struct SceMcStDateTime {
+    std::uint8_t resv2 = 0;
+    std::uint8_t sec = 0;
+    std::uint8_t min = 0;
+    std::uint8_t hour = 12;
+    std::uint8_t day = 14;
+    std::uint8_t month = 11;
+    std::uint16_t year = 2026;
+};
+static_assert(sizeof(SceMcStDateTime) == 8);
+
+struct SceMcTblGetDir {
+    SceMcStDateTime created{};
+    SceMcStDateTime modified{};
+    std::uint32_t file_size = 0;
+    std::uint16_t attr_file = 0;
+    std::uint16_t reserve1 = 0;
+    std::uint32_t reserve2 = 0;
+    std::uint32_t paging = 0;
+    char entry_name[32] = {};
+};
+static_assert(sizeof(SceMcTblGetDir) == 64);
+#pragma pack(pop)
+
+struct OpenFile {
+    bool in_use = false;
+    std::filesystem::path path;
+    std::vector<std::uint8_t> data;
+    std::size_t pos = 0;
+    bool dirty = false;
+    std::int32_t flags = 0;
+};
+static constexpr std::size_t kMaxOpenFiles = 16;
+static OpenFile s_open_files[kMaxOpenFiles];
+static std::string s_current_dir;
+
+std::filesystem::path host_save_base() {
+    if (!g_options.memcard_path.empty()) {
+        std::filesystem::path p = ps2::os::path(g_options.memcard_path);
+        std::filesystem::path save_dir = p.parent_path() / "saves";
+        std::error_code ec;
+        std::filesystem::create_directories(save_dir, ec);
+        return save_dir;
+    }
+    std::filesystem::path fallback = "saves";
+    std::error_code ec;
+    std::filesystem::create_directories(fallback, ec);
+    return fallback;
+}
+
+std::string read_ee_string(std::uint32_t address, std::size_t max_len = 256) {
+    if (!valid_ee_range(address, 1)) return {};
+    const char *ptr = ps2::fast<char>(ee_physical(address));
+    if (!ptr) return {};
+    std::size_t len = 0;
+    while (len < max_len && valid_ee_range(address + static_cast<std::uint32_t>(len), 1)) {
+        if (ptr[len] == '\0') break;
+        ++len;
+    }
+    return std::string(ptr, len);
+}
+
+std::string extract_name_param(const McDescParam &req) {
+    if (req.buffer != 0) {
+        std::string s = read_ee_string(req.buffer);
+        if (!s.empty()) return s;
+    }
+    if (req.param != 0) {
+        std::string s = read_ee_string(req.param);
+        if (!s.empty()) return s;
+    }
+    if (req.data[0] != 0) {
+        std::size_t len = 0;
+        while (len < sizeof(req.data) && req.data[len] != 0) ++len;
+        return std::string(reinterpret_cast<const char *>(req.data), len);
+    }
+    return {};
+}
+
+bool pattern_matches(const std::string &name, const std::string &pattern) {
+    if (pattern.empty() || pattern == "*") return true;
+    if (pattern.back() == '*') {
+        std::string prefix = pattern.substr(0, pattern.size() - 1);
+        return name.rfind(prefix, 0) == 0;
+    }
+    return name == pattern;
+}
+
+std::int32_t mc_get_dir(const McDescParam &req) {
+    if (req.port != 0 || req.slot != 0) return kMcFailDetect2;
+    const std::string pattern = extract_name_param(req);
+    const std::uint32_t maxent = static_cast<std::uint32_t>(req.offset > 0 ? req.offset : req.size > 0 ? req.size : 16);
+    const std::uint32_t dest_ee = req.buffer;
+    if (dest_ee == 0 || !valid_ee_range(dest_ee, sizeof(SceMcTblGetDir))) {
+        std::fprintf(stderr, "[iop-native] mc_get_dir invalid EE dest buffer 0x%08X\n", dest_ee);
+        return 0;
+    }
+
+    std::filesystem::path dir = host_save_base();
+    if (!s_current_dir.empty()) dir /= s_current_dir;
+    
+    std::vector<SceMcTblGetDir> entries;
+    std::error_code ec;
+    if (std::filesystem::exists(dir, ec) && std::filesystem::is_directory(dir, ec)) {
+        for (const auto &item : std::filesystem::directory_iterator(dir, ec)) {
+            const std::string filename = item.path().filename().string();
+            if (pattern_matches(filename, pattern)) {
+                SceMcTblGetDir entry{};
+                std::strncpy(entry.entry_name, filename.c_str(), sizeof(entry.entry_name) - 1);
+                if (item.is_directory(ec)) {
+                    entry.attr_file = 0x8427; // Directory (folder | exists | rwx)
+                    entry.file_size = 2; // entry count convention
+                } else {
+                    entry.attr_file = 0x8497; // File (file | closed | exists | rwx)
+                    entry.file_size = static_cast<std::uint32_t>(item.file_size(ec));
+                }
+                entries.push_back(entry);
+                if (entries.size() >= maxent) break;
+            }
+        }
+    }
+
+    const std::uint32_t count = static_cast<std::uint32_t>(entries.size());
+    const std::uint32_t copy_bytes = count * sizeof(SceMcTblGetDir);
+    if (copy_bytes > 0 && valid_ee_range(dest_ee, copy_bytes)) {
+        std::memcpy(ps2::fast<std::uint8_t>(ee_physical(dest_ee)), entries.data(), copy_bytes);
+    }
+    std::fprintf(stderr, "[iop-native] mc_get_dir pattern='%s' maxent=%u found=%u\n",
+                 pattern.c_str(), maxent, count);
+    return static_cast<std::int32_t>(count);
+}
+
+std::int32_t mc_chdir(const McDescParam &req) {
+    if (req.port != 0 || req.slot != 0) return kMcFailDetect2;
+    std::string target = extract_name_param(req);
+    std::fprintf(stderr, "[iop-native] mc_chdir target='%s' current='%s'\n", target.c_str(), s_current_dir.c_str());
+    if (target.empty() || target == "/" || target == ".") {
+        if (target == "/") s_current_dir.clear();
+    } else if (target == "..") {
+        auto idx = s_current_dir.find_last_of("/\\");
+        if (idx != std::string::npos) s_current_dir = s_current_dir.substr(0, idx);
+        else s_current_dir.clear();
+    } else {
+        if (target.front() == '/' || target.front() == '\\') target = target.substr(1);
+        if (s_current_dir.empty()) s_current_dir = target;
+        else s_current_dir = s_current_dir + "/" + target;
+    }
+    
+    std::filesystem::path p = host_save_base();
+    if (!s_current_dir.empty()) p /= s_current_dir;
+    std::error_code ec;
+    std::filesystem::create_directories(p, ec);
+
+    if (req.param != 0 && valid_ee_range(req.param, 32)) {
+        char *out = ps2::fast<char>(ee_physical(req.param));
+        if (out) {
+            std::strncpy(out, s_current_dir.c_str(), 31);
+            out[31] = '\0';
+        }
+    }
+    return 0;
+}
+
+std::int32_t mc_open(const McDescParam &req) {
+    if (req.port != 0 || req.slot != 0) return kMcFailDetect2;
+    std::string filename = extract_name_param(req);
+    if (filename.empty()) {
+        std::fprintf(stderr, "[iop-native] mc_open empty filename\n");
+        return -1;
+    }
+    
+    while (filename.front() == '/' || filename.front() == '\\') filename = filename.substr(1);
+
+    std::filesystem::path full_path = host_save_base();
+    if (!s_current_dir.empty()) full_path /= s_current_dir;
+    full_path /= filename;
+
+    int slot_idx = -1;
+    for (std::size_t i = 0; i < kMaxOpenFiles; ++i) {
+        if (!s_open_files[i].in_use) {
+            slot_idx = static_cast<int>(i);
+            break;
+        }
+    }
+    if (slot_idx < 0) {
+        std::fprintf(stderr, "[iop-native] mc_open out of file handles\n");
+        return -1;
+    }
+
+    OpenFile &f = s_open_files[slot_idx];
+    f = OpenFile{};
+    f.in_use = true;
+    f.path = full_path;
+    f.flags = req.offset != 0 ? req.offset : req.origin;
+
+    std::error_code ec;
+    if (std::filesystem::exists(full_path, ec)) {
+        std::ifstream in(full_path, std::ios::binary);
+        if (in) {
+            in.seekg(0, std::ios::end);
+            const std::size_t sz = static_cast<std::size_t>(in.tellg());
+            in.seekg(0, std::ios::beg);
+            f.data.resize(sz);
+            in.read(reinterpret_cast<char *>(f.data.data()), sz);
+        }
+    } else {
+        std::filesystem::create_directories(full_path.parent_path(), ec);
+    }
+
+    std::fprintf(stderr, "[iop-native] mc_open fd=%d path='%s' size=%zu\n",
+                 slot_idx, full_path.string().c_str(), f.data.size());
+    return slot_idx;
+}
+
+std::int32_t mc_close(const McDescParam &req) {
+    const std::int32_t fd = req.fd;
+    if (fd < 0 || static_cast<std::size_t>(fd) >= kMaxOpenFiles || !s_open_files[fd].in_use) {
+        std::fprintf(stderr, "[iop-native] mc_close invalid fd=%d\n", fd);
+        return -1;
+    }
+
+    OpenFile &f = s_open_files[fd];
+    if (f.dirty) {
+        std::error_code ec;
+        std::filesystem::create_directories(f.path.parent_path(), ec);
+        std::ofstream out(f.path, std::ios::binary);
+        if (out && !f.data.empty()) {
+            out.write(reinterpret_cast<const char *>(f.data.data()), f.data.size());
+        }
+        std::fprintf(stderr, "[iop-native] mc_close flushed dirty fd=%d to '%s' (%zu bytes)\n",
+                     fd, f.path.string().c_str(), f.data.size());
+    }
+    f.in_use = false;
+    f.data.clear();
+    return 0;
+}
+
+std::int32_t mc_seek(const McDescParam &req) {
+    const std::int32_t fd = req.fd;
+    if (fd < 0 || static_cast<std::size_t>(fd) >= kMaxOpenFiles || !s_open_files[fd].in_use) return -1;
+    OpenFile &f = s_open_files[fd];
+    const std::int32_t origin = req.origin;
+    const std::int32_t offset = req.offset;
+    std::int64_t target_pos = 0;
+    if (origin == 0) target_pos = offset;
+    else if (origin == 1) target_pos = static_cast<std::int64_t>(f.pos) + offset;
+    else if (origin == 2) target_pos = static_cast<std::int64_t>(f.data.size()) + offset;
+
+    if (target_pos < 0) target_pos = 0;
+    f.pos = static_cast<std::size_t>(target_pos);
+    return static_cast<std::int32_t>(f.pos);
+}
+
+std::int32_t mc_read(const McDescParam &req) {
+    const std::int32_t fd = req.fd;
+    if (fd < 0 || static_cast<std::size_t>(fd) >= kMaxOpenFiles || !s_open_files[fd].in_use) return -1;
+    OpenFile &f = s_open_files[fd];
+    const std::uint32_t buffer = req.buffer;
+    const std::uint32_t size = static_cast<std::uint32_t>(std::max(0, req.size));
+    if (size == 0) return 0;
+    if (!valid_ee_range(buffer, size)) return -1;
+
+    std::size_t available = (f.pos < f.data.size()) ? (f.data.size() - f.pos) : 0;
+    std::size_t to_read = std::min<std::size_t>(size, available);
+    if (to_read > 0) {
+        std::memcpy(ps2::fast<std::uint8_t>(ee_physical(buffer)), f.data.data() + f.pos, to_read);
+        f.pos += to_read;
+    }
+    std::fprintf(stderr, "[iop-native] mc_read fd=%d bytes=%zu/%u\n", fd, to_read, size);
+    return static_cast<std::int32_t>(to_read);
+}
+
+std::int32_t mc_write(const McDescParam &req) {
+    const std::int32_t fd = req.fd;
+    if (fd < 0 || static_cast<std::size_t>(fd) >= kMaxOpenFiles || !s_open_files[fd].in_use) return -1;
+    OpenFile &f = s_open_files[fd];
+    const std::uint32_t buffer = req.buffer;
+    const std::uint32_t size = static_cast<std::uint32_t>(std::max(0, req.size));
+    if (size == 0) return 0;
+    if (!valid_ee_range(buffer, size)) return -1;
+
+    if (f.pos + size > f.data.size()) {
+        f.data.resize(f.pos + size);
+    }
+    std::memcpy(f.data.data() + f.pos, ps2::fast<std::uint8_t>(ee_physical(buffer)), size);
+    f.pos += size;
+    f.dirty = true;
+    std::fprintf(stderr, "[iop-native] mc_write fd=%d bytes=%u (new total %zu)\n", fd, size, f.data.size());
+    return static_cast<std::int32_t>(size);
+}
+
+std::int32_t mc_flush(const McDescParam &req) {
+    const std::int32_t fd = req.fd;
+    if (fd < 0 || static_cast<std::size_t>(fd) >= kMaxOpenFiles || !s_open_files[fd].in_use) return -1;
+    OpenFile &f = s_open_files[fd];
+    if (f.dirty) {
+        std::error_code ec;
+        std::filesystem::create_directories(f.path.parent_path(), ec);
+        std::ofstream out(f.path, std::ios::binary);
+        if (out && !f.data.empty()) {
+            out.write(reinterpret_cast<const char *>(f.data.data()), f.data.size());
+        }
+        f.dirty = false;
+        std::fprintf(stderr, "[iop-native] mc_flush fd=%d flushed to '%s'\n", fd, f.path.string().c_str());
+    }
+    return 0;
+}
+
+std::int32_t mc_set_file_info(const McDescParam &req) {
+    std::string name = extract_name_param(req);
+    std::fprintf(stderr, "[iop-native] mc_set_file_info path='%s'\n", name.c_str());
+    return 0;
+}
+
+std::int32_t mc_delete(const McDescParam &req) {
+    std::string name = extract_name_param(req);
+    std::filesystem::path full_path = host_save_base();
+    if (!s_current_dir.empty()) full_path /= s_current_dir;
+    full_path /= name;
+    std::error_code ec;
+    std::filesystem::remove_all(full_path, ec);
+    std::fprintf(stderr, "[iop-native] mc_delete '%s'\n", full_path.string().c_str());
+    return 0;
+}
+
+std::int32_t mc_get_ent_space(const McDescParam &req) {
+    (void)req;
+    return 1024;
+}
+
+std::int32_t mc_format(const McDescParam &req) {
+    (void)req;
+    std::error_code ec;
+    std::filesystem::remove_all(host_save_base(), ec);
+    std::filesystem::create_directories(host_save_base(), ec);
+    std::fprintf(stderr, "[iop-native] mc_format completed\n");
+    return 0;
+}
+
 [[noreturn]] void strict_stop(const char *reason, std::uint32_t method,
                               std::uint32_t args, std::uint32_t args_size,
                               std::uint32_t ret_size) {
@@ -355,6 +700,63 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
         std::fprintf(stderr,
                      "[iop-native] MCSERV GetInfo2 port=%d slot=%d status=%d free_clusters=%d type_requested=%d format_requested=%d\n",
                      request.port, request.slot, result, aux.free, request.origin > 0, request.size > 0);
+        return true;
+    }
+
+    // Host file-level save handlers
+    McDescParam request{};
+    if (args_size >= kMcDescParamBytes && valid_ee_range(args, kMcDescParamBytes)) {
+        const std::uint8_t *request_bytes = ps2::fast<std::uint8_t>(ee_physical(args));
+        if (request_bytes) std::memcpy(&request, request_bytes, sizeof(request));
+    }
+
+    std::int32_t result = 0;
+    bool handled = false;
+
+    if (method == 0x02u || method == 0x71u) {
+        result = mc_open(request);
+        handled = true;
+    } else if (method == 0x03u || method == 0x72u) {
+        result = mc_close(request);
+        handled = true;
+    } else if (method == 0x04u || method == 0x75u) {
+        result = mc_seek(request);
+        handled = true;
+    } else if (method == 0x05u || method == 0x73u) {
+        result = mc_read(request);
+        handled = true;
+    } else if (method == 0x06u || method == 0x74u) {
+        result = mc_write(request);
+        handled = true;
+    } else if (method == 0x07u || method == 0x7Au) {
+        result = mc_flush(request);
+        handled = true;
+    } else if (method == 0x08u || method == 0x0Cu || method == 0x7Bu) {
+        result = mc_chdir(request);
+        handled = true;
+    } else if (method == 0x09u || method == 0x0Du || method == 0x76u) {
+        result = mc_get_dir(request);
+        handled = true;
+    } else if (method == 0x0Au || method == 0x7Cu) {
+        result = mc_set_file_info(request);
+        handled = true;
+    } else if (method == 0x0Bu || method == 0x79u) {
+        result = mc_delete(request);
+        handled = true;
+    } else if (method == 0x0Eu || method == 0x7Eu) {
+        result = mc_get_ent_space(request);
+        handled = true;
+    } else if (method == 0x0Fu || method == 0x77u) {
+        result = mc_format(request);
+        handled = true;
+    }
+
+    if (handled) {
+        if (ret && ret_size >= sizeof(std::int32_t) && valid_ee_range(ret, sizeof(std::int32_t))) {
+            std::uint8_t *status_bytes = ps2::fast<std::uint8_t>(ee_physical(ret));
+            if (status_bytes) std::memcpy(status_bytes, &result, sizeof(result));
+        }
+        std::fprintf(stderr, "[iop-native] MCSERV RPC method 0x%02X handled natively -> result %d\n", method, result);
         return true;
     }
 

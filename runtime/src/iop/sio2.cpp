@@ -570,7 +570,12 @@ void arm_dma(int channel, std::uint32_t madr, std::uint32_t block_words, std::ui
 }
 
 void set_buttons(int pad, std::uint16_t pressed_mask) {
-    if (pad >= 0 && pad < 2) g_pads[pad].buttons = pressed_mask;
+    if (pad >= 0 && pad < 2) {
+        g_pads[pad].buttons = pressed_mask;
+        for (int i = 0; i < 16; ++i) {
+            g_feel[pad].pressure[i] = (pressed_mask & (1u << i)) ? 0xFFu : 0u;
+        }
+    }
 }
 
 void set_axis(int pad, int axis, std::uint8_t value) {

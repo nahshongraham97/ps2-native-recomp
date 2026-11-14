@@ -380,10 +380,20 @@ void exact_download() {
 #endif
 }
 
+} // namespace
+
+void on_scene_boundary() {
+    if (native_gl::enabled()) {
+        native_gl::clear_surfaces();
+    }
+}
+
+namespace {
+
 // Hands a completed guest VRAM write to the native surface when it targets the
-// surface the GS is displaying. Buffer clears and movie frames arrive this way;
-// texture uploads land in other surfaces and must not be painted over the
-// picture. Runs on the render thread, which owns the GL context.
+// surface the GS is displaying or drawing into. Buffer clears and movie frames
+// arrive this way; texture uploads land in other surfaces and must not be
+// painted over the picture. Runs on the render thread, which owns the GL context.
 void apply_display_write(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
                          std::uint32_t x, std::uint32_t y,
                          std::uint32_t w, std::uint32_t h) {
@@ -391,7 +401,19 @@ void apply_display_write(std::uint32_t psm, std::uint32_t base, std::uint32_t bw
     const int circuit = (g_pmode & 2u) ? 1 : (g_pmode & 1u) ? 0 : -1;
     if (circuit < 0) return;
     const std::uint32_t display_base = (static_cast<std::uint32_t>(g_dispfb[circuit]) & 0x1FFu) * 32u;
-    if (base != display_base) return;
+    const std::uint32_t active_draw_base = native_gl::active_frame_fbp() * 32u;
+    if (base != display_base && base != active_draw_base) {
+        if (static_cast<std::uint64_t>(w) * h >= 7168u) {
+            static auto last_skip_report = std::chrono::steady_clock::time_point{};
+            const auto now_skip = std::chrono::steady_clock::now();
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(now_skip - last_skip_report).count() >= 500) {
+                last_skip_report = now_skip;
+                std::fprintf(stderr, "[gs-debug-skip-write] base=%u (fbp=%u) disp_base=%u (fbp=%u) act_base=%u (fbp=%u) rect=%u,%u %ux%u\n",
+                             base, base / 32u, display_base, display_base / 32u, active_draw_base, active_draw_base / 32u, x, y, w, h);
+            }
+        }
+        return;
+    }
     static auto last_report = std::chrono::steady_clock::time_point{};
     const auto now = std::chrono::steady_clock::now();
     if (std::chrono::duration_cast<std::chrono::milliseconds>(now - last_report).count() >= 500) {
@@ -654,6 +676,9 @@ bool read_display_rgba(std::uint32_t psm, std::uint32_t fbp, std::uint32_t fbw,
                        std::uint32_t dbx, std::uint32_t dby,
                        std::uint32_t width, std::uint32_t height,
                        bool halved_field, std::uint32_t *rgba) {
+    if (native_gl::enabled()) {
+        native_gl::sync_surface_to_cpu(fbp);
+    }
     // DISPFB.FBP is in 8192-byte pages; read_rect_rgba takes 256-byte units.
     return read_rect_rgba(psm, fbp * 32u, fbw, dbx, dby, width, height, halved_field, rgba);
 }
@@ -1052,18 +1077,41 @@ void write(std::uint32_t reg, std::uint64_t value) {
                                 (static_cast<std::uint32_t>(reg0 >> 32) & 0xFFFu));
         }
         if ((value & 3u) == 0) {
+            const std::uint64_t buf = s.bitbltbuf, pos = s.trxpos, reg = s.trxreg;
+            const std::uint32_t dbp = static_cast<std::uint32_t>(buf >> 32) & 0x3FFFu;
+            const std::uint32_t dpsm = static_cast<std::uint32_t>(buf >> 56) & 0x3Fu;
+            const std::uint32_t dsax = static_cast<std::uint32_t>(pos >> 32) & 0x7FFu;
+            const std::uint32_t dsay = static_cast<std::uint32_t>(pos >> 48) & 0x7FFu;
+            const std::uint32_t rrw = static_cast<std::uint32_t>(reg) & 0xFFFu;
+            const std::uint32_t rrh = static_cast<std::uint32_t>(reg >> 32) & 0xFFFu;
+            static std::uint32_t s_last_dbp = 0xFFFFFFFFu;
+            if (dbp != s_last_dbp) {
+                s_last_dbp = dbp;
+                std::fprintf(stderr, "[gs-trxdir] HostToLocal: dbp=%u (fbp=%u) dpsm=%u rect=%u,%u %ux%u\n",
+                             dbp, dbp / 32u, dpsm, dsax, dsay, rrw, rrh);
+            }
             g_transfer.active = true;
             if (cpu_raster()) {
-                const std::uint64_t buf = s.bitbltbuf, pos = s.trxpos, reg = s.trxreg;
-                note_guest_write(static_cast<std::uint32_t>(buf >> 32) & 0x3FFFu,
-                                 static_cast<std::uint32_t>(buf >> 56) & 0x3Fu,
-                                 static_cast<std::uint32_t>(pos >> 32) & 0x7FFu,
-                                 static_cast<std::uint32_t>(pos >> 48) & 0x7FFu,
-                                 static_cast<std::uint32_t>(reg) & 0xFFFu,
-                                 static_cast<std::uint32_t>(reg >> 32) & 0xFFFu);
+                note_guest_write(dbp, dpsm, dsax, dsay, rrw, rrh);
             }
         }
-        else if ((value & 3u) == 2) { if (cpu_raster()) local_copy(); }
+        else if ((value & 3u) == 2) {
+            const std::uint64_t buf = s.bitbltbuf, reg = s.trxreg;
+            const std::uint32_t sbp = static_cast<std::uint32_t>(buf) & 0x3FFFu;
+            const std::uint32_t dbp = static_cast<std::uint32_t>(buf >> 32) & 0x3FFFu;
+            const std::uint32_t rrw = static_cast<std::uint32_t>(reg) & 0xFFFu;
+            const std::uint32_t rrh = static_cast<std::uint32_t>(reg >> 32) & 0xFFFu;
+            static std::uint32_t s_last_local_copy = 0xFFFFFFFFu;
+            if (dbp != s_last_local_copy) {
+                s_last_local_copy = dbp;
+                std::fprintf(stderr, "[gs-trxdir] LocalToLocal: sbp=%u -> dbp=%u (fbp=%u) %ux%u\n",
+                             sbp, dbp, dbp / 32u, rrw, rrh);
+            }
+            if (native_gl::enabled()) {
+                native_gl::sync_surface_to_cpu(sbp / 32u);
+            }
+            if (cpu_raster()) local_copy();
+        }
         else if ((value & 3u) == 1) g_transfer.active = true;
         break;
     case 0x54:
@@ -1190,6 +1238,9 @@ void render_read_image(std::uint8_t *data, std::uint32_t qwords) {
     if (!g_transfer.active || (g_state.trxdir & 3u) != 1) return;
     const std::uint64_t buf = g_state.bitbltbuf, pos = g_state.trxpos, reg = g_state.trxreg;
     const std::uint32_t sbp = static_cast<std::uint32_t>(buf) & 0x3FFFu, sbw = static_cast<std::uint32_t>(buf >> 16) & 0x3Fu;
+    if (native_gl::enabled()) {
+        native_gl::sync_surface_to_cpu(sbp / 32u);
+    }
     const std::uint32_t spsm = static_cast<std::uint32_t>(buf >> 24) & 0x3Fu;
     const std::uint32_t ssax = static_cast<std::uint32_t>(pos) & 0x7FFu, ssay = static_cast<std::uint32_t>(pos >> 16) & 0x7FFu;
     const std::uint32_t rrw = static_cast<std::uint32_t>(reg) & 0xFFFu, rrh = static_cast<std::uint32_t>(reg >> 32) & 0xFFFu;
@@ -1602,7 +1653,7 @@ void stats() {
         auto sorted = g_transfer_dest;
         std::sort(sorted.begin(), sorted.end(), [](const auto &a, const auto &b) { return a.second.count > b.second.count; });
         std::fprintf(stderr, "[gs] guest VRAM writes by destination base (256-byte units):\n");
-        for (std::size_t i = 0; i < sorted.size() && i < 16; ++i) {
+        for (std::size_t i = 0; i < sorted.size(); ++i) {
             const auto &[base, info] = sorted[i];
             std::fprintf(stderr, "[gs]   base=%u (FBP %u) writes=%llu largest_rect=%llu px\n",
                          base, base / 32u, static_cast<unsigned long long>(info.count),
