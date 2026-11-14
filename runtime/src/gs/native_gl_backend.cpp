@@ -191,21 +191,6 @@ using RenderbufferStorageProc = void (APIENTRY *)(GLenum, GLenum, GLsizei, GLsiz
 using FramebufferRenderbufferProc = void (APIENTRY *)(GLenum, GLenum, GLenum, GLuint);
 using DeleteRenderbuffersProc = void (APIENTRY *)(GLsizei, const GLuint *);
 using BlitFramebufferProc = void (APIENTRY *)(GLint, GLint, GLint, GLint, GLint, GLint, GLint, GLint, GLbitfield, GLenum);
-using CreateShaderProc = GLuint (APIENTRY *)(GLenum);
-using ShaderSourceProc = void (APIENTRY *)(GLuint, GLsizei, const char *const *, const GLint *);
-using CompileShaderProc = void (APIENTRY *)(GLuint);
-using GetShaderivProc = void (APIENTRY *)(GLuint, GLenum, GLint *);
-using GetShaderInfoLogProc = void (APIENTRY *)(GLuint, GLsizei, GLsizei *, char *);
-using DeleteShaderProc = void (APIENTRY *)(GLuint);
-using CreateProgramProc = GLuint (APIENTRY *)();
-using AttachShaderProc = void (APIENTRY *)(GLuint, GLuint);
-using LinkProgramProc = void (APIENTRY *)(GLuint);
-using GetProgramivProc = void (APIENTRY *)(GLuint, GLenum, GLint *);
-using GetProgramInfoLogProc = void (APIENTRY *)(GLuint, GLsizei, GLsizei *, char *);
-using DeleteProgramProc = void (APIENTRY *)(GLuint);
-using UseProgramProc = void (APIENTRY *)(GLuint);
-using GetUniformLocationProc = GLint (APIENTRY *)(GLuint, const char *);
-using Uniform1iProc = void (APIENTRY *)(GLint, GLint);
 
 GenFramebuffersProc g_gen_framebuffers = nullptr;
 BindFramebufferProc g_bind_framebuffer = nullptr;
@@ -218,39 +203,6 @@ RenderbufferStorageProc g_renderbuffer_storage = nullptr;
 FramebufferRenderbufferProc g_framebuffer_renderbuffer = nullptr;
 DeleteRenderbuffersProc g_delete_renderbuffers = nullptr;
 BlitFramebufferProc g_blit_framebuffer = nullptr;
-CreateShaderProc g_create_shader = nullptr;
-ShaderSourceProc g_shader_source = nullptr;
-CompileShaderProc g_compile_shader = nullptr;
-GetShaderivProc g_get_shader_iv = nullptr;
-GetShaderInfoLogProc g_get_shader_info_log = nullptr;
-DeleteShaderProc g_delete_shader = nullptr;
-CreateProgramProc g_create_program = nullptr;
-AttachShaderProc g_attach_shader = nullptr;
-LinkProgramProc g_link_program = nullptr;
-GetProgramivProc g_get_program_iv = nullptr;
-GetProgramInfoLogProc g_get_program_info_log = nullptr;
-DeleteProgramProc g_delete_program = nullptr;
-UseProgramProc g_use_program = nullptr;
-GetUniformLocationProc g_get_uniform_location = nullptr;
-Uniform1iProc g_uniform_1i = nullptr;
-
-struct AlphaCompositor {
-    GLuint framebuffer = 0;
-    GLuint source_texture = 0;
-    GLuint destination_texture = 0;
-    GLuint depth_buffer = 0;
-    GLuint program = 0;
-    GLint source_uniform = -1;
-    GLint destination_uniform = -1;
-    GLint saved_active_texture = GL_TEXTURE0;
-    GLint saved_texture0_binding = 0;
-    GLint saved_texture1_binding = 0;
-    GLboolean saved_texture0_enabled = GL_FALSE;
-    GLboolean saved_texture1_enabled = GL_FALSE;
-    bool checked = false;
-    bool ready = false;
-};
-AlphaCompositor g_alpha_compositor;
 
 struct SceneTarget {
     GLuint framebuffer = 0;
@@ -300,7 +252,10 @@ T load_gl_proc(const char *name, const char *extension_name = nullptr) {
     return valid_gl_proc(proc) ? reinterpret_cast<T>(proc) : nullptr;
 }
 
-void load_alpha_compositor_functions() {
+// Loads the FBO/blit entry points the scene targets and presentation path
+// need. The GLSL shader loaders that used to live here were part of the
+// removed fullscreen alpha compositor.
+void load_framebuffer_functions() {
     g_gen_framebuffers = load_gl_proc<GenFramebuffersProc>("glGenFramebuffers", "glGenFramebuffersEXT");
     g_bind_framebuffer = load_gl_proc<BindFramebufferProc>("glBindFramebuffer", "glBindFramebufferEXT");
     g_framebuffer_texture_2d = load_gl_proc<FramebufferTexture2DProc>("glFramebufferTexture2D", "glFramebufferTexture2DEXT");
@@ -312,22 +267,6 @@ void load_alpha_compositor_functions() {
     g_framebuffer_renderbuffer = load_gl_proc<FramebufferRenderbufferProc>("glFramebufferRenderbuffer", "glFramebufferRenderbufferEXT");
     g_delete_renderbuffers = load_gl_proc<DeleteRenderbuffersProc>("glDeleteRenderbuffers", "glDeleteRenderbuffersEXT");
     g_blit_framebuffer = load_gl_proc<BlitFramebufferProc>("glBlitFramebuffer", "glBlitFramebufferEXT");
-
-    g_create_shader = load_gl_proc<CreateShaderProc>("glCreateShader");
-    g_shader_source = load_gl_proc<ShaderSourceProc>("glShaderSource");
-    g_compile_shader = load_gl_proc<CompileShaderProc>("glCompileShader");
-    g_get_shader_iv = load_gl_proc<GetShaderivProc>("glGetShaderiv");
-    g_get_shader_info_log = load_gl_proc<GetShaderInfoLogProc>("glGetShaderInfoLog");
-    g_delete_shader = load_gl_proc<DeleteShaderProc>("glDeleteShader");
-    g_create_program = load_gl_proc<CreateProgramProc>("glCreateProgram");
-    g_attach_shader = load_gl_proc<AttachShaderProc>("glAttachShader");
-    g_link_program = load_gl_proc<LinkProgramProc>("glLinkProgram");
-    g_get_program_iv = load_gl_proc<GetProgramivProc>("glGetProgramiv");
-    g_get_program_info_log = load_gl_proc<GetProgramInfoLogProc>("glGetProgramInfoLog");
-    g_delete_program = load_gl_proc<DeleteProgramProc>("glDeleteProgram");
-    g_use_program = load_gl_proc<UseProgramProc>("glUseProgram");
-    g_get_uniform_location = load_gl_proc<GetUniformLocationProc>("glGetUniformLocation");
-    g_uniform_1i = load_gl_proc<Uniform1iProc>("glUniform1i");
 }
 
 void release_scene_target() {
@@ -344,7 +283,7 @@ void release_scene_target() {
 
 bool allocate_scene_target(SceneTarget &t) {
     if (t.ready) return true;
-    load_alpha_compositor_functions();
+    load_framebuffer_functions();
     if (!g_gen_framebuffers || !g_bind_framebuffer || !g_framebuffer_texture_2d ||
         !g_check_framebuffer_status || !g_delete_framebuffers || !g_gen_renderbuffers ||
         !g_bind_renderbuffer || !g_renderbuffer_storage || !g_framebuffer_renderbuffer ||
@@ -452,239 +391,6 @@ void bind_draw_target(std::uint32_t fbp) {
         glReadBuffer(GL_COLOR_ATTACHMENT0);
         glViewport(0, 0, kWidth, kHeight);
     }
-}
-
-GLuint draw_target_framebuffer() {
-    if (!g_direct_window_context) return 0;
-    SceneTarget *target = find_scene_target(g_active_frame_fbp.load(std::memory_order_relaxed));
-    return target ? target->framebuffer : (g_scene_targets[0].ready ? g_scene_targets[0].framebuffer : 0);
-}
-
-void release_alpha_compositor() {
-    if (g_alpha_compositor.program && g_delete_program) g_delete_program(g_alpha_compositor.program);
-    if (g_alpha_compositor.framebuffer && g_delete_framebuffers)
-        g_delete_framebuffers(1, &g_alpha_compositor.framebuffer);
-    if (g_alpha_compositor.depth_buffer && g_delete_renderbuffers)
-        g_delete_renderbuffers(1, &g_alpha_compositor.depth_buffer);
-    const GLuint textures[] = {g_alpha_compositor.source_texture, g_alpha_compositor.destination_texture};
-    if (textures[0] || textures[1]) {
-        glDeleteTextures(2, textures);
-    }
-    g_alpha_compositor = AlphaCompositor{};
-}
-
-bool ensure_alpha_compositor() {
-    if (g_alpha_compositor.checked) return g_alpha_compositor.ready;
-    g_alpha_compositor.checked = true;
-    load_alpha_compositor_functions();
-    if (!g_multitexture_supported || !g_active_texture || !g_gen_framebuffers || !g_bind_framebuffer ||
-        !g_framebuffer_texture_2d || !g_check_framebuffer_status || !g_gen_renderbuffers ||
-        !g_bind_renderbuffer || !g_renderbuffer_storage || !g_framebuffer_renderbuffer ||
-        !g_delete_framebuffers || !g_delete_renderbuffers || !g_blit_framebuffer ||
-        !g_create_shader || !g_shader_source || !g_compile_shader || !g_get_shader_iv ||
-        !g_get_shader_info_log || !g_delete_shader || !g_create_program || !g_attach_shader || !g_link_program ||
-        !g_get_program_iv || !g_get_program_info_log || !g_delete_program || !g_use_program ||
-        !g_get_uniform_location || !g_uniform_1i) {
-        std::fprintf(stderr, "[native-gl] GS alpha compositor unavailable: required OpenGL 2.0/FBO functions are missing\n");
-        return false;
-    }
-
-    glGenTextures(1, &g_alpha_compositor.source_texture);
-    glGenTextures(1, &g_alpha_compositor.destination_texture);
-    g_gen_framebuffers(1, &g_alpha_compositor.framebuffer);
-    g_gen_renderbuffers(1, &g_alpha_compositor.depth_buffer);
-    if (!g_alpha_compositor.source_texture || !g_alpha_compositor.destination_texture ||
-        !g_alpha_compositor.framebuffer || !g_alpha_compositor.depth_buffer) {
-        std::fprintf(stderr, "[native-gl] GS alpha compositor could not allocate framebuffer resources\n");
-        return false;
-    }
-
-    const auto configure_texture = [](GLuint texture) {
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-    };
-    configure_texture(g_alpha_compositor.source_texture);
-    configure_texture(g_alpha_compositor.destination_texture);
-
-    GLint previous_framebuffer = 0;
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previous_framebuffer);
-    g_bind_framebuffer(GL_FRAMEBUFFER, g_alpha_compositor.framebuffer);
-    g_framebuffer_texture_2d(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-                             g_alpha_compositor.source_texture, 0);
-    g_bind_renderbuffer(GL_RENDERBUFFER, g_alpha_compositor.depth_buffer);
-    g_renderbuffer_storage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, kWidth, kHeight);
-    g_framebuffer_renderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
-                               g_alpha_compositor.depth_buffer);
-    glDrawBuffer(GL_COLOR_ATTACHMENT0);
-    const GLenum framebuffer_status = g_check_framebuffer_status(GL_FRAMEBUFFER);
-    g_bind_framebuffer(GL_FRAMEBUFFER, static_cast<GLuint>(previous_framebuffer));
-    if (framebuffer_status != GL_FRAMEBUFFER_COMPLETE) {
-        std::fprintf(stderr, "[native-gl] GS alpha compositor framebuffer is incomplete (0x%04X)\n",
-                     static_cast<unsigned>(framebuffer_status));
-        return false;
-    }
-
-    static constexpr char kFragmentShader[] =
-        "#version 120\n"
-        "uniform sampler2D uSource;\n"
-        "uniform sampler2D uDestination;\n"
-        "void main() {\n"
-        "  vec2 uv = gl_TexCoord[0].st;\n"
-        "  vec4 src = texture2D(uSource, uv);\n"
-        "  vec4 dst = texture2D(uDestination, uv);\n"
-        "  float factor = src.a * (255.0 / 128.0);\n"
-        "  gl_FragColor = clamp(dst + (src - dst) * factor, 0.0, 1.0);\n"
-        "}\n";
-    const GLuint shader = g_create_shader(GL_FRAGMENT_SHADER);
-    if (!shader) {
-        std::fprintf(stderr, "[native-gl] GS alpha compositor could not create its fragment shader\n");
-        return false;
-    }
-    const char *shader_source = kFragmentShader;
-    g_shader_source(shader, 1, &shader_source, nullptr);
-    g_compile_shader(shader);
-    GLint compiled = 0;
-    g_get_shader_iv(shader, GL_COMPILE_STATUS, &compiled);
-    if (!compiled) {
-        GLint log_length = 0;
-        g_get_shader_iv(shader, GL_INFO_LOG_LENGTH, &log_length);
-        std::vector<char> log(static_cast<std::size_t>(std::max(log_length, 1)), '\0');
-        GLsizei written = 0;
-        g_get_shader_info_log(shader, static_cast<GLsizei>(log.size()), &written, log.data());
-        std::fprintf(stderr, "[native-gl] GS alpha compositor shader compile failed: %s\n", log.data());
-        if (g_delete_shader) g_delete_shader(shader);
-        return false;
-    }
-
-    g_alpha_compositor.program = g_create_program();
-    if (!g_alpha_compositor.program) {
-        g_delete_shader(shader);
-        std::fprintf(stderr, "[native-gl] GS alpha compositor could not create its program\n");
-        return false;
-    }
-    g_attach_shader(g_alpha_compositor.program, shader);
-    g_link_program(g_alpha_compositor.program);
-    if (g_delete_shader) g_delete_shader(shader);
-    GLint linked = 0;
-    g_get_program_iv(g_alpha_compositor.program, GL_LINK_STATUS, &linked);
-    if (!linked) {
-        GLint log_length = 0;
-        g_get_program_iv(g_alpha_compositor.program, GL_INFO_LOG_LENGTH, &log_length);
-        std::vector<char> log(static_cast<std::size_t>(std::max(log_length, 1)), '\0');
-        GLsizei written = 0;
-        g_get_program_info_log(g_alpha_compositor.program, static_cast<GLsizei>(log.size()), &written, log.data());
-        std::fprintf(stderr, "[native-gl] GS alpha compositor shader link failed: %s\n", log.data());
-        return false;
-    }
-
-    g_alpha_compositor.source_uniform = g_get_uniform_location(g_alpha_compositor.program, "uSource");
-    g_alpha_compositor.destination_uniform = g_get_uniform_location(g_alpha_compositor.program, "uDestination");
-    if (g_alpha_compositor.source_uniform < 0 || g_alpha_compositor.destination_uniform < 0) {
-        std::fprintf(stderr, "[native-gl] GS alpha compositor sampler uniforms were not found\n");
-        return false;
-    }
-    g_use_program(g_alpha_compositor.program);
-    g_uniform_1i(g_alpha_compositor.source_uniform, 0);
-    g_uniform_1i(g_alpha_compositor.destination_uniform, 1);
-    g_use_program(0);
-    g_alpha_compositor.ready = true;
-    std::fprintf(stderr, "[native-gl] GS /128 alpha compositor initialized (GLSL + framebuffer objects)\n");
-    return true;
-}
-
-bool begin_alpha_composite(bool textured, int scissor_left, int scissor_top,
-                           int scissor_right, int scissor_bottom) {
-    if (!ensure_alpha_compositor()) return false;
-
-    // The texture uploader caches its GL bindings. Save both units here and
-    // restore them after the fullscreen composite so that cache and driver
-    // state remain in sync for the next primitive.
-    glGetIntegerv(GL_ACTIVE_TEXTURE, &g_alpha_compositor.saved_active_texture);
-    g_active_texture(GL_TEXTURE0);
-    glGetIntegerv(GL_TEXTURE_BINDING_2D, &g_alpha_compositor.saved_texture0_binding);
-    g_alpha_compositor.saved_texture0_enabled = glIsEnabled(GL_TEXTURE_2D);
-    g_active_texture(GL_TEXTURE1);
-    glGetIntegerv(GL_TEXTURE_BINDING_2D, &g_alpha_compositor.saved_texture1_binding);
-    g_alpha_compositor.saved_texture1_enabled = glIsEnabled(GL_TEXTURE_2D);
-    g_active_texture(GL_TEXTURE0);
-
-    const GLuint target_framebuffer = draw_target_framebuffer();
-    g_bind_framebuffer(GL_READ_FRAMEBUFFER, target_framebuffer);
-    glReadBuffer(g_direct_window_context ? GL_COLOR_ATTACHMENT0 : GL_BACK);
-    glBindTexture(GL_TEXTURE_2D, g_alpha_compositor.destination_texture);
-    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, kWidth, kHeight, 0);
-
-    // The source pass must retain the GS sampling setup created by
-    // prepare_texture(), so restore the original binding after the snapshot.
-    if (textured) glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(g_alpha_compositor.saved_texture0_binding));
-
-    g_bind_framebuffer(GL_READ_FRAMEBUFFER, target_framebuffer);
-    g_bind_framebuffer(GL_DRAW_FRAMEBUFFER, g_alpha_compositor.framebuffer);
-    g_blit_framebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
-                       GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-    g_bind_framebuffer(GL_FRAMEBUFFER, g_alpha_compositor.framebuffer);
-    glDrawBuffer(GL_COLOR_ATTACHMENT0);
-    glViewport(0, 0, kWidth, kHeight);
-    glDisable(GL_SCISSOR_TEST);
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(scissor_left, kHeight - scissor_bottom,
-              std::max(0, scissor_right - scissor_left),
-              std::max(0, scissor_bottom - scissor_top));
-    glDisable(GL_BLEND);
-    return true;
-}
-
-void finish_alpha_composite() {
-    // Copy depth-test/write results from the source pass back to the normal
-    // target before drawing the color-only full-screen composition.
-    g_bind_framebuffer(GL_READ_FRAMEBUFFER, g_alpha_compositor.framebuffer);
-    g_bind_framebuffer(GL_DRAW_FRAMEBUFFER, draw_target_framebuffer());
-    g_blit_framebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight,
-                       GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-    g_bind_framebuffer(GL_FRAMEBUFFER, draw_target_framebuffer());
-    glReadBuffer(g_direct_window_context ? GL_COLOR_ATTACHMENT0 : GL_BACK);
-    glDrawBuffer(g_direct_window_context ? GL_COLOR_ATTACHMENT0 : GL_BACK);
-    glViewport(0, 0, kWidth, kHeight);
-    glDisable(GL_SCISSOR_TEST);
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
-    glDisable(GL_BLEND);
-
-    g_active_texture(GL_TEXTURE0);
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, g_alpha_compositor.source_texture);
-    g_active_texture(GL_TEXTURE1);
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, g_alpha_compositor.destination_texture);
-    g_use_program(g_alpha_compositor.program);
-    g_active_texture(GL_TEXTURE0);
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 1.0f); glVertex2f(0.0f, 0.0f);
-    glTexCoord2f(1.0f, 1.0f); glVertex2f(static_cast<GLfloat>(kWidth), 0.0f);
-    glTexCoord2f(1.0f, 0.0f); glVertex2f(static_cast<GLfloat>(kWidth), static_cast<GLfloat>(kHeight));
-    glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, static_cast<GLfloat>(kHeight));
-    glEnd();
-    g_use_program(0);
-    g_active_texture(GL_TEXTURE1);
-    glDisable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(g_alpha_compositor.saved_texture1_binding));
-    g_active_texture(GL_TEXTURE0);
-    glDisable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(g_alpha_compositor.saved_texture0_binding));
-    if (g_alpha_compositor.saved_texture0_enabled) glEnable(GL_TEXTURE_2D);
-    if (g_alpha_compositor.saved_texture1_enabled) {
-        g_active_texture(GL_TEXTURE1);
-        glEnable(GL_TEXTURE_2D);
-    }
-    g_active_texture(static_cast<GLenum>(g_alpha_compositor.saved_active_texture));
-    glDepthMask(GL_TRUE);
 }
 
 std::uint64_t clut_hash(const State &st) {
@@ -861,7 +567,14 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
             glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
             glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, GL_TEXTURE);
             glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, GL_PRIMARY_COLOR);
-            glTexEnvi(GL_TEXTURE_ENV, GL_ALPHA_SCALE, 2);
+            // Both modulate inputs are already scaled into 0..255 with 255 =
+            // GS 0x80 (texture upload and glColor), so their product is
+            // already the GS (Ta * A) >> 7 result on the 0..255 scale. The
+            // RGB path needs GL_RGB_SCALE=2 because GS RGB modulate divides
+            // by 128 rather than 255; alpha does not, and a second scale here
+            // doubled every partially transparent modulated fragment - it made
+            // ALPHA=0x44 text fully opaque where the GS blends at As/128.
+            glTexEnvi(GL_TEXTURE_ENV, GL_ALPHA_SCALE, 1);
         } else {
             glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE);
             glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, GL_PRIMARY_COLOR);
@@ -1842,6 +1555,36 @@ bool submit(const State &st, const Vertex *verts, int count) {
             draw_target->last_draw_readback_state = ReadbackState{context.frame, st.dimx, st.dthe, st.colclamp};
         }
     }
+    // Build-specific diagnostic snapshot: raw state and vertices, GS memory,
+    // and the actual GL destination before this draw (RGBA8, bottom row first).
+    // Capture only when the caller supplies both an output path and TEX0.
+    if (const char *capture_path = std::getenv("MKA_GLYPH_CAPTURE_PATH")) {
+        static bool captured = false;
+        const char *wanted = std::getenv("MKA_GLYPH_CAPTURE_TEX0");
+        if (!captured && *capture_path && wanted && *wanted && (attr & 0x10u) &&
+            context.tex0 == std::strtoull(wanted, nullptr, 0) && g_direct_window_context &&
+            find_scene_target(active_fbp)) {
+            std::vector<std::uint8_t> destination(kWidth * kHeight * 4u);
+            glFinish();
+            glReadPixels(0, 0, kWidth, kHeight, GL_RGBA, GL_UNSIGNED_BYTE, destination.data());
+            if (std::FILE *f = ps2::os::open(capture_path, "wb")) {
+                const std::uint32_t header[] = {0x32434B4Du, sizeof(State), sizeof(Vertex),
+                    static_cast<std::uint32_t>(count), gs::kMemorySize, kWidth, kHeight};
+                const bool ok = std::fwrite(header, sizeof header, 1, f) == 1 &&
+                    std::fwrite(&st, sizeof st, 1, f) == 1 &&
+                    std::fwrite(verts, sizeof(Vertex), count, f) == static_cast<std::size_t>(count) &&
+                    std::fwrite(gs::memory(), gs::kMemorySize, 1, f) == 1 &&
+                    std::fwrite(destination.data(), destination.size(), 1, f) == 1;
+                const bool closed = std::fclose(f) == 0;
+                captured = ok && closed;
+                std::fprintf(stderr, "[native-gl-capture] %s %s TEX0=%016llX vertices=%d\n",
+                             captured ? "saved" : "failed", capture_path,
+                             static_cast<unsigned long long>(context.tex0), count);
+            } else {
+                std::fprintf(stderr, "[native-gl-capture] could not open %s\n", capture_path);
+            }
+        }
+    }
     if (attr & (1ull << 5)) return reject_packet(st, attr, prim_type, count, 13, "GS fog is not implemented yet");
     const bool textured = (attr & (1ull << 4)) != 0;
     const bool framebuffer_16 = fpsm == gs::PSMCT16 || fpsm == gs::PSMCT16S;
@@ -1850,7 +1593,6 @@ bool submit(const State &st, const Vertex *verts, int count) {
     if (framebuffer_16 && textured && tex_alpha_enabled)
         return reject_packet(st, attr, prim_type, count, 14, "16-bit framebuffer alpha quantization with texture alpha is not implemented yet");
     const bool alpha_blend = (attr & (1ull << 6)) != 0;
-    bool native_source_over = false;
     if (alpha_blend) {
         const std::uint32_t alpha = static_cast<std::uint32_t>(context.alpha);
         const std::uint32_t a = alpha & 3u;
@@ -1872,10 +1614,21 @@ bool submit(const State &st, const Vertex *verts, int count) {
             g_blend_func_separate(GL_ZERO, GL_ONE_MINUS_DST_ALPHA, GL_ONE, GL_ZERO);
         } else if (gs_source_over && fpsm == gs::PSMCT32 && (st.colclamp & 1u) &&
                    (!textured || tfx == 0)) {
-            if (!ensure_alpha_compositor())
-                return reject_packet(st, attr, prim_type, count, 14, "GS /128 source-over requires the native alpha compositor");
-            native_source_over = true;
-            glDisable(GL_BLEND);
+            // GS computes (Cs - Cd) * As / 128 + Cd. Texture and vertex alpha
+            // are scaled into 0..255 with 255 = GS 0x80 (a3efc7f), so As/128
+            // equals the fragment alpha divided by 255 and the standard
+            // source-over hardware blend is the same equation. This replaces
+            // the fullscreen alpha compositor, which copied and resampled the
+            // whole 1024x512 target through a GL_NEAREST quad for every
+            // ALPHA=0x44 primitive; the retail front-end submits hundreds of
+            // those per frame, and the repeated resampling degraded glyph
+            // columns. Only RGB is blended: the alpha channel is written from
+            // the source, as the GS framebuffer write does.
+            glEnable(GL_BLEND);
+            if (g_blend_func_separate)
+                g_blend_func_separate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+            else
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         } else {
             return reject_packet(st, attr, prim_type, count, 14, "GS ALPHA tuple is not exactly supported by the native OpenGL blend path");
         }
@@ -2038,16 +1791,6 @@ bool submit(const State &st, const Vertex *verts, int count) {
         g_last_readback = clock_t_::now();
     }
 
-    if (native_source_over) {
-        if (!begin_alpha_composite(textured, clip_left, clip_top, clip_right, clip_bottom))
-            return reject_packet(st, attr, prim_type, count, 14, "GS /128 source-over could not start the native alpha compositor");
-        static bool reported_alpha_composite = false;
-        if (!reported_alpha_composite) {
-            reported_alpha_composite = true;
-            std::fprintf(stderr, "[native-gl] GS ALPHA=0x44 PSMCT32 primitive uses the /128 source-over compositor\n");
-        }
-    }
-
     glBegin(mode);
     if (prim_type == 6) {
         // A GS sprite is encoded by two opposite corners. Expand it into a
@@ -2081,15 +1824,52 @@ bool submit(const State &st, const Vertex *verts, int count) {
         emit(a, b, a.x, b.y, su, tv, q);
         emit(b, b, b.x, b.y, tu, tv, q);
     } else {
+        // Half-picture-pixel UV alignment for triangle and triangle-strip
+        // packets (prim 3/4). The retail front-end draws its font glyphs and
+        // UI quads as prim-4 strips, so the sprite-only correction below never
+        // reached them and their texel columns were sampled half a pixel off,
+        // which drops columns under nearest-neighbour minification.
+        // The GS evaluates texture coordinates at the integer pixel (x, y);
+        // GL evaluates the fragment centre (x + 0.5, y + 0.5), so the UV must
+        // move by -0.49 * gradient in both axes: -0.5 would land exactly on
+        // the GS sample point and float error could then round down at texel
+        // boundaries, so the +0.01 tie-break biases upward like the sprite
+        // shift. The gradient is constant across an affine primitive, so one
+        // delta applies to every vertex.
+        float du = 0.0f, dv = 0.0f;
+        if (textured && count >= 3 && (prim_type == 3u || prim_type == 4u)) {
+            static const float shift = [] {
+                const char *value = std::getenv("PS2_NATIVE_GL_TRI_SHIFT");
+                return value ? static_cast<float>(std::atof(value)) : -0.49f;
+            }();
+            const auto pixel = [&](const Vertex &v) {
+                return std::array<float, 2>{(static_cast<int>(v.x) - ofx) / 16.0f,
+                                            (static_cast<int>(v.y) - ofy) / 16.0f};
+            };
+            const std::array<float, 2> p0 = pixel(verts[0]), p1 = pixel(verts[1]), p2 = pixel(verts[2]);
+            const std::array<float, 2> t0 = uv(verts[0]), t1 = uv(verts[1]), t2 = uv(verts[2]);
+            const float ex1 = p1[0] - p0[0], ey1 = p1[1] - p0[1];
+            const float ex2 = p2[0] - p0[0], ey2 = p2[1] - p0[1];
+            const float det = ex1 * ey2 - ex2 * ey1;
+            if (det != 0.0f) {
+                const float du1 = t1[0] - t0[0], du2 = t2[0] - t0[0];
+                const float dv1 = t1[1] - t0[1], dv2 = t2[1] - t0[1];
+                const float dudx = (du1 * ey2 - du2 * ey1) / det;
+                const float dudy = (ex1 * du2 - ex2 * du1) / det;
+                const float dvdx = (dv1 * ey2 - dv2 * ey1) / det;
+                const float dvdy = (ex1 * dv2 - ex2 * dv1) / det;
+                du = shift * (dudx + dudy);
+                dv = shift * (dvdx + dvdy);
+            }
+        }
         for (int i = 0; i < count; ++i) {
             const auto texcoord = uv(verts[i]);
             const Vertex &color = (attr & 8u) ? verts[i] : flat_color;
             const float q = fst || verts[i].q == 0.0f ? 1.0f : verts[i].q;
-            emit(verts[i], color, verts[i].x, verts[i].y, texcoord[0], texcoord[1], q);
+            emit(verts[i], color, verts[i].x, verts[i].y, texcoord[0] + du, texcoord[1] + dv, q);
         }
     }
     glEnd();
-    if (native_source_over) finish_alpha_composite();
     g_pending_readback_state = readback_state;
     g_pending_readback_state_valid = true;
     SceneTarget *active_target = find_scene_target(frame & 0x1FFu);
@@ -2150,7 +1930,6 @@ void shutdown() {
 #if defined(_WIN32)
     if (g_hrc && g_hdc) {
         if (wglGetCurrentContext() != g_hrc) wglMakeCurrent(g_hdc, g_hrc);
-        release_alpha_compositor();
         release_scene_target();
         if (g_texture.object) glDeleteTextures(1, &g_texture.object);
         g_texture = TextureCache{};

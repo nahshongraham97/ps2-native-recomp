@@ -83,10 +83,20 @@ std::uint32_t fetch(const Setup &s, int x, int y) {
 }
 
 std::uint32_t sample(const Setup &s, float u, float v) {
-    if (!s.bilinear) return fetch(s, static_cast<int>(std::floor(u)), static_cast<int>(std::floor(v)));
+    // Barycentric interpolation of an exactly-integer coordinate lands at
+    // k-1e-5 as often as k+1e-5 in float32 (a 1:1 surface hits an integer at
+    // every pixel). Flooring that noise selected the texel below the intended
+    // one, disagreeing with both exact math and the hardware DDA - a traced
+    // glyph pixel showed stq v=4.00000 yet fetched row 3. The epsilon is far
+    // below any meaningful boundary distance.
+    constexpr float kFloorEpsilon = 1.0e-3f;
+    if (!s.bilinear)
+        return fetch(s, static_cast<int>(std::floor(u + kFloorEpsilon)),
+                     static_cast<int>(std::floor(v + kFloorEpsilon)));
     u -= 0.5f;
     v -= 0.5f;
-    const int x0 = static_cast<int>(std::floor(u)), y0 = static_cast<int>(std::floor(v));
+    const int x0 = static_cast<int>(std::floor(u + kFloorEpsilon));
+    const int y0 = static_cast<int>(std::floor(v + kFloorEpsilon));
     const float fx = u - static_cast<float>(x0), fy = v - static_cast<float>(y0);
     const std::uint32_t c00 = fetch(s, x0, y0), c10 = fetch(s, x0 + 1, y0), c01 = fetch(s, x0, y0 + 1), c11 = fetch(s, x0 + 1, y0 + 1);
     std::uint32_t out = 0;
@@ -294,9 +304,10 @@ void plot(const Setup &s, int x, int y, const Attr &at) {
             const std::uint32_t zbefore = read_pixel(s.zpsm, s.zbp, s.fbw, static_cast<std::uint32_t>(x), static_cast<std::uint32_t>(y)) & z_max(s.zpsm);
             const char *what = shade(s, x, y, at);
             const std::uint32_t after = read_pixel(s.fpsm, s.fbp, s.fbw, static_cast<std::uint32_t>(x), static_cast<std::uint32_t>(y));
-            std::fprintf(stderr, "[gs-pixel] f%llu #%llu %d,%d fbp %X psm %02X: %s | pixel %08X -> %08X | z %.1f, buffer %X | rgba %.3f,%.3f,%.3f,%.3f stq %g,%g,%g\n",
+            std::fprintf(stderr, "[gs-pixel] f%llu #%llu %d,%d fbp %X psm %02X: %s | pixel %08X -> %08X | z %.1f, buffer %X | rgba %.3f,%.3f,%.3f,%.3f stq %g,%g,%g | abe %d pabe %d abcd %d%d%d%d colclamp %d\n",
                          static_cast<unsigned long long>(g_probe.frame), static_cast<unsigned long long>(g_probe.number), x, y, s.fbp, s.fpsm, what, before, after, at.z,
-                         zbefore, at.r, at.g, at.b, at.a, at.s, at.t, at.q);
+                         zbefore, at.r, at.g, at.b, at.a, at.s, at.t, at.q,
+                         s.abe ? 1 : 0, s.pabe ? 1 : 0, s.a, s.b, s.c, s.d, s.colclamp ? 1 : 0);
             return;
         }
     }

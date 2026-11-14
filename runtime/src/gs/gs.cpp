@@ -875,7 +875,9 @@ bool draw(const State &s, int needed) {
         std::fprintf(stderr, "[gs-vert] f%llu #%llu", static_cast<unsigned long long>(g_frame), static_cast<unsigned long long>(n));
         for (int i = 0; i < needed; ++i) {
             const Vertex &v = s.queue[i];
-            std::fprintf(stderr, " | %.3f %.3f %u %.5f %.5f %.5f", (static_cast<int>(v.x) - ofx) / 16.0, (static_cast<int>(v.y) - ofy) / 16.0, v.z, v.s, v.t, v.q);
+            std::fprintf(stderr, " | %.3f %.3f %u %.5f %.5f %.5f uv=%u,%u rgba=%02X%02X%02X%02X fog=%u",
+                         (static_cast<int>(v.x) - ofx) / 16.0, (static_cast<int>(v.y) - ofy) / 16.0,
+                         v.z, v.s, v.t, v.q, v.u, v.v, v.r, v.g, v.b, v.a, v.f);
         }
         std::fprintf(stderr, "\n");
     }
