@@ -1169,18 +1169,14 @@ bool present_frame(const DisplayRegs &regs) {
     // current direct FBO captures that surface's geometry, not empty columns
     // implied by a wider DISPLAY.DW. Keep DISPLAY.DW as the fallback before
     // the first accepted primitive and whenever the active surface is wider.
-    // A display surface the primitive stream never rendered into (movie or
-    // still image transfers) has to use DISPLAY.DW: the FBO describes a
-    // different surface entirely.
     const bool display_is_primitive_surface = display_fbp == active_frame_fbp;
-    const int fbo_width = active_frame_width > 0 ? std::min(display_width, active_frame_width) : display_width;
-    const int width = display_is_primitive_surface ? fbo_width : display_width;
-    if (width <= 0 || height <= 0 || dbx < 0 || dby < 0 || dbx + width > kWidth || dby + source_height > kHeight) {
+    const int scene_width = active_frame_width > 0 ? std::min(display_width, active_frame_width) : display_width;
+    if (scene_width <= 0 || height <= 0 || dbx < 0 || dby < 0 || dbx + scene_width > kWidth || dby + source_height > kHeight) {
         static bool warned = false;
         if (!warned) {
             warned = true;
             std::fprintf(stderr, "[native-gl] GS display rectangle is outside the direct scene target: x=%d y=%d w=%d h=%d field_h=%d\n",
-                         dbx, dby, width, height, source_height);
+                         dbx, dby, scene_width, height, source_height);
         }
         g_bind_framebuffer(GL_FRAMEBUFFER, g_scene_target.framebuffer);
         glDrawBuffer(GL_COLOR_ATTACHMENT0);
@@ -1189,23 +1185,32 @@ bool present_frame(const DisplayRegs &regs) {
         return false;
     }
 
-    // Movie and still-image frames are written straight into GS VRAM by the
-    // IMAGE transfer path and never reach the primitive scene target. Present
-    // the display rectangle from VRAM when the display surface is not the one
-    // the primitive stream rendered into, or when VRAM changed without a new
-    // primitive. The primitive path keeps the FBO authoritative otherwise so
-    // depth-tested 3D output is not replaced by a stale compatibility readback.
-    static std::uint64_t last_present_primitives = 0;
-    static std::uint64_t last_present_vram = 0;
+    // The display buffer is scanned out of VRAM, so the pipeline that last
+    // wrote that surface decides what the screen shows. A guest write (image
+    // transfer or local copy) means the picture lives in VRAM and never
+    // reached the primitive scene target: that is the movie and still-image
+    // path. A primitive write means the scene target holds it. Anything else
+    // (the display buffer only mirrors what the game rendered) keeps using
+    // the scene target, which is what the front end needs.
+    bool guest_owned = false;
+    std::uint64_t surface_generation = 0;
+    const bool owner_known = gs::surface_owner(display_fbp * 32u, guest_owned, surface_generation);
+    const bool present_from_vram = owner_known && guest_owned;
+    std::size_t write_count = 0;
+    const gs::GuestWrite *writes = gs::guest_writes(write_count);
+    const gs::GuestWrite *display_write = nullptr;
+    for (std::size_t i = 0; i < write_count; ++i) {
+        const gs::GuestWrite &write = writes[i];
+        if (write.psm != display_psm || write.base != display_fbp * 32u) continue;
+        const int write_x = static_cast<int>(write.x), write_y = static_cast<int>(write.y);
+        if (write_x >= dbx + display_width || dbx >= write_x + static_cast<int>(write.w)) continue;
+        if (write_y >= dby + source_height || dby >= write_y + static_cast<int>(write.h)) continue;
+        if (!display_write || write.generation > display_write->generation) display_write = &write;
+    }
+
     static int last_present_source = -1;
     static std::vector<std::uint32_t> vram_pixels;
-    const std::uint64_t primitives = g_prims_drawn.load(std::memory_order_relaxed);
-    const std::uint64_t vram_generation = gs::g_vram_generation;
-    const bool vram_written = vram_generation != last_present_vram;
-    const bool primitives_drawn = primitives != last_present_primitives;
-    const bool present_from_vram = vram_written && (!display_is_primitive_surface || !primitives_drawn);
-    last_present_primitives = primitives;
-    last_present_vram = vram_generation;
+    const int width = present_from_vram ? display_width : scene_width;
     bool presented_from_vram = false;
     if (present_from_vram) {
         vram_pixels.resize(static_cast<std::size_t>(width) * source_height);
@@ -1239,20 +1244,34 @@ bool present_frame(const DisplayRegs &regs) {
         draw_vram_display(vram_pixels.data(), width, source_height, output_width, output_height,
                           draw_x, draw_y, draw_width, draw_height);
     } else {
-        g_blit_framebuffer(dbx, source_y0, dbx + width, source_y1,
+        g_blit_framebuffer(dbx, source_y0, dbx + scene_width, source_y1,
                            draw_x, draw_y, draw_x + draw_width, draw_y + draw_height,
                            GL_COLOR_BUFFER_BIT, GL_NEAREST);
     }
     const int present_source = presented_from_vram ? 1 : 0;
-    if (present_source != last_present_source) {
+    static std::uint32_t last_present_fbp = 0xFFFFFFFFu;
+    static std::uint32_t last_present_psm = 0xFFFFFFFFu;
+    static int last_present_width = -1;
+    if (present_source != last_present_source || display_fbp != last_present_fbp ||
+        display_psm != last_present_psm || width != last_present_width) {
         last_present_source = present_source;
+        last_present_fbp = display_fbp;
+        last_present_psm = display_psm;
+        last_present_width = width;
         std::fprintf(stderr,
-                     "[native-gl] present source: %s %dx%d DISPFB FBP=%u PSM=%u DBX=%d DBY=%d, scene FBP=%u width=%d, primitives=%llu vram=%llu, scale=%.3f (%s) -> %d,%d %dx%d\n",
+                     "[native-gl] present source: %s %dx%d DISPFB FBP=%u PSM=%u FBW=%u DBX=%d DBY=%d, scene FBP=%u width=%d same_surface=%d owner=%s gen=%llu, write=%s, scale=%.3f (%s) -> %d,%d %dx%d\n",
                      presented_from_vram ? "vram" : "scene", width, source_height, display_fbp, display_psm,
-                     dbx, dby, active_frame_fbp, active_frame_width,
-                     static_cast<unsigned long long>(primitives),
-                     static_cast<unsigned long long>(vram_generation), scale,
+                     display_fbw, dbx, dby, active_frame_fbp, active_frame_width,
+                     display_is_primitive_surface ? 1 : 0,
+                     owner_known ? (guest_owned ? "guest" : "primitive") : "unknown",
+                     static_cast<unsigned long long>(surface_generation),
+                     display_write ? "display" : "none", scale,
                      fit >= 2.0 ? "integer" : "fit", draw_x, draw_y, draw_width, draw_height);
+        if (display_write)
+            std::fprintf(stderr, "[native-gl] guest write on the display surface: psm=%u base=%u rect=%u,%u %ux%u generation=%llu\n",
+                         display_write->psm, display_write->base, display_write->x, display_write->y,
+                         display_write->w, display_write->h,
+                         static_cast<unsigned long long>(display_write->generation));
     }
     static const bool diagnose_present = [] {
         const std::string value = ps2::os::env("PS2_NATIVE_GL_DIAGNOSTICS");
@@ -1269,12 +1288,22 @@ bool present_frame(const DisplayRegs &regs) {
         return present > 0 ? static_cast<unsigned>(present) : 0u;
     }();
     static const std::string diagnostic_dump_prefix = ps2::os::env("PS2_NATIVE_GL_DIAGNOSTIC_DUMP_PREFIX");
+    static const unsigned diagnostic_dump_every = [] {
+        const std::string value = ps2::os::env("PS2_NATIVE_GL_DIAGNOSTIC_DUMP_EVERY");
+        const long interval = std::strtol(value.c_str(), nullptr, 10);
+        return interval > 0 ? static_cast<unsigned>(interval) : 0u;
+    }();
     static unsigned present_serial = 0;
     const unsigned present_index = ++present_serial;
     static unsigned diagnostic_frames = 0;
     const bool dump_this_present = diagnostic_dump_present != 0 &&
         diagnostic_dump_present == present_index && !diagnostic_dump_prefix.empty();
-    const bool sample_present = dump_this_present || (diagnose_present &&
+    // A rolling dump records the presented back buffer every N presents. It
+    // shows what the window actually displays without touching the user's
+    // screen, so a movie frame can be inspected without disturbing a run.
+    const bool dump_rolling = diagnostic_dump_every != 0 && !diagnostic_dump_prefix.empty() &&
+        present_index % diagnostic_dump_every == 0;
+    const bool sample_present = dump_this_present || dump_rolling || (diagnose_present &&
         (diagnostics_every ? (present_index % diagnostics_every == 0) : diagnostic_frames < 8));
     if (sample_present) {
         const unsigned diagnostic_frame = ++diagnostic_frames;
@@ -1379,6 +1408,21 @@ bool present_frame(const DisplayRegs &regs) {
             }
             std::fprintf(stderr, "[native-gl-diag] present=%u PPM dump %s (%s, %s, %s)\n",
                          present_index, saved ? "saved" : "failed", scene_path.c_str(), crop_path.c_str(), output_path.c_str());
+        }
+
+        if (dump_rolling) {
+            const std::string path = diagnostic_dump_prefix + "_present_" + std::to_string(present_index) + ".ppm";
+            std::ofstream file(path, std::ios::binary);
+            file << "P6\n" << draw_width << " " << draw_height << "\n255\n";
+            for (int y = draw_height - 1; file && y >= 0; --y) {
+                for (int x = 0; x < draw_width; ++x) {
+                    const std::size_t at = (static_cast<std::size_t>(y) * draw_width + x) * 4;
+                    const char rgb[] = {static_cast<char>(output_pixels[at]), static_cast<char>(output_pixels[at + 1]),
+                                        static_cast<char>(output_pixels[at + 2])};
+                    file.write(rgb, sizeof rgb);
+                }
+            }
+            std::fprintf(stderr, "[native-gl-diag] present=%u rolling PPM dump %s\n", present_index, path.c_str());
         }
 
         const std::uint32_t accepted = static_cast<std::uint32_t>(g_prims_drawn.load(std::memory_order_relaxed));
@@ -1662,6 +1706,9 @@ bool submit(const State &st, const Vertex *verts, int count) {
     g_prims_drawn.fetch_add(1, std::memory_order_relaxed);
     g_active_frame_width.store(target_width, std::memory_order_relaxed);
     g_active_frame_fbp.store(frame & 0x1FFu, std::memory_order_relaxed);
+    // The primitive pipeline owns the surface it rendered into, so
+    // presentation can tell a primitive picture from one the guest uploaded.
+    gs::note_primitive_write(static_cast<std::uint32_t>(frame & 0x1FFu) * 32u);
     static bool reported = false;
     if (!reported) {
         reported = true;

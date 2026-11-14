@@ -44,6 +44,86 @@ std::uint64_t g_vram_generation = 0;
 
 void serve_state(const void *payload);
 
+// Guest writes into VRAM that do not come from the primitive pipeline: image
+// transfers (TRXDIR 0) and local copies (TRXDIR 2). A movie frame or a
+// converted still reaches the display buffer this way and never touches the
+// primitive scene target, so presentation needs to know which surface the
+// guest filled itself.
+//
+// Which pipeline owns a surface, and when it was last written. The display
+// buffer is scanned out of VRAM, so the owner decides what the screen shows:
+// a guest write means the picture lives in VRAM, a primitive write means the
+// scene target holds it.
+struct SurfaceWrite {
+    std::uint64_t generation = 0;
+    std::uint32_t base = 0;   // 256-byte units
+    bool guest = false;
+};
+
+constexpr std::size_t kGuestWriteHistory = 16;
+constexpr std::size_t kSurfaceWriteHistory = 32;
+GuestWrite g_guest_writes[kGuestWriteHistory];
+std::size_t g_guest_write_next = 0;
+std::uint64_t g_guest_write_generation = 0;
+SurfaceWrite g_surface_writes[kSurfaceWriteHistory];
+std::size_t g_surface_write_next = 0;
+std::uint64_t g_surface_generation = 0;
+
+void note_surface_write(std::uint32_t base, bool guest) {
+    SurfaceWrite &write = g_surface_writes[g_surface_write_next];
+    g_surface_write_next = (g_surface_write_next + 1) % kSurfaceWriteHistory;
+    write.generation = ++g_surface_generation;
+    write.base = base;
+    write.guest = guest;
+}
+
+void note_guest_write(std::uint32_t base, std::uint32_t psm,
+                      std::uint32_t x, std::uint32_t y,
+                      std::uint32_t w, std::uint32_t h) {
+    if (!w || !h) return;
+    GuestWrite &write = g_guest_writes[g_guest_write_next];
+    g_guest_write_next = (g_guest_write_next + 1) % kGuestWriteHistory;
+    write.generation = ++g_guest_write_generation;
+    write.base = base;
+    write.psm = psm;
+    write.x = x;
+    write.y = y;
+    write.w = w;
+    write.h = h;
+    note_surface_write(base, true);
+    // A large guest write is a frame upload rather than a texture. Report
+    // where it lands, throttled, so the log shows what a movie frame uses.
+    if (static_cast<std::uint64_t>(w) * h >= 65536u) {
+        static auto last_report = std::chrono::steady_clock::now();
+        const auto now = std::chrono::steady_clock::now();
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(now - last_report).count() >= 500) {
+            last_report = now;
+            std::fprintf(stderr, "[gs] guest frame write: psm=%u base=%u rect=%u,%u %ux%u\n",
+                         psm, base, x, y, w, h);
+        }
+    }
+}
+
+void note_primitive_write(std::uint32_t base) { note_surface_write(base, false); }
+
+const GuestWrite *guest_writes(std::size_t &count) {
+    count = kGuestWriteHistory;
+    return g_guest_writes;
+}
+
+bool surface_owner(std::uint32_t base, bool &guest, std::uint64_t &generation) {
+    bool found = false;
+    for (const SurfaceWrite &write : g_surface_writes) {
+        if (!write.generation || write.base != base) continue;
+        if (!found || write.generation > generation) {
+            found = true;
+            generation = write.generation;
+            guest = write.guest;
+        }
+    }
+    return found;
+}
+
 namespace {
 
 alignas(64) std::uint8_t g_memory[kMemorySize];
@@ -335,6 +415,7 @@ void local_copy() {
     const std::uint32_t dsax = static_cast<std::uint32_t>(pos >> 32) & 0x7FFu, dsay = static_cast<std::uint32_t>(pos >> 48) & 0x7FFu;
     const std::uint32_t dir = static_cast<std::uint32_t>(pos >> 59) & 3u;
     const std::uint32_t rrw = static_cast<std::uint32_t>(reg) & 0xFFFu, rrh = static_cast<std::uint32_t>(reg >> 32) & 0xFFFu;
+    note_guest_write(dbp, dpsm, dsax, dsay, rrw, rrh);
     std::vector<std::uint32_t> pixels(static_cast<std::size_t>(rrw) * rrh);
     for (std::uint32_t y = 0; y < rrh; ++y)
         for (std::uint32_t x = 0; x < rrw; ++x)
@@ -907,7 +988,18 @@ void write(std::uint32_t reg, std::uint64_t value) {
             else if ((value & 3u) == 1 && !cpu_raster()) download_source(s);
         }
 #endif
-        if ((value & 3u) == 0) g_transfer.active = true;
+        if ((value & 3u) == 0) {
+            g_transfer.active = true;
+            if (cpu_raster()) {
+                const std::uint64_t buf = s.bitbltbuf, pos = s.trxpos, reg = s.trxreg;
+                note_guest_write(static_cast<std::uint32_t>(buf >> 32) & 0x3FFFu,
+                                 static_cast<std::uint32_t>(buf >> 56) & 0x3Fu,
+                                 static_cast<std::uint32_t>(pos >> 32) & 0x7FFu,
+                                 static_cast<std::uint32_t>(pos >> 48) & 0x7FFu,
+                                 static_cast<std::uint32_t>(reg) & 0xFFFu,
+                                 static_cast<std::uint32_t>(reg >> 32) & 0xFFFu);
+            }
+        }
         else if ((value & 3u) == 2) { if (cpu_raster()) local_copy(); }
         else if ((value & 3u) == 1) g_transfer.active = true;
         break;

@@ -77,6 +77,27 @@ bool read_display_rgba(std::uint32_t psm, std::uint32_t fbp, std::uint32_t fbw,
                        std::uint32_t width, std::uint32_t height,
                        bool halved_field, std::uint32_t *rgba);
 
+// A guest VRAM write that did not come from the primitive pipeline: an image
+// transfer or a local copy. The newest recorded write carries the highest
+// generation.
+struct GuestWrite {
+    std::uint64_t generation;
+    std::uint32_t base;   // 256-byte units
+    std::uint32_t psm;
+    std::uint32_t x, y, w, h;
+};
+// All recorded guest writes; scan them and keep the highest generation.
+const GuestWrite *guest_writes(std::size_t &count);
+// Records that the guest filled a surface itself (image transfer, local copy).
+void note_guest_write(std::uint32_t base, std::uint32_t psm,
+                      std::uint32_t x, std::uint32_t y,
+                      std::uint32_t w, std::uint32_t h);
+// Records that the primitive pipeline rendered into a surface.
+void note_primitive_write(std::uint32_t base);
+// Reports which pipeline last wrote a surface. guest is true for an image
+// transfer or local copy, false for the primitive pipeline.
+bool surface_owner(std::uint32_t base, bool &guest, std::uint64_t &generation);
+
 struct DisplayRegs {
     std::uint64_t pmode, smode2, dispfb[2], display[2];
 };
