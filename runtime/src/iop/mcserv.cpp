@@ -218,12 +218,11 @@ std::int32_t mc_get_info2(const McDescParam &request, McEndParam2 &reply) {
     std::uint32_t free_clusters = 0;
     if (!mc_card_formatted_and_free(image, free_clusters)) return kMcNoFormat;
 
-    if (request.origin > 0) reply.type = 2; // sceMcTypePS2
-    if (request.offset > 0)
-        reply.free = free_clusters > static_cast<std::uint32_t>(std::numeric_limits<std::int32_t>::max())
-                         ? 0
-                         : static_cast<std::int32_t>(free_clusters);
-    if (request.size > 0) reply.formatted = 1;
+    reply.type = 2; // sceMcTypePS2
+    reply.free = free_clusters > static_cast<std::uint32_t>(std::numeric_limits<std::int32_t>::max())
+                     ? 0
+                     : static_cast<std::int32_t>(free_clusters);
+    reply.formatted = 1;
     return 0;
 }
 
@@ -698,8 +697,9 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
         std::memcpy(aux_bytes, &aux, sizeof aux);
         std::memcpy(status_bytes, &result, sizeof result);
         std::fprintf(stderr,
-                     "[iop-native] MCSERV GetInfo2 port=%d slot=%d status=%d free_clusters=%d type_requested=%d format_requested=%d\n",
-                     request.port, request.slot, result, aux.free, request.origin > 0, request.size > 0);
+                     "[iop-native] MCSERV GetInfo2 port=%d slot=%d status=%d free_clusters=%d type=%d format=%d (req: fd=%d size=%d off=%d orig=%d buf=0x%x param=0x%x)\n",
+                     request.port, request.slot, result, aux.free, aux.type, aux.formatted,
+                     request.fd, request.size, request.offset, request.origin, request.buffer, request.param);
         return true;
     }
 
