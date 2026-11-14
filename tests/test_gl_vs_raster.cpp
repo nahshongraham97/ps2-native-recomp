@@ -88,7 +88,7 @@ struct TestResult {
 };
 
 TestResult run_sprite_test(const char *name, std::uint32_t sprite_w, std::uint32_t sprite_h,
-                           bool use_st = false) {
+                           bool use_st = false, bool bilinear = true) {
     ps2::gs::State state{};
     state.prmodecont = 1;
     state.colclamp = 1;
@@ -97,7 +97,7 @@ TestResult run_sprite_test(const char *name, std::uint32_t sprite_w, std::uint32
                             (static_cast<std::uint64_t>(447u) << 48);
     state.ctx[0].tex0 = (kTextureBase * 32u / 32u) | (1ull << 14) | (2ull << 26) | (2ull << 30) |
                         (1ull << 34) | (1ull << 35);
-    state.ctx[0].tex1 = (1ull << 6) | (1ull << 5); // bilinear
+    state.ctx[0].tex1 = bilinear ? ((1ull << 6) | (1ull << 5)) : 0ull;
     state.ctx[0].clamp = 1u | (1u << 2);
     state.ctx[0].test = 0;
     state.ctx[0].zbuf = 0;
@@ -151,7 +151,8 @@ TestResult run_sprite_test(const char *name, std::uint32_t sprite_w, std::uint32
     return {name, sprite_w * sprite_h, mismatches, mismatches == 0};
 }
 
-TestResult run_triangle_test(const char *name, std::uint32_t quad_w, std::uint32_t quad_h) {
+TestResult run_triangle_test(const char *name, std::uint32_t quad_w, std::uint32_t quad_h,
+                             bool bilinear = true) {
     ps2::gs::State state{};
     state.prmodecont = 1;
     state.colclamp = 1;
@@ -160,7 +161,7 @@ TestResult run_triangle_test(const char *name, std::uint32_t quad_w, std::uint32
                             (static_cast<std::uint64_t>(447u) << 48);
     state.ctx[0].tex0 = (kTextureBase * 32u / 32u) | (1ull << 14) | (2ull << 26) | (2ull << 30) |
                         (1ull << 34) | (1ull << 35);
-    state.ctx[0].tex1 = (1ull << 6) | (1ull << 5);
+    state.ctx[0].tex1 = bilinear ? ((1ull << 6) | (1ull << 5)) : 0ull;
     state.ctx[0].clamp = 1u | (1u << 2);
     state.ctx[0].test = 0;
     state.ctx[0].zbuf = 0;
@@ -239,6 +240,13 @@ int main(int argc, char **argv) {
     results.push_back(run_triangle_test("Triangle Strip 1:1 (4x4 UV)", 4u, 4u));
     results.push_back(run_triangle_test("Triangle Strip 2x (8x8 UV)", 8u, 8u));
     results.push_back(run_tiebreak_test());
+
+    // Nearest-neighbor filtering (MMIN=0, MMAG=0) tests:
+    results.push_back(run_sprite_test("Sprite 1:1 Nearest (4x4 UV)", 4u, 4u, false, false));
+    results.push_back(run_sprite_test("Sprite 2x Nearest (8x8 UV)", 8u, 8u, false, false));
+    results.push_back(run_sprite_test("Sprite 3x Nearest (12x12 UV)", 12u, 12u, false, false));
+    results.push_back(run_triangle_test("Triangle Strip 1:1 Nearest (4x4 UV)", 4u, 4u, false));
+    results.push_back(run_triangle_test("Triangle Strip 2x Nearest (8x8 UV)", 8u, 8u, false));
 
     ps2::gs::native_gl::shutdown();
 
