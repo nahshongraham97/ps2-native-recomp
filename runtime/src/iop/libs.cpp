@@ -272,6 +272,9 @@ std::uint64_t read_clock(std::uint32_t p) {
 
 void install_sysmem() {
     register_hle_library("sysmem", 0x0101);
+    // SDRDRV imports sysmem v1.2; the PS2SDK export table keeps ordinal 7
+    // as QueryMaxFreeMemSize, which is implemented by this native HLE below.
+    register_hle_library("sysmem", 0x0102);
     def("sysmem", 4, "AllocSysMemory", [](Cpu &c) { c.r[2] = alloc(arg(c, 1), static_cast<int>(arg(c, 0)), arg(c, 2)); });
     def("sysmem", 5, "FreeSysMemory", [](Cpu &c) { free(arg(c, 0)); c.r[2] = 0; });
     def("sysmem", 6, "QueryMemSize", [](Cpu &c) { c.r[2] = kRamSize; });
@@ -284,6 +287,9 @@ void install_sysmem() {
 
 void install_loadcore() {
     register_hle_library("loadcore", 0x0101);
+    // The retail Armageddon SDRDRV imports loadcore v1.3. Its table preserves
+    // these implemented ordinals (including RegisterLibraryEntries at 6).
+    register_hle_library("loadcore", 0x0103);
     def("loadcore", 4, "FlushIcache", [](Cpu &c) { c.r[2] = 0; });
     def("loadcore", 5, "FlushDcache", [](Cpu &c) { c.r[2] = 0; });
     def("loadcore", 6, "RegisterLibraryEntries", [](Cpu &c) {
@@ -328,6 +334,9 @@ void install_intrman() {
 
 void install_thbase() {
     register_hle_library("thbase", 0x0101);
+    // PS2SDK thbase exports the same CreateThread ordinal in v1.2; SDRDRV
+    // imports that exact version, so expose the implemented native HLE there.
+    register_hle_library("thbase", 0x0102);
     def("thbase", 4, "CreateThread", [](Cpu &c) {
         const std::uint32_t p = arg(c, 0);
         c.r[2] = static_cast<std::uint32_t>(create_thread(read32(p + 8), read32(p + 12), static_cast<int>(read32(p + 16)), c.r[28], read32(p), read32(p + 4)));
@@ -496,6 +505,10 @@ void install_thbase() {
         c.r[2] = 0;
     });
     def("thbase", 41, "GetSystemStatusFlag", [](Cpu &c) { c.r[2] = 0; });
+    def("thbase", 42, "GetThreadCurrentPriority", [](Cpu &c) {
+        Thread *t = current();
+        c.r[2] = t ? static_cast<std::uint32_t>(t->priority) : 0u;
+    });
     def("thbase", 43, "GetSystemTimeLow", [](Cpu &c) { c.r[2] = static_cast<std::uint32_t>(now()); });
 }
 
@@ -810,6 +823,9 @@ void install_thvpool() {
 
 void install_sysclib() {
     register_hle_library("sysclib", 0x0103);
+    // The captured MSL imports sysclib v1.4; the PS2SDK export table keeps
+    // ordinal 14 as memset, which is implemented by this native HLE below.
+    register_hle_library("sysclib", 0x0104);
     def("sysclib", 4, "setjmp", [](Cpu &c) {
         const std::uint32_t p = arg(c, 0);
         const int regs[12] = {31, 29, 30, 16, 17, 18, 19, 20, 21, 22, 23, 28};
@@ -1096,6 +1112,10 @@ void install_vblank() {
 
 void install_timrman() {
     register_hle_library("timrman", 0x0101);
+    // Retail MSL imports timrman v1.03. These captured ordinals use the same
+    // timer ABI implemented below, so expose the native handlers for both
+    // library versions instead of falling through to guest import code.
+    register_hle_library("timrman", 0x0103);
     def("timrman", 4, "AllocHardTimer", [](Cpu &c) { c.r[2] = g_next_hard_timer++; });
     def("timrman", 5, "ReferHardTimer", [](Cpu &c) { c.r[2] = 1; });
     def("timrman", 6, "FreeHardTimer", [](Cpu &c) { c.r[2] = 0; });

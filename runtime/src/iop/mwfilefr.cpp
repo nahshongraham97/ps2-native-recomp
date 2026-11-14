@@ -4,7 +4,7 @@
 #include "kernel.hpp"
 #include "sif.hpp"
 
-#include "ps2/disc.hpp"
+#include "mka/content_vfs.hpp"
 #include "ps2/memory.hpp"
 #include "ps2/state.hpp"
 
@@ -24,6 +24,27 @@
 #include <vector>
 
 namespace ps2::iop::kernel {
+
+bool mwfilefr_read_host_range(const std::string &path, std::uint64_t open_size,
+                              std::uint64_t offset, std::uint8_t *out,
+                              std::uint32_t requested, std::uint32_t &transferred) {
+    transferred = 0;
+    if (!requested || offset >= open_size) return true;
+    if (!out || offset > static_cast<std::uint64_t>(std::numeric_limits<std::streamoff>::max())) return false;
+    std::ifstream stream(path, std::ios::binary);
+    if (!stream) return false;
+    stream.seekg(static_cast<std::streamoff>(offset), std::ios::beg);
+    if (!stream) return false;
+    const auto total = static_cast<std::uint32_t>(std::min<std::uint64_t>(requested, open_size - offset));
+    while (transferred < total) {
+        const auto wanted = std::min<std::uint32_t>(total - transferred, 0x8000u);
+        stream.read(reinterpret_cast<char *>(out + transferred), static_cast<std::streamsize>(wanted));
+        const std::streamsize got = stream.gcount();
+        if (got > 0) transferred += static_cast<std::uint32_t>(got);
+        if (stream.bad() || got != static_cast<std::streamsize>(wanted)) return false;
+    }
+    return true;
+}
 
 namespace {
 
@@ -231,8 +252,9 @@ bool reject(std::uint32_t method, const char *reason) {
 }
 
 std::optional<std::string> resolve_host_file(const std::string &guest_path) {
-    if (const auto overlay = disc::native_vfs_path(guest_path)) return overlay;
-    return disc::extracted_file_path(guest_path);
+    const auto path = mka::content::resolve(guest_path);
+    if (!path) return std::nullopt;
+    return path->string();
 }
 
 void write_iop16(std::uint32_t address, std::uint16_t value) {
@@ -241,6 +263,48 @@ void write_iop16(std::uint32_t address, std::uint16_t value) {
 
 void write_iop32(std::uint32_t address, std::uint32_t value) {
     std::memcpy(ps2::iop::ram_ptr(address), &value, sizeof(value));
+}
+
+std::uint32_t open_native_file(const std::string &guest_path, std::uint32_t open_flags,
+                              std::uint32_t &error_code) {
+    error_code = 0;
+    if ((open_flags & 0x22u) == 0x22u) {
+        error_code = kOpenErrorRead;
+        return 0;
+    }
+
+    const auto host_path = resolve_host_file(guest_path);
+    if (!host_path) {
+        error_code = kOpenErrorNotFound;
+        return 0;
+    }
+
+    std::error_code ec;
+    const std::uint64_t size = std::filesystem::file_size(*host_path, ec);
+    if (ec || !std::filesystem::is_regular_file(*host_path, ec) || ec) {
+        error_code = kOpenErrorNotFound;
+        return 0;
+    }
+
+    const std::uint32_t handle = alloc(kFileHandleBytes);
+    if (!handle) {
+        error_code = kOpenErrorRead;
+        return 0;
+    }
+    std::memset(ps2::iop::ram_ptr(handle), 0, kFileHandleBytes);
+    write_iop32(handle + 4u, static_cast<std::uint32_t>(std::min<std::uint64_t>(size, 0xFFFFFFFFu)));
+    write_iop16(handle + 0x18u, 1u);
+    const auto [it, inserted] = g_files.emplace(handle, NativeFile{guest_path, *host_path, handle, size, 1u});
+    if (!inserted) {
+        free(handle);
+        error_code = kOpenErrorRead;
+        return 0;
+    }
+
+    std::fprintf(stderr, "[mwfilefr-native] opened %s (%llu bytes) at IOP handle 0x%08X -> %s\n",
+                 guest_path.c_str(), static_cast<unsigned long long>(it->second.size), handle,
+                 it->second.host_path.c_str());
+    return handle;
 }
 
 void write_work_item(const WorkItem &work) {
@@ -291,45 +355,18 @@ void finish_work(WorkItem &work) {
 }
 
 void process_open(WorkItem &work) {
-    if ((work.open_flags & 0x22u) == 0x22u) {
-        work.error_code = static_cast<std::uint32_t>(-5);
+    work.file_handle = open_native_file(work.guest_path, work.open_flags, work.error_code);
+    if (!work.file_handle) {
         finish_work(work);
         return;
     }
-    const auto host_path = resolve_host_file(work.guest_path);
-    if (!host_path) {
-        work.error_code = kOpenErrorNotFound;
-        finish_work(work);
-        return;
-    }
-
-    std::error_code ec;
-    const std::uint64_t size = std::filesystem::file_size(*host_path, ec);
-    if (ec || !std::filesystem::is_regular_file(*host_path, ec) || ec) {
-        work.error_code = kOpenErrorNotFound;
-        finish_work(work);
-        return;
-    }
-
-    const std::uint32_t handle = alloc(kFileHandleBytes);
-    if (!handle) {
-        work.error_code = kOpenErrorRead;
-        finish_work(work);
-        return;
-    }
-    std::memset(ps2::iop::ram_ptr(handle), 0, kFileHandleBytes);
-    write_iop32(handle + 4u, static_cast<std::uint32_t>(std::min<std::uint64_t>(size, 0xFFFFFFFFu)));
-    write_iop16(handle + 0x18u, 1u);
-    g_files.emplace(handle, NativeFile{work.guest_path, *host_path, handle, size, 1u});
-    work.file_handle = handle;
-    work.requested_size = static_cast<std::uint32_t>(std::min<std::uint64_t>(size, 0xFFFFFFFFu));
+    const NativeFile &file = g_files.at(work.file_handle);
+    work.requested_size = static_cast<std::uint32_t>(std::min<std::uint64_t>(file.size, 0xFFFFFFFFu));
     work.destination = work.requested_size;
     if (work.path_buffer) {
         free(work.path_buffer);
         work.path_buffer = 0;
     }
-    std::fprintf(stderr, "[mwfilefr-native] opened %s (%llu bytes) at IOP handle 0x%08X -> %s\n",
-                 work.guest_path.c_str(), static_cast<unsigned long long>(size), handle, host_path->c_str());
     finish_work(work);
 }
 
@@ -359,38 +396,10 @@ void process_read(WorkItem &work) {
         return;
     }
 
-    work.bytes_transferred = 0;
-    while (work.bytes_transferred < work.requested_size) {
-        const std::uint64_t file_offset = static_cast<std::uint64_t>(work.offset) + work.bytes_transferred;
-        if (file_offset >= file->second.size) break;
-        const std::uint64_t available = file->second.size - file_offset;
-        const std::uint32_t remaining = work.requested_size - work.bytes_transferred;
-        const std::uint32_t wanted = static_cast<std::uint32_t>(
-            std::min<std::uint64_t>(remaining, std::min<std::uint64_t>(available, 0x8000u)));
-        std::ifstream stream(file->second.host_path, std::ios::binary);
-        if (!stream) {
-            work.error_code = kOpenErrorRead;
-            finish_work(work);
-            return;
-        }
-        stream.seekg(static_cast<std::streamoff>(file_offset), std::ios::beg);
-        if (!stream) {
-            work.error_code = kOpenErrorRead;
-            finish_work(work);
-            return;
-        }
-        std::uint8_t *out = ps2::g_ram + ee_physical(work.destination) + work.bytes_transferred;
-        stream.read(reinterpret_cast<char *>(out), static_cast<std::streamsize>(wanted));
-        if (stream.bad()) {
-            work.error_code = kOpenErrorRead;
-            finish_work(work);
-            return;
-        }
-        const std::streamsize got = stream.gcount();
-        if (got <= 0) break;
-        work.bytes_transferred += static_cast<std::uint32_t>(got);
-        if (static_cast<std::uint32_t>(got) < wanted) break;
-    }
+    std::uint8_t *out = ps2::g_ram + ee_physical(work.destination);
+    if (!mwfilefr_read_host_range(file->second.host_path, file->second.size, work.offset,
+                                 out, work.requested_size, work.bytes_transferred))
+        work.error_code = kOpenErrorRead;
     finish_work(work);
     std::fprintf(stderr, "[mwfilefr-native] read IOP handle 0x%08X offset 0x%08X requested 0x%X -> %u bytes at EE 0x%08X\n",
                  work.file_handle, work.offset, work.requested_size, work.bytes_transferred, work.destination);
@@ -702,6 +711,108 @@ bool mwfilefr_completion_rpc(std::uint32_t method, std::uint32_t args, std::uint
 }
 
 } // namespace
+
+void mwfilefr_open_import(ps2::iop::Cpu &c) {
+    const std::uint32_t path_address = c.r[4];
+    if (!path_address || !valid_iop_range(path_address, kOpenPathBytes)) {
+        c.r[2] = 0;
+        return;
+    }
+    const char *path_bytes = reinterpret_cast<const char *>(ps2::iop::ram_ptr(path_address));
+    const void *end = std::memchr(path_bytes, 0, kOpenPathBytes);
+    if (!end) {
+        c.r[2] = 0;
+        return;
+    }
+
+    const std::string guest_path(path_bytes, static_cast<const char *>(end) - path_bytes);
+    std::uint32_t error_code = 0;
+    const std::uint32_t handle = open_native_file(guest_path, c.r[5], error_code);
+    c.r[2] = handle;
+    if (!handle)
+        std::fprintf(stderr, "[mwfile-native] open failed for %s flags=0x%08X error=%d\n",
+                     guest_path.c_str(), c.r[5], static_cast<std::int32_t>(error_code));
+}
+
+void mwfilefr_close_import(ps2::iop::Cpu &c) {
+    const std::uint32_t handle = c.r[4];
+    const auto file = g_files.find(handle);
+    if (file != g_files.end()) {
+        g_files.erase(file);
+        free(handle);
+    }
+    c.r[2] = 0;
+}
+
+void mwfilefr_read_import(ps2::iop::Cpu &c) {
+    const std::uint32_t handle = c.r[4];
+    const std::uint32_t destination = c.r[5];
+    const std::uint32_t requested = c.r[6];
+    const std::uint32_t offset = c.r[7];
+    if (requested == 0u) {
+        c.r[2] = 0u;
+        return;
+    }
+
+    const std::uint32_t mode_address = c.r[29] + 0x10u;
+    const auto stop_invalid = [&c](const char *reason) {
+        std::fprintf(stderr, "[iop-native-stop] MWFILEFR mwfile v1.03 ordinal 10: %s\n", reason);
+        c.r[2] = 0u;
+        if (native_strict()) {
+            std::fflush(stderr);
+            std::abort();
+        }
+    };
+    if (mode_address < c.r[29] || !valid_iop_range(mode_address, 1u)) {
+        stop_invalid("fifth-argument stack byte is outside IOP RAM");
+        return;
+    }
+    if (!valid_iop_range(destination, requested)) {
+        stop_invalid("destination range is outside IOP RAM");
+        return;
+    }
+    const auto file = g_files.find(handle);
+    if (file == g_files.end()) {
+        stop_invalid("file handle was not opened by the native MWFILEFR service");
+        return;
+    }
+
+    // The retail MIPS32 export returns the number of bytes delivered. Its
+    // fifth stack argument is masked to two scheduling-mode bits before the
+    // async helper; the native implementation completes synchronously at the
+    // same call boundary, so the mode cannot change the returned byte count.
+    const std::uint8_t mode = *ps2::iop::ram_ptr(mode_address);
+    std::uint32_t transferred = 0;
+    const bool io_ok = mwfilefr_read_host_range(
+        file->second.host_path, file->second.size, offset,
+        ps2::iop::ram_ptr(destination), requested, transferred);
+    c.r[2] = transferred;
+    std::fprintf(stderr,
+                 "[mwfilefr-native] ordinal10 read IOP handle 0x%08X offset 0x%08X "
+                 "requested 0x%X mode=%u -> %u bytes at IOP 0x%08X%s\n",
+                 handle, offset, requested, static_cast<unsigned>(mode & 3u), transferred,
+                 destination, io_ok ? "" : " (host read incomplete)");
+}
+
+void mwfilefr_ordinal13_return_import(ps2::iop::Cpu &c) {
+    // The selected MWFILEFR.IRX is ELF32/MIPS-I. Its ordinal-13 export thunk
+    // at 0x1FD4 jumps to 0x4860, whose complete body is `jr ra` plus a delay
+    // slot writing to $zero. It does not define v0, so preserve the caller's
+    // value instead of inventing a success or error code.
+    const std::uint32_t inherited_v0 = c.r[2];
+    c.r[2] = inherited_v0;
+}
+
+void mwfilefr_ordinal16_worker_dispatch_import(ps2::iop::Cpu &c) {
+    // Retail ordinal 16 scans MWFILEFR's three worker mailboxes, compares the
+    // queued message count with semaphore state, and signals its guest worker
+    // threads. The native service has no guest mailboxes or worker threads:
+    // each accepted request schedules work_job(), and callback_poll_job()
+    // owns EE completion. Those host jobs are already queued when this export
+    // is called, so running the guest wakeup routine here would duplicate the
+    // scheduler. MSL's observed caller ignores v0; leave it untouched.
+    (void)c;
+}
 
 void register_native_mwfilefr_job() {
     register_job(kJobMwfilefrBindPoll, bind_poll_job);

@@ -5,6 +5,7 @@
 #include "ps2/vu.hpp"
 #include "ps2/observer_hook.hpp"
 #include "mka_combat_hooks.hpp"
+#include "mka/content_vfs.hpp"
 
 #ifdef PS2_WINDOW
 #include "window.hpp"
@@ -61,7 +62,7 @@ namespace {
 int usage() {
     std::fprintf(stderr,
                  "usage: ps2run <elf> [--arg text]... [--frames n] [--ntsc] [--misses file]\n"
-                 "              [--disc image.iso | --disc-files extracted-disc-dir] [--memcard card.ps2] [--pal | --ntsc] [--trace-syscalls] [--trace-io] [--trace-threads]\n"
+                 "              [--memcard card.ps2] [--pal | --ntsc] [--trace-syscalls] [--trace-io] [--trace-threads]\n"
                  "              [--trace-iop] [--trace-iop-hle] [--frames-dir dir] [--frame-every n] [--frame-at n]...\n"
                  "              [--press frame:button[+button][:frames]]... [--window] [--fullscreen]\n"
                  "              [--save-state frame:file] [--load-state file|newest] [--quick-dir dir] [--widescreen] [--patches file]\n"
@@ -222,6 +223,8 @@ public:
         return out;
     }
 
+    const std::string &path() const { return path_; }
+
 private:
     // a line of its own that the reader takes out of the stream: it tells flush() that everything before it was handled
     static constexpr char kMarker[] = "\x1e<ps2run-log-flush>\x1e\n";
@@ -301,6 +304,58 @@ LogTee g_log;
 #endif
 
 #ifdef _WIN32
+std::wstring quote_windows_argument(const std::wstring &value) {
+    std::wstring quoted(1, L'"');
+    std::size_t backslashes = 0;
+    for (const wchar_t ch : value) {
+        if (ch == L'\\') {
+            ++backslashes;
+        } else if (ch == L'"') {
+            quoted.append(backslashes * 2 + 1, L'\\');
+            quoted.push_back(ch);
+            backslashes = 0;
+        } else {
+            quoted.append(backslashes, L'\\');
+            quoted.push_back(ch);
+            backslashes = 0;
+        }
+    }
+    quoted.append(backslashes * 2, L'\\');
+    quoted.push_back(L'"');
+    return quoted;
+}
+
+bool open_log_window(const std::string &log_path) {
+    std::vector<wchar_t> module(32768);
+    const DWORD length = GetModuleFileNameW(nullptr, module.data(), static_cast<DWORD>(module.size()));
+    if (!length || length >= module.size()) return false;
+    const std::filesystem::path viewer = std::filesystem::path(std::wstring(module.data(), length)).parent_path() / L"watch_ps2run_log.ps1";
+    std::error_code error;
+    if (!std::filesystem::is_regular_file(viewer, error) || error) {
+        std::fprintf(stderr, "[log-window] viewer script is missing: %s\n", ps2::os::utf8(viewer).c_str());
+        return false;
+    }
+
+    std::wstring command = L"powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File " +
+                           quote_windows_argument(viewer.native()) + L" -Path " +
+                           quote_windows_argument(ps2::os::path(log_path).native()) + L" -Tail 80";
+    STARTUPINFOW startup{};
+    startup.cb = sizeof(startup);
+    startup.dwFlags = STARTF_USESHOWWINDOW;
+    startup.wShowWindow = SW_SHOWNORMAL;
+    PROCESS_INFORMATION process{};
+    if (!CreateProcessW(nullptr, command.data(), nullptr, nullptr, FALSE, CREATE_NEW_CONSOLE,
+                        nullptr, nullptr, &startup, &process)) {
+        std::fprintf(stderr, "[log-window] could not open the live log window (Windows error %lu)\n",
+                     static_cast<unsigned long>(GetLastError()));
+        return false;
+    }
+    CloseHandle(process.hThread);
+    CloseHandle(process.hProcess);
+    std::fprintf(stderr, "[log-window] following this run in a separate window: %s\n", log_path.c_str());
+    return true;
+}
+
 // The memory card file is written when the game saves (50 frames after its last write) and again whenever the game ends. These
 // two cover the ways a Windows program can be ended from outside while it is running, so a save made a moment ago is not lost:
 //   - Ctrl+C, Ctrl+Break or closing the console window the program was started from (it is told, then given a few seconds);
@@ -509,8 +564,7 @@ int main(int argc, char **argv) {
     std::vector<std::string> args{argv[1]};
     [[maybe_unused]] bool window = false, fullscreen = false;
     std::string load_path;
-    std::string disc_files_path;
-    bool disc_files_requested = false, no_record = false;
+    bool no_record = false;
     ps2::g_options.program_path = argv[1];
     for (int i = 0; i < argc; ++i) {
         const std::string a = argv[i];
@@ -532,11 +586,6 @@ int main(int argc, char **argv) {
         }
         else if (a == "--trace-io") ps2::g_options.trace_io = true;
         else if (a == "--trace-threads") ps2::g_options.trace_threads = true;
-        else if (a == "--disc" && i + 1 < argc) ps2::g_options.disc_path = argv[++i];
-        else if (a == "--disc-files" && i + 1 < argc) {
-            disc_files_requested = true;
-            disc_files_path = argv[++i];
-        }
         else if (a == "--memcard" && i + 1 < argc) ps2::g_options.memcard_path = argv[++i];
         else if (a == "--trace-iop") ps2::g_options.trace_iop_modules = true;
         else if (a == "--trace-iop-hle") ps2::g_options.trace_iop_hle = true;
@@ -573,32 +622,41 @@ int main(int argc, char **argv) {
         else if (a == "--quick-dir" && i + 1 < argc) ps2::g_options.quick_dir = argv[++i];
         else return usage();
     }
-    if (disc_files_requested) {
-        if (disc_files_path.empty()) {
-            std::fprintf(stderr, "--disc-files requires a directory path\n");
-            return usage();
-        }
-        if (!ps2::g_options.disc_path.empty()) {
-            std::fprintf(stderr, "--disc-files cannot be combined with --disc; the extracted filesystem is the complete disc source\n");
-            return usage();
-        }
-        std::error_code error;
-        const std::filesystem::path root = std::filesystem::absolute(ps2::os::path(disc_files_path), error);
-        if (error || !std::filesystem::is_directory(root, error) || error ||
-            !std::filesystem::is_regular_file(root / ".disc_layout", error) || error ||
-            !std::filesystem::is_regular_file(root / ".disc_meta", error) || error) {
-            std::fprintf(stderr, "--disc-files requires an extracted disc directory with .disc_layout and .disc_meta: %s\n",
-                         disc_files_path.c_str());
-            return 2;
-        }
-        if (!ps2::os::set_env("PS2_DISC_FILES", ps2::os::utf8(root)) ||
-            !ps2::os::set_env("PS2_DISC_FILES_STRICT", "1")) {
-            std::fprintf(stderr, "cannot enable strict extracted-disc mode\n");
-            return 2;
-        }
-        std::fprintf(stderr, "[disc-vfs] strict extracted filesystem selected; raw ISO fallback disabled (%s)\n",
-                     ps2::os::utf8(root).c_str());
+    // The retail launcher mounts native content from the game folder itself.
+    // Disc images and switches that opt into filesystem mode are not part of
+    // this runtime path.
+    std::error_code content_error;
+    const std::filesystem::path program =
+        std::filesystem::absolute(ps2::os::path(argv[1]), content_error);
+    if (content_error) {
+        std::fprintf(stderr, "[native-vfs-stop] cannot resolve the retail program path: %s\n", argv[1]);
+        return 2;
     }
+    const std::vector<std::filesystem::path> content_candidates = {
+        program.parent_path() / "disc-files",
+        program.parent_path().parent_path() / "disc-files"
+    };
+    std::filesystem::path content_root;
+    for (const auto &candidate : content_candidates) {
+        content_error.clear();
+        if (std::filesystem::is_regular_file(candidate / "MKDA.PAK", content_error) && !content_error) {
+            content_root = candidate;
+            break;
+        }
+    }
+    if (content_root.empty()) {
+        std::fprintf(stderr, "[native-vfs-stop] no native Armageddon content directory beside %s\n",
+                     ps2::os::utf8(program).c_str());
+        return 2;
+    }
+    std::string mount_error;
+    if (!mka::content::mount_root(content_root, &mount_error)) {
+        std::fprintf(stderr, "[native-vfs-stop] cannot mount content at %s: %s\n",
+                     ps2::os::utf8(content_root).c_str(), mount_error.c_str());
+        return 2;
+    }
+    std::fprintf(stderr, "[native-vfs] mounted extracted content root %s\n",
+                 ps2::os::utf8(mka::content::mounted_root()).c_str());
     std::sort(ps2::g_options.frame_capture_frames.begin(), ps2::g_options.frame_capture_frames.end());
     ps2::g_options.frame_capture_frames.erase(
         std::unique(ps2::g_options.frame_capture_frames.begin(), ps2::g_options.frame_capture_frames.end()),
@@ -611,6 +669,9 @@ int main(int argc, char **argv) {
         ps2::g_options.first_log = [](std::size_t lines) { return g_log.head(lines); };
         ps2::g_options.on_exit = [] { g_log.stop(); };
         std::atexit([] { g_log.stop(); });  // the window run that returns from main
+#ifdef _WIN32
+        open_log_window(g_log.path());
+#endif
     }
 #endif
 
@@ -628,10 +689,6 @@ int main(int argc, char **argv) {
         std::vector<std::filesystem::path> places;
         const std::filesystem::path program = std::filesystem::absolute(ps2::os::path(argv[1]), error);
         if (!error) places = {program.parent_path(), program.parent_path().parent_path()};
-        if (!ps2::g_options.disc_path.empty()) {
-            const std::filesystem::path disc = std::filesystem::absolute(ps2::os::path(ps2::g_options.disc_path), error);
-            if (!error) places.push_back(disc.parent_path());
-        }
         for (const std::filesystem::path &place : places) {
             const std::filesystem::path vu1 = (place / "vu1").lexically_normal();
             if (std::filesystem::is_directory(vu1, error) && ps2::os::set_env("PS2_VU_RECORD", ps2::os::utf8(vu1))) {

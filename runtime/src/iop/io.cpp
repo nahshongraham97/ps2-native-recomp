@@ -1,13 +1,14 @@
 #include "io.hpp"
 #include "kernel.hpp"
 
-#include "ps2/disc.hpp"
+#include "mka/content_vfs.hpp"
 #include "ps2/os.hpp"
 
 #include "ps2/state.hpp"
 
 #include <algorithm>
 #include <cstdio>
+#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <limits>
@@ -22,6 +23,8 @@ constexpr int kBadFd = -9;
 constexpr int kTooMany = -24;
 
 struct File {
+    // Retained in the state schema for older save files. Native files have no
+    // sector address and this field is never used for I/O.
     std::uint32_t sector = 0;
     std::uint32_t size = 0;
     std::uint64_t position = 0;
@@ -51,23 +54,15 @@ int allocate() {
 int open(const std::string &path, std::uint32_t flags) {
     const std::string device = device_of(path);
     File f;
-    if (device == "cdrom") {
-        if (const auto native_path = disc::native_vfs_path(path)) {
-            std::error_code ec;
-            const std::uintmax_t native_size = std::filesystem::file_size(*native_path, ec);
-            if (ec || native_size > std::numeric_limits<std::uint32_t>::max()) return kNoEntry;
-            f.native_vfs_request = path;
-            f.size = static_cast<std::uint32_t>(native_size);
-        } else {
-            const auto entry = disc::find(path);
-            if (!entry || entry->directory) return kNoEntry;
-            if (disc::extracted_files_strict() && !disc::extracted_file_path(path)) {
-                std::fprintf(stderr, "[disc-vfs-stop] extracted file unavailable or size mismatch: %s\n", path.c_str());
-                return kNoEntry;
-            }
-            f.sector = entry->sector;
-            f.size = entry->size;
-        }
+    if (const auto native_path = mka::content::resolve(path)) {
+        std::error_code ec;
+        if (!std::filesystem::is_regular_file(*native_path, ec) || ec) return kNoEntry;
+        const std::uintmax_t native_size = std::filesystem::file_size(*native_path, ec);
+        if (ec || native_size > std::numeric_limits<std::uint32_t>::max()) return kNoEntry;
+        f.native_vfs_request = path;
+        f.size = static_cast<std::uint32_t>(native_size);
+        std::fprintf(stderr, "[native-vfs] open %s (%u bytes) -> %s\n", path.c_str(), f.size,
+                     ps2::os::utf8(*native_path).c_str());
     } else if (device == "rom") {
         std::string name = path.substr(path.find(':') + 1);
         if (name == "ROMVER") {
@@ -102,7 +97,7 @@ int read(int fd, std::uint8_t *out, std::uint32_t size) {
     if (f.in_memory) {
         std::memcpy(out, f.memory.data() + f.position, n);
     } else if (!f.native_vfs_request.empty()) {
-        const auto host_path = disc::native_vfs_path(f.native_vfs_request);
+        const auto host_path = mka::content::resolve(f.native_vfs_request);
         if (!host_path) return kNoEntry;
         std::ifstream file(*host_path, std::ios::binary);
         if (!file) return kNoEntry;
@@ -110,36 +105,14 @@ int read(int fd, std::uint8_t *out, std::uint32_t size) {
         if (!file) return kNoEntry;
         file.read(reinterpret_cast<char *>(out), static_cast<std::streamsize>(n));
         const std::streamsize got = file.gcount();
-        if (got < 0) return kNoEntry;
+        if (got != static_cast<std::streamsize>(n)) return kNoEntry;
         f.position += static_cast<std::uint64_t>(got);
-        if (!os::env("PS2_TRACE_DISC_FILES").empty())
-            std::fprintf(stderr, "[disc-vfs-overlay] ioman read %s (%lld bytes) from %s\n",
-                         f.native_vfs_request.c_str(), static_cast<long long>(got), host_path->c_str());
+        if (!os::env("MKA_TRACE_NATIVE_FILES").empty())
+            std::fprintf(stderr, "[native-vfs-read] %s (%lld bytes) from %s\n",
+                         f.native_vfs_request.c_str(), static_cast<long long>(got), ps2::os::utf8(*host_path).c_str());
         return static_cast<int>(got);
     } else {
-        if (const auto host_path = disc::extracted_file_path(f.sector, f.size)) {
-            std::ifstream file(*host_path, std::ios::binary);
-            if (file) {
-                file.seekg(static_cast<std::streamoff>(f.position), std::ios::beg);
-                file.read(reinterpret_cast<char *>(out), static_cast<std::streamsize>(n));
-                const std::streamsize got = file.gcount();
-                if (got < static_cast<std::streamsize>(n)) std::memset(out + got, 0, n - static_cast<std::uint32_t>(got));
-                f.position += n;
-                if (!os::env("PS2_TRACE_DISC_FILES").empty())
-                    std::fprintf(stderr, "[disc-vfs] ioman read %s (%u bytes) from extracted file\n", host_path->c_str(), n);
-                return static_cast<int>(n);
-            }
-        }
-        if (disc::extracted_files_strict()) {
-            std::fprintf(stderr, "[disc-vfs-stop] extracted file disappeared during read (sector %u size %u)\n", f.sector, f.size);
-            return kNoEntry;
-        }
-        const std::uint64_t start = f.position, end = f.position + n;
-        const std::uint32_t first = static_cast<std::uint32_t>(start / disc::kSector);
-        const std::uint32_t last = static_cast<std::uint32_t>((end + disc::kSector - 1) / disc::kSector);
-        std::vector<std::uint8_t> buffer(static_cast<std::size_t>(last - first) * disc::kSector);
-        disc::read(f.sector + first, last - first, buffer.data());
-        std::memcpy(out, buffer.data() + (start - static_cast<std::uint64_t>(first) * disc::kSector), n);
+        return kNoEntry;
     }
     f.position += n;
     return static_cast<int>(n);
@@ -161,19 +134,19 @@ std::int64_t seek(int fd, std::int64_t offset, int whence) {
 }
 
 bool stat(const std::string &path, std::uint32_t &mode, std::uint32_t &size) {
-    if (device_of(path) != "cdrom") return false;
-    if (const auto native_path = disc::native_vfs_path(path)) {
-        std::error_code ec;
-        const std::uintmax_t native_size = std::filesystem::file_size(*native_path, ec);
-        if (ec || native_size > std::numeric_limits<std::uint32_t>::max()) return false;
-        mode = 0x0017u;
-        size = static_cast<std::uint32_t>(native_size);
+    const auto native_path = mka::content::resolve(path);
+    if (!native_path) return false;
+    std::error_code ec;
+    const bool directory = std::filesystem::is_directory(*native_path, ec);
+    if (ec) return false;
+    mode = directory ? 0x0027u : 0x0017u;
+    if (directory) {
+        size = 0;
         return true;
     }
-    const auto entry = disc::find(path);
-    if (!entry) return false;
-    mode = entry->directory ? 0x0027u : 0x0017u;
-    size = entry->size;
+    const std::uintmax_t native_size = std::filesystem::file_size(*native_path, ec);
+    if (ec || native_size > std::numeric_limits<std::uint32_t>::max()) return false;
+    size = static_cast<std::uint32_t>(native_size);
     return true;
 }
 

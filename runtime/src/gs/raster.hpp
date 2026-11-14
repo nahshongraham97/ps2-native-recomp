@@ -2,6 +2,8 @@
 
 #include "gs.hpp"
 
+#include <vector>
+
 namespace ps2::gs::raster {
 
 void reset();
@@ -13,5 +15,6 @@ struct Probe {
 };
 extern Probe g_probe;
 void draw(const State &s, const Vertex *v, int count);
+bool decode_texture_rgba(const State &s, std::vector<std::uint32_t> &pixels, std::uint32_t &width, std::uint32_t &height);
 
 }

@@ -29,6 +29,8 @@ void set_pressure(int pad, int button, std::uint8_t value);
 void set_connected(int pad, bool connected);
 bool controller_state(int pad, ControllerState &out);
 std::uint16_t rumble(int pad);
+void set_actuator_alignment(int pad, const std::array<std::uint8_t, 6> &alignment);
+std::array<std::uint8_t, 6> actuator_alignment(int pad);
 void flush_cards();
 void flush_cards_now(bool hurry);
 bool card_image(std::vector<std::uint8_t> &out, bool wait);

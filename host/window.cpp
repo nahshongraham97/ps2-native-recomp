@@ -2,6 +2,7 @@
 
 #include "ps2/system.hpp"
 #include "ps2/observer_hook.hpp"
+#include "ps2/native_gl.hpp"
 
 #ifdef _WIN32
 #define NOMINMAX
@@ -76,6 +77,8 @@ SDL_AudioDeviceID g_audio = 0;
 ps2sound::SoundPipe *g_pipe = nullptr;  // the game's sound: pushed by the emulation thread, played (and stretched) by the device thread, host/stretch.hpp
 // the keyboard drives the first controller port along with the first game controller, a second one is player 2
 SDL_GameController *g_pads[2] = {};
+SDL_GLContext g_gl_context = nullptr;
+bool g_direct_gl = false;
 // PS2_PAD_LOG=1 prints every change of what the two controller ports send to the game, and every rumble request
 bool g_pad_log = false;
 std::uint32_t g_tex_w = 0, g_tex_h = 0;
@@ -860,17 +863,27 @@ void show_pixels(const std::uint32_t *rgba, std::uint32_t w, std::uint32_t h) {
     if (w != g_tex_w || h != g_tex_h) {
         if (g_texture) SDL_DestroyTexture(g_texture);
         g_texture = SDL_CreateTexture(g_renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, static_cast<int>(w), static_cast<int>(h));
-        SDL_RenderSetLogicalSize(g_renderer, static_cast<int>(w), static_cast<int>(w) * (ps2::g_options.widescreen ? 9 : 3) / (ps2::g_options.widescreen ? 16 : 4));
         g_tex_w = w;
         g_tex_h = h;
     }
     SDL_UpdateTexture(g_texture, nullptr, rgba, static_cast<int>(w * 4));
     SDL_RenderClear(g_renderer);
-    SDL_RenderCopy(g_renderer, g_texture, nullptr, nullptr);
+    int output_w = 0, output_h = 0;
+    SDL_GetRendererOutputSize(g_renderer, &output_w, &output_h);
+    const double scale = std::min(static_cast<double>(output_w) / w, static_cast<double>(output_h) / h);
+    const int draw_w = std::max(1, static_cast<int>(std::lround(w * scale)));
+    const int draw_h = std::max(1, static_cast<int>(std::lround(h * scale)));
+    const SDL_Rect destination{(output_w - draw_w) / 2, (output_h - draw_h) / 2, draw_w, draw_h};
+    SDL_RenderCopy(g_renderer, g_texture, nullptr, &destination);
     SDL_RenderPresent(g_renderer);
 }
 
 void present() {
+    if (g_direct_gl) {
+        ps2::gs::native_gl::present_current();
+        SDL_GL_SwapWindow(g_window);
+        return;
+    }
     if (g_gpu_present) {
         ps2::present_frame();
         return;
@@ -1245,7 +1258,24 @@ bool open_window(bool fullscreen) {
         if (!g_look_forced) std::fprintf(stderr, "[video] PS2_LOOK=%s is not crisp, crisp_edges, soft, soft_edges, sharp, sharp_edges or 0 to 5, ignored\n", word.c_str());
     }
     load_keys();
-    const Uint32 flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | (fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0u);
+#ifdef _WIN32
+    g_direct_gl = ps2::gs::native_gl::selected();
+#else
+    g_direct_gl = false;
+#endif
+    if (g_direct_gl) {
+        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+        SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+        SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+        SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+        SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+    }
+    const Uint32 flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI |
+                         (g_direct_gl ? SDL_WINDOW_OPENGL : 0u) |
+                         (fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0u);
     g_window = SDL_CreateWindow("ps2-native-recomp", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, ps2::g_options.widescreen ? 1280 : 960, 720, flags);
     if (!g_window) {
         std::fprintf(stderr, "SDL: %s\n", SDL_GetError());
@@ -1261,7 +1291,33 @@ bool open_window(bool fullscreen) {
         SetForegroundWindow(static_cast<HWND>(wm_info.info.win.window));
     }
 #endif
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+    if (g_direct_gl) {
+#ifdef _WIN32
+        g_gl_context = SDL_GL_CreateContext(g_window);
+        if (!g_gl_context || SDL_GL_MakeCurrent(g_window, g_gl_context) != 0) {
+            std::fprintf(stderr, "[native-gl] SDL could not create the visible-window OpenGL context: %s\n", SDL_GetError());
+            if (g_gl_context) SDL_GL_DeleteContext(g_gl_context), g_gl_context = nullptr;
+            return false;
+        }
+        SDL_GL_SetSwapInterval(1);
+        SDL_SysWMinfo gl_wm_info;
+        SDL_VERSION(&gl_wm_info.version);
+        if (!SDL_GetWindowWMInfo(g_window, &gl_wm_info) || gl_wm_info.subsystem != SDL_SYSWM_WINDOWS ||
+            !ps2::gs::native_gl::attach_current_context(gl_wm_info.info.win.window)) {
+            std::fprintf(stderr, "[native-gl] could not attach the SDL window's current WGL context\n");
+            SDL_GL_DeleteContext(g_gl_context);
+            g_gl_context = nullptr;
+            return false;
+        }
+        std::fprintf(stderr, "[window] rendering directly into the visible SDL OpenGL window\n");
+#else
+        std::fprintf(stderr, "[native-gl] direct window presentation is available only on Windows\n");
+        return false;
+#endif
+    }
+    // The game output is a low-resolution GS frame. Bilinear scaling softens
+    // menu text a second time after native_gl's framebuffer readback.
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
     SDL_AudioSpec want{}, have{};
     want.freq = 48000;
     want.format = AUDIO_S16SYS;
@@ -1411,14 +1467,22 @@ void watchdog() {
 
 int run_window(const std::function<int()> &emulate) {
     ps2::init_graphics();
-    g_gpu_present = attach_gpu();
-    std::fprintf(stderr, "[window] %s\n", g_gpu_present ? "presenting through WebGPU" : "presenting through SDL");
-    if (!g_gpu_present && !create_renderer()) return 1;
+    g_gpu_present = g_direct_gl ? false : attach_gpu();
+    std::fprintf(stderr, "[window] %s\n", g_direct_gl ? "presenting through native OpenGL" :
+                    g_gpu_present ? "presenting through WebGPU" : "presenting through SDL");
+    if (!g_gpu_present && !g_direct_gl && !create_renderer()) return 1;
+    const auto shutdown_direct_gl = [] {
+        if (!g_direct_gl) return;
+        ps2::gs::native_gl::shutdown();
+        if (g_gl_context) SDL_GL_DeleteContext(g_gl_context), g_gl_context = nullptr;
+        g_direct_gl = false;
+    };
     const bool threads = !std::getenv("PS2_ONE_THREAD") && !std::getenv("PS2_TIME") && ps2::g_options.frames_dir.empty();
     if (!threads) {
         ps2::g_options.on_vblank = on_vblank;
         const int result = emulate();
         finish_audio();
+        shutdown_direct_gl();
         return result;
     }
     ps2::g_options.on_vblank = [] {
@@ -1465,6 +1529,13 @@ int run_window(const std::function<int()> &emulate) {
         ps2::wake_render_thread();
     });
     const std::function<void(const std::uint32_t *, std::uint32_t, std::uint32_t)> copy = show_pixels, none;
+    const std::function<void(const ps2::gs::DisplayRegs &)> before_present = [](const ps2::gs::DisplayRegs &regs) {
+        if (g_direct_gl) {
+            ps2::gs::native_gl::present_frame(regs);
+            SDL_GL_SwapWindow(g_window);
+        }
+        show_speed();
+    };
     while (!done.load()) {
         if (ps2::hitch::on()) {  // PS2_HITCH_LOG=<ms>: the window's own event handling
             const auto p0 = WaitLog::Clock::now();
@@ -1476,14 +1547,14 @@ int run_window(const std::function<int()> &emulate) {
         }
         window_stage("drawing the pictures of the emulation (render_pending)");
         if (!g_waits.on) {
-            if (ps2::render_pending(g_gpu_present, g_gpu_present ? none : copy, show_speed, 8.0) == ps2::Rendered::idle) {
+            if (ps2::render_pending(g_gpu_present, g_gpu_present ? none : g_direct_gl ? none : copy, before_present, 8.0) == ps2::Rendered::idle) {
                 window_stage("waiting for the emulation to post work (wait_render_work)");
                 ps2::wait_render_work(4);
             }
             continue;
         }
         const auto t0 = WaitLog::Clock::now();
-        const bool idle = ps2::render_pending(g_gpu_present, g_gpu_present ? none : copy, show_speed, 8.0) == ps2::Rendered::idle;
+        const bool idle = ps2::render_pending(g_gpu_present, g_gpu_present ? none : g_direct_gl ? none : copy, before_present, 8.0) == ps2::Rendered::idle;
         const auto t1 = WaitLog::Clock::now();
         if (idle) {
             window_stage("waiting for the emulation to post work (wait_render_work)");
@@ -1495,6 +1566,7 @@ int run_window(const std::function<int()> &emulate) {
     emulation.join();
     ps2::flush_memory_card();
     finish_audio();
+    shutdown_direct_gl();
     if (g_card.state.load() == 0) SDL_Quit();  // a key card still open is on a thread inside SDL: the program ends without taking SDL down under it
     if (ps2::g_options.on_exit) ps2::g_options.on_exit();  // the host's log copy hands over the last lines before the process ends
     std::fflush(nullptr);

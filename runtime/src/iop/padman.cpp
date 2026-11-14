@@ -24,6 +24,8 @@ constexpr std::uint32_t kPadRpcSid1 = 0x80000101u;
 constexpr std::uint32_t kPadRpcFunction = 1u;
 constexpr std::uint32_t kPadAreaBytes = 256u;
 constexpr std::uint32_t kPadRecordBytes = 128u;
+constexpr std::uint32_t kNativePadPorts = 2u;
+constexpr std::uint32_t kNativePadSlotsPerPort = 1u;
 constexpr std::uint8_t kPadModePressure = 0x79u;
 constexpr std::uint8_t kPadStateDisconnected = 0u;
 constexpr std::uint8_t kPadStateExecCommand = 5u;
@@ -101,7 +103,8 @@ void initialize_pad_area(std::uint32_t address) {
     std::memcpy(area + kPadRecordBytes, &initial, sizeof initial);
 }
 
-void fill_pad_record(EePadData &record, const sio2::ControllerState &controller, std::uint32_t frame) {
+void fill_pad_record(EePadData &record, const sio2::ControllerState &controller, std::uint32_t frame,
+                     const std::array<std::uint8_t, 6> &alignment) {
     std::memset(&record, 0, sizeof record);
     record.frame = frame;
     record.mode_config = 2u; // PADMAN MODE_CONFIG_READY
@@ -114,6 +117,7 @@ void fill_pad_record(EePadData &record, const sio2::ControllerState &controller,
     record.state = controller.connected ? kPadStateStable : kPadStateDisconnected;
     record.request_state = kPadRequestComplete;
     record.current_task = 1u; // PADMAN TASK_UPDATE_PAD
+    std::memcpy(record.act_align_data, alignment.data(), alignment.size());
     if (!controller.connected) {
         record.data[0] = 0xFFu;
         return;
@@ -135,6 +139,17 @@ void fill_pad_record(EePadData &record, const sio2::ControllerState &controller,
     }
     record.data[31] = 0x5Au;
     record.length = 32u;
+}
+
+bool current_pad_record(const OpenPad &open, EePadData &out) {
+    if (!open.open || !valid_ee_range(open.ee_area, kPadAreaBytes)) return false;
+    const std::uint8_t *area = ps2::fast<std::uint8_t>(ee_physical(open.ee_area));
+    if (!area) return false;
+    EePadData records[2]{};
+    std::memcpy(&records[0], area, sizeof(EePadData));
+    std::memcpy(&records[1], area + kPadRecordBytes, sizeof(EePadData));
+    out = records[records[1].frame > records[0].frame ? 1u : 0u];
+    return true;
 }
 
 bool pad_rpc(std::uint32_t method, std::uint32_t args, std::uint32_t args_size,
@@ -175,7 +190,33 @@ bool pad_rpc(std::uint32_t method, std::uint32_t args, std::uint32_t args_size,
         g_initialized = true;
         set_result(1u);
         return true;
+    case 0x0Fu: // padEnd: close host-owned pads and allow a later padInit.
+        g_open_pads = {};
+        g_initialized = false;
+        set_result(1u);
+        return true;
+    case 0x0Cu: // padGetPortMax
+        set_result(kNativePadPorts);
+        return true;
+    case 0x0Du: { // padGetSlotMax
+        if (args_size < 8u) {
+            if (kernel::native_strict()) strict_stop("truncated padGetSlotMax request", method, command);
+            set_result(0u);
+            return true;
+        }
+        const std::uint32_t port = ps2::load<std::uint32_t>(request.data() + 4u);
+        set_result(port < kNativePadPorts ? kNativePadSlotsPerPort : 0u);
+        return true;
+    }
     case 0x01u: { // padPortOpen
+        // The port, slot and EE status-area pointer occupy bytes 4..19.
+        // Do not interpret zero-filled bytes from a truncated request as
+        // valid arguments (in particular, an EE address of zero).
+        if (args_size < 20u) {
+            if (kernel::native_strict()) strict_stop("truncated padPortOpen request", method, command);
+            set_result(0u);
+            return true;
+        }
         if (!g_initialized) {
             if (kernel::native_strict()) strict_stop("padPortOpen before padInit", method, command);
             set_result(0u);
@@ -184,7 +225,7 @@ bool pad_rpc(std::uint32_t method, std::uint32_t args, std::uint32_t args_size,
         const std::uint32_t port = ps2::load<std::uint32_t>(request.data() + 4u);
         const std::uint32_t slot = ps2::load<std::uint32_t>(request.data() + 8u);
         const std::uint32_t area = ps2::load<std::uint32_t>(request.data() + 16u);
-        if (port >= 2u || slot >= 4u || (area & 0x3Fu) != 0u || !valid_ee_range(area, kPadAreaBytes)) {
+        if (port >= kNativePadPorts || slot >= kNativePadSlotsPerPort || (area & 0x3Fu) != 0u || !valid_ee_range(area, kPadAreaBytes)) {
             if (kernel::native_strict()) strict_stop("invalid pad port, slot, or 256-byte status area", method, command);
             set_result(0u);
             return true;
@@ -197,6 +238,99 @@ bool pad_rpc(std::uint32_t method, std::uint32_t args, std::uint32_t args_size,
         if (ret_size >= 24u) ps2::store<std::uint32_t>(reply + 20u, 0u);
         return true;
     }
+    case 0x06u: { // padSetMainMode (new libpad request)
+        // padModeResult is { unknown[5], result }, so its result is at +20,
+        // unlike the generic padResult used by the other commands above.
+        const auto set_mode_result = [&](std::uint32_t value) {
+            if (ret_size >= 24u) ps2::store<std::uint32_t>(reply + 20u, value);
+        };
+        if (args_size < 20u) {
+            if (kernel::native_strict()) strict_stop("truncated padSetMainMode request", method, command);
+            set_mode_result(0u);
+            return true;
+        }
+        const std::uint32_t port = ps2::load<std::uint32_t>(request.data() + 4u);
+        const std::uint32_t slot = ps2::load<std::uint32_t>(request.data() + 8u);
+        const std::uint32_t mode = ps2::load<std::uint32_t>(request.data() + 12u);
+        const std::uint32_t lock = ps2::load<std::uint32_t>(request.data() + 16u);
+        (void)lock; // The host-owned DualShock mode is not changed by user input.
+        if (!g_initialized || port >= g_open_pads.size() || slot >= g_open_pads[0].size() ||
+            !g_open_pads[port][slot].open || mode != 1u) {
+            if (kernel::native_strict()) strict_stop("unsupported padSetMainMode request", method, command);
+            set_mode_result(0u);
+            return true;
+        }
+        // Native PADMAN already publishes DualShock mode (0x79); the retail
+        // request observed in strict boot selects that same mode.
+        set_mode_result(1u);
+        std::fprintf(stderr, "[padman-native] padSetMainMode accepted port=%u slot=%u mode=%u lock=%u\n",
+                     port, slot, mode, lock);
+        return true;
+    }
+    case 0x08u: { // padSetActAlign (new libpad request)
+        const auto set_align_result = [&](std::uint32_t value) {
+            if (ret_size >= 24u) ps2::store<std::uint32_t>(reply + 20u, value);
+        };
+        if (args_size < 18u) {
+            if (kernel::native_strict()) strict_stop("truncated padSetActAlign request", method, command);
+            set_align_result(0u);
+            return true;
+        }
+        const std::uint32_t port = ps2::load<std::uint32_t>(request.data() + 4u);
+        const std::uint32_t slot = ps2::load<std::uint32_t>(request.data() + 8u);
+        if (!g_initialized || port >= kNativePadPorts || slot >= kNativePadSlotsPerPort ||
+            !g_open_pads[port][slot].open) {
+            set_align_result(0u);
+            return true;
+        }
+        EePadData current{};
+        if (!current_pad_record(g_open_pads[port][slot], current) || current.mode_config < 2u ||
+            current.current_task != 1u || current.request_state == kPadRequestBusy) {
+            set_align_result(0u);
+            return true;
+        }
+
+        std::array<std::uint8_t, 6> alignment{};
+        std::memcpy(alignment.data(), request.data() + 12u, alignment.size());
+        sio2::set_actuator_alignment(static_cast<int>(port), alignment);
+        std::uint8_t *area = ps2::fast<std::uint8_t>(ee_physical(g_open_pads[port][slot].ee_area));
+        if (area) {
+            for (std::uint32_t record = 0; record < 2u; ++record) {
+                std::memcpy(area + record * kPadRecordBytes + offsetof(EePadData, act_align_data),
+                            alignment.data(), alignment.size());
+            }
+        }
+        set_align_result(1u);
+        std::fprintf(stderr, "[padman-native] padSetActAlign accepted port=%u slot=%u map=%02X,%02X,%02X,%02X,%02X,%02X\n",
+                     port, slot, alignment[0], alignment[1], alignment[2], alignment[3], alignment[4], alignment[5]);
+        return true;
+    }
+    case 0x0Eu: { // padPortClose, synchronous host-owned pad
+        if (args_size < 20u) {
+            if (kernel::native_strict()) strict_stop("truncated padPortClose request", method, command);
+            set_result(0u);
+            return true;
+        }
+        const std::uint32_t port = ps2::load<std::uint32_t>(request.data() + 4u);
+        const std::uint32_t slot = ps2::load<std::uint32_t>(request.data() + 8u);
+        const std::uint32_t wait = ps2::load<std::uint32_t>(request.data() + 16u);
+        if (!g_initialized || port >= g_open_pads.size() || slot >= g_open_pads[0].size() ||
+            !g_open_pads[port][slot].open) {
+            set_result(0u);
+            return true;
+        }
+        // The host service has no asynchronous close task. Only the blocking
+        // close contract can be completed immediately without changing the
+        // guest-visible scheduling semantics.
+        if (!wait) {
+            if (kernel::native_strict()) strict_stop("asynchronous padPortClose is unimplemented", method, command);
+            set_result(0u);
+            return true;
+        }
+        g_open_pads[port][slot] = OpenPad{};
+        set_result(1u);
+        return true;
+    }
     default:
         if (kernel::native_strict()) strict_stop("unimplemented PADMAN RPC command", method, command);
         set_result(0u);
@@ -205,6 +339,11 @@ bool pad_rpc(std::uint32_t method, std::uint32_t args, std::uint32_t args_size,
 }
 
 } // namespace
+
+bool handle_rpc(std::uint32_t method, std::uint32_t args, std::uint32_t args_size,
+                std::uint32_t ret, std::uint32_t ret_size) {
+    return pad_rpc(method, args, args_size, ret, ret_size);
+}
 
 void reset() {
     g_active = false;
@@ -216,8 +355,8 @@ void activate() {
     g_active = true;
     g_initialized = false;
     g_open_pads = {};
-    sif::register_hle_override(kPadRpcSid0, pad_rpc);
-    sif::register_hle_override(kPadRpcSid1, pad_rpc);
+    sif::register_hle_override(kPadRpcSid0, handle_rpc);
+    sif::register_hle_override(kPadRpcSid1, handle_rpc);
     std::fprintf(stderr, "[iop-native] PADMAN host service active (SIF 0x%08X / 0x%08X)\n", kPadRpcSid0, kPadRpcSid1);
 }
 
@@ -231,7 +370,7 @@ void frame_tick() {
             if (!open.open || !valid_ee_range(open.ee_area, kPadAreaBytes)) continue;
             EePadData record{};
             ++open.frame;
-            fill_pad_record(record, controller, open.frame);
+            fill_pad_record(record, controller, open.frame, sio2::actuator_alignment(static_cast<int>(port)));
             const std::uint32_t destination = ee_physical(open.ee_area) + ((open.frame & 1u) * kPadRecordBytes);
             std::uint8_t *memory = ps2::fast<std::uint8_t>(destination);
             if (memory) std::memcpy(memory, &record, sizeof record);
@@ -252,8 +391,8 @@ void state(ps2::state::Stream &s) {
 
 void restore_sif_overrides() {
     if (g_active) {
-        sif::register_hle_override(kPadRpcSid0, pad_rpc);
-        sif::register_hle_override(kPadRpcSid1, pad_rpc);
+        sif::register_hle_override(kPadRpcSid0, handle_rpc);
+        sif::register_hle_override(kPadRpcSid1, handle_rpc);
     } else {
         sif::unregister_hle_override(kPadRpcSid0);
         sif::unregister_hle_override(kPadRpcSid1);

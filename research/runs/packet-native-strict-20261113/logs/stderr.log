@@ -1,0 +1,458 @@
+[disc-vfs] auto-selected extracted filesystem C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\disc-files (strict mode 1)
+[log] this log is also written to C:\Users\nahsh\AppData\Local\Temp\logs\ps2run_2026-11-13_12-08-11.log
+[vu1] recording vector programs that are not compiled yet into C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\vu1
+[keys] cannot write C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\config\armageddon-keys.ini: the default keys are used and cannot be changed
+[keys] C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\config\armageddon-keys.ini: defaults, 0 problems; mouse stick off
+[native-gl] direct GS scene target: 1024x512 color + depth FBO
+[native-gl] attached SDL-owned visible-window WGL context | AMD Radeon RX 6800 XT
+[window] rendering directly into the visible SDL OpenGL window
+[audio] sound device FxSound Speakers (FxSound Audio Enhancer) (wasapi): 48000 Hz, 2 channels; the game's sound is 48000 Hz stereo
+[audio] when the game runs slower than real time its sound is played slower, with the same pitch (PS2_AUDIO_STRETCH=0 switches that off)
+[pad] Xbox One Controller (Xbox One/Series) in port 1
+[vu-live +0.0s] compiling vector programs the build does not know with C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/bin/clang++.exe, into C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\vu1-live
+[vu1] Statically registered 490 compiled vector programs
+[ee-live +0.1s f0] loaded 155 translated code windows from 155 files in C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\ee-live
+[ee-live +0.1s f0] translating code the build does not have while the game runs, with C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/bin/clang++.exe, into C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\ee-live
+[cpu] AMD Ryzen 7 7800X3D 8-Core Processor           : 8 cores, 16 logical processors, 15 GB RAM
+[gs] native OpenGL/direct-packet mode selected; WebGPU presentation disabled
+[window] presenting through native OpenGL
+[disc] C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\disc.iso: 113 files, 2132224 sectors, layer 1 at 0 (filesystem source)
+[mc] card in slot 1: C:\Users\nahsh\AppData\Local\Temp\armageddon-packet-native-strict-20261113.ps2
+[native-hook] Registered replacement hook at 0x00197BC0 (MKA_HealthDeduction)
+[mka-hooks] Combat telemetry armed for guest PC 0x00197BC0 (Linker Wrappers Active)
+[replay] recording the pad from frame 0 into C:\Users\nahsh\AppData\Local\Temp\states\run_2026-11-13_12-08-12_f000000.inputs
+[sif] IOP reboot requested with "rom0:UDNL cdrom0:\MODULES\DNAS310.IMG;1"
+[sif] LOADFILE from cdrom0:\MODULES\DNAS310.IMG;1 reports 3100
+[loadfile] cdrom0:\MODULES\SIO2MAN.IRX;1
+[gs] SetGsCrt interlace 0 mode 0x2 field 1
+[fileio] open cdrom0:\LOADING.RAW;1 -> 3
+[loadfile] cdrom0:\MODULES\MWFILEFR.IRX;1
+[iop-native] installed MWFILEFR C++ SIF services for SIDs 0x000F0001 and 0x000F0002 (async native filesystem open/close/read, work-item lifecycle, and EE completion callbacks)
+[mwfilefr-native] waiting for EE callback SID 0x000F1002 via nonblocking SIF bind
+[mwfilefr-native] bound EE callback SID 0x000F1002 after 2 polls (EE buffer 0x00D7C680, server data 0x00D7C330)
+[fileio] open cdrom0:\GAMER.OVL;1 -> 3
+[fileio] open rom0:ROMVER -> 3
+[mwfilefr-native] opened cdrom0:\MKDA.PAK;1 (1408839332 bytes) at IOP handle 0x00020400 -> C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\disc-files\MKDA.PAK
+[mwfilefr-native] read IOP handle 0x00020400 offset 0x00000000 requested 0x14 -> 20 bytes at EE 0x006AA4F4
+[mwfilefr-native] read IOP handle 0x00020400 offset 0x53F90800 requested 0xB7C -> 2940 bytes at EE 0x01FBCE80
+[mwfilefr-native] read IOP handle 0x00020400 offset 0x53F9137C requested 0x1B28 -> 6952 bytes at EE 0x01FBA7B0
+[loadfile] cdrom0:\MODULES\PADMAN.IRX;1
+[iop-native] PADMAN host service active (SIF 0x80000100 / 0x80000101)
+[native-renderer] consuming GIF packet events before the compatibility GsSink
+[native-gl] first GS primitive consumed by the native OpenGL path
+[native-gl-diag] present=1 accepted_primitives=2 pmode=0000000000000066 smode2=0000000000000002 dispfb=0000000000001400 display=000DF9FF0181927C crop=0,0 640x224 scene_nonblack=0 crop_nonblack=0 scene_bounds=1024,512--1,-1 backbuffer_nonblack=0 gl_errors=0000/0000/0000
+[native-gl] direct present GS crop x=0 y=0 w=640 h=224 -> client rect x=0 y=192 w=960 h=336 (nearest)
+[native-gl-diag] present=2 accepted_primitives=2 pmode=0000000000000066 smode2=0000000000000002 dispfb=0000000000001400 display=000DF9FF0181927C crop=0,0 640x224 scene_nonblack=0 crop_nonblack=0 scene_bounds=1024,512--1,-1 backbuffer_nonblack=0 gl_errors=0000/0000/0000
+[native-gl-diag] present=3 accepted_primitives=2 pmode=0000000000000066 smode2=0000000000000002 dispfb=0000000000001400 display=000DF9FF0181927C crop=0,0 640x224 scene_nonblack=0 crop_nonblack=0 scene_bounds=1024,512--1,-1 backbuffer_nonblack=0 gl_errors=0000/0000/0000
+[native-gl-diag] present=4 accepted_primitives=2 pmode=0000000000000066 smode2=0000000000000002 dispfb=0000000000001400 display=000DF9FF0181927C crop=0,0 640x224 scene_nonblack=0 crop_nonblack=0 scene_bounds=1024,512--1,-1 backbuffer_nonblack=0 gl_errors=0000/0000/0000
+[native-gl-diag] present=5 accepted_primitives=2 pmode=0000000000000066 smode2=0000000000000002 dispfb=0000000000001400 display=000DF9FF0181927C crop=0,0 640x224 scene_nonblack=0 crop_nonblack=0 scene_bounds=1024,512--1,-1 backbuffer_nonblack=0 gl_errors=0000/0000/0000
+[native-gl-diag] present=6 accepted_primitives=2 pmode=0000000000000066 smode2=0000000000000002 dispfb=0000000000001400 display=000DF9FF0181927C crop=0,0 640x224 scene_nonblack=0 crop_nonblack=0 scene_bounds=1024,512--1,-1 backbuffer_nonblack=0 gl_errors=0000/0000/0000
+[native-gl-diag] present=7 accepted_primitives=2 pmode=0000000000000066 smode2=0000000000000002 dispfb=0000000000001400 display=000DF9FF0181927C crop=0,0 640x224 scene_nonblack=0 crop_nonblack=0 scene_bounds=1024,512--1,-1 backbuffer_nonblack=0 gl_errors=0000/0000/0000
+[native-gl-diag] present=8 accepted_primitives=2 pmode=0000000000000066 smode2=0000000000000002 dispfb=0000000000001400 display=000DF9FF0181927C crop=0,0 640x224 scene_nonblack=0 crop_nonblack=0 scene_bounds=1024,512--1,-1 backbuffer_nonblack=0 gl_errors=0000/0000/0000
+[loadfile] cdrom0:\MODULES\MCMAN.IRX;1
+[iop-native] MCMAN host replacement active; guest IRX is not loaded
+[loadfile] cdrom0:\MODULES\MCSERV.IRX;1
+[iop-native] MCSERV host SIF replacement active at 0x80000400; GetInfo is native, unsupported card RPCs fail closed
+[iop-native] MCSERV XMCMAN init accepted with retail minimum versions 0x20A/0x20E; reply 0x00658F40; unsupported card RPCs remain fail-closed
+[sif:mcsrv] HLE handled method 0x000000FE rpc 51; receive 0x00658F40 size 12 result 0x00000000; queued for reply job at IOP cycle 17444395
+[sif:mcsrv] reply job fired for method 0x000000FE rpc 51 at IOP cycle 17446238
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 51 (reply command 0x8000000A) at EE cycle 139703966
+[loadfile] cdrom0:\MODULES\DEV9.IRX;1
+[iop-native] DEV9 offline replacement active; no network device is attached
+[loadfile] cdrom0:\MODULES\USBD.IRX;1
+[iop-native] USBD offline replacement active; no USB device is attached
+[loadfile] cdrom0:\MODULES\LGKBM.IRX;1
+[iop-native] LGKBM host SIF service active at 0x61766973; guest IRX is not loaded
+[lgkbm] handshake version 0x00090001 accepted_endpoints 1
+[lgkbm] device-list reply: one inert keyboard endpoint
+[loadfile] cdrom0:\MODULES\LGAUD.IRX;1
+[iop-native] LGAUD offline replacement active; no USB audio device is attached; guest IRX is not loaded
+[loadfile] cdrom0:\MODULES\LIBSD.IRX;1
+[iop-native] LIBSD v1.5 C++ SPU2 bridge active; guest LIBSD IRX is not loaded
+[loadfile] cdrom0:\MODULES\SDRDRV.IRX;1
+[iop-tty] SDR driver version 4.0.1 (C) SCEI
+[iop-tty]  Exit rsd_main 
+[lgkbm] event-poll reply: zero events (poll 1)
+[loadfile] cdrom0:\MODULES\MSL.IRX;1
+[mwfilefr-native] completion DMA poll 1: 32 records (384 bytes) to EE 0x00D7A180
+[mwfilefr-native] read IOP handle 0x00020400 offset 0x115F5800 requested 0x61000 -> 397312 bytes at EE 0x01B4FF80
+[mwfilefr-native] read IOP handle 0x00020400 offset 0x117DA800 requested 0x800 -> 2048 bytes at EE 0x01BB3F80
+[gs] SetGsCrt interlace 1 mode 0x2 field 0
+[mwfilefr-native] opened cdrom0:\SNDSPS2\MSLASSET.MS2;1 (98273428 bytes) at IOP handle 0x000BF500 -> C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\disc-files\SNDSPS2\MSLASSET.MS2
+[mwfilefr-native] ordinal10 read IOP handle 0x000BF500 offset 0x00000000 requested 0xC mode=0 -> 12 bytes at IOP 0x007F2D54
+[mwfilefr-native] ordinal10 read IOP handle 0x000BF500 offset 0x00000003 requested 0x1B09C mode=0 -> 110748 bytes at IOP 0x00096B98
+[mwfilefr-native] opened cdrom0:\SNDSPS2\MSLASSET.ms4;1 (584581120 bytes) at IOP handle 0x000BF600 -> C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\disc-files\SNDSPS2\MSLASSET.MS4
+[lgkbm] event-poll reply: zero events (poll 1000)
+[padman-native] padSetMainMode accepted port=0 slot=0 mode=1 lock=1
+[mka-scanner] frame scan #1 (entry=328u)
+[mka-scanner] frame scan #2 (entry=328u)
+[mka-scanner] frame scan #3 (entry=328u)
+[mka-scanner] frame scan #4 (entry=328u)
+[mka-scanner] frame scan #5 (entry=328u)
+[lgkbm] event-poll reply: zero events (poll 2000)
+[mwfilefr-native] read IOP handle 0x00020400 offset 0x00C11800 requested 0x61000 -> 397312 bytes at EE 0x013B6F00
+[lgkbm] event-poll reply: zero events (poll 3000)
+[lgkbm] event-poll reply: zero events (poll 4000)
+[native-gl] GS /128 alpha compositor initialized (GLSL + framebuffer objects)
+[native-gl] GS ALPHA=0x44 PSMCT32 primitive uses the /128 source-over compositor
+[lgkbm] event-poll reply: zero events (poll 5000)
+[lgkbm] event-poll reply: zero events (poll 6000)
+[lgkbm] event-poll reply: zero events (poll 7000)
+[lgkbm] event-poll reply: zero events (poll 8000)
+[lgkbm] event-poll reply: zero events (poll 9000)
+[lgkbm] event-poll reply: zero events (poll 10000)
+[lgkbm] event-poll reply: zero events (poll 11000)
+[lgkbm] event-poll reply: zero events (poll 12000)
+[lgkbm] event-poll reply: zero events (poll 13000)
+[lgkbm] event-poll reply: zero events (poll 14000)
+[lgkbm] event-poll reply: zero events (poll 15000)
+[lgkbm] event-poll reply: zero events (poll 16000)
+[lgkbm] event-poll reply: zero events (poll 17000)
+[lgkbm] event-poll reply: zero events (poll 18000)
+[lgkbm] event-poll reply: zero events (poll 19000)
+[lgkbm] event-poll reply: zero events (poll 20000)
+[lgkbm] event-poll reply: zero events (poll 21000)
+[lgkbm] event-poll reply: zero events (poll 22000)
+[lgkbm] event-poll reply: zero events (poll 23000)
+[lgkbm] event-poll reply: zero events (poll 24000)
+[lgkbm] event-poll reply: zero events (poll 25000)
+[lgkbm] event-poll reply: zero events (poll 26000)
+[lgkbm] event-poll reply: zero events (poll 27000)
+[lgkbm] event-poll reply: zero events (poll 28000)
+[lgkbm] event-poll reply: zero events (poll 29000)
+[lgkbm] event-poll reply: zero events (poll 30000)
+[lgkbm] event-poll reply: zero events (poll 31000)
+[lgkbm] event-poll reply: zero events (poll 32000)
+[lgkbm] event-poll reply: zero events (poll 33000)
+[lgkbm] event-poll reply: zero events (poll 34000)
+[lgkbm] event-poll reply: zero events (poll 35000)
+[lgkbm] event-poll reply: zero events (poll 36000)
+[lgkbm] event-poll reply: zero events (poll 37000)
+[lgkbm] event-poll reply: zero events (poll 38000)
+[lgkbm] event-poll reply: zero events (poll 39000)
+[lgkbm] event-poll reply: zero events (poll 40000)
+[lgkbm] event-poll reply: zero events (poll 41000)
+[lgkbm] event-poll reply: zero events (poll 42000)
+[lgkbm] event-poll reply: zero events (poll 43000)
+[lgkbm] event-poll reply: zero events (poll 44000)
+[lgkbm] event-poll reply: zero events (poll 45000)
+[lgkbm] event-poll reply: zero events (poll 46000)
+[lgkbm] event-poll reply: zero events (poll 47000)
+[lgkbm] event-poll reply: zero events (poll 48000)
+[lgkbm] event-poll reply: zero events (poll 49000)
+[lgkbm] event-poll reply: zero events (poll 50000)
+[lgkbm] event-poll reply: zero events (poll 51000)
+[lgkbm] event-poll reply: zero events (poll 52000)
+[lgkbm] event-poll reply: zero events (poll 53000)
+[lgkbm] event-poll reply: zero events (poll 54000)
+[lgkbm] event-poll reply: zero events (poll 55000)
+[keys] cannot write C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\config\armageddon-keys.ini: the default keys are used and cannot be changed
+[keys] C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\config\armageddon-keys.ini: defaults, 0 problems; mouse stick off
+[lgkbm] event-poll reply: zero events (poll 56000)
+[lgkbm] event-poll reply: zero events (poll 57000)
+[lgkbm] event-poll reply: zero events (poll 58000)
+[lgkbm] event-poll reply: zero events (poll 59000)
+[lgkbm] event-poll reply: zero events (poll 60000)
+[lgkbm] event-poll reply: zero events (poll 61000)
+[lgkbm] event-poll reply: zero events (poll 62000)
+[lgkbm] event-poll reply: zero events (poll 63000)
+[lgkbm] event-poll reply: zero events (poll 64000)
+[lgkbm] event-poll reply: zero events (poll 65000)
+[lgkbm] event-poll reply: zero events (poll 66000)
+[lgkbm] event-poll reply: zero events (poll 67000)
+[lgkbm] event-poll reply: zero events (poll 68000)
+[lgkbm] event-poll reply: zero events (poll 69000)
+[lgkbm] event-poll reply: zero events (poll 70000)
+[lgkbm] event-poll reply: zero events (poll 71000)
+[lgkbm] event-poll reply: zero events (poll 72000)
+[lgkbm] event-poll reply: zero events (poll 73000)
+[lgkbm] event-poll reply: zero events (poll 74000)
+[lgkbm] event-poll reply: zero events (poll 75000)
+[lgkbm] event-poll reply: zero events (poll 76000)
+[lgkbm] event-poll reply: zero events (poll 77000)
+[lgkbm] event-poll reply: zero events (poll 78000)
+[lgkbm] event-poll reply: zero events (poll 79000)
+[lgkbm] event-poll reply: zero events (poll 80000)
+[lgkbm] event-poll reply: zero events (poll 81000)
+[lgkbm] event-poll reply: zero events (poll 82000)
+[lgkbm] event-poll reply: zero events (poll 83000)
+[lgkbm] event-poll reply: zero events (poll 84000)
+[lgkbm] event-poll reply: zero events (poll 85000)
+[lgkbm] event-poll reply: zero events (poll 86000)
+[lgkbm] event-poll reply: zero events (poll 87000)
+[lgkbm] event-poll reply: zero events (poll 88000)
+[mwfilefr-native] read IOP handle 0x00020400 offset 0x36E08800 requested 0x54800 -> 346112 bytes at EE 0x00E20E00
+[mwfilefr-native] read IOP handle 0x00020400 offset 0x3A748000 requested 0x4A800 -> 305152 bytes at EE 0x00E75600
+[lgkbm] event-poll reply: zero events (poll 89000)
+[iop-native] MCSERV GetInfo2 port=0 slot=0 status=0 free_clusters=8000 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 89903; receive 0x00658F40 size 4 result 0x00000000; queued for reply job at IOP cycle 253085134
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 89903 at IOP cycle 253086977
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 89903 (reply command 0x8000000A) at EE cycle 2024737628
+[iop-native] MCSERV GetInfo2 port=1 slot=0 status=-13 free_clusters=0 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 89905; receive 0x00658F40 size 4 result 0xFFFFFFF3; queued for reply job at IOP cycle 253092337
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 89905 at IOP cycle 253094180
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 89905 (reply command 0x8000000A) at EE cycle 2024886278
+[iop-native] MCSERV GetInfo2 port=0 slot=0 status=0 free_clusters=8000 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 89965; receive 0x00658F40 size 4 result 0x00000000; queued for reply job at IOP cycle 253262289
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 89965 at IOP cycle 253264132
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 89965 (reply command 0x8000000A) at EE cycle 2026212264
+[iop-native] MCSERV GetInfo2 port=1 slot=0 status=-13 free_clusters=0 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 89967; receive 0x00658F40 size 4 result 0xFFFFFFF3; queued for reply job at IOP cycle 253276666
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 89967 at IOP cycle 253278509
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 89967 (reply command 0x8000000A) at EE cycle 2026360914
+[iop-native] MCSERV GetInfo2 port=0 slot=0 status=0 free_clusters=8000 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 89969; receive 0x00658F40 size 4 result 0x00000000; queued for reply job at IOP cycle 253295273
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 89969 at IOP cycle 253297116
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 89969 (reply command 0x8000000A) at EE cycle 2026463537
+[iop-native] MCSERV GetInfo2 port=1 slot=0 status=-13 free_clusters=0 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 89971; receive 0x00658F40 size 4 result 0xFFFFFFF3; queued for reply job at IOP cycle 253308074
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 89971 at IOP cycle 253309917
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 89971 (reply command 0x8000000A) at EE cycle 2026507184
+[lgkbm] event-poll reply: zero events (poll 90000)
+[lgkbm] event-poll reply: zero events (poll 91000)
+[lgkbm] event-poll reply: zero events (poll 92000)
+[lgkbm] event-poll reply: zero events (poll 93000)
+[lgkbm] event-poll reply: zero events (poll 94000)
+[lgkbm] event-poll reply: zero events (poll 95000)
+[lgkbm] event-poll reply: zero events (poll 96000)
+[lgkbm] event-poll reply: zero events (poll 97000)
+[lgkbm] event-poll reply: zero events (poll 98000)
+[lgkbm] event-poll reply: zero events (poll 99000)
+[lgkbm] event-poll reply: zero events (poll 100000)
+[lgkbm] event-poll reply: zero events (poll 101000)
+[lgkbm] event-poll reply: zero events (poll 102000)
+[lgkbm] event-poll reply: zero events (poll 103000)
+[lgkbm] event-poll reply: zero events (poll 104000)
+[lgkbm] event-poll reply: zero events (poll 105000)
+[lgkbm] event-poll reply: zero events (poll 106000)
+[lgkbm] event-poll reply: zero events (poll 107000)
+[lgkbm] event-poll reply: zero events (poll 108000)
+[lgkbm] event-poll reply: zero events (poll 109000)
+[lgkbm] event-poll reply: zero events (poll 110000)
+[lgkbm] event-poll reply: zero events (poll 111000)
+[iop-native] MCSERV GetInfo2 port=0 slot=0 status=0 free_clusters=8000 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 112456; receive 0x00658F40 size 4 result 0x00000000; queued for reply job at IOP cycle 312255316
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 112456 at IOP cycle 312257159
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 112456 (reply command 0x8000000A) at EE cycle 2498097289
+[iop-native] MCSERV GetInfo2 port=1 slot=0 status=-13 free_clusters=0 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 112458; receive 0x00658F40 size 4 result 0xFFFFFFF3; queued for reply job at IOP cycle 312262295
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 112458 at IOP cycle 312264138
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 112458 (reply command 0x8000000A) at EE cycle 2498245939
+[lgkbm] event-poll reply: zero events (poll 112000)
+[lgkbm] event-poll reply: zero events (poll 113000)
+[lgkbm] event-poll reply: zero events (poll 114000)
+[lgkbm] event-poll reply: zero events (poll 115000)
+[lgkbm] event-poll reply: zero events (poll 116000)
+[lgkbm] event-poll reply: zero events (poll 117000)
+[lgkbm] event-poll reply: zero events (poll 118000)
+[lgkbm] event-poll reply: zero events (poll 119000)
+[iop-native] MCSERV GetInfo2 port=0 slot=0 status=0 free_clusters=8000 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 120660; receive 0x00658F40 size 4 result 0x00000000; queued for reply job at IOP cycle 333755111
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 120660 at IOP cycle 333756954
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 120660 (reply command 0x8000000A) at EE cycle 2670188469
+[lgkbm] event-poll reply: zero events (poll 120000)
+[lgkbm] event-poll reply: zero events (poll 121000)
+[lgkbm] event-poll reply: zero events (poll 122000)
+[lgkbm] event-poll reply: zero events (poll 123000)
+[iop-native] MCSERV GetInfo2 port=1 slot=0 status=-13 free_clusters=0 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 124168; receive 0x00658F40 size 4 result 0xFFFFFFF3; queued for reply job at IOP cycle 342970548
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 124168 at IOP cycle 342972391
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 124168 (reply command 0x8000000A) at EE cycle 2743920207
+[lgkbm] event-poll reply: zero events (poll 124000)
+[lgkbm] event-poll reply: zero events (poll 125000)
+[lgkbm] event-poll reply: zero events (poll 126000)
+[lgkbm] event-poll reply: zero events (poll 127000)
+[iop-native] MCSERV GetInfo2 port=0 slot=0 status=0 free_clusters=8000 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 128146; receive 0x00658F40 size 4 result 0x00000000; queued for reply job at IOP cycle 353415375
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 128146 at IOP cycle 353417218
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 128146 (reply command 0x8000000A) at EE cycle 2827470583
+[lgkbm] event-poll reply: zero events (poll 128000)
+[lgkbm] event-poll reply: zero events (poll 129000)
+[lgkbm] event-poll reply: zero events (poll 130000)
+[iop-native] MCSERV GetInfo2 port=1 slot=0 status=-13 free_clusters=0 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 131652; receive 0x00658F40 size 4 result 0xFFFFFFF3; queued for reply job at IOP cycle 362631452
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 131652 at IOP cycle 362633295
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 131652 (reply command 0x8000000A) at EE cycle 2901199201
+[lgkbm] event-poll reply: zero events (poll 131000)
+[lgkbm] event-poll reply: zero events (poll 132000)
+[lgkbm] event-poll reply: zero events (poll 133000)
+[lgkbm] event-poll reply: zero events (poll 134000)
+[iop-native] MCSERV GetInfo2 port=0 slot=0 status=0 free_clusters=8000 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 135630; receive 0x00658F40 size 4 result 0x00000000; queued for reply job at IOP cycle 373076655
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 135630 at IOP cycle 373078498
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 135630 (reply command 0x8000000A) at EE cycle 2984728534
+[lgkbm] event-poll reply: zero events (poll 135000)
+[lgkbm] event-poll reply: zero events (poll 136000)
+[lgkbm] event-poll reply: zero events (poll 137000)
+[lgkbm] event-poll reply: zero events (poll 138000)
+[iop-native] MCSERV GetInfo2 port=1 slot=0 status=-13 free_clusters=0 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 139141; receive 0x00658F40 size 4 result 0xFFFFFFF3; queued for reply job at IOP cycle 382292794
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 139141 at IOP cycle 382294637
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 139141 (reply command 0x8000000A) at EE cycle 3058460391
+[lgkbm] event-poll reply: zero events (poll 139000)
+[lgkbm] event-poll reply: zero events (poll 140000)
+[lgkbm] event-poll reply: zero events (poll 141000)
+[lgkbm] event-poll reply: zero events (poll 142000)
+[padman-native] padSetActAlign accepted port=0 slot=0 map=00,01,FF,FF,FF,FF
+[sif] IOP reboot requested with ""
+[lgkbm] event-poll reply: zero events (poll 143000)
+[lgkbm] event-poll reply: zero events (poll 144000)
+[lgkbm] event-poll reply: zero events (poll 145000)
+[lgkbm] event-poll reply: zero events (poll 146000)
+[lgkbm] event-poll reply: zero events (poll 147000)
+[lgkbm] event-poll reply: zero events (poll 148000)
+[lgkbm] event-poll reply: zero events (poll 149000)
+[lgkbm] event-poll reply: zero events (poll 150000)
+[lgkbm] event-poll reply: zero events (poll 151000)
+[lgkbm] event-poll reply: zero events (poll 152000)
+[lgkbm] event-poll reply: zero events (poll 153000)
+[lgkbm] event-poll reply: zero events (poll 154000)
+[lgkbm] event-poll reply: zero events (poll 155000)
+[lgkbm] event-poll reply: zero events (poll 156000)
+[lgkbm] event-poll reply: zero events (poll 157000)
+[lgkbm] event-poll reply: zero events (poll 158000)
+[lgkbm] event-poll reply: zero events (poll 159000)
+[lgkbm] event-poll reply: zero events (poll 160000)
+[lgkbm] event-poll reply: zero events (poll 161000)
+[iop-native] MCSERV GetInfo2 port=0 slot=0 status=0 free_clusters=8000 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 162818; receive 0x00658F40 size 4 result 0x00000000; queued for reply job at IOP cycle 444351910
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 162818 at IOP cycle 444353753
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 162818 (reply command 0x8000000A) at EE cycle 3554971944
+[iop-native] MCSERV GetInfo2 port=1 slot=0 status=-13 free_clusters=0 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 162821; receive 0x00658F40 size 4 result 0xFFFFFFF3; queued for reply job at IOP cycle 444371630
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 162821 at IOP cycle 444373473
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 162821 (reply command 0x8000000A) at EE cycle 3555095073
+[lgkbm] event-poll reply: zero events (poll 162000)
+[lgkbm] event-poll reply: zero events (poll 163000)
+[lgkbm] event-poll reply: zero events (poll 164000)
+[lgkbm] event-poll reply: zero events (poll 165000)
+[lgkbm] event-poll reply: zero events (poll 166000)
+[lgkbm] event-poll reply: zero events (poll 167000)
+[lgkbm] event-poll reply: zero events (poll 168000)
+[lgkbm] event-poll reply: zero events (poll 169000)
+[lgkbm] event-poll reply: zero events (poll 170000)
+[lgkbm] event-poll reply: zero events (poll 171000)
+[lgkbm] event-poll reply: zero events (poll 172000)
+[lgkbm] event-poll reply: zero events (poll 173000)
+[lgkbm] event-poll reply: zero events (poll 174000)
+[lgkbm] event-poll reply: zero events (poll 175000)
+[lgkbm] event-poll reply: zero events (poll 176000)
+[lgkbm] event-poll reply: zero events (poll 177000)
+[lgkbm] event-poll reply: zero events (poll 178000)
+[lgkbm] event-poll reply: zero events (poll 179000)
+[lgkbm] event-poll reply: zero events (poll 180000)
+[padman-native] padSetActAlign accepted port=0 slot=0 map=00,01,FF,FF,FF,FF
+[lgkbm] event-poll reply: zero events (poll 181000)
+[lgkbm] event-poll reply: zero events (poll 182000)
+[mka-video] stream request #1: ID=0 (movieps2/LOGON.sfd, loops=0, skippable=1, cb=0x0018E090)
+[mwfilefr-native] opened cdrom0:\MOVIEPS2\LOGON.SFD;1 (3321856 bytes) at IOP handle 0x000BF400 -> C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\disc-files\MOVIEPS2\LOGON.SFD
+[loadfile] cdrom0:\MODULES\CRI_ADXI.IRX;1
+[iop-tty] CRI ADX Driver Ver.9.16b(May  7 2004 20:20:44)
+[iop-tty] CRI ADX Driver : Main Thread Priority = 39
+[iop-tty] CRI ADX Driver : PSM Thread Priority  = 39
+[iop-tty] CRI ADX Driver : DTX Thread Priority  = 48
+[iop-tty] CRI ADX Driver : SPU CORE Number = 0
+[iop-tty] CRI ADX Driver : sceSdInit(SD_INIT_COLD) call.
+[sif:target-rpc] register sid 0x90000200 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 sd 0x000CB1B0 (instances 1)
+[fileio] open cdrom0:\MOVIER.OVL;1 -> 3
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 2 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 16 data 00000000 0083BCC0 000D2840 00000880
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 2 thread 19 result 0x000CAC40 reply 000CAD40
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 1027 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 0 data
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 1027 thread 19 result 0x000CAC40 reply
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 1036 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 0 data
+[iop] missing libsd #28 called from 0x000C3E18
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 1036 thread 19 result 0x000CAC40 reply
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 1058 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 12 data 00000001 000D3140 00000100 00000880
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 1058 thread 19 result 0x000CAC40 reply 000D0D00
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 1024 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 16 data 0083AC30 000D0D00 00000001 0083BA28
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 1024 thread 19 result 0x000CAC40 reply 000D1840
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 1058 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 12 data 00000001 000D7240 00000100 0083BA28
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 1058 thread 19 result 0x000CAC40 reply 000D0D30
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 1024 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 16 data 0083AC60 000D0D30 00000001 0083BA3C
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 1024 thread 19 result 0x000CAC40 reply 000D1854
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 2 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 16 data 00000001 00835E40 000DB440 00000880
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 2 thread 19 result 0x000CAC40 reply 000CAD84
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 1034 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 12 data 00000002 000DBD00 00000840 00000880
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 1034 thread 19 result 0x000CAC40 reply
+[ee-live +20.3s f813] no translated code at 0x00812750 (loaded code at 0x007C4880, image 007C4880_5B86E958, 541 KiB): translating it now, the game waits
+[ee-live +24.1s f813] switched in after 3.8 s (quick) (translate 0.1, compile 3.2, link 0.1): 30 entry points (calls of the program included), 93223 instructions, 33 files
+[io] write 0x1000F590 = 0x10000 (pc 0x0010A0B0)
+[audio] the sound ran dry at frame 814 (1 times so far): the game runs slower than real time than the sound can be stretched to
+[gs] SetGsCrt interlace 1 mode 0x2 field 0
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 1032 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 16 data 00000002 00000000 000D0D00 000D0D30
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 1032 thread 19 result 0x000CAC40 reply 000CB220
+[cdvdfsv] search \MOVIEPS2\LOGON.SFD;1 -> found
+[lgkbm] event-poll reply: zero events (poll 183000)
+[lgkbm] event-poll reply: zero events (poll 184000)
+[lgkbm] event-poll reply: zero events (poll 185000)
+[lgkbm] event-poll reply: zero events (poll 186000)
+[lgkbm] event-poll reply: zero events (poll 187000)
+[lgkbm] event-poll reply: zero events (poll 188000)
+[lgkbm] event-poll reply: zero events (poll 189000)
+[lgkbm] event-poll reply: zero events (poll 190000)
+[lgkbm] event-poll reply: zero events (poll 191000)
+[lgkbm] event-poll reply: zero events (poll 192000)
+[ee] halted: window closed
+[thread] 1 status 4 prio 24 wait 1/0 pc 0x0010C708 ra 0x007FB480
+[thread]   stack: 003376A4 003376A4 00336618 003365B4 00182248 0018D470 00280770 00163AD8 0018DA4C 0018D460 0018DBE8 0012E38C 00240000 00240000 00240000
+[thread] 2 status 4 prio 0 wait 2/2 pc 0x0010C828 ra 0x0010D528
+[thread]   stack:
+[thread] 3 status 4 prio 2 wait 1/0 pc 0x0010C708 ra 0x00329494
+[thread]   stack: 003294D0
+[thread] 4 status 4 prio 0 wait 1/0 pc 0x0010C708 ra 0x00110FD8
+[thread]   stack: 001229C0
+[thread] 5 status 4 prio 1 wait 2/12 pc 0x0010C828 ra 0x00357C04
+[thread]   stack:
+[thread] 6 status 4 prio 30 wait 2/14 pc 0x0010C828 ra 0x00523430
+[thread]   stack: 00523818 003D9520
+[thread] 7 status 8 prio 8 wait 0/0 pc 0x007CCFB0 ra 0x007CCFB8
+[thread]   stack:
+[thread] 8 status 4 prio 16 wait 1/0 pc 0x0010C708 ra 0x007CD130
+[thread]   stack:
+[thread] 9 status 4 prio 18 wait 1/0 pc 0x0010C708 ra 0x007CD210
+[thread]   stack:
+[thread] 10 status 4 prio 25 wait 1/0 pc 0x0010C708 ra 0x007CD320
+[thread]   stack:
+[sema] 2 count 0 waiters 1
+[sema] 12 count 0 waiters 1
+[sema] 14 count 0 waiters 1
+[iop] module 1 SIO2MAN at 0x00000000
+[iop] module 2 MWFILEFR at 0x00000000
+[iop] module 3 PADMAN at 0x00000000
+[iop] module 4 MCMAN at 0x00000000
+[iop] module 5 MCSERV at 0x00000000
+[iop] module 6 DEV9 at 0x00000000
+[iop] module 7 USBD at 0x00000000
+[iop] module 8 LGKBM at 0x00000000
+[iop] module 9 LGAUD at 0x00000000
+[iop] module 10 LIBSD at 0x00000000
+[iop] module 11 SDRDRV at 0x00020500
+[iop] module 12 MSL at 0x00022300
+[iop] module 13 CRI_ADXI at 0x000BF700
+[iop] thread 1 status 16 prio 8 wait 0/0 pc 0x00001010
+[iop] thread 2 status 4 prio 24 wait 8/137920 pc 0x00001020
+[iop] thread 3 status 16 prio 8 wait 0/0 pc 0x00001010
+[iop] thread 4 status 4 prio 50 wait 8/8353728 pc 0x00001020
+[iop] thread 5 status 4 prio 50 wait 3/10 pc 0x0002D768
+[iop] thread 6 status 4 prio 20 wait 5/13 pc 0x0002EA70
+[iop] thread 7 status 4 prio 52 wait 3/16 pc 0x00031A00
+[iop] thread 8 status 4 prio 50 wait 2/0 pc 0x0002CD98
+[iop] thread 16 status 16 prio 50 wait 0/0 pc 0x00001010
+[iop] thread 17 status 16 prio 8 wait 0/0 pc 0x00001010
+[iop] thread 18 status 4 prio 39 wait 7/1 pc 0x000BF884
+[iop] thread 19 status 4 prio 48 wait 8/832000 pc 0x00001020
+[iop] thread 20 status 4 prio 39 wait 3/17 pc 0x000C38A0
+[sif] 0 packets wait for the EE (processed 0)
+[sif] DMA marker 0x80000004 observed 560 times (no guest handler)
+[gs] 221035 primitives drawn, register writes: 06:11489 50:7791 51:11887 52:11848 53:11887
+[ipu] commands: 0:8 2:1528 3:4045 4:674 5:4 6:1 7:4 9:1 stalls 0 out 216704 qwords, busy 0 decoding 0 cmd 0x0000000B in 128 bytes bit 11 out 0
+[dma] starts: ch0=0 ch1=782 ch2=1541 ch3=1532 ch4=7 ch5=0 ch6=0 ch7=0 ch8=21923 ch9=539
+[gif] path 1 tags: packed 2932 reglist 0 image 0
+[gif] path 2 tags: packed 88589 reglist 0 image 0
+[gif] path 3 tags: packed 33121 reglist 0 image 11887
+[vif0]
+[vif1] 00:1017142 01:2936 02:2936 03:2936 04:4 05:5 06:13378 10:755 11:23942 13:15088 14:2932 20:4 4A:1478 50:37804 65:3208 6C:5864
+[spin] 41136396 cycles of waiting loops skipped (0.8 % of the time since this run started)
+[ee] stopped after 1080 frames, 5309410868 cycles: window closed
+[audio] the device got 17.52 s of sound in 28.09 s; the queue ran dry 1 times (about 3.67 s of silence in between), 0 samples dropped
+[audio] stretching: 17.45 s of game sound played as 24.45 s, 19.97 s of that stretched (slowest tempo x5.00; 0.11 s at the limit of x5.0, where it runs dry like without stretching)

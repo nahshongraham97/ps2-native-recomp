@@ -1,0 +1,28 @@
+Source excerpt from runtime/src/gs/native_gl_backend.cpp; original line numbers preserved.
+--- lines 1108-1116 ---
+1108:     const int active_frame_width = g_active_frame_width.load(std::memory_order_relaxed);
+1109:     const std::uint32_t active_frame_fbp = g_active_frame_fbp.load(std::memory_order_relaxed);
+1110:     const std::uint32_t display_fbp = static_cast<std::uint32_t>(fb) & 0x1FFu;
+1111:     // FRAME.FBW is the actual draw surface pitch in 64-pixel units. The
+1112:     // current direct FBO captures that surface's geometry, not empty columns
+1113:     // implied by a wider DISPLAY.DW. Keep DISPLAY.DW as the fallback before
+1114:     // the first accepted primitive and whenever the active surface is wider.
+1115:     const int width = active_frame_width > 0 ? std::min(display_width, active_frame_width) : display_width;
+1116:     if (width <= 0 || height <= 0 || dbx < 0 || dby < 0 || dbx + width > kWidth || dby + source_height > kHeight) {
+--- lines 1287-1293 ---
+1287:     static bool reported_direct_rect = false;
+1288:     if (!reported_direct_rect) {
+1289:         reported_direct_rect = true;
+1290:         std::fprintf(stderr, "[native-gl] direct present crop x=%d y=%d %dx%d (DISPLAY width=%d, latest FRAME width=%d FBP=%u, DISPFB FBP=%u) -> client rect %d,%d %dx%d (nearest)\n",
+1291:                      dbx, dby, width, source_height, display_width, active_frame_width,
+1292:                      active_frame_fbp, display_fbp, draw_x, draw_y, draw_width, draw_height);
+1293:     }
+--- lines 1540-1547 ---
+1540:     if (native_source_over) finish_alpha_composite();
+1541:     g_pending_readback_state = readback_state;
+1542:     g_pending_readback_state_valid = true;
+1543: 
+1544:     g_prims_drawn.fetch_add(1, std::memory_order_relaxed);
+1545:     g_active_frame_width.store(target_width, std::memory_order_relaxed);
+1546:     g_active_frame_fbp.store(frame & 0x1FFu, std::memory_order_relaxed);
+1547:     static bool reported = false;

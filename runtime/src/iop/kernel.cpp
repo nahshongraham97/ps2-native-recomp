@@ -1,4 +1,10 @@
 #include "kernel.hpp"
+#ifdef PS2_IOP_AOT_IMPORTS_ENABLED
+#include "aot_import_registry.hpp"
+#endif
+#ifdef PS2_IOP_AOT_MODULES_ENABLED
+#include "native/iop_native.h"
+#endif
 
 #include "hw.hpp"
 #include "io.hpp"
@@ -30,12 +36,149 @@ namespace ps2::iop {
 
 void execute(Cpu &c, std::int64_t &budget);
 
+void state_cpu(ps2::state::Stream &s, Cpu &c) {
+    struct LegacyCpu {
+        std::uint32_t r[32];
+        std::uint32_t hi, lo;
+        std::uint32_t pc, npc;
+        std::uint32_t status, cause, epc;
+    } legacy{};
+    static_assert(sizeof(LegacyCpu) == 39u * sizeof(std::uint32_t));
+
+    if (s.version() >= 13u) {
+        s.pod(c);
+        return;
+    }
+
+    if (s.saving()) {
+        std::copy(c.r, c.r + 32, legacy.r);
+        legacy.hi = c.hi;
+        legacy.lo = c.lo;
+        legacy.pc = c.pc;
+        legacy.npc = c.npc;
+        legacy.status = c.status;
+        legacy.cause = c.cause;
+        legacy.epc = c.epc;
+    }
+    s.pod(legacy);
+    if (s.loading()) {
+        c = Cpu{};
+        std::copy(legacy.r, legacy.r + 32, c.r);
+        c.hi = legacy.hi;
+        c.lo = legacy.lo;
+        c.pc = legacy.pc;
+        c.npc = legacy.npc;
+        c.status = legacy.status;
+        c.cause = legacy.cause;
+        c.epc = legacy.epc;
+    }
+}
+
 namespace kernel {
 
 bool g_trace_hle = false;
 bool g_trace_modules = false;
 
 namespace {
+
+std::map<int, Module> g_modules;
+#ifdef PS2_IOP_AOT_IMPORTS_ENABLED
+std::map<int, const aot_imports::Module *> g_compiled_import_modules;
+#endif
+#ifdef PS2_IOP_AOT_MODULES_ENABLED
+std::map<int, const ps2x::iop::detail::IopNativeModule *> g_compiled_iop_modules;
+#endif
+
+struct SavedAotBinding {
+    int module_id{};
+    std::uint32_t registry_index{};
+    std::uint64_t registry_hash{};
+};
+
+void state_aot_bindings(ps2::state::Stream &s) {
+    std::vector<SavedAotBinding> bodies;
+    std::vector<SavedAotBinding> imports;
+    if (s.saving()) {
+#ifdef PS2_IOP_AOT_MODULES_ENABLED
+        std::size_t body_count = 0;
+        const auto *body_entries = ps2x::iop::detail::iopNativeModules(body_count);
+        if (!body_entries && !g_compiled_iop_modules.empty())
+            throw std::runtime_error("compiled IOP body registry is unavailable while saving state");
+        for (const auto &[id, selected] : g_compiled_iop_modules) {
+            std::size_t index = 0;
+            while (index < body_count && &body_entries[index] != selected) ++index;
+            if (!selected || index == body_count)
+                throw std::runtime_error("compiled IOP body registry entry is missing while saving state");
+            bodies.push_back({id, static_cast<std::uint32_t>(index), selected->hash});
+        }
+#endif
+#ifdef PS2_IOP_AOT_IMPORTS_ENABLED
+        std::size_t import_count = 0;
+        const auto *import_entries = aot_imports::modules(import_count);
+        if (!import_entries && !g_compiled_import_modules.empty())
+            throw std::runtime_error("compiled IOP import registry is unavailable while saving state");
+        for (const auto &[id, selected] : g_compiled_import_modules) {
+            std::size_t index = 0;
+            while (index < import_count && &import_entries[index] != selected) ++index;
+            if (!selected || index == import_count)
+                throw std::runtime_error("compiled IOP import registry entry is missing while saving state");
+            imports.push_back({id, static_cast<std::uint32_t>(index), selected->text_hash});
+        }
+#endif
+    }
+
+    if (s.version() >= 13u) {
+        auto each = [&s](SavedAotBinding &binding) {
+            s.pod(binding.module_id);
+            s.pod(binding.registry_index);
+            s.pod(binding.registry_hash);
+        };
+        s.vec(bodies, each);
+        s.vec(imports, each);
+    } else if (s.loading()) {
+        bodies.clear();
+        imports.clear();
+    }
+
+    if (!s.loading()) return;
+
+#ifdef PS2_IOP_AOT_MODULES_ENABLED
+    g_compiled_iop_modules.clear();
+    if (s.version() >= 13u) {
+        std::size_t count = 0;
+        const auto *entries = ps2x::iop::detail::iopNativeModules(count);
+        for (const SavedAotBinding &binding : bodies) {
+            const auto module = g_modules.find(binding.module_id);
+            if (!entries || binding.registry_index >= count || module == g_modules.end())
+                throw std::runtime_error("save state references a missing compiled IOP body");
+            const auto *entry = &entries[binding.registry_index];
+            if (!entry->name || !entry->run || entry->hash != binding.registry_hash ||
+                module->second.name != entry->name || module->second.base != entry->base ||
+                module->second.size < entry->textSize)
+                throw std::runtime_error("save state compiled IOP body does not match this build");
+            g_compiled_iop_modules.emplace(binding.module_id, entry);
+        }
+    }
+#endif
+#ifdef PS2_IOP_AOT_IMPORTS_ENABLED
+    g_compiled_import_modules.clear();
+    if (s.version() >= 13u) {
+        std::size_t count = 0;
+        const auto *entries = aot_imports::modules(count);
+        for (const SavedAotBinding &binding : imports) {
+            const auto module = g_modules.find(binding.module_id);
+            if (!entries || binding.registry_index >= count || module == g_modules.end())
+                throw std::runtime_error("save state references a missing compiled IOP import bridge");
+            const auto *entry = &entries[binding.registry_index];
+            if (!entry->name || !entry->dispatch || entry->text_hash != binding.registry_hash ||
+                module->second.name != entry->name || module->second.base != entry->base ||
+                module->second.size < entry->text_size)
+                throw std::runtime_error("save state compiled IOP import bridge does not match this build");
+            g_compiled_import_modules.emplace(binding.module_id, entry);
+        }
+    }
+#endif
+}
 
 constexpr std::uint32_t kKernelBase = 0x00001000u;
 constexpr std::uint32_t kUserBase = 0x00020000u;
@@ -66,7 +209,7 @@ struct Interrupt {
 std::vector<HleEntry> g_hle;
 std::map<std::pair<std::string, std::uint32_t>, std::uint32_t> g_hle_ids;
 std::vector<std::pair<std::uint32_t, std::uint32_t>> g_hle_stubs;
-std::map<std::string, std::uint32_t> g_hle_versions;
+std::map<std::string, std::set<std::uint32_t>> g_hle_versions;
 std::map<std::string, std::uint32_t> g_libraries;
 // Native C++ modules are process configuration. Their active exports are
 // runtime state and are reactivated when each module is loaded after boot.
@@ -75,7 +218,6 @@ std::map<std::string, NativeIopModule> g_native_modules;
 std::map<NativeIopExportKey, std::pair<std::string, NativeIopFunction>> g_native_exports;
 // Legacy callbacks remain available only on the non-strict diagnostic path.
 std::map<std::string, HleModuleStart> g_hle_modules;
-std::map<int, Module> g_modules;
 int g_next_module = 1;
 
 std::map<int, Thread> g_threads;
@@ -339,6 +481,7 @@ void dump_native_module(const std::string &module_name, std::uint32_t base, std:
     const std::filesystem::path directory(root);
     const std::filesystem::path binary = directory / (capture_name + ".bin");
     const std::filesystem::path manifest = directory / "modules.txt";
+    const std::filesystem::path identities = directory / "module-identities.txt";
 
     std::error_code ec;
     std::filesystem::create_directories(directory, ec);
@@ -387,6 +530,30 @@ void dump_native_module(const std::string &module_name, std::uint32_t base, std:
         out << capture_name << ' ' << std::hex << std::uppercase << base << ' ' << text_size << ' ' << hash << '\n';
         if (!out) {
             std::fprintf(stderr, "[iop-aot-dump] failed updating %s\n", manifest.string().c_str());
+            return;
+        }
+    }
+    // Preserve the unsanitized retail name separately from the unique capture
+    // identifier. The generator must match the loaded module by its real name,
+    // while retaining base and hash in the capture filename.
+    bool identity_listed = false;
+    {
+        std::ifstream in(identities);
+        std::string line, identifier, name, trailing;
+        while (std::getline(in, line)) {
+            std::istringstream row(line);
+            if (row >> identifier >> std::quoted(name) && !(row >> trailing) &&
+                identifier == capture_name && name == module_name) {
+                identity_listed = true;
+                break;
+            }
+        }
+    }
+    if (!identity_listed) {
+        std::ofstream out(identities, std::ios::app);
+        out << capture_name << ' ' << std::quoted(module_name) << '\n';
+        if (!out) {
+            std::fprintf(stderr, "[iop-aot-dump] failed updating %s\n", identities.string().c_str());
             return;
         }
     }
@@ -624,12 +791,29 @@ std::uint32_t hle_stub(const HleFunction &function) {
     return at;
 }
 
+bool invoke_runtime_hle_stub(Cpu &c) {
+    const std::uint32_t pc = phys(c.pc);
+    const auto stub = std::find_if(g_hle_stubs.begin(), g_hle_stubs.end(), [pc](const auto &entry) {
+        return phys(entry.first) == pc;
+    });
+    if (stub == g_hle_stubs.end()) return false;
+
+    // Match the existing kHleOpcode interpreter semantics, but run the
+    // runtime-owned callback directly so strict mode never executes its
+    // synthetic IOP-RAM trampoline instruction.
+    c.pc = c.r[31];
+    c.npc = c.pc + 4;
+    c.r[0] = 0;
+    ps2::iop::call_hle(c, stub->second);
+    return true;
+}
+
 void register_library(const std::string &name, std::uint32_t table) {
     g_libraries[name] = table;
     if (g_trace_modules) std::fprintf(stderr, "[iop] library %s at 0x%08X\n", name.c_str(), table);
 }
 
-void register_hle_library(const std::string &name, std::uint32_t version) { g_hle_versions[name] = version; }
+void register_hle_library(const std::string &name, std::uint32_t version) { g_hle_versions[name].insert(version); }
 
 bool library_exists(const std::string &name) { return g_libraries.count(name) || g_hle_versions.count(name); }
 
@@ -687,9 +871,23 @@ void register_native_module(NativeIopModule module) {
 bool invoke_native_import(const std::string &library, std::uint16_t version, std::uint32_t ordinal, Cpu &c) {
     const auto it = g_native_exports.find(NativeIopExportKey{library, version, ordinal});
     if (it == g_native_exports.end()) {
+        const auto hle_version = g_hle_versions.find(library);
+        const auto hle_id = g_hle_ids.find({library, ordinal});
+        if (hle_version != g_hle_versions.end() && hle_version->second.count(version) &&
+            hle_id != g_hle_ids.end() && hle_id->second < g_hle.size()) {
+            const HleEntry &entry = g_hle[hle_id->second];
+            if (entry.library == library && entry.index == ordinal && entry.function) {
+                if (g_trace_modules)
+                    std::fprintf(stderr, "[iop-native-hle-call] %s v%04X ordinal %u\n",
+                                 library.c_str(), version, ordinal);
+                entry.function(c);
+                return true;
+            }
+        }
         if (native_strict()) {
-            std::fprintf(stderr, "[iop-native-stop] unresolved compiled C++ import %s v%04X ordinal %u\n",
-                         library.c_str(), version, ordinal);
+            std::fprintf(stderr,
+                         "[iop-native-stop] unresolved native import %s v%04X ordinal %u caller=0x%08X a0=0x%08X a1=0x%08X a2=0x%08X a3=0x%08X (no matching C++ export or versioned HLE)\n",
+                         library.c_str(), version, ordinal, c.r[31], c.r[4], c.r[5], c.r[6], c.r[7]);
             std::fflush(stderr);
             std::abort();
         }
@@ -700,6 +898,99 @@ bool invoke_native_import(const std::string &library, std::uint16_t version, std
                      ordinal, it->second.first.c_str());
     it->second.second(c);
     return true;
+}
+
+bool invoke_compiled_import(Cpu &c) {
+#ifdef PS2_IOP_AOT_IMPORTS_ENABLED
+    const std::uint32_t pc = phys(c.pc);
+    for (const auto &[id, bridge] : g_compiled_import_modules) {
+        const auto module = g_modules.find(id);
+        if (module == g_modules.end() || module->second.base != bridge->base ||
+            module->second.name != bridge->name || pc < bridge->base ||
+            pc - bridge->base >= bridge->text_size) continue;
+        const std::uint32_t stub = c.pc;
+        if (bridge->dispatch(c)) {
+            if (g_trace_modules)
+                std::fprintf(stderr, "[iop-aot-import] module=%s stub=0x%08X return=0x%08X\n",
+                             module->second.name.c_str(), stub, c.pc);
+            return true;
+        }
+    }
+#else
+    (void)c;
+#endif
+    return false;
+}
+
+bool invoke_compiled_module(Cpu &c, std::int64_t &budget) {
+#ifdef PS2_IOP_AOT_MODULES_ENABLED
+    if (budget <= 0) return false;
+    const std::uint32_t pc = phys(c.pc);
+    for (const auto &[id, compiled] : g_compiled_iop_modules) {
+        const auto module = g_modules.find(id);
+        if (module == g_modules.end() || !compiled || !compiled->run ||
+            module->second.name != compiled->name || module->second.base != compiled->base ||
+            pc < compiled->base || pc - compiled->base >= compiled->textSize) continue;
+
+        ps2x::iop::detail::IopCpuState native{};
+        std::copy(c.r, c.r + 32, native.gpr.begin());
+        native.hi = c.hi;
+        native.lo = c.lo;
+        native.pc = c.pc;
+        native.cop0[8] = c.badvaddr;
+        native.cop0[12] = c.status;
+        native.cop0[13] = c.cause;
+        native.cop0[14] = c.epc;
+        native.pendingLoad = c.pending_load;
+        native.pendingLoadReg = c.pending_load_reg;
+        native.pendingLoadValue = c.pending_load_value;
+        native.branchPending = c.npc != c.pc + 4u;
+        native.branchTarget = c.npc;
+
+        ps2x::iop::detail::IopMemory memory;
+        const auto allowed = static_cast<std::uint32_t>(std::min<std::int64_t>(budget, 0xFFFFFFFFll));
+        const std::uint32_t ran = compiled->run(native, memory, allowed);
+        if (!ran) return false;
+
+        std::copy(native.gpr.begin(), native.gpr.end(), c.r);
+        c.r[0] = 0;
+        c.hi = native.hi;
+        c.lo = native.lo;
+        c.pc = native.pc;
+        c.npc = native.branchPending ? native.branchTarget : native.pc + 4u;
+        c.badvaddr = native.cop0[8];
+        set_status(c, native.cop0[12]);
+        c.cause = native.cop0[13];
+        c.epc = native.cop0[14];
+        c.pending_load = native.pendingLoad;
+        c.pending_load_reg = native.pendingLoadReg;
+        c.pending_load_value = native.pendingLoadValue;
+        budget -= ran;
+        if (g_trace_modules)
+            std::fprintf(stderr,
+                         "[iop-aot] module=%s entry_pc=0x%08X next_pc=0x%08X instructions=%u budget_left=%lld%s\n",
+                         compiled->name, pc, c.pc, ran, static_cast<long long>(budget),
+                         native.exception ? " exception" : "");
+        return true;
+    }
+#else
+    (void)c;
+    (void)budget;
+#endif
+    return false;
+}
+
+bool compiled_import_stub_matches(std::uint32_t address, const std::string &library,
+                                  std::uint16_t version, std::uint32_t ordinal) {
+    const std::uint32_t pc = phys(address);
+    if ((pc & 3u) || pc > kRamSize - 8u) return false;
+    const std::uint32_t opcode = ram32(pc), argument = ram32(pc + 4);
+    if ((opcode >> 26) != kHleOpcode || argument != (0x24000000u | ordinal)) return false;
+    const std::uint32_t id = opcode & 0x03FFFFFFu;
+    if (id >= g_hle.size()) return false;
+    const auto &entry = g_hle[id];
+    return entry.library == "native_import:" + library + ":" + std::to_string(version) &&
+           entry.index == ordinal;
 }
 
 bool native_strict() {
@@ -754,6 +1045,12 @@ void boot() {
     g_libraries.clear();
     g_native_exports.clear();
     g_modules.clear();
+#ifdef PS2_IOP_AOT_IMPORTS_ENABLED
+    g_compiled_import_modules.clear();
+#endif
+#ifdef PS2_IOP_AOT_MODULES_ENABLED
+    g_compiled_iop_modules.clear();
+#endif
     g_threads.clear();
     g_used.clear();
     while (!g_events.empty()) g_events.pop();
@@ -779,7 +1076,6 @@ void boot() {
     });
     install_libraries();
     install_io();
-    install_cdvd();
     install_sif();
 }
 
@@ -895,6 +1191,83 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
         auto native = g_native_modules.find(name);
         if (native != g_native_modules.end()) {
             const std::string &native_name = native->second.name;
+            std::uint32_t reserved_aot_base = 0;
+#ifdef PS2_IOP_AOT_MODULES_ENABLED
+            if (native_strict()) {
+                std::size_t aot_count = 0;
+                const auto *aot_entries = ps2x::iop::detail::iopNativeModules(aot_count);
+                const ps2x::iop::detail::IopNativeModule *aot_layout = nullptr;
+                bool ambiguous_aot_layout = false;
+                for (std::size_t i = 0; aot_entries && i < aot_count; ++i) {
+                    const auto &entry = aot_entries[i];
+                    if (!entry.name || !entry.run || name != entry.name) continue;
+                    if (aot_layout) {
+                        ambiguous_aot_layout = true;
+                        break;
+                    }
+                    aot_layout = &entry;
+                }
+                if (ambiguous_aot_layout) {
+                    std::fprintf(stderr,
+                                 "[iop-native-stop] multiple AOT IOP bodies share native replacement name %s\n",
+                                 name.c_str());
+                    std::fflush(stderr);
+                    std::abort();
+                }
+                if (aot_layout) {
+                    if (data.size() < 52 || std::memcmp(data.data(), "\x7f" "ELF", 4) != 0) {
+                        std::fprintf(stderr,
+                                     "[iop-native-stop] cannot preserve AOT IOP layout for non-ELF native replacement %s\n",
+                                     name.c_str());
+                        std::fflush(stderr);
+                        std::abort();
+                    }
+
+                    const Elf elf{data};
+                    const std::uint32_t phoff = elf.u32(28);
+                    const std::uint16_t phnum = elf.u16(44), phentsize = elf.u16(42);
+                    std::uint32_t iopmod = 0, load_size = 0, mem_size = 0;
+                    for (std::uint32_t i = 0; i < phnum; ++i) {
+                        const std::size_t ph = phoff + i * phentsize;
+                        if (elf.u32(ph) == 0x70000080u) iopmod = elf.u32(ph + 4);
+                        if (elf.u32(ph) == 1 && !load_size) {
+                            load_size = elf.u32(ph + 16);
+                            mem_size = elf.u32(ph + 20);
+                        }
+                    }
+                    if (!iopmod || !load_size) {
+                        std::fprintf(stderr,
+                                     "[iop-native-stop] cannot derive IOP allocation for AOT-backed native replacement %s\n",
+                                     name.c_str());
+                        std::fflush(stderr);
+                        std::abort();
+                    }
+
+                    const std::uint32_t total = std::max(
+                        mem_size, elf.u32(iopmod + 12) + elf.u32(iopmod + 16) + elf.u32(iopmod + 20));
+                    const std::uint32_t requested = total + 0x40u;
+                    const std::uint32_t allocated = (requested + 0xFFu) & ~0xFFu;
+                    reserved_aot_base = alloc(requested);
+                    if (!reserved_aot_base || reserved_aot_base != aot_layout->base) {
+                        std::fprintf(stderr,
+                                     "[iop-native-stop] AOT layout mismatch for native replacement %s: expected base 0x%08X, reserved 0x%08X size 0x%X\n",
+                                     name.c_str(), aot_layout->base, reserved_aot_base, allocated);
+                        if (reserved_aot_base) free(reserved_aot_base);
+                        reserved_aot_base = 0;
+                        std::fflush(stderr);
+                        std::abort();
+                    }
+                    // Keep the captured IOP address layout for later compiled
+                    // modules, but do not load or execute this replacement's
+                    // guest IRX bytes.
+                    std::memset(ram_ptr(reserved_aot_base), 0, allocated);
+                    if (g_trace_modules)
+                        std::fprintf(stderr,
+                                     "[iop-aot-layout] native %s reserved 0x%08X..0x%08X for captured module placement; guest bytes not loaded\n",
+                                     name.c_str(), reserved_aot_base, reserved_aot_base + allocated);
+                }
+            }
+#endif
             for (const NativeIopLibrary &library : native->second.libraries) {
                 for (const NativeIopExport &entry : library.exports) {
                     const NativeIopExportKey key{library.name, library.version, entry.ordinal};
@@ -915,6 +1288,7 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
             }
             if (native->second.start && !native->second.start(args)) {
                 std::fprintf(stderr, "[iop-native-stop] compiled C++ module start failed for %s\n", native_name.c_str());
+                if (reserved_aot_base) free(reserved_aot_base);
                 if (done) done(-1, -1);
                 return -1;
             }
@@ -947,14 +1321,13 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
         }
         }
     }
-    if (native_strict()) {
-        std::fprintf(stderr, "[iop-native-stop] no host-native replacement registered for module %s (path %s)\n",
-                     name.c_str(), path.c_str());
-        std::fflush(stderr);
-        std::abort();
-    }
     if (data.size() < 52 || std::memcmp(data.data(), "\x7f" "ELF", 4) != 0) {
         std::fprintf(stderr, "[iop] %s is not an ELF module\n", path.c_str());
+        if (native_strict()) {
+            std::fprintf(stderr, "[iop-native-stop] no compiled C++ body can run non-ELF module %s\n", name.c_str());
+            std::fflush(stderr);
+            std::abort();
+        }
         return -1;
     }
     const Elf elf{data};
@@ -974,11 +1347,55 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
     }
     if (!iopmod || !load_size) {
         std::fprintf(stderr, "[iop] %s has no iopmod/load segment (type 0x%X)\n", path.c_str(), type);
+        if (native_strict()) {
+            std::fprintf(stderr, "[iop-native-stop] no compiled C++ body can run malformed module %s\n", name.c_str());
+            std::fflush(stderr);
+            std::abort();
+        }
         return -1;
     }
     const std::uint32_t entry = elf.u32(iopmod + 4), gp = elf.u32(iopmod + 8);
     const std::uint32_t total = std::max(mem_size, elf.u32(iopmod + 12) + elf.u32(iopmod + 16) + elf.u32(iopmod + 20));
-    const std::uint32_t base = alloc(total + 0x40u);
+    const std::uint32_t text_size = elf.u32(iopmod + 12);
+    std::uint32_t base = 0;
+#ifdef PS2_IOP_AOT_MODULES_ENABLED
+    if (native_strict()) {
+        std::size_t aot_count = 0;
+        const auto *aot_entries = ps2x::iop::detail::iopNativeModules(aot_count);
+        const ps2x::iop::detail::IopNativeModule *aot_layout = nullptr;
+        bool ambiguous_layout = false;
+        for (std::size_t i = 0; i < aot_count; ++i) {
+            const auto &candidate = aot_entries[i];
+            if (!candidate.name || !candidate.run || name != candidate.name || candidate.textSize != text_size) continue;
+            if (aot_layout) {
+                ambiguous_layout = true;
+                break;
+            }
+            aot_layout = &candidate;
+        }
+        if (ambiguous_layout) {
+            std::fprintf(stderr,
+                         "[iop-native-stop] ambiguous captured AOT layouts for %s text=0x%X\n",
+                         name.c_str(), text_size);
+            std::fflush(stderr);
+            std::abort();
+        }
+        if (aot_layout) {
+            base = alloc(total + 0x40u, 2, aot_layout->base);
+            if (!base) {
+                std::fprintf(stderr,
+                             "[iop-native-stop] captured AOT base 0x%08X is unavailable for %s size=0x%X\n",
+                             aot_layout->base, name.c_str(), total);
+                std::fflush(stderr);
+                std::abort();
+            }
+            if (g_trace_modules)
+                std::fprintf(stderr, "[iop-aot-layout] reserved captured base 0x%08X for %s text=0x%X\n",
+                             base, name.c_str(), text_size);
+        }
+    }
+#endif
+    if (!base) base = alloc(total + 0x40u);
     if (!base) return -1;
     std::memset(ram_ptr(base), 0, total);
     std::memcpy(ram_ptr(base), data.data() + load_off, load_size);
@@ -994,9 +1411,53 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
     // Capture relocated text before import stubs are rewritten to runtime HLE opcodes. This produces
     // the exact load-address image an offline IOP-to-C++ compiler needs to identify and translate.
     dump_native_module(module_name, base, elf.u32(iopmod + 12));
+    const std::uint64_t text_hash = text_size ? fnv1a64(ram_ptr(base), text_size) : 0ull;
+#ifdef PS2_IOP_AOT_MODULES_ENABLED
+    std::size_t native_count = 0;
+    const auto *native_modules = ps2x::iop::detail::iopNativeModules(native_count);
+    const ps2x::iop::detail::IopNativeModule *compiled_body = nullptr;
+    for (std::size_t i = 0; i < native_count; ++i) {
+        const auto &entry = native_modules[i];
+        if (!entry.name || !entry.run || module_name != entry.name || entry.base != base ||
+            entry.textSize != text_size || entry.hash != text_hash) continue;
+        if (compiled_body) {
+            compiled_body = nullptr;
+            break;
+        }
+        compiled_body = &entry;
+    }
+#else
+    const void *compiled_body = nullptr;
+#endif
+    if (native_strict() && !compiled_body) {
+        std::fprintf(stderr,
+                     "[iop-native-stop] no matching ahead-of-time C++ body for %s base=0x%08X text=0x%X hash=%016llX\n",
+                     module_name.c_str(), base, text_size, static_cast<unsigned long long>(text_hash));
+        std::fflush(stderr);
+        std::abort();
+    }
+#ifdef PS2_IOP_AOT_IMPORTS_ENABLED
+    std::size_t bridge_count = 0;
+    const auto *bridges = aot_imports::modules(bridge_count);
+    const auto *bridge = text_size && text_size <= total
+        ? aot_imports::find(bridges, bridge_count, module_name.c_str(), base, text_size,
+                            fnv1a64(ram_ptr(base), text_size)) : nullptr;
+#endif
     link_imports(base, total);
     const int id = g_next_module++;
     g_modules[id] = Module{id, module_name, base, total, base + entry, base + gp};
+#ifdef PS2_IOP_AOT_MODULES_ENABLED
+    if (compiled_body) g_compiled_iop_modules[id] = compiled_body;
+#endif
+#ifdef PS2_IOP_AOT_IMPORTS_ENABLED
+    if (bridge) {
+        g_compiled_import_modules[id] = bridge;
+        if (g_trace_modules)
+            std::fprintf(stderr, "[iop-aot-import] matched module=%s base=0x%08X text=0x%X hash=%016llX\n",
+                         module_name.c_str(), base, text_size,
+                         static_cast<unsigned long long>(bridge->text_hash));
+    }
+#endif
     if (g_trace_modules) std::fprintf(stderr, "[iop] module %d %s at 0x%08X size 0x%X entry 0x%08X\n", id, module_name.c_str(), base, total, base + entry);
 
     std::vector<std::string> argv{path};
@@ -1045,6 +1506,11 @@ namespace ps2::iop::kernel {
 
 void state(ps2::state::Stream &s) {
     s.tag("iopkern");
+#ifdef PS2_IOP_AOT_IMPORTS_ENABLED
+    // Captured hashes cover pre-link text; a restored state contains rewritten
+    // stubs and cannot reestablish that identity without separate metadata.
+    if (s.loading()) g_compiled_import_modules.clear();
+#endif
     if (s.saving() && g_nesting) throw std::runtime_error("the IOP is inside a guest call");
     s.map(g_threads, [&s](Thread &t) {
         if (s.saving() && t.on_exit) throw std::runtime_error("an IOP module is still starting");
@@ -1062,7 +1528,7 @@ void state(ps2::state::Stream &s) {
         s.pod(t.wait);
         s.pod(t.wait_id);
         s.pod(t.order);
-        s.pod(t.context);
+        state_cpu(s, t.context);
         s.pod(t.rpc_queue);
         s.pod(t.rpc_server);
         s.pod(t.event_bits);
@@ -1079,6 +1545,7 @@ void state(ps2::state::Stream &s) {
         s.pod(m.entry);
         s.pod(m.gp);
     });
+    state_aot_bindings(s);
     s.string_map(g_libraries, [&s](std::uint32_t &table) { s.pod(table); });
     s.map(g_used);
     s.map(g_interrupts);
@@ -1123,12 +1590,11 @@ namespace ps2::iop {
 
 void state(ps2::state::Stream &s) {
     s.tag("iop");
-    s.pod(g_cpu);
+    state_cpu(s, g_cpu);
     s.bytes(g_ram, kRamSize);
     kernel::state(s);
     kernel::libs_state(s);
-    kernel::cdvd_state(s);
-    kernel::cdvdfsv_state(s);
+    kernel::legacy_storage_state(s);
     hw::state(s);
     sio2::state(s);
     padman::state(s);

@@ -361,7 +361,6 @@ void record_start(const fs::path &file, const fs::path &state, CardAt card_at) {
     g_rec.buffer = "ps2-inputs 1\ncheck-every " + std::to_string(kCheckEvery) + " slices " + std::to_string(kSlices) + "\n";
     g_rec.buffer += std::string("pal ") + (g_options.pal ? "1" : "0") + "\n";
     if (!g_options.program_path.empty()) g_rec.buffer += "program " + g_options.program_path + "\n";
-    if (!g_options.disc_path.empty()) g_rec.buffer += "disc " + g_options.disc_path + "\n";
     if (state.empty()) g_rec.buffer += "start power-on frame 0\n";
     else g_rec.buffer += "start state " + os::utf8(state.filename()) + " frame " + std::to_string(g_frames) + "\n";
     g_rec.buffer += "recorded " + stamp() + "\n";
@@ -595,7 +594,7 @@ bool looks_like_state(const std::vector<std::uint8_t> &data) {
     std::uint32_t version = 0;
     std::memcpy(&version, data.data() + sizeof kStateMagic, sizeof version);
     static const char kEnd[8] = {'e', 'n', 'd', 0, 0, 0, 0, 0};
-    return (version == kStateVersion || version == 4) && std::memcmp(data.data() + data.size() - 8, kEnd, 8) == 0;  // 4: before the HLE replies
+    return (version == kStateVersion || version == kStateVersion - 1 || version == 4) && std::memcmp(data.data() + data.size() - 8, kEnd, 8) == 0;  // previous current version remains readable; 4: before the HLE replies
 }
 
 // A state does not hold the memory card, so a quick save has a copy of the card beside it (<state>.ps2). Loading a state never

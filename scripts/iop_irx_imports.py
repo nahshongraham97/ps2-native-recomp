@@ -20,6 +20,7 @@ from typing import Any
 PT_LOAD = 1
 PT_IOPMOD = 0x70000080
 IOP_IMPORT_MAGIC = 0x41E00000
+IOP_EXPORT_MAGIC = 0x41C00000
 IOP_IMPORT_RETURN = 0x03E00008  # jr ra
 IOP_IMPORT_INDEX_MASK = 0xFFFF0000
 IOP_IMPORT_INDEX_OP = 0x24000000  # addiu v0, zero, index
@@ -146,6 +147,61 @@ def scan_import_tables(image: bytes | bytearray) -> list[dict[str, Any]]:
     return tables
 
 
+def scan_export_tables(image: bytes | bytearray) -> list[dict[str, Any]]:
+    """Inventory unrelocated IOP export offsets; do not infer function names."""
+    tables = []
+    for at in range(0, max(0, len(image) - 24 + 1), 4):
+        if _u32(image, at) != IOP_EXPORT_MAGIC:
+            continue
+        try:
+            name = _read_c_string(image, at + 12, 8)
+        except UnicodeDecodeError:
+            continue
+        if not re.fullmatch(r"[A-Za-z0-9_]{1,8}", name):
+            continue
+        entries = []
+        cursor = at + 20
+        while cursor + 4 <= len(image):
+            target = _u32(image, cursor)
+            if target == 0:
+                break
+            if target & 3 or target >= len(image):
+                entries = []
+                break
+            entries.append({"ordinal": len(entries), "image_target": f"0x{target:08X}"})
+            cursor += 4
+        if entries and cursor + 4 <= len(image) and _u32(image, cursor) == 0:
+            tables.append({"image_offset": f"0x{at:08X}", "library": name,
+                           "version": f"0x{_u16(image, at + 8):04X}", "exports": entries})
+    return tables
+
+
+def scan_relocations(data: bytes, image_size: int) -> list[dict[str, int]]:
+    """Return ELF32 REL records without applying or assuming their semantics."""
+    shoff, shentsize, shnum = _u32(data, 32), _u16(data, 46), _u16(data, 48)
+    if not shnum:
+        return []
+    if shentsize < 40 or shoff > len(data) or shnum > (len(data) - shoff) // shentsize:
+        raise ValueError("section header table is truncated")
+    records = []
+    for index in range(shnum):
+        sh = shoff + index * shentsize
+        if _u32(data, sh + 4) != 9:  # SHT_REL
+            continue
+        offset, size, target, entsize = (_u32(data, sh + n) for n in (16, 20, 28, 36))
+        if entsize != 8 or size % entsize or offset > len(data) or size > len(data) - offset:
+            raise ValueError("invalid relocation section")
+        if target >= shnum:
+            raise ValueError("relocation target section is invalid")
+        for at in range(offset, offset + size, entsize):
+            address, info = _u32(data, at), _u32(data, at + 4)
+            if address > image_size or image_size - address < 4:
+                raise ValueError("relocation address is outside the load image")
+            records.append({"offset": address, "type": info & 0xFF, "symbol": info >> 8,
+                            "target_section": target})
+    return records
+
+
 def inspect_irx(path: Path) -> dict[str, Any]:
     data = path.read_bytes()
     image, load, module_name = _parse_elf_load_image(data)
@@ -169,6 +225,8 @@ def inspect_irx(path: Path) -> dict[str, Any]:
             for key, value in load.items()
         },
         "imports": imports,
+        "exports": scan_export_tables(image),
+        "relocations": scan_relocations(data, len(image)),
     }
 
 

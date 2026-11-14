@@ -563,7 +563,12 @@ std::optional<std::string> extracted_file_path(std::uint32_t sector, std::uint32
 }
 
 std::optional<std::string> native_vfs_path(const std::string &path) {
-    return native_overlay_path_for(path);
+    if (const auto overlay = native_overlay_path_for(path)) return overlay;
+    // A validated strict extraction can be read by name directly. Keep the
+    // layout lookup and size checks in extracted_file_path, but don't route
+    // subsequent ioman file reads through CDVD sector addresses.
+    if (extracted_files_strict()) return extracted_file_path(path);
+    return std::nullopt;
 }
 
 bool read_file(const std::string &path, std::vector<std::uint8_t> &out) {
@@ -573,7 +578,7 @@ bool read_file(const std::string &path, std::vector<std::uint8_t> &out) {
         if (ec || host_size > std::numeric_limits<std::uint32_t>::max()) return false;
         if (read_host_file(*host_path, out, static_cast<std::uint32_t>(host_size))) {
             if (!os::env("PS2_TRACE_DISC_FILES").empty())
-                std::fprintf(stderr, "[disc-vfs-overlay] read %s (%llu bytes) from %s\n", path.c_str(),
+                std::fprintf(stderr, "[disc-vfs-direct] read %s (%llu bytes) from %s\n", path.c_str(),
                              static_cast<unsigned long long>(host_size), host_path->c_str());
             return true;
         }

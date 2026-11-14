@@ -1,9 +1,12 @@
 #include "iop.hpp"
 #include "kernel.hpp"
+#include "dev9_offline.hpp"
+#include "libsd_native.hpp"
 #include "mcserv.hpp"
 #include "mwfilefr.hpp"
 #include "padman.hpp"
 #include "sio2.hpp"
+#include "usbd_offline.hpp"
 
 #include <cstdint>
 #include <cstdio>
@@ -125,6 +128,14 @@ void native_sio2_transfer(Cpu &c) {
     c.r[2] = 1;
 }
 
+void native_mwfile_library_init(Cpu &c) {
+    // MWFILEFR's host-native module start installs the filesystem SIF RPC
+    // service before the retail MSL initializer calls mwfile v1.03 ordinal
+    // 15. That call's return value is unused at its observed callsite, so the
+    // native boundary reports success without resetting the active service.
+    c.r[2] = 0;
+}
+
 void native_sio2_transfer_reset(Cpu &c) { c.r[2] = 0; }
 
 void native_sio2_transfer_init(Cpu &c) { c.r[2] = 0; }
@@ -186,6 +197,8 @@ void install_native_modules() {
     padman::reset();
     mcserv::reset();
     register_native_mwfilefr_job();
+    libsd_native::reset();
+    usbd_offline::reset();
     if (g_native_modules_registered) return;
 
     NativeIopModule sio2man;
@@ -226,6 +239,40 @@ void install_native_modules() {
     };
     register_native_module(std::move(mcserv_module));
 
+    // DEV9 is replaced by a host-native offline service. It loads successfully
+    // in strict mode and returns the SDK's unavailable-device codes through
+    // the dev9 v1.9 import table; no guest DEV9 instructions are executed.
+    dev9_offline::reset();
+    register_native_module(dev9_offline::make_module());
+    register_native_module(usbd_offline::make_module());
+
+    // LGKBM has no exported IOP library. Its selected-disc contract is the
+    // EE-facing SIF RPC endpoint installed by sif::install_servers(); register
+    // the module name so strict loads use that host endpoint without entering
+    // the guest IRX init/thread code.
+    NativeIopModule lgkbm_module;
+    lgkbm_module.name = "LGKBM";
+    lgkbm_module.start = [](const std::string &) {
+        std::fprintf(stderr,
+                     "[iop-native] LGKBM host SIF service active at 0x61766973; guest IRX is not loaded\n");
+        return true;
+    };
+    register_native_module(std::move(lgkbm_module));
+
+    // LGAUD is an optional USB audio accessory driver. In this no-device
+    // runtime, the retail IRX has no importers among the extracted IRX set and
+    // its initialization reports no EE RPC server when no supported device is
+    // present. Keep the module load native and expose no device-only exports.
+    NativeIopModule lgaud_module;
+    lgaud_module.name = "LGAUD";
+    lgaud_module.start = [](const std::string &) {
+        std::fprintf(stderr,
+                     "[iop-native] LGAUD offline replacement active; no USB audio device is attached; guest IRX is not loaded\n");
+        return true;
+    };
+    register_native_module(std::move(lgaud_module));
+    register_native_module(libsd_native::make_module());
+
     NativeIopModule mwfilefr;
     mwfilefr.name = "MWFILEFR";
     // module_name_of() strips the extension from disc paths, so MWFILEFR.IRX
@@ -236,6 +283,16 @@ void install_native_modules() {
         install_native_mwfilefr_service();
         return true;
     };
+    NativeIopLibrary mwfile_library;
+    mwfile_library.name = "mwfile";
+    mwfile_library.version = 0x0103u;
+    mwfile_library.exports.push_back({4, mwfilefr_open_import});
+    mwfile_library.exports.push_back({5, mwfilefr_close_import});
+    mwfile_library.exports.push_back({10, mwfilefr_read_import});
+    mwfile_library.exports.push_back({13, mwfilefr_ordinal13_return_import});
+    mwfile_library.exports.push_back({15, native_mwfile_library_init});
+    mwfile_library.exports.push_back({16, mwfilefr_ordinal16_worker_dispatch_import});
+    mwfilefr.libraries.push_back(std::move(mwfile_library));
     register_native_module(std::move(mwfilefr));
     g_native_modules_registered = true;
 }

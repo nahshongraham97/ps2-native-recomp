@@ -4,7 +4,7 @@
 #include "iop.hpp"
 #include "io.hpp"
 #include "kernel.hpp"
-#include "ps2/disc.hpp"
+#include "mka/content_vfs.hpp"
 #include "ps2/memory.hpp"
 #include "ps2/system.hpp"
 
@@ -469,8 +469,9 @@ char g_loadfile_version[4] = {'3', '0', '0', '0'};
 
 void read_reboot_image(const std::string &image_path) {
     std::vector<std::uint8_t> image;
-    if (!disc::read_file(image_path, image) || image.empty()) return;
-    image.resize((image.size() + disc::kSector - 1) / disc::kSector * disc::kSector, 0);
+    if (!mka::content::read_file(image_path, image) || image.empty()) return;
+    constexpr std::size_t kIopModuleAlignment = 2048u;
+    image.resize((image.size() + kIopModuleAlignment - 1) / kIopModuleAlignment * kIopModuleAlignment, 0);
     for (std::size_t at = 0; at + 16 <= image.size() && image[at]; at += 16)
         if (std::memcmp(&image[at], "FILEIO\0", 7) == 0) g_fileio_async = true;
     static const char kTag[] = "PsIIloadfile";
@@ -1156,11 +1157,11 @@ void install_servers() {
         return true;
     });
 
-    // LGKBM (SID 0x61766973) is loaded as a guest IRX, but its method 1 request
-    // remains in the guest server loop in this runtime. Route this protocol
-    // through the ordinary SIF HLE reply machinery. The reply fields follow
-    // the Armageddon HLE contract and the KillzoneRecomp protocol findings;
-    // the active endpoint is inert and emits no keyboard events.
+    // LGKBM's EE-facing SID 0x61766973 is serviced by this host RPC callback.
+    // SIF setup installs the override independently of the IRX; the native
+    // LGKBM module entry prevents the guest init/thread code from running. The
+    // device-list and event-poll reply fields follow the observed Armageddon
+    // contract; the endpoint is inert and emits no keyboard events.
     register_hle_override_internal(0x61766973u, [](std::uint32_t method, std::uint32_t args, std::uint32_t args_size,
                                          std::uint32_t ret, std::uint32_t ret_size) {
         const std::uint32_t request = args & (kRamSize - 1u);
@@ -1487,7 +1488,6 @@ void install_sif() {
     sif::reset();
     sif::install_iop_side();
     sif::install_servers();
-    install_cdvdfsv();
 }
 
 }

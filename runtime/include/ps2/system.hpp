@@ -7,6 +7,10 @@
 #include <string>
 #include <vector>
 
+namespace ps2::gs {
+struct DisplayRegs;
+}
+
 namespace ps2 {
 
 inline constexpr std::uint64_t kEeClock = 294912000ull;
@@ -45,7 +49,6 @@ struct Options {
     bool rate_forced = false;
     std::uint64_t max_frames = 0;
     std::string misses_path;
-    std::string disc_path;
     bool trace_iop_modules = false;
     bool trace_iop_hle = false;
     std::string frames_dir;
@@ -146,7 +149,7 @@ void post_present();
 std::uint32_t picture_frame();  // the emulation frame of the picture render_pending is presenting now
 enum class Rendered { idle, presented, busy };
 Rendered render_pending(bool surface, const std::function<void(const std::uint32_t *rgba, std::uint32_t width, std::uint32_t height)> &copy,
-                        const std::function<void()> &before_present, double budget_ms);
+                        const std::function<void(const gs::DisplayRegs &)> &before_present, double budget_ms);
 void wait_render_work(int timeout_ms);
 void wake_render_thread();
 bool copy_frame(std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height);

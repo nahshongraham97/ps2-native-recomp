@@ -1,4 +1,5 @@
 #include "ps2/disc.hpp"
+#include "../runtime/src/iop/io.hpp"
 
 #include <array>
 #include <chrono>
@@ -80,7 +81,8 @@ int main() {
     ok = ok && set_env("PS2_DISC_FILES", extracted.string().c_str());
     ok = ok && check(open((work / "no-iso-needed.iso").string()), "valid extracted layout failed to mount without an ISO") &&
          check(is_open(), "mounted extracted source was reported closed") &&
-         check(ready(1, 1), "extracted source was not ready");
+         check(ready(1, 1), "extracted source was not ready") &&
+         check(native_vfs_path("cdrom0:/TEST.BIN").has_value(), "strict extracted file did not resolve to a direct host path");
 
     std::array<std::uint8_t, kSector> sector{};
     ok = ok && check(read(1, 1, sector.data()), "file-backed sector read failed") &&
@@ -90,6 +92,16 @@ int main() {
     ok = ok && check(read_file("cdrom0:/TEST.BIN", file), "strict ioman-style extracted file read failed") &&
          check(file == std::vector<std::uint8_t>({'A', 'B', 'C'}), "extracted file read returned wrong bytes") &&
          check(!read_file("cdrom0:/MISSING.BIN", file), "strict mode accepted an unlisted extracted file");
+
+    const int fd = ps2::iop::io::open("cdrom0:/TEST.BIN", 0);
+    std::array<std::uint8_t, 3> stale{};
+    ok = ok && check(fd >= 3, "could not open extracted file for stale-handle check") &&
+         write_bytes(extracted / "TEST.BIN", {'A'}) &&
+         check(ps2::iop::io::read(fd, stale.data(), 3) < 0,
+               "strict read accepted an extracted file truncated after open") &&
+         check(ps2::iop::io::seek(fd, 0, 1) == 0, "failed strict read advanced file position") &&
+         check(ps2::iop::io::close(fd) == 0, "could not close extracted file") &&
+         write_bytes(extracted / "TEST.BIN", {'A', 'B', 'C'});
 
     ok = ok && write_bytes(native_overlay / "NEW" / "CUSTOM.BIN", {'N', 'E', 'W', '!'}) &&
          write_bytes(native_overlay / "TEST.BIN", {'X', 'Y', 'Z', '1', '2'}) &&
@@ -103,6 +115,15 @@ int main() {
          check(file == std::vector<std::uint8_t>({'X', 'Y', 'Z', '1', '2'}), "native overlay did not use the host file size") &&
          check(!native_vfs_path("cdrom0:/../TEST.BIN"), "native overlay accepted a parent traversal") &&
          check(!read_file("cdrom0:/UNREFERENCED.BIN", file), "strict mode accepted a missing overlay/index path");
+
+    const int overlay_fd = ps2::iop::io::open("cdrom0:/NEW/CUSTOM.BIN", 0);
+    std::array<std::uint8_t, 4> overlay_stale{};
+    ok = ok && check(overlay_fd >= 3, "could not open native overlay for stale-handle check") &&
+         write_bytes(native_overlay / "NEW" / "CUSTOM.BIN", {'N'}) &&
+         check(ps2::iop::io::read(overlay_fd, overlay_stale.data(), 4) < 0,
+               "strict read accepted an overlay file truncated after open") &&
+         check(ps2::iop::io::seek(overlay_fd, 0, 1) == 0, "failed overlay read advanced file position") &&
+         check(ps2::iop::io::close(overlay_fd) == 0, "could not close native overlay file");
 
     std::error_code symlink_error;
     std::filesystem::create_directory_symlink(outside, native_overlay / "LINK", symlink_error);

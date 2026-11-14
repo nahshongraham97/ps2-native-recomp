@@ -2,28 +2,224 @@
 
 #include "kernel.hpp"
 #include "sif.hpp"
+#include "sio2.hpp"
 #include "ps2/memory.hpp"
 
 #include <algorithm>
+#include <array>
+#include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <limits>
+#include <vector>
 
 namespace ps2::iop::mcserv {
 
 namespace {
 
 constexpr std::uint32_t kSifSid = 0x80000400u;
-constexpr std::uint32_t kMcDeniedPermit = static_cast<std::uint32_t>(-5);
+constexpr std::int32_t kMcNoFormat = -2;
+constexpr std::int32_t kMcFailDetect2 = -13;
 constexpr std::uint32_t kMcDescParamBytes = 48u;
 constexpr std::uint32_t kMcRpcStatBytes = 12u;
+constexpr std::uint32_t kMcEndParam2Bytes = 192u;
+constexpr std::size_t kMcPageBytes = 512u;
+constexpr std::size_t kMcSpareBytes = 16u;
+constexpr std::size_t kMcPageStride = kMcPageBytes + kMcSpareBytes;
+constexpr std::uint32_t kMcPagesPerCluster = 2u;
+constexpr std::uint32_t kMcClusterBytes = static_cast<std::uint32_t>(kMcPageBytes * kMcPagesPerCluster);
+constexpr std::uint32_t kMcFatEntriesPerCluster = 256u;
+constexpr std::uint32_t kMcIndirectFatCount = 32u;
+
+struct McDescParam {
+    std::int32_t fd;
+    std::int32_t port;
+    std::int32_t slot;
+    std::int32_t size;
+    std::int32_t offset;
+    std::int32_t origin;
+    std::uint32_t buffer;
+    std::uint32_t param;
+    std::uint8_t data[16];
+};
+
+struct McEndParam2 {
+    std::int32_t type;
+    std::int32_t free;
+    std::uint32_t dest1;
+    std::uint32_t dest2;
+    std::uint8_t src1[64];
+    std::uint8_t src2[64];
+    union {
+        std::int32_t formatted;
+        std::uint8_t unused[48];
+    };
+};
+
+struct McEndParam {
+    std::int32_t type;
+    std::int32_t free;
+    std::uint32_t dest1;
+    std::uint32_t dest2;
+    std::uint8_t src1[16];
+    std::uint8_t src2[16];
+    std::uint8_t unused[16];
+};
+
+static_assert(sizeof(McDescParam) == kMcDescParamBytes);
+static_assert(offsetof(McDescParam, offset) == 16u);
+static_assert(offsetof(McDescParam, param) == 28u);
+static_assert(sizeof(McEndParam2) == kMcEndParam2Bytes);
+static_assert(offsetof(McEndParam2, free) == 4u);
+static_assert(offsetof(McEndParam2, formatted) == 144u);
+static_assert(sizeof(McEndParam) == 64u);
 
 std::uint32_t ee_physical(std::uint32_t address) { return address & 0x1FFFFFFFu; }
 
 bool valid_ee_range(std::uint32_t address, std::uint32_t size) {
     const std::uint32_t physical = ee_physical(address);
     return physical < ps2::kRamSize && size <= ps2::kRamSize - physical;
+}
+
+std::uint16_t read_le16(const std::uint8_t *bytes) {
+    return static_cast<std::uint16_t>(bytes[0]) |
+           static_cast<std::uint16_t>(static_cast<std::uint16_t>(bytes[1]) << 8);
+}
+
+std::uint32_t read_le32(const std::uint8_t *bytes) {
+    return static_cast<std::uint32_t>(bytes[0]) |
+           (static_cast<std::uint32_t>(bytes[1]) << 8) |
+           (static_cast<std::uint32_t>(bytes[2]) << 16) |
+           (static_cast<std::uint32_t>(bytes[3]) << 24);
+}
+
+std::int32_t read_lei32(const std::uint8_t *bytes) {
+    const std::uint32_t raw = read_le32(bytes);
+    std::int32_t value = 0;
+    std::memcpy(&value, &raw, sizeof value);
+    return value;
+}
+
+bool read_card_cluster(const std::vector<std::uint8_t> &image,
+                       std::uint32_t cluster,
+                       std::uint32_t clusters_per_card,
+                       std::array<std::uint8_t, kMcClusterBytes> &out) {
+    if (cluster >= clusters_per_card) return false;
+    const std::uint64_t first_page = static_cast<std::uint64_t>(cluster) * kMcPagesPerCluster;
+    for (std::uint32_t page = 0; page < kMcPagesPerCluster; ++page) {
+        const std::uint64_t source = (first_page + page) * kMcPageStride;
+        const std::uint64_t destination = static_cast<std::uint64_t>(page) * kMcPageBytes;
+        if (source + kMcPageBytes > image.size()) return false;
+        std::memcpy(out.data() + destination, image.data() + source, kMcPageBytes);
+    }
+    return true;
+}
+
+bool mc_card_formatted_and_free(const std::vector<std::uint8_t> &image,
+                                std::uint32_t &free_clusters) {
+    constexpr char kSuperblockMagic[] = "Sony PS2 Memory Card Format ";
+    constexpr std::uint32_t kExpectedCardBytes = 8650752u;
+    constexpr std::size_t kSuperblockBytes = 384u;
+    if (image.size() != kExpectedCardBytes || image.size() < kSuperblockBytes ||
+        std::memcmp(image.data(), kSuperblockMagic, sizeof(kSuperblockMagic) - 1u) != 0)
+        return false;
+
+    const std::uint8_t *super = image.data();
+    const std::uint16_t page_size = read_le16(super + 40u);
+    const std::uint16_t pages_per_cluster = read_le16(super + 42u);
+    const std::uint16_t block_size_pages = read_le16(super + 44u);
+    const std::uint32_t clusters_per_card = read_le32(super + 48u);
+    const std::uint32_t alloc_offset = read_le32(super + 52u);
+    const std::uint32_t rootdir_cluster = read_le32(super + 60u);
+    if (page_size != kMcPageBytes || pages_per_cluster != kMcPagesPerCluster ||
+        block_size_pages == 0 || block_size_pages % pages_per_cluster != 0 ||
+        clusters_per_card == 0 || alloc_offset >= clusters_per_card)
+        return false;
+
+    const std::uint64_t page_count = static_cast<std::uint64_t>(clusters_per_card) * pages_per_cluster;
+    if (page_count * kMcPageStride > image.size()) return false;
+
+    // MCMAN checks the root directory's first two records before marking a card formatted.
+    const std::uint64_t root_cluster64 = static_cast<std::uint64_t>(alloc_offset) + rootdir_cluster;
+    if (root_cluster64 >= clusters_per_card) return false;
+    std::array<std::uint8_t, kMcClusterBytes> root{};
+    if (!read_card_cluster(image, static_cast<std::uint32_t>(root_cluster64), clusters_per_card, root)) return false;
+    const auto entry_name_is = [&root](std::size_t entry, const char *name) {
+        const std::size_t name_offset = entry * 512u + 64u;
+        const std::size_t length = std::strlen(name);
+        return name_offset + length < root.size() &&
+               std::memcmp(root.data() + name_offset, name, length) == 0 &&
+               root[name_offset + length] == 0;
+    };
+    if (!entry_name_is(0u, ".") || !entry_name_is(1u, "..")) return false;
+
+    const std::uint32_t clusters_per_block = block_size_pages / pages_per_cluster;
+    const std::uint64_t allocatable_target =
+        (static_cast<std::uint64_t>(clusters_per_card) * 1000u) / 1024u + 1u;
+    std::array<std::int32_t, kMcIndirectFatCount> bad_blocks{};
+    for (std::uint32_t i = 0; i < kMcIndirectFatCount; ++i)
+        bad_blocks[i] = read_lei32(super + 208u + i * 4u);
+
+    std::uint32_t current_cluster = alloc_offset;
+    std::uint64_t valid_cluster_count = 0;
+    bool current_block_valid = false;
+    while (valid_cluster_count < allocatable_target && current_cluster < clusters_per_card) {
+        if (current_cluster == alloc_offset || current_cluster % clusters_per_block == 0u) {
+            current_block_valid = true;
+            const std::int32_t block = static_cast<std::int32_t>(current_cluster / clusters_per_block);
+            for (const std::int32_t bad : bad_blocks)
+                if (bad == block) current_block_valid = false;
+        }
+        if (current_block_valid) ++valid_cluster_count;
+        ++current_cluster;
+    }
+    if (valid_cluster_count != allocatable_target) return false;
+    const std::uint32_t max_allocatable_clusters = current_cluster - alloc_offset;
+
+    std::uint32_t free_count = 0;
+    std::uint32_t cached_fat_cluster = std::numeric_limits<std::uint32_t>::max();
+    std::array<std::uint8_t, kMcClusterBytes> indirect_fat{};
+    std::array<std::uint8_t, kMcClusterBytes> fat{};
+    for (std::uint32_t fat_index = 0; fat_index < max_allocatable_clusters; ++fat_index) {
+        const std::uint32_t indirect_index = fat_index / kMcFatEntriesPerCluster;
+        const std::uint32_t fat_offset = fat_index % kMcFatEntriesPerCluster;
+        if (fat_offset == 0u) {
+            const std::uint32_t ifc_index = indirect_index / kMcFatEntriesPerCluster;
+            if (ifc_index >= kMcIndirectFatCount) return false;
+            const std::uint32_t ifc_cluster = read_le32(super + 80u + ifc_index * 4u);
+            if (!read_card_cluster(image, ifc_cluster, clusters_per_card, indirect_fat)) return false;
+            const std::uint32_t indirect_offset = indirect_index % kMcFatEntriesPerCluster;
+            cached_fat_cluster = read_le32(indirect_fat.data() + indirect_offset * 4u);
+            if (!read_card_cluster(image, cached_fat_cluster, clusters_per_card, fat)) return false;
+        }
+
+        const std::int32_t entry = read_lei32(fat.data() + fat_offset * 4u);
+        const std::uint32_t block = (alloc_offset + fat_index) / clusters_per_block;
+        const bool bad_block = std::find(bad_blocks.begin(), bad_blocks.end(), static_cast<std::int32_t>(block)) != bad_blocks.end();
+        if (entry >= 0 && !bad_block) ++free_count;
+    }
+    free_clusters = free_count;
+    return true;
+}
+
+std::int32_t mc_get_info2(const McDescParam &request, McEndParam2 &reply) {
+    // The native SIO2 backend exposes one card image as EE port 0, slot 0.
+    if (request.port != 0 || request.slot != 0) return kMcFailDetect2;
+
+    std::vector<std::uint8_t> image;
+    if (!sio2::card_image(image, true)) return kMcFailDetect2;
+    std::uint32_t free_clusters = 0;
+    if (!mc_card_formatted_and_free(image, free_clusters)) return kMcNoFormat;
+
+    if (request.origin > 0) reply.type = 2; // sceMcTypePS2
+    if (request.offset > 0)
+        reply.free = free_clusters > static_cast<std::uint32_t>(std::numeric_limits<std::int32_t>::max())
+                         ? 0
+                         : static_cast<std::int32_t>(free_clusters);
+    if (request.size > 0) reply.formatted = 1;
+    return 0;
 }
 
 [[noreturn]] void strict_stop(const char *reason, std::uint32_t method,
@@ -55,25 +251,114 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
     if (!valid_ee_range(args, args_size) || !valid_ee_range(ret, ret_size))
         strict_stop("RPC buffer outside EE RAM", method, args, args_size, ret_size);
 
-    // PS2SDK libmc probes XMCMAN first and treats a completed -5 init result as
-    // an unhandled protocol before trying legacy MCMAN. That behavior is a
-    // reference expectation; the retail game's use of this exact libmc path has
-    // not yet been established. This deliberately does not claim card support.
+    // The recovered retail FUN_0011bfa0 calls XMCMAN method 0xFE with a 48-byte
+    // request and a 12-byte reply. It rejects version words below 0x20A and
+    // 0x20E. Advertise those minimum versions so the retail initialization
+    // path can continue; this handshake does not imply that every card RPC is
+    // implemented below.
     if (method == 0xFEu) {
         if (args_size != kMcDescParamBytes || ret_size != kMcRpcStatBytes)
             strict_stop("unexpected XMCMAN init buffer sizes", method, args, args_size, ret_size);
 
         std::uint8_t *reply = ps2::fast<std::uint8_t>(ee_physical(ret));
         if (!reply) strict_stop("XMCMAN init reply is outside EE RAM", method, args, args_size, ret_size);
-        const std::uint32_t stat[3] = {kMcDeniedPermit, 0u, 0u};
+        const std::uint32_t stat[3] = {
+            0u,
+            0x20Au,
+            0x20Eu,
+        };
         std::memcpy(reply, stat, sizeof stat);
         std::fprintf(stderr,
-                     "[iop-native] MCSERV returned -5 for XMCMAN init (0xFE), EE reply buffer 0x%08X; legacy fallback remains to be observed\n",
+                     "[iop-native] MCSERV XMCMAN init accepted with retail minimum versions 0x20A/0x20E; reply 0x%08X; unsupported card RPCs remain fail-closed\n",
                      ee_physical(ret));
         return true;
     }
 
-    strict_stop("legacy/card RPC has no host implementation yet", method,
+    // Legacy MCSERV CMD_INIT delegates to McRetOnly, which returns success.
+    // Initialization alone does not imply that card operations are available;
+    // unimplemented RPCs below still stop rather than fabricating results.
+    if (method == 0x70u) {
+        if (args_size != kMcDescParamBytes || ret_size != sizeof(std::uint32_t))
+            strict_stop("unexpected legacy init buffer sizes", method, args, args_size, ret_size);
+        std::uint8_t *reply = ps2::fast<std::uint8_t>(ee_physical(ret));
+        if (!reply) strict_stop("legacy init reply is outside EE RAM", method, args, args_size, ret_size);
+        const std::uint32_t result = 0;
+        std::memcpy(reply, &result, sizeof result);
+        std::fprintf(stderr, "[iop-native] MCSERV legacy init completed; card operations remain unavailable\n");
+        return true;
+    }
+
+    // Legacy MCSERV CMD_GETINFO (0x78) returns mcEndParam_t rather than the
+    // extended mcEndParam2_t used by XMCSERV CMD_GETINFO (0x01).
+    if (method == 0x78u) {
+        if (args_size != kMcDescParamBytes || ret_size != sizeof(std::int32_t))
+            strict_stop("unexpected legacy GetInfo buffer sizes", method, args, args_size, ret_size);
+        const std::uint8_t *request_bytes = ps2::fast<std::uint8_t>(ee_physical(args));
+        if (!request_bytes)
+            strict_stop("legacy GetInfo request is outside EE RAM", method, args, args_size, ret_size);
+        McDescParam request{};
+        std::memcpy(&request, request_bytes, sizeof request);
+        if (request.param == 0 || !valid_ee_range(request.param, sizeof(McEndParam)))
+            strict_stop("legacy GetInfo output is outside EE RAM", method, args, args_size, ret_size);
+        std::uint8_t *aux_bytes = ps2::fast<std::uint8_t>(ee_physical(request.param));
+        std::uint8_t *status_bytes = ps2::fast<std::uint8_t>(ee_physical(ret));
+        if (!aux_bytes || !status_bytes)
+            strict_stop("legacy GetInfo result is outside EE RAM", method, args, args_size, ret_size);
+
+        McEndParam aux{};
+        std::int32_t result = kMcFailDetect2;
+        if (request.port == 0 && request.slot == 0) {
+            std::vector<std::uint8_t> image;
+            if (sio2::card_image(image, true)) {
+                std::uint32_t free_clusters = 0;
+                if (mc_card_formatted_and_free(image, free_clusters)) {
+                    result = 0;
+                    if (request.size > 0) aux.type = 2; // sceMcTypePS2
+                    if (request.offset != 0)
+                        aux.free = free_clusters > static_cast<std::uint32_t>(std::numeric_limits<std::int32_t>::max())
+                                       ? 0
+                                       : static_cast<std::int32_t>(free_clusters);
+                } else {
+                    result = kMcNoFormat;
+                }
+            }
+        }
+        std::memcpy(aux_bytes, &aux, sizeof aux);
+        std::memcpy(status_bytes, &result, sizeof result);
+        std::fprintf(stderr,
+                     "[iop-native] MCSERV legacy GetInfo port=%d slot=%d status=%d free_clusters=%d type_requested=%d\n",
+                     request.port, request.slot, result, aux.free, request.size > 0);
+        return true;
+    }
+
+    // XMCSERV CMD_GETINFO (0x01) returns a 4-byte status and writes its
+    // mcEndParam2_t payload through the EE pointer in mcDescParam_t::param.
+    if (method == 0x01u) {
+        if (args_size != kMcDescParamBytes || ret_size != sizeof(std::int32_t))
+            strict_stop("unexpected XMCSERV GetInfo2 buffer sizes", method, args, args_size, ret_size);
+        const std::uint8_t *request_bytes = ps2::fast<std::uint8_t>(ee_physical(args));
+        if (!request_bytes)
+            strict_stop("XMCSERV GetInfo2 request is outside EE RAM", method, args, args_size, ret_size);
+        McDescParam request{};
+        std::memcpy(&request, request_bytes, sizeof request);
+        if (request.param == 0 || !valid_ee_range(request.param, kMcEndParam2Bytes))
+            strict_stop("XMCSERV GetInfo2 output is outside EE RAM", method, args, args_size, ret_size);
+        std::uint8_t *aux_bytes = ps2::fast<std::uint8_t>(ee_physical(request.param));
+        std::uint8_t *status_bytes = ps2::fast<std::uint8_t>(ee_physical(ret));
+        if (!aux_bytes || !status_bytes)
+            strict_stop("XMCSERV GetInfo2 result is outside EE RAM", method, args, args_size, ret_size);
+
+        McEndParam2 aux{};
+        const std::int32_t result = mc_get_info2(request, aux);
+        std::memcpy(aux_bytes, &aux, sizeof aux);
+        std::memcpy(status_bytes, &result, sizeof result);
+        std::fprintf(stderr,
+                     "[iop-native] MCSERV GetInfo2 port=%d slot=%d status=%d free_clusters=%d type_requested=%d format_requested=%d\n",
+                     request.port, request.slot, result, aux.free, request.origin > 0, request.size > 0);
+        return true;
+    }
+
+    strict_stop("card RPC has no native host implementation yet", method,
                 args, args_size, ret_size);
 }
 
@@ -84,7 +369,7 @@ void reset() { sif::unregister_hle_override(kSifSid); }
 void activate() {
     sif::register_hle_override(kSifSid, mcsrv_rpc);
     std::fprintf(stderr,
-                 "[iop-native] MCSERV host SIF replacement active at 0x%08X; card operations fail closed until implemented\n",
+                 "[iop-native] MCSERV host SIF replacement active at 0x%08X; GetInfo is native, unsupported card RPCs fail closed\n",
                  kSifSid);
 }
 

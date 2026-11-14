@@ -16,8 +16,7 @@ namespace ps2::iop::kernel {
 
 void state(ps2::state::Stream &s);
 void libs_state(ps2::state::Stream &s);
-void cdvd_state(ps2::state::Stream &s);
-void cdvdfsv_state(ps2::state::Stream &s);
+void legacy_storage_state(ps2::state::Stream &s);
 
 enum Status { kRun = 1, kReady = 2, kWait = 4, kSuspend = 8, kWaitSuspend = 12, kDormant = 16 };
 enum WaitKind { kWaitNone, kWaitSleep, kWaitDelay, kWaitSema, kWaitEvent, kWaitMbx, kWaitFpl, kWaitVblank, kWaitRpc, kWaitHle, kWaitVpl };
@@ -118,6 +117,9 @@ const std::map<int, Module> &modules();
 // to C++ generator is not present yet; current coverage is per registered
 // service, and direct import dispatch is only exercised by synthetic tests.
 using NativeIopFunction = std::function<void(Cpu &)>;
+// Loader-time activation for a host module replacement. This is not an IOP
+// entry-point translator or a generated call site; AOT-generated callers must
+// dispatch imported functions through invoke_native_import below.
 using NativeIopModuleStart = std::function<bool(const std::string &)>;
 struct NativeIopExport {
     std::uint32_t ordinal{};
@@ -136,12 +138,21 @@ struct NativeIopModule {
     std::vector<NativeIopLibrary> libraries;
 };
 void register_native_module(NativeIopModule module);
-// Direct entry used by AOT-generated IOP C++ callers. In the mixed diagnostic
-// runtime, link_imports can also route a matching guest import stub through an
-// HLE trampoline to this native export. That path still requires guest IOP
-// execution and is rejected by native-strict mode; no production IOP AOT caller
-// exists yet. In native-strict mode, an unresolved direct import stops.
+// Direct function-call seam for native C++ implementations of IOP imports.
+// Compiled IRX bodies call this through their identity-checked import bridge.
+// In native-strict mode, an unresolved import stops instead of falling through
+// to guest IOP instructions.
 bool invoke_native_import(const std::string &library, std::uint16_t version, std::uint32_t ordinal, Cpu &c);
+// Invoke a runtime-generated HLE trampoline as its registered host callback,
+// without fetching the synthetic opcode from IOP RAM.
+bool invoke_runtime_hle_stub(Cpu &c);
+// Dispatch an import only when its containing capture was identity-checked at load.
+bool invoke_compiled_import(Cpu &c);
+// Run an identity-checked ahead-of-time C++ IRX body for the current PC and
+// charge the executed instruction count against the IOP budget.
+bool invoke_compiled_module(Cpu &c, std::int64_t &budget);
+bool compiled_import_stub_matches(std::uint32_t address, const std::string &library,
+                                  std::uint16_t version, std::uint32_t ordinal);
 // Installs built-in host-native module/service descriptors. Called during
 // IOP kernel boot; this does not load or execute guest IRX instructions.
 void install_native_modules();
@@ -163,8 +174,6 @@ void deliver_interrupts();
 void install_libraries();
 void vblank_edge(bool start);
 void install_sif();
-void install_cdvdfsv();
-void install_cdvd();
 void install_io();
 
 void trace_hle(const char *library, const char *function, const Cpu &c);

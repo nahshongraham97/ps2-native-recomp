@@ -12,7 +12,6 @@
 #include "iop/sio2.hpp"
 #include "iop/spu2.hpp"
 #include "ipu/ipu.hpp"
-#include "ps2/disc.hpp"
 #include "ps2/ee_live.hpp"
 #include "kernel.hpp"
 #include "load_stats.hpp"
@@ -505,7 +504,7 @@ std::uint32_t video_options() { return g_video_options.load(std::memory_order_re
 namespace {
 
 constexpr char kStateMagic[8] = {'P', 'S', '2', 'S', 'T', 'A', 'T', 'E'};
-constexpr std::uint32_t kStateVersion = 12;
+constexpr std::uint32_t kStateVersion = 14;
 
 std::function<void()> event_action(int id, std::uint64_t at) {
     if (id == hw::kEventVblank) return vblank;
@@ -536,8 +535,9 @@ void machine_state(state::Stream &s) {
     // IOP-owned request packet storage for reverse RPC completions; 9 records
     // native VFS paths for open IOP files; 10 records the first MWFILEFR
     // experiment; 11 records native MWFILEFR work items and callback queues;
-    // 12 records native PADMAN endpoint and open-pad state.
-    if (version != kStateVersion && !(s.loading() && (version == 4 || version == 5 || version == 6 || version == 7 || version == 8 || version == 9 || version == 10 || version == 11))) throw std::runtime_error("state file from another version");
+    // 12 records native PADMAN endpoint and open-pad state; 13 adds IOP
+    // load-delay state for compiled C++ IRX execution; 14 stores SIO2 actuator alignment.
+    if (version != kStateVersion && !(s.loading() && version >= 4u && version < kStateVersion)) throw std::runtime_error("state file from another version");
     s.set_version(version);
     s.tag("ee");
     s.pod(g_cpu);
@@ -688,15 +688,6 @@ void boot(std::uint32_t entry, const std::vector<std::string> &args) {
     init_watch();
     hw::reset();
     kernel::reset();
-    if (disc::extracted_files_strict() || !g_options.disc_path.empty()) {
-        if (!disc::open(g_options.disc_path)) {
-            std::fprintf(stderr, "[ee] cannot open disc source %s\n", g_options.disc_path.c_str());
-            if (disc::extracted_files_strict()) {
-                halt("strict filesystem disc source unavailable");
-                return;
-            }
-        }
-    }
     iop::set_trace(g_options.trace_iop_modules, g_options.trace_iop_hle);
     iop::reset();
     std::vector<std::string> guest_args = args;
@@ -960,7 +951,7 @@ void post_present() { gs::post_present(); }
 std::uint32_t picture_frame() { return gs::present_frame(); }
 
 Rendered render_pending(bool surface, const std::function<void(const std::uint32_t *, std::uint32_t, std::uint32_t)> &copy,
-                        const std::function<void()> &before_present, double budget_ms) {
+                        const std::function<void(const gs::DisplayRegs &)> &before_present, double budget_ms) {
     static std::vector<std::uint32_t> frame;
     static thread_local bool tuned = false;
     if (!tuned) {
@@ -970,7 +961,7 @@ Rendered render_pending(bool surface, const std::function<void(const std::uint32
     core_sample(Who::Render);
     return gs::render_pending([&](const gs::DisplayRegs &regs) {
         quick::on_present(regs);  // the picture for an F9 report is taken here, on the thread that may read the GPU
-        if (before_present) before_present();
+        if (before_present) before_present(regs);
         if (surface) {
             gs::present(regs);
             if (!copy) return;

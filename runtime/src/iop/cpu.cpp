@@ -1,5 +1,6 @@
 #include "iop.hpp"
 #include "kernel.hpp"
+#include "ps2/memory.hpp"
 
 #include <cstdio>
 #include <cstdlib>
@@ -36,11 +37,38 @@ void probe(const Cpu &c, std::uint32_t pc) {
                  c.r[7], c.r[2], c.r[3], c.r[16], c.r[17], c.r[31], t ? t->id : 0, static_cast<unsigned long long>(kernel::now()));
     static const char *reg = std::getenv("PS2_IOP_PROBE_MEM");
     if (reg) {
-        const std::uint32_t base = phys(c.r[std::atoi(reg) & 31]);
+        const std::uint32_t base = phys(c.r[std::atoi(reg) & 31]) & (kRamSize - 1);
         if (base + 64 <= kRamSize) {
             std::fprintf(stderr, "[iop-probe]   r%s:", reg);
             for (std::uint32_t i = 0; i < 16; ++i) std::fprintf(stderr, " %08X", ram32(base + i * 4));
             std::fprintf(stderr, "\n");
+        }
+    }
+    // Optional fixed-address snapshot for a stopped IOP context. Interpret
+    // mirrors in the same way as ram_ptr(); never wrap the 64-byte window.
+    if (const char *spec = std::getenv("PS2_IOP_PROBE_ADDRESS")) {
+        char *end = nullptr;
+        const unsigned long raw = std::strtoul(spec, &end, 16);
+        if (end != spec && *end == '\0' && raw <= 0xFFFFFFFFul) {
+            const std::uint32_t base = phys(static_cast<std::uint32_t>(raw)) & (kRamSize - 1);
+            if (base <= kRamSize - 64) {
+                std::fprintf(stderr, "[iop-probe]   address %08lX:", raw);
+                for (std::uint32_t i = 0; i < 16; ++i) std::fprintf(stderr, " %08X", ram32(base + i * 4));
+                std::fprintf(stderr, "\n");
+            }
+        }
+    }
+    if (const char *spec = std::getenv("PS2_EE_PROBE_ADDRESS")) {
+        char *end = nullptr;
+        const unsigned long raw = std::strtoul(spec, &end, 16);
+        if (end != spec && *end == '\0' && raw <= ps2::kRamSize - 128u) {
+            const auto *memory = ps2::fast<std::uint8_t>(static_cast<std::uint32_t>(raw));
+            if (memory) {
+                std::fprintf(stderr, "[iop-probe]   EE address %08lX:", raw);
+                for (std::uint32_t i = 0; i < 32; ++i)
+                    std::fprintf(stderr, " %08X", ps2::load<std::uint32_t>(memory + i * 4));
+                std::fprintf(stderr, "\n");
+            }
         }
     }
 }
@@ -59,18 +87,31 @@ std::uint32_t fetch(std::uint32_t pc) {
 }
 
 void execute(Cpu &c, std::int64_t &budget) {
-    if (kernel::native_strict()) {
+    static const bool probing = load_probes();
+    auto stop_guest_execution = [&] {
         const kernel::Thread *thread = kernel::current();
         std::fprintf(stderr, "[iop-native-stop] guest IOP instruction execution at pc=0x%08X thread=%d\n",
                      c.pc, thread ? thread->id : 0);
+        const std::uint32_t address = phys(c.pc);
+        for (const auto &[id, module] : kernel::modules()) {
+            const std::uint32_t base = phys(module.base);
+            if (module.size && address >= base && address - base < module.size)
+                std::fprintf(stderr, "[iop-native-stop] owner module=%s id=%d base=0x%08X size=0x%X offset=0x%X entry=0x%08X\n",
+                             module.name.c_str(), id, module.base, module.size, address - base, module.entry);
+        }
+        if (thread)
+            std::fprintf(stderr, "[iop-native-stop] thread entry=0x%08X ra=0x%08X gp=0x%08X sp=0x%08X s0=0x%08X a0=0x%08X v0=0x%08X\n",
+                         thread->entry, c.r[31], c.r[28], c.r[29], c.r[16], c.r[4], c.r[2]);
+        std::fprintf(stderr, "[iop-native-stop] exception cause=0x%08X epc=0x%08X badvaddr=0x%08X status=0x%08X s1=0x%08X\n",
+                     c.cause, c.epc, c.badvaddr, c.status, c.r[17]);
+        if (std::getenv("PS2_IOP_DUMP_ON_STOP")) dump();
         std::fflush(stderr);
         std::abort();
-    }
-    static const bool probing = load_probes();
+    };
     static bool traced_mwfilefr_callback = false;
     static bool traced_mwfilefr_context = false;
     static bool traced_mwfilefr_request_context = false;
-    while (budget-- > 0) {
+    while (budget > 0) {
         const std::uint32_t pc = c.pc;
         if (!traced_mwfilefr_request_context && pc == 0x00023B1Cu && kernel::g_trace_modules) {
             traced_mwfilefr_request_context = true;
@@ -98,6 +139,22 @@ void execute(Cpu &c, std::int64_t &budget) {
             const std::uint32_t a = pc & (kRamSize - 1);
             if (g_probes[a >> 5] & (1u << ((a >> 2) & 7u))) probe(c, pc);
         }
+        if (kernel::invoke_compiled_module(c, budget)) {
+            if (kernel::switch_pending()) return;
+            continue;
+        }
+        if (kernel::invoke_compiled_import(c)) {
+            --budget; // one dispatcher slot replaces the IRX jr-ra import stub
+            if (kernel::switch_pending()) return;
+            continue;
+        }
+        if (kernel::invoke_runtime_hle_stub(c)) {
+            --budget; // one host callback replaces the runtime-generated trampoline opcode
+            if (kernel::switch_pending()) return;
+            continue;
+        }
+        if (kernel::native_strict()) stop_guest_execution();
+        --budget;
         const std::uint32_t w = fetch(pc);
         c.pc = c.npc;
         c.npc += 4;

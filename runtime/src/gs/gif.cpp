@@ -2,6 +2,7 @@
 
 #include "gs.hpp"
 #include "queue.hpp"
+#include "native_renderer.hpp"
 
 #include "ps2/state.hpp"
 #include "ps2/observer_hook.hpp"
@@ -86,6 +87,17 @@ struct GsSink {
     void packed(std::uint32_t reg, const Reg128 &q) { gs::write_packed(reg, q); }
     void reglist(std::uint32_t reg, std::uint64_t value) { gs::write(reg, value); }
     void image(const std::uint8_t *data, std::uint32_t qwords) { gs::write_image(data, qwords); }
+};
+
+struct NativeRendererSink {
+    int path;
+    void tag(const Path &p, const Reg128 &q) {
+        ++g_tags[path][p.flg];
+        ps2::gs::native_renderer::tag(path, q.d[0]);
+    }
+    void packed(std::uint32_t reg, const Reg128 &q) { ps2::gs::native_renderer::packed(reg, q); }
+    void reglist(std::uint32_t reg, std::uint64_t value) { ps2::gs::native_renderer::reglist(reg, value); }
+    void image(const std::uint8_t *data, std::uint32_t qwords) { ps2::gs::native_renderer::image(data, qwords); }
 };
 
 void scan(Path &p, const std::uint8_t *data, std::uint32_t qwc) {
@@ -240,9 +252,15 @@ void reset() {
 
 void render_reset() {
     for (Path &p : g_paths) p = Path{};
+    ps2::gs::native_renderer::reset();
 }
 
 void render(int path, const std::uint8_t *data, std::uint32_t qwc) {
+    if (ps2::gs::native_renderer::active()) {
+        NativeRendererSink sink{path};
+        walk(g_paths[path], data, qwc, sink);
+        return;
+    }
     if (ps2::profile::profiler_enabled()) {
         const auto t0 = std::chrono::steady_clock::now();
         GsSink sink{path};

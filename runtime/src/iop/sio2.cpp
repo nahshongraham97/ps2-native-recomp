@@ -581,6 +581,20 @@ void set_pressure(int pad, int button, std::uint8_t value) {
     if (pad >= 0 && pad < 2 && button >= 0 && button < 16) g_feel[pad].pressure[button] = value;
 }
 
+void set_actuator_alignment(int pad, const std::array<std::uint8_t, 6> &alignment) {
+    if (pad < 0 || pad >= 2) return;
+    std::copy(alignment.begin(), alignment.end(), std::begin(g_feel[pad].motors));
+    g_feel[pad].rumble.store(0, std::memory_order_relaxed);
+}
+
+std::array<std::uint8_t, 6> actuator_alignment(int pad) {
+    std::array<std::uint8_t, 6> alignment{};
+    if (pad >= 0 && pad < 2) {
+        std::copy(std::begin(g_feel[pad].motors), std::end(g_feel[pad].motors), alignment.begin());
+    }
+    return alignment;
+}
+
 void set_connected(int pad, bool connected) {
     if (pad >= 0 && pad < 2) g_pads[pad].connected = g_plugged[pad] = connected;
 }
@@ -610,11 +624,14 @@ void state(ps2::state::Stream &s) {
     s.deque(g_in);
     s.deque(g_out);
     s.pod(g_pads);
+    if (s.version() >= 14u) {
+        for (Feel &f : g_feel) s.bytes(f.motors, sizeof f.motors);
+    }
     if (s.loading()) {
         g_pads[0].connected = g_plugged[0];
         g_pads[1].connected = g_plugged[1];
         for (Feel &f : g_feel) {
-            std::copy(std::begin(kLibpadMotors), std::end(kLibpadMotors), f.motors);
+            if (s.version() < 14u) std::copy(std::begin(kLibpadMotors), std::end(kLibpadMotors), f.motors);
             f.rumble.store(0);
         }
     }

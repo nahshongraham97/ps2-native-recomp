@@ -1,0 +1,2451 @@
+[disc-vfs] auto-selected extracted filesystem C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\disc-files (strict mode 1)
+[log] this log is also written to C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\disc\logs\ps2run_2026-11-13_11-21-38.log
+[vu1] recording vector programs that are not compiled yet into C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\vu1
+[keys] C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\config\armageddon-keys.ini: read, 0 problems; mouse stick off
+[native-gl] direct GS scene target: 1024x512 color + depth FBO
+[native-gl] attached SDL-owned visible-window WGL context | AMD Radeon RX 6800 XT
+[window] rendering directly into the visible SDL OpenGL window
+[audio] sound device FxSound Speakers (FxSound Audio Enhancer) (wasapi): 48000 Hz, 2 channels; the game's sound is 48000 Hz stereo
+[audio] when the game runs slower than real time its sound is played slower, with the same pitch (PS2_AUDIO_STRETCH=0 switches that off)
+[pad] Xbox One Controller (Xbox One/Series) in port 1
+[vu-live +0.0s] compiling vector programs the build does not know with C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/bin/clang++.exe, into C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\vu1-live
+[vu1] Statically registered 490 compiled vector programs
+[ee-live +0.0s f0] loaded 17 translated code windows from 17 files in C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\ee-live
+[ee-live +0.0s f0] translating code the build does not have while the game runs, with C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/bin/clang++.exe, into C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\ee-live
+[cpu] AMD Ryzen 7 7800X3D 8-Core Processor           : 8 cores, 16 logical processors, 15 GB RAM
+[gs] native OpenGL/direct-packet mode selected; WebGPU presentation disabled
+[window] presenting through native OpenGL
+[disc] C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\disc.iso: 113 files, 2132224 sectors, layer 1 at 0 (filesystem source)
+[mc] card in slot 1: C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\disc\armageddon.ps2
+[native-hook] Registered replacement hook at 0x00197BC0 (MKA_HealthDeduction)
+[mka-hooks] Combat telemetry armed for guest PC 0x00197BC0 (Linker Wrappers Active)
+[replay] recording the pad from frame 0 into C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\disc\states\run_2026-11-13_11-21-38_f000000.inputs
+[sif] IOP reboot requested with "rom0:UDNL cdrom0:\MODULES\DNAS310.IMG;1"
+[sif] LOADFILE from cdrom0:\MODULES\DNAS310.IMG;1 reports 3100
+[loadfile] cdrom0:\MODULES\SIO2MAN.IRX;1
+[gs] SetGsCrt interlace 0 mode 0x2 field 1
+[fileio] open cdrom0:\LOADING.RAW;1 -> 3
+[loadfile] cdrom0:\MODULES\MWFILEFR.IRX;1
+[iop-native] installed MWFILEFR C++ SIF services for SIDs 0x000F0001 and 0x000F0002 (async native filesystem open/close/read, work-item lifecycle, and EE completion callbacks)
+[mwfilefr-native] waiting for EE callback SID 0x000F1002 via nonblocking SIF bind
+[mwfilefr-native] bound EE callback SID 0x000F1002 after 2 polls (EE buffer 0x00D7C680, server data 0x00D7C330)
+[fileio] open cdrom0:\GAMER.OVL;1 -> 3
+[fileio] open rom0:ROMVER -> 3
+[mwfilefr-native] opened cdrom0:\MKDA.PAK;1 (1408839332 bytes) at IOP handle 0x00020400 -> C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\disc-files\MKDA.PAK
+[mwfilefr-native] read IOP handle 0x00020400 offset 0x00000000 requested 0x14 -> 20 bytes at EE 0x006AA4F4
+[mwfilefr-native] read IOP handle 0x00020400 offset 0x53F90800 requested 0xB7C -> 2940 bytes at EE 0x01FBCE80
+[mwfilefr-native] read IOP handle 0x00020400 offset 0x53F9137C requested 0x1B28 -> 6952 bytes at EE 0x01FBA7B0
+[loadfile] cdrom0:\MODULES\PADMAN.IRX;1
+[iop-native] PADMAN host service active (SIF 0x80000100 / 0x80000101)
+[native-gl] first GS primitive consumed by the native OpenGL path
+[native-gl] direct present GS crop x=0 y=0 w=640 h=224 -> client rect x=0 y=192 w=960 h=336 (nearest)
+[loadfile] cdrom0:\MODULES\MCMAN.IRX;1
+[iop-native] MCMAN host replacement active; guest IRX is not loaded
+[loadfile] cdrom0:\MODULES\MCSERV.IRX;1
+[iop-native] MCSERV host SIF replacement active at 0x80000400; GetInfo is native, unsupported card RPCs fail closed
+[iop-native] MCSERV XMCMAN init accepted with retail minimum versions 0x20A/0x20E; reply 0x00658F40; unsupported card RPCs remain fail-closed
+[sif:mcsrv] HLE handled method 0x000000FE rpc 51; receive 0x00658F40 size 12 result 0x00000000; queued for reply job at IOP cycle 17444395
+[sif:mcsrv] reply job fired for method 0x000000FE rpc 51 at IOP cycle 17446238
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 51 (reply command 0x8000000A) at EE cycle 139703966
+[loadfile] cdrom0:\MODULES\DEV9.IRX;1
+[iop-native] DEV9 offline replacement active; no network device is attached
+[loadfile] cdrom0:\MODULES\USBD.IRX;1
+[iop-native] USBD offline replacement active; no USB device is attached
+[loadfile] cdrom0:\MODULES\LGKBM.IRX;1
+[iop-native] LGKBM host SIF service active at 0x61766973; guest IRX is not loaded
+[lgkbm] handshake version 0x00090001 accepted_endpoints 1
+[lgkbm] device-list reply: one inert keyboard endpoint
+[loadfile] cdrom0:\MODULES\LGAUD.IRX;1
+[iop-native] LGAUD offline replacement active; no USB audio device is attached; guest IRX is not loaded
+[loadfile] cdrom0:\MODULES\LIBSD.IRX;1
+[iop-native] LIBSD v1.5 C++ SPU2 bridge active; guest LIBSD IRX is not loaded
+[loadfile] cdrom0:\MODULES\SDRDRV.IRX;1
+[iop-tty] SDR driver version 4.0.1 (C) SCEI
+[iop-tty]  Exit rsd_main 
+[lgkbm] event-poll reply: zero events (poll 1)
+[loadfile] cdrom0:\MODULES\MSL.IRX;1
+[mwfilefr-native] completion DMA poll 1: 32 records (384 bytes) to EE 0x00D7A180
+[mwfilefr-native] read IOP handle 0x00020400 offset 0x115F5800 requested 0x61000 -> 397312 bytes at EE 0x01B4FF80
+[mwfilefr-native] read IOP handle 0x00020400 offset 0x117DA800 requested 0x800 -> 2048 bytes at EE 0x01BB3F80
+[gs] SetGsCrt interlace 1 mode 0x2 field 0
+[mwfilefr-native] opened cdrom0:\SNDSPS2\MSLASSET.MS2;1 (98273428 bytes) at IOP handle 0x000BF500 -> C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\disc-files\SNDSPS2\MSLASSET.MS2
+[mwfilefr-native] ordinal10 read IOP handle 0x000BF500 offset 0x00000000 requested 0xC mode=0 -> 12 bytes at IOP 0x007F2D54
+[mwfilefr-native] ordinal10 read IOP handle 0x000BF500 offset 0x00000003 requested 0x1B09C mode=0 -> 110748 bytes at IOP 0x00096B98
+[mwfilefr-native] opened cdrom0:\SNDSPS2\MSLASSET.ms4;1 (584581120 bytes) at IOP handle 0x000BF600 -> C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\disc-files\SNDSPS2\MSLASSET.MS4
+[lgkbm] event-poll reply: zero events (poll 1000)
+[padman-native] padSetMainMode accepted port=0 slot=0 mode=1 lock=1
+[mka-scanner] frame scan #1 (entry=328u)
+[mka-scanner] frame scan #2 (entry=328u)
+[mka-scanner] frame scan #3 (entry=328u)
+[mka-scanner] frame scan #4 (entry=328u)
+[mka-scanner] frame scan #5 (entry=328u)
+[lgkbm] event-poll reply: zero events (poll 2000)
+[mwfilefr-native] read IOP handle 0x00020400 offset 0x00C11800 requested 0x61000 -> 397312 bytes at EE 0x013B6F00
+[lgkbm] event-poll reply: zero events (poll 3000)
+[lgkbm] event-poll reply: zero events (poll 4000)
+[native-gl] GS /128 alpha compositor initialized (GLSL + framebuffer objects)
+[native-gl] GS ALPHA=0x44 PSMCT32 primitive uses the /128 source-over compositor
+[lgkbm] event-poll reply: zero events (poll 5000)
+[lgkbm] event-poll reply: zero events (poll 6000)
+[lgkbm] event-poll reply: zero events (poll 7000)
+[lgkbm] event-poll reply: zero events (poll 8000)
+[lgkbm] event-poll reply: zero events (poll 9000)
+[lgkbm] event-poll reply: zero events (poll 10000)
+[lgkbm] event-poll reply: zero events (poll 11000)
+[lgkbm] event-poll reply: zero events (poll 12000)
+[lgkbm] event-poll reply: zero events (poll 13000)
+[lgkbm] event-poll reply: zero events (poll 14000)
+[lgkbm] event-poll reply: zero events (poll 15000)
+[lgkbm] event-poll reply: zero events (poll 16000)
+[lgkbm] event-poll reply: zero events (poll 17000)
+[lgkbm] event-poll reply: zero events (poll 18000)
+[lgkbm] event-poll reply: zero events (poll 19000)
+[lgkbm] event-poll reply: zero events (poll 20000)
+[lgkbm] event-poll reply: zero events (poll 21000)
+[lgkbm] event-poll reply: zero events (poll 22000)
+[lgkbm] event-poll reply: zero events (poll 23000)
+[lgkbm] event-poll reply: zero events (poll 24000)
+[lgkbm] event-poll reply: zero events (poll 25000)
+[lgkbm] event-poll reply: zero events (poll 26000)
+[lgkbm] event-poll reply: zero events (poll 27000)
+[lgkbm] event-poll reply: zero events (poll 28000)
+[lgkbm] event-poll reply: zero events (poll 29000)
+[lgkbm] event-poll reply: zero events (poll 30000)
+[lgkbm] event-poll reply: zero events (poll 31000)
+[lgkbm] event-poll reply: zero events (poll 32000)
+[lgkbm] event-poll reply: zero events (poll 33000)
+[lgkbm] event-poll reply: zero events (poll 34000)
+[lgkbm] event-poll reply: zero events (poll 35000)
+[lgkbm] event-poll reply: zero events (poll 36000)
+[lgkbm] event-poll reply: zero events (poll 37000)
+[lgkbm] event-poll reply: zero events (poll 38000)
+[lgkbm] event-poll reply: zero events (poll 39000)
+[lgkbm] event-poll reply: zero events (poll 40000)
+[lgkbm] event-poll reply: zero events (poll 41000)
+[lgkbm] event-poll reply: zero events (poll 42000)
+[lgkbm] event-poll reply: zero events (poll 43000)
+[lgkbm] event-poll reply: zero events (poll 44000)
+[lgkbm] event-poll reply: zero events (poll 45000)
+[lgkbm] event-poll reply: zero events (poll 46000)
+[lgkbm] event-poll reply: zero events (poll 47000)
+[lgkbm] event-poll reply: zero events (poll 48000)
+[lgkbm] event-poll reply: zero events (poll 49000)
+[lgkbm] event-poll reply: zero events (poll 50000)
+[lgkbm] event-poll reply: zero events (poll 51000)
+[lgkbm] event-poll reply: zero events (poll 52000)
+[lgkbm] event-poll reply: zero events (poll 53000)
+[lgkbm] event-poll reply: zero events (poll 54000)
+[lgkbm] event-poll reply: zero events (poll 55000)
+[lgkbm] event-poll reply: zero events (poll 56000)
+[lgkbm] event-poll reply: zero events (poll 57000)
+[lgkbm] event-poll reply: zero events (poll 58000)
+[lgkbm] event-poll reply: zero events (poll 59000)
+[lgkbm] event-poll reply: zero events (poll 60000)
+[lgkbm] event-poll reply: zero events (poll 61000)
+[lgkbm] event-poll reply: zero events (poll 62000)
+[lgkbm] event-poll reply: zero events (poll 63000)
+[lgkbm] event-poll reply: zero events (poll 64000)
+[lgkbm] event-poll reply: zero events (poll 65000)
+[lgkbm] event-poll reply: zero events (poll 66000)
+[lgkbm] event-poll reply: zero events (poll 67000)
+[lgkbm] event-poll reply: zero events (poll 68000)
+[lgkbm] event-poll reply: zero events (poll 69000)
+[lgkbm] event-poll reply: zero events (poll 70000)
+[lgkbm] event-poll reply: zero events (poll 71000)
+[lgkbm] event-poll reply: zero events (poll 72000)
+[lgkbm] event-poll reply: zero events (poll 73000)
+[lgkbm] event-poll reply: zero events (poll 74000)
+[lgkbm] event-poll reply: zero events (poll 75000)
+[lgkbm] event-poll reply: zero events (poll 76000)
+[lgkbm] event-poll reply: zero events (poll 77000)
+[lgkbm] event-poll reply: zero events (poll 78000)
+[lgkbm] event-poll reply: zero events (poll 79000)
+[lgkbm] event-poll reply: zero events (poll 80000)
+[lgkbm] event-poll reply: zero events (poll 81000)
+[lgkbm] event-poll reply: zero events (poll 82000)
+[lgkbm] event-poll reply: zero events (poll 83000)
+[lgkbm] event-poll reply: zero events (poll 84000)
+[lgkbm] event-poll reply: zero events (poll 85000)
+[lgkbm] event-poll reply: zero events (poll 86000)
+[lgkbm] event-poll reply: zero events (poll 87000)
+[lgkbm] event-poll reply: zero events (poll 88000)
+[mwfilefr-native] read IOP handle 0x00020400 offset 0x36E08800 requested 0x54800 -> 346112 bytes at EE 0x00E20E00
+[mwfilefr-native] read IOP handle 0x00020400 offset 0x3A748000 requested 0x4A800 -> 305152 bytes at EE 0x00E75600
+[lgkbm] event-poll reply: zero events (poll 89000)
+[iop-native] MCSERV GetInfo2 port=0 slot=0 status=0 free_clusters=8000 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 89903; receive 0x00658F40 size 4 result 0x00000000; queued for reply job at IOP cycle 253085134
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 89903 at IOP cycle 253086977
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 89903 (reply command 0x8000000A) at EE cycle 2024737628
+[iop-native] MCSERV GetInfo2 port=1 slot=0 status=-13 free_clusters=0 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 89905; receive 0x00658F40 size 4 result 0xFFFFFFF3; queued for reply job at IOP cycle 253092337
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 89905 at IOP cycle 253094180
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 89905 (reply command 0x8000000A) at EE cycle 2024886278
+[iop-native] MCSERV GetInfo2 port=0 slot=0 status=0 free_clusters=8000 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 89965; receive 0x00658F40 size 4 result 0x00000000; queued for reply job at IOP cycle 253262289
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 89965 at IOP cycle 253264132
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 89965 (reply command 0x8000000A) at EE cycle 2026212264
+[iop-native] MCSERV GetInfo2 port=1 slot=0 status=-13 free_clusters=0 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 89967; receive 0x00658F40 size 4 result 0xFFFFFFF3; queued for reply job at IOP cycle 253276666
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 89967 at IOP cycle 253278509
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 89967 (reply command 0x8000000A) at EE cycle 2026360914
+[iop-native] MCSERV GetInfo2 port=0 slot=0 status=0 free_clusters=8000 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 89969; receive 0x00658F40 size 4 result 0x00000000; queued for reply job at IOP cycle 253295273
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 89969 at IOP cycle 253297116
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 89969 (reply command 0x8000000A) at EE cycle 2026463537
+[iop-native] MCSERV GetInfo2 port=1 slot=0 status=-13 free_clusters=0 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 89971; receive 0x00658F40 size 4 result 0xFFFFFFF3; queued for reply job at IOP cycle 253308074
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 89971 at IOP cycle 253309917
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 89971 (reply command 0x8000000A) at EE cycle 2026507184
+[lgkbm] event-poll reply: zero events (poll 90000)
+[lgkbm] event-poll reply: zero events (poll 91000)
+[lgkbm] event-poll reply: zero events (poll 92000)
+[lgkbm] event-poll reply: zero events (poll 93000)
+[lgkbm] event-poll reply: zero events (poll 94000)
+[lgkbm] event-poll reply: zero events (poll 95000)
+[lgkbm] event-poll reply: zero events (poll 96000)
+[lgkbm] event-poll reply: zero events (poll 97000)
+[lgkbm] event-poll reply: zero events (poll 98000)
+[lgkbm] event-poll reply: zero events (poll 99000)
+[lgkbm] event-poll reply: zero events (poll 100000)
+[lgkbm] event-poll reply: zero events (poll 101000)
+[lgkbm] event-poll reply: zero events (poll 102000)
+[lgkbm] event-poll reply: zero events (poll 103000)
+[lgkbm] event-poll reply: zero events (poll 104000)
+[lgkbm] event-poll reply: zero events (poll 105000)
+[lgkbm] event-poll reply: zero events (poll 106000)
+[lgkbm] event-poll reply: zero events (poll 107000)
+[lgkbm] event-poll reply: zero events (poll 108000)
+[lgkbm] event-poll reply: zero events (poll 109000)
+[lgkbm] event-poll reply: zero events (poll 110000)
+[lgkbm] event-poll reply: zero events (poll 111000)
+[lgkbm] event-poll reply: zero events (poll 112000)
+[lgkbm] event-poll reply: zero events (poll 113000)
+[lgkbm] event-poll reply: zero events (poll 114000)
+[lgkbm] event-poll reply: zero events (poll 115000)
+[lgkbm] event-poll reply: zero events (poll 116000)
+[lgkbm] event-poll reply: zero events (poll 117000)
+[lgkbm] event-poll reply: zero events (poll 118000)
+[lgkbm] event-poll reply: zero events (poll 119000)
+[lgkbm] event-poll reply: zero events (poll 120000)
+[lgkbm] event-poll reply: zero events (poll 121000)
+[lgkbm] event-poll reply: zero events (poll 122000)
+[lgkbm] event-poll reply: zero events (poll 123000)
+[lgkbm] event-poll reply: zero events (poll 124000)
+[lgkbm] event-poll reply: zero events (poll 125000)
+[lgkbm] event-poll reply: zero events (poll 126000)
+[lgkbm] event-poll reply: zero events (poll 127000)
+[lgkbm] event-poll reply: zero events (poll 128000)
+[lgkbm] event-poll reply: zero events (poll 129000)
+[lgkbm] event-poll reply: zero events (poll 130000)
+[lgkbm] event-poll reply: zero events (poll 131000)
+[lgkbm] event-poll reply: zero events (poll 132000)
+[lgkbm] event-poll reply: zero events (poll 133000)
+[lgkbm] event-poll reply: zero events (poll 134000)
+[lgkbm] event-poll reply: zero events (poll 135000)
+[lgkbm] event-poll reply: zero events (poll 136000)
+[lgkbm] event-poll reply: zero events (poll 137000)
+[lgkbm] event-poll reply: zero events (poll 138000)
+[lgkbm] event-poll reply: zero events (poll 139000)
+[lgkbm] event-poll reply: zero events (poll 140000)
+[lgkbm] event-poll reply: zero events (poll 141000)
+[lgkbm] event-poll reply: zero events (poll 142000)
+[lgkbm] event-poll reply: zero events (poll 143000)
+[lgkbm] event-poll reply: zero events (poll 144000)
+[lgkbm] event-poll reply: zero events (poll 145000)
+[lgkbm] event-poll reply: zero events (poll 146000)
+[lgkbm] event-poll reply: zero events (poll 147000)
+[lgkbm] event-poll reply: zero events (poll 148000)
+[lgkbm] event-poll reply: zero events (poll 149000)
+[lgkbm] event-poll reply: zero events (poll 150000)
+[lgkbm] event-poll reply: zero events (poll 151000)
+[lgkbm] event-poll reply: zero events (poll 152000)
+[lgkbm] event-poll reply: zero events (poll 153000)
+[lgkbm] event-poll reply: zero events (poll 154000)
+[lgkbm] event-poll reply: zero events (poll 155000)
+[lgkbm] event-poll reply: zero events (poll 156000)
+[lgkbm] event-poll reply: zero events (poll 157000)
+[lgkbm] event-poll reply: zero events (poll 158000)
+[lgkbm] event-poll reply: zero events (poll 159000)
+[lgkbm] event-poll reply: zero events (poll 160000)
+[lgkbm] event-poll reply: zero events (poll 161000)
+[lgkbm] event-poll reply: zero events (poll 162000)
+[lgkbm] event-poll reply: zero events (poll 163000)
+[lgkbm] event-poll reply: zero events (poll 164000)
+[lgkbm] event-poll reply: zero events (poll 165000)
+[lgkbm] event-poll reply: zero events (poll 166000)
+[lgkbm] event-poll reply: zero events (poll 167000)
+[lgkbm] event-poll reply: zero events (poll 168000)
+[lgkbm] event-poll reply: zero events (poll 169000)
+[lgkbm] event-poll reply: zero events (poll 170000)
+[lgkbm] event-poll reply: zero events (poll 171000)
+[lgkbm] event-poll reply: zero events (poll 172000)
+[lgkbm] event-poll reply: zero events (poll 173000)
+[lgkbm] event-poll reply: zero events (poll 174000)
+[lgkbm] event-poll reply: zero events (poll 175000)
+[lgkbm] event-poll reply: zero events (poll 176000)
+[lgkbm] event-poll reply: zero events (poll 177000)
+[lgkbm] event-poll reply: zero events (poll 178000)
+[lgkbm] event-poll reply: zero events (poll 179000)
+[lgkbm] event-poll reply: zero events (poll 180000)
+[lgkbm] event-poll reply: zero events (poll 181000)
+[lgkbm] event-poll reply: zero events (poll 182000)
+[lgkbm] event-poll reply: zero events (poll 183000)
+[lgkbm] event-poll reply: zero events (poll 184000)
+[lgkbm] event-poll reply: zero events (poll 185000)
+[lgkbm] event-poll reply: zero events (poll 186000)
+[lgkbm] event-poll reply: zero events (poll 187000)
+[lgkbm] event-poll reply: zero events (poll 188000)
+[lgkbm] event-poll reply: zero events (poll 189000)
+[lgkbm] event-poll reply: zero events (poll 190000)
+[lgkbm] event-poll reply: zero events (poll 191000)
+[lgkbm] event-poll reply: zero events (poll 192000)
+[lgkbm] event-poll reply: zero events (poll 193000)
+[lgkbm] event-poll reply: zero events (poll 194000)
+[lgkbm] event-poll reply: zero events (poll 195000)
+[lgkbm] event-poll reply: zero events (poll 196000)
+[lgkbm] event-poll reply: zero events (poll 197000)
+[lgkbm] event-poll reply: zero events (poll 198000)
+[lgkbm] event-poll reply: zero events (poll 199000)
+[lgkbm] event-poll reply: zero events (poll 200000)
+[lgkbm] event-poll reply: zero events (poll 201000)
+[lgkbm] event-poll reply: zero events (poll 202000)
+[lgkbm] event-poll reply: zero events (poll 203000)
+[lgkbm] event-poll reply: zero events (poll 204000)
+[lgkbm] event-poll reply: zero events (poll 205000)
+[lgkbm] event-poll reply: zero events (poll 206000)
+[lgkbm] event-poll reply: zero events (poll 207000)
+[lgkbm] event-poll reply: zero events (poll 208000)
+[lgkbm] event-poll reply: zero events (poll 209000)
+[lgkbm] event-poll reply: zero events (poll 210000)
+[lgkbm] event-poll reply: zero events (poll 211000)
+[lgkbm] event-poll reply: zero events (poll 212000)
+[lgkbm] event-poll reply: zero events (poll 213000)
+[lgkbm] event-poll reply: zero events (poll 214000)
+[lgkbm] event-poll reply: zero events (poll 215000)
+[lgkbm] event-poll reply: zero events (poll 216000)
+[lgkbm] event-poll reply: zero events (poll 217000)
+[lgkbm] event-poll reply: zero events (poll 218000)
+[lgkbm] event-poll reply: zero events (poll 219000)
+[lgkbm] event-poll reply: zero events (poll 220000)
+[lgkbm] event-poll reply: zero events (poll 221000)
+[lgkbm] event-poll reply: zero events (poll 222000)
+[lgkbm] event-poll reply: zero events (poll 223000)
+[lgkbm] event-poll reply: zero events (poll 224000)
+[lgkbm] event-poll reply: zero events (poll 225000)
+[lgkbm] event-poll reply: zero events (poll 226000)
+[lgkbm] event-poll reply: zero events (poll 227000)
+[lgkbm] event-poll reply: zero events (poll 228000)
+[lgkbm] event-poll reply: zero events (poll 229000)
+[lgkbm] event-poll reply: zero events (poll 230000)
+[lgkbm] event-poll reply: zero events (poll 231000)
+[lgkbm] event-poll reply: zero events (poll 232000)
+[lgkbm] event-poll reply: zero events (poll 233000)
+[lgkbm] event-poll reply: zero events (poll 234000)
+[lgkbm] event-poll reply: zero events (poll 235000)
+[lgkbm] event-poll reply: zero events (poll 236000)
+[lgkbm] event-poll reply: zero events (poll 237000)
+[lgkbm] event-poll reply: zero events (poll 238000)
+[lgkbm] event-poll reply: zero events (poll 239000)
+[lgkbm] event-poll reply: zero events (poll 240000)
+[lgkbm] event-poll reply: zero events (poll 241000)
+[lgkbm] event-poll reply: zero events (poll 242000)
+[lgkbm] event-poll reply: zero events (poll 243000)
+[lgkbm] event-poll reply: zero events (poll 244000)
+[lgkbm] event-poll reply: zero events (poll 245000)
+[lgkbm] event-poll reply: zero events (poll 246000)
+[lgkbm] event-poll reply: zero events (poll 247000)
+[lgkbm] event-poll reply: zero events (poll 248000)
+[lgkbm] event-poll reply: zero events (poll 249000)
+[lgkbm] event-poll reply: zero events (poll 250000)
+[lgkbm] event-poll reply: zero events (poll 251000)
+[lgkbm] event-poll reply: zero events (poll 252000)
+[lgkbm] event-poll reply: zero events (poll 253000)
+[lgkbm] event-poll reply: zero events (poll 254000)
+[lgkbm] event-poll reply: zero events (poll 255000)
+[lgkbm] event-poll reply: zero events (poll 256000)
+[lgkbm] event-poll reply: zero events (poll 257000)
+[lgkbm] event-poll reply: zero events (poll 258000)
+[lgkbm] event-poll reply: zero events (poll 259000)
+[lgkbm] event-poll reply: zero events (poll 260000)
+[lgkbm] event-poll reply: zero events (poll 261000)
+[lgkbm] event-poll reply: zero events (poll 262000)
+[lgkbm] event-poll reply: zero events (poll 263000)
+[lgkbm] event-poll reply: zero events (poll 264000)
+[lgkbm] event-poll reply: zero events (poll 265000)
+[lgkbm] event-poll reply: zero events (poll 266000)
+[lgkbm] event-poll reply: zero events (poll 267000)
+[lgkbm] event-poll reply: zero events (poll 268000)
+[lgkbm] event-poll reply: zero events (poll 269000)
+[lgkbm] event-poll reply: zero events (poll 270000)
+[lgkbm] event-poll reply: zero events (poll 271000)
+[lgkbm] event-poll reply: zero events (poll 272000)
+[lgkbm] event-poll reply: zero events (poll 273000)
+[lgkbm] event-poll reply: zero events (poll 274000)
+[lgkbm] event-poll reply: zero events (poll 275000)
+[lgkbm] event-poll reply: zero events (poll 276000)
+[lgkbm] event-poll reply: zero events (poll 277000)
+[lgkbm] event-poll reply: zero events (poll 278000)
+[lgkbm] event-poll reply: zero events (poll 279000)
+[lgkbm] event-poll reply: zero events (poll 280000)
+[lgkbm] event-poll reply: zero events (poll 281000)
+[lgkbm] event-poll reply: zero events (poll 282000)
+[lgkbm] event-poll reply: zero events (poll 283000)
+[lgkbm] event-poll reply: zero events (poll 284000)
+[lgkbm] event-poll reply: zero events (poll 285000)
+[lgkbm] event-poll reply: zero events (poll 286000)
+[lgkbm] event-poll reply: zero events (poll 287000)
+[lgkbm] event-poll reply: zero events (poll 288000)
+[lgkbm] event-poll reply: zero events (poll 289000)
+[lgkbm] event-poll reply: zero events (poll 290000)
+[lgkbm] event-poll reply: zero events (poll 291000)
+[lgkbm] event-poll reply: zero events (poll 292000)
+[lgkbm] event-poll reply: zero events (poll 293000)
+[lgkbm] event-poll reply: zero events (poll 294000)
+[lgkbm] event-poll reply: zero events (poll 295000)
+[lgkbm] event-poll reply: zero events (poll 296000)
+[lgkbm] event-poll reply: zero events (poll 297000)
+[lgkbm] event-poll reply: zero events (poll 298000)
+[lgkbm] event-poll reply: zero events (poll 299000)
+[lgkbm] event-poll reply: zero events (poll 300000)
+[lgkbm] event-poll reply: zero events (poll 301000)
+[lgkbm] event-poll reply: zero events (poll 302000)
+[lgkbm] event-poll reply: zero events (poll 303000)
+[lgkbm] event-poll reply: zero events (poll 304000)
+[lgkbm] event-poll reply: zero events (poll 305000)
+[lgkbm] event-poll reply: zero events (poll 306000)
+[lgkbm] event-poll reply: zero events (poll 307000)
+[lgkbm] event-poll reply: zero events (poll 308000)
+[lgkbm] event-poll reply: zero events (poll 309000)
+[lgkbm] event-poll reply: zero events (poll 310000)
+[lgkbm] event-poll reply: zero events (poll 311000)
+[lgkbm] event-poll reply: zero events (poll 312000)
+[lgkbm] event-poll reply: zero events (poll 313000)
+[lgkbm] event-poll reply: zero events (poll 314000)
+[lgkbm] event-poll reply: zero events (poll 315000)
+[lgkbm] event-poll reply: zero events (poll 316000)
+[lgkbm] event-poll reply: zero events (poll 317000)
+[lgkbm] event-poll reply: zero events (poll 318000)
+[lgkbm] event-poll reply: zero events (poll 319000)
+[lgkbm] event-poll reply: zero events (poll 320000)
+[lgkbm] event-poll reply: zero events (poll 321000)
+[lgkbm] event-poll reply: zero events (poll 322000)
+[lgkbm] event-poll reply: zero events (poll 323000)
+[lgkbm] event-poll reply: zero events (poll 324000)
+[iop-native] MCSERV GetInfo2 port=0 slot=0 status=0 free_clusters=8000 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 326224; receive 0x00658F40 size 4 result 0x00000000; queued for reply job at IOP cycle 871975164
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 326224 at IOP cycle 871977007
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 326224 (reply command 0x8000000A) at EE cycle 6975948892
+[iop-native] MCSERV GetInfo2 port=1 slot=0 status=-13 free_clusters=0 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 326226; receive 0x00658F40 size 4 result 0xFFFFFFF3; queued for reply job at IOP cycle 871993743
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 326226 at IOP cycle 871995586
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 326226 (reply command 0x8000000A) at EE cycle 6975991383
+[lgkbm] event-poll reply: zero events (poll 325000)
+[lgkbm] event-poll reply: zero events (poll 326000)
+[lgkbm] event-poll reply: zero events (poll 327000)
+[lgkbm] event-poll reply: zero events (poll 328000)
+[lgkbm] event-poll reply: zero events (poll 329000)
+[lgkbm] event-poll reply: zero events (poll 330000)
+[lgkbm] event-poll reply: zero events (poll 331000)
+[lgkbm] event-poll reply: zero events (poll 332000)
+[iop-native] MCSERV GetInfo2 port=0 slot=0 status=0 free_clusters=8000 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 334422; receive 0x00658F40 size 4 result 0x00000000; queued for reply job at IOP cycle 893474919
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 334422 at IOP cycle 893476762
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 334422 (reply command 0x8000000A) at EE cycle 7147934335
+[lgkbm] event-poll reply: zero events (poll 333000)
+[lgkbm] event-poll reply: zero events (poll 334000)
+[lgkbm] event-poll reply: zero events (poll 335000)
+[lgkbm] event-poll reply: zero events (poll 336000)
+[iop-native] MCSERV GetInfo2 port=1 slot=0 status=-13 free_clusters=0 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 337936; receive 0x00658F40 size 4 result 0xFFFFFFF3; queued for reply job at IOP cycle 902690472
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 337936 at IOP cycle 902692315
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 337936 (reply command 0x8000000A) at EE cycle 7221666437
+[lgkbm] event-poll reply: zero events (poll 337000)
+[lgkbm] event-poll reply: zero events (poll 338000)
+[lgkbm] event-poll reply: zero events (poll 339000)
+[lgkbm] event-poll reply: zero events (poll 340000)
+[padman-native] padSetActAlign accepted port=0 slot=0 map=00,01,FF,FF,FF,FF
+[sif] IOP reboot requested with ""
+[lgkbm] event-poll reply: zero events (poll 341000)
+[lgkbm] event-poll reply: zero events (poll 342000)
+[lgkbm] event-poll reply: zero events (poll 343000)
+[lgkbm] event-poll reply: zero events (poll 344000)
+[lgkbm] event-poll reply: zero events (poll 345000)
+[lgkbm] event-poll reply: zero events (poll 346000)
+[lgkbm] event-poll reply: zero events (poll 347000)
+[iop-native] MCSERV GetInfo2 port=0 slot=0 status=0 free_clusters=8000 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 349172; receive 0x00658F40 size 4 result 0x00000000; queued for reply job at IOP cycle 932186720
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 349172 at IOP cycle 932188563
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 349172 (reply command 0x8000000A) at EE cycle 7457608871
+[iop-native] MCSERV GetInfo2 port=1 slot=0 status=-13 free_clusters=0 type_requested=0 format_requested=0
+[sif:mcsrv] HLE handled method 0x00000001 rpc 349174; receive 0x00658F40 size 4 result 0xFFFFFFF3; queued for reply job at IOP cycle 932201242
+[sif:mcsrv] reply job fired for method 0x00000001 rpc 349174 at IOP cycle 932203085
+[sif:mcsrv] Rend copied to EE receive buffer 0x00650340 for rpc 349174 (reply command 0x8000000A) at EE cycle 7457757521
+[lgkbm] event-poll reply: zero events (poll 348000)
+[lgkbm] event-poll reply: zero events (poll 349000)
+[lgkbm] event-poll reply: zero events (poll 350000)
+[lgkbm] event-poll reply: zero events (poll 351000)
+[lgkbm] event-poll reply: zero events (poll 352000)
+[lgkbm] event-poll reply: zero events (poll 353000)
+[lgkbm] event-poll reply: zero events (poll 354000)
+[lgkbm] event-poll reply: zero events (poll 355000)
+[lgkbm] event-poll reply: zero events (poll 356000)
+[lgkbm] event-poll reply: zero events (poll 357000)
+[lgkbm] event-poll reply: zero events (poll 358000)
+[lgkbm] event-poll reply: zero events (poll 359000)
+[lgkbm] event-poll reply: zero events (poll 360000)
+[lgkbm] event-poll reply: zero events (poll 361000)
+[lgkbm] event-poll reply: zero events (poll 362000)
+[lgkbm] event-poll reply: zero events (poll 363000)
+[lgkbm] event-poll reply: zero events (poll 364000)
+[lgkbm] event-poll reply: zero events (poll 365000)
+[padman-native] padSetActAlign accepted port=0 slot=0 map=00,01,FF,FF,FF,FF
+[lgkbm] event-poll reply: zero events (poll 366000)
+[lgkbm] event-poll reply: zero events (poll 367000)
+[mka-video] stream request #1: ID=0 (movieps2/LOGON.sfd, loops=0, skippable=1, cb=0x0018E090)
+[mwfilefr-native] opened cdrom0:\MOVIEPS2\LOGON.SFD;1 (3321856 bytes) at IOP handle 0x000BF400 -> C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\games\mkarmageddon\disc-files\MOVIEPS2\LOGON.SFD
+[lgkbm] event-poll reply: zero events (poll 368000)
+[loadfile] cdrom0:\MODULES\CRI_ADXI.IRX;1
+[iop-tty] CRI ADX Driver Ver.9.16b(May  7 2004 20:20:44)
+[iop-tty] CRI ADX Driver : Main Thread Priority = 39
+[iop-tty] CRI ADX Driver : PSM Thread Priority  = 39
+[iop-tty] CRI ADX Driver : DTX Thread Priority  = 48
+[iop-tty] CRI ADX Driver : SPU CORE Number = 0
+[iop-tty] CRI ADX Driver : sceSdInit(SD_INIT_COLD) call.
+[sif:target-rpc] register sid 0x90000200 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 sd 0x000CB1B0 (instances 1)
+[fileio] open cdrom0:\MOVIER.OVL;1 -> 3
+[ee-live +56.6s f1607] no translated code at 0x0084A100 (loaded code at 0x00824000, image 00824000_CAAA6CD1, 160 KiB): translating it now, the game waits
+[ee-live +57.2s f1607] switched in after 0.6 s (quick) (translate 0.0, compile 0.1, link 0.1): 1 entry points, 38 instructions, 2 files
+[ee-live +57.2s f1607] no translated code at 0x007D36A0 (window 0x007C4000, image 007C4000_658F322A, 256 KiB): translating it now, the game waits
+[ee-live +59.0s f1607] switched in after 1.8 s (quick) (translate 0.1, compile 1.7, link 0.1): 29 entry points (calls of the program included), 57497 instructions, 17 files
+[ee-live +59.0s f1607] no translated code at 0x00114CA0 (the program's own code, not reached by the build): translating it now, the game waits
+[ee-live +59.2s f1607] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 28 instructions, 2 files
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 2 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 16 data 00000000 0083BCC0 000D2840 00000880
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 2 thread 19 result 0x000CAC40 reply 000CAD40
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 1027 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 0 data
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 1027 thread 19 result 0x000CAC40 reply
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 1036 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 0 data
+[iop] missing libsd #28 called from 0x000C3E18
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 1036 thread 19 result 0x000CAC40 reply
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 1058 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 12 data 00000001 000D3140 00000100 00000880
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 1058 thread 19 result 0x000CAC40 reply 000D0D00
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 1024 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 16 data 0083AC30 000D0D00 00000001 0083BA28
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 1024 thread 19 result 0x000CAC40 reply 000D1840
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 1058 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 12 data 00000001 000D7240 00000100 0083BA28
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 1058 thread 19 result 0x000CAC40 reply 000D0D30
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 1024 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 16 data 0083AC60 000D0D30 00000001 0083BA3C
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 1024 thread 19 result 0x000CAC40 reply 000D1854
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 2 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 16 data 00000001 00835E40 000DB440 00000880
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 2 thread 19 result 0x000CAC40 reply 000CAD84
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 1034 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 12 data 00000002 000DBD00 00000840 00000880
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 1034 thread 19 result 0x000CAC40 reply
+[ee-live +59.2s f1607] no translated code at 0x00805D00 (window 0x007C8000, image 007C8000_B476BC35, 256 KiB): translating it now, the game waits
+[ee-live +60.9s f1607] switched in after 1.8 s (quick) (translate 0.1, compile 1.6, link 0.1): 24 entry points (calls of the program included), 57891 instructions, 17 files
+[ee-live +60.9s f1607] no translated code at 0x00812750 (loaded code at 0x007C4880, image 007C4880_877C46C3, 541 KiB): translating it now, the game waits
+[ee-live +64.0s f1607] switched in after 3.1 s (quick) (translate 0.1, compile 2.9, link 0.1): 30 entry points (calls of the program included), 93223 instructions, 33 files
+[io] write 0x1000F590 = 0x10000 (pc 0x0010A0B0)
+[audio] the sound ran dry at frame 1608 (1 times so far): the game runs slower than real time than the sound can be stretched to
+[ee-live +64.0s f1608] no translated code at 0x0010C6F0 (the program's own code, not reached by the build): translating it now, the game waits
+[ee-live +64.2s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 4 instructions, 2 files
+[ee-live +64.2s f1608] no translated code at 0x0080F068 (loaded code at 0x007C4880, image 007C4880_740261F7, 541 KiB): translating it now, the game waits
+[ee-live +64.7s f1608] switched in after 0.5 s (translate 0.0, compile 0.4, link 0.1): 1 entry points, 349 instructions, 5 files
+[gs] SetGsCrt interlace 1 mode 0x2 field 0
+[ee-live +64.7s f1608] no translated code at 0x00808050 (window 0x007CC000, image 007CC000_3D648FAA, 256 KiB): translating it now, the game waits
+[ee-live +66.4s f1608] switched in after 1.8 s (quick) (translate 0.1, compile 1.6, link 0.1): 24 entry points (calls of the program included), 57999 instructions, 17 files
+[ee-live +66.5s f1608] no translated code at 0x0080E078 (loaded code at 0x007C4880, image 007C4880_3CF8AB42, 541 KiB): translating it now, the game waits
+[ee-live +66.6s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 3 instructions, 2 files
+[ee-live +66.6s f1608] no translated code at 0x008100D8 (loaded code at 0x007C4880, image 007C4880_3CF8AB42, 541 KiB): translating it now, the game waits
+[ee-live +67.5s f1608] switched in after 0.9 s (translate 0.0, compile 0.8, link 0.1): 1 entry points, 5832 instructions, 10 files
+[ee-live +67.5s f1608] no translated code at 0x0080C250 (loaded code at 0x007C4880, image 007C4880_7937A9ED, 541 KiB): translating it now, the game waits
+[ee-live +68.4s f1608] switched in after 0.8 s (translate 0.0, compile 0.7, link 0.1): 1 entry points, 2066 instructions, 8 files
+[ee-live +68.4s f1608] no translated code at 0x001094F8 (the program's own code, not reached by the build): translating it now, the game waits
+[ee-live +68.8s f1608] switched in after 0.5 s (translate 0.0, compile 0.4, link 0.1): 1 entry points, 1308 instructions, 3 files
+[ee-live +68.8s f1608] no translated code at 0x0010A310 (the program's own code, not reached by the build): translating it now, the game waits
+[ee-live +69.0s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 13 instructions, 2 files
+[ee-live +69.0s f1608] no translated code at 0x00814A0C (loaded code at 0x007C4880, image 007C4880_14282A7D, 541 KiB): translating it now, the game waits
+[ee-live +69.2s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 26 instructions, 2 files
+[ee-live +69.2s f1608] no translated code at 0x00814B08 (loaded code at 0x007C4880, image 007C4880_14282A7D, 541 KiB): translating it now, the game waits
+[ee-live +69.6s f1608] switched in after 0.4 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 166 instructions, 3 files
+[ee-live +69.6s f1608] no translated code at 0x00814C28 (loaded code at 0x007C4880, image 007C4880_14282A7D, 541 KiB): translating it now, the game waits
+[ee-live +69.8s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 2 instructions, 2 files
+[ee-live +69.8s f1608] no translated code at 0x00814C30 (loaded code at 0x007C4880, image 007C4880_14282A7D, 541 KiB): translating it now, the game waits
+[ee-live +70.0s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 5 instructions, 2 files
+[ee-live +70.0s f1608] no translated code at 0x00814C48 (loaded code at 0x007C4880, image 007C4880_14282A7D, 541 KiB): translating it now, the game waits
+[ee-live +70.2s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 5 instructions, 2 files
+[ee-live +70.2s f1608] no translated code at 0x00814C60 (loaded code at 0x007C4880, image 007C4880_14282A7D, 541 KiB): translating it now, the game waits
+[ee-live +70.3s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 5 instructions, 2 files
+[ee-live +70.3s f1608] no translated code at 0x00814C78 (loaded code at 0x007C4880, image 007C4880_14282A7D, 541 KiB): translating it now, the game waits
+[ee-live +70.5s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 5 instructions, 2 files
+[ee-live +70.5s f1608] no translated code at 0x00814C90 (loaded code at 0x007C4880, image 007C4880_14282A7D, 541 KiB): translating it now, the game waits
+[ee-live +70.7s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 4 instructions, 2 files
+[ee-live +70.7s f1608] no translated code at 0x0081A3B0 (loaded code at 0x007C4880, image 007C4880_14282A7D, 541 KiB): translating it now, the game waits
+[ee-live +70.9s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 114 instructions, 2 files
+[ee-live +70.9s f1608] no translated code at 0x007E38C0 (window 0x007C4000, image 007C4000_BAE146B1, 256 KiB): translating it now, the game waits
+[ee-live +72.7s f1608] switched in after 1.7 s (quick) (translate 0.1, compile 1.6, link 0.1): 30 entry points (calls of the program included), 57516 instructions, 17 files
+[sif:target-rpc] dispatch sid 0x90000200 sd 0x000CB1B0 fn 1032 thread 19 func 0x000BFE20 buf 0x000CAC40 queue 0x000CB200 send 16 data 00000002 00000000 000D0D00 000D0D30
+[sif:target-rpc] finish sid 0x90000200 sd 0x000CB1B0 fn 1032 thread 19 result 0x000CAC40 reply 000CB220
+[ee-live +72.7s f1608] no translated code at 0x00814CA0 (loaded code at 0x007C4880, image 007C4880_9943776F, 541 KiB): translating it now, the game waits
+[ee-live +72.9s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 2 instructions, 2 files
+[ee-live +72.9s f1608] no translated code at 0x00813760 (loaded code at 0x007C4880, image 007C4880_9943776F, 541 KiB): translating it now, the game waits
+[ee-live +73.0s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 4 instructions, 2 files
+[ee-live +73.1s f1608] no translated code at 0x00812178 (loaded code at 0x007C4880, image 007C4880_9943776F, 541 KiB): translating it now, the game waits
+[ee-live +73.4s f1608] switched in after 0.3 s (translate 0.0, compile 0.2, link 0.1): 1 entry points, 60 instructions, 3 files
+[ee-live +73.4s f1608] no translated code at 0x00815D30 (loaded code at 0x007C4880, image 007C4880_9943776F, 541 KiB): translating it now, the game waits
+[ee-live +73.6s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 2 instructions, 2 files
+[ee-live +73.6s f1608] no translated code at 0x008159D8 (loaded code at 0x007C4880, image 007C4880_9943776F, 541 KiB): translating it now, the game waits
+[ee-live +73.9s f1608] switched in after 0.3 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 74 instructions, 3 files
+[ee-live +73.9s f1608] no translated code at 0x00810388 (loaded code at 0x007C4880, image 007C4880_9943776F, 541 KiB): translating it now, the game waits
+[ee-live +74.1s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 13 instructions, 2 files
+[ee-live +74.1s f1608] no translated code at 0x00810144 (loaded code at 0x007C4880, image 007C4880_9943776F, 541 KiB): translating it now, the game waits
+[ee-live +74.3s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 10 instructions, 2 files
+[ee-live +74.3s f1608] no translated code at 0x00812050 (loaded code at 0x007C4880, image 007C4880_FBC3ADD6, 541 KiB): translating it now, the game waits
+[ee-live +74.6s f1608] switched in after 0.3 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 204 instructions, 4 files
+[ee-live +74.6s f1608] no translated code at 0x00812608 (loaded code at 0x007C4880, image 007C4880_6DBBF037, 541 KiB): translating it now, the game waits
+[ee-live +74.9s f1608] switched in after 0.3 s (translate 0.0, compile 0.2, link 0.1): 1 entry points, 93 instructions, 3 files
+[ee-live +74.9s f1608] no translated code at 0x00818380 (loaded code at 0x007C4880, image 007C4880_40ED7D2B, 541 KiB): translating it now, the game waits
+[ee-live +75.3s f1608] switched in after 0.4 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 300 instructions, 4 files
+[ee-live +75.3s f1608] no translated code at 0x00818678 (loaded code at 0x007C4880, image 007C4880_A92423B7, 541 KiB): translating it now, the game waits
+[ee-live +75.5s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 2 instructions, 2 files
+[ee-live +75.5s f1608] no translated code at 0x00815758 (loaded code at 0x007C4880, image 007C4880_93876C8D, 541 KiB): translating it now, the game waits
+[ee-live +75.8s f1608] switched in after 0.3 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 142 instructions, 4 files
+[ee-live +75.8s f1608] no translated code at 0x008188E8 (loaded code at 0x007C4880, image 007C4880_3BBF0932, 541 KiB): translating it now, the game waits
+[ee-live +76.0s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 2 instructions, 2 files
+[ee-live +76.0s f1608] no translated code at 0x0080EF28 (loaded code at 0x007C4880, image 007C4880_157F33D8, 541 KiB): translating it now, the game waits
+[ee-live +76.5s f1608] switched in after 0.4 s (translate 0.0, compile 0.4, link 0.1): 1 entry points, 138 instructions, 5 files
+[ee-live +76.5s f1608] no translated code at 0x007FC878 (window 0x007C4000, image 007C4000_BAE146B1, 256 KiB): translating it now, the game waits
+[ee-live +77.0s f1608] switched in after 0.5 s (translate 0.0, compile 0.4, link 0.1): 1 entry points, 126 instructions, 5 files
+[ee-live +77.0s f1608] no translated code at 0x008122A0 (loaded code at 0x007C4880, image 007C4880_DB62A53D, 541 KiB): translating it now, the game waits
+[ee-live +77.3s f1608] switched in after 0.4 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 95 instructions, 3 files
+[ee-live +77.3s f1608] no translated code at 0x0080F0B0 (loaded code at 0x007C4880, image 007C4880_30EB81B5, 541 KiB): translating it now, the game waits
+[ee-live +77.5s f1608] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 34 instructions, 2 files
+[ee-live +77.5s f1608] no translated code at 0x0080ECB0 (loaded code at 0x007C4880, image 007C4880_B583D5C3, 541 KiB): translating it now, the game waits
+[ee-live +78.1s f1608] switched in after 0.6 s (translate 0.0, compile 0.5, link 0.1): 1 entry points, 409 instructions, 7 files
+[ee-live +78.1s f1608] no translated code at 0x00810748 (loaded code at 0x007C4880, image 007C4880_4ACA1DF2, 541 KiB): translating it now, the game waits
+[ee-live +79.2s f1608] switched in after 1.1 s (translate 0.0, compile 1.0, link 0.1): 1 entry points, 2270 instructions, 11 files
+[ee-live +79.2s f1608] no translated code at 0x0080EE60 (loaded code at 0x007C4880, image 007C4880_8B65E139, 541 KiB): translating it now, the game waits
+[ee-live +79.5s f1608] switched in after 0.3 s (translate 0.0, compile 0.2, link 0.1): 1 entry points, 74 instructions, 3 files
+[ee-live +79.5s f1608] no translated code at 0x0080F118 (loaded code at 0x007C4880, image 007C4880_4F492A8A, 541 KiB): translating it now, the game waits
+[ee-live +80.2s f1608] switched in after 0.7 s (translate 0.0, compile 0.6, link 0.1): 1 entry points, 613 instructions, 7 files
+[ee-live +80.2s f1608] no translated code at 0x0080F250 (loaded code at 0x007C4880, image 007C4880_64A0E45E, 541 KiB): translating it now, the game waits
+[ee-live +81.1s f1608] switched in after 0.9 s (translate 0.0, compile 0.8, link 0.1): 1 entry points, 1771 instructions, 10 files
+[ee-live +81.1s f1608] no translated code at 0x007FFEA8 (window 0x007C4000, image 007C4000_BAE146B1, 256 KiB): translating it now, the game waits
+[ee-live +82.0s f1608] switched in after 1.0 s (translate 0.0, compile 0.9, link 0.1): 1 entry points, 1427 instructions, 11 files
+[ee-live +82.0s f1608] no translated code at 0x00810D50 (loaded code at 0x007C4880, image 007C4880_5AC81AB2, 541 KiB): translating it now, the game waits
+[ee-live +82.5s f1608] switched in after 0.5 s (translate 0.0, compile 0.4, link 0.1): 1 entry points, 341 instructions, 6 files
+[ee-live +82.5s f1608] no translated code at 0x00812010 (loaded code at 0x007C4880, image 007C4880_62C46A62, 541 KiB): translating it now, the game waits
+[ee-live +82.8s f1608] switched in after 0.3 s (translate 0.0, compile 0.2, link 0.1): 1 entry points, 68 instructions, 3 files
+[ee-live +82.8s f1609] no translated code at 0x007E3A80 (window 0x007C4000, image 007C4000_471DF632, 256 KiB): translating it now, the game waits
+[ee-live +84.7s f1609] switched in after 1.9 s (quick) (translate 0.1, compile 1.7, link 0.1): 30 entry points (calls of the program included), 57585 instructions, 17 files
+[ee-live +84.7s f1609] no translated code at 0x007D7618 (window 0x007C4000, image 007C4000_471DF632, 256 KiB): translating it now, the game waits
+[ee-live +84.9s f1609] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 4 instructions, 2 files
+[ee-live +84.9s f1609] no translated code at 0x007DCB68 (window 0x007C4000, image 007C4000_471DF632, 256 KiB): translating it now, the game waits
+[ee-live +85.3s f1609] switched in after 0.4 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 465 instructions, 3 files
+[ee-live +85.3s f1609] no translated code at 0x007DC438 (window 0x007C4000, image 007C4000_471DF632, 256 KiB): translating it now, the game waits
+[ee-live +85.7s f1609] switched in after 0.4 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 484 instructions, 3 files
+[cdvdfsv] search \MOVIEPS2\LOGON.SFD;1 -> found
+[ee-live +85.7s f1609] no translated code at 0x007FC3C8 (window 0x007C4000, image 007C4000_471DF632, 256 KiB): translating it now, the game waits
+[ee-live +86.0s f1609] switched in after 0.4 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 115 instructions, 4 files
+[ee-live +86.0s f1609] no translated code at 0x0080EC00 (loaded code at 0x007C4880, image 007C4880_10EFDC6C, 541 KiB): translating it now, the game waits
+[ee-live +86.2s f1609] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 26 instructions, 2 files
+[ee-live +86.2s f1609] no translated code at 0x0080D048 (loaded code at 0x007C4880, image 007C4880_19D292EB, 541 KiB): translating it now, the game waits
+[ee-live +86.4s f1609] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 3 instructions, 2 files
+[ee-live +86.4s f1609] no translated code at 0x0080D068 (loaded code at 0x007C4880, image 007C4880_0AB69AE7, 541 KiB): translating it now, the game waits
+[ee-live +86.7s f1609] switched in after 0.3 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 162 instructions, 4 files
+[ee-live +86.7s f1609] no translated code at 0x00815B80 (loaded code at 0x007C4880, image 007C4880_FB4830D9, 541 KiB): translating it now, the game waits
+[ee-live +87.2s f1609] switched in after 0.5 s (translate 0.0, compile 0.4, link 0.1): 1 entry points, 209 instructions, 5 files
+[ee-live +87.2s f1609] no translated code at 0x00815878 (loaded code at 0x007C4880, image 007C4880_1E32CE70, 541 KiB): translating it now, the game waits
+[ee-live +87.5s f1609] switched in after 0.3 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 123 instructions, 3 files
+[ee-live +87.5s f1609] no translated code at 0x0080F260 (loaded code at 0x007C4880, image 007C4880_317DDD4E, 541 KiB): translating it now, the game waits
+[ee-live +88.4s f1609] switched in after 0.9 s (translate 0.0, compile 0.8, link 0.1): 1 entry points, 1755 instructions, 10 files
+[ee-live +88.4s f1609] no translated code at 0x007DC15C (window 0x007C4000, image 007C4000_26FC1E3D, 256 KiB): translating it now, the game waits
+[ee-live +90.2s f1609] switched in after 1.8 s (quick) (translate 0.1, compile 1.6, link 0.1): 30 entry points (calls of the program included), 57498 instructions, 17 files
+[audio] the sound ran dry at frame 1610 (2 times so far): the game runs slower than real time than the sound can be stretched to
+[ee-live +90.2s f1613] no translated code at 0x007DC120 (window 0x007C4000, image 007C4000_E2B0FF47, 256 KiB): translating it now, the game waits
+[ee-live +92.0s f1613] switched in after 1.8 s (quick) (translate 0.1, compile 1.6, link 0.1): 30 entry points (calls of the program included), 57513 instructions, 17 files
+[ee-live +92.0s f1614] no translated code at 0x00815F38 (loaded code at 0x007C4880, image 007C4880_B8B2168C, 541 KiB): translating it now, the game waits
+[ee-live +92.2s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 58 instructions, 2 files
+[ee-live +92.2s f1614] no translated code at 0x00816150 (loaded code at 0x007C4880, image 007C4880_8E7C3CB4, 541 KiB): translating it now, the game waits
+[ee-live +92.6s f1614] switched in after 0.4 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 197 instructions, 3 files
+[ee-live +92.6s f1614] no translated code at 0x00816000 (loaded code at 0x007C4880, image 007C4880_E72AF471, 541 KiB): translating it now, the game waits
+[ee-live +92.8s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 17 instructions, 2 files
+[ee-live +92.8s f1614] no translated code at 0x00816240 (loaded code at 0x007C4880, image 007C4880_AA39DD52, 541 KiB): translating it now, the game waits
+[ee-live +93.0s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 72 instructions, 2 files
+[ee-live +93.0s f1614] no translated code at 0x00816FA0 (loaded code at 0x007C4880, image 007C4880_24E8999A, 541 KiB): translating it now, the game waits
+[ee-live +93.2s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 124 instructions, 2 files
+[ee-live +93.2s f1614] no translated code at 0x00816A78 (loaded code at 0x007C4880, image 007C4880_CCBAA49C, 541 KiB): translating it now, the game waits
+[ee-live +93.4s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 45 instructions, 2 files
+[ee-live +93.4s f1614] no translated code at 0x008172A8 (loaded code at 0x007C4880, image 007C4880_BB73B1CC, 541 KiB): translating it now, the game waits
+[ee-live +93.6s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 131 instructions, 2 files
+[ee-live +93.6s f1614] no translated code at 0x00816980 (loaded code at 0x007C4880, image 007C4880_C413FA05, 541 KiB): translating it now, the game waits
+[ee-live +93.8s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 52 instructions, 2 files
+[ee-live +93.8s f1614] no translated code at 0x00816658 (loaded code at 0x007C4880, image 007C4880_3A2B5157, 541 KiB): translating it now, the game waits
+[ee-live +94.0s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 45 instructions, 2 files
+[ee-live +94.0s f1614] no translated code at 0x008166A0 (loaded code at 0x007C4880, image 007C4880_3807BA66, 541 KiB): translating it now, the game waits
+[ee-live +94.2s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 45 instructions, 2 files
+[ee-live +94.2s f1614] no translated code at 0x008166E8 (loaded code at 0x007C4880, image 007C4880_A763734A, 541 KiB): translating it now, the game waits
+[ee-live +94.4s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 45 instructions, 2 files
+[ee-live +94.4s f1614] no translated code at 0x00816730 (loaded code at 0x007C4880, image 007C4880_0F353D31, 541 KiB): translating it now, the game waits
+[ee-live +94.5s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 45 instructions, 2 files
+[ee-live +94.5s f1614] no translated code at 0x00816860 (loaded code at 0x007C4880, image 007C4880_93CC69E8, 541 KiB): translating it now, the game waits
+[ee-live +94.7s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 45 instructions, 2 files
+[ee-live +94.7s f1614] no translated code at 0x008168A8 (loaded code at 0x007C4880, image 007C4880_0D89F511, 541 KiB): translating it now, the game waits
+[ee-live +94.9s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 45 instructions, 2 files
+[ee-live +94.9s f1614] no translated code at 0x008168F0 (loaded code at 0x007C4880, image 007C4880_C0FB47C8, 541 KiB): translating it now, the game waits
+[ee-live +95.1s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 45 instructions, 2 files
+[ee-live +95.1s f1614] no translated code at 0x00816938 (loaded code at 0x007C4880, image 007C4880_8F21F18A, 541 KiB): translating it now, the game waits
+[ee-live +95.3s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 45 instructions, 2 files
+[ee-live +95.3s f1614] no translated code at 0x008169E8 (loaded code at 0x007C4880, image 007C4880_447EE68C, 541 KiB): translating it now, the game waits
+[ee-live +95.5s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 45 instructions, 2 files
+[ee-live +95.5s f1614] no translated code at 0x00816A30 (loaded code at 0x007C4880, image 007C4880_0402ECE3, 541 KiB): translating it now, the game waits
+[ee-live +95.7s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 45 instructions, 2 files
+[ee-live +95.7s f1614] no translated code at 0x00816BF8 (loaded code at 0x007C4880, image 007C4880_1FBE2A4B, 541 KiB): translating it now, the game waits
+[ee-live +95.9s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 108 instructions, 2 files
+[ee-live +95.9s f1614] no translated code at 0x00816C60 (loaded code at 0x007C4880, image 007C4880_B0C7D80F, 541 KiB): translating it now, the game waits
+[ee-live +96.1s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 114 instructions, 2 files
+[ee-live +96.1s f1614] no translated code at 0x00816CE0 (loaded code at 0x007C4880, image 007C4880_8C3772CF, 541 KiB): translating it now, the game waits
+[ee-live +96.3s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 108 instructions, 2 files
+[ee-live +96.3s f1614] no translated code at 0x00816D48 (loaded code at 0x007C4880, image 007C4880_BBE6D0A4, 541 KiB): translating it now, the game waits
+[ee-live +96.5s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 108 instructions, 2 files
+[ee-live +96.5s f1614] no translated code at 0x00816DB0 (loaded code at 0x007C4880, image 007C4880_0BAA443D, 541 KiB): translating it now, the game waits
+[ee-live +96.8s f1614] switched in after 0.2 s (translate 0.0, compile 0.2, link 0.1): 1 entry points, 108 instructions, 2 files
+[ee-live +96.8s f1614] no translated code at 0x00816E18 (loaded code at 0x007C4880, image 007C4880_D2CCD25D, 541 KiB): translating it now, the game waits
+[ee-live +97.0s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 110 instructions, 2 files
+[ee-live +97.0s f1614] no translated code at 0x00816E88 (loaded code at 0x007C4880, image 007C4880_2A584A5C, 541 KiB): translating it now, the game waits
+[ee-live +97.2s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 124 instructions, 2 files
+[ee-live +97.2s f1614] no translated code at 0x00816F30 (loaded code at 0x007C4880, image 007C4880_092DD31A, 541 KiB): translating it now, the game waits
+[ee-live +97.4s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 121 instructions, 2 files
+[ee-live +97.4s f1614] no translated code at 0x00817378 (loaded code at 0x007C4880, image 007C4880_287F9EC4, 541 KiB): translating it now, the game waits
+[ee-live +97.6s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 2 instructions, 2 files
+[ee-live +97.6s f1614] no translated code at 0x008162B0 (loaded code at 0x007C4880, image 007C4880_E4C5AD3D, 541 KiB): translating it now, the game waits
+[ee-live +97.8s f1614] switched in after 0.2 s (translate 0.0, compile 0.2, link 0.1): 1 entry points, 166 instructions, 2 files
+[ee-live +97.9s f1614] no translated code at 0x00817008 (loaded code at 0x007C4880, image 007C4880_0AA552FE, 541 KiB): translating it now, the game waits
+[ee-live +98.1s f1614] switched in after 0.3 s (translate 0.0, compile 0.2, link 0.1): 1 entry points, 124 instructions, 2 files
+[ee-live +98.1s f1614] no translated code at 0x00817070 (loaded code at 0x007C4880, image 007C4880_5F783F78, 541 KiB): translating it now, the game waits
+[ee-live +98.3s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 125 instructions, 2 files
+[ee-live +98.3s f1614] no translated code at 0x008170E0 (loaded code at 0x007C4880, image 007C4880_426BF35E, 541 KiB): translating it now, the game waits
+[ee-live +98.6s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 126 instructions, 2 files
+[ee-live +98.6s f1614] no translated code at 0x00817150 (loaded code at 0x007C4880, image 007C4880_23B5E9E2, 541 KiB): translating it now, the game waits
+[ee-live +98.8s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 124 instructions, 2 files
+[ee-live +98.8s f1614] no translated code at 0x008171B8 (loaded code at 0x007C4880, image 007C4880_D83EB405, 541 KiB): translating it now, the game waits
+[ee-live +99.0s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 128 instructions, 2 files
+[ee-live +99.0s f1614] no translated code at 0x00817230 (loaded code at 0x007C4880, image 007C4880_E42B3416, 541 KiB): translating it now, the game waits
+[ee-live +99.2s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 128 instructions, 2 files
+[ee-live +99.2s f1614] no translated code at 0x008111F0 (loaded code at 0x007C4880, image 007C4880_77478B5A, 541 KiB): translating it now, the game waits
+[ee-live +99.4s f1614] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 16 instructions, 2 files
+[ee-live +99.4s f1614] no translated code at 0x00810EC8 (loaded code at 0x007C4880, image 007C4880_05A48D3D, 541 KiB): translating it now, the game waits
+[ee-live +99.7s f1614] switched in after 0.3 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 118 instructions, 3 files
+[ee-live +99.7s f1614] no translated code at 0x0080E6B0 (loaded code at 0x007C4880, image 007C4880_08637306, 541 KiB): translating it now, the game waits
+[ee-live +100.0s f1614] switched in after 0.2 s (translate 0.0, compile 0.2, link 0.1): 1 entry points, 225 instructions, 2 files
+[ee-live +100.0s f1614] no translated code at 0x0080EA50 (loaded code at 0x007C4880, image 007C4880_1DA77EC6, 541 KiB): translating it now, the game waits
+[ee-live +100.3s f1614] switched in after 0.3 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 205 instructions, 3 files
+[ee-live +100.3s f1615] no translated code at 0x0080D058 (loaded code at 0x007C4880, image 007C4880_865307A6, 541 KiB): translating it now, the game waits
+[ee-live +100.5s f1615] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 3 instructions, 2 files
+[ee-live +100.5s f1615] no translated code at 0x007EC900 (window 0x007C4000, image 007C4000_EA58ED2D, 256 KiB): translating it now, the game waits
+[ee-live +102.4s f1615] switched in after 1.9 s (quick) (translate 0.1, compile 1.7, link 0.1): 30 entry points (calls of the program included), 60408 instructions, 17 files
+[ee-live +102.4s f1615] no translated code at 0x007ECF80 (window 0x007C4000, image 007C4000_EA58ED2D, 256 KiB): translating it now, the game waits
+[ee-live +102.8s f1615] switched in after 0.4 s (translate 0.0, compile 0.4, link 0.1): 1 entry points, 2720 instructions, 3 files
+[ee-live +102.8s f1615] no translated code at 0x007EE550 (window 0x007C4000, image 007C4000_EA58ED2D, 256 KiB): translating it now, the game waits
+[ee-live +103.3s f1615] switched in after 0.4 s (translate 0.0, compile 0.4, link 0.1): 1 entry points, 1199 instructions, 3 files
+[ee-live +103.3s f1615] no translated code at 0x00811000 (loaded code at 0x007C4880, image 007C4880_80B6757A, 541 KiB): translating it now, the game waits
+[ee-live +103.5s f1615] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 122 instructions, 2 files
+[ee-live +103.5s f1615] no translated code at 0x00813770 (loaded code at 0x007C4880, image 007C4880_9C021A41, 541 KiB): translating it now, the game waits
+[ee-live +103.8s f1615] switched in after 0.3 s (translate 0.0, compile 0.2, link 0.1): 1 entry points, 91 instructions, 4 files
+[ee-live +103.8s f1615] no translated code at 0x00813810 (loaded code at 0x007C4880, image 007C4880_0195D593, 541 KiB): translating it now, the game waits
+[ee-live +104.0s f1615] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 35 instructions, 2 files
+[ee-live +104.0s f1615] no translated code at 0x0080CE30 (loaded code at 0x007C4880, image 007C4880_F87237B5, 541 KiB): translating it now, the game waits
+[ee-live +104.2s f1615] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 12 instructions, 2 files
+[ee-live +104.2s f1615] no translated code at 0x0080D108 (loaded code at 0x007C4880, image 007C4880_5D77EB3A, 541 KiB): translating it now, the game waits
+[ee-live +104.6s f1615] switched in after 0.5 s (translate 0.0, compile 0.4, link 0.1): 1 entry points, 166 instructions, 5 files
+[ee-live +104.6s f1615] no translated code at 0x0080C0F8 (loaded code at 0x007C4880, image 007C4880_C2795E07, 541 KiB): translating it now, the game waits
+[ee-live +104.8s f1615] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 17 instructions, 2 files
+[ee-live +104.8s f1615] no translated code at 0x0080E8F8 (loaded code at 0x007C4880, image 007C4880_F6CA48AF, 541 KiB): translating it now, the game waits
+[ee-live +105.4s f1615] switched in after 0.6 s (translate 0.0, compile 0.5, link 0.1): 1 entry points, 880 instructions, 5 files
+[ee-live +105.4s f1615] no translated code at 0x0080EA40 (loaded code at 0x007C4880, image 007C4880_71FE0C21, 541 KiB): translating it now, the game waits
+[ee-live +105.6s f1615] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 3 instructions, 2 files
+[ee-live +105.6s f1615] no translated code at 0x0080C000 (loaded code at 0x007C4880, image 007C4880_CD5AB69F, 541 KiB): translating it now, the game waits
+[ee-live +105.9s f1615] switched in after 0.3 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 164 instructions, 3 files
+[ee-live +105.9s f1615] no translated code at 0x0080D1B8 (loaded code at 0x007C4880, image 007C4880_47BB3983, 541 KiB): translating it now, the game waits
+[ee-live +106.1s f1615] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 5 instructions, 2 files
+[ee-live +106.1s f1615] no translated code at 0x008104E0 (loaded code at 0x007C4880, image 007C4880_47BB3983, 541 KiB): translating it now, the game waits
+[ee-live +106.3s f1615] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 29 instructions, 2 files
+[ee-live +106.3s f1615] no translated code at 0x0080E720 (loaded code at 0x007C4880, image 007C4880_6090170D, 541 KiB): translating it now, the game waits
+[ee-live +106.5s f1615] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 58 instructions, 2 files
+[audio] the sound ran dry at frame 1616 (4 times so far): the game runs slower than real time than the sound can be stretched to
+[ee-live +106.5s f1616] no translated code at 0x0080D108 (loaded code at 0x007C4880, image 007C4880_7917FD36, 541 KiB): translating it now, the game waits
+[ee-live +107.0s f1616] switched in after 0.5 s (translate 0.0, compile 0.4, link 0.1): 1 entry points, 171 instructions, 5 files
+[ee-live +107.0s f1616] no translated code at 0x0080D108 (loaded code at 0x007C4880, image 007C4880_3E679001, 541 KiB): translating it now, the game waits
+[ee-live +107.3s f1616] switched in after 0.3 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 162 instructions, 4 files
+[ee-live +107.3s f1619] no translated code at 0x00810690 (loaded code at 0x007C4880, image 007C4880_2B9F946B, 541 KiB): translating it now, the game waits
+[ee-live +107.7s f1619] switched in after 0.3 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 96 instructions, 4 files
+[ee-live +107.7s f1619] no translated code at 0x0080F270 (loaded code at 0x007C4880, image 007C4880_656C05FE, 541 KiB): translating it now, the game waits
+[ee-live +108.5s f1619] switched in after 0.9 s (translate 0.0, compile 0.8, link 0.1): 1 entry points, 1394 instructions, 10 files
+[ee-live +108.5s f1620] no translated code at 0x0081A6B8 (loaded code at 0x007C4880, image 007C4880_958C72AF, 541 KiB): translating it now, the game waits
+[ee-live +108.7s f1620] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 3 instructions, 2 files
+[ee-live +108.7s f1620] no translated code at 0x00814D08 (loaded code at 0x007C4880, image 007C4880_8C9F5125, 541 KiB): translating it now, the game waits
+[ee-live +109.0s f1620] switched in after 0.3 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 504 instructions, 2 files
+[ee-live +109.1s f1620] no translated code at 0x00810C28 (loaded code at 0x007C4880, image 007C4880_3CC95843, 541 KiB): translating it now, the game waits
+[ee-live +109.4s f1620] switched in after 0.3 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 117 instructions, 4 files
+[ee-live +109.4s f1620] no translated code at 0x00815DA0 (loaded code at 0x007C4880, image 007C4880_3CC95843, 541 KiB): translating it now, the game waits
+[ee-live +109.9s f1620] switched in after 0.5 s (translate 0.0, compile 0.4, link 0.1): 1 entry points, 291 instructions, 5 files
+[ee-live +109.9s f1620] no translated code at 0x0080C9F0 (loaded code at 0x007C4880, image 007C4880_3CC95843, 541 KiB): translating it now, the game waits
+[ee-live +110.3s f1620] switched in after 0.4 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 352 instructions, 4 files
+[ee-live +110.3s f1620] no translated code at 0x00813C80 (loaded code at 0x007C4880, image 007C4880_43D71C70, 541 KiB): translating it now, the game waits
+[ee-live +110.6s f1620] switched in after 0.3 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 82 instructions, 3 files
+[ee-live +110.6s f1620] no translated code at 0x0081A2D8 (loaded code at 0x007C4880, image 007C4880_43D71C70, 541 KiB): translating it now, the game waits
+[ee-live +110.8s f1620] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 53 instructions, 2 files
+[ee-live +110.8s f1620] no translated code at 0x00818B28 (loaded code at 0x007C4880, image 007C4880_0CF58BB5, 541 KiB): translating it now, the game waits
+[ee-live +111.0s f1620] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 4 instructions, 2 files
+[ee-live +111.0s f1620] no translated code at 0x00818728 (loaded code at 0x007C4880, image 007C4880_3786A320, 541 KiB): translating it now, the game waits
+[ee-live +111.4s f1620] switched in after 0.3 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 214 instructions, 3 files
+[ee-live +111.4s f1620] no translated code at 0x00818B88 (loaded code at 0x007C4880, image 007C4880_2BA1E418, 541 KiB): translating it now, the game waits
+[ee-live +111.6s f1620] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 24 instructions, 2 files
+[ee-live +111.6s f1620] no translated code at 0x00818B68 (loaded code at 0x007C4880, image 007C4880_2BA1E418, 541 KiB): translating it now, the game waits
+[ee-live +111.8s f1620] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 24 instructions, 2 files
+[ee-live +111.8s f1620] no translated code at 0x00818680 (loaded code at 0x007C4880, image 007C4880_2BA1E418, 541 KiB): translating it now, the game waits
+[ee-live +112.0s f1620] switched in after 0.2 s (translate 0.0, compile 0.1, link 0.1): 1 entry points, 2 instructions, 2 files
+[ee-live +112.0s f1620] no translated code at 0x00812EC0 (loaded code at 0x007C4880, image 007C4880_2BA1E418, 541 KiB): translating it now, the game waits
+[ee-live +112.3s f1620] switched in after 0.3 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 162 instructions, 4 files
+[ee-live +112.3s f1620] no translated code at 0x00810CE0 (loaded code at 0x007C4880, image 007C4880_2BA1E418, 541 KiB): translating it now, the game waits
+[ee-live +112.6s f1620] switched in after 0.3 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 99 instructions, 4 files
+[ee-live +112.6s f1620] no translated code at 0x00815E18 (loaded code at 0x007C4880, image 007C4880_2BA1E418, 541 KiB): translating it now, the game waits
+[ee-live +113.0s f1620] switched in after 0.3 s (translate 0.0, compile 0.2, link 0.1): 1 entry points, 54 instructions, 3 files
+[ee-live +113.0s f1620] no translated code at 0x0080CBA0 (loaded code at 0x007C4880, image 007C4880_2BA1E418, 541 KiB): translating it now, the game waits
+[ee-live +113.3s f1620] switched in after 0.3 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 267 instructions, 4 files
+[ee-live +113.3s f1620] no translated code at 0x0080F280 (loaded code at 0x007C4880, image 007C4880_6E1B8E0D, 541 KiB): translating it now, the game waits
+[ee-live +114.1s f1620] switched in after 0.8 s (translate 0.0, compile 0.8, link 0.1): 1 entry points, 1315 instructions, 10 files
+[ee-live +114.1s f1620] no translated code at 0x007FFEB8 (window 0x007C4000, image 007C4000_7EADA7CB, 256 KiB): translating it now, the game waits
+[ee-live +116.0s f1620] switched in after 1.8 s (quick) (translate 0.1, compile 1.7, link 0.1): 30 entry points (calls of the program included), 57499 instructions, 17 files
+[ee-live +116.0s f1621] no translated code at 0x00813770 (loaded code at 0x007C4880, image 007C4880_6315D6EA, 541 KiB): translating it now, the game waits
+[ee-live +116.3s f1621] switched in after 0.3 s (translate 0.0, compile 0.3, link 0.1): 1 entry points, 84 instructions, 3 files
+[audio] the sound ran dry at frame 1622 (6 times so far): the game runs slower than real time than the sound can be stretched to
+[lgkbm] event-poll reply: zero events (poll 369000)
+[lgkbm] event-poll reply: zero events (poll 370000)
+[lgkbm] event-poll reply: zero events (poll 371000)
+[lgkbm] event-poll reply: zero events (poll 372000)
+[lgkbm] event-poll reply: zero events (poll 373000)
+[lgkbm] event-poll reply: zero events (poll 374000)
+[lgkbm] event-poll reply: zero events (poll 375000)
+[lgkbm] event-poll reply: zero events (poll 376000)
+[lgkbm] event-poll reply: zero events (poll 377000)
+[lgkbm] event-poll reply: zero events (poll 378000)
+[lgkbm] event-poll reply: zero events (poll 379000)
+[lgkbm] event-poll reply: zero events (poll 380000)
+[lgkbm] event-poll reply: zero events (poll 381000)
+[lgkbm] event-poll reply: zero events (poll 382000)
+[lgkbm] event-poll reply: zero events (poll 383000)
+[lgkbm] event-poll reply: zero events (poll 384000)
+[lgkbm] event-poll reply: zero events (poll 385000)
+[lgkbm] event-poll reply: zero events (poll 386000)
+[lgkbm] event-poll reply: zero events (poll 387000)
+[lgkbm] event-poll reply: zero events (poll 388000)
+[lgkbm] event-poll reply: zero events (poll 389000)
+[lgkbm] event-poll reply: zero events (poll 390000)
+[lgkbm] event-poll reply: zero events (poll 391000)
+[lgkbm] event-poll reply: zero events (poll 392000)
+[lgkbm] event-poll reply: zero events (poll 393000)
+[lgkbm] event-poll reply: zero events (poll 394000)
+[lgkbm] event-poll reply: zero events (poll 395000)
+[lgkbm] event-poll reply: zero events (poll 396000)
+[lgkbm] event-poll reply: zero events (poll 397000)
+[lgkbm] event-poll reply: zero events (poll 398000)
+[lgkbm] event-poll reply: zero events (poll 399000)
+[lgkbm] event-poll reply: zero events (poll 400000)
+[lgkbm] event-poll reply: zero events (poll 401000)
+[lgkbm] event-poll reply: zero events (poll 402000)
+[lgkbm] event-poll reply: zero events (poll 403000)
+[lgkbm] event-poll reply: zero events (poll 404000)
+[lgkbm] event-poll reply: zero events (poll 405000)
+[lgkbm] event-poll reply: zero events (poll 406000)
+[lgkbm] event-poll reply: zero events (poll 407000)
+[lgkbm] event-poll reply: zero events (poll 408000)
+[lgkbm] event-poll reply: zero events (poll 409000)
+[lgkbm] event-poll reply: zero events (poll 410000)
+[lgkbm] event-poll reply: zero events (poll 411000)
+[lgkbm] event-poll reply: zero events (poll 412000)
+[lgkbm] event-poll reply: zero events (poll 413000)
+[lgkbm] event-poll reply: zero events (poll 414000)
+[lgkbm] event-poll reply: zero events (poll 415000)
+[lgkbm] event-poll reply: zero events (poll 416000)
+[lgkbm] event-poll reply: zero events (poll 417000)
+[lgkbm] event-poll reply: zero events (poll 418000)
+[lgkbm] event-poll reply: zero events (poll 419000)
+[lgkbm] event-poll reply: zero events (poll 420000)
+[lgkbm] event-poll reply: zero events (poll 421000)
+[lgkbm] event-poll reply: zero events (poll 422000)
+[lgkbm] event-poll reply: zero events (poll 423000)
+[lgkbm] event-poll reply: zero events (poll 424000)
+[lgkbm] event-poll reply: zero events (poll 425000)
+[lgkbm] event-poll reply: zero events (poll 426000)
+[lgkbm] event-poll reply: zero events (poll 427000)
+[lgkbm] event-poll reply: zero events (poll 428000)
+[lgkbm] event-poll reply: zero events (poll 429000)
+[lgkbm] event-poll reply: zero events (poll 430000)
+[lgkbm] event-poll reply: zero events (poll 431000)
+[lgkbm] event-poll reply: zero events (poll 432000)
+[lgkbm] event-poll reply: zero events (poll 433000)
+[lgkbm] event-poll reply: zero events (poll 434000)
+[lgkbm] event-poll reply: zero events (poll 435000)
+[lgkbm] event-poll reply: zero events (poll 436000)
+[lgkbm] event-poll reply: zero events (poll 437000)
+[lgkbm] event-poll reply: zero events (poll 438000)
+[lgkbm] event-poll reply: zero events (poll 439000)
+[lgkbm] event-poll reply: zero events (poll 440000)
+[lgkbm] event-poll reply: zero events (poll 441000)
+[lgkbm] event-poll reply: zero events (poll 442000)
+[lgkbm] event-poll reply: zero events (poll 443000)
+[lgkbm] event-poll reply: zero events (poll 444000)
+[lgkbm] event-poll reply: zero events (poll 445000)
+[lgkbm] event-poll reply: zero events (poll 446000)
+[lgkbm] event-poll reply: zero events (poll 447000)
+[lgkbm] event-poll reply: zero events (poll 448000)
+[lgkbm] event-poll reply: zero events (poll 449000)
+[lgkbm] event-poll reply: zero events (poll 450000)
+[lgkbm] event-poll reply: zero events (poll 451000)
+[lgkbm] event-poll reply: zero events (poll 452000)
+[lgkbm] event-poll reply: zero events (poll 453000)
+[lgkbm] event-poll reply: zero events (poll 454000)
+[lgkbm] event-poll reply: zero events (poll 455000)
+[lgkbm] event-poll reply: zero events (poll 456000)
+[lgkbm] event-poll reply: zero events (poll 457000)
+[lgkbm] event-poll reply: zero events (poll 458000)
+[lgkbm] event-poll reply: zero events (poll 459000)
+[lgkbm] event-poll reply: zero events (poll 460000)
+[lgkbm] event-poll reply: zero events (poll 461000)
+[lgkbm] event-poll reply: zero events (poll 462000)
+[lgkbm] event-poll reply: zero events (poll 463000)
+[lgkbm] event-poll reply: zero events (poll 464000)
+[lgkbm] event-poll reply: zero events (poll 465000)
+[lgkbm] event-poll reply: zero events (poll 466000)
+[lgkbm] event-poll reply: zero events (poll 467000)
+[lgkbm] event-poll reply: zero events (poll 468000)
+[lgkbm] event-poll reply: zero events (poll 469000)
+[lgkbm] event-poll reply: zero events (poll 470000)
+[lgkbm] event-poll reply: zero events (poll 471000)
+[lgkbm] event-poll reply: zero events (poll 472000)
+[lgkbm] event-poll reply: zero events (poll 473000)
+[lgkbm] event-poll reply: zero events (poll 474000)
+[lgkbm] event-poll reply: zero events (poll 475000)
+[lgkbm] event-poll reply: zero events (poll 476000)
+[lgkbm] event-poll reply: zero events (poll 477000)
+[lgkbm] event-poll reply: zero events (poll 478000)
+[lgkbm] event-poll reply: zero events (poll 479000)
+[lgkbm] event-poll reply: zero events (poll 480000)
+[lgkbm] event-poll reply: zero events (poll 481000)
+[lgkbm] event-poll reply: zero events (poll 482000)
+[lgkbm] event-poll reply: zero events (poll 483000)
+[lgkbm] event-poll reply: zero events (poll 484000)
+[lgkbm] event-poll reply: zero events (poll 485000)
+[lgkbm] event-poll reply: zero events (poll 486000)
+[lgkbm] event-poll reply: zero events (poll 487000)
+[lgkbm] event-poll reply: zero events (poll 488000)
+[lgkbm] event-poll reply: zero events (poll 489000)
+[lgkbm] event-poll reply: zero events (poll 490000)
+[lgkbm] event-poll reply: zero events (poll 491000)
+[lgkbm] event-poll reply: zero events (poll 492000)
+[lgkbm] event-poll reply: zero events (poll 493000)
+[lgkbm] event-poll reply: zero events (poll 494000)
+[lgkbm] event-poll reply: zero events (poll 495000)
+[lgkbm] event-poll reply: zero events (poll 496000)
+[lgkbm] event-poll reply: zero events (poll 497000)
+[lgkbm] event-poll reply: zero events (poll 498000)
+[lgkbm] event-poll reply: zero events (poll 499000)
+[lgkbm] event-poll reply: zero events (poll 500000)
+[lgkbm] event-poll reply: zero events (poll 501000)
+[lgkbm] event-poll reply: zero events (poll 502000)
+[lgkbm] event-poll reply: zero events (poll 503000)
+[lgkbm] event-poll reply: zero events (poll 504000)
+[lgkbm] event-poll reply: zero events (poll 505000)
+[lgkbm] event-poll reply: zero events (poll 506000)
+[lgkbm] event-poll reply: zero events (poll 507000)
+[lgkbm] event-poll reply: zero events (poll 508000)
+[lgkbm] event-poll reply: zero events (poll 509000)
+[lgkbm] event-poll reply: zero events (poll 510000)
+[lgkbm] event-poll reply: zero events (poll 511000)
+[lgkbm] event-poll reply: zero events (poll 512000)
+[lgkbm] event-poll reply: zero events (poll 513000)
+[lgkbm] event-poll reply: zero events (poll 514000)
+[lgkbm] event-poll reply: zero events (poll 515000)
+[lgkbm] event-poll reply: zero events (poll 516000)
+[lgkbm] event-poll reply: zero events (poll 517000)
+[lgkbm] event-poll reply: zero events (poll 518000)
+[lgkbm] event-poll reply: zero events (poll 519000)
+[lgkbm] event-poll reply: zero events (poll 520000)
+[lgkbm] event-poll reply: zero events (poll 521000)
+[lgkbm] event-poll reply: zero events (poll 522000)
+[lgkbm] event-poll reply: zero events (poll 523000)
+[lgkbm] event-poll reply: zero events (poll 524000)
+[lgkbm] event-poll reply: zero events (poll 525000)
+[lgkbm] event-poll reply: zero events (poll 526000)
+[lgkbm] event-poll reply: zero events (poll 527000)
+[lgkbm] event-poll reply: zero events (poll 528000)
+[lgkbm] event-poll reply: zero events (poll 529000)
+[lgkbm] event-poll reply: zero events (poll 530000)
+[lgkbm] event-poll reply: zero events (poll 531000)
+[lgkbm] event-poll reply: zero events (poll 532000)
+[lgkbm] event-poll reply: zero events (poll 533000)
+[lgkbm] event-poll reply: zero events (poll 534000)
+[lgkbm] event-poll reply: zero events (poll 535000)
+[lgkbm] event-poll reply: zero events (poll 536000)
+[lgkbm] event-poll reply: zero events (poll 537000)
+[lgkbm] event-poll reply: zero events (poll 538000)
+[lgkbm] event-poll reply: zero events (poll 539000)
+[lgkbm] event-poll reply: zero events (poll 540000)
+[lgkbm] event-poll reply: zero events (poll 541000)
+[lgkbm] event-poll reply: zero events (poll 542000)
+[lgkbm] event-poll reply: zero events (poll 543000)
+[lgkbm] event-poll reply: zero events (poll 544000)
+[lgkbm] event-poll reply: zero events (poll 545000)
+[lgkbm] event-poll reply: zero events (poll 546000)
+[lgkbm] event-poll reply: zero events (poll 547000)
+[lgkbm] event-poll reply: zero events (poll 548000)
+[lgkbm] event-poll reply: zero events (poll 549000)
+[lgkbm] event-poll reply: zero events (poll 550000)
+[lgkbm] event-poll reply: zero events (poll 551000)
+[lgkbm] event-poll reply: zero events (poll 552000)
+[lgkbm] event-poll reply: zero events (poll 553000)
+[lgkbm] event-poll reply: zero events (poll 554000)
+[lgkbm] event-poll reply: zero events (poll 555000)
+[lgkbm] event-poll reply: zero events (poll 556000)
+[lgkbm] event-poll reply: zero events (poll 557000)
+[lgkbm] event-poll reply: zero events (poll 558000)
+[lgkbm] event-poll reply: zero events (poll 559000)
+[lgkbm] event-poll reply: zero events (poll 560000)
+[lgkbm] event-poll reply: zero events (poll 561000)
+[lgkbm] event-poll reply: zero events (poll 562000)
+[lgkbm] event-poll reply: zero events (poll 563000)
+[lgkbm] event-poll reply: zero events (poll 564000)
+[lgkbm] event-poll reply: zero events (poll 565000)
+[lgkbm] event-poll reply: zero events (poll 566000)
+[lgkbm] event-poll reply: zero events (poll 567000)
+[lgkbm] event-poll reply: zero events (poll 568000)
+[lgkbm] event-poll reply: zero events (poll 569000)
+[lgkbm] event-poll reply: zero events (poll 570000)
+[lgkbm] event-poll reply: zero events (poll 571000)
+[lgkbm] event-poll reply: zero events (poll 572000)
+[lgkbm] event-poll reply: zero events (poll 573000)
+[lgkbm] event-poll reply: zero events (poll 574000)
+[lgkbm] event-poll reply: zero events (poll 575000)
+[lgkbm] event-poll reply: zero events (poll 576000)
+[lgkbm] event-poll reply: zero events (poll 577000)
+[lgkbm] event-poll reply: zero events (poll 578000)
+[lgkbm] event-poll reply: zero events (poll 579000)
+[lgkbm] event-poll reply: zero events (poll 580000)
+[lgkbm] event-poll reply: zero events (poll 581000)
+[lgkbm] event-poll reply: zero events (poll 582000)
+[lgkbm] event-poll reply: zero events (poll 583000)
+[lgkbm] event-poll reply: zero events (poll 584000)
+[lgkbm] event-poll reply: zero events (poll 585000)
+[lgkbm] event-poll reply: zero events (poll 586000)
+[lgkbm] event-poll reply: zero events (poll 587000)
+[lgkbm] event-poll reply: zero events (poll 588000)
+[lgkbm] event-poll reply: zero events (poll 589000)
+[lgkbm] event-poll reply: zero events (poll 590000)
+[lgkbm] event-poll reply: zero events (poll 591000)
+[lgkbm] event-poll reply: zero events (poll 592000)
+[lgkbm] event-poll reply: zero events (poll 593000)
+[lgkbm] event-poll reply: zero events (poll 594000)
+[lgkbm] event-poll reply: zero events (poll 595000)
+[lgkbm] event-poll reply: zero events (poll 596000)
+[lgkbm] event-poll reply: zero events (poll 597000)
+[lgkbm] event-poll reply: zero events (poll 598000)
+[lgkbm] event-poll reply: zero events (poll 599000)
+[lgkbm] event-poll reply: zero events (poll 600000)
+[lgkbm] event-poll reply: zero events (poll 601000)
+[lgkbm] event-poll reply: zero events (poll 602000)
+[lgkbm] event-poll reply: zero events (poll 603000)
+[lgkbm] event-poll reply: zero events (poll 604000)
+[lgkbm] event-poll reply: zero events (poll 605000)
+[lgkbm] event-poll reply: zero events (poll 606000)
+[lgkbm] event-poll reply: zero events (poll 607000)
+[lgkbm] event-poll reply: zero events (poll 608000)
+[lgkbm] event-poll reply: zero events (poll 609000)
+[lgkbm] event-poll reply: zero events (poll 610000)
+[lgkbm] event-poll reply: zero events (poll 611000)
+[lgkbm] event-poll reply: zero events (poll 612000)
+[lgkbm] event-poll reply: zero events (poll 613000)
+[lgkbm] event-poll reply: zero events (poll 614000)
+[lgkbm] event-poll reply: zero events (poll 615000)
+[lgkbm] event-poll reply: zero events (poll 616000)
+[lgkbm] event-poll reply: zero events (poll 617000)
+[lgkbm] event-poll reply: zero events (poll 618000)
+[lgkbm] event-poll reply: zero events (poll 619000)
+[lgkbm] event-poll reply: zero events (poll 620000)
+[lgkbm] event-poll reply: zero events (poll 621000)
+[lgkbm] event-poll reply: zero events (poll 622000)
+[lgkbm] event-poll reply: zero events (poll 623000)
+[lgkbm] event-poll reply: zero events (poll 624000)
+[lgkbm] event-poll reply: zero events (poll 625000)
+[lgkbm] event-poll reply: zero events (poll 626000)
+[lgkbm] event-poll reply: zero events (poll 627000)
+[lgkbm] event-poll reply: zero events (poll 628000)
+[lgkbm] event-poll reply: zero events (poll 629000)
+[lgkbm] event-poll reply: zero events (poll 630000)
+[lgkbm] event-poll reply: zero events (poll 631000)
+[lgkbm] event-poll reply: zero events (poll 632000)
+[lgkbm] event-poll reply: zero events (poll 633000)
+[lgkbm] event-poll reply: zero events (poll 634000)
+[lgkbm] event-poll reply: zero events (poll 635000)
+[lgkbm] event-poll reply: zero events (poll 636000)
+[lgkbm] event-poll reply: zero events (poll 637000)
+[lgkbm] event-poll reply: zero events (poll 638000)
+[lgkbm] event-poll reply: zero events (poll 639000)
+[lgkbm] event-poll reply: zero events (poll 640000)
+[lgkbm] event-poll reply: zero events (poll 641000)
+[lgkbm] event-poll reply: zero events (poll 642000)
+[lgkbm] event-poll reply: zero events (poll 643000)
+[lgkbm] event-poll reply: zero events (poll 644000)
+[lgkbm] event-poll reply: zero events (poll 645000)
+[lgkbm] event-poll reply: zero events (poll 646000)
+[lgkbm] event-poll reply: zero events (poll 647000)
+[lgkbm] event-poll reply: zero events (poll 648000)
+[lgkbm] event-poll reply: zero events (poll 649000)
+[lgkbm] event-poll reply: zero events (poll 650000)
+[lgkbm] event-poll reply: zero events (poll 651000)
+[lgkbm] event-poll reply: zero events (poll 652000)
+[lgkbm] event-poll reply: zero events (poll 653000)
+[lgkbm] event-poll reply: zero events (poll 654000)
+[lgkbm] event-poll reply: zero events (poll 655000)
+[lgkbm] event-poll reply: zero events (poll 656000)
+[lgkbm] event-poll reply: zero events (poll 657000)
+[lgkbm] event-poll reply: zero events (poll 658000)
+[lgkbm] event-poll reply: zero events (poll 659000)
+[lgkbm] event-poll reply: zero events (poll 660000)
+[lgkbm] event-poll reply: zero events (poll 661000)
+[lgkbm] event-poll reply: zero events (poll 662000)
+[lgkbm] event-poll reply: zero events (poll 663000)
+[lgkbm] event-poll reply: zero events (poll 664000)
+[lgkbm] event-poll reply: zero events (poll 665000)
+[lgkbm] event-poll reply: zero events (poll 666000)
+[lgkbm] event-poll reply: zero events (poll 667000)
+[lgkbm] event-poll reply: zero events (poll 668000)
+[lgkbm] event-poll reply: zero events (poll 669000)
+[lgkbm] event-poll reply: zero events (poll 670000)
+[lgkbm] event-poll reply: zero events (poll 671000)
+[lgkbm] event-poll reply: zero events (poll 672000)
+[lgkbm] event-poll reply: zero events (poll 673000)
+[lgkbm] event-poll reply: zero events (poll 674000)
+[lgkbm] event-poll reply: zero events (poll 675000)
+[lgkbm] event-poll reply: zero events (poll 676000)
+[lgkbm] event-poll reply: zero events (poll 677000)
+[lgkbm] event-poll reply: zero events (poll 678000)
+[lgkbm] event-poll reply: zero events (poll 679000)
+[lgkbm] event-poll reply: zero events (poll 680000)
+[lgkbm] event-poll reply: zero events (poll 681000)
+[lgkbm] event-poll reply: zero events (poll 682000)
+[lgkbm] event-poll reply: zero events (poll 683000)
+[lgkbm] event-poll reply: zero events (poll 684000)
+[lgkbm] event-poll reply: zero events (poll 685000)
+[lgkbm] event-poll reply: zero events (poll 686000)
+[lgkbm] event-poll reply: zero events (poll 687000)
+[lgkbm] event-poll reply: zero events (poll 688000)
+[lgkbm] event-poll reply: zero events (poll 689000)
+[lgkbm] event-poll reply: zero events (poll 690000)
+[lgkbm] event-poll reply: zero events (poll 691000)
+[lgkbm] event-poll reply: zero events (poll 692000)
+[lgkbm] event-poll reply: zero events (poll 693000)
+[lgkbm] event-poll reply: zero events (poll 694000)
+[lgkbm] event-poll reply: zero events (poll 695000)
+[lgkbm] event-poll reply: zero events (poll 696000)
+[lgkbm] event-poll reply: zero events (poll 697000)
+[lgkbm] event-poll reply: zero events (poll 698000)
+[lgkbm] event-poll reply: zero events (poll 699000)
+[lgkbm] event-poll reply: zero events (poll 700000)
+[lgkbm] event-poll reply: zero events (poll 701000)
+[lgkbm] event-poll reply: zero events (poll 702000)
+[lgkbm] event-poll reply: zero events (poll 703000)
+[lgkbm] event-poll reply: zero events (poll 704000)
+[lgkbm] event-poll reply: zero events (poll 705000)
+[lgkbm] event-poll reply: zero events (poll 706000)
+[lgkbm] event-poll reply: zero events (poll 707000)
+[lgkbm] event-poll reply: zero events (poll 708000)
+[lgkbm] event-poll reply: zero events (poll 709000)
+[lgkbm] event-poll reply: zero events (poll 710000)
+[lgkbm] event-poll reply: zero events (poll 711000)
+[lgkbm] event-poll reply: zero events (poll 712000)
+[lgkbm] event-poll reply: zero events (poll 713000)
+[lgkbm] event-poll reply: zero events (poll 714000)
+[lgkbm] event-poll reply: zero events (poll 715000)
+[lgkbm] event-poll reply: zero events (poll 716000)
+[lgkbm] event-poll reply: zero events (poll 717000)
+[lgkbm] event-poll reply: zero events (poll 718000)
+[lgkbm] event-poll reply: zero events (poll 719000)
+[lgkbm] event-poll reply: zero events (poll 720000)
+[lgkbm] event-poll reply: zero events (poll 721000)
+[lgkbm] event-poll reply: zero events (poll 722000)
+[lgkbm] event-poll reply: zero events (poll 723000)
+[lgkbm] event-poll reply: zero events (poll 724000)
+[lgkbm] event-poll reply: zero events (poll 725000)
+[lgkbm] event-poll reply: zero events (poll 726000)
+[lgkbm] event-poll reply: zero events (poll 727000)
+[lgkbm] event-poll reply: zero events (poll 728000)
+[lgkbm] event-poll reply: zero events (poll 729000)
+[lgkbm] event-poll reply: zero events (poll 730000)
+[lgkbm] event-poll reply: zero events (poll 731000)
+[lgkbm] event-poll reply: zero events (poll 732000)
+[lgkbm] event-poll reply: zero events (poll 733000)
+[lgkbm] event-poll reply: zero events (poll 734000)
+[lgkbm] event-poll reply: zero events (poll 735000)
+[lgkbm] event-poll reply: zero events (poll 736000)
+[lgkbm] event-poll reply: zero events (poll 737000)
+[lgkbm] event-poll reply: zero events (poll 738000)
+[lgkbm] event-poll reply: zero events (poll 739000)
+[lgkbm] event-poll reply: zero events (poll 740000)
+[lgkbm] event-poll reply: zero events (poll 741000)
+[lgkbm] event-poll reply: zero events (poll 742000)
+[lgkbm] event-poll reply: zero events (poll 743000)
+[lgkbm] event-poll reply: zero events (poll 744000)
+[lgkbm] event-poll reply: zero events (poll 745000)
+[lgkbm] event-poll reply: zero events (poll 746000)
+[lgkbm] event-poll reply: zero events (poll 747000)
+[lgkbm] event-poll reply: zero events (poll 748000)
+[lgkbm] event-poll reply: zero events (poll 749000)
+[lgkbm] event-poll reply: zero events (poll 750000)
+[lgkbm] event-poll reply: zero events (poll 751000)
+[lgkbm] event-poll reply: zero events (poll 752000)
+[lgkbm] event-poll reply: zero events (poll 753000)
+[lgkbm] event-poll reply: zero events (poll 754000)
+[lgkbm] event-poll reply: zero events (poll 755000)
+[lgkbm] event-poll reply: zero events (poll 756000)
+[lgkbm] event-poll reply: zero events (poll 757000)
+[lgkbm] event-poll reply: zero events (poll 758000)
+[lgkbm] event-poll reply: zero events (poll 759000)
+[lgkbm] event-poll reply: zero events (poll 760000)
+[lgkbm] event-poll reply: zero events (poll 761000)
+[lgkbm] event-poll reply: zero events (poll 762000)
+[lgkbm] event-poll reply: zero events (poll 763000)
+[lgkbm] event-poll reply: zero events (poll 764000)
+[lgkbm] event-poll reply: zero events (poll 765000)
+[lgkbm] event-poll reply: zero events (poll 766000)
+[lgkbm] event-poll reply: zero events (poll 767000)
+[lgkbm] event-poll reply: zero events (poll 768000)
+[lgkbm] event-poll reply: zero events (poll 769000)
+[lgkbm] event-poll reply: zero events (poll 770000)
+[lgkbm] event-poll reply: zero events (poll 771000)
+[lgkbm] event-poll reply: zero events (poll 772000)
+[lgkbm] event-poll reply: zero events (poll 773000)
+[lgkbm] event-poll reply: zero events (poll 774000)
+[lgkbm] event-poll reply: zero events (poll 775000)
+[lgkbm] event-poll reply: zero events (poll 776000)
+[lgkbm] event-poll reply: zero events (poll 777000)
+[lgkbm] event-poll reply: zero events (poll 778000)
+[lgkbm] event-poll reply: zero events (poll 779000)
+[lgkbm] event-poll reply: zero events (poll 780000)
+[lgkbm] event-poll reply: zero events (poll 781000)
+[lgkbm] event-poll reply: zero events (poll 782000)
+[lgkbm] event-poll reply: zero events (poll 783000)
+[lgkbm] event-poll reply: zero events (poll 784000)
+[lgkbm] event-poll reply: zero events (poll 785000)
+[lgkbm] event-poll reply: zero events (poll 786000)
+[lgkbm] event-poll reply: zero events (poll 787000)
+[lgkbm] event-poll reply: zero events (poll 788000)
+[lgkbm] event-poll reply: zero events (poll 789000)
+[lgkbm] event-poll reply: zero events (poll 790000)
+[lgkbm] event-poll reply: zero events (poll 791000)
+[lgkbm] event-poll reply: zero events (poll 792000)
+[lgkbm] event-poll reply: zero events (poll 793000)
+[lgkbm] event-poll reply: zero events (poll 794000)
+[lgkbm] event-poll reply: zero events (poll 795000)
+[lgkbm] event-poll reply: zero events (poll 796000)
+[lgkbm] event-poll reply: zero events (poll 797000)
+[lgkbm] event-poll reply: zero events (poll 798000)
+[lgkbm] event-poll reply: zero events (poll 799000)
+[lgkbm] event-poll reply: zero events (poll 800000)
+[lgkbm] event-poll reply: zero events (poll 801000)
+[lgkbm] event-poll reply: zero events (poll 802000)
+[lgkbm] event-poll reply: zero events (poll 803000)
+[lgkbm] event-poll reply: zero events (poll 804000)
+[lgkbm] event-poll reply: zero events (poll 805000)
+[lgkbm] event-poll reply: zero events (poll 806000)
+[lgkbm] event-poll reply: zero events (poll 807000)
+[lgkbm] event-poll reply: zero events (poll 808000)
+[lgkbm] event-poll reply: zero events (poll 809000)
+[lgkbm] event-poll reply: zero events (poll 810000)
+[lgkbm] event-poll reply: zero events (poll 811000)
+[lgkbm] event-poll reply: zero events (poll 812000)
+[lgkbm] event-poll reply: zero events (poll 813000)
+[lgkbm] event-poll reply: zero events (poll 814000)
+[lgkbm] event-poll reply: zero events (poll 815000)
+[lgkbm] event-poll reply: zero events (poll 816000)
+[lgkbm] event-poll reply: zero events (poll 817000)
+[lgkbm] event-poll reply: zero events (poll 818000)
+[lgkbm] event-poll reply: zero events (poll 819000)
+[lgkbm] event-poll reply: zero events (poll 820000)
+[lgkbm] event-poll reply: zero events (poll 821000)
+[lgkbm] event-poll reply: zero events (poll 822000)
+[lgkbm] event-poll reply: zero events (poll 823000)
+[lgkbm] event-poll reply: zero events (poll 824000)
+[lgkbm] event-poll reply: zero events (poll 825000)
+[lgkbm] event-poll reply: zero events (poll 826000)
+[lgkbm] event-poll reply: zero events (poll 827000)
+[lgkbm] event-poll reply: zero events (poll 828000)
+[lgkbm] event-poll reply: zero events (poll 829000)
+[lgkbm] event-poll reply: zero events (poll 830000)
+[lgkbm] event-poll reply: zero events (poll 831000)
+[lgkbm] event-poll reply: zero events (poll 832000)
+[lgkbm] event-poll reply: zero events (poll 833000)
+[lgkbm] event-poll reply: zero events (poll 834000)
+[lgkbm] event-poll reply: zero events (poll 835000)
+[lgkbm] event-poll reply: zero events (poll 836000)
+[lgkbm] event-poll reply: zero events (poll 837000)
+[lgkbm] event-poll reply: zero events (poll 838000)
+[lgkbm] event-poll reply: zero events (poll 839000)
+[lgkbm] event-poll reply: zero events (poll 840000)
+[lgkbm] event-poll reply: zero events (poll 841000)
+[lgkbm] event-poll reply: zero events (poll 842000)
+[lgkbm] event-poll reply: zero events (poll 843000)
+[lgkbm] event-poll reply: zero events (poll 844000)
+[lgkbm] event-poll reply: zero events (poll 845000)
+[lgkbm] event-poll reply: zero events (poll 846000)
+[lgkbm] event-poll reply: zero events (poll 847000)
+[lgkbm] event-poll reply: zero events (poll 848000)
+[lgkbm] event-poll reply: zero events (poll 849000)
+[lgkbm] event-poll reply: zero events (poll 850000)
+[lgkbm] event-poll reply: zero events (poll 851000)
+[lgkbm] event-poll reply: zero events (poll 852000)
+[lgkbm] event-poll reply: zero events (poll 853000)
+[lgkbm] event-poll reply: zero events (poll 854000)
+[lgkbm] event-poll reply: zero events (poll 855000)
+[lgkbm] event-poll reply: zero events (poll 856000)
+[lgkbm] event-poll reply: zero events (poll 857000)
+[lgkbm] event-poll reply: zero events (poll 858000)
+[lgkbm] event-poll reply: zero events (poll 859000)
+[lgkbm] event-poll reply: zero events (poll 860000)
+[lgkbm] event-poll reply: zero events (poll 861000)
+[lgkbm] event-poll reply: zero events (poll 862000)
+[lgkbm] event-poll reply: zero events (poll 863000)
+[lgkbm] event-poll reply: zero events (poll 864000)
+[lgkbm] event-poll reply: zero events (poll 865000)
+[lgkbm] event-poll reply: zero events (poll 866000)
+[lgkbm] event-poll reply: zero events (poll 867000)
+[lgkbm] event-poll reply: zero events (poll 868000)
+[lgkbm] event-poll reply: zero events (poll 869000)
+[lgkbm] event-poll reply: zero events (poll 870000)
+[lgkbm] event-poll reply: zero events (poll 871000)
+[lgkbm] event-poll reply: zero events (poll 872000)
+[lgkbm] event-poll reply: zero events (poll 873000)
+[lgkbm] event-poll reply: zero events (poll 874000)
+[lgkbm] event-poll reply: zero events (poll 875000)
+[lgkbm] event-poll reply: zero events (poll 876000)
+[lgkbm] event-poll reply: zero events (poll 877000)
+[lgkbm] event-poll reply: zero events (poll 878000)
+[lgkbm] event-poll reply: zero events (poll 879000)
+[lgkbm] event-poll reply: zero events (poll 880000)
+[lgkbm] event-poll reply: zero events (poll 881000)
+[lgkbm] event-poll reply: zero events (poll 882000)
+[lgkbm] event-poll reply: zero events (poll 883000)
+[lgkbm] event-poll reply: zero events (poll 884000)
+[lgkbm] event-poll reply: zero events (poll 885000)
+[lgkbm] event-poll reply: zero events (poll 886000)
+[lgkbm] event-poll reply: zero events (poll 887000)
+[lgkbm] event-poll reply: zero events (poll 888000)
+[lgkbm] event-poll reply: zero events (poll 889000)
+[lgkbm] event-poll reply: zero events (poll 890000)
+[lgkbm] event-poll reply: zero events (poll 891000)
+[lgkbm] event-poll reply: zero events (poll 892000)
+[lgkbm] event-poll reply: zero events (poll 893000)
+[lgkbm] event-poll reply: zero events (poll 894000)
+[lgkbm] event-poll reply: zero events (poll 895000)
+[lgkbm] event-poll reply: zero events (poll 896000)
+[lgkbm] event-poll reply: zero events (poll 897000)
+[lgkbm] event-poll reply: zero events (poll 898000)
+[lgkbm] event-poll reply: zero events (poll 899000)
+[lgkbm] event-poll reply: zero events (poll 900000)
+[lgkbm] event-poll reply: zero events (poll 901000)
+[lgkbm] event-poll reply: zero events (poll 902000)
+[lgkbm] event-poll reply: zero events (poll 903000)
+[lgkbm] event-poll reply: zero events (poll 904000)
+[lgkbm] event-poll reply: zero events (poll 905000)
+[lgkbm] event-poll reply: zero events (poll 906000)
+[lgkbm] event-poll reply: zero events (poll 907000)
+[lgkbm] event-poll reply: zero events (poll 908000)
+[lgkbm] event-poll reply: zero events (poll 909000)
+[lgkbm] event-poll reply: zero events (poll 910000)
+[lgkbm] event-poll reply: zero events (poll 911000)
+[lgkbm] event-poll reply: zero events (poll 912000)
+[lgkbm] event-poll reply: zero events (poll 913000)
+[lgkbm] event-poll reply: zero events (poll 914000)
+[lgkbm] event-poll reply: zero events (poll 915000)
+[lgkbm] event-poll reply: zero events (poll 916000)
+[lgkbm] event-poll reply: zero events (poll 917000)
+[lgkbm] event-poll reply: zero events (poll 918000)
+[lgkbm] event-poll reply: zero events (poll 919000)
+[lgkbm] event-poll reply: zero events (poll 920000)
+[lgkbm] event-poll reply: zero events (poll 921000)
+[lgkbm] event-poll reply: zero events (poll 922000)
+[lgkbm] event-poll reply: zero events (poll 923000)
+[lgkbm] event-poll reply: zero events (poll 924000)
+[lgkbm] event-poll reply: zero events (poll 925000)
+[lgkbm] event-poll reply: zero events (poll 926000)
+[lgkbm] event-poll reply: zero events (poll 927000)
+[lgkbm] event-poll reply: zero events (poll 928000)
+[lgkbm] event-poll reply: zero events (poll 929000)
+[lgkbm] event-poll reply: zero events (poll 930000)
+[lgkbm] event-poll reply: zero events (poll 931000)
+[lgkbm] event-poll reply: zero events (poll 932000)
+[lgkbm] event-poll reply: zero events (poll 933000)
+[lgkbm] event-poll reply: zero events (poll 934000)
+[lgkbm] event-poll reply: zero events (poll 935000)
+[lgkbm] event-poll reply: zero events (poll 936000)
+[lgkbm] event-poll reply: zero events (poll 937000)
+[lgkbm] event-poll reply: zero events (poll 938000)
+[lgkbm] event-poll reply: zero events (poll 939000)
+[lgkbm] event-poll reply: zero events (poll 940000)
+[lgkbm] event-poll reply: zero events (poll 941000)
+[lgkbm] event-poll reply: zero events (poll 942000)
+[lgkbm] event-poll reply: zero events (poll 943000)
+[lgkbm] event-poll reply: zero events (poll 944000)
+[lgkbm] event-poll reply: zero events (poll 945000)
+[lgkbm] event-poll reply: zero events (poll 946000)
+[lgkbm] event-poll reply: zero events (poll 947000)
+[lgkbm] event-poll reply: zero events (poll 948000)
+[lgkbm] event-poll reply: zero events (poll 949000)
+[lgkbm] event-poll reply: zero events (poll 950000)
+[lgkbm] event-poll reply: zero events (poll 951000)
+[lgkbm] event-poll reply: zero events (poll 952000)
+[lgkbm] event-poll reply: zero events (poll 953000)
+[lgkbm] event-poll reply: zero events (poll 954000)
+[lgkbm] event-poll reply: zero events (poll 955000)
+[lgkbm] event-poll reply: zero events (poll 956000)
+[lgkbm] event-poll reply: zero events (poll 957000)
+[lgkbm] event-poll reply: zero events (poll 958000)
+[lgkbm] event-poll reply: zero events (poll 959000)
+[lgkbm] event-poll reply: zero events (poll 960000)
+[lgkbm] event-poll reply: zero events (poll 961000)
+[lgkbm] event-poll reply: zero events (poll 962000)
+[lgkbm] event-poll reply: zero events (poll 963000)
+[lgkbm] event-poll reply: zero events (poll 964000)
+[lgkbm] event-poll reply: zero events (poll 965000)
+[lgkbm] event-poll reply: zero events (poll 966000)
+[lgkbm] event-poll reply: zero events (poll 967000)
+[lgkbm] event-poll reply: zero events (poll 968000)
+[lgkbm] event-poll reply: zero events (poll 969000)
+[lgkbm] event-poll reply: zero events (poll 970000)
+[lgkbm] event-poll reply: zero events (poll 971000)
+[lgkbm] event-poll reply: zero events (poll 972000)
+[lgkbm] event-poll reply: zero events (poll 973000)
+[lgkbm] event-poll reply: zero events (poll 974000)
+[lgkbm] event-poll reply: zero events (poll 975000)
+[lgkbm] event-poll reply: zero events (poll 976000)
+[lgkbm] event-poll reply: zero events (poll 977000)
+[lgkbm] event-poll reply: zero events (poll 978000)
+[lgkbm] event-poll reply: zero events (poll 979000)
+[lgkbm] event-poll reply: zero events (poll 980000)
+[lgkbm] event-poll reply: zero events (poll 981000)
+[lgkbm] event-poll reply: zero events (poll 982000)
+[lgkbm] event-poll reply: zero events (poll 983000)
+[lgkbm] event-poll reply: zero events (poll 984000)
+[lgkbm] event-poll reply: zero events (poll 985000)
+[lgkbm] event-poll reply: zero events (poll 986000)
+[lgkbm] event-poll reply: zero events (poll 987000)
+[lgkbm] event-poll reply: zero events (poll 988000)
+[lgkbm] event-poll reply: zero events (poll 989000)
+[lgkbm] event-poll reply: zero events (poll 990000)
+[lgkbm] event-poll reply: zero events (poll 991000)
+[lgkbm] event-poll reply: zero events (poll 992000)
+[lgkbm] event-poll reply: zero events (poll 993000)
+[lgkbm] event-poll reply: zero events (poll 994000)
+[lgkbm] event-poll reply: zero events (poll 995000)
+[lgkbm] event-poll reply: zero events (poll 996000)
+[lgkbm] event-poll reply: zero events (poll 997000)
+[lgkbm] event-poll reply: zero events (poll 998000)
+[lgkbm] event-poll reply: zero events (poll 999000)
+[lgkbm] event-poll reply: zero events (poll 1000000)
+[lgkbm] event-poll reply: zero events (poll 1001000)
+[lgkbm] event-poll reply: zero events (poll 1002000)
+[lgkbm] event-poll reply: zero events (poll 1003000)
+[lgkbm] event-poll reply: zero events (poll 1004000)
+[lgkbm] event-poll reply: zero events (poll 1005000)
+[lgkbm] event-poll reply: zero events (poll 1006000)
+[lgkbm] event-poll reply: zero events (poll 1007000)
+[lgkbm] event-poll reply: zero events (poll 1008000)
+[lgkbm] event-poll reply: zero events (poll 1009000)
+[lgkbm] event-poll reply: zero events (poll 1010000)
+[lgkbm] event-poll reply: zero events (poll 1011000)
+[lgkbm] event-poll reply: zero events (poll 1012000)
+[lgkbm] event-poll reply: zero events (poll 1013000)
+[lgkbm] event-poll reply: zero events (poll 1014000)
+[lgkbm] event-poll reply: zero events (poll 1015000)
+[lgkbm] event-poll reply: zero events (poll 1016000)
+[lgkbm] event-poll reply: zero events (poll 1017000)
+[lgkbm] event-poll reply: zero events (poll 1018000)
+[lgkbm] event-poll reply: zero events (poll 1019000)
+[lgkbm] event-poll reply: zero events (poll 1020000)
+[lgkbm] event-poll reply: zero events (poll 1021000)
+[lgkbm] event-poll reply: zero events (poll 1022000)
+[lgkbm] event-poll reply: zero events (poll 1023000)
+[lgkbm] event-poll reply: zero events (poll 1024000)
+[lgkbm] event-poll reply: zero events (poll 1025000)
+[lgkbm] event-poll reply: zero events (poll 1026000)
+[lgkbm] event-poll reply: zero events (poll 1027000)
+[lgkbm] event-poll reply: zero events (poll 1028000)
+[lgkbm] event-poll reply: zero events (poll 1029000)
+[lgkbm] event-poll reply: zero events (poll 1030000)
+[lgkbm] event-poll reply: zero events (poll 1031000)
+[lgkbm] event-poll reply: zero events (poll 1032000)
+[lgkbm] event-poll reply: zero events (poll 1033000)
+[lgkbm] event-poll reply: zero events (poll 1034000)
+[lgkbm] event-poll reply: zero events (poll 1035000)
+[lgkbm] event-poll reply: zero events (poll 1036000)
+[lgkbm] event-poll reply: zero events (poll 1037000)
+[lgkbm] event-poll reply: zero events (poll 1038000)
+[lgkbm] event-poll reply: zero events (poll 1039000)
+[lgkbm] event-poll reply: zero events (poll 1040000)
+[lgkbm] event-poll reply: zero events (poll 1041000)
+[lgkbm] event-poll reply: zero events (poll 1042000)
+[lgkbm] event-poll reply: zero events (poll 1043000)
+[lgkbm] event-poll reply: zero events (poll 1044000)
+[lgkbm] event-poll reply: zero events (poll 1045000)
+[lgkbm] event-poll reply: zero events (poll 1046000)
+[lgkbm] event-poll reply: zero events (poll 1047000)
+[lgkbm] event-poll reply: zero events (poll 1048000)
+[lgkbm] event-poll reply: zero events (poll 1049000)
+[lgkbm] event-poll reply: zero events (poll 1050000)
+[lgkbm] event-poll reply: zero events (poll 1051000)
+[lgkbm] event-poll reply: zero events (poll 1052000)
+[lgkbm] event-poll reply: zero events (poll 1053000)
+[lgkbm] event-poll reply: zero events (poll 1054000)
+[lgkbm] event-poll reply: zero events (poll 1055000)
+[lgkbm] event-poll reply: zero events (poll 1056000)
+[lgkbm] event-poll reply: zero events (poll 1057000)
+[lgkbm] event-poll reply: zero events (poll 1058000)
+[lgkbm] event-poll reply: zero events (poll 1059000)
+[lgkbm] event-poll reply: zero events (poll 1060000)
+[lgkbm] event-poll reply: zero events (poll 1061000)
+[lgkbm] event-poll reply: zero events (poll 1062000)
+[lgkbm] event-poll reply: zero events (poll 1063000)
+[lgkbm] event-poll reply: zero events (poll 1064000)
+[lgkbm] event-poll reply: zero events (poll 1065000)
+[lgkbm] event-poll reply: zero events (poll 1066000)
+[lgkbm] event-poll reply: zero events (poll 1067000)
+[lgkbm] event-poll reply: zero events (poll 1068000)
+[lgkbm] event-poll reply: zero events (poll 1069000)
+[lgkbm] event-poll reply: zero events (poll 1070000)
+[lgkbm] event-poll reply: zero events (poll 1071000)
+[lgkbm] event-poll reply: zero events (poll 1072000)
+[lgkbm] event-poll reply: zero events (poll 1073000)
+[lgkbm] event-poll reply: zero events (poll 1074000)
+[lgkbm] event-poll reply: zero events (poll 1075000)
+[lgkbm] event-poll reply: zero events (poll 1076000)
+[lgkbm] event-poll reply: zero events (poll 1077000)
+[lgkbm] event-poll reply: zero events (poll 1078000)
+[lgkbm] event-poll reply: zero events (poll 1079000)
+[lgkbm] event-poll reply: zero events (poll 1080000)
+[lgkbm] event-poll reply: zero events (poll 1081000)
+[lgkbm] event-poll reply: zero events (poll 1082000)
+[lgkbm] event-poll reply: zero events (poll 1083000)
+[lgkbm] event-poll reply: zero events (poll 1084000)
+[lgkbm] event-poll reply: zero events (poll 1085000)
+[lgkbm] event-poll reply: zero events (poll 1086000)
+[lgkbm] event-poll reply: zero events (poll 1087000)
+[lgkbm] event-poll reply: zero events (poll 1088000)
+[lgkbm] event-poll reply: zero events (poll 1089000)
+[lgkbm] event-poll reply: zero events (poll 1090000)
+[lgkbm] event-poll reply: zero events (poll 1091000)
+[lgkbm] event-poll reply: zero events (poll 1092000)
+[lgkbm] event-poll reply: zero events (poll 1093000)
+[lgkbm] event-poll reply: zero events (poll 1094000)
+[lgkbm] event-poll reply: zero events (poll 1095000)
+[lgkbm] event-poll reply: zero events (poll 1096000)
+[lgkbm] event-poll reply: zero events (poll 1097000)
+[lgkbm] event-poll reply: zero events (poll 1098000)
+[lgkbm] event-poll reply: zero events (poll 1099000)
+[lgkbm] event-poll reply: zero events (poll 1100000)
+[lgkbm] event-poll reply: zero events (poll 1101000)
+[lgkbm] event-poll reply: zero events (poll 1102000)
+[lgkbm] event-poll reply: zero events (poll 1103000)
+[lgkbm] event-poll reply: zero events (poll 1104000)
+[lgkbm] event-poll reply: zero events (poll 1105000)
+[lgkbm] event-poll reply: zero events (poll 1106000)
+[lgkbm] event-poll reply: zero events (poll 1107000)
+[lgkbm] event-poll reply: zero events (poll 1108000)
+[lgkbm] event-poll reply: zero events (poll 1109000)
+[lgkbm] event-poll reply: zero events (poll 1110000)
+[lgkbm] event-poll reply: zero events (poll 1111000)
+[lgkbm] event-poll reply: zero events (poll 1112000)
+[lgkbm] event-poll reply: zero events (poll 1113000)
+[lgkbm] event-poll reply: zero events (poll 1114000)
+[lgkbm] event-poll reply: zero events (poll 1115000)
+[lgkbm] event-poll reply: zero events (poll 1116000)
+[lgkbm] event-poll reply: zero events (poll 1117000)
+[lgkbm] event-poll reply: zero events (poll 1118000)
+[lgkbm] event-poll reply: zero events (poll 1119000)
+[lgkbm] event-poll reply: zero events (poll 1120000)
+[lgkbm] event-poll reply: zero events (poll 1121000)
+[lgkbm] event-poll reply: zero events (poll 1122000)
+[lgkbm] event-poll reply: zero events (poll 1123000)
+[lgkbm] event-poll reply: zero events (poll 1124000)
+[lgkbm] event-poll reply: zero events (poll 1125000)
+[lgkbm] event-poll reply: zero events (poll 1126000)
+[lgkbm] event-poll reply: zero events (poll 1127000)
+[lgkbm] event-poll reply: zero events (poll 1128000)
+[lgkbm] event-poll reply: zero events (poll 1129000)
+[lgkbm] event-poll reply: zero events (poll 1130000)
+[lgkbm] event-poll reply: zero events (poll 1131000)
+[lgkbm] event-poll reply: zero events (poll 1132000)
+[lgkbm] event-poll reply: zero events (poll 1133000)
+[lgkbm] event-poll reply: zero events (poll 1134000)
+[lgkbm] event-poll reply: zero events (poll 1135000)
+[lgkbm] event-poll reply: zero events (poll 1136000)
+[lgkbm] event-poll reply: zero events (poll 1137000)
+[lgkbm] event-poll reply: zero events (poll 1138000)
+[lgkbm] event-poll reply: zero events (poll 1139000)
+[lgkbm] event-poll reply: zero events (poll 1140000)
+[lgkbm] event-poll reply: zero events (poll 1141000)
+[lgkbm] event-poll reply: zero events (poll 1142000)
+[lgkbm] event-poll reply: zero events (poll 1143000)
+[lgkbm] event-poll reply: zero events (poll 1144000)
+[lgkbm] event-poll reply: zero events (poll 1145000)
+[lgkbm] event-poll reply: zero events (poll 1146000)
+[lgkbm] event-poll reply: zero events (poll 1147000)
+[lgkbm] event-poll reply: zero events (poll 1148000)
+[lgkbm] event-poll reply: zero events (poll 1149000)
+[lgkbm] event-poll reply: zero events (poll 1150000)
+[lgkbm] event-poll reply: zero events (poll 1151000)
+[lgkbm] event-poll reply: zero events (poll 1152000)
+[lgkbm] event-poll reply: zero events (poll 1153000)
+[lgkbm] event-poll reply: zero events (poll 1154000)
+[lgkbm] event-poll reply: zero events (poll 1155000)
+[lgkbm] event-poll reply: zero events (poll 1156000)
+[lgkbm] event-poll reply: zero events (poll 1157000)
+[lgkbm] event-poll reply: zero events (poll 1158000)
+[lgkbm] event-poll reply: zero events (poll 1159000)
+[lgkbm] event-poll reply: zero events (poll 1160000)
+[lgkbm] event-poll reply: zero events (poll 1161000)
+[lgkbm] event-poll reply: zero events (poll 1162000)
+[lgkbm] event-poll reply: zero events (poll 1163000)
+[lgkbm] event-poll reply: zero events (poll 1164000)
+[lgkbm] event-poll reply: zero events (poll 1165000)
+[lgkbm] event-poll reply: zero events (poll 1166000)
+[lgkbm] event-poll reply: zero events (poll 1167000)
+[lgkbm] event-poll reply: zero events (poll 1168000)
+[lgkbm] event-poll reply: zero events (poll 1169000)
+[lgkbm] event-poll reply: zero events (poll 1170000)
+[lgkbm] event-poll reply: zero events (poll 1171000)
+[lgkbm] event-poll reply: zero events (poll 1172000)
+[lgkbm] event-poll reply: zero events (poll 1173000)
+[lgkbm] event-poll reply: zero events (poll 1174000)
+[lgkbm] event-poll reply: zero events (poll 1175000)
+[lgkbm] event-poll reply: zero events (poll 1176000)
+[lgkbm] event-poll reply: zero events (poll 1177000)
+[lgkbm] event-poll reply: zero events (poll 1178000)
+[lgkbm] event-poll reply: zero events (poll 1179000)
+[lgkbm] event-poll reply: zero events (poll 1180000)
+[lgkbm] event-poll reply: zero events (poll 1181000)
+[lgkbm] event-poll reply: zero events (poll 1182000)
+[lgkbm] event-poll reply: zero events (poll 1183000)
+[lgkbm] event-poll reply: zero events (poll 1184000)
+[lgkbm] event-poll reply: zero events (poll 1185000)
+[lgkbm] event-poll reply: zero events (poll 1186000)
+[lgkbm] event-poll reply: zero events (poll 1187000)
+[lgkbm] event-poll reply: zero events (poll 1188000)
+[lgkbm] event-poll reply: zero events (poll 1189000)
+[lgkbm] event-poll reply: zero events (poll 1190000)
+[lgkbm] event-poll reply: zero events (poll 1191000)
+[lgkbm] event-poll reply: zero events (poll 1192000)
+[lgkbm] event-poll reply: zero events (poll 1193000)
+[lgkbm] event-poll reply: zero events (poll 1194000)
+[lgkbm] event-poll reply: zero events (poll 1195000)
+[lgkbm] event-poll reply: zero events (poll 1196000)
+[lgkbm] event-poll reply: zero events (poll 1197000)
+[lgkbm] event-poll reply: zero events (poll 1198000)
+[lgkbm] event-poll reply: zero events (poll 1199000)
+[lgkbm] event-poll reply: zero events (poll 1200000)
+[lgkbm] event-poll reply: zero events (poll 1201000)
+[lgkbm] event-poll reply: zero events (poll 1202000)
+[lgkbm] event-poll reply: zero events (poll 1203000)
+[lgkbm] event-poll reply: zero events (poll 1204000)
+[lgkbm] event-poll reply: zero events (poll 1205000)
+[lgkbm] event-poll reply: zero events (poll 1206000)
+[lgkbm] event-poll reply: zero events (poll 1207000)
+[lgkbm] event-poll reply: zero events (poll 1208000)
+[lgkbm] event-poll reply: zero events (poll 1209000)
+[lgkbm] event-poll reply: zero events (poll 1210000)
+[lgkbm] event-poll reply: zero events (poll 1211000)
+[lgkbm] event-poll reply: zero events (poll 1212000)
+[lgkbm] event-poll reply: zero events (poll 1213000)
+[lgkbm] event-poll reply: zero events (poll 1214000)
+[lgkbm] event-poll reply: zero events (poll 1215000)
+[lgkbm] event-poll reply: zero events (poll 1216000)
+[lgkbm] event-poll reply: zero events (poll 1217000)
+[lgkbm] event-poll reply: zero events (poll 1218000)
+[lgkbm] event-poll reply: zero events (poll 1219000)
+[lgkbm] event-poll reply: zero events (poll 1220000)
+[lgkbm] event-poll reply: zero events (poll 1221000)
+[lgkbm] event-poll reply: zero events (poll 1222000)
+[lgkbm] event-poll reply: zero events (poll 1223000)
+[lgkbm] event-poll reply: zero events (poll 1224000)
+[lgkbm] event-poll reply: zero events (poll 1225000)
+[lgkbm] event-poll reply: zero events (poll 1226000)
+[lgkbm] event-poll reply: zero events (poll 1227000)
+[lgkbm] event-poll reply: zero events (poll 1228000)
+[lgkbm] event-poll reply: zero events (poll 1229000)
+[lgkbm] event-poll reply: zero events (poll 1230000)
+[lgkbm] event-poll reply: zero events (poll 1231000)
+[lgkbm] event-poll reply: zero events (poll 1232000)
+[lgkbm] event-poll reply: zero events (poll 1233000)
+[lgkbm] event-poll reply: zero events (poll 1234000)
+[lgkbm] event-poll reply: zero events (poll 1235000)
+[lgkbm] event-poll reply: zero events (poll 1236000)
+[lgkbm] event-poll reply: zero events (poll 1237000)
+[lgkbm] event-poll reply: zero events (poll 1238000)
+[lgkbm] event-poll reply: zero events (poll 1239000)
+[lgkbm] event-poll reply: zero events (poll 1240000)
+[lgkbm] event-poll reply: zero events (poll 1241000)
+[lgkbm] event-poll reply: zero events (poll 1242000)
+[lgkbm] event-poll reply: zero events (poll 1243000)
+[lgkbm] event-poll reply: zero events (poll 1244000)
+[lgkbm] event-poll reply: zero events (poll 1245000)
+[lgkbm] event-poll reply: zero events (poll 1246000)
+[lgkbm] event-poll reply: zero events (poll 1247000)
+[lgkbm] event-poll reply: zero events (poll 1248000)
+[lgkbm] event-poll reply: zero events (poll 1249000)
+[lgkbm] event-poll reply: zero events (poll 1250000)
+[lgkbm] event-poll reply: zero events (poll 1251000)
+[lgkbm] event-poll reply: zero events (poll 1252000)
+[lgkbm] event-poll reply: zero events (poll 1253000)
+[lgkbm] event-poll reply: zero events (poll 1254000)
+[lgkbm] event-poll reply: zero events (poll 1255000)
+[lgkbm] event-poll reply: zero events (poll 1256000)
+[lgkbm] event-poll reply: zero events (poll 1257000)
+[lgkbm] event-poll reply: zero events (poll 1258000)
+[lgkbm] event-poll reply: zero events (poll 1259000)
+[lgkbm] event-poll reply: zero events (poll 1260000)
+[lgkbm] event-poll reply: zero events (poll 1261000)
+[lgkbm] event-poll reply: zero events (poll 1262000)
+[lgkbm] event-poll reply: zero events (poll 1263000)
+[lgkbm] event-poll reply: zero events (poll 1264000)
+[lgkbm] event-poll reply: zero events (poll 1265000)
+[lgkbm] event-poll reply: zero events (poll 1266000)
+[lgkbm] event-poll reply: zero events (poll 1267000)
+[lgkbm] event-poll reply: zero events (poll 1268000)
+[lgkbm] event-poll reply: zero events (poll 1269000)
+[lgkbm] event-poll reply: zero events (poll 1270000)
+[lgkbm] event-poll reply: zero events (poll 1271000)
+[lgkbm] event-poll reply: zero events (poll 1272000)
+[lgkbm] event-poll reply: zero events (poll 1273000)
+[lgkbm] event-poll reply: zero events (poll 1274000)
+[lgkbm] event-poll reply: zero events (poll 1275000)
+[lgkbm] event-poll reply: zero events (poll 1276000)
+[lgkbm] event-poll reply: zero events (poll 1277000)
+[lgkbm] event-poll reply: zero events (poll 1278000)
+[lgkbm] event-poll reply: zero events (poll 1279000)
+[lgkbm] event-poll reply: zero events (poll 1280000)
+[lgkbm] event-poll reply: zero events (poll 1281000)
+[lgkbm] event-poll reply: zero events (poll 1282000)
+[lgkbm] event-poll reply: zero events (poll 1283000)
+[lgkbm] event-poll reply: zero events (poll 1284000)
+[lgkbm] event-poll reply: zero events (poll 1285000)
+[lgkbm] event-poll reply: zero events (poll 1286000)
+[lgkbm] event-poll reply: zero events (poll 1287000)
+[lgkbm] event-poll reply: zero events (poll 1288000)
+[lgkbm] event-poll reply: zero events (poll 1289000)
+[lgkbm] event-poll reply: zero events (poll 1290000)
+[lgkbm] event-poll reply: zero events (poll 1291000)
+[lgkbm] event-poll reply: zero events (poll 1292000)
+[lgkbm] event-poll reply: zero events (poll 1293000)
+[lgkbm] event-poll reply: zero events (poll 1294000)
+[lgkbm] event-poll reply: zero events (poll 1295000)
+[lgkbm] event-poll reply: zero events (poll 1296000)
+[lgkbm] event-poll reply: zero events (poll 1297000)
+[lgkbm] event-poll reply: zero events (poll 1298000)
+[lgkbm] event-poll reply: zero events (poll 1299000)
+[lgkbm] event-poll reply: zero events (poll 1300000)
+[lgkbm] event-poll reply: zero events (poll 1301000)
+[lgkbm] event-poll reply: zero events (poll 1302000)
+[lgkbm] event-poll reply: zero events (poll 1303000)
+[lgkbm] event-poll reply: zero events (poll 1304000)
+[lgkbm] event-poll reply: zero events (poll 1305000)
+[lgkbm] event-poll reply: zero events (poll 1306000)
+[lgkbm] event-poll reply: zero events (poll 1307000)
+[lgkbm] event-poll reply: zero events (poll 1308000)
+[lgkbm] event-poll reply: zero events (poll 1309000)
+[lgkbm] event-poll reply: zero events (poll 1310000)
+[lgkbm] event-poll reply: zero events (poll 1311000)
+[lgkbm] event-poll reply: zero events (poll 1312000)
+[lgkbm] event-poll reply: zero events (poll 1313000)
+[lgkbm] event-poll reply: zero events (poll 1314000)
+[lgkbm] event-poll reply: zero events (poll 1315000)
+[lgkbm] event-poll reply: zero events (poll 1316000)
+[lgkbm] event-poll reply: zero events (poll 1317000)
+[lgkbm] event-poll reply: zero events (poll 1318000)
+[lgkbm] event-poll reply: zero events (poll 1319000)
+[lgkbm] event-poll reply: zero events (poll 1320000)
+[lgkbm] event-poll reply: zero events (poll 1321000)
+[lgkbm] event-poll reply: zero events (poll 1322000)
+[lgkbm] event-poll reply: zero events (poll 1323000)
+[lgkbm] event-poll reply: zero events (poll 1324000)
+[lgkbm] event-poll reply: zero events (poll 1325000)
+[lgkbm] event-poll reply: zero events (poll 1326000)
+[lgkbm] event-poll reply: zero events (poll 1327000)
+[lgkbm] event-poll reply: zero events (poll 1328000)
+[lgkbm] event-poll reply: zero events (poll 1329000)
+[lgkbm] event-poll reply: zero events (poll 1330000)
+[lgkbm] event-poll reply: zero events (poll 1331000)
+[lgkbm] event-poll reply: zero events (poll 1332000)
+[lgkbm] event-poll reply: zero events (poll 1333000)
+[lgkbm] event-poll reply: zero events (poll 1334000)
+[lgkbm] event-poll reply: zero events (poll 1335000)
+[lgkbm] event-poll reply: zero events (poll 1336000)
+[lgkbm] event-poll reply: zero events (poll 1337000)
+[lgkbm] event-poll reply: zero events (poll 1338000)
+[lgkbm] event-poll reply: zero events (poll 1339000)
+[lgkbm] event-poll reply: zero events (poll 1340000)
+[lgkbm] event-poll reply: zero events (poll 1341000)
+[lgkbm] event-poll reply: zero events (poll 1342000)
+[lgkbm] event-poll reply: zero events (poll 1343000)
+[lgkbm] event-poll reply: zero events (poll 1344000)
+[lgkbm] event-poll reply: zero events (poll 1345000)
+[lgkbm] event-poll reply: zero events (poll 1346000)
+[lgkbm] event-poll reply: zero events (poll 1347000)
+[lgkbm] event-poll reply: zero events (poll 1348000)
+[lgkbm] event-poll reply: zero events (poll 1349000)
+[lgkbm] event-poll reply: zero events (poll 1350000)
+[lgkbm] event-poll reply: zero events (poll 1351000)
+[lgkbm] event-poll reply: zero events (poll 1352000)
+[lgkbm] event-poll reply: zero events (poll 1353000)
+[lgkbm] event-poll reply: zero events (poll 1354000)
+[lgkbm] event-poll reply: zero events (poll 1355000)
+[lgkbm] event-poll reply: zero events (poll 1356000)
+[lgkbm] event-poll reply: zero events (poll 1357000)
+[lgkbm] event-poll reply: zero events (poll 1358000)
+[lgkbm] event-poll reply: zero events (poll 1359000)
+[lgkbm] event-poll reply: zero events (poll 1360000)
+[lgkbm] event-poll reply: zero events (poll 1361000)
+[lgkbm] event-poll reply: zero events (poll 1362000)
+[lgkbm] event-poll reply: zero events (poll 1363000)
+[lgkbm] event-poll reply: zero events (poll 1364000)
+[lgkbm] event-poll reply: zero events (poll 1365000)
+[lgkbm] event-poll reply: zero events (poll 1366000)
+[lgkbm] event-poll reply: zero events (poll 1367000)
+[lgkbm] event-poll reply: zero events (poll 1368000)
+[lgkbm] event-poll reply: zero events (poll 1369000)
+[lgkbm] event-poll reply: zero events (poll 1370000)
+[lgkbm] event-poll reply: zero events (poll 1371000)
+[lgkbm] event-poll reply: zero events (poll 1372000)
+[lgkbm] event-poll reply: zero events (poll 1373000)
+[lgkbm] event-poll reply: zero events (poll 1374000)
+[lgkbm] event-poll reply: zero events (poll 1375000)
+[lgkbm] event-poll reply: zero events (poll 1376000)
+[lgkbm] event-poll reply: zero events (poll 1377000)
+[lgkbm] event-poll reply: zero events (poll 1378000)
+[lgkbm] event-poll reply: zero events (poll 1379000)
+[lgkbm] event-poll reply: zero events (poll 1380000)
+[lgkbm] event-poll reply: zero events (poll 1381000)
+[lgkbm] event-poll reply: zero events (poll 1382000)
+[lgkbm] event-poll reply: zero events (poll 1383000)
+[lgkbm] event-poll reply: zero events (poll 1384000)
+[lgkbm] event-poll reply: zero events (poll 1385000)
+[lgkbm] event-poll reply: zero events (poll 1386000)
+[lgkbm] event-poll reply: zero events (poll 1387000)
+[lgkbm] event-poll reply: zero events (poll 1388000)
+[lgkbm] event-poll reply: zero events (poll 1389000)
+[lgkbm] event-poll reply: zero events (poll 1390000)
+[lgkbm] event-poll reply: zero events (poll 1391000)
+[lgkbm] event-poll reply: zero events (poll 1392000)
+[lgkbm] event-poll reply: zero events (poll 1393000)
+[lgkbm] event-poll reply: zero events (poll 1394000)
+[lgkbm] event-poll reply: zero events (poll 1395000)
+[lgkbm] event-poll reply: zero events (poll 1396000)
+[lgkbm] event-poll reply: zero events (poll 1397000)
+[lgkbm] event-poll reply: zero events (poll 1398000)
+[lgkbm] event-poll reply: zero events (poll 1399000)
+[lgkbm] event-poll reply: zero events (poll 1400000)
+[lgkbm] event-poll reply: zero events (poll 1401000)
+[lgkbm] event-poll reply: zero events (poll 1402000)
+[lgkbm] event-poll reply: zero events (poll 1403000)
+[lgkbm] event-poll reply: zero events (poll 1404000)
+[lgkbm] event-poll reply: zero events (poll 1405000)
+[lgkbm] event-poll reply: zero events (poll 1406000)
+[lgkbm] event-poll reply: zero events (poll 1407000)
+[lgkbm] event-poll reply: zero events (poll 1408000)
+[lgkbm] event-poll reply: zero events (poll 1409000)
+[lgkbm] event-poll reply: zero events (poll 1410000)
+[lgkbm] event-poll reply: zero events (poll 1411000)
+[lgkbm] event-poll reply: zero events (poll 1412000)
+[lgkbm] event-poll reply: zero events (poll 1413000)
+[lgkbm] event-poll reply: zero events (poll 1414000)
+[lgkbm] event-poll reply: zero events (poll 1415000)
+[lgkbm] event-poll reply: zero events (poll 1416000)
+[lgkbm] event-poll reply: zero events (poll 1417000)
+[lgkbm] event-poll reply: zero events (poll 1418000)
+[lgkbm] event-poll reply: zero events (poll 1419000)
+[lgkbm] event-poll reply: zero events (poll 1420000)
+[lgkbm] event-poll reply: zero events (poll 1421000)
+[lgkbm] event-poll reply: zero events (poll 1422000)
+[lgkbm] event-poll reply: zero events (poll 1423000)
+[lgkbm] event-poll reply: zero events (poll 1424000)
+[lgkbm] event-poll reply: zero events (poll 1425000)
+[lgkbm] event-poll reply: zero events (poll 1426000)
+[lgkbm] event-poll reply: zero events (poll 1427000)
+[lgkbm] event-poll reply: zero events (poll 1428000)
+[lgkbm] event-poll reply: zero events (poll 1429000)
+[lgkbm] event-poll reply: zero events (poll 1430000)
+[lgkbm] event-poll reply: zero events (poll 1431000)
+[lgkbm] event-poll reply: zero events (poll 1432000)
+[lgkbm] event-poll reply: zero events (poll 1433000)
+[lgkbm] event-poll reply: zero events (poll 1434000)
+[lgkbm] event-poll reply: zero events (poll 1435000)
+[lgkbm] event-poll reply: zero events (poll 1436000)
+[lgkbm] event-poll reply: zero events (poll 1437000)
+[lgkbm] event-poll reply: zero events (poll 1438000)
+[lgkbm] event-poll reply: zero events (poll 1439000)
+[lgkbm] event-poll reply: zero events (poll 1440000)
+[lgkbm] event-poll reply: zero events (poll 1441000)
+[lgkbm] event-poll reply: zero events (poll 1442000)
+[lgkbm] event-poll reply: zero events (poll 1443000)
+[lgkbm] event-poll reply: zero events (poll 1444000)
+[lgkbm] event-poll reply: zero events (poll 1445000)
+[lgkbm] event-poll reply: zero events (poll 1446000)
+[lgkbm] event-poll reply: zero events (poll 1447000)
+[lgkbm] event-poll reply: zero events (poll 1448000)
+[lgkbm] event-poll reply: zero events (poll 1449000)
+[lgkbm] event-poll reply: zero events (poll 1450000)
+[lgkbm] event-poll reply: zero events (poll 1451000)
+[lgkbm] event-poll reply: zero events (poll 1452000)
+[lgkbm] event-poll reply: zero events (poll 1453000)
+[lgkbm] event-poll reply: zero events (poll 1454000)
+[lgkbm] event-poll reply: zero events (poll 1455000)
+[lgkbm] event-poll reply: zero events (poll 1456000)
+[lgkbm] event-poll reply: zero events (poll 1457000)
+[lgkbm] event-poll reply: zero events (poll 1458000)
+[lgkbm] event-poll reply: zero events (poll 1459000)
+[lgkbm] event-poll reply: zero events (poll 1460000)
+[lgkbm] event-poll reply: zero events (poll 1461000)
+[lgkbm] event-poll reply: zero events (poll 1462000)
+[lgkbm] event-poll reply: zero events (poll 1463000)
+[lgkbm] event-poll reply: zero events (poll 1464000)
+[lgkbm] event-poll reply: zero events (poll 1465000)
+[lgkbm] event-poll reply: zero events (poll 1466000)
+[lgkbm] event-poll reply: zero events (poll 1467000)
+[lgkbm] event-poll reply: zero events (poll 1468000)
+[lgkbm] event-poll reply: zero events (poll 1469000)
+[lgkbm] event-poll reply: zero events (poll 1470000)
+[lgkbm] event-poll reply: zero events (poll 1471000)
+[lgkbm] event-poll reply: zero events (poll 1472000)
+[lgkbm] event-poll reply: zero events (poll 1473000)
+[lgkbm] event-poll reply: zero events (poll 1474000)
+[lgkbm] event-poll reply: zero events (poll 1475000)
+[lgkbm] event-poll reply: zero events (poll 1476000)
+[lgkbm] event-poll reply: zero events (poll 1477000)
+[lgkbm] event-poll reply: zero events (poll 1478000)
+[lgkbm] event-poll reply: zero events (poll 1479000)
+[lgkbm] event-poll reply: zero events (poll 1480000)
+[lgkbm] event-poll reply: zero events (poll 1481000)
+[lgkbm] event-poll reply: zero events (poll 1482000)
+[lgkbm] event-poll reply: zero events (poll 1483000)
+[lgkbm] event-poll reply: zero events (poll 1484000)
+[lgkbm] event-poll reply: zero events (poll 1485000)
+[lgkbm] event-poll reply: zero events (poll 1486000)
+[lgkbm] event-poll reply: zero events (poll 1487000)
+[lgkbm] event-poll reply: zero events (poll 1488000)
+[lgkbm] event-poll reply: zero events (poll 1489000)
+[lgkbm] event-poll reply: zero events (poll 1490000)
+[lgkbm] event-poll reply: zero events (poll 1491000)
+[lgkbm] event-poll reply: zero events (poll 1492000)
+[lgkbm] event-poll reply: zero events (poll 1493000)
+[lgkbm] event-poll reply: zero events (poll 1494000)
+[lgkbm] event-poll reply: zero events (poll 1495000)
+[lgkbm] event-poll reply: zero events (poll 1496000)
+[lgkbm] event-poll reply: zero events (poll 1497000)
+[lgkbm] event-poll reply: zero events (poll 1498000)
+[lgkbm] event-poll reply: zero events (poll 1499000)
+[lgkbm] event-poll reply: zero events (poll 1500000)
+[lgkbm] event-poll reply: zero events (poll 1501000)
+[lgkbm] event-poll reply: zero events (poll 1502000)
+[lgkbm] event-poll reply: zero events (poll 1503000)
+[lgkbm] event-poll reply: zero events (poll 1504000)
+[lgkbm] event-poll reply: zero events (poll 1505000)
+[lgkbm] event-poll reply: zero events (poll 1506000)
+[lgkbm] event-poll reply: zero events (poll 1507000)
+[lgkbm] event-poll reply: zero events (poll 1508000)
+[lgkbm] event-poll reply: zero events (poll 1509000)
+[lgkbm] event-poll reply: zero events (poll 1510000)
+[lgkbm] event-poll reply: zero events (poll 1511000)
+[lgkbm] event-poll reply: zero events (poll 1512000)
+[lgkbm] event-poll reply: zero events (poll 1513000)
+[lgkbm] event-poll reply: zero events (poll 1514000)
+[lgkbm] event-poll reply: zero events (poll 1515000)
+[lgkbm] event-poll reply: zero events (poll 1516000)
+[lgkbm] event-poll reply: zero events (poll 1517000)
+[lgkbm] event-poll reply: zero events (poll 1518000)
+[lgkbm] event-poll reply: zero events (poll 1519000)
+[lgkbm] event-poll reply: zero events (poll 1520000)
+[lgkbm] event-poll reply: zero events (poll 1521000)
+[lgkbm] event-poll reply: zero events (poll 1522000)
+[lgkbm] event-poll reply: zero events (poll 1523000)
+[lgkbm] event-poll reply: zero events (poll 1524000)
+[lgkbm] event-poll reply: zero events (poll 1525000)
+[lgkbm] event-poll reply: zero events (poll 1526000)
+[lgkbm] event-poll reply: zero events (poll 1527000)
+[lgkbm] event-poll reply: zero events (poll 1528000)
+[lgkbm] event-poll reply: zero events (poll 1529000)
+[lgkbm] event-poll reply: zero events (poll 1530000)
+[lgkbm] event-poll reply: zero events (poll 1531000)
+[lgkbm] event-poll reply: zero events (poll 1532000)
+[lgkbm] event-poll reply: zero events (poll 1533000)
+[lgkbm] event-poll reply: zero events (poll 1534000)
+[lgkbm] event-poll reply: zero events (poll 1535000)
+[lgkbm] event-poll reply: zero events (poll 1536000)
+[lgkbm] event-poll reply: zero events (poll 1537000)
+[lgkbm] event-poll reply: zero events (poll 1538000)
+[lgkbm] event-poll reply: zero events (poll 1539000)
+[lgkbm] event-poll reply: zero events (poll 1540000)
+[lgkbm] event-poll reply: zero events (poll 1541000)
+[lgkbm] event-poll reply: zero events (poll 1542000)
+[lgkbm] event-poll reply: zero events (poll 1543000)
+[lgkbm] event-poll reply: zero events (poll 1544000)
+[lgkbm] event-poll reply: zero events (poll 1545000)
+[lgkbm] event-poll reply: zero events (poll 1546000)
+[lgkbm] event-poll reply: zero events (poll 1547000)
+[lgkbm] event-poll reply: zero events (poll 1548000)
+[lgkbm] event-poll reply: zero events (poll 1549000)
+[lgkbm] event-poll reply: zero events (poll 1550000)
+[lgkbm] event-poll reply: zero events (poll 1551000)
+[lgkbm] event-poll reply: zero events (poll 1552000)
+[lgkbm] event-poll reply: zero events (poll 1553000)
+[lgkbm] event-poll reply: zero events (poll 1554000)
+[lgkbm] event-poll reply: zero events (poll 1555000)
+[lgkbm] event-poll reply: zero events (poll 1556000)
+[lgkbm] event-poll reply: zero events (poll 1557000)
+[lgkbm] event-poll reply: zero events (poll 1558000)
+[lgkbm] event-poll reply: zero events (poll 1559000)
+[lgkbm] event-poll reply: zero events (poll 1560000)
+[lgkbm] event-poll reply: zero events (poll 1561000)
+[lgkbm] event-poll reply: zero events (poll 1562000)
+[lgkbm] event-poll reply: zero events (poll 1563000)
+[lgkbm] event-poll reply: zero events (poll 1564000)
+[lgkbm] event-poll reply: zero events (poll 1565000)
+[lgkbm] event-poll reply: zero events (poll 1566000)
+[lgkbm] event-poll reply: zero events (poll 1567000)
+[lgkbm] event-poll reply: zero events (poll 1568000)
+[lgkbm] event-poll reply: zero events (poll 1569000)
+[lgkbm] event-poll reply: zero events (poll 1570000)
+[lgkbm] event-poll reply: zero events (poll 1571000)
+[lgkbm] event-poll reply: zero events (poll 1572000)
+[lgkbm] event-poll reply: zero events (poll 1573000)
+[lgkbm] event-poll reply: zero events (poll 1574000)
+[lgkbm] event-poll reply: zero events (poll 1575000)
+[lgkbm] event-poll reply: zero events (poll 1576000)
+[lgkbm] event-poll reply: zero events (poll 1577000)
+[lgkbm] event-poll reply: zero events (poll 1578000)
+[lgkbm] event-poll reply: zero events (poll 1579000)
+[lgkbm] event-poll reply: zero events (poll 1580000)
+[lgkbm] event-poll reply: zero events (poll 1581000)
+[lgkbm] event-poll reply: zero events (poll 1582000)
+[lgkbm] event-poll reply: zero events (poll 1583000)
+[lgkbm] event-poll reply: zero events (poll 1584000)
+[lgkbm] event-poll reply: zero events (poll 1585000)
+[lgkbm] event-poll reply: zero events (poll 1586000)
+[lgkbm] event-poll reply: zero events (poll 1587000)
+[lgkbm] event-poll reply: zero events (poll 1588000)
+[lgkbm] event-poll reply: zero events (poll 1589000)
+[lgkbm] event-poll reply: zero events (poll 1590000)
+[lgkbm] event-poll reply: zero events (poll 1591000)
+[lgkbm] event-poll reply: zero events (poll 1592000)
+[lgkbm] event-poll reply: zero events (poll 1593000)
+[lgkbm] event-poll reply: zero events (poll 1594000)
+[lgkbm] event-poll reply: zero events (poll 1595000)
+[lgkbm] event-poll reply: zero events (poll 1596000)
+[lgkbm] event-poll reply: zero events (poll 1597000)
+[lgkbm] event-poll reply: zero events (poll 1598000)
+[lgkbm] event-poll reply: zero events (poll 1599000)
+[lgkbm] event-poll reply: zero events (poll 1600000)
+[lgkbm] event-poll reply: zero events (poll 1601000)
+[lgkbm] event-poll reply: zero events (poll 1602000)
+[lgkbm] event-poll reply: zero events (poll 1603000)
+[lgkbm] event-poll reply: zero events (poll 1604000)
+[lgkbm] event-poll reply: zero events (poll 1605000)
+[lgkbm] event-poll reply: zero events (poll 1606000)
+[lgkbm] event-poll reply: zero events (poll 1607000)
+[lgkbm] event-poll reply: zero events (poll 1608000)
+[lgkbm] event-poll reply: zero events (poll 1609000)
+[lgkbm] event-poll reply: zero events (poll 1610000)
+[lgkbm] event-poll reply: zero events (poll 1611000)
+[lgkbm] event-poll reply: zero events (poll 1612000)
+[lgkbm] event-poll reply: zero events (poll 1613000)
+[lgkbm] event-poll reply: zero events (poll 1614000)
+[lgkbm] event-poll reply: zero events (poll 1615000)
+[lgkbm] event-poll reply: zero events (poll 1616000)
+[lgkbm] event-poll reply: zero events (poll 1617000)
+[lgkbm] event-poll reply: zero events (poll 1618000)
+[lgkbm] event-poll reply: zero events (poll 1619000)
+[lgkbm] event-poll reply: zero events (poll 1620000)
+[lgkbm] event-poll reply: zero events (poll 1621000)
+[lgkbm] event-poll reply: zero events (poll 1622000)
+[lgkbm] event-poll reply: zero events (poll 1623000)
+[lgkbm] event-poll reply: zero events (poll 1624000)
+[lgkbm] event-poll reply: zero events (poll 1625000)
+[lgkbm] event-poll reply: zero events (poll 1626000)
+[lgkbm] event-poll reply: zero events (poll 1627000)
+[lgkbm] event-poll reply: zero events (poll 1628000)
+[lgkbm] event-poll reply: zero events (poll 1629000)
+[lgkbm] event-poll reply: zero events (poll 1630000)
+[lgkbm] event-poll reply: zero events (poll 1631000)
+[lgkbm] event-poll reply: zero events (poll 1632000)
+[lgkbm] event-poll reply: zero events (poll 1633000)
+[lgkbm] event-poll reply: zero events (poll 1634000)
+[lgkbm] event-poll reply: zero events (poll 1635000)
+[lgkbm] event-poll reply: zero events (poll 1636000)
+[lgkbm] event-poll reply: zero events (poll 1637000)
+[lgkbm] event-poll reply: zero events (poll 1638000)
+[lgkbm] event-poll reply: zero events (poll 1639000)
+[lgkbm] event-poll reply: zero events (poll 1640000)
+[lgkbm] event-poll reply: zero events (poll 1641000)
+[lgkbm] event-poll reply: zero events (poll 1642000)
+[lgkbm] event-poll reply: zero events (poll 1643000)
+[lgkbm] event-poll reply: zero events (poll 1644000)
+[lgkbm] event-poll reply: zero events (poll 1645000)
+[lgkbm] event-poll reply: zero events (poll 1646000)
+[lgkbm] event-poll reply: zero events (poll 1647000)
+[lgkbm] event-poll reply: zero events (poll 1648000)
+[lgkbm] event-poll reply: zero events (poll 1649000)
+[lgkbm] event-poll reply: zero events (poll 1650000)
+[lgkbm] event-poll reply: zero events (poll 1651000)
+[lgkbm] event-poll reply: zero events (poll 1652000)
+[lgkbm] event-poll reply: zero events (poll 1653000)
+[lgkbm] event-poll reply: zero events (poll 1654000)
+[lgkbm] event-poll reply: zero events (poll 1655000)
+[lgkbm] event-poll reply: zero events (poll 1656000)
+[lgkbm] event-poll reply: zero events (poll 1657000)
+[lgkbm] event-poll reply: zero events (poll 1658000)
+[lgkbm] event-poll reply: zero events (poll 1659000)
+[lgkbm] event-poll reply: zero events (poll 1660000)
+[lgkbm] event-poll reply: zero events (poll 1661000)
+[lgkbm] event-poll reply: zero events (poll 1662000)
+[lgkbm] event-poll reply: zero events (poll 1663000)
+[lgkbm] event-poll reply: zero events (poll 1664000)
+[lgkbm] event-poll reply: zero events (poll 1665000)
+[lgkbm] event-poll reply: zero events (poll 1666000)
+[lgkbm] event-poll reply: zero events (poll 1667000)
+[lgkbm] event-poll reply: zero events (poll 1668000)
+[lgkbm] event-poll reply: zero events (poll 1669000)
+[lgkbm] event-poll reply: zero events (poll 1670000)
+[lgkbm] event-poll reply: zero events (poll 1671000)
+[lgkbm] event-poll reply: zero events (poll 1672000)
+[lgkbm] event-poll reply: zero events (poll 1673000)
+[lgkbm] event-poll reply: zero events (poll 1674000)
+[lgkbm] event-poll reply: zero events (poll 1675000)
+[lgkbm] event-poll reply: zero events (poll 1676000)
+[lgkbm] event-poll reply: zero events (poll 1677000)
+[lgkbm] event-poll reply: zero events (poll 1678000)
+[lgkbm] event-poll reply: zero events (poll 1679000)
+[lgkbm] event-poll reply: zero events (poll 1680000)
+[lgkbm] event-poll reply: zero events (poll 1681000)
+[lgkbm] event-poll reply: zero events (poll 1682000)
+[lgkbm] event-poll reply: zero events (poll 1683000)
+[lgkbm] event-poll reply: zero events (poll 1684000)
+[lgkbm] event-poll reply: zero events (poll 1685000)
+[lgkbm] event-poll reply: zero events (poll 1686000)
+[lgkbm] event-poll reply: zero events (poll 1687000)
+[lgkbm] event-poll reply: zero events (poll 1688000)
+[lgkbm] event-poll reply: zero events (poll 1689000)
+[lgkbm] event-poll reply: zero events (poll 1690000)
+[lgkbm] event-poll reply: zero events (poll 1691000)
+[lgkbm] event-poll reply: zero events (poll 1692000)
+[lgkbm] event-poll reply: zero events (poll 1693000)
+[lgkbm] event-poll reply: zero events (poll 1694000)
+[lgkbm] event-poll reply: zero events (poll 1695000)
+[lgkbm] event-poll reply: zero events (poll 1696000)
+[lgkbm] event-poll reply: zero events (poll 1697000)
+[lgkbm] event-poll reply: zero events (poll 1698000)
+[lgkbm] event-poll reply: zero events (poll 1699000)
+[lgkbm] event-poll reply: zero events (poll 1700000)
+[lgkbm] event-poll reply: zero events (poll 1701000)
+[lgkbm] event-poll reply: zero events (poll 1702000)
+[lgkbm] event-poll reply: zero events (poll 1703000)
+[lgkbm] event-poll reply: zero events (poll 1704000)
+[lgkbm] event-poll reply: zero events (poll 1705000)
+[lgkbm] event-poll reply: zero events (poll 1706000)
+[lgkbm] event-poll reply: zero events (poll 1707000)
+[lgkbm] event-poll reply: zero events (poll 1708000)
+[lgkbm] event-poll reply: zero events (poll 1709000)
+[lgkbm] event-poll reply: zero events (poll 1710000)
+[lgkbm] event-poll reply: zero events (poll 1711000)
+[lgkbm] event-poll reply: zero events (poll 1712000)
+[lgkbm] event-poll reply: zero events (poll 1713000)
+[lgkbm] event-poll reply: zero events (poll 1714000)
+[lgkbm] event-poll reply: zero events (poll 1715000)
+[lgkbm] event-poll reply: zero events (poll 1716000)
+[lgkbm] event-poll reply: zero events (poll 1717000)
+[lgkbm] event-poll reply: zero events (poll 1718000)
+[lgkbm] event-poll reply: zero events (poll 1719000)
+[lgkbm] event-poll reply: zero events (poll 1720000)
+[lgkbm] event-poll reply: zero events (poll 1721000)
+[lgkbm] event-poll reply: zero events (poll 1722000)
+[lgkbm] event-poll reply: zero events (poll 1723000)
+[lgkbm] event-poll reply: zero events (poll 1724000)
+[lgkbm] event-poll reply: zero events (poll 1725000)
+[lgkbm] event-poll reply: zero events (poll 1726000)
+[lgkbm] event-poll reply: zero events (poll 1727000)
+[lgkbm] event-poll reply: zero events (poll 1728000)
+[lgkbm] event-poll reply: zero events (poll 1729000)
+[lgkbm] event-poll reply: zero events (poll 1730000)
+[lgkbm] event-poll reply: zero events (poll 1731000)
+[lgkbm] event-poll reply: zero events (poll 1732000)
+[lgkbm] event-poll reply: zero events (poll 1733000)
+[lgkbm] event-poll reply: zero events (poll 1734000)
+[lgkbm] event-poll reply: zero events (poll 1735000)
+[lgkbm] event-poll reply: zero events (poll 1736000)
+[lgkbm] event-poll reply: zero events (poll 1737000)
+[lgkbm] event-poll reply: zero events (poll 1738000)
+[lgkbm] event-poll reply: zero events (poll 1739000)
+[lgkbm] event-poll reply: zero events (poll 1740000)
+[lgkbm] event-poll reply: zero events (poll 1741000)
+[lgkbm] event-poll reply: zero events (poll 1742000)
+[lgkbm] event-poll reply: zero events (poll 1743000)
+[lgkbm] event-poll reply: zero events (poll 1744000)
+[lgkbm] event-poll reply: zero events (poll 1745000)
+[lgkbm] event-poll reply: zero events (poll 1746000)
+[lgkbm] event-poll reply: zero events (poll 1747000)
+[lgkbm] event-poll reply: zero events (poll 1748000)
+[lgkbm] event-poll reply: zero events (poll 1749000)
+[lgkbm] event-poll reply: zero events (poll 1750000)
+[lgkbm] event-poll reply: zero events (poll 1751000)
+[lgkbm] event-poll reply: zero events (poll 1752000)
+[lgkbm] event-poll reply: zero events (poll 1753000)
+[lgkbm] event-poll reply: zero events (poll 1754000)
+[lgkbm] event-poll reply: zero events (poll 1755000)
+[lgkbm] event-poll reply: zero events (poll 1756000)
+[lgkbm] event-poll reply: zero events (poll 1757000)
+[lgkbm] event-poll reply: zero events (poll 1758000)
+[lgkbm] event-poll reply: zero events (poll 1759000)
+[lgkbm] event-poll reply: zero events (poll 1760000)
+[lgkbm] event-poll reply: zero events (poll 1761000)
+[lgkbm] event-poll reply: zero events (poll 1762000)
+[lgkbm] event-poll reply: zero events (poll 1763000)
+[lgkbm] event-poll reply: zero events (poll 1764000)
+[lgkbm] event-poll reply: zero events (poll 1765000)
+[lgkbm] event-poll reply: zero events (poll 1766000)
+[lgkbm] event-poll reply: zero events (poll 1767000)
+[lgkbm] event-poll reply: zero events (poll 1768000)
+[lgkbm] event-poll reply: zero events (poll 1769000)
+[lgkbm] event-poll reply: zero events (poll 1770000)
+[lgkbm] event-poll reply: zero events (poll 1771000)
+[lgkbm] event-poll reply: zero events (poll 1772000)
+[lgkbm] event-poll reply: zero events (poll 1773000)
+[lgkbm] event-poll reply: zero events (poll 1774000)
+[lgkbm] event-poll reply: zero events (poll 1775000)
+[lgkbm] event-poll reply: zero events (poll 1776000)
+[lgkbm] event-poll reply: zero events (poll 1777000)
+[lgkbm] event-poll reply: zero events (poll 1778000)
+[lgkbm] event-poll reply: zero events (poll 1779000)
+[lgkbm] event-poll reply: zero events (poll 1780000)
+[lgkbm] event-poll reply: zero events (poll 1781000)
+[lgkbm] event-poll reply: zero events (poll 1782000)
+[lgkbm] event-poll reply: zero events (poll 1783000)
+[lgkbm] event-poll reply: zero events (poll 1784000)
+[lgkbm] event-poll reply: zero events (poll 1785000)
+[lgkbm] event-poll reply: zero events (poll 1786000)
+[lgkbm] event-poll reply: zero events (poll 1787000)
+[lgkbm] event-poll reply: zero events (poll 1788000)
+[lgkbm] event-poll reply: zero events (poll 1789000)
+[lgkbm] event-poll reply: zero events (poll 1790000)
+[lgkbm] event-poll reply: zero events (poll 1791000)
+[lgkbm] event-poll reply: zero events (poll 1792000)
+[lgkbm] event-poll reply: zero events (poll 1793000)
+[lgkbm] event-poll reply: zero events (poll 1794000)
+[lgkbm] event-poll reply: zero events (poll 1795000)
+[lgkbm] event-poll reply: zero events (poll 1796000)
+[lgkbm] event-poll reply: zero events (poll 1797000)
+[lgkbm] event-poll reply: zero events (poll 1798000)
+[lgkbm] event-poll reply: zero events (poll 1799000)
+[lgkbm] event-poll reply: zero events (poll 1800000)
+[lgkbm] event-poll reply: zero events (poll 1801000)
+[lgkbm] event-poll reply: zero events (poll 1802000)
+[lgkbm] event-poll reply: zero events (poll 1803000)
+[lgkbm] event-poll reply: zero events (poll 1804000)
+[lgkbm] event-poll reply: zero events (poll 1805000)
+[lgkbm] event-poll reply: zero events (poll 1806000)
+[lgkbm] event-poll reply: zero events (poll 1807000)
+[lgkbm] event-poll reply: zero events (poll 1808000)
+[lgkbm] event-poll reply: zero events (poll 1809000)
+[lgkbm] event-poll reply: zero events (poll 1810000)
+[lgkbm] event-poll reply: zero events (poll 1811000)
+[lgkbm] event-poll reply: zero events (poll 1812000)
+[lgkbm] event-poll reply: zero events (poll 1813000)
+[lgkbm] event-poll reply: zero events (poll 1814000)
+[lgkbm] event-poll reply: zero events (poll 1815000)
+[lgkbm] event-poll reply: zero events (poll 1816000)
+[lgkbm] event-poll reply: zero events (poll 1817000)
+[lgkbm] event-poll reply: zero events (poll 1818000)
+[lgkbm] event-poll reply: zero events (poll 1819000)
+[lgkbm] event-poll reply: zero events (poll 1820000)
+[lgkbm] event-poll reply: zero events (poll 1821000)
+[lgkbm] event-poll reply: zero events (poll 1822000)
+[lgkbm] event-poll reply: zero events (poll 1823000)
+[lgkbm] event-poll reply: zero events (poll 1824000)
+[lgkbm] event-poll reply: zero events (poll 1825000)
+[lgkbm] event-poll reply: zero events (poll 1826000)
+[lgkbm] event-poll reply: zero events (poll 1827000)
+[lgkbm] event-poll reply: zero events (poll 1828000)
+[lgkbm] event-poll reply: zero events (poll 1829000)
+[lgkbm] event-poll reply: zero events (poll 1830000)
+[lgkbm] event-poll reply: zero events (poll 1831000)
+[lgkbm] event-poll reply: zero events (poll 1832000)
+[lgkbm] event-poll reply: zero events (poll 1833000)
+[lgkbm] event-poll reply: zero events (poll 1834000)
+[lgkbm] event-poll reply: zero events (poll 1835000)
+[lgkbm] event-poll reply: zero events (poll 1836000)
+[lgkbm] event-poll reply: zero events (poll 1837000)
+[lgkbm] event-poll reply: zero events (poll 1838000)
+[lgkbm] event-poll reply: zero events (poll 1839000)
+[lgkbm] event-poll reply: zero events (poll 1840000)
+[lgkbm] event-poll reply: zero events (poll 1841000)
+[lgkbm] event-poll reply: zero events (poll 1842000)
+[lgkbm] event-poll reply: zero events (poll 1843000)
+[lgkbm] event-poll reply: zero events (poll 1844000)
+[lgkbm] event-poll reply: zero events (poll 1845000)
+[lgkbm] event-poll reply: zero events (poll 1846000)
+[lgkbm] event-poll reply: zero events (poll 1847000)
+[lgkbm] event-poll reply: zero events (poll 1848000)
+[lgkbm] event-poll reply: zero events (poll 1849000)
+[lgkbm] event-poll reply: zero events (poll 1850000)
+[lgkbm] event-poll reply: zero events (poll 1851000)
+[lgkbm] event-poll reply: zero events (poll 1852000)
+[lgkbm] event-poll reply: zero events (poll 1853000)
+[lgkbm] event-poll reply: zero events (poll 1854000)
+[lgkbm] event-poll reply: zero events (poll 1855000)
+[lgkbm] event-poll reply: zero events (poll 1856000)
+[lgkbm] event-poll reply: zero events (poll 1857000)
+[lgkbm] event-poll reply: zero events (poll 1858000)
+[lgkbm] event-poll reply: zero events (poll 1859000)
+[lgkbm] event-poll reply: zero events (poll 1860000)
+[lgkbm] event-poll reply: zero events (poll 1861000)
+[lgkbm] event-poll reply: zero events (poll 1862000)
+[lgkbm] event-poll reply: zero events (poll 1863000)
+[lgkbm] event-poll reply: zero events (poll 1864000)
+[lgkbm] event-poll reply: zero events (poll 1865000)
+[lgkbm] event-poll reply: zero events (poll 1866000)
+[lgkbm] event-poll reply: zero events (poll 1867000)
+[lgkbm] event-poll reply: zero events (poll 1868000)
+[lgkbm] event-poll reply: zero events (poll 1869000)
+[lgkbm] event-poll reply: zero events (poll 1870000)
+[lgkbm] event-poll reply: zero events (poll 1871000)
+[lgkbm] event-poll reply: zero events (poll 1872000)
+[lgkbm] event-poll reply: zero events (poll 1873000)
+[lgkbm] event-poll reply: zero events (poll 1874000)
+[lgkbm] event-poll reply: zero events (poll 1875000)
+[lgkbm] event-poll reply: zero events (poll 1876000)
+[lgkbm] event-poll reply: zero events (poll 1877000)
+[lgkbm] event-poll reply: zero events (poll 1878000)
+[lgkbm] event-poll reply: zero events (poll 1879000)
+[lgkbm] event-poll reply: zero events (poll 1880000)
+[lgkbm] event-poll reply: zero events (poll 1881000)
+[lgkbm] event-poll reply: zero events (poll 1882000)
+[lgkbm] event-poll reply: zero events (poll 1883000)
+[lgkbm] event-poll reply: zero events (poll 1884000)
+[lgkbm] event-poll reply: zero events (poll 1885000)
+[lgkbm] event-poll reply: zero events (poll 1886000)
+[lgkbm] event-poll reply: zero events (poll 1887000)
+[lgkbm] event-poll reply: zero events (poll 1888000)
+[lgkbm] event-poll reply: zero events (poll 1889000)
+[lgkbm] event-poll reply: zero events (poll 1890000)
+[lgkbm] event-poll reply: zero events (poll 1891000)
+[lgkbm] event-poll reply: zero events (poll 1892000)
+[lgkbm] event-poll reply: zero events (poll 1893000)
+[lgkbm] event-poll reply: zero events (poll 1894000)
+[lgkbm] event-poll reply: zero events (poll 1895000)
+[lgkbm] event-poll reply: zero events (poll 1896000)
+[lgkbm] event-poll reply: zero events (poll 1897000)
+[lgkbm] event-poll reply: zero events (poll 1898000)
+[lgkbm] event-poll reply: zero events (poll 1899000)
+[lgkbm] event-poll reply: zero events (poll 1900000)
+[lgkbm] event-poll reply: zero events (poll 1901000)
+[lgkbm] event-poll reply: zero events (poll 1902000)
+[lgkbm] event-poll reply: zero events (poll 1903000)
+[lgkbm] event-poll reply: zero events (poll 1904000)
+[lgkbm] event-poll reply: zero events (poll 1905000)
+[lgkbm] event-poll reply: zero events (poll 1906000)
+[lgkbm] event-poll reply: zero events (poll 1907000)
+[lgkbm] event-poll reply: zero events (poll 1908000)
+[lgkbm] event-poll reply: zero events (poll 1909000)
+[lgkbm] event-poll reply: zero events (poll 1910000)
+[lgkbm] event-poll reply: zero events (poll 1911000)
+[lgkbm] event-poll reply: zero events (poll 1912000)
+[lgkbm] event-poll reply: zero events (poll 1913000)
+[lgkbm] event-poll reply: zero events (poll 1914000)
+[lgkbm] event-poll reply: zero events (poll 1915000)
+[lgkbm] event-poll reply: zero events (poll 1916000)
+[lgkbm] event-poll reply: zero events (poll 1917000)
+[lgkbm] event-poll reply: zero events (poll 1918000)
+[lgkbm] event-poll reply: zero events (poll 1919000)
+[lgkbm] event-poll reply: zero events (poll 1920000)
+[lgkbm] event-poll reply: zero events (poll 1921000)
+[lgkbm] event-poll reply: zero events (poll 1922000)
+[lgkbm] event-poll reply: zero events (poll 1923000)
+[lgkbm] event-poll reply: zero events (poll 1924000)
+[lgkbm] event-poll reply: zero events (poll 1925000)
+[lgkbm] event-poll reply: zero events (poll 1926000)
+[lgkbm] event-poll reply: zero events (poll 1927000)
+[lgkbm] event-poll reply: zero events (poll 1928000)
+[lgkbm] event-poll reply: zero events (poll 1929000)
+[lgkbm] event-poll reply: zero events (poll 1930000)
+[lgkbm] event-poll reply: zero events (poll 1931000)
+[lgkbm] event-poll reply: zero events (poll 1932000)
+[lgkbm] event-poll reply: zero events (poll 1933000)
+[lgkbm] event-poll reply: zero events (poll 1934000)
+[lgkbm] event-poll reply: zero events (poll 1935000)
+[lgkbm] event-poll reply: zero events (poll 1936000)
+[ee] halted: window closed
+[thread] 1 status 4 prio 24 wait 1/0 pc 0x0010C708 ra 0x007FB480
+[thread]   stack: 003376A4 003376A4 00336618 003365B4 00182248 0018D470 00280770 00163AD8 0018DA4C 0018D460 0018DBE8 0012E38C 00240000 00240000 00240000
+[thread] 2 status 4 prio 0 wait 2/2 pc 0x0010C828 ra 0x0010D528
+[thread]   stack:
+[thread] 3 status 4 prio 2 wait 1/0 pc 0x0010C708 ra 0x00329494
+[thread]   stack: 003294D0
+[thread] 4 status 4 prio 0 wait 1/0 pc 0x0010C708 ra 0x00110FD8
+[thread]   stack: 001229C0
+[thread] 5 status 4 prio 1 wait 2/12 pc 0x0010C828 ra 0x00357C04
+[thread]   stack:
+[thread] 6 status 4 prio 30 wait 2/14 pc 0x0010C828 ra 0x00523430
+[thread]   stack: 00523818 003D9520
+[thread] 7 status 8 prio 8 wait 0/0 pc 0x007CCFB0 ra 0x007CCFB8
+[thread]   stack:
+[thread] 8 status 4 prio 16 wait 1/0 pc 0x0010C708 ra 0x007CD130
+[thread]   stack:
+[thread] 9 status 4 prio 18 wait 1/0 pc 0x0010C708 ra 0x007CD210
+[thread]   stack:
+[thread] 10 status 4 prio 25 wait 1/0 pc 0x0010C708 ra 0x007CD320
+[thread]   stack:
+[sema] 2 count 0 waiters 1
+[sema] 12 count 0 waiters 1
+[sema] 14 count 0 waiters 1
+[iop] module 1 SIO2MAN at 0x00000000
+[iop] module 2 MWFILEFR at 0x00000000
+[iop] module 3 PADMAN at 0x00000000
+[iop] module 4 MCMAN at 0x00000000
+[iop] module 5 MCSERV at 0x00000000
+[iop] module 6 DEV9 at 0x00000000
+[iop] module 7 USBD at 0x00000000
+[iop] module 8 LGKBM at 0x00000000
+[iop] module 9 LGAUD at 0x00000000
+[iop] module 10 LIBSD at 0x00000000
+[iop] module 11 SDRDRV at 0x00020500
+[iop] module 12 MSL at 0x00022300
+[iop] module 13 CRI_ADXI at 0x000BF700
+[iop] thread 1 status 16 prio 8 wait 0/0 pc 0x00001010
+[iop] thread 2 status 4 prio 24 wait 8/137920 pc 0x00001020
+[iop] thread 3 status 16 prio 8 wait 0/0 pc 0x00001010
+[iop] thread 4 status 4 prio 50 wait 8/8353728 pc 0x00001020
+[iop] thread 5 status 4 prio 50 wait 3/10 pc 0x0002D768
+[iop] thread 6 status 4 prio 20 wait 5/13 pc 0x0002EA70
+[iop] thread 7 status 4 prio 52 wait 3/16 pc 0x00031A00
+[iop] thread 8 status 4 prio 50 wait 2/0 pc 0x0002CD98
+[iop] thread 16 status 16 prio 50 wait 0/0 pc 0x00001010
+[iop] thread 17 status 16 prio 8 wait 0/0 pc 0x00001010
+[iop] thread 18 status 4 prio 39 wait 7/1 pc 0x000BF884
+[iop] thread 19 status 4 prio 48 wait 8/832000 pc 0x00001020
+[iop] thread 20 status 4 prio 39 wait 3/17 pc 0x000C38A0
+[sif] 0 packets wait for the EE (processed 0)
+[sif] DMA marker 0x80000004 observed 90282 times (no guest handler)
+[gs] 894753 primitives drawn, register writes: 00:55628 01:34612 03:166794 04:837208 05:229766 06:36786 08:44978 0C:722532 14:81737 18:12521 19:4697 1A:9 34:33663 36:33663 3B:1 3F:33659 40:9373 41:3123 42:21799 44:1549 45:4703 46:6 47:70117 48:3123 49:1 4C:17165 4D:3123 4E:36672 4F:1 50:22275 51:36091 52:36052 53:36091 7F:1075925
+[ipu] commands: 0:8 2:1528 3:4045 4:674 5:4 6:1 7:4 9:1 stalls 0 out 216704 qwords, busy 0 decoding 0 cmd 0x0000000B in 128 bytes bit 11 out 0
+[dma] starts: ch0=0 ch1=1576 ch2=3129 ch3=1532 ch4=7 ch5=0 ch6=0 ch7=0 ch8=157907 ch9=90261
+[gif] path 1 tags: packed 11128 reglist 0 image 0
+[gif] path 2 tags: packed 255256 reglist 0 image 0
+[gif] path 3 tags: packed 97601 reglist 0 image 36091
+[vif0]
+[vif1] 00:3067987 01:11132 02:11132 03:11132 04:4 05:5 06:39170 10:1549 11:73272 13:44120 14:11128 20:4 4A:4644 50:118300 65:13173 6C:22256
+[spin] 41031228 cycles of waiting loops skipped (0.0 % of the time since this run started)
+[ee] stopped after 46735 frames, 229712883303 cycles: window closed
+[audio] the device got 778.44 s of sound in 887.19 s; the queue ran dry 6 times (about 58.37 s of silence in between), 0 samples dropped
+[audio] stretching: 778.34 s of game sound played as 828.84 s, 84.50 s of that stretched (slowest tempo x5.00; 5.01 s at the limit of x5.0, where it runs dry like without stretching)

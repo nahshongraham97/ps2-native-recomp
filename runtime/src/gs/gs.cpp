@@ -3,6 +3,8 @@
 #include "gif.hpp"
 #include "queue.hpp"
 #include "raster.hpp"
+#include "native_gl_backend.hpp"
+#include "native_renderer.hpp"
 #include "../hw.hpp"
 #ifdef PS2_GPU
 #include "gpu/gpu.hpp"
@@ -38,6 +40,7 @@ bool traced(std::uint64_t frame);
 
 State g_state;
 std::uint32_t g_setup_generation = 0;
+std::uint64_t g_vram_generation = 0;
 
 void serve_state(const void *payload);
 
@@ -72,7 +75,17 @@ bool strict_native_gpu() {
     return enabled;
 }
 
-[[noreturn]] void strict_native_gpu_stop(const char *reason) {
+bool strict_native_gl() {
+    static const bool enabled = [] {
+        if (ps2::os::env("PS2_GS") == "native-gl") return true;
+        std::string value = ps2::os::env("PS2_NATIVE_GL_STRICT");
+        std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+        return !value.empty() && value != "0" && value != "off" && value != "false" && value != "no";
+    }();
+    return enabled;
+}
+
+[[noreturn]] void native_renderer_stop(const char *reason) {
     std::fprintf(stderr, "[gs-native-stop] %s\n", reason);
     std::fflush(stderr);
     std::abort();
@@ -278,6 +291,7 @@ void transfer_pixel(std::uint32_t value) {
     const std::uint32_t rrh = static_cast<std::uint32_t>(reg >> 32) & 0xFFFu;
     if (!g_transfer.active || !rrw) return;
     write_pixel(dpsm, dbp, dbw, (dsax + g_transfer.x) & 0x7FFu, (dsay + g_transfer.y) & 0x7FFu, value);
+    ++g_vram_generation;
     if (++g_transfer.x >= rrw) {
         g_transfer.x = 0;
         if (++g_transfer.y >= rrh) g_transfer.active = false;
@@ -332,6 +346,7 @@ void local_copy() {
             write_pixel(dpsm, dbp, dbw, (dsax + x) & 0x7FFu, (dsay + y) & 0x7FFu, pixels[sy * rrw + sx]);
         }
     }
+    ++g_vram_generation;
 }
 
 void load_clut(std::uint64_t tex0) {
@@ -488,18 +503,23 @@ void init() {
 #ifdef PS2_GPU
     const bool strict = strict_native_gpu();
     const char *backend = std::getenv("PS2_GS");
-    const gpu::Mode wanted = strict ? gpu::Mode::primary :
+    const bool use_native_gl = native_gl::selected() || native_renderer::selected();
+    if (strict && use_native_gl)
+        native_renderer_stop("PS2_GS_NATIVE_STRICT requests WebGPU, but native OpenGL/direct-packet mode was also selected");
+    const gpu::Mode wanted = use_native_gl ? gpu::Mode::off : strict ? gpu::Mode::primary :
         !backend || std::strcmp(backend, "gpu") == 0 ? gpu::Mode::primary :
         std::strcmp(backend, "both") == 0 ? gpu::Mode::mirror : gpu::Mode::off;
+    if (use_native_gl)
+        std::fprintf(stderr, "[gs] native OpenGL/direct-packet mode selected; WebGPU presentation disabled\n");
     if (wanted != gpu::Mode::off && !gpu::init(wanted)) {
-        if (strict) strict_native_gpu_stop("WebGPU initialization failed; strict mode forbids the software-raster fallback");
+        if (strict) native_renderer_stop("WebGPU initialization failed; strict mode forbids the software-raster fallback");
         std::fprintf(stderr, "[gs] WebGPU unavailable, using the software renderer\n");
     }
     if (strict && !gpu_primary())
-        strict_native_gpu_stop("native WebGPU primary mode is not active");
+        native_renderer_stop("native WebGPU primary mode is not active");
 #else
     if (strict_native_gpu())
-        strict_native_gpu_stop("this build has no PS2_GPU WebGPU renderer");
+        native_renderer_stop("this build has no PS2_GPU WebGPU renderer");
 #endif
 }
 
@@ -512,6 +532,7 @@ void render_reset() {
     std::memset(&g_state, 0, sizeof g_state);
     std::memset(g_memory, 0, sizeof g_memory);
     ++g_setup_generation;
+    ++g_vram_generation;
     g_transfer = Transfer{};
     g_primitives = 0;
     raster::reset();
@@ -711,13 +732,25 @@ void kick(bool draw) {
     const int needed = prim == 0 ? 1 : (prim == 1 || prim == 2 || prim == 6) ? 2 : prim == 7 ? 1 : 3;
     if (s.count < needed) return;
     if (draw) {
-        if (strict_native_gpu() && (!gpu_on() || !gpu_primary()))
-            strict_native_gpu_stop("a GS primitive would not be submitted exclusively to the native GPU renderer");
         if (trace::draw(s, needed)) {
-            if (cpu_raster()) raster::draw(s, s.queue, needed);
+            // The OpenGL renderer consumes the GS packet decoder's primitive
+            // stream directly. It is tried before either software rasterization
+            // or WebGPU, including when PS2_GS=native-gl selects the SDL/CPU
+            // presentation path.
+            const bool native_gl_draw = native_gl::submit(s, s.queue, needed);
+            if (native_gl_draw) {
+                if (strict_native_gpu())
+                    native_renderer_stop("PS2_GS_NATIVE_STRICT selects WebGPU, but this primitive was consumed by native OpenGL");
+            } else {
+                if (strict_native_gl())
+                    native_renderer_stop("native OpenGL did not consume a GS primitive; strict mode forbids raster fallback");
+                if (strict_native_gpu() && (!gpu_on() || !gpu_primary()))
+                    native_renderer_stop("a GS primitive would not be submitted exclusively to the native GPU renderer");
+                if (cpu_raster()) raster::draw(s, s.queue, needed);
 #ifdef PS2_GPU
-            if (gpu_on()) { if (!ps2::vertex::submit_primitive(s, s.queue, needed)) gpu::draw(s, s.queue, needed); }
+                if (gpu_on()) { if (!ps2::vertex::submit_primitive(s, s.queue, needed)) gpu::draw(s, s.queue, needed); }
 #endif
+            }
         }
         ++g_primitives;
     }
@@ -1135,6 +1168,10 @@ bool present(const DisplayRegs &r) {
 bool display(std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height) { return display(display_regs(), rgba, width, height); }
 
 bool display(const DisplayRegs &r, std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height) {
+    // In native OpenGL mode the back buffer is copied into CPU GS memory at
+    // presentation time. render_pending() and this display call run on the same
+    // render thread, so the WGL context remains thread-affine.
+    if (native_gl::enabled()) native_gl::flush();
     const int circuit = (r.pmode & 2u) ? 1 : (r.pmode & 1u) ? 0 : -1;
     if (circuit < 0) return false;
     const std::uint64_t fb = r.dispfb[circuit], disp = r.display[circuit];
@@ -1347,6 +1384,7 @@ Rendered render_pending(const std::function<void(const DisplayRegs &)> &on_prese
 }
 
 std::uint64_t primitives_drawn() { return g_primitives; }
+void note_native_primitive() { ++g_primitives; }
 
 void dump_region(const char *spec) {
 #ifdef PS2_GPU

@@ -49,6 +49,23 @@ std::uint32_t expand16(std::uint32_t c, const Setup &s) {
     return r | (g << 8) | (b << 16) | (a << 24);
 }
 
+std::uint32_t decode_texel(const Setup &s, std::uint32_t raw) {
+    switch (s.tpsm) {
+    case PSMCT32: case PSMZ32: return raw;
+    case PSMCT24: case PSMZ24: return (raw & 0xFFFFFFu) | (((s.aem && !(raw & 0xFFFFFFu)) ? 0u : s.ta0) << 24);
+    case PSMCT16: case PSMCT16S: case PSMZ16: case PSMZ16S: return expand16(raw, s);
+    case PSMT8: case PSMT8H: {
+        const std::uint32_t entry = s.clut[raw & 255u];
+        return s.cpsm == PSMCT32 || s.cpsm == PSMCT24 ? entry : expand16(entry, s);
+    }
+    case PSMT4: case PSMT4HL: case PSMT4HH: {
+        const std::uint32_t entry = s.clut[((s.csa & 15u) * 16u + (raw & 15u)) & 511u];
+        return s.cpsm == PSMCT32 || s.cpsm == PSMCT24 ? entry : expand16(entry, s);
+    }
+    default: return raw;
+    }
+}
+
 std::uint32_t fetch(const Setup &s, int x, int y) {
     const auto wrap = [](int v, int size, int mode, std::uint32_t min, std::uint32_t max) {
         switch (mode) {
@@ -61,20 +78,7 @@ std::uint32_t fetch(const Setup &s, int x, int y) {
     x = wrap(x, 1 << s.tw, s.wms, s.minu, s.maxu);
     y = wrap(y, 1 << s.th, s.wmt, s.minv, s.maxv);
     const std::uint32_t raw = read_pixel(s.tpsm, s.tbp, s.tbw, static_cast<std::uint32_t>(x), static_cast<std::uint32_t>(y));
-    switch (s.tpsm) {
-    case PSMCT32: case PSMZ32: return raw;
-    case PSMCT24: case PSMZ24: return (raw & 0xFFFFFFu) | (((s.aem && !(raw & 0xFFFFFFu)) ? 0u : s.ta0) << 24);
-    case PSMCT16: case PSMCT16S: case PSMZ16: case PSMZ16S: return expand16(raw, s);
-    case PSMT8: case PSMT8H: {
-        const std::uint32_t e = s.clut[raw & 255u];
-        return s.cpsm == PSMCT32 || s.cpsm == PSMCT24 ? e : expand16(e, s);
-    }
-    case PSMT4: case PSMT4HL: case PSMT4HH: {
-        const std::uint32_t e = s.clut[((s.csa & 15u) * 16u + (raw & 15u)) & 511u];
-        return s.cpsm == PSMCT32 || s.cpsm == PSMCT24 ? e : expand16(e, s);
-    }
-    default: return raw;
-    }
+    return decode_texel(s, raw);
 }
 
 std::uint32_t sample(const Setup &s, float u, float v) {
@@ -482,6 +486,29 @@ void line(const Setup &s, const Vertex *v) {
 Probe g_probe;
 
 void reset() {}
+
+bool decode_texture_rgba(const State &st, std::vector<std::uint32_t> &pixels, std::uint32_t &width, std::uint32_t &height) {
+    const Setup s = make_setup(st);
+    if (!s.tme) return false;
+    switch (s.tpsm) {
+    case PSMCT32: case PSMCT24: case PSMCT16: case PSMCT16S:
+    case PSMZ32: case PSMZ24: case PSMZ16: case PSMZ16S:
+    case PSMT8: case PSMT4: case PSMT8H: case PSMT4HL: case PSMT4HH:
+        break;
+    default:
+        return false;
+    }
+    width = 1u << s.tw;
+    height = 1u << s.th;
+    pixels.resize(static_cast<std::size_t>(width) * height);
+    for (std::uint32_t y = 0; y < height; ++y) {
+        for (std::uint32_t x = 0; x < width; ++x) {
+            const std::uint32_t raw = read_pixel(s.tpsm, s.tbp, s.tbw, x, y);
+            pixels[static_cast<std::size_t>(y) * width + x] = decode_texel(s, raw);
+        }
+    }
+    return true;
+}
 
 void draw(const State &st, const Vertex *v, int count) {
     const Setup s = make_setup(st);

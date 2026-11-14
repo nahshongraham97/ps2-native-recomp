@@ -479,9 +479,12 @@ int main(int argc, char **argv) {
         ps2web_wait_shown();
         g_render_idle.store(g_render_idle.load() + emscripten_get_now() - start);
     };
+    const std::function<void(const ps2::gs::DisplayRegs &)> before_present = [&wait_shown](const ps2::gs::DisplayRegs &) {
+        wait_shown();
+    };
     for (;;) {
         service_disc();
-        const ps2::Rendered rendered = ps2::render_pending(surface, g_streaming.load() ? streamed : copy ? blit : none, wait_shown, 6.0);
+        const ps2::Rendered rendered = ps2::render_pending(surface, g_streaming.load() ? streamed : copy ? blit : none, before_present, 6.0);
         if (rendered == ps2::Rendered::presented) ps2web_frame_done();
         if (rendered != ps2::Rendered::idle) {
             ps2::browser_yield();

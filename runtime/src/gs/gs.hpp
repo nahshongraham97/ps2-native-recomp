@@ -45,6 +45,7 @@ struct State {
 
 extern State g_state;
 extern std::uint32_t g_setup_generation;
+extern std::uint64_t g_vram_generation;
 std::uint8_t *memory();
 
 void init();
@@ -90,6 +91,7 @@ std::uint32_t present_frame();  // the emulation frame the picture that is being
 Rendered render_pending(const std::function<void(const DisplayRegs &)> &on_present, double budget_ms);
 double gpu_busy_ms();
 std::uint64_t primitives_drawn();
+void note_native_primitive();
 void stats();
 
 }

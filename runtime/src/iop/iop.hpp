@@ -25,7 +25,14 @@ struct Cpu {
     std::uint32_t hi, lo;
     std::uint32_t pc, npc;
     std::uint32_t status, cause, epc;
+    std::uint32_t badvaddr;
+    std::uint32_t pending_load_reg, pending_load_value;
+    bool pending_load;
 };
+
+// Serialize the current IOP CPU state while retaining support for the legacy
+// save-state layout that predates AOT load-delay tracking.
+void state_cpu(ps2::state::Stream &s, Cpu &c);
 
 extern Cpu g_cpu;
 

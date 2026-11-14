@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(PS2_GENERATED "" CACHE PATH "Folder with the C++ generated for a game")
+set(PS2_IOP_AOT_IMPORTS "" CACHE PATH "Folder containing generated native IOP import bridges and registry")
+set(PS2_IOP_AOT_MODULES "" CACHE PATH "Folder containing generated native IOP module bodies and registry")
 set(PS2_RUNTIME_LIB "" CACHE FILEPATH "libps2runtime.a built earlier from this source tree (scripts/runtime.sh); a game links it instead of compiling the runtime again")
 
 if(WIN32)
@@ -57,6 +59,7 @@ else()
         runtime/src/observer_hook.cpp
         runtime/src/native_hook.cpp
         runtime/src/native_vertex_hook.cpp
+        runtime/src/native/content_vfs.cpp
         runtime/src/system.cpp
         runtime/src/kernel.cpp
         runtime/src/hw.cpp
@@ -75,9 +78,14 @@ else()
         runtime/src/gs/gif.cpp
         runtime/src/gs/queue.cpp
         runtime/src/gs/raster.cpp
+        runtime/src/gs/native_gl_backend.cpp
+        runtime/src/gs/native_renderer.cpp
         runtime/src/iop/cpu.cpp
         runtime/src/iop/kernel.cpp
         runtime/src/iop/native_modules.cpp
+        runtime/src/iop/dev9_offline.cpp
+        runtime/src/iop/usbd_offline.cpp
+        runtime/src/iop/libsd_native.cpp
         runtime/src/iop/padman.cpp
         runtime/src/iop/mcserv.cpp
         runtime/src/iop/mwfilefr.cpp
@@ -86,9 +94,10 @@ else()
         runtime/src/iop/spu2.cpp
         runtime/src/iop/sio2.cpp
         runtime/src/iop/io.cpp
-        runtime/src/iop/cdvd.cpp
+        runtime/src/iop/native_module_loader.cpp
+        runtime/src/iop/native_legacy_state.cpp
         runtime/src/iop/sif.cpp
-        runtime/src/iop/cdvdfsv.cpp)
+        )
     if(MSVC)
         target_compile_options(ps2runtime PRIVATE /W4)
     else()
@@ -121,6 +130,32 @@ if(NOT WIN32 AND NOT EMSCRIPTEN)
     target_link_libraries(ps2runtime ${PS2_API} ${CMAKE_DL_LIBS})  # vu_live.cpp loads libraries with dlopen
 endif()
 target_include_directories(ps2runtime ${PS2_API} "${CMAKE_CURRENT_SOURCE_DIR}/runtime/include" "${CMAKE_CURRENT_SOURCE_DIR}/runtime/src")
+if(PS2_IOP_AOT_IMPORTS)
+    if(PS2_PREBUILT)
+        message(FATAL_ERROR "PS2_IOP_AOT_IMPORTS requires building ps2runtime from source")
+    endif()
+    if(NOT EXISTS "${PS2_IOP_AOT_IMPORTS}/iop_import_registry.cpp")
+        message(FATAL_ERROR "PS2_IOP_AOT_IMPORTS is missing iop_import_registry.cpp")
+    endif()
+    file(GLOB PS2_IOP_IMPORT_SOURCES CONFIGURE_DEPENDS "${PS2_IOP_AOT_IMPORTS}/iop_imports_*.cpp")
+    target_sources(ps2runtime PRIVATE "${PS2_IOP_AOT_IMPORTS}/iop_import_registry.cpp" ${PS2_IOP_IMPORT_SOURCES})
+    target_compile_definitions(ps2runtime PRIVATE PS2_IOP_AOT_IMPORTS_ENABLED=1)
+endif()
+if(PS2_IOP_AOT_MODULES)
+    if(PS2_PREBUILT)
+        message(FATAL_ERROR "PS2_IOP_AOT_MODULES requires building ps2runtime from source")
+    endif()
+    if(NOT EXISTS "${PS2_IOP_AOT_MODULES}/iopn_registry.cpp")
+        message(FATAL_ERROR "PS2_IOP_AOT_MODULES is missing iopn_registry.cpp")
+    endif()
+    file(GLOB PS2_IOP_NATIVE_SOURCES CONFIGURE_DEPENDS "${PS2_IOP_AOT_MODULES}/iopn_*.cpp")
+    target_sources(ps2runtime PRIVATE ${PS2_IOP_NATIVE_SOURCES})
+    target_compile_definitions(ps2runtime PRIVATE PS2_IOP_AOT_MODULES_ENABLED=1)
+endif()
+if(WIN32)
+    # The optional WGL backend is compiled independently of WebGPU.
+    target_link_libraries(ps2runtime ${PS2_API} opengl32)
+endif()
 
 set(PS2_WGPU_DIR "${CMAKE_SOURCE_DIR}/third_party/wgpu-native" CACHE PATH "wgpu-native release folder")
 if(EMSCRIPTEN OR EXISTS "${PS2_WGPU_DIR}/lib/libwgpu_native.a")
@@ -200,9 +235,32 @@ if(PS2_GENERATED)
     add_executable(test_iop_native_module EXCLUDE_FROM_ALL tests/test_iop_native_module.cpp)
     target_include_directories(test_iop_native_module PRIVATE runtime/src)
     target_link_libraries(test_iop_native_module PRIVATE ps2runtime)
+    add_executable(test_iop_aot_import_load EXCLUDE_FROM_ALL tests/test_iop_aot_import_load.cpp)
+    target_include_directories(test_iop_aot_import_load PRIVATE runtime/src)
+    target_link_libraries(test_iop_aot_import_load PRIVATE ps2runtime)
+    add_executable(test_padman_rpc EXCLUDE_FROM_ALL tests/test_padman_rpc.cpp)
+    target_include_directories(test_padman_rpc PRIVATE runtime/src)
+    target_link_libraries(test_padman_rpc PRIVATE ps2runtime)
+    add_executable(test_mwfilefr_read EXCLUDE_FROM_ALL tests/test_mwfilefr_read.cpp)
+    target_include_directories(test_mwfilefr_read PRIVATE runtime/src)
+    target_link_libraries(test_mwfilefr_read PRIVATE ps2runtime)
     add_executable(test_iop_native_import_link EXCLUDE_FROM_ALL tests/test_iop_native_import_link.cpp)
     target_include_directories(test_iop_native_import_link PRIVATE runtime/src)
     target_link_libraries(test_iop_native_import_link PRIVATE ps2runtime)
+    if(WIN32)
+        add_executable(test_native_gl_alpha EXCLUDE_FROM_ALL tests/test_native_gl_alpha.cpp)
+        target_include_directories(test_native_gl_alpha PRIVATE runtime/include runtime/src)
+        target_link_libraries(test_native_gl_alpha PRIVATE ps2runtime)
+    endif()
+    # These tests use assert for both checks and calls under test. Keep those
+    # expressions active even when the surrounding build is Release.
+    foreach(assert_test test_iop_native_module test_iop_native_import_link test_iop_aot_import_load)
+        if(MSVC)
+            target_compile_options(${assert_test} PRIVATE /UNDEBUG)
+        else()
+            target_compile_options(${assert_test} PRIVATE -UNDEBUG)
+        endif()
+    endforeach()
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
         target_sources(ps2run PRIVATE host/profile.cpp)
         target_compile_definitions(ps2run PRIVATE PS2_PROFILE)
@@ -222,6 +280,8 @@ if(PS2_GENERATED)
         target_link_libraries(ps2run PRIVATE SDL2::SDL2)
         if(WIN32)
             add_custom_command(TARGET ps2run POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2> $<TARGET_FILE_DIR:ps2run>)
+            # Keep the per-run log viewer beside ps2run so a visible game launch can open a live tail in its own console window.
+            add_custom_command(TARGET ps2run POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/scripts/watch_ps2run_log.ps1" $<TARGET_FILE_DIR:ps2run>)
             # Microsoft's shader compiler for Direct3D 12 (scripts/fetch_dxc.sh): used when the two DLLs sit next to ps2run.exe,
             # FXC otherwise. Not shipped with the source: each PC downloads it.
             foreach(dxc_dll dxcompiler.dll dxil.dll)

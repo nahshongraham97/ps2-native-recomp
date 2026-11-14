@@ -58,6 +58,22 @@ def synthetic_irx() -> bytes:
 
 
 class IopIrxImportTests(unittest.TestCase):
+    def test_relocation_inventory_and_bounds(self) -> None:
+        data = bytearray(synthetic_irx())
+        data.extend(bytes(0x80))
+        struct.pack_into("<I", data, 32, 0x240)  # section headers
+        struct.pack_into("<HH", data, 46, 40, 2)
+        struct.pack_into("<I", data, 0x240 + 40 + 4, 9)  # SHT_REL
+        struct.pack_into("<II", data, 0x240 + 40 + 16, 0x290, 8)
+        struct.pack_into("<I", data, 0x240 + 40 + 28, 0)
+        struct.pack_into("<I", data, 0x240 + 40 + 36, 8)
+        struct.pack_into("<II", data, 0x290, 0x20, (3 << 8) | 5)
+        self.assertEqual(iop_irx_imports.scan_relocations(data, 0x100),
+                         [{"offset": 0x20, "type": 5, "symbol": 3, "target_section": 0}])
+        struct.pack_into("<I", data, 0x290, 0xFE)
+        with self.assertRaisesRegex(ValueError, "outside the load image"):
+            iop_irx_imports.scan_relocations(data, 0x100)
+
     def test_scan_import_tables_keeps_stub_slot_and_function_ordinal_distinct(self) -> None:
         image = bytearray(0x80)
         add_import_table(image, 0x10, b"ioman", 0x0104, [4, 5, 8])
@@ -92,6 +108,21 @@ class IopIrxImportTests(unittest.TestCase):
         data = bytearray(synthetic_irx()[:70])
         with self.assertRaisesRegex(ValueError, "program header table is truncated"):
             iop_irx_imports._parse_elf_load_image(bytes(data))
+
+
+class ExportInventoryTests(unittest.TestCase):
+    def test_export_ordinals_and_invalid_target(self) -> None:
+        image = bytearray(0x100)
+        struct.pack_into("<IIHH8sIII", image, 0x20, 0x41C00000, 0, 0x0105, 0,
+                         b"libsd\0\0\0", 0x80, 0x84, 0)
+        tables = iop_irx_imports.scan_export_tables(image)
+        self.assertEqual(tables[0]["version"], "0x0105")
+        self.assertEqual(tables[0]["exports"], [
+            {"ordinal": 0, "image_target": "0x00000080"},
+            {"ordinal": 1, "image_target": "0x00000084"},
+        ])
+        struct.pack_into("<I", image, 0x38, 0x101)
+        self.assertEqual(iop_irx_imports.scan_export_tables(image), [])
 
 
 if __name__ == "__main__":
