@@ -1264,8 +1264,12 @@ bool present_frame(const DisplayRegs &regs) {
     const int scissor_x1 = static_cast<int>((scissor >> 16) & 0x7FFu);
     const int scissor_y0 = static_cast<int>((scissor >> 32) & 0x7FFu);
     const int scissor_y1 = static_cast<int>((scissor >> 48) & 0x7FFu);
-    const int picture_width = scissor_x1 >= scissor_x0 ? scissor_x1 - scissor_x0 + 1 : display_width;
-    const int picture_height = scissor_y1 >= scissor_y0 ? scissor_y1 - scissor_y0 + 1 : height;
+    // An unset scissor reads as (0,0)-(0,0): treat that as "no scissor yet"
+    // instead of a one-pixel picture, which stretched a single pixel across
+    // the whole window at boot and during the movie.
+    const bool scissor_valid = scissor_x1 > scissor_x0 && scissor_y1 > scissor_y0;
+    const int picture_width = scissor_valid ? scissor_x1 - scissor_x0 + 1 : display_width;
+    const int picture_height = scissor_valid ? scissor_y1 - scissor_y0 + 1 : height;
     const int width = std::min(display_width, picture_width);
     height = std::min(height, picture_height);
     const bool halved_field = (regs.smode2 & 3u) == 3u;
@@ -1338,10 +1342,12 @@ bool present_frame(const DisplayRegs &regs) {
 
     const double fit = std::min(static_cast<double>(output_width) / width,
                                 static_cast<double>(output_height) / height);
-    // Integer scaling keeps the GS pixels square: 1.5x nearest mixes doubled
-    // and single lines, which is what makes front-end text look uneven. Below
-    // 2x there is no integer step worth taking, so fill the window instead.
-    const double scale = fit >= 2.0 ? std::floor(fit) : fit;
+    // Never upscale by a fractional factor. 1.05x, 1.5x or 1.71x nearest
+    // drops some source columns and doubles others, which reads as missing
+    // vertical pixel columns and sliced glyphs and borders. An integer step
+    // keeps every source column; below 1x the window is smaller than the
+    // picture and the only honest choice is to shrink it.
+    const double scale = fit >= 1.0 ? std::floor(fit) : fit;
     const int draw_width = std::max(1, static_cast<int>(std::lround(width * scale)));
     const int draw_height = std::max(1, static_cast<int>(std::lround(height * scale)));
     const int draw_x = (output_width - draw_width) / 2;
@@ -1374,7 +1380,7 @@ bool present_frame(const DisplayRegs &regs) {
                      owner_known ? (guest_owned ? "guest" : "primitive") : "unknown",
                      static_cast<unsigned long long>(surface_generation),
                      display_write ? "display" : "none", scale,
-                     fit >= 2.0 ? "integer" : "fit", draw_x, draw_y, draw_width, draw_height);
+                     fit >= 1.0 ? "integer" : "fit", draw_x, draw_y, draw_width, draw_height);
         if (display_write)
             std::fprintf(stderr, "[native-gl] guest write on the display surface: psm=%u base=%u rect=%u,%u %ux%u generation=%llu\n",
                          display_write->psm, display_write->base, display_write->x, display_write->y,
