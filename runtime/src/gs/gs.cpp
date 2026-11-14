@@ -44,6 +44,26 @@ std::uint64_t g_vram_generation = 0;
 
 void serve_state(const void *payload);
 
+// Where guest image transfers and local copies landed, keyed by destination
+// base in 256-byte units. Printed by stats(): the question "does a movie
+// frame ever reach GS VRAM, and where?" is answered by this histogram rather
+// than by inference from a single logged write.
+struct TransferDest {
+    std::uint64_t count = 0;
+    std::uint64_t max_pixels = 0;
+};
+std::vector<std::pair<std::uint32_t, TransferDest>> g_transfer_dest;
+
+void count_transfer_dest(std::uint32_t base, std::uint32_t pixels) {
+    for (auto &entry : g_transfer_dest) {
+        if (entry.first != base) continue;
+        ++entry.second.count;
+        entry.second.max_pixels = std::max(entry.second.max_pixels, static_cast<std::uint64_t>(pixels));
+        return;
+    }
+    g_transfer_dest.push_back({base, TransferDest{1, pixels}});
+}
+
 // Guest writes into VRAM that do not come from the primitive pipeline: image
 // transfers (TRXDIR 0) and local copies (TRXDIR 2). A movie frame or a
 // converted still reaches the display buffer this way and never touches the
@@ -81,6 +101,7 @@ void note_guest_write(std::uint32_t base, std::uint32_t psm,
                       std::uint32_t x, std::uint32_t y,
                       std::uint32_t w, std::uint32_t h) {
     if (!w || !h) return;
+    count_transfer_dest(base, w * h);
     GuestWrite &write = g_guest_writes[g_guest_write_next];
     g_guest_write_next = (g_guest_write_next + 1) % kGuestWriteHistory;
     write.generation = ++g_guest_write_generation;
@@ -1568,6 +1589,17 @@ void stats() {
     for (int r = 0; r < 128; ++r)
         if (g_writes[r]) std::fprintf(stderr, " %02X:%llu", r, static_cast<unsigned long long>(g_writes[r]));
     std::fprintf(stderr, "\n");
+    if (!g_transfer_dest.empty()) {
+        auto sorted = g_transfer_dest;
+        std::sort(sorted.begin(), sorted.end(), [](const auto &a, const auto &b) { return a.second.count > b.second.count; });
+        std::fprintf(stderr, "[gs] guest VRAM writes by destination base (256-byte units):\n");
+        for (std::size_t i = 0; i < sorted.size() && i < 16; ++i) {
+            const auto &[base, info] = sorted[i];
+            std::fprintf(stderr, "[gs]   base=%u (FBP %u) writes=%llu largest_rect=%llu px\n",
+                         base, base / 32u, static_cast<unsigned long long>(info.count),
+                         static_cast<unsigned long long>(info.max_pixels));
+        }
+    }
 }
 
 }
