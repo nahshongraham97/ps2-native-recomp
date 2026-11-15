@@ -51,6 +51,15 @@ struct McDescParam {
     std::uint8_t data[16];
 };
 
+struct McNameParam {
+    std::int32_t port;
+    std::int32_t slot;
+    std::int32_t flags;
+    std::int32_t maxent;
+    std::uint32_t ee_dest; // union: mcT / curdir
+    char name[1024];
+};
+
 struct McEndParam2 {
     std::int32_t type;
     std::int32_t free;
@@ -77,6 +86,9 @@ struct McEndParam {
 static_assert(sizeof(McDescParam) == kMcDescParamBytes);
 static_assert(offsetof(McDescParam, offset) == 16u);
 static_assert(offsetof(McDescParam, param) == 28u);
+static_assert(sizeof(McNameParam) == 1044u);
+static_assert(offsetof(McNameParam, ee_dest) == 16u);
+static_assert(offsetof(McNameParam, name) == 20u);
 static_assert(sizeof(McEndParam2) == kMcEndParam2Bytes);
 static_assert(offsetof(McEndParam2, free) == 4u);
 static_assert(offsetof(McEndParam2, formatted) == 144u);
@@ -278,34 +290,7 @@ std::filesystem::path host_save_base() {
     return fallback;
 }
 
-std::string read_ee_string(std::uint32_t address, std::size_t max_len = 256) {
-    if (!valid_ee_range(address, 1)) return {};
-    const char *ptr = ps2::fast<char>(ee_physical(address));
-    if (!ptr) return {};
-    std::size_t len = 0;
-    while (len < max_len && valid_ee_range(address + static_cast<std::uint32_t>(len), 1)) {
-        if (ptr[len] == '\0') break;
-        ++len;
-    }
-    return std::string(ptr, len);
-}
 
-std::string extract_name_param(const McDescParam &req) {
-    if (req.buffer != 0) {
-        std::string s = read_ee_string(req.buffer);
-        if (!s.empty()) return s;
-    }
-    if (req.param != 0) {
-        std::string s = read_ee_string(req.param);
-        if (!s.empty()) return s;
-    }
-    if (req.data[0] != 0) {
-        std::size_t len = 0;
-        while (len < sizeof(req.data) && req.data[len] != 0) ++len;
-        return std::string(reinterpret_cast<const char *>(req.data), len);
-    }
-    return {};
-}
 
 bool pattern_matches(const std::string &name, const std::string &pattern) {
     if (pattern.empty() || pattern == "*") return true;
@@ -316,25 +301,56 @@ bool pattern_matches(const std::string &name, const std::string &pattern) {
     return name == pattern;
 }
 
-std::int32_t mc_get_dir(const McDescParam &req) {
+std::int32_t mc_get_dir(const McNameParam &req) {
     if (req.port != 0 || req.slot != 0) return kMcFailDetect2;
-    const std::string pattern = extract_name_param(req);
-    const std::uint32_t maxent = static_cast<std::uint32_t>(req.offset > 0 ? req.offset : req.size > 0 ? req.size : 16);
-    const std::uint32_t dest_ee = req.buffer;
+    std::string name_str = req.name;
+    std::string dir_part;
+    std::string pat_part;
+    auto last_slash = name_str.find_last_of("/\\");
+    if (last_slash != std::string::npos) {
+        dir_part = name_str.substr(0, last_slash);
+        pat_part = name_str.substr(last_slash + 1);
+        while (!dir_part.empty() && (dir_part.front() == '/' || dir_part.front() == '\\')) {
+            dir_part.erase(0, 1);
+        }
+    } else {
+        pat_part = name_str;
+    }
+    if (pat_part.empty()) pat_part = "*";
+
+    const std::uint32_t maxent = req.maxent > 0 ? static_cast<std::uint32_t>(req.maxent) : 16u;
+    const std::uint32_t dest_ee = req.ee_dest;
     if (dest_ee == 0 || !valid_ee_range(dest_ee, sizeof(SceMcTblGetDir))) {
         std::fprintf(stderr, "[iop-native] mc_get_dir invalid EE dest buffer 0x%08X\n", dest_ee);
         return 0;
     }
 
     std::filesystem::path dir = host_save_base();
-    if (!s_current_dir.empty()) dir /= s_current_dir;
-    
+    if (!dir_part.empty()) dir /= dir_part;
+    else if (!s_current_dir.empty()) dir /= s_current_dir;
+
     std::vector<SceMcTblGetDir> entries;
+
+    if (pattern_matches(".", pat_part) && entries.size() < maxent) {
+        SceMcTblGetDir dot{};
+        std::strncpy(dot.entry_name, ".", sizeof(dot.entry_name) - 1);
+        dot.attr_file = 0x8427; // Subdirectory
+        dot.file_size = 2;
+        entries.push_back(dot);
+    }
+    if (pattern_matches("..", pat_part) && entries.size() < maxent) {
+        SceMcTblGetDir dotdot{};
+        std::strncpy(dotdot.entry_name, "..", sizeof(dotdot.entry_name) - 1);
+        dotdot.attr_file = 0x8427; // Subdirectory
+        dotdot.file_size = 2;
+        entries.push_back(dotdot);
+    }
+
     std::error_code ec;
     if (std::filesystem::exists(dir, ec) && std::filesystem::is_directory(dir, ec)) {
         for (const auto &item : std::filesystem::directory_iterator(dir, ec)) {
             const std::string filename = item.path().filename().string();
-            if (pattern_matches(filename, pattern)) {
+            if (pattern_matches(filename, pat_part)) {
                 SceMcTblGetDir entry{};
                 std::strncpy(entry.entry_name, filename.c_str(), sizeof(entry.entry_name) - 1);
                 if (item.is_directory(ec)) {
@@ -355,14 +371,14 @@ std::int32_t mc_get_dir(const McDescParam &req) {
     if (copy_bytes > 0 && valid_ee_range(dest_ee, copy_bytes)) {
         std::memcpy(ps2::fast<std::uint8_t>(ee_physical(dest_ee)), entries.data(), copy_bytes);
     }
-    std::fprintf(stderr, "[iop-native] mc_get_dir pattern='%s' maxent=%u found=%u\n",
-                 pattern.c_str(), maxent, count);
+    std::fprintf(stderr, "[iop-native] mc_get_dir pattern='%s' (dir='%s') maxent=%u found=%u\n",
+                 pat_part.c_str(), dir.string().c_str(), maxent, count);
     return static_cast<std::int32_t>(count);
 }
 
-std::int32_t mc_chdir(const McDescParam &req) {
+std::int32_t mc_chdir(const McNameParam &req) {
     if (req.port != 0 || req.slot != 0) return kMcFailDetect2;
-    std::string target = extract_name_param(req);
+    std::string target = req.name;
     std::fprintf(stderr, "[iop-native] mc_chdir target='%s' current='%s'\n", target.c_str(), s_current_dir.c_str());
     if (target.empty() || target == "/" || target == ".") {
         if (target == "/") s_current_dir.clear();
@@ -381,19 +397,20 @@ std::int32_t mc_chdir(const McDescParam &req) {
     std::error_code ec;
     std::filesystem::create_directories(p, ec);
 
-    if (req.param != 0 && valid_ee_range(req.param, 32)) {
-        char *out = ps2::fast<char>(ee_physical(req.param));
+    if (req.ee_dest != 0 && valid_ee_range(req.ee_dest, 1024)) {
+        char *out = ps2::fast<char>(ee_physical(req.ee_dest));
         if (out) {
-            std::strncpy(out, s_current_dir.c_str(), 31);
-            out[31] = '\0';
+            std::string res = s_current_dir.empty() ? "/" : ("/" + s_current_dir);
+            std::strncpy(out, res.c_str(), 1023);
+            out[1023] = '\0';
         }
     }
     return 0;
 }
 
-std::int32_t mc_open(const McDescParam &req) {
+std::int32_t mc_open(const McNameParam &req) {
     if (req.port != 0 || req.slot != 0) return kMcFailDetect2;
-    std::string filename = extract_name_param(req);
+    std::string filename = req.name;
     if (filename.empty()) {
         std::fprintf(stderr, "[iop-native] mc_open empty filename\n");
         return -1;
@@ -421,7 +438,7 @@ std::int32_t mc_open(const McDescParam &req) {
     f = OpenFile{};
     f.in_use = true;
     f.path = full_path;
-    f.flags = req.offset != 0 ? req.offset : req.origin;
+    f.flags = req.flags;
 
     std::error_code ec;
     if (std::filesystem::exists(full_path, ec)) {
@@ -437,8 +454,8 @@ std::int32_t mc_open(const McDescParam &req) {
         std::filesystem::create_directories(full_path.parent_path(), ec);
     }
 
-    std::fprintf(stderr, "[iop-native] mc_open fd=%d path='%s' size=%zu\n",
-                 slot_idx, full_path.string().c_str(), f.data.size());
+    std::fprintf(stderr, "[iop-native] mc_open fd=%d path='%s' flags=0x%X size=%zu\n",
+                 slot_idx, full_path.string().c_str(), req.flags, f.data.size());
     return slot_idx;
 }
 
@@ -536,34 +553,38 @@ std::int32_t mc_flush(const McDescParam &req) {
     return 0;
 }
 
-std::int32_t mc_set_file_info(const McDescParam &req) {
-    std::string name = extract_name_param(req);
-    std::fprintf(stderr, "[iop-native] mc_set_file_info path='%s'\n", name.c_str());
+std::int32_t mc_set_file_info(const McNameParam &req) {
+    if (req.port != 0 || req.slot != 0) return kMcFailDetect2;
+    std::fprintf(stderr, "[iop-native] mc_set_file_info path='%s'\n", req.name);
     return 0;
 }
 
-std::int32_t mc_delete(const McDescParam &req) {
-    std::string name = extract_name_param(req);
+std::int32_t mc_delete(const McNameParam &req) {
+    if (req.port != 0 || req.slot != 0) return kMcFailDetect2;
+    std::string name = req.name;
     std::filesystem::path full_path = host_save_base();
-    if (!s_current_dir.empty()) full_path /= s_current_dir;
-    full_path /= name;
+    if (name.front() == '/' || name.front() == '\\') {
+        full_path /= name.substr(1);
+    } else {
+        if (!s_current_dir.empty()) full_path /= s_current_dir;
+        full_path /= name;
+    }
     std::error_code ec;
     std::filesystem::remove_all(full_path, ec);
     std::fprintf(stderr, "[iop-native] mc_delete '%s'\n", full_path.string().c_str());
     return 0;
 }
 
-std::int32_t mc_get_ent_space(const McDescParam &req) {
-    (void)req;
+std::int32_t mc_get_ent_space(const McNameParam &req) {
+    if (req.port != 0 || req.slot != 0) return kMcFailDetect2;
     return 1024;
 }
 
 std::int32_t mc_format(const McDescParam &req) {
-    (void)req;
+    if (req.port != 0 || req.slot != 0) return kMcFailDetect2;
     std::error_code ec;
-    std::filesystem::remove_all(host_save_base(), ec);
     std::filesystem::create_directories(host_save_base(), ec);
-    std::fprintf(stderr, "[iop-native] mc_format completed\n");
+    std::fprintf(stderr, "[iop-native] mc_format completed safely for host save directory\n");
     return 0;
 }
 
@@ -674,6 +695,7 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
         std::fprintf(stderr,
                      "[iop-native] MCSERV legacy GetInfo port=%d slot=%d status=%d free_clusters=%d type_requested=%d\n",
                      request.port, request.slot, result, aux.free, request.size > 0);
+        ps2::census::card_rpc(method, result == 0);
         return true;
     }
 
@@ -702,54 +724,68 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
                      "[iop-native] MCSERV GetInfo2 port=%d slot=%d status=%d free_clusters=%d type=%d format=%d (req: fd=%d size=%d off=%d orig=%d buf=0x%x param=0x%x)\n",
                      request.port, request.slot, result, aux.free, aux.type, aux.formatted,
                      request.fd, request.size, request.offset, request.origin, request.buffer, request.param);
+        ps2::census::card_rpc(method, result == 0);
         return true;
     }
 
-    // Host file-level save handlers
-    McDescParam request{};
+    // Host file-level save handlers: decode McDescParam and McNameParam safely
+    McDescParam desc_req{};
     if (args_size >= kMcDescParamBytes && valid_ee_range(args, kMcDescParamBytes)) {
         const std::uint8_t *request_bytes = ps2::fast<std::uint8_t>(ee_physical(args));
-        if (request_bytes) std::memcpy(&request, request_bytes, sizeof(request));
+        if (request_bytes) std::memcpy(&desc_req, request_bytes, sizeof(desc_req));
     }
+
+    McNameParam name_req{};
+    if (args_size >= sizeof(McNameParam) && valid_ee_range(args, sizeof(McNameParam))) {
+        const std::uint8_t *request_bytes = ps2::fast<std::uint8_t>(ee_physical(args));
+        if (request_bytes) std::memcpy(&name_req, request_bytes, sizeof(name_req));
+    } else if (args_size > 0 && valid_ee_range(args, std::min<std::uint32_t>(args_size, sizeof(name_req)))) {
+        const std::uint8_t *request_bytes = ps2::fast<std::uint8_t>(ee_physical(args));
+        if (request_bytes) std::memcpy(&name_req, request_bytes, std::min<std::uint32_t>(args_size, sizeof(name_req)));
+    }
+    name_req.name[sizeof(name_req.name) - 1] = '\0';
 
     std::int32_t result = 0;
     bool handled = false;
 
     if (method == 0x02u || method == 0x71u) {
-        result = mc_open(request);
+        result = mc_open(name_req);
         handled = true;
     } else if (method == 0x03u || method == 0x72u) {
-        result = mc_close(request);
+        result = mc_close(desc_req);
         handled = true;
     } else if (method == 0x04u || method == 0x75u) {
-        result = mc_seek(request);
+        result = mc_seek(desc_req);
         handled = true;
     } else if (method == 0x05u || method == 0x73u) {
-        result = mc_read(request);
+        result = mc_read(desc_req);
         handled = true;
     } else if (method == 0x06u || method == 0x74u) {
-        result = mc_write(request);
+        result = mc_write(desc_req);
         handled = true;
-    } else if (method == 0x07u || method == 0x7Au) {
-        result = mc_flush(request);
+    } else if (method == 0x0Au || method == 0x7Au) {
+        result = mc_flush(desc_req);
         handled = true;
-    } else if (method == 0x08u || method == 0x0Cu || method == 0x7Bu) {
-        result = mc_chdir(request);
+    } else if (method == 0x0Cu || method == 0x7Bu) {
+        result = mc_chdir(name_req);
         handled = true;
-    } else if (method == 0x09u || method == 0x0Du || method == 0x76u) {
-        result = mc_get_dir(request);
+    } else if (method == 0x0Du || method == 0x76u) {
+        result = mc_get_dir(name_req);
         handled = true;
-    } else if (method == 0x0Au || method == 0x7Cu) {
-        result = mc_set_file_info(request);
+    } else if (method == 0x0Eu || method == 0x7Cu) {
+        result = mc_set_file_info(name_req);
         handled = true;
-    } else if (method == 0x0Bu || method == 0x79u) {
-        result = mc_delete(request);
+    } else if (method == 0x0Fu || method == 0x79u) {
+        result = mc_delete(name_req);
         handled = true;
-    } else if (method == 0x0Eu || method == 0x7Eu) {
-        result = mc_get_ent_space(request);
+    } else if (method == 0x10u || method == 0x77u) {
+        result = mc_format(desc_req);
         handled = true;
-    } else if (method == 0x0Fu || method == 0x77u) {
-        result = mc_format(request);
+    } else if (method == 0x11u || method == 0x80u) {
+        result = 0;
+        handled = true;
+    } else if (method == 0x12u || method == 0x7Eu) {
+        result = mc_get_ent_space(name_req);
         handled = true;
     }
 
