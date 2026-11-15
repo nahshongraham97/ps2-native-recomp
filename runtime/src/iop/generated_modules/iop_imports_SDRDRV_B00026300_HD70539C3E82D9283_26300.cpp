@@ -1,4 +1,5 @@
 #include "iop/kernel.hpp"
+#include <cstdio>
 
 namespace ps2::iop::aot_imports {
 bool iop_imports_SDRDRV_B00026300_HD70539C3E82D9283_26300(Cpu &c) {

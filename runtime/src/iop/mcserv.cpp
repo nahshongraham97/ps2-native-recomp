@@ -26,8 +26,15 @@ namespace ps2::iop::mcserv {
 namespace {
 
 constexpr std::uint32_t kSifSid = 0x80000400u;
+constexpr std::int32_t kMcSucceed = 0;
+constexpr std::int32_t kMcChangedCard = -1;
 constexpr std::int32_t kMcNoFormat = -2;
+constexpr std::int32_t kMcNoEntry = -4;
 constexpr std::int32_t kMcFailDetect2 = -13;
+static bool s_card_changed[2][8] = {
+    {true, true, true, true, true, true, true, true},
+    {true, true, true, true, true, true, true, true}
+};
 constexpr std::uint32_t kMcDescParamBytes = 48u;
 constexpr std::uint32_t kMcRpcStatBytes = 12u;
 constexpr std::uint32_t kMcEndParam2Bytes = 192u;
@@ -259,7 +266,14 @@ std::int32_t mc_get_info2(const McDescParam &request, McEndParam2 &reply) {
                      ? 0
                      : static_cast<std::int32_t>(free_clusters);
     reply.formatted = 1;
-    return 0;
+
+    if (request.port < 2 && request.slot < 8) {
+        if (s_card_changed[request.port][request.slot]) {
+            s_card_changed[request.port][request.slot] = false;
+            return kMcChangedCard;
+        }
+    }
+    return kMcSucceed;
 }
 
 #pragma pack(push, 1)
@@ -396,7 +410,8 @@ std::int32_t mc_get_dir(const McNameParam &req) {
     }
     std::fprintf(stderr, "[iop-native] mc_get_dir pattern='%s' (dir='%s') maxent=%u found=%u\n",
                  pat_part.c_str(), dir.string().c_str(), maxent, count);
-    return static_cast<std::int32_t>(count);
+    if (count == 0) return kMcNoEntry;
+    return kMcSucceed;
 }
 
 std::int32_t mc_chdir(const McNameParam &req) {
@@ -709,13 +724,17 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
             if (sio2::card_image(image, true)) {
                 std::uint32_t free_clusters = 0;
                 if (mc_card_formatted_and_free(image, free_clusters)) {
-                    result = 0;
+                    result = kMcSucceed;
                     free_clusters = host_calculate_free_clusters(free_clusters);
                     if (request.size > 0) aux.type = 2; // sceMcTypePS2
                     if (request.offset != 0)
                         aux.free = free_clusters > static_cast<std::uint32_t>(std::numeric_limits<std::int32_t>::max())
                                        ? 0
                                        : static_cast<std::int32_t>(free_clusters);
+                    if (s_card_changed[0][0]) {
+                        s_card_changed[0][0] = false;
+                        result = kMcChangedCard;
+                    }
                 } else {
                     result = kMcNoFormat;
                 }
@@ -726,7 +745,7 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
         std::fprintf(stderr,
                      "[iop-native] MCSERV legacy GetInfo port=%d slot=%d status=%d free_clusters=%d type_requested=%d\n",
                      request.port, request.slot, result, aux.free, request.size > 0);
-        ps2::census::card_rpc(method, result == 0);
+        ps2::census::card_rpc(method, result == kMcSucceed || result == kMcChangedCard);
         return true;
     }
 
@@ -766,7 +785,7 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
                      request.port, request.slot, result, aux.free, aux.type, aux.formatted,
                      ee_status, ee_free, ee_type, ee_formatted,
                      request.fd, request.size, request.offset, request.origin, request.buffer, request.param);
-        ps2::census::card_rpc(method, result == 0);
+        ps2::census::card_rpc(method, result == kMcSucceed || result == kMcChangedCard);
         return true;
     }
 
@@ -808,11 +827,11 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
     } else if (method == 0x0Au || method == 0x7Au) {
         result = mc_flush(desc_req);
         handled = true;
-    } else if (method == 0x0Cu || method == 0x7Bu) {
-        result = mc_chdir(name_req);
-        handled = true;
-    } else if (method == 0x0Du || method == 0x76u) {
+    } else if (method == 0x0Cu || method == 0x76u) {
         result = mc_get_dir(name_req);
+        handled = true;
+    } else if (method == 0x0Du || method == 0x7Bu) {
+        result = mc_chdir(name_req);
         handled = true;
     } else if (method == 0x0Eu || method == 0x7Cu) {
         result = mc_set_file_info(name_req, desc_req);
@@ -837,7 +856,7 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
             if (status_bytes) std::memcpy(status_bytes, &result, sizeof(result));
         }
         std::fprintf(stderr, "[iop-native] MCSERV RPC method 0x%02X handled natively -> result %d\n", method, result);
-        ps2::census::card_rpc(method, result >= 0);
+        ps2::census::card_rpc(method, result >= 0 || result == kMcNoEntry);
         return true;
     }
 

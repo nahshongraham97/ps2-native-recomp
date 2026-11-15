@@ -178,14 +178,33 @@ def main():
         if len({entry['address'] for entry in imports}) != len(imports):
             raise ValueError(f"duplicate import stub address: {capture['capture']}")
         with bridge_path.open('w', encoding='utf-8', newline='\n') as out:
-            out.write('#include "iop/kernel.hpp"\n\nnamespace ps2::iop::aot_imports {\n')
+            out.write('#include "iop/kernel.hpp"\n#include <cstdio>\n\nnamespace ps2::iop::aot_imports {\n')
+            if 'MSL' in bridge_name:
+                out.write('''static void trace_msl_libsd_call(std::uint32_t ordinal, const char *name, std::uint32_t a0, std::uint32_t a1, std::uint32_t a2, std::uint32_t a3, Cpu &c, bool ok) {
+    if (kernel::g_trace_modules) {
+        if (!ok) {
+            std::fprintf(stderr, "[msl-libsd] ordinal %u (%s) REJECTED a0=0x%08X a1=0x%08X a2=0x%08X a3=0x%08X\\n",
+                         ordinal, name, a0, a1, a2, a3);
+        } else {
+            std::fprintf(stderr, "[msl-libsd] ordinal %u (%s) a0=0x%08X a1=0x%08X a2=0x%08X a3=0x%08X -> r2=0x%08X\\n",
+                         ordinal, name, a0, a1, a2, a3, c.r[2]);
+        }
+    }
+}
+''')
             out.write(f'bool {bridge_name}(Cpu &c) {{\n    switch (phys(c.pc)) {{\n')
             for entry in imports:
                 library = json.dumps(entry['library'])
                 out.write(f"    case 0x{entry['address']:08X}u:\n")
                 out.write(f"      if (!kernel::compiled_import_stub_matches(c.pc, {library}, 0x{entry['version']:04X}u, {entry['ordinal']}u)) return false;\n")
                 out.write('    { const auto pc = c.pc, npc = c.npc; c.pc = c.r[31]; c.npc = c.pc + 4; c.r[0] = 0;\n')
-                out.write(f"      if (!kernel::invoke_native_import({library}, 0x{entry['version']:04X}u, {entry['ordinal']}u, c)) {{ c.pc = pc; c.npc = npc; return false; }}\n")
+                if 'MSL' in bridge_name and entry['library'] == 'libsd':
+                    out.write('      const auto a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];\n')
+                    out.write(f"      const bool ok = kernel::invoke_native_import({library}, 0x{entry['version']:04X}u, {entry['ordinal']}u, c);\n")
+                    out.write(f"      trace_msl_libsd_call({entry['ordinal']}u, {library}, a0, a1, a2, a3, c, ok);\n")
+                    out.write('      if (!ok) { c.pc = pc; c.npc = npc; return false; }\n')
+                else:
+                    out.write(f"      if (!kernel::invoke_native_import({library}, 0x{entry['version']:04X}u, {entry['ordinal']}u, c)) {{ c.pc = pc; c.npc = npc; return false; }}\n")
                 out.write('      c.r[0] = 0; return true; }\n')
             out.write('    default: return false;\n    }\n}\n}\n')
         registry.append({**capture, 'function': function, 'source': path.name,
@@ -213,10 +232,11 @@ def main():
             out.write(f"std::uint32_t {entry['function']}(IopCpuState &, IopMemory &, std::uint32_t);\n")
         out.write('namespace {\nconst IopNativeModule kModules[] = {\n')
         for entry in registry:
+            total_size = entry.get('total_size', entry['size'])
             out.write(f"    {{{json.dumps(entry['module'])}, 0x{entry['base']:08X}u, "
-                      f"0x{entry['size']:X}u, 0x{entry['fnv1a64']}ull, &{entry['function']}}},\n")
+                      f"0x{entry['size']:X}u, 0x{total_size:X}u, 0x{entry['fnv1a64']}ull, &{entry['function']}}},\n")
         if not registry:
-            out.write('    {nullptr, 0u, 0u, 0ull, nullptr},\n')
+            out.write('    {nullptr, 0u, 0u, 0u, 0ull, nullptr},\n')
         out.write('};\n}\n')
         out.write('const IopNativeModule *iopNativeModules(std::size_t &count) {\n')
         out.write(f'    count = {len(registry)};\n    return kModules;\n')

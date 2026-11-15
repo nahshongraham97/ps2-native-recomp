@@ -31,10 +31,19 @@ def read_captures(directory):
     seen = set()
     for number, line in enumerate((directory / 'modules.txt').read_text(encoding='ascii').splitlines(), 1):
         parts = line.split()
-        if len(parts) != 4 or not re.fullmatch(r'[A-Za-z0-9_]+', parts[0]):
+        if len(parts) not in (4, 5) or not re.fullmatch(r'[A-Za-z0-9_]+', parts[0]):
             raise ValueError(f'invalid capture record at line {number}')
         identifier = parts[0]
-        base, size, expected = (int(value, 16) for value in parts[1:])
+        if len(parts) == 5:
+            base = int(parts[1], 16)
+            size = int(parts[2], 16)
+            total_size = int(parts[3], 16)
+            expected = int(parts[4], 16)
+        else:
+            base = int(parts[1], 16)
+            size = int(parts[2], 16)
+            total_size = size
+            expected = int(parts[3], 16)
         if identifier in seen or identifier not in identities:
             raise ValueError(f'duplicate capture or missing identity: {identifier}')
         seen.add(identifier)
@@ -42,7 +51,8 @@ def read_captures(directory):
         if not size or size % 4 or len(data) != size or fnv1a64(data) != expected:
             raise ValueError(f'capture size, alignment, or hash mismatch: {identifier}')
         captures.append({'capture': identifier, 'module': identities[identifier],
-                         'base': base, 'size': size, 'fnv1a64': f'{expected:016X}'})
+                         'base': base, 'size': size, 'total_size': total_size,
+                         'fnv1a64': f'{expected:016X}'})
     return captures
 
 

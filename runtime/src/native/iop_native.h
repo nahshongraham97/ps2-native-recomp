@@ -54,6 +54,7 @@ struct IopNativeModule {
     const char *name;
     std::uint32_t base;
     std::uint32_t textSize;
+    std::uint32_t totalSize;
     std::uint64_t hash;
     std::uint32_t (*run)(IopCpuState &, IopMemory &, std::uint32_t budget);
 };

@@ -727,9 +727,7 @@ static bool overlaps_registered_aot(std::uint32_t start, std::uint32_t size) {
     for (std::size_t i = 0; aot_entries && i < aot_count; ++i) {
         const auto &e = aot_entries[i];
         if (!e.base || !e.run) continue;
-        const std::uint32_t aot_size = (e.name && (std::strcmp(e.name, "CRI_ADXI") == 0 || std::strcmp(e.name, "CRI_ADX_Driver") == 0))
-            ? 0x14000u
-            : ((e.textSize + 0x8000u + 0xFFu) & ~0xFFu);
+        const std::uint32_t aot_size = e.totalSize ? e.totalSize : ((e.textSize + 0x8000u + 0xFFu) & ~0xFFu);
         if (start < e.base + aot_size && start + size > e.base) {
             return true;
         }

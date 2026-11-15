@@ -2,8 +2,7 @@
 #include <cstdio>
 
 namespace ps2::iop::aot_imports {
-
-static inline void log_msl_libsd(const char *name, std::uint32_t ordinal, Cpu &c, bool ok, std::uint32_t a0, std::uint32_t a1, std::uint32_t a2, std::uint32_t a3) {
+static void trace_msl_libsd_call(std::uint32_t ordinal, const char *name, std::uint32_t a0, std::uint32_t a1, std::uint32_t a2, std::uint32_t a3, Cpu &c, bool ok) {
     if (kernel::g_trace_modules) {
         if (!ok) {
             std::fprintf(stderr, "[msl-libsd] ordinal %u (%s) REJECTED a0=0x%08X a1=0x%08X a2=0x%08X a3=0x%08X\n",
@@ -249,73 +248,73 @@ bool iop_imports_MSL_B00028100_H7308BB2C3E647540_28100(Cpu &c) {
     case 0x00028380u:
       if (!kernel::compiled_import_stub_matches(c.pc, "libsd", 0x0105u, 4u)) return false;
     { const auto pc = c.pc, npc = c.npc; c.pc = c.r[31]; c.npc = c.pc + 4; c.r[0] = 0;
-      const std::uint32_t a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];
+      const auto a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];
       const bool ok = kernel::invoke_native_import("libsd", 0x0105u, 4u, c);
-      log_msl_libsd("sceSdInit", 4u, c, ok, a0, a1, a2, a3);
+      trace_msl_libsd_call(4u, "libsd", a0, a1, a2, a3, c, ok);
       if (!ok) { c.pc = pc; c.npc = npc; return false; }
       c.r[0] = 0; return true; }
     case 0x00028388u:
       if (!kernel::compiled_import_stub_matches(c.pc, "libsd", 0x0105u, 5u)) return false;
     { const auto pc = c.pc, npc = c.npc; c.pc = c.r[31]; c.npc = c.pc + 4; c.r[0] = 0;
-      const std::uint32_t a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];
+      const auto a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];
       const bool ok = kernel::invoke_native_import("libsd", 0x0105u, 5u, c);
-      log_msl_libsd("sceSdSetParam", 5u, c, ok, a0, a1, a2, a3);
+      trace_msl_libsd_call(5u, "libsd", a0, a1, a2, a3, c, ok);
       if (!ok) { c.pc = pc; c.npc = npc; return false; }
       c.r[0] = 0; return true; }
     case 0x00028390u:
       if (!kernel::compiled_import_stub_matches(c.pc, "libsd", 0x0105u, 7u)) return false;
     { const auto pc = c.pc, npc = c.npc; c.pc = c.r[31]; c.npc = c.pc + 4; c.r[0] = 0;
-      const std::uint32_t a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];
+      const auto a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];
       const bool ok = kernel::invoke_native_import("libsd", 0x0105u, 7u, c);
-      log_msl_libsd("sceSdSetSwitch", 7u, c, ok, a0, a1, a2, a3);
+      trace_msl_libsd_call(7u, "libsd", a0, a1, a2, a3, c, ok);
       if (!ok) { c.pc = pc; c.npc = npc; return false; }
       c.r[0] = 0; return true; }
     case 0x00028398u:
       if (!kernel::compiled_import_stub_matches(c.pc, "libsd", 0x0105u, 8u)) return false;
     { const auto pc = c.pc, npc = c.npc; c.pc = c.r[31]; c.npc = c.pc + 4; c.r[0] = 0;
-      const std::uint32_t a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];
+      const auto a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];
       const bool ok = kernel::invoke_native_import("libsd", 0x0105u, 8u, c);
-      log_msl_libsd("sceSdGetSwitch", 8u, c, ok, a0, a1, a2, a3);
+      trace_msl_libsd_call(8u, "libsd", a0, a1, a2, a3, c, ok);
       if (!ok) { c.pc = pc; c.npc = npc; return false; }
       c.r[0] = 0; return true; }
     case 0x000283A0u:
       if (!kernel::compiled_import_stub_matches(c.pc, "libsd", 0x0105u, 9u)) return false;
     { const auto pc = c.pc, npc = c.npc; c.pc = c.r[31]; c.npc = c.pc + 4; c.r[0] = 0;
-      const std::uint32_t a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];
+      const auto a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];
       const bool ok = kernel::invoke_native_import("libsd", 0x0105u, 9u, c);
-      log_msl_libsd("sceSdSetAddr", 9u, c, ok, a0, a1, a2, a3);
+      trace_msl_libsd_call(9u, "libsd", a0, a1, a2, a3, c, ok);
       if (!ok) { c.pc = pc; c.npc = npc; return false; }
       c.r[0] = 0; return true; }
     case 0x000283A8u:
       if (!kernel::compiled_import_stub_matches(c.pc, "libsd", 0x0105u, 10u)) return false;
     { const auto pc = c.pc, npc = c.npc; c.pc = c.r[31]; c.npc = c.pc + 4; c.r[0] = 0;
-      const std::uint32_t a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];
+      const auto a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];
       const bool ok = kernel::invoke_native_import("libsd", 0x0105u, 10u, c);
-      log_msl_libsd("sceSdGetAddr", 10u, c, ok, a0, a1, a2, a3);
+      trace_msl_libsd_call(10u, "libsd", a0, a1, a2, a3, c, ok);
       if (!ok) { c.pc = pc; c.npc = npc; return false; }
       c.r[0] = 0; return true; }
     case 0x000283B0u:
       if (!kernel::compiled_import_stub_matches(c.pc, "libsd", 0x0105u, 17u)) return false;
     { const auto pc = c.pc, npc = c.npc; c.pc = c.r[31]; c.npc = c.pc + 4; c.r[0] = 0;
-      const std::uint32_t a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];
+      const auto a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];
       const bool ok = kernel::invoke_native_import("libsd", 0x0105u, 17u, c);
-      log_msl_libsd("sceSdVoiceTrans", 17u, c, ok, a0, a1, a2, a3);
+      trace_msl_libsd_call(17u, "libsd", a0, a1, a2, a3, c, ok);
       if (!ok) { c.pc = pc; c.npc = npc; return false; }
       c.r[0] = 0; return true; }
     case 0x000283B8u:
       if (!kernel::compiled_import_stub_matches(c.pc, "libsd", 0x0105u, 19u)) return false;
     { const auto pc = c.pc, npc = c.npc; c.pc = c.r[31]; c.npc = c.pc + 4; c.r[0] = 0;
-      const std::uint32_t a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];
+      const auto a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];
       const bool ok = kernel::invoke_native_import("libsd", 0x0105u, 19u, c);
-      log_msl_libsd("sceSdVoiceTransStatus", 19u, c, ok, a0, a1, a2, a3);
+      trace_msl_libsd_call(19u, "libsd", a0, a1, a2, a3, c, ok);
       if (!ok) { c.pc = pc; c.npc = npc; return false; }
       c.r[0] = 0; return true; }
     case 0x000283C0u:
       if (!kernel::compiled_import_stub_matches(c.pc, "libsd", 0x0105u, 26u)) return false;
     { const auto pc = c.pc, npc = c.npc; c.pc = c.r[31]; c.npc = c.pc + 4; c.r[0] = 0;
-      const std::uint32_t a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];
+      const auto a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];
       const bool ok = kernel::invoke_native_import("libsd", 0x0105u, 26u, c);
-      log_msl_libsd("sceSdSetTransIntrHandler", 26u, c, ok, a0, a1, a2, a3);
+      trace_msl_libsd_call(26u, "libsd", a0, a1, a2, a3, c, ok);
       if (!ok) { c.pc = pc; c.npc = npc; return false; }
       c.r[0] = 0; return true; }
     case 0x000283E4u:

@@ -1,4 +1,5 @@
 #include "iop/kernel.hpp"
+#include <cstdio>
 
 namespace ps2::iop::aot_imports {
 bool iop_imports_LIBSD_B00020500_HBDCCE405D7757993_20500(Cpu &c) {

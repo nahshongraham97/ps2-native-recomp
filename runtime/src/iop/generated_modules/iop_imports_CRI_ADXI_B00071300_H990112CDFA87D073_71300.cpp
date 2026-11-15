@@ -1,4 +1,5 @@
 #include "iop/kernel.hpp"
+#include <cstdio>
 
 namespace ps2::iop::aot_imports {
 bool iop_imports_CRI_ADXI_B00071300_H990112CDFA87D073_71300(Cpu &c) {
