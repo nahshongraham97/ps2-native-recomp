@@ -577,12 +577,22 @@ void write_voice(Core &k, std::uint32_t off, std::uint32_t value) {
 }
 
 void key(Core &k, std::uint32_t mask, bool on) {
+    const int core_id = (&k == &g_cores[1]) ? 1 : 0;
+    std::fprintf(stderr, "[spu2-key] core=%d mask=0x%06X on=%d\n", core_id, mask, on ? 1 : 0);
     for (int i = 0; i < 24; ++i) {
         if (!(mask & (1u << i))) continue;
         Voice &v = k.voices[i];
-        if (on) v.key_on = true;
-        else if (v.key_on) v.key_on = false;
-        else if (v.phase != kOff) v.phase = kRelease;
+        if (on) {
+            v.key_on = true;
+            std::fprintf(stderr, "  [spu2-voice-on] core=%d voice=%d ssa=0x%06X pitch=0x%04X vol=%d/%d\n",
+                         core_id, i, v.ssa, v.pitch, v.vol[0].level, v.vol[1].level);
+        } else if (v.key_on) {
+            v.key_on = false;
+            std::fprintf(stderr, "  [spu2-voice-cancel] core=%d voice=%d\n", core_id, i);
+        } else if (v.phase != kOff) {
+            v.phase = kRelease;
+            std::fprintf(stderr, "  [spu2-voice-release] core=%d voice=%d\n", core_id, i);
+        }
     }
 }
 
@@ -750,6 +760,8 @@ void dma(int core, std::uint32_t madr, std::uint32_t words, bool to_spu, int cha
         return;
     }
     const std::uint32_t halfwords = words * 2;
+    std::fprintf(stderr, "[spu2-dma] core=%d to_spu=%d madr=0x%08X words=%u tsa=0x%06X ch=%d\n",
+                 core, to_spu ? 1 : 0, madr, words, k.tsa, channel);
     if (to_spu) check_irq(k.tsa, halfwords);
     for (std::uint32_t i = 0; i < halfwords; ++i) {
         std::uint16_t *spu = &g_ram[(k.tsa + i) & kRamMask];
@@ -766,6 +778,7 @@ void dma(int core, std::uint32_t madr, std::uint32_t words, bool to_spu, int cha
 // the blocks of the next transfer and keep the stream one block off for as long as the game streams.
 void dma_stop(int core) {
     Core &k = g_cores[core & 1];
+    std::fprintf(stderr, "[spu2-dma-stop] core=%d\n", core);
     static const bool trace_adma = std::getenv("PS2_TRACE_ADMA") != nullptr;
     if (trace_adma && !k.transfers.empty())
         std::fprintf(stderr, "[adma] core %d dma stopped at %.4f s, %zu transfers dropped, %u frames waiting\n", core,
