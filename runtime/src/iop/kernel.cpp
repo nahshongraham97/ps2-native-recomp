@@ -840,11 +840,11 @@ void register_native_module(NativeIopModule module) {
         const std::string key = module_name_of(alias);
         if (key.empty()) throw std::invalid_argument("native IOP module has an empty alias");
         if (!module_keys.insert(key).second)
-            throw std::invalid_argument("native IOP module repeats a name or alias");
+            throw std::invalid_argument("native IOP module repeats a name or alias: " + key);
     }
     for (const std::string &key : module_keys) {
         if (g_native_modules.find(key) != g_native_modules.end())
-            throw std::invalid_argument("native IOP module name or alias was registered more than once");
+            throw std::invalid_argument("native IOP module name or alias was registered more than once: " + key);
     }
     module.name = canonical_name;
 

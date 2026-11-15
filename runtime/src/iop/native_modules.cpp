@@ -284,7 +284,7 @@ void install_native_modules() {
     if (ps2::os::env("PS2_ADX_STUB") == "1") {
         NativeIopModule cri_adxi;
         cri_adxi.name = "CRI_ADXI";
-        cri_adxi.aliases = {"CRI_ADX_Driver", "ADXI", "cri_adxi"};
+        cri_adxi.aliases = {"CRI_ADX_Driver", "ADXI"};
         cri_adxi.start = [](const std::string &) {
             std::fprintf(stderr,
                          "[iop-native] PS2_ADX_STUB=1: CRI_ADXI diagnostic placeholder active (RPC 0x90000200 stubbed; movie frames not decoded)\n");
