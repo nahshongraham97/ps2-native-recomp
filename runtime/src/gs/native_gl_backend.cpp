@@ -1273,9 +1273,7 @@ bool present_frame(const DisplayRegs &regs) {
     const int dby = is_active_target ? 0 : static_cast<int>((fb >> 43) & 0x7FFu);
     const int magh = static_cast<int>((disp >> 23) & 0xFu) + 1;
     const int magv = static_cast<int>((disp >> 27) & 3u) + 1;
-    const int display_width = is_active_target
-                                  ? static_cast<int>(target_fbw * 64u)
-                                  : ((static_cast<int>((disp >> 32) & 0xFFFu) + 1) / magh);
+    const int display_width = (static_cast<int>((disp >> 32) & 0xFFFu) + 1) / magh;
     int height = (static_cast<int>((disp >> 44) & 0x7FFu) + 1) / magv;
     if ((regs.smode2 & 3u) == 1u && height > 576) height /= 2;
     // The display registers can describe a wider buffer than the game draws
