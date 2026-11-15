@@ -1,5 +1,6 @@
 #include "kernel.hpp"
 #include "sif.hpp"
+#include "compliance_census.hpp"
 
 #include "mka/content_vfs.hpp"
 #include "ps2/memory.hpp"
@@ -114,6 +115,7 @@ std::uint64_t fsv_cycles(std::uint32_t sectors) {
 
 // Copy sectors from the volume into EE main memory.
 void read_to_ee(std::uint32_t sector, std::uint32_t count, std::uint32_t destination) {
+    ps2::census::cdvd_sector_read(count);
     std::vector<std::uint8_t> data(static_cast<std::size_t>(count) * mka::content::kSectorSize);
     if (!mka::content::read_sectors(sector, count, data.data())) {
         if (!volume_available()) return;

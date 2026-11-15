@@ -269,7 +269,7 @@ int main(int argc, char **argv) {
         make_vertex(kOriginX + kDrawW, kOriginY + kDrawH, 0xEE, 0x10, 0x20, 0x40),
     };
     if (!ps2::gs::native_gl::submit(state, translucent, 2)) return 1;
-    for (std::uint32_t fbp : {140u, 200u, 260u, 320u}) {
+    for (std::uint32_t fbp = 140u; fbp <= 140u + 16u * 10u; fbp += 10u) {
         state.ctx[0].frame = (static_cast<std::uint64_t>(kFrameWidth) << 16) | fbp;
         if (!ps2::gs::native_gl::submit(state, verts, 2)) return 1;
     }

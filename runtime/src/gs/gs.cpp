@@ -1,4 +1,5 @@
 #include "gs.hpp"
+#include "compliance_census.hpp"
 
 #include "gif.hpp"
 #include "queue.hpp"
@@ -403,10 +404,12 @@ void apply_display_write(std::uint32_t psm, std::uint32_t base, std::uint32_t bw
     if (circuit < 0) return;
     const std::uint32_t display_base = (static_cast<std::uint32_t>(g_dispfb[circuit]) & 0x1FFu) * 32u;
     const std::uint32_t active_draw_base = native_gl::active_frame_fbp() * 32u;
-    const bool is_large_write = (static_cast<std::uint64_t>(w) * h >= 7168u);
-    if (base != display_base && base != active_draw_base && !is_large_write) {
+    const bool is_movie_target = (base == 8960u);
+    if (base != display_base && base != active_draw_base && !is_movie_target) {
+        ps2::census::gs_transfer(base, w * h, false);
         return;
     }
+    ps2::census::gs_transfer(base, w * h, true);
     static auto last_report = std::chrono::steady_clock::time_point{};
     const auto now = std::chrono::steady_clock::now();
     if (std::chrono::duration_cast<std::chrono::milliseconds>(now - last_report).count() >= 500) {

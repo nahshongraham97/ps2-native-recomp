@@ -77,6 +77,7 @@ else()
         runtime/src/native_vertex_hook.cpp
         runtime/src/native/content_vfs.cpp
         runtime/src/port_config.cpp
+        runtime/src/compliance_census.cpp
         runtime/src/system.cpp
         runtime/src/kernel.cpp
         runtime/src/hw.cpp

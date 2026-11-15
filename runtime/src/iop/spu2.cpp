@@ -1,4 +1,5 @@
 #include "spu2.hpp"
+#include "compliance_census.hpp"
 
 #include "hw.hpp"
 #include "iop.hpp"
@@ -490,6 +491,7 @@ void tick() {
         }
         out[n * 2] = clamp16(mix[0]);
         out[n * 2 + 1] = clamp16(mix[1]);
+        ps2::census::spu2_peak_sample(out[n * 2], out[n * 2 + 1]);
     }
     write_rings(0, rings[0]);
     write_rings(1, rings[1]);
@@ -591,13 +593,16 @@ void key(Core &k, std::uint32_t mask, bool on) {
         Voice &v = k.voices[i];
         if (on) {
             v.key_on = true;
+            ps2::census::spu2_key_on(core_id, i);
             std::fprintf(stderr, "  [spu2-voice-on] core=%d voice=%d ssa=0x%06X pitch=0x%04X vol=%d/%d\n",
                          core_id, i, v.ssa, v.pitch, v.vol[0].level, v.vol[1].level);
         } else if (v.key_on) {
             v.key_on = false;
+            ps2::census::spu2_key_off(core_id, i);
             std::fprintf(stderr, "  [spu2-voice-cancel] core=%d voice=%d\n", core_id, i);
         } else if (v.phase != kOff) {
             v.phase = kRelease;
+            ps2::census::spu2_key_off(core_id, i);
             std::fprintf(stderr, "  [spu2-voice-release] core=%d voice=%d\n", core_id, i);
         }
     }
@@ -757,6 +762,7 @@ void write(std::uint32_t a, std::uint32_t v, unsigned size) {
 
 void dma(int core, std::uint32_t madr, std::uint32_t words, bool to_spu, int channel) {
     keep_ticking();
+    ps2::census::spu2_dma(core, words * 4, to_spu);
     Core &k = g_cores[core];
     if (to_spu && (k.admas & (1u << core))) {
         static const bool trace_adma = std::getenv("PS2_TRACE_ADMA") != nullptr;  // porting work: when each ADMA block starts, and the blocks

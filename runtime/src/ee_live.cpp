@@ -1,4 +1,5 @@
 #include "ps2/ee_live.hpp"
+#include "compliance_census.hpp"
 
 #ifdef __EMSCRIPTEN__
 
@@ -983,6 +984,7 @@ bool loaded_run(std::uint32_t pc, std::uint32_t &base, std::uint32_t &size) {
 }
 
 bool translate_missing(std::uint32_t pc) {
+    ps2::census::ee_live_translation(pc);
     if (!g || !g->ready || g->failed.count(pc)) return false;
     const auto began = Clock::now();
     std::error_code error;

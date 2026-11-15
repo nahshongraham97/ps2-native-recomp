@@ -1,4 +1,5 @@
 #include "sif.hpp"
+#include "compliance_census.hpp"
 
 #include "../hw.hpp"
 #include "iop.hpp"
@@ -287,6 +288,7 @@ void call(const std::uint8_t *packet) {
         const auto it = g_servers.find(sid);
         const auto override = g_hle_overrides.find(sid);
         if (override == g_hle_overrides.end() && (it == g_servers.end() || !it->second.hle)) {
+            ps2::census::sif_rpc(c.server_data, c.rpc_number, ps2::census::RpcKind::Unknown);
             std::fprintf(stderr, "[sif] call %u to unknown endpoint 0x%08X\n", c.rpc_number, c.server_data);
             reply_call(c);
             return;
@@ -294,6 +296,7 @@ void call(const std::uint8_t *packet) {
         // The IOP runs behind the EE by up to a slice; catch it up so the reply
         // latency counts from the moment of the call.
         sync_iop();
+        ps2::census::sif_rpc(sid, c.rpc_number, ps2::census::RpcKind::Native);
         g_held_calls[sid] = c;
         const HleServer &invoke = override != g_hle_overrides.end() ? override->second : it->second.invoke;
         if (invoke(c.rpc_number, g_data_addr, c.send_size, c.recv & (kRamSize - 1), c.recv_size)) {
@@ -313,6 +316,7 @@ void call(const std::uint8_t *packet) {
         return;
     }
     const Server &s = guest->second;
+    ps2::census::sif_rpc(s.sid, c.rpc_number, ps2::census::RpcKind::Guest);
     Request request{c, c.send_size, {}};
     if (s.buf) {
         if (c.send_size > std::numeric_limits<std::uint32_t>::max() - 15u) {

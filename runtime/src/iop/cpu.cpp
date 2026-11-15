@@ -1,5 +1,6 @@
 #include "iop.hpp"
 #include "kernel.hpp"
+#include "compliance_census.hpp"
 #include "ps2/memory.hpp"
 
 #include <cstdio>
@@ -111,6 +112,14 @@ void execute(Cpu &c, std::int64_t &budget) {
     static bool traced_mwfilefr_callback = false;
     static bool traced_mwfilefr_context = false;
     static bool traced_mwfilefr_request_context = false;
+    struct CensusTracker {
+        std::uint64_t count = 0;
+        ~CensusTracker() {
+            if (count > 0) {
+                ps2::census::iop_guest_instructions(count);
+            }
+        }
+    } census_tracker;
     while (budget > 0) {
         const std::uint32_t pc = c.pc;
         if (!traced_mwfilefr_request_context && pc == 0x00023B1Cu && kernel::g_trace_modules) {
@@ -154,6 +163,10 @@ void execute(Cpu &c, std::int64_t &budget) {
             continue;
         }
         if (kernel::native_strict()) stop_guest_execution();
+        ++census_tracker.count;
+        if ((census_tracker.count & 1023u) == 0) {
+            ps2::census::iop_guest_sample(pc);
+        }
         --budget;
         const std::uint32_t w = fetch(pc);
         c.pc = c.npc;

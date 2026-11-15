@@ -1,4 +1,5 @@
 #include "mcserv.hpp"
+#include "compliance_census.hpp"
 
 #include "kernel.hpp"
 #include "sif.hpp"
@@ -615,6 +616,7 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
         std::fprintf(stderr,
                      "[iop-native] MCSERV XMCMAN init accepted with retail minimum versions 0x20A/0x20E; reply 0x%08X; unsupported card RPCs remain fail-closed\n",
                      ee_physical(ret));
+        ps2::census::card_rpc(method, true);
         return true;
     }
 
@@ -757,9 +759,11 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
             if (status_bytes) std::memcpy(status_bytes, &result, sizeof(result));
         }
         std::fprintf(stderr, "[iop-native] MCSERV RPC method 0x%02X handled natively -> result %d\n", method, result);
+        ps2::census::card_rpc(method, result >= 0);
         return true;
     }
 
+    ps2::census::card_rpc(method, false);
     strict_stop("card RPC has no native host implementation yet", method,
                 args, args_size, ret_size);
 }

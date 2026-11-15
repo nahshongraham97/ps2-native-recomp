@@ -11,6 +11,7 @@
 // continues through the configured CPU/WebGPU path.
 
 #include "native_gl_backend.hpp"
+#include "compliance_census.hpp"
 #include "gpu/gpu.hpp"
 #include "raster.hpp"
 
@@ -1103,6 +1104,7 @@ bool draw_guest_rect(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
     SceneTarget *target = ensure_scene_target(target_fbp);
     if (!target || !target->ready) return false;
     ++target->prim_count;
+    ps2::census::gs_primitive(target_fbp);
     ++target->write_count;
     target->last_write_tick = ++g_scene_write_tick;
     g_bind_framebuffer(GL_FRAMEBUFFER, target->framebuffer);
@@ -1984,6 +1986,7 @@ bool submit(const State &st, const Vertex *verts, int count) {
     SceneTarget *active_target = find_scene_target(frame & 0x1FFu);
     if (active_target) {
         ++active_target->prim_count;
+        ps2::census::gs_primitive(frame & 0x1FFu);
         active_target->last_write_tick = ++g_scene_write_tick;
         active_target->cpu_synced = false;
         active_target->last_draw_readback_state = readback_state;

@@ -1,4 +1,5 @@
 #include "dmac.hpp"
+#include "compliance_census.hpp"
 #include "gs/gif.hpp"
 #include "vif.hpp"
 #include "vu_micro.hpp"
@@ -878,6 +879,7 @@ int run() {
     if (const std::uint64_t skipped = hw::spin_skipped_cycles())
         std::fprintf(stderr, "[spin] %llu cycles of waiting loops skipped (%.1f %% of the time since this run started)\n", static_cast<unsigned long long>(skipped),
                      100.0 * static_cast<double>(skipped) / static_cast<double>(std::max<std::uint64_t>(now() - started_at, 1)));
+    ps2::census::report();
     std::fprintf(stderr, "[ee] stopped after %llu frames, %llu cycles: %s\n",
                  static_cast<unsigned long long>(g_frames), static_cast<unsigned long long>(now()), g_halt_reason.c_str());
     return 0;

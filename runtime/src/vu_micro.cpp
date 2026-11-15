@@ -1,4 +1,5 @@
 #include "vu_micro.hpp"
+#include "compliance_census.hpp"
 
 #include "gs/gif.hpp"
 #include "gs/queue.hpp"
@@ -1055,6 +1056,7 @@ ProgramFn lookup(std::uint32_t address) {
 }
 
 void run_fast(int n, std::uint32_t address, std::uint64_t diag_key) {
+    ps2::census::vu_interpreter_fallback(n, address);
     // The strict acceptance path must never execute either VU interpreter.
     // VU0 currently has no static C++ dispatcher, so its first call stops here.
     if (strict_aot_enabled()) {
