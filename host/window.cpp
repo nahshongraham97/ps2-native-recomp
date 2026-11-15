@@ -1331,15 +1331,46 @@ bool open_window(bool fullscreen) {
     static ps2sound::SoundPipe pipe(config);
     g_pipe = &pipe;
     want.callback = audio_callback;
-    g_audio = SDL_OpenAudioDevice(nullptr, 0, &want, &have, 0);
+    // PS2_AUDIO_DEVICE=<substring> opens the playback device whose name
+    // contains it (case-insensitive) instead of the default endpoint. When
+    // the system default is a virtual device (FxSound, a Stereo Mix loopback
+    // chain) whose output never reaches the speakers, the game is silent no
+    // matter how healthy its samples are; the startup list below shows every
+    // playback device so a working name is easy to copy into the variable.
+    const std::string wanted_device = ps2::os::env("PS2_AUDIO_DEVICE");
+    const auto lower = [](std::string s) {
+        for (char &c : s)
+            if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+        return s;
+    };
+    std::string chosen_device;
+    const std::string wanted_lc = lower(wanted_device);
+    for (int i = 0; i < SDL_GetNumAudioDevices(0); ++i) {
+        const char *device_name = SDL_GetAudioDeviceName(i, 0);
+        if (!device_name) continue;
+        std::fprintf(stderr, "[audio] playback device %d: %s\n", i, device_name);
+        if (chosen_device.empty() && !wanted_device.empty() &&
+            wanted_lc.find(lower(device_name)) != std::string::npos)
+            chosen_device = device_name;
+    }
+    if (!wanted_device.empty() && chosen_device.empty())
+        std::fprintf(stderr, "[audio] PS2_AUDIO_DEVICE=%s matched no playback device; using the default\n",
+                     wanted_device.c_str());
+    g_audio = chosen_device.empty() ? SDL_OpenAudioDevice(nullptr, 0, &want, &have, 0)
+                                    : SDL_OpenAudioDevice(chosen_device.c_str(), 0, &want, &have, 0);
     if (g_audio) {
         // SDL converts the 48000 Hz stereo queue to whatever the device itself runs at
         SDL_AudioSpec device{};
-        char *name = nullptr;
-        if (SDL_GetDefaultAudioInfo(&name, &device, 0) == 0)
-            std::fprintf(stderr, "[audio] sound device %s (%s): %d Hz, %d channels; the game's sound is 48000 Hz stereo\n", name ? name : "?",
-                         SDL_GetCurrentAudioDriver(), device.freq, device.channels);
-        SDL_free(name);
+        if (!chosen_device.empty()) {
+            std::fprintf(stderr, "[audio] sound device %s (selected by PS2_AUDIO_DEVICE): %d Hz, %d channels; the game's sound is 48000 Hz stereo\n",
+                         chosen_device.c_str(), have.freq, have.channels);
+        } else {
+            char *name = nullptr;
+            if (SDL_GetDefaultAudioInfo(&name, &device, 0) == 0)
+                std::fprintf(stderr, "[audio] sound device %s (%s): %d Hz, %d channels; the game's sound is 48000 Hz stereo\n", name ? name : "?",
+                             SDL_GetCurrentAudioDriver(), device.freq, device.channels);
+            SDL_free(name);
+        }
         const std::string dump = ps2::os::env("PS2_AUDIO_DUMP");
         if (!dump.empty() && g_dump.open(dump)) {
             g_pipe->device_tap.on = true;
