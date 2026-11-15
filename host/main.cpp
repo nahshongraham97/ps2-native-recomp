@@ -654,8 +654,26 @@ int main(int argc, char **argv) {
         ps2::g_options.on_exit = [] { g_log.stop(); };
         std::atexit([] { g_log.stop(); });  // the window run that returns from main
         // A census printed from a signal handler dies with the bytes still in the pipe this
-        // class pumps; report() calls this hook so the report is in the file first.
-        ps2::census::set_exit_flush_hook([] { g_log.flush(300); });
+        // class pumps; report() calls this hook so the report reaches the file first. The census
+        // is then copied out of the in-memory ring into its own file, so the report also survives
+        // a death that no handler can catch (a hard kill, a stack overflow in the handler itself).
+        ps2::census::set_exit_flush_hook([] {
+            g_log.flush(300);
+            const std::string text = g_log.tail(600);
+            if (text.find("[census]") == std::string::npos) return;
+            const std::filesystem::path census_file = ps2::os::path(ps2::quick_folder("logs")) / "census.txt";
+            if (std::FILE *out = std::fopen(ps2::os::utf8(census_file).c_str(), "wb")) {
+                std::size_t at = 0;
+                while (at < text.size()) {
+                    const std::size_t nl = text.find('\n', at);
+                    const std::string line = text.substr(at, nl == std::string::npos ? nl : nl - at);
+                    if (line.rfind("[census]", 0) == 0) std::fprintf(out, "%s\n", line.c_str());
+                    if (nl == std::string::npos) break;
+                    at = nl + 1;
+                }
+                std::fclose(out);
+            }
+        });
 #ifdef _WIN32
         open_log_window(g_log.path());
 #endif
