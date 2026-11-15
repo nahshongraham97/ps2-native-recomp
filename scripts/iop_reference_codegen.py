@@ -180,8 +180,44 @@ def main():
         with bridge_path.open('w', encoding='utf-8', newline='\n') as out:
             out.write('#include "iop/kernel.hpp"\n#include <cstdio>\n\nnamespace ps2::iop::aot_imports {\n')
             if 'MSL' in bridge_name:
-                out.write('''static void trace_msl_libsd_call(std::uint32_t ordinal, const char *name, std::uint32_t a0, std::uint32_t a1, std::uint32_t a2, std::uint32_t a3, Cpu &c, bool ok) {
+                out.write('''static const char *libsd_func_name(std::uint32_t ordinal) {
+    switch (ordinal) {
+    case 4: return "sceSdInit";
+    case 5: return "sceSdSetParam";
+    case 6: return "sceSdGetParam";
+    case 7: return "sceSdSetSwitch";
+    case 8: return "sceSdGetSwitch";
+    case 9: return "sceSdSetAddr";
+    case 10: return "sceSdGetAddr";
+    case 11: return "sceSdSetCoreAttr";
+    case 12: return "sceSdGetCoreAttr";
+    case 13: return "sceSdNote2Pitch";
+    case 14: return "sceSdPitch2Note";
+    case 15: return "sceSdProcBatch";
+    case 16: return "sceSdProcBatchEx";
+    case 17: return "sceSdVoiceTrans";
+    case 18: return "sceSdBlockTrans";
+    case 19: return "sceSdVoiceTransStatus";
+    case 20: return "sceSdBlockTransStatus";
+    case 21: return "sceSdSetTransCallback";
+    case 22: return "sceSdSetIRQCallback";
+    case 23: return "sceSdSetEffectAttr";
+    case 24: return "sceSdGetEffectAttr";
+    case 25: return "sceSdClearEffect";
+    case 26: return "sceSdSetTransIntrHandler";
+    case 27: return "sceSdSetSpu2IntrHandler";
+    case 28: return "sceSdGetTransIntrArg";
+    case 29: return "sceSdGetSpu2IntrArg";
+    case 30: return "sceSdStopTrans";
+    case 31: return "sceSdCleanEffect";
+    case 32: return "sceSdSetEffectMode";
+    case 33: return "sceSdSetEffectModeParams";
+    default: return "unknown";
+    }
+}
+static void trace_msl_libsd_call(std::uint32_t ordinal, std::uint32_t a0, std::uint32_t a1, std::uint32_t a2, std::uint32_t a3, Cpu &c, bool ok) {
     if (kernel::g_trace_modules) {
+        const char *name = libsd_func_name(ordinal);
         if (!ok) {
             std::fprintf(stderr, "[msl-libsd] ordinal %u (%s) REJECTED a0=0x%08X a1=0x%08X a2=0x%08X a3=0x%08X\\n",
                          ordinal, name, a0, a1, a2, a3);
@@ -201,7 +237,7 @@ def main():
                 if 'MSL' in bridge_name and entry['library'] == 'libsd':
                     out.write('      const auto a0 = c.r[4], a1 = c.r[5], a2 = c.r[6], a3 = c.r[7];\n')
                     out.write(f"      const bool ok = kernel::invoke_native_import({library}, 0x{entry['version']:04X}u, {entry['ordinal']}u, c);\n")
-                    out.write(f"      trace_msl_libsd_call({entry['ordinal']}u, {library}, a0, a1, a2, a3, c, ok);\n")
+                    out.write(f"      trace_msl_libsd_call({entry['ordinal']}u, a0, a1, a2, a3, c, ok);\n")
                     out.write('      if (!ok) { c.pc = pc; c.npc = npc; return false; }\n')
                 else:
                     out.write(f"      if (!kernel::invoke_native_import({library}, 0x{entry['version']:04X}u, {entry['ordinal']}u, c)) {{ c.pc = pc; c.npc = npc; return false; }}\n")

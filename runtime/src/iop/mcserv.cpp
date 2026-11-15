@@ -827,11 +827,23 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
     } else if (method == 0x0Au || method == 0x7Au) {
         result = mc_flush(desc_req);
         handled = true;
-    } else if (method == 0x0Cu || method == 0x76u) {
-        result = mc_get_dir(name_req);
-        handled = true;
-    } else if (method == 0x0Du || method == 0x7Bu) {
-        result = mc_chdir(name_req);
+    } else if (method == 0x0Cu || method == 0x0Du || method == 0x76u || method == 0x7Bu) {
+        // Robust shape-based dispatch between GetDir (directory listing) and Chdir (directory change):
+        // GetDir carries maxent > 0 and ee_dest pointing to a destination SceMcTblGetDir array.
+        // Chdir carries only a directory path (maxent <= 0 or ee_dest is null/string buffer).
+        const bool is_get_dir = (name_req.maxent > 0) && (name_req.ee_dest != 0) &&
+                                valid_ee_range(name_req.ee_dest, sizeof(SceMcTblGetDir));
+        if (is_get_dir) {
+            std::fprintf(stderr,
+                         "[iop-native] MCSERV RPC method 0x%02X resolved by shape to mc_get_dir (maxent=%d dest=0x%08X name='%s')\n",
+                         method, name_req.maxent, name_req.ee_dest, name_req.name);
+            result = mc_get_dir(name_req);
+        } else {
+            std::fprintf(stderr,
+                         "[iop-native] MCSERV RPC method 0x%02X resolved by shape to mc_chdir (maxent=%d dest=0x%08X name='%s')\n",
+                         method, name_req.maxent, name_req.ee_dest, name_req.name);
+            result = mc_chdir(name_req);
+        }
         handled = true;
     } else if (method == 0x0Eu || method == 0x7Cu) {
         result = mc_set_file_info(name_req, desc_req);
