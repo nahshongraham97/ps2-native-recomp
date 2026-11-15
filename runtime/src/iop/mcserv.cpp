@@ -222,6 +222,27 @@ bool mc_card_formatted_and_free(const std::vector<std::uint8_t> &image,
     return true;
 }
 
+std::filesystem::path host_save_base();
+
+std::uint32_t host_calculate_free_clusters(std::uint32_t raw_free_clusters) {
+    std::error_code ec;
+    std::uint64_t host_used_bytes = 0;
+    const auto base = host_save_base();
+    if (std::filesystem::exists(base, ec)) {
+        for (const auto &entry : std::filesystem::recursive_directory_iterator(base, ec)) {
+            if (entry.is_regular_file(ec)) {
+                const std::uint64_t sz = entry.file_size(ec);
+                host_used_bytes += (sz + kMcClusterBytes - 1u) & ~(static_cast<std::uint64_t>(kMcClusterBytes) - 1u);
+            }
+        }
+    }
+    const std::uint32_t host_used_clusters = static_cast<std::uint32_t>(host_used_bytes / kMcClusterBytes);
+    if (raw_free_clusters > host_used_clusters) {
+        return raw_free_clusters - host_used_clusters;
+    }
+    return 0;
+}
+
 std::int32_t mc_get_info2(const McDescParam &request, McEndParam2 &reply) {
     // The native SIO2 backend exposes one card image as EE port 0, slot 0.
     if (request.port != 0 || request.slot != 0) return kMcFailDetect2;
@@ -230,6 +251,8 @@ std::int32_t mc_get_info2(const McDescParam &request, McEndParam2 &reply) {
     if (!sio2::card_image(image, true)) return kMcFailDetect2;
     std::uint32_t free_clusters = 0;
     if (!mc_card_formatted_and_free(image, free_clusters)) return kMcNoFormat;
+
+    free_clusters = host_calculate_free_clusters(free_clusters);
 
     reply.type = 2; // sceMcTypePS2
     reply.free = free_clusters > static_cast<std::uint32_t>(std::numeric_limits<std::int32_t>::max())
@@ -553,15 +576,20 @@ std::int32_t mc_flush(const McDescParam &req) {
     return 0;
 }
 
-std::int32_t mc_set_file_info(const McNameParam &req) {
-    if (req.port != 0 || req.slot != 0) return kMcFailDetect2;
-    std::fprintf(stderr, "[iop-native] mc_set_file_info path='%s'\n", req.name);
+std::int32_t mc_set_file_info(const McNameParam &name_req, const McDescParam &desc_req) {
+    const bool valid_name = (name_req.port == 0 && name_req.slot == 0);
+    const bool valid_desc = (desc_req.port == 0 && desc_req.slot == 0);
+    if (!valid_name && !valid_desc) return kMcFailDetect2;
+    std::fprintf(stderr, "[iop-native] mc_set_file_info path='%s'\n", name_req.name);
     return 0;
 }
 
-std::int32_t mc_delete(const McNameParam &req) {
-    if (req.port != 0 || req.slot != 0) return kMcFailDetect2;
-    std::string name = req.name;
+std::int32_t mc_delete(const McNameParam &name_req, const McDescParam &desc_req) {
+    const bool valid_name = (name_req.port == 0 && name_req.slot == 0);
+    const bool valid_desc = (desc_req.port == 0 && desc_req.slot == 0);
+    if (!valid_name && !valid_desc) return kMcFailDetect2;
+    std::string name = name_req.name[0] != '\0' ? name_req.name : "";
+    if (name.empty()) return 0;
     std::filesystem::path full_path = host_save_base();
     if (name.front() == '/' || name.front() == '\\') {
         full_path /= name.substr(1);
@@ -575,8 +603,10 @@ std::int32_t mc_delete(const McNameParam &req) {
     return 0;
 }
 
-std::int32_t mc_get_ent_space(const McNameParam &req) {
-    if (req.port != 0 || req.slot != 0) return kMcFailDetect2;
+std::int32_t mc_get_ent_space(const McNameParam &name_req, const McDescParam &desc_req) {
+    const bool valid_name = (name_req.port == 0 && name_req.slot == 0);
+    const bool valid_desc = (desc_req.port == 0 && desc_req.slot == 0);
+    if (!valid_name && !valid_desc) return kMcFailDetect2;
     return 1024;
 }
 
@@ -680,6 +710,7 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
                 std::uint32_t free_clusters = 0;
                 if (mc_card_formatted_and_free(image, free_clusters)) {
                     result = 0;
+                    free_clusters = host_calculate_free_clusters(free_clusters);
                     if (request.size > 0) aux.type = 2; // sceMcTypePS2
                     if (request.offset != 0)
                         aux.free = free_clusters > static_cast<std::uint32_t>(std::numeric_limits<std::int32_t>::max())
@@ -773,10 +804,10 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
         result = mc_get_dir(name_req);
         handled = true;
     } else if (method == 0x0Eu || method == 0x7Cu) {
-        result = mc_set_file_info(name_req);
+        result = mc_set_file_info(name_req, desc_req);
         handled = true;
     } else if (method == 0x0Fu || method == 0x79u) {
-        result = mc_delete(name_req);
+        result = mc_delete(name_req, desc_req);
         handled = true;
     } else if (method == 0x10u || method == 0x77u) {
         result = mc_format(desc_req);
@@ -785,7 +816,7 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
         result = 0;
         handled = true;
     } else if (method == 0x12u || method == 0x7Eu) {
-        result = mc_get_ent_space(name_req);
+        result = mc_get_ent_space(name_req, desc_req);
         handled = true;
     }
 
