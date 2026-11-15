@@ -9,6 +9,7 @@
 #include "sio2.hpp"
 #include "usbd_offline.hpp"
 #include "ps2/memory.hpp"
+#include "ps2/os.hpp"
 
 #include <cstdint>
 #include <cstdio>
@@ -275,30 +276,33 @@ void install_native_modules() {
     register_native_module(std::move(lgaud_module));
 
     // DIAGNOSTIC PLACEHOLDER: CRI_ADXI SIF RPC stub (SID 0x90000200)
-    // Allows strict mode execution to proceed past the intro movie request to
-    // collect compliance census and audio/card metrics.
+    // Gated behind PS2_ADX_STUB=1 (defaults OFF).
+    // When OFF, strict mode aborts truthfully if no AOT C++ body is compiled.
+    // When ON, allows execution to proceed past the movie to collect census/audio/card metrics.
     // NOTE: Suppresses guest movie frame decoding (base 8960 / FBP 280).
     // Must be replaced by the AOT C++ body or native media foundation service.
-    NativeIopModule cri_adxi;
-    cri_adxi.name = "CRI_ADXI";
-    cri_adxi.aliases = {"CRI_ADX_Driver", "ADXI", "cri_adxi"};
-    cri_adxi.start = [](const std::string &) {
-        std::fprintf(stderr,
-                     "[iop-native] CRI_ADXI diagnostic placeholder active (RPC 0x90000200 stubbed; movie frames not decoded)\n");
-        sif::register_hle_override(0x90000200u, [](std::uint32_t method, std::uint32_t args,
-                                                  std::uint32_t args_size, std::uint32_t ret,
-                                                  std::uint32_t ret_size) {
+    if (ps2::os::env("PS2_ADX_STUB") == "1") {
+        NativeIopModule cri_adxi;
+        cri_adxi.name = "CRI_ADXI";
+        cri_adxi.aliases = {"CRI_ADX_Driver", "ADXI", "cri_adxi"};
+        cri_adxi.start = [](const std::string &) {
             std::fprintf(stderr,
-                         "[cri-adx-rpc] [diagnostic-stub] method=%u args=0x%08X args_size=%u ret=0x%08X ret_size=%u\n",
-                         method, args, args_size, ret, ret_size);
-            if (ret && ret_size >= 4) {
-                store<std::uint32_t>(ps2::g_ram + (ret & (ps2::kRamSize - 1)), 0);
-            }
+                         "[iop-native] PS2_ADX_STUB=1: CRI_ADXI diagnostic placeholder active (RPC 0x90000200 stubbed; movie frames not decoded)\n");
+            sif::register_hle_override(0x90000200u, [](std::uint32_t method, std::uint32_t args,
+                                                      std::uint32_t args_size, std::uint32_t ret,
+                                                      std::uint32_t ret_size) {
+                std::fprintf(stderr,
+                             "[cri-adx-rpc] [diagnostic-stub] method=%u args=0x%08X args_size=%u ret=0x%08X ret_size=%u\n",
+                             method, args, args_size, ret, ret_size);
+                if (ret && ret_size >= 4) {
+                    store<std::uint32_t>(ps2::g_ram + (ret & (ps2::kRamSize - 1)), 0);
+                }
+                return true;
+            });
             return true;
-        });
-        return true;
-    };
-    register_native_module(std::move(cri_adxi));
+        };
+        register_native_module(std::move(cri_adxi));
+    }
     register_native_module(libsd_native::make_module());
 
     NativeIopModule mwfilefr;
