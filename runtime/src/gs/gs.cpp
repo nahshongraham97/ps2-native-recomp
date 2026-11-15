@@ -403,16 +403,8 @@ void apply_display_write(std::uint32_t psm, std::uint32_t base, std::uint32_t bw
     if (circuit < 0) return;
     const std::uint32_t display_base = (static_cast<std::uint32_t>(g_dispfb[circuit]) & 0x1FFu) * 32u;
     const std::uint32_t active_draw_base = native_gl::active_frame_fbp() * 32u;
-    if (base != display_base && base != active_draw_base) {
-        if (static_cast<std::uint64_t>(w) * h >= 7168u) {
-            static auto last_skip_report = std::chrono::steady_clock::time_point{};
-            const auto now_skip = std::chrono::steady_clock::now();
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(now_skip - last_skip_report).count() >= 500) {
-                last_skip_report = now_skip;
-                std::fprintf(stderr, "[gs-debug-skip-write] base=%u (fbp=%u) disp_base=%u (fbp=%u) act_base=%u (fbp=%u) rect=%u,%u %ux%u\n",
-                             base, base / 32u, display_base, display_base / 32u, active_draw_base, active_draw_base / 32u, x, y, w, h);
-            }
-        }
+    const bool is_large_write = (static_cast<std::uint64_t>(w) * h >= 7168u);
+    if (base != display_base && base != active_draw_base && !is_large_write) {
         return;
     }
     static auto last_report = std::chrono::steady_clock::time_point{};

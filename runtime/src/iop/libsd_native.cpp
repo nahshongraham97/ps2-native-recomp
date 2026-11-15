@@ -56,6 +56,8 @@ std::array<std::uint32_t, 2> g_block_transfer_buffer{};
 std::array<std::uint32_t, 2> g_block_transfer_address{};
 std::array<std::uint32_t, 2> g_block_transfer_size{};
 std::array<bool, 2> g_block_transfer_active{};
+std::array<bool, 2> g_block_transfer_loop{};
+std::array<std::uint32_t, 2> g_block_transfer_direction{};
 std::array<std::uint32_t, 2> g_transfer_intr_handler{};
 std::array<std::uint32_t, 2> g_transfer_intr_argument{};
 std::array<std::uint32_t, 2> g_transfer_callback{};
@@ -273,11 +275,18 @@ std::uint32_t voice_transfer_status(std::uint32_t channel, std::uint32_t wait) {
 
 std::uint32_t stop_transfer(std::uint32_t channel) {
     const std::uint32_t core = channel & 1u;
-    const std::uint32_t address = g_block_transfer_active[core] ? g_block_transfer_address[core] : 0u;
+    std::uint32_t address = spu2::dma_address(static_cast<int>(core));
+    if (!address && g_block_transfer_active[core]) {
+        address = g_block_transfer_address[core] +
+                  (g_block_transfer_size[core] * g_block_transfer_buffer[core]);
+    }
+    const std::uint32_t retval = (g_block_transfer_buffer[core] << 24) | (address & 0x00FFFFFFu);
     spu2::dma_stop(static_cast<int>(core));
+    spu2::write(kSpuBase + 0x1B0u + core * 0x400u, 0, 2);
     g_block_transfer_active[core] = false;
+    g_block_transfer_loop[core] = false;
     g_voice_transfer_complete[core] = true;
-    return (g_block_transfer_buffer[core] << 24) | (address & 0x00FFFFFFu);
+    return retval;
 }
 
 std::int32_t block_transfer(std::uint32_t channel, std::uint32_t mode, std::uint32_t iop_address,
@@ -288,47 +297,43 @@ std::int32_t block_transfer(std::uint32_t channel, std::uint32_t mode, std::uint
         return -1; // handled by the ABI wrapper, which also returns the prior DMA address
     }
     if (direction != kDmaWrite && direction != kDmaRead && direction != kDmaWriteFrom) return -1;
+    const bool loop = (mode & kDmaLoop) != 0;
     std::uint32_t transfer_address = iop_address;
     std::uint32_t transfer_size = bytes;
+    if (loop) transfer_size /= 2u;
+
     if (direction == kDmaWriteFrom) {
         if (start_address == 0) start_address = iop_address;
         std::uint32_t offset = start_address - iop_address;
-        if (offset > bytes) {
-            if (mode & kDmaLoop) {
-                offset -= bytes;
+        if (offset > transfer_size) {
+            if (loop) {
+                offset -= transfer_size;
                 g_block_transfer_buffer[core] = 1;
             } else return -1;
         } else {
             g_block_transfer_buffer[core] = 0;
         }
-        if (offset & 1023u) offset += 1024u;
+        if (offset & 1023u) offset = (offset + 1023u) & ~1023u;
         transfer_address = iop_address + (transfer_size * g_block_transfer_buffer[core]) + offset;
     } else {
         g_block_transfer_buffer[core] = 0;
     }
-    if (mode & kDmaLoop) transfer_size /= 2u;
     if (!valid_iop_range(transfer_address, transfer_size)) return -1;
 
-    std::int32_t result = -1;
-    if (direction == kDmaRead) {
-        const std::uint32_t spu_address = ((mode & 0xF00u) << 2) + 0x800u;
-        result = dma_transfer(core, transfer_address, spu_address, transfer_size, false);
-    } else {
-        result = dma_transfer(core, transfer_address, 0, transfer_size, true);
-        if (result >= 0 && (mode & kDmaLoop)) {
-            const std::uint32_t next = transfer_address + transfer_size;
-            if (valid_iop_range(next, transfer_size)) {
-                const std::int32_t second = dma_transfer(core, next, 0, transfer_size, true);
-                if (second < 0) result = second;
-            } else {
-                result = -1;
-            }
-        }
-    }
-    g_block_transfer_address[core] = transfer_address;
+    g_block_transfer_active[core] = true;
+    g_block_transfer_loop[core] = loop;
+    g_block_transfer_direction[core] = direction;
+    g_block_transfer_address[core] = iop_address;
     g_block_transfer_size[core] = transfer_size;
-    g_block_transfer_active[core] = false; // the SPU2 core consumes the copied data synchronously
-    return result < 0 ? result : 0;
+
+    if (direction == kDmaRead) {
+        spu2::write(kSpuBase + 0x1B0u + core * 0x400u, 4, 2);
+        const std::uint32_t spu_address = ((mode & 0xF00u) << 2) + 0x800u;
+        return dma_transfer(core, transfer_address, spu_address, transfer_size, false);
+    } else {
+        spu2::write(kSpuBase + 0x1B0u + core * 0x400u, 1u << core, 2);
+        return dma_transfer(core, transfer_address, 0, transfer_size, true);
+    }
 }
 
 bool read_effect_attr(std::uint32_t address, EffectAttr &attr) {
@@ -442,8 +447,16 @@ std::int32_t apply_effect_attr(std::uint32_t core, const EffectAttr &input) {
 }
 
 std::int32_t process_batch(std::uint32_t batch, std::uint32_t returns, std::uint32_t count, std::uint32_t voice_mask, bool extended) {
+    static unsigned s_batch_counter = 0;
+    const unsigned cur_batch = ++s_batch_counter;
     if (count > kRamSize / 8u || !valid_iop_range(batch, static_cast<std::uint64_t>(count) * 8u) ||
-        (returns && !valid_iop_range(returns, static_cast<std::uint64_t>(count) * 4u))) return -1;
+        (returns && !valid_iop_range(returns, static_cast<std::uint64_t>(count) * 4u))) {
+        std::fprintf(stderr, "[libsd-proc-batch#%u-REJECT] %s batch=0x%08X returns=0x%08X count=%u\n",
+                     cur_batch, extended ? "ProcBatchEx" : "ProcBatch", batch, returns, count);
+        return -1;
+    }
+    std::fprintf(stderr, "[libsd-proc-batch#%u] %s batch=0x%08X returns=0x%08X count=%u vmask=0x%06X\n",
+                 cur_batch, extended ? "ProcBatchEx" : "ProcBatch", batch, returns, count, voice_mask);
     std::uint32_t return_index = 0;
     for (std::uint32_t i = 0; i < count; ++i) {
         const std::uint32_t record = batch + i * 8u;
@@ -484,17 +497,24 @@ std::int32_t process_batch(std::uint32_t batch, std::uint32_t returns, std::uint
             for (std::uint32_t voice = 0; voice < 24; ++voice) {
                 if (!(voice_mask & (1u << voice))) continue;
                 const std::uint32_t voice_entry = (entry & ~0x3Eu) | (voice << 1u);
-                if (!perform(voice_entry)) return -1 - static_cast<std::int32_t>(return_index);
+                const bool v_ok = perform(voice_entry);
+                std::fprintf(stderr, "  [batch#%u:%u v%u] fn=0x%02X ventry=0x%04X val=0x%08X -> %s res=0x%08X\n",
+                             cur_batch, i, voice, function, voice_entry, value, v_ok ? "OK" : "FAIL", result);
+                if (!v_ok) return -1 - static_cast<std::int32_t>(return_index);
                 if (returns && (function == 0x11 || function == 0x13)) write32(returns + return_index * 4u, result);
                 ++return_index;
             }
             continue;
         }
-        if (!perform(entry)) return -1 - static_cast<std::int32_t>(return_index);
+        const bool op_ok = perform(entry);
+        std::fprintf(stderr, "  [batch#%u:%u] fn=0x%02X entry=0x%04X val=0x%08X -> %s res=0x%08X\n",
+                     cur_batch, i, function, entry, value, op_ok ? "OK" : "FAIL", result);
+        if (!op_ok) return -1 - static_cast<std::int32_t>(return_index);
         if (returns && function >= 0x11 && function <= 0x14) write32(returns + return_index * 4u, result);
         else if (returns) write32(returns + return_index * 4u, 0);
         ++return_index;
     }
+    std::fprintf(stderr, "[libsd-proc-batch#%u-DONE] total_returns=%u\n", cur_batch, return_index);
     return static_cast<std::int32_t>(return_index);
 }
 
@@ -525,10 +545,20 @@ void export_init(Cpu &cpu) {
     g_transfer_callback = {};
     g_transfer_intr_handler = {};
     g_transfer_intr_argument = {};
+    g_block_transfer_buffer = {};
+    g_block_transfer_address = {};
+    g_block_transfer_size = {};
+    g_block_transfer_active = {};
+    g_block_transfer_loop = {};
+    g_block_transfer_direction = {};
     g_spu2_intr_handler = g_spu2_intr_argument = g_irq_callback = 0;
     g_spdif_settings = 0;
+    kernel::enable_interrupt(9, true);
+    kernel::enable_interrupt(0x24, true);
+    kernel::enable_interrupt(0x28, true);
     for (std::uint32_t core = 0; core < 2; ++core) {
         const std::uint32_t base = core * 0x400u;
+        spu2::write(kSpuBase + 0x1B0u + base, 0, 2);
         spu2::write(kSpuBase + 0x7C0u, 0, 2);
         spu2::write(kSpuBase + 0x7C0u, 0x8000u, 2);
         spu2::write(kSpuBase + 0x19Au + base, 0, 2);
@@ -574,55 +604,162 @@ void export_init(Cpu &cpu) {
     spu2::write(kSpuBase + 0x1A8u, 0, 2);
     spu2::write(kSpuBase + 0x1AAu, 0x2800u, 2);
     set_result(cpu, 0);
+    std::fprintf(stderr, "[libsd] sceSdInit(flag=%u) complete\n", flag);
 }
 
-void export_set_param(Cpu &cpu) { set_param(arg(cpu, 0), static_cast<std::uint16_t>(arg(cpu, 1))); }
-void export_get_param(Cpu &cpu) { std::uint16_t v = 0; set_u32_result(cpu, get_param(arg(cpu, 0), v) ? v : 0); }
-void export_set_switch(Cpu &cpu) { set_switch(arg(cpu, 0), arg(cpu, 1)); }
-void export_get_switch(Cpu &cpu) { std::uint32_t v = 0; set_u32_result(cpu, get_switch(arg(cpu, 0), v) ? v : 0); }
-void export_set_addr(Cpu &cpu) { set_addr(arg(cpu, 0), arg(cpu, 1)); }
-void export_get_addr(Cpu &cpu) { std::uint32_t v = 0; set_u32_result(cpu, get_addr(arg(cpu, 0), v) ? v : 0); }
-void export_set_core_attr(Cpu &cpu) { set_core_attr(arg(cpu, 0), static_cast<std::uint16_t>(arg(cpu, 1))); }
-void export_get_core_attr(Cpu &cpu) { std::uint16_t v = 0; set_u32_result(cpu, get_core_attr(arg(cpu, 0), v) ? v : 0); }
-void export_note_to_pitch(Cpu &cpu) { set_u32_result(cpu, note_to_pitch(arg(cpu, 0), arg(cpu, 1), arg(cpu, 2), static_cast<std::int16_t>(arg(cpu, 3)))); }
-void export_pitch_to_note(Cpu &cpu) { set_u32_result(cpu, pitch_to_note(arg(cpu, 0), arg(cpu, 1), arg(cpu, 2))); }
-void export_proc_batch(Cpu &cpu) { set_result(cpu, process_batch(arg(cpu, 0), arg(cpu, 1), arg(cpu, 2), 0, false)); }
-void export_proc_batch_ex(Cpu &cpu) { set_result(cpu, process_batch(arg(cpu, 0), arg(cpu, 1), arg(cpu, 2), arg(cpu, 3), true)); }
-void export_voice_trans(Cpu &cpu) { set_result(cpu, voice_transfer(arg(cpu, 0), arg(cpu, 1), arg(cpu, 2), arg(cpu, 3), arg(cpu, 4))); }
+void export_set_param(Cpu &cpu) {
+    const auto e = arg(cpu, 0);
+    const auto v = static_cast<std::uint16_t>(arg(cpu, 1));
+    const bool ok = set_param(e, v);
+    std::fprintf(stderr, "[libsd] sceSdSetParam(entry=0x%04X, val=0x%04X) -> %d\n", e, v, ok ? 1 : 0);
+}
+void export_get_param(Cpu &cpu) {
+    const auto e = arg(cpu, 0);
+    std::uint16_t v = 0;
+    const bool ok = get_param(e, v);
+    std::fprintf(stderr, "[libsd] sceSdGetParam(entry=0x%04X) -> 0x%04X (ok=%d)\n", e, v, ok ? 1 : 0);
+    set_u32_result(cpu, ok ? v : 0);
+}
+void export_set_switch(Cpu &cpu) {
+    const auto e = arg(cpu, 0);
+    const auto v = arg(cpu, 1);
+    const bool ok = set_switch(e, v);
+    std::fprintf(stderr, "[libsd] sceSdSetSwitch(entry=0x%04X, val=0x%08X) -> %d\n", e, v, ok ? 1 : 0);
+}
+void export_get_switch(Cpu &cpu) {
+    const auto e = arg(cpu, 0);
+    std::uint32_t v = 0;
+    const bool ok = get_switch(e, v);
+    std::fprintf(stderr, "[libsd] sceSdGetSwitch(entry=0x%04X) -> 0x%08X (ok=%d)\n", e, v, ok ? 1 : 0);
+    set_u32_result(cpu, ok ? v : 0);
+}
+void export_set_addr(Cpu &cpu) {
+    const auto e = arg(cpu, 0);
+    const auto v = arg(cpu, 1);
+    const bool ok = set_addr(e, v);
+    std::fprintf(stderr, "[libsd] sceSdSetAddr(entry=0x%04X, val=0x%08X) -> %d\n", e, v, ok ? 1 : 0);
+}
+void export_get_addr(Cpu &cpu) {
+    const auto e = arg(cpu, 0);
+    std::uint32_t v = 0;
+    const bool ok = get_addr(e, v);
+    std::fprintf(stderr, "[libsd] sceSdGetAddr(entry=0x%04X) -> 0x%08X (ok=%d)\n", e, v, ok ? 1 : 0);
+    set_u32_result(cpu, ok ? v : 0);
+}
+void export_set_core_attr(Cpu &cpu) {
+    const auto e = arg(cpu, 0);
+    const auto v = static_cast<std::uint16_t>(arg(cpu, 1));
+    const bool ok = set_core_attr(e, v);
+    std::fprintf(stderr, "[libsd] sceSdSetCoreAttr(entry=0x%04X, val=0x%04X) -> %d\n", e, v, ok ? 1 : 0);
+}
+void export_get_core_attr(Cpu &cpu) {
+    const auto e = arg(cpu, 0);
+    std::uint16_t v = 0;
+    const bool ok = get_core_attr(e, v);
+    std::fprintf(stderr, "[libsd] sceSdGetCoreAttr(entry=0x%04X) -> 0x%04X (ok=%d)\n", e, v, ok ? 1 : 0);
+    set_u32_result(cpu, ok ? v : 0);
+}
+void export_note_to_pitch(Cpu &cpu) {
+    const auto r = note_to_pitch(arg(cpu, 0), arg(cpu, 1), arg(cpu, 2), static_cast<std::int16_t>(arg(cpu, 3)));
+    std::fprintf(stderr, "[libsd] sceSdNoteToPitch(c_note=%u, c_fine=%u, note=%u, fine=%d) -> 0x%04X\n",
+                 arg(cpu, 0), arg(cpu, 1), arg(cpu, 2), static_cast<std::int16_t>(arg(cpu, 3)), r);
+    set_u32_result(cpu, r);
+}
+void export_pitch_to_note(Cpu &cpu) {
+    const auto r = pitch_to_note(arg(cpu, 0), arg(cpu, 1), arg(cpu, 2));
+    std::fprintf(stderr, "[libsd] sceSdPitchToNote(c_note=%u, c_fine=%u, pitch=0x%04X) -> %u\n",
+                 arg(cpu, 0), arg(cpu, 1), arg(cpu, 2), r);
+    set_u32_result(cpu, r);
+}
+void export_proc_batch(Cpu &cpu) {
+    const auto res = process_batch(arg(cpu, 0), arg(cpu, 1), arg(cpu, 2), 0, false);
+    set_result(cpu, res);
+}
+void export_proc_batch_ex(Cpu &cpu) {
+    const auto res = process_batch(arg(cpu, 0), arg(cpu, 1), arg(cpu, 2), arg(cpu, 3), true);
+    set_result(cpu, res);
+}
+void export_voice_trans(Cpu &cpu) {
+    const auto res = voice_transfer(arg(cpu, 0), arg(cpu, 1), arg(cpu, 2), arg(cpu, 3), arg(cpu, 4));
+    std::fprintf(stderr, "[libsd] sceSdVoiceTrans(ch=%u, mode=%u, iop=0x%08X, spu=0x%08X, size=0x%08X) -> %d\n",
+                 arg(cpu, 0), arg(cpu, 1), arg(cpu, 2), arg(cpu, 3), arg(cpu, 4), res);
+    set_result(cpu, res);
+}
 void export_block_trans(Cpu &cpu) {
     const std::uint32_t mode = arg(cpu, 1);
-    if ((mode & 3u) == kDmaStop) { set_u32_result(cpu, stop_transfer(arg(cpu, 0))); return; }
-    set_result(cpu, block_transfer(arg(cpu, 0), mode, arg(cpu, 2), arg(cpu, 3), arg(cpu, 4)));
+    if ((mode & 3u) == kDmaStop) {
+        const auto r = stop_transfer(arg(cpu, 0));
+        std::fprintf(stderr, "[libsd] sceSdBlockTrans(STOP ch=%u) -> 0x%08X\n", arg(cpu, 0), r);
+        set_u32_result(cpu, r);
+        return;
+    }
+    const auto res = block_transfer(arg(cpu, 0), mode, arg(cpu, 2), arg(cpu, 3), arg(cpu, 4));
+    std::fprintf(stderr, "[libsd] sceSdBlockTrans(ch=%u, mode=0x%X, iop=0x%08X, size=0x%08X, start=0x%08X) -> %d\n",
+                 arg(cpu, 0), mode, arg(cpu, 2), arg(cpu, 3), arg(cpu, 4), res);
+    set_result(cpu, res);
 }
-void export_voice_trans_status(Cpu &cpu) { set_u32_result(cpu, voice_transfer_status(arg(cpu, 0), arg(cpu, 1))); }
+void export_voice_trans_status(Cpu &cpu) {
+    const auto r = voice_transfer_status(arg(cpu, 0), arg(cpu, 1));
+    std::fprintf(stderr, "[libsd] sceSdVoiceTransStatus(ch=%u, wait=%u) -> %u\n", arg(cpu, 0), arg(cpu, 1), r);
+    set_u32_result(cpu, r);
+}
 void export_block_trans_status(Cpu &cpu) {
     const std::uint32_t core = arg(cpu, 0) & 1u;
-    const std::uint32_t address = g_block_transfer_active[core] ? g_block_transfer_address[core] : 0u;
-    set_u32_result(cpu, (g_block_transfer_buffer[core] << 24) | (address & 0x00FFFFFFu));
+    if (!g_block_transfer_active[core]) {
+        std::fprintf(stderr, "[libsd] sceSdBlockTransStatus(ch=%u) -> 0 (inactive)\n", arg(cpu, 0));
+        set_u32_result(cpu, 0);
+        return;
+    }
+    std::uint32_t address = spu2::dma_address(static_cast<int>(core));
+    if (!address) {
+        address = g_block_transfer_address[core] +
+                  (g_block_transfer_size[core] * g_block_transfer_buffer[core]);
+    }
+    const std::uint32_t ret = (g_block_transfer_buffer[core] << 24) | (address & 0x00FFFFFFu);
+    std::fprintf(stderr, "[libsd] sceSdBlockTransStatus(ch=%u) -> 0x%08X (active, buf=%u, addr=0x%08X)\n",
+                 arg(cpu, 0), ret, g_block_transfer_buffer[core], address);
+    set_u32_result(cpu, ret);
 }
 void export_set_trans_callback(Cpu &cpu) {
     const std::uint32_t core = arg(cpu, 0) & 1u;
     const std::uint32_t previous = g_transfer_callback[core];
     g_transfer_callback[core] = arg(cpu, 1);
+    std::fprintf(stderr, "[libsd] sceSdSetTransCallback(core=%u, cb=0x%08X) (prev=0x%08X)\n",
+                 core, arg(cpu, 1), previous);
     set_u32_result(cpu, previous);
 }
 void export_set_irq_callback(Cpu &cpu) {
     const std::uint32_t previous = g_irq_callback;
     g_irq_callback = arg(cpu, 0);
+    std::fprintf(stderr, "[libsd] sceSdSetIRQCallback(cb=0x%08X) (prev=0x%08X)\n", arg(cpu, 0), previous);
+    if (g_irq_callback) {
+        kernel::register_interrupt(9, g_irq_callback, 0, 1);
+        kernel::enable_interrupt(9, true);
+    } else if (!g_spu2_intr_handler) {
+        kernel::release_interrupt(9);
+    }
     set_u32_result(cpu, previous);
 }
 void export_set_effect_attr(Cpu &cpu) {
     EffectAttr attr;
-    if (!read_effect_attr(arg(cpu, 1), attr)) { set_result(cpu, -1); return; }
-    set_result(cpu, apply_effect_attr(arg(cpu, 0), attr));
+    if (!read_effect_attr(arg(cpu, 1), attr)) {
+        std::fprintf(stderr, "[libsd] sceSdSetEffectAttr(core=%u, addr=0x%08X) -> INVALID ADDR\n", arg(cpu, 0), arg(cpu, 1));
+        set_result(cpu, -1);
+        return;
+    }
+    const auto res = apply_effect_attr(arg(cpu, 0), attr);
+    std::fprintf(stderr, "[libsd] sceSdSetEffectAttr(core=%u, mode=%u) -> %d\n", arg(cpu, 0), attr.mode, res);
+    set_result(cpu, res);
 }
 void export_get_effect_attr(Cpu &cpu) {
     const std::uint32_t address = arg(cpu, 1);
     const std::uint32_t core = arg(cpu, 0) & 1u;
+    std::fprintf(stderr, "[libsd] sceSdGetEffectAttr(core=%u, addr=0x%08X)\n", core, address);
     if (address && valid_iop_range(address, 20)) write_effect_attr(address, g_effect_attr[core]);
 }
 void export_clear_effect(Cpu &cpu) {
     const std::uint32_t mode = arg(cpu, 2);
+    std::fprintf(stderr, "[libsd] sceSdClearEffect(core=%u, ch=%u, mode=%u)\n", arg(cpu, 0), arg(cpu, 1), mode);
     if (mode > 9u) { set_result(cpu, -1); return; }
     clear_effect_work_area(arg(cpu, 0), arg(cpu, 1), mode);
     set_result(cpu, 0);
@@ -632,24 +769,41 @@ void export_set_trans_intr_handler(Cpu &cpu) {
     const std::uint32_t previous = g_transfer_intr_handler[core];
     g_transfer_intr_handler[core] = arg(cpu, 1);
     g_transfer_intr_argument[core] = arg(cpu, 2);
+    std::fprintf(stderr, "[libsd] sceSdSetTransIntrHandler(core=%u, handler=0x%08X, arg=0x%08X) (prev=0x%08X)\n",
+                 core, arg(cpu, 1), arg(cpu, 2), previous);
     set_u32_result(cpu, previous);
 }
 void export_set_spu2_intr_handler(Cpu &cpu) {
     const std::uint32_t previous = g_spu2_intr_handler;
     g_spu2_intr_handler = arg(cpu, 0);
     g_spu2_intr_argument = arg(cpu, 1);
+    std::fprintf(stderr, "[libsd] sceSdSetSpu2IntrHandler(handler=0x%08X, arg=0x%08X) (prev=0x%08X)\n",
+                 arg(cpu, 0), arg(cpu, 1), previous);
+    if (g_spu2_intr_handler) {
+        kernel::register_interrupt(9, g_spu2_intr_handler, g_spu2_intr_argument, 1);
+        kernel::enable_interrupt(9, true);
+    } else if (!g_irq_callback) {
+        kernel::release_interrupt(9);
+    }
     set_u32_result(cpu, previous);
 }
 void export_get_trans_intr_arg(Cpu &cpu) {
     const std::uint32_t core = arg(cpu, 0) & 1u;
+    std::fprintf(stderr, "[libsd] sceSdGetTransIntrArg(core=%u) -> 0x%08X\n", core, g_transfer_intr_argument[core]);
     set_u32_result(cpu, g_transfer_intr_argument[core]);
 }
 void export_get_spu2_intr_arg(Cpu &cpu) {
+    std::fprintf(stderr, "[libsd] sceSdGetSpu2IntrArg() -> 0x%08X\n", g_spu2_intr_argument);
     set_u32_result(cpu, g_spu2_intr_argument);
 }
-void export_stop_trans(Cpu &cpu) { set_u32_result(cpu, stop_transfer(arg(cpu, 0))); }
+void export_stop_trans(Cpu &cpu) {
+    const auto r = stop_transfer(arg(cpu, 0));
+    std::fprintf(stderr, "[libsd] sceSdStopTrans(ch=%u) -> 0x%08X\n", arg(cpu, 0), r);
+    set_u32_result(cpu, r);
+}
 void export_clean_effect(Cpu &cpu) {
     const std::uint32_t mode = arg(cpu, 2);
+    std::fprintf(stderr, "[libsd] sceSdCleanEffect(core=%u, ch=%u, mode=%u)\n", arg(cpu, 0), arg(cpu, 1), mode);
     if (mode > 9u) { set_result(cpu, -1); return; }
     clear_effect_work_area(arg(cpu, 0), arg(cpu, 1), mode);
     set_result(cpu, 0);
@@ -669,6 +823,8 @@ void reset() {
     g_block_transfer_address = {};
     g_block_transfer_size = {};
     g_block_transfer_active = {};
+    g_block_transfer_loop = {};
+    g_block_transfer_direction = {};
     g_transfer_intr_handler = {};
     g_transfer_intr_argument = {};
     g_transfer_callback = {};
@@ -680,7 +836,20 @@ void on_dma_done(std::uint32_t core) {
     g_voice_transfer_complete[core] = true;
     g_voice_transfer_status[core] = 1;
     if (g_block_transfer_active[core]) {
-        g_block_transfer_buffer[core] = 1 - g_block_transfer_buffer[core];
+        if (g_block_transfer_loop[core]) {
+            g_block_transfer_buffer[core] = 1 - g_block_transfer_buffer[core];
+            const std::uint32_t next_addr = g_block_transfer_address[core] +
+                                           (g_block_transfer_size[core] * g_block_transfer_buffer[core]);
+            if (g_block_transfer_direction[core] == kDmaRead) {
+                dma_transfer(core, next_addr, 0x800u, g_block_transfer_size[core], false);
+            } else {
+                dma_transfer(core, next_addr, 0, g_block_transfer_size[core], true);
+            }
+        } else {
+            g_block_transfer_active[core] = false;
+            spu2::dma_stop(static_cast<int>(core));
+            spu2::write(kSpuBase + 0x1B0u + core * 0x400u, 0, 2);
+        }
     }
     if (g_transfer_intr_handler[core]) {
         kernel::call_guest(g_transfer_intr_handler[core], core, g_transfer_intr_argument[core]);

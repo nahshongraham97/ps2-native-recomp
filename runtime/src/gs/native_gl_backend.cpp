@@ -209,6 +209,7 @@ struct SceneTarget {
     GLuint color_texture = 0;
     GLuint depth_buffer = 0;
     std::uint32_t fbp = 0xFFFFFFFFu;
+    std::uint32_t fbw = 0;
     std::uint64_t last_use = 0;
     std::uint64_t prim_count = 0;
     std::uint64_t write_count = 0;
@@ -217,7 +218,7 @@ struct SceneTarget {
     bool cpu_synced = true;
     ReadbackState last_draw_readback_state;
 };
-static constexpr std::size_t kMaxSceneTargets = 4;
+static constexpr std::size_t kMaxSceneTargets = 16;
 SceneTarget g_scene_targets[kMaxSceneTargets];
 GLuint g_shared_depth_buffer = 0;
 bool g_evicted_color[512]{};
@@ -370,11 +371,27 @@ SceneTarget *ensure_scene_target(std::uint32_t fbp = 0) {
         }
     }
     if (best_slot < 0) {
+        const std::uint32_t active_fbp = g_active_frame_fbp.load(std::memory_order_relaxed);
+        const DisplayRegs dregs = gs::display_regs();
+        const int circuit = (dregs.pmode & 2u) ? 1 : (dregs.pmode & 1u) ? 0 : -1;
+        const std::uint32_t display_fbp = circuit >= 0 ? (static_cast<std::uint32_t>(dregs.dispfb[circuit]) & 0x1FFu) : 0xFFFFFFFFu;
+
         std::uint64_t oldest = UINT64_MAX;
         for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
+            if (g_scene_targets[i].fbp == display_fbp || g_scene_targets[i].fbp == active_fbp) {
+                continue;
+            }
             if (g_scene_targets[i].last_use < oldest) {
                 oldest = g_scene_targets[i].last_use;
                 best_slot = static_cast<int>(i);
+            }
+        }
+        if (best_slot < 0) {
+            for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
+                if (g_scene_targets[i].last_use < oldest) {
+                    oldest = g_scene_targets[i].last_use;
+                    best_slot = static_cast<int>(i);
+                }
             }
         }
     }
@@ -1196,12 +1213,47 @@ bool present_frame(const DisplayRegs &regs) {
         s_last_logged_target = target->fbp;
         std::fprintf(stderr, "[native-gl-target] display_fbp=%u active_fbp=%u selected_target_fbp=%u prim_count=%llu\n",
                      display_fbp, active_frame_fbp, target->fbp, static_cast<unsigned long long>(target->prim_count));
-        std::fprintf(stderr, "[native-gl-present-debug] disp_fbp=%u act_fbp=%u targets: [0]=(fbp=%u,cnt=%llu) [1]=(fbp=%u,cnt=%llu) [2]=(fbp=%u,cnt=%llu) [3]=(fbp=%u,cnt=%llu)\n",
-                     display_fbp, active_frame_fbp,
-                     g_scene_targets[0].fbp, static_cast<unsigned long long>(g_scene_targets[0].prim_count),
-                     g_scene_targets[1].fbp, static_cast<unsigned long long>(g_scene_targets[1].prim_count),
-                     g_scene_targets[2].fbp, static_cast<unsigned long long>(g_scene_targets[2].prim_count),
-                     g_scene_targets[3].fbp, static_cast<unsigned long long>(g_scene_targets[3].prim_count));
+        std::fprintf(stderr, "[native-gl-present-debug] disp_fbp=%u act_fbp=%u targets:", display_fbp, active_frame_fbp);
+        for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
+            if (g_scene_targets[i].ready && g_scene_targets[i].fbp != 0xFFFFFFFFu) {
+                std::fprintf(stderr, " [%zu]=(fbp=%u,cnt=%llu,wr=%llu)",
+                             i, g_scene_targets[i].fbp,
+                             static_cast<unsigned long long>(g_scene_targets[i].prim_count),
+                             static_cast<unsigned long long>(g_scene_targets[i].write_count));
+            }
+        }
+        std::fprintf(stderr, "\n");
+    }
+
+    const bool is_active_target = (target == active_target && target != display_target);
+    const std::uint32_t target_fbw = (target && target->fbw > 0) ? target->fbw : display_fbw;
+
+    if (target->fbp < 512 && g_evicted_color[target->fbp]) {
+        const int width = std::min(kWidth, static_cast<int>(target_fbw * 64u));
+        std::vector<std::uint32_t> rgba(static_cast<std::size_t>(width) * kHeight);
+        for (int y = 0; y < kHeight; ++y)
+            for (int x = 0; x < width; ++x)
+                rgba[static_cast<std::size_t>(kHeight - 1 - y) * width + x] =
+                    gs::read_pixel(display_psm, target->fbp * 32u, target_fbw, x, y);
+        GLint previous_texture = 0;
+        glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous_texture);
+        glBindTexture(GL_TEXTURE_2D, target->color_texture);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, kHeight, GL_RGBA, GL_UNSIGNED_BYTE, rgba.data());
+        glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(previous_texture));
+        g_evicted_color[target->fbp] = false;
+    }
+
+    if (target->prim_count == 0 && target->write_count == 0) {
+        SceneTarget *movie_source = find_scene_target(280);
+        if (movie_source && movie_source->write_count > 0 && movie_source != target) {
+            g_bind_framebuffer(GL_READ_FRAMEBUFFER, movie_source->framebuffer);
+            g_bind_framebuffer(GL_DRAW_FRAMEBUFFER, target->framebuffer);
+            g_blit_framebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+            target->write_count = movie_source->write_count;
+            target->last_write_tick = movie_source->last_write_tick;
+            std::fprintf(stderr, "[native-gl] sampled offscreen target FBP=%u into presentation FBP=%u\n",
+                         movie_source->fbp, target->fbp);
+        }
     }
 
     g_bind_framebuffer(GL_READ_FRAMEBUFFER, target->framebuffer);
@@ -1215,11 +1267,13 @@ bool present_frame(const DisplayRegs &regs) {
     glDisable(GL_BLEND);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    const int dbx = static_cast<int>((fb >> 32) & 0x7FFu);
-    const int dby = static_cast<int>((fb >> 43) & 0x7FFu);
+    const int dbx = is_active_target ? 0 : static_cast<int>((fb >> 32) & 0x7FFu);
+    const int dby = is_active_target ? 0 : static_cast<int>((fb >> 43) & 0x7FFu);
     const int magh = static_cast<int>((disp >> 23) & 0xFu) + 1;
     const int magv = static_cast<int>((disp >> 27) & 3u) + 1;
-    const int display_width = (static_cast<int>((disp >> 32) & 0xFFFu) + 1) / magh;
+    const int display_width = is_active_target
+                                  ? static_cast<int>(target_fbw * 64u)
+                                  : ((static_cast<int>((disp >> 32) & 0xFFFu) + 1) / magh);
     int height = (static_cast<int>((disp >> 44) & 0x7FFu) + 1) / magv;
     if ((regs.smode2 & 3u) == 1u && height > 576) height /= 2;
     // The display registers can describe a wider buffer than the game draws
@@ -1933,6 +1987,7 @@ bool submit(const State &st, const Vertex *verts, int count) {
         active_target->last_write_tick = ++g_scene_write_tick;
         active_target->cpu_synced = false;
         active_target->last_draw_readback_state = readback_state;
+        active_target->fbw = fbw;
     }
 
     g_prims_drawn.fetch_add(1, std::memory_order_relaxed);

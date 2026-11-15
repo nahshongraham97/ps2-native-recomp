@@ -765,12 +765,21 @@ void dma(int core, std::uint32_t madr, std::uint32_t words, bool to_spu, int cha
 // input buffer are dropped, as the stopped channel would not have sent them. Without this the old blocks stay in the queue, play ahead of
 // the blocks of the next transfer and keep the stream one block off for as long as the game streams.
 void dma_stop(int core) {
-    Core &k = g_cores[core];
+    Core &k = g_cores[core & 1];
     static const bool trace_adma = std::getenv("PS2_TRACE_ADMA") != nullptr;
     if (trace_adma && !k.transfers.empty())
         std::fprintf(stderr, "[adma] core %d dma stopped at %.4f s, %zu transfers dropped, %u frames waiting\n", core,
                      g_first_tick ? static_cast<double>(kernel::now() - g_first_tick) / 36864000.0 : 0.0, k.transfers.size(), k.input_count);
     k.transfers.clear();
+    k.admas &= ~(1u << (core & 1));
+    k.regs[0x1B0 >> 1] = k.admas;
+    k.input_count = k.input_read = 0;
+}
+
+std::uint32_t dma_address(int core) {
+    const Core &k = g_cores[core & 1];
+    if (k.transfers.empty()) return 0;
+    return k.transfers.front().madr;
 }
 
 void set_sink(std::function<void(const std::int16_t *, std::size_t)> sink) { g_sink = std::move(sink); }
