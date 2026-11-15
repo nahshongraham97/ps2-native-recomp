@@ -83,12 +83,16 @@ footprint protection for ordinary allocation stays in force.
 
 ## Verification
 
-- Rebuilt in place: `build_native_gl_full/ps2run.exe`, 2026-11-15 17:15,
-  75,948,544 bytes, **SHA-256
-  `bd7479bd9f18dc0217bf4ccff5c206b422b7f08ada50a6a9f5c6cb7f1ba90149`**
+- Rebuilt in place: `build_native_gl_full/ps2run.exe`, 2026-11-15 17:25, 75,948,544 bytes,
+  **SHA-256 `13424cdbdac05902cc9cc226e485da204921cb445f6265b4e5a661ca21114bba`**, build stamp
+  `commit c34b3fb clean` (the first build of this fix, `bd7479bd…`, carried a `dirty` stamp
+  because it preceded the commit and was replaced rather than shipped)
 - All five suites pass against that binary: `test_spu2_mix`, `test_gl_vs_raster`
   18/18, `test_native_gl_alpha`, `test_gl_lazy_readback` 10/10,
   `test_iop_native_module`.
+- Offline data check: parsing the four real IRX ELFs exactly as `kernel.cpp:1342-1345` does
+  gives allocated blocks `0x5E00 / 0x1E00 / 0x49100 / 0x13100`, so every reservation ends at or
+  before the next captured base (`0x26300 / 0x28100 / 0x71200 ≤ 0x71300 / 0x84400`).
 
 ## Gate for the next run
 

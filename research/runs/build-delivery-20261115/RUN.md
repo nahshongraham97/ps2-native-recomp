@@ -1,11 +1,15 @@
 # Build delivery — 2026-11-15 (census survives shutdown; AOT reservation fix)
 
-- Commit: `7f2f3d9` on `main` (`external/forks/ps2-native-recomp`), built from a clean tree
-- Runner: `build_native_gl_full/ps2run.exe`, 2026-11-15 17:15, 75,948,544 bytes
-- SHA-256: `bd7479bd9f18dc0217bf4ccff5c206b422b7f08ada50a6a9f5c6cb7f1ba90149`
-- Replaced runner: `6b2335a1b6503960a941b7872bedd2a12dd546a61b95ae8ace3e39341cf1bb99` (`dfc4076`)
+- Commit: `c34b3fb` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
+  (stamp: `commit c34b3fb clean, built 2026-11-15T22:25:49Z, Release, Clang-23.1.3`)
+- Runner: `build_native_gl_full/ps2run.exe`, 2026-11-15 17:25, 75,948,544 bytes
+- SHA-256: `13424cdbdac05902cc9cc226e485da204921cb445f6265b4e5a661ca21114bba`
+- Replaced runner: `bd7479bd9f18dc0217bf4ccff5c206b422b7f08ada50a6a9f5c6cb7f1ba90149` (17:15) — its
+  stamp read `commit b086270 dirty` because it was built before `7f2f3d9` was committed; it was
+  rebuilt from the clean tree instead of shipping a binary whose stamp did not name its source
 - Delivery history: `435ce55ae7de51a7dcbc4c93f16e27aa572a76fb46bce7d3209f75ed43062aa7`
-  → `8600a796a34df9d9728cbd1e60c2fd0f3fbf3c073fd5c1135724027f407fa78d` → `6b2335a1…` → `bd7479bd…`
+  → `8600a796a34df9d9728cbd1e60c2fd0f3fbf3c073fd5c1135724027f407fa78d` → `6b2335a1…` → `bd7479bd…` → `13424cdb…`
+- Commits after `c34b3fb` are documentation-only and do not change this binary.
 
 The `6b2335a1…` runner was run live once (`ps2run_2026-11-15_16-54-43.log`) and
 crashed at `LIBSD.IRX` with an AOT layout mismatch — root cause and fix recorded in
