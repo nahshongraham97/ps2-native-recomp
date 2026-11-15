@@ -1343,7 +1343,15 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
                         mem_size, elf.u32(iopmod + 12) + elf.u32(iopmod + 16) + elf.u32(iopmod + 20));
                     const std::uint32_t requested = total + 0x40u;
                     const std::uint32_t allocated = (requested + 0xFFu) & ~0xFFu;
-                    reserved_aot_base = alloc(requested);
+                    // Reserve at the captured base itself (mode 2), the same way the guest-IRX
+                    // path below does. First-fit (mode 0) used to reach this address only because
+                    // the slots below it happened to be full; once registered AOT ranges are
+                    // protected from ordinary allocation, first-fit rejects this module's own
+                    // footprint, walks past every registered range and lands somewhere the
+                    // equality check below cannot accept ("expected base 0x20500, reserved
+                    // 0x85300"). Mode 2 asks for the captured address outright: it returns that
+                    // address or 0, and 0 comes back with alloc()'s own occupied-range diagnostic.
+                    reserved_aot_base = alloc(requested, 2, aot_layout->base);
                     if (!reserved_aot_base || reserved_aot_base != aot_layout->base) {
                         std::fprintf(stderr,
                                      "[iop-native-stop] AOT layout mismatch for native replacement %s: expected base 0x%08X, reserved 0x%08X size 0x%X\n",
