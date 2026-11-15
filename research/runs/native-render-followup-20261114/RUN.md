@@ -272,3 +272,37 @@ These three failures are pre-existing renderer limitations, not regressions
 introduced by the safe subset. They remain opt-in so the default branch stays
 green. The full-surface readback behind the first two and the highlight
 combiner behind the third are the open items.
+
+## Phase B combiner parity matrix — 2026-11-14
+
+Added an opt-in combiner parity matrix to `test_gl_vs_raster`
+(`MKA_TEST_COMBINER_MATRIX=1`): TFX {0,1,2,3} x TCC {0,1} x blend
+{none, ALPHA=0x44, ALPHA=0xA8/FIX=0x80}, each cell drawing a single
+controlled texel (R=0xA0 G=0x80 B=0x50 A=0x40) under vertex colour
+(r=96 g=64 b=32 a=64) through both renderers. Result: 10 pass, 8 fail,
+6 rejected. The default 18-case sampling matrix stays green; the matrix is
+opt-in so the known gaps do not turn the branch red.
+
+Per-cell outcomes:
+- TFX=0 (MODULATE): all 6 cells pass (both TCC, all three blends). This is
+  the retail font/UI packet shape and is fully gated.
+- TFX=1 (DECAL): no-blend and ALPHA=0xA8 pass (4 cells); ALPHA=0x44 is
+  rejected by the `(!textured || tfx == 0)` guard on source-over, a
+  fail-closed limitation.
+- TFX=2/3 (HIGHLIGHT): all 8 drawable cells fail. Every RGB channel is
+  off by exactly +64 (ref 184/128/84 vs GL 248/192/148). Root cause:
+  the GL HIGHLIGHT path adds `GL_PRIMARY_COLOR`'s alpha to RGB, but
+  `glColor` carries the x2-scaled vertex alpha (min(255, 64*2)=128), so it
+  adds 128 where the software reference adds the raw 64. The output alpha is
+  correct under the x2 storage convention (GL 128 vs ref 64); only the
+  RGB addend is doubled.
+- The 6 rejected cells are textured TFX!=0 with ALPHA=0x44, which the
+  source-over guard rejects by design.
+
+The TFX=2/3 fix is a runtime change (it needs the RGB addend to use the raw
+vertex alpha while the output alpha/blend factor keep the x2 scaling, which
+fixed-function combiners cannot express for an interpolated alpha without
+either a shader or a per-draw constant). It is recorded here as the gate's
+first finding; the gate is not clear for shader migration until TFX=2/3
+match. No game was launched; both suites were run from `build_native_gl_full`
+on the AMD Radeon RX 6800 XT GL 4.6 context.

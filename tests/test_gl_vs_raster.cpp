@@ -494,6 +494,132 @@ TestResult run_font_test(const char *name, bool blend, std::uint8_t vertex_alpha
     return {name, kFontRegionW * kFontRegionH, mismatches, mismatches == 0};
 }
 
+// --- Combiner parity matrix --------------------------------------------
+// TFX {0,1,2,3} x TCC {0,1} x blend {none, ALPHA=0x44, ALPHA=0xA8/FIX=0x80}.
+// A single controlled texel (R=0xA0 G=0x80 B=0x50 A=0x40) and vertex colour
+// (r=96 g=64 b=32 a=64) isolate the texture combiner from sampling. Each cell
+// draws an opaque background then the combiner quad through both renderers.
+// Cells the backend rejects (fail-closed) are reported REJECTED; drawn cells
+// are compared and reported PASS or FAIL. This is the parity gate a future
+// fragment-shader path must clear; run it with MKA_TEST_COMBINER_MATRIX=1.
+
+enum class CombinerOutcome { Pass, Fail, Rejected };
+
+struct CombinerCell {
+    std::uint32_t tfx, tcc;
+    int blend; // 0=none, 1=ALPHA=0x44, 2=ALPHA=0xA8/FIX
+    CombinerOutcome outcome;
+    std::uint32_t mismatches;
+    std::uint32_t ref_pixel, gl_pixel;
+};
+
+CombinerCell run_combiner_cell(std::uint32_t tfx, std::uint32_t tcc, int blend, int tolerance) {
+    CombinerCell cell{tfx, tcc, blend, CombinerOutcome::Rejected, 0, 0, 0};
+    const std::uint32_t tex_bp = 0x600u;
+    ps2::gs::write_pixel(ps2::gs::PSMCT32, tex_bp, 1u, 0u, 0u, 0x405080A0u);
+
+    ps2::gs::State state = make_state(false); // nearest filtering
+    state.ctx[0].tex0 = tex_bp | (1ull << 14) | (static_cast<std::uint64_t>(tcc) << 34) |
+                        (static_cast<std::uint64_t>(tfx) << 35);
+    state.ctx[0].tex1 = 0; // MMIN=0 MMAG=0
+    state.ctx[0].clamp = 1u | (1u << 2);
+    state.prim = 4u | (1ull << 4) | (1ull << 8);
+    if (blend == 1) {
+        state.ctx[0].alpha = 0x44u;
+        state.prim |= (1ull << 6);
+    } else if (blend == 2) {
+        state.ctx[0].alpha = (0x80ull << 32) | 0xA8u;
+        state.prim |= (1ull << 6);
+    }
+
+    auto cv = [](std::uint32_t x, std::uint32_t y, float u, float v) {
+        ps2::gs::Vertex vert = make_vertex(x, y, u, v);
+        vert.r = 96;
+        vert.g = 64;
+        vert.b = 32;
+        vert.a = 64;
+        return vert;
+    };
+    const std::uint32_t x0 = 48, y0 = 48, w = 16, h = 16;
+    const ps2::gs::Vertex quad[4] = {
+        cv(x0, y0, 0.0f, 0.0f), cv(x0 + w, y0, 1.0f, 0.0f),
+        cv(x0, y0 + h, 0.0f, 1.0f), cv(x0 + w, y0 + h, 1.0f, 1.0f),
+    };
+
+    // Opaque background so blend cells have a destination to combine with.
+    auto draw_bg = [&](bool use_gl) {
+        ps2::gs::State bg = make_state(false);
+        bg.prim = 4u; // untextured, no blend
+        ps2::gs::Vertex v[4];
+        const std::uint32_t xs[4] = {x0, x0 + w, x0, x0 + w};
+        const std::uint32_t ys[4] = {y0, y0, y0 + h, y0 + h};
+        for (int i = 0; i < 4; ++i) {
+            v[i] = make_vertex(xs[i], ys[i], 0.0f, 0.0f);
+            v[i].r = 0x10;
+            v[i].g = 0x20;
+            v[i].b = 0x40;
+            v[i].a = 0x80;
+        }
+        if (use_gl)
+            gl_submit(bg, v, 4);
+        else
+            raster_draw(bg, v, 4);
+    };
+
+    clear_framebuffer();
+    draw_bg(false);
+    raster_draw(state, quad, 4);
+    const std::vector<std::uint32_t> ref_pixels = read_region(x0, y0, w, h);
+
+    clear_framebuffer();
+    draw_bg(true);
+    if (!gl_submit(state, quad, 4)) {
+        cell.outcome = CombinerOutcome::Rejected;
+        return cell;
+    }
+    ps2::gs::native_gl::flush();
+    ps2::gs::native_gl::sync_surface_to_cpu(kFrameBase);
+    const std::vector<std::uint32_t> gl_pixels = read_region(x0, y0, w, h);
+
+    cell.ref_pixel = ref_pixels[(h / 2) * w + (w / 2)];
+    cell.gl_pixel = gl_pixels[(h / 2) * w + (w / 2)];
+    cell.mismatches = count_mismatches(ref_pixels, gl_pixels, tolerance);
+    cell.outcome = cell.mismatches == 0 ? CombinerOutcome::Pass : CombinerOutcome::Fail;
+    return cell;
+}
+
+bool run_combiner_matrix() {
+    const char *const kBlendNames[3] = {"none", "0x44", "0xA8"};
+    bool all_ok = true;
+    int pass = 0, fail = 0, rejected = 0;
+    std::printf("\n--- Combiner parity matrix (TFX x TCC x blend) ---\n");
+    for (std::uint32_t tfx = 0; tfx < 4; ++tfx) {
+        for (std::uint32_t tcc = 0; tcc < 2; ++tcc) {
+            for (int blend = 0; blend < 3; ++blend) {
+                // Tolerance 1: GS integer /128 vs GL /255-scale combiners can
+                // differ by one unit on the last bit.
+                const CombinerCell cell = run_combiner_cell(tfx, tcc, blend, 1);
+                const char *outcome = cell.outcome == CombinerOutcome::Pass   ? "PASS"
+                                      : cell.outcome == CombinerOutcome::Fail ? "FAIL"
+                                                                              : "REJECTED";
+                std::printf("  tfx=%u tcc=%u blend=%-4s %-8s ref=%08X gl=%08X mism=%u\n",
+                            tfx, tcc, kBlendNames[blend], outcome, cell.ref_pixel,
+                            cell.gl_pixel, cell.mismatches);
+                if (cell.outcome == CombinerOutcome::Pass)
+                    ++pass;
+                else if (cell.outcome == CombinerOutcome::Fail) {
+                    ++fail;
+                    all_ok = false;
+                } else {
+                    ++rejected;
+                }
+            }
+        }
+    }
+    std::printf("  combiner matrix: %d pass, %d fail, %d rejected\n", pass, fail, rejected);
+    return all_ok;
+}
+
 } // namespace
 
 int main(int argc, char **argv) {
@@ -545,6 +671,13 @@ int main(int argc, char **argv) {
                      kFontAtlasPath);
     }
 
+    // Combiner parity matrix (opt-in): the shader-migration gate. It reports
+    // every TFX/TCC/blend cell so the tfx=2/3 highlight gap and the rejected
+    // textured-non-modulate source-over cells stay visible without turning the
+    // default suite red.
+    bool combiner_ok = true;
+    if (std::getenv("MKA_TEST_COMBINER_MATRIX")) combiner_ok = run_combiner_matrix();
+
     ps2::gs::native_gl::shutdown();
 
     std::cout << "\n=======================================================================\n";
@@ -566,10 +699,11 @@ int main(int argc, char **argv) {
     }
     std::cout << "=======================================================================\n";
 
-    if (all_passed) {
+    if (all_passed && combiner_ok) {
         std::cout << "ALL " << results.size() << " MATRIX TESTS PASSED!\n";
         return 0;
     }
-    std::cerr << "ACCEPTANCE MATRIX FAILED!\n";
+    if (!all_passed) std::cerr << "ACCEPTANCE MATRIX FAILED!\n";
+    if (!combiner_ok) std::cerr << "COMBINER PARITY MATRIX FAILED!\n";
     return 1;
 }
