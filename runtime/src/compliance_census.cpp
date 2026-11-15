@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <atomic>
+#include <csignal>
 #include <cstdio>
 #include <cstdlib>
 #include <map>
@@ -147,7 +148,8 @@ void cdvd_sector_read(std::uint32_t sectors) {
 void report() {
     static std::atomic<bool> reported{false};
     if (reported.exchange(true)) return;
-    std::lock_guard<std::mutex> lock(g_mutex);
+    std::unique_lock<std::mutex> lock(g_mutex, std::try_to_lock);
+    const bool locked = lock.owns_lock();
 
     std::fprintf(stderr, "\n[census] ===== accepted-route PS2 API census =====\n");
 
@@ -214,7 +216,7 @@ void report() {
                  static_cast<unsigned long long>(sif_gst),
                  static_cast<unsigned long long>(sif_unk));
 
-    if (sif_gst > 0) {
+    if (locked && sif_gst > 0) {
         std::fprintf(stderr, "[census] SIF  : guest-handled RPCs:");
         for (const auto &[key, val] : g_sif_rpcs) {
             if (val.first == RpcKind::Guest) {
@@ -232,7 +234,7 @@ void report() {
                  static_cast<unsigned long long>(gs_app),
                  static_cast<unsigned long long>(gs_skp),
                  static_cast<unsigned long long>(gs_prm));
-    if (!g_gs_transfers_by_base.empty()) {
+    if (locked && !g_gs_transfers_by_base.empty()) {
         std::fprintf(stderr, "[census] GS   : transfers by base:");
         for (const auto &[base, counts] : g_gs_transfers_by_base) {
             std::fprintf(stderr, " base=%u(fbp=%u):app=%llu,skp=%llu",
@@ -257,7 +259,7 @@ void report() {
                  static_cast<unsigned long long>(dma_r),
                  peak);
 
-    if (!g_card_rpcs_by_method.empty()) {
+    if (locked && !g_card_rpcs_by_method.empty()) {
         std::fprintf(stderr, "[census] CARD : RPCs by method:");
         for (const auto &[method, counts] : g_card_rpcs_by_method) {
             std::fprintf(stderr, " 0x%02X ok=%llu fail=%llu",
@@ -290,5 +292,29 @@ void report() {
     std::fprintf(stderr, "=================================================\n\n");
     std::fflush(stderr);
 }
+
+namespace {
+
+struct CensusShutdownHook {
+    CensusShutdownHook() {
+        std::atexit([]() {
+            report();
+        });
+        std::signal(SIGABRT, [](int sig) {
+            report();
+            std::signal(sig, SIG_DFL);
+            std::raise(sig);
+        });
+        std::signal(SIGTERM, [](int sig) {
+            report();
+            std::signal(sig, SIG_DFL);
+            std::raise(sig);
+        });
+    }
+};
+
+static CensusShutdownHook s_census_hook;
+
+} // namespace
 
 } // namespace ps2::census

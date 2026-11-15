@@ -1350,7 +1350,7 @@ bool open_window(bool fullscreen) {
         if (!device_name) continue;
         std::fprintf(stderr, "[audio] playback device %d: %s\n", i, device_name);
         if (chosen_device.empty() && !wanted_device.empty() &&
-            wanted_lc.find(lower(device_name)) != std::string::npos)
+            lower(device_name).find(wanted_lc) != std::string::npos)
             chosen_device = device_name;
     }
     if (!wanted_device.empty() && chosen_device.empty())
