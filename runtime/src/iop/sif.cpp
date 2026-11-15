@@ -333,16 +333,19 @@ void call(const std::uint8_t *packet) {
         }
         const std::uint8_t *source = iop::ram_ptr(s.buf);
         request.data.assign(source, source + size);
-        if (iop::kernel::g_trace_modules && (s.sid == 0x000F0001u || s.sid == 0x90000200u)) {
-            std::fprintf(stderr,
-                         "[sif:guest-request] sid 0x%08X sd 0x%08X fn %u send %u from IOP 0x%08X data",
-                         s.sid, s.sd, c.rpc_number, c.send_size, s.buf);
-            for (std::uint32_t i = 0; i < std::min<std::uint32_t>(8u, size / 4u); ++i)
-                std::fprintf(stderr, " %08X", iop::read32(s.buf + i * 4u));
-            std::fprintf(stderr, " (stale EE source 0x%08X:", g_data_addr);
-            for (std::uint32_t i = 0; i < std::min<std::uint32_t>(4u, (c.send_size + 3u) / 4u); ++i)
-                std::fprintf(stderr, " %08X", ee_read<std::uint32_t>(g_data_addr + i * 4u));
-            std::fprintf(stderr, ")\n");
+        if (iop::kernel::g_trace_modules && (s.sid == 0x000F0001u || s.sid == 0x90000200u || s.sid == 0x00012345u)) {
+            static std::uint32_t s_msl_log_count = 0;
+            if (s.sid != 0x00012345u || s_msl_log_count++ < 20) {
+                std::fprintf(stderr,
+                             "[sif:guest-request] sid 0x%08X sd 0x%08X fn %u send %u from IOP 0x%08X data",
+                             s.sid, s.sd, c.rpc_number, c.send_size, s.buf);
+                for (std::uint32_t i = 0; i < std::min<std::uint32_t>(16u, size / 4u); ++i)
+                    std::fprintf(stderr, " %08X", iop::read32(s.buf + i * 4u));
+                std::fprintf(stderr, " (stale EE source 0x%08X:", g_data_addr);
+                for (std::uint32_t i = 0; i < std::min<std::uint32_t>(4u, (c.send_size + 3u) / 4u); ++i)
+                    std::fprintf(stderr, " %08X", ee_read<std::uint32_t>(g_data_addr + i * 4u));
+                std::fprintf(stderr, ")\n");
+            }
         }
     }
     g_requests[s.queue].push_back(std::move(request));
@@ -848,7 +851,16 @@ void install_iop_side() {
         if (id == 0x90000200u)
             std::fprintf(stderr, "[sif:target-rpc] register sid 0x%08X func 0x%08X buf 0x%08X queue 0x%08X sd 0x%08X (instances %zu)\n",
                          id, s.func, s.buf, s.queue, sd, registered.size());
-        if (iop::kernel::g_trace_modules) std::fprintf(stderr, "[sif] server 0x%08X registered (func 0x%08X buf 0x%08X)\n", id, s.func, s.buf);
+        std::string caller_module = "unknown";
+        for (const auto &[mid, mod] : iop::kernel::modules()) {
+            if (c.r[31] >= mod.base && c.r[31] < mod.base + mod.size) {
+                caller_module = mod.name;
+                break;
+            }
+        }
+        if (iop::kernel::g_trace_modules)
+            std::fprintf(stderr, "[sif] server 0x%08X registered by %s (func 0x%08X buf 0x%08X sd 0x%08X ra 0x%08X)\n",
+                         id, caller_module.c_str(), s.func, s.buf, sd, c.r[31]);
         complete_pending_bind(id);
         c.r[2] = 0;
     });
