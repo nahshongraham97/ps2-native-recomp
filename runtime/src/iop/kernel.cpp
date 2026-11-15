@@ -1025,8 +1025,24 @@ void deliver_interrupts() {
         auto it = g_interrupts.find(static_cast<unsigned>(line));
         if (it == g_interrupts.end() || !it->second.handler) continue;
         const Interrupt handler = it->second;
-        if (g_trace_modules && line == 9) std::fprintf(stderr, "[iop] spu2 interrupt -> 0x%08X at %llu\n", handler.handler, static_cast<unsigned long long>(g_now));
-        const std::uint32_t result = call_guest(handler.handler, handler.arg);
+        std::uint32_t result = 0;
+        if (line == 9) {
+            const std::uint32_t irqinfo = spu2::read(0x7C2u, 2);
+            const std::uint32_t val = (irqinfo & 0x0Cu) >> 2u;
+            if (!val) continue;
+            if (val & 1u) spu2::write(0x19Au, spu2::read(0x19Au, 2) & 0xFFBFu, 2);
+            if (val & 2u) spu2::write(0x59Au, spu2::read(0x59Au, 2) & 0xFFBFu, 2);
+            if (g_trace_modules) {
+                std::fprintf(stderr, "[iop] spu2 interrupt cause=%u arg=0x%08X -> 0x%08X at %llu\n",
+                             val, handler.arg, handler.handler, static_cast<unsigned long long>(g_now));
+            }
+            // Retail passes cause in $a0 and data in $a1: handler(cause, data)
+            result = (handler.mode == 0)
+                ? call_guest(handler.handler, 0)
+                : call_guest(handler.handler, val, handler.arg);
+        } else {
+            result = call_guest(handler.handler, handler.arg);
+        }
         if (result == 0 && line < 32) hw::set_interrupt_mask(static_cast<unsigned>(line), false);
     }
 }

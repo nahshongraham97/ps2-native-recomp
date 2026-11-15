@@ -58,6 +58,7 @@ std::array<std::uint32_t, 2> g_block_transfer_size{};
 std::array<bool, 2> g_block_transfer_active{};
 std::array<bool, 2> g_block_transfer_loop{};
 std::array<std::uint32_t, 2> g_block_transfer_direction{};
+std::array<std::uint32_t, 2> g_block_transfer_mode{};
 std::array<std::uint32_t, 2> g_transfer_intr_handler{};
 std::array<std::uint32_t, 2> g_transfer_intr_argument{};
 std::array<std::uint32_t, 2> g_transfer_callback{};
@@ -283,6 +284,10 @@ std::uint32_t stop_transfer(std::uint32_t channel) {
     const std::uint32_t retval = (g_block_transfer_buffer[core] << 24) | (address & 0x00FFFFFFu);
     spu2::dma_stop(static_cast<int>(core));
     spu2::write(kSpuBase + 0x1B0u + core * 0x400u, 0, 2);
+    const std::uint32_t core_attr_addr = kSpuBase + 0x19Au + core * 0x400u;
+    spu2::write(core_attr_addr, spu2::read(core_attr_addr, 2) & 0xFFCFu, 2);
+    const std::uint32_t mmix_addr = kSpuBase + 0x198u + core * 0x400u;
+    spu2::write(mmix_addr, spu2::read(mmix_addr, 2) & 0xFF3Fu, 2);
     g_block_transfer_active[core] = false;
     g_block_transfer_loop[core] = false;
     g_voice_transfer_complete[core] = true;
@@ -323,11 +328,12 @@ std::int32_t block_transfer(std::uint32_t channel, std::uint32_t mode, std::uint
     g_block_transfer_active[core] = true;
     g_block_transfer_loop[core] = loop;
     g_block_transfer_direction[core] = direction;
+    g_block_transfer_mode[core] = mode;
     g_block_transfer_address[core] = iop_address;
     g_block_transfer_size[core] = transfer_size;
 
     if (direction == kDmaRead) {
-        spu2::write(kSpuBase + 0x1B0u + core * 0x400u, 4, 2);
+        spu2::write(kSpuBase + 0x1B0u + core * 0x400u, (1u << core) | 4u, 2);
         const std::uint32_t spu_address = ((mode & 0xF00u) << 2) + 0x800u;
         return dma_transfer(core, transfer_address, spu_address, transfer_size, false);
     } else {
@@ -551,6 +557,7 @@ void export_init(Cpu &cpu) {
     g_block_transfer_active = {};
     g_block_transfer_loop = {};
     g_block_transfer_direction = {};
+    g_block_transfer_mode = {};
     g_spu2_intr_handler = g_spu2_intr_argument = g_irq_callback = 0;
     g_spdif_settings = 0;
     kernel::enable_interrupt(9, true);
@@ -732,11 +739,13 @@ void export_set_irq_callback(Cpu &cpu) {
     const std::uint32_t previous = g_irq_callback;
     g_irq_callback = arg(cpu, 0);
     std::fprintf(stderr, "[libsd] sceSdSetIRQCallback(cb=0x%08X) (prev=0x%08X)\n", arg(cpu, 0), previous);
-    if (g_irq_callback) {
-        kernel::register_interrupt(9, g_irq_callback, 0, 1);
-        kernel::enable_interrupt(9, true);
-    } else if (!g_spu2_intr_handler) {
-        kernel::release_interrupt(9);
+    if (!g_spu2_intr_handler) {
+        if (g_irq_callback) {
+            kernel::register_interrupt(9, g_irq_callback, 0, 0);
+            kernel::enable_interrupt(9, true);
+        } else {
+            kernel::release_interrupt(9);
+        }
     }
     set_u32_result(cpu, previous);
 }
@@ -782,7 +791,10 @@ void export_set_spu2_intr_handler(Cpu &cpu) {
     if (g_spu2_intr_handler) {
         kernel::register_interrupt(9, g_spu2_intr_handler, g_spu2_intr_argument, 1);
         kernel::enable_interrupt(9, true);
-    } else if (!g_irq_callback) {
+    } else if (g_irq_callback) {
+        kernel::register_interrupt(9, g_irq_callback, 0, 0);
+        kernel::enable_interrupt(9, true);
+    } else {
         kernel::release_interrupt(9);
     }
     set_u32_result(cpu, previous);
@@ -825,6 +837,7 @@ void reset() {
     g_block_transfer_active = {};
     g_block_transfer_loop = {};
     g_block_transfer_direction = {};
+    g_block_transfer_mode = {};
     g_transfer_intr_handler = {};
     g_transfer_intr_argument = {};
     g_transfer_callback = {};
@@ -841,7 +854,8 @@ void on_dma_done(std::uint32_t core) {
             const std::uint32_t next_addr = g_block_transfer_address[core] +
                                            (g_block_transfer_size[core] * g_block_transfer_buffer[core]);
             if (g_block_transfer_direction[core] == kDmaRead) {
-                dma_transfer(core, next_addr, 0x800u, g_block_transfer_size[core], false);
+                const std::uint32_t spu_addr = ((g_block_transfer_mode[core] & 0xF00u) << 2) + 0x800u;
+                dma_transfer(core, next_addr, spu_addr, g_block_transfer_size[core], false);
             } else {
                 dma_transfer(core, next_addr, 0, g_block_transfer_size[core], true);
             }
@@ -849,6 +863,10 @@ void on_dma_done(std::uint32_t core) {
             g_block_transfer_active[core] = false;
             spu2::dma_stop(static_cast<int>(core));
             spu2::write(kSpuBase + 0x1B0u + core * 0x400u, 0, 2);
+            const std::uint32_t core_attr_addr = kSpuBase + 0x19Au + core * 0x400u;
+            spu2::write(core_attr_addr, spu2::read(core_attr_addr, 2) & 0xFFCFu, 2);
+            const std::uint32_t mmix_addr = kSpuBase + 0x198u + core * 0x400u;
+            spu2::write(mmix_addr, spu2::read(mmix_addr, 2) & 0xFF3Fu, 2);
         }
     }
     if (g_transfer_intr_handler[core]) {

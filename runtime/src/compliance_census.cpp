@@ -145,6 +145,8 @@ void cdvd_sector_read(std::uint32_t sectors) {
 }
 
 void report() {
+    static std::atomic<bool> reported{false};
+    if (reported.exchange(true)) return;
     std::lock_guard<std::mutex> lock(g_mutex);
 
     std::fprintf(stderr, "\n[census] ===== accepted-route PS2 API census =====\n");
