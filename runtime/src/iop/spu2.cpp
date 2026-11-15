@@ -731,6 +731,10 @@ std::uint16_t *ram() { return g_ram.data(); }
 
 std::uint32_t read(std::uint32_t a, unsigned size) {
     keep_ticking();
+    // Gate counter: every entry into the emulated SPU2 chip from outside (libsd, the IOP bus) is a
+    // platform call that must eventually terminate in the native audio service instead. A 4-byte
+    // read counts twice because it reads two registers (the recursive call counts its own entry).
+    ps2::census::spu2_device_op();
     const std::uint32_t off = a & 0x7FEu;
     std::uint32_t value = 0;
     if (off < 0x760u) value = read_core((off & 0x400u) ? 1 : 0, off & 0x3FEu);
@@ -748,6 +752,8 @@ void write(std::uint32_t a, std::uint32_t v, unsigned size) {
         write(a + 2, v >> 16, 2);
         return;
     }
+    // Counted after the 4-byte split so one hook = one 16-bit register write (see read()).
+    ps2::census::spu2_device_op();
     const std::uint32_t off = a & 0x7FEu;
     v &= 0xFFFFu;
     if (off < 0x760u) write_core((off & 0x400u) ? 1 : 0, off & 0x3FEu, v);
@@ -763,6 +769,7 @@ void write(std::uint32_t a, std::uint32_t v, unsigned size) {
 void dma(int core, std::uint32_t madr, std::uint32_t words, bool to_spu, int channel) {
     keep_ticking();
     ps2::census::spu2_dma(core, words * 4, to_spu);
+    ps2::census::spu2_device_op();
     Core &k = g_cores[core];
     if (to_spu && (k.admas & (1u << core))) {
         static const bool trace_adma = std::getenv("PS2_TRACE_ADMA") != nullptr;  // porting work: when each ADMA block starts, and the blocks

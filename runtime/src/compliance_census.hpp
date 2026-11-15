@@ -15,6 +15,11 @@ void spu2_key_on(int core, int voice);
 void spu2_key_off(int core, int voice);
 void spu2_dma(int core, std::uint32_t bytes, bool to_spu);
 void spu2_peak_sample(std::int16_t left, std::int16_t right);
+// One operation at the emulated SPU2 device boundary (spu2::read/write/dma). The acceptance gate
+// forbids an emulated SPU2 on the accepted route: every sound platform call must terminate in the
+// native audio service, not in a PS2 chip register file. This counter is that violation's magnitude
+// and must reach 0.
+void spu2_device_op();
 void card_rpc(std::uint32_t method, bool ok);
 void cdvd_sector_read(std::uint32_t sectors);
 void report();

@@ -36,6 +36,7 @@ std::atomic<std::uint64_t> g_spu2_dma_writes{0};
 std::atomic<std::uint64_t> g_spu2_dma_write_bytes{0};
 std::atomic<std::uint64_t> g_spu2_dma_reads{0};
 std::atomic<std::uint64_t> g_spu2_dma_read_bytes{0};
+std::atomic<std::uint64_t> g_spu2_device_ops{0};
 std::atomic<std::int32_t>  g_spu2_peak_sample_val{0};
 
 std::atomic<std::uint64_t> g_cdvd_sector_reads{0};
@@ -124,6 +125,10 @@ void spu2_dma(int core, std::uint32_t bytes, bool to_spu) {
         g_spu2_dma_reads.fetch_add(1, std::memory_order_relaxed);
         g_spu2_dma_read_bytes.fetch_add(bytes, std::memory_order_relaxed);
     }
+}
+
+void spu2_device_op() {
+    g_spu2_device_ops.fetch_add(1, std::memory_order_relaxed);
 }
 
 void spu2_peak_sample(std::int16_t left, std::int16_t right) {
@@ -215,7 +220,7 @@ void report() {
     const std::uint64_t sif_nat = g_sif_native.load(std::memory_order_relaxed);
     const std::uint64_t sif_gst = g_sif_guest.load(std::memory_order_relaxed);
     const std::uint64_t sif_unk = g_sif_unknown.load(std::memory_order_relaxed);
-    std::fprintf(stderr, "[census] SIF  : RPCs native = %llu guest = %llu unknown = %llu\n",
+    std::fprintf(stderr, "[census] SIF  : RPCs dispatched natively = %llu, through guest-registered servers = %llu, unknown = %llu\n",
                  static_cast<unsigned long long>(sif_nat),
                  static_cast<unsigned long long>(sif_gst),
                  static_cast<unsigned long long>(sif_unk));
@@ -234,7 +239,7 @@ void report() {
     const std::uint64_t gs_app = g_gs_transfers_applied.load(std::memory_order_relaxed);
     const std::uint64_t gs_skp = g_gs_transfers_skipped.load(std::memory_order_relaxed);
     const std::uint64_t gs_prm = g_gs_primitives.load(std::memory_order_relaxed);
-    std::fprintf(stderr, "[census] GS   : transfers applied = %llu skipped = %llu; primitives = %llu\n",
+    std::fprintf(stderr, "[census] GS   : transfers reached the native surface = %llu, stopped in emulated VRAM = %llu; primitives = %llu\n",
                  static_cast<unsigned long long>(gs_app),
                  static_cast<unsigned long long>(gs_skp),
                  static_cast<unsigned long long>(gs_prm));
@@ -244,8 +249,10 @@ void report() {
     const std::uint64_t dma_w = g_spu2_dma_writes.load(std::memory_order_relaxed);
     const std::uint64_t dma_wb = g_spu2_dma_write_bytes.load(std::memory_order_relaxed);
     const std::uint64_t dma_r = g_spu2_dma_reads.load(std::memory_order_relaxed);
+    const std::uint64_t spu2_ops = g_spu2_device_ops.load(std::memory_order_relaxed);
     const std::int32_t peak = g_spu2_peak_sample_val.load(std::memory_order_relaxed);
-    std::fprintf(stderr, "[census] SPU2 : key-ons = %llu key-offs = %llu DMA writes = %llu (%.1f MB) reads = %llu peak sample = %d\n",
+    std::fprintf(stderr, "[census] SPU2 : chip-model ops at the device boundary = %llu; key-ons = %llu key-offs = %llu DMA writes = %llu (%.1f MB) reads = %llu peak sample = %d\n",
+                 static_cast<unsigned long long>(spu2_ops),
                  static_cast<unsigned long long>(kon),
                  static_cast<unsigned long long>(koff),
                  static_cast<unsigned long long>(dma_w),
@@ -265,8 +272,20 @@ void report() {
     }
 
     const std::uint64_t cdvd_reads = g_cdvd_sector_reads.load(std::memory_order_relaxed);
-    std::fprintf(stderr, "[census] CDVD : sector reads = %llu                   (%s)\n",
-                 static_cast<unsigned long long>(cdvd_reads), cdvd_reads == 0 ? "PASS" : "must be 0");
+    std::fprintf(stderr, "[census] CDVD : device sector reads = %llu                   (%s)\n",
+                 static_cast<unsigned long long>(cdvd_reads),
+                 cdvd_reads == 0 ? "no CDVD device on route" : "gate violation: CDVD device on route");
+
+    // The acceptance gate, stated where every run record reads it: no interpreter and no emulated
+    // PS2 device on the accepted route. Interpreter absence alone is not the gate - the emulated
+    // GS/VRAM and SPU2 chip are devices, and they are violations until they leave the route.
+    std::fprintf(stderr,
+                 "[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): "
+                 "GS-stopped-in-VRAM=%llu SPU2-chip-model-ops=%llu SIF-guest-registered=%llu CDVD-device-reads=%llu\n",
+                 static_cast<unsigned long long>(gs_skp),
+                 static_cast<unsigned long long>(spu2_ops),
+                 static_cast<unsigned long long>(sif_gst),
+                 static_cast<unsigned long long>(cdvd_reads));
 
     // Verdict summary
     int violations = 0;
@@ -274,14 +293,16 @@ void report() {
     if (ee_live > 0) { violations++; viol_list += "EE live translation, "; }
     if (vu0_fb + vu1_fb > 0) { violations++; viol_list += "VU interpreter fallback, "; }
     if (iop_insns > 0) { violations++; viol_list += "IOP guest execution, "; }
-    if (sif_gst > 0) { violations++; viol_list += "SIF guest RPCs, "; }
-    if (cdvd_reads > 0) { violations++; viol_list += "CDVD sector reads, "; }
+    if (sif_gst > 0) { violations++; viol_list += "SIF RPCs through guest-registered servers, "; }
+    if (cdvd_reads > 0) { violations++; viol_list += "CDVD device reads, "; }
+    if (gs_skp > 0) { violations++; viol_list += "GS transfers stopped in emulated VRAM, "; }
+    if (spu2_ops > 0) { violations++; viol_list += "SPU2 chip-model operations, "; }
 
     if (violations > 0) {
         if (!viol_list.empty()) viol_list.resize(viol_list.size() - 2); // trim trailing comma
-        std::fprintf(stderr, "[census] VERDICT: %d mandate violations remain: %s\n", violations, viol_list.c_str());
+        std::fprintf(stderr, "[census] VERDICT: %d acceptance-gate violations remain: %s\n", violations, viol_list.c_str());
     } else {
-        std::fprintf(stderr, "[census] VERDICT: ALL MANDATE CRITERIA SATISFIED (zero guest emulation on accepted route)\n");
+        std::fprintf(stderr, "[census] VERDICT: ACCEPTANCE GATE MET (no interpreter and no emulated PS2 device on the accepted route)\n");
     }
     std::fprintf(stderr, "=================================================\n");
     std::fflush(stderr);
