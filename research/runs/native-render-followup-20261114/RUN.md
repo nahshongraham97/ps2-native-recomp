@@ -243,6 +243,47 @@ prove ownership, pixel contents, or that the transfer is a decoded movie frame.
 The log reports other large uploads to non-display bases throughout frontend
 operation, so size alone must not be used to classify every upload as video.
 
+## Phase C movie-presentation trace (offline) — 2026-11-14
+
+Evidence: the recorded run `games/mkarmageddon/disc/logs/ps2run_2026-11-14_16-57-24.log`
+plus the safety-copy backup `external/forks/ps2-native-recomp-backup-20261110/`,
+which the user identifies as the build where everything worked.
+
+- The backup presents through WebGPU (`[window] presenting through WebGPU`);
+  its 2026-11-08 run opened all three movies (LOGON/OPENING/TITLEN through
+  the old cdvdfsv path). The current run presents through the native-GL
+  direct window. That switch is the regression axis under investigation.
+- Both builds pass the guest SFD player through the same mka-video hook
+  (`handle_video_stream` in host/mka_combat_hooks.hpp), so the decoder itself
+  is the retail one in both.
+- Movie era in the current run, per movie: `[mka-video] stream request` ->
+  cdvd-native locates the SFD -> exactly one `[gs-trxdir] HostToLocal
+  dbp=8960 (fbp=280) dpsm=0 rect=0,0 16x448` -> no further transfers.
+- That transfer never completes: there is no `[gs] display-surface write
+  applied` for it and no `[gs-debug-skip-write] base=8960` (the skip log
+  fires when a completed transfer of at least 7168 pixels misses the display
+  base; 16x448 is exactly 7168). The only applied guest write in the whole
+  run is the boot-time `base=0 rect=192,48 256x128 psm=1` at line 52.
+- Presentation during the movie: DISPFB alternates FBP 0 and 140 while the
+  transfer targets FBP 280 (one 640x448x32 frame away), and every
+  `present source` line reads `scene ... owner=primitive ... write=none`, so
+  neither the VRAM path nor a guest write reaches the screen; the selected
+  scene target is FBP 0 with prim_count 1.
+- The EE then idles in ~134 consecutive `[lgkbm] event-poll reply: zero
+  events` lines until the next `SetGsCrt` and stream request - the guest
+  player is waiting for a completion or interrupt that never arrives.
+
+Working hypothesis (not yet proven): the register-PIO HostToLocal path
+starts on TRXDIR but its pixel data or completion signaling never finishes,
+so the guest movie player stalls and presentation has no guest-owned content.
+Two open sub-questions: whether the guest pushes the pixel data at all (no
+data-path trace is enabled in the recorded run), and how retail ever displays
+a buffer whose DISPFB never points at it (copy into the displayed base, or
+DISPFB follows after a swap) - a PCSX2 verbose log through the movies is the
+retail oracle for both. Next: trace transfer_pixel's data feeding and the
+completion/interrupt/STATX signaling the guest waits on, offline against this
+log.
+
 ## Phase A split verification — 2026-11-14
 
 Rebuilt from the working tree (`build_native_gl_full`, AMD Radeon RX 6800 XT
