@@ -186,6 +186,38 @@ int main() {
                      peak);
         return 1;
     }
+
+    // Phase 3: libsd ordinals 26, 27, 28, 29 (trans interrupt & spu2 interrupt arg accessors).
+    // These were missing from early builds and caused CRI_ADXI / ADX movie init failure.
+    ps2::iop::Cpu set_handler_call{};
+    set_handler_call.r[4] = 0; // core 0
+    set_handler_call.r[5] = 0x00010000u; // handler
+    set_handler_call.r[6] = 0x12345678u; // arg
+    if (!ps2::iop::kernel::invoke_native_import("libsd", 0x0105, 26, set_handler_call)) {
+        std::fprintf(stderr, "[FAIL] export 26 (sceSdSetTransIntrHandler) failed to invoke\n");
+        return 1;
+    }
+    ps2::iop::Cpu get_arg_call{};
+    get_arg_call.r[4] = 0; // core 0
+    if (!ps2::iop::kernel::invoke_native_import("libsd", 0x0105, 28, get_arg_call) || get_arg_call.r[2] != 0x12345678u) {
+        std::fprintf(stderr, "[FAIL] export 28 (sceSdGetTransIntrArg) returned 0x%08X, expected 0x12345678\n", get_arg_call.r[2]);
+        return 1;
+    }
+
+    ps2::iop::Cpu set_spu2_call{};
+    set_spu2_call.r[4] = 0x00020000u; // handler
+    set_spu2_call.r[5] = 0x87654321u; // arg
+    if (!ps2::iop::kernel::invoke_native_import("libsd", 0x0105, 27, set_spu2_call)) {
+        std::fprintf(stderr, "[FAIL] export 27 (sceSdSetSpu2IntrHandler) failed to invoke\n");
+        return 1;
+    }
+    ps2::iop::Cpu get_spu2_arg_call{};
+    if (!ps2::iop::kernel::invoke_native_import("libsd", 0x0105, 29, get_spu2_arg_call) || get_spu2_arg_call.r[2] != 0x87654321u) {
+        std::fprintf(stderr, "[FAIL] export 29 (sceSdGetSpu2IntrArg) returned 0x%08X, expected 0x87654321\n", get_spu2_arg_call.r[2]);
+        return 1;
+    }
+    std::printf("[spu2-mix] Phase 3: ordinals 26..29 verified\n");
+
     std::printf("[PASS] SPU2 produced non-silent samples through the libsd bridge\n");
     return 0;
 }

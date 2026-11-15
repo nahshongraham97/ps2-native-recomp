@@ -2,6 +2,7 @@
 
 #include "iop.hpp"
 #include "kernel.hpp"
+#include "libsd_native.hpp"
 #include "sio2.hpp"
 #include "spu2.hpp"
 
@@ -214,6 +215,8 @@ void dma_done(unsigned ch) {
     if (ch < 7) g_dicr |= 1u << (24 + ch);
     else g_dicr2 |= 1u << (24 + ch - 7);
     g_istat |= 8u;
+    if (ch == 4) libsd_native::on_dma_done(0);
+    else if (ch == 7) libsd_native::on_dma_done(1);
 }
 
 std::uint32_t ohci_read(std::uint32_t a) {

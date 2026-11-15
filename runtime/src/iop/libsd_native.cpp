@@ -483,12 +483,11 @@ std::int32_t process_batch(std::uint32_t batch, std::uint32_t returns, std::uint
         if (voice_command) {
             for (std::uint32_t voice = 0; voice < 24; ++voice) {
                 if (!(voice_mask & (1u << voice))) continue;
-                const std::uint32_t voice_entry = (entry & 0xFFC1u) | (1u << (voice + 1u));
+                const std::uint32_t voice_entry = (entry & ~0x3Eu) | (voice << 1u);
                 if (!perform(voice_entry)) return -1 - static_cast<std::int32_t>(return_index);
                 if (returns && (function == 0x11 || function == 0x13)) write32(returns + return_index * 4u, result);
                 ++return_index;
             }
-            if (function == 0x01 || function == 0x03) --return_index;
             continue;
         }
         if (!perform(entry)) return -1 - static_cast<std::int32_t>(return_index);
@@ -641,6 +640,13 @@ void export_set_spu2_intr_handler(Cpu &cpu) {
     g_spu2_intr_argument = arg(cpu, 1);
     set_u32_result(cpu, previous);
 }
+void export_get_trans_intr_arg(Cpu &cpu) {
+    const std::uint32_t core = arg(cpu, 0) & 1u;
+    set_u32_result(cpu, g_transfer_intr_argument[core]);
+}
+void export_get_spu2_intr_arg(Cpu &cpu) {
+    set_u32_result(cpu, g_spu2_intr_argument);
+}
 void export_stop_trans(Cpu &cpu) { set_u32_result(cpu, stop_transfer(arg(cpu, 0))); }
 void export_clean_effect(Cpu &cpu) {
     const std::uint32_t mode = arg(cpu, 2);
@@ -669,6 +675,20 @@ void reset() {
     g_spu2_intr_handler = g_spu2_intr_argument = g_irq_callback = g_spdif_settings = 0;
 }
 
+void on_dma_done(std::uint32_t core) {
+    core &= 1u;
+    g_voice_transfer_complete[core] = true;
+    g_voice_transfer_status[core] = 1;
+    if (g_block_transfer_active[core]) {
+        g_block_transfer_buffer[core] = 1 - g_block_transfer_buffer[core];
+    }
+    if (g_transfer_intr_handler[core]) {
+        kernel::call_guest(g_transfer_intr_handler[core], core, g_transfer_intr_argument[core]);
+    } else if (g_transfer_callback[core]) {
+        kernel::call_guest(g_transfer_callback[core], 0);
+    }
+}
+
 kernel::NativeIopModule make_module() {
     kernel::NativeIopModule module;
     module.name = "LIBSD";
@@ -689,7 +709,8 @@ kernel::NativeIopModule make_module() {
         {18, export_block_trans}, {19, export_voice_trans_status}, {20, export_block_trans_status},
         {21, export_set_trans_callback}, {22, export_set_irq_callback}, {23, export_set_effect_attr},
         {24, export_get_effect_attr}, {25, export_clear_effect}, {26, export_set_trans_intr_handler},
-        {27, export_set_spu2_intr_handler}, {30, export_stop_trans}, {31, export_clean_effect},
+        {27, export_set_spu2_intr_handler}, {28, export_get_trans_intr_arg}, {29, export_get_spu2_intr_arg},
+        {30, export_stop_trans}, {31, export_clean_effect},
         {32, export_set_effect_mode}, {33, export_set_effect_mode_params},
     };
     module.libraries.push_back(std::move(library));
