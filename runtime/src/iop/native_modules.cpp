@@ -274,17 +274,22 @@ void install_native_modules() {
     };
     register_native_module(std::move(lgaud_module));
 
+    // DIAGNOSTIC PLACEHOLDER: CRI_ADXI SIF RPC stub (SID 0x90000200)
+    // Allows strict mode execution to proceed past the intro movie request to
+    // collect compliance census and audio/card metrics.
+    // NOTE: Suppresses guest movie frame decoding (base 8960 / FBP 280).
+    // Must be replaced by the AOT C++ body or native media foundation service.
     NativeIopModule cri_adxi;
     cri_adxi.name = "CRI_ADXI";
     cri_adxi.aliases = {"CRI_ADX_Driver", "ADXI", "cri_adxi"};
     cri_adxi.start = [](const std::string &) {
         std::fprintf(stderr,
-                     "[iop-native] CRI_ADXI host replacement active; guest IRX is not loaded\n");
+                     "[iop-native] CRI_ADXI diagnostic placeholder active (RPC 0x90000200 stubbed; movie frames not decoded)\n");
         sif::register_hle_override(0x90000200u, [](std::uint32_t method, std::uint32_t args,
                                                   std::uint32_t args_size, std::uint32_t ret,
                                                   std::uint32_t ret_size) {
             std::fprintf(stderr,
-                         "[cri-adx-rpc] method=%u args=0x%08X args_size=%u ret=0x%08X ret_size=%u\n",
+                         "[cri-adx-rpc] [diagnostic-stub] method=%u args=0x%08X args_size=%u ret=0x%08X ret_size=%u\n",
                          method, args, args_size, ret, ret_size);
             if (ret && ret_size >= 4) {
                 store<std::uint32_t>(ps2::g_ram + (ret & (ps2::kRamSize - 1)), 0);
