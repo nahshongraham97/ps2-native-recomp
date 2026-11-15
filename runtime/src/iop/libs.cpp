@@ -1009,6 +1009,15 @@ void install_sysclib() {
 
 void install_stdio() {
     register_hle_library("stdio", 0x0102);
+    // The retail CRI ADX driver (Ver.9.16b, 2004) imports stdio version 0x0103 - a newer Sony
+    // SDK revision of the same library whose export table is not in this PS2SDK checkout. Its
+    // ordinal 4 is printf, proven by the caller itself: the run stopped at
+    // "unresolved native import stdio v0103 ordinal 4 caller=0x000714C8" with
+    // a0="CRI ADX Driver Ver.9.16b(%s %s)." a1="May  7 2004" a2="20:20:44" - a version banner
+    // being printed. The 0x0102 and 0x0103 tables share this layout at least at ordinal 4, and
+    // def() binds ordinals across every registered version of a library (sysclib 0x0103/0x0104
+    // and loadcore 0x0101/0x0103 already work this way), so registering the version is enough.
+    register_hle_library("stdio", 0x0103);
     def("stdio", 4, "printf", [](Cpu &c) {
         const std::string s = format(c, arg(c, 0), 1);
         print(s);
