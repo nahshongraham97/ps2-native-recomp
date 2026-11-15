@@ -172,6 +172,9 @@ public:
         read_fd_ = fds[0];
         write_fd_ = fds[1];
         active_ = true;
+        // No CRT buffering: without it the shutdown census can sit in the C runtime's own buffer
+        // and die with the process even though the pipe was drained.
+        std::setvbuf(stderr, nullptr, _IONBF, 0);
         thread_ = std::thread([this] { pump(); });
         std::fprintf(stderr, "[log] this log is also written to %s\n", path_.c_str());
         return true;
@@ -650,6 +653,9 @@ int main(int argc, char **argv) {
         ps2::g_options.first_log = [](std::size_t lines) { return g_log.head(lines); };
         ps2::g_options.on_exit = [] { g_log.stop(); };
         std::atexit([] { g_log.stop(); });  // the window run that returns from main
+        // A census printed from a signal handler dies with the bytes still in the pipe this
+        // class pumps; report() calls this hook so the report is in the file first.
+        ps2::census::set_exit_flush_hook([] { g_log.flush(300); });
 #ifdef _WIN32
         open_log_window(g_log.path());
 #endif

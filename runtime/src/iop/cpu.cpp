@@ -120,6 +120,7 @@ void execute(Cpu &c, std::int64_t &budget) {
                      c.cause, c.epc, c.badvaddr, c.status, c.r[17]);
         if (std::getenv("PS2_IOP_DUMP_ON_STOP")) dump();
         std::fflush(stderr);
+        ps2::census::report();  // before abort(): report() is idempotent, the handler call is a no-op
         std::abort();
     };
     static bool traced_mwfilefr_callback = false;

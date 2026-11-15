@@ -15,6 +15,7 @@
 #include "sio2.hpp"
 #include "spu2.hpp"
 #include "../load_stats.hpp"
+#include "compliance_census.hpp"
 
 #include "ps2/os.hpp"
 #include "ps2/state.hpp"
@@ -1485,6 +1486,9 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
                              "[iop-native-stop] captured AOT base 0x%08X is unavailable for %s size=0x%X\n",
                              aot_layout->base, name.c_str(), total);
                 std::fflush(stderr);
+                // Report before the abort: a census printed from the SIGABRT handler dies with the
+                // bytes still in the log pipe, which is how the Run 2 census lost its tail.
+                ps2::census::report();
                 std::abort();
             }
             if (g_trace_modules)

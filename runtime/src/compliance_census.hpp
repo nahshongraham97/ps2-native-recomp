@@ -19,4 +19,10 @@ void card_rpc(std::uint32_t method, bool ok);
 void cdvd_sector_read(std::uint32_t sectors);
 void report();
 
+// The host registers a hook that drains its log writer, so a shutdown report reaches the log
+// file before the process dies. The runtime cannot call the host's writer directly, and without
+// it a census printed from a signal handler is lost: the bytes are still in the pipe that the
+// log thread had not drained. The hook is called from report() and from every shutdown path.
+void set_exit_flush_hook(void (*hook)());
+
 } // namespace ps2::census

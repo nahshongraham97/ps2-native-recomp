@@ -145,6 +145,10 @@ void cdvd_sector_read(std::uint32_t sectors) {
     g_cdvd_sector_reads.fetch_add(sectors, std::memory_order_relaxed);
 }
 
+static void (*g_exit_flush_hook)();
+
+void set_exit_flush_hook(void (*hook)()) { g_exit_flush_hook = hook; }
+
 void report() {
     static std::atomic<bool> reported{false};
     if (reported.exchange(true)) return;
@@ -282,18 +286,28 @@ void report() {
     std::fprintf(stderr, "=================================================\n");
     std::fflush(stderr);
 
-    // Verbose transfer breakdown printed after essential verdict to prevent truncation
+    // Verbose transfer breakdown printed after the verdict. Capped: the verbose tail is the part
+    // a dying process loses first, and the report has to survive an abort.
     if (locked && !g_gs_transfers_by_base.empty()) {
+        std::vector<std::pair<std::uint64_t, std::uint32_t>> ranked;
+        ranked.reserve(g_gs_transfers_by_base.size());
+        for (const auto &[base, counts] : g_gs_transfers_by_base) ranked.emplace_back(counts.first + counts.second, base);
+        std::sort(ranked.begin(), ranked.end(), std::greater<>());
+        const std::size_t shown = std::min<std::size_t>(12, ranked.size());
         std::fprintf(stderr, "[census] GS   : transfers by base:");
-        for (const auto &[base, counts] : g_gs_transfers_by_base) {
+        for (std::size_t i = 0; i < shown; ++i) {
+            const std::uint32_t base = ranked[i].second;
+            const auto &counts = g_gs_transfers_by_base.at(base);
             std::fprintf(stderr, " base=%u(fbp=%u):app=%llu,skp=%llu",
                          base, base / 32u,
                          static_cast<unsigned long long>(counts.first),
                          static_cast<unsigned long long>(counts.second));
         }
+        if (ranked.size() > shown) std::fprintf(stderr, " (+%zu more bases)", ranked.size() - shown);
         std::fprintf(stderr, "\n");
         std::fflush(stderr);
     }
+    if (g_exit_flush_hook) g_exit_flush_hook();
 }
 
 namespace {
