@@ -234,16 +234,6 @@ void report() {
                  static_cast<unsigned long long>(gs_app),
                  static_cast<unsigned long long>(gs_skp),
                  static_cast<unsigned long long>(gs_prm));
-    if (locked && !g_gs_transfers_by_base.empty()) {
-        std::fprintf(stderr, "[census] GS   : transfers by base:");
-        for (const auto &[base, counts] : g_gs_transfers_by_base) {
-            std::fprintf(stderr, " base=%u(fbp=%u):app=%llu,skp=%llu",
-                         base, base / 32u,
-                         static_cast<unsigned long long>(counts.first),
-                         static_cast<unsigned long long>(counts.second));
-        }
-        std::fprintf(stderr, "\n");
-    }
 
     const std::uint64_t kon = g_spu2_key_ons.load(std::memory_order_relaxed);
     const std::uint64_t koff = g_spu2_key_offs.load(std::memory_order_relaxed);
@@ -289,8 +279,21 @@ void report() {
     } else {
         std::fprintf(stderr, "[census] VERDICT: ALL MANDATE CRITERIA SATISFIED (zero guest emulation on accepted route)\n");
     }
-    std::fprintf(stderr, "=================================================\n\n");
+    std::fprintf(stderr, "=================================================\n");
     std::fflush(stderr);
+
+    // Verbose transfer breakdown printed after essential verdict to prevent truncation
+    if (locked && !g_gs_transfers_by_base.empty()) {
+        std::fprintf(stderr, "[census] GS   : transfers by base:");
+        for (const auto &[base, counts] : g_gs_transfers_by_base) {
+            std::fprintf(stderr, " base=%u(fbp=%u):app=%llu,skp=%llu",
+                         base, base / 32u,
+                         static_cast<unsigned long long>(counts.first),
+                         static_cast<unsigned long long>(counts.second));
+        }
+        std::fprintf(stderr, "\n");
+        std::fflush(stderr);
+    }
 }
 
 namespace {

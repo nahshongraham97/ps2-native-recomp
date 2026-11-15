@@ -751,9 +751,20 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
         const std::int32_t result = mc_get_info2(request, aux);
         std::memcpy(aux_bytes, &aux, sizeof aux);
         std::memcpy(status_bytes, &result, sizeof result);
+
+        std::int32_t ee_status = 0;
+        std::int32_t ee_type = 0;
+        std::int32_t ee_free = 0;
+        std::int32_t ee_formatted = 0;
+        std::memcpy(&ee_status, status_bytes, sizeof(ee_status));
+        std::memcpy(&ee_type, aux_bytes, sizeof(ee_type));
+        std::memcpy(&ee_free, aux_bytes + 4, sizeof(ee_free));
+        std::memcpy(&ee_formatted, aux_bytes + 144, sizeof(ee_formatted));
+
         std::fprintf(stderr,
-                     "[iop-native] MCSERV GetInfo2 port=%d slot=%d status=%d free_clusters=%d type=%d format=%d (req: fd=%d size=%d off=%d orig=%d buf=0x%x param=0x%x)\n",
+                     "[iop-native] MCSERV GetInfo2 port=%d slot=%d status=%d free_clusters=%d type=%d format=%d | EE verified: status=%d free=%d type=%d format=%d (req: fd=%d size=%d off=%d orig=%d buf=0x%x param=0x%x)\n",
                      request.port, request.slot, result, aux.free, aux.type, aux.formatted,
+                     ee_status, ee_free, ee_type, ee_formatted,
                      request.fd, request.size, request.offset, request.origin, request.buffer, request.param);
         ps2::census::card_rpc(method, result == 0);
         return true;

@@ -253,6 +253,16 @@ std::optional<std::filesystem::path> resolve(const std::string &resource_name) {
         std::lock_guard<std::mutex> lock(g_root_mutex);
         root = g_root;
     }
+    if (root.empty()) {
+        const char *env_root = std::getenv("PS2_NATIVE_VFS_ROOT");
+        if (env_root && *env_root) {
+            std::error_code ec;
+            const auto p = std::filesystem::canonical(env_root, ec);
+            if (!ec && std::filesystem::is_directory(p, ec)) {
+                root = p;
+            }
+        }
+    }
     if (root.empty()) return std::nullopt;
     return resolve_under(root, resource_name);
 }

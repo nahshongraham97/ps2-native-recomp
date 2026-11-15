@@ -4,6 +4,8 @@
 #endif
 #ifdef PS2_IOP_AOT_MODULES_ENABLED
 #include "native/iop_native.h"
+#elif defined(PS2_IOP_AOT_IMPORTS_ENABLED)
+#include "native/iop_native.h"
 #endif
 
 #include "hw.hpp"
@@ -718,11 +720,32 @@ std::uint32_t call_guest(std::uint32_t address, std::uint32_t a0, std::uint32_t 
     return result;
 }
 
+#if defined(PS2_IOP_AOT_MODULES_ENABLED) || defined(PS2_IOP_AOT_IMPORTS_ENABLED)
+static bool overlaps_registered_aot(std::uint32_t start, std::uint32_t size) {
+    std::size_t aot_count = 0;
+    const auto *aot_entries = ps2x::iop::detail::iopNativeModules(aot_count);
+    for (std::size_t i = 0; aot_entries && i < aot_count; ++i) {
+        const auto &e = aot_entries[i];
+        if (!e.base || !e.run) continue;
+        const std::uint32_t aot_size = (e.name && (std::strcmp(e.name, "CRI_ADXI") == 0 || std::strcmp(e.name, "CRI_ADX_Driver") == 0))
+            ? 0x14000u
+            : ((e.textSize + 0x8000u + 0xFFu) & ~0xFFu);
+        if (start < e.base + aot_size && start + size > e.base) {
+            return true;
+        }
+    }
+    return false;
+}
+#endif
+
 std::uint32_t alloc(std::uint32_t size, int mode, std::uint32_t at) {
     size = (size + 0xFFu) & ~0xFFu;
     if (!size) size = 0x100u;
-    auto fits = [&](std::uint32_t start) {
+    auto fits = [&](std::uint32_t start, bool is_aot_target = false) {
         if (start < kUserBase || start + size > kRamSize) return false;
+#if defined(PS2_IOP_AOT_MODULES_ENABLED) || defined(PS2_IOP_AOT_IMPORTS_ENABLED)
+        if (!is_aot_target && overlaps_registered_aot(start, size)) return false;
+#endif
         auto it = g_used.lower_bound(start);
         if (it != g_used.end() && it->first < start + size) return false;
         if (it != g_used.begin()) {
@@ -733,25 +756,78 @@ std::uint32_t alloc(std::uint32_t size, int mode, std::uint32_t at) {
     };
     std::uint32_t chosen = 0;
     if (mode == 2) {
-        if (fits(at & ~0xFFu)) chosen = at & ~0xFFu;
+        const std::uint32_t target = at & ~0xFFu;
+        if (fits(target, true)) chosen = target;
     } else if (mode == 1) {
         std::uint32_t top = kRamSize;
         for (auto it = g_used.rbegin(); ; ++it) {
             const std::uint32_t bottom = it == g_used.rend() ? kUserBase : it->first + it->second;
-            if (top >= bottom + size && top - size >= kUserBase) { chosen = top - size; break; }
+            if (top >= bottom + size && top - size >= kUserBase) {
+                std::uint32_t cand = top - size;
+                while (cand >= bottom && !fits(cand, false)) {
+                    if (cand < 0x100u) break;
+                    cand -= 0x100u;
+                }
+                if (cand >= bottom && fits(cand, false)) { chosen = cand; break; }
+            }
             if (it == g_used.rend()) break;
             top = it->first;
         }
     } else {
         std::uint32_t start = kUserBase;
-        for (const auto &[a, s] : g_used) {
-            if (a >= start + size) break;
-            start = std::max(start, a + s);
+        while (start + size <= kRamSize) {
+            if (fits(start, false)) {
+                chosen = start;
+                break;
+            }
+            auto it = g_used.lower_bound(start);
+            if (it != g_used.end() && it->first < start + size) {
+                start = it->first + it->second;
+            } else {
+#if defined(PS2_IOP_AOT_MODULES_ENABLED) || defined(PS2_IOP_AOT_IMPORTS_ENABLED)
+                bool jumped = false;
+                std::size_t aot_count = 0;
+                const auto *aot_entries = ps2x::iop::detail::iopNativeModules(aot_count);
+                for (std::size_t i = 0; aot_entries && i < aot_count; ++i) {
+                    const auto &e = aot_entries[i];
+                    if (!e.base || !e.run) continue;
+                    const std::uint32_t aot_size = (e.name && (std::strcmp(e.name, "CRI_ADXI") == 0 || std::strcmp(e.name, "CRI_ADX_Driver") == 0))
+                        ? 0x14000u
+                        : ((e.textSize + 0x8000u + 0xFFu) & ~0xFFu);
+                    if (start < e.base + aot_size && start + size > e.base) {
+                        start = (e.base + aot_size + 0xFFu) & ~0xFFu;
+                        jumped = true;
+                        break;
+                    }
+                }
+                if (!jumped) start += 0x100u;
+#else
+                start += 0x100u;
+#endif
+            }
         }
-        if (start + size <= kRamSize) chosen = start;
     }
     if (!chosen) {
-        std::fprintf(stderr, "[iop] out of memory allocating 0x%X\n", size);
+        if (mode == 2) {
+            const std::uint32_t target = at & ~0xFFu;
+            auto it = g_used.lower_bound(target);
+            if (it != g_used.end() && it->first < target + size) {
+                std::fprintf(stderr,
+                             "[iop] cannot allocate 0x%X at fixed base 0x%08X (range occupied by 0x%08X+0x%X)\n",
+                             size, target, it->first, it->second);
+            } else if (it != g_used.begin() && std::prev(it)->first + std::prev(it)->second > target) {
+                auto prev = std::prev(it);
+                std::fprintf(stderr,
+                             "[iop] cannot allocate 0x%X at fixed base 0x%08X (range occupied by 0x%08X+0x%X)\n",
+                             size, target, prev->first, prev->second);
+            } else {
+                std::fprintf(stderr,
+                             "[iop] cannot allocate 0x%X at fixed base 0x%08X (address outside valid user RAM)\n",
+                             size, target);
+            }
+        } else {
+            std::fprintf(stderr, "[iop] out of memory allocating 0x%X\n", size);
+        }
         return 0;
     }
     g_used[chosen] = size;
@@ -1218,7 +1294,10 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
                 bool ambiguous_aot_layout = false;
                 for (std::size_t i = 0; aot_entries && i < aot_count; ++i) {
                     const auto &entry = aot_entries[i];
-                    if (!entry.name || !entry.run || name != entry.name) continue;
+                    const bool name_matches = entry.name && (name == entry.name ||
+                        (name == "CRI_ADX_Driver" && std::strcmp(entry.name, "CRI_ADXI") == 0) ||
+                        (name == "CRI_ADXI" && std::strcmp(entry.name, "CRI_ADX_Driver") == 0));
+                    if (!entry.run || !name_matches) continue;
                     if (aot_layout) {
                         ambiguous_aot_layout = true;
                         break;
@@ -1384,7 +1463,10 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
         bool ambiguous_layout = false;
         for (std::size_t i = 0; i < aot_count; ++i) {
             const auto &candidate = aot_entries[i];
-            if (!candidate.name || !candidate.run || name != candidate.name || candidate.textSize != text_size) continue;
+            const bool name_matches = candidate.name && (name == candidate.name ||
+                (name == "CRI_ADX_Driver" && std::strcmp(candidate.name, "CRI_ADXI") == 0) ||
+                (name == "CRI_ADXI" && std::strcmp(candidate.name, "CRI_ADX_Driver") == 0));
+            if (!candidate.run || !name_matches || candidate.textSize != text_size) continue;
             if (aot_layout) {
                 ambiguous_layout = true;
                 break;
