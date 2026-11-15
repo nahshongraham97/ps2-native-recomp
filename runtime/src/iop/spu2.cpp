@@ -171,6 +171,13 @@ void decode_block(Voice &v, std::int16_t *out) {
         const std::uint16_t word = g_ram[(at + 1 + i / 4) & kRamMask];
         std::int32_t sample = static_cast<std::int16_t>(((word >> ((i & 3) * 4)) & 0xF) << 12) >> shift;
         sample += (v.s1 * kFilter[filter][0] + v.s2 * kFilter[filter][1] + 32) >> 6;
+        if (sample >= 32767 || sample <= -32768) {
+            static std::uint64_t s_clip_count = 0;
+            if (++s_clip_count <= 20) {
+                std::fprintf(stderr, "[spu2-warn] ADPCM rail saturation sample=%d at=0x%06X header=0x%04X shift=%d filter=%d\n",
+                             sample, at, header, shift, filter);
+            }
+        }
         sample = std::clamp(sample, -32768, 32767);
         v.s2 = v.s1;
         v.s1 = sample;
