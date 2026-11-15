@@ -1,0 +1,1303 @@
+[
+  {
+    "capture": "LIBSD_B00020500_HBDCCE405D7757993",
+    "module": "LIBSD",
+    "base": 132352,
+    "size": 19376,
+    "fnv1a64": "BDCCE405D7757993",
+    "function": "iopn_LIBSD_B00020500_HBDCCE405D7757993_20500",
+    "source": "iopn_LIBSD_B00020500_HBDCCE405D7757993_20500.cpp",
+    "import_function": "iop_imports_LIBSD_B00020500_HBDCCE405D7757993_20500",
+    "import_source": "iop_imports_LIBSD_B00020500_HBDCCE405D7757993_20500.cpp",
+    "imports": [
+      {
+        "address": 151444,
+        "library": "intrman",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 4
+      },
+      {
+        "address": 151452,
+        "library": "intrman",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 5
+      },
+      {
+        "address": 151460,
+        "library": "intrman",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 6
+      },
+      {
+        "address": 151468,
+        "library": "intrman",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 7
+      },
+      {
+        "address": 151476,
+        "library": "intrman",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 17
+      },
+      {
+        "address": 151484,
+        "library": "intrman",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 18
+      },
+      {
+        "address": 151492,
+        "library": "intrman",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 23
+      },
+      {
+        "address": 151528,
+        "library": "loadcore",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 5
+      },
+      {
+        "address": 151536,
+        "library": "loadcore",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 6
+      },
+      {
+        "address": 151572,
+        "library": "sifman",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 7
+      },
+      {
+        "address": 151580,
+        "library": "sifman",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 8
+      },
+      {
+        "address": 151616,
+        "library": "sysclib",
+        "version": 260,
+        "version_word": 260,
+        "ordinal": 17
+      },
+      {
+        "address": 151652,
+        "library": "thevent",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 4
+      },
+      {
+        "address": 151660,
+        "library": "thevent",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 5
+      },
+      {
+        "address": 151668,
+        "library": "thevent",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 6
+      },
+      {
+        "address": 151676,
+        "library": "thevent",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 7
+      },
+      {
+        "address": 151684,
+        "library": "thevent",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 8
+      },
+      {
+        "address": 151692,
+        "library": "thevent",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 9
+      },
+      {
+        "address": 151700,
+        "library": "thevent",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 10
+      }
+    ],
+    "unmapped_stub_candidates": [],
+    "interpreter_fallback_candidates": [
+      132488
+    ]
+  },
+  {
+    "capture": "SDRDRV_B00026300_HD70539C3E82D9283",
+    "module": "SDRDRV",
+    "base": 156416,
+    "size": 4912,
+    "fnv1a64": "D70539C3E82D9283",
+    "function": "iopn_SDRDRV_B00026300_HD70539C3E82D9283_26300",
+    "source": "iopn_SDRDRV_B00026300_HD70539C3E82D9283_26300.cpp",
+    "import_function": "iop_imports_SDRDRV_B00026300_HD70539C3E82D9283_26300",
+    "import_source": "iop_imports_SDRDRV_B00026300_HD70539C3E82D9283_26300.cpp",
+    "imports": [
+      {
+        "address": 160724,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 4
+      },
+      {
+        "address": 160732,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 5
+      },
+      {
+        "address": 160740,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 6
+      },
+      {
+        "address": 160748,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 7
+      },
+      {
+        "address": 160756,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 8
+      },
+      {
+        "address": 160764,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 9
+      },
+      {
+        "address": 160772,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 10
+      },
+      {
+        "address": 160780,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 11
+      },
+      {
+        "address": 160788,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 12
+      },
+      {
+        "address": 160796,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 13
+      },
+      {
+        "address": 160804,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 14
+      },
+      {
+        "address": 160812,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 15
+      },
+      {
+        "address": 160820,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 16
+      },
+      {
+        "address": 160828,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 17
+      },
+      {
+        "address": 160836,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 18
+      },
+      {
+        "address": 160844,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 19
+      },
+      {
+        "address": 160852,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 20
+      },
+      {
+        "address": 160860,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 23
+      },
+      {
+        "address": 160868,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 24
+      },
+      {
+        "address": 160876,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 25
+      },
+      {
+        "address": 160884,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 26
+      },
+      {
+        "address": 160892,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 27
+      },
+      {
+        "address": 160900,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 30
+      },
+      {
+        "address": 160908,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 31
+      },
+      {
+        "address": 160916,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 32
+      },
+      {
+        "address": 160924,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 33
+      },
+      {
+        "address": 160960,
+        "library": "sysmem",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 14
+      },
+      {
+        "address": 160996,
+        "library": "intrman",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 17
+      },
+      {
+        "address": 161004,
+        "library": "intrman",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 18
+      },
+      {
+        "address": 161040,
+        "library": "loadcore",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 6
+      },
+      {
+        "address": 161048,
+        "library": "loadcore",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 7
+      },
+      {
+        "address": 161084,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 14
+      },
+      {
+        "address": 161092,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 15
+      },
+      {
+        "address": 161100,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 16
+      },
+      {
+        "address": 161108,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 17
+      },
+      {
+        "address": 161116,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 19
+      },
+      {
+        "address": 161124,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 22
+      },
+      {
+        "address": 161132,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 24
+      },
+      {
+        "address": 161140,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 25
+      },
+      {
+        "address": 161176,
+        "library": "sysclib",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 8
+      },
+      {
+        "address": 161184,
+        "library": "sysclib",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 29
+      },
+      {
+        "address": 161192,
+        "library": "sysclib",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 36
+      },
+      {
+        "address": 161228,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 4
+      },
+      {
+        "address": 161236,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 5
+      },
+      {
+        "address": 161244,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 6
+      },
+      {
+        "address": 161252,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 10
+      },
+      {
+        "address": 161260,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 14
+      },
+      {
+        "address": 161268,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 20
+      },
+      {
+        "address": 161276,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 22
+      },
+      {
+        "address": 161284,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 24
+      },
+      {
+        "address": 161292,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 26
+      },
+      {
+        "address": 161300,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 28
+      }
+    ],
+    "unmapped_stub_candidates": [],
+    "interpreter_fallback_candidates": []
+  },
+  {
+    "capture": "MSL_B00028100_H7308BB2C3E647540",
+    "module": "MSL",
+    "base": 164096,
+    "size": 65552,
+    "fnv1a64": "7308BB2C3E647540",
+    "function": "iopn_MSL_B00028100_H7308BB2C3E647540_28100",
+    "source": "iopn_MSL_B00028100_H7308BB2C3E647540_28100.cpp",
+    "import_function": "iop_imports_MSL_B00028100_H7308BB2C3E647540_28100",
+    "import_source": "iop_imports_MSL_B00028100_H7308BB2C3E647540_28100.cpp",
+    "imports": [
+      {
+        "address": 164116,
+        "library": "sysmem",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 4
+      },
+      {
+        "address": 164124,
+        "library": "sysmem",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 5
+      },
+      {
+        "address": 164132,
+        "library": "sysmem",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 7
+      },
+      {
+        "address": 164140,
+        "library": "sysmem",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 8
+      },
+      {
+        "address": 164176,
+        "library": "intrman",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 17
+      },
+      {
+        "address": 164184,
+        "library": "intrman",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 18
+      },
+      {
+        "address": 164220,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 14
+      },
+      {
+        "address": 164228,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 17
+      },
+      {
+        "address": 164236,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 19
+      },
+      {
+        "address": 164244,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 22
+      },
+      {
+        "address": 164280,
+        "library": "sifman",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 5
+      },
+      {
+        "address": 164288,
+        "library": "sifman",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 29
+      },
+      {
+        "address": 164324,
+        "library": "sysclib",
+        "version": 260,
+        "version_word": 260,
+        "ordinal": 12
+      },
+      {
+        "address": 164332,
+        "library": "sysclib",
+        "version": 260,
+        "version_word": 260,
+        "ordinal": 14
+      },
+      {
+        "address": 164340,
+        "library": "sysclib",
+        "version": 260,
+        "version_word": 260,
+        "ordinal": 19
+      },
+      {
+        "address": 164348,
+        "library": "sysclib",
+        "version": 260,
+        "version_word": 260,
+        "ordinal": 20
+      },
+      {
+        "address": 164356,
+        "library": "sysclib",
+        "version": 260,
+        "version_word": 260,
+        "ordinal": 21
+      },
+      {
+        "address": 164364,
+        "library": "sysclib",
+        "version": 260,
+        "version_word": 260,
+        "ordinal": 23
+      },
+      {
+        "address": 164372,
+        "library": "sysclib",
+        "version": 260,
+        "version_word": 260,
+        "ordinal": 27
+      },
+      {
+        "address": 164380,
+        "library": "sysclib",
+        "version": 260,
+        "version_word": 260,
+        "ordinal": 30
+      },
+      {
+        "address": 164416,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 4
+      },
+      {
+        "address": 164424,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 5
+      },
+      {
+        "address": 164432,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 6
+      },
+      {
+        "address": 164440,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 8
+      },
+      {
+        "address": 164448,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 10
+      },
+      {
+        "address": 164456,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 16
+      },
+      {
+        "address": 164464,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 20
+      },
+      {
+        "address": 164472,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 33
+      },
+      {
+        "address": 164480,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 34
+      },
+      {
+        "address": 164488,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 39
+      },
+      {
+        "address": 164496,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 40
+      },
+      {
+        "address": 164504,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 42
+      },
+      {
+        "address": 164540,
+        "library": "thsemap",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 4
+      },
+      {
+        "address": 164548,
+        "library": "thsemap",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 5
+      },
+      {
+        "address": 164556,
+        "library": "thsemap",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 6
+      },
+      {
+        "address": 164564,
+        "library": "thsemap",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 7
+      },
+      {
+        "address": 164572,
+        "library": "thsemap",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 8
+      },
+      {
+        "address": 164608,
+        "library": "thmsgbx",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 4
+      },
+      {
+        "address": 164616,
+        "library": "thmsgbx",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 6
+      },
+      {
+        "address": 164624,
+        "library": "thmsgbx",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 7
+      },
+      {
+        "address": 164632,
+        "library": "thmsgbx",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 8
+      },
+      {
+        "address": 164668,
+        "library": "timrman",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 4
+      },
+      {
+        "address": 164676,
+        "library": "timrman",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 20
+      },
+      {
+        "address": 164684,
+        "library": "timrman",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 22
+      },
+      {
+        "address": 164692,
+        "library": "timrman",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 23
+      },
+      {
+        "address": 164700,
+        "library": "timrman",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 24
+      },
+      {
+        "address": 164736,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 4
+      },
+      {
+        "address": 164744,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 5
+      },
+      {
+        "address": 164752,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 7
+      },
+      {
+        "address": 164760,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 8
+      },
+      {
+        "address": 164768,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 9
+      },
+      {
+        "address": 164776,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 10
+      },
+      {
+        "address": 164784,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 17
+      },
+      {
+        "address": 164792,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 19
+      },
+      {
+        "address": 164800,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 26
+      },
+      {
+        "address": 164836,
+        "library": "mwfile",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 4
+      },
+      {
+        "address": 164844,
+        "library": "mwfile",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 5
+      },
+      {
+        "address": 164852,
+        "library": "mwfile",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 8
+      },
+      {
+        "address": 164860,
+        "library": "mwfile",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 9
+      },
+      {
+        "address": 164868,
+        "library": "mwfile",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 10
+      },
+      {
+        "address": 164876,
+        "library": "mwfile",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 13
+      },
+      {
+        "address": 164884,
+        "library": "mwfile",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 14
+      },
+      {
+        "address": 164892,
+        "library": "mwfile",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 15
+      },
+      {
+        "address": 164900,
+        "library": "mwfile",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 16
+      }
+    ],
+    "unmapped_stub_candidates": [],
+    "interpreter_fallback_candidates": []
+  },
+  {
+    "capture": "CRI_ADXI_B00071300_H990112CDFA87D073",
+    "module": "CRI_ADXI",
+    "base": 463616,
+    "size": 38176,
+    "fnv1a64": "990112CDFA87D073",
+    "function": "iopn_CRI_ADXI_B00071300_H990112CDFA87D073_71300",
+    "source": "iopn_CRI_ADXI_B00071300_H990112CDFA87D073_71300.cpp",
+    "import_function": "iop_imports_CRI_ADXI_B00071300_H990112CDFA87D073_71300",
+    "import_source": "iop_imports_CRI_ADXI_B00071300_H990112CDFA87D073_71300.cpp",
+    "imports": [
+      {
+        "address": 501188,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 4
+      },
+      {
+        "address": 501196,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 5
+      },
+      {
+        "address": 501204,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 6
+      },
+      {
+        "address": 501212,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 11
+      },
+      {
+        "address": 501220,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 17
+      },
+      {
+        "address": 501228,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 18
+      },
+      {
+        "address": 501236,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 19
+      },
+      {
+        "address": 501244,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 20
+      },
+      {
+        "address": 501252,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 26
+      },
+      {
+        "address": 501260,
+        "library": "libsd",
+        "version": 261,
+        "version_word": 261,
+        "ordinal": 28
+      },
+      {
+        "address": 501296,
+        "library": "intrman",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 17
+      },
+      {
+        "address": 501304,
+        "library": "intrman",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 18
+      },
+      {
+        "address": 501340,
+        "library": "loadcore",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 5
+      },
+      {
+        "address": 501376,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 14
+      },
+      {
+        "address": 501384,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 16
+      },
+      {
+        "address": 501392,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 17
+      },
+      {
+        "address": 501400,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 19
+      },
+      {
+        "address": 501408,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 22
+      },
+      {
+        "address": 501416,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 24
+      },
+      {
+        "address": 501424,
+        "library": "sifcmd",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 25
+      },
+      {
+        "address": 501460,
+        "library": "sifman",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 5
+      },
+      {
+        "address": 501468,
+        "library": "sifman",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 7
+      },
+      {
+        "address": 501476,
+        "library": "sifman",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 29
+      },
+      {
+        "address": 501512,
+        "library": "stdio",
+        "version": 259,
+        "version_word": 259,
+        "ordinal": 4
+      },
+      {
+        "address": 501548,
+        "library": "sysclib",
+        "version": 260,
+        "version_word": 260,
+        "ordinal": 8
+      },
+      {
+        "address": 501556,
+        "library": "sysclib",
+        "version": 260,
+        "version_word": 260,
+        "ordinal": 11
+      },
+      {
+        "address": 501564,
+        "library": "sysclib",
+        "version": 260,
+        "version_word": 260,
+        "ordinal": 12
+      },
+      {
+        "address": 501572,
+        "library": "sysclib",
+        "version": 260,
+        "version_word": 260,
+        "ordinal": 14
+      },
+      {
+        "address": 501580,
+        "library": "sysclib",
+        "version": 260,
+        "version_word": 260,
+        "ordinal": 19
+      },
+      {
+        "address": 501588,
+        "library": "sysclib",
+        "version": 260,
+        "version_word": 260,
+        "ordinal": 29
+      },
+      {
+        "address": 501596,
+        "library": "sysclib",
+        "version": 260,
+        "version_word": 260,
+        "ordinal": 30
+      },
+      {
+        "address": 501604,
+        "library": "sysclib",
+        "version": 260,
+        "version_word": 260,
+        "ordinal": 36
+      },
+      {
+        "address": 501640,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 4
+      },
+      {
+        "address": 501648,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 5
+      },
+      {
+        "address": 501656,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 6
+      },
+      {
+        "address": 501664,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 10
+      },
+      {
+        "address": 501672,
+        "library": "thbase",
+        "version": 258,
+        "version_word": 258,
+        "ordinal": 20
+      },
+      {
+        "address": 501708,
+        "library": "thsemap",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 4
+      },
+      {
+        "address": 501716,
+        "library": "thsemap",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 5
+      },
+      {
+        "address": 501724,
+        "library": "thsemap",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 7
+      },
+      {
+        "address": 501732,
+        "library": "thsemap",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 8
+      },
+      {
+        "address": 501768,
+        "library": "vblank",
+        "version": 257,
+        "version_word": 257,
+        "ordinal": 5
+      }
+    ],
+    "unmapped_stub_candidates": [],
+    "interpreter_fallback_candidates": []
+  }
+]

@@ -5,8 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(PS2_GENERATED "" CACHE PATH "Folder with the C++ generated for a game")
-set(PS2_IOP_AOT_IMPORTS "" CACHE PATH "Folder containing generated native IOP import bridges and registry")
-set(PS2_IOP_AOT_MODULES "" CACHE PATH "Folder containing generated native IOP module bodies and registry")
+set(PS2_IOP_AOT_IMPORTS "${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/iop/generated_modules" CACHE PATH "Folder containing generated native IOP import bridges and registry")
+set(PS2_IOP_AOT_MODULES "${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/iop/generated_modules" CACHE PATH "Folder containing generated native IOP module bodies and registry")
 set(PS2_RUNTIME_LIB "" CACHE FILEPATH "libps2runtime.a built earlier from this source tree (scripts/runtime.sh); a game links it instead of compiling the runtime again")
 
 if(WIN32)
