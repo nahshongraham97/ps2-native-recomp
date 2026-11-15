@@ -1059,7 +1059,9 @@ void boot() {
     g_hle_stubs.clear();
     g_hle_versions.clear();
     g_libraries.clear();
+    g_native_modules.clear();
     g_native_exports.clear();
+    g_hle_modules.clear();
     g_modules.clear();
 #ifdef PS2_IOP_AOT_IMPORTS_ENABLED
     g_compiled_import_modules.clear();
