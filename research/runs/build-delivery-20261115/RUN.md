@@ -1,9 +1,9 @@
 # Build delivery — 2026-11-15 (census survives shutdown)
 
-- Commit: `dcfaf3a`..`<head>` on `main` (`external/forks/ps2-native-recomp`)
-- Runner: `build_native_gl_full/ps2run.exe`, 2026-11-15 16:31, 75,948,032 bytes
-- SHA-256: `435ce55ae7de51a7dcbc4c93f16e27aa572a76fb46bce7d3209f75ed43062aa7`
-- Replaced runner: `8600a796a34df9d9728cbd1e60c2fd0f3fbf3c073fd5c1135724027f407fa78d`
+- Commit: `dfc4076` on `main` (`external/forks/ps2-native-recomp`), built from a clean tree
+- Runner: `build_native_gl_full/ps2run.exe`, 2026-11-15 16:44, 75,948,032 bytes
+- SHA-256: `6b2335a1b6503960a941b7872bedd2a12dd546a61b95ae8ace3e39341cf1bb99`
+- Replaced runner: `435ce55ae7de51a7dcbc4c93f16e27aa572a76fb46bce7d3209f75ed43062aa7`
 
 ## Why the census was lost, and what actually limits a log
 
