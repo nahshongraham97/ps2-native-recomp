@@ -32,4 +32,9 @@ void render_stream_sample(int core, const bool input_wet[2], std::int32_t dry[2]
                           std::int16_t &raw_l, std::int16_t &raw_r, const std::uint16_t bvol[2]);
 void render_voices_batch(int core, std::size_t batch_frames, std::int32_t (*dry)[2], std::int32_t (*wet)[2]);
 
+// Frame hook: called once per rendered audio batch with the number of frames
+// it covers. The native sound service uses it to advance its sequencer's note
+// timing in step with the mixer.
+void set_frame_hook(void (*hook)(std::size_t frames));
+
 } // namespace ps2::iop::audio_native

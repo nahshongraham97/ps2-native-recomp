@@ -4,6 +4,7 @@
 #include "libsd_native.hpp"
 #include "mcserv.hpp"
 #include "mwfilefr.hpp"
+#include "msl_native.hpp"
 #include "padman.hpp"
 #include "sif.hpp"
 #include "sio2.hpp"
@@ -304,6 +305,29 @@ void install_native_modules() {
     mwfile_library.exports.push_back({16, mwfilefr_ordinal16_worker_dispatch_import});
     mwfilefr.libraries.push_back(std::move(mwfile_library));
     register_native_module(std::move(mwfilefr));
+
+    // The retail sound server (MSL) and its sound driver (SDRDRV) are replaced
+    // by the native sound service (msl_native.cpp). The loader keeps each
+    // module's captured IOP base reserved so the layout other modules expect
+    // still holds, but the guest IRX bytes are not loaded and the captured
+    // bodies never run: no guest SIF service remains on the accepted route,
+    // and the sound server's command list is parsed natively instead.
+    NativeIopModule msl_module;
+    msl_module.name = "MSL";
+    msl_module.start = [](const std::string &) {
+        msl_native::install();
+        return true;
+    };
+    register_native_module(std::move(msl_module));
+
+    NativeIopModule sdrdrv_module;
+    sdrdrv_module.name = "SDRDRV";
+    sdrdrv_module.start = [](const std::string &) {
+        // The retail sound driver's own SIF endpoint never received a call in
+        // the captured runs; the native sound service needs no driver module.
+        return true;
+    };
+    register_native_module(std::move(sdrdrv_module));
     g_native_modules_registered = true;
 }
 

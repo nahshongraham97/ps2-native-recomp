@@ -208,6 +208,12 @@ void advance_envelope(Voice &v) {
 
 } // namespace
 
+// The native sound service's sequencer advances with the mixer (see
+// set_frame_hook). Nothing else in the engine depends on it.
+void (*g_frame_hook)(std::size_t frames) = nullptr;
+
+void set_frame_hook(void (*hook)(std::size_t frames)) { g_frame_hook = hook; }
+
 std::uint16_t *sound_ram() {
     return spu2::ram();
 }
@@ -500,6 +506,7 @@ void render_stream_sample(int core, const bool input_wet[2], std::int32_t dry[2]
 void render_voices_batch(int core, std::size_t batch_frames, std::int32_t (*dry)[2], std::int32_t (*wet)[2]) {
     const int c = core & 1;
     CoreVoiceState &cv = g_core_voices[c];
+    if (g_frame_hook) g_frame_hook(batch_frames);
 
     for (int i = 0; i < 24; ++i) {
         Voice &v = cv.voices[i];

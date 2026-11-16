@@ -27,8 +27,7 @@ namespace ps2::iop::kernel {
 
 bool mwfilefr_read_host_range(const std::string &path, std::uint64_t open_size,
                               std::uint64_t offset, std::uint8_t *out,
-                              std::uint32_t requested, std::uint32_t &transferred) {
-    transferred = 0;
+                              std::uint32_t requested, std::uint32_t &transferred) {    transferred = 0;
     if (!requested || offset >= open_size) return true;
     if (!out || offset > static_cast<std::uint64_t>(std::numeric_limits<std::streamoff>::max())) return false;
     std::ifstream stream(path, std::ios::binary);
@@ -820,6 +819,22 @@ void mwfilefr_read_import(ps2::iop::Cpu &c) {
                  "requested 0x%X mode=%u -> %u bytes at IOP 0x%08X%s\n",
                  handle, offset, requested, static_cast<unsigned>(mode & 3u), transferred,
                  destination, io_ok ? "" : " (host read incomplete)");
+}
+
+// Reads a byte range from a disc path through the native file service's own
+// resolution (the same mapping the guest MWFILEFR used). The native sound
+// service reads the retail sound bank this way: the bank's layout is decoded
+// from the file itself, not from a guest module.
+bool mwfilefr_read_guest_range(const std::string &guest_path, std::uint64_t offset,
+                               std::uint8_t *out, std::uint32_t requested) {
+    const auto host_path = resolve_host_file(guest_path);
+    if (!host_path) return false;
+    std::error_code ec;
+    const std::uint64_t size = std::filesystem::file_size(*host_path, ec);
+    if (ec) return false;
+    std::uint32_t transferred = 0;
+    if (!mwfilefr_read_host_range(*host_path, size, offset, out, requested, transferred)) return false;
+    return transferred == requested;
 }
 
 void mwfilefr_ordinal13_return_import(ps2::iop::Cpu &c) {

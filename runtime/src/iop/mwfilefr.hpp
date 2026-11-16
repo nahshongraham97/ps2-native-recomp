@@ -22,6 +22,10 @@ bool mwfilefr_read_host_range(const std::string &path, std::uint64_t open_size,
 // Registers the host C++ service for MWFILEFR's observed SIF RPC endpoint.
 // The module descriptor calls this before EE clients bind to the endpoint.
 void install_native_mwfilefr_service();
+// Reads a byte range from a disc path through the native file service's path
+// resolution (the native sound service reads the retail sound bank this way).
+bool mwfilefr_read_guest_range(const std::string &guest_path, std::uint64_t offset,
+                               std::uint8_t *out, std::uint32_t requested);
 // Native C++ implementation of the MWFILEFR mwfile v1.03 ordinal 4 open API.
 void mwfilefr_open_import(ps2::iop::Cpu &c);
 // Native C++ implementation of the MWFILEFR mwfile v1.03 ordinal 5 close API.
