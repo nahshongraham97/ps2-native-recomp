@@ -42,6 +42,9 @@ std::atomic<std::uint64_t> g_spu2_device_ops{0};
 std::atomic<std::int32_t>  g_spu2_peak_sample_val{0};
 std::atomic<std::uint64_t> g_audio_native_frames_mixed{0};
 std::atomic<std::uint64_t> g_audio_native_blocks_consumed{0};
+std::atomic<std::uint64_t> g_audio_native_voices_keyed{0};
+std::atomic<std::uint64_t> g_audio_native_voice_frames_rendered{0};
+std::atomic<std::uint64_t> g_audio_native_adpcm_blocks_decoded{0};
 
 std::atomic<std::uint64_t> g_cdvd_sector_reads{0};
 
@@ -147,6 +150,19 @@ void audio_native_frame_mixed() {
 
 void audio_native_block_consumed() {
     g_audio_native_blocks_consumed.fetch_add(1, std::memory_order_relaxed);
+}
+
+void audio_native_voice_keyed_on(int core, int voice) {
+    (void)core; (void)voice;
+    g_audio_native_voices_keyed.fetch_add(1, std::memory_order_relaxed);
+}
+
+void audio_native_voice_frame_rendered(std::uint64_t count) {
+    g_audio_native_voice_frames_rendered.fetch_add(count, std::memory_order_relaxed);
+}
+
+void audio_native_adpcm_block_decoded() {
+    g_audio_native_adpcm_blocks_decoded.fetch_add(1, std::memory_order_relaxed);
 }
 
 void spu2_peak_sample(std::int16_t left, std::int16_t right) {
@@ -288,9 +304,15 @@ void report() {
 
     const std::uint64_t nat_audio_frames = g_audio_native_frames_mixed.load(std::memory_order_relaxed);
     const std::uint64_t nat_audio_blocks = g_audio_native_blocks_consumed.load(std::memory_order_relaxed);
-    std::fprintf(stderr, "[census] AUDIO: native frames mixed = %llu, blocks consumed = %llu\n",
+    const std::uint64_t nat_voices_keyed = g_audio_native_voices_keyed.load(std::memory_order_relaxed);
+    const std::uint64_t nat_voice_frames = g_audio_native_voice_frames_rendered.load(std::memory_order_relaxed);
+    const std::uint64_t nat_adpcm_blocks = g_audio_native_adpcm_blocks_decoded.load(std::memory_order_relaxed);
+    std::fprintf(stderr, "[census] AUDIO: native frames mixed = %llu, blocks consumed = %llu; voices keyed = %llu, voice frames = %llu, ADPCM blocks = %llu\n",
                  static_cast<unsigned long long>(nat_audio_frames),
-                 static_cast<unsigned long long>(nat_audio_blocks));
+                 static_cast<unsigned long long>(nat_audio_blocks),
+                 static_cast<unsigned long long>(nat_voices_keyed),
+                 static_cast<unsigned long long>(nat_voice_frames),
+                 static_cast<unsigned long long>(nat_adpcm_blocks));
 
     if (locked && !g_card_rpcs_by_method.empty()) {
         std::fprintf(stderr, "[census] CARD : RPCs by method:");

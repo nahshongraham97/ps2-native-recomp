@@ -458,6 +458,7 @@ void tick() {
     static std::uint64_t ticks = 0, active = 0, phases[5] = {};
     for (int c = 0; c < 2; ++c) {
         const Routing route = routing(g_cores[c]);
+        audio_native::render_voices_batch(c, kBatch, sum[c], wet[c]);
         for (int i = 0; i < 24; ++i) {
             Voice &v = g_cores[c].voices[i];
             if (!v.key_on && v.phase == kOff) continue;

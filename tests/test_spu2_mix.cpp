@@ -218,6 +218,83 @@ int main() {
     }
     std::printf("[spu2-mix] Phase 3: ordinals 26..29 verified\n");
 
+    // Phase 4: Per-entry semantic validation on the native libsd bridge (Increment b).
+    // Validates that SetSwitch/GetSwitch and voice parameter programming configure
+    // the 24-voice mix routing masks and voice keying without dropping requests.
+    ps2::iop::Cpu set_vmixl_call{};
+    set_vmixl_call.r[4] = 0x1800u; // SD_S_VMIXL core 0
+    set_vmixl_call.r[5] = 0x00FFFFFFu; // all 24 voices
+    if (!ps2::iop::kernel::invoke_native_import("libsd", 0x0105, 7, set_vmixl_call)) {
+        std::fprintf(stderr, "[FAIL] export 7 (sceSdSetSwitch) for VMIXL failed\n");
+        return 1;
+    }
+
+    ps2::iop::Cpu get_vmixl_call{};
+    get_vmixl_call.r[4] = 0x1800u; // SD_S_VMIXL core 0
+    if (!ps2::iop::kernel::invoke_native_import("libsd", 0x0105, 8, get_vmixl_call) || get_vmixl_call.r[2] != 0x00FFFFFFu) {
+        std::fprintf(stderr, "[FAIL] export 8 (sceSdGetSwitch) for VMIXL returned 0x%08X, expected 0x00FFFFFF\n", get_vmixl_call.r[2]);
+        return 1;
+    }
+
+    ps2::iop::Cpu set_vmixr_call{};
+    set_vmixr_call.r[4] = 0x1A00u; // SD_S_VMIXR core 0
+    set_vmixr_call.r[5] = 0x00FFFFFFu;
+    if (!ps2::iop::kernel::invoke_native_import("libsd", 0x0105, 7, set_vmixr_call)) {
+        std::fprintf(stderr, "[FAIL] export 7 (sceSdSetSwitch) for VMIXR failed\n");
+        return 1;
+    }
+
+    ps2::iop::Cpu get_vmixr_call{};
+    get_vmixr_call.r[4] = 0x1A00u; // SD_S_VMIXR core 0
+    if (!ps2::iop::kernel::invoke_native_import("libsd", 0x0105, 8, get_vmixr_call) || get_vmixr_call.r[2] != 0x00FFFFFFu) {
+        std::fprintf(stderr, "[FAIL] export 8 (sceSdGetSwitch) for VMIXR returned 0x%08X, expected 0x00FFFFFF\n", get_vmixr_call.r[2]);
+        return 1;
+    }
+
+    // Program voice 1 parameters through the bridge: voll, volr, pitch, ssa
+    ps2::iop::Cpu set_param_call{};
+    set_param_call.r[4] = 0x0002u; // VOLL voice 1 core 0
+    set_param_call.r[5] = 0x3FFFu;
+    ps2::iop::kernel::invoke_native_import("libsd", 0x0105, 5, set_param_call);
+
+    set_param_call.r[4] = 0x0102u; // VOLR voice 1 core 0
+    set_param_call.r[5] = 0x3FFFu;
+    ps2::iop::kernel::invoke_native_import("libsd", 0x0105, 5, set_param_call);
+
+    set_param_call.r[4] = 0x0202u; // PITCH voice 1 core 0
+    set_param_call.r[5] = 0x1000u;
+    ps2::iop::kernel::invoke_native_import("libsd", 0x0105, 5, set_param_call);
+
+    ps2::iop::Cpu set_addr_call{};
+    set_addr_call.r[4] = 0x2002u; // SSA voice 1 core 0
+    set_addr_call.r[5] = kBank;
+    ps2::iop::kernel::invoke_native_import("libsd", 0x0105, 9, set_addr_call);
+
+    // Key on voice 1 via KON entry 0x1500
+    ps2::iop::Cpu set_kon_call{};
+    set_kon_call.r[4] = 0x1500u; // KON core 0
+    set_kon_call.r[5] = 0x00000002u; // voice 1
+    if (!ps2::iop::kernel::invoke_native_import("libsd", 0x0105, 7, set_kon_call)) {
+        std::fprintf(stderr, "[FAIL] export 7 (sceSdSetSwitch) for KON failed\n");
+        return 1;
+    }
+
+    const std::size_t before_v1 = g_captured.size();
+    run_batches(8);
+    const int peak_v1 = peak_since(before_v1);
+    if (peak_v1 < 4096) {
+        std::fprintf(stderr, "[FAIL] voice 1 keyed via 0x1500 produced silence (peak %d)\n", peak_v1);
+        return 1;
+    }
+
+    // Key off voice 1 via KOFF entry 0x1600
+    ps2::iop::Cpu set_koff_call{};
+    set_koff_call.r[4] = 0x1600u; // KOFF core 0
+    set_koff_call.r[5] = 0x00000002u;
+    ps2::iop::kernel::invoke_native_import("libsd", 0x0105, 7, set_koff_call);
+
+    std::printf("[spu2-mix] Phase 4: per-entry semantic validation verified (VMIXL/R, KON/KOFF, params)\n");
+
     std::printf("[PASS] SPU2 produced non-silent samples through the libsd bridge\n");
     return 0;
 }

@@ -18,6 +18,9 @@ void spu2_dma(int core, std::uint32_t bytes, bool to_spu);
 void spu2_peak_sample(std::int16_t left, std::int16_t right);
 void audio_native_frame_mixed();
 void audio_native_block_consumed();
+void audio_native_voice_keyed_on(int core, int voice);
+void audio_native_voice_frame_rendered(std::uint64_t count = 1);
+void audio_native_adpcm_block_decoded();
 // One operation at the emulated SPU2 device boundary (spu2::read/write/dma). The acceptance gate
 // forbids an emulated SPU2 on the accepted route: every sound platform call must terminate in the
 // native audio service, not in a PS2 chip register file. This counter is that violation's magnitude

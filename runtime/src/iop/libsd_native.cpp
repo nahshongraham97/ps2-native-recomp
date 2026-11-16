@@ -111,6 +111,12 @@ std::uint32_t param_address(std::uint32_t entry) {
 }
 
 bool set_param(std::uint32_t entry, std::uint16_t value) {
+    const std::uint32_t index = (entry >> 8) & 0xFFu;
+    const std::uint32_t core = entry & 1u;
+    const std::uint32_t voice = (entry >> 1) & 0x1Fu;
+    if (index < 8 && voice < 24) {
+        audio_native::set_voice_param(core, voice, index, value);
+    }
     const std::uint32_t address = param_address(entry);
     if (address == 0xFFFFFFFFu) return false;
     spu2::write(kSpuBase + address, value, 2);
@@ -118,6 +124,12 @@ bool set_param(std::uint32_t entry, std::uint16_t value) {
 }
 
 bool get_param(std::uint32_t entry, std::uint16_t &value) {
+    const std::uint32_t index = (entry >> 8) & 0xFFu;
+    const std::uint32_t core = entry & 1u;
+    const std::uint32_t voice = (entry >> 1) & 0x1Fu;
+    if (index < 8 && voice < 24 && audio_native::get_voice_param(core, voice, index, value)) {
+        return true;
+    }
     const std::uint32_t address = param_address(entry);
     if (address == 0xFFFFFFFFu) return false;
     value = static_cast<std::uint16_t>(spu2::read(kSpuBase + address, 2));
@@ -127,7 +139,9 @@ bool get_param(std::uint32_t entry, std::uint16_t &value) {
 bool set_switch(std::uint32_t entry, std::uint32_t value) {
     const std::uint32_t index = (entry >> 8) & 0xFFu;
     if (index >= kParamRegisterOffsets.size()) return false;
-    const std::uint32_t address = kParamRegisterOffsets[index] + ((entry & 1u) << 10);
+    const std::uint32_t core = entry & 1u;
+    audio_native::set_switch(core, index, value);
+    const std::uint32_t address = kParamRegisterOffsets[index] + (core << 10);
     spu2::write(kSpuBase + address, value & 0xFFFFu, 2);
     spu2::write(kSpuBase + address + 2u, (value >> 16) & 0xFFu, 2);
     return true;
@@ -136,7 +150,11 @@ bool set_switch(std::uint32_t entry, std::uint32_t value) {
 bool get_switch(std::uint32_t entry, std::uint32_t &value) {
     const std::uint32_t index = (entry >> 8) & 0xFFu;
     if (index >= kParamRegisterOffsets.size()) return false;
-    const std::uint32_t address = kParamRegisterOffsets[index] + ((entry & 1u) << 10);
+    const std::uint32_t core = entry & 1u;
+    if (audio_native::get_switch(core, index, value)) {
+        return true;
+    }
+    const std::uint32_t address = kParamRegisterOffsets[index] + (core << 10);
     value = (spu2::read(kSpuBase + address, 2) & 0xFFFFu) |
             ((spu2::read(kSpuBase + address + 2u, 2) & 0xFFFFu) << 16);
     return true;
@@ -144,8 +162,13 @@ bool get_switch(std::uint32_t entry, std::uint32_t &value) {
 
 bool set_addr(std::uint32_t entry, std::uint32_t value) {
     const std::uint32_t index = (entry >> 8) & 0xFFu;
+    const std::uint32_t core = entry & 1u;
+    const std::uint32_t voice = (entry >> 1) & 0x1Fu;
+    if ((index >= 32 && index <= 34) && voice < 24) {
+        audio_native::set_voice_addr(core, voice, index, value);
+    }
     if (index >= kParamRegisterOffsets.size()) return false;
-    const std::uint32_t address = kParamRegisterOffsets[index] + ((entry & 1u) << 10) + ((entry & 0x3Eu) * 6u);
+    const std::uint32_t address = kParamRegisterOffsets[index] + (core << 10) + ((entry & 0x3Eu) * 6u);
     spu2::write(kSpuBase + address, (value >> 17) & 0xFFFFu, 2);
     if (index != 29u) spu2::write(kSpuBase + address + 2u, (value >> 1) & 0xFFF8u, 2);
     return true;
@@ -153,8 +176,13 @@ bool set_addr(std::uint32_t entry, std::uint32_t value) {
 
 bool get_addr(std::uint32_t entry, std::uint32_t &value) {
     const std::uint32_t index = (entry >> 8) & 0xFFu;
+    const std::uint32_t core = entry & 1u;
+    const std::uint32_t voice = (entry >> 1) & 0x1Fu;
+    if ((index >= 32 && index <= 34) && voice < 24 && audio_native::get_voice_addr(core, voice, index, value)) {
+        return true;
+    }
     if (index >= kParamRegisterOffsets.size()) return false;
-    const std::uint32_t address = kParamRegisterOffsets[index] + ((entry & 1u) << 10) + ((entry & 0x3Eu) * 6u);
+    const std::uint32_t address = kParamRegisterOffsets[index] + (core << 10) + ((entry & 0x3Eu) * 6u);
     const std::uint32_t high = (spu2::read(kSpuBase + address, 2) & 0xFFFFu) << 17;
     if (index == 29u) {
         value = high | 0x1FFFFu;
