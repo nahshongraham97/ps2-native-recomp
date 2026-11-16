@@ -3,6 +3,7 @@
 #include "tables.hpp"
 #include "../dmac.hpp"
 #include "../hw.hpp"
+#include "../media/vlc.hpp"
 
 #include "ps2/os.hpp"
 #include "ps2/state.hpp"
@@ -35,69 +36,17 @@ constexpr std::uint8_t kDefaultIntra[64] = {
 constexpr std::uint8_t kNonLinearScale[32] = {0,  1,  2,  3,  4,  5,  6,  7,  8,  10, 12, 14, 16, 18, 20, 22,
                                               24, 28, 32, 36, 40, 44, 48, 52, 56, 64, 72, 80, 88, 96, 104, 112};
 
-struct Entry {
-    std::uint8_t length = 0;
-    std::uint32_t value = 0;
-};
+// The variable length code lookups live in media/vlc.hpp: the native
+// MPEG-2 decoder that replaces this chip on the accepted route reads the same
+// tables.
+using media::vlc::DctEntry;
+using media::vlc::DctLookup;
+using media::vlc::Entry;
+using media::vlc::Lookup;
+using media::vlc::Tables;
+using media::vlc::build;
 
-struct Lookup {
-    unsigned bits = 0;
-    std::vector<Entry> entries;
-};
-
-struct DctEntry {
-    std::uint8_t length = 0;
-    std::uint8_t run = 0;
-    std::int16_t level = 0;
-};
-
-struct DctLookup {
-    unsigned bits = 0;
-    std::vector<DctEntry> entries;
-};
-
-template <std::size_t N>
-Lookup build(const Vlc (&table)[N]) {
-    Lookup l;
-    for (const Vlc &e : table) l.bits = std::max<unsigned>(l.bits, e.length);
-    l.entries.resize(std::size_t{1} << l.bits);
-    for (const Vlc &e : table) {
-        const unsigned shift = l.bits - e.length;
-        for (std::uint32_t i = 0; i < (1u << shift); ++i) l.entries[(static_cast<std::uint32_t>(e.code) << shift) | i] = {e.length, e.value};
-    }
-    return l;
-}
-
-template <std::size_t N>
-DctLookup build(const Dct (&table)[N]) {
-    DctLookup l;
-    for (const Dct &e : table) l.bits = std::max<unsigned>(l.bits, e.length);
-    l.entries.resize(std::size_t{1} << l.bits);
-    for (const Dct &e : table) {
-        const unsigned shift = l.bits - e.length;
-        for (std::uint32_t i = 0; i < (1u << shift); ++i) l.entries[(static_cast<std::uint32_t>(e.code) << shift) | i] = {e.length, e.run, e.level};
-    }
-    return l;
-}
-
-struct Tables {
-    Lookup mbai = build(kMbAddressIncrement), mb_i = build(kMbTypeI), mb_p = build(kMbTypeP), mb_b = build(kMbTypeB);
-    Lookup motion = build(kMotionCode), dmv = build(kDmVector), dc_luma = build(kDcSizeLuma), dc_chroma = build(kDcSizeChroma);
-    Lookup cbp = build(kCodedBlockPattern);
-    DctLookup dct0 = build(kDctTable0), dct1 = build(kDctTable1);
-    double cosines[8][8];
-
-    Tables() {
-        for (int x = 0; x < 8; ++x)
-            for (int u = 0; u < 8; ++u)
-                cosines[x][u] = (u ? 0.5 : 0.5 / std::sqrt(2.0)) * std::cos((2 * x + 1) * u * 3.14159265358979323846 / 16.0);
-    }
-};
-
-const Tables &tables() {
-    static const Tables t;
-    return t;
-}
+const media::vlc::Tables &tables() { return media::vlc::tables(); }
 
 enum Command { kBclr, kIdec, kBdec, kVdec, kFdec, kSetiq, kSetvq, kCsc, kPack, kSetth };
 
