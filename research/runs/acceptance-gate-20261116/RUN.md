@@ -113,3 +113,15 @@ ADX module - the movie path is still open work (programme step 4).
 | the host-side VRAM array as the source of truth | open - the guest's writes reach the native textures now; the *first* fill of a native texture still comes from the host-side array |
 | the 16-bit framebuffer's per-pixel destination alpha | open - the last fidelity gap the census names |
 | the modes, played and fixed | open - a gameplay list, not a coverage list |
+
+## Later history (this record is a snapshot of that build, not the current state)
+
+* The build this record describes had its **rendering** reverted later the
+  same day (`13c62b0`): the GS write-through push and the texture-base-unit
+  change made the picture electronic static, so both came out and the GS
+  counter went back to counting the transfers that do not reach a native
+  resource (16,192 in a 900 frame probe). The gate line in this record is
+  what that build measured; it is not the current state.
+* The census in this record does not count the IPU, which is still emulated.
+  See `../audio-and-text-20261116/RUN.md` and the project's `PORT_STATUS.md`
+  for the current state and the work list.
