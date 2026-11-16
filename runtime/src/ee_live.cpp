@@ -32,6 +32,7 @@ void frame_tick() {}
 #include <cstring>
 #include <deque>
 #include <fstream>
+#include <iomanip>
 #include <iterator>
 #include <map>
 #include <memory>
@@ -115,6 +116,7 @@ struct State {
     std::map<std::string, std::string> overlay_kept;   // image name -> the image in overlays\ that stands for it (itself, or a near copy that was there before)
     bool overlay_limit_said = false;      // the log line about the overlay limits was written
     std::set<std::string> whole;          // window images that were translated as a whole (marker files in the cache): later misses translate only what they reach
+    std::set<std::string> recorded_images;  // the loaded images the manifest already names
     std::set<std::uint32_t> flat_started; // bases of loaded-code runs (memory the program never mentions) that were translated as a whole in this run
     std::unique_ptr<recomp::StaticProgram> program_analysis;   // built at the first translation, for the calls into a window (under prep_mutex)
     std::vector<std::uint32_t> main_entries;
@@ -954,6 +956,37 @@ bool active() { return g && g->ready; }
 // proper is read to 0x001EA000 and called from there). There is no window and no segment to go by, so the run of non-empty 16 KiB units
 // around the address is the image, as for a window, only longer: such a program is 1 to 2 MiB with data between its code.
 constexpr std::uint32_t kLoadedCap = 0x400000;
+// Every image the game loads is recorded with its base, its size and the first
+// bytes of its content. Nothing may be translated while the game runs
+// (NATIVE_PORT_ONLY.md), so the build has to find each image in the disc and
+// translate it whole before the game starts. The record is what makes that
+// possible without a run: the image is named after the CRC-32 of its bytes,
+// and the prefix says what to look for in the disc's files.
+void record_loaded_image(std::uint32_t base, std::uint32_t size) {
+    if (!g || !g->ready || g->cache.empty() || size < 0x400u) return;
+    const std::string name = recomp::window_name(base, g_ram + base, size);
+    if (!g->recorded_images.insert(name).second) return;
+    std::ofstream out(g->cache / "images.txt", std::ios::app);
+    if (!out) return;
+    out << name << ' ' << std::hex << base << ' ' << size << ' ';
+    for (std::uint32_t i = 0; i < 64 && i < size; ++i)
+        out << std::setw(2) << std::setfill('0') << static_cast<unsigned>(g_ram[base + i]);
+    out << std::dec << std::endl;
+    out.flush();
+    // The image itself is saved when the build asked for captures. The image is
+    // data, not code: saving it is what lets the build translate it whole, so
+    // that nothing has to be translated while the game runs.
+    const std::string capture_dir = ps2::os::env("PS2_CAPTURE_AOT_DIR");
+    if (!capture_dir.empty()) {
+        std::error_code error;
+        std::filesystem::create_directories(capture_dir, error);
+        std::ofstream image(std::filesystem::path(capture_dir) / (name + ".bin"), std::ios::binary);
+        if (image) {
+            image.write(reinterpret_cast<const char *>(g_ram + base), size);
+            image.flush();
+        }
+    }
+}
 bool loaded_run(std::uint32_t pc, std::uint32_t &base, std::uint32_t &size) {
     constexpr std::uint32_t kUnit = recomp::kWindowUnit, kLowest = 0x00100000u;
     if (pc < kLowest || pc >= kRamSize || (pc & 3u)) return false;
@@ -980,6 +1013,7 @@ bool loaded_run(std::uint32_t pc, std::uint32_t &base, std::uint32_t &size) {
     if (end - begin < 0x400u) return false;
     base = begin;
     size = end - begin;
+    record_loaded_image(base, size);
     return true;
 }
 
