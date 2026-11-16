@@ -1,3 +1,51 @@
+# Build delivery — 2026-11-16 (native sound service; MSL/SDRDRV bodies retired)
+
+- Commit: `ccaf554` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
+  (stamp: `commit ccaf554 clean, built 2026-11-16T18:15:57Z, Release, Clang-23.1.3`)
+- Runner: `build_native_gl_full/ps2run.exe`, 2026-11-16 18:15
+- SHA-256: `d3ea5c2522e79edd97245108ee3089badf771fea7e3e91939780eb08e08c8b74`
+- Increment 4 step 3 — **the runtime now owns the sound server's SIF endpoint** (`runtime/src/iop/msl_native.cpp`):
+  - **Protocol (decoded from the captured MSL body, the retail bank and the 11:14 log):** the play
+    request is `op3` id 0 with the sound number as the value (the run shows MSL storing 101 then
+    102 at `0x4CDA4`); `op3` id `0x100FC` is the staging-buffer handshake (answered with
+    `0x4C9E4`, as the retail server did); `op6` stages a block, `op4` executes it, `op9`/`op0A`
+    load a bank, `op0x0B`/`0x0D`/`0x11`/`0x0C` are flags, `op0x4B` is a query. The reply is four
+    words, as the retail server's was.
+  - **Bank format (from the retail file, `disc-files/SNDSPS2/MSLASSET.MS2`):** header
+    `[2][8705 sound count][110748 table bytes]`, then 9229 twelve-byte entries
+    `[id][offset][size]`; the data at an entry's offset is `[count][count * sub-sample index]`, and
+    each sub-sample is another table entry whose `[offset][size]` points at the sample in the
+    SPU2's own ADPCM block format.
+  - **Playback:** the sample is copied into the sound RAM at the voice's start address,
+    VOLL/VOLR/PITCH are set, the voice is keyed on, and the sequencer advances with the mixer's
+    frame tick (the native engine grew a frame hook for it).
+  - **The captured MSL and SDRDRV bodies are no longer loaded:** the loader keeps each module's
+    captured IOP base reserved (so the layout other modules expect still holds) but does not load
+    the guest IRX bytes - **no guest SIF service remains for the sound server**.
+  - The native file service gained a guest-path byte-range reader
+    (`mwfilefr_read_guest_range`) so the bank is read through the same disc-path resolution the
+    guest MWFILEFR used.
+- Suites (final binaries): `test_spu2_mix` PASS, `test_gl_vs_raster` 18/18, `test_native_gl_alpha`
+  PASS, `test_gl_lazy_readback` PASS, `test_iop_native_module` PASS.
+- Replaced runner: `4d154395e072e8acc3917b85636852b333694e0bfd1ffd15706d219dde974371`
+  (`01d80fc clean` — sound decode, channel-pool watch, missing mwfile exports)
+- Acceptance for this increment (measured on the next run): the census's `SIF ... through
+  guest-registered servers` must be 0 for sid `0x00012345`, `voices keyed` must be > 0, and the
+  game must still boot and navigate.
+- Still open (the rest of the gate, with the code sites mapped): **SPU2 chip-model ops** (961) -
+  the emulated chip's register file has to move into the native engine: `libsd_native.cpp` mirrors
+  every voice register into `spu2::write/read` (about 30 sites) and the native engine's parameter
+  indices use a different convention than the chip's (`libsd_native.cpp:33` holds the chip's
+  register map), so the mapping has to be ported before the mirror can go; **CDVD device reads**
+  (15,836) - `cdvd_native.cpp:118` counts the device reads that the native content volume
+  already serves; **GS transfers stopped in emulated VRAM** (272,440) - the transfers that end in
+  the emulated VRAM instead of a native GL texture; **EE live translations** (2 per run) - the
+  PCs are logged now, so the missing windows can be captured.
+- Delivery history: `435ce55ae7de51a7dcbc4c93f16e27aa572a76fb46bce7d3209f75ed43062aa7`
+  → `8600a796…` → `6b2335a1…` → `bd7479bd…` → `13424cdb…` → `9141cd27…` → `eaf36b36…`
+  → `2c16e7af…` → `cd686675…` → `E536E22C…` → `47075BB1…` → `78a0c1f6…` → `daef9fb5…`
+  → `d8266fcf…` → `52102daf…` → `0190f570…` → `4d154395…` → `d3ea5c25…`
+
 # Build delivery — 2026-11-16 (sound-service decode + channel-pool watch + missing mwfile exports)
 
 - Commit: `01d80fc` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
