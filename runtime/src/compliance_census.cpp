@@ -29,6 +29,8 @@ std::atomic<std::uint64_t> g_sif_unknown{0};
 std::atomic<std::uint64_t> g_gs_transfers_applied{0};
 std::atomic<std::uint64_t> g_gs_transfers_skipped{0};
 std::atomic<std::uint64_t> g_gs_primitives{0};
+std::atomic<std::uint64_t> g_movie_blit_ran{0};
+std::atomic<std::uint64_t> g_movie_blit_skipped{0};
 
 std::atomic<std::uint64_t> g_spu2_key_ons{0};
 std::atomic<std::uint64_t> g_spu2_key_offs{0};
@@ -106,6 +108,12 @@ void gs_primitive(std::uint32_t fbp) {
     g_gs_primitives.fetch_add(1, std::memory_order_relaxed);
     std::lock_guard<std::mutex> lock(g_mutex);
     g_gs_primitives_by_target[fbp]++;
+}
+
+void movie_present(bool blit_ran, bool source_existed) {
+    if (!source_existed) return;
+    if (blit_ran) g_movie_blit_ran.fetch_add(1, std::memory_order_relaxed);
+    else g_movie_blit_skipped.fetch_add(1, std::memory_order_relaxed);
 }
 
 void spu2_key_on(int core, int voice) {
@@ -253,6 +261,14 @@ void report() {
                  static_cast<unsigned long long>(gs_app),
                  static_cast<unsigned long long>(gs_skp),
                  static_cast<unsigned long long>(gs_prm));
+
+    const std::uint64_t blit_ok = g_movie_blit_ran.load(std::memory_order_relaxed);
+    const std::uint64_t blit_skip = g_movie_blit_skipped.load(std::memory_order_relaxed);
+    if (blit_ok > 0 || blit_skip > 0) {
+        std::fprintf(stderr, "[census] MOVIE : presents with blit = %llu, blit skipped = %llu\n",
+                     static_cast<unsigned long long>(blit_ok),
+                     static_cast<unsigned long long>(blit_skip));
+    }
 
     const std::uint64_t kon = g_spu2_key_ons.load(std::memory_order_relaxed);
     const std::uint64_t koff = g_spu2_key_offs.load(std::memory_order_relaxed);

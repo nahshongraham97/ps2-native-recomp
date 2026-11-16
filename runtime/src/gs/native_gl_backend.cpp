@@ -1245,16 +1245,43 @@ bool present_frame(const DisplayRegs &regs) {
         g_evicted_color[target->fbp] = false;
     }
 
+    SceneTarget *movie_source = find_scene_target(280);
+    const bool movie_existed = (movie_source && movie_source->write_count > 0 && movie_source != target);
+    bool blit_ran = false;
+
+    static std::uint64_t s_last_vram_gen = 0;
+    const std::uint64_t cur_vram_gen = gs::g_vram_generation;
+    const bool vram_gen_changed = (cur_vram_gen != s_last_vram_gen);
+    s_last_vram_gen = cur_vram_gen;
+
     if (target->prim_count == 0 && target->write_count == 0) {
-        SceneTarget *movie_source = find_scene_target(280);
-        if (movie_source && movie_source->write_count > 0 && movie_source != target) {
+        if (movie_existed) {
             g_bind_framebuffer(GL_READ_FRAMEBUFFER, movie_source->framebuffer);
             g_bind_framebuffer(GL_DRAW_FRAMEBUFFER, target->framebuffer);
             g_blit_framebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
             target->write_count = movie_source->write_count;
             target->last_write_tick = movie_source->last_write_tick;
+            blit_ran = true;
             std::fprintf(stderr, "[native-gl] sampled offscreen target FBP=%u into presentation FBP=%u\n",
                          movie_source->fbp, target->fbp);
+        }
+    }
+
+    if (movie_existed) {
+        ps2::census::movie_present(blit_ran, true);
+        static unsigned s_movie_log_counter = 0;
+        if (++s_movie_log_counter <= 200 || (s_movie_log_counter % 60 == 0)) {
+            std::fprintf(stderr,
+                         "[native-gl-movie-present #%u] target_fbp=%u (prims=%llu, writes=%llu, tick=%llu) "
+                         "movie280_writes=%llu blit=%s vram_gen_changed=%d vram_gen=%llu\n",
+                         s_movie_log_counter, target->fbp,
+                         static_cast<unsigned long long>(target->prim_count),
+                         static_cast<unsigned long long>(target->write_count),
+                         static_cast<unsigned long long>(target->last_write_tick),
+                         static_cast<unsigned long long>(movie_source ? movie_source->write_count : 0),
+                         blit_ran ? "YES" : "NO",
+                         vram_gen_changed ? 1 : 0,
+                         static_cast<unsigned long long>(cur_vram_gen));
         }
     }
 

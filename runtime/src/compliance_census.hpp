@@ -11,6 +11,7 @@ enum class RpcKind { Native, Guest, Unknown };
 void sif_rpc(std::uint32_t sid, std::uint32_t method, RpcKind kind);
 void gs_transfer(std::uint32_t base, std::uint32_t pixels, bool applied);
 void gs_primitive(std::uint32_t fbp);
+void movie_present(bool blit_ran, bool source_existed);
 void spu2_key_on(int core, int voice);
 void spu2_key_off(int core, int voice);
 void spu2_dma(int core, std::uint32_t bytes, bool to_spu);

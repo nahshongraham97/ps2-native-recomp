@@ -335,16 +335,18 @@ void call(const std::uint8_t *packet) {
         request.data.assign(source, source + size);
         if (iop::kernel::g_trace_modules && (s.sid == 0x000F0001u || s.sid == 0x90000200u || s.sid == 0x00012345u)) {
             static std::uint32_t s_msl_log_count = 0;
-            if (s.sid != 0x00012345u || s_msl_log_count++ < 20) {
+            if (s.sid != 0x00012345u || s_msl_log_count++ < 500) {
                 std::fprintf(stderr,
-                             "[sif:guest-request] sid 0x%08X sd 0x%08X fn %u send %u from IOP 0x%08X data",
-                             s.sid, s.sd, c.rpc_number, c.send_size, s.buf);
+                             "[sif:guest-request #%u] sid 0x%08X sd 0x%08X fn %u send %u from IOP 0x%08X data",
+                             s_msl_log_count, s.sid, s.sd, c.rpc_number, c.send_size, s.buf);
                 for (std::uint32_t i = 0; i < std::min<std::uint32_t>(16u, size / 4u); ++i)
                     std::fprintf(stderr, " %08X", iop::read32(s.buf + i * 4u));
                 std::fprintf(stderr, " (stale EE source 0x%08X:", g_data_addr);
                 for (std::uint32_t i = 0; i < std::min<std::uint32_t>(4u, (c.send_size + 3u) / 4u); ++i)
                     std::fprintf(stderr, " %08X", ee_read<std::uint32_t>(g_data_addr + i * 4u));
                 std::fprintf(stderr, ")\n");
+            } else if (s.sid == 0x00012345u && s_msl_log_count == 501) {
+                std::fprintf(stderr, "[sif:guest-request] sid 0x00012345 reached 500 logged requests; capping further logs\n");
             }
         }
     }
