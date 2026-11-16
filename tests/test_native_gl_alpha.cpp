@@ -265,11 +265,30 @@ int main() {
             return 1;
         }
     }
+    // FIX=0x40 computes (Cs - 0) * 64 / 128 = Cs / 2 (raster.cpp:271). This
+    // used to be rejected as unimplemented; the general ALPHA blend mapper
+    // expresses it as a GL constant-alpha factor, so the contract is now
+    // agreement with the reference - the same check as FIX=0x80 above.
     state.ctx[0].alpha = (0x40ull << 32) | 0xA8u;
-    if (ps2::gs::native_gl::submit(state, partial_mask_vertices, 3)) {
-        std::fprintf(stderr, "unsupported GS ALPHA=0xA8 FIX=0x40 was incorrectly accepted\n");
-        ps2::gs::native_gl::shutdown();
-        return 1;
+    draw_triangle(state, 4u | 8u, 0, 0, 255, 128, false);
+    draw_triangle(state, 4u | 8u | (1u << 6), 48, 96, 192, 64, false);
+    const std::uint32_t half_ref = ps2::gs::read_pixel(
+        ps2::gs::PSMCT32, 0x5Bu * 32u, 10u, 20u, 20u);
+    draw_triangle(state, 4u | 8u, 0, 0, 255, 128, true);
+    draw_triangle(state, 4u | 8u | (1u << 6), 48, 96, 192, 64, true);
+    ps2::gs::native_gl::flush();
+    ps2::gs::native_gl::sync_surface_to_cpu(0x5Bu);
+    const std::uint32_t half_gl = ps2::gs::read_pixel(
+        ps2::gs::PSMCT32, 0x5Bu * 32u, 10u, 20u, 20u);
+    for (int channel = 0; channel < 4; ++channel) {
+        const int reference = (half_ref >> (channel * 8)) & 0xFFu;
+        const int actual = (half_gl >> (channel * 8)) & 0xFFu;
+        const int expected = channel == 3 ? std::min(255, 2 * reference) : reference;
+        if (std::abs(actual - expected) > 1) {
+            std::fprintf(stderr, "GS ALPHA=0xA8 FIX=0x40 mismatch: reference %08X GL %08X\n", half_ref, half_gl);
+            ps2::gs::native_gl::shutdown();
+            return 1;
+        }
     }
     state.ctx[0].alpha = 0x44u;
 

@@ -84,7 +84,17 @@ bool g_trace_modules = false;
 
 namespace {
 
-std::map<int, Module> g_modules;
+// Intentionally allocated once and never destroyed. The exit-time census
+// report runs from atexit (registered in compliance_census.cpp) and walks
+// this map; cross-TU static destruction order is unspecified, and when this
+// map's destructor ran first the exit census walked freed nodes and died on
+// a flaky 0xC0000005. test_spu2_mix crashed about one run in two - the runs
+// that survived were the ones where the freed heap pages had already been
+// reused with readable data (its census even printed a mangled module name
+// once), while an empty module map cannot crash at all, which is why the
+// GL-only suites never showed it. A process-lifetime allocation makes the
+// map object outlive every atexit call.
+std::map<int, Module> &g_modules = *new std::map<int, Module>();
 #ifdef PS2_IOP_AOT_IMPORTS_ENABLED
 std::map<int, const aot_imports::Module *> g_compiled_import_modules;
 #endif

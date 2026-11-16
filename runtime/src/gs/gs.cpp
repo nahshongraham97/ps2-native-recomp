@@ -933,7 +933,15 @@ void kick(bool draw) {
                     native_renderer_stop("native OpenGL did not consume a GS primitive; strict mode forbids raster fallback");
                 if (strict_native_gpu() && (!gpu_on() || !gpu_primary()))
                     native_renderer_stop("a GS primitive would not be submitted exclusively to the native GPU renderer");
-                if (cpu_raster()) raster::draw(s, s.queue, needed);
+                // The native GL route never falls back to the software
+                // rasterizer (user directive 2026-11-16: no CPU rasterization
+                // while the native route is being completed). A packet the
+                // native path rejects is counted in the census and dropped -
+                // the CPU rasterizer was silently drawing millions of packets
+                // per run on the CPU, which is where the frame time went. The
+                // software rasterizer remains available whenever native GL is
+                // not selected (tests, PS2_GS=software).
+                if (cpu_raster() && !native_gl::enabled()) raster::draw(s, s.queue, needed);
 #ifdef PS2_GPU
                 if (gpu_on()) { if (!ps2::vertex::submit_primitive(s, s.queue, needed)) gpu::draw(s, s.queue, needed); }
 #endif

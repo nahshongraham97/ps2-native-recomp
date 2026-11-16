@@ -42,6 +42,10 @@
 #define GL_FOG_COORDINATE_SOURCE 0x8450
 #define GL_FOG_COORDINATE 0x8451
 #endif
+#ifndef GL_CONSTANT_ALPHA  // GL 1.4 blend factors, for the GS ALPHA FIX term
+#define GL_CONSTANT_ALPHA 0x8003
+#define GL_ONE_MINUS_CONSTANT_ALPHA 0x8004
+#endif
 #ifndef GL_COMBINE
 #define GL_COMBINE 0x8570
 #define GL_COMBINE_RGB 0x8571
@@ -162,6 +166,23 @@ bool reject_packet(const State &st, std::uint64_t attr, std::uint32_t prim_type,
     return false;
 }
 
+// The census map is keyed by pointer, so every ALPHA tuple needs its own
+// stable string: the per-tuple distribution of rejected packets is what says
+// which blend equations are still missing (the rejection log itself fires
+// once per site and would only ever show the first tuple).
+const char *alpha_tuple_key(std::uint32_t alpha) {
+    static char kKeys[256][96];
+    static const bool kReady = [] {
+        for (int i = 0; i < 256; ++i)
+            std::snprintf(kKeys[i], sizeof kKeys[i],
+                          "GS ALPHA tuple a=%d b=%d c=%d d=%d is not expressible in the native OpenGL blend path",
+                          i & 3, (i >> 2) & 3, (i >> 4) & 3, (i >> 6) & 3);
+        return true;
+    }();
+    (void)kReady;
+    return kKeys[alpha & 0xFFu];
+}
+
 #if defined(_WIN32)
 HDC    g_hdc = nullptr;
 HGLRC  g_hrc = nullptr;
@@ -182,10 +203,12 @@ using ActiveTextureProc = void (APIENTRY *)(GLenum texture);
 using MultiTexCoord4fProc = void (APIENTRY *)(GLenum target, GLfloat s, GLfloat t, GLfloat r, GLfloat q);
 using BlendFuncSeparateProc = void (APIENTRY *)(GLenum src_rgb, GLenum dst_rgb, GLenum src_alpha, GLenum dst_alpha);
 using FogCoordfProc = void (APIENTRY *)(GLfloat coord);  // GL 1.4: not in Windows' GL 1.1 export table
+using BlendColorProc = void (APIENTRY *)(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);  // GL 1.4
 ActiveTextureProc g_active_texture = nullptr;
 MultiTexCoord4fProc g_multi_texcoord4f = nullptr;
 BlendFuncSeparateProc g_blend_func_separate = nullptr;
 FogCoordfProc g_fog_coordf = nullptr;
+BlendColorProc g_blend_color = nullptr;
 bool g_multitexture_supported = false;
 
 using GenFramebuffersProc = void (APIENTRY *)(GLsizei, GLuint *);
@@ -261,6 +284,12 @@ void load_multitexture_functions() {
     PROC fog_coord = wglGetProcAddress("glFogCoordf");
     if (!valid_gl_proc(fog_coord)) fog_coord = wglGetProcAddress("glFogCoordfEXT");
     if (valid_gl_proc(fog_coord)) g_fog_coordf = reinterpret_cast<FogCoordfProc>(fog_coord);
+
+    // glBlendColor supplies the GS ALPHA register's FIX term to GL_CONSTANT_ALPHA
+    // factors; GL 1.4, loaded the same way.
+    PROC blend_color = wglGetProcAddress("glBlendColor");
+    if (!valid_gl_proc(blend_color)) blend_color = wglGetProcAddress("glBlendColorEXT");
+    if (valid_gl_proc(blend_color)) g_blend_color = reinterpret_cast<BlendColorProc>(blend_color);
 }
 
 template <typename T>
@@ -1762,42 +1791,83 @@ bool submit(const State &st, const Vertex *verts, int count) {
         const std::uint32_t b = (alpha >> 2) & 3u;
         const std::uint32_t c = (alpha >> 4) & 3u;
         const std::uint32_t d = (alpha >> 6) & 3u;
-        // This exact ALPHA tuple computes Cd * (1 - Ad/128). On a 16-bit GS
-        // framebuffer Ad is one bit (0 or 0x80), so OpenGL's destination-alpha
-        // factor is exact once the alpha channel is quantized on each write.
-        // Other tuples need custom GS arithmetic and remain fail-closed.
         const bool identity_blend = a == b && a <= 2 && d == 0;
         // ALPHA=0xA8 with FIX=0x80: (Cs - 0) * 128 / 128 + 0 = Cs.
         // This is a source replacement, not a standard alpha blend.
         const bool fixed_source_identity = a == 0 && b == 2 && c == 2 && d == 2 &&
                                            ((context.alpha >> 32) & 0xFFu) == 0x80u;
         const bool exact_destination_alpha_fade = framebuffer_16 && a == 2 && b == 1 && c == 1 && d == 1;
-        const bool gs_source_over = a == 0 && b == 1 && c == 0 && d == 1;
         if (identity_blend || fixed_source_identity) {
             glDisable(GL_BLEND);
         } else if (exact_destination_alpha_fade && !(textured && (tex_alpha_enabled || tfx != 0)) &&
                    g_blend_func_separate) {
+            // 16-bit destination-alpha fade: Cd * (1 - Ad/128). On PSMCT16 Ad
+            // is one bit (0 or 0x80), so GL's destination-alpha factor is
+            // exact once the alpha channel is quantized on each write.
             glEnable(GL_BLEND);
             g_blend_func_separate(GL_ZERO, GL_ONE_MINUS_DST_ALPHA, GL_ONE, GL_ZERO);
-        } else if (gs_source_over && fpsm == gs::PSMCT32 && (st.colclamp & 1u) &&
-                   (!textured || tfx == 0)) {
-            // GS computes (Cs - Cd) * As / 128 + Cd. Texture and vertex alpha
-            // are scaled into 0..255 with 255 = GS 0x80 (a3efc7f), so As/128
-            // equals the fragment alpha divided by 255 and the standard
-            // source-over hardware blend is the same equation. This replaces
-            // the fullscreen alpha compositor, which copied and resampled the
-            // whole 1024x512 target through a GL_NEAREST quad for every
-            // ALPHA=0x44 primitive; the retail front-end submits hundreds of
-            // those per frame, and the repeated resampling degraded glyph
-            // columns. Only RGB is blended: the alpha channel is written from
-            // the source, as the GS framebuffer write does.
-            glEnable(GL_BLEND);
-            if (g_blend_func_separate)
-                g_blend_func_separate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
-            else
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        } else if (fpsm == gs::PSMCT32 && (st.colclamp & 1u) && (!textured || tfx <= 1u) &&
+                   g_blend_func_separate) {
+            // The general GS blend - what the reference rasterizer computes:
+            // result = (A - B) * C / 128 + D over RGB (raster.cpp:267-272),
+            // with the alpha channel written from the source (raster.cpp:282-286).
+            // This replaces the tuple whitelist that dropped 6,985,985 of
+            // 9,105,842 primitives in a single run: every ALPHA tuple the game
+            // sent fell through to "not exactly supported" and was drawn by
+            // neither GL nor (after 2026-11-16) the CPU rasterizer.
+            // GL computes Cs * srcFactor + Cd * dstFactor, so the coefficient
+            // of Cs is [A==Cs]*C - [B==Cs]*C + [D==Cs] and the coefficient of
+            // Cd is the same with Cd. Each must be one of {0, 1, C, 1 - C} for
+            // GL's factor set to express it (C+1 and -C cannot be).
+            // C is As - the fragment alpha, which this path already scales to
+            // GS/128 - or Ad - stored alpha is written GS*255/128, so GL's
+            // /255 is the rasterizer's /128 - or FIX via glBlendColor at
+            // FIX/128. FIX above 0x80 would need a factor above GL's clamped
+            // 1.0 while the rasterizer keeps multiplying: rejected, counted.
+            // colclamp is required because GL clamps where the rasterizer wraps
+            // (raster.cpp:272). TFX >= 2 (HIGHLIGHT) has an unverified
+            // two-texture-unit alpha path and stays rejected, counted; the
+            // rasterizer ignores TFX on untextured primitives (raster.cpp:169)
+            // and so does this check.
+            const std::uint32_t fix = static_cast<std::uint32_t>(context.alpha >> 32) & 0xFFu;
+            const int ck = c == 0 ? 0 : c == 1 ? 1 : 2;  // As, Ad, FIX
+            int sc = 0, so = 0, dc = 0, dt = 0;          // C coefficient and the +1 term
+            if (a == 0) ++sc; else if (a == 1) ++dc;
+            if (b == 0) --sc; else if (b == 1) --dc;
+            if (d == 0) ++so; else if (d == 1) ++dt;
+            const auto factor = [&](int coeff, int one, GLenum &out) -> bool {
+                static const GLenum kC[3] = {GL_SRC_ALPHA, GL_DST_ALPHA, GL_CONSTANT_ALPHA};
+                static const GLenum kOneMinusC[3] = {GL_ONE_MINUS_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA,
+                                                     GL_ONE_MINUS_CONSTANT_ALPHA};
+                if (coeff == 0) { out = one ? GL_ONE : GL_ZERO; return true; }
+                if (coeff == 1 && one == 0) { out = kC[ck]; return true; }
+                if (coeff == -1 && one == 1) { out = kOneMinusC[ck]; return true; }
+                return false;
+            };
+            GLenum src_factor = GL_ZERO, dst_factor = GL_ZERO;
+            const bool expressible = factor(sc, so, src_factor) && factor(dc, dt, dst_factor);
+            const bool fix_ok = ck != 2 || (fix <= 0x80u && g_blend_color != nullptr);
+            if (expressible && fix_ok) {
+                if (ck == 2)
+                    g_blend_color(0.0f, 0.0f, static_cast<float>(fix) / 128.0f, static_cast<float>(fix) / 128.0f);
+                glEnable(GL_BLEND);
+                g_blend_func_separate(src_factor, dst_factor, GL_ONE, GL_ZERO);
+            } else {
+                static const char *kFixHigh = "GS ALPHA FIX above 0x80 needs a GL blend factor above 1.0";
+                static const char *kNoBlendColor = "GL blend color is unavailable for the GS ALPHA FIX factor";
+                const char *why = !fix_ok ? (fix <= 0x80u ? kNoBlendColor : kFixHigh) : alpha_tuple_key(alpha);
+                return reject_packet(st, attr, prim_type, count, 14, why);
+            }
         } else {
-            return reject_packet(st, attr, prim_type, count, 14, "GS ALPHA tuple is not exactly supported by the native OpenGL blend path");
+            static const char *kNoSeparate = "GL blend-func-separate is unavailable";
+            static const char *kFrame = "GS ALPHA blend on a non-PSMCT32 framebuffer is not implemented yet";
+            static const char *kClamp = "GS ALPHA blend without COLCLAMP wraps, which GL cannot express";
+            static const char *kTfx = "GS ALPHA blend with TFX >= 2 is not verified against the rasterizer yet";
+            const char *why = !g_blend_func_separate ? kNoSeparate
+                           : fpsm != gs::PSMCT32     ? kFrame
+                           : !(st.colclamp & 1u)     ? kClamp
+                                                     : kTfx;
+            return reject_packet(st, attr, prim_type, count, 14, why);
         }
     } else {
         glDisable(GL_BLEND);
@@ -1839,7 +1909,14 @@ bool submit(const State &st, const Vertex *verts, int count) {
     const bool depth_surface_effect = zte && (ztst == 2 || ztst == 3 || (!zmsk && ztst != 0));
     const std::uint32_t zmax = depth_max_for_psm(zpsm);
     if (depth_surface_effect) {
-        if (zpsm != gs::PSMZ32 && zpsm != gs::PSMZ24 && zpsm != gs::PSMZ16 && zpsm != gs::PSMZ16S)
+        // The rasterizer accepts any 0x3X depth format: z_max() and
+        // write_pixel() treat the formats they do not enumerate as 32-bit
+        // (raster.cpp:150-155, gs.cpp:640), which is where the front-end's
+        // ZBUF format nibble 0x0A (zpsm 0x3A, seen on FBP 91) lands.
+        // depth_max_for_psm() already defaults to 32-bit the same way, so the
+        // vertex depth mapping is consistent; only the validity check was
+        // rejecting the surface after the ALPHA blend let the packet through.
+        if ((zpsm & 0xF0u) != 0x30u)
             return reject_packet(st, attr, prim_type, count, 17, "GS depth-buffer pixel format is unsupported");
         if (g_depth_key_valid && zbuf_key != g_depth_key)
             return reject_packet(st, attr, prim_type, count, 24, "multiple GS ZBUF surfaces are not implemented yet");
