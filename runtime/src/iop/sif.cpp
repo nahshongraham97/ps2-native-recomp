@@ -377,6 +377,18 @@ void other_data(const std::uint8_t *packet) {
     std::memcpy(&src, packet + 32, 4);
     std::memcpy(&dst, packet + 36, 4);
     std::memcpy(&size, packet + 40, 4);
+    // other_data tracing (native sound service, 2026-11-16): the IOP->EE direction was
+    // invisible unless a watch range was set through watch_span. This is the direction
+    // the sound service uses to push data back to the game, so every transfer is logged
+    // with its direction and size plus the leading words, by default.
+    std::fprintf(stderr, "[sif:other-data] IOP 0x%08X -> EE 0x%08X size 0x%X data", src, dst, size);
+    const std::uint8_t *bytes = iop::ram_ptr(src);
+    for (std::uint32_t word = 0; word < std::min<std::uint32_t>(16u, size / 4u); ++word) {
+        std::uint32_t v;
+        std::memcpy(&v, bytes + word * 4u, 4);
+        std::fprintf(stderr, " %08X", v);
+    }
+    std::fprintf(stderr, "\n");
     std::memcpy(g_ram + (dst & (kRamSize - 1)), iop::ram_ptr(src), size);
     watch_span(dst, size, "sif:other_data");
     Rend r = make_rend(*reinterpret_cast<const Header *>(packet), record, paddr, rpc, receive, 0x8000000Cu);
@@ -919,6 +931,15 @@ void install_iop_side() {
     def("sifcmd", 23, "sceSifGetOtherData", [](iop::Cpu &c) {
         const std::uint32_t src = arg(c, 1), dst = arg(c, 2), size = arg(c, 3);
         iop::watch_copy("sceSifGetOtherData", dst, src, size, c.r[31]);
+        // MSL window dump (native sound service, 2026-11-16): this pull path can carry
+        // the event data into the buffer MSL advertised, so its content is logged when
+        // the destination is inside MSL's window, like the SetDma path.
+        if (dst >= 0x4C9C0u && dst < 0x50000u) {
+            std::fprintf(stderr, "[sif:msl-window-dma] EE 0x%08X -> IOP 0x%08X size 0x%X data (GetOtherData)", src, dst, size);
+            for (std::uint32_t word = 0; word < std::min<std::uint32_t>(size / 4u, 1024u); ++word)
+                std::fprintf(stderr, " %08X", ee_read<std::uint32_t>(src + word * 4u));
+            std::fprintf(stderr, "\n");
+        }
         std::memcpy(iop::ram_ptr(dst), g_ram + (src & (kRamSize - 1)), size);
         c.r[2] = 0;
     });
@@ -1418,6 +1439,16 @@ std::uint32_t set_dma(std::uint32_t transfers, std::uint32_t count) {
                 }
             }
             iop::watch_copy("EE DMA (sceSifSetDma)", dst, src, size, 0);
+            // MSL window DMA dump (native sound service, 2026-11-16): watch_copy prints
+            // the transfer itself when the window watch is on, but the bytes are the
+            // evidence for what the EE actually stages at the buffer MSL advertised
+            // (0x4C9E4), so every word of a DMA into MSL's window is logged.
+            if (dst >= 0x4C9C0u && dst < 0x50000u) {
+                std::fprintf(stderr, "[sif:msl-window-dma] EE 0x%08X -> IOP 0x%08X size 0x%X data", src, dst, size);
+                for (std::uint32_t word = 0; word < size / 4u; ++word)
+                    std::fprintf(stderr, " %08X", ee_read<std::uint32_t>(src + word * 4u));
+                std::fprintf(stderr, "\n");
+            }
             std::memcpy(iop::ram_ptr(dst), g_ram + src, std::min(size, iop::kRamSize - (iop::phys(dst) & (iop::kRamSize - 1))));
             release_iop_rpc_packet(dst);
         }

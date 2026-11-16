@@ -155,6 +155,16 @@ void reset() {
             g_watch_lo = lo;
             g_watch_hi = hi;
         }
+    } else {
+        // Default watch window for the native sound service work (2026-11-16): MSL's
+        // command/state area. The open question is whether the EE's event data ever
+        // reaches the staging buffer MSL advertised (0x4C9E4, MSL's reply op3 id
+        // 0x100FC) and how the channel state machine advances (16-byte records at
+        // 0x4C9C0, field +0xC). With this window every IOP-code store into it and
+        // every DMA copy into it (watch_copy) is printed with PC and value;
+        // PS2_WATCH_IOP overrides the window for other porting work.
+        g_watch_lo = 0x4C9C0u;
+        g_watch_hi = 0x50000u;
     }
     spu2::reset();
     sio2::reset();
