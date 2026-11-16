@@ -1425,6 +1425,13 @@ bool push_write_into_texture(TextureCache &entry, std::uint32_t psm, std::uint32
                 pixel = (pixel & 0x00FFFFFFu) | (std::min<std::uint32_t>(255u, a * 2u) << 24);
             }
             const GLuint previous = g_glstate.texture;
+            // The push runs where the transfer finished, which is the thread
+            // that runs the guest; the context belongs to the render thread, so
+            // it is made current here before it is used.
+            if (wglGetCurrentContext() != g_hrc && !wglMakeCurrent(g_hdc, g_hrc)) {
+                complete = false;
+                continue;
+            }
             glBindTexture(GL_TEXTURE_2D, entry.object);
             glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
             glTexSubImage2D(GL_TEXTURE_2D, 0, static_cast<GLint>(dx), static_cast<GLint>(dy),
