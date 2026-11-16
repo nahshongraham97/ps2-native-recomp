@@ -26,6 +26,10 @@ void audio_native_adpcm_block_decoded();
 // native audio service, not in a PS2 chip register file. This counter is that violation's magnitude
 // and must reach 0.
 void spu2_device_op();
+// One GS packet the native GL path refused to draw. `why` is the rejecting site's string
+// literal, so its address is a stable unique key. A rejection is logged once per site, which
+// hides the scale: this counter is what makes dropped primitives visible in the census.
+void gs_packet_rejected(const char *why);
 void card_rpc(std::uint32_t method, bool ok);
 void cdvd_sector_read(std::uint32_t sectors);
 void report();

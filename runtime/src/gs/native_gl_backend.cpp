@@ -38,6 +38,10 @@
 #ifndef GL_CLAMP_TO_EDGE
 #define GL_CLAMP_TO_EDGE 0x812F
 #endif
+#ifndef GL_FOG_COORDINATE_SOURCE  // GL 1.4 fog coordinate, for the GS per-vertex fog value
+#define GL_FOG_COORDINATE_SOURCE 0x8450
+#define GL_FOG_COORDINATE 0x8451
+#endif
 #ifndef GL_COMBINE
 #define GL_COMBINE 0x8570
 #define GL_COMBINE_RGB 0x8571
@@ -140,6 +144,7 @@ bool g_pending_readback_state_valid = false;
 #endif
 
 bool reject_packet(const State &st, std::uint64_t attr, std::uint32_t prim_type, int count, unsigned reason, const char *why) {
+    ps2::census::gs_packet_rejected(why);
     const std::uint32_t bit = 1u << reason;
     if (!(g_reported_rejections.fetch_or(bit, std::memory_order_relaxed) & bit)) {
         const Context &context = st.ctx[(attr >> 9) & 1u];
@@ -176,9 +181,11 @@ TextureCache g_texture;
 using ActiveTextureProc = void (APIENTRY *)(GLenum texture);
 using MultiTexCoord4fProc = void (APIENTRY *)(GLenum target, GLfloat s, GLfloat t, GLfloat r, GLfloat q);
 using BlendFuncSeparateProc = void (APIENTRY *)(GLenum src_rgb, GLenum dst_rgb, GLenum src_alpha, GLenum dst_alpha);
+using FogCoordfProc = void (APIENTRY *)(GLfloat coord);  // GL 1.4: not in Windows' GL 1.1 export table
 ActiveTextureProc g_active_texture = nullptr;
 MultiTexCoord4fProc g_multi_texcoord4f = nullptr;
 BlendFuncSeparateProc g_blend_func_separate = nullptr;
+FogCoordfProc g_fog_coordf = nullptr;
 bool g_multitexture_supported = false;
 
 using GenFramebuffersProc = void (APIENTRY *)(GLsizei, GLuint *);
@@ -247,6 +254,13 @@ void load_multitexture_functions() {
     PROC blend = wglGetProcAddress("glBlendFuncSeparate");
     if (!valid_gl_proc(blend)) blend = wglGetProcAddress("glBlendFuncSeparateEXT");
     if (valid_gl_proc(blend)) g_blend_func_separate = reinterpret_cast<BlendFuncSeparateProc>(blend);
+
+    // The GS fog blends per vertex by the fog value the game supplies, so the native path needs
+    // GL's fog coordinate - not GL's depth-derived default. glFogCoordf is GL 1.4 and Windows
+    // exports GL 1.1 only, so it comes through wglGetProcAddress like the other extensions.
+    PROC fog_coord = wglGetProcAddress("glFogCoordf");
+    if (!valid_gl_proc(fog_coord)) fog_coord = wglGetProcAddress("glFogCoordfEXT");
+    if (valid_gl_proc(fog_coord)) g_fog_coordf = reinterpret_cast<FogCoordfProc>(fog_coord);
 }
 
 template <typename T>
@@ -1114,6 +1128,7 @@ bool draw_guest_rect(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
     glDisable(GL_SCISSOR_TEST);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
+    glDisable(GL_ALPHA_TEST);  // an image transfer has no GS alpha test; do not inherit the primitive path's
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
@@ -1254,8 +1269,19 @@ bool present_frame(const DisplayRegs &regs) {
     const bool vram_gen_changed = (cur_vram_gen != s_last_vram_gen);
     s_last_vram_gen = cur_vram_gen;
 
-    if (target->prim_count == 0 && target->write_count == 0) {
-        if (movie_existed) {
+    // A movie is playing: present the movie's own surface instead of leaving the screen on the
+    // game's textured quad, which samples FBP 280 while the decoder is still writing it. The
+    // movie arrives as ~40 strip transfers per frame, so a present inside that burst shows a
+    // half-written frame - that is the flicker (22:50 run: the old prim/write gate never fired,
+    // blit 0 of 16,691, and 8,328 of those presents landed on a VRAM write in progress). The
+    // blit therefore only runs while FBP 280 is QUIET (no VRAM write since the previous present,
+    // which means the frame's strips are all in): between complete frames the presented target
+    // keeps the last blit, so the screen holds a whole frame instead of alternating clean/torn.
+    // If the writes never quiet down, blit anyway after 8 presents rather than freeze the movie.
+    static std::uint64_t s_movie_changed_run = 0;
+    if (movie_existed) {
+        s_movie_changed_run = vram_gen_changed ? s_movie_changed_run + 1 : 0;
+        if (s_movie_changed_run == 0 || s_movie_changed_run >= 8) {
             g_bind_framebuffer(GL_READ_FRAMEBUFFER, movie_source->framebuffer);
             g_bind_framebuffer(GL_DRAW_FRAMEBUFFER, target->framebuffer);
             g_blit_framebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
@@ -1713,7 +1739,16 @@ bool submit(const State &st, const Vertex *verts, int count) {
             }
         }
     }
-    if (attr & (1ull << 5)) return reject_packet(st, attr, prim_type, count, 13, "GS fog is not implemented yet");
+    // GS fog (attr bit 5): the game supplies a fog value per vertex and the GS blends the final
+    // colour towards FOGCOL by it - (F*color + (255-F)*fogcol) >> 8, after texturing and before
+    // the alpha test, exactly as the reference rasterizer does (raster.cpp:206-212). Implemented
+    // with GL's fixed-function fog below instead of dropping the primitive: GL_LINEAR over the
+    // fog coordinate computes fogcol*(1-x) + color*x, so the coordinate is (255-F)/255 to give
+    // the colour the F weight as on the GS. The rasterizer divides by 256 where GL divides by
+    // 255 - at most one 8-bit unit of difference - and the reference suite does not sample fog.
+    const bool fog_enabled = (attr & (1ull << 5)) != 0;
+    if (fog_enabled && !g_fog_coordf)
+        return reject_packet(st, attr, prim_type, count, 13, "GL fog coordinate support is unavailable");
     const bool textured = (attr & (1ull << 4)) != 0;
     const bool framebuffer_16 = fpsm == gs::PSMCT16 || fpsm == gs::PSMCT16S;
     const bool tex_alpha_enabled = (context.tex0 & (1ull << 34)) != 0;
@@ -1770,16 +1805,33 @@ bool submit(const State &st, const Vertex *verts, int count) {
     const std::uint64_t test = context.test;
     const bool zte = (test & (1ull << 16)) != 0;
     const std::uint32_t ztst = static_cast<std::uint32_t>(test >> 17) & 3u;
+    const std::uint32_t atst = static_cast<std::uint32_t>(test >> 1) & 7u;
+    const std::uint32_t aref = static_cast<std::uint32_t>(test >> 4) & 0xFFu;
     const std::uint32_t afail = static_cast<std::uint32_t>(test >> 12) & 3u;
     const bool zmsk = (context.zbuf & (1ull << 32)) != 0;
+    // The GS alpha test. ATST/AREF live in TEST bits 1-3 / 4-11 (raster.cpp:335-336) and ATST's
+    // order matches GL's alpha-function enums one for one (raster.cpp:218-226). AFAIL=0 (keep
+    // nothing) is exactly GL's alpha test - discard the fragment - which is what cutout geometry
+    // needs and what was being dropped. The fragment alpha carries GS*255/128 (the scaling the
+    // blend path already applies), so the reference is aref/128; above 128 the GL value clamps at
+    // 1.0 and the comparison would differ from the rasterizer's, so those stay rejected (counted).
+    // AFAIL=1 keeps colour and only suppresses depth - already accepted when depth is unaffected;
+    // AFAIL=2/3 cannot be expressed in one GL pass and stay rejected (counted).
+    bool alpha_test_discard = false;
     if (test & 1u) {
-        // With AFAIL=FB_ONLY, failed alpha tests still write color and only
-        // suppress depth. If depth testing is disabled or all depth writes
-        // are masked, both alpha outcomes have the same framebuffer and depth
-        // effects. The depth comparison still applies to both outcomes.
         const bool no_depth_change = !zte || zmsk;
-        if (afail != 1u || !no_depth_change)
+        if (afail == 0u && aref <= 128u) {
+            alpha_test_discard = true;
+        } else if (afail != 1u || !no_depth_change) {
             return reject_packet(st, attr, prim_type, count, 15, "GS alpha test changes framebuffer or depth results");
+        }
+    }
+    if (alpha_test_discard) {
+        static const GLenum kAtst[8] = {GL_NEVER, GL_ALWAYS, GL_LESS, GL_LEQUAL, GL_EQUAL, GL_GEQUAL, GL_GREATER, GL_NOTEQUAL};
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(kAtst[atst], static_cast<GLfloat>(aref) / 128.0f);
+    } else {
+        glDisable(GL_ALPHA_TEST);
     }
     if (context.test & (1ull << 14)) return reject_packet(st, attr, prim_type, count, 16, "GS destination-alpha test is not implemented yet");
     const std::uint32_t zpsm = 0x30u | (static_cast<std::uint32_t>(context.zbuf >> 24) & 0xFu);
@@ -1882,6 +1934,9 @@ bool submit(const State &st, const Vertex *verts, int count) {
             ? (color.a >= 0x80u ? 0xFFu : 0u)
             : static_cast<GLubyte>(std::min<int>(255, static_cast<int>(color.a) * 2));
         glColor4ub(color.r, color.g, color.b, alpha);
+        // Per-vertex fog value: the GS blends by this (0 = fog colour, 255 = full colour), and
+        // GL_LINEAR with the coordinate (255-F)/255 reproduces that weighting (see fog_enabled).
+        if (fog_enabled) g_fog_coordf((255.0f - static_cast<float>(v.f)) / 255.0f);
         glVertex3f(fx, fy, fz);
     };
     const auto uv = [&](const Vertex &v) {
@@ -1906,6 +1961,22 @@ bool submit(const State &st, const Vertex *verts, int count) {
                                     v.t + texel_offset / static_cast<float>(texture_height)};
     };
     const Vertex &flat_color = verts[count - 1];
+    if (fog_enabled) {
+        // Fog colour comes from the GS FOGCOL register (RGB in the low 24 bits, raster.cpp:375).
+        const GLfloat fog_color[4] = {
+            static_cast<float>(st.fogcol & 0xFFu) / 255.0f,
+            static_cast<float>((st.fogcol >> 8) & 0xFFu) / 255.0f,
+            static_cast<float>((st.fogcol >> 16) & 0xFFu) / 255.0f,
+            1.0f};
+        glFogi(GL_FOG_MODE, GL_LINEAR);
+        glFogf(GL_FOG_START, 0.0f);
+        glFogf(GL_FOG_END, 1.0f);
+        glFogfv(GL_FOG_COLOR, fog_color);
+        glFogi(GL_FOG_COORDINATE_SOURCE, GL_FOG_COORDINATE);
+        glEnable(GL_FOG);
+    } else {
+        glDisable(GL_FOG);
+    }
     if (zte) {
         glEnable(GL_DEPTH_TEST);
         glDepthMask(zmsk ? GL_FALSE : GL_TRUE);

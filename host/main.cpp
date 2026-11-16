@@ -282,8 +282,20 @@ private:
         std::lock_guard<std::mutex> hold(m_);
         if (file_ && (max_bytes_ == 0 || written_ < max_bytes_)) {
             std::fwrite(part.data(), 1, part.size(), file_);
-            std::fflush(file_);
             written_ += part.size();
+            // Flush in batches rather than per record: at the trace volumes this build produces
+            // (~14k lines/s) a write syscall per line was a measurable share of the frame time.
+            // The bytes reach the FILE either way - only the on-disk currency between flushes
+            // changes - and a census line still forces an immediate flush, so the report is on
+            // disk before any handler can take the process.
+            const bool census_line = part.size() >= 8 && std::memcmp(part.data(), "[census]", 8) == 0;
+            const auto now = std::chrono::steady_clock::now();
+            if (census_line || written_ - flushed_ >= (64u << 10) ||
+                now - last_flush_ >= std::chrono::milliseconds(50)) {
+                std::fflush(file_);
+                flushed_ = written_;
+                last_flush_ = now;
+            }
             if (max_bytes_ && written_ >= max_bytes_) rotate();
         }
         for (const char c : part) {
@@ -310,6 +322,8 @@ private:
         std::filesystem::rename(std::filesystem::path(path_), path_ + ".1", error);
         file_ = ps2::os::open(path_, "wb");
         written_ = 0;
+        flushed_ = 0;
+        last_flush_ = {};
         if (file_) {
             std::fprintf(file_,
                          "[log] reached PS2_LOG_MAX_BYTES; the run continues in this file, the bytes before the rotation are in %s.1\n",
@@ -326,6 +340,8 @@ private:
     std::mutex m_;
     std::atomic<std::uint64_t> sent_{0}, seen_{0};
     std::uint64_t written_ = 0;
+    std::uint64_t flushed_ = 0;
+    std::chrono::steady_clock::time_point last_flush_{};
     std::deque<std::string> ring_;
     std::vector<std::string> head_;
     std::string partial_;

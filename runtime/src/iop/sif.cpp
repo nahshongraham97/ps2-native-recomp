@@ -347,7 +347,12 @@ void call(const std::uint8_t *packet) {
                 std::fprintf(stderr,
                              "[sif:guest-request #%u] sid 0x%08X sd 0x%08X fn %u send %u from IOP 0x%08X data",
                              s_msl_log_count, s.sid, s.sd, c.rpc_number, c.send_size, s.buf);
-                for (std::uint32_t i = 0; i < std::min<std::uint32_t>(16u, size / 4u); ++i)
+                // The MSL command buffer is 6,144 bytes (1,536 words) and it is a command LIST:
+                // dumping only the first 16 words hid every command past the setup prefix, which is
+                // where a play request would live. The MSL sid is dumped in full; the other traced
+                // sids keep the short prefix (their payloads are small and not the SFX question).
+                const std::uint32_t words = (s.sid == 0x00012345u) ? (size / 4u) : std::min<std::uint32_t>(16u, size / 4u);
+                for (std::uint32_t i = 0; i < words; ++i)
                     std::fprintf(stderr, " %08X", iop::read32(s.buf + i * 4u));
                 std::fprintf(stderr, " (stale EE source 0x%08X:", g_data_addr);
                 for (std::uint32_t i = 0; i < std::min<std::uint32_t>(4u, (c.send_size + 3u) / 4u); ++i)

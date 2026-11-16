@@ -53,6 +53,7 @@ std::map<std::pair<std::uint32_t, std::uint32_t>, std::pair<RpcKind, std::uint64
 std::map<std::uint32_t, std::pair<std::uint64_t, std::uint64_t>> g_gs_transfers_by_base; // <applied, skipped>
 std::map<std::uint32_t, std::uint64_t> g_gs_primitives_by_target;
 std::map<std::uint32_t, std::pair<std::uint64_t, std::uint64_t>> g_card_rpcs_by_method; // <ok, fail>
+std::map<const char *, std::uint64_t> g_gs_packet_rejected;                              // rejecting site -> dropped packets
 
 constexpr std::size_t kMaxSamples = 4096;
 std::uint32_t g_iop_samples[kMaxSamples]{};
@@ -142,6 +143,11 @@ void spu2_dma(int core, std::uint32_t bytes, bool to_spu) {
 
 void spu2_device_op() {
     g_spu2_device_ops.fetch_add(1, std::memory_order_relaxed);
+}
+
+void gs_packet_rejected(const char *why) {
+    std::lock_guard<std::mutex> lock(g_mutex);
+    ++g_gs_packet_rejected[why];
 }
 
 void audio_native_frame_mixed() {
@@ -329,6 +335,16 @@ void report() {
     std::fprintf(stderr, "[census] CDVD : device sector reads = %llu                   (%s)\n",
                  static_cast<unsigned long long>(cdvd_reads),
                  cdvd_reads == 0 ? "no CDVD device on route" : "gate violation: CDVD device on route");
+
+    // What the native GL path refused to draw. A rejection is logged once per site, so the log
+    // alone hides the scale; these counts are the size of the rendering gap (dropped packets).
+    if (!g_gs_packet_rejected.empty()) {
+        std::fprintf(stderr, "[census] GS   : packets dropped by the native GL path (not drawn):");
+        for (const auto &[why, n] : g_gs_packet_rejected)
+            std::fprintf(stderr, " [%s]=%llu", why, static_cast<unsigned long long>(n));
+        std::fprintf(stderr, "\n");
+        std::fflush(stderr);
+    }
 
     // The acceptance gate, stated where every run record reads it: no interpreter and no emulated
     // PS2 device on the accepted route. Interpreter absence alone is not the gate - the emulated
