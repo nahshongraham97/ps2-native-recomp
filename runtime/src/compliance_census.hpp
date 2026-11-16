@@ -31,7 +31,11 @@ void spu2_device_op();
 // hides the scale: this counter is what makes dropped primitives visible in the census.
 void gs_packet_rejected(const char *why);
 void card_rpc(std::uint32_t method, bool ok);
+// One sector read a disc device performed (the gate counter). The native
+// content volume serves the game's data from the host's files and counts
+// separately: content_volume_sector_read.
 void cdvd_sector_read(std::uint32_t sectors);
+void content_volume_sector_read(std::uint32_t sectors);
 void report();
 
 // The host registers a hook that drains its log writer, so a shutdown report reaches the log

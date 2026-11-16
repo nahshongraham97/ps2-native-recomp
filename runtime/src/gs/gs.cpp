@@ -400,6 +400,13 @@ void apply_display_write(std::uint32_t psm, std::uint32_t base, std::uint32_t bw
                          std::uint32_t x, std::uint32_t y,
                          std::uint32_t w, std::uint32_t h) {
     if (!native_gl::enabled() || !w || !h) return;
+    // The write may belong to one of the native textures (the game's own
+    // textures). Then it is pushed into that texture and the data reaches a
+    // native GL resource instead of stopping in the emulated VRAM.
+    if (native_gl::guest_wrote_vram(psm, base, bw, x, y, w, h)) {
+        ps2::census::gs_transfer(base, w * h, true);
+        return;
+    }
     const int circuit = (g_pmode & 2u) ? 1 : (g_pmode & 1u) ? 0 : -1;
     if (circuit < 0) return;
     const std::uint32_t display_base = (static_cast<std::uint32_t>(g_dispfb[circuit]) & 0x1FFu) * 32u;

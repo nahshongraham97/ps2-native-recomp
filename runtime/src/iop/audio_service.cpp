@@ -1097,7 +1097,7 @@ std::uint32_t param_address(std::uint32_t index, std::uint32_t core, std::uint32
 }
 
 // Writes one of the library's parameters into the service's state.
-void write_service(std::uint32_t core, std::uint32_t address, std::uint32_t value) {
+void write_service(std::uint32_t address, std::uint32_t value) {
     const std::uint32_t off = address & 0x7FEu;
     if (off < 0x760u) {
         write_core((off & 0x400u) ? 1 : 0, off & 0x3FEu, value);
@@ -1112,7 +1112,7 @@ void write_service(std::uint32_t core, std::uint32_t address, std::uint32_t valu
     write_global(off, value);
 }
 
-std::uint32_t read_service(std::uint32_t core, std::uint32_t address) {
+std::uint32_t read_service(std::uint32_t address) {
     const std::uint32_t off = address & 0x7FEu;
     if (off < 0x760u) return read_core((off & 0x400u) ? 1 : 0, off & 0x3FEu);
     if (off < 0x7B0u) {
@@ -1129,7 +1129,7 @@ bool set_param(int core, int voice, std::uint32_t index, std::uint16_t value) {
     const std::uint32_t address = param_address(index, static_cast<std::uint32_t>(core & 1),
                                                  static_cast<std::uint32_t>(voice & 0x1Fu), 16u);
     if (address == 0xFFFFFFFFu) return false;
-    write_service(static_cast<std::uint32_t>(core & 1), address, value);
+    write_service(address, value);
     return true;
 }
 
@@ -1137,7 +1137,7 @@ bool get_param(int core, int voice, std::uint32_t index, std::uint16_t &value) {
     const std::uint32_t address = param_address(index, static_cast<std::uint32_t>(core & 1),
                                                  static_cast<std::uint32_t>(voice & 0x1Fu), 16u);
     if (address == 0xFFFFFFFFu) return false;
-    value = static_cast<std::uint16_t>(read_service(static_cast<std::uint32_t>(core & 1), address) & 0xFFFFu);
+    value = static_cast<std::uint16_t>(read_service(address) & 0xFFFFu);
     return true;
 }
 
@@ -1199,8 +1199,8 @@ bool set_addr(int core, int voice, std::uint32_t index, std::uint32_t value) {
     const std::uint32_t offset = param_address(index, static_cast<std::uint32_t>(core & 1),
                                                static_cast<std::uint32_t>(voice & 0x1Fu), 12u);
     if (offset == 0xFFFFFFFFu) return false;
-    write_service(static_cast<std::uint32_t>(core & 1), offset, (value >> 17) & 0xFFFFu);
-    if (index != 29u) write_service(static_cast<std::uint32_t>(core & 1), offset + 2u, (value >> 1) & 0xFFF8u);
+    write_service(offset, (value >> 17) & 0xFFFFu);
+    if (index != 29u) write_service(offset + 2u, (value >> 1) & 0xFFF8u);
     return true;
 }
 
@@ -1221,11 +1221,11 @@ bool get_addr(int core, int voice, std::uint32_t index, std::uint32_t &value) {
     const std::uint32_t offset = param_address(index, static_cast<std::uint32_t>(core & 1),
                                                static_cast<std::uint32_t>(voice & 0x1Fu), 12u);
     if (offset == 0xFFFFFFFFu) return false;
-    const std::uint32_t high = read_service(static_cast<std::uint32_t>(core & 1), offset) & 0xFFFFu;
+    const std::uint32_t high = read_service(offset) & 0xFFFFu;
     if (index == 29u) {
         value = high << 17 | 0x1FFFFu;
     } else {
-        const std::uint32_t low = read_service(static_cast<std::uint32_t>(core & 1), offset + 2u) & 0xFFFFu;
+        const std::uint32_t low = read_service(offset + 2u) & 0xFFFFu;
         value = high << 17 | low << 1 | 1u;
     }
     return true;

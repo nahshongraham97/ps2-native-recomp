@@ -115,7 +115,9 @@ std::uint64_t fsv_cycles(std::uint32_t sectors) {
 
 // Copy sectors from the volume into EE main memory.
 void read_to_ee(std::uint32_t sector, std::uint32_t count, std::uint32_t destination) {
-    ps2::census::cdvd_sector_read(count);
+    // The read comes from the native content volume (the host's files): no
+    // disc image and no CDVD device are on the route.
+    ps2::census::content_volume_sector_read(count);
     std::vector<std::uint8_t> data(static_cast<std::size_t>(count) * mka::content::kSectorSize);
     if (!mka::content::read_sectors(sector, count, data.data())) {
         if (!volume_available()) return;
@@ -130,6 +132,7 @@ void read_to_ee(std::uint32_t sector, std::uint32_t count, std::uint32_t destina
 
 // Copy sectors from the volume into IOP memory.
 void read_to_iop(std::uint32_t sector, std::uint32_t count, std::uint32_t destination) {
+    ps2::census::content_volume_sector_read(count);
     std::vector<std::uint8_t> data(static_cast<std::size_t>(count) * mka::content::kSectorSize);
     if (!mka::content::read_sectors(sector, count, data.data()) && !volume_available()) return;
     for (std::size_t i = 0; i < data.size(); ++i) write8(destination + static_cast<std::uint32_t>(i), data[i]);

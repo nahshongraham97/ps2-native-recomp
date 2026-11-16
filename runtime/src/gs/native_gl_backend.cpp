@@ -193,11 +193,43 @@ bool   g_direct_window_context = false;
 struct TextureCache {
     GLuint object = 0;
     bool valid = false;
+    bool stale = true;  // the guest wrote over the texture's VRAM
     std::uint64_t tex0 = 0, tex1 = 0, tex2 = 0, clamp = 0, texa = 0;
     std::uint64_t clut_hash = 0, vram_generation = 0;
     std::uint32_t width = 0, height = 0;
+    // The texture's place in VRAM: the unit (256 bytes) it starts at and how
+    // many units it covers, so a guest write into it can be found and pushed
+    // into this native texture.
+    std::uint32_t base = 0, units = 0;
+    raster::TextureParams params{};
+    std::uint64_t last_use = 0;
 };
+
+// The native textures the game samples. Keeping them here means a texture is
+// decoded and uploaded once, not after every write anywhere in VRAM, and a
+// guest write lands in the native texture it belongs to instead of stopping
+// in the emulated VRAM.
+constexpr std::size_t kTexturePool = 12;
+TextureCache g_pool[kTexturePool];
+std::uint64_t g_texture_age = 0;
+
+// The working cache: the texture the current primitive samples.
 TextureCache g_texture;
+
+TextureCache *find_pool_entry(std::uint32_t base, std::uint32_t psm, std::uint32_t tbw) {
+    for (TextureCache &entry : g_pool) {
+        if (!entry.valid || entry.base != base) continue;
+        if (entry.params.psm != psm || entry.params.tbw != tbw) continue;
+        return &entry;
+    }
+    return nullptr;
+}
+
+// How many 256-byte units a texture of this size covers. The margin keeps a
+// write that lands in the page padding of the texture inside its range.
+std::uint32_t texture_units(std::uint32_t width, std::uint32_t height) {
+    return (width * height * 4u + 8191u) / 256u + 64u;
+}
 
 using ActiveTextureProc = void (APIENTRY *)(GLenum texture);
 using MultiTexCoord4fProc = void (APIENTRY *)(GLenum target, GLfloat s, GLfloat t, GLfloat r, GLfloat q);
@@ -799,13 +831,22 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
 
     cache_active_texture(GL_TEXTURE0);
     const std::uint64_t palette = clut_hash(st);
+    // The native texture for this base, if the pool holds it and the guest has
+    // not written over it since. Adopting it skips the decode and the upload:
+    // with one counter for the whole of VRAM, every write anywhere forced the
+    // game to decode and upload every texture again.
+    const std::uint32_t tex_base = raster::texture_base(st);
+    const std::uint32_t tex_psm = static_cast<std::uint32_t>((context.tex0 >> 20) & 0x3Fu);
+    const std::uint32_t tex_tbw = static_cast<std::uint32_t>((context.tex0 >> 14) & 0x3Fu);
+    TextureCache *pooled = tex_base == 0xFFFFFFFFu ? nullptr : find_pool_entry(tex_base, tex_psm, tex_tbw);
+    if (pooled && pooled->valid && !pooled->stale) g_texture = *pooled;
     if (!g_texture.object) glGenTextures(1, &g_texture.object);
     if (!g_texture.object)
         return reject_packet(st, attr, prim_type, count, width_reason + 3, "OpenGL could not allocate a texture object");
 
     const bool changed = !g_texture.valid || g_texture.tex0 != context.tex0 || g_texture.tex1 != context.tex1 ||
                          g_texture.tex2 != context.tex2 || g_texture.clamp != context.clamp || g_texture.texa != st.texa ||
-                         g_texture.clut_hash != palette || g_texture.vram_generation != gs::g_vram_generation;
+                         g_texture.clut_hash != palette;
     const std::uint64_t env_key = context.tex0 ^ (context.tex1 * 0x9E3779B97F4A7C15ull) ^
                                   (context.clamp << 1) ^ (static_cast<std::uint64_t>(st.texa) << 32) ^ palette;
     // Fast path: the texture content is unchanged, the same texture object is
@@ -923,6 +964,34 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
         g_texture.width = width;
         g_texture.height = height;
         g_texture.valid = true;
+        g_texture.stale = false;
+        g_texture.base = tex_base;
+        g_texture.units = texture_units(width, height);
+        g_texture.params.psm = tex_psm;
+        g_texture.params.tbp = tex_base;
+        g_texture.params.tbw = tex_tbw;
+        g_texture.params.cpsm = static_cast<std::uint32_t>((context.tex0 >> 51) & 0xFu);
+        g_texture.params.csa = static_cast<std::uint32_t>((context.tex0 >> 56) & 0x1Fu);
+        g_texture.params.ta0 = static_cast<std::uint32_t>(st.texa) & 0xFFu;
+        g_texture.params.aem = (st.texa >> 15) & 1u;
+        g_texture.params.clut = st.clut;
+        // Remember the native texture, so the next primitive that samples this
+        // base finds it and does not decode it again.
+        TextureCache *entry = pooled;
+        if (!entry) {
+            for (TextureCache &candidate : g_pool) {
+                if (!candidate.valid) { entry = &candidate; break; }
+            }
+            if (!entry) {
+                // Every slot is taken: drop the one that was used longest ago.
+                entry = &g_pool[0];
+                for (TextureCache &candidate : g_pool) {
+                    if (candidate.last_use < entry->last_use) entry = &candidate;
+                }
+            }
+        }
+        *entry = g_texture;
+        entry->last_use = ++g_texture_age;
     } else {
         width = g_texture.width;
         height = g_texture.height;
@@ -1228,6 +1297,56 @@ void sync_all_surfaces_to_cpu() {
             sync_surface_to_cpu(g_scene_targets[i].fbp);
         }
     }
+#endif
+}
+
+// A guest write into the game's VRAM.
+//
+// The game's own textures live in VRAM and the native path samples them from
+// native GL textures. When a write belongs to one of those textures, the
+// written rectangle is pushed into it, so the data reaches a native resource
+// instead of stopping in the emulated VRAM. A write that does not belong to
+// a native texture marks the textures it overlaps as stale, so they are
+// decoded again when they are sampled.
+bool guest_wrote_vram(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
+                      std::uint32_t x, std::uint32_t y, std::uint32_t w, std::uint32_t h) {
+#if defined(_WIN32)
+    if (!g_enabled || !g_hdc || !w || !h) return false;
+    const std::uint32_t bytes_per_pixel =
+        psm == gs::PSMCT24 ? 3u : (psm == gs::PSMCT16 || psm == gs::PSMCT16S) ? 2u : 4u;
+    const std::uint32_t units = (w * h * bytes_per_pixel + 255u) / 256u + 1u;
+    bool pushed = false;
+    for (TextureCache &entry : g_pool) {
+        if (!entry.valid) continue;
+        if (base + units <= entry.base || base >= entry.base + entry.units) continue;
+        if (entry.base == base && entry.params.psm == psm && entry.params.tbw == bw &&
+            x + w <= entry.width && y + h <= entry.height) {
+            std::vector<std::uint32_t> pixels;
+            if (raster::decode_rect_rgba(entry.params, x, y, w, h, pixels)) {
+                // The GS alpha range is 0..128 with 128 meaning opaque;
+                // OpenGL is 0..255 (the same scaling the full upload uses).
+                for (std::uint32_t &pixel : pixels) {
+                    const std::uint32_t a = (pixel >> 24) & 0xFFu;
+                    pixel = (pixel & 0x00FFFFFFu) | (std::min<std::uint32_t>(255u, a * 2u) << 24);
+                }
+                const GLuint previous = g_glstate.texture;
+                glBindTexture(GL_TEXTURE_2D, entry.object);
+                glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+                glTexSubImage2D(GL_TEXTURE_2D, 0, static_cast<GLint>(x), static_cast<GLint>(y),
+                                static_cast<GLsizei>(w), static_cast<GLsizei>(h), GL_RGBA,
+                                GL_UNSIGNED_BYTE, pixels.data());
+                glBindTexture(GL_TEXTURE_2D, previous);
+                entry.stale = false;
+                pushed = true;
+                continue;
+            }
+        }
+        entry.stale = true;
+    }
+    return pushed;
+#else
+    (void)psm; (void)base; (void)bw; (void)x; (void)y; (void)w; (void)h;
+    return false;
 #endif
 }
 

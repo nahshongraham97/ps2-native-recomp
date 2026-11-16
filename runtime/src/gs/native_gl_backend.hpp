@@ -52,6 +52,13 @@ bool sync_surface_to_cpu(std::uint32_t fbp);
 // Synchronizes all dirty GPU scene surfaces back to CPU VRAM.
 void sync_all_surfaces_to_cpu();
 
+// A guest write into the game's VRAM. When the write belongs to one of the
+// native textures (the game's own textures), the written rectangle is pushed
+// into that texture: the data reaches a native GL resource instead of
+// stopping in the emulated VRAM. Returns true when a native texture took it.
+bool guest_wrote_vram(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
+                      std::uint32_t x, std::uint32_t y, std::uint32_t w, std::uint32_t h);
+
 // The active drawing buffer's FBP (frame buffer pointer).
 std::uint32_t active_frame_fbp();
 

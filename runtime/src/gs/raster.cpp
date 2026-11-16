@@ -499,6 +499,33 @@ Probe g_probe;
 
 void reset() {}
 
+std::uint32_t texture_base(const State &st) {
+    const Setup s = make_setup(st);
+    return s.tme ? s.tbp : 0xFFFFFFFFu;
+}
+
+bool decode_rect_rgba(const TextureParams &p, std::uint32_t x, std::uint32_t y,
+                      std::uint32_t w, std::uint32_t h, std::vector<std::uint32_t> &pixels) {
+    if (!w || !h) return false;
+    Setup s{};
+    s.tpsm = p.psm;
+    s.tbp = p.tbp;
+    s.tbw = p.tbw;
+    s.cpsm = p.cpsm;
+    s.csa = p.csa;
+    s.ta0 = p.ta0;
+    s.aem = p.aem;
+    s.clut = p.clut;
+    pixels.resize(static_cast<std::size_t>(w) * h);
+    for (std::uint32_t row = 0; row < h; ++row) {
+        for (std::uint32_t column = 0; column < w; ++column) {
+            const std::uint32_t raw = read_pixel(s.tpsm, s.tbp, s.tbw, x + column, y + row);
+            pixels[static_cast<std::size_t>(row) * w + column] = decode_texel(s, raw);
+        }
+    }
+    return true;
+}
+
 bool decode_texture_rgba(const State &st, std::vector<std::uint32_t> &pixels, std::uint32_t &width, std::uint32_t &height) {
     const Setup s = make_setup(st);
     if (!s.tme) return false;

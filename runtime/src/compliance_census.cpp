@@ -47,6 +47,7 @@ std::atomic<std::uint64_t> g_audio_native_voice_frames_rendered{0};
 std::atomic<std::uint64_t> g_audio_native_adpcm_blocks_decoded{0};
 
 std::atomic<std::uint64_t> g_cdvd_sector_reads{0};
+std::atomic<std::uint64_t> g_content_volume_reads{0};
 
 std::mutex g_mutex;
 std::map<std::pair<std::uint32_t, std::uint32_t>, std::pair<RpcKind, std::uint64_t>> g_sif_rpcs;
@@ -191,7 +192,15 @@ void card_rpc(std::uint32_t method, bool ok) {
 }
 
 void cdvd_sector_read(std::uint32_t sectors) {
+    // A read that a disc device performed. The native content volume serves
+    // the game's data from the host's files, so it does not come through here.
     g_cdvd_sector_reads.fetch_add(sectors, std::memory_order_relaxed);
+}
+
+void content_volume_sector_read(std::uint32_t sectors) {
+    // A read the native content volume served (host files, no disc image and
+    // no CDVD device).
+    g_content_volume_reads.fetch_add(sectors, std::memory_order_relaxed);
 }
 
 static void (*g_exit_flush_hook)();
@@ -336,9 +345,11 @@ void report() {
     }
 
     const std::uint64_t cdvd_reads = g_cdvd_sector_reads.load(std::memory_order_relaxed);
-    std::fprintf(stderr, "[census] CDVD : device sector reads = %llu                   (%s)\n",
+    const std::uint64_t volume_reads = g_content_volume_reads.load(std::memory_order_relaxed);
+    std::fprintf(stderr, "[census] CDVD : device sector reads = %llu                   (%s); native content volume reads = %llu\n",
                  static_cast<unsigned long long>(cdvd_reads),
-                 cdvd_reads == 0 ? "no CDVD device on route" : "gate violation: CDVD device on route");
+                 cdvd_reads == 0 ? "no CDVD device on route" : "gate violation: CDVD device on route",
+                 static_cast<unsigned long long>(volume_reads));
 
     // What the native GL path refused to draw. A rejection is logged once per site, so the log
     // alone hides the scale; these counts are the size of the rendering gap (dropped packets).
