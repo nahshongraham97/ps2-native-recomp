@@ -1,3 +1,42 @@
+# Build delivery — 2026-11-16 (native sound service instrumentation, step 1 of 4)
+
+- Commit: `a12423b` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
+  (stamp: `commit a12423b clean, built 2026-11-16T16:00:55Z, Release, Clang-23.1.3`)
+- Runner: `build_native_gl_full/ps2run.exe`, 2026-11-16 16:00, 75,977,728 bytes
+- SHA-256: `52102daf2159eb0d80d67e1f15ec3e137553633c10d27df6e091e7ecdb2df93b`
+- What it adds — increment 4 step 1, the instrumentation that answers the open question for the
+  native sound service (does the EE's event data reach MSL's advertised staging buffer
+  `0x4C9E4`, and how does the channel state machine advance?):
+  1. **MSL window watch on by default** — `PS2_WATCH_IOP` now defaults to `[0x4C9C0, 0x50000)`
+     (MSL's command/state area: request globals `0x4CDD8/DDC/DF0`, staging `0x4C9E4`, state
+     table records at `0x4C9C0` with field `+0xC`), printing every IOP-code store with
+     time/PC/RA/size/address/value; the env var still overrides the window. `watch_copy`
+     covers DMA copies into the window from both EE-push paths.
+  2. **Window DMA content dumps** — an EE→IOP DMA (`sceSifSetDma` generic branch) or
+     `sceSifGetOtherData` whose destination is inside the window logs every word
+     (`[sif:msl-window-dma]`); the bytes are the event format the native command engine must
+     reproduce.
+  3. **`other_data` logged** — the IOP→EE direction was invisible without an env-set watch;
+     every transfer now prints direction/size/leading words (`[sif:other-data]`).
+- Decode state for steps 2-3 (from the 00:40 log + the in-repo oracle): MSL owns sid
+  `0x00012345` (handler entry `0x32BF4`, request globals, dispatch cascade `0x32F00-0x32FF8`);
+  the play path exists in the body (voice-start `0x33B68`, `SetAddr` at `0x33C24`, 14 call
+  sites; libsd stubs `SetParam=0x28388 SetSwitch=0x28390 SetAddr=0x283A0 VoiceTrans=0x283B0`)
+  but never executes — the sequencer polls the state table instead; **no DMA to `0x4C9E4`
+  appears anywhere in the 00:40 log** (`dtx-dma` targets the ADX buffers `0x84440/0xE1940`),
+  which is exactly what this build records.
+- Suites (final binaries): `test_spu2_mix` PASS, `test_gl_vs_raster` 18/18,
+  `test_native_gl_alpha` PASS, `test_gl_lazy_readback` PASS, `test_iop_native_module` PASS.
+- Replaced runner: `D8266FCFAEA80FAA95E7AD7EADF7997A73513920780ABD154C5401B4886D7013`
+  (`7768a5d clean` — movie pin + blit-into-every-target)
+- Next: step 2 (finish the op4-gate and `0x33B68` decode against the captured bytes from this
+  build's run), step 3 (runtime-owned endpoint + native command engine + native voice start),
+  step 4 (acceptance: `guest-registered → 0` for this sid, `voices keyed > 0`, audible SFX).
+- Delivery history: `435ce55ae7de51a7dcbc4c93f16e27aa572a76fb46bce7d3209f75ed43062aa7`
+  → `8600a796…` → `6b2335a1…` → `bd7479bd…` → `13424cdb…` → `9141cd27…` → `eaf36b36…`
+  → `2c16e7af…` → `cd686675…` → `E536E22C…` → `47075BB1…` → `78a0c1f6…` → `daef9fb5…`
+  → `d8266fcf…` → `52102daf…`
+
 # Build delivery — 2026-11-16 (movie presentation pin + blit-into-every-target)
 
 - Commit: `7768a5d` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
