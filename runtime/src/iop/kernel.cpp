@@ -1285,6 +1285,7 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
         if (native != g_native_modules.end()) {
             const std::string &native_name = native->second.name;
             std::uint32_t reserved_aot_base = 0;
+            std::uint32_t reserved_aot_size = 0;
 #ifdef PS2_IOP_AOT_MODULES_ENABLED
             if (native_strict()) {
                 std::size_t aot_count = 0;
@@ -1342,7 +1343,18 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
                     const std::uint32_t total = std::max(
                         mem_size, elf.u32(iopmod + 12) + elf.u32(iopmod + 16) + elf.u32(iopmod + 20));
                     const std::uint32_t requested = total + 0x40u;
+                    reserved_aot_size = requested;
                     const std::uint32_t allocated = (requested + 0xFFu) & ~0xFFu;
+                    for (const auto &[resident_id, m] : g_modules) {
+                        if (m.name == native_name && m.base == aot_layout->base) {
+                            std::fprintf(stderr,
+                                         "[iop-native] reusing resident native replacement %s (id=%d base=0x%08X)\n",
+                                         native_name.c_str(), resident_id, m.base);
+                            if (done) done(resident_id, 0);
+                            return resident_id;
+                        }
+                    }
+
                     // Reserve at the captured base itself (mode 2), the same way the guest-IRX
                     // path below does. First-fit (mode 0) used to reach this address only because
                     // the slots below it happened to be full; once registered AOT ranges are
@@ -1397,7 +1409,7 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
                 return -1;
             }
             const int id = g_next_module++;
-            g_modules[id] = Module{id, native_name, 0, 0, 0, 0};
+            g_modules[id] = Module{id, native_name, reserved_aot_base, reserved_aot_size, 0, 0};
             for (const NativeIopLibrary &library : native->second.libraries) {
                 for (const NativeIopExport &entry : library.exports) {
                     const NativeIopExportKey key{library.name, library.version, entry.ordinal};
@@ -1488,6 +1500,20 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
             std::abort();
         }
         if (aot_layout) {
+            for (const auto &[resident_id, m] : g_modules) {
+                const bool res_match = (m.name == name ||
+                    (name == "CRI_ADX_Driver" && m.name == "CRI_ADXI") ||
+                    (name == "CRI_ADXI" && m.name == "CRI_ADX_Driver") ||
+                    (aot_layout->name && m.name == aot_layout->name));
+                if (res_match && m.base == aot_layout->base) {
+                    std::fprintf(stderr,
+                                 "[iop-aot-layout] reusing resident AOT module %s (id=%d base=0x%08X size=0x%X)\n",
+                                 m.name.c_str(), resident_id, m.base, m.size);
+                    if (done) done(resident_id, 0);
+                    return resident_id;
+                }
+            }
+
             base = alloc(total + 0x40u, 2, aot_layout->base);
             if (!base) {
                 std::fprintf(stderr,
