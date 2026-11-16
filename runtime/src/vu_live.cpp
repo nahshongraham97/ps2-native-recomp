@@ -51,7 +51,7 @@ namespace {
 
 using Clock = lb::Clock;
 
-constexpr std::size_t kCodeSize = 16384;
+[[maybe_unused]] constexpr std::size_t kCodeSize = 16384;
 
 struct Pending {
     std::uint64_t key = 0;
@@ -331,20 +331,14 @@ void note_call(std::uint64_t key) {
     ++g->calls[key];
 }
 
-void unknown(std::uint64_t key, std::uint32_t entry, const std::uint8_t *code) {
-    if (!g || !g->worker) return;
-    // A vector program the build did not have, translated while the game
-    // runs. The accepted route may not do this: the program must be translated
-    // ahead of time. The census counts it.
+void unknown(std::uint64_t, std::uint32_t entry, const std::uint8_t *) {
+    // Nothing may be translated while the game runs (NATIVE_PORT_ONLY.md): the
+    // vector programs are translated ahead of time. A program the build does not
+    // have is a gap in the build, and the game is told where instead of the
+    // runtime compiling it while the game waits.
     ps2::census::vu_live_translation();
-    std::lock_guard lock(g->mutex);
-    if (!g->seen.insert(key).second) return;
-    Pending p;
-    p.key = key;
-    p.entry = entry;
-    p.code.assign(code, code + kCodeSize);
-    g->pending.push_back(std::move(p));
-    g->wake.notify_one();
+    std::fprintf(stderr, "[vu-live] no translation for the vector program at 0x%04X: the game stops\n", entry & 16383u);
+    std::fflush(stderr);
 }
 
 std::vector<Program> take() {

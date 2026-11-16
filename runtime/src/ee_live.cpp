@@ -1019,7 +1019,15 @@ bool loaded_run(std::uint32_t pc, std::uint32_t &base, std::uint32_t &size) {
 
 bool translate_missing(std::uint32_t pc) {
     ps2::census::ee_live_translation(pc);
-    if (!g || !g->ready || g->failed.count(pc)) return false;
+    // Nothing may be translated while the game runs (NATIVE_PORT_ONLY.md). The
+    // coverage is complete in the build: every function the program can enter
+    // is an entry point of the generated library and every code image is
+    // translated whole. A window that is not covered therefore means the
+    // build is missing something: the game stops and says where, it does not
+    // wait for a compiler.
+    say("no translated code at 0x%08X and the runtime does not translate while the game runs: the game stops", pc);
+    std::fflush(stderr);
+    return false;
     const auto began = Clock::now();
     std::error_code error;
     // The game waits from here on: builds that only improve code start no more compilers until it goes on.
