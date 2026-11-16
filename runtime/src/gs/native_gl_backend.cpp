@@ -209,7 +209,7 @@ struct TextureCache {
 // decoded and uploaded once, not after every write anywhere in VRAM, and a
 // guest write lands in the native texture it belongs to instead of stopping
 // in the emulated VRAM.
-constexpr std::size_t kTexturePool = 12;
+constexpr std::size_t kTexturePool = 64;
 TextureCache g_pool[kTexturePool];
 std::uint64_t g_texture_age = 0;
 
