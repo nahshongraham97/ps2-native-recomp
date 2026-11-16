@@ -1058,6 +1058,12 @@ bool invoke_compiled_module(Cpu &c, std::int64_t &budget) {
         const std::uint32_t ran = compiled->run(native, memory, allowed);
         if (!ran) return false;
 
+        // Guest code that runs is guest code that runs, whether it was
+        // interpreted or was compiled ahead of time: the census counts it, so
+        // a guest module that stays loaded and running shows up in the gate
+        // instead of hiding behind the compiler.
+        ps2::census::iop_guest_instructions(ran);
+
         std::copy(native.gpr.begin(), native.gpr.end(), c.r);
         c.r[0] = 0;
         c.hi = native.hi;
