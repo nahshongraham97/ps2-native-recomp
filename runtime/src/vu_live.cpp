@@ -1,5 +1,7 @@
 #include "ps2/vu_live.hpp"
 
+#include "compliance_census.hpp"
+
 #include "ps2/os.hpp"
 
 #ifdef __EMSCRIPTEN__
@@ -331,6 +333,10 @@ void note_call(std::uint64_t key) {
 
 void unknown(std::uint64_t key, std::uint32_t entry, const std::uint8_t *code) {
     if (!g || !g->worker) return;
+    // A vector program the build did not have, translated while the game
+    // runs. The accepted route may not do this: the program must be translated
+    // ahead of time. The census counts it.
+    ps2::census::vu_live_translation();
     std::lock_guard lock(g->mutex);
     if (!g->seen.insert(key).second) return;
     Pending p;

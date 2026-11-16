@@ -19,6 +19,8 @@ namespace {
 
 std::atomic<std::uint64_t> g_iop_instructions{0};
 std::atomic<std::uint64_t> g_ee_live_translations{0};
+std::atomic<std::uint64_t> g_vu_live_translations{0};
+std::atomic<std::uint64_t> g_guest_modules_loaded{0};
 std::atomic<std::uint64_t> g_vu0_fallbacks{0};
 std::atomic<std::uint64_t> g_vu1_fallbacks{0};
 
@@ -79,6 +81,19 @@ void ee_live_translation(std::uint32_t pc) {
     // but the counter did not say where. Live translation happens twice per run
     // at most, so the PC is worth logging.
     std::fprintf(stderr, "[ee-live] translating EE code outside the captured windows at 0x%08X\n", pc);
+    std::fflush(stderr);
+}
+
+void vu_live_translation() {
+    g_vu_live_translations.fetch_add(1, std::memory_order_relaxed);
+    std::fprintf(stderr, "[vu-live] translating a vector program while the game runs\n");
+    std::fflush(stderr);
+}
+
+void guest_module_loaded(const char *name) {
+    g_guest_modules_loaded.fetch_add(1, std::memory_order_relaxed);
+    std::fprintf(stderr, "[iop-native-stop] the guest module %s is loaded and able to run\n",
+                 name ? name : "?");
     std::fflush(stderr);
 }
 
@@ -216,8 +231,14 @@ void report() {
     std::fprintf(stderr, "\n[census] ===== accepted-route PS2 API census =====\n");
 
     const std::uint64_t ee_live = g_ee_live_translations.load(std::memory_order_relaxed);
-    std::fprintf(stderr, "[census] EE   : live guest translations = %llu        (%s)\n",
-                 static_cast<unsigned long long>(ee_live), ee_live == 0 ? "PASS" : "must be 0");
+    const std::uint64_t vu_live = g_vu_live_translations.load(std::memory_order_relaxed);
+    const std::uint64_t guest_modules = g_guest_modules_loaded.load(std::memory_order_relaxed);
+    std::fprintf(stderr, "[census] EE   : live guest translations = %llu        (%s); VU1 programs translated while the game ran = %llu (%s)\n",
+                 static_cast<unsigned long long>(ee_live), ee_live == 0 ? "PASS" : "must be 0",
+                 static_cast<unsigned long long>(vu_live), vu_live == 0 ? "PASS" : "must be 0");
+    std::fprintf(stderr, "[census] IOP  : guest modules loaded and able to run = %llu   (%s)\n",
+                 static_cast<unsigned long long>(guest_modules),
+                 guest_modules == 0 ? "PASS" : "must be 0");
 
     const std::uint64_t vu0_fb = g_vu0_fallbacks.load(std::memory_order_relaxed);
     const std::uint64_t vu1_fb = g_vu1_fallbacks.load(std::memory_order_relaxed);
@@ -366,16 +387,22 @@ void report() {
     // GS/VRAM and SPU2 chip are devices, and they are violations until they leave the route.
     std::fprintf(stderr,
                  "[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): "
-                 "GS-stopped-in-VRAM=%llu SPU2-chip-model-ops=%llu SIF-guest-registered=%llu CDVD-device-reads=%llu\n",
+                 "GS-stopped-in-VRAM=%llu SPU2-chip-model-ops=%llu SIF-guest-registered=%llu CDVD-device-reads=%llu; "
+                 "compiled while the game ran: EE=%llu VU1=%llu; guest modules able to run=%llu\n",
                  static_cast<unsigned long long>(gs_skp),
                  static_cast<unsigned long long>(spu2_ops),
                  static_cast<unsigned long long>(sif_gst),
-                 static_cast<unsigned long long>(cdvd_reads));
+                 static_cast<unsigned long long>(cdvd_reads),
+                 static_cast<unsigned long long>(ee_live),
+                 static_cast<unsigned long long>(vu_live),
+                 static_cast<unsigned long long>(guest_modules));
 
     // Verdict summary
     int violations = 0;
     std::string viol_list;
     if (ee_live > 0) { violations++; viol_list += "EE live translation, "; }
+    if (vu_live > 0) { violations++; viol_list += "VU1 program translated while the game ran, "; }
+    if (guest_modules > 0) { violations++; viol_list += "guest module able to run, "; }
     if (vu0_fb + vu1_fb > 0) { violations++; viol_list += "VU interpreter fallback, "; }
     if (iop_insns > 0) { violations++; viol_list += "IOP guest execution, "; }
     if (sif_gst > 0) { violations++; viol_list += "SIF RPCs through guest-registered servers, "; }

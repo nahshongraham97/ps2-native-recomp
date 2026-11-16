@@ -177,6 +177,31 @@ private:
             const auto id = static_cast<std::uint16_t>(unit.size() + 1);
             unit.emplace(a, id);
         }
+        // Every word of code in an image without symbols is an entry point.
+        //
+        // A program with symbols already gets complete coverage: the analysis
+        // makes every symbol a strong entry (analysis.cpp:233), so every
+        // function the program can enter - a callback, a mode's handler - is
+        // callable without anyone having played the mode that calls it.
+        //
+        // An image the game loads into RAM at runtime has no symbols, and the
+        // analysis can only guess where its functions start (a stack frame, a
+        // return, a pointer table). A function reached through something the
+        // guess missed was therefore not an entry, and the runtime had to
+        // translate it while the game waited - the 13:21 run's "no translated
+        // code at 0x00B17530" and its seven seconds of stall. Every word of
+        // code in such an image is an entry instead: the image is a few tens of
+        // thousands of instructions, and the coverage is then complete by
+        // construction.
+        if (image_.symbols().empty()) {
+            for (std::uint32_t a = p_.base; a < p_.end; a += 4) {
+                if (!p_.is_code(a)) continue;
+                auto &unit = ids_[layout_.unit_of(a)];
+                if (unit.count(a)) continue;
+                const auto id = static_cast<std::uint16_t>(unit.size() + 1);
+                unit.emplace(a, id);
+            }
+        }
     }
 
     std::uint16_t id_of(std::uint32_t a) const {

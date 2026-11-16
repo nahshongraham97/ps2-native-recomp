@@ -6,6 +6,8 @@ namespace ps2::census {
 void iop_guest_instructions(std::uint64_t count);        // exact retired guest IOP instructions
 void iop_guest_sample(std::uint32_t pc);                  // sampled PC for module attribution
 void ee_live_translation(std::uint32_t pc);               // guest EE translated at runtime
+void vu_live_translation();                              // a vector program translated while the game runs
+void guest_module_loaded(const char *name);              // a guest module loaded and able to run
 void vu_interpreter_fallback(int unit, std::uint32_t pc); // run_fast()
 enum class RpcKind { Native, Guest, Unknown };
 void sif_rpc(std::uint32_t sid, std::uint32_t method, RpcKind kind);

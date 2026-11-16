@@ -1631,6 +1631,11 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
     link_imports(base, total);
     const int id = g_next_module++;
     g_modules[id] = Module{id, module_name, base, total, base + entry, base + gp};
+    // A guest module with a real base is guest code that can run. The
+    // accepted route may not have one: every module must be a native service
+    // (or the guest's own code, pre-built and linked in). The census counts
+    // these.
+    if (base != 0) ps2::census::guest_module_loaded(module_name.c_str());
 #ifdef PS2_IOP_AOT_MODULES_ENABLED
     if (compiled_body) g_compiled_iop_modules[id] = compiled_body;
 #endif
