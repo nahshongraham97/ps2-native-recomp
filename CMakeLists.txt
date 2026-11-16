@@ -92,6 +92,7 @@ else()
         runtime/src/vu_live.cpp
         runtime/src/ee_live.cpp
         runtime/src/ipu/ipu.cpp
+        runtime/src/media/mpeg2.cpp
         runtime/src/gs/gs.cpp
         runtime/src/gs/gif.cpp
         runtime/src/gs/queue.cpp
@@ -277,6 +278,9 @@ if(PS2_GENERATED)
     add_executable(test_spu2_mix EXCLUDE_FROM_ALL tests/test_spu2_mix.cpp)
     target_include_directories(test_spu2_mix PRIVATE runtime/src)
     target_link_libraries(test_spu2_mix PRIVATE ps2runtime)
+    add_executable(test_mpeg2_stream EXCLUDE_FROM_ALL tests/test_mpeg2_stream.cpp)
+    target_include_directories(test_mpeg2_stream PRIVATE runtime/src)
+    target_link_libraries(test_mpeg2_stream PRIVATE ps2runtime)
     if(WIN32)
         add_executable(test_native_gl_alpha EXCLUDE_FROM_ALL tests/test_native_gl_alpha.cpp)
         target_include_directories(test_native_gl_alpha PRIVATE runtime/include runtime/src)
