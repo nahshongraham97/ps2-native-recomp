@@ -976,6 +976,21 @@ bool invoke_native_import(const std::string &library, std::uint16_t version, std
             std::fflush(stderr);
             std::abort();
         }
+        // Outside strict mode the failure was silent, which hid a real gap: the
+        // native MWFILEFR service exports ordinals 4, 5, 10, 13, 15 and 16 while
+        // the retail IRX had nine (4, 5, 8, 9, 10, 13, 14, 15, 16), so MSL's
+        // calls to 8, 9 and 14 failed with nothing in the log. Report the first
+        // occurrence of each missing export with its arguments.
+        static std::map<std::string, std::uint64_t> s_unresolved;
+        const std::string key = library + " v" + std::to_string(version) + " ordinal " + std::to_string(ordinal);
+        if (s_unresolved.emplace(key, 1).second) {
+            std::fprintf(stderr,
+                         "[iop-native-miss] unresolved native import %s v%04X ordinal %u caller=0x%08X a0=0x%08X a1=0x%08X a2=0x%08X a3=0x%08X\n",
+                         library.c_str(), version, ordinal, c.r[31], c.r[4], c.r[5], c.r[6], c.r[7]);
+            std::fflush(stderr);
+        } else {
+            ++s_unresolved[key];
+        }
         return false;
     }
     if (g_trace_modules)

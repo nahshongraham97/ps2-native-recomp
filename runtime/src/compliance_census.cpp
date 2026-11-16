@@ -73,8 +73,12 @@ void iop_guest_sample(std::uint32_t pc) {
 }
 
 void ee_live_translation(std::uint32_t pc) {
-    (void)pc;
     g_ee_live_translations.fetch_add(1, std::memory_order_relaxed);
+    // The census counts these (the accepted route must run only captured code),
+    // but the counter did not say where. Live translation happens twice per run
+    // at most, so the PC is worth logging.
+    std::fprintf(stderr, "[ee-live] translating EE code outside the captured windows at 0x%08X\n", pc);
+    std::fflush(stderr);
 }
 
 void vu_interpreter_fallback(int unit, std::uint32_t pc) {

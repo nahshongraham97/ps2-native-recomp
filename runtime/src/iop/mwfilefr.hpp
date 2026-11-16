@@ -28,6 +28,12 @@ void mwfilefr_open_import(ps2::iop::Cpu &c);
 void mwfilefr_close_import(ps2::iop::Cpu &c);
 // Native C++ implementation of the MWFILEFR mwfile v1.03 ordinal 10 read API.
 void mwfilefr_read_import(ps2::iop::Cpu &c);
+// The retail IRX also exports ordinals 8, 9 and 14; the native service now
+// provides them (measured no-ops that log their arguments) so a call can no
+// longer fail silently.
+void mwfilefr_ordinal8_import(ps2::iop::Cpu &c);
+void mwfilefr_ordinal9_import(ps2::iop::Cpu &c);
+void mwfilefr_ordinal14_import(ps2::iop::Cpu &c);
 // MWFILEFR ordinal 13's exported MIPS32 thunk reaches a leaf that only returns;
 // its return-value register is therefore preserved rather than synthesized.
 void mwfilefr_ordinal13_return_import(ps2::iop::Cpu &c);

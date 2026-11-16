@@ -25,19 +25,38 @@ bool is_scratchpad(std::uint32_t p) { return (p & ~0x3FFu) == 0x1F800000u; }
 // PS2_WATCH_IOP=<first>:<last> (hex, IOP RAM addresses): porting work, prints every store of the IOP's own code into that range with
 // the time (seconds of IOP time), the program counter, the return address and the value. Stores of the emulator itself (the disc
 // reads, the DMA) are not seen here.
-std::uint32_t g_watch_lo = 0, g_watch_hi = 0;
+// The watched ranges are listed in g_watch_ranges (see reset()).
+
+// The sound service's own data areas, watched by default (2026-11-16). MSL
+// keeps its control block and the staging buffer the game writes through at
+// 0x4C9C0-0x4FFFF, and its channel pool - 16-byte channel records whose
+// state byte sits at +0x0A - at 0x50620-0x50E34. The channel pool was outside
+// the first window, so the sequencer's channel states (the gate voice_start
+// checks before it key-ons a voice) were never visible.
+struct WatchRange {
+    std::uint32_t lo, hi;
+};
+WatchRange g_watch_ranges[4] = {};
+int g_watch_range_count = 0;
+
+bool watch_covered(std::uint32_t p, unsigned size) {
+    for (int i = 0; i < g_watch_range_count; ++i) {
+        if (p + size > g_watch_ranges[i].lo && p < g_watch_ranges[i].hi) return true;
+    }
+    return false;
+}
 
 void watch_store(std::uint32_t p, unsigned size, std::uint32_t v) {
-    if (p + size <= g_watch_lo || p >= g_watch_hi) return;
+    if (!watch_covered(p, size)) return;
     std::fprintf(stderr, "[watch] %.5f s pc 0x%08X ra 0x%08X store%u 0x%06X = 0x%X\n", static_cast<double>(kernel::now()) / 36864000.0, g_cpu.pc, g_cpu.r[31], size * 8, p, v);
 }
 
 }
 
 void watch_copy(const char *what, std::uint32_t dst, std::uint32_t src, std::uint32_t bytes, std::uint32_t caller) {
-    if (!g_watch_hi) return;
+    if (!g_watch_range_count) return;
     const std::uint32_t p = phys(dst);
-    if (p + bytes <= g_watch_lo || p >= g_watch_hi) return;
+    if (!watch_covered(p, bytes)) return;
     std::fprintf(stderr, "[watch] %.5f s %s of %u bytes to 0x%06X from 0x%06X, called from 0x%08X (pc 0x%08X)\n", static_cast<double>(kernel::now()) / 36864000.0, what, bytes, p,
                  phys(src), caller, g_cpu.pc);
 }
@@ -67,7 +86,7 @@ std::uint32_t read32(std::uint32_t a) {
 
 void write8(std::uint32_t a, std::uint8_t v) {
     const std::uint32_t p = phys(a);
-    if (g_watch_hi) watch_store(p, 1, v);
+    if (g_watch_range_count) watch_store(p, 1, v);
     if (is_ram(p)) { g_ram[p & (kRamSize - 1)] = v; return; }
     if (is_scratchpad(p)) { g_scratchpad[p & 0x3FFu] = v; return; }
     hw::write(p, v, 1);
@@ -75,7 +94,7 @@ void write8(std::uint32_t a, std::uint8_t v) {
 
 void write16(std::uint32_t a, std::uint16_t v) {
     const std::uint32_t p = phys(a);
-    if (g_watch_hi) watch_store(p, 2, v);
+    if (g_watch_range_count) watch_store(p, 2, v);
     if (is_ram(p)) { std::memcpy(g_ram + (p & (kRamSize - 1)), &v, 2); return; }
     if (is_scratchpad(p)) { std::memcpy(g_scratchpad + (p & 0x3FEu), &v, 2); return; }
     hw::write(p, v, 2);
@@ -83,7 +102,7 @@ void write16(std::uint32_t a, std::uint16_t v) {
 
 void write32(std::uint32_t a, std::uint32_t v) {
     const std::uint32_t p = phys(a);
-    if (g_watch_hi) watch_store(p, 4, v);
+    if (g_watch_range_count) watch_store(p, 4, v);
     if (is_ram(p)) { std::memcpy(g_ram + (p & (kRamSize - 1)), &v, 4); return; }
     if (is_scratchpad(p)) { std::memcpy(g_scratchpad + (p & 0x3FCu), &v, 4); return; }
     hw::write(p, v, 4);
@@ -152,19 +171,17 @@ void reset() {
     if (const char *w = std::getenv("PS2_WATCH_IOP")) {
         unsigned lo = 0, hi = 0;
         if (std::sscanf(w, "%x:%x", &lo, &hi) == 2 && hi > lo) {
-            g_watch_lo = lo;
-            g_watch_hi = hi;
+            g_watch_ranges[0] = WatchRange{lo, hi};
+            g_watch_range_count = 1;
         }
     } else {
-        // Default watch window for the native sound service work (2026-11-16): MSL's
-        // command/state area. The open question is whether the EE's event data ever
-        // reaches the staging buffer MSL advertised (0x4C9E4, MSL's reply op3 id
-        // 0x100FC) and how the channel state machine advances (16-byte records at
-        // 0x4C9C0, field +0xC). With this window every IOP-code store into it and
-        // every DMA copy into it (watch_copy) is printed with PC and value;
-        // PS2_WATCH_IOP overrides the window for other porting work.
-        g_watch_lo = 0x4C9C0u;
-        g_watch_hi = 0x50000u;
+        // Default watch windows for the sound service (2026-11-16): MSL's
+        // control block and the staging buffer the game writes through, and
+        // MSL's channel pool whose state byte (record + 0x0A) decides whether
+        // voice_start key-ons a voice.
+        g_watch_ranges[0] = WatchRange{0x4C9C0u, 0x50000u};
+        g_watch_ranges[1] = WatchRange{0x50600u, 0x50E40u};
+        g_watch_range_count = 2;
     }
     spu2::reset();
     sio2::reset();

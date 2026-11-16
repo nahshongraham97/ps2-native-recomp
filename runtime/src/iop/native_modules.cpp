@@ -295,8 +295,11 @@ void install_native_modules() {
     mwfile_library.version = 0x0103u;
     mwfile_library.exports.push_back({4, mwfilefr_open_import});
     mwfile_library.exports.push_back({5, mwfilefr_close_import});
+    mwfile_library.exports.push_back({8, mwfilefr_ordinal8_import});
+    mwfile_library.exports.push_back({9, mwfilefr_ordinal9_import});
     mwfile_library.exports.push_back({10, mwfilefr_read_import});
     mwfile_library.exports.push_back({13, mwfilefr_ordinal13_return_import});
+    mwfile_library.exports.push_back({14, mwfilefr_ordinal14_import});
     mwfile_library.exports.push_back({15, native_mwfile_library_init});
     mwfile_library.exports.push_back({16, mwfilefr_ordinal16_worker_dispatch_import});
     mwfilefr.libraries.push_back(std::move(mwfile_library));

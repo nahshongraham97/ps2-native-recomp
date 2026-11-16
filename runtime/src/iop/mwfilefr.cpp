@@ -744,6 +744,34 @@ void mwfilefr_close_import(ps2::iop::Cpu &c) {
     c.r[2] = 0;
 }
 
+// The retail MWFILEFR.IRX exports nine functions: ordinals 4 (open), 5 (close),
+// 8, 9, 10 (read), 13 (return), 14, 15 (init) and 16 (worker dispatch). The
+// native service implements 4, 5, 10, 13, 15 and 16, so MSL's calls to 8, 9 and
+// 14 had no provider: the native import dispatcher returned false with nothing
+// in the log (and MSL never reached those call sites in the 11:14 run - the
+// sequencer stalled earlier, at the channel-state gate).
+//
+// These three are therefore implemented as measured no-ops: the native read
+// completes synchronously, so a completion wait has nothing left to wait for
+// and a status query reports "done". v0 is preserved rather than invented -
+// the retail ordinal 13 does exactly that (its body is `jr ra` plus a delay
+// slot writing to $zero) - and every call logs its arguments so the next run
+// measures what MSL actually asks for instead of guessing it.
+void mwfilefr_ordinal8_import(ps2::iop::Cpu &c) {
+    std::fprintf(stderr, "[mwfilefr-native] ordinal 8 a0=0x%08X a1=0x%08X a2=0x%08X a3=0x%08X\n",
+                 c.r[4], c.r[5], c.r[6], c.r[7]);
+}
+
+void mwfilefr_ordinal9_import(ps2::iop::Cpu &c) {
+    std::fprintf(stderr, "[mwfilefr-native] ordinal 9 a0=0x%08X a1=0x%08X a2=0x%08X a3=0x%08X\n",
+                 c.r[4], c.r[5], c.r[6], c.r[7]);
+}
+
+void mwfilefr_ordinal14_import(ps2::iop::Cpu &c) {
+    std::fprintf(stderr, "[mwfilefr-native] ordinal 14 a0=0x%08X a1=0x%08X a2=0x%08X a3=0x%08X\n",
+                 c.r[4], c.r[5], c.r[6], c.r[7]);
+}
+
 void mwfilefr_read_import(ps2::iop::Cpu &c) {
     const std::uint32_t handle = c.r[4];
     const std::uint32_t destination = c.r[5];
