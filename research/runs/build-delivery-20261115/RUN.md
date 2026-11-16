@@ -1,22 +1,34 @@
-# Build delivery — 2026-11-16 (nothing in the log is sampled or truncated)
+# Build delivery — 2026-11-16 (full payloads, quiet movie present, batched flush, character-select rendering)
 
-- Commit: `c9cfbb7` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
-  (stamp: `commit c9cfbb7 clean, built 2026-11-16T03:37:52Z, Release, Clang-23.1.3`)
-- Runner: `build_native_gl_full/ps2run.exe`, 2026-11-16 22:37, 75,976,704 bytes
-- SHA-256: `47075bb124fffab3225287a39df56cfc941f428d22ea02cc1efdcf4fbc28d0bf`
-- What it adds: every trace line is logged by default, and the log file is never truncated.
-  `PS2_LOG_MAX_BYTES` (default 0 = no ceiling) rotates the file to `<name>.1` instead of stopping
-  at a fixed size; `PS2_TRACE_MSL_LIMIT` (default unlimited), `PS2_TRACE_MOVIE_PRESENT` (default
-  every present), `PS2_TRACE_SWEEP` (default every sweep write), `PS2_TRACE_VU` (default every
-  unimplemented VU "lower" operation), and the `[frame]` heartbeat now prints every frame.
-  The 600-line in-memory ring is only the in-game window's tail/head view — the file is complete
-  regardless. The census report, the `[iop-aot]`/`[iop-aot-import]`/`[iop-native-hle-call]` traces
-  and the cumulative `[vu1]` summary were already complete and are untouched.
-- Replaced runner: `E536E22CB107C669C9BFFDEFF6AF643304ABC37E6743B6C5408E7A62081CF17C`
-  (`6e0fb9b clean`, 2026-11-16 03:10 — native voice engine, Slice 2–3 step b)
+- Commit: `00c0cee` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
+  (stamp: `commit 00c0cee clean, built 2026-11-16T05:26:12Z, Release, Clang-23.1.3`)
+- Runner: `build_native_gl_full/ps2run.exe`, 2026-11-16 00:26, 75,976,192 bytes
+- SHA-256: `78a0c1f6aad99fad5e8a32d0c62a83d325b2dca6a321a5dd903d77cf5bd43533`
+- What it adds, from the 22:50 run's diagnosis:
+  1. **Full MSL payload dump** — all 1,536 words of the MSL command buffer (was 16): the SFX
+     question lives past the setup prefix.
+  2. **Quiet movie present** — the blit runs while FBP 280 is quiet (no VRAM write since the
+     previous present), holding the last whole frame between complete frames; the old gate never
+     fired (0 of 16,691) and the quad tore on 8,328 presents. Fallback blit after 8 changed
+     presents so a never-quiet stream cannot freeze.
+  3. **Batched log flush** — every 64 KB / 50 ms instead of per record (~14k write syscalls/s
+     were a share of the frame time); census lines still flush immediately.
+  4. **Character select** — the census now counts dropped packets per rejecting site (the log
+     fires once per site, which hid the scale; all three sites hit the front-end surfaces FBP 91
+     and 140), and two of the three were implemented: **alpha test** AFAIL=0 via `glAlphaFunc`
+     (ATST/AREF from TEST bits 1-3/4-11 per raster.cpp:335-336, reference `aref/128`; aref>128
+     and AFAIL=2/3 stay rejected and counted), and **fog** via GL fixed-function fog with the
+     per-vertex coordinate `(255-F)/255`, matching the rasterizer's
+     `(F*color + (255-F)*fogcol) >> 8` (within one 8-bit unit; `glFogCoordf` loads through
+     `wglGetProcAddress`, else the primitive is rejected and counted).
+- Replaced runner: `47075BB124FFFAB3225287A39DF56CFC941F428D22EA02CC1EFDCF4FBC28D0BF`
+  (`c9cfbb7 clean` — no-truncation logging)
+- Still open, named by the new counters: the **ALPHA tuple for textured DECAL** (alpha=0x44 with
+  tfx=1, rejected on FBP 140) and **reflections** (planned: verify the framebuffer-as-texture
+  path; check whether a rejected packet blocks them).
 - Delivery history: `435ce55ae7de51a7dcbc4c93f16e27aa572a76fb46bce7d3209f75ed43062aa7`
   → `8600a796…` → `6b2335a1…` → `bd7479bd…` → `13424cdb…` → `9141cd27…` → `eaf36b36…`
-  → `2c16e7af…` → `cd686675…` → `E536E22C…` → `47075bb1…`
+  → `2c16e7af…` → `cd686675…` → `E536E22C…` → `47075BB1…` → `78a0c1f6…`
 - The `13424cdb…` runner was run live once (`ps2run_2026-11-15_17-57-43.log`): card fixed, all
   four AOT bases loaded, crashed at the movie's `stdio v0103` import — record in
   `research/runs/aot-layout-crash-20261115/RUN.md`.
