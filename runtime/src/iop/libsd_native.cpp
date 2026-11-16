@@ -731,7 +731,7 @@ void export_block_trans_status(Cpu &cpu) {
     const std::uint32_t core = arg(cpu, 0) & 1u;
     if (audio_native::has_active_stream(core)) {
         const std::uint32_t buf = audio_native::get_active_buffer(core);
-        const std::uint32_t address = audio_native::get_current_address(core);
+        const std::uint32_t address = audio_native::get_next_fill_address(core);
         const std::uint32_t ret = (buf << 24) | (address & 0x00FFFFFFu);
         std::fprintf(stderr, "[libsd] sceSdBlockTransStatus(ch=%u) -> 0x%08X (native active, buf=%u, addr=0x%08X)\n",
                      arg(cpu, 0), ret, buf, address);

@@ -148,6 +148,11 @@ std::uint32_t get_active_buffer(int core) {
     return g_streams[core & 1].active_buf;
 }
 
+std::uint32_t get_next_fill_address(int core) {
+    const CoreStream &s = g_streams[core & 1];
+    return s.iop_base + (s.active_buf * s.half_bytes);
+}
+
 std::uint32_t get_current_address(int core) {
     return g_streams[core & 1].current_iop_addr;
 }
