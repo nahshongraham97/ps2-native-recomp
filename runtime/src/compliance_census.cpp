@@ -38,6 +38,8 @@ std::atomic<std::uint64_t> g_spu2_dma_reads{0};
 std::atomic<std::uint64_t> g_spu2_dma_read_bytes{0};
 std::atomic<std::uint64_t> g_spu2_device_ops{0};
 std::atomic<std::int32_t>  g_spu2_peak_sample_val{0};
+std::atomic<std::uint64_t> g_audio_native_frames_mixed{0};
+std::atomic<std::uint64_t> g_audio_native_blocks_consumed{0};
 
 std::atomic<std::uint64_t> g_cdvd_sector_reads{0};
 
@@ -129,6 +131,14 @@ void spu2_dma(int core, std::uint32_t bytes, bool to_spu) {
 
 void spu2_device_op() {
     g_spu2_device_ops.fetch_add(1, std::memory_order_relaxed);
+}
+
+void audio_native_frame_mixed() {
+    g_audio_native_frames_mixed.fetch_add(1, std::memory_order_relaxed);
+}
+
+void audio_native_block_consumed() {
+    g_audio_native_blocks_consumed.fetch_add(1, std::memory_order_relaxed);
 }
 
 void spu2_peak_sample(std::int16_t left, std::int16_t right) {
@@ -259,6 +269,12 @@ void report() {
                  static_cast<double>(dma_wb) / (1024.0 * 1024.0),
                  static_cast<unsigned long long>(dma_r),
                  peak);
+
+    const std::uint64_t nat_audio_frames = g_audio_native_frames_mixed.load(std::memory_order_relaxed);
+    const std::uint64_t nat_audio_blocks = g_audio_native_blocks_consumed.load(std::memory_order_relaxed);
+    std::fprintf(stderr, "[census] AUDIO: native frames mixed = %llu, blocks consumed = %llu\n",
+                 static_cast<unsigned long long>(nat_audio_frames),
+                 static_cast<unsigned long long>(nat_audio_blocks));
 
     if (locked && !g_card_rpcs_by_method.empty()) {
         std::fprintf(stderr, "[census] CARD : RPCs by method:");

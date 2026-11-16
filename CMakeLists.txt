@@ -104,6 +104,7 @@ else()
         runtime/src/iop/dev9_offline.cpp
         runtime/src/iop/usbd_offline.cpp
         runtime/src/iop/libsd_native.cpp
+        runtime/src/iop/audio_native.cpp
         runtime/src/iop/padman.cpp
         runtime/src/iop/mcserv.cpp
         runtime/src/iop/mwfilefr.cpp

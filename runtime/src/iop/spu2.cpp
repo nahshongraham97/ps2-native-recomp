@@ -1,4 +1,5 @@
 #include "spu2.hpp"
+#include "audio_native.hpp"
 #include "compliance_census.hpp"
 
 #include "hw.hpp"
@@ -304,6 +305,7 @@ void render_voice(Voice &v, unsigned voice, const Routing &route, std::int32_t (
 }
 
 void feed_input(int core) {
+    if (audio_native::has_active_stream(core)) return;
     Core &k = g_cores[core];
     while (!k.transfers.empty() && k.input_count + 256 <= kInputFrames) {
         Transfer &t = k.transfers.front();
@@ -344,6 +346,10 @@ void feed_input(int core) {
 }
 
 void render_input(int core, const Routing &route, std::int32_t *dry, std::int32_t *wet, std::int16_t &raw_l, std::int16_t &raw_r) {
+    if (audio_native::has_active_stream(core)) {
+        audio_native::render_stream_sample(core, route.input_wet, dry, wet, raw_l, raw_r, g_cores[core].bvol);
+        return;
+    }
     Core &k = g_cores[core];
     if (!k.input_count) return;
     const unsigned slot = k.input_read;
@@ -509,7 +515,7 @@ void tick() {
     kernel::schedule(g_next_tick, kernel::Job{kernel::kJobSpuTick});
 }
 
-void keep_ticking() {
+void keep_ticking_internal() {
     if (g_tick_pending) return;
     g_tick_pending = true;
     g_next_tick = kernel::now() + kBatch * kCyclesPerSample;
@@ -730,7 +736,7 @@ void reset() {
 std::uint16_t *ram() { return g_ram.data(); }
 
 std::uint32_t read(std::uint32_t a, unsigned size) {
-    keep_ticking();
+    keep_ticking_internal();
     // Gate counter: every entry into the emulated SPU2 chip from outside (libsd, the IOP bus) is a
     // platform call that must eventually terminate in the native audio service instead. A 4-byte
     // read counts twice because it reads two registers (the recursive call counts its own entry).
@@ -746,7 +752,7 @@ std::uint32_t read(std::uint32_t a, unsigned size) {
 }
 
 void write(std::uint32_t a, std::uint32_t v, unsigned size) {
-    keep_ticking();
+    keep_ticking_internal();
     if (size == 4) {
         write(a, v & 0xFFFFu, 2);
         write(a + 2, v >> 16, 2);
@@ -767,7 +773,7 @@ void write(std::uint32_t a, std::uint32_t v, unsigned size) {
 }
 
 void dma(int core, std::uint32_t madr, std::uint32_t words, bool to_spu, int channel) {
-    keep_ticking();
+    keep_ticking_internal();
     ps2::census::spu2_dma(core, words * 4, to_spu);
     ps2::census::spu2_device_op();
     Core &k = g_cores[core];
@@ -880,6 +886,10 @@ void state(ps2::state::Stream &s) {
     s.pod(g_spdif_media);
     s.pod(g_next_tick);
     s.pod(g_tick_pending);
+}
+
+void keep_ticking() {
+    keep_ticking_internal();
 }
 
 }

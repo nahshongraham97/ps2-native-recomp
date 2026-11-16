@@ -1,4 +1,5 @@
 #include "libsd_native.hpp"
+#include "audio_native.hpp"
 
 #include "iop.hpp"
 #include "spu2.hpp"
@@ -276,6 +277,16 @@ std::uint32_t voice_transfer_status(std::uint32_t channel, std::uint32_t wait) {
 
 std::uint32_t stop_transfer(std::uint32_t channel) {
     const std::uint32_t core = channel & 1u;
+    if (audio_native::has_active_stream(core)) {
+        const std::uint32_t address = audio_native::get_current_address(core);
+        const std::uint32_t buf = audio_native::get_active_buffer(core);
+        const std::uint32_t retval = (buf << 24) | (address & 0x00FFFFFFu);
+        audio_native::stop_stream(core);
+        g_block_transfer_active[core] = false;
+        g_block_transfer_loop[core] = false;
+        g_voice_transfer_complete[core] = true;
+        return retval;
+    }
     std::uint32_t address = spu2::dma_address(static_cast<int>(core));
     if (!address && g_block_transfer_active[core]) {
         address = g_block_transfer_address[core] +
@@ -331,6 +342,11 @@ std::int32_t block_transfer(std::uint32_t channel, std::uint32_t mode, std::uint
     g_block_transfer_mode[core] = mode;
     g_block_transfer_address[core] = iop_address;
     g_block_transfer_size[core] = transfer_size;
+
+    if (direction == kDmaWrite || direction == kDmaWriteFrom) {
+        audio_native::start_stream(core, mode, iop_address, bytes, start_address);
+        return static_cast<std::int32_t>(transfer_size);
+    }
 
     if (direction == kDmaRead) {
         spu2::write(kSpuBase + 0x1B0u + core * 0x400u, (1u << core) | 4u, 2);
@@ -545,6 +561,7 @@ std::uint16_t pitch_to_note(std::uint32_t center_note, std::uint32_t center_fine
 void export_init(Cpu &cpu) {
     const std::uint32_t flag = arg(cpu, 0) & 1u;
     spu2::reset();
+    audio_native::reset();
     g_voice_transfer_status = {1, 1};
     g_voice_transfer_complete = {};
     g_voice_transfer_io_mode = {};
@@ -712,6 +729,15 @@ void export_voice_trans_status(Cpu &cpu) {
 }
 void export_block_trans_status(Cpu &cpu) {
     const std::uint32_t core = arg(cpu, 0) & 1u;
+    if (audio_native::has_active_stream(core)) {
+        const std::uint32_t buf = audio_native::get_active_buffer(core);
+        const std::uint32_t address = audio_native::get_current_address(core);
+        const std::uint32_t ret = (buf << 24) | (address & 0x00FFFFFFu);
+        std::fprintf(stderr, "[libsd] sceSdBlockTransStatus(ch=%u) -> 0x%08X (native active, buf=%u, addr=0x%08X)\n",
+                     arg(cpu, 0), ret, buf, address);
+        set_u32_result(cpu, ret);
+        return;
+    }
     if (!g_block_transfer_active[core]) {
         std::fprintf(stderr, "[libsd] sceSdBlockTransStatus(ch=%u) -> 0 (inactive)\n", arg(cpu, 0));
         set_u32_result(cpu, 0);
@@ -848,7 +874,9 @@ void on_dma_done(std::uint32_t core) {
     core &= 1u;
     g_voice_transfer_complete[core] = true;
     g_voice_transfer_status[core] = 1;
-    if (g_block_transfer_active[core]) {
+    if (audio_native::has_active_stream(core)) {
+        // Active stream progression and loop is handled natively by audio_native
+    } else if (g_block_transfer_active[core]) {
         if (g_block_transfer_loop[core]) {
             g_block_transfer_buffer[core] = 1 - g_block_transfer_buffer[core];
             const std::uint32_t next_addr = g_block_transfer_address[core] +
