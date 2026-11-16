@@ -1,3 +1,48 @@
+# Build delivery — 2026-11-16 (sound-service decode + channel-pool watch + missing mwfile exports)
+
+- Commit: `01d80fc` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
+  (stamp: `commit 01d80fc clean, built 2026-11-16T17:53:02Z, Release, Clang-23.1.3`)
+- Runner: `build_native_gl_full/ps2run.exe`, 2026-11-16 17:53
+- SHA-256: `4d154395e072e8acc3917b85636852b333694e0bfd1ffd15706d219dde974371`
+- Increment 4 step 2 continued - the oracle decode of MSL's command protocol (the captured
+  body plus the 11:14 run's log):
+  - **The play request is `op3` with id 0 and the sound number as the value** - the run shows
+    MSL storing `0x65` (101) at `0x4CDA4`, then `0x66` (102): a sequence of sounds, one after
+    another.
+  - **The sequencer gates the play on the sound number being below the bank's sound count**
+    (worker compare at `0x2EBC0`, skip when out of range).
+  - **Bank format (from the retail file itself, `disc-files/SNDSPS2/MSLASSET.MS2`):** header
+    `[2][8705][110748]`, then 9,229 twelve-byte entries `[index][size][file_offset]` at offset
+    12, sample data after the table. The header's **8705 is the sound count** (the sequencer's
+    limit) and sound 101 is inside it - so the play is **not** out of range.
+  - **MSL is alive**: it reads the header and the 110,748-byte index, registers the bank
+    (`0x04CDB8/BC/C4`), signals its sequencer semaphore (`thsemap` #6) and keeps queueing sounds.
+    **No voice ever starts**: `voice_start` (`0x33B68`) returns early when the channel's state
+    byte (record + `0x0A`) is 0 or 4, and the channel pool (`0x50620-0x50E34`) was outside the
+    watched window. The EE also **never writes the staging buffer `0x4C9E4`** it was given (MSL's
+    reply `op3` id `0x100FC`) - no DMA, no IOP store, for the whole run.
+- Changes: (1) the IOP store watch is now a **list of ranges** - the control block/staging buffer
+  `[0x4C9C0,0x50000)` **plus the channel pool `[0x50600,0x50E40)`** whose state byte decides
+  whether a voice starts (`PS2_WATCH_IOP` still overrides); (2) **unresolved native imports are
+  reported** (`[iop-native-miss]`, first occurrence per library/ordinal with its arguments) - the
+  native MWFILEFR exports 4, 5, 10, 13, 15, 16 while the retail IRX had nine (4, 5, 8, 9, 10,
+  13, 14, 15, 16), so MSL's calls to 8, 9 and 14 failed silently; (3) **the three missing mwfile
+  exports are provided** as measured no-ops that log their arguments (the native read completes
+  synchronously, so a completion wait has nothing to wait for; v0 is preserved as the retail
+  ordinal 13 does); (4) the census's live-translation counter **logs the EE PC**, so the two live
+  translations in the 11:14 run can be located and captured.
+- Suites (final binaries): `test_spu2_mix` PASS, `test_gl_vs_raster` 18/18,
+  `test_native_gl_alpha` PASS, `test_gl_lazy_readback` PASS, `test_iop_native_module` PASS.
+- Replaced runner: `0190f5706a4c818a60ec2252b7343ece017c0bd54f91ed339ebfd46efe71bf14`
+  (`c2c3bf0 clean` - GL state cache and dedicated movie surface)
+- Next: the user's run measures the channel states and the staging buffer; then increment 4 step 3
+  (runtime-owned endpoint + native command engine + native voice start) and step 4 acceptance
+  (`guest-registered → 0` for sid `0x00012345`, `voices keyed > 0`, audible SFX).
+- Delivery history: `435ce55ae7de51a7dcbc4c93f16e27aa572a76fb46bce7d3209f75ed43062aa7`
+  → `8600a796…` → `6b2335a1…` → `bd7479bd…` → `13424cdb…` → `9141cd27…` → `eaf36b36…`
+  → `2c16e7af…` → `cd686675…` → `E536E22C…` → `47075BB1…` → `78a0c1f6…` → `daef9fb5…`
+  → `d8266fcf…` → `52102daf…` → `0190f570…` → `4d154395…`
+
 # Build delivery — 2026-11-16 (GL state cache: 16.8 fps fix; dedicated movie surface)
 
 - Commit: `c2c3bf0` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
