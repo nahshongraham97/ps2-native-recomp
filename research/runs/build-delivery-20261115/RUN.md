@@ -1,17 +1,22 @@
-# Build delivery — 2026-11-15 (census measures the acceptance gate)
+# Build delivery — 2026-11-16 (nothing in the log is sampled or truncated)
 
-- Commit: `9c94385` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
-  (stamp: `commit 9c94385 clean, built 2026-11-15T23:59:49Z, Release, Clang-23.1.3`)
-- Runner: `build_native_gl_full/ps2run.exe`, 2026-11-15 18:59, 75,949,568 bytes
-- SHA-256: `eaf36b36ae4025f3e03b0d519011f51237d758a6c6e133e7e562976c473fbffb`
-- What it adds: the census **GATE line** — emulated-device totals on the accepted route
-  (GS-stopped-in-VRAM, SPU2-chip-model-ops, SIF-guest-registered, CDVD-device-reads; each must
-  reach 0) — counted in the verdict, plus the `spu2_device_op()` boundary counter and the
-  stdio `0x0103` registration from the previous delivery.
-- Replaced runner: `9141cd27e4fc05ca0aa9a0bc70114cd2ce4575b6bf7d6b1b5227fbcdca1cb07b`
-  (`d9e5097 clean`, 18:29 — stdio fix, never run live)
+- Commit: `c9cfbb7` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
+  (stamp: `commit c9cfbb7 clean, built 2026-11-16T03:37:52Z, Release, Clang-23.1.3`)
+- Runner: `build_native_gl_full/ps2run.exe`, 2026-11-16 22:37, 75,976,704 bytes
+- SHA-256: `47075bb124fffab3225287a39df56cfc941f428d22ea02cc1efdcf4fbc28d0bf`
+- What it adds: every trace line is logged by default, and the log file is never truncated.
+  `PS2_LOG_MAX_BYTES` (default 0 = no ceiling) rotates the file to `<name>.1` instead of stopping
+  at a fixed size; `PS2_TRACE_MSL_LIMIT` (default unlimited), `PS2_TRACE_MOVIE_PRESENT` (default
+  every present), `PS2_TRACE_SWEEP` (default every sweep write), `PS2_TRACE_VU` (default every
+  unimplemented VU "lower" operation), and the `[frame]` heartbeat now prints every frame.
+  The 600-line in-memory ring is only the in-game window's tail/head view — the file is complete
+  regardless. The census report, the `[iop-aot]`/`[iop-aot-import]`/`[iop-native-hle-call]` traces
+  and the cumulative `[vu1]` summary were already complete and are untouched.
+- Replaced runner: `E536E22CB107C669C9BFFDEFF6AF643304ABC37E6743B6C5408E7A62081CF17C`
+  (`6e0fb9b clean`, 2026-11-16 03:10 — native voice engine, Slice 2–3 step b)
 - Delivery history: `435ce55ae7de51a7dcbc4c93f16e27aa572a76fb46bce7d3209f75ed43062aa7`
-  → `8600a796a34df9d9728cbd1e60c2fd0f3fbf3c073fd5c1135724027f407fa78d` → `6b2335a1…` → `bd7479bd…` → `13424cdb…` → `9141cd27…` → `eaf36b36…`
+  → `8600a796…` → `6b2335a1…` → `bd7479bd…` → `13424cdb…` → `9141cd27…` → `eaf36b36…`
+  → `2c16e7af…` → `cd686675…` → `E536E22C…` → `47075bb1…`
 - The `13424cdb…` runner was run live once (`ps2run_2026-11-15_17-57-43.log`): card fixed, all
   four AOT bases loaded, crashed at the movie's `stdio v0103` import — record in
   `research/runs/aot-layout-crash-20261115/RUN.md`.
