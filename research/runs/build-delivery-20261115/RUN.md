@@ -1,3 +1,50 @@
+# Build delivery — 2026-11-16 (GL state cache: 16.8 fps fix; dedicated movie surface)
+
+- Commit: `c2c3bf0` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
+  (stamp: `commit c2c3bf0 clean, built 2026-11-16T17:18:22Z, Release, Clang-23.1.3`)
+- Runner: `build_native_gl_full/ps2run.exe`, 2026-11-16 17:18, 75,977,728 bytes
+- SHA-256: `0190f5706a4c818a60ec2252b7343ece017c0bd54f91ed339ebfd46efe71bf14`
+- Run record this fixes (acceptance evidence): `ps2run_2026-11-16_11-14-49.log` (a12423b,
+  5,067 frames in 302.2 s wall = **16.8 fps**, audio stretched, movie shake present,
+  key-ons 0, census 5 gate violations incl. a new `EE live translation`). Diagnosis: `b07558f` pushed the previously rejected 77% of
+  primitives (6,985,985 of 9,105,842) through the immediate-mode GL path — 9.1M packets ×
+  ~15 redundant per-packet state calls ≈ 36k GL calls/frame; the a12423b instrumentation was
+  measured NOT the cost (2.5M watch lines ≈ 10k lines/s, below what the 42 fps run already
+  carried).
+- What it changes (`runtime/src/gs/native_gl_backend.cpp`):
+  1. **GL state cache** — `GlStateCache` + `cache_*` setters re-emit scissor, fog, depth,
+     alpha test, blend (+FIX constant), colour mask, FBO bind/viewport and the
+     TEXTURE_2D toggles only on change; `prepare_texture` skips bind + 4× `glTexParameteri`
+     + ~8× `glTexEnvi` when the texture content and TEX0/TEX1/CLAMP/TXA/CLUT match and it is
+     still bound. Every GL write outside the setters (present, image transfers, readbacks,
+     clears, flush, context init) calls `gl_state_invalidate()` first — each site wired
+     explicitly, since a missed invalidation means stale state.
+  2. **Dedicated movie presentation surface** — the 11:14 run proved the pin worked
+     (`target_fbp=140` on every present) but the game's own movie quad (`prims=2` every
+     present) overwrote the scene targets, so blit=NO presents showed the quad and blit=YES
+     showed the blit (the remaining shake). `ensure_movie_fbo()` creates a runtime-owned FBO
+     the game never draws into; the quiet-gated blit writes it first (scene targets too), the
+     first present of a movie seeds it, and the present reads it while a movie plays; the log
+     reports `movie surface=N`.
+- Increment 4 step-2 evidence from the same run (recorded, decode continues): MSL's advertised
+  staging buffer `0x4C9E4` (reply `op3 id 0x100FC`) is zeroed once at init and **never
+  written again** — no DMA, no IOP code, all run; `[sif:other-data]` never fires; every window
+  DMA carries command lists to the RPC buffer `0x4EDF0`. The command stream is the whole
+  protocol; record arrays live at `0x49A60/0x4BD90` and the channel pool at `0x50620–0x50E34`
+  (both outside the watched window).
+- Suites (final binaries): `test_spu2_mix` PASS, `test_gl_vs_raster` 18/18,
+  `test_native_gl_alpha` PASS, `test_gl_lazy_readback` PASS, `test_iop_native_module` PASS.
+- Replaced runner: `52102daf2159eb0d80d67e1f15ec3e137553633c10d27df6e091e7ecdb2df93b`
+  (`a12423b clean` — sound-service instrumentation)
+- Next: user run measures fps (target: cycles/294.912 MHz ≈ wall) and the shake; then
+  increment 4 steps 2–4 (op4 gate decode via the command-stream walker, runtime-owned
+  endpoint + native command engine, acceptance: `guest-registered → 0` for sid 0x00012345,
+  `voices keyed > 0`, audible SFX).
+- Delivery history: `435ce55ae7de51a7dcbc4c93f16e27aa572a76fb46bce7d3209f75ed43062aa7`
+  → `8600a796…` → `6b2335a1…` → `bd7479bd…` → `13424cdb…` → `9141cd27…` → `eaf36b36…`
+  → `2c16e7af…` → `cd686675…` → `E536E22C…` → `47075BB1…` → `78a0c1f6…` → `daef9fb5…`
+  → `d8266fcf…` → `52102daf…` → `0190f570…`
+
 # Build delivery — 2026-11-16 (native sound service instrumentation, step 1 of 4)
 
 - Commit: `a12423b` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
