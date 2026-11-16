@@ -138,3 +138,46 @@ depends on anyone playing anything.
   carry the same wording and the current step.
 - The census (`runtime/src/compliance_census.cpp`) measures the gate, and
   `tools/acceptance/check_acceptance.py` fails a run that violates it.
+
+<!-- PROJECT-RULES -->
+## The project's rules — absolute, and repeated in every document that an agent may read
+
+**How the work is driven**
+
+1. **The next build I tell the user to run must carry REAL fixes.** No
+   "please try it again" without a change that the evidence says is a fix.
+2. **Never tell the user to launch the game until EVERYTHING is fixed.** The
+   user's machine is not a test rig: the game is not opened (no window, no
+   device, no sound on the user's machine), and the user is not asked to
+   launch it, until the work is verified ready and working.
+3. **Do not stop, and do not produce a final output with work outstanding.**
+   Every claim carries its run record; the work list is the state of the
+   project, not a summary of intentions.
+4. **Every claim carries a run record**: build commit, flags, log, frames and
+   audio. A counter is not a claim - the frames and the audio are the claim.
+5. **Documentation is part of the work.** Every build, every blocker, every
+   defect, every fix and every revert is recorded where the next agent will
+   read it: `PORT_STATUS.md` (the state), `research/runs/INDEX.md` (the build
+   log) and the per-build records under `research/runs/`.
+
+**The acceptance gate (absolute)**
+
+6. **No PS2 syscall, CDVD, GS, VU or IOP API may remain on the accepted
+   boot/gameplay path.**
+7. **The recompiled retail logic may remain C++, but its platform calls must
+   terminate in native game/Windows services** - file, input, audio, video,
+   timing and thread services.
+8. Operationally, for one pinned build and flags:
+   * **no guest instruction or microcode interpreter** (EE, VU0/VU1, IOP);
+   * **no emulated PS2 devices on the accepted route** (CDVD, GS raster/state
+     machine, SPU2, SIF hardware);
+   * the retail game's platform calls terminate in native file/input/audio/
+     video/timing/thread services;
+   * compatibility data (GS packets, SIF RPC packets) may be decoded, but the
+     implementation is native, not a PS2 state machine;
+   * every claim has a run record with build commit, flags, log, frames and
+     audio.
+9. **NO EMULATED ANYTHING AT ALL. NO EMULATED VRAM. NO CPU RASTER. GPU-ONLY
+   RASTER IS REQUIRED.** Nothing may be emulated or fall back to emulation.
+   **NATIVE ONLY.** Acceptance in one shot - one build.
+<!-- /PROJECT-RULES -->

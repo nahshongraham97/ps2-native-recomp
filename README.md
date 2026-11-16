@@ -153,3 +153,13 @@ own discs.
 
 PlayStation and PS2 are trademarks of Sony Interactive Entertainment. All game names are trademarks of their owners. This
 project is not affiliated with or endorsed by Sony or any game publisher.
+---
+
+> **The project's rules and the current state live in `PORT_STATUS.md`** (read it
+> first). The build log is `research/runs/INDEX.md`; the per-build records are
+> the `research/runs/` folders. The acceptance gate is absolute: no guest
+> interpreter and no emulated PS2 device on the accepted boot/gameplay route,
+> no emulated VRAM, no CPU raster - GPU-only raster, native services for the
+> retail logic's platform calls, and every claim with a run record (commit,
+> flags, log, frames, audio). The game is not opened and the user is not asked
+> to launch it until everything is fixed.
