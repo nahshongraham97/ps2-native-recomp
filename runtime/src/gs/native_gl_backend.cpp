@@ -209,6 +209,159 @@ MultiTexCoord4fProc g_multi_texcoord4f = nullptr;
 BlendFuncSeparateProc g_blend_func_separate = nullptr;
 FogCoordfProc g_fog_coordf = nullptr;
 BlendColorProc g_blend_color = nullptr;
+
+// GL state cache. submit() runs once per GS packet - 9.1M packets in the
+// 00:40 run - and every packet used to re-emit ~15 identical GL state calls
+// (scissor, fog, depth, alpha test, blend, texture parameters/environment,
+// FBO bind, colour mask). When the general ALPHA blend started drawing the
+// previously rejected 77% of primitives, those redundant calls became the
+// frame-time wall: the 11:14 run measured 16.8 fps (5,067 frames in 302.2 s).
+// The cache re-emits a state group only when its value actually changes.
+// Every GL write outside the cached setters - present, image transfers,
+// readbacks, clears, flush - calls gl_state_invalidate() first, so the next
+// submit re-establishes everything; a missed invalidation would cost a stale
+// state, so every such site must keep calling it.
+struct GlStateCache {
+    bool valid = false;
+    bool blend = false;
+    GLenum blend_s = 0xFFFFFFFFu, blend_d = 0xFFFFFFFFu;
+    GLenum blend_as = 0xFFFFFFFFu, blend_ad = 0xFFFFFFFFu;
+    GLfloat blend_const = -1.0f;
+    bool alpha_test = false;
+    GLenum alpha_func = 0xFFFFFFFFu;
+    GLfloat alpha_ref = -1.0f;
+    bool fog = false;
+    GLfloat fog_r = -1.0f, fog_g = -1.0f, fog_b = -1.0f;
+    bool depth = false;
+    GLenum depth_func = 0xFFFFFFFFu;
+    bool depth_mask = true;
+    bool scissor = false;
+    GLint scissor_l = -1, scissor_t = -1, scissor_w = -1, scissor_h = -1;
+    bool mask_r = true, mask_g = true, mask_b = true, mask_a = true;
+    GLenum unit = 0xFFFFFFFFu;
+    bool tex2d0 = false, tex2d1 = false;
+    GLuint texture = 0;
+    std::uint64_t tex_env_key = 0;
+    GLuint draw_fbo = 0;
+};
+GlStateCache g_glstate;
+
+void gl_state_invalidate() { g_glstate = GlStateCache{}; }
+
+void cache_active_texture(GLenum unit) {
+    if (g_active_texture && g_glstate.unit != unit) {
+        g_active_texture(unit);
+        g_glstate.unit = unit;
+    }
+}
+
+void cache_texture2d(bool on, GLenum unit) {
+    cache_active_texture(unit);
+    bool &flag = (unit == GL_TEXTURE1) ? g_glstate.tex2d1 : g_glstate.tex2d0;
+    if (!g_glstate.valid || flag != on) {
+        if (on) glEnable(GL_TEXTURE_2D);
+        else glDisable(GL_TEXTURE_2D);
+        flag = on;
+    }
+}
+
+void cache_blend(bool on, GLenum s, GLenum d, GLenum as, GLenum ad) {
+    GlStateCache &c = g_glstate;
+    if (!c.valid || c.blend != on) {
+        if (on) glEnable(GL_BLEND);
+        else glDisable(GL_BLEND);
+        c.blend = on;
+    }
+    if (on && (!c.valid || c.blend_s != s || c.blend_d != d || c.blend_as != as || c.blend_ad != ad)) {
+        g_blend_func_separate(s, d, as, ad);
+        c.blend_s = s; c.blend_d = d; c.blend_as = as; c.blend_ad = ad;
+    }
+}
+
+void cache_blend_const(GLfloat v) {
+    GlStateCache &c = g_glstate;
+    if (g_blend_color && (!c.valid || c.blend_const != v)) {
+        g_blend_color(v, v, v, v);
+        c.blend_const = v;
+    }
+}
+
+void cache_alpha_test(bool on, GLenum func, GLfloat ref) {
+    GlStateCache &c = g_glstate;
+    if (!c.valid || c.alpha_test != on) {
+        if (on) glEnable(GL_ALPHA_TEST);
+        else glDisable(GL_ALPHA_TEST);
+        c.alpha_test = on;
+    }
+    if (on && (!c.valid || c.alpha_func != func || c.alpha_ref != ref)) {
+        glAlphaFunc(func, ref);
+        c.alpha_func = func; c.alpha_ref = ref;
+    }
+}
+
+void cache_fog(bool on, GLfloat r, GLfloat g, GLfloat b) {
+    GlStateCache &c = g_glstate;
+    if (!c.valid || c.fog != on) {
+        if (on) {
+            const GLfloat col[4] = {r, g, b, 1.0f};
+            glFogi(GL_FOG_MODE, GL_LINEAR);
+            glFogf(GL_FOG_START, 0.0f);
+            glFogf(GL_FOG_END, 1.0f);
+            glFogi(GL_FOG_COORDINATE_SOURCE, GL_FOG_COORDINATE);
+            glFogfv(GL_FOG_COLOR, col);
+            c.fog_r = r; c.fog_g = g; c.fog_b = b;
+            glEnable(GL_FOG);
+        } else {
+            glDisable(GL_FOG);
+        }
+        c.fog = on;
+    } else if (r != c.fog_r || g != c.fog_g || b != c.fog_b) {
+        const GLfloat col[4] = {r, g, b, 1.0f};
+        glFogfv(GL_FOG_COLOR, col);
+        c.fog_r = r; c.fog_g = g; c.fog_b = b;
+    }
+}
+
+void cache_depth(bool on, GLenum func, bool mask) {
+    GlStateCache &c = g_glstate;
+    if (!c.valid || c.depth != on) {
+        if (on) glEnable(GL_DEPTH_TEST);
+        else glDisable(GL_DEPTH_TEST);
+        c.depth = on;
+    }
+    if (!c.valid || c.depth_mask != mask) {
+        glDepthMask(mask ? GL_TRUE : GL_FALSE);
+        c.depth_mask = mask;
+    }
+    if (on && (!c.valid || c.depth_func != func)) {
+        glDepthFunc(func);
+        c.depth_func = func;
+    }
+}
+
+void cache_scissor(GLint l, GLint t, GLint w, GLint h) {
+    GlStateCache &c = g_glstate;
+    if (!c.valid || !c.scissor) {
+        glEnable(GL_SCISSOR_TEST);
+        c.scissor = true;
+    }
+    if (!c.valid || c.scissor_l != l || c.scissor_t != t || c.scissor_w != w || c.scissor_h != h) {
+        glScissor(l, t, w, h);
+        c.scissor_l = l; c.scissor_t = t; c.scissor_w = w; c.scissor_h = h;
+    }
+}
+
+void cache_color_mask(bool r, bool g, bool b, bool a) {
+    GlStateCache &c = g_glstate;
+    if (!c.valid || c.mask_r != r || c.mask_g != g || c.mask_b != b || c.mask_a != a) {
+        glColorMask(r ? GL_TRUE : GL_FALSE, g ? GL_TRUE : GL_FALSE, b ? GL_TRUE : GL_FALSE, a ? GL_TRUE : GL_FALSE);
+        c.mask_r = r; c.mask_g = g; c.mask_b = b; c.mask_a = a;
+    }
+}
+
+// Dedicated movie presentation surface (see ensure_movie_fbo below).
+GLuint g_movie_fbo = 0, g_movie_tex = 0;
+bool g_movie_fbo_ready = false;
 bool g_multitexture_supported = false;
 
 using GenFramebuffersProc = void (APIENTRY *)(GLsizei, GLuint *);
@@ -316,6 +469,45 @@ void load_framebuffer_functions() {
     g_blit_framebuffer = load_gl_proc<BlitFramebufferProc>("glBlitFramebuffer", "glBlitFramebufferEXT");
 }
 
+// Dedicated movie presentation surface. The game draws its own movie quad
+// into the scene targets every frame (prims=2 per present), so even with the
+// presented target pinned, blit=NO presents showed the game's quad and
+// blit=YES presents showed the blit of the complete frame - two sources at
+// different alignments alternating is the shake the 11:14 run still showed.
+// This FBO is written only by the runtime's quiet-gated blit, never by the
+// game, so the presented content cannot alternate while a movie plays.
+bool ensure_movie_fbo() {
+    if (g_movie_fbo_ready) return true;
+    load_framebuffer_functions();
+    if (!g_gen_framebuffers || !g_bind_framebuffer || !g_framebuffer_texture_2d ||
+        !g_check_framebuffer_status || !g_blit_framebuffer)
+        return false;
+    glGenTextures(1, &g_movie_tex);
+    g_gen_framebuffers(1, &g_movie_fbo);
+    if (!g_movie_tex || !g_movie_fbo) return false;
+    glBindTexture(GL_TEXTURE_2D, g_movie_tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    g_bind_framebuffer(GL_FRAMEBUFFER, g_movie_fbo);
+    g_framebuffer_texture_2d(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, g_movie_tex, 0);
+    glDrawBuffer(GL_COLOR_ATTACHMENT0);
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    const GLenum status = g_check_framebuffer_status(GL_FRAMEBUFFER);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    g_bind_framebuffer(GL_FRAMEBUFFER, 0);
+    if (status != GL_FRAMEBUFFER_COMPLETE) {
+        std::fprintf(stderr, "[native-gl] movie presentation framebuffer is incomplete (0x%04X)\n",
+                     static_cast<unsigned>(status));
+        return false;
+    }
+    g_movie_fbo_ready = true;
+    std::fprintf(stderr, "[native-gl] dedicated movie presentation surface ready\n");
+    return true;
+}
+
 void release_scene_target() {
     for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
         if (g_scene_targets[i].framebuffer && g_delete_framebuffers)
@@ -330,6 +522,7 @@ void release_scene_target() {
 }
 
 void clear_bound_scene_target(bool clear_depth = true) {
+    gl_state_invalidate();
     // glClear respects scissor and write masks left by the previous draw.
     // A newly assigned surface must be cleared in its entirety.
     glPushAttrib(GL_SCISSOR_BIT | GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_VIEWPORT_BIT);
@@ -344,6 +537,7 @@ void clear_bound_scene_target(bool clear_depth = true) {
 }
 
 bool allocate_scene_target(SceneTarget &t) {
+    gl_state_invalidate();
     if (t.ready) return true;
     load_framebuffer_functions();
     if (!g_gen_framebuffers || !g_bind_framebuffer || !g_framebuffer_texture_2d ||
@@ -475,10 +669,15 @@ void bind_draw_target(std::uint32_t fbp) {
     if (!g_direct_window_context) return;
     SceneTarget *target = ensure_scene_target(fbp);
     if (target && target->ready) {
-        g_bind_framebuffer(GL_FRAMEBUFFER, target->framebuffer);
-        glDrawBuffer(GL_COLOR_ATTACHMENT0);
-        glReadBuffer(GL_COLOR_ATTACHMENT0);
-        glViewport(0, 0, kWidth, kHeight);
+        // Cached: bind_draw_target ran per packet with the same target, and
+        // after present/readback invalidates the cache the bind is re-emitted.
+        if (!g_glstate.valid || g_glstate.draw_fbo != target->framebuffer) {
+            g_bind_framebuffer(GL_FRAMEBUFFER, target->framebuffer);
+            glDrawBuffer(GL_COLOR_ATTACHMENT0);
+            glReadBuffer(GL_COLOR_ATTACHMENT0);
+            glViewport(0, 0, kWidth, kHeight);
+            g_glstate.draw_fbo = target->framebuffer;
+        }
     }
 }
 
@@ -515,7 +714,7 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
     if (tfx >= 2 && (!g_multitexture_supported || !g_active_texture || !g_multi_texcoord4f))
         return reject_packet(st, attr, prim_type, count, width_reason + 2, "GS highlight texture functions require two OpenGL texture units");
 
-    if (g_active_texture) g_active_texture(GL_TEXTURE0);
+    cache_active_texture(GL_TEXTURE0);
     const std::uint64_t palette = clut_hash(st);
     if (!g_texture.object) glGenTextures(1, &g_texture.object);
     if (!g_texture.object)
@@ -524,7 +723,25 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
     const bool changed = !g_texture.valid || g_texture.tex0 != context.tex0 || g_texture.tex1 != context.tex1 ||
                          g_texture.tex2 != context.tex2 || g_texture.clamp != context.clamp || g_texture.texa != st.texa ||
                          g_texture.clut_hash != palette || g_texture.vram_generation != gs::g_vram_generation;
+    const std::uint64_t env_key = context.tex0 ^ (context.tex1 * 0x9E3779B97F4A7C15ull) ^
+                                  (context.clamp << 1) ^ (static_cast<std::uint64_t>(st.texa) << 32) ^ palette;
+    // Fast path: the texture content is unchanged, the same texture object is
+    // still bound, and TEX0/TEX1/CLAMP/TXA/CLUT - everything the four
+    // glTexParameteri and the glTexEnvi block re-derive - match what was
+    // configured last time. Only the TEXTURE_2D enables are re-checked (they
+    // toggle per packet between textured and untextured draws); the bind,
+    // the parameters and the whole environment block are skipped. This ran
+    // for every packet sharing a texture: ~14 GL calls x 9.1M packets.
+    if (!changed && g_glstate.valid && g_glstate.texture == g_texture.object &&
+        g_glstate.tex_env_key == env_key) {
+        width = g_texture.width;
+        height = g_texture.height;
+        cache_texture2d(true, GL_TEXTURE0);
+        if (g_active_texture) cache_texture2d(tfx >= 2, GL_TEXTURE1);
+        return true;
+    }
     glBindTexture(GL_TEXTURE_2D, g_texture.object);
+    g_glstate.texture = g_texture.object;
     if (changed) {
         std::vector<std::uint32_t> rgba;
         if (!raster::decode_texture_rgba(st, rgba, width, height))
@@ -639,10 +856,8 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
     // only when a mipmapped MMIN mode selects another level. TFX 2/3 use two
     // fixed-function texture units to add the vertex-alpha highlight term.
     if (g_active_texture) {
-        g_active_texture(GL_TEXTURE1);
-        if (tfx >= 2) glEnable(GL_TEXTURE_2D);
-        else glDisable(GL_TEXTURE_2D);
-        g_active_texture(GL_TEXTURE0);
+        cache_texture2d(tfx >= 2, GL_TEXTURE1);
+        cache_active_texture(GL_TEXTURE0);
     }
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
     if (tfx == 0) {
@@ -690,8 +905,8 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
         glTexEnvi(GL_TEXTURE_ENV, GL_ALPHA_SCALE, 1);
 
-        g_active_texture(GL_TEXTURE1);
-        glEnable(GL_TEXTURE_2D);
+        cache_active_texture(GL_TEXTURE1);
+        cache_texture2d(true, GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, g_texture.object);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_ADD);
@@ -711,13 +926,15 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
             glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
         }
         glTexEnvi(GL_TEXTURE_ENV, GL_ALPHA_SCALE, 1);
-        g_active_texture(GL_TEXTURE0);
+        cache_active_texture(GL_TEXTURE0);
     }
-    glEnable(GL_TEXTURE_2D);
+    cache_texture2d(true, GL_TEXTURE0);
+    g_glstate.tex_env_key = env_key;
     return true;
 }
 
 void initialize_context_state() {
+    gl_state_invalidate();
     load_multitexture_functions();
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
@@ -812,6 +1029,7 @@ static const bool s_enable_readback = [] {
 }();
 
 bool do_readback_target(SceneTarget *target, const ReadbackState &state) {
+    gl_state_invalidate();
 #if defined(_WIN32)
     if (!g_enabled || !g_hdc) return false;
     const std::uint32_t fbp = target ? target->fbp : (static_cast<std::uint32_t>(state.frame) & 0x1FFu);
@@ -1036,6 +1254,7 @@ bool direct_window() {
 bool draw_vram_display(const std::uint32_t *rgba, int width, int height,
                        int output_width, int output_height,
                        int draw_x, int draw_y, int draw_width, int draw_height) {
+    gl_state_invalidate();
     static GLuint texture = 0;
     static int texture_width = 0, texture_height = 0;
     if (!texture) {
@@ -1095,6 +1314,7 @@ bool draw_guest_rect(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
                      std::uint32_t width, std::uint32_t height) {
 #if defined(_WIN32)
     if (!g_enabled || !g_hdc || !g_hrc) return false;
+    gl_state_invalidate();
     if (!width || !height || x >= static_cast<std::uint32_t>(kWidth) ||
         y >= static_cast<std::uint32_t>(kHeight))
         return false;
@@ -1189,6 +1409,7 @@ bool draw_guest_rect(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
 }
 
 bool present_frame(const DisplayRegs &regs) {
+    gl_state_invalidate();
 #if defined(_WIN32)
     if (!direct_window() || !g_hdc || !g_hwnd || !g_blit_framebuffer) return false;
     if (wglGetCurrentContext() != g_hrc || wglGetCurrentDC() != g_hdc) {
@@ -1333,22 +1554,30 @@ bool present_frame(const DisplayRegs &regs) {
     // keeps the last blit, so the screen holds a whole frame instead of alternating clean/torn.
     // If the writes never quiet down, blit anyway after 8 presents rather than freeze the movie.
     static std::uint64_t s_movie_changed_run = 0;
+    static bool s_movie_shown = false;
     if (movie_existed) {
         s_movie_changed_run = vram_gen_changed ? s_movie_changed_run + 1 : 0;
-        if (s_movie_changed_run == 0 || s_movie_changed_run >= 8) {
-            // Blit the complete movie frame into EVERY scene target, not just the one
-            // that won this present. The game swaps its display buffers during
-            // playback, so a blit that only reached the selected buffer left the
-            // other one holding the previous frame: whichever buffer the next
-            // present picked showed a different frame - the shake (00:40 run:
-            // blit=NO on write-presents, blit=YES on the next, targets alternating
-            // 0/140). With every target carrying the same complete frame, buffer
-            // alternation becomes invisible. cpu_synced is cleared because the
-            // CPU-side copy of each blitted surface is now stale - the next reuse
-            // must read the new content back first (ensure_scene_target already
-            // syncs an unsynced target before recycling it).
-            int blitted = 0;
+        // The first present of a movie blits even when not quiet (a single
+        // possibly-torn frame beats a black surface), then the quiet gate
+        // takes over.
+        if (s_movie_changed_run == 0 || s_movie_changed_run >= 8 || !s_movie_shown) {
+            // Dedicated movie surface first: it is the only content that
+            // cannot alternate with the game's own quad, which keeps drawing
+            // into the scene targets every frame (see ensure_movie_fbo).
+            const bool have_movie_fbo = ensure_movie_fbo();
             g_bind_framebuffer(GL_READ_FRAMEBUFFER, movie_source->framebuffer);
+            if (have_movie_fbo) {
+                g_bind_framebuffer(GL_DRAW_FRAMEBUFFER, g_movie_fbo);
+                g_blit_framebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+                s_movie_shown = true;
+            }
+            // Then refresh EVERY scene target so buffer alternation after the
+            // pin releases also carries the same complete frame. cpu_synced is
+            // cleared because the CPU-side copy of each blitted surface is now
+            // stale - the next reuse must read the new content back first
+            // (ensure_scene_target already syncs an unsynced target before
+            // recycling it).
+            int blitted = 0;
             for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
                 SceneTarget &other = g_scene_targets[i];
                 if (!other.ready || other.fbp == 0xFFFFFFFFu || &other == movie_source) continue;
@@ -1360,9 +1589,11 @@ bool present_frame(const DisplayRegs &regs) {
                 ++blitted;
             }
             blit_ran = true;
-            std::fprintf(stderr, "[native-gl] sampled offscreen target FBP=%u into %d scene targets (presented FBP=%u)\n",
-                         movie_source->fbp, blitted, target->fbp);
+            std::fprintf(stderr, "[native-gl] sampled offscreen target FBP=%u into %d scene targets + movie surface=%d (presented FBP=%u)\n",
+                         movie_source->fbp, blitted, have_movie_fbo ? 1 : 0, target->fbp);
         }
+    } else {
+        s_movie_shown = false;
     }
 
     if (movie_existed) {
@@ -1390,7 +1621,11 @@ bool present_frame(const DisplayRegs &regs) {
         }
     }
 
-    g_bind_framebuffer(GL_READ_FRAMEBUFFER, target->framebuffer);
+    // During a movie the dedicated surface is the only content that cannot
+    // alternate: the game's quad keeps overwriting the scene targets, so
+    // presenting those alternated quad content with the blit (the shake).
+    const bool present_movie = movie_existed && s_movie_shown && g_movie_fbo_ready;
+    g_bind_framebuffer(GL_READ_FRAMEBUFFER, present_movie ? g_movie_fbo : target->framebuffer);
     glReadBuffer(GL_COLOR_ATTACHMENT0);
     g_bind_framebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glDrawBuffer(GL_BACK);
@@ -1841,14 +2076,13 @@ bool submit(const State &st, const Vertex *verts, int count) {
                                            ((context.alpha >> 32) & 0xFFu) == 0x80u;
         const bool exact_destination_alpha_fade = framebuffer_16 && a == 2 && b == 1 && c == 1 && d == 1;
         if (identity_blend || fixed_source_identity) {
-            glDisable(GL_BLEND);
+            cache_blend(false, 0, 0, 0, 0);
         } else if (exact_destination_alpha_fade && !(textured && (tex_alpha_enabled || tfx != 0)) &&
                    g_blend_func_separate) {
             // 16-bit destination-alpha fade: Cd * (1 - Ad/128). On PSMCT16 Ad
             // is one bit (0 or 0x80), so GL's destination-alpha factor is
             // exact once the alpha channel is quantized on each write.
-            glEnable(GL_BLEND);
-            g_blend_func_separate(GL_ZERO, GL_ONE_MINUS_DST_ALPHA, GL_ONE, GL_ZERO);
+            cache_blend(true, GL_ZERO, GL_ONE_MINUS_DST_ALPHA, GL_ONE, GL_ZERO);
         } else if (fpsm == gs::PSMCT32 && (st.colclamp & 1u) && (!textured || tfx <= 1u) &&
                    g_blend_func_separate) {
             // The general GS blend - what the reference rasterizer computes:
@@ -1892,9 +2126,8 @@ bool submit(const State &st, const Vertex *verts, int count) {
             const bool fix_ok = ck != 2 || (fix <= 0x80u && g_blend_color != nullptr);
             if (expressible && fix_ok) {
                 if (ck == 2)
-                    g_blend_color(0.0f, 0.0f, static_cast<float>(fix) / 128.0f, static_cast<float>(fix) / 128.0f);
-                glEnable(GL_BLEND);
-                g_blend_func_separate(src_factor, dst_factor, GL_ONE, GL_ZERO);
+                    cache_blend_const(static_cast<float>(fix) / 128.0f);
+                cache_blend(true, src_factor, dst_factor, GL_ONE, GL_ZERO);
             } else {
                 static const char *kFixHigh = "GS ALPHA FIX above 0x80 needs a GL blend factor above 1.0";
                 static const char *kNoBlendColor = "GL blend color is unavailable for the GS ALPHA FIX factor";
@@ -1913,7 +2146,7 @@ bool submit(const State &st, const Vertex *verts, int count) {
             return reject_packet(st, attr, prim_type, count, 14, why);
         }
     } else {
-        glDisable(GL_BLEND);
+        cache_blend(false, 0, 0, 0, 0);
     }
     const std::uint64_t test = context.test;
     const bool zte = (test & (1ull << 16)) != 0;
@@ -1941,10 +2174,9 @@ bool submit(const State &st, const Vertex *verts, int count) {
     }
     if (alpha_test_discard) {
         static const GLenum kAtst[8] = {GL_NEVER, GL_ALWAYS, GL_LESS, GL_LEQUAL, GL_EQUAL, GL_GEQUAL, GL_GREATER, GL_NOTEQUAL};
-        glEnable(GL_ALPHA_TEST);
-        glAlphaFunc(kAtst[atst], static_cast<GLfloat>(aref) / 128.0f);
+        cache_alpha_test(true, kAtst[atst], static_cast<GLfloat>(aref) / 128.0f);
     } else {
-        glDisable(GL_ALPHA_TEST);
+        cache_alpha_test(false, 0, 0.0f);
     }
     if (context.test & (1ull << 14)) return reject_packet(st, attr, prim_type, count, 16, "GS destination-alpha test is not implemented yet");
     const std::uint32_t zpsm = 0x30u | (static_cast<std::uint32_t>(context.zbuf >> 24) & 0xFu);
@@ -2002,12 +2234,8 @@ bool submit(const State &st, const Vertex *verts, int count) {
     if (textured) {
         if (!prepare_texture(st, context, attr, prim_type, count, 8, texture_width, texture_height)) return false;
     } else {
-        if (g_active_texture) {
-            g_active_texture(GL_TEXTURE1);
-            glDisable(GL_TEXTURE_2D);
-            g_active_texture(GL_TEXTURE0);
-        }
-        glDisable(GL_TEXTURE_2D);
+        if (g_active_texture) cache_texture2d(false, GL_TEXTURE1);
+        cache_texture2d(false, GL_TEXTURE0);
     }
 
     const std::uint64_t xyoffset = st.ctx[(attr >> 9) & 1u].xyoffset;
@@ -2025,9 +2253,8 @@ bool submit(const State &st, const Vertex *verts, int count) {
     const int clip_right = std::clamp(scax1 + 1, 0, target_width);
     const int clip_top = std::clamp(scay0, 0, kHeight);
     const int clip_bottom = std::clamp(scay1 + 1, 0, kHeight);
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(clip_left, kHeight - clip_bottom,
-              std::max(0, clip_right - clip_left), std::max(0, clip_bottom - clip_top));
+    cache_scissor(clip_left, kHeight - clip_bottom,
+                  std::max(0, clip_right - clip_left), std::max(0, clip_bottom - clip_top));
     const bool fst = (attr & (1ull << 8)) != 0;
     const auto emit = [&](const Vertex &v, const Vertex &color, std::uint32_t x, std::uint32_t y,
                           float s, float t, float q) {
@@ -2083,33 +2310,21 @@ bool submit(const State &st, const Vertex *verts, int count) {
     const Vertex &flat_color = verts[count - 1];
     if (fog_enabled) {
         // Fog colour comes from the GS FOGCOL register (RGB in the low 24 bits, raster.cpp:375).
-        const GLfloat fog_color[4] = {
-            static_cast<float>(st.fogcol & 0xFFu) / 255.0f,
-            static_cast<float>((st.fogcol >> 8) & 0xFFu) / 255.0f,
-            static_cast<float>((st.fogcol >> 16) & 0xFFu) / 255.0f,
-            1.0f};
-        glFogi(GL_FOG_MODE, GL_LINEAR);
-        glFogf(GL_FOG_START, 0.0f);
-        glFogf(GL_FOG_END, 1.0f);
-        glFogfv(GL_FOG_COLOR, fog_color);
-        glFogi(GL_FOG_COORDINATE_SOURCE, GL_FOG_COORDINATE);
-        glEnable(GL_FOG);
+        cache_fog(true,
+                  static_cast<float>(st.fogcol & 0xFFu) / 255.0f,
+                  static_cast<float>((st.fogcol >> 8) & 0xFFu) / 255.0f,
+                  static_cast<float>((st.fogcol >> 16) & 0xFFu) / 255.0f);
     } else {
-        glDisable(GL_FOG);
+        cache_fog(false, 0.0f, 0.0f, 0.0f);
     }
-    if (zte) {
-        glEnable(GL_DEPTH_TEST);
-        glDepthMask(zmsk ? GL_FALSE : GL_TRUE);
-        switch (ztst) {
-        case 0: glDepthFunc(GL_NEVER); break;
-        case 1: glDepthFunc(GL_ALWAYS); break;
-        case 2: glDepthFunc(GL_LEQUAL); break;
-        default: glDepthFunc(GL_LESS); break;
-        }
-    } else {
-        glDisable(GL_DEPTH_TEST);
-        glDepthMask(GL_TRUE);
+    GLenum depth_func = GL_LESS;
+    switch (ztst) {
+    case 0: depth_func = GL_NEVER; break;
+    case 1: depth_func = GL_ALWAYS; break;
+    case 2: depth_func = GL_LEQUAL; break;
+    default: depth_func = GL_LESS; break;
     }
+    cache_depth(zte, depth_func, !zte || !zmsk);
     const ReadbackState readback_state{context.frame, st.dimx, st.dthe, st.colclamp};
     if (g_pending_readback_state_valid && (!g_direct_window_context || s_enable_readback) &&
         !same_readback_state(g_pending_readback_state, readback_state)) {
@@ -2121,9 +2336,10 @@ bool submit(const State &st, const Vertex *verts, int count) {
         if (!g_direct_window_context) glClear(GL_COLOR_BUFFER_BIT);
         g_pending_readback_state_valid = false;
         g_last_readback = clock_t_::now();
+        gl_state_invalidate();
     }
 
-    if (fbmask) glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+    if (fbmask) cache_color_mask(true, true, true, false);
     glBegin(mode);
     if (prim_type == 6) {
         // A GS sprite is encoded by two opposite corners. Expand it into a
@@ -2203,7 +2419,7 @@ bool submit(const State &st, const Vertex *verts, int count) {
         }
     }
     glEnd();
-    if (fbmask) glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    if (fbmask) cache_color_mask(true, true, true, true);
     g_pending_readback_state = readback_state;
     g_pending_readback_state_valid = true;
     SceneTarget *active_target = find_scene_target(frame & 0x1FFu);
@@ -2240,6 +2456,7 @@ bool submit(const State &st, const Vertex *verts, int count) {
             if (!g_direct_window_context) glClear(GL_COLOR_BUFFER_BIT);
             g_pending_readback_state_valid = false;
             g_last_readback = now;
+            gl_state_invalidate();
         }
     }
     return true;
@@ -2250,6 +2467,7 @@ bool submit(const State &st, const Vertex *verts, int count) {
 }
 
 void flush() {
+    gl_state_invalidate();
 #if defined(_WIN32)
     if (!g_enabled || !g_hdc) return;
     if (s_enable_readback && g_pending_readback_state_valid) {
