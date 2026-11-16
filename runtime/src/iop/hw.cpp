@@ -4,7 +4,7 @@
 #include "kernel.hpp"
 #include "libsd_native.hpp"
 #include "sio2.hpp"
-#include "spu2.hpp"
+#include "audio_service.hpp"
 
 #include "ps2/state.hpp"
 
@@ -148,7 +148,7 @@ void start_dma(unsigned ch) {
     if (kernel::g_trace_modules) std::fprintf(stderr, "[iop-dma] start ch %u madr 0x%08X bcr 0x%08X chcr 0x%08X\n", ch, d.madr, d.bcr, d.chcr);
     const std::uint32_t words = (d.bcr & 0xFFFFu) * ((d.bcr >> 16) ? (d.bcr >> 16) : 1u);
     if (ch == 4 || ch == 7) {
-        spu2::dma(ch == 4 ? 0 : 1, d.madr, words, (d.chcr & 1u) != 0, static_cast<int>(ch));
+        audio_native::dma(ch == 4 ? 0 : 1, d.madr, words, (d.chcr & 1u) != 0, static_cast<int>(ch));
         return;
     }
     if (ch == 11 || ch == 12) {
@@ -183,7 +183,7 @@ void reset() {
         g_watch_ranges[1] = WatchRange{0x50600u, 0x50E40u};
         g_watch_range_count = 2;
     }
-    spu2::reset();
+    audio_native::reset();
     sio2::reset();
     std::memset(g_ohci, 0, sizeof g_ohci);
 }
@@ -267,7 +267,7 @@ void ohci_write(std::uint32_t a, std::uint32_t v) {
 }
 
 std::uint32_t read(std::uint32_t a, unsigned size) {
-    if (a >= 0x1F900000u && a < 0x1F900800u) return spu2::read(a, size);
+    if (a >= 0x1F900000u && a < 0x1F900800u) return audio_native::window_read(a, size);
     if (a >= 0x1F801600u && a < 0x1F801660u) return ohci_read(a);
     if (a >= 0x1F808200u && a < 0x1F808280u) return sio2::read(a);
     if (a == kIStat) return g_istat;
@@ -303,7 +303,7 @@ std::uint32_t read(std::uint32_t a, unsigned size) {
 }
 
 void write(std::uint32_t a, std::uint32_t v, unsigned size) {
-    if (a >= 0x1F900000u && a < 0x1F900800u) { spu2::write(a, v, size); return; }
+    if (a >= 0x1F900000u && a < 0x1F900800u) { audio_native::window_write(a, v, size); return; }
     if (a >= 0x1F801600u && a < 0x1F801660u) { ohci_write(a, v); return; }
     if (a >= 0x1F808200u && a < 0x1F808280u) { sio2::write(a, v); return; }
     if (a == kIStat) { g_istat &= v; return; }
@@ -334,7 +334,7 @@ void write(std::uint32_t a, std::uint32_t v, unsigned size) {
             if (d.chcr & 0x01000000u) start_dma(static_cast<unsigned>(ch));
             // the start bit written as 0 on a running channel stops it (libsd does that to stop a block transfer); the sound chip must
             // drop what it still had queued, or the old blocks play before the ones the game sends next
-            else if (was_running && (ch == 4 || ch == 7)) spu2::dma_stop(ch == 4 ? 0 : 1);
+            else if (was_running && (ch == 4 || ch == 7)) audio_native::dma_stop(ch == 4 ? 0 : 1);
         }
         return;
     }
@@ -342,7 +342,7 @@ void write(std::uint32_t a, std::uint32_t v, unsigned size) {
     g_regs[a] = v;
 }
 
-std::uint16_t *spu2_ram() { return spu2::ram(); }
+std::uint16_t *spu2_ram() { return audio_native::sound_ram(); }
 
 }
 

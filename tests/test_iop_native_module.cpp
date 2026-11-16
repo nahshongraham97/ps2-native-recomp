@@ -1,5 +1,5 @@
 #include "iop/kernel.hpp"
-#include "iop/spu2.hpp"
+#include "iop/audio_service.hpp"
 #include "ps2/memory.hpp"
 
 #include <algorithm>

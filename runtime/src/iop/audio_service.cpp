@@ -1,5 +1,4 @@
-#include "spu2.hpp"
-#include "audio_native.hpp"
+#include "audio_service.hpp"
 #include "compliance_census.hpp"
 
 #include "hw.hpp"
@@ -11,23 +10,29 @@
 #include "ps2/state.hpp"
 
 #include <algorithm>
+#include <array>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <deque>
 #include <vector>
 
-namespace ps2::iop::spu2 {
-
-namespace {
+namespace ps2::iop::audio_native {
 
 constexpr std::uint32_t kRamWords = 1u << 20;
 constexpr std::uint32_t kRamMask = kRamWords - 1;
 constexpr std::uint64_t kCyclesPerSample = 768;
 constexpr unsigned kBatch = 32;
 constexpr unsigned kInputFrames = 512;
+constexpr unsigned kRingFrames = 512;  // 512 stereo frames = 2048 bytes (one half buffer)
 constexpr std::uint32_t kInputBase[2] = {0x2000u, 0x2400u};
 constexpr unsigned kSpuLine = 9;
+
+bool valid_iop_range(std::uint32_t address, std::uint64_t size) {
+    if (size == 0) return true;
+    const std::uint32_t physical = phys(address);
+    return physical < kRamSize && size <= static_cast<std::uint64_t>(kRamSize - physical);
+}
 constexpr std::uint32_t kRingWords = 0x200;
 static_assert(kRingWords % kBatch == 0, "a batch must not straddle the ring end");
 
@@ -71,11 +76,23 @@ struct Core {
     std::uint16_t attr = 0, admas = 0;
     std::uint32_t irqa = 0x800u, tsa = 0;
     std::uint16_t mvol[2] = {0x3FFF, 0x3FFF}, bvol[2] = {0x7FFF, 0x7FFF}, avol[2] = {0x7FFF, 0x7FFF}, evol[2] = {};
+    // The retail's mixer setup, decoded into named fields. The emulator kept
+    // this in a register array indexed by the sound device's own register
+    // numbers; that array was the device model. What the game puts in it is
+    // setup data - which voices go dry and into the reverb, the reverb's ring
+    // addresses and volumes, the main volumes - so the service keeps it as
+    // named state.
+    std::uint16_t mix_control = 0;                       // the mixer control (MMIX)
+    std::uint32_t voice_dry[2] = {}, voice_wet[2] = {};   // the voice mix masks
+    std::uint16_t iir_alpha = 0, iir_beta = 0;
+    std::uint32_t reverb_start = 0;                       // the reverb ring's first word
+    std::uint16_t reverb_end = 0;                         // the ring's last page
+    std::uint32_t reverb_address[22] = {};                // the ring's 22 addresses
+    std::uint16_t reverb_volume[10] = {};                 // the ring's ten volumes
     bool irq = false;
     std::int16_t input[kInputFrames][2] = {};
     unsigned input_read = 0, input_count = 0;
     std::deque<Transfer> transfers;
-    std::uint16_t regs[0x200] = {};
 };
 
 std::vector<std::uint16_t> g_ram(kRamWords);
@@ -235,8 +252,13 @@ void update_envelope(Voice &v) {
     }
 }
 
+// The volume register is 15 bits: 0x0000 is silence and 0x7FFF is full scale.
+// It is a magnitude, so it must not be shifted into the sign bit: 0x7FFF << 1
+// overflows a signed 16-bit value to -2, and a voice multiplied by -2 is
+// silent. The level stays in the register's own 0..0x7FFF range and the mixer
+// scales by it directly.
 std::int32_t volume(std::uint16_t reg, Envelope &e) {
-    if (!(reg & 0x8000u)) return static_cast<std::int16_t>(reg << 1);
+    if (!(reg & 0x8000u)) return static_cast<std::int32_t>(reg & 0x7FFFu);
     e.step(reg & 0x7F, reg & 0x2000u, reg & 0x4000u);
     return e.level;
 }
@@ -253,15 +275,14 @@ struct Routing {
 };
 
 Routing routing(const Core &k) {
-    const auto pair = [&k](std::uint32_t off) { return static_cast<std::uint32_t>(k.regs[off >> 1]) | static_cast<std::uint32_t>(k.regs[(off + 2) >> 1] & 0xFFu) << 16; };
-    const std::uint16_t mmix = k.regs[0x198 >> 1];
+    const std::uint16_t mmix = k.mix_control;
     Routing r;
     r.reverb = (k.attr & 0x80u) != 0 && !g_reverb_off;
-    r.dry[0] = pair(0x188);
-    r.dry[1] = pair(0x190);
+    r.dry[0] = k.voice_dry[0];
+    r.dry[1] = k.voice_dry[1];
     if (r.reverb) {
-        r.wet[0] = (mmix & 0x200u) ? pair(0x18C) : 0;
-        r.wet[1] = (mmix & 0x100u) ? pair(0x194) : 0;
+        r.wet[0] = (mmix & 0x200u) ? k.voice_wet[0] : 0;
+        r.wet[1] = (mmix & 0x100u) ? k.voice_wet[1] : 0;
         r.input_wet[0] = (mmix & 0x20u) != 0;
         r.input_wet[1] = (mmix & 0x10u) != 0;
     }
@@ -273,7 +294,7 @@ void render_voice(Voice &v, unsigned voice, const Routing &route, std::int32_t (
     const std::uint32_t bit = 1u << voice;
     const std::uint32_t step = std::min<std::uint32_t>(v.pitch, 0x3FFFu);
     const bool sweep_l = v.voll & 0x8000u, sweep_r = v.volr & 0x8000u;
-    const std::int32_t fixed_l = static_cast<std::int16_t>(v.voll << 1), fixed_r = static_cast<std::int16_t>(v.volr << 1);
+    const std::int32_t fixed_l = static_cast<std::int32_t>(v.voll & 0x7FFFu), fixed_r = static_cast<std::int32_t>(v.volr & 0x7FFFu);
     std::uint32_t position = v.position;
     for (unsigned n = 0; n < kBatch; ++n) {
         if (v.phase == kOff) break;
@@ -345,9 +366,13 @@ void feed_input(int core) {
     }
 }
 
+void render_input(int core, const Routing &route, std::int32_t *dry, std::int32_t *wet, std::int16_t &raw_l, std::int16_t &raw_r);
+void render_stream_sample(int core, const bool input_wet[2], std::int32_t dry[2], std::int32_t wet[2],
+                          std::int16_t &raw_l, std::int16_t &raw_r, const std::uint16_t bvol[2]);
+
 void render_input(int core, const Routing &route, std::int32_t *dry, std::int32_t *wet, std::int16_t &raw_l, std::int16_t &raw_r) {
-    if (audio_native::has_active_stream(core)) {
-        audio_native::render_stream_sample(core, route.input_wet, dry, wet, raw_l, raw_r, g_cores[core].bvol);
+    if (has_active_stream(core)) {
+        render_stream_sample(core, route.input_wet, dry, wet, raw_l, raw_r, g_cores[core].bvol);
         return;
     }
     Core &k = g_cores[core];
@@ -365,7 +390,15 @@ void render_input(int core, const Routing &route, std::int32_t *dry, std::int32_
     --k.input_count;
 }
 
-std::int32_t master(std::uint16_t reg) { return reg & 0x8000u ? 0x7FFF : static_cast<std::int16_t>(reg << 1); }
+// The main volume is a 15-bit magnitude as well: 0x7FFF is full scale. The
+// shift the emulator used overflowed that to -2, which silenced the whole
+// voice mix, while the sound that arrives by DMA (scaled by the input volume,
+// which was used unsigned) stayed audible - so the game was audible only in
+// its movies.
+std::int32_t master(std::uint16_t reg) {
+    if (reg & 0x8000u) return 0x7FFF;
+    return static_cast<std::int32_t>(reg & 0x7FFFu);
+}
 
 // The reverb. The chip's reverb is the one of the first PlayStation's sound chip, written about in the public PlayStation hardware
 // documentation (nocash's psx-spx, "SPU Reverb"): a short ring of memory (from ESA to the end given by EEA), two same-side and two
@@ -386,16 +419,14 @@ std::int32_t mul15(std::int32_t sample, std::uint16_t volume) { return sample * 
 
 // The 'out' of 32 samples for the 32 samples of the wet side 'in'. step_base counts the reverb steps from the start of the run.
 void run_reverb(Core &k, std::uint64_t step_base, const std::int32_t (*in)[2], std::int32_t (*out)[2], std::int32_t (&last)[2]) {
-    const auto reg32 = [&k](std::uint32_t off) { return static_cast<std::uint32_t>(k.regs[off >> 1]) << 16 | k.regs[(off + 2) >> 1]; };
-    const std::uint32_t start = reg32(0x2E0) & kRamMask, end = ((static_cast<std::uint32_t>(k.regs[0x33C >> 1]) << 16) | 0xFFFFu) & kRamMask;
+    const std::uint32_t start = k.reverb_start & kRamMask, end = ((static_cast<std::uint32_t>(k.reverb_end) << 16) | 0xFFFFu) & kRamMask;
     const std::uint64_t size = end >= start ? end - start + 1u : 0u;
     if (size < 64) {
         for (unsigned n = 0; n < kBatch; ++n) out[n][0] = out[n][1] = 0;
         return;
     }
-    std::uint32_t address[22];
-    for (unsigned i = 0; i < 22; ++i) address[i] = reg32(kRevAddress + i * 4);
-    const std::uint16_t *vol = &k.regs[kRevVolume >> 1];
+    const std::uint32_t *address = k.reverb_address;
+    const std::uint16_t *vol = k.reverb_volume;
     for (unsigned t = 0; t < kBatch / 2; ++t) {
         const std::uint64_t at = (step_base + t) % size;
         // a cell of the ring, 'offset' words away from where this step is (a step further on, the same cell is one nearer to the writer)
@@ -448,8 +479,17 @@ void write_rings(int core, const std::int16_t (*rings)[kBatch]) {
     }
 }
 
+// The frame hook: called once per mixed batch with the number of frames it
+// covers, so the native sound service can advance its sequencer's note timing
+// in step with the mixer.
+void (*g_frame_hook)(std::size_t frames) = nullptr;
+
+void set_frame_hook(void (*hook)(std::size_t frames)) { g_frame_hook = hook; }
+
 void tick() {
     const cost::Timer time_it(cost::kSpuTick);
+    // The native sound service's sequencer advances with the mixer.
+    if (g_frame_hook) g_frame_hook(kBatch);
     std::int16_t out[kBatch * 2];
     std::int32_t sum[2][kBatch][2] = {}, wet[2][kBatch][2] = {}, echo[2][kBatch][2] = {};
     std::int16_t rings[2][8][kBatch] = {};
@@ -458,7 +498,6 @@ void tick() {
     static std::uint64_t ticks = 0, active = 0, phases[5] = {};
     for (int c = 0; c < 2; ++c) {
         const Routing route = routing(g_cores[c]);
-        audio_native::render_voices_batch(c, kBatch, sum[c], wet[c]);
         for (int i = 0; i < 24; ++i) {
             Voice &v = g_cores[c].voices[i];
             if (!v.key_on && v.phase == kOff) continue;
@@ -573,12 +612,12 @@ void write_voice(Core &k, std::uint32_t off, std::uint32_t value) {
         case 0x0:
             if (trace_sweep(value)) std::fprintf(stderr, "[spu2] voice volume sweep L 0x%04X (voice %u)\n", value, off >> 4);
             v.voll = static_cast<std::uint16_t>(value);
-            if (!(value & 0x8000u)) v.vol[0].level = static_cast<std::int16_t>(value << 1);
+            if (!(value & 0x8000u)) v.vol[0].level = static_cast<std::int16_t>(value & 0x7FFFu);
             break;
         case 0x2:
             if (trace_sweep(value)) std::fprintf(stderr, "[spu2] voice volume sweep R 0x%04X (voice %u)\n", value, off >> 4);
             v.volr = static_cast<std::uint16_t>(value);
-            if (!(value & 0x8000u)) v.vol[1].level = static_cast<std::int16_t>(value << 1);
+            if (!(value & 0x8000u)) v.vol[1].level = static_cast<std::int16_t>(value & 0x7FFFu);
             break;
         case 0x4: v.pitch = static_cast<std::uint16_t>(value); break;
         case 0x6: v.adsr1 = static_cast<std::uint16_t>(value); break;
@@ -640,8 +679,45 @@ std::uint32_t read_core(int core, std::uint32_t off) {
         return off == 0x340 ? endx & 0xFFFFu : endx >> 16;
     }
     case 0x344: return 0x80u;
-    default: return k.regs[off >> 1];
+    default: break;
     }
+    // The setup the service keeps and the guest can read back.
+    switch (off) {
+    case 0x180: return k.iir_alpha;
+    case 0x184: return k.iir_beta;
+    case 0x188: return k.voice_dry[0] & 0xFFFFu;
+    case 0x18A: return (k.voice_dry[0] >> 16) & 0xFFu;
+    case 0x18C: return k.voice_wet[0] & 0xFFFFu;
+    case 0x18E: return (k.voice_wet[0] >> 16) & 0xFFu;
+    case 0x190: return k.voice_dry[1] & 0xFFFFu;
+    case 0x192: return (k.voice_dry[1] >> 16) & 0xFFu;
+    case 0x194: return k.voice_wet[1] & 0xFFFFu;
+    case 0x196: return (k.voice_wet[1] >> 16) & 0xFFu;
+    case 0x198: return k.mix_control;
+    case 0x2E0: return k.reverb_start >> 16;
+    case 0x2E2: return k.reverb_start & 0xFFFFu;
+    case 0x33C: return k.reverb_end;
+    default: break;
+    }
+    if (off >= 0x2E4u && off < 0x334u) {
+        const std::uint32_t slot = (off - 0x2E4u) / 4u;
+        const bool high = (off & 2u) == 0;
+        return high ? (k.reverb_address[slot] >> 16) : (k.reverb_address[slot] & 0xFFFFu);
+    }
+    return 0;
+}
+
+// Some of the retail's setup values are two 16-bit registers: the reverb's
+// ring addresses hold the high half first, the voice mix masks hold the low
+// half first. These helpers keep both orders in one place.
+void set_high_half(std::uint32_t &field, std::uint32_t off, std::uint32_t value) {
+    if ((off & 2u) == 0) field = (field & 0xFFFFu) | (value << 16);
+    else field = (field & 0xFFFF0000u) | (value & 0xFFFFu);
+}
+
+void set_low_half24(std::uint32_t &field, std::uint32_t off, std::uint32_t value) {
+    if ((off & 2u) == 0) field = (field & 0xFFFF0000u) | (value & 0xFFFFu);
+    else field = (field & 0xFFFFFFu) | ((value & 0xFFu) << 16);
 }
 
 void write_core(int core, std::uint32_t off, std::uint32_t value) {
@@ -654,54 +730,90 @@ void write_core(int core, std::uint32_t off, std::uint32_t value) {
         write_voice(k, off, value);
         return;
     }
-    k.regs[off >> 1] = static_cast<std::uint16_t>(value);
     switch (off) {
+    case 0x180: k.iir_alpha = static_cast<std::uint16_t>(value); return;
+    case 0x184: k.iir_beta = static_cast<std::uint16_t>(value); return;
+    case 0x188: case 0x18A: set_low_half24(k.voice_dry[0], off, value); return;
+    case 0x18C: case 0x18E: set_low_half24(k.voice_wet[0], off, value); return;
+    case 0x190: case 0x192: set_low_half24(k.voice_dry[1], off, value); return;
+    case 0x194: case 0x196: set_low_half24(k.voice_wet[1], off, value); return;
+    case 0x198: k.mix_control = static_cast<std::uint16_t>(value); return;
     case 0x19A:
         k.attr = static_cast<std::uint16_t>(value);
         if (!(value & 0x40u)) k.irq = false;
-        break;
-    case 0x19C: k.irqa = set_hi(k.irqa, value); break;
-    case 0x19E: k.irqa = set_lo(k.irqa, value); break;
-    case 0x1A0: key(k, value, true); break;
-    case 0x1A2: key(k, value << 16, true); break;
-    case 0x1A4: key(k, value, false); break;
-    case 0x1A6: key(k, value << 16, false); break;
-    case 0x1A8: k.tsa = set_hi(k.tsa, value); break;
-    case 0x1AA: k.tsa = set_lo(k.tsa, value); break;
+        return;
+    case 0x19C: k.irqa = set_hi(k.irqa, value); return;
+    case 0x19E: k.irqa = set_lo(k.irqa, value); return;
+    case 0x1A0: key(k, value, true); return;
+    case 0x1A2: key(k, value << 16, true); return;
+    case 0x1A4: key(k, value, false); return;
+    case 0x1A6: key(k, value << 16, false); return;
+    case 0x1A8: k.tsa = set_hi(k.tsa, value); return;
+    case 0x1AA: k.tsa = set_lo(k.tsa, value); return;
     case 0x1AC:
         check_irq(k.tsa, 1);
         g_ram[k.tsa] = static_cast<std::uint16_t>(value);
         k.tsa = (k.tsa + 1) & kRamMask;
-        break;
+        return;
     case 0x1B0:
         k.admas = static_cast<std::uint16_t>(value);
         if (!value) k.input_count = k.input_read = 0;
-        break;
+        return;
     case 0x340:
         for (int i = 0; i < 16; ++i) k.voices[i].end = false;
-        break;
+        return;
     case 0x342:
         for (int i = 16; i < 24; ++i) k.voices[i].end = false;
-        break;
+        return;
+    case 0x2E0: case 0x2E2: set_high_half(k.reverb_start, off, value); return;
+    case 0x33C: k.reverb_end = static_cast<std::uint16_t>(value); return;
+    case 0x33E: return;  // the low half of the ring's end address is not used
     default: break;
+    }
+    if (off >= 0x2E4u && off < 0x334u) {
+        set_high_half(k.reverb_address[(off - 0x2E4u) / 4u], off, value);
+        return;
     }
 }
 
-std::uint16_t *master_reg(int core, std::uint32_t off) {
-    Core &k = g_cores[core];
+// The master block of a core: the main volumes, the input volumes and the
+// reverb's ten volumes.
+bool master_read(const Core &k, std::uint32_t off, std::uint16_t &value) {
     switch (off) {
-    case 0x0: return &k.mvol[0];
-    case 0x2: return &k.mvol[1];
-    case 0x4: return &k.evol[0];
-    case 0x6: return &k.evol[1];
-    case 0x8: return &k.avol[0];
-    case 0xA: return &k.avol[1];
-    case 0xC: return &k.bvol[0];
-    case 0xE: return &k.bvol[1];
-    case 0x10: case 0x12: case 0x14: case 0x16: case 0x18: case 0x1A: case 0x1C: case 0x1E: case 0x20: case 0x22: case 0x24: case 0x26:
-        return &k.regs[(0x3E0 >> 1) + (off - 0x10) / 2];
-    default: return nullptr;
+    case 0x0: value = k.mvol[0]; return true;
+    case 0x2: value = k.mvol[1]; return true;
+    case 0x4: value = k.evol[0]; return true;
+    case 0x6: value = k.evol[1]; return true;
+    case 0x8: value = k.avol[0]; return true;
+    case 0xA: value = k.avol[1]; return true;
+    case 0xC: value = k.bvol[0]; return true;
+    case 0xE: value = k.bvol[1]; return true;
+    default: break;
     }
+    if (off >= 0x14u && off <= 0x26u) {
+        value = k.reverb_volume[(off - 0x14u) / 2u];
+        return true;
+    }
+    return false;
+}
+
+bool master_write(Core &k, std::uint32_t off, std::uint16_t value) {
+    switch (off) {
+    case 0x0: k.mvol[0] = value; return true;
+    case 0x2: k.mvol[1] = value; return true;
+    case 0x4: k.evol[0] = value; return true;
+    case 0x6: k.evol[1] = value; return true;
+    case 0x8: k.avol[0] = value; return true;
+    case 0xA: k.avol[1] = value; return true;
+    case 0xC: k.bvol[0] = value; return true;
+    case 0xE: k.bvol[1] = value; return true;
+    default: break;
+    }
+    if (off >= 0x14u && off <= 0x26u) {
+        k.reverb_volume[(off - 0x14u) / 2u] = value;
+        return true;
+    }
+    return false;
 }
 
 std::uint32_t read_global(std::uint32_t off) {
@@ -723,6 +835,105 @@ void write_global(std::uint32_t off, std::uint32_t value) {
     }
 }
 
+// ---------------------------------------------------------------------------
+// The ADMA stream: the game streaming sound into the service.
+// ---------------------------------------------------------------------------
+
+struct CoreStream {
+    bool active = false;
+    bool loop = false;
+    std::uint32_t mode = 0;
+    std::uint32_t direction = 0;
+    std::uint32_t iop_base = 0;
+    std::uint32_t total_bytes = 0;
+    std::uint32_t half_bytes = 0;
+    std::uint32_t active_buf = 0;
+    std::uint32_t current_iop_addr = 0;
+    std::uint32_t bytes_pulled_in_half = 0;
+
+    std::int16_t ring[kRingFrames][2] = {};
+    unsigned ring_read = 0;
+    unsigned ring_count = 0;
+};
+
+CoreStream g_streams[2];
+
+void refill_ring(int core) {
+    CoreStream &s = g_streams[core & 1];
+    if (!s.active) return;
+
+    while (s.active && s.ring_count + 256 <= kRingFrames) {
+        const std::uint32_t chunk = std::min<std::uint32_t>(1024u, s.half_bytes - s.bytes_pulled_in_half);
+        if (chunk == 0) break;
+        if (!valid_iop_range(s.current_iop_addr, chunk)) {
+            std::fprintf(stderr, "[audio-native] core %d invalid IOP range 0x%08X size %u\n", core, s.current_iop_addr, chunk);
+            s.active = false;
+            break;
+        }
+
+        const std::uint8_t *src = ram_ptr(s.current_iop_addr);
+        const std::uint32_t frames = chunk / 4u;
+        for (std::uint32_t i = 0; i < frames; ++i) {
+            std::int16_t l, r;
+            std::memcpy(&l, src + i * 2, 2);
+            std::memcpy(&r, src + chunk / 2 + i * 2, 2);
+            const unsigned slot = (s.ring_read + s.ring_count + i) % kRingFrames;
+            s.ring[slot][0] = l;
+            s.ring[slot][1] = r;
+        }
+        s.ring_count += frames;
+        s.current_iop_addr += chunk;
+        s.bytes_pulled_in_half += chunk;
+
+        if (s.bytes_pulled_in_half >= s.half_bytes) {
+            s.bytes_pulled_in_half = 0;
+            ps2::census::audio_native_block_consumed();
+            // Signal DMA completion job to wake up guest interrupt / callbacks
+            kernel::schedule(kernel::now() + 32, kernel::Job{kernel::kJobDmaDone, (core & 1) ? 7u : 4u});
+            if (s.loop) {
+                s.active_buf = 1 - s.active_buf;
+                s.current_iop_addr = s.iop_base + (s.half_bytes * s.active_buf);
+            } else {
+                s.active = false;
+                break;
+            }
+        }
+    }
+}
+
+// The ADMA stream's samples: the game streaming sound into the service.
+void render_stream_sample(int core, const bool input_wet[2], std::int32_t dry[2], std::int32_t wet[2],
+                          std::int16_t &raw_l, std::int16_t &raw_r, const std::uint16_t bvol[2]) {
+    CoreStream &s = g_streams[core & 1];
+    if (!s.active) {
+        raw_l = 0;
+        raw_r = 0;
+        return;
+    }
+
+    refill_ring(core & 1);
+
+    if (!s.ring_count) {
+        raw_l = 0;
+        raw_r = 0;
+        return;
+    }
+
+    const unsigned slot = s.ring_read;
+    raw_l = s.ring[slot][0];
+    raw_r = s.ring[slot][1];
+    s.ring_read = (s.ring_read + 1) % kRingFrames;
+    --s.ring_count;
+
+    const std::int32_t l = static_cast<std::int32_t>(raw_l) * static_cast<std::int16_t>(bvol[0]) >> 15;
+    const std::int32_t r = static_cast<std::int32_t>(raw_r) * static_cast<std::int16_t>(bvol[1]) >> 15;
+    dry[0] += l;
+    dry[1] += r;
+    if (input_wet[0]) wet[0] += l;
+    if (input_wet[1]) wet[1] += r;
+
+    ps2::census::audio_native_frame_mixed();
+    ps2::census::spu2_peak_sample(raw_l, raw_r);
 }
 
 void reset() {
@@ -743,17 +954,17 @@ void reset() {
 
 std::uint16_t *ram() { return g_ram.data(); }
 
+// The service's own window on the guest's sound registers. This is the
+// service's interface, decoded into its state - not a device behind a
+// boundary: there is no emulated sound chip left to call into.
 std::uint32_t read(std::uint32_t a, unsigned size) {
     keep_ticking_internal();
-    // Gate counter: every entry into the emulated SPU2 chip from outside (libsd, the IOP bus) is a
-    // platform call that must eventually terminate in the native audio service instead. A 4-byte
-    // read counts twice because it reads two registers (the recursive call counts its own entry).
-    ps2::census::spu2_device_op();
     const std::uint32_t off = a & 0x7FEu;
     std::uint32_t value = 0;
     if (off < 0x760u) value = read_core((off & 0x400u) ? 1 : 0, off & 0x3FEu);
     else if (off < 0x7B0u) {
-        if (const std::uint16_t *reg = master_reg((off - 0x760u) / 0x28, (off - 0x760u) % 0x28)) value = *reg;
+        std::uint16_t reg = 0;
+        if (master_read(g_cores[(off - 0x760u) / 0x28u], (off - 0x760u) % 0x28u, reg)) value = reg;
     } else value = read_global(off);
     if (size == 4) value |= read(a + 2, 2) << 16;
     return value;
@@ -766,13 +977,11 @@ void write(std::uint32_t a, std::uint32_t v, unsigned size) {
         write(a + 2, v >> 16, 2);
         return;
     }
-    // Counted after the 4-byte split so one hook = one 16-bit register write (see read()).
-    ps2::census::spu2_device_op();
     const std::uint32_t off = a & 0x7FEu;
     v &= 0xFFFFu;
     if (off < 0x760u) write_core((off & 0x400u) ? 1 : 0, off & 0x3FEu, v);
     else if (off < 0x7B0u) {
-        if (std::uint16_t *reg = master_reg((off - 0x760u) / 0x28, (off - 0x760u) % 0x28)) *reg = static_cast<std::uint16_t>(v);
+        master_write(g_cores[(off - 0x760u) / 0x28u], (off - 0x760u) % 0x28u, static_cast<std::uint16_t>(v));
         static const bool trace = std::getenv("PS2_TRACE_SPU2") != nullptr;
         if (trace)
             std::fprintf(stderr, "[spu2] %.3f s core %u master reg 0x%02X = 0x%04X\n", g_first_tick ? static_cast<double>(kernel::now() - g_first_tick) / 36864000.0 : 0.0,
@@ -783,7 +992,6 @@ void write(std::uint32_t a, std::uint32_t v, unsigned size) {
 void dma(int core, std::uint32_t madr, std::uint32_t words, bool to_spu, int channel) {
     keep_ticking_internal();
     ps2::census::spu2_dma(core, words * 4, to_spu);
-    ps2::census::spu2_device_op();
     Core &k = g_cores[core];
     if (to_spu && (k.admas & (1u << core))) {
         static const bool trace_adma = std::getenv("PS2_TRACE_ADMA") != nullptr;  // porting work: when each ADMA block starts, and the blocks
@@ -819,7 +1027,6 @@ void dma_stop(int core) {
                      g_first_tick ? static_cast<double>(kernel::now() - g_first_tick) / 36864000.0 : 0.0, k.transfers.size(), k.input_count);
     k.transfers.clear();
     k.admas &= ~(1u << (core & 1));
-    k.regs[0x1B0 >> 1] = k.admas;
     k.input_count = k.input_read = 0;
 }
 
@@ -837,8 +1044,8 @@ void dump_voices() {
         std::fprintf(stderr, "[spu2] core %d master volume %04X %04X dry %04X %04X wet %04X %04X input %04X %04X attr %04X admas %04X\n", c, k.mvol[0], k.mvol[1], k.avol[0], k.avol[1],
                      k.evol[0], k.evol[1], k.bvol[0], k.bvol[1], k.attr, k.admas);
         std::fprintf(stderr, "[spu2] core %d registers from 0x180:", c);
-        for (std::uint32_t off = 0x180; off < 0x400; off += 2)
-            if (!(off >= 0x1C0 && off < 0x2E0) && k.regs[off >> 1]) std::fprintf(stderr, " %03X=%04X", off, k.regs[off >> 1]);
+        std::fprintf(stderr, " 180=%04X 184=%04X 188=%06X 18C=%06X 190=%06X 194=%06X 198=%04X", k.iir_alpha, k.iir_beta,
+                     k.voice_dry[0], k.voice_wet[0], k.voice_dry[1], k.voice_wet[1], k.mix_control);
         std::fprintf(stderr, "\n");
     }
     for (int c = 0; c < 2; ++c)
@@ -858,10 +1065,307 @@ void dump_audio(const char *) {
     g_out_wav.close();
 }
 
+// ---------------------------------------------------------------------------
+// The retail sound library's parameter interface.
+// The library addressed the sound device's parameters by an index, a core and
+// a voice. The service decodes each index into its own named state: the voice
+// registers, the mixer's routing, the reverb's ring and volumes, the
+// attribute register and the transfer registers. This table is the decoding
+// map (compatibility data), not a register file: what the library wrote
+// lands in named fields.
+// ---------------------------------------------------------------------------
+
+constexpr std::array<std::uint16_t, 41> kParamRegisterOffsets = {
+    0x000, 0x002, 0x004, 0x006, 0x008, 0x00A, 0x00C, 0x00E,
+    0x198,
+    0x760, 0x762, 0x764, 0x766, 0x768, 0x76A, 0x76C, 0x76E, 0x770, 0x772,
+    0x180, 0x184, 0x1A0, 0x1A4, 0x340, 0x188, 0x18C, 0x190, 0x194,
+    0x2E0, 0x33C, 0x1A8, 0x19C, 0x1C0, 0x1C4, 0x1C8, 0x19A, 0x1A8,
+    0x1AC, 0x1AE, 0x1B0, 0x334,
+};
+
+// The master's block lives at 0x760 with one block per core.
+constexpr bool is_master_index(std::uint32_t index) { return index >= 9u && index <= 18u; }
+
+// The address the library's index wrote, in the service's own numbering.
+std::uint32_t param_address(std::uint32_t index, std::uint32_t core, std::uint32_t voice,
+                            std::uint32_t voice_stride) {
+    if (index >= kParamRegisterOffsets.size()) return 0xFFFFFFFFu;
+    const std::uint32_t base = kParamRegisterOffsets[index];
+    if (is_master_index(index)) return base + (core ? 0x28u : 0u) + voice * voice_stride;
+    return base + (core ? 0x400u : 0u) + voice * voice_stride;
 }
 
-namespace ps2::iop::spu2 {
+// Writes one of the library's parameters into the service's state.
+void write_service(std::uint32_t core, std::uint32_t address, std::uint32_t value) {
+    const std::uint32_t off = address & 0x7FEu;
+    if (off < 0x760u) {
+        write_core((off & 0x400u) ? 1 : 0, off & 0x3FEu, value);
+        return;
+    }
+    if (off < 0x7B0u) {
+        const std::uint32_t block = (off - 0x760u) / 0x28u;
+        if (block > 1u) return;  // there are two cores
+        master_write(g_cores[block], (off - 0x760u) % 0x28u, static_cast<std::uint16_t>(value));
+        return;
+    }
+    write_global(off, value);
+}
 
+std::uint32_t read_service(std::uint32_t core, std::uint32_t address) {
+    const std::uint32_t off = address & 0x7FEu;
+    if (off < 0x760u) return read_core((off & 0x400u) ? 1 : 0, off & 0x3FEu);
+    if (off < 0x7B0u) {
+        const std::uint32_t block = (off - 0x760u) / 0x28u;
+        if (block > 1u) return 0;
+        std::uint16_t reg = 0;
+        if (!master_read(g_cores[block], (off - 0x760u) % 0x28u, reg)) return 0;
+        return reg;
+    }
+    return read_global(off);
+}
+
+bool set_param(int core, int voice, std::uint32_t index, std::uint16_t value) {
+    const std::uint32_t address = param_address(index, static_cast<std::uint32_t>(core & 1),
+                                                 static_cast<std::uint32_t>(voice & 0x1Fu), 16u);
+    if (address == 0xFFFFFFFFu) return false;
+    write_service(static_cast<std::uint32_t>(core & 1), address, value);
+    return true;
+}
+
+bool get_param(int core, int voice, std::uint32_t index, std::uint16_t &value) {
+    const std::uint32_t address = param_address(index, static_cast<std::uint32_t>(core & 1),
+                                                 static_cast<std::uint32_t>(voice & 0x1Fu), 16u);
+    if (address == 0xFFFFFFFFu) return false;
+    value = static_cast<std::uint16_t>(read_service(static_cast<std::uint32_t>(core & 1), address) & 0xFFFFu);
+    return true;
+}
+
+// The switch parameters: key on, key off, the end flags and the voice mix
+// masks.
+bool set_switch(int core, std::uint32_t index, std::uint32_t value) {
+    Core &k = g_cores[core & 1];
+    switch (index) {
+    case 8: k.mix_control = static_cast<std::uint16_t>(value); return true;
+    case 19: k.iir_alpha = static_cast<std::uint16_t>(value); return true;
+    case 20: k.iir_beta = static_cast<std::uint16_t>(value); return true;
+    case 21: key(k, value & 0xFFFFu, true); return true;
+    case 22: key(k, value & 0xFFFFu, false); return true;
+    case 23:
+        for (int i = 0; i < 24; ++i) k.voices[i].end = false;
+        return true;
+    case 24: k.voice_dry[0] = value & 0xFFFFFFu; return true;
+    case 25: k.voice_wet[0] = value & 0xFFFFFFu; return true;
+    case 26: k.voice_dry[1] = value & 0xFFFFFFu; return true;
+    case 27: k.voice_wet[1] = value & 0xFFFFFFu; return true;
+    default: return false;
+    }
+}
+
+bool get_switch(int core, std::uint32_t index, std::uint32_t &value) {
+    const Core &k = g_cores[core & 1];
+    switch (index) {
+    case 8: value = k.mix_control; return true;
+    case 19: value = k.iir_alpha; return true;
+    case 20: value = k.iir_beta; return true;
+    case 23: {
+        std::uint32_t endx = 0;
+        for (int i = 0; i < 24; ++i)
+            if (k.voices[i].end) endx |= 1u << i;
+        value = endx;
+        return true;
+    }
+    case 24: value = k.voice_dry[0]; return true;
+    case 25: value = k.voice_wet[0]; return true;
+    case 26: value = k.voice_dry[1]; return true;
+    case 27: value = k.voice_wet[1]; return true;
+    default: return false;
+    }
+}
+
+// A voice's sample address. The library passes the address in bits 1..20 and
+// the "next address" flag in bit 0.
+bool set_addr(int core, int voice, std::uint32_t index, std::uint32_t value) {
+    if (voice < 0 || voice >= 24) return false;
+    Core &k = g_cores[core & 1];
+    Voice &v = k.voices[voice];
+    const std::uint32_t address = ((value >> 17) & 0xFu) << 16 | ((value >> 1) & 0xFFF8u);
+    switch (index) {
+    case 32: v.ssa = address; return true;
+    case 33: v.lsax = address; v.lsax_written = true; return true;
+    case 34: v.next = address; return true;
+    default: break;
+    }
+    const std::uint32_t offset = param_address(index, static_cast<std::uint32_t>(core & 1),
+                                               static_cast<std::uint32_t>(voice & 0x1Fu), 12u);
+    if (offset == 0xFFFFFFFFu) return false;
+    write_service(static_cast<std::uint32_t>(core & 1), offset, (value >> 17) & 0xFFFFu);
+    if (index != 29u) write_service(static_cast<std::uint32_t>(core & 1), offset + 2u, (value >> 1) & 0xFFF8u);
+    return true;
+}
+
+bool get_addr(int core, int voice, std::uint32_t index, std::uint32_t &value) {
+    if (voice < 0 || voice >= 24) return false;
+    const Core &k = g_cores[core & 1];
+    const Voice &v = k.voices[voice];
+    switch (index) {
+    case 32: value = v.ssa; return true;
+    case 33: value = v.lsax; return true;
+    case 34: {
+        const std::uint32_t nax = (v.block[0] + 1 + (v.position >> 14)) & kRamMask;
+        value = nax;
+        return true;
+    }
+    default: break;
+    }
+    const std::uint32_t offset = param_address(index, static_cast<std::uint32_t>(core & 1),
+                                               static_cast<std::uint32_t>(voice & 0x1Fu), 12u);
+    if (offset == 0xFFFFFFFFu) return false;
+    const std::uint32_t high = read_service(static_cast<std::uint32_t>(core & 1), offset) & 0xFFFFu;
+    if (index == 29u) {
+        value = high << 17 | 0x1FFFFu;
+    } else {
+        const std::uint32_t low = read_service(static_cast<std::uint32_t>(core & 1), offset + 2u) & 0xFFFFu;
+        value = high << 17 | low << 1 | 1u;
+    }
+    return true;
+}
+
+// ---------------------------------------------------------------------------
+// The voice interface the native sound service uses.
+// ---------------------------------------------------------------------------
+
+void key_on(int core, std::uint32_t mask) {
+    const int c = core & 1;
+    Core &k = g_cores[c];
+    for (int i = 0; i < 24; ++i) {
+        if (!(mask & (1u << i))) continue;
+        ps2::census::audio_native_voice_keyed_on(c, i);
+    }
+    key(k, mask & 0xFFFFFFu, true);
+}
+
+void key_off(int core, std::uint32_t mask) {
+    key(g_cores[core & 1], mask & 0xFFFFFFu, false);
+}
+
+bool set_voice_param(int core, int voice, std::uint32_t index, std::uint16_t value) {
+    if (voice < 0 || voice >= 24) return false;
+    Voice &v = g_cores[core & 1].voices[voice];
+    switch (index) {
+    case 0:  // the volume left
+        v.voll = value;
+        if (!(value & 0x8000u)) v.vol[0].level = static_cast<std::int16_t>(value & 0x7FFFu);
+        return true;
+    case 1:  // the volume right
+        v.volr = value;
+        if (!(value & 0x8000u)) v.vol[1].level = static_cast<std::int16_t>(value & 0x7FFFu);
+        return true;
+    case 2: v.pitch = value; return true;
+    case 3: v.adsr1 = value; return true;
+    case 4: v.adsr2 = value; return true;
+    case 5: v.env.level = static_cast<std::int16_t>(value); return true;
+    default: return false;
+    }
+}
+
+bool get_voice_param(int core, int voice, std::uint32_t index, std::uint16_t &value) {
+    if (voice < 0 || voice >= 24) return false;
+    const Voice &v = g_cores[core & 1].voices[voice];
+    switch (index) {
+    case 0: value = v.voll; return true;
+    case 1: value = v.volr; return true;
+    case 2: value = v.pitch; return true;
+    case 3: value = v.adsr1; return true;
+    case 4: value = v.adsr2; return true;
+    case 5: value = static_cast<std::uint16_t>(v.env.level); return true;
+    case 6: value = static_cast<std::uint16_t>(v.vol[0].level); return true;
+    case 7: value = static_cast<std::uint16_t>(v.vol[1].level); return true;
+    default: return false;
+    }
+}
+
+bool set_voice_addr(int core, int voice, std::uint32_t index, std::uint32_t value) {
+    if (voice < 0 || voice >= 24) return false;
+    Voice &v = g_cores[core & 1].voices[voice];
+    switch (index) {
+    case 32: v.ssa = value; return true;
+    case 33: v.lsax = value; v.lsax_written = true; return true;
+    case 34: v.next = value; return true;
+    default: return false;
+    }
+}
+
+bool get_voice_addr(int core, int voice, std::uint32_t index, std::uint32_t &value) {
+    if (voice < 0 || voice >= 24) return false;
+    const Voice &v = g_cores[core & 1].voices[voice];
+    switch (index) {
+    case 32: value = v.ssa; return true;
+    case 33: value = v.lsax; return true;
+    case 34: value = (v.block[0] + 1 + (v.position >> 14)) & kRamMask; return true;
+    default: return false;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// The ADMA stream.
+// ---------------------------------------------------------------------------
+
+bool has_active_stream(int core) { return g_streams[core & 1].active; }
+
+void start_stream(int core, std::uint32_t mode, std::uint32_t iop_address, std::uint32_t bytes,
+                  std::uint32_t start_address) {
+    CoreStream &s = g_streams[core & 1];
+    s = {};
+    s.mode = mode;
+    s.direction = mode & 3u;
+    s.iop_base = iop_address;
+    s.total_bytes = bytes;
+    s.half_bytes = bytes / 2u;
+    s.loop = (mode & 0x10u) != 0;
+    if (s.direction == 1u) {
+        // Reading from the sound memory into the IOP's memory.
+        s.active_buf = 0;
+        std::uint32_t offset = start_address & 0x3FFu;
+        if (offset & 1023u) offset = (offset + 1023u) & ~1023u;
+        s.current_iop_addr = s.iop_base + (s.half_bytes * s.active_buf) + offset;
+    } else {
+        s.active_buf = 0;
+        s.current_iop_addr = s.iop_base;
+    }
+    s.active = true;
+    s.ring_read = 0;
+    s.ring_count = 0;
+    s.bytes_pulled_in_half = 0;
+    std::fprintf(stderr, "[audio-native] core %d start_stream: base=0x%08X total=%u half=%u loop=%d dir=%u\n",
+                 core & 1, s.iop_base, s.total_bytes, s.half_bytes, s.loop ? 1 : 0, s.direction);
+    keep_ticking_internal();
+    refill_ring(core & 1);
+}
+
+void stop_stream(int core) {
+    CoreStream &s = g_streams[core & 1];
+    s.active = false;
+    s.ring_count = 0;
+    s.ring_read = 0;
+}
+
+std::uint32_t get_active_buffer(int core) { return g_streams[core & 1].active_buf; }
+
+std::uint32_t get_next_fill_address(int core) {
+    const CoreStream &s = g_streams[core & 1];
+    return s.iop_base + (s.active_buf * s.half_bytes);
+}
+
+std::uint32_t get_current_address(int core) { return g_streams[core & 1].current_iop_addr; }
+
+// The service's window on the guest's sound registers.
+std::uint32_t window_read(std::uint32_t address, unsigned size) { return read(address, size); }
+void window_write(std::uint32_t address, std::uint32_t value, unsigned size) { write(address, value, size); }
+
+std::uint16_t *sound_ram() { return g_ram.data(); }
+
+// The service's state in a save/load stream.
 void state(ps2::state::Stream &s) {
     s.tag("spu2");
     s.vec(g_ram);
@@ -887,7 +1391,15 @@ void state(ps2::state::Stream &s) {
             s.pod(t.bytes);
             s.pod(t.channel);
         });
-        s.pod(k.regs);
+        s.pod(k.mix_control);
+        s.pod(k.voice_dry);
+        s.pod(k.voice_wet);
+        s.pod(k.iir_alpha);
+        s.pod(k.iir_beta);
+        s.pod(k.reverb_start);
+        s.pod(k.reverb_end);
+        s.pod(k.reverb_address);
+        s.pod(k.reverb_volume);
     }
     s.pod(g_spdif_out);
     s.pod(g_spdif_mode);

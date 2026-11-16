@@ -452,6 +452,84 @@ T load_gl_proc(const char *name, const char *extension_name = nullptr) {
     return valid_gl_proc(proc) ? reinterpret_cast<T>(proc) : nullptr;
 }
 
+// The GPU's own busy time.
+//
+// The window title's "GPU %" used to read the WebGPU path's counter, which is
+// always zero in the native GL path. That is what made the title say
+// "GPU 0%" while the game was drawing on the Radeon - the number was a
+// measurement artifact, not the truth. A GL_TIME_ELAPSED timer query measures
+// the time the GPU actually spent on the frame's commands, so the title can
+// only say what the hardware did.
+constexpr GLenum kGlTimeElapsed = 0x88BF;        // GL 3.2 / ARB_timer_query
+constexpr GLenum kGlQueryResult = 0x8866;
+constexpr GLenum kGlQueryResultAvailable = 0x8867;
+using BeginQueryProc = void (*)(GLenum, GLuint);
+using EndQueryProc = void (*)(GLenum);
+using GetQueryObjectui64vProc = void (*)(GLuint, GLenum, std::uint64_t *);
+using GenQueriesProc = void (*)(GLsizei, GLuint *);
+BeginQueryProc g_begin_query = nullptr;
+EndQueryProc g_end_query = nullptr;
+GetQueryObjectui64vProc g_get_query_object = nullptr;
+GenQueriesProc g_gen_queries = nullptr;
+GLuint g_timer_query = 0;
+bool g_timer_ready = false;
+bool g_timer_active = false;
+bool g_timer_result_pending = false;
+double g_gpu_busy_ms = 0.0;
+
+void load_timer_functions() {
+    if (g_begin_query && g_end_query && g_get_query_object) return;
+    g_begin_query = load_gl_proc<BeginQueryProc>("glBeginQuery");
+    g_end_query = load_gl_proc<EndQueryProc>("glEndQuery");
+    g_get_query_object = load_gl_proc<GetQueryObjectui64vProc>("glGetQueryObjectui64v");
+    g_gen_queries = load_gl_proc<GenQueriesProc>("glGenQueries");
+    if (!g_begin_query || !g_end_query || !g_get_query_object || !g_gen_queries) {
+        g_begin_query = nullptr;
+        g_end_query = nullptr;
+        g_get_query_object = nullptr;
+        g_gen_queries = nullptr;
+        return;
+    }
+    g_gen_queries(1, &g_timer_query);
+    if (!g_timer_query) {
+        g_begin_query = nullptr;
+        g_end_query = nullptr;
+        g_get_query_object = nullptr;
+        return;
+    }
+    g_timer_ready = true;
+    std::fprintf(stderr, "[native-gl] GPU busy time measured with a GL timer query\n");
+}
+
+// Starts the timer for the frame's commands. Called with the first primitive
+// of a frame; the query is closed when the frame is presented.
+void begin_frame_timer() {
+    if (!g_timer_ready || g_timer_active) return;
+    g_begin_query(kGlTimeElapsed, g_timer_query);
+    g_timer_active = true;
+}
+
+// Closes the timer and collects the previous frame's result. The result is
+// read without blocking: a frame that is still running on the GPU is picked up
+// on the next one.
+void end_frame_timer() {
+    if (!g_timer_ready || !g_timer_active) return;
+    g_end_query(kGlTimeElapsed);
+    g_timer_active = false;
+    g_timer_result_pending = true;
+}
+
+void poll_frame_timer() {
+    if (!g_timer_ready || !g_timer_result_pending) return;
+    std::uint64_t available = 0;
+    g_get_query_object(g_timer_query, kGlQueryResultAvailable, &available);
+    if (!available) return;
+    std::uint64_t nanoseconds = 0;
+    g_get_query_object(g_timer_query, kGlQueryResult, &nanoseconds);
+    g_timer_result_pending = false;
+    g_gpu_busy_ms = static_cast<double>(nanoseconds) / 1000000.0;
+}
+
 // Loads the FBO/blit entry points the scene targets and presentation path
 // need. The GLSL shader loaders that used to live here were part of the
 // removed fullscreen alpha compositor.
@@ -703,11 +781,16 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
                     std::uint32_t &width, std::uint32_t &height) {
     const std::uint32_t tex1 = static_cast<std::uint32_t>(context.tex1);
     const std::uint32_t mmin = (tex1 >> 6) & 7u;
+    const std::uint32_t mmag = (tex1 >> 5) & 1u;
     const std::uint32_t wms = static_cast<std::uint32_t>(context.clamp) & 3u;
     const std::uint32_t wmt = (static_cast<std::uint32_t>(context.clamp) >> 2) & 3u;
     const std::uint32_t tfx = static_cast<std::uint32_t>((context.tex0 >> 35) & 3u);
-    if (mmin > 1)
-        return reject_packet(st, attr, prim_type, count, width_reason, "mipmapped GS filtering is not implemented yet");
+    // MMIN 2..7 select a mip level. The reference rasterizer has no mip
+    // levels: it samples the base level with the MAG filter (raster.cpp:365,
+    // "s.bilinear = (c.tex1 >> 5) & 1u") and ignores MMIN. Rejecting those
+    // packets dropped 752,835 primitives in the 13:21 run - the character
+    // select's own textures - so the native path samples the base level the
+    // same way instead.
     if (wms == 3 || wmt == 3)
         return reject_packet(st, attr, prim_type, count, width_reason + 1, "GS region repeat is not implemented yet");
     const bool tcc = (context.tex0 & (1ull << 34)) != 0;
@@ -845,8 +928,10 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
         height = g_texture.height;
     }
 
-    const GLint min_filter = mmin == 1 ? GL_LINEAR : GL_NEAREST;
-    const GLint mag_filter = ((tex1 >> 5) & 1u) ? GL_LINEAR : GL_NEAREST;
+    // A mipmapped mode has only the base level here, so the magnification
+    // filter decides both - that is what the reference rasterizer does.
+    const GLint mag_filter = mmag ? GL_LINEAR : GL_NEAREST;
+    const GLint min_filter = mmin == 1 ? GL_LINEAR : (mmin > 1 ? mag_filter : GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wms == 0 ? GL_REPEAT : GL_CLAMP_TO_EDGE);
@@ -936,6 +1021,7 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
 void initialize_context_state() {
     gl_state_invalidate();
     load_multitexture_functions();
+    load_timer_functions();
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
@@ -1234,8 +1320,13 @@ bool attach_current_context(void *host_window) {
     }
     g_enabled = true;
     g_checked = true;
-    std::fprintf(stderr, "[native-gl] attached SDL-owned visible-window WGL context | %s\n",
-                 reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+    // The full context identity, logged once: the window title's "GPU %" used
+    // to read zero because it measured the wrong path, and there was no way to
+    // tell from the log which driver was drawing.
+    std::fprintf(stderr, "[native-gl] attached SDL-owned visible-window WGL context | %s | %s | %s\n",
+                 reinterpret_cast<const char *>(glGetString(GL_VENDOR)),
+                 reinterpret_cast<const char *>(glGetString(GL_RENDERER)),
+                 reinterpret_cast<const char *>(glGetString(GL_VERSION)));
     return true;
 #else
     (void)host_window;
@@ -1245,6 +1336,16 @@ bool attach_current_context(void *host_window) {
 
 bool direct_window() {
     return g_enabled && g_direct_window_context;
+}
+
+double gpu_busy_ms() {
+#if defined(_WIN32)
+    if (!g_timer_ready) return 0.0;
+    poll_frame_timer();
+    return g_gpu_busy_ms;
+#else
+    return 0.0;
+#endif
 }
 
 // Draws a VRAM display rectangle into the visible back buffer as a textured
@@ -1412,6 +1513,10 @@ bool present_frame(const DisplayRegs &regs) {
     gl_state_invalidate();
 #if defined(_WIN32)
     if (!direct_window() || !g_hdc || !g_hwnd || !g_blit_framebuffer) return false;
+    // The frame's commands are done: close the GPU timer and pick up the
+    // previous frame's measurement.
+    end_frame_timer();
+    poll_frame_timer();
     if (wglGetCurrentContext() != g_hrc || wglGetCurrentDC() != g_hdc) {
         if (!wglMakeCurrent(g_hdc, g_hrc)) {
             std::fprintf(stderr, "[native-gl] could not make the SDL WGL context current for presentation\n");
@@ -1982,6 +2087,8 @@ bool submit(const State &st, const Vertex *verts, int count) {
     if (count <= 0 || !verts) return reject_packet(st, attr, prim_type, count, 1, "empty primitive or null vertex stream");
 #if defined(_WIN32)
     if (!g_hdc || !g_hrc) return reject_packet(st, attr, prim_type, count, 2, "OpenGL device/context is not current");
+    // The first primitive of a frame starts the GPU timer.
+    begin_frame_timer();
 
     // Pick GL primitive from the PS2 PRIM register (low 3 bits: prim type).
     const Context &context = st.ctx[(attr >> 9) & 1u];
@@ -2060,8 +2167,6 @@ bool submit(const State &st, const Vertex *verts, int count) {
     const bool framebuffer_16 = fpsm == gs::PSMCT16 || fpsm == gs::PSMCT16S;
     const bool tex_alpha_enabled = (context.tex0 & (1ull << 34)) != 0;
     const std::uint32_t tfx = static_cast<std::uint32_t>((context.tex0 >> 35) & 3u);
-    if (framebuffer_16 && textured && tex_alpha_enabled)
-        return reject_packet(st, attr, prim_type, count, 14, "16-bit framebuffer alpha quantization with texture alpha is not implemented yet");
     const bool alpha_blend = (attr & (1ull << 6)) != 0;
     if (alpha_blend) {
         const std::uint32_t alpha = static_cast<std::uint32_t>(context.alpha);
@@ -2083,8 +2188,14 @@ bool submit(const State &st, const Vertex *verts, int count) {
             // is one bit (0 or 0x80), so GL's destination-alpha factor is
             // exact once the alpha channel is quantized on each write.
             cache_blend(true, GL_ZERO, GL_ONE_MINUS_DST_ALPHA, GL_ONE, GL_ZERO);
-        } else if (fpsm == gs::PSMCT32 && (st.colclamp & 1u) && (!textured || tfx <= 1u) &&
-                   g_blend_func_separate) {
+        } else if ((st.colclamp & 1u) && (!textured || tfx <= 1u) && g_blend_func_separate &&
+                   // The destination alpha only enters the blend when the ALPHA
+                   // register multiplies by it (C = Ad). A 24-bit framebuffer has
+                   // no alpha channel at all, so its destination alpha is zero;
+                   // a 16-bit framebuffer keeps one bit, which is a per-pixel
+                   // value GL's destination-alpha factor cannot carry.
+                   (fpsm == gs::PSMCT32 || fpsm == gs::PSMCT24 ||
+                    ((fpsm == gs::PSMCT16 || fpsm == gs::PSMCT16S) && c != 1))) {
             // The general GS blend - what the reference rasterizer computes:
             // result = (A - B) * C / 128 + D over RGB (raster.cpp:267-272),
             // with the alpha channel written from the source (raster.cpp:282-286).
@@ -2112,10 +2223,20 @@ bool submit(const State &st, const Vertex *verts, int count) {
             if (a == 0) ++sc; else if (a == 1) ++dc;
             if (b == 0) --sc; else if (b == 1) --dc;
             if (d == 0) ++so; else if (d == 1) ++dt;
+            // A framebuffer without an alpha channel (PSMCT24) has a
+            // destination alpha of zero, so the term that multiplies by Ad
+            // vanishes and the result is the D term alone (raster.cpp:265-272).
+            const bool destination_alpha_zero = (ck == 1) && (fpsm == gs::PSMCT24);
             const auto factor = [&](int coeff, int one, GLenum &out) -> bool {
                 static const GLenum kC[3] = {GL_SRC_ALPHA, GL_DST_ALPHA, GL_CONSTANT_ALPHA};
                 static const GLenum kOneMinusC[3] = {GL_ONE_MINUS_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA,
                                                      GL_ONE_MINUS_CONSTANT_ALPHA};
+                if (destination_alpha_zero) {
+                    // Only the D term survives: the result is the source
+                    // colour, the destination colour or black.
+                    out = one ? GL_ONE : GL_ZERO;
+                    return true;
+                }
                 if (coeff == 0) { out = one ? GL_ONE : GL_ZERO; return true; }
                 if (coeff == 1 && one == 0) { out = kC[ck]; return true; }
                 if (coeff == -1 && one == 1) { out = kOneMinusC[ck]; return true; }
@@ -2136,11 +2257,12 @@ bool submit(const State &st, const Vertex *verts, int count) {
             }
         } else {
             static const char *kNoSeparate = "GL blend-func-separate is unavailable";
-            static const char *kFrame = "GS ALPHA blend on a non-PSMCT32 framebuffer is not implemented yet";
+            static const char *kFrame = "GS ALPHA blend with the per-pixel destination alpha of a 16-bit framebuffer is not implemented yet";
             static const char *kClamp = "GS ALPHA blend without COLCLAMP wraps, which GL cannot express";
             static const char *kTfx = "GS ALPHA blend with TFX >= 2 is not verified against the rasterizer yet";
+            const bool framebuffer_alpha_per_pixel = (fpsm == gs::PSMCT16 || fpsm == gs::PSMCT16S) && c == 1;
             const char *why = !g_blend_func_separate ? kNoSeparate
-                           : fpsm != gs::PSMCT32     ? kFrame
+                           : framebuffer_alpha_per_pixel ? kFrame
                            : !(st.colclamp & 1u)     ? kClamp
                                                      : kTfx;
             return reject_packet(st, attr, prim_type, count, 14, why);

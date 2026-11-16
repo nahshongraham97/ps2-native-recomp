@@ -104,14 +104,13 @@ else()
         runtime/src/iop/dev9_offline.cpp
         runtime/src/iop/usbd_offline.cpp
         runtime/src/iop/libsd_native.cpp
-        runtime/src/iop/audio_native.cpp
         runtime/src/iop/msl_native.cpp
         runtime/src/iop/padman.cpp
         runtime/src/iop/mcserv.cpp
         runtime/src/iop/mwfilefr.cpp
         runtime/src/iop/libs.cpp
         runtime/src/iop/hw.cpp
-        runtime/src/iop/spu2.cpp
+        runtime/src/iop/audio_service.cpp
         runtime/src/iop/sio2.cpp
         runtime/src/iop/io.cpp
         runtime/src/iop/cdvd_native.cpp

@@ -16,7 +16,7 @@
 
 #include "iop/iop.hpp"
 #include "iop/kernel.hpp"
-#include "iop/spu2.hpp"
+#include "iop/audio_service.hpp"
 
 #include <algorithm>
 #include <cstdint>
@@ -100,7 +100,7 @@ int main() {
     // including the LIBSD v1.5 bridge. The synthetic load resolves to the
     // native replacement and runs its start, publishing the libsd exports.
     ps2::iop::reset();
-    ps2::iop::spu2::set_sink(capture);
+    ps2::iop::audio_native::set_sink(capture);
     const auto libsd_elf = make_iopmod_elf("LIBSD");
     if (ps2::iop::load_module_buffer(libsd_elf, "buffer", "") <= 0) {
         std::fprintf(stderr, "[FAIL] the LIBSD module did not load\n");
@@ -121,7 +121,7 @@ int main() {
     // RAM, so the data is written after it). 32 blocks = 896 samples. The
     // bank must avoid words 0x0000..0x1FFF (the SPU2 ring buffers overwrite
     // that range every tick) and 0x2800 (SdInit's voice_data).
-    std::uint16_t *ram = ps2::iop::spu2::ram();
+    std::uint16_t *ram = ps2::iop::audio_native::sound_ram();
     constexpr std::uint32_t kBank = 0x4000u;
     for (std::uint32_t b = 0; b < 32; ++b) write_block(ram, kBank + b * 8);
 
@@ -130,12 +130,12 @@ int main() {
     // key-on. SdInit leaves pitch at the freesd default 0x3FFF (about 4x
     // rate); games overwrite it, and 0x1000 is 1.0x (48 kHz). Master volume
     // is deliberately still zero here.
-    ps2::iop::spu2::write(kSpuBase + 0x004u, 0x1000u, 2);            // pitch 1.0x
-    ps2::iop::spu2::write(kSpuBase + 0x000u, 0x3FFFu, 2);            // voll
-    ps2::iop::spu2::write(kSpuBase + 0x002u, 0x3FFFu, 2);            // volr
-    ps2::iop::spu2::write(kSpuBase + 0x1C0u, kBank >> 16, 2);        // SSA high
-    ps2::iop::spu2::write(kSpuBase + 0x1C2u, kBank & 0xFFFFu, 2);    // SSA low
-    ps2::iop::spu2::write(kSpuBase + 0x1A0u, 0x0001u, 2);            // KON voice 0
+    ps2::iop::audio_native::window_write(kSpuBase + 0x004u, 0x1000u, 2);            // pitch 1.0x
+    ps2::iop::audio_native::window_write(kSpuBase + 0x000u, 0x3FFFu, 2);            // voll
+    ps2::iop::audio_native::window_write(kSpuBase + 0x002u, 0x3FFFu, 2);            // volr
+    ps2::iop::audio_native::window_write(kSpuBase + 0x1C0u, kBank >> 16, 2);        // SSA high
+    ps2::iop::audio_native::window_write(kSpuBase + 0x1C2u, kBank & 0xFFFFu, 2);    // SSA low
+    ps2::iop::audio_native::window_write(kSpuBase + 0x1A0u, 0x0001u, 2);            // KON voice 0
 
     // Phase 1: the voice is fully programmed but SdInit(0) left MVOL at 0.
     // Reference behaviour (freesd.c InitCoreVolume flag 0), so the output must
@@ -153,8 +153,8 @@ int main() {
 
     // Phase 2: the game sets the master volume; the same voice must become
     // audible without any further programming.
-    ps2::iop::spu2::write(kSpuBase + 0x760u, 0x3FFFu, 2); // MVOLL core 0
-    ps2::iop::spu2::write(kSpuBase + 0x762u, 0x3FFFu, 2); // MVOLR core 0
+    ps2::iop::audio_native::window_write(kSpuBase + 0x760u, 0x3FFFu, 2); // MVOLL core 0
+    ps2::iop::audio_native::window_write(kSpuBase + 0x762u, 0x3FFFu, 2); // MVOLR core 0
     const std::size_t before = g_captured.size();
     run_batches(8);
     const int peak = peak_since(before);
@@ -162,11 +162,11 @@ int main() {
                 g_captured.size() / 2, peak);
     if (std::getenv("SPU2_MIX_DEBUG")) {
         std::printf("[spu2-mix] SSA hi=%04X lo=%04X pitch=%04X voll=%04X MVOL=%04X\n",
-                    static_cast<unsigned>(ps2::iop::spu2::read(kSpuBase + 0x1C0u, 2) & 0xFFFFu),
-                    static_cast<unsigned>(ps2::iop::spu2::read(kSpuBase + 0x1C2u, 2) & 0xFFFFu),
-                    static_cast<unsigned>(ps2::iop::spu2::read(kSpuBase + 0x004u, 2) & 0xFFFFu),
-                    static_cast<unsigned>(ps2::iop::spu2::read(kSpuBase + 0x000u, 2) & 0xFFFFu),
-                    static_cast<unsigned>(ps2::iop::spu2::read(kSpuBase + 0x760u, 2) & 0xFFFFu));
+                    static_cast<unsigned>(ps2::iop::audio_native::window_read(kSpuBase + 0x1C0u, 2) & 0xFFFFu),
+                    static_cast<unsigned>(ps2::iop::audio_native::window_read(kSpuBase + 0x1C2u, 2) & 0xFFFFu),
+                    static_cast<unsigned>(ps2::iop::audio_native::window_read(kSpuBase + 0x004u, 2) & 0xFFFFu),
+                    static_cast<unsigned>(ps2::iop::audio_native::window_read(kSpuBase + 0x000u, 2) & 0xFFFFu),
+                    static_cast<unsigned>(ps2::iop::audio_native::window_read(kSpuBase + 0x760u, 2) & 0xFFFFu));
         std::printf("[spu2-mix] bank at 0x%X (block0 | block8):", kBank);
         for (int i = 0; i < 8; ++i) std::printf(" %04X", ram[kBank + i]);
         std::printf(" |");

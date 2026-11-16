@@ -1,8 +1,7 @@
 #include "libsd_native.hpp"
-#include "audio_native.hpp"
+#include "audio_service.hpp"
 
 #include "iop.hpp"
-#include "spu2.hpp"
 #include "libsd_effect_data.hpp"
 #include "ps2/memory.hpp"
 
@@ -28,16 +27,8 @@ constexpr std::uint32_t kDmaWriteFrom = 3;
 constexpr std::uint32_t kDmaLoop = 0x10;
 constexpr std::uint32_t kDmaIoMode = 8;
 
-// Offsets correspond to the PS2SDK libsd ParamRegList order. The register
-// table is used only as data: calls are served by the host SPU2 core.
-constexpr std::array<std::uint16_t, 41> kParamRegisterOffsets = {
-    0x000, 0x002, 0x004, 0x006, 0x008, 0x00A, 0x00C, 0x00E,
-    0x198,
-    0x760, 0x762, 0x764, 0x766, 0x768, 0x76A, 0x76C, 0x76E, 0x770, 0x772,
-    0x180, 0x184, 0x1A0, 0x1A4, 0x340, 0x188, 0x18C, 0x190, 0x194,
-    0x2E0, 0x33C, 0x1A8, 0x19C, 0x1C0, 0x1C4, 0x1C8, 0x19A, 0x1A8,
-    0x1AC, 0x1AE, 0x1B0, 0x334,
-};
+// The library's parameter index is decoded by the native sound service
+// (audio_service.cpp): this file only forwards the library's calls to it.
 
 struct EffectAttr {
     std::uint32_t core = 0;
@@ -101,26 +92,16 @@ bool copy_to_ee(std::uint32_t destination, const void *source, std::uint32_t siz
 void set_result(Cpu &cpu, std::int32_t result) { cpu.r[2] = static_cast<std::uint32_t>(result); }
 void set_u32_result(Cpu &cpu, std::uint32_t result) { cpu.r[2] = result; }
 
-std::uint32_t param_address(std::uint32_t entry) {
-    const std::uint32_t index = (entry >> 8) & 0xFFu;
-    if (index >= kParamRegisterOffsets.size()) return 0xFFFFFFFFu;
-    const std::uint32_t core = entry & 1u;
-    const std::uint32_t core_stride = (entry & 0x80u) ? 0x28u : 0x400u;
-    const std::uint32_t voice_offset = (entry & 0x3Eu) << 3;
-    return kParamRegisterOffsets[index] + core * core_stride + voice_offset;
-}
-
 bool set_param(std::uint32_t entry, std::uint16_t value) {
     const std::uint32_t index = (entry >> 8) & 0xFFu;
     const std::uint32_t core = entry & 1u;
     const std::uint32_t voice = (entry >> 1) & 0x1Fu;
     if (index < 8 && voice < 24) {
+        // The voice registers: the service's own voice interface.
         audio_native::set_voice_param(core, voice, index, value);
+        return true;
     }
-    const std::uint32_t address = param_address(entry);
-    if (address == 0xFFFFFFFFu) return false;
-    spu2::write(kSpuBase + address, value, 2);
-    return true;
+    return audio_native::set_param(core, voice, index, value);
 }
 
 bool get_param(std::uint32_t entry, std::uint16_t &value) {
@@ -130,33 +111,22 @@ bool get_param(std::uint32_t entry, std::uint16_t &value) {
     if (index < 8 && voice < 24 && audio_native::get_voice_param(core, voice, index, value)) {
         return true;
     }
-    const std::uint32_t address = param_address(entry);
-    if (address == 0xFFFFFFFFu) return false;
-    value = static_cast<std::uint16_t>(spu2::read(kSpuBase + address, 2));
-    return true;
+    return audio_native::get_param(core, voice, index, value);
 }
 
 bool set_switch(std::uint32_t entry, std::uint32_t value) {
     const std::uint32_t index = (entry >> 8) & 0xFFu;
-    if (index >= kParamRegisterOffsets.size()) return false;
+    if (index >= 41u) return false;
     const std::uint32_t core = entry & 1u;
     audio_native::set_switch(core, index, value);
-    const std::uint32_t address = kParamRegisterOffsets[index] + (core << 10);
-    spu2::write(kSpuBase + address, value & 0xFFFFu, 2);
-    spu2::write(kSpuBase + address + 2u, (value >> 16) & 0xFFu, 2);
     return true;
 }
 
 bool get_switch(std::uint32_t entry, std::uint32_t &value) {
     const std::uint32_t index = (entry >> 8) & 0xFFu;
-    if (index >= kParamRegisterOffsets.size()) return false;
+    if (index >= 41u) return false;
     const std::uint32_t core = entry & 1u;
-    if (audio_native::get_switch(core, index, value)) {
-        return true;
-    }
-    const std::uint32_t address = kParamRegisterOffsets[index] + (core << 10);
-    value = (spu2::read(kSpuBase + address, 2) & 0xFFFFu) |
-            ((spu2::read(kSpuBase + address + 2u, 2) & 0xFFFFu) << 16);
+    if (!audio_native::get_switch(core, index, value)) value = 0;
     return true;
 }
 
@@ -164,37 +134,19 @@ bool set_addr(std::uint32_t entry, std::uint32_t value) {
     const std::uint32_t index = (entry >> 8) & 0xFFu;
     const std::uint32_t core = entry & 1u;
     const std::uint32_t voice = (entry >> 1) & 0x1Fu;
-    if ((index >= 32 && index <= 34) && voice < 24) {
-        audio_native::set_voice_addr(core, voice, index, value);
-    }
-    if (index >= kParamRegisterOffsets.size()) return false;
-    const std::uint32_t address = kParamRegisterOffsets[index] + (core << 10) + ((entry & 0x3Eu) * 6u);
-    spu2::write(kSpuBase + address, (value >> 17) & 0xFFFFu, 2);
-    if (index != 29u) spu2::write(kSpuBase + address + 2u, (value >> 1) & 0xFFF8u, 2);
-    return true;
+    return audio_native::set_addr(core, voice, index, value);
 }
 
 bool get_addr(std::uint32_t entry, std::uint32_t &value) {
     const std::uint32_t index = (entry >> 8) & 0xFFu;
     const std::uint32_t core = entry & 1u;
     const std::uint32_t voice = (entry >> 1) & 0x1Fu;
-    if ((index >= 32 && index <= 34) && voice < 24 && audio_native::get_voice_addr(core, voice, index, value)) {
-        return true;
-    }
-    if (index >= kParamRegisterOffsets.size()) return false;
-    const std::uint32_t address = kParamRegisterOffsets[index] + (core << 10) + ((entry & 0x3Eu) * 6u);
-    const std::uint32_t high = (spu2::read(kSpuBase + address, 2) & 0xFFFFu) << 17;
-    if (index == 29u) {
-        value = high | 0x1FFFFu;
-    } else {
-        value = high | ((spu2::read(kSpuBase + address + 2u, 2) & 0xFFFFu) << 1) | 1u;
-    }
-    return true;
+    return audio_native::get_addr(core, voice, index, value);
 }
 
 void set_spdif_mode(std::uint16_t value) {
-    std::uint16_t out = static_cast<std::uint16_t>(spu2::read(kSpuBase + 0x7C0u, 2));
-    std::uint16_t mode = static_cast<std::uint16_t>(spu2::read(kSpuBase + 0x7C6u, 2));
+    std::uint16_t out = static_cast<std::uint16_t>(audio_native::window_read(kSpuBase + 0x7C0u, 2));
+    std::uint16_t mode = static_cast<std::uint16_t>(audio_native::window_read(kSpuBase + 0x7C6u, 2));
     switch (value & 0xFu) {
     case 0: mode &= 0xFFFDu; out = static_cast<std::uint16_t>((value & 0xFEF7u) | 0x20u); break;
     case 1: mode |= 2u; out = static_cast<std::uint16_t>((out & 0xFFD7u) | 0x100u); break;
@@ -205,26 +157,26 @@ void set_spdif_mode(std::uint16_t value) {
     if (value & 0x80u) mode |= 0x8000u;
     else mode &= 0x7FFFu;
     switch (value & 0xF00u) {
-    case 0x800: spu2::write(kSpuBase + 0x7C8u, 0x200u, 2); mode |= 0x1800u; break;
-    case 0x400: spu2::write(kSpuBase + 0x7C8u, 0, 2); mode &= 0xE7FFu; break;
+    case 0x800: audio_native::window_write(kSpuBase + 0x7C8u, 0x200u, 2); mode |= 0x1800u; break;
+    case 0x400: audio_native::window_write(kSpuBase + 0x7C8u, 0, 2); mode &= 0xE7FFu; break;
     default:
-        spu2::write(kSpuBase + 0x7C8u, 0x200u, 2);
+        audio_native::window_write(kSpuBase + 0x7C8u, 0x200u, 2);
         mode = static_cast<std::uint16_t>((mode & 0xE7FFu) | 0x800u);
         break;
     }
-    spu2::write(kSpuBase + 0x7C0u, out, 2);
-    spu2::write(kSpuBase + 0x7C6u, mode, 2);
+    audio_native::window_write(kSpuBase + 0x7C0u, out, 2);
+    audio_native::window_write(kSpuBase + 0x7C6u, mode, 2);
     g_spdif_settings = value;
 }
 
 bool set_core_attr(std::uint32_t entry, std::uint16_t value) {
     const std::uint32_t core = entry & 1u;
-    const std::uint32_t address = 0x19Au + core * 0x400u;
+    const std::uint32_t address = kSpuBase + 0x19Au + core * 0x400u;
     const std::uint32_t selector = entry & ~1u;
-    std::uint16_t current = static_cast<std::uint16_t>(spu2::read(kSpuBase + address, 2));
+    std::uint16_t current = static_cast<std::uint16_t>(audio_native::window_read(address, 2));
     if (selector == 0x08u) {
         current = static_cast<std::uint16_t>((current - 0x3F01u) | ((value & 0x3Fu) << 8));
-        spu2::write(kSpuBase + address, current, 2);
+        audio_native::window_write(address, current, 2);
         return true;
     }
     if (selector == 0x0Au) {
@@ -235,15 +187,15 @@ bool set_core_attr(std::uint32_t entry, std::uint16_t value) {
     if (selector < 0x02u || selector > 0x06u || (selector & 1u)) return false;
     const unsigned shift = shifts[(selector >> 1) - 1u];
     current = static_cast<std::uint16_t>((current & ~(1u << shift)) | ((value & 1u) << shift));
-    spu2::write(kSpuBase + address, current, 2);
+    audio_native::window_write(address, current, 2);
     return true;
 }
 
 bool get_core_attr(std::uint32_t entry, std::uint16_t &value) {
     const std::uint32_t core = entry & 1u;
-    const std::uint32_t address = 0x19Au + core * 0x400u;
+    const std::uint32_t address = kSpuBase + 0x19Au + core * 0x400u;
     const std::uint32_t selector = entry & ~1u;
-    const std::uint16_t current = static_cast<std::uint16_t>(spu2::read(kSpuBase + address, 2));
+    const std::uint16_t current = static_cast<std::uint16_t>(audio_native::window_read(address, 2));
     if (selector == 0x08u) { value = static_cast<std::uint16_t>((current >> 8) & 0x3Fu); return true; }
     if (selector == 0x0Au) { value = static_cast<std::uint16_t>(g_spdif_settings); return true; }
     constexpr std::array<unsigned, 3> shifts = {7, 6, 14};
@@ -254,8 +206,8 @@ bool get_core_attr(std::uint32_t entry, std::uint16_t &value) {
 
 void set_tsa(std::uint32_t core, std::uint32_t address) {
     const std::uint32_t base = kSpuBase + 0x1A8u + (core & 1u) * 0x400u;
-    spu2::write(base, (address >> 17) & 0xFFFFu, 2);
-    spu2::write(base + 2u, (address >> 1) & 0xFFFFu, 2);
+    audio_native::window_write(base, (address >> 17) & 0xFFFFu, 2);
+    audio_native::window_write(base + 2u, (address >> 1) & 0xFFFFu, 2);
 }
 
 std::int32_t dma_transfer(std::uint32_t core, std::uint32_t iop_address, std::uint32_t spu_address,
@@ -263,7 +215,7 @@ std::int32_t dma_transfer(std::uint32_t core, std::uint32_t iop_address, std::ui
     if (bytes == 0) return 0;
     if (bytes > kSpuRamBytes || (bytes & 3u) || !valid_iop_range(iop_address, bytes)) return -1;
     set_tsa(core, spu_address & kSpuRamMask);
-    spu2::dma(static_cast<int>(core & 1u), iop_address, bytes / 4u, to_spu, (core & 1u) ? 7 : 4);
+    audio_native::dma(static_cast<int>(core & 1u), iop_address, bytes / 4u, to_spu, (core & 1u) ? 7 : 4);
     return static_cast<std::int32_t>(bytes);
 }
 
@@ -279,7 +231,7 @@ std::int32_t voice_transfer(std::uint32_t channel, std::uint32_t mode, std::uint
             set_tsa(core, spu_address & kSpuRamMask);
             const std::uint32_t std_address = kSpuBase + 0x1ACu + core * 0x400u;
             for (std::uint32_t offset = 0; offset < bytes; offset += 2u)
-                spu2::write(std_address, read16(iop_address + offset), 2);
+                audio_native::window_write(std_address, read16(iop_address + offset), 2);
             result = static_cast<std::int32_t>(bytes);
         }
     } else {
@@ -315,18 +267,19 @@ std::uint32_t stop_transfer(std::uint32_t channel) {
         g_voice_transfer_complete[core] = true;
         return retval;
     }
-    std::uint32_t address = spu2::dma_address(static_cast<int>(core));
+    std::uint32_t address = audio_native::dma_address(static_cast<int>(core));
     if (!address && g_block_transfer_active[core]) {
         address = g_block_transfer_address[core] +
                   (g_block_transfer_size[core] * g_block_transfer_buffer[core]);
     }
     const std::uint32_t retval = (g_block_transfer_buffer[core] << 24) | (address & 0x00FFFFFFu);
-    spu2::dma_stop(static_cast<int>(core));
-    spu2::write(kSpuBase + 0x1B0u + core * 0x400u, 0, 2);
+    audio_native::dma_stop(static_cast<int>(core));
+    audio_native::window_write(kSpuBase + 0x1B0u + core * 0x400u, 0, 2);
     const std::uint32_t core_attr_addr = kSpuBase + 0x19Au + core * 0x400u;
-    spu2::write(core_attr_addr, spu2::read(core_attr_addr, 2) & 0xFFCFu, 2);
+    audio_native::window_write(core_attr_addr,
+                                audio_native::window_read(core_attr_addr, 2) & 0xFFCFu, 2);
     const std::uint32_t mmix_addr = kSpuBase + 0x198u + core * 0x400u;
-    spu2::write(mmix_addr, spu2::read(mmix_addr, 2) & 0xFF3Fu, 2);
+    audio_native::window_write(mmix_addr, audio_native::window_read(mmix_addr, 2) & 0xFF3Fu, 2);
     g_block_transfer_active[core] = false;
     g_block_transfer_loop[core] = false;
     g_voice_transfer_complete[core] = true;
@@ -377,11 +330,11 @@ std::int32_t block_transfer(std::uint32_t channel, std::uint32_t mode, std::uint
     }
 
     if (direction == kDmaRead) {
-        spu2::write(kSpuBase + 0x1B0u + core * 0x400u, (1u << core) | 4u, 2);
+        audio_native::window_write(kSpuBase + 0x1B0u + core * 0x400u, (1u << core) | 4u, 2);
         const std::uint32_t spu_address = ((mode & 0xF00u) << 2) + 0x800u;
         return dma_transfer(core, transfer_address, spu_address, transfer_size, false);
     } else {
-        spu2::write(kSpuBase + 0x1B0u + core * 0x400u, 1u << core, 2);
+        audio_native::window_write(kSpuBase + 0x1B0u + core * 0x400u, 1u << core, 2);
         return dma_transfer(core, transfer_address, 0, transfer_size, true);
     }
 }
@@ -407,14 +360,14 @@ void write_effect_attr(std::uint32_t address, const EffectAttr &attr) {
 }
 
 std::uint32_t get_eea(std::uint32_t core) {
-    const std::uint32_t high = spu2::read(kSpuBase + 0x33Cu + (core & 1u) * 0x400u, 2);
+    const std::uint32_t high = audio_native::window_read(kSpuBase + 0x33Cu + (core & 1u) * 0x400u, 2);
     return (high << 17) | 0x1FFFFu;
 }
 
 void set_esa(std::uint32_t core, std::uint32_t address) {
     const std::uint32_t base = kSpuBase + 0x2E0u + (core & 1u) * 0x400u;
-    spu2::write(base, address >> 17, 2);
-    spu2::write(base + 2u, address >> 1, 2);
+    audio_native::window_write(base, address >> 17, 2);
+    audio_native::window_write(base + 2u, address >> 1, 2);
     g_effect_address[core & 1u] = address;
 }
 
@@ -424,7 +377,7 @@ void clear_effect_work_area(std::uint32_t core, std::uint32_t channel, std::uint
     const std::uint32_t bytes = static_cast<std::uint32_t>(detail::kEffectSizes[mode]) << 4;
     const std::uint32_t end = get_eea(core);
     const std::uint32_t start = (end - (bytes - 2u)) & kSpuRamMask;
-    std::uint16_t *ram = spu2::ram();
+    std::uint16_t *ram = audio_native::sound_ram();
     const std::uint32_t first = (start >> 1) & (kSpuRamBytes / 2u - 1u);
     const std::uint32_t words = bytes / 2u;
     for (std::uint32_t i = 0; i < words; ++i) ram[(first + i) & (kSpuRamBytes / 2u - 1u)] = 0;
@@ -432,8 +385,8 @@ void clear_effect_work_area(std::uint32_t core, std::uint32_t channel, std::uint
 }
 
 void write_effect_register(std::uint32_t address, std::uint32_t value) {
-    spu2::write(kSpuBase + address, value >> 14, 2);
-    spu2::write(kSpuBase + address + 2u, value << 2, 2);
+    audio_native::window_write(kSpuBase + address, value >> 14, 2);
+    audio_native::window_write(kSpuBase + address + 2u, value << 2, 2);
 }
 
 void apply_effect_parameters(std::uint32_t core, std::uint32_t mode,
@@ -441,11 +394,11 @@ void apply_effect_parameters(std::uint32_t core, std::uint32_t mode,
     const std::uint32_t base = (core & 1u) * 0x400u;
     write_effect_register(0x2E4u + base, data[0]);
     write_effect_register(0x2E8u + base, data[1]);
-    for (std::uint32_t i = 0; i < 8; ++i) spu2::write(kSpuBase + 0x2ECu + base + i * 2u, data[2u + i], 2);
+    for (std::uint32_t i = 0; i < 8; ++i) audio_native::window_write(kSpuBase + 0x2ECu + base + i * 2u, data[2u + i], 2);
     for (std::uint32_t i = 0; i < 20; ++i) write_effect_register(0x2FCu + base + i * 4u, data[10u + i]);
     const std::uint32_t master = kSpuBase + 0x760u + base;
-    spu2::write(master + 0x24u, data[30], 2);
-    spu2::write(master + 0x26u, data[31], 2);
+    audio_native::window_write(master + 0x24u, data[30], 2);
+    audio_native::window_write(master + 0x26u, data[31], 2);
     (void)mode;
 }
 
@@ -483,16 +436,16 @@ std::int32_t apply_effect_attr(std::uint32_t core, const EffectAttr &input) {
         data[26] = static_cast<std::uint16_t>(data[28] + delay);
     }
     const std::uint32_t core_attr_address = kSpuBase + 0x19Au + core * 0x400u;
-    const bool effects_enabled = (spu2::read(core_attr_address, 2) & 0x80u) != 0;
-    if (effects_enabled) spu2::write(core_attr_address, spu2::read(core_attr_address, 2) & ~0x80u, 2);
+    const bool effects_enabled = (audio_native::window_read(core_attr_address, 2) & 0x80u) != 0;
+    if (effects_enabled) audio_native::window_write(core_attr_address, audio_native::window_read(core_attr_address, 2) & ~0x80u, 2);
     if (clear && effects_enabled) clear_effect_work_area(core, 0, g_effect_attr[core].mode);
     g_effect_attr[core] = attr;
-    spu2::write(kSpuBase + 0x764u + core * 0x28u, static_cast<std::uint16_t>(attr.depth_l), 2);
-    spu2::write(kSpuBase + 0x766u + core * 0x28u, static_cast<std::uint16_t>(attr.depth_r), 2);
+    audio_native::window_write(kSpuBase + 0x764u + core * 0x28u, static_cast<std::uint16_t>(attr.depth_l), 2);
+    audio_native::window_write(kSpuBase + 0x766u + core * 0x28u, static_cast<std::uint16_t>(attr.depth_r), 2);
     apply_effect_parameters(core, mode, data);
     set_esa(core, effect_address);
     if (clear) clear_effect_work_area(core, 0, mode);
-    if (effects_enabled) spu2::write(core_attr_address, spu2::read(core_attr_address, 2) | 0x80u, 2);
+    if (effects_enabled) audio_native::window_write(core_attr_address, audio_native::window_read(core_attr_address, 2) | 0x80u, 2);
     return 0;
 }
 
@@ -588,7 +541,7 @@ std::uint16_t pitch_to_note(std::uint32_t center_note, std::uint32_t center_fine
 
 void export_init(Cpu &cpu) {
     const std::uint32_t flag = arg(cpu, 0) & 1u;
-    spu2::reset();
+    audio_native::reset();
     audio_native::reset();
     g_voice_transfer_status = {1, 1};
     g_voice_transfer_complete = {};
@@ -610,51 +563,51 @@ void export_init(Cpu &cpu) {
     kernel::enable_interrupt(0x28, true);
     for (std::uint32_t core = 0; core < 2; ++core) {
         const std::uint32_t base = core * 0x400u;
-        spu2::write(kSpuBase + 0x1B0u + base, 0, 2);
-        spu2::write(kSpuBase + 0x7C0u, 0, 2);
-        spu2::write(kSpuBase + 0x7C0u, 0x8000u, 2);
-        spu2::write(kSpuBase + 0x19Au + base, 0, 2);
-        spu2::write(kSpuBase + 0x19Au + base, 0x8000u, 2);
-        spu2::write(kSpuBase + 0x1A4u + base, 0xFFFFu, 2);
-        spu2::write(kSpuBase + 0x1A6u + base, 0x00FFu, 2);
+        audio_native::window_write(kSpuBase + 0x1B0u + base, 0, 2);
+        audio_native::window_write(kSpuBase + 0x7C0u, 0, 2);
+        audio_native::window_write(kSpuBase + 0x7C0u, 0x8000u, 2);
+        audio_native::window_write(kSpuBase + 0x19Au + base, 0, 2);
+        audio_native::window_write(kSpuBase + 0x19Au + base, 0x8000u, 2);
+        audio_native::window_write(kSpuBase + 0x1A4u + base, 0xFFFFu, 2);
+        audio_native::window_write(kSpuBase + 0x1A6u + base, 0x00FFu, 2);
         for (std::uint32_t voice = 0; voice < 24; ++voice) {
             const std::uint32_t vp = base + voice * 16u;
-            spu2::write(kSpuBase + vp, 0, 2);
-            spu2::write(kSpuBase + vp + 2u, 0, 2);
-            spu2::write(kSpuBase + vp + 4u, 0x3FFFu, 2);
-            spu2::write(kSpuBase + vp + 6u, 0, 2);
-            spu2::write(kSpuBase + vp + 8u, 0, 2);
+            audio_native::window_write(kSpuBase + vp, 0, 2);
+            audio_native::window_write(kSpuBase + vp + 2u, 0, 2);
+            audio_native::window_write(kSpuBase + vp + 4u, 0x3FFFu, 2);
+            audio_native::window_write(kSpuBase + vp + 6u, 0, 2);
+            audio_native::window_write(kSpuBase + vp + 8u, 0, 2);
             const std::uint32_t va = base + 0x1C0u + voice * 12u;
-            spu2::write(kSpuBase + va, 0, 2);
-            spu2::write(kSpuBase + va + 2u, 0x2800u, 2);
+            audio_native::window_write(kSpuBase + va, 0, 2);
+            audio_native::window_write(kSpuBase + va + 2u, 0x2800u, 2);
         }
         const std::uint32_t mix = 0x188u + base;
         for (const std::uint32_t offset : {0x00u, 0x04u, 0x08u, 0x0Cu}) {
-            spu2::write(kSpuBase + mix + offset, 0xFFFFu, 2);
-            spu2::write(kSpuBase + mix + offset + 2u, 0x00FFu, 2);
+            audio_native::window_write(kSpuBase + mix + offset, 0xFFFFu, 2);
+            audio_native::window_write(kSpuBase + mix + offset + 2u, 0x00FFu, 2);
         }
-        spu2::write(kSpuBase + 0x198u + base, 0x0FF0u + (core ? 0x0Cu : 0), 2);
-        spu2::write(kSpuBase + 0x19Au + base, static_cast<std::uint16_t>(0xC000u | (core ? 1u : 0u)), 2);
-        spu2::write(kSpuBase + 0x340u + base, 0, 2);
-        spu2::write(kSpuBase + 0x342u + base, 0, 2);
+        audio_native::window_write(kSpuBase + 0x198u + base, 0x0FF0u + (core ? 0x0Cu : 0), 2);
+        audio_native::window_write(kSpuBase + 0x19Au + base, static_cast<std::uint16_t>(0xC000u | (core ? 1u : 0u)), 2);
+        audio_native::window_write(kSpuBase + 0x340u + base, 0, 2);
+        audio_native::window_write(kSpuBase + 0x342u + base, 0, 2);
         if (!flag) {
             for (const std::uint32_t offset : {0x760u, 0x762u, 0x764u, 0x766u})
-                spu2::write(kSpuBase + offset + core * 0x28u, 0, 2);
-            spu2::write(kSpuBase + 0x33Cu + base, core ? 0xFu : 0xEu, 2);
+                audio_native::window_write(kSpuBase + offset + core * 0x28u, 0, 2);
+            audio_native::window_write(kSpuBase + 0x33Cu + base, core ? 0xFu : 0xEu, 2);
         }
         g_effect_attr[core] = EffectAttr{core, 0, 0, 0, 0, 0};
         set_esa(core, get_eea(core) - (static_cast<std::uint32_t>(detail::kEffectSizes[0]) << 4) + 2u);
     }
-    spu2::write(kSpuBase + 0x7C6u, 0x900u, 2);
-    spu2::write(kSpuBase + 0x7C8u, 0x200u, 2);
-    spu2::write(kSpuBase + 0x7CAu, 8u, 2);
+    audio_native::window_write(kSpuBase + 0x7C6u, 0x900u, 2);
+    audio_native::window_write(kSpuBase + 0x7C8u, 0x200u, 2);
+    audio_native::window_write(kSpuBase + 0x7CAu, 8u, 2);
     static constexpr std::array<std::uint16_t, 16> voice_data = {
         0x707, 0x707, 0x707, 0x707, 0x707, 0x707, 0x707, 0x707,
         0, 0, 0, 0, 0, 0, 0, 0,
     };
-    std::copy(voice_data.begin(), voice_data.end(), spu2::ram() + (0x5000u >> 1));
-    spu2::write(kSpuBase + 0x1A8u, 0, 2);
-    spu2::write(kSpuBase + 0x1AAu, 0x2800u, 2);
+    std::copy(voice_data.begin(), voice_data.end(), audio_native::sound_ram() + (0x5000u >> 1));
+    audio_native::window_write(kSpuBase + 0x1A8u, 0, 2);
+    audio_native::window_write(kSpuBase + 0x1AAu, 0x2800u, 2);
     set_result(cpu, 0);
     std::fprintf(stderr, "[libsd] sceSdInit(flag=%u) complete\n", flag);
 }
@@ -771,7 +724,7 @@ void export_block_trans_status(Cpu &cpu) {
         set_u32_result(cpu, 0);
         return;
     }
-    std::uint32_t address = spu2::dma_address(static_cast<int>(core));
+    std::uint32_t address = audio_native::dma_address(static_cast<int>(core));
     if (!address) {
         address = g_block_transfer_address[core] +
                   (g_block_transfer_size[core] * g_block_transfer_buffer[core]);
@@ -917,12 +870,12 @@ void on_dma_done(std::uint32_t core) {
             }
         } else {
             g_block_transfer_active[core] = false;
-            spu2::dma_stop(static_cast<int>(core));
-            spu2::write(kSpuBase + 0x1B0u + core * 0x400u, 0, 2);
+            audio_native::dma_stop(static_cast<int>(core));
+            audio_native::window_write(kSpuBase + 0x1B0u + core * 0x400u, 0, 2);
             const std::uint32_t core_attr_addr = kSpuBase + 0x19Au + core * 0x400u;
-            spu2::write(core_attr_addr, spu2::read(core_attr_addr, 2) & 0xFFCFu, 2);
+            audio_native::window_write(core_attr_addr, audio_native::window_read(core_attr_addr, 2) & 0xFFCFu, 2);
             const std::uint32_t mmix_addr = kSpuBase + 0x198u + core * 0x400u;
-            spu2::write(mmix_addr, spu2::read(mmix_addr, 2) & 0xFF3Fu, 2);
+            audio_native::window_write(mmix_addr, audio_native::window_read(mmix_addr, 2) & 0xFF3Fu, 2);
         }
     }
     if (g_transfer_intr_handler[core]) {

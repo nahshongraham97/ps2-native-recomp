@@ -1,6 +1,6 @@
 #include "msl_native.hpp"
 
-#include "audio_native.hpp"
+#include "audio_service.hpp"
 #include "mwfilefr.hpp"
 #include "sif.hpp"
 
@@ -214,10 +214,13 @@ bool msl_rpc(std::uint32_t method, std::uint32_t args, std::uint32_t args_size, 
         }
         case kOpExecute:
         case kOpLoad:
-        case kOpLoadAlt: {
+        case kOpLoadAlt:
+        case 0x00400000u: {
+            // 0x00400000 is the load command with the retail's flag bit set;
+            // it loads a bank the same way.
             if (i + 6 > words) return true;
             const std::uint32_t id = read_le32(cmd + (i + 1) * 4u);
-            if (op == kOpLoad || op == kOpLoadAlt) load_bank();
+            if (op == kOpLoad || op == kOpLoadAlt || op == 0x00400000u) load_bank();
             reply[0] = kOpExecute; reply[1] = id; reply[2] = 2; reply[3] = 1;
             i += 6;
             break;
@@ -246,6 +249,13 @@ bool msl_rpc(std::uint32_t method, std::uint32_t args, std::uint32_t args_size, 
             reply[2] = (id == kQueryParam) ? kQueryValue : 0u;
             reply[3] = 0;
             i += 3;
+            break;
+        }
+        case 0: {
+            // A zero word ends the command list: the retail server's list is
+            // zero terminated, and the 13:21 run logged every zero as an
+            // unknown command.
+            i = words;
             break;
         }
         default: {

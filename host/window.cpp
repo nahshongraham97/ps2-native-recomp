@@ -1270,8 +1270,10 @@ bool open_window(bool fullscreen) {
         SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
         SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+        // No version is requested on purpose: SDL then asks the driver for the
+        // highest context it supports (WGL_ARB_create_context without a
+        // version attribute), which is the hardware path. Asking for 2.1
+        // pinned the game to the oldest profile the driver offers.
     }
     const Uint32 flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI |
                          (g_direct_gl ? SDL_WINDOW_OPENGL : 0u) |
@@ -1294,6 +1296,14 @@ bool open_window(bool fullscreen) {
     if (g_direct_gl) {
 #ifdef _WIN32
         g_gl_context = SDL_GL_CreateContext(g_window);
+        if (!g_gl_context) {
+            // The driver refused its default context: ask for an explicit 3.3
+            // compatibility profile, which every hardware driver supports.
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+            g_gl_context = SDL_GL_CreateContext(g_window);
+        }
         if (!g_gl_context || SDL_GL_MakeCurrent(g_window, g_gl_context) != 0) {
             std::fprintf(stderr, "[native-gl] SDL could not create the visible-window OpenGL context: %s\n", SDL_GetError());
             if (g_gl_context) SDL_GL_DeleteContext(g_gl_context), g_gl_context = nullptr;

@@ -13,7 +13,7 @@
 #include "mwfilefr.hpp"
 #include "padman.hpp"
 #include "sio2.hpp"
-#include "spu2.hpp"
+#include "audio_service.hpp"
 #include "../load_stats.hpp"
 #include "compliance_census.hpp"
 
@@ -198,6 +198,9 @@ constexpr std::uint32_t kUserBase = 0x00020000u;
 constexpr std::uint32_t kInterruptStack = 0x0001F000u;
 constexpr int kDefaultModulePriority = 8;
 constexpr std::int64_t kSlice = 512;
+// How many slices in a row a guest worker may end on the same instruction
+// before it is treated as a runaway worker and stopped.
+constexpr int kSpinLimit = 4096;
 
 struct HleEntry {
     std::string library;
@@ -235,6 +238,9 @@ int g_next_module = 1;
 
 std::map<int, Thread> g_threads;
 int g_current = 0;
+// The spin guard's counter: consecutive slices that ended on the same guest
+// instruction.
+int g_spin_slices = 0;
 int g_next_thread = 1;
 std::uint64_t g_order = 0;
 bool g_switch = false;
@@ -1127,11 +1133,11 @@ void deliver_interrupts() {
         const Interrupt handler = it->second;
         std::uint32_t result = 0;
         if (line == 9) {
-            const std::uint32_t irqinfo = spu2::read(0x7C2u, 2);
+            const std::uint32_t irqinfo = audio_native::window_read(0x7C2u, 2);
             const std::uint32_t val = (irqinfo & 0x0Cu) >> 2u;
             if (!val) continue;
-            if (val & 1u) spu2::write(0x19Au, spu2::read(0x19Au, 2) & 0xFFBFu, 2);
-            if (val & 2u) spu2::write(0x59Au, spu2::read(0x59Au, 2) & 0xFFBFu, 2);
+            if (val & 1u) audio_native::window_write(0x19Au, audio_native::window_read(0x19Au, 2) & 0xFFBFu, 2);
+            if (val & 2u) audio_native::window_write(0x59Au, audio_native::window_read(0x59Au, 2) & 0xFFBFu, 2);
             if (g_trace_modules) {
                 std::fprintf(stderr, "[iop] spu2 interrupt cause=%u arg=0x%08X -> 0x%08X at %llu\n",
                              val, handler.arg, handler.handler, static_cast<unsigned long long>(g_now));
@@ -1273,9 +1279,27 @@ void run(std::uint64_t ee_cycles) {
             budget = std::min<std::int64_t>(budget, static_cast<std::int64_t>(g_events.top().at - g_now));
         if (budget <= 0) budget = 1;
         const std::int64_t given = budget;
+        const std::uint32_t pc_before = g_cpu.pc;
         {
             const cost::Timer exec_time(cost::kIopExec);
             execute(g_cpu, budget);
+        }
+        // The spin guard: a guest worker that keeps returning to the same
+        // instruction is not making progress. The 13:06 run hung this way in
+        // the guest sound server's sequencer (a store loop the game waited
+        // on), and the game had to be closed by hand. Stop the thread and say
+        // so instead of hanging the game.
+        if (g_cpu.pc == pc_before && budget < given) {
+            if (++g_spin_slices > kSpinLimit) {
+                std::fprintf(stderr,
+                             "[iop-native-stop] the guest worker is spinning at PC 0x%08X (thread %d); the thread was stopped\n",
+                             pc_before, g_current);
+                std::fflush(stderr);
+                if (Thread *t = current()) t->status = kDormant;
+                g_spin_slices = 0;
+            }
+        } else {
+            g_spin_slices = 0;
         }
         if (cost::g_on) cost::g_exec_cycles += static_cast<std::uint64_t>(given - std::max<std::int64_t>(0, budget));
         g_now += static_cast<std::uint64_t>(std::max<std::int64_t>(1, given - std::max<std::int64_t>(0, budget)));
@@ -1759,7 +1783,7 @@ void state(ps2::state::Stream &s) {
     hw::state(s);
     sio2::state(s);
     padman::state(s);
-    spu2::state(s);
+    audio_native::state(s);
     io::state(s);
 }
 

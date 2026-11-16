@@ -11,7 +11,7 @@
 #include "iop/mcserv.hpp"
 #include "iop/sif.hpp"
 #include "iop/sio2.hpp"
-#include "iop/spu2.hpp"
+#include "iop/audio_service.hpp"
 #include "ipu/ipu.hpp"
 #include "ps2/ee_live.hpp"
 #include "kernel.hpp"
@@ -874,14 +874,14 @@ int run() {
         if (std::FILE *f = os::open(path, "wb")) {
             std::fwrite(g_ram, 1, kRamSize, f);
             std::fwrite(iop::ram_ptr(0), 1, iop::kRamSize, f);
-            std::fwrite(iop::spu2::ram(), 2, 1u << 20, f);
+            std::fwrite(iop::audio_native::sound_ram(), 2, 1u << 20, f);
             std::fclose(f);
         }
     }
     gs::stats();
     ipu::stats();
-    if (const std::string path = os::env("PS2_DUMP_AUDIO"); !path.empty()) iop::spu2::dump_audio(path.c_str());
-    if (std::getenv("PS2_TRACE_SPU2")) iop::spu2::dump_voices();
+    if (const std::string path = os::env("PS2_DUMP_AUDIO"); !path.empty()) iop::audio_native::dump_audio(path.c_str());
+    if (std::getenv("PS2_TRACE_SPU2")) iop::audio_native::dump_voices();
     dmac::stats();
     gif::stats();
     vif::stats();
@@ -1108,6 +1108,6 @@ void set_pad_connected(int pad, bool connected) {
     g_pad_in[pad].connected = connected;
 }
 std::uint16_t pad_rumble(int pad) { return iop::sio2::rumble(pad); }
-void set_audio_sink(std::function<void(const std::int16_t *, std::size_t)> sink) { iop::spu2::set_sink(std::move(sink)); }
+void set_audio_sink(std::function<void(const std::int16_t *, std::size_t)> sink) { iop::audio_native::set_sink(std::move(sink)); }
 
 }

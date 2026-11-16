@@ -55,6 +55,13 @@ void sync_all_surfaces_to_cpu();
 // The active drawing buffer's FBP (frame buffer pointer).
 std::uint32_t active_frame_fbp();
 
+// The GPU's own busy time in milliseconds, measured with a GL timer query
+// around the frame's commands. Zero when the driver has no timer query. This
+// is what the window title's "GPU %" reads in the native GL path: the WebGPU
+// counter it used before is always zero there, which is what made the title
+// say "GPU 0%" while the game was drawing on the Radeon.
+double gpu_busy_ms();
+
 // Tears down the GL context. Safe to call multiple times.
 void shutdown();
 

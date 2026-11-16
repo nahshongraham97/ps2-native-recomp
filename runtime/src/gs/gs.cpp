@@ -1383,6 +1383,11 @@ void resize_window(std::uint32_t width, std::uint32_t height) {
 
 double gpu_busy_ms() {
 #ifdef PS2_GPU
+    // The native GL path measures the GPU's own busy time with a timer query.
+    // The WebGPU path below keeps its own counter; reading that one in the
+    // native GL path is what made the window title say "GPU 0%" while the
+    // game was drawing on the Radeon.
+    if (native_gl::enabled()) return native_gl::gpu_busy_ms();
     return gpu::busy_ms();
 #else
     return 0.0;
