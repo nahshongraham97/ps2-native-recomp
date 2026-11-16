@@ -94,7 +94,9 @@ footprint protection for ordinary allocation stays in force.
   gives allocated blocks `0x5E00 / 0x1E00 / 0x49100 / 0x13100`, so every reservation ends at or
   before the next captured base (`0x26300 / 0x28100 / 0x71200 ≤ 0x71300 / 0x84400`).
 
-## Gate for the next run
+## Gate proposed after the 16:54 run — outcome recorded below
+
+This checklist was written before the 17:57 follow-up. It is historical, not the current gate:
 
 1. No `AOT layout mismatch`; the log must reach
    `[iop-native] LIBSD v1.5 C++ SPU2 bridge active; guest LIBSD IRX is not loaded`
@@ -106,10 +108,13 @@ footprint protection for ordinary allocation stays in force.
    at `0x71300` (movie), and the card screen (GetInfo2 readback + `resolved by
    shape to ...`).
 
-Still unfixed and untouched by this change: card detection root cause, audio
-(has instrumentation only), movie presentation for the guest-owned surface,
-and the census verdict's blindness to early deaths (a process that dies at the
-first AOT module reports "ALL MANDATE CRITERIA SATISFIED").
+**17:57 outcome:** Gate 1 passed: LIBSD and all four native/AOT module bases were reached. Gate 2, as written, was not demonstrated because `PS2_TRACE_MODULES=1` does not enable those trace lines; the later launcher correction uses `--trace-iop`, but its binary has not been run live. Gate 3 partially passed: the card's shape-dispatched `mc_chdir` and save path were exercised, and the CRI_ADXI body ran; `[msl-libsd]` tracing did not fire and movie playback did not complete.
+
+At the time of this staging change, card detection had not yet been verified,
+audio had instrumentation only, movie presentation for the guest-owned surface
+was open, and early-death census reporting could appear compliant. The 17:57
+run later verified card save operations; fork `9c94385` later added the census
+GATE totals to the verdict. Audio and movie completion remain unverified.
 
 ---
 
