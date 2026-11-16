@@ -1,3 +1,21 @@
+# Build delivery — 2026-11-16 (native sound service, native textures, hardware GL)
+
+The full record is in [`../build-delivery-20261116/RUN.md`](../build-delivery-20261116/RUN.md).
+
+- Commits: `79a17e6` (the native sound service replaces the emulated SPU2 chip),
+  `b03ff62` (the game's textures live in native GL resources; the CDVD counter
+  counts devices)
+- Build stamp: `commit b03ff62 clean, built 2026-11-16T19:39:32Z, Release, Clang-23.1.3`
+- Runner SHA-256: `482f906a65789aedadb9985a7607aadd78f481a37dcf924b9583cedc347dd5b3`
+- Suites: all five pass (`test_spu2_mix` PASS with non-silent samples and
+  chip-model ops 0, `test_gl_vs_raster` 18/18, `test_native_gl_alpha` PASS,
+  `test_gl_lazy_readback` PASS, `test_iop_native_module` PASS)
+- The in-game sound was missing because the volume register (a 15-bit
+  magnitude) was shifted into a signed 16-bit value: `0x7FFF` became `-2`, so
+  every voice and the whole main mix were multiplied by a negative level. The
+  sound that arrives by DMA was scaled unsigned, which is why the movies had
+  sound and the game did not.
+
 # Build delivery — 2026-11-16 (native sound service; MSL/SDRDRV bodies retired)
 
 - Commit: `ccaf554` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
