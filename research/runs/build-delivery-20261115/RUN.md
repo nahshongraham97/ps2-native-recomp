@@ -1,3 +1,34 @@
+# Build delivery — 2026-11-16 (movie presentation pin + blit-into-every-target)
+
+- Commit: `7768a5d` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
+  (stamp: `commit 7768a5d clean, built 2026-11-16T14:49:59Z, Release, Clang-23.1.3`)
+- Runner: `build_native_gl_full/ps2run.exe`, 2026-11-16 14:49, 75,977,728 bytes
+- SHA-256: `d8266fcfaea80faa95e7ad7eadf7997a73513920780abd154c5401b4886d7013`
+- What it adds — the movie shake fix (the regression the quiet-gated present introduced):
+  the 00:40 run measured `blit=NO` on write-presents / `blit=YES` on the next with the
+  presented target alternating FBP 0/140, so presents alternated between the fresh blit and
+  the other buffer's quad. Two changes in `present_frame`:
+  1. **Pinned presentation surface** — while a movie surface (FBP 280) exists, presentation
+     sticks to the target selected first instead of re-running the last-write-tick selection
+     (the game quads into whichever buffer drew last, which is what alternated them). The
+     pin releases when no movie surface exists and normal selection resumes.
+  2. **Blit into every scene target** — the quiet-gated blit now copies the complete movie
+     frame into all ready scene targets (not just the selected one), so buffer alternation is
+     invisible. Each blitted target takes the movie's `write_count`/`last_write_tick` and
+     `cpu_synced` is cleared (the CPU-side copy is stale; `ensure_scene_target` already syncs
+     an unsynced target before recycling it).
+- Suites (final binaries): `test_spu2_mix` PASS, `test_gl_vs_raster` 18/18,
+  `test_native_gl_alpha` PASS, `test_gl_lazy_readback` PASS, `test_iop_native_module` PASS.
+- Replaced runner: `daef9fb5b24edaa7927d387508747c81e3d04062bb8172ea96ccf9ffee4bf570`
+  (`b07558f clean` - no CPU raster, general ALPHA blend, atexit census UAF fix)
+- Next: increment 4 - the native sound service (decision B: runtime-owned SIF endpoint for
+  `sid 0x00012345 / fn 56026`, native command engine over the captured MSL/SDRDRV bodies as
+  oracle, those AOT bodies no longer loaded).
+- Delivery history: `435ce55ae7de51a7dcbc4c93f16e27aa572a76fb46bce7d3209f75ed43062aa7`
+  → `8600a796…` → `6b2335a1…` → `bd7479bd…` → `13424cdb…` → `9141cd27…` → `eaf36b36…`
+  → `2c16e7af…` → `cd686675…` → `E536E22C…` → `47075BB1…` → `78a0c1f6…` → `daef9fb5…`
+  → `d8266fcf…`
+
 # Build delivery — 2026-11-16 (no CPU raster, general ALPHA blend, atexit census UAF fix)
 
 - Commit: `b07558f` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
