@@ -127,3 +127,41 @@ page''s content is wrong where the RSP reads it. The next agent should look at
 the RSP''s own texture coordinates for the memory card screen''s words (the
 guest''s microcode, in `generated/mkarmageddon` and the VU1 capture) rather
 than at the GS side.
+
+### A trap worth writing down: the same numbers mean different places
+
+The game writes its 3D pages as CT32 at DBP 9632, 9664, ... and samples
+8-bit pages at TBP 9632, 10176, 11232 - the *same numbers*. They are not the
+same place: a transfer's DBP is in units of 256 bytes and a texture's TBP is in
+units of 64 texels, so DBP 9632 is byte 2,465,792 and the PSMT8 page at TBP
+9632 is byte 616,448. The runtime used to treat both as 256-byte units, which
+put every 8-bit texture four times too far into the VRAM.
+
+The same split is why the two kinds of page can share a number without
+sharing a byte: the game's CT32 scene pages and its 8-bit pages are two
+different parts of the VRAM.
+
+### The measurement that moved the search on
+
+The runtime dumps every texture it decodes (`PS2_NATIVE_GL_TEXTURE_DUMP_DIR`).
+On the current build the game's 8-bit pages decode to **one** alpha value (128,
+the CLUT''s default) - they are empty. And the transfers the game makes are all
+CT32 or CT24: **the game never uploads an 8-bit page at all.** So the garbled
+words are not a GS texture: there is no font in the GS''s textures.
+
+That fits what the screenshots show: the banner and the small labels (drawn by
+the GS) are clean, and the other words (drawn by the RSP, the 2D layer) are
+noise. The RSP''s words come from the RSP''s own source - the 2D layer the RSP
+draws into VRAM, or a page the RSP reads - and the runtime''s job there is to
+serve the RSP''s reads correctly and to give the GS the finished 2D layer.
+
+So the next place to look is the RSP side, not the GS side: the RSP''s
+microcode (the guest''s own code, in `generated/mkarmageddon` and the VU1
+capture under `games/mkarmageddon/vu1`) and the runtime''s VU1 memory and DMA
+path - specifically the writes the RSP makes into VRAM for the 2D layer, and
+the reads it makes for the font.
+
+(For the record: the PSMT8 pages the GS samples - TBP 9632, 10176 and 11232 -
+are at bytes 616,448, 651,264 and 718,848 with the corrected units, which is
+where the runtime decodes them now. They are empty because the game never
+writes there.)
