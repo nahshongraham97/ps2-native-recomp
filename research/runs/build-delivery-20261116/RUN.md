@@ -132,3 +132,157 @@ reported on their own line.
   13:21 run's log shows the retail sound server reading the index from
   `MSLASSET.MS2` and the samples from `MSLASSET.MS4`. The native sound
   service needs the same mapping.
+
+# Build delivery — 2026-11-16 (the coverage rebuild: nothing compiled while the game runs)
+
+## The build
+
+- Fork: `external/forks/ps2-native-recomp`, `main`
+- Commit: `dc8784f` ("recomp: every word of code in an image without symbols is an entry point"),
+  the rules in `cdc8220`
+- Build stamp: `commit dc8784f clean, built 2026-11-16T20:35:51Z, Release, Clang-23.1.3`
+- Runner: `build_native_gl_full/ps2run.exe`
+- **SHA-256: `1be585638799f7084ab1aa42f0bd9bd25926279e48f17a6052a500ba9a171af5`**
+- Flags: none (the default window run)
+
+## What was regenerated
+
+The game's code was re-translated with the new recompiler, over the captures
+that already exist (no re-capture):
+
+```
+code 1079332 instructions (4216 KiB), functions 8917, entries 93354, rejected seeds 14983
+3 entry points of the program called from modules and code windows
+4 distinct code window images of 4 captured, code 161713 instructions (631 KiB), 73 entry points
+360 units written to generated/mkarmageddon
+```
+
+**8,917 functions and 93,354 entry points.** Before this, an image the game
+loads into RAM at runtime had no symbols, so its functions were found by
+guessing; a function the game reached through something the guess missed was
+not an entry point, and the runtime had to translate it while the game waited
+("no translated code at 0x00B17530", seven seconds of stall, 13:21 run). Now
+every word of code in such an image is an entry point, so the coverage is
+complete by construction: **nobody has to play a mode to discover missing
+code, and the game never stops for one.**
+
+The build recompiled all 360 generated units and relinked the runner.
+
+## Suites (final binaries, after the clean rebuild)
+
+| suite | result |
+|---|---|
+| `test_spu2_mix` | PASS — non-silent samples, SPU2 chip-model ops 0 |
+| `test_gl_vs_raster` | PASS — 18/18 matrix cases |
+| `test_native_gl_alpha` | PASS — the ALPHA blend matches the reference |
+| `test_gl_lazy_readback` | PASS |
+| `test_iop_native_module` | PASS |
+
+## New measurements
+
+The census now counts the two halves of "nothing runs that emulates" that
+were not measured:
+
+- `VU1 programs translated while the game ran` — the vector program's live
+  path was never counted, so a run that compiled one looked clean.
+- `guest modules loaded and able to run` — a module loaded with a real base
+  is guest code that can run; the accepted route may not have one.
+
+Both are in the GATE line and in the verdict.
+
+## The image enumeration (`tools/acceptance/list_code_images.py`)
+
+- 1 program image (the ELF the game boots).
+- 20 guest modules on the disc (`MODULES/*.IRX`).
+- **37 images the game loads at runtime, of which 33 have no captured
+  window** - they exist only as compiled libraries in the ee-live cache,
+  because the runtime translated them itself over the game's history. They are
+  not ELF-overwritten windows (`windows.py list` gives three static ones); they
+  are the blobs the game loads from its data (the 2064 KiB image at
+  `0x00B04000` is the largest). Each has to be captured **offline from the
+  disc** and translated whole before the game starts - that is the next step.
+
+## What the next run must show
+
+| census line | expected |
+|---|---|
+| `live guest translations` | 0 for the program's own code (the 33 uncaptured images are the remaining gap) |
+| `VU1 programs translated while the game ran` | 0 |
+| `guest modules loaded and able to run` | 1 today: `CRI_ADXI` (retired in step 4 of the programme) |
+
+# Build delivery — 2026-11-16 (the coverage rebuild: nothing compiled while the game runs)
+
+## The build
+
+- Fork: `external/forks/ps2-native-recomp`, `main`
+- Commit: `dc8784f` ("recomp: every word of code in an image without symbols is an entry point"),
+  the rules in `cdc8220`
+- Build stamp: `commit dc8784f clean, built 2026-11-16T20:35:51Z, Release, Clang-23.1.3`
+- Runner: `build_native_gl_full/ps2run.exe`
+- **SHA-256: `1be585638799f7084ab1aa42f0bd9bd25926279e48f17a6052a500ba9a171af5`**
+- Flags: none (the default window run)
+
+## What was regenerated
+
+The game's code was re-translated with the new recompiler, over the captures
+that already exist (no re-capture):
+
+```
+code 1079332 instructions (4216 KiB), functions 8917, entries 93354, rejected seeds 14983
+3 entry points of the program called from modules and code windows
+4 distinct code window images of 4 captured, code 161713 instructions (631 KiB), 73 entry points
+360 units written to generated/mkarmageddon
+```
+
+**8,917 functions and 93,354 entry points.** Before this, an image the game
+loads into RAM at runtime had no symbols, so its functions were found by
+guessing; a function the game reached through something the guess missed was
+not an entry point, and the runtime had to translate it while the game waited
+("no translated code at 0x00B17530", seven seconds of stall, 13:21 run). Now
+every word of code in such an image is an entry point, so the coverage is
+complete by construction: **nobody has to play a mode to discover missing
+code, and the game never stops for one.**
+
+The build recompiled all 360 generated units and relinked the runner.
+
+## Suites (final binaries, after the clean rebuild)
+
+| suite | result |
+|---|---|
+| `test_spu2_mix` | PASS — non-silent samples, SPU2 chip-model ops 0 |
+| `test_gl_vs_raster` | PASS — 18/18 matrix cases |
+| `test_native_gl_alpha` | PASS — the ALPHA blend matches the reference |
+| `test_gl_lazy_readback` | PASS |
+| `test_iop_native_module` | PASS |
+
+## New measurements
+
+The census now counts the two halves of "nothing runs that emulates" that
+were not measured:
+
+- `VU1 programs translated while the game ran` — the vector program's live
+  path was never counted, so a run that compiled one looked clean.
+- `guest modules loaded and able to run` — a module loaded with a real base
+  is guest code that can run; the accepted route may not have one.
+
+Both are in the GATE line and in the verdict.
+
+## The image enumeration (`tools/acceptance/list_code_images.py`)
+
+- 1 program image (the ELF the game boots).
+- 20 guest modules on the disc (`MODULES/*.IRX`).
+- **37 images the game loads at runtime, of which 33 have no captured
+  window** - they exist only as compiled libraries in the ee-live cache,
+  because the runtime translated them itself over the game's history. They are
+  not ELF-overwritten windows (`windows.py list` gives three static ones); they
+  are the blobs the game loads from its data (the 2064 KiB image at
+  `0x00B04000` is the largest). Each has to be captured **offline from the
+  disc** and translated whole before the game starts - that is the next step.
+
+## What the next run must show
+
+| census line | expected |
+|---|---|
+| `live guest translations` | 0 for the program's own code (the 33 uncaptured images are the remaining gap) |
+| `VU1 programs translated while the game ran` | 0 |
+| `guest modules loaded and able to run` | 1 today: `CRI_ADXI` (retired in step 4 of the programme) |
