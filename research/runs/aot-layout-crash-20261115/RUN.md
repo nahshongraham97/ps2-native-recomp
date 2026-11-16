@@ -225,3 +225,28 @@ measurement itself — see below.
    MSL RPC thread processes `fn 56026` and why `sceSdVoiceTrans` is never called.
 3. **Card:** unchanged (working); confirm a second run repeats the save write.
 4. **Census:** the SIF guest-RPC classification stays unless the server registration changes.
+
+---
+
+# Follow-up run — 2026-11-15 19:13: CRI_ADXI reload abort and gate census
+
+- **Log:** `games/mkarmageddon/disc/logs/ps2run_2026-11-15_19-13-39.log` (30,555,207 bytes; last frame telemetry reaches frame 1878; the process did not produce a normal end-of-run frame total).
+- **Runner:** `build_native_gl_full/ps2run.exe`, build commit `9c94385`, build stamp `commit 9c94385 clean`, SHA-256 `EAF36B36AE4025F3E03B0D519011F51237D758A6C6E133E7E562976C473FFBFF`.
+- **Logged configuration:** `native-gl=1`, `packets=0`, `packets-strict=0`, `vu-aot-strict=1`, `iop-native-strict=1`; `--trace-iop` was active (`[msl-libsd]` records appear). The direct packet renderer was therefore not enabled in this run.
+- **Audio record:** the runtime wrote `last_run_device.wav` (7,489,580 bytes) and `last_run_heard.wav` (8,151,084 bytes). The trace includes `sceSdBlockTrans` (line 229897, followed by STOP at 405031) and `sceSdVoiceTrans` (line 405045). The census reports 2,438 SPU2 chip-model operations, zero key-ons and key-offs, 508 DMA writes (1.0 MB), and peak sample 23,364. The WAVs were not listened to or otherwise validated for audible game audio.
+
+## What the run establishes
+
+- **Card service:** the census records successful port-0 RPCs for methods `0x01` through `0x06`, `0x0C`, and `0xFE`; port 0 repeatedly reports 7,831 free clusters, consistent with the save written in the prior 17:57 run. Port-1 `0x01` failures are the absent second card. This run does not independently establish a new save write.
+- **Movie/module path:** `MOVIEPS2/LOGON.SFD` opened from the mounted extracted content tree, and the first `CRI_ADXI.IRX` request loaded and executed its captured AOT body. A later request tries to load the same module again; the strict loader rejects base `0x00071300` because the `0x13100` range is already occupied. The log does not identify why the game issued the second load. Movie-frame presentation is not verified by this run.
+- **Rendering:** the native OpenGL context was created on the AMD Radeon RX 6800 XT, but the configuration says `packets=0`. Census: 6,081 transfers reached the native surface, 34,592 stopped in emulated VRAM, and 558,333 primitives were submitted. The GS/VRAM replacement gate remains open.
+- **Accepted-route census:** EE live guest translations `1`; VU fallbacks `0`; IOP guest instructions `0`; SIF native dispatches `366,946`, through guest-registered servers `1,555`; CDVD service sector reads `1,622`; SPU2 chip-model operations `2,438`.
+
+```text
+[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=34592 SPU2-chip-model-ops=2438 SIF-guest-registered=1555 CDVD-device-reads=1622
+[census] VERDICT: 5 acceptance-gate violations remain: EE live translation, SIF RPCs through guest-registered servers, CDVD device reads, GS transfers stopped in emulated VRAM, SPU2 chip-model operations
+[iop] cannot allocate 0x13100 at fixed base 0x00071300 (range occupied by 0x00071300+0x13100)
+[iop-native-stop] captured AOT base 0x00071300 is unavailable for CRI_ADXI size=0x130C0
+```
+
+The CDVD counter here is service/API traffic routed through the transitional `cdvd-native` layer over extracted files; it is not evidence of ISO or physical-disc reads. It still violates the project's stricter requirement that CDVD APIs be absent from the accepted path.
