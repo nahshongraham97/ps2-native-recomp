@@ -407,7 +407,9 @@ void vblank() {
     ee::live::frame_tick();   // code windows that settled are translated in the background, finished libraries come in here (docs/gvz.md)
     if (g_options.on_vblank) g_options.on_vblank();
     iop::sio2::flush_cards();
-    if (g_options.trace_iop_modules && g_frames % 25 == 0) std::fprintf(stderr, "[frame] %llu prims %llu\n", static_cast<unsigned long long>(g_frames), static_cast<unsigned long long>(gs::primitives_drawn()));
+    // Every frame under --trace-iop: the heartbeat used to print one frame in 25, which is the same
+    // class of silent sampling the other trace caps were. Nothing is sampled now.
+    if (g_options.trace_iop_modules) std::fprintf(stderr, "[frame] %llu prims %llu\n", static_cast<unsigned long long>(g_frames), static_cast<unsigned long long>(gs::primitives_drawn()));
     if (!g_options.frames_dir.empty() && frame_capture_requested(g_frames)) dump_frame();
     hw::vblank_start();
     iop::vblank(true);

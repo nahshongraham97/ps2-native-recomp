@@ -1269,12 +1269,19 @@ bool present_frame(const DisplayRegs &regs) {
 
     if (movie_existed) {
         ps2::census::movie_present(blit_ran, true);
-        static unsigned s_movie_log_counter = 0;
-        if (++s_movie_log_counter <= 200 || (s_movie_log_counter % 60 == 0)) {
+        // Every present is logged unless PS2_TRACE_MOVIE_PRESENT says otherwise: this line is the
+        // flicker evidence, and sampling it used to hide exactly the frames that matter.
+        // 0 = off, N = every Nth present, unset = every present.
+        static const std::uint64_t movie_every = [] {
+            const char *value = std::getenv("PS2_TRACE_MOVIE_PRESENT");
+            return (value && *value) ? std::strtoull(value, nullptr, 10) : 1ull;
+        }();
+        static std::uint64_t s_movie_log_counter = 0;
+        if (movie_every && (++s_movie_log_counter % movie_every == 0)) {
             std::fprintf(stderr,
-                         "[native-gl-movie-present #%u] target_fbp=%u (prims=%llu, writes=%llu, tick=%llu) "
+                         "[native-gl-movie-present #%llu] target_fbp=%u (prims=%llu, writes=%llu, tick=%llu) "
                          "movie280_writes=%llu blit=%s vram_gen_changed=%d vram_gen=%llu\n",
-                         s_movie_log_counter, target->fbp,
+                         static_cast<unsigned long long>(s_movie_log_counter), target->fbp,
                          static_cast<unsigned long long>(target->prim_count),
                          static_cast<unsigned long long>(target->write_count),
                          static_cast<unsigned long long>(target->last_write_tick),

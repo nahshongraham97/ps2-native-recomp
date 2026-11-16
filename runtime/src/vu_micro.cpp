@@ -74,6 +74,18 @@ void read_q(const Unit &u, vuops::FlagPipe &pipe, Vu0Regs &r, std::uint32_t pc, 
 std::uint64_t g_reported = 0;
 bool g_reference_dry = false;
 
+// Every unimplemented VU "lower" operation is logged unless PS2_TRACE_VU says otherwise: these
+// lines are gate evidence (the VU interpreter must not run on the accepted route), and a fixed
+// first-32 cap used to hide the scale of a violation. 0 = off, N = every Nth, unset = all.
+bool vu_report() {
+    static const long every = [] {
+        const char *value = std::getenv("PS2_TRACE_VU");
+        return (value && *value) ? std::strtol(value, nullptr, 10) : 1L;
+    }();
+    if (every <= 0) return false;
+    return every == 1 || (++g_reported % static_cast<unsigned long>(every) == 0);
+}
+
 Unit unit_of(int n) {
     if (n == 0) return Unit{&g_cpu.vu0, g_vu0_code, g_vu0_mem, 4095u, 256u, g_cpu.vu0.tpc};
     return Unit{&g_vu1, g_vu1_code, g_vu1_mem, 16383u, 1024u, g_vu1.tpc};
@@ -505,7 +517,7 @@ void lower(Unit &u, std::uint32_t w, std::uint32_t pc, std::uint32_t &npc, bool 
             case 0x34: store_vi(r, id, r.vi[is] & r.vi[it]); break;
             case 0x35: store_vi(r, id, r.vi[is] | r.vi[it]); break;
             default:
-                if (g_reported++ < 32) std::fprintf(stderr, "[vu] lower op 0x%08X at 0x%04X\n", w, pc);
+                if (vu_report()) std::fprintf(stderr, "[vu] lower op 0x%08X at 0x%04X\n", w, pc);
                 break;
             }
             return;
@@ -595,7 +607,7 @@ void lower(Unit &u, std::uint32_t w, std::uint32_t pc, std::uint32_t &npc, bool 
             break;
         case 0x7B: break;
         default:
-            if (g_reported++ < 32) std::fprintf(stderr, "[vu] lower special 0x%X (0x%08X) at 0x%04X\n", index, w, pc);
+            if (vu_report()) std::fprintf(stderr, "[vu] lower special 0x%X (0x%08X) at 0x%04X\n", index, w, pc);
             break;
         }
         return;
@@ -660,7 +672,7 @@ void lower(Unit &u, std::uint32_t w, std::uint32_t pc, std::uint32_t &npc, bool 
     case 0x2E: if (static_cast<std::int16_t>(bvi(is)) <= 0) branch_to(target); break;
     case 0x2F: if (static_cast<std::int16_t>(bvi(is)) >= 0) branch_to(target); break;
     default:
-        if (g_reported++ < 32) std::fprintf(stderr, "[vu] lower 0x%08X at 0x%04X\n", w, pc);
+        if (vu_report()) std::fprintf(stderr, "[vu] lower 0x%08X at 0x%04X\n", w, pc);
         break;
     }
 }

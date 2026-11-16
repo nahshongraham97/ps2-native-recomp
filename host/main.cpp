@@ -145,6 +145,7 @@ public:
         for (int n = 2; std::filesystem::exists(file, error) && n < 100; ++n) file = folder / (std::string("ps2run_") + stamp + "_" + std::to_string(n) + ".log");
         path_ = ps2::os::utf8(file);
         file_ = ps2::os::open(path_, "wb");
+        if (const char *max = std::getenv("PS2_LOG_MAX_BYTES")) max_bytes_ = std::strtoull(max, nullptr, 10);
         int fds[2];
 #ifdef _WIN32
         // The descriptor the stderr stream really writes to. It is 2 when the parent passed a stderr, but not when the program
@@ -235,7 +236,12 @@ private:
     // a line of its own that the reader takes out of the stream: it tells flush() that everything before it was handled
     static constexpr char kMarker[] = "\x1e<ps2run-log-flush>\x1e\n";
     static constexpr std::size_t kRingLines = 600, kHeadLines = 100;
-    static constexpr std::size_t kFileLimit = 64u << 20;
+    // The file is written for as long as the run lasts. PS2_LOG_MAX_BYTES caps it in bytes and
+    // then rotates instead of stopping: a fixed ceiling used to silently drop the tail of a long
+    // run - the crash, the telemetry and the census were the first things to go. 0, the default,
+    // means no ceiling. kRingLines/kHeadLines are only the in-game window's tail/head view; the
+    // file itself is complete regardless of them.
+    std::uint64_t max_bytes_ = 0;
 
     static void put(int fd, const char *data, std::size_t size) {
         while (size) {
@@ -274,11 +280,11 @@ private:
     void record(std::string_view part) {
         put(saved_, part.data(), part.size());
         std::lock_guard<std::mutex> hold(m_);
-        if (file_ && written_ < kFileLimit) {
+        if (file_ && (max_bytes_ == 0 || written_ < max_bytes_)) {
             std::fwrite(part.data(), 1, part.size(), file_);
             std::fflush(file_);
             written_ += part.size();
-            if (written_ >= kFileLimit) std::fputs("\n[log] this file reached 64 MB and stops here\n", file_);
+            if (max_bytes_ && written_ >= max_bytes_) rotate();
         }
         for (const char c : part) {
             if (c != '\n') {
@@ -290,6 +296,25 @@ private:
             ring_.push_back(std::move(partial_));
             partial_.clear();
             if (ring_.size() > kRingLines) ring_.pop_front();
+        }
+    }
+
+    // PS2_LOG_MAX_BYTES was reached: keep the bytes written so far and continue in a fresh file
+    // under the same name. The previous file is kept as <name>.1, so the run is never truncated -
+    // only continued.
+    void rotate() {
+        if (!file_) return;
+        std::fclose(file_);
+        file_ = nullptr;
+        std::error_code error;
+        std::filesystem::rename(std::filesystem::path(path_), path_ + ".1", error);
+        file_ = ps2::os::open(path_, "wb");
+        written_ = 0;
+        if (file_) {
+            std::fprintf(file_,
+                         "[log] reached PS2_LOG_MAX_BYTES; the run continues in this file, the bytes before the rotation are in %s.1\n",
+                         path_.c_str());
+            std::fflush(file_);
         }
     }
 

@@ -552,11 +552,18 @@ std::uint32_t read_voice(Core &k, std::uint32_t off) {
     }
 }
 
-// PS2_TRACE_SPU2 also reports the first few voice volumes written in sweep mode (bit 15), which fades a voice instead of setting it
+// PS2_TRACE_SPU2 also reports voice volumes written in sweep mode (bit 15), which fades a voice
+// instead of setting it. Every one of them is logged by default; PS2_TRACE_SWEEP=<n> samples one
+// in n (0 turns the line off). Nothing here is dropped silently.
 bool trace_sweep(std::uint32_t value) {
     static const bool trace = std::getenv("PS2_TRACE_SPU2") != nullptr;
-    static int reported = 0;
-    return trace && (value & 0x8000u) && reported++ < 40;
+    static const long every = [] {
+        const char *value = std::getenv("PS2_TRACE_SWEEP");
+        return (value && *value) ? std::strtol(value, nullptr, 10) : 1L;  // unset - every sweep write
+    }();
+    static unsigned long reported = 0;
+    if (!trace || !(value & 0x8000u) || every <= 0) return false;
+    return every == 1 || (++reported % static_cast<unsigned long>(every) == 0);
 }
 
 void write_voice(Core &k, std::uint32_t off, std::uint32_t value) {

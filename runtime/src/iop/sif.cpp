@@ -334,8 +334,16 @@ void call(const std::uint8_t *packet) {
         const std::uint8_t *source = iop::ram_ptr(s.buf);
         request.data.assign(source, source + size);
         if (iop::kernel::g_trace_modules && (s.sid == 0x000F0001u || s.sid == 0x90000200u || s.sid == 0x00012345u)) {
+            // Every request is logged unless PS2_TRACE_MSL_LIMIT says otherwise: the payloads are
+            // the evidence for what the sound engine is asked to do, and a cap used to hide the
+            // commands that arrived while the user pressed buttons.
+            static const std::uint64_t msl_limit = [] {
+                const char *value = std::getenv("PS2_TRACE_MSL_LIMIT");
+                return value && *value ? std::strtoull(value, nullptr, 10) : 0ull;  // 0 - the default - means no cap
+            }();
             static std::uint32_t s_msl_log_count = 0;
-            if (s.sid != 0x00012345u || s_msl_log_count++ < 500) {
+            const bool under_limit = s.sid != 0x00012345u || msl_limit == 0 || s_msl_log_count++ < msl_limit;
+            if (under_limit) {
                 std::fprintf(stderr,
                              "[sif:guest-request #%u] sid 0x%08X sd 0x%08X fn %u send %u from IOP 0x%08X data",
                              s_msl_log_count, s.sid, s.sd, c.rpc_number, c.send_size, s.buf);
@@ -345,8 +353,9 @@ void call(const std::uint8_t *packet) {
                 for (std::uint32_t i = 0; i < std::min<std::uint32_t>(4u, (c.send_size + 3u) / 4u); ++i)
                     std::fprintf(stderr, " %08X", ee_read<std::uint32_t>(g_data_addr + i * 4u));
                 std::fprintf(stderr, ")\n");
-            } else if (s.sid == 0x00012345u && s_msl_log_count == 501) {
-                std::fprintf(stderr, "[sif:guest-request] sid 0x00012345 reached 500 logged requests; capping further logs\n");
+            } else if (s.sid == 0x00012345u && s_msl_log_count == msl_limit + 1) {
+                std::fprintf(stderr, "[sif:guest-request] sid 0x00012345 reached PS2_TRACE_MSL_LIMIT=%llu; capping further logs\n",
+                             static_cast<unsigned long long>(msl_limit));
             }
         }
     }
