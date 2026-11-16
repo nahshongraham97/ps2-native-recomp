@@ -1,5 +1,20 @@
 # ps2-native-recomp
 
+> **This checkout is the retail Armageddon native port. Read
+> [`NATIVE_PORT_ONLY.md`](NATIVE_PORT_ONLY.md) first.**
+>
+> Everything is native, and nothing is missing: no interpreter on the accepted
+> route, no emulated PS2 device, **nothing compiled while the game runs** (the
+> EE and the VU1 are already translated and ready), no guest module left
+> running, and the VRAM is the device's VRAM.
+>
+> This overrides one upstream behaviour: upstream translates code *while you
+> play* (the "Code translated while you play" bullet below). **Here that does
+> not happen** — every function the program can enter is an entry point of the
+> generated library and every code image is translated whole, so the game
+> never waits for a compiler and never stops for a missing window.
+
+
 Turns the disc image of a PS2 game you own into a native program for Windows or Linux. **This project is at an early
 stage** and still changes a lot. God of War II has been played from start to end on Windows; a few more games run as far
 as they have been played.
