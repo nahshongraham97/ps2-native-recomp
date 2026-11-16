@@ -6,12 +6,13 @@
 - Commits: `a1ee3a2` (nothing is translated while the game runs any more),
   `b7ddffb` (the native texture pool holds the game's textures),
   `876845e` (a guest VRAM write lands in the native texture that covers it),
-  `f6c190f` (the census counts guest code that was compiled ahead of time too)
-- Build stamp: `commit f6c190f clean, built 2026-11-16T21:22:20Z, Release, Clang-23.1.3`
+  `f6c190f` (the census counts guest code that was compiled ahead of time too),
+  `32eeb27` (the push makes the GL context current before it writes)
+- Build stamp: `commit 32eeb27 clean, built 2026-11-16T21:29:31Z, Release, Clang-23.1.3`
 - Runner: `build_native_gl_full/ps2run.exe`
-- **SHA-256: `ec1382c657904e4be9f81b40267e2e2186eaee77ea537cbf246b13b7354e040d`**
+- **SHA-256: `6bcfff337725bdc1bc4c869bb159807b460f68b8304823ef71782e9c3997c821`**
 - Flags: `PS2_NATIVE_GL=1` (the native OpenGL route; no WebGPU presentation),
-  `--frames 2000`, `--frames-dir games\mkarmageddon\shots\acceptance-f6c190f`
+  `--frames 2000`, `--frames-dir games\mkarmageddon\shots\acceptance-32eeb27`
 
 ## The census (the run's own words)
 
@@ -72,6 +73,11 @@ native resource.
 A write that only partly lands (a block the texture does not use, a rectangle
 that does not fit the texture's extent) leaves the texture stale, so it is
 decoded again when it is sampled: the picture stays right either way.
+
+`32eeb27` makes the push make the WGL context current before it writes: the
+push runs where the guest's transfer finished, which is the thread that runs
+the guest, not the render thread that owns the context (the other native call
+from that path, `draw_guest_rect`, already did this).
 
 ### The evidence that the push is faithful
 
