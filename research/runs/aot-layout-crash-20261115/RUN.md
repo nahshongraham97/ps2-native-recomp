@@ -174,32 +174,46 @@ intrman, loadcore, sifcmd, sifman, sysclib, thbase, thsemap, vblank) are all alr
   SIF API), not interpreter execution: `deliver_request` (`sif.cpp:203`) wakes the AOT module's
   own thread and the handler runs as native code — consistent with `IOP guest instructions = 0`.
 
-## GS — the gate is a display-surface gate, not a texture drop
+## GS — a gate violation: the emulated VRAM is on the accepted rendering path
 
-`applied = 1, skipped = 31,736; primitives = 502,814`. The gate (`gs.cpp:407-411`) applies a
-VRAM write to the native surface only when it targets the display base, the active draw base,
-or `base == 8960` (the movie target). The skipped transfers are texture uploads to
-fbp 301–351: they land in emulated VRAM for sampling, and the native backend has its own
-`TextureCache` / `prepare_texture` path (`native_gl_backend.cpp:174,459`) that samples VRAM at
-draw time. Whether that sampling path is correct is the open GS question — the census counter
-alone does not prove texture loss.
+`reached native surface = 1, stopped in emulated VRAM = 31,736; primitives = 502,814`. Read
+against the acceptance gate (no emulated PS2 device on the route): **every transfer terminates in
+`gs.cpp`'s emulated VRAM** — a PS2 GS device on the path — and `apply_display_write`
+(`gs.cpp:407-411`) merely decides whether to *also* paint the write onto a native surface (only
+for the display base, active draw base, or `base == 8960`). The 31,736 that never left it are
+texture uploads to fbp 301–351; the native backend's `TextureCache` / `prepare_texture`
+(`native_gl_backend.cpp:174,459`) then samples that emulated device at draw time.
 
-## Verdict
+This is not an open question about sampling correctness — it is a device to **remove**: texture
+and framebuffer transfers must terminate directly in native GL resources with no emulated VRAM in
+between. The transfer count is the violation's magnitude.
+
+## Verdict — the census could not see two of the violations
 
 `1 mandate violations remain: SIF guest RPCs` — the 1,425 `sid 0x00012345 fn 56026` calls.
-EE live = 0, VU fallbacks = 0, IOP guest = 0, CDVD = 0 (all PASS).
+EE live = 0, VU fallbacks = 0, IOP guest = 0, CDVD = 0.
+
+The verdict under-reported the gate: that census's mandate counted interpreters, SIF guest RPCs
+and CDVD reads but **not** the emulated GS/VRAM (31,736 transfers stopped in it) or the emulated
+SPU2 chip (every `sceSd*` call terminated in `spu2::write`). The next build fixes the
+measurement itself — see below.
 
 ## Delivered for the next run
 
-- **Runner:** `9141cd27e4fc05ca0aa9a0bc70114cd2ce4575b6bf7d6b1b5227fbcdca1cb07b`
-  (`d9e5097 clean`, 2026-11-15 18:29, 75,948,544 bytes) — adds the stdio `0x0103` registration.
-- **Launcher** (`launch_game.bat`, parent repo): now passes `--trace-iop`, turning on
+- **Runner:** `eaf36b36ae4025f3e03b0d519011f51237d758a6c6e133e7e562976c473fbffb`
+  (`9c94385 clean`, 2026-11-15 18:59, 75,949,568 bytes) — adds the **census GATE line** (the
+  emulated-device totals on the accepted route, each must reach 0, counted in the verdict) and
+  the stdio `0x0103` registration.
+- **Launcher** (`launch_game.bat`, parent repo): passes `--trace-iop`, turning on
   `g_trace_modules` — `[iop-aot-layout]`, every `[iop-aot-import]` call with its return,
   named `[msl-libsd]` calls, and `[sif:guest-request]` payloads (first 20 for the MSL sid).
   This is the audio instrumentation the previous runs never had.
 
 ### Gates for the next run
 
+0. **Gate line first:** the census `GATE` line's emulated-device totals (GS-stopped-in-VRAM,
+   SPU2-chip-model-ops, SIF-guest-registered, CDVD-device-reads) are the scoreboard — each must
+   reach 0. The verdict now counts them.
 1. **Movie:** no stdio stop; CRI_ADXI proceeds past the banner — its libsd calls for the
    movie's ADX audio will appear as `[libsd]` lines.
 2. **Audio:** `[msl-libsd]` + `[iop-aot-import]` + `[sif:guest-request]` must show whether the

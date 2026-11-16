@@ -1,21 +1,23 @@
-# Build delivery — 2026-11-15 (census survives shutdown; AOT reservation fix)
+# Build delivery — 2026-11-15 (census measures the acceptance gate)
 
-- Commit: `c34b3fb` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
-  (stamp: `commit c34b3fb clean, built 2026-11-15T22:25:49Z, Release, Clang-23.1.3`)
-- Runner: `build_native_gl_full/ps2run.exe`, 2026-11-15 17:25, 75,948,544 bytes
-- SHA-256: `13424cdbdac05902cc9cc226e485da204921cb445f6265b4e5a661ca21114bba`
-- Replaced runner: `bd7479bd9f18dc0217bf4ccff5c206b422b7f08ada50a6a9f5c6cb7f1ba90149` (17:15) — its
-  stamp read `commit b086270 dirty` because it was built before `7f2f3d9` was committed; it was
-  rebuilt from the clean tree instead of shipping a binary whose stamp did not name its source
+- Commit: `9c94385` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
+  (stamp: `commit 9c94385 clean, built 2026-11-15T23:59:49Z, Release, Clang-23.1.3`)
+- Runner: `build_native_gl_full/ps2run.exe`, 2026-11-15 18:59, 75,949,568 bytes
+- SHA-256: `eaf36b36ae4025f3e03b0d519011f51237d758a6c6e133e7e562976c473fbffb`
+- What it adds: the census **GATE line** — emulated-device totals on the accepted route
+  (GS-stopped-in-VRAM, SPU2-chip-model-ops, SIF-guest-registered, CDVD-device-reads; each must
+  reach 0) — counted in the verdict, plus the `spu2_device_op()` boundary counter and the
+  stdio `0x0103` registration from the previous delivery.
+- Replaced runner: `9141cd27e4fc05ca0aa9a0bc70114cd2ce4575b6bf7d6b1b5227fbcdca1cb07b`
+  (`d9e5097 clean`, 18:29 — stdio fix, never run live)
 - Delivery history: `435ce55ae7de51a7dcbc4c93f16e27aa572a76fb46bce7d3209f75ed43062aa7`
-  → `8600a796a34df9d9728cbd1e60c2fd0f3fbf3c073fd5c1135724027f407fa78d` → `6b2335a1…` → `bd7479bd…` → `13424cdb…`
-- Commits after `c34b3fb` are documentation-only and do not change this binary.
-
-The `6b2335a1…` runner was run live once (`ps2run_2026-11-15_16-54-43.log`) and
-crashed at `LIBSD.IRX` with an AOT layout mismatch — root cause and fix recorded in
-`research/runs/aot-layout-crash-20261115/RUN.md`. That run also verified the
-shutdown flush: `census.txt` was written with the complete report including the
-`VERDICT:` line.
+  → `8600a796a34df9d9728cbd1e60c2fd0f3fbf3c073fd5c1135724027f407fa78d` → `6b2335a1…` → `bd7479bd…` → `13424cdb…` → `9141cd27…` → `eaf36b36…`
+- The `13424cdb…` runner was run live once (`ps2run_2026-11-15_17-57-43.log`): card fixed, all
+  four AOT bases loaded, crashed at the movie's `stdio v0103` import — record in
+  `research/runs/aot-layout-crash-20261115/RUN.md`.
+- Earlier the same day the `6b2335a1…` runner was run once (`ps2run_2026-11-15_16-54-43.log`),
+  crashed at `LIBSD` (fixed in `7f2f3d9`), and verified the shutdown flush: `census.txt` was
+  written with the complete report including the `VERDICT:` line.
 
 ## Why the census was lost, and what actually limits a log
 
