@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
+#include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -52,6 +54,15 @@ struct Bank {
     bool loaded = false;
     std::uint32_t count = 0;      // the header's sound count
     std::vector<SoundEntry> sounds;
+    // The entry of an id: the game asks for a sound by its id, and the table's
+    // positions are not the ids (from the 345th entry on they differ).
+    std::map<std::uint32_t, std::size_t> by_id;
+};
+
+// One sample of the bank: the ADPCM data's place in it.
+struct Sample {
+    std::uint32_t offset = 0;
+    std::uint32_t size = 0;
 };
 
 Bank g_bank;
@@ -60,7 +71,7 @@ Bank g_bank;
 // offset is [count][count * sub-index]); they play one after another. Each
 // step lasts as long as its sample would take to play.
 struct Step {
-    std::uint32_t sound = 0;      // the sub-sample's table index
+    Sample sample;                // where the sample's ADPCM data is
     std::uint32_t ticks = 0;      // remaining ticks
     std::uint32_t length = 0;     // ticks in total
 };
@@ -94,11 +105,67 @@ bool load_bank() {
         const std::uint8_t *e = table.data() + i * 12u;
         g_bank.sounds.push_back(SoundEntry{read_le32(e), read_le32(e + 4), read_le32(e + 8)});
     }
+    for (std::size_t i = 0; i < g_bank.sounds.size(); ++i)
+        g_bank.by_id.emplace(g_bank.sounds[i].id, i);
     g_bank.count = count;
     g_bank.loaded = true;
     std::fprintf(stderr, "[msl-native] sound bank loaded: %u sounds, %u table entries, %u bytes\n",
                  count, entries, table_bytes);
     return true;
+}
+
+// The sample records of a sound: the bank's groups list the sub-sounds and
+// then the samples themselves, each with the offset and the size of its ADPCM
+// data. The records are the words with the 0x20000000 flag set, four words
+// each (the id, the flags, the offset and the size), and the list ends with
+// the id 0.
+std::vector<Sample> group_samples(std::uint32_t offset, std::uint32_t size) {
+    std::vector<Sample> samples;
+    if (size < 8) return samples;
+    std::vector<std::uint8_t> data(size);
+    if (!mwfilefr_read_guest_range(kBankPath, offset, data.data(), size)) return samples;
+    const std::uint32_t count = read_le32(data.data());
+    if (count == 0 || count > 4096) return samples;
+    const std::uint32_t words = size / 4u;
+    // The records start at the first flagged word after the sub-sound list.
+    std::uint32_t at = 1u + count;
+    while (at + 4u <= words && !(read_le32(data.data() + at * 4u) & 0x20000000u)) ++at;
+    while (at + 4u <= words) {
+        const std::uint32_t id = read_le32(data.data() + at * 4u);
+        if (!id) break;
+        const std::uint32_t sample_offset = read_le32(data.data() + (at + 2) * 4u);
+        const std::uint32_t sample_size = read_le32(data.data() + (at + 3) * 4u);
+        if (sample_size && sample_size < (1u << 24)) samples.push_back(Sample{sample_offset, sample_size});
+        at += 4u;
+    }
+    return samples;
+}
+
+// The samples of a sound: its own records plus the records of the sub-sounds
+// it lists. A sub-sound is an entry of its own, so the walk is recursive. The
+// groups may name each other in a circle, so every entry is visited once.
+void collect_samples(std::uint32_t id, std::vector<Sample> &out,
+                     std::set<std::uint32_t> &visited) {
+    if (out.size() >= 64) return;
+    if (!visited.insert(id).second) return;
+    const auto found = g_bank.by_id.find(id);
+    if (found == g_bank.by_id.end()) return;
+    const SoundEntry &entry = g_bank.sounds[found->second];
+    if (entry.size < 8) return;
+    std::vector<std::uint8_t> head(std::min<std::uint32_t>(entry.size, 64u));
+    if (!mwfilefr_read_guest_range(kBankPath, entry.offset, head.data(), head.size())) return;
+    const std::uint32_t count = read_le32(head.data());
+    if (count == 0 || count > 4096) {
+        // Not a group: the entry is a sample of its own.
+        out.push_back(Sample{entry.offset, entry.size});
+        return;
+    }
+    for (const Sample &sample : group_samples(entry.offset, entry.size)) out.push_back(sample);
+    for (std::uint32_t i = 0; i < count; ++i) {
+        const std::uint32_t sub = read_le32(head.data() + 4u + i * 4u);
+        if (!sub) continue;
+        collect_samples(sub & 0xFFFFu, out, visited);
+    }
 }
 
 // One sample's length in sequencer ticks. The samples are SPU2 ADPCM blocks:
@@ -111,15 +178,13 @@ std::uint32_t sample_ticks(std::uint32_t bytes) {
 
 // Starts one sub-sample in a voice: the sample bytes are copied into the sound
 // RAM at the voice's start address and the voice is keyed on.
-bool start_voice(std::uint32_t sound_index) {
+bool start_voice(const Sample &sample) {
     if (!load_bank()) return false;
-    if (sound_index >= g_bank.sounds.size()) return false;
-    const SoundEntry &e = g_bank.sounds[sound_index];
-    if (!e.size) return false;
-    std::vector<std::uint8_t> data(e.size);
-    if (!mwfilefr_read_guest_range(kBankPath, e.offset, data.data(), e.size)) {
-        std::fprintf(stderr, "[msl-native] cannot read sample %u (offset 0x%08X, %u bytes)\n",
-                     sound_index, e.offset, e.size);
+    if (!sample.size) return false;
+    std::vector<std::uint8_t> data(sample.size);
+    if (!mwfilefr_read_guest_range(kBankPath, sample.offset, data.data(), sample.size)) {
+        std::fprintf(stderr, "[msl-native] cannot read the sample at 0x%08X (%u bytes)\n",
+                     sample.offset, sample.size);
         return false;
     }
     std::uint16_t *ram = audio_native::sound_ram();
@@ -128,13 +193,19 @@ bool start_voice(std::uint32_t sound_index) {
     g_voice = (g_voice + 1) % 24;
     // Each voice gets its own 16 KiB slice of the 2 MiB sound RAM.
     const std::uint32_t ssa = 0x1000u + static_cast<std::uint32_t>(voice) * 0x4000u;
-    const std::uint32_t words = e.size / 2u;
+    const std::uint32_t words = sample.size / 2u;
     if (ssa + words > (1u << 20)) return false;
     std::memcpy(ram + ssa, data.data(), words * 2u);
     audio_native::set_voice_addr(0, voice, 32, ssa);
     audio_native::set_voice_param(0, voice, 0, 0x7FFFu);   // VOLL
     audio_native::set_voice_param(0, voice, 1, 0x7FFFu);   // VOLR
     audio_native::set_voice_param(0, voice, 2, 0x1000u);   // PITCH
+    // The retail server routed every voice to the dry bus when the sound
+    // library was initialised. There is no guest driver left to set the
+    // mixer's voice masks, so the service sets them here: without them the
+    // voices are keyed and routed nowhere, and the game is silent.
+    audio_native::set_switch(0, 24, 0x00FFFFFFu);   // the left dry bus
+    audio_native::set_switch(0, 26, 0x00FFFFFFu);   // the right dry bus
     audio_native::key_on(0, 1u << voice);
     return true;
 }
@@ -147,27 +218,33 @@ void play_sound(std::uint32_t sound) {
                      static_cast<unsigned>(g_bank.sounds.size()));
         return;
     }
-    const SoundEntry &e = g_bank.sounds[sound];
-    if (!e.size) return;
-    std::vector<std::uint8_t> head(e.size);
-    if (!mwfilefr_read_guest_range(kBankPath, e.offset, head.data(), e.size)) return;
-    const std::uint32_t count = read_le32(head.data());
-    if (!count || count > 4096u || count * 4u > e.size) {
-        std::fprintf(stderr, "[msl-native] sound %u has an unexpected header (%u entries, %u bytes)\n",
-                     sound, count, e.size);
+    const auto found = g_bank.by_id.find(sound);
+    if (found == g_bank.by_id.end()) {
+        std::fprintf(stderr, "[msl-native] sound %u is not in the bank\n", sound);
+        return;
+    }
+    std::vector<Sample> samples;
+    std::set<std::uint32_t> visited;
+    collect_samples(sound, samples, visited);
+    if (samples.empty()) {
+        std::fprintf(stderr, "[msl-native] sound %u has no samples\n", sound);
         return;
     }
     g_steps.clear();
-    for (std::uint32_t i = 0; i < count; ++i) {
-        const std::uint32_t sub = read_le32(head.data() + 4u + i * 4u);
+    for (const Sample &sample : samples) {
         Step step;
-        step.sound = sub;
-        step.length = (sub < g_bank.sounds.size()) ? sample_ticks(g_bank.sounds[sub].size) : 1u;
+        step.sample = sample;
+        step.length = sample_ticks(sample.size);
         step.ticks = step.length;
         g_steps.push_back(step);
     }
     g_step = 0;
-    std::fprintf(stderr, "[msl-native] play sound %u: %u sub-samples\n", sound, count);
+    // The sound service's mixer has to run for the sequencer to advance (the
+    // sequencer is stepped by the mixer's frame hook). There is no guest
+    // driver left to touch the sound registers, so the service starts the
+    // mixer itself: without it the sound is queued and never played.
+    audio_native::keep_ticking();
+    std::fprintf(stderr, "[msl-native] play sound %u: %zu samples\n", sound, g_steps.size());
 }
 
 // The sequencer's tick: one per rendered audio frame.
@@ -178,7 +255,7 @@ void advance(std::size_t frames) {
             --step.ticks;
             if (step.ticks > 0) continue;
         }
-        start_voice(step.sound);
+        start_voice(step.sample);
         ++g_step;
         if (g_step >= g_steps.size()) g_steps.clear();
     }

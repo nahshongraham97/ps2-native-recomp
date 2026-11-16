@@ -296,6 +296,7 @@ void render_voice(Voice &v, unsigned voice, const Routing &route, std::int32_t (
     const bool sweep_l = v.voll & 0x8000u, sweep_r = v.volr & 0x8000u;
     const std::int32_t fixed_l = static_cast<std::int32_t>(v.voll & 0x7FFFu), fixed_r = static_cast<std::int32_t>(v.volr & 0x7FFFu);
     std::uint32_t position = v.position;
+    std::uint64_t rendered = 0;
     for (unsigned n = 0; n < kBatch; ++n) {
         if (v.phase == kOff) break;
         const std::uint32_t index = position >> 12, frac = position & 0xFFFu;
@@ -310,8 +311,10 @@ void render_voice(Voice &v, unsigned voice, const Routing &route, std::int32_t (
             v.position = position;
             check_irq(v.block[0], 8);
             decode_block(v, v.buffer + 28);
+            ps2::census::audio_native_adpcm_block_decoded();
         }
         update_envelope(v);
+        ++rendered;
         const std::int32_t out = sample * v.env.level >> 15;
         if (raw) raw[n] = clamp16(out);
         // the volume sweeps step once per sample whatever the voice is sent to
@@ -323,6 +326,7 @@ void render_voice(Voice &v, unsigned voice, const Routing &route, std::int32_t (
         if (route.wet[1] & bit) wet[n][1] += r;
     }
     v.position = position;
+    if (rendered) ps2::census::audio_native_voice_frame_rendered(rendered);
 }
 
 void feed_input(int core) {
@@ -1236,6 +1240,12 @@ bool get_addr(int core, int voice, std::uint32_t index, std::uint32_t &value) {
 // ---------------------------------------------------------------------------
 
 void key_on(int core, std::uint32_t mask) {
+    // A keyed voice needs the mixer to run. The native MSL service programs
+    // the voices through this interface (there is no guest driver left to
+    // touch the sound registers, which is what used to start the tick), so
+    // the tick starts here: without it the voices are keyed but never
+    // rendered, and the game is silent.
+    keep_ticking_internal();
     const int c = core & 1;
     Core &k = g_cores[c];
     for (int i = 0; i < 24; ++i) {

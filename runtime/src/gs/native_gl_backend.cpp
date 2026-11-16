@@ -1368,8 +1368,11 @@ std::vector<std::pair<std::uint32_t, std::uint32_t>> texture_groups_in_block(
     const std::uint32_t rows = std::max(1u, entry.params.tbw * 64u / shape.width);
     const std::uint32_t columns = (entry.width + shape.width - 1) / shape.width;
     const std::uint32_t block_rows = (entry.height + shape.height - 1) / shape.height;
-    if (block < entry.base / kUnitsPerBlock) return groups;
-    const std::uint32_t relative = block - entry.base / kUnitsPerBlock;
+    // The texture's base pointer is in units of 64 texels, so the block it
+    // starts in depends on the format.
+    const std::uint32_t first_block = entry.base * gs::texel_block_bytes(psm) / 8192u;
+    if (block < first_block) return groups;
+    const std::uint32_t relative = block - first_block;
     for (std::uint32_t j = 0; j < block_rows; ++j) {
         const std::uint32_t offset = j * rows;
         if (relative < offset) break;
@@ -1393,7 +1396,11 @@ bool push_write_into_texture(TextureCache &entry, std::uint32_t psm, std::uint32
                               bool &complete) {
     complete = false;
     if (entry.params.psm != psm) return false;
-    if (base % kUnitsPerBlock != 0 || entry.base % kUnitsPerBlock != 0) return false;
+    // The write's base pointer is in units of 256 bytes and the texture's in
+    // units of 64 texels; both are compared here as bytes.
+    const std::uint32_t write_bytes = base * 256u;
+    const std::uint32_t texture_bytes = entry.base * gs::texel_block_bytes(psm);
+    if (write_bytes % 8192u != 0 || texture_bytes % 8192u != 0) return false;
     const std::vector<WriteBlock> blocks = write_blocks(psm, base, bw, x, y, w, h);
     bool pushed = false;
     complete = true;
@@ -1462,7 +1469,12 @@ bool guest_wrote_vram(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
     bool pushed = false;
     for (TextureCache &entry : g_pool) {
         if (!entry.valid) continue;
-        if (base + units <= entry.base || base >= entry.base + entry.units) continue;
+        // The write's bytes and the texture's bytes have to overlap.
+        const std::uint32_t write_at = base * 256u;
+        const std::uint32_t write_end = write_at + w * h * bytes_per_pixel;
+        const std::uint32_t texture_at = entry.base * gs::texel_block_bytes(entry.params.psm);
+        const std::uint32_t texture_end = texture_at + entry.width * entry.height * bytes_per_pixel;
+        if (write_end <= texture_at || write_at >= texture_end) continue;
         bool complete = false;
         if (push_write_into_texture(entry, psm, base, bw, x, y, w, h, complete)) {
             // The native texture holds the written pixels now, so it is not
