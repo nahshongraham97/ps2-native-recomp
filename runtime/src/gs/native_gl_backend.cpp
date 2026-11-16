@@ -1236,6 +1236,10 @@ bool present_frame(const DisplayRegs &regs) {
     // During front end: Target 91 wins because Target 0 is idle.
     // During movie playback: Target 0 / 140 win because movie quads/transfers
     // update their ticks past the stale front-end target.
+    // Movie state is needed before target selection: while a movie plays, the
+    // presentation pins one surface (below), so the movie source is looked up first.
+    SceneTarget *movie_source = find_scene_target(280);
+    const bool movie_playing = (movie_source && movie_source->write_count > 0);
     SceneTarget *active_target = find_scene_target(active_frame_fbp);
     SceneTarget *display_target = find_scene_target(display_fbp);
     SceneTarget *target = nullptr;
@@ -1253,6 +1257,28 @@ bool present_frame(const DisplayRegs &regs) {
     }
     if (!target) target = ensure_scene_target(display_fbp);
     if (!target || !target->ready) return false;
+
+    // Pin the presented surface while a movie is playing. The game double-buffers
+    // (FBP 0 and 140) and quads the movie into whichever buffer drew last, so the
+    // tick-based selection above alternates the presented buffer between frames:
+    // one present showed the fresh blit, the next showed the other buffer's quad -
+    // two different sources, which is the shake the 00:40 run measured (blit=NO on
+    // write-presents, blit=YES on the next, targets alternating 0/140). While a
+    // movie surface exists, presentation therefore sticks to the surface that was
+    // selected first, and that surface is refreshed only from complete movie frames
+    // (the quiet-gated blit below, which now reaches every scene target). When no
+    // movie surface exists any more the pin is released and normal selection resumes.
+    static std::uint32_t s_movie_display_fbp = 0xFFFFFFFFu;
+    if (movie_playing) {
+        SceneTarget *pinned = (s_movie_display_fbp != 0xFFFFFFFFu) ? find_scene_target(s_movie_display_fbp) : nullptr;
+        if (!pinned) {
+            s_movie_display_fbp = target->fbp;
+        } else if (pinned != target) {
+            target = pinned;
+        }
+    } else {
+        s_movie_display_fbp = 0xFFFFFFFFu;
+    }
 
     static std::uint32_t s_last_logged_target = 0xFFFFFFFFu;
     if (target->fbp != s_last_logged_target) {
@@ -1289,8 +1315,7 @@ bool present_frame(const DisplayRegs &regs) {
         g_evicted_color[target->fbp] = false;
     }
 
-    SceneTarget *movie_source = find_scene_target(280);
-    const bool movie_existed = (movie_source && movie_source->write_count > 0 && movie_source != target);
+    const bool movie_existed = (movie_playing && movie_source != target);
     bool blit_ran = false;
 
     static std::uint64_t s_last_vram_gen = 0;
@@ -1311,14 +1336,32 @@ bool present_frame(const DisplayRegs &regs) {
     if (movie_existed) {
         s_movie_changed_run = vram_gen_changed ? s_movie_changed_run + 1 : 0;
         if (s_movie_changed_run == 0 || s_movie_changed_run >= 8) {
+            // Blit the complete movie frame into EVERY scene target, not just the one
+            // that won this present. The game swaps its display buffers during
+            // playback, so a blit that only reached the selected buffer left the
+            // other one holding the previous frame: whichever buffer the next
+            // present picked showed a different frame - the shake (00:40 run:
+            // blit=NO on write-presents, blit=YES on the next, targets alternating
+            // 0/140). With every target carrying the same complete frame, buffer
+            // alternation becomes invisible. cpu_synced is cleared because the
+            // CPU-side copy of each blitted surface is now stale - the next reuse
+            // must read the new content back first (ensure_scene_target already
+            // syncs an unsynced target before recycling it).
+            int blitted = 0;
             g_bind_framebuffer(GL_READ_FRAMEBUFFER, movie_source->framebuffer);
-            g_bind_framebuffer(GL_DRAW_FRAMEBUFFER, target->framebuffer);
-            g_blit_framebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-            target->write_count = movie_source->write_count;
-            target->last_write_tick = movie_source->last_write_tick;
+            for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
+                SceneTarget &other = g_scene_targets[i];
+                if (!other.ready || other.fbp == 0xFFFFFFFFu || &other == movie_source) continue;
+                g_bind_framebuffer(GL_DRAW_FRAMEBUFFER, other.framebuffer);
+                g_blit_framebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+                other.write_count = movie_source->write_count;
+                other.last_write_tick = movie_source->last_write_tick;
+                other.cpu_synced = false;
+                ++blitted;
+            }
             blit_ran = true;
-            std::fprintf(stderr, "[native-gl] sampled offscreen target FBP=%u into presentation FBP=%u\n",
-                         movie_source->fbp, target->fbp);
+            std::fprintf(stderr, "[native-gl] sampled offscreen target FBP=%u into %d scene targets (presented FBP=%u)\n",
+                         movie_source->fbp, blitted, target->fbp);
         }
     }
 
