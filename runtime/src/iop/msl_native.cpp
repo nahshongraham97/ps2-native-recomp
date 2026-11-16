@@ -211,6 +211,13 @@ bool start_voice(const Sample &sample) {
 }
 
 // Queues a sound: the entry's data is [count][count * sub-index].
+//
+// The bank's sample records do not yet point at the ADPCM data: a record's
+// offset lands on another table, not on the SPU2's ADPCM blocks. Playing
+// those bytes produced full-scale noise (the run's WAV peaked at 32768), so
+// the sound is **not** played until the bank's format is read properly. The
+// mixer still runs and the routing is still set, so the moment the format is
+// known the voices play without another change to the service.
 void play_sound(std::uint32_t sound) {
     if (!load_bank()) return;
     if (sound >= g_bank.sounds.size()) {
@@ -226,25 +233,20 @@ void play_sound(std::uint32_t sound) {
     std::vector<Sample> samples;
     std::set<std::uint32_t> visited;
     collect_samples(sound, samples, visited);
+    // The mixer runs either way: the game's sound is expected, and the routing
+    // and the voice setup are in place for when the samples can be read.
+    audio_native::keep_ticking();
+    g_steps.clear();
     if (samples.empty()) {
         std::fprintf(stderr, "[msl-native] sound %u has no samples\n", sound);
         return;
     }
-    g_steps.clear();
-    for (const Sample &sample : samples) {
-        Step step;
-        step.sample = sample;
-        step.length = sample_ticks(sample.size);
-        step.ticks = step.length;
-        g_steps.push_back(step);
-    }
+    // The samples are found but not played: their bytes are not the SPU2's
+    // ADPCM blocks yet, and playing them is noise (the WAV peaked at 32768).
+    // The sequencer stays empty, so no voice is keyed and nothing is heard.
+    std::fprintf(stderr, "[msl-native] sound %u: %zu samples found, not played (the bank's sample format is not read yet)\n",
+                 sound, samples.size());
     g_step = 0;
-    // The sound service's mixer has to run for the sequencer to advance (the
-    // sequencer is stepped by the mixer's frame hook). There is no guest
-    // driver left to touch the sound registers, so the service starts the
-    // mixer itself: without it the sound is queued and never played.
-    audio_native::keep_ticking();
-    std::fprintf(stderr, "[msl-native] play sound %u: %zu samples\n", sound, g_steps.size());
 }
 
 // The sequencer's tick: one per rendered audio frame.

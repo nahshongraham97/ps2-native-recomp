@@ -519,7 +519,7 @@ bool decode_rect_rgba(const TextureParams &p, std::uint32_t x, std::uint32_t y,
     pixels.resize(static_cast<std::size_t>(w) * h);
     for (std::uint32_t row = 0; row < h; ++row) {
         for (std::uint32_t column = 0; column < w; ++column) {
-            const std::uint32_t raw = read_texture_pixel(s.tpsm, s.tbp, s.tbw, x + column, y + row);
+            const std::uint32_t raw = read_pixel(s.tpsm, s.tbp, s.tbw, x + column, y + row);
             pixels[static_cast<std::size_t>(row) * w + column] = decode_texel(s, raw);
         }
     }
@@ -552,7 +552,7 @@ bool decode_texture_rgba(const State &st, std::vector<std::uint32_t> &pixels, st
     pixels.resize(static_cast<std::size_t>(width) * height);
     for (std::uint32_t y = 0; y < height; ++y) {
         for (std::uint32_t x = 0; x < width; ++x) {
-            const std::uint32_t raw = read_texture_pixel(s.tpsm, s.tbp, s.tbw, x, y);
+            const std::uint32_t raw = read_pixel(s.tpsm, s.tbp, s.tbw, x, y);
             pixels[static_cast<std::size_t>(y) * width + x] = decode_texel(s, raw);
         }
     }

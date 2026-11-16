@@ -47,11 +47,6 @@ extern State g_state;
 extern std::uint32_t g_setup_generation;
 extern std::uint64_t g_vram_generation;
 std::uint8_t *memory();
-// Reads a texel of a texture. The texture's base pointer is in units of 64
-// texels, so the address it stands for depends on the pixel format.
-std::uint32_t read_texture_pixel(std::uint32_t psm, std::uint32_t tbp, std::uint32_t bw, std::uint32_t x, std::uint32_t y);
-// The bytes 64 texels of a format take.
-std::uint32_t texel_block_bytes(std::uint32_t psm);
 
 void init();
 void state(ps2::state::Stream &s);

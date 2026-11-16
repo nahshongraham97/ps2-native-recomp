@@ -579,27 +579,6 @@ std::uint32_t address32(std::uint32_t bp, std::uint32_t bw, std::uint32_t x, std
     return wrap(page_address(bp, bw, x, y, 64, 32) + g_off32[y & 31][x & 63]);
 }
 
-// The bytes 64 texels of this format take. A texture's base pointer
-// (TEX0.TBP) is in units of 64 texels, so the address it stands for
-// depends on the format: 64 texels of a 32-bit texture are 256 bytes, of a
-// 16-bit texture 128 and of an 8-bit texture 64.
-std::uint32_t texel_block_bytes(std::uint32_t psm) {
-    switch (psm) {
-    case PSMCT24: return 64u * 3u;
-    case PSMCT16: case PSMCT16S: case PSMZ16: case PSMZ16S: return 64u * 2u;
-    case PSMT8: return 64u;
-    case PSMT4: return 32u;
-    default: return 64u * 4u;
-    }
-}
-
-// Reads a texel of a texture. The transfer's destination base pointer (DBP)
-// and the frame buffer's (FBP) are in other units - 256 bytes and 8 KB - so
-// only the texture's own base pointer is converted here.
-std::uint32_t read_texture_pixel(std::uint32_t psm, std::uint32_t tbp, std::uint32_t bw, std::uint32_t x, std::uint32_t y) {
-    return read_pixel(psm, tbp * texel_block_bytes(psm) / 256u, bw, x, y);
-}
-
 std::uint32_t read_pixel(std::uint32_t psm, std::uint32_t bp, std::uint32_t bw, std::uint32_t x, std::uint32_t y) {
     switch (psm) {
     case PSMCT32: return get<std::uint32_t>(page_address(bp, bw, x, y, 64, 32) + g_off32[y & 31][x & 63]);

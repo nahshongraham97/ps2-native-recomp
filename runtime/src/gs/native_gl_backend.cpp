@@ -1300,157 +1300,6 @@ void sync_all_surfaces_to_cpu() {
 #endif
 }
 
-// The VRAM is made of 8 KB blocks, and inside a block the GS's swizzle depends
-// only on where the pixel sits in that block. A texture's pixels live in
-// blocks, and so does a guest write, so a write can be pushed into the native
-// texture that covers the same blocks - as long as both use the same pixel
-// format, because the block's shape depends on the format.
-struct BlockShape {
-    std::uint32_t width, height;
-};
-
-BlockShape block_shape(std::uint32_t psm) {
-    switch (psm) {
-    case gs::PSMCT16: case gs::PSMCT16S: case gs::PSMZ16: case gs::PSMZ16S: return {64, 64};
-    case gs::PSMT8: return {128, 64};
-    case gs::PSMT4: return {128, 128};
-    default: return {64, 32};
-    }
-}
-
-// A block is 8 KB, that is 32 units of 256 bytes.
-constexpr std::uint32_t kUnitsPerBlock = 32;
-
-// The blocks the guest's write covers, and the rectangle inside each of them.
-struct WriteBlock {
-    std::uint32_t block;        // the block's number in the VRAM
-    std::uint32_t inside_x;     // the first written column inside the block
-    std::uint32_t inside_y;     // the first written row inside the block
-    std::uint32_t width, height;
-};
-
-// The blocks a write lands in, in the order the write visits them.
-std::vector<WriteBlock> write_blocks(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
-                                     std::uint32_t x, std::uint32_t y, std::uint32_t w, std::uint32_t h) {
-    std::vector<WriteBlock> blocks;
-    const BlockShape shape = block_shape(psm);
-    const std::uint32_t rows = std::max(1u, bw * 64u / shape.width);
-    const std::uint32_t first = base / kUnitsPerBlock;
-    const std::uint32_t bx0 = x / shape.width, bx1 = (x + w - 1) / shape.width;
-    const std::uint32_t by0 = y / shape.height, by1 = (y + h - 1) / shape.height;
-    blocks.reserve(static_cast<std::size_t>(bx1 - bx0 + 1) * (by1 - by0 + 1));
-    for (std::uint32_t by = by0; by <= by1; ++by) {
-        for (std::uint32_t bx = bx0; bx <= bx1; ++bx) {
-            const std::uint32_t wx0 = std::max(x, bx * shape.width);
-            const std::uint32_t wx1 = std::min(x + w, (bx + 1) * shape.width);
-            const std::uint32_t wy0 = std::max(y, by * shape.height);
-            const std::uint32_t wy1 = std::min(y + h, (by + 1) * shape.height);
-            if (wx0 >= wx1 || wy0 >= wy1) continue;
-            WriteBlock block;
-            block.block = first + bx + by * rows;
-            block.inside_x = wx0 - bx * shape.width;
-            block.inside_y = wy0 - by * shape.height;
-            block.width = wx1 - wx0;
-            block.height = wy1 - wy0;
-            blocks.push_back(block);
-        }
-    }
-    return blocks;
-}
-
-// The texture's pixels that live in one VRAM block. A texture's rows are one
-// block row apart, so a block can hold more than one group of the texture's
-// pixels (a texture wider than its buffer width wraps around).
-std::vector<std::pair<std::uint32_t, std::uint32_t>> texture_groups_in_block(
-    const TextureCache &entry, std::uint32_t psm, std::uint32_t block) {
-    std::vector<std::pair<std::uint32_t, std::uint32_t>> groups;
-    const BlockShape shape = block_shape(psm);
-    const std::uint32_t rows = std::max(1u, entry.params.tbw * 64u / shape.width);
-    const std::uint32_t columns = (entry.width + shape.width - 1) / shape.width;
-    const std::uint32_t block_rows = (entry.height + shape.height - 1) / shape.height;
-    // The texture's base pointer is in units of 64 texels, so the block it
-    // starts in depends on the format.
-    const std::uint32_t first_block = entry.base * gs::texel_block_bytes(psm) / 8192u;
-    if (block < first_block) return groups;
-    const std::uint32_t relative = block - first_block;
-    for (std::uint32_t j = 0; j < block_rows; ++j) {
-        const std::uint32_t offset = j * rows;
-        if (relative < offset) break;
-        const std::uint32_t i = relative - offset;
-        if (i >= columns) continue;
-        groups.emplace_back(i * shape.width, j * shape.height);
-    }
-    return groups;
-}
-
-// Pushes the guest's write into the native texture that covers the blocks the
-// write lands in. The pixels come out of the host-side staging the transfer
-// wrote, through the same decoder the first upload uses, so the native texture
-// holds exactly what the GS would have read.
-//
-// 'complete' says whether every written pixel reached the texture. A write that
-// only partly landed leaves the texture stale, so it is decoded again when it
-// is sampled - the picture stays right either way.
-bool push_write_into_texture(TextureCache &entry, std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
-                              std::uint32_t x, std::uint32_t y, std::uint32_t w, std::uint32_t h,
-                              bool &complete) {
-    complete = false;
-    if (entry.params.psm != psm) return false;
-    // The write's base pointer is in units of 256 bytes and the texture's in
-    // units of 64 texels; both are compared here as bytes.
-    const std::uint32_t write_bytes = base * 256u;
-    const std::uint32_t texture_bytes = entry.base * gs::texel_block_bytes(psm);
-    if (write_bytes % 8192u != 0 || texture_bytes % 8192u != 0) return false;
-    const std::vector<WriteBlock> blocks = write_blocks(psm, base, bw, x, y, w, h);
-    bool pushed = false;
-    complete = true;
-    std::vector<std::uint32_t> pixels;
-    for (const WriteBlock &block : blocks) {
-        const std::vector<std::pair<std::uint32_t, std::uint32_t>> groups =
-            texture_groups_in_block(entry, psm, block.block);
-        if (groups.empty()) {
-            // The texture does not use this block, so the write has nothing to
-            // land in here.
-            complete = false;
-            continue;
-        }
-        for (const auto &[origin_x, origin_y] : groups) {
-            const std::uint32_t dx = origin_x + block.inside_x;
-            const std::uint32_t dy = origin_y + block.inside_y;
-            if (dx + block.width > entry.width || dy + block.height > entry.height) {
-                complete = false;
-                continue;
-            }
-            if (!raster::decode_rect_rgba(entry.params, dx, dy, block.width, block.height, pixels)) {
-                complete = false;
-                continue;
-            }
-            // The GS alpha range is 0..128 with 128 meaning opaque;
-            // OpenGL is 0..255 (the same scaling the full upload uses).
-            for (std::uint32_t &pixel : pixels) {
-                const std::uint32_t a = (pixel >> 24) & 0xFFu;
-                pixel = (pixel & 0x00FFFFFFu) | (std::min<std::uint32_t>(255u, a * 2u) << 24);
-            }
-            const GLuint previous = g_glstate.texture;
-            // The push runs where the transfer finished, which is the thread
-            // that runs the guest; the context belongs to the render thread, so
-            // it is made current here before it is used.
-            if (wglGetCurrentContext() != g_hrc && !wglMakeCurrent(g_hdc, g_hrc)) {
-                complete = false;
-                continue;
-            }
-            glBindTexture(GL_TEXTURE_2D, entry.object);
-            glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-            glTexSubImage2D(GL_TEXTURE_2D, 0, static_cast<GLint>(dx), static_cast<GLint>(dy),
-                            static_cast<GLsizei>(block.width), static_cast<GLsizei>(block.height), GL_RGBA,
-                            GL_UNSIGNED_BYTE, pixels.data());
-            glBindTexture(GL_TEXTURE_2D, previous);
-            pushed = true;
-        }
-    }
-    return pushed;
-}
-
 // A guest write into the game's VRAM.
 //
 // The game's own textures live in VRAM and the native path samples them from
@@ -1469,19 +1318,28 @@ bool guest_wrote_vram(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
     bool pushed = false;
     for (TextureCache &entry : g_pool) {
         if (!entry.valid) continue;
-        // The write's bytes and the texture's bytes have to overlap.
-        const std::uint32_t write_at = base * 256u;
-        const std::uint32_t write_end = write_at + w * h * bytes_per_pixel;
-        const std::uint32_t texture_at = entry.base * gs::texel_block_bytes(entry.params.psm);
-        const std::uint32_t texture_end = texture_at + entry.width * entry.height * bytes_per_pixel;
-        if (write_end <= texture_at || write_at >= texture_end) continue;
-        bool complete = false;
-        if (push_write_into_texture(entry, psm, base, bw, x, y, w, h, complete)) {
-            // The native texture holds the written pixels now, so it is not
-            // stale: the GS samples the native resource, not the host array.
-            if (!complete) entry.stale = true;
-            pushed = true;
-            continue;
+        if (base + units <= entry.base || base >= entry.base + entry.units) continue;
+        if (entry.base == base && entry.params.psm == psm && entry.params.tbw == bw &&
+            x + w <= entry.width && y + h <= entry.height) {
+            std::vector<std::uint32_t> pixels;
+            if (raster::decode_rect_rgba(entry.params, x, y, w, h, pixels)) {
+                // The GS alpha range is 0..128 with 128 meaning opaque;
+                // OpenGL is 0..255 (the same scaling the full upload uses).
+                for (std::uint32_t &pixel : pixels) {
+                    const std::uint32_t a = (pixel >> 24) & 0xFFu;
+                    pixel = (pixel & 0x00FFFFFFu) | (std::min<std::uint32_t>(255u, a * 2u) << 24);
+                }
+                const GLuint previous = g_glstate.texture;
+                glBindTexture(GL_TEXTURE_2D, entry.object);
+                glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+                glTexSubImage2D(GL_TEXTURE_2D, 0, static_cast<GLint>(x), static_cast<GLint>(y),
+                                static_cast<GLsizei>(w), static_cast<GLsizei>(h), GL_RGBA,
+                                GL_UNSIGNED_BYTE, pixels.data());
+                glBindTexture(GL_TEXTURE_2D, previous);
+                entry.stale = false;
+                pushed = true;
+                continue;
+            }
         }
         entry.stale = true;
     }
