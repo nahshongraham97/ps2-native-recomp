@@ -105,3 +105,25 @@ Compare the captured frames by SHA-256. The ASCII rendering used here
 (96x40 characters) is far too coarse for the memory card screen's text: it
 showed the same picture for a change that did alter it and for one that did
 not.
+
+### What is ruled out for the text
+
+* **The GS write-through** (the push into the native textures): the captured
+  frames are byte-identical before and after it (`9D53181A...`).
+* **The texture base unit**: the frames are byte-identical before and after the
+  fix (same hash), so the font page did not come through the GS texture
+  decode at all.
+* **The VU1''s own texture reads**: the runtime''s VU sources never compute a
+  texture address (`vu_jit.cpp`, `vu_micro.cpp` have no texture fetch) - the
+  *guest''s RSP microcode computes the address itself and reads the VRAM
+  through the memory interface, so its addressing is the guest''s own and is
+  correct.
+
+That leaves: the font is not sampled from a GS texture at all (the RSP may
+read it from another source - the I/O area''s font, or a page the game writes
+by a path that is not a transfer), or the font page''s *format* is not what the
+GS texture decode assumes (a PSMT8 page with a CLUT, or a 16-bit page), or the
+page''s content is wrong where the RSP reads it. The next agent should look at
+the RSP''s own texture coordinates for the memory card screen''s words (the
+guest''s microcode, in `generated/mkarmageddon` and the VU1 capture) rather
+than at the GS side.
