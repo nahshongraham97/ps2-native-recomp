@@ -1,3 +1,54 @@
+# Build delivery — 2026-11-16 (no CPU raster, general ALPHA blend, atexit census UAF fix)
+
+- Commit: `b07558f` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
+  (stamp: `commit b07558f clean, built 2026-11-16T07:57:38Z, Release, Clang-23.1.3`)
+- Runner: `build_native_gl_full/ps2run.exe`, 2026-11-16 02:57, 75,977,728 bytes
+- SHA-256: `daef9fb5b24edaa7927d387508747c81e3d04062bb8172ea96ccf9ffee4bf570`
+- What it adds, from the 00:40 run's diagnosis (host at 54% of real time, 77% of primitives
+  dropped, character select broken):
+  1. **No CPU rasterization on the native route** (user directive 2026-11-16). `kick()` fell
+     back to `raster::draw` for every rejected packet, and 6,985,985 of 9,105,842 primitives
+     were rejected - millions of software-rasterized primitives per run were where the frame
+     time went. Rejected packets are now counted in the census and dropped; the software
+     rasterizer stays available when native GL is not selected.
+  2. **The general GS ALPHA blend** - the character-select fix and the drop-count fix in one:
+     the tuple whitelist is replaced by an exact mapper of the rasterizer's equation
+     `(A - B) * C / 128 + D` (raster.cpp:267-272, alpha from source per raster.cpp:282-286)
+     onto GL blend factors (`{0, 1, C, 1-C}` per coefficient; `C+1`/`-C` stay rejected and
+     counted). C ∈ {As, Ad, FIX}; FIX>0x80, non-PSMCT32, missing COLCLAMP and TFX>=2 stay
+     rejected with **per-tuple census keys** (pointer-keyed census map, stable key table).
+     `glBlendColor`/`GL_CONSTANT_ALPHA` are GL 1.4, loaded via `wglGetProcAddress` with
+     guarded defines. The depth check accepts any `0x3X` ZBUF format to match the
+     rasterizer's default-to-32-bit behavior (`z_max`/`write_pixel`), which is where the
+     front-end's ZBUF nibble `0x0A` (zpsm `0x3A`, FBP 91) lands.
+  3. **Atexit census use-after-free fix** - the flaky `0xC0000005` in `test_spu2_mix`
+     (4 crashes in 7 runs), caught live with the project's x64dbg MCP: RIP on
+     `mov rax,[rax]` with `RAX=0xFEEEFEEEFEEEFEEE` (heap freed-fill) inside the census
+     report's `std::map` walk. The test only reaches `report()` from atexit (registered in
+     compliance_census.cpp); `g_modules` is a `std::map` in another translation unit,
+     cross-TU static destruction order is unspecified, and its destructor ran before the
+     atexit report, which then walked freed nodes - surviving runs were the ones where the
+     freed heap had been reused (one printed a mangled module name); an empty module map
+     cannot crash, which is why the GL-only suites never showed it. `g_modules` is now
+     allocated once and never destroyed. Verified **10/10** `test_spu2_mix` runs exit 0 with
+     complete census + PASS line (was 3/7) and **3/3** `test_iop_native_module` runs.
+  4. **test_native_gl_alpha contract upgrade**: `ALPHA=0xA8 FIX=0x40` is no longer asserted
+     rejected (old fail-closed contract for unimplemented tuples); it now checks agreement
+     with the reference rasterizer, same as the `FIX=0x80` case.
+- Suites: `test_spu2_mix` PASS (census complete), `test_gl_vs_raster` 18/18,
+  `test_native_gl_alpha` PASS, `test_gl_lazy_readback` PASS, `test_iop_native_module` PASS
+  (the two `fn=0x06/0x07 -> FAIL` lines are its pre-existing negative-path probes).
+- Replaced runner: `78a0c1f6aad99fad5e8a32d0c62a83d325b2dca6a321a5dd903d77cf5bd43533`
+  (`00c0cee clean` - full payloads, quiet movie present, batched flush, character-select work)
+- Still open (named by the census): the remaining per-tuple ALPHA rejects (if any appear as
+  per-tuple keys), the movie shake (blit alternates FBP 0/140), game SFX silence
+  (native sound service, decision B), reflections, and the gate items
+  (`SPU2 chip-model ops`, `GS stopped in emulated VRAM`, `CDVD device reads`,
+  `SIF guest-registered`).
+- Delivery history: `435ce55ae7de51a7dcbc4c93f16e27aa572a76fb46bce7d3209f75ed43062aa7`
+  → `8600a796…` → `6b2335a1…` → `bd7479bd…` → `13424cdb…` → `9141cd27…` → `eaf36b36…`
+  → `2c16e7af…` → `cd686675…` → `E536E22C…` → `47075BB1…` → `78a0c1f6…` → `daef9fb5…`
+
 # Build delivery — 2026-11-16 (full payloads, quiet movie present, batched flush, character-select rendering)
 
 - Commit: `00c0cee` on `main` (`external/forks/ps2-native-recomp`), built from a **clean** tree
