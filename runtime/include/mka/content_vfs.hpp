@@ -28,10 +28,13 @@ std::optional<std::filesystem::path> resolve(const std::string &resource_name);
 bool read_file(const std::string &resource_name, std::vector<std::uint8_t> &out);
 std::filesystem::path mounted_root();
 
-// Sector-addressed view of the same mounted content. Indexing reads
+// Transitional diagnostic sector view, forbidden on the accepted native route.
+// Direct file reads above use NativeFile; these functions still preserve
+// CDVD-style contracts and are not evidence that the CDVD API was removed.
+// Indexing reads
 // .disc_layout (the file extents) and .disc_meta (sectors that hold disc
-// metadata no file covers) from the root. It is the native replacement for the
-// disc image: CDVD reads, searches and layer queries are answered from it.
+// metadata no file covers) from the root. Legacy CDVD reads, searches and layer
+// queries are answered from it until those callers are replaced.
 bool index_volume(std::string *error = nullptr);
 bool volume_ready();
 std::uint64_t sector_count();

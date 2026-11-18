@@ -1,3 +1,4 @@
+#include "mka/native_file.hpp"
 #include "mka/content_vfs.hpp"
 
 #include <algorithm>
@@ -9,6 +10,8 @@
 #include <limits>
 #include <map>
 #include <mutex>
+#include <new>
+#include <stdexcept>
 #include <utility>
 
 namespace mka::content {
@@ -268,20 +271,20 @@ std::optional<std::filesystem::path> resolve(const std::string &resource_name) {
 }
 
 bool read_file(const std::string &resource_name, std::vector<std::uint8_t> &out) {
-    const auto path = resolve(resource_name);
-    if (!path) return false;
-    std::error_code ec;
-    const std::uintmax_t size = std::filesystem::file_size(*path, ec);
-    if (ec || size > std::numeric_limits<std::uint32_t>::max()) return false;
-    std::ifstream file(*path, std::ios::binary);
-    if (!file) return false;
-    out.resize(static_cast<std::size_t>(size));
-    if (!out.empty()) file.read(reinterpret_cast<char *>(out.data()), static_cast<std::streamsize>(out.size()));
-    if (!file || file.gcount() != static_cast<std::streamsize>(out.size())) {
-        out.clear();
+    out.clear();
+    try {
+        const auto path = resolve(resource_name);
+        if (!path) return false;
+        std::error_code error;
+        NativeFile file;
+        return file.open(*path, error) && file.read_all(out, error);
+    } catch (const std::filesystem::filesystem_error&) {
+        return false;
+    } catch (const std::bad_alloc&) {
+        return false;
+    } catch (const std::length_error&) {
         return false;
     }
-    return true;
 }
 
 std::filesystem::path mounted_root() {

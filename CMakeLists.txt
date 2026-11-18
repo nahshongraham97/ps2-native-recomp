@@ -75,6 +75,7 @@ else()
         runtime/src/observer_hook.cpp
         runtime/src/native_hook.cpp
         runtime/src/native_vertex_hook.cpp
+        runtime/src/native/native_file.cpp
         runtime/src/native/content_vfs.cpp
         runtime/src/native/sound_bank.cpp
         runtime/src/port_config.cpp
@@ -232,6 +233,11 @@ if(PS2_GENERATED)
     # dependencies through ps2runtime. It owns ordinary host byte buffers.
     add_executable(test_sound_bank EXCLUDE_FROM_ALL tests/test_sound_bank.cpp runtime/src/native/sound_bank.cpp)
     target_include_directories(test_sound_bank PRIVATE runtime/include)
+    add_executable(test_native_file EXCLUDE_FROM_ALL tests/test_native_file.cpp runtime/src/native/native_file.cpp)
+    target_include_directories(test_native_file PRIVATE runtime/include)
+    add_executable(test_native_content_read EXCLUDE_FROM_ALL tests/test_native_content_read.cpp
+        runtime/src/native/content_vfs.cpp runtime/src/native/native_file.cpp)
+    target_include_directories(test_native_content_read PRIVATE runtime/include)
     target_link_libraries(test_disc_vfs PRIVATE ps2runtime)
     add_executable(test_content_volume EXCLUDE_FROM_ALL tests/test_content_volume.cpp)
     target_link_libraries(test_content_volume PRIVATE ps2runtime)
