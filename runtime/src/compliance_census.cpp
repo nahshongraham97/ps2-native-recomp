@@ -414,7 +414,7 @@ void report() {
         if (!viol_list.empty()) viol_list.resize(viol_list.size() - 2); // trim trailing comma
         std::fprintf(stderr, "[census] VERDICT: %d acceptance-gate violations remain: %s\n", violations, viol_list.c_str());
     } else {
-        std::fprintf(stderr, "[census] VERDICT: ACCEPTANCE GATE MET (no interpreter and no emulated PS2 device on the accepted route)\n");
+        std::fprintf(stderr, "[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n");
     }
     std::fprintf(stderr, "=================================================\n");
     std::fflush(stderr);

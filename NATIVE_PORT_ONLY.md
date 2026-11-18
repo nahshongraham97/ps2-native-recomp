@@ -61,8 +61,11 @@ all.
 
 The guest's writes land in **native GL resources**; the guest's reads are
 served **from the GPU**. A host-side VRAM array that is the source of truth
-is an emulated VRAM and must not exist. Memory the guest owns (its RAM, its
-scratchpad) is the game's own memory and is fine.
+is an emulated VRAM and must not exist. A fixed guest RAM/scratchpad address
+map is transitional and does not satisfy the owner's clarified native-memory
+requirement. Game data must use host allocations and native pointers or
+verified native handles. See the parent project's
+`../../../NATIVE_PORT_EXECUTION_CONTRACT.md`.
 
 ## 3. Platform calls terminate in native game/Windows services
 

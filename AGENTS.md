@@ -1,5 +1,11 @@
 # Project guidance (this fork)
 
+**Read the parent project's
+`../../../NATIVE_PORT_EXECUTION_CONTRACT.md` before source work, milestone
+claims, or release. Its whole-game non-regression matrix is mandatory. A
+card, input, sound, movie, visual, save, or mode regression fails the build
+even when native-route census counters are zero.**
+
 **Read `NATIVE_PORT_ONLY.md` in this directory before changing anything
 here.** It carries the owner's absolute rules. The short form:
 
