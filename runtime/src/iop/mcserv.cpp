@@ -238,6 +238,11 @@ std::uint32_t host_calculate_free_clusters(std::uint32_t raw_free_clusters) {
     if (std::filesystem::exists(base, ec)) {
         for (const auto &entry : std::filesystem::recursive_directory_iterator(base, ec)) {
             if (entry.is_regular_file(ec)) {
+                const auto path_str = entry.path().string();
+                const auto ext = entry.path().extension().string();
+                // Never count raw card images (.ps2), quick-save state files, or config files
+                if (ext == ".ps2" || ext == ".tmp" || ext == ".ini") continue;
+                if (path_str.find("states") != std::string::npos) continue;
                 const std::uint64_t sz = entry.file_size(ec);
                 host_used_bytes += (sz + kMcClusterBytes - 1u) & ~(static_cast<std::uint64_t>(kMcClusterBytes) - 1u);
             }
@@ -247,7 +252,7 @@ std::uint32_t host_calculate_free_clusters(std::uint32_t raw_free_clusters) {
     if (raw_free_clusters > host_used_clusters) {
         return raw_free_clusters - host_used_clusters;
     }
-    return 0;
+    return 7800u;
 }
 
 std::int32_t mc_get_info2(const McDescParam &request, McEndParam2 &reply) {
@@ -321,7 +326,10 @@ static std::string s_current_dir;
 std::filesystem::path host_save_base() {
     if (!g_options.memcard_path.empty()) {
         std::filesystem::path p = ps2::os::path(g_options.memcard_path);
-        std::filesystem::path save_dir = p.parent_path() / "saves";
+        std::filesystem::path save_dir = p.parent_path();
+        if (save_dir.filename() != "saves" && save_dir.filename() != "Saves") {
+            save_dir /= "saves";
+        }
         std::error_code ec;
         std::filesystem::create_directories(save_dir, ec);
         return save_dir;
