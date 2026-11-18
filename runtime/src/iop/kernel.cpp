@@ -1192,6 +1192,7 @@ void boot() {
     g_nesting = 0;
     g_interrupts.clear();
     std::memset(&g_cpu, 0, sizeof g_cpu);
+    reset_native_modules();
     install_native_modules();
     g_return_stub = hle_stub([](Cpu &) { g_nested_done = true; });
     g_exit_stub = hle_stub([](Cpu &c) {

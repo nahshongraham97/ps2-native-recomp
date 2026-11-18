@@ -98,8 +98,8 @@ int main() {
                                   c.r[2] = c.r[4] + c.r[5];
                               }});
     provider.libraries.push_back(std::move(exports));
-    ps2::iop::kernel::register_native_module(std::move(provider));
     ps2::iop::reset();
+    ps2::iop::kernel::register_native_module(std::move(provider));
 
     constexpr std::uint32_t kImportImageOffset = 0x40;
     constexpr std::uint32_t kImportStubOffset = kImportImageOffset + 20;

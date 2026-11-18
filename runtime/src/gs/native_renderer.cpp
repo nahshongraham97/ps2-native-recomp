@@ -15,14 +15,6 @@ namespace ps2::gs::native_renderer {
 
 namespace {
 
-bool env_enabled(const char *name) {
-    std::string value = ps2::os::env(name);
-    std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) {
-        return static_cast<char>(std::tolower(c));
-    });
-    return !value.empty() && value != "0" && value != "off" && value != "false" && value != "no";
-}
-
 [[noreturn]] void stop(const char *reason) {
     std::fprintf(stderr, "[native-renderer-stop] %s\n", reason);
     std::fflush(stderr);
@@ -218,6 +210,14 @@ void write_packed(std::uint32_t reg, const Reg128 &q) {
 }
 
 } // namespace
+
+bool env_enabled(const char *name) {
+    std::string value = os::env(name);
+    std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) {
+        return static_cast<char>(std::tolower(c));
+    });
+    return !value.empty() && value != "0" && value != "off" && value != "false" && value != "no";
+}
 
 bool selected() { return env_enabled("PS2_GS_PACKET_NATIVE") || strict(); }
 

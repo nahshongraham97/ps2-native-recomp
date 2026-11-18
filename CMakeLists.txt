@@ -99,6 +99,7 @@ else()
         runtime/src/iop/cpu.cpp
         runtime/src/iop/kernel.cpp
         runtime/src/iop/native_modules.cpp
+        runtime/src/iop/adx_native.cpp
         runtime/src/iop/dev9_offline.cpp
         runtime/src/iop/usbd_offline.cpp
         runtime/src/iop/libsd_native.cpp

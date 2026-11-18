@@ -1,12 +1,8 @@
 #pragma once
 
-// The variable length code tables of the MPEG-1/2 video standard, as the
-// lookups the decoder reads them with.
-//
-// The tables themselves live in ipu/tables.hpp (the PS2's IPU used the same
-// standard's codes). The lookups are here because two things read them: the
-// IPU model (the chip's own decoder) and the native MPEG-2 decoder that
-// replaces it on the accepted route.
+// Native host MPEG-2 VLC decoding tables, built from the ISO/IEC 13818-2
+// standard. These lookup structures are used by the native decoder to
+// efficiently decode MPEG-2 video streams with zero IPU emulation.
 
 #include <algorithm>
 #include <cmath>
@@ -39,11 +35,11 @@ struct DctLookup {
 };
 
 template <std::size_t N>
-Lookup build(const ipu::tables::Vlc (&table)[N]) {
+Lookup build(const tables::Vlc (&table)[N]) {
     Lookup l;
-    for (const ipu::tables::Vlc &e : table) l.bits = std::max<unsigned>(l.bits, e.length);
+    for (const tables::Vlc &e : table) l.bits = std::max<unsigned>(l.bits, e.length);
     l.entries.resize(std::size_t{1} << l.bits);
-    for (const ipu::tables::Vlc &e : table) {
+    for (const tables::Vlc &e : table) {
         const unsigned shift = l.bits - e.length;
         for (std::uint32_t i = 0; i < (1u << shift); ++i)
             l.entries[(static_cast<std::uint32_t>(e.code) << shift) | i] = {e.length, e.value};
@@ -52,11 +48,11 @@ Lookup build(const ipu::tables::Vlc (&table)[N]) {
 }
 
 template <std::size_t N>
-DctLookup build(const ipu::tables::Dct (&table)[N]) {
+DctLookup build(const tables::Dct (&table)[N]) {
     DctLookup l;
-    for (const ipu::tables::Dct &e : table) l.bits = std::max<unsigned>(l.bits, e.length);
+    for (const tables::Dct &e : table) l.bits = std::max<unsigned>(l.bits, e.length);
     l.entries.resize(std::size_t{1} << l.bits);
-    for (const ipu::tables::Dct &e : table) {
+    for (const tables::Dct &e : table) {
         const unsigned shift = l.bits - e.length;
         for (std::uint32_t i = 0; i < (1u << shift); ++i)
             l.entries[(static_cast<std::uint32_t>(e.code) << shift) | i] = {e.length, e.run, e.level};
@@ -66,17 +62,17 @@ DctLookup build(const ipu::tables::Dct (&table)[N]) {
 
 // Every table the decoder needs, built once.
 struct Tables {
-    Lookup mbai = build(ipu::tables::kMbAddressIncrement);
-    Lookup mb_i = build(ipu::tables::kMbTypeI);
-    Lookup mb_p = build(ipu::tables::kMbTypeP);
-    Lookup mb_b = build(ipu::tables::kMbTypeB);
-    Lookup motion = build(ipu::tables::kMotionCode);
-    Lookup dmv = build(ipu::tables::kDmVector);
-    Lookup dc_luma = build(ipu::tables::kDcSizeLuma);
-    Lookup dc_chroma = build(ipu::tables::kDcSizeChroma);
-    Lookup cbp = build(ipu::tables::kCodedBlockPattern);
-    DctLookup dct0 = build(ipu::tables::kDctTable0);
-    DctLookup dct1 = build(ipu::tables::kDctTable1);
+    Lookup mbai = build(tables::kMbAddressIncrement);
+    Lookup mb_i = build(tables::kMbTypeI);
+    Lookup mb_p = build(tables::kMbTypeP);
+    Lookup mb_b = build(tables::kMbTypeB);
+    Lookup motion = build(tables::kMotionCode);
+    Lookup dmv = build(tables::kDmVector);
+    Lookup dc_luma = build(tables::kDcSizeLuma);
+    Lookup dc_chroma = build(tables::kDcSizeChroma);
+    Lookup cbp = build(tables::kCodedBlockPattern);
+    DctLookup dct0 = build(tables::kDctTable0);
+    DctLookup dct1 = build(tables::kDctTable1);
     double cosines[8][8];
 
     Tables() {

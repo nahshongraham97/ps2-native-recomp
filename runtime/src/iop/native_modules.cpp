@@ -1,5 +1,6 @@
 #include "iop.hpp"
 #include "kernel.hpp"
+#include "adx_native.hpp"
 #include "dev9_offline.hpp"
 #include "libsd_native.hpp"
 #include "mcserv.hpp"
@@ -196,6 +197,10 @@ NativeIopLibrary sio2man_library(std::uint16_t version, bool memory_card_imports
 
 } // namespace
 
+void reset_native_modules() {
+    g_native_modules_registered = false;
+}
+
 void install_native_modules() {
     g_sio2man_started = false;
     padman::reset();
@@ -276,9 +281,12 @@ void install_native_modules() {
     };
     register_native_module(std::move(lgaud_module));
 
-    // CRI_ADXI is compiled ahead-of-time (AOT) via the reference codegen pipeline
-    // (iopn_CRI_ADXI_B00071300_H990112CDFA87D073_71300.cpp). Strict mode runs the compiled
-    // C++ module body natively; the diagnostic placeholder stub is retired.
+    // CRI_ADXI is replaced by the host-native service (adx_native.cpp, SID 0x90000200).
+    // The native module registration stops the guest IRX from loading at all, and
+    // serves all 12 SIF RPC functions natively with zero guest IOP instructions
+    // and zero emulated IPU operations.
+    adx_native::reset();
+    register_native_module(adx_native::make_module());
     register_native_module(libsd_native::make_module());
 
     NativeIopModule mwfilefr;

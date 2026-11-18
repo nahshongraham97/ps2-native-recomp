@@ -622,6 +622,13 @@ int main(int argc, char **argv) {
 #else
     std::atexit([] { ps2::flush_memory_card(); });
 #endif
+    // Default to retail native recompiled execution (zero flags required)
+    if (ps2::os::env("PS2_NATIVE_GL").empty()) ps2::os::set_env("PS2_NATIVE_GL", "1");
+    if (ps2::os::env("PS2_GS_PACKET_NATIVE").empty()) ps2::os::set_env("PS2_GS_PACKET_NATIVE", "1");
+    if (ps2::os::env("PS2_GS_PACKET_NATIVE_STRICT").empty()) ps2::os::set_env("PS2_GS_PACKET_NATIVE_STRICT", "1");
+    if (ps2::os::env("PS2_VU_AOT_STRICT").empty()) ps2::os::set_env("PS2_VU_AOT_STRICT", "1");
+    if (ps2::os::env("PS2_IOP_NATIVE_STRICT").empty()) ps2::os::set_env("PS2_IOP_NATIVE_STRICT", "1");
+
     std::vector<std::string> args{argv[1]};
     [[maybe_unused]] bool window = false, fullscreen = false;
     std::string load_path;
@@ -763,6 +770,28 @@ int main(int argc, char **argv) {
     }
     std::fprintf(stderr, "[native-vfs] mounted extracted content root %s\n",
                  ps2::os::utf8(mka::content::mounted_root()).c_str());
+    if (ps2::g_options.memcard_path.empty()) {
+        const std::vector<std::filesystem::path> card_candidates = {
+            content_root / "armageddon.ps2",
+            content_root.parent_path() / "armageddon.ps2",
+            program.parent_path() / "armageddon.ps2",
+            program.parent_path().parent_path() / "armageddon.ps2",
+            program.parent_path().parent_path() / "disc" / "armageddon.ps2",
+            std::filesystem::path("armageddon.ps2"),
+            std::filesystem::path("saves") / "armageddon.ps2"
+        };
+        for (const auto &cand : card_candidates) {
+            std::error_code ec;
+            if (std::filesystem::is_regular_file(cand, ec) && !ec) {
+                ps2::g_options.memcard_path = ps2::os::utf8(cand);
+                break;
+            }
+        }
+        if (ps2::g_options.memcard_path.empty()) {
+            ps2::g_options.memcard_path = "saves/armageddon.ps2";
+        }
+        std::fprintf(stderr, "[mc] auto-resolved memory card path: %s\n", ps2::g_options.memcard_path.c_str());
+    }
     std::sort(ps2::g_options.frame_capture_frames.begin(), ps2::g_options.frame_capture_frames.end());
     ps2::g_options.frame_capture_frames.erase(
         std::unique(ps2::g_options.frame_capture_frames.begin(), ps2::g_options.frame_capture_frames.end()),
@@ -851,7 +880,13 @@ int main(int argc, char **argv) {
             return 1;
         }
         ps2::boot(entry, args);
-        if (const auto mka_env = ps2::os::env("MKA_INTERCEPT_COMBAT"); !mka_env.empty() && mka_env != "0" && mka_env != "off") {
+        const std::string run_target = argv[1] ? argv[1] : "";
+        const bool is_mka = (run_target.find("SLUS_214.10") != std::string::npos ||
+                             run_target.find("mkarmageddon") != std::string::npos ||
+                             run_target.find("armageddon") != std::string::npos ||
+                             entry == 0x00100008u);
+        const auto mka_env = ps2::os::env("MKA_INTERCEPT_COMBAT");
+        if (is_mka || (!mka_env.empty() && mka_env != "0" && mka_env != "off")) {
             mka::combat::register_mka_combat_hooks();
         }
         if (ps2::hook::is_enabled()) {

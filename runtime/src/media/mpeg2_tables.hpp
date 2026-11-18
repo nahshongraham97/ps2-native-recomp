@@ -145,7 +145,3 @@ constexpr std::uint8_t kAlternate[64] = {
 
 } // namespace ps2::media::tables
 
-// Compatibility alias
-namespace ps2::ipu::tables {
-using namespace ps2::media::tables;
-}

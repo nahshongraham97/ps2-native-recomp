@@ -255,9 +255,14 @@ std::int32_t mc_get_info2(const McDescParam &request, McEndParam2 &reply) {
     if (request.port != 0 || request.slot != 0) return kMcFailDetect2;
 
     std::vector<std::uint8_t> image;
-    if (!sio2::card_image(image, true)) return kMcFailDetect2;
     std::uint32_t free_clusters = 0;
-    if (!mc_card_formatted_and_free(image, free_clusters)) return kMcNoFormat;
+    if (sio2::card_image(image, true)) {
+        if (!mc_card_formatted_and_free(image, free_clusters)) return kMcNoFormat;
+    } else {
+        // Native Windows directory-backed memory card (saves/ or AppData)
+        // Eliminates reliance on raw 8 MB PS2 memory card image.
+        free_clusters = 8100u;
+    }
 
     free_clusters = host_calculate_free_clusters(free_clusters);
 
@@ -721,22 +726,28 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
         std::int32_t result = kMcFailDetect2;
         if (request.port == 0 && request.slot == 0) {
             std::vector<std::uint8_t> image;
+            std::uint32_t free_clusters = 0;
             if (sio2::card_image(image, true)) {
-                std::uint32_t free_clusters = 0;
                 if (mc_card_formatted_and_free(image, free_clusters)) {
                     result = kMcSucceed;
-                    free_clusters = host_calculate_free_clusters(free_clusters);
-                    if (request.size > 0) aux.type = 2; // sceMcTypePS2
-                    if (request.offset != 0)
-                        aux.free = free_clusters > static_cast<std::uint32_t>(std::numeric_limits<std::int32_t>::max())
-                                       ? 0
-                                       : static_cast<std::int32_t>(free_clusters);
-                    if (s_card_changed[0][0]) {
-                        s_card_changed[0][0] = false;
-                        result = kMcChangedCard;
-                    }
                 } else {
                     result = kMcNoFormat;
+                }
+            } else {
+                // Native Windows directory-backed memory card
+                result = kMcSucceed;
+                free_clusters = 8100u;
+            }
+            if (result == kMcSucceed) {
+                free_clusters = host_calculate_free_clusters(free_clusters);
+                if (request.size > 0) aux.type = 2; // sceMcTypePS2
+                if (request.offset != 0)
+                    aux.free = free_clusters > static_cast<std::uint32_t>(std::numeric_limits<std::int32_t>::max())
+                                   ? 0
+                                   : static_cast<std::int32_t>(free_clusters);
+                if (s_card_changed[0][0]) {
+                    s_card_changed[0][0] = false;
+                    result = kMcChangedCard;
                 }
             }
         }

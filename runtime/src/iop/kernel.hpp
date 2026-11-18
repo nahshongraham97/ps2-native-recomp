@@ -155,6 +155,7 @@ bool compiled_import_stub_matches(std::uint32_t address, const std::string &libr
                                   std::uint16_t version, std::uint32_t ordinal);
 // Installs built-in host-native module/service descriptors. Called during
 // IOP kernel boot; this does not load or execute guest IRX instructions.
+void reset_native_modules();
 void install_native_modules();
 
 // Legacy callback seam retained for non-strict diagnostics. Strict native

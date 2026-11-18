@@ -31,16 +31,10 @@
 namespace mka::combat {
 
 // Interception Activation State
-inline bool g_combat_interception_active = false;
+inline bool g_combat_interception_active = true;
 
 inline bool is_interception_enabled() {
-    if (g_combat_interception_active) return true;
-    const std::string env = ps2::os::env("MKA_INTERCEPT_COMBAT");
-    if (!env.empty() && env != "0" && env != "off") {
-        g_combat_interception_active = true;
-        return true;
-    }
-    return false;
+    return true;
 }
 
 // Native Phase 2 Combo History Tracker (outside RDRAM)
@@ -1000,30 +994,22 @@ inline void handle_video_stream(ps2::Cpu &c, std::uint32_t depth,
                      stream_id_raw, static_cast<unsigned long long>(s_video_calls));
     }
 
-    // Bypass idle attract demo (ID=3), quad main menu loop (ID=4), and idle trailers (ID=5, 6, 7).
-    // Also bypass looping back to Title Screen (ID=1) or Opening Cinematic (ID=2) once title has booted.
-    // In MKA, idling at the main menu triggers video streams that repeatedly re-instantiate
-    // CRI ADX/SFD on the IOP without clean teardown, eventually causing "[iop] out of memory allocating 0x8300".
-    // Bypassing idle attract/loop streams keeps the game stably in the main menu without crashing or interruption.
-    static bool s_has_booted_title = false;
-    if (stream_id == armageddon::VideoStreamId::TitleScreen && !s_has_booted_title) {
-        s_has_booted_title = true;
-        real_unit_0020(c, 126u, depth);
-        return;
-    }
-
-    const bool is_idle_attract_or_loop = (
+    // Bypass opening movies, midway logo, title stream, idle attract demo (ID=3), quad main menu loop (ID=4), and idle trailers (ID=5, 6, 7).
+    // In MKA offline headless recompilation, bypassing opening video streams allows instantaneous transition
+    // directly to character selection and kombat matches without waiting for video playback.
+    const bool is_bypass_stream = (
+        stream_id == armageddon::VideoStreamId::MidwayLogo ||
+        stream_id == armageddon::VideoStreamId::TitleScreen ||
+        stream_id == armageddon::VideoStreamId::OpeningCinematic ||
         stream_id == armageddon::VideoStreamId::AttractDemo ||
         stream_id == armageddon::VideoStreamId::QuadMainMenu ||
         stream_id == armageddon::VideoStreamId::StrangeHoldTrailer ||
         stream_id == armageddon::VideoStreamId::SpyHunterTrailer ||
-        stream_id == armageddon::VideoStreamId::BlitzTrailer ||
-        (s_has_booted_title && (stream_id == armageddon::VideoStreamId::TitleScreen ||
-                                stream_id == armageddon::VideoStreamId::OpeningCinematic))
+        stream_id == armageddon::VideoStreamId::BlitzTrailer
     );
 
-    if (is_idle_attract_or_loop) {
-        std::fprintf(stderr, "[mka-video] Bypassing idle attract/loop stream %u (%s) to prevent IOP memory exhaustion\n",
+    if (is_bypass_stream) {
+        std::fprintf(stderr, "[mka-video] Bypassing stream %u (%s) -> direct match/menu progression\n",
                      stream_id_raw, is_known ? g_video_stream_registry.get(stream_id).normal_path.c_str() : "unknown");
         c.r[2].w[0] = 0;
         c.pc = c.r[31].w[0];
@@ -1202,6 +1188,57 @@ inline void register_mka_combat_hooks() {
     ps2::hook::register_hook(kHealthScalarGuestPc, hook_subzero_health, "MKA_HealthDeduction");
     std::fprintf(stderr, "[mka-hooks] Combat telemetry armed for guest PC 0x%08X (Linker Wrappers Active)\n",
                  kHealthScalarGuestPc);
+
+    // Host-native replacement hooks for Metrowerks CodeWarrior Overlay static initializers:
+    // MOVIER.OVL ctor at 0x0084A100 (sets active bank mode = 2)
+    ps2::hook::register_hook(0x0084A100u, [](ps2::Cpu &c) {
+        std::fprintf(stderr, "[mka-overlay] MOVIER.OVL static ctor intercepted at 0x%08X (RA=0x%08X)\n", c.pc, c.r[31].w[0]);
+        c.r[3].w[0] = 2u;
+        ps2::st32(c.r[28].w[0] - 20304u, 2u);
+        c.pc = c.r[31].w[0];
+    }, "MOVIER_ctor");
+
+    // MOVIER.OVL playback state setter function at 0x007DC1F8
+    ps2::hook::register_hook(0x007DC1F8u, [](ps2::Cpu &c) {
+        c.r[2].sd[0] = static_cast<std::int32_t>(0x00830000u);
+        c.r[3].sd[0] = static_cast<std::int32_t>(0x00830000u);
+        ps2::st32(0x0082C774u, c.r[4].w[0]);
+        ps2::st32(0x0082C778u, c.r[5].w[0]);
+        c.pc = c.r[31].w[0];
+    }, "movier_007DC1F8");
+
+    // MOVIER.OVL stream state initializer at 0x00812750 / 0x00812760
+    ps2::hook::register_hook(0x00812750u, [](ps2::Cpu &c) {
+        ps2::st32(c.r[4].w[0] + 0u, 0u);
+        ps2::st32(c.r[4].w[0] + 4u, 0u);
+        ps2::st32(c.r[4].w[0] + 8u, c.r[5].w[0]);
+        c.pc = c.r[31].w[0];
+    }, "movier_00812750");
+    ps2::hook::register_hook(0x00812760u, [](ps2::Cpu &c) {
+        c.pc = c.r[31].w[0];
+    }, "movier_00812760");
+
+    // GAMER.OVL ctor at 0x007C4980 (sets active bank mode = 1)
+    ps2::hook::register_hook(0x007C4980u, [](ps2::Cpu &c) {
+        std::fprintf(stderr, "[mka-overlay] GAMER.OVL static ctor intercepted at 0x%08X (RA=0x%08X)\n", c.pc, c.r[31].w[0]);
+        c.r[3].w[0] = 1u;
+        ps2::st32(c.r[28].w[0] - 20304u, 1u);
+        c.pc = c.r[31].w[0];
+    }, "GAMER_ctor");
+
+    // NETR.OVL ctor at 0x00856700 / 0x00856780 (sets active bank mode = 3)
+    ps2::hook::register_hook(0x00856700u, [](ps2::Cpu &c) {
+        std::fprintf(stderr, "[mka-overlay] NETR.OVL static ctor intercepted at 0x%08X (RA=0x%08X)\n", c.pc, c.r[31].w[0]);
+        c.r[3].w[0] = 3u;
+        ps2::st32(c.r[28].w[0] - 20304u, 3u);
+        c.pc = c.r[31].w[0];
+    }, "NETR_ctor");
+    ps2::hook::register_hook(0x00856780u, [](ps2::Cpu &c) {
+        std::fprintf(stderr, "[mka-overlay] NETR.OVL alt static ctor intercepted at 0x%08X (RA=0x%08X)\n", c.pc, c.r[31].w[0]);
+        c.r[3].w[0] = 3u;
+        ps2::st32(c.r[28].w[0] - 20304u, 3u);
+        c.pc = c.r[31].w[0];
+    }, "NETR_alt_ctor");
 }
 
 } // namespace mka::combat
