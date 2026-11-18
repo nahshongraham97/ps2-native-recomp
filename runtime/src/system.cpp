@@ -12,7 +12,6 @@
 #include "iop/sif.hpp"
 #include "iop/sio2.hpp"
 #include "iop/audio_service.hpp"
-#include "ipu/ipu.hpp"
 #include "ps2/ee_live.hpp"
 #include "kernel.hpp"
 #include "load_stats.hpp"
@@ -574,7 +573,6 @@ void machine_state(state::Stream &s) {
     sync_vu_thread();
     vif::state(s);
     vu::state(s);
-    ipu::state(s);
     gs::state(s);
     gif::state(s);
     iop::state(s);
@@ -882,7 +880,6 @@ int run() {
         }
     }
     gs::stats();
-    ipu::stats();
     if (const std::string path = os::env("PS2_DUMP_AUDIO"); !path.empty()) iop::audio_native::dump_audio(path.c_str());
     if (std::getenv("PS2_TRACE_SPU2")) iop::audio_native::dump_voices();
     dmac::stats();

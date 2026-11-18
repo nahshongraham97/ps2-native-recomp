@@ -358,7 +358,7 @@ bool VideoDecoder::decode(const std::uint8_t *data, std::size_t size, std::size_
                 // The dequantisation and the inverse DCT.
                 const int scale = !q_scale_type ? static_cast<int>(quantiser) * 2 : kNonLinearScale[quantiser & 31u];
                 const std::uint8_t *weights = slice.intra ? intra_matrix_ : nonintra_matrix_;
-                const std::uint8_t *scan = alternate_scan ? ipu::tables::kAlternate : ipu::tables::kZigzag;
+                const std::uint8_t *scan = alternate_scan ? media::tables::kAlternate : media::tables::kZigzag;
                 int f[64] = {};
                 int sum = 0;
                 for (int k = 0; k < 64; ++k) {

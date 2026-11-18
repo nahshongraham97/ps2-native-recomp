@@ -88,7 +88,6 @@ else()
         runtime/src/vu_micro.cpp
         runtime/src/vu_jit.cpp
         runtime/src/vu_jit_web.cpp
-        runtime/src/ipu/ipu.cpp
         runtime/src/media/mpeg2.cpp
         runtime/src/media/mpeg2_decoder.cpp
         runtime/src/gs/gs.cpp

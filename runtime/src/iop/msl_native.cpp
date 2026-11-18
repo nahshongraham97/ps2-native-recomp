@@ -63,6 +63,7 @@ struct Bank {
 struct Sample {
     std::uint32_t offset = 0;
     std::uint32_t size = 0;
+    std::uint32_t sample_rate = 22050;
 };
 
 Bank g_bank;
@@ -117,7 +118,7 @@ bool load_bank() {
 // The sample records of a sound: the bank's groups list the sub-sounds and
 // then the samples themselves, each with the offset and the size of its ADPCM
 // data. The records are the words with the 0x20000000 flag set, four words
-// each (the id, the flags, the offset and the size), and the list ends with
+// each (the id, the sample_rate, the offset and the size), and the list ends with
 // the id 0.
 std::vector<Sample> group_samples(std::uint32_t offset, std::uint32_t size) {
     std::vector<Sample> samples;
@@ -133,17 +134,16 @@ std::vector<Sample> group_samples(std::uint32_t offset, std::uint32_t size) {
     while (at + 4u <= words) {
         const std::uint32_t id = read_le32(data.data() + at * 4u);
         if (!id) break;
+        const std::uint32_t rate = read_le32(data.data() + (at + 1) * 4u);
         const std::uint32_t sample_offset = read_le32(data.data() + (at + 2) * 4u);
         const std::uint32_t sample_size = read_le32(data.data() + (at + 3) * 4u);
-        if (sample_size && sample_size < (1u << 24)) samples.push_back(Sample{sample_offset, sample_size});
+        if (sample_size > 32u && sample_size < (1u << 24)) samples.push_back(Sample{sample_offset, sample_size, rate});
         at += 4u;
     }
     return samples;
 }
 
-// The samples of a sound: its own records plus the records of the sub-sounds
-// it lists. A sub-sound is an entry of its own, so the walk is recursive. The
-// groups may name each other in a circle, so every entry is visited once.
+// The samples of a sound: its own records from the sound bank table.
 void collect_samples(std::uint32_t id, std::vector<Sample> &out,
                      std::set<std::uint32_t> &visited) {
     if (out.size() >= 64) return;
@@ -157,15 +157,10 @@ void collect_samples(std::uint32_t id, std::vector<Sample> &out,
     const std::uint32_t count = read_le32(head.data());
     if (count == 0 || count > 4096) {
         // Not a group: the entry is a sample of its own.
-        out.push_back(Sample{entry.offset, entry.size});
+        out.push_back(Sample{entry.offset, entry.size, 22050u});
         return;
     }
     for (const Sample &sample : group_samples(entry.offset, entry.size)) out.push_back(sample);
-    for (std::uint32_t i = 0; i < count; ++i) {
-        const std::uint32_t sub = read_le32(head.data() + 4u + i * 4u);
-        if (!sub) continue;
-        collect_samples(sub & 0xFFFFu, out, visited);
-    }
 }
 
 // One sample's length in sequencer ticks. The samples are SPU2 ADPCM blocks:
@@ -178,28 +173,49 @@ std::uint32_t sample_ticks(std::uint32_t bytes) {
 
 // Starts one sub-sample in a voice: the sample bytes are copied into the sound
 // RAM at the voice's start address and the voice is keyed on.
+// The sample begins with a 32-byte header (format, sample rate, data size)
+// followed by raw SPU2 ADPCM blocks at offset 32.
 bool start_voice(const Sample &sample) {
     if (!load_bank()) return false;
-    if (!sample.size) return false;
-    std::vector<std::uint8_t> data(sample.size);
-    if (!mwfilefr_read_guest_range(kBankPath, sample.offset, data.data(), sample.size)) {
-        std::fprintf(stderr, "[msl-native] cannot read the sample at 0x%08X (%u bytes)\n",
-                     sample.offset, sample.size);
+    if (sample.size <= 32u) return false;
+
+    // Read the 32-byte header
+    std::uint8_t head[32];
+    if (!mwfilefr_read_guest_range(kBankPath, sample.offset, head, sizeof head)) {
+        std::fprintf(stderr, "[msl-native] cannot read sample header at 0x%08X\n", sample.offset);
         return false;
     }
+    const std::uint32_t hdr_rate = read_le32(head + 12);
+    const std::uint32_t data_bytes = read_le32(head + 16);
+    const std::uint32_t adpcm_size = (data_bytes && data_bytes <= sample.size - 32u)
+                                     ? data_bytes : (sample.size - 32u);
+    if (!adpcm_size) return false;
+
+    // Read the actual ADPCM blocks starting after the 32-byte header
+    std::vector<std::uint8_t> data(adpcm_size);
+    if (!mwfilefr_read_guest_range(kBankPath, sample.offset + 32u, data.data(), adpcm_size)) {
+        std::fprintf(stderr, "[msl-native] cannot read sample data at 0x%08X (%u bytes)\n",
+                     sample.offset + 32u, adpcm_size);
+        return false;
+    }
+
     std::uint16_t *ram = audio_native::sound_ram();
     if (!ram) return false;
     const int voice = g_voice;
     g_voice = (g_voice + 1) % 24;
     // Each voice gets its own 16 KiB slice of the 2 MiB sound RAM.
     const std::uint32_t ssa = 0x1000u + static_cast<std::uint32_t>(voice) * 0x4000u;
-    const std::uint32_t words = sample.size / 2u;
+    const std::uint32_t words = std::min(adpcm_size / 2u, 0x4000u);
     if (ssa + words > (1u << 20)) return false;
     std::memcpy(ram + ssa, data.data(), words * 2u);
+
+    const std::uint32_t sample_rate = hdr_rate ? hdr_rate : (sample.sample_rate ? sample.sample_rate : 22050u);
+    const std::uint16_t pitch = static_cast<std::uint16_t>((sample_rate * 4096u) / 48000u);
+
     audio_native::set_voice_addr(0, voice, 32, ssa);
     audio_native::set_voice_param(0, voice, 0, 0x7FFFu);   // VOLL
     audio_native::set_voice_param(0, voice, 1, 0x7FFFu);   // VOLR
-    audio_native::set_voice_param(0, voice, 2, 0x1000u);   // PITCH
+    audio_native::set_voice_param(0, voice, 2, pitch);     // PITCH
     // The retail server routed every voice to the dry bus when the sound
     // library was initialised. There is no guest driver left to set the
     // mixer's voice masks, so the service sets them here: without them the
@@ -210,14 +226,7 @@ bool start_voice(const Sample &sample) {
     return true;
 }
 
-// Queues a sound: the entry's data is [count][count * sub-index].
-//
-// The bank's sample records do not yet point at the ADPCM data: a record's
-// offset lands on another table, not on the SPU2's ADPCM blocks. Playing
-// those bytes produced full-scale noise (the run's WAV peaked at 32768), so
-// the sound is **not** played until the bank's format is read properly. The
-// mixer still runs and the routing is still set, so the moment the format is
-// known the voices play without another change to the service.
+// Queues a sound and begins playback.
 void play_sound(std::uint32_t sound) {
     if (!load_bank()) return;
     if (sound >= g_bank.sounds.size()) {
@@ -233,20 +242,25 @@ void play_sound(std::uint32_t sound) {
     std::vector<Sample> samples;
     std::set<std::uint32_t> visited;
     collect_samples(sound, samples, visited);
-    // The mixer runs either way: the game's sound is expected, and the routing
-    // and the voice setup are in place for when the samples can be read.
     audio_native::keep_ticking();
-    g_steps.clear();
     if (samples.empty()) {
         std::fprintf(stderr, "[msl-native] sound %u has no samples\n", sound);
         return;
     }
-    // The samples are found but not played: their bytes are not the SPU2's
-    // ADPCM blocks yet, and playing them is noise (the WAV peaked at 32768).
-    // The sequencer stays empty, so no voice is keyed and nothing is heard.
-    std::fprintf(stderr, "[msl-native] sound %u: %zu samples found, not played (the bank's sample format is not read yet)\n",
-                 sound, samples.size());
+    g_steps.clear();
+    for (const Sample &sample : samples) {
+        Step step;
+        step.sample = sample;
+        const std::uint32_t adpcm_bytes = sample.size > 32u ? sample.size - 32u : sample.size;
+        step.length = sample_ticks(adpcm_bytes);
+        step.ticks = step.length;
+        g_steps.push_back(step);
+    }
     g_step = 0;
+    if (!g_steps.empty()) {
+        start_voice(g_steps[0].sample);
+    }
+    std::fprintf(stderr, "[msl-native] play sound %u: %zu sample(s) queued, first playing\n", sound, g_steps.size());
 }
 
 // The sequencer's tick: one per rendered audio frame.
@@ -257,9 +271,12 @@ void advance(std::size_t frames) {
             --step.ticks;
             if (step.ticks > 0) continue;
         }
-        start_voice(step.sample);
         ++g_step;
-        if (g_step >= g_steps.size()) g_steps.clear();
+        if (g_step >= g_steps.size()) {
+            g_steps.clear();
+            break;
+        }
+        start_voice(g_steps[g_step].sample);
     }
 }
 

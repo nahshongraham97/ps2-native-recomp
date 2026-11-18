@@ -13,7 +13,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "ipu/tables.hpp"
+#include "mpeg2_tables.hpp"
 
 namespace ps2::media::vlc {
 

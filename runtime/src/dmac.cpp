@@ -4,7 +4,6 @@
 
 #include "gs/gif.hpp"
 #include "gs/gs.hpp"
-#include "ipu/ipu.hpp"
 #include "hw.hpp"
 #include "ps2/memory.hpp"
 #include "ps2/system.hpp"
@@ -356,8 +355,7 @@ void start(int ch) {
         return;
     }
     if (ch == 3 || ch == 4) {
-        if (ch == 3 && !c.qwc) finish(ch);
-        else ipu::dma_started(ch);
+        finish(ch);
         return;
     }
     const std::uint32_t mode = (c.chcr >> 2) & 3u;
@@ -380,55 +378,8 @@ void resume(int ch) {
     run_chain(ch);
 }
 
-bool ipu_pull(std::uint8_t *qword) {
-    Channel &c = g_ch[4];
-    if (!(c.chcr & 0x100u)) return false;
-    const bool chain = ((c.chcr >> 2) & 3u) == 1;
-    while (!c.qwc) {
-        if (!chain || c.tag_end) {
-            finish(4);
-            return false;
-        }
-        std::uint64_t tag;
-        std::memcpy(&tag, source(c.tadr), 8);
-        c.chcr = (c.chcr & 0xFFFFu) | (static_cast<std::uint32_t>(tag >> 16) << 16);
-        const std::uint32_t qwc = static_cast<std::uint32_t>(tag) & 0xFFFFu;
-        const std::uint32_t id = static_cast<std::uint32_t>(tag >> 28) & 7u;
-        const std::uint32_t addr = (static_cast<std::uint32_t>(tag >> 32) & 0x7FFFFFF0u) | (static_cast<std::uint32_t>(tag >> 63) << 31);
-        const bool irq = (tag >> 31) & 1u, tie = c.chcr & 0x80u;
-        std::uint32_t data = c.tadr + 16;
-        switch (id) {
-        case 0: data = addr; c.tadr += 16; c.tag_end = true; break;
-        case 1: c.tadr = data + qwc * 16; break;
-        case 2: c.tadr = addr; break;
-        case 3: case 4: data = addr; c.tadr += 16; break;
-        default: c.tag_end = true; break;
-        }
-        if (tie && irq) c.tag_end = true;
-        static const bool trace = std::getenv("PS2_TRACE_DMA") != nullptr;
-        if (trace) std::fprintf(stderr, "[dma] ch4 tag id %u qwc %u addr 0x%08X data 0x%08X next 0x%08X end %d\n", id, qwc, addr, data, c.tadr, c.tag_end);
-        c.madr = data;
-        c.qwc = qwc;
-        if (!qwc && c.tag_end) {
-            finish(4);
-            return false;
-        }
-    }
-    std::memcpy(qword, source(c.madr), 16);
-    c.madr += 16;
-    if (!--c.qwc && (!chain || c.tag_end)) finish(4);
-    return true;
-}
-
-bool ipu_push(const std::uint8_t *qword) {
-    Channel &c = g_ch[3];
-    if (!(c.chcr & 0x100u) || !c.qwc) return false;
-    std::memcpy(target(c.madr), qword, 16);
-    watch_span(c.madr, 16, "dma:ipu_push");
-    c.madr += 16;
-    if (!--c.qwc) finish(3);
-    return true;
-}
+bool ipu_pull(std::uint8_t *) { return false; }
+bool ipu_push(const std::uint8_t *) { return false; }
 
 void reset() {
     for (Channel &c : g_ch) c = Channel{};

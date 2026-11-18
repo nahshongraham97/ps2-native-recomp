@@ -1312,6 +1312,7 @@ bool guest_wrote_vram(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
                       std::uint32_t x, std::uint32_t y, std::uint32_t w, std::uint32_t h) {
 #if defined(_WIN32)
     if (!g_enabled || !g_hdc || !w || !h) return false;
+    if (wglGetCurrentContext() != g_hrc && !wglMakeCurrent(g_hdc, g_hrc)) return false;
     const std::uint32_t bytes_per_pixel =
         psm == gs::PSMCT24 ? 3u : (psm == gs::PSMCT16 || psm == gs::PSMCT16S) ? 2u : 4u;
     const std::uint32_t units = (w * h * bytes_per_pixel + 255u) / 256u + 1u;
@@ -1342,6 +1343,67 @@ bool guest_wrote_vram(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
             }
         }
         entry.stale = true;
+    }
+    if (!pushed) {
+        TextureCache *entry = find_pool_entry(base, psm, bw);
+        if (!entry) {
+            for (TextureCache &candidate : g_pool) {
+                if (!candidate.valid) { entry = &candidate; break; }
+            }
+            if (!entry) {
+                entry = &g_pool[0];
+                for (TextureCache &candidate : g_pool) {
+                    if (candidate.last_use < entry->last_use) entry = &candidate;
+                }
+            }
+        }
+        if (entry) {
+            if (!entry->object) glGenTextures(1, &entry->object);
+            if (entry->object) {
+                const std::uint32_t full_w = std::max(entry->valid ? entry->width : 0u, x + w);
+                const std::uint32_t full_h = std::max(entry->valid ? entry->height : 0u, y + h);
+                entry->valid = true;
+                entry->base = base;
+                entry->width = full_w;
+                entry->height = full_h;
+                entry->units = texture_units(full_w, full_h);
+                entry->params.psm = psm;
+                entry->params.tbp = base;
+                entry->params.tbw = bw;
+                entry->params.cpsm = 0;
+                entry->params.csa = 0;
+                entry->params.ta0 = 0;
+                entry->params.aem = false;
+                entry->params.clut = nullptr;
+                entry->last_use = ++g_texture_age;
+                entry->stale = false;
+
+                std::vector<std::uint32_t> pixels;
+                if (raster::decode_rect_rgba(entry->params, x, y, w, h, pixels)) {
+                    for (std::uint32_t &pixel : pixels) {
+                        const std::uint32_t a = (pixel >> 24) & 0xFFu;
+                        pixel = (pixel & 0x00FFFFFFu) | (std::min<std::uint32_t>(255u, a * 2u) << 24);
+                    }
+                    const GLuint previous = g_glstate.texture;
+                    glBindTexture(GL_TEXTURE_2D, entry->object);
+                    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+                    if (x == 0 && y == 0 && w == full_w && h == full_h) {
+                        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(full_w),
+                                     static_cast<GLsizei>(full_h), 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+                    } else {
+                        if (x == 0 && y == 0) {
+                            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(full_w),
+                                         static_cast<GLsizei>(full_h), 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+                        }
+                        glTexSubImage2D(GL_TEXTURE_2D, 0, static_cast<GLint>(x), static_cast<GLint>(y),
+                                        static_cast<GLsizei>(w), static_cast<GLsizei>(h), GL_RGBA,
+                                        GL_UNSIGNED_BYTE, pixels.data());
+                    }
+                    glBindTexture(GL_TEXTURE_2D, previous);
+                    pushed = true;
+                }
+            }
+        }
     }
     return pushed;
 #else

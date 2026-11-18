@@ -2,6 +2,7 @@
 #include "kernel.hpp"
 
 #include "mka/content_vfs.hpp"
+#include "ps2/disc.hpp"
 #include "ps2/os.hpp"
 
 #include "ps2/state.hpp"
@@ -49,12 +50,18 @@ int allocate() {
     return kTooMany;
 }
 
+std::optional<std::filesystem::path> resolve_path(const std::string &path) {
+    if (auto p = mka::content::resolve(path)) return p;
+    if (auto p = ps2::disc::native_vfs_path(path)) return std::filesystem::path(*p);
+    return std::nullopt;
+}
+
 }
 
 int open(const std::string &path, std::uint32_t flags) {
     const std::string device = device_of(path);
     File f;
-    if (const auto native_path = mka::content::resolve(path)) {
+    if (const auto native_path = resolve_path(path)) {
         std::error_code ec;
         if (!std::filesystem::is_regular_file(*native_path, ec) || ec) return kNoEntry;
         const std::uintmax_t native_size = std::filesystem::file_size(*native_path, ec);
@@ -97,7 +104,7 @@ int read(int fd, std::uint8_t *out, std::uint32_t size) {
     if (f.in_memory) {
         std::memcpy(out, f.memory.data() + f.position, n);
     } else if (!f.native_vfs_request.empty()) {
-        const auto host_path = mka::content::resolve(f.native_vfs_request);
+        const auto host_path = resolve_path(f.native_vfs_request);
         if (!host_path) return kNoEntry;
         std::ifstream file(*host_path, std::ios::binary);
         if (!file) return kNoEntry;
@@ -134,7 +141,7 @@ std::int64_t seek(int fd, std::int64_t offset, int whence) {
 }
 
 bool stat(const std::string &path, std::uint32_t &mode, std::uint32_t &size) {
-    const auto native_path = mka::content::resolve(path);
+    const auto native_path = resolve_path(path);
     if (!native_path) return false;
     std::error_code ec;
     const bool directory = std::filesystem::is_directory(*native_path, ec);
