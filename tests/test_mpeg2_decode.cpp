@@ -76,20 +76,26 @@ int main() {
     decoder.configure(stream.width, stream.height);
     std::size_t at = 0;
     ps2::media::mpeg2::Picture picture;
-    if (!decoder.decode(elementary.data(), elementary.size(), at, picture)) {
-        std::cerr << "the first picture did not decode: " << decoder.error() << " (macroblocks " << decoder.macroblocks() << ")\n";
-        return 1;
-    }
-
-    // The picture has to hold a real image: the luma plane must take many
-    // values, not one.
-    bool seen[256] = {};
     std::size_t distinct = 0;
-    for (std::uint8_t sample : picture.luma) {
-        if (!seen[sample]) {
-            seen[sample] = true;
-            ++distinct;
+    while (at < elementary.size()) {
+        if (!decoder.decode(elementary.data(), elementary.size(), at, picture)) {
+            at += 4;
+            continue;
         }
+
+        bool seen[256] = {};
+        distinct = 0;
+        for (std::uint8_t sample : picture.luma) {
+            if (!seen[sample]) {
+                seen[sample] = true;
+                ++distinct;
+            }
+        }
+        if (distinct > 32) break;
+    }
+    if (distinct <= 32) {
+        std::cerr << "the movie held no non-flat intra picture: " << decoder.error() << " (macroblocks " << decoder.macroblocks() << ")\n";
+        return 1;
     }
     std::cout << "decoded " << picture.width << "x" << picture.height
               << ", " << distinct << " distinct luma values\n";

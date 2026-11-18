@@ -26,6 +26,8 @@ constexpr std::uint8_t kDefaultNonIntra[64] = {
 };
 
 // The bit reader over the elementary stream.
+constexpr std::uint8_t kEscapeRun = 255;
+
 class Bits {
 public:
     Bits(const std::uint8_t *data, std::size_t size, std::size_t bit) : data_(data), size_(size), bit_(bit) {}
@@ -57,7 +59,7 @@ public:
         const vlc::Entry &e = l.entries[peek(l.bits)];
         if (!e.length) return false;
         bit_ += e.length;
-        value = e.value;
+        value = e.value & 0xFFFFu;
         return true;
     }
 
@@ -66,8 +68,14 @@ public:
         const vlc::DctEntry &e = l.entries[peek(l.bits)];
         if (!e.length) return false;
         bit_ += e.length;
-        run = e.run;
-        level = get(1) ? static_cast<std::int16_t>(-e.level) : e.level;
+        if (e.run == kEscapeRun) {
+            run = static_cast<std::uint8_t>(get(6));
+            const int v = static_cast<int>(get(12));
+            level = static_cast<std::int16_t>(v & 0x800 ? v - 0x1000 : v);
+        } else {
+            run = e.run;
+            level = get(1) ? static_cast<std::int16_t>(-e.level) : e.level;
+        }
         return true;
     }
 
@@ -84,8 +92,11 @@ struct Slice {
     std::uint8_t coded_block_pattern = 0x3Fu;
 };
 
+constexpr std::uint8_t kNonLinearScale[32] = {0,  1,  2,  3,  4,  5,  6,  7,  8,  10, 12, 14, 16, 18, 20, 22,
+                                              24, 28, 32, 36, 40, 44, 48, 52, 56, 64, 72, 80, 88, 96, 104, 112};
+
 // The escape is marked in the table by this run value.
-constexpr std::uint8_t kEscapeRun = 255;
+
 
 // The inverse DCT of the standard (a float one, as the IPU model does).
 void idct(const int *in, std::int16_t *out, const double (&cosines)[8][8]) {
@@ -132,7 +143,7 @@ bool VideoDecoder::decode(const std::uint8_t *data, std::size_t size, std::size_
             return false;
         }
         const std::uint8_t code = data[at_code + 3];
-        if (code >= 0x00 && code <= 0x1F) break;   // a picture header
+        if (code == 0x00) break;   // a picture header (0x00)
         at_code += 4;
     }
 
@@ -142,10 +153,19 @@ bool VideoDecoder::decode(const std::uint8_t *data, std::size_t size, std::size_
     bits.get(10);
     const std::uint32_t coding_type = bits.get(3);
     bits.get(16);
-    bits.get(1);
-    bits.get(1);
-    bits.get(3);
-    bits.get(3);
+    if (coding_type == 2 || coding_type == 3) {
+        bits.get(1);
+        bits.get(3);
+    }
+    if (coding_type == 3) {
+        bits.get(1);
+        bits.get(3);
+    }
+    while (bits.available() && bits.peek(1) == 1) {
+        bits.get(1);
+        bits.get(8);
+    }
+    if (bits.available()) bits.get(1); // extra_bit_picture == 0
 
     if (coding_type != 1) {
         // The predicted pictures need the motion compensation; the decoder
@@ -154,24 +174,48 @@ bool VideoDecoder::decode(const std::uint8_t *data, std::size_t size, std::size_
         at = at_code;
         return false;
     }
-    // The picture coding extension follows the picture header in an MPEG-2
-    // stream. It carries the f_codes and the scan flags, and the slices come
-    // after it.
-    {
-        std::size_t at_extension = bits.bit() / 8;
-        while (at_extension + 4 <= size &&
-               !(data[at_extension] == 0x00 && data[at_extension + 1] == 0x00 && data[at_extension + 2] == 0x01))
-            ++at_extension;
-        if (at_extension + 4 <= size && data[at_extension + 3] == 0xB5) {
-            std::size_t at_next = at_extension + 4;
-            while (at_next + 4 <= size &&
-                   !(data[at_next] == 0x00 && data[at_next + 1] == 0x00 && data[at_next + 2] == 0x01))
-                ++at_next;
-            bits.seek(at_next * 8);
+
+    // Default picture coding extension values
+    unsigned intra_dc_precision = 0;
+    bool q_scale_type = false;
+    bool intra_vlc_format = false;
+    bool alternate_scan = false;
+
+    // Advance through headers (extensions, user data) until the first slice
+    std::size_t next_sc = at_code + 4;
+    for (;;) {
+        while (next_sc + 4 <= size && !(data[next_sc] == 0x00 && data[next_sc + 1] == 0x00 && data[next_sc + 2] == 0x01))
+            ++next_sc;
+        if (next_sc + 4 > size) break;
+        const std::uint8_t sc = data[next_sc + 3];
+        if (sc == 0xB5) { // extension_start_code
+            Bits ext_bits(data, size, (next_sc + 4) * 8);
+            const std::uint32_t ext_id = ext_bits.get(4);
+            if (ext_id == 8) { // picture coding extension
+                ext_bits.get(4); // f_code[0][0]
+                ext_bits.get(4); // f_code[0][1]
+                ext_bits.get(4); // f_code[1][0]
+                ext_bits.get(4); // f_code[1][1]
+                intra_dc_precision = ext_bits.get(2);
+                ext_bits.get(2); // picture_structure
+                ext_bits.get(1); // top_field_first
+                ext_bits.get(1); // frame_pred_frame_dct
+                ext_bits.get(1); // concealment_motion_vectors
+                q_scale_type = ext_bits.get(1) != 0;
+                intra_vlc_format = ext_bits.get(1) != 0;
+                alternate_scan = ext_bits.get(1) != 0;
+            }
+            next_sc += 4;
+        } else if (sc == 0xB2) { // user_data
+            next_sc += 4;
+        } else if (sc >= 0x01 && sc <= 0xAF) { // first slice reached
+            bits.seek(next_sc * 8);
+            break;
         } else {
-            bits.seek(at_extension * 8);
+            next_sc += 4;
         }
     }
+
     if (width_ == 0 || height_ == 0) {
         error_ = "the picture size is not known";
         at = at_code;
@@ -187,7 +231,8 @@ bool VideoDecoder::decode(const std::uint8_t *data, std::size_t size, std::size_
 
     const std::uint32_t macroblocks_x = (width_ + 15) / 16;
     const std::uint32_t macroblocks_y = (height_ + 15) / 16;
-    std::int16_t dc[3] = {128, 128, 128};
+    const int dc_reset_val = 128 << intra_dc_precision;
+    std::int16_t dc[3] = {static_cast<std::int16_t>(dc_reset_val), static_cast<std::int16_t>(dc_reset_val), static_cast<std::int16_t>(dc_reset_val)};
     std::uint32_t macroblock = 0;
     std::size_t picture_end = size;
     bool failed = false;
@@ -201,50 +246,55 @@ bool VideoDecoder::decode(const std::uint8_t *data, std::size_t size, std::size_
             ++at_slice;
         if (at_slice + 4 > picture_end) break;
         const std::uint8_t code = data[at_slice + 3];
-        if (code == 0xB7) break;                    // the sequence end
-        if (code < 0x01 || code > 0xAF) {           // not a slice
+        if (code == 0x00 || code == 0xB7 || code > 0xAF) break; // next picture, sequence end, or non-slice
+        if (code < 0x01) {
             bits.seek((at_slice + 4) * 8);
             continue;
         }
         bits.seek((at_slice + 4) * 8);
 
-        // The slice header: the vertical position, the priority breakpoint,
-        // the quantiser scale code, the extra slice flag and the intra slice
-        // flag.
         Slice slice;
-        bits.get(8);
-        bits.get(7);
         slice.quantiser = bits.get(5);
-        if (bits.get(1)) bits.get(8);              // the extra slice information
-        slice.intra = bits.get(1) != 0;
-        if (!slice.intra) {
-            // The coded block pattern and the two sets of reserved bits.
-            std::uint32_t cbp = 0;
-            if (!bits.decode(vlc::tables().cbp, cbp)) {
-                failed = true;
-                break;
+        if (bits.peek(1)) {
+            bits.get(1);
+            slice.intra = bits.get(1) != 0;
+            bits.get(6);
+            while (bits.peek(1)) {
+                bits.get(1);
+                bits.get(8);
             }
-            slice.coded_block_pattern = static_cast<std::uint8_t>(cbp);
-            bits.get(5);
-            bits.get(5);
         }
+        bits.get(1); // extra_bit_slice == '0'
+        slice.intra = true; // In I-pictures, all macroblocks are intra
+
         // The DC predictors restart at every slice.
-        dc[0] = dc[1] = dc[2] = 128;
+        dc[0] = dc[1] = dc[2] = static_cast<std::int16_t>(dc_reset_val);
+
+        const std::uint32_t slice_row = code - 1;
+        macroblock = slice_row * macroblocks_x;
+        bool first_mb_in_slice = true;
 
         // The macroblocks of the slice.
         for (;;) {
-            // The macroblock address increment: the skipped macroblocks (the
-            // codes 0x22 and 0x23) and the macroblock itself.
+            if (bits.available() < 24 || bits.peek(24) == 1) {
+                break; // next start code reached
+            }
+
+            while (bits.available() >= 11 && bits.peek(11) == 0x008) {
+                bits.skip(11);
+                macroblock += 33;
+            }
+
             std::uint32_t increment = 0;
             if (!bits.decode(vlc::tables().mbai, increment)) {
-                failed = true;
                 break;
             }
-            if (increment == 0x22 || increment == 0x23) {
-                macroblock += (increment == 0x22) ? 1u : 2u;
-                continue;
+            if (first_mb_in_slice) {
+                macroblock += increment - 1u;
+                first_mb_in_slice = false;
+            } else {
+                macroblock += increment;
             }
-            macroblock += increment - 1u;
             if (macroblock >= macroblocks_x * macroblocks_y) break;
 
             // The macroblock type: the quantiser follows when the type says so.
@@ -254,38 +304,35 @@ bool VideoDecoder::decode(const std::uint8_t *data, std::size_t size, std::size_
                 break;
             }
             std::uint32_t quantiser = slice.quantiser;
-            if (type & 0x10u) quantiser = bits.get(5);
+            if (type & 0x10u) {
+                quantiser = bits.get(5);
+                slice.quantiser = quantiser;
+            }
 
             // The macroblock's six blocks.
             std::int16_t blocks[6][64] = {};
-            const std::uint8_t cbp = slice.intra ? 0x3Fu : slice.coded_block_pattern;
             for (int b = 0; b < 6; ++b) {
-                if (!(cbp & (32u >> b))) continue;
                 const int channel = b < 4 ? 0 : b - 3;
                 int coef[64] = {};
                 int index = 0;
-                const DctLookup &table = slice.intra ? vlc::tables().dct1 : vlc::tables().dct0;
-                const bool table_one = slice.intra;   // the MPEG-2 intra table
-                if (slice.intra) {
-                    // The DC difference, then the AC coefficients.
-                    std::uint32_t size = 0;
-                    if (!bits.decode(channel ? vlc::tables().dc_chroma : vlc::tables().dc_luma, size)) {
-                        failed = true;
-                        break;
-                    }
-                    int diff = 0;
-                    if (size) {
-                        const int v = static_cast<int>(bits.get(size));
-                        diff = v < (1 << (size - 1)) ? v + 1 - (1 << size) : v;
-                    }
-                    dc[channel] = static_cast<std::int16_t>(dc[channel] + diff);
-                    coef[0] = dc[channel];
-                    index = 1;
-                } else if (bits.peek(1)) {
-                    coef[0] = bits.get(2) & 1u ? -1 : 1;
-                    index = 1;
+                const DctLookup &table = intra_vlc_format ? vlc::tables().dct1 : vlc::tables().dct0;
+                const bool table_one = intra_vlc_format;
+
+                // The DC difference, then the AC coefficients.
+                std::uint32_t size = 0;
+                if (!bits.decode(channel ? vlc::tables().dc_chroma : vlc::tables().dc_luma, size)) {
+                    failed = true;
+                    break;
                 }
-                if (failed) break;
+                int diff = 0;
+                if (size) {
+                    const int v = static_cast<int>(bits.get(size));
+                    diff = v < (1 << (size - 1)) ? v + 1 - (1 << size) : v;
+                }
+                dc[channel] = static_cast<std::int16_t>(dc[channel] + diff);
+                coef[0] = dc[channel];
+                index = 1;
+
                 for (;;) {
                     if (index) {
                         if (table_one ? bits.peek(4) == 6u : bits.peek(2) == 2u) {
@@ -299,11 +346,7 @@ bool VideoDecoder::decode(const std::uint8_t *data, std::size_t size, std::size_
                         failed = true;
                         break;
                     }
-                    if (run == kEscapeRun) {
-                        run = static_cast<std::uint8_t>(bits.get(6));
-                        int v = static_cast<int>(bits.get(12));
-                        level = static_cast<std::int16_t>(v & 0x800 ? v - 0x1000 : v);
-                    }                    index += run;
+                    index += run;
                     if (index >= 64) {
                         failed = true;
                         break;
@@ -313,8 +356,9 @@ bool VideoDecoder::decode(const std::uint8_t *data, std::size_t size, std::size_
                 if (failed) break;
 
                 // The dequantisation and the inverse DCT.
+                const int scale = !q_scale_type ? static_cast<int>(quantiser) * 2 : kNonLinearScale[quantiser & 31u];
                 const std::uint8_t *weights = slice.intra ? intra_matrix_ : nonintra_matrix_;
-                const std::uint8_t *scan = ipu::tables::kZigzag;
+                const std::uint8_t *scan = alternate_scan ? ipu::tables::kAlternate : ipu::tables::kZigzag;
                 int f[64] = {};
                 int sum = 0;
                 for (int k = 0; k < 64; ++k) {
@@ -322,12 +366,12 @@ bool VideoDecoder::decode(const std::uint8_t *data, std::size_t size, std::size_
                     const int r = scan[k];
                     int x;
                     if (slice.intra && k == 0) {
-                        x = v * 8;
+                        x = v * (8 >> intra_dc_precision);
                     } else {
                         if (!v) continue;
                         const int sign = v > 0 ? 1 : -1;
-                        x = slice.intra ? (v * weights[r] * quantiser * 2) / 32
-                                        : ((2 * v + sign) * weights[r] * quantiser) / 32;
+                        x = slice.intra ? (v * weights[r] * scale) / 32
+                                        : ((2 * v + sign) * weights[r] * scale) / 32;
                     }
                     x = std::clamp(x, -2048, 2047);
                     f[r] = x;

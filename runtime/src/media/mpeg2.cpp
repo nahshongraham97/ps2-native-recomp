@@ -51,14 +51,13 @@ bool is_program_stream_code(std::uint8_t code) {
            code == kEndCode || code == kSystemHeader || code == kProgramStreamMap || code == kPackHeader;
 }
 
-// The presentation time stamp of an MPEG-2 PES header.
+// The presentation time stamp of an MPEG PES header.
 bool read_pts(const std::uint8_t *p, std::uint64_t &pts) {
-    if ((p[0] & 0x20) == 0) return false;             // the 'PTS' flag
     pts = (static_cast<std::uint64_t>((p[0] >> 1) & 0x07) << 30) |
           (static_cast<std::uint64_t>(p[1]) << 22) |
-          (static_cast<std::uint64_t>((p[1] >> 1) & 0x7F) << 15) |
-          (static_cast<std::uint64_t>(p[2]) << 7) |
-          (static_cast<std::uint64_t>((p[3] >> 1) & 0x7F));
+          (static_cast<std::uint64_t>((p[2] >> 1) & 0x7F) << 15) |
+          (static_cast<std::uint64_t>(p[3]) << 7) |
+          (static_cast<std::uint64_t>((p[4] >> 1) & 0x7F));
     return true;
 }
 
@@ -178,29 +177,38 @@ bool parse_program_stream(const std::uint8_t *data, std::size_t size, ProgramStr
             std::size_t payload_end = 0;
             std::uint64_t pts = 0;
             bool has_pts = false;
-            if (body[1] & 0x80) {
+            if (body_size > 2 && (body[2] & 0xC0) == 0x80) {
                 // An MPEG-2 PES header: the flags byte says what the optional
                 // header holds, and the header length says how long it is.
-                const std::size_t header = body[2];
-                const std::size_t optional = header > 3 ? (body[3] >> 4) & 0x03 : 0;
-                if (optional == 2 && header >= 5) has_pts = read_pts(body + 4, pts);
-                if (optional == 3 && header >= 10) {
-                    read_pts(body + 4, pts);
+                const std::size_t header = body_size > 4 ? body[4] : 0;
+                const std::size_t optional = body_size > 3 ? (body[3] >> 6) & 0x03 : 0;
+                if ((optional == 2 || optional == 3) && header >= 5 && body_size >= 5 + 5) {
+                    read_pts(body + 5, pts);
                     has_pts = true;
                 }
-                payload_at = code_at + 4 + 3 + header;
+                payload_at = code_at + 4 + 5 + header;
                 payload_end = size;
             } else {
-                // An MPEG-1 PES header: the flags byte and the PTS flags byte
-                // say whether a time stamp follows.
-                const std::uint8_t pts_flags = body[3];
-                const std::size_t kind = (pts_flags >> 6) & 0x03;
-                const std::size_t optional = kind == 2 ? 5 : kind == 3 ? 10 : 0;
-                if (optional >= 5) has_pts = read_pts(body + 4, pts);
-                payload_at = code_at + 4 + 4 + optional;
-                // The packet length is a hint: this muxer's lengths run past
-                // the pack they sit in, so the payload really ends at the next
-                // program stream start code.
+                // An MPEG-1 PES header
+                std::size_t h = 2;
+                while (h < body_size && body[h] == 0xFF) ++h;
+                if (h < body_size && (body[h] & 0xC0) == 0x40) h += 2;
+                if (h < body_size && (body[h] & 0xF0) == 0x20) {
+                    if (h + 5 <= body_size) {
+                        read_pts(body + h, pts);
+                        has_pts = true;
+                    }
+                    h += 5;
+                } else if (h < body_size && (body[h] & 0xF0) == 0x30) {
+                    if (h + 5 <= body_size) {
+                        read_pts(body + h, pts);
+                        has_pts = true;
+                    }
+                    h += 10;
+                } else if (h < body_size && body[h] == 0x0F) {
+                    h += 1;
+                }
+                payload_at = code_at + 4 + h;
                 payload_end = size;
             }
             // The payload runs to the next PES packet.
