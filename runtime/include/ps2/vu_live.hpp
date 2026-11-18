@@ -17,25 +17,11 @@
 
 namespace ps2::vu::live {
 
-// Called once before the game starts. cache is the folder for the libraries; it is made when the first one is built. Does
-// nothing (with one line in the log) when no C++ compiler is found, and then only loads what an earlier run left in the cache.
-void start(const std::string &cache);
-
-bool active();
-
-// The vector unit met a program the build does not know (unit 1; called on the thread that runs the vector unit). code is its
-// whole 16 KiB of micro memory. Cheap: a program is queued once.
-void unknown(std::uint64_t key, std::uint32_t entry, const std::uint8_t *code);
-
-// An interpreted call of a program the build does not know, by key: the busiest programs are built first.
-void note_call(std::uint64_t key);
-
-extern std::atomic<bool> g_ready;
-
-// True when the background thread has loaded programs the vector unit does not use yet.
-inline bool ready() { return g_ready.load(std::memory_order_relaxed); }
-
-// Hands over the programs loaded since the last call (the caller adds them to its table).
-std::vector<Program> take();
+inline void start(const std::string &) {}
+inline bool active() { return false; }
+inline void unknown(std::uint64_t, std::uint32_t, const std::uint8_t *) {}
+inline void note_call(std::uint64_t) {}
+inline bool ready() { return false; }
+inline std::vector<Program> take() { return {}; }
 
 }  // namespace ps2::vu::live

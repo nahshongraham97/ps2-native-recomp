@@ -146,7 +146,10 @@ std::uint64_t frame_cycles() { return kEeClock / (g_options.pal ? 50u : 60u); }
 void dump_frame() {
     std::vector<std::uint32_t> rgba;
     std::uint32_t w = 0, h = 0;
-    if (!gs::display(rgba, w, h)) return;
+    // The captured surface is the frame the window shows. gs::display() reads
+    // the CPU VRAM array, which the native path never fills, so it shows the
+    // game's texture data instead of the game.
+    if (!gs::captured_picture(rgba, w, h) && !gs::display(rgba, w, h)) return;
     char name[32];
     std::snprintf(name, sizeof name, "/frame_%05llu.ppm", static_cast<unsigned long long>(g_frames));
     std::FILE *f = os::open(g_options.frames_dir + name, "wb");
@@ -973,10 +976,13 @@ Rendered render_pending(bool surface, const std::function<void(const std::uint32
     return gs::render_pending([&](const gs::DisplayRegs &regs) {
         quick::on_present(regs);  // the picture for an F9 report is taken here, on the thread that may read the GPU
         if (before_present) before_present(regs);
-        if (surface) {
-            gs::present(regs);
-            if (!copy) return;
-        }
+        if (surface) gs::present(regs);
+        // The host picture capture needs the frame the window shows. The native
+        // path draws on the GPU and never fills the CPU VRAM array, so the
+        // capture reads the surface itself - here, on the thread that owns the
+        // GL context.
+        if (copy) gs::capture_present_picture();
+        if (surface && !copy) return;
         std::uint32_t width = 0, height = 0;
         if (copy && (g_options.sync_pictures ? gs::display(regs, frame, width, height) : gs::copy_frame(regs, frame, width, height))) copy(frame.data(), width, height);
     }, budget_ms);

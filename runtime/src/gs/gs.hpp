@@ -115,6 +115,14 @@ DisplayRegs display_regs();
 
 bool display(std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height);
 bool display(const DisplayRegs &regs, std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height);
+
+// The picture the native surface holds, captured on the render thread when a
+// frame is presented. The host picture capture runs on another thread and the
+// native path never writes into the CPU VRAM array, so this snapshot is the
+// only copy that shows the game. capture_present_picture() runs on the render
+// thread (it reads the GPU); captured_picture() may be called from any.
+void capture_present_picture();
+bool captured_picture(std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height);
 // Frame for hosts that draw it themselves, with interlaced fields blended like present(); may lag a frame.
 bool copy_frame(std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height);
 bool copy_frame(const DisplayRegs &regs, std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height);

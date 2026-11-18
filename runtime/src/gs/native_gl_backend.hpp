@@ -41,6 +41,14 @@ bool draw_guest_rect(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
 // an explicit sync point.
 void flush();
 
+// Reads the picture the GS scans out, straight from the native surface: the
+// same rectangle the window blits, taken from the same framebuffer. The
+// native path never writes its pixels into the CPU VRAM array, so a host
+// picture capture that reads that array shows the game's texture data instead
+// of the game. Returns false when the native backend is off or no surface
+// holds the picture. Runs on the thread that owns the GL context.
+bool read_picture(std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height);
+
 // Clears all native scene surfaces to black. Called at scene boundaries (e.g.
 // SetGsCrt or video mode reconfiguration) to eliminate stale frame ghosts.
 void clear_surfaces();

@@ -13,24 +13,13 @@
 
 namespace ps2::ee::live {
 
-// Called once, after the generated code is registered and before the game starts. program is the game's executable (its code windows
-// are read from it), cache is the folder for the libraries (made when the first one is built), game_dir the folder port.sh made
-// (entries.txt and overlays\ in it get what was found), or empty. Loads what earlier runs left in the cache. With no C++ compiler
-// found it logs one line and only the loaded libraries are used.
-void start(const std::string &program, const std::string &cache, const std::string &game_dir);
-
-bool active();
-
-// The main processor reached pc where nothing is translated. True when code for pc was translated, compiled and loaded (the caller
-// looks again); false when that is not possible (nothing is changed; the reason is in the log).
-bool translate_missing(std::uint32_t pc);
-
-// Called by the emulation thread at every frame boundary (the vertical blank), after the frame's own work. It watches the code windows
-// (a few memory areas the game fills with different code as it goes); when the content of one has stopped changing and nothing
-// translated serves it, it starts translating that window on a thread of its own, so that the pause of translate_missing shrinks to
-// the rest of the work or disappears. It also takes finished libraries into use, here, on the emulation thread: the game never sees
-// a library arrive at any other place. It changes nothing the game can notice (docs/gvz.md).
-void frame_tick();
+inline void start(const std::string &, const std::string &, const std::string &) {}
+inline bool active() { return false; }
+inline bool translate_missing(std::uint32_t pc) {
+    (void)pc;
+    return false;
+}
+inline void frame_tick() {}
 
 }  // namespace ps2::ee::live
 

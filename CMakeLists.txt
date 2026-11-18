@@ -88,9 +88,6 @@ else()
         runtime/src/vu_micro.cpp
         runtime/src/vu_jit.cpp
         runtime/src/vu_jit_web.cpp
-        runtime/src/live_build.cpp
-        runtime/src/vu_live.cpp
-        runtime/src/ee_live.cpp
         runtime/src/ipu/ipu.cpp
         runtime/src/media/mpeg2.cpp
         runtime/src/media/mpeg2_decoder.cpp
@@ -124,28 +121,6 @@ else()
         target_compile_options(ps2runtime PRIVATE /W4)
     else()
         target_compile_options(ps2runtime PRIVATE -Wall -Wextra)
-    endif()
-    if(NOT EMSCRIPTEN)
-        # Vector programs the build does not know are compiled while the game runs (runtime/src/vu_live.cpp, docs/vu-live.md): the
-        # generator is the one of the vurecomp tool, and the headers its output includes are embedded in the runner.
-        target_sources(ps2runtime PRIVATE recomp/vurecomp_gen.cpp)
-        # Main processor code that the build does not know is translated, compiled and loaded while the game runs too
-        # (runtime/src/ee_live.cpp, docs/ee-live.md): the translator is the one of the eerecomp tool, and the headers its output includes
-        # are embedded in the runner as well.
-        target_sources(ps2runtime PRIVATE recomp/eerecomp_gen.cpp recomp/codegen.cpp recomp/analysis.cpp recomp/r5900.cpp recomp/elf.cpp recomp/snr2.cpp)
-        target_include_directories(ps2runtime PRIVATE recomp)
-        foreach(entry "cpu:Cpu" "fpu:Fpu" "vu:Vu" "vu_ops:VuOps" "memory:Memory" "mmi:Mmi" "generated:Generated" "ee_live_abi:EeLiveAbi")
-            string(REPLACE ":" ";" pair "${entry}")
-            list(GET pair 0 hdr)
-            list(GET pair 1 sym)
-            set(live_hdr "${CMAKE_BINARY_DIR}/live_hdr_${hdr}.cpp")
-            add_custom_command(OUTPUT "${live_hdr}"
-                COMMAND ${CMAKE_COMMAND} -DSRC=${CMAKE_SOURCE_DIR}/runtime/include/ps2/${hdr}.hpp -DOUT=${live_hdr} -DNAME=kLiveHdr${sym} -P ${CMAKE_SOURCE_DIR}/cmake/embed.cmake
-                DEPENDS runtime/include/ps2/${hdr}.hpp cmake/embed.cmake)
-            target_sources(ps2runtime PRIVATE "${live_hdr}")
-        endforeach()
-        # the compiler this runner was built with is the last place vu_live.cpp looks for one
-        set_property(SOURCE runtime/src/live_build.cpp APPEND PROPERTY COMPILE_DEFINITIONS "PS2_LIVE_DEFAULT_CXX=\"${CMAKE_CXX_COMPILER}\"")
     endif()
 endif()
 if(NOT WIN32 AND NOT EMSCRIPTEN)

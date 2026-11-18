@@ -1628,6 +1628,119 @@ bool draw_guest_rect(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
 #endif
 }
 
+// The rectangle the GS scans out, computed once for the window blit and for
+// the host picture capture so the two can never disagree about what the frame
+// shows.
+struct DisplayRect {
+    int dbx = 0, dby = 0;        // where the rectangle starts in the surface
+    int width = 0, height = 0;   // visible size
+    int display_width = 0;       // the width DISPLAY.DW describes
+    int source_height = 0;       // rows read from the source (halved field)
+    bool halved_field = false;
+    bool valid = false;
+};
+
+DisplayRect display_rect(const DisplayRegs &regs, int circuit, std::uint64_t fb, std::uint64_t disp,
+                         bool is_active_target) {
+    DisplayRect rect;
+    rect.dbx = is_active_target ? 0 : static_cast<int>((fb >> 32) & 0x7FFu);
+    rect.dby = is_active_target ? 0 : static_cast<int>((fb >> 43) & 0x7FFu);
+    const int magh = static_cast<int>((disp >> 23) & 0xFu) + 1;
+    const int magv = static_cast<int>((disp >> 27) & 3u) + 1;
+    const int display_width = (static_cast<int>((disp >> 32) & 0xFFFu) + 1) / magh;
+    int height = (static_cast<int>((disp >> 44) & 0x7FFFu) + 1) / magv;
+    if ((regs.smode2 & 3u) == 1u && height > 576) height /= 2;
+    // The display registers can describe a wider buffer than the game draws
+    // into. The front end renders inside a 640x448 scissor while DISPFB reads
+    // 832 columns of an 832-pixel-wide buffer; presenting those extra columns
+    // showed 192 pixels the game never drew and forced a 1.538x scale, whose
+    // uneven 1/2/3-pixel doubling is what blurs the text. Clamp the displayed
+    // rectangle to the area the GS scissor actually allows the game to draw.
+    const std::uint64_t scissor = g_state.ctx[circuit].scissor;
+    const int scissor_x0 = static_cast<int>(scissor & 0x7FFu);
+    const int scissor_x1 = static_cast<int>((scissor >> 16) & 0x7FFu);
+    const int scissor_y0 = static_cast<int>((scissor >> 32) & 0x7FFu);
+    const int scissor_y1 = static_cast<int>((scissor >> 48) & 0x7FFu);
+    // An unset scissor reads as (0,0)-(0,0): treat that as "no scissor yet"
+    // instead of a one-pixel picture, which stretched a single pixel across
+    // the whole window at boot and during the movie.
+    const bool scissor_valid = scissor_x1 > scissor_x0 && scissor_y1 > scissor_y0;
+    const int picture_width = scissor_valid ? scissor_x1 - scissor_x0 + 1 : display_width;
+    const int picture_height = scissor_valid ? scissor_y1 - scissor_y0 + 1 : height;
+    const int width = std::min(display_width, picture_width);
+    height = std::min(height, picture_height);
+    rect.width = width;
+    rect.height = height;
+    rect.display_width = display_width;
+    rect.halved_field = (regs.smode2 & 3u) == 3u;
+    rect.source_height = rect.halved_field ? (height + 1) / 2 : height;
+    rect.valid = width > 0 && height > 0 && rect.dbx >= 0 && rect.dby >= 0 &&
+                 rect.dbx + width <= kWidth && rect.dby + rect.source_height <= kHeight;
+    return rect;
+}
+
+// The surface the display controller scans out, and whether a movie is
+// playing. DISPFB stays at FBP 0 in MKA's front end while everything is drawn
+// into FRAME_1 (FBP 91), so the surface with the most recent write wins.
+// During front end: Target 91 wins because Target 0 is idle. During movie
+// playback: Target 0 / 140 win because movie quads/transfers update their
+// ticks past the stale front-end target.
+//
+// Movie state is needed before target selection: while a movie plays, the
+// presentation pins one surface (below), so the movie source is looked up first.
+struct PresentTarget {
+    SceneTarget *target = nullptr;
+    SceneTarget *movie_source = nullptr;
+    bool movie_playing = false;
+};
+
+PresentTarget select_present_target(std::uint32_t display_fbp, std::uint32_t active_frame_fbp) {
+    PresentTarget selection;
+    selection.movie_source = find_scene_target(280);
+    selection.movie_playing = (selection.movie_source && selection.movie_source->write_count > 0);
+    SceneTarget *active_target = find_scene_target(active_frame_fbp);
+    SceneTarget *display_target = find_scene_target(display_fbp);
+    SceneTarget *target = nullptr;
+    if (active_target && display_target) {
+        if (active_target->last_write_tick == 0 && display_target->last_write_tick == 0) {
+            target = display_target;
+        } else {
+            target = (active_target->last_write_tick >= display_target->last_write_tick)
+                         ? active_target : display_target;
+        }
+    } else if (active_target && active_target->last_write_tick > 0) {
+        target = active_target;
+    } else {
+        target = display_target;
+    }
+    if (!target) target = ensure_scene_target(display_fbp);
+    if (!target || !target->ready) return selection;
+
+    // Pin the presented surface while a movie is playing. The game double-buffers
+    // (FBP 0 and 140) and quads the movie into whichever buffer drew last, so the
+    // tick-based selection above alternates the presented buffer between frames:
+    // one present showed the fresh blit, the next showed the other buffer's quad -
+    // two different sources, which is the shake the 00:40 run measured (blit=NO on
+    // write-presents, blit=YES on the next, targets alternating 0/140). While a
+    // movie surface exists, presentation therefore sticks to the surface that was
+    // selected first, and that surface is refreshed only from complete movie frames
+    // (the quiet-gated blit below, which now reaches every scene target). When no
+    // movie surface exists any more the pin is released and normal selection resumes.
+    static std::uint32_t s_movie_display_fbp = 0xFFFFFFFFu;
+    if (selection.movie_playing) {
+        SceneTarget *pinned = (s_movie_display_fbp != 0xFFFFFFFFu) ? find_scene_target(s_movie_display_fbp) : nullptr;
+        if (!pinned) {
+            s_movie_display_fbp = target->fbp;
+        } else if (pinned != target) {
+            target = pinned;
+        }
+    } else {
+        s_movie_display_fbp = 0xFFFFFFFFu;
+    }
+    selection.target = target;
+    return selection;
+}
+
 bool present_frame(const DisplayRegs &regs) {
     gl_state_invalidate();
 #if defined(_WIN32)
@@ -1683,47 +1796,13 @@ bool present_frame(const DisplayRegs &regs) {
     // update their ticks past the stale front-end target.
     // Movie state is needed before target selection: while a movie plays, the
     // presentation pins one surface (below), so the movie source is looked up first.
-    SceneTarget *movie_source = find_scene_target(280);
-    const bool movie_playing = (movie_source && movie_source->write_count > 0);
+    const PresentTarget selection = select_present_target(display_fbp, active_frame_fbp);
+    SceneTarget *movie_source = selection.movie_source;
+    const bool movie_playing = selection.movie_playing;
     SceneTarget *active_target = find_scene_target(active_frame_fbp);
     SceneTarget *display_target = find_scene_target(display_fbp);
-    SceneTarget *target = nullptr;
-    if (active_target && display_target) {
-        if (active_target->last_write_tick == 0 && display_target->last_write_tick == 0) {
-            target = display_target;
-        } else {
-            target = (active_target->last_write_tick >= display_target->last_write_tick)
-                         ? active_target : display_target;
-        }
-    } else if (active_target && active_target->last_write_tick > 0) {
-        target = active_target;
-    } else {
-        target = display_target;
-    }
-    if (!target) target = ensure_scene_target(display_fbp);
+    SceneTarget *target = selection.target;
     if (!target || !target->ready) return false;
-
-    // Pin the presented surface while a movie is playing. The game double-buffers
-    // (FBP 0 and 140) and quads the movie into whichever buffer drew last, so the
-    // tick-based selection above alternates the presented buffer between frames:
-    // one present showed the fresh blit, the next showed the other buffer's quad -
-    // two different sources, which is the shake the 00:40 run measured (blit=NO on
-    // write-presents, blit=YES on the next, targets alternating 0/140). While a
-    // movie surface exists, presentation therefore sticks to the surface that was
-    // selected first, and that surface is refreshed only from complete movie frames
-    // (the quiet-gated blit below, which now reaches every scene target). When no
-    // movie surface exists any more the pin is released and normal selection resumes.
-    static std::uint32_t s_movie_display_fbp = 0xFFFFFFFFu;
-    if (movie_playing) {
-        SceneTarget *pinned = (s_movie_display_fbp != 0xFFFFFFFFu) ? find_scene_target(s_movie_display_fbp) : nullptr;
-        if (!pinned) {
-            s_movie_display_fbp = target->fbp;
-        } else if (pinned != target) {
-            target = pinned;
-        }
-    } else {
-        s_movie_display_fbp = 0xFFFFFFFFu;
-    }
 
     static std::uint32_t s_last_logged_target = 0xFFFFFFFFu;
     if (target->fbp != s_last_logged_target) {
@@ -1860,34 +1939,12 @@ bool present_frame(const DisplayRegs &regs) {
     glDisable(GL_BLEND);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    const int dbx = is_active_target ? 0 : static_cast<int>((fb >> 32) & 0x7FFu);
-    const int dby = is_active_target ? 0 : static_cast<int>((fb >> 43) & 0x7FFu);
-    const int magh = static_cast<int>((disp >> 23) & 0xFu) + 1;
-    const int magv = static_cast<int>((disp >> 27) & 3u) + 1;
-    const int display_width = (static_cast<int>((disp >> 32) & 0xFFFu) + 1) / magh;
-    int height = (static_cast<int>((disp >> 44) & 0x7FFu) + 1) / magv;
-    if ((regs.smode2 & 3u) == 1u && height > 576) height /= 2;
-    // The display registers can describe a wider buffer than the game draws
-    // into. The front end renders inside a 640x448 scissor while DISPFB reads
-    // 832 columns of an 832-pixel-wide buffer; presenting those extra columns
-    // showed 192 pixels the game never drew and forced a 1.538x scale, whose
-    // uneven 1/2/3-pixel doubling is what blurs the text. Clamp the displayed
-    // rectangle to the area the GS scissor actually allows the game to draw.
-    const std::uint64_t scissor = g_state.ctx[circuit].scissor;
-    const int scissor_x0 = static_cast<int>(scissor & 0x7FFu);
-    const int scissor_x1 = static_cast<int>((scissor >> 16) & 0x7FFu);
-    const int scissor_y0 = static_cast<int>((scissor >> 32) & 0x7FFu);
-    const int scissor_y1 = static_cast<int>((scissor >> 48) & 0x7FFu);
-    // An unset scissor reads as (0,0)-(0,0): treat that as "no scissor yet"
-    // instead of a one-pixel picture, which stretched a single pixel across
-    // the whole window at boot and during the movie.
-    const bool scissor_valid = scissor_x1 > scissor_x0 && scissor_y1 > scissor_y0;
-    const int picture_width = scissor_valid ? scissor_x1 - scissor_x0 + 1 : display_width;
-    const int picture_height = scissor_valid ? scissor_y1 - scissor_y0 + 1 : height;
-    const int width = std::min(display_width, picture_width);
-    height = std::min(height, picture_height);
-    const bool halved_field = (regs.smode2 & 3u) == 3u;
-    const int source_height = halved_field ? (height + 1) / 2 : height;
+    const DisplayRect rect = display_rect(regs, circuit, fb, disp, is_active_target);
+    const int dbx = rect.dbx, dby = rect.dby;
+    const int width = rect.width, height = rect.height;
+    const int display_width = rect.display_width;
+    const bool halved_field = rect.halved_field;
+    const int source_height = rect.source_height;
     const int active_frame_width = g_active_frame_width.load(std::memory_order_relaxed);
     // FRAME.FBW is the actual draw surface pitch in 64-pixel units. The
     // current direct FBO captures that surface's geometry, not empty columns
@@ -2188,6 +2245,75 @@ bool present_frame(const DisplayRegs &regs) {
 
 bool present_current() {
     return present_frame(gs::display_regs());
+}
+
+bool read_picture(std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height) {
+#if defined(_WIN32)
+    if (!g_enabled || !g_hdc || !g_hrc) return false;
+    const DisplayRegs regs = gs::display_regs();
+    const int circuit = (regs.pmode & 2u) ? 1 : (regs.pmode & 1u) ? 0 : -1;
+    if (circuit < 0) return false;
+    const std::uint64_t fb = regs.dispfb[circuit], disp = regs.display[circuit];
+    const std::uint32_t display_fbp = static_cast<std::uint32_t>(fb) & 0x1FFu;
+    const std::uint32_t active_frame_fbp = g_active_frame_fbp.load(std::memory_order_relaxed);
+    const PresentTarget selection = select_present_target(display_fbp, active_frame_fbp);
+    SceneTarget *target = selection.target;
+    if (!target || !target->ready) return false;
+    SceneTarget *active_target = find_scene_target(active_frame_fbp);
+    SceneTarget *display_target = find_scene_target(display_fbp);
+    const bool is_active_target = (target == active_target && target != display_target);
+    const DisplayRect rect = display_rect(regs, circuit, fb, disp, is_active_target);
+    if (!rect.valid) return false;
+    // Which surface the capture reads, and how much the game has drawn into it.
+    // Without this the capture cannot be told apart from a stale frame.
+    {
+        std::fprintf(stderr,
+                     "[native-gl] picture capture: display_fbp=%u active_fbp=%u target_fbp=%u prims=%llu writes=%llu tick=%llu rect=%d,%d %dx%d\n",
+                     display_fbp, active_frame_fbp, target->fbp,
+                     static_cast<unsigned long long>(target->prim_count),
+                     static_cast<unsigned long long>(target->write_count),
+                     static_cast<unsigned long long>(target->last_write_tick),
+                     rect.dbx, rect.dby, rect.width, rect.source_height);
+    }
+    if (wglGetCurrentContext() != g_hrc && !wglMakeCurrent(g_hdc, g_hrc)) {
+        std::fprintf(stderr, "[native-gl] could not make the WGL context current for the picture capture\n");
+        return false;
+    }
+    // The picture comes from the same framebuffer the window blits, so the
+    // capture shows what the window shows. The native path never writes its
+    // pixels into the CPU VRAM array: reading that array instead showed the
+    // game's texture data, not the game. GL reads bottom-up and the GS scans
+    // out top-down, so the rows are flipped while they are copied.
+    const int source_y0 = kHeight - rect.dby - rect.source_height;
+    static std::vector<std::uint8_t> raw;
+    raw.resize(static_cast<std::size_t>(rect.width) * rect.source_height * 4);
+    g_bind_framebuffer(GL_READ_FRAMEBUFFER, target->framebuffer);
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    glReadPixels(rect.dbx, source_y0, rect.width, rect.source_height, GL_RGBA, GL_UNSIGNED_BYTE, raw.data());
+    const GLenum read_error = glGetError();
+    if (read_error != GL_NO_ERROR) {
+        std::fprintf(stderr, "[native-gl] picture capture failed: glReadPixels error 0x%X\n", read_error);
+        return false;
+    }
+    rgba.resize(static_cast<std::size_t>(rect.width) * rect.source_height);
+    for (int y = 0; y < rect.source_height; ++y) {
+        const std::uint8_t *src = raw.data() + static_cast<std::size_t>(rect.source_height - 1 - y) * rect.width * 4;
+        std::uint32_t *dst = rgba.data() + static_cast<std::size_t>(y) * rect.width;
+        for (int x = 0; x < rect.width; ++x) {
+            const std::uint8_t *p = src + static_cast<std::size_t>(x) * 4;
+            dst[x] = static_cast<std::uint32_t>(p[3]) << 24 | static_cast<std::uint32_t>(p[2]) << 16 |
+                     static_cast<std::uint32_t>(p[1]) << 8 | static_cast<std::uint32_t>(p[0]);
+        }
+    }
+    width = static_cast<std::uint32_t>(rect.width);
+    height = static_cast<std::uint32_t>(rect.source_height);
+    return true;
+#else
+    (void)rgba;
+    (void)width;
+    (void)height;
+    return false;
+#endif
 }
 
 bool submit(const State &st, const Vertex *verts, int count) {

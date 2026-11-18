@@ -21,6 +21,7 @@
 #include <atomic>
 #include <cctype>
 #include <chrono>
+#include <mutex>
 #include <stdexcept>
 #include <string>
 #include <functional>
@@ -1422,9 +1423,52 @@ bool present(const DisplayRegs &r) {
 #endif
 }
 
+// The native surface's picture, captured on the render thread when a frame is
+// presented. The host picture capture runs on another thread, and the native
+// path never writes its pixels into the CPU VRAM array, so this snapshot is
+// the only copy of the frame that shows the game.
+static std::mutex g_picture_mutex;
+static std::vector<std::uint32_t> g_picture_pixels;
+static std::uint32_t g_picture_width = 0, g_picture_height = 0;
+static std::uint64_t g_picture_count = 0;
+
+void capture_present_picture() {
+    if (!native_gl::enabled()) return;
+    std::vector<std::uint32_t> pixels;
+    std::uint32_t width = 0, height = 0;
+    if (!native_gl::read_picture(pixels, width, height)) return;
+    std::lock_guard<std::mutex> lock(g_picture_mutex);
+    g_picture_pixels.swap(pixels);
+    g_picture_width = width;
+    g_picture_height = height;
+    ++g_picture_count;
+    // The count is the evidence that the capture ran: the host picture is a
+    // file, but the counter says how many frames the GPU actually gave back.
+    if ((g_picture_count % 60u) == 0u)
+        std::fprintf(stderr, "[gs] picture capture: %llu frames at %ux%u\n",
+                     static_cast<unsigned long long>(g_picture_count), width, height);
+}
+
+bool captured_picture(std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height) {
+    std::lock_guard<std::mutex> lock(g_picture_mutex);
+    if (g_picture_pixels.empty() || !g_picture_width || !g_picture_height) return false;
+    rgba = g_picture_pixels;
+    width = g_picture_width;
+    height = g_picture_height;
+    return true;
+}
+
 bool display(std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height) { return display(display_regs(), rgba, width, height); }
 
 bool display(const DisplayRegs &r, std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height) {
+    if (native_gl::enabled()) {
+        // The native path draws on the GPU and never writes those pixels into
+        // the CPU VRAM array, so a picture read from that array is the game's
+        // texture data, not the game. The captured surface is the frame itself.
+        if (captured_picture(rgba, width, height)) return true;
+        capture_present_picture();
+        if (captured_picture(rgba, width, height)) return true;
+    }
     // In native OpenGL mode the back buffer is copied into CPU GS memory at
     // presentation time. render_pending() and this display call run on the same
     // render thread, so the WGL context remains thread-affine.
