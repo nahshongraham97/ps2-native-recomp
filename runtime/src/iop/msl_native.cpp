@@ -299,8 +299,9 @@ bool msl_rpc(std::uint32_t method, std::uint32_t args, std::uint32_t args_size, 
             const std::uint32_t id = read_le32(cmd + (i + 1) * 4u);
             const std::uint32_t value = read_le32(cmd + (i + 2) * 4u);
             if (id == 0) {
-                // The play request: the sound number is the value.
-                play_sound(value);
+                // Parameter 0 in MSL SetParam is volume/status parameter, NOT a play command.
+                // Blindly calling play_sound() here caused sound 99 to retrigger 60 times/sec
+                // across all 24 voices in an infinite loop, blasting rail-saturated distortion.
                 reply[0] = kOpSetParam; reply[1] = id; reply[2] = value; reply[3] = 0;
             } else if (id == kParamSoundId) {
                 // The handshake: the retail server answered with its staging buffer.
