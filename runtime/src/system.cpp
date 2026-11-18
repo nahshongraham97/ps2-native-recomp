@@ -145,9 +145,7 @@ std::uint64_t frame_cycles() { return kEeClock / (g_options.pal ? 50u : 60u); }
 void dump_frame() {
     std::vector<std::uint32_t> rgba;
     std::uint32_t w = 0, h = 0;
-    // The captured surface is the frame the window shows. gs::display() reads
-    // the CPU VRAM array, which the native path never fills, so it shows the
-    // game's texture data instead of the game.
+    gs::capture_present_picture();
     if (!gs::captured_picture(rgba, w, h) && !gs::display(rgba, w, h)) return;
     char name[32];
     std::snprintf(name, sizeof name, "/frame_%05llu.ppm", static_cast<unsigned long long>(g_frames));

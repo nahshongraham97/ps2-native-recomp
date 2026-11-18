@@ -16,6 +16,7 @@
 #include "raster.hpp"
 
 #include "ps2/os.hpp"
+#include "ps2/system.hpp"
 
 #include <algorithm>
 #include <array>
@@ -79,11 +80,17 @@
 #ifndef GL_ONE_MINUS_DST_ALPHA
 #define GL_ONE_MINUS_DST_ALPHA 0x0305
 #endif
+#ifndef GL_FUNC_ADD
+#define GL_FUNC_ADD 0x8006
+#define GL_FUNC_SUBTRACT 0x800A
+#define GL_FUNC_REVERSE_SUBTRACT 0x800B
+#endif
 #ifndef GL_FRAMEBUFFER
 #define GL_FRAMEBUFFER 0x8D40
 #define GL_FRAMEBUFFER_BINDING 0x8CA6
 #define GL_READ_FRAMEBUFFER 0x8CA8
 #define GL_DRAW_FRAMEBUFFER 0x8CA9
+#define GL_READ_FRAMEBUFFER_BINDING 0x8CAA
 #define GL_COLOR_ATTACHMENT0 0x8CE0
 #define GL_DEPTH_ATTACHMENT 0x8D00
 #define GL_FRAMEBUFFER_COMPLETE 0x8CD5
@@ -209,17 +216,15 @@ struct TextureCache {
 // decoded and uploaded once, not after every write anywhere in VRAM, and a
 // guest write lands in the native texture it belongs to instead of stopping
 // in the emulated VRAM.
-constexpr std::size_t kTexturePool = 64;
+constexpr std::size_t kTexturePool = 512;
 TextureCache g_pool[kTexturePool];
 std::uint64_t g_texture_age = 0;
 
-// The working cache: the texture the current primitive samples.
-TextureCache g_texture;
-
-TextureCache *find_pool_entry(std::uint32_t base, std::uint32_t psm, std::uint32_t tbw) {
+TextureCache *find_pool_entry(std::uint32_t base, std::uint32_t psm, std::uint32_t tbw, std::uint64_t clut_hash) {
     for (TextureCache &entry : g_pool) {
         if (!entry.valid || entry.base != base) continue;
         if (entry.params.psm != psm || entry.params.tbw != tbw) continue;
+        if (entry.clut_hash != clut_hash) continue;
         return &entry;
     }
     return nullptr;
@@ -234,11 +239,13 @@ std::uint32_t texture_units(std::uint32_t width, std::uint32_t height) {
 using ActiveTextureProc = void (APIENTRY *)(GLenum texture);
 using MultiTexCoord4fProc = void (APIENTRY *)(GLenum target, GLfloat s, GLfloat t, GLfloat r, GLfloat q);
 using BlendFuncSeparateProc = void (APIENTRY *)(GLenum src_rgb, GLenum dst_rgb, GLenum src_alpha, GLenum dst_alpha);
+using BlendEquationSeparateProc = void (APIENTRY *)(GLenum mode_rgb, GLenum mode_alpha);
 using FogCoordfProc = void (APIENTRY *)(GLfloat coord);  // GL 1.4: not in Windows' GL 1.1 export table
 using BlendColorProc = void (APIENTRY *)(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);  // GL 1.4
 ActiveTextureProc g_active_texture = nullptr;
 MultiTexCoord4fProc g_multi_texcoord4f = nullptr;
 BlendFuncSeparateProc g_blend_func_separate = nullptr;
+BlendEquationSeparateProc g_blend_equation_separate = nullptr;
 FogCoordfProc g_fog_coordf = nullptr;
 BlendColorProc g_blend_color = nullptr;
 
@@ -256,6 +263,8 @@ BlendColorProc g_blend_color = nullptr;
 struct GlStateCache {
     bool valid = false;
     bool blend = false;
+    GLenum blend_eq_rgb = 0x8006u;   // GL_FUNC_ADD
+    GLenum blend_eq_alpha = 0x8006u; // GL_FUNC_ADD
     GLenum blend_s = 0xFFFFFFFFu, blend_d = 0xFFFFFFFFu;
     GLenum blend_as = 0xFFFFFFFFu, blend_ad = 0xFFFFFFFFu;
     GLfloat blend_const = -1.0f;
@@ -297,16 +306,25 @@ void cache_texture2d(bool on, GLenum unit) {
     }
 }
 
-void cache_blend(bool on, GLenum s, GLenum d, GLenum as, GLenum ad) {
+void cache_blend(bool on, GLenum s, GLenum d, GLenum as, GLenum ad, GLenum eq_rgb = GL_FUNC_ADD, GLenum eq_alpha = GL_FUNC_ADD) {
     GlStateCache &c = g_glstate;
     if (!c.valid || c.blend != on) {
         if (on) glEnable(GL_BLEND);
         else glDisable(GL_BLEND);
         c.blend = on;
     }
-    if (on && (!c.valid || c.blend_s != s || c.blend_d != d || c.blend_as != as || c.blend_ad != ad)) {
-        g_blend_func_separate(s, d, as, ad);
-        c.blend_s = s; c.blend_d = d; c.blend_as = as; c.blend_ad = ad;
+    if (on) {
+        if (!c.valid || c.blend_eq_rgb != eq_rgb || c.blend_eq_alpha != eq_alpha) {
+            if (g_blend_equation_separate) {
+                g_blend_equation_separate(eq_rgb, eq_alpha);
+            }
+            c.blend_eq_rgb = eq_rgb;
+            c.blend_eq_alpha = eq_alpha;
+        }
+        if (!c.valid || c.blend_s != s || c.blend_d != d || c.blend_as != as || c.blend_ad != ad) {
+            g_blend_func_separate(s, d, as, ad);
+            c.blend_s = s; c.blend_d = d; c.blend_as = as; c.blend_ad = ad;
+        }
     }
 }
 
@@ -462,6 +480,10 @@ void load_multitexture_functions() {
     PROC blend = wglGetProcAddress("glBlendFuncSeparate");
     if (!valid_gl_proc(blend)) blend = wglGetProcAddress("glBlendFuncSeparateEXT");
     if (valid_gl_proc(blend)) g_blend_func_separate = reinterpret_cast<BlendFuncSeparateProc>(blend);
+
+    PROC eq = wglGetProcAddress("glBlendEquationSeparate");
+    if (!valid_gl_proc(eq)) eq = wglGetProcAddress("glBlendEquationSeparateEXT");
+    if (valid_gl_proc(eq)) g_blend_equation_separate = reinterpret_cast<BlendEquationSeparateProc>(eq);
 
     // The GS fog blends per vertex by the fog value the game supplies, so the native path needs
     // GL's fog coordinate - not GL's depth-derived default. glFogCoordf is GL 1.4 and Windows
@@ -831,41 +853,45 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
 
     cache_active_texture(GL_TEXTURE0);
     const std::uint64_t palette = clut_hash(st);
-    // The native texture for this base, if the pool holds it and the guest has
-    // not written over it since. Adopting it skips the decode and the upload:
-    // with one counter for the whole of VRAM, every write anywhere forced the
-    // game to decode and upload every texture again.
+    // The native texture for this base and palette, if the pool holds it and
+    // the guest has not written over it since.
     const std::uint32_t tex_base = raster::texture_base(st);
     const std::uint32_t tex_psm = static_cast<std::uint32_t>((context.tex0 >> 20) & 0x3Fu);
     const std::uint32_t tex_tbw = static_cast<std::uint32_t>((context.tex0 >> 14) & 0x3Fu);
-    TextureCache *pooled = tex_base == 0xFFFFFFFFu ? nullptr : find_pool_entry(tex_base, tex_psm, tex_tbw);
-    if (pooled && pooled->valid && !pooled->stale) g_texture = *pooled;
-    if (!g_texture.object) glGenTextures(1, &g_texture.object);
-    if (!g_texture.object)
+    TextureCache *entry = tex_base == 0xFFFFFFFFu ? nullptr : find_pool_entry(tex_base, tex_psm, tex_tbw, palette);
+    if (!entry) {
+        for (TextureCache &candidate : g_pool) {
+            if (!candidate.valid) { entry = &candidate; break; }
+        }
+        if (!entry) {
+            entry = &g_pool[0];
+            for (TextureCache &candidate : g_pool) {
+                if (candidate.last_use < entry->last_use) entry = &candidate;
+            }
+        }
+    }
+    if (!entry->object) glGenTextures(1, &entry->object);
+    if (!entry->object)
         return reject_packet(st, attr, prim_type, count, width_reason + 3, "OpenGL could not allocate a texture object");
 
-    const bool changed = !g_texture.valid || g_texture.tex0 != context.tex0 || g_texture.tex1 != context.tex1 ||
-                         g_texture.tex2 != context.tex2 || g_texture.clamp != context.clamp || g_texture.texa != st.texa ||
-                         g_texture.clut_hash != palette;
+    const bool changed = !entry->valid || entry->stale || entry->tex0 != context.tex0 ||
+                         entry->tex1 != context.tex1 || entry->tex2 != context.tex2 ||
+                         entry->clamp != context.clamp || entry->texa != st.texa ||
+                         entry->clut_hash != palette;
     const std::uint64_t env_key = context.tex0 ^ (context.tex1 * 0x9E3779B97F4A7C15ull) ^
                                   (context.clamp << 1) ^ (static_cast<std::uint64_t>(st.texa) << 32) ^ palette;
-    // Fast path: the texture content is unchanged, the same texture object is
-    // still bound, and TEX0/TEX1/CLAMP/TXA/CLUT - everything the four
-    // glTexParameteri and the glTexEnvi block re-derive - match what was
-    // configured last time. Only the TEXTURE_2D enables are re-checked (they
-    // toggle per packet between textured and untextured draws); the bind,
-    // the parameters and the whole environment block are skipped. This ran
-    // for every packet sharing a texture: ~14 GL calls x 9.1M packets.
-    if (!changed && g_glstate.valid && g_glstate.texture == g_texture.object &&
+
+    if (!changed && g_glstate.valid && g_glstate.texture == entry->object &&
         g_glstate.tex_env_key == env_key) {
-        width = g_texture.width;
-        height = g_texture.height;
+        width = entry->width;
+        height = entry->height;
+        entry->last_use = ++g_texture_age;
         cache_texture2d(true, GL_TEXTURE0);
         if (g_active_texture) cache_texture2d(tfx >= 2, GL_TEXTURE1);
         return true;
     }
-    glBindTexture(GL_TEXTURE_2D, g_texture.object);
-    g_glstate.texture = g_texture.object;
+    glBindTexture(GL_TEXTURE_2D, entry->object);
+    g_glstate.texture = entry->object;
     if (changed) {
         std::vector<std::uint32_t> rgba;
         if (!raster::decode_texture_rgba(st, rgba, width, height))
@@ -954,47 +980,32 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
         }
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(width), static_cast<GLsizei>(height),
                      0, GL_RGBA, GL_UNSIGNED_BYTE, rgba.data());
-        g_texture.tex0 = context.tex0;
-        g_texture.tex1 = context.tex1;
-        g_texture.tex2 = context.tex2;
-        g_texture.clamp = context.clamp;
-        g_texture.texa = st.texa;
-        g_texture.clut_hash = palette;
-        g_texture.vram_generation = gs::g_vram_generation;
-        g_texture.width = width;
-        g_texture.height = height;
-        g_texture.valid = true;
-        g_texture.stale = false;
-        g_texture.base = tex_base;
-        g_texture.units = texture_units(width, height);
-        g_texture.params.psm = tex_psm;
-        g_texture.params.tbp = tex_base;
-        g_texture.params.tbw = tex_tbw;
-        g_texture.params.cpsm = static_cast<std::uint32_t>((context.tex0 >> 51) & 0xFu);
-        g_texture.params.csa = static_cast<std::uint32_t>((context.tex0 >> 56) & 0x1Fu);
-        g_texture.params.ta0 = static_cast<std::uint32_t>(st.texa) & 0xFFu;
-        g_texture.params.aem = (st.texa >> 15) & 1u;
-        g_texture.params.clut = st.clut;
-        // Remember the native texture, so the next primitive that samples this
-        // base finds it and does not decode it again.
-        TextureCache *entry = pooled;
-        if (!entry) {
-            for (TextureCache &candidate : g_pool) {
-                if (!candidate.valid) { entry = &candidate; break; }
-            }
-            if (!entry) {
-                // Every slot is taken: drop the one that was used longest ago.
-                entry = &g_pool[0];
-                for (TextureCache &candidate : g_pool) {
-                    if (candidate.last_use < entry->last_use) entry = &candidate;
-                }
-            }
-        }
-        *entry = g_texture;
+        entry->tex0 = context.tex0;
+        entry->tex1 = context.tex1;
+        entry->tex2 = context.tex2;
+        entry->clamp = context.clamp;
+        entry->texa = st.texa;
+        entry->clut_hash = palette;
+        entry->vram_generation = gs::g_vram_generation;
+        entry->width = width;
+        entry->height = height;
+        entry->valid = true;
+        entry->stale = false;
+        entry->base = tex_base;
+        entry->units = texture_units(width, height);
+        entry->params.psm = tex_psm;
+        entry->params.tbp = tex_base;
+        entry->params.tbw = tex_tbw;
+        entry->params.cpsm = static_cast<std::uint32_t>((context.tex0 >> 51) & 0xFu);
+        entry->params.csa = static_cast<std::uint32_t>((context.tex0 >> 56) & 0x1Fu);
+        entry->params.ta0 = static_cast<std::uint32_t>(st.texa) & 0xFFu;
+        entry->params.aem = (st.texa >> 15) & 1u;
+        entry->params.clut = st.clut;
         entry->last_use = ++g_texture_age;
     } else {
-        width = g_texture.width;
-        height = g_texture.height;
+        width = entry->width;
+        height = entry->height;
+        entry->last_use = ++g_texture_age;
     }
 
     // A mipmapped mode has only the base level here, so the magnification
@@ -1061,7 +1072,7 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
 
         cache_active_texture(GL_TEXTURE1);
         cache_texture2d(true, GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, g_texture.object);
+        glBindTexture(GL_TEXTURE_2D, entry->object);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_ADD);
         glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_PREVIOUS);
@@ -1184,7 +1195,6 @@ static const bool s_enable_readback = [] {
 }();
 
 bool do_readback_target(SceneTarget *target, const ReadbackState &state) {
-    gl_state_invalidate();
 #if defined(_WIN32)
     if (!g_enabled || !g_hdc) return false;
     const std::uint32_t fbp = target ? target->fbp : (static_cast<std::uint32_t>(state.frame) & 0x1FFu);
@@ -1197,9 +1207,11 @@ bool do_readback_target(SceneTarget *target, const ReadbackState &state) {
 
     glFinish();
     const int render_width = std::min(kWidth, static_cast<int>(fbw * 64u));
+    GLint prev_read_fbo = 0;
     if (g_direct_window_context) {
         if (!target) target = ensure_scene_target(fbp);
         if (!target || !target->framebuffer) return false;
+        glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &prev_read_fbo);
         g_bind_framebuffer(GL_READ_FRAMEBUFFER, target->framebuffer);
         glReadBuffer(GL_COLOR_ATTACHMENT0);
     } else {
@@ -1246,7 +1258,7 @@ bool do_readback_target(SceneTarget *target, const ReadbackState &state) {
     }
     if (target) target->cpu_synced = true;
     if (g_direct_window_context) {
-        bind_draw_target(g_active_frame_fbp.load(std::memory_order_relaxed));
+        g_bind_framebuffer(GL_READ_FRAMEBUFFER, static_cast<GLuint>(prev_read_fbo));
     }
     g_readbacks.fetch_add(1, std::memory_order_relaxed);
     return true;
@@ -1343,67 +1355,6 @@ bool guest_wrote_vram(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
             }
         }
         entry.stale = true;
-    }
-    if (!pushed) {
-        TextureCache *entry = find_pool_entry(base, psm, bw);
-        if (!entry) {
-            for (TextureCache &candidate : g_pool) {
-                if (!candidate.valid) { entry = &candidate; break; }
-            }
-            if (!entry) {
-                entry = &g_pool[0];
-                for (TextureCache &candidate : g_pool) {
-                    if (candidate.last_use < entry->last_use) entry = &candidate;
-                }
-            }
-        }
-        if (entry) {
-            if (!entry->object) glGenTextures(1, &entry->object);
-            if (entry->object) {
-                const std::uint32_t full_w = std::max(entry->valid ? entry->width : 0u, x + w);
-                const std::uint32_t full_h = std::max(entry->valid ? entry->height : 0u, y + h);
-                entry->valid = true;
-                entry->base = base;
-                entry->width = full_w;
-                entry->height = full_h;
-                entry->units = texture_units(full_w, full_h);
-                entry->params.psm = psm;
-                entry->params.tbp = base;
-                entry->params.tbw = bw;
-                entry->params.cpsm = 0;
-                entry->params.csa = 0;
-                entry->params.ta0 = 0;
-                entry->params.aem = false;
-                entry->params.clut = nullptr;
-                entry->last_use = ++g_texture_age;
-                entry->stale = false;
-
-                std::vector<std::uint32_t> pixels;
-                if (raster::decode_rect_rgba(entry->params, x, y, w, h, pixels)) {
-                    for (std::uint32_t &pixel : pixels) {
-                        const std::uint32_t a = (pixel >> 24) & 0xFFu;
-                        pixel = (pixel & 0x00FFFFFFu) | (std::min<std::uint32_t>(255u, a * 2u) << 24);
-                    }
-                    const GLuint previous = g_glstate.texture;
-                    glBindTexture(GL_TEXTURE_2D, entry->object);
-                    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-                    if (x == 0 && y == 0 && w == full_w && h == full_h) {
-                        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(full_w),
-                                     static_cast<GLsizei>(full_h), 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
-                    } else {
-                        if (x == 0 && y == 0) {
-                            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(full_w),
-                                         static_cast<GLsizei>(full_h), 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-                        }
-                        glTexSubImage2D(GL_TEXTURE_2D, 0, static_cast<GLint>(x), static_cast<GLint>(y),
-                                        static_cast<GLsizei>(w), static_cast<GLsizei>(h), GL_RGBA,
-                                        GL_UNSIGNED_BYTE, pixels.data());
-                    }
-                    glBindTexture(GL_TEXTURE_2D, previous);
-                    pushed = true;
-                }
-            }
-        }
     }
     return pushed;
 #else
@@ -1759,9 +1710,12 @@ struct PresentTarget {
 PresentTarget select_present_target(std::uint32_t display_fbp, std::uint32_t active_frame_fbp) {
     PresentTarget selection;
     selection.movie_source = find_scene_target(280);
-    selection.movie_playing = (selection.movie_source && selection.movie_source->write_count > 0);
     SceneTarget *active_target = find_scene_target(active_frame_fbp);
     SceneTarget *display_target = find_scene_target(display_fbp);
+    const std::uint64_t movie_tick = selection.movie_source ? selection.movie_source->last_write_tick : 0;
+    const std::uint64_t active_tick = active_target ? active_target->last_write_tick : 0;
+    const std::uint64_t display_tick = display_target ? display_target->last_write_tick : 0;
+    selection.movie_playing = (movie_tick > 0 && movie_tick >= active_tick && movie_tick >= display_tick);
     SceneTarget *target = nullptr;
     if (active_target && display_target) {
         if (active_target->last_write_tick == 0 && display_target->last_write_tick == 0) {
@@ -2349,6 +2303,7 @@ bool read_picture(std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::u
     const int source_y0 = kHeight - rect.dby - rect.source_height;
     static std::vector<std::uint8_t> raw;
     raw.resize(static_cast<std::size_t>(rect.width) * rect.source_height * 4);
+    while (glGetError() != GL_NO_ERROR) {}
     g_bind_framebuffer(GL_READ_FRAMEBUFFER, target->framebuffer);
     glReadBuffer(GL_COLOR_ATTACHMENT0);
     glReadPixels(rect.dbx, source_y0, rect.width, rect.source_height, GL_RGBA, GL_UNSIGNED_BYTE, raw.data());
@@ -2365,6 +2320,31 @@ bool read_picture(std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::u
             const std::uint8_t *p = src + static_cast<std::size_t>(x) * 4;
             dst[x] = static_cast<std::uint32_t>(p[3]) << 24 | static_cast<std::uint32_t>(p[2]) << 16 |
                      static_cast<std::uint32_t>(p[1]) << 8 | static_cast<std::uint32_t>(p[0]);
+        }
+    }
+
+    for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
+        if (!g_scene_targets[i].ready || g_scene_targets[i].fbp == 0xFFFFFFFFu) continue;
+        std::fprintf(stderr, "[scene-target-census #%zu] fbp=%u prims=%llu writes=%llu tick=%llu\n",
+                     i, g_scene_targets[i].fbp,
+                     static_cast<unsigned long long>(g_scene_targets[i].prim_count),
+                     static_cast<unsigned long long>(g_scene_targets[i].write_count),
+                     static_cast<unsigned long long>(g_scene_targets[i].last_write_tick));
+        std::vector<std::uint8_t> dump_raw(640 * 448 * 4);
+        g_bind_framebuffer(GL_READ_FRAMEBUFFER, g_scene_targets[i].framebuffer);
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        glReadPixels(0, kHeight - 448, 640, 448, GL_RGBA, GL_UNSIGNED_BYTE, dump_raw.data());
+        char fname[256];
+        std::snprintf(fname, sizeof(fname), "C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp/build_native_gl_full/dump_target_%u.ppm", g_scene_targets[i].fbp);
+        std::ofstream f(fname, std::ios::binary);
+        if (f.good()) {
+            f << "P6\n640 448\n255\n";
+            for (int y = 0; y < 448; ++y) {
+                const std::uint8_t *row = dump_raw.data() + static_cast<std::size_t>(448 - 1 - y) * 640 * 4;
+                for (int x = 0; x < 640; ++x) {
+                    f.write(reinterpret_cast<const char*>(row + x * 4), 3);
+                }
+            }
         }
     }
     width = static_cast<std::uint32_t>(rect.width);
@@ -2549,13 +2529,23 @@ bool submit(const State &st, const Vertex *verts, int count) {
                 if (coeff == -1 && one == 1) { out = kOneMinusC[ck]; return true; }
                 return false;
             };
+            GLenum eq_rgb = GL_FUNC_ADD;
             GLenum src_factor = GL_ZERO, dst_factor = GL_ZERO;
-            const bool expressible = factor(sc, so, src_factor) && factor(dc, dt, dst_factor);
+            bool expressible = factor(sc, so, src_factor) && factor(dc, dt, dst_factor);
+            if (!expressible && g_blend_equation_separate) {
+                if (factor(sc, so, src_factor) && factor(-dc, -dt, dst_factor)) {
+                    eq_rgb = GL_FUNC_SUBTRACT;
+                    expressible = true;
+                } else if (factor(-sc, -so, src_factor) && factor(dc, dt, dst_factor)) {
+                    eq_rgb = GL_FUNC_REVERSE_SUBTRACT;
+                    expressible = true;
+                }
+            }
             const bool fix_ok = ck != 2 || (fix <= 0x80u && g_blend_color != nullptr);
             if (expressible && fix_ok) {
                 if (ck == 2)
                     cache_blend_const(static_cast<float>(fix) / 128.0f);
-                cache_blend(true, src_factor, dst_factor, GL_ONE, GL_ZERO);
+                cache_blend(true, src_factor, dst_factor, GL_ONE, GL_ZERO, eq_rgb, GL_FUNC_ADD);
             } else {
                 static const char *kFixHigh = "GS ALPHA FIX above 0x80 needs a GL blend factor above 1.0";
                 static const char *kNoBlendColor = "GL blend color is unavailable for the GS ALPHA FIX factor";
@@ -2666,6 +2656,25 @@ bool submit(const State &st, const Vertex *verts, int count) {
         if (g_active_texture) cache_texture2d(false, GL_TEXTURE1);
         cache_texture2d(false, GL_TEXTURE0);
     }
+    const std::uint64_t submit_prim_idx = g_prims_drawn.load(std::memory_order_relaxed);
+    if (submit_prim_idx >= 4085000 && submit_prim_idx <= 4095000) {
+        const int ofx_d = static_cast<int>(st.ctx[(attr >> 9) & 1u].xyoffset & 0xFFFFu);
+        const int ofy_d = static_cast<int>((st.ctx[(attr >> 9) & 1u].xyoffset >> 32) & 0xFFFFu);
+        const float fx0 = static_cast<float>(static_cast<int>(verts[0].x) - ofx_d) / 16.0f;
+        const float fy0 = static_cast<float>(static_cast<int>(verts[0].y) - ofy_d) / 16.0f;
+        if ((fx0 >= 50.0f && fx0 <= 130.0f && fy0 >= 60.0f && fy0 <= 150.0f) ||
+            (fx0 >= 230.0f && fx0 <= 320.0f && fy0 >= 140.0f && fy0 <= 210.0f)) {
+            std::fprintf(stderr, "[prim-draw #%llu] type=%u cnt=%d tex=%d tw=%u th=%u fbp=%u pos=(%.1f,%.1f) rgba=(%u,%u,%u,%u) stq=(%g,%g,%g) uv=(%u,%u) fst=%d test=%016llX tex0=%016llX\n",
+                         static_cast<unsigned long long>(submit_prim_idx), prim_type, count, textured, texture_width, texture_height,
+                         active_fbp, fx0, fy0, verts[0].r, verts[0].g, verts[0].b, verts[0].a,
+                         verts[0].s, verts[0].t, verts[0].q, verts[0].u, verts[0].v, (attr & (1ull << 8)) != 0,
+                         static_cast<unsigned long long>(context.test),
+                         static_cast<unsigned long long>(context.tex0));
+        }
+    }
+    if (g_direct_window_context) {
+        bind_draw_target(active_fbp);
+    }
 
     const std::uint64_t xyoffset = st.ctx[(attr >> 9) & 1u].xyoffset;
     const int ofx = static_cast<int>(xyoffset & 0xFFFFu);
@@ -2768,6 +2777,9 @@ bool submit(const State &st, const Vertex *verts, int count) {
         gl_state_invalidate();
     }
 
+    if (g_direct_window_context) {
+        bind_draw_target(active_fbp);
+    }
     if (fbmask) cache_color_mask(true, true, true, false);
     glBegin(mode);
     if (prim_type == 6) {
@@ -2917,8 +2929,10 @@ void shutdown() {
     if (g_hrc && g_hdc) {
         if (wglGetCurrentContext() != g_hrc) wglMakeCurrent(g_hdc, g_hrc);
         release_scene_target();
-        if (g_texture.object) glDeleteTextures(1, &g_texture.object);
-        g_texture = TextureCache{};
+        for (TextureCache &entry : g_pool) {
+            if (entry.object) glDeleteTextures(1, &entry.object);
+            entry = TextureCache{};
+        }
         if (g_owns_context) {
             wglMakeCurrent(g_hdc, nullptr);
             wglDeleteContext(g_hrc);

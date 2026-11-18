@@ -32,8 +32,8 @@ constexpr std::int32_t kMcNoFormat = -2;
 constexpr std::int32_t kMcNoEntry = -4;
 constexpr std::int32_t kMcFailDetect2 = -13;
 static bool s_card_changed[2][8] = {
-    {true, true, true, true, true, true, true, true},
-    {true, true, true, true, true, true, true, true}
+    {false, false, false, false, false, false, false, false},
+    {false, false, false, false, false, false, false, false}
 };
 constexpr std::uint32_t kMcDescParamBytes = 48u;
 constexpr std::uint32_t kMcRpcStatBytes = 12u;
@@ -346,6 +346,7 @@ bool pattern_matches(const std::string &name, const std::string &pattern) {
 std::int32_t mc_get_dir(const McNameParam &req) {
     if (req.port != 0 || req.slot != 0) return kMcFailDetect2;
     std::string name_str = req.name;
+    const bool is_abs = (!name_str.empty() && (name_str.front() == '/' || name_str.front() == '\\'));
     std::string dir_part;
     std::string pat_part;
     auto last_slash = name_str.find_last_of("/\\");
@@ -368,8 +369,12 @@ std::int32_t mc_get_dir(const McNameParam &req) {
     }
 
     std::filesystem::path dir = host_save_base();
-    if (!dir_part.empty()) dir /= dir_part;
-    else if (!s_current_dir.empty()) dir /= s_current_dir;
+    if (is_abs) {
+        if (!dir_part.empty()) dir /= dir_part;
+    } else {
+        if (!dir_part.empty()) dir /= dir_part;
+        else if (!s_current_dir.empty()) dir /= s_current_dir;
+    }
 
     std::vector<SceMcTblGetDir> entries;
 
@@ -415,8 +420,7 @@ std::int32_t mc_get_dir(const McNameParam &req) {
     }
     std::fprintf(stderr, "[iop-native] mc_get_dir pattern='%s' (dir='%s') maxent=%u found=%u\n",
                  pat_part.c_str(), dir.string().c_str(), maxent, count);
-    if (count == 0) return kMcNoEntry;
-    return kMcSucceed;
+    return static_cast<std::int32_t>(count);
 }
 
 std::int32_t mc_chdir(const McNameParam &req) {
@@ -430,8 +434,14 @@ std::int32_t mc_chdir(const McNameParam &req) {
         if (idx != std::string::npos) s_current_dir = s_current_dir.substr(0, idx);
         else s_current_dir.clear();
     } else {
-        if (target.front() == '/' || target.front() == '\\') target = target.substr(1);
-        if (s_current_dir.empty()) s_current_dir = target;
+        const bool is_abs = (target.front() == '/' || target.front() == '\\');
+        while (!target.empty() && (target.front() == '/' || target.front() == '\\')) {
+            target.erase(0, 1);
+        }
+        while (!target.empty() && (target.back() == '/' || target.back() == '\\')) {
+            target.pop_back();
+        }
+        if (is_abs || s_current_dir.empty()) s_current_dir = target;
         else s_current_dir = s_current_dir + "/" + target;
     }
     
@@ -459,10 +469,13 @@ std::int32_t mc_open(const McNameParam &req) {
         return -1;
     }
     
-    while (filename.front() == '/' || filename.front() == '\\') filename = filename.substr(1);
+    const bool is_abs = (filename.front() == '/' || filename.front() == '\\');
+    while (!filename.empty() && (filename.front() == '/' || filename.front() == '\\')) {
+        filename.erase(0, 1);
+    }
 
     std::filesystem::path full_path = host_save_base();
-    if (!s_current_dir.empty()) full_path /= s_current_dir;
+    if (!is_abs && !s_current_dir.empty()) full_path /= s_current_dir;
     full_path /= filename;
 
     int slot_idx = -1;
@@ -890,7 +903,15 @@ bool mcsrv_rpc(std::uint32_t method, std::uint32_t args,
 
 } // namespace
 
-void reset() { sif::unregister_hle_override(kSifSid); }
+void reset() {
+    s_current_dir.clear();
+    for (auto &f : s_open_files) {
+        f.in_use = false;
+        f.data.clear();
+        f.path.clear();
+    }
+    sif::unregister_hle_override(kSifSid);
+}
 
 void activate() {
     sif::register_hle_override(kSifSid, mcsrv_rpc);

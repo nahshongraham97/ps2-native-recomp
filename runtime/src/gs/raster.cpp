@@ -546,9 +546,10 @@ bool decode_texture_rgba(const State &st, std::vector<std::uint32_t> &pixels, st
     // texture extent as max(2^TW, CLAMP region + 1) (gpu/gpu.cpp), because a
     // game may declare a region wider than the power-of-two it names. Using
     // 2^TW alone made the uploaded texture narrower than the UVs expected,
-    // so the glyph and border sprites sampled the wrong texels.
-    width = std::max(width, s.maxu + 1u);
-    height = std::max(height, s.maxv + 1u);
+    // so the glyph and border sprites sampled the wrong texels. Only region
+    // clamp (WMS/WMT == 2) uses the clamp region bounds.
+    if (s.wms == 2) width = std::max(width, s.maxu + 1u);
+    if (s.wmt == 2) height = std::max(height, s.maxv + 1u);
     pixels.resize(static_cast<std::size_t>(width) * height);
     for (std::uint32_t y = 0; y < height; ++y) {
         for (std::uint32_t x = 0; x < width; ++x) {

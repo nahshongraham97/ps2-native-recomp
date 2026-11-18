@@ -506,6 +506,12 @@ void local_copy() {
 void load_clut(std::uint64_t tex0) {
     const std::uint32_t cld = static_cast<std::uint32_t>(tex0 >> 61) & 7u;
     static std::uint32_t cbp0 = ~0u, cbp1 = ~0u;
+    static std::uint64_t last_vram_gen = 0;
+    if (g_vram_generation != last_vram_gen) {
+        last_vram_gen = g_vram_generation;
+        cbp0 = ~0u;
+        cbp1 = ~0u;
+    }
     const std::uint32_t cbp = static_cast<std::uint32_t>(tex0 >> 37) & 0x3FFFu;
     const std::uint32_t before0 = cbp0, before1 = cbp1;
     bool skipped = false;
@@ -531,7 +537,10 @@ void load_clut(std::uint64_t tex0) {
 #ifdef PS2_GPU
     if (gpu_on()) gpu::load_clut(tex0, g_state.texclut);
 #endif
-    if (!cpu_raster()) return;
+    if (!cpu_raster() && !native_gl::enabled()) return;
+    if (native_gl::enabled()) {
+        native_gl::sync_surface_to_cpu(cbp / 32u);
+    }
     const bool eight = psm == PSMT8 || psm == PSMT8H;
     const std::uint32_t entries = eight ? 256u : 16u;
     const std::uint32_t texclut = static_cast<std::uint32_t>(g_state.texclut);
@@ -1465,7 +1474,6 @@ bool display(const DisplayRegs &r, std::vector<std::uint32_t> &rgba, std::uint32
         // The native path draws on the GPU and never writes those pixels into
         // the CPU VRAM array, so a picture read from that array is the game's
         // texture data, not the game. The captured surface is the frame itself.
-        if (captured_picture(rgba, width, height)) return true;
         capture_present_picture();
         if (captured_picture(rgba, width, height)) return true;
     }

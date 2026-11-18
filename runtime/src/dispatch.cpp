@@ -219,6 +219,21 @@ void dispatch(Cpu &c, std::uint32_t, std::uint32_t depth) {
         c.pc = c.r[31].w[0];
         return;
     }
+    if (c.r[31].w[0] == 0x002E6180u) {
+        static bool s_dumped = false;
+        if (!s_dumped) {
+            s_dumped = true;
+            std::fprintf(stderr, "[mka-particle] Dynamic particle evaluator at 0x%08X called from 0x%08X (r11=0x%08X)\n",
+                         pc, c.r[31].w[0], c.r[11].w[0]);
+            for (std::uint32_t a = pc; a < pc + 0xF0u; a += 16) {
+                std::fprintf(stderr, "  [0x%08X] %08X %08X %08X %08X\n",
+                             a, ld32(a), ld32(a+4), ld32(a+8), ld32(a+12));
+            }
+        }
+        c.r[2].d[0] = 0;
+        c.pc = c.r[31].w[0];
+        return;
+    }
     ps2::hook::notify_observer(c, depth);
     if (const auto h = ps2::hook::find_hook(pc)) { h(c); return; }
     const UnitInfo *u = unit_for(pc);
@@ -240,6 +255,10 @@ void dispatch(Cpu &c, std::uint32_t, std::uint32_t depth) {
         char reason[64];
         std::snprintf(reason, sizeof reason, "missing code at 0x%08X (ra 0x%08X)", pc, c.r[31].w[0]);
         std::fprintf(stderr, "[ee] no translated code at 0x%08X (ra 0x%08X)\n", pc, c.r[31].w[0]);
+        for (std::uint32_t a = pc - 64; a < pc + 64; a += 16) {
+            std::fprintf(stderr, "[ee] mem %08X: %08X %08X %08X %08X\n",
+                         a, ld32(a), ld32(a + 4), ld32(a + 8), ld32(a + 12));
+        }
         for (int i = 1; i < 32; i += 4)
             std::fprintf(stderr, "[ee]   r%-2d %08X %08X %08X %08X\n", i, c.r[i].w[0], c.r[i + 1].w[0], c.r[i + 2].w[0], i + 3 < 32 ? c.r[i + 3].w[0] : 0u);
         halt(reason);
