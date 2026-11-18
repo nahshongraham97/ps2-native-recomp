@@ -1,4 +1,6 @@
-# Acceptance gate met — 2026-11-16 (the guest's VRAM writes reach the native textures)
+# Historical census observation — 2026-11-16 (the guest's VRAM writes reach the native textures)
+
+> Audit correction (2026-11-18): This is a dated report, not current status. Broad native/acceptance/perfected/full-mode claims below are unsupported unless bounded to their exact recorded scenario; quoted tool verdicts are historical output, not proof of the execution contract. Preserve measured counts and original log quotations. Current status is the canonical root PORT_STATUS.md and acceptance remains OPEN.
 
 ## The build
 
@@ -47,9 +49,9 @@ base=11200(fbp=350):app=362,skp=0 base=11232(fbp=351):app=122,skp=0
 |---|---|
 | `test_spu2_mix` | exit 0 — "[PASS] SPU2 produced non-silent samples through the libsd bridge", peak sample 7166, chip-model ops 0 |
 | `test_gl_vs_raster` | exit 0 — 18/18 matrix cases |
-| `test_native_gl_alpha` | exit 0 — the census in the test reads ACCEPTANCE GATE MET |
+| `test_native_gl_alpha` | exit 0 — the census in the test reads ACCEPTANCE GATE MET | Historical tool wording only; not release acceptance.
 | `test_gl_lazy_readback` | exit 0 — all 10 cases |
-| `test_iop_native_module` | exit 0 — the census in the test reads ACCEPTANCE GATE MET |
+| `test_iop_native_module` | exit 0 — the census in the test reads ACCEPTANCE GATE MET | Historical tool wording only; not release acceptance.
 
 ## What the last change did
 

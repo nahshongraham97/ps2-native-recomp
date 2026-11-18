@@ -1,7 +1,9 @@
 # Build delivery — 2026-11-14
 
+> Dated-run audit boundary (2026-11-18): All implementation/current/verified language here refers to the named historical source, build and scenario. Original counter values, outputs, observations and artifact IDs are preserved as reports, not independently revalidated facts. “Native” component names, successful builds/tests and old census verdicts do not establish host resource ownership, card/profile behavior, correct sound, physical input, movie A/V sync or whole-game acceptance. Read the canonical parent PORT_STATUS.md and execution contract for current blockers; unresolved historical causal/source claims remain unresolved.
+
 The runner at `build_native_gl_full\ps2run.exe` (the binary `launch_game.bat`
-executes) was rebuilt in place from the current source, so the launcher now
+executes) was rebuilt in place from the source at the named revision, so the launcher now
 serves every commit on `codex/native-vfs-sif-overlay-20261110` instead of the
 checkpoint-era binary that predated them.
 

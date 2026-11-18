@@ -1,5 +1,7 @@
 # Historical 3,000-frame scripted Kombat run — 2026-11-18
 
+> Audit correction (2026-11-18): This is a dated report, not current status. Broad native/acceptance/perfected/full-mode claims below are unsupported unless bounded to their exact recorded scenario; quoted tool verdicts are historical output, not proof of the execution contract. Preserve measured counts and original log quotations. Current status is the canonical root PORT_STATUS.md and acceptance remains OPEN.
+
 **Superseded acceptance wording:** This run records scripted combat and its
 own counters/frames. It does not prove a physical keyboard or controller,
 correct sound effects, card profile save/reload, every mode, or elimination
@@ -9,11 +11,11 @@ contract.
 
 ## 1. Executive Summary & Project Milestones
 
-- **Zero Emulation Enforced**: Strictly 0 guest EE/VU/IOP interpreter instructions, 0 emulated GS device calls, 0 emulated SPU2 chip ops, and strictly **0 IPU emulation** anywhere on the accepted route.
-- **Zero Required Flags**: Out-of-the-box native retail execution of *Mortal Kombat: Armageddon* (`SLUS_214.10`) with zero command-line flags and zero required environment variables.
+- **Historical zero-emulation claim — unsupported as acceptance:** The recorded counters were zero for the listed scenario. They do not establish removal of every reachable device or fixed memory/resource path; architecture and full-game acceptance remain OPEN.
+- **Historical launch-default claim — not current launch guidance:** The report described default execution, but no present whole-game/physical-input/card/audio acceptance follows. Preserve the exact flags in the pinned run record; do not infer a flag-free release.
 - **3,000-Frame Offline Combat Match Verified**: Full retail execution traversing legal screen, direct memory card verification, front-end navigation, Practice Mode selection, character selection (Scorpion vs. Sub-Zero), arena loading, and 3,000 frames of active combat (punches, kicks, spear combo, jump/crouch attacks, weapon switches) with registered damage on opponent health bars.
-- **Character Select Rendering Perfected**:
-  - `clut_hash` caching in `native_gl_backend.cpp` eliminates portrait palette collision. Row 4 accurately renders all 10 distinct portraits: Meat, Locked (Daegon), single Zombie Liu Kang, Kung Lao, Shang Tsung, Quan Chi, Shinnok, Raiden, Locked (Taven), single KAK Blue Statue.
+- **Historical character-select change (full fidelity unverified)**:
+  - `clut_hash` caching in `native_gl_backend.cpp` was intended to address portrait palette collision. Row 4 was reported to render all 10 distinct portraits: Meat, Locked (Daegon), single Zombie Liu Kang, Kung Lao, Shang Tsung, Quan Chi, Shinnok, Raiden, Locked (Taven), single KAK Blue Statue. Full retail visual equivalence is unverified.
   - Restricted clamp-extent expansion in `raster.cpp` strictly to region clamp mode (`s.wms == 2`, `s.wmt == 2`), fixing UV coordinate stretching and eliminating black facial clipping on Scorpion's mask and hood.
 - **Host-Native Vector Particle Evaluator**:
   - Midway's internal dynamic heap particle generator call (`ra == 0x002E6180`) is intercepted and evaluated directly in native C++ in `dispatch.cpp`. Zero dynamic JIT compilation required.

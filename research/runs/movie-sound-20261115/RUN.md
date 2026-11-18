@@ -1,5 +1,7 @@
 # Movie sound, GATE line, and the movie-2 reload crash — 2026-11-15 19:13
 
+> Dated-run audit boundary (2026-11-18): All implementation/current/verified language here refers to the named historical source, build and scenario. Original counter values, outputs, observations and artifact IDs are preserved as reports, not independently revalidated facts. “Native” component names, successful builds/tests and old census verdicts do not establish host resource ownership, card/profile behavior, correct sound, physical input, movie A/V sync or whole-game acceptance. Read the canonical parent PORT_STATUS.md and execution contract for current blockers; unresolved historical causal/source claims remain unresolved.
+
 - Log: `games/mkarmageddon/disc/logs/ps2run_2026-11-15_19-13-39.log` (407,466 lines)
 - Binary: SHA-256 `eaf36b36ae4025f3e03b0d519011f51237d758a6c6e133e7e562976c473fbffb`, build stamp
   `commit 9c94385 clean` — the GATE-line build, launched through `launch_game.bat` with

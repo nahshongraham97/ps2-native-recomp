@@ -1,5 +1,7 @@
 # Screen-position replay — 2026-11-13
 
+> Dated-run audit boundary (2026-11-18): All implementation/current/verified language here refers to the named historical source, build and scenario. Original counter values, outputs, observations and artifact IDs are preserved as reports, not independently revalidated facts. “Native” component names, successful builds/tests and old census verdicts do not establish host resource ownership, card/profile behavior, correct sound, physical input, movie A/V sync or whole-game acceptance. Read the canonical parent PORT_STATUS.md and execution contract for current blockers; unresolved historical causal/source claims remain unresolved.
+
 - Runner: C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\build_native_gl_full\ps2run.exe
 - Runner SHA-256: B70FECCAB9EB8D7EC90E694498F1D99B772761C81BCDBE61C05C2A832B2CA1B0
 - PID: 40792

@@ -1,5 +1,7 @@
 # The native CRI ADX service — the contract (2026-11-16)
 
+> Audit correction (2026-11-18): This is a historical source/measurement proposal, not current implementation status. Original numeric outputs are retained as reported;3,854 pictures is not explained by315 intra+349 predicted, so the counting/classification evidence remains OPEN. Root PORT_STATUS.md and the execution contract control current acceptance.
+
 What the native service has to replace, measured from the game's own files and
 from the 13:21 run's log (`ps2run_2026-11-16_13-21-09.log`, the build that
 reached the intro movie).
@@ -23,9 +25,7 @@ reached the intro movie).
 - What it does: it plays the movie. The native GS path expects the decoded
   frames in VRAM at FBP 280 and presents that surface
   (`[native-gl] sampled offscreen target FBP=280 ...`).
-- It uses the PS2's **IPU** for the intra frames and the **RSP** for the rest.
-  Both are emulated PS2 devices; the census does not count either, so the IPU
-  emulation is a rule-4 gap of the same kind the AOT guest code was.
+- The original record attributed intra decoding to the IPU path. Its claim of a PS2 **RSP** decoding the remaining frames was unsupported and is withdrawn. Trace actual predicted-frame code and decoder ownership before implementation; a zero census alone cannot establish device removal.
 
 ## The media
 
@@ -39,7 +39,7 @@ Measured by `tests/test_mpeg2_stream.cpp` (which parses the game's own movie):
 |---|---|
 | picture | 640x448, 30 fps, progressive |
 | video PES packets | 1,485 |
-| pictures | 3,854 (315 intra, 349 predicted) |
+| historically reported pictures | 3,854 (315 intra, 349 predicted); totals inconsistent and interpretation unverified |
 | audio PES packets | 136 |
 | CRI metadata | private stream 2 (`CRITAGS`, `SFVFTRS`, `CRI_SVE 3.87`) |
 
@@ -63,14 +63,12 @@ really ends at the next program stream start code.
    (`runtime/src/ipu/ipu.cpp`: `read_dc_diff`, `read_coefficient`, `idct`,
    `decode_block`, `decode_macroblock`) and are standard MPEG-1/2 work, so the
    native decoder does the same from an elementary stream instead of from the
-   chip's commands. The predicted frames need the motion compensation the RSP
-   did.
+   chip's commands. Predicted frames require motion compensation; the original RSP attribution is not a proven implementation source.
 2. **The oracle**: the IPU model decodes the same stream, so the native
    decoder can be measured against it **without a game launch** - the frame it
    produces and the frame the IPU model produces must match.
 3. **The CRI audio**: the audio PES stream's payload is CRI's own; it goes to
-   the native sound service (the voices and the ADPCM decoder are already
-   native).
+   the native sound service (the historical implementation included a host audio path; its chip limits, codec behavior, identity and native acceptance still require verification).
 4. **The service**: a native SIF server for sid `0x90000200` with the twelve
    function numbers, and the native module registration that stops the guest
    IRX from loading at all (the loader already reserves the captured base

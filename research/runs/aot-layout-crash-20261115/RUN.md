@@ -1,5 +1,7 @@
 # AOT layout mismatch at LIBSD — crash, root cause, fix (2026-11-15)
 
+> Dated-run audit boundary (2026-11-18): All implementation/current/verified language here refers to the named historical source, build and scenario. Original counter values, outputs, observations and artifact IDs are preserved as reports, not independently revalidated facts. “Native” component names, successful builds/tests and old census verdicts do not establish host resource ownership, card/profile behavior, correct sound, physical input, movie A/V sync or whole-game acceptance. Read the canonical parent PORT_STATUS.md and execution contract for current blockers; unresolved historical causal/source claims remain unresolved.
+
 ## The run
 
 - Log: `games/mkarmageddon/disc/logs/ps2run_2026-11-15_16-54-43.log` (98 lines, 9,421 bytes)

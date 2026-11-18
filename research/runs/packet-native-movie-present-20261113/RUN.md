@@ -1,5 +1,7 @@
 # Native GL movie presentation capture — 2026-11-13
 
+> Dated-run audit boundary (2026-11-18): All implementation/current/verified language here refers to the named historical source, build and scenario. Original counter values, outputs, observations and artifact IDs are preserved as reports, not independently revalidated facts. “Native” component names, successful builds/tests and old census verdicts do not establish host resource ownership, card/profile behavior, correct sound, physical input, movie A/V sync or whole-game acceptance. Read the canonical parent PORT_STATUS.md and execution contract for current blockers; unresolved historical causal/source claims remain unresolved.
+
 - Runner: C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp\build_native_gl_full\ps2run.exe
 - PID: 21752
 - Runner SHA-256: F48D5CB1E5BFC18CAB5AFED1385FBB10A7FFBD058849A505F4000E82AAABEE08

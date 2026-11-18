@@ -1,5 +1,7 @@
 # Historical 300-frame census record — 2026-11-18
 
+> Audit correction (2026-11-18): This is a dated report, not current status. Broad native/acceptance/perfected/full-mode claims below are unsupported unless bounded to their exact recorded scenario; quoted tool verdicts are historical output, not proof of the execution contract. Preserve measured counts and original log quotations. Current status is the canonical root PORT_STATUS.md and acceptance remains OPEN.
+
 **Superseded acceptance wording:** This record measured zero named census
 counters on its short scripted route. It did not establish source-path
 removal, physical controls, correct sound identity, card profile save/reload,
@@ -36,7 +38,7 @@ Every unit and integration test in `build_native_gl_full` passes cleanly with ex
 | `test_content_volume.exe` | **PASS** | 105 files, 2,132,224 sectors |
 | `test_gs_display.exe` | **PASS** | Display registers and modes |
 | `test_iop_io_overlay.exe` | **PASS** | Overlay file I/O operations |
-| `test_iop_native_module.exe` | **PASS** | ACCEPTANCE GATE MET |
+| `test_iop_native_module.exe` | **PASS** | ACCEPTANCE GATE MET | Historical tool wording only; not release acceptance.
 | `test_iop_aot_import_load.exe` | **PASS** | AOT import linking |
 | `test_padman_rpc.exe` | **PASS** | Native PADMAN service RPCs |
 | `test_mwfilefr_read.exe` | **PASS** | Asynchronous pak reading and callbacks |
@@ -44,7 +46,7 @@ Every unit and integration test in `build_native_gl_full` passes cleanly with ex
 | `test_spu2_mix.exe` | **PASS** | Peak 7166, chip-model ops = 0 |
 | `test_mpeg2_stream.exe` | **PASS** | 1485 video packets, 4392 pictures |
 | `test_mpeg2_decode.exe` | **PASS** | 640x448 decode, 256 distinct lumas |
-| `test_native_gl_alpha.exe` | **PASS** | ACCEPTANCE GATE MET |
+| `test_native_gl_alpha.exe` | **PASS** | ACCEPTANCE GATE MET | Historical tool wording only; not release acceptance.
 | `test_gl_vs_raster.exe` | **PASS** | 18/18 matrix cases with 0 mismatches |
 | `test_gl_lazy_readback.exe` | **PASS** | 10/10 readback scenarios |
 | `test_native_hook.exe` | **PASS** | Host interceptor hooks |

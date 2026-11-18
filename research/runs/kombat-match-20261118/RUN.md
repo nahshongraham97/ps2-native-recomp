@@ -1,5 +1,7 @@
 # Historical 2,500-frame scripted Kombat run — 2026-11-18
 
+> Audit correction (2026-11-18): This is a dated report, not current status. Broad native/acceptance/perfected/full-mode claims below are unsupported unless bounded to their exact recorded scenario; quoted tool verdicts are historical output, not proof of the execution contract. Preserve measured counts and original log quotations. Current status is the canonical root PORT_STATUS.md and acceptance remains OPEN.
+
 **Superseded acceptance wording:** The observations below apply only to
 this recorded scripted route and build. They do not prove physical input,
 exact audio, card save/reload, every mode, or removal of all reachable PS2
@@ -8,8 +10,8 @@ full acceptance is OPEN under the parent native-port execution contract.
 
 ## 1. Executive Summary & Project Milestones
 
-- **Zero Emulation Enforced**: Strictly 0 guest EE/VU/IOP interpreter instructions, 0 emulated GS device calls, 0 emulated SPU2 chip ops, and strictly **0 IPU emulation** anywhere on the accepted route.
-- **Zero Required Flags**: Out-of-the-box native retail execution of *Mortal Kombat: Armageddon* (`SLUS_214.10`) with zero command-line flags and zero required environment variables.
+- **Historical zero-emulation claim — unsupported as acceptance:** The recorded counters were zero for the listed scenario. They do not establish removal of every reachable device or fixed memory/resource path; architecture and full-game acceptance remain OPEN.
+- **Historical launch-default claim — not current launch guidance:** The report described default execution, but no present whole-game/physical-input/card/audio acceptance follows. Preserve the exact flags in the pinned run record; do not infer a flag-free release.
 - **2,500-Frame Offline Kombat Match**: Full retail execution traversing the initial overlays, memory card verification, front-end navigation, character selection, arena selection, and 2,500 frames of combat simulation.
 - **Host-Native CRI_ADXI SIF Service (SID 0x90000200)**: Native C++ implementation of all 12 RPC functions without guest IOP execution or IPU emulation.
 - **Direct Directory Memory Card Mapping (SID 0x80000400)**: Direct filesystem mapping to native Windows `saves/` directory, eliminating raw 8 MB memory card dependencies.
@@ -37,7 +39,7 @@ All 17 test suites in `build_native_gl_full` pass with zero failures:
 | `test_content_volume.exe` | **PASS** | 105 files, 2,132,224 sectors |
 | `test_gs_display.exe` | **PASS** | Display registers and modes |
 | `test_iop_io_overlay.exe` | **PASS** | Overlay file I/O operations |
-| `test_iop_native_module.exe` | **PASS** | ACCEPTANCE GATE MET |
+| `test_iop_native_module.exe` | **PASS** | ACCEPTANCE GATE MET | Historical tool wording only; not release acceptance.
 | `test_iop_aot_import_load.exe` | **PASS** | AOT import linking |
 | `test_padman_rpc.exe` | **PASS** | Native PADMAN service RPCs |
 | `test_mwfilefr_read.exe` | **PASS** | Asynchronous pak reading and callbacks |

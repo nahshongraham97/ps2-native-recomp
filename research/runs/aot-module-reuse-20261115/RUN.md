@@ -1,5 +1,7 @@
 # Movie-2 Reload: Resident AOT Module Reuse (2026-11-15)
 
+> Dated-run audit boundary (2026-11-18): All implementation/current/verified language here refers to the named historical source, build and scenario. Original counter values, outputs, observations and artifact IDs are preserved as reports, not independently revalidated facts. “Native” component names, successful builds/tests and old census verdicts do not establish host resource ownership, card/profile behavior, correct sound, physical input, movie A/V sync or whole-game acceptance. Read the canonical parent PORT_STATUS.md and execution contract for current blockers; unresolved historical causal/source claims remain unresolved.
+
 ## Summary & Delivery
 
 - Binary: `build_native_gl_full/ps2run.exe`, SHA-256 `67E71461BA0953458CA43527E37FD0685AF2DF49423B73BF12651F01355DF874`.

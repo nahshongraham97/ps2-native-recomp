@@ -1,5 +1,7 @@
 # ps2-native-recomp
 
+> Historical archive audit (2026-11-18): This copied README is not current project guidance or a certificate for its historical claims. Original donor capabilities, current/ready wording, runtime translation and launch instructions refer to the source snapshot and are not independently reverified here. Use the canonical [current status](../../../../../../PORT_STATUS.md) and its linked execution contract; no archived native/perfected/all-mode claim is accepted without exact matching evidence.
+
 > **This checkout is the retail Armageddon native port. Read
 > [`NATIVE_PORT_ONLY.md`](NATIVE_PORT_ONLY.md) first.**
 >

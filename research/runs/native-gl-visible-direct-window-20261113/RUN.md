@@ -1,5 +1,7 @@
 # Visible retail run: native GL direct window, 2026-11-13
 
+> Dated-run audit boundary (2026-11-18): All implementation/current/verified language here refers to the named historical source, build and scenario. Original counter values, outputs, observations and artifact IDs are preserved as reports, not independently revalidated facts. “Native” component names, successful builds/tests and old census verdicts do not establish host resource ownership, card/profile behavior, correct sound, physical input, movie A/V sync or whole-game acceptance. Read the canonical parent PORT_STATUS.md and execution contract for current blockers; unresolved historical causal/source claims remain unresolved.
+
 ## Target and setup
 
 - Checkout: `external/forks/ps2-native-recomp/`, branch `codex/native-vfs-sif-overlay-20261110`, source HEAD `f039e25` before this uncommitted change set.

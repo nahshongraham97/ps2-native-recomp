@@ -1,5 +1,7 @@
 # Native renderer follow-up, 2026-11-14
 
+> Dated-run audit boundary (2026-11-18): All implementation/current/verified language here refers to the named historical source, build and scenario. Original counter values, outputs, observations and artifact IDs are preserved as reports, not independently revalidated facts. “Native” component names, successful builds/tests and old census verdicts do not establish host resource ownership, card/profile behavior, correct sound, physical input, movie A/V sync or whole-game acceptance. Read the canonical parent PORT_STATUS.md and execution contract for current blockers; unresolved historical causal/source claims remain unresolved.
+
 The user confirmed the text rendering checkpoint `efa189a` visually. The
 changes described here are subsequent source changes; the checkpoint runner
 was not replaced and the game was not launched for this follow-up.
@@ -86,7 +88,7 @@ new depth key after reset; resetting the key with the surfaces makes it pass.
 This does not implement sharing or restoration of depth between surfaces.
 
 An opt-in regression (`MKA_TEST_SHARED_DEPTH=1`) draws to two different color
-targets with the same depth key. It currently fails: the second target accepts
+targets with the same depth key. It in the recorded snapshot fails: the second target accepts
 a pixel that should fail against the first target's depth, because each target
 has its own GL depth renderbuffer. This test remains opt-in while the shared
 depth implementation is outstanding. The experiment does not establish retail
@@ -121,7 +123,7 @@ recording is conditional on `cpu_raster()`, which needs separate route analysis.
 
 Packet-path source trace: `native_renderer::image` calls `gs::write_image`,
 which forwards data to `feed_image`; when `cpu_raster()` is true, completed
-transfers call `apply_display_write`. The write-history event is currently
+transfers call `apply_display_write`. The write-history event is in the recorded snapshot
 recorded on TRXDIR setup, before image data is complete, and local-copy history
 is recorded before the copy loop. Therefore the record indicates intent, not
 confirmed completion; it must not alone establish that a full frame exists.
@@ -163,7 +165,7 @@ the non-overlapping test passes. An earlier test setup used overlapping bases
 91 and 140: full-frame destination readback overwrote the source's memory.
 That is a confirmed unresolved aliasing hazard, not fixed by exact-base sync.
 The reproducible opt-in combination `MKA_TEST_COPY_COHERENCY=1` and
-`MKA_TEST_COPY_OVERLAP=1` currently fails with `ff000000` in place of the
+`MKA_TEST_COPY_OVERLAP=1` in the recorded snapshot fails with `ff000000` in place of the
 newer copied pixel. The same copy test using non-overlapping bases passes.
 
 Source review confirms `do_readback_target` reads `FBW * 64` by 512 pixels and
@@ -222,12 +224,12 @@ The visible `test_gl_vs_raster` font cases exercise TFX=0 (MODULATE), while
 `prepare_texture` also implements TFX=1 (DECAL) and TFX=2/3 (highlight modes)
 with distinct alpha and second-texture-unit behavior. Before replacing this
 path with a shader, parity coverage must include those cases, both TCC choices,
-and the currently supported blend and framebuffer-mask combinations. Existing
+and the in the recorded snapshot supported blend and framebuffer-mask combinations. Existing
 font tests alone are insufficient to verify that migration.
 
 `MKA_TEST_COVERAGE_HOLES=1` now reproduces the need for actual coverage: a
 sentinel pixel lies inside a triangle's bounding box but outside its rasterized
-area; full-surface readback changes it to black. The opt-in test currently
+area; full-surface readback changes it to black. The opt-in test in the recorded snapshot
 fails and must pass before a coverage-based readback can be claimed correct.
 
 The movie log shows a host-to-local transfer with DBP 8960 while the observed

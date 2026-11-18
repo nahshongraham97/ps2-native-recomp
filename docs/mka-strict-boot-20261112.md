@@ -1,5 +1,7 @@
 # Armageddon strict boot observations, 2026-11-12
 
+> Historical run scope: These are2026-11-12 observations, not the current host implementation or acceptance state. Read the parent PORT_STATUS.md and execution contract for current blockers. The short runs do not validate physical input, saves, complete code coverage, or native resource ownership.
+
 The `build_native_gl_full` runner was launched headlessly with a disposable
 card, strict VU1 AOT, strict native IOP, strict GPU mode, and the extracted
 disc filesystem. The experimental OpenGL backend was disabled.
@@ -7,16 +9,16 @@ disc filesystem. The experimental OpenGL backend was disabled.
 * With EE live compilation disabled, execution stopped after 8 frames at
   untranslated EE address `0x00648680`. That address is present in the
   game's `entries.txt`; its presence there alone does not prove that the
-  currently linked generated code implements it.
+  then-linked generated code implements it.
 * With EE live compilation enabled, using a separate copy of the ELF,
   entries and overlays and a separate live compiler cache, execution reached
   28 frames. Native SIO2MAN, MWFILEFR, PADMAN, MCMAN and MCSERV registered.
-  The game exited following MCSERV method `0xFE`, for which the current host
+  The game exited following MCSERV method `0xFE`, for which the 2026-11-12 host
   service deliberately replies `{-5, 0, 0}`. Temporal proximity does not by
   itself prove that this reply caused the exit.
 * No VU1 execution trace was emitted in either short boot. The 490 registered
   AOT entries therefore have not been demonstrated to cover gameplay here.
-* MCSERV currently has no card-operation implementation. The local PS2SDK
+* The2026-11-12 MCSERV snapshot had no card-operation implementation. The local PS2SDK
   libmc reference treats an init result of `-5` as an unhandled XMCSERV
   protocol and attempts legacy initialization; this run did not show a legacy
   initialization call. A separate local `ps2-port-engine` implementation

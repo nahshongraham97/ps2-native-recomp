@@ -29,3 +29,12 @@ to this fork's `main` and push to `origin/main` after verifying the diff.
 For Qwen/LM Studio, follow `../../../MODEL_COORDINATION.md`; do not change
 settings or impose inference caps. If no instance is loaded, read source
 directly. Do not ask the owner to launch while any contract row is open.
+
+After each code/config change, test result, verified finding, decision,
+blocker, or rollback, update every affected active document before beginning
+the next implementation step. Parent `PORT_STATUS.md` owns live state;
+`ROADMAP.md` owns task order; the execution contract owns acceptance; dated
+run records own observations. Reconcile all conflicting current claims in
+place and mark superseded material historical. Include doc updates with the
+authored change; do not accumulate contradictory addenda or independent
+current snapshots.

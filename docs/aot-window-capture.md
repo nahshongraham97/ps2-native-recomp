@@ -1,5 +1,7 @@
 # Offline AOT window capture
 
+> Diagnostic tooling scope (2026-11-18): The source implements these opt-in offline capture/code-generation utilities in `runtime/src/system.cpp:324-355` and `recomp/main.cpp:126-199`. Their fixed guest-address windows describe legacy diagnostic inputs, not permitted native game allocation limits or a current release workflow. This guide does not authorize a game launch while execution-contract rows remain OPEN.
+
 The native runtime can save selected EE RAM windows at selected guest frames
 for offline inspection and recompilation. This is disabled unless all three
 environment variables below are set:
