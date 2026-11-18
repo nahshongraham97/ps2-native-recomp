@@ -1,4 +1,10 @@
-# Offline Kombat Match Execution (2,500 Frames) & Complete Acceptance Audit — 2026-11-18
+# Historical 2,500-frame scripted Kombat run — 2026-11-18
+
+**Superseded acceptance wording:** The observations below apply only to
+this recorded scripted route and build. They do not prove physical input,
+exact audio, card save/reload, every mode, or removal of all reachable PS2
+device/memory paths. The original milestone claims below remain historical;
+full acceptance is OPEN under the parent native-port execution contract.
 
 ## 1. Executive Summary & Project Milestones
 

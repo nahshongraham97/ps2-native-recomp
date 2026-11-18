@@ -1,4 +1,11 @@
-# Acceptance Gate Met — 2026-11-18 (Retail Native Execution Verified Offline)
+# Historical 300-frame census record — 2026-11-18
+
+**Superseded acceptance wording:** This record measured zero named census
+counters on its short scripted route. It did not establish source-path
+removal, physical controls, correct sound identity, card profile save/reload,
+movies, or all-mode gameplay. Its original claims below are preserved as
+dated claims, not the current verdict. Full acceptance is OPEN under the
+parent `../../../NATIVE_PORT_EXECUTION_CONTRACT.md` (from the fork root).
 
 ## 1. Pinned Build & Binary Identification
 

@@ -1,4 +1,11 @@
-# Offline Kombat Match Execution (3,000 Frames) & Milestone Audit — 2026-11-18
+# Historical 3,000-frame scripted Kombat run — 2026-11-18
+
+**Superseded acceptance wording:** This run records scripted combat and its
+own counters/frames. It does not prove a physical keyboard or controller,
+correct sound effects, card profile save/reload, every mode, or elimination
+of every reachable PS2 device/memory path. Preserve the measurements below
+as dated evidence; full acceptance is OPEN under the parent execution
+contract.
 
 ## 1. Executive Summary & Project Milestones
 
