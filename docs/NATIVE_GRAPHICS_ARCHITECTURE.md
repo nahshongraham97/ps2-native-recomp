@@ -51,3 +51,13 @@ Rather than staging texture data in an emulated 4 MB PS2 VRAM array, the native 
 - Proprietary geometry streams and skinning transformations are handled by **490 statically precompiled vector programs** (`runtime/src/vu_micro.cpp`).
 - Vertex coordinates, normals, UVs, and RGBA colors are converted ahead of time into native vertex buffers, bypassing any microcode or instruction interpreter.
 - Primitives are submitted directly to the native GPU pipeline (`native-gl` or `Direct3D 12`).
+
+### C. Palette Isolation via CLUT Hash (`clut_hash`)
+- **Problem**: 8-bit and 4-bit indexed textures sharing common VRAM addresses or buffer widths previously collided in the texture pool, causing palettes of adjacent UI portraits (e.g. Zombie Liu Kang) to overwrite one another.
+- **Solution**: The texture cache pool is expanded to 512 entries, and every texture lookup is uniquely keyed on `(base, psm, tbw, clut_hash)`. Each portrait and textured asset maintains its distinct palette binding.
+
+### D. Texture Wrap & Clamp Region Extent Constraint
+- In `raster.cpp`, texture dimension expansion beyond power-of-two boundaries (`width = max(width, s.maxu + 1u)`) is strictly constrained to region-clamp mode (`s.wms == 2`, `s.wmt == 2`). Repeat and standard clamp modes preserve natural power-of-two dimensions, preventing UV coordinate stretching and facial mesh clipping.
+
+### E. Subtractive & Reverse Subtractive Alpha Blending
+- Complex GS destination alpha combiners (`(Cs - Cd) * As + Cd` or negative coefficients) are mapped directly to OpenGL hardware equations via `glBlendEquationSeparate(GL_FUNC_SUBTRACT)` and `GL_FUNC_REVERSE_SUBTRACT`. Transparent UI banners and special effect overlays render without alpha clipping.
