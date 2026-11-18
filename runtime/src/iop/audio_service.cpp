@@ -542,6 +542,7 @@ void tick() {
         out[n * 2] = clamp16(mix[0]);
         out[n * 2 + 1] = clamp16(mix[1]);
         ps2::census::spu2_peak_sample(out[n * 2], out[n * 2 + 1]);
+        ps2::census::audio_native_frame_mixed();
     }
     write_rings(0, rings[0]);
     write_rings(1, rings[1]);
@@ -954,6 +955,7 @@ void reset() {
     if (!chip.empty() && g_chip_wav.open(chip)) std::fprintf(stderr, "[spu2] writing the sound chip's output to %s\n", chip.c_str());
     // the sink is set before the machine resets (host/window.cpp opens the sound device first)
     if (!out.empty() && out != chip && !g_sink && g_out_wav.open(out)) std::fprintf(stderr, "[spu2] writing the sound to %s (no sound device)\n", out.c_str());
+    keep_ticking_internal();
 }
 
 std::uint16_t *ram() { return g_ram.data(); }

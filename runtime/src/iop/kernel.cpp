@@ -1234,8 +1234,8 @@ void call_hle(Cpu &c, std::uint32_t id) {
 }
 
 void reset() {
-    hw::reset();
     kernel::boot();
+    hw::reset();
 }
 
 std::uint64_t cycles() { return kernel::g_now; }
