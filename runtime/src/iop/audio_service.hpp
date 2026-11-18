@@ -9,14 +9,13 @@ class Stream;
 }
 
 // ---------------------------------------------------------------------------
-// The native sound service.
+// Transitional sound service: NOT the accepted native audio implementation.
 //
-// It replaces the emulated SPU2 chip. The voices, the mixer, the reverb, the
-// sound memory and the ADMA path are the service's own state; the retail
-// sound library's parameter interface is decoded into named fields, and the
-// sound device's guest window is served by the service itself. No SPU2 device
-// model is left on the accepted route: every sound call the game makes ends
-// here, in native code.
+// This code still retains sound RAM, two cores of 24 chip-shaped voices,
+// register/window interfaces and cycle-based ticking. Renaming that state
+// did not remove the device model or its PS2 resource limits. The accepted
+// route must replace these with host-owned clips/streams and native mixing,
+// preserving the verified retail sound programs and audible behavior.
 // ---------------------------------------------------------------------------
 namespace ps2::iop::audio_native {
 
@@ -98,8 +97,7 @@ std::uint32_t get_current_address(int core);
 // The sound device's guest window.
 //
 // The IOP's sound registers live in the guest's memory map. The service serves
-// them: this is the service's own interface, decoded into its state, not an
-// emulated device behind a boundary.
+// them. This retains a PS2 device interface and is a native-port blocker.
 // ---------------------------------------------------------------------------
 
 std::uint32_t window_read(std::uint32_t address, unsigned size);

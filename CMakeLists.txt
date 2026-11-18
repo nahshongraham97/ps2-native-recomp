@@ -76,6 +76,7 @@ else()
         runtime/src/native_hook.cpp
         runtime/src/native_vertex_hook.cpp
         runtime/src/native/content_vfs.cpp
+        runtime/src/native/sound_bank.cpp
         runtime/src/port_config.cpp
         runtime/src/compliance_census.cpp
         runtime/src/system.cpp
@@ -227,6 +228,10 @@ if(PS2_GENERATED)
         "-Wl,--wrap=_ZN3gen9unit_0025ERN3ps23CpuEjj"
     )
     add_executable(test_disc_vfs EXCLUDE_FROM_ALL tests/test_disc_vfs.cpp)
+    # This parser test must not acquire guest memory, hardware, or scheduler
+    # dependencies through ps2runtime. It owns ordinary host byte buffers.
+    add_executable(test_sound_bank EXCLUDE_FROM_ALL tests/test_sound_bank.cpp runtime/src/native/sound_bank.cpp)
+    target_include_directories(test_sound_bank PRIVATE runtime/include)
     target_link_libraries(test_disc_vfs PRIVATE ps2runtime)
     add_executable(test_content_volume EXCLUDE_FROM_ALL tests/test_content_volume.cpp)
     target_link_libraries(test_content_volume PRIVATE ps2runtime)
