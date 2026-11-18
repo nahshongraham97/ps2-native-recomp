@@ -610,7 +610,44 @@ int main(int argc, char **argv) {
         argv = utf8_argv.data();
     }
 #endif
-    if (argc < 2) return usage();
+    std::filesystem::path exe_dir;
+#ifdef _WIN32
+    std::vector<wchar_t> mod_buf(32768);
+    DWORD mod_len = GetModuleFileNameW(nullptr, mod_buf.data(), static_cast<DWORD>(mod_buf.size()));
+    if (mod_len > 0 && mod_len < mod_buf.size()) {
+        exe_dir = std::filesystem::path(std::wstring(mod_buf.data(), mod_len)).parent_path();
+    }
+#endif
+
+    std::filesystem::path resolved_program;
+    int opt_start = 1;
+    if (argc >= 2 && argv[1][0] != '-') {
+        resolved_program = ps2::os::path(argv[1]);
+        opt_start = 2;
+    } else {
+        const std::vector<std::filesystem::path> elf_candidates = {
+            std::filesystem::current_path() / "disc-files" / "SLUS_214.10",
+            std::filesystem::current_path() / "SLUS_214.10",
+            std::filesystem::current_path() / "games" / "mkarmageddon" / "disc" / "SLUS_214.10",
+            exe_dir / "disc-files" / "SLUS_214.10",
+            exe_dir / "SLUS_214.10",
+            exe_dir.parent_path() / "disc-files" / "SLUS_214.10",
+            exe_dir.parent_path() / "SLUS_214.10",
+            exe_dir.parent_path() / "games" / "mkarmageddon" / "disc" / "SLUS_214.10"
+        };
+        for (const auto &cand : elf_candidates) {
+            std::error_code ec;
+            if (std::filesystem::is_regular_file(cand, ec) && !ec) {
+                resolved_program = cand;
+                break;
+            }
+        }
+        if (resolved_program.empty()) {
+            return usage();
+        }
+        opt_start = 1;
+    }
+
 #ifdef _WIN32
     SetConsoleCtrlHandler(on_console_event, TRUE);
     SetUnhandledExceptionFilter(on_crash);
@@ -629,19 +666,30 @@ int main(int argc, char **argv) {
     if (ps2::os::env("PS2_VU_AOT_STRICT").empty()) ps2::os::set_env("PS2_VU_AOT_STRICT", "1");
     if (ps2::os::env("PS2_IOP_NATIVE_STRICT").empty()) ps2::os::set_env("PS2_IOP_NATIVE_STRICT", "1");
 
-    std::vector<std::string> args{argv[1]};
-    [[maybe_unused]] bool window = false, fullscreen = false;
+    const std::string program_target = ps2::os::utf8(resolved_program);
+    std::vector<std::string> args{program_target};
+#ifdef PS2_WINDOW
+    [[maybe_unused]] bool window = true;
+#else
+    [[maybe_unused]] bool window = false;
+#endif
+    bool window_explicit = false;
+    bool fullscreen = false;
+    bool show_log_window = false;
     std::string load_path;
     bool no_record = false;
-    ps2::g_options.program_path = argv[1];
+    ps2::g_options.program_path = program_target;
     for (int i = 0; i < argc; ++i) {
         const std::string a = argv[i];
         ps2::g_options.command_line += (i ? " " : "") + (a.find_first_of(" \t") == std::string::npos ? a : "\"" + a + "\"");
     }
-    for (int i = 2; i < argc; ++i) {
+    for (int i = opt_start; i < argc; ++i) {
         const std::string a = argv[i];
         if (a == "--arg" && i + 1 < argc) args.push_back(argv[++i]);
-        else if (a == "--frames" && i + 1 < argc) ps2::g_options.max_frames = std::strtoull(argv[++i], nullptr, 10);
+        else if (a == "--frames" && i + 1 < argc) {
+            ps2::g_options.max_frames = std::strtoull(argv[++i], nullptr, 10);
+            if (!window_explicit) window = false;
+        }
         else if (a == "--ntsc" || a == "--pal") {
             ps2::g_options.pal = a == "--pal";
             ps2::g_options.rate_forced = true;
@@ -669,9 +717,22 @@ int main(int argc, char **argv) {
             if (!ps2::parse_axis(argv[++i], press)) return usage();
             ps2::g_options.axis_presses.push_back(press);
         }
+        else if (a == "--headless") {
+            window = false;
+            window_explicit = true;
+        }
 #ifdef PS2_WINDOW
-        else if (a == "--window") window = true;
-        else if (a == "--fullscreen") window = fullscreen = true;
+        else if (a == "--window") {
+            window = true;
+            window_explicit = true;
+        }
+        else if (a == "--fullscreen") {
+            window = fullscreen = true;
+            window_explicit = true;
+        }
+        else if (a == "--log-window") {
+            show_log_window = true;
+        }
 #endif
         else if (a == "--frame-every" && i + 1 < argc) ps2::g_options.frame_every = static_cast<std::uint32_t>(std::strtoul(argv[++i], nullptr, 10));
         else if (a == "--save-state" && i + 1 < argc) {
@@ -723,7 +784,9 @@ int main(int argc, char **argv) {
             }
         });
 #ifdef _WIN32
-        open_log_window(g_log.path());
+        if (show_log_window) {
+            open_log_window(g_log.path());
+        }
 #endif
     }
 #endif
@@ -740,14 +803,16 @@ int main(int argc, char **argv) {
     // this runtime path.
     std::error_code content_error;
     const std::filesystem::path program =
-        std::filesystem::absolute(ps2::os::path(argv[1]), content_error);
+        std::filesystem::absolute(resolved_program, content_error);
     if (content_error) {
-        std::fprintf(stderr, "[native-vfs-stop] cannot resolve the retail program path: %s\n", argv[1]);
+        std::fprintf(stderr, "[native-vfs-stop] cannot resolve the retail program path: %s\n", program_target.c_str());
         return 2;
     }
     const std::vector<std::filesystem::path> content_candidates = {
         program.parent_path() / "disc-files",
-        program.parent_path().parent_path() / "disc-files"
+        program.parent_path().parent_path() / "disc-files",
+        program.parent_path(),
+        program.parent_path().parent_path()
     };
     std::filesystem::path content_root;
     for (const auto &candidate : content_candidates) {
@@ -772,13 +837,16 @@ int main(int argc, char **argv) {
                  ps2::os::utf8(mka::content::mounted_root()).c_str());
     if (ps2::g_options.memcard_path.empty()) {
         const std::vector<std::filesystem::path> card_candidates = {
+            std::filesystem::path("saves") / "armageddon.ps2",
+            content_root.parent_path() / "saves" / "armageddon.ps2",
+            program.parent_path() / "saves" / "armageddon.ps2",
+            program.parent_path().parent_path() / "saves" / "armageddon.ps2",
             content_root / "armageddon.ps2",
             content_root.parent_path() / "armageddon.ps2",
             program.parent_path() / "armageddon.ps2",
             program.parent_path().parent_path() / "armageddon.ps2",
             program.parent_path().parent_path() / "disc" / "armageddon.ps2",
-            std::filesystem::path("armageddon.ps2"),
-            std::filesystem::path("saves") / "armageddon.ps2"
+            std::filesystem::path("armageddon.ps2")
         };
         for (const auto &cand : card_candidates) {
             std::error_code ec;
@@ -809,7 +877,7 @@ int main(int argc, char **argv) {
     if (window && ps2::os::env("PS2_VU_RECORD").empty()) {
         std::error_code error;
         std::vector<std::filesystem::path> places;
-        const std::filesystem::path program = std::filesystem::absolute(ps2::os::path(argv[1]), error);
+        const std::filesystem::path program = std::filesystem::absolute(resolved_program, error);
         if (!error) places = {program.parent_path(), program.parent_path().parent_path()};
         for (const std::filesystem::path &place : places) {
             const std::filesystem::path vu1 = (place / "vu1").lexically_normal();
@@ -832,7 +900,7 @@ int main(int argc, char **argv) {
             std::string cache = setting == "1" || setting == "on" ? std::string() : setting;
             if (cache.empty()) {
                 std::error_code error;
-                const std::filesystem::path program = std::filesystem::absolute(ps2::os::path(argv[1]), error);
+                const std::filesystem::path program = std::filesystem::absolute(resolved_program, error);
                 std::filesystem::path place = program.parent_path();
                 for (const std::filesystem::path &candidate : {program.parent_path(), program.parent_path().parent_path()})
                     if (std::filesystem::is_directory(candidate / "vu1", error)) {
@@ -856,7 +924,7 @@ int main(int argc, char **argv) {
         const std::string setting = ps2::os::env("PS2_EE_LIVE");
         if (setting != "0" && setting != "off" && (window || !setting.empty())) {
             std::error_code error;
-            const std::filesystem::path program = std::filesystem::absolute(ps2::os::path(argv[1]), error);
+            const std::filesystem::path program = std::filesystem::absolute(resolved_program, error);
             std::filesystem::path place = program.parent_path(), game_dir;
             for (const std::filesystem::path &candidate : {program.parent_path(), program.parent_path().parent_path()})
                 if (std::filesystem::is_directory(candidate / "vu1", error) || std::filesystem::is_regular_file(candidate / "entries.txt", error)) {
@@ -869,18 +937,18 @@ int main(int argc, char **argv) {
                     break;
                 }
             const std::string cache = setting.empty() || setting == "1" || setting == "on" ? ps2::os::utf8((place / "ee-live").lexically_normal()) : setting;
-            ps2::ee::live::start(argv[1], cache, ps2::os::utf8(game_dir));
+            ps2::ee::live::start(program_target.c_str(), cache, ps2::os::utf8(game_dir));
         }
     }
     const auto emulate = [&]() -> int {
         name_thread(L"ps2 emulation");
         std::uint32_t entry = 0;
-        if (!ps2::load_elf(argv[1], entry)) {
-            std::fprintf(stderr, "cannot load %s\n", argv[1]);
+        if (!ps2::load_elf(program_target.c_str(), entry)) {
+            std::fprintf(stderr, "cannot load %s\n", program_target.c_str());
             return 1;
         }
         ps2::boot(entry, args);
-        const std::string run_target = argv[1] ? argv[1] : "";
+        const std::string run_target = program_target;
         const bool is_mka = (run_target.find("SLUS_214.10") != std::string::npos ||
                              run_target.find("mkarmageddon") != std::string::npos ||
                              run_target.find("armageddon") != std::string::npos ||
