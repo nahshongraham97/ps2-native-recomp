@@ -137,7 +137,7 @@ std::vector<Sample> group_samples(std::uint32_t offset, std::uint32_t size) {
         const std::uint32_t rate = read_le32(data.data() + (at + 1) * 4u);
         const std::uint32_t sample_offset = read_le32(data.data() + (at + 2) * 4u);
         const std::uint32_t sample_size = read_le32(data.data() + (at + 3) * 4u);
-        if (sample_size > 32u && sample_size < (1u << 24)) samples.push_back(Sample{sample_offset, sample_size, rate});
+        if (sample_size > 20u && sample_size < (1u << 24)) samples.push_back(Sample{sample_offset, sample_size, rate});
         at += 4u;
     }
     return samples;
@@ -173,29 +173,32 @@ std::uint32_t sample_ticks(std::uint32_t bytes) {
 
 // Starts one sub-sample in a voice: the sample bytes are copied into the sound
 // RAM at the voice's start address and the voice is keyed on.
-// The sample begins with a 32-byte header (format, sample rate, data size)
-// followed by raw SPU2 ADPCM blocks at offset 32.
+// In MSLASSET.MS2, each sound sample begins with a 20-byte descriptor header:
+// 5 words: [dw0: format, dw1: flags, dw2: reserved, dw3: sample_rate, dw4: adpcm_size]
+// The raw Sony SPU2 ADPCM payload starts strictly at sample.offset + 20 bytes.
 bool start_voice(const Sample &sample) {
     if (!load_bank()) return false;
-    if (sample.size <= 32u) return false;
+    if (sample.size <= 20u) return false;
 
-    // Read the 32-byte header
-    std::uint8_t head[32];
+    std::fprintf(stderr, "[msl-native] start_voice offset=0x%08X size=%u\n", sample.offset, sample.size);
+
+    // Read the 20-byte descriptor header
+    std::uint8_t head[20];
     if (!mwfilefr_read_guest_range(kBankPath, sample.offset, head, sizeof head)) {
         std::fprintf(stderr, "[msl-native] cannot read sample header at 0x%08X\n", sample.offset);
         return false;
     }
     const std::uint32_t hdr_rate = read_le32(head + 12);
     const std::uint32_t data_bytes = read_le32(head + 16);
-    const std::uint32_t adpcm_size = (data_bytes && data_bytes <= sample.size - 32u)
-                                     ? data_bytes : (sample.size - 32u);
+    const std::uint32_t adpcm_size = (data_bytes && data_bytes <= sample.size - 20u)
+                                     ? data_bytes : (sample.size - 20u);
     if (!adpcm_size) return false;
 
-    // Read the actual ADPCM blocks starting after the 32-byte header
+    // Read the actual ADPCM blocks starting strictly after the 20-byte header
     std::vector<std::uint8_t> data(adpcm_size);
-    if (!mwfilefr_read_guest_range(kBankPath, sample.offset + 32u, data.data(), adpcm_size)) {
+    if (!mwfilefr_read_guest_range(kBankPath, sample.offset + 20u, data.data(), adpcm_size)) {
         std::fprintf(stderr, "[msl-native] cannot read sample data at 0x%08X (%u bytes)\n",
-                     sample.offset + 32u, adpcm_size);
+                     sample.offset + 20u, adpcm_size);
         return false;
     }
 
@@ -213,8 +216,8 @@ bool start_voice(const Sample &sample) {
     const std::uint16_t pitch = static_cast<std::uint16_t>((sample_rate * 4096u) / 48000u);
 
     audio_native::set_voice_addr(0, voice, 32, ssa);
-    audio_native::set_voice_param(0, voice, 0, 0x7FFFu);   // VOLL
-    audio_native::set_voice_param(0, voice, 1, 0x7FFFu);   // VOLR
+    audio_native::set_voice_param(0, voice, 0, 0x3FFFu);   // VOLL (balanced level)
+    audio_native::set_voice_param(0, voice, 1, 0x3FFFu);   // VOLR (balanced level)
     audio_native::set_voice_param(0, voice, 2, pitch);     // PITCH
     // The retail server routed every voice to the dry bus when the sound
     // library was initialised. There is no guest driver left to set the
@@ -251,7 +254,7 @@ void play_sound(std::uint32_t sound) {
     for (const Sample &sample : samples) {
         Step step;
         step.sample = sample;
-        const std::uint32_t adpcm_bytes = sample.size > 32u ? sample.size - 32u : sample.size;
+        const std::uint32_t adpcm_bytes = sample.size > 20u ? sample.size - 20u : sample.size;
         step.length = sample_ticks(adpcm_bytes);
         step.ticks = step.length;
         g_steps.push_back(step);
