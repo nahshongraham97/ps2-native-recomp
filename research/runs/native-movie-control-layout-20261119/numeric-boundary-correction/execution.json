@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_control.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native retail movie start/poll/skip/fade/stop traces and named failures; no game/player/device binding\n",
+  "stderr": "",
+  "source_sha256": {
+    "runtime/include/mka/movie_control.hpp": "095eb25b77539066f377a8abdb8785a96f53c3f23f3c2bfe7675bdc3e272adec",
+    "runtime/src/native/movie_control.cpp": "dbf53b97108b82a8e30d0310b11428bbe1ae1f485e12bf10e179bab6fa9ce08d",
+    "tests/test_movie_control.cpp": "1ef68a789614c4730634f8866ed22622324ab2a67945162c25d3bd1191c18bce",
+    "cmake/native_media.cmake": "f07b37ddf95f6e1ee89899a8b317b6a7077147585e0cdf36858725bea283232b"
+  },
+  "at_utc": "2026-11-19T13:35:49.197483+00:00"
+}

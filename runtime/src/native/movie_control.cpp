@@ -1,9 +1,8 @@
 #include "mka/movie_control.hpp"
 
-#include <cfenv>
 #include <cmath>
 #ifdef __FAST_MATH__
-#error Native movie control requires strict floating-point semantics
+#error Native movie control requires finite-value checks
 #endif
 
 namespace mka::video {
@@ -25,7 +24,6 @@ const char* movie_control_error_name(MovieControlError error) noexcept {
     case MovieControlError::invalid_state: return "invalid_state";
     case MovieControlError::invalid_key: return "invalid_key";
     case MovieControlError::invalid_volume: return "invalid_volume";
-    case MovieControlError::unsupported_fp_environment: return "unsupported_fp_environment";
     case MovieControlError::native_service: return "native_service";
     case MovieControlError::invalid_status: return "invalid_status";
     case MovieControlError::skip_callback: return "skip_callback";
@@ -114,17 +112,12 @@ MovieControlResult NativeMovieController::poll() noexcept {
     if (completion != MovieControlCompletion::none) return finish(completion);
     if (state_ == MovieControlState::fading) {
         if (fade_step_ == fade_length_) return finish(MovieControlCompletion::skipped);
-        if (std::fegetround() != FE_TONEAREST)
-            return fail(named(MovieControlError::unsupported_fp_environment, "movie fade rounding"));
         const float base = context_.base_volume_;
         if (!std::isfinite(base)) return fail(named(MovieControlError::invalid_volume, "movie fade base volume"));
         ++fade_step_;
-        // Source337670: increment first, then three separate float32 operations.
-        volatile float product = base * static_cast<float>(fade_step_);
-        volatile float fraction = product / static_cast<float>(fade_length_);
-        const float scalar = base - fraction;
-        if (!std::isfinite(scalar)) return fail(named(MovieControlError::invalid_volume, "movie fade scalar"));
-        if (!playback_.set_volume_scalar(scalar, failure))
+        // Source337670: increment first, reread base, then request the exact
+        // native gain calculation. Do not silently choose host FP semantics.
+        if (!playback_.apply_fade_volume({base, fade_step_, fade_length_}, failure))
             return fail(service_failure(failure, "movie fade volume"));
         // The poll that writes the last fade step still returns ongoing.
     } else if (state_ == MovieControlState::playing) {

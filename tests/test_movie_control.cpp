@@ -14,7 +14,7 @@ void check(bool condition, const char* message) {
 }
 struct Playback final : NativeMoviePlayback {
     std::vector<std::string> trace;
-    std::vector<float> volumes;
+    std::vector<MovieFadeStep> volumes;
     MoviePlaybackStatus observed = MoviePlaybackStatus::preparing;
     MoviePresentation presentation = MoviePresentation::no_frame;
     const char* fail_operation = "";
@@ -49,8 +49,8 @@ struct Playback final : NativeMoviePlayback {
     MoviePresentation try_present(MovieControlFailure& f) noexcept override {
         call("present-attempt", f); return presentation;
     }
-    bool set_volume_scalar(float volume, MovieControlFailure& f) noexcept override {
-        volumes.push_back(volume); return call("volume", f);
+    bool apply_fade_volume(const MovieFadeStep& step, MovieControlFailure& f) noexcept override {
+        volumes.push_back(step); return call("volume", f);
     }
     bool stop(MovieControlFailure& f) noexcept override { return call("stop", f); }
 };
@@ -93,8 +93,8 @@ void normal_and_skip() {
         check(player.poll().progress == MovieControlProgress::ongoing, "all four fade writes remain ongoing");
         expect(playback, {"metadata", "streams", "error-check", "volume"}, "fade bypasses status/render/skip");
     }
-    check(playback.volumes == std::vector<float>{.75f, .25f, .25f, 0.f},
-          "increment-first fade reads current base volume each poll");
+    check(playback.volumes == std::vector<MovieFadeStep>{{1.f, 1, 4}, {.5f, 2, 4}, {1.f, 3, 4}, {1.f, 4, 4}},
+          "increment-first fade requests preserve current base and exact counters; numeric parity is separate");
     const auto end = player.poll();
     check(end.progress == MovieControlProgress::complete && end.completion == MovieControlCompletion::skipped,
           "fifth fade poll completes");
@@ -152,9 +152,21 @@ void invalid_and_thread() {
     check(d.poll().failure.kind == MovieControlError::skip_callback, "throwing callback becomes named failure");
     expect(q, {"metadata", "streams", "error-check", "status", "resume", "present-attempt", "stop"}, "callback failure cleanup");
 }
+void mandatory_gain_request() {
+    Playback p; NativeMovieControlContext context(1.f); NativeMovieController c(p, context);
+    begin(c, p, 3); context.install_skip_if_present([] { return 1; });
+    p.observed = MoviePlaybackStatus::playing; c.poll(); p.trace.clear();
+    p.fail_operation = "volume";
+    const auto result = c.poll();
+    check(p.volumes == std::vector<MovieFadeStep>{{1.f, 1, 3}},
+          "source-sensitive one-third fade is an exact typed request, not guessed host math");
+    check(result.progress == MovieControlProgress::error && result.failure.native_code == 719,
+          "missing or failed native gain implementation cannot silently continue");
+    expect(p, {"metadata", "streams", "error-check", "volume", "stop"}, "native gain failure cleanup");
+}
 }
 int main() try {
-    normal_and_skip(); ends_and_explicit_stop(); zero_fade_and_errors(); invalid_and_thread();
+    normal_and_skip(); ends_and_explicit_stop(); zero_fade_and_errors(); invalid_and_thread(); mandatory_gain_request();
     std::puts("PASS native retail movie start/poll/skip/fade/stop traces and named failures; no game/player/device binding");
     return 0;
 } catch (const std::exception& e) { std::fprintf(stderr, "FAIL movie control: %s\n", e.what()); return 1; }

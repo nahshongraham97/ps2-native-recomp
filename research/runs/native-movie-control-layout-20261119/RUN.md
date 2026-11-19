@@ -31,3 +31,20 @@ Actual native movie factory/initial gain, source eligibility and played-audio
 clock, speaker routing, native rendering/overlay/fence/swap binding, supplied
 game callback ABI/side effects, poll cadence and nonblocking movie route remain
 OPEN. This is not a native game, movie playback, audio or full acceptance pass.
+
+
+## Current numerical boundary correction
+
+A subsequent source review found that the preserved playable code uses custom
+numeric helpers for fade arithmetic. The initial host-float implementation
+was not a verified numeric replacement. It is removed: the native controller
+passes current base/step/total to the mandatory `apply_fade_volume` port.
+No FP-mode requirement, host formula, std::log10 fallback or FPU model remains
+in this controller. The actual native gain kernel is still OPEN.
+
+`numeric-boundary-correction/verification.json` records the current three-file
+delta, rebuilt native archive/control test, source-sensitive1/3 request,
+failed-gain cleanup and symbol audit. Independent source review matches the
+current source/test hashes. The earlier20-case report and callback correction
+retain their exact historical identities. No further game/media playback pass
+is implied by this focused correction.

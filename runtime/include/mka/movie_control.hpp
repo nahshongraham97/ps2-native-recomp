@@ -10,7 +10,7 @@ namespace mka::video {
 
 enum class MovieControlError {
     none, wrong_thread, invalid_state, invalid_key, invalid_volume,
-    unsupported_fp_environment, native_service, invalid_status, skip_callback
+    native_service, invalid_status, skip_callback
 };
 struct MovieControlFailure {
     MovieControlError kind = MovieControlError::none;
@@ -20,6 +20,11 @@ struct MovieControlFailure {
 };
 enum class MoviePlaybackStatus { stopped, preparing, playing, ended, error };
 enum class MoviePresentation { no_frame, presented, error };
+struct MovieFadeStep {
+    float current_base_volume;
+    std::uint64_t step, total;
+    bool operator==(const MovieFadeStep&) const = default;
+};
 
 // Native player contract for the lifted retail control sequence. Implementors
 // own native decoding, completed audio progress, video resources and callbacks.
@@ -38,9 +43,11 @@ public:
     // A borrowed decoder frame may be acknowledged only after native ownership
     // has been acquired. Presented is submission, not swap/GPU/audio completion.
     virtual MoviePresentation try_present(MovieControlFailure&) noexcept = 0;
-    // Explicit source scalar, before the source3371F0 tenth-dB conversion.
-    // Implementors must preserve that conversion; this is not linear PCM gain.
-    virtual bool set_volume_scalar(float, MovieControlFailure&) noexcept = 0;
+    // Explicit source control inputs, before fade math and3371F0 quantization.
+    // Host-float arithmetic is not a verified substitute for the oracle's
+    // numeric helpers. A native gain implementation must prove the resulting
+    // gain/quantization; never substitute unity, linear PCM gain or std::log10.
+    virtual bool apply_fade_volume(const MovieFadeStep&, MovieControlFailure&) noexcept = 0;
     virtual bool stop(MovieControlFailure&) noexcept = 0;
 };
 
