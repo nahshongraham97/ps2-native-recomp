@@ -109,6 +109,8 @@ int main(int argc, char** argv) {
     auto numeric = SoundBank::parse(fixture(), error);
     check(numeric && numeric->resource_count() == 3, "resource table count");
     auto owned = numeric->lookup_resource(0xabcd0001u);
+    check(ResourceLookup{}.key_mode == ResourceKeyMode::unknown && owned.key_mode == ResourceKeyMode::numeric,
+          "unproven result is unknown; numeric lookup preserves bank key-mode provenance");
     check(owned.status == ResourceLookupStatus::found && owned.index == 1 && owned.bytes[0] == 0x21,
           "full 32-bit keys with same low 16 bits and opaque pointer bytes");
     check(numeric->lookup_resource(0x12340001u).index == 0, "first duplicate key wins");
@@ -120,6 +122,9 @@ int main(int argc, char** argv) {
     check(extrema->lookup_resource(0u).status == ResourceLookupStatus::found &&
           extrema->lookup_resource(0xffffffffu).index == 1, "resolver itself does not filter zero or sentinel keys");
     auto relocated = std::move(*numeric); numeric.reset();
+    const auto owned_copy = owned;
+    check(owned_copy.key_mode == ResourceKeyMode::numeric && relocated.lookup_resource(0xabcd0001u).key_mode == ResourceKeyMode::numeric,
+          "numeric key mode survives result copy and source bank move/destruction");
     check(relocated.lookup_resource(0xabcd0001u).bytes == owned.bytes, "resource metadata survives bank move");
     check(owned.bytes[0] == 0x21, "resource result owns its bytes");
     b = fixture(); put(b, 8, 0xffff, 2); reject(b, BankError::negative_count);
@@ -141,7 +146,10 @@ int main(int argc, char** argv) {
           named->lookup_resource("").index == 2, "embedded NUL terminates query and empty name matches");
     check(named->lookup_resource(0u).status == ResourceLookupStatus::unsupported_key_mode, "named bank rejects numeric overload");
     auto named_copy = named->lookup_resource("alpha");
+    check(named_copy.key_mode == ResourceKeyMode::name, "named result retains raw-offset mode provenance");
     auto moved_named = std::move(*named); named.reset(); named_bytes.clear();
+    check(moved_named.lookup_resource("ALPHA").key_mode == ResourceKeyMode::name && named_copy.key_mode == ResourceKeyMode::name,
+          "named key mode survives source bank move/destruction and owned result copy");
     check(moved_named.lookup_resource("ALPHA").bytes == named_copy.bytes, "owned name spans survive move and caller buffer lifetime");
     auto assigned = SoundBank::parse(fixture(), error);
     *assigned = std::move(moved_named);

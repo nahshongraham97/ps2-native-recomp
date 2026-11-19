@@ -154,6 +154,7 @@ ResourceLookup SoundBank::resource_result(std::size_t index) const {
     ResourceLookup result;
     result.status = ResourceLookupStatus::found;
     result.index = index;
+    result.key_mode = numeric_resources_ ? ResourceKeyMode::numeric : ResourceKeyMode::name;
     std::copy_n(bytes_.begin() + resource_offset_ + index * 36, 36, result.bytes.begin());
     return result;
 }

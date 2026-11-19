@@ -40,11 +40,15 @@ struct CommandLookup {
 };
 
 enum class ResourceLookupStatus { found, absent, unsupported_key_mode };
+enum class ResourceKeyMode { unknown, numeric, name };
 struct ResourceLookup {
     ResourceLookupStatus status = ResourceLookupStatus::absent;
     std::size_t index = 0;
     // Includes opaque serialized runtime-pointer slots; never dereferenced.
     std::array<std::uint8_t, 36> bytes{};
+    // Required provenance: raw record+8 is a key only in numeric mode;
+    // in named mode it is a serialized string offset, never a numeric key.
+    ResourceKeyMode key_mode = ResourceKeyMode::unknown;
 };
 
 // Owns unmodified serialized bytes. No pointers from the serialized bank are
