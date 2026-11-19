@@ -65,6 +65,12 @@ struct AudioClockReading {
     std::uint64_t position=0,frequency=0,qpc_100ns=0,reset_epoch=0;
     bool precise=false; // GetPosition S_OK vs S_FALSE (valid but imprecise).
 };
+struct AudioStreamFormat {
+    // Exact client float32 format supplied to this successful open(). Not the
+    // endpoint mix format, an inferred channel order or a second configuration.
+    std::uint32_t sample_rate=0,channels=0,channel_mask=0;
+    bool operator==(const AudioStreamFormat&) const = default;
+};
 // Pure checks; do not initialize COM or touch a device.
 bool validate_audio_device_config(const AudioDeviceConfig&,AudioDeviceFailure&)noexcept;
 bool validate_audio_pcm(const float*,std::size_t sample_count,std::uint32_t channels,
@@ -80,6 +86,7 @@ public:
     // All methods and destruction must run on its creating thread. No callbacks,
     // hidden worker, endpoint changes or automatic reopen after device loss.
     static std::unique_ptr<NativeAudioDevice> open(const AudioDeviceConfig&,AudioDeviceFailure&);
+    std::optional<AudioStreamFormat> stream_format(AudioDeviceFailure&);
     std::optional<AudioQueueStatus> queue_status(AudioDeviceFailure&);
     // Copies exactly sample_count interleaved float values, without gain/limiter.
     // No partial acceptance; buffer_full leaves submitted count unchanged.

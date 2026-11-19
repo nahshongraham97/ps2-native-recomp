@@ -1,0 +1,33 @@
+{
+  "at_utc": "2026-11-19T18:57:44.340060+00:00",
+  "fork_head": "3cbef8a1e69ba97a1bf885d019fbc223f2f83128",
+  "parent_head": "d0cdb7749b7326499fcd092fb8d2f33732100531",
+  "source_before_sha256": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_playback.hpp": "f5c70d248f7f406e8a2bb5f8a1eecf4094f481a013eb983bc9c04e9ac684941f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_playback.cpp": "1c11e3c0425befd01aa9f8cbe207bded8df52457474038536e862960a01523b6",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_playback_adapters.cpp": "c911034ca280562183427f5fe570a23d00a25672a903e06d149fee3cd7a32499",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\audio_device.hpp": "b3b2906c7e26c4388e09402ca899f7fc75442d2b2bb991b897350d571603a5f8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\audio_device.cpp": "8c1b9e9c6bbeb012d875bebce50a20a3e8541e6298a066dc56de973d73abc5be",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_playback.cpp": "6853546dbab30824df7632837bbf98624e81785b8229a1c9eca84e3bacaef333",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_native_audio_device.cpp": "79a5fbdb376e408d3129bd8d28da53bd03dd3e4269a4c37c063074bf4e37e8a3",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_control.hpp": "095eb25b77539066f377a8abdb8785a96f53c3f23f3c2bfe7675bdc3e272adec",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_control.cpp": "dbf53b97108b82a8e30d0310b11428bbe1ae1f485e12bf10e179bab6fa9ce08d",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_gain.cpp": "63f02d0b7f85ecb8e2b7cdb8fbdac0fcb1a095a2a410c4c551fdc0f3a2fb4422",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_color.cpp": "3f7f605a5eb42ddd9df66c0367dd41ce4574b16c37f7c303ae43588d85520697",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_gpu.cpp": "1490f71ebb6fecd705ac7a0084dea0266dd832ed00a64602eb95b244263caa03",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_catalog.cpp": "3f5f70be32cba3bb64f2d3a294f6cf1835707992199f4813a1090eabeb9e0c58",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_media.cmake": "b4fddbc9a4444a7e18e16f415c9e522ec64e9a95eeb652b849fcadccc13e8be0",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_audio.cmake": "439cce74973e3b00fbbc621aaf1021cd70aa660f991e0bc2946f8f6892b2856d",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\CMakeLists.txt": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules\\MOVIER.ovl": "3a34e3838042aa0bde0ce687a4e61e128b2eb965e60e65c34713e0a73891adb8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-movie-playback-composition-20261119\\validate.py": "ce5049ce9706df4c19133e2d7a7f40de89bedaeebff4c5c889a651bbb26e75da"
+  },
+  "preserved_dirty_sha256": {
+    "runtime/src/iop/mcserv.cpp": "ad2731a341409d87ffe1b171e99f28d7cedc5004aaf375a565d78673333414fb",
+    "runtime/src/iop/msl_native.cpp": "756cfb3867ebb440223ddb8ab6fe441ad6f9f54d35e4119a8342f8dd9063bb23"
+  },
+  "compiler_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_before_sha256": "d320c4e3663feec551cd3a3b4a8712e915fad196ddc86c7f880c07d4bd2aa3f4",
+  "scope": "Fake endpoint ownership/lifecycle; compile real native adapters. No player policy/game/device activation"
+}

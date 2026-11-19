@@ -83,6 +83,9 @@ int main(int argc,char** argv){try{
     c.endpoint_id_utf8=argv[2];c.sample_rate=word(argv[3]);c.channels=word(argv[4]);c.channel_mask=word(argv[5]);c.buffer_duration_100ns=number(argv[6]);
     check(std::string(argv[7])=="exact"||std::string(argv[7])=="convert","explicit CLI conversion");c.conversion=std::string(argv[7])=="exact"?AudioConversion::exact_shared:AudioConversion::engine_conversion;
     auto device=NativeAudioDevice::open(c,f);if(!device){std::fprintf(stderr,"open failure kind=%d HRESULT=%08X operation=%s\n",int(f.kind),unsigned(f.native_code),f.operation);return 1;}
+    const auto actual_format=device->stream_format(f);
+    check(actual_format&&*actual_format==AudioStreamFormat{c.sample_rate,c.channels,c.channel_mask},
+          "same-open client float32 format retained exactly");
     auto status=device->queue_status(f);check(status&&status->capacity_frames&&status->padding_frames==0&&status->submitted_frames==0,"new endpoint queue exact initial state");
     check(!device->start(f)&&f.kind==AudioDeviceError::invalid_state,"unprimed start named");
     // Every value is positive zero. No waveform, effects, test tones or game assets.
@@ -103,14 +106,17 @@ int main(int argc,char** argv){try{
     check(!device->queue_with_receipt(silence.data(),c.channels,f)&&f.kind==AudioDeviceError::buffer_full,"full queue has no receipt or overwrite");
     full=device->queue_status(f);check(full&&full->submitted_frames==status->capacity_frames,"failed queue does not add submitted frames");
     NativeAudioDevice moved(std::move(*device));check(!device->queue_status(f)&&f.kind==AudioDeviceError::invalid_owner,"moved device cannot access COM");
+    check(!device->stream_format(f)&&f.kind==AudioDeviceError::invalid_owner,"moved device has no client format");
     check(!device->queue_with_receipt(nullptr,0,f)&&f.kind==AudioDeviceError::invalid_owner,
           "moved owner has no receipt before PCM validation");
-    AudioDeviceError wrong=AudioDeviceError::none,wrong_queue=AudioDeviceError::none;
+    AudioDeviceError wrong=AudioDeviceError::none,wrong_queue=AudioDeviceError::none,wrong_format=AudioDeviceError::none;
     std::thread foreign([&]{AudioDeviceFailure local;
+        wrong_format=moved.stream_format(local)?AudioDeviceError::none:local.kind;
         auto receipt=moved.queue_with_receipt(nullptr,0,local);
         wrong_queue=receipt?AudioDeviceError::none:local.kind;
         wrong=moved.close(local)?AudioDeviceError::none:local.kind;});foreign.join();
     check(wrong_queue==AudioDeviceError::wrong_thread,"foreign submission has no receipt before PCM validation");
+    check(wrong_format==AudioDeviceError::wrong_thread,"foreign format read rejects before accessing owner");
     check(wrong==AudioDeviceError::wrong_thread,"foreign close retains resource for owner retry");
     full=moved.queue_status(f);check(full&&full->submitted_frames==status->capacity_frames&&full->reset_epoch==0,
           "failed owner/thread/full submissions preserve sequence");
@@ -136,6 +142,7 @@ int main(int argc,char** argv){try{
     const auto shared=moved.queue_status(f);check(shared&&shared->submitted_frames==2&&shared->reset_epoch==1,
           "bool and receipt queues advance one shared client sequence");
     check(moved.close(f),"owner closes COM audio services");
+    check(!moved.stream_format(f)&&f.kind==AudioDeviceError::closed,"closed owner has no active client format");
     check(!moved.queue_with_receipt(nullptr,0,f)&&f.kind==AudioDeviceError::closed,
           "closed owner has no receipt before PCM validation");check(!moved.clock(f)&&f.kind==AudioDeviceError::closed,"closed owner cannot report fictional clock");
     // Three actual returned receipts plus the fourth accepted bool submission's

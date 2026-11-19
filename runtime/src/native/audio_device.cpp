@@ -129,6 +129,7 @@ bool validate_audio_pcm(const float* pcm,std::size_t count,std::uint32_t channel
 struct NativeAudioDevice::Impl {
     std::thread::id owner=std::this_thread::get_id();
     std::uint32_t channels=0,capacity=0;std::uint64_t submitted=0,epoch=0;
+    AudioStreamFormat format;
     bool started=false,closed=false,failed=false;
 #ifdef _WIN32
     IMMDeviceEnumerator* enumerator=nullptr;IMMDevice* endpoint=nullptr;IAudioClient* client=nullptr;
@@ -167,6 +168,7 @@ std::unique_ptr<NativeAudioDevice> NativeAudioDevice::open(const AudioDeviceConf
         if(!length){failure(f,AudioDeviceError::invalid_endpoint,"MultiByteToWideChar endpoint UTF8",GetLastError());return {};}
         std::wstring id(length,L'\0');if(MultiByteToWideChar(CP_UTF8,MB_ERR_INVALID_CHARS,c.endpoint_id_utf8.data(),int(c.endpoint_id_utf8.size()),id.data(),length)!=length){failure(f,AudioDeviceError::invalid_endpoint,"UTF8 endpoint conversion",GetLastError());return {};}
         auto s=std::make_unique<Impl>();s->channels=c.channels;
+        s->format={c.sample_rate,c.channels,c.channel_mask};
         if(!s->result(CoCreateInstance(__uuidof(MMDeviceEnumerator),nullptr,CLSCTX_ALL,__uuidof(IMMDeviceEnumerator),reinterpret_cast<void**>(&s->enumerator)),AudioDeviceError::endpoint_open,"CoCreateInstance MMDeviceEnumerator",f))return {};
         if(!s->result(s->enumerator->GetDevice(id.c_str(),&s->endpoint),AudioDeviceError::endpoint_open,"IMMDeviceEnumerator::GetDevice explicit ID",f))return {};
         IMMEndpoint* endpoint_info=nullptr;
@@ -197,6 +199,11 @@ std::unique_ptr<NativeAudioDevice> NativeAudioDevice::open(const AudioDeviceConf
     failure(f,AudioDeviceError::unsupported_host,"WASAPI requires Windows");
 #endif
     return {};
+}
+std::optional<AudioStreamFormat> NativeAudioDevice::stream_format(AudioDeviceFailure& f){
+    f={};if(!impl_){failure(f,AudioDeviceError::invalid_owner,"moved native audio device");return {};}
+    if(!impl_->usable(f))return {};
+    return impl_->format;
 }
 std::optional<AudioQueueStatus> NativeAudioDevice::queue_status(AudioDeviceFailure& f){
     f={};if(!impl_){failure(f,AudioDeviceError::invalid_owner,"moved native audio device");return {};}

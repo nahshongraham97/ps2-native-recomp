@@ -34,6 +34,8 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/movie_service_clock.cpp
     runtime/src/native/movie_eligibility_numeric.cpp
     runtime/src/native/movie_control.cpp
+    runtime/src/native/movie_playback.cpp
+    runtime/src/native/movie_playback_adapters.cpp
     runtime/src/native/movie_catalog.cpp
     runtime/src/native/movie_source.cpp
     runtime/src/native/movie_gain.cpp
@@ -46,6 +48,7 @@ target_include_directories(mka_native_media PUBLIC runtime/include PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers" "${MKA_NATIVE_MEDIA_HEADERS}")
 target_compile_features(mka_native_media PUBLIC cxx_std_20)
 target_link_libraries(mka_native_media PRIVATE opengl32 gdi32 user32 bcrypt shell32 ole32 uuid)
+target_link_libraries(mka_native_media PRIVATE mka_native_audio_device)
 # Source font math uses ordered float32 steps and finite-value checks. These
 # modules must not inherit fast-math/reassociation or fused multiply-add from
 # a caller's global build flags. This does not modify the host FP environment.
@@ -53,11 +56,13 @@ if(MSVC)
     set_property(SOURCE runtime/src/native/font_metrics.cpp
         runtime/src/native/font_layout.cpp runtime/src/native/font_geometry.cpp
         runtime/src/native/movie_timecode.cpp runtime/src/native/movie_control.cpp
+        runtime/src/native/movie_playback.cpp
         APPEND PROPERTY COMPILE_OPTIONS /fp:strict)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
     set_property(SOURCE runtime/src/native/font_metrics.cpp
         runtime/src/native/font_layout.cpp runtime/src/native/font_geometry.cpp
         runtime/src/native/movie_timecode.cpp runtime/src/native/movie_control.cpp
+        runtime/src/native/movie_playback.cpp
         APPEND PROPERTY COMPILE_OPTIONS -fno-fast-math -ffp-contract=off)
 else()
     message(FATAL_ERROR "Native font math requires a verified strict float32 compiler configuration")
@@ -169,3 +174,14 @@ add_executable(test_native_movie_eligibility_numeric EXCLUDE_FROM_ALL
     tests/test_movie_eligibility_numeric.cpp runtime/src/native/movie_eligibility_numeric.cpp)
 target_include_directories(test_native_movie_eligibility_numeric PRIVATE runtime/include)
 target_compile_features(test_native_movie_eligibility_numeric PRIVATE cxx_std_20)
+
+# Deterministic stream ownership/lifecycle only: fake endpoints, original color
+# table data. Does not link codecs, audio devices or the game/runtime.
+add_executable(test_native_movie_playback EXCLUDE_FROM_ALL
+    tests/test_movie_playback.cpp runtime/src/native/movie_playback.cpp
+    runtime/src/native/movie_control.cpp runtime/src/native/movie_gain.cpp
+    runtime/src/native/movie_color.cpp runtime/src/native/movie_gpu.cpp
+    runtime/src/native/movie_catalog.cpp)
+target_include_directories(test_native_movie_playback PRIVATE runtime/include)
+target_compile_features(test_native_movie_playback PRIVATE cxx_std_20)
+target_link_libraries(test_native_movie_playback PRIVATE bcrypt)
