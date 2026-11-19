@@ -6,6 +6,7 @@
 #include "raster.hpp"
 #include "native_gl_backend.hpp"
 #include "native_renderer.hpp"
+#include "mka/gpu_diagnostics.hpp"
 #include "../hw.hpp"
 #ifdef PS2_GPU
 #include "gpu/gpu.hpp"
@@ -409,7 +410,12 @@ void apply_display_write(std::uint32_t psm, std::uint32_t base, std::uint32_t bw
         return;
     }
     const int circuit = (g_pmode & 2u) ? 1 : (g_pmode & 1u) ? 0 : -1;
-    if (circuit < 0) return;
+    if (circuit < 0) {
+        // No cached texture accepted the write and no display destination
+        // exists. CPU VRAM alone is not a successful native transfer.
+        ps2::census::gs_transfer(base, w * h, false);
+        return;
+    }
     const std::uint32_t display_base = (static_cast<std::uint32_t>(g_dispfb[circuit]) & 0x1FFu) * 32u;
     const std::uint32_t active_draw_base = native_gl::active_frame_fbp() * 32u;
     const bool is_movie_target = (base == 8960u);
@@ -417,7 +423,10 @@ void apply_display_write(std::uint32_t psm, std::uint32_t base, std::uint32_t bw
         ps2::census::gs_transfer(base, w * h, false);
         return;
     }
-    ps2::census::gs_transfer(base, w * h, true);
+    const bool reached = mka::graphics::account_native_transfer(
+        [&] { return native_gl::draw_guest_rect(psm, base, bw, x, y, w, h); },
+        [&](bool success) { ps2::census::gs_transfer(base, w * h, success); });
+    if (!reached) return;
     static auto last_report = std::chrono::steady_clock::time_point{};
     const auto now = std::chrono::steady_clock::now();
     if (std::chrono::duration_cast<std::chrono::milliseconds>(now - last_report).count() >= 500) {
@@ -425,7 +434,6 @@ void apply_display_write(std::uint32_t psm, std::uint32_t base, std::uint32_t bw
         std::fprintf(stderr, "[gs] display-surface write applied to the native surface: psm=%u base=%u rect=%u,%u %ux%u\n",
                      psm, base, x, y, w, h);
     }
-    native_gl::draw_guest_rect(psm, base, bw, x, y, w, h);
 }
 
 void transfer_pixel(std::uint32_t value) {
@@ -1399,12 +1407,13 @@ void resize_window(std::uint32_t width, std::uint32_t height) {
 }
 
 double gpu_busy_ms() {
+    // GL diagnostics do not depend on the optional WebGPU implementation.
+    if (native_gl::enabled()) return native_gl::gpu_busy_ms();
 #ifdef PS2_GPU
     // The native GL path measures the GPU's own busy time with a timer query.
     // The WebGPU path below keeps its own counter; reading that one in the
     // native GL path is what made the window title say "GPU 0%" while the
     // game was drawing on the Radeon.
-    if (native_gl::enabled()) return native_gl::gpu_busy_ms();
     return gpu::busy_ms();
 #else
     return 0.0;

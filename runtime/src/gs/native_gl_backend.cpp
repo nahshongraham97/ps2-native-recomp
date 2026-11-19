@@ -14,6 +14,7 @@
 #include "compliance_census.hpp"
 #include "gpu/gpu.hpp"
 #include "raster.hpp"
+#include "mka/gpu_diagnostics.hpp"
 
 #include "ps2/os.hpp"
 #include "ps2/system.hpp"
@@ -28,7 +29,10 @@
 #include <cstdlib>
 #include <cstdint>
 #include <cstring>
+#include <deque>
 #include <fstream>
+#include <new>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -196,6 +200,8 @@ HGLRC  g_hrc = nullptr;
 HWND   g_hwnd = nullptr;
 bool   g_owns_context = false;
 bool   g_direct_window_context = false;
+struct UploadTexture { GLuint object = 0; int width = 0, height = 0; };
+UploadTexture g_display_upload, g_rect_upload;
 
 struct TextureCache {
     GLuint object = 0;
@@ -512,8 +518,8 @@ T load_gl_proc(const char *name, const char *extension_name = nullptr) {
 // always zero in the native GL path. That is what made the title say
 // "GPU 0%" while the game was drawing on the Radeon - the number was a
 // measurement artifact, not the truth. A GL_TIME_ELAPSED timer query measures
-// the time the GPU actually spent on the frame's commands, so the title can
-// only say what the hardware did.
+// completed frame-query durations. The public counter is cumulative measured
+// time, not latest-frame duration or proof of full-device utilization.
 constexpr GLenum kGlTimeElapsed = 0x88BF;        // GL 3.2 / ARB_timer_query
 constexpr GLenum kGlQueryResult = 0x8866;
 constexpr GLenum kGlQueryResultAvailable = 0x8867;
@@ -521,67 +527,103 @@ using BeginQueryProc = void (*)(GLenum, GLuint);
 using EndQueryProc = void (*)(GLenum);
 using GetQueryObjectui64vProc = void (*)(GLuint, GLenum, std::uint64_t *);
 using GenQueriesProc = void (*)(GLsizei, GLuint *);
+using DeleteQueriesProc = void (*)(GLsizei, const GLuint *);
 BeginQueryProc g_begin_query = nullptr;
 EndQueryProc g_end_query = nullptr;
 GetQueryObjectui64vProc g_get_query_object = nullptr;
 GenQueriesProc g_gen_queries = nullptr;
-GLuint g_timer_query = 0;
+DeleteQueriesProc g_delete_queries = nullptr;
+struct PendingTimer { GLuint object; std::uint64_t session, serial; };
+std::vector<GLuint> g_timer_objects, g_timer_free;
+std::deque<PendingTimer> g_timer_pending;
+GLuint g_timer_active_object = 0;
+std::uint64_t g_timer_serial = 0;
 bool g_timer_ready = false;
-bool g_timer_active = false;
-bool g_timer_result_pending = false;
-double g_gpu_busy_ms = 0.0;
+mka::graphics::GpuQueryCounter g_gpu_time;
 
 void load_timer_functions() {
-    if (g_begin_query && g_end_query && g_get_query_object) return;
+    if (g_timer_ready) return;
     g_begin_query = load_gl_proc<BeginQueryProc>("glBeginQuery");
     g_end_query = load_gl_proc<EndQueryProc>("glEndQuery");
     g_get_query_object = load_gl_proc<GetQueryObjectui64vProc>("glGetQueryObjectui64v");
     g_gen_queries = load_gl_proc<GenQueriesProc>("glGenQueries");
-    if (!g_begin_query || !g_end_query || !g_get_query_object || !g_gen_queries) {
+    g_delete_queries = load_gl_proc<DeleteQueriesProc>("glDeleteQueries");
+    if (!g_begin_query || !g_end_query || !g_get_query_object || !g_gen_queries || !g_delete_queries) {
         g_begin_query = nullptr;
         g_end_query = nullptr;
         g_get_query_object = nullptr;
         g_gen_queries = nullptr;
-        return;
-    }
-    g_gen_queries(1, &g_timer_query);
-    if (!g_timer_query) {
-        g_begin_query = nullptr;
-        g_end_query = nullptr;
-        g_get_query_object = nullptr;
+        g_delete_queries = nullptr;
         return;
     }
     g_timer_ready = true;
     std::fprintf(stderr, "[native-gl] GPU busy time measured with a GL timer query\n");
 }
 
+// Render/context-owner only. Never reuse an ID before its completed result
+// has been consumed; a slow GPU grows the host query pool rather than losing
+// the previous frame's timing or inventing an unavailable measurement.
+void poll_frame_timer(bool wait = false) {
+    if (!g_timer_ready) return;
+    while (!g_timer_pending.empty()) {
+        const PendingTimer query = g_timer_pending.front();
+        if (query.object == g_timer_active_object) break; // Not ended yet.
+        if (!wait) {
+            std::uint64_t available = 0;
+            g_get_query_object(query.object, kGlQueryResultAvailable, &available);
+            if (!available) break;
+        }
+        std::uint64_t nanoseconds = 0;
+        g_get_query_object(query.object, kGlQueryResult, &nanoseconds);
+        g_gpu_time.completed(query.session, query.serial, nanoseconds);
+        g_timer_pending.pop_front();
+        g_timer_free.push_back(query.object);
+    }
+}
+
 // Starts the timer for the frame's commands. Called with the first primitive
 // of a frame; the query is closed when the frame is presented.
 void begin_frame_timer() {
-    if (!g_timer_ready || g_timer_active) return;
-    g_begin_query(kGlTimeElapsed, g_timer_query);
-    g_timer_active = true;
+    if (!g_timer_ready || g_timer_active_object) return;
+    poll_frame_timer();
+    // Reserve host bookkeeping before acquiring/starting a GL object. End and
+    // retirement then allocate nothing, including during shutdown cleanup.
+    try {
+        g_timer_pending.push_back({0, 0, 0});
+        if (g_timer_free.empty()) {
+            g_timer_objects.reserve(g_timer_objects.size() + 1);
+            g_timer_free.reserve(g_timer_objects.size() + 1);
+        }
+    } catch (const std::bad_alloc&) {
+        if (!g_timer_pending.empty() && g_timer_pending.back().object == 0) g_timer_pending.pop_back();
+        std::fprintf(stderr, "[native-gl] GPU query timing unavailable: host allocation failed\n");
+        return;
+    } catch (const std::length_error&) {
+        if (!g_timer_pending.empty() && g_timer_pending.back().object == 0) g_timer_pending.pop_back();
+        std::fprintf(stderr, "[native-gl] GPU query timing unavailable: host container capacity exceeded\n");
+        return;
+    }
+    GLuint object = 0;
+    if (g_timer_free.empty()) {
+        g_gen_queries(1, &object);
+        if (!object) { g_timer_pending.pop_back(); return; }
+        g_timer_objects.push_back(object);
+    } else {
+        object = g_timer_free.back();
+        g_timer_free.pop_back();
+    }
+    g_timer_pending.back() = {object, g_gpu_time.session(), ++g_timer_serial};
+    g_begin_query(kGlTimeElapsed, object);
+    g_timer_active_object = object;
 }
 
 // Closes the timer and collects the previous frame's result. The result is
 // read without blocking: a frame that is still running on the GPU is picked up
 // on the next one.
 void end_frame_timer() {
-    if (!g_timer_ready || !g_timer_active) return;
+    if (!g_timer_ready || !g_timer_active_object) return;
     g_end_query(kGlTimeElapsed);
-    g_timer_active = false;
-    g_timer_result_pending = true;
-}
-
-void poll_frame_timer() {
-    if (!g_timer_ready || !g_timer_result_pending) return;
-    std::uint64_t available = 0;
-    g_get_query_object(g_timer_query, kGlQueryResultAvailable, &available);
-    if (!available) return;
-    std::uint64_t nanoseconds = 0;
-    g_get_query_object(g_timer_query, kGlQueryResult, &nanoseconds);
-    g_timer_result_pending = false;
-    g_gpu_busy_ms = static_cast<double>(nanoseconds) / 1000000.0;
+    g_timer_active_object = 0;
 }
 
 // Loads the FBO/blit entry points the scene targets and presentation path
@@ -614,8 +656,8 @@ bool ensure_movie_fbo() {
     if (!g_gen_framebuffers || !g_bind_framebuffer || !g_framebuffer_texture_2d ||
         !g_check_framebuffer_status || !g_blit_framebuffer)
         return false;
-    glGenTextures(1, &g_movie_tex);
-    g_gen_framebuffers(1, &g_movie_fbo);
+    if (!g_movie_tex) glGenTextures(1, &g_movie_tex);
+    if (!g_movie_fbo) g_gen_framebuffers(1, &g_movie_fbo);
     if (!g_movie_tex || !g_movie_fbo) return false;
     glBindTexture(GL_TEXTURE_2D, g_movie_tex);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -653,6 +695,57 @@ void release_scene_target() {
     g_shared_depth_buffer = 0;
 }
 
+// No driver calls in this reset. It is also safe before any context exists.
+void reset_context_entrypoints() {
+    g_timer_objects.clear(); g_timer_free.clear(); g_timer_pending.clear();
+    g_timer_active_object = 0; g_timer_ready = false; g_timer_serial = 0;
+    g_gpu_time.reset_session(); // Process-lifetime completed time survives.
+    g_begin_query = nullptr; g_end_query = nullptr; g_get_query_object = nullptr;
+    g_gen_queries = nullptr; g_delete_queries = nullptr;
+    g_active_texture = nullptr; g_multi_texcoord4f = nullptr;
+    g_blend_func_separate = nullptr; g_blend_equation_separate = nullptr;
+    g_fog_coordf = nullptr; g_blend_color = nullptr;
+    g_multitexture_supported = false;
+    g_gen_framebuffers = nullptr; g_bind_framebuffer = nullptr;
+    g_framebuffer_texture_2d = nullptr; g_check_framebuffer_status = nullptr;
+    g_delete_framebuffers = nullptr; g_gen_renderbuffers = nullptr;
+    g_bind_renderbuffer = nullptr; g_renderbuffer_storage = nullptr;
+    g_framebuffer_renderbuffer = nullptr; g_delete_renderbuffers = nullptr;
+    g_blit_framebuffer = nullptr;
+    g_pending_readback_state_valid = false; g_depth_key_valid = false;
+    gl_state_invalidate();
+}
+
+bool has_context_objects() {
+    if (!g_timer_objects.empty() || g_timer_active_object || g_shared_depth_buffer ||
+        g_movie_fbo || g_movie_tex || g_display_upload.object || g_rect_upload.object) return true;
+    for (const SceneTarget &target : g_scene_targets)
+        if (target.framebuffer || target.color_texture) return true;
+    for (const TextureCache &entry : g_pool) if (entry.object) return true;
+    return false;
+}
+
+// Requires the backend context current. Releases even partially allocated
+// objects whose ready flag was never set; borrowed SDL context itself survives.
+void release_context_objects() {
+    end_frame_timer();
+    poll_frame_timer(true);
+    if (g_delete_queries)
+        for (GLuint object : g_timer_objects) g_delete_queries(1, &object);
+    release_scene_target();
+    for (TextureCache &entry : g_pool) {
+        if (entry.object) glDeleteTextures(1, &entry.object);
+        entry = TextureCache{};
+    }
+    if (g_movie_fbo && g_delete_framebuffers) g_delete_framebuffers(1, &g_movie_fbo);
+    if (g_movie_tex) glDeleteTextures(1, &g_movie_tex);
+    g_movie_fbo = 0; g_movie_tex = 0; g_movie_fbo_ready = false;
+    for (UploadTexture *upload : {&g_display_upload, &g_rect_upload}) {
+        if (upload->object) glDeleteTextures(1, &upload->object);
+        *upload = {};
+    }
+}
+
 void clear_bound_scene_target(bool clear_depth = true) {
     gl_state_invalidate();
     // glClear respects scissor and write masks left by the previous draw.
@@ -680,14 +773,22 @@ bool allocate_scene_target(SceneTarget &t) {
         return false;
     }
 
+    const bool new_depth = g_shared_depth_buffer == 0;
+    const auto fail = [&] {
+        if (t.framebuffer) g_delete_framebuffers(1, &t.framebuffer);
+        if (t.color_texture) glDeleteTextures(1, &t.color_texture);
+        if (new_depth && g_shared_depth_buffer) g_delete_renderbuffers(1, &g_shared_depth_buffer);
+        if (new_depth) g_shared_depth_buffer = 0;
+        t = SceneTarget{};
+        return false;
+    };
     glGenTextures(1, &t.color_texture);
     g_gen_framebuffers(1, &t.framebuffer);
-    const bool new_depth = g_shared_depth_buffer == 0;
     if (new_depth) g_gen_renderbuffers(1, &g_shared_depth_buffer);
     t.depth_buffer = g_shared_depth_buffer;
     if (!t.color_texture || !t.framebuffer || !t.depth_buffer) {
         std::fprintf(stderr, "[native-gl] direct scene target allocation failed\n");
-        return false;
+        return fail();
     }
 
     glBindTexture(GL_TEXTURE_2D, t.color_texture);
@@ -712,7 +813,7 @@ bool allocate_scene_target(SceneTarget &t) {
     if (status != GL_FRAMEBUFFER_COMPLETE) {
         std::fprintf(stderr, "[native-gl] direct scene framebuffer is incomplete (0x%04X)\n",
                      static_cast<unsigned>(status));
-        return false;
+        return fail();
     }
     t.ready = true;
     clear_bound_scene_target(new_depth);
@@ -1135,18 +1236,21 @@ bool create_hidden_gl_context() {
         return false;
     }
 
+    // Own every partial window/DC/context from its first allocation onward.
+    g_owns_context = true;
+    const auto fail = [] { shutdown(); return false; };
     g_hwnd = CreateWindowExW(0, kClass, L"", WS_POPUP | WS_DISABLED,
                              0, 0, kWidth, kHeight,
                              nullptr, nullptr, hi, nullptr);
     if (!g_hwnd) {
         std::fprintf(stderr, "[native-gl] CreateWindowExW failed (%lu)\n", GetLastError());
-        return false;
+        return fail();
     }
 
     g_hdc = GetDC(g_hwnd);
     if (!g_hdc) {
         std::fprintf(stderr, "[native-gl] GetDC failed\n");
-        return false;
+        return fail();
     }
 
     PIXELFORMATDESCRIPTOR pfd = {};
@@ -1162,27 +1266,27 @@ bool create_hidden_gl_context() {
     const int pf = ChoosePixelFormat(g_hdc, &pfd);
     if (!pf) {
         std::fprintf(stderr, "[native-gl] ChoosePixelFormat failed\n");
-        return false;
+        return fail();
     }
     if (!SetPixelFormat(g_hdc, pf, &pfd)) {
         std::fprintf(stderr, "[native-gl] SetPixelFormat failed (%lu)\n", GetLastError());
-        return false;
+        return fail();
     }
 
     g_hrc = wglCreateContext(g_hdc);
     if (!g_hrc) {
         std::fprintf(stderr, "[native-gl] wglCreateContext failed\n");
-        return false;
+        return fail();
     }
     if (!wglMakeCurrent(g_hdc, g_hrc)) {
         std::fprintf(stderr, "[native-gl] wglMakeCurrent failed\n");
-        return false;
+        return fail();
     }
     g_owns_context = true;
     g_direct_window_context = true;
     initialize_context_state();
     if (!ensure_scene_target()) {
-        g_direct_window_context = false;
+        return fail();
     }
 
     return true;
@@ -1443,10 +1547,9 @@ bool attach_current_context(void *host_window) {
     g_direct_window_context = true;
     initialize_context_state();
     if (!ensure_scene_target()) {
-        g_direct_window_context = false;
-        g_hdc = nullptr;
-        g_hrc = nullptr;
-        g_hwnd = nullptr;
+        // Cleanup before losing the valid current caller-owned context.
+        // shutdown deletes only backend objects, never this SDL context.
+        shutdown();
         g_checked = true;
         return false;
     }
@@ -1472,9 +1575,8 @@ bool direct_window() {
 
 double gpu_busy_ms() {
 #if defined(_WIN32)
-    if (!g_timer_ready) return 0.0;
-    poll_frame_timer();
-    return g_gpu_busy_ms;
+    // Called by host/title observers that may not own the GL context.
+    return g_gpu_time.total_ms();
 #else
     return 0.0;
 #endif
@@ -1488,8 +1590,8 @@ bool draw_vram_display(const std::uint32_t *rgba, int width, int height,
                        int output_width, int output_height,
                        int draw_x, int draw_y, int draw_width, int draw_height) {
     gl_state_invalidate();
-    static GLuint texture = 0;
-    static int texture_width = 0, texture_height = 0;
+    GLuint &texture = g_display_upload.object;
+    int &texture_width = g_display_upload.width, &texture_height = g_display_upload.height;
     if (!texture) {
         glGenTextures(1, &texture);
         if (!texture) return false;
@@ -1571,8 +1673,8 @@ bool draw_guest_rect(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
         return false;
     }
 
-    static GLuint texture = 0;
-    static int texture_width = 0, texture_height = 0;
+    GLuint &texture = g_rect_upload.object;
+    int &texture_width = g_rect_upload.width, &texture_height = g_rect_upload.height;
     if (!texture) {
         glGenTextures(1, &texture);
         if (!texture) return false;
@@ -1761,16 +1863,15 @@ bool present_frame(const DisplayRegs &regs) {
     gl_state_invalidate();
 #if defined(_WIN32)
     if (!direct_window() || !g_hdc || !g_hwnd || !g_blit_framebuffer) return false;
-    // The frame's commands are done: close the GPU timer and pick up the
-    // previous frame's measurement.
-    end_frame_timer();
-    poll_frame_timer();
     if (wglGetCurrentContext() != g_hrc || wglGetCurrentDC() != g_hdc) {
         if (!wglMakeCurrent(g_hdc, g_hrc)) {
             std::fprintf(stderr, "[native-gl] could not make the SDL WGL context current for presentation\n");
             return false;
         }
     }
+    // Query operations require the same current context as the draw commands.
+    end_frame_timer();
+    poll_frame_timer();
 
     RECT client{};
     if (!GetClientRect(g_hwnd, &client)) return false;
@@ -2374,6 +2475,8 @@ bool submit(const State &st, const Vertex *verts, int count) {
     if (count <= 0 || !verts) return reject_packet(st, attr, prim_type, count, 1, "empty primitive or null vertex stream");
 #if defined(_WIN32)
     if (!g_hdc || !g_hrc) return reject_packet(st, attr, prim_type, count, 2, "OpenGL device/context is not current");
+    if ((wglGetCurrentContext() != g_hrc || wglGetCurrentDC() != g_hdc) && !wglMakeCurrent(g_hdc, g_hrc))
+        return reject_packet(st, attr, prim_type, count, 2, "OpenGL context could not be made current");
     // The first primitive of a frame starts the GPU timer.
     begin_frame_timer();
 
@@ -2925,32 +3028,57 @@ void flush() {
 
 void shutdown() {
 #if defined(_WIN32)
-    std::fill(std::begin(g_evicted_color), std::end(g_evicted_color), false);
-    if (g_hrc && g_hdc) {
-        if (wglGetCurrentContext() != g_hrc) wglMakeCurrent(g_hdc, g_hrc);
-        release_scene_target();
-        for (TextureCache &entry : g_pool) {
-            if (entry.object) glDeleteTextures(1, &entry.object);
-            entry = TextureCache{};
+    const HDC previous_dc = wglGetCurrentDC();
+    const HGLRC previous_context = wglGetCurrentContext();
+    const HGLRC backend_context = g_hrc;
+    if (has_context_objects()) {
+        if (!g_hrc || !g_hdc ||
+            ((previous_context != g_hrc || previous_dc != g_hdc) && !wglMakeCurrent(g_hdc, g_hrc))) {
+            // Never abandon live IDs or permit attach over deferred cleanup.
+            g_checked = true;
+            std::fprintf(stderr, "[native-gl] shutdown deferred: resource-owning WGL context unavailable\n");
+            return;
         }
-        if (g_owns_context) {
-            wglMakeCurrent(g_hdc, nullptr);
-            wglDeleteContext(g_hrc);
-        }
-        g_hrc = nullptr;
+        release_context_objects();
     }
+    // Also reset pointer-only initialization after a failed attach with no
+    // object allocations. This path makes no GL calls without an owner.
+    reset_context_entrypoints();
+    if (g_owns_context && g_hrc) {
+        if (wglGetCurrentContext() == g_hrc && !wglMakeCurrent(nullptr, nullptr)) {
+            g_checked = true;
+            std::fprintf(stderr, "[native-gl] shutdown deferred: owned context could not be detached\n");
+            return;
+        }
+        if (!wglDeleteContext(g_hrc)) {
+            g_checked = true;
+            std::fprintf(stderr, "[native-gl] shutdown deferred: owned context could not be deleted\n");
+            return;
+        }
+    }
+    // Borrowed SDL contexts are never deleted/detached here. Restore any
+    // different context that was current before temporary resource cleanup.
+    if (previous_context != backend_context && wglGetCurrentContext() != previous_context &&
+        !wglMakeCurrent(previous_dc, previous_context))
+        std::fprintf(stderr, "[native-gl] could not restore the caller's prior WGL context\n");
+    g_hrc = nullptr;
     if (g_owns_context && g_hwnd && g_hdc) {
-        ReleaseDC(g_hwnd, g_hdc);
-    }
-    if (g_owns_context && g_hwnd) {
-        DestroyWindow(g_hwnd);
+        if (!ReleaseDC(g_hwnd, g_hdc)) {
+            g_checked = true;
+            std::fprintf(stderr, "[native-gl] shutdown deferred: owned window DC could not be released\n");
+            return;
+        }
     }
     g_hdc = nullptr;
+    if (g_owns_context && g_hwnd && !DestroyWindow(g_hwnd)) {
+        g_checked = true;
+        std::fprintf(stderr, "[native-gl] shutdown deferred: owned window could not be destroyed\n");
+        return;
+    }
     g_hwnd = nullptr;
     g_owns_context = false;
     g_direct_window_context = false;
-    g_pending_readback_state_valid = false;
-    g_depth_key_valid = false;
+    std::fill(std::begin(g_evicted_color), std::end(g_evicted_color), false);
 #endif
     g_enabled = false;
     g_checked = false;
