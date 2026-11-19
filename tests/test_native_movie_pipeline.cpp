@@ -3,11 +3,14 @@
 #include "mka/movie_decode.hpp"
 #include "mka/movie_color.hpp"
 #include "mka/movie_gl_device.hpp"
+#include "mka/movie_container.hpp"
+#include "mka/movie_subtitles.hpp"
 #include "native_test_sha256.hpp"
 #include "data/movie_decode_oracle.hpp"
 #include <GL/gl.h>
 #include <algorithm>
 #include <cstdlib>
+#include <cstring>
 #include <cstdio>
 #include <fstream>
 #include <optional>
@@ -33,6 +36,19 @@ struct DeviceOwner {
     ~DeviceOwner(){if(device&&device->shutdown()!=MovieGpuError::none)std::abort();}
 };
 std::vector<std::uint8_t> bytes(const std::filesystem::path& path){std::ifstream f(path,std::ios::binary);check(bool(f),"open original color data");return {(std::istreambuf_iterator<char>(f)),{}};}
+NativeMovieSubtitles fixture_subtitles(const NativeMovieContainer& container){
+    // Independently observed corpus assembly rule. This fixture is not a
+    // universal private-stream transport adapter or live player binding.
+    bool found=false;std::vector<std::uint8_t> root;
+    for(const auto& packet:container.private2){
+        if(packet.bytes.size()>=7&&!std::memcmp(packet.bytes.data(),"CRITAGS",7)){
+            check(!found,"one exact CRITAGS root in pinned movie");found=true;
+        }
+        if(found)root.insert(root.end(),packet.bytes.begin(),packet.bytes.end());
+    }
+    check(found,"pinned native movie metadata present");MovieSubtitleFailure failure;
+    auto parsed=NativeMovieSubtitles::parse(std::move(root),failure);check(bool(parsed),"native checked CRITAGS parse");return std::move(*parsed);
+}
 bool equal_time(const MovieTimestamp& a,const MovieTimestamp& b){return a.value==b.value&&a.numerator==b.numerator&&a.denominator==b.denominator&&a.present==b.present;}
 std::string present(const std::shared_ptr<NativeMovieGlDevice>& device,const MovieVideoFrame& input,const NativeMovieColorTable& table){
     MovieColorError color_error;auto converted=convert_movie_yuv420(input,table,color_error);check(converted&&color_error==MovieColorError::none,"real decoded frame converted with explicit verified role");
@@ -70,6 +86,18 @@ int main(int argc,char** argv){try{
     for(const auto& expected:native_movie_oracle::assets){
         MovieAssetFailure asset_error;auto catalog=NativeMovieAssetStore::create(assets,{{expected.name,expected.name}},asset_error);check(bool(catalog),"explicit exact asset binding");
         auto asset=catalog->open(expected.name,asset_error);check(asset&&asset->seek(19,mka::content::SeekOrigin::begin,asset_error),"owned inspected file handoff");
+        MovieSubtitleQuery retained_caption;
+        {
+            MovieContainerFailure container_error;auto container=extract_movie_private2(*asset,container_error);
+            check(container&&asset->position(asset_error)==19,"native metadata scan preserves same file cursor");
+            auto document=fixture_subtitles(*container);MovieSubtitleFailure subtitle_error;
+            auto cursor=document.cursor(0,0,subtitle_error);check(bool(cursor),"explicit fixture channel and offset");
+            // Mathematical 7s fixture input (>32-bit), NOT a selected runtime
+            // master clock, video PTS or a guessed playback scheduler.
+            auto selected=document.query(*cursor,{7000000000ll,1000000000ll},subtitle_error);check(bool(selected),"native64 subtitle query");
+            retained_caption=std::move(*selected);
+            check(retained_caption.active==(std::string(expected.name)=="TITLEN.SFD"),"original pinned subtitle presence");
+        } // Container, document and cursor gone; query owns its original data.
         MovieDecodeFailure failure;auto decoder=NativeMovieDecoder::open(libs,std::move(*asset),failure);check(bool(decoder),"same owned asset native decoder");catalog.reset();asset.reset();
         std::optional<MovieVideoFrame> first,last;NativeTestSha256 yuv,pcm;std::uint64_t videos=0,audios=0,samples=0;
         for(;;){auto result=decoder->next(failure);check(result.status!=MovieReadStatus::error,"complete movie decode");if(result.status==MovieReadStatus::end)break;
@@ -80,9 +108,15 @@ int main(int argc,char** argv){try{
         check(videos==expected.video.frames&&audios==expected.audio.frames&&samples==expected.audio.samples,"full original video/audio drain counts before GPU comparison");
         check(yuv.finish()==expected.video.sha256&&pcm.finish()==expected.audio.sha256,"every decoded byte retains independent native oracle identity");
         decoder.reset(); // GPU handoff uses owned frames AFTER file/codec/DLL teardown.
+        std::size_t english_bytes=0;
+        if(retained_caption.active){
+            MovieSubtitleFailure subtitle_error;auto english=extract_movie_subtitle_language(retained_caption,MovieSubtitleLanguage::english,subtitle_error);
+            const std::string expected_text="\\n\\nPRESS START BUTTON";
+            check(english&&std::equal(english->begin(),english->end(),expected_text.begin(),expected_text.end()),"exact raw subtitle bytes survive file/codec/document/cursor lifetime");english_bytes=english->size();
+        }
         check(first&&last&&first->width==640&&first->height==448&&last->width==640&&last->height==448,"pinned original frame shape");
         const auto first_sha=present(device.device,*first,*first_table),last_sha=present(device.device,*last,*last_table);
-        std::printf("[native-pipeline] %s videos=%llu audio_frames=%llu samples_per_channel=%llu first_rgba_sha256=%s last_rgba_sha256=%s\n",expected.name,(unsigned long long)videos,(unsigned long long)audios,(unsigned long long)samples,first_sha.c_str(),last_sha.c_str());
+        std::printf("[native-pipeline] %s videos=%llu audio_frames=%llu samples_per_channel=%llu first_rgba_sha256=%s last_rgba_sha256=%s subtitle_active=%d english_bytes=%zu\n",expected.name,(unsigned long long)videos,(unsigned long long)audios,(unsigned long long)samples,first_sha.c_str(),last_sha.c_str(),int(retained_caption.active),english_bytes);
     }
-    std::puts("PASS three full owned native movie decodes and six exact first/last GPU frames; no game/audio-device/A-V-sync/retail-aspect-role-selection acceptance");return 0;
+    std::puts("PASS three full native decodes, preserved private2/subtitle data and six exact GPU frames; no game/font/audio-device/A-V-sync/retail-aspect-role-selection acceptance");return 0;
 }catch(const std::exception& e){std::fprintf(stderr,"FAIL native movie pipeline: %s\n",e.what());return 1;}}

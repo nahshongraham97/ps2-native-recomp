@@ -17,7 +17,11 @@ file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers/libavutil/avconfig.
 
 add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/native_file.cpp
+    runtime/src/native/font_atlas.cpp
+    runtime/src/native/font_metrics.cpp
     runtime/src/native/movie_assets.cpp
+    runtime/src/native/movie_container.cpp
+    runtime/src/native/movie_subtitles.cpp
     runtime/src/native/movie_decode.cpp
     runtime/src/native/movie_color.cpp
     runtime/src/native/movie_gpu.cpp
@@ -28,13 +32,17 @@ target_compile_features(mka_native_media PUBLIC cxx_std_20)
 target_link_libraries(mka_native_media PRIVATE opengl32 gdi32 user32 bcrypt)
 
 foreach(pair
+    "test_native_font_atlas|tests/test_font_atlas.cpp"
+    "test_native_font_metrics|tests/test_font_metrics.cpp"
     "test_native_movie_color|tests/test_movie_color.cpp"
     "test_native_movie_gpu_layout|tests/test_movie_gpu_layout.cpp"
     "test_native_movie_assets|tests/test_movie_assets.cpp"
     "test_native_movie_gl_device|tests/test_movie_gl_device.cpp"
     "test_native_movie_decode|tests/test_movie_decode.cpp"
     "test_native_movie_pipeline|tests/test_native_movie_pipeline.cpp"
-    "test_native_movie_inventory|tests/test_native_movie_inventory.cpp")
+    "test_native_movie_inventory|tests/test_native_movie_inventory.cpp"
+    "test_native_movie_container|tests/test_native_movie_container.cpp"
+    "test_native_movie_subtitles|tests/test_movie_subtitles.cpp")
     string(REPLACE "|" ";" parts "${pair}")
     list(GET parts 0 target)
     list(GET parts 1 source)
