@@ -36,6 +36,7 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/movie_control.cpp
     runtime/src/native/movie_playback.cpp
     runtime/src/native/movie_playback_adapters.cpp
+    runtime/src/native/movie_audio_progress.cpp
     runtime/src/native/movie_catalog.cpp
     runtime/src/native/movie_source.cpp
     runtime/src/native/movie_gain.cpp
@@ -192,3 +193,9 @@ add_executable(test_native_movie_playback_adapters EXCLUDE_FROM_ALL
     tests/test_movie_playback_adapters.cpp)
 target_link_libraries(test_native_movie_playback_adapters PRIVATE mka_native_media bcrypt ole32 uuid)
 target_compile_features(test_native_movie_playback_adapters PRIVATE cxx_std_20)
+
+# Identity-bound native client-buffer retirement only, no device or player link.
+add_executable(test_native_movie_audio_progress EXCLUDE_FROM_ALL
+    tests/test_movie_audio_progress.cpp runtime/src/native/movie_audio_progress.cpp)
+target_include_directories(test_native_movie_audio_progress PRIVATE runtime/include)
+target_compile_features(test_native_movie_audio_progress PRIVATE cxx_std_20)

@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_audio_progress.exe"
+  ],
+  "exit": 0,
+  "stdout": "{\"case\":\"partial\",\"submitted\":7,\"padding\":2,\"retired\":5,\"source_boundary\":105}\nPASS pure source retirement; no device/clock/player binding\n",
+  "stderr": "",
+  "executable_sha256": "ee73e3aaef7edab6d33bee3d40053454cc441b09db96b3c598bc28dedc5975c7",
+  "executable_after_sha256": "ee73e3aaef7edab6d33bee3d40053454cc441b09db96b3c598bc28dedc5975c7"
+}
