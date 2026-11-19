@@ -1904,7 +1904,7 @@ public:
             auto id=g_video_identity.load();do{if(id==UINT64_MAX)return {E::host_capacity,{}};}while(!g_video_identity.compare_exchange_weak(id,id+1));
             lease->session=session_;lease->texture=std::move(texture);lease->id=id+1;lease->w=f.width;lease->h=f.height;
             lease->info={f.conversion_role,f.source_pts,f.timestamp,f.source_sample_aspect_numerator,f.source_sample_aspect_denominator,
-                f.source_color_range,f.source_color_space,f.source_color_primaries,f.source_color_transfer};
+                f.source_color_range,f.source_color_space,f.source_color_primaries,f.source_color_transfer,f.codec_timing};
             return {E::none,std::move(lease)};
         }catch(const std::bad_alloc&){return {E::host_capacity,{}};}catch(const std::length_error&){return {E::host_capacity,{}};}
     }
@@ -3049,13 +3049,9 @@ bool submit(const State &st, const Vertex *verts, int count) {
     const bool fst = (attr & (1ull << 8)) != 0;
     const auto emit = [&](const Vertex &v, const Vertex &color, std::uint32_t x, std::uint32_t y,
                           float s, float t, float q) {
-        // Pixel-centre alignment. The GS samples at the pixel's own coordinate;
-        // GL samples at the fragment centre, half a pixel further on. This
-        // shift moves the native path onto the GS sample point.
-        static const float pixel_shift = [] {
-            const char *value = std::getenv("PS2_NATIVE_GL_PIXEL_SHIFT");
-            return value ? static_cast<float>(std::atof(value)) : 0.0f;
-        }();
+        // Preserve the established zero coordinate shift. This patch removes
+        // runtime experiments without changing the current sampling policy.
+        constexpr float pixel_shift = 0.0f;
         const float fx = static_cast<float>(static_cast<int>(x) - ofx) / 16.0f + pixel_shift;
         const float fy = static_cast<float>(static_cast<int>(y) - ofy) / 16.0f + pixel_shift;
         const std::uint32_t z = std::min(v.z, zmax);
@@ -3084,10 +3080,7 @@ bool submit(const State &st, const Vertex *verts, int count) {
         // the native path land on the same texel as the software rasterizer,
         // which is the reference implementation of the GS sampling rules.
         // tests/test_gl_vs_raster.cpp measures the agreement.
-        static const float texel_offset = [] {
-            const char *value = std::getenv("PS2_NATIVE_GL_TEXEL_OFFSET");
-            return value ? static_cast<float>(std::atof(value)) : 0.0f;
-        }();
+        constexpr float texel_offset = 0.0f;
         if (fst) {
             return std::array<float, 2>{
                 static_cast<float>(v.u) / (16.0f * static_cast<float>(texture_width)) +
@@ -3151,14 +3144,8 @@ bool submit(const State &st, const Vertex *verts, int count) {
         // native GL sprite sampling with the reference implementation.
         const float span_x = static_cast<float>(static_cast<int>(b.x) - static_cast<int>(a.x)) / 16.0f;
         const float span_y = static_cast<float>(static_cast<int>(b.y) - static_cast<int>(a.y)) / 16.0f;
-        static const float shift_x = [] {
-            const char *value = std::getenv("PS2_NATIVE_GL_SPRITE_SHIFT_X");
-            return value ? static_cast<float>(std::atof(value)) : -0.49f;
-        }();
-        static const float shift_y = [] {
-            const char *value = std::getenv("PS2_NATIVE_GL_SPRITE_SHIFT_Y");
-            return value ? static_cast<float>(std::atof(value)) : 0.0f;
-        }();
+        constexpr float shift_x = -0.49f;
+        constexpr float shift_y = 0.0f;
         const float shift_u = span_x != 0.0f ? shift_x * (buv[0] - auv[0]) / span_x : 0.0f;
         const float shift_v = span_y != 0.0f ? shift_y * (buv[1] - auv[1]) / span_y : 0.0f;
         const float su = auv[0] + shift_u, sv = auv[1] + shift_v;
@@ -3182,10 +3169,7 @@ bool submit(const State &st, const Vertex *verts, int count) {
         // delta applies to every vertex.
         float du = 0.0f, dv = 0.0f;
         if (textured && count >= 3 && (prim_type == 3u || prim_type == 4u)) {
-            static const float shift = [] {
-                const char *value = std::getenv("PS2_NATIVE_GL_TRI_SHIFT");
-                return value ? static_cast<float>(std::atof(value)) : -0.49f;
-            }();
+            constexpr float shift = -0.49f;
             const auto pixel = [&](const Vertex &v) {
                 return std::array<float, 2>{(static_cast<int>(v.x) - ofx) / 16.0f,
                                             (static_cast<int>(v.y) - ofy) / 16.0f};

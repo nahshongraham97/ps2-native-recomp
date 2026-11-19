@@ -1,0 +1,13 @@
+{
+  "name": "native-gl-device",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_gl_device.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules\\MOVIER.ovl",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-movie-decode-20261119\\decoded-02"
+  ],
+  "exe_sha256": "2a81f65513bcc2ca138e7f83098c60cf8fa8111260169dd6a381239bbe24950b",
+  "exit": 0,
+  "stdout": "native-movie-gl driver: ATI Technologies Inc. | AMD Radeon RX 6800 XT | 4.6.0 Compatibility Profile Context 26.11.2.261112\nPASS actual decoded-logo converted pixels, dynamic movieRGBA upload/filter/SAR/alpha/fences/ownership; no game/lifecycle/A-V-sync acceptance\n",
+  "stderr": "",
+  "at_utc": "2026-11-19T11:00:12.139447+00:00"
+}

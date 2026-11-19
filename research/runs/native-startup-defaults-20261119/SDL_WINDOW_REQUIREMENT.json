@@ -1,0 +1,8 @@
+{
+  "scope": "Windows runner configure dependency; no game launch",
+  "path": "external/forks/ps2-native-recomp/CMakeLists.txt",
+  "before_sha256": "07bc1bc8b3d654ef8470604953270067b5ff14f53ffca4f92108bec593ec5069",
+  "after_sha256": "df551bc4d6a0f8a25e123a9c9a954a23fcfe33339e8d9f728808f51b29abb2fa",
+  "reason": "Missing window/input dependency must fail at configure instead of producing a normal headless runner",
+  "standalone_component_targets": "unchanged; branch applies only when PS2_GENERATED defines ps2run"
+}

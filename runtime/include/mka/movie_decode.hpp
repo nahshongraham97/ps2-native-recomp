@@ -1,9 +1,11 @@
 #pragma once
 #include "mka/movie_assets.hpp"
+#include "mka/mpeg2_timing.hpp"
 #include <array>
 #include <cstdint>
 #include <filesystem>
 #include <memory>
+#include <optional>
 #include <string>
 #include <variant>
 #include <vector>
@@ -13,6 +15,22 @@ struct MovieTimestamp {
     std::int64_t value=0;
     std::int32_t numerator=0,denominator=0;
     bool present=false;
+};
+struct MovieRateRatio {
+    std::int32_t numerator=0,denominator=0;
+    bool operator==(const MovieRateRatio&) const = default;
+};
+struct MovieCodecTiming {
+    // Exact library values, including 0/0 when unavailable. The demuxer's
+    // r_frame_rate is an estimate; none of these selects a playback clock.
+    MovieRateRatio codec_framerate,demux_avg_frame_rate,demux_r_frame_rate;
+    // Owned raw MPEG 25-bit GOP timecode, emitted by the codec only on its
+    // associated first output. Not a PTS, per-picture reference or origin.
+    std::optional<std::uint64_t> gop_timecode;
+    // Parsed elementary-picture metadata, carried through codec reorder by an
+    // owned opaque tag. Distinct from GOP side-data, PTS and library rate hints.
+    std::optional<Mpeg2PictureTiming> picture;
+    bool operator==(const MovieCodecTiming&) const = default;
 };
 struct MovieVideoFrame {
     std::uint32_t width=0,height=0;
@@ -24,6 +42,7 @@ struct MovieVideoFrame {
     MovieTimestamp timestamp;
     std::int32_t sample_aspect_numerator=0,sample_aspect_denominator=0;
     std::int32_t color_range=0,color_space=0,color_primaries=0,color_transfer=0;
+    MovieCodecTiming codec_timing;
 };
 struct MovieAudioFrame {
     std::uint32_t sample_rate=0;
@@ -35,7 +54,7 @@ struct MovieAudioFrame {
 using MovieDecodedFrame=std::variant<MovieVideoFrame,MovieAudioFrame>;
 enum class MovieDecodeError {none,unsupported_host,library_load,missing_symbol,
     library_version,file_io,allocation,invalid_stream,unsupported_stream,
-    unsupported_frame,demux,decode,invalid_owner,failed_owner};
+    unsupported_frame,demux,decode,invalid_owner,failed_owner,timing_parse,timing_association};
 struct MovieDecodeFailure {
     MovieDecodeError kind=MovieDecodeError::none;
     std::int32_t native_code=0;
@@ -51,8 +70,9 @@ struct MovieReadResult {
 // No CDVD, IPU, GS, IOP, SPU2 or device clock. This decoder does not invent
 // an A/V clock, skip/fade lifecycle, pixel conversion, presentation or audio
 // output. Those have separate source-proven contracts.
-// Only YUV/PCM is emitted: CRI private-stream subtitle tags require a separate
-// native container parser/selector and are not claimed preserved by this API.
+// Frames own their raw codec/header timing metadata as well as YUV/PCM. CRI
+// private-stream subtitle tags use the separate native container/metadata
+// parser; they are not emitted by this codec API.
 class NativeMovieDecoder {
 public:
     ~NativeMovieDecoder();

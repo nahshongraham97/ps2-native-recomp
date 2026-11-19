@@ -1,0 +1,11 @@
+{
+  "name": "movie-timecode",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_timecode.exe"
+  ],
+  "exe_sha256": "52bbee6d466687239345b7a3402ae1dbf62dca32f0e19a31d494fb99c86b37f5",
+  "exit": 0,
+  "stdout": "[timecode-wide-oracle] full_domain=10000 wide_cancellation=10000 compiler128=PASS\n[timecode-pass] original rate/drop branches and checked native64 arithmetic\n",
+  "stderr": "",
+  "at_utc": "2026-11-19T11:00:11.866061+00:00"
+}

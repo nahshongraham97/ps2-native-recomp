@@ -63,6 +63,7 @@ std::optional<MovieRgbaFrame> convert_movie_yuv420(const MovieVideoFrame& input,
         MovieRgbaFrame output;output.conversion_role=table.role();output.width=input.width;output.height=input.height;output.source_pts=input.source_pts;output.timestamp=input.timestamp;
         output.source_sample_aspect_numerator=input.sample_aspect_numerator;output.source_sample_aspect_denominator=input.sample_aspect_denominator;
         output.source_color_range=input.color_range;output.source_color_space=input.color_space;output.source_color_primaries=input.color_primaries;output.source_color_transfer=input.color_transfer;
+        output.codec_timing=input.codec_timing;
         output.rgba.resize(w*h*4);
         for(std::size_t y=0;y<h;++y)for(std::size_t x=0;x<w;++x){
             const auto chroma=(y/2)*cw+x/2;

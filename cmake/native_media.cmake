@@ -23,6 +23,9 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/font_geometry.cpp
     runtime/src/native/movie_assets.cpp
     runtime/src/native/movie_container.cpp
+    runtime/src/native/movie_metadata.cpp
+    runtime/src/native/mpeg2_timing.cpp
+    runtime/src/native/movie_timecode.cpp
     runtime/src/native/movie_subtitles.cpp
     runtime/src/native/movie_decode.cpp
     runtime/src/native/movie_color.cpp
@@ -60,6 +63,7 @@ foreach(pair
     "test_native_movie_pipeline|tests/test_native_movie_pipeline.cpp"
     "test_native_movie_inventory|tests/test_native_movie_inventory.cpp"
     "test_native_movie_container|tests/test_native_movie_container.cpp"
+    "test_native_movie_metadata|tests/test_movie_metadata.cpp"
     "test_native_movie_subtitles|tests/test_movie_subtitles.cpp")
     string(REPLACE "|" ";" parts "${pair}")
     list(GET parts 0 target)
@@ -67,3 +71,13 @@ foreach(pair
     add_executable(${target} EXCLUDE_FROM_ALL "${source}")
     target_link_libraries(${target} PRIVATE mka_native_media)
 endforeach()
+
+# Pure serialized-header fixture: no codec libraries, renderer or runtime link.
+add_executable(test_native_mpeg2_timing EXCLUDE_FROM_ALL
+    tests/test_mpeg2_timing.cpp runtime/src/native/mpeg2_timing.cpp)
+target_include_directories(test_native_mpeg2_timing PRIVATE runtime/include)
+target_compile_features(test_native_mpeg2_timing PRIVATE cxx_std_20)
+add_executable(test_native_movie_timecode EXCLUDE_FROM_ALL
+    tests/test_movie_timecode.cpp runtime/src/native/movie_timecode.cpp)
+target_include_directories(test_native_movie_timecode PRIVATE runtime/include)
+target_compile_features(test_native_movie_timecode PRIVATE cxx_std_20)

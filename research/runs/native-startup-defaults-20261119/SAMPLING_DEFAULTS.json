@@ -1,0 +1,47 @@
+{
+  "date": "2026-11-19",
+  "scope": "sampling override removal only; no default arithmetic changes",
+  "files": {
+    "runtime/src/gs/native_gl_backend.cpp": {
+      "before_sha256": "774a4a476267748fefbe6320ec378e6637f4abc99c286b4925f5542865642e79",
+      "after_sha256": "5ac8fc3b51a2dd0136ae2a5a5495081ee90ada78751b7ed80083c5ba8bcd8dcd"
+    },
+    "tests/test_gl_vs_raster.cpp": {
+      "sha256": "96daaaaab07cbd4b5eee99ec5e1a37d7ba570785e775f09f8251ee2c17b74855",
+      "status": "read only; no test edits or execution"
+    }
+  },
+  "removed_overrides": {
+    "PS2_NATIVE_GL_PIXEL_SHIFT": {
+      "constant": "0.0f",
+      "previous_absent_environment_default": "0.0f"
+    },
+    "PS2_NATIVE_GL_TEXEL_OFFSET": {
+      "constant": "0.0f",
+      "previous_absent_environment_default": "0.0f"
+    },
+    "PS2_NATIVE_GL_SPRITE_SHIFT_X": {
+      "constant": "-0.49f",
+      "previous_absent_environment_default": "-0.49f"
+    },
+    "PS2_NATIVE_GL_SPRITE_SHIFT_Y": {
+      "constant": "0.0f",
+      "previous_absent_environment_default": "0.0f"
+    },
+    "PS2_NATIVE_GL_TRI_SHIFT": {
+      "constant": "-0.49f",
+      "previous_absent_environment_default": "-0.49f"
+    }
+  },
+  "verification": "source comparison only; no build/test/GPU/game execution",
+  "requested_targets": [
+    "test_gl_vs_raster",
+    "ps2runtime native_gl_backend.cpp object"
+  ],
+  "limits": [
+    "existing serialized GS state/fixed scene dimensions remain outside scope",
+    "no gameplay or general sampling fidelity claim",
+    "root must serialize any compilation and permitted regression execution"
+  ],
+  "preserved_preexisting_dirty_change": "movie lease codec_timing propagation at line1907 was already present in before hash; not authored/removed by this patch"
+}

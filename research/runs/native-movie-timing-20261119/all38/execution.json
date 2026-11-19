@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_inventory.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2"
+  ],
+  "exe_sha256": "5f6bb0ead130db735185d34be737bd611ba9aa17651bfec1f782e6f3109b8a4d",
+  "exit": 0,
+  "started_utc": "2026-11-19T10:49:27.750482+00:00",
+  "finished_utc": "2026-11-19T10:50:07.297214+00:00",
+  "elapsed_seconds": 39.546734900002775,
+  "source_sha256": {
+    "runtime/src/native/movie_decode.cpp": "2014fa033173766bf4814e3843a2fdab15dc48107123ac8792e535c25d467a90",
+    "runtime/include/mka/movie_decode.hpp": "7043087bbe1c66009995e571ebb4ac8b84900a6df5315303ac0a0cf9b9b3e92c",
+    "runtime/src/native/mpeg2_timing.cpp": "f933f077396ca0561d3c8ebdd81a3bbbf9165d73564119df99f2c5714a85b57e",
+    "runtime/include/mka/mpeg2_timing.hpp": "ef2cc29d015511f1247e0c7b0c83a85b35175fd2e880c3031ebfe4e02ffcc0a1",
+    "tests/test_native_movie_inventory.cpp": "ce59476b106a97e7615febd0201e37042937e2d4e5a324fcf819b7285288b29b"
+  },
+  "stdout_file": "inventory.jsonl",
+  "stderr_file": "stderr.log",
+  "game_launched": false,
+  "gpu_driver_changes": false
+}

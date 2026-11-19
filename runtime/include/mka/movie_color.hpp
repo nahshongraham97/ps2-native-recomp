@@ -13,6 +13,7 @@ struct MovieRgbaFrame {
     std::int32_t source_sample_aspect_numerator=0,source_sample_aspect_denominator=0;
     std::int32_t source_color_range=0,source_color_space=0,source_color_primaries=0,source_color_transfer=0;
     MovieColorRole conversion_role=MovieColorRole::unspecified;
+    MovieCodecTiming codec_timing;
 };
 // Portable original retail lookup arithmetic, not a GS/IPU/chip model.
 // Selection is mandatory: the two original tables are materially different.

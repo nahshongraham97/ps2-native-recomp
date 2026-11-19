@@ -10,6 +10,7 @@ struct MovieGpuMetadata {
     MovieTimestamp source_pts,timestamp;
     std::int32_t sample_aspect_numerator=0,sample_aspect_denominator=0;
     std::int32_t color_range=0,color_space=0,color_primaries=0,color_transfer=0;
+    MovieCodecTiming codec_timing;
 };
 class MovieGpuFrame:public VideoFrameResource {
 public:

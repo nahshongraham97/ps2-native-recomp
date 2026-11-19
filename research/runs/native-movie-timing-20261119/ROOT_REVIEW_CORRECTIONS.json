@@ -1,0 +1,109 @@
+{
+  "at_utc": "2026-11-19T10:58:28.743824+00:00",
+  "scope": "root executed negative reproducers and source corrections; no normal actual-asset failure claimed",
+  "findings": [
+    {
+      "name": "metadata_prefix_overlap",
+      "correction": "Validate recognized complete-header start against preceding payload end",
+      "before": {
+        "argv": [
+          "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_metadata.exe"
+        ],
+        "exe_sha256": "394f0e4066f0d295cd2df61a2fbfca3a014abe91572f89ee151fe6e70fc54f40",
+        "exit": 1,
+        "stdout": "",
+        "stderr": "FAIL named transactional malformed rejection\n",
+        "at_utc": "2026-11-19T10:42:51.033387+00:00"
+      },
+      "after": {
+        "argv": [
+          "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_metadata.exe",
+          "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2"
+        ],
+        "exe_sha256": "3322639fcf3d93b856c6be346d41657225cd8d74af721c4d23c00056be45430f",
+        "exit": 0,
+        "stdout": "actual assets=38 headers=38 ordinary=40 events=14\nPASS owned native metadata assembly; no player/callback execution\n",
+        "stderr": "",
+        "at_utc": "2026-11-19T10:43:10.505818+00:00"
+      }
+    },
+    {
+      "name": "reprime_old_sequence",
+      "correction": "Prime from fresh candidate; preserve old state only on error",
+      "before": {
+        "argv": [
+          "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_mpeg2_timing.exe"
+        ],
+        "exe_sha256": "8940501b4089abab37f71105b0cc244117b26c501730fb78aed1e58949e57522",
+        "exit": 1,
+        "stdout": "",
+        "stderr": "[mpeg2-timing-fail] empty extradata must not reuse a prior sequence\n",
+        "at_utc": "2026-11-19T10:45:53.735177+00:00"
+      },
+      "after": {
+        "argv": [
+          "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_mpeg2_timing.exe"
+        ],
+        "exe_sha256": "48268c9d5e1afd7bb00ee7aa9baa54e1c37fdb09fc479cd84677ca28f0ba0f5b",
+        "exit": 0,
+        "stdout": "[mpeg2-timing-pass] synthetic header ownership/transaction/cardinality checks\n",
+        "stderr": "",
+        "at_utc": "2026-11-19T10:46:07.630447+00:00"
+      }
+    },
+    {
+      "name": "post_terminal_unit",
+      "correction": "Reject later nonpadding units after sequence-end",
+      "before": {
+        "argv": [
+          "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_mpeg2_timing.exe"
+        ],
+        "exe_sha256": "90cf8fb6866c1f5a494df0f40ebe903c365e8181f6b1ab06ac86ffe80de1aa69",
+        "exit": 1,
+        "stdout": "",
+        "stderr": "[mpeg2-timing-fail] no later slice may attach after terminal sequence-end\n",
+        "at_utc": "2026-11-19T10:45:14.788653+00:00"
+      },
+      "after": {
+        "argv": [
+          "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_mpeg2_timing.exe"
+        ],
+        "exe_sha256": "48268c9d5e1afd7bb00ee7aa9baa54e1c37fdb09fc479cd84677ca28f0ba0f5b",
+        "exit": 0,
+        "stdout": "[mpeg2-timing-pass] synthetic header ownership/transaction/cardinality checks\n",
+        "stderr": "",
+        "at_utc": "2026-11-19T10:46:07.630447+00:00"
+      }
+    },
+    {
+      "name": "terminal_nonzero_body",
+      "correction": "EOS has no payload; only zero bytes may remain before EOF/next prefix",
+      "before": {
+        "argv": [
+          "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_mpeg2_timing.exe"
+        ],
+        "exe_sha256": "4d8ad2ef9e0f9dd537ec67420d080bf66aea9210044e9021738d79ac38c17081",
+        "exit": 1,
+        "stdout": "",
+        "stderr": "[mpeg2-timing-fail] terminal sequence-end has no nonzero payload bytes\n",
+        "at_utc": "2026-11-19T10:48:05.344072+00:00"
+      },
+      "after": {
+        "argv": [
+          "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_mpeg2_timing.exe"
+        ],
+        "exe_sha256": "31405dc9971006f2a5468b7684e2e3e0d6e82d5c56cc0ea9e7d826c26e1f63ff",
+        "exit": 0,
+        "stdout": "[mpeg2-timing-pass] synthetic header ownership/transaction/cardinality checks\n",
+        "stderr": "",
+        "at_utc": "2026-11-19T10:48:33.996245+00:00"
+      }
+    }
+  ],
+  "current_source_sha256": {
+    "runtime/src/native/movie_metadata.cpp": "04db6563167d87a48746ff9801be04403b85f72506afc4261b4fa303ef68d951",
+    "runtime/src/native/mpeg2_timing.cpp": "f933f077396ca0561d3c8ebdd81a3bbbf9165d73564119df99f2c5714a85b57e",
+    "tests/test_movie_metadata.cpp": "b3d749800deede7f734c296b7d8c060108cedcd6a83882809ba72c4db713ca5b",
+    "tests/test_mpeg2_timing.cpp": "6de223e7a0a45b873df0b036511d5ef32835d96ad55aa54b2fac68815af7be28"
+  }
+}

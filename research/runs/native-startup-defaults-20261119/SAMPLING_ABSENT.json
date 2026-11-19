@@ -1,0 +1,30 @@
+{
+  "scope": "hidden WGL renderer component fixture; not game acceptance",
+  "command": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_gl_vs_raster.exe"
+  ],
+  "cwd": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp",
+  "started_at": "2026-11-19T11:17:42.517236+00:00",
+  "ended_at": "2026-11-19T11:17:42.784375+00:00",
+  "returncode": 0,
+  "stdout": "\n=======================================================================\n             GS TEXTURE SAMPLING A/B ACCEPTANCE MATRIX                 \n=======================================================================\nTest Case                                 Pixels        Mismatches  Status\n-----------------------------------------------------------------------\nSprite 1:1 Scale (4x4 UV)                 16            0           PASS\nSprite 2x Magnification (8x8 UV)          64            0           PASS\nSprite 3x Magnification (12x12 UV)        144           0           PASS\nSprite 1.5x Non-Integer (6x6 UV)          36            0           PASS\nSprite 2x Magnification (8x8 ST)          64            0           PASS\nTriangle Strip 1:1 (4x4 UV)               16            0           PASS\nTriangle Strip 2x (8x8 UV)                64            0           PASS\nMidpoint Tie-Break (0.5 texel center)     64            0           PASS\nSprite 1:1 Nearest (4x4 UV)               16            0           PASS\nSprite 2x Nearest (8x8 UV)                64            0           PASS\nSprite 3x Nearest (12x12 UV)              144           0           PASS\nTriangle Strip 1:1 Nearest (4x4 UV)       16            0           PASS\nTriangle Strip 2x Nearest (8x8 UV)        64            0           PASS\nTriangle Prim3 1:1 (4x4 UV)               16            0           PASS\nTriangle Prim3 Nearest 13x13 (4x4 UV)     169           0           PASS\nFont Atlas Nearest Minify (prim4)         2584          0           PASS\nFont Atlas ALPHA=0x44 av=0x80             2584          0           PASS\nFont Atlas ALPHA=0x44 av=0x40             2584          0           PASS\n=======================================================================\nALL 18 MATRIX TESTS PASSED!\n",
+  "stderr": "[gs] native OpenGL/direct-packet mode selected; WebGPU presentation disabled\n[native-gl] GPU busy time measured with a GL timer query\n[native-gl] owned GPU scene 0 for FBP=0\n[native-gl] enabled: GL 4.6.0 Compatibility Profile Context 26.11.2.261112 | AMD Radeon RX 6800 XT | ATI Technologies Inc.\n[native-gl] owned GPU scene 1 for FBP=91\n[native-gl] first GS primitive consumed by the native OpenGL path\n\n[census] ===== accepted-route PS2 API census =====\n[census] EE   : live guest translations = 0        (PASS); VU1 programs translated while the game ran = 0 (PASS)\n[census] IOP  : guest modules loaded and able to run = 0   (PASS)\n[census] VU   : interpreter fallbacks = 0 (vu0 0, vu1 0) (PASS)\n[census] IOP  : guest instructions = 0       (PASS)\n[census] SIF  : RPCs dispatched natively = 0, through guest-registered servers = 0, unknown = 0\n[census] GS   : transfers reached the native surface = 0, stopped in emulated VRAM = 0; primitives = 63\n[census] SPU2 : chip-model ops at the device boundary = 0; key-ons = 0 key-offs = 0 DMA writes = 0 (0.0 MB) reads = 0 peak sample = 0\n[census] AUDIO: native frames mixed = 0, blocks consumed = 0; voices keyed = 0, voice frames = 0, ADPCM blocks = 0\n[census] CDVD : device sector reads = 0                   (no CDVD device on route); native content volume reads = 0\n[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=0 SPU2-chip-model-ops=0 SIF-guest-registered=0 CDVD-device-reads=0; compiled while the game ran: EE=0 VU1=0; guest modules able to run=0\n[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n=================================================\n",
+  "binary_sha256": "3247e3ec210d4fcd08d1e2b333a2946132808cc76b2e46b4e17872f084f6c7d7",
+  "source_sha256": {
+    "CMakeLists.txt": "df551bc4d6a0f8a25e123a9c9a954a23fcfe33339e8d9f728808f51b29abb2fa",
+    "runtime/src/gs/native_gl_backend.cpp": "5ac8fc3b51a2dd0136ae2a5a5495081ee90ada78751b7ed80083c5ba8bcd8dcd",
+    "tests/test_gl_vs_raster.cpp": "63be1b314689f23db35aedec1880b7e217a2107074a22926d8006d51031d59c0"
+  },
+  "child_environment_removed": [
+    "PS2_NATIVE_GL_PIXEL_SHIFT",
+    "PS2_NATIVE_GL_TEXEL_OFFSET",
+    "PS2_NATIVE_GL_SPRITE_SHIFT_X",
+    "PS2_NATIVE_GL_SPRITE_SHIFT_Y",
+    "PS2_NATIVE_GL_TRI_SHIFT",
+    "PS2_NATIVE_GL",
+    "PS2_GS"
+  ],
+  "child_environment_injected": {},
+  "persistent_environment_or_driver_changes": false,
+  "game_launched": false
+}

@@ -1,0 +1,54 @@
+{
+  "scope": "host/main.cpp startupcleanup only;before snapshot preserves allprior dirty edits",
+  "before_sha256": "a5ab8c27a33b4aeb16c22e6c757e91bbb271af6b241efaafe10354416c320824",
+  "after_sha256": "d27527a619096794d0a0481b8d4797ffe037e666a83b74ff8f438558c91de275",
+  "mutations": [
+    "appendactualextracteddisc-filescandidateafterallworkingcandidates",
+    "remove5redundantnativeoptinwrites",
+    "removeMKA_INTERCEPT_COMBATforceoverride,preserveis_mkaandregistrationcall",
+    "correctstaleAOT/interpretercomments"
+  ],
+  "verification": {
+    "static_checks": {
+      "old_candidate_order_preserved": true,
+      "one_extracted_candidate_appended": true,
+      "retail_registration_call_preserved_once": true,
+      "five_env_writes_removed": true,
+      "legacy_forced_registration_removed": true
+    },
+    "object_build_receipt": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-startup-defaults-20261119\\host-object-build.json",
+    "exit": 0,
+    "stderr": "",
+    "scope": "Saved Ninja target compilercommand;no CMake regeneration,linkorlaunch",
+    "exe_unchanged": true
+  },
+  "residuals": [
+    "Root owns canonical defaultlauncher and normalrunnerdependency enforcement;notchangedhere.",
+    "No fullgame link/playthrough or currentbinary freshnessclaim;existingexe unchanged.",
+    "Existing historicalVU_RECORD destinationmetadata code remainsoutsideboundedcleanup;currentruntime has no interpreter/livecompiler route.",
+    "NativeMedia/retailplayerintegration andfixedmemory/devicearchitecture remainseparateOPENwork."
+  ],
+  "files": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\host\\main.cpp": {
+      "after_sha256": "d27527a619096794d0a0481b8d4797ffe037e666a83b74ff8f438558c91de275"
+    },
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-startup-defaults-20261119\\main.cpp.before-startup-cleanup": {
+      "after_sha256": "a5ab8c27a33b4aeb16c22e6c757e91bbb271af6b241efaafe10354416c320824"
+    },
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-startup-defaults-20261119\\startup-main.patch": {
+      "after_sha256": "d5253f03e5e24ae72419864db730d8d0266823a1d908d42fba63cfee5c92a3b5"
+    },
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-startup-defaults-20261119\\host-object-command.txt": {
+      "after_sha256": "f54ddad12153a877fe694d90b4361712ea4c40ee2b902db8d0b4ee8d345cbf32"
+    },
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-startup-defaults-20261119\\host-object-build.json": {
+      "after_sha256": "eb9ad17bb62438c8f12d92b7445afa6d74858f03eff489815ccafc9a6852f684"
+    },
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-startup-defaults-20261119\\host-object-stdout.txt": {
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-startup-defaults-20261119\\host-object-stderr.txt": {
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

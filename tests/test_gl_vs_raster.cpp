@@ -635,8 +635,6 @@ bool run_combiner_matrix() {
 int main(int argc, char **argv) {
     (void)argc;
     (void)argv;
-    _putenv_s("PS2_NATIVE_GL", "1");
-    _putenv_s("PS2_GS", "native-gl");
     ps2::gs::init();
     init_texture();
     // PS2_TRACE_PIXEL=<x>,<y> prints the reference rasterizer's interpolated

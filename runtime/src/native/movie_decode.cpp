@@ -13,6 +13,10 @@ extern "C" {
 #include <new>
 #include <optional>
 #include <stdexcept>
+#include <unordered_map>
+extern "C" {
+#include <libavutil/buffer.h>
+}
 #ifdef _WIN32
 #define NOMINMAX
 #include <windows.h>
@@ -27,7 +31,7 @@ struct Api {
 #endif
 #define DECLARE(name) decltype(&name) name##_p=nullptr
     DECLARE(avutil_version);DECLARE(avcodec_version);DECLARE(avformat_version);
-    DECLARE(av_malloc);DECLARE(av_free);DECLARE(av_frame_alloc);DECLARE(av_frame_free);DECLARE(av_frame_unref);
+    DECLARE(av_malloc);DECLARE(av_free);DECLARE(av_frame_alloc);DECLARE(av_frame_free);DECLARE(av_frame_unref);DECLARE(av_frame_get_side_data);DECLARE(av_buffer_create);DECLARE(av_buffer_unref);
     DECLARE(av_packet_alloc);DECLARE(av_packet_free);DECLARE(av_packet_unref);DECLARE(av_new_packet);DECLARE(av_packet_copy_props);
     DECLARE(avio_alloc_context);DECLARE(avio_context_free);
     DECLARE(avformat_alloc_context);DECLARE(avformat_open_input);DECLARE(avformat_find_stream_info);
@@ -50,6 +54,7 @@ struct Api {
 #define LOAD(module,name) name##_p=reinterpret_cast<decltype(name##_p)>(GetProcAddress(module,#name));if(!name##_p){f={MovieDecodeError::missing_symbol,0,#name};return false;}
         LOAD(utility,avutil_version);LOAD(codec,avcodec_version);LOAD(format,avformat_version);
         LOAD(utility,av_malloc);LOAD(utility,av_free);LOAD(utility,av_frame_alloc);LOAD(utility,av_frame_free);LOAD(utility,av_frame_unref);
+        LOAD(utility,av_frame_get_side_data);LOAD(utility,av_buffer_create);LOAD(utility,av_buffer_unref);
         LOAD(codec,av_packet_alloc);LOAD(codec,av_packet_free);LOAD(codec,av_packet_unref);
         LOAD(codec,av_new_packet);LOAD(codec,av_packet_copy_props);
         LOAD(format,avio_alloc_context);LOAD(format,avio_context_free);LOAD(format,avformat_alloc_context);
@@ -92,6 +97,51 @@ struct NativeMovieDecoder::Impl {
     AVFrame* scratch=nullptr;
     struct Stream {int index=-1;AVCodecContext* decoder=nullptr;AVRational base{};};
     Stream video,audio;
+    NativeMpeg2Timing timing;
+    struct PictureTag {
+        static constexpr std::uint64_t magic_value=0x4d4b415049435431ull;
+        std::uint64_t magic=magic_value;
+        const Impl* owner=nullptr;
+        std::uint64_t serial=0;
+        Mpeg2PictureTiming picture;
+    };
+    struct PendingPicture {std::uint64_t serial;Mpeg2PictureTiming picture;};
+    std::unordered_map<const std::uint8_t*,PendingPicture> pending_pictures;
+    std::uint64_t picture_serial=0;
+    static void free_picture_tag(void*,std::uint8_t* data) noexcept {
+        delete reinterpret_cast<PictureTag*>(data);
+    }
+    bool timing_failure(const Mpeg2TimingFailure& why,MovieDecodeFailure& f){
+        f={MovieDecodeError::timing_parse,static_cast<int>(why.kind),
+           std::string("native MPEG2 timing ")+mpeg2_timing_error_name(why.kind)+" at byte "+std::to_string(why.offset)};
+        return false;
+    }
+    bool associate_picture(MovieVideoFrame& frame,MovieDecodeFailure& f){
+        const auto* ref=scratch->opaque_ref;
+        if(!ref||!ref->data||ref->size!=sizeof(PictureTag)){
+            f={MovieDecodeError::timing_association,0,"missing or invalid native picture tag extent"};return false;
+        }
+        // Check registered address before treating arbitrary codec opaque bytes
+        // as our C++ type. AVFrame holds a live AVBufferRef throughout this read.
+        const auto it=pending_pictures.find(ref->data);
+        if(it==pending_pictures.end()){
+            f={MovieDecodeError::timing_association,0,"foreign, duplicate or unmatched native picture tag"};return false;
+        }
+        const auto* tag=reinterpret_cast<const PictureTag*>(ref->data);
+        if(tag->magic!=PictureTag::magic_value||tag->owner!=this||!tag->serial||
+           tag->serial!=it->second.serial||scratch->opaque!=tag||tag->picture!=it->second.picture){
+            f={MovieDecodeError::timing_association,0,"native picture tag type/owner/serial/value mismatch"};return false;
+        }
+        // MPEG2 coding_type 1/2/3 and AVPictureType I/P/B share the documented
+        // values. The codec's independent output classification also checks
+        // association through B-picture reordering, beyond our own tag copies.
+        if(tag->picture.coding_type!=static_cast<unsigned>(scratch->pict_type)){
+            f={MovieDecodeError::timing_association,0,"native picture tag disagrees with codec output picture type"};return false;
+        }
+        frame.codec_timing.picture=tag->picture;
+        pending_pictures.erase(it);
+        return true;
+    }
     std::deque<MovieDecodedFrame> ready;
     std::error_code io_error;
     bool ended=false,failed=false;
@@ -135,23 +185,55 @@ struct NativeMovieDecoder::Impl {
         int r=api.avcodec_parameters_to_context_p(stream.decoder,source->codecpar);
         if(r<0){f={MovieDecodeError::decode,r,"avcodec_parameters_to_context"};return false;}
         stream.decoder->pkt_timebase=source->time_base;
+        if(source->codecpar->codec_type==AVMEDIA_TYPE_VIDEO){
+            stream.decoder->flags|=AV_CODEC_FLAG_COPY_OPAQUE;
+            if(stream.decoder->extradata_size<0||
+               (stream.decoder->extradata_size&&!stream.decoder->extradata)){
+                f={MovieDecodeError::timing_parse,0,"invalid MPEG2 timing extradata extent"};return false;
+            }
+            if(stream.decoder->extradata_size){
+                Mpeg2TimingFailure why;
+                if(!timing.prime({stream.decoder->extradata,static_cast<std::size_t>(stream.decoder->extradata_size)},why))return timing_failure(why,f);
+            }
+        }
         stream.decoder->err_recognition=AV_EF_CRCCHECK|AV_EF_BITSTREAM|AV_EF_BUFFER|AV_EF_EXPLODE;
         r=api.avcodec_open2_p(stream.decoder,decoder,nullptr);
         if(r<0){f={MovieDecodeError::decode,r,"avcodec_open2"};return false;}
         return true;
     }
-    bool receive(Stream& stream,MovieDecodeFailure& f){
+    bool receive(Stream& stream,MovieDecodeFailure& f,bool draining=false){
         for(;;){
             const int r=api.avcodec_receive_frame_p(stream.decoder,scratch);
-            if(r==AVERROR(EAGAIN)||r==AVERROR_EOF)return true;
+            if(r==AVERROR_EOF){
+                if(stream.index==video.index&&!pending_pictures.empty()){
+                    f={MovieDecodeError::timing_association,0,"decoder EOF with unmatched native picture tags"};return false;
+                }
+                return true;
+            }
+            if(r==AVERROR(EAGAIN)){
+                if(draining){f={MovieDecodeError::decode,r,"decoder requested input after drain"};return false;}
+                return true;
+            }
             if(r<0){f={MovieDecodeError::decode,r,"avcodec_receive_frame"};return false;}
             if((scratch->flags&AV_FRAME_FLAG_CORRUPT)||scratch->decode_error_flags){f={MovieDecodeError::decode,scratch->decode_error_flags,"corrupt decoded movie frame"};return false;}
             if(stream.index==video.index){
                 if(scratch->format!=AV_PIX_FMT_YUV420P||scratch->width<=0||scratch->height<=0){f={MovieDecodeError::unsupported_frame,scratch->format,"native movie requires proven YUV420P frame"};return false;}
                 MovieVideoFrame frame;frame.width=scratch->width;frame.height=scratch->height;
+                if(!associate_picture(frame,f))return false;
                 frame.source_pts=timestamp(scratch->pts,stream.base);frame.timestamp=timestamp(scratch->best_effort_timestamp,stream.base);
                 frame.sample_aspect_numerator=scratch->sample_aspect_ratio.num;frame.sample_aspect_denominator=scratch->sample_aspect_ratio.den;
                 frame.color_range=scratch->color_range;frame.color_space=scratch->colorspace;frame.color_primaries=scratch->color_primaries;frame.color_transfer=scratch->color_trc;
+                const auto* source=format->streams[stream.index];
+                frame.codec_timing.codec_framerate={stream.decoder->framerate.num,stream.decoder->framerate.den};
+                frame.codec_timing.demux_avg_frame_rate={source->avg_frame_rate.num,source->avg_frame_rate.den};
+                frame.codec_timing.demux_r_frame_rate={source->r_frame_rate.num,source->r_frame_rate.den};
+                if(const auto* gop=api.av_frame_get_side_data_p(scratch,AV_FRAME_DATA_GOP_TIMECODE)){
+                    std::uint64_t raw=0;
+                    if(!gop->data||gop->size!=sizeof(raw)){f={MovieDecodeError::unsupported_frame,0,"invalid native codec GOP timecode extent"};return false;}
+                    std::memcpy(&raw,gop->data,sizeof(raw));
+                    if(raw>0x1ffffffu){f={MovieDecodeError::unsupported_frame,0,"invalid native codec 25-bit GOP timecode"};return false;}
+                    frame.codec_timing.gop_timecode=raw;
+                }
                 for(unsigned plane=0;plane!=3;++plane){
                     const std::size_t w=plane?(std::size_t(frame.width)+1)/2:frame.width,h=plane?(std::size_t(frame.height)+1)/2:frame.height;
                     const auto stride=std::int64_t(scratch->linesize[plane]);
@@ -176,8 +258,43 @@ struct NativeMovieDecoder::Impl {
         }
     }
     bool send(Stream& stream,const AVPacket* data,MovieDecodeFailure& f){
-        const int sent=api.avcodec_send_packet_p(stream.decoder,data);
-        if(sent<0){f={MovieDecodeError::decode,sent,"avcodec_send_packet"};return false;}
+        if(stream.index!=video.index){
+            const int sent=api.avcodec_send_packet_p(stream.decoder,data);
+            if(sent<0){f={MovieDecodeError::decode,sent,"avcodec_send_packet"};return false;}
+            return receive(stream,f);
+        }
+        if(!data||data->size<0||(data->size&&!data->data)){
+            f={MovieDecodeError::timing_parse,0,"invalid elementary video packet extent"};return false;
+        }
+        std::optional<Mpeg2PictureTiming> picture;Mpeg2TimingFailure why;
+        if(!timing.parse({data->data,static_cast<std::size_t>(data->size)},picture,why))return timing_failure(why,f);
+        // All original packet storage/properties remain borrowed and untouched.
+        // send_packet internally refs them before returning. Only this header's
+        // opaque fields refer to our separately owned native tag.
+        AVPacket annotated=*data;annotated.opaque=nullptr;annotated.opaque_ref=nullptr;
+        const auto unref=[&](AVBufferRef* ref){api.av_buffer_unref_p(&ref);};
+        std::unique_ptr<AVBufferRef,decltype(unref)> owned_ref(nullptr,unref);
+        const std::uint8_t* registered=nullptr;
+        if(picture){
+            if(picture_serial==std::numeric_limits<std::uint64_t>::max()){
+                f={MovieDecodeError::timing_association,0,"native picture serial exhausted"};return false;
+            }
+            auto tag=std::make_unique<PictureTag>();tag->owner=this;tag->serial=++picture_serial;tag->picture=*picture;
+            auto* bytes=reinterpret_cast<std::uint8_t*>(tag.get());
+            auto* ref=api.av_buffer_create_p(bytes,sizeof(PictureTag),free_picture_tag,nullptr,AV_BUFFER_FLAG_READONLY);
+            // Public buffer.h: failure leaves data untouched. unique_ptr frees
+            // failure; successful AVBuffer takes sole deletion responsibility.
+            if(!ref){f={MovieDecodeError::allocation,0,"native picture AVBuffer ownership"};return false;}
+            auto* raw=tag.release();owned_ref.reset(ref);
+            const auto inserted=pending_pictures.emplace(bytes,PendingPicture{raw->serial,raw->picture});
+            if(!inserted.second){f={MovieDecodeError::timing_association,0,"native picture tag address reused while pending"};return false;}
+            registered=bytes;annotated.opaque=raw;annotated.opaque_ref=ref;
+        }
+        const int sent=api.avcodec_send_packet_p(stream.decoder,&annotated);
+        if(sent<0){
+            if(registered)pending_pictures.erase(registered);
+            f={MovieDecodeError::decode,sent,"avcodec_send_packet annotated picture"};return false;
+        }
         return receive(stream,f);
     }
     bool send_packet(Stream& stream,MovieDecodeFailure& f){
@@ -273,7 +390,7 @@ MovieReadResult NativeMovieDecoder::next(MovieDecodeFailure& f){
                 for(auto* stream:{&s.video,&s.audio})if(stream->decoder){
                     const int sent=s.api.avcodec_send_packet_p(stream->decoder,nullptr);
                     if(sent<0&&sent!=AVERROR_EOF){f={MovieDecodeError::decode,sent,"native decoder flush"};s.failed=true;return {};}
-                    if(!s.receive(*stream,f)){s.failed=true;return {};}
+                    if(!s.receive(*stream,f,true)){s.failed=true;return {};}
                 }
                 s.ended=true;break;
             }

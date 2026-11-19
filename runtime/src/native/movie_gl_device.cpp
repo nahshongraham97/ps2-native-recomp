@@ -219,7 +219,7 @@ public:
             if(session_->identity==UINT64_MAX)return {E::host_capacity,{}};auto id=session_->identity++;
             lease->session=session_;lease->texture=std::move(texture);lease->id=id+1;lease->w=f.width;lease->h=f.height;
             lease->info={f.conversion_role,f.source_pts,f.timestamp,f.source_sample_aspect_numerator,f.source_sample_aspect_denominator,
-                f.source_color_range,f.source_color_space,f.source_color_primaries,f.source_color_transfer};
+                f.source_color_range,f.source_color_space,f.source_color_primaries,f.source_color_transfer,f.codec_timing};
             return {E::none,std::move(lease)};
         }catch(const std::bad_alloc&){return {E::host_capacity,{}};}catch(const std::length_error&){return {E::host_capacity,{}};}
     }

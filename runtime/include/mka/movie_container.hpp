@@ -1,5 +1,7 @@
 #pragma once
 #include "mka/movie_assets.hpp"
+#include <array>
+#include <optional>
 #include <vector>
 namespace mka::video {
 enum class MovieContainerError {none,asset_io,cursor_restore,truncated,bad_prefix,
@@ -11,9 +13,18 @@ struct MovieContainerFailure {
     MovieAssetFailure asset;
     MovieContainerError before_restore=MovieContainerError::none;
 };
+struct MoviePrivate2Prefix {
+    std::uint64_t file_offset=0;
+    // Actual validated adjacent MPEG1 pack[12] and BF packet prefix[6].
+    // Retained serialized data for header classification/forwarding, no device.
+    std::array<std::uint8_t,18> bytes{};
+};
 struct MoviePrivate2Payload {
     std::uint64_t packet_offset=0,payload_offset=0;
     std::vector<std::uint8_t> bytes;
+    // Present only when this BF immediately followed a validated MPEG1 pack.
+    // Never synthesized for a packet following other PES/system/padding data.
+    std::optional<MoviePrivate2Prefix> adjacent_mpeg1_prefix;
 };
 struct NativeMovieContainer {
     std::uint64_t file_bytes=0,packet_count=0,pack_count=0;

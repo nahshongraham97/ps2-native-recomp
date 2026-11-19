@@ -631,7 +631,8 @@ int main(int argc, char **argv) {
             exe_dir / "SLUS_214.10",
             exe_dir.parent_path() / "disc-files" / "SLUS_214.10",
             exe_dir.parent_path() / "SLUS_214.10",
-            exe_dir.parent_path() / "games" / "mkarmageddon" / "disc" / "SLUS_214.10"
+            exe_dir.parent_path() / "games" / "mkarmageddon" / "disc" / "SLUS_214.10",
+            exe_dir.parent_path() / "games" / "mkarmageddon" / "disc-files" / "SLUS_214.10"
         };
         for (const auto &cand : elf_candidates) {
             std::error_code ec;
@@ -657,12 +658,8 @@ int main(int argc, char **argv) {
 #else
     std::atexit([] { ps2::flush_memory_card(); });
 #endif
-    // Default to retail native recompiled execution (zero flags required)
-    if (ps2::os::env("PS2_NATIVE_GL").empty()) ps2::os::set_env("PS2_NATIVE_GL", "1");
-    if (ps2::os::env("PS2_GS_PACKET_NATIVE").empty()) ps2::os::set_env("PS2_GS_PACKET_NATIVE", "1");
-    if (ps2::os::env("PS2_GS_PACKET_NATIVE_STRICT").empty()) ps2::os::set_env("PS2_GS_PACKET_NATIVE_STRICT", "1");
-    if (ps2::os::env("PS2_VU_AOT_STRICT").empty()) ps2::os::set_env("PS2_VU_AOT_STRICT", "1");
-    if (ps2::os::env("PS2_IOP_NATIVE_STRICT").empty()) ps2::os::set_env("PS2_IOP_NATIVE_STRICT", "1");
+    // Native rendering and static AOT dispatch are mandatory runtime choices;
+    // startup does not select them through environment opt-in switches.
 
     const std::string program_target = ps2::os::utf8(resolved_program);
     std::vector<std::string> args{program_target};
@@ -864,14 +861,9 @@ int main(int argc, char **argv) {
         ps2::g_options.frame_capture_frames.end());
 
 #ifdef PS2_WINDOW
-    // Playing records the vector programs that are not compiled into this build into the vu1 folder of the game that port.sh
-    // made, games/<name>/vu1, so `port.sh <name> <image> --no-explore` can compile them afterwards (docs/gow2.md). Without that, a
-    // game is slow wherever the exploring runs did not go: unknown programs run in the interpreter. A PS2_VU_RECORD the user set
-    // wins. This runs before anything reads the variable (the vector unit code reads it on its first program, long after main).
-    // The game folder is found from the program first: port.sh always extracts it into the game folder (disc/<program>,
-    // patched/<program>, or core.elf at the top), so the folder is the program's own or the one above it. The disc image is no
-    // guide on its own: port.sh hard-links it into the game folder, but a hard link cannot reach another drive, and an image on
-    // another drive is played from where it is, with no vu1 folder next to it. Next to the disc image is still looked at last.
+    // Preserve the historical offline-recording destination metadata below.
+    // The current runtime dispatches linked static AOT programs only; missing
+    // programs fail explicitly and never enter an interpreter or live compiler.
     if (window && ps2::os::env("PS2_VU_RECORD").empty()) {
         std::error_code error;
         std::vector<std::filesystem::path> places;
@@ -903,8 +895,7 @@ int main(int argc, char **argv) {
                              run_target.find("mkarmageddon") != std::string::npos ||
                              run_target.find("armageddon") != std::string::npos ||
                              entry == 0x00100008u);
-        const auto mka_env = ps2::os::env("MKA_INTERCEPT_COMBAT");
-        if (is_mka || (!mka_env.empty() && mka_env != "0" && mka_env != "off")) {
+        if (is_mka) {
             mka::retail::register_retail_observers_and_leafs();
         }
         if (ps2::hook::is_enabled()) {

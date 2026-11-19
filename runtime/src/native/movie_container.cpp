@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <new>
 #include <stdexcept>
+#include <utility>
 namespace mka::video {
 namespace {
 bool fail(MovieContainerFailure& f,MovieContainerError kind,std::uint64_t at){f.kind=kind;f.offset=at;return false;}
@@ -29,7 +30,9 @@ bool pack1(const std::array<unsigned char,8>& bytes){
 }
 std::optional<NativeMovieContainer> scan(NativeMovieAsset& asset,std::uint64_t size,MovieContainerFailure& f){
     NativeMovieContainer result;result.file_bytes=size;Reader reader{asset,f,size,0};
+    std::optional<std::pair<std::uint64_t,std::array<std::uint8_t,12>>> preceding_pack;
     while(reader.pos<size){
+        auto previous=std::move(preceding_pack);preceding_pack.reset();
         const auto start=reader.pos;std::array<unsigned char,4> code;if(!reader.take(code.data(),code.size()))return {};
         if(code[0]||code[1]||code[2]!=1){fail(f,MovieContainerError::bad_prefix,start);return {};}
         if(!result.packet_count&&code[3]!=0xBA){fail(f,MovieContainerError::missing_pack_header,start);return {};}
@@ -39,6 +42,8 @@ std::optional<NativeMovieContainer> scan(NativeMovieAsset& asset,std::uint64_t s
             if((header[0]&0xF0)!=0x20){fail(f,MovieContainerError::unsupported_pack,start);return {};}
             if(!reader.take(header.data()+1,7))return {};
             if(!pack1(header)){fail(f,MovieContainerError::bad_pack_marker,start);return {};}
+            std::array<std::uint8_t,12> prefix{};std::copy(code.begin(),code.end(),prefix.begin());
+            std::copy(header.begin(),header.end(),prefix.begin()+4);preceding_pack=std::make_pair(start,prefix);
             ++result.pack_count;
         }else if(code[3]==0xB9){
             result.program_end_offset=start;std::array<unsigned char,4096> tail;
@@ -52,7 +57,17 @@ std::optional<NativeMovieContainer> scan(NativeMovieAsset& asset,std::uint64_t s
             if(!n){fail(f,MovieContainerError::unsupported_zero_length,start);return {};}
             if(code[3]==0xBB&&n<6){fail(f,MovieContainerError::bad_system_header,start);return {};}
             const auto end=movie_container_packet_extent(start,n,size,f);if(!end)return {};
-            if(code[3]==0xBF){MoviePrivate2Payload payload;payload.packet_offset=start;payload.payload_offset=reader.pos;payload.bytes.resize(n);if(!reader.take(payload.bytes.data(),n))return {};result.private2.push_back(std::move(payload));}
+            if(code[3]==0xBF){
+                MoviePrivate2Payload payload;payload.packet_offset=start;payload.payload_offset=reader.pos;
+                if(previous){
+                    MoviePrivate2Prefix prefix;prefix.file_offset=previous->first;
+                    std::copy(previous->second.begin(),previous->second.end(),prefix.bytes.begin());
+                    std::copy(code.begin(),code.end(),prefix.bytes.begin()+12);
+                    std::copy(length.begin(),length.end(),prefix.bytes.begin()+16);
+                    payload.adjacent_mpeg1_prefix=std::move(prefix);
+                }
+                payload.bytes.resize(n);if(!reader.take(payload.bytes.data(),n))return {};result.private2.push_back(std::move(payload));
+            }
             else if(!reader.skip(*end))return {};
         }else{fail(f,MovieContainerError::unsupported_packet,start);return {};}
     }fail(f,MovieContainerError::missing_program_end,reader.pos);return {};
