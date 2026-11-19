@@ -1,0 +1,48 @@
+{
+  "status": "PASS_NATIVE_MOVIE_SERVICE_CLOCK_COMPONENT",
+  "source_after_sha256": {
+    "runtime/include/mka/movie_service_clock.hpp": "d625b6c879a3d261ba541fb705a8b8c204cb631758e9a54965279cfa10a1cf98",
+    "runtime/src/native/movie_service_clock.cpp": "a0cdcfed5ac7dfdd28386a38854e8913924f3c83482d016d8478ce3f9377f138",
+    "runtime/include/mka/movie_clock_filter.hpp": "a09c54636fcca9438666305b6443314abb12ecf17e0ef0e6078afb47b899caa6",
+    "runtime/include/mka/movie_clock_history.hpp": "4d4efa5ceb223358aaf1db385c4a20116ecfeb4a4fee04914727b995ec8f056c",
+    "runtime/include/mka/movie_clock_math.hpp": "9a7c028b6cea9acf474b5d643f9ca5f93b19a02605a615b576fb448c4dfdfaf5",
+    "tests/test_movie_service_clock.cpp": "8c46c276566147b359398c9cb68aa867da8c6e39480b3ed366a59bfacb55d949",
+    "tests/generated/movie_service_clock_plan.inc": "7495e760f0edf8a8df09d7dac045101f90c6ae77930c1f9eafcec2f8e59229f9",
+    "CMakeLists.txt": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+    "cmake/native_media.cmake": "c52169abb3d2a0e39d442ccce656e5a9ece67ca49be4e1d095a041e2ee7f0b31"
+  },
+  "executable_sha256": "670651084b14eb5bb594c269cbf67f268fa45ab4c009fcdd853e89a9a3e9d98f",
+  "oracle": {
+    "status": "PASS_COMPLETE_NATIVE_SERVICE_CLOCK_TRACE",
+    "trace_rows": 287,
+    "cases": 47,
+    "error_counts": {
+      "none": 262,
+      "invalid_rational": 6,
+      "overflow": 7,
+      "unsupported_rate": 8,
+      "invalid_frequency": 2,
+      "unsupported_mode": 2
+    },
+    "gate_cases": 16,
+    "negative_checks": {
+      "trace_mutations": 18,
+      "metadata_mutations": 11,
+      "json_mutations": 2
+    },
+    "model_sha256": "2f369540f5d0e2f560cd694261190fd6be699275e84a8c304916b24bc7e77f54",
+    "verifier_sha256": "3ed056380d6210c2a5153f4b9b9bbed2e63afef61e91a93e8fba7962992f9f8e",
+    "execution_receipt_sha256": "8b25f50e43605d5bab34651eaef1407c3ef5429a3319e5342c78dabf0569d608",
+    "executable_sha256": "670651084b14eb5bb594c269cbf67f268fa45ab4c009fcdd853e89a9a3e9d98f",
+    "limits": [
+      "Atomic scalar counter/companion only; no native cadence/masterclock/player/output/game proof",
+      "Move/lifetime fixture separate; fixed scalar storage has no allocation fault claim"
+    ]
+  },
+  "forbidden": [],
+  "cache_after_sha256": "d320c4e3663feec551cd3a3b4a8712e915fad196ddc86c7f880c07d4bd2aa3f4",
+  "limits": [
+    "No real clock/master-time, diagnostics-buffer, scheduler, player/output or game binding",
+    "Fixed scalar storage; overflow rollback and moved-owner/lifetime assertions tested, no cadence/lifecycle proof"
+  ]
+}

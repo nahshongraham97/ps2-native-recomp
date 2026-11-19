@@ -1,0 +1,9 @@
+{
+  "observed_utc": "2026-11-19T17:51:25.564945+00:00",
+  "scope": "Post-run read-only runner path/hash supplement; not a newly invented prelaunch path pin",
+  "runner_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-service-clock-20261119\\validate.py",
+  "runner_sha256": "5d0683e8a5d3a0adf34c9b0b9735337ec0e88eba77c4bb8e7261c1f021563cc0",
+  "recorded_prebuild_runner_sha256": "5d0683e8a5d3a0adf34c9b0b9735337ec0e88eba77c4bb8e7261c1f021563cc0",
+  "provenance_receipt_sha256": "745ff228689b736300cdc45c6772438bd65875d8c83218bbcd480a69d6e88c2e",
+  "match": true
+}

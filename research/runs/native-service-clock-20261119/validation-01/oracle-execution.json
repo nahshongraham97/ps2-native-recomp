@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Python315\\python.exe",
+    "-O",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\tools\\research\\verify_movie_service_clock_trace.py",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-service-clock-20261119\\validation-01\\execution.json",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-service-clock-20261119\\validation-01\\complete-trace-oracle.json"
+  ],
+  "exit": 0,
+  "stdout": "{\"status\": \"PASS_COMPLETE_NATIVE_SERVICE_CLOCK_TRACE\", \"trace_rows\": 287, \"cases\": 47, \"error_counts\": {\"none\": 262, \"invalid_rational\": 6, \"overflow\": 7, \"unsupported_rate\": 8, \"invalid_frequency\": 2, \"unsupported_mode\": 2}, \"gate_cases\": 16, \"negative_checks\": {\"trace_mutations\": 18, \"metadata_mutations\": 11, \"json_mutations\": 2}, \"model_sha256\": \"2f369540f5d0e2f560cd694261190fd6be699275e84a8c304916b24bc7e77f54\", \"verifier_sha256\": \"3ed056380d6210c2a5153f4b9b9bbed2e63afef61e91a93e8fba7962992f9f8e\", \"execution_receipt_sha256\": \"8b25f50e43605d5bab34651eaef1407c3ef5429a3319e5342c78dabf0569d608\", \"executable_sha256\": \"670651084b14eb5bb594c269cbf67f268fa45ab4c009fcdd853e89a9a3e9d98f\", \"limits\": [\"Atomic scalar counter/companion only; no native cadence/masterclock/player/output/game proof\", \"Move/lifetime fixture separate; fixed scalar storage has no allocation fault claim\"]}\n",
+  "stderr": "",
+  "executable_sha256": "d4e19e9a33268fb0ce575a24ab2d4b85972524f1933df008a6befc14dce19fbd",
+  "executable_after_sha256": "d4e19e9a33268fb0ce575a24ab2d4b85972524f1933df008a6befc14dce19fbd"
+}
