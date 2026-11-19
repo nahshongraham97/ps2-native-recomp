@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_audio_pes_index.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS same-owned audio PES spans/readers; no decoder or timestamp-clock binding\n",
+  "stderr": "",
+  "executable_sha256": "4ebf4fcb78e8074434112ce40723a72243c2f0bf99c30ff49019e1586dc45d60",
+  "executable_after_sha256": "4ebf4fcb78e8074434112ce40723a72243c2f0bf99c30ff49019e1586dc45d60"
+}

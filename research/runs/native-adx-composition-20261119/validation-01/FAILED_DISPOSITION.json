@@ -1,0 +1,26 @@
+{
+  "status": "FAILED_BATCH_FIXTURE_JSON_BEFORE_CORPUS_COMPARISON",
+  "cause": "Unqualified quoted(nonconst std::string&) selected std::quoted by ADL; discarded manipulator printed no key value",
+  "observed_prefix": "{\"key\":,\"data_start\":288,\"encoding\":3,\"block_bytes\":18,\"sample_bits\":4,\"source_planes\":2,\"sample_rate\":48000,\"declared_samples\":3257658,\"cutoff\":500,\"version\":4",
+  "native_fixture_exit": 0,
+  "component_fixture_exits": {
+    "header": 0,
+    "stream": 0,
+    "profile": 0,
+    "audio-index": 0,
+    "pes-regression": 0
+  },
+  "measured_runner_sha256": "464df1442705ea8f2e1e4fb329660b42705ef0770340f71117aee8a23a2a378f",
+  "saved_runner": "runner-source.before.py",
+  "not_run": [
+    "38video corpus comparison",
+    "real audio corpus",
+    "independent fullasset PCM comparator",
+    "final sourceafter/audit/verification joins"
+  ],
+  "limits": [
+    "No batch/realheader/corpus PASS claimed",
+    "No production header/stream/profile/index defect inferred from fixture output failure",
+    "Original receipt/source data preserved; subsequent change needs new validation directory"
+  ]
+}

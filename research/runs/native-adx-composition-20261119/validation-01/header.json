@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_adx_header.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS owned explicit ADX header fields/history; no coefficient or packet admission\n",
+  "stderr": "",
+  "executable_sha256": "2c90e5e4fa26d5a43f245651babe8995212bbd085f45ceb11a5b8e1d4ceb82d2",
+  "executable_after_sha256": "2c90e5e4fa26d5a43f245651babe8995212bbd085f45ceb11a5b8e1d4ceb82d2"
+}

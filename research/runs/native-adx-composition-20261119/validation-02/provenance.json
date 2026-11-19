@@ -1,0 +1,340 @@
+{
+  "at_utc": "2026-11-19T22:21:53.870048+00:00",
+  "fork_head": "d09c5307c942e8fdde058a67c558200d1e7cc978",
+  "parent_head": "a04339891c2b5077e8d6185a10d64c6855e541f8",
+  "source_before_sha256": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_pcm_binding.hpp": "cf04ce3f452e43577a36d6c324d23860105400c22cf5edd63077d36710eba99d",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_pcm_binding.cpp": "d876a3f862536d410aefccbb09347a76aff2a71aafeed5f55180cf175d1af69f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_kernel_policies.hpp": "f1f51f8dab7b831ef5853580f744148c1fe5fb6606559ac3bca355bc9d6f679c",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_kernel_policies.cpp": "797371e687a64e7beeb9501be92c0b76fa5eb057a46089557b4029e01558e660",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_pcm_binding.cpp": "7f56ccd2e84e039439d3c305620df0b441d293f0e17ebc6c6b7c9ad3b45d3d8e",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_kernel_policies.cpp": "68764b09b183392b70a582a28d7408afc6b7ebf71c3ff7a84b49390ed575d109",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_playback.hpp": "22d4bcebd321ffaa2872cda411f595d94afc16759edd831d3aa28b0b475544d9",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_playback.cpp": "265dc66f4a3fc084ed95c68b0f4a2f1055474610ec84ebe22af419f89aa3e5b8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_playback.cpp": "fbf48386d897928621cd68dbf902f1f88b2b16a7ade68e2b6dfad7eb97385fd7",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_pcm_mix.hpp": "ed8853490298e7c396560cd9b9f786ce9c37e5905fca0315b44fe5a924e07a61",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_pcm_mix.cpp": "838b44b6542587e910b7dac4f80425f0dcb123cbf431354f58a3feeb2f971e89",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\generated\\movie_pcm_mix_tables.inc": "a5ad4e0d00232ad85a9ac30b4a0bc1393b2c3413f21dd2d54e84af63ca9c9e82",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_frame_eligibility.hpp": "1a3f00c45e6b0ce6b75865ea43bb67529a53be2d7226e289cc8831e6b33ca868",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_frame_eligibility.cpp": "fc2b22ac6571522c22f170526e007bae2352750bc44460fa763a685f9a28f8d7",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_eligibility_numeric.hpp": "b496c55eef48793bc133e23a174f9a2bf1f6d0281c2af3bca02b92fee340d490",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_eligibility_numeric.cpp": "63c81a84a154600c156a290dd40cf85ac6e6499e7cb12f3ae45e66a999d47c46",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_clock_filter.hpp": "a09c54636fcca9438666305b6443314abb12ecf17e0ef0e6078afb47b899caa6",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_timecode.hpp": "1a20efa40d7c39fb26aaf64dc963de67b888c6bcebdb93086a248e40ae88d99f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_decode.hpp": "e2bdadf503885b0ef85e11c53e021d547d1849934936889a9a5bea2f1ec1be15",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_pes_index.hpp": "cd5cf3a5b1a7e494b33c95e524583988d0bc99d07a364e443b9946bd1b5a0f2e",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_source.hpp": "92eb2f00976bbc61764288d5c0a6b5cfe244db852dae84f6d4803b4ba0ebeb51",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_catalog.hpp": "067df1c104e41eb4b4b4e25f5f50e49698eac364aef321192fae7da2caf6ca17",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_gpu.hpp": "d6ee24409067b58dfb7984f790e3083ffdc903100830ebd84a51b41c4bbc7e15",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_color.hpp": "69aef2ea2397e094d30f5f3ecf42d06a436708c9d2aaf77919a825804b50eba0",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\audio_device.hpp": "b3b2906c7e26c4388e09402ca899f7fc75442d2b2bb991b897350d571603a5f8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_audio_submission.hpp": "09d74f3f9f8d174029ef36feb51c0aa2cc9ff40dd9d3843ffd9814bd2a4e256e",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_audio_progress.hpp": "7353fc44e71a80bd98d014e7a67e5b94937c2484758fff03589fb7f996d9bb45",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_audio_progress.cpp": "3c8bec1bf28207d7f8a3655eea885efadb6b166a5b99dd55ea68f554f8b6c487",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_color.cpp": "3f7f605a5eb42ddd9df66c0367dd41ce4574b16c37f7c303ae43588d85520697",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_gpu.cpp": "1490f71ebb6fecd705ac7a0084dea0266dd832ed00a64602eb95b244263caa03",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_gain.cpp": "63f02d0b7f85ecb8e2b7cdb8fbdac0fcb1a095a2a410c4c551fdc0f3a2fb4422",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_control.cpp": "dbf53b97108b82a8e30d0310b11428bbe1ae1f485e12bf10e179bab6fa9ce08d",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_catalog.cpp": "3f5f70be32cba3bb64f2d3a294f6cf1835707992199f4813a1090eabeb9e0c58",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_media.cmake": "cce41f1959930a4dc916f2bd8ccefca082de65e8d3fed96116c3aa0ee629ed24",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\CMakeLists.txt": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_adx_blocks.hpp": "c2253de177c89dc6d8e3d1e04eb6dea5b8b0866ed17b0d22cb0b59c7a39ce4aa",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_adx_blocks.cpp": "3cb943927a998e3899b38dae8d0130e4b72f176d6eb0d7ccc35b4404c8705130",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_adx_header.hpp": "39de0a855680389c432848ce5241af795d3ce134f687adb9d535c12c2de7750b",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_adx_header.cpp": "7d7f95dbb231b44678d2eda308b72e70772ab5e8809f7d4be64ba927c567f638",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_adx_stream.hpp": "f59ab7bffb14b767cfd6d1a97ca8641783f06fdb1927c44d96350df286ca6ff1",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_adx_stream.cpp": "13e059be37a755f4b756a7649ecf90f4a7af4a5ef26dd151485573f0feed4d84",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_adx_profile.hpp": "ec2a694f545223bd13ec08b053e336d2ebf2eaa97370446a965747651408bf46",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_adx_profile.cpp": "fef43a4117cb4ca42ca246359c50e0652bfcff7cf10fa72fac93dea0860f3f26",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_pes_index.cpp": "bc85c3b0302263d561c2cbaf51d089daf815654704286047bde9d6b92afa797e",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_assets.cpp": "47f2f4a74c32f5e832e08647c3484a0bbc9b55e6a1c9927b0c8ea9a76d6b7135",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\native_file.cpp": "527c9759d7bfa036c55769c32684e85402253dfd98faa5a2e1993c6fe425a5cd",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_adx_header.cpp": "915d4705db45f961155e932cbe173917dc50118e2f054c158a46be3965cfac38",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_adx_header_assets.cpp": "885761a516fddbf12508bde575956b2568dfa715a42c6fb9aa3aa854bec9f595",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_adx_stream.cpp": "e580384e536fbcd364c63236a45386e9a63d2f45969ec7319809c60251d2141f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_adx_profile.cpp": "592b3a0167e3ec962296b5143d68e242a6bd851a2ba1fefab43648c61a06abdf",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_audio_pes_index.cpp": "0026b7c6cd7cbc7881b4dc356ad2f583beff666420f707e1f18821402a246229",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_pes_index.cpp": "0e2ec9aa36eaa504d89604a4749a3ef2d93b66c76e85ec1ccff3ade014c3f8f2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_adx_audio_assets.cpp": "1f998c4471dadf21a9c8ed7215203332ebd1bcfc21c7e8273f92c1142a6ba9c5",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\native_test_sha256.hpp": "f90189e16a9ab989bd2228e752d65e9935dad0250ac1cbdc0a76ead8e3504bf7",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-movie-kernel-policies-20261119\\validate.py": "987bafb18845f33ff65cfd9e437a3b9e98b7296313a119b474070e95dc1f0752",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\tools\\research\\verify_native_adx_audio_assets.py": "82b7f4153801a694c0a910781739d5f99fb51f69fff9755bde7d82ebaf1276c9",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-movie-ingress-20261119\\MOVIE_ADX_HEADER_NATIVE_BINDING_CONTRACT.json": "b28d870409ef67e25b7b34e6b127c95eb64bf2a45f9429f8a4e1ba09fcd97cd2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-movie-ingress-20261119\\pes-index-corpus.json": "53effc8afc0fa03b9c08917126197b295c19e0fb8c3f1257abb4407fefa521da",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-movie-ingress-20261119\\MOVIE_ADX_STREAM_END_SOURCE_CONTRACT.json": "db050398fd551c0a05ad590fc29278c2119fcc028b7c5a1a63e65962b96c59bf",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-movie-ingress-20261119\\MOVIE_ADX_PREDICTOR_INPUT_SOURCE.json": "323b831756705d1d5a20cbddcd90c88335dc737fc60b6f4dcefd1ec319158015",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-movie-ingress-20261119\\MOVIE_ADX_COEFFICIENT_REFERENCE_RESULTS.md": "363f12e31919c93a63ee7303d582a185e97f6697fce8190bcd903221ec737279",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validate.py": "c4c0fbad00d9bb018fae2a82534443fc1d549622284b63c6bb53c517578b711c"
+  },
+  "fixture_input_sha256": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-000.bin": "4e2901ce12bdcb727b3b3eed80445a5e627bef401b9203a72907d79fd9c0452c",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-001.bin": "4e2901ce12bdcb727b3b3eed80445a5e627bef401b9203a72907d79fd9c0452c",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-002.bin": "5d4605a3c9bac5a9a57bf2a007a2c85798b24359926183deb71a83d0c68e8fc9",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-003.bin": "e5f43647fb14aa118d39be47984abfa2db28757f67b361a0399f5b298d8d6202",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-004.bin": "dc9151910f0616d1ae3c345198385eb1939bed5cdd2fb16f54d863a8f55e523a",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-005.bin": "f27cbb675f1d2943feea959703eec54baa9c746145354cb77e242f5a80ef3ef8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-006.bin": "b4820bd8d678f308de3f70c8350d8201905534ce01e12daa8f6a68b921846964",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-007.bin": "7d83173ca9ef907435999087a91edf924463446cbe0bc4d337efbe6202ebb07e",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-008.bin": "ff51092320b6e154795ef4f46a274c15cd5542bce588f30dccf9347afa4a921c",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-009.bin": "fee892ac364124e89a2dfaeb374b5b880f1fa81c356fd41ad4d01693b6187cec",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-010.bin": "4978ebe6738fe22170749f5efe4b210e41140ed2e4a302c184854b6c3a1b1cef",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-011.bin": "d8f9663be71d98c911a992ac1861f09e26c99184935510a4d9e1a8ba187df815",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-012.bin": "7f257ffea2b7076acf1094fb6f7addf2b792a45cce8f47682aa2131c887625c9",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-013.bin": "6ac7766ecf540fb79fc6e4d4a7eae47d1b29c36a45763b389851bafd54d28e07",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-014.bin": "f114fe88d6f0cfc2e705711ca0c1de9bc128edddf6ac3525e259dff4d9fd51cf",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-015.bin": "4d91dfe081f54e82c6219c6ab2f4d870ce330e40156f6ba4115310074611c378",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-016.bin": "d1489d38d3c3c7ad280c0a002897aaac96931404e05a24127272e70232caf50e",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-017.bin": "80203e7d07180cf9f4082cd6ee974a18b89da5cd6146701051f79a9c2b14016b",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-018.bin": "80203e7d07180cf9f4082cd6ee974a18b89da5cd6146701051f79a9c2b14016b",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-019.bin": "8c86faf27a7cd3335e74e1905792e89a15ba0bb2854f91024b1ca23bb9d6f8ec",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-020.bin": "8c86faf27a7cd3335e74e1905792e89a15ba0bb2854f91024b1ca23bb9d6f8ec",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-021.bin": "cff9e5c9d607570cb9dff61a9fd6e49c1d453983d0202bd4dcce27b56f5d7274",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-022.bin": "cff9e5c9d607570cb9dff61a9fd6e49c1d453983d0202bd4dcce27b56f5d7274",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-023.bin": "076268a36f679a88263994c30bc2bc25afd96f22de925fe825867cca4ec943e0",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-024.bin": "076268a36f679a88263994c30bc2bc25afd96f22de925fe825867cca4ec943e0",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-025.bin": "0cb3cacb289163a770e37517ac18ede8860cd844860731973eb33d2227abe6db",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-026.bin": "0cb3cacb289163a770e37517ac18ede8860cd844860731973eb33d2227abe6db",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-027.bin": "129e493293a01982f76f011a8a1a9c07c7a39c6749fb1031facf215cc9a9ff54",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\header-fixtures\\header-028.bin": "129e493293a01982f76f011a8a1a9c07c7a39c6749fb1031facf215cc9a9ff54",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\headers.tsv": "947e6c30d6f0a2e5979ae81df9552da607c488920c40f221eae5b41460c2f534",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-composition-20261119\\validation-02\\assets.tsv": "ffb00e731a9d57e26620750902094232f0fde677ecbb5245ad5a0a3cfed2fa78"
+  },
+  "original_assets": {
+    "ATTRACTN.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\ATTRACTN.SFD",
+      "sha256": "4fd676d3541ffea5adbd1ab9484143cbd05916ce85ef63421ab59b78a058fc86",
+      "bytes": 46497792,
+      "mtime_ns": 1794328167748925300
+    },
+    "ATTRACTW.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\ATTRACTW.SFD",
+      "sha256": "9ddba26fabaf9f1e0219ba1b2a364f55780e73ec78b0b51bacb5e974f4c90ad1",
+      "bytes": 46510080,
+      "mtime_ns": 1794328167819103400
+    },
+    "KRYPT/V_BLOOP2.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_BLOOP2.SFD",
+      "sha256": "5a4c60d434d02f0cab6550201c95e16f7fc114ab9a371f884b624987a4372f24",
+      "bytes": 24436736,
+      "mtime_ns": 1794328167839910600
+    },
+    "KRYPT/V_BLOOP3.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_BLOOP3.SFD",
+      "sha256": "dc9805f3224ab45e6bb35c88b8e54f4057594a3665b93b674083aa36e6db8840",
+      "bytes": 7270400,
+      "mtime_ns": 1794328167857974800
+    },
+    "KRYPT/V_BLOOP4.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_BLOOP4.SFD",
+      "sha256": "3d4e2ca483a11e9f79def22e0895fe7901b8829c976146966ed4e9933a7fc558",
+      "bytes": 53260288,
+      "mtime_ns": 1794328167914561400
+    },
+    "KRYPT/V_BLOOP5.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_BLOOP5.SFD",
+      "sha256": "d7a883cfa6f0db93d5da0db5c26e7f80b72ae0643006c35dca28d5dc24ab7274",
+      "bytes": 16832512,
+      "mtime_ns": 1794328167939045500
+    },
+    "KRYPT/V_BLOOPR.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_BLOOPR.SFD",
+      "sha256": "34466ceff507bc367a9817bcd7a0cbd9ac0dc584e60dd07df1affade0d1ebf75",
+      "bytes": 9488384,
+      "mtime_ns": 1794328167953582900
+    },
+    "KRYPT/V_BLUES.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_BLUES.SFD",
+      "sha256": "1758bf5e4bbc5ba14ed88995796d9004440534e7051691d683bff3cb000a4c8b",
+      "bytes": 6797312,
+      "mtime_ns": 1794328167956583000
+    },
+    "KRYPT/V_ERMACB.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_ERMACB.SFD",
+      "sha256": "24e113180f3fc267e28c3eac6ec31bfeb671708783addc77dc95e22f906a926e",
+      "bytes": 23091200,
+      "mtime_ns": 1794328167996159000
+    },
+    "KRYPT/V_KANO.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_KANO.SFD",
+      "sha256": "3aec43f776bd8b2ed8255684858586d9b1a5aeed513626c43c8494b09cbe8782",
+      "bytes": 5879808,
+      "mtime_ns": 1794328168006690200
+    },
+    "KRYPT/V_KONQIN.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_KONQIN.SFD",
+      "sha256": "9a186deb9c9700d98b54d63a5172e3cb424e6abecef0aa6b3e0649ff00f1e9a6",
+      "bytes": 68722688,
+      "mtime_ns": 1794328168091420900
+    },
+    "KRYPT/V_LOAD1.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_LOAD1.SFD",
+      "sha256": "d9c655a5225803c887e16ae982950a1b5570eb80b37ec10b7558b1cabd68cb60",
+      "bytes": 3461120,
+      "mtime_ns": 1794328168097939900
+    },
+    "KRYPT/V_LOAD2.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_LOAD2.SFD",
+      "sha256": "2e81b069ced5a0a3bb3921dfa0c10e8e758454b9036df92b68de557c8eaa2e84",
+      "bytes": 3432448,
+      "mtime_ns": 1794328168103451300
+    },
+    "KRYPT/V_MKAKON.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_MKAKON.SFD",
+      "sha256": "3e46dd8d7c305782d62cd5e512194dfda3e43eb8552cb985ddd9e8c59724cf25",
+      "bytes": 105713664,
+      "mtime_ns": 1794328168207496300
+    },
+    "KRYPT/V_MKDACC.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_MKDACC.SFD",
+      "sha256": "cce2e8491088726d615a1d750c332a0e90d2ac27931a9e06195d5bb0df1116fb",
+      "bytes": 19929088,
+      "mtime_ns": 1794328168236563500
+    },
+    "KRYPT/V_MKHAND.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_MKHAND.SFD",
+      "sha256": "fd6f2f9d2d1a901cbe4595b18cb991d175ce5dc575fe59f5d8896ebd11bb9b0c",
+      "bytes": 180252672,
+      "mtime_ns": 1794328168470060700
+    },
+    "KRYPT/V_MOTOGI.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_MOTOGI.SFD",
+      "sha256": "26f25af4e4f6d526633952761fb76fafcf5d7a80d19ee1ed92f9f4269ed4bec0",
+      "bytes": 62883840,
+      "mtime_ns": 1794328168551312700
+    },
+    "KRYPT/V_MOTORK.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_MOTORK.SFD",
+      "sha256": "e51cccf5d18acab1506e09aa66f9f940e605544ada23e10297a783e7eb88f091",
+      "bytes": 49823744,
+      "mtime_ns": 1794328168608004600
+    },
+    "KRYPT/V_MOTRBK.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_MOTRBK.SFD",
+      "sha256": "142797674920a4a656584a65d0c997b11b748e2ba09eccd6b2a2479e52df5033",
+      "bytes": 4577280,
+      "mtime_ns": 1794328168620155400
+    },
+    "KRYPT/V_MOTRFT.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_MOTRFT.SFD",
+      "sha256": "1a31d7881426dfc5d5e1319b99837d2b00580f06f4b9d94c7cd0d7fbfc2653d9",
+      "bytes": 4573184,
+      "mtime_ns": 1794328168631679400
+    },
+    "KRYPT/V_RAIDON.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_RAIDON.SFD",
+      "sha256": "0067d84f92072d88e065f7cbe48b3c89efd74d08094be6894120de7736b11999",
+      "bytes": 2752512,
+      "mtime_ns": 1794328168641196100
+    },
+    "KRYPT/V_SCORP.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_SCORP.SFD",
+      "sha256": "4fac65428df7749456aa1034313b19a024d2a0182fedb1fffa03273ce8e741f7",
+      "bytes": 5879808,
+      "mtime_ns": 1794328168643708600
+    },
+    "KRYPT/V_SHINOK.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_SHINOK.SFD",
+      "sha256": "651c135da991113c1d70446a829a459f07ce6d71f46b36aa413746100c310029",
+      "bytes": 5879808,
+      "mtime_ns": 1794328168646714800
+    },
+    "KRYPT/V_SNDOUT.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_SNDOUT.SFD",
+      "sha256": "9a8738c9480a440b803830f18c1754619b1b880acfc40a6f24c5de474b300f31",
+      "bytes": 57585664,
+      "mtime_ns": 1794328168699519800
+    },
+    "KRYPT/V_SUBZER.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_SUBZER.SFD",
+      "sha256": "d1dd7751a559afcfe8155c7bfe6eebe772519a2e9e5cfd5dba9cd65de0bafb0a",
+      "bytes": 5877760,
+      "mtime_ns": 1794328168707055700
+    },
+    "KRYPT/V_SZCCKY.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\KRYPT\\V_SZCCKY.SFD",
+      "sha256": "731c8c889e8a61446428df4264d780ba03b245558dbabf5b1a73888fc79158de",
+      "bytes": 10194944,
+      "mtime_ns": 1794328168732597300
+    },
+    "LOGON.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\LOGON.SFD",
+      "sha256": "cf49fb014d51f20fee7727a01e845cc7303be63fe0af2902fb3eadf371a843af",
+      "bytes": 3321856,
+      "mtime_ns": 1794328168735600700
+    },
+    "LOGOW.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\LOGOW.SFD",
+      "sha256": "fa5e25182e8c054c3d673ada0ed9d38d6e3b3f2c9ac14bde9d5baa862eb81e71",
+      "bytes": 3342336,
+      "mtime_ns": 1794328168738101400
+    },
+    "OPENINGN.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\OPENINGN.SFD",
+      "sha256": "a2b3e83b23de92c31879dbcc4ab9415e07bbbb0638ea4f90d112f969de3e5e53",
+      "bytes": 190517248,
+      "mtime_ns": 1794328168958693100
+    },
+    "OPENINGW.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\OPENINGW.SFD",
+      "sha256": "5c68f06a1f376f58be350c12e6c45185ed33005328dc14b4a244e40fc54b639a",
+      "bytes": 190517248,
+      "mtime_ns": 1794328169194195800
+    },
+    "QUADN.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\QUADN.SFD",
+      "sha256": "edee5f2d216764864452741d752ee09f59b39e8e25e5933d2307cf0800f1072a",
+      "bytes": 20850688,
+      "mtime_ns": 1794328169221237500
+    },
+    "QUADW.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\QUADW.SFD",
+      "sha256": "dc4988c994f37baabe34697df48cd2238e1648db87fea9476aa2c816d7cd59da",
+      "bytes": 20850688,
+      "mtime_ns": 1794328169256306800
+    },
+    "SPYHUNN.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\SPYHUNN.SFD",
+      "sha256": "7448b1e598404011923fb21d7b4826223dce0e5807cc914f8102b40a2f5da398",
+      "bytes": 43825152,
+      "mtime_ns": 1794328169301899700
+    },
+    "SPYHUNW.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\SPYHUNW.SFD",
+      "sha256": "e728aad87b8f812ef19653888493a437b760ecd0f40e1902f132269a6f01cbde",
+      "bytes": 43808768,
+      "mtime_ns": 1794328169342990900
+    },
+    "STRANGN.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\STRANGN.SFD",
+      "sha256": "fff2a9feceb1618b14ba7cd8dd000952652d8b131e391cb9873f5a4714246707",
+      "bytes": 62617600,
+      "mtime_ns": 1794328169421722600
+    },
+    "STRANGW.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\STRANGW.SFD",
+      "sha256": "737c203deebda23483305f34740bc1916a594f7a4667b220832aa6b5cac95c76",
+      "bytes": 62443520,
+      "mtime_ns": 1794328169497376200
+    },
+    "TITLEN.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\TITLEN.SFD",
+      "sha256": "b184f25ad02e7ffc4ece847bc915c1f54e2eeddbf6afcd816be0108adadfa371",
+      "bytes": 21565440,
+      "mtime_ns": 1794328169535015300
+    },
+    "TITLEW.SFD": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\TITLEW.SFD",
+      "sha256": "9a850166ddc5a8a13d153498d329c42fe479d848b56ab2784c6f371c6b3b0928",
+      "bytes": 21565440,
+      "mtime_ns": 1794328169557046100
+    }
+  },
+  "preserved_dirty_sha256": {
+    "runtime/src/iop/mcserv.cpp": "ad2731a341409d87ffe1b171e99f28d7cedc5004aaf375a565d78673333414fb",
+    "runtime/src/iop/msl_native.cpp": "756cfb3867ebb440223ddb8ab6fe441ad6f9f54d35e4119a8342f8dd9063bb23"
+  },
+  "compiler_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_before_sha256": "d320c4e3663feec551cd3a3b4a8712e915fad196ddc86c7f880c07d4bd2aa3f4",
+  "scope": "Native codec/header/profile/stream/audio index with authentic original assets; no devices/game"
+}

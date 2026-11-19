@@ -5,6 +5,7 @@
 namespace mka::video {
 enum class MoviePesError {none,io,cursor_restore,truncated,bad_prefix,missing_pack,bad_pack,bad_system_header,unsupported_packet,unsupported_header,unsupported_zero_length,bad_timestamp,missing_end,bad_tail,overflow,allocation,invalid_stream,range,byte_mismatch,bad_picture_prefix,moved};
 struct MoviePesFailure {MoviePesError kind=MoviePesError::none; std::uint64_t offset=0; MovieAssetFailure asset; MoviePesError before_restore=MoviePesError::none;};
+// Legacy type name; identical checked PES span fields also describe audio.
 struct MovieVideoPesSpan {
     std::uint8_t stream_id=0;
     std::uint64_t packet_offset=0,payload_offset=0,packet_end=0,es_begin=0,es_end=0;
@@ -20,7 +21,10 @@ class NativeMoviePesIndex {
 public:
     // Takes the actual opened asset. No reopen/path matching or decoder policy.
     static std::optional<NativeMoviePesIndex> build(NativeMovieAsset&&,MoviePesFailure&);
+    // Existing enumeration remains VIDEO-only (E0..EF).
     std::vector<MoviePesStream> streams()const;
+    // Audio C0..DF payloads share the span layout/reader ownership semantics.
+    std::vector<MoviePesStream> audio_streams()const;
     std::optional<MovieVideoPesSpan> lookup(std::uint8_t stream,std::uint64_t first_byte,MoviePesFailure&)const;
     // Verifies all four 00 00 01 00 bytes, including a cross-PES prefix;
     // selects only the FIRST byte's span, preserving absent timestamps.

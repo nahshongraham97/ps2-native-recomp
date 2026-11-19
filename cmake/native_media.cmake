@@ -41,6 +41,9 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/movie_pcm_mix.cpp
     runtime/src/native/movie_pcm_downmix.cpp
     runtime/src/native/movie_adx_blocks.cpp
+    runtime/src/native/movie_adx_header.cpp
+    runtime/src/native/movie_adx_stream.cpp
+    runtime/src/native/movie_adx_profile.cpp
     runtime/src/native/movie_pcm_binding.cpp
     runtime/src/native/movie_kernel_policies.cpp
     runtime/src/native/movie_catalog.cpp
@@ -239,3 +242,26 @@ add_executable(test_native_movie_adx_blocks EXCLUDE_FROM_ALL
     tests/test_movie_adx_blocks.cpp runtime/src/native/movie_adx_blocks.cpp)
 target_include_directories(test_native_movie_adx_blocks PRIVATE runtime/include)
 target_compile_features(test_native_movie_adx_blocks PRIVATE cxx_std_20)
+
+# Owned native ADX header/stream/profile fixtures; no codec/reference/device link.
+add_executable(test_native_movie_adx_header EXCLUDE_FROM_ALL
+    tests/test_movie_adx_header.cpp runtime/src/native/movie_adx_header.cpp)
+add_executable(test_native_movie_adx_header_assets EXCLUDE_FROM_ALL
+    tests/test_movie_adx_header_assets.cpp runtime/src/native/movie_adx_header.cpp)
+add_executable(test_native_movie_adx_stream EXCLUDE_FROM_ALL
+    tests/test_movie_adx_stream.cpp runtime/src/native/movie_adx_stream.cpp
+    runtime/src/native/movie_adx_header.cpp runtime/src/native/movie_adx_blocks.cpp)
+add_executable(test_native_movie_adx_profile EXCLUDE_FROM_ALL
+    tests/test_movie_adx_profile.cpp runtime/src/native/movie_adx_profile.cpp
+    runtime/src/native/movie_adx_stream.cpp runtime/src/native/movie_adx_header.cpp
+    runtime/src/native/movie_adx_blocks.cpp)
+foreach(target test_native_movie_adx_header test_native_movie_adx_header_assets
+    test_native_movie_adx_stream test_native_movie_adx_profile)
+    target_include_directories(${target} PRIVATE runtime/include)
+    target_compile_features(${target} PRIVATE cxx_std_20)
+endforeach()
+add_executable(test_native_movie_audio_pes_index EXCLUDE_FROM_ALL tests/test_movie_audio_pes_index.cpp)
+target_link_libraries(test_native_movie_audio_pes_index PRIVATE mka_native_media)
+
+add_executable(test_native_movie_adx_audio_assets EXCLUDE_FROM_ALL tests/test_movie_adx_audio_assets.cpp)
+target_link_libraries(test_native_movie_adx_audio_assets PRIVATE mka_native_media)
