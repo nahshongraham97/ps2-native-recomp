@@ -41,8 +41,18 @@ struct NativeVideoSource {
     std::uint32_t serialized_base=0,serialized_stride=0,serialized_format=0;
     std::shared_ptr<const VideoFrameResource> resource;
 };
+enum class VideoOutputPrecision {unspecified,rgba8,serialized_destination};
+struct VideoEffects {
+    std::uint64_t dimx,colclamp;
+    VideoOutputPrecision precision;
+    VideoEffects(std::uint64_t matrix,std::uint64_t clamp,VideoOutputPrecision output):dimx(matrix),colclamp(clamp),precision(output){}
+};
 struct NativePresentPlan {FinalResample resample;NativeVideoSource source;
-    std::uint32_t logical_width=0,logical_height=0;};
+    std::uint32_t logical_width=0,logical_height=0;
+    // Absent in historical data/order-only callers. Actual GPU submission
+    // requires explicit inherited state and precision; absence cannot execute.
+    std::optional<VideoEffects> effects;
+};
 std::optional<NativePresentPlan> bind_present_source(const FinalResample&,NativeVideoSource,
     std::uint32_t logical_width,std::uint32_t logical_height);
 struct VideoEnvironment {std::array<NativePresentPlan,4> variants;};

@@ -2,6 +2,7 @@
 // rasterizer. One GS integration case seeds/checks CPU sentinels to prove bypass.
 #include "gs/native_gl_backend.hpp"
 #include "gs/gif.hpp"
+#include "mka/video_gpu_adapter.hpp"
 #include <array>
 #include <algorithm>
 #include <cmath>
@@ -12,6 +13,7 @@
 #include <fstream>
 #include <string>
 #include <stdexcept>
+#include <thread>
 #ifdef _WIN32
 #define NOMINMAX
 #include <windows.h>
@@ -126,9 +128,86 @@ int main(int argc,char** argv) {
     try {
 #ifdef _WIN32
         if(argc==3&&std::string(argv[1])=="--retail-final")return retail_final(argv[2]);
-        check(argc==1,"usage: test_native_image_upload [--retail-final preserved.state]");
         using namespace ps2::gs;
         check(native_gl::enabled(),"actual native GL initialization");
+        if(argc==2&&std::string(argv[1])=="--video-adapter"){
+            using namespace mka::video;
+            constexpr std::uint64_t words[40]={0x70000013,0,0x1000000000008012,14,
+                0xd0000,0x4c,0,0x18,0x7fff00007fff0000,0x40,0x30000,0x47,0x10a0000e7,0x4e,0,0x45,
+                0x6fc009fc00a,8,0xaa8028b60,6,0x61,0x14,0x16,0,0x3f80000000000000,1,
+                0x3a00000039c00000,2,0,5,0x3ee040003f201800,2,0x1c003400,5,0x720000006c00,0x18,0xa005b,0x4c,0xa0000e7,0x4e};
+            std::array<std::uint8_t,320> bytes{};
+            for(unsigned w=0;w<40;++w)for(unsigned b=0;b<8;++b)bytes[w*8+b]=std::uint8_t(words[w]>>(b*8));
+            const auto decoded=decode_final_resample(bytes.data(),bytes.size());check(bool(decoded),"synthetic explicit CT32/no-dither final pass grammar");
+            std::vector<std::uint32_t> source(640*448);
+            for(unsigned y=0;y<448;++y)for(unsigned x=0;x<640;++x)source[y*640+x]=x<320?0x800000ffu:0x80ff0000u;
+            check(native_gl::upload_image(PSMCT32,2912,10,0,0,640,448,reinterpret_cast<const std::uint8_t*>(source.data()),source.size()*4),"video lease explicit owned source");
+            auto backend=native_gl::video_backend(0x100000001ull);check(bool(backend),"actual context video lease/fence backend");
+            auto producer=std::make_shared<NativeVideoProducer>();
+            VideoGpuAdapter adapter(producer,backend);
+            const auto acquired=adapter.acquire(decoded.plan,640,448,VideoEffects(0,1,VideoOutputPrecision::rgba8));
+            check(acquired.error==VideoGpuError::none&&acquired.plan&&acquired.plan->source.resource->identity(),"immutable owned GPU snapshot acquisition");
+            VideoGpuError foreign=VideoGpuError::none;
+            std::thread thread([&]{foreign=backend->acquire({2912,10,PSMCT32,{0,0,640,448},640,448}).error;});thread.join();
+            check(foreign==VideoGpuError::wrong_thread,"foreign-thread lease operation cannot make context current");
+            std::fill(source.begin(),source.end(),0x8000ff00u);
+            check(native_gl::upload_image(PSMCT32,2912,10,0,0,640,448,reinterpret_cast<const std::uint8_t*>(source.data()),source.size()*4),"replace original resource after snapshot");
+            auto env=std::make_shared<VideoEnvironment>();env->variants.fill(*acquired.plan);
+            auto other_backend=native_gl::video_backend(0x100000001ull);check(bool(other_backend),"second explicit session");
+            check(producer->enqueue(0x40,env)==VideoError::none,"queue actual GPU lease");
+            RECT client{};check(GetClientRect(WindowFromDC(wglGetCurrentDC()),&client)!=0,"actual video destination size");
+            const HostVideoLayout layout{0x100000001ull,{0,0,832,448},640,448,unsigned(client.right),unsigned(client.bottom),HostVideoScale::centered_nearest_fit};
+            const auto physical=centered_video_destination(layout);check(bool(physical),"valid explicit layout");
+            check(other_backend->submit({1,0,0,env},layout,*physical).error==VideoGpuError::stale_resource,"other session cannot borrow/reinterpret lease GLuint");
+            check(adapter.on_host_frame(0,layout).progress==VideoAdapterProgress::submitted,"actual final pass and explicit logical presentation submitted");
+            check(producer->status().completed==0,"submission alone is not completion");
+            VideoAdapterResult progress;
+            for(unsigned i=0;i<5000;++i){progress=adapter.poll();if(progress.progress!=VideoAdapterProgress::waiting)break;Sleep(1);}
+            check(progress.progress==VideoAdapterProgress::completed&&producer->status().completed==1,"real GLsync completion advances producer");
+            using Bind=void(APIENTRY*)(GLenum,GLuint);const auto bind=reinterpret_cast<Bind>(wglGetProcAddress("glBindFramebuffer"));check(bind!=nullptr,"video fixture framebuffer access");
+            bind(0x8ca8,0);glReadBuffer(GL_BACK);
+            const auto destination=centered_video_destination(layout);check(bool(destination),"explicit full-output/logical destination");
+            const auto sample=[&](unsigned x,unsigned y,unsigned r,unsigned b){std::array<std::uint8_t,4> pixel{};glReadPixels(x,layout.window_height-1-y,1,1,GL_RGBA,GL_UNSIGNED_BYTE,pixel.data());
+                check(pixel[0]==r&&pixel[1]==0&&pixel[2]==b,"immutable snapshot and full832 sample mapped to640 logical extent");};
+            sample(destination->x+destination->width/8,destination->y+destination->height/2,255,0);
+            sample(destination->x+destination->width*7/8,destination->y+destination->height/2,0,255);
+            std::vector<std::uint8_t> row(std::size_t(destination->width)*4);
+            glReadPixels(destination->x,layout.window_height-1-(destination->y+destination->height/2),destination->width,1,GL_RGBA,GL_UNSIGNED_BYTE,row.data());
+            for(unsigned x=0;x<destination->width;++x){
+                const auto output_x=std::min(831u,unsigned(std::floor((double(x)+.5)*832/destination->width)));
+                const double source_x=(double(output_x)+.5)*640/832+.375-.5;
+                const auto lower=std::floor(source_x);const double fraction=source_x-lower;
+                const double red=(lower<320?1-fraction:0)+(lower+1<320?fraction:0);
+                const int expected=int(std::round(red*255));
+                check(std::abs(int(row[x*4])-expected)<=1&&row[x*4+1]==0&&std::abs(int(row[x*4+2])-(255-expected))<=1,
+                    "full destination row preserves final linear ST bias followed by nearest logical display scaling");
+            }
+            check(glGetError()==GL_NO_ERROR,"video adapter pixel operations restore valid GL state");
+            auto unsupported=*acquired.plan;unsupported.effects.reset();env->variants.fill(unsupported);producer->reset();
+            check(producer->enqueue(0x40,env)==VideoError::none,"data/order core retains missing effect metadata without guessing");
+            check(adapter.on_host_frame(0,layout).error==VideoGpuError::unsupported_effect,"GPU refuses missing inherited effect context");
+            producer->reset();unsupported=*acquired.plan;unsupported.resample.raw[112]=1;
+            const auto dither=decode_final_resample(unsupported.resample.raw.data(),320);check(bool(dither),"explicit dither fixture");
+            unsupported.resample=dither.plan;env->variants.fill(unsupported);check(producer->enqueue(0x40,env)==VideoError::none,"queue explicit unsupported dither data");
+            check(adapter.on_host_frame(0,layout).error==VideoGpuError::unsupported_effect,"dither is not silently omitted");
+            producer->reset();unsupported=*acquired.plan;unsupported.resample.raw[35]=0x0a;
+            const auto output16=decode_final_resample(unsupported.resample.raw.data(),320);check(bool(output16),"explicit16S destination fixture");
+            unsupported.resample=output16.plan;env->variants.fill(unsupported);check(producer->enqueue(0x40,env)==VideoError::none,"queue unsupported16S destination");
+            check(adapter.on_host_frame(0,layout).error==VideoGpuError::unsupported_effect,"16S quantization is not silently replaced with rgba8");
+            native_gl::shutdown();
+            check(backend->acquire({2912,10,PSMCT32,{0,0,640,448},640,448}).error==VideoGpuError::stale_resource,"shutdown revokes retained leases without reusing context names");
+            std::puts("[native-video-adapter] actual GPU snapshot, full sample/logical layout, GLsync and named effect/thread/lifetime failures passed");return 0;
+        }
+        if(argc==2){
+            const std::string mode=argv[1];
+            check(mode=="--reject-upload16"||mode=="--reject-copy16"||mode=="--reject-download","known strict transfer rejection mode");
+            const auto format=std::uint64_t(PSMCT16);
+            write(0x50u,1ull<<16 | format<<24 | 1ull<<48 | format<<56);
+            write(0x51u,0);write(0x52u,1ull|(1ull<<32));
+            write(0x53u,mode=="--reject-upload16"?0u:mode=="--reject-copy16"?2u:1u);
+            throw std::runtime_error("unsupported native transfer unexpectedly returned");
+        }
+        check(argc==1,"usage: test_native_image_upload [--retail-final preserved.state | --reject-upload16 | --reject-copy16 | --reject-download]");
         const auto* renderer=glGetString(GL_RENDERER);check(renderer!=nullptr,"actual GL renderer");
         std::fprintf(stderr,"[image-test-driver] %s\n",renderer);
         const std::array<std::uint8_t,16> rgba={255,0,0,64, 0,255,0,127, 0,0,255,128, 255,255,255,255};

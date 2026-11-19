@@ -1,11 +1,17 @@
 #pragma once
 
 #include <cstddef>
+#include <memory>
 
 #include "gs.hpp"
 #include "ps2/native_gl.hpp"
+namespace mka::video {class VideoGpuBackend;}
 
 namespace ps2::gs::native_gl {
+// Acquires this current native context's video adapter session. The opaque
+// destination is supplied by its host owner, not derived from a packet address.
+// Null means unavailable/context mismatch; never creates another context.
+std::shared_ptr<mka::video::VideoGpuBackend> video_backend(std::uint64_t destination);
 // Effective CLD load only: caller retains the retail CLD skip/latch decision.
 // Palette source must be a covered native raw CT32 resource; never CPU VRAM.
 bool load_clut(std::uint64_t tex0, std::uint64_t texclut);

@@ -1141,6 +1141,22 @@ void write(std::uint32_t reg, std::uint64_t value) {
         g_carried = 0;
         const bool native_ct32 = ((s.bitbltbuf >> 56) & 0x3Fu) == PSMCT32 &&
             ((value & 3u) == 0 || ((value & 3u) == 2 && ((s.bitbltbuf >> 24) & 0x3Fu) == PSMCT32));
+        // Reject unsupported serialized operations before any legacy device,
+        // CPU-VRAM transfer, or implicit GPU-to-CPU synchronization can run.
+        if (native_gl::selected()) {
+            if (!native_gl::enabled()) {
+                std::fprintf(stderr,"[gs-native-stop] mandatory native GPU initialization failed at transfer boundary\n");
+                std::fflush(stderr);std::abort();
+            }
+            const auto direction = value & 3u;
+            if (direction == 1 || ((direction == 0 || direction == 2) && !native_ct32)) {
+                std::fprintf(stderr,
+                    "[gs-native-stop] unsupported native transfer src_psm=%u dst_psm=%u direction=%u; legacy device/CPU path removed\n",
+                    static_cast<unsigned>((s.bitbltbuf>>24)&63u),
+                    static_cast<unsigned>((s.bitbltbuf>>56)&63u),static_cast<unsigned>(direction));
+                std::fflush(stderr);std::abort();
+            }
+        }
 #ifdef PS2_GPU
         if (gpu_on() && !native_ct32) {
             if ((value & 3u) == 0) gpu::image_begin(s);

@@ -46,6 +46,7 @@ int main(int argc,char** argv){
     const auto other=bind_present_source(other_decode.plan,{next_base,10,0,b},640,448);CHECK(other);
     auto environment=std::make_shared<VideoEnvironment>();
     environment->variants={*plan,*other,*other,*plan};
+    environment->variants[0].effects=VideoEffects(0x123456789abcdef0ull,1,VideoOutputPrecision::serialized_destination);
     NativeVideoProducer producer;producer.pacing(2);
     CHECK(producer.enqueue(0x42,environment)==VideoError::unsupported_command);
     CHECK(producer.enqueue(0x40,environment)==VideoError::none);
@@ -54,6 +55,8 @@ int main(int argc,char** argv){
     CHECK(!producer.on_host_frame(0).request);CHECK(!producer.on_host_frame(0).request);
     const auto first=producer.on_host_frame(0);CHECK(first.request&&first.request->buffer==0&&first.request->plan().source.resource->identity()==a->id);
     CHECK(producer.status().in_flight&&!producer.status().pending);
+    CHECK(first.request->plan().effects&&first.request->plan().effects->dimx==0x123456789abcdef0ull&&
+        first.request->plan().effects->precision==VideoOutputPrecision::serialized_destination);
     CHECK(!producer.on_host_frame(1).request);CHECK(!producer.on_host_frame(1).request);
     CHECK(producer.complete(first.request->completion+1,true)==VideoError::stale_completion);
     CHECK(producer.complete(first.request->completion,true)==VideoError::none);

@@ -1,0 +1,121 @@
+{
+  "created_utc": "2026-11-19T07:30:21.453253+00:00",
+  "scope": "Staged native component source, not accepted game executable",
+  "fork_before_commit": "e4083fdc6d6e02981623963f5d11169663ff12c3",
+  "verification_sha256": "c6fdfa634f7326a2dfb9580394404f9fa588da23f6a1be1f8230451be918b0ca",
+  "external_media_headers_commit": "9abe92e3af7fa7becc8f7f742b1457b4c28220a6",
+  "preserved_unstaged_sha256": {
+    "runtime/src/iop/mcserv.cpp": "ad2731a341409d87ffe1b171e99f28d7cedc5004aaf375a565d78673333414fb",
+    "runtime/src/iop/msl_native.cpp": "756cfb3867ebb440223ddb8ab6fe441ad6f9f54d35e4119a8342f8dd9063bb23"
+  },
+  "source": [
+    {
+      "path": "CMakeLists.txt",
+      "git_blob": "4fd8e4dbb889b571f09e38170634d9e219d76d9c",
+      "staged_content_sha256": "3c70a4e90ced040a6c26d07aa232a494c96b709a8f216bf80312a179ee4988a4",
+      "bytes": 31029
+    },
+    {
+      "path": "runtime/include/mka/movie_color.hpp",
+      "git_blob": "90d5c3f3d969d1e7e8f2869e4d7d3afa7ed7f3cb",
+      "staged_content_sha256": "a02b4c594b3a286ff665f2ad8039a158812b98b1ac6ec5dad2fe320762a0bc09",
+      "bytes": 1423
+    },
+    {
+      "path": "runtime/include/mka/movie_decode.hpp",
+      "git_blob": "6165bca301196e22b9b91d94146ae878ea01e544",
+      "staged_content_sha256": "5946b5e79e012d69db68d3d181590e8cb0a4e483c36ea60c2e1abfa8d5e31a6e",
+      "bytes": 2636
+    },
+    {
+      "path": "runtime/include/mka/video_gpu_adapter.hpp",
+      "git_blob": "657c4ea6327109831ee3c596275c215319772690",
+      "staged_content_sha256": "52bf5858230052ed83291cb548437665042715870cc36f8b1f9f55ffde8f9206",
+      "bytes": 4127
+    },
+    {
+      "path": "runtime/include/mka/video_producer.hpp",
+      "git_blob": "31522f90cca77a81d3272f471ea00ab1f4c2aa2a",
+      "staged_content_sha256": "3c6bf094bf192eee69ce2e245530103b1c7b9dc1119841f41886f05076cf2901",
+      "bytes": 4315
+    },
+    {
+      "path": "runtime/src/gs/gs.cpp",
+      "git_blob": "f8042fe3ee0c345c1e5809478b86dc0ab2f04e13",
+      "staged_content_sha256": "5b466c7964414ad2d2fc4bd4deeb86eb8c10da257d29a120f021e679df14be37",
+      "bytes": 92089
+    },
+    {
+      "path": "runtime/src/gs/native_gl_backend.cpp",
+      "git_blob": "cfff8b5910ea7395ffcafac315426728fd3987e4",
+      "staged_content_sha256": "de60c839b6d7cf968a330dcf47f13cb673cf5516426ff0c73c18b602ac64d3d7",
+      "bytes": 180653
+    },
+    {
+      "path": "runtime/src/gs/native_gl_backend.hpp",
+      "git_blob": "b0f4cbf1589f38c55ee4d6a0566f0119c5a66052",
+      "staged_content_sha256": "c20dcf7f556d74f4b08fcf38dd210010a0cb34d0b2a21b555128a1f99477018b",
+      "bytes": 7023
+    },
+    {
+      "path": "runtime/src/native/movie_color.cpp",
+      "git_blob": "f1147a27999c7f4b29f69ab78b3903ceab280384",
+      "staged_content_sha256": "659ec7bcb38ad738204a2eca517f61de903787cdc17f9ebaca191bf2fe553109",
+      "bytes": 4956
+    },
+    {
+      "path": "runtime/src/native/movie_decode.cpp",
+      "git_blob": "1bd416a389f511db5ea478f92622569b29a1b92b",
+      "staged_content_sha256": "05c0d611e47def545e10dc19714abc6f070a85d380ff24720669e133a9386470",
+      "bytes": 17114
+    },
+    {
+      "path": "runtime/src/native/video_gpu_adapter.cpp",
+      "git_blob": "1b0ec65dbd14cff310a41e75f7906a3cc4f3a578",
+      "staged_content_sha256": "b7bc697197a735ec7a2523c876ee64ba4ea1d24b19fdd3d047726000b1dae816",
+      "bytes": 5479
+    },
+    {
+      "path": "tests/data/movie_decode_oracle.hpp",
+      "git_blob": "fdf89741daee97e932fef3f203bd9bcfdeada392",
+      "staged_content_sha256": "f78a1828839bdbf7fbe272618b27ee4336edca48374ade8f8f39fc6de70515e6",
+      "bytes": 1275
+    },
+    {
+      "path": "tests/native_test_sha256.hpp",
+      "git_blob": "fcd66187c77d4628e1ebeaa34d34cd3463dfbc4d",
+      "staged_content_sha256": "f90189e16a9ab989bd2228e752d65e9935dad0250ac1cbdc0a76ead8e3504bf7",
+      "bytes": 2063
+    },
+    {
+      "path": "tests/test_movie_color.cpp",
+      "git_blob": "1e6ef4b49897a0781b89b0ca935536f3defca046",
+      "staged_content_sha256": "503dc385cc494fc0d429243c67811a94dacc3677c9366f8f269ed93965cc0ef0",
+      "bytes": 4712
+    },
+    {
+      "path": "tests/test_movie_decode.cpp",
+      "git_blob": "90f208cefa0cd0b6581c0cad234f0ea658444cf7",
+      "staged_content_sha256": "14192f2219cebcbddb0fa0c8c3fe565eeec9dc2a30e0867eb3233a2bda898322",
+      "bytes": 7352
+    },
+    {
+      "path": "tests/test_native_image_upload.cpp",
+      "git_blob": "1ed92bbb1d3c331ada91a94a42aa7ffca6d0ec0c",
+      "staged_content_sha256": "7f0d6fea9b6c0e29b0a9911f20b4af935a085846906abc37b704233f89c13571",
+      "bytes": 50015
+    },
+    {
+      "path": "tests/test_video_gpu_adapter.cpp",
+      "git_blob": "65a3150731f306af9b74f85f89e10af475d6a517",
+      "staged_content_sha256": "bd2a5d36105c9b8240aff433385d343580d3effac216c13a46578f31bd170ded",
+      "bytes": 5053
+    },
+    {
+      "path": "tests/test_video_producer.cpp",
+      "git_blob": "0de833b2593d9267ad54aa355c43d1bf2aaeeb97",
+      "staged_content_sha256": "b5b4c029186024f7c552b7983efe01a561812fb66d4790674d968907b2d9f361",
+      "bytes": 6472
+    }
+  ]
+}

@@ -13,6 +13,7 @@
 #include "compliance_census.hpp"
 #include "gpu/gpu.hpp"
 #include "mka/gpu_diagnostics.hpp"
+#include "mka/video_gpu_adapter.hpp"
 
 #include "ps2/os.hpp"
 #include "ps2/system.hpp"
@@ -34,6 +35,7 @@
 #include <optional>
 #include <stdexcept>
 #include <string>
+#include <thread>
 #include <vector>
 
 #if defined(_WIN32)
@@ -107,6 +109,9 @@
 #endif
 #ifndef GL_DRAW_FRAMEBUFFER_BINDING
 #define GL_DRAW_FRAMEBUFFER_BINDING 0x8CA6
+#endif
+#ifndef GL_CURRENT_PROGRAM
+#define GL_CURRENT_PROGRAM 0x8B8D
 #endif
 #else
 // No GL backend on non-Windows yet: submit() always returns false.
@@ -722,6 +727,8 @@ void reset_context_entrypoints() {
 }
 
 bool has_context_objects() {
+    extern bool has_video_objects();
+    if(has_video_objects())return true;
     if(g_native_clut)return true;
     if (!g_timer_objects.empty() || g_timer_active_object || g_shared_depth_buffer ||
         g_display_upload.object || g_rect_upload.object) return true;
@@ -735,6 +742,8 @@ bool has_context_objects() {
 // Requires the backend context current. Releases even partially allocated
 // objects whose ready flag was never set; borrowed SDL context itself survives.
 void release_context_objects() {
+    extern void release_video_objects();
+    release_video_objects();
     end_frame_timer();
     poll_frame_timer(true);
     if (g_delete_queries)
@@ -1607,7 +1616,247 @@ void do_readback(const ReadbackState &state) {
 #endif
 }
 
+#if defined(_WIN32)
+// Video leases own snapshots rather than borrowing scene/cache entries. Public
+// handles never expose GL names and destructors never call GL on foreign threads.
+namespace video=mka::video;
+using VideoSync=void*;
+using FenceSyncProc=VideoSync(APIENTRY*)(GLenum,GLbitfield);
+using WaitSyncProc=GLenum(APIENTRY*)(VideoSync,GLbitfield,std::uint64_t);
+using DeleteSyncProc=void(APIENTRY*)(VideoSync);
+struct VideoTexture {GLuint object=0;};
+struct VideoWork {
+    VideoSync sync=nullptr;
+    std::shared_ptr<const video::VideoFrameResource> source;
+    std::shared_ptr<VideoTexture> output;
+    std::atomic<bool> retired{false};
+};
+struct VideoSession {
+    HGLRC context=nullptr;HDC dc=nullptr;HWND window=nullptr;
+    std::thread::id owner;std::atomic<bool> revoked{false};
+    std::uint64_t destination=0;
+    FenceSyncProc fence=nullptr;WaitSyncProc wait=nullptr;DeleteSyncProc erase=nullptr;
+    std::vector<std::shared_ptr<VideoTexture>> textures;
+    std::vector<std::shared_ptr<VideoWork>> work;
+};
+std::vector<std::shared_ptr<VideoSession>> g_video_sessions;
+std::atomic<std::uint64_t> g_video_identity{0};
+struct VideoLease final:video::VideoFrameResource {
+    std::shared_ptr<VideoSession> session;std::shared_ptr<VideoTexture> texture;
+    video::VideoSourceRequest request;std::uint64_t id=0;
+    std::uint64_t identity()const noexcept override{return id;}
+    std::uint32_t width()const noexcept override{return request.logical_width;}
+    std::uint32_t height()const noexcept override{return request.logical_height;}
+};
+struct GlVideoFence final:video::VideoGpuFence {
+    std::shared_ptr<VideoSession> session;std::shared_ptr<VideoWork> work;
+    GlVideoFence(video::NativePresentRequest r,std::shared_ptr<VideoSession> s,std::shared_ptr<VideoWork> w)
+        :VideoGpuFence(std::move(r)),session(std::move(s)),work(std::move(w)){}
+    ~GlVideoFence(){work->retired.store(true,std::memory_order_release);}
+};
+video::VideoGpuError video_current(const VideoSession& s){
+    if(s.revoked.load(std::memory_order_acquire)||!g_enabled||s.context!=g_hrc)return video::VideoGpuError::stale_resource;
+    if(std::this_thread::get_id()!=s.owner||wglGetCurrentContext()!=s.context||wglGetCurrentDC()!=s.dc)return video::VideoGpuError::wrong_thread;
+    return video::VideoGpuError::none;
+}
+bool collect_video(VideoSession& s){
+    for(auto it=s.work.begin();it!=s.work.end();){
+        auto& w=**it;
+        if(w.retired.load(std::memory_order_acquire)){
+            if(!w.sync)return false;
+            const auto status=s.wait(w.sync,0,0);
+            if(status==0x911a||status==0x911c){s.erase(w.sync);w.sync=nullptr;w.source.reset();w.output.reset();it=s.work.erase(it);continue;}
+            if(status!=0x911b)return false;
+        }
+        ++it;
+    }
+    for(auto it=s.textures.begin();it!=s.textures.end();){
+        if(it->use_count()==1){if((*it)->object)glDeleteTextures(1,&(*it)->object);it=s.textures.erase(it);}else ++it;
+    }
+    return true;
+}
+bool has_video_objects(){return !g_video_sessions.empty();}
+void release_video_objects(){
+    for(auto& s:g_video_sessions){
+        s->revoked.store(true,std::memory_order_release);
+        for(auto& w:s->work){if(w->sync)s->erase(w->sync);w->sync=nullptr;w->source.reset();w->output.reset();}
+        s->work.clear();
+        for(auto& t:s->textures){if(t->object)glDeleteTextures(1,&t->object);t->object=0;}
+        s->textures.clear();
+    }
+    g_video_sessions.clear();
+}
+// Preserves caller bindings/state; all resource construction remains GPU-only.
+struct VideoGlState {
+    GLint read=0,draw=0,program=0,active=GL_TEXTURE0,mode=GL_MODELVIEW;
+    using UseProgram=void(APIENTRY*)(GLuint);
+    UseProgram use=load_gl_proc<UseProgram>("glUseProgram");
+    VideoGlState(){
+        glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING,&read);glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING,&draw);
+        glGetIntegerv(GL_CURRENT_PROGRAM,&program);glGetIntegerv(GL_ACTIVE_TEXTURE,&active);glGetIntegerv(GL_MATRIX_MODE,&mode);
+        glPushAttrib(GL_ALL_ATTRIB_BITS);if(use)use(0);
+        if(g_active_texture){g_active_texture(GL_TEXTURE1);glDisable(GL_TEXTURE_2D);g_active_texture(GL_TEXTURE0);}
+        glMatrixMode(GL_TEXTURE);glPushMatrix();glLoadIdentity();
+        glMatrixMode(GL_PROJECTION);glPushMatrix();glMatrixMode(GL_MODELVIEW);glPushMatrix();
+    }
+    ~VideoGlState(){
+        if(g_active_texture)g_active_texture(GL_TEXTURE0);
+        glMatrixMode(GL_TEXTURE);glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);glPopMatrix();glMatrixMode(GL_PROJECTION);glPopMatrix();
+        g_bind_framebuffer(GL_READ_FRAMEBUFFER,read);g_bind_framebuffer(GL_DRAW_FRAMEBUFFER,draw);
+        glPopAttrib();if(use)use(program);if(g_active_texture)g_active_texture(active);glMatrixMode(mode);gl_state_invalidate();
+    }
+};
+void video_quad(GLuint texture,unsigned width,unsigned height,float u0,float v0,float u1,float v1,bool final_pass,unsigned x=0,unsigned y=0){
+    glViewport(x,y,width,height);glDisable(GL_SCISSOR_TEST);glDisable(GL_DEPTH_TEST);glDisable(GL_BLEND);glDisable(GL_ALPHA_TEST);
+    glDisable(GL_FOG);glDisable(GL_CULL_FACE);glDisable(GL_STENCIL_TEST);glDisable(GL_DITHER);glDisable(GL_COLOR_LOGIC_OP);
+    glDisable(GL_LIGHTING);glDisable(GL_TEXTURE_GEN_S);glDisable(GL_TEXTURE_GEN_T);glDisable(GL_TEXTURE_GEN_R);glDisable(GL_TEXTURE_GEN_Q);
+    for(unsigned i=0;i<6;++i)glDisable(GL_CLIP_PLANE0+i);
+    glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);glDepthMask(GL_FALSE);
+    glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+    glMatrixMode(GL_PROJECTION);glLoadIdentity();glOrtho(0,width,height,0,-1,1);
+    glMatrixMode(GL_MODELVIEW);glLoadIdentity();glEnable(GL_TEXTURE_2D);glBindTexture(GL_TEXTURE_2D,texture);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,final_pass?GL_LINEAR:GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,final_pass?GL_LINEAR:GL_NEAREST);
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_COMBINE);
+    glTexEnvi(GL_TEXTURE_ENV,GL_COMBINE_RGB,GL_REPLACE);glTexEnvi(GL_TEXTURE_ENV,GL_SOURCE0_RGB,GL_TEXTURE);
+    glTexEnvi(GL_TEXTURE_ENV,GL_OPERAND0_RGB,GL_SRC_COLOR);
+    glTexEnvi(GL_TEXTURE_ENV,GL_RGB_SCALE,1);glTexEnvi(GL_TEXTURE_ENV,GL_ALPHA_SCALE,1);
+    glTexEnvi(GL_TEXTURE_ENV,GL_COMBINE_ALPHA,GL_REPLACE);
+    glTexEnvi(GL_TEXTURE_ENV,GL_SOURCE0_ALPHA,final_pass?GL_PRIMARY_COLOR:GL_TEXTURE);
+    glTexEnvi(GL_TEXTURE_ENV,GL_OPERAND0_ALPHA,GL_SRC_ALPHA);glColor4f(1,1,1,0);
+    glBegin(GL_QUADS);
+    glTexCoord2f(u0,v0);glVertex2i(0,0);glTexCoord2f(u1,v0);glVertex2i(width,0);
+    glTexCoord2f(u1,v1);glVertex2i(width,height);glTexCoord2f(u0,v1);glVertex2i(0,height);glEnd();
+}
+class GlVideoBackend final:public video::VideoGpuBackend {
+public:
+    explicit GlVideoBackend(std::shared_ptr<VideoSession> s):session_(std::move(s)){}
+    video::VideoSourceResult acquire(const video::VideoSourceRequest& r)override{
+        using E=video::VideoGpuError;
+        if(auto e=video_current(*session_);e!=E::none)return {e,{}};
+        if(!collect_video(*session_))return {E::fence_failed,{}};
+        if(!r.logical_width||!r.logical_height||!r.required.width||!r.required.height||r.serialized_format!=PSMCT32||
+           std::uint64_t(r.required.x)+r.required.width>r.logical_width||std::uint64_t(r.required.y)+r.required.height>r.logical_height)return {E::invalid_plan,{}};
+        auto* image=find_native_image(r.serialized_base);
+        auto* frame=r.serialized_base%32u==0?find_scene_target(r.serialized_base/32u):nullptr;
+        GLuint source=0;bool flip=false;
+        if(frame&&frame->ready&&frame->fbw==r.serialized_stride&&((frame->last_draw_readback_state.frame>>24)&63)==PSMCT32){
+            if(r.logical_width>kWidth||r.logical_height>kHeight)return {E::unsupported_source,{}};
+            source=frame->color_texture;flip=true;
+            if(image&&!image_rect_covered(*image,r.required.x,r.required.y,r.required.width,r.required.height))return {E::unsupported_source,{}};
+        }else if(!frame&&image&&!image->framebuffer&&image->bw==r.serialized_stride&&image->psm==PSMCT32&&
+                 r.logical_width<=image->width&&r.logical_height<=image->height&&image_rect_covered(*image,r.required.x,r.required.y,r.required.width,r.required.height))source=image->object;
+        if(!source)return {E::unsupported_source,{}};
+        if(image_error("video acquire incoming GL state"))return {E::submission_failed,{}};
+        try{
+            auto lease=std::make_shared<VideoLease>();auto texture=std::make_shared<VideoTexture>();
+            session_->textures.push_back(texture);VideoGlState state;
+            if(!allocate_image_texture(texture->object,r.required.width,r.required.height)||
+               !blit_image_rect(source,texture->object,r.required.x,flip?kHeight-r.required.y:r.required.y,
+                 r.required.x+r.required.width,flip?kHeight-r.required.y-r.required.height:r.required.y+r.required.height,
+                 0,0,r.required.width,r.required.height))return {E::submission_failed,{}};
+            auto id=g_video_identity.load();do{if(id==UINT64_MAX)return {E::allocation_failure,{}};}
+            while(!g_video_identity.compare_exchange_weak(id,id+1));
+            lease->session=session_;lease->texture=std::move(texture);lease->request=r;lease->id=id+1;
+            return {E::none,std::move(lease)};
+        }catch(const std::bad_alloc&){return {E::allocation_failure,{}};}catch(const std::length_error&){return {E::allocation_failure,{}};}
+    }
+    video::VideoGpuSubmission submit(const video::NativePresentRequest& request,const video::HostVideoLayout& layout,const video::VideoRect& dest)override{
+        using E=video::VideoGpuError;
+        if(auto e=video_current(*session_);e!=E::none)return {e,{}};
+        if(!collect_video(*session_))return {E::fence_failed,{}};
+        if(!request.environment||request.buffer>1||request.variant>1)return {E::invalid_plan,{}};
+        const auto& plan=request.plan();
+        auto lease=std::dynamic_pointer_cast<const VideoLease>(plan.source.resource);
+        if(!lease||lease->session!=session_||!lease->texture->object)return {E::stale_resource,{}};
+        const auto canonical=video::bind_present_source(plan.resample,plan.source,plan.logical_width,plan.logical_height);
+        if(!canonical)return {E::invalid_plan,{}};
+        const auto& p=canonical->resample;
+        if(lease->request.serialized_base!=plan.source.serialized_base||
+           lease->request.serialized_stride!=plan.source.serialized_stride||lease->request.serialized_format!=plan.source.serialized_format||
+           lease->request.required.x!=p.clamp_x||lease->request.required.y!=p.clamp_y||lease->request.required.width!=p.clamp_width||lease->request.required.height!=p.clamp_height)return {E::invalid_plan,{}};
+        if(!plan.effects||plan.effects->precision!=video::VideoOutputPrecision::rgba8||plan.effects->colclamp!=1||
+           p.destination_dither||((p.destination_frame>>24)&63)!=PSMCT32)return {E::unsupported_effect,{}};
+        const auto physical=video::centered_video_destination(layout);
+        RECT client{};
+        if(layout.destination!=session_->destination||!physical||physical->x!=dest.x||physical->y!=dest.y||physical->width!=dest.width||physical->height!=dest.height||
+           layout.sample.x||layout.sample.y||layout.sample.width!=p.output_width||layout.sample.height!=p.output_height||
+           layout.logical_width!=plan.logical_width||layout.logical_height!=plan.logical_height||
+           !GetClientRect(session_->window,&client)||client.right!=layout.window_width||client.bottom!=layout.window_height)return {E::invalid_layout,{}};
+        GLint limit=0;glGetIntegerv(GL_MAX_TEXTURE_SIZE,&limit);
+        if(p.output_width>unsigned(limit)||p.output_height>unsigned(limit))return {E::unsupported_source,{}};
+        if(image_error("video submit incoming GL state"))return {E::submission_failed,{}};
+        try{
+            auto output=std::make_shared<VideoTexture>();auto work=std::make_shared<VideoWork>();
+            auto fence=std::make_shared<GlVideoFence>(request,session_,work);
+            session_->textures.push_back(output);session_->work.push_back(work);
+            // Reserve all ownership before submitting GPU commands. On failure
+            // the record remains retired until a real fence or context teardown.
+            work->source=lease;work->output=output;
+            GLuint framebuffer=0;bool ok=false;
+            {
+                VideoGlState state;
+                if(allocate_image_texture(output->object,p.output_width,p.output_height)){
+                    g_gen_framebuffers(1,&framebuffer);g_bind_framebuffer(GL_FRAMEBUFFER,framebuffer);
+                    g_framebuffer_texture_2d(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,output->object,0);
+                    if(framebuffer&&g_check_framebuffer_status(GL_FRAMEBUFFER)==GL_FRAMEBUFFER_COMPLETE){
+                        glDrawBuffer(GL_COLOR_ATTACHMENT0);glReadBuffer(GL_COLOR_ATTACHMENT0);
+                        video_quad(lease->texture->object,p.output_width,p.output_height,
+                            (p.u0*p.virtual_width-p.clamp_x)/p.clamp_width,(p.v0*p.virtual_height-p.clamp_y)/p.clamp_height,
+                            (p.u1*p.virtual_width-p.clamp_x)/p.clamp_width,(p.v1*p.virtual_height-p.clamp_y)/p.clamp_height,true);
+                        ok=!image_error("video exact final resample");
+                        if(ok){
+                            g_bind_framebuffer(GL_DRAW_FRAMEBUFFER,0);glDrawBuffer(GL_BACK);
+                            glDisable(GL_SCISSOR_TEST);glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);glClearColor(0,0,0,1);glClear(GL_COLOR_BUFFER_BIT);
+                            // Full final output is mapped to the explicitly
+                            // supplied logical display policy; never crop832to640.
+                            video_quad(output->object,dest.width,dest.height,0,1,1,0,false,dest.x,layout.window_height-dest.y-dest.height);
+                            ok=!image_error("video logical host presentation");
+                        }
+                    }
+                }
+                if(framebuffer)g_delete_framebuffers(1,&framebuffer);
+                work->sync=session_->fence(0x9117,0);glFlush();
+                ok=ok&&work->sync&&!image_error("video completion fence");
+            }
+            if(!ok)return {E::submission_failed,std::move(fence)};
+            return {E::none,std::move(fence)};
+        }catch(const std::bad_alloc&){return {E::allocation_failure,{}};}catch(const std::length_error&){return {E::allocation_failure,{}};}
+    }
+    video::VideoFenceResult poll(const std::shared_ptr<video::VideoGpuFence>& f)override{
+        using E=video::VideoGpuError;
+        if(auto e=video_current(*session_);e!=E::none)return {video::VideoFenceState::failed,e};
+        auto fence=std::dynamic_pointer_cast<GlVideoFence>(f);
+        if(!fence||fence->session!=session_||!fence->work->sync)return {video::VideoFenceState::failed,E::stale_resource};
+        if(image_error("video fence incoming GL state"))return {video::VideoFenceState::failed,E::fence_failed};
+        const auto status=session_->wait(fence->work->sync,0,0);
+        if(image_error("poll native video completion"))return {video::VideoFenceState::failed,E::fence_failed};
+        if(status==0x911a||status==0x911c)return {video::VideoFenceState::complete,E::none};
+        if(status==0x911b)return {video::VideoFenceState::pending,E::none};
+        return {video::VideoFenceState::failed,E::fence_failed};
+    }
+    void retire(std::shared_ptr<video::VideoGpuFence> f)noexcept override{f.reset();}
+private:std::shared_ptr<VideoSession> session_;
+};
+#endif
 } // namespace
+
+std::shared_ptr<mka::video::VideoGpuBackend> video_backend(std::uint64_t destination){
+#if defined(_WIN32)
+    if(!destination||!g_enabled||wglGetCurrentContext()!=g_hrc||wglGetCurrentDC()!=g_hdc)return {};
+    try{
+        auto s=std::make_shared<VideoSession>();s->context=g_hrc;s->dc=g_hdc;s->window=g_hwnd;s->owner=std::this_thread::get_id();s->destination=destination;
+        s->fence=load_gl_proc<FenceSyncProc>("glFenceSync");
+        s->wait=load_gl_proc<WaitSyncProc>("glClientWaitSync");
+        s->erase=load_gl_proc<DeleteSyncProc>("glDeleteSync");
+        if(!s->fence||!s->wait||!s->erase)return {};
+        auto backend=std::make_shared<GlVideoBackend>(s);g_video_sessions.push_back(std::move(s));return backend;
+    }catch(const std::bad_alloc&){return {};}
+#else
+    (void)destination;return {};
+#endif
+}
 
 bool sync_surface_to_cpu(std::uint32_t fbp) {
 #if defined(_WIN32)

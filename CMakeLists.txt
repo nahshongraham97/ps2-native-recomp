@@ -89,6 +89,7 @@ else()
         runtime/src/native/host_voice.cpp
         runtime/src/native/playback_owner.cpp
         runtime/src/native/video_producer.cpp
+        runtime/src/native/video_gpu_adapter.cpp
         runtime/src/native/haptics.cpp
         runtime/src/native/retail_haptics_bridge.cpp
         runtime/src/native/controller_input.cpp
@@ -404,9 +405,32 @@ if(PS2_GENERATED)
     add_executable(test_native_video_producer EXCLUDE_FROM_ALL
         tests/test_video_producer.cpp runtime/src/native/video_producer.cpp)
     target_include_directories(test_native_video_producer PRIVATE runtime/include)
+    add_executable(test_native_video_gpu_adapter EXCLUDE_FROM_ALL tests/test_video_gpu_adapter.cpp
+        runtime/src/native/video_producer.cpp runtime/src/native/video_gpu_adapter.cpp)
+    target_include_directories(test_native_video_gpu_adapter PRIVATE runtime/include)
     add_executable(test_retail_call_observers EXCLUDE_FROM_ALL
         tests/test_retail_call_observers.cpp host/mka_unit_wrappers.cpp)
     target_include_directories(test_retail_call_observers PRIVATE runtime/include host)
+    add_executable(test_native_movie_color EXCLUDE_FROM_ALL tests/test_movie_color.cpp
+        runtime/src/native/movie_color.cpp)
+    target_include_directories(test_native_movie_color PRIVATE runtime/include)
+    target_link_libraries(test_native_movie_color PRIVATE bcrypt)
+    # Pinned public headers for the existing native FFmpeg7.1.4 DLL ABI.
+    # This standalone component does not silently replace missing SDK support.
+    set(MKA_NATIVE_MEDIA_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/../../../../dependencies/native-media/ffmpeg-7.1.4" CACHE PATH "Pinned FFmpeg7.1.4 public header root")
+    if(EXISTS "${MKA_NATIVE_MEDIA_HEADERS}/libavcodec/avcodec.h")
+        if(NOT WIN32 OR NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
+            message(FATAL_ERROR "Pinned native media loader/header configuration requires Windows64")
+        endif()
+        file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers/libavutil")
+        file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers/libavutil/avconfig.h"
+            "#ifndef AVUTIL_AVCONFIG_H\n#define AVUTIL_AVCONFIG_H\n#define AV_HAVE_BIGENDIAN 0\n#define AV_HAVE_FAST_UNALIGNED 1\n#endif\n")
+        add_executable(test_native_movie_decode EXCLUDE_FROM_ALL tests/test_movie_decode.cpp
+            runtime/src/native/movie_decode.cpp runtime/src/native/native_file.cpp)
+        target_include_directories(test_native_movie_decode PRIVATE runtime/include
+            "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers" "${MKA_NATIVE_MEDIA_HEADERS}")
+        target_link_libraries(test_native_movie_decode PRIVATE bcrypt)
+    endif()
     add_executable(test_native_haptics EXCLUDE_FROM_ALL
         tests/test_haptics.cpp runtime/src/native/haptics.cpp)
     target_include_directories(test_native_haptics PRIVATE runtime/include)

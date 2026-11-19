@@ -1,0 +1,252 @@
+#include "mka/movie_decode.hpp"
+#include "mka/native_file.hpp"
+extern "C" {
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+}
+#include <bit>
+#include <cerrno>
+#include <cstdio>
+#include <cstring>
+#include <deque>
+#include <limits>
+#include <new>
+#include <stdexcept>
+#ifdef _WIN32
+#define NOMINMAX
+#include <windows.h>
+#endif
+
+namespace mka::video {
+namespace {
+struct Api {
+#ifdef _WIN32
+    HMODULE utility=nullptr,codec=nullptr,format=nullptr;
+    ~Api(){if(format)FreeLibrary(format);if(codec)FreeLibrary(codec);if(utility)FreeLibrary(utility);}
+#endif
+#define DECLARE(name) decltype(&name) name##_p=nullptr
+    DECLARE(avutil_version);DECLARE(avcodec_version);DECLARE(avformat_version);
+    DECLARE(av_malloc);DECLARE(av_free);DECLARE(av_frame_alloc);DECLARE(av_frame_free);DECLARE(av_frame_unref);
+    DECLARE(av_packet_alloc);DECLARE(av_packet_free);DECLARE(av_packet_unref);DECLARE(av_new_packet);DECLARE(av_packet_copy_props);
+    DECLARE(avio_alloc_context);DECLARE(avio_context_free);
+    DECLARE(avformat_alloc_context);DECLARE(avformat_open_input);DECLARE(avformat_find_stream_info);
+    DECLARE(avformat_close_input);DECLARE(av_read_frame);
+    DECLARE(avcodec_find_decoder);DECLARE(avcodec_alloc_context3);DECLARE(avcodec_parameters_to_context);
+    DECLARE(avcodec_open2);DECLARE(avcodec_free_context);DECLARE(avcodec_send_packet);DECLARE(avcodec_receive_frame);
+#undef DECLARE
+    bool load(const std::filesystem::path& dir,MovieDecodeFailure& f){
+#ifdef _WIN32
+        static_assert(sizeof(void*)==8&&std::endian::native==std::endian::little);
+        const auto flags=LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR|LOAD_LIBRARY_SEARCH_DEFAULT_DIRS;
+        const auto module=[&](const wchar_t* name){
+            auto value=LoadLibraryExW((dir/name).c_str(),nullptr,flags);
+            if(!value)f={MovieDecodeError::library_load,static_cast<int>(GetLastError()),"LoadLibraryExW pinned native media library"};
+            return value;
+        };
+        utility=module(L"avutil-59.dll");if(!utility)return false;
+        codec=module(L"avcodec-61.dll");if(!codec)return false;
+        format=module(L"avformat-61.dll");if(!format)return false;
+#define LOAD(module,name) name##_p=reinterpret_cast<decltype(name##_p)>(GetProcAddress(module,#name));if(!name##_p){f={MovieDecodeError::missing_symbol,0,#name};return false;}
+        LOAD(utility,avutil_version);LOAD(codec,avcodec_version);LOAD(format,avformat_version);
+        LOAD(utility,av_malloc);LOAD(utility,av_free);LOAD(utility,av_frame_alloc);LOAD(utility,av_frame_free);LOAD(utility,av_frame_unref);
+        LOAD(codec,av_packet_alloc);LOAD(codec,av_packet_free);LOAD(codec,av_packet_unref);
+        LOAD(codec,av_new_packet);LOAD(codec,av_packet_copy_props);
+        LOAD(format,avio_alloc_context);LOAD(format,avio_context_free);LOAD(format,avformat_alloc_context);
+        LOAD(format,avformat_open_input);LOAD(format,avformat_find_stream_info);LOAD(format,avformat_close_input);LOAD(format,av_read_frame);
+        LOAD(codec,avcodec_find_decoder);LOAD(codec,avcodec_alloc_context3);LOAD(codec,avcodec_parameters_to_context);
+        LOAD(codec,avcodec_open2);LOAD(codec,avcodec_free_context);LOAD(codec,avcodec_send_packet);LOAD(codec,avcodec_receive_frame);
+#undef LOAD
+        if(avutil_version_p()!=LIBAVUTIL_VERSION_INT||avcodec_version_p()!=LIBAVCODEC_VERSION_INT||avformat_version_p()!=LIBAVFORMAT_VERSION_INT){
+            f={MovieDecodeError::library_version,0,"runtime versions must match pinned public headers"};return false;}
+        return true;
+#else
+        f={MovieDecodeError::unsupported_host,0,"native media loader currently requires Windows x64"};return false;
+#endif
+    }
+};
+MovieTimestamp timestamp(std::int64_t value,AVRational base){
+    return {value==AV_NOPTS_VALUE?0:value,base.num,base.den,value!=AV_NOPTS_VALUE};
+}
+}
+struct NativeMovieDecoder::Impl {
+    Api api;
+    content::NativeFile file;
+    AVIOContext* io=nullptr;
+    AVFormatContext* format=nullptr;
+    AVPacket* packet=nullptr;
+    AVFrame* scratch=nullptr;
+    struct Stream {int index=-1;AVCodecContext* decoder=nullptr;AVRational base{};};
+    Stream video,audio;
+    std::deque<MovieDecodedFrame> ready;
+    std::error_code io_error;
+    bool ended=false,failed=false;
+    ~Impl(){
+        if(scratch)api.av_frame_free_p(&scratch);
+        if(packet)api.av_packet_free_p(&packet);
+        if(video.decoder)api.avcodec_free_context_p(&video.decoder);
+        if(audio.decoder)api.avcodec_free_context_p(&audio.decoder);
+        if(format)api.avformat_close_input_p(&format);
+        if(io){api.av_free_p(io->buffer);api.avio_context_free_p(&io);}
+    }
+    static int read(void* opaque,std::uint8_t* buffer,int size){
+        auto& s=*static_cast<Impl*>(opaque);
+        if(size<=0)return AVERROR(EINVAL);
+        const auto r=s.file.read(buffer,static_cast<std::size_t>(size));
+        if(r.error){s.io_error=r.error;return AVERROR(EIO);}
+        if(r.bytes)return static_cast<int>(r.bytes);
+        return r.eof?AVERROR_EOF:AVERROR(EIO);
+    }
+    static std::int64_t seek(void* opaque,std::int64_t offset,int whence){
+        auto& s=*static_cast<Impl*>(opaque);std::error_code ec;
+        whence&=~AVSEEK_FORCE;
+        if(whence==AVSEEK_SIZE){
+            std::uint64_t size;if(!s.file.length(size,ec)){s.io_error=ec;return AVERROR(EIO);}
+            return size>std::uint64_t(INT64_MAX)?AVERROR(EOVERFLOW):static_cast<std::int64_t>(size);
+        }
+        content::SeekOrigin origin;
+        if(whence==SEEK_SET)origin=content::SeekOrigin::begin;
+        else if(whence==SEEK_CUR)origin=content::SeekOrigin::current;
+        else if(whence==SEEK_END)origin=content::SeekOrigin::end;
+        else return AVERROR(EINVAL);
+        std::uint64_t position;
+        if(!s.file.seek(offset,origin,ec)||!s.file.position(position,ec)){s.io_error=ec;return AVERROR(EIO);}
+        return position>std::uint64_t(INT64_MAX)?AVERROR(EOVERFLOW):static_cast<std::int64_t>(position);
+    }
+    bool open_stream(Stream& stream,unsigned i,MovieDecodeFailure& f){
+        auto* source=format->streams[i];const auto* decoder=api.avcodec_find_decoder_p(source->codecpar->codec_id);
+        if(!decoder){f={MovieDecodeError::unsupported_stream,source->codecpar->codec_id,"native codec unavailable"};return false;}
+        stream.index=static_cast<int>(i);stream.base=source->time_base;stream.decoder=api.avcodec_alloc_context3_p(decoder);
+        if(!stream.decoder){f={MovieDecodeError::allocation,0,"avcodec_alloc_context3"};return false;}
+        int r=api.avcodec_parameters_to_context_p(stream.decoder,source->codecpar);
+        if(r<0){f={MovieDecodeError::decode,r,"avcodec_parameters_to_context"};return false;}
+        stream.decoder->pkt_timebase=source->time_base;
+        stream.decoder->err_recognition=AV_EF_CRCCHECK|AV_EF_BITSTREAM|AV_EF_BUFFER|AV_EF_EXPLODE;
+        r=api.avcodec_open2_p(stream.decoder,decoder,nullptr);
+        if(r<0){f={MovieDecodeError::decode,r,"avcodec_open2"};return false;}
+        return true;
+    }
+    bool receive(Stream& stream,MovieDecodeFailure& f){
+        for(;;){
+            const int r=api.avcodec_receive_frame_p(stream.decoder,scratch);
+            if(r==AVERROR(EAGAIN)||r==AVERROR_EOF)return true;
+            if(r<0){f={MovieDecodeError::decode,r,"avcodec_receive_frame"};return false;}
+            if((scratch->flags&AV_FRAME_FLAG_CORRUPT)||scratch->decode_error_flags){f={MovieDecodeError::decode,scratch->decode_error_flags,"corrupt decoded movie frame"};return false;}
+            if(stream.index==video.index){
+                if(scratch->format!=AV_PIX_FMT_YUV420P||scratch->width<=0||scratch->height<=0){f={MovieDecodeError::unsupported_frame,scratch->format,"native movie requires proven YUV420P frame"};return false;}
+                MovieVideoFrame frame;frame.width=scratch->width;frame.height=scratch->height;
+                frame.source_pts=timestamp(scratch->pts,stream.base);frame.timestamp=timestamp(scratch->best_effort_timestamp,stream.base);
+                frame.sample_aspect_numerator=scratch->sample_aspect_ratio.num;frame.sample_aspect_denominator=scratch->sample_aspect_ratio.den;
+                frame.color_range=scratch->color_range;frame.color_space=scratch->colorspace;frame.color_primaries=scratch->color_primaries;frame.color_transfer=scratch->color_trc;
+                for(unsigned plane=0;plane!=3;++plane){
+                    const std::size_t w=plane?(std::size_t(frame.width)+1)/2:frame.width,h=plane?(std::size_t(frame.height)+1)/2:frame.height;
+                    const auto stride=std::int64_t(scratch->linesize[plane]);
+                    if(!scratch->data[plane]||std::uint64_t(stride<0?-stride:stride)<w||h>SIZE_MAX/w){f={MovieDecodeError::unsupported_frame,0,"invalid decoded video plane extent"};return false;}
+                    frame.planes[plane].resize(w*h);
+                    for(std::size_t y=0;y<h;++y)std::memcpy(frame.planes[plane].data()+y*w,scratch->data[plane]+std::ptrdiff_t(y)*stride,w);
+                }
+                ready.emplace_back(std::move(frame));
+            }else{
+                const auto channels=scratch->ch_layout.nb_channels;
+                if(scratch->format!=AV_SAMPLE_FMT_S16P||scratch->sample_rate<=0||scratch->nb_samples<=0||channels<=0||!scratch->extended_data){f={MovieDecodeError::unsupported_frame,scratch->format,"native movie requires proven planar S16 PCM"};return false;}
+                MovieAudioFrame frame;frame.sample_rate=scratch->sample_rate;frame.source_pts=timestamp(scratch->pts,stream.base);
+                frame.timestamp=timestamp(scratch->best_effort_timestamp,stream.base);frame.channels.resize(channels);
+                for(int channel=0;channel<channels;++channel){
+                    if(!scratch->extended_data[channel]){f={MovieDecodeError::unsupported_frame,0,"missing decoded PCM plane"};return false;}
+                    frame.channels[channel].resize(scratch->nb_samples);
+                    std::memcpy(frame.channels[channel].data(),scratch->extended_data[channel],std::size_t(scratch->nb_samples)*sizeof(std::int16_t));
+                }
+                ready.emplace_back(std::move(frame));
+            }
+            api.av_frame_unref_p(scratch);
+        }
+    }
+    bool send(Stream& stream,const AVPacket* data,MovieDecodeFailure& f){
+        const int sent=api.avcodec_send_packet_p(stream.decoder,data);
+        if(sent<0){f={MovieDecodeError::decode,sent,"avcodec_send_packet"};return false;}
+        return receive(stream,f);
+    }
+    bool send_packet(Stream& stream,MovieDecodeFailure& f){
+        // The pinned parser includes SEQ_END_CODE in the final picture packet,
+        // but its strict decoder counts those32bits as excess slice bits.
+        // The same decoder explicitly supports the standalone4-byte marker.
+        // Split only this exact terminal MPEG2 control word: preserve all bytes
+        // and ordering, keep picture timestamps on the picture, invent none
+        // for the non-picture control packet. No error flags are relaxed.
+        if(stream.index!=video.index||packet->size<=4||
+           std::memcmp(packet->data+packet->size-4,"\0\0\1\267",4)!=0)return send(stream,packet,f);
+        const auto release=[&](AVPacket* p){api.av_packet_free_p(&p);};
+        std::unique_ptr<AVPacket,decltype(release)> part(api.av_packet_alloc_p(),release);
+        if(!part){f={MovieDecodeError::allocation,0,"terminal sequence packet"};return false;}
+        const int body_size=packet->size-4;
+        for(unsigned piece=0;piece!=2;++piece){
+            api.av_packet_unref_p(part.get());
+            int r=api.av_new_packet_p(part.get(),piece?4:body_size);
+            if(r>=0)r=api.av_packet_copy_props_p(part.get(),packet);
+            if(r<0){f={MovieDecodeError::allocation,r,"terminal sequence packet ownership"};return false;}
+            std::memcpy(part->data,packet->data+(piece?body_size:0),piece?4:body_size);
+            if(piece){part->pts=part->dts=AV_NOPTS_VALUE;part->duration=0;}
+            if(!send(stream,part.get(),f))return false;
+        }
+        std::fprintf(stderr,"[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=%d)\n",body_size);
+        return true;
+    }
+};
+NativeMovieDecoder::NativeMovieDecoder(std::unique_ptr<Impl> p):impl_(std::move(p)){}
+NativeMovieDecoder::~NativeMovieDecoder()=default;
+NativeMovieDecoder::NativeMovieDecoder(NativeMovieDecoder&&)noexcept=default;
+NativeMovieDecoder& NativeMovieDecoder::operator=(NativeMovieDecoder&&)noexcept=default;
+std::unique_ptr<NativeMovieDecoder> NativeMovieDecoder::open(const std::filesystem::path& libraries,const std::filesystem::path& asset,MovieDecodeFailure& f){
+    f={};try{
+        auto s=std::make_unique<Impl>();if(!s->api.load(libraries,f))return {};
+        std::error_code ec;if(!s->file.open(asset,ec)){f={MovieDecodeError::file_io,ec.value(),"NativeFile::open"};return {};}
+        auto* buffer=static_cast<std::uint8_t*>(s->api.av_malloc_p(65536));if(!buffer){f={MovieDecodeError::allocation,0,"native AVIO cache"};return {};}
+        s->io=s->api.avio_alloc_context_p(buffer,65536,0,s.get(),Impl::read,nullptr,Impl::seek);
+        if(!s->io){s->api.av_free_p(buffer);f={MovieDecodeError::allocation,0,"avio_alloc_context"};return {};}
+        s->format=s->api.avformat_alloc_context_p();if(!s->format){f={MovieDecodeError::allocation,0,"avformat_alloc_context"};return {};}
+        s->format->pb=s->io;s->format->flags|=AVFMT_FLAG_CUSTOM_IO;
+        int r=s->api.avformat_open_input_p(&s->format,nullptr,nullptr,nullptr);
+        if(r<0){f={MovieDecodeError::demux,r,"avformat_open_input NativeFile"};return {};}
+        r=s->api.avformat_find_stream_info_p(s->format,nullptr);
+        if(r<0){f={MovieDecodeError::demux,r,"avformat_find_stream_info"};return {};}
+        for(unsigned i=0;i<s->format->nb_streams;++i){
+            const auto* p=s->format->streams[i]->codecpar;
+            if(p->codec_type==AVMEDIA_TYPE_VIDEO&&p->codec_id==AV_CODEC_ID_MPEG2VIDEO&&s->video.index<0){if(!s->open_stream(s->video,i,f))return {};}
+            else if(p->codec_type==AVMEDIA_TYPE_AUDIO&&p->codec_id==AV_CODEC_ID_ADPCM_ADX&&s->audio.index<0){if(!s->open_stream(s->audio,i,f))return {};}
+            else {f={MovieDecodeError::unsupported_stream,p->codec_id,"unverified movie stream or duplicate media type"};return {};}
+        }
+        if(s->video.index<0){f={MovieDecodeError::invalid_stream,0,"movie has no MPEG2 video"};return {};}
+        s->packet=s->api.av_packet_alloc_p();s->scratch=s->api.av_frame_alloc_p();if(!s->packet||!s->scratch){f={MovieDecodeError::allocation,0,"native decoder packet/frame"};return {};}
+        return std::unique_ptr<NativeMovieDecoder>(new NativeMovieDecoder(std::move(s)));
+    }catch(const std::bad_alloc&){f={MovieDecodeError::allocation,0,"native movie ownership"};}
+     catch(const std::length_error&){f={MovieDecodeError::allocation,0,"native movie host capacity"};}
+    return {};
+}
+MovieReadResult NativeMovieDecoder::next(MovieDecodeFailure& f){
+    f={};if(!impl_){f={MovieDecodeError::invalid_owner,0,"moved native movie decoder"};return {};}
+    auto& s=*impl_;if(s.failed){f={MovieDecodeError::failed_owner,0,"native movie decoder previously failed"};return {};}
+    try{
+        while(s.ready.empty()&&!s.ended){
+            const int r=s.api.av_read_frame_p(s.format,s.packet);
+            if(r<0){
+                if(r!=AVERROR_EOF){f={MovieDecodeError::demux,r,"av_read_frame"};s.failed=true;return {};}
+                if(s.io_error){f={MovieDecodeError::file_io,s.io_error.value(),"NativeFile read/seek"};s.failed=true;return {};}
+                for(auto* stream:{&s.video,&s.audio})if(stream->decoder){
+                    const int sent=s.api.avcodec_send_packet_p(stream->decoder,nullptr);
+                    if(sent<0&&sent!=AVERROR_EOF){f={MovieDecodeError::decode,sent,"native decoder flush"};s.failed=true;return {};}
+                    if(!s.receive(*stream,f)){s.failed=true;return {};}
+                }
+                s.ended=true;break;
+            }
+            auto* stream=s.packet->stream_index==s.video.index?&s.video:s.packet->stream_index==s.audio.index?&s.audio:nullptr;
+            if(s.packet->flags&AV_PKT_FLAG_CORRUPT){f={MovieDecodeError::demux,0,"corrupt movie packet"};s.api.av_packet_unref_p(s.packet);s.failed=true;return {};}
+            if(!stream){f={MovieDecodeError::unsupported_stream,s.packet->stream_index,"unbound movie packet stream"};s.api.av_packet_unref_p(s.packet);s.failed=true;return {};}
+            const bool sent=s.send_packet(*stream,f);s.api.av_packet_unref_p(s.packet);
+            if(!sent){s.failed=true;return {};}
+        }
+        if(s.ready.empty())return {MovieReadStatus::end,{}};
+        MovieReadResult result{MovieReadStatus::frame,std::move(s.ready.front())};s.ready.pop_front();return result;
+    }catch(const std::bad_alloc&){f={MovieDecodeError::allocation,0,"decoded native frame ownership"};}
+     catch(const std::length_error&){f={MovieDecodeError::allocation,0,"decoded frame host capacity"};}
+    s.failed=true;return {};
+}
+} // namespace mka::video
