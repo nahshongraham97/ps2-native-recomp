@@ -53,6 +53,12 @@ struct AudioQueueStatus {
     std::uint64_t submitted_frames=0,reset_epoch=0;
     bool started=false;
 };
+// Successful host-buffer submission only; no decoded/heard/time/drain claim.
+// Range is [first_client_frame, first_client_frame + client_frames) in the
+// caller PCM stream for this reset epoch, independent of raw device clock.
+struct AudioSubmission {
+    std::uint64_t first_client_frame=0,client_frames=0,reset_epoch=0;
+};
 struct AudioClockReading {
     // Device-defined units. Only position/frequency denotes elapsed seconds;
     // neither field is caller PCM frames. QPC timestamp is already100ns units.
@@ -77,6 +83,9 @@ public:
     std::optional<AudioQueueStatus> queue_status(AudioDeviceFailure&);
     // Copies exactly sample_count interleaved float values, without gain/limiter.
     // No partial acceptance; buffer_full leaves submitted count unchanged.
+    std::optional<AudioSubmission> queue_with_receipt(const float*,std::size_t sample_count,
+                                                    AudioDeviceFailure&);
+    // Same submission sequence; true iff queue_with_receipt returned a receipt.
     bool queue(const float*,std::size_t sample_count,AudioDeviceFailure&);
     bool start(AudioDeviceFailure&);
     bool stop(AudioDeviceFailure&); // Stops streaming; does not flush/reset.

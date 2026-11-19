@@ -1,0 +1,18 @@
+{
+  "scope": "Post-run provenance supplement; not a claimed prelaunch Git/toolchain snapshot",
+  "at_utc": "2026-11-19T16:08:39.089004+00:00",
+  "baseline_commit_observed_after_run": "b8e86a6e257e62b059a760f0398d8c8ce1040c5d",
+  "parent_commit_observed_after_run": "c6a268795ee045fe19238c09729b81a6d7963bcd",
+  "native_only_cache": "PS2_GENERATED:PATH=",
+  "source_matches_prebuild_and_run_receipts": true,
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "source_sha256": {
+    "runtime/include/mka/audio_device.hpp": "df431fe8ac0e1727d554fd023e0234e79a394a135f2bd0508417fe74ea8bd931",
+    "runtime/src/native/audio_device.cpp": "00b4324cd8de940005bbb6af8f21df3ca05a662c022b94dd56ce0955b1b68cbe",
+    "tests/test_native_audio_device.cpp": "4485a87ad465957ebe67c37fec520b7e66d8b992078bf435fd0b1d7aceb1f60c",
+    "CMakeLists.txt": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+    "cmake/native_audio.cmake": "439cce74973e3b00fbbc621aaf1021cd70aa660f991e0bc2946f8f6892b2856d"
+  },
+  "executed_sha256": "74e33a5562cee6fce6820583e5672d97cebce0fa6d0db91dd38b1607aea21950",
+  "no_game_or_nonzero_audio": true
+}

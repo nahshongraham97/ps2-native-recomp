@@ -210,18 +210,24 @@ std::optional<AudioQueueStatus> NativeAudioDevice::queue_status(AudioDeviceFailu
 #endif
 }
 bool NativeAudioDevice::queue(const float* pcm,std::size_t count,AudioDeviceFailure& f){
-    f={};if(!impl_)return failure(f,AudioDeviceError::invalid_owner,"moved native audio device");auto& s=*impl_;if(!s.usable(f))return false;
-    std::uint32_t frames;if(!validate_audio_pcm(pcm,count,s.channels,frames,f))return false;
-    if(frames>UINT64_MAX-s.submitted)return failure(f,AudioDeviceError::host_capacity,"submitted frame counter overflow");
-    auto status=queue_status(f);if(!status)return false;if(frames>status->writable_frames)return failure(f,AudioDeviceError::buffer_full,"requested PCM exceeds writable endpoint frames");
+    return queue_with_receipt(pcm,count,f).has_value();
+}
+std::optional<AudioSubmission> NativeAudioDevice::queue_with_receipt(const float* pcm,std::size_t count,AudioDeviceFailure& f){
+    f={};if(!impl_){failure(f,AudioDeviceError::invalid_owner,"moved native audio device");return {};}
+    auto& s=*impl_;if(!s.usable(f))return {};
+    std::uint32_t frames;if(!validate_audio_pcm(pcm,count,s.channels,frames,f))return {};
+    if(frames>UINT64_MAX-s.submitted){failure(f,AudioDeviceError::host_capacity,"submitted frame counter overflow");return {};}
+    auto status=queue_status(f);if(!status)return {};
+    if(frames>status->writable_frames){failure(f,AudioDeviceError::buffer_full,"requested PCM exceeds writable endpoint frames");return {};}
 #ifdef _WIN32
-    BYTE* target=nullptr;if(!s.result(s.render->GetBuffer(frames,&target),AudioDeviceError::buffer_acquire,"IAudioRenderClient::GetBuffer",f))return false;
-    if(!target){HRESULT released=s.render->ReleaseBuffer(0,0);s.failed=true;return failure(f,AudioDeviceError::buffer_acquire,"nonnull render packet required",FAILED(released)?released:E_POINTER);}
+    BYTE* target=nullptr;if(!s.result(s.render->GetBuffer(frames,&target),AudioDeviceError::buffer_acquire,"IAudioRenderClient::GetBuffer",f))return {};
+    if(!target){HRESULT released=s.render->ReleaseBuffer(0,0);s.failed=true;failure(f,AudioDeviceError::buffer_acquire,"nonnull render packet required",FAILED(released)?released:E_POINTER);return {};}
     std::memcpy(target,pcm,count*sizeof(float));
-    if(!s.result(s.render->ReleaseBuffer(frames,0),AudioDeviceError::buffer_release,"IAudioRenderClient::ReleaseBuffer",f))return false;
-    s.submitted+=frames;return true;
+    if(!s.result(s.render->ReleaseBuffer(frames,0),AudioDeviceError::buffer_release,"IAudioRenderClient::ReleaseBuffer",f))return {};
+    const AudioSubmission receipt{s.submitted,frames,s.epoch};
+    s.submitted+=frames;return receipt;
 #else
-    return false;
+    return {};
 #endif
 }
 bool NativeAudioDevice::start(AudioDeviceFailure& f){

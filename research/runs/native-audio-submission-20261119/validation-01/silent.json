@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_audio_device.exe",
+    "--silent",
+    "{0.0.0.00000000}.{f71b35bf-438e-480f-858b-994d0e6707cb}",
+    "48000",
+    "2",
+    "3",
+    "1000000",
+    "exact"
+  ],
+  "at_utc": "2026-11-19T16:06:36.866252+00:00",
+  "completed_at_utc": "2026-11-19T16:06:36.934327+00:00",
+  "windows": "Windows-11-10.0.26300-SP0",
+  "exit": 0,
+  "stdout": "PASS pure format/PCM validation only; no device opened or audio generated\n{\"kind\":\"audio_submission_receipts\",\"actual_capacity_frames\":4800,\"epoch0_first\":{\"first_client_frame\":0,\"client_frames\":2400,\"reset_epoch\":0},\"epoch0_second\":{\"first_client_frame\":2400,\"client_frames\":2400,\"reset_epoch\":0},\"epoch1_first\":{\"first_client_frame\":0,\"client_frames\":1,\"reset_epoch\":1},\"after_bool_queue\":{\"submitted_frames\":2,\"reset_epoch\":1},\"accepted_submissions\":4,\"all_queued_samples_positive_zero\":true,\"scope\":\"host_buffer_submission_only_no_heard_time_or_drain_claim\"}\nPASS opt-in silent-only WASAPI lifecycle; initialrawposition=0 progressedrawposition=4040 frequency=384000 QPC100ns=377238195342 precise=1; no audible/game/movie-drain claim\n",
+  "stderr": "",
+  "executable_sha256": "74e33a5562cee6fce6820583e5672d97cebce0fa6d0db91dd38b1607aea21950",
+  "executable_after_sha256": "74e33a5562cee6fce6820583e5672d97cebce0fa6d0db91dd38b1607aea21950",
+  "source_sha256": {
+    "runtime/include/mka/audio_device.hpp": "df431fe8ac0e1727d554fd023e0234e79a394a135f2bd0508417fe74ea8bd931",
+    "runtime/src/native/audio_device.cpp": "00b4324cd8de940005bbb6af8f21df3ca05a662c022b94dd56ce0955b1b68cbe",
+    "tests/test_native_audio_device.cpp": "4485a87ad465957ebe67c37fec520b7e66d8b992078bf435fd0b1d7aceb1f60c",
+    "CMakeLists.txt": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+    "cmake/native_audio.cmake": "439cce74973e3b00fbbc621aaf1021cd70aa660f991e0bc2946f8f6892b2856d"
+  },
+  "test_policy": "Explicit exact observed shared-mode format;100ms requested test buffer; all positive-zero float samples; no settings/game/nonzero audio"
+}

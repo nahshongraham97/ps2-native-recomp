@@ -1,0 +1,43 @@
+{
+  "status": "PASS_NATIVE_AUDIO_SUBMISSION_RECEIPTS",
+  "source_sha256": {
+    "runtime/include/mka/audio_device.hpp": "df431fe8ac0e1727d554fd023e0234e79a394a135f2bd0508417fe74ea8bd931",
+    "runtime/src/native/audio_device.cpp": "00b4324cd8de940005bbb6af8f21df3ca05a662c022b94dd56ce0955b1b68cbe",
+    "tests/test_native_audio_device.cpp": "4485a87ad465957ebe67c37fec520b7e66d8b992078bf435fd0b1d7aceb1f60c",
+    "CMakeLists.txt": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+    "cmake/native_audio.cmake": "439cce74973e3b00fbbc621aaf1021cd70aa660f991e0bc2946f8f6892b2856d"
+  },
+  "executable_sha256": "74e33a5562cee6fce6820583e5672d97cebce0fa6d0db91dd38b1607aea21950",
+  "measurement": {
+    "kind": "audio_submission_receipts",
+    "actual_capacity_frames": 4800,
+    "epoch0_first": {
+      "first_client_frame": 0,
+      "client_frames": 2400,
+      "reset_epoch": 0
+    },
+    "epoch0_second": {
+      "first_client_frame": 2400,
+      "client_frames": 2400,
+      "reset_epoch": 0
+    },
+    "epoch1_first": {
+      "first_client_frame": 0,
+      "client_frames": 1,
+      "reset_epoch": 1
+    },
+    "after_bool_queue": {
+      "submitted_frames": 2,
+      "reset_epoch": 1
+    },
+    "accepted_submissions": 4,
+    "all_queued_samples_positive_zero": true,
+    "scope": "host_buffer_submission_only_no_heard_time_or_drain_claim"
+  },
+  "forbidden": [],
+  "limits": [
+    "Native client-buffer acceptance only; no game/audio identity/movie clock/heard frame/drain acceptance",
+    "All queued values +0.0f; no nonzero sound or driver/settings action",
+    "Device-loss/acquire/release failure/overflow branches source-reviewed, not fault injected"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "at_utc": "2026-11-19T16:05:23.925679+00:00",
+  "source_sha256": {
+    "runtime/include/mka/audio_device.hpp": "df431fe8ac0e1727d554fd023e0234e79a394a135f2bd0508417fe74ea8bd931",
+    "runtime/src/native/audio_device.cpp": "00b4324cd8de940005bbb6af8f21df3ca05a662c022b94dd56ce0955b1b68cbe",
+    "tests/test_native_audio_device.cpp": "4485a87ad465957ebe67c37fec520b7e66d8b992078bf435fd0b1d7aceb1f60c",
+    "CMakeLists.txt": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+    "cmake/native_audio.cmake": "439cce74973e3b00fbbc621aaf1021cd70aa660f991e0bc2946f8f6892b2856d"
+  },
+  "scope": "native Windows component; pure and read-only discovery only in this phase, no game or nonzero PCM"
+}

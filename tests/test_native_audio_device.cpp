@@ -1,6 +1,7 @@
 // Default mode is pure validation: no COM, endpoint access, device or sound.
 // --silent is opt-in ONLY and queues exactly zero float samples; no effects.
 #include "mka/audio_device.hpp"
+#include <bit>
 #include <cstdio>
 #include <cstdlib>
 #include <limits>
@@ -87,12 +88,32 @@ int main(int argc,char** argv){try{
     // Every value is positive zero. No waveform, effects, test tones or game assets.
     check(std::uint64_t(status->capacity_frames)*c.channels<=SIZE_MAX/sizeof(float),"silent fixture allocation extent");
     std::vector<float> silence(std::size_t(status->capacity_frames)*c.channels,0.0f);
-    check(device->queue(silence.data(),silence.size(),f),"prequeue only exact silence");
+    for(float value:silence)check(std::bit_cast<std::uint32_t>(value)==0,"all queued float samples are positive zero");
+    check(status->capacity_frames>=2,"queried host buffer must fit two nonempty receipt test submissions");
+    const std::uint32_t first_frames=status->capacity_frames/2;
+    const auto first_receipt=device->queue_with_receipt(silence.data(),std::size_t(first_frames)*c.channels,f);
+    check(first_receipt&&f.kind==AudioDeviceError::none&&first_receipt->first_client_frame==0&&
+          first_receipt->client_frames==first_frames&&first_receipt->reset_epoch==0,"first exact silent submission receipt");
+    const auto second_receipt=device->queue_with_receipt(silence.data()+std::size_t(first_frames)*c.channels,
+          std::size_t(status->capacity_frames-first_frames)*c.channels,f);
+    check(second_receipt&&f.kind==AudioDeviceError::none&&second_receipt->first_client_frame==first_frames&&
+          second_receipt->client_frames==status->capacity_frames-first_frames&&second_receipt->reset_epoch==0,
+          "second receipt contiguous through actual queried host capacity");
     auto full=device->queue_status(f);check(full&&full->submitted_frames==status->capacity_frames&&full->padding_frames==status->capacity_frames,"submitted vs padding explicit");
-    check(!device->queue(silence.data(),c.channels,f)&&f.kind==AudioDeviceError::buffer_full,"full queue rejects without overwrite");
+    check(!device->queue_with_receipt(silence.data(),c.channels,f)&&f.kind==AudioDeviceError::buffer_full,"full queue has no receipt or overwrite");
     full=device->queue_status(f);check(full&&full->submitted_frames==status->capacity_frames,"failed queue does not add submitted frames");
     NativeAudioDevice moved(std::move(*device));check(!device->queue_status(f)&&f.kind==AudioDeviceError::invalid_owner,"moved device cannot access COM");
-    AudioDeviceError wrong=AudioDeviceError::none;std::thread foreign([&]{AudioDeviceFailure local;wrong=moved.close(local)?AudioDeviceError::none:local.kind;});foreign.join();check(wrong==AudioDeviceError::wrong_thread,"foreign close retains resource for owner retry");
+    check(!device->queue_with_receipt(nullptr,0,f)&&f.kind==AudioDeviceError::invalid_owner,
+          "moved owner has no receipt before PCM validation");
+    AudioDeviceError wrong=AudioDeviceError::none,wrong_queue=AudioDeviceError::none;
+    std::thread foreign([&]{AudioDeviceFailure local;
+        auto receipt=moved.queue_with_receipt(nullptr,0,local);
+        wrong_queue=receipt?AudioDeviceError::none:local.kind;
+        wrong=moved.close(local)?AudioDeviceError::none:local.kind;});foreign.join();
+    check(wrong_queue==AudioDeviceError::wrong_thread,"foreign submission has no receipt before PCM validation");
+    check(wrong==AudioDeviceError::wrong_thread,"foreign close retains resource for owner retry");
+    full=moved.queue_status(f);check(full&&full->submitted_frames==status->capacity_frames&&full->reset_epoch==0,
+          "failed owner/thread/full submissions preserve sequence");
     check(moved.start(f),"caller explicit silent start");check(!moved.start(f)&&f.kind==AudioDeviceError::invalid_state,"duplicate start is not silent success");
     auto clock=moved.clock(f);check(clock&&clock->frequency&&clock->reset_epoch==0,"raw device clock ratio not submitted-as-played");
     auto advanced=*clock;bool progressed=false;
@@ -103,9 +124,35 @@ int main(int argc,char** argv){try{
     }
     check(progressed,"native rendering clock advances without equating submitted frames to playback");
     check(!moved.reset(f)&&f.kind==AudioDeviceError::invalid_state,"running reset rejected");
-    check(moved.stop(f),"explicit stop");check(!moved.stop(f)&&f.kind==AudioDeviceError::invalid_state,"duplicate stop named");check(moved.reset(f),"explicit flush/reset");
+    check(moved.stop(f),"explicit stop");check(!moved.stop(f)&&f.kind==AudioDeviceError::invalid_state,"duplicate stop named");
+    const auto stopped=moved.queue_status(f);check(stopped&&stopped->submitted_frames==status->capacity_frames&&
+          stopped->reset_epoch==0&&!stopped->started,"Stop retains submitted sequence and epoch");
+    check(moved.reset(f),"explicit flush/reset");
     auto reset=moved.queue_status(f);check(reset&&reset->padding_frames==0&&reset->submitted_frames==0&&reset->reset_epoch==1,"reset separates epoch from submitted counters");
-    check(moved.close(f),"owner closes COM audio services");check(!moved.clock(f)&&f.kind==AudioDeviceError::closed,"closed owner cannot report fictional clock");
+    const auto reset_receipt=moved.queue_with_receipt(silence.data(),c.channels,f);
+    check(reset_receipt&&reset_receipt->first_client_frame==0&&reset_receipt->client_frames==1&&
+          reset_receipt->reset_epoch==1,"Reset starts frame zero in new receipt epoch");
+    check(moved.queue(silence.data(),c.channels,f),"legacy bool queue shares receipt submission implementation");
+    const auto shared=moved.queue_status(f);check(shared&&shared->submitted_frames==2&&shared->reset_epoch==1,
+          "bool and receipt queues advance one shared client sequence");
+    check(moved.close(f),"owner closes COM audio services");
+    check(!moved.queue_with_receipt(nullptr,0,f)&&f.kind==AudioDeviceError::closed,
+          "closed owner has no receipt before PCM validation");check(!moved.clock(f)&&f.kind==AudioDeviceError::closed,"closed owner cannot report fictional clock");
+    // Three actual returned receipts plus the fourth accepted bool submission's
+    // shared counter; do not invent a receipt value from the bool-only API.
+    std::printf("{\"kind\":\"audio_submission_receipts\",\"actual_capacity_frames\":%u,"
+                "\"epoch0_first\":{\"first_client_frame\":%llu,\"client_frames\":%llu,\"reset_epoch\":%llu},"
+                "\"epoch0_second\":{\"first_client_frame\":%llu,\"client_frames\":%llu,\"reset_epoch\":%llu},"
+                "\"epoch1_first\":{\"first_client_frame\":%llu,\"client_frames\":%llu,\"reset_epoch\":%llu},"
+                "\"after_bool_queue\":{\"submitted_frames\":%llu,\"reset_epoch\":%llu},"
+                "\"accepted_submissions\":4,\"all_queued_samples_positive_zero\":true,"
+                "\"scope\":\"host_buffer_submission_only_no_heard_time_or_drain_claim\"}\n",
+        status->capacity_frames,
+        (unsigned long long)first_receipt->first_client_frame,(unsigned long long)first_receipt->client_frames,(unsigned long long)first_receipt->reset_epoch,
+        (unsigned long long)second_receipt->first_client_frame,(unsigned long long)second_receipt->client_frames,(unsigned long long)second_receipt->reset_epoch,
+        (unsigned long long)reset_receipt->first_client_frame,(unsigned long long)reset_receipt->client_frames,(unsigned long long)reset_receipt->reset_epoch,
+        (unsigned long long)shared->submitted_frames,(unsigned long long)shared->reset_epoch);
+    check(std::fflush(stdout)==0&&!std::ferror(stdout),"submission receipt measurement output");
     std::printf("PASS opt-in silent-only WASAPI lifecycle; initialrawposition=%llu progressedrawposition=%llu frequency=%llu QPC100ns=%llu precise=%d; no audible/game/movie-drain claim\n",(unsigned long long)clock->position,(unsigned long long)advanced.position,(unsigned long long)advanced.frequency,(unsigned long long)advanced.qpc_100ns,int(advanced.precise));return 0;
 #else
     throw std::runtime_error("silent WASAPI fixture requires Windows");

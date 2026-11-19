@@ -1,0 +1,26 @@
+{
+  "scope": "Freshly observed role-default endpoint for zero-only component test, not persistent game configuration",
+  "default": {
+    "endpoint_id_utf8": "{0.0.0.00000000}.{f71b35bf-438e-480f-858b-994d0e6707cb}",
+    "default_for_role": true,
+    "sample_rate": 48000,
+    "channels": 2,
+    "channel_mask": 3,
+    "container_bits": 32,
+    "valid_bits": 32,
+    "encoding": "ieee_float",
+    "mix_failure": {
+      "kind": 0,
+      "native_code": 0,
+      "operation": ""
+    }
+  },
+  "source_sha256": {
+    "runtime/include/mka/audio_device.hpp": "df431fe8ac0e1727d554fd023e0234e79a394a135f2bd0508417fe74ea8bd931",
+    "runtime/src/native/audio_device.cpp": "00b4324cd8de940005bbb6af8f21df3ca05a662c022b94dd56ce0955b1b68cbe",
+    "tests/test_native_audio_device.cpp": "4485a87ad465957ebe67c37fec520b7e66d8b992078bf435fd0b1d7aceb1f60c",
+    "CMakeLists.txt": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+    "cmake/native_audio.cmake": "439cce74973e3b00fbbc621aaf1021cd70aa660f991e0bc2946f8f6892b2856d"
+  },
+  "executable_sha256": "74e33a5562cee6fce6820583e5672d97cebce0fa6d0db91dd38b1607aea21950"
+}
