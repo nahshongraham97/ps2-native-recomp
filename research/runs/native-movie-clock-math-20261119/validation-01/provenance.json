@@ -1,0 +1,20 @@
+{
+  "at_utc": "2026-11-19T17:01:22.590995+00:00",
+  "fork_head": "e0f5ea2d8ab438d162e059851004878c140ea82a",
+  "parent_head": "bc568ee6c3099b480d7fb85e62a7c1b3a1e617b0",
+  "source_sha256": {
+    "runtime/include/mka/movie_clock_math.hpp": "9a7c028b6cea9acf474b5d643f9ca5f93b19a02605a615b576fb448c4dfdfaf5",
+    "runtime/src/native/movie_clock_math.cpp": "38e4bc67350612a66855e4238fff25f9d4597f5e1d44f32f350db5be279d495a",
+    "tests/test_movie_clock_math.cpp": "ce7908c7597962497bcf20060dd4daedd0d4a0c3168be537ee983f50f7c2a4d9",
+    "CMakeLists.txt": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+    "cmake/native_media.cmake": "c03ccbce5eaa6cfbbae18ae14921dd2cce40302e13adaa35f06a0e83162241f4"
+  },
+  "preserved_dirty_sha256": {
+    "runtime/src/iop/mcserv.cpp": "ad2731a341409d87ffe1b171e99f28d7cedc5004aaf375a565d78673333414fb",
+    "runtime/src/iop/msl_native.cpp": "756cfb3867ebb440223ddb8ab6fe441ad6f9f54d35e4119a8342f8dd9063bb23"
+  },
+  "runner_sha256": "603a8f5d3e73ec0fd87ec47e9ce250afc19ed4d9ddddd403e6a8837c7c204216",
+  "cache_before_sha256": "d320c4e3663feec551cd3a3b4a8712e915fad196ddc86c7f880c07d4bd2aa3f4",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "scope": "Pure integer helpers only; no game, renderer, audio, model, driver or settings operation"
+}

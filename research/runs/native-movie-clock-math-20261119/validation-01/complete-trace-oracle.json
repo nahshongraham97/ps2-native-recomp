@@ -1,0 +1,18 @@
+{
+  "status": "PASS_COMPLETE_NATIVE_CLOCK_MATH_TRACE",
+  "trace_rows": 422,
+  "error_counts": {
+    "none": 413,
+    "overflow": 4,
+    "zero_divisor": 2,
+    "invalid_denominator": 3
+  },
+  "negative_checks": 12,
+  "source_verifier_sha256": "48808f0d2065ae00504ddc1be92e3ce58533db8ec4296eeecb59bf6d09f13ee7",
+  "executed_receipt_sha256": "8018f3baa440b7d21bf51d735b6af681095d089e16178a5752b0a9ccbcd92f10",
+  "executable_sha256": "46aaba549ca80c31ae636f32a9829142f9a949d942952696fd4e37decb6e4bab",
+  "limits": [
+    "Native wide integer helpers only; no full clock/filter/player or game proof",
+    "Source low64 wrapping/saturation is deliberately not retained; software-double timecode converter is unchanged"
+  ]
+}
