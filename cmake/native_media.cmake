@@ -30,6 +30,7 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/movie_timecode.cpp
     runtime/src/native/movie_clock_history.cpp
     runtime/src/native/movie_clock_math.cpp
+    runtime/src/native/movie_clock_filter.cpp
     runtime/src/native/movie_control.cpp
     runtime/src/native/movie_catalog.cpp
     runtime/src/native/movie_source.cpp
@@ -147,3 +148,10 @@ add_executable(test_native_movie_clock_history_clone EXCLUDE_FROM_ALL
     tests/test_movie_clock_history_clone.cpp runtime/src/native/movie_clock_history.cpp)
 target_include_directories(test_native_movie_clock_history_clone PRIVATE runtime/include)
 target_compile_features(test_native_movie_clock_history_clone PRIVATE cxx_std_20)
+
+# Pure filter algorithm and owned history; no media/device/runtime linkage.
+add_executable(test_native_movie_clock_filter EXCLUDE_FROM_ALL
+    tests/test_movie_clock_filter.cpp runtime/src/native/movie_clock_filter.cpp
+    runtime/src/native/movie_clock_history.cpp)
+target_include_directories(test_native_movie_clock_filter PRIVATE runtime/include)
+target_compile_features(test_native_movie_clock_filter PRIVATE cxx_std_20)

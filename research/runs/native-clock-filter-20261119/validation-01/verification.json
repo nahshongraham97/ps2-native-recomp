@@ -1,0 +1,64 @@
+{
+  "status": "PASS_NATIVE_CLOCK_FILTER_COMPONENT",
+  "source_after_sha256": {
+    "runtime/include/mka/movie_clock_filter.hpp": "a09c54636fcca9438666305b6443314abb12ecf17e0ef0e6078afb47b899caa6",
+    "runtime/src/native/movie_clock_filter.cpp": "0a30cf57e33074d102d10a8c656725c8b35a7b49cbbd5469640f7116ebc6021a",
+    "runtime/include/mka/movie_clock_history.hpp": "4d4efa5ceb223358aaf1db385c4a20116ecfeb4a4fee04914727b995ec8f056c",
+    "runtime/src/native/movie_clock_history.cpp": "77fe50b9b6edf1af03c403c263d73b59291c40a774534fcdfc8c68ef03bb5f78",
+    "runtime/include/mka/movie_clock_math.hpp": "9a7c028b6cea9acf474b5d643f9ca5f93b19a02605a615b576fb448c4dfdfaf5",
+    "tests/test_movie_clock_filter.cpp": "9414ca97f398a04c4968e4312a4b0d6d27069de2d7ea85cf340c5fbfb4f1f763",
+    "tests/generated/movie_clock_filter_plan.inc": "516d77137f1e633ed638b316418d9b6687905a2e3d70a203840bfcf05fd7c960",
+    "CMakeLists.txt": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+    "cmake/native_media.cmake": "ba2c59dc86d9c5bdc6e57650dd5726b097a4aa3f3d1cd0100b456725a6934edd"
+  },
+  "executable_sha256": "8a653593f6bc4b7b48e65e38d00c989b8e2ce55a6afb5895df8478686180de2c",
+  "oracle": {
+    "status": "PASS_COMPLETE_NATIVE_FILTER_TRACE",
+    "trace_rows": 440,
+    "cases": 25,
+    "error_counts": {
+      "none": 427,
+      "invalid_rational": 4,
+      "unsupported_mode": 2,
+      "invalid_config": 4,
+      "overflow": 3
+    },
+    "branch_counts": {
+      "first_offset": 18,
+      "insert": 369,
+      "paused": 6,
+      "inactive_reanchor": 2,
+      "last_pair_clamp": 7,
+      "restart_offset": 1,
+      "mode0_activation_without_reanchor": 2,
+      "correction": 4,
+      "large_reset": 2,
+      "bypass": 3
+    },
+    "windows": [
+      1,
+      10,
+      61,
+      256
+    ],
+    "negative_checks": {
+      "trace_mutations": 13,
+      "metadata_mutations": 11,
+      "json_mutations": 2
+    },
+    "model_sha256": "a4b55f70a70accecc9d7dd56bb67568187adff20627871a9182f8039913e8b56",
+    "verifier_sha256": "70d6a8b9d3e25bcff84939388aae0ca0ade3aafb3f7c5ce8c925974f55c5ee49",
+    "execution_receipt_sha256": "e78312747bda4126445cc21fe5c3c8c75f8f5492bbb0beac51fac65e6bc07cef",
+    "executable_sha256": "8a653593f6bc4b7b48e65e38d00c989b8e2ce55a6afb5895df8478686180de2c",
+    "limits": [
+      "Pinned model bounded mode0/1 integer filter only; no native masterclock/player/game/output proof",
+      "Allocation faults/moved ownership require separate native fixture; no synthetic receipt is native evidence"
+    ]
+  },
+  "forbidden": [],
+  "cache_after_sha256": "d320c4e3663feec551cd3a3b4a8712e915fad196ddc86c7f880c07d4bd2aa3f4",
+  "limits": [
+    "No real clock/master-time, diagnostics-buffer, scheduler, player/output or game binding",
+    "Allocation and counter-overflow branches not fault-injected; moved-owner/lifetime assertions executed separately"
+  ]
+}

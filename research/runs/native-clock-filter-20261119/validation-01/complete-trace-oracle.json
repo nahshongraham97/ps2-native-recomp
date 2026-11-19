@@ -1,0 +1,43 @@
+{
+  "status": "PASS_COMPLETE_NATIVE_FILTER_TRACE",
+  "trace_rows": 440,
+  "cases": 25,
+  "error_counts": {
+    "none": 427,
+    "invalid_rational": 4,
+    "unsupported_mode": 2,
+    "invalid_config": 4,
+    "overflow": 3
+  },
+  "branch_counts": {
+    "first_offset": 18,
+    "insert": 369,
+    "paused": 6,
+    "inactive_reanchor": 2,
+    "last_pair_clamp": 7,
+    "restart_offset": 1,
+    "mode0_activation_without_reanchor": 2,
+    "correction": 4,
+    "large_reset": 2,
+    "bypass": 3
+  },
+  "windows": [
+    1,
+    10,
+    61,
+    256
+  ],
+  "negative_checks": {
+    "trace_mutations": 13,
+    "metadata_mutations": 11,
+    "json_mutations": 2
+  },
+  "model_sha256": "a4b55f70a70accecc9d7dd56bb67568187adff20627871a9182f8039913e8b56",
+  "verifier_sha256": "70d6a8b9d3e25bcff84939388aae0ca0ade3aafb3f7c5ce8c925974f55c5ee49",
+  "execution_receipt_sha256": "e78312747bda4126445cc21fe5c3c8c75f8f5492bbb0beac51fac65e6bc07cef",
+  "executable_sha256": "8a653593f6bc4b7b48e65e38d00c989b8e2ce55a6afb5895df8478686180de2c",
+  "limits": [
+    "Pinned model bounded mode0/1 integer filter only; no native masterclock/player/game/output proof",
+    "Allocation faults/moved ownership require separate native fixture; no synthetic receipt is native evidence"
+  ]
+}
