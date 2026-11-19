@@ -35,15 +35,15 @@ int main(int argc,char** argv){
         check(std::filesystem::create_directories(out),"output must be new");
         MovieDecodeFailure f;
         check(!NativeMovieDecoder::open(out/"absent-libraries",assets/"LOGON.SFD",f)&&f.kind==MovieDecodeError::library_load,"missing native codec libraries fail by name");
-        check(!NativeMovieDecoder::open(libs,out/"absent-movie.sfd",f)&&f.kind==MovieDecodeError::file_io,"missing movie fails through NativeFile");
+        check(!NativeMovieDecoder::open(libs,out/"absent-movie.sfd",f)&&f.kind==MovieDecodeError::source_index&&f.asset_failure.kind==MovieAssetError::invalid_host_path&&bool(f.asset_failure.host_error)&&f.operation=="exact-path native movie catalog binding","missing movie fails exact catalog/index association");
         const char invalid[]="this is not a movie";save(out/"invalid.sfd",invalid,sizeof(invalid));
-        check(!NativeMovieDecoder::open(libs,out/"invalid.sfd",f)&&f.kind==MovieDecodeError::demux,"invalid media never becomes successful empty movie");
-        // Invalid media through an already-open asset must retain the same strict demux failure.
+        check(!NativeMovieDecoder::open(libs,out/"invalid.sfd",f)&&f.kind==MovieDecodeError::source_index&&f.source_failure.kind==MoviePesError::bad_prefix&&f.source_failure.offset==0&&f.operation=="native movie PES index","invalid media fails exact source prefix validation");
+        // Invalid media through an already-open asset must retain exact source-index failure.
         MovieAssetFailure af;
         auto invalid_store=NativeMovieAssetStore::create(out,{{"invalid.sfd","invalid.sfd"}},af);
         check(bool(invalid_store),"invalid media catalog fixture");
         auto invalid_asset=invalid_store->open("invalid.sfd",af);check(bool(invalid_asset),"opened invalid media fixture");
-        check(!NativeMovieDecoder::open(libs,std::move(*invalid_asset),f)&&f.kind==MovieDecodeError::demux,"catalog media validation not bypassed");
+        check(!NativeMovieDecoder::open(libs,std::move(*invalid_asset),f)&&f.kind==MovieDecodeError::source_index&&f.source_failure.kind==MoviePesError::bad_prefix&&f.source_failure.offset==0&&f.operation=="native movie PES index","catalog source prefix validation not bypassed");
         check(!invalid_asset->valid(),"failed decoder consumed owned asset without reopen");
         check(!NativeMovieDecoder::open(libs,std::move(*invalid_asset),f)&&f.kind==MovieDecodeError::invalid_owner&&f.asset_failure.kind==MovieAssetError::moved_asset,"moved asset fails by exact owner error");
         for(const auto& expected:native_movie_oracle::assets){

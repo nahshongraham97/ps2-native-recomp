@@ -1,0 +1,13 @@
+{
+  "name": "subtitle-titles",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_subtitles.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\TITLEN.SFD",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\TITLEW.SFD"
+  ],
+  "exe_sha256": "1b1574698f9daed5f6c203d91a9c4a9eaf41af56aa1183baeaacb05d006a4983",
+  "exit": 0,
+  "stdout": "[subtitle-pass] synthetic ownership/headers/selection/cache/malformed/12000-events\n[subtitle-pass] native timeline 10000 independent128 boundary cases\n[subtitle-pass] explicit real asset/tree SHA256, seven events and raw language bytes\n[subtitle-pass] explicit real asset/tree SHA256, seven events and raw language bytes\n",
+  "stderr": "",
+  "at_utc": "2026-11-19T12:37:30.291361+00:00"
+}

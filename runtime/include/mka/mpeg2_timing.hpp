@@ -30,6 +30,9 @@ struct Mpeg2GopTiming {
     bool operator==(const Mpeg2GopTiming&) const = default;
 };
 struct Mpeg2PictureTiming {
+    // FIRST byte of 00 00 01 00, relative to this parse() input only.
+    // Not a file/PES offset, timestamp or inherited sequence property.
+    std::uint64_t packet_picture_offset=0;
     Mpeg2SequenceTiming sequence;
     std::optional<Mpeg2GopTiming> gop; // absence is explicit, never zero timecode
     std::uint16_t temporal_reference=0;

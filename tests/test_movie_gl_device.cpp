@@ -84,7 +84,14 @@ int main(int argc,char** argv){try{
     for(unsigned i=0;i<3;++i)video.planes[i]=bytes(directory/("LOGON.SFD.first.plane"+std::to_string(i)));
     video.source_pts={0,1,90000,true};video.timestamp=video.source_pts;
     video.codec_timing={{30000,1001},{30,1},{60000,1001},0x123456u};
-    const auto expected_timing=video.codec_timing; // Synthetic ownership sentinel, not a selected rate.
+    Mpeg2PictureTiming synthetic_picture;synthetic_picture.packet_picture_offset=(1ull<<34)+37;
+    synthetic_picture.temporal_reference=981;synthetic_picture.coding_type=3;
+    video.codec_timing.picture=synthetic_picture;
+    MoviePictureSource synthetic_source;synthetic_source.packet_es_begin=(1ull<<36)+11;
+    synthetic_source.picture_es_byte=synthetic_source.packet_es_begin+synthetic_picture.packet_picture_offset;
+    synthetic_source.pes={0xe0,(1ull<<37)+2,(1ull<<37)+20,(1ull<<37)+2030,(1ull<<35)+1,(1ull<<35)+2011,(1ull<<33)-1,123456};
+    synthetic_source.quarter_pts=((1ull<<33)-1)>>2;video.codec_timing.picture_source=synthetic_source;
+    const auto expected_timing=video.codec_timing; // Synthetic ownership sentinel, not an actual source/selected rate.
     // Extracted plane files contain no SAR; preserve unknown rather than
     // attributing an invented aspect to the original source.
     auto converted=convert_movie_yuv420(video,*table,color_error);check(bool(converted),"actual decoded logo -> native converted owned RGBA");
@@ -102,7 +109,7 @@ int main(int argc,char** argv){try{
     glGetIntegerv(GL_UNPACK_SKIP_ROWS,&value);check(value==3,"unpack skip rows restored");glGetIntegerv(GL_UNPACK_SKIP_PIXELS,&value);check(value==2,"unpack skip pixels restored");
     glGetIntegerv(GL_UNPACK_SWAP_BYTES,&value);check(value==GL_TRUE,"unpack byte order restored");bind(0x88ec,0);erase(1,&pbo);
     check(uploaded.frame->metadata().source_pts.value==0&&uploaded.frame->metadata().timestamp.denominator==90000,"GPU frame retains timing without scheduling it");
-    video.codec_timing={};check(uploaded.frame->metadata().codec_timing==expected_timing,"all independent rate values and raw GOP code survive source mutation");
+    video.codec_timing={};check(uploaded.frame->metadata().codec_timing==expected_timing,"all independent rate, GOP, picture offset and PES provenance values survive source mutation");
     converted->rgba.clear();video.planes={};converted.reset(); // GPU resource has no CPU data dependency.
     RECT client{};check(GetClientRect(WindowFromDC(wglGetCurrentDC()),&client)!=0,"actual destination size");
     MovieHostLayout layout{0x200000003ull,unsigned(client.right),unsigned(client.bottom),MovieAspectMode::explicit_display_aspect,640,448,MovieWindowPolicy::centered_fit};

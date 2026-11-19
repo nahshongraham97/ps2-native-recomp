@@ -1,0 +1,11 @@
+{
+  "name": "pes-index-synthetic",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_pes_index.exe"
+  ],
+  "exe_sha256": "991b89d9f7e6226bcdcdca3748020b97e431e71080db8986000e766c66ee6d2a",
+  "exit": 0,
+  "stdout": "SYNTHETIC PASS\n",
+  "stderr": "",
+  "at_utc": "2026-11-19T12:37:40.886061+00:00"
+}

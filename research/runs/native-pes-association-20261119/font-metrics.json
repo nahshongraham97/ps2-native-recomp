@@ -1,0 +1,12 @@
+{
+  "name": "font-metrics",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_font_metrics.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MKDA.PAK"
+  ],
+  "exe_sha256": "8a6f2b68d27dea62d08627679ac01391557192b9c09d425852ada2653569446c",
+  "exit": 0,
+  "stdout": "font-metrics actual glyphs=224 float_fields=2016 sha256=b91b6ee00f3bed46a1e89471c247ea659b88af927d7bd9576311b57fd0cfd497 space=6 glyph0_advance=7\nPASS owned native metrics, exact retail fields, malformed/lifetime/dynamic-capacity checks; no atlas/layout/font-selection/render/game acceptance\n",
+  "stderr": "",
+  "at_utc": "2026-11-19T12:37:38.123786+00:00"
+}

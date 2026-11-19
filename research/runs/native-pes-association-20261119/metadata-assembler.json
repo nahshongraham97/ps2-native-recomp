@@ -1,0 +1,12 @@
+{
+  "name": "metadata-assembler",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_metadata.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2"
+  ],
+  "exe_sha256": "8e2cccaf1b7fc52a984d7cc7aa3358b4e40985a43a0831f9b9a779f47ad67c04",
+  "exit": 0,
+  "stdout": "actual assets=38 headers=38 ordinary=40 events=14\nPASS owned native metadata assembly; no player/callback execution\n",
+  "stderr": "",
+  "at_utc": "2026-11-19T12:37:40.574098+00:00"
+}

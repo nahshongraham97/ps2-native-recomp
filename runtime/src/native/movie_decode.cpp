@@ -76,20 +76,23 @@ MovieTimestamp timestamp(std::int64_t value,AVRational base){
 }
 struct NativeMovieDecoder::Impl {
     Api api;
-    content::NativeFile file;
-    std::optional<NativeMovieAsset> asset;
+    std::optional<NativeMoviePesIndex> source_index;
+    std::optional<MovieSourceCursor> source_file;
+    std::optional<MovieEsReader> source_video;
+    std::uint8_t source_stream_id=0;
     MovieAssetFailure asset_error;
+    MoviePesFailure source_error;
+    bool source_failure(MovieDecodeError kind,const char* operation,MovieDecodeFailure& f){
+        f={kind,static_cast<int>(source_error.kind),operation};f.source_failure=source_error;f.asset_failure=source_error.asset;return false;
+    }
     content::FileRead read_bytes(void* data,std::size_t size){
-        return asset?asset->read(data,size,asset_error):file.read(data,size);
+        auto r=source_file->read(data,size,source_error);asset_error=source_error.asset;return r;
     }
     bool length(std::uint64_t& n,std::error_code& ec){
-        if(!asset)return file.length(n,ec);
-        auto value=asset->length(asset_error);ec=asset_error.host_error;if(!value)return false;n=*value;return true;
+        auto value=source_file->length(source_error);ec=source_error.asset.host_error;asset_error=source_error.asset;if(!value)return false;n=*value;return true;
     }
     bool seek_position(std::int64_t offset,content::SeekOrigin origin,std::uint64_t& n,std::error_code& ec){
-        if(!asset)return file.seek(offset,origin,ec)&&file.position(n,ec);
-        if(!asset->seek(offset,origin,asset_error)){ec=asset_error.host_error;return false;}
-        auto value=asset->position(asset_error);ec=asset_error.host_error;if(!value)return false;n=*value;return true;
+        const bool ok=source_file->seek(offset,origin,source_error);ec=source_error.asset.host_error;asset_error=source_error.asset;if(!ok)return false;n=source_file->position();return true;
     }
     AVIOContext* io=nullptr;
     AVFormatContext* format=nullptr;
@@ -104,8 +107,9 @@ struct NativeMovieDecoder::Impl {
         const Impl* owner=nullptr;
         std::uint64_t serial=0;
         Mpeg2PictureTiming picture;
+        MoviePictureSource source;
     };
-    struct PendingPicture {std::uint64_t serial;Mpeg2PictureTiming picture;};
+    struct PendingPicture {std::uint64_t serial;Mpeg2PictureTiming picture;MoviePictureSource source;};
     std::unordered_map<const std::uint8_t*,PendingPicture> pending_pictures;
     std::uint64_t picture_serial=0;
     static void free_picture_tag(void*,std::uint8_t* data) noexcept {
@@ -129,7 +133,7 @@ struct NativeMovieDecoder::Impl {
         }
         const auto* tag=reinterpret_cast<const PictureTag*>(ref->data);
         if(tag->magic!=PictureTag::magic_value||tag->owner!=this||!tag->serial||
-           tag->serial!=it->second.serial||scratch->opaque!=tag||tag->picture!=it->second.picture){
+           tag->serial!=it->second.serial||scratch->opaque!=tag||tag->picture!=it->second.picture||tag->source!=it->second.source){
             f={MovieDecodeError::timing_association,0,"native picture tag type/owner/serial/value mismatch"};return false;
         }
         // MPEG2 coding_type 1/2/3 and AVPictureType I/P/B share the documented
@@ -139,6 +143,7 @@ struct NativeMovieDecoder::Impl {
             f={MovieDecodeError::timing_association,0,"native picture tag disagrees with codec output picture type"};return false;
         }
         frame.codec_timing.picture=tag->picture;
+        frame.codec_timing.picture_source=tag->source;
         pending_pictures.erase(it);
         return true;
     }
@@ -186,6 +191,12 @@ struct NativeMovieDecoder::Impl {
         if(r<0){f={MovieDecodeError::decode,r,"avcodec_parameters_to_context"};return false;}
         stream.decoder->pkt_timebase=source->time_base;
         if(source->codecpar->codec_type==AVMEDIA_TYPE_VIDEO){
+            if(source->id<0x1e0||source->id>0x1ef){
+                f={MovieDecodeError::source_association,source->id,"unverified MPEGPS video stream ID encoding"};return false;
+            }
+            source_stream_id=static_cast<std::uint8_t>(source->id&0xff);
+            source_video=source_index->reader(source_stream_id,source_error);
+            if(!source_video)return source_failure(MovieDecodeError::source_association,"MPEGPS video stream absent from same-file PES index",f);
             stream.decoder->flags|=AV_CODEC_FLAG_COPY_OPAQUE;
             if(stream.decoder->extradata_size<0||
                (stream.decoder->extradata_size&&!stream.decoder->extradata)){
@@ -257,7 +268,7 @@ struct NativeMovieDecoder::Impl {
             api.av_frame_unref_p(scratch);
         }
     }
-    bool send(Stream& stream,const AVPacket* data,MovieDecodeFailure& f){
+    bool send(Stream& stream,const AVPacket* data,MovieDecodeFailure& f,std::optional<std::uint64_t> packet_es_begin={}){
         if(stream.index!=video.index){
             const int sent=api.avcodec_send_packet_p(stream.decoder,data);
             if(sent<0){f={MovieDecodeError::decode,sent,"avcodec_send_packet"};return false;}
@@ -279,14 +290,23 @@ struct NativeMovieDecoder::Impl {
             if(picture_serial==std::numeric_limits<std::uint64_t>::max()){
                 f={MovieDecodeError::timing_association,0,"native picture serial exhausted"};return false;
             }
+            if(!packet_es_begin||picture->packet_picture_offset>static_cast<std::uint64_t>(data->size)||
+               static_cast<std::uint64_t>(data->size)-picture->packet_picture_offset<4||
+               picture->packet_picture_offset>UINT64_MAX-*packet_es_begin){
+                f={MovieDecodeError::source_association,0,"invalid native picture prefix source offset"};return false;
+            }
+            const auto picture_es_byte=*packet_es_begin+picture->packet_picture_offset;
+            auto provenance=source_index->lookup_picture_prefix(source_stream_id,picture_es_byte,source_error);
+            if(!provenance)return source_failure(MovieDecodeError::source_association,"native picture prefix source range",f);
             auto tag=std::make_unique<PictureTag>();tag->owner=this;tag->serial=++picture_serial;tag->picture=*picture;
+            tag->source={*packet_es_begin,picture_es_byte,*provenance,provenance->quarter_pts()};
             auto* bytes=reinterpret_cast<std::uint8_t*>(tag.get());
             auto* ref=api.av_buffer_create_p(bytes,sizeof(PictureTag),free_picture_tag,nullptr,AV_BUFFER_FLAG_READONLY);
             // Public buffer.h: failure leaves data untouched. unique_ptr frees
             // failure; successful AVBuffer takes sole deletion responsibility.
             if(!ref){f={MovieDecodeError::allocation,0,"native picture AVBuffer ownership"};return false;}
             auto* raw=tag.release();owned_ref.reset(ref);
-            const auto inserted=pending_pictures.emplace(bytes,PendingPicture{raw->serial,raw->picture});
+            const auto inserted=pending_pictures.emplace(bytes,PendingPicture{raw->serial,raw->picture,raw->source});
             if(!inserted.second){f={MovieDecodeError::timing_association,0,"native picture tag address reused while pending"};return false;}
             registered=bytes;annotated.opaque=raw;annotated.opaque_ref=ref;
         }
@@ -298,6 +318,17 @@ struct NativeMovieDecoder::Impl {
         return receive(stream,f);
     }
     bool send_packet(Stream& stream,MovieDecodeFailure& f){
+        std::optional<std::uint64_t> packet_es_begin;
+        if(stream.index==video.index){
+            if(packet->size<0||(packet->size&&!packet->data)){
+                f={MovieDecodeError::source_validation,0,"invalid original video packet extent"};return false;
+            }
+            packet_es_begin=source_video->position();
+            // Validate the FULL unsplit packet exactly once. Terminal control
+            // splitting below must neither repeat nor omit these source bytes.
+            if(!source_video->validate_next({packet->data,static_cast<std::size_t>(packet->size)},source_error))
+                return source_failure(MovieDecodeError::source_validation,"original video packet does not match next indexed ES bytes",f);
+        }
         // The pinned parser includes SEQ_END_CODE in the final picture packet,
         // but its strict decoder counts those32bits as excess slice bits.
         // The same decoder explicitly supports the standalone4-byte marker.
@@ -305,7 +336,7 @@ struct NativeMovieDecoder::Impl {
         // and ordering, keep picture timestamps on the picture, invent none
         // for the non-picture control packet. No error flags are relaxed.
         if(stream.index!=video.index||packet->size<=4||
-           std::memcmp(packet->data+packet->size-4,"\0\0\1\267",4)!=0)return send(stream,packet,f);
+           std::memcmp(packet->data+packet->size-4,"\0\0\1\267",4)!=0)return send(stream,packet,f,packet_es_begin);
         const auto release=[&](AVPacket* p){api.av_packet_free_p(&p);};
         std::unique_ptr<AVPacket,decltype(release)> part(api.av_packet_alloc_p(),release);
         if(!part){f={MovieDecodeError::allocation,0,"terminal sequence packet"};return false;}
@@ -317,7 +348,7 @@ struct NativeMovieDecoder::Impl {
             if(r<0){f={MovieDecodeError::allocation,r,"terminal sequence packet ownership"};return false;}
             std::memcpy(part->data,packet->data+(piece?body_size:0),piece?4:body_size);
             if(piece){part->pts=part->dts=AV_NOPTS_VALUE;part->duration=0;}
-            if(!send(stream,part.get(),f))return false;
+            if(!send(stream,part.get(),f,packet_es_begin))return false;
         }
         std::fprintf(stderr,"[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=%d)\n",body_size);
         return true;
@@ -327,19 +358,29 @@ NativeMovieDecoder::NativeMovieDecoder(std::unique_ptr<Impl> p):impl_(std::move(
 NativeMovieDecoder::~NativeMovieDecoder()=default;
 NativeMovieDecoder::NativeMovieDecoder(NativeMovieDecoder&&)noexcept=default;
 NativeMovieDecoder& NativeMovieDecoder::operator=(NativeMovieDecoder&&)noexcept=default;
-std::unique_ptr<NativeMovieDecoder> NativeMovieDecoder::open(const std::filesystem::path& libraries,const std::filesystem::path& asset,MovieDecodeFailure& f){
+std::unique_ptr<NativeMovieDecoder> NativeMovieDecoder::open(const std::filesystem::path& libraries,const std::filesystem::path& path,MovieDecodeFailure& f){
     f={};try{
-        auto s=std::make_unique<Impl>();if(!s->api.load(libraries,f))return {};
-        std::error_code ec;if(!s->file.open(asset,ec)){f={MovieDecodeError::file_io,ec.value(),"NativeFile::open"};return {};}
-        return finish_open(std::move(s),f);
-    }catch(const std::bad_alloc&){f={MovieDecodeError::allocation,0,"native movie ownership"};}
-     catch(const std::length_error&){f={MovieDecodeError::allocation,0,"native movie host capacity"};}
+        std::error_code ec;const auto absolute=std::filesystem::absolute(path,ec);
+        if(ec||path.empty()||absolute.filename().empty()){f={MovieDecodeError::source_index,ec.value(),"invalid exact movie source path"};return {};}
+        const auto name=absolute.filename().u8string();const std::string relative(name.begin(),name.end());
+        MovieAssetFailure why;auto store=NativeMovieAssetStore::create(absolute.parent_path(),{{"native-decoder-source",relative}},why);
+        if(!store){f={MovieDecodeError::source_index,static_cast<int>(why.kind),"exact-path native movie catalog binding"};f.asset_failure=why;return {};}
+        auto asset=store->open("native-decoder-source",why);
+        if(!asset){f={MovieDecodeError::source_index,static_cast<int>(why.kind),"exact-path native movie opened asset"};f.asset_failure=why;return {};}
+        return open(libraries,std::move(*asset),f);
+    }catch(const std::bad_alloc&){f={MovieDecodeError::allocation,0,"native movie path ownership"};}
+     catch(const std::length_error&){f={MovieDecodeError::allocation,0,"native movie path host capacity"};}
+     catch(const std::filesystem::filesystem_error& e){f={MovieDecodeError::source_index,e.code().value(),"native movie exact path encoding"};}
     return {};
 }
 std::unique_ptr<NativeMovieDecoder> NativeMovieDecoder::open(const std::filesystem::path& libraries,NativeMovieAsset&& asset,MovieDecodeFailure& f){
     f={};if(!asset.valid()){f={MovieDecodeError::invalid_owner,0,"invalid or moved NativeMovieAsset"};f.asset_failure.kind=MovieAssetError::moved_asset;return {};}
     try{
-        auto s=std::make_unique<Impl>();s->asset.emplace(std::move(asset));
+        auto s=std::make_unique<Impl>();
+        s->source_index=NativeMoviePesIndex::build(std::move(asset),s->source_error);
+        if(!s->source_index){s->source_failure(MovieDecodeError::source_index,"native movie PES index",f);return {};}
+        s->source_file=s->source_index->file_reader(s->source_error);
+        if(!s->source_file){s->source_failure(MovieDecodeError::source_index,"native movie same-asset file cursor",f);return {};}
         if(!s->api.load(libraries,f))return {};
         return finish_open(std::move(s),f);
     }catch(const std::bad_alloc&){f={MovieDecodeError::allocation,0,"native movie asset ownership"};}
@@ -354,7 +395,7 @@ std::unique_ptr<NativeMovieDecoder> NativeMovieDecoder::finish_open(std::unique_
         std::error_code ec;std::uint64_t position=0;
         if(!s->seek_position(0,content::SeekOrigin::begin,position,ec)||position!=0){
             f={MovieDecodeError::file_io,ec?ec.value():static_cast<int>(std::errc::io_error),"native movie reader rewind"};
-            f.asset_failure=s->asset_error;return {};
+            f.asset_failure=s->asset_error;f.source_failure=s->source_error;return {};
         }
         auto* buffer=static_cast<std::uint8_t*>(s->api.av_malloc_p(65536));if(!buffer){f={MovieDecodeError::allocation,0,"native AVIO cache"};return {};}
         s->io=s->api.avio_alloc_context_p(buffer,65536,0,s.get(),Impl::read,nullptr,Impl::seek);
@@ -362,9 +403,9 @@ std::unique_ptr<NativeMovieDecoder> NativeMovieDecoder::finish_open(std::unique_
         s->format=s->api.avformat_alloc_context_p();if(!s->format){f={MovieDecodeError::allocation,0,"avformat_alloc_context"};return {};}
         s->format->pb=s->io;s->format->flags|=AVFMT_FLAG_CUSTOM_IO;
         int r=s->api.avformat_open_input_p(&s->format,nullptr,nullptr,nullptr);
-        if(r<0){f={s->io_error?MovieDecodeError::file_io:MovieDecodeError::demux,r,"avformat_open_input owned reader"};f.asset_failure=s->asset_error;return {};}
+        if(r<0){f={s->io_error?MovieDecodeError::file_io:MovieDecodeError::demux,r,"avformat_open_input owned reader"};f.asset_failure=s->asset_error;f.source_failure=s->source_error;return {};}
         r=s->api.avformat_find_stream_info_p(s->format,nullptr);
-        if(r<0){f={s->io_error?MovieDecodeError::file_io:MovieDecodeError::demux,r,"avformat_find_stream_info"};f.asset_failure=s->asset_error;return {};}
+        if(r<0){f={s->io_error?MovieDecodeError::file_io:MovieDecodeError::demux,r,"avformat_find_stream_info"};f.asset_failure=s->asset_error;f.source_failure=s->source_error;return {};}
         for(unsigned i=0;i<s->format->nb_streams;++i){
             const auto* p=s->format->streams[i]->codecpar;
             if(p->codec_type==AVMEDIA_TYPE_VIDEO&&p->codec_id==AV_CODEC_ID_MPEG2VIDEO&&s->video.index<0){if(!s->open_stream(s->video,i,f))return {};}
@@ -385,8 +426,11 @@ MovieReadResult NativeMovieDecoder::next(MovieDecodeFailure& f){
         while(s.ready.empty()&&!s.ended){
             const int r=s.api.av_read_frame_p(s.format,s.packet);
             if(r<0){
-                if(r!=AVERROR_EOF){f={s.io_error?MovieDecodeError::file_io:MovieDecodeError::demux,r,"av_read_frame owned reader"};f.asset_failure=s.asset_error;s.failed=true;return {};}
-                if(s.io_error){f={MovieDecodeError::file_io,s.io_error.value(),"owned movie reader read/seek"};f.asset_failure=s.asset_error;s.failed=true;return {};}
+                if(r!=AVERROR_EOF){f={s.io_error?MovieDecodeError::file_io:MovieDecodeError::demux,r,"av_read_frame owned reader"};f.asset_failure=s.asset_error;f.source_failure=s.source_error;s.failed=true;return {};}
+                if(s.io_error){f={MovieDecodeError::file_io,s.io_error.value(),"owned movie reader read/seek"};f.asset_failure=s.asset_error;f.source_failure=s.source_error;s.failed=true;return {};}
+                if(!s.source_video||!s.source_video->finished()){
+                    f={MovieDecodeError::source_validation,0,"demux EOF before complete indexed video ES coverage"};s.failed=true;return {};
+                }
                 for(auto* stream:{&s.video,&s.audio})if(stream->decoder){
                     const int sent=s.api.avcodec_send_packet_p(stream->decoder,nullptr);
                     if(sent<0&&sent!=AVERROR_EOF){f={MovieDecodeError::decode,sent,"native decoder flush"};s.failed=true;return {};}

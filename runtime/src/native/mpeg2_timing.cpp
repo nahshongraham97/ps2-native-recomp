@@ -125,6 +125,7 @@ bool NativeMpeg2Timing::parse(std::span<const std::uint8_t> bytes,
             if(!next.sequence_header_)return fail(Mpeg2TimingError::missing_sequence,start);
             if(!next.sequence_extension_)return fail(Mpeg2TimingError::missing_sequence_extension,start);
             Mpeg2PictureTiming pic;pic.sequence=next.sequence_;pic.gop=next.gop_;
+            pic.packet_picture_offset=static_cast<std::uint64_t>(start);
             if(!get(10,x)||!get(3,y))return trunc();
             if(y<1||y>3)return fail(Mpeg2TimingError::invalid_picture,start);
             pic.temporal_reference=static_cast<std::uint16_t>(x);pic.coding_type=static_cast<std::uint8_t>(y);

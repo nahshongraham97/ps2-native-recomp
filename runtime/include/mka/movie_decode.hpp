@@ -1,5 +1,6 @@
 #pragma once
 #include "mka/movie_assets.hpp"
+#include "mka/movie_pes_index.hpp"
 #include "mka/mpeg2_timing.hpp"
 #include <array>
 #include <cstdint>
@@ -20,6 +21,12 @@ struct MovieRateRatio {
     std::int32_t numerator=0,denominator=0;
     bool operator==(const MovieRateRatio&) const = default;
 };
+struct MoviePictureSource {
+    std::uint64_t packet_es_begin=0,picture_es_byte=0;
+    MovieVideoPesSpan pes;
+    std::optional<std::uint64_t> quarter_pts;
+    bool operator==(const MoviePictureSource&) const = default;
+};
 struct MovieCodecTiming {
     // Exact library values, including 0/0 when unavailable. The demuxer's
     // r_frame_rate is an estimate; none of these selects a playback clock.
@@ -30,6 +37,8 @@ struct MovieCodecTiming {
     // Parsed elementary-picture metadata, carried through codec reorder by an
     // owned opaque tag. Distinct from GOP side-data, PTS and library rate hints.
     std::optional<Mpeg2PictureTiming> picture;
+    // Exact original PES provenance; independent of library PTS/position hints.
+    std::optional<MoviePictureSource> picture_source;
     bool operator==(const MovieCodecTiming&) const = default;
 };
 struct MovieVideoFrame {
@@ -54,12 +63,13 @@ struct MovieAudioFrame {
 using MovieDecodedFrame=std::variant<MovieVideoFrame,MovieAudioFrame>;
 enum class MovieDecodeError {none,unsupported_host,library_load,missing_symbol,
     library_version,file_io,allocation,invalid_stream,unsupported_stream,
-    unsupported_frame,demux,decode,invalid_owner,failed_owner,timing_parse,timing_association};
+    unsupported_frame,demux,decode,invalid_owner,failed_owner,timing_parse,timing_association,source_index,source_validation,source_association};
 struct MovieDecodeFailure {
     MovieDecodeError kind=MovieDecodeError::none;
     std::int32_t native_code=0;
     std::string operation;
     MovieAssetFailure asset_failure;
+    MoviePesFailure source_failure;
 };
 enum class MovieReadStatus {frame,end,error};
 struct MovieReadResult {

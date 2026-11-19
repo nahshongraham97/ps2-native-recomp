@@ -1,0 +1,13 @@
+# Mandatory same-file native movie provenance — 2026-11-19
+
+PASS:19 standalone native-service commands and16 executable defined-symbol checks (no ps2::/gen::/spu2::/iop:: definitions). verification.json pins every source/tool/oracle, input, exact binary, command and output. Parent tools/research/verify_native_movie_metadata.py reproduces them from the native-only build.
+
+The owned MPEG1 PES index uses native64-bit file/logical-ES extents and raw33-bit timestamp data with verified marker fields. It retains the actual opened asset, serializes shared native IO and provides independently positioned source cursors. Exact range reads publish atomically; failures preserve logical position. Lookup verifies allfour picture-prefix bytes and chooses the FIRST byte's half-open PES span, retaining absent timestamps without inheritance.
+
+Both decoder entry points require that same index/source-cursor/ES-reader chain. The raw-file bypass is removed. Whole original video packets validate exact advancing ES bytes before terminal-control splitting or codec submission. Picture offsets and PES provenance remain owned through opaque codec tags, reordering, output and native GPU metadata handoff. EOF requires complete ES consumption.
+
+Actual38-file decoder comparison matches65,181 input-picture/PES mapping hashes against the earlier independent raw-byte oracle, including18 absent timestamps and90 cross-PES prefixes. Three full YUV/PCM/count goldens are unchanged; the existing decode suite also verifies those3 through path and catalog opens, timestamps, EOF and moved-owner lifetime. The independent native FFmpeg packet oracle separately matches all38 complete ES byte streams. Input mapping comparison is sorted diagnostically; decoded output display order is unchanged. For35 non-golden movies this does not independently prove pixel/source pairing.
+
+New negative tests reject unsupported PES through both opens, then truncate isolated LOGON copies after open and require named file_io/truncated failure followed by failed_owner. Original source hash remains unchanged. Old unit expectations for direct-file/demux errors were first run failing, then updated to exact source-index/underlying-cause expectations. No old-or-new generic acceptance was added.
+
+These are component/library checks, not a game launch. No game/viewer, audible playback or real userdata writes occurred. Playback master clock, origins/lifecycle, font composition, actual retail call binding and remaining fixed-memory/device removal stay OPEN. There is no accepted current game package or owner launch request. Backup and preexisting IOP edits remain untouched.

@@ -1,0 +1,13 @@
+{
+  "name": "font-layout",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_font_layout.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-pes-bound-checkpoint-20261119-02\\EDDMONDGRAY14_MET.source",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\TITLEN.SFD"
+  ],
+  "exe_sha256": "5dfd8cb2efc46a7b0f1cf93021fd3486b67cfb250930e98da3837a68d5e22d88",
+  "exit": 0,
+  "stdout": "actual title layout events=7 languages=5 retained=35 english_glyphs=16 width=272 baseline=446\nPASS native logical font layout; no screen/region/composition\n",
+  "stderr": "",
+  "at_utc": "2026-11-19T12:37:38.170560+00:00"
+}

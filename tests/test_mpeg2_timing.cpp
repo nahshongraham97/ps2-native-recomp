@@ -34,11 +34,33 @@ int main(){
     auto p=picture();check(!parser.parse(p,result,f)&&f.kind==Mpeg2TimingError::missing_sequence&&!result,"no guessed sequence");
     auto seq=sequence();check(parser.prime(seq,f),"explicit extradata prime");
     auto packet=gop(12,34,56,17,true);append(packet,p);check(parser.parse(packet,result,f)&&result.has_value(),"one frame picture");
+    check(result->packet_picture_offset==8,"GOP prefix places picture FIRST byte at8");
     auto owned=*result;check(owned.sequence.frame_rate_code==4&&owned.sequence.extension_n==2&&owned.sequence.extension_d==7&&owned.sequence.width==4816&&owned.sequence.height==480,"sequence fields and extended width");
     check(owned.gop&&owned.gop->raw_time_code==((1u<<24)|(12u<<19)|(34u<<13)|(1u<<12)|(56u<<6)|17u)&&owned.gop->hours==12&&owned.gop->minutes==34&&owned.gop->seconds==56&&owned.gop->pictures==17&&owned.gop->drop_frame&&owned.gop->closed_gop&&!owned.gop->broken_link,"raw GOP bit positions");
     check(owned.temporal_reference==513&&owned.coding_type==3&&owned.picture_structure==3&&owned.top_field_first&&owned.repeat_first_field&&owned.progressive_frame,"picture fields");
     packet.clear();seq.clear();check(owned.gop->minutes==34,"owned metadata input lifetime");
     auto other=picture(7,1,3,false,false,false);check(parser.parse(other,result,f)&&result->gop&&result->gop->raw_time_code==owned.gop->raw_time_code&&!result->top_field_first&&!result->repeat_first_field&&!result->progressive_frame,"GOP inheritance different picture flags");
+    // Literal unit sizes: sequence12 + extension10 + GOP8 + user-data7.
+    NativeMpeg2Timing offsets;
+    auto prefixed=sequence();append(prefixed,gop(1,2,3,4,false));
+    append(prefixed,Bytes{0,0,1,0xb2,'a','b','c'});append(prefixed,p);
+    check(offsets.parse(prefixed,result,f)&&result&&result->packet_picture_offset==37,
+          "sequence/GOP/user-data exact prefix-firstbyte offset");
+    auto padded=p; padded.insert(padded.begin(),0);
+    check(offsets.parse(padded,result,f)&&result&&result->packet_picture_offset==1,
+          "extra zero is padding before actual picture prefix");
+    check(offsets.parse(p,result,f)&&result&&result->packet_picture_offset==0,
+          "picture-only offset never inherits previous packet offset");
+    auto malformed=sequence(8);append(malformed,Bytes{0,0,1,0,0});
+    check(!offsets.parse(malformed,result,f)&&!result,
+          "failed picture publishes no offset or mutated sequence");
+    check(offsets.parse(p,result,f)&&result&&result->packet_picture_offset==0&&
+          result->sequence.frame_rate_code==4&&result->gop&&result->gop->hours==1,
+          "failure preserves previous sequence/GOP; offset stays input-local");
+    check(offsets.parse(Bytes{0,0,1,0xb2,'x'},result,f)&&!result,
+          "control-only input has no picture offset result");
+    check(offsets.parse(Bytes{0,0,1,0xb7},result,f)&&!result,
+          "sequence-end control has no picture offset result");
     auto many=picture();append(many,picture(1));check(!parser.parse(many,result,f)&&f.kind==Mpeg2TimingError::multiple_pictures&&!result,"multiple pictures fail");
     auto field=picture(0,1,1);check(!parser.parse(field,result,f)&&f.kind==Mpeg2TimingError::unsupported_field_picture,"field rejected");
     auto reserved=picture(0,1,0);check(!parser.parse(reserved,result,f)&&f.kind==Mpeg2TimingError::invalid_picture,"reserved structure");
