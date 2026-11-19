@@ -3,6 +3,9 @@
 #include <limits>
 #include <new>
 #include <stdexcept>
+#if defined(__FAST_MATH__)
+#error "font_layout requires ordered float32 operations; disable fast-math"
+#endif
 namespace mka::text {
 const char* font_layout_error_name(FontLayoutError e) noexcept {
     switch(e){

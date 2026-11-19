@@ -20,6 +20,7 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/font_atlas.cpp
     runtime/src/native/font_metrics.cpp
     runtime/src/native/font_layout.cpp
+    runtime/src/native/font_geometry.cpp
     runtime/src/native/movie_assets.cpp
     runtime/src/native/movie_container.cpp
     runtime/src/native/movie_subtitles.cpp
@@ -31,11 +32,26 @@ target_include_directories(mka_native_media PUBLIC runtime/include PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers" "${MKA_NATIVE_MEDIA_HEADERS}")
 target_compile_features(mka_native_media PUBLIC cxx_std_20)
 target_link_libraries(mka_native_media PRIVATE opengl32 gdi32 user32 bcrypt)
+# Source font math uses ordered float32 steps and finite-value checks. These
+# modules must not inherit fast-math/reassociation or fused multiply-add from
+# a caller's global build flags. This does not modify the host FP environment.
+if(MSVC)
+    set_property(SOURCE runtime/src/native/font_metrics.cpp
+        runtime/src/native/font_layout.cpp runtime/src/native/font_geometry.cpp
+        APPEND PROPERTY COMPILE_OPTIONS /fp:strict)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    set_property(SOURCE runtime/src/native/font_metrics.cpp
+        runtime/src/native/font_layout.cpp runtime/src/native/font_geometry.cpp
+        APPEND PROPERTY COMPILE_OPTIONS -fno-fast-math -ffp-contract=off)
+else()
+    message(FATAL_ERROR "Native font math requires a verified strict float32 compiler configuration")
+endif()
 
 foreach(pair
     "test_native_font_atlas|tests/test_font_atlas.cpp"
     "test_native_font_metrics|tests/test_font_metrics.cpp"
     "test_native_font_layout|tests/test_font_layout.cpp"
+    "test_native_font_geometry|tests/test_font_geometry.cpp"
     "test_native_movie_color|tests/test_movie_color.cpp"
     "test_native_movie_gpu_layout|tests/test_movie_gpu_layout.cpp"
     "test_native_movie_assets|tests/test_movie_assets.cpp"

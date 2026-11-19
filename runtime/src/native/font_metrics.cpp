@@ -3,6 +3,9 @@
 #include <cmath>
 #include <new>
 #include <stdexcept>
+#if defined(__FAST_MATH__)
+#error "font_metrics requires finite source float32 validation; disable fast-math"
+#endif
 
 namespace mka::text {
 struct FontMetricsStorage {
