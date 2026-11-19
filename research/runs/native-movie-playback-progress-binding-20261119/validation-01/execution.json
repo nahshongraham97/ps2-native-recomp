@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_playback.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules\\MOVIER.ovl"
+  ],
+  "exit": 0,
+  "stdout": "PASS deterministic playback composition fakes/controller/owned queues; no device or retail policy binding\n",
+  "stderr": "",
+  "executable_sha256": "88b2539f6ae75a1124e6e3546fb42dfb852e904f89b6dbb23fe0f7ade31ee531",
+  "executable_after_sha256": "88b2539f6ae75a1124e6e3546fb42dfb852e904f89b6dbb23fe0f7ade31ee531"
+}

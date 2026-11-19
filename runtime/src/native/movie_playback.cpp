@@ -103,6 +103,10 @@ bool NativeMovieStreamPlayback::pause(bool value,MovieControlFailure& f) noexcep
         cleanup_needed_=true;
         if(!policies_->pause(value,f))return fail(f,"movie playback policy pause");
         if(audio_&&!audio_->pause(value,f))return fail(f,"movie playback native audio pause");
+        if(source_progress_) {
+            MovieAudioProgressFailure pf;
+            if(!source_progress_->pause(value,pf))return fail(f,"movie playback source retirement pause");
+        }
         paused_=value;return true;
     }catch(...){return fail(f,"movie playback pause exception");}
 }
@@ -153,14 +157,29 @@ bool NativeMovieStreamPlayback::poll_fences(MovieControlFailure& f) {
     }
     return true;
 }
-bool NativeMovieStreamPlayback::submit_audio(MovieControlFailure& f) {
-    if(pcm_.empty())return true;
+bool NativeMovieStreamPlayback::submit_audio(MovieControlFailure& f,bool& blocked) {
+    blocked=false;
+    while(!pcm_.empty()) {
     auto& packet=pcm_.front();
     if(!packet.prepared) {
+        if(!source_progress_) {
+            MovieAudioProgressFailure pf;
+            // Explicit decoder-relative sample INDEX, never the retail clock
+            // origin. All accepted source chunks already carry this same index.
+            source_progress_=NativeMovieAudioProgress::create({input_->request().logical_key,
+                0,packet.source.sample_rate,config_.client_sample_rate,next_audio_->reset_epoch},pf);
+            if(!source_progress_)return fail(f,"movie playback equal-rate source progress admission");
+            source_audio_rate_=packet.source.sample_rate;
+            if(!source_progress_->pause(paused_,pf))return fail(f,"movie playback source progress pause admission");
+        }
+        if(!source_audio_rate_||packet.source.sample_rate!=*source_audio_rate_)
+            return fail(f,"movie playback source sample rate changed before acceptance");
         if(!policies_->prepare_audio(packet.source,gain_,packet.client,f))
             return fail(f,"movie playback admitted PCM transform");
         if(packet.client.empty()||packet.client.size()%config_.client_channels)
             return fail(f,"movie playback complete owned interleaved client PCM");
+        if(packet.client.size()/config_.client_channels!=packet.source.channels.front().size())
+            return fail(f,"movie playback equal-cardinality PCM required before acceptance");
         for(const float sample:packet.client)if(!std::isfinite(sample))
             return fail(f,"movie playback finite client PCM");
         packet.prepared=true;
@@ -170,7 +189,7 @@ bool NativeMovieStreamPlayback::submit_audio(MovieControlFailure& f) {
        available->reset_epoch!=next_audio_->reset_epoch||
        available->submitted_frames!=next_audio_->submitted_frames)
         return fail(f,"movie playback exclusive audio epoch and sequence");
-    if(!available->writable_frames)return true;
+    if(!available->writable_frames){blocked=true;return true;}
     const std::size_t remain=(packet.client.size()-packet.accepted_samples)/config_.client_channels;
     const auto count=std::min<std::size_t>(remain,available->writable_frames);
     if(count>UINT64_MAX-available->submitted_frames)
@@ -181,7 +200,7 @@ bool NativeMovieStreamPlayback::submit_audio(MovieControlFailure& f) {
     reserve_one(accepted_);
     const auto result=audio_->queue(std::span<const float>(packet.client).subspan(
         packet.accepted_samples,count*config_.client_channels),f);
-    if(result.status==MovieAudioSubmitStatus::full&&!result.submission&&f.kind==MovieControlError::none)return true;
+    if(result.status==MovieAudioSubmitStatus::full&&!result.submission&&f.kind==MovieControlError::none){blocked=true;return true;}
     if(result.status!=MovieAudioSubmitStatus::accepted||!result.submission||f.kind!=MovieControlError::none)
         return fail(f,"movie playback native audio submission");
     const auto receipt=*result.submission;
@@ -194,9 +213,13 @@ bool NativeMovieStreamPlayback::submit_audio(MovieControlFailure& f) {
     accepted_.push_back(acceptance);
     packet.accepted_samples+=count*config_.client_channels;
     next_audio_->submitted_frames=receipt.first_client_frame+receipt.client_frames;
+    MovieAudioProgressFailure pf;
+    if(!source_progress_->accept(input_->request().logical_key,packet.source.sample_rate,acceptance,pf))
+        return fail(f,"movie playback source/client retirement ledger admission");
     if(!policies_->audio_accepted(acceptance,f))return fail(f,"movie playback source/client ledger admission");
     if(packet.accepted_samples==packet.client.size())pcm_.pop_front();
     if(!audio_->pause(paused_,f))return fail(f,"movie playback native audio start after prequeue");
+    }
     return true;
 }
 bool NativeMovieStreamPlayback::pump_streams(MovieControlFailure& f) noexcept {
@@ -204,8 +227,18 @@ bool NativeMovieStreamPlayback::pump_streams(MovieControlFailure& f) noexcept {
     if(terminal_.kind!=MovieControlError::none){f=terminal_;return false;}
     if(!active_)return true;
     try {
-        if(!poll_fences(f)||!submit_audio(f))return false;
-        if(!eof_&&queued_bytes()<config_.queued_byte_budget) {
+        bool blocked=false;
+        if(!poll_fences(f)||!submit_audio(f,blocked))return false;
+        while(!eof_&&queued_bytes()<config_.queued_byte_budget) {
+            if(!video_.empty()) {
+                if(!audio_||blocked)break;
+                const auto available=audio_->queue_status(f);
+                if(!available||!valid_status(*available)||!next_audio_||
+                   available->reset_epoch!=next_audio_->reset_epoch||
+                   available->submitted_frames!=next_audio_->submitted_frames)
+                    return fail(f,"movie playback native pump capacity observation");
+                if(!available->writable_frames)break;
+            }
             auto read=input_->next(f);
             if(read.status==MovieReadStatus::end) {
                 if(f.kind!=MovieControlError::none)return fail(f,"movie playback contradictory source end");
@@ -230,14 +263,15 @@ bool NativeMovieStreamPlayback::pump_streams(MovieControlFailure& f) noexcept {
                     source_audio_cursor_+=size;++decoded_audio_;
                 }
             } else return fail(f,"movie playback native source read");
+            if(!blocked&&!submit_audio(f,blocked))return false;
         }
-        return submit_audio(f);
+        return true;
     }catch(...){return fail(f,"movie playback stream allocation or service exception");}
 }
 bool NativeMovieStreamPlayback::snapshot(MoviePlaybackSnapshot& s,MovieControlFailure& f) noexcept {
     if(!owner(f))return false;
     try {
-        s={eof_,paused_,decoded_video_,decoded_audio_,video_.size(),pcm_.size(),fences_.size(),{}, {}};
+        s={eof_,paused_,decoded_video_,decoded_audio_,video_.size(),pcm_.size(),fences_.size(),{}, {}, {}, cancelled_progress_};
         if(audio_) {
             s.audio_queue=audio_->queue_status(f);if(!s.audio_queue)return fail(f,"movie playback audio status");
             s.device_clock=audio_->clock(f);if(!s.device_clock)return fail(f,"movie playback native clock reading");
@@ -246,6 +280,11 @@ bool NativeMovieStreamPlayback::snapshot(MoviePlaybackSnapshot& s,MovieControlFa
                s.audio_queue->submitted_frames!=next_audio_->submitted_frames||
                s.device_clock->reset_epoch!=next_audio_->reset_epoch)
                 return fail(f,"movie playback observed audio epoch and sequence");
+            if(source_progress_) {
+                MovieAudioProgressFailure pf;
+                s.source_retirement=source_progress_->observe(*s.audio_queue,pf);
+                if(!s.source_retirement)return fail(f,"movie playback same-observation source retirement");
+            }
         }
         return true;
     }catch(...){return fail(f,"movie playback snapshot exception");}
@@ -260,7 +299,13 @@ bool NativeMovieStreamPlayback::status(MoviePlaybackStatus& result,MovieControlF
         bool ready=false;
         if(!policies_->ready(s,ready,f))return fail(f,"movie playback explicit readiness policy");
         result=ready?MoviePlaybackStatus::playing:MoviePlaybackStatus::preparing;
-        if(eof_&&video_.empty()&&pcm_.empty()&&fences_.empty()) {
+        const bool client_drained=!audio_||(s.audio_queue&&s.source_retirement&&
+            s.audio_queue->padding_frames==0&&s.source_retirement->pending==0&&
+            s.audio_queue->reset_epoch==s.source_retirement->epoch);
+        // The business policy may impose a stricter completion condition. It
+        // cannot waive a still-pending native audio buffer. This is client
+        // retirement only; it is not acoustic or retail completion by itself.
+        if(eof_&&video_.empty()&&pcm_.empty()&&fences_.empty()&&client_drained) {
             bool ended=false;
             if(!policies_->end_admitted(s,ended,f))return fail(f,"movie playback explicit source/output drain policy");
             if(ended)result=MoviePlaybackStatus::ended;
@@ -321,6 +366,30 @@ bool NativeMovieStreamPlayback::stop(MovieControlFailure& f) noexcept {
     MovieControlFailure first;
     if(!cleanup_needed_&&fences_.empty()&&video_.empty()&&pcm_.empty())return true;
     // Attempt all cleanup operations even if an earlier service failed.
+    if(audio_) {
+        try {
+            if(!audio_->pause(true,f))error(f,"movie playback stop before reset observation");
+            else {
+                paused_=true;
+                if(source_progress_) {
+                    MovieAudioProgressFailure pf;
+                    if(!source_progress_->pause(true,pf))error(f,"movie playback retirement stopped publication");
+                }
+            }
+        }catch(...){error(f,"movie playback native stop cleanup exception");}
+        if(f.kind!=MovieControlError::none)first=f;
+        f={};
+    }
+    if(source_progress_&&audio_) {
+        try {
+            const auto before=audio_->queue_status(f);
+            MovieAudioProgressFailure pf;
+            if(!before||!source_progress_->observe(*before,pf))
+                error(f,"movie playback source retirement before reset");
+        }catch(...){error(f,"movie playback source retirement cleanup observation exception");}
+        if(first.kind==MovieControlError::none&&f.kind!=MovieControlError::none)first=f;
+        f={};
+    }
     try {
         if(audio_) {
             if(!audio_->stop_and_reset(f))error(f,"movie playback audio cleanup");
@@ -328,12 +397,28 @@ bool NativeMovieStreamPlayback::stop(MovieControlFailure& f) noexcept {
                 auto actual=audio_->queue_status(f);
                 if(!actual||!valid_status(*actual)||actual->started||actual->padding_frames||actual->submitted_frames)
                     error(f,"movie playback audio reset state");
-                else next_audio_=actual;
+                else {
+                    next_audio_=actual;
+                    if(source_progress_) {
+                        MovieAudioProgressFailure pf;
+                        if(!source_progress_->pause(true,pf))error(f,"movie playback source retirement stop");
+                        else {
+                            // All pending decoded data is being abandoned. The
+                            // new unused epoch explicitly starts at the decoder
+                            // cursor; the prior cancelled epoch stays separate.
+                            auto cancelled=source_progress_->reset({input_->request().logical_key,
+                                source_audio_cursor_,*source_audio_rate_,config_.client_sample_rate,
+                                actual->reset_epoch},*actual,pf);
+                            if(!cancelled)error(f,"movie playback source retirement reset cancellation");
+                            else cancelled_progress_=std::move(cancelled);
+                        }
+                    }
+                }
             }
         }
     }
     catch(...){error(f,"movie playback audio cleanup exception");}
-    if(f.kind!=MovieControlError::none)first=f;
+    if(first.kind==MovieControlError::none&&f.kind!=MovieControlError::none)first=f;
     f={};
     try {if(!policies_->stop(f))error(f,"movie playback policy cleanup");}
     catch(...){error(f,"movie playback policy cleanup exception");}

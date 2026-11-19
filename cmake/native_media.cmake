@@ -180,6 +180,7 @@ target_compile_features(test_native_movie_eligibility_numeric PRIVATE cxx_std_20
 # table data. Does not link codecs, audio devices or the game/runtime.
 add_executable(test_native_movie_playback EXCLUDE_FROM_ALL
     tests/test_movie_playback.cpp runtime/src/native/movie_playback.cpp
+    runtime/src/native/movie_audio_progress.cpp
     runtime/src/native/movie_control.cpp runtime/src/native/movie_gain.cpp
     runtime/src/native/movie_color.cpp runtime/src/native/movie_gpu.cpp
     runtime/src/native/movie_catalog.cpp)

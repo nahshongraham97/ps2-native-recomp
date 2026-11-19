@@ -1,0 +1,7 @@
+{
+  "scope": "POST_CHANGE inverse-hunk reconstruction matches saved pre/post source hash; not a claimed pre-edit copy",
+  "prior_source_sha256": "10d3f9d43df33208e54bf2d4b6e6159c3bc62caa9ae6e556d02701e20743a518",
+  "current_guarded_source_sha256": "29402a20cf3ddb934b23e12cbe3aff8eeec781f67090676be9b4894e1c170313",
+  "original_runner_sha256": "21782960a1d435ee682e9dc98e0912fdee3ecaa28040687070a9ec80abadbb7d",
+  "raw_receipts_unchanged": true
+}

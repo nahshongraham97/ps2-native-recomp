@@ -1,5 +1,6 @@
 #pragma once
 #include "mka/audio_device.hpp"
+#include "mka/movie_audio_progress.hpp"
 #include "mka/movie_color.hpp"
 #include "mka/movie_control.hpp"
 #include "mka/movie_gpu.hpp"
@@ -53,17 +54,17 @@ struct MoviePlaybackConfiguration {
     std::size_t queued_byte_budget = 0;
     std::optional<float> initial_base_volume;
 };
-struct MoviePlaybackAudioAcceptance {
-    std::uint64_t source_first_frame, source_frames;
-    std::uint64_t packet_client_frames, packet_client_offset;
-    sound::AudioSubmission submission;
-};
 struct MoviePlaybackSnapshot {
     bool decoder_eof = false, paused = true;
     std::uint64_t decoded_video_frames = 0, decoded_audio_frames = 0;
     std::size_t queued_video = 0, queued_audio = 0, outstanding_fences = 0;
     std::optional<sound::AudioQueueStatus> audio_queue;
     std::optional<sound::AudioClockReading> device_clock;
+    // Decoder-relative source-frame INDEX retirement, not a game-clock origin,
+    // PTS, master-clock choice or acoustic completion. Current and cancelled
+    // old-epoch observations remain separate across an explicit reset.
+    std::optional<MovieAudioProgressSnapshot> source_retirement;
+    std::optional<MovieAudioProgressSnapshot> cancelled_source_retirement;
 };
 // These remain REQUIRED, separately source-bound business policies. This
 // composition supplies no default PTS/ordinal, stereo, unity, ready or ended
@@ -132,7 +133,7 @@ private:
     bool owner(MovieControlFailure&) const noexcept;
     bool fail(MovieControlFailure&, const char*) noexcept;
     bool poll_fences(MovieControlFailure&);
-    bool submit_audio(MovieControlFailure&);
+    bool submit_audio(MovieControlFailure&, bool& blocked);
     std::size_t queued_bytes() const noexcept;
     std::unique_ptr<MoviePlaybackInput> input_;
     std::unique_ptr<MoviePlaybackPolicies> policies_;
@@ -146,6 +147,9 @@ private:
     std::vector<std::shared_ptr<MovieGpuFence>> fences_;
     std::vector<MoviePlaybackAudioAcceptance> accepted_;
     std::optional<sound::AudioQueueStatus> next_audio_;
+    std::unique_ptr<NativeMovieAudioProgress> source_progress_;
+    std::optional<MovieAudioProgressSnapshot> cancelled_progress_;
+    std::optional<std::uint64_t> source_audio_rate_;
     std::uint64_t decoded_video_ = 0, decoded_audio_ = 0, source_audio_cursor_ = 0;
     std::int32_t gain_;
     bool used_ = false, active_ = false, paused_ = true, eof_ = false, error_pending_ = false, cleanup_needed_ = false;

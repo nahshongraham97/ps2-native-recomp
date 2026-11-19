@@ -1,0 +1,80 @@
+"""Fake-endpoint native source retirement binding; no game/device activation."""
+import ctypes,datetime,hashlib,json,os,pathlib,re,subprocess
+FORK=pathlib.Path(__file__).resolve().parents[3];PARENT=FORK.parents[2];WORKSPACE=PARENT.parent
+BUILD=FORK/'build_native_services_only_20261119-01'
+BIN=WORKSPACE/'dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/bin'
+CMAKE=WORKSPACE/'dependencies/cmake/cmake-4.4.5-windows-x86_64/bin/cmake.exe'
+OUT=pathlib.Path(__file__).resolve().parent/'validation-01'
+NAMES=['runtime/include/mka/movie_playback.hpp','runtime/src/native/movie_playback.cpp',
+    'runtime/src/native/movie_playback_adapters.cpp','runtime/include/mka/movie_audio_submission.hpp',
+    'runtime/include/mka/movie_audio_progress.hpp','runtime/src/native/movie_audio_progress.cpp',
+    'runtime/include/mka/audio_device.hpp','tests/test_movie_playback.cpp',
+    'tests/test_movie_audio_progress.cpp','runtime/src/native/movie_control.cpp',
+    'runtime/src/native/movie_gain.cpp','runtime/src/native/movie_color.cpp',
+    'runtime/src/native/movie_gpu.cpp','runtime/src/native/movie_catalog.cpp',
+    'CMakeLists.txt','cmake/native_media.cmake']
+PRESERVE={'runtime/src/iop/mcserv.cpp':'ad2731a341409d87ffe1b171e99f28d7cedc5004aaf375a565d78673333414fb',
+    'runtime/src/iop/msl_native.cpp':'756cfb3867ebb440223ddb8ab6fe441ad6f9f54d35e4119a8342f8dd9063bb23'}
+def req(ok,message):
+    if not ok:raise RuntimeError(message)
+def sha(p):return hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()
+def write(name,x):
+    with (OUT/name).open('x',encoding='utf-8',newline='\n') as f:json.dump(x,f,indent=2);f.write('\n')
+def run(name,args):
+    args=list(map(str,args));before=sha(args[0]);r=subprocess.run(args,cwd=FORK,env=ENV,
+        capture_output=True,text=True,creationflags=subprocess.CREATE_NO_WINDOW)
+    x=dict(argv=args,exit=r.returncode,stdout=r.stdout,stderr=r.stderr,
+        executable_sha256=before,executable_after_sha256=sha(args[0]))
+    write(name,x);req(r.returncode==0 and sha(args[0])==before,name+' failed');return x
+def symbols(name,target,expected,required,executed):
+    before=sha(target);record=run(name,[BIN/'llvm-nm.exe','-C','--defined-only',target])
+    forbidden=[s for s in record['stdout'].splitlines() if re.search(r'ps2::|\b(g_ram|g_spr|EEContext|IOPContext|SPU2|CDVD)\b',s)]
+    req(not forbidden and all(s in record['stdout'] for s in required),'required native symbols/no forbidden definitions')
+    req(before==sha(target)==expected,'exact symbol target')
+    x=dict(target=str(target),target_before_sha256=before,target_after_sha256=sha(target),
+        audited_target_expected_sha256=expected,execution_applicable=executed,
+        tool_sha256=record['executable_sha256'],forbidden=forbidden,required_defined_symbols=required)
+    if executed:x['executed_target_sha256']=expected
+    write(name.replace('.json','-target.json'),x);return x
+if __name__=='__main__':
+    ctypes.windll.kernel32.SetErrorMode(3);OUT.mkdir(parents=True,exist_ok=False)
+    ENV=dict(os.environ,PATH=str(BIN)+os.pathsep+os.environ['PATH'])
+    cache=(BUILD/'CMakeCache.txt').read_text(encoding='utf-8-sig')
+    req(bool(re.search(r'^PS2_GENERATED:PATH=$',cache,re.M)),'no generated game')
+    req(bool(re.search(r'^CMAKE_BUILD_TYPE:STRING=Release$',cache,re.M)),'Release')
+    overlay=PARENT/'research/inputs/modules/MOVIER.ovl'
+    req(sha(overlay)=='3a34e3838042aa0bde0ce687a4e61e128b2eb965e60e65c34713e0a73891adb8','original color data')
+    paths=[*[FORK/n for n in NAMES],overlay,pathlib.Path(__file__).resolve()];before={str(p):sha(p) for p in paths}
+    for n,h in PRESERVE.items():req(sha(FORK/n)==h,'preserve '+n)
+    write('provenance.json',dict(at_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        fork_head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=FORK,text=True).strip(),
+        parent_head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=PARENT,text=True).strip(),
+        source_before_sha256=before,preserved_dirty_sha256=PRESERVE,
+        compiler_path=str(BIN/'clang++.exe'),compiler_sha256=sha(BIN/'clang++.exe'),
+        cache_before_sha256=sha(BUILD/'CMakeCache.txt'),
+        scope='Native source retirement composed with faithful fake padding and capacity-driven pump; no real movie policies'))
+    run('build.json',[CMAKE,'--build',BUILD,'--target','test_native_movie_playback',
+        'test_native_movie_audio_progress','mka_native_media','-j2'])
+    fixture=BUILD/'test_native_movie_playback.exe'
+    execution=run('execution.json',[fixture,overlay])
+    req(execution['stdout'].strip()=='PASS deterministic playback composition fakes/controller/owned queues; no device or retail policy binding','complete composition assertions')
+    pure=run('pure-progress.json',[BUILD/'test_native_movie_audio_progress.exe'])
+    req(pure['stdout'].splitlines()[-1]=='PASS pure source retirement; no device/clock/player binding','pure assertions retained after header split')
+    audit=symbols('symbols.json',fixture,execution['executable_sha256'],
+        ['mka::video::NativeMovieStreamPlayback::','mka::video::NativeMovieAudioProgress::'],True)
+    archive=BUILD/'libmka_native_media.a'
+    compiled=symbols('archive-symbols.json',archive,sha(archive),
+        ['mka::video::NativeMovieStreamPlayback::','mka::video::NativeMovieAudioProgress::',
+         'mka::video::own_movie_playback_audio('],False)
+    req(before=={str(p):sha(p) for p in paths},'source unchanged during run')
+    for n,h in PRESERVE.items():req(sha(FORK/n)==h,'preserve after '+n)
+    write('verification.json',dict(status='PASS_ISOLATED_NATIVE_PLAYBACK_SOURCE_RETIREMENT_BINDING',
+        source_after_sha256=before,fixture_sha256=execution['executable_sha256'],
+        execution_receipt_sha256=sha(OUT/'execution.json'),pure_fixture_sha256=pure['executable_sha256'],
+        native_archive_sha256=sha(archive),symbol_audits=[audit,compiled],
+        cache_after_sha256=sha(BUILD/'CMakeCache.txt'),
+        limits=['Faithful deterministic endpoint padding/retirement only; no actual native stream or audible movie',
+                'Decoder-relative sample index is not selected game clock/origin or acoustic time',
+                'Cached PCM gain/fade chronology, retail timeline/audio/metadata/end policies and game remain open']))
+    print(json.dumps(dict(status='PASS_ISOLATED_NATIVE_PLAYBACK_SOURCE_RETIREMENT_BINDING',
+        fixture_sha256=execution['executable_sha256'],native_archive_sha256=sha(archive))))
