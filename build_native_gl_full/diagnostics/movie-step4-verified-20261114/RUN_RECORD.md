@@ -40,7 +40,7 @@
   6. Triangle Strip 1:1 (4x4 UV): 16 px, **0 mismatches (PASS)**
   7. Triangle Strip 2× (8x8 UV): 64 px, **0 mismatches (PASS)**
   8. Midpoint Tie-Break (0.5 texel center): 64 px, **0 mismatches (PASS)**
-- Superseded mathematical claim: the prior universal `-0.49f` / `+0.01f` GS-equivalence explanation was not proved by eight synthetic cases. Current source uses conditional/path-specific adjustments: `native_gl_backend.cpp:2734-2746` defaults general texel offset 0, sprite shift X defaults -0.49 and shift Y 0 at 2799–2807, and triangle shift applies conditionally near2829–2834. Do not use this historical test set as a universal sampling proof.
+- Superseded mathematical claim: the prior universal `-0.49f` / `+0.01f` GS-equivalence explanation was not proved by eight synthetic cases. The pre-GPU-cleanup source snapshot cited during the earlier review used conditional/path-specific adjustments (these are historical line numbers, not current-source pins): `native_gl_backend.cpp:2734-2746` defaults general texel offset 0, sprite shift X defaults -0.49 and shift Y 0 at 2799–2807, and triangle shift applies conditionally near2829–2834. Do not use this historical test set as a universal sampling proof.
 
 ---
 

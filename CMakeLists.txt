@@ -76,9 +76,11 @@ else()
         runtime/src/native_hook.cpp
         runtime/src/native_vertex_hook.cpp
         runtime/src/native/adpcm_codec.cpp
+        runtime/src/native/bank_asset.cpp
         runtime/src/native/native_file.cpp
         runtime/src/native/content_vfs.cpp
         runtime/src/native/sound_bank.cpp
+        runtime/src/native/sound_archive.cpp
         runtime/src/port_config.cpp
         runtime/src/compliance_census.cpp
         runtime/src/system.cpp
@@ -246,6 +248,15 @@ if(PS2_GENERATED)
     target_include_directories(test_sample_payload PRIVATE runtime/include)
     add_executable(test_gpu_diagnostics EXCLUDE_FROM_ALL tests/test_gpu_diagnostics.cpp)
     target_include_directories(test_gpu_diagnostics PRIVATE runtime/include)
+    add_executable(test_sound_archive EXCLUDE_FROM_ALL tests/test_sound_archive.cpp
+        runtime/src/native/sound_archive.cpp runtime/src/native/native_file.cpp
+        runtime/src/native/sample_payload.cpp runtime/src/native/sound_bank.cpp)
+    target_include_directories(test_sound_archive PRIVATE runtime/include)
+    add_executable(test_bank_asset EXCLUDE_FROM_ALL tests/test_bank_asset.cpp
+        runtime/src/native/bank_asset.cpp runtime/src/native/sound_archive.cpp
+        runtime/src/native/native_file.cpp runtime/src/native/sample_payload.cpp
+        runtime/src/native/sound_bank.cpp runtime/src/native/adpcm_codec.cpp)
+    target_include_directories(test_bank_asset PRIVATE runtime/include)
     target_link_libraries(test_disc_vfs PRIVATE ps2runtime)
     add_executable(test_content_volume EXCLUDE_FROM_ALL tests/test_content_volume.cpp)
     target_link_libraries(test_content_volume PRIVATE ps2runtime)

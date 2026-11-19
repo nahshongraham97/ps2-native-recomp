@@ -12,9 +12,13 @@ reached the intro movie).
   own name: **CRI_ADX_Driver**.
 - It registers **one SIF server, sid `0x90000200`** (`[sif:target-rpc] register
   sid 0x90000200 func 0x00071A20 buf 0x0007C840 queue 0x0007CE00 sd
-  0x0007CDB0`), and the game talks to it **only over SIF RPC**: the module
-  publishes **no export table** (the IRX scan in `scripts/iop_irx_imports.py`
-  finds none), so there is no by-address entry point to intercept.
+  0x0007CDB0`). SIF RPC is the operation boundary observed in that log.
+  The IRX scan found no exported library table; this does not establish that
+  direct/by-address callers are impossible or exhaustively searched. The
+  original ELF has initialization entry `0x57C` (SHA-256
+  `6ebaa7a8e0c677c3f9567030916b89ccdd04b5d7740f6f9be5cee036391b95ab`).
+  That entry proves neither a public operation ABI nor a hidden game caller.
+  Direct operation calls remain unverified; do not invent a replacement ABI.
 - The function numbers the game calls (from the `[sif:target-rpc] finish`
   lines): **2, 3, 1024, 1025, 1027, 1032, 1033, 1034, 1036, 1037, 1058,
   1059**. The call trace prints each one's arguments (`[sif] call endpoint ...
