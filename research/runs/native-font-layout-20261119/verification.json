@@ -1,0 +1,206 @@
+{
+  "status": "PASS",
+  "scope": "seven standalone metadata/font/pipeline cases; no accepted game build",
+  "at_utc": "2026-11-19T10:00:45.021013+00:00",
+  "fork_base": "09a206ab4afb530443ccccb0ef7bc28a4d5662a3",
+  "parent_base": "1e0647393403c0fa7eb02b0dec048db544f0d551",
+  "source_sha256": {
+    "external\\forks\\ps2-native-recomp\\tests\\test_native_movie_pipeline.cpp": "252ae8d3f8f621db7a3778b32d88c9f6abd61d38253cec6d88e3205e2283786a",
+    "tools\\research\\verify_native_movie_metadata.py": "f71a411139db6831f8687d2c8d4be9c7532e997a506b70db7a252a34d29369dc",
+    "external\\forks\\ps2-native-recomp\\tests\\test_font_layout.cpp": "348aad7d65a6588da665ea5d4c0b461f1928e887f13cc12112ff8e0250fff73f",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\font_layout.hpp": "afabdf3b225423cb4bf4b6d964ee23f59f006128222e09fd9de5936148e26264",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_subtitles.hpp": "26b5537415ddb601fc26b11a37c651852dd70e0784eaca3b8a4b68f1759d9e5f",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_assets.cpp": "47f2f4a74c32f5e832e08647c3484a0bbc9b55e6a1c9927b0c8ea9a76d6b7135",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\font_atlas.hpp": "edd8368dd89014dd9ae8f9135e3ca702f3574e47e7f460cb59db025a737997e2",
+    "external\\forks\\ps2-native-recomp\\tests\\test_font_metrics.cpp": "f4f0a2d932b57b99e787014fd143267389d345e693c17d6a77e305b9a58c72f4",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_gpu.cpp": "1490f71ebb6fecd705ac7a0084dea0266dd832ed00a64602eb95b244263caa03",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_subtitles.cpp": "c7584c7b3f77be0b968b690dbc268c6c885bc67232816f817eac116977fa2c91",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\font_atlas.cpp": "05bf36ca65ed68fa485d680c524d8f36e6970f42bf35f1760bbe8e79712046a0",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\native_file.cpp": "527c9759d7bfa036c55769c32684e85402253dfd98faa5a2e1993c6fe425a5cd",
+    "external\\forks\\ps2-native-recomp\\tests\\native_test_sha256.hpp": "f90189e16a9ab989bd2228e752d65e9935dad0250ac1cbdc0a76ead8e3504bf7",
+    "external\\forks\\ps2-native-recomp\\tests\\test_movie_subtitles.cpp": "4e128c324ed300c33a77e1f3c31a24b6f7d8b227c69b7e02a98817dda038fbcf",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_gl_device.cpp": "e9bbc076e9a8d8f6567929220f008c361d0a431c8ca5b14a551144dd7150126a",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_gl_device.hpp": "f327d83133ece6b24fd57bbeaf3ab4d817a506a2c9b3c43414dea181c0b0bf4b",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_color.cpp": "7408cde8199d16c5f6ed59c3c9dc31b7ee179c20a797adb126a2232bbeda302b",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\native_file.hpp": "bf54d1e032ab48c53016aa4caa0312fba8cf8c93a2c42dd5b41ab2d926502e49",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_container.cpp": "429497645e51643d8263cf1a7861ae4ff1fe581584a344c3a387611696f53dd5",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_gpu.hpp": "3bac034761e82728797e14feba8f59ae4f17cf2d68571fa5d1a724f251280639",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_decode.hpp": "a4975861d6a60f916f0ac5f20d7a5baf24b6c9d5f9b7f399519d0d6ce88d65ae",
+    "external\\forks\\ps2-native-recomp\\cmake\\native_media.cmake": "f2b20003420da1e78d4faf10850752a0ccc01cdf0181a3c8cc5769d37762b482",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\font_layout.cpp": "aafc0b1fe27c5b8657975dba7b456d49d24766ec1b64dfed3e6de40324f1578c",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_assets.hpp": "777f2383e4b25db43ee5b6ffbff96cd179baa82dd4acf6d317b88b9b945624da",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_color.hpp": "d8fa93e9ae34b6d4604ac02348ac9e1356f66aed1cdb2207a0f1e75e999a2ab4",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_decode.cpp": "9aeec2fe41fe07f2372d64646b47b1e81c7f6daee53e03be9641e0ed9eecd83f",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_container.hpp": "2bd4383bb0c88ade04778e4fa78343d2352c7e7909d358405bc230570106e332",
+    "external\\forks\\ps2-native-recomp\\tests\\test_native_movie_container.cpp": "a78c3e253be6431f10e7c14d171340689106922f5f9fd6ac2611c3a1212422d9",
+    "external\\forks\\ps2-native-recomp\\tests\\test_font_atlas.cpp": "e98c45fc217e71e31e355af8704d332ebecd123df03d0d8d9cf5542c2add488c",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\font_metrics.hpp": "56637f95f47ddc46041ced408ef463e94ebe5de1b42800b6c9100262f67058d0",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\font_metrics.cpp": "cb0737328800497c5d1c3a2c6dc65fb6e221a4575b87c7600d251f9c392d15dd"
+  },
+  "inputs_sha256": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MKDA.PAK": "ff51cdff04e6487460ef3c3a1db309a68ced43e4c4bfd084fa965cb41c8c227a",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules\\MOVIER.ovl": "3a34e3838042aa0bde0ce687a4e61e128b2eb965e60e65c34713e0a73891adb8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-movie-layout-checkpoint-20261119-01\\EDDMONDGRAY14.source": "085846ff5d595e179e118c2fcbe51f59f322f6c51fc871cac80354f19d1990bc",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-movie-layout-checkpoint-20261119-01\\EDDMONDGRAY14_MET.source": "b91b6ee00f3bed46a1e89471c247ea659b88af927d7bd9576311b57fd0cfd497",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\LOGON.SFD": "cf49fb014d51f20fee7727a01e845cc7303be63fe0af2902fb3eadf371a843af",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\TITLEN.SFD": "b184f25ad02e7ffc4ece847bc915c1f54e2eeddbf6afcd816be0108adadfa371",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\TITLEW.SFD": "9a850166ddc5a8a13d153498d329c42fe479d848b56ab2784c6f371c6b3b0928",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\OPENINGN.SFD": "a2b3e83b23de92c31879dbcc4ab9415e07bbbb0638ea4f90d112f969de3e5e53",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared\\avutil-59.dll": "40174006a5ac403dbd74d94451a2d979be69dd59981b52f5120e04af7693632c",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared\\avcodec-61.dll": "29b9c1c54cdb23e5582616228c26906d98330ba38d585325c533ca3af150ca7d",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared\\avformat-61.dll": "f274edcda73be512bbb2db7d27097fdf80a7e0902564580d0700a75fb78f2e9c"
+  },
+  "build_cache_sha256": "d320c4e3663feec551cd3a3b4a8712e915fad196ddc86c7f880c07d4bd2aa3f4",
+  "preserved_iop_sha256": {
+    "runtime/src/iop/mcserv.cpp": "ad2731a341409d87ffe1b171e99f28d7cedc5004aaf375a565d78673333414fb",
+    "runtime/src/iop/msl_native.cpp": "756cfb3867ebb440223ddb8ab6fe441ad6f9f54d35e4119a8342f8dd9063bb23"
+  },
+  "cases": [
+    {
+      "name": "build",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+        "--build",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+        "--target",
+        "test_native_movie_container",
+        "test_native_movie_subtitles",
+        "test_native_movie_pipeline",
+        "test_native_font_metrics",
+        "test_native_font_atlas",
+        "test_native_font_layout",
+        "-j2"
+      ],
+      "exe_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+      "exit": 0,
+      "stdout": "[0/2] Re-checking globbed directories...\n[1/8] Linking CXX executable test_native_font_atlas.exe\n[2/8] Linking CXX executable test_native_font_metrics.exe\n[3/8] Linking CXX executable test_native_movie_pipeline.exe\n[4/8] Linking CXX executable test_native_movie_container.exe\n[5/8] Linking CXX executable test_native_movie_subtitles.exe\n[6/8] Building CXX object CMakeFiles/test_native_font_layout.dir/tests/test_font_layout.cpp.obj\n[7/8] Linking CXX executable test_native_font_layout.exe\n",
+      "stderr": "",
+      "at_utc": "2026-11-19T10:00:35.120525+00:00"
+    },
+    {
+      "name": "container",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_container.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-movie-layout-checkpoint-20261119-01\\container-fixture"
+      ],
+      "exe_sha256": "e71cd3136a6972274afd728bb41550d6516013829017bdb87c5abde17438ca72",
+      "exit": 0,
+      "stdout": "PASS38assets/78private2payloads exactsource/range/SHA; titlecontinuations/cursor/ownership/malformed/overflow/36MB; no decoder, tags, playback or game claim\n",
+      "stderr": "",
+      "at_utc": "2026-11-19T10:00:37.545635+00:00"
+    },
+    {
+      "name": "subtitle-titles",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_subtitles.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\TITLEN.SFD",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\TITLEW.SFD"
+      ],
+      "exe_sha256": "80444551d939d6f2a91b96b55e593781f6a5d40905a6fa6ac28a95417536debb",
+      "exit": 0,
+      "stdout": "[subtitle-pass] synthetic ownership/headers/selection/cache/malformed/12000-events\n[subtitle-pass] native timeline 10000 independent128 boundary cases\n[subtitle-pass] explicit real asset/tree SHA256, seven events and raw language bytes\n[subtitle-pass] explicit real asset/tree SHA256, seven events and raw language bytes\n",
+      "stderr": "",
+      "at_utc": "2026-11-19T10:00:37.759313+00:00"
+    },
+    {
+      "name": "subtitle-corpus",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_subtitles.exe",
+        "--corpus",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2"
+      ],
+      "exe_sha256": "80444551d939d6f2a91b96b55e593781f6a5d40905a6fa6ac28a95417536debb",
+      "exit": 0,
+      "stdout": "[subtitle-pass] synthetic ownership/headers/selection/cache/malformed/12000-events\n[subtitle-pass] native timeline 10000 independent128 boundary cases\n[subtitle-corpus-payload] key=ATTRACTN.SFD packet=6156 payload=6162 bytes=576 sha256=f40f48f1e7ced49dc954fb2082d03e048e6f3eb261b3fdd17999453ebcc88e90\n[subtitle-corpus] key=ATTRACTN.SFD source_bytes=46497792 private2=2 root_bytes=576 root_sha256=f40f48f1e7ced49dc954fb2082d03e048e6f3eb261b3fdd17999453ebcc88e90 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=ATTRACTW.SFD packet=6156 payload=6162 bytes=576 sha256=f40f48f1e7ced49dc954fb2082d03e048e6f3eb261b3fdd17999453ebcc88e90\n[subtitle-corpus] key=ATTRACTW.SFD source_bytes=46510080 private2=2 root_bytes=576 root_sha256=f40f48f1e7ced49dc954fb2082d03e048e6f3eb261b3fdd17999453ebcc88e90 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_BLOOP2.SFD packet=6156 payload=6162 bytes=576 sha256=154c93f192125a2b651a4067b1c984a56168bc43c8f5484557a6bb3d1bce8414\n[subtitle-corpus] key=KRYPT/V_BLOOP2.SFD source_bytes=24436736 private2=2 root_bytes=576 root_sha256=154c93f192125a2b651a4067b1c984a56168bc43c8f5484557a6bb3d1bce8414 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_BLOOP3.SFD packet=6156 payload=6162 bytes=576 sha256=df1c3fb6d29ca5a8a8bd919b1d1ada3ba66c747b42f8950e872cd5ea8a896e0b\n[subtitle-corpus] key=KRYPT/V_BLOOP3.SFD source_bytes=7270400 private2=2 root_bytes=576 root_sha256=df1c3fb6d29ca5a8a8bd919b1d1ada3ba66c747b42f8950e872cd5ea8a896e0b events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_BLOOP4.SFD packet=6156 payload=6162 bytes=576 sha256=2b2febd589997f7eaa84f7c87df8e39ed2c43cfb061303412cec91a5cdaf0427\n[subtitle-corpus] key=KRYPT/V_BLOOP4.SFD source_bytes=53260288 private2=2 root_bytes=576 root_sha256=2b2febd589997f7eaa84f7c87df8e39ed2c43cfb061303412cec91a5cdaf0427 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_BLOOP5.SFD packet=6156 payload=6162 bytes=576 sha256=b47cdb7844ea4cd4a2166565441df1df178bc6ec99045c2d743a8c995976d1c5\n[subtitle-corpus] key=KRYPT/V_BLOOP5.SFD source_bytes=16832512 private2=2 root_bytes=576 root_sha256=b47cdb7844ea4cd4a2166565441df1df178bc6ec99045c2d743a8c995976d1c5 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_BLOOPR.SFD packet=6156 payload=6162 bytes=576 sha256=2c346aa299d8728c6fac756583822608cfd1609a6c8e23bc31cd7b17676c89cb\n[subtitle-corpus] key=KRYPT/V_BLOOPR.SFD source_bytes=9488384 private2=2 root_bytes=576 root_sha256=2c346aa299d8728c6fac756583822608cfd1609a6c8e23bc31cd7b17676c89cb events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_BLUES.SFD packet=6156 payload=6162 bytes=576 sha256=15caa0d6c3ac9aab578f46fda1c7c12c9a8d01cbbcf1eb00557fad25fb39500a\n[subtitle-corpus] key=KRYPT/V_BLUES.SFD source_bytes=6797312 private2=2 root_bytes=576 root_sha256=15caa0d6c3ac9aab578f46fda1c7c12c9a8d01cbbcf1eb00557fad25fb39500a events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_ERMACB.SFD packet=6156 payload=6162 bytes=576 sha256=50a113f01e219a76a74e02a73a031121a8877f5dbf5aac3cf1f98cb0493d5190\n[subtitle-corpus] key=KRYPT/V_ERMACB.SFD source_bytes=23091200 private2=2 root_bytes=576 root_sha256=50a113f01e219a76a74e02a73a031121a8877f5dbf5aac3cf1f98cb0493d5190 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_KANO.SFD packet=4108 payload=4114 bytes=576 sha256=b6f3fd17e0d879efd330136d61bdd479e7e6b8da2e5de5e32aaf6759c5591468\n[subtitle-corpus] key=KRYPT/V_KANO.SFD source_bytes=5879808 private2=2 root_bytes=576 root_sha256=b6f3fd17e0d879efd330136d61bdd479e7e6b8da2e5de5e32aaf6759c5591468 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_KONQIN.SFD packet=6156 payload=6162 bytes=576 sha256=49d74548ba3b98ae35daa65cf908dddfe508cf0c23c65a45217ee5b540913ad6\n[subtitle-corpus] key=KRYPT/V_KONQIN.SFD source_bytes=68722688 private2=2 root_bytes=576 root_sha256=49d74548ba3b98ae35daa65cf908dddfe508cf0c23c65a45217ee5b540913ad6 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_LOAD1.SFD packet=6156 payload=6162 bytes=576 sha256=cfc485d81e02afbf87c2658031bc09aff6177a3c060bfb4333fa689c45c83df7\n[subtitle-corpus] key=KRYPT/V_LOAD1.SFD source_bytes=3461120 private2=2 root_bytes=576 root_sha256=cfc485d81e02afbf87c2658031bc09aff6177a3c060bfb4333fa689c45c83df7 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_LOAD2.SFD packet=4108 payload=4114 bytes=576 sha256=e72e20067fcf78e223062f53ebc5553c3bebc0c60380e6334139251df087459a\n[subtitle-corpus] key=KRYPT/V_LOAD2.SFD source_bytes=3432448 private2=2 root_bytes=576 root_sha256=e72e20067fcf78e223062f53ebc5553c3bebc0c60380e6334139251df087459a events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_MKAKON.SFD packet=6156 payload=6162 bytes=576 sha256=97991138da558cf840aaed7895b41d02b9ac33c64198da2bbc0e3193116a7274\n[subtitle-corpus] key=KRYPT/V_MKAKON.SFD source_bytes=105713664 private2=2 root_bytes=576 root_sha256=97991138da558cf840aaed7895b41d02b9ac33c64198da2bbc0e3193116a7274 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_MKDACC.SFD packet=6156 payload=6162 bytes=576 sha256=762c96b0c63a05963195cebcba874c6a15716d67ca1dc45685b90be4345a96f9\n[subtitle-corpus] key=KRYPT/V_MKDACC.SFD source_bytes=19929088 private2=2 root_bytes=576 root_sha256=762c96b0c63a05963195cebcba874c6a15716d67ca1dc45685b90be4345a96f9 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_MKHAND.SFD packet=6156 payload=6162 bytes=576 sha256=cffbb364fb0907412e0c628d165b203ee7638d4d7a27de9d0cf3943854e65c06\n[subtitle-corpus] key=KRYPT/V_MKHAND.SFD source_bytes=180252672 private2=2 root_bytes=576 root_sha256=cffbb364fb0907412e0c628d165b203ee7638d4d7a27de9d0cf3943854e65c06 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_MOTOGI.SFD packet=6156 payload=6162 bytes=576 sha256=3f8101cdda9fc80be8793eb98d32e104e2e10952ed052b20efb9c81d0fd04f3c\n[subtitle-corpus] key=KRYPT/V_MOTOGI.SFD source_bytes=62883840 private2=2 root_bytes=576 root_sha256=3f8101cdda9fc80be8793eb98d32e104e2e10952ed052b20efb9c81d0fd04f3c events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_MOTORK.SFD packet=6156 payload=6162 bytes=576 sha256=1c544eda4df66a10879f8e6be4df54be181846a5590c7463859ceac203dc53c2\n[subtitle-corpus] key=KRYPT/V_MOTORK.SFD source_bytes=49823744 private2=2 root_bytes=576 root_sha256=1c544eda4df66a10879f8e6be4df54be181846a5590c7463859ceac203dc53c2 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_MOTRBK.SFD packet=4108 payload=4114 bytes=576 sha256=f8b44d2c8abc1300600695a7623b3264ac16b7edb4539e3bee4741c9ba792e26\n[subtitle-corpus] key=KRYPT/V_MOTRBK.SFD source_bytes=4577280 private2=2 root_bytes=576 root_sha256=f8b44d2c8abc1300600695a7623b3264ac16b7edb4539e3bee4741c9ba792e26 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_MOTRFT.SFD packet=4108 payload=4114 bytes=576 sha256=98d70c57a6349a6ae719f731aff67d629cacd3dfc373a0a6b1984ef00b370eb3\n[subtitle-corpus] key=KRYPT/V_MOTRFT.SFD source_bytes=4573184 private2=2 root_bytes=576 root_sha256=98d70c57a6349a6ae719f731aff67d629cacd3dfc373a0a6b1984ef00b370eb3 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_RAIDON.SFD packet=4108 payload=4114 bytes=576 sha256=b63827b4bd8454861da75740bd34dc0f0d36d7ae72e05e3052d8f7aee2e15127\n[subtitle-corpus] key=KRYPT/V_RAIDON.SFD source_bytes=2752512 private2=2 root_bytes=576 root_sha256=b63827b4bd8454861da75740bd34dc0f0d36d7ae72e05e3052d8f7aee2e15127 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_SCORP.SFD packet=4108 payload=4114 bytes=576 sha256=79fa721ccb2771c1a7c753ce4bff83466f70a6b0c42785302c2c80404e45d7b7\n[subtitle-corpus] key=KRYPT/V_SCORP.SFD source_bytes=5879808 private2=2 root_bytes=576 root_sha256=79fa721ccb2771c1a7c753ce4bff83466f70a6b0c42785302c2c80404e45d7b7 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_SHINOK.SFD packet=4108 payload=4114 bytes=576 sha256=850cd7177ccf1eab758c1d7aaafad479baa9cf0cea1cbd757acc9adee378a570\n[subtitle-corpus] key=KRYPT/V_SHINOK.SFD source_bytes=5879808 private2=2 root_bytes=576 root_sha256=850cd7177ccf1eab758c1d7aaafad479baa9cf0cea1cbd757acc9adee378a570 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_SNDOUT.SFD packet=6156 payload=6162 bytes=576 sha256=80513bc18c611e447e9a7064519d6e6ac55ad4a9a41940b87257a4454bd1c4d4\n[subtitle-corpus] key=KRYPT/V_SNDOUT.SFD source_bytes=57585664 private2=2 root_bytes=576 root_sha256=80513bc18c611e447e9a7064519d6e6ac55ad4a9a41940b87257a4454bd1c4d4 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_SUBZER.SFD packet=4108 payload=4114 bytes=576 sha256=61698ff4fc7ccc72a9eb0e1aa08a341d59dc8526456704d5bdcadd680f59804b\n[subtitle-corpus] key=KRYPT/V_SUBZER.SFD source_bytes=5877760 private2=2 root_bytes=576 root_sha256=61698ff4fc7ccc72a9eb0e1aa08a341d59dc8526456704d5bdcadd680f59804b events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=KRYPT/V_SZCCKY.SFD packet=4108 payload=4114 bytes=576 sha256=518a6e716087720d2c5b19c752c6d906e19f960013fb93e0ce81471e43e2338c\n[subtitle-corpus] key=KRYPT/V_SZCCKY.SFD source_bytes=10194944 private2=2 root_bytes=576 root_sha256=518a6e716087720d2c5b19c752c6d906e19f960013fb93e0ce81471e43e2338c events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=LOGON.SFD packet=6156 payload=6162 bytes=576 sha256=671243a10e71294737316e2f0aed500aa8f4c502390d5c96c435a4f86f7f601e\n[subtitle-corpus] key=LOGON.SFD source_bytes=3321856 private2=2 root_bytes=576 root_sha256=671243a10e71294737316e2f0aed500aa8f4c502390d5c96c435a4f86f7f601e events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=LOGOW.SFD packet=6156 payload=6162 bytes=576 sha256=671243a10e71294737316e2f0aed500aa8f4c502390d5c96c435a4f86f7f601e\n[subtitle-corpus] key=LOGOW.SFD source_bytes=3342336 private2=2 root_bytes=576 root_sha256=671243a10e71294737316e2f0aed500aa8f4c502390d5c96c435a4f86f7f601e events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=OPENINGN.SFD packet=6156 payload=6162 bytes=576 sha256=46dd710a6e751e96985016ebb313e09a6391bc7b86aadc59dd9c00ecf51b4bcd\n[subtitle-corpus] key=OPENINGN.SFD source_bytes=190517248 private2=2 root_bytes=576 root_sha256=46dd710a6e751e96985016ebb313e09a6391bc7b86aadc59dd9c00ecf51b4bcd events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=OPENINGW.SFD packet=6156 payload=6162 bytes=576 sha256=608310dda6b5b6b9fc5da822455124bf9122715d46ade67d727200d7080bc45f\n[subtitle-corpus] key=OPENINGW.SFD source_bytes=190517248 private2=2 root_bytes=576 root_sha256=608310dda6b5b6b9fc5da822455124bf9122715d46ade67d727200d7080bc45f events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=QUADN.SFD packet=6156 payload=6162 bytes=576 sha256=aa36d4ebc62d367f5e81db660b43cf72c0ff59b2170dca0e2522967f3a4f416e\n[subtitle-corpus] key=QUADN.SFD source_bytes=20850688 private2=2 root_bytes=576 root_sha256=aa36d4ebc62d367f5e81db660b43cf72c0ff59b2170dca0e2522967f3a4f416e events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=QUADW.SFD packet=6156 payload=6162 bytes=576 sha256=2f1dd843269fac7e9077104a538d799425ec4f771641c85c59250f1f32a109b7\n[subtitle-corpus] key=QUADW.SFD source_bytes=20850688 private2=2 root_bytes=576 root_sha256=2f1dd843269fac7e9077104a538d799425ec4f771641c85c59250f1f32a109b7 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=SPYHUNN.SFD packet=6156 payload=6162 bytes=576 sha256=ceea6d4f09a6ad46542ab9fff88838e5380166181a55fc2d780f6594a907e80a\n[subtitle-corpus] key=SPYHUNN.SFD source_bytes=43825152 private2=2 root_bytes=576 root_sha256=ceea6d4f09a6ad46542ab9fff88838e5380166181a55fc2d780f6594a907e80a events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=SPYHUNW.SFD packet=6156 payload=6162 bytes=576 sha256=12e6b17bf82918da4f22dd865cfd7ed575af5f8aa15b63f1d3a3fead8e038742\n[subtitle-corpus] key=SPYHUNW.SFD source_bytes=43808768 private2=2 root_bytes=576 root_sha256=12e6b17bf82918da4f22dd865cfd7ed575af5f8aa15b63f1d3a3fead8e038742 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=STRANGN.SFD packet=6156 payload=6162 bytes=576 sha256=aaff985238d4cecc97ddbf10c1f4c158a1c0e7928075d06a9f3d16c67b9bfc28\n[subtitle-corpus] key=STRANGN.SFD source_bytes=62617600 private2=2 root_bytes=576 root_sha256=aaff985238d4cecc97ddbf10c1f4c158a1c0e7928075d06a9f3d16c67b9bfc28 events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=STRANGW.SFD packet=6156 payload=6162 bytes=576 sha256=a9906d042b42f6eae2643a1e77f565a8085fdda775d5a74f3d3bcabfd25b34ee\n[subtitle-corpus] key=STRANGW.SFD source_bytes=62443520 private2=2 root_bytes=576 root_sha256=a9906d042b42f6eae2643a1e77f565a8085fdda775d5a74f3d3bcabfd25b34ee events=0 active=0 content_bytes=0 content_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 error=none\n[subtitle-corpus-payload] key=TITLEN.SFD packet=6156 payload=6162 bytes=2030 sha256=644be5aeb8151901785b0266a609988d4df2586f600bbb680281409fe9921bd6\n[subtitle-corpus-payload] key=TITLEN.SFD packet=8204 payload=8210 bytes=359 sha256=5ff2cc3d8c7e06d54a2df39db13e925229f190c156b2fb0eaac3a6b8db0ae652\n[subtitle-corpus] key=TITLEN.SFD source_bytes=21565440 private2=3 root_bytes=2389 root_sha256=bbe9842b4fdb0763b9393467376d54ec83fc199e52b8251566a2a60d229c4147 events=7 active=1 content_bytes=163 content_sha256=c0b644081f15d11ed691d02c816239ca42c5ee1a620fca3998d2771ecfe376c5 error=none\n[subtitle-corpus-payload] key=TITLEW.SFD packet=6156 payload=6162 bytes=2030 sha256=644be5aeb8151901785b0266a609988d4df2586f600bbb680281409fe9921bd6\n[subtitle-corpus-payload] key=TITLEW.SFD packet=8204 payload=8210 bytes=359 sha256=c81a39ef9d600222ba6c82b1c65dd891ff5dbda8d781d7fe6a37c5c16c86f0f7\n[subtitle-corpus] key=TITLEW.SFD source_bytes=21565440 private2=3 root_bytes=2389 root_sha256=3ba2d8aa47943c511560370b97eda2e5c9b8d6fae6ce7fe412b92ca79ccd5b2c events=7 active=1 content_bytes=163 content_sha256=c0b644081f15d11ed691d02c816239ca42c5ee1a620fca3998d2771ecfe376c5 error=none\n[subtitle-corpus-pass] assets=38 private2=78 roots=38 events=14 active_titles=2 ownership=retained error=none; fixture-only continuation/synthetic clock; no font/playback/game claim\n",
+      "stderr": "",
+      "at_utc": "2026-11-19T10:00:39.373627+00:00"
+    },
+    {
+      "name": "pipeline",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_pipeline.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules\\MOVIER.ovl"
+      ],
+      "exe_sha256": "9bfabe989825dd2fcf3ff3cd573a60c6f280d0f6a27b57e65fefda940db6fea0",
+      "exit": 0,
+      "stdout": "native pipeline GL: ATI Technologies Inc. | AMD Radeon RX 6800 XT | 4.6.0 Compatibility Profile Context 26.11.2.261112\n[native-pipeline] LOGON.SFD videos=152 audio_frames=7601 samples_per_channel=243232 first_rgba_sha256=176b395e57f46dba66347d8e9ff503edf9ba99218c838b3ff7a8ed42b12d5cb3 last_rgba_sha256=58e5e48106007265af8062e2590728b5443945fb794e644d240a27e64e28808d subtitle_active=0 english_bytes=0\n[native-pipeline] TITLEN.SFD videos=900 audio_frames=26804 samples_per_channel=857728 first_rgba_sha256=e30544624c4fba18b61e77fe252a4a727621f7a4160e0bb484f7de78c82e82ff last_rgba_sha256=8f6a55984acd008901fd06bb4a55025809cdaefe403521659647501135c89087 subtitle_active=1 english_bytes=22\n[native-pipeline] OPENINGN.SFD videos=7841 audio_frames=388550 samples_per_channel=12433600 first_rgba_sha256=ea3e347568bbc5cb260b1a26de03a2119278b68bf4d09f4f12ee4c29e565d41c last_rgba_sha256=58e5e48106007265af8062e2590728b5443945fb794e644d240a27e64e28808d subtitle_active=0 english_bytes=0\nPASS three full native decodes, preserved private2/subtitle data and six exact GPU frames; no game/font/audio-device/A-V-sync/retail-aspect-role-selection acceptance\n",
+      "stderr": "[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=296)\n[mpeg @ 000001CB4C6CBE00] stream 0 : no PTS found at end of file, duration not set\n[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=11277)\n[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=296)\n",
+      "at_utc": "2026-11-19T10:00:44.514412+00:00"
+    },
+    {
+      "name": "font-metrics",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_font_metrics.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MKDA.PAK"
+      ],
+      "exe_sha256": "5736129628c43b9ab53eed806a5144622ca2cc610e2a7cb85dfa8ec4fc885229",
+      "exit": 0,
+      "stdout": "font-metrics actual glyphs=224 float_fields=2016 sha256=b91b6ee00f3bed46a1e89471c247ea659b88af927d7bd9576311b57fd0cfd497 space=6 glyph0_advance=7\nPASS owned native metrics, exact retail fields, malformed/lifetime/dynamic-capacity checks; no atlas/layout/font-selection/render/game acceptance\n",
+      "stderr": "",
+      "at_utc": "2026-11-19T10:00:44.573350+00:00"
+    },
+    {
+      "name": "font-atlas",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_font_atlas.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-movie-layout-checkpoint-20261119-01\\EDDMONDGRAY14.source"
+      ],
+      "exe_sha256": "984db7f29375a497bad76f7550bf00eb175bc5a07653be9c6d9195e7511ec482",
+      "exit": 0,
+      "stdout": "PASS font atlas owned data/permutation; no render oracle\n",
+      "stderr": "",
+      "at_utc": "2026-11-19T10:00:44.631170+00:00"
+    },
+    {
+      "name": "font-layout",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_font_layout.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-movie-layout-checkpoint-20261119-01\\EDDMONDGRAY14_MET.source",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\TITLEN.SFD"
+      ],
+      "exe_sha256": "575b2fa470fd086ce6b5c5d704831138f9e5530822250bae44442593f8c8d645",
+      "exit": 0,
+      "stdout": "actual title layout events=7 languages=5 retained=35 english_glyphs=16 width=272 baseline=446\nPASS native logical font layout; no screen/region/composition\n",
+      "stderr": "",
+      "at_utc": "2026-11-19T10:00:44.674113+00:00"
+    }
+  ],
+  "symbol_checks": [
+    {
+      "target": "test_native_movie_container",
+      "defined_forbidden_namespace_symbols": []
+    },
+    {
+      "target": "test_native_movie_subtitles",
+      "defined_forbidden_namespace_symbols": []
+    },
+    {
+      "target": "test_native_movie_pipeline",
+      "defined_forbidden_namespace_symbols": []
+    },
+    {
+      "target": "test_native_font_metrics",
+      "defined_forbidden_namespace_symbols": []
+    },
+    {
+      "target": "test_native_font_atlas",
+      "defined_forbidden_namespace_symbols": []
+    },
+    {
+      "target": "test_native_font_layout",
+      "defined_forbidden_namespace_symbols": []
+    }
+  ],
+  "limits": [
+    "Symbol names supplement, not replace, a whole-game source reachability audit",
+    "Synthetic clocks and fixture-only CRITAGS continuation assembly",
+    "Font derived-byte hashes are source/manual observations, not rendered hardware oracle",
+    "Layout proves logical pen/baseline only, not screen/region transform or pixel sampling",
+    "No actual font selection/composition, A-V playback, audible output or game run"
+  ],
+  "game_launched": false,
+  "gpu_driver_changes": false
+}

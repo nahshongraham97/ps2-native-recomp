@@ -19,6 +19,7 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/native_file.cpp
     runtime/src/native/font_atlas.cpp
     runtime/src/native/font_metrics.cpp
+    runtime/src/native/font_layout.cpp
     runtime/src/native/movie_assets.cpp
     runtime/src/native/movie_container.cpp
     runtime/src/native/movie_subtitles.cpp
@@ -34,6 +35,7 @@ target_link_libraries(mka_native_media PRIVATE opengl32 gdi32 user32 bcrypt)
 foreach(pair
     "test_native_font_atlas|tests/test_font_atlas.cpp"
     "test_native_font_metrics|tests/test_font_metrics.cpp"
+    "test_native_font_layout|tests/test_font_layout.cpp"
     "test_native_movie_color|tests/test_movie_color.cpp"
     "test_native_movie_gpu_layout|tests/test_movie_gpu_layout.cpp"
     "test_native_movie_assets|tests/test_movie_assets.cpp"
