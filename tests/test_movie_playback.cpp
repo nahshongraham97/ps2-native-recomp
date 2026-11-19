@@ -20,6 +20,7 @@ struct Input final:MoviePlaybackInput {
 struct Policies final:MoviePlaybackPolicies {
     Trace& trace;bool is_ready=false,is_eligible=true,allow_end=false,stop_error=false,pause_error=false,wrong_cardinality=false,gain_aware=false;std::optional<std::int32_t> initial_gain;std::vector<std::int32_t> prepared_gains;NativeMovieStreamPlayback* reentry_owner=nullptr;bool reentry_probe=false;int reentry_rejections=0,gain_sets=0;int transforms=0,stops=0,eligibility_calls=0,video_submissions=0,end_checks=0;std::vector<MoviePlaybackAudioAcceptance> accepted;
     explicit Policies(Trace& t):trace(t){}
+    bool validate_audio_format(const std::optional<sound::AudioStreamFormat>& format,MovieControlFailure& f)override{f={};return !format||*format==sound::AudioStreamFormat{48000,2,3};}
     bool begin(const RetailMovieRequest&,std::int32_t,MovieControlFailure& f)override{f={};trace.calls.push_back("begin");return true;}
     bool pump_metadata(MovieControlFailure& f)override{f={};trace.calls.push_back("metadata");return true;}
     bool pause(bool p,MovieControlFailure& f)override{f={};trace.calls.push_back(p?"policy_pause":"policy_resume");return pause_error?error(f,"test policy pause"):true;}

@@ -1,0 +1,117 @@
+{
+  "status": "PASS_SCOPED_CONCRETE_NATIVE_MOVIE_KERNEL_POLICIES",
+  "source_after_sha256": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_pcm_binding.hpp": "7150d72bf1d1eb90bc69c3943041136c7c4dc94ad18f6e54013963af847af87b",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_pcm_binding.cpp": "cac2c78f25c5ad2d8961a8246b4f1629de6554518beacceca1c795b8957ad747",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_kernel_policies.hpp": "f1f51f8dab7b831ef5853580f744148c1fe5fb6606559ac3bca355bc9d6f679c",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_kernel_policies.cpp": "797371e687a64e7beeb9501be92c0b76fa5eb057a46089557b4029e01558e660",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_pcm_binding.cpp": "f30b5cf322f4489e11021e124d4ceff3f50a89f50b52d8096246151d3be7c470",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_kernel_policies.cpp": "c3a99ab1f3430426c693fd11e98db24b743eaae149dc7d41a76f0a8a9f2ca174",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_playback.hpp": "22d4bcebd321ffaa2872cda411f595d94afc16759edd831d3aa28b0b475544d9",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_playback.cpp": "265dc66f4a3fc084ed95c68b0f4a2f1055474610ec84ebe22af419f89aa3e5b8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_playback.cpp": "fbf48386d897928621cd68dbf902f1f88b2b16a7ade68e2b6dfad7eb97385fd7",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_pcm_mix.hpp": "ed8853490298e7c396560cd9b9f786ce9c37e5905fca0315b44fe5a924e07a61",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_pcm_mix.cpp": "838b44b6542587e910b7dac4f80425f0dcb123cbf431354f58a3feeb2f971e89",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\generated\\movie_pcm_mix_tables.inc": "a5ad4e0d00232ad85a9ac30b4a0bc1393b2c3413f21dd2d54e84af63ca9c9e82",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_frame_eligibility.hpp": "1a3f00c45e6b0ce6b75865ea43bb67529a53be2d7226e289cc8831e6b33ca868",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_frame_eligibility.cpp": "fc2b22ac6571522c22f170526e007bae2352750bc44460fa763a685f9a28f8d7",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_eligibility_numeric.hpp": "b496c55eef48793bc133e23a174f9a2bf1f6d0281c2af3bca02b92fee340d490",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_eligibility_numeric.cpp": "63c81a84a154600c156a290dd40cf85ac6e6499e7cb12f3ae45e66a999d47c46",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_clock_filter.hpp": "a09c54636fcca9438666305b6443314abb12ecf17e0ef0e6078afb47b899caa6",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_timecode.hpp": "1a20efa40d7c39fb26aaf64dc963de67b888c6bcebdb93086a248e40ae88d99f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_decode.hpp": "e2bdadf503885b0ef85e11c53e021d547d1849934936889a9a5bea2f1ec1be15",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_pes_index.hpp": "7b2bdf6977e54b762402d1c1185134277082cac33305bb01464c83cf1a105a1e",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_source.hpp": "92eb2f00976bbc61764288d5c0a6b5cfe244db852dae84f6d4803b4ba0ebeb51",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_catalog.hpp": "067df1c104e41eb4b4b4e25f5f50e49698eac364aef321192fae7da2caf6ca17",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_gpu.hpp": "d6ee24409067b58dfb7984f790e3083ffdc903100830ebd84a51b41c4bbc7e15",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_color.hpp": "69aef2ea2397e094d30f5f3ecf42d06a436708c9d2aaf77919a825804b50eba0",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\audio_device.hpp": "b3b2906c7e26c4388e09402ca899f7fc75442d2b2bb991b897350d571603a5f8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_audio_submission.hpp": "09d74f3f9f8d174029ef36feb51c0aa2cc9ff40dd9d3843ffd9814bd2a4e256e",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_audio_progress.hpp": "7353fc44e71a80bd98d014e7a67e5b94937c2484758fff03589fb7f996d9bb45",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_audio_progress.cpp": "3c8bec1bf28207d7f8a3655eea885efadb6b166a5b99dd55ea68f554f8b6c487",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_color.cpp": "3f7f605a5eb42ddd9df66c0367dd41ce4574b16c37f7c303ae43588d85520697",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_gpu.cpp": "1490f71ebb6fecd705ac7a0084dea0266dd832ed00a64602eb95b244263caa03",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_gain.cpp": "63f02d0b7f85ecb8e2b7cdb8fbdac0fcb1a095a2a410c4c551fdc0f3a2fb4422",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_control.cpp": "dbf53b97108b82a8e30d0310b11428bbe1ae1f485e12bf10e179bab6fa9ce08d",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_catalog.cpp": "3f5f70be32cba3bb64f2d3a294f6cf1835707992199f4813a1090eabeb9e0c58",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_media.cmake": "5f6dcef8c03eadaafb74d837a75f612c60e8de7d605ae147316b2f477c256e88",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\CMakeLists.txt": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules\\MOVIER.ovl": "3a34e3838042aa0bde0ce687a4e61e128b2eb965e60e65c34713e0a73891adb8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-movie-kernel-policies-20261119\\validate.py": "987bafb18845f33ff65cfd9e437a3b9e98b7296313a119b474070e95dc1f0752"
+  },
+  "fixtures": [
+    {
+      "component": "pcm-binding",
+      "fixture_sha256": "719e38bc7c15f4bb0990ee27ce9ae361b8148ea851ccd86bd972156cb2a38d9a",
+      "audit": {
+        "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_pcm_binding.exe",
+        "target_before_sha256": "719e38bc7c15f4bb0990ee27ce9ae361b8148ea851ccd86bd972156cb2a38d9a",
+        "target_after_sha256": "719e38bc7c15f4bb0990ee27ce9ae361b8148ea851ccd86bd972156cb2a38d9a",
+        "audited_target_expected_sha256": "719e38bc7c15f4bb0990ee27ce9ae361b8148ea851ccd86bd972156cb2a38d9a",
+        "execution_applicable": true,
+        "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+        "forbidden": [],
+        "required_defined_symbols": [
+          "mka::video::NativeMoviePcmBinding::"
+        ],
+        "executed_target_sha256": "719e38bc7c15f4bb0990ee27ce9ae361b8148ea851ccd86bd972156cb2a38d9a"
+      }
+    },
+    {
+      "component": "kernel-policies",
+      "fixture_sha256": "0bba45b365f6724f236e623d41aee499398e3125a5fd9fff91ffc8d8a9317349",
+      "audit": {
+        "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_kernel_policies.exe",
+        "target_before_sha256": "0bba45b365f6724f236e623d41aee499398e3125a5fd9fff91ffc8d8a9317349",
+        "target_after_sha256": "0bba45b365f6724f236e623d41aee499398e3125a5fd9fff91ffc8d8a9317349",
+        "audited_target_expected_sha256": "0bba45b365f6724f236e623d41aee499398e3125a5fd9fff91ffc8d8a9317349",
+        "execution_applicable": true,
+        "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+        "forbidden": [],
+        "required_defined_symbols": [
+          "mka::video::NativeMovieKernelPolicies::",
+          "mka::video::NativeMovieStreamPlayback::",
+          "mka::video::NativeMoviePcmBinding::"
+        ],
+        "executed_target_sha256": "0bba45b365f6724f236e623d41aee499398e3125a5fd9fff91ffc8d8a9317349"
+      }
+    },
+    {
+      "component": "stream-regression",
+      "fixture_sha256": "f27e9bd58426f98ec6c746f57883f58af848703455856f9977457d9f07f53424",
+      "audit": {
+        "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_playback.exe",
+        "target_before_sha256": "f27e9bd58426f98ec6c746f57883f58af848703455856f9977457d9f07f53424",
+        "target_after_sha256": "f27e9bd58426f98ec6c746f57883f58af848703455856f9977457d9f07f53424",
+        "audited_target_expected_sha256": "f27e9bd58426f98ec6c746f57883f58af848703455856f9977457d9f07f53424",
+        "execution_applicable": true,
+        "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+        "forbidden": [],
+        "required_defined_symbols": [
+          "mka::video::NativeMovieStreamPlayback::"
+        ],
+        "executed_target_sha256": "f27e9bd58426f98ec6c746f57883f58af848703455856f9977457d9f07f53424"
+      }
+    }
+  ],
+  "native_archive_sha256": "aa43cf0fe6cc1be4ee6960429c981b9264e98c0d4416c593627a6b39f2c91348",
+  "archive_audit": {
+    "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_media.a",
+    "target_before_sha256": "aa43cf0fe6cc1be4ee6960429c981b9264e98c0d4416c593627a6b39f2c91348",
+    "target_after_sha256": "aa43cf0fe6cc1be4ee6960429c981b9264e98c0d4416c593627a6b39f2c91348",
+    "audited_target_expected_sha256": "aa43cf0fe6cc1be4ee6960429c981b9264e98c0d4416c593627a6b39f2c91348",
+    "execution_applicable": false,
+    "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+    "forbidden": [],
+    "required_defined_symbols": [
+      "mka::video::NativeMovieKernelPolicies::",
+      "mka::video::NativeMoviePcmBinding::"
+    ]
+  },
+  "cache_after_sha256": "d320c4e3663feec551cd3a3b4a8712e915fad196ddc86c7f880c07d4bd2aa3f4",
+  "limits": [
+    "Explicit generic PCM/ordinary eligibility and deterministic fake endpoint composition only",
+    "No normal source/speaker/sink profile admission, source timeline/lifecycle provider or complete playback proof",
+    "No game, real endpoint/GPU/context, audible samples, local model, driver or settings access"
+  ]
+}

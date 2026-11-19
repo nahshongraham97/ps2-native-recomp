@@ -73,6 +73,10 @@ struct MoviePlaybackSnapshot {
 class MoviePlaybackPolicies {
 public:
     virtual ~MoviePlaybackPolicies() = default;
+    // Construction-time join to the ACTUAL opened client format. Equal sample
+    // counts alone cannot authenticate channel/speaker order. Absence explicit.
+    virtual bool validate_audio_format(const std::optional<sound::AudioStreamFormat>&,
+                                      MovieControlFailure&) = 0;
     virtual bool begin(const RetailMovieRequest&, std::int32_t initial_tenth_db, MovieControlFailure&) = 0;
     virtual bool pump_metadata(MovieControlFailure&) = 0;
     virtual bool pause(bool, MovieControlFailure&) = 0;

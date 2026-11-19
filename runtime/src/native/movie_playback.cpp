@@ -69,22 +69,27 @@ std::unique_ptr<NativeMovieStreamPlayback> NativeMovieStreamPlayback::create(
             error(f,"movie playback explicit host presentation and queue policy");return {};
         }
         std::optional<sound::AudioQueueStatus> initial;
+        std::optional<sound::AudioStreamFormat> actual_format;
         if(config.audio==MoviePlaybackAudioPresence::required) {
             if(!audio||!config.client_sample_rate||!config.client_channels||!config.client_channel_mask) {
                 error(f,"movie playback missing required native audio output format");return {};
             }
             const auto actual=audio->format(f);
-            if(!actual||*actual!=sound::AudioStreamFormat{config.client_sample_rate,
+            if(!actual||f.kind!=MovieControlError::none||*actual!=sound::AudioStreamFormat{config.client_sample_rate,
                    config.client_channels,config.client_channel_mask}) {
                 error(f,"movie playback client format differs from owned output");return {};
             }
+            actual_format=actual;
             initial=audio->queue_status(f);
-            if(!initial||!valid_status(*initial)||initial->started||initial->submitted_frames||initial->padding_frames) {
+            if(!initial||f.kind!=MovieControlError::none||!valid_status(*initial)||initial->started||initial->submitted_frames||initial->padding_frames) {
                 error(f,"movie playback requires exclusive empty stopped audio stream");return {};
             }
         } else if(config.audio!=MoviePlaybackAudioPresence::absent||audio||
                   config.client_sample_rate||config.client_channels||config.client_channel_mask) {
             error(f,"movie playback explicit audio presence mismatch");return {};
+        }
+        if(!policies->validate_audio_format(actual_format,f)||f.kind!=MovieControlError::none) {
+            error(f,"movie playback policy differs from actual client format");return {};
         }
         auto result=std::unique_ptr<NativeMovieStreamPlayback>(new NativeMovieStreamPlayback(
             std::move(input),std::move(policies),std::move(audio),gpu,std::move(color),config,*gain));

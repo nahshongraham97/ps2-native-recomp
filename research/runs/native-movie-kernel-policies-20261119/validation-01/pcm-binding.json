@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_pcm_binding.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS explicit immutable PCM binding; no retail profile admission or playback\n",
+  "stderr": "",
+  "executable_sha256": "719e38bc7c15f4bb0990ee27ce9ae361b8148ea851ccd86bd972156cb2a38d9a",
+  "executable_after_sha256": "719e38bc7c15f4bb0990ee27ce9ae361b8148ea851ccd86bd972156cb2a38d9a"
+}
