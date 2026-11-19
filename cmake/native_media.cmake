@@ -29,6 +29,7 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/mpeg2_timing.cpp
     runtime/src/native/movie_timecode.cpp
     runtime/src/native/movie_control.cpp
+    runtime/src/native/movie_gain.cpp
     runtime/src/native/movie_subtitles.cpp
     runtime/src/native/movie_decode.cpp
     runtime/src/native/movie_color.cpp
@@ -94,6 +95,11 @@ add_executable(test_native_movie_control EXCLUDE_FROM_ALL
     tests/test_movie_control.cpp runtime/src/native/movie_control.cpp)
 target_include_directories(test_native_movie_control PRIVATE runtime/include)
 target_compile_features(test_native_movie_control PRIVATE cxx_std_20)
+
+add_executable(test_native_movie_gain EXCLUDE_FROM_ALL
+    tests/test_movie_gain.cpp runtime/src/native/movie_gain.cpp)
+target_include_directories(test_native_movie_gain PRIVATE runtime/include)
+target_compile_features(test_native_movie_gain PRIVATE cxx_std_20)
 
 # Native platform paths: no media codecs, runtime or generated game dependency.
 add_executable(test_native_user_paths EXCLUDE_FROM_ALL

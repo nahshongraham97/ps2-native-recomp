@@ -1,0 +1,60 @@
+{
+  "positive_records": 510,
+  "negative_cases": [
+    {
+      "case": "empty",
+      "rejected": true,
+      "message": "movie_gain: exactly510 reviewed records required"
+    },
+    {
+      "case": "duplicate",
+      "rejected": true,
+      "message": "movie_gain: duplicate category/step"
+    },
+    {
+      "case": "missing",
+      "rejected": true,
+      "message": "movie_gain: exactly510 reviewed records required"
+    },
+    {
+      "case": "bool_category",
+      "rejected": true,
+      "message": "movie_gain: invalid category"
+    },
+    {
+      "case": "bool_step",
+      "rejected": true,
+      "message": "movie_gain: invalid step/total"
+    },
+    {
+      "case": "bool_value",
+      "rejected": true,
+      "message": "movie_gain: unresolved/invalid gain"
+    },
+    {
+      "case": "wrong_total",
+      "rejected": true,
+      "message": "movie_gain: invalid step/total"
+    },
+    {
+      "case": "nonfinite",
+      "rejected": true,
+      "message": "movie_gain: invalid source category base"
+    },
+    {
+      "case": "negative_base",
+      "rejected": true,
+      "message": "movie_gain: invalid source category base"
+    },
+    {
+      "case": "unresolved",
+      "rejected": true,
+      "message": "movie_gain: unresolved/invalid gain"
+    },
+    {
+      "case": "base_changes",
+      "rejected": true,
+      "message": "movie_gain: changing base within category"
+    }
+  ]
+}

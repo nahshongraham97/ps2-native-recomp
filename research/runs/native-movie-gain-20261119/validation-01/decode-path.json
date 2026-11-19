@@ -1,0 +1,14 @@
+{
+  "name": "decode-path",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_decode.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-movie-gain-20261119\\validation-01\\decode-path"
+  ],
+  "exe_sha256": "2fefc6084e93b60134d90672117953611554c41dd7c139b8e295da6a37537493",
+  "exit": 0,
+  "stdout": "[native-movie-decode] LOGON.SFD video_frames=152 audio_frames=7601 samples_per_channel=243232 peak=29980 missing_pts=0 yuv_fnv64=0468A47CFE425CA5 pcm_fnv64=D26294A0E63F19E3\n[native-movie-decode] TITLEN.SFD video_frames=900 audio_frames=26804 samples_per_channel=857728 peak=32768 missing_pts=0 yuv_fnv64=358F4D588B8C4AAA pcm_fnv64=A974534C9BF69CB6\n[native-movie-decode] OPENINGN.SFD video_frames=7841 audio_frames=388550 samples_per_channel=12433600 peak=32768 missing_pts=0 yuv_fnv64=4968774FB3474C4E pcm_fnv64=DFF3E672DC7A5C41\nPASS native filesystem/MPEG2/ADX decoder ownership and actual media output; no game/A-V-sync/presentation/fidelity claim\n",
+  "stderr": "[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=296)\n[mpeg @ 00000206D1C09DC0] stream 0 : no PTS found at end of file, duration not set\n[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=11277)\n[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=296)\n",
+  "at_utc": "2026-11-19T14:02:17.492287+00:00"
+}

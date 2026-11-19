@@ -1,0 +1,33 @@
+{
+  "name": "build",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+    "--target",
+    "test_native_movie_container",
+    "test_native_movie_subtitles",
+    "test_native_movie_pipeline",
+    "test_native_font_metrics",
+    "test_native_font_atlas",
+    "test_native_font_layout",
+    "test_native_font_geometry",
+    "test_native_movie_metadata",
+    "test_native_mpeg2_timing",
+    "test_native_movie_timecode",
+    "test_native_movie_gl_device",
+    "test_native_user_paths",
+    "test_native_movie_pes_index",
+    "test_native_movie_decode",
+    "test_native_movie_source_failure",
+    "test_native_movie_source_association",
+    "test_native_movie_control",
+    "test_native_movie_gain",
+    "-j2"
+  ],
+  "exe_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "exit": 0,
+  "stdout": "[0/2] Re-checking globbed directories...\n[1/14] Linking CXX executable test_native_font_atlas.exe\n[2/14] Linking CXX executable test_native_font_metrics.exe\n[3/14] Linking CXX executable test_native_font_layout.exe\n[4/14] Linking CXX executable test_native_font_geometry.exe\n[5/14] Linking CXX executable test_native_movie_gl_device.exe\n[6/14] Linking CXX executable test_native_movie_decode.exe\n[7/14] Linking CXX executable test_native_movie_source_failure.exe\n[8/14] Linking CXX executable test_native_movie_pipeline.exe\n[9/14] Linking CXX executable test_native_movie_container.exe\n[10/14] Linking CXX executable test_native_movie_source_association.exe\n[11/14] Linking CXX executable test_native_movie_pes_index.exe\n[12/14] Linking CXX executable test_native_movie_metadata.exe\n[13/14] Linking CXX executable test_native_movie_subtitles.exe\n",
+  "stderr": "",
+  "at_utc": "2026-11-19T14:01:50.731721+00:00"
+}

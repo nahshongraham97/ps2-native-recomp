@@ -1,0 +1,75 @@
+{
+  "scope": "Negative build fixtures only; no game/runtime/device",
+  "source_sha256": "0c49f01f2b9d3f18e0893e80d479a37298122a2e4384ce66ec55f3d8e3038acb",
+  "data_sha256": "ec5c700aafaaf51103000676309190bec5a8628a80d1384ce416e77b9cb90ec5",
+  "cases": [
+    {
+      "case": "missing_data",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-fsyntax-only",
+        "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-native-gain-compile-71bed_1l\\missing_data\\movie_gain.cpp"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-native-gain-compile-71bed_1l\\missing_data\\movie_gain.cpp:21:10: fatal error: 'generated/movie_gain_rows.inc' file not found\n   21 | #include \"generated/movie_gain_rows.inc\"\n      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n1 error generated.\n"
+    },
+    {
+      "case": "empty_data",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-fsyntax-only",
+        "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-native-gain-compile-71bed_1l\\empty_data\\movie_gain.cpp"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-native-gain-compile-71bed_1l\\empty_data\\movie_gain.cpp:26:9: error: no matching function for call to 'size'\n   26 |     if (std::size(rows) != 102) return false;\n      |         ^~~~~~~~~\nC:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__iterator/size.h:29:38: note: candidate template ignored: substitution failure [with _Cont = GainRow[0]]: member reference base type 'const mka::video::(anonymous namespace)::GainRow[0]' is not a structure or union\n   29 | _LIBCPP_HIDE_FROM_ABI constexpr auto size(const _Cont& __c) noexcept(noexcept(__c.size())) -> decltype(__c.size()) {\n      |                                      ^                                                                    ~\nC:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__iterator/size.h:34:54: note: candidate template ignored: substitution failure [with _Tp = GainRow, _Sz = 0]: zero-length arrays are not permitted in C++\n   34 | [[nodiscard]] _LIBCPP_HIDE_FROM_ABI constexpr size_t size(const _Tp (&)[_Sz]) noexcept {\n      |                                                      ^                  ~~~\nC:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-native-gain-compile-71bed_1l\\empty_data\\movie_gain.cpp:45:15: error: static assertion expression is not an integral constant expression\n   45 | static_assert(valid_rows(),\n      |               ^~~~~~~~~~~~\nC:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-native-gain-compile-71bed_1l\\empty_data\\movie_gain.cpp:53:15: error: static assertion expression is not an integral constant expression\n   53 | static_assert(category(101)->base_bits == 0x3f400000u,\n      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\nC:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-native-gain-compile-71bed_1l\\empty_data\\movie_gain.cpp:53:30: note: cannot access field of null pointer\n   53 | static_assert(category(101)->base_bits == 0x3f400000u,\n      |                              ^\nC:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-native-gain-compile-71bed_1l\\empty_data\\movie_gain.cpp:55:15: error: static assertion expression is not an integral constant expression\n   55 | static_assert(category(0)->base_bits == 0u,\n      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~\nC:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-native-gain-compile-71bed_1l\\empty_data\\movie_gain.cpp:55:28: note: cannot access field of null pointer\n   55 | static_assert(category(0)->base_bits == 0u,\n      |                            ^\n4 errors generated.\n"
+    },
+    {
+      "case": "duplicate_category",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-fsyntax-only",
+        "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-native-gain-compile-71bed_1l\\duplicate_category\\movie_gain.cpp"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-native-gain-compile-71bed_1l\\duplicate_category\\movie_gain.cpp:45:15: error: static assertion failed due to requirement 'valid_rows()': Movie gain requires102 unique categories0..101, valid tenths-dB and agreeing duplicate bases\n   45 | static_assert(valid_rows(),\n      |               ^~~~~~~~~~~~\n1 error generated.\n"
+    },
+    {
+      "case": "nonfinite_base",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-fsyntax-only",
+        "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-native-gain-compile-71bed_1l\\nonfinite_base\\movie_gain.cpp"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-native-gain-compile-71bed_1l\\nonfinite_base\\movie_gain.cpp:45:15: error: static assertion failed due to requirement 'valid_rows()': Movie gain requires102 unique categories0..101, valid tenths-dB and agreeing duplicate bases\n   45 | static_assert(valid_rows(),\n      |               ^~~~~~~~~~~~\nC:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-native-gain-compile-71bed_1l\\nonfinite_base\\movie_gain.cpp:55:15: error: static assertion failed due to requirement 'category(0)->base_bits == 0U': Source zero category must retain literal positive zero\n   55 | static_assert(category(0)->base_bits == 0u,\n      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~\nC:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-native-gain-compile-71bed_1l\\nonfinite_base\\movie_gain.cpp:55:38: note: expression evaluates to '2143289345 == 0'\n   55 | static_assert(category(0)->base_bits == 0u,\n      |               ~~~~~~~~~~~~~~~~~~~~~~~^~~~~\n2 errors generated.\n"
+    },
+    {
+      "case": "invalid_gain",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-fsyntax-only",
+        "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-native-gain-compile-71bed_1l\\invalid_gain\\movie_gain.cpp"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-native-gain-compile-71bed_1l\\invalid_gain\\movie_gain.cpp:45:15: error: static assertion failed due to requirement 'valid_rows()': Movie gain requires102 unique categories0..101, valid tenths-dB and agreeing duplicate bases\n   45 | static_assert(valid_rows(),\n      |               ^~~~~~~~~~~~\n1 error generated.\n"
+    }
+  ],
+  "initial_harness_issue": "First attempt correctly rejected empty data but stopped because it required the specific static assertion diagnostic; initial compiler stderr was not retained. This rerun retains all full diagnostics.",
+  "at_utc": "2026-11-19T13:59:23.013567+00:00",
+  "all_rejected": true
+}

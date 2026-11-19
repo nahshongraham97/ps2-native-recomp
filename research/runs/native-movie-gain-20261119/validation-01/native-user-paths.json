@@ -1,0 +1,11 @@
+{
+  "name": "native-user-paths",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_user_paths.exe"
+  ],
+  "exe_sha256": "05fb84810f096b0813315308823fb25e0db9913aaece6148e45adc5325a2a1a2",
+  "exit": 0,
+  "stdout": "native-user-paths PASS: read-only knownfolder; temporary Unicode/create/IO/errors\n",
+  "stderr": "",
+  "at_utc": "2026-11-19T14:02:03.903000+00:00"
+}

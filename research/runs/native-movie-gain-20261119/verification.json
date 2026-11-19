@@ -1,0 +1,33 @@
+{
+  "status": "PASS_BOUNDED_NATIVE_LOOKUP",
+  "native_rows": 102,
+  "native_gain_results": 510,
+  "policy_negatives": 11,
+  "source_sha256": {
+    "cmake/native_media.cmake": "95df7d23844440250d5b8537972c1f706093f7dabf64de0ab53e8bfcc6335cd8",
+    "runtime/include/mka/movie_gain.hpp": "c0290a1877a46c3641115af577b8d8cba41eac626af08348452da2982982d20b",
+    "runtime/src/native/movie_gain.cpp": "0c49f01f2b9d3f18e0893e80d479a37298122a2e4384ce66ec55f3d8e3038acb",
+    "runtime/src/native/generated/movie_gain_rows.inc": "ec5c700aafaaf51103000676309190bec5a8628a80d1384ce416e77b9cb90ec5",
+    "tests/test_movie_gain.cpp": "95a49569c283cb2113cf392be793ef2dd92bca615b9899a7af6c9c22c4e9595c"
+  },
+  "admitted_reference_sha256": "ff5a11e94f74bed9498db2607d8d5c09f6a3cfd2c7f008ab2bb3d1e9ba131018",
+  "emitter_sha256": "4534a0be3e12c295a4e02d30c3c7e81ae1c6a0cafa8b40aa14a7c2d174665f13",
+  "symbol_checks": [
+    {
+      "target": "test_native_movie_gain",
+      "sha256": "22a0d9e5334fde7243c6b8484442efeb3a9baed0c9bc444e6b1e4b31232e6969",
+      "defined_forbidden_namespace_symbols": []
+    },
+    {
+      "target": "test_native_movie_control",
+      "sha256": "1f2e886f0eae43315870574168438314c6029db4c6d03ffcb0393e2906fc4e33",
+      "defined_forbidden_namespace_symbols": []
+    }
+  ],
+  "scope": "Mandatory compiled native data lookup; no runtime FP/chip helper, game, device, driver or model action",
+  "limits": [
+    "Bounded source-derived reference, not historical executable or EE hardware parity",
+    "Profile raw settings and selector/pan bindings remain OPEN",
+    "Coefficient/mixer/actual native player integration remains OPEN"
+  ]
+}
