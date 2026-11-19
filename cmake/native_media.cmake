@@ -17,6 +17,7 @@ file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers/libavutil/avconfig.
 
 add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/native_file.cpp
+    runtime/src/native/native_user_paths.cpp
     runtime/src/native/font_atlas.cpp
     runtime/src/native/font_metrics.cpp
     runtime/src/native/font_layout.cpp
@@ -34,7 +35,7 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
 target_include_directories(mka_native_media PUBLIC runtime/include PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers" "${MKA_NATIVE_MEDIA_HEADERS}")
 target_compile_features(mka_native_media PUBLIC cxx_std_20)
-target_link_libraries(mka_native_media PRIVATE opengl32 gdi32 user32 bcrypt)
+target_link_libraries(mka_native_media PRIVATE opengl32 gdi32 user32 bcrypt shell32 ole32 uuid)
 # Source font math uses ordered float32 steps and finite-value checks. These
 # modules must not inherit fast-math/reassociation or fused multiply-add from
 # a caller's global build flags. This does not modify the host FP environment.
@@ -81,3 +82,10 @@ add_executable(test_native_movie_timecode EXCLUDE_FROM_ALL
     tests/test_movie_timecode.cpp runtime/src/native/movie_timecode.cpp)
 target_include_directories(test_native_movie_timecode PRIVATE runtime/include)
 target_compile_features(test_native_movie_timecode PRIVATE cxx_std_20)
+
+# Native platform paths: no media codecs, runtime or generated game dependency.
+add_executable(test_native_user_paths EXCLUDE_FROM_ALL
+    tests/test_native_user_paths.cpp runtime/src/native/native_user_paths.cpp)
+target_include_directories(test_native_user_paths PRIVATE runtime/include)
+target_compile_features(test_native_user_paths PRIVATE cxx_std_20)
+target_link_libraries(test_native_user_paths PRIVATE shell32 ole32 uuid)

@@ -1,0 +1,151 @@
+{
+  "date": "2026-11-19",
+  "scope": "read-only NativeUserPaths and log/census integration review; no execution",
+  "files": {
+    "external/forks/ps2-native-recomp/runtime/include/mka/native_user_paths.hpp": {
+      "sha256": "b952c8fa19bececb4575dda4a58767c252de1aa41978c36c68042bb8b91f979b",
+      "status": "source reviewed within userpaths integration scope"
+    },
+    "external/forks/ps2-native-recomp/runtime/src/native/native_user_paths.cpp": {
+      "sha256": "2db55a36aee618c7fa4095deee70e0def1a47368841930407467f86475902e22",
+      "status": "source reviewed within userpaths integration scope"
+    },
+    "external/forks/ps2-native-recomp/tests/test_native_user_paths.cpp": {
+      "sha256": "c792f9ece6e2cd3ad294cddb313333c03c5e663f2afccde89bd5644c2b21e3f9",
+      "status": "source reviewed within userpaths integration scope"
+    },
+    "external/forks/ps2-native-recomp/host/main.cpp": {
+      "sha256": "c150ef515146b00c67d42391dc39a88c81c41fc5f525d0db760034a6c21f88d7",
+      "status": "source reviewed within userpaths integration scope"
+    },
+    "external/forks/ps2-native-recomp/CMakeLists.txt": {
+      "sha256": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+      "status": "source reviewed within userpaths integration scope"
+    },
+    "external/forks/ps2-native-recomp/cmake/native_media.cmake": {
+      "sha256": "06af8dd0b2fa00677600b89f24a67540558da3319c844042dd41c16c1b2f8555",
+      "status": "source reviewed within userpaths integration scope"
+    },
+    "external/forks/ps2-native-recomp/runtime/include/ps2/os.hpp": {
+      "sha256": "98c00876618e7a3fd3b182b4ad9c622c722137e84d55a537db6caa0c14c15d03",
+      "status": "source reviewed within userpaths integration scope"
+    }
+  },
+  "findings": [
+    {
+      "id": "cleanup-absolute-containment",
+      "path": "tests/test_native_user_paths.cpp",
+      "line": 17,
+      "status": "closed_by_source_recheck; initial_hashes_retained",
+      "evidence": "Cleanup destructor remove_all(p) without resolved absolute containment verification; unique create_directory does not prove canonical containment",
+      "correction": "verify resolved absolute exclusive temp target remains strictly inside intended temporary parent before recursive removal"
+    },
+    {
+      "id": "unicode-census-open",
+      "path": "host/main.cpp",
+      "line": 780,
+      "status": "closed_by_source_recheck; initial_hashes_retained",
+      "evidence": "census std::fopen UTF8 narrow path differs from Unicode-aware ps2::os::open used by LogTee; Windows non-ANSI profile can silently lose census",
+      "correction": "use existing Unicode-aware open helper for same KnownFolder census path"
+    }
+  ],
+  "reviewed_properties": [
+    "SHGetKnownFolderPath allocated PWSTR freed on both failure and success; RAII success owner survives path conversion",
+    "from_local_app_data rejects relative/dot/nonexistent/non-directory root and resolves native root without CWD/env/content fallback",
+    "resolve does not create; real-profile test calls resolve only",
+    "window branch uses same native logs path for LogTee and census; headless does not enter branch",
+    "shell32 ole32 uuid linked for actual runtime/native fixture/media targets"
+  ],
+  "limits": [
+    "No tests/builds/run by reviewer; root-reported previous PASS is separate",
+    "Existing LogTee file-open/retention behavior was not introduced by NativeUserPaths; no blanket logger correctness claim",
+    "KnownFolder lookup is Windows platform policy, not retail save-path behavior",
+    "Source hashes represent review snapshot; subsequent root corrections require explicit recheck"
+  ],
+  "existing_named_gap": {
+    "path": "host/main.cpp",
+    "line": 142,
+    "scope": "preexisting LogTee integration outside newly authored KnownFolder logic",
+    "evidence": "file_=ps2::os::open mayreturnnull; start doesnotcheck andreturns true180 whileclaiminglogwritten179",
+    "status": "closed_initial_open_issue_by_source_recheck_and_root_retained_receipts"
+  },
+  "correction_recheck": {
+    "date": "2026-11-19",
+    "scope": "source recheck; no reviewer execution",
+    "files": {
+      "external/forks/ps2-native-recomp/host/main.cpp": {
+        "after_sha256": "c28339d40d71c83021fd6a951392cb9182a7523e5bc3a8dd3a6e660ae4669691",
+        "status": "source correction verified"
+      },
+      "external/forks/ps2-native-recomp/tests/test_native_user_paths.cpp": {
+        "after_sha256": "0ebca160e7e91ecbe4ffe7e60d972619d7952c245d7a60b74a1d089ac6907762",
+        "status": "source correction verified"
+      }
+    },
+    "evidence": [
+      "test canonicalizes native temp parent and exclusivecreated root, verifies absolute exactchild identity beforecleanup; destructor recanonicalizes/rejects changed/symlink boundary before remove_all",
+      "census uses existing Unicode ps2::os::open; named open/write/close errors present",
+      "fixture uses same Unicode openhelper on isolatedUnicodefilename andchecks exact censusbytes; realprofile remainsread-only"
+    ],
+    "execution_scope": "other agent reported standalone/hostobjectPASS; reviewer did not rerun or observe actual exitcallback"
+  },
+  "files_scope": "initial BEFORE snapshot; correction_recheck files are current reviewed identities",
+  "log_start_guard_recheck": {
+    "main_after_sha256": "f1d0969197d273e576706cd496233861a9245e1a37beb9da74468de4407d668b",
+    "source_evidence": "start rejects directory/enumeration/filename errors and nullUnicodefile open BEFORE pipe/thread creation; named path+host/errno failures",
+    "receipts": {
+      "external/forks/ps2-native-recomp/build_native_gl_full/diagnostics/log-start-before-20261119-02/verification.json": {
+        "sha256": "25799819d64eb61f994096e573680cbc6b66850f4cf6ca9888bcbf69b7c7d521",
+        "scope": "Exact source class isolated from game; real temporary native file/pipe calls"
+      },
+      "external/forks/ps2-native-recomp/build_native_gl_full/diagnostics/log-start-after-20261119-01/verification.json": {
+        "sha256": "7df3a5b2cc642ce92a5241389e3b963060225692804864c796d41cb579cda3ed",
+        "scope": "Exact source class isolated from game; real temporary native file/pipe calls"
+      }
+    },
+    "observed_receipt_results": {
+      "before": "blocked-file-root accepted1; probeexpectedrejectionexit1",
+      "after": "blocked-file-root accepted0exit0; normalfile exactemittedbytesretainedexit0"
+    },
+    "reviewer_execution": "none; source and retained root receipt inspection only",
+    "remaining_open": [
+      "ongoing write failure integrity",
+      "rotation error handling and collision policy",
+      "partial pipe-start failure cleanup"
+    ],
+    "no_game_or_profile_write_claim": true
+  },
+  "pure_native_helper_final_recheck": {
+    "files": {
+      "external/forks/ps2-native-recomp/host/main.cpp": {
+        "sha256": "ced3ea21eed58e5f7a969874af0e4c968e316480d451af224dfa106b3bfd97a4",
+        "status": "read-only final source verified"
+      },
+      "external/forks/ps2-native-recomp/runtime/include/mka/native_user_paths.hpp": {
+        "sha256": "ac60c59fcb432d10908db46bbe932d137e8e4af30aeb6047d529c8e3f97b151a",
+        "status": "read-only final source verified"
+      },
+      "external/forks/ps2-native-recomp/runtime/src/native/native_user_paths.cpp": {
+        "sha256": "53ec15b88864e17005d96eb966732a39aa0a8d1d2a2ccc6366f05567bdeb8aba",
+        "status": "read-only final source verified"
+      },
+      "external/forks/ps2-native-recomp/tests/test_native_user_paths.cpp": {
+        "sha256": "47a3a9717bbecd76afa804790da01db96cc8d0e814e1b72b25819d9c626a3c0c",
+        "status": "read-only final source verified"
+      }
+    },
+    "properties": [
+      "helper opens original Windows wide filesystem path with typed read/write mode and namederrno error",
+      "empty/NUL/invalidenum rejected",
+      "LogTee initialopen/rotation and census use same native helper; no ps2 utility dependency in standalonefixture",
+      "ownedFILE requires caller fclose and current callers close; no fallback/reopen path selected onfailure",
+      "cleanup containmentguard and realprofile readonlytest retained"
+    ],
+    "reviewer_execution": "none",
+    "root_execution_reference": "fork research/runs/native-defaults-checkpoint-20261119; root reported13cases and12symbol auditsPASS, separate from this source review",
+    "remaining_open": [
+      "ongoing write/rotation integrity",
+      "partial pipe-start failure cleanup"
+    ]
+  }
+}

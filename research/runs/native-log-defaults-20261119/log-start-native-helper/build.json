@@ -1,0 +1,22 @@
+{
+  "name": "build",
+  "command": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+    "-std=c++20",
+    "-O2",
+    "-I",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\log-start-native-helper-20261119-01\\log_start_probe.cpp",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\native_user_paths.cpp",
+    "-lshell32",
+    "-lole32",
+    "-luuid",
+    "-o",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\log-start-native-helper-20261119-01\\log_start_probe.exe"
+  ],
+  "started_at": "2026-11-19T11:38:52.957897+00:00",
+  "ended_at": "2026-11-19T11:38:55.052082+00:00",
+  "returncode": 0,
+  "stdout": "",
+  "stderr": ""
+}

@@ -1,0 +1,13 @@
+{
+  "name": "container",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_container.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-defaults-checkpoint-20261119-02\\container-fixture"
+  ],
+  "exe_sha256": "2bc26a96cb8f3c3c627f229aed876278468b14fceebc81eaa7d7121649185856",
+  "exit": 0,
+  "stdout": "PASS38assets/78private2payloads exactsource/range/SHA; titlecontinuations/cursor/ownership/malformed/overflow/36MB; no decoder, tags, playback or game claim\n",
+  "stderr": "",
+  "at_utc": "2026-11-19T11:38:59.600819+00:00"
+}

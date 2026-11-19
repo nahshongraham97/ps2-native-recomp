@@ -1,0 +1,48 @@
+{
+  "scope": "Exact source class isolated from game; real temporary native file/pipe calls",
+  "source_commit": "1226028",
+  "main_source_sha256": "59637e9266ee7e19e49f5ac121690212faea846b54b2679fa5f4c0c4dd11f587",
+  "class_sha256": "2b095d9b02733c8c9d6e24a73646d01e9e6f0074ad41e920685322efce87699c",
+  "probe_source_sha256": "ddd18544137e020e68080c735b8ff606ddbf0f3daa42e17e034967f96d047455",
+  "probe_executable_sha256": "d9d24b0a8878d8f6e899366e1f415d27773356228021e2f9f883f1ccce1ad6be",
+  "os_header_sha256": "98c00876618e7a3fd3b182b4ad9c622c722137e84d55a537db6caa0c14c15d03",
+  "expected_bug_reproduced": true,
+  "receipts": [
+    {
+      "name": "build",
+      "command": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-O2",
+        "-I",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\log-start-before-20261119-02\\log_start_probe.cpp",
+        "-o",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\log-start-before-20261119-02\\log_start_probe.exe"
+      ],
+      "started_at": "2026-11-19T11:35:27.269854+00:00",
+      "ended_at": "2026-11-19T11:35:28.732354+00:00",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "blocked-file-root",
+      "command": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\log-start-before-20261119-02\\log_start_probe.exe",
+        "reject",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\log-start-before-20261119-02\\blocked-file-root"
+      ],
+      "started_at": "2026-11-19T11:35:28.743562+00:00",
+      "ended_at": "2026-11-19T11:35:28.830924+00:00",
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "[log] this log is also written to C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\log-start-before-20261119-02\\blocked-file-root\\ps2run_2026-11-19_06-35-28.log\n[probe] blocked file-root accepted=1\n"
+    }
+  ],
+  "game_launched": false,
+  "limits": [
+    "No game/viewer/AppData writes",
+    "Ongoing write/rotation failure integrity and partial pipe-start cleanup not tested"
+  ]
+}

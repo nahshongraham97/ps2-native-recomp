@@ -1,0 +1,13 @@
+{
+  "name": "font-geometry",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_font_geometry.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-defaults-checkpoint-20261119-02\\EDDMONDGRAY14_MET.source",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\TITLEN.SFD"
+  ],
+  "exe_sha256": "af28029d6f5124d6d8ef1860e012f34d9edc9e9003531b301ed5f44852597d4f",
+  "exit": 0,
+  "stdout": "PASS native font geometry data; no coverage/sampling/composition\n",
+  "stderr": "",
+  "at_utc": "2026-11-19T11:39:07.019896+00:00"
+}

@@ -1,0 +1,7 @@
+# Native defaults component checkpoint — 2026-11-19
+
+PASS:13 actual native-only service cases from the empty-PS2_GENERATED build;12 executable defined-symbol audits contain no ps2::/gen::/spu2::/iop:: definitions. verification.json pins source/tool/header inputs, command/executable hashes, outputs and lifetime limits. Includes all earlier movie/container/subtitle/font/geometry/timing/pipeline cases and native Windows user-path/file-helper checks.
+
+The first13-case attempt executed every case but FAILED its final namespace check: new Unicode fixture included old runtime OS utilities. SYMBOL_GATE_FAILURE.json preserves the named dependencies and tested binary hash. The correction implements a typed Windows Unicode file helper shared by live logfile, census and the standalone fixture, removes that dependency and retains the strict gate. No checker exception or namespace rename around an emulated implementation was used: the helper calls the native wide CRT file API.
+
+Normal game source startup requires no native-enabling flags or log-window switch; Windows logs/census use native per-user storage. Host object-only proof and actual isolated log-class initialization/file-pipe tests are in ../native-log-defaults-20261119/. Earlier18-case sampling absent/conflicting-variable proof belongs to1226028. No game or viewer launched; no nonzero audible playback or accepted game binary. Actual movie lifecycle/clock/composition, saves/physical input/audio identity, remaining PS2 device/memory removal and whole-game acceptance stay OPEN.

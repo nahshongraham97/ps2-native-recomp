@@ -1,0 +1,171 @@
+{
+  "scope": "Native Windows log policy only; saves/card/state/key paths untouched",
+  "status": "frozen; standalone test and host object PASS; no game/viewer/link",
+  "files": {
+    "runtime/include/mka/native_user_paths.hpp": {
+      "after_sha256": "ac60c59fcb432d10908db46bbe932d137e8e4af30aeb6047d529c8e3f97b151a",
+      "status": "implemented",
+      "evidence": [
+        "native-user-paths-build.json",
+        "native-user-paths-test.json",
+        "native-user-paths-host-object.json"
+      ]
+    },
+    "runtime/src/native/native_user_paths.cpp": {
+      "after_sha256": "53ec15b88864e17005d96eb966732a39aa0a8d1d2a2ccc6366f05567bdeb8aba",
+      "status": "implemented",
+      "evidence": [
+        "native-user-paths-build.json",
+        "native-user-paths-test.json",
+        "native-user-paths-host-object.json"
+      ]
+    },
+    "tests/test_native_user_paths.cpp": {
+      "after_sha256": "47a3a9717bbecd76afa804790da01db96cc8d0e814e1b72b25819d9c626a3c0c",
+      "status": "implemented",
+      "evidence": [
+        "native-user-paths-build.json",
+        "native-user-paths-test.json",
+        "native-user-paths-host-object.json"
+      ]
+    },
+    "host/main.cpp": {
+      "after_sha256": "ced3ea21eed58e5f7a969874af0e4c968e316480d451af224dfa106b3bfd97a4",
+      "status": "implemented",
+      "evidence": [
+        "native-user-paths-build.json",
+        "native-user-paths-test.json",
+        "native-user-paths-host-object.json",
+        "log-open-guard-object.json"
+      ]
+    },
+    "CMakeLists.txt": {
+      "after_sha256": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+      "status": "implemented",
+      "evidence": [
+        "native-user-paths-build.json",
+        "native-user-paths-test.json",
+        "native-user-paths-host-object.json"
+      ]
+    },
+    "cmake/native_media.cmake": {
+      "after_sha256": "06af8dd0b2fa00677600b89f24a67540558da3319c844042dd41c16c1b2f8555",
+      "status": "implemented",
+      "evidence": [
+        "native-user-paths-build.json",
+        "native-user-paths-test.json",
+        "native-user-paths-host-object.json"
+      ]
+    }
+  },
+  "previous_main_sha256": "feea1ef2fa8678d46d4b6d32e590924348f64864f5f5fb5b48ccd03015b38967",
+  "api_evidence": {
+    "headers": "dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/shlobj.h:752,766; knownfolders.h:73",
+    "contract": "SHGetKnownFolderPath(FOLDERID_LocalAppData,KF_FLAG_DONT_VERIFY,nullptr,&ownedWideString); no KF_FLAG_CREATE; CoTaskMemFree via RAII; Windows-only default resolver, no env/CWD fallback",
+    "policy": "actual canonical LocalAppData / MortalKombatArmageddon / logs; resolving creates nothing, explicit create_logs creates only when asked"
+  },
+  "verification": {
+    "standalone_exit": 0,
+    "host_object_exit": 0,
+    "commands": "native-user-paths-commands.txt",
+    "initial_host_failure": "native-user-paths-host-object-initial-failure.json retained; capture lambda incompatible with raw function-pointer census API, fixed with process-owned static path",
+    "real_profile": "read-only knownfolder query/canonical directory inspection; no create_logs call on real profile",
+    "writes": "exclusive new temporary test tree only, cleaned by scoped RAII"
+  },
+  "limits": [
+    "No actual game or viewer launch; native log display runtime remains untested.",
+    "Saves/cards/states/keys still use existing paths and remain separate blockers for immutable package deployment.",
+    "Windows shell32/ole32/uuid link declared for runtime/native service; complete runner was not linked.",
+    "The known-folder root must already exist; errors fail by name, no fallback."
+  ],
+  "followup": {
+    "findings": "Independent review identified unchecked recursive test cleanup boundary and ANSI census fopen. Both corrected.",
+    "cleanup": "Exclusive directory creation; resolved absolute root equality and canonical temp-parent component equality checked before recursive delete; changed path refuses cleanup.",
+    "unicode": "Census uses inline ps2::os::open/_wfopen and names open/write/close failures. Isolated Unicode path test uses same header-only helper and verifies exact census bytes.",
+    "verification": "Updated build/test/host-object receipts all exit0. Initial receipts preserved with .initial suffix. Actual production census callback unexecuted."
+  },
+  "historical_main_pins": [
+    {
+      "after_sha256": "c28339d40d71c83021fd6a951392cb9182a7523e5bc3a8dd3a6e660ae4669691",
+      "status": "implemented",
+      "evidence": [
+        "native-user-paths-build.json",
+        "native-user-paths-test.json",
+        "native-user-paths-host-object.json",
+        "log-open-guard-object.json"
+      ]
+    }
+  ],
+  "log_start_followup": {
+    "change": "Fail named before pipe/thread on create/enumeration/stat/open errors; errno/path on null fopen; KnownFolder comment updated",
+    "verification": "host object exit0; actual LogTee failure extraction harness delegated to root; no game/viewer",
+    "remaining": "Ongoing write/rotation integrity and partial pipe startup cleanup not tested in this bounded change"
+  },
+  "historical_pre_native_helper_sources": {
+    "runtime/include/mka/native_user_paths.hpp": {
+      "after_sha256": "b952c8fa19bececb4575dda4a58767c252de1aa41978c36c68042bb8b91f979b",
+      "status": "implemented",
+      "evidence": [
+        "native-user-paths-build.json",
+        "native-user-paths-test.json",
+        "native-user-paths-host-object.json"
+      ]
+    },
+    "runtime/src/native/native_user_paths.cpp": {
+      "after_sha256": "2db55a36aee618c7fa4095deee70e0def1a47368841930407467f86475902e22",
+      "status": "implemented",
+      "evidence": [
+        "native-user-paths-build.json",
+        "native-user-paths-test.json",
+        "native-user-paths-host-object.json"
+      ]
+    },
+    "tests/test_native_user_paths.cpp": {
+      "after_sha256": "0ebca160e7e91ecbe4ffe7e60d972619d7952c245d7a60b74a1d089ac6907762",
+      "status": "implemented",
+      "evidence": [
+        "native-user-paths-build.json",
+        "native-user-paths-test.json",
+        "native-user-paths-host-object.json"
+      ]
+    },
+    "host/main.cpp": {
+      "after_sha256": "f1d0969197d273e576706cd496233861a9245e1a37beb9da74468de4407d668b",
+      "status": "implemented",
+      "evidence": [
+        "native-user-paths-build.json",
+        "native-user-paths-test.json",
+        "native-user-paths-host-object.json",
+        "log-open-guard-object.json"
+      ]
+    },
+    "CMakeLists.txt": {
+      "after_sha256": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+      "status": "implemented",
+      "evidence": [
+        "native-user-paths-build.json",
+        "native-user-paths-test.json",
+        "native-user-paths-host-object.json"
+      ]
+    },
+    "cmake/native_media.cmake": {
+      "after_sha256": "06af8dd0b2fa00677600b89f24a67540558da3319c844042dd41c16c1b2f8555",
+      "status": "implemented",
+      "evidence": [
+        "native-user-paths-build.json",
+        "native-user-paths-test.json",
+        "native-user-paths-host-object.json"
+      ]
+    }
+  },
+  "native_helper_followup": {
+    "prior_consolidated_gate": "diagnostics/native-defaults-checkpoint-20261119-01: all13 executions0, strict symbol gate FAILED; NOT13PASS",
+    "exact_rejected_symbols": [
+      "ps2::os::open(...)",
+      "ps2::os::path(...)"
+    ],
+    "correction": "mka::platform::open_native_file(path,NativeFileMode,error), direct _wfopen native wide path; no runtime utility dependency in test/service; same helper used by live log and census; native rotation path retained",
+    "error_tests": "empty path, embedded NUL, invalid enum, missing read path, Unicode exact bytes",
+    "receipts": "updated native-user-paths-build/test/host-object all0; narrow symbols JSON no defined ps2::; complete consolidated rerun remains root owned"
+  }
+}

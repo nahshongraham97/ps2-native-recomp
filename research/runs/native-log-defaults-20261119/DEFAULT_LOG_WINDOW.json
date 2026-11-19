@@ -1,0 +1,37 @@
+{
+  "status": "frozen; host object compile passed; runtime viewer unexecuted",
+  "baseline": "fork commit 1226028 plus preserved worktree edits",
+  "before_snapshot": "main.cpp.before-default-log-window",
+  "before_sha256": "d27527a619096794d0a0481b8d4797ffe037e666a83b74ff8f438558c91de275",
+  "files": {
+    "external/forks/ps2-native-recomp/host/main.cpp": {
+      "after_sha256": "feea1ef2fa8678d46d4b6d32e590924348f64864f5f5fb5b48ccd03015b38967",
+      "status": "default separate viewer implemented; object verified",
+      "evidence": [
+        "default-log-window-object.json",
+        "DEFAULT_LOG_WINDOW.md"
+      ]
+    }
+  },
+  "source_lines": {
+    "750": "// Every window run owns a live log and, on Windows, a separate viewer.",
+    "753": "if (!g_log.start(ps2::os::path(ps2::quick_folder(\"logs\")))) {",
+    "754": "std::fprintf(stderr, \"[log-window] failed to initialize the window run log\\n\");",
+    "769": "const std::filesystem::path census_file = ps2::os::path(ps2::quick_folder(\"logs\")) / \"census.txt\";",
+    "783": "if (!open_log_window(g_log.path())) {",
+    "784": "std::fprintf(stderr, \"[log-window] required separate viewer could not start\\n\");",
+    "835": "if (ps2::g_options.memcard_path.empty()) {",
+    "855": "if (ps2::g_options.memcard_path.empty()) {"
+  },
+  "verification": {
+    "receipt": "default-log-window-object.json",
+    "exit_code": 0,
+    "object_sha256": "069208054dde3a3ed9c0ea64639eeb5a763789c4631f9de14b43f99bb4f98a8f",
+    "scope": "exact saved host object compiler command; no link/game/window/process viewer test"
+  },
+  "blocker": {
+    "source": "runtime/src/quick_keys.inc:76-85; host/main.cpp log initialization precedes default memcard discovery",
+    "meaning": "Default quick_folder logs use resolved content program parent before default card selection. Native userdata root outside immutable package not bound. No save/card/log migration performed."
+  },
+  "historical_pins": "Earlier STARTUP_DEFAULTS_AUDIT/STARTUP_CLEANUP/host-object-build receipts remain historical snapshots; no overwrites."
+}

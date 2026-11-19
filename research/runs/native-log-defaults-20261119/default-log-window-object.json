@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-11-19T11:24:42.640960+00:00",
+  "argv": [
+    "cmd.exe",
+    "/d",
+    "/c",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-startup-defaults-20261119\\compile-host-object.cmd"
+  ],
+  "cwd": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full",
+  "compiler_command": "\"C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe\" -DPS2_GPU -DPS2_PROFILE -DPS2_WINDOW -I\"C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp/build_native_gl_full/build-stamp\" -I\"C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp/runtime/include\" -I\"C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp/runtime/src\" -isystem \"C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp/third_party/sdl2/include/SDL2\" -O3 -DNDEBUG -std=gnu++20 -MD -MT CMakeFiles/ps2run.dir/host/main.cpp.obj -MF CMakeFiles\\ps2run.dir\\host\\main.cpp.obj.d -o CMakeFiles/ps2run.dir/host/main.cpp.obj -c \"C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp/host/main.cpp\"\n",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "",
+  "source_sha256": "feea1ef2fa8678d46d4b6d32e590924348f64864f5f5fb5b48ccd03015b38967",
+  "object_sha256": "069208054dde3a3ed9c0ea64639eeb5a763789c4631f9de14b43f99bb4f98a8f",
+  "scope": "host object only; no link, executable launch, log viewer or game"
+}

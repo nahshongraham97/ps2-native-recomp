@@ -77,6 +77,7 @@ else()
         runtime/src/native/adpcm_codec.cpp
         runtime/src/native/bank_asset.cpp
         runtime/src/native/native_file.cpp
+        runtime/src/native/native_user_paths.cpp
         runtime/src/native/content_vfs.cpp
         runtime/src/native/sound_bank.cpp
         runtime/src/native/sound_archive.cpp
@@ -171,7 +172,7 @@ if(PS2_IOP_AOT_MODULES)
 endif()
 if(WIN32)
     # The optional WGL backend is compiled independently of WebGPU.
-    target_link_libraries(ps2runtime ${PS2_API} opengl32 bcrypt)
+    target_link_libraries(ps2runtime ${PS2_API} opengl32 bcrypt shell32 ole32 uuid)
 endif()
 
 set(PS2_WGPU_DIR "${CMAKE_SOURCE_DIR}/third_party/wgpu-native" CACHE PATH "wgpu-native release folder")

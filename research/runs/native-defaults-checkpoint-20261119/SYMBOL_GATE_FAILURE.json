@@ -1,0 +1,14 @@
+{
+  "at_utc": "2026-11-19T11:37:56.467660+00:00",
+  "status": "FAIL",
+  "phase": "strict standalone defined-symbol audit after all13case executions returned0",
+  "failed_target": "test_native_user_paths",
+  "failed_binary_sha256": "d50cea2a2f304fb0bb95072919959bb988530b4ab080398d0949a078d9beebb7",
+  "symbols": [
+    "ps2::os::open(std::string const&, char const*)",
+    "ps2::os::path(std::string const&)"
+  ],
+  "cause": "Unicode census fixture included old runtime generic OS helpers; no interpreter/device execution observed, but component dependency violates standalone namespace gate",
+  "correction_required": "Native Windows Unicode file helper shared by logging/census/test; keep namespace gate strict",
+  "game_launched": false
+}

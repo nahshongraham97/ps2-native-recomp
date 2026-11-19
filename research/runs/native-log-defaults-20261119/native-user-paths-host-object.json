@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "cmd.exe",
+    "/d",
+    "/c",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-startup-defaults-20261119\\compile-host-object.cmd"
+  ],
+  "cwd": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "",
+  "scope": "host object only"
+}

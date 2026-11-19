@@ -1,0 +1,27 @@
+{
+  "name": "build",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+    "--target",
+    "test_native_movie_container",
+    "test_native_movie_subtitles",
+    "test_native_movie_pipeline",
+    "test_native_font_metrics",
+    "test_native_font_atlas",
+    "test_native_font_layout",
+    "test_native_font_geometry",
+    "test_native_movie_metadata",
+    "test_native_mpeg2_timing",
+    "test_native_movie_timecode",
+    "test_native_movie_gl_device",
+    "test_native_user_paths",
+    "-j2"
+  ],
+  "exe_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "exit": 0,
+  "stdout": "[0/2] Re-checking globbed directories...\n[1/15] Building CXX object CMakeFiles/test_native_user_paths.dir/tests/test_native_user_paths.cpp.obj\n[2/15] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/native_user_paths.cpp.obj\n[3/15] Linking CXX static library libmka_native_media.a\n[4/15] Linking CXX executable test_native_font_atlas.exe\n[5/15] Linking CXX executable test_native_font_metrics.exe\n[6/15] Linking CXX executable test_native_font_layout.exe\n[7/15] Linking CXX executable test_native_font_geometry.exe\n[8/15] Linking CXX executable test_native_movie_gl_device.exe\n[9/15] Linking CXX executable test_native_movie_pipeline.exe\n[10/15] Linking CXX executable test_native_movie_container.exe\n[11/15] Linking CXX executable test_native_movie_metadata.exe\n[12/15] Building CXX object CMakeFiles/test_native_user_paths.dir/runtime/src/native/native_user_paths.cpp.obj\n[13/15] Linking CXX executable test_native_movie_subtitles.exe\n[14/15] Linking CXX executable test_native_user_paths.exe\n",
+  "stderr": "",
+  "at_utc": "2026-11-19T11:38:57.138854+00:00"
+}
