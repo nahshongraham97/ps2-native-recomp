@@ -1,0 +1,42 @@
+{
+  "at_utc": "2026-11-19T20:27:56.030836+00:00",
+  "fork_head": "e86c1bec9a56212ba1825faac5495bda6e941874",
+  "parent_head": "556ff313356375fa87ca655c9fe917386d07d42b",
+  "source_before_sha256": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_playback.hpp": "1ffa99abd7253e127c6040b39d44f543eb3dee0af3964efcb955c51101b4836f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_playback.cpp": "4637232d561f62e39fdd2eef39a76094bb20c6dcc86d2ccb5b2b8a448af32b7b",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_audio_submission.hpp": "09d74f3f9f8d174029ef36feb51c0aa2cc9ff40dd9d3843ffd9814bd2a4e256e",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_audio_progress.hpp": "7353fc44e71a80bd98d014e7a67e5b94937c2484758fff03589fb7f996d9bb45",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_audio_progress.cpp": "3c8bec1bf28207d7f8a3655eea885efadb6b166a5b99dd55ea68f554f8b6c487",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_playback.cpp": "db16f3f67fe5ca2e63e805f96e5939ab31ecfe4597a4ad4c37b6ed2018ce3eee",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_frame_eligibility.hpp": "1a3f00c45e6b0ce6b75865ea43bb67529a53be2d7226e289cc8831e6b33ca868",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_frame_eligibility.cpp": "fc2b22ac6571522c22f170526e007bae2352750bc44460fa763a685f9a28f8d7",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_frame_eligibility.cpp": "3b583304057c4bb67a4a7669b750876c8cf3ac8a5ee4a020c8bba25986866a7a",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_eligibility_numeric.hpp": "b496c55eef48793bc133e23a174f9a2bf1f6d0281c2af3bca02b92fee340d490",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_eligibility_numeric.cpp": "63c81a84a154600c156a290dd40cf85ac6e6499e7cb12f3ae45e66a999d47c46",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_pcm_mix.hpp": "ed8853490298e7c396560cd9b9f786ce9c37e5905fca0315b44fe5a924e07a61",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_pcm_mix.cpp": "838b44b6542587e910b7dac4f80425f0dcb123cbf431354f58a3feeb2f971e89",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\generated\\movie_pcm_mix_tables.inc": "a5ad4e0d00232ad85a9ac30b4a0bc1393b2c3413f21dd2d54e84af63ca9c9e82",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_pcm_mix.cpp": "ee30620e7171ad3ed8f8e448ef51db9333c59fba9a8dfbccf76c725166e4f424",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_gain.cpp": "63f02d0b7f85ecb8e2b7cdb8fbdac0fcb1a095a2a410c4c551fdc0f3a2fb4422",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_control.cpp": "dbf53b97108b82a8e30d0310b11428bbe1ae1f485e12bf10e179bab6fa9ce08d",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_color.cpp": "3f7f605a5eb42ddd9df66c0367dd41ce4574b16c37f7c303ae43588d85520697",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_gpu.cpp": "1490f71ebb6fecd705ac7a0084dea0266dd832ed00a64602eb95b244263caa03",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\CMakeLists.txt": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_media.cmake": "21282ba82190a7e87599611616cadcb73c0af0b87fc391b5eb0104ef483a6584",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules\\MOVIER.ovl": "3a34e3838042aa0bde0ce687a4e61e128b2eb965e60e65c34713e0a73891adb8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\modules\\cri_adxi.irx": "6ebaa7a8e0c677c3f9567030916b89ccdd04b5d7740f6f9be5cee036391b95ab",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\tools\\research\\generate_movie_pcm_mix_tables.py": "27d9786c1757a69b420ce83f1a1ba521a57409c0dc78eeb349c761d09d86a299",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\tools\\research\\verify_movie_pcm_mix_trace.py": "92a43de5937b120c293ed74594b2941ef467eef8ecc1ab52039976925f0a225a",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-movie-gain-eligibility-20261119\\validate.py": "ae09a3f813eb9351853f7ac912d4600a5add667e156c94dcc290f5348050cea1"
+  },
+  "preserved_dirty_sha256": {
+    "runtime/src/iop/mcserv.cpp": "ad2731a341409d87ffe1b171e99f28d7cedc5004aaf375a565d78673333414fb",
+    "runtime/src/iop/msl_native.cpp": "756cfb3867ebb440223ddb8ab6fe441ad6f9f54d35e4119a8342f8dd9063bb23"
+  },
+  "compiler_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_before_sha256": "d320c4e3663feec551cd3a3b4a8712e915fad196ddc86c7f880c07d4bd2aa3f4",
+  "generated_include_sha256": "a5ad4e0d00232ad85a9ac30b4a0bc1393b2c3413f21dd2d54e84af63ca9c9e82",
+  "scope": "Explicit stateless PCM/ordinary clock policy/gain-tail owner; fake endpoints only; no game/device/local model"
+}

@@ -33,10 +33,12 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/movie_clock_filter.cpp
     runtime/src/native/movie_service_clock.cpp
     runtime/src/native/movie_eligibility_numeric.cpp
+    runtime/src/native/movie_frame_eligibility.cpp
     runtime/src/native/movie_control.cpp
     runtime/src/native/movie_playback.cpp
     runtime/src/native/movie_playback_adapters.cpp
     runtime/src/native/movie_audio_progress.cpp
+    runtime/src/native/movie_pcm_mix.cpp
     runtime/src/native/movie_catalog.cpp
     runtime/src/native/movie_source.cpp
     runtime/src/native/movie_gain.cpp
@@ -200,3 +202,18 @@ add_executable(test_native_movie_audio_progress EXCLUDE_FROM_ALL
     tests/test_movie_audio_progress.cpp runtime/src/native/movie_audio_progress.cpp)
 target_include_directories(test_native_movie_audio_progress PRIVATE runtime/include)
 target_compile_features(test_native_movie_audio_progress PRIVATE cxx_std_20)
+
+# Ordinary available-clock direct/adaptive game policy only; no clock producer,
+# decoder, device, runtime or outer control/retained-clock wrapper linkage.
+add_executable(test_native_movie_frame_eligibility EXCLUDE_FROM_ALL
+    tests/test_movie_frame_eligibility.cpp runtime/src/native/movie_frame_eligibility.cpp
+    runtime/src/native/movie_eligibility_numeric.cpp)
+target_include_directories(test_native_movie_frame_eligibility PRIVATE runtime/include)
+target_compile_features(test_native_movie_frame_eligibility PRIVATE cxx_std_20)
+
+# Explicit stateless PCM business arithmetic and compiled original lookup data.
+# No codec/device/game/runtime linkage or implicit speaker/profile selection.
+add_executable(test_native_movie_pcm_mix EXCLUDE_FROM_ALL
+    tests/test_movie_pcm_mix.cpp runtime/src/native/movie_pcm_mix.cpp)
+target_include_directories(test_native_movie_pcm_mix PRIVATE runtime/include)
+target_compile_features(test_native_movie_pcm_mix PRIVATE cxx_std_20)

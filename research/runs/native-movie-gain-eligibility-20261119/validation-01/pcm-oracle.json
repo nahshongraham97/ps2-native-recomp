@@ -1,0 +1,21 @@
+{
+  "status": "PASS_COMPLETE_PCM_TABLE_PAN_AND_SAMPLE_PLAN",
+  "gain_rows": 1000,
+  "pan_rows": 31,
+  "pan_grid_rows": 7967,
+  "sample_grid_rows": 2816,
+  "negative_checks": {
+    "trace_mutations": 12,
+    "metadata_mutations": 11,
+    "json_mutations": 2
+  },
+  "executable_sha256": "57cb6160305766f4c2cdc2b530f6b4d615a62a2e135f91712769b2c94b1b0397",
+  "execution_receipt_sha256": "c9472d96702f35050cf18a61246c9c2dbbd8ad25766df8694ed6d4f1ed7c10ff",
+  "verifier_sha256": "92a43de5937b120c293ed74594b2941ef467eef8ecc1ab52039976925f0a225a",
+  "movier_sha256": "3a34e3838042aa0bde0ce687a4e61e128b2eb965e60e65c34713e0a73891adb8",
+  "cri_sha256": "6ebaa7a8e0c677c3f9567030916b89ccdd04b5d7740f6f9be5cee036391b95ab",
+  "limits": [
+    "Explicit generic stateless source arithmetic only",
+    "No normal profile, real audio, resampling, timing or playback proof"
+  ]
+}

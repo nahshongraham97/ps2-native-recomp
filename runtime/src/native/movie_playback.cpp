@@ -4,6 +4,7 @@
 #include <cmath>
 #include <limits>
 #include <new>
+#include <exception>
 #ifdef __FAST_MATH__
 #error Native movie playback requires finite-value checks
 #endif
@@ -24,6 +25,18 @@ template<class T> void reserve_one(std::vector<T>& v) {
     v.reserve(v.capacity()+growth);
 }
 }
+struct NativeMovieStreamPlayback::CallGuard {
+    NativeMovieStreamPlayback* context=nullptr;
+    CallGuard(NativeMovieStreamPlayback& value,MovieControlFailure& f) noexcept {
+        if(!value.owner(f))return;
+        if(value.in_call_) {
+            f={MovieControlError::invalid_state,"movie playback non-reentrant operation",0};return;
+        }
+        value.in_call_=true;context=&value;
+    }
+    ~CallGuard(){if(context)context->in_call_=false;}
+    explicit operator bool() const noexcept {return context!=nullptr;}
+};
 NativeMovieStreamPlayback::NativeMovieStreamPlayback(std::unique_ptr<MoviePlaybackInput> i,
         std::unique_ptr<MoviePlaybackPolicies> p, std::unique_ptr<MoviePlaybackAudioOutput> a,
         NativeMovieGpuBackend& g, NativeMovieColorTable c, MoviePlaybackConfiguration cfg,
@@ -80,7 +93,7 @@ std::unique_ptr<NativeMovieStreamPlayback> NativeMovieStreamPlayback::create(
     } catch(...) {error(f,"movie playback construction allocation or service exception");return {};}
 }
 NativeMovieStreamPlayback::~NativeMovieStreamPlayback() {
-    if(std::this_thread::get_id()!=owner_) std::terminate();
+    if(std::this_thread::get_id()!=owner_||in_call_) std::terminate();
     MovieControlFailure f;
     stop(f);
 }
@@ -97,7 +110,7 @@ bool NativeMovieStreamPlayback::fail(MovieControlFailure& f,const char* operatio
     return false;
 }
 bool NativeMovieStreamPlayback::pause(bool value,MovieControlFailure& f) noexcept {
-    if(!owner(f))return false;
+    CallGuard call(*this,f);if(!call)return false;
     if(terminal_.kind!=MovieControlError::none){f=terminal_;return false;}
     try {
         cleanup_needed_=true;
@@ -111,7 +124,7 @@ bool NativeMovieStreamPlayback::pause(bool value,MovieControlFailure& f) noexcep
     }catch(...){return fail(f,"movie playback pause exception");}
 }
 bool NativeMovieStreamPlayback::start(std::string_view key,MovieControlFailure& f) noexcept {
-    if(!owner(f))return false;
+    CallGuard call(*this,f);if(!call)return false;
     if(used_||terminal_.kind!=MovieControlError::none) {
         f={MovieControlError::invalid_state,"movie playback source is single use",0};return false;
     }
@@ -125,7 +138,7 @@ bool NativeMovieStreamPlayback::start(std::string_view key,MovieControlFailure& 
     }catch(...){return fail(f,"movie playback begin exception");}
 }
 bool NativeMovieStreamPlayback::pump_metadata(MovieControlFailure& f) noexcept {
-    if(!owner(f))return false;
+    CallGuard call(*this,f);if(!call)return false;
     if(terminal_.kind!=MovieControlError::none){f=terminal_;return false;}
     if(!active_)return true;
     try {
@@ -161,7 +174,7 @@ bool NativeMovieStreamPlayback::submit_audio(MovieControlFailure& f,bool& blocke
     blocked=false;
     while(!pcm_.empty()) {
     auto& packet=pcm_.front();
-    if(!packet.prepared) {
+    if(!packet.prepared||packet.prepared_gain!=gain_) {
         if(!source_progress_) {
             MovieAudioProgressFailure pf;
             // Explicit decoder-relative sample INDEX, never the retail clock
@@ -174,15 +187,30 @@ bool NativeMovieStreamPlayback::submit_audio(MovieControlFailure& f,bool& blocke
         }
         if(!source_audio_rate_||packet.source.sample_rate!=*source_audio_rate_)
             return fail(f,"movie playback source sample rate changed before acceptance");
-        if(!policies_->prepare_audio(packet.source,gain_,packet.client,f))
+        std::vector<float> prepared;
+        const auto requested_gain=gain_;
+        if(!policies_->prepare_audio(packet.source,requested_gain,prepared,f)||f.kind!=MovieControlError::none)
             return fail(f,"movie playback admitted PCM transform");
-        if(packet.client.empty()||packet.client.size()%config_.client_channels)
+        if(gain_!=requested_gain)
+            return fail(f,"movie playback gain changed during stateless preparation");
+        if(prepared.empty()||prepared.size()%config_.client_channels)
             return fail(f,"movie playback complete owned interleaved client PCM");
-        if(packet.client.size()/config_.client_channels!=packet.source.channels.front().size())
+        if(prepared.size()/config_.client_channels!=packet.source.channels.front().size())
             return fail(f,"movie playback equal-cardinality PCM required before acceptance");
-        for(const float sample:packet.client)if(!std::isfinite(sample))
+        for(const float sample:prepared)if(!std::isfinite(sample))
             return fail(f,"movie playback finite client PCM");
+        if(packet.prepared&&prepared.size()!=packet.client.size())
+            return fail(f,"movie playback immutable prepared packet extent changed");
+        if(!packet.prepared)packet.client=std::move(prepared);
+        else {
+            // All allocation/validation completed before replacing this tail.
+            // Already accepted prefix and its receipts remain byte-for-byte
+            // intact; never multiply already prepared output by another gain.
+            std::copy(prepared.begin()+packet.accepted_samples,prepared.end(),
+                      packet.client.begin()+packet.accepted_samples);
+        }
         packet.prepared=true;
+        packet.prepared_gain=requested_gain;
     }
     auto available=audio_->queue_status(f);
     if(!available||!valid_status(*available)||!next_audio_||
@@ -223,7 +251,7 @@ bool NativeMovieStreamPlayback::submit_audio(MovieControlFailure& f,bool& blocke
     return true;
 }
 bool NativeMovieStreamPlayback::pump_streams(MovieControlFailure& f) noexcept {
-    if(!owner(f))return false;
+    CallGuard call(*this,f);if(!call)return false;
     if(terminal_.kind!=MovieControlError::none){f=terminal_;return false;}
     if(!active_)return true;
     try {
@@ -269,7 +297,11 @@ bool NativeMovieStreamPlayback::pump_streams(MovieControlFailure& f) noexcept {
     }catch(...){return fail(f,"movie playback stream allocation or service exception");}
 }
 bool NativeMovieStreamPlayback::snapshot(MoviePlaybackSnapshot& s,MovieControlFailure& f) noexcept {
-    if(!owner(f))return false;
+    CallGuard call(*this,f);if(!call)return false;
+    try {return snapshot_owned(s,f);}
+    catch(...){return fail(f,"movie playback snapshot exception");}
+}
+bool NativeMovieStreamPlayback::snapshot_owned(MoviePlaybackSnapshot& s,MovieControlFailure& f) {
     try {
         s={eof_,paused_,decoded_video_,decoded_audio_,video_.size(),pcm_.size(),fences_.size(),{}, {}, {}, cancelled_progress_};
         if(audio_) {
@@ -290,12 +322,12 @@ bool NativeMovieStreamPlayback::snapshot(MoviePlaybackSnapshot& s,MovieControlFa
     }catch(...){return fail(f,"movie playback snapshot exception");}
 }
 bool NativeMovieStreamPlayback::status(MoviePlaybackStatus& result,MovieControlFailure& f) noexcept {
-    if(!owner(f))return false;
+    CallGuard call(*this,f);if(!call)return false;
     if(terminal_.kind!=MovieControlError::none){result=MoviePlaybackStatus::error;f=terminal_;return false;}
     result=MoviePlaybackStatus::stopped;if(!active_)return true;
     try {
         MoviePlaybackSnapshot s;
-        if(!snapshot(s,f))return false;
+        if(!snapshot_owned(s,f))return false;
         bool ready=false;
         if(!policies_->ready(s,ready,f))return fail(f,"movie playback explicit readiness policy");
         result=ready?MoviePlaybackStatus::playing:MoviePlaybackStatus::preparing;
@@ -314,12 +346,12 @@ bool NativeMovieStreamPlayback::status(MoviePlaybackStatus& result,MovieControlF
     }catch(...){return fail(f,"movie playback status policy exception");}
 }
 MoviePresentation NativeMovieStreamPlayback::try_present(MovieControlFailure& f) noexcept {
-    if(!owner(f))return MoviePresentation::error;
+    CallGuard call(*this,f);if(!call)return MoviePresentation::error;
     if(terminal_.kind!=MovieControlError::none){f=terminal_;return MoviePresentation::error;}
     if(!active_||paused_||video_.empty())return MoviePresentation::no_frame;
     try {
         MoviePlaybackSnapshot s;
-        if(!snapshot(s,f))return MoviePresentation::error;
+        if(!snapshot_owned(s,f))return MoviePresentation::error;
         auto& next=video_.front();bool eligible=false;
         if(!policies_->eligible(next.source,s,eligible,f)) {fail(f,"movie playback explicit frame eligibility");return MoviePresentation::error;}
         if(!eligible)return MoviePresentation::no_frame;
@@ -347,7 +379,7 @@ MoviePresentation NativeMovieStreamPlayback::try_present(MovieControlFailure& f)
     }catch(...){fail(f,"movie playback presentation allocation or service exception");return MoviePresentation::error;}
 }
 bool NativeMovieStreamPlayback::apply_fade_volume(const MovieFadeStep& step,MovieControlFailure& f) noexcept {
-    if(!owner(f))return false;
+    CallGuard call(*this,f);if(!call)return false;
     if(terminal_.kind!=MovieControlError::none){f=terminal_;return false;}
     try {
         MovieGainFailure gf;auto gain=movie_gain_fade(step,gf);
@@ -357,12 +389,12 @@ bool NativeMovieStreamPlayback::apply_fade_volume(const MovieFadeStep& step,Movi
     }catch(...){return fail(f,"movie playback gain policy exception");}
 }
 bool NativeMovieStreamPlayback::take_error(MovieControlFailure& f) noexcept {
-    if(!owner(f))return true;
+    CallGuard call(*this,f);if(!call)return true;
     if(!error_pending_)return false;
     f=terminal_;error_pending_=false;return true;
 }
 bool NativeMovieStreamPlayback::stop(MovieControlFailure& f) noexcept {
-    if(!owner(f))return false;
+    CallGuard call(*this,f);if(!call)return false;
     MovieControlFailure first;
     if(!cleanup_needed_&&fences_.empty()&&video_.empty()&&pcm_.empty())return true;
     // Attempt all cleanup operations even if an earlier service failed.

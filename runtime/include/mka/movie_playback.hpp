@@ -79,11 +79,16 @@ public:
     virtual bool ready(const MoviePlaybackSnapshot&, bool&, MovieControlFailure&) = 0;
     virtual bool eligible(const MovieVideoFrame&, const MoviePlaybackSnapshot&, bool&, MovieControlFailure&) = 0;
     virtual bool video_submitted(const MovieGpuMetadata&, MovieControlFailure&) = 0;
-    // Whole source packet -> owned client PCM with an admitted routing/gain/rate
-    // conversion. Every source sample and returned client sample is accounted.
+    // Admitted STATELESS signal transform, with immutable source/profile and
+    // equal source/client rate/cardinality. May be called again on ORIGINAL
+    // samples after a gain change; it must not advance resampler/filter/source
+    // history or reapply gain to previously prepared PCM. Instrumentation is
+    // allowed. Stateful/changed-profile routes need a separately proved binding.
     virtual bool prepare_audio(const MovieAudioFrame&, std::int32_t tenth_db,
                                std::vector<float>& client_pcm, MovieControlFailure&) = 0;
     virtual bool audio_accepted(const MoviePlaybackAudioAcceptance&, MovieControlFailure&) = 0;
+    // Updates owned coefficient state for future mixing; not system/device
+    // volume, rewriting submitted PCM or applying another gain to output.
     virtual bool set_gain(std::int32_t tenth_db, MovieControlFailure&) = 0;
     // Called only after EOF, empty decoded queues and completed/retired fences.
     // Device padding/clock and sink ledger still require an explicit drain rule.
@@ -92,7 +97,12 @@ public:
 };
 
 // Concrete serialized source/queue/GPU/audio composition. This is a single-use
-// movie source; a second request requires a newly opened native owner. GPU must
+// movie source; a second request requires a newly opened native owner. Public
+// operations are serialized and non-reentrant, including from policy/backend
+// callbacks: nested operations fail before any service/state effect. Callbacks
+// use supplied snapshots; object destruction cannot occur during an operation.
+// The borrowed receipt view remains observational and follows normal span
+// lifetime rules. GPU must
 // outlive the session; all calls/destruction require the creating thread and
 // current original native context. No window/swap/COM/clock policy is invented.
 class NativeMovieStreamPlayback final : public NativeMoviePlayback {
@@ -116,6 +126,7 @@ public:
     bool snapshot(MoviePlaybackSnapshot&, MovieControlFailure&) noexcept;
     std::span<const MoviePlaybackAudioAcceptance> audio_acceptances() const noexcept { return accepted_; }
 private:
+    struct CallGuard;
     struct QueuedVideo {
         MovieVideoFrame source;
         std::shared_ptr<const MovieGpuFrame> uploaded;
@@ -126,6 +137,7 @@ private:
         std::uint64_t first_source = 0;
         std::size_t accepted_samples = 0;
         bool prepared = false;
+        std::int32_t prepared_gain = 0;
     };
     NativeMovieStreamPlayback(std::unique_ptr<MoviePlaybackInput>,
         std::unique_ptr<MoviePlaybackPolicies>, std::unique_ptr<MoviePlaybackAudioOutput>,
@@ -133,6 +145,7 @@ private:
     bool owner(MovieControlFailure&) const noexcept;
     bool fail(MovieControlFailure&, const char*) noexcept;
     bool poll_fences(MovieControlFailure&);
+    bool snapshot_owned(MoviePlaybackSnapshot&, MovieControlFailure&);
     bool submit_audio(MovieControlFailure&, bool& blocked);
     std::size_t queued_bytes() const noexcept;
     std::unique_ptr<MoviePlaybackInput> input_;
@@ -153,6 +166,7 @@ private:
     std::uint64_t decoded_video_ = 0, decoded_audio_ = 0, source_audio_cursor_ = 0;
     std::int32_t gain_;
     bool used_ = false, active_ = false, paused_ = true, eof_ = false, error_pending_ = false, cleanup_needed_ = false;
+    bool in_call_ = false;
     MovieControlFailure terminal_;
 };
 } // namespace mka::video
