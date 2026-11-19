@@ -41,6 +41,7 @@ const char *const kLane = "xyzw";
 bool lane(unsigned dest, int i) { return dest & (8u >> i); }
 
 struct Upper {
+    bool supported = true;
     std::string pre, post;
     bool sets_flags = false;
     int target = -1;
@@ -110,7 +111,7 @@ Upper upper(std::uint32_t hi, bool flags_live) {
         case 0x2D: set(Msub, Vec, fd, true); break;
         case 0x2E: set(Opmsub, Vec, fd, true); break;
         case 0x2F: set(Min, Vec, fd, false); break;
-        default: break;
+        default: u.supported = false; break;
         }
     } else {
         const unsigned index = ((hi >> 6) & 31u) * 4u + (funct & 3u);
@@ -140,7 +141,8 @@ Upper upper(std::uint32_t hi, bool flags_live) {
         case 0x2C: set(Sub, Vec, kAcc, true); break;
         case 0x2D: set(Msub, Vec, kAcc, true); break;
         case 0x2E: set(Opmula, Vec, kAcc, true); break;
-        default: break;
+        case 0x2F: break; // FD_11[11]: architectural NOP (0x2FF).
+        default: u.supported = false; break;
         }
     }
     if (kind == Nop) return u;
@@ -488,16 +490,15 @@ std::string generate(const Program &p, std::string &name, std::string *failure =
     name.clear();
     if (failure) failure->clear();
     const std::vector<std::uint32_t> pcs = ps2::vu::reachable(p.code.data(), kMask, p.entry);
-    const ps2::vu::StallPlan plan = ps2::vu::stall_plan(p.code.data(), kMask, pcs, p.entry);
-    if (!plan.ok) {
-        if (failure) *failure = "pipeline state analysis failed";
-        return {};
-    }
     std::set<std::uint32_t> in(pcs.begin(), pcs.end());
     std::map<std::uint32_t, Lower> lowers;
     bool any_status = false, any_flags = false, any_q = false;
     for (std::uint32_t pc : pcs) {
         const std::uint32_t lo = word(p.code, pc), hi = word(p.code, pc + 4);
+        if (!upper(hi, true).supported) {
+            if (failure) *failure = std::format("unsupported upper opcode 0x{:08X} at PC 0x{:04X}", hi, pc);
+            return {};
+        }
         Lower l;
         if (!(hi & 0x80000000u)) {
             l = lower(lo, pc);
@@ -510,6 +511,11 @@ std::string generate(const Program &p, std::string &name, std::string *failure =
         any_flags = any_flags || l.reads_flags;
         any_q = any_q || l.code.find("fl.end_q(") != std::string::npos;
         lowers[pc] = l;
+    }
+    const ps2::vu::StallPlan plan = ps2::vu::stall_plan(p.code.data(), kMask, pcs, p.entry);
+    if (!plan.ok) {
+        if (failure) *failure = "pipeline state analysis failed";
+        return {};
     }
     std::map<std::uint32_t, bool> live_in;
     const auto successors = [&](std::uint32_t pc) {
@@ -612,7 +618,11 @@ std::string generate(const Program &p, std::string &name, std::string *failure =
             }
         }
         if (hi & 0x80000000u) body += std::format("r.i = {}u; ", lo);
-        else if (!l.supported) body += std::format("vu::interpret(1, {}u); return; ", pc);
+        else if (!l.supported) {
+            name.clear();
+            if (failure) *failure = std::format("generator invariant failure: unsupported lower opcode 0x{:08X} at PC 0x{:04X}", lo, pc);
+            return {};
+        }
         else body += lcode;
         if (keep_bk.count(pc)) body += "bk = next_bk; ";
         if (set_bi.count(pc)) body += std::format("bi = {}u; ", std::max(def[pc], 0));
@@ -672,15 +682,21 @@ namespace ps2::vurecomp {
 
 // Bump this when the generated code changes in a way the headers do not show (a change in this file): libraries made earlier
 // are then left alone and built again (vu_live.cpp).
-const char *const kGeneratorVersion = "vurecomp 3";
+const char *const kGeneratorVersion = "vurecomp 4 strict";
 
 Result generate_files(std::vector<Input> inputs, const fs::path &out_dir, std::uint64_t live_stamp, std::size_t per_file,
                       bool with_targets, bool require_complete) {
+    (void)require_complete; // Compatibility parameter: incomplete output is never permitted.
     std::vector<Program> programs;
-    std::size_t skipped = 0;
+    std::size_t skipped = inputs.empty() ? 1 : 0;
+    if (inputs.empty()) std::fprintf(stderr, "[vurecomp] at least one complete capture is required\n");
     for (Input &in : inputs) {
+        if (in.code.size() != kMask + 1 || (in.entry & 7u) || in.entry > kMask) {
+            std::fprintf(stderr, "%016llX_%04X: invalid capture size or entry\n", static_cast<unsigned long long>(in.key), in.entry);
+            ++skipped;
+            continue;
+        }
         Program p{in.key, in.entry, std::move(in.code)};
-        p.code.resize(kMask + 1);
         const auto pcs = ps2::vu::reachable(p.code.data(), kMask, p.entry);
         if (ps2::vu::program_key(p.code.data(), pcs, p.entry) != p.key) {
             std::fprintf(stderr, "%016llX_%04X: key mismatch, skipped\n", static_cast<unsigned long long>(p.key), p.entry);
@@ -727,7 +743,7 @@ Result generate_files(std::vector<Input> inputs, const fs::path &out_dir, std::u
     result.jump_targets = programs.size() - recorded;
     result.programs = names.size();
     for (std::size_t i = 0; i < names.size(); ++i) result.keys.push_back(programs[i].key);
-    if (require_complete && result.skipped != 0) {
+    if (result.skipped != 0) {
         std::fprintf(stderr, "[vurecomp] strict static output rejected: %zu program(s) were omitted; existing output left unchanged\n", result.skipped);
         return result;
     }

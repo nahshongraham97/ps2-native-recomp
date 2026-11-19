@@ -1,4 +1,3 @@
-#include "ps2/ee_live.hpp"
 #include "ps2/generated.hpp"
 #include "ps2/observer_hook.hpp"
 #include "ps2/native_hook.hpp"
@@ -176,8 +175,6 @@ void register_modules(const ModuleInfo *modules, std::uint32_t count) {
     for (std::uint32_t k = 0; k < count; ++k) g_module_span = std::max(g_module_span, modules[k].size);
 }
 
-void add_modules(const ModuleInfo *modules, std::uint32_t count) { add_modules_ranked(modules, count, 0); }
-
 void add_modules_ranked(const ModuleInfo *modules, std::uint32_t count, int rank) {
     for (std::uint32_t k = 0; k < count; ++k) {
         g_modules.push_back(modules[k]);
@@ -190,6 +187,8 @@ void add_modules_ranked(const ModuleInfo *modules, std::uint32_t count, int rank
     if (rank > 0) g_instances.clear();
 }
 
+void add_modules(const ModuleInfo *modules, std::uint32_t count) { add_modules_ranked(modules, count, 0); }
+
 bool window_module_in_place(std::uint32_t pc) { return instance_for(pc) != nullptr; }
 
 bool window_covered(std::uint32_t base, std::uint32_t size) {
@@ -201,6 +200,7 @@ bool window_covered(std::uint32_t base, std::uint32_t size) {
 }
 
 bool has_code(std::uint32_t pc) {
+    if (pc & 3u) return false;
     const UnitInfo *u = unit_for(pc);
     if (u && u->entries[(pc - u->base) >> 2] != 0) return true;
     return instance_for(pc, true) != nullptr;
@@ -210,65 +210,42 @@ void dispatch(Cpu &c, std::uint32_t, std::uint32_t depth) {
     const std::uint32_t pc = c.pc;
     if (pc & kUnwind) return;
     if (pc == kHandlerReturn || pc == kIdle) return;
-    if (pc == 0 && c.r[31].w[0] != 0) {
-        static std::uint32_t last_logged_ra = 0;
-        if (last_logged_ra != c.r[31].w[0]) {
-            std::fprintf(stderr, "[ee] null indirect call at 0x00000000 intercepted (ra 0x%08X); returning cleanly\n", c.r[31].w[0]);
-            last_logged_ra = c.r[31].w[0];
-        }
-        c.pc = c.r[31].w[0];
-        return;
-    }
-    if (c.r[31].w[0] == 0x002E6180u) {
-        static bool s_dumped = false;
-        if (!s_dumped) {
-            s_dumped = true;
-            std::fprintf(stderr, "[mka-particle] Dynamic particle evaluator at 0x%08X called from 0x%08X (r11=0x%08X)\n",
-                         pc, c.r[31].w[0], c.r[11].w[0]);
-            for (std::uint32_t a = pc; a < pc + 0xF0u; a += 16) {
-                std::fprintf(stderr, "  [0x%08X] %08X %08X %08X %08X\n",
-                             a, ld32(a), ld32(a+4), ld32(a+8), ld32(a+12));
-            }
-        }
-        c.r[2].d[0] = 0;
-        c.pc = c.r[31].w[0];
-        return;
+    if (pc & 3u) {
+        std::fprintf(stderr,"[ee-native-stop] misaligned call pc=0x%08X ra=0x%08X\n",pc,c.r[31].w[0]);
+        std::fflush(stderr); std::abort();
     }
     ps2::hook::notify_observer(c, depth);
     if (const auto h = ps2::hook::find_hook(pc)) { h(c); return; }
     const UnitInfo *u = unit_for(pc);
     const std::uint16_t id = u ? u->entries[(pc - u->base) >> 2] : 0;
     if (!id) {
-        for (bool translated = false;; translated = true) {
-            if (const Instance *m = instance_for(pc, true)) {
-                const std::uint32_t base = m->base;
-                const UnitInfo *mu = nullptr;
-                const std::uint16_t entry = module_entry(*m, pc, mu);
-                c.base = base;
-                mu->function(c, entry, depth);
-                return;
-            }
-            // Code the build does not have: translate it now, while the game waits, and look again (ee_live.cpp, docs/ee-live.md).
-            if (translated || !ee::live::translate_missing(pc)) break;
+        if (const Instance *m = instance_for(pc, true)) {
+            const UnitInfo *mu = nullptr;
+            const std::uint16_t entry = module_entry(*m, pc, mu);
+            c.base = m->base;
+            mu->function(c, entry, depth);
+            return;
         }
         record_miss(pc);
         char reason[64];
         std::snprintf(reason, sizeof reason, "missing code at 0x%08X (ra 0x%08X)", pc, c.r[31].w[0]);
         std::fprintf(stderr, "[ee] no translated code at 0x%08X (ra 0x%08X)\n", pc, c.r[31].w[0]);
-        for (std::uint32_t a = pc - 64; a < pc + 64; a += 16) {
-            std::fprintf(stderr, "[ee] mem %08X: %08X %08X %08X %08X\n",
-                         a, ld32(a), ld32(a + 4), ld32(a + 8), ld32(a + 12));
-        }
-        for (int i = 1; i < 32; i += 4)
-            std::fprintf(stderr, "[ee]   r%-2d %08X %08X %08X %08X\n", i, c.r[i].w[0], c.r[i + 1].w[0], c.r[i + 2].w[0], i + 3 < 32 ? c.r[i + 3].w[0] : 0u);
-        halt(reason);
-        c.pc = pc | kUnwind;
-        return;
+        std::fprintf(stderr, "[ee-native-stop] %s; no runtime translation or synthetic return is permitted\n", reason);
+        std::fflush(stderr);
+        std::abort();
     }
     u->function(c, id, depth);
 }
 
 void call(Cpu &c, std::uint32_t target, std::uint32_t depth) {
+    // Raw retail targets cannot contain the dispatcher's internal unwind bit.
+    // Check before the depth limit too: a deferred bad target must not become
+    // an apparently valid neighboring entry at the outer dispatch loop.
+    if (target & 3u) {
+        std::fprintf(stderr, "[ee-native-stop] misaligned raw call target=0x%08X ra=0x%08X\n", target, c.r[31].w[0]);
+        std::fflush(stderr);
+        std::abort();
+    }
     c.pc = target;
     if (depth >= kMaxDepth) return;
     dispatch(c, 0, depth);
@@ -276,14 +253,14 @@ void call(Cpu &c, std::uint32_t target, std::uint32_t depth) {
 
 void bad_entry(Cpu &c, std::uint32_t unit_base) {
     std::fprintf(stderr, "[ee] bad entry into unit 0x%08X for pc 0x%08X\n", unit_base, c.pc);
-    halt("bad entry");
-    c.pc |= kUnwind;
+    std::fflush(stderr);
+    std::abort();
 }
 
-void stop(Cpu &c, std::uint32_t pc, const char *what) {
+void stop(Cpu &, std::uint32_t pc, const char *what) {
     std::fprintf(stderr, "[ee] stopped at 0x%08X: %s\n", pc, what);
-    halt(what);
-    c.pc = pc | kUnwind;
+    std::fflush(stderr);
+    std::abort();
 }
 
 void probe(Cpu &c, std::uint32_t pc) {
@@ -293,10 +270,14 @@ void probe(Cpu &c, std::uint32_t pc) {
 
 void breakpoint(Cpu &c, std::uint32_t pc) {
     std::fprintf(stderr, "[ee] break at 0x%08X (ra 0x%08X)\n", pc, c.r[31].w[0]);
+    std::fflush(stderr);
+    std::abort();
 }
 
 void trap(Cpu &c, std::uint32_t pc) {
     std::fprintf(stderr, "[ee] trap at 0x%08X (ra 0x%08X)\n", pc, c.r[31].w[0]);
+    std::fflush(stderr);
+    std::abort();
 }
 
 }

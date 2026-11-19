@@ -12,7 +12,6 @@
 #include "iop/sif.hpp"
 #include "iop/sio2.hpp"
 #include "iop/audio_service.hpp"
-#include "ps2/ee_live.hpp"
 #include "kernel.hpp"
 #include "load_stats.hpp"
 #include "ps2/generated.hpp"
@@ -404,7 +403,6 @@ void vblank() {
     quick::frame_check();
     apply_patches(false);
     track_words();
-    ee::live::frame_tick();   // code windows that settled are translated in the background, finished libraries come in here (docs/gvz.md)
     if (g_options.on_vblank) g_options.on_vblank();
     iop::sio2::flush_cards();
     // Every frame under --trace-iop: the heartbeat used to print one frame in 25, which is the same

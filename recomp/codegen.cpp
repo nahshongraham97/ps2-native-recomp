@@ -275,7 +275,7 @@ private:
                 falls = true;
             } else if (i.op == Eret) {
                 flush();
-                line("{ const std::uint32_t t = eret(c); c.pc = t; [[clang::musttail]] return dispatch(c, 0u, depth); }");
+                line("{ const std::uint32_t t = eret(c); " + raw_target_guard("t", "ERET") + "c.pc = t; [[clang::musttail]] return dispatch(c, 0u, depth); }");
                 falls = false;
             } else if (fl == Flow::Stop) {
                 flush();
@@ -393,6 +393,10 @@ private:
 
     std::string where(const Next &n) const { return n.known() ? pc(n.pc) : n.var; }
 
+    std::string raw_target_guard(std::string_view target, std::string_view kind) const {
+        return std::format("if (({0}) & 3u) stop(c, {0}, \"misaligned raw EE {1} target\"); ", target, kind);
+    }
+
     // Collects the addresses slot_flow() reaches from a branch with a complex slot: labels and entries to provide.
     void reach_of(const Insn &branch) {
         collecting_ = true;
@@ -419,14 +423,14 @@ private:
             line(jump(n.ret, from));
             break;
         case Next::Return:
-            line(std::format("c.pc = {}; return;", n.var));
+            line(raw_target_guard(n.var, "return") + std::format("c.pc = {}; return;", n.var));
             break;
         case Next::Indirect:
-            line(std::format("c.pc = {0}; if ({0} - {1} < {2}u) {{ entry = {3}[({0} - {1}) >> 2]; if (entry) goto dispatch_entry; }} [[clang::musttail]] return dispatch(c, 0u, depth);",
+            line(raw_target_guard(n.var, "JR") + std::format("c.pc = {0}; if ({0} - {1} < {2}u) {{ entry = {3}[({0} - {1}) >> 2]; if (entry) goto dispatch_entry; }} [[clang::musttail]] return dispatch(c, 0u, depth);",
                              n.var, pc(base_), layout_.size(), table_name(layout_.unit_of(base_))));
             break;
         case Next::IndirectCall:
-            line(std::format("c.pc = {0}; call(c, {0}, depth + 1u); if (c.pc != {1}) [[unlikely]] return;", n.var, pc(n.ret)));
+            line(raw_target_guard(n.var, "JALR") + std::format("c.pc = {0}; call(c, {0}, depth + 1u); if (c.pc != {1}) [[unlikely]] return;", n.var, pc(n.ret)));
             line(jump(n.ret, from));
             break;
         }
@@ -557,16 +561,16 @@ private:
             break;
         case Flow::JumpRegister:
             if (i.rs() == 31) {
-                line(std::format("{{ const std::uint32_t t = {}; {} c.pc = t; return; }}", w(31), slot));
+                line(std::format("{{ const std::uint32_t t = {}; {} {} c.pc = t; return; }}", w(31), slot, raw_target_guard("t", "JR return")));
             } else {
-                line(std::format("{{ const std::uint32_t t = {}; {} c.pc = t; if (t - {} < {}u) {{ entry = {}[(t - {}) >> 2]; if (entry) goto dispatch_entry; }} [[clang::musttail]] return dispatch(c, 0u, depth); }}",
-                                 w(i.rs()), slot, pc(base_), layout_.size(), table_name(layout_.unit_of(base_)), pc(base_)));
+                line(std::format("{{ const std::uint32_t t = {}; {} {} c.pc = t; if (t - {} < {}u) {{ entry = {}[(t - {}) >> 2]; if (entry) goto dispatch_entry; }} [[clang::musttail]] return dispatch(c, 0u, depth); }}",
+                                 w(i.rs()), slot, raw_target_guard("t", "JR"), pc(base_), layout_.size(), table_name(layout_.unit_of(base_)), pc(base_)));
             }
             break;
         case Flow::CallRegister: {
             const std::string set = i.rd() ? std::format("c.r[{}].sd[0] = static_cast<std::int32_t>({});", i.rd(), pc(ret)) : "";
-            line(std::format("{{ const std::uint32_t t = {}; {} {} c.pc = t; call(c, t, depth + 1u); if (c.pc != {}) [[unlikely]] return; }}",
-                             w(i.rs()), set, slot, pc(ret)));
+            line(std::format("{{ const std::uint32_t t = {}; {} {} {} c.pc = t; call(c, t, depth + 1u); if (c.pc != {}) [[unlikely]] return; }}",
+                             w(i.rs()), set, slot, raw_target_guard("t", "JALR"), pc(ret)));
             break;
         }
         default:

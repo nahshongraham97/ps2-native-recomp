@@ -6,8 +6,8 @@
 
 namespace ps2::gs::native_renderer {
 
-// Opt-in direct GIF-event renderer. When selected, gif::render sends packet
-// events here instead of through the compatibility GsSink.
+// Mandatory direct GIF-event route. Backend failure and unsupported packets
+// stop; no environment setting may select compatibility drawing.
 bool selected();
 bool active();
 bool strict();

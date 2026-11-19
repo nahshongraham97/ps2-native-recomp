@@ -1,7 +1,5 @@
 #include "ps2/os.hpp"
 #include "ps2/system.hpp"
-#include "ps2/ee_live.hpp"
-#include "ps2/vu_live.hpp"
 #include "ps2/vu.hpp"
 #include "ps2/observer_hook.hpp"
 #include "ps2/port_config.hpp"
@@ -890,56 +888,8 @@ int main(int argc, char **argv) {
     if (window && !open_window(fullscreen)) return 1;
     if (window) name_thread(L"ps2 window");
 #endif
-    // Vector programs the build does not know are compiled in the background while the game runs (docs/vu-live.md). On in a window,
-    // off in headless runs unless PS2_VU_LIVE asks: PS2_VU_LIVE=1 (or a folder for the compiled libraries), PS2_VU_LIVE=0 switches it off.
-    // The libraries go next to the game: the game folder that port.sh made (the one with the vu1 folder), else the program's own folder.
-    {
-        const std::string setting = ps2::os::env("PS2_VU_LIVE");
-        const bool strict_aot = ps2::vu::strict_aot_enabled();
-        if (!strict_aot && setting != "0" && setting != "off" && (window || !setting.empty())) {
-            std::string cache = setting == "1" || setting == "on" ? std::string() : setting;
-            if (cache.empty()) {
-                std::error_code error;
-                const std::filesystem::path program = std::filesystem::absolute(resolved_program, error);
-                std::filesystem::path place = program.parent_path();
-                for (const std::filesystem::path &candidate : {program.parent_path(), program.parent_path().parent_path()})
-                    if (std::filesystem::is_directory(candidate / "vu1", error)) {
-                        place = candidate;
-                        break;
-                    }
-                cache = ps2::os::utf8((place / "vu1-live").lexically_normal());
-            }
-            ps2::vu::live::start(cache);
-        } else if (strict_aot) {
-            std::fprintf(stderr, "[vu1-aot] strict mode: live microprogram compilation disabled\n");
-        }
-    }
     register_generated_code();
     register_generated_vu();
-    // Main processor code the build does not know (code a game copies into a window while it runs) is translated and compiled on the
-    // spot, the game waiting (docs/ee-live.md). On in a window, off in headless runs unless PS2_EE_LIVE asks (a headless run is how
-    // port.sh explores, and it wants the stop): PS2_EE_LIVE=1 (or a folder for the compiled libraries), PS2_EE_LIVE=0 switches it off.
-    // The libraries go next to the game like the vector programs'; entries.txt and overlays\ of the game folder get what was found.
-    {
-        const std::string setting = ps2::os::env("PS2_EE_LIVE");
-        if (setting != "0" && setting != "off" && (window || !setting.empty())) {
-            std::error_code error;
-            const std::filesystem::path program = std::filesystem::absolute(resolved_program, error);
-            std::filesystem::path place = program.parent_path(), game_dir;
-            for (const std::filesystem::path &candidate : {program.parent_path(), program.parent_path().parent_path()})
-                if (std::filesystem::is_directory(candidate / "vu1", error) || std::filesystem::is_regular_file(candidate / "entries.txt", error)) {
-                    place = candidate;
-                    break;
-                }
-            for (const std::filesystem::path &candidate : {program.parent_path(), program.parent_path().parent_path()})
-                if (std::filesystem::is_regular_file(candidate / "entries.txt", error)) {
-                    game_dir = candidate;
-                    break;
-                }
-            const std::string cache = setting.empty() || setting == "1" || setting == "on" ? ps2::os::utf8((place / "ee-live").lexically_normal()) : setting;
-            ps2::ee::live::start(program_target.c_str(), cache, ps2::os::utf8(game_dir));
-        }
-    }
     const auto emulate = [&]() -> int {
         name_thread(L"ps2 emulation");
         std::uint32_t entry = 0;

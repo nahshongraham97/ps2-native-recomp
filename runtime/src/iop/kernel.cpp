@@ -296,27 +296,23 @@ std::uint32_t hle_id_for(const std::string &library, std::uint32_t index) {
     auto it = g_hle_ids.find({library, index});
     if (it != g_hle_ids.end()) return it->second;
     return register_hle(library, index, [library, index](Cpu &c) {
-        if (g_missing_reported.insert({library, index}).second)
-            std::fprintf(stderr, "[iop] missing %s #%u called from 0x%08X\n", library.c_str(), index, c.r[31]);
-        c.r[2] = 0;
+        std::fprintf(stderr, "[iop-native-stop] missing host service %s #%u caller=0x%08X\n", library.c_str(), index, c.r[31]);
+        std::fflush(stderr);
+        std::abort();
     });
 }
 
 std::uint32_t native_import_hle_id_for(const std::string &library, std::uint16_t version, std::uint32_t ordinal) {
     const std::string hle_library = "native_import:" + library + ":" + std::to_string(version);
     return register_hle(hle_library, ordinal, [library, version, ordinal](Cpu &c) {
-        if (!invoke_native_import(library, version, ordinal, c) && !native_strict()) c.r[2] = 0;
+        invoke_native_import(library, version, ordinal, c);
     });
 }
 
 std::uint32_t import_hle_id_for(const std::string &library, std::uint16_t version, std::uint32_t ordinal) {
     const NativeIopExportKey key{library, version, ordinal};
-    // Strict mode must route even unresolved imports through the native
-    // resolver so invoke_native_import() stops instead of the generic missing
-    // HLE handler silently returning zero.
-    if (native_strict() || g_native_exports.find(key) != g_native_exports.end())
-        return native_import_hle_id_for(library, version, ordinal);
-    return hle_id_for(library, ordinal);
+    // Every import must have an actual, versioned native implementation.
+    return native_import_hle_id_for(library, version, ordinal);
 }
 
 void link_imports(std::uint32_t base, std::uint32_t size) {
@@ -326,20 +322,14 @@ void link_imports(std::uint32_t base, std::uint32_t size) {
         std::memcpy(raw, ram_ptr(a + 12), 8);
         const std::string library(raw);
         const auto version = static_cast<std::uint16_t>(ram32(a + 8));
-        const auto guest = g_libraries.find(library);
         for (std::uint32_t stub = a + 20; stub + 8 <= base + size; stub += 8) {
             const std::uint32_t w0 = ram32(stub), w1 = ram32(stub + 4);
             if (w0 != 0x03E00008u || (w1 & 0xFFFF0000u) != 0x24000000u) break;
             const std::uint32_t index = w1 & 0xFFFFu;
-            if (guest != g_libraries.end() && !native_strict()) {
-                const std::uint32_t target = ram32(guest->second + 20 + index * 4);
-                set_ram32(stub, 0x08000000u | ((target >> 2) & 0x03FFFFFFu));
-                set_ram32(stub + 4, 0);
-            } else {
+
                 if (!g_hle_versions.count(library) && g_trace_modules)
                     std::fprintf(stderr, "[iop] import from unknown library %s #%u\n", library.c_str(), index);
                 set_ram32(stub, (kHleOpcode << 26) | import_hle_id_for(library, version, index));
-            }
         }
     }
 }
@@ -363,38 +353,65 @@ void relink_hle_imports() {
     for (const auto &[at, id] : g_hle_stubs) set_ram32(at, (kHleOpcode << 26) | id);
 }
 
+[[noreturn]] void native_failure(const char *reason) {
+    std::fprintf(stderr, "[iop-native-stop] %s\n", reason);
+    std::fflush(stderr);
+    std::abort();
+}
+
 struct Elf {
     const std::vector<std::uint8_t> &data;
-    std::uint32_t u32(std::size_t o) const { std::uint32_t v; std::memcpy(&v, data.data() + o, 4); return v; }
-    std::uint16_t u16(std::size_t o) const { std::uint16_t v; std::memcpy(&v, data.data() + o, 2); return v; }
+    void range(std::size_t offset, std::size_t count) const {
+        if (offset > data.size() || count > data.size() - offset)
+            native_failure("ELF source range is outside the supplied module bytes");
+    }
+    void table(std::size_t offset, std::size_t stride, std::size_t count, std::size_t required) const {
+        if (!count) return;
+        if (stride < required || offset > data.size() || count > (data.size() - offset) / stride)
+            native_failure("ELF table extent or entry size is invalid");
+    }
+    std::uint32_t u32(std::size_t o) const { range(o,4); std::uint32_t v; std::memcpy(&v,data.data()+o,4); return v; }
+    std::uint16_t u16(std::size_t o) const { range(o,2); std::uint16_t v; std::memcpy(&v,data.data()+o,2); return v; }
+    std::uint32_t allocation_total(std::size_t module, std::uint32_t memory) const {
+        range(module,24);
+        const std::uint64_t parts = static_cast<std::uint64_t>(u32(module+12)) + u32(module+16) + u32(module+20);
+        const auto total = std::max<std::uint64_t>(memory,parts);
+        // Existing allocator adds 0x40 then rounds to 0x100: validate before either addition.
+        if (total > 0xFFFFFF00ull - 0x40u) native_failure("ELF module allocation arithmetic overflows");
+        return static_cast<std::uint32_t>(total);
+    }
 };
 
 void relocate(const Elf &elf, std::uint32_t base, std::uint32_t size, bool v2) {
     const std::uint32_t shoff = elf.u32(32);
     const std::uint16_t shentsize = elf.u16(46), shnum = elf.u16(48);
+    elf.table(shoff,shentsize,shnum,24);
     auto word = [&](std::int64_t offset) -> std::uint8_t * {
-        static std::uint32_t dummy;
-        if (offset < 0 || offset + 4 > size) return reinterpret_cast<std::uint8_t *>(&dummy);
+        if (offset < 0 || offset + 4 > size) native_failure("ELF relocation target is outside allocated module");
         return ram_ptr(base + static_cast<std::uint32_t>(offset));
     };
     auto get = [&](std::int64_t o) { std::uint32_t v; std::memcpy(&v, word(o), 4); return v; };
     auto put = [&](std::int64_t o, std::uint32_t v) { std::memcpy(word(o), &v, 4); };
     for (std::uint32_t i = 0; i < shnum; ++i) {
-        const std::size_t sh = shoff + i * shentsize;
+        const std::size_t sh = static_cast<std::size_t>(shoff) + static_cast<std::size_t>(i) * shentsize;
         if (elf.u32(sh + 4) != 9) continue;
-        const std::uint32_t off = elf.u32(sh + 16), count = elf.u32(sh + 20) / 8;
+        const std::uint32_t off = elf.u32(sh + 16), extent = elf.u32(sh + 20);
+        if (extent % 8) native_failure("ELF relocation table has a partial entry");
+        elf.range(off,extent);
+        const std::uint32_t count = extent / 8;
         std::int64_t hi_at = -1;
         std::uint32_t hi_word = 0;
         for (std::uint32_t k = 0; k < count; ++k) {
-            const auto at = static_cast<std::int64_t>(static_cast<std::int32_t>(elf.u32(off + k * 8)));
-            const std::uint32_t type = elf.u32(off + k * 8 + 4) & 0xFFu;
+            const auto at = static_cast<std::int64_t>(static_cast<std::int32_t>(elf.u32(static_cast<std::size_t>(off) + static_cast<std::size_t>(k) * 8)));
+            const std::uint32_t type = elf.u32(static_cast<std::size_t>(off) + static_cast<std::size_t>(k) * 8 + 4) & 0xFFu;
+            if (type == 0) continue; // R_MIPS_NONE has no target read/write.
             std::uint32_t insn = get(at);
             switch (type) {
             case 2: put(at, insn + base); break;
             case 4: put(at, (insn & ~0x03FFFFFFu) | (((insn & 0x03FFFFFFu) + (base >> 2)) & 0x03FFFFFFu)); break;
             case 5:
                 if (v2 && k + 1 < count) {
-                    const auto next = static_cast<std::int64_t>(static_cast<std::int32_t>(elf.u32(off + (k + 1) * 8)));
+                    const auto next = static_cast<std::int64_t>(static_cast<std::int32_t>(elf.u32(static_cast<std::size_t>(off) + (static_cast<std::size_t>(k) + 1) * 8)));
                     std::uint32_t value = static_cast<std::uint32_t>(static_cast<std::int16_t>(get(next))) + (insn << 16) + base;
                     if (value & 0x8000u) value += 0x10000u;
                     put(at, (insn & ~0xFFFFu) | (value >> 16));
@@ -417,8 +434,8 @@ void relocate(const Elf &elf, std::uint32_t base, std::uint32_t size, bool v2) {
                 }
                 break;
             default:
-                if (g_trace_modules) std::fprintf(stderr, "[iop] relocation type %u ignored\n", type);
-                break;
+                std::fprintf(stderr,"[iop-native-stop] unsupported ELF relocation type %u\n",type);
+                native_failure("ELF relocation has no implemented semantics");
             }
         }
     }
@@ -455,7 +472,7 @@ bool iop_module_name_from_elf(const std::vector<std::uint8_t> &data, std::string
     if (!phentsize || phentsize < 8 || !phnum || phoff > data.size() || phnum > (data.size() - phoff) / phentsize) return false;
 
     for (std::size_t i = 0; i < phnum; ++i) {
-        const std::size_t ph = phoff + i * phentsize;
+        const std::size_t ph = static_cast<std::size_t>(phoff) + static_cast<std::size_t>(i) * phentsize;
         if (u32(ph) != 0x70000080u) continue;
         const std::size_t iopmod = u32(ph + 4);
         if (iopmod > data.size() || data.size() - iopmod <= 26) return false;
@@ -583,22 +600,18 @@ void dump_native_module(const std::string &module_name, std::uint32_t base, std:
 }
 
 void fault(const char *reason) {
-    std::fprintf(stderr, "[iop] fault: %s (pc 0x%08X thread %d)\n", reason, g_cpu.pc, g_current);
-    if (Thread *t = current()) {
-        t->status = kDormant;
-        g_current = 0;
-    }
-    g_switch = true;
+    std::fprintf(stderr,"[iop-native-stop] fault: %s pc=0x%08X thread=%d\n",reason,g_cpu.pc,g_current);
+    native_failure("required IOP operation faulted; refusing to discard the worker");
 }
 
 std::uint32_t fetch_special(std::uint32_t pc) {
     std::fprintf(stderr, "[iop] fetch from 0x%08X\n", pc);
-    fault("fetch outside RAM");
-    return 0;
+    native_failure("fetch outside retained IOP memory has no native destination");
 }
 
 void syscall(Cpu &c, std::uint32_t pc) {
-    std::fprintf(stderr, "[iop] syscall at 0x%08X (v0 0x%X)\n", pc, c.r[2]);
+    std::fprintf(stderr, "[iop-native-stop] unsupported syscall at 0x%08X (v0 0x%X)\n", pc, c.r[2]);
+    native_failure("IOP syscall has no implemented host contract");
 }
 
 void set_status(Cpu &c, std::uint32_t value) { c.status = value; }
@@ -724,12 +737,17 @@ std::uint32_t call_guest(std::uint32_t address, std::uint32_t a0, std::uint32_t 
     while (!g_nested_done && guard > 0) {
         std::int64_t budget = kSlice;
         execute(g_cpu, budget);
+        if (budget < 0 || budget > kSlice) native_failure("nested IOP call returned an invalid execution budget");
+        if (budget == kSlice && !g_nested_done) native_failure("nested IOP call made no execution progress");
         guard -= kSlice - budget;
         switch_wanted |= g_switch;
         g_switch = false;
     }
     g_switch = switch_wanted;
-    if (guard <= 0) std::fprintf(stderr, "[iop] guest call to 0x%08X did not return\n", address);
+    if (!g_nested_done) {
+        std::fprintf(stderr,"[iop-native-stop] nested call to 0x%08X exhausted its return guard\n",address);
+        native_failure("nested IOP call did not return; refusing to publish a result");
+    }
     const std::uint32_t result = g_cpu.r[2];
     g_cpu = saved;
     g_nested_done = saved_done;
@@ -975,29 +993,11 @@ bool invoke_native_import(const std::string &library, std::uint16_t version, std
                 return true;
             }
         }
-        if (native_strict()) {
-            std::fprintf(stderr,
-                         "[iop-native-stop] unresolved native import %s v%04X ordinal %u caller=0x%08X a0=0x%08X a1=0x%08X a2=0x%08X a3=0x%08X (no matching C++ export or versioned HLE)\n",
-                         library.c_str(), version, ordinal, c.r[31], c.r[4], c.r[5], c.r[6], c.r[7]);
-            std::fflush(stderr);
-            std::abort();
-        }
-        // Outside strict mode the failure was silent, which hid a real gap: the
-        // native MWFILEFR service exports ordinals 4, 5, 10, 13, 15 and 16 while
-        // the retail IRX had nine (4, 5, 8, 9, 10, 13, 14, 15, 16), so MSL's
-        // calls to 8, 9 and 14 failed with nothing in the log. Report the first
-        // occurrence of each missing export with its arguments.
-        static std::map<std::string, std::uint64_t> s_unresolved;
-        const std::string key = library + " v" + std::to_string(version) + " ordinal " + std::to_string(ordinal);
-        if (s_unresolved.emplace(key, 1).second) {
-            std::fprintf(stderr,
-                         "[iop-native-miss] unresolved native import %s v%04X ordinal %u caller=0x%08X a0=0x%08X a1=0x%08X a2=0x%08X a3=0x%08X\n",
-                         library.c_str(), version, ordinal, c.r[31], c.r[4], c.r[5], c.r[6], c.r[7]);
-            std::fflush(stderr);
-        } else {
-            ++s_unresolved[key];
-        }
-        return false;
+        std::fprintf(stderr,
+                     "[iop-native-stop] unresolved native import %s v%04X ordinal %u caller=0x%08X a0=0x%08X a1=0x%08X a2=0x%08X a3=0x%08X (no matching C++ export or versioned host service)\n",
+                     library.c_str(), version, ordinal, c.r[31], c.r[4], c.r[5], c.r[6], c.r[7]);
+        std::fflush(stderr);
+        std::abort();
     }
     if (g_trace_modules)
         std::fprintf(stderr, "[iop-native-call] %s v%04X ordinal %u owner %s\n", library.c_str(), version,
@@ -1105,16 +1105,7 @@ bool compiled_import_stub_matches(std::uint32_t address, const std::string &libr
            entry.index == ordinal;
 }
 
-bool native_strict() {
-    static const bool enabled = [] {
-        const char *raw = std::getenv("PS2_IOP_NATIVE_STRICT");
-        if (!raw) return false;
-        std::string value(raw);
-        std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
-        return !value.empty() && value != "0" && value != "off" && value != "false" && value != "no";
-    }();
-    return enabled;
-}
+bool native_strict() { return true; }
 
 void register_interrupt(unsigned line, std::uint32_t handler, std::uint32_t arg, std::uint32_t mode) {
     if (g_trace_modules) std::fprintf(stderr, "[iop] interrupt %u -> 0x%08X (arg 0x%X)\n", line, handler, arg);
@@ -1227,8 +1218,7 @@ std::uint32_t register_hle(const std::string &library, std::uint32_t index, HleF
 
 void call_hle(Cpu &c, std::uint32_t id) {
     if (id >= kernel::g_hle.size()) {
-        kernel::fault("bad HLE id");
-        return;
+        kernel::native_failure("invalid runtime HLE callback id");
     }
     kernel::g_hle[id].function(c);
 }
@@ -1291,6 +1281,9 @@ void run(std::uint64_t ee_cycles) {
             const cost::Timer exec_time(cost::kIopExec);
             execute(g_cpu, budget);
         }
+        if (budget < 0 || budget > given) native_failure("IOP scheduler received an invalid execution budget");
+        if (budget == given && g_cpu.pc == pc_before && !g_switch)
+            native_failure("IOP scheduler execution made no progress");
         // The spin guard: a guest worker that keeps returning to the same
         // instruction is not making progress. The 13:06 run hung this way in
         // the guest sound server's sequencer (a store loop the game waited
@@ -1299,11 +1292,10 @@ void run(std::uint64_t ee_cycles) {
         if (g_cpu.pc == pc_before && budget < given) {
             if (++g_spin_slices > kSpinLimit) {
                 std::fprintf(stderr,
-                             "[iop-native-stop] the guest worker is spinning at PC 0x%08X (thread %d); the thread was stopped\n",
+                             "[iop-native-stop] the guest worker is spinning at PC 0x%08X (thread %d); refusing to discard the worker\n",
                              pc_before, g_current);
                 std::fflush(stderr);
-                if (Thread *t = current()) t->status = kDormant;
-                g_spin_slices = 0;
+                native_failure("required IOP worker exceeded spin guard; refusing to discard the worker");
             }
         } else {
             g_spin_slices = 0;
@@ -1379,12 +1371,14 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
                     const Elf elf{data};
                     const std::uint32_t phoff = elf.u32(28);
                     const std::uint16_t phnum = elf.u16(44), phentsize = elf.u16(42);
+                    elf.table(phoff,phentsize,phnum,24);
                     std::uint32_t iopmod = 0, load_size = 0, mem_size = 0;
                     for (std::uint32_t i = 0; i < phnum; ++i) {
-                        const std::size_t ph = phoff + i * phentsize;
+                        const std::size_t ph = static_cast<std::size_t>(phoff) + static_cast<std::size_t>(i) * phentsize;
                         if (elf.u32(ph) == 0x70000080u) iopmod = elf.u32(ph + 4);
                         if (elf.u32(ph) == 1 && !load_size) {
                             load_size = elf.u32(ph + 16);
+                            elf.range(elf.u32(ph+4),load_size);
                             mem_size = elf.u32(ph + 20);
                         }
                     }
@@ -1396,8 +1390,7 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
                         std::abort();
                     }
 
-                    const std::uint32_t total = std::max(
-                        mem_size, elf.u32(iopmod + 12) + elf.u32(iopmod + 16) + elf.u32(iopmod + 20));
+                    const std::uint32_t total = elf.allocation_total(iopmod,mem_size);
                     const std::uint32_t requested = total + 0x40u;
                     reserved_aot_size = requested;
                     const std::uint32_t allocated = (requested + 0xFFu) & ~0xFFu;
@@ -1479,19 +1472,7 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
             if (done) done(id, 0);
             return id;
         }
-        // A void module-start callback carries no import/export ABI. Keep it
-        // only for the old non-strict diagnostic path; it cannot pass strict.
-        if (!native_strict()) {
-        auto hle = g_hle_modules.find(name);
-        if (hle != g_hle_modules.end()) {
-            if (g_trace_modules) std::fprintf(stderr, "[iop] %s handled natively\n", name.c_str());
-            const int id = g_next_module++;
-            g_modules[id] = Module{id, name, 0, 0, 0, 0};
-            if (hle->second) hle->second();
-            if (done) done(id, 0);
-            return id;
-        }
-        }
+
     }
     if (data.size() < 52 || std::memcmp(data.data(), "\x7f" "ELF", 4) != 0) {
         std::fprintf(stderr, "[iop] %s is not an ELF module\n", path.c_str());
@@ -1506,14 +1487,16 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
     const std::uint16_t type = elf.u16(16);
     const std::uint32_t phoff = elf.u32(28);
     const std::uint16_t phnum = elf.u16(44), phentsize = elf.u16(42);
+    elf.table(phoff,phentsize,phnum,24);
     std::uint32_t iopmod = 0, load_off = 0, load_size = 0, mem_size = 0;
     for (std::uint32_t i = 0; i < phnum; ++i) {
-        const std::size_t ph = phoff + i * phentsize;
+        const std::size_t ph = static_cast<std::size_t>(phoff) + static_cast<std::size_t>(i) * phentsize;
         const std::uint32_t ptype = elf.u32(ph);
         if (ptype == 0x70000080u) iopmod = elf.u32(ph + 4);
         if (ptype == 1 && !load_size) {
             load_off = elf.u32(ph + 4);
             load_size = elf.u32(ph + 16);
+            elf.range(load_off,load_size);
             mem_size = elf.u32(ph + 20);
         }
     }
@@ -1526,9 +1509,9 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
         }
         return -1;
     }
-    const std::uint32_t entry = elf.u32(iopmod + 4), gp = elf.u32(iopmod + 8);
-    const std::uint32_t total = std::max(mem_size, elf.u32(iopmod + 12) + elf.u32(iopmod + 16) + elf.u32(iopmod + 20));
-    const std::uint32_t text_size = elf.u32(iopmod + 12);
+    const std::uint32_t entry = elf.u32(static_cast<std::size_t>(iopmod) + 4), gp = elf.u32(static_cast<std::size_t>(iopmod) + 8);
+    const std::uint32_t total = elf.allocation_total(iopmod,mem_size);
+    const std::uint32_t text_size = elf.u32(static_cast<std::size_t>(iopmod) + 12);
     std::uint32_t base = 0;
 #ifdef PS2_IOP_AOT_MODULES_ENABLED
     if (native_strict()) {
@@ -1589,6 +1572,9 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
 #endif
     if (!base) base = alloc(total + 0x40u);
     if (!base) return -1;
+    if (load_size > total) native_failure("ELF file segment exceeds allocated module extent");
+    elf.range(load_off,load_size);
+    if (base > kRamSize || total > kRamSize-base) native_failure("ELF destination exceeds retained module memory");
     std::memset(ram_ptr(base), 0, total);
     std::memcpy(ram_ptr(base), data.data() + load_off, load_size);
     relocate(elf, base, total, type == 0xFF81u);
@@ -1596,13 +1582,14 @@ std::int32_t load_module_buffer(const std::vector<std::uint8_t> &data, const std
     // A module the EE sent as a buffer has no file name: it is known by the name in its own header (the iopmod record, version first,
     // then the name), which is what SearchModuleByName looks for (Tekken 5 asks the IOP for "mcserv" before it starts the memory card).
     std::string module_name = name;
-    if (path == "buffer" && iopmod + 26 < data.size()) {
-        const char *text = reinterpret_cast<const char *>(data.data() + iopmod + 26);
-        module_name.assign(text, strnlen(text, std::min<std::size_t>(data.size() - iopmod - 26, 56)));
+    const std::size_t module_name_at = static_cast<std::size_t>(iopmod) + 26;
+    if (path == "buffer" && module_name_at < data.size()) {
+        const char *text = reinterpret_cast<const char *>(data.data() + module_name_at);
+        module_name.assign(text, strnlen(text, std::min<std::size_t>(data.size() - module_name_at, 56)));
     }
     // Capture relocated text before import stubs are rewritten to runtime HLE opcodes. This produces
     // the exact load-address image an offline IOP-to-C++ compiler needs to identify and translate.
-    dump_native_module(module_name, base, elf.u32(iopmod + 12));
+    dump_native_module(module_name, base, elf.u32(static_cast<std::size_t>(iopmod) + 12));
     const std::uint64_t text_hash = text_size ? fnv1a64(ram_ptr(base), text_size) : 0ull;
 #ifdef PS2_IOP_AOT_MODULES_ENABLED
     std::size_t native_count = 0;

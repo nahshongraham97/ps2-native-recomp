@@ -5,11 +5,12 @@
 
 namespace ps2::gs::native_gl {
 
-// True when native OpenGL is requested by the environment. This does not
-// create the context, so it is safe to use while selecting the GS backend.
+// Native OpenGL selection is mandatory and independent of environment flags.
+// This query does not create or validate a context.
 bool selected();
 
-// True when the native OpenGL context was requested and initialized.
+// True only after the native OpenGL context/backend initialized successfully.
+// Selection alone does not establish rendering or hardware-driver acceptance.
 bool enabled();
 
 // Used by a visible SDL OpenGL host after it has made its context current.

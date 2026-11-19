@@ -172,8 +172,19 @@ void release(Thread &t, std::int64_t result) {
     else make_ready(t);
 }
 
+// Only raw guest entry values pass here. Internal scheduler/preemption PCs
+// carry kUnwind separately and must never be mistaken for malformed entries.
+void require_aligned_raw_entry(std::uint32_t address, const char* kind) {
+    if (address & 3u) {
+        std::fprintf(stderr, "[ee-native-stop] misaligned raw %s entry pc=0x%08X\n", kind, address);
+        std::fflush(stderr);
+        std::abort();
+    }
+}
+
 std::uint32_t run_guest(Cpu &c, std::uint32_t address, std::uint32_t a0, std::uint32_t a1, std::uint32_t a2, std::uint32_t gp,
                         std::uint32_t a3 = 0) {
+    require_aligned_raw_entry(address, "callback");
     ThreadContext saved;
     save_context(c, saved);
     const bool nested = g_in_handler;
@@ -296,6 +307,7 @@ int create_thread(Cpu &c) {
     if (t.id < 0) return -1;
     t.status = kDormant;
     t.entry = ld32(p + 4);
+    require_aligned_raw_entry(t.entry, "thread");
     t.stack = ld32(p + 8);
     t.stack_size = ld32(p + 12);
     t.gp = ld32(p + 16);
@@ -310,6 +322,7 @@ int create_thread(Cpu &c) {
 }
 
 void reset_thread(Thread &t, std::uint32_t argument) {
+    require_aligned_raw_entry(t.entry, "thread restart");
     std::memset(&t.context, 0, sizeof t.context);
     t.context.pc = t.entry;
     t.context.r[4].sd[0] = static_cast<std::int32_t>(argument);
@@ -429,6 +442,7 @@ void reset() {
 std::uint32_t g_boot_argc = 0, g_boot_argv = 0;
 
 void start_main_thread(std::uint32_t entry, std::uint32_t gp, std::uint32_t argc, std::uint32_t argv) {
+    require_aligned_raw_entry(entry, "main thread");
     g_boot_argc = argc;
     g_boot_argv = argv;
     Thread t;

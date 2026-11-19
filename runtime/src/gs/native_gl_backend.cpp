@@ -898,20 +898,30 @@ SceneTarget *ensure_scene_target(std::uint32_t fbp = 0) {
     return &target;
 }
 
-void bind_draw_target(std::uint32_t fbp) {
-    if (!g_direct_window_context) return;
-    SceneTarget *target = ensure_scene_target(fbp);
-    if (target && target->ready) {
-        // Cached: bind_draw_target ran per packet with the same target, and
-        // after present/readback invalidates the cache the bind is re-emitted.
-        if (!g_glstate.valid || g_glstate.draw_fbo != target->framebuffer) {
-            g_bind_framebuffer(GL_FRAMEBUFFER, target->framebuffer);
-            glDrawBuffer(GL_COLOR_ATTACHMENT0);
-            glReadBuffer(GL_COLOR_ATTACHMENT0);
-            glViewport(0, 0, kWidth, kHeight);
-            g_glstate.draw_fbo = target->framebuffer;
-        }
+bool bind_draw_target(std::uint32_t fbp) {
+    if (!g_direct_window_context) {
+        std::fprintf(stderr, "[native-gl] cannot bind FBP=%u without a direct scene context\n", fbp);
+        gl_state_invalidate();
+        return false;
     }
+    SceneTarget *target = ensure_scene_target(fbp);
+    if (!target || !target->ready) {
+        // Allocation or preservation may have changed the actual GL binding.
+        // Never let a cached previous framebuffer make a later draw look valid.
+        gl_state_invalidate();
+        std::fprintf(stderr, "[native-gl] cannot create/preserve native draw target FBP=%u\n", fbp);
+        return false;
+    }
+    // Cached: bind_draw_target ran per packet with the same target, and
+    // after present/readback invalidates the cache the bind is re-emitted.
+    if (!g_glstate.valid || g_glstate.draw_fbo != target->framebuffer) {
+        g_bind_framebuffer(GL_FRAMEBUFFER, target->framebuffer);
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        glViewport(0, 0, kWidth, kHeight);
+        g_glstate.draw_fbo = target->framebuffer;
+    }
+    return true;
 }
 
 std::uint64_t clut_hash(const State &st) {
@@ -1491,19 +1501,8 @@ void clear_surfaces() {
 }
 
 bool selected() {
-    const auto env_enabled = [](const char *name) {
-        std::string value = ps2::os::env(name);
-        std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) {
-            return static_cast<char>(std::tolower(c));
-        });
-        return !value.empty() && value != "0" && value != "off" && value != "false" && value != "no";
-    };
-    std::string backend = ps2::os::env("PS2_GS");
-    std::transform(backend.begin(), backend.end(), backend.begin(), [](unsigned char c) {
-        return static_cast<char>(std::tolower(c));
-    });
-    return env_enabled("PS2_NATIVE_GL") || env_enabled("PS2_NATIVE_GL_STRICT") || backend == "native-gl" ||
-           env_enabled("PS2_GS_PACKET_NATIVE") || env_enabled("PS2_GS_PACKET_NATIVE_STRICT");
+    // Native GPU rendering is mandatory, independent of legacy mode switches.
+    return true;
 }
 
 bool enabled() {
@@ -1735,8 +1734,7 @@ bool draw_guest_rect(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);
-    bind_draw_target(g_active_frame_fbp.load(std::memory_order_relaxed));
-    return true;
+    return bind_draw_target(g_active_frame_fbp.load(std::memory_order_relaxed));
 #else
     (void)psm; (void)base; (void)bw; (void)x; (void)y; (void)width; (void)height;
     return false;
@@ -1890,8 +1888,7 @@ bool present_frame(const DisplayRegs &regs) {
                      static_cast<unsigned long long>(regs.pmode));
     }
     if (circuit < 0) {
-        bind_draw_target(g_active_frame_fbp.load(std::memory_order_relaxed));
-        return true;
+        return bind_draw_target(g_active_frame_fbp.load(std::memory_order_relaxed));
     }
 
     const std::uint64_t fb = regs.dispfb[circuit], disp = regs.display[circuit];
@@ -2075,7 +2072,9 @@ bool present_frame(const DisplayRegs &regs) {
             std::fprintf(stderr, "[native-gl] GS display rectangle is outside the direct scene target: x=%d y=%d w=%d h=%d field_h=%d\n",
                          dbx, dby, width, height, source_height);
         }
-        bind_draw_target(active_frame_fbp);
+        // This presentation already failed. A failed best-effort restore is
+        // also a failure; the next primitive must bind its own target again.
+        (void)bind_draw_target(active_frame_fbp);
         return false;
     }
 
@@ -2351,7 +2350,7 @@ bool present_frame(const DisplayRegs &regs) {
                      active_frame_fbp, display_fbp, draw_x, draw_y, draw_width, draw_height);
     }
 
-    bind_draw_target(active_frame_fbp);
+    if (!bind_draw_target(active_frame_fbp)) return false;
     glFlush();
     return true;
 #else
@@ -2491,7 +2490,8 @@ bool submit(const State &st, const Vertex *verts, int count) {
 
     const std::uint32_t active_fbp = frame & 0x1FFu;
     if (g_direct_window_context) {
-        bind_draw_target(active_fbp);
+        if (!bind_draw_target(active_fbp))
+            return reject_packet(st, attr, prim_type, count, 26, "native draw framebuffer could not be created or preserved");
         if (g_evicted_color[active_fbp]) {
             // Restore exact stored RGBA for the supported 32-bit path. Other
             // formats require their own alpha conversion and remain rejected.
@@ -2776,7 +2776,8 @@ bool submit(const State &st, const Vertex *verts, int count) {
         }
     }
     if (g_direct_window_context) {
-        bind_draw_target(active_fbp);
+        if (!bind_draw_target(active_fbp))
+            return reject_packet(st, attr, prim_type, count, 26, "native draw framebuffer could not be created or preserved");
     }
 
     const std::uint64_t xyoffset = st.ctx[(attr >> 9) & 1u].xyoffset;
@@ -2881,7 +2882,8 @@ bool submit(const State &st, const Vertex *verts, int count) {
     }
 
     if (g_direct_window_context) {
-        bind_draw_target(active_fbp);
+        if (!bind_draw_target(active_fbp))
+            return reject_packet(st, attr, prim_type, count, 26, "native draw framebuffer could not be created or preserved");
     }
     if (fbmask) cache_color_mask(true, true, true, false);
     glBegin(mode);

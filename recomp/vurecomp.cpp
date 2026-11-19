@@ -8,6 +8,8 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include <regex>
+#include <exception>
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -33,7 +35,8 @@ int main(int argc, char **argv) {
         argv = utf8_argv.data();
     }
 #endif
-    bool require_complete = false;
+    try {
+    bool require_complete = true;
     for (int i = 3; i < argc; ++i) {
         if (std::string_view(argv[i]) == "--require-complete") require_complete = true;
         else {
@@ -51,10 +54,23 @@ int main(int argc, char **argv) {
         if (e.path().extension() != ".bin") continue;
         unsigned long long key = 0;
         unsigned entry = 0;
-        if (std::sscanf(ps2::os::utf8(e.path().stem()).c_str(), "%llx_%x", &key, &entry) != 2) continue;
+        const std::string stem = ps2::os::utf8(e.path().stem());
+        if (!std::regex_match(stem, std::regex("[0-9A-Fa-f]{16}_[0-9A-Fa-f]{4}")) ||
+            std::sscanf(stem.c_str(), "%llx_%x", &key, &entry) != 2 || (entry & 7u) || entry >= 16384) {
+            std::fprintf(stderr, "[vurecomp] malformed capture name/entry: %s\n", ps2::os::utf8(e.path()).c_str());
+            return 2;
+        }
+        if (fs::file_size(e.path()) != 16384) {
+            std::fprintf(stderr, "[vurecomp] capture must contain exactly 16384 bytes: %s\n", ps2::os::utf8(e.path()).c_str());
+            return 2;
+        }
         std::ifstream f(e.path(), std::ios::binary);
         ps2::vurecomp::Input in{key, entry, std::vector<std::uint8_t>(16384)};
         f.read(reinterpret_cast<char *>(in.code.data()), static_cast<std::streamsize>(in.code.size()));
+        if (!f || f.gcount() != 16384 || f.peek() != std::char_traits<char>::eof()) {
+            std::fprintf(stderr, "[vurecomp] capture read failed or size changed: %s\n", ps2::os::utf8(e.path()).c_str());
+            return 2;
+        }
         inputs.push_back(std::move(in));
     }
     if (require_complete && inputs.empty()) {
@@ -66,4 +82,8 @@ int main(int argc, char **argv) {
                 result.programs, result.jump_targets, result.skipped);
     if (require_complete && result.skipped != 0) return 2;
     return 0;
+    } catch (const std::exception &e) {
+        std::fprintf(stderr, "[vurecomp] capture/output error: %s\n", e.what());
+        return 2;
+    }
 }

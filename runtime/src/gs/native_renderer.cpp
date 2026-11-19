@@ -2,14 +2,9 @@
 
 #include "native_gl_backend.hpp"
 
-#include "ps2/os.hpp"
-
-#include <algorithm>
-#include <cctype>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <string>
 
 namespace ps2::gs::native_renderer {
 
@@ -29,11 +24,10 @@ void kick(bool draw) {
 
     if (draw) {
         const bool consumed = native_gl::submit(s, s.queue, needed);
-        if (consumed) {
-            ps2::gs::note_native_primitive();
-        } else if (strict()) {
-            stop("native OpenGL rejected a primitive from the direct GIF packet path");
+        if (!consumed) {
+            stop("native OpenGL rejected a primitive from the direct GIF packet path; no compatibility draw is permitted");
         }
+        ps2::gs::note_native_primitive();
     }
 
     switch (prim) {
@@ -58,7 +52,7 @@ void kick(bool draw) {
 
 void vertex(std::uint32_t x, std::uint32_t y, std::uint32_t z, std::uint8_t fog, bool draw) {
     State &s = g_state;
-    if (s.count >= 3) s.count = 2;
+    if (s.count < 0 || s.count >= 3) stop("invalid native primitive assembly queue count");
     Vertex &v = s.queue[s.count++];
     v.x = x;
     v.y = y;
@@ -150,15 +144,11 @@ void write_register(std::uint32_t reg, std::uint64_t value) {
     case 0x7F: // GS_REG_NOP
         break;
     default:
-        if (strict()) {
-            std::fprintf(stderr,
-                         "[native-renderer-stop] unhandled GS register 0x%02X value=0x%016llX in direct GIF packet path\n",
-                         reg, static_cast<unsigned long long>(value));
-            std::fflush(stderr);
-            std::abort();
-        }
-        std::fprintf(stderr, "[native-renderer] ignored unhandled GS register 0x%02X\n", reg);
-        break;
+        std::fprintf(stderr,
+                     "[native-renderer-stop] unhandled GS register 0x%02X value=0x%016llX in direct GIF packet path\n",
+                     reg, static_cast<unsigned long long>(value));
+        std::fflush(stderr);
+        std::abort();
     }
 }
 
@@ -211,23 +201,15 @@ void write_packed(std::uint32_t reg, const Reg128 &q) {
 
 } // namespace
 
-bool env_enabled(const char *name) {
-    std::string value = os::env(name);
-    std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) {
-        return static_cast<char>(std::tolower(c));
-    });
-    return !value.empty() && value != "0" && value != "off" && value != "false" && value != "no";
-}
+// Packet rendering is mandatory. Keep these query functions for callers, but
+// environment flags cannot select the compatibility GIF sink or relax errors.
+bool selected() { return true; }
 
-bool selected() { return env_enabled("PS2_GS_PACKET_NATIVE") || strict(); }
-
-bool strict() { return env_enabled("PS2_GS_PACKET_NATIVE_STRICT"); }
+bool strict() { return true; }
 
 bool active() {
-    if (!selected()) return false;
     if (!native_gl::enabled()) {
-        if (strict()) stop("packet-native strict mode requires the native OpenGL renderer");
-        return false;
+        stop("the mandatory native GIF packet renderer requires an available native OpenGL backend/context");
     }
     static bool announced = false;
     if (!announced) {

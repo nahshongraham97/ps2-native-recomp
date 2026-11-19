@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(PS2_GENERATED "" CACHE PATH "Folder with the C++ generated for a game")
 set(PS2_IOP_AOT_IMPORTS "${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/iop/generated_modules" CACHE PATH "Folder containing generated native IOP import bridges and registry")
 set(PS2_IOP_AOT_MODULES "${CMAKE_CURRENT_SOURCE_DIR}/runtime/src/iop/generated_modules" CACHE PATH "Folder containing generated native IOP module bodies and registry")
-set(PS2_RUNTIME_LIB "" CACHE FILEPATH "libps2runtime.a built earlier from this source tree (scripts/runtime.sh); a game links it instead of compiling the runtime again")
+set(PS2_RUNTIME_LIB "" CACHE FILEPATH "Unsupported legacy prebuilt runtime input; native candidates must build reviewed runtime sources")
 
 if(WIN32)
     add_link_options(-static-libgcc -static-libstdc++)
@@ -62,10 +62,7 @@ if(NOT EMSCRIPTEN)
 endif()
 
 if(PS2_RUNTIME_LIB AND NOT EMSCRIPTEN)
-    set(PS2_PREBUILT ON)
-    set(PS2_API INTERFACE)
-    add_library(ps2runtime STATIC IMPORTED)
-    set_target_properties(ps2runtime PROPERTIES IMPORTED_LOCATION "${PS2_RUNTIME_LIB}")
+    message(FATAL_ERROR "Prebuilt PS2_RUNTIME_LIB cannot supply the native candidate: build the reviewed runtime sources; legacy fallback libraries are forbidden")
 else()
     set(PS2_PREBUILT OFF)
     set(PS2_API PUBLIC)
@@ -91,8 +88,6 @@ else()
         runtime/src/dmac.cpp
         runtime/src/vif.cpp
         runtime/src/vu_micro.cpp
-        runtime/src/vu_jit.cpp
-        runtime/src/vu_jit_web.cpp
         runtime/src/media/mpeg2.cpp
         runtime/src/media/mpeg2_decoder.cpp
         runtime/src/gs/gs.cpp
@@ -257,6 +252,11 @@ if(PS2_GENERATED)
         runtime/src/native/native_file.cpp runtime/src/native/sample_payload.cpp
         runtime/src/native/sound_bank.cpp runtime/src/native/adpcm_codec.cpp)
     target_include_directories(test_bank_asset PRIVATE runtime/include)
+    add_executable(test_vu_aot_only EXCLUDE_FROM_ALL tests/test_vu_aot_only.cpp runtime/src/vu_micro.cpp)
+    target_include_directories(test_vu_aot_only PRIVATE runtime/include runtime/src)
+    add_executable(test_native_fail_closed EXCLUDE_FROM_ALL tests/test_native_fail_closed.cpp)
+    target_include_directories(test_native_fail_closed PRIVATE runtime/include runtime/src)
+    target_link_libraries(test_native_fail_closed PRIVATE ps2runtime)
     target_link_libraries(test_disc_vfs PRIVATE ps2runtime)
     add_executable(test_content_volume EXCLUDE_FROM_ALL tests/test_content_volume.cpp)
     target_link_libraries(test_content_volume PRIVATE ps2runtime)
@@ -291,10 +291,12 @@ if(PS2_GENERATED)
     target_include_directories(test_mpeg2_decode PRIVATE runtime/src)
     target_link_libraries(test_mpeg2_decode PRIVATE ps2runtime)
     if(WIN32)
-        add_executable(test_native_gl_alpha EXCLUDE_FROM_ALL tests/test_native_gl_alpha.cpp)
+        add_executable(test_native_gl_alpha EXCLUDE_FROM_ALL tests/test_native_gl_alpha.cpp runtime/src/gs/raster.cpp)
+        target_compile_definitions(test_native_gl_alpha PRIVATE MKA_REFERENCE_RASTER=1)
         target_include_directories(test_native_gl_alpha PRIVATE runtime/include runtime/src)
         target_link_libraries(test_native_gl_alpha PRIVATE ps2runtime)
-        add_executable(test_gl_vs_raster EXCLUDE_FROM_ALL tests/test_gl_vs_raster.cpp)
+        add_executable(test_gl_vs_raster EXCLUDE_FROM_ALL tests/test_gl_vs_raster.cpp runtime/src/gs/raster.cpp)
+        target_compile_definitions(test_gl_vs_raster PRIVATE MKA_REFERENCE_RASTER=1)
         target_include_directories(test_gl_vs_raster PRIVATE runtime/include runtime/src)
         target_link_libraries(test_gl_vs_raster PRIVATE ps2runtime)
         add_executable(test_gl_lazy_readback EXCLUDE_FROM_ALL tests/test_gl_lazy_readback.cpp)

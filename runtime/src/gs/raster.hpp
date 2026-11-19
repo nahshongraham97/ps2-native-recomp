@@ -14,7 +14,9 @@ struct Probe {
     std::uint64_t frame = 0, number = 0;
 };
 extern Probe g_probe;
+#if defined(MKA_REFERENCE_RASTER)
 void draw(const State &s, const Vertex *v, int count);
+#endif
 bool decode_texture_rgba(const State &s, std::vector<std::uint32_t> &pixels, std::uint32_t &width, std::uint32_t &height);
 
 // The texture's base in VRAM (256-byte units) for the state, or 0xFFFFFFFF

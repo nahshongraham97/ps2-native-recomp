@@ -3,7 +3,7 @@
 
 #include "gif.hpp"
 #include "queue.hpp"
-#include "raster.hpp"
+#include "raster.hpp" // Texture decoding/probe declarations; CPU draw is reference-only.
 #include "native_gl_backend.hpp"
 #include "native_renderer.hpp"
 #include "mka/gpu_diagnostics.hpp"
@@ -173,16 +173,6 @@ bool strict_native_gpu() {
         const char *raw = std::getenv("PS2_GS_NATIVE_STRICT");
         if (!raw) return false;
         std::string value(raw);
-        std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
-        return !value.empty() && value != "0" && value != "off" && value != "false" && value != "no";
-    }();
-    return enabled;
-}
-
-bool strict_native_gl() {
-    static const bool enabled = [] {
-        if (ps2::os::env("PS2_GS") == "native-gl") return true;
-        std::string value = ps2::os::env("PS2_NATIVE_GL_STRICT");
         std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
         return !value.empty() && value != "0" && value != "off" && value != "false" && value != "no";
     }();
@@ -944,34 +934,11 @@ void kick(bool draw) {
     const int needed = prim == 0 ? 1 : (prim == 1 || prim == 2 || prim == 6) ? 2 : prim == 7 ? 1 : 3;
     if (s.count < needed) return;
     if (draw) {
-        if (trace::draw(s, needed)) {
-            // The OpenGL renderer consumes the GS packet decoder's primitive
-            // stream directly. It is tried before either software rasterization
-            // or WebGPU, including when PS2_GS=native-gl selects the SDL/CPU
-            // presentation path.
-            const bool native_gl_draw = native_gl::submit(s, s.queue, needed);
-            if (native_gl_draw) {
-                if (strict_native_gpu())
-                    native_renderer_stop("PS2_GS_NATIVE_STRICT selects WebGPU, but this primitive was consumed by native OpenGL");
-            } else {
-                if (strict_native_gl())
-                    native_renderer_stop("native OpenGL did not consume a GS primitive; strict mode forbids raster fallback");
-                if (strict_native_gpu() && (!gpu_on() || !gpu_primary()))
-                    native_renderer_stop("a GS primitive would not be submitted exclusively to the native GPU renderer");
-                // The native GL route never falls back to the software
-                // rasterizer (user directive 2026-11-16: no CPU rasterization
-                // while the native route is being completed). A packet the
-                // native path rejects is counted in the census and dropped -
-                // the CPU rasterizer was silently drawing millions of packets
-                // per run on the CPU, which is where the frame time went. The
-                // software rasterizer remains available whenever native GL is
-                // not selected (tests, PS2_GS=software).
-                if (cpu_raster() && !native_gl::enabled()) raster::draw(s, s.queue, needed);
-#ifdef PS2_GPU
-                if (gpu_on()) { if (!ps2::vertex::submit_primitive(s, s.queue, needed)) gpu::draw(s, s.queue, needed); }
-#endif
-            }
-        }
+        // Diagnostics must not filter accepted primitives or select a slower
+        // renderer. A rejected packet is an implementation gap, never a drop.
+        (void)trace::draw(s, needed);
+        if (!native_gl::submit(s, s.queue, needed))
+            native_renderer_stop("native OpenGL rejected a primitive; software/WebGPU fallback and packet dropping are removed");
         ++g_primitives;
     }
     switch (prim) {

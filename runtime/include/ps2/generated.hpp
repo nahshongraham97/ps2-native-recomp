@@ -37,7 +37,8 @@ struct ModuleInfo {
 
 void register_units(const UnitInfo *units, std::uint32_t count);
 void register_modules(const ModuleInfo *modules, std::uint32_t count);
-// More modules while the game runs (runtime/src/ee_live.cpp): the table stays valid for as long as the game runs.
+// Append statically compiled module tables, owned for the runtime lifetime.
+// This registry operation does not translate or compile code.
 void add_modules(const ModuleInfo *modules, std::uint32_t count);
 // True when some module of a code window is in place (its checked words are what the memory holds now) where pc is.
 bool window_module_in_place(std::uint32_t pc);

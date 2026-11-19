@@ -1,12 +1,10 @@
 #pragma once
 
-// Vector unit programs the build does not know, compiled while the game runs (docs/vu-live.md).
-//
-// A game build compiles the vector unit programs that were recorded before it (vurecomp); every other program runs in the
-// interpreter, several times slower. With live compiling the runner keeps interpreting such a program and, in the background,
-// makes the C++ for it with the same generator (recomp/vurecomp_gen.cpp), compiles that into a library with a C++ compiler,
-// loads the library and from then on uses the compiled program like a built-in one. The libraries stay in a cache folder next
-// to the game, so the next start loads them without compiling anything.
+// Retired test-only API shim. These empty functions do not compile or load
+// programs. The host/runtime no longer includes this header. The stale
+// scripts/test_vu_codegen.py fixture still references it and must be replaced
+// with an independent AOT math oracle before this header can be deleted.
+// This shim supplies no runtime coverage or native-port acceptance evidence.
 
 #include "ps2/vu_ops.hpp"
 

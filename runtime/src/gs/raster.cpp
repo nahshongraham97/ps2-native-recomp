@@ -560,6 +560,8 @@ bool decode_texture_rgba(const State &st, std::vector<std::uint32_t> &pixels, st
     return true;
 }
 
+#if defined(MKA_REFERENCE_RASTER)
+// Standalone comparison oracle only; absent from the game runtime object.
 void draw(const State &st, const Vertex *v, int count) {
     const Setup s = make_setup(st);
     switch (st.prim & 7u) {
@@ -575,5 +577,6 @@ void draw(const State &st, const Vertex *v, int count) {
     default: break;
     }
 }
+#endif
 
 }
