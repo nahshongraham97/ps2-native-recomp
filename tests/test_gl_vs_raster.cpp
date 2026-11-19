@@ -75,6 +75,7 @@ ps2::gs::Vertex make_vertex(std::uint32_t x, std::uint32_t y,
 }
 
 void init_texture() {
+    std::vector<std::uint32_t> native_pixels;
     for (std::uint32_t y = 0; y < kTextureDim; ++y) {
         for (std::uint32_t x = 0; x < kTextureDim; ++x) {
             const std::uint32_t value = 0xFF000000u | (y << 16) | (x << 8) | (0x40u + x * 0x10u + y);
@@ -82,8 +83,11 @@ void init_texture() {
             // 256); the old *32 wrote the texels where neither renderer reads
             // them, which made every case compare 0 == 0.
             ps2::gs::write_pixel(ps2::gs::PSMCT32, kTextureBase, 1u, x, y, value);
+            native_pixels.push_back(value);
         }
     }
+    if(!ps2::gs::native_gl::upload_image(ps2::gs::PSMCT32,kTextureBase,1,0,0,kTextureDim,kTextureDim,
+        reinterpret_cast<const std::uint8_t*>(native_pixels.data()),native_pixels.size()*4))std::exit(1);
 }
 
 void clear_framebuffer() {
@@ -360,6 +364,7 @@ bool load_ppm(const char *path, std::vector<std::uint8_t> &rgb, int &w, int &h) 
 // renderers receive identical alpha, so the A/B stays fair.
 bool init_font_atlas() {
     std::vector<std::uint8_t> rgb;
+    std::vector<std::uint32_t> native_pixels;
     int w = 0, h = 0;
     if (!load_ppm(kFontAtlasPath, rgb, w, h)) {
         std::fprintf(stderr, "[font-test] cannot read %s\n", kFontAtlasPath);
@@ -379,9 +384,11 @@ bool init_font_atlas() {
             ps2::gs::write_pixel(ps2::gs::PSMCT32, kFontBase, 4u,
                                  static_cast<std::uint32_t>(x), static_cast<std::uint32_t>(y),
                                  value);
+            native_pixels.push_back(value);
         }
     }
-    return true;
+    return ps2::gs::native_gl::upload_image(ps2::gs::PSMCT32,kFontBase,4,0,0,w,h,
+        reinterpret_cast<const std::uint8_t*>(native_pixels.data()),native_pixels.size()*4);
 }
 
 struct GlyphQuad {
@@ -517,6 +524,9 @@ CombinerCell run_combiner_cell(std::uint32_t tfx, std::uint32_t tcc, int blend, 
     CombinerCell cell{tfx, tcc, blend, CombinerOutcome::Rejected, 0, 0, 0};
     const std::uint32_t tex_bp = 0x600u;
     ps2::gs::write_pixel(ps2::gs::PSMCT32, tex_bp, 1u, 0u, 0u, 0x405080A0u);
+    const std::uint32_t source=0x405080A0u;
+    if(!ps2::gs::native_gl::upload_image(ps2::gs::PSMCT32,tex_bp,1,0,0,1,1,
+        reinterpret_cast<const std::uint8_t*>(&source),4))return cell;
 
     ps2::gs::State state = make_state(false); // nearest filtering
     state.ctx[0].tex0 = tex_bp | (1ull << 14) | (static_cast<std::uint64_t>(tcc) << 34) |

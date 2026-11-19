@@ -83,6 +83,14 @@ else()
         runtime/src/native/audio_bank_protocol.cpp
         runtime/src/native/normal_sample.cpp
         runtime/src/native/bank_preparation.cpp
+        runtime/src/native/audio_bank_service.cpp
+        runtime/src/native/program_executor.cpp
+        runtime/src/native/audio_controls.cpp
+        runtime/src/native/host_voice.cpp
+        runtime/src/native/playback_owner.cpp
+        runtime/src/native/video_producer.cpp
+        runtime/src/native/haptics.cpp
+        runtime/src/native/retail_haptics_bridge.cpp
         runtime/src/native/controller_input.cpp
         runtime/src/port_config.cpp
         runtime/src/compliance_census.cpp
@@ -332,6 +340,84 @@ if(PS2_GENERATED)
         runtime/src/native/normal_sample.cpp
         runtime/src/native/adpcm_codec.cpp)
     target_include_directories(test_native_bank_preparation PRIVATE runtime/include)
+    add_executable(test_native_audio_bank_service EXCLUDE_FROM_ALL
+        tests/test_audio_bank_service.cpp
+        runtime/src/native/program_executor.cpp
+        runtime/src/native/audio_bank_service.cpp
+        runtime/src/native/audio_bank_protocol.cpp
+        runtime/src/native/bank_preparation.cpp
+        runtime/src/native/audio_banks.cpp
+        runtime/src/native/bank_asset.cpp
+        runtime/src/native/sound_archive.cpp
+        runtime/src/native/sound_bank.cpp
+        runtime/src/native/sample_payload.cpp
+        runtime/src/native/native_file.cpp
+        runtime/src/native/stream_source.cpp
+        runtime/src/native/normal_sample.cpp
+        runtime/src/native/adpcm_codec.cpp)
+    target_include_directories(test_native_audio_bank_service PRIVATE runtime/include)
+    add_executable(test_native_program_executor EXCLUDE_FROM_ALL
+        tests/test_program_executor.cpp
+        runtime/src/native/program_executor.cpp
+        runtime/src/native/bank_preparation.cpp
+        runtime/src/native/bank_asset.cpp
+        runtime/src/native/sound_archive.cpp
+        runtime/src/native/sound_bank.cpp
+        runtime/src/native/sample_payload.cpp
+        runtime/src/native/native_file.cpp
+        runtime/src/native/normal_sample.cpp
+        runtime/src/native/adpcm_codec.cpp)
+    target_include_directories(test_native_program_executor PRIVATE runtime/include)
+    add_executable(test_native_host_voice EXCLUDE_FROM_ALL
+        tests/test_host_voice.cpp
+        runtime/src/native/host_voice.cpp
+        runtime/src/native/audio_controls.cpp
+        runtime/src/native/program_executor.cpp
+        runtime/src/native/bank_preparation.cpp
+        runtime/src/native/bank_asset.cpp
+        runtime/src/native/sound_archive.cpp
+        runtime/src/native/sound_bank.cpp
+        runtime/src/native/sample_payload.cpp
+        runtime/src/native/native_file.cpp
+        runtime/src/native/normal_sample.cpp
+        runtime/src/native/adpcm_codec.cpp)
+    target_include_directories(test_native_host_voice PRIVATE runtime/include)
+    add_executable(test_native_playback_owner EXCLUDE_FROM_ALL
+        tests/test_playback_owner.cpp
+        runtime/src/native/playback_owner.cpp
+        runtime/src/native/audio_bank_service.cpp
+        runtime/src/native/audio_bank_protocol.cpp
+        runtime/src/native/audio_banks.cpp
+        runtime/src/native/host_voice.cpp
+        runtime/src/native/audio_controls.cpp
+        runtime/src/native/program_executor.cpp
+        runtime/src/native/bank_preparation.cpp
+        runtime/src/native/bank_asset.cpp
+        runtime/src/native/sound_archive.cpp
+        runtime/src/native/sound_bank.cpp
+        runtime/src/native/sample_payload.cpp
+        runtime/src/native/native_file.cpp
+        runtime/src/native/stream_source.cpp
+        runtime/src/native/normal_sample.cpp
+        runtime/src/native/adpcm_codec.cpp)
+    target_include_directories(test_native_playback_owner PRIVATE runtime/include)
+    add_executable(test_native_video_producer EXCLUDE_FROM_ALL
+        tests/test_video_producer.cpp runtime/src/native/video_producer.cpp)
+    target_include_directories(test_native_video_producer PRIVATE runtime/include)
+    add_executable(test_retail_call_observers EXCLUDE_FROM_ALL
+        tests/test_retail_call_observers.cpp host/mka_unit_wrappers.cpp)
+    target_include_directories(test_retail_call_observers PRIVATE runtime/include host)
+    add_executable(test_native_haptics EXCLUDE_FROM_ALL
+        tests/test_haptics.cpp runtime/src/native/haptics.cpp)
+    target_include_directories(test_native_haptics PRIVATE runtime/include)
+    add_executable(test_native_padman_haptics EXCLUDE_FROM_ALL tests/test_padman_haptics.cpp)
+    target_include_directories(test_native_padman_haptics PRIVATE runtime/include runtime/src)
+    target_link_libraries(test_native_padman_haptics PRIVATE ps2runtime)
+    add_executable(test_native_retail_haptics_bridge EXCLUDE_FROM_ALL
+        tests/test_retail_haptics_bridge.cpp
+        runtime/src/native/retail_haptics_bridge.cpp
+        runtime/src/native/haptics.cpp)
+    target_include_directories(test_native_retail_haptics_bridge PRIVATE runtime/include)
     target_include_directories(test_padman_rpc PRIVATE runtime/src)
     target_link_libraries(test_padman_rpc PRIVATE ps2runtime)
     add_executable(test_mwfilefr_read EXCLUDE_FROM_ALL tests/test_mwfilefr_read.cpp)

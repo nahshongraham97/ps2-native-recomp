@@ -1,0 +1,286 @@
+{
+  "created_utc": "2026-11-19T06:56:54.962695+00:00",
+  "scope": "Staged source/component content, not accepted game build",
+  "fork_before_commit": "f1fddfcd3f3ed7e2608ba2c405f76b35e14dc988",
+  "verification_sha256": "b23c8d59d660b09b02b12b0e5a9aa2aed40eee82adeb58f206ef538c4c029ff9",
+  "preserved_unstaged_files_sha256": {
+    "runtime/src/iop/mcserv.cpp": "ad2731a341409d87ffe1b171e99f28d7cedc5004aaf375a565d78673333414fb",
+    "runtime/src/iop/msl_native.cpp": "756cfb3867ebb440223ddb8ab6fe441ad6f9f54d35e4119a8342f8dd9063bb23"
+  },
+  "source": [
+    {
+      "path": "CMakeLists.txt",
+      "git_blob": "846089165f3b3238f40bd293cedd3d71378911d6",
+      "staged_content_sha256": "762b6a20972ae59d8ad5da7985da75d0aa4ef4eaaaeba35bb2b9e82dcf144ecf",
+      "bytes": 29111
+    },
+    {
+      "path": "host/main.cpp",
+      "git_blob": "53d2e65020c52960a8e30db0d0a73c66965f68d4",
+      "staged_content_sha256": "e027270c0aec7f63ab8ab766364b380715e5a3f6592a46dc9a183d98c8f18b65",
+      "bytes": 48459
+    },
+    {
+      "path": "host/mka_combat_hooks.hpp",
+      "deleted": true
+    },
+    {
+      "path": "host/mka_retail_hooks.hpp",
+      "git_blob": "b2a526926be9e805f265419ef71bed1bb2a59a36",
+      "staged_content_sha256": "483def963f1f423e38ee95e8b7964b651f64c80a4c1fecd81efced77568bc656",
+      "bytes": 5391
+    },
+    {
+      "path": "host/mka_unit_wrappers.cpp",
+      "git_blob": "682539996e75fe9bf5a9f5b66eaffe956ea2e3c2",
+      "staged_content_sha256": "d54292b1dfbef982c1a109747e091f682f516e5bd91bb8c49a086d419530ac01",
+      "bytes": 6049
+    },
+    {
+      "path": "host/window.cpp",
+      "git_blob": "fee50e78c284c5b383977aeb9540f340f4474b4f",
+      "staged_content_sha256": "64d0c73c30756197f3bfea1addf7d6726c0807d9d9910585fe235524203474b9",
+      "bytes": 79530
+    },
+    {
+      "path": "runtime/include/mka/audio_bank_protocol.hpp",
+      "git_blob": "8cdaaea116b9849f73c47f691f225d15ac91cd20",
+      "staged_content_sha256": "ae7a6d616f3ec4ebe81298580e3b00ffe59a59d79990baaad87c5ed42a213485",
+      "bytes": 3618
+    },
+    {
+      "path": "runtime/include/mka/audio_bank_service.hpp",
+      "git_blob": "4c2a1d1487174716474b26a46bc9f26b18cc67b3",
+      "staged_content_sha256": "8bb8924e6eb71b0cb3e198b640f8532ab7318325e09c66500a07b98a032fb39b",
+      "bytes": 3018
+    },
+    {
+      "path": "runtime/include/mka/audio_banks.hpp",
+      "git_blob": "ca17ce9ba908fa0bfaa4a4c3c0549508ec756855",
+      "staged_content_sha256": "e3fe5e2e5ca3e1b7d2a036a934911f925485791f23d157ef8dc26a0294b90f49",
+      "bytes": 5008
+    },
+    {
+      "path": "runtime/include/mka/audio_controls.hpp",
+      "git_blob": "2b7211228c59335389a19a8a97f511826d37f83d",
+      "staged_content_sha256": "f5e3ae5ee2426b351fe94b5d8000d6634fcfd95069d5152e1e923d7d716b30aa",
+      "bytes": 2304
+    },
+    {
+      "path": "runtime/include/mka/haptics.hpp",
+      "git_blob": "c9b857f5de1e5cbfedecff8bb23be4650e0a4cbc",
+      "staged_content_sha256": "9936b9faa635e18facb72dd2c14ffa0f9a42f8844660d1f214a29371445a9f79",
+      "bytes": 2423
+    },
+    {
+      "path": "runtime/include/mka/host_voice.hpp",
+      "git_blob": "8a03c088c05601e04ba7e190e5f4ec39f201c54d",
+      "staged_content_sha256": "d634b56e80ef3c47eea5063d0d62529a8a3929a4e258dacc3c15658e5ba803e3",
+      "bytes": 2432
+    },
+    {
+      "path": "runtime/include/mka/playback_owner.hpp",
+      "git_blob": "5b7e3229bb102d69c0a20b952bf2f78bf5aa1392",
+      "staged_content_sha256": "c23686fbaa588f9621c461b18ddf29db5eea6656a9c9f2e656f37a9b06639069",
+      "bytes": 3518
+    },
+    {
+      "path": "runtime/include/mka/program_executor.hpp",
+      "git_blob": "c45dd72d135a1f919b18620de5e78b3db7f415b2",
+      "staged_content_sha256": "cd3afcea1625745d524a50a92ce7f1990bf972395cd1a5ea0a07b087ef6e821a",
+      "bytes": 3233
+    },
+    {
+      "path": "runtime/include/mka/retail_haptics_bridge.hpp",
+      "git_blob": "877510fee158ef52fcc571713f948fbb16b1e28b",
+      "staged_content_sha256": "0fec6fed0929e8757368a04b82f411bb31957f7a57b816aa43c9bc34f9b18e7d",
+      "bytes": 2794
+    },
+    {
+      "path": "runtime/include/mka/video_producer.hpp",
+      "git_blob": "1882e918351d06b95b330a19b95b0fed469b13fc",
+      "staged_content_sha256": "8ded672f9b85b873da0251f64c46062df6bc8e84b1e91a49d31a99df18d67246",
+      "bytes": 3812
+    },
+    {
+      "path": "runtime/src/gs/gs.cpp",
+      "git_blob": "04c8c862ed93542de9189cd8e23910e90c62b2de",
+      "staged_content_sha256": "501dbec8894c4bc682effbcd218712217a7fbda9c0cc268317003bf9c64c182e",
+      "bytes": 91117
+    },
+    {
+      "path": "runtime/src/gs/native_gl_backend.cpp",
+      "git_blob": "fa85d36773ba1f9ea8bf3e9dc3478f32456d92fb",
+      "staged_content_sha256": "a1d03ac32afa95656be6e9c07d7f8fd3ae33bb40bb5106374dfeb0f62a3d5f57",
+      "bytes": 163890
+    },
+    {
+      "path": "runtime/src/gs/native_gl_backend.hpp",
+      "git_blob": "8ac3e306b256f8958f643d90ae1e6a423589b1c9",
+      "staged_content_sha256": "4bf8f189b9b9f3309f1b62bf3e8eed2a6ee24b04f435c42bb34e51948a263f67",
+      "bytes": 6640
+    },
+    {
+      "path": "runtime/src/iop/padman.cpp",
+      "git_blob": "ce5b6bcef15f7919aecf614165e2fb14e3037fe1",
+      "staged_content_sha256": "ec4ae9229f255b6ba53f164e721010c3ef7dcf79b7a1e4e9f92121b2e1c5a98a",
+      "bytes": 19613
+    },
+    {
+      "path": "runtime/src/iop/padman.hpp",
+      "git_blob": "958b2cfe0c8dab2d851fd7dc1201931c7420d07d",
+      "staged_content_sha256": "71be5b18d74b57c42e78ef9adea8bff5a901c355e81b288542bf8967f6d8ed17",
+      "bytes": 582
+    },
+    {
+      "path": "runtime/src/native/audio_bank_protocol.cpp",
+      "git_blob": "cc1c2bda5c4075a5c587b681549ec0008c09551b",
+      "staged_content_sha256": "a013853dff568ec7a4f724fd244988f319dca0affa8ada7133e46efdd781e6d4",
+      "bytes": 10726
+    },
+    {
+      "path": "runtime/src/native/audio_bank_service.cpp",
+      "git_blob": "381d25179fc34eeb912570e1716b29191af7c8ac",
+      "staged_content_sha256": "98ed7f4c2e0fc678b49ce1e0761d543301512c15475f4cbb6bd0f0f70fb62028",
+      "bytes": 11203
+    },
+    {
+      "path": "runtime/src/native/audio_banks.cpp",
+      "git_blob": "4e5786d9510b9ecbc603ba3254413ba6909812f4",
+      "staged_content_sha256": "4b415a6c495cf3478310ce79d64a21132b341573c7bd85c9120b3c22e9c0f906",
+      "bytes": 11948
+    },
+    {
+      "path": "runtime/src/native/audio_controls.cpp",
+      "git_blob": "964cc20facae5ada2b93249d5f63ac4c08fc11b2",
+      "staged_content_sha256": "5b9880100de1654f1ee2dd1dceab29c4922706bbe07bec73c5828974b28ac66c",
+      "bytes": 7288
+    },
+    {
+      "path": "runtime/src/native/haptics.cpp",
+      "git_blob": "dfbeac0159f9fa45a01af717a33dd8345dd99180",
+      "staged_content_sha256": "463764f3afd9fda355d13a6d5ae801ff3d1560ffb78aa7d760ea38e2af74eca4",
+      "bytes": 4034
+    },
+    {
+      "path": "runtime/src/native/host_voice.cpp",
+      "git_blob": "af31ec62a8838b4d205ea1e9564ff51093bd81c7",
+      "staged_content_sha256": "4c2b2d17caf135c69443f6b2dac009182bfe96eb4230d579fc5e1d65a79d31b1",
+      "bytes": 8471
+    },
+    {
+      "path": "runtime/src/native/playback_owner.cpp",
+      "git_blob": "8bea69df502d365c77b6b7d9888856fe12bdeccf",
+      "staged_content_sha256": "42f25151de831646f55d1176aad8c661da4a050e27ec325e6470b888c0c7c87d",
+      "bytes": 10498
+    },
+    {
+      "path": "runtime/src/native/program_executor.cpp",
+      "git_blob": "6b6fc2e9fa20c0115d68ea2c44a9985d1597a1ef",
+      "staged_content_sha256": "0e6b3ba0b9c272919448d2bf848749fbed6866656a0c495e7b45211c445cbdd3",
+      "bytes": 6035
+    },
+    {
+      "path": "runtime/src/native/retail_haptics_bridge.cpp",
+      "git_blob": "47de2d62e52be99de2b5ed49dba51a081f02813c",
+      "staged_content_sha256": "1d8dfcf4be5fbe0bf15815806318668cf175c24fba4c383cf95de31976e21428",
+      "bytes": 4413
+    },
+    {
+      "path": "runtime/src/native/video_producer.cpp",
+      "git_blob": "509648041463d2f4fa2d3a3f4bbf948f7c570212",
+      "staged_content_sha256": "b5d22a25c928caca4fe08dd895c7cd8d522d9f8c3ff9a899aadf5e834cccb236",
+      "bytes": 7613
+    },
+    {
+      "path": "runtime/src/system.cpp",
+      "git_blob": "db7e0b22c587f0d27d89b36ec681afb386fd5cff",
+      "staged_content_sha256": "bc5add98b7bad1e18bd2c8d7184a581024a0bbd05c47c18961c57bbc2d9d4361",
+      "bytes": 49010
+    },
+    {
+      "path": "tests/test_audio_bank_service.cpp",
+      "git_blob": "282c15289377cbf45ba9d64e7fd04982709ec666",
+      "staged_content_sha256": "7b44a876c2026e5bb62689c969592aa93fafb3f103f945175bda662f3d850855",
+      "bytes": 9215
+    },
+    {
+      "path": "tests/test_gl_lazy_readback.cpp",
+      "git_blob": "9b0fa6bb348bda26239ab3dcf7827fab7e52324c",
+      "staged_content_sha256": "2babec1073aad786dc4caac8a45cfbf7461dee6a96febdb0e1ba8b45808b65e5",
+      "bytes": 22161
+    },
+    {
+      "path": "tests/test_gl_vs_raster.cpp",
+      "git_blob": "4e52a3a9315cc472f2d13964a6860541bf687fd7",
+      "staged_content_sha256": "73dad06568bf7fc6b70ed16cb45763c8bcbc9fee6a25ca0db469d24b1ef4800a",
+      "bytes": 31894
+    },
+    {
+      "path": "tests/test_haptics.cpp",
+      "git_blob": "5e5b6abed38cf47056d120a153ee308e5f087cd6",
+      "staged_content_sha256": "62910df0dd1a071f4dc4e9c8b5285ba348d213558684f4b78ddaada6285cebf7",
+      "bytes": 3521
+    },
+    {
+      "path": "tests/test_host_voice.cpp",
+      "git_blob": "be05a211d3673351d022e793dbb0a3a9de5a2428",
+      "staged_content_sha256": "b9addc1241f24c5d5fadb692f6c81d11c2be1a5574de90560492f853c9caf57e",
+      "bytes": 11689
+    },
+    {
+      "path": "tests/test_native_gl_alpha.cpp",
+      "git_blob": "5bb413b8a90d537dbec113040e328a7331b7ddce",
+      "staged_content_sha256": "dd06881f102246a147180d3985cabaf49f56b4946fe9cd5bb7080328c6cf778c",
+      "bytes": 16246
+    },
+    {
+      "path": "tests/test_native_image_upload.cpp",
+      "git_blob": "fa413fb26e5fc717b19c766fc54d7ac5c15988e4",
+      "staged_content_sha256": "b72d3168b2da0a809d3ace6d0e1a3605c492818df09c794d03b113b76dbd9d9a",
+      "bytes": 41805
+    },
+    {
+      "path": "tests/test_padman_haptics.cpp",
+      "git_blob": "3576f125bf0dde68edf66c5c95b1bda21d70c4b5",
+      "staged_content_sha256": "5a4264f6dfdb83cb7ffd3ed46a79fa5e9e2ac91ef3cb24a7a7b55879264b4ebd",
+      "bytes": 3679
+    },
+    {
+      "path": "tests/test_padman_rpc.cpp",
+      "git_blob": "76fa5f6ef8a8478c2f9aae1187e0c54d3b64abd4",
+      "staged_content_sha256": "a3e01e5adc3e2f7b9dd85bb64f0e7b6940d1a05014e7a2a764fb65ca772a3f2e",
+      "bytes": 7459
+    },
+    {
+      "path": "tests/test_playback_owner.cpp",
+      "git_blob": "1ea199cbb16673426465adbfbd4bda5506e710a1",
+      "staged_content_sha256": "e4f5444e816733af0a3d204d2acf82203a3709b3b9d26088333972abaaa1ebf4",
+      "bytes": 9012
+    },
+    {
+      "path": "tests/test_program_executor.cpp",
+      "git_blob": "9bc18a39d2e8dbe983fea89a22a779acfbd2d786",
+      "staged_content_sha256": "ba2761cdabee4702ca32da74b444d7bf103f8223bbff8b8deb38c33afc0574bc",
+      "bytes": 7541
+    },
+    {
+      "path": "tests/test_retail_call_observers.cpp",
+      "git_blob": "d4fc32b3efa1de86909d29e8b5dc7be20dfe3438",
+      "staged_content_sha256": "d1a006f32571e1e3d76addc30a45411f4eb74e69cf0cd5dd01b9deb744bac900",
+      "bytes": 7495
+    },
+    {
+      "path": "tests/test_retail_haptics_bridge.cpp",
+      "git_blob": "20cfc67e911e650238316c4da13c220ab00c5e34",
+      "staged_content_sha256": "e451f0614263de15598b16a2e44447a4b07434c14edd8c8ca57f4d4eceace261",
+      "bytes": 4812
+    },
+    {
+      "path": "tests/test_video_producer.cpp",
+      "git_blob": "d2fd085926b0ab82deae924fa51b4f5d98613564",
+      "staged_content_sha256": "0125d4461aea1561158069dc53769bfa65111870030dd22f996342b932d6b2d6",
+      "bytes": 6152
+    }
+  ]
+}

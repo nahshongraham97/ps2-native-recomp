@@ -41,6 +41,7 @@
 #include <vector>
 
 #include "keymap.hpp"
+#include "mka/haptics.hpp"
 #include "ps2/hitch.hpp"
 #include "ps2/os.hpp"
 #include "ps2/video.hpp"
@@ -186,19 +187,27 @@ void rumble(int port) {
     static bool last_weak[2] = {};
     static Uint32 sent[2] = {};
     SDL_GameController *pad = g_pads[port];
-    if (!pad) return;
-    const std::uint16_t motors = ps2::pad_rumble(port);
+    const auto request=mka::input::haptics().sample(static_cast<std::uint32_t>(port));
+    if(!request)return;
+    if (!pad) {
+        if(request->feedback==mka::input::HapticFeedback::pending)
+            (void)mka::input::haptics().acknowledge(port,request->sequence,false);
+        return;
+    }
+    const std::uint16_t motors=std::uint16_t((std::uint16_t(request->request.large)<<8)|(request->request.small?1u:0u));
     const double strong = (motors >> 8) < 16 ? 0.0 : std::sqrt((motors >> 8) / 255.0);
     const bool weak = motors & 1u;
     const Uint32 now = SDL_GetTicks();
-    if (std::fabs(strong - last_strong[port]) <= 0.08 && weak == last_weak[port] && (!(strong > 0.0 || weak) || now - sent[port] < 100)) return;
+    if (request->feedback!=mka::input::HapticFeedback::pending &&
+        std::fabs(strong - last_strong[port]) <= 0.08 && weak == last_weak[port] && (!(strong > 0.0 || weak) || now - sent[port] < 100)) return;
     if (g_pad_log && (strong != last_strong[port] || weak != last_weak[port]))
         std::fprintf(stderr, "[pad] frame %llu port %d rumble: large motor %u, small motor %s\n", static_cast<unsigned long long>(ps2::frames_run()), port + 1,
                      motors >> 8, weak ? "on" : "off");
     last_strong[port] = strong;
     last_weak[port] = weak;
     sent[port] = now;
-    SDL_GameControllerRumble(pad, static_cast<Uint16>(strong * 65535.0), weak ? 0xFFFF : 0, strong > 0.0 || weak ? 200 : 0);
+    const bool applied=SDL_GameControllerRumble(pad, static_cast<Uint16>(strong * 65535.0), weak ? 0xFFFF : 0, strong > 0.0 || weak ? 200 : 0)==0;
+    (void)mka::input::haptics().acknowledge(port,request->sequence,applied);
 }
 
 const char *pad_kind(SDL_GameController *pad) {
@@ -236,6 +245,17 @@ void close_pad(SDL_JoystickID id) {
         SDL_GameController *&pad = g_pads[port];
         if (!pad || SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(pad)) != id) continue;
         std::fprintf(stderr, "[pad] %s unplugged from port %d\n", or_unknown(SDL_GameControllerName(pad)), port + 1);
+        if(mka::input::haptics().sample(port)) {
+            const auto stopped=mka::input::haptics().stop(port);
+            if(stopped!=mka::input::HapticError::none) {
+                std::fprintf(stderr,"[native-input-stop] cannot publish haptic stop for disconnected player %d\n",port);
+                std::abort();
+            }
+            const auto request=mka::input::haptics().sample(port);
+            const bool applied=SDL_GameControllerRumble(pad,0,0,0)==0;
+            if(request&&!request->request.small&&request->request.large==0)
+                (void)mka::input::haptics().acknowledge(port,request->sequence,applied);
+        }
         SDL_GameControllerClose(pad);
         pad = nullptr;
     }

@@ -1,6 +1,7 @@
 #include "iop/padman.hpp"
 #include "iop/sio2.hpp"
 #include "mka/controller_input.hpp"
+#include "mka/haptics.hpp"
 #include "ps2/memory.hpp"
 #include "ps2/system.hpp"
 
@@ -79,14 +80,17 @@ int main(int argc, char **argv) {
         return 1;
     }
     const std::array<std::uint8_t, 6> alignment{{0x00, 0x01, 0xFF, 0xFF, 0xFF, 0xFF}};
+    const std::array<std::uint8_t,6> opposing_alignment{{0x01,0x00,0xFF,0xFF,0xFF,0xFF}};
+    ps2::iop::sio2::set_actuator_alignment(0,opposing_alignment);
     ps2::st32(args, 0x08); // padSetActAlign
     ps2::st32(args + 4, 0);
     ps2::st32(args + 8, 0);
     for (std::uint32_t i = 0; i < alignment.size(); ++i) ps2::st8(args + 12 + i, alignment[i]);
     ps2::st32(reply + 20, 0xFFFFFFFFu);
     if (!ps2::iop::padman::handle_rpc(1, args, 20, reply, 24) || ps2::ld32(reply + 20) != 1u ||
-        ps2::iop::sio2::actuator_alignment(0) != alignment) {
-        std::cerr << "padSetActAlign did not return success and apply the SIO2 actuator map\n";
+        !mka::input::haptics().sample(0) || mka::input::haptics().sample(0)->alignment != alignment ||
+        ps2::iop::sio2::actuator_alignment(0) != opposing_alignment) {
+        std::cerr << "padSetActAlign did not apply native alignment independently of SIO2\n";
         return 1;
     }
     for (std::uint32_t i = 0; i < alignment.size(); ++i) {

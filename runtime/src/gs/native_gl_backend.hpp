@@ -41,6 +41,16 @@ bool enabled();
 // Used by a visible SDL OpenGL host after it has made its context current.
 bool attach_current_context(void *host_window);
 bool direct_window();
+struct PresentationLayout {
+    std::uint32_t scan_width=0,scan_height=0;
+    // Logical canvas rectangle in this exact owned resource's coordinates.
+    std::uint32_t x=0,y=0,width=0,height=0;
+};
+// Explicit native video/render-target configuration only, never inferred from
+// a primitive, screen contents or another resource. Does not authorize an
+// FBP/stride/format alias or establish the retail video adapter binding.
+bool configure_presentation_layout(std::uint32_t fbp,std::uint32_t bw,
+                                   std::uint32_t psm,const PresentationLayout& layout);
 bool present_frame(const DisplayRegs &regs);
 bool present_current();
 

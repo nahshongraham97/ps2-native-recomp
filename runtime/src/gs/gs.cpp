@@ -505,6 +505,11 @@ void feed_image(const std::uint8_t *data, std::size_t bytes) {
         feed_native_ct32(data, bytes);
         return;
     }
+    if(native_gl::enabled()) {
+        std::fprintf(stderr,"[gs-native-stop] unsupported native IMAGE format/direction psm=%u direction=%u; CPU VRAM fallback removed\n",
+            static_cast<unsigned>((g_state.bitbltbuf>>56)&63u),static_cast<unsigned>(g_state.trxdir&3u));
+        std::fflush(stderr);std::abort();
+    }
 #ifdef PS2_GPU
     if (gpu_on() && (g_state.trxdir & 3u) == 0) gpu::image_data(data, bytes);
 #endif

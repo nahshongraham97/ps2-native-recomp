@@ -21,6 +21,7 @@
 #include "ps2/state_request.hpp"
 #include "ps2/system.hpp"
 #include "ps2/video.hpp"
+#include "mka/haptics.hpp"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -1133,7 +1134,11 @@ void set_pad_connected(int pad, bool connected) {
     if (g_pad_in[pad].connected != connected) g_pad_dirty |= 1u << pad;
     g_pad_in[pad].connected = connected;
 }
-std::uint16_t pad_rumble(int pad) { return iop::sio2::rumble(pad); }
+std::uint16_t pad_rumble(int pad) {
+    if(pad<0)return 0;
+    const auto request=mka::input::haptics().sample(static_cast<std::uint32_t>(pad));
+    return request?std::uint16_t((std::uint16_t(request->request.large)<<8)|(request->request.small?1u:0u)):0;
+}
 void set_audio_sink(std::function<void(const std::int16_t *, std::size_t)> sink) { iop::audio_native::set_sink(std::move(sink)); }
 
 }

@@ -12,7 +12,7 @@ enum class AudioBanksError {
     bank_parse_failed, absent_selector, absent_program, malformed_bank,
     empty_program, command_out_of_bounds, unsupported_command_kind,
     unsupported_named_command_route, absent_resource, normal_read_failed,
-    no_associated_ms4, stream_read_failed, allocation_failed, host_capacity, preparation_revoked
+    no_associated_ms4, stream_read_failed, allocation_failed, host_capacity, preparation_revoked, bank_not_prepared
 };
 struct AudioBanksFailure {
     AudioBanksError kind = AudioBanksError::none;
@@ -68,6 +68,10 @@ public:
     // Failed preparation invalidates ONLY this bank handle, matching candidate cleanup.
     // No wire callback/status is emitted; source-deferred programs stay deferred.
     std::optional<PreparedBank> prepare_bank(const AudioBankHandle&, BankPreparationReport&, PreparationFailure&, AudioBanksFailure&);
+    // Retrieve an eager program or perform the source-selected deferred normal
+    // work. This is preparation, not a duplicate bank-load completion/playback.
+    std::shared_ptr<const PreparedProgram> prepare_program(const AudioBankHandle&,
+        std::int32_t selector,PreparationFailure&,AudioBanksFailure&);
     std::optional<AudioResource> resolve_kind1(const AudioBankHandle&, std::int32_t selector,
                                               std::size_t command_index, AudioBanksFailure&) const;
     std::optional<BankSample> read_normal(const AudioBankHandle&, std::int32_t selector,

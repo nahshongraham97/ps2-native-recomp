@@ -3,10 +3,10 @@
 #include "iop.hpp"
 #include "kernel.hpp"
 #include "sif.hpp"
-#include "sio2.hpp"
 #include "ps2/memory.hpp"
 #include "ps2/state.hpp"
 #include "mka/controller_input.hpp"
+#include "mka/haptics.hpp"
 
 #include <algorithm>
 #include <array>
@@ -33,6 +33,8 @@ constexpr std::uint8_t kPadStateExecCommand = 5u;
 constexpr std::uint8_t kPadStateStable = 6u;
 constexpr std::uint8_t kPadRequestComplete = 0u;
 constexpr std::uint8_t kPadRequestBusy = 2u;
+// SDK padPortOpen.c initializes all six actuator positions to unused.
+constexpr mka::input::ActuatorBytes kUnusedActuators{{255,255,255,255,255,255}};
 
 // This is the 128-byte ee_paddata_t layout used by PS2SDK's newer libpad.
 struct EePadData {
@@ -98,6 +100,7 @@ void initialize_pad_area(std::uint32_t address) {
     initial.request_state = kPadRequestBusy;
     initial.current_task = 0;
     initial.button_data_ready = 0;
+    std::memcpy(initial.act_align_data,kUnusedActuators.data(),kUnusedActuators.size());
     std::uint8_t *area = ps2::fast<std::uint8_t>(ee_physical(address));
     if (!area) return;
     std::memcpy(area, &initial, sizeof initial);
@@ -192,6 +195,8 @@ bool pad_rpc(std::uint32_t method, std::uint32_t args, std::uint32_t args_size,
         set_result(1u);
         return true;
     case 0x0Fu: // padEnd: close host-owned pads and allow a later padInit.
+        if(mka::input::haptics().stop_all()!=mka::input::HapticError::none)
+            strict_stop("cannot stop native haptics at padEnd",method,command);
         g_open_pads = {};
         g_initialized = false;
         set_result(1u);
@@ -232,6 +237,8 @@ bool pad_rpc(std::uint32_t method, std::uint32_t args, std::uint32_t args_size,
             return true;
         }
         initialize_pad_area(area);
+        if(mka::input::haptics().set_alignment(port,kUnusedActuators)!=mka::input::HapticError::none)
+            strict_stop("cannot initialize native actuator alignment",method,command);
         g_open_pads[port][slot] = OpenPad{area, 0u, true};
         set_result(1u);
         // New libpad reads padArea in EE RAM. The legacy result is an IOP
@@ -293,7 +300,8 @@ bool pad_rpc(std::uint32_t method, std::uint32_t args, std::uint32_t args_size,
 
         std::array<std::uint8_t, 6> alignment{};
         std::memcpy(alignment.data(), request.data() + 12u, alignment.size());
-        sio2::set_actuator_alignment(static_cast<int>(port), alignment);
+        if(mka::input::haptics().set_alignment(port,alignment)!=mka::input::HapticError::none)
+            strict_stop("unsupported or unavailable native actuator alignment",method,command);
         std::uint8_t *area = ps2::fast<std::uint8_t>(ee_physical(g_open_pads[port][slot].ee_area));
         if (area) {
             for (std::uint32_t record = 0; record < 2u; ++record) {
@@ -328,6 +336,8 @@ bool pad_rpc(std::uint32_t method, std::uint32_t args, std::uint32_t args_size,
             set_result(0u);
             return true;
         }
+        if(mka::input::haptics().set_alignment(port,kUnusedActuators)!=mka::input::HapticError::none)
+            strict_stop("cannot stop native haptics at padPortClose",method,command);
         g_open_pads[port][slot] = OpenPad{};
         set_result(1u);
         return true;
@@ -347,12 +357,16 @@ bool handle_rpc(std::uint32_t method, std::uint32_t args, std::uint32_t args_siz
 }
 
 void reset() {
+    if(mka::input::haptics().stop_all()!=mka::input::HapticError::none)
+        strict_stop("cannot stop native haptics at reset",0,0);
     g_active = false;
     g_initialized = false;
     g_open_pads = {};
 }
 
 void activate() {
+    if(mka::input::haptics().stop_all()!=mka::input::HapticError::none)
+        strict_stop("cannot stop native haptics at activation",0,0);
     g_active = true;
     g_initialized = false;
     g_open_pads = {};
@@ -371,7 +385,9 @@ void frame_tick() {
             if (!open.open || !valid_ee_range(open.ee_area, kPadAreaBytes)) continue;
             EePadData record{};
             ++open.frame;
-            fill_pad_record(record, controller, open.frame, sio2::actuator_alignment(static_cast<int>(port)));
+            const auto feedback=mka::input::haptics().sample(port);
+            if(!feedback)strict_stop("open pad has no native actuator alignment",0,0);
+            fill_pad_record(record, controller, open.frame, feedback->alignment);
             const std::uint32_t destination = ee_physical(open.ee_area) + ((open.frame & 1u) * kPadRecordBytes);
             std::uint8_t *memory = ps2::fast<std::uint8_t>(destination);
             if (memory) std::memcpy(memory, &record, sizeof record);
@@ -388,6 +404,28 @@ void state(ps2::state::Stream &s) {
     s.pod(g_active);
     s.pod(g_initialized);
     s.pod(g_open_pads);
+    if(s.loading() && !restore_haptic_alignment())
+        strict_stop("saved PADMAN actuator alignment cannot be restored",0,0);
+}
+
+bool restore_haptic_alignment() {
+    if(mka::input::haptics().stop_all()!=mka::input::HapticError::none)return false;
+    for(std::uint32_t port=0;port<g_open_pads.size();++port)
+        for(std::uint32_t slot=0;slot<g_open_pads[port].size();++slot){
+            const auto& open=g_open_pads[port][slot];if(!open.open)continue;
+            if(!g_active || !g_initialized || port>=kNativePadPorts || slot>=kNativePadSlotsPerPort)return false;
+            EePadData record{};if(!current_pad_record(open,record))return false;
+            // Source identity is the latest saved EE record, not any SIO2
+            // state. An unstarted open has the exact all-unused reset map.
+            if(record.current_task!=1u && !(open.frame==0 && record.frame==0 && record.current_task==0))return false;
+            if(record.current_task==1u && (record.mode_config!=2u || record.mode_cur_id!=kPadModePressure ||
+                record.num_actuators!=2u || record.request_state!=kPadRequestComplete))return false;
+            mka::input::ActuatorBytes alignment{};
+            std::memcpy(alignment.data(),record.act_align_data,alignment.size());
+            if(record.current_task==0 && alignment!=kUnusedActuators)return false;
+            if(mka::input::haptics().set_alignment(port,alignment)!=mka::input::HapticError::none)return false;
+        }
+    return true;
 }
 
 void restore_sif_overrides() {

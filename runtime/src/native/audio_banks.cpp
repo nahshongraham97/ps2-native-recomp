@@ -129,6 +129,20 @@ std::optional<AudioResource> AudioBankSession::resolve(
       catch (const std::length_error&) { failure.kind = AudioBanksError::host_capacity; }
     return std::nullopt;
 }
+std::shared_ptr<const PreparedProgram> AudioBankSession::prepare_program(
+    const AudioBankHandle& handle,std::int32_t selector,PreparationFailure& preparation,AudioBanksFailure& failure) {
+    preparation={};failure={};
+    if(!state_){failure.kind=AudioBanksError::moved_session;return {};}
+    std::lock_guard<std::mutex> lock(state_->mutex);
+    if(!checked_bank(handle,failure))return {};
+    auto& prepared=state_->banks.at(handle.identity_.get()).prepared;
+    if(!prepared){failure.kind=AudioBanksError::bank_not_prepared;return {};}
+    if(!prepared->active()){failure.kind=AudioBanksError::preparation_revoked;preparation.kind=PreparationError::unloaded;return {};}
+    auto program=prepared->eager_program(selector,preparation);
+    if(!program&&preparation.kind==PreparationError::source_deferred)
+        program=prepared->prepare_deferred_normal(selector,preparation);
+    return program;
+}
 std::optional<AudioResource> AudioBankSession::resolve_kind1(
     const AudioBankHandle& handle, std::int32_t selector, std::size_t index, AudioBanksFailure& failure) const {
     failure = {};

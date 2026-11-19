@@ -40,6 +40,8 @@ public:
     static std::optional<AudioBankProtocol> create(AudioBankSession&&, AudioProtocolFailure&);
     std::optional<UnpreparedBankLoad> load_unprepared(const AudioBankCommand&, AudioProtocolFailure&);
     std::optional<PreparedBank> prepare_loaded(const AudioBankHandle&, BankPreparationReport&, PreparationFailure&, AudioProtocolFailure&);
+    std::shared_ptr<const PreparedProgram> prepare_program(const AudioBankCommand&,
+        PreparationFailure&,AudioProtocolFailure&);
     bool close_session(AudioProtocolFailure&);
     bool discard_unprepared(const AudioBankHandle&, AudioProtocolFailure&);
     // Null bank tokens are explicitly unsupported by this host ownership route;

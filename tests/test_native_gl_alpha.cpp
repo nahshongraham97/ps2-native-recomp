@@ -25,6 +25,10 @@
 #include <cmath>
 
 namespace {
+void upload_texture(std::uint32_t base,std::uint32_t pixel) {
+    if(!ps2::gs::native_gl::upload_image(ps2::gs::PSMCT32,base,1,0,0,1,1,
+        reinterpret_cast<const std::uint8_t*>(&pixel),4))std::exit(1);
+}
 
 ps2::gs::Vertex make_vertex(std::uint32_t x, std::uint32_t y,
                             std::uint8_t r, std::uint8_t g,
@@ -82,6 +86,7 @@ std::uint32_t run_sequence(ps2::gs::State state, bool use_gl) {
     // destination, not half-blend it.
     constexpr std::uint32_t texture_base = 0x100u;
     ps2::gs::write_pixel(ps2::gs::PSMCT32, texture_base, 1u, 0u, 0u, 0x800000FFu);
+    upload_texture(texture_base,0x800000FFu);
     state.ctx[0].tex0 = texture_base | (1ull << 14) | (1ull << 34); // 1x1 CT32, TCC=1, TFX=MODULATE
     draw_triangle(state, 4u | 8u | (1u << 4) | (1u << 6) | (1u << 8), 255, 255, 255, 128, use_gl);
     trace("opaque source-over");
@@ -92,6 +97,7 @@ std::uint32_t run_sequence(ps2::gs::State state, bool use_gl) {
     trace("blue dest 2");
     constexpr std::uint32_t repeated_texture_base = texture_base + 0x100u;
     ps2::gs::write_pixel(ps2::gs::PSMCT32, repeated_texture_base, 1u, 0u, 0u, 0x200000FFu);
+    upload_texture(repeated_texture_base,0x200000FFu);
     state.ctx[0].tex0 = repeated_texture_base | (1ull << 14) | (1ull << 34);
     draw_triangle(state, 4u | 8u | (1u << 4) | (1u << 6) | (1u << 8), 255, 255, 255, 128, use_gl);
     trace("half source-over 1");
@@ -297,6 +303,7 @@ int main() {
             for (std::uint64_t tcc = 0; tcc < 2; ++tcc) {
                 const std::uint32_t texture_base = 0x500u + static_cast<std::uint32_t>((tfx * 2 + tcc) * 0x20u);
                 ps2::gs::write_pixel(ps2::gs::PSMCT32, texture_base, 1u, 0, 0, 0x405080A0u);
+                upload_texture(texture_base,0x405080A0u);
                 state.ctx[0].tex0 = texture_base | (1ull << 14) | (tcc << 34) | (tfx << 35);
                 clear_target();
                 draw_triangle(state, 4u | 8u | (1u << 4) | (1u << 8), 96, 64, 32, 64, false);

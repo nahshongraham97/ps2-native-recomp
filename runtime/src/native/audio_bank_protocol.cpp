@@ -165,4 +165,17 @@ bool AudioBankProtocol::unload(const AudioBankCommand& command,AudioProtocolFail
     if(!state_->session.unload_bank(it->second,failure.bank)){failure.kind=AudioProtocolError::bank_failure;return false;}
     return true;
 }
+std::shared_ptr<const PreparedProgram> AudioBankProtocol::prepare_program(
+    const AudioBankCommand& command,PreparationFailure& preparation,AudioProtocolFailure& failure) {
+    preparation={};failure={};
+    if(!is_play(command.opcode)){failure.kind=AudioProtocolError::wrong_command;return {};}
+    if(!state_){failure.kind=AudioProtocolError::moved_bridge;return {};}
+    if(!command.bank_token.value){failure.kind=AudioProtocolError::unsupported_null_bank_token;return {};}
+    std::lock_guard<std::mutex> lock(state_->mutex);
+    const auto found=state_->bindings.find(command.bank_token.value);
+    if(found==state_->bindings.end()){failure.kind=AudioProtocolError::unknown_bank_token;return {};}
+    auto program=state_->session.prepare_program(found->second,command.selector,preparation,failure.bank);
+    if(!program)failure.kind=AudioProtocolError::bank_failure;
+    return program;
+}
 } // namespace mka::sound

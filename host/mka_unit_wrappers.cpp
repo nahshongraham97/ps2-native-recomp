@@ -1,4 +1,4 @@
-#include "mka_combat_hooks.hpp"
+#include "mka_retail_hooks.hpp"
 
 namespace {
 
@@ -20,11 +20,11 @@ bool mode_input_trace_enabled() {
 
 PadTraceSnapshot read_pad_trace_snapshot() {
     return {
-        ps2::ld32(mka::combat::kModeWordAddr),
-        ps2::ld32(mka::combat::kGatekeeperFlagsAddr),
-        ps2::ld32(mka::combat::kGatekeeperFlagsAddr + 4u),
-        ps2::ld32(mka::combat::kWriteIndexAddr),
-        ps2::ld32(mka::combat::kLastTickAddr)
+        ps2::ld32(mka::retail::kModeWordAddr),
+        ps2::ld32(mka::retail::kGatekeeperFlagsAddr),
+        ps2::ld32(mka::retail::kGatekeeperFlagsAddr + 4u),
+        ps2::ld32(mka::retail::kWriteIndexAddr),
+        ps2::ld32(mka::retail::kLastTickAddr)
     };
 }
 
@@ -42,7 +42,7 @@ void __wrap__ZN3gen9unit_0018ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, st
     if (entry == 328u) {
         static std::uint64_t s_scanner_calls = 0;
         const std::uint64_t scan = ++s_scanner_calls;
-        if (mka::combat::is_interception_enabled() && scan <= 5) {
+        if (mka::retail::is_interception_enabled() && scan <= 5) {
             // Scanner entry point (guest PC 0x001637D0) called by unit_0008.
             std::fprintf(stderr, "[mka-scanner] frame scan #%llu (entry=328u)\n",
                          static_cast<unsigned long long>(scan));
@@ -80,7 +80,7 @@ void __wrap__ZN3gen9unit_0018ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, st
 
             if (after.write_index != before.write_index || after.last_tick != before.last_tick) {
                 if (after.write_index < 30u) {
-                    const std::uint32_t at = mka::combat::kRingBufferAddr + after.write_index * 20u;
+                    const std::uint32_t at = mka::retail::kRingBufferAddr + after.write_index * 20u;
                     std::fprintf(stderr,
                                  "[mka-mode-trace] scan=%llu pad-ring index=%u last_tick=0x%08X record=[%08X,%08X,%08X,%08X,%08X]\n",
                                  static_cast<unsigned long long>(scan), after.write_index, after.last_tick,
@@ -96,10 +96,10 @@ void __wrap__ZN3gen9unit_0018ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, st
         return;
     }
 
-    if (mka::combat::is_interception_enabled()) {
+    if (mka::retail::is_interception_enabled()) {
         if (entry == 309u) {
             // Button event handler entry point (guest PC 0x00162E70)
-            mka::combat::handle_pad_event(c, depth, __real__ZN3gen9unit_0018ERN3ps23CpuEjj);
+            mka::retail::handle_pad_event(c, depth, __real__ZN3gen9unit_0018ERN3ps23CpuEjj);
             return;
         }
     }
@@ -109,9 +109,9 @@ void __wrap__ZN3gen9unit_0018ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, st
 
 // Linker Wrapper for gen::unit_0020: Intercepts Video Stream Dispatcher (126u)
 void __wrap__ZN3gen9unit_0020ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
-    if (entry == 126u && mka::combat::is_interception_enabled()) {
+    if (entry == 126u && mka::retail::is_interception_enabled()) {
         // Video stream dispatcher (guest PC 0x00181F90)
-        mka::combat::handle_video_stream(c, depth, __real__ZN3gen9unit_0020ERN3ps23CpuEjj);
+        mka::retail::handle_video_stream(c, depth, __real__ZN3gen9unit_0020ERN3ps23CpuEjj);
         return;
     }
 
@@ -120,18 +120,18 @@ void __wrap__ZN3gen9unit_0020ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, st
 
 // Linker Wrapper for gen::unit_0025: Intercepts Health Scalar Deduction (204u)
 void __wrap__ZN3gen9unit_0025ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
-    if (entry == 204u && mka::combat::is_interception_enabled()) {
+    if (entry == 204u && mka::retail::is_interception_enabled()) {
         // Health deduction scalar entry point (guest PC 0x00197BC0) called by unit_0041/unit_0042
-        mka::combat::handle_subzero_health(c, depth, __real__ZN3gen9unit_0025ERN3ps23CpuEjj);
+        mka::retail::handle_subzero_health(c, depth, __real__ZN3gen9unit_0025ERN3ps23CpuEjj);
         return;
     }
 
     __real__ZN3gen9unit_0025ERN3ps23CpuEjj(c, entry, depth);
 }
 
-// Native Phase 4 SPU2 Audio Processing Tap
+// Read-only output observation. Native audio replacement is a separate service.
 void mka_process_audio(const std::int16_t *samples, std::size_t frames) {
-    mka::combat::process_audio(samples, frames);
+    mka::retail::process_audio(samples, frames);
 }
 
 } // extern "C"

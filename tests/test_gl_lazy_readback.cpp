@@ -260,7 +260,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    std::cout << "[TEST] 8. Preserve a dirty surface when the target cache evicts it\n";
+    std::cout << "[TEST] 8. Retain more than sixteen surfaces entirely on the GPU\n";
     ps2::gs::write_pixel(ps2::gs::PSMCT32, kFrameBase * 32u, kFrameWidth,
                          kOriginX, kOriginY, 0u);
     state.ctx[0].frame = (static_cast<std::uint64_t>(kFrameWidth) << 16) | kFrameBase;
@@ -273,10 +273,19 @@ int main(int argc, char **argv) {
         state.ctx[0].frame = (static_cast<std::uint64_t>(kFrameWidth) << 16) | fbp;
         if (!ps2::gs::native_gl::submit(state, verts, 2)) return 1;
     }
-    const std::uint32_t evicted = ps2::gs::read_pixel(
-        ps2::gs::PSMCT32, kFrameBase * 32u, kFrameWidth, kOriginX, kOriginY);
+    if(ps2::gs::read_pixel(ps2::gs::PSMCT32,kFrameBase*32u,kFrameWidth,kOriginX,kOriginY)!=0) {
+        std::cerr<<"[FAIL] scene growth spilled GPU pixels into CPU VRAM\n";return 1;
+    }
+    ps2::gs::DisplayRegs owned{};owned.pmode=1;
+    owned.dispfb[0]=kFrameBase|(std::uint64_t(kFrameWidth)<<9);
+    owned.display[0]=(639ull<<32)|(447ull<<44);
+    std::vector<std::uint32_t> retained;std::uint32_t retained_width=0,retained_height=0;
+    if(!ps2::gs::native_gl::read_picture(owned,retained,retained_width,retained_height)||retained_width!=640||retained_height!=448) {
+        std::cerr<<"[FAIL] GPU-owned original scene not capturable after growth\n";return 1;
+    }
+    const std::uint32_t evicted=retained[kOriginY*retained_width+kOriginX];
     if (evicted != 0x802010EEu) {
-        std::cerr << "[FAIL] dirty evicted surface was lost: " << std::hex << evicted << "\n";
+        std::cerr << "[FAIL] GPU-owned surface was lost: " << std::hex << evicted << "\n";
         return 1;
     }
     // Opt-in experimental 32-bit color-restoration regression. Passing it

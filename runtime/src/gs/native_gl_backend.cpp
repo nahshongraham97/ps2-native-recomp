@@ -12,7 +12,6 @@
 #include "native_gl_backend.hpp"
 #include "compliance_census.hpp"
 #include "gpu/gpu.hpp"
-#include "raster.hpp"
 #include "mka/gpu_diagnostics.hpp"
 
 #include "ps2/os.hpp"
@@ -32,6 +31,7 @@
 #include <deque>
 #include <fstream>
 #include <new>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -211,13 +211,13 @@ struct TextureCache {
     bool valid = false;
     bool stale = true;  // the guest wrote over the texture's VRAM
     std::uint64_t tex0 = 0, tex1 = 0, tex2 = 0, clamp = 0, texa = 0;
-    std::uint64_t clut_hash = 0, vram_generation = 0;
+    std::uint64_t clut_hash = 0;
     std::uint32_t width = 0, height = 0;
     // The texture's place in VRAM: the unit (256 bytes) it starts at and how
     // many units it covers, so a guest write into it can be found and pushed
     // into this native texture.
     std::uint32_t base = 0, units = 0;
-    raster::TextureParams params{};
+    std::uint32_t psm=0,tbw=0;
     std::uint64_t last_use = 0;
     std::uint64_t native_image_serial = 0;
 };
@@ -233,7 +233,7 @@ std::uint64_t g_texture_age = 0;
 TextureCache *find_pool_entry(std::uint32_t base, std::uint32_t psm, std::uint32_t tbw, std::uint64_t clut_hash) {
     for (TextureCache &entry : g_pool) {
         if (!entry.valid || entry.base != base) continue;
-        if (entry.params.psm != psm || entry.params.tbw != tbw) continue;
+        if (entry.psm != psm || entry.tbw != tbw) continue;
         if (entry.clut_hash != clut_hash) continue;
         return &entry;
     }
@@ -255,6 +255,8 @@ GLuint g_native_clut=0;
 std::array<bool,256> g_native_clut_valid{};
 std::uint64_t g_native_clut_serial=0;
 bool g_native_clut_csm2=false;
+unsigned g_native_clut_cpsm=0;
+std::array<GLint,256> g_native_clut_half{}; // address metadata, never palette pixels
 std::uint64_t g_image_serial = 0;
 NativeImage* find_native_image(std::uint32_t base) {
     for (auto& image : g_native_images) if (image.base == base) return &image;
@@ -458,9 +460,6 @@ void cache_color_mask(bool r, bool g, bool b, bool a) {
     }
 }
 
-// Dedicated movie presentation surface (see ensure_movie_fbo below).
-GLuint g_movie_fbo = 0, g_movie_tex = 0;
-bool g_movie_fbo_ready = false;
 bool g_multitexture_supported = false;
 
 using GenFramebuffersProc = void (APIENTRY *)(GLsizei, GLuint *);
@@ -500,11 +499,11 @@ struct SceneTarget {
     bool ready = false;
     bool cpu_synced = true;
     ReadbackState last_draw_readback_state;
+    std::optional<PresentationLayout> presentation_layout;
 };
-static constexpr std::size_t kMaxSceneTargets = 16;
-SceneTarget g_scene_targets[kMaxSceneTargets];
+// Stable object addresses and host capacity; no fixed scene pool or CPU eviction.
+std::deque<SceneTarget> g_scene_targets;
 GLuint g_shared_depth_buffer = 0;
-bool g_evicted_color[512]{};
 std::uint64_t g_scene_target_age = 0;
 static std::atomic<std::uint64_t> g_scene_write_tick{0};
 
@@ -686,53 +685,16 @@ void load_framebuffer_functions() {
     g_blit_framebuffer = load_gl_proc<BlitFramebufferProc>("glBlitFramebuffer", "glBlitFramebufferEXT");
 }
 
-// Dedicated movie presentation surface. The game draws its own movie quad
-// into the scene targets every frame (prims=2 per present), so even with the
-// presented target pinned, blit=NO presents showed the game's quad and
-// blit=YES presents showed the blit of the complete frame - two sources at
-// different alignments alternating is the shake the 11:14 run still showed.
-// This FBO is written only by the runtime's quiet-gated blit, never by the
-// game, so the presented content cannot alternate while a movie plays.
-bool ensure_movie_fbo() {
-    if (g_movie_fbo_ready) return true;
-    load_framebuffer_functions();
-    if (!g_gen_framebuffers || !g_bind_framebuffer || !g_framebuffer_texture_2d ||
-        !g_check_framebuffer_status || !g_blit_framebuffer)
-        return false;
-    if (!g_movie_tex) glGenTextures(1, &g_movie_tex);
-    if (!g_movie_fbo) g_gen_framebuffers(1, &g_movie_fbo);
-    if (!g_movie_tex || !g_movie_fbo) return false;
-    glBindTexture(GL_TEXTURE_2D, g_movie_tex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-    g_bind_framebuffer(GL_FRAMEBUFFER, g_movie_fbo);
-    g_framebuffer_texture_2d(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, g_movie_tex, 0);
-    glDrawBuffer(GL_COLOR_ATTACHMENT0);
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
-    const GLenum status = g_check_framebuffer_status(GL_FRAMEBUFFER);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    g_bind_framebuffer(GL_FRAMEBUFFER, 0);
-    if (status != GL_FRAMEBUFFER_COMPLETE) {
-        std::fprintf(stderr, "[native-gl] movie presentation framebuffer is incomplete (0x%04X)\n",
-                     static_cast<unsigned>(status));
-        return false;
-    }
-    g_movie_fbo_ready = true;
-    std::fprintf(stderr, "[native-gl] dedicated movie presentation surface ready\n");
-    return true;
-}
 
 void release_scene_target() {
-    for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
+    for (std::size_t i = 0; i < g_scene_targets.size(); ++i) {
         if (g_scene_targets[i].framebuffer && g_delete_framebuffers)
             g_delete_framebuffers(1, &g_scene_targets[i].framebuffer);
         if (g_scene_targets[i].color_texture)
             glDeleteTextures(1, &g_scene_targets[i].color_texture);
         g_scene_targets[i] = SceneTarget{};
     }
+    g_scene_targets.clear();
     if (g_shared_depth_buffer && g_delete_renderbuffers)
         g_delete_renderbuffers(1, &g_shared_depth_buffer);
     g_shared_depth_buffer = 0;
@@ -762,7 +724,7 @@ void reset_context_entrypoints() {
 bool has_context_objects() {
     if(g_native_clut)return true;
     if (!g_timer_objects.empty() || g_timer_active_object || g_shared_depth_buffer ||
-        g_movie_fbo || g_movie_tex || g_display_upload.object || g_rect_upload.object) return true;
+        g_display_upload.object || g_rect_upload.object) return true;
     for (const SceneTarget &target : g_scene_targets)
         if (target.framebuffer || target.color_texture) return true;
     for (const TextureCache &entry : g_pool) if (entry.object) return true;
@@ -782,13 +744,11 @@ void release_context_objects() {
     g_native_images.clear();
     if(g_native_clut)glDeleteTextures(1,&g_native_clut);
     g_native_clut=0;g_native_clut_valid.fill(false);g_native_clut_serial=0;g_native_clut_csm2=false;
+    g_native_clut_cpsm=0;g_native_clut_half.fill(0);
     for (TextureCache &entry : g_pool) {
         if (entry.object) glDeleteTextures(1, &entry.object);
         entry = TextureCache{};
     }
-    if (g_movie_fbo && g_delete_framebuffers) g_delete_framebuffers(1, &g_movie_fbo);
-    if (g_movie_tex) glDeleteTextures(1, &g_movie_tex);
-    g_movie_fbo = 0; g_movie_tex = 0; g_movie_fbo_ready = false;
     for (UploadTexture *upload : {&g_display_upload, &g_rect_upload}) {
         if (upload->object) glDeleteTextures(1, &upload->object);
         *upload = {};
@@ -870,7 +830,7 @@ bool allocate_scene_target(SceneTarget &t) {
 }
 
 SceneTarget *find_scene_target(std::uint32_t fbp) {
-    for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
+    for (std::size_t i = 0; i < g_scene_targets.size(); ++i) {
         if (g_scene_targets[i].ready && g_scene_targets[i].fbp == fbp) {
             g_scene_targets[i].last_use = ++g_scene_target_age;
             return &g_scene_targets[i];
@@ -888,67 +848,20 @@ SceneTarget *ensure_scene_target(std::uint32_t fbp = 0) {
     SceneTarget *existing = find_scene_target(fbp);
     if (existing) return existing;
 
-    int best_slot = -1;
-    for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
-        if (!g_scene_targets[i].ready || g_scene_targets[i].fbp == 0xFFFFFFFFu) {
-            best_slot = static_cast<int>(i);
-            break;
-        }
+    try {
+        g_scene_targets.emplace_back();
+    } catch(const std::bad_alloc&) {
+        std::fprintf(stderr,"[native-gl] host scene ownership allocation failed\n");
+        return nullptr;
+    } catch(const std::length_error&) {
+        std::fprintf(stderr,"[native-gl] host scene container capacity exceeded\n");
+        return nullptr;
     }
-    if (best_slot < 0) {
-        const std::uint32_t active_fbp = g_active_frame_fbp.load(std::memory_order_relaxed);
-        const DisplayRegs dregs = gs::display_regs();
-        const int circuit = (dregs.pmode & 2u) ? 1 : (dregs.pmode & 1u) ? 0 : -1;
-        const std::uint32_t display_fbp = circuit >= 0 ? (static_cast<std::uint32_t>(dregs.dispfb[circuit]) & 0x1FFu) : 0xFFFFFFFFu;
-
-        std::uint64_t oldest = UINT64_MAX;
-        for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
-            if (g_scene_targets[i].fbp == display_fbp || g_scene_targets[i].fbp == active_fbp) {
-                continue;
-            }
-            if (g_scene_targets[i].last_use < oldest) {
-                oldest = g_scene_targets[i].last_use;
-                best_slot = static_cast<int>(i);
-            }
-        }
-        if (best_slot < 0) {
-            for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
-                if (g_scene_targets[i].last_use < oldest) {
-                    oldest = g_scene_targets[i].last_use;
-                    best_slot = static_cast<int>(i);
-                }
-            }
-        }
-    }
-    if (best_slot < 0) best_slot = 0;
-
-    SceneTarget &target = g_scene_targets[best_slot];
-    if (!target.ready) {
-        if (!allocate_scene_target(target)) return nullptr;
-        std::fprintf(stderr, "[native-gl] direct GS scene target %d: %dx%d color + depth FBO for FBP=%u\n",
-                     best_slot, kWidth, kHeight, fbp);
-    } else {
-        // Preserve GPU-only pixels before reusing the surface. The existing
-        // readback routine restores the active draw target when it finishes.
-        if (!target.cpu_synced && !sync_surface_to_cpu(target.fbp)) {
-            std::fprintf(stderr, "[native-gl] cannot preserve dirty scene target FBP=%u before reuse\n", target.fbp);
-            return nullptr;
-        }
-        if (target.last_write_tick && target.fbp < 512) g_evicted_color[target.fbp] = true;
-        g_bind_framebuffer(GL_FRAMEBUFFER, target.framebuffer);
-        clear_bound_scene_target(false);
-        std::fprintf(stderr, "[native-gl] recycled scene target %d for FBP=%u (cleared)\n", best_slot, fbp);
-    }
-    // A recycled GL surface is now an empty surface for a different FBP.
-    // Its previous owner's write age and readback state must not make the
-    // cleared surface appear to contain a newer frame.
-    target.prim_count = 0;
-    target.write_count = 0;
-    target.last_write_tick = 0;
-    target.cpu_synced = true;
-    target.last_draw_readback_state = {};
-    target.fbp = fbp;
-    target.last_use = ++g_scene_target_age;
+    SceneTarget &target=g_scene_targets.back();
+    if(!allocate_scene_target(target)) {g_scene_targets.pop_back();return nullptr;}
+    target.fbp=fbp;
+    target.last_use=++g_scene_target_age;
+    std::fprintf(stderr,"[native-gl] owned GPU scene %zu for FBP=%u\n",g_scene_targets.size()-1,fbp);
     return &target;
 }
 
@@ -976,15 +889,6 @@ bool bind_draw_target(std::uint32_t fbp) {
         g_glstate.draw_fbo = target->framebuffer;
     }
     return true;
-}
-
-std::uint64_t clut_hash(const State &st) {
-    std::uint64_t hash = 1469598103934665603ull;
-    for (const std::uint32_t value : st.clut) {
-        hash ^= value;
-        hash *= 1099511628211ull;
-    }
-    return hash;
 }
 
 bool image_error(const char* operation) {
@@ -1078,6 +982,63 @@ bool convert_image_view(const NativeImage& image,GLuint destination,std::uint32_
     g_bind_framebuffer(GL_READ_FRAMEBUFFER,static_cast<GLuint>(read));g_bind_framebuffer(GL_DRAW_FRAMEBUFFER,static_cast<GLuint>(draw));
     g_delete_framebuffers(1,&fbo);gl_state_invalidate();return ok && !image_error("restore native IMAGE conversion");
 }
+// Materialize GS virtual texel coordinates with edge replication on GPU.
+// A virtual1024x1024 view can therefore depend on only its covered640x448
+// clamped footprint. Replicated edge pixels are the defined sampler result,
+// never zero-filled unowned source bytes.
+bool region_clamp_view(const NativeImage& image,GLuint destination,unsigned width,unsigned height,std::uint64_t clamp) {
+    const unsigned wms=clamp&3u,wmt=(clamp>>2)&3u;
+    const unsigned x0=wms==2?(clamp>>4)&1023u:0,x1=wms==2?((clamp>>14)&1023u)+1:width;
+    const unsigned y0=wmt==2?(clamp>>24)&1023u:0,y1=wmt==2?((clamp>>34)&1023u)+1:height;
+    if(x0>=x1 || y0>=y1 || x1>width || y1>height || !image_rect_covered(image,x0,y0,x1-x0,y1-y0))return false;
+    const auto* frame=image.framebuffer?find_scene_target(image.base/32u):nullptr;
+    const GLuint source=image.framebuffer?(frame&&frame->ready?frame->color_texture:0):image.object;
+    if(!source || !g_active_texture)return false;
+    struct Segment{unsigned lo,hi;float source_lo,source_hi;};
+    std::array<Segment,3> xs{},ys{};unsigned nx=0,ny=0;
+    const auto segments=[](auto& out,unsigned& count,unsigned extent,unsigned low,unsigned high){
+        if(low)out[count++]={0,low,float(low)+.5f,float(low)+.5f};
+        out[count++]={low,high,float(low),float(high)};
+        if(high<extent)out[count++]={high,extent,float(high)-.5f,float(high)-.5f};
+    };
+    segments(xs,nx,width,x0,x1);segments(ys,ny,height,y0,y1);
+    GLint read=0,draw=0,old_active=0;glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING,&read);glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING,&draw);
+    glGetIntegerv(GL_ACTIVE_TEXTURE,&old_active);glPushAttrib(GL_ALL_ATTRIB_BITS);
+    g_active_texture(GL_TEXTURE1);glDisable(GL_TEXTURE_2D);g_active_texture(GL_TEXTURE0);
+    glEnable(GL_TEXTURE_2D);glBindTexture(GL_TEXTURE_2D,source);
+    GLint min_filter=0,mag_filter=0;glGetTexParameteriv(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,&min_filter);glGetTexParameteriv(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,&mag_filter);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    GLuint fbo=0;g_gen_framebuffers(1,&fbo);g_bind_framebuffer(GL_FRAMEBUFFER,fbo);
+    g_framebuffer_texture_2d(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,destination,0);
+    const bool complete=fbo&&g_check_framebuffer_status(GL_FRAMEBUFFER)==GL_FRAMEBUFFER_COMPLETE;
+    if(complete){
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);glViewport(0,0,width,height);
+        glDisable(GL_DEPTH_TEST);glDisable(GL_BLEND);glDisable(GL_ALPHA_TEST);glDisable(GL_SCISSOR_TEST);
+        glDisable(GL_FOG);glDisable(GL_STENCIL_TEST);glDisable(GL_CULL_FACE);glDisable(GL_DITHER);glDisable(GL_COLOR_LOGIC_OP);
+        glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
+        glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_COMBINE);
+        glTexEnvi(GL_TEXTURE_ENV,GL_COMBINE_RGB,GL_REPLACE);glTexEnvi(GL_TEXTURE_ENV,GL_SOURCE0_RGB,GL_TEXTURE);
+        glTexEnvi(GL_TEXTURE_ENV,GL_OPERAND0_RGB,GL_SRC_COLOR);glTexEnvi(GL_TEXTURE_ENV,GL_RGB_SCALE,1);
+        glTexEnvi(GL_TEXTURE_ENV,GL_COMBINE_ALPHA,GL_REPLACE);glTexEnvi(GL_TEXTURE_ENV,GL_SOURCE0_ALPHA,GL_TEXTURE);
+        glTexEnvi(GL_TEXTURE_ENV,GL_OPERAND0_ALPHA,GL_SRC_ALPHA);glTexEnvi(GL_TEXTURE_ENV,GL_ALPHA_SCALE,image.framebuffer?1:2);
+        glMatrixMode(GL_PROJECTION);glPushMatrix();glLoadIdentity();glOrtho(0,width,0,height,-1,1);
+        glMatrixMode(GL_MODELVIEW);glPushMatrix();glLoadIdentity();
+        glBegin(GL_QUADS);
+        for(unsigned yi=0;yi<ny;++yi)for(unsigned xi=0;xi<nx;++xi){const auto& x=xs[xi];const auto& y=ys[yi];
+            const float u0=x.source_lo/image.width,u1=x.source_hi/image.width;
+            const float v0=image.framebuffer?1-y.source_lo/image.height:y.source_lo/image.height;
+            const float v1=image.framebuffer?1-y.source_hi/image.height:y.source_hi/image.height;
+            glTexCoord2f(u0,v0);glVertex2i(x.lo,y.lo);glTexCoord2f(u1,v0);glVertex2i(x.hi,y.lo);
+            glTexCoord2f(u1,v1);glVertex2i(x.hi,y.hi);glTexCoord2f(u0,v1);glVertex2i(x.lo,y.hi);
+        }
+        glEnd();glPopMatrix();glMatrixMode(GL_PROJECTION);glPopMatrix();glMatrixMode(GL_MODELVIEW);
+    }
+    glBindTexture(GL_TEXTURE_2D,source);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,min_filter);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,mag_filter);
+    const bool copied=!image_error("materialize GPU virtual region-clamp view");
+    g_bind_framebuffer(GL_READ_FRAMEBUFFER,read);g_bind_framebuffer(GL_DRAW_FRAMEBUFFER,draw);glPopAttrib();g_active_texture(old_active);
+    if(fbo)g_delete_framebuffers(1,&fbo);gl_state_invalidate();return complete&&copied&&!image_error("restore virtual region-clamp view");
+}
+
 bool allocate_image_texture(GLuint& object, std::uint32_t width, std::uint32_t height) {
     glGenTextures(1,&object); if (!object) return false;
     glBindTexture(GL_TEXTURE_2D,object);
@@ -1121,7 +1082,8 @@ std::uint32_t ct32_offset(unsigned x,unsigned y) {
     return block[y/8][x/8]*256+((y&7)/2)*64+word[y&1][x&7]*4;
 }
 bool indexed_image_view(const NativeImage& image,GLuint destination,std::uint32_t psm,
-                        std::uint32_t tbw,std::uint32_t width,std::uint32_t height,unsigned csa) {
+                        std::uint32_t tbw,std::uint32_t width,std::uint32_t height,unsigned csa,
+                        unsigned cpsm,std::uint64_t texa) {
     if(image.framebuffer || !g_native_clut || !g_active_texture)return false;
     const unsigned entries=(psm==gs::PSMT8 || psm==gs::PSMT8H)?256:16;
     const unsigned palette_offset=(csa&15u)*16;
@@ -1156,6 +1118,7 @@ bool indexed_image_view(const NativeImage& image,GLuint destination,std::uint32_
     using One=void(APIENTRY*)(GLuint);using Get=void(APIENTRY*)(GLuint,GLenum,GLint*);
     using CreateProgram=GLuint(APIENTRY*)();using Attach=void(APIENTRY*)(GLuint,GLuint);
     using Location=GLint(APIENTRY*)(GLuint,const char*);using Uniform=void(APIENTRY*)(GLint,GLint);
+    using UniformArray=void(APIENTRY*)(GLint,GLsizei,const GLint*);
     const auto create=reinterpret_cast<CreateShader>(wglGetProcAddress("glCreateShader"));
     const auto source=reinterpret_cast<ShaderSource>(wglGetProcAddress("glShaderSource"));
     const auto compile=reinterpret_cast<One>(wglGetProcAddress("glCompileShader"));
@@ -1169,18 +1132,24 @@ bool indexed_image_view(const NativeImage& image,GLuint destination,std::uint32_
     const auto delete_program=reinterpret_cast<One>(wglGetProcAddress("glDeleteProgram"));
     const auto location=reinterpret_cast<Location>(wglGetProcAddress("glGetUniformLocation"));
     const auto uniform=reinterpret_cast<Uniform>(wglGetProcAddress("glUniform1i"));
-    if(!create||!source||!compile||!get_shader||!create_program||!attach||!link||!get_program||!use||!delete_shader||!delete_program||!location||!uniform)return false;
+    const auto uniform_array=reinterpret_cast<UniformArray>(wglGetProcAddress("glUniform1iv"));
+    if(!create||!source||!compile||!get_shader||!create_program||!attach||!link||!get_program||!use||!delete_shader||!delete_program||!location||!uniform||!uniform_array)return false;
     GLuint shader=create(GL_FRAGMENT_SHADER),program=create_program(),map=0,fbo=0;
     struct Release{GLuint& shader;GLuint& program;GLuint& map;GLuint& fbo;One ds,dp;
         ~Release(){if(shader)ds(shader);if(program)dp(program);if(map)glDeleteTextures(1,&map);if(fbo)g_delete_framebuffers(1,&fbo);}}
         release{shader,program,map,fbo,delete_shader,delete_program};
     if(!shader||!program)return false;
     const char* text="#version 120\nuniform sampler2D bytesTexture;uniform sampler2D addressTexture;uniform sampler2D paletteTexture;uniform int paletteOffset;uniform int eightBit;"
+        "uniform int palette16;uniform int paletteHalf[256];uniform int ta0;uniform int ta1;uniform int aem;"
         "void main(){vec4 m=texture2D(addressTexture,gl_TexCoord[0].xy);vec4 b=texture2D(bytesTexture,m.xy);"
         "float v=m.z<0.5?b.r:(m.z<1.5?b.g:(m.z<2.5?b.b:b.a));v=floor(v*255.0+0.5);"
         "if(m.w>0.5)v=floor(v/16.0);else if(m.w> -0.5)v=mod(v,16.0);"
         "v=eightBit!=0?min(floor(v/16.0)*16.0+float(paletteOffset),240.0)+mod(v,16.0):v+float(paletteOffset);"
-        "vec4 c=texture2D(paletteTexture,vec2((v+0.5)/256.0,0.5));c.a=min(1.0,c.a*2.0);gl_FragColor=c;}";
+        "vec4 c=texture2D(paletteTexture,vec2((v+0.5)/256.0,0.5));"
+        "if(palette16!=0){vec2 p=paletteHalf[int(v)]==0?c.rg:c.ba;float word=floor(p.x*255.0+0.5)+floor(p.y*255.0+0.5)*256.0;"
+        "float alpha=word>=32768.0?float(ta1):((aem!=0 && word==0.0)?0.0:float(ta0));"
+        "c=vec4(mod(word,32.0)*8.0,mod(floor(word/32.0),32.0)*8.0,mod(floor(word/1024.0),32.0)*8.0,alpha)/255.0;}"
+        "c.a=min(1.0,c.a*2.0);gl_FragColor=c;}";
     source(shader,1,&text,nullptr);compile(shader);GLint ok=0;get_shader(shader,GL_COMPILE_STATUS,&ok);
     if(!ok){std::fprintf(stderr,"[native-gl-indexed] GLSL byte/palette shader compilation failed\n");return false;}
     attach(program,shader);link(program);get_program(program,GL_LINK_STATUS,&ok);
@@ -1204,6 +1173,10 @@ bool indexed_image_view(const NativeImage& image,GLuint destination,std::uint32_
         glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);use(program);
         uniform(location(program,"bytesTexture"),0);uniform(location(program,"addressTexture"),1);uniform(location(program,"paletteTexture"),2);
         uniform(location(program,"paletteOffset"),palette_offset);uniform(location(program,"eightBit"),entries==256);
+        uniform(location(program,"palette16"),cpsm!=0);
+        uniform_array(location(program,"paletteHalf[0]"),256,g_native_clut_half.data());
+        uniform(location(program,"ta0"),texa&255u);uniform(location(program,"ta1"),(texa>>32)&255u);
+        uniform(location(program,"aem"),(texa>>15)&1u);
         glMatrixMode(GL_PROJECTION);glPushMatrix();glLoadIdentity();glOrtho(0,width,0,height,-1,1);
         glMatrixMode(GL_MODELVIEW);glPushMatrix();glLoadIdentity();
         glBegin(GL_QUADS);glTexCoord2f(0,0);glVertex2i(0,0);glTexCoord2f(1,0);glVertex2i(width,0);
@@ -1237,18 +1210,38 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
         return reject_packet(st, attr, prim_type, count, width_reason + 2, "GS highlight texture functions require two OpenGL texture units");
 
     cache_active_texture(GL_TEXTURE0);
-    const std::uint64_t palette = clut_hash(st) ^ (g_native_clut_serial*0x9E3779B97F4A7C15ull);
+    const std::uint64_t palette = g_native_clut_serial*0x9E3779B97F4A7C15ull;
     // The native texture for this base and palette, if the pool holds it and
     // the guest has not written over it since.
-    const std::uint32_t tex_base = raster::texture_base(st);
+    const std::uint32_t tex_base = static_cast<std::uint32_t>(context.tex0 & 0x3fffu);
     const std::uint32_t tex_psm = static_cast<std::uint32_t>((context.tex0 >> 20) & 0x3Fu);
     const std::uint32_t tex_tbw = static_cast<std::uint32_t>((context.tex0 >> 14) & 0x3Fu);
     NativeImage* image=find_native_image(tex_base);
+    if(!image && tex_base%32u==0 && tex_psm==gs::PSMCT32) {
+        if(auto* frame=find_scene_target(tex_base/32u);frame && frame->ready && frame->fbw==tex_tbw) {
+            try {
+                NativeImage resource;
+                resource.base=tex_base;resource.bw=tex_tbw;resource.psm=gs::PSMCT32;
+                resource.width=kWidth;resource.height=kHeight;resource.framebuffer=true;
+                resource.coverage.push_back({0,0,kWidth,kHeight});resource.serial=++g_image_serial;
+                g_native_images.push_back(std::move(resource));image=&g_native_images.back();
+            } catch(const std::bad_alloc&) {
+                return reject_packet(st,attr,prim_type,count,width_reason+4,"native framebuffer view ownership allocation failed");
+            } catch(const std::length_error&) {
+                return reject_packet(st,attr,prim_type,count,width_reason+4,"native framebuffer view host capacity exceeded");
+            }
+        }
+    }
+    if(!image)
+        return reject_packet(st,attr,prim_type,count,width_reason+4,"texture has no GPU-owned source; CPU VRAM fallback is removed");
     const bool indexed=indexed_psm(tex_psm);
     if((indexed || tex_psm==gs::PSMT4) && !image)
         return reject_packet(st,attr,prim_type,count,width_reason+4,"indexed texture has no exact GPU-owned raw IMAGE source");
-    if(indexed && (((context.tex0>>51)&15u)!=0 || image->framebuffer))
-        return reject_packet(st,attr,prim_type,count,width_reason+4,"native indexed view requires raw CT32 and CPSM32");
+    const unsigned cpsm=(context.tex0>>51)&15u;
+    if(indexed && ((cpsm!=0 && cpsm!=gs::PSMCT16 && cpsm!=gs::PSMCT16S) || image->framebuffer))
+        return reject_packet(st,attr,prim_type,count,width_reason+4,"native indexed view requires raw CT32 and a supported palette format");
+    if(indexed && (cpsm!=g_native_clut_cpsm || (cpsm && (((context.tex0>>56)&31u) || ((context.tex0>>55)&1u)))))
+        return reject_packet(st,attr,prim_type,count,width_reason+4,"native palette format reinterpretation or CPSM16 CSA/CSM2 is unsupported");
     if(indexed && tex_psm!=gs::PSMT8 && tex_psm!=gs::PSMT4 && tex_tbw!=image->bw)
         return reject_packet(st,attr,prim_type,count,width_reason+4,"native high-byte indexed stride reinterpretation is unsupported");
     if(indexed && tex_psm!=gs::PSMT8 && tex_psm!=gs::PSMT8H && bool((context.tex0>>55)&1u)!=g_native_clut_csm2)
@@ -1257,8 +1250,8 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
         return reject_packet(st,attr,prim_type,count,width_reason+4,"texture overlaps owned native IMAGE bytes through an unsupported resource alias");
     if (image && ((!indexed && (tex_psm!=image->psm || tex_tbw!=image->bw)) || !tex_tbw))
         return reject_packet(st,attr,prim_type,count,width_reason+4,"native IMAGE texture format/stride alias is unsupported");
-    if (image && (wms==2 || wmt==2))
-        return reject_packet(st,attr,prim_type,count,width_reason+5,"native IMAGE region-clamp view is not implemented");
+    if (indexed && (wms==2 || wmt==2))
+        return reject_packet(st,attr,prim_type,count,width_reason+5,"indexed region-clamp view is not implemented");
     TextureCache *entry = tex_base == 0xFFFFFFFFu ? nullptr : find_pool_entry(tex_base, tex_psm, tex_tbw, palette);
     if (!entry) {
         for (TextureCache &candidate : g_pool) {
@@ -1295,86 +1288,10 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
     glBindTexture(GL_TEXTURE_2D, entry->object);
     g_glstate.texture = entry->object;
     if (changed) {
-        std::vector<std::uint32_t> rgba;
-        if (image) {
-            width=1u<<((context.tex0>>26)&15u); height=1u<<((context.tex0>>30)&15u);
-            if (!indexed && !image_covered(*image,width,height))
-                return reject_packet(st,attr,prim_type,count,width_reason+4,"native IMAGE texture view contains undefined pixels");
-        } else if (!raster::decode_texture_rgba(st, rgba, width, height))
-            return reject_packet(st, attr, prim_type, count, width_reason + 4, "GS texture pixel format is unsupported by the decoder");
-
-        static const std::string texture_dump_dir = ps2::os::env("PS2_NATIVE_GL_TEXTURE_DUMP_DIR");
-        static const std::uint64_t texture_dump_first_primitive = [] {
-            const std::string value = ps2::os::env("PS2_NATIVE_GL_TEXTURE_DUMP_FIRST_PRIMITIVE");
-            return static_cast<std::uint64_t>(std::strtoull(value.c_str(), nullptr, 10));
-        }();
-        static const std::uint64_t texture_dump_last_primitive = [] {
-            const std::string value = ps2::os::env("PS2_NATIVE_GL_TEXTURE_DUMP_LAST_PRIMITIVE");
-            return static_cast<std::uint64_t>(std::strtoull(value.c_str(), nullptr, 10));
-        }();
-        static unsigned texture_dump_serial = 0;
-        const std::uint64_t primitive_index = g_prims_drawn.load(std::memory_order_relaxed);
-        if (!image && !texture_dump_dir.empty() && primitive_index >= texture_dump_first_primitive &&
-            (texture_dump_last_primitive == 0 || primitive_index <= texture_dump_last_primitive) &&
-            texture_dump_serial < 96) {
-            const unsigned serial = ++texture_dump_serial;
-            const std::uint32_t tpsm = static_cast<std::uint32_t>((context.tex0 >> 20) & 0x3Fu);
-            const std::uint32_t mmin = (tex1 >> 6) & 7u;
-            const std::uint32_t mmag = (tex1 >> 5) & 1u;
-            const std::string path = texture_dump_dir + "/texture_" + std::to_string(serial) + ".ppm";
-            std::ofstream file(path, std::ios::binary);
-            file << "P6\n" << width << " " << height << "\n255\n";
-            for (const std::uint32_t pixel : rgba) {
-                const char rgb[] = {static_cast<char>(pixel), static_cast<char>(pixel >> 8),
-                                    static_cast<char>(pixel >> 16)};
-                file.write(rgb, sizeof(rgb));
-            }
-            // The RGB dump cannot show alpha, and whether the front-end font
-            // has holes is an alpha question. Write the alpha channel as its
-            // own grayscale image and summarise it in the log line.
-            const std::string alpha_path = texture_dump_dir + "/texture_" + std::to_string(serial) + "_alpha.ppm";
-            std::ofstream alpha_file(alpha_path, std::ios::binary);
-            alpha_file << "P6\n" << width << " " << height << "\n255\n";
-            std::uint32_t alpha_hist[256] = {};
-            for (const std::uint32_t pixel : rgba) {
-                const std::uint8_t a = static_cast<std::uint8_t>(pixel >> 24);
-                alpha_hist[a]++;
-                const char gray[] = {static_cast<char>(a), static_cast<char>(a), static_cast<char>(a)};
-                alpha_file.write(gray, sizeof(gray));
-            }
-            std::uint32_t distinct = 0, amin = 255, amax = 0;
-            for (unsigned i = 0; i < 256; ++i) {
-                if (!alpha_hist[i]) continue;
-                distinct++;
-                if (i < amin) amin = i;
-                if (i > amax) amax = i;
-            }
-            const std::uint32_t opaque = alpha_hist[255], transparent = alpha_hist[0];
-            std::fprintf(stderr,
-                         "[native-gl-texture] primitive=%llu dump=%u %s TEX0=%016llX TEX1=%016llX PSM=%u size=%ux%u MMIN=%u MMAG=%u TFX=%u TCC=%u saved=%d alpha distinct=%u min=%u max=%u opaque=%u transparent=%u %s\n",
-                         static_cast<unsigned long long>(primitive_index), serial, path.c_str(),
-                         static_cast<unsigned long long>(context.tex0),
-                         static_cast<unsigned long long>(context.tex1), tpsm, width, height,
-                         mmin, mmag, tfx, static_cast<unsigned>((context.tex0 >> 34) & 1u), file.good() ? 1 : 0,
-                         distinct, amin, amax, opaque, transparent, alpha_path.c_str());
-        }
-
-        const std::uint32_t minu = static_cast<std::uint32_t>(context.clamp >> 4) & 0x3FFu;
-        const std::uint32_t maxu = static_cast<std::uint32_t>(context.clamp >> 14) & 0x3FFu;
-        const std::uint32_t minv = static_cast<std::uint32_t>(context.clamp >> 24) & 0x3FFu;
-        const std::uint32_t maxv = static_cast<std::uint32_t>(context.clamp >> 34) & 0x3FFu;
-        if ((wms == 2 && (minu > maxu || maxu >= width)) || (wmt == 2 && (minv > maxv || maxv >= height)))
-            return reject_packet(st, attr, prim_type, count, width_reason + 5, "GS region clamp bounds fall outside the decoded texture");
-        if (wms == 2 || wmt == 2) {
-            const std::vector<std::uint32_t> source = rgba;
-            for (std::uint32_t y = 0; y < height; ++y) {
-                const std::uint32_t source_y = wmt == 2 ? std::clamp(y, minv, maxv) : y;
-                for (std::uint32_t x = 0; x < width; ++x) {
-                    const std::uint32_t source_x = wms == 2 ? std::clamp(x, minu, maxu) : x;
-                    rgba[static_cast<std::size_t>(y) * width + x] = source[static_cast<std::size_t>(source_y) * width + source_x];
-                }
-            }
-        }
+        width=1u<<((context.tex0>>26)&15u);height=1u<<((context.tex0>>30)&15u);
+        const bool region=wms==2||wmt==2;
+        if(!indexed && !region && !image_covered(*image,width,height))
+            return reject_packet(st,attr,prim_type,count,width_reason+4,"native IMAGE texture view contains undefined pixels");
         if (image) {
             // Materialize exactly this TEX0 view from GPU storage. Raw IMAGE
             // alpha remains unchanged; its CT32 sampling conversion is GPU-only.
@@ -1382,24 +1299,13 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
             if (image_error("allocate native IMAGE view"))
                 return reject_packet(st,attr,prim_type,count,width_reason+4,"native IMAGE texture view allocation failed");
             SceneTarget* source=image->framebuffer?find_scene_target(image->base/32u):nullptr;
-            const bool copied=indexed?indexed_image_view(*image,entry->object,tex_psm,tex_tbw,width,height,(context.tex0>>56)&31u):
+            const bool copied=indexed?indexed_image_view(*image,entry->object,tex_psm,tex_tbw,width,height,(context.tex0>>56)&31u,cpsm,st.texa):
+                region?region_clamp_view(*image,entry->object,width,height,context.clamp):
                 image->framebuffer ? (source && source->ready && copy_framebuffer_image(*source,entry->object,width,height)) :
                 convert_image_view(*image,entry->object,width,height);
             if (!copied)
                 return reject_packet(st,attr,prim_type,count,width_reason+4,"native IMAGE texture view GPU copy failed");
             glBindTexture(GL_TEXTURE_2D,entry->object);
-        } else {
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-        // The GS alpha range is 0..128 with 128 meaning opaque; OpenGL is
-        // 0..255. Uploading the byte unchanged put every texture at half
-        // opacity (128 -> 0.502), which washes out text and UI and makes thin
-        // strokes look broken. Scale it, saturating at opaque.
-        for (std::uint32_t &pixel : rgba) {
-            const std::uint32_t a = (pixel >> 24) & 0xFFu;
-            pixel = (pixel & 0x00FFFFFFu) | (std::min<std::uint32_t>(255u, a * 2u) << 24);
-        }
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, static_cast<GLsizei>(width), static_cast<GLsizei>(height),
-                     0, GL_RGBA, GL_UNSIGNED_BYTE, rgba.data());
         }
         entry->native_image_serial=image ? image->serial : 0;
         entry->tex0 = context.tex0;
@@ -1408,21 +1314,14 @@ bool prepare_texture(const State &st, const Context &context, std::uint64_t attr
         entry->clamp = context.clamp;
         entry->texa = st.texa;
         entry->clut_hash = palette;
-        entry->vram_generation = gs::g_vram_generation;
         entry->width = width;
         entry->height = height;
         entry->valid = true;
         entry->stale = false;
         entry->base = tex_base;
         entry->units = texture_units(width, height);
-        entry->params.psm = tex_psm;
-        entry->params.tbp = tex_base;
-        entry->params.tbw = tex_tbw;
-        entry->params.cpsm = static_cast<std::uint32_t>((context.tex0 >> 51) & 0xFu);
-        entry->params.csa = static_cast<std::uint32_t>((context.tex0 >> 56) & 0x1Fu);
-        entry->params.ta0 = static_cast<std::uint32_t>(st.texa) & 0xFFu;
-        entry->params.aem = (st.texa >> 15) & 1u;
-        entry->params.clut = st.clut;
+        entry->psm = tex_psm;
+        entry->tbw = tex_tbw;
         entry->last_use = ++g_texture_age;
     } else {
         width = entry->width;
@@ -1729,7 +1628,7 @@ bool sync_surface_to_cpu(std::uint32_t fbp) {
 void sync_all_surfaces_to_cpu() {
 #if defined(_WIN32)
     if (!g_enabled || !g_hdc) return;
-    for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
+    for (std::size_t i = 0; i < g_scene_targets.size(); ++i) {
         if (g_scene_targets[i].ready && !g_scene_targets[i].cpu_synced) {
             sync_surface_to_cpu(g_scene_targets[i].fbp);
         }
@@ -1842,7 +1741,8 @@ bool load_clut(std::uint64_t tex0,std::uint64_t texclut) {
     auto fail=[](const char* why){std::fprintf(stderr,"[native-gl-clut] rejected: %s\n",why);return false;};
 #if defined(_WIN32)
     const unsigned psm=(tex0>>20)&63u,cpsm=(tex0>>51)&15u,csm=(tex0>>55)&1u,csa=(tex0>>56)&31u;
-    if(!indexed_psm(psm) || cpsm)return fail("only native indexed CPSM32 palettes are implemented");
+    if(!indexed_psm(psm) || (cpsm!=0 && cpsm!=gs::PSMCT16 && cpsm!=gs::PSMCT16S))return fail("unsupported native indexed palette format");
+    if(cpsm && (csm || csa))return fail("CPSM16 palette load currently requires CSM1 and CSA0");
     if(!enabled() || !g_hdc || !g_hrc ||
        ((wglGetCurrentContext()!=g_hrc || wglGetCurrentDC()!=g_hdc) && !wglMakeCurrent(g_hdc,g_hrc)))return fail("native context unavailable");
     if(image_error("before native CLUT load"))return fail("prior GL error");
@@ -1853,9 +1753,21 @@ bool load_clut(std::uint64_t tex0,std::uint64_t texclut) {
     if(csm && entries==256 && offset)return fail("CSM2 nonzero-CSA eight-bit palette load is unsupported");
     const unsigned first=(!csm && entries==256)?offset:0;
     std::array<std::array<unsigned,2>,256> coordinates{};
+    std::array<GLint,256> halves{};
+    std::array<std::array<unsigned,2>,2048> inverse{};
+    if(cpsm)for(unsigned y=0;y<32;++y)for(unsigned x=0;x<64;++x)inverse[ct32_offset(x,y)/4]={x,y};
     for(unsigned i=first;i<entries;++i){
         unsigned x=0,y=0;
-        if(csm){if((texclut&63u)!=image->bw)return fail("CSM2 palette stride mismatch");x=((texclut>>6)&63u)*16+i;y=(texclut>>12)&1023u;}
+        if(cpsm){
+            // Primary GSClut WriteCLUT_T16_I8_CSM1 shuffle (606..628)
+            // equals this 32-halfword permutation, repeated eight times.
+            // I4 uses its first16 entries (631..638). Both 16/16S start
+            // at the same physical BlockPtr(0,0), without CPU pixel access.
+            static constexpr unsigned order[32]={0,2,8,10,16,18,24,26,4,6,12,14,20,22,28,30,1,3,9,11,17,19,25,27,5,7,13,15,21,23,29,31};
+            const unsigned half=(i&~31u)+order[i&31u];
+            const auto& xy=inverse[half/2];x=xy[0];y=xy[1];halves[i]=half&1;
+        }
+        else if(csm){if((texclut&63u)!=image->bw)return fail("CSM2 palette stride mismatch");x=((texclut>>6)&63u)*16+i;y=(texclut>>12)&1023u;}
         else if(entries==256){const unsigned j=(i&~24u)|((i&8u)<<1)|((i&16u)>>1);x=j&15;y=j>>4;}
         else {x=i&7;y=i>>3;}
         if(!csm && image->bw!=1)return fail("CSM1 palette requires exact one-page-row CT32 stride");
@@ -1870,7 +1782,10 @@ bool load_clut(std::uint64_t tex0,std::uint64_t texclut) {
         if(!blit_image_rect(image->object,replacement,xy[0],xy[1],xy[0]+1,xy[1]+1,slot,0,slot+1,1))return fail("palette GPU load failed");}
     if(g_native_clut)glDeleteTextures(1,&g_native_clut);
     g_native_clut=replacement;replacement=0;
-    for(unsigned i=first;i<entries;++i)g_native_clut_valid[entries==256?i:offset+i]=true;
+    if(cpsm!=g_native_clut_cpsm){g_native_clut_valid.fill(false);g_native_clut_half.fill(0);}
+    for(unsigned i=first;i<entries;++i){const unsigned slot=entries==256?i:offset+i;
+        g_native_clut_valid[slot]=true;g_native_clut_half[slot]=halves[i];}
+    g_native_clut_cpsm=cpsm;
     g_native_clut_csm2=csm!=0;++g_native_clut_serial;gl_state_invalidate();return true;
 #else
     (void)tex0;(void)texclut;return fail("native palette load requires Windows GL");
@@ -1970,38 +1885,11 @@ bool guest_wrote_vram(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
 #if defined(_WIN32)
     if (!g_enabled || !g_hdc || !w || !h) return false;
     if (wglGetCurrentContext() != g_hrc && !wglMakeCurrent(g_hdc, g_hrc)) return false;
-    const std::uint32_t bytes_per_pixel =
-        psm == gs::PSMCT24 ? 3u : (psm == gs::PSMCT16 || psm == gs::PSMCT16S) ? 2u : 4u;
-    const std::uint32_t units = (w * h * bytes_per_pixel + 255u) / 256u + 1u;
-    bool pushed = false;
-    for (TextureCache &entry : g_pool) {
-        if (!entry.valid) continue;
-        if (base + units <= entry.base || base >= entry.base + entry.units) continue;
-        if (entry.base == base && entry.params.psm == psm && entry.params.tbw == bw &&
-            x + w <= entry.width && y + h <= entry.height) {
-            std::vector<std::uint32_t> pixels;
-            if (raster::decode_rect_rgba(entry.params, x, y, w, h, pixels)) {
-                // The GS alpha range is 0..128 with 128 meaning opaque;
-                // OpenGL is 0..255 (the same scaling the full upload uses).
-                for (std::uint32_t &pixel : pixels) {
-                    const std::uint32_t a = (pixel >> 24) & 0xFFu;
-                    pixel = (pixel & 0x00FFFFFFu) | (std::min<std::uint32_t>(255u, a * 2u) << 24);
-                }
-                const GLuint previous = g_glstate.texture;
-                glBindTexture(GL_TEXTURE_2D, entry.object);
-                glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-                glTexSubImage2D(GL_TEXTURE_2D, 0, static_cast<GLint>(x), static_cast<GLint>(y),
-                                static_cast<GLsizei>(w), static_cast<GLsizei>(h), GL_RGBA,
-                                GL_UNSIGNED_BYTE, pixels.data());
-                glBindTexture(GL_TEXTURE_2D, previous);
-                entry.stale = false;
-                pushed = true;
-                continue;
-            }
-        }
-        entry.stale = true;
-    }
-    return pushed;
+    // A CPU reference/snapshot write is not a native GPU upload. It may
+    // invalidate cached views, but cannot repopulate a native resource.
+    (void)psm;(void)bw;(void)x;(void)y;
+    for(auto& entry:g_pool)if(entry.valid && entry.base==base)entry.stale=true;
+    return false;
 #else
     (void)psm; (void)base; (void)bw; (void)x; (void)y; (void)w; (void)h;
     return false;
@@ -2014,8 +1902,7 @@ std::uint32_t active_frame_fbp() {
 
 void clear_surfaces() {
 #if defined(_WIN32)
-    std::fill(std::begin(g_evicted_color), std::end(g_evicted_color), false);
-    for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
+    for (std::size_t i = 0; i < g_scene_targets.size(); ++i) {
         if (g_scene_targets[i].ready && g_scene_targets[i].framebuffer) {
             g_bind_framebuffer(GL_FRAMEBUFFER, g_scene_targets[i].framebuffer);
             clear_bound_scene_target();
@@ -2116,57 +2003,6 @@ double gpu_busy_ms() {
 // quad. Nearest filtering keeps the integer-scaled pixels exact. Restores the
 // fixed-function state the primitive path leaves behind (texture unit, texenv,
 // matrices) so the next submitted primitive sees the same context it expects.
-bool draw_vram_display(const std::uint32_t *rgba, int width, int height,
-                       int output_width, int output_height,
-                       int draw_x, int draw_y, int draw_width, int draw_height) {
-    gl_state_invalidate();
-    GLuint &texture = g_display_upload.object;
-    int &texture_width = g_display_upload.width, &texture_height = g_display_upload.height;
-    if (!texture) {
-        glGenTextures(1, &texture);
-        if (!texture) return false;
-    }
-    if (g_active_texture) g_active_texture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    if (width != texture_width || height != texture_height) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        texture_width = width;
-        texture_height = height;
-    } else {
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, rgba);
-    }
-
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0.0, output_width, output_height, 0.0, -1.0, 1.0);
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_BLEND);
-    glDisable(GL_SCISSOR_TEST);
-    glEnable(GL_TEXTURE_2D);
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f); glVertex2i(draw_x, draw_y);
-    glTexCoord2f(1.0f, 0.0f); glVertex2i(draw_x + draw_width, draw_y);
-    glTexCoord2f(1.0f, 1.0f); glVertex2i(draw_x + draw_width, draw_y + draw_height);
-    glTexCoord2f(0.0f, 1.0f); glVertex2i(draw_x, draw_y + draw_height);
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-    return true;
-}
 
 // Copies a rectangle the guest wrote straight into VRAM onto the native scene
 // surface. A buffer clear and a movie frame both arrive as image transfers
@@ -2284,108 +2120,49 @@ struct DisplayRect {
     bool valid = false;
 };
 
-DisplayRect display_rect(const DisplayRegs &regs, int circuit, std::uint64_t fb, std::uint64_t disp,
-                         bool is_active_target) {
+DisplayRect display_rect(const DisplayRegs &regs, std::uint64_t fb, std::uint64_t disp,
+                         const PresentationLayout* layout=nullptr) {
     DisplayRect rect;
-    rect.dbx = is_active_target ? 0 : static_cast<int>((fb >> 32) & 0x7FFu);
-    rect.dby = is_active_target ? 0 : static_cast<int>((fb >> 43) & 0x7FFu);
+    rect.dbx = static_cast<int>((fb >> 32) & 0x7FFu);
+    rect.dby = static_cast<int>((fb >> 43) & 0x7FFu);
     const int magh = static_cast<int>((disp >> 23) & 0xFu) + 1;
     const int magv = static_cast<int>((disp >> 27) & 3u) + 1;
     const int display_width = (static_cast<int>((disp >> 32) & 0xFFFu) + 1) / magh;
     int height = (static_cast<int>((disp >> 44) & 0x7FFFu) + 1) / magv;
     if ((regs.smode2 & 3u) == 1u && height > 576) height /= 2;
-    // The display registers can describe a wider buffer than the game draws
-    // into. The front end renders inside a 640x448 scissor while DISPFB reads
-    // 832 columns of an 832-pixel-wide buffer; presenting those extra columns
-    // showed 192 pixels the game never drew and forced a 1.538x scale, whose
-    // uneven 1/2/3-pixel doubling is what blurs the text. Clamp the displayed
-    // rectangle to the area the GS scissor actually allows the game to draw.
-    const std::uint64_t scissor = g_state.ctx[circuit].scissor;
-    const int scissor_x0 = static_cast<int>(scissor & 0x7FFu);
-    const int scissor_x1 = static_cast<int>((scissor >> 16) & 0x7FFu);
-    const int scissor_y0 = static_cast<int>((scissor >> 32) & 0x7FFu);
-    const int scissor_y1 = static_cast<int>((scissor >> 48) & 0x7FFu);
-    // An unset scissor reads as (0,0)-(0,0): treat that as "no scissor yet"
-    // instead of a one-pixel picture, which stretched a single pixel across
-    // the whole window at boot and during the movie.
-    const bool scissor_valid = scissor_x1 > scissor_x0 && scissor_y1 > scissor_y0;
-    const int picture_width = scissor_valid ? scissor_x1 - scissor_x0 + 1 : display_width;
-    const int picture_height = scissor_valid ? scissor_y1 - scissor_y0 + 1 : height;
-    const int width = std::min(display_width, picture_width);
-    height = std::min(height, picture_height);
+    // Scanout dimensions belong to DISPLAY, independent of the latest
+    // primitive's target/scissor. DISPFB DBX/DBY are never reset by activity.
+    const int width = display_width;
     rect.width = width;
     rect.height = height;
     rect.display_width = display_width;
     rect.halved_field = (regs.smode2 & 3u) == 3u;
     rect.source_height = rect.halved_field ? (height + 1) / 2 : height;
+    if(layout){
+        if(rect.halved_field || layout->scan_width!=static_cast<unsigned>(display_width) ||
+           layout->scan_height!=static_cast<unsigned>(height))return rect;
+        const int left=std::max(rect.dbx,static_cast<int>(layout->x));
+        const int top=std::max(rect.dby,static_cast<int>(layout->y));
+        const int right=std::min(rect.dbx+rect.width,static_cast<int>(layout->x+layout->width));
+        const int bottom=std::min(rect.dby+rect.source_height,static_cast<int>(layout->y+layout->height));
+        rect.dbx=left;rect.dby=top;rect.width=right-left;rect.height=rect.source_height=bottom-top;
+    }
     rect.valid = width > 0 && height > 0 && rect.dbx >= 0 && rect.dby >= 0 &&
                  rect.dbx + width <= kWidth && rect.dby + rect.source_height <= kHeight;
     return rect;
 }
 
-// The surface the display controller scans out, and whether a movie is
-// playing. DISPFB stays at FBP 0 in MKA's front end while everything is drawn
-// into FRAME_1 (FBP 91), so the surface with the most recent write wins.
-// During front end: Target 91 wins because Target 0 is idle. During movie
-// playback: Target 0 / 140 win because movie quads/transfers update their
-// ticks past the stale front-end target.
-//
-// Movie state is needed before target selection: while a movie plays, the
-// presentation pins one surface (below), so the movie source is looked up first.
-struct PresentTarget {
-    SceneTarget *target = nullptr;
-    SceneTarget *movie_source = nullptr;
-    bool movie_playing = false;
-};
-
-PresentTarget select_present_target(std::uint32_t display_fbp, std::uint32_t active_frame_fbp) {
-    PresentTarget selection;
-    selection.movie_source = find_scene_target(280);
-    SceneTarget *active_target = find_scene_target(active_frame_fbp);
-    SceneTarget *display_target = find_scene_target(display_fbp);
-    const std::uint64_t movie_tick = selection.movie_source ? selection.movie_source->last_write_tick : 0;
-    const std::uint64_t active_tick = active_target ? active_target->last_write_tick : 0;
-    const std::uint64_t display_tick = display_target ? display_target->last_write_tick : 0;
-    selection.movie_playing = (movie_tick > 0 && movie_tick >= active_tick && movie_tick >= display_tick);
-    SceneTarget *target = nullptr;
-    if (active_target && display_target) {
-        if (active_target->last_write_tick == 0 && display_target->last_write_tick == 0) {
-            target = display_target;
-        } else {
-            target = (active_target->last_write_tick >= display_target->last_write_tick)
-                         ? active_target : display_target;
-        }
-    } else if (active_target && active_target->last_write_tick > 0) {
-        target = active_target;
-    } else {
-        target = display_target;
+// DISPLAY identifies the owned resource. No latest-writer, movie-base or
+// implicit allocation can substitute a different surface.
+SceneTarget* select_display_target(std::uint32_t fbp,std::uint32_t bw,std::uint32_t psm) {
+    auto* target=find_scene_target(fbp);
+    if(!target || !target->ready || !bw || target->fbw!=bw ||
+       (psm!=gs::PSMCT32 && psm!=gs::PSMCT24 && psm!=gs::PSMCT16 && psm!=gs::PSMCT16S) ||
+       ((target->last_draw_readback_state.frame>>24)&63u)!=psm) {
+        std::fprintf(stderr,"[native-gl-display] exact DISPLAY framebuffer %u/%u/%u is unavailable or aliases another format/stride\n",fbp,bw,psm);
+        return nullptr;
     }
-    if (!target) target = ensure_scene_target(display_fbp);
-    if (!target || !target->ready) return selection;
-
-    // Pin the presented surface while a movie is playing. The game double-buffers
-    // (FBP 0 and 140) and quads the movie into whichever buffer drew last, so the
-    // tick-based selection above alternates the presented buffer between frames:
-    // one present showed the fresh blit, the next showed the other buffer's quad -
-    // two different sources, which is the shake the 00:40 run measured (blit=NO on
-    // write-presents, blit=YES on the next, targets alternating 0/140). While a
-    // movie surface exists, presentation therefore sticks to the surface that was
-    // selected first, and that surface is refreshed only from complete movie frames
-    // (the quiet-gated blit below, which now reaches every scene target). When no
-    // movie surface exists any more the pin is released and normal selection resumes.
-    static std::uint32_t s_movie_display_fbp = 0xFFFFFFFFu;
-    if (selection.movie_playing) {
-        SceneTarget *pinned = (s_movie_display_fbp != 0xFFFFFFFFu) ? find_scene_target(s_movie_display_fbp) : nullptr;
-        if (!pinned) {
-            s_movie_display_fbp = target->fbp;
-        } else if (pinned != target) {
-            target = pinned;
-        }
-    } else {
-        s_movie_display_fbp = 0xFFFFFFFFu;
-    }
-    selection.target = target;
-    return selection;
+    return target;
 }
 
 #if defined(_WIN32)
@@ -2395,7 +2172,7 @@ bool present_native_image(const NativeImage& image,const DisplayRegs& regs,int c
     if(image.framebuffer || psm!=gs::PSMCT32 || image.bw!=bw || (regs.pmode&3u)==3u) {
         std::fprintf(stderr,"[native-gl-image] unsupported native IMAGE display format/stride/dual-circuit alias\n");return false;
     }
-    const auto rect=display_rect(regs,circuit,fb,disp,false);
+    const auto rect=display_rect(regs,fb,disp);
     if(!rect.valid || !image_rect_covered(image,rect.dbx,rect.dby,rect.width,rect.source_height)) {
         std::fprintf(stderr,"[native-gl-image] selected DISPLAY rectangle contains undefined native IMAGE pixels\n");return false;
     }
@@ -2426,507 +2203,65 @@ bool present_native_image(const NativeImage& image,const DisplayRegs& regs,int c
 }
 #endif
 
+bool configure_presentation_layout(std::uint32_t fbp,std::uint32_t bw,std::uint32_t psm,const PresentationLayout& layout) {
+#if defined(_WIN32)
+    auto* target=select_display_target(fbp,bw,psm);
+    const std::uint64_t right=std::uint64_t(layout.x)+layout.width,bottom=std::uint64_t(layout.y)+layout.height;
+    if(!target || !layout.scan_width || !layout.scan_height || layout.scan_width>kWidth || layout.scan_height>kHeight ||
+       !layout.width || !layout.height || right>std::uint64_t(bw)*64 || right>kWidth || bottom>kHeight){
+        std::fprintf(stderr,"[native-gl-layout] invalid or unowned exact resource layout\n");return false;
+    }
+    target->presentation_layout=layout;return true;
+#else
+    (void)fbp;(void)bw;(void)psm;(void)layout;return false;
+#endif
+}
+
 bool present_frame(const DisplayRegs &regs) {
     gl_state_invalidate();
 #if defined(_WIN32)
-    if (!direct_window() || !g_hdc || !g_hwnd || !g_blit_framebuffer) return false;
-    if (wglGetCurrentContext() != g_hrc || wglGetCurrentDC() != g_hdc) {
-        if (!wglMakeCurrent(g_hdc, g_hrc)) {
-            std::fprintf(stderr, "[native-gl] could not make the SDL WGL context current for presentation\n");
-            return false;
-        }
-    }
-    // Query operations require the same current context as the draw commands.
-    end_frame_timer();
-    poll_frame_timer();
-
-    RECT client{};
-    if (!GetClientRect(g_hwnd, &client)) return false;
-    const int output_width = client.right - client.left;
-    const int output_height = client.bottom - client.top;
-    if (output_width <= 0 || output_height <= 0) return false;
-
-    const int circuit = (regs.pmode & 2u) ? 1 : (regs.pmode & 1u) ? 0 : -1;
-    static std::uint64_t last_dfb0 = 0xFFFFFFFFull, last_dfb1 = 0xFFFFFFFFull;
-    if (regs.dispfb[0] != last_dfb0 || regs.dispfb[1] != last_dfb1) {
-        last_dfb0 = regs.dispfb[0];
-        last_dfb1 = regs.dispfb[1];
-        std::fprintf(stderr, "[native-gl-debug] dispfb change: [0]=%016llX [1]=%016llX pmode=%016llX\n",
-                     static_cast<unsigned long long>(last_dfb0),
-                     static_cast<unsigned long long>(last_dfb1),
-                     static_cast<unsigned long long>(regs.pmode));
-    }
-    if (circuit < 0) {
-        return bind_draw_target(g_active_frame_fbp.load(std::memory_order_relaxed));
-    }
-
-    const std::uint64_t fb = regs.dispfb[circuit], disp = regs.display[circuit];
-    const std::uint32_t display_fbp = static_cast<std::uint32_t>(fb) & 0x1FFu;
-    const std::uint32_t display_fbw = static_cast<std::uint32_t>(fb >> 9) & 0x3Fu;
-    const std::uint32_t display_psm = static_cast<std::uint32_t>(fb >> 15) & 0x1Fu;
-    const std::uint32_t active_frame_fbp = g_active_frame_fbp.load(std::memory_order_relaxed);
-
-    // Target selection:
-    // In normal execution, DISPFB designates the completed frame scanned out to
-    // the display controller. However, in MKA's front end (legal screen, GameSpy,
-    // memory card prompts), DISPFB remains at FBP 0 while all drawing occurs in
-    // FRAME_1 (FBP 91). Target 0 receives no writes after boot, while Target 91
-    // receives tens of thousands of primitives per frame.
-    // By comparing last_write_tick between active_target and display_target,
-    // the target that received the most recent write wins presentation.
-    // During front end: Target 91 wins because Target 0 is idle.
-    // During movie playback: Target 0 / 140 win because movie quads/transfers
-    // update their ticks past the stale front-end target.
-    // Movie state is needed before target selection: while a movie plays, the
-    // presentation pins one surface (below), so the movie source is looked up first.
-    if(const auto* image=find_native_image(display_fbp*32u);image && !image->framebuffer)
+    if(!direct_window() || !g_hdc || !g_hwnd || !g_blit_framebuffer)return false;
+    if((wglGetCurrentContext()!=g_hrc || wglGetCurrentDC()!=g_hdc) && !wglMakeCurrent(g_hdc,g_hrc))return false;
+    end_frame_timer();poll_frame_timer();
+    RECT client{};if(!GetClientRect(g_hwnd,&client))return false;
+    const int output_width=client.right-client.left,output_height=client.bottom-client.top;
+    if(output_width<=0 || output_height<=0)return false;
+    const int circuits=regs.pmode&3u;
+    if(circuits==0){std::fprintf(stderr,"[native-gl-display] no enabled DISPLAY circuit\n");return false;}
+    if(circuits==3){std::fprintf(stderr,"[native-gl-display] dual-circuit composition is unsupported\n");return false;}
+    const int circuit=circuits==2?1:0;
+    const auto fb=regs.dispfb[circuit],disp=regs.display[circuit];
+    const unsigned fbp=fb&511u,bw=(fb>>9)&63u,psm=(fb>>15)&31u;
+    if(const auto* image=find_native_image(fbp*32u);image && !image->framebuffer)
         return present_native_image(*image,regs,circuit,fb,disp,output_width,output_height);
-    const PresentTarget selection = select_present_target(display_fbp, active_frame_fbp);
-    SceneTarget *movie_source = selection.movie_source;
-    const bool movie_playing = selection.movie_playing;
-    SceneTarget *active_target = find_scene_target(active_frame_fbp);
-    SceneTarget *display_target = find_scene_target(display_fbp);
-    SceneTarget *target = selection.target;
-    if (!target || !target->ready) return false;
-
-    static std::uint32_t s_last_logged_target = 0xFFFFFFFFu;
-    if (target->fbp != s_last_logged_target) {
-        s_last_logged_target = target->fbp;
-        std::fprintf(stderr, "[native-gl-target] display_fbp=%u active_fbp=%u selected_target_fbp=%u prim_count=%llu\n",
-                     display_fbp, active_frame_fbp, target->fbp, static_cast<unsigned long long>(target->prim_count));
-        std::fprintf(stderr, "[native-gl-present-debug] disp_fbp=%u act_fbp=%u targets:", display_fbp, active_frame_fbp);
-        for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
-            if (g_scene_targets[i].ready && g_scene_targets[i].fbp != 0xFFFFFFFFu) {
-                std::fprintf(stderr, " [%zu]=(fbp=%u,cnt=%llu,wr=%llu)",
-                             i, g_scene_targets[i].fbp,
-                             static_cast<unsigned long long>(g_scene_targets[i].prim_count),
-                             static_cast<unsigned long long>(g_scene_targets[i].write_count));
-            }
-        }
-        std::fprintf(stderr, "\n");
+    auto* target=select_display_target(fbp,bw,psm);if(!target)return false;
+    const auto rect=display_rect(regs,fb,disp,target->presentation_layout?&*target->presentation_layout:nullptr);
+    if(!rect.valid){std::fprintf(stderr,"[native-gl-display] DISPLAY rectangle exceeds selected framebuffer\n");return false;}
+    if(const auto* image=find_native_image(fbp*32u);image &&
+       !image_rect_covered(*image,rect.dbx,rect.dby,rect.width,rect.source_height)){
+        std::fprintf(stderr,"[native-gl-display] DISPLAY rectangle includes undefined uploaded framebuffer pixels\n");return false;
     }
-
-    const bool is_active_target = (target == active_target && target != display_target);
-    const std::uint32_t target_fbw = (target && target->fbw > 0) ? target->fbw : display_fbw;
-
-    if (target->fbp < 512 && g_evicted_color[target->fbp]) {
-        const int width = std::min(kWidth, static_cast<int>(target_fbw * 64u));
-        std::vector<std::uint32_t> rgba(static_cast<std::size_t>(width) * kHeight);
-        for (int y = 0; y < kHeight; ++y)
-            for (int x = 0; x < width; ++x)
-                rgba[static_cast<std::size_t>(kHeight - 1 - y) * width + x] =
-                    gs::read_pixel(display_psm, target->fbp * 32u, target_fbw, x, y);
-        GLint previous_texture = 0;
-        glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous_texture);
-        glBindTexture(GL_TEXTURE_2D, target->color_texture);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, kHeight, GL_RGBA, GL_UNSIGNED_BYTE, rgba.data());
-        glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(previous_texture));
-        g_evicted_color[target->fbp] = false;
-    }
-
-    const bool movie_existed = (movie_playing && movie_source != target);
-    bool blit_ran = false;
-
-    static std::uint64_t s_last_vram_gen = 0;
-    const std::uint64_t cur_vram_gen = gs::g_vram_generation;
-    const bool vram_gen_changed = (cur_vram_gen != s_last_vram_gen);
-    s_last_vram_gen = cur_vram_gen;
-
-    // A movie is playing: present the movie's own surface instead of leaving the screen on the
-    // game's textured quad, which samples FBP 280 while the decoder is still writing it. The
-    // movie arrives as ~40 strip transfers per frame, so a present inside that burst shows a
-    // half-written frame - that is the flicker (22:50 run: the old prim/write gate never fired,
-    // blit 0 of 16,691, and 8,328 of those presents landed on a VRAM write in progress). The
-    // blit therefore only runs while FBP 280 is QUIET (no VRAM write since the previous present,
-    // which means the frame's strips are all in): between complete frames the presented target
-    // keeps the last blit, so the screen holds a whole frame instead of alternating clean/torn.
-    // If the writes never quiet down, blit anyway after 8 presents rather than freeze the movie.
-    static std::uint64_t s_movie_changed_run = 0;
-    static bool s_movie_shown = false;
-    if (movie_existed) {
-        s_movie_changed_run = vram_gen_changed ? s_movie_changed_run + 1 : 0;
-        // The first present of a movie blits even when not quiet (a single
-        // possibly-torn frame beats a black surface), then the quiet gate
-        // takes over.
-        if (s_movie_changed_run == 0 || s_movie_changed_run >= 8 || !s_movie_shown) {
-            // Dedicated movie surface first: it is the only content that
-            // cannot alternate with the game's own quad, which keeps drawing
-            // into the scene targets every frame (see ensure_movie_fbo).
-            const bool have_movie_fbo = ensure_movie_fbo();
-            g_bind_framebuffer(GL_READ_FRAMEBUFFER, movie_source->framebuffer);
-            if (have_movie_fbo) {
-                g_bind_framebuffer(GL_DRAW_FRAMEBUFFER, g_movie_fbo);
-                g_blit_framebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-                s_movie_shown = true;
-            }
-            // Then refresh EVERY scene target so buffer alternation after the
-            // pin releases also carries the same complete frame. cpu_synced is
-            // cleared because the CPU-side copy of each blitted surface is now
-            // stale - the next reuse must read the new content back first
-            // (ensure_scene_target already syncs an unsynced target before
-            // recycling it).
-            int blitted = 0;
-            for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
-                SceneTarget &other = g_scene_targets[i];
-                if (!other.ready || other.fbp == 0xFFFFFFFFu || &other == movie_source) continue;
-                g_bind_framebuffer(GL_DRAW_FRAMEBUFFER, other.framebuffer);
-                g_blit_framebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-                other.write_count = movie_source->write_count;
-                other.last_write_tick = movie_source->last_write_tick;
-                other.cpu_synced = false;
-                ++blitted;
-            }
-            blit_ran = true;
-            std::fprintf(stderr, "[native-gl] sampled offscreen target FBP=%u into %d scene targets + movie surface=%d (presented FBP=%u)\n",
-                         movie_source->fbp, blitted, have_movie_fbo ? 1 : 0, target->fbp);
-        }
-    } else {
-        s_movie_shown = false;
-    }
-
-    if (movie_existed) {
-        ps2::census::movie_present(blit_ran, true);
-        // Every present is logged unless PS2_TRACE_MOVIE_PRESENT says otherwise: this line is the
-        // flicker evidence, and sampling it used to hide exactly the frames that matter.
-        // 0 = off, N = every Nth present, unset = every present.
-        static const std::uint64_t movie_every = [] {
-            const char *value = std::getenv("PS2_TRACE_MOVIE_PRESENT");
-            return (value && *value) ? std::strtoull(value, nullptr, 10) : 1ull;
-        }();
-        static std::uint64_t s_movie_log_counter = 0;
-        if (movie_every && (++s_movie_log_counter % movie_every == 0)) {
-            std::fprintf(stderr,
-                         "[native-gl-movie-present #%llu] target_fbp=%u (prims=%llu, writes=%llu, tick=%llu) "
-                         "movie280_writes=%llu blit=%s vram_gen_changed=%d vram_gen=%llu\n",
-                         static_cast<unsigned long long>(s_movie_log_counter), target->fbp,
-                         static_cast<unsigned long long>(target->prim_count),
-                         static_cast<unsigned long long>(target->write_count),
-                         static_cast<unsigned long long>(target->last_write_tick),
-                         static_cast<unsigned long long>(movie_source ? movie_source->write_count : 0),
-                         blit_ran ? "YES" : "NO",
-                         vram_gen_changed ? 1 : 0,
-                         static_cast<unsigned long long>(cur_vram_gen));
-        }
-    }
-
-    // During a movie the dedicated surface is the only content that cannot
-    // alternate: the game's quad keeps overwriting the scene targets, so
-    // presenting those alternated quad content with the blit (the shake).
-    const bool present_movie = movie_existed && s_movie_shown && g_movie_fbo_ready;
-    g_bind_framebuffer(GL_READ_FRAMEBUFFER, present_movie ? g_movie_fbo : target->framebuffer);
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
-    g_bind_framebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    glDrawBuffer(GL_BACK);
-    glViewport(0, 0, output_width, output_height);
-    glDisable(GL_SCISSOR_TEST);
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE);
-    glDisable(GL_BLEND);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    const DisplayRect rect = display_rect(regs, circuit, fb, disp, is_active_target);
-    const int dbx = rect.dbx, dby = rect.dby;
-    const int width = rect.width, height = rect.height;
-    const int display_width = rect.display_width;
-    const bool halved_field = rect.halved_field;
-    const int source_height = rect.source_height;
-    const int active_frame_width = g_active_frame_width.load(std::memory_order_relaxed);
-    // FRAME.FBW is the actual draw surface pitch in 64-pixel units. The
-    // current direct FBO captures that surface's geometry, not empty columns
-    // implied by a wider DISPLAY.DW. Keep DISPLAY.DW as the fallback before
-    // the first accepted primitive and whenever the active surface is wider.
-    const bool display_is_primitive_surface = display_fbp == active_frame_fbp;
-    if (width <= 0 || height <= 0 || dbx < 0 || dby < 0 || dbx + width > kWidth || dby + source_height > kHeight) {
-        static bool warned = false;
-        if (!warned) {
-            warned = true;
-            std::fprintf(stderr, "[native-gl] GS display rectangle is outside the direct scene target: x=%d y=%d w=%d h=%d field_h=%d\n",
-                         dbx, dby, width, height, source_height);
-        }
-        // This presentation already failed. A failed best-effort restore is
-        // also a failure; the next primitive must bind its own target again.
-        (void)bind_draw_target(active_frame_fbp);
-        return false;
-    }
-
-    // The display buffer is scanned out of VRAM, so the pipeline that last
-    // wrote that surface decides what the screen shows. A guest write (image
-    // transfer or local copy) means the picture lives in VRAM and never
-    // reached the primitive scene target: that is the movie and still-image
-    // path. A primitive write means the scene target holds it. Anything else
-    // (the display buffer only mirrors what the game rendered) keeps using
-    // the scene target, which is what the front end needs.
-    bool guest_owned = false;
-    std::uint64_t surface_generation = 0;
-    const bool owner_known = gs::surface_owner(display_fbp * 32u, guest_owned, surface_generation);
-    const bool present_from_vram = owner_known && guest_owned;
-    std::size_t write_count = 0;
-    const gs::GuestWrite *writes = gs::guest_writes(write_count);
-    const gs::GuestWrite *display_write = nullptr;
-    for (std::size_t i = 0; i < write_count; ++i) {
-        const gs::GuestWrite &write = writes[i];
-        if (write.psm != display_psm || write.base != display_fbp * 32u) continue;
-        const int write_x = static_cast<int>(write.x), write_y = static_cast<int>(write.y);
-        if (write_x >= dbx + display_width || dbx >= write_x + static_cast<int>(write.w)) continue;
-        if (write_y >= dby + source_height || dby >= write_y + static_cast<int>(write.h)) continue;
-        if (!display_write || write.generation > display_write->generation) display_write = &write;
-    }
-
-    static int last_present_source = -1;
-    static std::vector<std::uint32_t> vram_pixels;
-    bool presented_from_vram = false;
-    if (present_from_vram) {
-        vram_pixels.resize(static_cast<std::size_t>(width) * source_height);
-        if (gs::read_display_rgba(display_psm, display_fbp, display_fbw, static_cast<std::uint32_t>(dbx),
-                                  static_cast<std::uint32_t>(dby), static_cast<std::uint32_t>(width),
-                                  static_cast<std::uint32_t>(source_height), halved_field, vram_pixels.data()))
-            presented_from_vram = true;
-    }
-    if (present_from_vram && !presented_from_vram) {
-        static bool warned_vram = false;
-        if (!warned_vram) {
-            warned_vram = true;
-            std::fprintf(stderr, "[native-gl] cannot present DISPFB from VRAM: pixel format %u is unsupported; using the scene target\n",
-                         display_psm);
-        }
-    }
-
-    const double fit = std::min(static_cast<double>(output_width) / width,
-                                static_cast<double>(output_height) / height);
-    // Never upscale by a fractional factor. 1.05x, 1.5x or 1.71x nearest
-    // drops some source columns and doubles others, which reads as missing
-    // vertical pixel columns and sliced glyphs and borders. An integer step
-    // keeps every source column; below 1x the window is smaller than the
-    // picture and the only honest choice is to shrink it.
-    const double scale = fit >= 1.0 ? std::floor(fit) : fit;
-    const int draw_width = std::max(1, static_cast<int>(std::lround(width * scale)));
-    const int draw_height = std::max(1, static_cast<int>(std::lround(height * scale)));
-    const int draw_x = (output_width - draw_width) / 2;
-    const int draw_y = (output_height - draw_height) / 2;
-    const int source_y0 = kHeight - dby - source_height;
-    const int source_y1 = kHeight - dby;
-    if (presented_from_vram) {
-        draw_vram_display(vram_pixels.data(), width, source_height, output_width, output_height,
-                          draw_x, draw_y, draw_width, draw_height);
-    } else {
-        g_blit_framebuffer(dbx, source_y0, dbx + width, source_y1,
-                           draw_x, draw_y, draw_x + draw_width, draw_y + draw_height,
-                           GL_COLOR_BUFFER_BIT, GL_NEAREST);
-    }
-    const int present_source = presented_from_vram ? 1 : 0;
-    static std::uint32_t last_present_fbp = 0xFFFFFFFFu;
-    static std::uint32_t last_present_psm = 0xFFFFFFFFu;
-    static int last_present_width = -1;
-    if (present_source != last_present_source || display_fbp != last_present_fbp ||
-        display_psm != last_present_psm || width != last_present_width) {
-        last_present_source = present_source;
-        last_present_fbp = display_fbp;
-        last_present_psm = display_psm;
-        last_present_width = width;
-        std::fprintf(stderr,
-                     "[native-gl] present source: %s %dx%d DISPFB FBP=%u PSM=%u FBW=%u DBX=%d DBY=%d, scene FBP=%u width=%d same_surface=%d owner=%s gen=%llu, write=%s, scale=%.3f (%s) -> %d,%d %dx%d\n",
-                     presented_from_vram ? "vram" : "scene", width, source_height, display_fbp, display_psm,
-                     display_fbw, dbx, dby, active_frame_fbp, active_frame_width,
-                     display_is_primitive_surface ? 1 : 0,
-                     owner_known ? (guest_owned ? "guest" : "primitive") : "unknown",
-                     static_cast<unsigned long long>(surface_generation),
-                     display_write ? "display" : "none", scale,
-                     fit >= 1.0 ? "integer" : "fit", draw_x, draw_y, draw_width, draw_height);
-        if (display_write)
-            std::fprintf(stderr, "[native-gl] guest write on the display surface: psm=%u base=%u rect=%u,%u %ux%u generation=%llu\n",
-                         display_write->psm, display_write->base, display_write->x, display_write->y,
-                         display_write->w, display_write->h,
-                         static_cast<unsigned long long>(display_write->generation));
-    }
-    static const bool diagnose_present = [] {
-        const std::string value = ps2::os::env("PS2_NATIVE_GL_DIAGNOSTICS");
-        return !value.empty() && value != "0" && value != "off" && value != "false";
-    }();
-    static const unsigned diagnostics_every = [] {
-        const std::string value = ps2::os::env("PS2_NATIVE_GL_DIAGNOSTIC_EVERY");
-        const long interval = std::strtol(value.c_str(), nullptr, 10);
-        return interval > 0 ? static_cast<unsigned>(interval) : 0u;
-    }();
-    static const unsigned diagnostic_dump_present = [] {
-        const std::string value = ps2::os::env("PS2_NATIVE_GL_DIAGNOSTIC_DUMP_PRESENT");
-        const long present = std::strtol(value.c_str(), nullptr, 10);
-        return present > 0 ? static_cast<unsigned>(present) : 0u;
-    }();
-    static const std::string diagnostic_dump_prefix = ps2::os::env("PS2_NATIVE_GL_DIAGNOSTIC_DUMP_PREFIX");
-    static const unsigned diagnostic_dump_every = [] {
-        const std::string value = ps2::os::env("PS2_NATIVE_GL_DIAGNOSTIC_DUMP_EVERY");
-        const long interval = std::strtol(value.c_str(), nullptr, 10);
-        return interval > 0 ? static_cast<unsigned>(interval) : 0u;
-    }();
-    static unsigned present_serial = 0;
-    const unsigned present_index = ++present_serial;
-    static unsigned diagnostic_frames = 0;
-    const bool dump_this_present = diagnostic_dump_present != 0 &&
-        diagnostic_dump_present == present_index && !diagnostic_dump_prefix.empty();
-    // A rolling dump records the presented back buffer every N presents. It
-    // shows what the window actually displays without touching the user's
-    // screen, so a movie frame can be inspected without disturbing a run.
-    const bool dump_rolling = diagnostic_dump_every != 0 && !diagnostic_dump_prefix.empty() &&
-        present_index % diagnostic_dump_every == 0;
-    const bool sample_present = dump_this_present || dump_rolling || (diagnose_present &&
-        (diagnostics_every ? (present_index % diagnostics_every == 0) : diagnostic_frames < 8));
-    if (sample_present) {
-        const unsigned diagnostic_frame = ++diagnostic_frames;
-        g_bind_framebuffer(GL_READ_FRAMEBUFFER, target->framebuffer);
-        glReadBuffer(GL_COLOR_ATTACHMENT0);
-        const GLenum blit_error = glGetError();
-
-        // A successful packet submission and valid display-register rectangle
-        // do not prove that the source target contains pixels. Sample the whole
-        // scene target, the selected GS crop, and the just-blitted back buffer.
-        glReadPixels(0, 0, kWidth, kHeight, GL_RGBA, GL_UNSIGNED_BYTE, g_readback.data());
-        const GLenum scene_read_error = glGetError();
-        std::uint64_t scene_nonblack = 0, crop_nonblack = 0, crop_gold = 0;
-        int scene_x0 = kWidth, scene_y0 = kHeight, scene_x1 = -1, scene_y1 = -1;
-        int crop_gold_x0 = kWidth, crop_gold_x1 = -1;
-        for (int y = 0; y < kHeight; ++y) {
-            for (int x = 0; x < kWidth; ++x) {
-                const std::size_t at = (static_cast<std::size_t>(y) * kWidth + x) * 4;
-                if ((g_readback[at] | g_readback[at + 1] | g_readback[at + 2]) == 0) continue;
-                ++scene_nonblack;
-                scene_x0 = std::min(scene_x0, x);
-                scene_y0 = std::min(scene_y0, y);
-                scene_x1 = std::max(scene_x1, x);
-                scene_y1 = std::max(scene_y1, y);
-                const bool inside_crop = x >= dbx && x < dbx + width && y >= source_y0 && y < source_y1;
-                if (inside_crop)
-                    ++crop_nonblack;
-                const unsigned red = g_readback[at], green = g_readback[at + 1], blue = g_readback[at + 2];
-                if (inside_crop && red > 90u && red * 100u > green * 112u && green * 100u > blue * 120u) {
-                    ++crop_gold;
-                    crop_gold_x0 = std::min(crop_gold_x0, x);
-                    crop_gold_x1 = std::max(crop_gold_x1, x);
-                }
-            }
-        }
-
-        g_bind_framebuffer(GL_READ_FRAMEBUFFER, 0);
-        glReadBuffer(GL_BACK);
-        std::vector<std::uint8_t> output_pixels(static_cast<std::size_t>(draw_width) * draw_height * 4);
-        glReadPixels(draw_x, draw_y, draw_width, draw_height, GL_RGBA, GL_UNSIGNED_BYTE, output_pixels.data());
-        const GLenum output_read_error = glGetError();
-        std::uint64_t output_nonblack = 0, output_gold = 0;
-        int output_gold_x0 = output_width, output_gold_x1 = -1;
-        for (int y = 0; y < draw_height; ++y) {
-            for (int x = 0; x < draw_width; ++x) {
-                const std::size_t at = (static_cast<std::size_t>(y) * draw_width + x) * 4;
-                const unsigned red = output_pixels[at], green = output_pixels[at + 1], blue = output_pixels[at + 2];
-                if ((red | green | blue) != 0) ++output_nonblack;
-                if (red > 90u && red * 100u > green * 112u && green * 100u > blue * 120u) {
-                    ++output_gold;
-                    output_gold_x0 = std::min(output_gold_x0, draw_x + x);
-                    output_gold_x1 = std::max(output_gold_x1, draw_x + x);
-                }
-            }
-        }
-
-        if (dump_this_present) {
-            const auto write_header = [](std::ofstream &file, int width_px, int height_px) {
-                file << "P6\n" << width_px << " " << height_px << "\n255\n";
-                return static_cast<bool>(file);
-            };
-            const std::string scene_path = diagnostic_dump_prefix + "_scene.ppm";
-            const std::string crop_path = diagnostic_dump_prefix + "_crop.ppm";
-            const std::string output_path = diagnostic_dump_prefix + "_present.ppm";
-            bool saved = true;
-            {
-                std::ofstream file(scene_path, std::ios::binary);
-                saved = saved && write_header(file, kWidth, kHeight);
-                for (int y = kHeight - 1; saved && y >= 0; --y) {
-                    for (int x = 0; x < kWidth; ++x) {
-                        const std::size_t at = (static_cast<std::size_t>(y) * kWidth + x) * 4;
-                        const char rgb[] = {static_cast<char>(g_readback[at]), static_cast<char>(g_readback[at + 1]),
-                                            static_cast<char>(g_readback[at + 2])};
-                        file.write(rgb, sizeof(rgb));
-                    }
-                    saved = static_cast<bool>(file);
-                }
-            }
-            {
-                std::ofstream file(crop_path, std::ios::binary);
-                saved = saved && write_header(file, width, source_height);
-                for (int y = source_y1 - 1; saved && y >= source_y0; --y) {
-                    for (int x = dbx; x < dbx + width; ++x) {
-                        const std::size_t at = (static_cast<std::size_t>(y) * kWidth + x) * 4;
-                        const char rgb[] = {static_cast<char>(g_readback[at]), static_cast<char>(g_readback[at + 1]),
-                                            static_cast<char>(g_readback[at + 2])};
-                        file.write(rgb, sizeof(rgb));
-                    }
-                    saved = static_cast<bool>(file);
-                }
-            }
-            {
-                std::ofstream file(output_path, std::ios::binary);
-                saved = saved && write_header(file, draw_width, draw_height);
-                for (int y = draw_height - 1; saved && y >= 0; --y) {
-                    for (int x = 0; x < draw_width; ++x) {
-                        const std::size_t at = (static_cast<std::size_t>(y) * draw_width + x) * 4;
-                        const char rgb[] = {static_cast<char>(output_pixels[at]), static_cast<char>(output_pixels[at + 1]),
-                                            static_cast<char>(output_pixels[at + 2])};
-                        file.write(rgb, sizeof(rgb));
-                    }
-                    saved = static_cast<bool>(file);
-                }
-            }
-            std::fprintf(stderr, "[native-gl-diag] present=%u PPM dump %s (%s, %s, %s)\n",
-                         present_index, saved ? "saved" : "failed", scene_path.c_str(), crop_path.c_str(), output_path.c_str());
-        }
-
-        if (dump_rolling) {
-            const std::string path = diagnostic_dump_prefix + "_present_" + std::to_string(present_index) + ".ppm";
-            std::ofstream file(path, std::ios::binary);
-            file << "P6\n" << draw_width << " " << draw_height << "\n255\n";
-            for (int y = draw_height - 1; file && y >= 0; --y) {
-                for (int x = 0; x < draw_width; ++x) {
-                    const std::size_t at = (static_cast<std::size_t>(y) * draw_width + x) * 4;
-                    const char rgb[] = {static_cast<char>(output_pixels[at]), static_cast<char>(output_pixels[at + 1]),
-                                        static_cast<char>(output_pixels[at + 2])};
-                    file.write(rgb, sizeof rgb);
-                }
-            }
-            std::fprintf(stderr, "[native-gl-diag] present=%u rolling PPM dump %s\n", present_index, path.c_str());
-        }
-
-        const std::uint32_t accepted = static_cast<std::uint32_t>(g_prims_drawn.load(std::memory_order_relaxed));
-        const std::uint64_t frame0 = g_state.ctx[0].frame, frame1 = g_state.ctx[1].frame;
-        const std::uint64_t xyoffset0 = g_state.ctx[0].xyoffset, xyoffset1 = g_state.ctx[1].xyoffset;
-        const std::uint64_t scissor0 = g_state.ctx[0].scissor, scissor1 = g_state.ctx[1].scissor;
-        std::fprintf(stderr,
-                     "[native-gl-diag] present=%u sample=%u accepted_primitives=%u pmode=%016llX smode2=%016llX dispfb=%016llX display=%016llX frame0=%016llX frame1=%016llX xyoffset0=%016llX xyoffset1=%016llX scissor0=%016llX scissor1=%016llX dx=%u dy=%u crop=%d,%d %dx%d dest=%d,%d %dx%d scene_nonblack=%llu crop_nonblack=%llu scene_bounds=%d,%d-%d,%d crop_gold=%llu crop_gold_x=%d..%d output_nonblack=%llu output_gold=%llu output_gold_x=%d..%d gl_errors=%04X/%04X/%04X\n",
-                     present_index, diagnostic_frame, accepted, static_cast<unsigned long long>(regs.pmode),
-                     static_cast<unsigned long long>(regs.smode2), static_cast<unsigned long long>(fb),
-                     static_cast<unsigned long long>(disp), static_cast<unsigned long long>(frame0),
-                     static_cast<unsigned long long>(frame1), static_cast<unsigned long long>(xyoffset0),
-                     static_cast<unsigned long long>(xyoffset1), static_cast<unsigned long long>(scissor0),
-                     static_cast<unsigned long long>(scissor1), static_cast<unsigned>(disp & 0xFFFu),
-                     static_cast<unsigned>((disp >> 12) & 0x7FFu), dbx, dby, width, source_height,
-                     draw_x, draw_y, draw_width, draw_height,
-                     static_cast<unsigned long long>(scene_nonblack), static_cast<unsigned long long>(crop_nonblack),
-                     scene_x0, scene_y0, scene_x1, scene_y1,
-                     static_cast<unsigned long long>(crop_gold), crop_gold_x0, crop_gold_x1,
-                     static_cast<unsigned long long>(output_nonblack), static_cast<unsigned long long>(output_gold),
-                     output_gold_x0, output_gold_x1, static_cast<unsigned>(blit_error),
-                     static_cast<unsigned>(scene_read_error), static_cast<unsigned>(output_read_error));
-    }
-    static bool reported_direct_rect = false;
-    if (!reported_direct_rect) {
-        reported_direct_rect = true;
-        std::fprintf(stderr, "[native-gl] direct present crop x=%d y=%d %dx%d (DISPLAY width=%d, latest FRAME width=%d FBP=%u, DISPFB FBP=%u) -> client rect %d,%d %dx%d (nearest)\n",
-                     dbx, dby, width, source_height, display_width, active_frame_width,
-                     active_frame_fbp, display_fbp, draw_x, draw_y, draw_width, draw_height);
-    }
-
-    if (!bind_draw_target(active_frame_fbp)) return false;
-    glFlush();
-    return true;
+    if(image_error("before exact framebuffer presentation"))return false;
+    // Preserve the established centered nearest integer scale for scene FBOs.
+    const double fit=std::min(double(output_width)/rect.width,double(output_height)/rect.height);
+    const double scale=fit>=1.0?std::floor(fit):fit;
+    const int draw_width=std::max(1,int(std::round(rect.width*scale)));
+    const int draw_height=std::max(1,int(std::round(rect.height*scale)));
+    const int left=(output_width-draw_width)/2,bottom=(output_height-draw_height)/2;
+    GLint read=0,draw=0;glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING,&read);glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING,&draw);
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
+    g_bind_framebuffer(GL_READ_FRAMEBUFFER,target->framebuffer);g_bind_framebuffer(GL_DRAW_FRAMEBUFFER,0);
+    glReadBuffer(GL_COLOR_ATTACHMENT0);glDrawBuffer(GL_BACK);glDisable(GL_SCISSOR_TEST);
+    glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);glClearColor(0,0,0,1);glClear(GL_COLOR_BUFFER_BIT);
+    g_blit_framebuffer(rect.dbx,kHeight-rect.dby-rect.source_height,rect.dbx+rect.width,kHeight-rect.dby,
+        left,bottom,left+draw_width,bottom+draw_height,GL_COLOR_BUFFER_BIT,GL_NEAREST);
+    const bool copied=!image_error("present exact DISPLAY framebuffer");
+    g_bind_framebuffer(GL_READ_FRAMEBUFFER,read);g_bind_framebuffer(GL_DRAW_FRAMEBUFFER,draw);
+    glPopAttrib();gl_state_invalidate();
+    if(image_error("restore exact framebuffer presentation") || !copied)return false;
+    glFlush();return true;
 #else
-    (void)regs;
-    return false;
+    (void)regs;return false;
 #endif
 }
 
@@ -2938,6 +2273,7 @@ bool read_picture(std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::u
     return read_picture(gs::display_regs(),rgba,width,height);
 }
 bool read_picture(const DisplayRegs& regs,std::vector<std::uint32_t>& rgba,std::uint32_t& width,std::uint32_t& height) {
+    rgba.clear();width=height=0;
 #if defined(_WIN32)
     if (!g_enabled || !g_hdc || !g_hrc) return false;
     const int circuit = (regs.pmode & 2u) ? 1 : (regs.pmode & 1u) ? 0 : -1;
@@ -2946,7 +2282,7 @@ bool read_picture(const DisplayRegs& regs,std::vector<std::uint32_t>& rgba,std::
     const std::uint32_t display_fbp = static_cast<std::uint32_t>(fb) & 0x1FFu;
     if(const auto* image=find_native_image(display_fbp*32u);image && !image->framebuffer) {
         rgba.clear();width=height=0;
-        const auto rect=display_rect(regs,circuit,fb,disp,false);
+        const auto rect=display_rect(regs,fb,disp);
         const auto bw=static_cast<std::uint32_t>((fb>>9)&0x3fu),psm=static_cast<std::uint32_t>((fb>>15)&0x1fu);
         if(psm!=gs::PSMCT32 || image->bw!=bw || (regs.pmode&3u)==3u || !rect.valid ||
            !image_rect_covered(*image,rect.dbx,rect.dby,rect.width,rect.source_height)) {
@@ -2974,85 +2310,35 @@ bool read_picture(const DisplayRegs& regs,std::vector<std::uint32_t>& rgba,std::
             rgba=std::move(pixels);width=rect.width;height=rect.source_height;return true;
         }catch(const std::bad_alloc&){return false;}catch(const std::length_error&){return false;}
     }
-    const std::uint32_t active_frame_fbp = g_active_frame_fbp.load(std::memory_order_relaxed);
-    const PresentTarget selection = select_present_target(display_fbp, active_frame_fbp);
-    SceneTarget *target = selection.target;
-    if (!target || !target->ready) return false;
-    SceneTarget *active_target = find_scene_target(active_frame_fbp);
-    SceneTarget *display_target = find_scene_target(display_fbp);
-    const bool is_active_target = (target == active_target && target != display_target);
-    const DisplayRect rect = display_rect(regs, circuit, fb, disp, is_active_target);
-    if (!rect.valid) return false;
-    // Which surface the capture reads, and how much the game has drawn into it.
-    // Without this the capture cannot be told apart from a stale frame.
-    {
-        std::fprintf(stderr,
-                     "[native-gl] picture capture: display_fbp=%u active_fbp=%u target_fbp=%u prims=%llu writes=%llu tick=%llu rect=%d,%d %dx%d\n",
-                     display_fbp, active_frame_fbp, target->fbp,
-                     static_cast<unsigned long long>(target->prim_count),
-                     static_cast<unsigned long long>(target->write_count),
-                     static_cast<unsigned long long>(target->last_write_tick),
-                     rect.dbx, rect.dby, rect.width, rect.source_height);
+    if((regs.pmode&3u)==3u){std::fprintf(stderr,"[native-gl-display] dual-circuit capture is unsupported\n");return false;}
+    const unsigned bw=(fb>>9)&63u,psm=(fb>>15)&31u;
+    auto* target=select_display_target(display_fbp,bw,psm);if(!target)return false;
+    const auto rect=display_rect(regs,fb,disp,target->presentation_layout?&*target->presentation_layout:nullptr);
+    if(!rect.valid){std::fprintf(stderr,"[native-gl-display] capture rectangle exceeds selected framebuffer\n");return false;}
+    if(const auto* image=find_native_image(display_fbp*32u);image &&
+       !image_rect_covered(*image,rect.dbx,rect.dby,rect.width,rect.source_height)){
+        std::fprintf(stderr,"[native-gl-display] capture includes undefined uploaded framebuffer pixels\n");return false;
     }
-    if (wglGetCurrentContext() != g_hrc && !wglMakeCurrent(g_hdc, g_hrc)) {
-        std::fprintf(stderr, "[native-gl] could not make the WGL context current for the picture capture\n");
-        return false;
-    }
-    // The picture comes from the same framebuffer the window blits, so the
-    // capture shows what the window shows. The native path never writes its
-    // pixels into the CPU VRAM array: reading that array instead showed the
-    // game's texture data, not the game. GL reads bottom-up and the GS scans
-    // out top-down, so the rows are flipped while they are copied.
-    const int source_y0 = kHeight - rect.dby - rect.source_height;
-    static std::vector<std::uint8_t> raw;
-    raw.resize(static_cast<std::size_t>(rect.width) * rect.source_height * 4);
-    while (glGetError() != GL_NO_ERROR) {}
-    g_bind_framebuffer(GL_READ_FRAMEBUFFER, target->framebuffer);
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
-    glReadPixels(rect.dbx, source_y0, rect.width, rect.source_height, GL_RGBA, GL_UNSIGNED_BYTE, raw.data());
-    const GLenum read_error = glGetError();
-    if (read_error != GL_NO_ERROR) {
-        std::fprintf(stderr, "[native-gl] picture capture failed: glReadPixels error 0x%X\n", read_error);
-        return false;
-    }
-    rgba.resize(static_cast<std::size_t>(rect.width) * rect.source_height);
-    for (int y = 0; y < rect.source_height; ++y) {
-        const std::uint8_t *src = raw.data() + static_cast<std::size_t>(rect.source_height - 1 - y) * rect.width * 4;
-        std::uint32_t *dst = rgba.data() + static_cast<std::size_t>(y) * rect.width;
-        for (int x = 0; x < rect.width; ++x) {
-            const std::uint8_t *p = src + static_cast<std::size_t>(x) * 4;
-            dst[x] = static_cast<std::uint32_t>(p[3]) << 24 | static_cast<std::uint32_t>(p[2]) << 16 |
-                     static_cast<std::uint32_t>(p[1]) << 8 | static_cast<std::uint32_t>(p[0]);
+    if((wglGetCurrentContext()!=g_hrc || wglGetCurrentDC()!=g_hdc) && !wglMakeCurrent(g_hdc,g_hrc))return false;
+    if(image_error("before exact framebuffer capture"))return false;
+    try{
+        std::vector<std::uint8_t> raw(std::size_t(rect.width)*rect.source_height*4);
+        std::vector<std::uint32_t> pixels(std::size_t(rect.width)*rect.source_height);
+        GLint read=0,pack=0,read_buffer=0;
+        glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING,&read);glGetIntegerv(GL_PACK_ALIGNMENT,&pack);glGetIntegerv(GL_READ_BUFFER,&read_buffer);
+        g_bind_framebuffer(GL_READ_FRAMEBUFFER,target->framebuffer);glReadBuffer(GL_COLOR_ATTACHMENT0);glPixelStorei(GL_PACK_ALIGNMENT,4);
+        glReadPixels(rect.dbx,kHeight-rect.dby-rect.source_height,rect.width,rect.source_height,GL_RGBA,GL_UNSIGNED_BYTE,raw.data());
+        const bool copied=!image_error("capture exact DISPLAY framebuffer");
+        g_bind_framebuffer(GL_READ_FRAMEBUFFER,read);glReadBuffer(read_buffer);glPixelStorei(GL_PACK_ALIGNMENT,pack);gl_state_invalidate();
+        if(image_error("restore exact framebuffer capture") || !copied)return false;
+        for(int y=0;y<rect.source_height;++y)for(int x=0;x<rect.width;++x){
+            const auto at=(std::size_t(rect.source_height-1-y)*rect.width+x)*4;
+            pixels[std::size_t(y)*rect.width+x]=std::uint32_t(raw[at])|(std::uint32_t(raw[at+1])<<8)|
+                (std::uint32_t(raw[at+2])<<16)|(std::uint32_t(raw[at+3])<<24);
         }
-    }
+        rgba=std::move(pixels);width=rect.width;height=rect.source_height;return true;
+    }catch(const std::bad_alloc&){return false;}catch(const std::length_error&){return false;}
 
-    for (std::size_t i = 0; i < kMaxSceneTargets; ++i) {
-        if (!g_scene_targets[i].ready || g_scene_targets[i].fbp == 0xFFFFFFFFu) continue;
-        std::fprintf(stderr, "[scene-target-census #%zu] fbp=%u prims=%llu writes=%llu tick=%llu\n",
-                     i, g_scene_targets[i].fbp,
-                     static_cast<unsigned long long>(g_scene_targets[i].prim_count),
-                     static_cast<unsigned long long>(g_scene_targets[i].write_count),
-                     static_cast<unsigned long long>(g_scene_targets[i].last_write_tick));
-        std::vector<std::uint8_t> dump_raw(640 * 448 * 4);
-        g_bind_framebuffer(GL_READ_FRAMEBUFFER, g_scene_targets[i].framebuffer);
-        glReadBuffer(GL_COLOR_ATTACHMENT0);
-        glReadPixels(0, kHeight - 448, 640, 448, GL_RGBA, GL_UNSIGNED_BYTE, dump_raw.data());
-        char fname[256];
-        std::snprintf(fname, sizeof(fname), "C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp/build_native_gl_full/dump_target_%u.ppm", g_scene_targets[i].fbp);
-        std::ofstream f(fname, std::ios::binary);
-        if (f.good()) {
-            f << "P6\n640 448\n255\n";
-            for (int y = 0; y < 448; ++y) {
-                const std::uint8_t *row = dump_raw.data() + static_cast<std::size_t>(448 - 1 - y) * 640 * 4;
-                for (int x = 0; x < 640; ++x) {
-                    f.write(reinterpret_cast<const char*>(row + x * 4), 3);
-                }
-            }
-        }
-    }
-    width = static_cast<std::uint32_t>(rect.width);
-    height = static_cast<std::uint32_t>(rect.source_height);
-    return true;
 #else
     (void)regs;
     (void)rgba;
@@ -3099,26 +2385,7 @@ bool submit(const State &st, const Vertex *verts, int count) {
     if (g_direct_window_context) {
         if (!bind_draw_target(active_fbp))
             return reject_packet(st, attr, prim_type, count, 26, "native draw framebuffer could not be created or preserved");
-        if (g_evicted_color[active_fbp]) {
-            // Restore exact stored RGBA for the supported 32-bit path. Other
-            // formats require their own alpha conversion and remain rejected.
-            if (fpsm != gs::PSMCT32)
-                return reject_packet(st, attr, prim_type, count, 25, "evicted framebuffer format cannot be restored yet");
-            SceneTarget *target = find_scene_target(active_fbp);
-            if (!target) return reject_packet(st, attr, prim_type, count, 25, "evicted framebuffer target unavailable");
-            const int width = std::min(kWidth, static_cast<int>(fbw * 64u));
-            std::vector<std::uint32_t> rgba(static_cast<std::size_t>(width) * kHeight);
-            for (int y = 0; y < kHeight; ++y)
-                for (int x = 0; x < width; ++x)
-                    rgba[static_cast<std::size_t>(kHeight - 1 - y) * width + x] =
-                        gs::read_pixel(fpsm, active_fbp * 32u, fbw, x, y);
-            GLint previous_texture = 0;
-            glGetIntegerv(GL_TEXTURE_BINDING_2D, &previous_texture);
-            glBindTexture(GL_TEXTURE_2D, target->color_texture);
-            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, kHeight, GL_RGBA, GL_UNSIGNED_BYTE, rgba.data());
-            glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(previous_texture));
-            g_evicted_color[active_fbp] = false;
-        }
+
     }
     // Build-specific diagnostic snapshot: raw state and vertices, GS memory,
     // and the actual GL destination before this draw (RGBA8, bottom row first).
@@ -3687,7 +2954,6 @@ void shutdown() {
     g_hwnd = nullptr;
     g_owns_context = false;
     g_direct_window_context = false;
-    std::fill(std::begin(g_evicted_color), std::end(g_evicted_color), false);
 #endif
     g_enabled = false;
     g_checked = false;
