@@ -47,7 +47,7 @@ int main(int argc,char** argv){
                 std::uint32_t actual;std::memcpy(&actual,output->rgba.data()+(y*3+x)*4,4);
                 check(actual==instruction_reference(raw,frame.planes[0][y*3+x],frame.planes[1][(y/2)*2+x/2],frame.planes[2][(y/2)*2+x/2]),"nearest2x2 chroma and linear output layout");
             }
-            check(output->timestamp.value==12345&&output->source_pts.value==12000&&output->source_sample_aspect_numerator==14&&output->source_sample_aspect_denominator==15&&output->source_color_space==4,"timing and source aspect/color provenance retained");
+            check(output->conversion_role==role&&output->timestamp.value==12345&&output->source_pts.value==12000&&output->source_sample_aspect_numerator==14&&output->source_sample_aspect_denominator==15&&output->source_color_space==4,"conversion role, timing and source aspect/color provenance retained");
             const auto retained=output->rgba;frame.planes[0].clear();check(output->rgba==retained,"converted output owns pixels");
             check(!convert_movie_yuv420(frame,*table,f)&&f==MovieColorError::invalid_frame,"incomplete plane never produces guessed pixels");
             std::printf("[native-movie-color] table=%u all16777216 YUV triples match original SIMD arithmetic\n",variant);

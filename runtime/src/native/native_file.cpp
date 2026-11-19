@@ -4,6 +4,11 @@
 #include <new>
 #include <stdexcept>
 #include <utility>
+#ifdef _WIN32
+#define NOMINMAX
+#include <windows.h>
+#include <io.h>
+#endif
 
 namespace mka::content {
 namespace {
@@ -35,6 +40,52 @@ bool NativeFile::open(const std::filesystem::path& path, std::error_code& error)
 #endif
     if (!file_) { error = io_error(); return false; }
     return true;
+}
+bool NativeFile::opened_path(std::filesystem::path& out,std::error_code& error)const {
+    out.clear();error.clear();
+    if(!file_){error=std::make_error_code(std::errc::bad_file_descriptor);return false;}
+#ifdef _WIN32
+    static_assert(sizeof(wchar_t)==2);
+    errno=0;const auto descriptor=_fileno(file_);
+    if(descriptor<0){error=io_error();return false;}
+    const auto native=_get_osfhandle(descriptor);
+    if(native==-1||native==-2){error=io_error();return false;}
+    const auto handle=reinterpret_cast<HANDLE>(native);
+    const auto fail=[&](){const auto code=GetLastError();error={int(code?code:ERROR_GEN_FAILURE),std::system_category()};return false;};
+    DWORD capacity=GetFinalPathNameByHandleW(handle,nullptr,0,FILE_NAME_NORMALIZED|VOLUME_NAME_DOS);
+    if(!capacity)return fail();
+    try{
+        std::vector<wchar_t> buffer;
+        for(;;){
+            if(capacity>buffer.max_size()){error=std::make_error_code(std::errc::value_too_large);return false;}
+            buffer.resize(capacity);
+            const DWORD size=GetFinalPathNameByHandleW(handle,buffer.data(),capacity,FILE_NAME_NORMALIZED|VOLUME_NAME_DOS);
+            if(!size)return fail();
+            if(size>=capacity){
+                if(size==MAXDWORD){error=std::make_error_code(std::errc::value_too_large);return false;}
+                capacity=size+1;continue;
+            }
+            if(buffer[size]!=L'\0'){error=std::make_error_code(std::errc::invalid_argument);return false;}
+            for(DWORD i=0;i<size;++i){const auto c=std::uint16_t(buffer[i]);
+                if(!c){error=std::make_error_code(std::errc::invalid_argument);return false;}
+                if(c>=0xd800&&c<=0xdbff){
+                    if(i+1>=size||std::uint16_t(buffer[i+1])<0xdc00||std::uint16_t(buffer[i+1])>0xdfff){error=std::make_error_code(std::errc::illegal_byte_sequence);return false;}
+                    ++i;
+                }else if(c>=0xdc00&&c<=0xdfff){error=std::make_error_code(std::errc::illegal_byte_sequence);return false;}
+            }
+            // Preserve the OS-returned extended namespace. This path is a
+            // handle observation, not a new fopen/canonical lookup.
+            std::filesystem::path observed(std::wstring(buffer.data(),size));
+            if(!observed.is_absolute()){error=std::make_error_code(std::errc::invalid_argument);return false;}
+            out=std::move(observed);return true;
+        }
+    }catch(const std::bad_alloc&){error=std::make_error_code(std::errc::not_enough_memory);}
+     catch(const std::length_error&){error=std::make_error_code(std::errc::value_too_large);}
+     catch(const std::filesystem::filesystem_error& e){error=e.code();}
+    return false;
+#else
+    error=std::make_error_code(std::errc::operation_not_supported);return false;
+#endif
 }
 bool NativeFile::position(std::uint64_t& out, std::error_code& error) {
     out = 0; error.clear();

@@ -60,7 +60,7 @@ std::optional<MovieRgbaFrame> convert_movie_yuv420(const MovieVideoFrame& input,
     if(!w||!h||h>SIZE_MAX/w||ch>SIZE_MAX/cw||w*h>SIZE_MAX/4||
        input.planes[0].size()!=w*h||input.planes[1].size()!=cw*ch||input.planes[2].size()!=cw*ch){f=MovieColorError::invalid_frame;return std::nullopt;}
     try{
-        MovieRgbaFrame output;output.width=input.width;output.height=input.height;output.source_pts=input.source_pts;output.timestamp=input.timestamp;
+        MovieRgbaFrame output;output.conversion_role=table.role();output.width=input.width;output.height=input.height;output.source_pts=input.source_pts;output.timestamp=input.timestamp;
         output.source_sample_aspect_numerator=input.sample_aspect_numerator;output.source_sample_aspect_denominator=input.sample_aspect_denominator;
         output.source_color_range=input.color_range;output.source_color_space=input.color_space;output.source_color_primaries=input.color_primaries;output.source_color_transfer=input.color_transfer;
         output.rgba.resize(w*h*4);

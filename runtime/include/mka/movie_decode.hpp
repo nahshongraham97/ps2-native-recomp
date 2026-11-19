@@ -1,4 +1,5 @@
 #pragma once
+#include "mka/movie_assets.hpp"
 #include <array>
 #include <cstdint>
 #include <filesystem>
@@ -39,6 +40,7 @@ struct MovieDecodeFailure {
     MovieDecodeError kind=MovieDecodeError::none;
     std::int32_t native_code=0;
     std::string operation;
+    MovieAssetFailure asset_failure;
 };
 enum class MovieReadStatus {frame,end,error};
 struct MovieReadResult {
@@ -58,10 +60,15 @@ public:
     NativeMovieDecoder& operator=(const NativeMovieDecoder&)=delete;
     static std::unique_ptr<NativeMovieDecoder> open(const std::filesystem::path& library_directory,
         const std::filesystem::path& asset,MovieDecodeFailure&);
+    // Consumes the already-open catalog asset and decodes the complete movie
+    // from byte zero, regardless of prior reads/seeks/EOF. Never reopens its path.
+    static std::unique_ptr<NativeMovieDecoder> open(const std::filesystem::path& library_directory,
+        NativeMovieAsset&& asset,MovieDecodeFailure&);
     MovieReadResult next(MovieDecodeFailure&);
 private:
     struct Impl;
     explicit NativeMovieDecoder(std::unique_ptr<Impl>);
+    static std::unique_ptr<NativeMovieDecoder> finish_open(std::unique_ptr<Impl>,MovieDecodeFailure&);
     std::unique_ptr<Impl> impl_;
 };
 } // namespace mka::video

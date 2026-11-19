@@ -1,4 +1,5 @@
 #pragma once
+#include "mka/video_frame.hpp"
 #include <array>
 #include <cstddef>
 #include <cstdint>
@@ -28,13 +29,6 @@ struct FinalResampleDecode {FinalResample plan;VideoError error=VideoError::none
 // Unknown passes/registers are rejected; this never executes or skips them.
 FinalResampleDecode decode_final_resample(const std::uint8_t*,std::size_t);
 
-class VideoFrameResource {
-public:
-    virtual ~VideoFrameResource()=default;
-    virtual std::uint64_t identity()const noexcept=0;
-    virtual std::uint32_t width()const noexcept=0;
-    virtual std::uint32_t height()const noexcept=0;
-};
 struct NativeVideoSource {
     // Explicit adapter association; these serialized fields are compatibility
     // data, never allocation addresses or limits on native resource ownership.

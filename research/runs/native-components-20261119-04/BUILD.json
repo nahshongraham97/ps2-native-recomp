@@ -1,0 +1,45 @@
+{
+  "scope": "standalone native component worktree checkpoint; not accepted gameplay or clean whole-game binary",
+  "created_utc": "2026-11-19T08:27:48.664300+00:00",
+  "parent_head": "9b4c00147830529cedbf5e63ade200e7c7710061",
+  "fork_base": "2793ff101878cd101cbc72f0550f8ded8de87438",
+  "verification_sha256": "6882ec027813b123654576ee36588a353a0b438eb4ea69af0cd69033806ab9e4",
+  "authored_source_sha256": {
+    "CMakeLists.txt": "119e90a232856df58a344be97b024d43f71ed7ac2d92870eb355277f41aa4b24",
+    "runtime/include/mka/movie_color.hpp": "d8fa93e9ae34b6d4604ac02348ac9e1356f66aed1cdb2207a0f1e75e999a2ab4",
+    "runtime/include/mka/movie_decode.hpp": "5cce752b39f90a5f99797cc69aea8c6cb61b6d0d183c0c25251d361a5cb0969d",
+    "runtime/include/mka/native_file.hpp": "6a63bb9f829e7d704cba94d219261050738c07ee002789c061ce3e7971836a61",
+    "runtime/include/mka/video_producer.hpp": "525b9464fbb8263de943fee4f8f8c7b4656d7827ba25fafb9bbc890b195edecd",
+    "runtime/src/gs/native_gl_backend.cpp": "38d9da24a9cee37ce92ad6a33b11e3ed1e7005e96e15b1c2c7eda7b0b8eb3332",
+    "runtime/src/gs/native_gl_backend.hpp": "b3881f413ffad16d2ceaab4164b6ca1e28680182479ccb64a131765bbd516c34",
+    "runtime/src/native/movie_color.cpp": "7408cde8199d16c5f6ed59c3c9dc31b7ee179c20a797adb126a2232bbeda302b",
+    "runtime/src/native/movie_decode.cpp": "9aeec2fe41fe07f2372d64646b47b1e81c7f6daee53e03be9641e0ed9eecd83f",
+    "runtime/src/native/native_file.cpp": "6c3f1f041c98fcdbec32c63f9777b3a793c6bfa0086315d14365d41bbee39f0e",
+    "tests/test_movie_color.cpp": "c996def0a52217cfdd3bf32db6a2d3abae7c8bce2595b0f336f5357f1f6f273d",
+    "tests/test_movie_decode.cpp": "ac77d82761586911c9a1558f13eadcb0cb1b658a24b9a409a170131ff81f3ced",
+    "runtime/include/mka/movie_assets.hpp": "777f2383e4b25db43ee5b6ffbff96cd179baa82dd4acf6d317b88b9b945624da",
+    "runtime/include/mka/movie_gl_device.hpp": "f327d83133ece6b24fd57bbeaf3ab4d817a506a2c9b3c43414dea181c0b0bf4b",
+    "runtime/include/mka/movie_gpu.hpp": "3bac034761e82728797e14feba8f59ae4f17cf2d68571fa5d1a724f251280639",
+    "runtime/include/mka/video_frame.hpp": "014ea11ef73fe7abaeff4432fd5a60d13c121ca777f140c265c3494c2e2df8e9",
+    "runtime/src/native/movie_assets.cpp": "ed9615e6f6da43c6bd0e5674c1ff0a1e7d7df806f06459dcfdfffcb41dab3c4f",
+    "runtime/src/native/movie_gl_device.cpp": "e9bbc076e9a8d8f6567929220f008c361d0a431c8ca5b14a551144dd7150126a",
+    "runtime/src/native/movie_gpu.cpp": "1490f71ebb6fecd705ac7a0084dea0266dd832ed00a64602eb95b244263caa03",
+    "tests/test_movie_assets.cpp": "1077de6e9f4421061780aa719acd8fe5adebd0d9cf252db694545d4b0c8f0fea",
+    "tests/test_movie_gl_device.cpp": "0138188fb8a6f1b05aedeabd757c64566eac06962c2aae4ce6cc709f5410f3c2",
+    "tests/test_movie_gpu.cpp": "9c414dcfb090b303a00824dce5e326a497b62b2176114ea0dda6364f6ef8cddd",
+    "tests/test_movie_gpu_layout.cpp": "488a50abe3aaa6ba32875049a0f4428b46bb99488e365d641d7418f89d4b9250"
+  },
+  "preserved_preexisting_source_sha256": {
+    "runtime/src/iop/mcserv.cpp": "ad2731a341409d87ffe1b171e99f28d7cedc5004aaf375a565d78673333414fb",
+    "runtime/src/iop/msl_native.cpp": "756cfb3867ebb440223ddb8ab6fe441ad6f9f54d35e4119a8342f8dd9063bb23"
+  },
+  "build_cache_sha256": "8958f198bd503bc0b5600f7d7f75d4a0c205074fcc91d1b832873f5bc8a4f8aa",
+  "limits": [
+    "No game executable launched",
+    "No physical controller or audible/device-output comparison",
+    "Windows symlink creation denied; explicitly NOT_EXERCISED",
+    "Case-sensitive-directory containment needs actual directory-handle identity proof",
+    "Movie timing/skip/fade/drain/native audio binding remains source/integration work",
+    "GPU drivers and update settings were not changed by project work"
+  ]
+}

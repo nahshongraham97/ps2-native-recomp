@@ -90,6 +90,9 @@ else()
         runtime/src/native/playback_owner.cpp
         runtime/src/native/video_producer.cpp
         runtime/src/native/video_gpu_adapter.cpp
+        runtime/src/native/movie_color.cpp
+        runtime/src/native/movie_gpu.cpp
+        runtime/src/native/movie_assets.cpp
         runtime/src/native/haptics.cpp
         runtime/src/native/retail_haptics_bridge.cpp
         runtime/src/native/controller_input.cpp
@@ -166,7 +169,7 @@ if(PS2_IOP_AOT_MODULES)
 endif()
 if(WIN32)
     # The optional WGL backend is compiled independently of WebGPU.
-    target_link_libraries(ps2runtime ${PS2_API} opengl32)
+    target_link_libraries(ps2runtime ${PS2_API} opengl32 bcrypt)
 endif()
 
 set(PS2_WGPU_DIR "${CMAKE_SOURCE_DIR}/third_party/wgpu-native" CACHE PATH "wgpu-native release folder")
@@ -415,6 +418,20 @@ if(PS2_GENERATED)
         runtime/src/native/movie_color.cpp)
     target_include_directories(test_native_movie_color PRIVATE runtime/include)
     target_link_libraries(test_native_movie_color PRIVATE bcrypt)
+    add_executable(test_native_movie_gpu_layout EXCLUDE_FROM_ALL tests/test_movie_gpu_layout.cpp
+        runtime/src/native/movie_gpu.cpp)
+    target_include_directories(test_native_movie_gpu_layout PRIVATE runtime/include)
+    add_executable(test_native_movie_gpu EXCLUDE_FROM_ALL tests/test_movie_gpu.cpp)
+    target_include_directories(test_native_movie_gpu PRIVATE runtime/include runtime/src)
+    target_link_libraries(test_native_movie_gpu PRIVATE ps2runtime opengl32)
+    add_executable(test_native_movie_assets EXCLUDE_FROM_ALL tests/test_movie_assets.cpp
+        runtime/src/native/movie_assets.cpp runtime/src/native/native_file.cpp)
+    target_include_directories(test_native_movie_assets PRIVATE runtime/include)
+    add_executable(test_native_movie_gl_device EXCLUDE_FROM_ALL tests/test_movie_gl_device.cpp
+        runtime/src/native/movie_gl_device.cpp runtime/src/native/movie_gpu.cpp
+        runtime/src/native/movie_color.cpp)
+    target_include_directories(test_native_movie_gl_device PRIVATE runtime/include)
+    target_link_libraries(test_native_movie_gl_device PRIVATE opengl32 gdi32 user32 bcrypt)
     # Pinned public headers for the existing native FFmpeg7.1.4 DLL ABI.
     # This standalone component does not silently replace missing SDK support.
     set(MKA_NATIVE_MEDIA_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/../../../../dependencies/native-media/ffmpeg-7.1.4" CACHE PATH "Pinned FFmpeg7.1.4 public header root")
@@ -426,7 +443,7 @@ if(PS2_GENERATED)
         file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers/libavutil/avconfig.h"
             "#ifndef AVUTIL_AVCONFIG_H\n#define AVUTIL_AVCONFIG_H\n#define AV_HAVE_BIGENDIAN 0\n#define AV_HAVE_FAST_UNALIGNED 1\n#endif\n")
         add_executable(test_native_movie_decode EXCLUDE_FROM_ALL tests/test_movie_decode.cpp
-            runtime/src/native/movie_decode.cpp runtime/src/native/native_file.cpp)
+            runtime/src/native/movie_decode.cpp runtime/src/native/movie_assets.cpp runtime/src/native/native_file.cpp)
         target_include_directories(test_native_movie_decode PRIVATE runtime/include
             "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers" "${MKA_NATIVE_MEDIA_HEADERS}")
         target_link_libraries(test_native_movie_decode PRIVATE bcrypt)

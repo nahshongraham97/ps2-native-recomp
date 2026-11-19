@@ -29,7 +29,8 @@ void save(const std::filesystem::path& path,const void* data,std::size_t size){
 int main(int argc,char** argv){
     using namespace mka::video;
     try{
-        check(argc==4,"usage: test_native_movie_decode library_directory movie_directory NEW_output_directory");
+        const bool catalog_mode=argc==5&&std::string(argv[4])=="--catalog";
+        check(argc==4||catalog_mode,"usage: test_native_movie_decode library_directory movie_directory NEW_output_directory [--catalog]");
         const auto libs=std::filesystem::u8path(argv[1]),assets=std::filesystem::u8path(argv[2]),out=std::filesystem::u8path(argv[3]);
         check(std::filesystem::create_directories(out),"output must be new");
         MovieDecodeFailure f;
@@ -37,9 +38,37 @@ int main(int argc,char** argv){
         check(!NativeMovieDecoder::open(libs,out/"absent-movie.sfd",f)&&f.kind==MovieDecodeError::file_io,"missing movie fails through NativeFile");
         const char invalid[]="this is not a movie";save(out/"invalid.sfd",invalid,sizeof(invalid));
         check(!NativeMovieDecoder::open(libs,out/"invalid.sfd",f)&&f.kind==MovieDecodeError::demux,"invalid media never becomes successful empty movie");
+        // Invalid media through an already-open asset must retain the same strict demux failure.
+        MovieAssetFailure af;
+        auto invalid_store=NativeMovieAssetStore::create(out,{{"invalid.sfd","invalid.sfd"}},af);
+        check(bool(invalid_store),"invalid media catalog fixture");
+        auto invalid_asset=invalid_store->open("invalid.sfd",af);check(bool(invalid_asset),"opened invalid media fixture");
+        check(!NativeMovieDecoder::open(libs,std::move(*invalid_asset),f)&&f.kind==MovieDecodeError::demux,"catalog media validation not bypassed");
+        check(!invalid_asset->valid(),"failed decoder consumed owned asset without reopen");
+        check(!NativeMovieDecoder::open(libs,std::move(*invalid_asset),f)&&f.kind==MovieDecodeError::invalid_owner&&f.asset_failure.kind==MovieAssetError::moved_asset,"moved asset fails by exact owner error");
         for(const auto& expected:native_movie_oracle::assets){
             const auto* name=expected.name;
-            auto decoder=NativeMovieDecoder::open(libs,assets/name,f);
+            std::unique_ptr<NativeMovieDecoder> decoder;
+            if(catalog_mode){
+                auto catalog=NativeMovieAssetStore::create(assets,{{name,name}},af);check(bool(catalog),"explicit verified test catalog");
+                auto opened=catalog->open(name,af);check(bool(opened),"catalog NativeFile already opened");
+                if(std::string(name)=="LOGON.SFD"){
+                    std::array<std::uint8_t,64> header{};
+                    const auto inspected=opened->read(header.data(),header.size(),af);
+                    check(inspected.bytes==header.size()&&!inspected.error&&opened->position(af)==header.size(),"inspected asset retains nonzero cursor before decoder handoff");
+                }else if(std::string(name)=="TITLEN.SFD"){
+                    check(opened->seek(1,mka::content::SeekOrigin::end,af),"asset positioned past EOF before decoder handoff");
+                    std::uint8_t byte=0;const auto end=opened->read(&byte,1,af);
+                    check(end.bytes==0&&end.eof&&!end.error,"asset EOF flag set before decoder handoff");
+                }else{
+                    check(opened->seek(12345,mka::content::SeekOrigin::begin,af)&&opened->position(af)==12345,"asset explicitly sought before decoder handoff");
+                }
+                // Reader lifetime is independent of the catalog and consumes its existing file.
+                catalog.reset();decoder=NativeMovieDecoder::open(libs,std::move(*opened),f);
+                check(!opened->valid(),"decoder consumed existing asset");
+                if(decoder)check(!NativeMovieDecoder::open(libs,std::move(*opened),f)&&f.kind==MovieDecodeError::invalid_owner,"moved real asset rejected");
+                // The negative owner check above must not affect the independent decoder.
+            }else decoder=NativeMovieDecoder::open(libs,assets/name,f);
             if(!decoder){std::fprintf(stderr,"open %s failed kind=%d native=%d operation=%s\n",name,int(f.kind),f.native_code,f.operation.c_str());return 1;}
             NativeMovieDecoder moved(std::move(*decoder));
             check(decoder->next(f).status==MovieReadStatus::error&&f.kind==MovieDecodeError::invalid_owner,"moved decoder cannot access old ownership");

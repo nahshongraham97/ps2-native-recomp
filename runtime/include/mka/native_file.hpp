@@ -21,6 +21,11 @@ public:
     bool open(const std::filesystem::path&, std::error_code&);
     void close() noexcept;
     bool is_open() const noexcept { return file_ != nullptr; }
+    // Queries this already opened handle, without reopening or moving its
+    // cursor. Windows returns the normalized extended DOS/UNC path, retaining
+    // its prefix (do not strip it and reopen under different path semantics).
+    // Other hosts explicitly report operation_not_supported. Failure clears out.
+    bool opened_path(std::filesystem::path& out, std::error_code&) const;
     bool position(std::uint64_t&, std::error_code&);
     bool length(std::uint64_t&, std::error_code&);
     bool seek(std::int64_t offset, SeekOrigin, std::error_code&);
