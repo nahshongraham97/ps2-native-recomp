@@ -1,4 +1,5 @@
 #include "mka/movie_pcm_binding.hpp"
+#include "mka/movie_pcm_downmix.hpp"
 #include <bit>
 #include <new>
 #include <stdexcept>
@@ -18,6 +19,8 @@ bool layout_valid(const MovieAudioChannelLayout& l) noexcept {
 std::unique_ptr<NativeMoviePcmBinding> NativeMoviePcmBinding::create(MoviePcmBindingConfiguration c,MoviePcmBindingFailure& f) noexcept {
     f={};
     if(c.mode!=MoviePcmMixMode::generic_stateless){fail(f,MoviePcmBindingError::unsupported_profile,"explicit generic stateless PCM binding");return {};}
+    if(c.plane_policy!=MoviePcmPlanePolicy::preserve&&c.plane_policy!=MoviePcmPlanePolicy::downmix_duplicate){fail(f,MoviePcmBindingError::unsupported_profile,"explicit decoded plane policy required");return {};}
+    if(c.plane_policy==MoviePcmPlanePolicy::downmix_duplicate&&c.source_layout.channel_count!=2){fail(f,MoviePcmBindingError::unsupported_profile,"downmix business route requires its two source planes");return {};}
     if(c.source_key.empty()||!layout_valid(c.source_layout)||!c.source_sample_rate||!c.client_format.sample_rate||!c.client_format.channels||!c.client_format.channel_mask||std::popcount(c.client_format.channel_mask)!=c.client_format.channels||c.routes.size()!=c.source_layout.channel_count){fail(f,MoviePcmBindingError::invalid_configuration,"explicit key/layout/rates/client mask/routes");return {};}
     if(c.source_sample_rate!=c.client_format.sample_rate){fail(f,MoviePcmBindingError::source_rate_mismatch,"equal source/client sample rate");return {};}
     for(const auto& route:c.routes)if(route.output0==route.output1||route.output0>=c.client_format.channels||route.output1>=c.client_format.channels){fail(f,MoviePcmBindingError::invalid_configuration,"distinct explicit output pair in client extent");return {};}
@@ -32,6 +35,16 @@ bool NativeMoviePcmBinding::prepare_audio(const MovieAudioFrame& a,std::int32_t 
     if(a.channels.empty()||a.channels.front().empty())return fail(f,MoviePcmBindingError::invalid_frame,"nonempty original PCM frame");
     for(const auto& p:a.channels)if(p.size()!=a.channels.front().size())return fail(f,MoviePcmBindingError::invalid_frame,"equal original plane frame counts");
     try {
+        // Decoder/predictor equivalence and mode selection are caller admission
+        // obligations. This transform consumes signed16 decoded samples only;
+        // it never mixes back into decoder history or touches encoded markers.
+        std::optional<MoviePcmMixResult> transformed;
+        const auto* source=&a.channels;
+        if(config_.plane_policy==MoviePcmPlanePolicy::downmix_duplicate){
+            transformed=movie_pcm_downmix_duplicate(a.channels[0],a.channels[1],f.pcm);
+            if(!transformed)return fail(f,MoviePcmBindingError::pcm,"bound decoded plane downmix");
+            source=&transformed->outputs;
+        }
         MoviePcmMixProfile matrix{MoviePcmMixMode::generic_stateless,config_.client_format.channels,{}};
         matrix.coefficients.resize(config_.routes.size());
         std::vector<std::span<const std::int16_t>> planes;planes.reserve(a.channels.size());
@@ -41,7 +54,7 @@ bool NativeMoviePcmBinding::prepare_audio(const MovieAudioFrame& a,std::int32_t 
             auto pair=movie_pcm_pan(gain.table_value,route.explicit_pan,f.pcm);
             if(!pair)return fail(f,MoviePcmBindingError::pcm,"bound gain/pan coefficients");
             auto& row=matrix.coefficients[i];row.assign(config_.client_format.channels,0);
-            row[route.output0]=(*pair)[0];row[route.output1]=(*pair)[1];planes.emplace_back(a.channels[i]);
+            row[route.output0]=(*pair)[0];row[route.output1]=(*pair)[1];planes.emplace_back((*source)[i]);
         }
         auto mixed=mix_movie_pcm(matrix,planes,f.pcm);
         if(!mixed)return fail(f,MoviePcmBindingError::pcm,"bound original PCM mix");

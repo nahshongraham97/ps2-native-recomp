@@ -1,0 +1,22 @@
+{
+  "status": "PASS_COMPLETE_SIGNED16_DOWNMIX_SUM_CLASSES",
+  "sum_classes": 131071,
+  "first_sum": -65536,
+  "last_sum": 65534,
+  "canonical_trace_sha256": "afb3d1dcf13bc2c57d72037154688c235798849a805237e5c00bc330f3f1bd7d",
+  "executable_sha256": "800d21e7df7f4650d5676c443cb0988556c64897112c899d86b84d7328ff9a5e",
+  "execution_receipt_sha256": "198cdbafeb8e6807357e0693bee407e3742370f9d257b7b3c1abcf0b35e64bd0",
+  "checker_sha256": "2d8aae30a062c566052348356cc038349e5f5ef3eeb235d5a4d100a66bf27912",
+  "movier_sha256": "3a34e3838042aa0bde0ce687a4e61e128b2eb965e60e65c34713e0a73891adb8",
+  "source_contract_sha256": "d6769f0e56e12c31c09421ee78e0b1aabc212b4c21f407caf6331a42af1bb13c",
+  "original_words_sha256": "429a0d8424f82fe24c65597c779b41fb3ae06287a989a41d8fcd066781d07473",
+  "negative_checks": {
+    "trace_mutations": 17,
+    "metadata_mutations": 11,
+    "json_mutations": 3
+  },
+  "limits": [
+    "All signed16 pairs reduce algebraically to these sum classes; not literal 2^32-pair execution",
+    "Conditional source software arithmetic only; no decoder mode/profile/speaker admission or playback"
+  ]
+}

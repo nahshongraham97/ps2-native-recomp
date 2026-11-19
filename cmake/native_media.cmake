@@ -39,6 +39,7 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/movie_playback_adapters.cpp
     runtime/src/native/movie_audio_progress.cpp
     runtime/src/native/movie_pcm_mix.cpp
+    runtime/src/native/movie_pcm_downmix.cpp
     runtime/src/native/movie_pcm_binding.cpp
     runtime/src/native/movie_kernel_policies.cpp
     runtime/src/native/movie_catalog.cpp
@@ -225,3 +226,9 @@ add_executable(test_native_movie_pcm_binding EXCLUDE_FROM_ALL tests/test_movie_p
 target_link_libraries(test_native_movie_pcm_binding PRIVATE mka_native_media)
 add_executable(test_native_movie_kernel_policies EXCLUDE_FROM_ALL tests/test_movie_kernel_policies.cpp)
 target_link_libraries(test_native_movie_kernel_policies PRIVATE mka_native_media)
+
+# Plain decoded PCM business transform only; no runtime/media/device link.
+add_executable(test_native_movie_pcm_downmix EXCLUDE_FROM_ALL
+    tests/test_movie_pcm_downmix.cpp runtime/src/native/movie_pcm_downmix.cpp)
+target_include_directories(test_native_movie_pcm_downmix PRIVATE runtime/include)
+target_compile_features(test_native_movie_pcm_downmix PRIVATE cxx_std_20)

@@ -5,6 +5,9 @@
 #include <memory>
 #include <utility>
 namespace mka::video {
+// Explicit already-decoded source-plane business policy. Unspecified never
+// infers the retail decoder selector, stereo or a native speaker assignment.
+enum class MoviePcmPlanePolicy { unspecified, preserve, downmix_duplicate };
 struct MoviePcmPlaneRoute {
     std::int64_t metadata_tenth_db,explicit_pan;
     std::size_t output0,output1;
@@ -17,6 +20,7 @@ struct MoviePcmBindingConfiguration {
     std::uint32_t source_sample_rate=0;
     sound::AudioStreamFormat client_format;
     MoviePcmMixMode mode=MoviePcmMixMode::unspecified;
+    MoviePcmPlanePolicy plane_policy=MoviePcmPlanePolicy::unspecified;
     std::vector<MoviePcmPlaneRoute> routes;
 };
 enum class MoviePcmBindingError { none,invalid_owner,invalid_configuration,unsupported_profile,source_layout_mismatch,source_rate_mismatch,invalid_frame,allocation,host_capacity,pcm };
