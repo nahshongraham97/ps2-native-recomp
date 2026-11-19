@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-movie-control-layout-20261119\\callback-correction\\before.exe"
+  ],
+  "exit": 1,
+  "stdout": "",
+  "stderr": "FAIL movie control: 64-bit callback value with lowword1 does not skip\n",
+  "at_utc": "2026-11-19T13:21:20.503264+00:00",
+  "expected_exit": 1
+}

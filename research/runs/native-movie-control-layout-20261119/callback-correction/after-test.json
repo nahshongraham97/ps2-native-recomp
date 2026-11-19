@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_control.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native retail movie start/poll/skip/fade/stop traces and named failures; no game/player/device binding\n",
+  "stderr": "",
+  "at_utc": "2026-11-19T13:21:21.193612+00:00",
+  "expected_exit": 0
+}

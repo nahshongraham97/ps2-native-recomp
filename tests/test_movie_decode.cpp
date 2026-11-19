@@ -89,6 +89,12 @@ int main(int argc,char** argv){
                 }else{
                     auto& a=std::get<MovieAudioFrame>(next.frame);
                     check(a.sample_rate==48000&&a.channels.size()==2&&!a.channels[0].empty()&&a.channels[0].size()==a.channels[1].size(),"actual ADX rate/channels and owned PCM extent");
+                    // Pinned ADX header publishes count2, not speaker labels:
+                    // adxdec.c76..79 preserves UNSPEC and decode.c596..600 copies
+                    // that actual layout to AVFrame. Do not guess stereo/mask3.
+                    check(a.channel_layout.order==MovieAudioChannelOrder::unspecified&&
+                        a.channel_layout.channel_count==2&&!a.channel_layout.mask&&a.channel_layout.channels.empty(),
+                        "actual ADX layout explicitly unspecified; no invented speaker IDs");
                     for(const auto& c:a.channels){ah.add(c.data(),c.size()*2);for(const auto x:c)peak=std::max(peak,x<0?-int(x):int(x));}
                     audio_pts.add(a.source_pts);audio_best.add(a.timestamp);
                     ++audios;samples+=a.channels[0].size();if(!a.timestamp.present)++missing_pts;else check(a.timestamp.numerator>0&&a.timestamp.denominator>0,"audio native timebase explicit");
@@ -102,8 +108,12 @@ int main(int argc,char** argv){
             video_pts.verify(expected.video.pts);video_best.verify(expected.video.best);audio_pts.verify(expected.audio.pts);audio_best.verify(expected.audio.best);
             check(moved.next(f).status==MovieReadStatus::end&&f.kind==MovieDecodeError::none,"real EOF is stable");
             Hash before;for(const auto& p:first_video->planes)before.add(p.data(),p.size());for(const auto& p:first_audio->channels)before.add(p.data(),p.size()*2);
+            const auto retained_layout=first_audio->channel_layout;
+            auto retained_audio=std::move(*first_audio);first_audio=std::move(retained_audio);
+            check(first_audio->channel_layout==retained_layout,"owned channel layout survives audio frame moves");
             {NativeMovieDecoder closed(std::move(moved));} // All library frame/decoder storage is released.
             Hash after;for(const auto& p:first_video->planes)after.add(p.data(),p.size());for(const auto& p:first_audio->channels)after.add(p.data(),p.size()*2);
+            check(first_audio->channel_layout==retained_layout,"owned channel layout survives decoder and DLL release");
             check(before.value==after.value,"retained decoded planes/PCM survive decoder and DLL lifetime");
             for(unsigned p=0;p!=3;++p)save(out/(std::string(name)+".first.plane"+std::to_string(p)),first_video->planes[p].data(),first_video->planes[p].size());
             for(unsigned c=0;c!=2;++c)save(out/(std::string(name)+".first.channel"+std::to_string(c)+".s16"),first_audio->channels[c].data(),first_audio->channels[c].size()*2);

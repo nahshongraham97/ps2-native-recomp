@@ -53,7 +53,27 @@ struct MovieVideoFrame {
     std::int32_t color_range=0,color_space=0,color_primaries=0,color_transfer=0;
     MovieCodecTiming codec_timing;
 };
+enum class MovieAudioChannelOrder {unspecified,native,custom,ambisonic};
+struct MovieAudioChannel {
+    // Exact public AVChannel numeric ID; no decoder/private pointer survives.
+    std::int32_t id=0;
+    std::array<char,16> custom_name{};
+    bool operator==(const MovieAudioChannel&) const = default;
+};
+struct MovieAudioChannelLayout {
+    MovieAudioChannelOrder order=MovieAudioChannelOrder::unspecified;
+    std::uint64_t channel_count=0;
+    // NATIVE mask or AMBISONIC non-diegetic mask only; undefined for UNSPEC
+    // and CUSTOM, so those orders retain explicit absence.
+    std::optional<std::uint64_t> mask;
+    // Exact plane-order IDs for known orders; empty for UNSPEC (count only).
+    // AMBISONIC IDs retain ACN order and non-diegetic suffix. CUSTOM names keep
+    // all16 public bytes. FFmpeg application-private opaque pointers omitted.
+    std::vector<MovieAudioChannel> channels;
+    bool operator==(const MovieAudioChannelLayout&) const = default;
+};
 struct MovieAudioFrame {
+    MovieAudioChannelLayout channel_layout;
     std::uint32_t sample_rate=0;
     // Channel count is the vector size, with no console voice/core limit.
     std::vector<std::vector<std::int16_t>> channels;
@@ -63,7 +83,7 @@ struct MovieAudioFrame {
 using MovieDecodedFrame=std::variant<MovieVideoFrame,MovieAudioFrame>;
 enum class MovieDecodeError {none,unsupported_host,library_load,missing_symbol,
     library_version,file_io,allocation,invalid_stream,unsupported_stream,
-    unsupported_frame,demux,decode,invalid_owner,failed_owner,timing_parse,timing_association,source_index,source_validation,source_association};
+    unsupported_frame,unsupported_audio_layout,demux,decode,invalid_owner,failed_owner,timing_parse,timing_association,source_index,source_validation,source_association};
 struct MovieDecodeFailure {
     MovieDecodeError kind=MovieDecodeError::none;
     std::int32_t native_code=0;

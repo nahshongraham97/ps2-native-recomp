@@ -30,6 +30,7 @@ struct Api {
     ~Api(){if(format)FreeLibrary(format);if(codec)FreeLibrary(codec);if(utility)FreeLibrary(utility);}
 #endif
 #define DECLARE(name) decltype(&name) name##_p=nullptr
+    DECLARE(av_channel_layout_check);DECLARE(av_channel_layout_channel_from_index);
     DECLARE(avutil_version);DECLARE(avcodec_version);DECLARE(avformat_version);
     DECLARE(av_malloc);DECLARE(av_free);DECLARE(av_frame_alloc);DECLARE(av_frame_free);DECLARE(av_frame_unref);DECLARE(av_frame_get_side_data);DECLARE(av_buffer_create);DECLARE(av_buffer_unref);
     DECLARE(av_packet_alloc);DECLARE(av_packet_free);DECLARE(av_packet_unref);DECLARE(av_new_packet);DECLARE(av_packet_copy_props);
@@ -52,6 +53,7 @@ struct Api {
         codec=module(L"avcodec-61.dll");if(!codec)return false;
         format=module(L"avformat-61.dll");if(!format)return false;
 #define LOAD(module,name) name##_p=reinterpret_cast<decltype(name##_p)>(GetProcAddress(module,#name));if(!name##_p){f={MovieDecodeError::missing_symbol,0,#name};return false;}
+        LOAD(utility,av_channel_layout_check);LOAD(utility,av_channel_layout_channel_from_index);
         LOAD(utility,avutil_version);LOAD(codec,avcodec_version);LOAD(format,avformat_version);
         LOAD(utility,av_malloc);LOAD(utility,av_free);LOAD(utility,av_frame_alloc);LOAD(utility,av_frame_free);LOAD(utility,av_frame_unref);
         LOAD(utility,av_frame_get_side_data);LOAD(utility,av_buffer_create);LOAD(utility,av_buffer_unref);
@@ -182,6 +184,30 @@ struct NativeMovieDecoder::Impl {
         if(!s.seek_position(offset,origin,position,ec)){s.io_error=ec?ec:std::make_error_code(std::errc::io_error);return AVERROR(EIO);}
         return position>std::uint64_t(INT64_MAX)?AVERROR(EOVERFLOW):static_cast<std::int64_t>(position);
     }
+    bool copy_audio_layout(const AVChannelLayout& source,MovieAudioChannelLayout& out,MovieDecodeFailure& f){
+        if(!api.av_channel_layout_check_p(&source)){
+            f={MovieDecodeError::unsupported_audio_layout,static_cast<int>(source.order),"invalid actual AVFrame channel layout"};return false;}
+        MovieAudioChannelLayout owned;owned.channel_count=static_cast<std::uint64_t>(source.nb_channels);
+        switch(source.order){
+        case AV_CHANNEL_ORDER_UNSPEC:owned.order=MovieAudioChannelOrder::unspecified;break;
+        case AV_CHANNEL_ORDER_NATIVE:owned.order=MovieAudioChannelOrder::native;owned.mask=source.u.mask;break;
+        case AV_CHANNEL_ORDER_CUSTOM:owned.order=MovieAudioChannelOrder::custom;break;
+        case AV_CHANNEL_ORDER_AMBISONIC:owned.order=MovieAudioChannelOrder::ambisonic;owned.mask=source.u.mask;break;
+        default:f={MovieDecodeError::unsupported_audio_layout,static_cast<int>(source.order),"unsupported actual AVFrame channel order"};return false;
+        }
+        if(source.order!=AV_CHANNEL_ORDER_UNSPEC){
+            owned.channels.reserve(static_cast<std::size_t>(source.nb_channels));
+            for(int i=0;i<source.nb_channels;++i){
+                const auto id=api.av_channel_layout_channel_from_index_p(&source,static_cast<unsigned>(i));
+                if(id==AV_CHAN_NONE){f={MovieDecodeError::unsupported_audio_layout,i,"actual AVFrame channel ID unavailable"};return false;}
+                MovieAudioChannel channel;channel.id=static_cast<std::int32_t>(id);
+                if(source.order==AV_CHANNEL_ORDER_CUSTOM)
+                    std::memcpy(channel.custom_name.data(),source.u.map[i].name,channel.custom_name.size());
+                owned.channels.push_back(channel);
+            }
+        }
+        out=std::move(owned);return true;
+    }
     bool open_stream(Stream& stream,unsigned i,MovieDecodeFailure& f){
         auto* source=format->streams[i];const auto* decoder=api.avcodec_find_decoder_p(source->codecpar->codec_id);
         if(!decoder){f={MovieDecodeError::unsupported_stream,source->codecpar->codec_id,"native codec unavailable"};return false;}
@@ -256,7 +282,8 @@ struct NativeMovieDecoder::Impl {
             }else{
                 const auto channels=scratch->ch_layout.nb_channels;
                 if(scratch->format!=AV_SAMPLE_FMT_S16P||scratch->sample_rate<=0||scratch->nb_samples<=0||channels<=0||!scratch->extended_data){f={MovieDecodeError::unsupported_frame,scratch->format,"native movie requires proven planar S16 PCM"};return false;}
-                MovieAudioFrame frame;frame.sample_rate=scratch->sample_rate;frame.source_pts=timestamp(scratch->pts,stream.base);
+                MovieAudioFrame frame;if(!copy_audio_layout(scratch->ch_layout,frame.channel_layout,f))return false;
+                frame.sample_rate=scratch->sample_rate;frame.source_pts=timestamp(scratch->pts,stream.base);
                 frame.timestamp=timestamp(scratch->best_effort_timestamp,stream.base);frame.channels.resize(channels);
                 for(int channel=0;channel<channels;++channel){
                     if(!scratch->extended_data[channel]){f={MovieDecodeError::unsupported_frame,0,"missing decoded PCM plane"};return false;}

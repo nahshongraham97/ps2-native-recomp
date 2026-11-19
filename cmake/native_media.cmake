@@ -28,6 +28,7 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/movie_metadata.cpp
     runtime/src/native/mpeg2_timing.cpp
     runtime/src/native/movie_timecode.cpp
+    runtime/src/native/movie_control.cpp
     runtime/src/native/movie_subtitles.cpp
     runtime/src/native/movie_decode.cpp
     runtime/src/native/movie_color.cpp
@@ -43,12 +44,12 @@ target_link_libraries(mka_native_media PRIVATE opengl32 gdi32 user32 bcrypt shel
 if(MSVC)
     set_property(SOURCE runtime/src/native/font_metrics.cpp
         runtime/src/native/font_layout.cpp runtime/src/native/font_geometry.cpp
-        runtime/src/native/movie_timecode.cpp
+        runtime/src/native/movie_timecode.cpp runtime/src/native/movie_control.cpp
         APPEND PROPERTY COMPILE_OPTIONS /fp:strict)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
     set_property(SOURCE runtime/src/native/font_metrics.cpp
         runtime/src/native/font_layout.cpp runtime/src/native/font_geometry.cpp
-        runtime/src/native/movie_timecode.cpp
+        runtime/src/native/movie_timecode.cpp runtime/src/native/movie_control.cpp
         APPEND PROPERTY COMPILE_OPTIONS -fno-fast-math -ffp-contract=off)
 else()
     message(FATAL_ERROR "Native font math requires a verified strict float32 compiler configuration")
@@ -88,6 +89,11 @@ add_executable(test_native_movie_timecode EXCLUDE_FROM_ALL
     tests/test_movie_timecode.cpp runtime/src/native/movie_timecode.cpp)
 target_include_directories(test_native_movie_timecode PRIVATE runtime/include)
 target_compile_features(test_native_movie_timecode PRIVATE cxx_std_20)
+
+add_executable(test_native_movie_control EXCLUDE_FROM_ALL
+    tests/test_movie_control.cpp runtime/src/native/movie_control.cpp)
+target_include_directories(test_native_movie_control PRIVATE runtime/include)
+target_compile_features(test_native_movie_control PRIVATE cxx_std_20)
 
 # Native platform paths: no media codecs, runtime or generated game dependency.
 add_executable(test_native_user_paths EXCLUDE_FROM_ALL

@@ -1,0 +1,12 @@
+{
+  "name": "font-atlas",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_font_atlas.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-movie-control-layout-20261119\\validation-01\\EDDMONDGRAY14.source"
+  ],
+  "exe_sha256": "201f860324c70afe3a906e97efbd748addb6489043138b7dd17e8161b28adde6",
+  "exit": 0,
+  "stdout": "PASS font atlas owned data/permutation; no render oracle\n",
+  "stderr": "",
+  "at_utc": "2026-11-19T13:18:12.476500+00:00"
+}
