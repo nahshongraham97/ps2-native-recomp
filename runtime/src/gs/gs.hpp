@@ -122,6 +122,7 @@ bool display(const DisplayRegs &regs, std::vector<std::uint32_t> &rgba, std::uin
 // only copy that shows the game. capture_present_picture() runs on the render
 // thread (it reads the GPU); captured_picture() may be called from any.
 void capture_present_picture();
+bool capture_present_picture(const DisplayRegs &regs);
 bool captured_picture(std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height);
 // Frame for hosts that draw it themselves, with interlaced fields blended like present(); may lag a frame.
 bool copy_frame(std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height);

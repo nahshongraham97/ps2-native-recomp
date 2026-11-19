@@ -1,9 +1,34 @@
 #pragma once
 
+#include <cstddef>
+
 #include "gs.hpp"
 #include "ps2/native_gl.hpp"
 
 namespace ps2::gs::native_gl {
+// Effective CLD load only: caller retains the retail CLD skip/latch decision.
+// Palette source must be a covered native raw CT32 resource; never CPU VRAM.
+bool load_clut(std::uint64_t tex0, std::uint64_t texclut);
+
+// Complete tightly packed host-to-local IMAGE data, before any CPU VRAM write.
+// Supported: exact PSMCT32 identity, DBP in packet resource units, DBW in
+// 64-pixel units, forward row order. True means uploaded GPU-owned pixels;
+// later sampling still requires complete coverage of its exact TEX0 view.
+// Existing exact CT32 framebuffer updates/views use GPU storage. Pending-to-new
+// framebuffer promotion and indexed/format aliases are unsupported; no CPU fallback.
+bool upload_image(std::uint32_t psm, std::uint32_t base, std::uint32_t bw,
+                  std::uint32_t x, std::uint32_t y, std::uint32_t w, std::uint32_t h,
+                  const std::uint8_t* packed, std::size_t bytes);
+
+// Snapshot copy between exact owned CT32 resources. Direction is the decoded
+// TRXPOS traversal order (DIRY bit0, DIRX bit1), NOT geometric mirroring.
+// Same-resource overlap stages on the GPU. FBO-to-raw is unsupported because
+// scaled framebuffer alpha cannot reconstruct the original IMAGE bytes.
+bool copy_image(std::uint32_t source_psm, std::uint32_t source_base, std::uint32_t source_bw,
+                std::uint32_t sx, std::uint32_t sy,
+                std::uint32_t destination_psm, std::uint32_t destination_base, std::uint32_t destination_bw,
+                std::uint32_t dx, std::uint32_t dy, std::uint32_t w, std::uint32_t h,
+                std::uint32_t direction = 0);
 
 // Native OpenGL selection is mandatory and independent of environment flags.
 // This query does not create or validate a context.
@@ -49,6 +74,11 @@ void flush();
 // of the game. Returns false when the native backend is off or no surface
 // holds the picture. Runs on the thread that owns the GL context.
 bool read_picture(std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height);
+// Explicit descriptor form also captures an uploaded-only native DISPLAY source
+// directly from its GPU storage. RGB matches that selected picture; raw source
+// alpha is retained (window scanout alpha is not an encoded-data contract).
+bool read_picture(const DisplayRegs&, std::vector<std::uint32_t>& rgba,
+                  std::uint32_t& width, std::uint32_t& height);
 
 // Clears all native scene surfaces to black. Called at scene boundaries (e.g.
 // SetGsCrt or video mode reconfiguration) to eliminate stale frame ghosts.

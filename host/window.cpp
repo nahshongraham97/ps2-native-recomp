@@ -680,12 +680,8 @@ void read_keyboard(std::uint16_t &pressed, std::uint8_t &lx, std::uint8_t &ly, s
 }
 
 void poll_port(int port) {
-    static bool plugged[2] = {};
     SDL_GameController *pad = g_pads[port];
-    if (port > 0 && plugged[port] != (pad != nullptr)) {
-        plugged[port] = pad != nullptr;
-        ps2::set_pad_connected(port, plugged[port]);
-    }
+    const bool connected=port==0||pad!=nullptr;
     std::uint16_t pressed = 0;
     std::uint8_t l2 = 0xFF, r2 = 0xFF;
     std::uint8_t lx = 0x80, ly = 0x80, rx = 0x80, ry = 0x80;
@@ -708,10 +704,12 @@ void poll_port(int port) {
     }
     rumble(port);
     static std::uint64_t last[2] = {~0ull, ~0ull};
+    static bool last_connected[2] = {};
     const std::uint64_t state = pressed | (static_cast<std::uint64_t>(rx) << 16) | (static_cast<std::uint64_t>(ry) << 24) | (static_cast<std::uint64_t>(lx) << 32) |
                                 (static_cast<std::uint64_t>(ly) << 40) | (static_cast<std::uint64_t>(l2) << 48) | (static_cast<std::uint64_t>(r2) << 56);
-    if (state == last[port]) return;
+    if (state == last[port]&&connected==last_connected[port]) return;
     last[port] = state;
+    last_connected[port]=connected;
     if (g_pad_log) {
         static const char *const kNames[16] = {"select", "l3", "r3", "start", "up", "right", "down", "left",
                                                "l2", "r2", "l1", "r1", "triangle", "circle", "cross", "square"};
@@ -722,13 +720,8 @@ void poll_port(int port) {
                      static_cast<unsigned long long>(ps2::frames_run()), port + 1, pressed, names.empty() ? " none" : names.c_str(), lx, ly, rx, ry,
                      pressed & kL2 ? l2 : 0, pressed & kR2 ? r2 : 0);
     }
-    ps2::set_pad_pressure(8, l2, port);
-    ps2::set_pad_pressure(9, r2, port);
-    ps2::set_pad_buttons(pressed, port);
-    ps2::set_pad_axis(0, rx, port);
-    ps2::set_pad_axis(1, ry, port);
-    ps2::set_pad_axis(2, lx, port);
-    ps2::set_pad_axis(3, ly, port);
+    ps2::set_pad_state(mka::input::digital_state(pressed,connected,
+        {{rx,ry,lx,ly}},l2,r2),port);
 }
 
 // F2: the next look. The title says which one, and the choice goes into keys.ini (the other lines of the file stay as they are).
@@ -1572,7 +1565,17 @@ int run_window(const std::function<int()> &emulate) {
     const std::function<void(const std::uint32_t *, std::uint32_t, std::uint32_t)> copy = show_pixels, none;
     const std::function<void(const ps2::gs::DisplayRegs &)> before_present = [](const ps2::gs::DisplayRegs &regs) {
         if (g_direct_gl) {
-            ps2::gs::native_gl::present_frame(regs);
+            int width = 0, height = 0;
+            SDL_GetWindowSizeInPixels(g_window, &width, &height);
+            if ((SDL_GetWindowFlags(g_window) & SDL_WINDOW_MINIMIZED) || width <= 0 || height <= 0) {
+                show_speed();
+                return;
+            }
+            if (!ps2::gs::native_gl::present_frame(regs)) {
+                std::fprintf(stderr, "[native-present-stop] native GPU presentation failed; refusing to swap a stale frame\n");
+                std::fflush(stderr);
+                std::abort();
+            }
             SDL_GL_SwapWindow(g_window);
         }
         show_speed();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cpu.hpp"
+#include "mka/controller_input.hpp"
 
 #include <cstdint>
 #include <functional>
@@ -162,6 +163,11 @@ std::uint64_t frames_run();
 std::uint64_t primitives_drawn();
 // pad 0 is the first controller port, pad 1 the second, which starts unplugged
 void set_pad_buttons(std::uint16_t pressed, int pad = 0);
+// Publish a complete host sample under one lock; avoid mixed-frame axes/buttons.
+void set_pad_state(const mka::input::ControllerState&, int pad = 0);
+// Publish pending host input at a game frame boundary, including recording/replay.
+void publish_controller_frame();
+void publish_controller_frame(std::uint64_t game_frame);
 void set_pad_axis(int axis, std::uint8_t value, int pad = 0);
 void set_pad_pressure(int button, std::uint8_t value, int pad = 0);
 void set_pad_connected(int pad, bool connected);

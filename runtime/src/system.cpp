@@ -38,6 +38,7 @@
 #include <iterator>
 #include <mutex>
 #include <stdexcept>
+#include <sstream>
 #ifndef __EMSCRIPTEN__
 #include <condition_variable>
 #include <ctime>
@@ -67,9 +68,10 @@ struct PadSample {
     std::uint16_t buttons = 0;
     std::uint8_t axes[4] = {0x80, 0x80, 0x80, 0x80};  // right x, right y, left x, left y (as set_pad_axis numbers them)
     std::uint8_t l2 = 0xFF, r2 = 0xFF;                // pressure of L2 and R2
+    std::array<std::uint8_t,16> pressure{};
     bool connected = false;
     bool operator==(const PadSample &o) const {
-        return buttons == o.buttons && std::memcmp(axes, o.axes, 4) == 0 && l2 == o.l2 && r2 == o.r2 && connected == o.connected;
+        return buttons == o.buttons && std::memcmp(axes, o.axes, 4) == 0 && l2 == o.l2 && r2 == o.r2 && pressure==o.pressure && connected == o.connected;
     }
 };
 
@@ -77,7 +79,7 @@ struct PadSample {
 namespace quick {
 // Called by vblank with the pad state the host asked for; a recording notes it, a replay replaces it by the recorded one. `apply` is the
 // set of ports (bit 0 = port 1) that must be given to the game: the ones the host changed, and all of them at the first frame.
-void pads_hook(PadSample (&pads)[2], unsigned &apply);
+void pads_hook(PadSample (&pads)[2], unsigned &apply, std::uint64_t frame);
 // every frame: the checkpoints of a recording or a replay
 void frame_check();
 bool vblank_tick();
@@ -158,14 +160,14 @@ void dump_frame() {
     std::fclose(f);
 }
 
-void apply_presses(PadSample &pad, unsigned &apply) {
+void apply_presses(PadSample &pad, unsigned &apply,std::uint64_t frame) {
     // Scripted intro inputs supplement the live keyboard/controller. Writing
     // them through set_pad_buttons used to erase the user's keys every frame
     // until the last scheduled press, including frames with no scripted hold.
     std::uint16_t mask = 0;
     std::uint8_t stick = 0;
     for (const Press &p : g_options.presses)
-        if (g_frames >= p.frame && g_frames < p.frame + p.frames) {
+        if (frame >= p.frame && frame < p.frame + p.frames) {
             mask |= p.buttons;
             stick |= p.stick;
         }
@@ -180,7 +182,7 @@ void apply_presses(PadSample &pad, unsigned &apply) {
         axis_active[3] = true;
     }
     for (const AxisPress &p : g_options.axis_presses)
-        if (g_frames >= p.frame && g_frames < p.frame + p.frames) {
+        if (frame >= p.frame && frame < p.frame + p.frames) {
             axes[p.axis] = p.value;
             axis_active[p.axis] = true;
         }
@@ -190,6 +192,8 @@ void apply_presses(PadSample &pad, unsigned &apply) {
     if (mask != previous_mask) apply |= 1u;
     previous_mask = mask;
     pad.buttons |= mask;
+    for(unsigned button=0;button<pad.pressure.size();++button)
+        if(mask&(1u<<button))pad.pressure[button]=255;
     for (int axis = 0; axis < 4; ++axis) {
         if (axis_active[axis] != previous_active[axis] ||
             (axis_active[axis] && axes[axis] != previous_axes[axis])) apply |= 1u;
@@ -211,7 +215,7 @@ void pad_init() {
     (void)once;
 }
 
-void latch_pads() {
+void latch_pads(std::uint64_t frame) {
     PadSample pads[2];
     unsigned apply;
     {
@@ -222,15 +226,17 @@ void latch_pads() {
         apply = g_pad_dirty;
         g_pad_dirty = 0;
     }
-    apply_presses(pads[0], apply);
-    quick::pads_hook(pads, apply);
+    apply_presses(pads[0], apply,frame);
+    quick::pads_hook(pads, apply,frame);
     for (int p = 0; p < 2; ++p) {
-        if (!(apply & (1u << p))) continue;
-        iop::sio2::set_buttons(p, pads[p].buttons);
-        for (int a = 0; a < 4; ++a) iop::sio2::set_axis(p, a, pads[p].axes[a]);
-        iop::sio2::set_pressure(p, 8, pads[p].l2);
-        iop::sio2::set_pressure(p, 9, pads[p].r2);
-        iop::sio2::set_connected(p, pads[p].connected);
+        if(!(apply&(1u<<p))&&mka::input::controllers().sample(p))continue;
+        auto state=mka::input::digital_state(pads[p].buttons,pads[p].connected,
+            {{pads[p].axes[0],pads[p].axes[1],pads[p].axes[2],pads[p].axes[3]}},pads[p].l2,pads[p].r2);
+        state.pressure=pads[p].pressure;
+        if(!mka::input::controllers().publish(static_cast<std::uint32_t>(p),state)) {
+            std::fprintf(stderr,"[native-input-stop] cannot publish player %d input\n",p);
+            std::abort();
+        }
     }
 }
 
@@ -398,7 +404,7 @@ void vblank() {
     }
     report_load();
     time_frames();
-    latch_pads();
+    publish_controller_frame();
     iop::padman::frame_tick();
     quick::frame_check();
     apply_patches(false);
@@ -626,7 +632,7 @@ bool load_state(const std::string &path) {
 #include "quick_keys.inc"
 #else
 namespace quick {
-void pads_hook(PadSample (&)[2], unsigned &) {}
+void pads_hook(PadSample (&)[2], unsigned &,std::uint64_t) {}
 void frame_check() {}
 bool vblank_tick() { return false; }
 void service() {}
@@ -1076,13 +1082,32 @@ void browser_yield() {}
 
 std::uint64_t frames_run() { return g_frames; }
 std::uint64_t primitives_drawn() { return gs::primitives_drawn(); }
+void publish_controller_frame() { latch_pads(g_frames); }
+void publish_controller_frame(std::uint64_t frame) { latch_pads(frame); }
 // The host's pad state waits in g_pad_in until the next frame (latch_pads); only the values that change mark a port as changed.
 void set_pad_buttons(std::uint16_t pressed, int pad) {
     if (pad < 0 || pad > 1) return;
     std::lock_guard<std::mutex> hold(g_pad_lock);
     pad_init();
-    if (g_pad_in[pad].buttons != pressed) g_pad_dirty |= 1u << pad;
+    const auto before=g_pad_in[pad];
     g_pad_in[pad].buttons = pressed;
+    for(unsigned button=0;button<g_pad_in[pad].pressure.size();++button)
+        g_pad_in[pad].pressure[button]=(pressed&(1u<<button))?255:0;
+    if(pressed&(1u<<8))g_pad_in[pad].pressure[8]=g_pad_in[pad].l2;
+    if(pressed&(1u<<9))g_pad_in[pad].pressure[9]=g_pad_in[pad].r2;
+    if(!(before==g_pad_in[pad]))g_pad_dirty|=1u<<pad;
+}
+void set_pad_state(const mka::input::ControllerState& state,int pad) {
+    if(pad<0||pad>1)return;
+    std::lock_guard<std::mutex> hold(g_pad_lock);
+    pad_init();
+    PadSample sample;
+    sample.buttons=state.buttons; sample.connected=state.connected;
+    std::copy(state.axes.begin(),state.axes.end(),sample.axes);
+    sample.l2=state.pressure[8]; sample.r2=state.pressure[9];
+    sample.pressure=state.pressure;
+    if(!(g_pad_in[pad]==sample))g_pad_dirty|=1u<<pad;
+    g_pad_in[pad]=sample;
 }
 void set_pad_axis(int axis, std::uint8_t value, int pad) {
     if (pad < 0 || pad > 1 || axis < 0 || axis > 3) return;
@@ -1092,12 +1117,14 @@ void set_pad_axis(int axis, std::uint8_t value, int pad) {
     g_pad_in[pad].axes[axis] = value;
 }
 void set_pad_pressure(int button, std::uint8_t value, int pad) {
-    if (pad < 0 || pad > 1 || (button != 8 && button != 9)) return;
+    if (pad < 0 || pad > 1 || button<0 || button>=16) return;
     std::lock_guard<std::mutex> hold(g_pad_lock);
     pad_init();
-    std::uint8_t &slot = button == 8 ? g_pad_in[pad].l2 : g_pad_in[pad].r2;
+    std::uint8_t &slot = g_pad_in[pad].pressure[button];
     if (slot != value) g_pad_dirty |= 1u << pad;
     slot = value;
+    if(button==8)g_pad_in[pad].l2=value;
+    if(button==9)g_pad_in[pad].r2=value;
 }
 void set_pad_connected(int pad, bool connected) {
     if (pad < 0 || pad > 1) return;

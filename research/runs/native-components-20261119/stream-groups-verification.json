@@ -1,0 +1,47 @@
+{
+  "utc": "2026-11-19T04:06:44.166488+00:00",
+  "scope": "Native raw encoded source-group bytes, ownership and errors only; no playback/game/architecture acceptance",
+  "game_launched": false,
+  "compiler": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+  "binary": {
+    "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_stream_source.exe",
+    "sha256": "006bce360735eda42fbd98594c6875a5c46ea153b5bfa5bb131dd896fa480edd"
+  },
+  "source_sha256": {
+    "CMakeLists.txt": "97d35a560fa0f6f0d1ddb66cde817b91e17ec8c2d642cd3fe897816d01eb3871",
+    "runtime/include/mka/stream_source.hpp": "0d59cc035518c585f2af99c0799ac7ac838f2dd498e46f73cf3b011435a68771",
+    "runtime/src/native/stream_source.cpp": "0ab2edeb159b288fbbe3575576e92e7fecf94f77267f9a13727f37a3c5ac7804",
+    "tests/test_stream_source.cpp": "36a4f9232d73cee29bc0034242f55c7425f259d17946146cfcf16e907b19bc00",
+    "runtime/src/native/native_file.cpp": "b067300d7498984f1559fdba948a28778d6db244074b2935083c801792dee748",
+    "runtime/src/native/sound_archive.cpp": "548373865895b410fdbc0b8f59b32022d2fb35cc45048e86ed90ea160a68100f"
+  },
+  "reference_sha256": "0ecc293fb5458d1e68f5d5fbbb15a36112fa963260fbeaa44e75d18fc70e8e16",
+  "input_sha256": {
+    "private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/sndsps2/mslasset.ms2": "74b7affaf2ec29052b39f531788ff12148f9870e79dde953e701c63e6e948d5d",
+    "private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/sndsps2/mslasset.ms4": "bd97bd4ae76b41a18852555bebb7909e80c1287aba950ec1d85adacc10f46781"
+  },
+  "synthetic": {
+    "passed": true,
+    "exit": 0,
+    "stdout": "[stream-synthetic-positive] raw ownership/modes/extents/truncation/sparse/concurrency passed; temporary cleanup verified\n",
+    "stderr": ""
+  },
+  "batch": {
+    "passed": true,
+    "command": [
+      "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_stream_source.exe",
+      "batch-real",
+      "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2",
+      "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms4",
+      "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-stream-groups-20261118\\bank-key-ordinal.tsv"
+    ],
+    "exit": 0,
+    "stderr": "[stream-batch-positive] rows=1189 actual bank lookups=26; raw SHA256 only\n",
+    "expected": 1189,
+    "seen": 1189,
+    "missing": [],
+    "mismatches": [],
+    "output_sha256": "a933943b1ff5626425a578e194e5226071a8a83609e4532a8db6666c5564a6c3"
+  },
+  "passed": true
+}

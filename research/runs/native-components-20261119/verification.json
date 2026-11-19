@@ -1,0 +1,303 @@
+{
+  "created_utc": "2026-11-19T05:08:50.351918+00:00",
+  "scope": "standalone component tests only; no game launch, physical input, audible playback or full native acceptance",
+  "script_sha256": "4072daa534b6e0d4ff52ee023d226ab3f2a679dff8de5655de23fb3b91d46f0e",
+  "fork_head": "6d979034b74f73aa7ee53dc5664d9040f4668449",
+  "status": "PASS",
+  "cases": [
+    {
+      "name": "bank-ownership",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_audio_banks.exe",
+      "exe_sha256": "e4e78585718cee1e98e8cedff9d0ff1fbd7955626d28080437b0fdd3afa88374",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms4"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "PASS audio bank host ownership, exact real lookup and retained source bytes; no preparation/playback claim\n",
+      "stderr": ""
+    },
+    {
+      "name": "bank-protocol",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_audio_bank_protocol.exe",
+      "exe_sha256": "bbd988976ff745883bcbce1329f30a4df1f7853dd6ed203534ffbada5b61ce22",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "PASS verified audio bank framing and explicit host token binding; no preparation/completion/playback\n",
+      "stderr": ""
+    },
+    {
+      "name": "bank-preparation",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_bank_preparation.exe",
+      "exe_sha256": "42bf0030f2130ab16400476c5229f60196569e764194b6d46a24c2f34308cb3e",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-components-20261119-01\\bank-preparation"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "announcr selector0 program0 effectiveflags2 instances1 PCM34720\nPASS 344 actualbanks 5500eager 4156deferred 179skipprecreation; nativepreparation only nocallback/playback\n",
+      "stderr": ""
+    },
+    {
+      "name": "controller",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_controller_input.exe",
+      "exe_sha256": "ef00e3fe4c367964589e7359405714793d6b9d71aa1d806f99d65b20e5b326a6",
+      "argv": [],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "native controller ownership, pressure, release, capacity and atomic publication PASS\n",
+      "stderr": ""
+    },
+    {
+      "name": "padman",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_padman_rpc.exe",
+      "exe_sha256": "05755c7a19f03d0914b3b40d65d0452829dd78c0204e518aa1ebb759c4e315cd",
+      "argv": [],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "",
+      "stderr": "[iop-native] PADMAN host service active (SIF 0x80000100 / 0x80000101)\n[padman-native] padSetMainMode accepted port=0 slot=0 mode=1 lock=1\n[pad] port 0 buttons 0x0000 -> 0x8000\n[padman-native] padSetActAlign accepted port=0 slot=0 map=00,01,FF,FF,FF,FF\n\n[census] ===== accepted-route PS2 API census =====\n[census] EE   : live guest translations = 0        (PASS); VU1 programs translated while the game ran = 0 (PASS)\n[census] IOP  : guest modules loaded and able to run = 0   (PASS)\n[census] VU   : interpreter fallbacks = 0 (vu0 0, vu1 0) (PASS)\n[census] IOP  : guest instructions = 0       (PASS)\n[census] SIF  : RPCs dispatched natively = 0, through guest-registered servers = 0, unknown = 0\n[census] GS   : transfers reached the native surface = 0, stopped in emulated VRAM = 0; primitives = 0\n[census] SPU2 : chip-model ops at the device boundary = 0; key-ons = 0 key-offs = 0 DMA writes = 0 (0.0 MB) reads = 0 peak sample = 0\n[census] AUDIO: native frames mixed = 0, blocks consumed = 0; voices keyed = 0, voice frames = 0, ADPCM blocks = 0\n[census] CDVD : device sector reads = 0                   (no CDVD device on route); native content volume reads = 0\n[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=0 SPU2-chip-model-ops=0 SIF-guest-registered=0 CDVD-device-reads=0; compiled while the game ran: EE=0 VU1=0; guest modules able to run=0\n[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n=================================================\n"
+    },
+    {
+      "name": "padman-truncated",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_padman_rpc.exe",
+      "exe_sha256": "05755c7a19f03d0914b3b40d65d0452829dd78c0204e518aa1ebb759c4e315cd",
+      "argv": [
+        "strict-truncated"
+      ],
+      "exit": 3,
+      "expected_exit": 3,
+      "required_diagnostic": "truncated padPortOpen request",
+      "pass": true,
+      "stdout": "",
+      "stderr": "[iop-native] PADMAN host service active (SIF 0x80000100 / 0x80000101)\n[iop-native-stop] PADMAN RPC method 1 command 0x00000001: truncated padPortOpen request\n\n[census] ===== accepted-route PS2 API census =====\n[census] EE   : live guest translations = 0        (PASS); VU1 programs translated while the game ran = 0 (PASS)\n[census] IOP  : guest modules loaded and able to run = 0   (PASS)\n[census] VU   : interpreter fallbacks = 0 (vu0 0, vu1 0) (PASS)\n[census] IOP  : guest instructions = 0       (PASS)\n[census] SIF  : RPCs dispatched natively = 0, through guest-registered servers = 0, unknown = 0\n[census] GS   : transfers reached the native surface = 0, stopped in emulated VRAM = 0; primitives = 0\n[census] SPU2 : chip-model ops at the device boundary = 0; key-ons = 0 key-offs = 0 DMA writes = 0 (0.0 MB) reads = 0 peak sample = 0\n[census] AUDIO: native frames mixed = 0, blocks consumed = 0; voices keyed = 0, voice frames = 0, ADPCM blocks = 0\n[census] CDVD : device sector reads = 0                   (no CDVD device on route); native content volume reads = 0\n[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=0 SPU2-chip-model-ops=0 SIF-guest-registered=0 CDVD-device-reads=0; compiled while the game ran: EE=0 VU1=0; guest modules able to run=0\n[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n=================================================\n"
+    },
+    {
+      "name": "padman-slot",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_padman_rpc.exe",
+      "exe_sha256": "05755c7a19f03d0914b3b40d65d0452829dd78c0204e518aa1ebb759c4e315cd",
+      "argv": [
+        "strict-slot"
+      ],
+      "exit": 3,
+      "expected_exit": 3,
+      "required_diagnostic": "invalid pad port, slot",
+      "pass": true,
+      "stdout": "",
+      "stderr": "[iop-native] PADMAN host service active (SIF 0x80000100 / 0x80000101)\n[iop-native-stop] PADMAN RPC method 1 command 0x00000001: invalid pad port, slot, or 256-byte status area\n\n[census] ===== accepted-route PS2 API census =====\n[census] EE   : live guest translations = 0        (PASS); VU1 programs translated while the game ran = 0 (PASS)\n[census] IOP  : guest modules loaded and able to run = 0   (PASS)\n[census] VU   : interpreter fallbacks = 0 (vu0 0, vu1 0) (PASS)\n[census] IOP  : guest instructions = 0       (PASS)\n[census] SIF  : RPCs dispatched natively = 0, through guest-registered servers = 0, unknown = 0\n[census] GS   : transfers reached the native surface = 0, stopped in emulated VRAM = 0; primitives = 0\n[census] SPU2 : chip-model ops at the device boundary = 0; key-ons = 0 key-offs = 0 DMA writes = 0 (0.0 MB) reads = 0 peak sample = 0\n[census] AUDIO: native frames mixed = 0, blocks consumed = 0; voices keyed = 0, voice frames = 0, ADPCM blocks = 0\n[census] CDVD : device sector reads = 0                   (no CDVD device on route); native content volume reads = 0\n[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=0 SPU2-chip-model-ops=0 SIF-guest-registered=0 CDVD-device-reads=0; compiled while the game ran: EE=0 VU1=0; guest modules able to run=0\n[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n=================================================\n"
+    },
+    {
+      "name": "recording-v1",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_controller_recording.exe",
+      "exe_sha256": "69ba4b30359eea5bf03b0e3cf079d48e7d32d4b0aa57da2003332145f73366a5",
+      "argv": [
+        "v1",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-components-20261119-01\\recording-v1"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "recorded complete pressures, legacy data decode, hold and release PASS\n",
+      "stderr": "[replay] C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-components-20261119-01\\recording-v1\\inputs.txt: frames 0 to 5, 0 checkpoints\n\n[census] ===== accepted-route PS2 API census =====\n[census] EE   : live guest translations = 0        (PASS); VU1 programs translated while the game ran = 0 (PASS)\n[census] IOP  : guest modules loaded and able to run = 0   (PASS)\n[census] VU   : interpreter fallbacks = 0 (vu0 0, vu1 0) (PASS)\n[census] IOP  : guest instructions = 0       (PASS)\n[census] SIF  : RPCs dispatched natively = 0, through guest-registered servers = 0, unknown = 0\n[census] GS   : transfers reached the native surface = 0, stopped in emulated VRAM = 0; primitives = 0\n[census] SPU2 : chip-model ops at the device boundary = 0; key-ons = 0 key-offs = 0 DMA writes = 0 (0.0 MB) reads = 0 peak sample = 0\n[census] AUDIO: native frames mixed = 0, blocks consumed = 0; voices keyed = 0, voice frames = 0, ADPCM blocks = 0\n[census] CDVD : device sector reads = 0                   (no CDVD device on route); native content volume reads = 0\n[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=0 SPU2-chip-model-ops=0 SIF-guest-registered=0 CDVD-device-reads=0; compiled while the game ran: EE=0 VU1=0; guest modules able to run=0\n[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n=================================================\n"
+    },
+    {
+      "name": "recording-v2",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_controller_recording.exe",
+      "exe_sha256": "69ba4b30359eea5bf03b0e3cf079d48e7d32d4b0aa57da2003332145f73366a5",
+      "argv": [
+        "v2",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-components-20261119-01\\recording-v2"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "recorded complete pressures, legacy data decode, hold and release PASS\n",
+      "stderr": "[replay] C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-components-20261119-01\\recording-v2\\inputs.txt: frames 0 to 5, 0 checkpoints\n\n[census] ===== accepted-route PS2 API census =====\n[census] EE   : live guest translations = 0        (PASS); VU1 programs translated while the game ran = 0 (PASS)\n[census] IOP  : guest modules loaded and able to run = 0   (PASS)\n[census] VU   : interpreter fallbacks = 0 (vu0 0, vu1 0) (PASS)\n[census] IOP  : guest instructions = 0       (PASS)\n[census] SIF  : RPCs dispatched natively = 0, through guest-registered servers = 0, unknown = 0\n[census] GS   : transfers reached the native surface = 0, stopped in emulated VRAM = 0; primitives = 0\n[census] SPU2 : chip-model ops at the device boundary = 0; key-ons = 0 key-offs = 0 DMA writes = 0 (0.0 MB) reads = 0 peak sample = 0\n[census] AUDIO: native frames mixed = 0, blocks consumed = 0; voices keyed = 0, voice frames = 0, ADPCM blocks = 0\n[census] CDVD : device sector reads = 0                   (no CDVD device on route); native content volume reads = 0\n[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=0 SPU2-chip-model-ops=0 SIF-guest-registered=0 CDVD-device-reads=0; compiled while the game ran: EE=0 VU1=0; guest modules able to run=0\n[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n=================================================\n"
+    },
+    {
+      "name": "recording-bad",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_controller_recording.exe",
+      "exe_sha256": "69ba4b30359eea5bf03b0e3cf079d48e7d32d4b0aa57da2003332145f73366a5",
+      "argv": [
+        "bad",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-components-20261119-01\\recording-bad"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "",
+      "stderr": "[replay] invalid input recording: invalid complete pressure sample\n\n[census] ===== accepted-route PS2 API census =====\n[census] EE   : live guest translations = 0        (PASS); VU1 programs translated while the game ran = 0 (PASS)\n[census] IOP  : guest modules loaded and able to run = 0   (PASS)\n[census] VU   : interpreter fallbacks = 0 (vu0 0, vu1 0) (PASS)\n[census] IOP  : guest instructions = 0       (PASS)\n[census] SIF  : RPCs dispatched natively = 0, through guest-registered servers = 0, unknown = 0\n[census] GS   : transfers reached the native surface = 0, stopped in emulated VRAM = 0; primitives = 0\n[census] SPU2 : chip-model ops at the device boundary = 0; key-ons = 0 key-offs = 0 DMA writes = 0 (0.0 MB) reads = 0 peak sample = 0\n[census] AUDIO: native frames mixed = 0, blocks consumed = 0; voices keyed = 0, voice frames = 0, ADPCM blocks = 0\n[census] CDVD : device sector reads = 0                   (no CDVD device on route); native content volume reads = 0\n[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=0 SPU2-chip-model-ops=0 SIF-guest-registered=0 CDVD-device-reads=0; compiled while the game ran: EE=0 VU1=0; guest modules able to run=0\n[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n=================================================\n"
+    },
+    {
+      "name": "recording-bad-row",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_controller_recording.exe",
+      "exe_sha256": "69ba4b30359eea5bf03b0e3cf079d48e7d32d4b0aa57da2003332145f73366a5",
+      "argv": [
+        "bad-row",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-components-20261119-01\\recording-bad-row"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "",
+      "stderr": "[replay] invalid input recording: malformed controller row or out-of-range value\n\n[census] ===== accepted-route PS2 API census =====\n[census] EE   : live guest translations = 0        (PASS); VU1 programs translated while the game ran = 0 (PASS)\n[census] IOP  : guest modules loaded and able to run = 0   (PASS)\n[census] VU   : interpreter fallbacks = 0 (vu0 0, vu1 0) (PASS)\n[census] IOP  : guest instructions = 0       (PASS)\n[census] SIF  : RPCs dispatched natively = 0, through guest-registered servers = 0, unknown = 0\n[census] GS   : transfers reached the native surface = 0, stopped in emulated VRAM = 0; primitives = 0\n[census] SPU2 : chip-model ops at the device boundary = 0; key-ons = 0 key-offs = 0 DMA writes = 0 (0.0 MB) reads = 0 peak sample = 0\n[census] AUDIO: native frames mixed = 0, blocks consumed = 0; voices keyed = 0, voice frames = 0, ADPCM blocks = 0\n[census] CDVD : device sector reads = 0                   (no CDVD device on route); native content volume reads = 0\n[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=0 SPU2-chip-model-ops=0 SIF-guest-registered=0 CDVD-device-reads=0; compiled while the game ran: EE=0 VU1=0; guest modules able to run=0\n[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n=================================================\n"
+    },
+    {
+      "name": "recording-bad-range",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_controller_recording.exe",
+      "exe_sha256": "69ba4b30359eea5bf03b0e3cf079d48e7d32d4b0aa57da2003332145f73366a5",
+      "argv": [
+        "bad-range",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-components-20261119-01\\recording-bad-range"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "",
+      "stderr": "[replay] invalid input recording: malformed controller row or out-of-range value\n\n[census] ===== accepted-route PS2 API census =====\n[census] EE   : live guest translations = 0        (PASS); VU1 programs translated while the game ran = 0 (PASS)\n[census] IOP  : guest modules loaded and able to run = 0   (PASS)\n[census] VU   : interpreter fallbacks = 0 (vu0 0, vu1 0) (PASS)\n[census] IOP  : guest instructions = 0       (PASS)\n[census] SIF  : RPCs dispatched natively = 0, through guest-registered servers = 0, unknown = 0\n[census] GS   : transfers reached the native surface = 0, stopped in emulated VRAM = 0; primitives = 0\n[census] SPU2 : chip-model ops at the device boundary = 0; key-ons = 0 key-offs = 0 DMA writes = 0 (0.0 MB) reads = 0 peak sample = 0\n[census] AUDIO: native frames mixed = 0, blocks consumed = 0; voices keyed = 0, voice frames = 0, ADPCM blocks = 0\n[census] CDVD : device sector reads = 0                   (no CDVD device on route); native content volume reads = 0\n[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=0 SPU2-chip-model-ops=0 SIF-guest-registered=0 CDVD-device-reads=0; compiled while the game ran: EE=0 VU1=0; guest modules able to run=0\n[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n=================================================\n"
+    },
+    {
+      "name": "recording-bad-buttons",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_controller_recording.exe",
+      "exe_sha256": "69ba4b30359eea5bf03b0e3cf079d48e7d32d4b0aa57da2003332145f73366a5",
+      "argv": [
+        "bad-buttons",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-components-20261119-01\\recording-bad-buttons"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "",
+      "stderr": "[replay] invalid input recording: malformed controller row or out-of-range value\n\n[census] ===== accepted-route PS2 API census =====\n[census] EE   : live guest translations = 0        (PASS); VU1 programs translated while the game ran = 0 (PASS)\n[census] IOP  : guest modules loaded and able to run = 0   (PASS)\n[census] VU   : interpreter fallbacks = 0 (vu0 0, vu1 0) (PASS)\n[census] IOP  : guest instructions = 0       (PASS)\n[census] SIF  : RPCs dispatched natively = 0, through guest-registered servers = 0, unknown = 0\n[census] GS   : transfers reached the native surface = 0, stopped in emulated VRAM = 0; primitives = 0\n[census] SPU2 : chip-model ops at the device boundary = 0; key-ons = 0 key-offs = 0 DMA writes = 0 (0.0 MB) reads = 0 peak sample = 0\n[census] AUDIO: native frames mixed = 0, blocks consumed = 0; voices keyed = 0, voice frames = 0, ADPCM blocks = 0\n[census] CDVD : device sector reads = 0                   (no CDVD device on route); native content volume reads = 0\n[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=0 SPU2-chip-model-ops=0 SIF-guest-registered=0 CDVD-device-reads=0; compiled while the game ran: EE=0 VU1=0; guest modules able to run=0\n[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n=================================================\n"
+    },
+    {
+      "name": "recording-bad-version",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_controller_recording.exe",
+      "exe_sha256": "69ba4b30359eea5bf03b0e3cf079d48e7d32d4b0aa57da2003332145f73366a5",
+      "argv": [
+        "bad-version",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-components-20261119-01\\recording-bad-version"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "",
+      "stderr": "[replay] invalid input recording: unsupported version header\n\n[census] ===== accepted-route PS2 API census =====\n[census] EE   : live guest translations = 0        (PASS); VU1 programs translated while the game ran = 0 (PASS)\n[census] IOP  : guest modules loaded and able to run = 0   (PASS)\n[census] VU   : interpreter fallbacks = 0 (vu0 0, vu1 0) (PASS)\n[census] IOP  : guest instructions = 0       (PASS)\n[census] SIF  : RPCs dispatched natively = 0, through guest-registered servers = 0, unknown = 0\n[census] GS   : transfers reached the native surface = 0, stopped in emulated VRAM = 0; primitives = 0\n[census] SPU2 : chip-model ops at the device boundary = 0; key-ons = 0 key-offs = 0 DMA writes = 0 (0.0 MB) reads = 0 peak sample = 0\n[census] AUDIO: native frames mixed = 0, blocks consumed = 0; voices keyed = 0, voice frames = 0, ADPCM blocks = 0\n[census] CDVD : device sector reads = 0                   (no CDVD device on route); native content volume reads = 0\n[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=0 SPU2-chip-model-ops=0 SIF-guest-registered=0 CDVD-device-reads=0; compiled while the game ran: EE=0 VU1=0; guest modules able to run=0\n[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n=================================================\n"
+    },
+    {
+      "name": "recording-bad-port",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_controller_recording.exe",
+      "exe_sha256": "69ba4b30359eea5bf03b0e3cf079d48e7d32d4b0aa57da2003332145f73366a5",
+      "argv": [
+        "bad-port",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-components-20261119-01\\recording-bad-port"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "",
+      "stderr": "[replay] invalid input recording: malformed controller row or out-of-range value\n\n[census] ===== accepted-route PS2 API census =====\n[census] EE   : live guest translations = 0        (PASS); VU1 programs translated while the game ran = 0 (PASS)\n[census] IOP  : guest modules loaded and able to run = 0   (PASS)\n[census] VU   : interpreter fallbacks = 0 (vu0 0, vu1 0) (PASS)\n[census] IOP  : guest instructions = 0       (PASS)\n[census] SIF  : RPCs dispatched natively = 0, through guest-registered servers = 0, unknown = 0\n[census] GS   : transfers reached the native surface = 0, stopped in emulated VRAM = 0; primitives = 0\n[census] SPU2 : chip-model ops at the device boundary = 0; key-ons = 0 key-offs = 0 DMA writes = 0 (0.0 MB) reads = 0 peak sample = 0\n[census] AUDIO: native frames mixed = 0, blocks consumed = 0; voices keyed = 0, voice frames = 0, ADPCM blocks = 0\n[census] CDVD : device sector reads = 0                   (no CDVD device on route); native content volume reads = 0\n[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=0 SPU2-chip-model-ops=0 SIF-guest-registered=0 CDVD-device-reads=0; compiled while the game ran: EE=0 VU1=0; guest modules able to run=0\n[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n=================================================\n"
+    },
+    {
+      "name": "recording-bad-connection",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_controller_recording.exe",
+      "exe_sha256": "69ba4b30359eea5bf03b0e3cf079d48e7d32d4b0aa57da2003332145f73366a5",
+      "argv": [
+        "bad-connection",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-components-20261119-01\\recording-bad-connection"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "",
+      "stderr": "[replay] invalid input recording: malformed controller row or out-of-range value\n\n[census] ===== accepted-route PS2 API census =====\n[census] EE   : live guest translations = 0        (PASS); VU1 programs translated while the game ran = 0 (PASS)\n[census] IOP  : guest modules loaded and able to run = 0   (PASS)\n[census] VU   : interpreter fallbacks = 0 (vu0 0, vu1 0) (PASS)\n[census] IOP  : guest instructions = 0       (PASS)\n[census] SIF  : RPCs dispatched natively = 0, through guest-registered servers = 0, unknown = 0\n[census] GS   : transfers reached the native surface = 0, stopped in emulated VRAM = 0; primitives = 0\n[census] SPU2 : chip-model ops at the device boundary = 0; key-ons = 0 key-offs = 0 DMA writes = 0 (0.0 MB) reads = 0 peak sample = 0\n[census] AUDIO: native frames mixed = 0, blocks consumed = 0; voices keyed = 0, voice frames = 0, ADPCM blocks = 0\n[census] CDVD : device sector reads = 0                   (no CDVD device on route); native content volume reads = 0\n[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=0 SPU2-chip-model-ops=0 SIF-guest-registered=0 CDVD-device-reads=0; compiled while the game ran: EE=0 VU1=0; guest modules able to run=0\n[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n=================================================\n"
+    },
+    {
+      "name": "recording-bad-negative",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_controller_recording.exe",
+      "exe_sha256": "69ba4b30359eea5bf03b0e3cf079d48e7d32d4b0aa57da2003332145f73366a5",
+      "argv": [
+        "bad-negative",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\diagnostics\\native-components-20261119-01\\recording-bad-negative"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "",
+      "stderr": "[replay] invalid input recording: malformed controller row or out-of-range value\n\n[census] ===== accepted-route PS2 API census =====\n[census] EE   : live guest translations = 0        (PASS); VU1 programs translated while the game ran = 0 (PASS)\n[census] IOP  : guest modules loaded and able to run = 0   (PASS)\n[census] VU   : interpreter fallbacks = 0 (vu0 0, vu1 0) (PASS)\n[census] IOP  : guest instructions = 0       (PASS)\n[census] SIF  : RPCs dispatched natively = 0, through guest-registered servers = 0, unknown = 0\n[census] GS   : transfers reached the native surface = 0, stopped in emulated VRAM = 0; primitives = 0\n[census] SPU2 : chip-model ops at the device boundary = 0; key-ons = 0 key-offs = 0 DMA writes = 0 (0.0 MB) reads = 0 peak sample = 0\n[census] AUDIO: native frames mixed = 0, blocks consumed = 0; voices keyed = 0, voice frames = 0, ADPCM blocks = 0\n[census] CDVD : device sector reads = 0                   (no CDVD device on route); native content volume reads = 0\n[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=0 SPU2-chip-model-ops=0 SIF-guest-registered=0 CDVD-device-reads=0; compiled while the game ran: EE=0 VU1=0; guest modules able to run=0\n[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n=================================================\n"
+    },
+    {
+      "name": "test_native_image_upload",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_image_upload.exe",
+      "exe_sha256": "41e32f6eee76ea229a1e54715135899ede4a8c2bccde07a07f293f2986e711d5",
+      "argv": [],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "[native-image-positive] uploads, copies, indexed GPU palettes and explicit DISPLAY pixels passed\n",
+      "stderr": "[native-gl] GPU busy time measured with a GL timer query\n[native-gl] direct GS scene target 0: 1024x512 color + depth FBO for FBP=0\n[native-gl] enabled: GL 4.6.0 Compatibility Profile Context 26.10.1.261008 | AMD Radeon RX 6800 XT | ATI Technologies Inc.\n[image-test-driver] AMD Radeon RX 6800 XT\n[native-gl] rejected GS packet: native IMAGE texture view contains undefined pixels | prim=6 attr=0000000000000116 frame=0000000000010000 fbw=1 fpsm=00 tex0=0000000C44007040 tex1=0000000000000000 clamp=0000000000000005 test=0000000000000000 alpha=0000000000000000 zbuf=0000000100000000 dthe=0 dimx=0000000000000000 colclamp=1 count=2\n[native-gl] first GS primitive consumed by the native OpenGL path\n[native-gl-image] rejected psm=19 base=12352 bw=1 rect=0,0 1x1: only exact CT32 IMAGE resources are implemented\n[native-gl-image] rejected psm=0 base=12352 bw=2 rect=0,0 1x1: resource identity format/stride alias is unsupported\n[native-gl-image] rejected psm=0 base=12352 bw=1 rect=0,0 1x1: IMAGE extent/stride or exact packed byte count is invalid\n[native-gl-image] rejected psm=0 base=12352 bw=1 rect=64,0 1x1: IMAGE extent/stride or exact packed byte count is invalid\n[native-gl] direct GS scene target 1: 1024x512 color + depth FBO for FBP=64\n[gs-trxdir] HostToLocal: dbp=14848 (fbp=464) dpsm=0 rect=0,0 3x2\n[native-gl-debug] dispfb change: [0]=0000000000000382 [1]=0000000000000000 pmode=0000000000000001\n[native-gl-image] rejected psm=0 base=12353 bw=1 rect=0,0 1x1: IMAGE overlaps another owned native resource identity\n[native-gl-copy] rejected src=0/12353/1 0,0 dst=0/13440/1 0,0 1x1 dir=0: source overlaps an owned resource through an unsupported interior alias\n[native-gl-copy] rejected src=0/12352/1 0,0 dst=0/12353/1 0,0 1x1 dir=0: destination overlaps another owned resource identity\n[native-gl-copy] rejected src=0/13824/1 0,0 dst=0/13952/1 0,0 2x2 dir=0: source copy rectangle contains undefined pixels\n[native-gl-copy] rejected src=0/12352/1 0,0 dst=0/13952/1 0,0 2x2 dir=4: invalid copy direction/stride/rectangle\n[native-gl-copy] rejected src=0/0/1 0,0 dst=0/14080/1 0,0 2x2 dir=0: scaled framebuffer alpha cannot reconstruct raw IMAGE bytes\n[native-gl] direct GS scene target 2: 1024x512 color + depth FBO for FBP=128\n[native-gl-clut] rejected: only native indexed CPSM32 palettes are implemented\n[native-gl-clut] rejected: palette source contains undefined pixels\n[native-gl-clut] rejected: CSM2 nonzero-CSA eight-bit palette load is unsupported\n[native-gl-clut] rejected: CSM2 palette stride mismatch\n[native-gl-debug] dispfb change: [0]=0000000000000582 [1]=0000000000000000 pmode=0000000000000001\n[native-gl-image] unsupported native IMAGE display format/stride/dual-circuit alias\n[native-gl-image] capture DISPLAY source has unsupported identity or undefined pixels\n[native-gl-image] capture DISPLAY source has unsupported identity or undefined pixels\n[native-gl-image] capture DISPLAY source has unsupported identity or undefined pixels\n\n[census] ===== accepted-route PS2 API census =====\n[census] EE   : live guest translations = 0        (PASS); VU1 programs translated while the game ran = 0 (PASS)\n[census] IOP  : guest modules loaded and able to run = 0   (PASS)\n[census] VU   : interpreter fallbacks = 0 (vu0 0, vu1 0) (PASS)\n[census] IOP  : guest instructions = 0       (PASS)\n[census] SIF  : RPCs dispatched natively = 0, through guest-registered servers = 0, unknown = 0\n[census] GS   : transfers reached the native surface = 1, stopped in emulated VRAM = 0; primitives = 19\n[census] SPU2 : chip-model ops at the device boundary = 0; key-ons = 0 key-offs = 0 DMA writes = 0 (0.0 MB) reads = 0 peak sample = 0\n[census] AUDIO: native frames mixed = 0, blocks consumed = 0; voices keyed = 0, voice frames = 0, ADPCM blocks = 0\n[census] CDVD : device sector reads = 0                   (no CDVD device on route); native content volume reads = 0\n[census] GS   : packets dropped by the native GL path (not drawn): [four-bit palette CSM reinterpretation is unsupported]=1 [texture overlaps owned native IMAGE bytes through an unsupported resource alias]=1 [native IMAGE texture view contains undefined pixels]=1 [native IMAGE texture view GPU copy failed]=2\n[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=0 SPU2-chip-model-ops=0 SIF-guest-registered=0 CDVD-device-reads=0; compiled while the game ran: EE=0 VU1=0; guest modules able to run=0\n[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n=================================================\n[census] GS   : transfers by base: base=14848(fbp=464):app=1,skp=0\n"
+    },
+    {
+      "name": "test_gl_vs_raster",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_gl_vs_raster.exe",
+      "exe_sha256": "7e8b873a8e2384f29fe93784b850cff7fe98c1d1a9476c858969bb7696ababa1",
+      "argv": [],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "\n=======================================================================\n             GS TEXTURE SAMPLING A/B ACCEPTANCE MATRIX                 \n=======================================================================\nTest Case                                 Pixels        Mismatches  Status\n-----------------------------------------------------------------------\nSprite 1:1 Scale (4x4 UV)                 16            0           PASS\nSprite 2x Magnification (8x8 UV)          64            0           PASS\nSprite 3x Magnification (12x12 UV)        144           0           PASS\nSprite 1.5x Non-Integer (6x6 UV)          36            0           PASS\nSprite 2x Magnification (8x8 ST)          64            0           PASS\nTriangle Strip 1:1 (4x4 UV)               16            0           PASS\nTriangle Strip 2x (8x8 UV)                64            0           PASS\nMidpoint Tie-Break (0.5 texel center)     64            0           PASS\nSprite 1:1 Nearest (4x4 UV)               16            0           PASS\nSprite 2x Nearest (8x8 UV)                64            0           PASS\nSprite 3x Nearest (12x12 UV)              144           0           PASS\nTriangle Strip 1:1 Nearest (4x4 UV)       16            0           PASS\nTriangle Strip 2x Nearest (8x8 UV)        64            0           PASS\nTriangle Prim3 1:1 (4x4 UV)               16            0           PASS\nTriangle Prim3 Nearest 13x13 (4x4 UV)     169           0           PASS\nFont Atlas Nearest Minify (prim4)         2584          0           PASS\nFont Atlas ALPHA=0x44 av=0x80             2584          0           PASS\nFont Atlas ALPHA=0x44 av=0x40             2584          0           PASS\n=======================================================================\nALL 18 MATRIX TESTS PASSED!\n",
+      "stderr": "[gs] native OpenGL/direct-packet mode selected; WebGPU presentation disabled\n[native-gl] GPU busy time measured with a GL timer query\n[native-gl] direct GS scene target 0: 1024x512 color + depth FBO for FBP=0\n[native-gl] enabled: GL 4.6.0 Compatibility Profile Context 26.10.1.261008 | AMD Radeon RX 6800 XT | ATI Technologies Inc.\n[native-gl] direct GS scene target 1: 1024x512 color + depth FBO for FBP=91\n[native-gl] first GS primitive consumed by the native OpenGL path\n\n[census] ===== accepted-route PS2 API census =====\n[census] EE   : live guest translations = 0        (PASS); VU1 programs translated while the game ran = 0 (PASS)\n[census] IOP  : guest modules loaded and able to run = 0   (PASS)\n[census] VU   : interpreter fallbacks = 0 (vu0 0, vu1 0) (PASS)\n[census] IOP  : guest instructions = 0       (PASS)\n[census] SIF  : RPCs dispatched natively = 0, through guest-registered servers = 0, unknown = 0\n[census] GS   : transfers reached the native surface = 0, stopped in emulated VRAM = 0; primitives = 63\n[census] SPU2 : chip-model ops at the device boundary = 0; key-ons = 0 key-offs = 0 DMA writes = 0 (0.0 MB) reads = 0 peak sample = 0\n[census] AUDIO: native frames mixed = 0, blocks consumed = 0; voices keyed = 0, voice frames = 0, ADPCM blocks = 0\n[census] CDVD : device sector reads = 0                   (no CDVD device on route); native content volume reads = 0\n[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=0 SPU2-chip-model-ops=0 SIF-guest-registered=0 CDVD-device-reads=0; compiled while the game ran: EE=0 VU1=0; guest modules able to run=0\n[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n=================================================\n"
+    },
+    {
+      "name": "test_native_gl_alpha",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_gl_alpha.exe",
+      "exe_sha256": "f89014920689b404dd3839e7aa12872c5ac324163a0976e74dfdb1d760f515c3",
+      "argv": [],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "",
+      "stderr": "[gs] native OpenGL/direct-packet mode selected; WebGPU presentation disabled\n[native-gl] GPU busy time measured with a GL timer query\n[native-gl] direct GS scene target 0: 1024x512 color + depth FBO for FBP=0\n[native-gl] enabled: GL 4.6.0 Compatibility Profile Context 26.10.1.261008 | AMD Radeon RX 6800 XT | ATI Technologies Inc.\n[native-gl] direct GS scene target 1: 1024x512 color + depth FBO for FBP=91\n[native-gl] first GS primitive consumed by the native OpenGL path\n[native-gl] direct GS scene target 2: 1024x512 color + depth FBO for FBP=92\n[native-gl] rejected GS packet: GS framebuffer write mask is not implemented yet | prim=4 attr=000000000000000C frame=01000000000A005C fbw=10 fpsm=00 tex0=0000000000000000 tex1=0000000000000000 clamp=0000000000000000 test=0000000000000000 alpha=0000000000000044 zbuf=0000000000000000 dthe=0 dimx=0000000000000000 colclamp=1 count=3\nGS ALPHA=0x44 PSMCT32 source-over matches the reference: reference 208F006F native GL 408F0070\n\n[census] ===== accepted-route PS2 API census =====\n[census] EE   : live guest translations = 0        (PASS); VU1 programs translated while the game ran = 0 (PASS)\n[census] IOP  : guest modules loaded and able to run = 0   (PASS)\n[census] VU   : interpreter fallbacks = 0 (vu0 0, vu1 0) (PASS)\n[census] IOP  : guest instructions = 0       (PASS)\n[census] SIF  : RPCs dispatched natively = 0, through guest-registered servers = 0, unknown = 0\n[census] GS   : transfers reached the native surface = 0, stopped in emulated VRAM = 0; primitives = 16\n[census] SPU2 : chip-model ops at the device boundary = 0; key-ons = 0 key-offs = 0 DMA writes = 0 (0.0 MB) reads = 0 peak sample = 0\n[census] AUDIO: native frames mixed = 0, blocks consumed = 0; voices keyed = 0, voice frames = 0, ADPCM blocks = 0\n[census] CDVD : device sector reads = 0                   (no CDVD device on route); native content volume reads = 0\n[census] GS   : packets dropped by the native GL path (not drawn): [GS framebuffer write mask is not implemented yet]=1\n[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=0 SPU2-chip-model-ops=0 SIF-guest-registered=0 CDVD-device-reads=0; compiled while the game ran: EE=0 VU1=0; guest modules able to run=0\n[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n=================================================\n"
+    },
+    {
+      "name": "test_gl_lazy_readback",
+      "exe": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_gl_lazy_readback.exe",
+      "exe_sha256": "5d0a60b717c53511eb4631bd9e678fbe2d3c7cf285585fe5cccec0b5f776771e",
+      "argv": [],
+      "exit": 0,
+      "expected_exit": 0,
+      "required_diagnostic": null,
+      "pass": true,
+      "stdout": "[TEST] 1. Initial clean state\n[TEST] 2. Submitting primitive to GPU scene surface\n[TEST] 3. Verify CPU VRAM is still clean (lazy: no eager readback)\n[TEST] 4. Trigger on-demand sync_surface_to_cpu\n[TEST] 5. Verify CPU VRAM is now populated with rendered pixels\nRendered pixel readback: R=17 G=34 B=51\n[TEST] 6. Verify subsequent sync_surface_to_cpu returns false (already clean)\n[TEST] 7. Verify read_display_rgba triggers sync automatically\nread_display_rgba R=238\n[TEST] 8. Preserve a dirty surface when the target cache evicts it\n[TEST] 9. Clear the entire surface after a scissored draw\n[TEST] 10. Permit a new depth buffer after scene reset\n[PASS] All lazy on-demand readback tests passed successfully!\n",
+      "stderr": "[gs] native OpenGL/direct-packet mode selected; WebGPU presentation disabled\n[native-gl] GPU busy time measured with a GL timer query\n[native-gl] direct GS scene target 0: 1024x512 color + depth FBO for FBP=0\n[native-gl] enabled: GL 4.6.0 Compatibility Profile Context 26.10.1.261008 | AMD Radeon RX 6800 XT | ATI Technologies Inc.\n[native-gl] direct GS scene target 1: 1024x512 color + depth FBO for FBP=91\n[native-gl] first GS primitive consumed by the native OpenGL path\n[native-gl] direct GS scene target 2: 1024x512 color + depth FBO for FBP=140\n[native-gl] direct GS scene target 3: 1024x512 color + depth FBO for FBP=150\n[native-gl] direct GS scene target 4: 1024x512 color + depth FBO for FBP=160\n[native-gl] direct GS scene target 5: 1024x512 color + depth FBO for FBP=170\n[native-gl] direct GS scene target 6: 1024x512 color + depth FBO for FBP=180\n[native-gl] direct GS scene target 7: 1024x512 color + depth FBO for FBP=190\n[native-gl] direct GS scene target 8: 1024x512 color + depth FBO for FBP=200\n[native-gl] direct GS scene target 9: 1024x512 color + depth FBO for FBP=210\n[native-gl] direct GS scene target 10: 1024x512 color + depth FBO for FBP=220\n[native-gl] direct GS scene target 11: 1024x512 color + depth FBO for FBP=230\n[native-gl] direct GS scene target 12: 1024x512 color + depth FBO for FBP=240\n[native-gl] direct GS scene target 13: 1024x512 color + depth FBO for FBP=250\n[native-gl] direct GS scene target 14: 1024x512 color + depth FBO for FBP=260\n[native-gl] direct GS scene target 15: 1024x512 color + depth FBO for FBP=270\n[native-gl] recycled scene target 0 for FBP=280 (cleared)\n[native-gl] recycled scene target 1 for FBP=290 (cleared)\n[native-gl] recycled scene target 2 for FBP=300 (cleared)\n[native-gl] recycled scene target 3 for FBP=91 (cleared)\n[native-gl] scene boundary: cleared all native surfaces\n[native-gl] scene boundary: cleared all native surfaces\n\n[census] ===== accepted-route PS2 API census =====\n[census] EE   : live guest translations = 0        (PASS); VU1 programs translated while the game ran = 0 (PASS)\n[census] IOP  : guest modules loaded and able to run = 0   (PASS)\n[census] VU   : interpreter fallbacks = 0 (vu0 0, vu1 0) (PASS)\n[census] IOP  : guest instructions = 0       (PASS)\n[census] SIF  : RPCs dispatched natively = 0, through guest-registered servers = 0, unknown = 0\n[census] GS   : transfers reached the native surface = 0, stopped in emulated VRAM = 0; primitives = 25\n[census] SPU2 : chip-model ops at the device boundary = 0; key-ons = 0 key-offs = 0 DMA writes = 0 (0.0 MB) reads = 0 peak sample = 0\n[census] AUDIO: native frames mixed = 0, blocks consumed = 0; voices keyed = 0, voice frames = 0, ADPCM blocks = 0\n[census] CDVD : device sector reads = 0                   (no CDVD device on route); native content volume reads = 0\n[census] GATE  : emulated PS2 devices on the accepted route (each must reach 0): GS-stopped-in-VRAM=0 SPU2-chip-model-ops=0 SIF-guest-registered=0 CDVD-device-reads=0; compiled while the game ran: EE=0 VU1=0; guest modules able to run=0\n[census] VERDICT: CENSUS GATE MET (full-game behavior and source-path acceptance not evaluated)\n=================================================\n"
+    }
+  ]
+}

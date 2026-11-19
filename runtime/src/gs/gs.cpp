@@ -451,7 +451,60 @@ void transfer_pixel(std::uint32_t value) {
 std::uint8_t g_carry[4];
 std::size_t g_carried = 0;
 
+// Decode CT32 IMAGE payloads directly into native image resources. Transfer
+// coordinates are packet cursors; no emulated VRAM is read or written here.
+void feed_native_ct32(const std::uint8_t* data, std::size_t bytes) {
+    const auto buf = g_state.bitbltbuf, pos = g_state.trxpos, reg = g_state.trxreg;
+    const auto base = static_cast<std::uint32_t>(buf >> 32) & 0x3FFFu;
+    const auto bw = static_cast<std::uint32_t>(buf >> 48) & 0x3Fu;
+    const auto x = static_cast<std::uint32_t>(pos >> 32) & 0x7FFu;
+    const auto y = static_cast<std::uint32_t>(pos >> 48) & 0x7FFu;
+    const auto width = static_cast<std::uint32_t>(reg) & 0xFFFu;
+    const auto height = static_cast<std::uint32_t>(reg >> 32) & 0xFFFu;
+    const auto fail = [&](const char* why) {
+        std::fprintf(stderr, "[gs-native-stop] CT32 IMAGE base=%u bw=%u rect=%u,%u %ux%u cursor=%u,%u: %s\n",
+                     base, bw, x, y, width, height, g_transfer.x, g_transfer.y, why);
+        ps2::census::gs_transfer(base, width * height, false);
+        std::fflush(stderr);
+        std::abort();
+    };
+    if (!native_gl::enabled()) fail("native GPU image backend is not initialized");
+    if ((bytes & 3u) || (bytes && !data)) fail("incomplete CT32 pixel payload");
+    if (!width || !height || g_transfer.x >= width || g_transfer.y >= height)
+        fail("invalid IMAGE rectangle or packet cursor");
+    std::size_t available = bytes / 4u;
+    while (available && g_transfer.active) {
+        const auto full_rows = g_transfer.x == 0 ?
+            std::min<std::size_t>(available / width, height - g_transfer.y) : 0u;
+        const auto draw_width = full_rows ? width :
+            static_cast<std::uint32_t>(std::min<std::size_t>(available, width - g_transfer.x));
+        const auto draw_height = full_rows ? static_cast<std::uint32_t>(full_rows) : 1u;
+        const auto pixels = static_cast<std::size_t>(draw_width) * draw_height;
+        if (!native_gl::upload_image(PSMCT32, base, bw, x + g_transfer.x,
+                                    y + g_transfer.y, draw_width, draw_height, data, pixels * 4u))
+            fail("native GPU resource rejected IMAGE data");
+        data += pixels * 4u;
+        available -= pixels;
+        if (full_rows) g_transfer.y += draw_height;
+        else {
+            g_transfer.x += draw_width;
+            if (g_transfer.x == width) { g_transfer.x = 0; ++g_transfer.y; }
+        }
+        if (g_transfer.y == height) {
+            g_transfer.active = false;
+            note_surface_write(base, false);
+            ps2::census::gs_transfer(base, width * height, true);
+        }
+    }
+    // Remaining bytes belong to serialized IMAGE padding, outside TRXREG.
+}
+
 void feed_image(const std::uint8_t *data, std::size_t bytes) {
+    if (g_transfer.active && (g_state.trxdir & 3u) == 0 &&
+        ((g_state.bitbltbuf >> 56) & 0x3Fu) == PSMCT32) {
+        feed_native_ct32(data, bytes);
+        return;
+    }
 #ifdef PS2_GPU
     if (gpu_on() && (g_state.trxdir & 3u) == 0) gpu::image_data(data, bytes);
 #endif
@@ -485,6 +538,20 @@ void local_copy() {
     const std::uint32_t dsax = static_cast<std::uint32_t>(pos >> 32) & 0x7FFu, dsay = static_cast<std::uint32_t>(pos >> 48) & 0x7FFu;
     const std::uint32_t dir = static_cast<std::uint32_t>(pos >> 59) & 3u;
     const std::uint32_t rrw = static_cast<std::uint32_t>(reg) & 0xFFFu, rrh = static_cast<std::uint32_t>(reg >> 32) & 0xFFFu;
+    if (spsm == PSMCT32 && dpsm == PSMCT32) {
+        if (!rrw || !rrh) return;
+        const bool copied = native_gl::copy_image(spsm, sbp, sbw, ssax, ssay,
+                                                  dpsm, dbp, dbw, dsax, dsay, rrw, rrh, dir);
+        ps2::census::gs_transfer(dbp, rrw * rrh, copied);
+        if (!copied) {
+            std::fprintf(stderr, "[gs-native-stop] native CT32 copy rejected: source=%u destination=%u rect=%ux%u direction=%u\n",
+                         sbp, dbp, rrw, rrh, dir);
+            std::fflush(stderr);
+            std::abort();
+        }
+        note_surface_write(dbp, false);
+        return;
+    }
     std::vector<std::uint32_t> pixels(static_cast<std::size_t>(rrw) * rrh);
     for (std::uint32_t y = 0; y < rrh; ++y)
         for (std::uint32_t x = 0; x < rrw; ++x)
@@ -502,6 +569,9 @@ void local_copy() {
 }
 
 void load_clut(std::uint64_t tex0) {
+    // TEX0 on a direct-color texture does not execute a palette load, even
+    // when its serialized CLD bits are nonzero (GSClut::WriteTest contract).
+    if(((tex0 >> 20) & 7u) < 3u)return;
     const std::uint32_t cld = static_cast<std::uint32_t>(tex0 >> 61) & 7u;
     static std::uint32_t cbp0 = ~0u, cbp1 = ~0u;
     static std::uint64_t last_vram_gen = 0;
@@ -532,13 +602,19 @@ void load_clut(std::uint64_t tex0) {
     const std::uint32_t cpsm = static_cast<std::uint32_t>(tex0 >> 51) & 0xFu;
     const std::uint32_t csm = static_cast<std::uint32_t>(tex0 >> 55) & 1u;
     const std::uint32_t csa = static_cast<std::uint32_t>(tex0 >> 56) & 0x1Fu;
+    if(native_gl::enabled()) {
+        if(!native_gl::load_clut(tex0,g_state.texclut)) {
+            std::fprintf(stderr,"[gs-native-stop] native palette load rejected TEX0=%016llX TEXCLUT=%016llX\n",
+                static_cast<unsigned long long>(tex0),static_cast<unsigned long long>(g_state.texclut));
+            std::fflush(stderr);
+            std::abort();
+        }
+        return;
+    }
 #ifdef PS2_GPU
     if (gpu_on()) gpu::load_clut(tex0, g_state.texclut);
 #endif
     if (!cpu_raster() && !native_gl::enabled()) return;
-    if (native_gl::enabled()) {
-        native_gl::sync_surface_to_cpu(cbp / 32u);
-    }
     const bool eight = psm == PSMT8 || psm == PSMT8H;
     const std::uint32_t entries = eight ? 256u : 16u;
     const std::uint32_t texclut = static_cast<std::uint32_t>(g_state.texclut);
@@ -1049,7 +1125,7 @@ void write(std::uint32_t reg, std::uint64_t value) {
     case 0x50: s.bitbltbuf = value; break;
     case 0x51: s.trxpos = value; break;
     case 0x52: s.trxreg = value; break;
-    case 0x53:
+    case 0x53: {
         if (trace_display()) {
             std::fprintf(stderr, "[gs] trx dir %llu buf 0x%016llX pos 0x%016llX reg 0x%016llX\n", static_cast<unsigned long long>(value & 3u),
                          static_cast<unsigned long long>(s.bitbltbuf), static_cast<unsigned long long>(s.trxpos), static_cast<unsigned long long>(s.trxreg));
@@ -1058,8 +1134,10 @@ void write(std::uint32_t reg, std::uint64_t value) {
         s.trxdir = value;
         g_transfer = Transfer{};
         g_carried = 0;
+        const bool native_ct32 = ((s.bitbltbuf >> 56) & 0x3Fu) == PSMCT32 &&
+            ((value & 3u) == 0 || ((value & 3u) == 2 && ((s.bitbltbuf >> 24) & 0x3Fu) == PSMCT32));
 #ifdef PS2_GPU
-        if (gpu_on()) {
+        if (gpu_on() && !native_ct32) {
             if ((value & 3u) == 0) gpu::image_begin(s);
             else if ((value & 3u) == 2) gpu::local_copy(s);
             else if ((value & 3u) == 1 && !cpu_raster()) download_source(s);
@@ -1081,7 +1159,8 @@ void write(std::uint32_t reg, std::uint64_t value) {
             // Preserve earlier GPU draws before the incoming CPU transfer can
             // modify the same framebuffer. A later readback must not overwrite
             // newer transferred pixels with stale GPU contents.
-            if (cpu_raster() && native_gl::enabled() && (dbp % 32u) == 0)
+            const std::uint32_t incoming_psm = static_cast<std::uint32_t>(buf >> 56) & 0x3Fu;
+            if (incoming_psm != PSMCT32 && cpu_raster() && native_gl::enabled() && (dbp % 32u) == 0)
                 native_gl::sync_surface_to_cpu(dbp / 32u);
             const std::uint32_t dpsm = static_cast<std::uint32_t>(buf >> 56) & 0x3Fu;
             const std::uint32_t dsax = static_cast<std::uint32_t>(pos >> 32) & 0x7FFu;
@@ -1108,14 +1187,15 @@ void write(std::uint32_t reg, std::uint64_t value) {
                 std::fprintf(stderr, "[gs-trxdir] LocalToLocal: sbp=%u -> dbp=%u (fbp=%u) %ux%u\n",
                              sbp, dbp, dbp / 32u, rrw, rrh);
             }
-            if (native_gl::enabled()) {
+            if (native_gl::enabled() && !native_ct32) {
                 if ((sbp % 32u) == 0) native_gl::sync_surface_to_cpu(sbp / 32u);
                 if ((dbp % 32u) == 0 && dbp != sbp) native_gl::sync_surface_to_cpu(dbp / 32u);
             }
-            if (cpu_raster()) local_copy();
+            if (cpu_raster() || native_ct32) local_copy();
         }
         else if ((value & 3u) == 1) g_transfer.active = true;
         break;
+    }
     case 0x54:
         feed_image(reinterpret_cast<const std::uint8_t *>(&value), 8);
         break;
@@ -1418,10 +1498,14 @@ static std::uint32_t g_picture_width = 0, g_picture_height = 0;
 static std::uint64_t g_picture_count = 0;
 
 void capture_present_picture() {
-    if (!native_gl::enabled()) return;
+    (void)capture_present_picture(display_regs());
+}
+
+bool capture_present_picture(const DisplayRegs &regs) {
+    if (!native_gl::enabled()) return false;
     std::vector<std::uint32_t> pixels;
     std::uint32_t width = 0, height = 0;
-    if (!native_gl::read_picture(pixels, width, height)) return;
+    if (!native_gl::read_picture(regs,pixels, width, height)) return false;
     std::lock_guard<std::mutex> lock(g_picture_mutex);
     g_picture_pixels.swap(pixels);
     g_picture_width = width;
@@ -1432,6 +1516,7 @@ void capture_present_picture() {
     if ((g_picture_count % 60u) == 0u)
         std::fprintf(stderr, "[gs] picture capture: %llu frames at %ux%u\n",
                      static_cast<unsigned long long>(g_picture_count), width, height);
+    return true;
 }
 
 bool captured_picture(std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height) {
@@ -1450,8 +1535,11 @@ bool display(const DisplayRegs &r, std::vector<std::uint32_t> &rgba, std::uint32
         // The native path draws on the GPU and never writes those pixels into
         // the CPU VRAM array, so a picture read from that array is the game's
         // texture data, not the game. The captured surface is the frame itself.
-        capture_present_picture();
-        if (captured_picture(rgba, width, height)) return true;
+        if(!capture_present_picture(r)) {
+            rgba.clear();width=height=0;
+            return false;
+        }
+        return captured_picture(rgba,width,height);
     }
     // In native OpenGL mode the back buffer is copied into CPU GS memory at
     // presentation time. render_pending() and this display call run on the same
@@ -1507,6 +1595,9 @@ bool display(const DisplayRegs &r, std::vector<std::uint32_t> &rgba, std::uint32
 bool copy_frame(std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height) { return copy_frame(display_regs(), rgba, width, height); }
 
 bool copy_frame(const DisplayRegs &r, std::vector<std::uint32_t> &rgba, std::uint32_t &width, std::uint32_t &height) {
+    // Capture the requested native resource directly. No CPU device-memory
+    // fallback or cross-frame deinterlace resampling on this path.
+    if(native_gl::enabled())return display(r,rgba,width,height);
     static std::vector<std::uint32_t> previous;
     bool got = false;
 #ifdef PS2_GPU

@@ -358,7 +358,7 @@ void record_start(const fs::path &file, const fs::path &state, CardAt card_at) {
     g_rec.chain = 0;
     g_rec.began = g_frames;
     g_rec.last_frame = g_frames;
-    g_rec.buffer = "ps2-inputs 1\ncheck-every " + std::to_string(kCheckEvery) + " slices " + std::to_string(kSlices) + "\n";
+    g_rec.buffer = "ps2-inputs 2\ncheck-every " + std::to_string(kCheckEvery) + " slices " + std::to_string(kSlices) + "\n";
     g_rec.buffer += std::string("pal ") + (g_options.pal ? "1" : "0") + "\n";
     if (!g_options.program_path.empty()) g_rec.buffer += "program " + g_options.program_path + "\n";
     if (state.empty()) g_rec.buffer += "start power-on frame 0\n";
@@ -410,20 +410,20 @@ void replay_end(int status, const std::string &why) {
 }
 
 // the pad states of this frame (system.cpp, latch_pads)
-void pads_hook(PadSample (&pads)[2], unsigned &apply) {
+void pads_hook(PadSample (&pads)[2], unsigned &apply,std::uint64_t frame) {
     if (g_rep.active) {
         if (g_rep.finished) return;
         if (g_rep.first) {
             g_rep.first = false;
-            if (g_rep.began + 1 != g_frames) {
+            if (g_rep.began + 1 != frame) {
                 std::fprintf(stderr, "[replay] the recording began at frame %llu, but this run is at frame %llu: wrong state for this recording?\n",
-                             static_cast<unsigned long long>(g_rep.began), static_cast<unsigned long long>(g_frames - 1));
+                             static_cast<unsigned long long>(g_rep.began), static_cast<unsigned long long>(frame - 1));
                 replay_end(5, "wrong start for the recording");
                 return;
             }
         }
         apply = 0;
-        const auto it = g_rep.pads.find(g_frames);
+        const auto it = g_rep.pads.find(frame);
         if (it != g_rep.pads.end())
             for (const auto &entry : it->second) {
                 pads[entry.first] = entry.second;
@@ -438,9 +438,10 @@ void pads_hook(PadSample (&pads)[2], unsigned &apply) {
         if (!g_rec.first && pads[p] == g_rec.last[p]) continue;
         g_rec.last[p] = pads[p];
         const PadSample &s = pads[p];
-        std::snprintf(line, sizeof line, "p%d %llu %04X %u %u %u %u %u %u %d\n", p + 1, static_cast<unsigned long long>(g_frames), s.buttons, s.axes[0], s.axes[1],
+        std::snprintf(line, sizeof line, "p%d %llu %04X %u %u %u %u %u %u %d", p + 1, static_cast<unsigned long long>(frame), s.buttons, s.axes[0], s.axes[1],
                       s.axes[2], s.axes[3], s.l2, s.r2, s.connected ? 1 : 0);
         g_rec.buffer += line;
+        g_rec.buffer += " "+mka::input::encode_pressure(s.pressure)+"\n";
     }
     g_rec.first = false;
 }
@@ -1031,23 +1032,55 @@ bool replay_begin() {
     quick::Replay &r = quick::g_rep;
     char line[256];
     bool magic = false;
+    bool full_pressure=false;
+    const auto invalid_input=[&](const char* reason) {
+        std::fprintf(stderr,"[replay] invalid input recording: %s\n",reason);
+        std::fclose(f);r.status=5;return false;
+    };
     while (std::fgets(line, sizeof line, f)) {
         unsigned long long frame = 0, begin = 0;
-        unsigned buttons, a0, a1, a2, a3, l2, r2, conn;
+        unsigned a0,a1;
         char name[200];
-        int port = 0;
-        if (std::strncmp(line, "ps2-inputs 1", 12) == 0) magic = true;
-        else if (std::sscanf(line, "p%d %llu %x %u %u %u %u %u %u %u", &port, &frame, &buttons, &a0, &a1, &a2, &a3, &l2, &r2, &conn) == 10 && (port == 1 || port == 2)) {
+        std::string_view row(line);
+        while(!row.empty()&&(row.back()=='\n'||row.back()=='\r'||row.back()==' '||row.back()=='\t'))row.remove_suffix(1);
+        const bool pad_row=line[0]=='p'&&((line[1]>='0'&&line[1]<='9')||line[1]==' ');
+        if(row.substr(0,10)=="ps2-inputs") {
+            if(magic)return invalid_input("duplicate version header");
+            if(row=="ps2-inputs 1"){magic=true;full_pressure=false;}
+            else if(row=="ps2-inputs 2"){magic=true;full_pressure=true;}
+            else return invalid_input("unsupported version header");
+        }
+        else if (pad_row) {
+            // Parse wide values before narrowing; stream overflow and negative
+            // tokens are errors, never wrapped controller data.
+            std::istringstream input{std::string(row)};
+            std::string player,encoded,extra;
+            std::uint64_t buttons,rx,ry,lx,ly,l2,r2,conn;
+            if(!magic||row.find('-')!=std::string_view::npos||
+                !(input>>player>>frame>>std::hex>>buttons>>std::dec>>rx>>ry>>lx>>ly>>l2>>r2>>conn)||
+                (player!="p1"&&player!="p2")||buttons>0xffffu||rx>255u||ry>255u||lx>255u||ly>255u||l2>255u||r2>255u||conn>1u)
+                return invalid_input("malformed controller row or out-of-range value");
+            const int port=player=="p1"?0:1;
             PadSample s;
             s.buttons = static_cast<std::uint16_t>(buttons);
-            s.axes[0] = static_cast<std::uint8_t>(a0);
-            s.axes[1] = static_cast<std::uint8_t>(a1);
-            s.axes[2] = static_cast<std::uint8_t>(a2);
-            s.axes[3] = static_cast<std::uint8_t>(a3);
+            s.axes[0] = static_cast<std::uint8_t>(rx);
+            s.axes[1] = static_cast<std::uint8_t>(ry);
+            s.axes[2] = static_cast<std::uint8_t>(lx);
+            s.axes[3] = static_cast<std::uint8_t>(ly);
             s.l2 = static_cast<std::uint8_t>(l2);
             s.r2 = static_cast<std::uint8_t>(r2);
             s.connected = conn != 0;
-            r.pads[frame].emplace_back(port - 1, s);
+            s.pressure=mka::input::digital_state(s.buttons,s.connected,{{s.axes[0],s.axes[1],s.axes[2],s.axes[3]}},s.l2,s.r2).pressure;
+            if(full_pressure) {
+                if(!(input>>encoded))return invalid_input("missing complete pressure sample");
+                const auto decoded=mka::input::decode_pressure(encoded);
+                if(!decoded) {
+                    return invalid_input("invalid complete pressure sample");
+                }
+                s.pressure=*decoded;
+            }
+            if(input>>extra)return invalid_input("unexpected controller fields");
+            r.pads[frame].emplace_back(port, s);
             r.end = std::max<std::uint64_t>(r.end, frame);
         } else if (std::sscanf(line, "h %llu %x", &frame, &a0) == 2) {
             r.checks[frame] = a0;

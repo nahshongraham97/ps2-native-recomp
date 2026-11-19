@@ -78,6 +78,12 @@ else()
         runtime/src/native/content_vfs.cpp
         runtime/src/native/sound_bank.cpp
         runtime/src/native/sound_archive.cpp
+        runtime/src/native/stream_source.cpp
+        runtime/src/native/audio_banks.cpp
+        runtime/src/native/audio_bank_protocol.cpp
+        runtime/src/native/normal_sample.cpp
+        runtime/src/native/bank_preparation.cpp
+        runtime/src/native/controller_input.cpp
         runtime/src/port_config.cpp
         runtime/src/compliance_census.cpp
         runtime/src/system.cpp
@@ -253,6 +259,41 @@ if(PS2_GENERATED)
         runtime/src/native/sound_bank.cpp runtime/src/native/adpcm_codec.cpp)
     target_include_directories(test_bank_asset PRIVATE runtime/include)
     add_executable(test_vu_aot_only EXCLUDE_FROM_ALL tests/test_vu_aot_only.cpp runtime/src/vu_micro.cpp)
+    add_executable(test_native_audio_banks EXCLUDE_FROM_ALL
+        tests/test_audio_banks.cpp
+        runtime/src/native/bank_preparation.cpp
+        runtime/src/native/normal_sample.cpp
+        runtime/src/native/audio_banks.cpp
+        runtime/src/native/stream_source.cpp
+        runtime/src/native/bank_asset.cpp
+        runtime/src/native/adpcm_codec.cpp
+        runtime/src/native/native_file.cpp
+        runtime/src/native/sound_archive.cpp
+        runtime/src/native/sound_bank.cpp
+        runtime/src/native/sample_payload.cpp)
+    target_include_directories(test_native_audio_banks PRIVATE runtime/include)
+    add_executable(test_native_audio_bank_protocol EXCLUDE_FROM_ALL
+        tests/test_audio_bank_protocol.cpp
+        runtime/src/native/bank_preparation.cpp
+        runtime/src/native/normal_sample.cpp
+        runtime/src/native/audio_bank_protocol.cpp
+        runtime/src/native/audio_banks.cpp
+        runtime/src/native/stream_source.cpp
+        runtime/src/native/bank_asset.cpp
+        runtime/src/native/adpcm_codec.cpp
+        runtime/src/native/native_file.cpp
+        runtime/src/native/sound_archive.cpp
+        runtime/src/native/sound_bank.cpp
+        runtime/src/native/sample_payload.cpp)
+    target_include_directories(test_native_audio_bank_protocol PRIVATE runtime/include)
+    add_executable(test_native_normal_sample EXCLUDE_FROM_ALL
+        tests/test_normal_sample.cpp
+        runtime/src/native/normal_sample.cpp
+        runtime/src/native/adpcm_codec.cpp
+        runtime/src/native/native_file.cpp
+        runtime/src/native/sample_payload.cpp
+        runtime/src/native/sound_bank.cpp)
+    target_include_directories(test_native_normal_sample PRIVATE runtime/include)
     target_include_directories(test_vu_aot_only PRIVATE runtime/include runtime/src)
     add_executable(test_native_fail_closed EXCLUDE_FROM_ALL tests/test_native_fail_closed.cpp)
     target_include_directories(test_native_fail_closed PRIVATE runtime/include runtime/src)
@@ -273,6 +314,24 @@ if(PS2_GENERATED)
     target_include_directories(test_iop_aot_import_load PRIVATE runtime/src)
     target_link_libraries(test_iop_aot_import_load PRIVATE ps2runtime)
     add_executable(test_padman_rpc EXCLUDE_FROM_ALL tests/test_padman_rpc.cpp)
+    add_executable(test_native_controller_input EXCLUDE_FROM_ALL
+        tests/test_controller_input.cpp runtime/src/native/controller_input.cpp)
+    target_include_directories(test_native_controller_input PRIVATE runtime/include)
+    add_executable(test_native_controller_recording EXCLUDE_FROM_ALL tests/test_controller_recording.cpp)
+    target_link_libraries(test_native_controller_recording PRIVATE ps2runtime)
+    add_executable(test_native_bank_preparation EXCLUDE_FROM_ALL
+        tests/test_bank_preparation.cpp
+        runtime/src/native/bank_preparation.cpp
+        runtime/src/native/audio_banks.cpp
+        runtime/src/native/bank_asset.cpp
+        runtime/src/native/sound_archive.cpp
+        runtime/src/native/sound_bank.cpp
+        runtime/src/native/sample_payload.cpp
+        runtime/src/native/native_file.cpp
+        runtime/src/native/stream_source.cpp
+        runtime/src/native/normal_sample.cpp
+        runtime/src/native/adpcm_codec.cpp)
+    target_include_directories(test_native_bank_preparation PRIVATE runtime/include)
     target_include_directories(test_padman_rpc PRIVATE runtime/src)
     target_link_libraries(test_padman_rpc PRIVATE ps2runtime)
     add_executable(test_mwfilefr_read EXCLUDE_FROM_ALL tests/test_mwfilefr_read.cpp)
@@ -291,6 +350,18 @@ if(PS2_GENERATED)
     target_include_directories(test_mpeg2_decode PRIVATE runtime/src)
     target_link_libraries(test_mpeg2_decode PRIVATE ps2runtime)
     if(WIN32)
+        add_executable(test_native_image_upload EXCLUDE_FROM_ALL tests/test_native_image_upload.cpp)
+        target_include_directories(test_native_image_upload PRIVATE runtime/include runtime/src)
+        target_link_libraries(test_native_image_upload PRIVATE ps2runtime)
+        add_executable(test_native_stream_source EXCLUDE_FROM_ALL
+            tests/test_stream_source.cpp
+            runtime/src/native/stream_source.cpp
+            runtime/src/native/native_file.cpp
+            runtime/src/native/sound_archive.cpp
+            runtime/src/native/sound_bank.cpp
+            runtime/src/native/sample_payload.cpp)
+        target_include_directories(test_native_stream_source PRIVATE runtime/include)
+        target_link_libraries(test_native_stream_source PRIVATE bcrypt)
         add_executable(test_native_gl_alpha EXCLUDE_FROM_ALL tests/test_native_gl_alpha.cpp runtime/src/gs/raster.cpp)
         target_compile_definitions(test_native_gl_alpha PRIVATE MKA_REFERENCE_RASTER=1)
         target_include_directories(test_native_gl_alpha PRIVATE runtime/include runtime/src)

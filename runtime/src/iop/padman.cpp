@@ -6,6 +6,7 @@
 #include "sio2.hpp"
 #include "ps2/memory.hpp"
 #include "ps2/state.hpp"
+#include "mka/controller_input.hpp"
 
 #include <algorithm>
 #include <array>
@@ -103,7 +104,7 @@ void initialize_pad_area(std::uint32_t address) {
     std::memcpy(area + kPadRecordBytes, &initial, sizeof initial);
 }
 
-void fill_pad_record(EePadData &record, const sio2::ControllerState &controller, std::uint32_t frame,
+void fill_pad_record(EePadData &record, const mka::input::ControllerState &controller, std::uint32_t frame,
                      const std::array<std::uint8_t, 6> &alignment) {
     std::memset(&record, 0, sizeof record);
     record.frame = frame;
@@ -363,8 +364,8 @@ void activate() {
 void frame_tick() {
     if (!g_active || !g_initialized) return;
     for (std::uint32_t port = 0; port < g_open_pads.size(); ++port) {
-        sio2::ControllerState controller;
-        if (!sio2::controller_state(static_cast<int>(port), controller)) continue;
+        const auto sample=mka::input::controllers().sample(port);
+        const auto controller=sample?sample->state:mka::input::ControllerState{};
         for (std::uint32_t slot = 0; slot < g_open_pads[port].size(); ++slot) {
             OpenPad &open = g_open_pads[port][slot];
             if (!open.open || !valid_ee_range(open.ee_area, kPadAreaBytes)) continue;
