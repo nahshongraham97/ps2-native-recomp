@@ -1,0 +1,12 @@
+{
+  "at_utc": "2026-11-19T16:32:16.688617+00:00",
+  "source_sha256": {
+    "runtime/include/mka/movie_clock_history.hpp": "609204bfb7467bd8d87e3d8352356313e3563b7d3cc3d7b231754bb41b539454",
+    "runtime/src/native/movie_clock_history.cpp": "0fe6c9bee14b87a402ccf0da240cfdf81e75a5ee195784199142f4dd415304a1",
+    "tests/test_movie_clock_history.cpp": "88080b084cca9428e61bf00e7fe9c20843d9a443c746338f0fd18c663f79f19f",
+    "CMakeLists.txt": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+    "cmake/native_media.cmake": "f140c1609388df229a70c8474f5727040e9dda14b5c429b4d63b0c4ba102def9"
+  },
+  "fork_baseline": "a90c946da8ef28a885db229f4273b635fbd3374d",
+  "scope": "Pure native history arithmetic fixture, no clock/device/game; source delta pinned"
+}

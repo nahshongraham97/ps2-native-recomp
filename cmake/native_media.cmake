@@ -28,6 +28,7 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/movie_metadata.cpp
     runtime/src/native/mpeg2_timing.cpp
     runtime/src/native/movie_timecode.cpp
+    runtime/src/native/movie_clock_history.cpp
     runtime/src/native/movie_control.cpp
     runtime/src/native/movie_catalog.cpp
     runtime/src/native/movie_source.cpp
@@ -127,3 +128,9 @@ add_executable(test_native_user_paths EXCLUDE_FROM_ALL
 target_include_directories(test_native_user_paths PRIVATE runtime/include)
 target_compile_features(test_native_user_paths PRIVATE cxx_std_20)
 target_link_libraries(test_native_user_paths PRIVATE shell32 ole32 uuid)
+
+# Pure native residual math; no media/device/runtime linkage.
+add_executable(test_native_movie_clock_history EXCLUDE_FROM_ALL
+    tests/test_movie_clock_history.cpp runtime/src/native/movie_clock_history.cpp)
+target_include_directories(test_native_movie_clock_history PRIVATE runtime/include)
+target_compile_features(test_native_movie_clock_history PRIVATE cxx_std_20)

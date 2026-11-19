@@ -1,0 +1,20 @@
+{
+  "status": "PASS_COMPLETE_NATIVE_HISTORY_TRACE",
+  "trace_rows": 365,
+  "overflow_rejections": 3,
+  "moved_owner_rejections": 1,
+  "windows": [
+    1,
+    10,
+    61,
+    256
+  ],
+  "negative_checks": 6,
+  "source_verifier_sha256": "25f04c9ec0a71fe1149a16260656bc31cacabaa2f5bffd366033ea94e09ee3d5",
+  "executed_receipt_sha256": "cfd808544e60e80c55ef95c9a7adb676e643fd167790d6400de68bdc036ed55c",
+  "executable_sha256": "9348d13c0d5440fe3072f767ff5f355d517f6d459966a72f1b9aac8e9e4f1f34",
+  "limits": [
+    "Integer history component only; no full clock/filter/player or gameplay proof",
+    "Dynamic native storage/wide results are not source32 wrapping/unsafe-array parity"
+  ]
+}
