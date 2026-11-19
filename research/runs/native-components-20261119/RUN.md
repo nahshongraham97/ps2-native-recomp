@@ -45,7 +45,10 @@ fixtures use AMD Radeon RX 6800 XT OpenGL 4.6. No game boot is involved.
   loop, envelope, mixer or audible parity.
 - `stream-groups-verification.json`: 1,189 actual MS4 source groups and their
   exact metadata/byte hashes match the independent extractor.
-- `source-manifest.json` binds staged source blobs and working-file hashes.
+- `source-manifest.json` binds staged source blobs and their content SHA-256.
+  Working-file hashes are concurrent observations only: the GPU delegate had
+  begun the next CPSM16 batch after staging, so that working backend hash is
+  not the tested checkpoint's source identity. The staged blob is authoritative.
   JSON records bind individual test executable hashes and arguments. Tests
   ran before this checkpoint commit; no clean accepted game build is claimed.
 

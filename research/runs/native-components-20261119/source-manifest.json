@@ -2,161 +2,225 @@
   {
     "path": "CMakeLists.txt",
     "working_sha256": "8BC28395C1EF8874151E50B3F9A46E5C690D7DB59019AA65B93DF63CD77A9ED1",
-    "staged_blob": "8c26d8ae0477f80d7c37f544acee869e9fa5ba11"
+    "staged_blob": "8c26d8ae0477f80d7c37f544acee869e9fa5ba11",
+    "staged_content_sha256": "4da0ccaa03f06985a05f4b930443d884eb30da16a9eeeba8db3134614fb932f8",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "host/window.cpp",
     "working_sha256": "DA7921D66E49D4D08A23C8F06C380BA2CD6E240AEF5AF6D6E4DCDD3271CB6CB3",
-    "staged_blob": "7d3f3c28c4728b684d6a896b3760be177917b9ad"
+    "staged_blob": "7d3f3c28c4728b684d6a896b3760be177917b9ad",
+    "staged_content_sha256": "706a0c59a0facc4e65627aac2ed01cf865b7c03ce3471c2a4ff07bbd74a06a7b",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/include/mka/audio_bank_protocol.hpp",
     "working_sha256": "5751B5FB55B691E56C55B6F8E8BCC06FF2B9EAD59AECCBA6FB67A99CA04D1460",
-    "staged_blob": "1efe1b73a037d579849ce5fc06a3c0df86a63e2c"
+    "staged_blob": "1efe1b73a037d579849ce5fc06a3c0df86a63e2c",
+    "staged_content_sha256": "b90a722f6e88c19951328b52ddaa10b7606b79627c2caa984917e1e3a6adacde",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/include/mka/audio_banks.hpp",
     "working_sha256": "35D0D6DD7A75CD1E04F205D2ED53254D8D8FDE265E6AC5629A805ED9E9A513E3",
-    "staged_blob": "49c7e1293721fbd401b34b4ff6621400a7fd95e7"
+    "staged_blob": "49c7e1293721fbd401b34b4ff6621400a7fd95e7",
+    "staged_content_sha256": "8b8cf839ec35cc5c413b7f7b05c0e39cd07b125cfa11fd7c0f9e9966b06a8570",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/include/mka/bank_preparation.hpp",
     "working_sha256": "1095594063DB092ACA523F71C5457D839C3A5B04E05897531B784F4108715C06",
-    "staged_blob": "10e0e4aadf8df95cc0630f85b2d0d29715a9b9cb"
+    "staged_blob": "10e0e4aadf8df95cc0630f85b2d0d29715a9b9cb",
+    "staged_content_sha256": "e81f6eb24352d13afbb4207c693a673b86ab7fc3641ee1cf4d0022336d6c82a6",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/include/mka/controller_input.hpp",
     "working_sha256": "D1A9DB7F9028B9BA18B88E389EBF0DC30A293A178122341788DB8F8BA7097612",
-    "staged_blob": "3831f314e62a068bb2942f39aa5279bbf7a5d559"
+    "staged_blob": "3831f314e62a068bb2942f39aa5279bbf7a5d559",
+    "staged_content_sha256": "d1a9db7f9028b9ba18b88e389ebf0dc30a293a178122341788db8f8ba7097612",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/include/mka/normal_sample.hpp",
     "working_sha256": "2BE1F718E115EF0ECA9B5AA33EB83A9379678D54A6D00DABB644FE8B8EE03DB2",
-    "staged_blob": "dc118f1b5260f8848f8950e9fb41720201d8213a"
+    "staged_blob": "dc118f1b5260f8848f8950e9fb41720201d8213a",
+    "staged_content_sha256": "24f877ad26452a5b94bfb89f64e0ee28a93f7056eac297d7e69ebfbec136f4e1",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/include/mka/stream_source.hpp",
     "working_sha256": "0D59CC035518C585F2AF99C0799AC7AC838F2DD498E46F73CF3B011435A68771",
-    "staged_blob": "e70cb402fabafca83f24ce9655db6dd6fa3db973"
+    "staged_blob": "e70cb402fabafca83f24ce9655db6dd6fa3db973",
+    "staged_content_sha256": "9f288fdb2ca963a5dfc7c764f5221453e0382aa9c433619efe48de39bf156853",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/include/ps2/system.hpp",
     "working_sha256": "3D8C6D1B335F57B6C78DCC145B97DBD5EF205E20DFAD06A08EF5AD2EA24C3E5F",
-    "staged_blob": "cdc41b4ed791fadeb36d7a4131542439a5f35cce"
+    "staged_blob": "cdc41b4ed791fadeb36d7a4131542439a5f35cce",
+    "staged_content_sha256": "a23dbb5f7a7ecdf1fe10d2b0751881c8ccc06c09ba8bc27c6bd2293ee2999f73",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/src/gs/gs.cpp",
     "working_sha256": "65395B8B89BFE68A38FB65DED07152D30CD781ED30413EA2679B048C0A86C029",
-    "staged_blob": "22270abc3e03f0463ddecda2516f4e872e1f0abe"
+    "staged_blob": "22270abc3e03f0463ddecda2516f4e872e1f0abe",
+    "staged_content_sha256": "e61ba61d5e9739dd01738b207411a3f7a9b684f0a5d266e32f960b8e5a50a7ac",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/src/gs/gs.hpp",
     "working_sha256": "2A50A4C34130711EFDB4B2B794F8647541EA73676464CCB56660CA690D4EE25F",
-    "staged_blob": "5f76de05576602d05ce9f971ad61b14352b8589b"
+    "staged_blob": "5f76de05576602d05ce9f971ad61b14352b8589b",
+    "staged_content_sha256": "9f11faedb00427528ed97ef4388012eb986e79fd10c8007113f17be23c6a5853",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/src/gs/native_gl_backend.cpp",
     "working_sha256": "A6B8771131F5C1C77DAAFF1F7E384F28D603C290DAA4DCF36E077B011621A662",
-    "staged_blob": "46a271c990b3cd684c90d5cfb1edeaca67e149e0"
+    "staged_blob": "46a271c990b3cd684c90d5cfb1edeaca67e149e0",
+    "staged_content_sha256": "65bf7d907a0fe6d55e258723a63a46fa75733e95732c2689186c3588f9b0d035",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/src/gs/native_gl_backend.hpp",
     "working_sha256": "B885D0C44EE0E756D96C85D38657A010C00A3FE769304DAC73F8A5A1865E53E0",
-    "staged_blob": "10a01d03abe51f9c1d30de9c2567096db45f19e3"
+    "staged_blob": "10a01d03abe51f9c1d30de9c2567096db45f19e3",
+    "staged_content_sha256": "b885d0c44ee0e756d96c85d38657a010c00a3fe769304dac73f8a5a1865e53e0",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/src/iop/padman.cpp",
     "working_sha256": "F9B50D1C958C278AC62327A88FC481812F5F8860BE139A80343BEECCA84E910E",
-    "staged_blob": "860ef59082bdffa3f908c1fa776a6c6aa521e50f"
+    "staged_blob": "860ef59082bdffa3f908c1fa776a6c6aa521e50f",
+    "staged_content_sha256": "c86ac9c997ae3ab82ec5276e0060038fd655bfabee13a0a0913b0ceede9f6bb4",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/src/native/audio_bank_protocol.cpp",
     "working_sha256": "27B3228BCBC15AA8DCD0E5ABEBEB9A148A819A79A05AA016BA36F3487C1A7D7B",
-    "staged_blob": "013da505a4735e081264393a28d4c5ef444dd6fd"
+    "staged_blob": "013da505a4735e081264393a28d4c5ef444dd6fd",
+    "staged_content_sha256": "14c5c1680416836750e81355265e5c31c1d1750c16adaf2d6ae9a612da00d625",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/src/native/audio_banks.cpp",
     "working_sha256": "37FD070B7CAC7C161885DBE80B777C0E73C4754D6A86C8886258CB9FEE355236",
-    "staged_blob": "cb607a4c53eab3c1db496e0da15b00251e8a8c90"
+    "staged_blob": "cb607a4c53eab3c1db496e0da15b00251e8a8c90",
+    "staged_content_sha256": "74e90fde3fc8de1b1c31c403f00d18d17b1308af829c315d0c72d0d3e12cac26",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/src/native/bank_preparation.cpp",
     "working_sha256": "CBA26A8174CC8C39C93CC8CDC18332B7DC5FED9D1ED1CD458931BBB031B8979D",
-    "staged_blob": "b795e71cb182cbd10f62223e65fa47de84fa0708"
+    "staged_blob": "b795e71cb182cbd10f62223e65fa47de84fa0708",
+    "staged_content_sha256": "0d36999e3c238e03e5df45401c2a28ec8b7b1a8cad3b8ba3f78f1675b7d9b29d",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/src/native/controller_input.cpp",
     "working_sha256": "A04E0AB9A85BC56AC7BF95274ED51C9BB68CB26E1EE37EABCC3C572ABFA22BD7",
-    "staged_blob": "ed9da82388ab24c7f3c95a83b94985f5985d1dee"
+    "staged_blob": "ed9da82388ab24c7f3c95a83b94985f5985d1dee",
+    "staged_content_sha256": "a04e0ab9a85bc56ac7bf95274ed51c9bb68cb26e1ee37eabcc3c572abfa22bd7",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/src/native/normal_sample.cpp",
     "working_sha256": "DF4B07BD1315A02EC4CE7C5F33C69ACD00A949879877475CE559C6BE678B0087",
-    "staged_blob": "c30e5f87635323a182cc0584eba783c6300d8657"
+    "staged_blob": "c30e5f87635323a182cc0584eba783c6300d8657",
+    "staged_content_sha256": "86b8b8cf6feec8e54ad8429ed5ac291b8b161cbd76ffd02a1654686c5b12fc23",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/src/native/stream_source.cpp",
     "working_sha256": "0AB2EDEB159B288FBBE3575576E92E7FECF94F77267F9A13727F37A3C5AC7804",
-    "staged_blob": "a2ccf3d3bb2c830d1cfd92a4c016cca609f8e346"
+    "staged_blob": "a2ccf3d3bb2c830d1cfd92a4c016cca609f8e346",
+    "staged_content_sha256": "e64f5e8e105c6ba12b3ab1d6ad11b92552c6a43cd0b554e6973776fc3d4ba01e",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/src/quick_keys.inc",
     "working_sha256": "356E46590379E36716EDB86A68459ECAD7A7CBDF798B7865AC441A148E3B5B01",
-    "staged_blob": "7ff14fe973ea998abff6bb07b97f61cffeffa77e"
+    "staged_blob": "7ff14fe973ea998abff6bb07b97f61cffeffa77e",
+    "staged_content_sha256": "10f3659345f37c49fdc3a10ae12f277d8543a7f80fe55147ac514c23a41094ce",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "runtime/src/system.cpp",
     "working_sha256": "937803C53FFDB393AB674D549550A85196CA471C807E71F97328AE085536A6E1",
-    "staged_blob": "28cd08a426798798a1747cb6aea0f68a41210d9c"
+    "staged_blob": "28cd08a426798798a1747cb6aea0f68a41210d9c",
+    "staged_content_sha256": "a1c381796d217ce10a831ed18c7ba23ea83b82b838bb447d2c83a9300fceba83",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "tests/test_audio_bank_protocol.cpp",
     "working_sha256": "6226A2E4325C1C1905A619518D6868B6B5753B350515F35B337BDCB0C9231C58",
-    "staged_blob": "7491c527e11d275a442482736ac6a8a9f669b591"
+    "staged_blob": "7491c527e11d275a442482736ac6a8a9f669b591",
+    "staged_content_sha256": "0b69aed3c12bcb769851976d3189af95ee0604a5f8b635aa125bb1f3b57678e2",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "tests/test_audio_banks.cpp",
     "working_sha256": "8CC50BBC16636DA180A9BFDDB54B2BC4ECB5D310048863CF9808B7561D135204",
-    "staged_blob": "16aefd0481f9183e7d2b8d3a60c29bbd57ef9193"
+    "staged_blob": "16aefd0481f9183e7d2b8d3a60c29bbd57ef9193",
+    "staged_content_sha256": "9b4ff67ba8e2d510b79b7e00ae933fc1039544dbb45812ea709a98ffd9610491",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "tests/test_bank_preparation.cpp",
     "working_sha256": "C601C49AE2611C3838A2E301DEB0E5F8892854CFA00E9873ECF0A97DFE6C293E",
-    "staged_blob": "73471f1aad5a978886985598965cf5f8dafddd94"
+    "staged_blob": "73471f1aad5a978886985598965cf5f8dafddd94",
+    "staged_content_sha256": "d06c8f9dfc88d48448e6b817c5bf25299ba9205ff94b3c0de82d32a8e9da0324",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "tests/test_controller_input.cpp",
     "working_sha256": "FC8C5792C2E9812A81F31AB0560EA9F962A1F128C5D204CBF97329B555D7ED25",
-    "staged_blob": "c37c62ede4e47fd01d502e079b0fd93717575edb"
+    "staged_blob": "c37c62ede4e47fd01d502e079b0fd93717575edb",
+    "staged_content_sha256": "fc8c5792c2e9812a81f31ab0560ea9f962a1f128c5d204cbf97329b555d7ed25",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "tests/test_controller_recording.cpp",
     "working_sha256": "3B4A010DDAC455751497108CFE52D32303D3FBCB5A9B8D429EFD40724BB9255B",
-    "staged_blob": "b977443cab2f52adffe6ee845618d72457ee9472"
+    "staged_blob": "b977443cab2f52adffe6ee845618d72457ee9472",
+    "staged_content_sha256": "3b4a010ddac455751497108cfe52d32303d3fbcb5a9b8d429efd40724bb9255b",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "tests/test_native_image_upload.cpp",
     "working_sha256": "53E8590445E4FA7AFDA9A1CFDAD30BF100F88F4A27AB121D76CEC113DCE5EA52",
-    "staged_blob": "b3a3b8c0af409a670f92c74b413e24646739ac9c"
+    "staged_blob": "b3a3b8c0af409a670f92c74b413e24646739ac9c",
+    "staged_content_sha256": "53e8590445e4fa7afda9a1cfdad30bf100f88f4a27ab121d76cec113dce5ea52",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "tests/test_normal_sample.cpp",
     "working_sha256": "F213C9F781FC12D24C1555D721CF4426F63A9F1865896633A94A2B739816AE90",
-    "staged_blob": "128e58399a5d3e4d76a92792282e0756b12d421a"
+    "staged_blob": "128e58399a5d3e4d76a92792282e0756b12d421a",
+    "staged_content_sha256": "d87ec372bca94933147e399df4d78609cc394412f2d10ec48c39a5ce81398c0e",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "tests/test_padman_rpc.cpp",
     "working_sha256": "23F319E413B16BC84C22D86AC62D727D6444B23A985C38EB169F1CA8D8E86956",
-    "staged_blob": "963bc6174df3dc2fddc5f763f1646cc5e980ac8f"
+    "staged_blob": "963bc6174df3dc2fddc5f763f1646cc5e980ac8f",
+    "staged_content_sha256": "7e1d228734618af0850e1e2d9858a08558c12f771e67ed492095a51efe25a0c1",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "tests/test_stream_source.cpp",
     "working_sha256": "36A4F9232D73CEE29BC0034242F55C7425F259D17946146CFCF16E907B19BC00",
-    "staged_blob": "475a9b566ebb37095646ba69965ae42244938d22"
+    "staged_blob": "475a9b566ebb37095646ba69965ae42244938d22",
+    "staged_content_sha256": "36a4f9232d73cee29bc0034242f55c7425f259d17946146cfcf16e907b19bc00",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   },
   {
     "path": "tests/verify_normal_sample.py",
     "working_sha256": "47FAC7E2BDFD49562B08FB7A4107CB10599ABF36DA0A2B74168DA6E4225A052A",
-    "staged_blob": "b75dc7b214c899867bd15e601373089a16c8b349"
+    "staged_blob": "b75dc7b214c899867bd15e601373089a16c8b349",
+    "staged_content_sha256": "ba757ee8cab3bce43750b79f5f07c551902115248bad525ac849a7938c0f8205",
+    "working_hash_scope": "Concurrent workspace observation, not a tested-source binding. Use staged blob/content identity for this checkpoint."
   }
 ]
