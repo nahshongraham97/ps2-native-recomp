@@ -1,0 +1,69 @@
+{
+  "status": "PASS_SCOPED_ACTUAL_NATIVE_MOVIE_ADAPTERS_ZERO_ONLY",
+  "source_after_sha256": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_playback.hpp": "f5c70d248f7f406e8a2bb5f8a1eecf4094f481a013eb983bc9c04e9ac684941f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_playback_adapters.cpp": "c911034ca280562183427f5fe570a23d00a25672a903e06d149fee3cd7a32499",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\audio_device.hpp": "b3b2906c7e26c4388e09402ca899f7fc75442d2b2bb991b897350d571603a5f8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\audio_device.cpp": "8c1b9e9c6bbeb012d875bebce50a20a3e8541e6298a066dc56de973d73abc5be",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_source.hpp": "92eb2f00976bbc61764288d5c0a6b5cfe244db852dae84f6d4803b4ba0ebeb51",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_source.cpp": "a512a361ca2682cba77c8703660cd8417e07a8afef7653513dcd4ccf5438c778",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_decode.hpp": "e2bdadf503885b0ef85e11c53e021d547d1849934936889a9a5bea2f1ec1be15",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_decode.cpp": "d37d4c7638df6105c42ace9a7a6c12c9a5013bf5d775c30d1da8699c8904c638",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_assets.cpp": "47f2f4a74c32f5e832e08647c3484a0bbc9b55e6a1c9927b0c8ea9a76d6b7135",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\native_file.cpp": "527c9759d7bfa036c55769c32684e85402253dfd98faa5a2e1993c6fe425a5cd",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_catalog.cpp": "3f5f70be32cba3bb64f2d3a294f6cf1835707992199f4813a1090eabeb9e0c58",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_pes_index.cpp": "6103f538244a09a9a03513260849bd097af5972ad4b248c65331f4ac3c45db3e",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\mpeg2_timing.cpp": "3c129c7f274a34db9aa56eec29d23568de7bbb75c740db8510e8253608c2a3ef",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_playback_adapters.cpp": "d54f7bb4d1991b70e123f508cd0e1cc2d5205d7fd2aed34edf0f290ff2a0b580",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_native_audio_device.cpp": "79a5fbdb376e408d3129bd8d28da53bd03dd3e4269a4c37c063074bf4e37e8a3",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\native_test_sha256.hpp": "f90189e16a9ab989bd2228e752d65e9935dad0250ac1cbdc0a76ead8e3504bf7",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_media.cmake": "87c6ab0070f722ade918521a369c9ec2ad5fed66d7d49c19043c53dc1d397873",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_audio.cmake": "439cce74973e3b00fbbc621aaf1021cd70aa660f991e0bc2946f8f6892b2856d",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\CMakeLists.txt": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-movie-source-20261119\\validation-01\\assets.tsv": "93662b6723cf4088b82aef9bff56429cf89cfb6f008b1d5e9c5b292a4afcf6ed",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\LOGON.SFD": "cf49fb014d51f20fee7727a01e845cc7303be63fe0af2902fb3eadf371a843af",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared\\avformat-61.dll": "f274edcda73be512bbb2db7d27097fdf80a7e0902564580d0700a75fb78f2e9c",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared\\avcodec-61.dll": "29b9c1c54cdb23e5582616228c26906d98330ba38d585325c533ca3af150ca7d",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared\\avutil-59.dll": "40174006a5ac403dbd74d94451a2d979be69dd59981b52f5120e04af7693632c",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-movie-playback-adapters-20261119\\validate.py": "4c02a3bb2a84a9bf6064483b35349f385846a69877e8bc00d1b1338e5f0debaa"
+  },
+  "fixture_sha256": "d4235aea23c3d95f7d3e5ebecc838b17b5b005e333448a02464380e23cf3a3f5",
+  "execution_receipt_sha256": "ef10c4432e9f3b304b21c0d310cbf4196cc77a3f957d5517b5321a14ae78383c",
+  "source_observation": {
+    "source": "LOGON.SFD",
+    "scope": "first_video_and_audio_only_two_source_owners",
+    "video_sha256": "b6d725a75d2de44acb4ae6ecc3c453dc3f8ea222c5e7b18fd6c307dbdecbed88",
+    "audio_planar_s16_sha256": "38723a2e5e8a17aa7950dc008209944e898f69a7bd10a23c839d341e935fd5ca",
+    "width": 640,
+    "height": 448,
+    "source_audio_rate": 48000,
+    "source_audio_planes": 2
+  },
+  "audio_observation": {
+    "audio": "actual_owned_adapter_positive_zero_only",
+    "rate": 48000,
+    "channels": 2,
+    "mask": 3,
+    "capacity_frames": 4800,
+    "first": {
+      "first": 0,
+      "frames": 4800,
+      "epoch": 0
+    },
+    "after_reset": {
+      "first": 0,
+      "frames": 1,
+      "epoch": 1
+    },
+    "raw_clock_position": 0,
+    "raw_clock_frequency": 384000,
+    "raw_clock_precise": true
+  },
+  "forbidden": [],
+  "cache_after_sha256": "d320c4e3663feec551cd3a3b4a8712e915fad196ddc86c7f880c07d4bd2aa3f4",
+  "limits": [
+    "First LOGON video/audio ownership forwarding only, not independent decoder/full-media parity",
+    "Positive-zero PCM only; actual decoded media never queued to endpoint",
+    "No GPU, complete movie, retail policies, A/V sync, acoustic completion or game acceptance"
+  ]
+}

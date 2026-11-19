@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_audio_device.exe",
+    "--silent",
+    "{0.0.0.00000000}.{f71b35bf-438e-480f-858b-994d0e6707cb}",
+    "48000",
+    "2",
+    "3",
+    "1000000",
+    "exact"
+  ],
+  "exit": 0,
+  "stdout": "PASS pure format/PCM validation only; no device opened or audio generated\n{\"kind\":\"audio_submission_receipts\",\"actual_capacity_frames\":4800,\"epoch0_first\":{\"first_client_frame\":0,\"client_frames\":2400,\"reset_epoch\":0},\"epoch0_second\":{\"first_client_frame\":2400,\"client_frames\":2400,\"reset_epoch\":0},\"epoch1_first\":{\"first_client_frame\":0,\"client_frames\":1,\"reset_epoch\":1},\"after_bool_queue\":{\"submitted_frames\":2,\"reset_epoch\":1},\"accepted_submissions\":4,\"all_queued_samples_positive_zero\":true,\"scope\":\"host_buffer_submission_only_no_heard_time_or_drain_claim\"}\nPASS opt-in silent-only WASAPI lifecycle; initialrawposition=0 progressedrawposition=3848 frequency=384000 QPC100ns=487171595933 precise=1; no audible/game/movie-drain claim\n",
+  "stderr": "",
+  "executable_sha256": "f593fd1364e556f1eaf15d6bcf4c95c790a9059de31ee8b73661fcd178c6a1e4",
+  "executable_after_sha256": "f593fd1364e556f1eaf15d6bcf4c95c790a9059de31ee8b73661fcd178c6a1e4"
+}

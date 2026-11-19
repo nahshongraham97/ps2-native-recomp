@@ -185,3 +185,10 @@ add_executable(test_native_movie_playback EXCLUDE_FROM_ALL
 target_include_directories(test_native_movie_playback PRIVATE runtime/include)
 target_compile_features(test_native_movie_playback PRIVATE cxx_std_20)
 target_link_libraries(test_native_movie_playback PRIVATE bcrypt)
+
+# Deliberate zero-only component fixture. Explicit source/codec/endpoint data;
+# actual native adapters, never game or retail audible PCM playback.
+add_executable(test_native_movie_playback_adapters EXCLUDE_FROM_ALL
+    tests/test_movie_playback_adapters.cpp)
+target_link_libraries(test_native_movie_playback_adapters PRIVATE mka_native_media bcrypt ole32 uuid)
+target_compile_features(test_native_movie_playback_adapters PRIVATE cxx_std_20)

@@ -1,0 +1,18 @@
+{
+  "scope": "Observed console default for deliberate zero-only component; not persistent game configuration",
+  "endpoint": {
+    "endpoint_id_utf8": "{0.0.0.00000000}.{f71b35bf-438e-480f-858b-994d0e6707cb}",
+    "default_for_role": true,
+    "sample_rate": 48000,
+    "channels": 2,
+    "channel_mask": 3,
+    "container_bits": 32,
+    "valid_bits": 32,
+    "encoding": "ieee_float",
+    "mix_failure": {
+      "kind": 0,
+      "native_code": 0,
+      "operation": ""
+    }
+  }
+}

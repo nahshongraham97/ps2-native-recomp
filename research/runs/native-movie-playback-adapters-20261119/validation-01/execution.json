@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_playback_adapters.exe",
+    "--silent",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-movie-source-20261119\\validation-01\\assets.tsv",
+    "{0.0.0.00000000}.{f71b35bf-438e-480f-858b-994d0e6707cb}",
+    "48000",
+    "2",
+    "3",
+    "1000000",
+    "exact"
+  ],
+  "exit": 0,
+  "stdout": "{\"source\":\"LOGON.SFD\",\"scope\":\"first_video_and_audio_only_two_source_owners\",\"video_sha256\":\"b6d725a75d2de44acb4ae6ecc3c453dc3f8ea222c5e7b18fd6c307dbdecbed88\",\"audio_planar_s16_sha256\":\"38723a2e5e8a17aa7950dc008209944e898f69a7bd10a23c839d341e935fd5ca\",\"width\":640,\"height\":448,\"source_audio_rate\":48000,\"source_audio_planes\":2}\n{\"audio\":\"actual_owned_adapter_positive_zero_only\",\"rate\":48000,\"channels\":2,\"mask\":3,\"capacity_frames\":4800,\"first\":{\"first\":0,\"frames\":4800,\"epoch\":0},\"after_reset\":{\"first\":0,\"frames\":1,\"epoch\":1},\"raw_clock_position\":0,\"raw_clock_frequency\":384000,\"raw_clock_precise\":true}\nPASS actual native source and zero-only audio adapters; no movie playback or retail policy binding\n",
+  "stderr": "",
+  "executable_sha256": "d4235aea23c3d95f7d3e5ebecc838b17b5b005e333448a02464380e23cf3a3f5",
+  "executable_after_sha256": "d4235aea23c3d95f7d3e5ebecc838b17b5b005e333448a02464380e23cf3a3f5"
+}
