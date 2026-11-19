@@ -1,0 +1,12 @@
+{
+  "scope": "offline all-asset native decoder coverage only; no playback/device/game and no CRI subtitle metadata acceptance",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_inventory.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2"
+  ],
+  "exe_sha256": "f64acd8f1b8092183f11b0b11aa19a5b9755a4e0f6db1930c5c30cc074ff510b",
+  "exit": 0,
+  "elapsed_seconds": 39.908271074295044,
+  "output_sha256": "9dc92c62b53993c7402c1295d7d9d6a8106a4fdbe1713f07e6491d274972158b"
+}

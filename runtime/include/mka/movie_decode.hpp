@@ -51,6 +51,8 @@ struct MovieReadResult {
 // No CDVD, IPU, GS, IOP, SPU2 or device clock. This decoder does not invent
 // an A/V clock, skip/fade lifecycle, pixel conversion, presentation or audio
 // output. Those have separate source-proven contracts.
+// Only YUV/PCM is emitted: CRI private-stream subtitle tags require a separate
+// native container parser/selector and are not claimed preserved by this API.
 class NativeMovieDecoder {
 public:
     ~NativeMovieDecoder();

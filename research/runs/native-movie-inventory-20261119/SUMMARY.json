@@ -1,0 +1,20 @@
+{
+  "scope": "all physical MOVIEPS2 native full-decode coverage; neither retail reachability nor subtitle/visual/audio fidelity",
+  "fork_base": "cc0fa6ec24d17477eb13255c562b1da0ac668f1f",
+  "fixture_sha256": "ce59476b106a97e7615febd0201e37042937e2d4e5a324fcf819b7285288b29b",
+  "cmake_module_sha256": "680e898429794a67b1176ffba75b026ecd0d437bfb76d225948bc4d122341f57",
+  "assets": 38,
+  "complete": 38,
+  "failed": 0,
+  "source_bytes": 1516830720,
+  "video_frames": 65181,
+  "audio_sample_frames": 99511552,
+  "fixed_golden_matches": 3,
+  "golden_timestamp_scope": "first/last/missing/timebase aggregates, not independently hashed full timestamp sequences",
+  "nominal_video_fps": "not exposed; no derived rate assumed",
+  "limits": [
+    "35 assets lack independent full-decode goldens",
+    "CRI container subtitle tags are not emitted by decoder and require native extraction/selection",
+    "No game, playback/device output, rendered inventory frames or actual movie synchronization claim"
+  ]
+}
