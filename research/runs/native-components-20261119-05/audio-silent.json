@@ -1,0 +1,18 @@
+{
+  "scope": "explicit OS-reported default endpoint/mix format; only zero PCM; no settings/driver changes; not audible/game acceptance",
+  "inspection_source": "inspect.json",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_audio_device.exe",
+    "--silent",
+    "{0.0.0.00000000}.{f71b35bf-438e-480f-858b-994d0e6707cb}",
+    "48000",
+    "2",
+    "3",
+    "1000000",
+    "exact"
+  ],
+  "exe_sha256": "5b89f033faa75597d25cbe6cf658915a6e88cb0ec84cf1e17f022098020de7f7",
+  "exit": 0,
+  "stdout": "PASS pure format/PCM validation only; no device opened or audio generated\nPASS opt-in silent-only WASAPI lifecycle; initialrawposition=0 progressedrawposition=4432 frequency=384000 QPC100ns=112079425259 precise=1; no audible/game/movie-drain claim\n",
+  "stderr": ""
+}

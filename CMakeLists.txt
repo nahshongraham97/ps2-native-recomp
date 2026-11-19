@@ -12,6 +12,8 @@ set(PS2_RUNTIME_LIB "" CACHE FILEPATH "Unsupported legacy prebuilt runtime input
 if(WIN32)
     add_link_options(-static-libgcc -static-libstdc++)
 endif()
+include(cmake/native_media.cmake)
+include(cmake/native_audio.cmake)
 
 # Build identity. ps2run prints this at startup so every run log names the commit
 # and working-tree state that produced the binary; two runs are then comparable
@@ -414,40 +416,9 @@ if(PS2_GENERATED)
     add_executable(test_retail_call_observers EXCLUDE_FROM_ALL
         tests/test_retail_call_observers.cpp host/mka_unit_wrappers.cpp)
     target_include_directories(test_retail_call_observers PRIVATE runtime/include host)
-    add_executable(test_native_movie_color EXCLUDE_FROM_ALL tests/test_movie_color.cpp
-        runtime/src/native/movie_color.cpp)
-    target_include_directories(test_native_movie_color PRIVATE runtime/include)
-    target_link_libraries(test_native_movie_color PRIVATE bcrypt)
-    add_executable(test_native_movie_gpu_layout EXCLUDE_FROM_ALL tests/test_movie_gpu_layout.cpp
-        runtime/src/native/movie_gpu.cpp)
-    target_include_directories(test_native_movie_gpu_layout PRIVATE runtime/include)
     add_executable(test_native_movie_gpu EXCLUDE_FROM_ALL tests/test_movie_gpu.cpp)
     target_include_directories(test_native_movie_gpu PRIVATE runtime/include runtime/src)
     target_link_libraries(test_native_movie_gpu PRIVATE ps2runtime opengl32)
-    add_executable(test_native_movie_assets EXCLUDE_FROM_ALL tests/test_movie_assets.cpp
-        runtime/src/native/movie_assets.cpp runtime/src/native/native_file.cpp)
-    target_include_directories(test_native_movie_assets PRIVATE runtime/include)
-    add_executable(test_native_movie_gl_device EXCLUDE_FROM_ALL tests/test_movie_gl_device.cpp
-        runtime/src/native/movie_gl_device.cpp runtime/src/native/movie_gpu.cpp
-        runtime/src/native/movie_color.cpp)
-    target_include_directories(test_native_movie_gl_device PRIVATE runtime/include)
-    target_link_libraries(test_native_movie_gl_device PRIVATE opengl32 gdi32 user32 bcrypt)
-    # Pinned public headers for the existing native FFmpeg7.1.4 DLL ABI.
-    # This standalone component does not silently replace missing SDK support.
-    set(MKA_NATIVE_MEDIA_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/../../../../dependencies/native-media/ffmpeg-7.1.4" CACHE PATH "Pinned FFmpeg7.1.4 public header root")
-    if(EXISTS "${MKA_NATIVE_MEDIA_HEADERS}/libavcodec/avcodec.h")
-        if(NOT WIN32 OR NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
-            message(FATAL_ERROR "Pinned native media loader/header configuration requires Windows64")
-        endif()
-        file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers/libavutil")
-        file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers/libavutil/avconfig.h"
-            "#ifndef AVUTIL_AVCONFIG_H\n#define AVUTIL_AVCONFIG_H\n#define AV_HAVE_BIGENDIAN 0\n#define AV_HAVE_FAST_UNALIGNED 1\n#endif\n")
-        add_executable(test_native_movie_decode EXCLUDE_FROM_ALL tests/test_movie_decode.cpp
-            runtime/src/native/movie_decode.cpp runtime/src/native/movie_assets.cpp runtime/src/native/native_file.cpp)
-        target_include_directories(test_native_movie_decode PRIVATE runtime/include
-            "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers" "${MKA_NATIVE_MEDIA_HEADERS}")
-        target_link_libraries(test_native_movie_decode PRIVATE bcrypt)
-    endif()
     add_executable(test_native_haptics EXCLUDE_FROM_ALL
         tests/test_haptics.cpp runtime/src/native/haptics.cpp)
     target_include_directories(test_native_haptics PRIVATE runtime/include)

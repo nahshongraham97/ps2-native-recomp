@@ -16,7 +16,6 @@ bool utf8(std::string_view s){
         if(v<minimum||v>0x10ffff||(v>=0xd800&&v<=0xdfff))return false;
     }return true;
 }
-std::string path_utf8(const std::filesystem::path& p){const auto bytes=p.generic_u8string();return std::string(reinterpret_cast<const char*>(bytes.data()),bytes.size());}
 std::string ascii_key(std::string s){for(auto& c:s)if(c>='a'&&c<='z')c=char(c-'a'+'A');return s;}
 std::optional<std::string> relative_name(std::string_view s,bool fold,MovieAssetFailure& f){
     if(!utf8(s)){f.kind=MovieAssetError::invalid_utf8;return std::nullopt;}
@@ -63,11 +62,7 @@ std::filesystem::path io_path(const std::filesystem::path& canonical){
 }
 bool inside(const std::filesystem::path& root,const std::filesystem::path& path){
     auto r=root.begin(),p=path.begin();for(;r!=root.end();++r,++p){if(p==path.end())return false;
-#ifdef _WIN32
-        if(ascii_key(path_utf8(*r))!=ascii_key(path_utf8(*p)))return false;
-#else
         if(*r!=*p)return false;
-#endif
     }
     return p!=path.end();
 }
@@ -80,6 +75,7 @@ struct MovieAssetBinding {
 };
 struct NativeMovieAssetStore::State {
     std::filesystem::path root;
+    std::filesystem::path observed_root;
     std::unordered_map<std::string,std::shared_ptr<const MovieAssetBinding>> catalog;
 };
 bool NativeMovieAsset::valid()const noexcept{return bool(binding_)&&file_.is_open();}
@@ -102,6 +98,9 @@ std::optional<std::uint64_t> NativeMovieAsset::length(MovieAssetFailure& f){
 std::optional<NativeMovieAssetStore> NativeMovieAssetStore::create(const std::filesystem::path& root,const std::vector<MovieAssetCatalogEntry>& catalog,MovieAssetFailure& f){
     f={};try{auto s=std::make_shared<State>();std::error_code ec;s->root=std::filesystem::canonical(root,ec);
         if(ec||!std::filesystem::is_directory(io_path(s->root),ec)){f.kind=MovieAssetError::invalid_root;f.host_error=ec;return std::nullopt;}
+        std::filesystem::path actual_root;
+        if(!content::NativeFile::directory_path(io_path(s->root),actual_root,f.host_error)){f.kind=MovieAssetError::opened_path_unavailable;return std::nullopt;}
+        s->observed_root=comparison_path(actual_root);
         for(std::size_t i=0;i<catalog.size();++i){f.catalog_index=i;
             auto key=relative_name(catalog[i].logical_utf8,true,f);if(!key)return std::nullopt;
             auto relative=relative_name(catalog[i].relative_host_utf8,false,f);if(!relative){if(f.kind==MovieAssetError::invalid_name)f.kind=MovieAssetError::invalid_host_path;return std::nullopt;}
@@ -112,14 +111,15 @@ std::optional<NativeMovieAssetStore> NativeMovieAssetStore::create(const std::fi
             joined.make_preferred();
             auto target=std::filesystem::canonical(joined,ec);
             if(ec){f.kind=MovieAssetError::invalid_host_path;f.host_error=ec;return std::nullopt;}
-            if(!inside(comparison_path(s->root),comparison_path(target))){f.kind=MovieAssetError::root_escape;return std::nullopt;}
             if(!std::filesystem::is_regular_file(io_path(target),ec)){f.kind=MovieAssetError::not_regular_file;f.host_error=ec;return std::nullopt;}
             content::NativeFile actual;
             if(!actual.open(io_path(target),f.host_error)){f.kind=MovieAssetError::file_open;return std::nullopt;}
             std::filesystem::path observed;
             if(!actual.opened_path(observed,f.host_error)){f.kind=MovieAssetError::opened_path_unavailable;return std::nullopt;}
             auto normalized=comparison_path(observed);
-            if(!inside(comparison_path(s->root),normalized)){f.kind=MovieAssetError::opened_path_mismatch;return std::nullopt;}
+            // Both names are normalized observations of actual handles. A
+            // differently cased sibling is not the registered root directory.
+            if(!inside(s->observed_root,normalized)){f.kind=MovieAssetError::root_escape;return std::nullopt;}
             auto entry=std::make_shared<MovieAssetBinding>();entry->key=*key;entry->path=std::move(target);entry->observed_path=std::move(normalized);
             s->catalog.emplace(std::move(*key),std::move(entry));
         }f={};return NativeMovieAssetStore(std::move(s));
@@ -132,15 +132,15 @@ std::optional<NativeMovieAsset> NativeMovieAssetStore::open(std::string_view nam
         if(i==state_->catalog.end()){f.kind=MovieAssetError::unknown_key;return std::nullopt;}
         std::error_code ec;auto current=std::filesystem::canonical(io_path(i->second->path),ec);
         if(ec){f.kind=MovieAssetError::file_open;f.host_error=ec;return std::nullopt;}
-        if(comparison_path(current)!=comparison_path(i->second->path)||!inside(comparison_path(state_->root),comparison_path(current))){f.kind=MovieAssetError::association_changed;return std::nullopt;}
+        if(comparison_path(current)!=comparison_path(i->second->path)){f.kind=MovieAssetError::association_changed;return std::nullopt;}
         if(!std::filesystem::is_regular_file(io_path(current),ec)){f.kind=MovieAssetError::not_regular_file;f.host_error=ec;return std::nullopt;}
         content::NativeFile file;if(!file.open(io_path(current),f.host_error)){f.kind=MovieAssetError::file_open;return std::nullopt;}
         std::filesystem::path observed;
         if(!file.opened_path(observed,f.host_error)){f.kind=MovieAssetError::opened_path_unavailable;return std::nullopt;}
-        const auto opened=comparison_path(observed),root=comparison_path(state_->root);
+        const auto opened=comparison_path(observed);
         // No canonical/equivalent/reopen on the observed path: it describes
         // the actual still-owned handle, not another pathname lookup.
-        if(opened!=i->second->observed_path||!inside(root,opened)){f.kind=MovieAssetError::opened_path_mismatch;return std::nullopt;}
+        if(opened!=i->second->observed_path||!inside(state_->observed_root,opened)){f.kind=MovieAssetError::opened_path_mismatch;return std::nullopt;}
         return NativeMovieAsset(i->second,std::move(file));
     }catch(const std::bad_alloc&){f.kind=MovieAssetError::allocation_failed;}catch(const std::length_error&){f.kind=MovieAssetError::host_capacity;}
      catch(const std::filesystem::filesystem_error& e){f.kind=MovieAssetError::invalid_host_path;f.host_error=e.code();}return std::nullopt;

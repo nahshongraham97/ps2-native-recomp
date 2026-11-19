@@ -16,6 +16,41 @@ std::error_code io_error() { return {errno ? errno : EIO, std::generic_category(
 #ifdef _WIN32
 auto host_tell(std::FILE* f) { return _ftelli64(f); }
 int host_seek(std::FILE* f, std::int64_t p, int origin) { return _fseeki64(f, p, origin); }
+bool query_handle_path(HANDLE handle,std::filesystem::path& out,std::error_code& error){
+    out.clear();error.clear();static_assert(sizeof(wchar_t)==2);
+    const auto fail=[&](){const auto code=GetLastError();error={int(code?code:ERROR_GEN_FAILURE),std::system_category()};return false;};
+    DWORD capacity=GetFinalPathNameByHandleW(handle,nullptr,0,FILE_NAME_NORMALIZED|VOLUME_NAME_DOS);
+    if(!capacity)return fail();
+    try{
+        std::vector<wchar_t> buffer;
+        for(;;){
+            if(capacity>buffer.max_size()){error=std::make_error_code(std::errc::value_too_large);return false;}
+            buffer.resize(capacity);
+            const DWORD size=GetFinalPathNameByHandleW(handle,buffer.data(),capacity,FILE_NAME_NORMALIZED|VOLUME_NAME_DOS);
+            if(!size)return fail();
+            if(size>=capacity){
+                if(size==MAXDWORD){error=std::make_error_code(std::errc::value_too_large);return false;}
+                capacity=size+1;continue;
+            }
+            if(buffer[size]!=L'\0'){error=std::make_error_code(std::errc::invalid_argument);return false;}
+            for(DWORD i=0;i<size;++i){const auto c=std::uint16_t(buffer[i]);
+                if(!c){error=std::make_error_code(std::errc::invalid_argument);return false;}
+                if(c>=0xd800&&c<=0xdbff){
+                    if(i+1>=size||std::uint16_t(buffer[i+1])<0xdc00||std::uint16_t(buffer[i+1])>0xdfff){error=std::make_error_code(std::errc::illegal_byte_sequence);return false;}
+                    ++i;
+                }else if(c>=0xdc00&&c<=0xdfff){error=std::make_error_code(std::errc::illegal_byte_sequence);return false;}
+            }
+            // Preserve the OS-returned extended namespace. This path is a
+            // handle observation, not a new fopen/canonical lookup.
+            std::filesystem::path observed(std::wstring(buffer.data(),size));
+            if(!observed.is_absolute()){error=std::make_error_code(std::errc::invalid_argument);return false;}
+            out=std::move(observed);return true;
+        }
+    }catch(const std::bad_alloc&){error=std::make_error_code(std::errc::not_enough_memory);}
+     catch(const std::length_error&){error=std::make_error_code(std::errc::value_too_large);}
+     catch(const std::filesystem::filesystem_error& e){error=e.code();}
+    return false;
+}
 #else
 auto host_tell(std::FILE* f) { return ftello(f); }
 int host_seek(std::FILE* f, std::int64_t p, int origin) {
@@ -51,40 +86,24 @@ bool NativeFile::opened_path(std::filesystem::path& out,std::error_code& error)c
     const auto native=_get_osfhandle(descriptor);
     if(native==-1||native==-2){error=io_error();return false;}
     const auto handle=reinterpret_cast<HANDLE>(native);
-    const auto fail=[&](){const auto code=GetLastError();error={int(code?code:ERROR_GEN_FAILURE),std::system_category()};return false;};
-    DWORD capacity=GetFinalPathNameByHandleW(handle,nullptr,0,FILE_NAME_NORMALIZED|VOLUME_NAME_DOS);
-    if(!capacity)return fail();
-    try{
-        std::vector<wchar_t> buffer;
-        for(;;){
-            if(capacity>buffer.max_size()){error=std::make_error_code(std::errc::value_too_large);return false;}
-            buffer.resize(capacity);
-            const DWORD size=GetFinalPathNameByHandleW(handle,buffer.data(),capacity,FILE_NAME_NORMALIZED|VOLUME_NAME_DOS);
-            if(!size)return fail();
-            if(size>=capacity){
-                if(size==MAXDWORD){error=std::make_error_code(std::errc::value_too_large);return false;}
-                capacity=size+1;continue;
-            }
-            if(buffer[size]!=L'\0'){error=std::make_error_code(std::errc::invalid_argument);return false;}
-            for(DWORD i=0;i<size;++i){const auto c=std::uint16_t(buffer[i]);
-                if(!c){error=std::make_error_code(std::errc::invalid_argument);return false;}
-                if(c>=0xd800&&c<=0xdbff){
-                    if(i+1>=size||std::uint16_t(buffer[i+1])<0xdc00||std::uint16_t(buffer[i+1])>0xdfff){error=std::make_error_code(std::errc::illegal_byte_sequence);return false;}
-                    ++i;
-                }else if(c>=0xdc00&&c<=0xdfff){error=std::make_error_code(std::errc::illegal_byte_sequence);return false;}
-            }
-            // Preserve the OS-returned extended namespace. This path is a
-            // handle observation, not a new fopen/canonical lookup.
-            std::filesystem::path observed(std::wstring(buffer.data(),size));
-            if(!observed.is_absolute()){error=std::make_error_code(std::errc::invalid_argument);return false;}
-            out=std::move(observed);return true;
-        }
-    }catch(const std::bad_alloc&){error=std::make_error_code(std::errc::not_enough_memory);}
-     catch(const std::length_error&){error=std::make_error_code(std::errc::value_too_large);}
-     catch(const std::filesystem::filesystem_error& e){error=e.code();}
-    return false;
+    return query_handle_path(handle,out,error);
 #else
     error=std::make_error_code(std::errc::operation_not_supported);return false;
+#endif
+}
+bool NativeFile::directory_path(const std::filesystem::path& path,std::filesystem::path& out,std::error_code& error){
+    out.clear();error.clear();
+#ifdef _WIN32
+    const auto handle=CreateFileW(path.c_str(),FILE_READ_ATTRIBUTES,FILE_SHARE_READ|FILE_SHARE_WRITE|FILE_SHARE_DELETE,
+        nullptr,OPEN_EXISTING,FILE_FLAG_BACKUP_SEMANTICS,nullptr);
+    if(handle==INVALID_HANDLE_VALUE){error={int(GetLastError()),std::system_category()};return false;}
+    struct Owner {HANDLE handle;~Owner(){CloseHandle(handle);}} owner{handle};
+    BY_HANDLE_FILE_INFORMATION info{};
+    if(!GetFileInformationByHandle(handle,&info)){error={int(GetLastError()),std::system_category()};return false;}
+    if(!(info.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY)){error=std::make_error_code(std::errc::not_a_directory);return false;}
+    return query_handle_path(handle,out,error);
+#else
+    (void)path;error=std::make_error_code(std::errc::operation_not_supported);return false;
 #endif
 }
 bool NativeFile::position(std::uint64_t& out, std::error_code& error) {

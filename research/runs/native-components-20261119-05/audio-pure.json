@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_audio_device.exe"
+  ],
+  "exe_sha256": "ada6b2a790f872edb8cb1251d9e3e6d533b2afb2054546a4879ab6a279ff9595",
+  "exit": 0,
+  "stdout": "PASS pure format/PCM validation only; no device opened or audio generated\n",
+  "stderr": ""
+}

@@ -1,0 +1,35 @@
+{
+  "scope": "standalone native host services, not an accepted retail game build",
+  "created_utc": "2026-11-19T08:51:30.534254+00:00",
+  "fork_base": "b890a1ed9095a80492c00db39724c089798256bb",
+  "parent_base": "9b4c00147830529cedbf5e63ade200e7c7710061",
+  "authored_source_sha256": {
+    "CMakeLists.txt": "07bc1bc8b3d654ef8470604953270067b5ff14f53ffca4f92108bec593ec5069",
+    "runtime/include/mka/native_file.hpp": "bf54d1e032ab48c53016aa4caa0312fba8cf8c93a2c42dd5b41ab2d926502e49",
+    "runtime/src/native/movie_assets.cpp": "47f2f4a74c32f5e832e08647c3484a0bbc9b55e6a1c9927b0c8ea9a76d6b7135",
+    "runtime/src/native/native_file.cpp": "527c9759d7bfa036c55769c32684e85402253dfd98faa5a2e1993c6fe425a5cd",
+    "tests/test_movie_assets.cpp": "f6f07dc69fd13593219b507d9896880caec7221dedfa376554943c112202b050",
+    "cmake/native_audio.cmake": "439cce74973e3b00fbbc621aaf1021cd70aa660f991e0bc2946f8f6892b2856d",
+    "cmake/native_media.cmake": "56c612a5321b0ff50496ec24d72d57b3865ed26684d11b06402184adaf273762",
+    "runtime/include/mka/audio_device.hpp": "398d6b6f34ce4fbfb3c18a827725e3a21e8a4874ec147cd242427eaeb40d06aa",
+    "runtime/src/native/audio_device.cpp": "928c4402693bcd3990c33b2f17aa6e187b53eb1311a044485fc7e655e563082d",
+    "tests/test_native_audio_device.cpp": "9bf8ff1125dd40a0f5de131f2c43188e3d75d46ec45599ecae3f7f68b4e8bb58",
+    "tests/test_native_movie_pipeline.cpp": "48f957e142e84fded618f698b2f4e71d8ddc1e7adb1c6306001953ea1da52d1b"
+  },
+  "preserved_preexisting_sha256": {
+    "runtime/src/iop/mcserv.cpp": "ad2731a341409d87ffe1b171e99f28d7cedc5004aaf375a565d78673333414fb",
+    "runtime/src/iop/msl_native.cpp": "756cfb3867ebb440223ddb8ab6fe441ad6f9f54d35e4119a8342f8dd9063bb23"
+  },
+  "build_cache_sha256": "8958f198bd503bc0b5600f7d7f75d4a0c205074fcc91d1b832873f5bc8a4f8aa",
+  "report_sha256": "deea2b7fbd343a2e3daa65b069c1b2272168c5329efb97b86c73bb29b83c0bc3",
+  "standalone_cases": 45,
+  "game_launched": false,
+  "gpu_driver_changes": false,
+  "limits": [
+    "No live retail binding, audio identity/volume/DSP, physical input, saves, A/V-sync or gameplay acceptance",
+    "Silent WASAPI uses explicit OS-reported endpoint/format, zero samples only; no audible fidelity claim",
+    "Symlink-negative tests not exercised because OS denied privilege",
+    "Case-sensitive root identities exercised; no filesystem security/content immutability claim",
+    "Fresh native-only service binaries exclude defined ps2/gen/spu2/iop symbols; complete retail executable still retains forbidden architecture"
+  ]
+}

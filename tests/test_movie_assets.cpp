@@ -1,3 +1,11 @@
+// Expose the SDK's Windows10 case-sensitivity enum in this test only. Actual
+// OS/permission support is queried below; no machine policy is changed.
+#ifdef _WIN32
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0a00
+#undef NTDDI_VERSION
+#define NTDDI_VERSION 0x0a000007
+#endif
 #include "mka/movie_assets.hpp"
 #include <cstdio>
 #include <cstdlib>
@@ -19,6 +27,29 @@ std::vector<unsigned char> all(NativeMovieAsset& a,MovieAssetFailure& f){
  for(;;){auto r=a.read(buffer,sizeof(buffer),f);check(!r.error&&f.kind==MovieAssetError::none,"NativeFilebytes");result.insert(result.end(),buffer,buffer+r.bytes);if(r.eof)break;check(r.bytes!=0,"nozeroprogresssuccess");}return result;
 }
 #ifdef _WIN32
+void case_sensitive_containment(const std::filesystem::path& out){
+ const auto parent=out/"exclusive-case-sensitive";check(std::filesystem::create_directory(parent),"exclusivecasefixture");
+ const auto handle=CreateFileW(parent.c_str(),FILE_READ_ATTRIBUTES|FILE_WRITE_ATTRIBUTES,
+  FILE_SHARE_READ|FILE_SHARE_WRITE|FILE_SHARE_DELETE,nullptr,OPEN_EXISTING,FILE_FLAG_BACKUP_SEMANTICS,nullptr);
+ check(handle!=INVALID_HANDLE_VALUE,"opencasefixtureonly");
+ FILE_CASE_SENSITIVE_INFO requested{FILE_CS_FLAG_CASE_SENSITIVE_DIR};
+ if(!SetFileInformationByHandle(handle,FileCaseSensitiveInfo,&requested,sizeof(requested))){
+  const auto error=GetLastError();check(CloseHandle(handle),"closeunsupportedcasefixture");
+  std::printf("NOT_EXERCISED case-sensitive directory containment: SetFileInformationByHandle error=%lu\n",error);return;
+ }
+ FILE_CASE_SENSITIVE_INFO observed{};check(GetFileInformationByHandleEx(handle,FileCaseSensitiveInfo,&observed,sizeof(observed))&&
+  (observed.Flags&FILE_CS_FLAG_CASE_SENSITIVE_DIR),"verifyfixturecaseflag");check(CloseHandle(handle),"closecasefixturehandle");
+ const auto lower=parent/"root",upper=parent/"ROOT";check(std::filesystem::create_directory(lower)&&std::filesystem::create_directory(upper),"distinctcaseonlyrootsactuallyexist");
+ write(lower/"clip.sfd","lower-root");write(upper/"clip.sfd","upper-root");
+ MovieAssetFailure f;auto a=NativeMovieAssetStore::create(lower,{{"clip.sfd","clip.sfd"}},f),b=NativeMovieAssetStore::create(upper,{{"clip.sfd","clip.sfd"}},f);
+ check(a&&b,"caseonlyrootscapturedfromactualdirectoryhandles");auto af=a->open("CLIP.SFD",f),bf=b->open("CLIP.SFD",f);check(af&&bf,"distinctcaseonlyrootassets");
+ const auto av=all(*af,f),bv=all(*bf,f);check(std::string(av.begin(),av.end())=="lower-root"&&std::string(bv.begin(),bv.end())=="upper-root","caseonlyrootidentitiesneverfold");
+ std::puts("EXERCISED case-sensitive directory roots with distinct exact handle identities");
+ std::error_code ec;std::filesystem::create_symlink(std::filesystem::absolute(upper/"clip.sfd"),lower/"escape.sfd",ec);
+ if(ec){std::printf("NOT_EXERCISED case-sensitive sibling escape rejection: symlink error=%d %s\n",ec.value(),ec.message().c_str());return;}
+ check(!NativeMovieAssetStore::create(lower,{{"escape.sfd","escape.sfd"}},f)&&f.kind==MovieAssetError::root_escape,"actualcaseonlysiblingtargetisoutsideregisteredroot");
+ std::puts("EXERCISED exact-handle containment rejects case-only sibling symlink target");
+}
 void opened_path(const std::filesystem::path& request,const std::filesystem::path& expected){
  mka::content::NativeFile native;std::error_code error;std::filesystem::path observed="stale-path";
  check(!native.opened_path(observed,error)&&observed.empty()&&error==std::errc::bad_file_descriptor,"closedhandlequeryclearsoutput");
@@ -43,6 +74,12 @@ int main(int argc,char** argv){
  const auto source=std::filesystem::u8path(argv[1]),out=std::filesystem::u8path(argv[2]);check(std::filesystem::create_directory(out),"exclusiveownedfixtures");MovieAssetFailure f;
 #ifdef _WIN32
  opened_path(source,source);
+ std::filesystem::path actual_root;std::error_code directory_error;
+ check(mka::content::NativeFile::directory_path(source.parent_path(),actual_root,directory_error)&&
+  std::filesystem::equivalent(actual_root,source.parent_path(),directory_error)&&!directory_error,"actualdirectoryhandlepath");
+ actual_root="stale-path";check(!mka::content::NativeFile::directory_path(source,actual_root,directory_error)&&actual_root.empty()&&directory_error==std::errc::not_a_directory,"filecannotmasqueradeasdirectoryhandle");
+ actual_root="stale-path";check(!mka::content::NativeFile::directory_path(out/"absent-directory",actual_root,directory_error)&&actual_root.empty()&&directory_error,"missingdirectoryqueryclearsoutput");
+ case_sensitive_containment(out);
 #endif
  const std::vector<MovieAssetCatalogEntry> catalog{{"LOGON.SFD",utf8_bytes(source.filename().u8string())}};
  auto store=NativeMovieAssetStore::create(source.parent_path(),catalog,f);check(bool(store),"explicitactualMOVIEPS2rootcatalog");auto file=store->open("logon.sfd",f);check(file&&file->logical_key()=="LOGON.SFD"&&file->associated_path(),"ASCIIcasecataloglookup");

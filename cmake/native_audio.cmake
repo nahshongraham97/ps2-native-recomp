@@ -1,0 +1,10 @@
+# Ordinary Windows output services, independent of console transport/mixers.
+if(NOT WIN32)
+    return()
+endif()
+add_library(mka_native_audio_device STATIC EXCLUDE_FROM_ALL runtime/src/native/audio_device.cpp)
+target_include_directories(mka_native_audio_device PUBLIC runtime/include)
+target_compile_features(mka_native_audio_device PUBLIC cxx_std_20)
+target_link_libraries(mka_native_audio_device PRIVATE ole32 uuid)
+add_executable(test_native_audio_device EXCLUDE_FROM_ALL tests/test_native_audio_device.cpp)
+target_link_libraries(test_native_audio_device PRIVATE mka_native_audio_device)

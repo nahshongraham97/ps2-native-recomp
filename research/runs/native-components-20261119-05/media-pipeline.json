@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_movie_pipeline.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules\\MOVIER.ovl"
+  ],
+  "exe_sha256": "0fd83a00f8831b30631297186ff9c55e4c18c8b98fdc7661c37b4c67ddfbcf46",
+  "exit": 0,
+  "stdout": "native pipeline GL: ATI Technologies Inc. | AMD Radeon RX 6800 XT | 4.6.0 Compatibility Profile Context 26.11.2.261112\n[native-pipeline] LOGON.SFD videos=152 audio_frames=7601 samples_per_channel=243232 first_rgba_sha256=176b395e57f46dba66347d8e9ff503edf9ba99218c838b3ff7a8ed42b12d5cb3 last_rgba_sha256=58e5e48106007265af8062e2590728b5443945fb794e644d240a27e64e28808d\n[native-pipeline] TITLEN.SFD videos=900 audio_frames=26804 samples_per_channel=857728 first_rgba_sha256=e30544624c4fba18b61e77fe252a4a727621f7a4160e0bb484f7de78c82e82ff last_rgba_sha256=8f6a55984acd008901fd06bb4a55025809cdaefe403521659647501135c89087\n[native-pipeline] OPENINGN.SFD videos=7841 audio_frames=388550 samples_per_channel=12433600 first_rgba_sha256=ea3e347568bbc5cb260b1a26de03a2119278b68bf4d09f4f12ee4c29e565d41c last_rgba_sha256=58e5e48106007265af8062e2590728b5443945fb794e644d240a27e64e28808d\nPASS three full owned native movie decodes and six exact first/last GPU frames; no game/audio-device/A-V-sync/retail-aspect-role-selection acceptance\n",
+  "stderr": "[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=296)\n[mpeg @ 0000016E5F647C00] stream 0 : no PTS found at end of file, duration not set\n[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=11277)\n[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=296)\n"
+}

@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_gl_full\\test_native_audio_device.exe",
+    "--inspect",
+    "console"
+  ],
+  "exe_sha256": "ada6b2a790f872edb8cb1251d9e3e6d533b2afb2054546a4879ab6a279ff9595",
+  "exit": 0,
+  "stdout": "{\"mode\":\"inspect_only_no_stream\",\"requested_role\":\"console\",\"default_endpoint_id_utf8\":\"{0.0.0.00000000}.{f71b35bf-438e-480f-858b-994d0e6707cb}\",\"default_failure\":{\"kind\":0,\"native_code\":0,\"operation\":\"\"},\"active_render_endpoints\":[{\"endpoint_id_utf8\":\"{0.0.0.00000000}.{450a6681-eca8-4eab-8b53-daba117d9039}\",\"default_for_role\":false,\"sample_rate\":48000,\"channels\":2,\"channel_mask\":3,\"container_bits\":32,\"valid_bits\":32,\"encoding\":\"ieee_float\",\"mix_failure\":{\"kind\":0,\"native_code\":0,\"operation\":\"\"}},{\"endpoint_id_utf8\":\"{0.0.0.00000000}.{af64719c-0fdc-488d-87e9-ef6057bb8da0}\",\"default_for_role\":false,\"sample_rate\":48000,\"channels\":2,\"channel_mask\":3,\"container_bits\":32,\"valid_bits\":32,\"encoding\":\"ieee_float\",\"mix_failure\":{\"kind\":0,\"native_code\":0,\"operation\":\"\"}},{\"endpoint_id_utf8\":\"{0.0.0.00000000}.{f71b35bf-438e-480f-858b-994d0e6707cb}\",\"default_for_role\":true,\"sample_rate\":48000,\"channels\":2,\"channel_mask\":3,\"container_bits\":32,\"valid_bits\":32,\"encoding\":\"ieee_float\",\"mix_failure\":{\"kind\":0,\"native_code\":0,\"operation\":\"\"}},{\"endpoint_id_utf8\":\"{0.0.0.00000000}.{fa7dfeba-dcf7-45a7-8772-2f6ad86ad453}\",\"default_for_role\":false,\"sample_rate\":48000,\"channels\":2,\"channel_mask\":3,\"container_bits\":32,\"valid_bits\":32,\"encoding\":\"ieee_float\",\"mix_failure\":{\"kind\":0,\"native_code\":0,\"operation\":\"\"}}]}\n",
+  "stderr": ""
+}
