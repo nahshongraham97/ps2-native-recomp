@@ -1,6 +1,7 @@
 #pragma once
 #include "mka/movie_assets.hpp"
 #include "mka/movie_pes_index.hpp"
+#include "mka/movie_adx_stream.hpp"
 #include "mka/mpeg2_timing.hpp"
 #include <array>
 #include <cstdint>
@@ -72,6 +73,35 @@ struct MovieAudioChannelLayout {
     std::vector<MovieAudioChannel> channels;
     bool operator==(const MovieAudioChannelLayout&) const = default;
 };
+// Raw demux observations, not decoded timestamps or a playback clock.
+struct MovieAudioPacketObservation {
+    std::uint64_t sequence=0,es_begin=0,es_end=0;
+    MovieTimestamp pts,dts;
+    std::vector<std::uint8_t> bytes;
+};
+struct MovieAudioPacketContribution {
+    MovieAudioPacketObservation packet;
+    std::uint64_t es_begin=0,es_end=0;
+};
+struct MovieAudioPesContribution {
+    MovieVideoPesSpan pes;
+    std::uint64_t es_begin=0,es_end=0;
+};
+struct MovieAudioSourceMetadata {
+    std::uint64_t first_source_frame=0,raw_decoded_frames=0,es_begin=0,es_end=0;
+    // Exact encoded full-group bytes, excluding header/marker/pending tail.
+    std::vector<MovieAudioPacketContribution> packets;
+    std::vector<MovieAudioPesContribution> pes_spans;
+};
+struct MovieAudioDecodeAudit {
+    bool present=false,demux_eof=false,source_complete=false,decoder_failed=false;
+    std::uint8_t stream_id=0;
+    std::uint64_t es_bytes=0,validated_bytes=0;
+    std::vector<std::uint8_t> extradata;
+    std::vector<MovieAudioPacketObservation> packets;
+    std::vector<MovieVideoPesSpan> pes_spans;
+    std::optional<MovieAdxStreamSnapshot> native;
+};
 struct MovieAudioFrame {
     MovieAudioChannelLayout channel_layout;
     std::uint32_t sample_rate=0;
@@ -79,24 +109,26 @@ struct MovieAudioFrame {
     std::vector<std::vector<std::int16_t>> channels;
     MovieTimestamp source_pts;
     MovieTimestamp timestamp;
+    std::optional<MovieAudioSourceMetadata> source;
 };
 using MovieDecodedFrame=std::variant<MovieVideoFrame,MovieAudioFrame>;
 enum class MovieDecodeError {none,unsupported_host,library_load,missing_symbol,
     library_version,file_io,allocation,invalid_stream,unsupported_stream,
-    unsupported_frame,unsupported_audio_layout,demux,decode,invalid_owner,failed_owner,timing_parse,timing_association,source_index,source_validation,source_association};
+    unsupported_frame,unsupported_audio_layout,demux,decode,invalid_owner,failed_owner,timing_parse,timing_association,source_index,source_validation,source_association,audio_source,audio_decode};
 struct MovieDecodeFailure {
     MovieDecodeError kind=MovieDecodeError::none;
     std::int32_t native_code=0;
     std::string operation;
     MovieAssetFailure asset_failure;
     MoviePesFailure source_failure;
+    MovieAdxStreamFailure audio_failure;
 };
 enum class MovieReadStatus {frame,end,error};
 struct MovieReadResult {
     MovieReadStatus status=MovieReadStatus::error;
     MovieDecodedFrame frame;
 };
-// Native filesystem -> MPEG-PS demux -> ordinary MPEG2/ADX codec library.
+// Native filesystem -> MPEG-PS demux -> MPEG2 library / project-owned ADX codec.
 // No CDVD, IPU, GS, IOP, SPU2 or device clock. This decoder does not invent
 // an A/V clock, skip/fade lifecycle, pixel conversion, presentation or audio
 // output. Those have separate source-proven contracts.
@@ -117,6 +149,8 @@ public:
     static std::unique_ptr<NativeMovieDecoder> open(const std::filesystem::path& library_directory,
         NativeMovieAsset&& asset,MovieDecodeFailure&);
     MovieReadResult next(MovieDecodeFailure&);
+    // Owned non-consuming source observations; not a clock or client drain.
+    std::optional<MovieAudioDecodeAudit> audio_audit(MovieDecodeFailure&);
 private:
     struct Impl;
     explicit NativeMovieDecoder(std::unique_ptr<Impl>);

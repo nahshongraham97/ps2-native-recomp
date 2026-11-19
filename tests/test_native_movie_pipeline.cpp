@@ -9,6 +9,7 @@
 #include "mka/movie_timecode.hpp"
 #include "data/movie_codec_timing_oracle.hpp"
 #include "native_test_sha256.hpp"
+#include "native_adx_test_observer.hpp"
 #include "data/movie_decode_oracle.hpp"
 #include <GL/gl.h>
 #include <algorithm>
@@ -106,7 +107,7 @@ int main(int argc,char** argv){try{
             check(retained_caption.active==(std::string(expected.name)=="TITLEN.SFD"),"original pinned subtitle presence");
         } // Container, document and cursor gone; query owns its original data.
         MovieDecodeFailure failure;auto decoder=NativeMovieDecoder::open(libs,std::move(*asset),failure);check(bool(decoder),"same owned asset native decoder");catalog.reset();asset.reset();
-        std::optional<MovieVideoFrame> first,last;NativeTestSha256 yuv,pcm,codec_timing;std::uint64_t videos=0,audios=0,samples=0,gops=0,timecodes=0,missing_gops=0;
+        std::optional<MovieVideoFrame> first,last;NativeAdxTestObserver native_audio;NativeTestSha256 yuv,pcm,codec_timing;std::uint64_t videos=0,audios=0,samples=0,gops=0,timecodes=0,missing_gops=0;
         for(;;){auto result=decoder->next(failure);check(result.status!=MovieReadStatus::error,"complete movie decode");if(result.status==MovieReadStatus::end)break;
             if(auto* frame=std::get_if<MovieVideoFrame>(&result.frame)){
                 check(frame->codec_timing.picture.has_value(),"every native decoded picture retains validated associated headers");
@@ -114,10 +115,10 @@ int main(int argc,char** argv){try{
                 if(frame->codec_timing.picture->gop){check(timecode&&why.kind==MovieTimecodeError::none,"actual parsed source descriptor converts without PTS/rate substitution");++timecodes;}
                 else{check(!timecode&&why.kind==MovieTimecodeError::missing_gop,"absent source GOP does not invent a timecode");++missing_gops;}
                 for(const auto& plane:frame->planes)yuv.add(plane.data(),plane.size());add_codec_timing(codec_timing,frame->codec_timing);++videos;if(frame->codec_timing.gop_timecode)++gops;if(!first)first=*frame;last=std::move(*frame);
-            }else{const auto& audio=std::get<MovieAudioFrame>(result.frame);check(!audio.channels.empty(),"actual owned audio channels");for(const auto& channel:audio.channels)pcm.add(channel.data(),channel.size()*sizeof(std::int16_t));++audios;samples+=audio.channels[0].size();}
+            }else{const auto& audio=std::get<MovieAudioFrame>(result.frame);native_audio.add(audio);check(!audio.channels.empty(),"actual owned audio channels");for(const auto& channel:audio.channels)pcm.add(channel.data(),channel.size()*sizeof(std::int16_t));++audios;samples+=audio.channels[0].size();}
         }
-        check(videos==expected.video.frames&&audios==expected.audio.frames&&samples==expected.audio.samples,"full original video/audio drain counts before GPU comparison");
-        check(yuv.finish()==expected.video.sha256&&pcm.finish()==expected.audio.sha256,"every decoded byte retains independent native oracle identity");
+        check(videos==expected.video.frames,"full historical video drain count before GPU comparison");native_audio.verify(expected.name);
+        check(yuv.finish()==expected.video.sha256,"every decoded video byte retains historical independent oracle identity");
         decoder.reset(); // GPU handoff uses owned frames AFTER file/codec/DLL teardown.
         std::size_t english_bytes=0;
         if(retained_caption.active){

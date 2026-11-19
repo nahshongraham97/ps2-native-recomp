@@ -2,6 +2,7 @@
 #include "mka/movie_source.hpp"
 #include "mka/movie_pes_index.hpp"
 #include "native_test_sha256.hpp"
+#include "native_adx_test_observer.hpp"
 #include "data/movie_decode_oracle.hpp"
 #include <charconv>
 #include <cstdio>
@@ -126,7 +127,7 @@ int main(int argc,char**argv) try {
         const auto streams=index->streams();check(streams.size()==1,"actual onevideo stream");
         const native_movie_oracle::Asset* golden=nullptr;
         for(const auto& candidate:native_movie_oracle::assets) if(semantic_request->logical_key==candidate.name) golden=&candidate;
-        Hash vh,ah;Times vp,vb,ap,ab;std::uint64_t videos=0,audios=0,samples=0;
+        Hash vh,ah;Times vp,vb;NativeAdxTestObserver native_audio;std::uint64_t videos=0,audios=0,samples=0;
         std::optional<MovieVideoFrame> retained_video;std::optional<MovieAudioFrame> retained_audio;
         for(;;) {
             auto item=source->next(f);check(f.kind==MovieSourceError::none&&item.status!=MovieReadStatus::error,"source decode next");
@@ -142,15 +143,15 @@ int main(int argc,char**argv) try {
                 check(a.channel_layout.order==MovieAudioChannelOrder::unspecified&&a.channel_layout.channel_count==2&&
                       !a.channel_layout.mask&&a.channel_layout.channels.empty(),"actual ADX UNSPEC no stereo inference");
                 samples+=a.channels[0].size();for(const auto& plane:a.channels) ah.add(plane.data(),plane.size()*sizeof(std::int16_t));
-                ap.add(a.source_pts);ab.add(a.timestamp);if(!retained_audio) retained_audio=std::move(a);
+                native_audio.add(a);if(!retained_audio) retained_audio=std::move(a);
             }
         }
         const auto video_sha=vh.sha.finish(),audio_sha=ah.sha.finish();
         if(golden) {
-            check(videos==golden->video.frames&&audios==golden->audio.frames&&samples==golden->audio.samples,"full independent count golden");
-            check(vh.bytes==golden->video.bytes&&ah.bytes==golden->audio.bytes&&vh.fnv==golden->video.fnv&&ah.fnv==golden->audio.fnv&&
-                  video_sha==golden->video.sha256&&audio_sha==golden->audio.sha256,"all full decoded YUV/PCM independent SHA/FNV/bytes");
-            vp.verify(golden->video.pts);vb.verify(golden->video.best);ap.verify(golden->audio.pts);ab.verify(golden->audio.best);
+            check(videos==golden->video.frames,"full historical video count golden");native_audio.verify(semantic_request->logical_key);
+            check(vh.bytes==golden->video.bytes&&vh.fnv==golden->video.fnv&&
+                  video_sha==golden->video.sha256,"all full decoded YUV historical SHA/FNV/bytes");
+            vp.verify(golden->video.pts);vb.verify(golden->video.best);
             check(source->next(f).status==MovieReadStatus::end&&f.kind==MovieSourceError::none,"EOF stable after full drain");++goldens;
         }
         check(retained_video.has_value(),"owned video retained");

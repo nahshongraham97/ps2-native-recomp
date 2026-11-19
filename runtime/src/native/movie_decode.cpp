@@ -1,5 +1,7 @@
 #include "mka/movie_decode.hpp"
 #include "mka/native_file.hpp"
+#include "mka/movie_adx_profile.hpp"
+#include <algorithm>
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
@@ -16,6 +18,7 @@ extern "C" {
 #include <unordered_map>
 extern "C" {
 #include <libavutil/buffer.h>
+#include <libavutil/mem.h>
 }
 #ifdef _WIN32
 #define NOMINMAX
@@ -30,9 +33,9 @@ struct Api {
     ~Api(){if(format)FreeLibrary(format);if(codec)FreeLibrary(codec);if(utility)FreeLibrary(utility);}
 #endif
 #define DECLARE(name) decltype(&name) name##_p=nullptr
-    DECLARE(av_channel_layout_check);DECLARE(av_channel_layout_channel_from_index);
+
     DECLARE(avutil_version);DECLARE(avcodec_version);DECLARE(avformat_version);
-    DECLARE(av_malloc);DECLARE(av_free);DECLARE(av_frame_alloc);DECLARE(av_frame_free);DECLARE(av_frame_unref);DECLARE(av_frame_get_side_data);DECLARE(av_buffer_create);DECLARE(av_buffer_unref);
+    DECLARE(av_malloc);DECLARE(av_free);DECLARE(av_strdup);DECLARE(av_frame_alloc);DECLARE(av_frame_free);DECLARE(av_frame_unref);DECLARE(av_frame_get_side_data);DECLARE(av_buffer_create);DECLARE(av_buffer_unref);
     DECLARE(av_packet_alloc);DECLARE(av_packet_free);DECLARE(av_packet_unref);DECLARE(av_new_packet);DECLARE(av_packet_copy_props);
     DECLARE(avio_alloc_context);DECLARE(avio_context_free);
     DECLARE(avformat_alloc_context);DECLARE(avformat_open_input);DECLARE(avformat_find_stream_info);
@@ -53,9 +56,9 @@ struct Api {
         codec=module(L"avcodec-61.dll");if(!codec)return false;
         format=module(L"avformat-61.dll");if(!format)return false;
 #define LOAD(module,name) name##_p=reinterpret_cast<decltype(name##_p)>(GetProcAddress(module,#name));if(!name##_p){f={MovieDecodeError::missing_symbol,0,#name};return false;}
-        LOAD(utility,av_channel_layout_check);LOAD(utility,av_channel_layout_channel_from_index);
+
         LOAD(utility,avutil_version);LOAD(codec,avcodec_version);LOAD(format,avformat_version);
-        LOAD(utility,av_malloc);LOAD(utility,av_free);LOAD(utility,av_frame_alloc);LOAD(utility,av_frame_free);LOAD(utility,av_frame_unref);
+        LOAD(utility,av_malloc);LOAD(utility,av_free);LOAD(utility,av_strdup);LOAD(utility,av_frame_alloc);LOAD(utility,av_frame_free);LOAD(utility,av_frame_unref);
         LOAD(utility,av_frame_get_side_data);LOAD(utility,av_buffer_create);LOAD(utility,av_buffer_unref);
         LOAD(codec,av_packet_alloc);LOAD(codec,av_packet_free);LOAD(codec,av_packet_unref);
         LOAD(codec,av_new_packet);LOAD(codec,av_packet_copy_props);
@@ -102,6 +105,82 @@ struct NativeMovieDecoder::Impl {
     AVFrame* scratch=nullptr;
     struct Stream {int index=-1;AVCodecContext* decoder=nullptr;AVRational base{};};
     Stream video,audio;
+    std::optional<MovieEsReader> source_audio;
+    std::unique_ptr<NativeMovieAdxStream> adx;
+    MovieAudioDecodeAudit audio_observed;
+    std::size_t audio_packet_first=0,audio_pes_first=0;
+    bool audio_error(const MovieAdxStreamFailure& why,MovieDecodeFailure& f){
+        f={MovieDecodeError::audio_decode,static_cast<int>(why.kind),why.operation};f.audio_failure=why;return false;
+    }
+    bool open_audio(unsigned i,MovieDecodeFailure& f){
+        const auto* stream=format->streams[i];const auto* p=stream->codecpar;
+        // Pinned MPEGPS demux st->id is the full startcode (0x1C0..0x1DF).
+        if(stream->id<0x1c0||stream->id>0x1df){f={MovieDecodeError::audio_source,stream->id,"unverified MPEGPS audio stream ID encoding"};return false;}
+        const auto list=source_index->audio_streams();
+        if(list.size()!=1||list[0].stream_id!=(stream->id&0xff)){f={MovieDecodeError::audio_source,stream->id,"audio stream/index inventory mismatch"};return false;}
+        audio.index=static_cast<int>(i);audio.base=stream->time_base;
+        audio_observed.present=true;audio_observed.stream_id=static_cast<std::uint8_t>(stream->id);
+        audio_observed.es_bytes=list[0].bytes;audio_observed.pes_spans=list[0].spans;
+        source_audio=source_index->reader(audio_observed.stream_id,source_error);
+        if(!source_audio)return source_failure(MovieDecodeError::audio_source,"same-file audio ES reader",f);
+        if(p->extradata_size<0||(p->extradata_size&&!p->extradata)){f={MovieDecodeError::audio_source,0,"invalid ADX extradata extent"};return false;}
+        if(p->extradata_size){
+            audio_observed.extradata.assign(p->extradata,p->extradata+p->extradata_size);
+            if(!source_audio->validate_next(audio_observed.extradata,source_error))return source_failure(MovieDecodeError::audio_source,"ADX extradata differs from next source ES bytes",f);
+        }
+        MovieAdxStreamFailure why;
+        adx=NativeMovieAdxStream::create(audio_observed.extradata,std::make_unique<NativeMovieAdxProfileResolver>(),why);
+        if(!adx)return audio_error(why,f);
+        audio_observed.validated_bytes=source_audio->position();return true;
+    }
+    bool send_audio(MovieDecodeFailure& f){
+        if(!adx||!source_audio||packet->size<=0||!packet->data){f={MovieDecodeError::audio_source,0,"missing native ADX owner or empty packet"};return false;}
+        if(packet->side_data_elems<0||(packet->side_data_elems&&!packet->side_data)){f={MovieDecodeError::audio_source,0,"invalid audio packet side-data extent"};return false;}
+        for(int i=0;i<packet->side_data_elems;++i)if(packet->side_data[i].type==AV_PKT_DATA_NEW_EXTRADATA){
+            f={MovieDecodeError::audio_source,0,"unsupported audio packet NEW_EXTRADATA"};return false;
+        }
+        const auto begin=source_audio->position();
+        if(!source_audio->validate_next({packet->data,static_cast<std::size_t>(packet->size)},source_error))return source_failure(MovieDecodeError::audio_source,"original audio packet differs from next indexed ES bytes",f);
+        if(audio_observed.packets.size()==UINT64_MAX){f={MovieDecodeError::audio_source,0,"audio observation sequence overflow"};return false;}
+        audio_observed.packets.push_back({static_cast<std::uint64_t>(audio_observed.packets.size())+1,begin,source_audio->position(),timestamp(packet->pts,audio.base),timestamp(packet->dts,audio.base),std::vector<std::uint8_t>(packet->data,packet->data+packet->size)});
+        audio_observed.validated_bytes=source_audio->position();
+        MovieAdxStreamFailure why;auto result=adx->feed({packet->data,static_cast<std::size_t>(packet->size)},why);
+        if(result.status==MovieAdxStreamStatus::error)return audio_error(why,f);
+        if(result.frame){
+            auto& raw=*result.frame;
+            if(raw.sample_rate>UINT32_MAX){f={MovieDecodeError::audio_decode,0,"native ADX sample rate exceeds frame representation"};return false;}
+            MovieAudioFrame frame;frame.sample_rate=static_cast<std::uint32_t>(raw.sample_rate);
+            frame.channel_layout.order=MovieAudioChannelOrder::unspecified;frame.channel_layout.channel_count=raw.planes.size();
+            frame.channels=std::move(raw.planes); // No decoded PTS or speaker inference.
+            MovieAudioSourceMetadata source;source.first_source_frame=raw.first_source_frame;source.raw_decoded_frames=raw.raw_decoded_frames;
+            auto snapshot=adx->snapshot(why);if(!snapshot)return audio_error(why,f);
+            // Source coverage for PCM/history is the full encoded groups,
+            // including the complete final group before declared-N trimming.
+            // Header, marker and pending bytes are represented only by audit.
+            if(!snapshot->header||!raw.raw_decoded_frames||raw.raw_decoded_frames%32||
+               snapshot->raw_decoded_frames%32||snapshot->raw_decoded_frames<raw.raw_decoded_frames){
+                f={MovieDecodeError::audio_source,0,"unaligned native ADX group provenance"};return false;
+            }
+            const auto& header=*snapshot->header;
+            if(!header.source_planes||!header.block_bytes||header.source_planes>UINT64_MAX/header.block_bytes){f={MovieDecodeError::audio_source,0,"native ADX group byte product overflow"};return false;}
+            const std::uint64_t group_bytes=std::uint64_t(header.source_planes)*header.block_bytes;
+            const auto previous_groups=(snapshot->raw_decoded_frames-raw.raw_decoded_frames)/32;
+            const auto emitted_groups=raw.raw_decoded_frames/32;
+            if(previous_groups>UINT64_MAX/group_bytes||emitted_groups>UINT64_MAX/group_bytes){f={MovieDecodeError::audio_source,0,"native ADX group source product overflow"};return false;}
+            const auto previous_bytes=previous_groups*group_bytes,emitted_bytes=emitted_groups*group_bytes;
+            if(header.data_start>UINT64_MAX-previous_bytes){f={MovieDecodeError::audio_source,0,"native ADX group source start overflow"};return false;}
+            source.es_begin=header.data_start+previous_bytes;
+            if(source.es_begin>UINT64_MAX-emitted_bytes){f={MovieDecodeError::audio_source,0,"native ADX group source end overflow"};return false;}
+            source.es_end=source.es_begin+emitted_bytes;
+            if(source.es_end>source_audio->position()||source.es_end>audio_observed.es_bytes){f={MovieDecodeError::audio_source,0,"native ADX group source exceeds validated ES"};return false;}
+            while(audio_packet_first<audio_observed.packets.size()&&audio_observed.packets[audio_packet_first].es_end<=source.es_begin)++audio_packet_first;
+            for(auto i=audio_packet_first;i<audio_observed.packets.size()&&audio_observed.packets[i].es_begin<source.es_end;++i){const auto& item=audio_observed.packets[i];source.packets.push_back({item,std::max(item.es_begin,source.es_begin),std::min(item.es_end,source.es_end)});}
+            while(audio_pes_first<audio_observed.pes_spans.size()&&audio_observed.pes_spans[audio_pes_first].es_end<=source.es_begin)++audio_pes_first;
+            for(auto i=audio_pes_first;i<audio_observed.pes_spans.size()&&audio_observed.pes_spans[i].es_begin<source.es_end;++i){const auto& item=audio_observed.pes_spans[i];source.pes_spans.push_back({item,std::max(item.es_begin,source.es_begin),std::min(item.es_end,source.es_end)});}
+            frame.source=std::move(source);ready.emplace_back(std::move(frame));
+        }
+        return true;
+    }
     NativeMpeg2Timing timing;
     struct PictureTag {
         static constexpr std::uint64_t magic_value=0x4d4b415049435431ull;
@@ -156,7 +235,7 @@ struct NativeMovieDecoder::Impl {
         if(scratch)api.av_frame_free_p(&scratch);
         if(packet)api.av_packet_free_p(&packet);
         if(video.decoder)api.avcodec_free_context_p(&video.decoder);
-        if(audio.decoder)api.avcodec_free_context_p(&audio.decoder);
+
         if(format)api.avformat_close_input_p(&format);
         if(io){api.av_free_p(io->buffer);api.avio_context_free_p(&io);}
     }
@@ -183,30 +262,6 @@ struct NativeMovieDecoder::Impl {
         std::uint64_t position;
         if(!s.seek_position(offset,origin,position,ec)){s.io_error=ec?ec:std::make_error_code(std::errc::io_error);return AVERROR(EIO);}
         return position>std::uint64_t(INT64_MAX)?AVERROR(EOVERFLOW):static_cast<std::int64_t>(position);
-    }
-    bool copy_audio_layout(const AVChannelLayout& source,MovieAudioChannelLayout& out,MovieDecodeFailure& f){
-        if(!api.av_channel_layout_check_p(&source)){
-            f={MovieDecodeError::unsupported_audio_layout,static_cast<int>(source.order),"invalid actual AVFrame channel layout"};return false;}
-        MovieAudioChannelLayout owned;owned.channel_count=static_cast<std::uint64_t>(source.nb_channels);
-        switch(source.order){
-        case AV_CHANNEL_ORDER_UNSPEC:owned.order=MovieAudioChannelOrder::unspecified;break;
-        case AV_CHANNEL_ORDER_NATIVE:owned.order=MovieAudioChannelOrder::native;owned.mask=source.u.mask;break;
-        case AV_CHANNEL_ORDER_CUSTOM:owned.order=MovieAudioChannelOrder::custom;break;
-        case AV_CHANNEL_ORDER_AMBISONIC:owned.order=MovieAudioChannelOrder::ambisonic;owned.mask=source.u.mask;break;
-        default:f={MovieDecodeError::unsupported_audio_layout,static_cast<int>(source.order),"unsupported actual AVFrame channel order"};return false;
-        }
-        if(source.order!=AV_CHANNEL_ORDER_UNSPEC){
-            owned.channels.reserve(static_cast<std::size_t>(source.nb_channels));
-            for(int i=0;i<source.nb_channels;++i){
-                const auto id=api.av_channel_layout_channel_from_index_p(&source,static_cast<unsigned>(i));
-                if(id==AV_CHAN_NONE){f={MovieDecodeError::unsupported_audio_layout,i,"actual AVFrame channel ID unavailable"};return false;}
-                MovieAudioChannel channel;channel.id=static_cast<std::int32_t>(id);
-                if(source.order==AV_CHANNEL_ORDER_CUSTOM)
-                    std::memcpy(channel.custom_name.data(),source.u.map[i].name,channel.custom_name.size());
-                owned.channels.push_back(channel);
-            }
-        }
-        out=std::move(owned);return true;
     }
     bool open_stream(Stream& stream,unsigned i,MovieDecodeFailure& f){
         auto* source=format->streams[i];const auto* decoder=api.avcodec_find_decoder_p(source->codecpar->codec_id);
@@ -279,28 +334,11 @@ struct NativeMovieDecoder::Impl {
                     for(std::size_t y=0;y<h;++y)std::memcpy(frame.planes[plane].data()+y*w,scratch->data[plane]+std::ptrdiff_t(y)*stride,w);
                 }
                 ready.emplace_back(std::move(frame));
-            }else{
-                const auto channels=scratch->ch_layout.nb_channels;
-                if(scratch->format!=AV_SAMPLE_FMT_S16P||scratch->sample_rate<=0||scratch->nb_samples<=0||channels<=0||!scratch->extended_data){f={MovieDecodeError::unsupported_frame,scratch->format,"native movie requires proven planar S16 PCM"};return false;}
-                MovieAudioFrame frame;if(!copy_audio_layout(scratch->ch_layout,frame.channel_layout,f))return false;
-                frame.sample_rate=scratch->sample_rate;frame.source_pts=timestamp(scratch->pts,stream.base);
-                frame.timestamp=timestamp(scratch->best_effort_timestamp,stream.base);frame.channels.resize(channels);
-                for(int channel=0;channel<channels;++channel){
-                    if(!scratch->extended_data[channel]){f={MovieDecodeError::unsupported_frame,0,"missing decoded PCM plane"};return false;}
-                    frame.channels[channel].resize(scratch->nb_samples);
-                    std::memcpy(frame.channels[channel].data(),scratch->extended_data[channel],std::size_t(scratch->nb_samples)*sizeof(std::int16_t));
-                }
-                ready.emplace_back(std::move(frame));
             }
             api.av_frame_unref_p(scratch);
         }
     }
     bool send(Stream& stream,const AVPacket* data,MovieDecodeFailure& f,std::optional<std::uint64_t> packet_es_begin={}){
-        if(stream.index!=video.index){
-            const int sent=api.avcodec_send_packet_p(stream.decoder,data);
-            if(sent<0){f={MovieDecodeError::decode,sent,"avcodec_send_packet"};return false;}
-            return receive(stream,f);
-        }
         if(!data||data->size<0||(data->size&&!data->data)){
             f={MovieDecodeError::timing_parse,0,"invalid elementary video packet extent"};return false;
         }
@@ -428,17 +466,24 @@ std::unique_ptr<NativeMovieDecoder> NativeMovieDecoder::finish_open(std::unique_
         s->io=s->api.avio_alloc_context_p(buffer,65536,0,s.get(),Impl::read,nullptr,Impl::seek);
         if(!s->io){s->api.av_free_p(buffer);f={MovieDecodeError::allocation,0,"avio_alloc_context"};return {};}
         s->format=s->api.avformat_alloc_context_p();if(!s->format){f={MovieDecodeError::allocation,0,"avformat_alloc_context"};return {};}
+        // AVFormatContext owns this av_strdup allocation through its AVOption
+        // cleanup. Probe parsers remain available; avcodec_open2 rejects ADX
+        // via the propagated whitelist instead of silently decoding it.
+        s->format->codec_whitelist=s->api.av_strdup_p("mpeg2video");
+        if(!s->format->codec_whitelist){f={MovieDecodeError::allocation,0,"MPEG2-only probe codec whitelist"};return {};}
         s->format->pb=s->io;s->format->flags|=AVFMT_FLAG_CUSTOM_IO;
         int r=s->api.avformat_open_input_p(&s->format,nullptr,nullptr,nullptr);
         if(r<0){f={s->io_error?MovieDecodeError::file_io:MovieDecodeError::demux,r,"avformat_open_input owned reader"};f.asset_failure=s->asset_error;f.source_failure=s->source_error;return {};}
+        if(!s->format->codec_whitelist||std::strcmp(s->format->codec_whitelist,"mpeg2video")!=0){f={MovieDecodeError::unsupported_stream,0,"MPEG2-only probe whitelist changed"};return {};}
         r=s->api.avformat_find_stream_info_p(s->format,nullptr);
         if(r<0){f={s->io_error?MovieDecodeError::file_io:MovieDecodeError::demux,r,"avformat_find_stream_info"};f.asset_failure=s->asset_error;f.source_failure=s->source_error;return {};}
         for(unsigned i=0;i<s->format->nb_streams;++i){
             const auto* p=s->format->streams[i]->codecpar;
             if(p->codec_type==AVMEDIA_TYPE_VIDEO&&p->codec_id==AV_CODEC_ID_MPEG2VIDEO&&s->video.index<0){if(!s->open_stream(s->video,i,f))return {};}
-            else if(p->codec_type==AVMEDIA_TYPE_AUDIO&&p->codec_id==AV_CODEC_ID_ADPCM_ADX&&s->audio.index<0){if(!s->open_stream(s->audio,i,f))return {};}
+            else if(p->codec_type==AVMEDIA_TYPE_AUDIO&&p->codec_id==AV_CODEC_ID_ADPCM_ADX&&s->audio.index<0){if(!s->open_audio(i,f))return {};}
             else {f={MovieDecodeError::unsupported_stream,p->codec_id,"unverified movie stream or duplicate media type"};return {};}
         }
+        if((s->audio.index<0)!=s->source_index->audio_streams().empty()){f={MovieDecodeError::audio_source,0,"demux/index audio presence mismatch"};return {};}
         if(s->video.index<0){f={MovieDecodeError::invalid_stream,0,"movie has no MPEG2 video"};return {};}
         s->packet=s->api.av_packet_alloc_p();s->scratch=s->api.av_frame_alloc_p();if(!s->packet||!s->scratch){f={MovieDecodeError::allocation,0,"native decoder packet/frame"};return {};}
         return std::unique_ptr<NativeMovieDecoder>(new NativeMovieDecoder(std::move(s)));
@@ -458,7 +503,13 @@ MovieReadResult NativeMovieDecoder::next(MovieDecodeFailure& f){
                 if(!s.source_video||!s.source_video->finished()){
                     f={MovieDecodeError::source_validation,0,"demux EOF before complete indexed video ES coverage"};s.failed=true;return {};
                 }
-                for(auto* stream:{&s.video,&s.audio})if(stream->decoder){
+                if(s.adx){
+                    s.audio_observed.demux_eof=true;s.audio_observed.source_complete=s.source_audio->finished();
+                    if(!s.audio_observed.source_complete){f={MovieDecodeError::audio_source,0,"demux EOF before complete indexed audio ES coverage"};s.failed=true;return {};}
+                    MovieAdxStreamFailure why;auto end=s.adx->finish(why);
+                    if(end.status==MovieAdxStreamStatus::error){s.audio_error(why,f);s.failed=true;return {};}
+                }
+                for(auto* stream:{&s.video})if(stream->decoder){
                     const int sent=s.api.avcodec_send_packet_p(stream->decoder,nullptr);
                     if(sent<0&&sent!=AVERROR_EOF){f={MovieDecodeError::decode,sent,"native decoder flush"};s.failed=true;return {};}
                     if(!s.receive(*stream,f,true)){s.failed=true;return {};}
@@ -468,7 +519,7 @@ MovieReadResult NativeMovieDecoder::next(MovieDecodeFailure& f){
             auto* stream=s.packet->stream_index==s.video.index?&s.video:s.packet->stream_index==s.audio.index?&s.audio:nullptr;
             if(s.packet->flags&AV_PKT_FLAG_CORRUPT){f={MovieDecodeError::demux,0,"corrupt movie packet"};s.api.av_packet_unref_p(s.packet);s.failed=true;return {};}
             if(!stream){f={MovieDecodeError::unsupported_stream,s.packet->stream_index,"unbound movie packet stream"};s.api.av_packet_unref_p(s.packet);s.failed=true;return {};}
-            const bool sent=s.send_packet(*stream,f);s.api.av_packet_unref_p(s.packet);
+            const bool sent=stream==&s.audio?s.send_audio(f):s.send_packet(*stream,f);s.api.av_packet_unref_p(s.packet);
             if(!sent){s.failed=true;return {};}
         }
         if(s.ready.empty())return {MovieReadStatus::end,{}};
@@ -476,5 +527,15 @@ MovieReadResult NativeMovieDecoder::next(MovieDecodeFailure& f){
     }catch(const std::bad_alloc&){f={MovieDecodeError::allocation,0,"decoded native frame ownership"};}
      catch(const std::length_error&){f={MovieDecodeError::allocation,0,"decoded frame host capacity"};}
     s.failed=true;return {};
+}
+std::optional<MovieAudioDecodeAudit> NativeMovieDecoder::audio_audit(MovieDecodeFailure& f){
+    f={};if(!impl_){f={MovieDecodeError::invalid_owner,0,"moved native movie decoder"};return {};}
+    try{
+        auto result=impl_->audio_observed;result.decoder_failed=impl_->failed;
+        if(impl_->adx){MovieAdxStreamFailure why;result.native=impl_->adx->snapshot(why);if(!result.native){impl_->audio_error(why,f);return {};}}
+        return result;
+    }catch(const std::bad_alloc&){f={MovieDecodeError::allocation,0,"owned native audio audit"};}
+     catch(const std::length_error&){f={MovieDecodeError::allocation,0,"native audio audit host capacity"};}
+    return {};
 }
 } // namespace mka::video

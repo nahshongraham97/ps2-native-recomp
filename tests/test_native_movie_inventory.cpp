@@ -1,6 +1,7 @@
 // Offline full-asset codec coverage. No presentation/audio device/game execution.
 #include "mka/movie_decode.hpp"
 #include "native_test_sha256.hpp"
+#include "native_adx_test_observer.hpp"
 #include "data/movie_decode_oracle.hpp"
 #include <algorithm>
 #include <array>
@@ -38,6 +39,7 @@ struct Times {std::uint64_t missing=0;std::map<std::pair<std::int32_t,std::int32
 const char* decode_name(MovieDecodeError e){switch(e){
 #define CASE(x) case MovieDecodeError::x:return #x;
  CASE(none) CASE(unsupported_host) CASE(library_load) CASE(missing_symbol) CASE(library_version) CASE(file_io) CASE(allocation) CASE(invalid_stream) CASE(unsupported_stream) CASE(unsupported_frame) CASE(demux) CASE(decode) CASE(invalid_owner) CASE(failed_owner)
+ CASE(unsupported_audio_layout) CASE(timing_parse) CASE(timing_association) CASE(source_index) CASE(source_validation) CASE(source_association) CASE(audio_source) CASE(audio_decode)
 #undef CASE
  }return "unknown_decode_error";}
 const char* asset_name(MovieAssetError e){switch(e){
@@ -68,7 +70,7 @@ struct Record {
 Record inspect(const std::string& key,const NativeMovieAssetStore& store,const std::filesystem::path& libraries){
  Record r;r.key=key;for(const auto& g:native_movie_oracle::assets)if(key==g.name)r.golden_present=true;
  try{
-  Hash source,video(r.golden_present),audio(r.golden_present);r.stage="catalog_open";auto asset=store.open(key,r.asset);if(!asset){r.message="NativeMovieAssetStore::open";return r;}
+  NativeAdxTestObserver native_audio;Hash source,video(r.golden_present),audio(r.golden_present);r.stage="catalog_open";auto asset=store.open(key,r.asset);if(!asset){r.message="NativeMovieAssetStore::open";return r;}
   r.stage="source_hash";std::array<unsigned char,65536> buffer;
   for(;;){auto read=asset->read(buffer.data(),buffer.size(),r.asset);if(read.error){r.message="NativeMovieAsset::read source hash";return r;}source.put(buffer.data(),read.bytes);if(read.eof)break;if(!read.bytes){r.message="source read made no progress";return r;}}
   r.source_sha=source.sha.finish();r.source_bytes=source.bytes;
@@ -76,10 +78,10 @@ Record inspect(const std::string& key,const NativeMovieAssetStore& store,const s
   r.stage="decode";
   for(;;){auto next=decoder->next(r.decode);if(next.status==MovieReadStatus::error){r.asset=r.decode.asset_failure;r.message="NativeMovieDecoder::next";break;}if(next.status==MovieReadStatus::end){r.complete=true;break;}
    if(auto* v=std::get_if<MovieVideoFrame>(&next.frame)){add(r.video_frames,1);for(const auto& p:v->planes)video.put(p.data(),p.size());r.video_pts.put(v->source_pts);r.video_best.put(v->timestamp);r.video_shapes.emplace(v->width,v->height,v->sample_aspect_numerator,v->sample_aspect_denominator,v->color_range,v->color_space,v->color_primaries,v->color_transfer);}
-   else {const auto& a=std::get<MovieAudioFrame>(next.frame);add(r.audio_frames,1);if(!a.channels.empty())add(r.audio_samples,a.channels.front().size());for(const auto& p:a.channels){add(r.scalar_samples,p.size());audio.put(p.data(),p.size()*sizeof(std::int16_t));}r.audio_pts.put(a.source_pts);r.audio_best.put(a.timestamp);r.audio_shapes.emplace(a.sample_rate,a.channels.size());}
+   else {const auto& a=std::get<MovieAudioFrame>(next.frame);native_audio.add(a);add(r.audio_frames,1);if(!a.channels.empty())add(r.audio_samples,a.channels.front().size());for(const auto& p:a.channels){add(r.scalar_samples,p.size());audio.put(p.data(),p.size()*sizeof(std::int16_t));}r.audio_pts.put(a.source_pts);r.audio_best.put(a.timestamp);r.audio_shapes.emplace(a.sample_rate,a.channels.size());}
   }
   r.video_sha=video.sha.finish();r.audio_sha=audio.sha.finish();r.video_bytes=video.bytes;r.audio_bytes=audio.bytes;r.video_fnv=video.fnv;r.audio_fnv=audio.fnv;
-  for(const auto& g:native_movie_oracle::assets)if(key==g.name){r.golden_present=true;r.golden_match=r.complete&&r.video_frames==g.video.frames&&r.audio_frames==g.audio.frames&&r.audio_samples==g.audio.samples&&r.video_bytes==g.video.bytes&&r.audio_bytes==g.audio.bytes&&r.video_fnv==g.video.fnv&&r.audio_fnv==g.audio.fnv&&r.video_sha==g.video.sha256&&r.audio_sha==g.audio.sha256&&r.video_pts.equals(g.video.pts)&&r.video_best.equals(g.video.best)&&r.audio_pts.equals(g.audio.pts)&&r.audio_best.equals(g.audio.best);if(r.complete&&!r.golden_match){r.stage="fixed_golden";r.message="exact-name independent decoded hash/count/timestamp golden mismatch";}}
+  for(const auto& g:native_movie_oracle::assets)if(key==g.name){r.golden_present=true;if(r.complete)native_audio.verify(key);r.golden_match=r.complete&&r.video_frames==g.video.frames&&r.video_bytes==g.video.bytes&&r.video_fnv==g.video.fnv&&r.video_sha==g.video.sha256&&r.video_pts.equals(g.video.pts)&&r.video_best.equals(g.video.best);if(r.complete&&!r.golden_match){r.stage="fixed_golden";r.message="exact-name independent decoded hash/count/timestamp golden mismatch";}}
   if(r.ok())r.stage.clear();
  }catch(const std::exception& e){r.message=e.what();}return r;
 }

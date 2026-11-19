@@ -1,5 +1,6 @@
 #include "mka/movie_decode.hpp"
 #include "native_test_sha256.hpp"
+#include "native_adx_test_observer.hpp"
 #include "data/movie_decode_oracle.hpp"
 #include <algorithm>
 #include <cstdio>
@@ -73,7 +74,7 @@ int main(int argc,char** argv){
             NativeMovieDecoder moved(std::move(*decoder));
             check(decoder->next(f).status==MovieReadStatus::error&&f.kind==MovieDecodeError::invalid_owner,"moved decoder cannot access old ownership");
             std::uint64_t videos=0,audios=0,samples=0,missing_pts=0;int peak=0;Hash vh,ah;
-            Times video_pts,video_best,audio_pts,audio_best;
+            Times video_pts,video_best;NativeAdxTestObserver native_audio;
             std::optional<MovieVideoFrame> first_video;std::optional<MovieAudioFrame> first_audio;
             for(;;){
                 auto next=moved.next(f);
@@ -89,23 +90,21 @@ int main(int argc,char** argv){
                 }else{
                     auto& a=std::get<MovieAudioFrame>(next.frame);
                     check(a.sample_rate==48000&&a.channels.size()==2&&!a.channels[0].empty()&&a.channels[0].size()==a.channels[1].size(),"actual ADX rate/channels and owned PCM extent");
-                    // Pinned ADX header publishes count2, not speaker labels:
-                    // adxdec.c76..79 preserves UNSPEC and decode.c596..600 copies
-                    // that actual layout to AVFrame. Do not guess stereo/mask3.
+                    // Native source header publishes plane count2, without speaker IDs.
                     check(a.channel_layout.order==MovieAudioChannelOrder::unspecified&&
                         a.channel_layout.channel_count==2&&!a.channel_layout.mask&&a.channel_layout.channels.empty(),
                         "actual ADX layout explicitly unspecified; no invented speaker IDs");
                     for(const auto& c:a.channels){ah.add(c.data(),c.size()*2);for(const auto x:c)peak=std::max(peak,x<0?-int(x):int(x));}
-                    audio_pts.add(a.source_pts);audio_best.add(a.timestamp);
+                    native_audio.add(a);
                     ++audios;samples+=a.channels[0].size();if(!a.timestamp.present)++missing_pts;else check(a.timestamp.numerator>0&&a.timestamp.denominator>0,"audio native timebase explicit");
                     if(!first_audio)first_audio=std::move(a);
                 }
             }
             check(videos>0&&audios>0&&samples>0&&peak>0,"actual movie yields both video and nonzero PCM");
-            check(videos==expected.video.frames&&audios==expected.audio.frames&&samples==expected.audio.samples,"exact independent video/audio counts including final decoder drain");
-            check(vh.value==expected.video.fnv&&ah.value==expected.audio.fnv&&vh.bytes==expected.video.bytes&&ah.bytes==expected.audio.bytes,"exact independent decoded bytes/count/FNV");
-            check(vh.sha.finish()==expected.video.sha256&&ah.sha.finish()==expected.audio.sha256,"SHA256 of every decoded video and PCM byte matches independent default decoder");
-            video_pts.verify(expected.video.pts);video_best.verify(expected.video.best);audio_pts.verify(expected.audio.pts);audio_best.verify(expected.audio.best);
+            check(videos==expected.video.frames,"exact historical video count including final decoder drain");native_audio.verify(name);
+            check(vh.value==expected.video.fnv&&vh.bytes==expected.video.bytes,"exact historical video bytes/count/FNV");
+            check(vh.sha.finish()==expected.video.sha256,"every video byte retains historical independent SHA256");
+            video_pts.verify(expected.video.pts);video_best.verify(expected.video.best);
             check(moved.next(f).status==MovieReadStatus::end&&f.kind==MovieDecodeError::none,"real EOF is stable");
             Hash before;for(const auto& p:first_video->planes)before.add(p.data(),p.size());for(const auto& p:first_audio->channels)before.add(p.data(),p.size()*2);
             const auto retained_layout=first_audio->channel_layout;

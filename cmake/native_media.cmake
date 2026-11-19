@@ -88,6 +88,7 @@ foreach(pair
     "test_native_movie_assets|tests/test_movie_assets.cpp"
     "test_native_movie_gl_device|tests/test_movie_gl_device.cpp"
     "test_native_movie_decode|tests/test_movie_decode.cpp"
+    "test_native_movie_decode_adx|tests/test_movie_decode_adx.cpp"
     "test_native_movie_source|tests/test_movie_source.cpp"
     "test_native_movie_source_failure|tests/test_movie_source_failure.cpp"
     "test_native_movie_pipeline|tests/test_native_movie_pipeline.cpp"
@@ -103,6 +104,14 @@ foreach(pair
     add_executable(${target} EXCLUDE_FROM_ALL "${source}")
     target_link_libraries(${target} PRIVATE mka_native_media)
 endforeach()
+
+# Independent public-library demux observations; no project media/runtime link.
+add_executable(test_native_movie_audio_demux_probe EXCLUDE_FROM_ALL
+    tests/test_movie_audio_demux_probe.cpp)
+target_include_directories(test_native_movie_audio_demux_probe PRIVATE
+    "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers" "${MKA_NATIVE_MEDIA_HEADERS}")
+target_compile_features(test_native_movie_audio_demux_probe PRIVATE cxx_std_20)
+target_link_libraries(test_native_movie_audio_demux_probe PRIVATE bcrypt)
 
 # Pure serialized-header fixture: no codec libraries, renderer or runtime link.
 add_executable(test_native_mpeg2_timing EXCLUDE_FROM_ALL

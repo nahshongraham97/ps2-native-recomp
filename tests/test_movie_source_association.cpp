@@ -2,6 +2,7 @@
 // Native decoding only: no game, presentation, audio output or device model.
 #include "mka/movie_decode.hpp"
 #include "native_test_sha256.hpp"
+#include "native_adx_test_observer.hpp"
 #include "data/movie_decode_oracle.hpp"
 #include <algorithm>
 #include <filesystem>
@@ -44,11 +45,11 @@ int main(int argc,char** argv){try {
         auto decoder=NativeMovieDecoder::open(libraries,std::move(*input),df);
         if(!decoder){std::cerr<<"open failure "<<int(df.kind)<<' '<<df.operation<<'\n';return 1;}
         std::map<std::uint64_t,Row> rows;
-        std::uint64_t frames=0,audio_frames=0,samples=0,missing=0,crossed=0;
+        std::uint64_t frames=0,audio_frames=0,samples=0,missing=0,crossed=0;NativeAdxTestObserver native_audio;
         const native_movie_oracle::Asset* golden=nullptr;
         for(const auto& item:native_movie_oracle::assets)if(key==item.name)golden=&item;
-        std::unique_ptr<NativeTestSha256> video_hash,audio_hash;
-        if(golden){video_hash=std::make_unique<NativeTestSha256>();audio_hash=std::make_unique<NativeTestSha256>();}
+        std::unique_ptr<NativeTestSha256> video_hash;
+        if(golden)video_hash=std::make_unique<NativeTestSha256>();
         for(;;){auto next=decoder->next(df);
             if(next.status==MovieReadStatus::error){std::cerr<<"decode failure "<<int(df.kind)<<' '<<df.operation<<'\n';return 1;}
             if(next.status==MovieReadStatus::end)break;
@@ -71,7 +72,7 @@ int main(int argc,char** argv){try {
             }else{
                 const auto& a=std::get<MovieAudioFrame>(next.frame);++audio_frames;
                 if(!a.channels.empty())samples+=a.channels.front().size();
-                if(audio_hash)for(const auto& plane:a.channels)audio_hash->add(plane.data(),plane.size()*sizeof(std::int16_t));
+                native_audio.add(a);
             }
         }
         // Sort observations by input ES offset only for comparison; decoded
@@ -82,8 +83,7 @@ int main(int argc,char** argv){try {
             optional(compact,row.source.quarter_pts);compact<<']';}
         compact<<']';const auto text=compact.str();NativeTestSha256 hash;hash.add(text.data(),text.size());
         const auto mapping=hash.finish();bool golden_match=true;
-        if(golden){golden_match=frames==golden->video.frames && audio_frames==golden->audio.frames &&
-            samples==golden->audio.samples && video_hash->finish()==golden->video.sha256 && audio_hash->finish()==golden->audio.sha256;}
+        if(golden){native_audio.verify(key);golden_match=frames==golden->video.frames && video_hash->finish()==golden->video.sha256;}
         std::cout<<"{\"file\":";quote(std::cout,key);std::cout<<",\"frames\":"<<frames<<",\"absent\":"<<missing
             <<",\"cross\":"<<crossed<<",\"picture_pes_mapping_sha256\":";quote(std::cout,mapping);
         std::cout<<",\"golden_present\":"<<(golden?"true":"false")<<",\"golden_match\":"<<(golden_match?"true":"false")<<"}\n"<<std::flush;

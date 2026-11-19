@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_source.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-decoder-20261119\\validation-01\\assets.tsv",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-decoder-20261119\\validation-01\\source-owned"
+  ],
+  "exit": 1,
+  "stdout": "",
+  "stderr": "FAIL movie source: missing manifest field\n",
+  "executable_sha256": "2b319182b92cbbb7c8e1f5c82be487f755818fc832537f44a50f9bdfbc2b968a",
+  "executable_after_sha256": "2b319182b92cbbb7c8e1f5c82be487f755818fc832537f44a50f9bdfbc2b968a"
+}
