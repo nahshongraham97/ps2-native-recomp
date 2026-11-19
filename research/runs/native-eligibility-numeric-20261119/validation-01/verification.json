@@ -1,0 +1,52 @@
+{
+  "status": "PASS_NATIVE_ELIGIBILITY_NUMERIC_COMPONENT",
+  "source_after_sha256": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_eligibility_numeric.hpp": "b496c55eef48793bc133e23a174f9a2bf1f6d0281c2af3bca02b92fee340d490",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_eligibility_numeric.cpp": "63c81a84a154600c156a290dd40cf85ac6e6499e7cb12f3ae45e66a999d47c46",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_clock_filter.hpp": "a09c54636fcca9438666305b6443314abb12ecf17e0ef0e6078afb47b899caa6",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_clock_history.hpp": "4d4efa5ceb223358aaf1db385c4a20116ecfeb4a4fee04914727b995ec8f056c",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_clock_math.hpp": "9a7c028b6cea9acf474b5d643f9ca5f93b19a02605a615b576fb448c4dfdfaf5",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_timecode.hpp": "1a20efa40d7c39fb26aaf64dc963de67b888c6bcebdb93086a248e40ae88d99f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\mpeg2_timing.hpp": "53d214a675e041e149b57de3ef62123e7ef0789a3c22e7990a3099d1d7c4cbc5",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_eligibility_numeric.cpp": "42c97c056737face2fddf5ed65556ada34016b5eb0d975bd605f583450b579e0",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\generated\\movie_eligibility_numeric_plan.inc": "7960556f091627b7c73da7697e7a542464dbc6e64a686dbb4c075310a6a309c7",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\CMakeLists.txt": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_media.cmake": "285592e9b471e43528e05076a9d264c1b71b75f8765554fb535681c6e6d52154",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\tools\\research\\movie_eligibility_numeric_reference.py": "63f1e58350febd5589d712639856603655e06b7342539bece30aabb5224496f3",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\tools\\research\\verify_movie_eligibility_numeric_trace.py": "0a1d0f3f083a064adbce941b45c4cb1387b29a5fcacd6e3f2b17e67444f9f348",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\tools\\research\\movie_eligibility_source_oracle.cpp": "3241b7e61c89c6a56dc3127a843d1be2b82477c681afe388ef5209b78fdd57dc",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-backup-20261110\\runtime\\include\\ps2\\fpu.hpp": "c318a2e548f8b8473719c4cde9b414980c75ca53ac9ec52781b72c1792099c5c"
+  },
+  "executable_sha256": "0b52cabea26a7bcfd4c66ff30041203b29af4f94ab59ccde349488732541fe64",
+  "offline_source_executable_sha256": "48d80353e1596bab95b7d7608dabc503d92ef65d7fb77ef02d7edcec8bd25cc0",
+  "oracle": {
+    "status": "PASS_COMPLETE_NATIVE_ELIGIBILITY_NUMERIC_TRACE",
+    "trace_rows": 57,
+    "source32_rows": 32,
+    "negative_checks": {
+      "trace_mutations": 13,
+      "metadata_mutations": 11,
+      "json_mutations": 2
+    },
+    "model_sha256": "63f1e58350febd5589d712639856603655e06b7342539bece30aabb5224496f3",
+    "verifier_sha256": "0a1d0f3f083a064adbce941b45c4cb1387b29a5fcacd6e3f2b17e67444f9f348",
+    "execution_receipt_sha256": "43dc321066f8e9780cb7beb0da9846eceb49b69efa3e21aed0b279f5bd148f8f",
+    "executable_sha256": "0b52cabea26a7bcfd4c66ff30041203b29af4f94ab59ccde349488732541fe64",
+    "source_oracle": {
+      "trace_rows": 32,
+      "source32_rows": 32
+    },
+    "source_receipt_sha256": "4e00f2f5a6f268c7c78ef307b14ef176561e7997aef25ebf8f4927e01a0e3131",
+    "limits": [
+      "Function-specific numeric subset only; software helper oracle is not hardware/historical binary proof",
+      "No target association, clock, adaptive owner, player or output proof"
+    ]
+  },
+  "forbidden": [],
+  "cache_after_sha256": "d320c4e3663feec551cd3a3b4a8712e915fad196ddc86c7f880c07d4bd2aa3f4",
+  "limits": [
+    "57 planned cases only; no exhaustive native64/HW/game or historical cache proof",
+    "Offline source helper is separate and absent from native target",
+    "No adjusted target association, adaptive owner, actual clocks, player or output proof"
+  ]
+}

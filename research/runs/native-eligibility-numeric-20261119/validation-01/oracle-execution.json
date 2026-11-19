@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "C:\\Python315\\python.exe",
+    "-O",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\tools\\research\\verify_movie_eligibility_numeric_trace.py",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-eligibility-numeric-20261119\\validation-01\\execution.json",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-eligibility-numeric-20261119\\validation-01\\complete-trace-oracle.json",
+    "--source-receipt",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-eligibility-numeric-20261119\\validation-01\\source-execution.json"
+  ],
+  "exit": 0,
+  "stdout": "{\"status\": \"PASS_COMPLETE_NATIVE_ELIGIBILITY_NUMERIC_TRACE\", \"trace_rows\": 57, \"source32_rows\": 32, \"negative_checks\": {\"trace_mutations\": 13, \"metadata_mutations\": 11, \"json_mutations\": 2}, \"model_sha256\": \"63f1e58350febd5589d712639856603655e06b7342539bece30aabb5224496f3\", \"verifier_sha256\": \"0a1d0f3f083a064adbce941b45c4cb1387b29a5fcacd6e3f2b17e67444f9f348\", \"execution_receipt_sha256\": \"43dc321066f8e9780cb7beb0da9846eceb49b69efa3e21aed0b279f5bd148f8f\", \"executable_sha256\": \"0b52cabea26a7bcfd4c66ff30041203b29af4f94ab59ccde349488732541fe64\", \"source_oracle\": {\"trace_rows\": 32, \"source32_rows\": 32}, \"source_receipt_sha256\": \"4e00f2f5a6f268c7c78ef307b14ef176561e7997aef25ebf8f4927e01a0e3131\", \"limits\": [\"Function-specific numeric subset only; software helper oracle is not hardware/historical binary proof\", \"No target association, clock, adaptive owner, player or output proof\"]}\n",
+  "stderr": "",
+  "executable_sha256": "d4e19e9a33268fb0ce575a24ab2d4b85972524f1933df008a6befc14dce19fbd",
+  "executable_after_sha256": "d4e19e9a33268fb0ce575a24ab2d4b85972524f1933df008a6befc14dce19fbd"
+}

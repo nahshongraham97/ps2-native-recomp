@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+    "-std=c++20",
+    "-O2",
+    "-I",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-backup-20261110\\runtime\\include",
+    "-I",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\generated",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\tools\\research\\movie_eligibility_source_oracle.cpp",
+    "-o",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\movie_eligibility_source_oracle.exe"
+  ],
+  "exit": 0,
+  "stdout": "",
+  "stderr": "",
+  "executable_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "executable_after_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe"
+}

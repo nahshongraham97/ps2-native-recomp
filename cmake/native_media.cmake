@@ -32,6 +32,7 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/movie_clock_math.cpp
     runtime/src/native/movie_clock_filter.cpp
     runtime/src/native/movie_service_clock.cpp
+    runtime/src/native/movie_eligibility_numeric.cpp
     runtime/src/native/movie_control.cpp
     runtime/src/native/movie_catalog.cpp
     runtime/src/native/movie_source.cpp
@@ -162,3 +163,9 @@ add_executable(test_native_movie_service_clock EXCLUDE_FROM_ALL
     tests/test_movie_service_clock.cpp runtime/src/native/movie_service_clock.cpp)
 target_include_directories(test_native_movie_service_clock PRIVATE runtime/include)
 target_compile_features(test_native_movie_service_clock PRIVATE cxx_std_20)
+
+# Function-specific pure business arithmetic; no offline oracle/runtime linkage.
+add_executable(test_native_movie_eligibility_numeric EXCLUDE_FROM_ALL
+    tests/test_movie_eligibility_numeric.cpp runtime/src/native/movie_eligibility_numeric.cpp)
+target_include_directories(test_native_movie_eligibility_numeric PRIVATE runtime/include)
+target_compile_features(test_native_movie_eligibility_numeric PRIVATE cxx_std_20)
