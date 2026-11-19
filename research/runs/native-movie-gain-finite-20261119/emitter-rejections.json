@@ -1,0 +1,46 @@
+{
+  "positive_intervals": 3841,
+  "negative_cases": [
+    {
+      "case": "empty",
+      "rejected": true,
+      "message": "movie_gain: invalid complete interval row"
+    },
+    {
+      "case": "missing_last",
+      "rejected": true,
+      "message": "movie_gain: incomplete finite coverage"
+    },
+    {
+      "case": "duplicate_first",
+      "rejected": true,
+      "message": "movie_gain: invalid finite coverage"
+    },
+    {
+      "case": "gap_first",
+      "rejected": true,
+      "message": "movie_gain: invalid finite coverage"
+    },
+    {
+      "case": "bad_number",
+      "rejected": true,
+      "message": "movie_gain: invalid gain number"
+    },
+    {
+      "case": "extra_field",
+      "rejected": true,
+      "message": "movie_gain: invalid complete interval row"
+    },
+    {
+      "case": "wrong_final",
+      "rejected": true,
+      "message": "movie_gain: unreviewed final response exception"
+    },
+    {
+      "case": "wrong_capacity_band",
+      "rejected": true,
+      "message": "movie_gain: unreviewed final response exception"
+    }
+  ],
+  "emitter_sha256": "695dd04d8518e28bfc423ac6d039f75b406e09b7e37014dee7928b287b810d95"
+}

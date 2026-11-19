@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+    "--target",
+    "mka_native_media",
+    "test_native_movie_gain",
+    "test_native_movie_control",
+    "-j2"
+  ],
+  "exit": 0,
+  "stdout": "[0/2] Re-checking globbed directories...\n[1/6] Building CXX object CMakeFiles/test_native_movie_gain.dir/tests/test_movie_gain.cpp.obj\n[2/6] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_gain.cpp.obj\n[3/6] Linking CXX static library libmka_native_media.a\n[4/6] Building CXX object CMakeFiles/test_native_movie_gain.dir/runtime/src/native/movie_gain.cpp.obj\n[5/6] Linking CXX executable test_native_movie_gain.exe\n",
+  "stderr": "",
+  "at_utc": "2026-11-19T14:35:37.724199+00:00",
+  "source_sha256": {
+    "runtime/include/mka/movie_gain.hpp": "532d979a75baa7835219b97e549249f6a6d740b3d6dd388d26a1f54b15c189ff",
+    "runtime/src/native/movie_gain.cpp": "63f02d0b7f85ecb8e2b7cdb8fbdac0fcb1a095a2a410c4c551fdc0f3a2fb4422",
+    "runtime/src/native/generated/movie_gain_rows.inc": "ec5c700aafaaf51103000676309190bec5a8628a80d1384ce416e77b9cb90ec5",
+    "runtime/src/native/generated/movie_gain_intervals.inc": "f3bf0274de2ec06306d6607769e0366749414b875559a62f47943c049cf9777e",
+    "tests/test_movie_gain.cpp": "ff361ee3c5ab6dc711e13b0b3923bf983409a49110b1f62fc28444cc80039289",
+    "cmake/native_media.cmake": "95df7d23844440250d5b8537972c1f706093f7dabf64de0ab53e8bfcc6335cd8"
+  }
+}

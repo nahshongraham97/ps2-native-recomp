@@ -22,6 +22,47 @@ constexpr GainRow rows[] = {
 };
 #undef MKA_MOVIE_GAIN_ROW
 
+struct GainInterval {
+    std::uint32_t first, last;
+    std::array<std::int32_t, 5> tenth_db;
+};
+// Mandatory full finite-magnitude dataset. Its final value includes the
+// reviewed native-wide cancellation extension, not legacy overflow behavior.
+#define MKA_MOVIE_GAIN_INTERVAL(first, last, initial, one, two, three, four) \
+    GainInterval{first, last, {initial, one, two, three, four}},
+constexpr GainInterval intervals[] = {
+#include "generated/movie_gain_intervals.inc"
+};
+#undef MKA_MOVIE_GAIN_INTERVAL
+
+constexpr bool valid_intervals() {
+    if (std::size(intervals) == 0) return false;
+    std::uint32_t next = 0;
+    for (const auto& interval : intervals) {
+        if (interval.first != next || interval.first > interval.last ||
+            interval.last > 0x7f7fffffu) return false;
+        for (auto value : interval.tenth_db)
+            if (value < -960 || value > 0) return false;
+        if (interval.tenth_db[4] != -960) return false;
+        next = interval.last + 1u;
+    }
+    return next == 0x7f800000u;
+}
+static_assert(valid_intervals(),
+              "Movie gain requires full contiguous finite magnitude coverage and native final mute");
+
+constexpr const GainInterval* magnitude_interval(std::uint32_t magnitude) {
+    std::size_t begin = 0, end = std::size(intervals);
+    while (begin < end) {
+        const auto middle = begin + (end - begin) / 2;
+        const auto& interval = intervals[middle];
+        if (magnitude < interval.first) end = middle;
+        else if (magnitude > interval.last) begin = middle + 1;
+        else return &interval;
+    }
+    return nullptr;
+}
+
 constexpr bool valid_rows() {
     if (std::size(rows) != 102) return false;
     std::array<bool, 102> seen{};
@@ -44,6 +85,15 @@ static_assert(sizeof(float) == sizeof(std::uint32_t) &&
               "Movie gain requires exact binary32 base identity");
 static_assert(valid_rows(),
               "Movie gain requires102 unique categories0..101, valid tenths-dB and agreeing duplicate bases");
+constexpr bool source_categories_agree() {
+    for (const auto& row : rows) {
+        const auto* interval = magnitude_interval(row.base_bits);
+        if (!interval || row.tenth_db != interval->tenth_db) return false;
+    }
+    return true;
+}
+static_assert(source_categories_agree(),
+              "Full native gain intervals must preserve all five source UI/default values");
 
 constexpr const GainRow* category(std::uint32_t key) {
     for (const auto& row : rows) if (row.category == key) return &row;
@@ -55,10 +105,10 @@ static_assert(category(101)->base_bits == 0x3f400000u,
 static_assert(category(0)->base_bits == 0u,
               "Source zero category must retain literal positive zero");
 
-const GainRow* exact(float base) noexcept {
-    const auto bits = std::bit_cast<std::uint32_t>(base);
-    for (const auto& row : rows) if (row.base_bits == bits) return &row;
-    return nullptr;
+const GainInterval* finite(float base) noexcept {
+    const auto magnitude = std::bit_cast<std::uint32_t>(base) & 0x7fffffffu;
+    if (magnitude >= 0x7f800000u) return nullptr;
+    return magnitude_interval(magnitude);
 }
 } // namespace
 
@@ -73,9 +123,9 @@ float movie_gain_default_base() noexcept {
 std::optional<std::int32_t> movie_gain_initial(float base,
                                              MovieGainFailure& failure) noexcept {
     failure = {};
-    const auto* row = exact(base);
+    const auto* row = finite(base);
     if (!row) {
-        failure = {MovieGainError::unsupported_base, "movie initial exact base bits"};
+        failure = {MovieGainError::unsupported_base, "movie initial nonfinite base"};
         return std::nullopt;
     }
     return row->tenth_db[0];
@@ -91,9 +141,9 @@ std::optional<std::int32_t> movie_gain_fade(const MovieFadeStep& step,
         failure = {MovieGainError::unsupported_fade_step, "movie source fade steps1..4"};
         return std::nullopt;
     }
-    const auto* row = exact(step.current_base_volume);
+    const auto* row = finite(step.current_base_volume);
     if (!row) {
-        failure = {MovieGainError::unsupported_base, "movie fade exact base bits"};
+        failure = {MovieGainError::unsupported_base, "movie fade nonfinite base"};
         return std::nullopt;
     }
     return row->tenth_db[static_cast<std::size_t>(step.step)];

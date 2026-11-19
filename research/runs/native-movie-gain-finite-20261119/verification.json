@@ -1,0 +1,40 @@
+{
+  "status": "PASS_EXHAUSTIVE_NATIVE_FINITE_GAIN",
+  "at_utc": "2026-11-19T15:00:34.366443+00:00",
+  "signed_finite_patterns": 4278190080,
+  "result_checks": 21390950400,
+  "seconds": 219.5470546,
+  "native_digest": "F04C33D8F3F068E7",
+  "source_sha256": {
+    "runtime/include/mka/movie_gain.hpp": "532d979a75baa7835219b97e549249f6a6d740b3d6dd388d26a1f54b15c189ff",
+    "runtime/src/native/movie_gain.cpp": "63f02d0b7f85ecb8e2b7cdb8fbdac0fcb1a095a2a410c4c551fdc0f3a2fb4422",
+    "runtime/src/native/generated/movie_gain_rows.inc": "ec5c700aafaaf51103000676309190bec5a8628a80d1384ce416e77b9cb90ec5",
+    "runtime/src/native/generated/movie_gain_intervals.inc": "f3bf0274de2ec06306d6607769e0366749414b875559a62f47943c049cf9777e",
+    "tests/test_movie_gain_domain.cpp": "846b831ebdab9b4b353398507f9a311ce7dae43037dfa838e383c4c1ba98beca",
+    "cmake/native_media.cmake": "de6cca56a7f9fdccca697d789c0d6413651b3b8f59126c2413e51696ad6d6aa7"
+  },
+  "symbol_checks": [
+    {
+      "target": "test_native_movie_gain",
+      "sha256": "bc4910e81540061646105134e3c97c7a9b990af816f65d4cef959c2b7107726f",
+      "defined_forbidden_namespace_symbols": []
+    },
+    {
+      "target": "test_native_movie_control",
+      "sha256": "1f2e886f0eae43315870574168438314c6029db4c6d03ffcb0393e2906fc4e33",
+      "defined_forbidden_namespace_symbols": []
+    },
+    {
+      "target": "test_native_movie_gain_domain",
+      "sha256": "37bf6e903d93fdb87b19e9225eb2ea01a5a48342a3e96dd8ceac1100b21e1467",
+      "defined_forbidden_namespace_symbols": []
+    }
+  ],
+  "supplementary_transitive_header_sha256": "24d55229df9de9604ab5cb8a1e838e6cb45ebdab2d325aee1ff1d9a0d1372cb7",
+  "source_review_sha256": "28d2de7645fa3e92976a480ecc9ca37806e1f9a1ecf203ad4047b8c94774522a",
+  "limits": [
+    "Finite numeric gain/source-derived curve plus explicit native-wide final cancellation, not old binary/hardware/FCR parity",
+    "Profile storage/invalid legacy fields, coefficients/routing/mixer, native player and full game remain OPEN",
+    "No game or device launch; native-only arithmetic API fixture"
+  ]
+}

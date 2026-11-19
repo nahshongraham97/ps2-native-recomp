@@ -47,7 +47,33 @@ int main() try {
         check(movie_gain_fade({base, 4, 4}, failure) == -960,
               "final source total4 step cancels to zero, not guessed intermediate gain");
     }
-    for (auto bits : {0x3f400001u, 0x80000000u, 0x7f800000u, 0x7fc00001u}) {
+    struct LiteralCase {
+        std::uint32_t bits;
+        std::array<std::int32_t, 5> values;
+    };
+    // Offline literal-source results, plus the explicit native-wide final
+    // cancellation policy. These are not copied from the interval include.
+    constexpr LiteralCase cases[] = {
+        {0x00000000u, {-960, -960, -960, -960, -960}},
+        {0x00000001u, {-960, -960, -960, -960, -960}},
+        {0x007fffffu, {-960, -960, -960, -960, -960}},
+        {0x00800000u, {-960, -960, -960, -960, -960}},
+        {0x3f000000u, {-60, -85, -120, -180, -960}},
+        {0x3f400001u, {-24, -49, -85, -145, -960}},
+        {0x3f800000u, {0, -24, -60, -120, -960}},
+        {0x7f7fffffu, {0, 0, 0, 0, -960}},
+    };
+    for (const auto& literal : cases) {
+        for (auto sign : {0u, 0x80000000u}) {
+            const auto base = std::bit_cast<float>(literal.bits | sign);
+            check(movie_gain_initial(base, failure) == literal.values[0] &&
+                  failure.kind == MovieGainError::none, "finite signed literal initial response");
+            for (std::uint64_t step = 1; step <= 4; ++step)
+                check(movie_gain_fade({base, step, 4}, failure) == literal.values[step] &&
+                      failure.kind == MovieGainError::none, "finite signed literal fade response");
+        }
+    }
+    for (auto bits : {0x7f800000u, 0xff800000u, 0x7fc00001u, 0xffc00001u}) {
         const auto unknown = std::bit_cast<float>(bits);
         auto value = movie_gain_initial(unknown, failure);
         check_error(value, failure, MovieGainError::unsupported_base);
@@ -80,7 +106,7 @@ int main() try {
                     static_cast<int>(fades[1]), static_cast<int>(fades[2]),
                     static_cast<int>(fades[3]));
     }
-    std::fputs("PASS bounded source-derived movie gain lookup; no playback/binary/hardware parity claim\n", stderr);
+    std::fputs("PASS finite native movie gain interval lookup and source UI values; native final mute extension, no playback/binary/hardware parity claim\n", stderr);
     return 0;
 } catch (const std::exception& error) {
     std::fprintf(stderr, "FAIL movie gain: %s\n", error.what()); return 1;

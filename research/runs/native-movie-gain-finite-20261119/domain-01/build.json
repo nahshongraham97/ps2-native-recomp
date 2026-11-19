@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+    "--target",
+    "test_native_movie_gain_domain",
+    "-j2"
+  ],
+  "exit": 0,
+  "stdout": "[0/2] Re-checking globbed directories...\n[1/2] Re-running CMake...\n-- Configuring done (0.0s)\n-- Generating done (0.1s)\n-- Build files have been written to: C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp/build_native_services_only_20261119-01\n[0/4] Re-checking globbed directories...\n[1/6] Building CXX object CMakeFiles/test_native_movie_gain_domain.dir/runtime/src/native/movie_gain.cpp.obj\n[2/6] Building CXX object CMakeFiles/test_native_movie_gain_domain.dir/tests/test_movie_gain_domain.cpp.obj\n[3/6] Linking CXX executable test_native_movie_gain_domain.exe\n",
+  "stderr": "CMake Warning in CMakeLists.txt:\n  The object file directory\n\n    C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp/build_native_services_only_20261119-01/CMakeFiles/ps2runtime.dir/./\n\n  has 169 characters.  The maximum full path to an object file is 250\n  characters (see CMAKE_OBJECT_PATH_MAX).  Object file\n\n    8eeeb52ec54dabec17ed448439587928/iop_imports_SDRDRV_B00026300_HD70539C3E82D9283_26300.cpp.obj\n\n  cannot be safely placed under this directory.  The build may not work\n  correctly.\n\n\n",
+  "source_sha256": {
+    "runtime/include/mka/movie_gain.hpp": "532d979a75baa7835219b97e549249f6a6d740b3d6dd388d26a1f54b15c189ff",
+    "runtime/src/native/movie_gain.cpp": "63f02d0b7f85ecb8e2b7cdb8fbdac0fcb1a095a2a410c4c551fdc0f3a2fb4422",
+    "runtime/src/native/generated/movie_gain_rows.inc": "ec5c700aafaaf51103000676309190bec5a8628a80d1384ce416e77b9cb90ec5",
+    "runtime/src/native/generated/movie_gain_intervals.inc": "f3bf0274de2ec06306d6607769e0366749414b875559a62f47943c049cf9777e",
+    "tests/test_movie_gain_domain.cpp": "846b831ebdab9b4b353398507f9a311ce7dae43037dfa838e383c4c1ba98beca",
+    "cmake/native_media.cmake": "de6cca56a7f9fdccca697d789c0d6413651b3b8f59126c2413e51696ad6d6aa7"
+  }
+}

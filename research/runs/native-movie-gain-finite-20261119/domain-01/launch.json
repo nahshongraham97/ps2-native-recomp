@@ -1,0 +1,19 @@
+{
+  "pid": 15332,
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_gain_domain.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-movie-ingress-20261119\\offline-gain\\full-reference-intervals.tsv"
+  ],
+  "started": "2026-11-19T14:40:10.575396+00:00",
+  "source_sha256": {
+    "runtime/include/mka/movie_gain.hpp": "532d979a75baa7835219b97e549249f6a6d740b3d6dd388d26a1f54b15c189ff",
+    "runtime/src/native/movie_gain.cpp": "63f02d0b7f85ecb8e2b7cdb8fbdac0fcb1a095a2a410c4c551fdc0f3a2fb4422",
+    "runtime/src/native/generated/movie_gain_rows.inc": "ec5c700aafaaf51103000676309190bec5a8628a80d1384ce416e77b9cb90ec5",
+    "runtime/src/native/generated/movie_gain_intervals.inc": "f3bf0274de2ec06306d6607769e0366749414b875559a62f47943c049cf9777e",
+    "tests/test_movie_gain_domain.cpp": "846b831ebdab9b4b353398507f9a311ce7dae43037dfa838e383c4c1ba98beca",
+    "cmake/native_media.cmake": "de6cca56a7f9fdccca697d789c0d6413651b3b8f59126c2413e51696ad6d6aa7"
+  },
+  "exe_sha256": "37bf6e903d93fdb87b19e9225eb2ea01a5a48342a3e96dd8ceac1100b21e1467",
+  "reference_sha256": "5f24bf75c3c64ba42ea0af713e5eab8a6e61e1ec9ef3dcf4207f6f65012690cc",
+  "scope": "One CPU native API fixture; no FPU/reference helper/game/device, no runtime flags"
+}

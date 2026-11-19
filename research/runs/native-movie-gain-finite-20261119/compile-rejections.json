@@ -1,0 +1,73 @@
+{
+  "cases": [
+    {
+      "case": "missing",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-fsyntax-only",
+        "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-finite-gain-compile-96beu7x6\\missing\\movie_gain.cpp"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-finite-gain-compile-96beu7x6\\missing\\movie_gain.cpp:34:10: fatal error: 'generated/movie_gain_intervals.inc' file not found\n   34 | #include \"generated/movie_gain_intervals.inc\"\n      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n1 error generated.\n"
+    },
+    {
+      "case": "empty",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-fsyntax-only",
+        "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-finite-gain-compile-96beu7x6\\empty\\movie_gain.cpp"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-finite-gain-compile-96beu7x6\\empty\\movie_gain.cpp:39:9: error: no matching function for call to 'size'\n   39 |     if (std::size(intervals) == 0) return false;\n      |         ^~~~~~~~~\nC:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__iterator/size.h:29:38: note: candidate template ignored: substitution failure [with _Cont = GainInterval[0]]: member reference base type 'const mka::video::(anonymous namespace)::GainInterval[0]' is not a structure or union\n   29 | _LIBCPP_HIDE_FROM_ABI constexpr auto size(const _Cont& __c) noexcept(noexcept(__c.size())) -> decltype(__c.size()) {\n      |                                      ^                                                                    ~\nC:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__iterator/size.h:34:54: note: candidate template ignored: substitution failure [with _Tp = GainInterval, _Sz = 0]: zero-length arrays are not permitted in C++\n   34 | [[nodiscard]] _LIBCPP_HIDE_FROM_ABI constexpr size_t size(const _Tp (&)[_Sz]) noexcept {\n      |                                                      ^                  ~~~\nC:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-finite-gain-compile-96beu7x6\\empty\\movie_gain.cpp:51:15: error: static assertion expression is not an integral constant expression\n   51 | static_assert(valid_intervals(),\n      |               ^~~~~~~~~~~~~~~~~\nC:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-finite-gain-compile-96beu7x6\\empty\\movie_gain.cpp:55:34: error: no matching function for call to 'size'\n   55 |     std::size_t begin = 0, end = std::size(intervals);\n      |                                  ^~~~~~~~~\nC:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__iterator/size.h:29:38: note: candidate template ignored: substitution failure [with _Cont = GainInterval[0]]: member reference base type 'const mka::video::(anonymous namespace)::GainInterval[0]' is not a structure or union\n   29 | _LIBCPP_HIDE_FROM_ABI constexpr auto size(const _Cont& __c) noexcept(noexcept(__c.size())) -> decltype(__c.size()) {\n      |                                      ^                                                                    ~\nC:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__iterator/size.h:34:54: note: candidate template ignored: substitution failure [with _Tp = GainInterval, _Sz = 0]: zero-length arrays are not permitted in C++\n   34 | [[nodiscard]] _LIBCPP_HIDE_FROM_ABI constexpr size_t size(const _Tp (&)[_Sz]) noexcept {\n      |                                                      ^                  ~~~\nC:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-finite-gain-compile-96beu7x6\\empty\\movie_gain.cpp:95:15: error: static assertion expression is not an integral constant expression\n   95 | static_assert(source_categories_agree(),\n      |               ^~~~~~~~~~~~~~~~~~~~~~~~~\n4 errors generated.\n"
+    },
+    {
+      "case": "missing_final",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-fsyntax-only",
+        "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-finite-gain-compile-96beu7x6\\missing_final\\movie_gain.cpp"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-finite-gain-compile-96beu7x6\\missing_final\\movie_gain.cpp:51:15: error: static assertion failed due to requirement 'valid_intervals()': Movie gain requires full contiguous finite magnitude coverage and native final mute\n   51 | static_assert(valid_intervals(),\n      |               ^~~~~~~~~~~~~~~~~\n1 error generated.\n"
+    },
+    {
+      "case": "overlap",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-fsyntax-only",
+        "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-finite-gain-compile-96beu7x6\\overlap\\movie_gain.cpp"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-finite-gain-compile-96beu7x6\\overlap\\movie_gain.cpp:51:15: error: static assertion failed due to requirement 'valid_intervals()': Movie gain requires full contiguous finite magnitude coverage and native final mute\n   51 | static_assert(valid_intervals(),\n      |               ^~~~~~~~~~~~~~~~~\n1 error generated.\n"
+    },
+    {
+      "case": "wrong_final",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-fsyntax-only",
+        "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-finite-gain-compile-96beu7x6\\wrong_final\\movie_gain.cpp"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-finite-gain-compile-96beu7x6\\wrong_final\\movie_gain.cpp:51:15: error: static assertion failed due to requirement 'valid_intervals()': Movie gain requires full contiguous finite magnitude coverage and native final mute\n   51 | static_assert(valid_intervals(),\n      |               ^~~~~~~~~~~~~~~~~\nC:\\Users\\nahsh\\AppData\\Local\\Temp\\mka-finite-gain-compile-96beu7x6\\wrong_final\\movie_gain.cpp:95:15: error: static assertion failed due to requirement 'source_categories_agree()': Full native gain intervals must preserve all five source UI/default values\n   95 | static_assert(source_categories_agree(),\n      |               ^~~~~~~~~~~~~~~~~~~~~~~~~\n2 errors generated.\n"
+    }
+  ],
+  "all_rejected": true,
+  "source_sha256": "63f02d0b7f85ecb8e2b7cdb8fbdac0fcb1a095a2a410c4c551fdc0f3a2fb4422",
+  "valid_data_sha256": "f3bf0274de2ec06306d6607769e0366749414b875559a62f47943c049cf9777e",
+  "scope": "Isolated negative data builds; no valid source/data mutation"
+}
