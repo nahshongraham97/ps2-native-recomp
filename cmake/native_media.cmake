@@ -44,6 +44,7 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/movie_adx_header.cpp
     runtime/src/native/movie_adx_stream.cpp
     runtime/src/native/movie_adx_profile.cpp
+    runtime/src/native/movie_decoder_mode.cpp
     runtime/src/native/movie_pcm_binding.cpp
     runtime/src/native/movie_kernel_policies.cpp
     runtime/src/native/movie_catalog.cpp
@@ -112,6 +113,12 @@ target_include_directories(test_native_movie_audio_demux_probe PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers" "${MKA_NATIVE_MEDIA_HEADERS}")
 target_compile_features(test_native_movie_audio_demux_probe PRIVATE cxx_std_20)
 target_link_libraries(test_native_movie_audio_demux_probe PRIVATE bcrypt)
+
+# Pure mutable game/content policy data, without runtime or device linkage.
+add_executable(test_native_movie_decoder_mode EXCLUDE_FROM_ALL
+    tests/test_movie_decoder_mode.cpp runtime/src/native/movie_decoder_mode.cpp)
+target_include_directories(test_native_movie_decoder_mode PRIVATE runtime/include)
+target_compile_features(test_native_movie_decoder_mode PRIVATE cxx_std_20)
 
 # Pure serialized-header fixture: no codec libraries, renderer or runtime link.
 add_executable(test_native_mpeg2_timing EXCLUDE_FROM_ALL

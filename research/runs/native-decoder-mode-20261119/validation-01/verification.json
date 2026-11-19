@@ -1,0 +1,37 @@
+{
+  "status": "PASS_SCOPED_NATIVE_MUTABLE_MOVIE_DECODER_MODE_EPOCH",
+  "source_after_sha256": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_decoder_mode.hpp": "2ad8ae36b10fdd76f329791ac2da776e25ae9f83c6c8060e2cd5a434a86727f2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_decoder_mode.cpp": "307c06b8705e11d8346ea2d504f6ef2ef55792f0c6c5e432f07c27e44a1d25ee",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_movie_decoder_mode.cpp": "5afafe21313c0703ffa1c34e5185b7318b47a84a02aa8a2527040f42811ddac7",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_media.cmake": "225bd7a5ea10fd83480b623e2f4db759e763495ff8fb81219a325b4ed569a564",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\CMakeLists.txt": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules\\MOVIER.ovl": "3a34e3838042aa0bde0ce687a4e61e128b2eb965e60e65c34713e0a73891adb8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-movie-kernel-policies-20261119\\validate.py": "987bafb18845f33ff65cfd9e437a3b9e98b7296313a119b474070e95dc1f0752",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-movie-ingress-20261119\\MOVIE_DECODER_MODE_NATIVE_STATE_CONTRACT.json": "c6748ab0dc5b3dad88e1eb5b2a86606066f5de3455e12c2722c7aac124d78765",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-movie-ingress-20261119\\MOVIE_DECODER_MODE_NATIVE_IMPLEMENTATION.json": "68a074c532ea4c1671a37b4d13e1d0cefae42119c54a9b08cbb4342d4f874cb7",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-movie-ingress-20261119\\MOVIE_DECODER_MODE_NATIVE_SOURCE_REVIEW.json": "6749a44f93465355969638f52833cf106984f19a2eaad1c144e48f27f1697282",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-decoder-mode-20261119\\validate.py": "e1857da0f8607c16dff6d02d6a99b326ed01f2adfcc6d69e793526839e4fc051"
+  },
+  "executed_target_sha256": "f3eb6036cfdbc433f179de4594a03dfc031a35c6dda2ba3f079bbdc10ea43fbb",
+  "audit": {
+    "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_decoder_mode.exe",
+    "target_before_sha256": "f3eb6036cfdbc433f179de4594a03dfc031a35c6dda2ba3f079bbdc10ea43fbb",
+    "target_after_sha256": "f3eb6036cfdbc433f179de4594a03dfc031a35c6dda2ba3f079bbdc10ea43fbb",
+    "audited_target_expected_sha256": "f3eb6036cfdbc433f179de4594a03dfc031a35c6dda2ba3f079bbdc10ea43fbb",
+    "execution_applicable": true,
+    "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+    "forbidden": [],
+    "required_defined_symbols": [
+      "mka::video::NativeMovieDecoderMode::"
+    ],
+    "executed_target_sha256": "f3eb6036cfdbc433f179de4594a03dfc031a35c6dda2ba3f079bbdc10ea43fbb"
+  },
+  "cache_after_sha256": "d320c4e3663feec551cd3a3b4a8712e915fad196ddc86c7f880c07d4bd2aa3f4",
+  "limits": [
+    "Explicit native activation is a caller precondition, not authenticated normal-game ingress",
+    "No processing-batch/cache chronology, speaker/sink/clock/player/game admission",
+    "Generation overflow guard source reviewed, not dynamically exercised",
+    "No game/device/context/audible sample/model/server/driver/settings action"
+  ]
+}

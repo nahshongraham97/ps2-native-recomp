@@ -2,6 +2,8 @@
 #include "mka/movie_frame_eligibility.hpp"
 #include "mka/movie_pcm_binding.hpp"
 #include "mka/movie_playback.hpp"
+#include "mka/movie_service_clock.hpp"
+#include <variant>
 
 namespace mka::video {
 // The parser record that supplied the rate and the selected SDK output picture
@@ -21,6 +23,44 @@ struct MovieOrdinaryDecision {
           ordinary_clock(clock), adjusted_target(target) {}
 };
 
+// One actual source-bound mutable service owner, shared with the context.
+// This is ordinary native lifetime/identity, never a guest handle/address.
+class MovieEligibilityServiceBinding {
+public:
+    MovieEligibilityServiceBinding(const MovieEligibilityServiceBinding&)=delete;
+    MovieEligibilityServiceBinding& operator=(const MovieEligibilityServiceBinding&)=delete;
+    MovieEligibilityServiceBinding(MovieEligibilityServiceBinding&&)=delete;
+    MovieEligibilityServiceBinding& operator=(MovieEligibilityServiceBinding&&)=delete;
+    static std::shared_ptr<MovieEligibilityServiceBinding> create(std::string source_key,
+        NativeMovieServiceClock&&,MovieControlFailure&) noexcept;
+    const std::string& source_key() const noexcept { return source_key_; }
+    NativeMovieServiceClock* service(MovieControlFailure&) noexcept;
+private:
+    MovieEligibilityServiceBinding(std::string key,NativeMovieServiceClock&& clock)
+        :source_key_(std::move(key)),clock_(std::move(clock)),configured_frequency_(clock_.state().frequency) {}
+    const std::string source_key_;
+    NativeMovieServiceClock clock_;
+    const std::int64_t configured_frequency_;
+    const std::thread::id owner_=std::this_thread::get_id();
+};
+struct MovieSourceDirectDecision {
+    std::string source_key;
+    MoviePictureSource selected_picture;
+};
+struct MovieSourceRetainedDecision {
+    std::string source_key;
+    MoviePictureSource selected_picture;
+    MovieTimecodeRational adjusted_target;
+    std::shared_ptr<MovieEligibilityServiceBinding> service;
+};
+using MoviePolicyDecision=std::variant<MovieOrdinaryDecision,MovieSourceDirectDecision,MovieSourceRetainedDecision>;
+enum class MovieEligibilityRoute {ordinary,source_direct,source_retained};
+struct MoviePolicyRouteResult {
+    MovieEligibilityRoute route;
+    bool eligible;
+    bool operator==(const MoviePolicyRouteResult&) const = default;
+};
+
 // Required owned source-specific lifecycle/timeline context. No method has a
 // default ready/end/clock/metadata policy. Implementing this interface remains
 // separate from proving its retail caller, source origins and event ordering.
@@ -31,7 +71,7 @@ public:
     virtual bool pump_metadata(MovieControlFailure&) = 0;
     virtual bool pause(bool, MovieControlFailure&) = 0;
     virtual bool ready(const MoviePlaybackSnapshot&, bool&, MovieControlFailure&) = 0;
-    virtual std::optional<MovieOrdinaryDecision> decision(const MovieVideoFrame&,
+    virtual std::optional<MoviePolicyDecision> decision(const MovieVideoFrame&,
         const MoviePlaybackSnapshot&, MovieControlFailure&) = 0;
     virtual bool video_submitted(const MovieGpuMetadata&, MovieControlFailure&) = 0;
     virtual bool audio_accepted(const MoviePlaybackAudioAcceptance&, MovieControlFailure&) = 0;
@@ -39,7 +79,7 @@ public:
     virtual bool stop(MovieControlFailure&) = 0;
 };
 
-// Actual PCM and ordinary eligibility kernels behind the stream-player policy
+// Actual PCM and typed source/ordinary eligibility behind the stream-player policy
 // seam. Explicit immutable PCM/profile and timeline providers remain mandatory.
 // This is single-use, owner-thread and non-reentrant, including provider calls.
 class NativeMovieKernelPolicies final : public MoviePlaybackPolicies {
@@ -48,6 +88,12 @@ public:
         MoviePlaybackAudioPresence, std::unique_ptr<NativeMoviePcmBinding>,
         MovieFrameEligibilityConfig, std::unique_ptr<MoviePlaybackPolicyContext>,
         MovieControlFailure&) noexcept;
+    // Explicit shared service binding for source-retained decisions. The
+    // original overload deliberately supplies no service for ordinary callers.
+    static std::unique_ptr<NativeMovieKernelPolicies> create(RetailMovieRequest,
+        MoviePlaybackAudioPresence, std::unique_ptr<NativeMoviePcmBinding>,
+        MovieFrameEligibilityConfig, std::unique_ptr<MoviePlaybackPolicyContext>,
+        std::shared_ptr<MovieEligibilityServiceBinding>,MovieControlFailure&) noexcept;
     ~NativeMovieKernelPolicies() override;
     bool validate_audio_format(const std::optional<sound::AudioStreamFormat>&,
                               MovieControlFailure&) noexcept override;
@@ -64,19 +110,24 @@ public:
     bool stop(MovieControlFailure&) noexcept override;
     // Owned scalar observations; caller must remain on the owner thread and
     // outside callbacks, just as for the stream owner's receipt view.
+    // Most recent ORDINARY result, possibly older than last_route_result().
+    // Direct/retained routes never claim a fresh ordinary numeric evaluation.
     const std::optional<MovieFrameEligibilityResult>& last_decision() const noexcept { return last_; }
+    const std::optional<MoviePolicyRouteResult>& last_route_result() const noexcept { return route_; }
 private:
     NativeMovieKernelPolicies(RetailMovieRequest, MoviePlaybackAudioPresence,
         std::unique_ptr<NativeMoviePcmBinding>, std::unique_ptr<NativeMovieFrameEligibility>,
-        std::unique_ptr<MoviePlaybackPolicyContext>);
+        std::unique_ptr<MoviePlaybackPolicyContext>,std::shared_ptr<MovieEligibilityServiceBinding>);
     template<class F> bool invoke(MovieControlFailure&, bool needs_active, F&&) noexcept;
     RetailMovieRequest request_;
     MoviePlaybackAudioPresence audio_presence_;
     std::unique_ptr<NativeMoviePcmBinding> pcm_;
     std::unique_ptr<NativeMovieFrameEligibility> eligibility_;
     std::unique_ptr<MoviePlaybackPolicyContext> context_;
+    std::shared_ptr<MovieEligibilityServiceBinding> service_;
     const std::thread::id owner_ = std::this_thread::get_id();
     std::optional<MovieFrameEligibilityResult> last_;
+    std::optional<MoviePolicyRouteResult> route_;
     std::optional<MoviePictureSource> pending_picture_;
     std::int32_t gain_ = 0;
     bool in_call_ = false, format_joined_ = false, used_ = false, active_ = false, cleanup_needed_ = false, closed_ = false;
