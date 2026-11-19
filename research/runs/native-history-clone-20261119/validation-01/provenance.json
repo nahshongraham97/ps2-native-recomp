@@ -1,0 +1,21 @@
+{
+  "at_utc": "2026-11-19T17:13:52.449124+00:00",
+  "fork_head": "bdd9b1b1bbac68205e9d63b735999856d4d475fd",
+  "parent_head": "ed70cc668207d4ff2d2ef10897ea51bde7aeb944",
+  "source_before_sha256": {
+    "runtime/include/mka/movie_clock_history.hpp": "4d4efa5ceb223358aaf1db385c4a20116ecfeb4a4fee04914727b995ec8f056c",
+    "runtime/src/native/movie_clock_history.cpp": "77fe50b9b6edf1af03c403c263d73b59291c40a774534fcdfc8c68ef03bb5f78",
+    "tests/test_movie_clock_history.cpp": "88080b084cca9428e61bf00e7fe9c20843d9a443c746338f0fd18c663f79f19f",
+    "tests/test_movie_clock_history_clone.cpp": "a5c0be9fb5cc6339303fd29465a86f6d7a83ceca271db249ac3f2bbcf753a3b7",
+    "CMakeLists.txt": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+    "cmake/native_media.cmake": "ea70f7294bd5f17c52f1dbf00d0b733c3c9dcc99af9f279f4d0f2f19793b39e0"
+  },
+  "preserved_dirty_sha256": {
+    "runtime/src/iop/mcserv.cpp": "ad2731a341409d87ffe1b171e99f28d7cedc5004aaf375a565d78673333414fb",
+    "runtime/src/iop/msl_native.cpp": "756cfb3867ebb440223ddb8ab6fe441ad6f9f54d35e4119a8342f8dd9063bb23"
+  },
+  "runner_sha256": "ab8ea8099f597696652463fced87ee93954437c49d8ee835fbf8e4af85ff8e66",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_before_sha256": "d320c4e3663feec551cd3a3b4a8712e915fad196ddc86c7f880c07d4bd2aa3f4",
+  "scope": "Pure history/ownership fixtures; no game, devices, drivers or settings"
+}

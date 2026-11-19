@@ -16,6 +16,7 @@ public:
     NativeMovieClockHistory& operator=(const NativeMovieClockHistory&)=delete;
     NativeMovieClockHistory(NativeMovieClockHistory&&) noexcept;
     NativeMovieClockHistory& operator=(NativeMovieClockHistory&&) noexcept;
+    std::optional<NativeMovieClockHistory> clone(MovieClockHistoryFailure&) const noexcept;
     bool valid() const noexcept { return active_; }
     std::optional<std::int64_t> insert(std::int64_t,MovieClockHistoryFailure&) noexcept;
     std::optional<std::int64_t> recenter(std::int64_t,MovieClockHistoryFailure&) noexcept;

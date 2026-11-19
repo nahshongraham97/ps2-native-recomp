@@ -1,0 +1,16 @@
+{
+  "at_utc": "2026-11-19T17:16:05.731885+00:00",
+  "scope": "Read-only corrected Python verifier over saved native execution; no C++ rerun",
+  "argv": [
+    "C:\\Python315\\python.exe",
+    "-O",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\tools\\research\\verify_movie_history_clone_trace.py",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-history-clone-20261119\\validation-01\\clone-execution.json",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-history-clone-20261119\\validation-01\\clone-complete-trace-oracle-02.json"
+  ],
+  "exit": 0,
+  "stdout": "{\"status\": \"PASS_COMPLETE_HISTORY_CLONE_TRACE\", \"trace_rows\": 380, \"windows\": [1, 10, 61, 256], \"moved_owner_rejections\": 4, \"negative_checks\": 18, \"executable_sha256\": \"b6cb9bca75355f14da3a8e11b8af87c22b64dc8d4e188cd9824d0599e3d39703\", \"execution_receipt_sha256\": \"485f558e17539c209855f46ad9bc38c0f44ab2ac287c5f8e803bd1a339969154\", \"verifier_sha256\": \"e652fde20a504256d4f3f415cd1f6f40bf905412469d9b203d841433cd4d737e\", \"limits\": [\"History ownership/staging only; no complete clock/filter/player/game or allocation fault injection\"]}\n",
+  "stderr": "",
+  "verifier_sha256": "e652fde20a504256d4f3f415cd1f6f40bf905412469d9b203d841433cd4d737e",
+  "execution_receipt_sha256": "485f558e17539c209855f46ad9bc38c0f44ab2ac287c5f8e803bd1a339969154"
+}

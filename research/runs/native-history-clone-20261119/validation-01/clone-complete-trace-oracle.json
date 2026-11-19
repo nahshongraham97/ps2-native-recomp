@@ -1,0 +1,18 @@
+{
+  "status": "PASS_COMPLETE_HISTORY_CLONE_TRACE",
+  "trace_rows": 380,
+  "windows": [
+    1,
+    10,
+    61,
+    256
+  ],
+  "moved_owner_rejections": 4,
+  "negative_checks": 8,
+  "executable_sha256": "b6cb9bca75355f14da3a8e11b8af87c22b64dc8d4e188cd9824d0599e3d39703",
+  "execution_receipt_sha256": "485f558e17539c209855f46ad9bc38c0f44ab2ac287c5f8e803bd1a339969154",
+  "verifier_sha256": "6ba866cd85c7e94dd066af31b77275919438743ffcb79a58f49b03f0fe91d1c3",
+  "limits": [
+    "History ownership/staging only; no complete clock/filter/player/game or allocation fault injection"
+  ]
+}

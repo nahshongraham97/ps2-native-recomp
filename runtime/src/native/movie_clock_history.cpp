@@ -26,6 +26,19 @@ std::optional<NativeMovieClockHistory> NativeMovieClockHistory::create(std::size
     result.active_=true;
     return result;
 }
+std::optional<NativeMovieClockHistory> NativeMovieClockHistory::clone(MovieClockHistoryFailure& f) const noexcept {
+    f={};
+    if(!active_) { f.kind=MovieClockHistoryError::invalid_owner;return std::nullopt; }
+    NativeMovieClockHistory result;
+    if(values_.size()>result.values_.max_size()) {
+        f.kind=MovieClockHistoryError::storage_size;return std::nullopt;
+    }
+    try { result.values_=values_; }
+    catch(const std::length_error&) { f.kind=MovieClockHistoryError::storage_size;return std::nullopt; }
+    catch(const std::bad_alloc&) { f.kind=MovieClockHistoryError::allocation;return std::nullopt; }
+    result.cursor_=cursor_;result.active_=true;
+    return result;
+}
 NativeMovieClockHistory::NativeMovieClockHistory(NativeMovieClockHistory&& other) noexcept
     :values_(std::move(other.values_)),cursor_(other.cursor_),active_(other.active_) {
     other.active_=false; other.cursor_=0;
