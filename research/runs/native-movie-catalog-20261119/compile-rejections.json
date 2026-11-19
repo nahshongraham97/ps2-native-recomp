@@ -1,0 +1,125 @@
+{
+  "status": "PASS_MANDATORY_CATALOG_DATA",
+  "positive_compiles": 1,
+  "rejections": 7,
+  "source_sha256": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_catalog.cpp": "3f5f70be32cba3bb64f2d3a294f6cf1835707992199f4813a1090eabeb9e0c58",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\generated\\movie_catalog_rows.inc": "4d632bde1f4aac701269c947b2f824f258b2dbfebcced2911d82e38529a501f3",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\tools\\research\\emit_native_movie_catalog.py": "a26218f311a6a664a526c4a2625bdcee6fa16f377a70439116f369832411974d"
+  },
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cases": [
+    {
+      "name": "positive",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-fsyntax-only",
+        "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\diagnostics\\catalog-rejections-20261119-01\\positive\\movie_catalog.cpp"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "include_sha256": "e9c69773774db6b8c6d75b609ce72a75c9bd385598fa4976c2fed9361b370287"
+    },
+    {
+      "name": "missing",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-fsyntax-only",
+        "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\diagnostics\\catalog-rejections-20261119-01\\missing\\movie_catalog.cpp"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\diagnostics\\catalog-rejections-20261119-01\\missing\\movie_catalog.cpp:22:10: fatal error: 'generated/movie_catalog_rows.inc' file not found\n   22 | #include \"generated/movie_catalog_rows.inc\"\n      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n1 error generated.\n",
+      "include_sha256": null
+    },
+    {
+      "name": "empty",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-fsyntax-only",
+        "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\diagnostics\\catalog-rejections-20261119-01\\empty\\movie_catalog.cpp"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\diagnostics\\catalog-rejections-20261119-01\\empty\\movie_catalog.cpp:33:9: error: no matching function for call to 'size'\n   33 |     if (std::size(rows) != 33) return false;\n      |         ^~~~~~~~~\nC:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__iterator/size.h:29:38: note: candidate template ignored: substitution failure [with _Cont = Row[0]]: member reference base type 'const mka::video::(anonymous namespace)::Row[0]' is not a structure or union\n   29 | _LIBCPP_HIDE_FROM_ABI constexpr auto size(const _Cont& __c) noexcept(noexcept(__c.size())) -> decltype(__c.size()) {\n      |                                      ^                                                                    ~\nC:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__iterator/size.h:34:54: note: candidate template ignored: substitution failure [with _Tp = Row, _Sz = 0]: zero-length arrays are not permitted in C++\n   34 | [[nodiscard]] _LIBCPP_HIDE_FROM_ABI constexpr size_t size(const _Tp (&)[_Sz]) noexcept {\n      |                                                      ^                  ~~~\nC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\diagnostics\\catalog-rejections-20261119-01\\empty\\movie_catalog.cpp:58:15: error: static assertion expression is not an integral constant expression\n   58 | static_assert(valid_rows(), \"Mandatory retail movie data must cover33 unique IDs/41 unique active keys/positive extents/known blocking routes\");\n      |               ^~~~~~~~~~~~\n2 errors generated.\n",
+      "include_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "incomplete",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-fsyntax-only",
+        "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\diagnostics\\catalog-rejections-20261119-01\\incomplete\\movie_catalog.cpp"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\diagnostics\\catalog-rejections-20261119-01\\incomplete\\movie_catalog.cpp:58:15: error: static assertion failed due to requirement 'valid_rows()': Mandatory retail movie data must cover33 unique IDs/41 unique active keys/positive extents/known blocking routes\n   58 | static_assert(valid_rows(), \"Mandatory retail movie data must cover33 unique IDs/41 unique active keys/positive extents/known blocking routes\");\n      |               ^~~~~~~~~~~~\n1 error generated.\n",
+      "include_sha256": "debb94c099309192e788035488dd71be91d13c010dc9580e0dfb47edf6f4bae0"
+    },
+    {
+      "name": "duplicate_id",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-fsyntax-only",
+        "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\diagnostics\\catalog-rejections-20261119-01\\duplicate_id\\movie_catalog.cpp"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\diagnostics\\catalog-rejections-20261119-01\\duplicate_id\\movie_catalog.cpp:58:15: error: static assertion failed due to requirement 'valid_rows()': Mandatory retail movie data must cover33 unique IDs/41 unique active keys/positive extents/known blocking routes\n   58 | static_assert(valid_rows(), \"Mandatory retail movie data must cover33 unique IDs/41 unique active keys/positive extents/known blocking routes\");\n      |               ^~~~~~~~~~~~\n1 error generated.\n",
+      "include_sha256": "addb04ec40fdd4447aec738cdd8e819d9e45a6fac84b4fc1f987bca3c224bed2"
+    },
+    {
+      "name": "duplicate_key",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-fsyntax-only",
+        "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\diagnostics\\catalog-rejections-20261119-01\\duplicate_key\\movie_catalog.cpp"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\diagnostics\\catalog-rejections-20261119-01\\duplicate_key\\movie_catalog.cpp:58:15: error: static assertion failed due to requirement 'valid_rows()': Mandatory retail movie data must cover33 unique IDs/41 unique active keys/positive extents/known blocking routes\n   58 | static_assert(valid_rows(), \"Mandatory retail movie data must cover33 unique IDs/41 unique active keys/positive extents/known blocking routes\");\n      |               ^~~~~~~~~~~~\n1 error generated.\n",
+      "include_sha256": "4ab37ac2691b18684358bfde47c2752f933d1b97224da98c00ab773ea32a7b46"
+    },
+    {
+      "name": "zero_extent",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-fsyntax-only",
+        "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\diagnostics\\catalog-rejections-20261119-01\\zero_extent\\movie_catalog.cpp"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\diagnostics\\catalog-rejections-20261119-01\\zero_extent\\movie_catalog.cpp:58:15: error: static assertion failed due to requirement 'valid_rows()': Mandatory retail movie data must cover33 unique IDs/41 unique active keys/positive extents/known blocking routes\n   58 | static_assert(valid_rows(), \"Mandatory retail movie data must cover33 unique IDs/41 unique active keys/positive extents/known blocking routes\");\n      |               ^~~~~~~~~~~~\n1 error generated.\n",
+      "include_sha256": "64edc09aea8c4d90d79de266c63867a62fe5c70d288ff6b21e5ad6ba4287ea8f"
+    },
+    {
+      "name": "unsupported_route",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-fsyntax-only",
+        "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\diagnostics\\catalog-rejections-20261119-01\\unsupported_route\\movie_catalog.cpp"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\diagnostics\\catalog-rejections-20261119-01\\unsupported_route\\movie_catalog.cpp:58:15: error: static assertion failed due to requirement 'valid_rows()': Mandatory retail movie data must cover33 unique IDs/41 unique active keys/positive extents/known blocking routes\n   58 | static_assert(valid_rows(), \"Mandatory retail movie data must cover33 unique IDs/41 unique active keys/positive extents/known blocking routes\");\n      |               ^~~~~~~~~~~~\n1 error generated.\n",
+      "include_sha256": "ae33b20f9467fcba43035964e53d346e8cbd0b898ef3cc1daf0be715c09da52a"
+    }
+  ]
+}

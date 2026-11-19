@@ -29,6 +29,7 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/mpeg2_timing.cpp
     runtime/src/native/movie_timecode.cpp
     runtime/src/native/movie_control.cpp
+    runtime/src/native/movie_catalog.cpp
     runtime/src/native/movie_gain.cpp
     runtime/src/native/movie_subtitles.cpp
     runtime/src/native/movie_decode.cpp
@@ -105,6 +106,18 @@ add_executable(test_native_movie_gain_domain EXCLUDE_FROM_ALL
     tests/test_movie_gain_domain.cpp runtime/src/native/movie_gain.cpp)
 target_include_directories(test_native_movie_gain_domain PRIVATE runtime/include)
 target_compile_features(test_native_movie_gain_domain PRIVATE cxx_std_20)
+
+# Native request/file integration only; no player or device is constructed.
+add_executable(test_native_movie_catalog_assets EXCLUDE_FROM_ALL
+    tests/test_movie_catalog_assets.cpp)
+target_link_libraries(test_native_movie_catalog_assets PRIVATE mka_native_media)
+target_compile_features(test_native_movie_catalog_assets PRIVATE cxx_std_20)
+
+# Semantic owned requests only: no codecs, renderer, assets or game runtime.
+add_executable(test_native_movie_catalog EXCLUDE_FROM_ALL
+    tests/test_movie_catalog.cpp runtime/src/native/movie_catalog.cpp)
+target_include_directories(test_native_movie_catalog PRIVATE runtime/include)
+target_compile_features(test_native_movie_catalog PRIVATE cxx_std_20)
 
 # Native platform paths: no media codecs, runtime or generated game dependency.
 add_executable(test_native_user_paths EXCLUDE_FROM_ALL

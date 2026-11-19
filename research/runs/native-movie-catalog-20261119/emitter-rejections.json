@@ -1,0 +1,57 @@
+{
+  "status": "PASS_REVIEWED_CATALOG_EMITTER",
+  "positive_regeneration": 1,
+  "rejections": 8,
+  "source_sha256": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_catalog.cpp": "3f5f70be32cba3bb64f2d3a294f6cf1835707992199f4813a1090eabeb9e0c58",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\generated\\movie_catalog_rows.inc": "4d632bde1f4aac701269c947b2f824f258b2dbfebcced2911d82e38529a501f3",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\tools\\research\\emit_native_movie_catalog.py": "a26218f311a6a664a526c4a2625bdcee6fa16f377a70439116f369832411974d"
+  },
+  "cases": [
+    {
+      "name": "positive",
+      "rejected": false,
+      "error": null
+    },
+    {
+      "name": "missing_review",
+      "rejected": true,
+      "error": "movie_catalog: independent source review missing"
+    },
+    {
+      "name": "bool_count",
+      "rejected": true,
+      "error": "movie_catalog: incomplete reviewed raw-row checks"
+    },
+    {
+      "name": "incomplete_rows",
+      "rejected": true,
+      "error": "movie_catalog: incomplete observations"
+    },
+    {
+      "name": "duplicate_id",
+      "rejected": true,
+      "error": "movie_catalog: incomplete observations"
+    },
+    {
+      "name": "wrong_name",
+      "rejected": true,
+      "error": "movie_catalog: original bytes differ from independent row review"
+    },
+    {
+      "name": "wrong_raw_route",
+      "rejected": true,
+      "error": "movie_catalog: original bytes differ from independent row review"
+    },
+    {
+      "name": "wrong_pin",
+      "rejected": true,
+      "error": "movie_catalog: reviewed source/evidence hash mismatch: C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\diagnostics\\catalog-rejections-20261119-01\\emitter-wrong_pin\\RETAIL_MOVIE_TABLE_OBSERVATIONS.json"
+    },
+    {
+      "name": "wrong_caller_elf",
+      "rejected": true,
+      "error": "movie_catalog: caller ELF identity mismatch"
+    }
+  ]
+}

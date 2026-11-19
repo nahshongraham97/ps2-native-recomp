@@ -1,0 +1,260 @@
+{
+  "at_utc": "2026-11-19T15:24:40.212422+00:00",
+  "source_sha256": {
+    "external\\forks\\ps2-native-recomp\\cmake\\native_media.cmake": "4595e7ddea074e3f06bc83224e5984978882edf7f69ac6669a46eea88ea75ef4",
+    "external\\forks\\ps2-native-recomp\\CMakeLists.txt": "6fe87ade36ac6b37f816d0fe205ba105f381a659af9716e868ed2cff0a5d308f",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\adpcm_codec.hpp": "c7a79c28fe6b32ffdc36f98f27caf1b4c4878fc534c97a9b94f71c5ec7f8ed95",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\audio_bank_protocol.hpp": "d4d80b302e505b1dd6050765e467672e2f277210ce8b402d45b23e119287d019",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\audio_bank_service.hpp": "f3d2824a6de4c77dad07a28275e420c3040ddd033c43f302bf136caa1ec8f0ba",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\audio_banks.hpp": "ca671773536fc1a429fdfee0d2159f72ac81990a965ce9484c390b89c99c9477",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\audio_controls.hpp": "008f01b1a025174b47aace5c4c98c2d1cebd072d987d66de340aeb272973d3fe",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\audio_device.hpp": "398d6b6f34ce4fbfb3c18a827725e3a21e8a4874ec147cd242427eaeb40d06aa",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\bank_asset.hpp": "abd36899fc4d04e0417c2632743e182356d819d9ae51c59173a034a0a45f8c53",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\bank_preparation.hpp": "1095594063db092aca523f71c5457d839c3a5b04e05897531b784f4108715c06",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\content_vfs.hpp": "7dd4d823b727fcbf07948c20f41411592469e29fb980e2a9a060486aa0345f56",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\controller_input.hpp": "d1a9db7f9028b9ba18b88e389ebf0dc30a293a178122341788db8f8ba7097612",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\font_atlas.hpp": "edd8368dd89014dd9ae8f9135e3ca702f3574e47e7f460cb59db025a737997e2",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\font_geometry.hpp": "6dfc1adc31cf96206b25d5eaf8b7adc3760c3af30b68d21e19ca73d763baa8b6",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\font_layout.hpp": "afabdf3b225423cb4bf4b6d964ee23f59f006128222e09fd9de5936148e26264",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\font_metrics.hpp": "56637f95f47ddc46041ced408ef463e94ebe5de1b42800b6c9100262f67058d0",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\gpu_diagnostics.hpp": "3c144626d14704b9c2501c209f2b2e40fc5d5a8204e4e5cca47ae8c7a451d040",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\haptics.hpp": "9936b9faa635e18facb72dd2c14ffa0f9a42f8844660d1f214a29371445a9f79",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\host_voice.hpp": "2def07068c2f90a44c8f5276d6e746daace7b32ee327578b299eabf12d1ec1de",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_assets.hpp": "777f2383e4b25db43ee5b6ffbff96cd179baa82dd4acf6d317b88b9b945624da",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_catalog.hpp": "067df1c104e41eb4b4b4e25f5f50e49698eac364aef321192fae7da2caf6ca17",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_color.hpp": "69aef2ea2397e094d30f5f3ecf42d06a436708c9d2aaf77919a825804b50eba0",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_container.hpp": "d73d458489cf48dc048f4e3b44933b7f8093823e74ed3e02efe370ed4135c1bc",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_control.hpp": "095eb25b77539066f377a8abdb8785a96f53c3f23f3c2bfe7675bdc3e272adec",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_decode.hpp": "e2bdadf503885b0ef85e11c53e021d547d1849934936889a9a5bea2f1ec1be15",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_gain.hpp": "532d979a75baa7835219b97e549249f6a6d740b3d6dd388d26a1f54b15c189ff",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_gl_device.hpp": "f327d83133ece6b24fd57bbeaf3ab4d817a506a2c9b3c43414dea181c0b0bf4b",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_gpu.hpp": "d6ee24409067b58dfb7984f790e3083ffdc903100830ebd84a51b41c4bbc7e15",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_metadata.hpp": "0f6340d1f9c2375409aa5230b81b39df02b684b4d6ae0182fe415e3164576dee",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_pes_index.hpp": "7b2bdf6977e54b762402d1c1185134277082cac33305bb01464c83cf1a105a1e",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_subtitles.hpp": "26b5537415ddb601fc26b11a37c651852dd70e0784eaca3b8a4b68f1759d9e5f",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\movie_timecode.hpp": "1a20efa40d7c39fb26aaf64dc963de67b888c6bcebdb93086a248e40ae88d99f",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\mpeg2_timing.hpp": "53d214a675e041e149b57de3ef62123e7ef0789a3c22e7990a3099d1d7c4cbc5",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\native_file.hpp": "bf54d1e032ab48c53016aa4caa0312fba8cf8c93a2c42dd5b41ab2d926502e49",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\native_user_paths.hpp": "ac60c59fcb432d10908db46bbe932d137e8e4af30aeb6047d529c8e3f97b151a",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\normal_sample.hpp": "2be1f718e115ef0eca9b5aa33eb83a9379678d54a6d00dabb644fe8b8ee03db2",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\playback_owner.hpp": "55460cd02b3bc57c895d02a844d9df6318ad736a865e9c5da60ec163a8534af0",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\program_executor.hpp": "17ff4ef9617d0a9982bb214afdee4f40db45a7ae908a5e48365a3db74f77e47a",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_haptics_bridge.hpp": "0fec6fed0929e8757368a04b82f411bb31957f7a57b816aa43c9bc34f9b18e7d",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\sample_payload.hpp": "83e175495259b46fb418b2599975079f149f3e1fd840e72d1750896dc5d09794",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\sound_archive.hpp": "40dea70d19946de0baadcbec96896694fd0b0ec9b66df013de0a9113e6477d90",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\sound_bank.hpp": "807866859d62457fe6d3b762bf494930aee483cf6747dc0487899033c484d018",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\stream_source.hpp": "0d59cc035518c585f2af99c0799ac7ac838f2dd498e46f73cf3b011435a68771",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\video_frame.hpp": "014ea11ef73fe7abaeff4432fd5a60d13c121ca777f140c265c3494c2e2df8e9",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\video_gpu_adapter.hpp": "52bf5858230052ed83291cb548437665042715870cc36f8b1f9f55ffde8f9206",
+    "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\video_producer.hpp": "525b9464fbb8263de943fee4f8f8c7b4656d7827ba25fafb9bbc890b195edecd",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\adpcm_codec.cpp": "2a104f1778225f4a5017a4425bb3cb682e4a8272a24f9d8b70d39e15a28fecb7",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\audio_bank_protocol.cpp": "f16840bf392acb7eda0b65dc92af8b35484898c6f5ab6aafec88ba145ff6e516",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\audio_bank_service.cpp": "3687b9bb6cf74f34a01216761887a4051b51423d597d11d08e980aec82c769bd",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\audio_banks.cpp": "950f3c79b64d3cc96fa655103a549c2a036c57c7b9b0c5abc9eab55794542592",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\audio_controls.cpp": "e4d156e21cc86dfce88f775376721844c663db8e1ece67bb967c857aadad32db",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\audio_device.cpp": "928c4402693bcd3990c33b2f17aa6e187b53eb1311a044485fc7e655e563082d",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\bank_asset.cpp": "69b13c4dfd86c4fcdacc9fa0de761c88c95d953f7a486366a68b780f501751bb",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\bank_preparation.cpp": "cba26a8174cc8c39c93cc8cdc18332b7dc5fed9d1ed1cd458931bbb031b8979d",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\content_vfs.cpp": "8228a841d2223d325c49d6d487e9963b58f12f2841842d9b08e10168a1617843",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\controller_input.cpp": "a04e0ab9a85bc56ac7bf95274ed51c9bb68cb26e1ee37eabcc3c572abfa22bd7",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\font_atlas.cpp": "05bf36ca65ed68fa485d680c524d8f36e6970f42bf35f1760bbe8e79712046a0",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\font_geometry.cpp": "21cf049fec2dcde21fe714410241e08dc36c37e47255db8d40c6ecc8a3b14716",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\font_layout.cpp": "6268c0c2f1f3afe6ffb828ea14141821c1b700aa242484f657ba8f6b95bc6205",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\font_metrics.cpp": "80995605964879bee02284de53e974d0e2008bf7a13f9da089312faa55cae6fc",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\generated\\movie_catalog_rows.inc": "4d632bde1f4aac701269c947b2f824f258b2dbfebcced2911d82e38529a501f3",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\generated\\movie_gain_intervals.inc": "f3bf0274de2ec06306d6607769e0366749414b875559a62f47943c049cf9777e",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\generated\\movie_gain_rows.inc": "ec5c700aafaaf51103000676309190bec5a8628a80d1384ce416e77b9cb90ec5",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\haptics.cpp": "463764f3afd9fda355d13a6d5ae801ff3d1560ffb78aa7d760ea38e2af74eca4",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\host_voice.cpp": "9ba81b9a267a29e46ef4e03cc6b67727f928e41b3c22232d7b7d6b3f80522fd2",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_assets.cpp": "47f2f4a74c32f5e832e08647c3484a0bbc9b55e6a1c9927b0c8ea9a76d6b7135",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_catalog.cpp": "3f5f70be32cba3bb64f2d3a294f6cf1835707992199f4813a1090eabeb9e0c58",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_color.cpp": "3f7f605a5eb42ddd9df66c0367dd41ce4574b16c37f7c303ae43588d85520697",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_container.cpp": "fa3e89f00b5204aee0160b9117922217a095d145bf0764aee8fca0cd4cab5b2c",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_control.cpp": "dbf53b97108b82a8e30d0310b11428bbe1ae1f485e12bf10e179bab6fa9ce08d",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_decode.cpp": "d37d4c7638df6105c42ace9a7a6c12c9a5013bf5d775c30d1da8699c8904c638",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_gain.cpp": "63f02d0b7f85ecb8e2b7cdb8fbdac0fcb1a095a2a410c4c551fdc0f3a2fb4422",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_gl_device.cpp": "c081b1986519a6acdfa17a2a3169da853e679cb0d26439e7a8ab77134c90dc3f",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_gpu.cpp": "1490f71ebb6fecd705ac7a0084dea0266dd832ed00a64602eb95b244263caa03",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_metadata.cpp": "04db6563167d87a48746ff9801be04403b85f72506afc4261b4fa303ef68d951",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_pes_index.cpp": "6103f538244a09a9a03513260849bd097af5972ad4b248c65331f4ac3c45db3e",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_subtitles.cpp": "c7584c7b3f77be0b968b690dbc268c6c885bc67232816f817eac116977fa2c91",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\movie_timecode.cpp": "fbe229384d7761a49b6032fd59cfebf86b23d7463fd54b415b68862ccbd3aeda",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\mpeg2_timing.cpp": "3c129c7f274a34db9aa56eec29d23568de7bbb75c740db8510e8253608c2a3ef",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\native_file.cpp": "527c9759d7bfa036c55769c32684e85402253dfd98faa5a2e1993c6fe425a5cd",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\native_user_paths.cpp": "53ec15b88864e17005d96eb966732a39aa0a8d1d2a2ccc6366f05567bdeb8aba",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\normal_sample.cpp": "df4b07bd1315a02ec4ce7c5f33c69acd00a949879877475ce559c6be678b0087",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\playback_owner.cpp": "5d26d799b2d8c2df36c40ca245bf4740aa52d9cefc27c2502c7826a5c8feb931",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\program_executor.cpp": "42f061d01a9021209b53dab7446f173bbe361ac7b026361cd660624908f578a4",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_haptics_bridge.cpp": "1d8dfcf4be5fbe0bf15815806318668cf175c24fba4c383cf95de31976e21428",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\sample_payload.cpp": "bdc395874559e8c72a4d5404a4777ea6a5f7ebde036aea85b97c17c1f9a3dbc5",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\sound_archive.cpp": "548373865895b410fdbc0b8f59b32022d2fb35cc45048e86ed90ea160a68100f",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\sound_bank.cpp": "e093197f51633b9c0bfb1cad80e44d421e436004d6712506806142c09b4a7da7",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\stream_source.cpp": "0ab2edeb159b288fbbe3575576e92e7fecf94f77267f9a13727f37a3c5ac7804",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\video_gpu_adapter.cpp": "b7bc697197a735ec7a2523c876ee64ba4ea1d24b19fdd3d047726000b1dae816",
+    "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\video_producer.cpp": "b5d22a25c928caca4fe08dd895c7cd8d522d9f8c3ff9a899aadf5e834cccb236",
+    "external\\forks\\ps2-native-recomp\\tests\\test_movie_catalog.cpp": "e6d0b659c2a5696e94a7154e707f32091908bc776875859b5134206514f6a9fe",
+    "external\\forks\\ps2-native-recomp\\tests\\test_movie_catalog_assets.cpp": "e77e3e4cf68864da4a694a0b1fc8272788e2f3c3483f2a07cd99a7bd15cadf2c",
+    "research\\inputs\\SLUS_214.10": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+    "research\\runs\\native-movie-ingress-20261119\\PES_SOURCE_OBSERVATIONS.json": "619c6723e30045b1392f0ad63118d892286140835399c2762a41150c5a3e1d71",
+    "tools\\research\\emit_native_movie_catalog.py": "a26218f311a6a664a526c4a2625bdcee6fa16f377a70439116f369832411974d",
+    "tools\\research\\verify_native_movie_catalog.py": "ac5608e289ea8d233d074ed43161a78242cd6f7d8f95ce8ce3398b66d0041331"
+  },
+  "asset_pins": {
+    "ATTRACTN.SFD": {
+      "bytes": 46497792,
+      "sha256": "4fd676d3541ffea5adbd1ab9484143cbd05916ce85ef63421ab59b78a058fc86"
+    },
+    "ATTRACTW.SFD": {
+      "bytes": 46510080,
+      "sha256": "9ddba26fabaf9f1e0219ba1b2a364f55780e73ec78b0b51bacb5e974f4c90ad1"
+    },
+    "KRYPT/V_BLOOP2.SFD": {
+      "bytes": 24436736,
+      "sha256": "5a4c60d434d02f0cab6550201c95e16f7fc114ab9a371f884b624987a4372f24"
+    },
+    "KRYPT/V_BLOOP3.SFD": {
+      "bytes": 7270400,
+      "sha256": "dc9805f3224ab45e6bb35c88b8e54f4057594a3665b93b674083aa36e6db8840"
+    },
+    "KRYPT/V_BLOOP4.SFD": {
+      "bytes": 53260288,
+      "sha256": "3d4e2ca483a11e9f79def22e0895fe7901b8829c976146966ed4e9933a7fc558"
+    },
+    "KRYPT/V_BLOOP5.SFD": {
+      "bytes": 16832512,
+      "sha256": "d7a883cfa6f0db93d5da0db5c26e7f80b72ae0643006c35dca28d5dc24ab7274"
+    },
+    "KRYPT/V_BLOOPR.SFD": {
+      "bytes": 9488384,
+      "sha256": "34466ceff507bc367a9817bcd7a0cbd9ac0dc584e60dd07df1affade0d1ebf75"
+    },
+    "KRYPT/V_BLUES.SFD": {
+      "bytes": 6797312,
+      "sha256": "1758bf5e4bbc5ba14ed88995796d9004440534e7051691d683bff3cb000a4c8b"
+    },
+    "KRYPT/V_ERMACB.SFD": {
+      "bytes": 23091200,
+      "sha256": "24e113180f3fc267e28c3eac6ec31bfeb671708783addc77dc95e22f906a926e"
+    },
+    "KRYPT/V_KANO.SFD": {
+      "bytes": 5879808,
+      "sha256": "3aec43f776bd8b2ed8255684858586d9b1a5aeed513626c43c8494b09cbe8782"
+    },
+    "KRYPT/V_KONQIN.SFD": {
+      "bytes": 68722688,
+      "sha256": "9a186deb9c9700d98b54d63a5172e3cb424e6abecef0aa6b3e0649ff00f1e9a6"
+    },
+    "KRYPT/V_LOAD1.SFD": {
+      "bytes": 3461120,
+      "sha256": "d9c655a5225803c887e16ae982950a1b5570eb80b37ec10b7558b1cabd68cb60"
+    },
+    "KRYPT/V_LOAD2.SFD": {
+      "bytes": 3432448,
+      "sha256": "2e81b069ced5a0a3bb3921dfa0c10e8e758454b9036df92b68de557c8eaa2e84"
+    },
+    "KRYPT/V_MKAKON.SFD": {
+      "bytes": 105713664,
+      "sha256": "3e46dd8d7c305782d62cd5e512194dfda3e43eb8552cb985ddd9e8c59724cf25"
+    },
+    "KRYPT/V_MKDACC.SFD": {
+      "bytes": 19929088,
+      "sha256": "cce2e8491088726d615a1d750c332a0e90d2ac27931a9e06195d5bb0df1116fb"
+    },
+    "KRYPT/V_MKHAND.SFD": {
+      "bytes": 180252672,
+      "sha256": "fd6f2f9d2d1a901cbe4595b18cb991d175ce5dc575fe59f5d8896ebd11bb9b0c"
+    },
+    "KRYPT/V_MOTOGI.SFD": {
+      "bytes": 62883840,
+      "sha256": "26f25af4e4f6d526633952761fb76fafcf5d7a80d19ee1ed92f9f4269ed4bec0"
+    },
+    "KRYPT/V_MOTORK.SFD": {
+      "bytes": 49823744,
+      "sha256": "e51cccf5d18acab1506e09aa66f9f940e605544ada23e10297a783e7eb88f091"
+    },
+    "KRYPT/V_MOTRBK.SFD": {
+      "bytes": 4577280,
+      "sha256": "142797674920a4a656584a65d0c997b11b748e2ba09eccd6b2a2479e52df5033"
+    },
+    "KRYPT/V_MOTRFT.SFD": {
+      "bytes": 4573184,
+      "sha256": "1a31d7881426dfc5d5e1319b99837d2b00580f06f4b9d94c7cd0d7fbfc2653d9"
+    },
+    "KRYPT/V_RAIDON.SFD": {
+      "bytes": 2752512,
+      "sha256": "0067d84f92072d88e065f7cbe48b3c89efd74d08094be6894120de7736b11999"
+    },
+    "KRYPT/V_SCORP.SFD": {
+      "bytes": 5879808,
+      "sha256": "4fac65428df7749456aa1034313b19a024d2a0182fedb1fffa03273ce8e741f7"
+    },
+    "KRYPT/V_SHINOK.SFD": {
+      "bytes": 5879808,
+      "sha256": "651c135da991113c1d70446a829a459f07ce6d71f46b36aa413746100c310029"
+    },
+    "KRYPT/V_SNDOUT.SFD": {
+      "bytes": 57585664,
+      "sha256": "9a8738c9480a440b803830f18c1754619b1b880acfc40a6f24c5de474b300f31"
+    },
+    "KRYPT/V_SUBZER.SFD": {
+      "bytes": 5877760,
+      "sha256": "d1dd7751a559afcfe8155c7bfe6eebe772519a2e9e5cfd5dba9cd65de0bafb0a"
+    },
+    "KRYPT/V_SZCCKY.SFD": {
+      "bytes": 10194944,
+      "sha256": "731c8c889e8a61446428df4264d780ba03b245558dbabf5b1a73888fc79158de"
+    },
+    "LOGON.SFD": {
+      "bytes": 3321856,
+      "sha256": "cf49fb014d51f20fee7727a01e845cc7303be63fe0af2902fb3eadf371a843af"
+    },
+    "LOGOW.SFD": {
+      "bytes": 3342336,
+      "sha256": "fa5e25182e8c054c3d673ada0ed9d38d6e3b3f2c9ac14bde9d5baa862eb81e71"
+    },
+    "OPENINGN.SFD": {
+      "bytes": 190517248,
+      "sha256": "a2b3e83b23de92c31879dbcc4ab9415e07bbbb0638ea4f90d112f969de3e5e53"
+    },
+    "OPENINGW.SFD": {
+      "bytes": 190517248,
+      "sha256": "5c68f06a1f376f58be350c12e6c45185ed33005328dc14b4a244e40fc54b639a"
+    },
+    "QUADN.SFD": {
+      "bytes": 20850688,
+      "sha256": "edee5f2d216764864452741d752ee09f59b39e8e25e5933d2307cf0800f1072a"
+    },
+    "QUADW.SFD": {
+      "bytes": 20850688,
+      "sha256": "dc4988c994f37baabe34697df48cd2238e1648db87fea9476aa2c816d7cd59da"
+    },
+    "SPYHUNN.SFD": {
+      "bytes": 43825152,
+      "sha256": "7448b1e598404011923fb21d7b4826223dce0e5807cc914f8102b40a2f5da398"
+    },
+    "SPYHUNW.SFD": {
+      "bytes": 43808768,
+      "sha256": "e728aad87b8f812ef19653888493a437b760ecd0f40e1902f132269a6f01cbde"
+    },
+    "STRANGN.SFD": {
+      "bytes": 62617600,
+      "sha256": "fff2a9feceb1618b14ba7cd8dd000952652d8b131e391cb9873f5a4714246707"
+    },
+    "STRANGW.SFD": {
+      "bytes": 62443520,
+      "sha256": "737c203deebda23483305f34740bc1916a594f7a4667b220832aa6b5cac95c76"
+    },
+    "TITLEN.SFD": {
+      "bytes": 21565440,
+      "sha256": "b184f25ad02e7ffc4ece847bc915c1f54e2eeddbf6afcd816be0108adadfa371"
+    },
+    "TITLEW.SFD": {
+      "bytes": 21565440,
+      "sha256": "9a850166ddc5a8a13d153498d329c42fe479d848b56ab2784c6f371c6b3b0928"
+    }
+  },
+  "test_manifest_sha256": "93662b6723cf4088b82aef9bff56429cf89cfb6f008b1d5e9c5b292a4afcf6ed",
+  "parent_commit": "248988d72342c802f4592c30f6c8f45e2bacb11a",
+  "fork_commit": "359529215644480a94e9700f760cb48bdf0bbf27",
+  "scope": "source delta/component fixtures; no full-game clean build or acceptance"
+}

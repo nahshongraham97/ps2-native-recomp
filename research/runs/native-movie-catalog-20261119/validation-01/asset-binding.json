@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_catalog_assets.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-movie-catalog-20261119\\validation-01\\assets.tsv"
+  ],
+  "exit": 0,
+  "stdout": "{\"status\":\"PASS_NATIVE_CATALOG_ASSET_BINDING\",\"requests\":66,\"opened_requests\":62,\"distinct_opened\":38,\"missing_requests\":4,\"distinct_missing\":3,\"game_or_device_launched\":false}\n",
+  "stderr": "",
+  "executable_sha256": "dc2070d99108b09d1e780d9ef9e7d6d7e58da937a31e20b98e4ffd0b3caead82"
+}
