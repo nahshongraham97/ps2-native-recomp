@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <optional>
 namespace mka::video {
-enum class MovieTimecodeError {none,missing_gop,unsupported_rate,overflow};
+enum class MovieTimecodeError {none,missing_gop,missing_timestamp,unsupported_rate,invalid_temporal_reference,unsupported_fp_environment,overflow};
 struct MovieTimecodeFailure {MovieTimecodeError kind=MovieTimecodeError::none;};
 const char* movie_timecode_error_name(MovieTimecodeError) noexcept;
 // Native arithmetic descriptor, not a serialized SDK struct. All timeline
@@ -28,4 +28,10 @@ std::optional<MovieTimecodeRational> convert_movie_timecode(
 // descriptor+1E half-frame adjustment0. A missing GOP is not a zero timecode.
 std::optional<MovieTimecodeRational> convert_movie_picture_timecode(
     const Mpeg2PictureTiming&,MovieTimecodeFailure&) noexcept;
+// Original80A608 position route. Caller supplies explicit quantized PES timestamp
+// (raw33-bit PTS >>2 in the serialized domain); wide native values are allowed.
+// No timestamp inheritance, playback clock, source origin or GOP substitution.
+std::optional<MovieTimecodeDescriptor> convert_movie_position_timecode(
+    std::optional<std::uint64_t> timestamp22500,std::uint8_t frame_rate_code,
+    bool drop_frame,std::uint16_t temporal_reference,MovieTimecodeFailure&) noexcept;
 }

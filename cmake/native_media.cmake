@@ -43,10 +43,12 @@ target_link_libraries(mka_native_media PRIVATE opengl32 gdi32 user32 bcrypt shel
 if(MSVC)
     set_property(SOURCE runtime/src/native/font_metrics.cpp
         runtime/src/native/font_layout.cpp runtime/src/native/font_geometry.cpp
+        runtime/src/native/movie_timecode.cpp
         APPEND PROPERTY COMPILE_OPTIONS /fp:strict)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
     set_property(SOURCE runtime/src/native/font_metrics.cpp
         runtime/src/native/font_layout.cpp runtime/src/native/font_geometry.cpp
+        runtime/src/native/movie_timecode.cpp
         APPEND PROPERTY COMPILE_OPTIONS -fno-fast-math -ffp-contract=off)
 else()
     message(FATAL_ERROR "Native font math requires a verified strict float32 compiler configuration")

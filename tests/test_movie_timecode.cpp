@@ -4,6 +4,7 @@
 #include <limits>
 #include <initializer_list>
 #include <bit>
+#include <cfenv>
 using namespace mka::video;
 void check(bool v,const char* s){if(!v){std::fprintf(stderr,"[timecode-fail] %s\n",s);std::exit(1);}}
 MovieTimecodeRational convert(MovieTimecodeDescriptor d){MovieTimecodeFailure f;auto r=convert_movie_timecode(d,f);check(bool(r),"conversion succeeds");return *r;}
@@ -39,7 +40,56 @@ void independent_wide_oracle(){
     check(false,"this verification target requires an independent compiler128 integer oracle");
 #endif
 }
+void position_timecode_source_cases(){
+    MovieTimecodeFailure f;
+    auto pos=[&](std::uint64_t t,std::uint8_t rate,bool drop,std::uint16_t ref){
+        auto d=convert_movie_position_timecode(t,rate,drop,ref,f);check(bool(d),"explicit position conversion");return *d;};
+    auto expect=[&](std::uint64_t t,std::uint8_t rate,bool drop,std::int64_t h,std::int64_t m,std::int64_t sec,std::int64_t pic){
+        const auto d=pos(t,rate,drop,0);check(d.hours==h&&d.minutes==m&&d.seconds==sec&&d.pictures==pic&&
+          d.frame_rate_code==rate&&d.drop_frame==drop&&d.temporal_reference==0&&d.half_frame_adjustment==0,
+          "literal original inverse-table boundary");};
+    // Independent literal source-table boundaries; notably minute60 exists just
+    // BEFORE the original inverse hour divisor. Do not normalize these fields.
+    expect(1350601,4,true,0,0,59,29);expect(1351351,4,true,0,1,0,2);
+    expect(1371622,4,true,0,1,0,29);expect(1372372,4,true,0,1,1,0);
+    expect(13498498,4,true,0,9,59,28);expect(13499249,4,true,0,10,0,0);
+    expect(80998498,4,true,0,60,0,4);expect(80999249,4,true,1,0,0,0);
+    expect(1350976,7,true,0,0,59,59);expect(1351351,7,true,0,1,0,4);
+    expect(1371997,7,true,0,1,0,59);expect(1372372,7,true,0,1,1,0);
+    expect(13499249,7,true,0,9,59,58);expect(13499625,7,true,0,10,0,0);
+    expect(80999249,7,true,0,60,0,4);expect(80999625,7,true,1,0,0,0);
+    // Actual preexisting PES census tail timestamps (raw33>>2), with explicit
+    // fixture drop=false/ref=0. These do not assert retail branch admission.
+    expect(113250,5,false,0,0,5,1);   // LOGON raw453000
+    expect(674195,4,false,0,0,29,28); // TITLEN raw2696781
+    expect(5885916,4,false,0,4,21,10);// OPENINGN raw23543664
+    expect(22500,5,false,0,0,1,0);expect(1350000,5,false,0,1,0,0);
+    expect(81000000,5,false,1,0,0,0);
+    // Source only special-cases drop at29970/59940; flag on code5 uses the
+    // ordinary decomposition while preserving the caller's explicit flag.
+    expect(1350000,5,true,0,1,0,0);
+    const auto before=pos(187,5,false,0),after=pos(188,5,false,0);
+    check(before.pictures==0&&before.half_frame_adjustment==0&&after.pictures==0&&after.half_frame_adjustment==1,
+          "source double plus-half floor and half-frame parity");
+    const auto second_before=pos(562,5,false,0),second_after=pos(563,5,false,0);
+    check(second_before.pictures==0&&second_before.half_frame_adjustment==1&&second_after.pictures==1&&second_after.half_frame_adjustment==0,
+          "second half-frame rounding boundary");
+    const auto adjusted=pos(22500,5,false,5);check(adjusted.seconds==0&&adjusted.pictures==25&&adjusted.temporal_reference==5,
+          "subtract temporal reference before decomposition; retain explicit field");
+    const auto clamped=pos(0,5,false,1023);check(clamped.hours==0&&clamped.pictures==0&&clamped.temporal_reference==1023,
+          "negative adjusted frame count clamps at source zero");
+    check(!convert_movie_position_timecode(std::nullopt,5,false,0,f)&&f.kind==MovieTimecodeError::missing_timestamp,"missing timestamp is not zero");
+    check(!convert_movie_position_timecode(0,0,false,0,f)&&f.kind==MovieTimecodeError::unsupported_rate,"position unsupported rate");
+    check(!convert_movie_position_timecode(0,5,false,1024,f)&&f.kind==MovieTimecodeError::invalid_temporal_reference,"serialized ten-bit temporal reference");
+    const auto wide=pos(std::numeric_limits<std::uint64_t>::max(),8,false,0);
+    check(wide.hours>std::numeric_limits<std::int32_t>::max(),"native position descriptor has no original word/hour cap");
+    check(!convert_movie_timecode(wide,f)&&f.kind==MovieTimecodeError::overflow,"genuine native rational output overflow remains named");
+    const auto original_round=std::fegetround();check(std::fesetround(FE_DOWNWARD)==0,"set test rounding mode");
+    check(!convert_movie_position_timecode(188,5,false,0,f)&&f.kind==MovieTimecodeError::unsupported_fp_environment,"no rounding-environment-dependent result");
+    check(std::fesetround(original_round)==0,"restore test rounding mode");
+}
 int main(){
+    position_timecode_source_cases();
     // Original instruction constants: drop24 hour86292/minute1438;
     // drop30 hour107892/minute1798;drop60 hour215892/minute3598 (source uses two, not four).
     check(convert({1,true,1,1,1,1,2,1})==MovieTimecodeRational{87757500,23976},"original24drop constants+half");

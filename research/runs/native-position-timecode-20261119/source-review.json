@@ -1,0 +1,107 @@
+{
+  "scope": "Root independent source review of native position-to-timecode conversion; read-only Ghidra Emotion Engine session, no project opening/mutation or game execution",
+  "program": {
+    "name": "SLUS_214.10",
+    "project_path": "/SLUS_214.10",
+    "executable_path": "/C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/local-research/ghidra-mcp/disc-files/SLUS_214.10",
+    "executable_format": "Executable and Linking Format (ELF)",
+    "language_id": "r5900:LE:32:default",
+    "compiler_spec": "default",
+    "processor": "MIPS-R5900",
+    "endian": "little",
+    "pointer_size": 4,
+    "image_base": "00100000",
+    "min_address": "00100000",
+    "max_address": "_elfSectionHeaders::000001b7",
+    "memory_size": 105345404,
+    "function_count": 13138,
+    "external_function_count": 1,
+    "entry_points": [
+      "00100008"
+    ],
+    "md5": "d79dee61099b6b206ee1da180fea0cf6",
+    "sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f"
+  },
+  "helpers": {
+    "0x00121ef8": {
+      "function": {
+        "name": "FUN_00121ef8",
+        "address": "00121ef8"
+      },
+      "code": "\r\nulong FUN_00121ef8(ulong param_1)\r\n\r\n{\r\n  undefined8 uVar1;\r\n  long lVar2;\r\n  ulong uVar3;\r\n  uint uVar4;\r\n  int iVar5;\r\n  ulong uVar6;\r\n  uint uVar7;\r\n  ulong uVar8;\r\n  uint uVar9;\r\n  ulong uVar10;\r\n  \r\n  uVar6 = (long)param_1 >> 0x20;\r\n  iVar5 = (int)(param_1 >> 0x20);\r\n  uVar9 = iVar5 >> 0x14 & 0x7ff;\r\n  uVar7 = (uint)param_1;\r\n  uVar4 = uVar9 - 0x3ff;\r\n  uVar8 = (ulong)(int)uVar7;\r\n  if ((int)uVar4 < 0x14) {\r\n    if ((int)uVar4 < 0) {\r\n      uVar1 = FUN_00125370(param_1,DAT_005f50c0);\r\n      lVar2 = FUN_001258d0(0,uVar1);\r\n      uVar3 = uVar6 << 0x20;\r\n      if (-1 < lVar2) goto LAB_00121f74;\r\n      if ((long)uVar6 < 0) {\r\n        uVar3 = uVar6 << 0x20;\r\n        if ((uVar6 & 0x7fffffff) == 0 && uVar8 == 0) goto LAB_00121f74;\r\n        uVar6 = 0xffffffffbff00000;\r\n        uVar8 = 0;\r\n      }\r\n      else {\r\n        uVar8 = 0;\r\n        uVar6 = 0;\r\n      }\r\n    }\r\n    else {\r\n      uVar10 = (ulong)(0xfffff >> (uVar4 & 0x1f));\r\n      if ((uVar6 & uVar10) == 0 && uVar8 == 0) {\r\n        return param_1;\r\n      }\r\n      uVar1 = FUN_00125370(param_1,DAT_005f50c0);\r\n      lVar2 = FUN_001258d0(0,uVar1);\r\n      uVar3 = uVar6 << 0x20;\r\n      if (-1 < lVar2) goto LAB_00121f74;\r\n      if ((long)uVar6 < 0) {\r\n        uVar6 = (ulong)(iVar5 + (0x100000 >> (uVar4 & 0x1f)));\r\n      }\r\n      uVar8 = 0;\r\n      uVar6 = uVar6 & ~uVar10;\r\n    }\r\n  }\r\n  else {\r\n    if (0x33 < (int)uVar4) {\r\n      if (uVar4 != 0x400) {\r\n        return param_1;\r\n      }\r\n      uVar6 = FUN_00125370(param_1,param_1);\r\n      return uVar6;\r\n    }\r\n    uVar9 = 0xffffffff >> (uVar9 - 0x413 & 0x1f);\r\n    if ((uVar7 & uVar9) == 0) {\r\n      return param_1;\r\n    }\r\n    uVar1 = FUN_00125370(param_1,DAT_005f50c0);\r\n    lVar2 = FUN_001258d0(0,uVar1);\r\n    uVar3 = uVar6 << 0x20;\r\n    if (-1 < lVar2) goto LAB_00121f74;\r\n    uVar3 = uVar8;\r\n    if ((long)uVar6 < 0) {\r\n      if (uVar4 == 0x14) {\r\n        iVar5 = iVar5 + 1;\r\n      }\r\n      else {\r\n        uVar3 = (ulong)(int)(uVar7 + (1 << (0x34 - uVar4 & 0x1f)));\r\n        iVar5 = iVar5 + (uint)(uVar3 < uVar8);\r\n      }\r\n      uVar6 = (ulong)iVar5;\r\n    }\r\n    uVar8 = uVar3 & ~(long)(int)uVar9;\r\n  }\r\n  uVar3 = uVar6 << 0x20;\r\nLAB_00121f74:\r\n  return uVar3 | uVar8 & 0xffffffff;\r\n}\r\n\r\n",
+      "truncated": false
+    },
+    "0x00125920": {
+      "function": {
+        "name": "FUN_00125920",
+        "address": "00125920"
+      },
+      "code": "\r\nundefined8 FUN_00125920(ulong param_1)\r\n\r\n{\r\n  undefined8 uVar1;\r\n  undefined4 uStack_30;\r\n  int iStack_2c;\r\n  int iStack_28;\r\n  ulong uStack_20;\r\n  \r\n  iStack_2c = -((int)param_1 >> 0x1f);\r\n  uStack_30 = 3;\r\n  if (param_1 == 0) {\r\n    uStack_30 = 2;\r\n  }\r\n  else {\r\n    iStack_28 = 0x3c;\r\n    if (iStack_2c != 0) {\r\n      if (param_1 == 0xffffffff80000000) {\r\n        return 0xc1e0000000000000;\r\n      }\r\n      param_1 = (ulong)-(int)param_1;\r\n    }\r\n    uStack_20 = param_1;\r\n    if (param_1 < 0x1000000000000000) {\r\n      iStack_28 = 0x3c;\r\n      do {\r\n        param_1 = param_1 << 1;\r\n        iStack_28 = iStack_28 + -1;\r\n        uStack_20 = param_1;\r\n      } while (param_1 < 0x1000000000000000);\r\n    }\r\n  }\r\n  uVar1 = FUN_00124fe0(&uStack_30);\r\n  return uVar1;\r\n}\r\n\r\n",
+      "truncated": false
+    },
+    "0x001259d0": {
+      "function": {
+        "name": "FUN_001259d0",
+        "address": "001259d0"
+      },
+      "code": "\r\nint FUN_001259d0(undefined8 param_1)\r\n\r\n{\r\n  int iVar1;\r\n  uint uStack_40;\r\n  int iStack_3c;\r\n  int iStack_38;\r\n  ulong uStack_30;\r\n  undefined8 auStack_20 [2];\r\n  \r\n  auStack_20[0] = param_1;\r\n  FUN_001250b8(auStack_20,&uStack_40);\r\n  if (uStack_40 == 2) {\r\n    return 0;\r\n  }\r\n  if (uStack_40 < 2) {\r\n    return 0;\r\n  }\r\n  if (uStack_40 != 4) {\r\n    if (iStack_38 < 0) {\r\n      return 0;\r\n    }\r\n    if (iStack_38 < 0x1f) {\r\n      iVar1 = (int)(uStack_30 >> (long)(0x3c - iStack_38));\r\n      if (iStack_3c == 0) {\r\n        return iVar1;\r\n      }\r\n      return -iVar1;\r\n    }\r\n  }\r\n  iVar1 = -0x80000000;\r\n  if (iStack_3c == 0) {\r\n    iVar1 = 0x7fffffff;\r\n  }\r\n  return iVar1;\r\n}\r\n\r\n",
+      "truncated": false
+    }
+  },
+  "checked_tables": {
+    "0x849510": [
+      107891,
+      17981,
+      1800,
+      1798,
+      28,
+      30,
+      10,
+      2
+    ],
+    "0x849530": [
+      215783,
+      35963,
+      3600,
+      3596,
+      56,
+      60,
+      10,
+      4
+    ],
+    "0x8494e8": [
+      0,
+      24,
+      24,
+      25,
+      30,
+      30,
+      50,
+      60,
+      60
+    ],
+    "0x849740": [
+      1,
+      23976,
+      24000,
+      25000,
+      29970,
+      30000,
+      50000,
+      59940,
+      60000
+    ]
+  },
+  "findings": [
+    "Compared all four tables directly against SHA-pinned MOVIER original bytes",
+    "Decoded DIV/MFHI/MFLO/MULT and branch-delay data flow at 80A608..80A7EC; native hour/block/minute/second/picture decomposition matches",
+    "121EF8 truncates positive binary64 fraction bits and rounds negative nonintegrals downward, supporting floor identification; 125920 packs signed integer into double, 1259D0 truncates/saturates signed-word conversion",
+    "7F6DD0 constructs 0x3FE0000000000000 (0.5), adds after multiply/divide, applies floor, then integer conversion",
+    "Native implementation preserves operation order and explicit controls; source-domain integer saturation is not imposed as a native game capacity"
+  ],
+  "limits": [
+    "This is source review, not original-helper execution",
+    "Native wide-value behavior and FE_TONEAREST precondition require component tests",
+    "No actual player/master-clock/lifecycle binding or gameplay claim"
+  ]
+}
