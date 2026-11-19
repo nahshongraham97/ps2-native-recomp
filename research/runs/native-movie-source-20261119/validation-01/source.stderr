@@ -1,0 +1,5 @@
+[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=296)
+[mpeg @ 00000193948AF0C0] stream 0 : no PTS found at end of file, duration not set
+[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=11277)
+[mpeg @ 0000019394862080] stream 0 : no PTS found at end of file, duration not set
+[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=296)

@@ -30,6 +30,7 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/movie_timecode.cpp
     runtime/src/native/movie_control.cpp
     runtime/src/native/movie_catalog.cpp
+    runtime/src/native/movie_source.cpp
     runtime/src/native/movie_gain.cpp
     runtime/src/native/movie_subtitles.cpp
     runtime/src/native/movie_decode.cpp
@@ -67,6 +68,7 @@ foreach(pair
     "test_native_movie_assets|tests/test_movie_assets.cpp"
     "test_native_movie_gl_device|tests/test_movie_gl_device.cpp"
     "test_native_movie_decode|tests/test_movie_decode.cpp"
+    "test_native_movie_source|tests/test_movie_source.cpp"
     "test_native_movie_source_failure|tests/test_movie_source_failure.cpp"
     "test_native_movie_pipeline|tests/test_native_movie_pipeline.cpp"
     "test_native_movie_inventory|tests/test_native_movie_inventory.cpp"

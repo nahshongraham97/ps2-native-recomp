@@ -1,0 +1,212 @@
+{
+  "status": "PASS_RAW_SOURCE_ORACLE_EDGE_CASES",
+  "source_sha256": "64d1566b7e983a05a0c4e692d98e979d89608534d029e11531b8578cd514015a",
+  "positive": 11,
+  "rejections": 3,
+  "cases": [
+    {
+      "name": "cross-1-pts-None",
+      "bytes_hex": "000001e000050f61626300000001e0000b21000107cf00010078797a",
+      "position": 3,
+      "expected": [
+        0,
+        null,
+        null
+      ],
+      "actual": [
+        0,
+        null,
+        null
+      ],
+      "error": null
+    },
+    {
+      "name": "cross-1-pts-0",
+      "bytes_hex": "000001e00009210001000161626300000001e0000b21000107cf00010078797a",
+      "position": 3,
+      "expected": [
+        0,
+        0,
+        0
+      ],
+      "actual": [
+        0,
+        0,
+        0
+      ],
+      "error": null
+    },
+    {
+      "name": "cross-1-pts-4294967301",
+      "bytes_hex": "000001e00009290001000b61626300000001e0000b21000107cf00010078797a",
+      "position": 3,
+      "expected": [
+        0,
+        4294967301,
+        1073741825
+      ],
+      "actual": [
+        0,
+        4294967301,
+        1073741825
+      ],
+      "error": null
+    },
+    {
+      "name": "cross-2-pts-None",
+      "bytes_hex": "000001e000060f6162630000000001e0000a21000107cf010078797a",
+      "position": 3,
+      "expected": [
+        0,
+        null,
+        null
+      ],
+      "actual": [
+        0,
+        null,
+        null
+      ],
+      "error": null
+    },
+    {
+      "name": "cross-2-pts-0",
+      "bytes_hex": "000001e0000a21000100016162630000000001e0000a21000107cf010078797a",
+      "position": 3,
+      "expected": [
+        0,
+        0,
+        0
+      ],
+      "actual": [
+        0,
+        0,
+        0
+      ],
+      "error": null
+    },
+    {
+      "name": "cross-2-pts-4294967301",
+      "bytes_hex": "000001e0000a290001000b6162630000000001e0000a21000107cf010078797a",
+      "position": 3,
+      "expected": [
+        0,
+        4294967301,
+        1073741825
+      ],
+      "actual": [
+        0,
+        4294967301,
+        1073741825
+      ],
+      "error": null
+    },
+    {
+      "name": "cross-3-pts-None",
+      "bytes_hex": "000001e000070f616263000001000001e0000921000107cf0078797a",
+      "position": 3,
+      "expected": [
+        0,
+        null,
+        null
+      ],
+      "actual": [
+        0,
+        null,
+        null
+      ],
+      "error": null
+    },
+    {
+      "name": "cross-3-pts-0",
+      "bytes_hex": "000001e0000b2100010001616263000001000001e0000921000107cf0078797a",
+      "position": 3,
+      "expected": [
+        0,
+        0,
+        0
+      ],
+      "actual": [
+        0,
+        0,
+        0
+      ],
+      "error": null
+    },
+    {
+      "name": "cross-3-pts-4294967301",
+      "bytes_hex": "000001e0000b290001000b616263000001000001e0000921000107cf0078797a",
+      "position": 3,
+      "expected": [
+        0,
+        4294967301,
+        1073741825
+      ],
+      "actual": [
+        0,
+        4294967301,
+        1073741825
+      ],
+      "error": null
+    },
+    {
+      "name": "half-open-boundary",
+      "bytes_hex": "000001e000082100010003616263000001e0000a2fffffffff000001007a",
+      "position": 3,
+      "expected": [
+        14,
+        8589934591,
+        2147483647
+      ],
+      "actual": [
+        14,
+        8589934591,
+        2147483647
+      ],
+      "error": null
+    },
+    {
+      "name": "same-packet",
+      "bytes_hex": "000001e0000f21000103216162630000010078797a",
+      "position": 3,
+      "expected": [
+        0,
+        400,
+        100
+      ],
+      "actual": [
+        0,
+        400,
+        100
+      ],
+      "error": null
+    },
+    {
+      "name": "not-picture",
+      "bytes_hex": "000001e0000d21000100017878787878787878",
+      "position": 0,
+      "expected": null,
+      "actual": null,
+      "error": "observed native picture is not a raw picture prefix"
+    },
+    {
+      "name": "truncated",
+      "bytes_hex": "000001e0000921000100010000",
+      "position": 0,
+      "expected": null,
+      "actual": null,
+      "error": "raw packet extent"
+    },
+    {
+      "name": "beyond-range",
+      "bytes_hex": "000001e00009210001000100000100",
+      "position": 999,
+      "expected": null,
+      "actual": null,
+      "error": "raw PS prefix before observed picture"
+    }
+  ],
+  "limits": [
+    "Single video MPEG1 PES synthetic cases only; not arbitrary multistream/malformed MPEG2 validation",
+    "Research oracle fixture only, not game/runtime/player behavior"
+  ]
+}
