@@ -1,0 +1,41 @@
+{
+  "status": "PASS_OFFLINE_ORDERED_COEFFICIENT_REFERENCE_ONLY",
+  "role": "NOT_ACCEPTED_RUNTIME_OR_HARDWARE_PROOF",
+  "source_after_sha256": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-coefficient-reference-20261119\\reference.cpp": "2bc9f455ef16382f112410c260d3ed35fe7ba57db1dcda02fed68ea370024011",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-backup-20261110\\runtime\\include\\ps2\\fpu.hpp": "c318a2e548f8b8473719c4cde9b414980c75ca53ac9ec52781b72c1792099c5c",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules\\MOVIER.ovl": "3a34e3838042aa0bde0ce687a4e61e128b2eb965e60e65c34713e0a73891adb8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\SLUS_214.10": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe"
+  },
+  "fixture_sha256": "55b86fbb89673e34545588741dcd23677bfe48be99b11d9aa184608cc7365f1b",
+  "trace_rows": 88,
+  "pairs": [
+    {
+      "case": "actual_header_500_48000",
+      "kind": "coefficient_pair",
+      "cutoff": 500,
+      "rate": 48000,
+      "first_word": "00001ce8",
+      "second_word": "fffff2f2",
+      "first_int16": 7400,
+      "second_int16": -3342,
+      "helper_flags": "00000000"
+    },
+    {
+      "case": "constructor_500_44100",
+      "kind": "coefficient_pair",
+      "cutoff": 500,
+      "rate": 44100,
+      "first_word": "00001ca6",
+      "second_word": "fffff32d",
+      "first_int16": 7334,
+      "second_int16": -3283,
+      "helper_flags": "00000000"
+    }
+  ],
+  "limits": [
+    "Measured preserved source-helper sequence only",
+    "Native coefficient admission, raw codec parity and normal profile/timeline/full playback remain OPEN"
+  ]
+}

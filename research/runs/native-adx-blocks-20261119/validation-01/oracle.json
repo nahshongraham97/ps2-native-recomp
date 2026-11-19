@@ -1,0 +1,32 @@
+{
+  "status": "PASS_COMPLETE_NATIVE_ADX_BLOCK76_PLAN",
+  "cases": 76,
+  "samples": 2432,
+  "domain": {
+    "source32_cases": 75,
+    "native_wide_extension_cases": 1,
+    "source32_predictor_overflows": 0,
+    "native_extension_source32_overflow_observations": 1
+  },
+  "canonical_reference_sha256": "aeee6bf2aa1a2fa6e268a16775f32f61a32ecf0fc3b4dde378d2683ce1d66eea",
+  "negative_checks": {
+    "trace_mutations": 23,
+    "metadata_mutations": 11,
+    "json_mutations": 3
+  },
+  "execution_receipt_sha256": "4f1216cbf68cfe1c1003239f93ea00ad34e83482a75021f48e3cacf05c6b40ad",
+  "executable_sha256": "64eb0475a3c92c265a7ca8fadea7984ee44bcf0bb89a7d2d773e43c4884a39a8",
+  "checker_sha256": "604358d3fd6339ee2b5ca7e94f7a90c834bd9038d04d960f9ea2bebefb420bee",
+  "movier_sha256": "3a34e3838042aa0bde0ce687a4e61e128b2eb965e60e65c34713e0a73891adb8",
+  "reviewed_source_pins": {
+    "MOVIE_ADX_BLOCK_TRACE_PLAN.md": "80955b4971179dba5dde8eb5d511924cdfdb973aa4741b4250e842ce2b4c8a2a",
+    "MOVIE_ADX_BLOCK_TRACE_PLAN.json": "a49df2709e00a869f8af1b6c9c0a88ca19c2b8b74b4a93d558babe83691b5673",
+    "MOVIE_ADX_PREDICTOR_INPUT_SOURCE.json": "323b831756705d1d5a20cbddcd90c88335dc737fc60b6f4dcefd1ec319158015",
+    "adx-predictor-input-source.words.txt": "d301012c81211a375d5fb6b81d3aa8a39dc4c4cace304f2225c32e93f1fb4a31"
+  },
+  "fixture_source_sha256": "77018037ae52bfabdea11c44594c0c7b4f826c338b00fc912c04589d046ebfa6",
+  "limits": [
+    "75 source32-safe synthetic cases plus1 explicit native-wide extension",
+    "No actual coefficient/header/decoder-mode admission or real decoded asset/playback equivalence"
+  ]
+}

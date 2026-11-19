@@ -40,6 +40,7 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/movie_audio_progress.cpp
     runtime/src/native/movie_pcm_mix.cpp
     runtime/src/native/movie_pcm_downmix.cpp
+    runtime/src/native/movie_adx_blocks.cpp
     runtime/src/native/movie_pcm_binding.cpp
     runtime/src/native/movie_kernel_policies.cpp
     runtime/src/native/movie_catalog.cpp
@@ -232,3 +233,9 @@ add_executable(test_native_movie_pcm_downmix EXCLUDE_FROM_ALL
     tests/test_movie_pcm_downmix.cpp runtime/src/native/movie_pcm_downmix.cpp)
 target_include_directories(test_native_movie_pcm_downmix PRIVATE runtime/include)
 target_compile_features(test_native_movie_pcm_downmix PRIVATE cxx_std_20)
+
+# Native encoded asset codec only; no backup/reference-helper/runtime link.
+add_executable(test_native_movie_adx_blocks EXCLUDE_FROM_ALL
+    tests/test_movie_adx_blocks.cpp runtime/src/native/movie_adx_blocks.cpp)
+target_include_directories(test_native_movie_adx_blocks PRIVATE runtime/include)
+target_compile_features(test_native_movie_adx_blocks PRIVATE cxx_std_20)

@@ -1,0 +1,18 @@
+{
+  "at_utc": "2026-11-19T21:15:25.376272+00:00",
+  "fork_head": "9f62a0b92657afaad502d0be19006bff18b4557c",
+  "parent_head": "9078370938784c7ecfebaf200a215bb2f06a382a",
+  "source_before_sha256": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-adx-coefficient-reference-20261119\\reference.cpp": "2bc9f455ef16382f112410c260d3ed35fe7ba57db1dcda02fed68ea370024011",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-backup-20261110\\runtime\\include\\ps2\\fpu.hpp": "c318a2e548f8b8473719c4cde9b414980c75ca53ac9ec52781b72c1792099c5c",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules\\MOVIER.ovl": "3a34e3838042aa0bde0ce687a4e61e128b2eb965e60e65c34713e0a73891adb8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\SLUS_214.10": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe"
+  },
+  "role": "OFFLINE_SOURCE_HELPER_REFERENCE_ONLY_NOT_ACCEPTED_RUNTIME",
+  "limits": [
+    "Static preserved helper family, not authenticated historical cache binary or hardware oracle",
+    "Only literal source sequence for two explicit header/constructor input pairs",
+    "Never links reference or backup helpers into native runtime; no game/devices/models/driver/settings"
+  ]
+}
