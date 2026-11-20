@@ -32,8 +32,8 @@ constexpr std::int32_t kMcNoFormat = -2;
 constexpr std::int32_t kMcNoEntry = -4;
 constexpr std::int32_t kMcFailDetect2 = -13;
 static bool s_card_changed[2][8] = {
-    {false, false, false, false, false, false, false, false},
-    {false, false, false, false, false, false, false, false}
+    {true, true, true, true, true, true, true, true},
+    {true, true, true, true, true, true, true, true}
 };
 constexpr std::uint32_t kMcDescParamBytes = 48u;
 constexpr std::uint32_t kMcRpcStatBytes = 12u;
@@ -920,7 +920,7 @@ void reset() {
     }
     for (int p = 0; p < 2; ++p) {
         for (int s = 0; s < 8; ++s) {
-            s_card_changed[p][s] = false;
+            s_card_changed[p][s] = true;
         }
     }
     sif::unregister_hle_override(kSifSid);
