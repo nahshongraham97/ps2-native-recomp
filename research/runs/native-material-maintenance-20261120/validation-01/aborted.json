@@ -1,0 +1,6 @@
+{
+  "status": "PREFLIGHT_REFERENCE_NEWLINE_SCOPE_ERROR_NO_BUILD_OR_EXECUTION",
+  "message": "LF guard incorrectly applied to preserved historical runtime/include/ps2/fpu.hpp, not authored this batch. Preserve original reference bytes; check exact hash, scope LF guard to authored changes.",
+  "driver_sha256": "6000fef5c9fd376a7b50f685c25562028fd43e18aed3339760ab2389569c5904",
+  "reference_sha256": "c318a2e548f8b8473719c4cde9b414980c75ca53ac9ec52781b72c1792099c5c"
+}

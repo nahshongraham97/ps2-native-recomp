@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_matfx_binding.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native MatFX owned bindings/borrowed matrix lifetime/resource cleanup; no renderer or hierarchy admission\n",
+  "stderr": "",
+  "executable_sha256": "5712dd7c21619354d188b153a8815457dc995298152a5776a9db9c56e12c8760",
+  "executable_after_sha256": "5712dd7c21619354d188b153a8815457dc995298152a5776a9db9c56e12c8760"
+}

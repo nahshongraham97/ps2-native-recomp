@@ -1,0 +1,163 @@
+"""Populated native material task integration. Offline movie decoder frozen."""
+import ctypes
+import datetime
+import importlib.util
+import json
+import os
+import pathlib
+import re
+import subprocess
+import sys
+
+FORK = pathlib.Path(__file__).resolve().parents[3]
+PARENT = FORK.parents[2]
+RECORDS = PARENT / 'research/runs/native-movie-ingress-20261119'
+COMMON = FORK / 'research/runs/native-movie-kernel-policies-20261119/validate.py'
+spec = importlib.util.spec_from_file_location('_material_evidence', COMMON)
+common = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(common)
+NAMES = ['cmake/native_game.cmake', 'tests/test_logon_frontend_task.cpp',
+    *['runtime/' + kind + '/mka/' + stem + '.hpp' if kind == 'include' else
+      'runtime/src/native/' + stem + '.cpp'
+      for stem in ['material_translation', 'matfx_binding', 'material_maintenance']
+      for kind in ['include', 'src']],
+    *['tests/test_' + stem + '.cpp' for stem in
+      ['material_translation', 'matfx_binding', 'material_maintenance']],
+    'tests/material_translation_source_oracle.cpp', 'runtime/include/ps2/fpu.hpp']
+
+
+def cache_contract():
+    text = (common.BUILD / 'CMakeCache.txt').read_text(encoding='utf-8-sig')
+    common.require(bool(re.search(r'^PS2_GENERATED:PATH=$', text, re.M)), 'no generated game target')
+    common.require(bool(re.search(r'^CMAKE_BUILD_TYPE:STRING=Release$', text, re.M)), 'Release')
+
+
+if __name__ == '__main__':
+    ctypes.windll.kernel32.SetErrorMode(3)
+    require, sha, write = common.require, common.sha, common.write
+    require(len(sys.argv) == 2 and re.fullmatch(r'validation-[0-9]+', sys.argv[1]), 'usage: verify.py validation-NN')
+    out = pathlib.Path(__file__).resolve().parent / sys.argv[1]
+    out.mkdir(exist_ok=False)
+    common.OUT = out
+    common.ENV = dict(os.environ, PATH=str(common.BIN) + os.pathsep + os.environ['PATH'])
+    cache_contract()
+    prior_path = FORK / 'research/runs/native-frontend-logon-integration-20261120/validation-01/verification.json'
+    prior = json.loads(prior_path.read_bytes())
+    require(prior['status'] == 'PASS_NATIVE_QUEUED_LOGON_STATE_SCHEDULER_INTEGRATION' and
+        isinstance(prior['source_after_sha256'], dict) and isinstance(prior['fixtures'], list) and
+        len(prior['fixtures']) == 6 and prior['queued_runtime_scenarios'] == 16, 'prior actual schema/status')
+    changed = {str(FORK / name) for name in NAMES}
+    untouched = {name: digest for name, digest in prior['source_after_sha256'].items() if name not in changed}
+    require(all(sha(name) == digest for name, digest in untouched.items()), 'untouched prior source/tools/assets/libraries')
+    model_path = RECORDS / 'native-material-translation-model-20261120/reference.py'
+    vectors = model_path.with_name('vectors.tsv')
+    model_spec = importlib.util.spec_from_file_location('_material_model', model_path)
+    model = importlib.util.module_from_spec(model_spec)
+    model_spec.loader.exec_module(model)
+    require(len(model.rows(vectors)) == 1000, 'actual fixed numeric-vector schema')
+    reviews = [RECORDS / ('NATIVE_MATERIAL_MAINTENANCE_CLOSURE_' + side + '_20261120.json') for side in ['A', 'B']]
+    review_records = []
+    for path, status in zip(reviews, ['SOURCE_REVIEW_MA01_MA02_CLOSED_NOT_BUILT_NOT_EXECUTED',
+            'SOURCE_REVIEW_MM_B01_CLOSED_NO_CONCRETE_DEFECT_NOT_BUILT_NOT_EXECUTED']):
+        report = json.loads(path.read_bytes())
+        require(report['status'] == status, 'final review status')
+        require(isinstance(report['pins'], dict) and all(sha(name) == digest for name, digest in report['pins'].items()), 'final exact reviewed identities')
+        review_records.append(dict(path=str(path), sha256=sha(path)))
+    paths = {pathlib.Path(name) for name in prior['source_after_sha256']}
+    paths.update(FORK / name for name in NAMES)
+    paths.update([COMMON, pathlib.Path(__file__).resolve(), prior_path, model_path, vectors, *reviews])
+    before = {str(path): sha(path) for path in sorted(paths)}
+    for name in NAMES:
+        if name != 'runtime/include/ps2/fpu.hpp': # Preserved reference has original CRLF, pinned, never rewritten.
+            require(b'\r' not in (FORK / name).read_bytes(), 'LF authored source ' + name)
+    for name, digest in common.PRESERVE.items():
+        require(sha(FORK / name) == digest, 'preserved dirty IOP ' + name)
+    for name, digest in prior['generated_source_sha256'].items():
+        require(sha(name) == digest, 'unchanged AOT caller')
+    write('provenance.json', dict(at_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        fork_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=FORK, text=True).strip(),
+        parent_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=PARENT, text=True).strip(),
+        source_before_sha256=before, unchanged_prior_pins=len(untouched),
+        preserved_dirty_sha256=common.PRESERVE, final_reviews=review_records,
+        scope='Native material kernel/binding/registry/real queued task; deterministic ports, explicit world/frontend probes; no offline movie-corpus rerun'))
+    try:
+        libraries = PARENT.parent / 'dependencies/blender/blender-4.5.15-windows-x64/blender.shared'
+        assets = FORK / 'games/mkarmageddon/disc-files/MOVIEPS2'
+        overlay = PARENT / 'research/inputs/modules/MOVIER.ovl'
+        movie_args = [libraries, assets, 'LOGON.SFD', overlay]
+        cases = [
+            ('translation', 'test_native_material_translation', [vectors],
+             'PASS native material translation source-word kernel; no hardware parity or publication', ['mka::game::translate_material_layers']),
+            ('binding', 'test_native_matfx_binding', [],
+             'PASS native MatFX owned bindings/borrowed matrix lifetime/resource cleanup; no renderer or hierarchy admission', ['mka::game::NativeMatFxBinding::prepare_direct_tracking']),
+            ('maintenance', 'test_native_material_maintenance', [],
+             'PASS native populated material tracking/publication/lifetimes/game step; no hierarchy preparation or renderer bootstrap', ['mka::game::NativeMaterialMaintenanceTask::update', 'mka::game::NativeMaterialMaintenance::step']),
+            ('queued-logon', 'test_native_logon_frontend', movie_args,
+             'PASS native queued LOGON with populated material maintenance/game step; deterministic ports and explicit world/frontend probes',
+             ['mka::native_logon::NativeLogonFrontendTask::update', 'mka::game::NativeMaterialMaintenanceTask::update', 'mka::game::NativeMaterialMaintenance::step']),
+            ('caller', 'test_native_logon_runtime', movie_args,
+             'PASS generated native LOGON actual Service/input-task suspension/restore/identity; deterministic ports not full game effects', ['mka::native_logon::NativeLogonState::poll'])]
+        common.execute('build.json', [common.CMAKE, '--build', common.BUILD, '--target',
+            *[row[1] for row in cases], 'material_translation_source_oracle', '-j2'])
+        fixtures = []
+        translation = None
+        for label, target, args, footer, required in cases:
+            print('RUN ' + label, flush=True)
+            executable = common.BUILD / (target + '.exe')
+            result = common.execute(label + '.json', [executable, *args])
+            require(result['stdout'].splitlines()[-1] == footer, 'complete ' + label + ' assertions')
+            audit = common.symbols(label + '-symbols', executable, result['executable_sha256'], required, True)
+            fixtures.append(dict(component=label, executed_target_sha256=result['executable_sha256'], audit=audit))
+            if label == 'translation':
+                require(model.compare(result['stdout'], vectors, footer) == 1000, 'candidate exact 32 matrix words and selection')
+                translation = result
+        oracle = common.execute('offline-source-oracle.json', [common.BUILD / 'material_translation_source_oracle.exe', vectors])
+        oracle_footer = 'PASS offline material translation project-source helper oracle; not runtime or hardware proof'
+        require(model.compare(oracle['stdout'], vectors, oracle_footer) == 1000, 'offline reference exact numeric words')
+        require(translation['stdout'].splitlines()[:-1] == oracle['stdout'].splitlines()[:-1], 'three-way full output equality')
+        checker_negatives = []
+        lines = translation['stdout'].splitlines()
+        for label, bad in [
+                ('missing-row', '\n'.join(lines[1:]) + '\n'),
+                ('missing-footer', '\n'.join(lines[:-1]) + '\n'),
+                ('wrong-complete-word', translation['stdout'].replace(lines[0].split()[1], 'deadbeef', 1)),
+                ('extra-row', lines[0] + '\n' + translation['stdout']),
+                ('wrong-footer', '\n'.join(lines[:-1] + ['PASS']) + '\n')]:
+            try: model.compare(bad, vectors, cases[0][3])
+            except ValueError: checker_negatives.append(label)
+            else: raise RuntimeError('numeric checker accepted ' + label)
+        write('numeric-comparison.json', dict(status='PASS_THREE_WAY_PROJECT_SOURCE_WORDS_NOT_HARDWARE',
+            vectors=1000, matrix_words_per_vector=32, selection_words=1, checker_negatives=checker_negatives,
+            candidate_sha256=translation['executable_sha256'], offline_oracle_sha256=oracle['executable_sha256'],
+            offline_oracle_role='Separate test-only project helper; never accepted runtime or hardware evidence'))
+        archive = common.BUILD / 'libmka_native_material.a'
+        common.symbols('material-archive-symbols', archive, sha(archive),
+            ['mka::game::NativeMaterialMaintenanceTask::update', 'mka::game::translate_material_layers'], False)
+        ninja = common.BUILD / 'build.ninja'
+        build_text = ninja.read_text()
+        linkage = []
+        for target in ['libmka_native_material.a', 'test_native_logon_frontend.exe']:
+            block = re.search(r'^build ' + re.escape(target) + r':.*(?:\n[ \t].*)*', build_text, re.M)
+            require(block is not None, 'actual Ninja archive/link target')
+            text = block.group()
+            require('material_translation_source_oracle' not in text and 'ps2runtime' not in text, 'no reference/guest runtime candidate linkage')
+            linkage.append(dict(target=target, actual_build_rule=text))
+        write('linkage-audit.json', dict(ninja_sha256=sha(ninja), candidate_rules=linkage,
+            offline_oracle_role='Separate EXCLUDE_FROM_ALL test target, never candidate linked'))
+        require(before == {name: sha(name) for name in before}, 'stable source/compiler/asset/library/review pins')
+        for name, digest in common.PRESERVE.items(): require(sha(FORK / name) == digest, 'preserved IOP after run')
+        cache_contract()
+        write('verification.json', dict(status='PASS_NATIVE_POPULATED_MATERIAL_TASK_INTEGRATION',
+            source_after_sha256=before, unchanged_prior_pins=len(untouched), generated_source_sha256=prior['generated_source_sha256'],
+            fixtures=fixtures, queued_runtime_scenarios=17, retained_caller_scenarios=20, numeric_vectors=1000,
+            offline_reference_executable_sha256=oracle['executable_sha256'],
+            limits=['Source-word agreement with two offline software references, not new hardware proof',
+                'Selected nonempty null-target collection remains named unbound; full hierarchy/resource producer is not implemented',
+                'Real maintenance body runs after queued LOGON; world/frontend and resource/settings ingress remain explicit fixture probes',
+                'No decoder algorithm/corpus rerun; no full game, physical endpoint, local model, driver/settings action',
+                'Actual world/resource/frontend/host bootstrap and physical playback/full-game acceptance remain OPEN']))
+        print(json.dumps(dict(status='PASS_NATIVE_POPULATED_MATERIAL_TASK_INTEGRATION', fixtures=len(fixtures),
+            pins=len(before), numeric_vectors=1000, queued_scenarios=17)), flush=True)
+    except Exception as error:
+        write('aborted.json', dict(status='NATIVE_POPULATED_MATERIAL_CHECK_FAILED', error=str(error)))
+        raise

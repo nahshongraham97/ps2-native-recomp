@@ -1,0 +1,16 @@
+{
+  "status": "PASS_THREE_WAY_PROJECT_SOURCE_WORDS_NOT_HARDWARE",
+  "vectors": 1000,
+  "matrix_words_per_vector": 32,
+  "selection_words": 1,
+  "checker_negatives": [
+    "missing-row",
+    "missing-footer",
+    "wrong-complete-word",
+    "extra-row",
+    "wrong-footer"
+  ],
+  "candidate_sha256": "c647a395308df4675a2b8330a510d7e8d313a718e08f8ece00d569287d0df753",
+  "offline_oracle_sha256": "a208c7e9af2a358170f12c8a428d2edbeddb7b640a6e46e67b779952aca61fda",
+  "offline_oracle_role": "Separate test-only project helper; never accepted runtime or hardware evidence"
+}

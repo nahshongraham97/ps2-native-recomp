@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_material_maintenance.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native populated material tracking/publication/lifetimes/game step; no hierarchy preparation or renderer bootstrap\n",
+  "stderr": "",
+  "executable_sha256": "d51e892cbfaa0b6ff608643331948d142c34b73e633cb790b8e5b82a3cb5c6c5",
+  "executable_after_sha256": "d51e892cbfaa0b6ff608643331948d142c34b73e633cb790b8e5b82a3cb5c6c5"
+}

@@ -14,6 +14,22 @@ target_link_libraries(test_native_game_transition_state PRIVATE mka_native_game_
 add_executable(test_native_frontend_scheduler EXCLUDE_FROM_ALL tests/test_frontend_scheduler.cpp)
 target_link_libraries(test_native_frontend_scheduler PRIVATE mka_native_game_actions)
 
+# Native material game data/updates; no guest runtime or software-FPU include.
+add_library(mka_native_material STATIC EXCLUDE_FROM_ALL
+    runtime/src/native/material_translation.cpp runtime/src/native/matfx_binding.cpp
+    runtime/src/native/material_maintenance.cpp)
+target_include_directories(mka_native_material PUBLIC runtime/include)
+target_link_libraries(mka_native_material PUBLIC mka_native_game_actions)
+add_executable(test_native_material_translation EXCLUDE_FROM_ALL tests/test_material_translation.cpp)
+target_link_libraries(test_native_material_translation PRIVATE mka_native_material)
+add_executable(test_native_matfx_binding EXCLUDE_FROM_ALL tests/test_matfx_binding.cpp)
+target_link_libraries(test_native_matfx_binding PRIVATE mka_native_material)
+add_executable(test_native_material_maintenance EXCLUDE_FROM_ALL tests/test_material_maintenance.cpp)
+target_link_libraries(test_native_material_maintenance PRIVATE mka_native_material)
+# Separate offline project-helper oracle ONLY. No candidate links this target.
+add_executable(material_translation_source_oracle EXCLUDE_FROM_ALL tests/material_translation_source_oracle.cpp)
+target_include_directories(material_translation_source_oracle PRIVATE runtime/include)
+
 # Strict source-checked typed retail closure, isolated from the Cpu-generated glob.
 add_executable(test_native_closure_codegen EXCLUDE_FROM_ALL
     tests/test_native_closure_codegen.cpp recomp/native_closure_codegen.cpp)
@@ -39,5 +55,5 @@ if(WIN32 AND TARGET mka_native_media)
     target_link_libraries(mka_native_logon_frontend PUBLIC mka_native_logon)
     add_dependencies(mka_native_logon_frontend mka_native_logon)
     add_executable(test_native_logon_frontend EXCLUDE_FROM_ALL tests/test_logon_frontend_task.cpp)
-    target_link_libraries(test_native_logon_frontend PRIVATE mka_native_logon_frontend)
+    target_link_libraries(test_native_logon_frontend PRIVATE mka_native_logon_frontend mka_native_material)
 endif()

@@ -1,5 +1,6 @@
 #include "native_movie_audio_ports.hpp"
 #include "mka/logon_frontend_task.hpp"
+#include "mka/material_maintenance.hpp"
 #include <functional>
 
 using namespace mka::native_logon;
@@ -12,6 +13,15 @@ struct Probe final : game::NativeFrontendTask {
     Probe(decltype(run) r, decltype(cleanup) c) : run(std::move(r)), cleanup(std::move(c)) {}
     ~Probe() override { if (cleanup) cleanup(); }
     game::TaskUpdate update(game::NativeFrontendExecution& e, game::FrontendSchedulerFailure& f) override { return run(e, f); }
+};
+struct ObservedMaintenance final : game::NativeFrontendTask {
+    std::unique_ptr<game::NativeMaterialMaintenanceTask> actual; std::vector<int>& events;
+    ObservedMaintenance(std::unique_ptr<game::NativeMaterialMaintenanceTask> task, std::vector<int>& e)
+        : actual(std::move(task)), events(e) {}
+    ~ObservedMaintenance() override { events.push_back(-16); }
+    game::TaskUpdate update(game::NativeFrontendExecution& e, game::FrontendSchedulerFailure& f) override {
+        events.push_back(16); return actual->update(e, f);
+    }
 };
 struct Observed final : game::NativeFrontendTask {
     std::unique_ptr<NativeLogonFrontendTask> actual;
@@ -39,12 +49,12 @@ int main(int argc, char** argv) { try {
     enum class Case { normal, skip, gate_during_block, mode7_after_world, world_failure,
         missing_clear, frontend_failure, factory_exception, world_exception,
         missing_dependencies, movie_failure, cancel, clear_without_maintenance,
-        wrong_maintenance_priority, foreign_maintenance_receipt, handled_reentry };
+        wrong_maintenance_priority, foreign_maintenance_receipt, handled_reentry, material_step50 };
     unsigned scenarios = 0;
     for (auto scenario : {Case::normal, Case::skip, Case::gate_during_block, Case::mode7_after_world,
             Case::world_failure, Case::missing_clear, Case::frontend_failure, Case::factory_exception,
             Case::world_exception, Case::missing_dependencies, Case::movie_failure, Case::cancel,
-            Case::clear_without_maintenance, Case::wrong_maintenance_priority, Case::foreign_maintenance_receipt, Case::handled_reentry}) {
+            Case::clear_without_maintenance, Case::wrong_maintenance_priority, Case::foreign_maintenance_receipt, Case::handled_reentry, Case::material_step50}) {
         ++scenarios;
         auto data = std::make_shared<Data>(); auto gpu = std::make_shared<GPU>();
         std::int64_t ticks = 0; unsigned profiles = 0, restores = 0, destroyed = 0;
@@ -94,6 +104,15 @@ int main(int argc, char** argv) { try {
         game::FrontendSchedulerFailure failure;
         auto scheduler = game::NativeFrontendScheduler::create(*actions, 0, failure); check(bool(scheduler), "actual native scheduler");
         auto ui = input_tasks->create_task(input::GameInputTaskKind::kind208b, false, tf); check(bool(ui), "owned existing UI restore state");
+        game::MaterialMaintenanceFailure mf;
+        auto materials = game::NativeMaterialMaintenance::create(mf);
+        auto step = game::NativeMaterialGameStep::create({false, false, 60}, mf);
+        auto material_owner = game::NativeTrackedMaterialOwner::create({}, mf);
+        game::MatFxBindingFailure bf;
+        auto unique_material = game::NativeMatFxBinding::create({game::MatFxMode::disabled, {}}, bf);
+        check(materials && step && material_owner && unique_material, "actual native material owners; explicit fixture settings/resource producer");
+        auto material = std::shared_ptr<game::NativeMatFxBinding>(std::move(unique_material));
+        std::optional<game::MaterialTrackingToken> material_token;
         FrontendEffects effects;
         effects.prepare_game_world = [&](EffectFailure& f) { f = {}; events.push_back(1); return true; };
         effects.surround_movie = [&](EffectFailure& f) { f = {}; events.push_back(2); return true; };
@@ -116,8 +135,10 @@ int main(int argc, char** argv) { try {
             check(execution.clear_for_transition(failure), "actual source-point native task clear");
             check(!input_tasks->get(*ui, tf) && tf.kind == input::GameInputTaskError::stale_task, "clearing actual UI task releases its restore record");
             if (scenario == Case::clear_without_maintenance) return {};
-            std::unique_ptr<game::NativeFrontendTask> maintenance = std::make_unique<Probe>(
-                [&](auto&, auto& why) { why = {}; events.push_back(16); return game::TaskUpdate::yield; }, [&] { events.push_back(-16); });
+            check(materials->clear(mf) && step->refresh({false, false, scenario == Case::material_step50 ? 50 : 60}, mf), "actual material cleanup/game-step refresh source point; settings ingress is explicit fixture data");
+            auto body = game::NativeMaterialMaintenanceTask::create(materials, step, mf);
+            check(bool(body), "real populated maintenance body required, not successful task stub");
+            std::unique_ptr<game::NativeFrontendTask> maintenance = std::make_unique<ObservedMaintenance>(std::move(body), events);
             std::optional<game::FrontendTaskToken> receipt;
             if (scenario == Case::foreign_maintenance_receipt) {
                 auto foreign = game::NativeFrontendScheduler::create(*actions, 0, failure); check(bool(foreign), "actual foreign native scheduler");
@@ -132,7 +153,14 @@ int main(int argc, char** argv) { try {
             auto current = flow->snapshot(gf); check(current && current->active_render_view_count == (scenario == Case::mode7_after_world ? 5 : 1), "conditional view count reads mode AFTER world");
             if (scenario == Case::frontend_failure) { f = {"fixture next frontend body unavailable", 95}; return {}; }
             if (scenario == Case::factory_exception) throw std::runtime_error("fixture next frontend factory exception");
-            return std::make_unique<Probe>([&](auto&, auto& why) { why = {}; check(sequence == 1, "frontend deferred to next main iteration"); ++sequence; events.push_back(32); return game::TaskUpdate::finished; }, [&] { events.push_back(-32); });
+            return std::make_unique<Probe>([&](auto&, auto& why) {
+                why = {}; check(sequence == 1, "frontend deferred to next main iteration");
+                material_token = materials->register_direct(material_owner, material,
+                    {{0x3e800000}, {0}, {0}, {0}}, {{0x40000000, 0}, {{{11,12,13},{21,22,23}}}}, mf);
+                check(material_token && materials->record(*material_token, mf)->matrices.first.translation.x.bits == 0,
+                    "frontend fixture registers actual native material after first empty maintenance pass");
+                ++sequence; events.push_back(32); return game::TaskUpdate::finished;
+            }, [&] { events.push_back(-32); });
         };
         if (scenario == Case::missing_dependencies) effects.frontend_task = {};
         FrontendTaskFailure task_failure;
@@ -190,8 +218,16 @@ int main(int argc, char** argv) { try {
         auto next = scheduler->dispatch(failure); check(next.progress == game::FrontendDispatchProgress::pass_complete && sequence == 2, "application explicitly begins the next source iteration");
         auto m = std::find(events.begin(), events.end(), 16), n = std::find(events.begin(), events.end(), 32);
         check(m != events.end() && n != events.end() && m < n, "native source business priority16 precedes32");
+        auto populated = scheduler->dispatch(failure);
+        check(populated.progress == game::FrontendDispatchProgress::pass_complete && populated.updates == 1,
+            "real maintenance yields then runs populated in next eligible source pass");
+        auto actual_pair = material->first_parameter_pair(bf);
+        check(material_token && actual_pair && actual_pair->first && !actual_pair->second &&
+            actual_pair->first->translation.x.bits == (scenario == Case::material_step50 ? 0x3e999999u : 0x3e800000u) &&
+            actual_pair->first->flags == 0x40000003 && actual_pair->first->opaque_padding == std::array<std::uint32_t,3>{11,12,13},
+            "queued actual maintenance publishes native binding from actual owned game step, not clock/display rate");
         scheduler.reset();
     }
-    check(scenarios == 16, "all declared queued caller scenarios executed");
-    std::puts("PASS native queued LOGON blocking/transition/game state/owned jobs; deterministic ports and explicit game-effect probes"); return 0;
+    check(scenarios == 17, "all declared queued caller scenarios executed");
+    std::puts("PASS native queued LOGON with populated material maintenance/game step; deterministic ports and explicit world/frontend probes"); return 0;
 } catch (const std::exception& e) { std::fprintf(stderr, "FAIL native queued LOGON %s\n", e.what()); return 1; } }
