@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_admission_feed.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native admission feed current headers/explicit parse entries/work candidates; no business admission or decoder execution\n",
+  "stderr": "",
+  "executable_sha256": "e691d2028f37646f8c5e2cae7b623b4dadfd5a0b38b8cf50fde0cbbd96145a4c",
+  "executable_after_sha256": "e691d2028f37646f8c5e2cae7b623b4dadfd5a0b38b8cf50fde0cbbd96145a4c"
+}

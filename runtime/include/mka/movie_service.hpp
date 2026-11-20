@@ -44,6 +44,7 @@ struct MovieServiceFailure {
     MovieControlFailure control;
     MovieOutputPositionFailure position;
     MovieAdmissionFeedFailure feed;
+    MovieControlFailure observation;
 };
 struct MovieServiceRequestIdentity {
     std::uint64_t generation=0;
@@ -60,6 +61,11 @@ struct MovieServiceSnapshot {
     std::optional<MovieNativeContextSnapshot> context;
     std::optional<MovieOutputPositionSnapshot> position;
     std::optional<MovieControlResult> terminal;
+    // No pumping; actual owned Session/Stream observation. Retained after close
+    // refers to the last pre-teardown query, not a current device observation.
+    std::optional<MoviePlaybackSnapshot> playback;
+    bool playback_retained=false;
+    std::optional<MovieControlFailure> playback_snapshot_failure;
 };
 struct MovieServicePort;
 class NativeMovieService final {
@@ -86,6 +92,7 @@ public:
     // Operations consume the SAME feed automatically supplied by actual Stream
     // observations. Need-more/blocked candidates do not imply admission.
     std::optional<MovieAdmissionCandidate> parse_candidate(const MovieServiceRequestIdentity&,MovieServiceFailure&) noexcept;
+    std::optional<MoviePictureBodyExtent> picture_body_extent(const MovieServiceRequestIdentity&,MovieServiceFailure&) noexcept;
     std::optional<MovieHeaderBoundaryProposal> boundary_proposal(const MovieServiceRequestIdentity&,MovieServiceFailure&) noexcept;
     bool skip_source_bytes(const MovieServiceRequestIdentity&,std::uint64_t actual_bytes,MovieServiceFailure&) noexcept;
     std::optional<MovieAdmissionFeedSnapshot> source_feed_snapshot(const MovieServiceRequestIdentity&,MovieServiceFailure&) const noexcept;

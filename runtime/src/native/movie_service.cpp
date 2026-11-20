@@ -2,6 +2,7 @@
 #include <cmath>
 #include <limits>
 #include <new>
+#include <type_traits>
 namespace mka::video {
 struct MovieServicePort {
     std::uint64_t generation=0,factory_calls=0;
@@ -19,11 +20,18 @@ struct MovieServicePort {
     void invalidate() noexcept {opening=false;context=nullptr;kernel=nullptr;feed.reset();}
 };
 namespace {
+static_assert(std::is_nothrow_move_assignable_v<MoviePlaybackSnapshot>);
+static_assert(std::is_nothrow_move_constructible_v<MoviePlaybackSnapshot>);
+static_assert(std::is_nothrow_move_assignable_v<MovieSessionFailure>);
 struct Guard {bool& flag;explicit Guard(bool& f):flag(f){flag=true;}~Guard(){flag=false;}};
 bool same_request(const RetailMovieRequest& a,const RetailMovieRequest& b) noexcept {return a.id==b.id&&a.logical_key==b.logical_key&&a.logical_extent.width==b.logical_extent.width&&a.logical_extent.height==b.logical_extent.height&&a.requested_view==b.requested_view&&a.selected_view==b.selected_view&&a.route==b.route&&a.route_extra==b.route_extra&&a.subtitle_language==b.subtitle_language&&a.subtitle_tag==b.subtitle_tag;}
 bool fail(MovieServiceFailure& f,MovieServiceError kind,const char* op) noexcept {f.kind=kind;f.operation=op;return false;}
 std::unique_ptr<MoviePlaybackPolicies> policy_error(MovieSessionFailure& f,const char* op,MovieSessionError kind=MovieSessionError::control) noexcept {if(f.kind==MovieSessionError::none){f.kind=kind;f.operation=op;}return {};}
-MovieControlFailure control_error(const MovieServiceFailure& f) noexcept {if(f.control.kind!=MovieControlError::none)return f.control;if(f.session.control.kind!=MovieControlError::none)return f.session.control;return {f.kind==MovieServiceError::wrong_thread?MovieControlError::wrong_thread:MovieControlError::native_service,f.operation,static_cast<std::int64_t>(f.kind)};}
+MovieControlFailure observation_error(const MovieSessionFailure& f) noexcept {
+    if(f.control.kind!=MovieControlError::none)return f.control;
+    return {f.kind==MovieSessionError::wrong_thread?MovieControlError::wrong_thread:MovieControlError::native_service,f.operation,static_cast<std::int64_t>(f.kind)};
+}
+MovieControlFailure control_error(const MovieServiceFailure& f) noexcept {if(f.control.kind!=MovieControlError::none)return f.control;if(f.session.control.kind!=MovieControlError::none)return f.session.control;if(f.observation.kind!=MovieControlError::none)return f.observation;if(f.cleanup.kind!=MovieSessionError::none)return observation_error(f.cleanup);return {f.kind==MovieServiceError::wrong_thread?MovieControlError::wrong_thread:MovieControlError::native_service,f.operation,static_cast<std::int64_t>(f.kind)};}
 // Lifetime wrapper only: all business calls execute the concrete kernel. Its
 // destructor clears every captured raw port before the owned kernel/context.
 class LeasedPolicies final:public MoviePlaybackPolicies {
@@ -117,14 +125,24 @@ bool NativeMovieService::start(std::int64_t id,MovieViewSelection view,std::int6
      catch(...){fail(f,MovieServiceError::session,"movie service acquisition factory exception");terminal_failure(f);return false;}
 }
 bool NativeMovieService::close_owned(MovieServiceFailure& f) noexcept {
-    if(port_)port_->invalidate(); // Before any stream/policy/context destruction.
-    bool ok=true;if(session_){ok=session_->close(f.session);if(!ok)fail(f,MovieServiceError::session,"movie service resource cleanup");session_.reset();}
+    bool ok=true;
+    if(session_){
+        MoviePlaybackSnapshot actual;MovieSessionFailure query;
+        state_.playback_retained=true;
+        if(session_->snapshot(actual,query)){state_.playback=std::move(actual);state_.playback_snapshot_failure.reset();}
+        else {state_.playback.reset();state_.playback_snapshot_failure=observation_error(query);f.observation=*state_.playback_snapshot_failure;f.session=std::move(query);fail(f,MovieServiceError::session,"movie service pre-teardown playback observation");ok=false;}
+    }
+    if(port_)port_->invalidate(); // Before any source/policy/context destruction.
+    if(session_){MovieSessionFailure cleanup;const bool closed=session_->close(cleanup);
+        if(!closed){f.cleanup=std::move(cleanup);if(ok)fail(f,MovieServiceError::session,"movie service resource cleanup");ok=false;}
+        session_.reset();
+    }
     port_.reset();state_.active=false;return ok;
 }
 void NativeMovieService::terminal_failure(MovieServiceFailure& f) noexcept {
     auto primary=control_error(f);MovieServiceFailure cleanup;
-    close_owned(cleanup);f.cleanup=cleanup.session;
-    state_.terminal=MovieControlResult{MovieControlProgress::error,MovieControlCompletion::none,primary,cleanup.kind==MovieServiceError::none?MovieControlFailure{}:control_error(cleanup)};state_.activity=MovieServiceActivity::error;
+    close_owned(cleanup);f.observation=cleanup.observation;f.cleanup=std::move(cleanup.cleanup);
+    state_.terminal=MovieControlResult{MovieControlProgress::error,MovieControlCompletion::none,primary,f.cleanup.kind==MovieSessionError::none?MovieControlFailure{}:observation_error(f.cleanup)};state_.activity=MovieServiceActivity::error;
 }
 MovieControlResult NativeMovieService::poll(MovieServiceFailure& f) noexcept {
     if(!access(f))return {MovieControlProgress::error,MovieControlCompletion::none,control_error(f),{}};Guard call(in_call_);
@@ -133,7 +151,19 @@ MovieControlResult NativeMovieService::poll(MovieServiceFailure& f) noexcept {
     auto result=session_->poll();if(result.progress==MovieControlProgress::ongoing)return result;
     if(port_&&port_->feed_failure.kind!=MovieAdmissionFeedError::none){f.kind=MovieServiceError::source_feed;f.operation="movie service source observation feed failure";f.feed=port_->feed_failure;f.control=result.failure;}
     MovieServiceFailure cleanup;close_owned(cleanup);
-    if(cleanup.kind!=MovieServiceError::none){if(f.kind==MovieServiceError::none)f=cleanup;else f.cleanup=cleanup.session;if(result.progress==MovieControlProgress::error)result.cleanup_failure=control_error(cleanup);else{result.progress=MovieControlProgress::error;result.failure=control_error(cleanup);}}
+    if(cleanup.kind!=MovieServiceError::none){
+        const auto observation=cleanup.observation;
+        const bool actual_cleanup_failed=cleanup.cleanup.kind!=MovieSessionError::none;
+        const auto actual_cleanup=actual_cleanup_failed?observation_error(cleanup.cleanup):MovieControlFailure{};
+        const auto first=observation.kind!=MovieControlError::none?observation:actual_cleanup;
+        if(f.kind==MovieServiceError::none)f=std::move(cleanup);
+        else{f.observation=observation;f.cleanup=std::move(cleanup.cleanup);}
+        if(actual_cleanup_failed)result.cleanup_failure=actual_cleanup;
+        // Observation failure is never relabeled as actual cleanup, and cannot
+        // replace an existing playback failure. A completed control operation
+        // may fail its final observation while retaining its completion reason.
+        if(result.progress!=MovieControlProgress::error){result.progress=MovieControlProgress::error;result.failure=first;}
+    }
     state_.terminal=result;state_.activity=result.progress==MovieControlProgress::error?MovieServiceActivity::error:MovieServiceActivity::complete;
     if(result.progress==MovieControlProgress::error&&f.kind==MovieServiceError::none){f.kind=MovieServiceError::session;f.operation="movie service terminal playback error";f.control=result.failure;}
     return result;
@@ -142,11 +172,16 @@ bool NativeMovieService::stop(MovieServiceFailure& f) noexcept {if(!access(f))re
 bool NativeMovieService::close(MovieServiceFailure& f) noexcept {if(!access(f))return false;Guard call(in_call_);const bool ok=close_owned(f);state_.activity=ok?MovieServiceActivity::closed:MovieServiceActivity::error;return ok;}
 NativeMovieService::~NativeMovieService(){if(std::this_thread::get_id()!=owner_||in_call_)std::terminate();in_call_=true;MovieServiceFailure ignored;close_owned(ignored);}
 std::optional<MovieServiceRequestIdentity> NativeMovieService::request_identity(MovieServiceFailure& f) const noexcept {if(!access(f))return {};Guard call(in_call_);if(!state_.active||!port_||!port_->context){fail(f,MovieServiceError::invalid_state,"movie service no live request identity");return {};}try{return MovieServiceRequestIdentity{state_.generation,port_->key,port_->identity};}catch(const std::bad_alloc&){fail(f,MovieServiceError::allocation,"movie service identity allocation");return {};}}
-std::optional<MovieServiceSnapshot> NativeMovieService::snapshot(MovieServiceFailure& f) const noexcept {if(!access(f))return {};Guard call(in_call_);try{auto result=state_;result.base_volume=settings_.current_base_volume();if(port_&&port_->context){MovieControlFailure why;result.context=port_->context->snapshot(why);if(!result.context){f.control=why;fail(f,MovieServiceError::context,"movie service context snapshot");return {};}}return result;}catch(const std::bad_alloc&){fail(f,MovieServiceError::allocation,"movie service snapshot allocation");return {};}}
+std::optional<MovieServiceSnapshot> NativeMovieService::snapshot(MovieServiceFailure& f) const noexcept {if(!access(f))return {};Guard call(in_call_);try{auto result=state_;result.base_volume=settings_.current_base_volume();if(session_){MoviePlaybackSnapshot actual;if(!session_->snapshot(actual,f.session)){f.observation=observation_error(f.session);fail(f,MovieServiceError::session,"movie service live playback observation");return {};}result.playback=std::move(actual);result.playback_retained=false;result.playback_snapshot_failure.reset();}if(port_&&port_->context){MovieControlFailure why;result.context=port_->context->snapshot(why);if(!result.context){f.control=why;fail(f,MovieServiceError::context,"movie service context snapshot");return {};}}return result;}catch(const std::bad_alloc&){fail(f,MovieServiceError::allocation,"movie service snapshot allocation");return {};}}
 std::optional<MovieAdmissionCandidate> NativeMovieService::parse_candidate(const MovieServiceRequestIdentity& id,MovieServiceFailure& f) noexcept {
     if(!event_access(id,f))return {};Guard call(in_call_);
     auto result=port_->feed->parse_next(f.feed);
     if(!result){fail(f,MovieServiceError::source_feed,"movie service parse source candidate");terminal_failure(f);}return result;
+}
+std::optional<MoviePictureBodyExtent> NativeMovieService::picture_body_extent(const MovieServiceRequestIdentity& id,MovieServiceFailure& f) noexcept {
+    if(!event_access(id,f))return {};Guard call(in_call_);
+    auto result=port_->feed->picture_body_extent(f.feed);
+    if(!result){fail(f,MovieServiceError::source_feed,"movie service source picture body extent");terminal_failure(f);}return result;
 }
 std::optional<MovieHeaderBoundaryProposal> NativeMovieService::boundary_proposal(const MovieServiceRequestIdentity& id,MovieServiceFailure& f) noexcept {
     if(!event_access(id,f))return {};Guard call(in_call_);

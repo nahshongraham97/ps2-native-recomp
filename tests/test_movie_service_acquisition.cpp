@@ -59,6 +59,28 @@ int main(int argc,char** argv){try{
     const auto polled=service->poll(sf);check(polled.progress==MovieControlProgress::ongoing&&sf.kind==MovieServiceError::none,"one actual preparation poll pumps native source without completion");
     auto received=service->source_feed_snapshot(*identity,sf);check(received&&received->current.source->source_key==request->logical_key&&received->current.source->identity==identity->source&&received->observation_sequence>0&&received->es_end>received->es_begin&&received->buffered_bytes>0,"same-epoch real native source observations reached service-owned feed");
     auto preparing=service->snapshot(sf);check(preparing&&preparing->active&&preparing->context&&!preparing->context->owner_started&&!preparing->context->video_started&&preparing->context->admissions==0,"source delivery invents neither readiness acknowledgments nor business admission");
+    std::optional<MovieAdmissionCandidate> slice;
+    for (;;) {
+        auto before_parse=service->source_feed_snapshot(*identity,sf);check(bool(before_parse),"actual source cursor before parser entry");
+        auto candidate=service->parse_candidate(*identity,sf);check(bool(candidate),"actual source header parse candidate");
+        auto after_parse=service->source_feed_snapshot(*identity,sf);check(bool(after_parse),"actual source cursor after parser entry");
+        if(candidate->kind==MovieAdmissionCandidateKind::first_slice){
+            check(candidate->consumed_bytes==0&&after_parse->es_begin==before_parse->es_begin&&after_parse->work_pending,"actual first slice is non-consuming pending work");slice=std::move(candidate);break;
+        }
+        check(candidate->kind==MovieAdmissionCandidateKind::parsed_header&&candidate->parsed&&candidate->consumed_bytes>=4&&
+            before_parse->es_begin<=UINT64_MAX-candidate->consumed_bytes&&after_parse->es_begin==before_parse->es_begin+candidate->consumed_bytes&&after_parse->es_begin>before_parse->es_begin&&after_parse->es_end==received->es_end,
+            "header-only loop must consume checked bytes strictly within already observed data; no retries or pumping");
+    }
+    auto before_body=service->source_feed_snapshot(*identity,sf);auto extent=service->picture_body_extent(*identity,sf);
+    check(before_body&&extent&&sf.kind==MovieServiceError::none&&extent->current.source&&extent->current.source->source_key==request->logical_key&&extent->current.source->identity==identity->source&&extent->current.picture&&extent->current.coding&&slice->prefix&&extent->first_slice.prefix.es_prefix_first_byte==slice->prefix->prefix.es_prefix_first_byte&&extent->first_slice.prefix.raw_codeword==slice->prefix->prefix.raw_codeword&&extent->first_slice.prefix.classification==slice->prefix->prefix.classification&&extent->first_slice.pes==slice->prefix->pes&&extent->first_slice.quarter_pts==slice->prefix->quarter_pts&&extent->es_begin==before_body->es_begin&&extent->first_slice.prefix.es_prefix_first_byte==extent->es_begin&&extent->first_slice.pes.es_begin<=extent->es_begin&&extent->es_begin<extent->first_slice.pes.es_end,
+        "actual service body query retains exact same-source current picture and first-slice provenance");
+    if(extent->state==MoviePictureBodyExtentState::boundary_found){
+        check(extent->es_end>extent->es_begin&&extent->es_end<=before_body->es_end&&extent->slice_count>0,"found slice-data extent stays inside observed source");
+        check((extent->next_header&&extent->next_header->prefix.es_prefix_first_byte==extent->es_end)||(!extent->next_header&&extent->ended_at_program_end&&before_body->program_end_observed&&extent->es_end==before_body->es_end),"found boundary has actual next-header or validated input-end provenance");
+    }else check(extent->state==MoviePictureBodyExtentState::need_more&&!extent->next_header&&!extent->ended_at_program_end,"available input can explicitly require further body lookahead without fabricated work");
+    auto after_body=service->source_feed_snapshot(*identity,sf);auto unchanged=service->snapshot(sf);
+    check(after_body&&after_body->es_begin==before_body->es_begin&&after_body->buffered_bytes==before_body->buffered_bytes&&after_body->work_pending&&after_body->current.gop_parse_entries==before_body->current.gop_parse_entries&&unchanged&&unchanged->context&&unchanged->context->admissions==0&&!unchanged->context->owner_started&&!unchanged->context->video_started&&!unchanged->position,
+        "production body proposal consumes no bytes or business admission/readiness/position work");
     check(service->close(sf)&&!service->snapshot(sf)->active,"actual session resource cancellation");service.reset();factory={};check(weak.expired()&&released==1,"retained GPU released only after session/factory teardown");
     check(std::puts("PASS native service acquisition associated video-only Session; no endpoint activation or playback")>=0&&std::fflush(stdout)==0,"checked output");return 0;
 }catch(const std::exception& e){std::fprintf(stderr,"FAIL movie acquisition %s\n",e.what());return 1;}}

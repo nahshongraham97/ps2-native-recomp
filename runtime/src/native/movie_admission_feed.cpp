@@ -209,6 +209,43 @@ std::optional<MovieAdmissionCandidate> NativeMovieAdmissionFeed::parse_next(Movi
       catch (const std::length_error&) { fail(f, MovieAdmissionFeedError::host_capacity); }
     return {};
 }
+std::optional<MoviePictureBodyExtent> NativeMovieAdmissionFeed::picture_body_extent(MovieAdmissionFeedFailure& f) const noexcept {
+    if (!access(f)) return {};
+    Guard guard(state_->in_call);
+    const auto& s = *state_;
+    if (!s.pending || !s.current.picture || !s.current.coding) { fail(f, MovieAdmissionFeedError::invalid_order); return {}; }
+    auto view = s.boundary.snapshot(f.boundary);
+    if (!view) { fail(f, MovieAdmissionFeedError::allocation); return {}; }
+    auto first = s.prefixes.find(view->es_begin);
+    if (first == s.prefixes.end() || (first->second.prefix.raw_codeword & 255) != 1) { fail(f, MovieAdmissionFeedError::invalid_order); return {}; }
+    MoviePictureBodyExtent out;
+    out.es_begin = view->es_begin; out.es_end = view->es_begin;
+    out.first_slice = first->second; out.current = s.current;
+    const auto& bytes = view->bytes;
+    std::size_t at = 0;
+    for (;;) {
+        const auto code = bytes[at + 3];
+        if (code < 1 || code > 0xaf) {
+            out.state = MoviePictureBodyExtentState::boundary_found; out.es_end = view->es_begin + at; out.next_header = s.prefixes.at(out.es_end); return out;
+        }
+        ++out.slice_count;
+        std::size_t next = at + 4;
+        while (next + 4 <= bytes.size() && (bytes[next] || bytes[next + 1] || bytes[next + 2] != 1)) ++next;
+        if (next + 4 <= bytes.size()) {
+            if (!s.prefixes.contains(view->es_begin + next)) {
+                if (s.program_end) { fail(f, MovieAdmissionFeedError::invalid_prefix); return {}; }
+                return out; // Metadata may still arrive while input is open.
+            }
+            if (next == at + 4) { fail(f, MovieAdmissionFeedError::parser); return {}; }
+            at = next; continue;
+        }
+        if (!s.program_end) return out;
+        if (bytes.size() == at + 4 || (bytes.size() >= 3 && bytes[bytes.size()-3] == 0 && bytes[bytes.size()-2] == 0 && bytes.back() == 1)) {
+            fail(f, MovieAdmissionFeedError::parser); return {};
+        }
+        out.state = MoviePictureBodyExtentState::boundary_found; out.es_end = view->es_end; out.ended_at_program_end = true; return out;
+    }
+}
 std::optional<MovieHeaderBoundaryProposal> NativeMovieAdmissionFeed::proposal(MovieAdmissionFeedFailure& f) noexcept {
     if (!access(f)) return {};
     Guard guard(state_->in_call);

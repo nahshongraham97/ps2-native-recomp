@@ -86,5 +86,40 @@ int main() { try {
         MovieAdmissionFeedFailure thread_failure;std::optional<MovieAdmissionCandidate> result;std::thread t([&]{result=x.owner->parse_next(thread_failure);});t.join();check(!result&&thread_failure.kind==MovieAdmissionFeedError::wrong_thread,"owner-thread contract");
         NativeMovieAdmissionFeed moved(std::move(*x.owner));check(!x.owner->snapshot(f)&&f.kind==MovieAdmissionFeedError::invalid_owner,"moved owner rejects");moved=std::move(moved);reenter=&moved;auto completed=moved.parse_next(f);check(completed&&completed->kind==MovieAdmissionCandidateKind::parsed_header&&reentry_checked,"selfmove preserves bytes; allocator reentry cannot consume or inspect half operation");
     }
+    {
+        Bytes body=sequence();add(body,picture());add(body,coding(false,false));const auto begin=body.size();
+        add(body,{0,0,1,1,0x55});add(body,{0,0,1,2,0x66,0x77});const auto end=body.size();add(body,{0,0,1,0xb2,0x44});add(body,{0,0,1,0xb7});
+        Feed x(body,end+2);x.push(end+2);x.next();x.next();x.next();x.next();
+        auto waiting=x.owner->picture_body_extent(f);check(waiting&&waiting->state==MoviePictureBodyExtentState::need_more&&waiting->slice_count==2&&waiting->es_begin==begin,"split next raw prefix keeps body range unresolved");
+        const auto before=x.snapshot();x.push(body.size());auto extent=x.owner->picture_body_extent(f);
+        check(extent&&extent->state==MoviePictureBodyExtentState::boundary_found&&extent->es_begin==begin&&extent->es_end==end&&extent->slice_count==2&&extent->next_header&&extent->next_header->prefix.raw_codeword==0x1b2&&!extent->ended_at_program_end,"multiple slices stop at exact B2 delimiter without declaring whole-picture completion");
+        check(x.snapshot().es_begin==before.es_begin&&x.snapshot().work_pending,"range proposal never consumes or clears pending work");
+        auto held=*extent;check(!x.owner->skip(UINT64_MAX,f)&&x.snapshot().es_begin==begin,"invalid body acknowledgment leaves cursor intact");
+        check(x.owner->skip(end-begin,f)&&x.next().parsed->origin.prefix.raw_codeword==0x1b2,"explicit checked body consumption leaves structured header for parser");
+        x.owner.reset();check(held.current.picture&&held.current.source->identity==x.id&&held.next_header->prefix.es_prefix_first_byte==end,"body proposal source and header ownership survive feed destruction");
+    }
+    {
+        Bytes body=sequence();add(body,picture());add(body,coding(false,false));const auto begin=body.size();add(body,{0,0,1,1,0x55});
+        Feed x(body);x.push(body.size());x.next();x.next();x.next();x.next();
+        auto pending=x.owner->picture_body_extent(f);check(pending&&pending->state==MoviePictureBodyExtentState::need_more,"buffer end alone cannot close slice-data extent");
+        MovieSourceObservationBatch end{"fixture.sfd",x.id,{{++x.seq,MovieProgramEndObservation{999,4,0}}}};check(x.owner->push(end,f),"explicit validated input ProgramEnd observation");
+        auto range=x.owner->picture_body_extent(f);check(range&&range->state==MoviePictureBodyExtentState::boundary_found&&range->ended_at_program_end&&!range->next_header&&range->es_begin==begin&&range->es_end==body.size(),"explicit input end bounds final slice data only");
+        allocation_after=0;auto failed=x.owner->picture_body_extent(f);allocation_after=-1;check(!failed&&f.kind==MovieAdmissionFeedError::allocation&&x.snapshot().es_begin==begin,"proposal allocation failure leaves body/cursor unchanged");
+    }
+    for(bool terminal:{false,true}) {
+        Bytes body=sequence();add(body,picture());add(body,coding(false,false));add(body,{0,0,1,1,0x55});const auto delimiter=body.size();add(body,{0,0,1,0xb7});
+        Feed x(body);auto batch=x.chunk(body.size());MovieVideoPrefixObserved delayed;
+        for(auto it=batch.events.begin();it!=batch.events.end();++it)if(auto* p=std::get_if<MovieVideoPrefixObserved>(&it->value);p&&p->prefix.es_prefix_first_byte==delimiter){delayed=*p;batch.events.erase(it);break;}
+        std::uint64_t seq=0;for(auto& event:batch.events)event.sequence=++seq;x.seq=seq;
+        check(x.owner->push(batch,f),"raw bytes can precede delayed prefix metadata");x.next();x.next();x.next();x.next();
+        auto waiting=x.owner->picture_body_extent(f);check(waiting&&waiting->state==MoviePictureBodyExtentState::need_more,"missing delimiter provenance waits while input open");
+        if(terminal){MovieSourceObservationBatch end{"fixture.sfd",x.id,{{++x.seq,MovieProgramEndObservation{999,4,0}}}};check(x.owner->push(end,f),"terminal missing provenance input end");check(!x.owner->picture_body_extent(f)&&f.kind==MovieAdmissionFeedError::invalid_prefix&&x.snapshot().work_pending,"terminal missing prefix provenance rejects instead of permanent need-more");}
+        else {MovieSourceObservationBatch later{"fixture.sfd",x.id,{{++x.seq,delayed}}};check(x.owner->push(later,f),"delayed delimiter observation accepted before end");auto found=x.owner->picture_body_extent(f);check(found&&found->state==MoviePictureBodyExtentState::boundary_found&&found->es_end==delimiter,"delayed provenance resolves exact boundary without consuming");}
+    }
+    for(bool empty:{false,true}) {
+        Bytes body=sequence();add(body,picture());add(body,coding(false,false));add(body,{0,0,1,1});if(!empty)add(body,{0x55,0,0,1});
+        Feed x(body);x.push(body.size());x.next();x.next();x.next();x.next();MovieSourceObservationBatch end{"fixture.sfd",x.id,{{++x.seq,MovieProgramEndObservation{999,4,0}}}};check(x.owner->push(end,f),"end for malformed body fixture");
+        check(!x.owner->picture_body_extent(f)&&f.kind==MovieAdmissionFeedError::parser&&x.snapshot().work_pending,"empty slice or terminal partial prefix is named and non-consuming");
+    }
     std::puts("PASS native admission feed current headers/explicit parse entries/work candidates; no business admission or decoder execution");return 0;
 } catch(const std::exception& e){std::fprintf(stderr,"FAIL admission feed %s\n",e.what());return 1;} }

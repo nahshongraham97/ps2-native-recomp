@@ -39,6 +39,15 @@ struct MovieAdmissionCandidate {
     std::shared_ptr<const MovieCurrentHeaderUnit> parsed;
     MovieAdmissionCurrent current;
 };
+enum class MoviePictureBodyExtentState { need_more, boundary_found };
+struct MoviePictureBodyExtent {
+    MoviePictureBodyExtentState state = MoviePictureBodyExtentState::need_more;
+    std::uint64_t es_begin = 0, es_end = 0, slice_count = 0;
+    bool ended_at_program_end = false;
+    MovieVideoPrefixObserved first_slice;
+    std::optional<MovieVideoPrefixObserved> next_header;
+    MovieAdmissionCurrent current;
+};
 struct MovieAdmissionFeedSnapshot {
     MovieAdmissionCurrent current;
     std::uint64_t observation_sequence = 0, es_begin = 0, es_end = 0;
@@ -61,6 +70,9 @@ public:
     // Explicit source parser invocation; actual checked parser extent is the
     // only automatic consumption. First slice has consumed_bytes=0.
     std::optional<MovieAdmissionCandidate> parse_next(MovieAdmissionFeedFailure&) noexcept;
+    // Data-only range proposal for the pending picture's contiguous slice units.
+    // Never consumes bytes, proves decoder work, admits or completes playback.
+    std::optional<MoviePictureBodyExtent> picture_body_extent(MovieAdmissionFeedFailure&) const noexcept;
     // Source C/V proposal cache, never proof of parser/admission progress.
     std::optional<MovieHeaderBoundaryProposal> proposal(MovieAdmissionFeedFailure&) noexcept;
     // Caller acknowledges actual non-parser consumption, not a proposal/packet.
