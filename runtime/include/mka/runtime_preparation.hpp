@@ -36,6 +36,8 @@ private:
     struct Impl;
     explicit RuntimeProgramReference(std::unique_ptr<Impl>);
     std::unique_ptr<Impl> state_;
+    bool retain_service_admission(std::shared_ptr<const void>);
     friend class PreparedBank;
+    friend class AudioBankService;
 };
 } // namespace mka::sound

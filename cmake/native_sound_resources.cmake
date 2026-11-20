@@ -89,3 +89,12 @@ if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
     target_link_libraries(test_native_program_copy_failure PRIVATE mka_native_sound_resources)
     target_link_options(test_native_program_copy_failure PRIVATE "-Wl,--wrap=_Znwy")
 endif()
+
+add_executable(test_native_service_runtime EXCLUDE_FROM_ALL tests/test_service_runtime.cpp)
+target_link_libraries(test_native_service_runtime PRIVATE mka_native_sound_resources)
+if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    add_executable(test_native_service_runtime_gaps EXCLUDE_FROM_ALL tests/test_service_runtime_gaps.cpp)
+    target_link_libraries(test_native_service_runtime_gaps PRIVATE mka_native_sound_resources)
+    target_link_options(test_native_service_runtime_gaps PRIVATE
+        "-Wl,--wrap=_ZN3mka5sound17AudioBankProtocol23acquire_runtime_programERKNS0_16AudioBankCommandERNS0_18PreparationFailureERNS0_20AudioProtocolFailureE")
+endif()

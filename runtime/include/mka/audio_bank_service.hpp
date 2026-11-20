@@ -5,7 +5,7 @@ enum class BankServiceError { none, moved_service, closed, wrong_command, unsupp
     duplicate_bank_token, unknown_bank_token, unloaded_bank_token, unpublished_bank_token,
     sync_during_async_unsupported, no_pending_work, worker_active, pending_completions,
     cancellation_unsupported, protocol_failed, allocation_failed, host_capacity, native_exception,
-    program_work_active, bank_unloading, bank_state_unknown };
+    program_work_active, bank_unloading, bank_state_unknown, runtime_reference_active, runtime_admission_failed };
 struct BankServiceFailure { BankServiceError kind=BankServiceError::none; AudioProtocolFailure protocol; };
 struct BankLoadOutcome {
     // Sync source0x14 result: exact supplied opaque bank word on prepared success,
@@ -46,6 +46,10 @@ public:
     // Owned admission for the actual fresh data work. No inferred sound context,
     // scheduler or callback. Same-bank unload/close require explicit retirement.
     std::shared_ptr<BankProgramWork> admit_deferred_program(const AudioBankCommand&,
+        PreparationFailure&,BankServiceFailure&);
+    // The exact returned runtime reference retains Service/bank admission through
+    // explicit semantic release or destruction, including transfer into a copy.
+    std::unique_ptr<RuntimeProgramReference> acquire_runtime_program(const AudioBankCommand&,
         PreparationFailure&,BankServiceFailure&);
     bool unload(const AudioBankCommand&,BankServiceFailure&);
     bool cancel_async(BankServiceFailure&); // Always named unsupported; pending work unchanged.

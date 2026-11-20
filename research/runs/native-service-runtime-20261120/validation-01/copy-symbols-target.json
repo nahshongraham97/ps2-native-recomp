@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_program_copy.exe",
+  "target_before_sha256": "9837e09c2be5c1a9fbf8402d98cf1f8b2c685e5c93e57bf193d75113e599e6a4",
+  "target_after_sha256": "9837e09c2be5c1a9fbf8402d98cf1f8b2c685e5c93e57bf193d75113e599e6a4",
+  "audited_target_expected_sha256": "9837e09c2be5c1a9fbf8402d98cf1f8b2c685e5c93e57bf193d75113e599e6a4",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::sound::NativeProgramCopy::clone"
+  ],
+  "executed_target_sha256": "9837e09c2be5c1a9fbf8402d98cf1f8b2c685e5c93e57bf193d75113e599e6a4"
+}

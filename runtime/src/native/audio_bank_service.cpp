@@ -10,7 +10,7 @@ namespace mka::sound {
 struct AudioBankService::State {
     explicit State(AudioBankProtocol&& p):protocol(std::move(p)){}
     enum class TokenState { reserved, completion_pending, live, unloaded, unloading, unknown };
-    struct TokenRecord { TokenState state=TokenState::reserved; std::size_t program_work=0; };
+    struct TokenRecord { TokenState state=TokenState::reserved; std::size_t program_work=0,runtime_references=0; };
     struct Completion { bool ready=false; BankLoadCompletion value; };
     struct Job { AudioBankCommand request; BankWireToken identity; std::list<Completion>::iterator completion; };
     AudioBankProtocol protocol;
@@ -19,7 +19,7 @@ struct AudioBankService::State {
     std::unordered_map<std::uint32_t,TokenRecord> tokens;
     std::optional<Job> pending;
     bool busy=false, worker=false, closed=false;
-    std::size_t operations=0;
+    std::size_t operations=0,runtime_references=0;
     struct Activity {
         std::shared_ptr<State> state;
         std::uint32_t reserved_token = 0;
@@ -31,6 +31,18 @@ struct AudioBankService::State {
                 if (token != state->tokens.end() && token->second.state == TokenState::reserved) state->tokens.erase(token);
             }
             --state->operations;
+        }
+    };
+    struct RuntimeAdmission {
+        RuntimeAdmission(std::shared_ptr<State> s,std::uint32_t t):state(std::move(s)),token(t){}
+        std::shared_ptr<State> state;
+        std::uint32_t token;
+        bool active=false;
+        ~RuntimeAdmission(){
+            if(!active)return;
+            std::lock_guard lock(state->mutex);
+            --state->tokens.at(token).runtime_references;
+            --state->runtime_references;--state->operations;
         }
     };
     BankLoadOutcome execute(const AudioBankCommand& request,BankWireToken token){
@@ -106,6 +118,31 @@ std::shared_ptr<BankProgramWork> AudioBankService::admit_deferred_program(
         job->work=state_->protocol.admit_deferred_normal(job->request,preparation,failure.protocol);
         if(!job->work){failure.kind=BankServiceError::protocol_failed;return {};}
         return std::shared_ptr<BankProgramWork>(new BankProgramWork(std::move(job)));
+    }catch(const std::bad_alloc&){failure.kind=BankServiceError::allocation_failed;}
+    catch(const std::length_error&){failure.kind=BankServiceError::host_capacity;}
+    catch(...){failure.kind=BankServiceError::native_exception;}
+    return {};
+}
+std::unique_ptr<RuntimeProgramReference> AudioBankService::acquire_runtime_program(
+    const AudioBankCommand& request,PreparationFailure& preparation,BankServiceFailure& failure){
+    preparation={};failure={};
+    if(!state_){failure.kind=BankServiceError::moved_service;return {};}
+    if(request.opcode!=AudioBankOpcode::play&&request.opcode!=AudioBankOpcode::play_extended){failure.kind=BankServiceError::wrong_command;return {};}
+    try {
+        auto admission=std::make_shared<State::RuntimeAdmission>(state_,request.bank_token.value);
+        {std::lock_guard lock(state_->mutex);
+         if(state_->closed){failure.kind=BankServiceError::closed;return {};}
+         if(!state_->usable(request.bank_token,failure))return {};
+         auto& token=state_->tokens.at(request.bank_token.value);
+         const auto max=std::numeric_limits<std::size_t>::max();
+         if(state_->operations==max||state_->runtime_references==max||token.runtime_references==max){failure.kind=BankServiceError::host_capacity;return {};}
+         ++state_->operations;++state_->runtime_references;++token.runtime_references;admission->active=true;}
+        auto reference=state_->protocol.acquire_runtime_program(request,preparation,failure.protocol);
+        if(!reference){failure.kind=BankServiceError::protocol_failed;return {};}
+        if(!reference->retain_service_admission(admission)){
+            failure.kind=BankServiceError::runtime_admission_failed;return {};
+        }
+        return reference;
     }catch(const std::bad_alloc&){failure.kind=BankServiceError::allocation_failed;}
     catch(const std::length_error&){failure.kind=BankServiceError::host_capacity;}
     catch(...){failure.kind=BankServiceError::native_exception;}
@@ -227,6 +264,7 @@ bool AudioBankService::unload(const AudioBankCommand& request,BankServiceFailure
      if(!state_->usable(request.bank_token,failure))return false;
      auto& token=state_->tokens.at(request.bank_token.value);
      if(token.program_work){failure.kind=BankServiceError::program_work_active;return false;}
+     if(token.runtime_references){failure.kind=BankServiceError::runtime_reference_active;return false;}
      if(state_->operations==std::numeric_limits<std::size_t>::max()){failure.kind=BankServiceError::host_capacity;return false;}
      ++state_->operations;activity.state=state_;token.state=State::TokenState::unloading;}
     bool ok=false,unknown=false;
@@ -261,6 +299,7 @@ bool AudioBankService::close_when_idle(BankServiceFailure& failure){
     {std::lock_guard<std::mutex> lock(state_->mutex);
      if(state_->closed){failure.kind=BankServiceError::closed;return false;}
      if(state_->busy){failure.kind=BankServiceError::cancellation_unsupported;return false;}
+     if(state_->runtime_references){failure.kind=BankServiceError::runtime_reference_active;return false;}
      if(state_->operations){failure.kind=BankServiceError::worker_active;return false;}
      if(!state_->completions.empty()){failure.kind=BankServiceError::pending_completions;return false;}
      state_->closed=true;} // Admission barrier before releasing mutex/closing protocol.

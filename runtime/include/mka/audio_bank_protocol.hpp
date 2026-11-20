@@ -44,6 +44,8 @@ public:
         PreparationFailure&,AudioProtocolFailure&);
     std::shared_ptr<PreparedProgramWork> admit_deferred_normal(const AudioBankCommand&,
         PreparationFailure&,AudioProtocolFailure&);
+    std::unique_ptr<RuntimeProgramReference> acquire_runtime_program(const AudioBankCommand&,
+        PreparationFailure&,AudioProtocolFailure&);
     bool close_session(AudioProtocolFailure&);
     bool discard_unprepared(const AudioBankHandle&, AudioProtocolFailure&);
     // Null bank tokens are explicitly unsupported by this host ownership route;

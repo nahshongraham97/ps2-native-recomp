@@ -117,6 +117,7 @@ struct PreparedBank::State {
 struct RuntimeProgramReference::Impl {
     std::shared_ptr<PreparedBank::State> bank;
     std::shared_ptr<const NativeRuntimePreparation> preparation;
+    std::shared_ptr<const void> service_admission;
     std::size_t index=0;
     mutable std::mutex mutex;
     bool active=false;
@@ -124,6 +125,7 @@ struct RuntimeProgramReference::Impl {
         std::shared_ptr<const NativeRuntimePreparation> discarded;
         std::shared_ptr<PreparedBank::State> retained_bank;
         std::shared_ptr<const NativeRuntimePreparation> retained_preparation;
+        std::shared_ptr<const void> retained_admission;
         {std::lock_guard own_lock(mutex);
          if(!active){if(failure)failure->kind=PreparationError::invalid_work_state;return false;}
          {std::lock_guard bank_lock(bank->mutex);
@@ -131,9 +133,11 @@ struct RuntimeProgramReference::Impl {
           --record.references;
           if(!record.references&&(bank->flags[index]&2u))discarded=std::move(record.cached);
          }
-         active=false;retained_preparation=std::move(preparation);retained_bank=std::move(bank);
+         active=false;retained_preparation=std::move(preparation);retained_bank=std::move(bank);retained_admission=std::move(service_admission);
         }
-        discarded.reset();retained_preparation.reset();retained_bank.reset();return true;
+        discarded.reset();retained_preparation.reset();retained_bank.reset();
+        retained_admission.reset(); // Actual semantic retirement precedes Service release.
+        return true;
     }
     ~Impl(){if(active)release(nullptr);}
 };
@@ -144,6 +148,11 @@ std::shared_ptr<const NativeRuntimePreparation> RuntimeProgramReference::prepara
     std::lock_guard lock(state_->mutex);return state_->active?state_->preparation:nullptr;
 }
 bool RuntimeProgramReference::release(PreparationFailure& f){f={};return state_->release(&f);}
+bool RuntimeProgramReference::retain_service_admission(std::shared_ptr<const void> admission){
+    std::lock_guard lock(state_->mutex);
+    if(!state_->active||state_->service_admission||!admission)return false;
+    state_->service_admission=std::move(admission);return true;
+}
 std::optional<std::vector<RuntimeCacheObservation>> PreparedBank::runtime_cache(PreparationFailure& f)const{
     f={};if(!state_){f.kind=PreparationError::unloaded;return {};}
     try {std::lock_guard lock(state_->mutex);

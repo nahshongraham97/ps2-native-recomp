@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_service_runtime.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_SERVICE_RUNTIME: 5 actual Service runtime-reference/copy/output lifetime cases; no source callback/activation/device/fidelity claim\n",
+  "stderr": "",
+  "executable_sha256": "d8781767e2c89bbe78ef15065acbb2537f9cefd18b6ad16e1d435d369fef096b",
+  "executable_after_sha256": "d8781767e2c89bbe78ef15065acbb2537f9cefd18b6ad16e1d435d369fef096b"
+}

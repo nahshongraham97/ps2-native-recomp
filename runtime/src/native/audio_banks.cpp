@@ -215,6 +215,18 @@ std::shared_ptr<PreparedProgramWork> AudioBankSession::admit_deferred_normal(
     lock.unlock();
     return prepared->admit_deferred_normal(selector,preparation);
 }
+
+std::unique_ptr<RuntimeProgramReference> AudioBankSession::acquire_runtime_program(
+    const AudioBankHandle& handle,std::int32_t selector,PreparationFailure& preparation,AudioBanksFailure& failure) {
+    preparation={};failure={};
+    if(!state_){failure.kind=AudioBanksError::moved_session;return {};}
+    std::unique_lock<std::mutex> lock(state_->mutex);
+    if(!checked_bank(handle,failure))return {};
+    auto prepared=state_->banks.at(handle.identity_.get()).prepared;
+    if(!prepared){failure.kind=AudioBanksError::bank_not_prepared;return {};}
+    lock.unlock();
+    return prepared->acquire_runtime_program(selector,preparation);
+}
 std::optional<AudioResource> AudioBankSession::resolve_kind1(
     const AudioBankHandle& handle, std::int32_t selector, std::size_t index, AudioBanksFailure& failure) const {
     failure = {};
