@@ -1,6 +1,6 @@
 #pragma once
 #include "mka/audio_bank_service.hpp"
-#include "mka/host_voice.hpp"
+#include "mka/program_copy.hpp"
 namespace mka::sound {
 class NativePlaybackOwner;
 // Explicit native ownership, unrelated to serialized context words or gain data.
@@ -28,23 +28,32 @@ struct NativePlayParameters {
     NativeEnvelopeProfile envelope;
     ProgramClockWord initial_deadline;
     std::uint32_t source_output_mode;
+    std::uint16_t caller_play_flags;
+    NativePlayParameters(AudioControlFactors c,AudioControlFactors p,NativeEnvelopeProfile e,
+        ProgramClockWord already_activated_deadline,std::uint32_t mode,std::uint16_t flags)
+        :context(c),program(p),envelope(e),initial_deadline(already_activated_deadline),
+         source_output_mode(mode),caller_play_flags(flags){}
 };
 enum class PlaybackError { none, moved_owner, closed, invalid_output_rate,
     unknown_handle, foreign_owner, retired_handle, active_playback,
     service_failed, program_failed, voice_failed, failed_playback_requires_stop,
     allocation_failed, host_capacity, native_exception, operation_active, closing,
-    bank_unloading, bank_state_unknown, close_state_unknown, unknown_context, foreign_context, retired_context };
+    bank_unloading, bank_state_unknown, close_state_unknown, unknown_context, foreign_context, retired_context,
+    unsupported_play_flags, copy_failed };
 struct PlaybackFailure {
     PlaybackError kind=PlaybackError::none;
     BankServiceFailure service;
     PreparationFailure preparation;
     ProgramFailure program;
     HostVoiceFailure voice;
+    ProgramCopyFailure copy;
 };
 struct PlaybackObservation {
     ProgramClockWord deadline;
     std::size_t command_index=0, voices=0, active_voices=0;
     bool executor_finished=false, explicitly_stopped=false;
+    bool private_copy_bound=false,resources_retired=false;
+    std::uint16_t effective_play_flags=0;
     std::optional<std::uint64_t> first_voice_source_index;
     std::optional<PlaybackFailure> terminal_failure;
 };

@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_program_admission.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_PROGRAM_ADMISSION: 7 actual Service admission lifecycle cases; no scheduler/callback/context/hardware fidelity claim\n",
+  "stderr": "",
+  "executable_sha256": "44672b3e9e702de07fef1d051d524c3ffe50b46336b84dcced7010d705ab2c12",
+  "executable_after_sha256": "44672b3e9e702de07fef1d051d524c3ffe50b46336b84dcced7010d705ab2c12"
+}

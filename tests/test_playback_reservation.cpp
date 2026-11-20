@@ -30,7 +30,7 @@ AudioBankCommand command(AudioBankOpcode opcode, std::uint32_t token) {
 NativePlayParameters parameters() {
     // Explicit existing software-fixture values, not retail profile selection or fidelity proof.
     return {initial_program_control_factors(), initial_program_control_factors(),
-        {{1,14336,false},{1,-16384,true},{1,14336,false},{1,-16384,false},2048}, {1000}, 3};
+        {{1,14336,false},{1,-16384,true},{1,14336,false},{1,-16384,false},2048}, {1000}, 3, 0};
 }
 NativePlaybackOwner owner(const std::filesystem::path& original,
                           const std::shared_ptr<AudioResourceDomain>& domain) {

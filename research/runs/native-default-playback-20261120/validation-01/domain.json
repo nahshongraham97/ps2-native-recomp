@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_audio_resource_domain.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-default-playback-20261120\\validation-01\\domain-owned"
+  ],
+  "exit": 0,
+  "stdout": "PASS native audio resource barriers/shared backings/private PCM publication/unload; no game or physical audio\n",
+  "stderr": "",
+  "executable_sha256": "207763290119821daf30a0f146eec0f093c27aa2b71e7e60ec4896e45026ca51",
+  "executable_after_sha256": "207763290119821daf30a0f146eec0f093c27aa2b71e7e60ec4896e45026ca51"
+}

@@ -64,11 +64,25 @@ std::optional<NormalPlayInstanceObservation> NativeProgramCopy::instance(std::si
     return result;
 }
 std::optional<OrdinaryProgramSchedule> NativeProgramCopy::prepare_ordinary_schedule(ProgramClockWord clock,std::uint16_t flags,ProgramCopyFailure& f){
+    return bind_preactivated_schedule(ordinary_initial_deadline(state_->data->commands.front(),clock),flags,f);
+}
+std::optional<OrdinaryProgramSchedule> NativeProgramCopy::bind_preactivated_schedule(ProgramClockWord deadline,std::uint16_t flags,ProgramCopyFailure& f){
     f={};if(state_->scheduled){f.kind=ProgramCopyError::already_scheduled;return {};}
     if(flags&8u){f.kind=ProgramCopyError::alternate_schedule_unbound;return {};}
     if(!reset_ordinary_command_state(state_->data->commands,f))return {};
     state_->data->effective_flags=flags;state_->scheduled=true;
-    return OrdinaryProgramSchedule{state_->data,ordinary_initial_deadline(state_->data->commands.front(),clock),flags};
+    return OrdinaryProgramSchedule{state_->data,deadline,flags};
+}
+NativeProgramOutputObservation NativeProgramCopy::output_observation()const noexcept{
+    NativeProgramOutputObservation result;
+    for(const auto& i:state_->instances)if(i.output){
+        if(result.voices++==0)result.first_voice_source_index=i.output->source_index();
+        if(i.output->active())++result.active_voices;
+    }
+    return result;
+}
+void NativeProgramCopy::append_outputs(std::vector<HostVoice*>& voices){
+    for(auto& i:state_->instances)if(i.output)voices.push_back(&*i.output);
 }
 bool NativeProgramCopy::start_output(const ProgramStep& event,const NormalOutputParameters& p,ProgramCopyFailure& f){
     f={};if(!state_->scheduled){f.kind=ProgramCopyError::not_scheduled;return false;}

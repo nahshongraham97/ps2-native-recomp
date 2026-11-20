@@ -22,6 +22,10 @@ struct OrdinaryProgramSchedule {
     ProgramClockWord deadline;
     std::uint16_t play_flags=0;
 };
+struct NativeProgramOutputObservation {
+    std::size_t voices=0,active_voices=0;
+    std::optional<std::uint64_t> first_voice_source_index;
+};
 // Source30000 arithmetic only; this samples no clock and admits no output owner.
 ProgramClockWord ordinary_initial_deadline(const CommandRecord&,ProgramClockWord)noexcept;
 // Source2FFA0 command reset only; preflight prevents partial malformed mutation.
@@ -47,6 +51,12 @@ public:
     std::optional<std::vector<float>> mix(std::size_t host_frames,ProgramCopyFailure&);
     bool stop_outputs(const ProgramStep&,ProgramCopyFailure&);
 private:
+    friend class NativePlaybackOwner;
+    // The existing native caller supplies an already activated deadline. This
+    // binds a private copy without inventing a source clock/admission receipt.
+    std::optional<OrdinaryProgramSchedule> bind_preactivated_schedule(ProgramClockWord,std::uint16_t,ProgramCopyFailure&);
+    NativeProgramOutputObservation output_observation()const noexcept;
+    void append_outputs(std::vector<HostVoice*>&);
     struct Impl;
     explicit NativeProgramCopy(std::unique_ptr<Impl>);
     std::unique_ptr<Impl> state_;

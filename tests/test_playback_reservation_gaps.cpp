@@ -1,4 +1,5 @@
 #include "mka/playback_owner.hpp"
+#include "mka/runtime_preparation.hpp"
 #include <array>
 #include <chrono>
 #include <condition_variable>
@@ -69,7 +70,7 @@ AudioBankCommand load(AudioBankOpcode opcode) {
 }
 NativePlayParameters parameters() {
     return {initial_program_control_factors(), initial_program_control_factors(),
-        {{1,14336,false},{1,-16384,true},{1,14336,false},{1,-16384,false},2048}, {1000}, 3};
+        {{1,14336,false},{1,-16384,true},{1,14336,false},{1,-16384,false},2048}, {1000}, 3, 0};
 }
 NativePlaybackOwner create(const char* file) {
     AudioBanksFailure banks;
@@ -108,8 +109,8 @@ void check_pending(NativePlaybackOwner& owner, const NativeSoundContext& context
     extern "C" type wrap_##name args __asm__("__wrap_" symbol); \
     extern "C" type wrap_##name args { return inject(config, [&] { return real_##name invoke; }); }
 
-SERVICE_WRAPS(prepare, "_ZN3mka5sound16AudioBankService15prepare_programERKNS0_16AudioBankCommandERNS0_18PreparationFailureERNS0_18BankServiceFailureE",
-    std::shared_ptr<const PreparedProgram>,
+SERVICE_WRAPS(prepare, "_ZN3mka5sound16AudioBankService23acquire_runtime_programERKNS0_16AudioBankCommandERNS0_18PreparationFailureERNS0_18BankServiceFailureE",
+    std::unique_ptr<RuntimeProgramReference>,
     (AudioBankService* self, const AudioBankCommand& c, PreparationFailure& p, BankServiceFailure& f), (self, c, p, f), preparation)
 SERVICE_WRAPS(unload, "_ZN3mka5sound16AudioBankService6unloadERKNS0_16AudioBankCommandERNS0_18BankServiceFailureE",
     bool, (AudioBankService* self, const AudioBankCommand& c, BankServiceFailure& f), (self, c, f), unloading)

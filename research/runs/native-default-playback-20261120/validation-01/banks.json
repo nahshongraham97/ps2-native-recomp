@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_audio_banks.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS4"
+  ],
+  "exit": 0,
+  "stdout": "PASS audio bank host ownership, exact real lookup and retained source bytes; no preparation/playback claim\n",
+  "stderr": "",
+  "executable_sha256": "55f0fb84c3db377c2edde3fb1ab145855105cf7c12031163c223e7de4f7eaea4",
+  "executable_after_sha256": "55f0fb84c3db377c2edde3fb1ab145855105cf7c12031163c223e7de4f7eaea4"
+}
