@@ -22,6 +22,10 @@ struct MovieAdmissionFeedState {
     std::size_t tail_size = 0;
     std::uint64_t sequence = 0;
     bool pending = false, program_end = false, failed = false;
+    std::optional<MovieVideoPrefixObserved> batch_origin;
+    std::uint64_t batch_serial=0,batch_units=0,batch_offered_end=0;
+    std::optional<MovieVideoPrefixObserved> batch_timestamp_prefix;
+    std::optional<std::uint64_t> batch_timestamp_offset;
     bool progressive = false, repeat = false, top = false;
     bool in_call = false;
     const std::thread::id owner = std::this_thread::get_id();
@@ -72,7 +76,7 @@ bool NativeMovieAdmissionFeed::access(MovieAdmissionFeedFailure& f, bool allow_f
 }
 bool NativeMovieAdmissionFeed::begin_inner_parse(MovieAdmissionFeedFailure& f) noexcept {
     if(!access(f))return false;Guard guard(state_->in_call);auto& s=*state_;
-    if(s.inner_active)return fail(f,MovieAdmissionFeedError::scope);
+    if(s.inner_active||s.batch_origin)return fail(f,MovieAdmissionFeedError::scope);
     auto next=s.inner_current;
     auto merge=[](auto& into,const auto& from){if(from&&(!into||from->origin.prefix.es_prefix_first_byte>into->origin.prefix.es_prefix_first_byte))into=from;};
     merge(next.sequence,s.current.sequence);merge(next.sequence_extension,s.current.sequence_extension);
@@ -171,6 +175,10 @@ bool NativeMovieAdmissionFeed::consume(std::uint64_t count, MovieHeaderConsumeKi
 std::optional<MovieAdmissionCandidate> NativeMovieAdmissionFeed::parse_next(MovieAdmissionFeedFailure& f) noexcept {
     if (!access(f)) return {};
     Guard guard(state_->in_call);
+    if(state_->batch_origin){fail(f,MovieAdmissionFeedError::scope);return {};}
+    return parse_next_owned(f);
+}
+std::optional<MovieAdmissionCandidate> NativeMovieAdmissionFeed::parse_next_owned(MovieAdmissionFeedFailure& f) noexcept {
     auto& s = *state_; auto view = s.boundary.snapshot(f.boundary);
     if (!view) { fail(f, MovieAdmissionFeedError::allocation); return {}; }
     MovieAdmissionCandidate result; result.es_begin = view->es_begin; result.current = s.current;
@@ -241,6 +249,64 @@ std::optional<MovieAdmissionCandidate> NativeMovieAdmissionFeed::parse_next(Movi
     } catch (const std::bad_alloc&) { fail(f, MovieAdmissionFeedError::allocation); }
       catch (const std::length_error&) { fail(f, MovieAdmissionFeedError::host_capacity); }
     return {};
+}
+std::optional<MovieOuterHeaderBatchResult> NativeMovieAdmissionFeed::parse_outer_batch(MovieAdmissionFeedFailure& f) noexcept {
+    if(!access(f))return {};Guard guard(state_->in_call);auto& s=*state_;
+    if(s.inner_active||(s.pending&&!s.batch_origin)){fail(f,MovieAdmissionFeedError::scope);return {};}
+    auto view=s.boundary.snapshot(f.boundary);if(!view){fail(f,MovieAdmissionFeedError::allocation);return {};}
+    if(!s.batch_origin){
+        if(view->bytes.size()<4){
+            if(s.program_end&&!view->bytes.empty()){s.failed=true;f.unit.kind=MovieHeaderUnitError::incomplete_prefix;fail(f,MovieAdmissionFeedError::parser);return {};}
+            return MovieOuterHeaderBatchResult{};
+        }
+        auto origin=s.prefixes.find(view->es_begin);
+        if(origin==s.prefixes.end()){
+            if(!view->bytes[0]&&!view->bytes[1]&&view->bytes[2]==1&&!s.program_end)return MovieOuterHeaderBatchResult{};
+            fail(f,MovieAdmissionFeedError::invalid_prefix);return {};
+        }
+        if((origin->second.prefix.classification&2)||!origin->second.prefix.classification){fail(f,MovieAdmissionFeedError::invalid_order);return {};}
+        if(s.batch_serial==UINT64_MAX){fail(f,MovieAdmissionFeedError::overflow);return {};}
+        s.batch_origin=origin->second;s.batch_units=0;s.batch_offered_end=view->es_end;s.batch_timestamp_prefix.reset();s.batch_timestamp_offset.reset();
+        // Search original raw BYTES first. Prefix metadata may arrive later;
+        // its absence cannot turn a real raw picture query into timestamp absence.
+        for(std::size_t i=0;i+4<=view->bytes.size();++i)
+            if(!view->bytes[i]&&!view->bytes[i+1]&&view->bytes[i+2]==1&&
+               (movie_prefix_classification(0x100u|view->bytes[i+3])&4)){s.batch_timestamp_offset=view->es_begin+i;break;}
+    }
+    if(s.batch_timestamp_offset&&!s.batch_timestamp_prefix){
+        auto actual=s.prefixes.find(*s.batch_timestamp_offset);
+        if(actual==s.prefixes.end()){
+            if(s.program_end){s.failed=true;fail(f,MovieAdmissionFeedError::invalid_prefix);return {};}
+            return MovieOuterHeaderBatchResult{};
+        }
+        s.batch_timestamp_prefix=actual->second;
+    }
+    try {
+        for(;;){
+            auto unit=parse_next_owned(f);if(!unit)return {};
+            if(unit->kind==MovieAdmissionCandidateKind::need_more){
+                if(s.program_end){s.failed=true;f.unit.kind=MovieHeaderUnitError::incomplete_header;fail(f,MovieAdmissionFeedError::parser);return {};}
+                return MovieOuterHeaderBatchResult{};
+            }
+            auto progress=MovieOuterHeaderBatchProgress::need_more;
+            if(unit->kind==MovieAdmissionCandidateKind::parsed_header){
+                if(s.batch_units==UINT64_MAX){s.failed=true;fail(f,MovieAdmissionFeedError::overflow);return {};}
+                ++s.batch_units;
+                if(unit->parsed&&std::holds_alternative<MovieSequenceEndHeader>(unit->parsed->unit.payload))progress=MovieOuterHeaderBatchProgress::sequence_end;
+                else continue;
+            }else if(unit->kind==MovieAdmissionCandidateKind::first_slice)progress=MovieOuterHeaderBatchProgress::first_slice;
+            else {s.failed=true;fail(f,MovieAdmissionFeedError::invalid_order);return {};}
+            auto after=s.boundary.snapshot(f.boundary);if(!after){s.failed=true;fail(f,MovieAdmissionFeedError::allocation);return {};}
+            if(!s.batch_units||after->es_begin<=s.batch_origin->prefix.es_prefix_first_byte){s.failed=true;fail(f,MovieAdmissionFeedError::invalid_order);return {};}
+            auto current=std::make_shared<const MovieAdmissionCurrent>(s.current);
+            auto batch=std::shared_ptr<const MovieOuterHeaderBatch>(new MovieOuterHeaderBatch(
+                *s.batch_origin,progress==MovieOuterHeaderBatchProgress::first_slice?unit->prefix:std::nullopt,
+                after->es_begin,s.batch_serial+1,s.batch_units,std::move(current),s.batch_offered_end,s.batch_timestamp_prefix));
+            ++s.batch_serial;s.batch_origin.reset();s.batch_units=0;
+            return MovieOuterHeaderBatchResult{progress,std::move(batch)};
+        }
+    }catch(const std::bad_alloc&){s.failed=true;fail(f,MovieAdmissionFeedError::allocation);return {};}
+     catch(const std::length_error&){s.failed=true;fail(f,MovieAdmissionFeedError::host_capacity);return {};}
 }
 std::optional<MoviePictureBodyExtent> NativeMovieAdmissionFeed::picture_body_extent(MovieAdmissionFeedFailure& f) const noexcept {
     if (!access(f)) return {};
@@ -320,7 +386,9 @@ std::optional<MovieHeaderBoundaryProposal> NativeMovieAdmissionFeed::proposal(Mo
     if (!value) fail(f, MovieAdmissionFeedError::range); return value;
 }
 bool NativeMovieAdmissionFeed::skip(std::uint64_t amount, MovieAdmissionFeedFailure& f) noexcept {
-    if (!access(f)) return false; Guard guard(state_->in_call); return consume(amount, MovieHeaderConsumeKind::skip, f);
+    if (!access(f)) return false; Guard guard(state_->in_call);
+    if(state_->batch_origin)return fail(f,MovieAdmissionFeedError::scope);
+    return consume(amount, MovieHeaderConsumeKind::skip, f);
 }
 std::optional<MovieAdmissionFeedSnapshot> NativeMovieAdmissionFeed::snapshot(MovieAdmissionFeedFailure& f) const noexcept {
     if (!access(f, true)) return {};
@@ -328,6 +396,6 @@ std::optional<MovieAdmissionFeedSnapshot> NativeMovieAdmissionFeed::snapshot(Mov
     auto view = state_->boundary.snapshot(f.boundary);
     if (!view) { fail(f, MovieAdmissionFeedError::allocation); return {}; }
     return MovieAdmissionFeedSnapshot{state_->current, state_->sequence, view->es_begin, view->es_end,
-        view->bytes.size(), state_->pending, state_->program_end, state_->failed,state_->last_input_receipt,state_->inner_active};
+        view->bytes.size(), state_->pending, state_->program_end, state_->failed,state_->last_input_receipt,state_->inner_active,bool(state_->batch_origin)};
 }
 } // namespace mka::video

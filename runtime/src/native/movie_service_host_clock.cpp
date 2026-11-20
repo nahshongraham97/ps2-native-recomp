@@ -32,7 +32,21 @@ bool NativeMovieServiceHostClock::begin(MovieServiceHostClockFailure& f) noexcep
     state_.service_counter=baseline_;state_.begun=true;return true;
 }
 bool NativeMovieServiceHostClock::update(const std::optional<MovieAnchoredAudioClockSample>& audio,MovieServiceHostClockFailure& f) noexcept{
-    if(!access(f))return false;Guard guard(busy_);if(!state_.begun||state_.stopped)return fail(f,MovieServiceHostClockError::invalid_state);
+    if(!access(f))return false;Guard guard(busy_);return update_owned(audio,f);
+}
+bool NativeMovieServiceHostClock::update_from_output(MovieServiceHostClockFailure& f) noexcept {
+    if(!access(f))return false;Guard guard(busy_);
+    auto actual=service_.snapshot(f.service);if(!actual){fail(f,MovieServiceHostClockError::service);return terminate(f);}
+    std::optional<MovieAnchoredAudioClockSample> sample;
+    try {if(actual->playback)sample=actual->playback->audio_time;}catch(const std::bad_alloc&){fail(f,MovieServiceHostClockError::allocation);return terminate(f);}
+    if(policy_==MovieServiceHostClockPolicy::anchored_audio&&actual->active&&sample&&
+       (sample->cancelled||!sample->output_clock||!actual->playback->audio_queue||sample->output_clock->reset_epoch!=actual->playback->audio_queue->reset_epoch)){
+        fail(f,MovieServiceHostClockError::invalid_sample);return terminate(f);
+    }
+    return update_owned(sample,f);
+}
+bool NativeMovieServiceHostClock::update_owned(const std::optional<MovieAnchoredAudioClockSample>& audio,MovieServiceHostClockFailure& f) noexcept {
+    if(!state_.begun||state_.stopped)return fail(f,MovieServiceHostClockError::invalid_state);
     auto s=service_.snapshot(f.service);if(!s){fail(f,MovieServiceHostClockError::service);return terminate(f);}
     if(s->generation!=identity_.generation||!s->request||s->request->logical_key!=identity_.source_key){fail(f,MovieServiceHostClockError::foreign_source);return terminate(f);}
     if(!s->active||s->playback_retained){if(!clock_->stop(identity_.source_key,identity_.source,f.host)){fail(f,MovieServiceHostClockError::host);return terminate(f);}auto final=clock_->read(identity_.source_key,identity_.source,f.host);if(!final){fail(f,MovieServiceHostClockError::host);return terminate(f);}state_.elapsed=final->elapsed;state_.stopped=true;return true;}
@@ -52,7 +66,7 @@ bool NativeMovieServiceHostClock::update(const std::optional<MovieAnchoredAudioC
     }else{
         if(!audio){fail(f,MovieServiceHostClockError::unavailable);return terminate(f);}
         if(audio->source_key!=identity_.source_key||audio->source!=identity_.source||!audio->anchor||(anchor_&&anchor_!=audio->anchor)){fail(f,MovieServiceHostClockError::foreign_source);return terminate(f);}
-        if(audio->elapsed.denominator<=0||audio->elapsed.numerator<0){fail(f,MovieServiceHostClockError::invalid_sample);return terminate(f);}
+        if(audio->cancelled||audio->elapsed.denominator<=0||audio->elapsed.numerator<0){fail(f,MovieServiceHostClockError::invalid_sample);return terminate(f);}
         if(last_audio_&&__int128(audio->elapsed.numerator)*last_audio_->denominator<__int128(last_audio_->numerator)*audio->elapsed.denominator){fail(f,MovieServiceHostClockError::regression);return terminate(f);}
         if(!service_.sample_audio(identity_,audio->elapsed,elapsed,audio->query_admitted,audio->active,f.service)){fail(f,MovieServiceHostClockError::service);return terminate(f);}
         anchor_=audio->anchor;last_audio_=audio->elapsed;

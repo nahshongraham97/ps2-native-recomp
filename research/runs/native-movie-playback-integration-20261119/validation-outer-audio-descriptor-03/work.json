@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_frame_work.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2",
+    "KRYPT/V_RAIDON.SFD"
+  ],
+  "exit": 0,
+  "stdout": "{\"processed\":120,\"selected\":120,\"first_reference_no_output\":1,\"inner_outer_differences\":1,\"b_pictures\":79}\nPASS actual native frame work source identities/outer scope/delayed selection/flush; no playback or content comparison\n",
+  "stderr": "[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=8549)\n",
+  "executable_sha256": "95de1cf8967fe992d590d9c69863450528a1ead9d8b3af3016d92ba0a0bb6d94",
+  "executable_after_sha256": "95de1cf8967fe992d590d9c69863450528a1ead9d8b3af3016d92ba0a0bb6d94"
+}

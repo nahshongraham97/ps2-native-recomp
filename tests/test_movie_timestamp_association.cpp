@@ -1,0 +1,53 @@
+#include "mka/movie_timestamp_association.hpp"
+#include <cstdio>
+#include <cstdlib>
+#include <new>
+#include <stdexcept>
+#include <thread>
+#include <type_traits>
+using namespace mka::video;
+namespace {
+int fail_after=-1;
+void check(bool value,const char* text){if(!value)throw std::runtime_error(text);}
+bool same_query(const std::optional<MovieVideoPrefixObserved>& a,const std::optional<MovieVideoPrefixObserved>& b){return bool(a)==bool(b)&&(!a||(a->prefix.es_prefix_first_byte==b->prefix.es_prefix_first_byte&&a->prefix.raw_codeword==b->prefix.raw_codeword&&a->prefix.classification==b->prefix.classification&&a->pes==b->pes&&a->quarter_pts==b->quarter_pts));}
+bool same(const MovieTimestampAssociationState& a,const MovieTimestampAssociationState& b){return a.origin==b.origin&&a.cached_raw_timestamp22500==b.cached_raw_timestamp22500&&same_query(a.cached_query,b.cached_query)&&a.base_temporal==b.base_temporal&&a.offset==b.offset&&a.max_delta==b.max_delta;}
+MovieVideoPrefixObserved query(std::uint64_t at,std::optional<std::uint64_t> raw){
+    MovieVideoPesSpan pes;pes.stream_id=0xe0;pes.packet_offset=100;pes.payload_offset=110;pes.packet_end=210;pes.es_begin=at;pes.es_end=at+100;if(raw)pes.pts33=*raw*4;
+    return {{at,0x100,4},pes,raw};
+}
+MovieTimestampAssociationState state(NativeMovieTimestampAssociation& owner){MovieTimestampAssociationFailure f;auto s=owner.snapshot(f);check(bool(s)&&f.kind==MovieTimestampAssociationError::none,"owned state");return s->values;}
+MovieTimestampAssociationResult update(NativeMovieTimestampAssociation& owner,const std::string& key,const std::shared_ptr<const MovieSourceObservationIdentity>& id,MovieVideoPrefixObserved p,std::uint16_t tr,std::uint8_t coding=1,bool changed=false,std::uint8_t rate=5){MovieTimestampAssociationFailure f;auto result=owner.update(key,id,p,rate,tr,coding,changed,f);check(bool(result)&&f.kind==MovieTimestampAssociationError::none,"successful exact source association");return *result;}
+}
+void* operator new(std::size_t n){if(fail_after==0){fail_after=-1;throw std::bad_alloc();}if(fail_after>0)--fail_after;if(auto p=std::malloc(n?n:1))return p;throw std::bad_alloc();}
+void operator delete(void* p) noexcept {std::free(p);}
+void operator delete(void* p,std::size_t) noexcept {std::free(p);}
+int main(){try{
+    static_assert(!std::is_copy_constructible_v<NativeMovieTimestampAssociation>);
+    const std::string key(80,'k');auto id=std::make_shared<const MovieSourceObservationIdentity>();MovieTimestampAssociationFailure f;
+    check(!NativeMovieTimestampAssociation::create({},id,f)&&f.kind==MovieTimestampAssociationError::invalid_source,"missing key rejects");check(!NativeMovieTimestampAssociation::create(key,{},f)&&f.kind==MovieTimestampAssociationError::invalid_source,"actual epoch required");
+    auto owner=NativeMovieTimestampAssociation::create(key,id,f);check(bool(owner),"source-bound owned scalar producer");auto fresh=state(*owner);check(!fresh.origin&&!fresh.cached_raw_timestamp22500&&!fresh.cached_query&&fresh.base_temporal==0&&fresh.offset==0&&fresh.max_delta==0,"exact source fresh state");
+    auto missing=owner->update(key,id,{},0,65535,0,true,f);check(missing&&!missing->raw_timestamp22500&&!missing->adjusted_timestamp22500&&same(fresh,state(*owner)),"no picture query bypasses adjustment and leaves state unchanged");
+    auto absent=owner->update(key,id,query(0,{}),0,65535,0,true,f);check(absent&&!absent->raw_timestamp22500&&!absent->adjusted_timestamp22500&&same(fresh,state(*owner)),"missing timestamp does not manufacture clock or validate uncalled numeric route");
+    auto first=update(*owner,key,id,query(10,225000),3);check(first.raw_timestamp22500==225000&&first.adjusted_timestamp22500==2250&&first.origin_initialized&&first.record_changed&&first.snapshot.values.origin==222750&&first.snapshot.values.base_temporal==3,"first valid timestamp subtracts current TR interval only for stored origin");
+    auto next=update(*owner,key,id,query(20,225000),4,2);check(!next.record_changed&&next.adjusted_timestamp22500==3000&&next.snapshot.values.max_delta==1&&next.snapshot.values.cached_query->prefix.es_prefix_first_byte==10&&next.query->prefix.es_prefix_first_byte==20,"equal numeric timestamp across distinct prefix/PES identities interpolates, retaining cached record provenance");
+    auto b=update(*owner,key,id,query(30,225000),2,3);check(b.adjusted_timestamp22500==1500&&b.snapshot.values.max_delta==1,"negative temporal delta truncates signed and never overwrites larger max");
+    auto gop=update(*owner,key,id,query(40,225000),0,1,true);check(gop.adjusted_timestamp22500==3750&&gop.snapshot.values.base_temporal==0&&gop.snapshot.values.offset==2&&gop.snapshot.values.max_delta==0,"same timestamp GOP transition adds old max plus one BEFORE interpolation");
+    auto farther=update(*owner,key,id,query(50,225000),3,2);check(farther.adjusted_timestamp22500==6000&&farther.snapshot.values.offset==2&&farther.snapshot.values.max_delta==3,"offset and current delta both contribute");
+    auto new_record=update(*owner,key,id,query(60,226500),7,3,true);check(new_record.record_changed&&new_record.adjusted_timestamp22500==3750&&new_record.snapshot.values.base_temporal==7&&new_record.snapshot.values.offset==0&&new_record.snapshot.values.max_delta==1,"new raw timestamp branch wins over GOP transition and B seeds max one");
+    auto after_b=update(*owner,key,id,query(70,226500),0,1,true);check(after_b.adjusted_timestamp22500==5250&&after_b.snapshot.values.offset==2,"B new-record seed affects next same-timestamp GOP offset");
+    auto regress=update(*owner,key,id,query(80,210000),0);check(regress.record_changed&&regress.adjusted_timestamp22500==0&&regress.snapshot.values.origin==222750,"association is not a monotonic clock; earlier raw timestamp clamps base to zero without rebasing origin");
+    auto before=state(*owner);auto none=owner->update(key,id,query(90,{}),5,0,1,false,f);check(none&&!none->adjusted_timestamp22500&&same(before,state(*owner)),"later absent timestamp never inherits cached timestamp or mutates origin");
+    auto other=std::make_shared<const MovieSourceObservationIdentity>();check(!owner->update(key,other,query(90,1),5,0,1,false,f)&&f.kind==MovieTimestampAssociationError::foreign_source&&same(before,state(*owner)),"same key foreign epoch rejects atomically");check(!owner->update("foreign",id,query(90,1),5,0,1,false,f)&&f.kind==MovieTimestampAssociationError::foreign_source&&same(before,state(*owner)),"wrong logical source rejects atomically");
+    auto bad=query(90,1);bad.quarter_pts=2;check(!owner->update(key,id,bad,5,0,1,false,f)&&f.kind==MovieTimestampAssociationError::invalid_prefix&&same(before,state(*owner)),"forged quarter timestamp cannot disagree with exact first-byte PES");bad=query(90,1);bad.prefix.classification=8;check(!owner->update(key,id,bad,5,0,1,false,f)&&f.kind==MovieTimestampAssociationError::invalid_prefix,"query must be raw picture class");bad=query(90,1);bad.pes.pts33=std::uint64_t(1)<<33;bad.quarter_pts=std::uint64_t(1)<<31;check(!owner->update(key,id,bad,5,0,1,false,f)&&f.kind==MovieTimestampAssociationError::invalid_prefix,"serialized timestamp domain is explicit, no signed reinterpretation");
+    bad=query(90,1);bad.pes.es_end=90;check(!owner->update(key,id,bad,5,0,1,false,f)&&f.kind==MovieTimestampAssociationError::invalid_prefix,"empty/corrupt range rejects");
+    check(!owner->update(key,id,query(90,1),0,0,1,false,f)&&f.kind==MovieTimestampAssociationError::unsupported_rate,"missing rate not default 29970");check(!owner->update(key,id,query(90,1),9,0,1,false,f)&&f.kind==MovieTimestampAssociationError::unsupported_rate,"unknown rate not indexed");check(!owner->update(key,id,query(90,1),5,1024,1,false,f)&&f.kind==MovieTimestampAssociationError::invalid_temporal,"actual serialized temporal domain");check(!owner->update(key,id,query(90,1),5,0,4,false,f)&&f.kind==MovieTimestampAssociationError::invalid_coding&&same(before,state(*owner)),"invalid metadata routes never mutate numeric/cache state");
+    fail_after=0;auto allocation=owner->update(key,id,query(90,300000),5,0,1,false,f);fail_after=-1;check(!allocation&&f.kind==MovieTimestampAssociationError::allocation&&same(before,state(*owner)),"genuine owned result allocation failure leaves staged origin/cache uncommitted");
+    MovieTimestampAssociationFailure foreign_thread;std::thread thread([&]{owner->snapshot(foreign_thread);});thread.join();check(foreign_thread.kind==MovieTimestampAssociationError::wrong_thread,"source owner thread enforced");
+    for(std::uint8_t rate=1;rate<=8;++rate){constexpr std::int64_t interval[]={0,938,937,900,750,750,450,375,375};auto unit=NativeMovieTimestampAssociation::create(key,id,f);update(*unit,key,id,query(0,0),0,1,false,rate);auto one=update(*unit,key,id,query(10,0),1,1,false,rate);check(one.adjusted_timestamp22500==interval[rate],"literal original denominator table and truncation for every rate");}
+    {auto unit=NativeMovieTimestampAssociation::create(key,id,f);auto r=update(*unit,key,id,query(0,1000),3);check(r.snapshot.values.origin==0&&r.adjusted_timestamp22500==1000,"negative prospective origin clamps before retaining source base");}
+    {auto unit=NativeMovieTimestampAssociation::create(key,id,f);auto r=update(*unit,key,id,query(0,2147483647),0);check(r.raw_timestamp22500==2147483647&&r.snapshot.values.origin==2147483647&&r.adjusted_timestamp22500==0,"maximum serialized positive quarter value is not absence");}
+    {auto unit=NativeMovieTimestampAssociation::create(key,id,f);auto cross=query(0,22500);cross.prefix.es_prefix_first_byte=99;auto r=update(*unit,key,id,cross,0);check(r.query->prefix.es_prefix_first_byte==99&&r.query->pes.es_end==100&&r.adjusted_timestamp22500==0,"query first-byte owner remains correct even if remaining prefix crosses PES");}
+    fail_after=0;auto failed_create=NativeMovieTimestampAssociation::create(key,id,f);fail_after=-1;check(!failed_create&&f.kind==MovieTimestampAssociationError::allocation,"real owner allocation error named");
+    auto held=first;auto owned_snapshot=owner->snapshot(f);owner.reset();id.reset();check(held.snapshot.source_key==key&&held.snapshot.identity&&held.query->quarter_pts==225000&&held.adjusted_timestamp22500==2250&&owned_snapshot->values.origin==222750,"owned results/query/epoch survive source producer teardown");
+    check(std::puts("PASS native source timestamp association origin/interpolation; no selected-picture or playback clock claim")>=0&&std::fflush(stdout)==0,"checked footer");return 0;
+}catch(const std::exception& e){std::fprintf(stderr,"FAIL native timestamp association %s\n",e.what());return 1;}}

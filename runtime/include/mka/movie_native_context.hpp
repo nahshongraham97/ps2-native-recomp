@@ -35,6 +35,7 @@ struct MovieNativeHeaderAdmission {
     std::shared_ptr<const MovieAdmissionCurrent> current;
     std::optional<MovieNativeDescriptorRoute> descriptor_route;
     bool clear_temporal,latch_eligibility_rate,latch_first_baseline;
+    std::shared_ptr<const MovieOuterHeaderBatch> parsed_batch;
 };
 struct MovieNativeOutputPublication {
     std::uint64_t work_admission_id,timing_admission_id;

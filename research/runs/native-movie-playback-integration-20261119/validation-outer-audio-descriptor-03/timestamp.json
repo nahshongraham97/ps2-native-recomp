@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_timestamp_association.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native source timestamp association origin/interpolation; no selected-picture or playback clock claim\n",
+  "stderr": "",
+  "executable_sha256": "3e8bd16af053234934cf4b424dbc576a0fd67a7e7d7255e8ca7112cd0ffbd866",
+  "executable_after_sha256": "3e8bd16af053234934cf4b424dbc576a0fd67a7e7d7255e8ca7112cd0ffbd866"
+}

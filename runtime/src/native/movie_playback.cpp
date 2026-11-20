@@ -70,6 +70,7 @@ std::unique_ptr<NativeMovieStreamPlayback> NativeMovieStreamPlayback::create(
         }
         std::optional<sound::AudioQueueStatus> initial;
         std::optional<sound::AudioStreamFormat> actual_format;
+        std::optional<sound::AudioClockReading> initial_clock;
         if(config.audio==MoviePlaybackAudioPresence::required) {
             if(!audio||!config.client_sample_rate||!config.client_channels||!config.client_channel_mask) {
                 error(f,"movie playback missing required native audio output format");return {};
@@ -88,6 +89,7 @@ std::unique_ptr<NativeMovieStreamPlayback> NativeMovieStreamPlayback::create(
                   config.client_sample_rate||config.client_channels||config.client_channel_mask) {
             error(f,"movie playback explicit audio presence mismatch");return {};
         }
+        if(audio){initial_clock=audio->clock(f);if(!initial_clock||f.kind!=MovieControlError::none){error(f,"movie playback initial native output clock");return {};}}
         const auto source_identity=input->observation_identity();
         if(!source_identity||!policies->validate_observation_source(source_identity,f)||f.kind!=MovieControlError::none) {
             error(f,"movie playback policy source observation identity mismatch");return {};
@@ -95,9 +97,12 @@ std::unique_ptr<NativeMovieStreamPlayback> NativeMovieStreamPlayback::create(
         if(!policies->validate_audio_format(actual_format,f)||f.kind!=MovieControlError::none) {
             error(f,"movie playback policy differs from actual client format");return {};
         }
+        std::unique_ptr<NativeMovieAudioClockAnchor> audio_time;
+        if(initial){MovieAudioClockAnchorFailure why;audio_time=NativeMovieAudioClockAnchor::create(input->request().logical_key,source_identity,*initial,*initial_clock,why);if(!audio_time){f={MovieControlError::native_service,"movie playback stopped-zero output clock anchor",static_cast<std::int64_t>(why.kind)};return {};}}
         auto result=std::unique_ptr<NativeMovieStreamPlayback>(new NativeMovieStreamPlayback(
             std::move(input),std::move(policies),std::move(audio),gpu,std::move(color),config,*gain));
-        result->next_audio_=initial;
+        result->next_audio_=initial;result->audio_time_=std::move(audio_time);
+        if(initial){MovieAudioClockAnchorFailure why;result->last_audio_time_=result->audio_time_->observe(*initial,*initial_clock,why);if(!result->last_audio_time_){f={MovieControlError::native_service,"movie playback initial output clock sample",static_cast<std::int64_t>(why.kind)};return {};}}
         return result;
     } catch(...) {error(f,"movie playback construction allocation or service exception");return {};}
 }
@@ -325,6 +330,14 @@ bool NativeMovieStreamPlayback::snapshot_owned(MoviePlaybackSnapshot& s,MovieCon
                s.audio_queue->submitted_frames!=next_audio_->submitted_frames||
                s.device_clock->reset_epoch!=next_audio_->reset_epoch)
                 return fail(f,"movie playback observed audio epoch and sequence");
+            s.cancelled_audio_time=cancelled_audio_time_;s.audio_time_failure=audio_time_failure_;
+            if(!audio_time_failure_){
+                if(!audio_time_)return fail(f,"movie playback missing native output clock anchor");
+                MovieAudioClockAnchorFailure clock_failure;
+                s.audio_time=audio_time_->observe(*s.audio_queue,*s.device_clock,clock_failure);
+                if(!s.audio_time){f={MovieControlError::native_service,"movie playback native output anchored time",static_cast<std::int64_t>(clock_failure.kind)};return fail(f,"movie playback native output anchored time");}
+                last_audio_time_=s.audio_time;
+            }
             if(source_progress_) {
                 MovieAudioProgressFailure pf;
                 s.source_retirement=source_progress_->observe(*s.audio_queue,pf);
@@ -425,6 +438,13 @@ bool NativeMovieStreamPlayback::stop(MovieControlFailure& f) noexcept {
         if(f.kind!=MovieControlError::none)first=f;
         f={};
     }
+    if(audio_time_&&audio_) {
+        try {auto q=audio_->queue_status(f);auto c=audio_->clock(f);MovieAudioClockAnchorFailure why;
+            if(!q||!c)audio_time_failure_=MovieAudioClockAnchorFailure{MovieAudioClockAnchorError::query};
+            else {auto sample=audio_time_->observe(*q,*c,why);if(!sample)audio_time_failure_=why;else last_audio_time_=std::move(sample);}
+        }catch(...){audio_time_failure_=MovieAudioClockAnchorFailure{MovieAudioClockAnchorError::allocation};}
+        f={}; // Clock observation cannot masquerade as actual native cleanup.
+    }
     if(source_progress_&&audio_) {
         try {
             const auto before=audio_->queue_status(f);
@@ -444,6 +464,14 @@ bool NativeMovieStreamPlayback::stop(MovieControlFailure& f) noexcept {
                     error(f,"movie playback audio reset state");
                 else {
                     next_audio_=actual;
+                    try {
+                        if(last_audio_time_){cancelled_audio_time_=last_audio_time_;cancelled_audio_time_->cancelled=true;}
+                        auto reset_clock=audio_->clock(f);MovieAudioClockAnchorFailure clock_failure;
+                        if(!reset_clock||!audio_time_)audio_time_failure_=MovieAudioClockAnchorFailure{MovieAudioClockAnchorError::query};
+                        else {auto old=audio_time_->reset(*actual,*reset_clock,clock_failure);if(!old)audio_time_failure_=clock_failure;else {cancelled_audio_time_=std::move(old);audio_time_failure_.reset();last_audio_time_.reset();}}
+                    }catch(...){audio_time_failure_=MovieAudioClockAnchorFailure{MovieAudioClockAnchorError::allocation};}
+                    f={}; // Successful Reset stands; new unused anchor may be unavailable.
+
                     if(source_progress_) {
                         MovieAudioProgressFailure pf;
                         if(!source_progress_->pause(true,pf))error(f,"movie playback source retirement stop");

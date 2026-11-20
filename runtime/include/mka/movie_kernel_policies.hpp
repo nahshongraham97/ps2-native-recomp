@@ -6,6 +6,7 @@
 #include <variant>
 
 namespace mka::video {
+class MovieOuterHeaderBatch;
 // Source-owned sequence/admission origin for the eligibility owner rate
 // (original owner920). This is distinct from current work-record target rate
 // (original record68) and from the selected decoded picture/FFmpeg packet.
@@ -14,6 +15,7 @@ struct MovieParserRateRecord {
     std::shared_ptr<const MovieSourceObservationIdentity> identity;
     std::uint64_t admission_id=0,admitted_header_es_byte=0,sequence_header_es_byte=0;
     std::int64_t frame_rate_code=0;
+    std::shared_ptr<const MovieOuterHeaderBatch> parsed_batch;
 };
 struct MovieOrdinaryDecision {
     std::string source_key;

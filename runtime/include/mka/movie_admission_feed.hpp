@@ -33,6 +33,41 @@ struct MovieAdmissionCurrent {
     // outer compatibility record's separate signed -1 initial sentinel.
     std::uint8_t info54 = 0, info57 = 0;
 };
+// Issued only after the same Feed actually parses an OUTER header batch.
+// Initiating prefix and checked parser endpoint are separate native facts.
+class MovieOuterHeaderBatch final {
+public:
+    ~MovieOuterHeaderBatch()=default;
+    MovieOuterHeaderBatch(const MovieOuterHeaderBatch&)=delete;
+    MovieOuterHeaderBatch& operator=(const MovieOuterHeaderBatch&)=delete;
+    const MovieVideoPrefixObserved& initiating_prefix() const noexcept{return origin_;}
+    const std::optional<MovieVideoPrefixObserved>& stopping_prefix() const noexcept{return stop_;}
+    std::uint64_t parse_end() const noexcept{return end_;}
+    std::uint64_t offered_end() const noexcept{return offered_end_;}
+    const std::optional<MovieVideoPrefixObserved>& timestamp_prefix() const noexcept{return timestamp_prefix_;}
+    std::uint64_t batch_id() const noexcept{return id_;}
+    std::uint64_t parsed_units() const noexcept{return units_;}
+    const std::shared_ptr<const MovieAdmissionCurrent>& current() const noexcept{return current_;}
+private:
+    friend class NativeMovieAdmissionFeed;
+    MovieOuterHeaderBatch(MovieVideoPrefixObserved origin,std::optional<MovieVideoPrefixObserved> stop,
+        std::uint64_t end,std::uint64_t id,std::uint64_t units,std::shared_ptr<const MovieAdmissionCurrent> current,
+        std::uint64_t offered_end,std::optional<MovieVideoPrefixObserved> timestamp_prefix)
+        :origin_(std::move(origin)),stop_(std::move(stop)),end_(end),id_(id),units_(units),current_(std::move(current)),
+         offered_end_(offered_end),timestamp_prefix_(std::move(timestamp_prefix)){}
+    const MovieVideoPrefixObserved origin_;
+    const std::optional<MovieVideoPrefixObserved> stop_;
+    const std::uint64_t end_,id_,units_;
+    const std::shared_ptr<const MovieAdmissionCurrent> current_;
+    const std::uint64_t offered_end_;
+    const std::optional<MovieVideoPrefixObserved> timestamp_prefix_;
+};
+enum class MovieOuterHeaderBatchProgress {need_more,first_slice,sequence_end};
+struct MovieOuterHeaderBatchResult {
+    MovieOuterHeaderBatchProgress progress=MovieOuterHeaderBatchProgress::need_more;
+    std::shared_ptr<const MovieOuterHeaderBatch> batch;
+};
+
 enum class MovieAdmissionCandidateKind { need_more, parsed_header, first_slice, other, blocked };
 struct MovieAdmissionCandidate {
     MovieAdmissionCandidateKind kind = MovieAdmissionCandidateKind::need_more;
@@ -56,7 +91,7 @@ struct MovieAdmissionFeedSnapshot {
     std::size_t buffered_bytes = 0;
     bool work_pending = false, program_end_observed = false, failed = false;
     std::shared_ptr<const MovieCodecInputReceipt> last_input_receipt;
-    bool inner_parse_active=false;
+    bool inner_parse_active=false,outer_batch_pending=false;
 };
 struct MovieAdmissionFeedState;
 class NativeMovieAdmissionFeed final {
@@ -78,6 +113,7 @@ public:
     // Explicit source parser invocation; actual checked parser extent is the
     // only automatic consumption. First slice has consumed_bytes=0.
     std::optional<MovieAdmissionCandidate> parse_next(MovieAdmissionFeedFailure&) noexcept;
+    std::optional<MovieOuterHeaderBatchResult> parse_outer_batch(MovieAdmissionFeedFailure&) noexcept;
     // Data-only range proposal for the pending picture's contiguous slice units.
     // Never consumes bytes, proves decoder work, admits or completes playback.
     std::optional<MoviePictureBodyExtent> picture_body_extent(MovieAdmissionFeedFailure&) const noexcept;
@@ -94,6 +130,7 @@ private:
     explicit NativeMovieAdmissionFeed(std::unique_ptr<MovieAdmissionFeedState>);
     bool access(MovieAdmissionFeedFailure&, bool allow_failed = false) const noexcept;
     bool consume(std::uint64_t, MovieHeaderConsumeKind, MovieAdmissionFeedFailure&) noexcept;
+    std::optional<MovieAdmissionCandidate> parse_next_owned(MovieAdmissionFeedFailure&) noexcept;
     std::unique_ptr<MovieAdmissionFeedState> state_;
 };
 } // namespace mka::video

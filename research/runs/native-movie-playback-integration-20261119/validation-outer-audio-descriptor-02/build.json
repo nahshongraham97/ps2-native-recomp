@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+    "--target",
+    "test_native_movie_audio_clock_anchor",
+    "test_native_movie_descriptor_rewrite",
+    "test_native_movie_timestamp_association",
+    "test_native_movie_outer_header_batch",
+    "test_native_movie_playback",
+    "test_native_movie_service",
+    "test_native_movie_service_host_clock",
+    "test_native_movie_native_context",
+    "test_native_movie_kernel_policies",
+    "test_native_movie_admission_feed",
+    "test_native_movie_service_acquisition",
+    "test_native_movie_frame_work",
+    "-j2"
+  ],
+  "exit": 0,
+  "stdout": "[0/2] Re-checking globbed directories...\n[1/2] Re-running CMake...\n-- Configuring done (0.1s)\n-- Generating done (0.1s)\n-- Build files have been written to: C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp/build_native_services_only_20261119-01\n[0/4] Re-checking globbed directories...\n[1/18] Building CXX object CMakeFiles/test_native_movie_playback.dir/runtime/src/native/movie_audio_clock_anchor.cpp.obj\n[2/18] Linking CXX executable test_native_movie_playback.exe\n[3/18] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_decode.cpp.obj\n[4/18] Linking CXX static library libmka_native_media.a\n[5/18] Linking CXX executable test_native_movie_native_context.exe\n[6/18] Linking CXX executable test_native_movie_service.exe\n[7/18] Linking CXX executable test_native_movie_service_acquisition.exe\n[8/18] Linking CXX executable test_native_movie_frame_work.exe\n[9/18] Linking CXX executable test_native_movie_audio_clock_anchor.exe\n[10/18] Linking CXX executable test_native_movie_descriptor_rewrite.exe\n[11/18] Linking CXX executable test_native_movie_timestamp_association.exe\n[12/18] Linking CXX executable test_native_movie_outer_header_batch.exe\n[13/18] Linking CXX executable test_native_movie_admission_feed.exe\n[14/18] Linking CXX executable test_native_movie_service_host_clock.exe\n[15/18] Linking CXX executable test_native_movie_kernel_policies.exe\n",
+  "stderr": "CMake Warning in CMakeLists.txt:\n  The object file directory\n\n    C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp/build_native_services_only_20261119-01/CMakeFiles/test_native_movie_userdata_retention_corpus.dir/./\n\n  has 202 characters.  The maximum full path to an object file is 250\n  characters (see CMAKE_OBJECT_PATH_MAX).  Object file\n\n    tests/test_movie_userdata_retention_corpus.cpp.obj\n\n  cannot be safely placed under this directory.  The build may not work\n  correctly.\n\n\nCMake Warning in CMakeLists.txt:\n  The object file directory\n\n    C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp/build_native_services_only_20261119-01/CMakeFiles/test_native_movie_input_acceptance_consumers.dir/./\n\n  has 203 characters.  The maximum full path to an object file is 250\n  characters (see CMAKE_OBJECT_PATH_MAX).  Object file\n\n    tests/test_movie_input_acceptance_consumers.cpp.obj\n\n  cannot be safely placed under this directory.  The build may not work\n  correctly.\n\n\nCMake Warning in CMakeLists.txt:\n  The object file directory\n\n    C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp/build_native_services_only_20261119-01/CMakeFiles/ps2runtime.dir/./\n\n  has 169 characters.  The maximum full path to an object file is 250\n  characters (see CMAKE_OBJECT_PATH_MAX).  Object file\n\n    8eeeb52ec54dabec17ed448439587928/iopn_CRI_ADXI_B00071300_H990112CDFA87D073_71300.cpp.obj\n\n  cannot be safely placed under this directory.  The build may not work\n  correctly.\n\n\n",
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "executable_after_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3"
+}

@@ -59,20 +59,13 @@ int main(int argc,char** argv){try{
     const auto polled=service->poll(sf);check(polled.progress==MovieControlProgress::ongoing&&sf.kind==MovieServiceError::none,"one actual preparation poll pumps native source without completion");
     auto received=service->source_feed_snapshot(*identity,sf);check(received&&received->current.source->source_key==request->logical_key&&received->current.source->identity==identity->source&&received->observation_sequence>0&&received->es_end>received->es_begin&&received->buffered_bytes>0,"same-epoch real native source observations reached service-owned feed");
     auto preparing=service->snapshot(sf);check(preparing&&preparing->active&&preparing->context&&!preparing->context->owner_started&&!preparing->context->video_started&&preparing->context->admissions==0,"source delivery invents neither readiness acknowledgments nor business admission");
-    std::optional<MovieAdmissionCandidate> slice;
-    for (;;) {
-        auto before_parse=service->source_feed_snapshot(*identity,sf);check(bool(before_parse),"actual source cursor before parser entry");
-        auto candidate=service->parse_candidate(*identity,sf);check(bool(candidate),"actual source header parse candidate");
-        auto after_parse=service->source_feed_snapshot(*identity,sf);check(bool(after_parse),"actual source cursor after parser entry");
-        if(candidate->kind==MovieAdmissionCandidateKind::first_slice){
-            check(candidate->consumed_bytes==0&&after_parse->es_begin==before_parse->es_begin&&after_parse->work_pending,"actual first slice is non-consuming pending work");slice=std::move(candidate);break;
-        }
-        check(candidate->kind==MovieAdmissionCandidateKind::parsed_header&&candidate->parsed&&candidate->consumed_bytes>=4&&
-            before_parse->es_begin<=UINT64_MAX-candidate->consumed_bytes&&after_parse->es_begin==before_parse->es_begin+candidate->consumed_bytes&&after_parse->es_begin>before_parse->es_begin&&after_parse->es_end==received->es_end,
-            "header-only loop must consume checked bytes strictly within already observed data; no retries or pumping");
-    }
+    auto parsed_batch=service->parse_header_batch(*identity,sf);
+    check(parsed_batch&&parsed_batch->progress==MovieOuterHeaderBatchProgress::first_slice&&parsed_batch->batch,"actual production Service parses one structured outer batch");
+    const auto batch=parsed_batch->batch;
+    check(batch->initiating_prefix().prefix.raw_codeword==0x1b3&&batch->parsed_units()>1&&batch->stopping_prefix()&&batch->parse_end()==batch->stopping_prefix()->prefix.es_prefix_first_byte&&batch->current()->picture&&batch->current()->gop&&batch->current()->coding&&batch->current()->picture->origin.prefix.es_prefix_first_byte>batch->initiating_prefix().prefix.es_prefix_first_byte,"B3-origin batch authenticates later already-parsed GOP/picture/coding without relabeling initiating prefix");
+    auto slice=MovieAdmissionCandidate{MovieAdmissionCandidateKind::first_slice,batch->parse_end(),0,batch->stopping_prefix(),{},*batch->current()};
     auto before_body=service->source_feed_snapshot(*identity,sf);auto extent=service->picture_body_extent(*identity,sf);
-    check(before_body&&extent&&sf.kind==MovieServiceError::none&&extent->current.source&&extent->current.source->source_key==request->logical_key&&extent->current.source->identity==identity->source&&extent->current.picture&&extent->current.coding&&slice->prefix&&extent->first_slice.prefix.es_prefix_first_byte==slice->prefix->prefix.es_prefix_first_byte&&extent->first_slice.prefix.raw_codeword==slice->prefix->prefix.raw_codeword&&extent->first_slice.prefix.classification==slice->prefix->prefix.classification&&extent->first_slice.pes==slice->prefix->pes&&extent->first_slice.quarter_pts==slice->prefix->quarter_pts&&extent->es_begin==before_body->es_begin&&extent->first_slice.prefix.es_prefix_first_byte==extent->es_begin&&extent->first_slice.pes.es_begin<=extent->es_begin&&extent->es_begin<extent->first_slice.pes.es_end,
+    check(before_body&&extent&&sf.kind==MovieServiceError::none&&extent->current.source&&extent->current.source->source_key==request->logical_key&&extent->current.source->identity==identity->source&&extent->current.picture&&extent->current.coding&&slice.prefix&&extent->first_slice.prefix.es_prefix_first_byte==slice.prefix->prefix.es_prefix_first_byte&&extent->first_slice.prefix.raw_codeword==slice.prefix->prefix.raw_codeword&&extent->first_slice.prefix.classification==slice.prefix->prefix.classification&&extent->first_slice.pes==slice.prefix->pes&&extent->first_slice.quarter_pts==slice.prefix->quarter_pts&&extent->es_begin==before_body->es_begin&&extent->first_slice.prefix.es_prefix_first_byte==extent->es_begin&&extent->first_slice.pes.es_begin<=extent->es_begin&&extent->es_begin<extent->first_slice.pes.es_end,
         "actual service body query retains exact same-source current picture and first-slice provenance");
     if(extent->state==MoviePictureBodyExtentState::boundary_found){
         check(extent->es_end>extent->es_begin&&extent->es_end<=before_body->es_end&&extent->slice_count>0,"found slice-data extent stays inside observed source");
@@ -81,8 +74,8 @@ int main(int argc,char** argv){try{
     auto after_body=service->source_feed_snapshot(*identity,sf);auto unchanged=service->snapshot(sf);
     check(after_body&&after_body->es_begin==before_body->es_begin&&after_body->buffered_bytes==before_body->buffered_bytes&&after_body->work_pending&&after_body->current.gop_parse_entries==before_body->current.gop_parse_entries&&unchanged&&unchanged->context&&unchanged->context->admissions==0&&!unchanged->context->owner_started&&!unchanged->context->video_started&&!unchanged->position,
         "production body proposal consumes no bytes or business admission/readiness/position work");
-    auto outer=std::make_shared<const MovieAdmissionCurrent>(slice->current);
-    check(service->admit_header(*identity,{1,outer->picture->origin.prefix.es_prefix_first_byte,outer,MovieNativeDescriptorRoute::gop,false,true,true},sf),"explicit fixture business admission uses actual parsed source");
+    auto outer=batch->current();
+    check(service->admit_header(*identity,{1,batch->initiating_prefix().prefix.es_prefix_first_byte,outer,MovieNativeDescriptorRoute::gop,false,true,true,batch},sf),"explicit fixture business admission uses actual B3-origin grouped parse receipt");
     check(service->begin_native_work(*identity,1,1,sf),"same service starts actual native processing with frozen outer admission");
     auto first_work=service->step_native_work(*identity,sf);
     check(first_work&&first_work->progress==MovieFrameWorkProgress::processed_without_output&&first_work->work&&first_work->input&&!first_work->selected,"actual first reference completes native work without fabricated output");

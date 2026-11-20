@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_descriptor_rewrite.exe"
+  ],
+  "exit": 1,
+  "stdout": "",
+  "stderr": "FAIL native descriptor rewrite inactive cached value is not fabricated despite rewrite enable\n",
+  "executable_sha256": "f70dd1ac089fa9a8aa912d0c7a31a3fa2593ec65d9ab18bf433903b5dbbd8035",
+  "executable_after_sha256": "f70dd1ac089fa9a8aa912d0c7a31a3fa2593ec65d9ab18bf433903b5dbbd8035"
+}

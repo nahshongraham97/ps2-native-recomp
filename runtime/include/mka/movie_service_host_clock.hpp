@@ -1,18 +1,9 @@
 #pragma once
 #include "mka/movie_service.hpp"
 #include "mka/movie_host_clock.hpp"
+#include "mka/movie_audio_clock_anchor.hpp"
 namespace mka::video {
 enum class MovieServiceHostClockPolicy {elapsed_service,anchored_audio};
-// Issued/owned by an explicit native output anchor producer. This is not a
-// device tick or client padding observation and does not claim heard samples.
-struct MovieNativeAudioClockAnchor {};
-struct MovieAnchoredAudioClockSample {
-    std::string source_key;
-    std::shared_ptr<const MovieSourceObservationIdentity> source;
-    std::shared_ptr<const MovieNativeAudioClockAnchor> anchor;
-    MovieClockRational elapsed;
-    bool query_admitted,active;
-};
 enum class MovieServiceHostClockError {none,invalid_owner,wrong_thread,reentry,invalid_state,
     foreign_source,unavailable,invalid_sample,baseline_changed,regression,overflow,host,service,allocation};
 struct MovieServiceHostClockFailure {
@@ -40,11 +31,13 @@ public:
     NativeMovieServiceHostClock& operator=(const NativeMovieServiceHostClock&)=delete;
     bool begin(MovieServiceHostClockFailure&) noexcept;
     bool update(const std::optional<MovieAnchoredAudioClockSample>&,MovieServiceHostClockFailure&) noexcept;
+    bool update_from_output(MovieServiceHostClockFailure&) noexcept;
     std::optional<MovieServiceHostClockSnapshot> snapshot(MovieServiceHostClockFailure&) const noexcept;
 private:
     NativeMovieServiceHostClock(NativeMovieService&,MovieServiceRequestIdentity,MovieServiceHostClockPolicy,bool,std::unique_ptr<NativeMovieHostClock>);
     bool access(MovieServiceHostClockFailure&) const noexcept;
     bool terminate(MovieServiceHostClockFailure&) noexcept;
+    bool update_owned(const std::optional<MovieAnchoredAudioClockSample>&,MovieServiceHostClockFailure&) noexcept;
     NativeMovieService& service_;
     MovieServiceRequestIdentity identity_;
     MovieServiceHostClockPolicy policy_;

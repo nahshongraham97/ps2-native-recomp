@@ -1,5 +1,6 @@
 #pragma once
 #include "mka/audio_device.hpp"
+#include "mka/movie_audio_clock_anchor.hpp"
 #include "mka/movie_audio_progress.hpp"
 #include "mka/movie_color.hpp"
 #include "mka/movie_control.hpp"
@@ -66,6 +67,8 @@ struct MoviePlaybackSnapshot {
     // old-epoch observations remain separate across an explicit reset.
     std::optional<MovieAudioProgressSnapshot> source_retirement;
     std::optional<MovieAudioProgressSnapshot> cancelled_source_retirement;
+    std::optional<MovieAnchoredAudioClockSample> audio_time,cancelled_audio_time;
+    std::optional<MovieAudioClockAnchorFailure> audio_time_failure;
 };
 // These remain REQUIRED, separately source-bound business policies. This
 // composition supplies no default PTS/ordinal, stereo, unity, ready or ended
@@ -172,6 +175,9 @@ private:
     std::optional<sound::AudioQueueStatus> next_audio_;
     std::unique_ptr<NativeMovieAudioProgress> source_progress_;
     std::optional<MovieAudioProgressSnapshot> cancelled_progress_;
+    std::unique_ptr<NativeMovieAudioClockAnchor> audio_time_;
+    std::optional<MovieAnchoredAudioClockSample> cancelled_audio_time_,last_audio_time_;
+    std::optional<MovieAudioClockAnchorFailure> audio_time_failure_;
     std::optional<std::uint64_t> source_audio_rate_;
     std::uint64_t decoded_video_ = 0, decoded_audio_ = 0, source_audio_cursor_ = 0;
     std::int32_t gain_;

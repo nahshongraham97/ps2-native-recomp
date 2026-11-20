@@ -95,6 +95,7 @@ public:
     // Operations consume the SAME feed automatically supplied by actual Stream
     // observations. Need-more/blocked candidates do not imply admission.
     std::optional<MovieAdmissionCandidate> parse_candidate(const MovieServiceRequestIdentity&,MovieServiceFailure&) noexcept;
+    std::optional<MovieOuterHeaderBatchResult> parse_header_batch(const MovieServiceRequestIdentity&,MovieServiceFailure&) noexcept;
     std::optional<MoviePictureBodyExtent> picture_body_extent(const MovieServiceRequestIdentity&,MovieServiceFailure&) noexcept;
     std::optional<MovieHeaderBoundaryProposal> boundary_proposal(const MovieServiceRequestIdentity&,MovieServiceFailure&) noexcept;
     bool skip_source_bytes(const MovieServiceRequestIdentity&,std::uint64_t actual_bytes,MovieServiceFailure&) noexcept;

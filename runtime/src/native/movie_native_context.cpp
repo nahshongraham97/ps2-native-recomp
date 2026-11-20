@@ -125,13 +125,41 @@ bool NativeMoviePlaybackContext::admit_header(const MovieNativeHeaderAdmission& 
     if(state_.admissions==std::numeric_limits<std::uint64_t>::max()||event.admission_id!=state_.admissions+1)
         return fail(f,MovieNativeContextError::invalid_order,"movie native context admission order");
     const auto admitted=event.admitted_header_es_byte;
-    auto is_origin=[&](const std::shared_ptr<const MovieCurrentHeaderUnit>& u){return u&&u->origin.prefix.es_prefix_first_byte==admitted;};
-    if(admitted>observed_es_end_||observed_es_end_-admitted<4||
-       (!is_origin(current->sequence)&&!is_origin(current->gop)&&!is_origin(current->picture)))
-        return fail(f,MovieNativeContextError::invalid_order,"movie native context actual admitted header origin");
+    auto checked_bound=admitted;
+    if(event.parsed_batch){
+        const auto& batch=*event.parsed_batch;const auto& origin=batch.initiating_prefix();
+        auto seen=prefixes_.find(origin.prefix.es_prefix_first_byte);
+        if(batch.current()!=current||!batch.batch_id()||!batch.parsed_units()||origin.prefix.es_prefix_first_byte!=admitted||
+           batch.parse_end()<=admitted||batch.parse_end()>observed_es_end_||batch.parse_end()<4||
+           seen==prefixes_.end()||seen->second.prefix!=origin.prefix||seen->second.pes!=origin.pes||seen->second.quarter_pts!=origin.quarter_pts)
+            return fail(f,MovieNativeContextError::foreign_source,"movie native context unowned parsed outer batch");
+        if(batch.stopping_prefix()){
+            const auto& stop=*batch.stopping_prefix();auto observed=prefixes_.find(batch.parse_end());
+            if(stop.prefix.es_prefix_first_byte!=batch.parse_end()||!(stop.prefix.classification&2)||
+               observed_es_end_-batch.parse_end()<4||observed==prefixes_.end()||observed->second.prefix!=stop.prefix||
+               observed->second.pes!=stop.pes||observed->second.quarter_pts!=stop.quarter_pts)
+                return fail(f,MovieNativeContextError::foreign_source,"movie native context unobserved outer batch stop");
+        }
+        if(batch.offered_end()<admitted||batch.offered_end()>observed_es_end_||batch.offered_end()-admitted<4)
+            return fail(f,MovieNativeContextError::foreign_source,"movie native context batch original offered range");
+        if(batch.timestamp_prefix()){
+            const auto& first=*batch.timestamp_prefix();const auto at=first.prefix.es_prefix_first_byte;auto actual=prefixes_.find(at);
+            if(at<admitted||at>batch.offered_end()||batch.offered_end()-at<4||!(first.prefix.classification&4)||
+               actual==prefixes_.end()||actual->second.prefix!=first.prefix||actual->second.pes!=first.pes||actual->second.quarter_pts!=first.quarter_pts)
+                return fail(f,MovieNativeContextError::foreign_source,"movie native context original raw timestamp prefix");
+        }
+        for(const auto* unit:{&current->sequence,&current->sequence_extension,&current->display_extension,&current->gop,&current->picture,&current->coding,&current->quant_matrix,&current->userdata})
+            if(*unit&&(*unit)->consumed_end>batch.parse_end())return fail(f,MovieNativeContextError::foreign_source,"movie native context unit beyond actual parsed batch");
+        checked_bound=batch.parse_end()-4;
+    }else{
+        auto is_origin=[&](const std::shared_ptr<const MovieCurrentHeaderUnit>& u){return u&&u->origin.prefix.es_prefix_first_byte==admitted;};
+        if(admitted>observed_es_end_||observed_es_end_-admitted<4||
+           (!is_origin(current->sequence)&&!is_origin(current->gop)&&!is_origin(current->picture)))
+            return fail(f,MovieNativeContextError::invalid_order,"movie native context actual admitted header origin");
+    }
     // Validate actual parsed-unit bytes and the FIRST-byte PES owner. The
     // independently retained current units need no future picture/index record.
-    auto sequence_unit=checked_unit(current->sequence,admitted,0x1b3,f);if(!sequence_unit)return false;
+    auto sequence_unit=checked_unit(current->sequence,checked_bound,0x1b3,f);if(!sequence_unit)return false;
     const auto* sequence=std::get_if<MovieSequenceHeader>(&sequence_unit->payload);
     const auto* claimed_sequence=std::get_if<MovieSequenceHeader>(&current->sequence->unit.payload);
     if(!sequence||!claimed_sequence||sequence->frame_rate_code!=claimed_sequence->frame_rate_code)
@@ -141,14 +169,14 @@ bool NativeMoviePlaybackContext::admit_header(const MovieNativeHeaderAdmission& 
     std::optional<MovieTimecodeDescriptor> descriptor;std::optional<MovieTimecodeRational> time;
     auto baseline=state_.first_baseline;MovieTimecodeFailure why;
     if(event.descriptor_route){
-        auto gop_unit=checked_unit(current->gop,admitted,0x1b8,f);if(!gop_unit)return false;
+        auto gop_unit=checked_unit(current->gop,checked_bound,0x1b8,f);if(!gop_unit)return false;
         const auto* gop=std::get_if<MovieGopHeader>(&gop_unit->payload);
         const auto* claimed_gop=std::get_if<MovieGopHeader>(&current->gop->unit.payload);
         if(!gop||!claimed_gop||gop->raw_time_code!=claimed_gop->raw_time_code||gop->closed_gop!=claimed_gop->closed_gop||gop->broken_link!=claimed_gop->broken_link)
             return fail(f,MovieNativeContextError::foreign_source,"movie native context serialized GOP mismatch");
         std::uint16_t temporal=0;
         if(!event.clear_temporal||*event.descriptor_route==MovieNativeDescriptorRoute::pes_position){
-            auto picture_unit=checked_unit(current->picture,admitted,0x100,f);if(!picture_unit)return false;
+            auto picture_unit=checked_unit(current->picture,checked_bound,0x100,f);if(!picture_unit)return false;
             const auto* picture=std::get_if<MoviePictureHeader>(&picture_unit->payload);
             const auto* claimed_picture=std::get_if<MoviePictureHeader>(&current->picture->unit.payload);
             if(!picture||!claimed_picture||picture->temporal_reference!=claimed_picture->temporal_reference||picture->coding_type!=claimed_picture->coding_type)
@@ -167,7 +195,7 @@ bool NativeMoviePlaybackContext::admit_header(const MovieNativeHeaderAdmission& 
     }else if(event.clear_temporal||event.latch_first_baseline)return fail(f,MovieNativeContextError::missing_admission,"movie native context rate-only admission has no descriptor");
     try {
         std::optional<MovieParserRateRecord> rate;
-        if(event.latch_eligibility_rate)rate.emplace(MovieParserRateRecord{config_.request.logical_key,config_.identity,event.admission_id,admitted,current->sequence->origin.prefix.es_prefix_first_byte,sequence->frame_rate_code});
+        if(event.latch_eligibility_rate)rate.emplace(MovieParserRateRecord{config_.request.logical_key,config_.identity,event.admission_id,admitted,current->sequence->origin.prefix.es_prefix_first_byte,sequence->frame_rate_code,event.parsed_batch});
         admissions_.emplace(event.admission_id,Admission{event,descriptor,time,sequence->frame_rate_code});
         if(rate)state_.eligibility_rate=std::move(rate);
         state_.first_baseline=baseline;++state_.admissions;return true;
@@ -237,7 +265,10 @@ bool NativeMoviePlaybackContext::sample_audio(MovieClockRational audio,MovieCloc
     if(!admitted){state_.cached_clock.reset();route_=ClockRoute::retained;return true;}
     if(!active){state_.cached_clock=state_.retained_audio_clock;route_=state_.cached_clock?ClockRoute::ordinary:ClockRoute::retained;return true;}
     MovieClockFilterFailure why;auto updated=filter_.update(audio,timer,why);if(!updated)return fail(f,MovieNativeContextError::filter,"movie native context source filter",static_cast<std::int64_t>(why.kind));
-    if(updated->output.numerator>state_.retained_audio_clock.value_or(MovieClockRational{-1,1}).numerator)state_.retained_audio_clock=updated->output;
+    // The absent source sentinel remains a separate initialization rule. Once
+    // present, native exact elapsed readings may change rational representation.
+    const auto prior=state_.retained_audio_clock;
+    if((!prior&&updated->output.numerator>-1)||(prior&&Wide(updated->output.numerator)*prior->denominator>Wide(prior->numerator)*updated->output.denominator))state_.retained_audio_clock=updated->output;
     state_.cached_clock=state_.retained_audio_clock;
     route_=state_.cached_clock?ClockRoute::ordinary:ClockRoute::retained;return true;
 }

@@ -43,6 +43,9 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/movie_output_position.cpp
     runtime/src/native/movie_service.cpp
     runtime/src/native/movie_frame_work.cpp
+    runtime/src/native/movie_audio_clock_anchor.cpp
+    runtime/src/native/movie_descriptor_rewrite.cpp
+    runtime/src/native/movie_timestamp_association.cpp
     runtime/src/native/movie_service_host_clock.cpp
     runtime/src/native/movie_service_acquisition.cpp
     runtime/src/native/movie_admission_feed.cpp
@@ -119,6 +122,10 @@ foreach(pair
     "test_native_movie_host_clock|tests/test_movie_host_clock.cpp"
     "test_native_movie_accepted_body|tests/test_movie_accepted_body.cpp"
     "test_native_movie_frame_work|tests/test_movie_frame_work.cpp"
+    "test_native_movie_audio_clock_anchor|tests/test_movie_audio_clock_anchor.cpp"
+    "test_native_movie_descriptor_rewrite|tests/test_movie_descriptor_rewrite.cpp"
+    "test_native_movie_timestamp_association|tests/test_movie_timestamp_association.cpp"
+    "test_native_movie_outer_header_batch|tests/test_movie_outer_header_batch.cpp"
     "test_native_movie_service_host_clock|tests/test_movie_service_host_clock.cpp"
     "test_native_movie_input_acceptance|tests/test_movie_input_acceptance.cpp"
     "test_native_movie_input_acceptance_consumers|tests/test_movie_input_acceptance_consumers.cpp"
@@ -261,6 +268,7 @@ target_compile_features(test_native_movie_eligibility_numeric PRIVATE cxx_std_20
 add_executable(test_native_movie_playback EXCLUDE_FROM_ALL
     tests/test_movie_playback.cpp runtime/src/native/movie_playback.cpp
     runtime/src/native/movie_audio_progress.cpp
+    runtime/src/native/movie_audio_clock_anchor.cpp
     runtime/src/native/movie_control.cpp runtime/src/native/movie_gain.cpp
     runtime/src/native/movie_color.cpp runtime/src/native/movie_gpu.cpp
     runtime/src/native/movie_catalog.cpp)

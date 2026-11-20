@@ -1,3 +1,4 @@
+#include "mka/movie_admission_feed.hpp"
 #include "mka/movie_kernel_policies.hpp"
 #include "mka/movie_input_acceptance.hpp"
 #include <exception>
@@ -227,8 +228,19 @@ bool NativeMovieKernelPolicies::eligible(const MovieVideoFrame& frame, const Mov
         std::optional<MovieFrameEligibilityResult> ordinary;
         if(auto* value=std::get_if<MovieOrdinaryDecision>(&*decision)) {
             const auto& rate=value->rate_record;
+            auto bound=rate.admitted_header_es_byte;
+            if(rate.parsed_batch){
+                const auto& batch=*rate.parsed_batch;const auto& current=batch.current();
+                if(!current||!current->source||current->source->source_key!=rate.source_key||current->source->identity!=rate.identity||
+                   !current->sequence||current->sequence->origin.prefix.es_prefix_first_byte!=rate.sequence_header_es_byte||
+                   batch.initiating_prefix().prefix.es_prefix_first_byte!=rate.admitted_header_es_byte||batch.parse_end()<4)
+                    return fail(f,"movie policies foreign parsed batch rate provenance");
+                const auto* actual=std::get_if<MovieSequenceHeader>(&current->sequence->unit.payload);
+                if(!actual||actual->frame_rate_code!=rate.frame_rate_code)return fail(f,"movie policies altered authentic batch sequence rate");
+                bound=batch.parse_end()-4;
+            }
             if(rate.source_key!=request_.logical_key||!rate.identity||rate.identity!=source_identity_||
-               !rate.admission_id||rate.sequence_header_es_byte>rate.admitted_header_es_byte||
+               !rate.admission_id||rate.sequence_header_es_byte>bound||
                rate.frame_rate_code<0||rate.frame_rate_code>15)
                 return fail(f, "movie policies missing associated parser rate provenance");
             if (value->ordinary_clock.denominator <= 0) return fail(f, "movie policies missing ordinary clock");

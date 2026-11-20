@@ -13,13 +13,14 @@ struct MovieServicePort {
     std::shared_ptr<MovieEligibilityServiceBinding> clock;
     std::unique_ptr<NativeMovieOutputPosition> position;
     std::unique_ptr<NativeMovieAdmissionFeed> feed;
+    std::shared_ptr<const MovieOuterHeaderBatch> last_batch;
     std::unique_ptr<NativeMovieFrameWorkCoordinator> work;
     MovieFrameWorkFailure work_failure;
     MovieAdmissionFeedFailure feed_failure;
     std::map<std::uint64_t,std::shared_ptr<const MovieAdmissionCurrent>> admissions;
     const std::thread::id owner=std::this_thread::get_id();
     bool opening=true;
-    void invalidate() noexcept {opening=false;context=nullptr;kernel=nullptr;work.reset();feed.reset();}
+    void invalidate() noexcept {opening=false;context=nullptr;kernel=nullptr;work.reset();last_batch.reset();feed.reset();}
 };
 namespace {
 static_assert(std::is_nothrow_move_assignable_v<MoviePlaybackSnapshot>);
@@ -187,6 +188,15 @@ std::optional<MovieAdmissionCandidate> NativeMovieService::parse_candidate(const
     auto result=port_->feed->parse_next(f.feed);
     if(!result){fail(f,MovieServiceError::source_feed,"movie service parse source candidate");terminal_failure(f);}return result;
 }
+std::optional<MovieOuterHeaderBatchResult> NativeMovieService::parse_header_batch(const MovieServiceRequestIdentity& id,MovieServiceFailure& f) noexcept {
+    if(!event_access(id,f))return {};Guard call(in_call_);
+    auto active=port_->work->snapshot(f.native_work);
+    if(!active||active->outer_active||active->waiting_output){fail(f,MovieServiceError::invalid_state,"movie service outer batch during native work");return {};}
+    auto result=port_->feed->parse_outer_batch(f.feed);
+    if(!result){fail(f,MovieServiceError::source_feed,"movie service actual outer header batch parse");terminal_failure(f);return {};}
+    if(result->batch)port_->last_batch=result->batch;
+    return result;
+}
 std::optional<MoviePictureBodyExtent> NativeMovieService::picture_body_extent(const MovieServiceRequestIdentity& id,MovieServiceFailure& f) noexcept {
     if(!event_access(id,f))return {};Guard call(in_call_);
     auto result=port_->feed->picture_body_extent(f.feed);
@@ -207,6 +217,7 @@ std::optional<MovieAdmissionFeedSnapshot> NativeMovieService::source_feed_snapsh
 }
 bool NativeMovieService::admit_header(const MovieServiceRequestIdentity& id,const MovieNativeHeaderAdmission& event,MovieServiceFailure& f) noexcept {
     if(!event_access(id,f))return false;Guard call(in_call_);
+    if(event.parsed_batch&&event.parsed_batch!=port_->last_batch)return fail(f,MovieServiceError::context,"movie service foreign parser batch owner");
     try{std::map<std::uint64_t,std::shared_ptr<const MovieAdmissionCurrent>> staged;staged.emplace(event.admission_id,event.current);
         if(!port_->context->admit_header(event,f.control)){fail(f,MovieServiceError::context,"movie service source header admission");terminal_failure(f);return false;}port_->admissions.merge(staged);return true;
     }catch(const std::bad_alloc&){fail(f,MovieServiceError::allocation,"movie service admission ownership allocation");terminal_failure(f);return false;}
