@@ -7,7 +7,8 @@
 
 namespace mka::game {
 enum class MaterialMaintenanceError {none,wrong_thread,reentry,invalid_input,
-    foreign_owner,stale_record,expired_target,allocation,overflow,binding,step_state,unbound_collection};
+    foreign_owner,stale_record,expired_target,allocation,overflow,binding,step_state,
+    unbound_collection,unbound_hierarchy_resource};
 struct MaterialMaintenanceFailure {
     MaterialMaintenanceError kind=MaterialMaintenanceError::none;
     const char* operation="";
@@ -39,9 +40,56 @@ public:
 private:
     friend class NativeMaterialMaintenance;
     friend class NativeTrackedMaterialOwner;
+    friend class NativeMaterialGeometry;
     explicit NativeMaterialGroup(std::vector<std::shared_ptr<NativeMatFxBinding>> x):materials_(std::move(x)){}
     std::vector<std::shared_ptr<NativeMatFxBinding>> materials_;
     const std::thread::id owner_=std::this_thread::get_id();
+};
+
+// Geometry plugin presence and count are source resource data, not device
+// state. Separate geometry/atomic owners preserve shared-geometry identity.
+struct MaterialGeometryImport {
+    MatFxHierarchyRoute plugin_route;
+    std::int32_t source_count;
+};
+struct MaterialGeometrySnapshot {
+    MaterialGeometryImport imported;
+    std::size_t materials;
+};
+class NativeMaterialGeometry final {
+public:
+    static std::shared_ptr<NativeMaterialGeometry> create(
+        std::shared_ptr<NativeMaterialGroup>,MaterialGeometryImport,MaterialMaintenanceFailure&) noexcept;
+    std::optional<MaterialGeometrySnapshot> snapshot(MaterialMaintenanceFailure&) const noexcept;
+private:
+    friend class NativeMaterialMaintenance;
+    friend class NativeMaterialHierarchy;
+    NativeMaterialGeometry(std::shared_ptr<NativeMaterialGroup> group,MaterialGeometryImport imported)
+        :group_(std::move(group)),imported_(imported){}
+    std::shared_ptr<NativeMaterialGroup> group_;
+    const MaterialGeometryImport imported_;
+    const std::thread::id owner_=std::this_thread::get_id();
+};
+struct MaterialHierarchyImport {std::int32_t resource_kind;bool effect_enabled;};
+struct MaterialHierarchySnapshot {
+    std::shared_ptr<const NativeMaterialGeometry> geometry;
+    MaterialHierarchyImport state;
+};
+class NativeMaterialHierarchy final {
+public:
+    static std::shared_ptr<NativeMaterialHierarchy> create(
+        std::shared_ptr<NativeMaterialGeometry>,MaterialHierarchyImport,MaterialMaintenanceFailure&) noexcept;
+    ~NativeMaterialHierarchy();
+    std::optional<MaterialHierarchySnapshot> snapshot(MaterialMaintenanceFailure&) const noexcept;
+private:
+    friend class NativeMaterialMaintenance;
+    NativeMaterialHierarchy(std::shared_ptr<NativeMaterialGeometry> geometry,MaterialHierarchyImport state)
+        :geometry_(std::move(geometry)),state_(state){}
+    bool access(MaterialMaintenanceFailure&) const noexcept;
+    std::shared_ptr<NativeMaterialGeometry> geometry_;
+    MaterialHierarchyImport state_;
+    const std::thread::id owner_=std::this_thread::get_id();
+    bool busy_=false;
 };
 struct MaterialOwnerGeneration;
 class NativeTrackedMaterialOwner final {
@@ -67,7 +115,7 @@ struct MaterialTrackingSeed {
     std::array<std::uint32_t,2> flags;
     std::array<std::array<std::uint32_t,3>,2> padding;
 };
-enum class MaterialTrackingRoute {direct_material,prepared_group,owner_collection};
+enum class MaterialTrackingRoute {direct_material,prepared_group,owner_collection,hierarchy};
 class MaterialTrackingToken {
 public:
     MaterialTrackingToken(const MaterialTrackingToken&)=default;
@@ -102,6 +150,12 @@ public:
     std::optional<MaterialTrackingToken> register_owner_collection(
         std::shared_ptr<NativeTrackedMaterialOwner>,MaterialTranslationRates,
         MaterialTrackingSeed,MaterialMaintenanceFailure&) noexcept;
+    // Actual source185630: initialize, prepare native geometry/materials, then
+    // prepend. Absent-plugin nonzero resource kinds need the actual program
+    // producer and fail by name until it is implemented; no draw is invented.
+    std::optional<MaterialTrackingToken> register_hierarchy(
+        std::shared_ptr<NativeTrackedMaterialOwner>,std::shared_ptr<NativeMaterialHierarchy>,
+        MaterialTranslationRates,MaterialTrackingSeed,MaterialMaintenanceFailure&) noexcept;
     bool retire(const MaterialTrackingToken&,MaterialMaintenanceFailure&) noexcept;
     bool clear(MaterialMaintenanceFailure&) noexcept;
     std::optional<MaterialTrackedSnapshot> record(const MaterialTrackingToken&,MaterialMaintenanceFailure&) const noexcept;
@@ -115,7 +169,8 @@ private:
     bool find(const MaterialTrackingToken&,const Record*&,MaterialMaintenanceFailure&) const noexcept;
     std::optional<MaterialTrackingToken> register_owned(MaterialTrackingRoute,
         std::shared_ptr<NativeTrackedMaterialOwner>,std::shared_ptr<NativeMatFxBinding>,
-        std::shared_ptr<NativeMaterialGroup>,MaterialTranslationRates,MaterialTrackingSeed,
+        std::shared_ptr<NativeMaterialGroup>,std::shared_ptr<NativeMaterialHierarchy>,
+        MaterialTranslationRates,MaterialTrackingSeed,
         MaterialMaintenanceFailure&) noexcept;
     bool publish(Record&,const std::shared_ptr<NativeMatFxBinding>&,bool,MaterialMaintenancePass&,MaterialMaintenanceFailure&) noexcept;
     bool advance_group(Record&,const NativeMaterialGroup&,MaterialStepDelta,MaterialMaintenancePass&,MaterialMaintenanceFailure&) noexcept;

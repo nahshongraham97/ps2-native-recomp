@@ -15,6 +15,7 @@ public: virtual ~NativeMatFxProperty() noexcept=0;
 enum class MatFxBindingError {none,wrong_thread,reentry,invalid_state,missing_slot,missing_property,stale_matrix,unbound_hierarchy,allocation};
 struct MatFxBindingFailure {MatFxBindingError kind=MatFxBindingError::none;const char* operation="";};
 enum class MatFxMode : std::uint32_t {disabled=0,effect1=1,effect2=2,combined12=3,property=4,parameter_pair=5,parameter_pair_property=6};
+enum class MatFxHierarchyRoute {plugin_absent,plugin_present};
 enum class MatFxEffectKind : std::uint32_t {none=0,effect1=1,effect2=2,property=4,parameter_pair=5};
 class NativeMatFxBinding;
 class MatFxMatrixReference {
@@ -52,7 +53,8 @@ public:
  // Source185350: old4 ->6 preserves property/selectors; other modes ->5.
  // Existing mode5 retains its borrowed pair (equal nonzero source mode).
  bool prepare_direct_tracking(MatFxBindingFailure&) noexcept;
- bool prepare_hierarchy_tracking(MatFxBindingFailure&) noexcept;
+ // Explicit original185630 branch; never implies renderer/program preparation.
+ bool prepare_hierarchy_tracking(MatFxHierarchyRoute,MatFxBindingFailure&) noexcept;
  std::optional<MatFxParameterPairLease> first_parameter_pair(MatFxBindingFailure&) const noexcept;
  bool set_first_parameter_pair(const MatFxParameterPair&,MatFxBindingFailure&) noexcept;
  std::optional<std::shared_ptr<NativeMatFxProperty>> first_property(MatFxBindingFailure&) const noexcept;
@@ -62,6 +64,7 @@ public:
 private:
  explicit NativeMatFxBinding(MatFxImportedState&&) noexcept;
  bool access(MatFxBindingFailure&) const noexcept;
+ bool prepare_tracking_owned(bool preserve_property,MatFxBindingFailure&) noexcept;
  bool lease(const MatFxParameterPair&,MatFxParameterPairLease&,MatFxBindingFailure&) const noexcept;
  MatFxEffectSlot* find(MatFxEffectKind) noexcept;
  const MatFxEffectSlot* find(MatFxEffectKind) const noexcept;

@@ -90,10 +90,56 @@ void errors_and_lifetime(){
  check(!owner->first_parameter_pair(f)&&f.kind==MatFxBindingError::missing_slot,"missing kind5 cannot return fabricated null success");
  auto replacement=std::make_shared<Resource>(count);check(!owner->replace_property({},f)&&f.kind==MatFxBindingError::missing_property,"null source resource replacement rejected");
  check(owner->replace_property(replacement,f)&&count==1,"real resource replacement releases displaced owner");
- auto before=owner->snapshot(f);check(!owner->prepare_hierarchy_tracking(f)&&f.kind==MatFxBindingError::unbound_hierarchy,"actual hierarchy dependency is named");auto after=owner->snapshot(f);check(before&&after&&before->mode==after->mode&&before->slots[0].primary==after->slots[0].primary,"unbound hierarchy changes no state");
+ auto before=owner->snapshot(f);check(!owner->prepare_hierarchy_tracking(static_cast<MatFxHierarchyRoute>(99),f)&&f.kind==MatFxBindingError::invalid_state,"unknown explicit hierarchy route is named");auto after=owner->snapshot(f);check(before&&after&&before->mode==after->mode&&before->slots[0].primary==after->slots[0].primary,"invalid hierarchy route changes no state");
  bool wrong=false;std::thread thread([&]{MatFxBindingFailure why;wrong=!owner->prepare_direct_tracking(why)&&why.kind==MatFxBindingError::wrong_thread;});thread.join();check(wrong,"foreign thread cannot mutate binding");
  before.reset();after.reset();replacement.reset();auto retained=owner->snapshot(f);owner.reset();check(retained&&count==1&&retained->slots[0].primary,"owned snapshot retains actual resource beyond binding teardown");retained.reset();check(count==2,"retained resource finalizes at actual last native owner");
  std::vector<std::unique_ptr<NativeMatFxBinding>> many;for(int i=0;i<513;++i)many.push_back(binding(MatFxMode::disabled));check(many.size()==513,"semantic two slots do not cap native binding count");
+}
+void hierarchy_routes(){
+ MatFxBindingFailure f;
+ for(auto route:{MatFxHierarchyRoute::plugin_absent,MatFxHierarchyRoute::plugin_present})for(unsigned number=0;number<7;++number){
+  const auto mode=static_cast<MatFxMode>(number);int releases=0,total=0;auto state=imported(mode);
+  auto first=std::make_shared<NativeMaterialMatrix>();auto second=std::make_shared<NativeMaterialMatrix>();first->flags=123;second->flags=456;
+  NativeMatFxProperty* property_identity=nullptr;
+  for(auto& slot:state.slots){
+   if(slot.kind==MatFxEffectKind::effect1){slot.primary=std::make_shared<Resource>(releases);slot.secondary=std::make_shared<Resource>(releases);total+=2;}
+   if(slot.kind==MatFxEffectKind::effect2){slot.secondary=std::make_shared<Resource>(releases);++total;}
+   if(slot.kind==MatFxEffectKind::property){slot.primary=std::make_shared<Resource>(releases);property_identity=slot.primary.get();slot.selectors={-3,99};++total;}
+   if(slot.kind==MatFxEffectKind::parameter_pair)slot.pair={MatFxMatrixReference::borrow(first),MatFxMatrixReference::borrow(second)};
+  }
+  auto owner=NativeMatFxBinding::create(std::move(state),f);check(bool(owner),"each of seven imported modes owns source-correct slots");
+  fail_next=true;const bool ok=owner->prepare_hierarchy_tracking(route,f);const bool noalloc=fail_next;fail_next=false;
+  check(ok&&noalloc&&f.kind==MatFxBindingError::none,"exact hierarchy state conversion requires no new allocation");
+  const bool absent=route==MatFxHierarchyRoute::plugin_absent;
+  const auto expected=absent?(mode==MatFxMode::disabled?MatFxMode::parameter_pair:mode==MatFxMode::property?MatFxMode::parameter_pair_property:mode):MatFxMode::parameter_pair;
+  auto view=owner->snapshot(f);check(view&&view->mode==expected,"plugin branch mode mapping across all seven modes");
+  check(releases==(absent?0:total),"present mode resets actual resource leases; absent preserves other modes");
+  if(expected==MatFxMode::parameter_pair||expected==MatFxMode::parameter_pair_property){
+   auto pair=owner->first_parameter_pair(f);check(bool(pair),"actual hierarchy prepared pair");
+   const bool preserves=mode==MatFxMode::parameter_pair||(absent&&mode==MatFxMode::parameter_pair_property);
+   check(pair->first.get()==(preserves?first.get():nullptr)&&pair->second.get()==(preserves?second.get():nullptr),"same5/absent6 preserve exact borrowed identities, conversion creates null pair");
+  }
+  if(absent&&mode==MatFxMode::property){auto held=owner->first_property(f);auto selectors=owner->property_selectors(f);check(held&&held->get()==property_identity&&selectors&&selectors->first==-3&&selectors->second==99,"absent4->6 retains property and selectors rather than matrix references");}
+  if(absent&&mode==MatFxMode::parameter_pair_property){check(view->slots[1].primary.get()==property_identity&&view->slots[1].selectors.first==-3&&view->slots[1].selectors.second==99,"absent6 leaves property slot untouched");}
+  if(absent&&(number==1||number==2||number==3))check(view->slots[0].kind==static_cast<MatFxEffectKind>(number==3?1:number)&&bool(view->slots[0].secondary),"absent nonzero legacy effects remain owned and unchanged");
+  view.reset();owner.reset();check(releases==total,"every imported concrete resource finalizes once at true last owner");
+ }
+ auto null_property=binding(MatFxMode::property);
+ check(!null_property->prepare_hierarchy_tracking(MatFxHierarchyRoute::plugin_absent,f)&&f.kind==MatFxBindingError::missing_property&&null_property->snapshot(f)->mode==MatFxMode::property,"absent null property conversion fails atomically");
+ check(null_property->prepare_hierarchy_tracking(MatFxHierarchyRoute::plugin_present,f)&&null_property->snapshot(f)->mode==MatFxMode::parameter_pair,"present route discards null property instead of trying to restore it");
+ auto matrix=std::make_shared<NativeMaterialMatrix>();auto five=binding(MatFxMode::parameter_pair);
+ check(five->set_first_parameter_pair({MatFxMatrixReference::borrow(matrix),MatFxMatrixReference::null()},f),"expired-preservation setup");matrix.reset();
+ for(auto route:{MatFxHierarchyRoute::plugin_absent,MatFxHierarchyRoute::plugin_present}){
+  check(five->prepare_hierarchy_tracking(route,f),"equal5 hierarchy preparation does not silently read or clear stale refs");
+  check(!five->first_parameter_pair(f)&&f.kind==MatFxBindingError::stale_matrix,"stale nonnull identity preserved, not fabricated null");
+ }
+ bool wrong=false;std::thread thread([&]{MatFxBindingFailure local;wrong=!five->prepare_hierarchy_tracking(MatFxHierarchyRoute::plugin_present,local)&&local.kind==MatFxBindingError::wrong_thread;});thread.join();check(wrong,"hierarchy mutation creating thread guard");
+ for(auto route:{MatFxHierarchyRoute::plugin_absent,MatFxHierarchyRoute::plugin_present}){
+  int count=0;bool rejected=false;auto initial=imported(MatFxMode::property);auto property=std::make_shared<Resource>(count);auto* raw=property.get();initial.slots[0].primary=property;property.reset();auto owner=NativeMatFxBinding::create(std::move(initial),f);raw->probe=owner.get();raw->rejected=&rejected;
+  check(owner->prepare_hierarchy_tracking(route,f),"hierarchy resource conversion succeeds");
+  if(route==MatFxHierarchyRoute::plugin_present)check(count==1&&rejected,"present hierarchy reset finalizer cannot reenter active binding");
+  else {check(count==0&&!rejected,"absent4->6 retains property through conversion");owner.reset();check(count==1&&rejected,"retained property finalizes under guarded owner teardown");}
+ }
 }
 void finalizer_reentry(){
  MatFxBindingFailure f;int count=0;bool rejected=false;auto state=imported(MatFxMode::effect1);auto property=std::make_shared<Resource>(count);auto* raw=property.get();state.slots[0].primary=property;property.reset();auto owner=NativeMatFxBinding::create(std::move(state),f);raw->probe=owner.get();raw->rejected=&rejected;
@@ -103,6 +149,6 @@ void finalizer_reentry(){
  next.reset();auto held=second->first_property(f);auto* last=static_cast<Resource*>(held->get());last->probe=second.get();last->rejected=&rejected;held.reset();rejected=false;second.reset();check(count==3&&rejected,"binding destructor blocks resource-finalizer reentry");
 }
 }
-int main(){try{direct_property_and_cleanup();borrowed_pairs();previous_mode_cleanup();errors_and_lifetime();finalizer_reentry();
- check(std::puts("PASS native MatFX owned bindings/borrowed matrix lifetime/resource cleanup; no renderer or hierarchy admission")>=0&&std::fflush(stdout)==0,"checked output");return 0;
+int main(){try{direct_property_and_cleanup();borrowed_pairs();previous_mode_cleanup();errors_and_lifetime();hierarchy_routes();finalizer_reentry();
+ check(std::puts("PASS native MatFX owned bindings/borrowed matrix lifetime/resource cleanup; no renderer or serialized resource admission")>=0&&std::fflush(stdout)==0,"checked output");return 0;
 }catch(const std::exception& e){fail_next=false;std::fprintf(stderr,"FAIL native MatFX binding %s\n",e.what());return 1;}}

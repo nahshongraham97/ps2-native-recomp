@@ -1,0 +1,41 @@
+{
+  "scope": "Native source185630 supported hierarchy preparation/owned geometry/tracking and real queued maintenance; absent nonzero program/resource and full game OPEN",
+  "base_fork_commit": "7c99e6f60e68f9706c475e749117d6b6deb15e88",
+  "verification_sha256": "302e3f1beeaf4bbe5dfa047a586dce11de862af995a83e15704c02b5668f6dc6",
+  "execution_review_sha256": "e50e56f5490b98b8c3b6a911c9ac7d8ac7f41aaba1ec47e32ff8424ba625439d",
+  "approved_files_sha256": {
+    "cmake/native_game.cmake": "3ca4ea3ffd856a67f7b32bac2973d26faa2dcab46fc0d3ae17459e1e456c9bda",
+    "research/runs/native-hierarchy-preparation-20261120/validation-01/aborted.json": "72e689ba404e6cc002cad6911305dba321bab9c84876014c16f8fb383063c269",
+    "research/runs/native-hierarchy-preparation-20261120/validation-01/verify.py.before-relative-review-paths": "f139a5f1ca809a457a68fd887acd4946ab3b4ed26cb9529441390d92d89a30fb",
+    "research/runs/native-hierarchy-preparation-20261120/validation-02/binding-symbols-target.json": "fd649c30deeef88764e7a6f1c99269991e8f6c51a5a6bb7384ee15a227567768",
+    "research/runs/native-hierarchy-preparation-20261120/validation-02/binding-symbols.json": "912056ad7e783b6dd0289d204b534481fabada2fab1e206540f87e113d932690",
+    "research/runs/native-hierarchy-preparation-20261120/validation-02/binding.json": "8d599d77e93a87337c66ef7d657a4fb801d142c62d76545b6933feb201189667",
+    "research/runs/native-hierarchy-preparation-20261120/validation-02/build.json": "0e0c9b59a9bffa8b0a4ea1a6b45518f65a01170c756361343fb4558fbe1f3f53",
+    "research/runs/native-hierarchy-preparation-20261120/validation-02/hierarchy-symbols-target.json": "ff09439e666feb87d4059cb386f2e3fe1b4f8d0ae58770a0be6646df8674f908",
+    "research/runs/native-hierarchy-preparation-20261120/validation-02/hierarchy-symbols.json": "a31c8bb4d1b00921f8f49a902c4947909ebd03729ef12e293ebffca669e7c4bd",
+    "research/runs/native-hierarchy-preparation-20261120/validation-02/hierarchy.json": "5b48632f4837be827b5dfdbb7139a3d0ae39f86770f42d505c72d14b8bb8ca9b",
+    "research/runs/native-hierarchy-preparation-20261120/validation-02/linkage-audit.json": "106531e0102fb6ec7112fde33f52579773bbc9daf9796b83f97c364debe7a942",
+    "research/runs/native-hierarchy-preparation-20261120/validation-02/maintenance-symbols-target.json": "552a1c48c580ea53ebae85a5fa711eb4d66e42ffdf11944bc87aab9045b2a9b1",
+    "research/runs/native-hierarchy-preparation-20261120/validation-02/maintenance-symbols.json": "3926e292ca0af178a1fb12691e6d796c5f5b009df2b9fd123472a7b679fb2d87",
+    "research/runs/native-hierarchy-preparation-20261120/validation-02/maintenance.json": "5efc28a6f8f2ee3ef9aab0df484a3736074dac32d14fd6bb934c16c1a1a9cc4e",
+    "research/runs/native-hierarchy-preparation-20261120/validation-02/material-archive-symbols-target.json": "5f01e5973e512df8ace68ffba7e08dc218560c9b5e5645d3e56f2fb41c926865",
+    "research/runs/native-hierarchy-preparation-20261120/validation-02/material-archive-symbols.json": "5801594e9a951b31b1c9311c520197d9a7a9de4cab01e49ce48f64613a71433c",
+    "research/runs/native-hierarchy-preparation-20261120/validation-02/provenance.json": "3fad4522ff4828df28b37d651f737f52d53a04144d1186b0ca33bbcd4d4be15e",
+    "research/runs/native-hierarchy-preparation-20261120/validation-02/queued-logon-symbols-target.json": "9bc05e4516450526e4e4808db887b52edfbc6aab82caa77efdfb531c2e8ec356",
+    "research/runs/native-hierarchy-preparation-20261120/validation-02/queued-logon-symbols.json": "0ba65462383766f72a98044680250b79c82aea828fa755f287595482dd67a326",
+    "research/runs/native-hierarchy-preparation-20261120/validation-02/queued-logon.json": "b877b12040c83d0b2cfad8a74758346c46593f84d324f866926c51179c80ea50",
+    "research/runs/native-hierarchy-preparation-20261120/validation-02/verification.json": "302e3f1beeaf4bbe5dfa047a586dce11de862af995a83e15704c02b5668f6dc6",
+    "research/runs/native-hierarchy-preparation-20261120/verify.py": "324dad6b51113020e8e48e8363d4fd84f0ec0e129338c7998d7123f02299149d",
+    "runtime/include/mka/material_maintenance.hpp": "d5e1edaff289eb9b2a38dce32dcfe4e8752a6b38ff66fc500c2b802700b70e31",
+    "runtime/include/mka/matfx_binding.hpp": "b8b73acd3c2699cd6520fe2252246366481faee68e17e9f9dd308cc28704a218",
+    "runtime/src/native/material_maintenance.cpp": "30cf4de67ac8e4be05f8bacbdb4cc8f897a02916fbad0ef1b4fbc771a07c0181",
+    "runtime/src/native/matfx_binding.cpp": "8a11c64869d17113f884b74cf7887623eab0037cb55cec009e36525cfcd626e8",
+    "tests/test_logon_frontend_task.cpp": "76f43607a04bae1efc10d0040c5af21c581b3bd6b1cdc2be578ff1f8efc3fe9a",
+    "tests/test_material_hierarchy.cpp": "c234a63002f761d1cd9dfcfaf323298ee42b404cdca29533ceff012ce21d5a99",
+    "tests/test_matfx_binding.cpp": "076b80d7fd0918735eaa2e2fee45da3a4be171923234f94f200d4afc019f35e3"
+  },
+  "preserved_dirty_sha256": {
+    "runtime/src/iop/mcserv.cpp": "ad2731a341409d87ffe1b171e99f28d7cedc5004aaf375a565d78673333414fb",
+    "runtime/src/iop/msl_native.cpp": "756cfb3867ebb440223ddb8ab6fe441ad6f9f54d35e4119a8342f8dd9063bb23"
+  }
+}

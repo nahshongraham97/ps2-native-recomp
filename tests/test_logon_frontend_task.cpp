@@ -49,12 +49,12 @@ int main(int argc, char** argv) { try {
     enum class Case { normal, skip, gate_during_block, mode7_after_world, world_failure,
         missing_clear, frontend_failure, factory_exception, world_exception,
         missing_dependencies, movie_failure, cancel, clear_without_maintenance,
-        wrong_maintenance_priority, foreign_maintenance_receipt, handled_reentry, material_step50 };
+        wrong_maintenance_priority, foreign_maintenance_receipt, handled_reentry, material_step50, hierarchy_plugin_present };
     unsigned scenarios = 0;
     for (auto scenario : {Case::normal, Case::skip, Case::gate_during_block, Case::mode7_after_world,
             Case::world_failure, Case::missing_clear, Case::frontend_failure, Case::factory_exception,
             Case::world_exception, Case::missing_dependencies, Case::movie_failure, Case::cancel,
-            Case::clear_without_maintenance, Case::wrong_maintenance_priority, Case::foreign_maintenance_receipt, Case::handled_reentry, Case::material_step50}) {
+            Case::clear_without_maintenance, Case::wrong_maintenance_priority, Case::foreign_maintenance_receipt, Case::handled_reentry, Case::material_step50, Case::hierarchy_plugin_present}) {
         ++scenarios;
         auto data = std::make_shared<Data>(); auto gpu = std::make_shared<GPU>();
         std::int64_t ticks = 0; unsigned profiles = 0, restores = 0, destroyed = 0;
@@ -112,6 +112,12 @@ int main(int argc, char** argv) { try {
         auto unique_material = game::NativeMatFxBinding::create({game::MatFxMode::disabled, {}}, bf);
         check(materials && step && material_owner && unique_material, "actual native material owners; explicit fixture settings/resource producer");
         auto material = std::shared_ptr<game::NativeMatFxBinding>(std::move(unique_material));
+        auto material_group = game::NativeMaterialGroup::create({material}, mf);
+        const auto geometry_route = scenario == Case::hierarchy_plugin_present ? game::MatFxHierarchyRoute::plugin_present : game::MatFxHierarchyRoute::plugin_absent;
+        auto geometry = game::NativeMaterialGeometry::create(material_group, {geometry_route, 2}, mf);
+        auto hierarchy = game::NativeMaterialHierarchy::create(geometry,
+            {scenario == Case::hierarchy_plugin_present ? 0x81 : 0, false}, mf);
+        check(geometry && hierarchy, "explicit fixture resource importer creates actual native geometry/atomic owners");
         std::optional<game::MaterialTrackingToken> material_token;
         FrontendEffects effects;
         effects.prepare_game_world = [&](EffectFailure& f) { f = {}; events.push_back(1); return true; };
@@ -155,10 +161,10 @@ int main(int argc, char** argv) { try {
             if (scenario == Case::factory_exception) throw std::runtime_error("fixture next frontend factory exception");
             return std::make_unique<Probe>([&](auto&, auto& why) {
                 why = {}; check(sequence == 1, "frontend deferred to next main iteration");
-                material_token = materials->register_direct(material_owner, material,
+                material_token = materials->register_hierarchy(material_owner, hierarchy,
                     {{0x3e800000}, {0}, {0}, {0}}, {{0x40000000, 0}, {{{11,12,13},{21,22,23}}}}, mf);
                 check(material_token && materials->record(*material_token, mf)->matrices.first.translation.x.bits == 0,
-                    "frontend fixture registers actual native material after first empty maintenance pass");
+                    "frontend fixture invokes actual source hierarchy preparation/registration after first empty maintenance pass");
                 ++sequence; events.push_back(32); return game::TaskUpdate::finished;
             }, [&] { events.push_back(-32); });
         };
@@ -221,6 +227,11 @@ int main(int argc, char** argv) { try {
         auto populated = scheduler->dispatch(failure);
         check(populated.progress == game::FrontendDispatchProgress::pass_complete && populated.updates == 1,
             "real maintenance yields then runs populated in next eligible source pass");
+        auto actual_hierarchy = hierarchy->snapshot(mf);
+        check(actual_hierarchy && actual_hierarchy->geometry.get() == geometry.get() &&
+            actual_hierarchy->state.effect_enabled == (scenario != Case::hierarchy_plugin_present) &&
+            materials->record(*material_token, mf)->route == game::MaterialTrackingRoute::hierarchy,
+            "actual native hierarchy caller preserves plugin branches/geometry/atomic ownership");
         auto actual_pair = material->first_parameter_pair(bf);
         check(material_token && actual_pair && actual_pair->first && !actual_pair->second &&
             actual_pair->first->translation.x.bits == (scenario == Case::material_step50 ? 0x3e999999u : 0x3e800000u) &&
@@ -228,6 +239,6 @@ int main(int argc, char** argv) { try {
             "queued actual maintenance publishes native binding from actual owned game step, not clock/display rate");
         scheduler.reset();
     }
-    check(scenarios == 17, "all declared queued caller scenarios executed");
-    std::puts("PASS native queued LOGON with populated material maintenance/game step; deterministic ports and explicit world/frontend probes"); return 0;
+    check(scenarios == 18, "all declared queued caller scenarios executed");
+    std::puts("PASS native queued LOGON with actual hierarchy preparation/material maintenance; deterministic ports and explicit world/frontend probes"); return 0;
 } catch (const std::exception& e) { std::fprintf(stderr, "FAIL native queued LOGON %s\n", e.what()); return 1; } }

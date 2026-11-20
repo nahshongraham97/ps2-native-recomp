@@ -1,0 +1,150 @@
+"""Native retail hierarchy caller/queued-task integration. Decoder frozen."""
+import ctypes
+import datetime
+import importlib.util
+import json
+import os
+import pathlib
+import re
+import subprocess
+import sys
+
+FORK = pathlib.Path(__file__).resolve().parents[3]
+PARENT = FORK.parents[2]
+RECORDS = PARENT / 'research/runs/native-movie-ingress-20261119'
+COMMON = FORK / 'research/runs/native-movie-kernel-policies-20261119/validate.py'
+spec = importlib.util.spec_from_file_location('_hierarchy_evidence', COMMON)
+common = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(common)
+CHANGED = ['cmake/native_game.cmake', 'tests/test_logon_frontend_task.cpp',
+    'tests/test_matfx_binding.cpp', 'runtime/include/mka/matfx_binding.hpp',
+    'runtime/src/native/matfx_binding.cpp', 'runtime/include/mka/material_maintenance.hpp',
+    'runtime/src/native/material_maintenance.cpp']
+NEW = ['tests/test_material_hierarchy.cpp']
+
+
+def cache_contract():
+    cache = (common.BUILD / 'CMakeCache.txt').read_text(encoding='utf-8-sig')
+    common.require(bool(re.search(r'^PS2_GENERATED:PATH=$', cache, re.M)), 'no generated guest game target')
+    common.require(bool(re.search(r'^CMAKE_BUILD_TYPE:STRING=Release$', cache, re.M)), 'Release')
+
+
+def verify():
+    require, sha, write = common.require, common.sha, common.write
+    cache_contract()
+    prior_path = FORK / 'research/runs/native-material-maintenance-20261120/validation-02/verification.json'
+    prior = json.loads(prior_path.read_bytes())
+    require(prior['status'] == 'PASS_NATIVE_POPULATED_MATERIAL_TASK_INTEGRATION' and
+        isinstance(prior['source_after_sha256'], dict) and isinstance(prior['fixtures'], list) and
+        len(prior['fixtures']) == 5 and prior['queued_runtime_scenarios'] == 17, 'prior producer schema/status')
+    changed = {str(FORK / name) for name in CHANGED}
+    untouched = {name: digest for name, digest in prior['source_after_sha256'].items() if name not in changed}
+    require(all(sha(name) == digest for name, digest in untouched.items()), 'untouched prior source/tools/assets/libraries')
+    original_test = RECORDS / 'native-hierarchy-before-partial-fixture-20261120/test_material_hierarchy.cpp'
+    review_a = RECORDS / 'NATIVE_HIERARCHY_PARTIAL_FIXTURE_CLOSURE_A_20261120.json'
+    report_a = json.loads(review_a.read_bytes())
+    require(report_a['status'] == 'SOURCE_REVIEW_NO_CONCRETE_DEFECT_NOT_EXECUTED' and
+        isinstance(report_a['pins'], dict) and not report_a['findings'], 'actual final A closure schema')
+    require(all(sha(name) == digest for name, digest in report_a['pins'].items()), 'final A exact pins')
+    initial_b = RECORDS / 'NATIVE_HIERARCHY_REGISTRY_PEER_B_20261120.json'
+    report_b = json.loads(initial_b.read_bytes())
+    require(report_b['status'] == 'SOURCE_REVIEW_NO_CONCRETE_DEFECT_NOT_BUILT_NOT_EXECUTED' and
+        isinstance(report_b['pins'], dict), 'actual initial B schema')
+    for name, digest in report_b['pins'].items():
+        actual = original_test if pathlib.Path(name) == FORK / NEW[0] else pathlib.Path(name)
+        require(sha(actual) == digest, 'preserved reviewed B scope')
+    review_b = RECORDS / 'NATIVE_HIERARCHY_PARTIAL_FIXTURE_CLOSURE_B_20261120.json'
+    supplement = json.loads(review_b.read_bytes())
+    require(supplement['status'] == 'SOURCE_SUPPLEMENT_NO_CONCRETE_DEFECT_NOT_BUILT_NOT_EXECUTED' and
+        isinstance(supplement['stable_reviewed_source_pins'], dict), 'actual final B supplement schema')
+    require(sha(initial_b) == supplement['prior_review_sha256'] and
+        sha(original_test) == supplement['before_test_sha256'] and
+        sha(FORK / NEW[0]) == supplement['current_test_sha256'], 'old/current fixture and review joins')
+    require(all(sha(FORK / name) == digest for name, digest in supplement['stable_reviewed_source_pins'].items()), 'B stable production pins')
+    numeric = prior_path.with_name('numeric-comparison.json')
+    numeric_record = json.loads(numeric.read_bytes())
+    require(numeric_record['status'] == 'PASS_THREE_WAY_PROJECT_SOURCE_WORDS_NOT_HARDWARE' and
+        numeric_record['vectors'] == 1000, 'retained numeric certificate; no rerun')
+    decoder_certificate = FORK / 'research/runs/native-adx-composition-20261119/validation-02/audio-oracle.json'
+    require(sha(decoder_certificate) == '46ed75bf100ca151b94d05698e5c8080f4df87b80fb5373f87960f1dfa32bd8c', 'frozen original movie corpus certificate')
+    paths = {pathlib.Path(name) for name in prior['source_after_sha256']}
+    paths.update(FORK / name for name in CHANGED + NEW)
+    paths.update([COMMON, pathlib.Path(__file__).resolve(), prior_path, original_test,
+        review_a, initial_b, review_b, numeric, decoder_certificate])
+    before = {str(path): sha(path) for path in sorted(paths)}
+    for name in CHANGED + NEW:
+        require(b'\r' not in (FORK / name).read_bytes(), 'LF authored source ' + name)
+    for name, digest in common.PRESERVE.items(): require(sha(FORK / name) == digest, 'preserved dirty IOP ' + name)
+    for name, digest in prior['generated_source_sha256'].items(): require(sha(name) == digest, 'same AOT LOGON caller')
+    write('provenance.json', dict(at_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        fork_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=FORK, text=True).strip(),
+        parent_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=PARENT, text=True).strip(),
+        source_before_sha256=before, unchanged_prior_pins=len(untouched), preserved_dirty_sha256=common.PRESERVE,
+        retained_numeric_certificate_sha256=sha(numeric), frozen_decoder_certificate_sha256=sha(decoder_certificate),
+        scope='Actual hierarchy preparation/registration and real queued maintenance; fixture world/resource ingress and deterministic outputs'))
+    libraries = PARENT.parent / 'dependencies/blender/blender-4.5.15-windows-x64/blender.shared'
+    assets = FORK / 'games/mkarmageddon/disc-files/MOVIEPS2'
+    overlay = PARENT / 'research/inputs/modules/MOVIER.ovl'
+    cases = [
+        ('binding', 'test_native_matfx_binding', [],
+         'PASS native MatFX owned bindings/borrowed matrix lifetime/resource cleanup; no renderer or serialized resource admission',
+         ['mka::game::NativeMatFxBinding::prepare_hierarchy_tracking']),
+        ('maintenance', 'test_native_material_maintenance', [],
+         'PASS native populated material tracking/publication/lifetimes/game step; no hierarchy preparation or renderer bootstrap',
+         ['mka::game::NativeMaterialMaintenanceTask::update']),
+        ('hierarchy', 'test_native_material_hierarchy', [],
+         'PASS native retail hierarchy preparation/registration/owned geometry; serialized program producer and renderer remain open',
+         ['mka::game::NativeMaterialMaintenance::register_hierarchy', 'mka::game::NativeMaterialGeometry::create']),
+        ('queued-logon', 'test_native_logon_frontend', [libraries, assets, 'LOGON.SFD', overlay],
+         'PASS native queued LOGON with actual hierarchy preparation/material maintenance; deterministic ports and explicit world/frontend probes',
+         ['mka::native_logon::NativeLogonFrontendTask::update', 'mka::game::NativeMaterialMaintenance::register_hierarchy',
+          'mka::game::NativeMaterialMaintenanceTask::update'])]
+    common.execute('build.json', [common.CMAKE, '--build', common.BUILD, '--target', *[row[1] for row in cases], '-j2'])
+    fixtures = []
+    for label, target, args, footer, required in cases:
+        print('RUN ' + label, flush=True)
+        executable = common.BUILD / (target + '.exe')
+        run = common.execute(label + '.json', [executable, *args])
+        require(run['stdout'].splitlines()[-1] == footer, 'complete ' + label + ' assertions')
+        audit = common.symbols(label + '-symbols', executable, run['executable_sha256'], required, True)
+        fixtures.append(dict(component=label, executed_target_sha256=run['executable_sha256'], audit=audit))
+    archive = common.BUILD / 'libmka_native_material.a'
+    common.symbols('material-archive-symbols', archive, sha(archive), ['mka::game::NativeMaterialMaintenance::register_hierarchy'], False)
+    ninja = common.BUILD / 'build.ninja'
+    build_text = ninja.read_text()
+    linkage = []
+    for target in ['libmka_native_material.a', 'test_native_logon_frontend.exe', 'test_native_material_hierarchy.exe']:
+        block = re.search(r'^build ' + re.escape(target) + r':.*(?:\n[ \t].*)*', build_text, re.M)
+        require(block is not None, 'actual native build target')
+        text = block.group()
+        require('material_translation_source_oracle' not in text and 'ps2runtime' not in text, 'no offline reference/guest runtime linkage')
+        linkage.append(dict(target=target, actual_build_rule=text))
+    write('linkage-audit.json', dict(ninja_sha256=sha(ninja), candidate_rules=linkage))
+    require(before == {name: sha(name) for name in before}, 'stable source/review/tool/asset/library identities')
+    for name, digest in common.PRESERVE.items(): require(sha(FORK / name) == digest, 'preserved IOP after run')
+    cache_contract()
+    write('verification.json', dict(status='PASS_NATIVE_HIERARCHY_PREPARATION_QUEUED_INTEGRATION',
+        source_after_sha256=before, unchanged_prior_pins=len(untouched), generated_source_sha256=prior['generated_source_sha256'],
+        fixtures=fixtures, queued_runtime_scenarios=18, retained_numeric_certificate_sha256=sha(numeric),
+        frozen_decoder_certificate_sha256=sha(decoder_certificate),
+        limits=['Actual supported hierarchy producer/native owned geometry/bindings/tracking and real queued task',
+            'Absent nonzero serialized/program producer remains named unbound; no invented count repair or draw success',
+            'World/frontend/importer/settings ingress remain fixture probes; output ports deterministic; no physical playback',
+            'No decoder corpus/algorithm or unchanged numeric-kernel rerun',
+            'No game, endpoint, local model/server, GPU driver/settings or preserved card/save/backup action',
+            'Native resource/program catalog, full world/frontend/bootstrap/output and full-game acceptance remain OPEN']))
+    print(json.dumps(dict(status='PASS_NATIVE_HIERARCHY_PREPARATION_QUEUED_INTEGRATION',
+        fixtures=len(fixtures), pins=len(before), unchanged_prior_pins=len(untouched), queued_scenarios=18)), flush=True)
+
+
+if __name__ == '__main__':
+    ctypes.windll.kernel32.SetErrorMode(3)
+    common.require(len(sys.argv) == 2 and re.fullmatch(r'validation-[0-9]+', sys.argv[1]), 'usage: verify.py validation-NN')
+    out = pathlib.Path(__file__).resolve().parent / sys.argv[1]
+    out.mkdir(exist_ok=False)
+    common.OUT = out
+    common.ENV = dict(os.environ, PATH=str(common.BIN) + os.pathsep + os.environ['PATH'])
+    try: verify()
+    except Exception as error:
+        common.write('aborted.json', dict(status='NATIVE_HIERARCHY_PREPARATION_CHECK_FAILED', error=str(error)))
+        raise

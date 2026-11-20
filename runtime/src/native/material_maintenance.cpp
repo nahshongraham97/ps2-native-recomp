@@ -39,6 +39,39 @@ std::shared_ptr<NativeMaterialGroup> NativeMaterialGroup::create(std::vector<std
     try{return std::shared_ptr<NativeMaterialGroup>(new NativeMaterialGroup(std::move(values)));}
     catch(const std::bad_alloc&){fail(f,MaterialMaintenanceError::allocation,"material group allocation");return {};}
 }
+
+std::shared_ptr<NativeMaterialGeometry> NativeMaterialGeometry::create(
+    std::shared_ptr<NativeMaterialGroup> group,MaterialGeometryImport imported,MaterialMaintenanceFailure& f) noexcept {
+    f={};
+    if(!group||group->owner_!=std::this_thread::get_id()){
+        fail(f,MaterialMaintenanceError::invalid_input,"native material geometry requires owned group");return {};}
+    if(imported.plugin_route!=MatFxHierarchyRoute::plugin_absent&&imported.plugin_route!=MatFxHierarchyRoute::plugin_present){
+        fail(f,MaterialMaintenanceError::invalid_input,"native material geometry plugin route");return {};}
+    try{return std::shared_ptr<NativeMaterialGeometry>(new NativeMaterialGeometry(std::move(group),imported));}
+    catch(const std::bad_alloc&){fail(f,MaterialMaintenanceError::allocation,"native material geometry allocation");return {};}
+}
+std::optional<MaterialGeometrySnapshot> NativeMaterialGeometry::snapshot(MaterialMaintenanceFailure& f) const noexcept {
+    f={};if(owner_!=std::this_thread::get_id()){
+        fail(f,MaterialMaintenanceError::wrong_thread,"native material geometry owner thread");return {};}
+    return MaterialGeometrySnapshot{imported_,group_->materials_.size()};
+}
+bool NativeMaterialHierarchy::access(MaterialMaintenanceFailure& f) const noexcept {
+    f={};if(owner_!=std::this_thread::get_id())return fail(f,MaterialMaintenanceError::wrong_thread,"native material hierarchy owner thread");
+    if(busy_)return fail(f,MaterialMaintenanceError::reentry,"native material hierarchy reentry");return true;
+}
+std::shared_ptr<NativeMaterialHierarchy> NativeMaterialHierarchy::create(
+    std::shared_ptr<NativeMaterialGeometry> geometry,MaterialHierarchyImport state,MaterialMaintenanceFailure& f) noexcept {
+    f={};if(!geometry){fail(f,MaterialMaintenanceError::invalid_input,"native material hierarchy requires geometry");return {};}
+    if(!geometry->snapshot(f))return {};
+    try{return std::shared_ptr<NativeMaterialHierarchy>(new NativeMaterialHierarchy(std::move(geometry),state));}
+    catch(const std::bad_alloc&){fail(f,MaterialMaintenanceError::allocation,"native material hierarchy allocation");return {};}
+}
+NativeMaterialHierarchy::~NativeMaterialHierarchy(){
+    if(owner_!=std::this_thread::get_id()||busy_)std::terminate();busy_=true;geometry_.reset();
+}
+std::optional<MaterialHierarchySnapshot> NativeMaterialHierarchy::snapshot(MaterialMaintenanceFailure& f) const noexcept {
+    if(!access(f))return {};return MaterialHierarchySnapshot{geometry_,state_};
+}
 struct MaterialOwnerGeneration {};
 NativeTrackedMaterialOwner::NativeTrackedMaterialOwner(std::vector<std::shared_ptr<NativeMaterialGroup>> groups)
     :groups_(std::move(groups)),generation_(std::make_shared<MaterialOwnerGeneration>()){}
@@ -69,6 +102,7 @@ struct NativeMaterialMaintenance::Record {
     std::weak_ptr<const MaterialOwnerGeneration> associated_generation;
     std::weak_ptr<NativeMatFxBinding> direct;
     std::weak_ptr<NativeMaterialGroup> group;
+    std::weak_ptr<NativeMaterialHierarchy> hierarchy;
     MaterialTranslationRates rates;MaterialLayerSelection selection;
     std::shared_ptr<NativeMaterialMatrix> first,second;
 };
@@ -84,24 +118,39 @@ bool NativeMaterialMaintenance::access(MaterialMaintenanceFailure& f) const noex
 }
 std::optional<MaterialTrackingToken> NativeMaterialMaintenance::register_direct(std::shared_ptr<NativeTrackedMaterialOwner> owner,
     std::shared_ptr<NativeMatFxBinding> target,MaterialTranslationRates rates,MaterialTrackingSeed seed,MaterialMaintenanceFailure& f) noexcept {
-    return register_owned(MaterialTrackingRoute::direct_material,std::move(owner),std::move(target),{},rates,seed,f);
+    return register_owned(MaterialTrackingRoute::direct_material,std::move(owner),std::move(target),{},{},rates,seed,f);
 }
 std::optional<MaterialTrackingToken> NativeMaterialMaintenance::register_prepared_group(std::shared_ptr<NativeTrackedMaterialOwner> owner,
     std::shared_ptr<NativeMaterialGroup> group,MaterialTranslationRates rates,MaterialTrackingSeed seed,MaterialMaintenanceFailure& f) noexcept {
-    return register_owned(MaterialTrackingRoute::prepared_group,std::move(owner),{},std::move(group),rates,seed,f);
+    return register_owned(MaterialTrackingRoute::prepared_group,std::move(owner),{},std::move(group),{},rates,seed,f);
 }
 std::optional<MaterialTrackingToken> NativeMaterialMaintenance::register_owner_collection(std::shared_ptr<NativeTrackedMaterialOwner> owner,
     MaterialTranslationRates rates,MaterialTrackingSeed seed,MaterialMaintenanceFailure& f) noexcept {
-    return register_owned(MaterialTrackingRoute::owner_collection,std::move(owner),{},{},rates,seed,f);
+    return register_owned(MaterialTrackingRoute::owner_collection,std::move(owner),{},{},{},rates,seed,f);
+}
+std::optional<MaterialTrackingToken> NativeMaterialMaintenance::register_hierarchy(std::shared_ptr<NativeTrackedMaterialOwner> owner,
+    std::shared_ptr<NativeMaterialHierarchy> hierarchy,MaterialTranslationRates rates,MaterialTrackingSeed seed,MaterialMaintenanceFailure& f) noexcept {
+    return register_owned(MaterialTrackingRoute::hierarchy,std::move(owner),{},{},std::move(hierarchy),rates,seed,f);
 }
 std::optional<MaterialTrackingToken> NativeMaterialMaintenance::register_owned(MaterialTrackingRoute route,
     std::shared_ptr<NativeTrackedMaterialOwner> owner,std::shared_ptr<NativeMatFxBinding> target,
-    std::shared_ptr<NativeMaterialGroup> group,MaterialTranslationRates rates,MaterialTrackingSeed seed,MaterialMaintenanceFailure& f) noexcept {
+    std::shared_ptr<NativeMaterialGroup> group,std::shared_ptr<NativeMaterialHierarchy> hierarchy,
+    MaterialTranslationRates rates,MaterialTrackingSeed seed,MaterialMaintenanceFailure& f) noexcept {
     if(!access(f))return {};Guard guard(busy_);
     if(!owner||(route==MaterialTrackingRoute::direct_material&&!target))return {}; // Proved source absence.
     if(!owner->access(f))return {};Guard owner_guard(owner->busy_);
     if(route==MaterialTrackingRoute::prepared_group&&(!group||group->owner_!=owner_)){
         fail(f,MaterialMaintenanceError::invalid_input,"material prepared target lifetime/thread");return {};}
+    std::optional<Guard> hierarchy_guard;
+    if(route==MaterialTrackingRoute::hierarchy){
+        if(!hierarchy){fail(f,MaterialMaintenanceError::invalid_input,"material hierarchy registration missing target");return {};}
+        if(!hierarchy->access(f))return {};hierarchy_guard.emplace(hierarchy->busy_);
+        const auto& geometry=*hierarchy->geometry_;
+        // Native program/serialized resource production is an actual required
+        // body. Reject the unbound branch before publishing a guessed resource.
+        if(geometry.imported_.plugin_route==MatFxHierarchyRoute::plugin_absent&&hierarchy->state_.resource_kind!=0){
+            fail(f,MaterialMaintenanceError::unbound_hierarchy_resource,"native hierarchy serialized program/resource producer unbound");return {};}
+    }
     if(generation_==std::numeric_limits<std::uint64_t>::max()){
         fail(f,MaterialMaintenanceError::overflow,"material tracking handle generation exhausted");return {};}
     try {
@@ -111,9 +160,20 @@ std::optional<MaterialTrackingToken> NativeMaterialMaintenance::register_owned(M
         auto second=std::make_shared<NativeMaterialMatrix>(identity_matrix(seed.flags[1],seed.padding[1]));
         std::list<Record> staged;
         const auto next=generation_+1;
-        staged.push_back({next,route,owner,owner->generation_,target,group,rates,select_material_layers(rates),std::move(first),std::move(second)});
+        staged.push_back({next,route,owner,owner->generation_,target,group,hierarchy,rates,select_material_layers(rates),std::move(first),std::move(second)});
         if(route==MaterialTrackingRoute::direct_material&&!target->prepare_direct_tracking(f.binding)){
             fail(f,MaterialMaintenanceError::binding,"material direct registration preparation");return {};}
+        if(route==MaterialTrackingRoute::hierarchy){
+            const auto& geometry=*hierarchy->geometry_;
+            if(geometry.imported_.plugin_route==MatFxHierarchyRoute::plugin_absent)hierarchy->state_.effect_enabled=true;
+            for(const auto& material:geometry.group_->materials_)
+                if(!material->prepare_hierarchy_tracking(geometry.imported_.plugin_route,f.binding)){
+                    fail(f,MaterialMaintenanceError::binding,"native hierarchy material preparation");return {};}
+            // For absent-plugin kind0, source333130 calls31BD10 only when the
+            // SAME count>=2;31BD10 builds only when count<2. This source route
+            // performs no packet build for ANY count. The present-plugin
+            // branch skips333130. No pipeline/GS state is synthesized here.
+        }
         records_.splice(records_.begin(),staged);generation_=next;
         return MaterialTrackingToken(identity_,next);
     } catch(const std::bad_alloc&){fail(f,MaterialMaintenanceError::allocation,"material tracking registration allocation");}
@@ -192,6 +252,11 @@ std::optional<MaterialMaintenancePass> NativeMaterialMaintenance::step(MaterialS
             }else if(r.route==MaterialTrackingRoute::prepared_group){auto group=r.group.lock();
                 if(!group){fail(f,MaterialMaintenanceError::expired_target,"material explicit group target expired");return {};}
                 if(!advance_group(r,*group,delta,pass,f))return {};
+            }else if(r.route==MaterialTrackingRoute::hierarchy){auto hierarchy=r.hierarchy.lock();
+                if(!hierarchy){fail(f,MaterialMaintenanceError::expired_target,"material hierarchy target expired");return {};}
+                if(!hierarchy->access(f)){f.record=r.id;return {};}Guard hierarchy_guard(hierarchy->busy_);
+                f.record=r.id;
+                if(!advance_group(r,*hierarchy->geometry_->group_,delta,pass,f))return {};
             } // Empty or disabled collection makes no callback in the source.
         }
         ++it;

@@ -42,19 +42,26 @@ std::optional<MatFxBindingSnapshot> NativeMatFxBinding::snapshot(MatFxBindingFai
  if(!access(f))return {};Guard guard(busy_);return MatFxBindingSnapshot{mode_,slots_};
 }
 bool NativeMatFxBinding::prepare_direct_tracking(MatFxBindingFailure& f) noexcept {
- if(!access(f))return false;Guard guard(busy_);
+ if(!access(f))return false;Guard guard(busy_);return prepare_tracking_owned(true,f);
+}
+bool NativeMatFxBinding::prepare_tracking_owned(bool preserve_property,MatFxBindingFailure& f) noexcept {
  if(mode_==MatFxMode::parameter_pair)return true; // Equal nonzero mode does not reset source slots.
  std::array<MatFxEffectSlot,2> staged;staged[0].kind=MatFxEffectKind::parameter_pair;
- const auto next=mode_==MatFxMode::property?MatFxMode::parameter_pair_property:MatFxMode::parameter_pair;
- if(mode_==MatFxMode::property){const auto* old=find(MatFxEffectKind::property);if(!old)return fail(f,MatFxBindingError::missing_slot,"matfx missing source property slot");
+ const auto next=preserve_property&&mode_==MatFxMode::property?MatFxMode::parameter_pair_property:MatFxMode::parameter_pair;
+ if(preserve_property&&mode_==MatFxMode::property){const auto* old=find(MatFxEffectKind::property);if(!old)return fail(f,MatFxBindingError::missing_slot,"matfx missing source property slot");
   if(!old->primary)return fail(f,MatFxBindingError::missing_property,"matfx source conversion missing owned property");
   staged[1].kind=MatFxEffectKind::property;staged[1].primary=old->primary;staged[1].selectors=old->selectors;}
  // Staged strong property lifetime is an explicit safe native extension across
  // source reset/replacement. Displaced resources finalize while guard is active.
  slots_.swap(staged);mode_=next;return true;
 }
-bool NativeMatFxBinding::prepare_hierarchy_tracking(MatFxBindingFailure& f) noexcept {
- if(!access(f))return false;return fail(f,MatFxBindingError::unbound_hierarchy,"matfx hierarchy preparation requires actual resource owner");
+bool NativeMatFxBinding::prepare_hierarchy_tracking(MatFxHierarchyRoute route,MatFxBindingFailure& f) noexcept {
+ if(!access(f))return false;Guard guard(busy_);
+ if(route!=MatFxHierarchyRoute::plugin_absent&&route!=MatFxHierarchyRoute::plugin_present)
+  return fail(f,MatFxBindingError::invalid_state,"matfx unknown hierarchy plugin route");
+ if(route==MatFxHierarchyRoute::plugin_present)return prepare_tracking_owned(false,f);
+ if(mode_==MatFxMode::disabled||mode_==MatFxMode::property)return prepare_tracking_owned(true,f);
+ return true; // Source absent-plugin branch leaves all other modes unchanged.
 }
 std::optional<MatFxParameterPairLease> NativeMatFxBinding::first_parameter_pair(MatFxBindingFailure& f) const noexcept {
  if(!access(f))return {};Guard guard(busy_);const auto* slot=find(MatFxEffectKind::parameter_pair);
