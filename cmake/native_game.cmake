@@ -111,3 +111,17 @@ endif()
 # Native file regression must be available without the legacy generated game.
 add_executable(test_native_file EXCLUDE_FROM_ALL tests/test_native_file.cpp)
 target_link_libraries(test_native_file PRIVATE mka_native_content_volume)
+
+# Real native allocation ownership, independent of the guest runtime.
+add_library(mka_native_heap STATIC EXCLUDE_FROM_ALL runtime/src/native/native_heap.cpp)
+target_include_directories(mka_native_heap PUBLIC runtime/include)
+target_compile_features(mka_native_heap PUBLIC cxx_std_20)
+add_executable(test_native_heap_owner EXCLUDE_FROM_ALL tests/test_native_heap_owner.cpp)
+target_link_libraries(test_native_heap_owner PRIVATE mka_native_heap)
+if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    # Test-only host allocator/deleter gates. Production has no injection path.
+    add_executable(test_native_heap_inflight EXCLUDE_FROM_ALL tests/test_native_heap_inflight.cpp)
+    target_link_libraries(test_native_heap_inflight PRIVATE mka_native_heap)
+    target_link_options(test_native_heap_inflight PRIVATE
+        "-Wl,--wrap=_ZnwySt11align_val_t" "-Wl,--wrap=_ZdlPvSt11align_val_t")
+endif()

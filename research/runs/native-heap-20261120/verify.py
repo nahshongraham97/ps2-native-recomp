@@ -1,0 +1,119 @@
+"""Real native allocation/lifetime evidence. No game or physical endpoints."""
+import csv, ctypes, datetime, importlib.util, json, os, pathlib, re, struct, subprocess, sys
+
+F = pathlib.Path(__file__).resolve().parents[3]
+P = F.parents[2]
+H = P / 'research/runs/native-retail-startup-20261120/native-heap'
+spec = importlib.util.spec_from_file_location('_heap_evidence',
+    F / 'research/runs/native-movie-kernel-policies-20261119/validate.py')
+c = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(c)
+
+
+def verify():
+    need, sha, write = c.require, c.sha, c.write
+    cache = (c.BUILD / 'CMakeCache.txt').read_text(encoding='utf-8-sig')
+    need(bool(re.search(r'^PS2_GENERATED:PATH=$', cache, re.M)) and
+         bool(re.search(r'^CMAKE_BUILD_TYPE:STRING=Release$', cache, re.M)), 'isolated native Release')
+    prior_path = F / 'research/runs/native-retail-startup-20261120/validation-04/verification.json'
+    prior = json.loads(prior_path.read_bytes())
+    need(prior['status'] == 'PASS_NATIVE_RETAIL_STARTUP_LEAVES_AND_OWNED_CONTENT' and
+         len(prior['source_after_sha256']) == 651, 'actual prior schema and identity')
+    changed = {str(F / 'cmake/native_game.cmake')}
+    untouched = {n: h for n, h in prior['source_after_sha256'].items() if n not in changed}
+    need(len(untouched) == 650 and all(sha(n) == h for n, h in untouched.items()), '650 prior inputs unchanged')
+    need(sha(H / 'before/cmake/native_game.cmake') == prior['source_after_sha256'][str(F / 'cmake/native_game.cmake')],
+         'exact prior CMake retained before integration')
+    paths = {pathlib.Path(n) for n in prior['source_after_sha256']}
+    paths.update([prior_path, pathlib.Path(__file__).resolve(), H / 'INTEGRATION.md'])
+    authored = [F / name for name in [
+        'runtime/include/mka/native_heap.hpp', 'runtime/src/native/native_heap.cpp',
+        'tests/test_native_heap_owner.cpp', 'tests/test_native_heap_inflight.cpp', 'cmake/native_game.cmake']]
+    paths.update(authored)
+    reports = [
+        ('ALIGNMENT_SOURCE', 'BOUNDED_RETAIL_ORDINARY_ALIGNMENT_AND_DISPATCH_SOURCE_VERIFIED'),
+        ('caller-review/SOURCE', 'RETAIL_12DA40_WAVE_OWNER_SOURCE_JOIN_VERIFIED_NATIVE_ROUTING_OPEN'),
+        ('PEER_OWNER_INCLUDE_REVIEW', 'SOURCE_REVIEW_NATIVE_HEAP_OWNER_INCLUDE_ONLY_VERIFIED')]
+    for stem, status in reports:
+        path = H / (stem + '.json'); report = json.loads(path.read_bytes())
+        need(report['status'] == status and report['source_only'] is True and
+             isinstance(report['input_sha256'], dict), 'actual source review schema: ' + stem)
+        need(all(sha(n) == h for n, h in report['input_sha256'].items()), 'review source still current: ' + stem)
+        paths.update([path, path.with_suffix('.md')]); paths.update(map(pathlib.Path, report['input_sha256']))
+    paths.update(q for q in H.rglob('*') if q.is_file() and 'validation-' not in str(q))
+    original = P / 'research/inputs/SLUS_214.10'; elf = original.read_bytes()
+    need(sha(original) == 'a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f', 'original ELF')
+    phoff, = struct.unpack_from('<I', elf, 28)
+    size, count = struct.unpack_from('<HH', elf, 42)
+    segments = [struct.unpack_from('<8I', elf, phoff + i * size) for i in range(count)]
+    joined = 0
+    for path in sorted(H.rglob('*.csv')):
+        rows = list(csv.DictReader(path.read_text(encoding='utf-8-sig').splitlines()))
+        address_key = 'virtual_address' if path.parent.name == 'caller-review' else 'va'
+        need(bool(rows) and {address_key, 'file_offset', 'word_le32'}.issubset(rows[0]), 'actual per-producer primary row schema')
+        for row in rows:
+            va, offset, word = (int(row[k], 16) for k in [address_key, 'file_offset', 'word_le32'])
+            mapped = [s[1] + va - s[2] for s in segments if s[0] == 1 and s[2] <= va and va + 4 <= s[2] + s[4]]
+            need(mapped == [offset] and struct.unpack_from('<I', elf, offset)[0] == word, 'original PT_LOAD instruction bytes')
+            joined += 1
+    need(joined == 765, '635 alignment plus130 actual caller ELF words')
+    for path in authored:
+        data = path.read_bytes()
+        need(b'\r' not in data and data.endswith(b'\n') and not data.endswith(b'\n\n') and
+             all(line == line.rstrip(b' \t') for line in data.splitlines()), 'authored LF/EOF: ' + str(path))
+    before = {str(q): sha(q) for q in sorted(paths)}
+    for name, expected in c.PRESERVE.items(): need(sha(F / name) == expected, 'protected IOP source')
+    write('provenance.json', dict(at_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        fork_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=F, text=True).strip(),
+        parent_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=P, text=True).strip(),
+        source_before_sha256=before, unchanged_prior_pins=len(untouched), primary_words_rejoined=joined,
+        compiler_sha256=sha(c.BIN / 'clang++.exe'), scope='Real aligned heap ownership; no retail route completion'))
+    cases = [
+        ('heap-owner', 'test_native_heap_owner',
+         'PASS_NATIVE_HEAP_OWNER: 3 groups real aligned storage/routing/lifetime/concurrency; no retail initialization or source callback claim'),
+        ('heap-inflight', 'test_native_heap_inflight',
+         'PASS_NATIVE_HEAP_INFLIGHT: real host allocation success/failure and deletion cuts; test-only linker gates')]
+    c.execute('build.json', [c.CMAKE, '--build', c.BUILD, '--target', *[x[1] for x in cases], '-j2'])
+    fixtures = []
+    for label, target, footer in cases:
+        print('RUN ' + label, flush=True)
+        run = c.execute(label + '.json', [c.BUILD / (target + '.exe')])
+        need(run['stdout'].strip() == footer, 'complete actual assertions: ' + label)
+        audit = c.symbols(label + '-symbols', c.BUILD / (target + '.exe'), run['executable_sha256'],
+            ['mka::memory::NativeHeapOwner::allocate', 'mka::memory::NativeAllocation::release'], True)
+        fixtures.append(dict(component=label, target=target, executed_target_sha256=run['executable_sha256'], audit=audit))
+    archive = c.BUILD / 'libmka_native_heap.a'
+    archive_audit = c.symbols('heap-archive', archive, sha(archive), ['mka::memory::NativeHeapOwner::allocate'], False)
+    raw = c.execute('raw-allocation-symbols.json', [c.BIN / 'llvm-nm.exe', '-u', archive])
+    need('_ZnwySt11align_val_t' in raw['stdout'] and '_ZdlPvSt11align_val_t' in raw['stdout'], 'actual host allocation ABI spelling')
+    definitions = c.execute('raw-test-wrapper-symbols.json', [c.BIN / 'llvm-nm.exe', '--defined-only', c.BUILD / 'test_native_heap_inflight.exe'])
+    need('__wrap__ZnwySt11align_val_t' in definitions['stdout'] and '__wrap__ZdlPvSt11align_val_t' in definitions['stdout'], 'actual isolated linker wrapper definitions')
+    ninja = c.BUILD / 'build.ninja'; text = ninja.read_text(); rules = []
+    for label, target, _ in cases:
+        match = re.search(r'^build ' + re.escape(target + '.exe') + r':.*(?:\n[ \t].*)*', text, re.M)
+        need(match and all(n not in match.group() for n in ['ps2runtime', 'source_oracle']), 'actual native-only target linkage')
+        need(('--wrap=' in match.group()) == (label == 'heap-inflight'), 'wrappers limited to isolated test')
+        rules.append(dict(target=target, actual_build_rule=match.group()))
+    write('linkage-audit.json', dict(ninja_sha256=sha(ninja), target_rules=rules, archive=archive_audit))
+    need(before == {n: sha(n) for n in before}, 'all source/evidence pins stable during verification')
+    for name, expected in c.PRESERVE.items(): need(sha(F / name) == expected, 'protected IOP source after verification')
+    write('verification.json', dict(status='PASS_NATIVE_HEAP_OWNERSHIP_AND_REAL_HOST_LIFETIME_CUTS',
+        source_after_sha256=before, unchanged_prior_pins=len(untouched), primary_words_rejoined=joined,
+        fixtures=fixtures, frozen_decoder_certificate_sha256=prior['frozen_decoder_certificate_sha256'], limits=[
+            'Two real native ownership clients only; existing startup, file, sound and decoder source unchanged',
+            '12DA40 is Wave callback-owned; no generic ordinary/Permanent retail substitution was integrated',
+            'Wave alternate/overflow/diagnostics/visible source status and complete native startup remain OPEN',
+            'No game/oracle launch, physical GPU/audio/input endpoint, driver/model/settings or user card/save operation']))
+    print(json.dumps(dict(status='PASS_NATIVE_HEAP_OWNERSHIP_AND_REAL_HOST_LIFETIME_CUTS', fixtures=len(fixtures), pins=len(before))), flush=True)
+
+
+if __name__ == '__main__':
+    ctypes.windll.kernel32.SetErrorMode(3)
+    if len(sys.argv) != 2 or not re.fullmatch(r'validation-[0-9]+', sys.argv[1]): raise SystemExit('usage: verify.py validation-NN')
+    c.OUT = pathlib.Path(__file__).resolve().parent / sys.argv[1]
+    c.OUT.mkdir(exist_ok=False)
+    c.ENV = dict(os.environ, PATH=str(c.BIN) + os.pathsep + os.environ['PATH'])
+    try: verify()
+    except Exception as error:
+        c.write('aborted.json', dict(status='NATIVE_HEAP_CHECK_FAILED', error=str(error)))
+        raise

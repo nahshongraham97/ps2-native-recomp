@@ -1,0 +1,12 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_heap.a",
+  "target_before_sha256": "3591f8329a692e4f96eab5cb24e5fc17fab68f3838cf04db4cae00fef4b964a6",
+  "target_after_sha256": "3591f8329a692e4f96eab5cb24e5fc17fab68f3838cf04db4cae00fef4b964a6",
+  "audited_target_expected_sha256": "3591f8329a692e4f96eab5cb24e5fc17fab68f3838cf04db4cae00fef4b964a6",
+  "execution_applicable": false,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::memory::NativeHeapOwner::allocate"
+  ]
+}

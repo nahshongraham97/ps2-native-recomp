@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-u",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_heap.a"
+  ],
+  "exit": 0,
+  "stdout": "\nnative_heap.cpp.obj:\n         U _ZNKSt3__119__shared_weak_count13__get_deleterERKSt9type_info\n         U _ZNSt3__119__shared_weak_count14__release_weakEv\n         U _ZNSt3__119__shared_weak_countD2Ev\n         U _ZNSt3__15mutex4lockEv\n         U _ZNSt3__15mutex6unlockEv\n         U _ZSt9terminatev\n         U _ZTVN10__cxxabiv117__class_type_infoE\n         U _ZTVN10__cxxabiv120__si_class_type_infoE\n         U _ZTVN10__cxxabiv121__vmi_class_type_infoE\n         U _ZdlPv\n         U _ZdlPvSt11align_val_t\n         U _Znwy\n         U _ZnwySt11align_val_t\n         U __cxa_begin_catch\n         U __cxa_end_catch\n         U __gxx_personality_seh0\n         U strcmp\n",
+  "stderr": "",
+  "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "executable_after_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10"
+}

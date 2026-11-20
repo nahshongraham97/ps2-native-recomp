@@ -1,0 +1,25 @@
+{
+  "ninja_sha256": "b2e44208668d181d5a81c85660a0445c33ddc36405a12a4b0a1cd71fcb027d3e",
+  "target_rules": [
+    {
+      "target": "test_native_heap_owner",
+      "actual_build_rule": "build test_native_heap_owner.exe: CXX_EXECUTABLE_LINKER__test_native_heap_owner_Release CMakeFiles/test_native_heap_owner.dir/tests/test_native_heap_owner.cpp.obj | libmka_native_heap.a || libmka_native_heap.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_heap.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_heap_owner.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_heap_owner.exe\n  TARGET_IMPLIB = libtest_native_heap_owner.dll.a\n  TARGET_PDB = test_native_heap_owner.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_heap_owner.dir"
+    },
+    {
+      "target": "test_native_heap_inflight",
+      "actual_build_rule": "build test_native_heap_inflight.exe: CXX_EXECUTABLE_LINKER__test_native_heap_inflight_Release CMakeFiles/test_native_heap_inflight.dir/tests/test_native_heap_inflight.cpp.obj | libmka_native_heap.a || libmka_native_heap.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++ -Wl,--wrap=_ZnwySt11align_val_t -Wl,--wrap=_ZdlPvSt11align_val_t\n  LINK_LIBRARIES = libmka_native_heap.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_heap_inflight.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_heap_inflight.exe\n  TARGET_IMPLIB = libtest_native_heap_inflight.dll.a\n  TARGET_PDB = test_native_heap_inflight.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_heap_inflight.dir"
+    }
+  ],
+  "archive": {
+    "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_heap.a",
+    "target_before_sha256": "3591f8329a692e4f96eab5cb24e5fc17fab68f3838cf04db4cae00fef4b964a6",
+    "target_after_sha256": "3591f8329a692e4f96eab5cb24e5fc17fab68f3838cf04db4cae00fef4b964a6",
+    "audited_target_expected_sha256": "3591f8329a692e4f96eab5cb24e5fc17fab68f3838cf04db4cae00fef4b964a6",
+    "execution_applicable": false,
+    "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+    "forbidden": [],
+    "required_defined_symbols": [
+      "mka::memory::NativeHeapOwner::allocate"
+    ]
+  }
+}
