@@ -21,6 +21,9 @@ public:
  bool set_dispatch_blocked(std::uint32_t,bool,GameActionFailure&) noexcept;
  // State ingress only: does not implement full source182BB0.
  bool set_suspend_inhibit(bool,GameActionFailure&) noexcept;
+ // Same source-owned game gate used by new scheduler admissions. A resumed
+ // blocking task does not re-enter that admission point.
+ std::optional<bool> suspend_inhibited(GameActionFailure&) const noexcept;
  bool validate_post_movie_targets(GameActionFailure&) const noexcept;
  bool suspend_after_logon(NativeGameInputTasks&,GameActionFailure&) noexcept;
  bool resume_source_inputs(NativeGameInputTasks&,GameActionFailure&) noexcept;

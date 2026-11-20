@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_game_action_input.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native game action input ordered mappings/poll edges/LOGON skip; same mask suspension/typed existing task restore; no task execution\n",
+  "stderr": "",
+  "executable_sha256": "1b39b56aa8a74ab9d1bf646352ca51793e3db79c54919960da9cd5ffb23f7d8a",
+  "executable_after_sha256": "1b39b56aa8a74ab9d1bf646352ca51793e3db79c54919960da9cd5ffb23f7d8a"
+}

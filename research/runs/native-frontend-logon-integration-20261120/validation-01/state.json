@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_game_transition_state.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native game transition context/state/allocation/ownership; no world teardown or scheduler execution\n",
+  "stderr": "",
+  "executable_sha256": "3d96da90cb65be92bdeb7a58911ac28ce124b10fe3e0005d9bc37a2814fa38a9",
+  "executable_after_sha256": "3d96da90cb65be92bdeb7a58911ac28ce124b10fe3e0005d9bc37a2814fa38a9"
+}

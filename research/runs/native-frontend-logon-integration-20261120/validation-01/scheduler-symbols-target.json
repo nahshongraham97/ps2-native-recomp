@@ -1,0 +1,15 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_frontend_scheduler.exe",
+  "target_before_sha256": "6c4ce0504251002566796bd60209ddc43e50980bace47d7a4dfbd89df6406f89",
+  "target_after_sha256": "6c4ce0504251002566796bd60209ddc43e50980bace47d7a4dfbd89df6406f89",
+  "audited_target_expected_sha256": "6c4ce0504251002566796bd60209ddc43e50980bace47d7a4dfbd89df6406f89",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::game::NativeFrontendScheduler::dispatch",
+    "mka::game::NativeFrontendExecution::validate_transition_task",
+    "mka::input::NativeGameActionInput::suspend_inhibited"
+  ],
+  "executed_target_sha256": "6c4ce0504251002566796bd60209ddc43e50980bace47d7a4dfbd89df6406f89"
+}

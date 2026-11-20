@@ -70,6 +70,7 @@ bool NativeGameActionInput::set_dispatch_blocked(std::uint32_t role,bool value,G
  if(!access(f))return false;for(auto& s:states_)if(s.player==role){s.dispatch_blocked=value;return true;}return fail(f,GameActionError::missing_player,"game_action.dispatch");
 }
 bool NativeGameActionInput::set_suspend_inhibit(bool value,GameActionFailure& f) noexcept {if(!access(f))return false;inhibit_=value;return true;}
+std::optional<bool> NativeGameActionInput::suspend_inhibited(GameActionFailure& f) const noexcept {if(!access(f))return {};return inhibit_;}
 bool NativeGameActionInput::validate_post_movie_targets(GameActionFailure& f) const noexcept {
  if(!access(f))return false;for(auto role:{0u,1u,2u}){bool found=false;for(const auto& s:states_)if(s.player==role)found=true;if(!found)return fail(f,GameActionError::missing_player,"game_action.post_movie_role");}return true;
 }
