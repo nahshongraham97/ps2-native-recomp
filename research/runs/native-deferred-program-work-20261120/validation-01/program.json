@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_program_executor.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "stdout": "PASS actualannouncrtimeline/ownedclip/exactoperands/startACK/stop/unsupportedcontrols; no mix/audio execution\n",
+  "stderr": "",
+  "executable_sha256": "8d0691fcc547795b172de1e16d566429af20fcc2d9d565bb35bbeb541b06136f",
+  "executable_after_sha256": "8d0691fcc547795b172de1e16d566429af20fcc2d9d565bb35bbeb541b06136f"
+}

@@ -59,3 +59,9 @@ if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
         target_link_options(test_native_playback_reservation_gaps PRIVATE "-Wl,--wrap=${symbol}")
     endforeach()
 endif()
+
+# Actual native fresh-work/cache ownership, no hardware/runtime linkage.
+add_executable(test_native_deferred_program_work EXCLUDE_FROM_ALL tests/test_deferred_program_work.cpp)
+target_link_libraries(test_native_deferred_program_work PRIVATE mka_native_sound_resources)
+add_executable(test_native_deferred_cache_policy EXCLUDE_FROM_ALL tests/test_deferred_cache_policy.cpp)
+target_link_libraries(test_native_deferred_cache_policy PRIVATE mka_native_sound_resources)

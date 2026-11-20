@@ -1,0 +1,2 @@
+# Preserve this generated Windows TSV measurement exactly as recorded.
+research/runs/native-deferred-program-work-20261120/validation-01/preparation-owned/bank-preparation.tsv -text -whitespace

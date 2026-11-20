@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_deferred_cache_policy.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-deferred-program-work-20261120\\validation-01\\cache-owned"
+  ],
+  "exit": 0,
+  "stdout": "PASS native sample cache flag40 polarity/occurrence ownership/PCM separation/private candidate cleanup; explicit source-format fixtures only\n",
+  "stderr": "",
+  "executable_sha256": "98760eb9f91d47541362fbc3b282707f3a8ed2b4accbddca798b2f1f9c1107fc",
+  "executable_after_sha256": "98760eb9f91d47541362fbc3b282707f3a8ed2b4accbddca798b2f1f9c1107fc"
+}
