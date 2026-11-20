@@ -6,21 +6,25 @@
 #include <variant>
 
 namespace mka::video {
-// The parser record that supplied the rate and the selected SDK output picture
-// are separate identities. Their association is a required producer contract;
-// this adapter never substitutes latest metadata or frame-rate estimates.
+// Source-owned sequence/admission origin for the eligibility owner rate
+// (original owner920). This is distinct from current work-record target rate
+// (original record68) and from the selected decoded picture/FFmpeg packet.
+struct MovieParserRateRecord {
+    std::string source_key;
+    std::shared_ptr<const MovieSourceObservationIdentity> identity;
+    std::uint64_t admission_id=0,admitted_header_es_byte=0,sequence_header_es_byte=0;
+    std::int64_t frame_rate_code=0;
+};
 struct MovieOrdinaryDecision {
     std::string source_key;
-    MoviePictureSource selected_picture, rate_record_picture;
-    std::int64_t associated_sequence_rate_code;
+    MoviePictureSource selected_picture;
+    MovieParserRateRecord rate_record;
     MovieClockRational ordinary_clock;
     MovieTimecodeRational adjusted_target;
-    MovieOrdinaryDecision(std::string key, MoviePictureSource selected,
-        MoviePictureSource rate_record, std::int64_t rate,
-        MovieClockRational clock, MovieTimecodeRational target)
-        : source_key(std::move(key)), selected_picture(selected),
-          rate_record_picture(rate_record), associated_sequence_rate_code(rate),
-          ordinary_clock(clock), adjusted_target(target) {}
+    MovieOrdinaryDecision(std::string key,MoviePictureSource selected,
+        MovieParserRateRecord rate,MovieClockRational clock,MovieTimecodeRational target)
+        :source_key(std::move(key)),selected_picture(selected),rate_record(std::move(rate)),
+         ordinary_clock(clock),adjusted_target(target){}
 };
 
 // One actual source-bound mutable service owner, shared with the context.
@@ -67,6 +71,8 @@ struct MoviePolicyRouteResult {
 class MoviePlaybackPolicyContext {
 public:
     virtual ~MoviePlaybackPolicyContext() = default;
+    // Joins the actual opened source before begin; no caller-invented token.
+    virtual bool bind_source(std::shared_ptr<const MovieSourceObservationIdentity>,MovieControlFailure&) = 0;
     virtual bool begin(const RetailMovieRequest&, std::int32_t, MovieControlFailure&) = 0;
     virtual bool pump_metadata(MovieControlFailure&) = 0;
     virtual bool observe_source(const MovieSourceObservationBatch&,MovieControlFailure&) = 0;

@@ -126,6 +126,9 @@ bool NativeMovieKernelPolicies::validate_observation_source(
     return invoke(f,false,[&]{
         if(used_||closed_||!identity||(source_identity_&&source_identity_!=identity))
             return fail(f,"movie policies missing or changed actual source observation identity");
+        if(source_identity_)return true;
+        if(!context_->bind_source(identity,f)||f.kind!=MovieControlError::none)
+            return fail(f,"movie policies source context identity join failed");
         source_identity_=std::move(identity);return true;
     });
 }
@@ -217,13 +220,15 @@ bool NativeMovieKernelPolicies::eligible(const MovieVideoFrame& frame, const Mov
         bool eligible=false;MovieEligibilityRoute selected_route;
         std::optional<MovieFrameEligibilityResult> ordinary;
         if(auto* value=std::get_if<MovieOrdinaryDecision>(&*decision)) {
-            if (!valid_picture(value->rate_record_picture) || value->associated_sequence_rate_code < 0 ||
-                value->associated_sequence_rate_code > 15)
+            const auto& rate=value->rate_record;
+            if(rate.source_key!=request_.logical_key||!rate.identity||rate.identity!=source_identity_||
+               !rate.admission_id||rate.sequence_header_es_byte>rate.admitted_header_es_byte||
+               rate.frame_rate_code<0||rate.frame_rate_code>15)
                 return fail(f, "movie policies missing associated parser rate provenance");
             if (value->ordinary_clock.denominator <= 0) return fail(f, "movie policies missing ordinary clock");
             if (value->adjusted_target.denominator <= 0) return fail(f, "movie policies missing adjusted target");
             MovieFrameEligibilityFailure ef;
-            ordinary=eligibility_->evaluate(value->ordinary_clock,value->adjusted_target,value->associated_sequence_rate_code,ef);
+            ordinary=eligibility_->evaluate(value->ordinary_clock,value->adjusted_target,rate.frame_rate_code,ef);
             if(!ordinary)return fail(f,"movie policies ordinary eligibility failed",static_cast<std::int64_t>(ef.kind));
             selected_route=MovieEligibilityRoute::ordinary;eligible=ordinary->eligible;
         } else if(std::holds_alternative<MovieSourceDirectDecision>(*decision)) {

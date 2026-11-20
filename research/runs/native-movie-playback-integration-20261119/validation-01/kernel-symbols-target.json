@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_kernel_policies.exe",
+  "target_before_sha256": "dba9f00eb9850143b570e62dbd85407770e60dca45c9b9acb81224693f0f34a0",
+  "target_after_sha256": "dba9f00eb9850143b570e62dbd85407770e60dca45c9b9acb81224693f0f34a0",
+  "audited_target_expected_sha256": "dba9f00eb9850143b570e62dbd85407770e60dca45c9b9acb81224693f0f34a0",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::video::NativeMovieKernelPolicies::"
+  ],
+  "executed_target_sha256": "dba9f00eb9850143b570e62dbd85407770e60dca45c9b9acb81224693f0f34a0"
+}

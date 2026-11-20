@@ -56,6 +56,7 @@ public:
     explicit NativeMovieControlContext(float current_base_volume)
         : base_volume_(current_base_volume) {}
     void set_base_volume(float value) noexcept { base_volume_ = value; }
+    float current_base_volume() const noexcept { return base_volume_; }
     // Retail336410 only replaces the shared callback for a non-null input.
     void install_skip_if_present(std::function<std::int64_t()> callback) {
         if (callback) skip_ = std::move(callback);
