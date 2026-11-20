@@ -65,3 +65,14 @@ add_executable(test_native_deferred_program_work EXCLUDE_FROM_ALL tests/test_def
 target_link_libraries(test_native_deferred_program_work PRIVATE mka_native_sound_resources)
 add_executable(test_native_deferred_cache_policy EXCLUDE_FROM_ALL tests/test_deferred_cache_policy.cpp)
 target_link_libraries(test_native_deferred_cache_policy PRIVATE mka_native_sound_resources)
+
+# Actual Service-owned deferred work; CPU/files only.
+add_executable(test_native_program_admission EXCLUDE_FROM_ALL tests/test_program_admission.cpp)
+target_link_libraries(test_native_program_admission PRIVATE mka_native_sound_resources)
+
+if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    add_executable(test_native_program_admission_gates EXCLUDE_FROM_ALL tests/test_program_admission_gates.cpp)
+    target_link_libraries(test_native_program_admission_gates PRIVATE mka_native_sound_resources)
+    target_link_options(test_native_program_admission_gates PRIVATE
+        "-Wl,--wrap=_ZN3mka5sound17AudioBankProtocol6unloadERKNS0_16AudioBankCommandERNS0_20AudioProtocolFailureE")
+endif()

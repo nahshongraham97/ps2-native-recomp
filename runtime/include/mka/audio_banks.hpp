@@ -49,8 +49,8 @@ struct AudioResource {
     std::uint32_t resolved_key = 0;
     ResourceLookup resource;
 };
-// Synchronous host ownership/data/preparation service only. No playback-ready claim,
-// callbacks, work queue, cancellation, voices or playback are implemented.
+// Host ownership/data/preparation service and owned fresh-data work admission.
+// No playback scheduler, callbacks, voices or playback-ready claim.
 // Admission is checked against unload/close. Admitted reads retain immutable
 // backing owners while local registry locks are released; new work is revoked
 // on unload. Returned data owns its bytes. No playback job is modeled here.
@@ -76,6 +76,9 @@ public:
     // Retrieve an eager program or perform the source-selected deferred normal
     // work. This is preparation, not a duplicate bank-load completion/playback.
     std::shared_ptr<const PreparedProgram> prepare_program(const AudioBankHandle&,
+        std::int32_t selector,PreparationFailure&,AudioBanksFailure&);
+    // Exact source-deferred data admission; no resource work or callback begins.
+    std::shared_ptr<PreparedProgramWork> admit_deferred_normal(const AudioBankHandle&,
         std::int32_t selector,PreparationFailure&,AudioBanksFailure&);
     std::optional<AudioResource> resolve_kind1(const AudioBankHandle&, std::int32_t selector,
                                               std::size_t command_index, AudioBanksFailure&) const;

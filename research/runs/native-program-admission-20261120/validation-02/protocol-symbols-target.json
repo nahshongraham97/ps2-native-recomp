@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_audio_bank_protocol.exe",
+  "target_before_sha256": "32c2748fe88840080e8ab336a835b5f1eaeeeb5a200ad58fe3096f68326cd601",
+  "target_after_sha256": "32c2748fe88840080e8ab336a835b5f1eaeeeb5a200ad58fe3096f68326cd601",
+  "audited_target_expected_sha256": "32c2748fe88840080e8ab336a835b5f1eaeeeb5a200ad58fe3096f68326cd601",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::sound::AudioBankProtocol::admit_deferred_normal"
+  ],
+  "executed_target_sha256": "32c2748fe88840080e8ab336a835b5f1eaeeeb5a200ad58fe3096f68326cd601"
+}

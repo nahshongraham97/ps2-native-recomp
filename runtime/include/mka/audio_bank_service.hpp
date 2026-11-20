@@ -4,7 +4,8 @@ namespace mka::sound {
 enum class BankServiceError { none, moved_service, closed, wrong_command, unsupported_null_bank_token,
     duplicate_bank_token, unknown_bank_token, unloaded_bank_token, unpublished_bank_token,
     sync_during_async_unsupported, no_pending_work, worker_active, pending_completions,
-    cancellation_unsupported, protocol_failed, allocation_failed, host_capacity, native_exception };
+    cancellation_unsupported, protocol_failed, allocation_failed, host_capacity, native_exception,
+    program_work_active, bank_unloading, bank_state_unknown };
 struct BankServiceFailure { BankServiceError kind=BankServiceError::none; AudioProtocolFailure protocol; };
 struct BankLoadOutcome {
     // Sync source0x14 result: exact supplied opaque bank word on prepared success,
@@ -25,6 +26,7 @@ enum class AsyncBankSubmission { queued, completed_busy };
 // no IOP/SIF/guest callback address, library thread emulation, or runtime fallback.
 // Admitted jobs/completions belong to this service: drain before close/destruction.
 // Cancellation is explicitly unsupported; destruction does not invent callbacks.
+class BankProgramWork;
 class AudioBankService {
 public:
     AudioBankService(const AudioBankService&)=delete;
@@ -41,6 +43,10 @@ public:
     // bytes; live executor/voice stop ordering belongs to the playback owner.
     std::shared_ptr<const PreparedProgram> prepare_program(const AudioBankCommand&,
         PreparationFailure&,BankServiceFailure&);
+    // Owned admission for the actual fresh data work. No inferred sound context,
+    // scheduler or callback. Same-bank unload/close require explicit retirement.
+    std::shared_ptr<BankProgramWork> admit_deferred_program(const AudioBankCommand&,
+        PreparationFailure&,BankServiceFailure&);
     bool unload(const AudioBankCommand&,BankServiceFailure&);
     bool cancel_async(BankServiceFailure&); // Always named unsupported; pending work unchanged.
     bool close_when_idle(BankServiceFailure&);
@@ -49,5 +55,30 @@ private:
     struct State;
     explicit AudioBankService(std::shared_ptr<State> state):state_(std::move(state)){}
     std::shared_ptr<State> state_;
+    friend class BankProgramWork;
+};
+struct BankProgramWorkObservation {
+    ProgramWorkObservation preparation;
+    bool admission_retained=false;
+};
+// Owns the actual Service operation through worker retirement. No lower Work
+// ownership escapes independently of this reservation. Destruction is cleanup,
+// never a source callback or acknowledgement of successful completion.
+class BankProgramWork final {
+public:
+    BankProgramWork(const BankProgramWork&)=delete;
+    BankProgramWork& operator=(const BankProgramWork&)=delete;
+    ~BankProgramWork();
+    const AudioBankCommand& request() const noexcept;
+    bool build(PreparationFailure&);
+    ProgramWorkCancellation cancel();
+    std::shared_ptr<const PreparedProgram> take_result(PreparationFailure&);
+    bool retire(PreparationFailure&);
+    BankProgramWorkObservation observe() const;
+private:
+    struct Impl;
+    explicit BankProgramWork(std::shared_ptr<Impl> state):state_(std::move(state)){}
+    std::shared_ptr<Impl> state_;
+    friend class AudioBankService;
 };
 } // namespace mka::sound
