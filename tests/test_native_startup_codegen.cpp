@@ -24,6 +24,9 @@ int main(int argc,char** argv){try {
     recomp::NativeClosureFailure f;
     auto result=recomp::emit_native_startup_closure(bytes,manifest,f);
     check(result&&f.kind==recomp::NativeClosureError::none,"actual original recipe emits");
+    check(result->header.find("unique_ptr<NativeRetailMemoryOwners>")!=std::string::npos&&
+        result->header.find("initialize_retail_memory_owners")!=std::string::npos,
+        "generated native state owns required memory group instead of guest heap globals");
     const auto expected=*result;
     auto rejected=[&](const auto& m,recomp::NativeClosureError error){
         check(!recomp::emit_native_startup_closure(bytes,m,f)&&f.kind==error,"named altered recipe refusal");

@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-C",
+    "--defined-only",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_retail_startup.a"
+  ],
+  "exit": 0,
+  "stdout": "\nnative_retail_startup.cpp.obj:\n00000000 R .refptr._ZTVSt12length_error\n00000000 a @feat.00\n00000028 r GCC_except_table2\n00000084 r GCC_except_table3\n00000010 r GCC_except_table6\n000002d0 T mka::retail::open_retail_resource(mka::retail::NativeRetailStartupState const&, std::__1::basic_string_view<char, std::__1::char_traits<char>>, mka::retail::StartupFailure&)\n00000080 T mka::retail::derive_retail_boot_directory(mka::retail::NativeRetailStartupState&, mka::retail::StartupFailure&)\n000003e0 T mka::retail::initialize_retail_memory_owners(mka::retail::NativeRetailStartupState&, mka::retail::StartupFailure&)\n00000000 T mka::retail::initialize_retail_resource_prefix(mka::retail::NativeRetailStartupState&, mka::retail::StartupFailure&)\n00000000 T std::__1::default_delete<mka::retail::NativeRetailMemoryOwners>::operator()[abi:nqe230103](mka::retail::NativeRetailMemoryOwners*) const\n00000000 T std::length_error::length_error[abi:nqe230103](char const*)\n00000000 T std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::__throw_length_error[abi:nqe230103]()\n00000000 T std::__1::__throw_length_error[abi:nqe230103](char const*)\n00000000 T std::__1::array<std::__1::shared_ptr<mka::memory::NativeHeapOwner>, 8ull>::~array()\n00000000 R typeinfo for std::logic_error\n00000000 R typeinfo for std::length_error\n00000000 R typeinfo for std::bad_alloc\n00000000 R typeinfo for std::exception\n00000000 R typeinfo name for std::logic_error\n00000000 R typeinfo name for std::length_error\n00000000 R typeinfo name for std::bad_alloc\n00000000 R typeinfo name for std::exception\n00000000 T __clang_call_terminate\n\nnative_retail_entry.cpp.obj:\n00000000 a @feat.00\n00000018 r GCC_except_table0\n00000000 T mka::retail::run_native_retail(mka::retail::NativeRetailStartupState&, mka::retail::StartupFailure&)\n00000000 R typeinfo for std::bad_alloc\n00000000 R typeinfo for std::exception\n00000000 R typeinfo name for std::bad_alloc\n00000000 R typeinfo name for std::exception\n00000000 T __clang_call_terminate\n",
+  "stderr": "",
+  "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "executable_after_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10"
+}

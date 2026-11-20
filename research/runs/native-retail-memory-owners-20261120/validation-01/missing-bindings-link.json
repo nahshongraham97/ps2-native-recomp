@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+    "--target",
+    "test_native_startup_missing_bindings",
+    "-j2"
+  ],
+  "exit": 1,
+  "stdout": "[0/2] Re-checking globbed directories...\n[1/3] Building CXX object CMakeFiles/test_native_startup_missing_bindings.dir/tests/test_native_startup_missing_bindings.cpp.obj\n[2/3] Linking CXX executable test_native_startup_missing_bindings.exe\nFAILED: [code=1] test_native_startup_missing_bindings.exe \nC:\\WINDOWS\\system32\\cmd.exe /C \"cd . && \"C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe\" -O3 -DNDEBUG -static-libgcc -static-libstdc++ CMakeFiles/test_native_startup_missing_bindings.dir/tests/test_native_startup_missing_bindings.cpp.obj -o test_native_startup_missing_bindings.exe -Wl,--out-implib,libtest_native_startup_missing_bindings.dll.a -Wl,--major-image-version,0,--minor-image-version,0  libmka_native_retail_startup.a  libmka_native_content_volume.a  libmka_native_retail_memory_owners.a  libmka_native_wave_allocation.a  libmka_native_heap.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd .\"\nld.lld: error: undefined symbol: mka::retail::initialize_native_retail_crt(mka::retail::NativeRetailStartupState&, mka::retail::StartupFailure&)\n>>> referenced by libmka_native_retail_startup.a(native_retail_entry.cpp.obj):(mka::retail::run_native_retail(mka::retail::NativeRetailStartupState&, mka::retail::StartupFailure&))\n\nld.lld: error: undefined symbol: mka::retail::finalize_native_retail_pre_main(mka::retail::NativeRetailStartupState&, mka::retail::StartupFailure&)\n>>> referenced by libmka_native_retail_startup.a(native_retail_entry.cpp.obj):(mka::retail::run_native_retail(mka::retail::NativeRetailStartupState&, mka::retail::StartupFailure&))\n\nld.lld: error: undefined symbol: mka::retail::initialize_native_retail_platform(mka::retail::NativeRetailStartupState&, mka::retail::StartupFailure&)\n>>> referenced by libmka_native_retail_startup.a(native_retail_entry.cpp.obj):(mka::retail::run_native_retail(mka::retail::NativeRetailStartupState&, mka::retail::StartupFailure&))\n\nld.lld: error: undefined symbol: mka::retail::continue_native_retail_main(mka::retail::NativeRetailStartupState&, mka::retail::StartupFailure&)\n>>> referenced by libmka_native_retail_startup.a(native_retail_entry.cpp.obj):(mka::retail::run_native_retail(mka::retail::NativeRetailStartupState&, mka::retail::StartupFailure&))\nclang-23: error: linker command failed with exit code 1 (use -v to see invocation)\nninja: build stopped: subcommand failed.\n",
+  "stderr": "",
+  "expected_failure": true,
+  "required_native_bindings": [
+    "initialize_native_retail_crt",
+    "finalize_native_retail_pre_main",
+    "initialize_native_retail_platform",
+    "continue_native_retail_main"
+  ],
+  "tool_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3"
+}

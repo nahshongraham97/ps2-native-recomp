@@ -231,15 +231,17 @@ std::optional<NativeStartupSources> emit_native_startup_closure(std::span<const 
         if(!verify_native_closure_source(bytes,manifest.original_elf_sha256,manifest.words,failure))return {};
         return NativeStartupSources{R"STARTUP(#pragma once
 #include "mka/content_volume.hpp"
+#include "mka/retail_memory_owners.hpp"
 #include <cstdint>
+#include <memory>
 #include <optional>
 #include <string>
 #include <string_view>
 #include <utility>
 #include <vector>
 namespace mka::retail {
-enum class StartupError {none,missing_boot_argument,malformed_boot_argument,missing_directory_separator,content,allocation,host_capacity,native_exception};
-struct StartupFailure {StartupError kind=StartupError::none;const char* operation="";content::ContentVolumeFailure content;};
+enum class StartupError {none,missing_boot_argument,malformed_boot_argument,missing_directory_separator,content,allocation,host_capacity,native_exception,memory_owners,already_initialized};
+struct StartupFailure {StartupError kind=StartupError::none;const char* operation="";content::ContentVolumeFailure content;RetailMemoryOwnerFailure memory;};
 // Native-owned replacements for the original startup arguments and writable
 // content/path state. Host executable location, boot-resource string and volume
 // are separate inputs; no guest argument block, pointer table or BSS is retained.
@@ -247,11 +249,15 @@ struct NativeRetailStartupState {
     content::NativeContentVolume content;
     std::vector<std::string> boot_arguments;
     std::string resource_prefix,boot_directory;
+    std::unique_ptr<NativeRetailMemoryOwners> memory_owners;
     NativeRetailStartupState(content::NativeContentVolume volume,std::vector<std::string> arguments)
         :content(std::move(volume)),boot_arguments(std::move(arguments)){}
 };
 bool initialize_retail_resource_prefix(NativeRetailStartupState&,StartupFailure&) noexcept;
 bool derive_retail_boot_directory(NativeRetailStartupState&,StartupFailure&) noexcept;
+// Subordinate main phase only. The required CRT/platform/main entry below does
+// not call this early or treat identity creation as complete initialization.
+bool initialize_retail_memory_owners(NativeRetailStartupState&,StartupFailure&) noexcept;
 // Ordinary native file operation bound to the same actual startup volume.
 // This is a platform destination, not an IRX loader or a disc API.
 std::optional<content::NativeContentFile> open_retail_resource(const NativeRetailStartupState&,
@@ -292,6 +298,13 @@ std::optional<content::NativeContentFile> open_retail_resource(const NativeRetai
         if(!result)f.kind=StartupError::content;return result;
     }catch(const std::bad_alloc&){f={StartupError::allocation,"retail content open allocation"};}
     catch(...){f={StartupError::native_exception,"retail content open"};}return {};
+}
+bool initialize_retail_memory_owners(NativeRetailStartupState& state,StartupFailure& f)noexcept {
+    f={};
+    if(state.memory_owners){f={StartupError::already_initialized,"retail memory owner group already initialized"};return false;}
+    auto owners=NativeRetailMemoryOwners::create(f.memory);
+    if(!owners){f.kind=StartupError::memory_owners;f.operation="retail main memory owner group";return false;}
+    state.memory_owners=std::move(owners);return true;
 }
 } // namespace mka::retail
 )STARTUP",R"STARTUP(#include "native_retail_startup.hpp"

@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_startup_codegen.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\SLUS_214.10"
+  ],
+  "exit": 0,
+  "stdout": "PASS native retail startup source identity, ordered prerequisites and owned emission; no game boot\n",
+  "stderr": "",
+  "executable_sha256": "b5ca223de37a1bd6b2a7cfe8ef2592efe647e72e0a2c64f069c69ea4ded1b301",
+  "executable_after_sha256": "b5ca223de37a1bd6b2a7cfe8ef2592efe647e72e0a2c64f069c69ea4ded1b301"
+}

@@ -99,7 +99,7 @@ if(WIN32)
     add_library(mka_native_retail_startup STATIC EXCLUDE_FROM_ALL
         "${_startup_dir}/native_retail_startup.cpp" "${_startup_dir}/native_retail_entry.cpp")
     target_include_directories(mka_native_retail_startup PUBLIC "${_startup_dir}" runtime/include)
-    target_link_libraries(mka_native_retail_startup PUBLIC mka_native_content_volume)
+    target_link_libraries(mka_native_retail_startup PUBLIC mka_native_content_volume mka_native_retail_memory_owners)
     add_executable(test_native_retail_startup EXCLUDE_FROM_ALL tests/test_native_retail_startup.cpp)
     target_link_libraries(test_native_retail_startup PRIVATE mka_native_retail_startup)
     # Expected-negative link fixture: never included in a successful build batch.
@@ -107,6 +107,15 @@ if(WIN32)
     add_executable(test_native_startup_missing_bindings EXCLUDE_FROM_ALL tests/test_native_startup_missing_bindings.cpp)
     target_link_libraries(test_native_startup_missing_bindings PRIVATE mka_native_retail_startup)
 endif()
+
+# Native identities for the actual ordered retail main memory-owner phase.
+# Unsupported source allocator policies remain explicit, not ordinary fallbacks.
+add_library(mka_native_retail_memory_owners STATIC EXCLUDE_FROM_ALL runtime/src/native/retail_memory_owners.cpp)
+target_link_libraries(mka_native_retail_memory_owners PUBLIC mka_native_wave_allocation)
+add_executable(test_native_retail_memory_owners EXCLUDE_FROM_ALL tests/test_retail_memory_owners.cpp)
+target_link_libraries(test_native_retail_memory_owners PRIVATE mka_native_retail_memory_owners)
+add_executable(test_native_retail_memory_owner_faults EXCLUDE_FROM_ALL tests/test_retail_memory_owner_faults.cpp)
+target_link_libraries(test_native_retail_memory_owner_faults PRIVATE mka_native_retail_memory_owners)
 
 # Native file regression must be available without the legacy generated game.
 add_executable(test_native_file EXCLUDE_FROM_ALL tests/test_native_file.cpp)

@@ -1,0 +1,6 @@
+{
+  "status": "PUBLICATION_PREFLIGHT_FAILED_BEFORE_COMMIT",
+  "reason": "publisher included generated startup-owned fixture file in authored LF/EOF validation",
+  "source_build_tests_changed": false,
+  "commit_or_push_attempted": false
+}
