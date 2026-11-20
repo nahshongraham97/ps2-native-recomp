@@ -67,3 +67,7 @@ if(WIN32 AND TARGET mka_native_media)
     add_executable(test_native_logon_frontend EXCLUDE_FROM_ALL tests/test_logon_frontend_task.cpp)
     target_link_libraries(test_native_logon_frontend PRIVATE mka_native_logon_frontend mka_native_material)
 endif()
+
+# Native pending ownership barriers only: no media decoder or physical endpoint.
+add_executable(test_native_logon_pending EXCLUDE_FROM_ALL tests/test_logon_pending.cpp)
+target_link_libraries(test_native_logon_pending PRIVATE mka_native_game_actions)

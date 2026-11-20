@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_frontend_scheduler.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native frontend owned queue/live ordering/blocked handoff/lifetime; no game scheduler bootstrap or hardware tick\n",
+  "stderr": "",
+  "executable_sha256": "93ba76b01e75c43ec356d200afaf10f3d889406b99b88ae3a1c1e449359c341f",
+  "executable_after_sha256": "93ba76b01e75c43ec356d200afaf10f3d889406b99b88ae3a1c1e449359c341f"
+}

@@ -17,8 +17,7 @@ NativeLogonFrontendTask::NativeLogonFrontendTask(video::NativeMovieService& serv
     input::NativeGameInputTasks& tasks, game::NativeGameTransitionState& state,
     Settings settings, FrontendEffects effects)
     : actions_(actions), input_tasks_(tasks), game_(state), effects_(std::move(effects)) {
-    Effects bound{effects_.prepare_game_world, effects_.surround_movie,
-        effects_.finish_surround_movie, [this](EffectFailure& f) { return transition(f); }};
+    Effects bound{effects_.prepare_game_world, effects_.surround_movie, [this](EffectFailure& f) { return transition(f); }};
     state_ = std::make_unique<NativeLogonState>(service, actions, host, tasks, settings, std::move(bound));
 }
 NativeLogonFrontendTask::~NativeLogonFrontendTask() = default;
@@ -29,7 +28,7 @@ std::unique_ptr<NativeLogonFrontendTask> NativeLogonFrontendTask::create(
     game::NativeGameTransitionState& state, Settings settings, FrontendEffects effects,
     FrontendTaskFailure& f) noexcept {
     f = {};
-    if (!effects.prepare_game_world || !effects.surround_movie || !effects.finish_surround_movie ||
+    if (!effects.prepare_game_world || !effects.surround_movie ||
         !effects.teardown_game_world || !effects.frontend_task) {
         f.kind = FrontendTaskError::missing_effect; f.operation = "native LOGON unbound frontend game dependency"; return {};
     }
@@ -112,13 +111,13 @@ bool NativeLogonFrontendTask::transition(EffectFailure& f) noexcept {
 game::TaskUpdate NativeLogonFrontendTask::task_error(game::FrontendSchedulerFailure& f, std::int64_t code) noexcept {
     f.kind = game::FrontendSchedulerError::invalid_result;
     f.operation = failure_.operation; f.task_code = code ? code : failure_.effect.code;
-    f.input = failure_.input; return game::TaskUpdate::error;
+    f.input = failure_.input;f.native_cause=failure_.movie.retained; return game::TaskUpdate::error;
 }
 
 game::TaskUpdate NativeLogonFrontendTask::update(game::NativeFrontendExecution& execution,
     game::FrontendSchedulerFailure& f) {
     f = {};
-    if (execution_) {
+    if (std::this_thread::get_id()!=owner_||execution_||retiring_) {
         // Reject the nested call through its own result; a caller may handle
         // that rejection without corrupting the still-running outer update.
         f.kind = game::FrontendSchedulerError::invalid_state;
@@ -152,6 +151,45 @@ game::TaskUpdate NativeLogonFrontendTask::update(game::NativeFrontendExecution& 
         return task_error(f);
     }
     return game::TaskUpdate::transition;
+}
+bool NativeLogonFrontendTask::retirement_required() const noexcept {
+    const auto p=state_->phase();
+    return p==Phase::beginning||p==Phase::playing||p==Phase::finishing||p==Phase::cleanup_failed;
+}
+game::TaskRetirement NativeLogonFrontendTask::retire(game::FrontendSchedulerFailure& f) {
+    f={};
+    if(std::this_thread::get_id()!=owner_||execution_||retiring_){f.kind=game::FrontendSchedulerError::invalid_state;f.operation="native LOGON retirement access";return game::TaskRetirement::error;}
+    struct Retiring {bool& active;Retiring(bool& b):active(b){active=true;}~Retiring(){active=false;}} guard(retiring_);
+    Failure movie;state_->cancel(movie);
+    if(retirement_required()){
+        if(movie.kind==Error::none)return game::TaskRetirement::pending;
+        failure_.movie=std::move(movie);failure_.operation=failure_.movie.operation;
+        f.kind=game::FrontendSchedulerError::invalid_result;f.operation=failure_.operation;f.native_cause=failure_.movie.retained;f.task_code=failure_.movie.restoration_failure?failure_.movie.restoration_failure->code:failure_.movie.effect.code;
+        return game::TaskRetirement::error;
+    }
+    // Resource retirement does not erase the original task/movie failure.
+    if(movie.kind!=Error::none){
+        failure_.movie=std::move(movie);f.kind=game::FrontendSchedulerError::invalid_result;f.operation=failure_.movie.operation;f.native_cause=failure_.movie.retained;f.task_code=failure_.movie.restoration_failure?failure_.movie.restoration_failure->code:failure_.movie.effect.code;
+        return game::TaskRetirement::complete_with_error;
+    }
+    return game::TaskRetirement::complete;
+}
+game::TaskRetirement NativeLogonFrontendTask::retry_retirement(game::FrontendSchedulerFailure& f) {
+    f={};
+    if(std::this_thread::get_id()!=owner_||execution_||retiring_){f.kind=game::FrontendSchedulerError::invalid_state;f.operation="native LOGON retirement retry access";return game::TaskRetirement::error;}
+    struct Retiring {bool& active;Retiring(bool& b):active(b){active=true;}~Retiring(){active=false;}} guard(retiring_);
+    Failure movie;state_->retry_cleanup(movie);
+    if(retirement_required()){
+        if(movie.kind==Error::none)return game::TaskRetirement::pending;
+        failure_.movie=std::move(movie);failure_.operation=failure_.movie.operation;
+        f.kind=game::FrontendSchedulerError::invalid_result;f.operation=failure_.operation;f.native_cause=failure_.movie.retained;f.task_code=failure_.movie.restoration_failure?failure_.movie.restoration_failure->code:failure_.movie.effect.code;
+        return game::TaskRetirement::error;
+    }
+    if(movie.kind!=Error::none){
+        failure_.movie=std::move(movie);f.kind=game::FrontendSchedulerError::invalid_result;f.operation=failure_.movie.operation;f.native_cause=failure_.movie.retained;f.task_code=failure_.movie.restoration_failure?failure_.movie.restoration_failure->code:failure_.movie.effect.code;
+        return game::TaskRetirement::complete_with_error;
+    }
+    return game::TaskRetirement::complete;
 }
 static_assert(std::is_nothrow_move_assignable_v<Failure>);
 } // namespace mka::native_logon

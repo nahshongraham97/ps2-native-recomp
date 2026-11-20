@@ -66,6 +66,8 @@ std::optional<NativeClosureSources> emit_native_logon_closure(std::span<const st
   if(m.effects!=std::vector<NativeLogonEffect>(std::begin(recipe),std::end(recipe))){f={NativeClosureError::recipe,"native LOGON complete ordered effect coverage"};return {};}
   return NativeClosureSources{R"NATIVE(#pragma once
 #include "mka/movie_service.hpp"
+#include "mka/logon_surround.hpp"
+#include "mka/frontend_scheduler.hpp"
 #include "mka/game_action_input.hpp"
 #include <functional>
 #include <cstdint>
@@ -81,19 +83,21 @@ struct Settings {
     float base_volume;
     Settings(video::MovieViewSelection v,std::int64_t l,float volume):view(v),language(l),base_volume(volume){}
 };
-struct EffectFailure { const char* operation=""; std::int64_t code=0; };
-using Effect=std::function<bool(EffectFailure&)>;
 struct Effects {
-    Effect prepare_game_world,surround_movie,finish_surround_movie,transition_task;
+    Effect prepare_game_world;
+    SurroundFactory surround_movie;
+    Effect transition_task;
 };
 enum class Error { none,invalid_state,wrong_thread,foreign_request,missing_effect,input,effect,service,allocation };
-struct Failure {
+struct Failure : game::FrontendTaskFailureDetail {
     Error kind=Error::none; const char* operation="";
     EffectFailure effect; input::GameActionFailure input;
     video::MovieServiceFailure service,cleanup,ownership;
     std::optional<EffectFailure> restoration_failure;
+    std::optional<SurroundFailure> surround_failure,surround_cleanup_failure;
+    std::shared_ptr<const Failure> retained;
 };
-enum class Phase { fresh,playing,complete,failed,cancelled };
+enum class Phase { fresh,beginning,playing,finishing,cleanup_failed,complete,failed,cancelled };
 class NativeLogonState final {
 public:
     NativeLogonState(video::NativeMovieService&,input::NativeGameActionInput&,const input::ControllerInput&,input::NativeGameInputTasks&,Settings,Effects);
@@ -102,7 +106,10 @@ public:
     NativeLogonState& operator=(const NativeLogonState&)=delete;
     bool native_logon_enter(Failure&) noexcept;
     std::optional<video::MovieControlResult> poll(Failure&) noexcept;
+    // False with no Failure means cancellation cleanup is still pending.
     bool cancel(Failure&) noexcept;
+    bool retry_cleanup(Failure&) noexcept;
+    const Failure& retained_failure() const noexcept {return *retained_failure_;}
     Phase phase() const noexcept {return phase_;}
 private:
     struct SkipLease;
@@ -112,7 +119,12 @@ private:
     bool native_logon_start(const video::RetailMovieRequest&,Failure&) noexcept;
     void invalidate() noexcept;
     void terminate(Failure&) noexcept;
-    bool restore_surround(Failure&) noexcept;
+    using SurroundCall=EffectProgress(NativeLogonSurround::*)(SurroundFailure&);
+    EffectProgress surround_call(SurroundCall,Failure&) noexcept;
+    bool finish_step(Failure&,bool retry=false) noexcept;
+    bool finish_continuation(Failure&) noexcept;
+    void retain_failure(Failure&) noexcept;
+    void publish_failure(Failure&) const noexcept;
     bool check_request(Failure&,bool require_active) noexcept;
     bool close_owned(Failure&) noexcept;
     video::NativeMovieService& service_;
@@ -122,7 +134,10 @@ private:
     Settings settings_; Effects effects_;
     std::shared_ptr<SkipLease> skip_;
     Phase phase_=Phase::fresh;
-    bool owns_session_=false,surround_owned_=false,in_call_=false;
+    bool owns_session_=false,in_call_=false,finish_started_=false,cancel_requested_=false;
+    std::unique_ptr<NativeLogonSurround> surround_;
+    const std::shared_ptr<Failure> retained_failure_=std::make_shared<Failure>();
+    std::optional<video::MovieControlResult> terminal_result_;
     std::string source_key_;
     std::uint64_t generation_=0;
     std::shared_ptr<const video::MovieSourceObservationIdentity> source_;
@@ -149,7 +164,11 @@ NativeLogonState::NativeLogonState(video::NativeMovieService& s,input::NativeGam
     const input::ControllerInput& h,input::NativeGameInputTasks& tasks,Settings v,Effects e):service_(s),actions_(a),host_(h),tasks_(tasks),settings_(v),effects_(std::move(e)){}
 NativeLogonState::~NativeLogonState(){
     if(std::this_thread::get_id()!=owner_||in_call_)std::terminate();
-    in_call_=true;Failure ignored;invalidate();close_owned(ignored);restore_surround(ignored);
+    in_call_=true;Failure ignored;invalidate();close_owned(ignored);
+    cancel_requested_=true;retain_failure(ignored);
+    if(surround_){if(phase_==Phase::cleanup_failed)std::terminate();phase_=Phase::finishing;finish_step(ignored);}
+    // The explicit task/scheduler shutdown must retain pending native work.
+    if(surround_)std::terminate();
 }
 bool NativeLogonState::access(Failure& f)const noexcept {
     f={};if(std::this_thread::get_id()!=owner_)return fail(f,Error::wrong_thread,"native LOGON owner thread");
@@ -178,18 +197,67 @@ bool NativeLogonState::close_owned(Failure& f)noexcept {
     owns_session_=false;source_.reset();video::MovieServiceFailure cleanup;
     if(!service_.close(cleanup)){f.cleanup=std::move(cleanup);if(f.kind==Error::none)fail(f,Error::service,"native LOGON resource cleanup failed");return false;}return true;
 }
-bool NativeLogonState::restore_surround(Failure& f)noexcept {
-    if(!surround_owned_)return true;
-    // An attempted restore is never retried, even if the effect fails or throws.
-    surround_owned_=false;Failure restoration;
-    if(invoke(effects_.finish_surround_movie,restoration))return true;
-    auto detail=restoration.effect;
-    if(!detail.operation||!*detail.operation)detail.operation=restoration.operation;
-    f.restoration_failure=detail;
-    if(f.kind==Error::none)fail(f,restoration.kind,"native LOGON surround restoration failed");return false;
+void NativeLogonState::retain_failure(Failure& f)noexcept {
+    if(retained_failure_->kind==Error::none)*retained_failure_=std::move(f);
+    else {
+        if(f.restoration_failure&&!retained_failure_->restoration_failure)retained_failure_->restoration_failure=f.restoration_failure;
+        if(f.surround_cleanup_failure&&!retained_failure_->surround_cleanup_failure)retained_failure_->surround_cleanup_failure=f.surround_cleanup_failure;
+        if(f.cleanup.kind!=video::MovieServiceError::none)retained_failure_->cleanup=std::move(f.cleanup);
+        if(f.ownership.kind!=video::MovieServiceError::none)retained_failure_->ownership=std::move(f.ownership);
+    }
+    retained_failure_->retained.reset();f={};
+}
+void NativeLogonState::publish_failure(Failure& f)const noexcept {
+    try {f=*retained_failure_;}
+    catch(...){
+        f={};f.kind=Error::allocation;f.operation="native LOGON failure detail allocation; exact cause retained";
+    }
+    f.retained=retained_failure_;
+}
+EffectProgress NativeLogonState::surround_call(SurroundCall call,Failure& f)noexcept {
+    try {
+        SurroundFailure detail;const auto progress=(surround_.get()->*call)(detail);
+        const auto bad=[](const EffectFailure& e){return e.code!=0||!e.operation||*e.operation;};
+        const auto ef=bad(detail.primary)?detail.primary:bad(detail.graphics)?detail.graphics:detail.audio;
+        if((progress!=EffectProgress::pending&&progress!=EffectProgress::complete&&progress!=EffectProgress::error)||
+            bad(detail.primary)||bad(detail.graphics)||bad(detail.audio)||progress==EffectProgress::error){
+            f.surround_failure=detail;f.effect=ef;fail(f,Error::effect,"native LOGON owned surround operation failed");return EffectProgress::error;
+        }
+        return progress;
+    }catch(const std::bad_alloc&){fail(f,Error::allocation,"native LOGON surround allocation");}
+    catch(...){fail(f,Error::effect,"native LOGON surround exception");}
+    return EffectProgress::error;
+}
+bool NativeLogonState::finish_step(Failure& f,bool retry)noexcept {
+    if(!surround_)return true;
+    Failure restoration;
+    const auto method=retry?&NativeLogonSurround::retry_finish:
+        finish_started_?&NativeLogonSurround::poll_finish:&NativeLogonSurround::begin_finish;
+    finish_started_=true;
+    const auto progress=surround_call(method,restoration);
+    if(progress==EffectProgress::pending){f={};return false;}
+    if(progress==EffectProgress::error){
+        auto detail=restoration.effect;
+        if(!detail.operation||!*detail.operation)detail.operation=restoration.operation;
+        restoration.restoration_failure=detail;restoration.surround_cleanup_failure=restoration.surround_failure;retain_failure(restoration);
+        phase_=Phase::cleanup_failed;publish_failure(f);return false;
+    }
+    surround_.reset();return true;
+}
+bool NativeLogonState::finish_continuation(Failure& f)noexcept {
+    if(!finish_step(f))return false;
+    if(retained_failure_->kind!=Error::none){phase_=Phase::failed;publish_failure(f);return false;}
+    if(cancel_requested_){phase_=Phase::cancelled;return true;}
+    if(!actions_.suspend_after_logon(tasks_,f.input)){
+        fail(f,Error::input,"native LOGON post-movie input suspension");retain_failure(f);phase_=Phase::failed;publish_failure(f);return false;
+    }
+    if(!invoke(effects_.transition_task,f)){retain_failure(f);phase_=Phase::failed;publish_failure(f);return false;}
+    phase_=Phase::complete;return true;
 }
 void NativeLogonState::terminate(Failure& f)noexcept {
-    invalidate();close_owned(f);restore_surround(f);phase_=Phase::failed;
+    invalidate();close_owned(f);retain_failure(f);
+    if(surround_){phase_=Phase::finishing;finish_step(f);}
+    if(!surround_){phase_=Phase::failed;publish_failure(f);}
 }
 bool NativeLogonState::invoke(const Effect& effect,Failure& f)noexcept {
     try {EffectFailure ef;const bool ok=effect(ef);if(!ok||ef.code!=0||!ef.operation||*ef.operation){f.effect=ef;return fail(f,Error::effect,"native LOGON required game effect failed");}return true;}
@@ -199,7 +267,7 @@ bool NativeLogonState::invoke(const Effect& effect,Failure& f)noexcept {
 bool NativeLogonState::native_logon_enter(Failure& f)noexcept {
     if(!access(f))return false;Guard guard(in_call_);
     if(phase_!=Phase::fresh)return fail(f,Error::invalid_state,"native LOGON enter once");
-    if(!effects_.prepare_game_world||!effects_.surround_movie||!effects_.finish_surround_movie||!effects_.transition_task)
+    if(!effects_.prepare_game_world||!effects_.surround_movie||!effects_.transition_task)
         return fail(f,Error::missing_effect,"native LOGON unbound game-world effect");
     // Existing Service/control/gain admit all finite binary32 base values.
     if(!std::isfinite(settings_.base_volume))return fail(f,Error::invalid_state,"native LOGON nonfinite base volume");
@@ -217,10 +285,16 @@ bool NativeLogonState::native_logon_enter(Failure& f)noexcept {
     if(!invoke(effects_.prepare_game_world,f)){terminate(f);return false;}
     // Source preparation clears the SAME persistent intro-skip owner.
     if(!actions_.reset_intro_skip(f.input)){fail(f,Error::input,"native LOGON preparation skip reset");terminate(f);return false;}
-    // A failed surround callback owns rollback of its own partial effects.
-    if(!invoke(effects_.surround_movie,f)){terminate(f);return false;}
-    surround_owned_=true;
-    return native_logon_select(f);
+    try {
+        EffectFailure ef;surround_=effects_.surround_movie(ef);
+        if(!surround_||ef.code!=0||!ef.operation||*ef.operation){f.effect=ef;fail(f,Error::effect,"native LOGON surround ownership admission");terminate(f);return phase_==Phase::finishing;}
+    }catch(...){fail(f,Error::allocation,"native LOGON surround factory");terminate(f);return false;}
+    phase_=Phase::beginning;
+    const auto progress=surround_call(&NativeLogonSurround::begin,f);
+    if(progress==EffectProgress::pending)return true;
+    if(progress==EffectProgress::error){terminate(f);return phase_==Phase::finishing;}
+    if(native_logon_select(f))return true;
+    return phase_==Phase::finishing;
 }
 bool NativeLogonState::native_logon_select(Failure& f)noexcept {
     video::MovieCatalogFailure cf;auto request=video::RetailMovieCatalog{}.resolve(0,settings_.view,settings_.language,cf);
@@ -254,28 +328,56 @@ bool NativeLogonState::native_logon_start(const video::RetailMovieRequest& reque
 }
 std::optional<video::MovieControlResult> NativeLogonState::poll(Failure& f)noexcept {
     if(!access(f))return {};Guard guard(in_call_);
-    if(phase_!=Phase::playing){fail(f,Error::invalid_state,"native LOGON poll without active movie");return {};}
-    if(!check_request(f,true)){terminate(f);return {};}
+    if(phase_==Phase::cleanup_failed){publish_failure(f);return {};}
+    if(phase_==Phase::beginning){
+        const auto progress=surround_call(&NativeLogonSurround::poll_begin,f);
+        if(progress==EffectProgress::pending)return video::MovieControlResult{video::MovieControlProgress::ongoing};
+        if(progress==EffectProgress::error)terminate(f);
+        else native_logon_select(f);
+        if(phase_==Phase::beginning||phase_==Phase::playing)return video::MovieControlResult{video::MovieControlProgress::ongoing};
+        if(phase_==Phase::finishing)return video::MovieControlResult{video::MovieControlProgress::ongoing};
+        return {};
+    }
+    if(phase_==Phase::finishing){
+        if(cancel_requested_){fail(f,Error::invalid_state,"native LOGON cancellation must advance through cancel");return {};}
+        if(!finish_continuation(f)){
+            if(phase_==Phase::finishing)return video::MovieControlResult{video::MovieControlProgress::ongoing};
+            if(terminal_result_&&terminal_result_->progress==video::MovieControlProgress::error)return terminal_result_;
+            return {};
+        }
+        return terminal_result_.value_or(video::MovieControlResult{video::MovieControlProgress::complete});
+    }
+    if(phase_!=Phase::playing){fail(f,Error::invalid_state,"native LOGON poll without active work");return {};}
+    if(!check_request(f,true)){terminate(f);if(phase_==Phase::finishing)return video::MovieControlResult{video::MovieControlProgress::ongoing};return {};}
     auto result=service_.poll(f.service);
     if(result.progress==video::MovieControlProgress::ongoing)return result;
-    // Service.poll terminal results already perform actual request teardown.
-    // Drop ownership before any continuation/restore callback can start another.
-    owns_session_=false;source_.reset();invalidate();
-    if(result.progress==video::MovieControlProgress::error){fail(f,Error::service,"native LOGON movie failure");restore_surround(f);phase_=Phase::failed;return result;}
-    if(!restore_surround(f)){phase_=Phase::failed;return {};}
-    if(!actions_.suspend_after_logon(tasks_,f.input)){
-        fail(f,Error::input,"native LOGON post-movie input suspension");phase_=Phase::failed;return {};}
-    if(!invoke(effects_.transition_task,f)){
-        phase_=Phase::failed;return {};}
-    phase_=Phase::complete;return result;
+    owns_session_=false;source_.reset();invalidate();terminal_result_=result;
+    if(result.progress==video::MovieControlProgress::error)fail(f,Error::service,"native LOGON movie failure");
+    retain_failure(f);phase_=Phase::finishing;
+    if(!finish_continuation(f)&&phase_==Phase::finishing)return video::MovieControlResult{video::MovieControlProgress::ongoing};
+    if(f.kind!=Error::none&&result.progress!=video::MovieControlProgress::error)return {};
+    return result;
 }
 bool NativeLogonState::cancel(Failure& f)noexcept {
-    if(!access(f))return false;Guard guard(in_call_);invalidate();
-    const bool closed=close_owned(f);const bool restored=restore_surround(f);
-    if(!closed||!restored){phase_=Phase::failed;return false;}
-    if(phase_!=Phase::complete&&phase_!=Phase::failed)phase_=Phase::cancelled;return true;
+    if(!access(f))return false;Guard guard(in_call_);
+    if(phase_==Phase::cleanup_failed){publish_failure(f);return false;}
+    if(phase_==Phase::complete||phase_==Phase::cancelled)return true;
+    invalidate();cancel_requested_=true;
+    close_owned(f);retain_failure(f);
+    if(surround_){phase_=Phase::finishing;if(!finish_step(f))return false;}
+    if(retained_failure_->kind!=Error::none){phase_=Phase::failed;publish_failure(f);return false;}
+    phase_=Phase::cancelled;return true;
+}
+bool NativeLogonState::retry_cleanup(Failure& f)noexcept {
+    if(!access(f))return false;Guard guard(in_call_);
+    if(phase_!=Phase::cleanup_failed)return fail(f,Error::invalid_state,"native LOGON retry requires retained failed cleanup");
+    // Cleanup recovery never upgrades an earlier failure into a game handoff.
+    phase_=Phase::finishing;
+    if(!finish_step(f,true))return false;
+    phase_=Phase::failed;publish_failure(f);return false;
 }
 static_assert(std::is_nothrow_move_assignable_v<video::MovieServiceFailure>);
+static_assert(std::is_nothrow_move_assignable_v<Failure>);
 } // namespace mka::native_logon
 )NATIVE"};
  }catch(const std::bad_alloc&){f={NativeClosureError::allocation,"native LOGON emitter allocation"};}

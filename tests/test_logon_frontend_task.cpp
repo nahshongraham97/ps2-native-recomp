@@ -1,3 +1,4 @@
+#include "logon_surround_probe.hpp"
 #include "native_movie_audio_ports.hpp"
 #include "mka/logon_frontend_task.hpp"
 #include "mka/material_maintenance.hpp"
@@ -29,6 +30,9 @@ struct Observed final : game::NativeFrontendTask {
     Observed(std::unique_ptr<NativeLogonFrontendTask> task, unsigned& d, FrontendTaskError& error)
         : actual(std::move(task)), destroyed(d), terminal(error) {}
     ~Observed() override { check(!running, "executing LOGON survives through update return"); actual.reset(); ++destroyed; }
+    bool retirement_required() const noexcept override {return actual->retirement_required();}
+    game::TaskRetirement retire(game::FrontendSchedulerFailure& f) override {return actual->retire(f);}
+    game::TaskRetirement retry_retirement(game::FrontendSchedulerFailure& f) override {return actual->retry_retirement(f);}
     game::TaskUpdate update(game::NativeFrontendExecution& e, game::FrontendSchedulerFailure& f) override {
         running = true; auto result = actual->update(e, f); terminal = actual->failure().kind; running = false; return result;
     }
@@ -49,12 +53,12 @@ int main(int argc, char** argv) { try {
     enum class Case { normal, skip, gate_during_block, mode7_after_world, world_failure,
         missing_clear, frontend_failure, factory_exception, world_exception,
         missing_dependencies, movie_failure, cancel, clear_without_maintenance,
-        wrong_maintenance_priority, foreign_maintenance_receipt, handled_reentry, material_step50, hierarchy_plugin_present };
+        wrong_maintenance_priority, foreign_maintenance_receipt, handled_reentry, material_step50, hierarchy_plugin_present,pending_setup,pending_finish,pending_cancel_setup };
     unsigned scenarios = 0;
     for (auto scenario : {Case::normal, Case::skip, Case::gate_during_block, Case::mode7_after_world,
             Case::world_failure, Case::missing_clear, Case::frontend_failure, Case::factory_exception,
             Case::world_exception, Case::missing_dependencies, Case::movie_failure, Case::cancel,
-            Case::clear_without_maintenance, Case::wrong_maintenance_priority, Case::foreign_maintenance_receipt, Case::handled_reentry, Case::material_step50, Case::hierarchy_plugin_present}) {
+            Case::clear_without_maintenance, Case::wrong_maintenance_priority, Case::foreign_maintenance_receipt, Case::handled_reentry, Case::material_step50, Case::hierarchy_plugin_present,Case::pending_setup,Case::pending_finish,Case::pending_cancel_setup}) {
         ++scenarios;
         auto data = std::make_shared<Data>(); auto gpu = std::make_shared<GPU>();
         std::int64_t ticks = 0; unsigned profiles = 0, restores = 0, destroyed = 0;
@@ -128,8 +132,10 @@ int main(int argc, char** argv) { try {
         std::optional<game::MaterialTrackingToken> material_token;
         FrontendEffects effects;
         effects.prepare_game_world = [&](EffectFailure& f) { f = {}; events.push_back(1); return true; };
-        effects.surround_movie = [&](EffectFailure& f) { f = {}; events.push_back(2); return true; };
-        effects.finish_surround_movie = [&](EffectFailure& f) { f = {}; ++restores; events.push_back(3); return true; };
+        effects.surround_movie = logon_surround_probe([&](EffectFailure& f) { f = {}; events.push_back(2); return true; },
+            [&](EffectFailure& f) { f = {}; ++restores; events.push_back(3); return true; },
+            scenario==Case::pending_setup||scenario==Case::pending_cancel_setup?2:0,
+            scenario==Case::pending_finish||scenario==Case::pending_cancel_setup?2:0);
         NativeLogonFrontendTask* running_task = nullptr;
         effects.teardown_game_world = [&](game::NativeFrontendExecution& execution, EffectFailure& f) -> std::optional<game::FrontendTaskToken> {
             f = {}; events.push_back(4); check(destroyed == 0 && restores == 1, "world follows movie cleanup while current task lives");
@@ -191,20 +197,27 @@ int main(int argc, char** argv) { try {
         bool armed = false, done = false; game::FrontendDispatchResult last;
         for (unsigned polls = 0; polls < 20000 && !done; ++polls) {
             data->advance(); ticks += 10;
+            if(scenario==Case::pending_cancel_setup&&!armed&&events==std::vector<int>({1,2})){
+                check(profiles==0&&scheduler->cancel(*token,failure)&&destroyed==0,"cancel retained actual queued task while setup pending and no movie exists");
+                check(scheduler->poll_retirements(failure).progress==game::FrontendDispatchProgress::blocked&&restores==1&&destroyed==0,"partial begin cancellation owns pending native finish");
+                check(scheduler->poll_retirements(failure).progress==game::FrontendDispatchProgress::blocked&&destroyed==0,"second finish pump still owns task");
+                check(scheduler->poll_retirements(failure).progress==game::FrontendDispatchProgress::pass_complete&&destroyed==1&&profiles==0,"only actual finish completion retires pre-movie task");
+                done=true;break;
+            }
             if (data->started && !armed) {
                 armed = true;
                 if (scenario == Case::skip) check(host.publish(0, input::digital_state(0x40, true)), "actual native mapped movie skip");
                 if (scenario == Case::gate_during_block) check(actions->set_suspend_inhibit(true, af) && scheduler->set_suspension_count(7, failure), "change new-task gates during already-admitted blocking call");
                 if (scenario == Case::movie_failure) data->clock_error = true;
-                if (scenario == Case::cancel) { check(scheduler->cancel(*token, failure), "owner cancels blocked native task"); check(destroyed == 1 && restores == 1 && !service->request_view(sf), "cancel destroys movie owner/restores once"); done = true; break; }
+                if (scenario == Case::cancel) { check(scheduler->cancel(*token, failure), "owner cancels blocked native task"); check(destroyed == 0, "cancel acceptance retains actual task cleanup"); check(scheduler->poll_retirements(failure).progress == game::FrontendDispatchProgress::pass_complete && destroyed == 1 && restores == 1 && !service->request_view(sf), "explicit retirement completes movie owner/restores once"); done = true; break; }
             }
             last = scheduler->dispatch(failure);
             check(std::find(events.begin(), events.end(), 99) == events.end(), "ordinary game tasks never interleave inside original blocking movie call");
-            if (last.progress == game::FrontendDispatchProgress::blocked) { check(destroyed == 0 && profiles == 1, "blocked task/pass stays owned"); continue; }
+            if (last.progress == game::FrontendDispatchProgress::blocked) { check(destroyed == 0 && (profiles == 1||((scenario==Case::pending_setup||scenario==Case::pending_cancel_setup)&&profiles==0)), "blocked task/pass stays owned including pending surround setup"); continue; }
             done = true;
         }
         check(done, "finite original LOGON native lifecycle");
-        if (scenario == Case::cancel) { scheduler.reset(); continue; }
+        if (scenario == Case::cancel||scenario==Case::pending_cancel_setup) { scheduler.reset(); continue; }
         const bool error = scenario == Case::world_failure || scenario == Case::world_exception || scenario == Case::missing_clear ||
             scenario == Case::frontend_failure || scenario == Case::factory_exception || scenario == Case::movie_failure ||
             scenario == Case::clear_without_maintenance || scenario == Case::wrong_maintenance_priority || scenario == Case::foreign_maintenance_receipt;
@@ -256,6 +269,6 @@ int main(int argc, char** argv) { try {
             "queued actual maintenance publishes native binding from actual owned game step, not clock/display rate");
         scheduler.reset();
     }
-    check(scenarios == 18, "all declared queued caller scenarios executed");
+    check(scenarios == 21, "all declared queued caller scenarios executed");
     std::puts("PASS native queued LOGON with owned geometry/hierarchy/material tasks; deterministic ports and explicit world/frontend probes"); return 0;
 } catch (const std::exception& e) { std::fprintf(stderr, "FAIL native queued LOGON %s\n", e.what()); return 1; } }

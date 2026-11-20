@@ -1,0 +1,14 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_logon_runtime.exe",
+  "target_before_sha256": "bed7c893ac17d4986426312692e7e460ee6fc2dda600bb64efa862251526d0b0",
+  "target_after_sha256": "bed7c893ac17d4986426312692e7e460ee6fc2dda600bb64efa862251526d0b0",
+  "audited_target_expected_sha256": "bed7c893ac17d4986426312692e7e460ee6fc2dda600bb64efa862251526d0b0",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::native_logon::NativeLogonState::retry_cleanup",
+    "mka::native_logon::NativeLogonState::poll"
+  ],
+  "executed_target_sha256": "bed7c893ac17d4986426312692e7e460ee6fc2dda600bb64efa862251526d0b0"
+}

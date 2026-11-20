@@ -9,7 +9,8 @@ namespace mka::native_logon {
 // body at its source points. The factory supplies the actual current frontend
 // continuation AFTER that teardown; no callback address/index is stored here.
 struct FrontendEffects {
-    Effect prepare_game_world, surround_movie, finish_surround_movie;
+    Effect prepare_game_world;
+    SurroundFactory surround_movie;
     std::function<std::optional<game::FrontendTaskToken>(game::NativeFrontendExecution&, EffectFailure&)> teardown_game_world;
     std::function<std::unique_ptr<game::NativeFrontendTask>(EffectFailure&)> frontend_task;
 };
@@ -39,6 +40,9 @@ public:
     ~NativeLogonFrontendTask() override;
     game::TaskUpdate update(game::NativeFrontendExecution&,
         game::FrontendSchedulerFailure&) override;
+    bool retirement_required() const noexcept override;
+    game::TaskRetirement retire(game::FrontendSchedulerFailure&) override;
+    game::TaskRetirement retry_retirement(game::FrontendSchedulerFailure&) override;
     // Borrowed observation, valid only while this task is owned and on its
     // owner thread. Native scheduler retirement destroys the task.
     const FrontendTaskFailure& failure() const noexcept { return failure_; }
@@ -58,7 +62,8 @@ private:
     FrontendEffects effects_;
     FrontendTaskFailure failure_;
     game::NativeFrontendExecution* execution_ = nullptr;
-    bool started_ = false, handoff_ = false;
+    const std::thread::id owner_=std::this_thread::get_id();
+    bool started_ = false, handoff_ = false, retiring_ = false;
     std::unique_ptr<NativeLogonState> state_;
 };
 } // namespace mka::native_logon

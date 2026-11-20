@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_logon_pending.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS pending native frontend retirement/no-allocation cancel/exact retry/shutdown; CPU scheduler only, no movie decode or endpoint\n",
+  "stderr": "",
+  "executable_sha256": "306c3efc430689d80bb39d9f532783abcbe8fa997556cb9c2e8d2810e994c1f1",
+  "executable_after_sha256": "306c3efc430689d80bb39d9f532783abcbe8fa997556cb9c2e8d2810e994c1f1"
+}

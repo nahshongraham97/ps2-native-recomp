@@ -23,21 +23,27 @@ struct NativeFrontendScheduler::Impl {
   std::int64_t priority;
   bool override_gate;
   std::uint64_t generation;
+  std::optional<FrontendSchedulerFailure> retirement_failure;
   Node(std::int64_t p,bool o,std::uint64_t g):priority(p),override_gate(o),generation(g){}
  };
  input::NativeGameActionInput& actions;
- std::list<Node> tasks;
+ std::list<Node> tasks,retiring;
+ std::optional<FrontendSchedulerFailure> retirement_failure;
  std::list<Node>::iterator cursor=tasks.end();
  std::shared_ptr<FrontendExecutionControl> control=std::make_shared<FrontendExecutionControl>();
  std::uint64_t suspension_count,generation=0,execution_generation=0;
- bool in_call=false,mutating=false,pass_active=false,blocked=false,transition_pending=false,failed=false;
+ bool in_call=false,mutating=false,pass_active=false,blocked=false,transition_pending=false,failed=false,shutting_down=false,transition_notice=false;
  explicit Impl(input::NativeGameActionInput& a,std::uint64_t count):actions(a),suspension_count(count){}
 };
 NativeFrontendScheduler::NativeFrontendScheduler(std::unique_ptr<Impl> p):impl_(std::move(p)){impl_->control->owner=this;}
 NativeFrontendScheduler::~NativeFrontendScheduler(){
  if(std::this_thread::get_id()!=impl_->control->thread||impl_->in_call)std::terminate();
  impl_->in_call=true;impl_->mutating=true;impl_->control->active=false;impl_->control->owner=nullptr;
- impl_->tasks.clear();
+ for(auto it=impl_->tasks.begin();it!=impl_->tasks.end();){auto next=std::next(it);
+  if(it->task->retirement_required())impl_->retiring.splice(impl_->retiring.end(),impl_->tasks,it);
+  else impl_->tasks.erase(it);it=next;}
+ FrontendSchedulerFailure cleanup;
+ if(retire_owned(cleanup).progress!=FrontendDispatchProgress::pass_complete)std::terminate();
 }
 std::unique_ptr<NativeFrontendScheduler> NativeFrontendScheduler::create(input::NativeGameActionInput& actions,std::uint64_t count,FrontendSchedulerFailure& f) noexcept {
  f={};auto value=actions.suspend_inhibited(f.input);
@@ -50,7 +56,7 @@ bool NativeFrontendScheduler::access(FrontendSchedulerFailure& f) const noexcept
  if(impl_->in_call||impl_->mutating)return fail(f,FrontendSchedulerError::invalid_state,"frontend scheduler reentry");return true;
 }
 std::optional<FrontendTaskToken> NativeFrontendScheduler::enqueue_owned(std::unique_ptr<NativeFrontendTask>& task,std::int64_t priority,bool override_gate,FrontendSchedulerFailure& f) noexcept {
- if(impl_->failed){fail(f,FrontendSchedulerError::invalid_state,"frontend scheduler terminal task error");return {};}
+ if(impl_->failed||impl_->shutting_down){fail(f,FrontendSchedulerError::invalid_state,"frontend scheduler closed task admission");return {};}
  if(!task){fail(f,FrontendSchedulerError::missing_task,"frontend scheduler missing owned task");return {};}
  if(impl_->generation==std::numeric_limits<std::uint64_t>::max()){fail(f,FrontendSchedulerError::overflow,"frontend scheduler generation exhausted");return {};}
  // Allocators may invoke application hooks. Keep the active execution capability
@@ -103,7 +109,11 @@ bool NativeFrontendScheduler::clear_transition_owned(FrontendSchedulerFailure& f
  if(impl_->transition_pending)return fail(f,FrontendSchedulerError::invalid_state,"frontend transition already requested");
  impl_->transition_pending=true;
  Guard mutation(impl_->mutating);
- for(auto it=impl_->tasks.begin();it!=impl_->tasks.end();){if(it==impl_->cursor)++it;else it=impl_->tasks.erase(it);}
+ for(auto it=impl_->tasks.begin();it!=impl_->tasks.end();){
+  if(it==impl_->cursor){++it;continue;}auto next=std::next(it);
+  if(it->task->retirement_required())impl_->retiring.splice(impl_->retiring.end(),impl_->tasks,it);
+  else impl_->tasks.erase(it);it=next;
+ }
  return true;
 }
 bool NativeFrontendExecution::clear_for_transition(FrontendSchedulerFailure& f) noexcept {
@@ -117,11 +127,19 @@ bool NativeFrontendScheduler::set_suspension_count(std::uint64_t count,FrontendS
 FrontendDispatchResult NativeFrontendScheduler::dispatch(FrontendSchedulerFailure& f) noexcept {
  if(!access(f))return {};
  Guard call(impl_->in_call);
+ // Retained cleanup remains reachable even after an earlier task failure.
+ auto retired=retire_owned(f);if(retired.progress!=FrontendDispatchProgress::pass_complete)return retired;
+ if(impl_->shutting_down)return retired;
  if(impl_->failed){fail(f,FrontendSchedulerError::invalid_state,"frontend scheduler terminal task error");return {};}
+ if(impl_->transition_notice){impl_->transition_notice=false;return {FrontendDispatchProgress::transition,0};}
  if(!impl_->pass_active){impl_->pass_active=true;impl_->cursor=impl_->tasks.begin();}
  bool resuming=impl_->blocked;impl_->blocked=false;
  std::uint64_t updates=0;
- auto terminal=[&](){impl_->failed=true;impl_->control->active=false;impl_->blocked=false;return FrontendDispatchResult{FrontendDispatchProgress::error,updates};};
+ auto terminal=[&](){impl_->failed=true;impl_->control->active=false;impl_->blocked=false;
+   if(impl_->cursor!=impl_->tasks.end()&&impl_->cursor->task->retirement_required()){
+    impl_->retiring.splice(impl_->retiring.end(),impl_->tasks,impl_->cursor);impl_->cursor=impl_->tasks.end();impl_->pass_active=false;
+   }
+   return FrontendDispatchResult{FrontendDispatchProgress::error,updates};};
  while(impl_->cursor!=impl_->tasks.end()){
   if(!resuming){
    auto inhibited=impl_->actions.suspend_inhibited(f.input);
@@ -146,14 +164,27 @@ FrontendDispatchResult NativeFrontendScheduler::dispatch(FrontendSchedulerFailur
    fail(f,FrontendSchedulerError::invalid_result,"frontend task transition requires clear and matching result");return terminal();}
   if(result==TaskUpdate::blocked){impl_->blocked=true;return {FrontendDispatchProgress::blocked,updates};}
   if(result==TaskUpdate::transition){
-   {Guard mutation(impl_->mutating);impl_->cursor=impl_->tasks.erase(impl_->cursor);}
+   {Guard mutation(impl_->mutating);
+    if(impl_->cursor->task->retirement_required())impl_->retiring.splice(impl_->retiring.end(),impl_->tasks,impl_->cursor);
+    else impl_->tasks.erase(impl_->cursor);
+   }
    impl_->cursor=impl_->tasks.end();impl_->pass_active=false;impl_->blocked=false;impl_->transition_pending=false;
+   if(!impl_->retiring.empty()){
+    impl_->transition_notice=true;
+    auto cleanup=retire_owned(f);cleanup.updates+=updates;
+    if(cleanup.progress!=FrontendDispatchProgress::pass_complete)return cleanup;
+    impl_->transition_notice=false;
+   }
    return {FrontendDispatchProgress::transition,updates};
   }
   // Read live next AFTER the callback. Insertions after the current node are
   // eligible in this pass; insertions before it wait for a new source pass.
   auto next=std::next(impl_->cursor);
-  if(result==TaskUpdate::finished){Guard mutation(impl_->mutating);impl_->tasks.erase(impl_->cursor);}
+  if(result==TaskUpdate::finished){Guard mutation(impl_->mutating);
+   if(impl_->cursor->task->retirement_required())impl_->retiring.splice(impl_->retiring.end(),impl_->tasks,impl_->cursor);
+   else impl_->tasks.erase(impl_->cursor);
+  }
+  if(!impl_->retiring.empty()){impl_->cursor=next;impl_->blocked=false;return {FrontendDispatchProgress::blocked,updates};}
   impl_->cursor=next;
  }
  impl_->pass_active=false;impl_->blocked=false;
@@ -164,14 +195,87 @@ bool NativeFrontendScheduler::cancel(const FrontendTaskToken& token,FrontendSche
  if(token.owner_!=impl_->control)return fail(f,FrontendSchedulerError::foreign_owner,"frontend scheduler foreign task");
  for(auto it=impl_->tasks.begin();it!=impl_->tasks.end();++it)if(it->generation==token.generation_){
   if(impl_->pass_active&&it==impl_->cursor){impl_->cursor=impl_->tasks.end();impl_->pass_active=false;impl_->blocked=false;impl_->transition_pending=false;}
-  Guard mutation(impl_->mutating);impl_->tasks.erase(it);return true;
+  Guard mutation(impl_->mutating);
+  if(it->task->retirement_required())impl_->retiring.splice(impl_->retiring.end(),impl_->tasks,it);
+  else impl_->tasks.erase(it);return true;
  }
  return fail(f,FrontendSchedulerError::stale_task,"frontend scheduler retired task");
+}
+FrontendDispatchResult NativeFrontendScheduler::retire_owned(FrontendSchedulerFailure& f) noexcept {
+ std::uint64_t updates=0;
+ for(auto it=impl_->retiring.begin();it!=impl_->retiring.end();){
+  if(it->retirement_failure){f=*it->retirement_failure;return {FrontendDispatchProgress::error,updates};}
+  TaskRetirement result=TaskRetirement::error;
+  try {result=it->task->retire(f);}
+  catch(...){fail(f,FrontendSchedulerError::task_exception,"frontend native retirement exception");}
+  ++updates;
+  if(result==TaskRetirement::complete_with_error&&!it->task->retirement_required()){
+   if(f.kind==FrontendSchedulerError::none)fail(f,FrontendSchedulerError::invalid_result,"frontend completed retirement reported failure");
+   impl_->retirement_failure=f;impl_->failed=true;
+   {Guard mutation(impl_->mutating);impl_->retiring.erase(it);}
+   return {FrontendDispatchProgress::error,updates};
+  }
+  if(f.kind!=FrontendSchedulerError::none||result==TaskRetirement::error||
+     (result!=TaskRetirement::pending&&result!=TaskRetirement::complete)){
+   if(f.kind==FrontendSchedulerError::none)fail(f,FrontendSchedulerError::invalid_result,"frontend native retirement failure");
+   it->retirement_failure=f;return {FrontendDispatchProgress::error,updates};
+  }
+  if(result==TaskRetirement::pending)return {FrontendDispatchProgress::blocked,updates};
+  if(it->task->retirement_required()){
+   fail(f,FrontendSchedulerError::invalid_result,"frontend retirement complete with retained native ownership");
+   it->retirement_failure=f;return {FrontendDispatchProgress::error,updates};
+  }
+  Guard mutation(impl_->mutating);it=impl_->retiring.erase(it);
+ }
+ return {FrontendDispatchProgress::pass_complete,updates};
+}
+FrontendDispatchResult NativeFrontendScheduler::poll_retirements(FrontendSchedulerFailure& f) noexcept {
+ if(!access(f))return {};Guard call(impl_->in_call);return retire_owned(f);
+}
+bool NativeFrontendScheduler::retry_retirement(const FrontendTaskToken& token,FrontendSchedulerFailure& f) noexcept {
+ if(!access(f))return false;Guard call(impl_->in_call);
+ if(token.owner_!=impl_->control)return fail(f,FrontendSchedulerError::foreign_owner,"frontend retirement foreign task");
+ for(auto it=impl_->retiring.begin();it!=impl_->retiring.end();++it)if(it->generation==token.generation_){
+  if(!it->retirement_failure)return fail(f,FrontendSchedulerError::invalid_state,"frontend retry needs retained retirement failure");
+  TaskRetirement result=TaskRetirement::error;
+  try {result=it->task->retry_retirement(f);}
+  catch(...){fail(f,FrontendSchedulerError::task_exception,"frontend native retirement retry exception");}
+  if(result==TaskRetirement::complete_with_error&&!it->task->retirement_required()){
+   if(f.kind==FrontendSchedulerError::none)fail(f,FrontendSchedulerError::invalid_result,"frontend completed retry reported failure");
+   impl_->retirement_failure=f;impl_->failed=true;
+   Guard mutation(impl_->mutating);impl_->retiring.erase(it);return false;
+  }
+  if(f.kind!=FrontendSchedulerError::none||result==TaskRetirement::error||
+     (result!=TaskRetirement::pending&&result!=TaskRetirement::complete)){
+   if(f.kind==FrontendSchedulerError::none)fail(f,FrontendSchedulerError::invalid_result,"frontend native retirement retry failed");
+   it->retirement_failure=f;return false;
+  }
+  it->retirement_failure.reset();
+  if(result==TaskRetirement::complete){
+   if(it->task->retirement_required()){
+    fail(f,FrontendSchedulerError::invalid_result,"frontend retirement retry still owns resources");it->retirement_failure=f;return false;
+   }
+   Guard mutation(impl_->mutating);impl_->retiring.erase(it);
+  }
+  return true;
+ }
+ return fail(f,FrontendSchedulerError::stale_task,"frontend retirement stale task");
+}
+FrontendDispatchResult NativeFrontendScheduler::shutdown(FrontendSchedulerFailure& f) noexcept {
+ if(!access(f))return {};Guard call(impl_->in_call);impl_->shutting_down=true;impl_->transition_notice=false;
+ impl_->control->active=false;impl_->cursor=impl_->tasks.end();impl_->pass_active=false;impl_->blocked=false;impl_->transition_pending=false;
+ {Guard mutation(impl_->mutating);
+  for(auto it=impl_->tasks.begin();it!=impl_->tasks.end();){auto next=std::next(it);
+   if(it->task->retirement_required())impl_->retiring.splice(impl_->retiring.end(),impl_->tasks,it);
+   else impl_->tasks.erase(it);it=next;
+  }
+ }
+ return retire_owned(f);
 }
 std::optional<FrontendSchedulerSnapshot> NativeFrontendScheduler::snapshot(FrontendSchedulerFailure& f) const noexcept {
  if(!access(f))return {};Guard call(impl_->in_call);
  try{
-  FrontendSchedulerSnapshot s;s.suspension_count=impl_->suspension_count;s.pass_active=impl_->pass_active;s.blocked=impl_->blocked;s.transition_pending=impl_->transition_pending;s.failed=impl_->failed;
+  FrontendSchedulerSnapshot s;s.suspension_count=impl_->suspension_count;s.pass_active=impl_->pass_active;s.blocked=impl_->blocked;s.transition_pending=impl_->transition_pending;s.failed=impl_->failed;s.shutting_down=impl_->shutting_down;s.retiring=impl_->retiring.size();s.retirement_failure=impl_->retirement_failure;
   s.tasks.reserve(impl_->tasks.size());for(auto it=impl_->tasks.begin();it!=impl_->tasks.end();++it)
    s.tasks.push_back({FrontendTaskToken(impl_->control,it->generation),it->priority,it->override_gate,impl_->pass_active&&it==impl_->cursor});
   return s;
