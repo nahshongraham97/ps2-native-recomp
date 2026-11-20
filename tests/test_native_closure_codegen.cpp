@@ -21,6 +21,8 @@ int main(int argc,char** argv){try{
  check(result->header.find("class NativeLogonState final")!=std::string::npos&&result->implementation.find("return native_logon_select(f);")!=std::string::npos&&result->implementation.find("return native_logon_start(*request,f);")!=std::string::npos,"actual native caller chain emitted");
  check(result->implementation.find("service_.start(request.id,request.requested_view,settings_.language,4,f.service)")!=std::string::npos,"actual Service source fade count");
  check(result->implementation.find("poll_logon_skip(*lease->host,af)")!=std::string::npos&&result->implementation.find("validate_logon_bindings(f.input)")!=std::string::npos,"actual typed native action owner");
+ check(result->implementation.find("actions_.suspend_after_logon(tasks_,f.input)")!=std::string::npos&&result->implementation.find("validate_post_movie_targets(f.input)")!=std::string::npos,"actual native post-movie input/task owner and preflight");
+ check(result->implementation.find("effects_.suspend_game_inputs_after_movie")==std::string::npos&&result->header.find("finish_surround_movie,transition_task")!=std::string::npos,"post-movie input is implemented rather than delegated to an arbitrary effect");
  for(const char* forbidden:{"ps2::","Cpu","c.r[","dispatch(","reinterpret_cast","0x0018","0x0033","original(c","register_hook"}){
   check(result->header.find(forbidden)==std::string::npos&&result->implementation.find(forbidden)==std::string::npos,"no runtime legacy ABI or address adapter");}
  auto expected=*result;

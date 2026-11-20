@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\eerecomp.exe",
+    "--native-logon",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\SLUS_214.10",
+    "--out",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\native-retail-logon-8dd1ce32ef6d925361042775902fd8fd7e987f21b7a750d9487c412f9e42bf8c"
+  ],
+  "exit": 0,
+  "stdout": "native LOGON exact existing source verified\n",
+  "stderr": "",
+  "executable_sha256": "0522fea1b3d4785281c0fd76a9ba0badb08ef8ae434ea8551c17ec4cf5667a5f",
+  "executable_after_sha256": "0522fea1b3d4785281c0fd76a9ba0badb08ef8ae434ea8551c17ec4cf5667a5f"
+}

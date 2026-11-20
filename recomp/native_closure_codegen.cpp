@@ -9,6 +9,23 @@ namespace recomp { namespace {
 constexpr const char* identity="a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f";
 constexpr NativeClosureWord words[]={{0x0018d450u,0x27bdfff0u},{0x0018d454u,0xffbf0000u},{0x0018d458u,0x0c06365cu},{0x0018d45cu,0x00000000u},{0x0018d460u,0x3c050019u},{0x0018d464u,0x0000202du},{0x0018d468u,0x0c0607e4u},{0x0018d46cu,0x24a5e090u},{0x0018d470u,0x0c058ee8u},{0x0018d474u,0x00000000u},{0x0018d478u,0x3c050019u},{0x0018d47cu,0x0000202du},{0x0018d480u,0x0c048974u},{0x0018d484u,0x24a5db60u},{0x0018d488u,0xdfbf0000u},{0x0018d48cu,0x03e00008u},{0x0018d490u,0x27bd0010u},{0x00181f90u,0x27bdfe70u},{0x00182234u,0x0240202du},{0x00182238u,0x0260282du},{0x0018223cu,0x0280302du},{0x00182240u,0x0c0cd904u},{0x00182244u,0x02c0382du},{0x00336410u,0x27bdffa0u},{0x00336414u,0xffbf0040u},{0x00336420u,0x00a0982du},{0x00336428u,0x00e0902du},{0x00336430u,0x0080882du}};
 constexpr NativeLogonEffect recipe[]={NativeLogonEffect::prepare_game_world,NativeLogonEffect::surround_movie,NativeLogonEffect::finish_surround_movie,NativeLogonEffect::suspend_game_inputs_after_movie,NativeLogonEffect::transition_task};
+constexpr NativeClosureWord input_effect_words[]={
+ {0x00163bb0u,0x00051ebcu},{0x00163bb4u,0x00031ffeu},{0x00163bb8u,0x5460001du},
+ {0x00163bc8u,0xac400258u},{0x00163bd4u,0xac60025cu},{0x00163bd8u,0xac400260u},
+ {0x00163be4u,0xac600278u},{0x00163be8u,0xac40027cu},{0x00163bf4u,0xac600280u},
+ {0x00163bf8u,0xac400298u},{0x00163c04u,0xac60029cu},{0x00163c08u,0xac4002a0u},
+ {0x00163c0cu,0x2402ffbfu},{0x00163c18u,0x00641825u},{0x00163c1cu,0x0c0a0204u},
+ {0x00163c20u,0xa0430081u},{0x00163c24u,0x0c0a01d8u},
+ {0x00163a64u,0x2403ffbfu},{0x00163a90u,0x8ce201d4u},{0x00163a94u,0x10400008u},
+ {0x00163ab0u,0xa08201ccu},{0x00163abcu,0x29020003u},
+ {0x00280824u,0x24102065u},{0x00280828u,0x0c04bb44u},{0x0028083cu,0x0c04ba4cu},
+ {0x0028085cu,0xac43000cu},{0x00280768u,0x0c04bb44u},{0x0028076cu,0x2404208bu},
+ {0x0028077cu,0x0c04ba4cu},{0x0028079cu,0xac43000cu},
+ {0x0012d860u,0x03e00008u},{0x0012d864u,0x0080102du}};
+std::vector<NativeClosureWord> source_words(){
+ std::vector<NativeClosureWord> out(std::begin(words),std::end(words));
+ out.insert(out.end(),std::begin(input_effect_words),std::end(input_effect_words));return out;
+}
 std::uint32_t le32(std::span<const std::uint8_t> b,std::size_t p){
  if(p>b.size()||b.size()-p<4)throw std::invalid_argument("ELF extent");
  return b[p]|std::uint32_t(b[p+1])<<8|std::uint32_t(b[p+2])<<16|std::uint32_t(b[p+3])<<24;
@@ -40,12 +57,12 @@ std::string digest(std::span<const std::uint8_t> b){
  std::string out;out.reserve(64);constexpr char hex[]="0123456789abcdef";for(auto x:h)for(int i=7;i>=0;--i)out.push_back(hex[(x>>(i*4))&15]);return out;
 }
 } // namespace
-NativeLogonManifest native_logon_manifest(){return {identity,{std::begin(words),std::end(words)},{std::begin(recipe),std::end(recipe)}};}
+NativeLogonManifest native_logon_manifest(){return {identity,source_words(),{std::begin(recipe),std::end(recipe)}};}
 std::optional<NativeClosureSources> emit_native_logon_closure(std::span<const std::uint8_t> b,const NativeLogonManifest& m,NativeClosureFailure& f)noexcept {
  f={};try {
   if(m.original_elf_sha256!=identity||digest(b)!=identity){f={NativeClosureError::source_identity,"native LOGON original ELF SHA256"};return {};}
-  if(m.words!=std::vector<NativeClosureWord>(std::begin(words),std::end(words))){f={NativeClosureError::source_word,"native LOGON exact ordered source evidence"};return {};}
-  for(const auto& w:words)if(mapped(b,w.pc)!=w.word){f={NativeClosureError::source_word,"native LOGON mapped source word"};return {};}
+  if(m.words!=source_words()){f={NativeClosureError::source_word,"native LOGON exact ordered source evidence"};return {};}
+  for(const auto& w:m.words)if(mapped(b,w.pc)!=w.word){f={NativeClosureError::source_word,"native LOGON mapped source word"};return {};}
   if(m.effects!=std::vector<NativeLogonEffect>(std::begin(recipe),std::end(recipe))){f={NativeClosureError::recipe,"native LOGON complete ordered effect coverage"};return {};}
   return NativeClosureSources{R"NATIVE(#pragma once
 #include "mka/movie_service.hpp"
@@ -67,7 +84,7 @@ struct Settings {
 struct EffectFailure { const char* operation=""; std::int64_t code=0; };
 using Effect=std::function<bool(EffectFailure&)>;
 struct Effects {
-    Effect prepare_game_world,surround_movie,finish_surround_movie,suspend_game_inputs_after_movie,transition_task;
+    Effect prepare_game_world,surround_movie,finish_surround_movie,transition_task;
 };
 enum class Error { none,invalid_state,wrong_thread,foreign_request,missing_effect,input,effect,service,allocation };
 struct Failure {
@@ -79,7 +96,7 @@ struct Failure {
 enum class Phase { fresh,playing,complete,failed,cancelled };
 class NativeLogonState final {
 public:
-    NativeLogonState(video::NativeMovieService&,input::NativeGameActionInput&,const input::ControllerInput&,Settings,Effects);
+    NativeLogonState(video::NativeMovieService&,input::NativeGameActionInput&,const input::ControllerInput&,input::NativeGameInputTasks&,Settings,Effects);
     ~NativeLogonState();
     NativeLogonState(const NativeLogonState&)=delete;
     NativeLogonState& operator=(const NativeLogonState&)=delete;
@@ -101,6 +118,7 @@ private:
     video::NativeMovieService& service_;
     input::NativeGameActionInput& actions_;
     const input::ControllerInput& host_;
+    input::NativeGameInputTasks& tasks_;
     Settings settings_; Effects effects_;
     std::shared_ptr<SkipLease> skip_;
     Phase phase_=Phase::fresh;
@@ -128,7 +146,7 @@ struct NativeLogonState::SkipLease {
     bool active=true;
 };
 NativeLogonState::NativeLogonState(video::NativeMovieService& s,input::NativeGameActionInput& a,
-    const input::ControllerInput& h,Settings v,Effects e):service_(s),actions_(a),host_(h),settings_(v),effects_(std::move(e)){}
+    const input::ControllerInput& h,input::NativeGameInputTasks& tasks,Settings v,Effects e):service_(s),actions_(a),host_(h),tasks_(tasks),settings_(v),effects_(std::move(e)){}
 NativeLogonState::~NativeLogonState(){
     if(std::this_thread::get_id()!=owner_||in_call_)std::terminate();
     in_call_=true;Failure ignored;invalidate();close_owned(ignored);restore_surround(ignored);
@@ -181,14 +199,15 @@ bool NativeLogonState::invoke(const Effect& effect,Failure& f)noexcept {
 bool NativeLogonState::native_logon_enter(Failure& f)noexcept {
     if(!access(f))return false;Guard guard(in_call_);
     if(phase_!=Phase::fresh)return fail(f,Error::invalid_state,"native LOGON enter once");
-    if(!effects_.prepare_game_world||!effects_.surround_movie||!effects_.finish_surround_movie||!effects_.suspend_game_inputs_after_movie||!effects_.transition_task)
+    if(!effects_.prepare_game_world||!effects_.surround_movie||!effects_.finish_surround_movie||!effects_.transition_task)
         return fail(f,Error::missing_effect,"native LOGON unbound game-world effect");
     // Existing Service/control/gain admit all finite binary32 base values.
     if(!std::isfinite(settings_.base_volume))return fail(f,Error::invalid_state,"native LOGON nonfinite base volume");
     if(!actions_.validate_logon_bindings(f.input))return fail(f,Error::input,"native LOGON action mappings");
-    auto participants=actions_.snapshot(f.input);if(!participants)return fail(f,Error::input,"native LOGON action ownership");
-    if(participants->size()!=2||(*participants)[0].player!=0||(*participants)[1].player!=1)
-        return fail(f,Error::input,"native LOGON explicit game participants0/1");
+    if(!actions_.validate_post_movie_targets(f.input))return fail(f,Error::input,"native LOGON post-movie action ownership");
+    if(!tasks_.validate_access(f.input.tasks)){
+        f.input.kind=input::GameActionError::wrong_thread;f.input.operation="native LOGON task owner thread";
+        return fail(f,Error::input,"native LOGON task ownership");}
     auto service_state=service_.snapshot(f.service);if(!service_state)return fail(f,Error::service,"native LOGON service observation");
     if(service_state->active)return fail(f,Error::invalid_state,"native LOGON service already active");
     video::MovieCatalogFailure catalog_failure;auto request=video::RetailMovieCatalog{}.resolve(0,settings_.view,settings_.language,catalog_failure);
@@ -244,7 +263,9 @@ std::optional<video::MovieControlResult> NativeLogonState::poll(Failure& f)noexc
     owns_session_=false;source_.reset();invalidate();
     if(result.progress==video::MovieControlProgress::error){fail(f,Error::service,"native LOGON movie failure");restore_surround(f);phase_=Phase::failed;return result;}
     if(!restore_surround(f)){phase_=Phase::failed;return {};}
-    if(!invoke(effects_.suspend_game_inputs_after_movie,f)||!invoke(effects_.transition_task,f)){
+    if(!actions_.suspend_after_logon(tasks_,f.input)){
+        fail(f,Error::input,"native LOGON post-movie input suspension");phase_=Phase::failed;return {};}
+    if(!invoke(effects_.transition_task,f)){
         phase_=Phase::failed;return {};}
     phase_=Phase::complete;return result;
 }

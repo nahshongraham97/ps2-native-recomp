@@ -1,0 +1,40 @@
+{
+  "scope": "Native LOGON input/task binding; decoder frozen; no complete game acceptance",
+  "base_fork_head": "a57e1ddbd0eeecef04c19167c2eed98c2a642317",
+  "verification_sha256": "4121e8e368752f69718973f842807813c0d9470e812361478bde325279c428f5",
+  "approved_files_sha256": {
+    "cmake/native_game.cmake": "955276d8034abd0cf3563496a57a2566929dbd054d9d8c656ccc93cb9e68addc",
+    "recomp/native_closure_codegen.cpp": "8dd1ce32ef6d925361042775902fd8fd7e987f21b7a750d9487c412f9e42bf8c",
+    "research/runs/native-logon-input-task-lift-20261120/validation-01/actions-symbols-target.json": "4605169b5025e522ed7ca908edf16dcc3a9ceb6fdf8e92ffaafd11c767997e29",
+    "research/runs/native-logon-input-task-lift-20261120/validation-01/actions-symbols.json": "b9e24b245ceb449f8d748b8cad42a3685d97b2780adb7861cf6e9d2509fca4c1",
+    "research/runs/native-logon-input-task-lift-20261120/validation-01/actions.json": "defc6687df2ec5eed5f8e19e79c9eb95c936d5ecd7bf644c7355a76d56954f68",
+    "research/runs/native-logon-input-task-lift-20261120/validation-01/build.json": "51b968b3a5d79a8cb714d9df84f0e34938ba163467d7c8b14d058ffd3d27dd32",
+    "research/runs/native-logon-input-task-lift-20261120/validation-01/compiler-native-reuse.json": "188231a91ae8f5b2eca97cb31396dc81d0389c6ddd2de9f0189dc831676fba4a",
+    "research/runs/native-logon-input-task-lift-20261120/validation-01/emitter-symbols-target.json": "01e96ee38cf33045c9a211d205e77968be54b935e33f4f4a40c98ac5fa467b0b",
+    "research/runs/native-logon-input-task-lift-20261120/validation-01/emitter-symbols.json": "c86d65bca2f2a66fb2a0d0c60ffaabd1da2f9b750e46f8744aadc7581ddf4768",
+    "research/runs/native-logon-input-task-lift-20261120/validation-01/emitter.json": "b4f1226da45d422bb8578de98ce94f1fac1d5f4caa5db1531a377228aca5b47e",
+    "research/runs/native-logon-input-task-lift-20261120/validation-01/native-logon-symbols-target.json": "95c125575ebec7f7f471de1079a46819419f70fde4abc7be664f113f9f4cfe1d",
+    "research/runs/native-logon-input-task-lift-20261120/validation-01/native-logon-symbols.json": "f9ee1deaa6152ca9cf2af22c93b49320d3e0d8d920dd1755f9b87d74c2d5e8d8",
+    "research/runs/native-logon-input-task-lift-20261120/validation-01/native-logon.json": "fc3a9be79ae9d4d4c6b3ba22645d14333110ba277a052feaf06db1ce02927e88",
+    "research/runs/native-logon-input-task-lift-20261120/validation-01/provenance.json": "4d7ad2ff9ffaf93326e4e9f673c3b2bbdfdbc953a5c9bb00e0d73298ea2b6d1d",
+    "research/runs/native-logon-input-task-lift-20261120/validation-01/tasks-symbols-target.json": "f28b4fc950d4b30d0bd47f96f79285c650818b3a4b1e33687feb151eccde1978",
+    "research/runs/native-logon-input-task-lift-20261120/validation-01/tasks-symbols.json": "5b23fda80821a6b6194ecd2f22018b579f27e21c7c07470bb8484e1d63f8092e",
+    "research/runs/native-logon-input-task-lift-20261120/validation-01/tasks.json": "342a9fb8536fce674e7e0071fb99cc06f94914f1853ae7937d4b6c6ec8b90b32",
+    "research/runs/native-logon-input-task-lift-20261120/validation-01/validator-emission/native_logon.cpp": "da28742de84694ae76b7c5c654e617106357a7df64c077a7921a0467222236c5",
+    "research/runs/native-logon-input-task-lift-20261120/validation-01/validator-emission/native_logon.hpp": "21644da1acc301dc4118eaae23fa5edae90f58c14dcd57e38da0273b787ce490",
+    "research/runs/native-logon-input-task-lift-20261120/validation-01/verification.json": "4121e8e368752f69718973f842807813c0d9470e812361478bde325279c428f5",
+    "research/runs/native-logon-input-task-lift-20261120/verify.py": "8ddb118cbbdab7e1c8dd5248162f70a8f54ae369c5a2a71f7c1758de4b53a1af",
+    "runtime/include/mka/game_action_input.hpp": "1ef2058fd94d39697ec6a23e4e44dc2ecc91a87d3bd677abed616f6bec05f681",
+    "runtime/include/mka/game_input_tasks.hpp": "73992a94a36e3b1d8cb61f466936df1cb5fbe798cf2b07800088d008245811e6",
+    "runtime/src/native/game_action_input.cpp": "83cad7aab415dae2ea838b4a9f861cfbb5646fc247f958c0968a24d9e16c41c5",
+    "runtime/src/native/game_input_tasks.cpp": "f8478e41e5fd457813b97f8f65bcad7b03f43a0e31a4d6a08a2daa84656b92a5",
+    "tests/test_game_action_input.cpp": "a2d80882a6f84e018f9ef857ed5210cfdb8406051f85de0a4e8b53a9afdad723",
+    "tests/test_game_input_tasks.cpp": "0bb6efddf20f9fecf8496a67457651075853da7a74fe49504851686e9d29d661",
+    "tests/test_native_closure_codegen.cpp": "25280b528b66a52c8f2bc4f767fdb18ebc758e5a9d7aa331df935015064ec107",
+    "tests/test_native_logon_runtime.cpp": "565178159cc828174aec45bbb4407ddbe25c7dc1e14455fe19fe51662132a176"
+  },
+  "preserved_dirty_sha256": {
+    "runtime/src/iop/mcserv.cpp": "ad2731a341409d87ffe1b171e99f28d7cedc5004aaf375a565d78673333414fb",
+    "runtime/src/iop/msl_native.cpp": "756cfb3867ebb440223ddb8ab6fe441ad6f9f54d35e4119a8342f8dd9063bb23"
+  }
+}

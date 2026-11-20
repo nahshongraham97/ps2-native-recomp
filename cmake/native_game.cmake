@@ -1,10 +1,13 @@
 # Native retail game state/caller components. No guest ABI/runtime linkage.
 add_library(mka_native_game_actions STATIC EXCLUDE_FROM_ALL
-    runtime/src/native/controller_input.cpp runtime/src/native/game_action_input.cpp)
+    runtime/src/native/controller_input.cpp runtime/src/native/game_action_input.cpp
+    runtime/src/native/game_input_tasks.cpp)
 target_include_directories(mka_native_game_actions PUBLIC runtime/include)
 target_compile_features(mka_native_game_actions PUBLIC cxx_std_20)
 add_executable(test_native_game_action_input EXCLUDE_FROM_ALL tests/test_game_action_input.cpp)
 target_link_libraries(test_native_game_action_input PRIVATE mka_native_game_actions)
+add_executable(test_native_game_input_tasks EXCLUDE_FROM_ALL tests/test_game_input_tasks.cpp)
+target_link_libraries(test_native_game_input_tasks PRIVATE mka_native_game_actions)
 
 # Strict source-checked typed retail closure, isolated from the Cpu-generated glob.
 add_executable(test_native_closure_codegen EXCLUDE_FROM_ALL

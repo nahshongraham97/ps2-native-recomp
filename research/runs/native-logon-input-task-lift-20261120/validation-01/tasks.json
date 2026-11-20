@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_game_input_tasks.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native owned game input task restore/lifetime/first match/allocation; no task body execution\n",
+  "stderr": "",
+  "executable_sha256": "fc9ec414f0139270531715d0fe9660362c45ddc72e2afdd55d9ba70c12a0b957",
+  "executable_after_sha256": "fc9ec414f0139270531715d0fe9660362c45ddc72e2afdd55d9ba70c12a0b957"
+}

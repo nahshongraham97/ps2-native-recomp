@@ -6,8 +6,8 @@ int main(int argc,char** argv){try{
  check(argc==5,"usage: test_native_logon_runtime DLLdir asset_root LOGON_relative MOVIER.ovl");
  MovieAssetFailure af;auto store=NativeMovieAssetStore::create(std::filesystem::u8path(argv[2]),{{"LOGON.SFD",argv[3]}},af);check(bool(store),"actual LOGON association");
  std::ifstream original(std::filesystem::u8path(argv[4]),std::ios::binary);std::vector<std::uint8_t> bytes((std::istreambuf_iterator<char>(original)),{});check(bytes.size()>=0x77dd8+6144,"actual color source extent");MovieColorError ce;auto color=NativeMovieColorTable::decode(MovieColorRole::helper_default,bytes.data()+0x77dd8,6144,ce);check(bool(color),"source color table");
- enum class Case{normal,skip,missing_effect,missing_mapping,prepare_failure,surround_failure,start_failure,poll_failure,dual_failure,cancel,destructor,foreign,foreign_poll,reentry,positive_gain,negative_gain};
- for(auto scenario:{Case::normal,Case::skip,Case::missing_effect,Case::missing_mapping,Case::prepare_failure,Case::surround_failure,Case::start_failure,Case::poll_failure,Case::dual_failure,Case::cancel,Case::destructor,Case::foreign,Case::foreign_poll,Case::reentry,Case::positive_gain,Case::negative_gain}){
+ enum class Case{normal,skip,missing_effect,missing_mapping,prepare_failure,surround_failure,start_failure,poll_failure,dual_failure,cancel,destructor,foreign,foreign_poll,reentry,positive_gain,negative_gain,inhibit,missing_target,extra_player,wrong_task_owner};
+ for(auto scenario:{Case::normal,Case::skip,Case::missing_effect,Case::missing_mapping,Case::prepare_failure,Case::surround_failure,Case::start_failure,Case::poll_failure,Case::dual_failure,Case::cancel,Case::destructor,Case::foreign,Case::foreign_poll,Case::reentry,Case::positive_gain,Case::negative_gain,Case::inhibit,Case::missing_target,Case::extra_player,Case::wrong_task_owner}){
  auto data=std::make_shared<Data>();auto gpu=std::make_shared<GPU>();std::int64_t ticks=0;unsigned profiles=0;MovieServiceFailure failure;bool start_error=scenario==Case::start_failure;
         auto service=NativeMovieService::create_with_native_clock(1.0f,
             [data,&profiles](const RetailMovieRequest& request,std::shared_ptr<const MovieSourceObservationIdentity> id,const std::optional<sound::AudioStreamFormat>& actual,MovieSessionFailure& f)->std::optional<MovieServicePolicyConfiguration>{f={};++profiles;check(request.id==0&&request.logical_key=="LOGON.SFD"&&id==data->source&&actual&&*actual==sound::AudioStreamFormat{data->rate,data->channels,3},"actual same-source data determines client/profile join");return profile(request,*data);},
@@ -29,16 +29,28 @@ int main(int argc,char** argv){try{
  check(bool(service),"actual Service construction");
  mka::input::ControllerInput host;check(host.publish(0,mka::input::digital_state(0,true))&&host.publish(1,mka::input::digital_state(0,true)),"explicit actual host participants");
  mka::input::GameActionFailure action_failure;std::map<std::uint32_t,std::uint32_t> maps{{11,0x800},{6,0x40}};
- auto actions=mka::input::NativeGameActionInput::create({{0,maps},{1,scenario==Case::missing_mapping?std::map<std::uint32_t,std::uint32_t>{{6,0x40}}:maps}},action_failure);check(bool(actions),"owned actual action mappings");
+ std::vector<mka::input::GameActionParticipant> participants{{0,maps,true,false},{1,scenario==Case::missing_mapping?std::map<std::uint32_t,std::uint32_t>{{6,0x40}}:maps,false,true}};
+ if(scenario==Case::extra_player){participants.emplace_back(5,std::map<std::uint32_t,std::uint32_t>{{99,0x40}},true,false);check(host.publish(5,mka::input::digital_state(0,true)),"extra host participant with distinct mapping");}
+ auto actions=mka::input::NativeGameActionInput::create(std::move(participants),scenario==Case::inhibit,action_failure);check(bool(actions),"owned actual action mappings and explicit inhibition");
+ if(scenario!=Case::missing_target)check(actions->add_unassigned_record(2,action_failure),"explicit unassigned third game input record without host sample");
+ mka::input::GameInputTaskFailure task_failure;std::unique_ptr<mka::input::NativeGameInputTasks> tasks;
+ if(scenario==Case::wrong_task_owner){std::thread worker([&]{mka::input::GameInputTaskFailure own;tasks=mka::input::NativeGameInputTasks::create(own);});worker.join();}
+ else tasks=mka::input::NativeGameInputTasks::create(task_failure);
+ check(bool(tasks),"actual native task restore-state owner");
+ std::optional<mka::input::GameInputTaskToken> task_primary,task_no_payload,task_later,task_modal;
+ if(scenario!=Case::wrong_task_owner){task_primary=tasks->create_task(mka::input::GameInputTaskKind::kind2065,false,task_failure);task_no_payload=tasks->create_task(mka::input::GameInputTaskKind::kind2066,std::nullopt,task_failure);task_later=tasks->create_task(mka::input::GameInputTaskKind::kind2066,false,task_failure);task_modal=tasks->create_task(mka::input::GameInputTaskKind::kind208b,false,task_failure);check(task_primary&&task_no_payload&&task_later&&task_modal,"owned existing task records");}
  if(scenario!=Case::missing_mapping){check(host.publish(0,mka::input::digital_state(0x800,true)),"prior intro skip press");auto edge=actions->poll_logon_skip(host,action_failure);check(edge&&*edge&&actions->intro_skip(),"prior retained skip genuinely set");check(host.publish(0,mka::input::digital_state(0,true)),"prior release");check(actions->poll(host,action_failure),"release previous intro");}
- std::vector<int> effects;unsigned restores=0;NativeLogonState* current=nullptr;bool reentry_rejected=false;
- auto effect=[&](int id,bool bad){return [&,id,bad](EffectFailure& f){effects.push_back(id);if(id==3)++restores;if(id==1&&scenario==Case::reentry){Failure inner;reentry_rejected=current&&!current->native_logon_enter(inner)&&inner.kind==Error::invalid_state;}if(bad){f={"fixture required effect failure",90+id};return false;}f={};return true;};};
- Effects ports{effect(1,scenario==Case::prepare_failure),effect(2,scenario==Case::surround_failure),effect(3,scenario==Case::dual_failure),effect(4,false),effect(5,false)};
+ std::vector<int> effects;unsigned restores=0;NativeLogonState* current=nullptr;bool reentry_rejected=false,post_checked=false;
+ auto effect=[&](int id,bool bad){return [&,id,bad](EffectFailure& f){effects.push_back(id);if(id==3)++restores;if(id==1&&scenario==Case::reentry){Failure inner;reentry_rejected=current&&!current->native_logon_enter(inner)&&inner.kind==Error::invalid_state;}
+ if(id==5){auto masks=actions->snapshot(action_failure);check(bool(masks),"observe SAME native post-movie mask owner");for(const auto& s:*masks){if(s.player<=2&&scenario!=Case::inhibit)check(s.previous==0&&s.current==0&&s.rising==0,"source post-movie clears all selected native masks");if(s.player==0&&scenario==Case::inhibit)check(s.current==0x40,"inhibition preserves held input masks");if(s.player==5)check(s.current==0x40,"source clear set does not erase additional host role");}
+ const bool expected=scenario!=Case::inhibit;auto primary=tasks->get(*task_primary,task_failure);auto modal=tasks->get(*task_modal,task_failure);auto absent=tasks->get(*task_no_payload,task_failure);auto later=tasks->get(*task_later,task_failure);check(primary&&modal&&absent&&later&&primary->saved_restore==expected&&modal->saved_restore==expected&&!absent->saved_restore&&later->saved_restore==false,"actual direct suspension updates first live typed payloads before transition; absent payload stops that kind search");post_checked=true;}
+ if(bad){f={"fixture required effect failure",90+id};return false;}f={};return true;};};
+ Effects ports{effect(1,scenario==Case::prepare_failure),effect(2,scenario==Case::surround_failure),effect(3,scenario==Case::dual_failure),effect(5,false)};
  if(scenario==Case::missing_effect)ports.transition_task={};
  float volume=scenario==Case::positive_gain?2.0f:scenario==Case::negative_gain?-0.5f:1.0f;
- Failure f;auto state=std::make_unique<NativeLogonState>(*service,*actions,host,Settings{MovieViewSelection::normal,0,volume},ports);current=state.get();
+ Failure f;auto state=std::make_unique<NativeLogonState>(*service,*actions,host,*tasks,Settings{MovieViewSelection::normal,0,volume},ports);current=state.get();
  const bool entered=state->native_logon_enter(f);
- if(scenario==Case::missing_effect||scenario==Case::missing_mapping){check(!entered&&profiles==0&&effects.empty(),"required effects/mappings reject before acquisition/game effects");continue;}
+ if(scenario==Case::missing_effect||scenario==Case::missing_mapping||scenario==Case::missing_target||scenario==Case::wrong_task_owner){check(!entered&&profiles==0&&effects.empty(),"required effects/mappings/reset roles/task ownership reject before acquisition/game effects");check(f.kind==(scenario==Case::missing_effect?Error::missing_effect:Error::input),"typed pre-acquisition failure");continue;}
  if(scenario==Case::prepare_failure||scenario==Case::surround_failure){check(!entered&&profiles==0&&f.kind==Error::effect&&restores==0,"failed preparation/surround owns no successful surround");check(effects==(scenario==Case::prepare_failure?std::vector<int>{1}:std::vector<int>{1,2}),"preparation failure source order");continue;}
  check(!actions->intro_skip(),"successful preparation clears SAME retained intro flag");
  if(scenario==Case::start_failure){check(!entered&&f.kind==Error::service&&effects==std::vector<int>({1,2,3})&&restores==1,"start failure restores successful surround once");continue;}
@@ -51,12 +63,13 @@ int main(int argc,char** argv){try{
  if(scenario==Case::cancel||scenario==Case::reentry||scenario==Case::positive_gain||scenario==Case::negative_gain){check(state->cancel(f)&&restores==1&&effects==std::vector<int>({1,2,3}),"owned cancellation restoration source order");state.reset();check(restores==1,"cancel destructor no repeated restore");continue;}
  if(scenario==Case::poll_failure||scenario==Case::dual_failure){data->clock_error=true;auto result=state->poll(f);check(result&&result->progress==MovieControlProgress::error&&result->failure.native_code==72&&f.kind==Error::service&&restores==1,"actual clock failure restores after terminal Service teardown");check(bool(f.restoration_failure)==(scenario==Case::dual_failure),"independent restoration failure retained alongside primary");if(f.restoration_failure)check(f.restoration_failure->code==93,"exact secondary effect failure");continue;}
  bool complete=false,skip_sent=false;unsigned polls=0;for(;polls<20000&&!complete;++polls){data->advance();ticks+=10;
- if(scenario==Case::skip&&!skip_sent&&data->started){check(host.publish(0,mka::input::digital_state(0x40,true)),"mapped native skip edge");skip_sent=true;}
+ if((scenario==Case::skip||scenario==Case::inhibit)&&!skip_sent&&data->started){check(host.publish(0,mka::input::digital_state(0x40,true)),"mapped native skip edge");skip_sent=true;}
+ if(scenario==Case::extra_player&&!skip_sent&&data->started){check(host.publish(5,mka::input::digital_state(0x40,true)),"additional host role edge must not trigger LOGON skip");skip_sent=true;}
  auto result=state->poll(f);check(result&&result->progress!=MovieControlProgress::error&&f.kind==Error::none,"actual emitted runtime poll succeeds");complete=result->progress==MovieControlProgress::complete;}
- check(complete&&state->phase()==Phase::complete&&effects==std::vector<int>({1,2,3,4,5})&&restores==1,"generated full continuation order");
- if(scenario==Case::normal)check(data->total_accepted==243201&&gpu->presents==152&&data->starts==1&&data->resets==1&&gpu->retired==152,"normal actual LOGON control/audio/work/drain counts");
+ check(complete&&state->phase()==Phase::complete&&effects==std::vector<int>({1,2,3,5})&&restores==1&&post_checked,"generated continuation order with concrete native input/task operation");
+ if(scenario==Case::normal||scenario==Case::extra_player)check(data->total_accepted==243201&&gpu->presents==152&&data->starts==1&&data->resets==1&&gpu->retired==152&&!actions->intro_skip(),"normal actual LOGON counts; unrelated host role never skips");
  else check(skip_sent&&actions->intro_skip()&&data->total_accepted<243201,"actual mapped skip initiates source fade/early finish");
  state.reset();check(restores==1,"successful destruction no duplicate restore");
  }
- check(std::puts("PASS generated native LOGON actual Service chain/actions/restore/identity; deterministic ports not full game effects")>=0&&std::fflush(stdout)==0,"checked footer");return 0;
+ check(std::puts("PASS generated native LOGON actual Service/input-task suspension/restore/identity; deterministic ports not full game effects")>=0&&std::fflush(stdout)==0,"checked footer");return 0;
  }catch(const std::exception& e){std::fprintf(stderr,"FAIL native LOGON runtime %s\n",e.what());return 1;}}
