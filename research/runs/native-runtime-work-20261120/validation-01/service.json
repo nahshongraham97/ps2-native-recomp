@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_audio_bank_service.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-runtime-work-20261120\\validation-01\\service-owned"
+  ],
+  "exit": 0,
+  "stdout": "PASS nativebank sync/async completion ordering/exacttokens/eagerfailure; no transport/game/playback\n",
+  "stderr": "",
+  "executable_sha256": "7e7207d9f281cb736451795c2b8808e63aa4dc1241ad2bf59982f504828cda2a",
+  "executable_after_sha256": "7e7207d9f281cb736451795c2b8808e63aa4dc1241ad2bf59982f504828cda2a"
+}

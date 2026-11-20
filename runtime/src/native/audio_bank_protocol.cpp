@@ -184,6 +184,24 @@ std::shared_ptr<PreparedProgramWork> AudioBankProtocol::admit_deferred_normal(
     return program;
 }
 
+std::shared_ptr<RuntimeProgramWork> AudioBankProtocol::admit_runtime_program(
+    const AudioBankCommand& command,PreparationFailure& preparation,AudioProtocolFailure& failure) {
+    preparation={};failure={};
+    if(!is_play(command.opcode)){failure.kind=AudioProtocolError::wrong_command;return {};}
+    if(!state_){failure.kind=AudioProtocolError::moved_bridge;return {};}
+    if(!command.bank_token.value){failure.kind=AudioProtocolError::unsupported_null_bank_token;return {};}
+    AudioBankHandle handle;
+    {
+        std::lock_guard<std::mutex> lock(state_->mutex);
+        const auto found=state_->bindings.find(command.bank_token.value);
+        if(found==state_->bindings.end()){failure.kind=AudioProtocolError::unknown_bank_token;return {};}
+        handle=found->second;
+    }
+    auto program=state_->session.admit_runtime_program(handle,command.selector,preparation,failure.bank);
+    if(!program)failure.kind=AudioProtocolError::bank_failure;
+    return program;
+}
+
 std::unique_ptr<RuntimeProgramReference> AudioBankProtocol::acquire_runtime_program(
     const AudioBankCommand& command,PreparationFailure& preparation,AudioProtocolFailure& failure) {
     preparation={};failure={};

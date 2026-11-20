@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_deferred_program_work.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_DEFERRED_PROGRAM_WORK: 5 actual ANNOUNCR lifecycle cases; CPU-only, no runtime callback or hardware fidelity claim\n",
+  "stderr": "",
+  "executable_sha256": "c33c8fdb7d24afc6e9558fe0325752c05c50f69076a05842525711ec95b81926",
+  "executable_after_sha256": "c33c8fdb7d24afc6e9558fe0325752c05c50f69076a05842525711ec95b81926"
+}

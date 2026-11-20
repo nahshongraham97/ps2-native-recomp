@@ -20,6 +20,7 @@ private:
     std::shared_ptr<AudioResourceDomain> domain_;
     AudioControlFactors controls_;
     friend class PreparedBank;
+    friend class RuntimeProgramWork;
     friend class NativeProgramCopy;
 };
 // One semantic acquisition, distinct from independently retained immutable data.
@@ -33,12 +34,15 @@ public:
     std::shared_ptr<const NativeRuntimePreparation> preparation() const;
     bool active() const;
     bool release(PreparationFailure&);
+    std::optional<std::size_t> reference_count(PreparationFailure&) const;
 private:
     struct Impl;
     explicit RuntimeProgramReference(std::unique_ptr<Impl>);
     std::unique_ptr<Impl> state_;
     bool retain_service_admission(std::shared_ptr<const void>);
     friend class PreparedBank;
+    friend class RuntimeProgramWork;
     friend class AudioBankService;
+    friend class BankRuntimeProgramWork;
 };
 } // namespace mka::sound

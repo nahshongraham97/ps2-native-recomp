@@ -60,6 +60,7 @@ struct PreparedProgram {
 class NativeRuntimePreparation;
 class RuntimeProgramReference;
 class PreparedProgramWork;
+class RuntimeProgramWork;
 struct RuntimeCacheObservation {std::size_t program_index=0,references=0;bool cached=false,deferred=false,building=false;};
 struct SampleCacheObservation {std::size_t resource_index=0;bool occupied=false,preserved=false;};
 // Source292E4 load-preparation predicate only, not playback/completion transport.
@@ -77,6 +78,7 @@ public:
     // Full runtime descriptor/callback/coordinator semantics are separate.
     std::shared_ptr<PreparedProgramWork> admit_deferred_normal(std::int32_t selector,PreparationFailure&);
     std::optional<std::vector<SampleCacheObservation>> sample_cache(PreparationFailure&) const;
+    std::shared_ptr<RuntimeProgramWork> admit_runtime_program(std::int32_t selector,PreparationFailure&);
     std::unique_ptr<RuntimeProgramReference> acquire_runtime_program(std::int32_t selector,PreparationFailure&);
     std::optional<std::vector<RuntimeCacheObservation>> runtime_cache(PreparationFailure&) const;
     // Synchronous native convenience over the same owned fresh work lifecycle.
@@ -91,6 +93,7 @@ private:
     std::shared_ptr<State> state_;
     friend class PreparedProgramWork;
     friend class RuntimeProgramReference;
+    friend class RuntimeProgramWork;
 };
 enum class ProgramWorkState {queued,building,ready,cancelled,failed,published,retired};
 enum class ProgramWorkCancellation {queued_removed,running_requested,not_cancellable};
@@ -117,6 +120,37 @@ public:
 private:
     struct Impl;
     explicit PreparedProgramWork(std::shared_ptr<Impl> state):state_(std::move(state)){}
+    std::shared_ptr<Impl> state_;
+    friend class PreparedBank;
+};
+
+enum class RuntimeProgramWorkState {queued,building,ready,build_failed,committed,taken,cancelled,failed,retired};
+enum class RuntimeProgramWorkBranch {unselected,cached,fresh};
+struct RuntimeProgramWorkObservation {
+    RuntimeProgramWorkState state=RuntimeProgramWorkState::queued;
+    RuntimeProgramWorkBranch branch=RuntimeProgramWorkBranch::unselected;
+    // runtime_published records a historical fresh commit, even if a later
+    // direct bank unload revokes the still-untaken result.
+    bool cancellation_open=false,cancellation_requested=false,runtime_published=false,result_taken=false;
+    std::optional<PreparationFailure> failure;
+};
+// Private runtime construction and exact cached-reference admission. No callback,
+// source outstanding-job counter or public association release is synthesized.
+class RuntimeProgramWork final {
+public:
+    RuntimeProgramWork(const RuntimeProgramWork&)=delete;
+    RuntimeProgramWork& operator=(const RuntimeProgramWork&)=delete;
+    ~RuntimeProgramWork();
+    bool build(PreparationFailure&);
+    bool finish_build(PreparationFailure&);
+    ProgramWorkCancellation cancel();
+    // Direct unload revokes an untaken result; prior returned references survive.
+    std::unique_ptr<RuntimeProgramReference> take_result(PreparationFailure&);
+    bool retire(PreparationFailure&);
+    RuntimeProgramWorkObservation observe() const;
+private:
+    struct Impl;
+    explicit RuntimeProgramWork(std::shared_ptr<Impl> state):state_(std::move(state)){}
     std::shared_ptr<Impl> state_;
     friend class PreparedBank;
 };

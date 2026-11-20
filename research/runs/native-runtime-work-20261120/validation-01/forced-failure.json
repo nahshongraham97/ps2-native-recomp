@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_forced_output_retirement_failure.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_FORCED_OUTPUT_RETIREMENT_FAILURE: 8 single and 11 context allocation failures; mixed-pool rollback; test-only allocator wrap\n",
+  "stderr": "",
+  "executable_sha256": "3f0b6f329882434a8a0791cc5f967e6a747e798baceafef3d4ad279cf64c1cf0",
+  "executable_after_sha256": "3f0b6f329882434a8a0791cc5f967e6a747e798baceafef3d4ad279cf64c1cf0"
+}

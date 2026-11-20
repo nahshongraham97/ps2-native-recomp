@@ -121,3 +121,9 @@ if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
     target_link_libraries(test_native_forced_output_retirement_failure PRIVATE mka_native_sound_resources)
     target_link_options(test_native_forced_output_retirement_failure PRIVATE "-Wl,--wrap=_Znwy")
 endif()
+
+# Actual private runtime construction/decision and retained Service work.
+add_executable(test_native_runtime_program_work EXCLUDE_FROM_ALL tests/test_runtime_program_work.cpp)
+target_link_libraries(test_native_runtime_program_work PRIVATE mka_native_sound_resources)
+add_executable(test_native_service_runtime_work EXCLUDE_FROM_ALL tests/test_service_runtime_work.cpp)
+target_link_libraries(test_native_service_runtime_work PRIVATE mka_native_sound_resources)

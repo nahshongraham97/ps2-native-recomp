@@ -123,6 +123,68 @@ std::shared_ptr<BankProgramWork> AudioBankService::admit_deferred_program(
     catch(...){failure.kind=BankServiceError::native_exception;}
     return {};
 }
+struct BankRuntimeProgramWork::Impl {
+    Impl(std::shared_ptr<AudioBankService::State> owner,const AudioBankCommand& command)
+        :service(std::move(owner)),request(command){}
+    const std::shared_ptr<AudioBankService::State> service;
+    const AudioBankCommand request;
+    std::shared_ptr<RuntimeProgramWork> work;
+    std::shared_ptr<AudioBankService::State::RuntimeAdmission> result_admission;
+    std::mutex reservation_mutex;
+    std::atomic<bool> retained=false;
+    void release_reservation(){
+        std::lock_guard own_lock(reservation_mutex);
+        if(!retained.load(std::memory_order_acquire))return;
+        std::lock_guard service_lock(service->mutex);
+        --service->tokens.at(request.bank_token.value).program_work;--service->operations;
+        retained.store(false,std::memory_order_release);
+    }
+    ~Impl(){work.reset();result_admission.reset();release_reservation();}
+};
+BankRuntimeProgramWork::~BankRuntimeProgramWork()=default;
+const AudioBankCommand& BankRuntimeProgramWork::request()const noexcept{return state_->request;}
+bool BankRuntimeProgramWork::build(PreparationFailure& f){return state_->work->build(f);}
+bool BankRuntimeProgramWork::finish_build(PreparationFailure& f){return state_->work->finish_build(f);}
+ProgramWorkCancellation BankRuntimeProgramWork::cancel(){return state_->work->cancel();}
+std::unique_ptr<RuntimeProgramReference> BankRuntimeProgramWork::take_result(PreparationFailure& f){
+    auto result=state_->work->take_result(f);if(!result)return {};
+    if(!result->retain_service_admission(state_->result_admission)){f.kind=PreparationError::invalid_work_state;return {};}
+    return result;
+}
+bool BankRuntimeProgramWork::retire(PreparationFailure& f){
+    if(!state_->work->retire(f))return false;
+    // Actual semantic cleanup precedes safety-keeper release. A returned result
+    // shares this preallocated keeper and remains protected independently.
+    state_->result_admission.reset();state_->release_reservation();return true;
+}
+BankRuntimeProgramWorkObservation BankRuntimeProgramWork::observe()const{
+    const bool retained=state_->retained.load(std::memory_order_acquire);
+    return {state_->work->observe(),retained};
+}
+std::shared_ptr<BankRuntimeProgramWork> AudioBankService::admit_runtime_program(
+    const AudioBankCommand& request,PreparationFailure& preparation,BankServiceFailure& failure){
+    preparation={};failure={};if(!state_){failure.kind=BankServiceError::moved_service;return {};}
+    if(request.opcode!=AudioBankOpcode::play&&request.opcode!=AudioBankOpcode::play_extended){failure.kind=BankServiceError::wrong_command;return {};}
+    try {
+        auto job=std::make_shared<BankRuntimeProgramWork::Impl>(state_,request);
+        job->result_admission=std::make_shared<State::RuntimeAdmission>(state_,request.bank_token.value);
+        {std::lock_guard lock(state_->mutex);
+         if(state_->closed){failure.kind=BankServiceError::closed;return {};}
+         if(!state_->usable(request.bank_token,failure))return {};
+         auto& token=state_->tokens.at(request.bank_token.value);const auto max=std::numeric_limits<std::size_t>::max();
+         if(state_->operations>max-2||state_->runtime_references==max||token.runtime_references==max||token.program_work==max){failure.kind=BankServiceError::host_capacity;return {};}
+         ++state_->operations;++token.program_work;job->retained.store(true,std::memory_order_release);
+         // Reserve actual native result-admission capacity now so no allocation
+         // or counter-capacity failure can occur after runtime cache publication.
+         ++state_->operations;++state_->runtime_references;++token.runtime_references;job->result_admission->active=true;
+        }
+        job->work=state_->protocol.admit_runtime_program(job->request,preparation,failure.protocol);
+        if(!job->work){failure.kind=BankServiceError::protocol_failed;return {};}
+        return std::shared_ptr<BankRuntimeProgramWork>(new BankRuntimeProgramWork(std::move(job)));
+    }catch(const std::bad_alloc&){failure.kind=BankServiceError::allocation_failed;}
+    catch(const std::length_error&){failure.kind=BankServiceError::host_capacity;}
+    catch(...){failure.kind=BankServiceError::native_exception;}return {};
+}
 std::unique_ptr<RuntimeProgramReference> AudioBankService::acquire_runtime_program(
     const AudioBankCommand& request,PreparationFailure& preparation,BankServiceFailure& failure){
     preparation={};failure={};

@@ -27,6 +27,7 @@ enum class AsyncBankSubmission { queued, completed_busy };
 // Admitted jobs/completions belong to this service: drain before close/destruction.
 // Cancellation is explicitly unsupported; destruction does not invent callbacks.
 class BankProgramWork;
+class BankRuntimeProgramWork;
 class AudioBankService {
 public:
     AudioBankService(const AudioBankService&)=delete;
@@ -49,6 +50,11 @@ public:
         PreparationFailure&,BankServiceFailure&);
     // The exact returned runtime reference retains Service/bank admission through
     // explicit semantic release or destruction, including transfer into a copy.
+    // Owned runtime job: private fresh constructor/decision, actual cached hit.
+    // Separate native result-capacity and job safety keepers are not source
+    // bank+2C/refcount values or completion callbacks.
+    std::shared_ptr<BankRuntimeProgramWork> admit_runtime_program(const AudioBankCommand&,
+        PreparationFailure&,BankServiceFailure&);
     std::unique_ptr<RuntimeProgramReference> acquire_runtime_program(const AudioBankCommand&,
         PreparationFailure&,BankServiceFailure&);
     bool unload(const AudioBankCommand&,BankServiceFailure&);
@@ -60,6 +66,7 @@ private:
     explicit AudioBankService(std::shared_ptr<State> state):state_(std::move(state)){}
     std::shared_ptr<State> state_;
     friend class BankProgramWork;
+    friend class BankRuntimeProgramWork;
 };
 struct BankProgramWorkObservation {
     ProgramWorkObservation preparation;
@@ -82,6 +89,31 @@ public:
 private:
     struct Impl;
     explicit BankProgramWork(std::shared_ptr<Impl> state):state_(std::move(state)){}
+    std::shared_ptr<Impl> state_;
+    friend class AudioBankService;
+};
+struct BankRuntimeProgramWorkObservation {
+    RuntimeProgramWorkObservation preparation;
+    bool admission_retained=false;
+};
+// Exact admitted runtime work and immutable request. The result's independent
+// Service keeper may outlive job retirement. No callback/outstanding chronology
+// is inferred from these native admission counts.
+class BankRuntimeProgramWork final {
+public:
+    BankRuntimeProgramWork(const BankRuntimeProgramWork&)=delete;
+    BankRuntimeProgramWork& operator=(const BankRuntimeProgramWork&)=delete;
+    ~BankRuntimeProgramWork();
+    const AudioBankCommand& request() const noexcept;
+    bool build(PreparationFailure&);
+    bool finish_build(PreparationFailure&);
+    ProgramWorkCancellation cancel();
+    std::unique_ptr<RuntimeProgramReference> take_result(PreparationFailure&);
+    bool retire(PreparationFailure&);
+    BankRuntimeProgramWorkObservation observe() const;
+private:
+    struct Impl;
+    explicit BankRuntimeProgramWork(std::shared_ptr<Impl> state):state_(std::move(state)){}
     std::shared_ptr<Impl> state_;
     friend class AudioBankService;
 };

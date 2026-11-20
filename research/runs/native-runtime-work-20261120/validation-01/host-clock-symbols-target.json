@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_program_host_clock.exe",
+  "target_before_sha256": "1528fb0a9d44209d5a80990ef015087f2d5c2c0b0f47924957bbe4abed94383f",
+  "target_after_sha256": "1528fb0a9d44209d5a80990ef015087f2d5c2c0b0f47924957bbe4abed94383f",
+  "audited_target_expected_sha256": "1528fb0a9d44209d5a80990ef015087f2d5c2c0b0f47924957bbe4abed94383f",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::sound::NativeProgramHostClock::read"
+  ],
+  "executed_target_sha256": "1528fb0a9d44209d5a80990ef015087f2d5c2c0b0f47924957bbe4abed94383f"
+}

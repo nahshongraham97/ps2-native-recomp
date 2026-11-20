@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_forced_output_retirement.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_FORCED_OUTPUT_RETIREMENT: 4 actual Owner output retirement groups; software tails only\n",
+  "stderr": "",
+  "executable_sha256": "58563699105dd174043dab38e6280ebadda445cde2ea3f1cccf9a063d52e7f79",
+  "executable_after_sha256": "58563699105dd174043dab38e6280ebadda445cde2ea3f1cccf9a063d52e7f79"
+}

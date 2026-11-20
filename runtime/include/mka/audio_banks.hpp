@@ -81,6 +81,8 @@ public:
     // Exact source-deferred data admission; no resource work or callback begins.
     std::shared_ptr<PreparedProgramWork> admit_deferred_normal(const AudioBankHandle&,
         std::int32_t selector,PreparationFailure&,AudioBanksFailure&);
+    std::shared_ptr<RuntimeProgramWork> admit_runtime_program(const AudioBankHandle&,
+        std::int32_t selector,PreparationFailure&,AudioBanksFailure&);
     std::unique_ptr<RuntimeProgramReference> acquire_runtime_program(const AudioBankHandle&,
         std::int32_t selector,PreparationFailure&,AudioBanksFailure&);
     std::optional<AudioResource> resolve_kind1(const AudioBankHandle&, std::int32_t selector,
