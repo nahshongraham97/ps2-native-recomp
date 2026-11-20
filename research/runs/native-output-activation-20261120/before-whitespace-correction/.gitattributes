@@ -1,0 +1,8 @@
+# Preserve this generated Windows TSV measurement exactly as recorded.
+research/runs/native-deferred-program-work-20261120/validation-01/preparation-owned/bank-preparation.tsv -text -whitespace
+
+# Preserve the generated Windows bank-policy measurement exactly.
+research/runs/native-runtime-preparation-20261120/validation-01/preparation-owned/bank-preparation.tsv -text -whitespace
+
+# Preserve the exact generated Windows bank-policy measurement.
+research/runs/native-program-copy-20261120/validation-01/preparation-owned/bank-preparation.tsv -text -whitespace

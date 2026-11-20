@@ -70,7 +70,7 @@ AudioBankCommand load(AudioBankOpcode opcode) {
 }
 NativePlayParameters parameters() {
     return {initial_program_control_factors(), initial_program_control_factors(),
-        {{1,14336,false},{1,-16384,true},{1,14336,false},{1,-16384,false},2048}, {1000}, 3, 0};
+        {{1,14336,false},{1,-16384,true},{1,14336,false},{1,-16384,false},2048}, {1000}, 3, 0,NativeProgramOutputRequest{-1,0}};
 }
 NativePlaybackOwner create(const char* file) {
     AudioBanksFailure banks;
@@ -165,7 +165,7 @@ int main(int argc, char** argv) {
     {
         auto owner = create(argv[1]);
         load_sync(owner, token);
-        auto context = owner.create_sound_context(f);
+        auto context = owner.create_sound_context(NativeSoundContextConfiguration{0},f);
         check(bool(context), "explicit play context");
         for (Edge edge : {Edge::before, Edge::after}) {
             Gate gate;
@@ -208,7 +208,7 @@ int main(int argc, char** argv) {
     {
         auto owner = create(argv[1]);
         load_sync(owner, token);
-        auto context = owner.create_sound_context(f);
+        auto context = owner.create_sound_context(NativeSoundContextConfiguration{0},f);
         check(bool(context), "unload fixture context");
         Gate gate;
         std::thread unloading_thread([&] { unloading = {Edge::after, &gate}; PlaybackFailure retire; check(owner.unload(unload, retire), "actual unload commits"); });
@@ -222,23 +222,23 @@ int main(int argc, char** argv) {
     }
     {
         auto owner = create(argv[1]);
-        auto context = owner.create_sound_context(f);
+        auto context = owner.create_sound_context(NativeSoundContextConfiguration{0},f);
         check(bool(context), "close fixture context");
         Gate gate;
         std::thread closing_thread([&] { closing = {Edge::before, &gate}; PlaybackFailure retire; check(owner.close_when_idle(retire), "actual close commits"); });
         gate.await();
         check(!owner.play(*context, play, params, f) && f.kind == PlaybackError::closing, "play admission sealed before Service close");
-        check(!owner.create_sound_context(f) && f.kind == PlaybackError::closing, "context admission sealed before Service close");
+        check(!owner.create_sound_context(NativeSoundContextConfiguration{0},f) && f.kind == PlaybackError::closing, "context admission sealed before Service close");
         check(!owner.load_sync(load(AudioBankOpcode::load_sync), {token}, f) && f.kind == PlaybackError::closing, "load admission sealed before Service close");
         gate.release();
         closing_thread.join();
-        check(!owner.create_sound_context(f) && f.kind == PlaybackError::closed, "outer close committed after actual Service close");
+        check(!owner.create_sound_context(NativeSoundContextConfiguration{0},f) && f.kind == PlaybackError::closed, "outer close committed after actual Service close");
     }
     {
         auto owner = create(argv[1]);
         load_sync(owner, token);
         load_sync(owner, other_token);
-        auto context = owner.create_sound_context(f);
+        auto context = owner.create_sound_context(NativeSoundContextConfiguration{0},f);
         check(bool(context), "uncertain unload fixture context");
         auto retained = owner.play(*context, play, params, f);
         check(retained && owner.stop(*retained, f), "inactive published handle retained during uncertain unload");
@@ -260,7 +260,7 @@ int main(int argc, char** argv) {
         check(!owner.close_when_idle(f) && f.kind == PlaybackError::native_exception, "exception after actual Service close");
         closing = {};
         check(!owner.close_when_idle(f) && f.kind == PlaybackError::close_state_unknown, "uncertain close cannot implicitly reopen");
-        check(!owner.create_sound_context(f) && f.kind == PlaybackError::close_state_unknown && owner.resource_domain() == domain,
+        check(!owner.create_sound_context(NativeSoundContextConfiguration{0},f) && f.kind == PlaybackError::close_state_unknown && owner.resource_domain() == domain,
               "uncertainty seals admission and retains resource owner");
     }
     std::puts("PASS native playback reservation pre/post-service gaps/64 slot growth/unpublished rollback/exact-bank and close uncertainty; injected CPU fixture only");

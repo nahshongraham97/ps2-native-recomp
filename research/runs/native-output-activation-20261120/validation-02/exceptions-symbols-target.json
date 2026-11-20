@@ -1,0 +1,15 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_audio_resource_exception.exe",
+  "target_before_sha256": "f91e49bc8ac86f1f258dc5ce2ee448bb40eefd3cfbfb467d7d131fed4bb4262a",
+  "target_after_sha256": "f91e49bc8ac86f1f258dc5ce2ee448bb40eefd3cfbfb467d7d131fed4bb4262a",
+  "audited_target_expected_sha256": "f91e49bc8ac86f1f258dc5ce2ee448bb40eefd3cfbfb467d7d131fed4bb4262a",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::sound::PreparedBank::acquire_runtime_program"
+  ],
+  "executed_target_sha256": "f91e49bc8ac86f1f258dc5ce2ee448bb40eefd3cfbfb467d7d131fed4bb4262a",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-output-activation-20261120\\validation-01\\exceptions-symbols-target.json",
+  "reused_receipt_sha256": "ed243c2bfbd8ab5d20091ea518c09083eea3f2f3c60893b1cbadbdbba6e5ef85"
+}

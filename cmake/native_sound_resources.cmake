@@ -8,7 +8,7 @@ add_library(mka_native_sound_resources STATIC EXCLUDE_FROM_ALL
     runtime/src/native/bank_preparation.cpp runtime/src/native/audio_banks.cpp
     runtime/src/native/audio_bank_protocol.cpp runtime/src/native/audio_bank_service.cpp
     runtime/src/native/program_executor.cpp runtime/src/native/program_copy.cpp runtime/src/native/audio_controls.cpp
-    runtime/src/native/host_voice.cpp runtime/src/native/playback_owner.cpp)
+    runtime/src/native/host_voice.cpp runtime/src/native/program_host_clock.cpp runtime/src/native/playback_owner.cpp)
 target_include_directories(mka_native_sound_resources PUBLIC runtime/include)
 target_compile_features(mka_native_sound_resources PUBLIC cxx_std_20)
 add_executable(test_sound_archive EXCLUDE_FROM_ALL tests/test_sound_archive.cpp)
@@ -106,3 +106,9 @@ if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
     target_link_options(test_native_default_playback_runtime PRIVATE
         "-Wl,--wrap=_ZN3mka5sound17AudioBankProtocol6unloadERKNS0_16AudioBankCommandERNS0_20AudioProtocolFailureE")
 endif()
+
+# Native shared clock and actual logical output activation; CPU/files only.
+add_executable(test_native_program_host_clock EXCLUDE_FROM_ALL tests/test_program_host_clock.cpp)
+target_link_libraries(test_native_program_host_clock PRIVATE mka_native_sound_resources)
+add_executable(test_native_program_output_activation EXCLUDE_FROM_ALL tests/test_program_output_activation.cpp)
+target_link_libraries(test_native_program_output_activation PRIVATE mka_native_sound_resources)

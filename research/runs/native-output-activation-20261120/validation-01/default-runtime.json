@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_default_playback_runtime.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_DEFAULT_PLAYBACK_RUNTIME: 7 actual default runtime/copy/flag/retirement cases; no source activation/callback/device/fidelity claim\n",
+  "stderr": "",
+  "executable_sha256": "96ce4f30b2f9771750ac8397d01de1f3e0f946ef99d2212927598a52bb32fa07",
+  "executable_after_sha256": "96ce4f30b2f9771750ac8397d01de1f3e0f946ef99d2212927598a52bb32fa07"
+}

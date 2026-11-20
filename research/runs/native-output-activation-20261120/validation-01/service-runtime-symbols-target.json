@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_service_runtime.exe",
+  "target_before_sha256": "ff6412701f49378f03c8cc8d8e1029ea174987d6df96b2ed57c44bae6e8af246",
+  "target_after_sha256": "ff6412701f49378f03c8cc8d8e1029ea174987d6df96b2ed57c44bae6e8af246",
+  "audited_target_expected_sha256": "ff6412701f49378f03c8cc8d8e1029ea174987d6df96b2ed57c44bae6e8af246",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::sound::AudioBankService::acquire_runtime_program"
+  ],
+  "executed_target_sha256": "ff6412701f49378f03c8cc8d8e1029ea174987d6df96b2ed57c44bae6e8af246"
+}

@@ -1,0 +1,16 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_program_output_activation.exe",
+  "target_before_sha256": "6a9b560e7c28648181d0f5c57a25cb324585d671b3f0253c1f638ec676f3290e",
+  "target_after_sha256": "6a9b560e7c28648181d0f5c57a25cb324585d671b3f0253c1f638ec676f3290e",
+  "audited_target_expected_sha256": "6a9b560e7c28648181d0f5c57a25cb324585d671b3f0253c1f638ec676f3290e",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::sound::NativePlaybackOwner::activate",
+    "mka::sound::NativePlaybackOwner::update_ordinary_context",
+    "mka::sound::NativeProgramHostClock::read",
+    "mka::sound::NativeProgramCopy::clone"
+  ],
+  "executed_target_sha256": "6a9b560e7c28648181d0f5c57a25cb324585d671b3f0253c1f638ec676f3290e"
+}

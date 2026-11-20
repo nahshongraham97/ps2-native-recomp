@@ -15,11 +15,11 @@ NativePlaybackOwner owner(const char* path){
 }
 // Explicit saved software profile for this unit fixture only. Its selection for
 // actual retail initialization is NOT asserted; chronology remains unresolved.
-NativePlayParameters parameters(){return {initial_program_control_factors(),initial_program_control_factors(),{{1,14336,false},{1,-16384,true},{1,14336,false},{1,-16384,false},2048},{1000},3,0};}
+NativePlayParameters parameters(){return {initial_program_control_factors(),initial_program_control_factors(),{{1,14336,false},{1,-16384,true},{1,14336,false},{1,-16384,false},2048},{1000},3,0,NativeProgramOutputRequest{-1,0}};}
 }
 int main(int argc,char** argv){
  if(argc!=2){std::fprintf(stderr,"usage: test_playback_owner <pinnedMS2>\n");return 2;}
- auto o=owner(argv[1]);PlaybackFailure f;auto context=o.create_sound_context(f);check(bool(context),"explicit owned native sound context");constexpr std::uint32_t token=0xaabb1234;auto play=command(AudioBankOpcode::play,token),unload=command(AudioBankOpcode::unload,token);auto params=parameters();
+ auto o=owner(argv[1]);PlaybackFailure f;auto context=o.create_sound_context(NativeSoundContextConfiguration{0},f);check(bool(context),"explicit owned native sound context");constexpr std::uint32_t token=0xaabb1234;auto play=command(AudioBankOpcode::play,token),unload=command(AudioBankOpcode::unload,token);auto params=parameters();
  check(o.submit_async(load(AudioBankOpcode::load_async,"announcr",0xeeff1234),{token},f)==AsyncBankSubmission::queued,"realbankasyncadmission");
  check(!o.play(*context,play,params,f)&&f.kind==PlaybackError::service_failed&&f.service.kind==BankServiceError::unpublished_bank_token,"noplaybeforeactualpreparation");check(o.run_one(f),"actualbanknativepreparation");check(!o.play(*context,play,params,f)&&f.service.kind==BankServiceError::unpublished_bank_token,"noplaybeforecompletiondelivery");auto completion=o.poll_completion(f);check(completion&&completion->words[0]==0&&completion->words[1]==token&&completion->callback_token==0xeeff1234,"sourcefulltokencompletion");
  auto h=o.play(*context,play,params,f);check(bool(h),"servicefulltokentodeferredpreparedprogram");auto initial=o.observe(*h,f);check(initial&&initial->voices==0&&initial->command_index==0&&initial->deadline.milliseconds==1000,"playregistrydoesnotfakestartACK");check(!o.unload(unload,f)&&f.kind==PlaybackError::active_playback,"scheduledprogramblocksunload");

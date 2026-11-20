@@ -1,0 +1,15 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_deferred_cache_policy.exe",
+  "target_before_sha256": "ebd825b47f7fda41502fc27e6436434b36182e54fef49244271fe9021f95fd04",
+  "target_after_sha256": "ebd825b47f7fda41502fc27e6436434b36182e54fef49244271fe9021f95fd04",
+  "audited_target_expected_sha256": "ebd825b47f7fda41502fc27e6436434b36182e54fef49244271fe9021f95fd04",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::sound::PreparedBank::acquire_runtime_program"
+  ],
+  "executed_target_sha256": "ebd825b47f7fda41502fc27e6436434b36182e54fef49244271fe9021f95fd04",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-output-activation-20261120\\validation-01\\cache-symbols-target.json",
+  "reused_receipt_sha256": "d1fbf7759dcf2adbab9b3c585a7b47fbe3ff7227bd309b6327a65797c4ee7d4d"
+}

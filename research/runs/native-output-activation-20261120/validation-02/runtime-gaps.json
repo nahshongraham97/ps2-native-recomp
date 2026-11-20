@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_service_runtime_gaps.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "stdout": "PASS native Service runtime pre/post acquisition guards and failure rollback: five CPU-only injected boundaries\n",
+  "stderr": "",
+  "executable_sha256": "7df781b9df8dca8360300853d15aecb0a9a3f75bfd152fe5e5dd9f3daa86203d",
+  "executable_after_sha256": "7df781b9df8dca8360300853d15aecb0a9a3f75bfd152fe5e5dd9f3daa86203d",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-output-activation-20261120\\validation-01\\runtime-gaps.json",
+  "reused_receipt_sha256": "eb483c98620cc8b48598b257e1b8a864f677f269dde1ea58cc44bfafbd8d6ee2"
+}

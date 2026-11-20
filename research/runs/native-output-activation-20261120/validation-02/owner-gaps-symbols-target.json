@@ -1,0 +1,17 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_playback_reservation_gaps.exe",
+  "target_before_sha256": "01d0af6b9abf8397516785f83b7105791fc953d8f658daac3a45bad8e1545ba6",
+  "target_after_sha256": "01d0af6b9abf8397516785f83b7105791fc953d8f658daac3a45bad8e1545ba6",
+  "audited_target_expected_sha256": "01d0af6b9abf8397516785f83b7105791fc953d8f658daac3a45bad8e1545ba6",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::sound::NativePlaybackOwner::play",
+    "mka::sound::NativeProgramCopy::clone",
+    "mka::sound::AudioBankService::acquire_runtime_program"
+  ],
+  "executed_target_sha256": "01d0af6b9abf8397516785f83b7105791fc953d8f658daac3a45bad8e1545ba6",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-output-activation-20261120\\validation-01\\owner-gaps-symbols-target.json",
+  "reused_receipt_sha256": "3b77bad2ce4e05d4050b23e41725701030ded585e4d4eb68d47b95c801b17411"
+}

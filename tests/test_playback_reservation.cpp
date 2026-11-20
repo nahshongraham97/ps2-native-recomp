@@ -30,7 +30,7 @@ AudioBankCommand command(AudioBankOpcode opcode, std::uint32_t token) {
 NativePlayParameters parameters() {
     // Explicit existing software-fixture values, not retail profile selection or fidelity proof.
     return {initial_program_control_factors(), initial_program_control_factors(),
-        {{1,14336,false},{1,-16384,true},{1,14336,false},{1,-16384,false},2048}, {1000}, 3, 0};
+        {{1,14336,false},{1,-16384,true},{1,14336,false},{1,-16384,false},2048}, {1000}, 3, 0,NativeProgramOutputRequest{-1,0}};
 }
 NativePlaybackOwner owner(const std::filesystem::path& original,
                           const std::shared_ptr<AudioResourceDomain>& domain) {
@@ -60,9 +60,9 @@ int main(int argc, char** argv) {
     auto sound = owner(std::filesystem::path(argv[1]), domain);
     auto foreign = owner(std::filesystem::path(argv[1]), domain);
     PlaybackFailure failure;
-    auto existing_context = sound.create_sound_context(failure);
-    auto pending_context = sound.create_sound_context(failure);
-    auto foreign_context = foreign.create_sound_context(failure);
+    auto existing_context = sound.create_sound_context(NativeSoundContextConfiguration{0},failure);
+    auto pending_context = sound.create_sound_context(NativeSoundContextConfiguration{0},failure);
+    auto foreign_context = foreign.create_sound_context(NativeSoundContextConfiguration{0},failure);
     check(existing_context && pending_context && foreign_context, "explicit distinct context identities");
     NativeSoundContext unknown;
     check(!sound.observe_sound_context(unknown, failure) && failure.kind == PlaybackError::unknown_context,
@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
     check(!sound.observe_sound_context(*foreign_context, failure) && failure.kind == PlaybackError::foreign_context &&
           !foreign.observe_sound_context(*existing_context, failure) && failure.kind == PlaybackError::foreign_context,
           "context identity never crosses owner boundary");
-    auto retired_context = sound.create_sound_context(failure);
+    auto retired_context = sound.create_sound_context(NativeSoundContextConfiguration{0},failure);
     check(retired_context && sound.release_sound_context(*retired_context, failure) &&
           !sound.observe_sound_context(*retired_context, failure) && failure.kind == PlaybackError::retired_context &&
           !sound.release_sound_context(*retired_context, failure) && failure.kind == PlaybackError::retired_context,
@@ -129,7 +129,7 @@ int main(int argc, char** argv) {
     // reservation. One real failed Service lookup also exercises rollback; no
     // assumption about retained failed slots or vector capacity is made here.
     for (unsigned index = 0; index < 64; ++index) {
-        auto context = sound.create_sound_context(failure);
+        auto context = sound.create_sound_context(NativeSoundContextConfiguration{0},failure);
         check(bool(context), "dynamic context registry grows while real preparation is pending");
         if (index == 0) {
             auto rejected = sound.play(*context, command(AudioBankOpcode::play, 0xdeadbeef), params, failure);

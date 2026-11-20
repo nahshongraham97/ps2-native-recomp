@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_program_output_activation.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_PROGRAM_OUTPUT_ACTIVATION: 7 actual role/clock/replacement groups; ordinary native output only\n",
+  "stderr": "",
+  "executable_sha256": "a1643da0d5fa05297ac0d997a44d332584679a35f458116ff4cc279666844ab3",
+  "executable_after_sha256": "a1643da0d5fa05297ac0d997a44d332584679a35f458116ff4cc279666844ab3"
+}

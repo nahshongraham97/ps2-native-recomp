@@ -6,3 +6,6 @@ research/runs/native-runtime-preparation-20261120/validation-01/preparation-owne
 
 # Preserve the exact generated Windows bank-policy measurement.
 research/runs/native-program-copy-20261120/validation-01/preparation-owned/bank-preparation.tsv -text -whitespace
+
+# Preserve exact pre-correction test bytes as historical evidence only.
+research/runs/native-output-activation-20261120/before-whitespace-correction/** -text -whitespace

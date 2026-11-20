@@ -1,0 +1,15 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_program_admission_gates.exe",
+  "target_before_sha256": "bc6055dbf7b43d31bfe02fbf52e5657dde849f7f44e8134f8990481ad8d54b68",
+  "target_after_sha256": "bc6055dbf7b43d31bfe02fbf52e5657dde849f7f44e8134f8990481ad8d54b68",
+  "audited_target_expected_sha256": "bc6055dbf7b43d31bfe02fbf52e5657dde849f7f44e8134f8990481ad8d54b68",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::sound::PreparedBank::acquire_runtime_program"
+  ],
+  "executed_target_sha256": "bc6055dbf7b43d31bfe02fbf52e5657dde849f7f44e8134f8990481ad8d54b68",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-output-activation-20261120\\validation-01\\gates-symbols-target.json",
+  "reused_receipt_sha256": "5cad0360773b6baa5035f43768e6cd516289cd81c609980a629383b356fb15e2"
+}
