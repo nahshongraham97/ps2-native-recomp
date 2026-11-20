@@ -1,0 +1,5 @@
+{
+  "status": "DRIVER_PARSE_ERROR_NO_PREFLIGHT_BUILD_OR_EXECUTION",
+  "error": "SyntaxError unmatched parenthesis at provenance write line71",
+  "driver_sha256": "5670414ee040142b9d980f11981364c563e08f6add6847e4c0f43c08337b6204"
+}

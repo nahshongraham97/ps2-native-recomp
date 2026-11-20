@@ -1,0 +1,17 @@
+{
+  "ninja_sha256": "3081193730fe785c5d9ce7cb2fd19613d2f562cb59285576f1801e6a3c930953",
+  "candidate_rules": [
+    {
+      "target": "libmka_native_material.a",
+      "actual_build_rule": "build libmka_native_material.a: CXX_STATIC_LIBRARY_LINKER__mka_native_material_Release CMakeFiles/mka_native_material.dir/runtime/src/native/material_translation.cpp.obj CMakeFiles/mka_native_material.dir/runtime/src/native/matfx_binding.cpp.obj CMakeFiles/mka_native_material.dir/runtime/src/native/material_maintenance.cpp.obj CMakeFiles/mka_native_material.dir/runtime/src/native/geometry_attributes.cpp.obj CMakeFiles/mka_native_material.dir/runtime/src/native/geometry_companion_quantizer.cpp.obj || libmka_native_game_actions.a\n  CONFIG = Release\n  LANGUAGE_COMPILE_FLAGS = -O3 -DNDEBUG\n  OBJECT_DIR = CMakeFiles\\mka_native_material.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = libmka_native_material.a\n  TARGET_PDB = mka_native_material.a.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\mka_native_material.dir"
+    },
+    {
+      "target": "test_native_logon_frontend.exe",
+      "actual_build_rule": "build test_native_logon_frontend.exe: CXX_EXECUTABLE_LINKER__test_native_logon_frontend_Release CMakeFiles/test_native_logon_frontend.dir/tests/test_logon_frontend_task.cpp.obj | libmka_native_logon_frontend.a libmka_native_material.a libmka_native_logon.a libmka_native_media.a libmka_native_audio_device.a libmka_native_game_actions.a || libmka_native_audio_device.a libmka_native_game_actions.a libmka_native_logon.a libmka_native_logon_frontend.a libmka_native_material.a libmka_native_media.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_logon_frontend.a  libmka_native_material.a  libmka_native_logon.a  libmka_native_media.a  -lopengl32  -lgdi32  -luser32  -lbcrypt  -lshell32  libmka_native_audio_device.a  -lole32  -luuid  libmka_native_game_actions.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_logon_frontend.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_logon_frontend.exe\n  TARGET_IMPLIB = libtest_native_logon_frontend.dll.a\n  TARGET_PDB = test_native_logon_frontend.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_logon_frontend.dir"
+    },
+    {
+      "target": "test_native_geometry_attributes.exe",
+      "actual_build_rule": "build test_native_geometry_attributes.exe: CXX_EXECUTABLE_LINKER__test_native_geometry_attributes_Release CMakeFiles/test_native_geometry_attributes.dir/tests/test_geometry_attributes.cpp.obj | libmka_native_material.a libmka_native_game_actions.a || libmka_native_game_actions.a libmka_native_material.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_material.a  libmka_native_game_actions.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_geometry_attributes.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_geometry_attributes.exe\n  TARGET_IMPLIB = libtest_native_geometry_attributes.dll.a\n  TARGET_PDB = test_native_geometry_attributes.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_geometry_attributes.dir"
+    }
+  ]
+}

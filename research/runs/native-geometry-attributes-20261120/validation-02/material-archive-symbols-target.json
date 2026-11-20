@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_material.a",
+  "target_before_sha256": "24f2b88621c2d8b69573b11b4cbd527f26451bf13c57a5a638c4a7dce4505874",
+  "target_after_sha256": "24f2b88621c2d8b69573b11b4cbd527f26451bf13c57a5a638c4a7dce4505874",
+  "audited_target_expected_sha256": "24f2b88621c2d8b69573b11b4cbd527f26451bf13c57a5a638c4a7dce4505874",
+  "execution_applicable": false,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::game::NativeGeometryAttributes::vertex",
+    "mka::game::quantize_geometry_companion_component"
+  ]
+}

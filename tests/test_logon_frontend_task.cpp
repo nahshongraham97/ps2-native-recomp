@@ -114,7 +114,14 @@ int main(int argc, char** argv) { try {
         auto material = std::shared_ptr<game::NativeMatFxBinding>(std::move(unique_material));
         auto material_group = game::NativeMaterialGroup::create({material}, mf);
         const auto geometry_route = scenario == Case::hierarchy_plugin_present ? game::MatFxHierarchyRoute::plugin_present : game::MatFxHierarchyRoute::plugin_absent;
-        auto geometry = game::NativeMaterialGeometry::create(material_group, {geometry_route, 2}, mf);
+        game::GeometryAttributeData attributes{1, {}, std::nullopt, std::nullopt, std::nullopt,
+            game::GeometryExtraChannels::current_default, {}, std::nullopt};
+        attributes.streams.push_back({{{{0x3f800000},{0x40000000},{0x40400000}}}, std::nullopt});
+        attributes.streams.push_back({{{{0x40800000},{0x40a00000},{0x40c00000}}}, std::nullopt});
+        game::GeometryAttributeFailure attribute_failure;
+        auto owned_attributes = game::NativeGeometryAttributes::create(std::move(attributes), attribute_failure);
+        check(bool(owned_attributes), "explicit fixture importer creates real native geometry arrays");
+        auto geometry = game::NativeMaterialGeometry::create_with_attributes(material_group, geometry_route, owned_attributes, mf);
         auto hierarchy = game::NativeMaterialHierarchy::create(geometry,
             {scenario == Case::hierarchy_plugin_present ? 0x81 : 0, false}, mf);
         check(geometry && hierarchy, "explicit fixture resource importer creates actual native geometry/atomic owners");
@@ -232,6 +239,16 @@ int main(int argc, char** argv) { try {
             actual_hierarchy->state.effect_enabled == (scenario != Case::hierarchy_plugin_present) &&
             materials->record(*material_token, mf)->route == game::MaterialTrackingRoute::hierarchy,
             "actual native hierarchy caller preserves plugin branches/geometry/atomic ownership");
+        auto actual_geometry = actual_hierarchy->geometry->snapshot(mf);
+        check(actual_geometry && actual_geometry->attributes.get() == owned_attributes.get(),
+            "queued native material geometry retains SAME actual immutable attribute owner");
+        auto observed_vertex = actual_geometry->attributes->vertex(0, {17,18,19,20}, attribute_failure);
+        auto observed_payload = observed_vertex ? game::emit_geometry_vertex_attributes(*observed_vertex,
+            game::GeometryAttributeProgram::pair_banks, attribute_failure) : std::nullopt;
+        check(observed_payload && observed_payload->first.primary.x.bits == 0x3f800000 &&
+            observed_payload->pair_word_count == 4 && observed_payload->packed == game::GeometryPacked{17,18,19,20} &&
+            observed_payload->second && observed_payload->second->primary.z.bits == 0x40c00000,
+            "inspect real owned geometry payload after task; this is not a draw call on the source no-build route");
         auto actual_pair = material->first_parameter_pair(bf);
         check(material_token && actual_pair && actual_pair->first && !actual_pair->second &&
             actual_pair->first->translation.x.bits == (scenario == Case::material_step50 ? 0x3e999999u : 0x3e800000u) &&
@@ -240,5 +257,5 @@ int main(int argc, char** argv) { try {
         scheduler.reset();
     }
     check(scenarios == 18, "all declared queued caller scenarios executed");
-    std::puts("PASS native queued LOGON with actual hierarchy preparation/material maintenance; deterministic ports and explicit world/frontend probes"); return 0;
+    std::puts("PASS native queued LOGON with owned geometry/hierarchy/material tasks; deterministic ports and explicit world/frontend probes"); return 0;
 } catch (const std::exception& e) { std::fprintf(stderr, "FAIL native queued LOGON %s\n", e.what()); return 1; } }

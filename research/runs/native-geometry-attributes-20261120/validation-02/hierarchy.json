@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_material_hierarchy.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native retail hierarchy preparation/registration/owned geometry; serialized program producer and renderer remain open\n",
+  "stderr": "",
+  "executable_sha256": "43f7334f051f3e8664b10057e71e9549b53adbe5d05f5dfc8a90fbcf47c07e3c",
+  "executable_after_sha256": "43f7334f051f3e8664b10057e71e9549b53adbe5d05f5dfc8a90fbcf47c07e3c"
+}

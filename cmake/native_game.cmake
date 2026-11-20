@@ -17,7 +17,8 @@ target_link_libraries(test_native_frontend_scheduler PRIVATE mka_native_game_act
 # Native material game data/updates; no guest runtime or software-FPU include.
 add_library(mka_native_material STATIC EXCLUDE_FROM_ALL
     runtime/src/native/material_translation.cpp runtime/src/native/matfx_binding.cpp
-    runtime/src/native/material_maintenance.cpp)
+    runtime/src/native/material_maintenance.cpp
+    runtime/src/native/geometry_attributes.cpp runtime/src/native/geometry_companion_quantizer.cpp)
 target_include_directories(mka_native_material PUBLIC runtime/include)
 target_link_libraries(mka_native_material PUBLIC mka_native_game_actions)
 add_executable(test_native_material_translation EXCLUDE_FROM_ALL tests/test_material_translation.cpp)
@@ -28,6 +29,13 @@ add_executable(test_native_material_maintenance EXCLUDE_FROM_ALL tests/test_mate
 target_link_libraries(test_native_material_maintenance PRIVATE mka_native_material)
 add_executable(test_native_material_hierarchy EXCLUDE_FROM_ALL tests/test_material_hierarchy.cpp)
 target_link_libraries(test_native_material_hierarchy PRIVATE mka_native_material)
+add_executable(test_native_geometry_attributes EXCLUDE_FROM_ALL tests/test_geometry_attributes.cpp)
+target_link_libraries(test_native_geometry_attributes PRIVATE mka_native_material)
+add_executable(test_native_geometry_companion_quantizer EXCLUDE_FROM_ALL tests/test_geometry_companion_quantizer.cpp)
+target_link_libraries(test_native_geometry_companion_quantizer PRIVATE mka_native_material)
+# Separate OFFLINE source oracle, never a candidate dependency.
+add_executable(geometry_companion_source_oracle EXCLUDE_FROM_ALL tests/geometry_companion_source_oracle.cpp)
+target_include_directories(geometry_companion_source_oracle PRIVATE runtime/include)
 # Separate offline project-helper oracle ONLY. No candidate links this target.
 add_executable(material_translation_source_oracle EXCLUDE_FROM_ALL tests/material_translation_source_oracle.cpp)
 target_include_directories(material_translation_source_oracle PRIVATE runtime/include)

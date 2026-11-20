@@ -1,6 +1,7 @@
 #pragma once
 #include "mka/frontend_scheduler.hpp"
 #include "mka/matfx_binding.hpp"
+#include "mka/geometry_attributes.hpp"
 #include <list>
 #include <thread>
 #include <vector>
@@ -50,16 +51,20 @@ private:
 // state. Separate geometry/atomic owners preserve shared-geometry identity.
 struct MaterialGeometryImport {
     MatFxHierarchyRoute plugin_route;
-    std::int32_t source_count;
+    std::int64_t source_count; // decoded retail count or a native host stream count
 };
 struct MaterialGeometrySnapshot {
     MaterialGeometryImport imported;
     std::size_t materials;
+    std::shared_ptr<const NativeGeometryAttributes> attributes;
 };
 class NativeMaterialGeometry final {
 public:
     static std::shared_ptr<NativeMaterialGeometry> create(
         std::shared_ptr<NativeMaterialGroup>,MaterialGeometryImport,MaterialMaintenanceFailure&) noexcept;
+    static std::shared_ptr<NativeMaterialGeometry> create_with_attributes(
+        std::shared_ptr<NativeMaterialGroup>,MatFxHierarchyRoute,
+        std::shared_ptr<const NativeGeometryAttributes>,MaterialMaintenanceFailure&) noexcept;
     std::optional<MaterialGeometrySnapshot> snapshot(MaterialMaintenanceFailure&) const noexcept;
 private:
     friend class NativeMaterialMaintenance;
@@ -67,6 +72,7 @@ private:
     NativeMaterialGeometry(std::shared_ptr<NativeMaterialGroup> group,MaterialGeometryImport imported)
         :group_(std::move(group)),imported_(imported){}
     std::shared_ptr<NativeMaterialGroup> group_;
+    std::shared_ptr<const NativeGeometryAttributes> attributes_;
     const MaterialGeometryImport imported_;
     const std::thread::id owner_=std::this_thread::get_id();
 };

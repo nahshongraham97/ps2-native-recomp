@@ -1,0 +1,18 @@
+{
+  "status": "PASS_GEOMETRY_COMPANION_THREE_WAY_PROJECT_SOURCE_NOT_HARDWARE",
+  "vectors": 4096,
+  "literal_cases": 19,
+  "checker_negatives": [
+    "missing-row",
+    "wrong-value",
+    "wrong-source-identity",
+    "wrong-footer",
+    "extra-row"
+  ],
+  "candidate_sha256": "c14bd7f290bcb42ca1a61cd6de0be3a523b5632efb5b649ad4986c9929b7d48a",
+  "offline_oracle_sha256": "0f77e29c08669873f38cd5580d3ad047cb2fa22581a0a8e9218979441475fbdb",
+  "limits": [
+    "New business attribute encoding only; no decoder or old matrix corpus rerun",
+    "Separate offline project-helper executable, never candidate/runtime linkage or hardware evidence"
+  ]
+}

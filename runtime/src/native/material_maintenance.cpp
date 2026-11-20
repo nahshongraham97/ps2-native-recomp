@@ -53,7 +53,18 @@ std::shared_ptr<NativeMaterialGeometry> NativeMaterialGeometry::create(
 std::optional<MaterialGeometrySnapshot> NativeMaterialGeometry::snapshot(MaterialMaintenanceFailure& f) const noexcept {
     f={};if(owner_!=std::this_thread::get_id()){
         fail(f,MaterialMaintenanceError::wrong_thread,"native material geometry owner thread");return {};}
-    return MaterialGeometrySnapshot{imported_,group_->materials_.size()};
+    return MaterialGeometrySnapshot{imported_,group_->materials_.size(),attributes_};
+}
+std::shared_ptr<NativeMaterialGeometry> NativeMaterialGeometry::create_with_attributes(
+    std::shared_ptr<NativeMaterialGroup> group,MatFxHierarchyRoute route,
+    std::shared_ptr<const NativeGeometryAttributes> attributes,MaterialMaintenanceFailure& f) noexcept {
+    f={};if(!attributes){fail(f,MaterialMaintenanceError::invalid_input,"native material geometry attributes missing");return {};}
+    // This is a host extent, not the old serialized signed32 allocation limit.
+    if(attributes->stream_count()>static_cast<std::uint64_t>(std::numeric_limits<std::int64_t>::max())){
+        fail(f,MaterialMaintenanceError::overflow,"native material geometry host stream extent");return {};}
+    auto geometry=create(std::move(group),{route,static_cast<std::int64_t>(attributes->stream_count())},f);
+    if(geometry)geometry->attributes_=std::move(attributes);
+    return geometry;
 }
 bool NativeMaterialHierarchy::access(MaterialMaintenanceFailure& f) const noexcept {
     f={};if(owner_!=std::this_thread::get_id())return fail(f,MaterialMaintenanceError::wrong_thread,"native material hierarchy owner thread");
