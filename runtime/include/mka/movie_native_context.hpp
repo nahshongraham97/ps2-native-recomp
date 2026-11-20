@@ -1,6 +1,7 @@
 #pragma once
 #include "mka/movie_kernel_policies.hpp"
 #include "mka/movie_admission_feed.hpp"
+#include "mka/movie_descriptor_rewrite.hpp"
 #include <map>
 namespace mka::video {
 enum class MovieNativeTargetRoute {descriptor,published_position};
@@ -36,6 +37,9 @@ struct MovieNativeHeaderAdmission {
     std::optional<MovieNativeDescriptorRoute> descriptor_route;
     bool clear_temporal,latch_eligibility_rate,latch_first_baseline;
     std::shared_ptr<const MovieOuterHeaderBatch> parsed_batch;
+    // Explicit backend-produced semantic value after the actual rewrite owner.
+    // Requires genuine parsed_batch; never silently reconstructed from raw GOP.
+    std::optional<MovieDescriptorRewriteResult> prepared_descriptor;
 };
 struct MovieNativeOutputPublication {
     std::uint64_t work_admission_id,timing_admission_id;
@@ -51,6 +55,8 @@ struct MovieNativeContextSnapshot {
     std::shared_ptr<const MovieCodecInputReceipt> last_input_receipt;
     std::optional<MovieParserRateRecord> eligibility_rate;
     std::optional<MovieTimecodeRational> first_baseline,queued_baseline;
+    std::optional<MovieDescriptorRewriteResult> latest_prepared_descriptor;
+    std::uint64_t prepared_batch_id=0;
     std::uint64_t position_origin=0;
     std::optional<MovieClockRational> cached_clock,retained_audio_clock;
     MovieServiceClockState service;
@@ -67,6 +73,8 @@ public:
         MovieControlFailure&) noexcept;
     bool bind_source(std::shared_ptr<const MovieSourceObservationIdentity>,MovieControlFailure&) noexcept override;
     bool admit_header(const MovieNativeHeaderAdmission&,MovieControlFailure&) noexcept;
+    bool output_pending(const MoviePictureSource&,bool&,MovieControlFailure&) const noexcept;
+    bool pump_backend(const MoviePlaybackBackendObservation&,MoviePlaybackBackendResult&,MovieControlFailure&) noexcept override;
     bool validate_work(const MovieAdmissionCurrent&,MovieControlFailure&) const noexcept;
     bool publish_output(const MovieNativeOutputPublication&,MovieControlFailure&) noexcept;
     bool advance_position_origin(std::uint64_t actual_published_position,MovieControlFailure&) noexcept;

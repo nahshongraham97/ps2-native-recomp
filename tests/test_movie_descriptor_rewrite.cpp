@@ -47,6 +47,11 @@ int main(){try{
     {NativeMovieDescriptorRewrite owner;auto first=update(owner,input(descriptor(0,-2)));check(!first.cache_updated&&!state(owner).cache&&first.published.relative.numerator==-2000,"inactive cache comparison seed is minus one, not zero or automatic first cache");
      check(owner.set_rewrite_enabled(true,failure),"explicit source config mutation");auto i=input(descriptor(5,-3));i.preserve_direct_without_cache=true;auto r=update(owner,i);check(r.branch==MovieDescriptorRewriteBranch::direct&&r.published.relative.numerator==2000&&r.cache_updated&&state(owner).cache&&state(owner).cache->relative.numerator==2000,"preserved direct five-minus-three publishes positive2000 and MUST refresh inactive cache");}
     {NativeMovieDescriptorRewrite owner;update(owner,input(descriptor(0,-2)));check(owner.set_rewrite_enabled(true,failure),"separate negative inactive-cache enable");auto i=input(descriptor(0,-3));i.preserve_direct_without_cache=true;auto r=update(owner,i);check(r.branch==MovieDescriptorRewriteBranch::direct&&r.published.relative.numerator==-3000&&!r.cache_updated&&!state(owner).cache,"preserved direct negative3000 remains below inactive seed minus one; cache stays inactive");}
+    {NativeMovieDescriptorRewrite owner;auto i=input(descriptor(),1);i.timestamp22500=0;update(owner,i);
+     i.timestamp22500.reset();i.gop_serial=2;i.observed_gop_changed=false;auto same_publication=update(owner,i);
+     check(!same_publication.gop_changed&&same_publication.branch==MovieDescriptorRewriteBranch::cached,"explicit published comparison false overrides changed serial after unadmitted publication");
+     i.observed_gop_changed=true;auto changed_publication=update(owner,i);
+     check(changed_publication.gop_changed&&changed_publication.branch==MovieDescriptorRewriteBranch::incremented&&changed_publication.published.descriptor.timecode.pictures==1,"explicit published comparison true overrides same locally stored serial");}
     {NativeMovieDescriptorRewrite owner;auto r=update(owner,input(descriptor(0,-1,0,2)));check(r.published.relative.numerator==-1000,"negative published relative descriptor is explicit numeric value");}
     for(unsigned code=1;code<=8;++code){
         constexpr std::int64_t nominal[]={0,24,24,25,30,30,50,60,60};NativeMovieDescriptorRewrite owner;

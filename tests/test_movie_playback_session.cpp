@@ -41,6 +41,7 @@ struct Policies final : MoviePlaybackPolicies {
     bool validate_audio_format(const std::optional<mka::sound::AudioStreamFormat>& format, MovieControlFailure& f) override { f = {}; return !format; }
     bool begin(const RetailMovieRequest& r, std::int32_t gain, MovieControlFailure& f) override { f = {}; check(r.logical_key == "LOGON.SFD" && gain == 0, "explicit fixture initial gain/request"); trace.events.push_back("begin"); return true; }
     bool pump_metadata(MovieControlFailure& f) override { f = {}; ++trace.metadata; return true; }
+    bool pump_backend(const MoviePlaybackBackendObservation& o,MoviePlaybackBackendResult& out,MovieControlFailure& f)override{f={};out={};out.head_frame_published=o.head_video!=nullptr;return true;}
     bool pause(bool value, MovieControlFailure& f) override { f = {}; trace.events.push_back(value ? "pause" : "resume"); return true; }
     bool ready(const MoviePlaybackSnapshot&, bool& ready, MovieControlFailure& f) override { f = {}; ready = true; return true; }
     bool eligible(const MovieVideoFrame&, const MoviePlaybackSnapshot&, bool& yes, MovieControlFailure& f) override { f = {}; yes = true; return true; }

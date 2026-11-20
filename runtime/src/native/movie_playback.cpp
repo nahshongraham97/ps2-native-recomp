@@ -264,6 +264,40 @@ bool NativeMovieStreamPlayback::submit_audio(MovieControlFailure& f,bool& blocke
     }
     return true;
 }
+bool NativeMovieStreamPlayback::prepare_head_video_owned(MovieControlFailure& f) {
+    if(video_.empty()||video_.front().uploaded)return true;
+    auto& next=video_.front();MovieColorError why;auto rgba=convert_movie_yuv420(next.source,color_,why);
+    if(!rgba)return fail(f,"movie playback admitted source color conversion");
+    auto upload=gpu_.upload(*rgba);
+    if(upload.error!=MovieGpuError::none||!upload.frame)return fail(f,"movie playback native frame upload");
+    if(upload.frame->width()!=next.source.width||upload.frame->height()!=next.source.height||
+       upload.frame->metadata().conversion_role!=rgba->conversion_role||upload.frame->metadata().codec_timing!=rgba->codec_timing)
+        return fail(f,"movie playback prepared frame metadata ownership mismatch");
+    next.uploaded=std::move(upload.frame);return true;
+}
+bool NativeMovieStreamPlayback::pump_backend_owned(MoviePlaybackBackendResult& result,MovieControlFailure& f) {
+    MoviePlaybackSnapshot snapshot;if(!snapshot_owned(snapshot,f))return false;
+    result={};const MoviePlaybackBackendObservation observed{input_->request(),input_->observation_identity(),snapshot,queued_bytes(),config_.queued_byte_budget,!video_.empty()&&bool(video_.front().uploaded),video_.empty()?nullptr:&video_.front().source};
+    if(!policies_->pump_backend(observed,result,f)||f.kind!=MovieControlError::none)return fail(f,"movie playback native backend phase");
+    if(result.prepare_head_video){
+        if(video_.empty()){f={MovieControlError::invalid_status,"movie playback backend preparation without current head",static_cast<std::int64_t>(MoviePlaybackBackendFailure::invalid_preparation_request)};return fail(f,"movie playback invalid backend preparation");}
+        if(!video_.front().uploaded){
+            if(!prepare_head_video_owned(f))return false;
+            MoviePlaybackSnapshot prepared;if(!snapshot_owned(prepared,f))return false;
+            const MoviePlaybackBackendObservation followup{input_->request(),input_->observation_identity(),prepared,queued_bytes(),config_.queued_byte_budget,true,&video_.front().source};
+            result={};if(!policies_->pump_backend(followup,result,f)||f.kind!=MovieControlError::none)return fail(f,"movie playback backend prepared follow-up");
+        }
+        result.prepare_head_video=false; // Already satisfied; never rerasterize or loop.
+    }
+    if(result.head_frame_published&&video_.empty()){
+        f={MovieControlError::invalid_status,"movie playback backend publication without current head",static_cast<std::int64_t>(MoviePlaybackBackendFailure::invalid_head_publication)};return fail(f,"movie playback invalid backend publication");
+    }
+    if(result.needs_source_input&&eof_){f={MovieControlError::native_service,"movie playback backend requires source after actual EOF",static_cast<std::int64_t>(MoviePlaybackBackendFailure::source_after_eof)};return fail(f,"movie playback backend source unavailable");}
+    if(result.needs_source_input&&observed.queued_bytes>=observed.queued_byte_budget&&!result.head_frame_published){
+        f={MovieControlError::native_service,"movie playback backend lookahead queued byte budget exhausted",static_cast<std::int64_t>(MoviePlaybackBackendFailure::queued_budget_exhausted)};return fail(f,"movie playback backend queued resource limit");
+    }
+    return true;
+}
 bool NativeMovieStreamPlayback::pump_streams(MovieControlFailure& f) noexcept {
     CallGuard call(*this,f);if(!call)return false;
     if(terminal_.kind!=MovieControlError::none){f=terminal_;return false;}
@@ -271,8 +305,9 @@ bool NativeMovieStreamPlayback::pump_streams(MovieControlFailure& f) noexcept {
     try {
         bool blocked=false;
         if(!poll_fences(f)||!submit_audio(f,blocked))return false;
+        MoviePlaybackBackendResult backend;if(!pump_backend_owned(backend,f))return false;
         while(!eof_&&queued_bytes()<config_.queued_byte_budget) {
-            if(!video_.empty()) {
+            if(!video_.empty()&&!backend.needs_source_input) {
                 if(!audio_||blocked)break;
                 const auto available=audio_->queue_status(f);
                 if(!available||!valid_status(*available)||!next_audio_||
@@ -310,6 +345,7 @@ bool NativeMovieStreamPlayback::pump_streams(MovieControlFailure& f) noexcept {
                 }
             } else return fail(f,"movie playback native source read");
             if(!blocked&&!submit_audio(f,blocked))return false;
+            if(!pump_backend_owned(backend,f))return false;
         }
         return true;
     }catch(...){return fail(f,"movie playback stream allocation or service exception");}
@@ -381,14 +417,7 @@ MoviePresentation NativeMovieStreamPlayback::try_present(MovieControlFailure& f)
         auto& next=video_.front();bool eligible=false;
         if(!policies_->eligible(next.source,s,eligible,f)) {fail(f,"movie playback explicit frame eligibility");return MoviePresentation::error;}
         if(!eligible)return MoviePresentation::no_frame;
-        if(!next.uploaded) {
-            MovieColorError ce;
-            auto rgba=convert_movie_yuv420(next.source,color_,ce);
-            if(!rgba){fail(f,"movie playback admitted source color conversion");return MoviePresentation::error;}
-            auto upload=gpu_.upload(*rgba);
-            if(upload.error!=MovieGpuError::none||!upload.frame) {fail(f,"movie playback native frame upload");return MoviePresentation::error;}
-            next.uploaded=std::move(upload.frame);
-        }
+        if(!prepare_head_video_owned(f))return MoviePresentation::error;
         NativeMoviePresentPlan plan{next.uploaded,{0,0,next.source.width,next.source.height},config_.filter,MovieAlpha::replace_rgba8};
         if(fences_.size()==fences_.max_size()){fail(f,"movie playback fence host capacity");return MoviePresentation::error;}
         reserve_one(fences_);

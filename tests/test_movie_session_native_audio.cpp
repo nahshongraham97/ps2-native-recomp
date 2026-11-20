@@ -21,6 +21,7 @@ struct Policies final:MoviePlaybackPolicies {
  bool observe_source(const MovieSourceObservationBatch&,MovieControlFailure& f)override{return unused(f);}
  bool begin(const RetailMovieRequest&,std::int32_t,MovieControlFailure& f)override{return unused(f);}
  bool pump_metadata(MovieControlFailure& f)override{return unused(f);}
+    bool pump_backend(const MoviePlaybackBackendObservation& o,MoviePlaybackBackendResult& out,MovieControlFailure& f)override{f={};out={};out.head_frame_published=o.head_video!=nullptr;return true;}
  bool pause(bool,MovieControlFailure& f)override{return unused(f);}
  bool ready(const MoviePlaybackSnapshot&,bool&,MovieControlFailure& f)override{return unused(f);}
  bool eligible(const MovieVideoFrame&,const MoviePlaybackSnapshot&,bool&,MovieControlFailure& f)override{return unused(f);}

@@ -55,7 +55,8 @@ std::optional<MovieDescriptorRewriteResult> NativeMovieDescriptorRewrite::update
     if(rate<1||rate>8){fail(f,MovieDescriptorRewriteError::unsupported_rate);return {};}
     auto next=state_;auto current=input.current;
     MovieDescriptorRewriteResult result;
-    result.gop_changed=!next.previous_gop_serial||*next.previous_gop_serial!=input.gop_serial;
+    result.gop_changed=input.observed_gop_changed.value_or(
+        !next.previous_gop_serial||*next.previous_gop_serial!=input.gop_serial);
     if(!next.enabled){
         bool enable=bool(input.timestamp22500)||input.gop_serial==0||input.repeat;
         if(!enable&&result.gop_changed&&next.cache){

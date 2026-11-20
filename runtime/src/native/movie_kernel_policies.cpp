@@ -199,6 +199,9 @@ bool NativeMovieKernelPolicies::begin(const RetailMovieRequest& request, std::in
 bool NativeMovieKernelPolicies::pump_metadata(MovieControlFailure& f) noexcept {
     return invoke(f, true, [&] { return context_->pump_metadata(f); });
 }
+bool NativeMovieKernelPolicies::pump_backend(const MoviePlaybackBackendObservation& o,MoviePlaybackBackendResult& result,MovieControlFailure& f) noexcept {
+    result={};return invoke(f,true,[&]{return context_->pump_backend(o,result,f);});
+}
 bool NativeMovieKernelPolicies::pause(bool paused, MovieControlFailure& f) noexcept {
     return invoke(f, false, [&] {
         if (closed_) return fail(f, "movie policies pause after cleanup");

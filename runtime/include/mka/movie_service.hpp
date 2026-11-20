@@ -2,6 +2,7 @@
 #include "mka/movie_native_context.hpp"
 #include "mka/movie_output_position.hpp"
 #include "mka/movie_frame_work.hpp"
+#include "mka/movie_backend_driver.hpp"
 #include "mka/movie_playback_session.hpp"
 namespace mka::video {
 struct MovieServicePolicyConfiguration {
@@ -69,11 +70,20 @@ struct MovieServiceSnapshot {
     bool playback_retained=false;
     std::optional<MovieControlFailure> playback_snapshot_failure;
     std::optional<MovieFrameWorkSnapshot> native_work;
+    std::optional<MovieBackendDriverSnapshot> backend;
 };
+using MovieServiceNativeClockFactory=std::function<std::unique_ptr<NativeMovieHostClock>(std::string_view,
+    std::shared_ptr<const MovieSourceObservationIdentity>,MovieHostClockFailure&)>;
 struct MovieServicePort;
 class NativeMovieService final {
 public:
     static std::unique_ptr<NativeMovieService> create(float explicit_base_volume,
+        MovieServiceProfileFactory,MovieServiceSessionFactory,MovieServiceFailure&) noexcept;
+    // Automatic native backend with a deterministic clock port for integration tests.
+    static std::unique_ptr<NativeMovieService> create_with_native_clock(float,
+        MovieServiceProfileFactory,MovieServiceSessionFactory,MovieServiceNativeClockFactory,MovieServiceFailure&) noexcept;
+    // Isolated protocol tests only; no automatic backend or production fallback.
+    static std::unique_ptr<NativeMovieService> create_component_fixture(float,
         MovieServiceProfileFactory,MovieServiceSessionFactory,MovieServiceFailure&) noexcept;
     ~NativeMovieService();
     NativeMovieService(const NativeMovieService&)=delete;
@@ -121,7 +131,7 @@ public:
     bool select_direct_control(const MovieServiceRequestIdentity&,MovieServiceFailure&) noexcept;
     bool command(const MovieServiceRequestIdentity&,MovieNativeCommand,MovieServiceFailure&) noexcept;
 private:
-    NativeMovieService(float,MovieServiceProfileFactory,MovieServiceSessionFactory);
+    NativeMovieService(float,MovieServiceProfileFactory,MovieServiceSessionFactory,bool,MovieServiceNativeClockFactory);
     bool access(MovieServiceFailure&) const noexcept;
     bool event_access(const MovieServiceRequestIdentity&,MovieServiceFailure&) const noexcept;
     bool close_owned(MovieServiceFailure&) noexcept;
@@ -131,6 +141,8 @@ private:
     NativeMovieControlContext settings_;
     MovieServiceProfileFactory profile_factory_;
     MovieServiceSessionFactory session_factory_;
+    bool automatic_backend_;
+    MovieServiceNativeClockFactory native_clock_factory_;
     std::unique_ptr<NativeMoviePlaybackSession> session_;
     std::shared_ptr<MovieServicePort> port_;
     MovieServiceSnapshot state_;

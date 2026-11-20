@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+    "--target",
+    "test_native_movie_audio_clock_anchor",
+    "test_native_movie_descriptor_rewrite",
+    "test_native_movie_timestamp_association",
+    "test_native_movie_outer_header_batch",
+    "test_native_movie_playback",
+    "test_native_movie_service",
+    "test_native_movie_service_host_clock",
+    "test_native_movie_native_context",
+    "test_native_movie_kernel_policies",
+    "test_native_movie_admission_feed",
+    "test_native_movie_service_acquisition",
+    "test_native_movie_playback_session",
+    "test_native_movie_service_backend",
+    "test_native_movie_frame_work",
+    "test_native_movie_session_native_audio",
+    "-j2"
+  ],
+  "exit": 0,
+  "stdout": "[0/2] Re-checking globbed directories...\n[1/17] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_backend_driver.cpp.obj\n[2/17] Linking CXX static library libmka_native_media.a\n[3/17] Linking CXX executable test_native_movie_playback_session.exe\n[4/17] Linking CXX executable test_native_movie_session_native_audio.exe\n[5/17] Linking CXX executable test_native_movie_native_context.exe\n[6/17] Linking CXX executable test_native_movie_service.exe\n[7/17] Linking CXX executable test_native_movie_service_acquisition.exe\n[8/17] Linking CXX executable test_native_movie_frame_work.exe\n[9/17] Linking CXX executable test_native_movie_audio_clock_anchor.exe\n[10/17] Linking CXX executable test_native_movie_descriptor_rewrite.exe\n[11/17] Linking CXX executable test_native_movie_timestamp_association.exe\n[12/17] Linking CXX executable test_native_movie_outer_header_batch.exe\n[13/17] Linking CXX executable test_native_movie_admission_feed.exe\n[14/17] Linking CXX executable test_native_movie_service_host_clock.exe\n[15/17] Linking CXX executable test_native_movie_kernel_policies.exe\n[16/17] Linking CXX executable test_native_movie_service_backend.exe\n",
+  "stderr": "",
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "executable_after_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3"
+}

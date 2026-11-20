@@ -66,6 +66,7 @@ struct Context final:MoviePlaybackPolicyContext {
 
  bool begin(const RetailMovieRequest&,std::int32_t,MovieControlFailure& f)override{f={};++begins;return true;}
  bool pump_metadata(MovieControlFailure& f)override{f={};return true;}
+    bool pump_backend(const MoviePlaybackBackendObservation& o,MoviePlaybackBackendResult& out,MovieControlFailure& f)override{f={};out={};out.head_frame_published=o.head_video!=nullptr;return true;}
  bool pause(bool,MovieControlFailure& f)override{f={};return true;}
  bool ready(const MoviePlaybackSnapshot&,bool& b,MovieControlFailure& f)override{f={};b=ready_value;if(mode==1)return false;if(mode==2){error(f,"provider contradiction");return true;}return true;}
  std::optional<MoviePolicyDecision> decision(const MovieVideoFrame&,const MoviePlaybackSnapshot&,MovieControlFailure& f)override{f={};if(reenter){MovieControlFailure local;check(!reenter->set_gain(-24,local)&&local.kind==MovieControlError::invalid_state,"policy reentry rejected");probed=true;}if(mode==3)return {};if(route==1)return MovieSourceDirectDecision{key,selected};if(route==2)return MovieSourceRetainedDecision{key,selected,target,service};auto origin=rate_record;origin.frame_rate_code=rate;return MovieOrdinaryDecision(key,selected,std::move(origin),clock,target);}

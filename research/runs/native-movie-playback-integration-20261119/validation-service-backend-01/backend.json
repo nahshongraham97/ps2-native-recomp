@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_service_backend.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2",
+    "KRYPT/V_RAIDON.SFD",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules\\MOVIER.ovl"
+  ],
+  "exit": 1,
+  "stdout": "",
+  "stderr": "backend failure poll13 movie service terminal playback error / movie backend unproved_history_predecessor code0\nFAIL native service backend normal automatic backend must not fail\n",
+  "executable_sha256": "662afa6bea306f41f68a4efe93c70d7dc2ec6c6a7288e2132fbaa6f5c3680f04",
+  "executable_after_sha256": "662afa6bea306f41f68a4efe93c70d7dc2ec6c6a7288e2132fbaa6f5c3680f04"
+}

@@ -42,6 +42,7 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/movie_native_context.cpp
     runtime/src/native/movie_output_position.cpp
     runtime/src/native/movie_service.cpp
+    runtime/src/native/movie_backend_driver.cpp
     runtime/src/native/movie_frame_work.cpp
     runtime/src/native/movie_audio_clock_anchor.cpp
     runtime/src/native/movie_descriptor_rewrite.cpp
@@ -344,3 +345,7 @@ target_link_libraries(test_native_movie_audio_pes_index PRIVATE mka_native_media
 
 add_executable(test_native_movie_adx_audio_assets EXCLUDE_FROM_ALL tests/test_movie_adx_audio_assets.cpp)
 target_link_libraries(test_native_movie_adx_audio_assets PRIVATE mka_native_media)
+
+# Actual service-owned orchestration with deterministic output/clock ports.
+add_executable(test_native_movie_service_backend EXCLUDE_FROM_ALL tests/test_movie_service_backend.cpp)
+target_link_libraries(test_native_movie_service_backend PRIVATE mka_native_media)

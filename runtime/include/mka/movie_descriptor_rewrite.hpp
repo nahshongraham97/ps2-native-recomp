@@ -28,6 +28,9 @@ struct MovieDescriptorRewriteInput {
     bool repeat;
     std::int64_t comparison_margin;
     bool preserve_direct_without_cache;
+    // Exact comparison made by the OUTER parser publication producer, even
+    // when intervening publications were not timeline-admitted.
+    std::optional<bool> observed_gop_changed={};
 };
 enum class MovieDescriptorRewriteBranch {direct,position,zero_origin,cached,incremented};
 enum class MovieDescriptorRewriteError {none,invalid_owner,unsupported_rate,invalid_temporal,overflow,timecode};

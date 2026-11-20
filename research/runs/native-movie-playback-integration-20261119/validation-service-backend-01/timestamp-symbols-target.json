@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_timestamp_association.exe",
+  "target_before_sha256": "47955ba664486b055683ae1099b3d2276fdd435fdfbbb0639c64e4eecc097dae",
+  "target_after_sha256": "47955ba664486b055683ae1099b3d2276fdd435fdfbbb0639c64e4eecc097dae",
+  "audited_target_expected_sha256": "47955ba664486b055683ae1099b3d2276fdd435fdfbbb0639c64e4eecc097dae",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::video::NativeMovieTimestampAssociation::"
+  ],
+  "executed_target_sha256": "47955ba664486b055683ae1099b3d2276fdd435fdfbbb0639c64e4eecc097dae"
+}

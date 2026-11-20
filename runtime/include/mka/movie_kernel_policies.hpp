@@ -78,6 +78,7 @@ public:
     virtual bool begin(const RetailMovieRequest&, std::int32_t, MovieControlFailure&) = 0;
     virtual bool pump_metadata(MovieControlFailure&) = 0;
     virtual bool observe_source(const MovieSourceObservationBatch&,MovieControlFailure&) = 0;
+    virtual bool pump_backend(const MoviePlaybackBackendObservation&,MoviePlaybackBackendResult&,MovieControlFailure&) = 0;
     virtual bool pause(bool, MovieControlFailure&) = 0;
     virtual bool ready(const MoviePlaybackSnapshot&, bool&, MovieControlFailure&) = 0;
     virtual std::optional<MoviePolicyDecision> decision(const MovieVideoFrame&,
@@ -110,6 +111,7 @@ public:
                               MovieControlFailure&) noexcept override;
     bool begin(const RetailMovieRequest&, std::int32_t, MovieControlFailure&) noexcept override;
     bool pump_metadata(MovieControlFailure&) noexcept override;
+    bool pump_backend(const MoviePlaybackBackendObservation&,MoviePlaybackBackendResult&,MovieControlFailure&) noexcept override;
     bool pause(bool, MovieControlFailure&) noexcept override;
     bool ready(const MoviePlaybackSnapshot&, bool&, MovieControlFailure&) noexcept override;
     bool eligible(const MovieVideoFrame&, const MoviePlaybackSnapshot&, bool&, MovieControlFailure&) noexcept override;

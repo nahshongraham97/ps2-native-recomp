@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_service_backend.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2",
+    "KRYPT/V_RAIDON.SFD",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules\\MOVIER.ovl"
+  ],
+  "exit": 0,
+  "stdout": "{\"processed\":120,\"published\":120,\"submitted_ports\":120,\"retired_ports\":120}\nPASS automatic native movie service backend work/preparation/drain through deterministic ports; no physical playback or content comparison\n",
+  "stderr": "[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=8549)\n",
+  "executable_sha256": "a1c6daba7051344e4718902007e52fcbdf0c4259356c6cc49578154c67375cbc",
+  "executable_after_sha256": "a1c6daba7051344e4718902007e52fcbdf0c4259356c6cc49578154c67375cbc"
+}

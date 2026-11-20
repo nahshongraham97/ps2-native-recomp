@@ -74,6 +74,22 @@ struct MoviePlaybackSnapshot {
 // composition supplies no default PTS/ordinal, stereo, unity, ready or ended
 // policy. An interface call is not evidence that the actual retail policy was
 // implemented. The same-asset metadata context must exist before begin().
+struct MoviePlaybackBackendObservation {
+    const RetailMovieRequest& request;
+    std::shared_ptr<const MovieSourceObservationIdentity> source;
+    const MoviePlaybackSnapshot& playback;
+    std::size_t queued_bytes,queued_byte_budget;
+    bool head_video_prepared;
+    const MovieVideoFrame* head_video; // Borrowed only for this guarded call.
+};
+struct MoviePlaybackBackendResult {
+    bool needs_source_input=false;
+    bool prepare_head_video=false;
+    // Explicit publication fact for observation.head_video, not queue count
+    // or a claim that clock eligibility/readiness/fence completion is satisfied.
+    bool head_frame_published=false;
+};
+enum class MoviePlaybackBackendFailure {none,invalid_head_publication,queued_budget_exhausted,source_after_eof,invalid_preparation_request};
 class MoviePlaybackPolicies {
 public:
     virtual ~MoviePlaybackPolicies() = default;
@@ -88,6 +104,7 @@ public:
                                       MovieControlFailure&) = 0;
     virtual bool begin(const RetailMovieRequest&, std::int32_t initial_tenth_db, MovieControlFailure&) = 0;
     virtual bool pump_metadata(MovieControlFailure&) = 0;
+    virtual bool pump_backend(const MoviePlaybackBackendObservation&,MoviePlaybackBackendResult&,MovieControlFailure&) = 0;
     virtual bool pause(bool, MovieControlFailure&) = 0;
     virtual bool ready(const MoviePlaybackSnapshot&, bool&, MovieControlFailure&) = 0;
     virtual bool eligible(const MovieVideoFrame&, const MoviePlaybackSnapshot&, bool&, MovieControlFailure&) = 0;
@@ -158,6 +175,8 @@ private:
     bool owner(MovieControlFailure&) const noexcept;
     bool fail(MovieControlFailure&, const char*) noexcept;
     bool poll_fences(MovieControlFailure&);
+    bool prepare_head_video_owned(MovieControlFailure&);
+    bool pump_backend_owned(MoviePlaybackBackendResult&,MovieControlFailure&);
     bool snapshot_owned(MoviePlaybackSnapshot&, MovieControlFailure&);
     bool submit_audio(MovieControlFailure&, bool& blocked);
     std::size_t queued_bytes() const noexcept;

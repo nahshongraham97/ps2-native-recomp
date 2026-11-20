@@ -86,7 +86,7 @@ struct Rig {
    MoviePlaybackConfiguration c;c.audio=with_audio?MoviePlaybackAudioPresence::required:MoviePlaybackAudioPresence::absent;if(with_audio){c.client_sample_rate=48000;c.client_channels=2;c.client_channel_mask=3;}c.layout={1,640,448,MovieAspectMode::explicit_display_aspect,4,3,MovieWindowPolicy::centered_fit};c.filter=MovieFilter::nearest;c.queued_byte_budget=1024;
    std::unique_ptr<MoviePlaybackAudioOutput> output;if(with_audio)output=std::make_unique<Audio>(audio);return NativeMoviePlaybackSession::create_from_ports(std::make_unique<Input>(source,r,destroyed,with_audio,with_video),std::move(policies),std::move(output),std::make_shared<GPU>(),color,c,settings,why);
   };
-  service=NativeMovieService::create(1.0f,std::move(data),std::move(opener),f);check(bool(service),"service creation");callback_owner=service.get();
+  service=NativeMovieService::create_component_fixture(1.0f,std::move(data),std::move(opener),f);check(bool(service),"service creation");callback_owner=service.get();
  }
  MovieServiceRequestIdentity start(){MovieServiceFailure f;check(service->start(0,MovieViewSelection::normal,0,4,f),"actual session/controller concrete policy start");auto id=service->request_identity(f);check(bool(id),"owned actual service identity");return *id;}
  void observations(){MovieServiceFailure f;check(service->poll(f).progress==MovieControlProgress::ongoing,"EOF observations delivered without default ready/end");}
@@ -111,7 +111,7 @@ int main(int argc,char** argv){try{
  check(argc==2,"usage: test_native_movie_service original_MOVIER.ovl");
  std::ifstream source(std::filesystem::u8path(argv[1]),std::ios::binary);check(bool(source),"original read-only color source");Bytes bytes((std::istreambuf_iterator<char>(source)),{});check(bytes.size()>=0x77dd8+6144,"original color extent");MovieColorError ce;auto color=NativeMovieColorTable::decode(MovieColorRole::helper_default,bytes.data()+0x77dd8,6144,ce);check(bool(color),"existing original color decoder");
  MovieServiceFailure f;
- {check(!NativeMovieService::create(1.0f,{},{},f)&&f.kind==MovieServiceError::missing_factory,"no default resource/profile policy");}
+ {check(!NativeMovieService::create_component_fixture(1.0f,{},{},f)&&f.kind==MovieServiceError::missing_factory,"no default resource/profile policy");}
  {Rig r(*color);auto id=r.start();auto initial_feed=r.service->source_feed_snapshot(id,f);check(initial_feed&&initial_feed->observation_sequence==0&&initial_feed->es_begin==0&&initial_feed->es_end==0,"new actual source feed starts empty before native stream pump");auto need=r.service->parse_candidate(id,f);check(need&&need->kind==MovieAdmissionCandidateKind::need_more,"no source data means explicit need-more, not ready/admitted");check(r.reentry_checked&&r.profiles==1,"one actual profile construction and callback guard");
   check(!r.service->start(0,MovieViewSelection::normal,0,4,f)&&f.kind==MovieServiceError::invalid_state,"single active request");r.observations();r.headers(id);
   auto no=r.service->complete_work(id,{1,3,r.source.current_work},std::nullopt,std::nullopt,f);check(no&&!no->publication&&no->successful_work==1,"actual no-output work advances without fabricated selected picture");

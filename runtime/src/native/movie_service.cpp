@@ -15,12 +15,14 @@ struct MovieServicePort {
     std::unique_ptr<NativeMovieAdmissionFeed> feed;
     std::shared_ptr<const MovieOuterHeaderBatch> last_batch;
     std::unique_ptr<NativeMovieFrameWorkCoordinator> work;
+    std::unique_ptr<NativeMovieBackendDriver> driver;
+    bool automatic_backend=false;
     MovieFrameWorkFailure work_failure;
     MovieAdmissionFeedFailure feed_failure;
     std::map<std::uint64_t,std::shared_ptr<const MovieAdmissionCurrent>> admissions;
     const std::thread::id owner=std::this_thread::get_id();
     bool opening=true;
-    void invalidate() noexcept {opening=false;context=nullptr;kernel=nullptr;work.reset();last_batch.reset();feed.reset();}
+    void invalidate() noexcept {opening=false;driver.reset();context=nullptr;kernel=nullptr;work.reset();last_batch.reset();feed.reset();}
 };
 namespace {
 static_assert(std::is_nothrow_move_assignable_v<MoviePlaybackSnapshot>);
@@ -50,13 +52,21 @@ public:
         if(!port_->work||!port_->work->observe_source(b,port_->work_failure)){f={MovieControlError::native_service,"movie service native work observation",static_cast<std::int64_t>(port_->work_failure.kind)};return false;}
         return true;
     }
+    bool pump_backend(const MoviePlaybackBackendObservation& o,MoviePlaybackBackendResult& out,MovieControlFailure& f)override{
+        if(port_->driver)return port_->driver->pump(o,out,f);
+        if(port_->automatic_backend){f={MovieControlError::native_service,"movie service missing required backend",0};return false;}
+        // Explicit protocol fixture observes a publication without driving work.
+        out={};if(o.head_video&&o.head_video->codec_timing.picture_source)
+            return port_->context->output_pending(*o.head_video->codec_timing.picture_source,out.head_frame_published,f);
+        f={};return true;
+    }
     bool validate_audio_format(const std::optional<sound::AudioStreamFormat>& x,MovieControlFailure& f)override{return kernel_->validate_audio_format(x,f);}
     bool begin(const RetailMovieRequest& r,std::int32_t g,MovieControlFailure& f)override{return kernel_->begin(r,g,f);}
     bool pump_metadata(MovieControlFailure& f)override{return kernel_->pump_metadata(f);}
-    bool pause(bool p,MovieControlFailure& f)override{return kernel_->pause(p,f);}
+    bool pause(bool p,MovieControlFailure& f)override{if(!kernel_->pause(p,f))return false;return !port_->driver||port_->driver->pause(p,f);}
     bool ready(const MoviePlaybackSnapshot& s,bool& out,MovieControlFailure& f)override{return kernel_->ready(s,out,f);}
     bool eligible(const MovieVideoFrame& v,const MoviePlaybackSnapshot& s,bool& out,MovieControlFailure& f)override{return kernel_->eligible(v,s,out,f);}
-    bool video_submitted(const MovieGpuMetadata& m,MovieControlFailure& f)override{return kernel_->video_submitted(m,f);}
+    bool video_submitted(const MovieGpuMetadata& m,MovieControlFailure& f)override{if(!kernel_->video_submitted(m,f))return false;return !port_->driver||port_->driver->video_submitted(m,f);}
     bool prepare_audio(const MovieAudioFrame& a,std::int32_t gain,std::vector<float>& out,MovieControlFailure& f)override{return kernel_->prepare_audio(a,gain,out,f);}
     bool audio_accepted(const MoviePlaybackAudioAcceptance& a,MovieControlFailure& f)override{return kernel_->audio_accepted(a,f);}
     bool set_gain(std::int32_t gain,MovieControlFailure& f)override{return kernel_->set_gain(gain,f);}
@@ -64,8 +74,8 @@ public:
     bool stop(MovieControlFailure& f)override{return kernel_->stop(f);}
 private:std::unique_ptr<NativeMovieKernelPolicies> kernel_;std::shared_ptr<MovieServicePort> port_;
 };
-MovieSessionPolicyFactory policies_for(std::weak_ptr<MovieServicePort> weak,RetailMovieRequest expected,MovieServiceProfileFactory profile_factory){
-    return [weak,expected=std::move(expected),profile_factory=std::move(profile_factory)](const RetailMovieRequest& request,std::shared_ptr<const MovieSourceObservationIdentity> identity,const std::optional<sound::AudioStreamFormat>& format,MovieSessionFailure& f)->std::unique_ptr<MoviePlaybackPolicies>{
+MovieSessionPolicyFactory policies_for(std::weak_ptr<MovieServicePort> weak,RetailMovieRequest expected,MovieServiceProfileFactory profile_factory,MovieServiceNativeClockFactory native_clock_factory){
+    return [weak,expected=std::move(expected),profile_factory=std::move(profile_factory),native_clock_factory=std::move(native_clock_factory)](const RetailMovieRequest& request,std::shared_ptr<const MovieSourceObservationIdentity> identity,const std::optional<sound::AudioStreamFormat>& format,MovieSessionFailure& f)->std::unique_ptr<MoviePlaybackPolicies>{
         f={};auto port=weak.lock();if(!port||!port->opening||std::this_thread::get_id()!=port->owner)return policy_error(f,"movie service expired/foreign policy factory");
         if(port->factory_calls)return policy_error(f,"movie service policy factory reused");
         port->factory_calls=1;
@@ -89,25 +99,41 @@ MovieSessionPolicyFactory policies_for(std::weak_ptr<MovieServicePort> weak,Reta
             if(!position){f.control={MovieControlError::native_service,position_failure.operation,static_cast<std::int64_t>(position_failure.kind)};return policy_error(f,"movie service output-position profile");}
             MovieAdmissionFeedFailure feed_failure;auto feed=NativeMovieAdmissionFeed::create(request.logical_key,identity,0,feed_failure);
             if(!feed){f.control={MovieControlError::native_service,"movie service source feed creation",static_cast<std::int64_t>(feed_failure.kind)};return policy_error(f,"movie service source feed creation");}
-            MovieFrameWorkFailure work_failure;
+                    MovieFrameWorkFailure work_failure;
             auto work=NativeMovieFrameWorkCoordinator::create(*feed,request.logical_key,identity,MovieFrameWorkProfile::frame_no_repeat_no_skip,work_failure);
             if(!work){f.control={MovieControlError::native_service,work_failure.operation,static_cast<std::int64_t>(work_failure.kind)};return policy_error(f,"movie service native work owner");}
             auto guarded=std::unique_ptr<MoviePlaybackPolicies>(new LeasedPolicies(std::move(kernel),raw,port));
-            port->identity=std::move(identity);port->clock=std::move(binding);port->position=std::move(position);port->feed=std::move(feed);port->work=std::move(work);return guarded;
+            port->identity=std::move(identity);port->clock=std::move(binding);port->position=std::move(position);port->feed=std::move(feed);port->work=std::move(work);
+            if(port->automatic_backend){
+                if(c.preserve_queued_temporal||c.target_route!=MovieNativeTargetRoute::published_position) return policy_error(f,"movie service normal backend profile requires published position and cleared queued temporal");
+                MovieHostClockFailure hf;auto host=native_clock_factory(request.logical_key,port->identity,hf);
+                if(!host){f.control={MovieControlError::native_service,"movie service native clock acquisition",static_cast<std::int64_t>(hf.kind)};return policy_error(f,"movie service native clock acquisition");}
+                port->driver=NativeMovieBackendDriver::create(request.logical_key,port->identity,*port->feed,*port->work,*port->position,*raw,c.video_enabled,c.audio_enabled,std::move(host),control);
+                if(!port->driver){f.control=control;return policy_error(f,"movie service native backend construction");}
+            }return guarded;
         }catch(const std::bad_alloc&){return policy_error(f,"movie service policy allocation",MovieSessionError::allocation);}
          catch(...){return policy_error(f,"movie service profile factory exception");}
     };
 }
 }
-NativeMovieService::NativeMovieService(float volume,MovieServiceProfileFactory profile,MovieServiceSessionFactory opener):settings_(volume),profile_factory_(std::move(profile)),session_factory_(std::move(opener)){state_.base_volume=volume;}
+NativeMovieService::NativeMovieService(float volume,MovieServiceProfileFactory profile,MovieServiceSessionFactory opener,bool automatic,MovieServiceNativeClockFactory clock):settings_(volume),profile_factory_(std::move(profile)),session_factory_(std::move(opener)),automatic_backend_(automatic),native_clock_factory_(std::move(clock)){state_.base_volume=volume;}
 std::unique_ptr<NativeMovieService> NativeMovieService::create(float base,MovieServiceProfileFactory profile,MovieServiceSessionFactory opener,MovieServiceFailure& f) noexcept {
+    return create_with_native_clock(base,std::move(profile),std::move(opener),[](std::string_view key,std::shared_ptr<const MovieSourceObservationIdentity> id,MovieHostClockFailure& why){return NativeMovieHostClock::create(key,std::move(id),why);},f);
+}
+std::unique_ptr<NativeMovieService> NativeMovieService::create_with_native_clock(float base,MovieServiceProfileFactory profile,MovieServiceSessionFactory opener,MovieServiceNativeClockFactory clock,MovieServiceFailure& f) noexcept {
     f={};if(!std::isfinite(base)){fail(f,MovieServiceError::profile,"movie service nonfinite base setting");return {};}
-    if(!profile||!opener){fail(f,MovieServiceError::missing_factory,"movie service requires actual source/profile factories");return {};}
-    try{return std::unique_ptr<NativeMovieService>(new NativeMovieService(base,std::move(profile),std::move(opener)));}catch(const std::bad_alloc&){fail(f,MovieServiceError::allocation,"movie service allocation");return {};}
+    if(!profile||!opener||!clock){fail(f,MovieServiceError::missing_factory,"movie service requires actual source/profile factories");return {};}
+    try{return std::unique_ptr<NativeMovieService>(new NativeMovieService(base,std::move(profile),std::move(opener),true,std::move(clock)));}catch(const std::bad_alloc&){fail(f,MovieServiceError::allocation,"movie service allocation");return {};}
+}
+std::unique_ptr<NativeMovieService> NativeMovieService::create_component_fixture(float base,MovieServiceProfileFactory profile,MovieServiceSessionFactory opener,MovieServiceFailure& f) noexcept {
+    f={};if(!std::isfinite(base)||!profile||!opener){fail(f,MovieServiceError::missing_factory,"movie service explicit component ports");return {};}
+    try{return std::unique_ptr<NativeMovieService>(new NativeMovieService(base,std::move(profile),std::move(opener),false,{}));}
+    catch(const std::bad_alloc&){fail(f,MovieServiceError::allocation,"movie service component allocation");return {};}
 }
 bool NativeMovieService::access(MovieServiceFailure& f) const noexcept {f={};if(std::this_thread::get_id()!=owner_)return fail(f,MovieServiceError::wrong_thread,"movie service owner thread");if(in_call_)return fail(f,MovieServiceError::invalid_state,"movie service reentry");return true;}
 bool NativeMovieService::event_access(const MovieServiceRequestIdentity& id,MovieServiceFailure& f) const noexcept {
     if(!access(f))return false;
+    if(port_&&port_->automatic_backend)return fail(f,MovieServiceError::invalid_state,"movie service native backend owns event ingress");
     if(!session_||!state_.active||!port_||!port_->context)return fail(f,MovieServiceError::invalid_state,"movie service has no active source context");
     if(id.generation!=state_.generation||id.source_key!=port_->key||!id.source||id.source!=port_->identity)return fail(f,MovieServiceError::foreign_request,"movie service stale/foreign request event");return true;
 }
@@ -120,14 +146,15 @@ bool NativeMovieService::start(std::int64_t id,MovieViewSelection view,std::int6
     MovieCatalogFailure cf;auto request=RetailMovieCatalog{}.resolve(id,view,language,cf);if(!request||request->route!=MovieRoute::blocking)return fail(f,MovieServiceError::invalid_request,"movie service invalid or unsupported retail request");
     try {
         const auto generation=state_.generation+1;MovieServiceSnapshot staged;staged.generation=generation;staged.request=*request;staged.base_volume=settings_.current_base_volume();staged.activity=MovieServiceActivity::starting;
-        auto port=std::make_shared<MovieServicePort>();port->generation=generation;port->key=request->logical_key;state_=std::move(staged);port_=port;
-        auto factory=policies_for(port,*request,profile_factory_);
+        auto port=std::make_shared<MovieServicePort>();port->generation=generation;port->key=request->logical_key;port->automatic_backend=automatic_backend_;state_=std::move(staged);port_=port;
+        auto factory=policies_for(port,*request,profile_factory_,native_clock_factory_);
         session_=session_factory_(*request,language,std::move(factory),settings_,f.session);
         if(!session_||f.session.kind!=MovieSessionError::none||port->factory_calls!=1||!port->context||!port->identity||!port->position||!port->feed){fail(f,MovieServiceError::session,"movie service actual session/policy construction");terminal_failure(f);return false;}
         MovieSessionFailure query;const auto* actual=session_->request(query);
         if(!actual||query.kind!=MovieSessionError::none||!same_request(*actual,*request)){f.session=query;fail(f,MovieServiceError::session,"movie service actual session request mismatch");terminal_failure(f);return false;}
         port->opening=false;
         if(!session_->start(fade,{},f.session)){fail(f,MovieServiceError::session,"movie service actual session start");terminal_failure(f);return false;}
+        if(port->driver&&!port->driver->begin_after_start(f.control)){fail(f,MovieServiceError::context,"movie service native backend start");terminal_failure(f);return false;}
         state_.active=true;state_.activity=MovieServiceActivity::preparing;return true;
     }catch(const std::bad_alloc&){fail(f,MovieServiceError::allocation,"movie service request allocation");terminal_failure(f);return false;}
      catch(...){fail(f,MovieServiceError::session,"movie service acquisition factory exception");terminal_failure(f);return false;}
@@ -139,6 +166,12 @@ bool NativeMovieService::close_owned(MovieServiceFailure& f) noexcept {
         state_.playback_retained=true;
         if(session_->snapshot(actual,query)){state_.playback=std::move(actual);state_.playback_snapshot_failure.reset();}
         else {state_.playback.reset();state_.playback_snapshot_failure=observation_error(query);f.observation=*state_.playback_snapshot_failure;f.session=std::move(query);fail(f,MovieServiceError::session,"movie service pre-teardown playback observation");ok=false;}
+    }
+    if(port_&&port_->driver){
+        state_.backend=port_->driver->state();
+        MovieControlFailure context_failure;state_.context=port_->context->snapshot(context_failure);
+        MovieFrameWorkFailure work_failure;state_.native_work=port_->work->snapshot(work_failure);
+        MovieOutputPositionFailure position_failure;state_.position=port_->position->snapshot(position_failure);
     }
     if(port_)port_->invalidate(); // Before any source/policy/context destruction.
     if(session_){MovieSessionFailure cleanup;const bool closed=session_->close(cleanup);
@@ -181,7 +214,7 @@ bool NativeMovieService::stop(MovieServiceFailure& f) noexcept {if(!access(f))re
 bool NativeMovieService::close(MovieServiceFailure& f) noexcept {if(!access(f))return false;Guard call(in_call_);const bool ok=close_owned(f);state_.activity=ok?MovieServiceActivity::closed:MovieServiceActivity::error;return ok;}
 NativeMovieService::~NativeMovieService(){if(std::this_thread::get_id()!=owner_||in_call_)std::terminate();in_call_=true;MovieServiceFailure ignored;close_owned(ignored);}
 std::optional<MovieServiceRequestIdentity> NativeMovieService::request_identity(MovieServiceFailure& f) const noexcept {if(!access(f))return {};Guard call(in_call_);if(!state_.active||!port_||!port_->context){fail(f,MovieServiceError::invalid_state,"movie service no live request identity");return {};}try{return MovieServiceRequestIdentity{state_.generation,port_->key,port_->identity};}catch(const std::bad_alloc&){fail(f,MovieServiceError::allocation,"movie service identity allocation");return {};}}
-std::optional<MovieServiceSnapshot> NativeMovieService::snapshot(MovieServiceFailure& f) const noexcept {if(!access(f))return {};Guard call(in_call_);try{auto result=state_;result.base_volume=settings_.current_base_volume();if(session_){MoviePlaybackSnapshot actual;if(!session_->snapshot(actual,f.session)){f.observation=observation_error(f.session);fail(f,MovieServiceError::session,"movie service live playback observation");return {};}result.playback=std::move(actual);result.playback_retained=false;result.playback_snapshot_failure.reset();}if(port_&&port_->context){MovieControlFailure why;result.context=port_->context->snapshot(why);if(port_->work){result.native_work=port_->work->snapshot(f.native_work);if(!result.native_work){fail(f,MovieServiceError::native_work,"movie service native work snapshot");return {};}}if(!result.context){f.control=why;fail(f,MovieServiceError::context,"movie service context snapshot");return {};}}return result;}catch(const std::bad_alloc&){fail(f,MovieServiceError::allocation,"movie service snapshot allocation");return {};}}
+std::optional<MovieServiceSnapshot> NativeMovieService::snapshot(MovieServiceFailure& f) const noexcept {if(!access(f))return {};Guard call(in_call_);try{auto result=state_;result.base_volume=settings_.current_base_volume();if(session_){MoviePlaybackSnapshot actual;if(!session_->snapshot(actual,f.session)){f.observation=observation_error(f.session);fail(f,MovieServiceError::session,"movie service live playback observation");return {};}result.playback=std::move(actual);result.playback_retained=false;result.playback_snapshot_failure.reset();}if(port_&&port_->context){if(port_->driver){result.backend=port_->driver->state();if(result.backend->processed){MovieOutputPositionFailure position_failure;result.position=port_->position->snapshot(position_failure);if(!result.position){f.position=position_failure;fail(f,MovieServiceError::position,"movie service backend position snapshot");return {};}}}MovieControlFailure why;result.context=port_->context->snapshot(why);if(port_->work){result.native_work=port_->work->snapshot(f.native_work);if(!result.native_work){fail(f,MovieServiceError::native_work,"movie service native work snapshot");return {};}}if(!result.context){f.control=why;fail(f,MovieServiceError::context,"movie service context snapshot");return {};}}return result;}catch(const std::bad_alloc&){fail(f,MovieServiceError::allocation,"movie service snapshot allocation");return {};}}
 std::optional<MovieAdmissionCandidate> NativeMovieService::parse_candidate(const MovieServiceRequestIdentity& id,MovieServiceFailure& f) noexcept {
     if(!event_access(id,f))return {};Guard call(in_call_);
     auto active=port_->work->snapshot(f.native_work);if(!active||active->outer_active||active->waiting_output){fail(f,MovieServiceError::invalid_state,"movie service outer parse during native work");return {};}

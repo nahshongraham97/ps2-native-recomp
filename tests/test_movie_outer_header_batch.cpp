@@ -14,6 +14,7 @@ public:
  bool begin(const RetailMovieRequest& r,std::int32_t g,MovieControlFailure& f)override{return inner->begin(r,g,f);}
  bool pump_metadata(MovieControlFailure& f)override{return inner->pump_metadata(f);}
  bool observe_source(const MovieSourceObservationBatch& b,MovieControlFailure& f)override{return inner->observe_source(b,f);}
+    bool pump_backend(const MoviePlaybackBackendObservation& o,MoviePlaybackBackendResult& out,MovieControlFailure& f)override{f={};out={};out.head_frame_published=o.head_video!=nullptr;return true;}
  bool pause(bool p,MovieControlFailure& f)override{return inner->pause(p,f);}
  bool ready(const MoviePlaybackSnapshot& s,bool& o,MovieControlFailure& f)override{return inner->ready(s,o,f);}
  std::optional<MoviePolicyDecision> decision(const MovieVideoFrame& v,const MoviePlaybackSnapshot& s,MovieControlFailure& f)override{auto d=inner->decision(v,s,f);if(d&&alter)if(auto* o=std::get_if<MovieOrdinaryDecision>(&*d))o->rate_record.frame_rate_code=o->rate_record.frame_rate_code==1?2:1;return d;}

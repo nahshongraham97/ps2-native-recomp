@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_audio_clock_anchor.exe",
+  "target_before_sha256": "5dfba810ea26d75490230a6e3ce6c6c65b6d6e6ad8be2e681c4d8d089b2b5bf1",
+  "target_after_sha256": "5dfba810ea26d75490230a6e3ce6c6c65b6d6e6ad8be2e681c4d8d089b2b5bf1",
+  "audited_target_expected_sha256": "5dfba810ea26d75490230a6e3ce6c6c65b6d6e6ad8be2e681c4d8d089b2b5bf1",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::video::NativeMovieAudioClockAnchor::"
+  ],
+  "executed_target_sha256": "5dfba810ea26d75490230a6e3ce6c6c65b6d6e6ad8be2e681c4d8d089b2b5bf1"
+}

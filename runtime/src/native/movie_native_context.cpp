@@ -168,7 +168,48 @@ bool NativeMoviePlaybackContext::admit_header(const MovieNativeHeaderAdmission& 
         return fail(f,MovieNativeContextError::missing_rate,"movie native context source rate");
     std::optional<MovieTimecodeDescriptor> descriptor;std::optional<MovieTimecodeRational> time;
     auto baseline=state_.first_baseline;MovieTimecodeFailure why;
-    if(event.descriptor_route){
+    if(event.prepared_descriptor){
+        if(!event.parsed_batch||event.descriptor_route||event.clear_temporal)
+            return fail(f,MovieNativeContextError::invalid_config,"movie native context prepared descriptor requires sole authentic batch route");
+        if(event.parsed_batch->batch_id()<=state_.prepared_batch_id)
+            return fail(f,MovieNativeContextError::invalid_order,"movie native context prepared parser batch replay");
+        const auto& prepared=*event.prepared_descriptor;
+        switch(prepared.branch){
+        case MovieDescriptorRewriteBranch::direct:case MovieDescriptorRewriteBranch::position:
+        case MovieDescriptorRewriteBranch::zero_origin:case MovieDescriptorRewriteBranch::cached:
+        case MovieDescriptorRewriteBranch::incremented:break;
+        default:return fail(f,MovieNativeContextError::invalid_config,"movie native context unknown prepared descriptor branch");
+        }
+        auto picture_unit=checked_unit(current->picture,checked_bound,0x100,f);if(!picture_unit)return false;
+        const auto* picture=std::get_if<MoviePictureHeader>(&picture_unit->payload);
+        const auto flag=current->info54<128?std::int64_t(current->info54):std::int64_t(current->info54)-256;
+        if(!picture||prepared.published.descriptor.timecode.temporal_reference!=picture->temporal_reference||
+           prepared.published.descriptor.flag!=flag)
+            return fail(f,MovieNativeContextError::foreign_source,"movie native context prepared current temporal/flag mismatch");
+        if(prepared.first_baseline.denominator<=0||prepared.published.relative.denominator<=0)
+            return fail(f,MovieNativeContextError::invalid_rational,"movie native context prepared descriptor denominator");
+        descriptor=prepared.published.descriptor.timecode;
+        time=convert_movie_timecode(*descriptor,why);
+        if(!time)return fail(f,MovieNativeContextError::timecode,"movie native context prepared timecode conversion",static_cast<std::int64_t>(why.kind));
+        std::int64_t relative;
+        if(!store(Wide(time->numerator)-prepared.first_baseline.numerator,relative))
+            return fail(f,MovieNativeContextError::overflow,"movie native context prepared relative overflow");
+        if(prepared.published.relative!=MovieTimecodeRational{relative,time->denominator})
+            return fail(f,MovieNativeContextError::invalid_config,"movie native context contradictory prepared relative time");
+        if(baseline){
+            if(*baseline!=prepared.first_baseline)
+                return fail(f,MovieNativeContextError::invalid_config,"movie native context prepared first baseline changed");
+        }else{
+            if(!event.latch_first_baseline)
+                return fail(f,MovieNativeContextError::missing_baseline,"movie native context prepared baseline not admitted");
+            auto first=*descriptor;first.temporal_reference=0;
+            auto converted=convert_movie_timecode(first,why);
+            if(!converted)return fail(f,MovieNativeContextError::timecode,"movie native context prepared zero-temporal baseline",static_cast<std::int64_t>(why.kind));
+            if(*converted!=prepared.first_baseline)
+                return fail(f,MovieNativeContextError::invalid_config,"movie native context contradictory prepared initial baseline");
+            baseline=*converted;
+        }
+    }else if(event.descriptor_route){
         auto gop_unit=checked_unit(current->gop,checked_bound,0x1b8,f);if(!gop_unit)return false;
         const auto* gop=std::get_if<MovieGopHeader>(&gop_unit->payload);
         const auto* claimed_gop=std::get_if<MovieGopHeader>(&current->gop->unit.payload);
@@ -198,8 +239,19 @@ bool NativeMoviePlaybackContext::admit_header(const MovieNativeHeaderAdmission& 
         if(event.latch_eligibility_rate)rate.emplace(MovieParserRateRecord{config_.request.logical_key,config_.identity,event.admission_id,admitted,current->sequence->origin.prefix.es_prefix_first_byte,sequence->frame_rate_code,event.parsed_batch});
         admissions_.emplace(event.admission_id,Admission{event,descriptor,time,sequence->frame_rate_code});
         if(rate)state_.eligibility_rate=std::move(rate);
-        state_.first_baseline=baseline;++state_.admissions;return true;
+        state_.first_baseline=baseline;
+        state_.latest_prepared_descriptor=event.prepared_descriptor;
+        if(event.prepared_descriptor)state_.prepared_batch_id=event.parsed_batch->batch_id();
+        ++state_.admissions;return true;
     }catch(const std::bad_alloc&){return fail(f,MovieNativeContextError::allocation,"movie native context admission allocation");}
+}
+bool NativeMoviePlaybackContext::pump_backend(const MoviePlaybackBackendObservation&,MoviePlaybackBackendResult& out,MovieControlFailure& f) noexcept {
+    out={};if(!enter(f))return false;Guard guard(in_call_);
+    return fail(f,MovieNativeContextError::missing_admission,"movie native context requires service-owned backend");
+}
+bool NativeMoviePlaybackContext::output_pending(const MoviePictureSource& source,bool& out,MovieControlFailure& f) const noexcept {
+    out=false;if(!enter(f))return false;Guard guard(in_call_);
+    const auto found=outputs_.find(source.picture_es_byte);out=found!=outputs_.end()&&found->second.selected==source;return true;
 }
 bool NativeMoviePlaybackContext::validate_work(const MovieAdmissionCurrent& current,MovieControlFailure& f) const noexcept {
     if(!enter(f))return false;Guard guard(in_call_);
