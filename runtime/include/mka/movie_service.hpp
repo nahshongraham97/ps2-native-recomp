@@ -36,13 +36,14 @@ using MovieServiceSessionFactory=std::function<std::unique_ptr<NativeMoviePlayba
     const RetailMovieRequest&,std::int64_t game_language_code,MovieSessionPolicyFactory,
     NativeMovieControlContext&,MovieSessionFailure&)>;
 enum class MovieServiceError {none,wrong_thread,invalid_state,invalid_request,foreign_request,
-    missing_factory,profile,session,context,position,allocation,overflow};
+    missing_factory,profile,session,context,position,allocation,overflow,source_feed};
 struct MovieServiceFailure {
     MovieServiceError kind=MovieServiceError::none;
     const char* operation="";
     MovieSessionFailure session,cleanup;
     MovieControlFailure control;
     MovieOutputPositionFailure position;
+    MovieAdmissionFeedFailure feed;
 };
 struct MovieServiceRequestIdentity {
     std::uint64_t generation=0;
@@ -81,6 +82,13 @@ public:
     bool close(MovieServiceFailure&) noexcept;
     std::optional<MovieServiceRequestIdentity> request_identity(MovieServiceFailure&) const noexcept;
     std::optional<MovieServiceSnapshot> snapshot(MovieServiceFailure&) const noexcept;
+    // Backend coordinator only; the retail caller does not parse MPEG.
+    // Operations consume the SAME feed automatically supplied by actual Stream
+    // observations. Need-more/blocked candidates do not imply admission.
+    std::optional<MovieAdmissionCandidate> parse_candidate(const MovieServiceRequestIdentity&,MovieServiceFailure&) noexcept;
+    std::optional<MovieHeaderBoundaryProposal> boundary_proposal(const MovieServiceRequestIdentity&,MovieServiceFailure&) noexcept;
+    bool skip_source_bytes(const MovieServiceRequestIdentity&,std::uint64_t actual_bytes,MovieServiceFailure&) noexcept;
+    std::optional<MovieAdmissionFeedSnapshot> source_feed_snapshot(const MovieServiceRequestIdentity&,MovieServiceFailure&) const noexcept;
     bool admit_header(const MovieServiceRequestIdentity&,const MovieNativeHeaderAdmission&,MovieServiceFailure&) noexcept;
     std::optional<MovieOutputPositionUpdate> complete_work(const MovieServiceRequestIdentity&,
         const MovieOutputPositionWork&,std::optional<std::uint64_t> timing_admission_id,
