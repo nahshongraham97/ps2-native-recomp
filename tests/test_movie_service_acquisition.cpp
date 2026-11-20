@@ -81,6 +81,15 @@ int main(int argc,char** argv){try{
     auto after_body=service->source_feed_snapshot(*identity,sf);auto unchanged=service->snapshot(sf);
     check(after_body&&after_body->es_begin==before_body->es_begin&&after_body->buffered_bytes==before_body->buffered_bytes&&after_body->work_pending&&after_body->current.gop_parse_entries==before_body->current.gop_parse_entries&&unchanged&&unchanged->context&&unchanged->context->admissions==0&&!unchanged->context->owner_started&&!unchanged->context->video_started&&!unchanged->position,
         "production body proposal consumes no bytes or business admission/readiness/position work");
+    auto outer=std::make_shared<const MovieAdmissionCurrent>(slice->current);
+    check(service->admit_header(*identity,{1,outer->picture->origin.prefix.es_prefix_first_byte,outer,MovieNativeDescriptorRoute::gop,false,true,true},sf),"explicit fixture business admission uses actual parsed source");
+    check(service->begin_native_work(*identity,1,1,sf),"same service starts actual native processing with frozen outer admission");
+    auto first_work=service->step_native_work(*identity,sf);
+    check(first_work&&first_work->progress==MovieFrameWorkProgress::processed_without_output&&first_work->work&&first_work->input&&!first_work->selected,"actual first reference completes native work without fabricated output");
+    auto second_work=service->step_native_work(*identity,sf);
+    check(second_work&&second_work->progress==MovieFrameWorkProgress::output&&second_work->selected&&second_work->work->current_header==outer&&second_work->processing_header->picture!=outer->picture,"same outer work processes later reference and selects actual earlier decoded source");
+    auto worked=service->snapshot(sf);auto restored=service->source_feed_snapshot(*identity,sf);
+    check(worked&&worked->position&&worked->position->successful_work==2&&worked->position->published_position==0&&worked->context->outputs_pending==1&&worked->native_work&&worked->native_work->processed==2&&restored&&!restored->inner_parse_active&&restored->current.picture==outer->picture,"native work is connected through real service/context/publication with outer metadata restored");
     check(service->close(sf)&&!service->snapshot(sf)->active,"actual session resource cancellation");service.reset();factory={};check(weak.expired()&&released==1,"retained GPU released only after session/factory teardown");
     check(std::puts("PASS native service acquisition associated video-only Session; no endpoint activation or playback")>=0&&std::fflush(stdout)==0,"checked output");return 0;
 }catch(const std::exception& e){std::fprintf(stderr,"FAIL movie acquisition %s\n",e.what());return 1;}}

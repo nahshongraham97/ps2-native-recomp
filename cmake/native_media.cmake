@@ -42,6 +42,8 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/movie_native_context.cpp
     runtime/src/native/movie_output_position.cpp
     runtime/src/native/movie_service.cpp
+    runtime/src/native/movie_frame_work.cpp
+    runtime/src/native/movie_service_host_clock.cpp
     runtime/src/native/movie_service_acquisition.cpp
     runtime/src/native/movie_admission_feed.cpp
     runtime/src/native/movie_audio_progress.cpp
@@ -115,6 +117,9 @@ foreach(pair
     "test_native_movie_service|tests/test_movie_service.cpp"
     "test_native_movie_service_acquisition|tests/test_movie_service_acquisition.cpp"
     "test_native_movie_host_clock|tests/test_movie_host_clock.cpp"
+    "test_native_movie_accepted_body|tests/test_movie_accepted_body.cpp"
+    "test_native_movie_frame_work|tests/test_movie_frame_work.cpp"
+    "test_native_movie_service_host_clock|tests/test_movie_service_host_clock.cpp"
     "test_native_movie_input_acceptance|tests/test_movie_input_acceptance.cpp"
     "test_native_movie_input_acceptance_consumers|tests/test_movie_input_acceptance_consumers.cpp"
     "test_native_movie_admission_feed|tests/test_movie_admission_feed.cpp"

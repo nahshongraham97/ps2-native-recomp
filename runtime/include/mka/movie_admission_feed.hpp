@@ -5,7 +5,7 @@
 
 namespace mka::video {
 enum class MovieAdmissionFeedError { none, invalid_owner, wrong_thread, invalid_source, foreign_source,
-    invalid_order, invalid_prefix, range, overflow, allocation, host_capacity, parser, failed_owner, reentry };
+    invalid_order, invalid_prefix, range, overflow, allocation, host_capacity, parser, failed_owner, reentry, unsupported, scope };
 struct MovieAdmissionFeedFailure {
     MovieAdmissionFeedError kind = MovieAdmissionFeedError::none;
     MovieHeaderBoundaryFailure boundary;
@@ -56,6 +56,7 @@ struct MovieAdmissionFeedSnapshot {
     std::size_t buffered_bytes = 0;
     bool work_pending = false, program_end_observed = false, failed = false;
     std::shared_ptr<const MovieCodecInputReceipt> last_input_receipt;
+    bool inner_parse_active=false;
 };
 struct MovieAdmissionFeedState;
 class NativeMovieAdmissionFeed final {
@@ -68,6 +69,10 @@ public:
     NativeMovieAdmissionFeed& operator=(const NativeMovieAdmissionFeed&) = delete;
     NativeMovieAdmissionFeed(NativeMovieAdmissionFeed&&) noexcept;
     NativeMovieAdmissionFeed& operator=(NativeMovieAdmissionFeed&&) noexcept;
+    // Separate persistent parser-current scopes; byte/provenance/consumption
+    // state stays shared. Counters/kind are never inherited from the outer scope.
+    bool begin_inner_parse(MovieAdmissionFeedFailure&) noexcept;
+    bool end_inner_parse(MovieAdmissionFeedFailure&) noexcept;
     // Ingress does not parse/admit headers, increment GOP serial or consume.
     bool push(const MovieSourceObservationBatch&, MovieAdmissionFeedFailure&) noexcept;
     // Explicit source parser invocation; actual checked parser extent is the
@@ -76,6 +81,10 @@ public:
     // Data-only range proposal for the pending picture's contiguous slice units.
     // Never consumes bytes, proves decoder work, admits or completes playback.
     std::optional<MoviePictureBodyExtent> picture_body_extent(MovieAdmissionFeedFailure&) const noexcept;
+    // Authentic accepted ORIGINAL codec interval bounds a pending slice body
+    // even without following input. This remains data-only/non-consuming.
+    std::optional<MoviePictureBodyExtent> accepted_picture_body(
+        std::shared_ptr<const MovieCodecInputReceipt>, MovieAdmissionFeedFailure&) const noexcept;
     // Source C/V proposal cache, never proof of parser/admission progress.
     std::optional<MovieHeaderBoundaryProposal> proposal(MovieAdmissionFeedFailure&) noexcept;
     // Caller acknowledges actual non-parser consumption, not a proposal/packet.

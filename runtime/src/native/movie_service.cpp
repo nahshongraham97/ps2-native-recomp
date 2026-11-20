@@ -13,11 +13,13 @@ struct MovieServicePort {
     std::shared_ptr<MovieEligibilityServiceBinding> clock;
     std::unique_ptr<NativeMovieOutputPosition> position;
     std::unique_ptr<NativeMovieAdmissionFeed> feed;
+    std::unique_ptr<NativeMovieFrameWorkCoordinator> work;
+    MovieFrameWorkFailure work_failure;
     MovieAdmissionFeedFailure feed_failure;
     std::map<std::uint64_t,std::shared_ptr<const MovieAdmissionCurrent>> admissions;
     const std::thread::id owner=std::this_thread::get_id();
     bool opening=true;
-    void invalidate() noexcept {opening=false;context=nullptr;kernel=nullptr;feed.reset();}
+    void invalidate() noexcept {opening=false;context=nullptr;kernel=nullptr;work.reset();feed.reset();}
 };
 namespace {
 static_assert(std::is_nothrow_move_assignable_v<MoviePlaybackSnapshot>);
@@ -43,7 +45,9 @@ public:
         f={};
         if(!port_->feed){port_->feed_failure.kind=MovieAdmissionFeedError::invalid_owner;f={MovieControlError::native_service,"movie service missing source feed",static_cast<std::int64_t>(port_->feed_failure.kind)};return false;}
         if(!port_->feed->push(b,port_->feed_failure)){f={MovieControlError::native_service,"movie service source feed observation",static_cast<std::int64_t>(port_->feed_failure.kind)};return false;}
-        return kernel_->observe_source(b,f);
+        if(!kernel_->observe_source(b,f))return false;
+        if(!port_->work||!port_->work->observe_source(b,port_->work_failure)){f={MovieControlError::native_service,"movie service native work observation",static_cast<std::int64_t>(port_->work_failure.kind)};return false;}
+        return true;
     }
     bool validate_audio_format(const std::optional<sound::AudioStreamFormat>& x,MovieControlFailure& f)override{return kernel_->validate_audio_format(x,f);}
     bool begin(const RetailMovieRequest& r,std::int32_t g,MovieControlFailure& f)override{return kernel_->begin(r,g,f);}
@@ -84,8 +88,11 @@ MovieSessionPolicyFactory policies_for(std::weak_ptr<MovieServicePort> weak,Reta
             if(!position){f.control={MovieControlError::native_service,position_failure.operation,static_cast<std::int64_t>(position_failure.kind)};return policy_error(f,"movie service output-position profile");}
             MovieAdmissionFeedFailure feed_failure;auto feed=NativeMovieAdmissionFeed::create(request.logical_key,identity,0,feed_failure);
             if(!feed){f.control={MovieControlError::native_service,"movie service source feed creation",static_cast<std::int64_t>(feed_failure.kind)};return policy_error(f,"movie service source feed creation");}
+            MovieFrameWorkFailure work_failure;
+            auto work=NativeMovieFrameWorkCoordinator::create(*feed,request.logical_key,identity,MovieFrameWorkProfile::frame_no_repeat_no_skip,work_failure);
+            if(!work){f.control={MovieControlError::native_service,work_failure.operation,static_cast<std::int64_t>(work_failure.kind)};return policy_error(f,"movie service native work owner");}
             auto guarded=std::unique_ptr<MoviePlaybackPolicies>(new LeasedPolicies(std::move(kernel),raw,port));
-            port->identity=std::move(identity);port->clock=std::move(binding);port->position=std::move(position);port->feed=std::move(feed);return guarded;
+            port->identity=std::move(identity);port->clock=std::move(binding);port->position=std::move(position);port->feed=std::move(feed);port->work=std::move(work);return guarded;
         }catch(const std::bad_alloc&){return policy_error(f,"movie service policy allocation",MovieSessionError::allocation);}
          catch(...){return policy_error(f,"movie service profile factory exception");}
     };
@@ -150,6 +157,7 @@ MovieControlResult NativeMovieService::poll(MovieServiceFailure& f) noexcept {
     if(state_.polls==UINT64_MAX){fail(f,MovieServiceError::overflow,"movie service poll count overflow");terminal_failure(f);return *state_.terminal;}++state_.polls;
     auto result=session_->poll();if(result.progress==MovieControlProgress::ongoing)return result;
     if(port_&&port_->feed_failure.kind!=MovieAdmissionFeedError::none){f.kind=MovieServiceError::source_feed;f.operation="movie service source observation feed failure";f.feed=port_->feed_failure;f.control=result.failure;}
+    if(port_&&port_->work_failure.kind!=MovieFrameWorkError::none){f.kind=MovieServiceError::native_work;f.operation="movie service native work observation failure";f.native_work=port_->work_failure;f.control=result.failure;}
     MovieServiceFailure cleanup;close_owned(cleanup);
     if(cleanup.kind!=MovieServiceError::none){
         const auto observation=cleanup.observation;
@@ -172,9 +180,10 @@ bool NativeMovieService::stop(MovieServiceFailure& f) noexcept {if(!access(f))re
 bool NativeMovieService::close(MovieServiceFailure& f) noexcept {if(!access(f))return false;Guard call(in_call_);const bool ok=close_owned(f);state_.activity=ok?MovieServiceActivity::closed:MovieServiceActivity::error;return ok;}
 NativeMovieService::~NativeMovieService(){if(std::this_thread::get_id()!=owner_||in_call_)std::terminate();in_call_=true;MovieServiceFailure ignored;close_owned(ignored);}
 std::optional<MovieServiceRequestIdentity> NativeMovieService::request_identity(MovieServiceFailure& f) const noexcept {if(!access(f))return {};Guard call(in_call_);if(!state_.active||!port_||!port_->context){fail(f,MovieServiceError::invalid_state,"movie service no live request identity");return {};}try{return MovieServiceRequestIdentity{state_.generation,port_->key,port_->identity};}catch(const std::bad_alloc&){fail(f,MovieServiceError::allocation,"movie service identity allocation");return {};}}
-std::optional<MovieServiceSnapshot> NativeMovieService::snapshot(MovieServiceFailure& f) const noexcept {if(!access(f))return {};Guard call(in_call_);try{auto result=state_;result.base_volume=settings_.current_base_volume();if(session_){MoviePlaybackSnapshot actual;if(!session_->snapshot(actual,f.session)){f.observation=observation_error(f.session);fail(f,MovieServiceError::session,"movie service live playback observation");return {};}result.playback=std::move(actual);result.playback_retained=false;result.playback_snapshot_failure.reset();}if(port_&&port_->context){MovieControlFailure why;result.context=port_->context->snapshot(why);if(!result.context){f.control=why;fail(f,MovieServiceError::context,"movie service context snapshot");return {};}}return result;}catch(const std::bad_alloc&){fail(f,MovieServiceError::allocation,"movie service snapshot allocation");return {};}}
+std::optional<MovieServiceSnapshot> NativeMovieService::snapshot(MovieServiceFailure& f) const noexcept {if(!access(f))return {};Guard call(in_call_);try{auto result=state_;result.base_volume=settings_.current_base_volume();if(session_){MoviePlaybackSnapshot actual;if(!session_->snapshot(actual,f.session)){f.observation=observation_error(f.session);fail(f,MovieServiceError::session,"movie service live playback observation");return {};}result.playback=std::move(actual);result.playback_retained=false;result.playback_snapshot_failure.reset();}if(port_&&port_->context){MovieControlFailure why;result.context=port_->context->snapshot(why);if(port_->work){result.native_work=port_->work->snapshot(f.native_work);if(!result.native_work){fail(f,MovieServiceError::native_work,"movie service native work snapshot");return {};}}if(!result.context){f.control=why;fail(f,MovieServiceError::context,"movie service context snapshot");return {};}}return result;}catch(const std::bad_alloc&){fail(f,MovieServiceError::allocation,"movie service snapshot allocation");return {};}}
 std::optional<MovieAdmissionCandidate> NativeMovieService::parse_candidate(const MovieServiceRequestIdentity& id,MovieServiceFailure& f) noexcept {
     if(!event_access(id,f))return {};Guard call(in_call_);
+    auto active=port_->work->snapshot(f.native_work);if(!active||active->outer_active||active->waiting_output){fail(f,MovieServiceError::invalid_state,"movie service outer parse during native work");return {};}
     auto result=port_->feed->parse_next(f.feed);
     if(!result){fail(f,MovieServiceError::source_feed,"movie service parse source candidate");terminal_failure(f);}return result;
 }
@@ -214,10 +223,32 @@ std::optional<MovieOutputPositionUpdate> NativeMovieService::work_owned(const Mo
 }
 std::optional<MovieOutputPositionUpdate> NativeMovieService::complete_work(const MovieServiceRequestIdentity& id,const MovieOutputPositionWork& work,std::optional<std::uint64_t> timing,const std::optional<MoviePictureSource>& selected,MovieServiceFailure& f) noexcept {if(!event_access(id,f))return {};Guard call(in_call_);return work_owned(work,timing,selected,false,f);}
 std::optional<MovieOutputPositionUpdate> NativeMovieService::flush_work(const MovieServiceRequestIdentity& id,const MovieOutputPositionWork& work,std::optional<std::uint64_t> timing,const std::optional<MoviePictureSource>& selected,MovieServiceFailure& f) noexcept {if(!event_access(id,f))return {};Guard call(in_call_);return work_owned(work,timing,selected,true,f);}
+bool NativeMovieService::begin_native_work(const MovieServiceRequestIdentity& id,std::uint64_t outer,std::uint64_t timing,MovieServiceFailure& f) noexcept {
+    if(!event_access(id,f))return false;Guard call(in_call_);
+    auto current=port_->admissions.find(outer);
+    if(current==port_->admissions.end()||!port_->admissions.contains(timing))return fail(f,MovieServiceError::context,"movie service native work requires actual outer/timing admissions");
+    if(!port_->work->begin_outer(outer,current->second,timing,f.native_work)){fail(f,MovieServiceError::native_work,"movie service begin native frame work");terminal_failure(f);return false;}return true;
+}
+std::optional<MovieFrameWorkResult> NativeMovieService::step_native_work(const MovieServiceRequestIdentity& id,MovieServiceFailure& f) noexcept {
+    if(!event_access(id,f))return {};Guard call(in_call_);
+    auto result=port_->work->next(f.native_work);
+    if(!result){fail(f,MovieServiceError::native_work,"movie service actual native frame processing");terminal_failure(f);return {};}
+    if(result->work&&!work_owned(*result->work,result->timing_admission_id,result->selected,false,f))return {};
+    return result;
+}
+std::optional<MovieFrameWorkResult> NativeMovieService::flush_native_work(const MovieServiceRequestIdentity& id,MovieServiceFailure& f) noexcept {
+    if(!event_access(id,f))return {};Guard call(in_call_);MoviePlaybackSnapshot actual;
+    if(!session_->snapshot(actual,f.session)){fail(f,MovieServiceError::session,"movie service actual decoder drain observation");terminal_failure(f);return {};}
+    auto result=port_->work->flush_after_decoder_end(actual.decoder_eof,f.native_work);
+    if(!result){fail(f,MovieServiceError::native_work,"movie service actual native final work");terminal_failure(f);return {};}
+    if(result->work&&!work_owned(*result->work,result->timing_admission_id,result->selected,result->progress==MovieFrameWorkProgress::flushed,f))return {};
+    return result;
+}
 #define CONTEXT_EVENT(name,args,callargs) bool NativeMovieService::name args noexcept {if(!event_access(id,f))return false;Guard call(in_call_);if(!port_->context->name callargs){fail(f,MovieServiceError::context,"movie service source " #name);terminal_failure(f);return false;}return true;}
 CONTEXT_EVENT(advance_position_origin,(const MovieServiceRequestIdentity& id,std::uint64_t p,MovieServiceFailure& f),(p,f.control))
 CONTEXT_EVENT(maintenance,(const MovieServiceRequestIdentity& id,MovieServiceMaintenanceGates gates,MovieServiceFailure& f),(gates,f.control))
 CONTEXT_EVENT(increment_service,(const MovieServiceRequestIdentity& id,MovieClockRational r,MovieServiceFailure& f),(r,f.control))
+CONTEXT_EVENT(increment_service_ticks,(const MovieServiceRequestIdentity& id,std::int64_t expected,__int128 ticks,MovieServiceFailure& f),(expected,ticks,f.control))
 CONTEXT_EVENT(sample_service,(const MovieServiceRequestIdentity& id,bool admitted,MovieServiceFailure& f),(admitted,f.control))
 CONTEXT_EVENT(sample_audio,(const MovieServiceRequestIdentity& id,MovieClockRational audio,MovieClockRational timer,bool admitted,bool active,MovieServiceFailure& f),(audio,timer,admitted,active,f.control))
 CONTEXT_EVENT(select_direct_control,(const MovieServiceRequestIdentity& id,MovieServiceFailure& f),(f.control))

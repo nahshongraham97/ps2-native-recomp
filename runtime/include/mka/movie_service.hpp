@@ -1,6 +1,7 @@
 #pragma once
 #include "mka/movie_native_context.hpp"
 #include "mka/movie_output_position.hpp"
+#include "mka/movie_frame_work.hpp"
 #include "mka/movie_playback_session.hpp"
 namespace mka::video {
 struct MovieServicePolicyConfiguration {
@@ -36,7 +37,7 @@ using MovieServiceSessionFactory=std::function<std::unique_ptr<NativeMoviePlayba
     const RetailMovieRequest&,std::int64_t game_language_code,MovieSessionPolicyFactory,
     NativeMovieControlContext&,MovieSessionFailure&)>;
 enum class MovieServiceError {none,wrong_thread,invalid_state,invalid_request,foreign_request,
-    missing_factory,profile,session,context,position,allocation,overflow,source_feed};
+    missing_factory,profile,session,context,position,allocation,overflow,source_feed,native_work};
 struct MovieServiceFailure {
     MovieServiceError kind=MovieServiceError::none;
     const char* operation="";
@@ -45,6 +46,7 @@ struct MovieServiceFailure {
     MovieOutputPositionFailure position;
     MovieAdmissionFeedFailure feed;
     MovieControlFailure observation;
+    MovieFrameWorkFailure native_work;
 };
 struct MovieServiceRequestIdentity {
     std::uint64_t generation=0;
@@ -66,6 +68,7 @@ struct MovieServiceSnapshot {
     std::optional<MoviePlaybackSnapshot> playback;
     bool playback_retained=false;
     std::optional<MovieControlFailure> playback_snapshot_failure;
+    std::optional<MovieFrameWorkSnapshot> native_work;
 };
 struct MovieServicePort;
 class NativeMovieService final {
@@ -106,6 +109,11 @@ public:
     bool advance_position_origin(const MovieServiceRequestIdentity&,std::uint64_t actual_position,MovieServiceFailure&) noexcept;
     bool maintenance(const MovieServiceRequestIdentity&,MovieServiceMaintenanceGates,MovieServiceFailure&) noexcept;
     bool increment_service(const MovieServiceRequestIdentity&,MovieClockRational,MovieServiceFailure&) noexcept;
+    bool increment_service_ticks(const MovieServiceRequestIdentity&,std::int64_t expected_counter,__int128 nonnegative_ticks,MovieServiceFailure&) noexcept;
+    bool begin_native_work(const MovieServiceRequestIdentity&,std::uint64_t outer_admission_id,
+        std::uint64_t timing_admission_id,MovieServiceFailure&) noexcept;
+    std::optional<MovieFrameWorkResult> step_native_work(const MovieServiceRequestIdentity&,MovieServiceFailure&) noexcept;
+    std::optional<MovieFrameWorkResult> flush_native_work(const MovieServiceRequestIdentity&,MovieServiceFailure&) noexcept;
     bool sample_service(const MovieServiceRequestIdentity&,bool query_admitted,MovieServiceFailure&) noexcept;
     bool sample_audio(const MovieServiceRequestIdentity&,MovieClockRational,MovieClockRational,
         bool query_admitted,bool active,MovieServiceFailure&) noexcept;

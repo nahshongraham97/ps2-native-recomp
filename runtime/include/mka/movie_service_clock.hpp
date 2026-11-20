@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <optional>
 namespace mka::video {
-enum class MovieServiceClockError { none,invalid_owner,invalid_frequency,invalid_rational,unsupported_mode,unsupported_rate,overflow };
+enum class MovieServiceClockError { none,invalid_owner,invalid_frequency,invalid_rational,unsupported_mode,unsupported_rate,overflow,counter_changed };
 struct MovieServiceClockFailure { MovieServiceClockError kind=MovieServiceClockError::none; };
 const char* movie_service_clock_error_name(MovieServiceClockError) noexcept;
 enum class MovieServiceSourceMode { mode0,mode1,mode2 };
@@ -35,6 +35,9 @@ public:
     bool assign_retained(std::int64_t,MovieServiceClockFailure&) noexcept;
     bool invalidate_retained(MovieServiceClockFailure&) noexcept;
     bool increment(MovieClockRational,MovieServiceClockFailure&) noexcept;
+    // Native elapsed-time integration. One atomic update after wide projection;
+    // both actual stored destinations retain the ordinary increment semantics.
+    bool increment_ticks(std::int64_t expected_counter,__int128 nonnegative_ticks,MovieServiceClockFailure&) noexcept;
     bool increment_rate(std::int64_t source_code,MovieServiceClockFailure&) noexcept;
     std::optional<MovieServiceRateProjection> project_rate(std::int64_t source_code,MovieServiceClockFailure&) const noexcept;
     std::optional<bool> eligible(MovieClockRational target,MovieServiceClockFailure&) noexcept;

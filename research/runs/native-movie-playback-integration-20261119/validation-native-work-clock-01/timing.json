@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_service_host_clock.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules\\MOVIER.ovl"
+  ],
+  "exit": 0,
+  "stdout": "PASS native service host timing binding cumulative elapsed/explicit audio; no master-policy or output anchor admission\n",
+  "stderr": "",
+  "executable_sha256": "cbd5adb3ecfedaaf7b2e738709a22f05d1450808e80dc1473cef8040219f6155",
+  "executable_after_sha256": "cbd5adb3ecfedaaf7b2e738709a22f05d1450808e80dc1473cef8040219f6155"
+}

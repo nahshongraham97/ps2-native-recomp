@@ -71,6 +71,7 @@ public:
     bool advance_position_origin(std::uint64_t actual_published_position,MovieControlFailure&) noexcept;
     bool maintenance(MovieServiceMaintenanceGates,MovieControlFailure&) noexcept;
     bool increment_service(MovieClockRational,MovieControlFailure&) noexcept;
+    bool increment_service_ticks(std::int64_t expected_counter,__int128 nonnegative_ticks,MovieControlFailure&) noexcept;
     bool sample_service(bool query_admitted,MovieControlFailure&) noexcept;
     // query_admitted and active are actual source control inputs; inactive
     // retains the prior pair, unavailable explicitly selects retained route.

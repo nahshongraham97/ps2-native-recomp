@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_kernel_policies.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules\\MOVIER.ovl"
+  ],
+  "exit": 0,
+  "stdout": "PASS actual kernel policies with explicit fixture inputs; no retail profile/timeline admission\n",
+  "stderr": "",
+  "executable_sha256": "d4a6cb38db7b5786a0bc0d84f60e1d8d2fd0b618b73f037eab6ea79fa772cf4c",
+  "executable_after_sha256": "d4a6cb38db7b5786a0bc0d84f60e1d8d2fd0b618b73f037eab6ea79fa772cf4c"
+}

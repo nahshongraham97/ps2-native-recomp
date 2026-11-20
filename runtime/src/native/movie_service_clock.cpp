@@ -21,6 +21,7 @@ const char* movie_service_clock_error_name(MovieServiceClockError e) noexcept {
     case MovieServiceClockError::unsupported_mode:return "unsupported_mode";
     case MovieServiceClockError::unsupported_rate:return "unsupported_rate";
     case MovieServiceClockError::overflow:return "overflow";
+    case MovieServiceClockError::counter_changed:return "counter_changed";
     }return "unknown_error";
 }
 std::optional<MovieServiceClockConfig> movie_service_source_config(MovieServiceSourceMode mode,MovieServiceClockFailure& f) noexcept {
@@ -75,6 +76,19 @@ bool NativeMovieServiceClock::increment_rate(std::int64_t code,MovieServiceClock
     f={};if(!valid_)return fail(f,MovieServiceClockError::invalid_owner);
     if(!rate_valid(code))return fail(f,MovieServiceClockError::unsupported_rate);
     return increment(code==0?MovieClockRational{0,29970}:MovieClockRational{1000,rates[code]},f);
+}
+bool NativeMovieServiceClock::increment_ticks(std::int64_t expected,Wide delta,MovieServiceClockFailure& f) noexcept {
+    f={};if(!valid_)return fail(f,MovieServiceClockError::invalid_owner);
+    if(state_.counter!=expected)return fail(f,MovieServiceClockError::counter_changed);
+    if(delta<0)return fail(f,MovieServiceClockError::invalid_rational);
+    // These differences fit signed128. Bound before adding an unrestricted
+    // positive128 input, then narrow only the two actual stored destinations.
+    const Wide counter_room=Wide(INT64_MAX)-state_.counter;
+    const Wide retained_room=Wide(INT64_MAX)-state_.retained.value_or(-1);
+    if(delta>counter_room||delta>retained_room)return fail(f,MovieServiceClockError::overflow);
+    const auto counter=std::int64_t(Wide(state_.counter)+delta);
+    const auto value=std::int64_t(Wide(state_.retained.value_or(-1))+delta);
+    state_.counter=counter;state_.retained=retained(value);return true;
 }
 std::optional<MovieServiceRateProjection> NativeMovieServiceClock::project_rate(std::int64_t code,MovieServiceClockFailure& f) const noexcept {
     f={};if(!valid_) { fail(f,MovieServiceClockError::invalid_owner);return std::nullopt; }

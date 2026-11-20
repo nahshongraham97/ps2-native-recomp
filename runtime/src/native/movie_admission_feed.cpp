@@ -6,11 +6,15 @@
 #include <map>
 #include <new>
 #include <stdexcept>
+#include <type_traits>
 
 namespace mka::video {
 struct MovieAdmissionFeedState {
     NativeMovieHeaderBoundary boundary;
     MovieAdmissionCurrent current;
+    MovieAdmissionCurrent inner_current,outer_current;
+    bool inner_active=false,inner_progressive=false,inner_repeat=false,inner_top=false;
+    bool outer_progressive=false,outer_repeat=false,outer_top=false;
     std::map<std::uint64_t, MovieVideoPrefixObserved> prefixes;
     std::optional<std::uint64_t> last_prefix;
     std::shared_ptr<const MovieCodecInputReceipt> last_input_receipt;
@@ -22,9 +26,11 @@ struct MovieAdmissionFeedState {
     bool in_call = false;
     const std::thread::id owner = std::this_thread::get_id();
     MovieAdmissionFeedState(NativeMovieHeaderBoundary b, MovieAdmissionCurrent c)
-        : boundary(std::move(b)), current(std::move(c)) {}
+        : boundary(std::move(b)), current(std::move(c)) { inner_current.source=current.source; }
 };
 namespace {
+static_assert(std::is_nothrow_copy_assignable_v<MovieAdmissionCurrent>);
+static_assert(std::is_nothrow_move_assignable_v<MovieAdmissionCurrent>);
 struct Guard { bool& flag; explicit Guard(bool& f) : flag(f) { flag = true; } ~Guard() { flag = false; } };
 bool fail(MovieAdmissionFeedFailure& f, MovieAdmissionFeedError e) noexcept { f.kind = e; return false; }
 bool pes_valid(const MovieVideoPrefixObserved& p) noexcept {
@@ -63,6 +69,28 @@ bool NativeMovieAdmissionFeed::access(MovieAdmissionFeedFailure& f, bool allow_f
     if (state_->in_call) return fail(f, MovieAdmissionFeedError::reentry);
     if (state_->failed && !allow_failed) return fail(f, MovieAdmissionFeedError::failed_owner);
     return true;
+}
+bool NativeMovieAdmissionFeed::begin_inner_parse(MovieAdmissionFeedFailure& f) noexcept {
+    if(!access(f))return false;Guard guard(state_->in_call);auto& s=*state_;
+    if(s.inner_active)return fail(f,MovieAdmissionFeedError::scope);
+    auto next=s.inner_current;
+    auto merge=[](auto& into,const auto& from){if(from&&(!into||from->origin.prefix.es_prefix_first_byte>into->origin.prefix.es_prefix_first_byte))into=from;};
+    merge(next.sequence,s.current.sequence);merge(next.sequence_extension,s.current.sequence_extension);
+    merge(next.display_extension,s.current.display_extension);merge(next.gop,s.current.gop);
+    merge(next.picture,s.current.picture);merge(next.coding,s.current.coding);
+    merge(next.quant_matrix,s.current.quant_matrix);merge(next.userdata,s.current.userdata);
+    auto progressive=s.inner_progressive,repeat=s.inner_repeat,top=s.inner_top;
+    if(next.sequence_extension)progressive=std::get<MovieSequenceExtension>(next.sequence_extension->unit.payload).progressive_sequence;
+    if(next.coding){const auto& coding=std::get<MoviePictureCodingExtension>(next.coding->unit.payload);repeat=coding.repeat_first_field;top=coding.top_field_first;}
+    constexpr std::array<std::uint8_t,8> flags{0,0,1,1,0,0,2,4};next.info54=flags[4*unsigned(progressive)+2*unsigned(repeat)+unsigned(top)];next.info57=repeat;
+    s.outer_current=s.current;s.outer_progressive=s.progressive;s.outer_repeat=s.repeat;s.outer_top=s.top;
+    s.current=std::move(next);s.progressive=progressive;s.repeat=repeat;s.top=top;s.inner_active=true;return true;
+}
+bool NativeMovieAdmissionFeed::end_inner_parse(MovieAdmissionFeedFailure& f) noexcept {
+    if(!access(f,true))return false;Guard guard(state_->in_call);auto& s=*state_;
+    if(!s.inner_active)return fail(f,MovieAdmissionFeedError::scope);
+    s.inner_current=s.current;s.inner_progressive=s.progressive;s.inner_repeat=s.repeat;s.inner_top=s.top;
+    s.current=std::move(s.outer_current);s.progressive=s.outer_progressive;s.repeat=s.outer_repeat;s.top=s.outer_top;s.inner_active=false;return true;
 }
 bool NativeMovieAdmissionFeed::push(const MovieSourceObservationBatch& batch, MovieAdmissionFeedFailure& f) noexcept {
     if (!access(f)) return false;
@@ -251,6 +279,40 @@ std::optional<MoviePictureBodyExtent> NativeMovieAdmissionFeed::picture_body_ext
         out.state = MoviePictureBodyExtentState::boundary_found; out.es_end = view->es_end; out.ended_at_program_end = true; return out;
     }
 }
+std::optional<MoviePictureBodyExtent> NativeMovieAdmissionFeed::accepted_picture_body(
+        std::shared_ptr<const MovieCodecInputReceipt> receipt, MovieAdmissionFeedFailure& f) const noexcept {
+    if (!access(f)) return {};
+    Guard guard(state_->in_call);
+    const auto& s = *state_;
+    if (!receipt) { f.input_receipt=MovieInputReceiptError::null_receipt; fail(f,MovieAdmissionFeedError::invalid_source);return {}; }
+    if (receipt->source_key()!=s.current.source->source_key||receipt->source_identity()!=s.current.source->identity) {
+        f.input_receipt=MovieInputReceiptError::foreign_source;fail(f,MovieAdmissionFeedError::foreign_source);return {};
+    }
+    if (!s.pending||!s.current.picture||!s.current.coding||!s.last_input_receipt) {fail(f,MovieAdmissionFeedError::invalid_order);return {};}
+    if (receipt->stream_id()!=s.last_input_receipt->stream_id()||receipt->stream_id()!=s.current.picture->origin.pes.stream_id||receipt->stream_id()!=s.current.coding->origin.pes.stream_id||receipt->input_id()>s.last_input_receipt->input_id()||
+        receipt->es_begin()>=receipt->es_end()||receipt->es_end()>s.last_input_receipt->es_end()) {fail(f,MovieAdmissionFeedError::invalid_order);return {};}
+    auto view=s.boundary.snapshot(f.boundary);if(!view){fail(f,MovieAdmissionFeedError::allocation);return {};}
+    const auto picture=s.current.picture->origin.prefix.es_prefix_first_byte,coding=s.current.coding->origin.prefix.es_prefix_first_byte;
+    if (picture<receipt->es_begin()||picture>=receipt->es_end()||coding<=picture||coding>=receipt->es_end()||
+        s.current.coding->consumed_end>view->es_begin||view->es_begin<receipt->es_begin()||view->es_begin>=receipt->es_end()||receipt->es_end()>view->es_end) {fail(f,MovieAdmissionFeedError::range);return {};}
+    auto first=s.prefixes.find(view->es_begin);
+    if(first==s.prefixes.end()||(first->second.prefix.raw_codeword&255)!=1||first->second.pes.stream_id!=receipt->stream_id()){fail(f,MovieAdmissionFeedError::invalid_prefix);return {};}
+    MoviePictureBodyExtent out;out.es_begin=view->es_begin;out.es_end=receipt->es_end();out.first_slice=first->second;out.current=s.current;
+    const auto limit=static_cast<std::size_t>(receipt->es_end()-view->es_begin);const auto& bytes=view->bytes;if(limit<4){fail(f,MovieAdmissionFeedError::range);return {};}std::size_t at=0;
+    for(;;){
+        const auto observed=s.prefixes.find(view->es_begin+at);
+        if(observed==s.prefixes.end()){fail(f,MovieAdmissionFeedError::invalid_prefix);return {};}
+        const auto code=bytes[at+3];
+        if(code==0xb7&&at+4==limit&&out.slice_count){out.es_end=view->es_begin+at;out.next_header=observed->second;break;}
+        if(code<1||code>0xaf){fail(f,MovieAdmissionFeedError::unsupported);return {};}
+        ++out.slice_count;std::size_t next=at+4;
+        while(next+4<=limit&&(bytes[next]||bytes[next+1]||bytes[next+2]!=1))++next;
+        if(next+4<=limit){if(next==at+4){fail(f,MovieAdmissionFeedError::parser);return {};}at=next;continue;}
+        if(limit==at+4||(limit>=3&&bytes[limit-3]==0&&bytes[limit-2]==0&&bytes[limit-1]==1)){fail(f,MovieAdmissionFeedError::parser);return {};}
+        break;
+    }
+    out.state=MoviePictureBodyExtentState::boundary_found;return out;
+}
 std::optional<MovieHeaderBoundaryProposal> NativeMovieAdmissionFeed::proposal(MovieAdmissionFeedFailure& f) noexcept {
     if (!access(f)) return {};
     Guard guard(state_->in_call);
@@ -266,6 +328,6 @@ std::optional<MovieAdmissionFeedSnapshot> NativeMovieAdmissionFeed::snapshot(Mov
     auto view = state_->boundary.snapshot(f.boundary);
     if (!view) { fail(f, MovieAdmissionFeedError::allocation); return {}; }
     return MovieAdmissionFeedSnapshot{state_->current, state_->sequence, view->es_begin, view->es_end,
-        view->bytes.size(), state_->pending, state_->program_end, state_->failed,state_->last_input_receipt};
+        view->bytes.size(), state_->pending, state_->program_end, state_->failed,state_->last_input_receipt,state_->inner_active};
 }
 } // namespace mka::video
