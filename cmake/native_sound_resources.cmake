@@ -112,3 +112,12 @@ add_executable(test_native_program_host_clock EXCLUDE_FROM_ALL tests/test_progra
 target_link_libraries(test_native_program_host_clock PRIVATE mka_native_sound_resources)
 add_executable(test_native_program_output_activation EXCLUDE_FROM_ALL tests/test_program_output_activation.cpp)
 target_link_libraries(test_native_program_output_activation PRIVATE mka_native_sound_resources)
+
+# Actual typed forced output retirement with retained native release tails.
+add_executable(test_native_forced_output_retirement EXCLUDE_FROM_ALL tests/test_forced_output_retirement.cpp)
+target_link_libraries(test_native_forced_output_retirement PRIVATE mka_native_sound_resources)
+if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    add_executable(test_native_forced_output_retirement_failure EXCLUDE_FROM_ALL tests/test_forced_output_retirement_failure.cpp)
+    target_link_libraries(test_native_forced_output_retirement_failure PRIVATE mka_native_sound_resources)
+    target_link_options(test_native_forced_output_retirement_failure PRIVATE "-Wl,--wrap=_Znwy")
+endif()

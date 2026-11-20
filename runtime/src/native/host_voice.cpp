@@ -86,13 +86,20 @@ std::optional<std::vector<float>> HostVoice::render(std::size_t frames,HostVoice
     }catch(const std::bad_alloc&){failure.kind=HostVoiceError::allocation_failed;}
      catch(const std::length_error&){failure.kind=HostVoiceError::host_capacity;}return std::nullopt;
 }
+bool HostVoice::validate_program_owner(const std::shared_ptr<const PreparedProgram>& owner,HostVoiceFailure& failure) const noexcept{
+    failure={};if(!data_){failure.kind=HostVoiceError::moved_voice;return false;}
+    if(!owner||owner!=data_->owner){failure.kind=HostVoiceError::foreign_program;return false;}
+    return true;
+}
+bool HostVoice::stop_for_resource_retirement(const std::shared_ptr<const PreparedProgram>& owner,HostVoiceFailure& failure) noexcept{
+    if(!validate_program_owner(owner,failure))return false;
+    // Normal2E654->3403C/342E8 freezes source position before release.
+    data_->frozen=true;if(data_->phase!=Data::Phase::off)data_->phase=Data::Phase::release;return true;
+}
 bool HostVoice::stop_from_program(const ProgramStep& event,HostVoiceFailure& failure){
     failure={};if(!data_){failure.kind=HostVoiceError::moved_voice;return false;}
     if(event.kind!=ProgramStepKind::program_stop){failure.kind=HostVoiceError::wrong_stop_event;return false;}
-    if(event.owner!=data_->owner){failure.kind=HostVoiceError::foreign_program;return false;}
-    // Normal2E654→3403C/342E8 zeroes pitch before key-off: freeze the
-    // interpolated source position while the explicitly supplied release runs.
-    data_->frozen=true;if(data_->phase!=Data::Phase::off)data_->phase=Data::Phase::release;return true;
+    return stop_for_resource_retirement(event.owner,failure);
 }
 bool HostVoice::active()const noexcept{return data_&&data_->phase!=Data::Phase::off;}
 std::uint64_t HostVoice::source_index()const noexcept{return data_?data_->index:0;}

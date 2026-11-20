@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_program_host_clock.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_PROGRAM_HOST_CLOCK: shared explicit epoch/integer milliseconds/wrap/failure atomicity/reentry/concurrent readers; no original kernel epoch or physical timing fidelity claim\n",
+  "stderr": "",
+  "executable_sha256": "5dfd3bea2e0ae5c0e2679663ecf585c338c3f6ee64e54f8a3d067360da5dd070",
+  "executable_after_sha256": "5dfd3bea2e0ae5c0e2679663ecf585c338c3f6ee64e54f8a3d067360da5dd070"
+}

@@ -5,7 +5,7 @@ namespace mka::sound {
 enum class ProgramCopyError {none,absent_runtime_reference,empty_program,missing_instance,
     duplicate_instance,foreign_instance,alternate_instance,missing_terminator,already_scheduled,
     alternate_schedule_unbound,not_scheduled,foreign_step,wrong_command,output_already_bound,
-    unsupported_stop_mode,wrong_stop_metadata,stopped_copy,voice_failed,resource_access,allocation_failed,host_capacity};
+    unsupported_stop_mode,wrong_stop_metadata,stopped_copy,outputs_retired,transfer_capacity,invalid_transfer_destination,invalid_transfer_provenance,voice_failed,resource_access,allocation_failed,host_capacity};
 struct ProgramCopyFailure {ProgramCopyError kind=ProgramCopyError::none;std::size_t command_index=0;HostVoiceFailure voice;AudioResourceFailure resource;};
 struct NormalPlayInstanceObservation {
     NormalInstanceTemplateState state;
@@ -52,6 +52,9 @@ public:
     bool stop_outputs(const ProgramStep&,ProgramCopyFailure&);
 private:
     friend class NativePlaybackOwner;
+    std::shared_ptr<const void> bank_identity() const noexcept;
+    bool validate_forced_output_transfer(const std::vector<HostVoice>& destination,ProgramCopyFailure&) const noexcept;
+    bool transfer_forced_outputs(std::vector<HostVoice>& destination,ProgramCopyFailure&) noexcept;
     // The existing native caller supplies an already activated deadline. This
     // binds a private copy without inventing a source clock/admission receipt.
     std::optional<OrdinaryProgramSchedule> bind_preactivated_schedule(ProgramClockWord,std::uint16_t,ProgramCopyFailure&);

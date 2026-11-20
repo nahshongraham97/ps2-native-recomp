@@ -18,6 +18,7 @@ struct NativeSoundContextConfiguration {std::size_t explicit_role_count;};
 struct NativeProgramOutputRequest {std::int32_t selector;std::int16_t priority;};
 struct SoundContextObservation {
     std::size_t pending_preparations=0,programs=0,active_voices=0;
+    std::size_t retired_groups=0,retired_voices=0,active_retired_voices=0;
 };
 class NativePlayHandle {
 public:
@@ -53,7 +54,7 @@ enum class PlaybackError { none, moved_owner, closed, invalid_output_rate,
     allocation_failed, host_capacity, native_exception, operation_active, closing,
     bank_unloading, bank_state_unknown, close_state_unknown, unknown_context, foreign_context, retired_context,
     unsupported_play_flags, copy_failed, invalid_output_selector, unsupported_output_selector,
-    output_priority_refused, clock_failed, invalid_clock };
+    output_priority_refused, clock_failed, invalid_clock, unknown_retired_output, retired_output };
 struct PlaybackFailure {
     PlaybackError kind=PlaybackError::none;
     BankServiceFailure service;
@@ -74,6 +75,24 @@ struct PlaybackObservation {
     std::optional<std::size_t> output_role;
     bool output_owned=false,dispatch_live=false,replaced=false;
     std::int16_t priority=0;
+};
+class NativeRetiredOutputHandle {
+public:
+    NativeRetiredOutputHandle()=default;
+private:
+    std::shared_ptr<const void> owner_,identity_;
+    friend class NativePlaybackOwner;
+};
+struct ForcedPlaybackRetirement {
+    NativeRetiredOutputHandle outputs;
+    std::size_t voices=0;
+    bool native_resources_released=false;
+};
+struct RetiredOutputObservation {
+    std::size_t voices=0,active_voices=0;
+    std::optional<std::uint64_t> first_voice_source_index;
+    BankWireToken original_bank;
+    bool native_resources_released=false;
 };
 struct SoundContextStep {
     NativePlayHandle handle;
@@ -121,6 +140,12 @@ public:
     std::optional<std::vector<float>> mix(std::size_t host_frames,PlaybackFailure&);
     std::optional<PlaybackObservation> observe(const NativePlayHandle&,PlaybackFailure&) const;
     bool release(const NativePlayHandle&,PlaybackFailure&); // Only inactive entries.
+    // Typed normal resource retirement, distinct from script mode0 stop. Real
+    // voices keep releasing in the native mixer after clone/semantic disposal.
+    // These receipts do NOT complete source jobs/notifications/command12.
+    std::optional<ForcedPlaybackRetirement> force_retire(const NativePlayHandle&,PlaybackFailure&);
+    std::optional<std::vector<ForcedPlaybackRetirement>> force_retire_context_outputs(const NativeSoundContext&,PlaybackFailure&);
+    std::optional<RetiredOutputObservation> observe_retired(const NativeRetiredOutputHandle&,PlaybackFailure&) const;
     // No automatic pending-play cancellation/unload rule is inferred. A source
     // program awaiting its deadline or any active/releasing voice blocks unload.
     bool unload(const AudioBankCommand&,PlaybackFailure&);
@@ -128,6 +153,7 @@ public:
 private:
     std::optional<NativePlayHandle> play_impl(const NativeSoundContext&,const AudioBankCommand&,
         const NativePlayParameters&,bool sample_activation_clock,PlaybackFailure&);
+    std::optional<std::vector<ForcedPlaybackRetirement>> force_retire_impl(const NativePlayHandle*,const NativeSoundContext*,PlaybackFailure&);
     struct State;
     explicit NativePlaybackOwner(std::shared_ptr<State> s):state_(std::move(s)){}
     std::shared_ptr<State> state_;

@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <new>
 #include <stdexcept>
+#include <type_traits>
 namespace mka::sound {
 ProgramClockWord ordinary_initial_deadline(const CommandRecord& first,ProgramClockWord clock)noexcept{
     return {clock.milliseconds+static_cast<std::uint32_t>(first.delay_milliseconds())};
@@ -18,7 +19,7 @@ struct NativeProgramCopy::Impl {
     std::shared_ptr<const NativeRuntimePreparation> runtime;
     std::shared_ptr<PreparedProgram> data;
     std::vector<Instance> instances;
-    bool scheduled=false,stopped=false;
+    bool scheduled=false,stopped=false,outputs_retired=false;
     Instance* find(std::size_t index){for(auto& i:instances)if(i.command_index==index)return &i;return nullptr;}
     ~Impl(){instances.clear();data.reset();runtime.reset();reference.reset();}
 };
@@ -56,6 +57,40 @@ std::unique_ptr<NativeProgramCopy> NativeProgramCopy::clone(std::unique_ptr<Runt
     catch(const std::length_error&){f.kind=ProgramCopyError::host_capacity;}
     return {};
 }
+std::shared_ptr<const void> NativeProgramCopy::bank_identity() const noexcept{
+    return state_->runtime?state_->runtime->bank_:nullptr;
+}
+bool NativeProgramCopy::validate_forced_output_transfer(const std::vector<HostVoice>& destination,ProgramCopyFailure& f) const noexcept{
+    f={};
+    if(!state_->scheduled){f.kind=ProgramCopyError::not_scheduled;return false;}
+    if(state_->outputs_retired){f.kind=ProgramCopyError::outputs_retired;return false;}
+    if(!destination.empty()){f.kind=ProgramCopyError::invalid_transfer_destination;return false;}
+    if(!state_->reference||!state_->runtime||!state_->data){f.kind=ProgramCopyError::invalid_transfer_provenance;return false;}
+    for(const auto& occurrence:state_->data->normal_instances){
+        if(occurrence.cache_reference){f.kind=ProgramCopyError::invalid_transfer_provenance;f.command_index=occurrence.command_index;return false;}
+        if(occurrence.native_template.flags&2u){f.kind=ProgramCopyError::alternate_instance;f.command_index=occurrence.command_index;return false;}
+    }
+    std::size_t count=0;
+    for(const auto& instance:state_->instances)if(instance.output){
+        if(!instance.output->validate_program_owner(state_->data,f.voice)){f.kind=ProgramCopyError::voice_failed;f.command_index=instance.command_index;return false;}
+        ++count;
+    }
+    if(destination.capacity()<count){f.kind=ProgramCopyError::transfer_capacity;return false;}
+    return true;
+}
+bool NativeProgramCopy::transfer_forced_outputs(std::vector<HostVoice>& destination,ProgramCopyFailure& f) noexcept{
+    if(!validate_forced_output_transfer(destination,f))return false;
+    // Owner serializes all copy/output mutation. Every fallible condition and
+    // destination allocation precedes the first actual release-state change.
+    for(auto& instance:state_->instances)if(instance.output){
+        if(!instance.output->stop_for_resource_retirement(state_->data,f.voice)){f.kind=ProgramCopyError::voice_failed;f.command_index=instance.command_index;return false;}
+    }
+    static_assert(std::is_nothrow_move_constructible_v<HostVoice>);
+    for(auto& instance:state_->instances)if(instance.output){
+        destination.push_back(std::move(*instance.output));instance.output.reset();
+    }
+    state_->stopped=true;state_->outputs_retired=true;return true;
+}
 const std::vector<CommandRecord>& NativeProgramCopy::commands()const noexcept{return state_->data->commands;}
 std::optional<NormalPlayInstanceObservation> NativeProgramCopy::instance(std::size_t index,ProgramCopyFailure& f)const{
     f={};auto* i=state_->find(index);if(!i){f.kind=ProgramCopyError::missing_instance;f.command_index=index;return {};}
@@ -86,6 +121,7 @@ void NativeProgramCopy::append_outputs(std::vector<HostVoice*>& voices){
 }
 bool NativeProgramCopy::start_output(const ProgramStep& event,const NormalOutputParameters& p,ProgramCopyFailure& f){
     f={};if(!state_->scheduled){f.kind=ProgramCopyError::not_scheduled;return false;}
+    if(state_->outputs_retired){f.kind=ProgramCopyError::outputs_retired;return false;}
     if(state_->stopped){f.kind=ProgramCopyError::stopped_copy;return false;}
     if(event.kind!=ProgramStepKind::sample_start||event.owner!=state_->data){f.kind=ProgramCopyError::foreign_step;return false;}
     auto* i=state_->find(event.command_index);

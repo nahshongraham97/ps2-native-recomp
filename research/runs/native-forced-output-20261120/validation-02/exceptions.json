@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_audio_resource_exception.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "stdout": "PASS injected native preparation exceptions/whole-candidate cleanup/exact-token retries/failure completion; no production fault switch\n",
+  "stderr": "",
+  "executable_sha256": "72f1a343f292bd117fb4ad31c9f5591ddb284ac5f07eb2a72707d9a69cecc136",
+  "executable_after_sha256": "72f1a343f292bd117fb4ad31c9f5591ddb284ac5f07eb2a72707d9a69cecc136"
+}

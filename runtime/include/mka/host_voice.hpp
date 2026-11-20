@@ -32,6 +32,10 @@ public:
     std::optional<std::vector<float>> render(std::size_t frames,HostVoiceFailure&);
     // Proven normal stop path: freeze source position and enter release envelope.
     bool stop_from_program(const ProgramStep&,HostVoiceFailure&);
+    bool validate_program_owner(const std::shared_ptr<const PreparedProgram>&,HostVoiceFailure&) const noexcept;
+    // Typed resource detachment uses the same real normal release, without
+    // fabricating ordinary ProgramStep cleanup metadata or callback completion.
+    bool stop_for_resource_retirement(const std::shared_ptr<const PreparedProgram>&,HostVoiceFailure&) noexcept;
     bool active() const noexcept;
     std::uint64_t source_index() const noexcept;
     std::uint32_t output_rate() const noexcept;

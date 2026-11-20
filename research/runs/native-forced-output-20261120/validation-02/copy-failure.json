@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_program_copy_failure.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "stdout": "PASS native program copy allocation rollback: 7 failure sites; actual voice failure/retry; test-only allocator wrap\n",
+  "stderr": "",
+  "executable_sha256": "112eaed147f2450774e05a00611dfecc06a67538fe69326e01f383526a76c403",
+  "executable_after_sha256": "112eaed147f2450774e05a00611dfecc06a67538fe69326e01f383526a76c403"
+}

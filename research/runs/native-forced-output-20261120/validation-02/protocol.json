@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_audio_bank_protocol.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "stdout": "PASS verified audio bank framing and explicit host token binding; no preparation/completion/playback\n",
+  "stderr": "",
+  "executable_sha256": "9d3444897884d716ee117e3ce92bef2f60bd3705e75c2bbee75b35796b9f3403",
+  "executable_after_sha256": "9d3444897884d716ee117e3ce92bef2f60bd3705e75c2bbee75b35796b9f3403"
+}

@@ -20,6 +20,7 @@ private:
     std::shared_ptr<AudioResourceDomain> domain_;
     AudioControlFactors controls_;
     friend class PreparedBank;
+    friend class NativeProgramCopy;
 };
 // One semantic acquisition, distinct from independently retained immutable data.
 // A reference retains the actual bank record. Release is exactly once and may

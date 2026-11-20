@@ -1,0 +1,20 @@
+{
+  "status": "PREBUILD_BEFORE_SNAPSHOT_ENCODING_MISMATCH",
+  "build_started": false,
+  "original_snapshot_archive": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-movie-ingress-20261119\\native-forced-output-before-encoding-correction-20261120",
+  "corrections": [
+    {
+      "path": "runtime/include/mka/host_voice.hpp",
+      "git_blob_snapshot_sha256": "d634b56e80ef3c47eea5063d0d62529a8a3929a4e258dacc3c15658e5ba803e3",
+      "exact_recorded_before_sha256": "2def07068c2f90a44c8f5276d6e746daace7b32ee327578b299eabf12d1ec1de",
+      "representation": "LF body with terminal CRLF; exact recorded SHA independently matches"
+    },
+    {
+      "path": "runtime/src/native/host_voice.cpp",
+      "git_blob_snapshot_sha256": "4c2b2d17caf135c69443f6b2dac009182bfe96eb4230d579fc5e1d65a79d31b1",
+      "exact_recorded_before_sha256": "9ba81b9a267a29e46ef4e03cc6b67727f928e41b3c22232d7b7d6b3f80522fd2",
+      "representation": "LF body with terminal CRLF; exact recorded SHA independently matches"
+    }
+  ],
+  "action": "No current code/review change. Reconstruct only exact historical bytes matched by prior SHA; original Git-blob snapshots and failed preflight remain preserved"
+}
