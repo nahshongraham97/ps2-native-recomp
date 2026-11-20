@@ -43,3 +43,19 @@ if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
     target_link_options(test_native_audio_resource_exception PRIVATE
         "-Wl,--wrap=_ZN3mka5sound12PreparedBank7prepareENS0_15BankAssetSourceERNS0_21BankPreparationReportERNS0_18PreparationFailureE")
 endif()
+
+# Actual native playback/resource ownership only; no device or game linkage.
+add_executable(test_native_playback_reservation EXCLUDE_FROM_ALL tests/test_playback_reservation.cpp)
+target_link_libraries(test_native_playback_reservation PRIVATE mka_native_sound_resources)
+if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    add_executable(test_native_playback_reservation_gaps EXCLUDE_FROM_ALL tests/test_playback_reservation_gaps.cpp)
+    target_link_libraries(test_native_playback_reservation_gaps PRIVATE mka_native_sound_resources)
+    foreach(symbol
+        _ZN3mka5sound16AudioBankService15prepare_programERKNS0_16AudioBankCommandERNS0_18PreparationFailureERNS0_18BankServiceFailureE
+        _ZN3mka5sound16AudioBankService6unloadERKNS0_16AudioBankCommandERNS0_18BankServiceFailureE
+        _ZN3mka5sound16AudioBankService15close_when_idleERNS0_18BankServiceFailureE
+        _ZN3mka5sound16AudioBankService9load_syncERKNS0_16AudioBankCommandENS0_13BankWireTokenERNS0_18BankServiceFailureE
+        _ZN3mka5sound16AudioBankService7run_oneERNS0_18BankServiceFailureE)
+        target_link_options(test_native_playback_reservation_gaps PRIVATE "-Wl,--wrap=${symbol}")
+    endforeach()
+endif()

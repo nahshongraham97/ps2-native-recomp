@@ -3,6 +3,17 @@
 #include "mka/host_voice.hpp"
 namespace mka::sound {
 class NativePlaybackOwner;
+// Explicit native ownership, unrelated to serialized context words or gain data.
+class NativeSoundContext {
+public:
+    NativeSoundContext()=default;
+private:
+    std::shared_ptr<const void> owner_,identity_;
+    friend class NativePlaybackOwner;
+};
+struct SoundContextObservation {
+    std::size_t pending_preparations=0,programs=0,active_voices=0;
+};
 class NativePlayHandle {
 public:
     NativePlayHandle()=default;
@@ -21,7 +32,8 @@ struct NativePlayParameters {
 enum class PlaybackError { none, moved_owner, closed, invalid_output_rate,
     unknown_handle, foreign_owner, retired_handle, active_playback,
     service_failed, program_failed, voice_failed, failed_playback_requires_stop,
-    allocation_failed, host_capacity };
+    allocation_failed, host_capacity, native_exception, operation_active, closing,
+    bank_unloading, bank_state_unknown, close_state_unknown, unknown_context, foreign_context, retired_context };
 struct PlaybackFailure {
     PlaybackError kind=PlaybackError::none;
     BankServiceFailure service;
@@ -37,7 +49,8 @@ struct PlaybackObservation {
     std::optional<PlaybackFailure> terminal_failure;
 };
 // Exclusive bank-service owner and native program/voice registry. Calls are
-// serialized. Source clock stepping and audio frames are explicit, separate
+// serialized only for admission, commit and executor/voice mutation. Native
+// resource work never holds the registry mutex. Source clock stepping and audio frames are explicit, separate
 // inputs: this does not invent an output-device scheduler or timing equivalence.
 class NativePlaybackOwner {
 public:
@@ -51,7 +64,13 @@ public:
     std::optional<AsyncBankSubmission> submit_async(const AudioBankCommand&,BankWireToken,PlaybackFailure&);
     bool run_one(PlaybackFailure&);
     std::optional<BankLoadCompletion> poll_completion(PlaybackFailure&);
-    std::optional<NativePlayHandle> play(const AudioBankCommand&,const NativePlayParameters&,PlaybackFailure&);
+    std::optional<NativeSoundContext> create_sound_context(PlaybackFailure&);
+    std::optional<SoundContextObservation> observe_sound_context(const NativeSoundContext&,PlaybackFailure&) const;
+    // Idle native teardown only: this is NOT retail command12/forced cleanup1.
+    bool release_sound_context(const NativeSoundContext&,PlaybackFailure&);
+    std::shared_ptr<AudioResourceDomain> resource_domain() const noexcept;
+    std::optional<NativePlayHandle> play(const NativeSoundContext&,const AudioBankCommand&,
+        const NativePlayParameters&,PlaybackFailure&);
     // At most one source operation per call. Start acknowledgement occurs only
     // after an owned HostVoice was created and inserted successfully.
     std::optional<ProgramStep> tick(const NativePlayHandle&,ProgramClockWord,PlaybackFailure&);
