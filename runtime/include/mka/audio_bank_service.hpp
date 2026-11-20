@@ -4,12 +4,13 @@ namespace mka::sound {
 enum class BankServiceError { none, moved_service, closed, wrong_command, unsupported_null_bank_token,
     duplicate_bank_token, unknown_bank_token, unloaded_bank_token, unpublished_bank_token,
     sync_during_async_unsupported, no_pending_work, worker_active, pending_completions,
-    cancellation_unsupported, protocol_failed, allocation_failed, host_capacity };
+    cancellation_unsupported, protocol_failed, allocation_failed, host_capacity, native_exception };
 struct BankServiceFailure { BankServiceError kind=BankServiceError::none; AudioProtocolFailure protocol; };
 struct BankLoadOutcome {
     // Sync source0x14 result: exact supplied opaque bank word on prepared success,
     // zero on load failure. Detailed host failure remains available separately.
     BankWireToken bank;
+    BankServiceError native_failure = BankServiceError::none;
     BankPreparationReport preparation;
     PreparationFailure preparation_failure;
     AudioProtocolFailure protocol_failure;
@@ -43,6 +44,7 @@ public:
     bool unload(const AudioBankCommand&,BankServiceFailure&);
     bool cancel_async(BankServiceFailure&); // Always named unsupported; pending work unchanged.
     bool close_when_idle(BankServiceFailure&);
+    std::shared_ptr<AudioResourceDomain> resource_domain() const noexcept;
 private:
     struct State;
     explicit AudioBankService(std::shared_ptr<State> state):state_(std::move(state)){}

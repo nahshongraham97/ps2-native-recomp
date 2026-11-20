@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_audio_resource_domain.exe",
+  "target_before_sha256": "0e9150e3cfd3ed2fcc067e86b765806c2560636ffb2263a60ec5a1ea9e9758dd",
+  "target_after_sha256": "0e9150e3cfd3ed2fcc067e86b765806c2560636ffb2263a60ec5a1ea9e9758dd",
+  "audited_target_expected_sha256": "0e9150e3cfd3ed2fcc067e86b765806c2560636ffb2263a60ec5a1ea9e9758dd",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::sound::AudioResourceDomain::acquire"
+  ],
+  "executed_target_sha256": "0e9150e3cfd3ed2fcc067e86b765806c2560636ffb2263a60ec5a1ea9e9758dd"
+}

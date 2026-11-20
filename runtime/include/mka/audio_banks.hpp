@@ -12,10 +12,11 @@ enum class AudioBanksError {
     bank_parse_failed, absent_selector, absent_program, malformed_bank,
     empty_program, command_out_of_bounds, unsupported_command_kind,
     unsupported_named_command_route, absent_resource, normal_read_failed,
-    no_associated_ms4, stream_read_failed, allocation_failed, host_capacity, preparation_revoked, bank_not_prepared
+    no_associated_ms4, stream_read_failed, allocation_failed, host_capacity, preparation_revoked, bank_not_prepared, resource_access
 };
 struct AudioBanksFailure {
     AudioBanksError kind = AudioBanksError::none;
+    AudioResourceFailure resource;
     ArchiveFailure archive;
     BankAssetFailure bank;
     StreamFailure stream;
@@ -50,8 +51,9 @@ struct AudioResource {
 };
 // Synchronous host ownership/data/preparation service only. No playback-ready claim,
 // callbacks, work queue, cancellation, voices or playback are implemented.
-// Reads serialize with unload/close; returned payload/group/record values own
-// their bytes independently. No outstanding playback job is modeled here.
+// Admission is checked against unload/close. Admitted reads retain immutable
+// backing owners while local registry locks are released; new work is revoked
+// on unload. Returned data owns its bytes. No playback job is modeled here.
 class AudioBankSession {
 public:
     AudioBankSession(const AudioBankSession&) = delete;
@@ -63,6 +65,9 @@ public:
     static std::optional<AudioBankSession> open(
         const std::filesystem::path& ms2,
         const std::optional<std::filesystem::path>& associated_ms4, AudioBanksFailure&);
+    static std::optional<AudioBankSession> open(const std::filesystem::path&,
+        const std::optional<std::filesystem::path>&, std::shared_ptr<AudioResourceDomain>, AudioBanksFailure&);
+    std::shared_ptr<AudioResourceDomain> resource_domain() const noexcept;
     std::optional<AudioBankHandle> load_bank(std::string_view name, AudioBanksFailure&);
     std::optional<AudioBankLoadState> load_state(const AudioBankHandle&, AudioBanksFailure&) const;
     // Failed preparation invalidates ONLY this bank handle, matching candidate cleanup.

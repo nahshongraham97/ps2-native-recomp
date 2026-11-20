@@ -52,6 +52,7 @@ public:
     std::optional<AudioResource> resolve_play_kind1(const AudioBankCommand&, std::size_t command_index,
                                                    AudioProtocolFailure&) const;
     bool unload(const AudioBankCommand&, AudioProtocolFailure&);
+    std::shared_ptr<AudioResourceDomain> resource_domain() const noexcept;
 private:
     struct State;
     explicit AudioBankProtocol(std::shared_ptr<State> s):state_(std::move(s)){}

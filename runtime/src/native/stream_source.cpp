@@ -54,10 +54,20 @@ const std::filesystem::path& StreamSource::associated_path() const noexcept {
 std::optional<StreamSource> StreamSource::open_associated_ms4(
     const std::filesystem::path& path, StreamFailure& failure) {
     failure = {};
+    auto domain = AudioResourceDomain::create(failure.backing.resource);
+    if (!domain) { failure.kind = StreamError::backing_failure; failure.backing.kind = ArchiveError::resource_access; return std::nullopt; }
+    return open_associated_ms4(path, std::move(domain), failure);
+}
+std::shared_ptr<AudioResourceDomain> StreamSource::resource_domain() const noexcept {
+    return state_ ? state_->backing->resource_domain() : nullptr;
+}
+std::optional<StreamSource> StreamSource::open_associated_ms4(
+    const std::filesystem::path& path, std::shared_ptr<AudioResourceDomain> domain, StreamFailure& failure) {
+    failure = {};
     try {
         auto state = std::make_shared<State>();
         state->path = path;
-        state->backing = SoundArchiveBacking::open(path, failure.backing);
+        state->backing = SoundArchiveBacking::open(path, std::move(domain), failure.backing);
         if (!state->backing) { failure.kind = StreamError::backing_failure; return std::nullopt; }
         return StreamSource(std::move(state));
     } catch (const std::bad_alloc&) { failure.kind = StreamError::allocation_failed; }

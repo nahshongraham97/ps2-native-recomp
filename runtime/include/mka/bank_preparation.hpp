@@ -5,9 +5,10 @@ namespace mka::sound {
 enum class PreparationError { none, no_backing, malformed_bank, unsupported_named_keys, duplicate_resource_key, source_deferred, already_prepared,
     absent_resource, payload_failed, codec_failed, count2_failed, unsupported_count,
     unsupported_alternate_preparation, absent_selector, absent_program, unloaded,
-    allocation_failed, host_capacity, eager_program_failures };
+    allocation_failed, host_capacity, eager_program_failures, resource_access };
 struct PreparationFailure {
     PreparationError kind=PreparationError::none;
+    AudioResourceFailure resource;
     BankError bank=BankError::none;
     PayloadFailure payload;
     AdpcmError codec=AdpcmError::none;

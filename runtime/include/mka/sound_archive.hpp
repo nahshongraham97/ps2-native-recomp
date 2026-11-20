@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mka/sample_payload.hpp"
+#include "mka/audio_resource_domain.hpp"
 
 #include <filesystem>
 #include <memory>
@@ -16,11 +17,12 @@ enum class ArchiveError {
     none, open_failed, io_error, cursor_restore_failed, short_read,
     truncated_header, unsupported_type, invalid_count, directory_out_of_bounds,
     entry_out_of_bounds, unterminated_name, duplicate_key, ambiguous_name,
-    host_capacity, allocation_failed, absent_bank, closed
+    host_capacity, allocation_failed, absent_bank, closed, resource_access
 };
 struct ArchiveFailure {
     ArchiveError kind = ArchiveError::none;
     std::error_code host_error;
+    AudioResourceFailure resource;
 };
 struct ArchiveRecord {
     std::uint32_t key = 0;
@@ -36,6 +38,9 @@ class SoundArchiveBacking {
 public:
     static std::shared_ptr<SoundArchiveBacking> open(const std::filesystem::path&,
                                                       ArchiveFailure&);
+    static std::shared_ptr<SoundArchiveBacking> open(const std::filesystem::path&,
+        std::shared_ptr<AudioResourceDomain>, ArchiveFailure&);
+    std::shared_ptr<AudioResourceDomain> resource_domain() const noexcept;
     ~SoundArchiveBacking();
     SoundArchiveBacking(const SoundArchiveBacking&) = delete;
     SoundArchiveBacking& operator=(const SoundArchiveBacking&) = delete;
@@ -67,6 +72,11 @@ public:
     // cannot publish a new backing paired with the old directory.
     SoundArchive& operator=(SoundArchive other) noexcept { swap(other); return *this; }
     static std::optional<SoundArchive> open(const std::filesystem::path&, ArchiveFailure&);
+    static std::optional<SoundArchive> open(const std::filesystem::path&,
+        std::shared_ptr<AudioResourceDomain>, ArchiveFailure&);
+    std::shared_ptr<AudioResourceDomain> resource_domain() const noexcept {
+        return backing_ ? backing_->resource_domain() : nullptr;
+    }
     std::optional<ArchiveRecord> find_bank(std::string_view request, ArchiveFailure&) const;
     std::optional<BankAssetSource> read_bank(std::string_view request, ArchiveFailure&) const;
     std::size_t directory_entry_count() const noexcept { return backing_ ? records_.size() : 0; }

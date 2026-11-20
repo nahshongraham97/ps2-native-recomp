@@ -1,5 +1,6 @@
 #pragma once
 #include "mka/native_file.hpp"
+#include "mka/audio_resource_domain.hpp"
 #include "mka/sound_bank.hpp"
 #include <array>
 #include <optional>
@@ -11,9 +12,9 @@ enum class PayloadError {
     unsupported_key_lookup_route, extent_out_of_bounds, truncated_header,
     unsupported_count_encoding, unsupported_zero_count, unsupported_zero_rate,
     unsupported_rate_mismatch, unsupported_zero_plane_size, inconsistent_extent,
-    host_capacity, allocation_failed, io_error, cursor_restore_failed
+    host_capacity, allocation_failed, io_error, cursor_restore_failed, resource_access
 };
-struct PayloadFailure { PayloadError kind = PayloadError::none; std::error_code host_error; };
+struct PayloadFailure { PayloadError kind = PayloadError::none; std::error_code host_error; AudioResourceFailure resource; };
 struct PayloadBytes { const std::uint8_t* data = nullptr; std::size_t size = 0; };
 // Owns serialized bytes only. No codec, channel order, Hz or playback meaning
 // is inferred. Views last until this owner is destroyed, assigned or moved.

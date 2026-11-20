@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_sound_archive.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "stdout": "Real archive: 8705 records, 344 names; 344 banks/9656 programs; announcr key1, shell key342\nsound archive tests passed\n",
+  "stderr": "",
+  "executable_sha256": "40fa93516dc4404995692f2f0965c8aa6fb4c838f05cdccf60f148f068ff988a",
+  "executable_after_sha256": "40fa93516dc4404995692f2f0965c8aa6fb4c838f05cdccf60f148f068ff988a"
+}

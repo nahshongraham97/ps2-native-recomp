@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+    "--target",
+    "test_native_audio_resource_domain",
+    "test_sound_archive",
+    "test_bank_asset",
+    "test_native_audio_banks",
+    "test_native_audio_bank_protocol",
+    "test_native_bank_preparation",
+    "test_native_audio_bank_service",
+    "test_native_program_executor",
+    "test_native_host_voice",
+    "test_native_playback_owner",
+    "test_native_stream_source",
+    "-j2"
+  ],
+  "exit": 0,
+  "stdout": "[0/2] Re-checking globbed directories...\n[1/38] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_resource_domain.cpp.obj\n[2/38] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/sound_archive.cpp.obj\n[3/38] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/sample_payload.cpp.obj\n[4/38] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/stream_source.cpp.obj\n[5/38] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/bank_asset.cpp.obj\n[6/38] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/normal_sample.cpp.obj\n[7/38] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/bank_preparation.cpp.obj\n[8/38] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_banks.cpp.obj\n[9/38] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_bank_protocol.cpp.obj\n[10/38] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_bank_service.cpp.obj\n[11/38] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/program_executor.cpp.obj\n[12/38] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_controls.cpp.obj\n[13/38] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/host_voice.cpp.obj\n[14/38] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/playback_owner.cpp.obj\n[15/38] Linking CXX static library libmka_native_sound_resources.a\n[16/38] Building CXX object CMakeFiles/test_sound_archive.dir/tests/test_sound_archive.cpp.obj\n[17/38] Building CXX object CMakeFiles/test_bank_asset.dir/tests/test_bank_asset.cpp.obj\n[18/38] Building CXX object CMakeFiles/test_native_audio_banks.dir/tests/test_audio_banks.cpp.obj\n[19/38] Building CXX object CMakeFiles/test_native_audio_bank_protocol.dir/tests/test_audio_bank_protocol.cpp.obj\n[20/38] Building CXX object CMakeFiles/test_native_bank_preparation.dir/tests/test_bank_preparation.cpp.obj\n[21/38] Building CXX object CMakeFiles/test_native_audio_bank_service.dir/tests/test_audio_bank_service.cpp.obj\n[22/38] Building CXX object CMakeFiles/test_native_program_executor.dir/tests/test_program_executor.cpp.obj\n[23/38] Building CXX object CMakeFiles/test_native_audio_resource_domain.dir/tests/test_audio_resource_domain.cpp.obj\n[24/38] Building CXX object CMakeFiles/test_native_host_voice.dir/tests/test_host_voice.cpp.obj\n[25/38] Building CXX object CMakeFiles/test_native_playback_owner.dir/tests/test_playback_owner.cpp.obj\n[26/38] Linking CXX executable test_sound_archive.exe\n[27/38] Linking CXX executable test_bank_asset.exe\n[28/38] Linking CXX executable test_native_audio_banks.exe\n[29/38] Linking CXX executable test_native_audio_bank_protocol.exe\n[30/38] Linking CXX executable test_native_bank_preparation.exe\n[31/38] Linking CXX executable test_native_audio_bank_service.exe\n[32/38] Linking CXX executable test_native_audio_resource_domain.exe\n[33/38] Linking CXX executable test_native_program_executor.exe\n[34/38] Linking CXX executable test_native_host_voice.exe\n[35/38] Linking CXX executable test_native_playback_owner.exe\n[36/38] Building CXX object CMakeFiles/test_native_stream_source.dir/tests/test_stream_source.cpp.obj\n[37/38] Linking CXX executable test_native_stream_source.exe\n",
+  "stderr": "",
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "executable_after_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3"
+}

@@ -72,6 +72,9 @@ struct AudioBankProtocol::State {
     std::unordered_map<std::uint32_t,AudioBankHandle> bindings;
     mutable std::mutex mutex;
 };
+std::shared_ptr<AudioResourceDomain> AudioBankProtocol::resource_domain() const noexcept {
+    return state_ ? state_->session.resource_domain() : nullptr;
+}
 std::optional<AudioBankProtocol> AudioBankProtocol::create(AudioBankSession&& session, AudioProtocolFailure& failure) {
     failure={};
     try{return AudioBankProtocol(std::make_shared<State>(std::move(session)));}
@@ -85,7 +88,6 @@ std::optional<UnpreparedBankLoad> AudioBankProtocol::load_unprepared(
     if(!state_){failure.kind=AudioProtocolError::moved_bridge;return std::nullopt;}
     if(!is_load(command.opcode)){failure.kind=AudioProtocolError::wrong_command;return std::nullopt;}
     if(command.pathname.empty()){failure.kind=AudioProtocolError::empty_path;return std::nullopt;}
-    std::lock_guard<std::mutex> lock(state_->mutex);
     try {
         // Copy request before publishing a bank, so allocation failure cannot strand it.
         AudioBankCommand copy=command;
@@ -100,7 +102,6 @@ std::optional<PreparedBank> AudioBankProtocol::prepare_loaded(const AudioBankHan
     BankPreparationReport& report,PreparationFailure& preparation,AudioProtocolFailure& failure){
     failure={};report={};preparation={};
     if(!state_){failure.kind=AudioProtocolError::moved_bridge;return std::nullopt;}
-    std::lock_guard<std::mutex> lock(state_->mutex);
     auto prepared=state_->session.prepare_bank(handle,report,preparation,failure.bank);
     if(!prepared)failure.kind=AudioProtocolError::bank_failure;
     return prepared;
@@ -171,10 +172,14 @@ std::shared_ptr<const PreparedProgram> AudioBankProtocol::prepare_program(
     if(!is_play(command.opcode)){failure.kind=AudioProtocolError::wrong_command;return {};}
     if(!state_){failure.kind=AudioProtocolError::moved_bridge;return {};}
     if(!command.bank_token.value){failure.kind=AudioProtocolError::unsupported_null_bank_token;return {};}
-    std::lock_guard<std::mutex> lock(state_->mutex);
-    const auto found=state_->bindings.find(command.bank_token.value);
-    if(found==state_->bindings.end()){failure.kind=AudioProtocolError::unknown_bank_token;return {};}
-    auto program=state_->session.prepare_program(found->second,command.selector,preparation,failure.bank);
+    AudioBankHandle handle;
+    {
+        std::lock_guard<std::mutex> lock(state_->mutex);
+        const auto found=state_->bindings.find(command.bank_token.value);
+        if(found==state_->bindings.end()){failure.kind=AudioProtocolError::unknown_bank_token;return {};}
+        handle=found->second;
+    }
+    auto program=state_->session.prepare_program(handle,command.selector,preparation,failure.bank);
     if(!program)failure.kind=AudioProtocolError::bank_failure;
     return program;
 }

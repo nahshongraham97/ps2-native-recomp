@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_bank_asset.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "stdout": "Real bank chain: announcr.mst resource20000002 payload19840 PCM69440\nbank asset tests passed\n",
+  "stderr": "",
+  "executable_sha256": "f1de6711ee792f8608ac8a9c15e09d73467265162e4f98aaf821430d8ba2d98f",
+  "executable_after_sha256": "f1de6711ee792f8608ac8a9c15e09d73467265162e4f98aaf821430d8ba2d98f"
+}

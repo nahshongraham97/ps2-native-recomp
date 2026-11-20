@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_bank_preparation.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-audio-resource-domain-20261120\\validation-02\\preparation-owned"
+  ],
+  "exit": 0,
+  "stdout": "announcr selector0 program0 effectiveflags2 instances1 PCM34720\nPASS 344 actualbanks 5500eager 4156deferred 179skipprecreation; nativepreparation only nocallback/playback\n",
+  "stderr": "",
+  "executable_sha256": "fadaf36c2c1c0c360695f73a66c3e74d056471b90ba0c4901a3314b932196fef",
+  "executable_after_sha256": "fadaf36c2c1c0c360695f73a66c3e74d056471b90ba0c4901a3314b932196fef"
+}

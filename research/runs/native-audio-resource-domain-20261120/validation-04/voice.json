@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_host_voice.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "stdout": "PASS realannouncr freshpan/LUT/phase/explicitprofiles/signedDSP/hostresample/64voices/transactionalstop; no device/output/fidelity claim\n",
+  "stderr": "",
+  "executable_sha256": "c767ad9398081b9a1a6dc78249f18604c39c61987087fd438d2e9dcc6896ab26",
+  "executable_after_sha256": "c767ad9398081b9a1a6dc78249f18604c39c61987087fd438d2e9dcc6896ab26"
+}

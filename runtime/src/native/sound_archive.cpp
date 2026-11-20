@@ -32,7 +32,9 @@ std::string bank_name(std::string_view request) {
 }
 
 struct SoundArchiveBacking::State {
-    content::NativeFile file;
+    std::shared_ptr<AudioResourceDomain> domain;
+    std::unique_ptr<AudioResourceBacking> opened = std::make_unique<AudioResourceBacking>();
+    ~State() { domain->retire_backing(std::move(opened)); }
     std::uint64_t length = 0;
     mutable std::mutex mutex;
 };
@@ -42,13 +44,27 @@ SoundArchiveBacking::~SoundArchiveBacking() = default;
 std::shared_ptr<SoundArchiveBacking> SoundArchiveBacking::open(
     const std::filesystem::path& path, ArchiveFailure& failure) {
     failure = {};
+    auto domain = AudioResourceDomain::create(failure.resource);
+    if (!domain) { failure.kind = ArchiveError::resource_access; return {}; }
+    return open(path, std::move(domain), failure);
+}
+std::shared_ptr<AudioResourceDomain> SoundArchiveBacking::resource_domain() const noexcept {
+    return state_->domain;
+}
+std::shared_ptr<SoundArchiveBacking> SoundArchiveBacking::open(
+    const std::filesystem::path& path, std::shared_ptr<AudioResourceDomain> domain, ArchiveFailure& failure) {
+    failure = {};
+    if (!domain) { failure.kind = ArchiveError::resource_access; failure.resource.kind = AudioResourceError::invalid_owner; return {}; }
+    auto access = domain->acquire(AudioResourceWork::backing, failure.resource);
+    if (!access) { failure.kind = ArchiveError::resource_access; return {}; }
     try {
         auto state = std::make_unique<State>();
-        if (!state->file.open(path, failure.host_error)) {
+        state->domain = std::move(domain);
+        if (!state->opened->file.open(path, failure.host_error)) {
             failure.kind = ArchiveError::open_failed;
             return {};
         }
-        if (!state->file.length(state->length, failure.host_error)) {
+        if (!state->opened->file.length(state->length, failure.host_error)) {
             failure.kind = ArchiveError::io_error;
             return {};
         }
@@ -65,20 +81,22 @@ std::uint64_t SoundArchiveBacking::size() const noexcept { return state_->length
 std::optional<std::vector<std::uint8_t>> SoundArchiveBacking::read_bytes(
     std::uint64_t offset, std::uint64_t count, ArchiveFailure& failure) const {
     failure = {};
+    auto access = state_->domain->acquire(AudioResourceWork::backing, failure.resource);
+    if (!access) { failure.kind = ArchiveError::resource_access; return std::nullopt; }
     std::lock_guard<std::mutex> lock(state_->mutex);
     auto fail = [&](ArchiveError kind, std::error_code error = {})
         -> std::optional<std::vector<std::uint8_t>> { failure = {kind, error}; return std::nullopt; };
     std::uint64_t saved = 0, length = 0;
     std::error_code error;
-    if (!state_->file.position(saved, error)) return fail(ArchiveError::io_error, error);
+    if (!state_->opened->file.position(saved, error)) return fail(ArchiveError::io_error, error);
     auto restore = [&](std::optional<std::vector<std::uint8_t>> value) {
         std::error_code restore_error;
         if (saved > std::uint64_t(INT64_MAX) ||
-            !state_->file.seek(static_cast<std::int64_t>(saved), content::SeekOrigin::begin, restore_error))
+            !state_->opened->file.seek(static_cast<std::int64_t>(saved), content::SeekOrigin::begin, restore_error))
             return fail(ArchiveError::cursor_restore_failed, restore_error);
         return value;
     };
-    if (!state_->file.length(length, error)) return restore(fail(ArchiveError::io_error, error));
+    if (!state_->opened->file.length(length, error)) return restore(fail(ArchiveError::io_error, error));
     if (offset > length || count > length - offset) return restore(fail(ArchiveError::entry_out_of_bounds));
     std::vector<std::uint8_t> bytes;
     if (offset > std::uint64_t(INT64_MAX) || count > bytes.max_size())
@@ -86,10 +104,10 @@ std::optional<std::vector<std::uint8_t>> SoundArchiveBacking::read_bytes(
     try { bytes.resize(static_cast<std::size_t>(count)); }
     catch (const std::bad_alloc&) { return restore(fail(ArchiveError::allocation_failed)); }
     catch (const std::length_error&) { return restore(fail(ArchiveError::host_capacity)); }
-    if (!state_->file.seek(static_cast<std::int64_t>(offset), content::SeekOrigin::begin, error))
+    if (!state_->opened->file.seek(static_cast<std::int64_t>(offset), content::SeekOrigin::begin, error))
         return restore(fail(ArchiveError::io_error, error));
     if (!bytes.empty()) {
-        const auto read = state_->file.read(bytes.data(), bytes.size());
+        const auto read = state_->opened->file.read(bytes.data(), bytes.size());
         if (read.error) return restore(fail(ArchiveError::io_error, read.error));
         if (read.bytes != bytes.size()) return restore(fail(ArchiveError::short_read));
     }
@@ -97,19 +115,29 @@ std::optional<std::vector<std::uint8_t>> SoundArchiveBacking::read_bytes(
 }
 std::optional<SamplePayload> SoundArchiveBacking::read_payload(
     const ResourceLookup& resource, PayloadFailure& failure) const {
+    AudioResourceFailure resource_failure;
+    auto access = state_->domain->acquire(AudioResourceWork::backing, resource_failure);
+    if (!access) { failure = {}; failure.kind = PayloadError::resource_access; failure.resource = resource_failure; return std::nullopt; }
     std::lock_guard<std::mutex> lock(state_->mutex);
-    return SamplePayload::read(state_->file, resource, failure);
+    return SamplePayload::read(state_->opened->file, resource, failure);
 }
 
 std::optional<SoundArchive> SoundArchive::open(const std::filesystem::path& path,
                                               ArchiveFailure& failure) {
+    failure = {};
+    auto domain = AudioResourceDomain::create(failure.resource);
+    if (!domain) { failure.kind = ArchiveError::resource_access; return std::nullopt; }
+    return open(path, std::move(domain), failure);
+}
+std::optional<SoundArchive> SoundArchive::open(const std::filesystem::path& path,
+    std::shared_ptr<AudioResourceDomain> domain, ArchiveFailure& failure) {
     failure = {};
     auto fail = [&](ArchiveError kind) -> std::optional<SoundArchive> {
         failure = {kind, {}}; return std::nullopt;
     };
     try {
         SoundArchive archive;
-        archive.backing_ = SoundArchiveBacking::open(path, failure);
+        archive.backing_ = SoundArchiveBacking::open(path, std::move(domain), failure);
         if (!archive.backing_) return std::nullopt;
         if (archive.backing_->size() < 12) return fail(ArchiveError::truncated_header);
         auto header = archive.backing_->read_bytes(0, 12, failure);

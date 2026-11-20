@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_stream_source.exe",
+    "synthetic"
+  ],
+  "exit": 0,
+  "stdout": "[stream-synthetic-positive] raw ownership/modes/extents/truncation/sparse/concurrency passed; temporary cleanup verified\n",
+  "stderr": "",
+  "executable_sha256": "327ff6df7e7d6a2b823d348ce7b25e9e213c081529bef485a4c0c20ad8de3a90",
+  "executable_after_sha256": "327ff6df7e7d6a2b823d348ce7b25e9e213c081529bef485a4c0c20ad8de3a90"
+}

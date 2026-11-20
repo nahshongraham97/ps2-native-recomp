@@ -1,5 +1,6 @@
 #include "mka/audio_banks.hpp"
 #include <mutex>
+#include <condition_variable>
 #include <new>
 #include <stdexcept>
 #include <unordered_map>
@@ -10,13 +11,15 @@ struct AudioBankHandle::Identity {
     bool unloaded = false; // Access only under the owning session mutex.
 };
 struct AudioBankSession::State {
-    explicit State(SoundArchive archive_value) : archive(std::move(archive_value)) {}
-    struct Entry { std::shared_ptr<AudioBankHandle::Identity> identity; BankAsset bank; std::shared_ptr<SoundArchiveBacking> backing; std::optional<PreparedBank> prepared; };
+    explicit State(SoundArchive archive_value) : archive(std::make_shared<const SoundArchive>(std::move(archive_value))) {}
+    struct Entry { std::shared_ptr<AudioBankHandle::Identity> identity; std::shared_ptr<const BankAsset> bank; std::shared_ptr<SoundArchiveBacking> backing; std::optional<PreparedBank> prepared; bool preparing = false; };
     const std::shared_ptr<const void> cookie = std::make_shared<const int>(0);
-    std::optional<SoundArchive> archive;
+    std::shared_ptr<AudioResourceDomain> domain;
+    std::shared_ptr<const SoundArchive> archive;
     std::optional<StreamSource> stream;
     std::unordered_map<const AudioBankHandle::Identity*, Entry> banks;
     mutable std::mutex mutex;
+    std::condition_variable changed;
     bool closed = false;
     ~State() { for(auto& entry:banks)if(entry.second.prepared)entry.second.prepared->unload(); }
 };
@@ -24,12 +27,25 @@ std::optional<AudioBankSession> AudioBankSession::open(
     const std::filesystem::path& ms2, const std::optional<std::filesystem::path>& ms4,
     AudioBanksFailure& failure) {
     failure = {};
+    auto domain = AudioResourceDomain::create(failure.resource);
+    if (!domain) { failure.kind = AudioBanksError::resource_access; return std::nullopt; }
+    return open(ms2, ms4, std::move(domain), failure);
+}
+std::shared_ptr<AudioResourceDomain> AudioBankSession::resource_domain() const noexcept {
+    return state_ ? state_->domain : nullptr;
+}
+std::optional<AudioBankSession> AudioBankSession::open(
+    const std::filesystem::path& ms2, const std::optional<std::filesystem::path>& ms4,
+    std::shared_ptr<AudioResourceDomain> domain, AudioBanksFailure& failure) {
+    failure = {};
+    if (!domain) { failure.kind = AudioBanksError::resource_access; failure.resource.kind = AudioResourceError::invalid_owner; return std::nullopt; }
     try {
-        auto archive = SoundArchive::open(ms2, failure.archive);
+        auto archive = SoundArchive::open(ms2, domain, failure.archive);
         if (!archive) { failure.kind = AudioBanksError::archive_failed; return std::nullopt; }
         auto state = std::make_shared<State>(std::move(*archive));
+        state->domain = domain;
         if (ms4) {
-            state->stream = StreamSource::open_associated_ms4(*ms4, failure.stream);
+            state->stream = StreamSource::open_associated_ms4(*ms4, domain, failure.stream);
             if (!state->stream) { failure.kind = AudioBanksError::stream_read_failed; return std::nullopt; }
         }
         return AudioBankSession(std::move(state));
@@ -47,22 +63,27 @@ const BankAsset* AudioBankSession::checked_bank(const AudioBankHandle& handle, A
     if (handle.identity_->unloaded) { failure.kind = AudioBanksError::unloaded_handle; return nullptr; }
     auto it = state_->banks.find(handle.identity_.get());
     if (it == state_->banks.end()) { failure.kind = AudioBanksError::unknown_handle; return nullptr; }
-    return &it->second.bank;
+    return it->second.bank.get();
 }
 std::optional<AudioBankHandle> AudioBankSession::load_bank(std::string_view name, AudioBanksFailure& failure) {
     failure = {};
     if (!state_) { failure.kind = AudioBanksError::moved_session; return std::nullopt; }
-    std::lock_guard<std::mutex> lock(state_->mutex);
+    std::unique_lock<std::mutex> lock(state_->mutex);
     if (state_->closed) { failure.kind = AudioBanksError::closed_session; return std::nullopt; }
+    auto archive = state_->archive;
+    lock.unlock();
     try {
-        auto source = state_->archive->read_bank(name, failure.archive);
+        auto source = archive->read_bank(name, failure.archive);
         if (!source) { failure.kind = AudioBanksError::archive_failed; return std::nullopt; }
         auto backing=source->backing;
         auto bank = BankAsset::parse(std::move(*source), failure.bank);
         if (!bank) { failure.kind = AudioBanksError::bank_parse_failed; return std::nullopt; }
         auto identity = std::make_shared<AudioBankHandle::Identity>();
         identity->session = state_->cookie;
-        state_->banks.emplace(identity.get(), State::Entry{identity, std::move(*bank),std::move(backing),std::nullopt});
+        auto owned_bank = std::make_shared<const BankAsset>(std::move(*bank));
+        lock.lock();
+        if (state_->closed) { failure.kind = AudioBanksError::closed_session; return std::nullopt; }
+        state_->banks.emplace(identity.get(), State::Entry{identity, std::move(owned_bank),std::move(backing),std::nullopt});
         return AudioBankHandle(std::move(identity));
     } catch (const std::bad_alloc&) { failure.kind = AudioBanksError::allocation_failed; }
       catch (const std::length_error&) { failure.kind = AudioBanksError::host_capacity; }
@@ -82,7 +103,7 @@ std::optional<PreparedBank> AudioBankSession::prepare_bank(const AudioBankHandle
     BankPreparationReport& report,PreparationFailure& preparation,AudioBanksFailure& failure) {
     failure={};preparation={};report={};
     if(!state_){failure.kind=AudioBanksError::moved_session;return std::nullopt;}
-    std::lock_guard<std::mutex> lock(state_->mutex);
+    std::unique_lock<std::mutex> lock(state_->mutex);
     const auto* bank=checked_bank(handle,failure);if(!bank)return std::nullopt;
     auto it=state_->banks.find(handle.identity_.get());
     if(it->second.prepared){
@@ -90,12 +111,51 @@ std::optional<PreparedBank> AudioBankSession::prepare_bank(const AudioBankHandle
         else preparation.kind=PreparationError::already_prepared;
         return std::nullopt;
     }
+    while (it->second.preparing) {
+        state_->changed.wait(lock);
+        bank = checked_bank(handle, failure); if (!bank) return std::nullopt;
+        it = state_->banks.find(handle.identity_.get());
+        if (it->second.prepared) { preparation.kind = PreparationError::already_prepared; return std::nullopt; }
+    }
     std::optional<PreparedBank> prepared;
+    bool admitted = false;
+    auto retire_admission = [&] {
+        if (!lock.owns_lock()) lock.lock();
+        if (admitted) {
+            auto current = state_->banks.find(handle.identity_.get());
+            if (current != state_->banks.end()) current->second.preparing = false;
+            state_->changed.notify_all();
+            admitted = false;
+        }
+    };
     try {
         BankAssetSource source{bank->origin(),bank->bank().raw_bytes(),it->second.backing};
+        it->second.preparing = true;
+        admitted = true;
+        lock.unlock();
         prepared=PreparedBank::prepare(std::move(source),report,preparation);
     }catch(const std::bad_alloc&){preparation.kind=PreparationError::allocation_failed;}
      catch(const std::length_error&){preparation.kind=PreparationError::host_capacity;}
+     catch (...) {
+         retire_admission();
+         // Source failure retires the complete candidate, not only its busy
+         // state. Never leave an unbound bank/backing hidden in the session.
+         auto failed = state_->banks.find(handle.identity_.get());
+         if (failed != state_->banks.end()) {
+             handle.identity_->unloaded = true;
+             if (failed->second.prepared) failed->second.prepared->unload();
+             state_->banks.erase(failed);
+             state_->changed.notify_all();
+         }
+         throw;
+     }
+    retire_admission();
+    it = state_->banks.find(handle.identity_.get());
+    if (state_->closed || it == state_->banks.end() || handle.identity_->unloaded) {
+        if (prepared) prepared->unload();
+        failure.kind = AudioBanksError::preparation_revoked;
+        return std::nullopt;
+    }
     if(!prepared){
         // Source loader frees the whole failed candidate after eager error counting.
         // Unrelated registry entries are never changed, including allocation failure.
@@ -133,11 +193,12 @@ std::shared_ptr<const PreparedProgram> AudioBankSession::prepare_program(
     const AudioBankHandle& handle,std::int32_t selector,PreparationFailure& preparation,AudioBanksFailure& failure) {
     preparation={};failure={};
     if(!state_){failure.kind=AudioBanksError::moved_session;return {};}
-    std::lock_guard<std::mutex> lock(state_->mutex);
+    std::unique_lock<std::mutex> lock(state_->mutex);
     if(!checked_bank(handle,failure))return {};
-    auto& prepared=state_->banks.at(handle.identity_.get()).prepared;
+    auto prepared=state_->banks.at(handle.identity_.get()).prepared;
     if(!prepared){failure.kind=AudioBanksError::bank_not_prepared;return {};}
     if(!prepared->active()){failure.kind=AudioBanksError::preparation_revoked;preparation.kind=PreparationError::unloaded;return {};}
+    lock.unlock();
     auto program=prepared->eager_program(selector,preparation);
     if(!program&&preparation.kind==PreparationError::source_deferred)
         program=prepared->prepare_deferred_normal(selector,preparation);
@@ -155,9 +216,11 @@ std::optional<BankSample> AudioBankSession::read_normal(
     const AudioBankHandle& handle, std::int32_t selector, std::size_t index, AudioBanksFailure& failure) const {
     failure = {};
     if (!state_) { failure.kind = AudioBanksError::moved_session; return std::nullopt; }
-    std::lock_guard<std::mutex> lock(state_->mutex);
-    const auto* bank = checked_bank(handle, failure);
-    if (!bank || !resolve(*bank, selector, index, failure)) return std::nullopt;
+    std::unique_lock<std::mutex> lock(state_->mutex);
+    const auto* checked = checked_bank(handle, failure);
+    if (!checked || !resolve(*checked, selector, index, failure)) return std::nullopt;
+    auto bank = state_->banks.at(handle.identity_.get()).bank;
+    lock.unlock();
     auto sample = bank->read_sample(selector, index, failure.bank);
     if (!sample) failure.kind = AudioBanksError::normal_read_failed;
     return sample;
@@ -167,13 +230,15 @@ std::optional<StreamSourceGroup> AudioBankSession::read_stream_group(
     AudioBanksFailure& failure) const {
     failure = {};
     if (!state_) { failure.kind = AudioBanksError::moved_session; return std::nullopt; }
-    std::lock_guard<std::mutex> lock(state_->mutex);
+    std::unique_lock<std::mutex> lock(state_->mutex);
     const auto* bank = checked_bank(handle, failure);
     if (!bank) return std::nullopt;
     auto resource = resolve(*bank, selector, index, failure);
     if (!resource) return std::nullopt;
     if (!state_->stream) { failure.kind = AudioBanksError::no_associated_ms4; return std::nullopt; }
-    auto group = state_->stream->read_group(resource->resource, ordinal, failure.stream);
+    auto stream = *state_->stream;
+    lock.unlock();
+    auto group = stream.read_group(resource->resource, ordinal, failure.stream);
     if (!group) failure.kind = AudioBanksError::stream_read_failed;
     return group;
 }
@@ -186,6 +251,7 @@ bool AudioBankSession::unload_bank(const AudioBankHandle& handle, AudioBanksFail
     auto& entry=state_->banks.at(handle.identity_.get());
     if(entry.prepared)entry.prepared->unload();
     state_->banks.erase(handle.identity_.get());
+    state_->changed.notify_all();
     return true;
 }
 bool AudioBankSession::close(AudioBanksFailure& failure) {
@@ -198,6 +264,7 @@ bool AudioBankSession::close(AudioBanksFailure& failure) {
     state_->banks.clear();
     state_->stream.reset();
     state_->archive.reset();
+    state_->changed.notify_all();
     return true;
 }
 } // namespace mka::sound
