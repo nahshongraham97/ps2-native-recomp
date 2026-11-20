@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_source_failure.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2\\LOGON.SFD"
+  ],
+  "exit": 0,
+  "stdout": "invalid_pes route=path error=source_index pes=unsupported_header\ntruncated route=path buffered_frames=0 kind=5 pes=3 operation=av_read_frame owned reader\ninvalid_pes route=catalog error=source_index pes=unsupported_header\ntruncated route=catalog buffered_frames=0 kind=5 pes=3 operation=av_read_frame owned reader\nPASS native decoder both-open source rejection and terminal truncation; no output/race-authentication claim\n",
+  "stderr": "[adpcm_adx @ 00000206183B2400] Codec (adpcm_adx) not on whitelist 'mpeg2video'\n[mpeg @ 00000206183A1D40] Could not find codec parameters for stream 0 (Audio: adpcm_adx, 0 channels): unspecified sample rate\nConsider increasing the value for the 'analyzeduration' (0) and 'probesize' (5000000) options\n[adpcm_adx @ 000002061834CC00] Codec (adpcm_adx) not on whitelist 'mpeg2video'\n[mpeg @ 000002061A776A80] Could not find codec parameters for stream 0 (Audio: adpcm_adx, 0 channels): unspecified sample rate\nConsider increasing the value for the 'analyzeduration' (0) and 'probesize' (5000000) options\n",
+  "executable_sha256": "fd3e775a7f0bfbb95f6753e217078d90fa9a9fb807b33bec8b45129ec8e11830",
+  "executable_after_sha256": "fd3e775a7f0bfbb95f6753e217078d90fa9a9fb807b33bec8b45129ec8e11830"
+}

@@ -88,6 +88,10 @@ std::unique_ptr<NativeMovieStreamPlayback> NativeMovieStreamPlayback::create(
                   config.client_sample_rate||config.client_channels||config.client_channel_mask) {
             error(f,"movie playback explicit audio presence mismatch");return {};
         }
+        const auto source_identity=input->observation_identity();
+        if(!source_identity||!policies->validate_observation_source(source_identity,f)||f.kind!=MovieControlError::none) {
+            error(f,"movie playback policy source observation identity mismatch");return {};
+        }
         if(!policies->validate_audio_format(actual_format,f)||f.kind!=MovieControlError::none) {
             error(f,"movie playback policy differs from actual client format");return {};
         }
@@ -273,6 +277,10 @@ bool NativeMovieStreamPlayback::pump_streams(MovieControlFailure& f) noexcept {
                 if(!available->writable_frames)break;
             }
             auto read=input_->next(f);
+            if(read.status!=MovieReadStatus::error&&f.kind==MovieControlError::none&&read.observations){
+                if(!policies_->observe_source(*read.observations,f)||f.kind!=MovieControlError::none)
+                    return fail(f,"movie playback source observation provider");
+            }
             if(read.status==MovieReadStatus::end) {
                 if(f.kind!=MovieControlError::none)return fail(f,"movie playback contradictory source end");
                 if(config_.audio==MoviePlaybackAudioPresence::required&&!decoded_audio_)

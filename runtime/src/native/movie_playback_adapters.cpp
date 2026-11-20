@@ -11,6 +11,9 @@ class OwnedSource final : public MoviePlaybackInput {
 public:
     explicit OwnedSource(std::unique_ptr<NativeRetailMovieSource> s):source_(std::move(s)){}
     const RetailMovieRequest& request() const noexcept override {return *source_->request();}
+    std::shared_ptr<const MovieSourceObservationIdentity> observation_identity() const noexcept override {
+        return source_->observation_identity();
+    }
     MovieReadResult next(MovieControlFailure& f) override {
         f={};MovieSourceFailure sf;auto result=source_->next(sf);
         if(result.status==MovieReadStatus::error)

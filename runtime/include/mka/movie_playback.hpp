@@ -16,6 +16,7 @@ class MoviePlaybackInput {
 public:
     virtual ~MoviePlaybackInput() = default;
     virtual const RetailMovieRequest& request() const noexcept = 0;
+    virtual std::shared_ptr<const MovieSourceObservationIdentity> observation_identity() const noexcept = 0;
     virtual MovieReadResult next(MovieControlFailure&) = 0;
 };
 std::unique_ptr<MoviePlaybackInput> own_movie_playback_source(
@@ -73,6 +74,11 @@ struct MoviePlaybackSnapshot {
 class MoviePlaybackPolicies {
 public:
     virtual ~MoviePlaybackPolicies() = default;
+    virtual bool validate_observation_source(std::shared_ptr<const MovieSourceObservationIdentity>,
+                                            MovieControlFailure&) = 0;
+    // Ordered actual-input/codec observations, before the returned frame or
+    // source EOF is queued. A real context must bind their source semantics.
+    virtual bool observe_source(const MovieSourceObservationBatch&,MovieControlFailure&) = 0;
     // Construction-time join to the ACTUAL opened client format. Equal sample
     // counts alone cannot authenticate channel/speaker order. Absence explicit.
     virtual bool validate_audio_format(const std::optional<sound::AudioStreamFormat>&,

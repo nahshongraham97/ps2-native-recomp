@@ -14,6 +14,12 @@ struct MovieVideoPesSpan {
     std::optional<std::uint64_t> quarter_pts()const noexcept {return pts33 ? std::optional<std::uint64_t>(*pts33>>2):std::nullopt;}
 };
 struct MoviePesStream {std::uint8_t stream_id=0;std::uint64_t bytes=0;std::vector<MovieVideoPesSpan> spans;};
+// A grammar-validated top-level program-end code, not decoder/client completion.
+// The observed four bytes and verified trailing FF padding belong to this file.
+struct MovieProgramEndObservation {
+    std::uint64_t file_offset=0,byte_extent=4,trailing_padding_bytes=0;
+    bool operator==(const MovieProgramEndObservation&) const = default;
+};
 struct MoviePesBacking;
 class MovieEsReader;
 class MovieSourceCursor;
@@ -25,6 +31,9 @@ public:
     std::vector<MoviePesStream> streams()const;
     // Audio C0..DF payloads share the span layout/reader ownership semantics.
     std::vector<MoviePesStream> audio_streams()const;
+    // Owned optional value; absent means no admitted B9, not an invented EOF event.
+    // Moved-from index returns no observation. Copies survive backing teardown.
+    std::optional<MovieProgramEndObservation> program_end()const noexcept;
     std::optional<MovieVideoPesSpan> lookup(std::uint8_t stream,std::uint64_t first_byte,MoviePesFailure&)const;
     // Verifies all four 00 00 01 00 bytes, including a cross-PES prefix;
     // selects only the FIRST byte's span, preserving absent timestamps.

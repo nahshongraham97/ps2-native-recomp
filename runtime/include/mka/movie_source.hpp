@@ -34,6 +34,9 @@ public:
     // Owner validity only. EOF/failure is not presentation or audio completion.
     bool valid() const noexcept { return bool(decoder_); }
     const RetailMovieRequest* request() const noexcept { return valid() ? &request_ : nullptr; }
+    std::shared_ptr<const MovieSourceObservationIdentity> observation_identity() const noexcept {
+        return decoder_?decoder_->observation_identity():nullptr;
+    }
     MovieReadResult next(MovieSourceFailure&);
 private:
     NativeRetailMovieSource(RetailMovieRequest&& request, std::unique_ptr<NativeMovieDecoder>&& decoder)

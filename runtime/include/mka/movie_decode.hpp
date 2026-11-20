@@ -1,6 +1,7 @@
 #pragma once
 #include "mka/movie_assets.hpp"
 #include "mka/movie_pes_index.hpp"
+#include "mka/movie_source_observations.hpp"
 #include "mka/movie_adx_stream.hpp"
 #include "mka/mpeg2_timing.hpp"
 #include <array>
@@ -21,12 +22,6 @@ struct MovieTimestamp {
 struct MovieRateRatio {
     std::int32_t numerator=0,denominator=0;
     bool operator==(const MovieRateRatio&) const = default;
-};
-struct MoviePictureSource {
-    std::uint64_t packet_es_begin=0,picture_es_byte=0;
-    MovieVideoPesSpan pes;
-    std::optional<std::uint64_t> quarter_pts;
-    bool operator==(const MoviePictureSource&) const = default;
 };
 struct MovieCodecTiming {
     // Exact library values, including 0/0 when unavailable. The demuxer's
@@ -114,7 +109,7 @@ struct MovieAudioFrame {
 using MovieDecodedFrame=std::variant<MovieVideoFrame,MovieAudioFrame>;
 enum class MovieDecodeError {none,unsupported_host,library_load,missing_symbol,
     library_version,file_io,allocation,invalid_stream,unsupported_stream,
-    unsupported_frame,unsupported_audio_layout,demux,decode,invalid_owner,failed_owner,timing_parse,timing_association,source_index,source_validation,source_association,audio_source,audio_decode};
+    unsupported_frame,unsupported_audio_layout,demux,decode,invalid_owner,failed_owner,timing_parse,timing_association,source_index,source_validation,source_association,audio_source,audio_decode,source_observation};
 struct MovieDecodeFailure {
     MovieDecodeError kind=MovieDecodeError::none;
     std::int32_t native_code=0;
@@ -122,11 +117,13 @@ struct MovieDecodeFailure {
     MovieAssetFailure asset_failure;
     MoviePesFailure source_failure;
     MovieAdxStreamFailure audio_failure;
+    MoviePrefixFailure prefix_failure;
 };
 enum class MovieReadStatus {frame,end,error};
 struct MovieReadResult {
     MovieReadStatus status=MovieReadStatus::error;
     MovieDecodedFrame frame;
+    std::optional<MovieSourceObservationBatch> observations;
 };
 // Native filesystem -> MPEG-PS demux -> MPEG2 library / project-owned ADX codec.
 // No CDVD, IPU, GS, IOP, SPU2 or device clock. This decoder does not invent
@@ -149,6 +146,7 @@ public:
     static std::unique_ptr<NativeMovieDecoder> open(const std::filesystem::path& library_directory,
         NativeMovieAsset&& asset,MovieDecodeFailure&);
     MovieReadResult next(MovieDecodeFailure&);
+    std::shared_ptr<const MovieSourceObservationIdentity> observation_identity() const noexcept;
     // Owned non-consuming source observations; not a clock or client drain.
     std::optional<MovieAudioDecodeAudit> audio_audit(MovieDecodeFailure&);
 private:

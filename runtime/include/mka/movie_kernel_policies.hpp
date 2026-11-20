@@ -69,6 +69,7 @@ public:
     virtual ~MoviePlaybackPolicyContext() = default;
     virtual bool begin(const RetailMovieRequest&, std::int32_t, MovieControlFailure&) = 0;
     virtual bool pump_metadata(MovieControlFailure&) = 0;
+    virtual bool observe_source(const MovieSourceObservationBatch&,MovieControlFailure&) = 0;
     virtual bool pause(bool, MovieControlFailure&) = 0;
     virtual bool ready(const MoviePlaybackSnapshot&, bool&, MovieControlFailure&) = 0;
     virtual std::optional<MoviePolicyDecision> decision(const MovieVideoFrame&,
@@ -95,6 +96,8 @@ public:
         MovieFrameEligibilityConfig, std::unique_ptr<MoviePlaybackPolicyContext>,
         std::shared_ptr<MovieEligibilityServiceBinding>,MovieControlFailure&) noexcept;
     ~NativeMovieKernelPolicies() override;
+    bool validate_observation_source(std::shared_ptr<const MovieSourceObservationIdentity>,MovieControlFailure&) noexcept override;
+    bool observe_source(const MovieSourceObservationBatch&,MovieControlFailure&) noexcept override;
     bool validate_audio_format(const std::optional<sound::AudioStreamFormat>&,
                               MovieControlFailure&) noexcept override;
     bool begin(const RetailMovieRequest&, std::int32_t, MovieControlFailure&) noexcept override;
@@ -125,6 +128,10 @@ private:
     std::unique_ptr<NativeMovieFrameEligibility> eligibility_;
     std::unique_ptr<MoviePlaybackPolicyContext> context_;
     std::shared_ptr<MovieEligibilityServiceBinding> service_;
+    std::shared_ptr<const MovieSourceObservationIdentity> source_identity_;
+    std::uint64_t observation_sequence_=0,observed_video_end_=0;
+    std::optional<std::uint64_t> observed_prefix_;
+    bool observed_program_end_=false;
     const std::thread::id owner_ = std::this_thread::get_id();
     std::optional<MovieFrameEligibilityResult> last_;
     std::optional<MoviePolicyRouteResult> route_;

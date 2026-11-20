@@ -4,7 +4,7 @@
 #include <limits>
 #include <stdexcept>
 namespace mka::video {
-struct MoviePesBacking {NativeMovieAsset asset; std::mutex mutex;std::uint64_t file_bytes=0;std::vector<MoviePesStream> streams;explicit MoviePesBacking(NativeMovieAsset&& a):asset(std::move(a)){};};
+struct MoviePesBacking {NativeMovieAsset asset; std::mutex mutex;std::uint64_t file_bytes=0;std::vector<MoviePesStream> streams;std::optional<MovieProgramEndObservation> program_end;explicit MoviePesBacking(NativeMovieAsset&& a):asset(std::move(a)){};};
 namespace {
 bool fail(MoviePesFailure& f,MoviePesError k,std::uint64_t p){f.kind=k;f.offset=p;return false;}
 struct Input {
@@ -25,7 +25,7 @@ bool scan(MoviePesBacking& state,std::uint64_t size,MoviePesFailure& f){
  if(c[3]==0xba){std::array<unsigned char,8>b{};if(!in.take(b.data(),8))return false;
  unsigned bit=0;auto get=[&](unsigned n){unsigned v=0;while(n--){v=(v<<1)|((b[bit/8]>>(7-bit%8))&1);++bit;}return v;};
  if(get(4)!=2)return fail(f,MoviePesError::unsupported_header,start);get(3);if(get(1)!=1)return fail(f,MoviePesError::bad_pack,start);get(15);if(get(1)!=1)return fail(f,MoviePesError::bad_pack,start);get(15);if(get(1)!=1||get(1)!=1)return fail(f,MoviePesError::bad_pack,start);get(22);if(get(1)!=1)return fail(f,MoviePesError::bad_pack,start);
- }else if(c[3]==0xb9){std::array<unsigned char,4096>b{};while(in.pos<size){auto n=static_cast<std::size_t>(std::min<std::uint64_t>(b.size(),size-in.pos));auto at=in.pos;if(!in.take(b.data(),n))return false;for(std::size_t i=0;i<n;++i)if(b[i]!=255)return fail(f,MoviePesError::bad_tail,at+i);}return true;
+ }else if(c[3]==0xb9){const auto padding=size-in.pos;std::array<unsigned char,4096>b{};while(in.pos<size){auto n=static_cast<std::size_t>(std::min<std::uint64_t>(b.size(),size-in.pos));auto at=in.pos;if(!in.take(b.data(),n))return false;for(std::size_t i=0;i<n;++i)if(b[i]!=255)return fail(f,MoviePesError::bad_tail,at+i);}state.program_end=MovieProgramEndObservation{start,4,padding};return true;
  }else if(c[3]==0xbb||c[3]==0xbe||c[3]==0xbf||(c[3]>=0xc0&&c[3]<=0xef)){
  std::array<unsigned char,2>b{};if(!in.take(b.data(),2))return false;auto n=unsigned(b[0])*256+b[1];if(!n)return fail(f,MoviePesError::unsupported_zero_length,start);if(c[3]==0xbb&&n<6)return fail(f,MoviePesError::bad_system_header,start);if(n>size-in.pos)return fail(f,MoviePesError::truncated,start);auto end=in.pos+n;
  if(c[3]>=0xc0&&c[3]<=0xef){auto it=std::find_if(state.streams.begin(),state.streams.end(),[&](const auto& s){return s.stream_id==c[3];});if(it==state.streams.end()){state.streams.push_back({c[3],0,{}});it=state.streams.end()-1;}
@@ -80,6 +80,7 @@ content::FileRead MovieSourceCursor::read(void* data,std::size_t size,MoviePesFa
  }catch(const std::bad_alloc&){fail(f,MoviePesError::allocation,position_);}catch(const std::length_error&){fail(f,MoviePesError::overflow,position_);}
  restore(*state_,*original,f);return error();
 }
+std::optional<MovieProgramEndObservation> NativeMoviePesIndex::program_end()const noexcept{return state_?state_->program_end:std::nullopt;}
 std::vector<MoviePesStream> NativeMoviePesIndex::streams()const{std::vector<MoviePesStream> out;if(state_)for(const auto& s:state_->streams)if(s.stream_id>=0xe0&&s.stream_id<=0xef)out.push_back(s);return out;}
 std::vector<MoviePesStream> NativeMoviePesIndex::audio_streams()const{std::vector<MoviePesStream> out;if(state_)for(const auto& s:state_->streams)if(s.stream_id>=0xc0&&s.stream_id<=0xdf)out.push_back(s);return out;}
 std::optional<MovieVideoPesSpan> NativeMoviePesIndex::lookup(std::uint8_t id,std::uint64_t p,MoviePesFailure& f)const{f={};if(!state_){fail(f,MoviePesError::moved,p);return {};}auto* s=stream(*state_,id);if(!s){fail(f,MoviePesError::invalid_stream,p);return {};}auto* v=find(*s,p);if(!v){fail(f,MoviePesError::range,p);return {};}return *v;}

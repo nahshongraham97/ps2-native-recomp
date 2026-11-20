@@ -84,11 +84,33 @@ struct NativeMovieDecoder::Impl {
     std::optional<NativeMoviePesIndex> source_index;
     std::optional<MovieSourceCursor> source_file;
     std::optional<MovieEsReader> source_video;
+    std::optional<NativeMoviePrefixEvents> prefix_events;
+    std::string observation_key;
+    std::shared_ptr<const MovieSourceObservationIdentity> observation_source;
+    std::vector<MovieSourceObservation> pending_observations;
+    std::uint64_t observation_sequence=0;
     std::uint8_t source_stream_id=0;
     MovieAssetFailure asset_error;
     MoviePesFailure source_error;
     bool source_failure(MovieDecodeError kind,const char* operation,MovieDecodeFailure& f){
         f={kind,static_cast<int>(source_error.kind),operation};f.source_failure=source_error;f.asset_failure=source_error.asset;return false;
+    }
+    bool observation_failure(const MoviePrefixFailure& why,const char* operation,MovieDecodeFailure& f){
+        f={MovieDecodeError::source_observation,static_cast<int>(why.kind),operation};f.prefix_failure=why;return false;
+    }
+    bool observe(MovieSourceObservationValue value,MovieDecodeFailure& f){
+        if(!observation_source||observation_sequence==UINT64_MAX){
+            f={MovieDecodeError::source_observation,0,"native source observation identity/sequence capacity"};return false;
+        }
+        pending_observations.push_back({observation_sequence+1,std::move(value)});++observation_sequence;return true;
+    }
+    MovieReadResult publish(MovieReadStatus status,MovieDecodedFrame frame={}){
+        MovieReadResult result{status,std::move(frame)};
+        if(!pending_observations.empty()){
+            result.observations=MovieSourceObservationBatch{observation_key,observation_source,std::move(pending_observations)};
+            pending_observations.clear();
+        }
+        return result;
     }
     content::FileRead read_bytes(void* data,std::size_t size){
         auto r=source_file->read(data,size,source_error);asset_error=source_error.asset;return r;
@@ -333,6 +355,10 @@ struct NativeMovieDecoder::Impl {
                     frame.planes[plane].resize(w*h);
                     for(std::size_t y=0;y<h;++y)std::memcpy(frame.planes[plane].data()+y*w,scratch->data[plane]+std::ptrdiff_t(y)*stride,w);
                 }
+                if(!frame.codec_timing.picture||!frame.codec_timing.picture_source){
+                    f={MovieDecodeError::source_observation,0,"decoded picture missing owned source timing"};return false;
+                }
+                if(!observe(MovieDecodedPictureObserved{*frame.codec_timing.picture_source,*frame.codec_timing.picture},f))return false;
                 ready.emplace_back(std::move(frame));
             }
             api.av_frame_unref_p(scratch);
@@ -393,6 +419,19 @@ struct NativeMovieDecoder::Impl {
             // splitting below must neither repeat nor omit these source bytes.
             if(!source_video->validate_next({packet->data,static_cast<std::size_t>(packet->size)},source_error))
                 return source_failure(MovieDecodeError::source_validation,"original video packet does not match next indexed ES bytes",f);
+            if(!prefix_events||packet->size==0){
+                f={MovieDecodeError::source_observation,0,"missing source prefix owner or empty video packet"};return false;
+            }
+            MoviePrefixFailure pf;auto prefixes=prefix_events->feed(*packet_es_begin,
+                {packet->data,static_cast<std::size_t>(packet->size)},pf);
+            if(!prefixes)return observation_failure(pf,"native original VIDEO ES prefix observation",f);
+            if(!observe(MovieVideoEsObserved{*packet_es_begin,source_video->position(),
+                std::vector<std::uint8_t>(packet->data,packet->data+packet->size)},f))return false;
+            for(const auto& prefix:prefixes->events){
+                auto owner=source_index->lookup(source_stream_id,prefix.es_prefix_first_byte,source_error);
+                if(!owner)return source_failure(MovieDecodeError::source_observation,"prefix FIRST-byte PES observation",f);
+                if(!observe(MovieVideoPrefixObserved{prefix,*owner,owner->quarter_pts()},f))return false;
+            }
         }
         // The pinned parser includes SEQ_END_CODE in the final picture packet,
         // but its strict decoder counts those32bits as excess slice bits.
@@ -442,6 +481,7 @@ std::unique_ptr<NativeMovieDecoder> NativeMovieDecoder::open(const std::filesyst
     f={};if(!asset.valid()){f={MovieDecodeError::invalid_owner,0,"invalid or moved NativeMovieAsset"};f.asset_failure.kind=MovieAssetError::moved_asset;return {};}
     try{
         auto s=std::make_unique<Impl>();
+        s->observation_key=std::string(asset.logical_key());
         s->source_index=NativeMoviePesIndex::build(std::move(asset),s->source_error);
         if(!s->source_index){s->source_failure(MovieDecodeError::source_index,"native movie PES index",f);return {};}
         s->source_file=s->source_index->file_reader(s->source_error);
@@ -486,6 +526,9 @@ std::unique_ptr<NativeMovieDecoder> NativeMovieDecoder::finish_open(std::unique_
         if((s->audio.index<0)!=s->source_index->audio_streams().empty()){f={MovieDecodeError::audio_source,0,"demux/index audio presence mismatch"};return {};}
         if(s->video.index<0){f={MovieDecodeError::invalid_stream,0,"movie has no MPEG2 video"};return {};}
         s->packet=s->api.av_packet_alloc_p();s->scratch=s->api.av_frame_alloc_p();if(!s->packet||!s->scratch){f={MovieDecodeError::allocation,0,"native decoder packet/frame"};return {};}
+        MoviePrefixFailure pf;s->prefix_events=NativeMoviePrefixEvents::create(0,pf);
+        if(!s->prefix_events){s->observation_failure(pf,"native source prefix owner creation",f);return {};}
+        s->observation_source=std::make_shared<const MovieSourceObservationIdentity>();
         return std::unique_ptr<NativeMovieDecoder>(new NativeMovieDecoder(std::move(s)));
     }catch(const std::bad_alloc&){f={MovieDecodeError::allocation,0,"native movie ownership"};}
      catch(const std::length_error&){f={MovieDecodeError::allocation,0,"native movie host capacity"};}
@@ -509,6 +552,16 @@ MovieReadResult NativeMovieDecoder::next(MovieDecodeFailure& f){
                     MovieAdxStreamFailure why;auto end=s.adx->finish(why);
                     if(end.status==MovieAdxStreamStatus::error){s.audio_error(why,f);s.failed=true;return {};}
                 }
+                MoviePrefixFailure pf;auto tail=s.prefix_events->finish(pf);
+                if(!tail){s.observation_failure(pf,"native source prefix observation finish",f);s.failed=true;return {};}
+                if(tail->source_end!=s.source_video->position()){
+                    f={MovieDecodeError::source_observation,0,"prefix observer did not cover complete VIDEO ES"};s.failed=true;return {};
+                }
+                const auto program=s.source_index->program_end();
+                if(!program){f={MovieDecodeError::source_observation,0,"missing validated source program-end observation"};s.failed=true;return {};}
+                // Actual input closure precedes delayed VIDEO drain. This is
+                // neither SDK command completion nor audio/client/GPU end.
+                if(!s.observe(*program,f)){s.failed=true;return {};}
                 for(auto* stream:{&s.video})if(stream->decoder){
                     const int sent=s.api.avcodec_send_packet_p(stream->decoder,nullptr);
                     if(sent<0&&sent!=AVERROR_EOF){f={MovieDecodeError::decode,sent,"native decoder flush"};s.failed=true;return {};}
@@ -522,11 +575,14 @@ MovieReadResult NativeMovieDecoder::next(MovieDecodeFailure& f){
             const bool sent=stream==&s.audio?s.send_audio(f):s.send_packet(*stream,f);s.api.av_packet_unref_p(s.packet);
             if(!sent){s.failed=true;return {};}
         }
-        if(s.ready.empty())return {MovieReadStatus::end,{}};
-        MovieReadResult result{MovieReadStatus::frame,std::move(s.ready.front())};s.ready.pop_front();return result;
+        if(s.ready.empty())return s.publish(MovieReadStatus::end);
+        auto frame=std::move(s.ready.front());s.ready.pop_front();return s.publish(MovieReadStatus::frame,std::move(frame));
     }catch(const std::bad_alloc&){f={MovieDecodeError::allocation,0,"decoded native frame ownership"};}
      catch(const std::length_error&){f={MovieDecodeError::allocation,0,"decoded frame host capacity"};}
     s.failed=true;return {};
+}
+std::shared_ptr<const MovieSourceObservationIdentity> NativeMovieDecoder::observation_identity() const noexcept {
+    return impl_?impl_->observation_source:nullptr;
 }
 std::optional<MovieAudioDecodeAudit> NativeMovieDecoder::audio_audit(MovieDecodeFailure& f){
     f={};if(!impl_){f={MovieDecodeError::invalid_owner,0,"moved native movie decoder"};return {};}

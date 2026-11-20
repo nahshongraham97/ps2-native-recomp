@@ -39,7 +39,7 @@ struct Times {std::uint64_t missing=0;std::map<std::pair<std::int32_t,std::int32
 const char* decode_name(MovieDecodeError e){switch(e){
 #define CASE(x) case MovieDecodeError::x:return #x;
  CASE(none) CASE(unsupported_host) CASE(library_load) CASE(missing_symbol) CASE(library_version) CASE(file_io) CASE(allocation) CASE(invalid_stream) CASE(unsupported_stream) CASE(unsupported_frame) CASE(demux) CASE(decode) CASE(invalid_owner) CASE(failed_owner)
- CASE(unsupported_audio_layout) CASE(timing_parse) CASE(timing_association) CASE(source_index) CASE(source_validation) CASE(source_association) CASE(audio_source) CASE(audio_decode)
+ CASE(unsupported_audio_layout) CASE(timing_parse) CASE(timing_association) CASE(source_index) CASE(source_validation) CASE(source_association) CASE(audio_source) CASE(audio_decode) CASE(source_observation)
 #undef CASE
  }return "unknown_decode_error";}
 const char* asset_name(MovieAssetError e){switch(e){

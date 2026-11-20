@@ -1,6 +1,7 @@
 #include "mka/movie_kernel_policies.hpp"
 #include <exception>
 #include <new>
+#include <type_traits>
 
 namespace mka::video {
 namespace {
@@ -120,10 +121,65 @@ bool NativeMovieKernelPolicies::validate_audio_format(const std::optional<sound:
         return true;
     });
 }
+bool NativeMovieKernelPolicies::validate_observation_source(
+        std::shared_ptr<const MovieSourceObservationIdentity> identity,MovieControlFailure& f) noexcept {
+    return invoke(f,false,[&]{
+        if(used_||closed_||!identity||(source_identity_&&source_identity_!=identity))
+            return fail(f,"movie policies missing or changed actual source observation identity");
+        source_identity_=std::move(identity);return true;
+    });
+}
+bool NativeMovieKernelPolicies::observe_source(const MovieSourceObservationBatch& batch,MovieControlFailure& f) noexcept {
+    return invoke(f,true,[&]{
+        if(batch.source_key!=request_.logical_key||!batch.identity||batch.identity!=source_identity_||batch.events.empty())
+            return fail(f,"movie policies source observation identity/key/extent mismatch");
+        auto sequence=observation_sequence_,video_end=observed_video_end_;
+        auto prefix=observed_prefix_;auto ended=observed_program_end_;
+        for(const auto& event:batch.events){
+            if(sequence==UINT64_MAX||event.sequence!=sequence+1)
+                return fail(f,"movie policies source observation sequence mismatch");
+            const bool valid=std::visit([&](const auto& value){
+                using T=std::decay_t<decltype(value)>;
+                if constexpr(std::is_same_v<T,MovieVideoEsObserved>){
+                    if(ended||value.bytes.empty()||value.es_begin!=video_end||value.es_end<=value.es_begin||
+                       value.es_end-value.es_begin!=value.bytes.size())return false;
+                    video_end=value.es_end;return true;
+                }else if constexpr(std::is_same_v<T,MovieVideoPrefixObserved>){
+                    const auto& raw=value.prefix;const auto& pes=value.pes;
+                    if(ended||(raw.raw_codeword&0xffffff00u)!=0x00000100u||
+                       raw.classification!=movie_prefix_classification(raw.raw_codeword)||
+                       raw.es_prefix_first_byte>video_end||video_end-raw.es_prefix_first_byte<4||
+                       (prefix&&raw.es_prefix_first_byte<=*prefix)||
+                       pes.stream_id<0xe0||pes.stream_id>0xef||pes.packet_offset>=pes.payload_offset||
+                       pes.payload_offset>=pes.packet_end||pes.es_begin>=pes.es_end||
+                       raw.es_prefix_first_byte<pes.es_begin||raw.es_prefix_first_byte>=pes.es_end||
+                       value.quarter_pts!=pes.quarter_pts())return false;
+                    prefix=raw.es_prefix_first_byte;return true;
+                }else if constexpr(std::is_same_v<T,MovieDecodedPictureObserved>){
+                    return valid_picture(value.picture)&&value.picture.picture_es_byte<=video_end&&
+                        video_end-value.picture.picture_es_byte>=4&&
+                        value.timing.packet_picture_offset==value.picture.picture_es_byte-value.picture.packet_es_begin;
+                }else{
+                    if(ended||!video_end||value.byte_extent!=4||value.file_offset>UINT64_MAX-4||
+                       value.trailing_padding_bytes>UINT64_MAX-value.file_offset-4)return false;
+                    ended=true;return true;
+                }
+            },event.value);
+            if(!valid)return fail(f,"movie policies invalid source observation data/order");
+            sequence=event.sequence;
+        }
+        // Required source-specific consumer receives the actual producer data.
+        // It must own/validate any parser/admission/output/lifecycle semantics.
+        if(!context_->observe_source(batch,f)||f.kind!=MovieControlError::none)return false;
+        observation_sequence_=sequence;observed_video_end_=video_end;
+        observed_prefix_=prefix;observed_program_end_=ended;return true;
+    });
+}
 bool NativeMovieKernelPolicies::begin(const RetailMovieRequest& request, std::int32_t gain, MovieControlFailure& f) noexcept {
     return invoke(f, false, [&] {
         if (used_ || closed_) return fail(f, "movie policies source is single use");
         if (!format_joined_) return fail(f, "movie policies actual client format not joined");
+        if (!source_identity_) return fail(f,"movie policies actual source observation identity not joined");
         if (!same_request(request_, request)) return fail(f, "movie policies full request identity mismatch");
         used_ = true; cleanup_needed_ = true;
         if (!context_->begin(request_, gain, f) || f.kind != MovieControlError::none) return false;
