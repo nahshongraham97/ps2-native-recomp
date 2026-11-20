@@ -138,7 +138,12 @@ bool NativeMovieBackendDriver::publish(const MovieFrameWorkResult& result,MovieC
 bool NativeMovieBackendDriver::finish(const MoviePlaybackBackendObservation& o,MoviePlaybackBackendResult& out,MovieControlFailure& f) {
     if(o.head_video){
         if(!o.head_video->codec_timing.picture_source)return fail(f,"movie backend head lacks selected source");
-        const auto& source=*o.head_video->codec_timing.picture_source;auto found=pending_.find(source.picture_es_byte);
+        const auto& source=*o.head_video->codec_timing.picture_source;
+        const auto& syntax=o.head_video->source_syntax;
+        if(!syntax||syntax->source_key!=key_||syntax->identity!=identity_||
+           syntax->picture_es_byte!=source.picture_es_byte||syntax->pes!=source.pes||syntax->quarter_pts!=source.quarter_pts)
+            return fail(f,"movie backend preparation foreign source syntax");
+        auto found=pending_.find(source.picture_es_byte);
         out.head_frame_published=found!=pending_.end()&&found->second==source;
         out.prepare_head_video=out.head_frame_published&&!o.head_video_prepared;
     }

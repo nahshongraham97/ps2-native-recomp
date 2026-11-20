@@ -36,6 +36,28 @@ struct GPU final:NativeMovieGpuBackend {
     MovieFenceResult poll(const std::shared_ptr<MovieGpuFence>& f)override{check(bool(f),"owned submitted fence");return {MovieFenceState::complete,MovieGpuError::none};}
     void retire(std::shared_ptr<MovieGpuFence> f)noexcept override{if(f)++retired;}
 };
+// Malformed native frame-port results retain authentic input observations and
+// selected-picture fields, isolating authentication before native upload.
+struct ForeignInput final:MoviePlaybackInput {
+    std::unique_ptr<MoviePlaybackInput> input;int fault;bool injected=false;
+    ForeignInput(std::unique_ptr<MoviePlaybackInput> p,int mode):input(std::move(p)),fault(mode){}
+    const RetailMovieRequest& request()const noexcept override{return input->request();}
+    std::shared_ptr<const MovieSourceObservationIdentity> observation_identity()const noexcept override{return input->observation_identity();}
+    MovieReadResult next(MovieControlFailure& f)override{
+        auto r=input->next(f);
+        if(!injected&&r.status==MovieReadStatus::frame)if(auto* frame=std::get_if<MovieVideoFrame>(&r.frame)){
+            check(bool(frame->source_syntax),"actual source supplies syntax before fault injection");
+            if(fault==0)frame->source_syntax.reset();
+            else {auto foreign=std::make_shared<MovieSourceSyntaxPicture>(*frame->source_syntax);
+                if(fault==1)foreign->identity=std::make_shared<const MovieSourceObservationIdentity>();
+                else ++foreign->pes.es_begin;
+                frame->source_syntax=std::move(foreign);
+            }
+            injected=true;
+        }
+        return r;
+    }
+};
 MovieServicePolicyConfiguration profile(){
     MovieServiceClockFailure f;auto clock=movie_service_source_config(MovieServiceSourceMode::mode0,f);check(bool(clock),"source mode0 config");
     return {MoviePlaybackAudioPresence::absent,{},
@@ -100,6 +122,24 @@ int main(int argc,char** argv){try{
             std::printf("{\"processed\":%llu,\"published\":%llu,\"submitted_ports\":%llu,\"retired_ports\":%llu}\n",(unsigned long long)max_processed,(unsigned long long)max_published,(unsigned long long)gpu->presents,(unsigned long long)gpu->retired);
         }
         live=nullptr;check(service->close(f),"separate idempotent resource cancellation");
+    }
+    for(int malformed=0;malformed<3;++malformed){
+        auto gpu=std::make_shared<GPU>();MovieServiceFailure f;
+        auto service=NativeMovieService::create(1.0f,
+            [](const RetailMovieRequest&,std::shared_ptr<const MovieSourceObservationIdentity>,const std::optional<mka::sound::AudioStreamFormat>& format,MovieSessionFailure& sf)->std::optional<MovieServicePolicyConfiguration>{sf={};check(!format,"malformed video-only fixture");return profile();},
+            [&,gpu,malformed](const RetailMovieRequest& request,std::int64_t language,MovieSessionPolicyFactory policies,NativeMovieControlContext& control,MovieSessionFailure& sf){
+                MovieSourceFailure source_failure;auto source=NativeRetailMovieSource::open(*store,std::filesystem::u8path(argv[1]),request.id,request.requested_view,language,source_failure);
+                if(!source){sf.kind=MovieSessionError::source;sf.source=std::move(source_failure);return std::unique_ptr<NativeMoviePlaybackSession>{};}
+                auto id=source->observation_identity();auto concrete=policies(request,id,std::nullopt,sf);if(!concrete)return std::unique_ptr<NativeMoviePlaybackSession>{};
+                MovieControlFailure cf;auto actual=own_movie_playback_source(std::move(source),cf);check(bool(actual),"actual one-source input for malformed return");
+                MoviePlaybackConfiguration config;config.audio=MoviePlaybackAudioPresence::absent;config.layout={1,640,448,MovieAspectMode::explicit_display_aspect,4,3,MovieWindowPolicy::centered_fit};config.filter=MovieFilter::nearest;config.queued_byte_budget=8*1024*1024;
+                return NativeMoviePlaybackSession::create_from_ports(std::make_unique<ForeignInput>(std::move(actual),malformed),std::move(concrete),{},gpu,*color,config,control,sf);
+            },f);
+        check(service&&service->start(12,MovieViewSelection::normal,0,0,f),"default automatic Service/QPC with malformed native return port");
+        MovieControlResult result;bool terminal=false;
+        for(unsigned n=0;n<20&&!terminal;++n){result=service->poll(f);terminal=result.progress!=MovieControlProgress::ongoing;}
+        check(terminal&&result.progress==MovieControlProgress::error&&std::string_view(result.failure.operation)=="movie backend preparation foreign source syntax"&&!gpu->uploads&&!gpu->presents,"missing/foreign-epoch/mismatched-PES head rejected before any native upload");
+        check(service->close(f),"malformed frame owned resources close separately");
     }
     check(std::puts("PASS automatic native movie service backend work/preparation/drain through deterministic ports; no physical playback or content comparison")>=0&&std::fflush(stdout)==0,"checked output");return 0;
 }catch(const std::exception& e){std::fprintf(stderr,"FAIL native service backend %s\n",e.what());return 1;}}

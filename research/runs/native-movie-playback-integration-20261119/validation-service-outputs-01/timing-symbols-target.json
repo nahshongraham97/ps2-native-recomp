@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_service_host_clock.exe",
+  "target_before_sha256": "74413de8873bf5bce39826b18d66d57b5b7c4ba88aea857349bd1f789a60cf5a",
+  "target_after_sha256": "74413de8873bf5bce39826b18d66d57b5b7c4ba88aea857349bd1f789a60cf5a",
+  "audited_target_expected_sha256": "74413de8873bf5bce39826b18d66d57b5b7c4ba88aea857349bd1f789a60cf5a",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::video::NativeMovieServiceHostClock::"
+  ],
+  "executed_target_sha256": "74413de8873bf5bce39826b18d66d57b5b7c4ba88aea857349bd1f789a60cf5a"
+}

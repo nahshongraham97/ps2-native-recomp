@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_audio_clock_anchor.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native output clock zero anchor/lifecycle/exact rational; no acoustic or retail clock claim\n",
+  "stderr": "",
+  "executable_sha256": "90afcd3f202d1e696c9e1508e8846d9b7725f990451413d8d23cd141d84aa516",
+  "executable_after_sha256": "90afcd3f202d1e696c9e1508e8846d9b7725f990451413d8d23cd141d84aa516"
+}

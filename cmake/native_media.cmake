@@ -349,3 +349,7 @@ target_link_libraries(test_native_movie_adx_audio_assets PRIVATE mka_native_medi
 # Actual service-owned orchestration with deterministic output/clock ports.
 add_executable(test_native_movie_service_backend EXCLUDE_FROM_ALL tests/test_movie_service_backend.cpp)
 target_link_libraries(test_native_movie_service_backend PRIVATE mka_native_media)
+
+# Actual audio-bearing automatic Service, deterministic native output ports only.
+add_executable(test_native_movie_service_backend_audio EXCLUDE_FROM_ALL tests/test_movie_service_backend_audio.cpp)
+target_link_libraries(test_native_movie_service_backend_audio PRIVATE mka_native_media)

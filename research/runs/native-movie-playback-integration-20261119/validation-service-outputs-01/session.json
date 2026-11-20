@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_playback_session.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules\\MOVIER.ovl"
+  ],
+  "exit": 0,
+  "stdout": "PASS native playback session real stream/controller lifecycle with deterministic ports; no devices or retail policy admission\n",
+  "stderr": "",
+  "executable_sha256": "dd947f9372c9109e6f4272997f3015e9c48a51e499ff6d3bf7d6531e5d6dbe84",
+  "executable_after_sha256": "dd947f9372c9109e6f4272997f3015e9c48a51e499ff6d3bf7d6531e5d6dbe84"
+}
