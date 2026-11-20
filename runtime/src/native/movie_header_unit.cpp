@@ -57,6 +57,13 @@ MovieHeaderUnitResult parse_movie_header_unit(std::span<const std::uint8_t> inpu
                 if(v){MovieDisplayColor color;if(!read(8,color.primaries)||!read(8,color.transfer)||!read(8,color.matrix))return more();x.color=color;}
                 if(!read(14,x.horizontal_size)||!b.get(1,v))return more();if(v!=1)return malformed(E::invalid_marker);
                 if(!read(14,x.vertical_size))return more();unit.payload=x;
+            }else if(id==3){
+                MovieQuantMatrixExtension x;
+                for(auto* matrix:{&x.intra_matrix,&x.non_intra_matrix,&x.chroma_intra_matrix,&x.chroma_non_intra_matrix}){
+                    if(!b.get(1,v))return more();
+                    if(v){matrix->emplace();for(auto& coefficient:**matrix)if(!read(8,coefficient))return more();}
+                }
+                unit.payload=std::move(x);
             }else if(id==8){
                 MoviePictureCodingExtension x;for(auto& e:x.f_code){if(!read(4,e))return more();if(!e)return malformed(E::invalid_value);}
                 if(!read(2,x.intra_dc_precision)||!read(2,x.picture_structure))return more();

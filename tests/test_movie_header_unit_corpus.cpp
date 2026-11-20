@@ -30,6 +30,8 @@ Fields fields(const MovieHeaderUnitPayload& payload){return std::visit([](const 
   if(p.intra_matrix)a.hash(*p.intra_matrix);else a.raw("null");if(p.non_intra_matrix)a.hash(*p.non_intra_matrix);else a.raw("null");
  }else if constexpr(std::is_same_v<T,MovieSequenceExtension>){kind="sequence_extension";
   a.number(p.profile_and_level);a.flag(p.progressive_sequence);a.number(p.chroma_format);a.number(p.horizontal_size_extension);a.number(p.vertical_size_extension);a.number(p.bit_rate_extension);a.number(p.vbv_buffer_size_extension);a.flag(p.low_delay);a.number(p.frame_rate_extension_n);a.number(p.frame_rate_extension_d);
+ }else if constexpr(std::is_same_v<T,MovieQuantMatrixExtension>){kind="quant_matrix_extension";
+  for(const auto* matrix:{&p.intra_matrix,&p.non_intra_matrix,&p.chroma_intra_matrix,&p.chroma_non_intra_matrix}){if(*matrix)a.hash(**matrix);else a.raw("null");}
  }else if constexpr(std::is_same_v<T,MovieDisplayExtension>){kind="display_extension";
   a.number(p.video_format);if(p.color){Array c;c.number(p.color->primaries);c.number(p.color->transfer);c.number(p.color->matrix);a.raw(c.finish());}else a.raw("null");a.number(p.horizontal_size);a.number(p.vertical_size);
  }else if constexpr(std::is_same_v<T,MoviePictureCodingExtension>){kind="picture_extension";

@@ -21,6 +21,11 @@ struct MovieSequenceExtension {
     std::uint16_t bit_rate_extension=0;std::uint8_t vbv_buffer_size_extension=0;
     bool progressive_sequence=false,low_delay=false;std::uint8_t frame_rate_extension_n=0,frame_rate_extension_d=0;
 };
+struct MovieQuantMatrixExtension {
+    // Serialized order, deliberately not decoder zigzag/permuted storage.
+    std::optional<std::array<std::uint8_t,64>> intra_matrix,non_intra_matrix,
+        chroma_intra_matrix,chroma_non_intra_matrix;
+};
 struct MovieDisplayColor {std::uint8_t primaries=0,transfer=0,matrix=0;};
 struct MovieDisplayExtension {
     std::uint8_t video_format=0;std::optional<MovieDisplayColor> color;
@@ -50,7 +55,7 @@ struct MoviePictureHeader {
 struct MovieUserDataHeader {std::vector<std::uint8_t> payload;};
 struct MovieSequenceEndHeader {};
 using MovieHeaderUnitPayload=std::variant<MovieSequenceHeader,MovieSequenceExtension,MovieDisplayExtension,
-    MoviePictureCodingExtension,MovieGopHeader,MoviePictureHeader,MovieUserDataHeader,MovieSequenceEndHeader>;
+    MoviePictureCodingExtension,MovieQuantMatrixExtension,MovieGopHeader,MoviePictureHeader,MovieUserDataHeader,MovieSequenceEndHeader>;
 struct MovieHeaderUnit {std::uint64_t consumed_bytes=0;std::vector<std::uint8_t> bytes;MovieHeaderUnitPayload payload;};
 struct MovieHeaderUnitResult {
     MovieHeaderUnitStatus status=MovieHeaderUnitStatus::error;MovieHeaderUnitFailure failure;
