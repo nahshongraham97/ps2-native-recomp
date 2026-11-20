@@ -143,3 +143,13 @@ if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
     target_link_libraries(test_native_wave_allocation PRIVATE mka_native_wave_allocation)
     target_link_options(test_native_wave_allocation PRIVATE "-Wl,--wrap=_ZnwySt11align_val_t")
 endif()
+
+# Native direct allocation-class payload and source-derived game descriptors.
+add_library(mka_native_allocation_class STATIC EXCLUDE_FROM_ALL runtime/src/native/allocation_class.cpp)
+target_link_libraries(mka_native_allocation_class PUBLIC mka_native_heap)
+add_executable(test_native_allocation_class EXCLUDE_FROM_ALL tests/test_allocation_class.cpp)
+target_link_libraries(test_native_allocation_class PRIVATE mka_native_allocation_class)
+add_library(mka_native_allocation_profile STATIC EXCLUDE_FROM_ALL runtime/src/native/allocation_profile.cpp)
+target_link_libraries(mka_native_allocation_profile PUBLIC mka_native_allocation_class)
+add_executable(test_native_class_profile EXCLUDE_FROM_ALL tests/test_allocation_profile.cpp)
+target_link_libraries(test_native_class_profile PRIVATE mka_native_allocation_profile)

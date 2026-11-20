@@ -1,0 +1,10 @@
+{
+  "source_report": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\PROFILE_MEMORY_SOURCE.json",
+  "source_report_sha256": "e6a7fceafcdfa6ebd96f3e9f34fe298a49c5d24769fb083f7ea29447230292bd",
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-allocation-class-20261120\\validation-01\\source-profile.tsv",
+  "target_sha256": "9fe136f7da86ef086da7f8132286992840d155555b0992a19df038998eaecf22",
+  "descriptors": 13,
+  "original_profiles": 14,
+  "source_only": true,
+  "note": "Original source facts, never parsed from candidate implementation"
+}

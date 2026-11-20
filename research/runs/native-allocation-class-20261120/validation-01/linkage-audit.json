@@ -1,0 +1,13 @@
+{
+  "ninja_sha256": "b8dc167deb1cfed3be7208fbf1ca0e50f1e79dc2aaae5ee6ee640206720ed73c",
+  "target_rules": [
+    {
+      "target": "test_native_allocation_class",
+      "actual_build_rule": "build test_native_allocation_class.exe: CXX_EXECUTABLE_LINKER__test_native_allocation_class_Release CMakeFiles/test_native_allocation_class.dir/tests/test_allocation_class.cpp.obj | libmka_native_allocation_class.a libmka_native_heap.a || libmka_native_allocation_class.a libmka_native_heap.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_allocation_class.a  libmka_native_heap.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_allocation_class.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_allocation_class.exe\n  TARGET_IMPLIB = libtest_native_allocation_class.dll.a\n  TARGET_PDB = test_native_allocation_class.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_allocation_class.dir"
+    },
+    {
+      "target": "test_native_class_profile",
+      "actual_build_rule": "build test_native_class_profile.exe: CXX_EXECUTABLE_LINKER__test_native_class_profile_Release CMakeFiles/test_native_class_profile.dir/tests/test_allocation_profile.cpp.obj | libmka_native_allocation_profile.a libmka_native_allocation_class.a libmka_native_heap.a || libmka_native_allocation_class.a libmka_native_allocation_profile.a libmka_native_heap.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_allocation_profile.a  libmka_native_allocation_class.a  libmka_native_heap.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_class_profile.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_class_profile.exe\n  TARGET_IMPLIB = libtest_native_class_profile.dll.a\n  TARGET_PDB = test_native_class_profile.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_class_profile.dir"
+    }
+  ]
+}
