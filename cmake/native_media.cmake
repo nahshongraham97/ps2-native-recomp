@@ -38,6 +38,8 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/movie_playback.cpp
     runtime/src/native/movie_playback_adapters.cpp
     runtime/src/native/movie_playback_session.cpp
+    runtime/src/native/movie_native_context.cpp
+    runtime/src/native/movie_output_position.cpp
     runtime/src/native/movie_audio_progress.cpp
     runtime/src/native/movie_pcm_mix.cpp
     runtime/src/native/movie_pcm_downmix.cpp
@@ -103,6 +105,8 @@ foreach(pair
     "test_native_movie_source_syntax_index|tests/test_movie_source_syntax_index.cpp"
     "test_native_movie_source_syntax_corpus|tests/test_movie_source_syntax_corpus.cpp"
     "test_native_movie_playback_session|tests/test_movie_playback_session.cpp"
+    "test_native_movie_native_context|tests/test_movie_native_context.cpp"
+    "test_native_movie_output_position|tests/test_movie_output_position.cpp"
     "test_native_movie_source|tests/test_movie_source.cpp"
     "test_native_movie_source_failure|tests/test_movie_source_failure.cpp"
     "test_native_movie_pipeline|tests/test_native_movie_pipeline.cpp"

@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_native_context.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS concrete source-owned movie context kernels/lifecycle; no default profile or native device/player admission\n",
+  "stderr": "",
+  "executable_sha256": "1a668e9a4b22cd99ac37c2ea6cbd0c233c79f5c16c186c2dfa9dbdde64cc163d",
+  "executable_after_sha256": "1a668e9a4b22cd99ac37c2ea6cbd0c233c79f5c16c186c2dfa9dbdde64cc163d"
+}
