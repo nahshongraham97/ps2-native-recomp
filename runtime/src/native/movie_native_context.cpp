@@ -57,7 +57,7 @@ bool NativeMoviePlaybackContext::pump_metadata(MovieControlFailure& f) noexcept 
 bool NativeMoviePlaybackContext::observe_source(const MovieSourceObservationBatch& batch,MovieControlFailure& f) noexcept {
     if(!enter(f))return false;Guard guard(in_call_);
     if(batch.events.empty()||batch.source_key!=config_.request.logical_key||batch.identity!=config_.identity)return fail(f,MovieNativeContextError::foreign_source,"movie native context observation source mismatch");
-    auto sequence=state_.observation_sequence,end=observed_es_end_;auto last=last_prefix_;bool ended=state_.program_end_observed;
+    auto sequence=state_.observation_sequence,end=observed_es_end_;auto last=last_prefix_;bool ended=state_.program_end_observed;auto accepted=state_.last_input_receipt;
     try {
         std::vector<std::uint8_t> extra;
         std::map<std::uint64_t,Decoded> additions;
@@ -74,13 +74,17 @@ bool NativeMoviePlaybackContext::observe_source(const MovieSourceObservationBatc
             }else if(const auto* decoded=std::get_if<MovieDecodedPictureObserved>(&event.value)){
                 const auto& p=decoded->picture;const auto at=p.picture_es_byte;
                 if(!picture_valid(p)||decoded->timing.packet_picture_offset!=at-p.packet_es_begin||at>end||end-at<4||code_at(at)!=0x100||decoded_.contains(at)||additions.contains(at))return fail(f,MovieNativeContextError::foreign_source,"movie native context decoded source observation");additions.emplace(at,Decoded{p,false});
+            }else if(const auto* input=std::get_if<MovieCodecInputAccepted>(&event.value)){
+                const auto error=check_movie_input_receipt(input->receipt,batch.source_key,batch.identity,accepted,end,ended);
+                if(error!=MovieInputReceiptError::none)return fail(f,MovieNativeContextError::invalid_receipt,"movie native context codec input receipt",static_cast<std::int64_t>(error));
+                accepted=input->receipt;
             }else if(const auto* control=std::get_if<MovieProgramEndObservation>(&event.value)){
                 if(ended||!end||control->byte_extent!=4||control->file_offset>UINT64_MAX-4||control->trailing_padding_bytes>UINT64_MAX-control->file_offset-4)return fail(f,MovieNativeContextError::invalid_order,"movie native context program end replay");ended=true;
             }
         }
         source_bytes_.reserve(static_cast<std::size_t>(end));
         source_bytes_.insert(source_bytes_.end(),extra.begin(),extra.end());
-        decoded_.merge(additions);prefixes_.merge(prefix_additions);observed_es_end_=end;last_prefix_=last;state_.observation_sequence=sequence;state_.program_end_observed=ended;return true;
+        decoded_.merge(additions);prefixes_.merge(prefix_additions);observed_es_end_=end;last_prefix_=last;state_.observation_sequence=sequence;state_.program_end_observed=ended;state_.last_input_receipt=std::move(accepted);return true;
     }catch(const std::bad_alloc&){return fail(f,MovieNativeContextError::allocation,"movie native context observation allocation");}
     catch(const std::length_error&){return fail(f,MovieNativeContextError::host_capacity,"movie native context observation host capacity");}
 }

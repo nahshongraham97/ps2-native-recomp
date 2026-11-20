@@ -89,7 +89,7 @@ struct NativeMovieDecoder::Impl {
     std::string observation_key;
     std::shared_ptr<const MovieSourceObservationIdentity> observation_source;
     std::vector<MovieSourceObservation> pending_observations;
-    std::uint64_t observation_sequence=0;
+    std::uint64_t observation_sequence=0,input_serial=0;
     std::uint8_t source_stream_id=0;
     MovieAssetFailure asset_error;
     MoviePesFailure source_error;
@@ -436,8 +436,20 @@ struct NativeMovieDecoder::Impl {
         }
         return receive(stream,f);
     }
+    bool accept_input(std::uint64_t begin,std::uint64_t end,MovieDecodeFailure& f){
+        if(!observation_source||begin>=end||input_serial==UINT64_MAX){
+            f={MovieDecodeError::source_observation,0,"native codec input receipt identity/range/ID capacity"};return false;
+        }
+        // Construction is private to NativeMovieDecoder/Impl. Host failure
+        // after successful codec calls is terminal in next(), never retried.
+        auto receipt=std::shared_ptr<const MovieCodecInputReceipt>(new MovieCodecInputReceipt(
+            observation_key,observation_source,input_serial+1,source_stream_id,begin,end));
+        if(!observe(MovieCodecInputAccepted{std::move(receipt)},f))return false;
+        ++input_serial;return true;
+    }
     bool send_packet(Stream& stream,MovieDecodeFailure& f){
         std::optional<std::uint64_t> packet_es_begin;
+        std::uint64_t packet_es_end=0;
         if(stream.index==video.index){
             if(packet->size<0||(packet->size&&!packet->data)){
                 f={MovieDecodeError::source_validation,0,"invalid original video packet extent"};return false;
@@ -447,6 +459,7 @@ struct NativeMovieDecoder::Impl {
             // splitting below must neither repeat nor omit these source bytes.
             if(!source_video->validate_next({packet->data,static_cast<std::size_t>(packet->size)},source_error))
                 return source_failure(MovieDecodeError::source_validation,"original video packet does not match next indexed ES bytes",f);
+            packet_es_end=source_video->position();
             if(!prefix_events||packet->size==0){
                 f={MovieDecodeError::source_observation,0,"missing source prefix owner or empty video packet"};return false;
             }
@@ -468,7 +481,10 @@ struct NativeMovieDecoder::Impl {
         // and ordering, keep picture timestamps on the picture, invent none
         // for the non-picture control packet. No error flags are relaxed.
         if(stream.index!=video.index||packet->size<=4||
-           std::memcmp(packet->data+packet->size-4,"\0\0\1\267",4)!=0)return send(stream,packet,f,packet_es_begin);
+           std::memcmp(packet->data+packet->size-4,"\0\0\1\267",4)!=0){
+            if(!send(stream,packet,f,packet_es_begin))return false;
+            return !packet_es_begin||accept_input(*packet_es_begin,packet_es_end,f);
+        }
         const auto release=[&](AVPacket* p){api.av_packet_free_p(&p);};
         std::unique_ptr<AVPacket,decltype(release)> part(api.av_packet_alloc_p(),release);
         if(!part){f={MovieDecodeError::allocation,0,"terminal sequence packet"};return false;}
@@ -483,7 +499,7 @@ struct NativeMovieDecoder::Impl {
             if(!send(stream,part.get(),f,packet_es_begin))return false;
         }
         std::fprintf(stderr,"[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=%d)\n",body_size);
-        return true;
+        return accept_input(*packet_es_begin,packet_es_end,f);
     }
 };
 NativeMovieDecoder::NativeMovieDecoder(std::unique_ptr<Impl> p):impl_(std::move(p)){}

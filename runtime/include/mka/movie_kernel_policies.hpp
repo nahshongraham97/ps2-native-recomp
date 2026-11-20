@@ -136,6 +136,7 @@ private:
     std::shared_ptr<MovieEligibilityServiceBinding> service_;
     std::shared_ptr<const MovieSourceObservationIdentity> source_identity_;
     std::uint64_t observation_sequence_=0,observed_video_end_=0;
+    std::shared_ptr<const MovieCodecInputReceipt> observed_input_receipt_;
     std::optional<std::uint64_t> observed_prefix_;
     bool observed_program_end_=false;
     const std::thread::id owner_ = std::this_thread::get_id();

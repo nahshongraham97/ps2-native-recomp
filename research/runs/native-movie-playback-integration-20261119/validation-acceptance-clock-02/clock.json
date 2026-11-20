@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_host_clock.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native host elapsed clock exact intervals/source lifecycle; no master-clock policy binding\n",
+  "stderr": "",
+  "executable_sha256": "afd6ab6430aeec6962cc6e8dfd688db3f9262b080b36814a592e91e1be40bf5f",
+  "executable_after_sha256": "afd6ab6430aeec6962cc6e8dfd688db3f9262b080b36814a592e91e1be40bf5f"
+}

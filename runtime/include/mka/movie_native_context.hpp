@@ -47,6 +47,7 @@ struct MovieNativeContextSnapshot {
     bool video_finished=false,audio_finished=false,stop_acknowledged=false,program_end_observed=false;
     std::uint64_t observation_sequence=0,admissions=0,outputs_pending=0,submitted=0;
     std::uint64_t accepted_audio_frames=0,next_source_audio_frame=0,next_client_frame=0;
+    std::shared_ptr<const MovieCodecInputReceipt> last_input_receipt;
     std::optional<MovieParserRateRecord> eligibility_rate;
     std::optional<MovieTimecodeRational> first_baseline,queued_baseline;
     std::uint64_t position_origin=0;

@@ -1,6 +1,7 @@
 #pragma once
 #include "mka/movie_header_boundary.hpp"
 #include "mka/movie_header_unit.hpp"
+#include "mka/movie_input_acceptance.hpp"
 
 namespace mka::video {
 enum class MovieAdmissionFeedError { none, invalid_owner, wrong_thread, invalid_source, foreign_source,
@@ -9,6 +10,7 @@ struct MovieAdmissionFeedFailure {
     MovieAdmissionFeedError kind = MovieAdmissionFeedError::none;
     MovieHeaderBoundaryFailure boundary;
     MovieHeaderUnitFailure unit;
+    MovieInputReceiptError input_receipt=MovieInputReceiptError::none;
 };
 struct MovieAdmissionEpoch {
     std::string source_key;
@@ -53,6 +55,7 @@ struct MovieAdmissionFeedSnapshot {
     std::uint64_t observation_sequence = 0, es_begin = 0, es_end = 0;
     std::size_t buffered_bytes = 0;
     bool work_pending = false, program_end_observed = false, failed = false;
+    std::shared_ptr<const MovieCodecInputReceipt> last_input_receipt;
 };
 struct MovieAdmissionFeedState;
 class NativeMovieAdmissionFeed final {

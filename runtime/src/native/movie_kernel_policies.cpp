@@ -1,4 +1,5 @@
 #include "mka/movie_kernel_policies.hpp"
+#include "mka/movie_input_acceptance.hpp"
 #include <exception>
 #include <new>
 #include <type_traits>
@@ -137,7 +138,8 @@ bool NativeMovieKernelPolicies::observe_source(const MovieSourceObservationBatch
         if(batch.source_key!=request_.logical_key||!batch.identity||batch.identity!=source_identity_||batch.events.empty())
             return fail(f,"movie policies source observation identity/key/extent mismatch");
         auto sequence=observation_sequence_,video_end=observed_video_end_;
-        auto prefix=observed_prefix_;auto ended=observed_program_end_;
+        auto prefix=observed_prefix_;auto ended=observed_program_end_;auto accepted=observed_input_receipt_;
+        auto acceptance_error=MovieInputReceiptError::none;
         for(const auto& event:batch.events){
             if(sequence==UINT64_MAX||event.sequence!=sequence+1)
                 return fail(f,"movie policies source observation sequence mismatch");
@@ -162,20 +164,24 @@ bool NativeMovieKernelPolicies::observe_source(const MovieSourceObservationBatch
                     return valid_picture(value.picture)&&value.picture.picture_es_byte<=video_end&&
                         video_end-value.picture.picture_es_byte>=4&&
                         value.timing.packet_picture_offset==value.picture.picture_es_byte-value.picture.packet_es_begin;
-                }else{
+                }else if constexpr(std::is_same_v<T,MovieProgramEndObservation>){
                     if(ended||!video_end||value.byte_extent!=4||value.file_offset>UINT64_MAX-4||
                        value.trailing_padding_bytes>UINT64_MAX-value.file_offset-4)return false;
                     ended=true;return true;
+                }else if constexpr(std::is_same_v<T,MovieCodecInputAccepted>){
+                    acceptance_error=check_movie_input_receipt(value.receipt,batch.source_key,batch.identity,accepted,video_end,ended);
+                    if(acceptance_error!=MovieInputReceiptError::none)return false;
+                    accepted=value.receipt;return true;
                 }
             },event.value);
-            if(!valid)return fail(f,"movie policies invalid source observation data/order");
+            if(!valid)return fail(f,"movie policies invalid source observation data/order",static_cast<std::int64_t>(acceptance_error));
             sequence=event.sequence;
         }
         // Required source-specific consumer receives the actual producer data.
         // It must own/validate any parser/admission/output/lifecycle semantics.
         if(!context_->observe_source(batch,f)||f.kind!=MovieControlError::none)return false;
         observation_sequence_=sequence;observed_video_end_=video_end;
-        observed_prefix_=prefix;observed_program_end_=ended;return true;
+        observed_prefix_=prefix;observed_program_end_=ended;observed_input_receipt_=std::move(accepted);return true;
     });
 }
 bool NativeMovieKernelPolicies::begin(const RetailMovieRequest& request, std::int32_t gain, MovieControlFailure& f) noexcept {

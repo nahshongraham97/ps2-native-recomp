@@ -13,6 +13,7 @@ struct MovieAdmissionFeedState {
     MovieAdmissionCurrent current;
     std::map<std::uint64_t, MovieVideoPrefixObserved> prefixes;
     std::optional<std::uint64_t> last_prefix;
+    std::shared_ptr<const MovieCodecInputReceipt> last_input_receipt;
     std::array<std::uint8_t, 3> consumed_tail{};
     std::size_t tail_size = 0;
     std::uint64_t sequence = 0;
@@ -73,7 +74,7 @@ bool NativeMovieAdmissionFeed::push(const MovieSourceObservationBatch& batch, Mo
     auto view = s.boundary.snapshot(f.boundary);
     if (!view) return fail(f, MovieAdmissionFeedError::allocation);
     try {
-        auto sequence = s.sequence; auto end = view->es_end; auto last = s.last_prefix; auto ended = s.program_end;
+        auto sequence = s.sequence; auto end = view->es_end; auto last = s.last_prefix; auto ended = s.program_end;auto accepted=s.last_input_receipt;
         std::vector<std::uint8_t> extra;
         std::map<std::uint64_t, MovieVideoPrefixObserved> additions;
         const auto read = [&](std::uint64_t at) -> std::uint8_t {
@@ -100,6 +101,10 @@ bool NativeMovieAdmissionFeed::push(const MovieSourceObservationBatch& batch, Mo
                 // A delayed raw prefix inside an already consumed structured
                 // header is provenance only, never a new parser unit.
                 if (at >= view->es_begin) additions.emplace(at, *p);
+            } else if (const auto* input = std::get_if<MovieCodecInputAccepted>(&event.value)) {
+                f.input_receipt=check_movie_input_receipt(input->receipt,batch.source_key,batch.identity,accepted,end,ended,view->initial_es_begin);
+                if(f.input_receipt!=MovieInputReceiptError::none)return fail(f,MovieAdmissionFeedError::invalid_order);
+                accepted=input->receipt;
             } else if (const auto* control = std::get_if<MovieProgramEndObservation>(&event.value)) {
                 if (ended || control->byte_extent != 4 || control->file_offset > UINT64_MAX - 4 ||
                         control->trailing_padding_bytes > UINT64_MAX - control->file_offset - 4)
@@ -112,7 +117,7 @@ bool NativeMovieAdmissionFeed::push(const MovieSourceObservationBatch& batch, Mo
         if (!s.boundary.append(batch.source_key, batch.identity, raw, f.boundary))
             return fail(f, f.boundary.kind == MovieHeaderBoundaryError::allocation
                 ? MovieAdmissionFeedError::allocation : MovieAdmissionFeedError::range);
-        s.prefixes.merge(additions); s.sequence = sequence; s.last_prefix = last; s.program_end = ended;
+        s.prefixes.merge(additions); s.sequence = sequence; s.last_prefix = last; s.program_end = ended;s.last_input_receipt=std::move(accepted);
         return true;
     } catch (const std::bad_alloc&) { return fail(f, MovieAdmissionFeedError::allocation); }
       catch (const std::length_error&) { return fail(f, MovieAdmissionFeedError::host_capacity); }
@@ -261,6 +266,6 @@ std::optional<MovieAdmissionFeedSnapshot> NativeMovieAdmissionFeed::snapshot(Mov
     auto view = state_->boundary.snapshot(f.boundary);
     if (!view) { fail(f, MovieAdmissionFeedError::allocation); return {}; }
     return MovieAdmissionFeedSnapshot{state_->current, state_->sequence, view->es_begin, view->es_end,
-        view->bytes.size(), state_->pending, state_->program_end, state_->failed};
+        view->bytes.size(), state_->pending, state_->program_end, state_->failed,state_->last_input_receipt};
 }
 } // namespace mka::video
