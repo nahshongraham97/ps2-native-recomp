@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_outer_header_batch.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2",
+    "KRYPT/V_RAIDON.SFD"
+  ],
+  "exit": 0,
+  "stdout": "PASS genuine outer parse batch admission/partial scope/rate provenance; no retail driver or playback\n",
+  "stderr": "",
+  "executable_sha256": "c131c7ea0b82756037e17e5ea3c134cc371271619096b9cf3547336fc9b3c0e4",
+  "executable_after_sha256": "c131c7ea0b82756037e17e5ea3c134cc371271619096b9cf3547336fc9b3c0e4"
+}

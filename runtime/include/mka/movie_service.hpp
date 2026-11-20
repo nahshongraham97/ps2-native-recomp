@@ -54,6 +54,16 @@ struct MovieServiceRequestIdentity {
     std::string source_key;
     std::shared_ptr<const MovieSourceObservationIdentity> source;
 };
+// Nonallocating active-request observation. The borrowed key is valid only
+// until the next close/start. Retain generation/token plus an independently
+// owned key when authorizing later operations. No active request is success
+// with nullopt; owner/reentry/corrupt-active-state failures remain named.
+struct MovieServiceRequestView {
+    std::uint64_t generation=0;
+    std::string_view source_key;
+    std::shared_ptr<const MovieSourceObservationIdentity> source;
+};
+
 enum class MovieServiceActivity {idle,starting,preparing,work,stopping,closed,complete,error};
 struct MovieServiceSnapshot {
     MovieServiceActivity activity=MovieServiceActivity::idle;
@@ -100,6 +110,7 @@ public:
     bool stop(MovieServiceFailure&) noexcept;
     bool close(MovieServiceFailure&) noexcept;
     std::optional<MovieServiceRequestIdentity> request_identity(MovieServiceFailure&) const noexcept;
+    std::optional<MovieServiceRequestView> request_view(MovieServiceFailure&) const noexcept;
     std::optional<MovieServiceSnapshot> snapshot(MovieServiceFailure&) const noexcept;
     // Backend coordinator only; the retail caller does not parse MPEG.
     // Operations consume the SAME feed automatically supplied by actual Stream

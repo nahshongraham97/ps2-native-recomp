@@ -2,10 +2,16 @@
 #include "mka/movie_service_host_clock.hpp"
 #include "mka/movie_admission_feed.hpp"
 #include <cstdio>
+#include <cstdlib>
+#include <new>
 #include <fstream>
 #include <stdexcept>
 #include <thread>
 #include <type_traits>
+namespace { bool refuse_request_view_allocation=false; }
+void* operator new(std::size_t n){if(refuse_request_view_allocation)throw std::bad_alloc();if(auto* p=std::malloc(n?n:1))return p;throw std::bad_alloc();}
+void operator delete(void* p)noexcept{std::free(p);}
+void operator delete(void* p,std::size_t)noexcept{std::free(p);}
 using namespace mka::video;
 namespace {
 using Bytes=std::vector<std::uint8_t>;
@@ -86,9 +92,13 @@ struct Rig {
    MoviePlaybackConfiguration c;c.audio=with_audio?MoviePlaybackAudioPresence::required:MoviePlaybackAudioPresence::absent;if(with_audio){c.client_sample_rate=48000;c.client_channels=2;c.client_channel_mask=3;}c.layout={1,640,448,MovieAspectMode::explicit_display_aspect,4,3,MovieWindowPolicy::centered_fit};c.filter=MovieFilter::nearest;c.queued_byte_budget=1024;
    std::unique_ptr<MoviePlaybackAudioOutput> output;if(with_audio)output=std::make_unique<Audio>(audio);return NativeMoviePlaybackSession::create_from_ports(std::make_unique<Input>(source,r,destroyed,with_audio,with_video),std::move(policies),std::move(output),std::make_shared<GPU>(),color,c,settings,why);
   };
-  service=NativeMovieService::create_component_fixture(1.0f,std::move(data),std::move(opener),f);check(bool(service),"service creation");callback_owner=service.get();
+  service=NativeMovieService::create_component_fixture(1.0f,std::move(data),std::move(opener),f);check(bool(service),"service creation");
+  refuse_request_view_allocation=true;auto absent=service->request_view(f);refuse_request_view_allocation=false;
+  check(!absent&&f.kind==MovieServiceError::none,"inactive request view is allocation-free typed absence");callback_owner=service.get();
  }
- MovieServiceRequestIdentity start(){MovieServiceFailure f;check(service->start(0,MovieViewSelection::normal,0,4,f),"actual session/controller concrete policy start");auto id=service->request_identity(f);check(bool(id),"owned actual service identity");return *id;}
+ MovieServiceRequestIdentity start(){MovieServiceFailure f;check(service->start(0,MovieViewSelection::normal,0,4,f),"actual session/controller concrete policy start");auto id=service->request_identity(f);check(bool(id),"owned actual service identity");
+  refuse_request_view_allocation=true;auto view=service->request_view(f);refuse_request_view_allocation=false;
+  check(view&&f.kind==MovieServiceError::none&&view->generation==id->generation&&view->source_key==id->source_key&&view->source==id->source,"actual request view is allocation-free and joins generation/key/source");return *id;}
  void observations(){MovieServiceFailure f;check(service->poll(f).progress==MovieControlProgress::ongoing,"EOF observations delivered without default ready/end");}
  void parse_all(const MovieServiceRequestIdentity& id){MovieServiceFailure f;
   auto received=service->source_feed_snapshot(id,f);check(received&&received->observation_sequence==source.batch.events.size()&&received->es_end==source.bytes.size()&&received->es_begin==0&&received->current.gop_parse_entries==0&&!received->current.sequence,"actual Stream observation batch automatically reaches same service-owned feed");

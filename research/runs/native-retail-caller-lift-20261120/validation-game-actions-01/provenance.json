@@ -1,0 +1,21 @@
+{
+  "at_utc": "2026-11-20T07:23:50.504627+00:00",
+  "source_before_sha256": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\game_action_input.hpp": "65895af171ab16faa57a3faaab679417687a0f88fd7d6c3a17015262148c50c1",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\game_action_input.cpp": "b1cdbe5774335ba1affd9a29a13fb5fcc74bd6af750eb7b7646d4a4958d71605",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\controller_input.hpp": "d1a9db7f9028b9ba18b88e389ebf0dc30a293a178122341788db8f8ba7097612",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\controller_input.cpp": "a04e0ab9a85bc56ac7bf95274ed51c9bb68cb26e1ee37eabcc3c572abfa22bd7",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_game_action_input.cpp": "7ad9a7c182aed9580b5a300946b18adc869b60e5dad3aba4c25855304fb94b76",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\CMakeLists.txt": "a5687d881d759879912fd319ecfcf94c66f154e88c9ee9c4505ed6deb32c5fa0",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_game.cmake": "9d44c2b6b18fa8664bc469c76b9049a4360d460cafde08616b55b356a258c81c",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-movie-ingress-20261119\\NATIVE_GAME_ACTION_INPUT_SOURCE.md": "d6cc3e0721278a44f5dc218c8dba95be2df9fd41ddd37560e3a6665d6d35950b",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-movie-ingress-20261119\\NATIVE_GAME_ACTION_INPUT_SOURCE.json": "bf26b9d36e55302d7b53742f4eedc8cc075b51757d6cea99b27274055b0f2fcf",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-movie-ingress-20261119\\NATIVE_GAME_ACTION_INPUT_IMPLEMENTATION.md": "afa78ce47f0f3ddb111b1cc7d066004b192f3af2c806e4f9f8c774cfa0f249d4",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-movie-ingress-20261119\\NATIVE_GAME_ACTION_INPUT_IMPLEMENTATION.json": "0168029a57bfdc738d9059d67d7107016a9166a9ef36b9a025da7171f18c512b",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-movie-kernel-policies-20261119\\validate.py": "987bafb18845f33ff65cfd9e437a3b9e98b7296313a119b474070e95dc1f0752",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-caller-lift-20261120\\check_game_actions.py": "d33df8d223e5d86714472eddd80cf8358f10ba4d7b1732680fa4413c3628bc85",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\SLUS_214.10": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f"
+  },
+  "scope": "Native source-derived game action state using actual ControllerInput publications; no window/device/game/decoder"
+}

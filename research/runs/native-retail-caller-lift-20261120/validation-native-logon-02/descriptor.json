@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_descriptor_rewrite.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native descriptor rewrite cache and baseline literals; no retail admission or clock selection\n",
+  "stderr": "",
+  "executable_sha256": "6c79836fa380ad21ef1370599a2763099ad90f268b7c8314549009ff737e51d7",
+  "executable_after_sha256": "6c79836fa380ad21ef1370599a2763099ad90f268b7c8314549009ff737e51d7"
+}

@@ -14,6 +14,7 @@ if(WIN32)
 endif()
 include(cmake/native_media.cmake)
 include(cmake/native_audio.cmake)
+include(cmake/native_game.cmake)
 
 # Build identity. ps2run prints this at startup so every run log names the commit
 # and working-tree state that produced the binary; two runs are then comparable
@@ -43,6 +44,7 @@ if(NOT EMSCRIPTEN)
         recomp/elf.cpp
         recomp/analysis.cpp
         recomp/codegen.cpp
+        recomp/native_closure_codegen.cpp
         recomp/eerecomp_gen.cpp
         recomp/snr2.cpp)
     target_include_directories(eerecomp PRIVATE runtime/include)

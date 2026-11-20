@@ -1,5 +1,6 @@
 #include "analysis.hpp"
 #include "codegen.hpp"
+#include "native_closure_codegen.hpp"
 #include "eerecomp_gen.hpp"
 #include "elf.hpp"
 #include "snr2.hpp"
@@ -121,9 +122,44 @@ std::map<std::uint32_t, Toggle> read_toggles(const std::string &path) {
     return toggles;
 }
 
+int native_logon_output(const char* original_path,const char* output_path) {
+    try {
+        const auto input_path=ps2::os::path(original_path),directory=ps2::os::path(output_path);
+        std::ifstream input(input_path,std::ios::binary);
+        if(!input)throw std::runtime_error("native LOGON original ELF open failed");
+        std::vector<std::uint8_t> bytes((std::istreambuf_iterator<char>(input)),{});
+        if(input.bad())throw std::runtime_error("native LOGON original ELF read failed");
+        NativeClosureFailure failure;auto emitted=emit_native_logon_closure(bytes,native_logon_manifest(),failure);
+        if(!emitted)throw std::runtime_error(failure.operation);
+        const bool existing=std::filesystem::exists(directory);
+        if(existing&&!std::filesystem::is_directory(directory))throw std::runtime_error("native LOGON output path is not a directory");
+        const bool reuse=existing&&!std::filesystem::is_empty(directory);
+        // Ninja may create an empty output parent before the custom command.
+        // A nonempty destination remains verification-only: never overwrite.
+        if(!existing&&!std::filesystem::create_directory(directory))throw std::runtime_error("native LOGON output directory is not exclusively new");
+        for(const auto& item:{std::pair{"native_logon.hpp",&emitted->header},std::pair{"native_logon.cpp",&emitted->implementation}}){
+            const auto destination=directory/item.first;
+            if(reuse){
+                std::ifstream prior(destination,std::ios::binary);
+                const std::string current((std::istreambuf_iterator<char>(prior)),{});
+                if(!prior.is_open()||prior.bad()||current!=*item.second)
+                    throw std::runtime_error("native LOGON existing output differs; refusing to overwrite");
+            }else{
+                std::ofstream output(destination,std::ios::binary);
+                if(!output)throw std::runtime_error("native LOGON output open failed");
+                output.write(item.second->data(),static_cast<std::streamsize>(item.second->size()));output.close();
+                if(!output)throw std::runtime_error("native LOGON output write failed");
+            }
+        }
+        std::puts(reuse?"native LOGON exact existing source verified":"native LOGON typed source emitted");
+        return 0;
+    }catch(const std::exception& error){std::fprintf(stderr,"eerecomp native LOGON: %s\n",error.what());return 1;}
+}
+
 int usage() {
     std::fprintf(stderr, "usage: eerecomp <elf> [--entries file] [--modules dir] [--overlays dir] [--probes file] [--toggles file] [--out dir] [--stats]\n");
     std::fprintf(stderr, "       eerecomp --live-image <captured.bin> --base <hex> --stamp <hex> --out <dir> [--entry <hex>]... [--expect-name <base_crc>] [--dense-checks]\n");
+    std::fprintf(stderr, "       eerecomp --native-logon <original.elf> --out <separate-native-source-dir>\n");
     return 2;
 }
 
@@ -145,6 +181,10 @@ int main(int argc, char **argv) {
     }
 #endif
     if (argc < 2) return usage();
+    if(std::strcmp(argv[1],"--native-logon")==0){
+        if(argc!=5||std::strcmp(argv[3],"--out")!=0)return usage();
+        return native_logon_output(argv[2],argv[4]);
+    }
     if (std::strcmp(argv[1], "--live-image") == 0) {
         if (argc < 3) return usage();
         std::string image_path = argv[2], out_dir, expected_name;

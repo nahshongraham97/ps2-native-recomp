@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_service_backend_audio.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2",
+    "LOGON.SFD",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules\\MOVIER.ovl"
+  ],
+  "exit": 0,
+  "stdout": "{\"source\":\"LOGON.SFD\",\"source_rate\":48000,\"source_planes\":2,\"prefetched_reads\":1,\"forwarded_reads\":1,\"accepted_client_frames\":243201,\"output_starts\":1,\"resets\":1,\"submissions\":152,\"fences_retired\":152,\"polls\":508}\nPASS automatic native audio Service timing/acceptance/drain deterministic ports; no physical playback or content comparison\n",
+  "stderr": "[adpcm_adx @ 000002512777A700] Codec (adpcm_adx) not on whitelist 'mpeg2video'\n[mpeg @ 0000025125DE4900] Could not find codec parameters for stream 0 (Audio: adpcm_adx, 0 channels): unspecified sample rate\nConsider increasing the value for the 'analyzeduration' (0) and 'probesize' (5000000) options\n[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=296)\n[adpcm_adx @ 0000025127F807C0] Codec (adpcm_adx) not on whitelist 'mpeg2video'\n[mpeg @ 00000251277EED00] Could not find codec parameters for stream 0 (Audio: adpcm_adx, 0 channels): unspecified sample rate\nConsider increasing the value for the 'analyzeduration' (0) and 'probesize' (5000000) options\n[adpcm_adx @ 0000025125DE4900] Codec (adpcm_adx) not on whitelist 'mpeg2video'\n[mpeg @ 00000251277EED00] Could not find codec parameters for stream 0 (Audio: adpcm_adx, 0 channels): unspecified sample rate\nConsider increasing the value for the 'analyzeduration' (0) and 'probesize' (5000000) options\n",
+  "executable_sha256": "6ecccd0b0a840dbfc8f3a6e2b7edd91f8e5aaf1e853a1774c4b2f8b709586e69",
+  "executable_after_sha256": "6ecccd0b0a840dbfc8f3a6e2b7edd91f8e5aaf1e853a1774c4b2f8b709586e69"
+}
