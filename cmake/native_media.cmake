@@ -15,6 +15,13 @@ file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers/libavutil"
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers/libavutil/avconfig.h"
     "#ifndef AVUTIL_AVCONFIG_H\n#define AVUTIL_AVCONFIG_H\n#define AV_HAVE_BIGENDIAN 0\n#define AV_HAVE_FAST_UNALIGNED 1\n#endif\n")
 
+# Native completion/retirement policy: no GL/decoder/runtime dependency.
+add_library(mka_native_gpu_completion STATIC EXCLUDE_FROM_ALL runtime/src/native/movie_gpu_completion.cpp)
+target_include_directories(mka_native_gpu_completion PUBLIC runtime/include)
+target_compile_features(mka_native_gpu_completion PUBLIC cxx_std_20)
+add_executable(test_native_movie_gpu_completion EXCLUDE_FROM_ALL tests/test_movie_gpu_completion.cpp)
+target_link_libraries(test_native_movie_gpu_completion PRIVATE mka_native_gpu_completion)
+
 add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/native_file.cpp
     runtime/src/native/native_user_paths.cpp
@@ -77,6 +84,7 @@ target_include_directories(mka_native_media PUBLIC runtime/include PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers" "${MKA_NATIVE_MEDIA_HEADERS}")
 target_compile_features(mka_native_media PUBLIC cxx_std_20)
 target_link_libraries(mka_native_media PRIVATE opengl32 gdi32 user32 bcrypt shell32 ole32 uuid)
+target_link_libraries(mka_native_media PUBLIC mka_native_gpu_completion)
 target_link_libraries(mka_native_media PRIVATE mka_native_audio_device)
 # Source font math uses ordered float32 steps and finite-value checks. These
 # modules must not inherit fast-math/reassociation or fused multiply-add from

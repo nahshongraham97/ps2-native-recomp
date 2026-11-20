@@ -31,6 +31,24 @@ struct HiddenContext {
     }
     ~HiddenContext(){if(wglGetCurrentContext()==context)wglMakeCurrent(nullptr,nullptr);if(context)wglDeleteContext(context);if(dc)ReleaseDC(window,dc);if(window)DestroyWindow(window);}
 };
+struct RetirementScope {
+    std::shared_ptr<NativeMovieGpuRetirementOwner> owner;
+    RetirementScope() { MovieGpuError error; owner=NativeMovieGpuRetirementOwner::create(error); check(owner&&error==MovieGpuError::none,"explicit host retirement owner"); }
+    ~RetirementScope() {
+        for(unsigned i=0;i<5000;++i){
+            auto result=owner->poll();
+            if(result.state==MovieFenceState::complete)return;
+            if(result.state==MovieFenceState::failed){result=owner->retry_failed();if(result.state==MovieFenceState::complete)return;}
+            Sleep(1);
+        }
+        std::fputs("FAIL physical fixture retained GPU retirement work\n",stderr);std::abort();
+    }
+};
+void shutdown_complete(const std::shared_ptr<NativeMovieGlDevice>& device) {
+    for(unsigned i=0;i<5000;++i){const auto error=device->shutdown();if(error==MovieGpuError::none)return;
+        check(error==MovieGpuError::pending,"actual native shutdown failure");Sleep(1);}
+    throw std::runtime_error("physical fixture native shutdown pending");
+}
 void completed(const std::shared_ptr<NativeMovieGpuBackend>& backend,const std::shared_ptr<MovieGpuFence>& fence){
     check(bool(fence),"actual submitted GPU fence");MovieFenceResult status;
     for(unsigned i=0;i<5000;++i){status=backend->poll(fence);if(status.state!=MovieFenceState::pending)break;Sleep(1);}
@@ -70,13 +88,13 @@ void picture(const NativeMoviePresentPlan& plan,const MovieHostLayout& layout,co
 int main(int argc,char** argv){try{
     check(argc==3,"usage: test_movie_gl_device original_MOVIER.ovl existing_decoded_planes_directory");
 #ifdef _WIN32
-    using namespace mka::video;HiddenContext host;
+    using namespace mka::video;HiddenContext host;RetirementScope retirement_scope;auto retirement=retirement_scope.owner;
     std::printf("native-movie-gl driver: %s | %s | %s\n",glGetString(GL_VENDOR),glGetString(GL_RENDERER),glGetString(GL_VERSION));
     glViewport(3,5,73,91);GLint viewport[4]{};glGetIntegerv(GL_VIEWPORT,viewport);
     MovieGpuError attach_error;GLint alpha=0;glGetIntegerv(GL_ALPHA_BITS,&alpha);check(alpha>=8,"fixture requires real8-bit destination alpha");
-    check(!NativeMovieGlDevice::attach_current_context(nullptr,1,attach_error)&&attach_error==MovieGpuError::unavailable,"missing host association fails");
-    check(!NativeMovieGlDevice::attach_current_context(host.window,0,attach_error)&&attach_error==MovieGpuError::unavailable,"missing explicit destination fails");
-    auto backend=NativeMovieGlDevice::attach_current_context(host.window,0x200000003ull,attach_error);check(bool(backend)&&attach_error==MovieGpuError::none,"pure native movie device without runtime/packet IDs");
+    check(!NativeMovieGlDevice::attach_current_context(nullptr,1,retirement,attach_error)&&attach_error==MovieGpuError::unavailable,"missing host association fails");
+    check(!NativeMovieGlDevice::attach_current_context(host.window,0,retirement,attach_error)&&attach_error==MovieGpuError::unavailable,"missing explicit destination fails");
+    auto backend=NativeMovieGlDevice::attach_current_context(host.window,0x200000003ull,retirement,attach_error);check(bool(backend)&&attach_error==MovieGpuError::none,"pure native movie device without runtime/packet IDs");
     GLint unchanged[4]{};glGetIntegerv(GL_VIEWPORT,unchanged);check(std::equal(viewport,viewport+4,unchanged),"attach does not install fixed legacy viewport");
     const auto overlay=bytes(std::filesystem::u8path(argv[1]));check(overlay.size()>=0x77dd8+6144,"verified original helper lookup extent");
     MovieColorError color_error;const auto table=NativeMovieColorTable::decode(MovieColorRole::helper_default,overlay.data()+0x77dd8,6144,color_error);check(bool(table),"SHA-verified original conversion role");
@@ -119,7 +137,7 @@ int main(int argc,char** argv){try{
     invalid=plan;invalid.alpha=MovieAlpha::unspecified;check(backend->present(invalid,layout).error==MovieGpuError::unsupported_effect,"unknown alpha cannot silently use GS scaling");
     auto unknown_sar=layout;unknown_sar.aspect=MovieAspectMode::source_sample_aspect;unknown_sar.display_aspect_numerator=unknown_sar.display_aspect_denominator=0;
     check(backend->present(plan,unknown_sar).error==MovieGpuError::invalid_layout,"missing source SAR requires explicit host policy");
-    auto other=NativeMovieGlDevice::attach_current_context(host.window,layout.destination,attach_error);check(bool(other),"distinct native session");check(other->present(plan,layout).error==MovieGpuError::stale_resource,"foreign-session source is not aliased");
+    auto other=NativeMovieGlDevice::attach_current_context(host.window,layout.destination,retirement,attach_error);check(bool(other),"distinct native session");check(other->present(plan,layout).error==MovieGpuError::stale_resource,"foreign-session source is not aliased");
     MovieGpuError foreign=MovieGpuError::none;std::thread thread([&]{foreign=backend->upload(expected).error;});thread.join();check(foreign==MovieGpuError::wrong_thread,"foreign-thread upload does not steal context");
     MovieRgbaFrame large;large.width=2053;large.height=769;large.conversion_role=MovieColorRole::fresh_preset21;
     large.source_sample_aspect_numerator=9;large.source_sample_aspect_denominator=8;large.rgba.resize(std::size_t(large.width)*large.height*4);
@@ -143,10 +161,10 @@ int main(int argc,char** argv){try{
     std::weak_ptr<const MovieGpuFrame> weak=dynamic.frame;dynamic.frame.reset();dynamic_plan.frame.reset();check(!weak.expired(),"in-flight fence pins actual source");completed(backend,submission.fence);backend->retire(std::move(submission.fence));
     MovieGpuError wrong_shutdown=MovieGpuError::none;std::thread shutdown_thread([&]{wrong_shutdown=backend->shutdown();});shutdown_thread.join();
     check(wrong_shutdown==MovieGpuError::wrong_thread,"foreign shutdown revokes but retains owner cleanup");
-    check(backend->shutdown()==MovieGpuError::none&&backend->shutdown()==MovieGpuError::none,"explicit owner cleanup and idempotence");
+    shutdown_complete(backend);check(backend->shutdown()==MovieGpuError::none,"explicit owner cleanup and idempotence");
     check(wglGetCurrentContext()==host.context&&wglGetCurrentDC()==host.dc&&IsWindow(host.window),"borrowed host context/window never detached or deleted");
     check(backend->upload(expected).error==MovieGpuError::stale_resource,"shutdown revokes session without resurrecting resource");
-    check(other->present(plan,layout).error==MovieGpuError::stale_resource,"foreign-session lease rejects after other device shutdown");check(other->shutdown()==MovieGpuError::none,"second independent device cleanup");
+    check(other->present(plan,layout).error==MovieGpuError::stale_resource,"foreign-session lease rejects after other device shutdown");shutdown_complete(other);check(retirement->poll().state==MovieFenceState::complete,"all explicit native sessions retired");
     std::puts("PASS actual decoded-logo converted pixels, dynamic movieRGBA upload/filter/SAR/alpha/fences/ownership; no game/lifecycle/A-V-sync acceptance");return 0;
 #else
     throw std::runtime_error("movie GPU fixture requires actual Windows GL");

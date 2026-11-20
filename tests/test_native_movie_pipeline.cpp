@@ -35,9 +35,27 @@ struct HiddenContext {
     }
     ~HiddenContext(){if(wglGetCurrentContext()==context)wglMakeCurrent(nullptr,nullptr);if(context)wglDeleteContext(context);if(dc)ReleaseDC(window,dc);if(window)DestroyWindow(window);}
 };
+struct RetirementScope {
+    std::shared_ptr<NativeMovieGpuRetirementOwner> owner;
+    RetirementScope() { MovieGpuError error; owner=NativeMovieGpuRetirementOwner::create(error); check(owner&&error==MovieGpuError::none,"explicit host retirement owner"); }
+    ~RetirementScope() {
+        for(unsigned i=0;i<5000;++i){
+            auto result=owner->poll();
+            if(result.state==MovieFenceState::complete)return;
+            if(result.state==MovieFenceState::failed){result=owner->retry_failed();if(result.state==MovieFenceState::complete)return;}
+            Sleep(1);
+        }
+        std::fputs("FAIL physical fixture retained GPU retirement work\n",stderr);std::abort();
+    }
+};
+void shutdown_complete(const std::shared_ptr<NativeMovieGlDevice>& device) {
+    for(unsigned i=0;i<5000;++i){const auto error=device->shutdown();if(error==MovieGpuError::none)return;
+        check(error==MovieGpuError::pending,"actual native shutdown failure");Sleep(1);}
+    throw std::runtime_error("physical fixture native shutdown pending");
+}
 struct DeviceOwner {
     std::shared_ptr<NativeMovieGlDevice> device;
-    ~DeviceOwner(){if(device&&device->shutdown()!=MovieGpuError::none)std::abort();}
+    ~DeviceOwner(){if(device){try{shutdown_complete(device);}catch(...){std::abort();}}}
 };
 std::vector<std::uint8_t> bytes(const std::filesystem::path& path){std::ifstream f(path,std::ios::binary);check(bool(f),"open original color data");return {(std::istreambuf_iterator<char>(f)),{}};}
 NativeMovieSubtitles native_subtitles(NativeMovieContainer&& container){
@@ -89,7 +107,7 @@ int main(int argc,char** argv){try{
     check(overlay.size()>=0x795d8+6144,"original color table extents");MovieColorError color_error;
     auto first_table=NativeMovieColorTable::decode(MovieColorRole::helper_default,overlay.data()+0x77dd8,6144,color_error);check(bool(first_table),"first explicit table identity");
     auto last_table=NativeMovieColorTable::decode(MovieColorRole::fresh_preset21,overlay.data()+0x795d8,6144,color_error);check(bool(last_table),"last explicit table identity");
-    HiddenContext host;MovieGpuError gpu_error;DeviceOwner device{NativeMovieGlDevice::attach_current_context(host.window,0x13579bdf2468ace0ull,gpu_error)};check(device.device&&gpu_error==MovieGpuError::none,"independent native GPU service");
+    HiddenContext host;RetirementScope retirement_scope;MovieGpuError gpu_error;DeviceOwner device{NativeMovieGlDevice::attach_current_context(host.window,0x13579bdf2468ace0ull,retirement_scope.owner,gpu_error)};check(device.device&&gpu_error==MovieGpuError::none,"independent native GPU service");
     std::printf("native pipeline GL: %s | %s | %s\n",glGetString(GL_VENDOR),glGetString(GL_RENDERER),glGetString(GL_VERSION));
     for(const auto& expected:native_movie_oracle::assets){
         MovieAssetFailure asset_error;auto catalog=NativeMovieAssetStore::create(assets,{{expected.name,expected.name}},asset_error);check(bool(catalog),"explicit exact asset binding");

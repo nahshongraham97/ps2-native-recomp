@@ -1,0 +1,12 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_pipeline.exe",
+  "target_before_sha256": "eb72d1b791b964eb6d90d29ec5b2752cc8ac7bc7a521e8108e95dc3b43caebf2",
+  "target_after_sha256": "eb72d1b791b964eb6d90d29ec5b2752cc8ac7bc7a521e8108e95dc3b43caebf2",
+  "audited_target_expected_sha256": "eb72d1b791b964eb6d90d29ec5b2752cc8ac7bc7a521e8108e95dc3b43caebf2",
+  "execution_applicable": false,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::video::NativeMovieGpuWorkOwner::begin_drain"
+  ]
+}

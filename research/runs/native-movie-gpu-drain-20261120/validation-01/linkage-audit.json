@@ -1,0 +1,64 @@
+{
+  "ninja_sha256": "ce698f81231b9b454844647b69f26cf528106d4f6783341216c104b2c196ac1f",
+  "target_rules": [
+    {
+      "target": "test_native_movie_gpu_completion.exe",
+      "actual_build_rule": "build test_native_movie_gpu_completion.exe: CXX_EXECUTABLE_LINKER__test_native_movie_gpu_completion_Release CMakeFiles/test_native_movie_gpu_completion.dir/tests/test_movie_gpu_completion.cpp.obj | libmka_native_gpu_completion.a || libmka_native_gpu_completion.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_gpu_completion.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_movie_gpu_completion.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_movie_gpu_completion.exe\n  TARGET_IMPLIB = libtest_native_movie_gpu_completion.dll.a\n  TARGET_PDB = test_native_movie_gpu_completion.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_movie_gpu_completion.dir"
+    },
+    {
+      "target": "libmka_native_gpu_completion.a",
+      "actual_build_rule": "build libmka_native_gpu_completion.a: CXX_STATIC_LIBRARY_LINKER__mka_native_gpu_completion_Release CMakeFiles/mka_native_gpu_completion.dir/runtime/src/native/movie_gpu_completion.cpp.obj\n  CONFIG = Release\n  LANGUAGE_COMPILE_FLAGS = -O3 -DNDEBUG\n  OBJECT_DIR = CMakeFiles\\mka_native_gpu_completion.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = libmka_native_gpu_completion.a\n  TARGET_PDB = mka_native_gpu_completion.a.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\mka_native_gpu_completion.dir"
+    },
+    {
+      "target": "libmka_native_media.a",
+      "actual_build_rule": "build libmka_native_media.a: CXX_STATIC_LIBRARY_LINKER__mka_native_media_Release CMakeFiles/mka_native_media.dir/runtime/src/native/native_file.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/native_user_paths.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/font_atlas.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/font_metrics.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/font_layout.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/font_geometry.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_assets.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_container.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_pes_index.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_metadata.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/mpeg2_timing.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_timecode.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_clock_history.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_clock_math.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_clock_filter.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_host_clock.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_service_clock.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_eligibility_numeric.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_frame_eligibility.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_control.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_playback.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_playback_adapters.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_playback_session.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_native_context.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_output_position.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_service.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_backend_driver.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_frame_work.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_audio_clock_anchor.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_descriptor_rewrite.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_timestamp_association.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_service_host_clock.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_service_acquisition.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_admission_feed.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_audio_progress.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_pcm_mix.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_pcm_downmix.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_adx_blocks.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_adx_header.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_adx_stream.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_adx_profile.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_decoder_mode.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_prefix_events.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_header_boundary.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_header_unit.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_userdata_retention.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_source_syntax_index.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_pcm_binding.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_kernel_policies.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_catalog.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_source.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_gain.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_subtitles.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_decode.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_color.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_gpu.cpp.obj CMakeFiles/mka_native_media.dir/runtime/src/native/movie_gl_device.cpp.obj || libmka_native_audio_device.a libmka_native_gpu_completion.a\n  CONFIG = Release\n  LANGUAGE_COMPILE_FLAGS = -O3 -DNDEBUG\n  OBJECT_DIR = CMakeFiles\\mka_native_media.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = libmka_native_media.a\n  TARGET_PDB = mka_native_media.a.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\mka_native_media.dir"
+    },
+    {
+      "target": "test_native_movie_gl_device.exe",
+      "actual_build_rule": "build test_native_movie_gl_device.exe: CXX_EXECUTABLE_LINKER__test_native_movie_gl_device_Release CMakeFiles/test_native_movie_gl_device.dir/tests/test_movie_gl_device.cpp.obj | libmka_native_media.a libmka_native_gpu_completion.a libmka_native_audio_device.a || libmka_native_audio_device.a libmka_native_gpu_completion.a libmka_native_media.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_media.a  -lopengl32  -lgdi32  -luser32  -lbcrypt  -lshell32  libmka_native_gpu_completion.a  libmka_native_audio_device.a  -lole32  -luuid  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_movie_gl_device.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_movie_gl_device.exe\n  TARGET_IMPLIB = libtest_native_movie_gl_device.dll.a\n  TARGET_PDB = test_native_movie_gl_device.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_movie_gl_device.dir"
+    },
+    {
+      "target": "test_native_movie_pipeline.exe",
+      "actual_build_rule": "build test_native_movie_pipeline.exe: CXX_EXECUTABLE_LINKER__test_native_movie_pipeline_Release CMakeFiles/test_native_movie_pipeline.dir/tests/test_native_movie_pipeline.cpp.obj | libmka_native_media.a libmka_native_gpu_completion.a libmka_native_audio_device.a || libmka_native_audio_device.a libmka_native_gpu_completion.a libmka_native_media.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_media.a  -lopengl32  -lgdi32  -luser32  -lbcrypt  -lshell32  libmka_native_gpu_completion.a  libmka_native_audio_device.a  -lole32  -luuid  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_movie_pipeline.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_movie_pipeline.exe\n  TARGET_IMPLIB = libtest_native_movie_pipeline.dll.a\n  TARGET_PDB = test_native_movie_pipeline.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_movie_pipeline.dir"
+    }
+  ],
+  "executed_targets": [
+    "test_native_movie_gpu_completion.exe"
+  ],
+  "physical_targets_never_executed": [
+    {
+      "target": "test_native_movie_gl_device",
+      "sha256": "96fb7a9e5a999bdf6a2811d1c2d4df178d726a276a3fd7f197d250026ed33735",
+      "execution_applicable": false,
+      "audit": {
+        "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_gl_device.exe",
+        "target_before_sha256": "96fb7a9e5a999bdf6a2811d1c2d4df178d726a276a3fd7f197d250026ed33735",
+        "target_after_sha256": "96fb7a9e5a999bdf6a2811d1c2d4df178d726a276a3fd7f197d250026ed33735",
+        "audited_target_expected_sha256": "96fb7a9e5a999bdf6a2811d1c2d4df178d726a276a3fd7f197d250026ed33735",
+        "execution_applicable": false,
+        "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+        "forbidden": [],
+        "required_defined_symbols": [
+          "mka::video::NativeMovieGpuWorkOwner::begin_drain"
+        ]
+      }
+    },
+    {
+      "target": "test_native_movie_pipeline",
+      "sha256": "eb72d1b791b964eb6d90d29ec5b2752cc8ac7bc7a521e8108e95dc3b43caebf2",
+      "execution_applicable": false,
+      "audit": {
+        "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_pipeline.exe",
+        "target_before_sha256": "eb72d1b791b964eb6d90d29ec5b2752cc8ac7bc7a521e8108e95dc3b43caebf2",
+        "target_after_sha256": "eb72d1b791b964eb6d90d29ec5b2752cc8ac7bc7a521e8108e95dc3b43caebf2",
+        "audited_target_expected_sha256": "eb72d1b791b964eb6d90d29ec5b2752cc8ac7bc7a521e8108e95dc3b43caebf2",
+        "execution_applicable": false,
+        "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+        "forbidden": [],
+        "required_defined_symbols": [
+          "mka::video::NativeMovieGpuWorkOwner::begin_drain"
+        ]
+      }
+    }
+  ]
+}

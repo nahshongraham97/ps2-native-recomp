@@ -4,7 +4,7 @@
 
 namespace mka::video {
 enum class MovieGpuError {none,invalid_frame,invalid_plan,invalid_layout,unsupported_effect,
-    host_capacity,unavailable,wrong_thread,stale_resource,upload_failed,present_failed,fence_failed};
+    host_capacity,unavailable,wrong_thread,stale_resource,upload_failed,present_failed,fence_failed,admission_closed,pending};
 struct MovieGpuMetadata {
     MovieColorRole conversion_role=MovieColorRole::unspecified;
     MovieTimestamp source_pts,timestamp;

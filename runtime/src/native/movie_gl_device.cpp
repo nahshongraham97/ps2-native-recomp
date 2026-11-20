@@ -90,8 +90,50 @@ namespace video=mka::video;
 template<class T>T load(const char* name){auto p=wglGetProcAddress(name);if(!p||p==reinterpret_cast<PROC>(1)||p==reinterpret_cast<PROC>(2)||p==reinterpret_cast<PROC>(3)||p==reinterpret_cast<PROC>(-1))return nullptr;return reinterpret_cast<T>(p);}
 using Sync=void*;
 struct Texture {GLuint object=0;};
-struct Work {Sync sync=nullptr;std::shared_ptr<const VideoFrameResource> source;std::atomic<bool> retired{false};};
-struct Session {
+bool image_error(const char* operation);
+struct GlNativeFence final : MovieNativeFence { Sync sync = nullptr; };
+struct GlFencePort final : NativeMovieFencePort {
+    HGLRC context = nullptr; HDC dc = nullptr; std::thread::id owner;
+    Sync(APIENTRY* fence)(GLenum, GLbitfield) = nullptr;
+    GLenum(APIENTRY* wait)(Sync, GLbitfield, std::uint64_t) = nullptr;
+    void(APIENTRY* erase)(Sync) = nullptr;
+    MovieGpuError current() const noexcept override {
+        return std::this_thread::get_id() == owner && wglGetCurrentContext() == context && wglGetCurrentDC() == dc
+            ? MovieGpuError::none : MovieGpuError::wrong_thread;
+    }
+    MovieNativeFencePlacement insert_after_commands() override {
+        if (auto error = current(); error != MovieGpuError::none) return {error, {}};
+        if (image_error("native completion incoming state")) return {MovieGpuError::fence_failed, {}};
+        auto placed = std::make_shared<GlNativeFence>(); // Allocate BEFORE native submission.
+        placed->sync = fence(0x9117, 0); glFlush();
+        const bool bad = image_error("native context completion fence");
+        return {placed->sync && !bad ? MovieGpuError::none : MovieGpuError::fence_failed, std::move(placed)};
+    }
+    MovieFenceResult poll(const std::shared_ptr<MovieNativeFence>& opaque) noexcept override {
+        if (auto error = current(); error != MovieGpuError::none) return {MovieFenceState::failed, error};
+        auto native = std::dynamic_pointer_cast<GlNativeFence>(opaque);
+        if (!native || !native->sync) return {MovieFenceState::failed, MovieGpuError::stale_resource};
+        if (image_error("native completion poll incoming state")) return {MovieFenceState::failed, MovieGpuError::fence_failed};
+        const auto status = wait(native->sync, 0, 0);
+        if (image_error("native completion poll")) return {MovieFenceState::failed, MovieGpuError::fence_failed};
+        if (status == 0x911a || status == 0x911c) return {MovieFenceState::complete, MovieGpuError::none};
+        if (status == 0x911b) return {MovieFenceState::pending, MovieGpuError::none};
+        return {MovieFenceState::failed, MovieGpuError::fence_failed};
+    }
+    MovieGpuError release(std::shared_ptr<MovieNativeFence>& opaque) noexcept override {
+        if (auto error = current(); error != MovieGpuError::none) return error;
+        auto native = std::dynamic_pointer_cast<GlNativeFence>(opaque);
+        if (!native) return MovieGpuError::stale_resource;
+        if (image_error("native completion release incoming state")) return MovieGpuError::fence_failed;
+        if (native->sync) {
+            erase(native->sync);
+            if (image_error("native completion release")) return MovieGpuError::fence_failed;
+            native->sync = nullptr;
+        }
+        opaque.reset(); return MovieGpuError::none;
+    }
+};
+struct Session : NativeMovieGpuRetirementTask {
     HGLRC context=nullptr;HDC dc=nullptr;HWND window=nullptr;std::thread::id owner;
     std::atomic<bool> revoked{false};bool cleaned=false;std::uint64_t destination=0,identity=0;
     Sync(APIENTRY* fence)(GLenum,GLbitfield)=nullptr;
@@ -100,14 +142,14 @@ struct Session {
     void(APIENTRY* bind_framebuffer)(GLenum,GLuint)=nullptr;
     void(APIENTRY* active)(GLenum)=nullptr;
     void(APIENTRY* use)(GLuint)=nullptr;
-    std::vector<std::shared_ptr<Texture>> textures;std::vector<std::shared_ptr<Work>> work;
+    std::vector<std::shared_ptr<Texture>> textures;
+    std::shared_ptr<NativeMovieGpuWorkOwner> completion;
+    MovieFenceResult poll_retirement() noexcept override;
+    MovieFenceResult retry_retirement() noexcept override;
 };
 bool image_error(const char* operation){auto error=glGetError();if(error==GL_NO_ERROR)return false;std::fprintf(stderr,"[native-movie-gl] %s GL error=0x%X\n",operation,unsigned(error));return true;}
 bool collect_video(Session& s){
-    for(auto i=s.work.begin();i!=s.work.end();){auto& w=**i;if(w.retired.load(std::memory_order_acquire)){
-        if(!w.sync)return false;const auto status=s.wait(w.sync,0,0);
-        if(status==0x911a||status==0x911c){s.erase(w.sync);w.sync=nullptr;w.source.reset();i=s.work.erase(i);continue;}
-        if(status!=0x911b)return false;}++i;}
+    if (s.completion->collect() != MovieGpuError::none) return false;
     for(auto i=s.textures.begin();i!=s.textures.end();){if(i->use_count()==1){if((*i)->object)glDeleteTextures(1,&(*i)->object);i=s.textures.erase(i);}else ++i;}
     return true;
 }
@@ -157,7 +199,7 @@ void video_quad(GLuint texture,unsigned width,unsigned height,float u0,float v0,
     glTexCoord2f(u1,v1);glVertex2i(width,height);glTexCoord2f(u0,v1);glVertex2i(0,height);glEnd();
 }
 struct MovieLease final:video::MovieGpuFrame {
-    std::shared_ptr<Session> session;std::shared_ptr<Texture> texture;
+    std::weak_ptr<Session> session;std::shared_ptr<Texture> texture;
     video::MovieGpuMetadata info;std::uint32_t w=0,h=0;std::uint64_t id=0;
     std::uint64_t identity()const noexcept override{return id;}
     std::uint32_t width()const noexcept override{return w;}
@@ -165,10 +207,10 @@ struct MovieLease final:video::MovieGpuFrame {
     const video::MovieGpuMetadata& metadata()const noexcept override{return info;}
 };
 struct GlMovieFence final:video::MovieGpuFence {
-    std::shared_ptr<Session> session;std::shared_ptr<Work> work;
-    GlMovieFence(video::NativeMoviePresentPlan p,std::shared_ptr<Session> s,std::shared_ptr<Work> w)
-        :MovieGpuFence(std::move(p)),session(std::move(s)),work(std::move(w)){}
-    ~GlMovieFence(){work->retired.store(true,std::memory_order_release);}
+    std::shared_ptr<Session> session;std::shared_ptr<MovieGpuWorkReceipt> work;
+    GlMovieFence(video::NativeMoviePresentPlan p,std::shared_ptr<Session> s)
+        :MovieGpuFence(std::move(p)),session(std::move(s)){}
+    ~GlMovieFence(){if(work)work->retire();}
 };
 video::MovieGpuError movie_current(const Session& s){
     if(s.revoked.load(std::memory_order_acquire))return video::MovieGpuError::stale_resource;
@@ -193,12 +235,42 @@ struct MovieUnpackState {
         glPixelStorei(GL_UNPACK_SWAP_BYTES,swap);glPixelStorei(GL_UNPACK_LSB_FIRST,lsb);
     }
 };
+MovieFenceResult Session::poll_retirement() noexcept {
+    revoked.store(true,std::memory_order_release);
+    if(std::this_thread::get_id()!=owner||wglGetCurrentContext()!=context||wglGetCurrentDC()!=dc)
+        return {MovieFenceState::failed,MovieGpuError::wrong_thread};
+    if(cleaned)return {MovieFenceState::complete,MovieGpuError::none};
+    auto tail=completion->begin_drain();
+    if(tail.result.state==MovieFenceState::failed)return tail.result;
+    auto done=completion->poll_drain(tail.receipt);
+    if(done.state!=MovieFenceState::complete)return done;
+    if(image_error("native movie cleanup incoming state"))return {MovieFenceState::failed,MovieGpuError::fence_failed};
+    for(auto& texture:textures)if(texture->object){
+        glDeleteTextures(1,&texture->object);
+        if(image_error("native movie cleanup texture"))return {MovieFenceState::failed,MovieGpuError::fence_failed};
+        texture->object=0;
+    }
+    textures.clear();cleaned=true;return {MovieFenceState::complete,MovieGpuError::none};
+}
+MovieFenceResult Session::retry_retirement() noexcept {
+    if(std::this_thread::get_id()!=owner||wglGetCurrentContext()!=context||wglGetCurrentDC()!=dc)
+        return {MovieFenceState::failed,MovieGpuError::wrong_thread};
+    if(cleaned)return {MovieFenceState::complete,MovieGpuError::none};
+    auto tail=completion->begin_drain();
+    if(tail.result.state==MovieFenceState::failed && tail.receipt) {
+        auto retry=completion->retry_drain(tail.receipt);
+        if(retry.result.state==MovieFenceState::failed)return retry.result;
+    }
+    return poll_retirement();
+}
 class GlMovieBackend final:public video::NativeMovieGlDevice {
 public:
     GlMovieBackend(std::shared_ptr<Session> s,MovieBindBuffer b):session_(std::move(s)),bind_(b){}
+    MovieGpuRetirementRegistration retirement;
     video::MovieGpuUpload upload(const video::MovieRgbaFrame& f)override{
         using E=video::MovieGpuError;
         if(auto e=movie_current(*session_);e!=E::none)return {e,{}};
+        if(auto e=session_->completion->admission();e!=E::none)return {e,{}};
         if(auto e=video::validate_movie_upload(f);e!=E::none)return {e,{}};
         if(!collect_video(*session_))return {E::fence_failed,{}};
         if(image_error("movie upload incoming GL state"))return {E::upload_failed,{}};
@@ -207,6 +279,7 @@ public:
         try{
             auto lease=std::make_shared<MovieLease>();auto texture=std::make_shared<Texture>();session_->textures.push_back(texture);
             bool ok=false;
+            if (auto e=session_->completion->commands_issued();e!=E::none)return {e,{}};
             {
                 VideoGlState state(*session_);MovieUnpackState unpack(bind_);
                 glGenTextures(1,&texture->object);glBindTexture(GL_TEXTURE_2D,texture->object);
@@ -226,16 +299,20 @@ public:
     video::MovieGpuSubmission present(const video::NativeMoviePresentPlan& p,const video::MovieHostLayout& l)override{
         using E=video::MovieGpuError;
         if(auto e=movie_current(*session_);e!=E::none)return {e,{}};
+        if(auto e=session_->completion->admission();e!=E::none)return {e,{}};
         if(auto e=video::validate_movie_present(p);e!=E::none)return {e,{}};
         auto lease=std::dynamic_pointer_cast<const MovieLease>(p.frame);
-        if(!lease||lease->session!=session_||!lease->texture->object)return {E::stale_resource,{}};
+        if(!lease||lease->session.lock()!=session_||!lease->texture->object)return {E::stale_resource,{}};
         const auto dest=video::movie_destination(p,l);RECT client{};
         if(!dest||l.destination!=session_->destination||!GetClientRect(session_->window,&client)||client.right!=l.window_width||client.bottom!=l.window_height)return {E::invalid_layout,{}};
         if(!collect_video(*session_))return {E::fence_failed,{}};
         if(image_error("movie presentation incoming GL state"))return {E::present_failed,{}};
         try{
-            auto work=std::make_shared<Work>();auto fence=std::make_shared<GlMovieFence>(p,session_,work);
-            session_->work.push_back(work);work->source=lease;bool ok=false;
+            // All caller-visible wrapper allocation precedes work admission.
+            auto fence=std::make_shared<GlMovieFence>(p,session_);
+            auto admitted=session_->completion->admit(lease);
+            if(admitted.error!=E::none)return {admitted.error,{}};
+            fence->work=std::move(admitted.receipt);bool ok=false;
             {
                 VideoGlState state(*session_);
                 session_->bind_framebuffer(GL_DRAW_FRAMEBUFFER,0);glDrawBuffer(GL_BACK);
@@ -245,59 +322,82 @@ public:
                 glDisable(GL_SCISSOR_TEST);glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);glClearColor(0,0,0,1);glClear(GL_COLOR_BUFFER_BIT);
                 video_quad(lease->texture->object,dest->width,dest->height,0,0,1,1,false,dest->x,l.window_height-dest->y-dest->height,p.filter==video::MovieFilter::linear);
                 ok=!image_error("present native movie frame");
-                work->sync=session_->fence(0x9117,0);glFlush();ok=ok&&work->sync&&!image_error("native movie completion fence");
+
             }
             if(image_error("restore native movie presentation state"))ok=false;
-            return {ok?E::none:E::present_failed,std::move(fence)};
+            const auto submitted=session_->completion->finish_submission(fence->work,ok?E::none:E::present_failed);
+            return {submitted,std::move(fence)};
         }catch(const std::bad_alloc&){return {E::host_capacity,{}};}catch(const std::length_error&){return {E::host_capacity,{}};}
     }
     video::MovieFenceResult poll(const std::shared_ptr<video::MovieGpuFence>& f)override{
         using E=video::MovieGpuError;using S=video::MovieFenceState;
         if(auto e=movie_current(*session_);e!=E::none)return {S::failed,e};
         const auto fence=std::dynamic_pointer_cast<GlMovieFence>(f);
-        if(!fence||fence->session!=session_||!fence->work->sync)return {S::failed,E::stale_resource};
-        if(image_error("movie fence incoming GL state"))return {S::failed,E::fence_failed};
-        const auto status=session_->wait(fence->work->sync,0,0);
-        if(image_error("poll native movie completion"))return {S::failed,E::fence_failed};
-        if(status==0x911a||status==0x911c)return {S::complete,E::none};if(status==0x911b)return {S::pending,E::none};
-        return {S::failed,E::fence_failed};
+        if(!fence||fence->session!=session_||!fence->work)return {S::failed,E::stale_resource};
+        return session_->completion->poll(fence->work);
     }
     void retire(std::shared_ptr<video::MovieGpuFence> f)noexcept override{f.reset();}
     ~GlMovieBackend(){
-        if(!session_->cleaned&&shutdown()!=video::MovieGpuError::none)
-            std::fprintf(stderr,"[native-movie-gl] explicit owner-current shutdown required; caller context still owns unreleased GL objects\n");
+        session_->revoked.store(true,std::memory_order_release);
+        if(retirement)retirement.retire(); // Registered before any GPU operation; no allocation here.
+    }
+    MovieGpuDrain begin_context_drain() noexcept override {
+        if(std::this_thread::get_id()!=session_->owner||wglGetCurrentContext()!=session_->context||wglGetCurrentDC()!=session_->dc)
+            return {{MovieFenceState::failed,MovieGpuError::wrong_thread},{}};
+        if(session_->cleaned)return {{MovieFenceState::failed,MovieGpuError::stale_resource},{}};
+        return session_->completion->begin_drain();
+    }
+    MovieFenceResult poll_context_drain(const std::shared_ptr<MovieGpuDrainReceipt>& receipt) noexcept override {
+        if(std::this_thread::get_id()!=session_->owner||wglGetCurrentContext()!=session_->context||wglGetCurrentDC()!=session_->dc)
+            return {MovieFenceState::failed,MovieGpuError::wrong_thread};
+        if(session_->cleaned)return {MovieFenceState::failed,MovieGpuError::stale_resource};
+        return session_->completion->poll_drain(receipt);
+    }
+    MovieGpuDrain retry_context_drain(const std::shared_ptr<MovieGpuDrainReceipt>& receipt) noexcept override {
+        if(std::this_thread::get_id()!=session_->owner||wglGetCurrentContext()!=session_->context||wglGetCurrentDC()!=session_->dc)
+            return {{MovieFenceState::failed,MovieGpuError::wrong_thread},{}};
+        if(session_->cleaned)return {{MovieFenceState::failed,MovieGpuError::stale_resource},{}};
+        return session_->completion->retry_drain(receipt);
+    }
+    MovieGpuError resume_after_drain(const std::shared_ptr<MovieGpuDrainReceipt>& receipt) noexcept override {
+        if(session_->revoked.load(std::memory_order_acquire))return MovieGpuError::stale_resource;
+        return session_->completion->resume(receipt);
     }
     video::MovieGpuError shutdown()noexcept override{
         session_->revoked.store(true,std::memory_order_release);
-        if(session_->cleaned)return video::MovieGpuError::none;
-        if(std::this_thread::get_id()!=session_->owner||wglGetCurrentContext()!=session_->context||wglGetCurrentDC()!=session_->dc)return video::MovieGpuError::wrong_thread;
-        // Deleting a GLsync/texture after queued commands is ordered by GL;
-        // no invented completion or caller-context destruction is necessary.
-        for(auto& w:session_->work){if(w->sync)session_->erase(w->sync);w->sync=nullptr;w->source.reset();}
-        session_->work.clear();for(auto& t:session_->textures){if(t->object)glDeleteTextures(1,&t->object);t->object=0;}
-        session_->textures.clear();session_->cleaned=true;
-        return glGetError()==GL_NO_ERROR?video::MovieGpuError::none:video::MovieGpuError::fence_failed;
+        const auto result=session_->poll_retirement();
+        if(result.state==MovieFenceState::pending)return MovieGpuError::pending;
+        if(result.state==MovieFenceState::failed)return result.error;
+        if(retirement)retirement.retire();
+        return MovieGpuError::none;
     }
 private:std::shared_ptr<Session> session_;MovieBindBuffer bind_;
 };
 } // namespace
 #endif
-std::shared_ptr<NativeMovieGlDevice> NativeMovieGlDevice::attach_current_context(void* host_window,std::uint64_t destination,MovieGpuError& error){
+std::shared_ptr<NativeMovieGlDevice> NativeMovieGlDevice::attach_current_context(void* host_window,std::uint64_t destination,
+    const std::shared_ptr<NativeMovieGpuRetirementOwner>& retirement,MovieGpuError& error){
     error=MovieGpuError::unavailable;
 #ifdef _WIN32
     auto window=static_cast<HWND>(host_window);auto dc=wglGetCurrentDC();auto context=wglGetCurrentContext();RECT client{};
-    if(!window||!destination||!dc||!context||WindowFromDC(dc)!=window||!GetClientRect(window,&client)||client.right<=0||client.bottom<=0)return {};
+    if(!retirement||!window||!destination||!dc||!context||WindowFromDC(dc)!=window||!GetClientRect(window,&client)||client.right<=0||client.bottom<=0)return {};
     try{auto s=std::make_shared<Session>();s->window=window;s->dc=dc;s->context=context;s->destination=destination;s->owner=std::this_thread::get_id();
         s->fence=load<decltype(s->fence)>("glFenceSync");s->wait=load<decltype(s->wait)>("glClientWaitSync");s->erase=load<decltype(s->erase)>("glDeleteSync");
         s->bind_framebuffer=load<decltype(s->bind_framebuffer)>("glBindFramebuffer");s->active=load<decltype(s->active)>("glActiveTexture");s->use=load<decltype(s->use)>("glUseProgram");
         auto bind=load<MovieBindBuffer>("glBindBuffer");
         if(!s->fence||!s->wait||!s->erase||!s->bind_framebuffer||!s->active||!s->use||!bind)return {};
-        // Queries/function loading only: no framebuffer, viewport, clear or
-        // fixed geometry state is installed during attachment.
-        auto device=std::make_shared<GlMovieBackend>(std::move(s),bind);error=MovieGpuError::none;return device;
+        auto port=std::make_shared<GlFencePort>();port->context=context;port->dc=dc;port->owner=s->owner;
+        port->fence=s->fence;port->wait=s->wait;port->erase=s->erase;
+        s->completion=NativeMovieGpuWorkOwner::create(std::move(port),error);if(!s->completion)return {};
+        // Queries/loading and pre-registration only; no fence/draw/window mutation.
+        auto device=std::make_shared<GlMovieBackend>(s,bind);
+        auto registration=retirement->register_task(std::move(s),error);
+        if(!registration)return {};
+        device->retirement=MovieGpuRetirementRegistration(std::move(registration));
+        error=MovieGpuError::none;return device;
     }catch(const std::bad_alloc&){error=MovieGpuError::host_capacity;}catch(const std::length_error&){error=MovieGpuError::host_capacity;}
 #else
-    (void)host_window;(void)destination;
+    (void)host_window;(void)destination;(void)retirement;
 #endif
     return {};
 }

@@ -1,0 +1,15 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_gpu_completion.exe",
+  "target_before_sha256": "e193943af23a17bd195b91aa02c6d4ecfd8cc0f3a9d85fafa89b7da68ebd9712",
+  "target_after_sha256": "e193943af23a17bd195b91aa02c6d4ecfd8cc0f3a9d85fafa89b7da68ebd9712",
+  "audited_target_expected_sha256": "e193943af23a17bd195b91aa02c6d4ecfd8cc0f3a9d85fafa89b7da68ebd9712",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::video::NativeMovieGpuWorkOwner::begin_drain",
+    "mka::video::NativeMovieGpuRetirementOwner::poll",
+    "mka::video::MovieGpuRetirementRegistration::~MovieGpuRetirementRegistration"
+  ],
+  "executed_target_sha256": "e193943af23a17bd195b91aa02c6d4ecfd8cc0f3a9d85fafa89b7da68ebd9712"
+}
