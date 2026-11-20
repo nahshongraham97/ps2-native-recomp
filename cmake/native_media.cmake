@@ -47,6 +47,7 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/movie_decoder_mode.cpp
     runtime/src/native/movie_prefix_events.cpp
     runtime/src/native/movie_header_boundary.cpp
+    runtime/src/native/movie_header_unit.cpp
     runtime/src/native/movie_pcm_binding.cpp
     runtime/src/native/movie_kernel_policies.cpp
     runtime/src/native/movie_catalog.cpp
@@ -94,6 +95,7 @@ foreach(pair
     "test_native_movie_decode_adx|tests/test_movie_decode_adx.cpp"
     "test_native_movie_program_end|tests/test_movie_program_end.cpp"
     "test_native_movie_source_observations|tests/test_movie_source_observations.cpp"
+    "test_native_movie_header_unit_corpus|tests/test_movie_header_unit_corpus.cpp"
     "test_native_movie_source|tests/test_movie_source.cpp"
     "test_native_movie_source_failure|tests/test_movie_source_failure.cpp"
     "test_native_movie_pipeline|tests/test_native_movie_pipeline.cpp"
@@ -119,6 +121,11 @@ target_compile_features(test_native_movie_audio_demux_probe PRIVATE cxx_std_20)
 target_link_libraries(test_native_movie_audio_demux_probe PRIVATE bcrypt)
 
 # Pure mutable game/content policy data, without runtime or device linkage.
+add_executable(test_native_movie_header_unit EXCLUDE_FROM_ALL
+    tests/test_movie_header_unit.cpp runtime/src/native/movie_header_unit.cpp)
+target_include_directories(test_native_movie_header_unit PRIVATE runtime/include)
+target_compile_features(test_native_movie_header_unit PRIVATE cxx_std_20)
+
 add_executable(test_native_movie_header_boundary EXCLUDE_FROM_ALL
     tests/test_movie_header_boundary.cpp runtime/src/native/movie_header_boundary.cpp
     runtime/src/native/movie_prefix_events.cpp)

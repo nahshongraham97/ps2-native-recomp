@@ -1,0 +1,12 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_media.a",
+  "target_before_sha256": "bd0599cf58042c04fa71151d3ea6681c60e7c9df21b5f337bd9af94a8f065b0c",
+  "target_after_sha256": "bd0599cf58042c04fa71151d3ea6681c60e7c9df21b5f337bd9af94a8f065b0c",
+  "audited_target_expected_sha256": "bd0599cf58042c04fa71151d3ea6681c60e7c9df21b5f337bd9af94a8f065b0c",
+  "execution_applicable": false,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::video::parse_movie_header_unit("
+  ]
+}

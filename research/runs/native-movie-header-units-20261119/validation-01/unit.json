@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_header_unit.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native header unit checked fields/endpoints/ownership; no batch or admission binding\n",
+  "stderr": "",
+  "executable_sha256": "ebae219c14a2c8640298573d8eb4d78d26eb5255321a5af66440adaa95f0d701",
+  "executable_after_sha256": "ebae219c14a2c8640298573d8eb4d78d26eb5255321a5af66440adaa95f0d701"
+}
