@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_header_boundary.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native source header-boundary proposals/cache/ownership; no parser admission or timeline binding\n",
+  "stderr": "",
+  "executable_sha256": "503e6a7d99339a365d843102378323b9bc25634f87d251ea328c708969c81da2",
+  "executable_after_sha256": "503e6a7d99339a365d843102378323b9bc25634f87d251ea328c708969c81da2"
+}
