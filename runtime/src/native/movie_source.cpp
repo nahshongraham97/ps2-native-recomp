@@ -40,6 +40,20 @@ std::unique_ptr<NativeRetailMovieSource> NativeRetailMovieSource::open(
         return nullptr;
     }
 }
+std::optional<bool> NativeRetailMovieSource::audio_present(MovieSourceFailure& failure) noexcept {
+    failure={};
+    if(!decoder_){failure.kind=MovieSourceError::invalid_owner;failure.operation="native movie moved source audio presence";return {};}
+    try {
+        MovieDecodeFailure why;auto audit=decoder_->audio_audit(why);
+        if(!audit||audit->decoder_failed){
+            failure.kind=MovieSourceError::decoder;failure.operation="native movie owned audio presence audit";
+            failure.decoder_failure=std::move(why);
+            if(audit&&audit->decoder_failed)failure.decoder_failure={MovieDecodeError::failed_owner,0,"native movie audio presence failed decoder"};
+            return {};
+        }
+        return audit->present;
+    }catch(const std::bad_alloc&){failure.kind=MovieSourceError::allocation;failure.operation="native movie source audio presence allocation";return {};}
+}
 MovieReadResult NativeRetailMovieSource::next(MovieSourceFailure& failure) {
     failure = {};
     if (!decoder_) {

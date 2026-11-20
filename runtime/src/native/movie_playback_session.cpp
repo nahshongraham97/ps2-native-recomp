@@ -42,6 +42,17 @@ std::unique_ptr<NativeMoviePlaybackSession> NativeMoviePlaybackSession::open(
         MovieSourceFailure sf;
         auto source = NativeRetailMovieSource::open(store, libraries, id, view, language, sf);
         if (!source) { named(f, MovieSessionError::source, "movie session source open"); f.source = std::move(sf); return {}; }
+        return assemble_source(std::move(source),std::move(factory),std::move(audio),std::move(gpu),
+            std::move(color),std::move(config),context,false,f);
+    } catch (const std::bad_alloc&) { named(f, MovieSessionError::allocation, "movie session open allocation"); }
+      catch (...) { named(f, MovieSessionError::control, "movie session open exception"); }
+    return {};
+}
+std::unique_ptr<NativeMoviePlaybackSession> NativeMoviePlaybackSession::assemble_source(
+        std::unique_ptr<NativeRetailMovieSource> source,MovieSessionPolicyFactory factory,
+        std::unique_ptr<sound::NativeAudioDevice> audio,std::shared_ptr<NativeMovieGpuBackend> gpu,
+        NativeMovieColorTable color,MoviePlaybackConfiguration config,NativeMovieControlContext& context,
+        bool fill_actual_client,MovieSessionFailure& f){
         MovieControlFailure cf;
         std::unique_ptr<MoviePlaybackAudioOutput> output;
         std::optional<sound::AudioStreamFormat> actual;
@@ -53,6 +64,14 @@ std::unique_ptr<NativeMoviePlaybackSession> NativeMoviePlaybackSession::open(
                 control_failure(f, cf, "movie session actual audio format"); return {};
             }
         }
+        if(fill_actual_client&&actual){
+            if((config.client_sample_rate&&config.client_sample_rate!=actual->sample_rate)||
+               (config.client_channels&&config.client_channels!=actual->channels)||
+               (config.client_channel_mask&&config.client_channel_mask!=actual->channel_mask)){
+                control_failure(f,{MovieControlError::native_service,"movie session actual client format conflict",0},"movie session actual client format join");return {};
+            }
+            config.client_sample_rate=actual->sample_rate;config.client_channels=actual->channels;config.client_channel_mask=actual->channel_mask;
+        }
         auto policies = factory(*source->request(), source->observation_identity(), actual, f);
         if (!policies || f.kind != MovieSessionError::none) {
             if (f.kind == MovieSessionError::none)
@@ -63,8 +82,42 @@ std::unique_ptr<NativeMoviePlaybackSession> NativeMoviePlaybackSession::open(
         if (!input) { control_failure(f, cf, "movie session source adapter"); return {}; }
         return create_from_ports(std::move(input), std::move(policies), std::move(output),
             std::move(gpu), std::move(color), std::move(config), context, f);
-    } catch (const std::bad_alloc&) { named(f, MovieSessionError::allocation, "movie session open allocation"); }
-      catch (...) { named(f, MovieSessionError::control, "movie session open exception"); }
+}
+std::unique_ptr<NativeMoviePlaybackSession> NativeMoviePlaybackSession::open_with_native_audio(
+        const NativeMovieAssetStore& store,const std::filesystem::path& libraries,
+        std::int64_t id,MovieViewSelection view,std::int64_t language,
+        MovieSessionPolicyFactory factory,std::optional<sound::AudioDeviceConfig> host,
+        std::shared_ptr<NativeMovieGpuBackend> gpu,NativeMovieColorTable color,
+        MoviePlaybackConfiguration config,NativeMovieControlContext& context,MovieSessionFailure& f) noexcept {
+    f={};try {
+        if(!factory){named(f,MovieSessionError::invalid_owner,"movie session requires source policy factory");return {};}
+        MovieSourceFailure why;auto source=NativeRetailMovieSource::open(store,libraries,id,view,language,why);
+        if(!source){named(f,MovieSessionError::source,"movie session source-first open");f.source=std::move(why);return {};}
+        const auto present=source->audio_present(why);
+        if(!present){named(f,MovieSessionError::source,"movie session source audio presence");f.source=std::move(why);return {};}
+        const auto expected=*present?MoviePlaybackAudioPresence::required:MoviePlaybackAudioPresence::absent;
+        if(config.audio!=MoviePlaybackAudioPresence::unspecified&&config.audio!=expected){
+            control_failure(f,{MovieControlError::native_service,"movie session contradictory source audio presence",0},"movie session source audio presence join");return {};
+        }
+        config.audio=expected;
+        std::unique_ptr<sound::NativeAudioDevice> audio;
+        if(*present){
+            if(!host){named(f,MovieSessionError::device,"movie session actual audio requires explicit host configuration");f.device={sound::AudioDeviceError::invalid_endpoint,0,"movie session missing explicit native audio configuration"};return {};}
+            if(!sound::validate_audio_device_config(*host,f.device)){f.kind=MovieSessionError::device;f.operation="movie session native audio configuration";return {};}
+            if((config.client_sample_rate&&config.client_sample_rate!=host->sample_rate)||
+               (config.client_channels&&config.client_channels!=host->channels)||
+               (config.client_channel_mask&&config.client_channel_mask!=host->channel_mask)){
+                control_failure(f,{MovieControlError::native_service,"movie session configured client format conflict",0},"movie session native client configuration join");return {};
+            }
+            audio=sound::NativeAudioDevice::open(*host,f.device);
+            if(!audio){f.kind=MovieSessionError::device;f.operation="movie session native audio open";return {};}
+        }else if(config.client_sample_rate||config.client_channels||config.client_channel_mask){
+            control_failure(f,{MovieControlError::native_service,"movie session video-only client fields conflict",0},"movie session absent client format join");return {};
+        }
+        return assemble_source(std::move(source),std::move(factory),std::move(audio),std::move(gpu),
+            std::move(color),std::move(config),context,true,f);
+    }catch(const std::bad_alloc&){named(f,MovieSessionError::allocation,"movie session source-first audio allocation");}
+     catch(...){named(f,MovieSessionError::control,"movie session source-first audio exception");}
     return {};
 }
 std::unique_ptr<NativeMoviePlaybackSession> NativeMoviePlaybackSession::create_from_ports(

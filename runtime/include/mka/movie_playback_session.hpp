@@ -2,12 +2,13 @@
 #include "mka/movie_playback.hpp"
 
 namespace mka::video {
-enum class MovieSessionError { none, source, control, allocation, invalid_owner, wrong_thread, invalid_state };
+enum class MovieSessionError { none, source, control, allocation, invalid_owner, wrong_thread, invalid_state, device };
 struct MovieSessionFailure {
     MovieSessionError kind = MovieSessionError::none;
     const char* operation = "";
     MovieSourceFailure source;
     MovieControlFailure control, cleanup;
+    sound::AudioDeviceFailure device;
 };
 // Request reference is borrowed only for the factory call; policies retain
 // their own request values and shared source identity. Format is the actual
@@ -27,6 +28,15 @@ public:
         const NativeMovieAssetStore&, const std::filesystem::path& library_directory,
         std::int64_t id, MovieViewSelection, std::int64_t game_language_code,
         MovieSessionPolicyFactory, std::unique_ptr<sound::NativeAudioDevice>,
+        std::shared_ptr<NativeMovieGpuBackend>, NativeMovieColorTable,
+        MoviePlaybackConfiguration, NativeMovieControlContext&, MovieSessionFailure&) noexcept;
+    // Opens the associated source BEFORE deciding whether any endpoint is
+    // needed. Explicit host config is required only for an actual audio source.
+    // Never selects a default endpoint or silently changes explicit fields.
+    static std::unique_ptr<NativeMoviePlaybackSession> open_with_native_audio(
+        const NativeMovieAssetStore&, const std::filesystem::path& library_directory,
+        std::int64_t id, MovieViewSelection, std::int64_t game_language_code,
+        MovieSessionPolicyFactory, std::optional<sound::AudioDeviceConfig>,
         std::shared_ptr<NativeMovieGpuBackend>, NativeMovieColorTable,
         MoviePlaybackConfiguration, NativeMovieControlContext&, MovieSessionFailure&) noexcept;
     static std::unique_ptr<NativeMoviePlaybackSession> create_from_ports(
@@ -51,6 +61,11 @@ public:
     // even after a controller failure; closes permanently even if cleanup fails.
     bool close(MovieSessionFailure&) noexcept;
 private:
+    static std::unique_ptr<NativeMoviePlaybackSession> assemble_source(
+        std::unique_ptr<NativeRetailMovieSource>, MovieSessionPolicyFactory,
+        std::unique_ptr<sound::NativeAudioDevice>, std::shared_ptr<NativeMovieGpuBackend>,
+        NativeMovieColorTable, MoviePlaybackConfiguration, NativeMovieControlContext&,
+        bool fill_actual_client, MovieSessionFailure&);
     struct CallGuard;
     NativeMoviePlaybackSession(std::shared_ptr<NativeMovieGpuBackend>, RetailMovieRequest,
         std::unique_ptr<NativeMovieStreamPlayback>, NativeMovieControlContext&);

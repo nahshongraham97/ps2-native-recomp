@@ -34,12 +34,22 @@ int main(int argc,char** argv){try{
     auto bad=playback();bad.audio=MoviePlaybackAudioPresence::required;
     check(!NativeMovieServiceAcquisition::create(*store,std::filesystem::u8path(argv[1]),gpu,*color,{{request->logical_key,bad,{}}},failure)&&failure.kind==MovieServiceAcquisitionError::invalid_setting,"required audio cannot silently become absent");
     check(!NativeMovieServiceAcquisition::create(*store,std::filesystem::u8path(argv[1]),gpu,*color,{{request->logical_key,playback(),{}},{request->logical_key,playback(),{}}},failure)&&failure.kind==MovieServiceAcquisitionError::invalid_setting,"duplicate exact key rejected");
-    auto owner=NativeMovieServiceAcquisition::create(*store,std::filesystem::u8path(argv[1]),gpu,*color,{{request->logical_key,playback(),{}}},failure);check(bool(owner),"explicit video-only acquisition owner");
+    auto automatic=playback();automatic.audio=MoviePlaybackAudioPresence::unspecified;
+    mka::sound::AudioDeviceConfig unused_host;unused_host.endpoint_id_utf8="deliberately-unusable-unused-video-only-endpoint";
+    auto owner=NativeMovieServiceAcquisition::create(*store,std::filesystem::u8path(argv[1]),gpu,*color,{{request->logical_key,automatic,unused_host}},failure);check(bool(owner),"unspecified source audio with unused invalid generic host settings is retained passively");
     NativeMovieControlContext control(1.0f);unsigned called=0;MovieSessionPolicyFactory reject=[&](const RetailMovieRequest&,std::shared_ptr<const MovieSourceObservationIdentity>,const std::optional<mka::sound::AudioStreamFormat>& actual,MovieSessionFailure& f)->std::unique_ptr<MoviePlaybackPolicies>{++called;check(!actual,"video-only must not acquire endpoint");f.kind=MovieSessionError::control;f.operation="fixture deliberate policy rejection";return {};};
     auto forged=*request;forged.logical_extent.width++;
     check(!owner->acquire(forged,0,reject,control,failure)&&failure.kind==MovieServiceAcquisitionError::invalid_request&&called==0,"full request rejected before source/policy acquisition");
     MovieServiceAcquisitionFailure foreign;std::thread t([&]{owner->session_factory(foreign);});t.join();check(foreign.kind==MovieServiceAcquisitionError::wrong_thread,"foreign acquisition thread rejected");
     check(!owner->acquire(*request,0,reject,control,failure)&&failure.kind==MovieServiceAcquisitionError::session&&failure.session.kind==MovieSessionError::control&&called==1,"actual associated source reaches actual-format policy factory with nested failure retained");
+    {
+        const auto missing_libraries=std::filesystem::u8path(argv[1])/"missing-acquisition-fixture-libraries";
+        check(!std::filesystem::exists(missing_libraries),"explicit missing-library fixture path must not exist");
+        auto missing_owner=NativeMovieServiceAcquisition::create(*store,missing_libraries,gpu,*color,{{request->logical_key,automatic,unused_host}},failure);
+        check(bool(missing_owner),"missing library retained as acquisition input, not fallback");
+        auto missing_factory=missing_owner->session_factory(failure);const auto before_calls=called;MovieSessionFailure missing;
+        check(!missing_factory(*request,0,reject,control,missing)&&missing.kind==MovieSessionError::source&&missing.source.kind==MovieSourceError::decoder&&missing.source.decoder_failure.kind==MovieDecodeError::library_load&&!missing.source.decoder_failure.operation.empty()&&called==before_calls,"actual native source missing-library error moves through acquisition callback without invoking policy");
+    }
     auto factory=owner->session_factory(failure);check(bool(factory),"concrete retained acquisition callback");owner.reset();store.reset();gpu.reset();check(!weak.expired(),"factory retains native store/GPU owner after external teardown");
     unsigned profiles=0;MovieServiceFailure sf;auto service=NativeMovieService::create(1.0f,[&](const RetailMovieRequest& r,std::shared_ptr<const MovieSourceObservationIdentity> token,const std::optional<mka::sound::AudioStreamFormat>& actual,MovieSessionFailure& f)->std::optional<MovieServicePolicyConfiguration>{f={};++profiles;check(r.logical_key==request->logical_key&&token&&!actual,"actual source epoch and explicit absent client reach concrete service");return profile();},factory,sf);
     check(service&&service->start(id,MovieViewSelection::normal,0,4,sf),"production acquisition opens actual source and concrete native Session");

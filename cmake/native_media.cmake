@@ -108,6 +108,7 @@ foreach(pair
     "test_native_movie_source_syntax_index|tests/test_movie_source_syntax_index.cpp"
     "test_native_movie_source_syntax_corpus|tests/test_movie_source_syntax_corpus.cpp"
     "test_native_movie_playback_session|tests/test_movie_playback_session.cpp"
+    "test_native_movie_session_native_audio|tests/test_movie_session_native_audio.cpp"
     "test_native_movie_native_context|tests/test_movie_native_context.cpp"
     "test_native_movie_output_position|tests/test_movie_output_position.cpp"
     "test_native_movie_service|tests/test_movie_service.cpp"

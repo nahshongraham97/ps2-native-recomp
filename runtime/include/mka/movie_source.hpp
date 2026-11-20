@@ -37,6 +37,9 @@ public:
     std::shared_ptr<const MovieSourceObservationIdentity> observation_identity() const noexcept {
         return decoder_?decoder_->observation_identity():nullptr;
     }
+    // Non-consuming fact from the SAME owned decoder. false is successful
+    // video-only; nullopt is a named invalid/failed owner or audit failure.
+    std::optional<bool> audio_present(MovieSourceFailure&) noexcept;
     MovieReadResult next(MovieSourceFailure&);
 private:
     NativeRetailMovieSource(RetailMovieRequest&& request, std::unique_ptr<NativeMovieDecoder>&& decoder)

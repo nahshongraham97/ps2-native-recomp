@@ -3,6 +3,8 @@
 namespace mka::video {
 // Passive exact-key host settings. Neither media presence nor source PCM
 // profile is inferred here; the existing service profile factory remains required.
+// Unspecified presence is resolved from the actual owned source by Session;
+// unused generic host endpoint settings do not activate video-only audio.
 struct MovieServiceAcquisitionSetting {
     std::string logical_key;
     MoviePlaybackConfiguration playback;

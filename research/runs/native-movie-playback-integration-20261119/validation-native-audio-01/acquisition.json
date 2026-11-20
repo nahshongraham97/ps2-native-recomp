@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_service_acquisition.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2",
+    "KRYPT/V_RAIDON.SFD",
+    "12",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules\\MOVIER.ovl"
+  ],
+  "exit": 0,
+  "stdout": "PASS native service acquisition associated video-only Session; no endpoint activation or playback\n",
+  "stderr": "",
+  "executable_sha256": "f58222fc38739dc782f211d2febfbf01269801e4f8ca960ccb502e6403927a39",
+  "executable_after_sha256": "f58222fc38739dc782f211d2febfbf01269801e4f8ca960ccb502e6403927a39"
+}
