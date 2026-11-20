@@ -1,0 +1,16 @@
+{
+  "status": "PASS_COMPLETED_ORIGINAL_CHECKERS_REUSED_WITH_EXACT_VIEWS_EQUIVALENCE",
+  "original_syntax_sha256": "c2d5333fde61d91c9249471abea8b581fa10300634a4af367751a0d4c4d4e187",
+  "media_source_sha256": "adc5f635e3070c38fa0a2d5c573152b99e071480fb99991ed1cd7d5bff5c70c1",
+  "media_negative_groups": {
+    "native_value": 13,
+    "program_end": 3,
+    "schema_or_absence": 4,
+    "missing_field": 18,
+    "receipt": 8,
+    "coverage_footer": 3,
+    "json": 3
+  },
+  "syntax_negative_checks": 39,
+  "scope": "No original checker rerun or native reexecution; original38 fields/record hashes exactly match view implementation"
+}

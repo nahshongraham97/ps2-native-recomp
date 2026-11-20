@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "C:\\Python315\\python.exe",
+    "-O",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\tools\\research\\verify_movie_source_syntax_index.py",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-movie-source-syntax-20261119\\validation-02\\syntax-corpus.json",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-movie-source-syntax-20261119\\validation-02\\syntax-oracle.json"
+  ],
+  "exit": 0,
+  "stdout": "{\"status\": \"PASS_ORIGINAL38_SOURCE_SYNTAX_AND_ATTACHMENT_MEMBERSHIP\", \"assets\": 38, \"pictures\": 65181, \"cross_pes_prefixes\": 90, \"absent_pts\": 18, \"negative_checks\": 39}\n",
+  "stderr": "",
+  "executable_sha256": "d4e19e9a33268fb0ce575a24ab2d4b85972524f1933df008a6befc14dce19fbd",
+  "executable_after_sha256": "d4e19e9a33268fb0ce575a24ab2d4b85972524f1933df008a6befc14dce19fbd"
+}

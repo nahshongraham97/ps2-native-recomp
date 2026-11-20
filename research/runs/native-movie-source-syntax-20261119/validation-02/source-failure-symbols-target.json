@@ -1,0 +1,14 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_source_failure.exe",
+  "target_before_sha256": "cdb8dfae50e73422f60a13aac4c1c67efbc41f89327653f012857724d81a4946",
+  "target_after_sha256": "cdb8dfae50e73422f60a13aac4c1c67efbc41f89327653f012857724d81a4946",
+  "audited_target_expected_sha256": "cdb8dfae50e73422f60a13aac4c1c67efbc41f89327653f012857724d81a4946",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::video::NativeMovieSourceSyntaxIndex::",
+    "mka::video::NativeMovieDecoder::"
+  ],
+  "executed_target_sha256": "cdb8dfae50e73422f60a13aac4c1c67efbc41f89327653f012857724d81a4946"
+}

@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Python315\\python.exe",
+    "-O",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\tools\\research\\test_movie_header_oracle_views.py",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2"
+  ],
+  "exit": 0,
+  "stdout": "{\"status\": \"PASS_FROZEN_HEADER_BYTES_VIEW_EQUIVALENCE\", \"original_unit_variants\": 8, \"synthetic_cases\": 3, \"asset_sha256\": \"cf49fb014d51f20fee7727a01e845cc7303be63fe0af2902fb3eadf371a843af\", \"header_sha256\": \"4b93d759660a442415a551a3450f45633d917bcab4208d2c826e4b356971c882\", \"grammar_sha256\": \"82b7f4153801a694c0a910781739d5f99fb51f69fff9755bde7d82ebaf1276c9\", \"scope\": \"Representation equivalence only; no candidate/native/decoder or SDK admission\"}\n",
+  "stderr": "",
+  "executable_sha256": "d4e19e9a33268fb0ce575a24ab2d4b85972524f1933df008a6befc14dce19fbd",
+  "executable_after_sha256": "d4e19e9a33268fb0ce575a24ab2d4b85972524f1933df008a6befc14dce19fbd"
+}

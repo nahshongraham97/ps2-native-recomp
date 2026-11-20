@@ -49,6 +49,7 @@ add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/movie_header_boundary.cpp
     runtime/src/native/movie_header_unit.cpp
     runtime/src/native/movie_userdata_retention.cpp
+    runtime/src/native/movie_source_syntax_index.cpp
     runtime/src/native/movie_pcm_binding.cpp
     runtime/src/native/movie_kernel_policies.cpp
     runtime/src/native/movie_catalog.cpp
@@ -98,6 +99,8 @@ foreach(pair
     "test_native_movie_source_observations|tests/test_movie_source_observations.cpp"
     "test_native_movie_header_unit_corpus|tests/test_movie_header_unit_corpus.cpp"
     "test_native_movie_userdata_retention_corpus|tests/test_movie_userdata_retention_corpus.cpp"
+    "test_native_movie_source_syntax_index|tests/test_movie_source_syntax_index.cpp"
+    "test_native_movie_source_syntax_corpus|tests/test_movie_source_syntax_corpus.cpp"
     "test_native_movie_source|tests/test_movie_source.cpp"
     "test_native_movie_source_failure|tests/test_movie_source_failure.cpp"
     "test_native_movie_pipeline|tests/test_native_movie_pipeline.cpp"

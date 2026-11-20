@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_source_syntax_index.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS immutable source syntax pictures; no SDK admission or selected-output association\n",
+  "stderr": "",
+  "executable_sha256": "ec115215ce9de94286678f1e5af6e9b0814d52ec8666d8cfd20afcb7fdcd45fc",
+  "executable_after_sha256": "ec115215ce9de94286678f1e5af6e9b0814d52ec8666d8cfd20afcb7fdcd45fc"
+}

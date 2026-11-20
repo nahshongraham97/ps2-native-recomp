@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_movie_decode.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\blender\\blender-4.5.15-windows-x64\\blender.shared",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\MOVIEPS2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-movie-source-syntax-20261119\\validation-02\\decode-owned",
+    "--catalog"
+  ],
+  "exit": 0,
+  "stdout": "[native-movie-decode] LOGON.SFD video_frames=152 audio_frames=7601 samples_per_channel=243201 peak=30832 missing_pts=7601 yuv_fnv64=0468A47CFE425CA5 pcm_fnv64=E5BA88906E6AA5AF\n[native-movie-decode] TITLEN.SFD video_frames=900 audio_frames=26804 samples_per_channel=857700 peak=32768 missing_pts=26804 yuv_fnv64=358F4D588B8C4AAA pcm_fnv64=392D24BBE57F5998\n[native-movie-decode] OPENINGN.SFD video_frames=7841 audio_frames=388550 samples_per_channel=12433600 peak=32768 missing_pts=388550 yuv_fnv64=4968774FB3474C4E pcm_fnv64=402330DF3E5142F1\nPASS native filesystem/MPEG2/ADX decoder ownership and actual media output; no game/A-V-sync/presentation/fidelity claim\n",
+  "stderr": "[adpcm_adx @ 00000243EBE54C40] Codec (adpcm_adx) not on whitelist 'mpeg2video'\n[mpeg @ 00000243EBE4C800] Could not find codec parameters for stream 0 (Audio: adpcm_adx, 0 channels): unspecified sample rate\nConsider increasing the value for the 'analyzeduration' (0) and 'probesize' (5000000) options\n[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=296)\n[adpcm_adx @ 00000243EBEBDFC0] Codec (adpcm_adx) not on whitelist 'mpeg2video'\n[mpeg @ 00000243EBEBFE40] stream 0 : no PTS found at end of file, duration not set\n[mpeg @ 00000243EBEBFE40] Could not find codec parameters for stream 0 (Audio: adpcm_adx, 0 channels): unspecified sample rate\nConsider increasing the value for the 'analyzeduration' (0) and 'probesize' (5000000) options\n[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=11277)\n[adpcm_adx @ 00000243EBEBA1C0] Codec (adpcm_adx) not on whitelist 'mpeg2video'\n[mpeg @ 00000243ED8AECC0] Could not find codec parameters for stream 0 (Audio: adpcm_adx, 0 channels): unspecified sample rate\nConsider increasing the value for the 'analyzeduration' (0) and 'probesize' (5000000) options\n[native-movie] preserved terminal MPEG2 sequence-end as separate control packet (picture_bytes=296)\n",
+  "executable_sha256": "51582c9a670617a2f3e151e9b974d3b736aedc955601707661c9762a69eac92e",
+  "executable_after_sha256": "51582c9a670617a2f3e151e9b974d3b736aedc955601707661c9762a69eac92e"
+}

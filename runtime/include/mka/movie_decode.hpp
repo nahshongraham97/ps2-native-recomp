@@ -2,6 +2,7 @@
 #include "mka/movie_assets.hpp"
 #include "mka/movie_pes_index.hpp"
 #include "mka/movie_source_observations.hpp"
+#include "mka/movie_source_syntax_index.hpp"
 #include "mka/movie_adx_stream.hpp"
 #include "mka/mpeg2_timing.hpp"
 #include <array>
@@ -48,6 +49,9 @@ struct MovieVideoFrame {
     std::int32_t sample_aspect_numerator=0,sample_aspect_denominator=0;
     std::int32_t color_range=0,color_space=0,color_primaries=0,color_transfer=0;
     MovieCodecTiming codec_timing;
+    // Immutable source-format record for this exact decoded picture. This is
+    // not current retail header admission or selected SDK work-record metadata.
+    std::shared_ptr<const MovieSourceSyntaxPicture> source_syntax;
 };
 enum class MovieAudioChannelOrder {unspecified,native,custom,ambisonic};
 struct MovieAudioChannel {
@@ -109,7 +113,7 @@ struct MovieAudioFrame {
 using MovieDecodedFrame=std::variant<MovieVideoFrame,MovieAudioFrame>;
 enum class MovieDecodeError {none,unsupported_host,library_load,missing_symbol,
     library_version,file_io,allocation,invalid_stream,unsupported_stream,
-    unsupported_frame,unsupported_audio_layout,demux,decode,invalid_owner,failed_owner,timing_parse,timing_association,source_index,source_validation,source_association,audio_source,audio_decode,source_observation};
+    unsupported_frame,unsupported_audio_layout,demux,decode,invalid_owner,failed_owner,timing_parse,timing_association,source_index,source_validation,source_association,audio_source,audio_decode,source_observation,source_syntax};
 struct MovieDecodeFailure {
     MovieDecodeError kind=MovieDecodeError::none;
     std::int32_t native_code=0;
@@ -118,6 +122,7 @@ struct MovieDecodeFailure {
     MoviePesFailure source_failure;
     MovieAdxStreamFailure audio_failure;
     MoviePrefixFailure prefix_failure;
+    MovieSourceSyntaxFailure syntax_failure;
 };
 enum class MovieReadStatus {frame,end,error};
 struct MovieReadResult {

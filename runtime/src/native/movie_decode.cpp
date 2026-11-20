@@ -82,6 +82,7 @@ MovieTimestamp timestamp(std::int64_t value,AVRational base){
 struct NativeMovieDecoder::Impl {
     Api api;
     std::optional<NativeMoviePesIndex> source_index;
+    std::optional<NativeMovieSourceSyntaxIndex> source_syntax;
     std::optional<MovieSourceCursor> source_file;
     std::optional<MovieEsReader> source_video;
     std::optional<NativeMoviePrefixEvents> prefix_events;
@@ -245,6 +246,33 @@ struct NativeMovieDecoder::Impl {
         if(tag->picture.coding_type!=static_cast<unsigned>(scratch->pict_type)){
             f={MovieDecodeError::timing_association,0,"native picture tag disagrees with codec output picture type"};return false;
         }
+        if(!source_syntax){
+            f={MovieDecodeError::source_syntax,0,"missing native source-syntax index"};return false;
+        }
+        MovieSourceSyntaxFailure sf;
+        auto syntax=source_syntax->lookup(observation_key,observation_source,tag->source.picture_es_byte,sf);
+        if(!syntax){
+            f={MovieDecodeError::source_syntax,static_cast<int>(sf.kind),"exact decoded-picture source-syntax lookup"};f.syntax_failure=sf;return false;
+        }
+        const auto& sequence=syntax->sequence;const auto& extension=syntax->sequence_extension;
+        const Mpeg2SequenceTiming sequence_timing{sequence.frame_rate_code,
+            extension.frame_rate_extension_n,extension.frame_rate_extension_d,extension.progressive_sequence,
+            static_cast<std::uint16_t>(sequence.width|(std::uint16_t(extension.horizontal_size_extension)<<12)),
+            static_cast<std::uint16_t>(sequence.height|(std::uint16_t(extension.vertical_size_extension)<<12)),extension.chroma_format};
+        std::optional<Mpeg2GopTiming> gop_timing;
+        if(syntax->gop){const auto& g=*syntax->gop;gop_timing=Mpeg2GopTiming{
+            g.raw_time_code,g.hours,g.minutes,g.seconds,g.pictures,g.drop_frame,g.closed_gop,g.broken_link};}
+        const auto& picture=tag->picture;
+        if(syntax->pes!=tag->source.pes||syntax->quarter_pts!=tag->source.quarter_pts||
+           tag->source.picture_es_byte<tag->source.packet_es_begin||
+           picture.packet_picture_offset!=tag->source.picture_es_byte-tag->source.packet_es_begin||
+           picture.sequence!=sequence_timing||picture.gop!=gop_timing||
+           picture.temporal_reference!=syntax->picture.temporal_reference||picture.coding_type!=syntax->picture.coding_type||
+           picture.picture_structure!=syntax->coding.picture_structure||picture.top_field_first!=syntax->coding.top_field_first||
+           picture.repeat_first_field!=syntax->coding.repeat_first_field||picture.progressive_frame!=syntax->coding.progressive_frame){
+            f={MovieDecodeError::source_syntax,0,"source syntax disagrees with independently parsed decoded-picture timing/provenance"};return false;
+        }
+        frame.source_syntax=std::move(syntax);
         frame.codec_timing.picture=tag->picture;
         frame.codec_timing.picture_source=tag->source;
         pending_pictures.erase(it);
@@ -529,6 +557,13 @@ std::unique_ptr<NativeMovieDecoder> NativeMovieDecoder::finish_open(std::unique_
         MoviePrefixFailure pf;s->prefix_events=NativeMoviePrefixEvents::create(0,pf);
         if(!s->prefix_events){s->observation_failure(pf,"native source prefix owner creation",f);return {};}
         s->observation_source=std::make_shared<const MovieSourceObservationIdentity>();
+        MovieSourceSyntaxFailure sf;
+        s->source_syntax=NativeMovieSourceSyntaxIndex::build(*s->source_index,s->source_stream_id,
+            s->observation_key,s->observation_source,sf);
+        if(!s->source_syntax){
+            f={MovieDecodeError::source_syntax,static_cast<int>(sf.kind),"native source-syntax index from retained opened movie"};
+            f.syntax_failure=sf;return {};
+        }
         return std::unique_ptr<NativeMovieDecoder>(new NativeMovieDecoder(std::move(s)));
     }catch(const std::bad_alloc&){f={MovieDecodeError::allocation,0,"native movie ownership"};}
      catch(const std::length_error&){f={MovieDecodeError::allocation,0,"native movie host capacity"};}

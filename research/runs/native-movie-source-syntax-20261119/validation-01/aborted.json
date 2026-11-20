@@ -1,0 +1,14 @@
+{
+  "status": "ABORTED_BEFORE_COMPILATION_REVIEW_LABEL_MISMATCH",
+  "runner_sha256": "2df391cefd8434c6d4e08c7d2d548cd596db77a6ac2fb235965dedfe50d8ed30",
+  "exit": 1,
+  "failed_check": "frozen independent source review",
+  "actual_decoder_review_status": "SOURCE_REVIEW_NO_CONCRETE_DEFECT_NOT_BUILT",
+  "incorrect_expected_status": "SOURCE_REVIEW_NO_CONCRETE_DEFECT_NOT_EXECUTED",
+  "fixtures_executed": 0,
+  "build_executed": false,
+  "limits": [
+    "validation-01 was created empty before failure; preserved",
+    "No native code changed and no test claim is made"
+  ]
+}
