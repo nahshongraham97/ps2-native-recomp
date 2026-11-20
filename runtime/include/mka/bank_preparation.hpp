@@ -33,6 +33,14 @@ struct PreparedNormal {
     std::vector<AdpcmMono> pcm; // Ordered planes, no left/right/loop/playtime assertion.
     std::optional<NormalCount2Encoded> count2_encoded;
 };
+// Actual fresh normal donor state. Clone copies this value; it does not reset it.
+struct NormalInstanceTemplateState {
+    std::uint32_t flags=0;
+    std::int16_t repeat_operand=0;
+    std::uint64_t repeat_counter=0;
+    std::int32_t gain_q14=0x4000,pan_q14=0,pitch_q12=0x1000;
+    std::uint32_t descriptor_word=0,start_argument=0;
+};
 struct PreparedSampleInstance {
     std::size_t command_index=0;
     CommandRecord command;
@@ -41,6 +49,7 @@ struct PreparedSampleInstance {
     std::shared_ptr<const PreparedNormal> sample;
     // The cache association is an actual instance owner, independent of PCM consumers.
     std::shared_ptr<const void> cache_reference;
+    NormalInstanceTemplateState native_template;
 };
 struct PreparedProgram {
     std::size_t program_index=0;

@@ -1,0 +1,102 @@
+{
+  "ninja_sha256": "bfd423304a3e3e3164200e533df8457902e796498bcc4812cec5a4876804a11a",
+  "target_rules": [
+    {
+      "target": "test_native_program_copy",
+      "actual_build_rule": "build test_native_program_copy.exe: CXX_EXECUTABLE_LINKER__test_native_program_copy_Release CMakeFiles/test_native_program_copy.dir/tests/test_program_copy.cpp.obj | libmka_native_sound_resources.a || libmka_native_sound_resources.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_sound_resources.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_program_copy.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_program_copy.exe\n  TARGET_IMPLIB = libtest_native_program_copy.dll.a\n  TARGET_PDB = test_native_program_copy.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_program_copy.dir",
+      "test_only_wraps": []
+    },
+    {
+      "target": "test_native_program_copy_failure",
+      "actual_build_rule": "build test_native_program_copy_failure.exe: CXX_EXECUTABLE_LINKER__test_native_program_copy_failure_Release CMakeFiles/test_native_program_copy_failure.dir/tests/test_program_copy_failure.cpp.obj | libmka_native_sound_resources.a || libmka_native_sound_resources.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++ -Wl,--wrap=_Znwy\n  LINK_LIBRARIES = libmka_native_sound_resources.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_program_copy_failure.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_program_copy_failure.exe\n  TARGET_IMPLIB = libtest_native_program_copy_failure.dll.a\n  TARGET_PDB = test_native_program_copy_failure.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_program_copy_failure.dir",
+      "test_only_wraps": [
+        "_Znwy"
+      ]
+    },
+    {
+      "target": "test_native_runtime_preparation",
+      "actual_build_rule": "build test_native_runtime_preparation.exe: CXX_EXECUTABLE_LINKER__test_native_runtime_preparation_Release CMakeFiles/test_native_runtime_preparation.dir/tests/test_runtime_preparation.cpp.obj | libmka_native_sound_resources.a || libmka_native_sound_resources.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_sound_resources.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_runtime_preparation.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_runtime_preparation.exe\n  TARGET_IMPLIB = libtest_native_runtime_preparation.dll.a\n  TARGET_PDB = test_native_runtime_preparation.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_runtime_preparation.dir",
+      "test_only_wraps": []
+    },
+    {
+      "target": "test_native_program_admission",
+      "actual_build_rule": "build test_native_program_admission.exe: CXX_EXECUTABLE_LINKER__test_native_program_admission_Release CMakeFiles/test_native_program_admission.dir/tests/test_program_admission.cpp.obj | libmka_native_sound_resources.a || libmka_native_sound_resources.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_sound_resources.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_program_admission.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_program_admission.exe\n  TARGET_IMPLIB = libtest_native_program_admission.dll.a\n  TARGET_PDB = test_native_program_admission.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_program_admission.dir",
+      "test_only_wraps": []
+    },
+    {
+      "target": "test_native_program_admission_gates",
+      "actual_build_rule": "build test_native_program_admission_gates.exe: CXX_EXECUTABLE_LINKER__test_native_program_admission_gates_Release CMakeFiles/test_native_program_admission_gates.dir/tests/test_program_admission_gates.cpp.obj | libmka_native_sound_resources.a || libmka_native_sound_resources.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++ -Wl,--wrap=_ZN3mka5sound17AudioBankProtocol6unloadERKNS0_16AudioBankCommandERNS0_20AudioProtocolFailureE\n  LINK_LIBRARIES = libmka_native_sound_resources.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_program_admission_gates.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_program_admission_gates.exe\n  TARGET_IMPLIB = libtest_native_program_admission_gates.dll.a\n  TARGET_PDB = test_native_program_admission_gates.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_program_admission_gates.dir",
+      "test_only_wraps": [
+        "_ZN3mka5sound17AudioBankProtocol6unloadERKNS0_16AudioBankCommandERNS0_20AudioProtocolFailureE"
+      ]
+    },
+    {
+      "target": "test_native_audio_banks",
+      "actual_build_rule": "build test_native_audio_banks.exe: CXX_EXECUTABLE_LINKER__test_native_audio_banks_Release CMakeFiles/test_native_audio_banks.dir/tests/test_audio_banks.cpp.obj | libmka_native_sound_resources.a || libmka_native_sound_resources.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_sound_resources.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_audio_banks.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_audio_banks.exe\n  TARGET_IMPLIB = libtest_native_audio_banks.dll.a\n  TARGET_PDB = test_native_audio_banks.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_audio_banks.dir",
+      "test_only_wraps": []
+    },
+    {
+      "target": "test_native_audio_bank_protocol",
+      "actual_build_rule": "build test_native_audio_bank_protocol.exe: CXX_EXECUTABLE_LINKER__test_native_audio_bank_protocol_Release CMakeFiles/test_native_audio_bank_protocol.dir/tests/test_audio_bank_protocol.cpp.obj | libmka_native_sound_resources.a || libmka_native_sound_resources.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_sound_resources.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_audio_bank_protocol.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_audio_bank_protocol.exe\n  TARGET_IMPLIB = libtest_native_audio_bank_protocol.dll.a\n  TARGET_PDB = test_native_audio_bank_protocol.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_audio_bank_protocol.dir",
+      "test_only_wraps": []
+    },
+    {
+      "target": "test_native_audio_bank_service",
+      "actual_build_rule": "build test_native_audio_bank_service.exe: CXX_EXECUTABLE_LINKER__test_native_audio_bank_service_Release CMakeFiles/test_native_audio_bank_service.dir/tests/test_audio_bank_service.cpp.obj | libmka_native_sound_resources.a || libmka_native_sound_resources.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_sound_resources.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_audio_bank_service.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_audio_bank_service.exe\n  TARGET_IMPLIB = libtest_native_audio_bank_service.dll.a\n  TARGET_PDB = test_native_audio_bank_service.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_audio_bank_service.dir",
+      "test_only_wraps": []
+    },
+    {
+      "target": "test_native_audio_resource_domain",
+      "actual_build_rule": "build test_native_audio_resource_domain.exe: CXX_EXECUTABLE_LINKER__test_native_audio_resource_domain_Release CMakeFiles/test_native_audio_resource_domain.dir/tests/test_audio_resource_domain.cpp.obj | libmka_native_sound_resources.a || libmka_native_sound_resources.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_sound_resources.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_audio_resource_domain.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_audio_resource_domain.exe\n  TARGET_IMPLIB = libtest_native_audio_resource_domain.dll.a\n  TARGET_PDB = test_native_audio_resource_domain.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_audio_resource_domain.dir",
+      "test_only_wraps": []
+    },
+    {
+      "target": "test_native_audio_resource_exception",
+      "actual_build_rule": "build test_native_audio_resource_exception.exe: CXX_EXECUTABLE_LINKER__test_native_audio_resource_exception_Release CMakeFiles/test_native_audio_resource_exception.dir/tests/test_audio_resource_exception.cpp.obj | libmka_native_sound_resources.a || libmka_native_sound_resources.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++ -Wl,--wrap=_ZN3mka5sound12PreparedBank7prepareENS0_15BankAssetSourceERNS0_21BankPreparationReportERNS0_18PreparationFailureE\n  LINK_LIBRARIES = libmka_native_sound_resources.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_audio_resource_exception.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_audio_resource_exception.exe\n  TARGET_IMPLIB = libtest_native_audio_resource_exception.dll.a\n  TARGET_PDB = test_native_audio_resource_exception.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_audio_resource_exception.dir",
+      "test_only_wraps": [
+        "_ZN3mka5sound12PreparedBank7prepareENS0_15BankAssetSourceERNS0_21BankPreparationReportERNS0_18PreparationFailureE"
+      ]
+    },
+    {
+      "target": "test_native_playback_owner",
+      "actual_build_rule": "build test_native_playback_owner.exe: CXX_EXECUTABLE_LINKER__test_native_playback_owner_Release CMakeFiles/test_native_playback_owner.dir/tests/test_playback_owner.cpp.obj | libmka_native_sound_resources.a || libmka_native_sound_resources.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_sound_resources.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_playback_owner.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_playback_owner.exe\n  TARGET_IMPLIB = libtest_native_playback_owner.dll.a\n  TARGET_PDB = test_native_playback_owner.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_playback_owner.dir",
+      "test_only_wraps": []
+    },
+    {
+      "target": "test_native_playback_reservation",
+      "actual_build_rule": "build test_native_playback_reservation.exe: CXX_EXECUTABLE_LINKER__test_native_playback_reservation_Release CMakeFiles/test_native_playback_reservation.dir/tests/test_playback_reservation.cpp.obj | libmka_native_sound_resources.a || libmka_native_sound_resources.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_sound_resources.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_playback_reservation.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_playback_reservation.exe\n  TARGET_IMPLIB = libtest_native_playback_reservation.dll.a\n  TARGET_PDB = test_native_playback_reservation.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_playback_reservation.dir",
+      "test_only_wraps": []
+    },
+    {
+      "target": "test_native_playback_reservation_gaps",
+      "actual_build_rule": "build test_native_playback_reservation_gaps.exe: CXX_EXECUTABLE_LINKER__test_native_playback_reservation_gaps_Release CMakeFiles/test_native_playback_reservation_gaps.dir/tests/test_playback_reservation_gaps.cpp.obj | libmka_native_sound_resources.a || libmka_native_sound_resources.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++ -Wl,--wrap=_ZN3mka5sound16AudioBankService15prepare_programERKNS0_16AudioBankCommandERNS0_18PreparationFailureERNS0_18BankServiceFailureE -Wl,--wrap=_ZN3mka5sound16AudioBankService6unloadERKNS0_16AudioBankCommandERNS0_18BankServiceFailureE -Wl,--wrap=_ZN3mka5sound16AudioBankService15close_when_idleERNS0_18BankServiceFailureE -Wl,--wrap=_ZN3mka5sound16AudioBankService9load_syncERKNS0_16AudioBankCommandENS0_13BankWireTokenERNS0_18BankServiceFailureE -Wl,--wrap=_ZN3mka5sound16AudioBankService7run_oneERNS0_18BankServiceFailureE\n  LINK_LIBRARIES = libmka_native_sound_resources.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_playback_reservation_gaps.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_playback_reservation_gaps.exe\n  TARGET_IMPLIB = libtest_native_playback_reservation_gaps.dll.a\n  TARGET_PDB = test_native_playback_reservation_gaps.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_playback_reservation_gaps.dir",
+      "test_only_wraps": [
+        "_ZN3mka5sound16AudioBankService15prepare_programERKNS0_16AudioBankCommandERNS0_18PreparationFailureERNS0_18BankServiceFailureE",
+        "_ZN3mka5sound16AudioBankService6unloadERKNS0_16AudioBankCommandERNS0_18BankServiceFailureE",
+        "_ZN3mka5sound16AudioBankService15close_when_idleERNS0_18BankServiceFailureE",
+        "_ZN3mka5sound16AudioBankService9load_syncERKNS0_16AudioBankCommandENS0_13BankWireTokenERNS0_18BankServiceFailureE",
+        "_ZN3mka5sound16AudioBankService7run_oneERNS0_18BankServiceFailureE"
+      ]
+    },
+    {
+      "target": "test_native_deferred_program_work",
+      "actual_build_rule": "build test_native_deferred_program_work.exe: CXX_EXECUTABLE_LINKER__test_native_deferred_program_work_Release CMakeFiles/test_native_deferred_program_work.dir/tests/test_deferred_program_work.cpp.obj | libmka_native_sound_resources.a || libmka_native_sound_resources.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_sound_resources.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_deferred_program_work.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_deferred_program_work.exe\n  TARGET_IMPLIB = libtest_native_deferred_program_work.dll.a\n  TARGET_PDB = test_native_deferred_program_work.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_deferred_program_work.dir",
+      "test_only_wraps": []
+    },
+    {
+      "target": "test_native_deferred_cache_policy",
+      "actual_build_rule": "build test_native_deferred_cache_policy.exe: CXX_EXECUTABLE_LINKER__test_native_deferred_cache_policy_Release CMakeFiles/test_native_deferred_cache_policy.dir/tests/test_deferred_cache_policy.cpp.obj | libmka_native_sound_resources.a || libmka_native_sound_resources.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_sound_resources.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_deferred_cache_policy.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_deferred_cache_policy.exe\n  TARGET_IMPLIB = libtest_native_deferred_cache_policy.dll.a\n  TARGET_PDB = test_native_deferred_cache_policy.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_deferred_cache_policy.dir",
+      "test_only_wraps": []
+    },
+    {
+      "target": "test_native_bank_preparation",
+      "actual_build_rule": "build test_native_bank_preparation.exe: CXX_EXECUTABLE_LINKER__test_native_bank_preparation_Release CMakeFiles/test_native_bank_preparation.dir/tests/test_bank_preparation.cpp.obj | libmka_native_sound_resources.a || libmka_native_sound_resources.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_sound_resources.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_bank_preparation.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_bank_preparation.exe\n  TARGET_IMPLIB = libtest_native_bank_preparation.dll.a\n  TARGET_PDB = test_native_bank_preparation.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_bank_preparation.dir",
+      "test_only_wraps": []
+    },
+    {
+      "target": "test_native_program_executor",
+      "actual_build_rule": "build test_native_program_executor.exe: CXX_EXECUTABLE_LINKER__test_native_program_executor_Release CMakeFiles/test_native_program_executor.dir/tests/test_program_executor.cpp.obj | libmka_native_sound_resources.a || libmka_native_sound_resources.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_sound_resources.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_program_executor.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_program_executor.exe\n  TARGET_IMPLIB = libtest_native_program_executor.dll.a\n  TARGET_PDB = test_native_program_executor.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_program_executor.dir",
+      "test_only_wraps": []
+    }
+  ]
+}

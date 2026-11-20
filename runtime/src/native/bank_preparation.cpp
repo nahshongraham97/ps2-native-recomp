@@ -99,6 +99,9 @@ struct PreparedBank::State {
             // All vector allocation preceded sample/cache policy mutation. Copies
             // of an immutable occurrence share its native acquisition lifetime.
             result->normal_instances.push_back({n,c,signed16(std::uint16_t(c.bytes[10])|(std::uint16_t(c.bytes[11])<<8)),sample->preserve,sample->sample,sample});
+            auto& donor=result->normal_instances.back();
+            donor.native_template.repeat_operand=donor.repeat_operand;
+            donor.native_template.flags=donor.source_preserve_resource_after_instance?0x40u:0u;
             // Install the actual instance owner before transferring precreation.
             if(sample->preserve)pinned_cache[r.index]=sample;
             else pinned_cache[r.index].reset();

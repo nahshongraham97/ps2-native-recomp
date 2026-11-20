@@ -13,6 +13,8 @@ struct SampleStartOperands {
     std::int16_t repeat_operand=0;
     bool set_descriptor_flag_1=false, set_descriptor_flag_4=false;
 };
+// Decode actual kind1 operands; caller validates its command route.
+SampleStartOperands sample_start_operands(const CommandRecord&) noexcept;
 enum class ProgramStopReason { command_kind7, owner_request };
 enum class ProgramStepKind { waiting, sample_start, awaiting_start_result, program_stop, structural_end, finished };
 struct ProgramStep {

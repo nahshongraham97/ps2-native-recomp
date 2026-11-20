@@ -7,7 +7,7 @@ add_library(mka_native_sound_resources STATIC EXCLUDE_FROM_ALL
     runtime/src/native/normal_sample.cpp runtime/src/native/adpcm_codec.cpp
     runtime/src/native/bank_preparation.cpp runtime/src/native/audio_banks.cpp
     runtime/src/native/audio_bank_protocol.cpp runtime/src/native/audio_bank_service.cpp
-    runtime/src/native/program_executor.cpp runtime/src/native/audio_controls.cpp
+    runtime/src/native/program_executor.cpp runtime/src/native/program_copy.cpp runtime/src/native/audio_controls.cpp
     runtime/src/native/host_voice.cpp runtime/src/native/playback_owner.cpp)
 target_include_directories(mka_native_sound_resources PUBLIC runtime/include)
 target_compile_features(mka_native_sound_resources PUBLIC cxx_std_20)
@@ -80,3 +80,12 @@ endif()
 # Actual bank-owned runtime preparation/cache; no device/runtime linkage.
 add_executable(test_native_runtime_preparation EXCLUDE_FROM_ALL tests/test_runtime_preparation.cpp)
 target_link_libraries(test_native_runtime_preparation PRIVATE mka_native_sound_resources)
+
+add_executable(test_native_program_copy EXCLUDE_FROM_ALL tests/test_program_copy.cpp)
+target_link_libraries(test_native_program_copy PRIVATE mka_native_sound_resources)
+
+if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    add_executable(test_native_program_copy_failure EXCLUDE_FROM_ALL tests/test_program_copy_failure.cpp)
+    target_link_libraries(test_native_program_copy_failure PRIVATE mka_native_sound_resources)
+    target_link_options(test_native_program_copy_failure PRIVATE "-Wl,--wrap=_Znwy")
+endif()

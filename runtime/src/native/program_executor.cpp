@@ -4,6 +4,13 @@ namespace {
 std::uint32_t word(const std::array<std::uint8_t,40>& b,std::size_t a){return std::uint32_t(b[a])|(std::uint32_t(b[a+1])<<8)|(std::uint32_t(b[a+2])<<16)|(std::uint32_t(b[a+3])<<24);}
 std::int16_t half(const std::array<std::uint8_t,40>& b,std::size_t a){const auto v=std::uint16_t(b[a])|(std::uint16_t(b[a+1])<<8);return v<=32767?static_cast<std::int16_t>(v):static_cast<std::int16_t>(-1-static_cast<int>(65535-v));}
 }
+SampleStartOperands sample_start_operands(const CommandRecord& command)noexcept{
+    SampleStartOperands value;
+    value.parameter_44=half(command.bytes,32);value.parameter_46=half(command.bytes,34);value.parameter_48=half(command.bytes,36);
+    value.descriptor_word_28=word(command.bytes,16);value.start_argument=word(command.bytes,12);
+    value.repeat_operand=half(command.bytes,10);value.set_descriptor_flag_1=value.repeat_operand!=1;
+    value.set_descriptor_flag_4=(command.bytes[9]&1u)!=0;return value;
+}
 std::optional<ProgramExecutor> ProgramExecutor::create(std::shared_ptr<const PreparedProgram> p,ProgramClockWord deadline,ProgramFailure& failure){
     failure={};if(!p){failure.kind=ProgramError::null_program;return std::nullopt;}
     if(p->commands.empty()){failure.kind=ProgramError::empty_program;return std::nullopt;}
@@ -49,11 +56,7 @@ std::optional<ProgramStep> ProgramExecutor::step(ProgramClockWord now,ProgramFai
         if(count==2)valid=valid && sample.count2_encoded && sample.count2_encoded->planes[0].size()==plane_bytes && sample.count2_encoded->planes[1].size()==plane_bytes;
         if(!valid){fail(ProgramError::invalid_prepared_sample,failure);return std::nullopt;}
         event.kind=ProgramStepKind::sample_start;event.clip=instance->sample;
-        event.start.parameter_44=half(command.bytes,32);event.start.parameter_46=half(command.bytes,34);event.start.parameter_48=half(command.bytes,36);
-        event.start.descriptor_word_28=word(command.bytes,16);event.start.start_argument=word(command.bytes,12);
-        event.start.repeat_operand=half(command.bytes,10);
-        event.start.set_descriptor_flag_1=event.start.repeat_operand!=1;
-        event.start.set_descriptor_flag_4=(command.bytes[9]&1u)!=0;
+        event.start=sample_start_operands(command);
         state_=State::awaiting_start;return event;
     }
     case 7:

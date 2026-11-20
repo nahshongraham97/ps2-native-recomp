@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_program_admission_gates.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "stdout": "PASS native Service program admission unload gates/known refusal/unknown mutation; five CPU-only injected boundaries\n",
+  "stderr": "",
+  "executable_sha256": "5cd4cff3b3420103f3e6d28b77974a2f7445cd2cd4ece68e4a7972c523893e9b",
+  "executable_after_sha256": "5cd4cff3b3420103f3e6d28b77974a2f7445cd2cd4ece68e4a7972c523893e9b"
+}

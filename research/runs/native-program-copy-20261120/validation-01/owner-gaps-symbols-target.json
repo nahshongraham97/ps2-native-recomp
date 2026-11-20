@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_playback_reservation_gaps.exe",
+  "target_before_sha256": "cabffec065e0e54e2be723fb9048fd33c1a07ca887e06383a3fc63fe9474d3f7",
+  "target_after_sha256": "cabffec065e0e54e2be723fb9048fd33c1a07ca887e06383a3fc63fe9474d3f7",
+  "audited_target_expected_sha256": "cabffec065e0e54e2be723fb9048fd33c1a07ca887e06383a3fc63fe9474d3f7",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::sound::sample_start_operands"
+  ],
+  "executed_target_sha256": "cabffec065e0e54e2be723fb9048fd33c1a07ca887e06383a3fc63fe9474d3f7"
+}
