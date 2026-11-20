@@ -14,6 +14,8 @@ struct NativeHeapState {
     NativeHeapIdentity identity;
     bool active{true};
     std::size_t live{}, inflight{}, children{};
+    std::size_t requested_live{}, actual_live{}, requests{};
+    bool overflow_attempted{};
     std::shared_ptr<NativeHeapState> parent;
     ~NativeHeapState() {
         if (parent) {
@@ -47,14 +49,23 @@ bool admit(const std::shared_ptr<State>& s, NativeHeapFailure& f) {
     ++s->inflight;
     return true;
 }
-void complete(const std::shared_ptr<State>& s, bool success) noexcept {
+void complete(const std::shared_ptr<State>& s, bool success,
+              bool requested = false, bool actual = false) noexcept {
     std::lock_guard lock(s->mutex);
     --s->inflight;
-    if (success) ++s->live;
+    if (success) {
+        // Each role is a subset of unique live ownership, whose sum with inflight
+        // was checked at admission. Neither role increment can overflow.
+        ++s->live;
+        if (requested) ++s->requested_live;
+        if (actual) ++s->actual_live;
+    }
 }
-void released(const std::shared_ptr<State>& s) noexcept {
+void released(const std::shared_ptr<State>& s, bool requested, bool actual) noexcept {
     std::lock_guard lock(s->mutex);
     --s->live;
+    if (requested) --s->requested_live;
+    if (actual) --s->actual_live;
 }
 } // namespace
 
@@ -148,8 +159,8 @@ std::optional<NativeAllocation> NativeHeapOwner::allocate_on(
         // Shutdown cannot change the generation while admitted.
         result.requested_identity_ = state_->identity;
         result.actual_identity_ = target->identity;
-        complete(state_, true);
-        if (actual_admitted) complete(target, true);
+        complete(state_, true, true, target == state_);
+        if (actual_admitted) complete(target, true, false, true);
         return result;
     } catch (const std::bad_alloc&) { fail(f, NativeHeapError::allocation_failed); }
       catch (...) { fail(f, NativeHeapError::native_exception); }
@@ -159,12 +170,58 @@ std::optional<NativeAllocation> NativeHeapOwner::allocate_on(
     return {};
 }
 
+std::optional<NativeHeapRequest> NativeHeapOwner::retain_request(NativeHeapFailure& f) noexcept {
+    f = {};
+    try {
+        std::lock_guard lock(state_->mutex);
+        if (!state_->active) {
+            fail(f, NativeHeapError::inactive_owner);
+            return {};
+        }
+        if (state_->requests == std::numeric_limits<std::size_t>::max()) {
+            fail(f, NativeHeapError::counter_overflow);
+            return {};
+        }
+        NativeHeapRequest result;
+        result.state_ = state_;
+        ++state_->requests;
+        return result;
+    } catch (...) { fail(f, NativeHeapError::native_exception); }
+    return {};
+}
+
+NativeHeapRequest::~NativeHeapRequest() { release(); }
+NativeHeapRequest::NativeHeapRequest(NativeHeapRequest&& other) noexcept
+    : state_(std::move(other.state_)) {}
+NativeHeapRequest& NativeHeapRequest::operator=(NativeHeapRequest&& other) noexcept {
+    if (this != &other) {
+        release();
+        state_ = std::move(other.state_);
+    }
+    return *this;
+}
+bool NativeHeapRequest::release() noexcept {
+    if (!state_) return false;
+    // Drop the retained state/parent only after releasing its mutex.
+    auto retained = std::move(state_);
+    {
+        std::lock_guard lock(retained->mutex);
+        --retained->requests;
+    }
+    return true;
+}
+
 NativeHeapObservation NativeHeapOwner::observe() const {
     std::lock_guard lock(state_->mutex);
     // Parent identity is immutable while its registered child exists.
     return {state_->identity, state_->parent ? std::optional{state_->parent->identity}
                                             : std::nullopt,
-            state_->active, state_->live, state_->inflight, state_->children};
+            state_->active, state_->live, state_->inflight, state_->children,
+            state_->requested_live, state_->actual_live, state_->requests, state_->overflow_attempted};
+}
+void NativeHeapOwner::mark_overflow_attempted() noexcept {
+    std::lock_guard lock(state_->mutex);
+    state_->overflow_attempted = true;
 }
 const std::string& NativeHeapOwner::name() const noexcept { return state_->name; }
 bool NativeHeapOwner::shutdown(NativeHeapFailure& f) noexcept {
@@ -174,7 +231,7 @@ bool NativeHeapOwner::shutdown(NativeHeapFailure& f) noexcept {
         {
             std::lock_guard lock(state_->mutex);
             if (!state_->active) return fail(f, NativeHeapError::inactive_owner);
-            if (state_->live || state_->inflight || state_->children)
+            if (state_->live || state_->inflight || state_->children || state_->requests)
                 return fail(f, NativeHeapError::owner_busy);
             state_->active = false;
             ++state_->identity.generation;
@@ -208,8 +265,8 @@ void NativeAllocation::reset() noexcept {
     if (!pointer_) return;
     ::operator delete(pointer_, std::align_val_t{alignment_});
     pointer_ = nullptr;
-    released(requested_);
-    if (actual_ != requested_) released(actual_);
+    released(requested_, true, actual_ == requested_);
+    if (actual_ != requested_) released(actual_, false, true);
     actual_.reset();
     requested_.reset();
     requested_size_ = rounded_size_ = alignment_ = 0;

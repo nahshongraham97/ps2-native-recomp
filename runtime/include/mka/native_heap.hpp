@@ -27,9 +27,30 @@ struct NativeHeapObservation {
     std::size_t live_allocations{};
     std::size_t inflight_allocations{};
     std::size_t child_owners{};
+    std::size_t requested_live_allocations{};
+    std::size_t actual_live_allocations{};
+    std::size_t active_requests{};
+    bool overflow_attempted{};
 };
 namespace detail { struct NativeHeapState; }
 class NativeHeapOwner;
+class NativeWaveAllocator;
+
+// Route-wide native admission only; no source callback or fallback policy is implied.
+class NativeHeapRequest final {
+public:
+    NativeHeapRequest() noexcept = default;
+    ~NativeHeapRequest();
+    NativeHeapRequest(NativeHeapRequest&&) noexcept;
+    NativeHeapRequest& operator=(NativeHeapRequest&&) noexcept;
+    NativeHeapRequest(const NativeHeapRequest&) = delete;
+    NativeHeapRequest& operator=(const NativeHeapRequest&) = delete;
+    explicit operator bool() const noexcept { return static_cast<bool>(state_); }
+    bool release() noexcept;
+private:
+    friend class NativeHeapOwner;
+    std::shared_ptr<detail::NativeHeapState> state_;
+};
 
 // No raw-pointer free API: the move-only owner carries the actual host deleter.
 class NativeAllocation final {
@@ -69,6 +90,7 @@ public:
     std::optional<NativeAllocation> allocate_from(
         const std::shared_ptr<NativeHeapOwner>& actual, std::size_t bytes,
         NativeHeapFailure&, std::size_t alignment = 16) noexcept;
+    std::optional<NativeHeapRequest> retain_request(NativeHeapFailure&) noexcept;
     NativeHeapObservation observe() const;
     const std::string& name() const noexcept;
     bool shutdown(NativeHeapFailure&) noexcept;
@@ -76,6 +98,8 @@ public:
     NativeHeapOwner& operator=(const NativeHeapOwner&) = delete;
 private:
     friend class NativeAllocation;
+    friend class NativeWaveAllocator;
+    void mark_overflow_attempted() noexcept;
     explicit NativeHeapOwner(std::shared_ptr<detail::NativeHeapState>) noexcept;
     std::optional<NativeAllocation> allocate_on(
         const std::shared_ptr<detail::NativeHeapState>& actual, std::size_t bytes,

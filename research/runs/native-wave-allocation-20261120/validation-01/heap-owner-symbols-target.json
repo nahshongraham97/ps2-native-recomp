@@ -1,0 +1,14 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_heap_owner.exe",
+  "target_before_sha256": "e71822657db2222646b76d8ab9ea711a8cac6a8b3c6b8836b0cb90a348aee778",
+  "target_after_sha256": "e71822657db2222646b76d8ab9ea711a8cac6a8b3c6b8836b0cb90a348aee778",
+  "audited_target_expected_sha256": "e71822657db2222646b76d8ab9ea711a8cac6a8b3c6b8836b0cb90a348aee778",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::memory::NativeHeapOwner::retain_request",
+    "mka::memory::NativeHeapRequest::release"
+  ],
+  "executed_target_sha256": "e71822657db2222646b76d8ab9ea711a8cac6a8b3c6b8836b0cb90a348aee778"
+}

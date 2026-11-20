@@ -41,13 +41,15 @@ auto owner(const char* name){
     NativeHeapFailure f;auto result=NativeHeapOwner::create(name,{},f);
     check(bool(result),"real native heap owner");return result;
 }
-void verify_access(const std::shared_ptr<NativeHeapOwner>& owner,std::size_t live,std::size_t inflight){
+void verify_access(const std::shared_ptr<NativeHeapOwner>& owner,std::size_t live,std::size_t inflight,bool actual){
     auto probe=std::async(std::launch::async,[&]{return owner->observe();});
     check(probe.wait_for(std::chrono::seconds(5))==std::future_status::ready,
         "owner mutex is not held across host allocation or delete");
     const auto state=probe.get();
     check(state.active&&state.live_allocations==live&&state.inflight_allocations==inflight&&state.child_owners==0,
         "exact live/inflight ownership without hidden child or anchor");
+    check(state.requested_live_allocations==(actual?0:live)&&state.actual_live_allocations==(actual?live:0)&&state.active_requests==0,
+        "actual/requested roles change only at host allocation/deletion completion");
     auto close=std::async(std::launch::async,[&]{NativeHeapFailure f;return std::pair{owner->shutdown(f),f.kind};});
     check(close.wait_for(std::chrono::seconds(5))==std::future_status::ready,"shutdown can inspect live host transaction");
     const auto result=close.get();
@@ -60,7 +62,7 @@ void allocation_cut(bool throw_failure){
     std::optional<NativeAllocation> result;NativeHeapFailure f;
     std::thread worker([&]{result=requested->allocate_from(actual,384,f,256);});
     gate.wait();
-    verify_access(requested,0,1);verify_access(actual,0,1);
+    verify_access(requested,0,1,false);verify_access(actual,0,1,true);
     gate.open();worker.join();
     check(requested->observe().identity==requested_identity&&actual->observe().identity==actual_identity,
         "failed concurrent shutdown cannot revoke either owner generation");
@@ -85,7 +87,7 @@ void release_cut(){
     gate.arm(Operation::release,false,allocation->data());
     std::thread worker([&]{NativeHeapFailure error;check(allocation->release(error),"actual owned release");});
     gate.wait();
-    verify_access(requested,1,0);verify_access(actual,1,0);
+    verify_access(requested,1,0,false);verify_access(actual,1,0,true);
     gate.open();worker.join();
     check(requested->observe().live_allocations==0&&actual->observe().live_allocations==0&&
         requested->shutdown(f)&&actual->shutdown(f),"counter retirement follows actual host delete");

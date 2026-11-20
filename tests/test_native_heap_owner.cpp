@@ -34,6 +34,9 @@ void allocation_and_validation() {
     auto zero = heap->allocate(0, f);
     require(zero && *zero && zero->requested_size() == 0 && zero->rounded_size() == 16,
             "zero owns real sixteen-byte allocation");
+    require(heap->observe().live_allocations == 1 &&
+            heap->observe().requested_live_allocations == 1 &&
+            heap->observe().actual_live_allocations == 1, "same owner counts once total and once in each role");
     require(reinterpret_cast<std::uintptr_t>(zero->data()) % 16 == 0, "default alignment");
     auto* z = static_cast<unsigned char*>(zero->data());
     for (std::size_t i = 0; i < 16; ++i) z[i] = static_cast<unsigned char>(i + 1);
@@ -86,6 +89,10 @@ void routing_parent_and_lifetime() {
             allocation->actual_owner() == actual->observe().identity, "actual owner metadata survives route");
     require(requested->observe().live_allocations == 1 && actual->observe().live_allocations == 1,
             "both route identities retain live admission");
+    require(requested->observe().requested_live_allocations == 1 &&
+            requested->observe().actual_live_allocations == 0 &&
+            actual->observe().requested_live_allocations == 0 &&
+            actual->observe().actual_live_allocations == 1, "routed roles remain distinct");
     require(!requested->shutdown(f) && !actual->shutdown(f), "neither owner can close routed allocation");
     auto* pointer = allocation->data();
     require(!allocation->release_from(*requested, f) && f.kind == NativeHeapError::foreign_owner &&
@@ -93,6 +100,10 @@ void routing_parent_and_lifetime() {
     require(!allocation->release_from(*foreign, f) && f.kind == NativeHeapError::foreign_owner,
             "foreign identity rejected without mutation");
     require(allocation->release_from(*actual, f), "actual owner releases routed allocation");
+    require(requested->observe().requested_live_allocations == 0 &&
+            requested->observe().actual_live_allocations == 0 &&
+            actual->observe().requested_live_allocations == 0 &&
+            actual->observe().actual_live_allocations == 0, "actual deletion retires both live roles");
     require(actual->shutdown(f), "close alternate");
     require(!requested->allocate_from(actual, 64, f) && f.kind == NativeHeapError::inactive_owner &&
             requested->observe().inflight_allocations == 0, "failed alternate rolls back requested admission");
@@ -112,6 +123,46 @@ void routing_parent_and_lifetime() {
     require(static_cast<unsigned char*>(held->data())[63] == 42 && held->release(f),
             "last owner storage remains usable and really frees");
 }
+void request_guard_lifetime() {
+    auto parent = owner("request parent");
+    auto child = owner("request child", parent);
+    auto other = owner("request replacement");
+    NativeHeapFailure f;
+    auto guard = child->retain_request(f);
+    require(guard && *guard && f.kind == NativeHeapError::none, "retain actual route-wide request");
+    auto snapshot = child->observe();
+    require(snapshot.active_requests == 1 && snapshot.live_allocations == 0 &&
+            snapshot.inflight_allocations == 0 && snapshot.requested_live_allocations == 0 &&
+            snapshot.actual_live_allocations == 0, "request admission is separate from allocation roles");
+    require(!child->shutdown(f) && f.kind == NativeHeapError::owner_busy,
+            "request alone blocks shutdown between route attempts");
+    NativeHeapRequest moved = std::move(*guard);
+    require(!*guard && moved && child->observe().active_requests == 1,
+            "request move constructor preserves one admission");
+    auto replacement = other->retain_request(f);
+    require(replacement && *replacement, "independent real request");
+    *replacement = std::move(moved);
+    require(!moved && *replacement && other->observe().active_requests == 0 &&
+            child->observe().active_requests == 1, "move assignment retires old guard exactly once");
+    require(other->shutdown(f), "replaced request no longer blocks its owner");
+    require(!other->retain_request(f) && f.kind == NativeHeapError::inactive_owner &&
+            other->observe().active_requests == 0, "closed owner refuses new route request");
+    child.reset();
+    require(parent->observe().child_owners == 1 && !parent->shutdown(f),
+            "request retains child state and parent registration after public owner disappears");
+    require(replacement->release() && !replacement->release() && !*replacement,
+            "request release is exactly once, double release returns false");
+    require(parent->observe().child_owners == 0 && parent->shutdown(f),
+            "last request release destroys child state outside its mutex and detaches parent");
+    auto destructor_owner = owner("request destructor");
+    {
+        auto automatic = destructor_owner->retain_request(f);
+        require(automatic && destructor_owner->observe().active_requests == 1,
+                "automatic request owns real admission");
+    }
+    require(destructor_owner->observe().active_requests == 0 && destructor_owner->shutdown(f),
+            "request destructor retires exactly once");
+}
 void host_failure_and_concurrency() {
     auto heap = owner("host failure");
     NativeHeapFailure f;
@@ -120,6 +171,8 @@ void host_failure_and_concurrency() {
             "representable but impossible host allocation reports real failure");
     require(heap->observe().live_allocations == 0 && heap->observe().inflight_allocations == 0,
             "host allocation failure rolls back reservation");
+    require(heap->observe().requested_live_allocations == 0 &&
+            heap->observe().actual_live_allocations == 0, "host failure publishes neither role");
     auto anchor = heap->allocate(16, f);
     require(anchor.has_value(), "held ownership throughout concurrent operations");
     std::atomic<bool> begin{false};
@@ -153,5 +206,6 @@ int main() {
     allocation_and_validation();
     routing_parent_and_lifetime();
     host_failure_and_concurrency();
-    std::cout << "PASS_NATIVE_HEAP_OWNER: 3 groups real aligned storage/routing/lifetime/concurrency; no retail initialization or source callback claim\n";
+    request_guard_lifetime();
+    std::cout << "PASS_NATIVE_HEAP_OWNER: 4 groups real aligned storage/roles/request guards/routing/lifetime/concurrency; no retail initialization or source callback claim\n";
 }

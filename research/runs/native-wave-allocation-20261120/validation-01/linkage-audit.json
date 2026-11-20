@@ -1,0 +1,43 @@
+{
+  "ninja_sha256": "f0cd4977c4ab3b1759c841b3dfa28863a5c0b2fcbdf4738c0e1159e0cdc821f0",
+  "target_rules": [
+    {
+      "target": "test_native_heap_owner",
+      "actual_build_rule": "build test_native_heap_owner.exe: CXX_EXECUTABLE_LINKER__test_native_heap_owner_Release CMakeFiles/test_native_heap_owner.dir/tests/test_native_heap_owner.cpp.obj | libmka_native_heap.a || libmka_native_heap.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_heap.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_heap_owner.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_heap_owner.exe\n  TARGET_IMPLIB = libtest_native_heap_owner.dll.a\n  TARGET_PDB = test_native_heap_owner.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_heap_owner.dir"
+    },
+    {
+      "target": "test_native_heap_inflight",
+      "actual_build_rule": "build test_native_heap_inflight.exe: CXX_EXECUTABLE_LINKER__test_native_heap_inflight_Release CMakeFiles/test_native_heap_inflight.dir/tests/test_native_heap_inflight.cpp.obj | libmka_native_heap.a || libmka_native_heap.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++ -Wl,--wrap=_ZnwySt11align_val_t -Wl,--wrap=_ZdlPvSt11align_val_t\n  LINK_LIBRARIES = libmka_native_heap.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_heap_inflight.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_heap_inflight.exe\n  TARGET_IMPLIB = libtest_native_heap_inflight.dll.a\n  TARGET_PDB = test_native_heap_inflight.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_heap_inflight.dir"
+    },
+    {
+      "target": "test_native_wave_allocation",
+      "actual_build_rule": "build test_native_wave_allocation.exe: CXX_EXECUTABLE_LINKER__test_native_wave_allocation_Release CMakeFiles/test_native_wave_allocation.dir/tests/test_wave_allocation.cpp.obj | libmka_native_wave_allocation.a libmka_native_heap.a || libmka_native_heap.a libmka_native_wave_allocation.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++ -Wl,--wrap=_ZnwySt11align_val_t\n  LINK_LIBRARIES = libmka_native_wave_allocation.a  libmka_native_heap.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_wave_allocation.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_wave_allocation.exe\n  TARGET_IMPLIB = libtest_native_wave_allocation.dll.a\n  TARGET_PDB = test_native_wave_allocation.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_wave_allocation.dir"
+    }
+  ],
+  "archives": [
+    {
+      "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_heap.a",
+      "target_before_sha256": "bfe9654a8457756a32c5e1fde30c7067aa48f33257d06df8613d767b0721ffab",
+      "target_after_sha256": "bfe9654a8457756a32c5e1fde30c7067aa48f33257d06df8613d767b0721ffab",
+      "audited_target_expected_sha256": "bfe9654a8457756a32c5e1fde30c7067aa48f33257d06df8613d767b0721ffab",
+      "execution_applicable": false,
+      "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+      "forbidden": [],
+      "required_defined_symbols": [
+        "mka::memory::NativeHeapOwner::retain_request"
+      ]
+    },
+    {
+      "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_wave_allocation.a",
+      "target_before_sha256": "9fb7c597d43d74b7082f83f39db4e140089906bf60d228fe2ad7690d1d954abe",
+      "target_after_sha256": "9fb7c597d43d74b7082f83f39db4e140089906bf60d228fe2ad7690d1d954abe",
+      "audited_target_expected_sha256": "9fb7c597d43d74b7082f83f39db4e140089906bf60d228fe2ad7690d1d954abe",
+      "execution_applicable": false,
+      "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+      "forbidden": [],
+      "required_defined_symbols": [
+        "mka::memory::NativeWaveAllocator::allocate"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-C",
+    "--defined-only",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_wave_allocation.a"
+  ],
+  "exit": 0,
+  "stdout": "\nwave_allocation.cpp.obj:\n00000000 a @feat.00\n00000014 r GCC_except_table1\n00000064 r GCC_except_table5\n000000a4 r GCC_except_table6\n00000010 r GCC_except_table9\n00000000 T mka::memory::NativeWaveAllocator::Call::~Call()\n00000060 T mka::memory::NativeWaveAllocator::create(mka::memory::WaveAllocationBindings, mka::memory::WaveAllocationFailure&)\n00000250 T mka::memory::NativeWaveAllocator::report(mka::memory::WaveDiagnosticKind, unsigned long long, unsigned long long, unsigned int, mka::memory::WaveAllocationFailure&)\n00000300 T mka::memory::NativeWaveAllocator::allocate(unsigned long long, mka::memory::WaveAllocationFailure&)\n00000000 T mka::memory::NativeWaveAllocator::NativeWaveAllocator(mka::memory::WaveAllocationBindings, mka::memory::NativeHeapIdentity)\n00000000 T mka::memory::NativeWaveAllocator::NativeWaveAllocator(mka::memory::WaveAllocationBindings, mka::memory::NativeHeapIdentity)\n00000000 T mka::memory::WaveAllocationBindings::~WaveAllocationBindings()\n000001f0 T mka::memory::NativeWaveAllocator::observe() const\n00000000 T std::__1::optional<mka::memory::NativeAllocation>::operator=[abi:nqe230103](std::__1::optional<mka::memory::NativeAllocation>&&)\n000009d0 t mka::memory::NativeWaveAllocator::allocate(unsigned long long, mka::memory::WaveAllocationFailure&)::$_0::operator()(std::__1::shared_ptr<mka::memory::NativeHeapOwner> const&, mka::memory::WaveAllocationStage) const\n00000000 T __clang_call_terminate\n",
+  "stderr": "",
+  "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "executable_after_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10"
+}

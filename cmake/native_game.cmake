@@ -125,3 +125,12 @@ if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
     target_link_options(test_native_heap_inflight PRIVATE
         "-Wl,--wrap=_ZnwySt11align_val_t" "-Wl,--wrap=_ZdlPvSt11align_val_t")
 endif()
+
+# Actual retail Wave transaction policy; startup/overlay bindings remain required.
+add_library(mka_native_wave_allocation STATIC EXCLUDE_FROM_ALL runtime/src/native/wave_allocation.cpp)
+target_link_libraries(mka_native_wave_allocation PUBLIC mka_native_heap)
+if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    add_executable(test_native_wave_allocation EXCLUDE_FROM_ALL tests/test_wave_allocation.cpp)
+    target_link_libraries(test_native_wave_allocation PRIVATE mka_native_wave_allocation)
+    target_link_options(test_native_wave_allocation PRIVATE "-Wl,--wrap=_ZnwySt11align_val_t")
+endif()
