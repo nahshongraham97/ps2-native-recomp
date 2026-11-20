@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-u",
+    "-C",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_retail_startup.a"
+  ],
+  "exit": 0,
+  "stdout": "\nnative_retail_startup.cpp.obj:\n         U _Unwind_Resume\n         U mka::content::NativeContentVolume::open_resource(std::__1::basic_string_view<char, std::__1::char_traits<char>>, mka::content::ContentVolumeFailure&) const\n         U std::logic_error::logic_error(char const*)\n         U std::length_error::~length_error()\n         U std::__1::system_category()\n         U std::terminate()\n         U vtable for __cxxabiv1::__class_type_info\n         U vtable for __cxxabiv1::__si_class_type_info\n         U vtable for std::length_error\n         U operator delete(void*)\n         U operator new(unsigned long long)\n         U __cxa_allocate_exception\n         U __cxa_begin_catch\n         U __cxa_end_catch\n         U __cxa_free_exception\n         U __cxa_throw\n         U __gxx_personality_seh0\n         U memchr\n         U memmove\n\nnative_retail_entry.cpp.obj:\n         U mka::retail::continue_native_retail_main(mka::retail::NativeRetailStartupState&, mka::retail::StartupFailure&)\n         U mka::retail::derive_retail_boot_directory(mka::retail::NativeRetailStartupState&, mka::retail::StartupFailure&)\n         U mka::retail::initialize_native_retail_crt(mka::retail::NativeRetailStartupState&, mka::retail::StartupFailure&)\n         U mka::retail::finalize_native_retail_pre_main(mka::retail::NativeRetailStartupState&, mka::retail::StartupFailure&)\n         U mka::retail::initialize_native_retail_platform(mka::retail::NativeRetailStartupState&, mka::retail::StartupFailure&)\n         U mka::retail::initialize_retail_resource_prefix(mka::retail::NativeRetailStartupState&, mka::retail::StartupFailure&)\n         U std::__1::system_category()\n         U std::terminate()\n         U vtable for __cxxabiv1::__class_type_info\n         U vtable for __cxxabiv1::__si_class_type_info\n         U __cxa_begin_catch\n         U __cxa_end_catch\n         U __gxx_personality_seh0\n",
+  "stderr": "",
+  "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "executable_after_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10"
+}

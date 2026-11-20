@@ -1,0 +1,37 @@
+{
+  "ninja_sha256": "b05a2fd113c5fd2b71312a99e2a91d3d9c846b85e6c1723570b88b0ae80d31cb",
+  "target_rules": [
+    {
+      "target": "test_native_content_volume_owner",
+      "actual_build_rule": "build test_native_content_volume_owner.exe: CXX_EXECUTABLE_LINKER__test_native_content_volume_owner_Release CMakeFiles/test_native_content_volume_owner.dir/tests/test_native_content_volume_owner.cpp.obj | libmka_native_content_volume.a || libmka_native_content_volume.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_content_volume.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_content_volume_owner.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_content_volume_owner.exe\n  TARGET_IMPLIB = libtest_native_content_volume_owner.dll.a\n  TARGET_PDB = test_native_content_volume_owner.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_content_volume_owner.dir"
+    },
+    {
+      "target": "test_native_startup_codegen",
+      "actual_build_rule": "build test_native_startup_codegen.exe: CXX_EXECUTABLE_LINKER__test_native_startup_codegen_Release CMakeFiles/test_native_startup_codegen.dir/tests/test_native_startup_codegen.cpp.obj CMakeFiles/test_native_startup_codegen.dir/recomp/native_closure_codegen.cpp.obj CMakeFiles/test_native_startup_codegen.dir/recomp/native_startup_codegen.cpp.obj\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_startup_codegen.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_startup_codegen.exe\n  TARGET_IMPLIB = libtest_native_startup_codegen.dll.a\n  TARGET_PDB = test_native_startup_codegen.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_startup_codegen.dir"
+    },
+    {
+      "target": "test_native_retail_startup",
+      "actual_build_rule": "build test_native_retail_startup.exe: CXX_EXECUTABLE_LINKER__test_native_retail_startup_Release CMakeFiles/test_native_retail_startup.dir/tests/test_native_retail_startup.cpp.obj | libmka_native_retail_startup.a libmka_native_content_volume.a || libmka_native_content_volume.a libmka_native_retail_startup.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_retail_startup.a  libmka_native_content_volume.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_retail_startup.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_retail_startup.exe\n  TARGET_IMPLIB = libtest_native_retail_startup.dll.a\n  TARGET_PDB = test_native_retail_startup.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_retail_startup.dir"
+    },
+    {
+      "target": "test_native_closure_codegen",
+      "actual_build_rule": "build test_native_closure_codegen.exe: CXX_EXECUTABLE_LINKER__test_native_closure_codegen_Release CMakeFiles/test_native_closure_codegen.dir/tests/test_native_closure_codegen.cpp.obj CMakeFiles/test_native_closure_codegen.dir/recomp/native_closure_codegen.cpp.obj\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_closure_codegen.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_closure_codegen.exe\n  TARGET_IMPLIB = libtest_native_closure_codegen.dll.a\n  TARGET_PDB = test_native_closure_codegen.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_closure_codegen.dir"
+    },
+    {
+      "target": "test_native_file",
+      "actual_build_rule": "build test_native_file.exe: CXX_EXECUTABLE_LINKER__test_native_file_Release CMakeFiles/test_native_file.dir/tests/test_native_file.cpp.obj | libmka_native_content_volume.a || libmka_native_content_volume.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_content_volume.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_file.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_file.exe\n  TARGET_IMPLIB = libtest_native_file.dll.a\n  TARGET_PDB = test_native_file.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_file.dir"
+    }
+  ],
+  "archive": {
+    "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_retail_startup.a",
+    "target_before_sha256": "8505913586c787c930daafa6b10b84a7834cb3ebab8334dead3124d3330eafd8",
+    "target_after_sha256": "8505913586c787c930daafa6b10b84a7834cb3ebab8334dead3124d3330eafd8",
+    "audited_target_expected_sha256": "8505913586c787c930daafa6b10b84a7834cb3ebab8334dead3124d3330eafd8",
+    "execution_applicable": false,
+    "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+    "forbidden": [],
+    "required_defined_symbols": [
+      "mka::retail::run_native_retail"
+    ]
+  }
+}

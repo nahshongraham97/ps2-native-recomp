@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_content_volume_owner.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-startup-20261120\\validation-03\\volume-owned"
+  ],
+  "exit": 3221226505,
+  "stdout": "",
+  "stderr": "FAIL: retained root denies rename while volume owns it\n",
+  "executable_sha256": "644ed4c3a9c96e26ad95248b3755d92fa6fa4e1f5b91e7c0b2c827a57e3ad8e4",
+  "executable_after_sha256": "644ed4c3a9c96e26ad95248b3755d92fa6fa4e1f5b91e7c0b2c827a57e3ad8e4"
+}

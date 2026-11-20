@@ -1,6 +1,7 @@
 #include "analysis.hpp"
 #include "codegen.hpp"
 #include "native_closure_codegen.hpp"
+#include "native_startup_codegen.hpp"
 #include "eerecomp_gen.hpp"
 #include "elf.hpp"
 #include "snr2.hpp"
@@ -9,6 +10,8 @@
 #include "ps2/os.hpp"
 
 #include <algorithm>
+#include <array>
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -28,6 +31,8 @@
 #define NOMINMAX
 #include <windows.h>
 #include <shellapi.h>
+#else
+#include <unistd.h>
 #endif
 
 using namespace recomp;
@@ -156,10 +161,75 @@ int native_logon_output(const char* original_path,const char* output_path) {
     }catch(const std::exception& error){std::fprintf(stderr,"eerecomp native LOGON: %s\n",error.what());return 1;}
 }
 
+int native_startup_output(const char* original_path,const char* output_path) {
+    try {
+        std::ifstream input(ps2::os::path(original_path),std::ios::binary);
+        if(!input)throw std::runtime_error("native startup original ELF open failed");
+        std::vector<std::uint8_t> bytes((std::istreambuf_iterator<char>(input)),{});
+        if(input.bad())throw std::runtime_error("native startup original ELF read failed");
+        NativeClosureFailure failure;
+        auto emitted=emit_native_startup_closure(bytes,native_startup_manifest(),failure);
+        if(!emitted)throw std::runtime_error(failure.operation);
+        const auto directory=std::filesystem::absolute(ps2::os::path(output_path));
+        const bool existing=std::filesystem::exists(directory);
+        if(existing&&!std::filesystem::is_directory(directory))throw std::runtime_error("native startup output is not a directory");
+        const bool reuse=existing&&!std::filesystem::is_empty(directory);
+        const auto outputs={std::pair{"native_retail_startup.hpp",&emitted->header},
+            std::pair{"native_retail_startup.cpp",&emitted->implementation},
+            std::pair{"native_retail_entry.cpp",&emitted->entry}};
+        if(reuse) {
+            for(const auto& item:outputs) {
+                std::ifstream prior(directory/item.first,std::ios::binary);
+                const std::string text((std::istreambuf_iterator<char>(prior)),{});
+                if(!prior.is_open()||prior.bad()||text!=*item.second)throw std::runtime_error("native startup existing output differs; refusing overwrite");
+            }
+        } else {
+            const auto temporary=directory.parent_path()/std::filesystem::path(".retail-stage-"+
+                std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+            struct StagingOwner {
+                std::filesystem::path directory;
+                std::array<std::filesystem::path,3> files;
+                bool active=false;
+                ~StagingOwner()noexcept {if(active){
+#ifdef _WIN32
+                    for(const auto& file:files)DeleteFileW(file.c_str());
+                    RemoveDirectoryW(directory.c_str());
+#else
+                    for(const auto& file:files)std::remove(file.c_str());
+                    ::rmdir(directory.c_str());
+#endif
+                }}
+            } owner{temporary,{temporary/"native_retail_startup.hpp",temporary/"native_retail_startup.cpp",temporary/"native_retail_entry.cpp"}};
+            // All cleanup paths are constructed before the exclusive directory.
+            if(!std::filesystem::create_directory(temporary))throw std::runtime_error("native startup exclusive staging creation failed");
+            owner.active=true;
+            for(const auto& item:outputs) {
+                std::ofstream output(temporary/item.first,std::ios::binary);
+                if(!output)throw std::runtime_error("native startup output open failed");
+                output.write(item.second->data(),static_cast<std::streamsize>(item.second->size()));output.close();
+                if(!output)throw std::runtime_error("native startup output write failed");
+            }
+            // Ninja may precreate the empty final parent. A concurrent nonempty
+            // directory is never removed or overwritten. Publication is one rename.
+            if(existing) {
+#ifdef _WIN32
+                if(!RemoveDirectoryW(directory.c_str()))throw std::runtime_error("native startup empty output changed during publication");
+#else
+                if(::rmdir(directory.c_str()))throw std::runtime_error("native startup empty output changed during publication");
+#endif
+            }
+            std::filesystem::rename(temporary,directory);owner.active=false;
+        }
+        std::puts(reuse?"native startup exact existing source verified":"native startup owned retail source emitted; platform link obligations remain");
+        return 0;
+    }catch(const std::exception& e){std::fprintf(stderr,"eerecomp native startup: %s\n",e.what());return 1;}
+}
+
 int usage() {
     std::fprintf(stderr, "usage: eerecomp <elf> [--entries file] [--modules dir] [--overlays dir] [--probes file] [--toggles file] [--out dir] [--stats]\n");
     std::fprintf(stderr, "       eerecomp --live-image <captured.bin> --base <hex> --stamp <hex> --out <dir> [--entry <hex>]... [--expect-name <base_crc>] [--dense-checks]\n");
     std::fprintf(stderr, "       eerecomp --native-logon <original.elf> --out <separate-native-source-dir>\n");
+    std::fprintf(stderr, "       eerecomp --native-startup <original.elf> --out <separate-native-source-dir>\n");
     return 2;
 }
 
@@ -181,6 +251,10 @@ int main(int argc, char **argv) {
     }
 #endif
     if (argc < 2) return usage();
+    if(std::strcmp(argv[1],"--native-startup")==0){
+        if(argc!=5||std::strcmp(argv[3],"--out")!=0)return usage();
+        return native_startup_output(argv[2],argv[4]);
+    }
     if(std::strcmp(argv[1],"--native-logon")==0){
         if(argc!=5||std::strcmp(argv[3],"--out")!=0)return usage();
         return native_logon_output(argv[2],argv[4]);

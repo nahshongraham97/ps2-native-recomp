@@ -4,6 +4,10 @@
 #include <new>
 #include <stdexcept>
 #include <utility>
+#ifndef _WIN32
+#include <sys/stat.h>
+#include <unistd.h>
+#endif
 #ifdef _WIN32
 #define NOMINMAX
 #include <windows.h>
@@ -89,6 +93,20 @@ bool NativeFile::opened_path(std::filesystem::path& out,std::error_code& error)c
     return query_handle_path(handle,out,error);
 #else
     error=std::make_error_code(std::errc::operation_not_supported);return false;
+#endif
+}
+bool NativeFile::opened_regular_file(bool& out,std::error_code& error)const{
+    out=false;error.clear();if(!file_){error=std::make_error_code(std::errc::bad_file_descriptor);return false;}
+#ifdef _WIN32
+    errno=0;const auto descriptor=_fileno(file_);if(descriptor<0){error=io_error();return false;}
+    const auto native=_get_osfhandle(descriptor);if(native==-1||native==-2){error=io_error();return false;}
+    auto handle=reinterpret_cast<HANDLE>(native);BY_HANDLE_FILE_INFORMATION info{};
+    if(!GetFileInformationByHandle(handle,&info)){error={int(GetLastError()),std::system_category()};return false;}
+    SetLastError(NO_ERROR);const auto type=GetFileType(handle);
+    if(type==FILE_TYPE_UNKNOWN&&GetLastError()!=NO_ERROR){error={int(GetLastError()),std::system_category()};return false;}
+    out=type==FILE_TYPE_DISK&&!(info.dwFileAttributes&(FILE_ATTRIBUTE_DIRECTORY|FILE_ATTRIBUTE_DEVICE));return true;
+#else
+    struct stat info{};if(fstat(fileno(file_),&info)){error=io_error();return false;}out=S_ISREG(info.st_mode);return true;
 #endif
 }
 bool NativeFile::directory_path(const std::filesystem::path& path,std::filesystem::path& out,std::error_code& error){

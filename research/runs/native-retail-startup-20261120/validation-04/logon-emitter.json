@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_closure_codegen.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\SLUS_214.10",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-startup-20261120\\validation-04\\logon-owned"
+  ],
+  "exit": 0,
+  "stdout": "PASS strict typed LOGON source recipe and owned native emission; runtime chain not executed\n",
+  "stderr": "",
+  "executable_sha256": "13ac51cdd59c52b5d2437a07d33921fabadd00204de6f07e06b26edd8a30af32",
+  "executable_after_sha256": "13ac51cdd59c52b5d2437a07d33921fabadd00204de6f07e06b26edd8a30af32"
+}

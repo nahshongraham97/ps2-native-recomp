@@ -1,0 +1,39 @@
+{
+  "status": "SOURCE_REVIEW_NATIVE_RETAIL_STARTUP_AND_CONTENT_VERIFIED",
+  "source_only": true,
+  "input_sha256": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\CMakeLists.txt": "54b79300fcd2d4fa8658e0c37df9cc9d3e56f99e0a7ff36ff748d22c4c0f5b95",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_game.cmake": "582d2f3b022bd339918c06712ae3c02d5ec781ccb8a4fc52029a625307a97ab6",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\recomp\\main.cpp": "37e042f11e4b473b900054753a690737e61a62c4c1e198c66ca86e7dcb8079be",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\recomp\\native_closure_codegen.cpp": "6a53940679dc0d9cb6d5a464c4c010f7f3f9ada9782ea9979a7972e8a34f03a3",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\recomp\\native_closure_codegen.hpp": "6ec3f9b99b14f3d27ba6e86dfe355c65407e48b218c29e447f355911688ce79e",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\native_file.hpp": "3362e7cc032b76bb12079abe5ced5a9a05a880871c4cb17c9a1f6a50e9e5442e",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\native_file.cpp": "087c92a9e7a62f2d6e6c691ecd81c8b923adce55451c02e2fe6deb61992b1982",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\recomp\\native_startup_codegen.cpp": "79aaa08906f049357697f5820ab67ac753db89b42b162545aa5f95bb17c665ec",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\recomp\\native_startup_codegen.hpp": "8f9f3f207f3ebb4d61b43dec62f8ae93e1281c862138ef884014f55d8993d558",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\content_volume.hpp": "3ab514fc57a917e020c0f985c8c33c77566744f4460a672b41e0bd7ec248c949",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\content_volume.cpp": "0fa025e9105523034bd62498c9dd933c00edd30e782f008cb7270bd30cb1bc66",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_native_content_volume_owner.cpp": "961abbfd0da82e32e4d0188b3d10d27719e790375a879a78c53c4ecd28962e13",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_native_retail_startup.cpp": "e86743398194efbc98559adf77eda79edce1774e76300b3631a18b3921b3fa5e",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_native_startup_codegen.cpp": "f2b050db0763e7b07af95c1b41770b145b97ab7307624337757e26c6a2b3f8ae",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_native_startup_missing_bindings.cpp": "c482ac76c000adc84d7654a3746e942cfc71de65c89858529144f199a4f7283d"
+  },
+  "findings": [
+    "The manifest\u2019s 209 distinct words match the original retail ELF at their file-backed addresses. The offline verifier checks exact ELF identity, word sequence and source order before emitting anything. The generated bodies use native-owned arguments, prefix and directory storage and an actual retained content file owner.",
+    "The emitted entry orders CRT prerequisite binding, thread setup, prefix initialization, platform setup, argv0 directory derivation and the remaining main continuation. The startup leaf archive and expected-negative entry link fixture remain distinct. No successful test or production stand-in fills a missing binding.",
+    "The corrected CLI writes all three known files into an exclusively created sibling directory and publishes with one directory rename. Its cleanup paths are precomputed, native cleanup does not allocate new paths, and removing an empty final build directory uses a directory-only operation. Existing populated output is verified byte-for-byte.",
+    "The content owner uses one retained Windows root handle for both identity and normalized path, denies delete sharing on this handle, checks canonical containment before file open and checks containment and disk regularity on the opened handle. The file retains the root owner and preserves the startup keys with an exact final ;1 decode. The aggregate source scope is fourteen code/schema files plus the build entry file, fifteen total.",
+    "The first validation attempt stopped before compilation because test_native_file was defined only under PS2_GENERATED. The existing fixture now has one EXCLUDE_FROM_ALL definition in native_game.cmake, links the native content archive, and retains the original fixture source. The old CMake and review bytes remain archived with the prebuild failure. No startup binding changed."
+  ],
+  "unbound_production_symbols": [
+    "initialize_native_retail_crt",
+    "configure_native_retail_thread",
+    "initialize_native_retail_platform",
+    "continue_native_retail_main"
+  ],
+  "limits": [
+    "Source-only. No build, fixture, game, model or physical endpoint ran. The generated leaves and archive do not establish a working retail boot.",
+    "The runtime content call consumes supplied source-style keys through the native file handle. The general original 2209E0 resource-name producer, kernel/platform startup and the remaining game path are still unbound.",
+    "Containment is scoped to the implemented Windows retained-root and pre/post-open checks. No kernel-relative traversal across arbitrary concurrent namespace changes is claimed."
+  ]
+}

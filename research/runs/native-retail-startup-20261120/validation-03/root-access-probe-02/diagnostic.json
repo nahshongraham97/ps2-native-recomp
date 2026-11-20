@@ -1,0 +1,39 @@
+{
+  "kind": "saved diagnostic, not acceptance",
+  "original_raw_sha256": "aa5ea931a4b36553f2957876da8df882ef64991f7226b036b40091da64c6189f",
+  "rows": [
+    {
+      "access": "00000080",
+      "opened": true,
+      "open_error": 0,
+      "rename_succeeded": true,
+      "rename_error": 0,
+      "closed": true
+    },
+    {
+      "access": "00000001",
+      "opened": true,
+      "open_error": 0,
+      "rename_succeeded": false,
+      "rename_error": 32,
+      "closed": true
+    },
+    {
+      "access": "00100081",
+      "opened": true,
+      "open_error": 0,
+      "rename_succeeded": false,
+      "rename_error": 32,
+      "closed": true
+    },
+    {
+      "access": "80000000",
+      "opened": true,
+      "open_error": 0,
+      "rename_succeeded": false,
+      "rename_error": 32,
+      "closed": true
+    }
+  ],
+  "scope": "owned Win32 CreateFileW/MoveFileExW calls in one-shot PowerShell C# PInvoke; no global setting or driver action"
+}

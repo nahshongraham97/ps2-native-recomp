@@ -26,6 +26,8 @@ public:
     // its prefix (do not strip it and reopen under different path semantics).
     // Other hosts explicitly report operation_not_supported. Failure clears out.
     bool opened_path(std::filesystem::path& out, std::error_code&) const;
+    // Queries type on this actual handle, not another pathname lookup.
+    bool opened_regular_file(bool& out,std::error_code&) const;
     // Opens a directory for attributes only, observes its normalized actual
     // handle path and closes that temporary handle. No guessed case folding.
     // Same Windows-only path/UTF16/error contract as opened_path.

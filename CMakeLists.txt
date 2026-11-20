@@ -46,6 +46,7 @@ if(NOT EMSCRIPTEN)
         recomp/analysis.cpp
         recomp/codegen.cpp
         recomp/native_closure_codegen.cpp
+        recomp/native_startup_codegen.cpp
         recomp/eerecomp_gen.cpp
         recomp/snr2.cpp)
     target_include_directories(eerecomp PRIVATE runtime/include)
@@ -255,8 +256,6 @@ if(PS2_GENERATED)
     # dependencies through ps2runtime. It owns ordinary host byte buffers.
     add_executable(test_sound_bank EXCLUDE_FROM_ALL tests/test_sound_bank.cpp runtime/src/native/sound_bank.cpp)
     target_include_directories(test_sound_bank PRIVATE runtime/include)
-    add_executable(test_native_file EXCLUDE_FROM_ALL tests/test_native_file.cpp runtime/src/native/native_file.cpp)
-    target_include_directories(test_native_file PRIVATE runtime/include)
     add_executable(test_adpcm_codec EXCLUDE_FROM_ALL tests/test_adpcm_codec.cpp runtime/src/native/adpcm_codec.cpp)
     target_include_directories(test_adpcm_codec PRIVATE runtime/include)
     add_executable(test_native_content_read EXCLUDE_FROM_ALL tests/test_native_content_read.cpp

@@ -71,3 +71,43 @@ endif()
 # Native pending ownership barriers only: no media decoder or physical endpoint.
 add_executable(test_native_logon_pending EXCLUDE_FROM_ALL tests/test_logon_pending.cpp)
 target_link_libraries(test_native_logon_pending PRIVATE mka_native_game_actions)
+
+# Native startup content and AOT retail state. No sector/content_vfs/runtime TU.
+add_library(mka_native_content_volume STATIC EXCLUDE_FROM_ALL
+    runtime/src/native/native_file.cpp runtime/src/native/content_volume.cpp)
+target_include_directories(mka_native_content_volume PUBLIC runtime/include)
+target_compile_features(mka_native_content_volume PUBLIC cxx_std_20)
+add_executable(test_native_content_volume_owner EXCLUDE_FROM_ALL tests/test_native_content_volume_owner.cpp)
+target_link_libraries(test_native_content_volume_owner PRIVATE mka_native_content_volume)
+add_executable(test_native_startup_codegen EXCLUDE_FROM_ALL
+    tests/test_native_startup_codegen.cpp recomp/native_closure_codegen.cpp recomp/native_startup_codegen.cpp)
+target_include_directories(test_native_startup_codegen PRIVATE recomp)
+if(WIN32)
+    file(SHA256 "${CMAKE_CURRENT_SOURCE_DIR}/recomp/native_startup_codegen.cpp" _startup_recipe_hash)
+    file(SHA256 "${CMAKE_CURRENT_SOURCE_DIR}/recomp/native_closure_codegen.cpp" _startup_checker_hash)
+    string(SHA256 _startup_key "${_startup_recipe_hash}:${_startup_checker_hash}")
+    set(_startup_dir "${CMAKE_CURRENT_BINARY_DIR}/native-retail-startup-${_startup_key}")
+    set(_startup_elf "${CMAKE_CURRENT_SOURCE_DIR}/../../../research/inputs/SLUS_214.10")
+    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/recomp/native_startup_codegen.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/recomp/native_closure_codegen.cpp")
+    add_custom_command(OUTPUT "${_startup_dir}/native_retail_startup.hpp"
+        "${_startup_dir}/native_retail_startup.cpp" "${_startup_dir}/native_retail_entry.cpp"
+        COMMAND $<TARGET_FILE:eerecomp> --native-startup "${_startup_elf}" --out "${_startup_dir}"
+        DEPENDS eerecomp "${_startup_elf}" recomp/native_startup_codegen.cpp recomp/native_closure_codegen.cpp
+        VERBATIM COMMENT "AOT compile original retail startup into owned native state")
+    add_library(mka_native_retail_startup STATIC EXCLUDE_FROM_ALL
+        "${_startup_dir}/native_retail_startup.cpp" "${_startup_dir}/native_retail_entry.cpp")
+    target_include_directories(mka_native_retail_startup PUBLIC "${_startup_dir}" runtime/include)
+    target_link_libraries(mka_native_retail_startup PUBLIC mka_native_content_volume)
+    add_executable(test_native_retail_startup EXCLUDE_FROM_ALL tests/test_native_retail_startup.cpp)
+    target_link_libraries(test_native_retail_startup PRIVATE mka_native_retail_startup)
+    # Expected-negative link fixture: never included in a successful build batch.
+    # Four real production obligations are missing; no test success providers.
+    add_executable(test_native_startup_missing_bindings EXCLUDE_FROM_ALL tests/test_native_startup_missing_bindings.cpp)
+    target_link_libraries(test_native_startup_missing_bindings PRIVATE mka_native_retail_startup)
+endif()
+
+# Native file regression must be available without the legacy generated game.
+add_executable(test_native_file EXCLUDE_FROM_ALL tests/test_native_file.cpp)
+target_link_libraries(test_native_file PRIVATE mka_native_content_volume)

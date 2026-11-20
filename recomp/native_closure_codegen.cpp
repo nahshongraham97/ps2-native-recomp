@@ -57,6 +57,15 @@ std::string digest(std::span<const std::uint8_t> b){
  std::string out;out.reserve(64);constexpr char hex[]="0123456789abcdef";for(auto x:h)for(int i=7;i>=0;--i)out.push_back(hex[(x>>(i*4))&15]);return out;
 }
 } // namespace
+bool verify_native_closure_source(std::span<const std::uint8_t> b,
+    std::string_view expected,std::span<const NativeClosureWord> required,NativeClosureFailure& f)noexcept {
+ f={};try {
+  if(expected!=identity||digest(b)!=identity){f={NativeClosureError::source_identity,"native retail original ELF SHA256"};return false;}
+  for(const auto& w:required)if(mapped(b,w.pc)!=w.word){f={NativeClosureError::source_word,"native retail mapped source word"};return false;}
+  return true;
+ }catch(const std::bad_alloc&){f={NativeClosureError::allocation,"native retail source verification allocation"};}
+ catch(...){f={NativeClosureError::source_format,"native retail ELF32 source format"};}return false;
+}
 NativeLogonManifest native_logon_manifest(){return {identity,source_words(),{std::begin(recipe),std::end(recipe)}};}
 std::optional<NativeClosureSources> emit_native_logon_closure(std::span<const std::uint8_t> b,const NativeLogonManifest& m,NativeClosureFailure& f)noexcept {
  f={};try {
