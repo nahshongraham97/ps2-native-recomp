@@ -1,6 +1,6 @@
 #pragma once
 #include "mka/movie_kernel_policies.hpp"
-#include "mka/movie_source_syntax_index.hpp"
+#include "mka/movie_admission_feed.hpp"
 #include <map>
 namespace mka::video {
 enum class MovieNativeTargetRoute {descriptor,published_position};
@@ -32,7 +32,7 @@ struct MovieNativeContextConfiguration {
 };
 struct MovieNativeHeaderAdmission {
     std::uint64_t admission_id,admitted_header_es_byte;
-    std::shared_ptr<const MovieSourceSyntaxPicture> syntax;
+    std::shared_ptr<const MovieAdmissionCurrent> current;
     std::optional<MovieNativeDescriptorRoute> descriptor_route;
     bool clear_temporal,latch_eligibility_rate,latch_first_baseline;
 };
@@ -65,6 +65,7 @@ public:
         MovieControlFailure&) noexcept;
     bool bind_source(std::shared_ptr<const MovieSourceObservationIdentity>,MovieControlFailure&) noexcept override;
     bool admit_header(const MovieNativeHeaderAdmission&,MovieControlFailure&) noexcept;
+    bool validate_work(const MovieAdmissionCurrent&,MovieControlFailure&) const noexcept;
     bool publish_output(const MovieNativeOutputPublication&,MovieControlFailure&) noexcept;
     bool advance_position_origin(std::uint64_t actual_published_position,MovieControlFailure&) noexcept;
     bool maintenance(MovieServiceMaintenanceGates,MovieControlFailure&) noexcept;
@@ -93,6 +94,8 @@ private:
     NativeMoviePlaybackContext(MovieNativeContextConfiguration,NativeMovieClockFilter&&) noexcept;
     bool enter(MovieControlFailure&,bool active=true) const noexcept;
     bool fail(MovieControlFailure&,MovieNativeContextError,const char*,std::int64_t=0) const noexcept;
+    std::optional<MovieHeaderUnit> checked_unit(const std::shared_ptr<const MovieCurrentHeaderUnit>&,
+        std::uint64_t admitted,std::uint32_t code,MovieControlFailure&) const noexcept;
     enum class ClockRoute {missing,ordinary,direct,retained};
     MovieNativeContextConfiguration config_;
     NativeMovieClockFilter filter_;
@@ -101,6 +104,7 @@ private:
     std::map<std::uint64_t,Output> outputs_;
     struct Decoded {MoviePictureSource source;bool submitted=false;};
     std::map<std::uint64_t,Decoded> decoded_;
+    std::map<std::uint64_t,MovieVideoPrefixObserved> prefixes_;
     std::optional<std::uint64_t> last_prefix_;
     std::uint64_t observed_es_end_=0;
     std::vector<std::uint8_t> source_bytes_;

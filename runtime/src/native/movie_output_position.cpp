@@ -71,16 +71,34 @@ std::optional<MovieOutputPositionUpdate> NativeMovieOutputPosition::apply(std::s
     if (!work.work_id || work.work_id <= s.value.last_work_id) {
         fail(f, MovieOutputPositionError::replay, "movie output position work identity replay/order"); return {};
     }
-    if (!work.admission_id || !work.current_header || work.current_header->source_key != key ||
-            work.current_header->identity != identity) {
+    if (!work.admission_id || !work.current_header || !work.current_header->source || work.current_header->source->source_key != key ||
+            work.current_header->source->identity != identity) {
         fail(f, MovieOutputPositionError::invalid_work, "movie output position current admission header"); return {};
     }
     const auto& header = *work.current_header;
-    if (header.coding.picture_structure != 3 || header.coding.repeat_first_field ||
-            header.picture.coding_type < 1 || header.picture.coding_type > 3) {
+    if(!header.picture||!header.coding||
+       header.coding->origin.prefix.es_prefix_first_byte<=header.picture->origin.prefix.es_prefix_first_byte){
+        fail(f,MovieOutputPositionError::invalid_work,"movie output position stale/missing current coding origin");return {};
+    }
+    auto picture_unit=parse_movie_header_unit(header.picture->unit.bytes);
+    auto coding_unit=parse_movie_header_unit(header.coding->unit.bytes);
+    if(picture_unit.failure.kind==MovieHeaderUnitError::allocation||coding_unit.failure.kind==MovieHeaderUnitError::allocation){
+        fail(f,MovieOutputPositionError::allocation,"movie output position current unit validation allocation");return {};
+    }
+    const auto* picture=picture_unit.unit?std::get_if<MoviePictureHeader>(&picture_unit.unit->payload):nullptr;
+    const auto* coding=coding_unit.unit?std::get_if<MoviePictureCodingExtension>(&coding_unit.unit->payload):nullptr;
+    const auto* claimed_picture=std::get_if<MoviePictureHeader>(&header.picture->unit.payload);
+    const auto* claimed_coding=std::get_if<MoviePictureCodingExtension>(&header.coding->unit.payload);
+    if(!picture||!coding||!claimed_picture||!claimed_coding||
+       picture->coding_type!=claimed_picture->coding_type||picture->temporal_reference!=claimed_picture->temporal_reference||
+       coding->picture_structure!=claimed_coding->picture_structure||coding->repeat_first_field!=claimed_coding->repeat_first_field){
+        fail(f,MovieOutputPositionError::invalid_work,"movie output position raw/typed current profile mismatch");return {};
+    }
+    if (coding->picture_structure != 3 || coding->repeat_first_field ||
+            picture->coding_type < 1 || picture->coding_type > 3) {
         fail(f, MovieOutputPositionError::unsupported_profile, "movie output position field/repeat/unknown coding profile"); return {};
     }
-    if (selected && (!valid_selected(*selected) || selected->pes.stream_id != header.pes.stream_id)) {
+    if (selected && (!valid_selected(*selected) || selected->pes.stream_id != header.picture->origin.pes.stream_id)) {
         fail(f, MovieOutputPositionError::invalid_selected, "movie output position selected source provenance"); return {};
     }
     if (selected && s.selected_pictures.contains(selected->picture_es_byte)) {

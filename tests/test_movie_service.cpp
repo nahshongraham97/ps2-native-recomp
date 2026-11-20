@@ -1,0 +1,124 @@
+#include "mka/movie_service.hpp"
+#include "mka/movie_admission_feed.hpp"
+#include <cstdio>
+#include <fstream>
+#include <stdexcept>
+#include <thread>
+#include <type_traits>
+using namespace mka::video;
+namespace {
+using Bytes=std::vector<std::uint8_t>;
+void check(bool value,const char* text){if(!value)throw std::runtime_error(text);}
+struct Bits {Bytes bytes;unsigned bit=0;explicit Bits(unsigned code):bytes{0,0,1,std::uint8_t(code)}{}void put(unsigned n,std::uint32_t value){for(unsigned i=0;i<n;++i){if(!bit)bytes.push_back(0);bytes.back()|=((value>>(n-1-i))&1u)<<(7-bit);bit=(bit+1)%8;}}};
+Bytes sequence(unsigned rate){Bits b(0xb3);b.put(12,640);b.put(12,448);b.put(4,3);b.put(4,rate);b.put(18,1);b.put(1,1);b.put(10,112);b.put(1,0);b.put(1,0);b.put(1,0);return b.bytes;}
+Bytes extension(){Bits b(0xb5);b.put(4,1);b.put(8,0x48);b.put(1,1);b.put(2,1);b.put(2,0);b.put(2,0);b.put(12,0);b.put(1,1);b.put(8,0);b.put(1,0);b.put(2,0);b.put(5,0);return b.bytes;}
+Bytes gop(unsigned seconds=0){Bits b(0xb8);b.put(25,(1u<<12)|(seconds<<6));b.put(1,0);b.put(1,0);return b.bytes;}
+Bytes picture(unsigned temporal){Bits b(0);b.put(10,temporal);b.put(3,1);b.put(16,0xffff);b.put(1,0);return b.bytes;}
+Bytes coding(){Bits b(0xb5);b.put(4,8);for(unsigned i=0;i<4;++i)b.put(4,1);b.put(2,0);b.put(2,3);for(unsigned i=0;i<9;++i)b.put(1,i==8);b.put(1,0);return b.bytes;}
+void add(Bytes& b,const Bytes& v){b.insert(b.end(),v.begin(),v.end());}
+MovieHeaderUnit unit(const Bytes& b){auto p=parse_movie_header_unit(b);check(bool(p.unit),"literal header parse");return std::move(*p.unit);}
+RetailMovieRequest request(){MovieCatalogFailure f;auto r=RetailMovieCatalog{}.resolve(0,MovieViewSelection::normal,0,f);check(bool(r),"actual catalog fixture request");return *r;}
+struct Source {
+ std::shared_ptr<const MovieSourceObservationIdentity> id=std::make_shared<const MovieSourceObservationIdentity>();Bytes bytes;
+ std::shared_ptr<const MovieAdmissionCurrent> first_sequence,current_gop,current_work,stale_work;std::shared_ptr<const MovieSourceSyntaxPicture> first,second;MovieVideoFrame frame1,frame2;MovieSourceObservationBatch batch;
+ Source(unsigned seconds=0){auto a=make(5,0,seconds);auto b=make(6,1,seconds);add(bytes,{0,0,1,0xb7});MovieVideoPesSpan pes{0xe0,12,20,20+bytes.size(),0,bytes.size(),16,std::nullopt};
+  a->pes=pes;b->pes=pes;a->quarter_pts=b->quarter_pts=4;first=a;second=b;frame1=frame(a);frame2=frame(b);
+  batch={"LOGON.SFD",id,{}};batch.events.push_back({1,MovieVideoEsObserved{0,bytes.size(),bytes}});batch.events.push_back({2,MovieDecodedPictureObserved{*frame1.codec_timing.picture_source,*frame1.codec_timing.picture}});batch.events.push_back({3,MovieDecodedPictureObserved{*frame2.codec_timing.picture_source,*frame2.codec_timing.picture}});batch.events.push_back({4,MovieProgramEndObservation{999,4,0}});
+  batch.events.clear();std::uint64_t serial=1;batch.events.push_back({serial++,MovieVideoEsObserved{0,bytes.size(),bytes}});
+  for(std::size_t i=0;i+4<=bytes.size();++i)if(bytes[i]==0&&bytes[i+1]==0&&bytes[i+2]==1){const auto raw=std::uint32_t(0x100|bytes[i+3]);batch.events.push_back({serial++,MovieVideoPrefixObserved{{i,raw,movie_prefix_classification(raw)},pes,4}});}
+  batch.events.push_back({serial++,MovieDecodedPictureObserved{*frame1.codec_timing.picture_source,*frame1.codec_timing.picture}});batch.events.push_back({serial++,MovieDecodedPictureObserved{*frame2.codec_timing.picture_source,*frame2.codec_timing.picture}});batch.events.push_back({serial++,MovieProgramEndObservation{999,4,0}});
+  MovieAdmissionFeedFailure failure;auto feed=NativeMovieAdmissionFeed::create("LOGON.SFD",id,0,failure);check(feed&&feed->push(batch,failure),"actual native current-header producer input");
+  for(;;){auto c=feed->parse_next(failure);check(bool(c),"native fixture header event parse");if(c->kind==MovieAdmissionCandidateKind::need_more)break;if(c->kind==MovieAdmissionCandidateKind::first_slice){check(feed->skip(5,failure),"explicit literal slice consumption only");continue;}check(c->kind==MovieAdmissionCandidateKind::parsed_header,"known literal header event");if(c->es_begin==first->sequence_es_byte)first_sequence=std::make_shared<const MovieAdmissionCurrent>(c->current);if(c->es_begin==*first->gop_es_byte)current_gop=std::make_shared<const MovieAdmissionCurrent>(c->current);if(c->es_begin==second->picture_es_byte)stale_work=std::make_shared<const MovieAdmissionCurrent>(c->current);if(c->es_begin==second->coding_extension_es_byte)current_work=std::make_shared<const MovieAdmissionCurrent>(c->current);}
+  check(stale_work&&first_sequence&&current_gop&&current_work&&!first_sequence->picture&&!current_gop->picture,"early source current snapshots have NO future picture");
+ }
+ std::shared_ptr<MovieSourceSyntaxPicture> make(unsigned rate,unsigned temporal,unsigned seconds){auto s=std::make_shared<MovieSourceSyntaxPicture>();s->source_key="LOGON.SFD";s->identity=id;s->sequence_es_byte=bytes.size();auto seq=sequence(rate);s->sequence=std::get<MovieSequenceHeader>(unit(seq).payload);add(bytes,seq);s->sequence_extension_es_byte=bytes.size();auto ex=extension();s->sequence_extension=std::get<MovieSequenceExtension>(unit(ex).payload);add(bytes,ex);s->gop_es_byte=bytes.size();auto g=gop(seconds);s->gop=std::get<MovieGopHeader>(unit(g).payload);add(bytes,g);s->picture_es_byte=bytes.size();auto p=picture(temporal);s->picture=std::get<MoviePictureHeader>(unit(p).payload);add(bytes,p);s->coding_extension_es_byte=bytes.size();auto c=coding();s->coding=std::get<MoviePictureCodingExtension>(unit(c).payload);add(bytes,c);add(bytes,{0,0,1,1,0x55});return s;}
+ MovieVideoFrame frame(const std::shared_ptr<const MovieSourceSyntaxPicture>& s){MovieVideoFrame f;f.source_syntax=s;f.codec_timing.picture_source=MoviePictureSource{0,s->picture_es_byte,s->pes,s->quarter_pts};Mpeg2PictureTiming t;t.packet_picture_offset=s->picture_es_byte;t.sequence={s->sequence.frame_rate_code,0,0,true,640,448,1};t.temporal_reference=s->picture.temporal_reference;t.coding_type=1;t.picture_structure=3;t.progressive_frame=true;f.codec_timing.picture=t;return f;}
+};
+
+struct Input final:MoviePlaybackInput {
+ Source& source;RetailMovieRequest value;bool delivered=false,with_audio=false;unsigned& destroyed;
+ Input(Source& s,const RetailMovieRequest& r,unsigned& d,bool a):source(s),value(r),with_audio(a),destroyed(d){}
+ ~Input() override{++destroyed;}
+ const RetailMovieRequest& request()const noexcept override{return value;}
+ std::shared_ptr<const MovieSourceObservationIdentity> observation_identity()const noexcept override{return source.id;}
+ MovieReadResult next(MovieControlFailure& f)override{f={};MovieReadResult r;r.status=MovieReadStatus::end;if(!delivered){r.observations=source.batch;delivered=true;if(with_audio){MovieAudioFrame a;a.sample_rate=48000;a.channel_layout.channel_count=2;a.channels={{100,101},{-100,-101}};r.status=MovieReadStatus::frame;r.frame=std::move(a);}}return r;}
+};
+struct GPU final:NativeMovieGpuBackend {
+ MovieGpuUpload upload(const MovieRgbaFrame&)override{throw std::runtime_error("unexpected upload without delivered video");}
+ MovieGpuSubmission present(const NativeMoviePresentPlan&,const MovieHostLayout&)override{throw std::runtime_error("unexpected presentation");}
+ MovieFenceResult poll(const std::shared_ptr<MovieGpuFence>&)override{return {MovieFenceState::complete,MovieGpuError::none};}
+ void retire(std::shared_ptr<MovieGpuFence>)noexcept override{}
+};
+MovieServicePolicyConfiguration profile(){return {MoviePlaybackAudioPresence::absent,std::nullopt,
+ MovieFrameEligibilityConfig{30000,1000,0,0,MovieFrameEligibilityMode::direct},{30000,1000},
+ MovieClockFilterConfig::source_defaults(),MovieNativeTargetRoute::published_position,
+ MovieNativeCompletion::video,true,false,true,0,0,0,0,
+ MovieOutputPositionProfile::successful_frame_no_repeat_no_skip};}
+struct AudioData {std::vector<float> samples;unsigned resets=0;bool stop_error=false;};
+struct Audio final:MoviePlaybackAudioOutput {
+ std::shared_ptr<AudioData> data;std::uint32_t padding=0;std::uint64_t submitted=0,epoch=0;bool started=false;
+ explicit Audio(std::shared_ptr<AudioData> d):data(std::move(d)){}
+ std::optional<mka::sound::AudioStreamFormat> format(MovieControlFailure& f)override{f={};return mka::sound::AudioStreamFormat{48000,2,3};}
+ std::optional<mka::sound::AudioQueueStatus> queue_status(MovieControlFailure& f)override{f={};return mka::sound::AudioQueueStatus{2,padding,2-padding,submitted,epoch,started};}
+ std::optional<mka::sound::AudioClockReading> clock(MovieControlFailure& f)override{f={};return mka::sound::AudioClockReading{0,123456,0,epoch,true};}
+ MovieAudioSubmitResult queue(std::span<const float> pcm,MovieControlFailure& f)override{f={};check(pcm.size()%2==0&&pcm.size()/2<=2-padding,"actual capacity respected");mka::sound::AudioSubmission r{submitted,pcm.size()/2,epoch};data->samples.insert(data->samples.end(),pcm.begin(),pcm.end());submitted+=r.client_frames;padding+=static_cast<std::uint32_t>(r.client_frames);return {MovieAudioSubmitStatus::accepted,r};}
+ bool pause(bool p,MovieControlFailure& f)override{f={};started=!p&&padding>0;return true;}
+ bool stop_and_reset(MovieControlFailure& f)override{f={};++data->resets;if(data->stop_error){f={MovieControlError::native_service,"fixture native cleanup failure",71};return false;}padding=0;submitted=0;started=false;++epoch;return true;}
+};
+struct Rig {
+ Source source;bool with_audio=false;std::shared_ptr<AudioData> audio=std::make_shared<AudioData>();unsigned acquired=0,profiles=0,destroyed=0;bool duplicate=false,fail_after_factory=false,missing_profile=false;
+ NativeMovieService* callback_owner=nullptr;bool reentry_checked=false;
+ MovieSessionPolicyFactory retained_factory;std::unique_ptr<NativeMovieService> service;
+ Rig(const NativeMovieColorTable& color,bool a=false):with_audio(a){MovieServiceFailure f;
+  auto data=[this](const RetailMovieRequest& r,std::shared_ptr<const MovieSourceObservationIdentity> id,const std::optional<mka::sound::AudioStreamFormat>& fmt,MovieSessionFailure& why)->std::optional<MovieServicePolicyConfiguration>{
+   why={};++profiles;check(r.id==0&&r.logical_key=="LOGON.SFD"&&r.logical_extent.width==request().logical_extent.width&&r.subtitle_tag==request().subtitle_tag&&id==source.id&&bool(fmt)==with_audio,"actual full request/epoch/format reaches data factory");
+   if(callback_owner){MovieServiceFailure nested;check(!callback_owner->close(nested)&&nested.kind==MovieServiceError::invalid_state,"profile callback cannot reenter service");reentry_checked=true;}
+   if(missing_profile)return std::nullopt;auto c=profile();if(with_audio){c.audio=MoviePlaybackAudioPresence::required;c.audio_enabled=true;c.completion=MovieNativeCompletion::all;c.audio_source_rate=48000;
+    MoviePcmBindingConfiguration pcm;pcm.source_key=r.logical_key;pcm.source_layout.channel_count=2;pcm.source_sample_rate=48000;pcm.client_format={48000,2,3};pcm.mode=MoviePcmMixMode::generic_stateless;pcm.plane_policy=MoviePcmPlanePolicy::preserve;pcm.routes.emplace_back(0,-15,0,1);pcm.routes.emplace_back(0,15,0,1);c.pcm=std::move(pcm);}return c;};
+  auto opener=[this,color](const RetailMovieRequest& r,std::int64_t language,MovieSessionPolicyFactory factory,NativeMovieControlContext& settings,MovieSessionFailure& why){
+   ++acquired;check(language==0,"actual language forwarded");retained_factory=factory;
+   auto actual_format=with_audio?std::optional<mka::sound::AudioStreamFormat>{mka::sound::AudioStreamFormat{48000,2,3}}:std::nullopt;auto policies=factory(r,source.id,actual_format,why);if(!policies)return std::unique_ptr<NativeMoviePlaybackSession>{};
+   if(duplicate){MovieSessionFailure extra;check(!factory(r,source.id,std::nullopt,extra)&&extra.kind!=MovieSessionError::none,"second policy construction rejected");}
+   if(fail_after_factory){why={MovieSessionError::control,"fixture acquisition failure",{},{},{}};return std::unique_ptr<NativeMoviePlaybackSession>{};}
+   MoviePlaybackConfiguration c;c.audio=with_audio?MoviePlaybackAudioPresence::required:MoviePlaybackAudioPresence::absent;if(with_audio){c.client_sample_rate=48000;c.client_channels=2;c.client_channel_mask=3;}c.layout={1,640,448,MovieAspectMode::explicit_display_aspect,4,3,MovieWindowPolicy::centered_fit};c.filter=MovieFilter::nearest;c.queued_byte_budget=1024;
+   std::unique_ptr<MoviePlaybackAudioOutput> output;if(with_audio)output=std::make_unique<Audio>(audio);return NativeMoviePlaybackSession::create_from_ports(std::make_unique<Input>(source,r,destroyed,with_audio),std::move(policies),std::move(output),std::make_shared<GPU>(),color,c,settings,why);
+  };
+  service=NativeMovieService::create(1.0f,std::move(data),std::move(opener),f);check(bool(service),"service creation");callback_owner=service.get();
+ }
+ MovieServiceRequestIdentity start(){MovieServiceFailure f;check(service->start(0,MovieViewSelection::normal,0,4,f),"actual session/controller concrete policy start");auto id=service->request_identity(f);check(bool(id),"owned actual service identity");return *id;}
+ void observations(){MovieServiceFailure f;check(service->poll(f).progress==MovieControlProgress::ongoing,"EOF observations delivered without default ready/end");}
+ void headers(const MovieServiceRequestIdentity& id){MovieServiceFailure f;
+  check(service->admit_header(id,{1,source.first->sequence_es_byte,source.first_sequence,std::nullopt,false,true,false},f),"real B3 rate latch");
+  check(service->admit_header(id,{2,*source.first->gop_es_byte,source.current_gop,MovieNativeDescriptorRoute::gop,true,false,true},f),"GOP timing baseline distinct from future work");
+  check(service->admit_header(id,{3,source.second->picture_es_byte,source.current_work,MovieNativeDescriptorRoute::gop,false,false,false},f),"current work admission");
+ }
+};
+}
+int main(int argc,char** argv){try{
+ static_assert(!std::is_default_constructible_v<MovieServicePolicyConfiguration>);
+ check(argc==2,"usage: test_native_movie_service original_MOVIER.ovl");
+ std::ifstream source(std::filesystem::u8path(argv[1]),std::ios::binary);check(bool(source),"original read-only color source");Bytes bytes((std::istreambuf_iterator<char>(source)),{});check(bytes.size()>=0x77dd8+6144,"original color extent");MovieColorError ce;auto color=NativeMovieColorTable::decode(MovieColorRole::helper_default,bytes.data()+0x77dd8,6144,ce);check(bool(color),"existing original color decoder");
+ MovieServiceFailure f;
+ {check(!NativeMovieService::create(1.0f,{},{},f)&&f.kind==MovieServiceError::missing_factory,"no default resource/profile policy");}
+ {Rig r(*color);auto id=r.start();check(r.reentry_checked&&r.profiles==1,"one actual profile construction and callback guard");
+  check(!r.service->start(0,MovieViewSelection::normal,0,4,f)&&f.kind==MovieServiceError::invalid_state,"single active request");r.observations();r.headers(id);
+  auto no=r.service->complete_work(id,{1,3,r.source.current_work},std::nullopt,std::nullopt,f);check(no&&!no->publication&&no->successful_work==1,"actual no-output work advances without fabricated selected picture");
+  auto yes=r.service->complete_work(id,{2,3,r.source.current_work},2,*r.source.frame1.codec_timing.picture_source,f);check(yes&&yes->publication&&yes->publication->value==0&&yes->publication->work.admission_id==3,"work/current rate and earlier timing publish first actual selected position0");
+  auto state=r.service->snapshot(f);check(state&&state->context&&state->context->outputs_pending==1&&state->position->successful_work==2,"concrete context and position coupled");
+  auto forged=id;forged.generation++;check(!r.service->maintenance(forged,{true,true,true,true},f)&&f.kind==MovieServiceError::foreign_request,"stale request no context mutation");
+  MovieServiceFailure foreign;bool ok=true;std::thread thread([&]{ok=r.service->close(foreign);});thread.join();check(!ok&&foreign.kind==MovieServiceError::wrong_thread&&r.service->snapshot(f)->active,"foreign thread does not poison service");
+  check(r.service->close(f)&&r.destroyed==1,"close actual session and invalidate lease");MovieSessionFailure expired;check(!r.retained_factory(request(),r.source.id,std::nullopt,expired)&&expired.kind!=MovieSessionError::none,"retained factory cannot use destroyed raw context");
+  auto old=id;r.source=Source{};id=r.start();check(id.generation==old.generation+1&&id.source!=old.source,"new per-request actual epoch");check(!r.service->command(old,MovieNativeCommand::owner_start,f)&&f.kind==MovieServiceError::foreign_request,"prior epoch rejected after restart");check(r.service->close(f),"restart cleanup");check(state->context->outputs_pending==1,"owned diagnostic survives teardown/restart");
+ }
+ {Rig r(*color);r.missing_profile=true;check(!r.service->start(0,MovieViewSelection::normal,0,4,f)&&f.kind==MovieServiceError::session&&r.destroyed==0,"missing profile cannot return default-ready policy or acquire stream");}
+ {Rig r(*color);r.duplicate=true;r.start();check(r.profiles==1&&r.service->close(f),"policy factory duplicate never reconstructs context");}
+ {Rig r(*color);r.fail_after_factory=true;check(!r.service->start(0,MovieViewSelection::normal,0,4,f)&&f.kind==MovieServiceError::session,"failed acquisition destroys concrete policy lease");check(!r.service->request_identity(f),"failed construction has no dangling context");MovieSessionFailure expired;check(!r.retained_factory(request(),r.source.id,std::nullopt,expired),"late factory after setup failure rejected");r.fail_after_factory=false;auto id=r.start();check(id.generation==2&&r.service->close(f),"safe restart after setup failure");}
+ {Rig r(*color);auto id=r.start();r.observations();r.headers(id);auto first=r.service->complete_work(id,{1,3,r.source.current_work},std::nullopt,std::nullopt,f);check(first&&first->successful_work==1,"valid work precedes stale coding rejection");check(r.service->admit_header(id,{4,r.source.second->picture_es_byte,r.source.stale_work,std::nullopt,false,false,false},f),"current parser snapshot legitimately retains prior coding after new picture");check(!r.service->complete_work(id,{2,4,r.source.stale_work},std::nullopt,std::nullopt,f)&&f.kind==MovieServiceError::context,"service authenticates current work before position mutation");auto failed=r.service->snapshot(f);check(failed&&!failed->active&&failed->position&&failed->position->successful_work==1&&r.destroyed==1,"stale work cannot advance position and terminal cleanup closes actual session");}
+ {Rig r(*color);auto id=r.start();r.observations();r.headers(id);auto selected=*r.source.frame1.codec_timing.picture_source;selected.picture_es_byte++;
+  check(!r.service->complete_work(id,{1,3,r.source.current_work},2,selected,f)&&f.kind==MovieServiceError::context,"post-position selected publication error is terminal");auto s=r.service->snapshot(f);check(s&&!s->active&&s->terminal&&s->terminal->progress==MovieControlProgress::error&&s->position->successful_work==1&&r.destroyed==1,"position partial commit visible but resources closed, never retried");}
+ {Rig r(*color);unsigned skips=0;check(r.service->install_skip_if_present([&]()->std::int64_t{++skips;return 1;},f)&&r.service->install_skip_if_present({},f),"empty skip preserves app callback");auto skip_id=r.start();check(r.service->command(skip_id,MovieNativeCommand::owner_start,f)&&r.service->command(skip_id,MovieNativeCommand::video_start,f),"explicit actual start acknowledgments before ready/skip");check(r.service->set_base_volume(0.5f,f)&&r.service->snapshot(f)->base_volume==0.5f,"base setting retained without immediate PCM mutation");check(r.service->poll(f).progress==MovieControlProgress::ongoing&&skips==1,"actual controller observes persistent skip");check(r.service->stop(f)&&r.service->snapshot(f)->active,"retail stop does not cancel in-progress fade");for(unsigned i=0;i<4;++i)check(r.service->poll(f).progress==MovieControlProgress::ongoing,"source fade remains ongoing through final write");check(r.service->poll(f).completion==MovieControlCompletion::skipped&&r.destroyed==1,"controller-complete cleanup");r.source=Source{};skip_id=r.start();check(r.service->command(skip_id,MovieNativeCommand::owner_start,f)&&r.service->command(skip_id,MovieNativeCommand::video_start,f),"next explicit start acknowledgments");check(r.service->poll(f).progress==MovieControlProgress::ongoing&&skips==2,"settings persist next actual construction");check(r.service->close(f),"explicit cancellation distinct from fade completion");}
+ {Rig r(*color,true);auto id=r.start();check(r.service->poll(f).progress==MovieControlProgress::ongoing,"real PCM prefill while preparing");check(r.audio->samples==std::vector<float>{100.0f/32768,-100.0f/32768,101.0f/32768,-101.0f/32768},"explicit PCM profile runs native gain/pan/mix with signed literal samples");auto before=r.audio->samples;check(r.service->snapshot(f)->context->accepted_audio_frames==2,"concrete context accepts same-owned audio receipt");check(r.service->set_base_volume(0.5f,f)&&r.audio->samples==before,"base setting does not rewrite already accepted PCM");check(r.service->command(id,MovieNativeCommand::owner_start,f)&&r.service->command(id,MovieNativeCommand::audio_start,f)&&r.service->command(id,MovieNativeCommand::video_start,f)&&r.service->poll(f).progress==MovieControlProgress::ongoing,"explicit real stage acknowledgments permit native resume");check(r.service->close(f)&&r.audio->resets==1&&r.audio->samples==before,"resource cancellation resets client once preserving accepted observation");}
+ {Rig r(*color,true);auto id=r.start();check(r.service->poll(f).progress==MovieControlProgress::ongoing,"cleanup error setup prefill");r.audio->stop_error=true;check(!r.service->sample_audio(id,{1,0},{0,1},true,true,f)&&f.kind==MovieServiceError::context&&f.control.kind!=MovieControlError::none&&f.cleanup.kind!=MovieSessionError::none,"source primary failure and separate actual cleanup failure both preserved");auto failed=r.service->snapshot(f);check(failed&&!failed->active&&failed->terminal&&failed->terminal->failure.kind!=MovieControlError::none&&failed->terminal->cleanup_failure.native_code==71&&r.destroyed==1,"first failure retained while all owned resources released");}
+ {MovieSessionPolicyFactory retained;std::shared_ptr<const MovieSourceObservationIdentity> identity;{Rig r(*color);r.start();retained=r.retained_factory;identity=r.source.id;}MovieSessionFailure expired;check(!retained(request(),identity,std::nullopt,expired)&&expired.kind!=MovieSessionError::none,"stored factory survives service/Rig teardown without dereferencing captured provider or context");}
+ check(std::puts("PASS native movie service concrete session/kernel/context lifecycle; no retail coordinator or profile admission")>=0&&std::fflush(stdout)==0,"checked fixture output");return 0;
+}catch(const std::exception& e){std::fprintf(stderr,"FAIL native movie service %s\n",e.what());return 1;}}

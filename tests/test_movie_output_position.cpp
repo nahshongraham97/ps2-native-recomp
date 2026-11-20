@@ -23,11 +23,23 @@ MoviePictureSource selected(std::uint64_t byte) {
     p.pes = {0xe0, 100, 110, 1000, 0, 890, 400, {}};
     p.quarter_pts = 100; return p;
 }
-std::shared_ptr<MovieSourceSyntaxPicture> header(const std::string& key,
+struct Bits {std::vector<std::uint8_t> bytes;unsigned bit=0;explicit Bits(unsigned code):bytes{0,0,1,std::uint8_t(code)}{}void put(unsigned n,std::uint32_t value){for(unsigned i=0;i<n;++i){if(!bit)bytes.push_back(0);bytes.back()|=((value>>(n-1-i))&1u)<<(7-bit);bit=(bit+1)%8;}}};
+std::shared_ptr<MovieCurrentHeaderUnit> parsed_unit(Bits b,std::uint64_t at){
+    auto result=parse_movie_header_unit(b.bytes);check(bool(result.unit),"literal current source unit");
+    auto unit=std::make_shared<MovieCurrentHeaderUnit>();unit->origin.prefix={at,0x100u|b.bytes[3],movie_prefix_classification(0x100u|b.bytes[3])};
+    unit->origin.pes=selected(800).pes;unit->origin.quarter_pts=unit->origin.pes.quarter_pts();
+    unit->consumed_end=at+result.unit->consumed_bytes;unit->unit=std::move(*result.unit);return unit;
+}
+void set_coding(const std::shared_ptr<MovieAdmissionCurrent>& p,unsigned structure,bool repeat){
+    Bits b(0xb5);b.put(4,8);for(unsigned i=0;i<4;++i)b.put(4,1);b.put(2,0);b.put(2,structure);
+    for(unsigned i=0;i<9;++i)b.put(1,i==8||(i==6&&repeat));b.put(1,0);p->coding=parsed_unit(std::move(b),808);
+}
+std::shared_ptr<MovieAdmissionCurrent> header(const std::string& key,
         const std::shared_ptr<const MovieSourceObservationIdentity>& identity) {
-    auto p = std::make_shared<MovieSourceSyntaxPicture>(); p->source_key = key; p->identity = identity;
-    p->picture_es_byte = 800; p->picture.coding_type = 2; p->coding.picture_structure = 3;
-    p->pes = selected(800).pes; return p;
+    auto p=std::make_shared<MovieAdmissionCurrent>();
+    p->source=std::make_shared<MovieAdmissionEpoch>(MovieAdmissionEpoch{key,identity});
+    Bits b(0);b.put(10,0);b.put(3,1);b.put(16,0xffff);b.put(1,0);p->picture=parsed_unit(std::move(b),800);
+    set_coding(p,3,false);return p;
 }
 std::unique_ptr<NativeMovieOutputPosition> owner(const std::string& key,
         const std::shared_ptr<const MovieSourceObservationIdentity>& identity) {
@@ -49,7 +61,7 @@ int main() { try {
         "first accepted output latches current processing and publishes0 before advance");
     auto held = *a->publication;
     check(held.work.current_header == current && held.selected.picture_es_byte == 10 &&
-        held.work.current_header->picture_es_byte == 800, "current work header and selected pixels are distinct roles");
+        held.work.current_header->picture->origin.prefix.es_prefix_first_byte == 800, "current work header and selected pixels are distinct roles");
     a = p->complete_work(key, identity, {3, 77, current}, {}, f);
     check(a && !a->publication && p->snapshot(f)->published_position == 0, "no-output preserves last publication");
     a = p->complete_work(key, identity, {4, 77, current}, selected(30), f);
@@ -61,7 +73,7 @@ int main() { try {
     check(!p->complete_work(key, identity, {6, 77, current}, selected(40), f) &&
         f.kind == MovieOutputPositionError::closed && p->snapshot(f) == terminal, "final flush closes work ingress");
     p.reset(); current.reset();
-    check(held.value == 0 && held.work.current_header->source_key == key && held.identity == identity,
+    check(held.value == 0 && held.work.current_header->source->source_key == key && held.identity == identity,
         "owned publication and current header survive producer teardown");
     {
         auto q = owner(key, identity); auto h = header(key, identity);
@@ -86,11 +98,16 @@ int main() { try {
         rejects([&] { return q->complete_work(key, identity, {1, 1, h}, selected(20), f); }, MovieOutputPositionError::replay);
         rejects([&] { return q->complete_work(key, identity, {2, 1, h}, selected(10), f); }, MovieOutputPositionError::replay);
         rejects([&] { return q->complete_work(key, identity, {2, 0, h}, selected(20), f); }, MovieOutputPositionError::invalid_work);
-        h->coding.picture_structure = 1;
+        set_coding(h,1,false);
         rejects([&] { return q->complete_work(key, identity, {2, 1, h}, selected(20), f); }, MovieOutputPositionError::unsupported_profile);
-        h->coding.picture_structure = 3; h->coding.repeat_first_field = true;
+        set_coding(h,3,true);
         rejects([&] { return q->flush(key, identity, {2, 1, h}, selected(20), f); }, MovieOutputPositionError::unsupported_profile);
-        h->coding.repeat_first_field = false;
+        set_coding(h,3,false);
+        auto actual=h->coding;auto stale=std::make_shared<MovieCurrentHeaderUnit>(*actual);stale->origin.prefix.es_prefix_first_byte=799;h->coding=stale;
+        rejects([&] { return q->complete_work(key, identity, {2, 1, h}, selected(20), f); }, MovieOutputPositionError::invalid_work);
+        auto forged=std::make_shared<MovieCurrentHeaderUnit>(*actual);std::get<MoviePictureCodingExtension>(forged->unit.payload).repeat_first_field=true;h->coding=forged;
+        rejects([&] { return q->complete_work(key, identity, {2, 1, h}, selected(20), f); }, MovieOutputPositionError::invalid_work);
+        h->coding=actual;
         auto bad = selected(20); bad.quarter_pts.reset();
         rejects([&] { return q->complete_work(key, identity, {2, 1, h}, bad, f); }, MovieOutputPositionError::invalid_selected);
         std::optional<MovieOutputPositionSnapshot> foreign_snapshot; MovieOutputPositionFailure thread_failure;
@@ -113,7 +130,7 @@ int main() { try {
             check(q->complete_work(long_key, identity, {1, 1, h}, selected(10), f).has_value(),
                 "failed publication did not consume work or selected identity");
         }
-        check(failures >= 2, "genuine publication and replay-set allocation sites reached");
+        check(failures >= 4, "genuine publication and replay-set allocation sites reached");
     }
     check(!NativeMovieOutputPosition::create(key, identity, MovieOutputPositionProfile::unspecified, f) &&
         f.kind == MovieOutputPositionError::unsupported_profile, "no default profile");

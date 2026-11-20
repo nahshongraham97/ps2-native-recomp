@@ -1,5 +1,6 @@
 #include "mka/movie_native_context.hpp"
 #include <array>
+#include <algorithm>
 #include <limits>
 #include <new>
 #include <stdexcept>
@@ -60,6 +61,7 @@ bool NativeMoviePlaybackContext::observe_source(const MovieSourceObservationBatc
     try {
         std::vector<std::uint8_t> extra;
         std::map<std::uint64_t,Decoded> additions;
+        std::map<std::uint64_t,MovieVideoPrefixObserved> prefix_additions;
         auto code_at=[&](std::uint64_t offset)->std::uint32_t {std::uint32_t code=0;for(unsigned i=0;i<4;++i){const auto at=offset+i;const auto byte=at<source_bytes_.size()?source_bytes_[static_cast<std::size_t>(at)]:extra[static_cast<std::size_t>(at-source_bytes_.size())];code=(code<<8)|byte;}return code;};
         for(const auto& event:batch.events){
             if(sequence==std::numeric_limits<std::uint64_t>::max()||event.sequence!=sequence+1)return fail(f,MovieNativeContextError::invalid_order,"movie native context observation sequence");++sequence;
@@ -68,7 +70,7 @@ bool NativeMoviePlaybackContext::observe_source(const MovieSourceObservationBatc
                 extra.insert(extra.end(),raw->bytes.begin(),raw->bytes.end());end=raw->es_end;
             }else if(const auto* p=std::get_if<MovieVideoPrefixObserved>(&event.value)){
                 const auto at=p->prefix.es_prefix_first_byte;
-                if(ended||at>end||end-at<4||(last&&at<=*last)||p->pes.stream_id<0xe0||p->pes.stream_id>0xef||p->pes.packet_offset>=p->pes.payload_offset||p->pes.payload_offset>=p->pes.packet_end||p->pes.es_begin>at||at>=p->pes.es_end||p->quarter_pts!=p->pes.quarter_pts()||p->prefix.raw_codeword!=code_at(at)||p->prefix.classification!=movie_prefix_classification(p->prefix.raw_codeword))return fail(f,MovieNativeContextError::invalid_order,"movie native context actual prefix observation");last=at;
+                if(ended||at>end||end-at<4||(last&&at<=*last)||p->pes.stream_id<0xe0||p->pes.stream_id>0xef||p->pes.packet_offset>=p->pes.payload_offset||p->pes.payload_offset>=p->pes.packet_end||p->pes.es_begin>at||at>=p->pes.es_end||p->quarter_pts!=p->pes.quarter_pts()||p->prefix.raw_codeword!=code_at(at)||p->prefix.classification!=movie_prefix_classification(p->prefix.raw_codeword))return fail(f,MovieNativeContextError::invalid_order,"movie native context actual prefix observation");last=at;prefix_additions.emplace(at,*p);
             }else if(const auto* decoded=std::get_if<MovieDecodedPictureObserved>(&event.value)){
                 const auto& p=decoded->picture;const auto at=p.picture_es_byte;
                 if(!picture_valid(p)||decoded->timing.packet_picture_offset!=at-p.packet_es_begin||at>end||end-at<4||code_at(at)!=0x100||decoded_.contains(at)||additions.contains(at))return fail(f,MovieNativeContextError::foreign_source,"movie native context decoded source observation");additions.emplace(at,Decoded{p,false});
@@ -78,7 +80,7 @@ bool NativeMoviePlaybackContext::observe_source(const MovieSourceObservationBatc
         }
         source_bytes_.reserve(static_cast<std::size_t>(end));
         source_bytes_.insert(source_bytes_.end(),extra.begin(),extra.end());
-        decoded_.merge(additions);observed_es_end_=end;last_prefix_=last;state_.observation_sequence=sequence;state_.program_end_observed=ended;return true;
+        decoded_.merge(additions);prefixes_.merge(prefix_additions);observed_es_end_=end;last_prefix_=last;state_.observation_sequence=sequence;state_.program_end_observed=ended;return true;
     }catch(const std::bad_alloc&){return fail(f,MovieNativeContextError::allocation,"movie native context observation allocation");}
     catch(const std::length_error&){return fail(f,MovieNativeContextError::host_capacity,"movie native context observation host capacity");}
 }
@@ -86,46 +88,121 @@ bool NativeMoviePlaybackContext::pause(bool paused,MovieControlFailure& f) noexc
     if(!enter(f,false))return false;Guard guard(in_call_);MovieClockFilterFailure why;
     if(!filter_.set_paused(paused,why))return fail(f,MovieNativeContextError::filter,"movie native context pause filter",static_cast<std::int64_t>(why.kind));state_.paused=paused;return true;
 }
+std::optional<MovieHeaderUnit> NativeMoviePlaybackContext::checked_unit(const std::shared_ptr<const MovieCurrentHeaderUnit>& u,
+        std::uint64_t admitted,std::uint32_t code,MovieControlFailure& f) const noexcept {
+        if(!u){fail(f,MovieNativeContextError::missing_admission,"movie native context current parsed unit unavailable");return {};}
+        const auto at=u->origin.prefix.es_prefix_first_byte;const auto& pes=u->origin.pes;
+        auto observed=prefixes_.find(at);
+        if(observed==prefixes_.end()||observed->second.prefix!=u->origin.prefix||
+           observed->second.pes!=pes||observed->second.quarter_pts!=u->origin.quarter_pts){
+            fail(f,MovieNativeContextError::foreign_source,"movie native context unobserved current prefix/PES origin");return {};
+        }
+        if(at>admitted||at>observed_es_end_||u->unit.consumed_bytes>observed_es_end_-at||
+           u->unit.consumed_bytes<4||u->consumed_end!=at+u->unit.consumed_bytes||
+           u->unit.bytes.size()!=u->unit.consumed_bytes||u->origin.prefix.raw_codeword!=code||
+           u->origin.prefix.classification!=movie_prefix_classification(code)||
+           pes.stream_id<0xe0||pes.stream_id>0xef||pes.packet_offset>=pes.payload_offset||pes.payload_offset>=pes.packet_end||
+           pes.es_begin>at||at>=pes.es_end||u->origin.quarter_pts!=pes.quarter_pts()||
+           !std::equal(u->unit.bytes.begin(),u->unit.bytes.end(),source_bytes_.begin()+static_cast<std::size_t>(at))){
+            fail(f,MovieNativeContextError::foreign_source,"movie native context current unit bytes/origin mismatch");return {};
+        }
+        auto parsed=parse_movie_header_unit(u->unit.bytes);
+        if(!parsed.unit||parsed.unit->consumed_bytes!=u->unit.consumed_bytes){
+            fail(f,parsed.failure.kind==MovieHeaderUnitError::allocation?MovieNativeContextError::allocation:MovieNativeContextError::foreign_source,
+                "movie native context checked current unit");return {};
+        }
+        return std::move(parsed.unit);
+}
 bool NativeMoviePlaybackContext::admit_header(const MovieNativeHeaderAdmission& event,MovieControlFailure& f) noexcept {
     if(!enter(f))return false;Guard guard(in_call_);
-    const auto& s=event.syntax;
-    if(!s||s->source_key!=config_.request.logical_key||s->identity!=config_.identity)return fail(f,MovieNativeContextError::foreign_source,"movie native context admission source mismatch");
-    if(state_.admissions==std::numeric_limits<std::uint64_t>::max()||event.admission_id!=state_.admissions+1)return fail(f,MovieNativeContextError::invalid_order,"movie native context admission order");
-    if(s->sequence_es_byte>s->picture_es_byte||s->sequence_extension_es_byte<s->sequence_es_byte||s->sequence_extension_es_byte>=s->picture_es_byte||event.admitted_header_es_byte>observed_es_end_||observed_es_end_-event.admitted_header_es_byte<4||
-        (event.admitted_header_es_byte!=s->picture_es_byte&&event.admitted_header_es_byte!=s->sequence_es_byte&&(!s->gop_es_byte||event.admitted_header_es_byte!=*s->gop_es_byte)))return fail(f,MovieNativeContextError::invalid_order,"movie native context actual admitted header origin");
-    if(s->sequence_es_byte>=source_bytes_.size())return fail(f,MovieNativeContextError::missing_admission,"movie native context sequence bytes unavailable");
-    auto serialized=parse_movie_header_unit(std::span(source_bytes_).subspan(static_cast<std::size_t>(s->sequence_es_byte)));
-    const auto* sequence=serialized.unit?std::get_if<MovieSequenceHeader>(&serialized.unit->payload):nullptr;
-    if(serialized.failure.kind==MovieHeaderUnitError::allocation)return fail(f,MovieNativeContextError::allocation,"movie native context sequence validation allocation");
-    if(!sequence||sequence->frame_rate_code!=s->sequence.frame_rate_code)return fail(f,MovieNativeContextError::foreign_source,"movie native context serialized sequence rate mismatch");
-    if(s->sequence.frame_rate_code<1||s->sequence.frame_rate_code>8)return fail(f,MovieNativeContextError::missing_rate,"movie native context source rate");
+    const auto& current=event.current;
+    if(!current||!current->source||current->source->source_key!=config_.request.logical_key||current->source->identity!=config_.identity)
+        return fail(f,MovieNativeContextError::foreign_source,"movie native context admission source mismatch");
+    if(state_.admissions==std::numeric_limits<std::uint64_t>::max()||event.admission_id!=state_.admissions+1)
+        return fail(f,MovieNativeContextError::invalid_order,"movie native context admission order");
+    const auto admitted=event.admitted_header_es_byte;
+    auto is_origin=[&](const std::shared_ptr<const MovieCurrentHeaderUnit>& u){return u&&u->origin.prefix.es_prefix_first_byte==admitted;};
+    if(admitted>observed_es_end_||observed_es_end_-admitted<4||
+       (!is_origin(current->sequence)&&!is_origin(current->gop)&&!is_origin(current->picture)))
+        return fail(f,MovieNativeContextError::invalid_order,"movie native context actual admitted header origin");
+    // Validate actual parsed-unit bytes and the FIRST-byte PES owner. The
+    // independently retained current units need no future picture/index record.
+    auto sequence_unit=checked_unit(current->sequence,admitted,0x1b3,f);if(!sequence_unit)return false;
+    const auto* sequence=std::get_if<MovieSequenceHeader>(&sequence_unit->payload);
+    const auto* claimed_sequence=std::get_if<MovieSequenceHeader>(&current->sequence->unit.payload);
+    if(!sequence||!claimed_sequence||sequence->frame_rate_code!=claimed_sequence->frame_rate_code)
+        return fail(f,MovieNativeContextError::foreign_source,"movie native context serialized sequence rate mismatch");
+    if(sequence->frame_rate_code<1||sequence->frame_rate_code>8)
+        return fail(f,MovieNativeContextError::missing_rate,"movie native context source rate");
     std::optional<MovieTimecodeDescriptor> descriptor;std::optional<MovieTimecodeRational> time;
     auto baseline=state_.first_baseline;MovieTimecodeFailure why;
     if(event.descriptor_route){
-        if(!s->gop||!s->gop_es_byte||*s->gop_es_byte>event.admitted_header_es_byte||*s->gop_es_byte>=source_bytes_.size())return fail(f,MovieNativeContextError::missing_admission,"movie native context descriptor needs current GOP");
-        const bool gop_only=event.admitted_header_es_byte==*s->gop_es_byte;
-        if(gop_only&&(!event.clear_temporal||*event.descriptor_route!=MovieNativeDescriptorRoute::gop))return fail(f,MovieNativeContextError::missing_admission,"movie native context GOP needs explicit zero temporal; current mixed parsed origin unavailable");
-        if(!gop_only&&(s->picture_es_byte>event.admitted_header_es_byte||s->picture_es_byte>=source_bytes_.size()))return fail(f,MovieNativeContextError::missing_admission,"movie native context descriptor needs current picture");
-        auto gop_unit=parse_movie_header_unit(std::span(source_bytes_).subspan(static_cast<std::size_t>(*s->gop_es_byte)));
-        if(gop_unit.failure.kind==MovieHeaderUnitError::allocation)return fail(f,MovieNativeContextError::allocation,"movie native context GOP validation allocation");
-        const auto* gop=gop_unit.unit?std::get_if<MovieGopHeader>(&gop_unit.unit->payload):nullptr;
-        if(!gop||gop->raw_time_code!=s->gop->raw_time_code||gop->closed_gop!=s->gop->closed_gop||gop->broken_link!=s->gop->broken_link)return fail(f,MovieNativeContextError::foreign_source,"movie native context serialized GOP mismatch");
+        auto gop_unit=checked_unit(current->gop,admitted,0x1b8,f);if(!gop_unit)return false;
+        const auto* gop=std::get_if<MovieGopHeader>(&gop_unit->payload);
+        const auto* claimed_gop=std::get_if<MovieGopHeader>(&current->gop->unit.payload);
+        if(!gop||!claimed_gop||gop->raw_time_code!=claimed_gop->raw_time_code||gop->closed_gop!=claimed_gop->closed_gop||gop->broken_link!=claimed_gop->broken_link)
+            return fail(f,MovieNativeContextError::foreign_source,"movie native context serialized GOP mismatch");
         std::uint16_t temporal=0;
-        if(!gop_only){auto picture_unit=parse_movie_header_unit(std::span(source_bytes_).subspan(static_cast<std::size_t>(s->picture_es_byte)));if(picture_unit.failure.kind==MovieHeaderUnitError::allocation)return fail(f,MovieNativeContextError::allocation,"movie native context picture validation allocation");const auto* picture=picture_unit.unit?std::get_if<MoviePictureHeader>(&picture_unit.unit->payload):nullptr;if(!picture||picture->temporal_reference!=s->picture.temporal_reference||picture->coding_type!=s->picture.coding_type)return fail(f,MovieNativeContextError::foreign_source,"movie native context serialized picture mismatch");temporal=picture->temporal_reference;}
-        if(*event.descriptor_route==MovieNativeDescriptorRoute::gop)descriptor=MovieTimecodeDescriptor{s->sequence.frame_rate_code,gop->drop_frame,gop->hours,gop->minutes,gop->seconds,gop->pictures,temporal,0};
-        else if(*event.descriptor_route==MovieNativeDescriptorRoute::pes_position){if(s->quarter_pts!=s->pes.quarter_pts()||s->pes.es_begin>s->picture_es_byte||s->picture_es_byte>=s->pes.es_end)return fail(f,MovieNativeContextError::foreign_source,"movie native context actual picture PES origin");descriptor=convert_movie_position_timecode(s->quarter_pts,s->sequence.frame_rate_code,gop->drop_frame,temporal,why);if(!descriptor)return fail(f,MovieNativeContextError::timecode,"movie native context PES descriptor",static_cast<std::int64_t>(why.kind));}
-        else return fail(f,MovieNativeContextError::invalid_config,"movie native context descriptor route");
+        if(!event.clear_temporal||*event.descriptor_route==MovieNativeDescriptorRoute::pes_position){
+            auto picture_unit=checked_unit(current->picture,admitted,0x100,f);if(!picture_unit)return false;
+            const auto* picture=std::get_if<MoviePictureHeader>(&picture_unit->payload);
+            const auto* claimed_picture=std::get_if<MoviePictureHeader>(&current->picture->unit.payload);
+            if(!picture||!claimed_picture||picture->temporal_reference!=claimed_picture->temporal_reference||picture->coding_type!=claimed_picture->coding_type)
+                return fail(f,MovieNativeContextError::foreign_source,"movie native context serialized picture mismatch");
+            temporal=picture->temporal_reference;
+        }
+        if(*event.descriptor_route==MovieNativeDescriptorRoute::gop)
+            descriptor=MovieTimecodeDescriptor{sequence->frame_rate_code,gop->drop_frame,gop->hours,gop->minutes,gop->seconds,gop->pictures,temporal,0};
+        else if(*event.descriptor_route==MovieNativeDescriptorRoute::pes_position){
+            descriptor=convert_movie_position_timecode(current->picture->origin.quarter_pts,sequence->frame_rate_code,gop->drop_frame,temporal,why);
+            if(!descriptor)return fail(f,MovieNativeContextError::timecode,"movie native context PES descriptor",static_cast<std::int64_t>(why.kind));
+        }else return fail(f,MovieNativeContextError::invalid_config,"movie native context descriptor route");
         if(event.clear_temporal)descriptor->temporal_reference=0;
         time=convert_movie_timecode(*descriptor,why);if(!time)return fail(f,MovieNativeContextError::timecode,"movie native context admitted timecode",static_cast<std::int64_t>(why.kind));
         if(event.latch_first_baseline&&!baseline){auto first=*descriptor;first.temporal_reference=0;baseline=convert_movie_timecode(first,why);if(!baseline)return fail(f,MovieNativeContextError::timecode,"movie native context first baseline",static_cast<std::int64_t>(why.kind));}
     }else if(event.clear_temporal||event.latch_first_baseline)return fail(f,MovieNativeContextError::missing_admission,"movie native context rate-only admission has no descriptor");
     try {
         std::optional<MovieParserRateRecord> rate;
-        if(event.latch_eligibility_rate)rate.emplace(MovieParserRateRecord{config_.request.logical_key,config_.identity,event.admission_id,event.admitted_header_es_byte,s->sequence_es_byte,s->sequence.frame_rate_code});
+        if(event.latch_eligibility_rate)rate.emplace(MovieParserRateRecord{config_.request.logical_key,config_.identity,event.admission_id,admitted,current->sequence->origin.prefix.es_prefix_first_byte,sequence->frame_rate_code});
         admissions_.emplace(event.admission_id,Admission{event,descriptor,time,sequence->frame_rate_code});
         if(rate)state_.eligibility_rate=std::move(rate);
         state_.first_baseline=baseline;++state_.admissions;return true;
     }catch(const std::bad_alloc&){return fail(f,MovieNativeContextError::allocation,"movie native context admission allocation");}
+}
+bool NativeMoviePlaybackContext::validate_work(const MovieAdmissionCurrent& current,MovieControlFailure& f) const noexcept {
+    if(!enter(f))return false;Guard guard(in_call_);
+    if(!current.source||current.source->source_key!=config_.request.logical_key||current.source->identity!=config_.identity)
+        return fail(f,MovieNativeContextError::foreign_source,"movie native context work source mismatch");
+    if(!current.picture||!current.coding||current.coding->origin.prefix.es_prefix_first_byte<=current.picture->origin.prefix.es_prefix_first_byte)
+        return fail(f,MovieNativeContextError::missing_admission,"movie native context stale/missing current picture coding");
+    // Raw start-code observations can lie INSIDE structured matrix/header
+    // bytes. Walk checked unit extents; only an actual parsed picture breaks
+    // the association between this picture and its coding extension.
+    auto cursor=current.picture->consumed_end;
+    const auto coding_at=current.coding->origin.prefix.es_prefix_first_byte;
+    if(cursor>coding_at||coding_at>observed_es_end_)
+        return fail(f,MovieNativeContextError::missing_admission,"movie native context overlapping picture/coding origins");
+    while(cursor<coding_at){
+        if(!prefixes_.contains(cursor))return fail(f,MovieNativeContextError::missing_admission,"movie native context missing structured work origin");
+        auto between=parse_movie_header_unit(std::span(source_bytes_).subspan(static_cast<std::size_t>(cursor)));
+        if(!between.unit){return fail(f,between.failure.kind==MovieHeaderUnitError::allocation?MovieNativeContextError::allocation:MovieNativeContextError::missing_admission,
+            "movie native context intervening structured header");}
+        if(std::holds_alternative<MoviePictureHeader>(between.unit->payload))
+            return fail(f,MovieNativeContextError::missing_admission,"movie native context coding belongs to another parsed picture");
+        const auto amount=between.unit->consumed_bytes;
+        if(amount<4||amount>coding_at-cursor)return fail(f,MovieNativeContextError::missing_admission,"movie native context invalid intervening header extent");
+        cursor+=amount;
+    }
+    auto picture_unit=checked_unit(current.picture,observed_es_end_,0x100,f);if(!picture_unit)return false;
+    auto coding_unit=checked_unit(current.coding,observed_es_end_,0x1b5,f);if(!coding_unit)return false;
+    const auto* picture=std::get_if<MoviePictureHeader>(&picture_unit->payload);
+    const auto* claimed_picture=std::get_if<MoviePictureHeader>(&current.picture->unit.payload);
+    const auto* coding=std::get_if<MoviePictureCodingExtension>(&coding_unit->payload);
+    const auto* claimed_coding=std::get_if<MoviePictureCodingExtension>(&current.coding->unit.payload);
+    if(!picture||!claimed_picture||picture->coding_type!=claimed_picture->coding_type||picture->temporal_reference!=claimed_picture->temporal_reference||
+       !coding||!claimed_coding||coding->picture_structure!=claimed_coding->picture_structure||coding->repeat_first_field!=claimed_coding->repeat_first_field)
+        return fail(f,MovieNativeContextError::foreign_source,"movie native context current work raw/typed profile mismatch");
+    return true;
 }
 bool NativeMoviePlaybackContext::publish_output(const MovieNativeOutputPublication& event,MovieControlFailure& f) noexcept {
     if(!enter(f))return false;Guard guard(in_call_);
@@ -189,6 +266,6 @@ bool NativeMoviePlaybackContext::end_admitted(const MoviePlaybackSnapshot& s,boo
         if(q.reset_epoch!=config_.audio_reset_epoch||r.epoch!=config_.audio_reset_epoch||r.source_identity!=config_.request.logical_key||r.source_rate!=config_.audio_source_rate||q.submitted_frames!=state_.next_client_frame||r.submitted!=q.submitted_frames||r.retired>r.submitted||r.pending!=r.submitted-r.retired||Wide(config_.audio_source_origin)+r.retired!=r.source_boundary)return fail(f,MovieNativeContextError::invalid_receipt,"movie native context foreign audio drain observation");
     }
     const bool drained=s.decoder_eof&&!s.queued_video&&!s.queued_audio&&!s.outstanding_fences&&outputs_.empty()&&(!config_.audio_enabled||(s.audio_queue&&s.source_retirement&&s.audio_queue->reset_epoch==config_.audio_reset_epoch&&s.source_retirement->epoch==config_.audio_reset_epoch&&s.source_retirement->source_identity==config_.request.logical_key&&s.source_retirement->source_rate==config_.audio_source_rate&&!s.audio_queue->padding_frames&&!s.source_retirement->pending));out=complete&&state_.stop_acknowledged&&state_.program_end_observed&&drained;return true;}
-bool NativeMoviePlaybackContext::stop(MovieControlFailure& f) noexcept {f={};if(std::this_thread::get_id()!=owner_){f={MovieControlError::wrong_thread,"movie native context stop thread",0};return false;}if(in_call_){f={MovieControlError::invalid_state,"movie native context stop reentry",0};return false;}if(state_.closed)return true;Guard guard(in_call_);outputs_.clear();admissions_.clear();decoded_.clear();source_bytes_.clear();pending_decision_.reset();state_.outputs_pending=0;state_.closed=true;return true;}
+bool NativeMoviePlaybackContext::stop(MovieControlFailure& f) noexcept {f={};if(std::this_thread::get_id()!=owner_){f={MovieControlError::wrong_thread,"movie native context stop thread",0};return false;}if(in_call_){f={MovieControlError::invalid_state,"movie native context stop reentry",0};return false;}if(state_.closed)return true;Guard guard(in_call_);outputs_.clear();admissions_.clear();decoded_.clear();prefixes_.clear();source_bytes_.clear();pending_decision_.reset();state_.outputs_pending=0;state_.closed=true;return true;}
 std::optional<MovieNativeContextSnapshot> NativeMoviePlaybackContext::snapshot(MovieControlFailure& f) const noexcept {f={};if(std::this_thread::get_id()!=owner_){f={MovieControlError::wrong_thread,"movie native context snapshot thread",0};return {};}if(in_call_){f={MovieControlError::invalid_state,"movie native context snapshot reentry",0};return {};}Guard guard(in_call_);auto* clock=config_.service->service(f);if(!clock)return {};try{auto result=state_;result.service=clock->state();return result;}catch(const std::bad_alloc&){fail(f,MovieNativeContextError::allocation,"movie native context snapshot allocation");return {};}}
 } // namespace mka::video

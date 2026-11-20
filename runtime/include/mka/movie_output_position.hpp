@@ -1,5 +1,5 @@
 #pragma once
-#include "mka/movie_source_syntax_index.hpp"
+#include "mka/movie_admission_feed.hpp"
 #include <thread>
 
 namespace mka::video {
@@ -14,7 +14,7 @@ struct MovieOutputPositionFailure {
 // IDs are native producer identities; current header is not selected pixels.
 struct MovieOutputPositionWork {
     std::uint64_t work_id, admission_id;
-    std::shared_ptr<const MovieSourceSyntaxPicture> current_header;
+    std::shared_ptr<const MovieAdmissionCurrent> current_header;
 };
 struct MovieOutputPositionPublication {
     std::string source_key;
