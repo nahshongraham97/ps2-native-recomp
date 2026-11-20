@@ -76,3 +76,7 @@ if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
     target_link_options(test_native_program_admission_gates PRIVATE
         "-Wl,--wrap=_ZN3mka5sound17AudioBankProtocol6unloadERKNS0_16AudioBankCommandERNS0_20AudioProtocolFailureE")
 endif()
+
+# Actual bank-owned runtime preparation/cache; no device/runtime linkage.
+add_executable(test_native_runtime_preparation EXCLUDE_FROM_ALL tests/test_runtime_preparation.cpp)
+target_link_libraries(test_native_runtime_preparation PRIVATE mka_native_sound_resources)

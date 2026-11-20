@@ -1,4 +1,6 @@
 #include "mka/bank_preparation.hpp"
+#include "mka/runtime_preparation.hpp"
+#include <limits>
 #include <algorithm>
 #include <mutex>
 #include <new>
@@ -33,6 +35,9 @@ struct PreparedBank::State {
     // Zero-instance precreation or the durable source flag40 cache reference.
     std::vector<std::shared_ptr<NormalCache>> pinned_cache;
     mutable std::mutex mutex;
+    struct RuntimeRecord {std::shared_ptr<const NativeRuntimePreparation> cached;std::size_t references=0;bool building=false;};
+    std::vector<RuntimeRecord> runtime_records;
+    const std::shared_ptr<const void> runtime_identity=std::make_shared<const int>(0);
     bool unloaded=false;
     ResourceLookup resource(std::uint32_t key) const { return bank.lookup_resource(key); }
     std::shared_ptr<NormalCache> normal(const ResourceLookup& r,
@@ -106,6 +111,87 @@ struct PreparedBank::State {
         return p.index;
     }
 };
+struct RuntimeProgramReference::Impl {
+    std::shared_ptr<PreparedBank::State> bank;
+    std::shared_ptr<const NativeRuntimePreparation> preparation;
+    std::size_t index=0;
+    mutable std::mutex mutex;
+    bool active=false;
+    bool release(PreparationFailure* failure){
+        std::shared_ptr<const NativeRuntimePreparation> discarded;
+        std::shared_ptr<PreparedBank::State> retained_bank;
+        std::shared_ptr<const NativeRuntimePreparation> retained_preparation;
+        {std::lock_guard own_lock(mutex);
+         if(!active){if(failure)failure->kind=PreparationError::invalid_work_state;return false;}
+         {std::lock_guard bank_lock(bank->mutex);
+          auto& record=bank->runtime_records[index];
+          --record.references;
+          if(!record.references&&(bank->flags[index]&2u))discarded=std::move(record.cached);
+         }
+         active=false;retained_preparation=std::move(preparation);retained_bank=std::move(bank);
+        }
+        discarded.reset();retained_preparation.reset();retained_bank.reset();return true;
+    }
+    ~Impl(){if(active)release(nullptr);}
+};
+RuntimeProgramReference::RuntimeProgramReference(std::unique_ptr<Impl> state):state_(std::move(state)){}
+RuntimeProgramReference::~RuntimeProgramReference()=default;
+bool RuntimeProgramReference::active()const{std::lock_guard lock(state_->mutex);return state_->active;}
+std::shared_ptr<const NativeRuntimePreparation> RuntimeProgramReference::preparation()const{
+    std::lock_guard lock(state_->mutex);return state_->active?state_->preparation:nullptr;
+}
+bool RuntimeProgramReference::release(PreparationFailure& f){f={};return state_->release(&f);}
+std::optional<std::vector<RuntimeCacheObservation>> PreparedBank::runtime_cache(PreparationFailure& f)const{
+    f={};if(!state_){f.kind=PreparationError::unloaded;return {};}
+    try {std::lock_guard lock(state_->mutex);
+        if(state_->unloaded){f.kind=PreparationError::unloaded;return {};}
+        std::vector<RuntimeCacheObservation> result;result.reserve(state_->runtime_records.size());
+        for(std::size_t i=0;i<state_->runtime_records.size();++i){const auto& r=state_->runtime_records[i];result.push_back({i,r.references,bool(r.cached),bool(state_->flags[i]&2u),r.building});}
+        return result;
+    }catch(const std::bad_alloc&){f.kind=PreparationError::allocation_failed;}
+    catch(const std::length_error&){f.kind=PreparationError::host_capacity;}
+    return {};
+}
+std::unique_ptr<RuntimeProgramReference> PreparedBank::acquire_runtime_program(std::int32_t selector,PreparationFailure& f){
+    f={};if(!state_){f.kind=PreparationError::unloaded;return {};}
+    struct Building {
+        std::shared_ptr<State> bank;std::size_t index=0;
+        ~Building(){if(bank){std::lock_guard lock(bank->mutex);bank->runtime_records[index].building=false;}}
+    };
+    try {
+        std::size_t index;
+        {std::lock_guard lock(state_->mutex);
+         if(state_->unloaded){f.kind=PreparationError::unloaded;return {};}
+         auto found=state_->selector(selector,f);if(!found)return {};index=*found;}
+        auto work=state_->domain->acquire(AudioResourceWork::program,f.resource);
+        if(!work){f.kind=PreparationError::resource_access;return {};}
+        Building building; // Clear marker before the actual work lease releases.
+        std::unique_lock lock(state_->mutex);
+        if(state_->unloaded){f.kind=PreparationError::unloaded;return {};}
+        auto& record=state_->runtime_records[index];
+        if(record.building){f.kind=PreparationError::runtime_building;return {};}
+        if(record.references==std::numeric_limits<std::size_t>::max()){f.kind=PreparationError::host_capacity;return {};}
+        std::shared_ptr<const NativeRuntimePreparation> runtime=record.cached;
+        if(!runtime){
+            record.building=true;building.bank=state_;building.index=index;
+            lock.unlock();
+            auto data=prepare_deferred_normal(selector,f);
+            if(!data)return {};
+            runtime=std::shared_ptr<const NativeRuntimePreparation>(new NativeRuntimePreparation(std::move(data),state_->runtime_identity,state_->domain));
+            lock.lock();
+            if(state_->unloaded){f.kind=PreparationError::unloaded;return {};}
+        }
+        auto keeper=std::make_unique<RuntimeProgramReference::Impl>();
+        keeper->bank=state_;keeper->preparation=runtime;keeper->index=index;
+        auto reference=std::unique_ptr<RuntimeProgramReference>(new RuntimeProgramReference(std::move(keeper)));
+        record.cached=std::move(runtime);++record.references;reference->state_->active=true;
+        record.building=false;building.bank.reset();
+        return reference;
+    }catch(const std::bad_alloc&){f.kind=PreparationError::allocation_failed;}
+    catch(const std::length_error&){f.kind=PreparationError::host_capacity;}
+    catch(...){f.kind=PreparationError::native_exception;}
+    return {};
+}
 struct PreparedProgramWork::Impl {
     std::shared_ptr<PreparedBank::State> bank;
     std::shared_ptr<SoundArchiveBacking> backing;
@@ -236,7 +322,7 @@ std::optional<PreparedBank> PreparedBank::prepare(BankAssetSource source,BankPre
         s->domain=s->backing->resource_domain();
         std::unique_lock<std::mutex> lock(s->mutex);
         const auto& raw=s->bank.raw_bytes();const auto programs=s->bank.program_count(),resources=s->bank.resource_count();
-        s->commands.resize(programs);s->flags.resize(programs);s->eager.resize(programs);s->cache.resize(resources);s->pinned_cache.resize(resources);report.programs.resize(programs);
+        s->commands.resize(programs);s->flags.resize(programs);s->eager.resize(programs);s->runtime_records.resize(programs);s->cache.resize(resources);s->pinned_cache.resize(resources);report.programs.resize(programs);
         const auto po=word(raw,20),ao=word(raw,24),ro=word(raw,16);std::size_t cursor=word(raw,28);
         // SoundBank already validated these exact table extents/counts, including
         // programs with no selector alias. Never confuse selector count with programs.
@@ -273,6 +359,8 @@ std::optional<PreparedBank> PreparedBank::prepare(BankAssetSource source,BankPre
             else{observation.state=ProgramPreparationState::failed;observation.failure=f;++report.eager_error_count;}
         }
         if(report.eager_error_count){failure.kind=PreparationError::eager_program_failures;return std::nullopt;}
+        for(std::size_t i=0;i<programs;++i)if(s->eager[i])
+            s->runtime_records[i].cached=std::shared_ptr<const NativeRuntimePreparation>(new NativeRuntimePreparation(s->eager[i],s->runtime_identity,s->domain));
         return PreparedBank(std::move(s));
     }catch(const std::bad_alloc&){failure.kind=PreparationError::allocation_failed;}
      catch(const std::length_error&){failure.kind=PreparationError::host_capacity;}
@@ -307,6 +395,8 @@ bool PreparedBank::active()const{
 void PreparedBank::unload(){
     if(!state_)return;
     std::lock_guard<std::mutex> lock(state_->mutex);state_->unloaded=true;
-    state_->eager.clear();state_->pinned_cache.clear();state_->cache.clear();state_->backing.reset();
+    state_->eager.clear();state_->pinned_cache.clear();state_->cache.clear();
+    for(auto& r:state_->runtime_records)r.cached.reset();
+    state_->backing.reset();
 }
 } // namespace mka::sound

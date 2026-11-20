@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_playback_reservation_gaps.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "stdout": "PASS native playback reservation pre/post-service gaps/64 slot growth/unpublished rollback/exact-bank and close uncertainty; injected CPU fixture only\n",
+  "stderr": "",
+  "executable_sha256": "c35ef5fac9a0a2dd7420f29949b21ec8145e52db6c5742f3012d5886d4297692",
+  "executable_after_sha256": "c35ef5fac9a0a2dd7420f29949b21ec8145e52db6c5742f3012d5886d4297692"
+}

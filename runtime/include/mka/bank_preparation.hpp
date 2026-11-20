@@ -5,7 +5,7 @@ namespace mka::sound {
 enum class PreparationError { none, no_backing, malformed_bank, unsupported_named_keys, duplicate_resource_key, source_deferred, already_prepared,
     absent_resource, payload_failed, codec_failed, count2_failed, unsupported_count,
     unsupported_alternate_preparation, absent_selector, absent_program, unloaded,
-    allocation_failed, host_capacity, eager_program_failures, resource_access, cancelled, invalid_work_state, wrong_thread, native_exception };
+    allocation_failed, host_capacity, eager_program_failures, resource_access, cancelled, invalid_work_state, wrong_thread, native_exception, runtime_building };
 struct PreparationFailure {
     PreparationError kind=PreparationError::none,cleanup_kind=PreparationError::none;
     AudioResourceFailure resource,cleanup_resource;
@@ -48,7 +48,10 @@ struct PreparedProgram {
     std::vector<CommandRecord> commands; // ALL kinds retained; no execution/no-op claim.
     std::vector<PreparedSampleInstance> normal_instances;
 };
+class NativeRuntimePreparation;
+class RuntimeProgramReference;
 class PreparedProgramWork;
+struct RuntimeCacheObservation {std::size_t program_index=0,references=0;bool cached=false,deferred=false,building=false;};
 struct SampleCacheObservation {std::size_t resource_index=0;bool occupied=false,preserved=false;};
 // Source292E4 load-preparation predicate only, not playback/completion transport.
 // Returns no bank if any eager program fails. Deferred programs remain explicit.
@@ -65,6 +68,8 @@ public:
     // Full runtime descriptor/callback/coordinator semantics are separate.
     std::shared_ptr<PreparedProgramWork> admit_deferred_normal(std::int32_t selector,PreparationFailure&);
     std::optional<std::vector<SampleCacheObservation>> sample_cache(PreparationFailure&) const;
+    std::unique_ptr<RuntimeProgramReference> acquire_runtime_program(std::int32_t selector,PreparationFailure&);
+    std::optional<std::vector<RuntimeCacheObservation>> runtime_cache(PreparationFailure&) const;
     // Synchronous native convenience over the same owned fresh work lifecycle.
     // Does not rewrite a source-deferred program as eagerly prepared.
     std::shared_ptr<const PreparedProgram> prepare_deferred_normal(std::int32_t selector, PreparationFailure&);
@@ -76,6 +81,7 @@ private:
     explicit PreparedBank(std::shared_ptr<State> state):state_(std::move(state)){}
     std::shared_ptr<State> state_;
     friend class PreparedProgramWork;
+    friend class RuntimeProgramReference;
 };
 enum class ProgramWorkState {queued,building,ready,cancelled,failed,published,retired};
 enum class ProgramWorkCancellation {queued_removed,running_requested,not_cancellable};

@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_playback_reservation.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files\\SNDSPS2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "stdout": "PASS actual ANNOUNCR pending play reservation/context identity/registry growth/nonzero concurrent voice/resource domain; no device/game/PCM fidelity claim\n",
+  "stderr": "",
+  "executable_sha256": "94cbda3233e0cb09da4f16a8a9ea7d43fd3e1025da7b606b28d38847afac9b67",
+  "executable_after_sha256": "94cbda3233e0cb09da4f16a8a9ea7d43fd3e1025da7b606b28d38847afac9b67"
+}
