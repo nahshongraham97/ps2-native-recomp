@@ -75,6 +75,19 @@ std::optional<NativeRetailInputRoleObservation> NativeRetailInputRoles::observe(
         state->participant.lock(), state->source_control_word};
 }
 
+bool NativeRetailInputRoles::clear_dispatch_blocked_first_three_from_163a50(
+    RetailInputRoleFailure& failure) noexcept {
+    failure = {};
+    if (std::this_thread::get_id() != thread_) {
+        failure.kind = RetailInputRoleError::wrong_thread;
+        return false;
+    }
+    for (std::size_t index = 0; index != 3; ++index) {
+        if (roles_[index].initialized) roles_[index].dispatch_blocked = false;
+    }
+    return true;
+}
+
 std::optional<RetailActionRowObservation> NativeRetailInputRoles::observe_action_row(
     RetailInputRole role_id, std::size_t row, RetailInputRoleFailure& failure) const noexcept {
     const auto* state = role(role_id, failure);

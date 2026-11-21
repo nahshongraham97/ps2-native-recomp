@@ -1,5 +1,7 @@
 #include "mka/retail_main.hpp"
 #include "mka/retail_profile_main_state.hpp"
+#include "mka/retail_game_info_resources.hpp"
+#include "mka/retail_input_roles.hpp"
 #include "native_retail_startup.hpp"
 
 #include <cstdio>
@@ -36,6 +38,47 @@ int main(int argc, char** argv) {
         main.post_overlay_state = 0x12345678;
         check(main_binding::initialize_retail_post_overlay_state(main, failure) &&
               main.post_overlay_state == 0, "production182E50 clears actual game value");
+        // Execute the actual185EE0 child on its real owners. The enclosing
+        // complete1303F0/130350 sequence remains an unresolved production call.
+        check(main_binding::clear_retail_mode_stack(main, failure) &&
+              main_binding::enter_retail_mode_zero(main, failure), "real source mode owner");
+        RetailGameResourceRegistryFailure registry_failure;
+        main.resource_registry = NativeRetailGameResourceRegistry::create(registry_failure);
+        RetailInputRoleFailure role_failure;
+        main.input_roles = NativeRetailInputRoles::create(role_failure);
+        RetailGameInfoResourceFailure value_failure;
+        main.game_info_resources = NativeRetailGameInfoResources::create(startup.game_session, value_failure);
+        check(main.resource_registry && main.input_roles && main.game_info_resources,
+              "real registry, roles and typed game values");
+        RetailGameSessionFailure session_failure;
+        auto controls = startup.game_session->controls(session_failure);
+        RetailGameControlsFailure control_failure;
+        check(controls->store_analog_input_inhibited_from_source(true, control_failure),
+              "actual shared flag set before full-word reset");
+        auto* const domain = startup.game_session->task_domain(session_failure);
+        check(domain && startup.game_record_reset->run_185ee0(*domain,
+              *main.mode_history, *main.input_roles, *main.game_info_resources,
+              *main.resource_registry, failure.game_record_reset),
+              "real185EE0 ordered reset and four native registrations");
+        auto names = main.resource_registry->observe(registry_failure);
+        auto* values = startup.game_session->game_record_values(session_failure);
+        check(names && names->global_names == 4 && values &&
+              values->word_185ee0_c3c8 == 0 && values->word_16a9d0_2d4 == 2 &&
+              controls->analog_input_inhibited(control_failure) == false,
+              "same game values, initialized-word transition and input reset");
+        // Exercise the real next section initializer independently. The
+        // intervening full1303F0 controller remains unresolved in production.
+        check(main_binding::initialize_retail_loaded_sections(main, failure),
+              "production19C4C0 native section workspace");
+        auto* const sections = startup.section_workspace.get();
+        RetailSectionWorkspaceFailure section_failure;
+        auto section_state = sections->observe(section_failure);
+        check(section_state && section_state->record_count == 7 &&
+              section_state->active_transient_records == 0,
+              "real initial section records and empty active list");
+        check(main_binding::initialize_retail_loaded_sections(main, failure) &&
+              startup.section_workspace.get() == sections,
+              "section reentry retains same initialized owner");
         auto* const profile = startup.profile_main.get();
         auto* const overlay = startup.active_overlay.get();
         RetailProfileMainFailure profile_failure;
@@ -67,7 +110,7 @@ int main(int argc, char** argv) {
         check(main_binding::initialize_retail_active_overlay(main, failure) &&
               startup.active_overlay.get() == overlay && !prior_parent->observe().active,
               "actual overlay replaces retired parent after profile reset");
-        std::puts("PASS real native startup profile, GAMER initializer and post-overlay state; full entry remains open");
+        std::puts("PASS real native startup profile, GAMER, post-overlay and section initialization; full entry remains open");
         return 0;
     } catch (const std::exception& error) {
         std::fprintf(stderr, "FAIL native startup initialization: %s\n", error.what());

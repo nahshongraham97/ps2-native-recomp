@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_section_workspace.exe"
+  ],
+  "exit": 0,
+  "stdout": "native retail Section workspace: PASS\n",
+  "stderr": "",
+  "executable_sha256": "82ce3e9e730bc322b7c30a2374b217841296527e37f31667b5af4d563ad935d1",
+  "executable_after_sha256": "82ce3e9e730bc322b7c30a2374b217841296527e37f31667b5af4d563ad935d1"
+}

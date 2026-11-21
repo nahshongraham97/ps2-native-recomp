@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_game_resource_registry.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native game resource registry CPU source rules; typed producers and game open\n",
+  "stderr": "",
+  "executable_sha256": "fa5af4bcae73654a4d3cb6ca270985d177dce54b6c7fe2776d3d873365c8734a",
+  "executable_after_sha256": "fa5af4bcae73654a4d3cb6ca270985d177dce54b6c7fe2776d3d873365c8734a"
+}

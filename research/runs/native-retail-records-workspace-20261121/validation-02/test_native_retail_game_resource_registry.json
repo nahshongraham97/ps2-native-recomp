@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_game_resource_registry.exe"
+  ],
+  "exit": 1,
+  "stdout": "",
+  "stderr": "FAIL: source active head prepend and dynamic host storage\n",
+  "executable_sha256": "49e19c2dd6623535f667e9502766b4fffb33326c6d2a61b94858ac3fa47a78de",
+  "executable_after_sha256": "49e19c2dd6623535f667e9502766b4fffb33326c6d2a61b94858ac3fa47a78de"
+}

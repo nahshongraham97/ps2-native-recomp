@@ -43,6 +43,8 @@ public:
         RetailInputRole, RetailInputRoleFailure&) const noexcept;
     std::optional<RetailActionRowObservation> observe_action_row(
         RetailInputRole, std::size_t row, RetailInputRoleFailure&) const noexcept;
+    bool clear_dispatch_blocked_first_three_from_163a50(
+        RetailInputRoleFailure&) noexcept;
 
 private:
     friend class NativeRetailInputAssignments;

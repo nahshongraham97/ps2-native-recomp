@@ -45,6 +45,17 @@ int main() { try {
     auto* random = session->random(f);
     auto* auxiliary = session->auxiliary_words(f);
     auto* initial_task = session->initial_task_state(f);
+    auto* task_domain = session->task_domain(f);
+    auto* game_values = session->game_record_values(f);
+    check(game_values && game_values->word_185ee0_c3c8 == 1 &&
+        game_values->word_152880_88 == 0 && !game_values->partial_reset,
+        "same session births actual initialized game value separately from BSS zeros");
+    RetailTaskDomainFailure task_failure;
+    auto task_birth = task_domain ? task_domain->observe(task_failure) : std::nullopt;
+    check(task_birth && task_birth->identity_counter == 0 &&
+        task_birth->live_current_word == 5 && task_birth->live_partner_word == 5 &&
+        !task_birth->task_roots_born,
+        "same session owns source data and BSS task domain before real root birth");
     check(controls && settings && random && auxiliary && auxiliary->first == 0 && auxiliary->second == 0,
         "same session supplies actual controls/settings/BSS auxiliary and PRNG owners");
     RetailInitialTaskStateFailure initial_failure;

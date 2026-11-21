@@ -4,8 +4,10 @@
 
 namespace mka::retail {
 NativeRetailGameSession::NativeRetailGameSession(std::shared_ptr<NativeRetailGameControls> controls,
-    std::shared_ptr<NativeRetailMainSettings> settings) noexcept
-    : controls_(std::move(controls)), settings_(std::move(settings)) {}
+    std::shared_ptr<NativeRetailMainSettings> settings,
+    std::unique_ptr<NativeRetailTaskDomain> task_domain) noexcept
+    : controls_(std::move(controls)), settings_(std::move(settings)),
+      task_domain_(std::move(task_domain)) {}
 std::shared_ptr<NativeRetailGameSession> NativeRetailGameSession::create(RetailGameSessionFailure& failure) noexcept {
     failure = {};
     try {
@@ -21,8 +23,14 @@ std::shared_ptr<NativeRetailGameSession> NativeRetailGameSession::create(RetailG
             failure.operation = "native game settings construction";
             return {};
         }
+        auto task_domain = NativeRetailTaskDomain::create(controls, failure.task_domain);
+        if (!task_domain) {
+            failure.kind = RetailGameSessionError::task_domain;
+            failure.operation = "native persistent task domain construction";
+            return {};
+        }
         return std::shared_ptr<NativeRetailGameSession>(new NativeRetailGameSession(
-            std::move(controls), std::move(settings)));
+            std::move(controls), std::move(settings), std::move(task_domain)));
     } catch (const std::bad_alloc&) {
         failure.kind = RetailGameSessionError::allocation;
         failure.operation = "native game session allocation";
@@ -70,5 +78,15 @@ NativeRetailInitialTaskState* NativeRetailGameSession::initial_task_state(
     RetailGameSessionFailure& failure) noexcept {
     if (!validate_current_thread(failure)) return nullptr;
     return &initial_task_state_;
+}
+NativeRetailTaskDomain* NativeRetailGameSession::task_domain(
+    RetailGameSessionFailure& failure) noexcept {
+    if (!validate_current_thread(failure)) return nullptr;
+    return task_domain_.get();
+}
+RetailGameRecordResetSnapshot* NativeRetailGameSession::game_record_values(
+    RetailGameSessionFailure& failure) noexcept {
+    if (!validate_current_thread(failure)) return nullptr;
+    return &game_record_values_;
 }
 } // namespace mka::retail

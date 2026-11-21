@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_input_poll.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native assigned-ready source transition and full precision host axes\n",
+  "stderr": "",
+  "executable_sha256": "5156b1f75f4bf7add4a9d45116c6d9d268afd4d7e3b5c3841d373ab272e80816",
+  "executable_after_sha256": "5156b1f75f4bf7add4a9d45116c6d9d268afd4d7e3b5c3841d373ab272e80816"
+}

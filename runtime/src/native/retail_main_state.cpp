@@ -1,4 +1,6 @@
 #include "mka/retail_main.hpp"
+#include "mka/retail_game_resource_registry.hpp"
+#include "mka/retail_game_info_resources.hpp"
 #include "native_retail_startup.hpp"
 #include <cstdio>
 #include <exception>

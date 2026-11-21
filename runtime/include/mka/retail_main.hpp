@@ -28,6 +28,8 @@ class NativeRetailMiddlewareWorkGroup;
 class NativeRetailMiddlewareDispatcher;
 class NativeRetailPrefixDispatchDescriptor;
 class NativeRetailRecordOwners;
+class NativeRetailGameResourceRegistry;
+class NativeRetailGameInfoResources;
 struct NativeRetailProfileOwners;
 struct NativeRetailSceneOwners;
 
@@ -81,6 +83,9 @@ struct NativeRetailMainState {
     std::shared_ptr<NativeRetailPrefixDispatchDescriptor> dispatch_object;
     std::shared_ptr<NativeRetailPrefixDispatchDescriptor> auxiliary_dispatch_object;
     std::shared_ptr<NativeRetailRecordOwners> record_owners;
+    // Created only at the real2173D0 point of game-record initialization.
+    std::unique_ptr<NativeRetailGameResourceRegistry> resource_registry;
+    std::unique_ptr<NativeRetailGameInfoResources> game_info_resources;
     std::unique_ptr<NativeRetailAudioStatistics> audio_statistics;
     std::optional<NativeRetailModeState> mode_history;
     std::unique_ptr<NativeRetailPackage> package;
