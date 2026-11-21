@@ -20,14 +20,16 @@ runtime-translation descriptions, is preserved for provenance at
 `research/history/native-port-docs-2026-11-18/README.md`. Those instructions
 do not describe the accepted Armageddon route.
 
-The work24/26 component checkpoint adds source-backed ordered task
-lookup/retirement and an offline compiler that emits the original scalar
-getter/setter as typed native C++. The generated output compiles and executes
-against the actual native session without guest/compiler/device linkage.
-Three current client identities are measured;38 earlier client binaries are
-unchanged. A deliberately modified generated source fails before compilation.
-The complete retail entry still refuses39 unimplemented native integration
-names. Real task bodies/dispatch/reset, whole-game input/render/audio and
-acceptance remain OPEN. No game or physical endpoint was opened.
-The parent live status and dated work24/26 results own the full scope.
+The work28 component checkpoint connects the compiled typed scalar getter
+to the existing native selector component. Its affected CPU client passes,
+and selector/generated getter/real session are linked without a guest
+runtime, emulated device or offline compiler dependency. Source281930
+directly loads this shared field; reusing the equivalent getter does not
+establish an original call edge.138 current source pins and40 unchanged
+prior binary identities are recorded. Work24/26 also supplies ordered
+task lookup/retirement and generated-source build authentication.
+The complete retail entry still refuses39 native integration names.
+Actual task bodies/dispatch/reset, complete input/render/audio and full
+game acceptance remain OPEN. No game or physical endpoints were opened.
+Parent live status and dated work28 results own current scope.
 No owner launch is requested.

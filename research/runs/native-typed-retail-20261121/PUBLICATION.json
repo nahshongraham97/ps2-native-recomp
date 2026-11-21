@@ -1,0 +1,18 @@
+{
+  "fork_commit": "0f77ee383020ef12d5b7101bb5ca49b3200932f9",
+  "fork": {
+    "available": true,
+    "local_commit": "0f77ee383020ef12d5b7101bb5ca49b3200932f9",
+    "remote_commit": "0f77ee383020ef12d5b7101bb5ca49b3200932f9",
+    "synchronization": "verified"
+  },
+  "parent_commit": "ab07e1b0fbd9651ef25497213d5670b7d6f415af",
+  "parent": {
+    "available": true,
+    "local_commit": "ab07e1b0fbd9651ef25497213d5670b7d6f415af",
+    "remote_commit": "ab07e1b0fbd9651ef25497213d5670b7d6f415af",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "8d1d48e7c3ac60babea430dd1d8e29944c0c1975fa142974d048671a990269ed",
+  "scope": "Typed getter/setter and ordered task lookup only;39 main integrations and full game acceptance OPEN"
+}

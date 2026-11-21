@@ -1,4 +1,5 @@
 #include "mka/retail_input_selection.hpp"
+#include "native_typed_retail.hpp"
 
 #include <cstdio>
 #include <new>
@@ -117,7 +118,9 @@ NativeRetailInputSelection::select_physical(
              "retail 281930 physical role zero or one");
         return {};
     }
-    const auto mode=session_->scalar_mode(f.session);
+    // 281930 directly loads this shared field. Reuse the source-equivalent
+    // generated getter; this is no claim of an original call edge to 185CB0.
+    const auto mode=generated::retail_scalar_mode_get_185cb0(*session_,f.session);
     if(!mode) {
         fail(f,RetailInputSelectionError::game_session,"retail 185cb0 scalar mode");
         return {};

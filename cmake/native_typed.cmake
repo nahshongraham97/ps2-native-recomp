@@ -36,6 +36,10 @@ add_library(mka_native_typed_retail STATIC EXCLUDE_FROM_ALL "${_typed_dir}/nativ
 add_dependencies(mka_native_typed_retail mka_native_typed_authenticate)
 target_include_directories(mka_native_typed_retail PUBLIC "${_typed_dir}")
 target_link_libraries(mka_native_typed_retail PUBLIC mka_native_retail_game_session)
+if(TARGET mka_native_retail_startup)
+    target_link_libraries(mka_native_retail_startup PUBLIC mka_native_typed_retail)
+    add_dependencies(mka_native_retail_startup mka_native_typed_authenticate)
+endif()
 add_executable(test_native_typed_retail EXCLUDE_FROM_ALL tests/test_native_typed_retail.cpp)
 target_link_libraries(test_native_typed_retail PRIVATE mka_native_typed_retail)
 
