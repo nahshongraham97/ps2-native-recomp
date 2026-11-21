@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_profile_menu.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS source-ordered profile menu driver with explicit test-only children; production scene/action/transition children open\n",
+  "stderr": "",
+  "executable_sha256": "a34ad20bc31b3bed922a8717caf9b8dd7ea868d95baf20b0a31fcf19c635f780",
+  "executable_after_sha256": "a34ad20bc31b3bed922a8717caf9b8dd7ea868d95baf20b0a31fcf19c635f780"
+}

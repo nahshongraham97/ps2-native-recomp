@@ -161,7 +161,7 @@ bool initialize_retail_package_stage(NativeRetailMainState&, StartupFailure&); /
 bool initialize_retail_game_options(NativeRetailMainState&, StartupFailure&); // 164130, not audio configuration
 bool initialize_retail_current_sound(NativeRetailMainState&, StartupFailure&); // 12D7E0
 bool initialize_retail_mode_objects(NativeRetailMainState&, StartupFailure&); // 2460B0
-bool initialize_retail_scene_service(NativeRetailMainState&, StartupFailure&); // 295660
+bool initialize_retail_current_profile_preferences(NativeRetailMainState&, StartupFailure&); // 295660
 bool initialize_retail_mode_service(NativeRetailMainState&, StartupFailure&); // 12A4F0(0)
 bool initialize_retail_section_service(NativeRetailMainState&, StartupFailure&); // 19A630
 // 1861B0 is full scene reset/bootstrap, including 12F030 and repeated130350.

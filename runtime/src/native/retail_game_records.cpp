@@ -47,8 +47,8 @@ bool clear_retail_game_records_pair_1303f0(
     f={};
     auto* state=values(session,f);
     if(!state) return false;
-    state->word_6b6f94=0;
-    state->word_6b6f98=0;
+    state->profile_preferences.word_34=0;
+    state->profile_preferences.word_38=0;
     return true;
 }
 

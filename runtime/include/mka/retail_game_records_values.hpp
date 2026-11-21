@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include "mka/retail_profile_preferences.hpp"
 
 namespace mka::retail {
 // Source-proven persistent words outside the 185EE0 reset block. Names carry
@@ -8,7 +9,11 @@ namespace mka::retail {
 struct RetailGameRecordsValues {
     std::uint32_t word_660098{};
     std::uint32_t word_6602e4{}, word_6602e8{}, word_6600a4{};
-    std::uint32_t word_6b6f94{}, word_6b6f98{};
+    // Same live preference owner used by1303F0 and later295660; no copies
+    // of the overlapping6B6F94/98 values are kept outside this object.
+    RetailProfilePreferenceValues profile_preferences;
+    std::uint32_t word_64eac0{}, word_64eac4{};
+    std::uint64_t word_64e318{}; // Live aggregate override, proven BSS zero birth.
     std::uint32_t word_6602ac{}, word_6602c4{}, word_6602b0{};
     std::uint32_t word_6602b4{}, word_6602b8{}, word_6602bc{};
     std::uint32_t word_6602c0{};

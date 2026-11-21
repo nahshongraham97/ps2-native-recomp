@@ -98,6 +98,16 @@ RetailGameRecordsValues* NativeRetailGameSession::game_records_values(
     if (!validate_current_thread(failure)) return nullptr;
     return &game_records_values_;
 }
+NativeRetailProfileResourceIds* NativeRetailGameSession::profile_resource_ids(
+    RetailGameSessionFailure& failure) noexcept {
+    if (!validate_current_thread(failure)) return nullptr;
+    return &profile_resource_ids_;
+}
+NativeRetailProfileAggregate* NativeRetailGameSession::profile_aggregate(
+    RetailGameSessionFailure& failure) noexcept {
+    if (!validate_current_thread(failure)) return nullptr;
+    return &profile_aggregate_;
+}
 bool NativeRetailGameSession::ensure_game_task_lists(
     std::shared_ptr<NativeRetailGamePool> pool,
     RetailGameSessionFailure& failure) noexcept {

@@ -10,6 +10,8 @@
 #include "mka/retail_main_settings.hpp"
 #include "mka/retail_random.hpp"
 #include "mka/retail_task_domain.hpp"
+#include "mka/retail_profile_resource_ids.hpp"
+#include "mka/retail_profile_aggregate.hpp"
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -50,6 +52,8 @@ public:
     NativeRetailTaskDomain* task_domain(RetailGameSessionFailure&) noexcept;
     RetailGameRecordResetSnapshot* game_record_values(RetailGameSessionFailure&) noexcept;
     RetailGameRecordsValues* game_records_values(RetailGameSessionFailure&) noexcept;
+    NativeRetailProfileResourceIds* profile_resource_ids(RetailGameSessionFailure&) noexcept;
+    NativeRetailProfileAggregate* profile_aggregate(RetailGameSessionFailure&) noexcept;
     bool ensure_game_task_lists(std::shared_ptr<NativeRetailGamePool>,
         RetailGameSessionFailure&) noexcept;
     std::shared_ptr<NativeRetailGameTaskLists> game_task_lists(
@@ -75,6 +79,8 @@ private:
     NativeRetailInitialTaskState initial_task_state_;
     RetailGameRecordResetSnapshot game_record_values_;
     RetailGameRecordsValues game_records_values_;
+    NativeRetailProfileResourceIds profile_resource_ids_{*this};
+    NativeRetailProfileAggregate profile_aggregate_;
     std::shared_ptr<NativeRetailGameTaskLists> game_task_lists_;
     std::shared_ptr<NativeRetailInitialGameTasks> initial_game_tasks_;
     std::shared_ptr<NativeRetailTaskObject> source_task_1588c0_;

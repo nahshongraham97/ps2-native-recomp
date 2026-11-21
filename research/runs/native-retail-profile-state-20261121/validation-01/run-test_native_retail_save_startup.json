@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_save_startup.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS Main native save readiness and retained file lifetime; full profile records remain required\n",
+  "stderr": "",
+  "executable_sha256": "829cf443771c032d3c6b106287d083bc577b81f0945bbc84e38922c18b62725e",
+  "executable_after_sha256": "829cf443771c032d3c6b106287d083bc577b81f0945bbc84e38922c18b62725e"
+}
