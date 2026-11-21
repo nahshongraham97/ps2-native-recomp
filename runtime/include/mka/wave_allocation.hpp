@@ -64,6 +64,7 @@ public:
     NativeWaveAllocator(const NativeWaveAllocator&) = delete;
     NativeWaveAllocator& operator=(const NativeWaveAllocator&) = delete;
 private:
+    friend class NativeTierAllocator;
     struct Call;
     NativeWaveAllocator(WaveAllocationBindings, NativeHeapIdentity) noexcept;
     bool report(WaveDiagnosticKind, std::uint64_t, std::size_t, unsigned,

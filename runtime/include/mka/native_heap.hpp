@@ -35,6 +35,7 @@ struct NativeHeapObservation {
 namespace detail { struct NativeHeapState; }
 class NativeHeapOwner;
 class NativeWaveAllocator;
+class NativeTierAllocator;
 
 // Route-wide native admission only; no source callback or fallback policy is implied.
 class NativeHeapRequest final {
@@ -99,6 +100,7 @@ public:
 private:
     friend class NativeAllocation;
     friend class NativeWaveAllocator;
+    friend class NativeTierAllocator;
     void mark_overflow_attempted() noexcept;
     explicit NativeHeapOwner(std::shared_ptr<detail::NativeHeapState>) noexcept;
     std::optional<NativeAllocation> allocate_on(

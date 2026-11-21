@@ -1,0 +1,67 @@
+{
+  "status": "EXACT_HISTORICAL_VERSIONS_RESOLVED",
+  "resolutions": [
+    {
+      "producer": "previous component certificate",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\wave_allocation.hpp",
+      "expected_sha256": "5f1f76a8a66f8dec6da26ac45f44c67cea9a4fa2173e0f9a6f679e57d16da3f6",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\class-tier-allocation\\before-root-integration\\runtime\\include\\mka\\wave_allocation.hpp"
+    },
+    {
+      "producer": "previous component certificate",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\native_heap.hpp",
+      "expected_sha256": "5d49b3d878cb3d9dfcab3d66e3f1e24d06cc67a134f893ea1eb2c11279d4c9ce",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\class-tier-allocation\\before-root-integration\\runtime\\include\\mka\\native_heap.hpp"
+    },
+    {
+      "producer": "previous component certificate",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\PROFILE_MEMORY_SOURCE.json",
+      "expected_sha256": "e6a7fceafcdfa6ebd96f3e9f34fe298a49c5d24769fb083f7ea29447230292bd",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\class-tier-allocation\\before-source-correction\\PROFILE_MEMORY_SOURCE.json"
+    },
+    {
+      "producer": "previous component certificate",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\PROFILE_MEMORY_SOURCE.md",
+      "expected_sha256": "8a67dea2aa834fd024dc12f55ddaa9a60ab75b898736aa4337e98762e2bf8869",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\class-tier-allocation\\before-source-correction\\PROFILE_MEMORY_SOURCE.md"
+    },
+    {
+      "producer": "previous component certificate",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_game.cmake",
+      "expected_sha256": "3e5e3f5e25f89d51828c4af7ea07770d2c6117b9ac52b7a0e101ba49871893a3",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\class-tier-allocation\\before-root-integration\\cmake\\native_game.cmake"
+    },
+    {
+      "producer": "profile data comparison",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\PROFILE_MEMORY_SOURCE.json",
+      "expected_sha256": "e6a7fceafcdfa6ebd96f3e9f34fe298a49c5d24769fb083f7ea29447230292bd",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\class-tier-allocation\\before-source-correction\\PROFILE_MEMORY_SOURCE.json"
+    },
+    {
+      "producer": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\class-tier-allocation\\CORRECTION.json",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\CLASS_CALLER_SOURCE.md",
+      "expected_sha256": "7c0848f02efc76b9417511a8db7cf5be8ccfb14c290c745a71df7f755904be3d",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\class-tier-allocation\\before-source-correction\\CLASS_CALLER_SOURCE.md"
+    },
+    {
+      "producer": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\class-tier-allocation\\CORRECTION.json",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\CLASS_CALLER_SOURCE.json",
+      "expected_sha256": "7720ce3e16967066f9ca86faff8e9537f8e0837322e996c7e1f361b8ba298d82",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\class-tier-allocation\\before-source-correction\\CLASS_CALLER_SOURCE.json"
+    },
+    {
+      "producer": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\class-tier-allocation\\CORRECTION.json",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\PROFILE_MEMORY_SOURCE.md",
+      "expected_sha256": "8a67dea2aa834fd024dc12f55ddaa9a60ab75b898736aa4337e98762e2bf8869",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\class-tier-allocation\\before-source-correction\\PROFILE_MEMORY_SOURCE.md"
+    },
+    {
+      "producer": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\class-tier-allocation\\CORRECTION.json",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\PROFILE_MEMORY_SOURCE.json",
+      "expected_sha256": "e6a7fceafcdfa6ebd96f3e9f34fe298a49c5d24769fb083f7ea29447230292bd",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\class-tier-allocation\\before-source-correction\\PROFILE_MEMORY_SOURCE.json"
+    }
+  ],
+  "no_expected_hash_replacement": true,
+  "profile_data_unchanged": true
+}
