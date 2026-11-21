@@ -1,0 +1,19 @@
+{
+  "schema": "native_profile_state_publication_v1",
+  "fork_commit": "aba27c3a501a03b2149251b38a913a1f58eb6ec6",
+  "fork": {
+    "available": true,
+    "local_commit": "aba27c3a501a03b2149251b38a913a1f58eb6ec6",
+    "remote_commit": "aba27c3a501a03b2149251b38a913a1f58eb6ec6",
+    "synchronization": "verified"
+  },
+  "parent_commit": "c2e227cec2e634f92db50da2864c223a5221160e",
+  "parent": {
+    "available": true,
+    "local_commit": "c2e227cec2e634f92db50da2864c223a5221160e",
+    "remote_commit": "c2e227cec2e634f92db50da2864c223a5221160e",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "8eeb9f0619a0a2befc400719d6949cf4b72d970cc746378ec418041392b9c8a8",
+  "scope": "Seven CPU/file clients;27 Main requirements and separate5 scene/actor requirements remain; no gameplay claim"
+}
