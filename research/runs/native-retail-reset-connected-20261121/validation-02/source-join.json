@@ -1,0 +1,19 @@
+{
+  "original_elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "reset_words": 60,
+  "reset_listing_words": 60,
+  "wait_range_words": 144,
+  "setter_words_le32": [
+    "0x3c030066",
+    "0x3e00008",
+    "0xac640098",
+    "0x0"
+  ],
+  "input_evidence": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-reset-state-85\\source-agent01\\RAW_SOURCE.json": "07c7775304623861fa863fdf4c571bffda548e432c06977d96a12cccb4b62bee",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-reset-state-85\\source-agent01\\LISTINGS.json": "45020a0ffa7c4fda6484e86e9a1492de0bf9579cd140adcc3edd0db8d4b04e39",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-initial-reset-wait-82\\source-agent01\\RAW_SOURCE.json": "c519658ca694853a67fb3af15446c5c27832a0a9690d0816d1e4c6222efd5958",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-initial-reset-wait-82\\source-agent01\\SOURCE.md": "240a6263ded9f4656c9fc6daa4bb8f0ed73dee738069e71468619ee40b95a7c8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-initial-reset-80\\source-agent01\\SOURCE.md": "a8ad97ad52dd6727115657c2200d3aedc52b5fab2a370840bf594b08824207ac"
+  }
+}

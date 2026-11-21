@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "C:/Program Files/Git/cmd/git.exe",
+    "diff",
+    "--check",
+    "--",
+    "cmake/native_game.cmake",
+    "runtime/include/mka/retail_participants.hpp",
+    "runtime/src/native/retail_participants.cpp",
+    "runtime/include/mka/retail_initial_task_state.hpp",
+    "runtime/src/native/retail_initial_task_state.cpp",
+    "runtime/include/mka/retail_initial_task_required.hpp",
+    "runtime/include/mka/retail_initial_reset_required.hpp",
+    "runtime/src/native/retail_initial_reset.cpp",
+    "tests/test_retail_initial_reset.cpp",
+    "tests/test_retail_initial_task.cpp"
+  ],
+  "cwd": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp",
+  "exit": 0,
+  "stdout": "",
+  "stderr": "warning: in the working copy of 'cmake/native_game.cmake', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'runtime/include/mka/retail_initial_task_required.hpp', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'runtime/include/mka/retail_initial_task_state.hpp', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'runtime/include/mka/retail_participants.hpp', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'runtime/src/native/retail_initial_task_state.cpp', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'runtime/src/native/retail_participants.cpp', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'tests/test_retail_initial_task.cpp', LF will be replaced by CRLF the next time Git touches it\n",
+  "executable_sha256": "20d0dde30a65afb6e5810a883700a94dcd77fbf3b44b32868d45bf7c9b30137c",
+  "executable_after_sha256": "20d0dde30a65afb6e5810a883700a94dcd77fbf3b44b32868d45bf7c9b30137c"
+}

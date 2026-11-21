@@ -43,6 +43,10 @@ public:
     // Exact 1319E0 effect. The 137810 constructor deliberately leaves this
     // state untouched on a later menu reconstruction.
     bool set_game_state(std::uint32_t, RetailParticipantFailure&) noexcept;
+    // Full-word game fields read by the profile/reset callers. Byte consumers
+    // continue to observe these same values, rather than reset-only copies.
+    bool store_source_word_2c(std::uint32_t, RetailParticipantFailure&) noexcept;
+    bool store_initial_game_word_14(std::uint32_t, RetailParticipantFailure&) noexcept;
 private:
     friend class NativeRetailParticipants;
     friend class NativeRetailInputAssignments;

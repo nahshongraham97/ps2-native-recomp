@@ -23,9 +23,10 @@ public:
 
 enum class RetailInitialTransitionBody { source_245930, menu_18db60 };
 
-// Strong source-effect dependencies. Production defines none of these until
-// the complete corresponding retail effects are ported. A test translation
-// unit may define explicit child procedures for a bounded CPU fixture.
+// Strong source-effect dependencies. The reset caller defines its verified
+// sequence and requires its unported children through initial_reset_required.
+// Other unported bodies have no production defaults. A test translation unit
+// may supply explicit children for a bounded CPU fixture.
 namespace initial_task_required {
 // Reset can suspend in12ABD0 after12A4F0(1); its native child must retain
 // completed effects and its live resource/barrier state across1.0 waits.

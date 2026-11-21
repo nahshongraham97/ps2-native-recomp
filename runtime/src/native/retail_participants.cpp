@@ -50,6 +50,20 @@ bool NativeRetailParticipants::access(RetailParticipantFailure& failure) const n
         fail(failure, RetailParticipantError::wrong_thread, "retail participant collection thread");
 }
 
+bool NativeRetailInputParticipant::store_source_word_2c(
+    std::uint32_t value, RetailParticipantFailure& failure) noexcept {
+    if (!access(failure)) return false;
+    state_.source_word_2c = value;
+    return true;
+}
+
+bool NativeRetailInputParticipant::store_initial_game_word_14(
+    std::uint32_t value, RetailParticipantFailure& failure) noexcept {
+    if (!access(failure)) return false;
+    state_.initial_game_words[0] = value;
+    return true;
+}
+
 std::shared_ptr<NativeRetailParticipants> NativeRetailParticipants::create_first_two(
     RetailParticipantFailure& failure) noexcept {
     failure = {};

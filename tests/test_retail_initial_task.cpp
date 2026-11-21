@@ -82,8 +82,8 @@ void install_known_owners(NativeRetailMainState& main) {
 }
 }
 
-// Explicit fixture-only child implementations. The production source has no
-// definitions for these symbols and therefore cannot link a fake game path.
+// Explicit fixture-only child implementations, including a substituted reset.
+// The production reset requires its actual resource children at link time.
 namespace mka::retail::initial_task_required {
 std::shared_ptr<NativeRetailInitialChild> begin_reset_18d970(
     NativeRetailMainState&,NativeRetailGameSession&) {

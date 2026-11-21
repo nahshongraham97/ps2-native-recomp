@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_initial_reset.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-reset-connected-20261121\\validation-02\\content"
+  ],
+  "cwd": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp",
+  "exit": 0,
+  "stdout": "PASS native reset ordering, live fields, suspension,1799-wait timeout, failure and lifetime; six resource children remain unported\n",
+  "stderr": "",
+  "executable_sha256": "56470460e53f46fa55e7ca7cea0d3a07ffb08a3103a309d461f42a33e36c5a47",
+  "executable_after_sha256": "56470460e53f46fa55e7ca7cea0d3a07ffb08a3103a309d461f42a33e36c5a47"
+}

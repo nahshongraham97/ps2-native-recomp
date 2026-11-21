@@ -1,0 +1,20 @@
+--- a/cmake/native_game.cmake
++++ b/cmake/native_game.cmake
+@@ -232,7 +232,7 @@
+         runtime/src/native/retail_profile_transition_child.cpp runtime/src/native/retail_profile_entry_decision.cpp
+         runtime/src/native/retail_profile_task_retirement.cpp
+         runtime/src/native/retail_task_dispatch_main.cpp runtime/src/native/retail_initial_task_main.cpp
+-        runtime/src/native/retail_initial_task.cpp
++        runtime/src/native/retail_initial_task.cpp runtime/src/native/retail_initial_reset.cpp
+         runtime/src/native/retail_game_records.cpp
+         runtime/src/native/retail_game_records_main.cpp
+         runtime/src/native/retail_task_lookup_main.cpp
+@@ -268,6 +268,8 @@
+     target_link_libraries(test_native_retail_active_overlay PRIVATE mka_native_retail_startup)
+     add_executable(test_native_retail_startup_initialization EXCLUDE_FROM_ALL tests/test_retail_startup_initialization.cpp)
+     target_link_libraries(test_native_retail_startup_initialization PRIVATE mka_native_retail_startup)
++    add_executable(test_native_retail_initial_reset EXCLUDE_FROM_ALL tests/test_retail_initial_reset.cpp)
++    target_link_libraries(test_native_retail_initial_reset PRIVATE mka_native_retail_startup)
+     add_executable(test_native_retail_game_records_main EXCLUDE_FROM_ALL tests/test_retail_game_records_main.cpp)
+     target_link_libraries(test_native_retail_game_records_main PRIVATE mka_native_retail_startup)
+     add_executable(test_native_retail_pad_control EXCLUDE_FROM_ALL tests/test_retail_pad_control.cpp)
