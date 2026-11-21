@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_scene_owners.exe",
+  "target_before_sha256": "352f5155ef0b48302f2482e166bfb977e82eb1008d887cc0a4c4bf8d9e736682",
+  "target_after_sha256": "352f5155ef0b48302f2482e166bfb977e82eb1008d887cc0a4c4bf8d9e736682",
+  "audited_target_expected_sha256": "352f5155ef0b48302f2482e166bfb977e82eb1008d887cc0a4c4bf8d9e736682",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::retail::NativeRetailSceneEventGraph::"
+  ],
+  "executed_target_sha256": "352f5155ef0b48302f2482e166bfb977e82eb1008d887cc0a4c4bf8d9e736682"
+}

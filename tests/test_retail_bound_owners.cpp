@@ -66,6 +66,31 @@ int main(int argc, char** argv) { try {
     const auto* exact_records = state.record_owners.get();
     check(!main_binding::construct_retail_record_owners(state, f) && f.kind == StartupError::already_initialized &&
         state.record_owners.get() == exact_records, "duplicate request owner cannot replace live identity");
+    fail_allocation = true;
+    const bool history_created = main_binding::initialize_retail_action_service(state, f);
+    fail_allocation = false;
+    check(!history_created && f.kind == StartupError::allocation && !state.action_history,
+        "actual journal allocation failure leaves main without a published history");
+    check(main_binding::initialize_retail_action_service(state, f) && f.kind == StartupError::none && state.action_history,
+        "actual action initializer retries with cleared failure and owns real records");
+    auto* exact_history = state.action_history.get();
+    check(exact_history->journals[0].cursor == -1 && exact_history->journals[0].records[0].action == -1 &&
+        exact_history->recent[0].cursor == 0 && exact_history->recent[0].canonical[0] == -1,
+        "production initializer applies source stores");
+    exact_history->journals[0].cursor = 7;
+    auto& history_record = exact_history->journals[0].records[3];
+    history_record.action = 4; history_record.frame = 66; history_record.label = "owned event label";
+    history_record.context = 19; history_record.canonical = 8;
+    exact_history->recent[0].cursor = 3; exact_history->recent[0].canonical[1] = 9;
+    f = {StartupError::native_exception, "prior fixture error"};
+    fail_allocation = true;
+    const bool history_reset = main_binding::initialize_retail_action_service(state, f);
+    fail_allocation = false;
+    check(history_reset && f.kind == StartupError::none && state.action_history.get() == exact_history &&
+        exact_history->journals[0].cursor == 7 && history_record.action == -1 && history_record.frame == -1 &&
+        history_record.label.empty() && history_record.context == 19 && history_record.canonical == 8 &&
+        exact_history->recent[0].cursor == 0 && exact_history->recent[0].canonical[1] == -1,
+        "source repeat initialization is selective, allocation-free, and preserves actual owner identity");
     std::puts("PASS actual native main constructor/mode bindings and allocation failures; no game or endpoint");
     return 0;
 } catch (const std::exception& e) {

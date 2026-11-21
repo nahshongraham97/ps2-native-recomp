@@ -20,9 +20,9 @@ runtime-translation descriptions, is preserved for provenance at
 `research/history/native-port-docs-2026-11-18/README.md`. Those instructions
 do not describe the accepted Armageddon route.
 
-The source-ordered native entry remains incomplete. Package/constructor
-integration05 passes eleven native CPU/file checks, including all245 archive
-members and44 static key calls, and measures52 unresolved native integration
-symbols. These are not missing original retail functions. No native menu,
-combat or physical output is verified. Parent live status owns the current
-evidence and remaining work. No owner launch is requested.
+The source-ordered native entry remains incomplete. Input-state integration06
+passes twelve native CPU/file checks, including the real action-history
+initializer, and measures51 unresolved native integration symbols. These
+are not missing original retail algorithms. Native keyboard/event feeding,
+actual input assignment and full game/render/audio behavior remain open.
+Parent live status owns the current evidence. No owner launch is requested.

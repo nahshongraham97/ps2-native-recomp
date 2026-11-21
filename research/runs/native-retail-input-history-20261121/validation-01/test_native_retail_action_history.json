@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_action_history.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native retail action journal selective reset; producer/game open\n",
+  "stderr": "",
+  "executable_sha256": "0ad21b782c89b031ac8398e61c6ad55353dcd465ff0c47d59eaf6b1b96e9c01a",
+  "executable_after_sha256": "0ad21b782c89b031ac8398e61c6ad55353dcd465ff0c47d59eaf6b1b96e9c01a"
+}

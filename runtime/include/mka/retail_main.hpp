@@ -4,6 +4,7 @@
 #include "mka/frontend_scheduler.hpp"
 #include "mka/game_action_input.hpp"
 #include "mka/playback_owner.hpp"
+#include "mka/retail_action_history.hpp"
 #include "mka/retail_audio_statistics.hpp"
 #include "mka/retail_main_timing.hpp"
 #include "mka/retail_mode_state.hpp"
@@ -79,6 +80,7 @@ struct NativeRetailMainState {
     // spans this entire main state and all role adapters.
     input::ControllerInput& controller_samples;
     std::unique_ptr<input::NativeGameActionInput> action_input;
+    std::unique_ptr<NativeRetailActionHistory> action_history;
     std::unique_ptr<game::NativeFrontendScheduler> task_scheduler;
     std::unique_ptr<sound::NativePlaybackOwner> playback;
     std::optional<sound::NativeSoundContext> current_sound;
