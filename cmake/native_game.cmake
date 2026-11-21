@@ -150,11 +150,20 @@ target_link_libraries(mka_native_retail_loading PUBLIC mka_native_content_volume
 if(WIN32)
     set(SDL2_NO_MWINDOWS ON)
     find_package(SDL2 CONFIG REQUIRED HINTS "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sdl2/lib/cmake/SDL2")
+    add_library(mka_native_retail_keyboard STATIC EXCLUDE_FROM_ALL
+        runtime/src/native/retail_keyboard.cpp runtime/src/native/retail_keyboard_sdl.cpp)
+    target_include_directories(mka_native_retail_keyboard PUBLIC runtime/include)
+    target_include_directories(mka_native_retail_keyboard PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sdl2/include/SDL2")
+    add_executable(test_native_retail_keyboard EXCLUDE_FROM_ALL tests/test_retail_keyboard.cpp)
+    target_include_directories(test_native_retail_keyboard PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sdl2/include/SDL2")
+    target_link_libraries(test_native_retail_keyboard PRIVATE mka_native_retail_keyboard)
     add_library(mka_native_retail_platform STATIC EXCLUDE_FROM_ALL
         runtime/src/native/retail_platform.cpp host/keymap.cpp)
     target_include_directories(mka_native_retail_platform PRIVATE host)
     target_link_libraries(mka_native_retail_platform PUBLIC mka_native_retail_loading
-        mka_native_game_actions SDL2::SDL2 PRIVATE opengl32)
+        mka_native_game_actions mka_native_retail_keyboard SDL2::SDL2 PRIVATE opengl32)
     add_executable(test_native_retail_loading EXCLUDE_FROM_ALL tests/test_retail_loading_picture.cpp)
     target_link_libraries(test_native_retail_loading PRIVATE mka_native_retail_loading)
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")

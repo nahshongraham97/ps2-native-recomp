@@ -1,6 +1,7 @@
 #pragma once
 #include "mka/content_volume.hpp"
 #include "mka/controller_input.hpp"
+#include "mka/retail_keyboard.hpp"
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -18,6 +19,7 @@ struct RetailPlatformFailure {
     const char* operation="";
     std::string detail;
     content::ContentVolumeFailure content;
+    RetailKeyboardFailure keyboard;
 };
 enum class RetailLoadingOrigin { asset, source_missing_file_pattern };
 struct RetailLoadingPicture {
@@ -42,6 +44,7 @@ public:
     NativeRetailPlatform(const NativeRetailPlatform&)=delete;
     NativeRetailPlatform& operator=(const NativeRetailPlatform&)=delete;
     input::ControllerInput& controller_samples() noexcept;
+    NativeRetailKeyboard& keyboard_events() noexcept;
     bool poll_events_and_input(RetailPlatformFailure&) noexcept;
     std::optional<std::vector<RetailHostController>> controllers(RetailPlatformFailure&) const noexcept;
     // Game role ownership explicitly chooses players. Device arrival never

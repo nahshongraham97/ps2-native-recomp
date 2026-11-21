@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_keyboard.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-keyboard-feed-07\\source-key-table.bin"
+  ],
+  "exit": 1,
+  "stdout": "",
+  "stderr": "DIAGNOSTIC press kind=0 transition=0 scancode=7235433 mods shift=1 caps=1 num=1 rshift=0 mode=0 source_code=-1 keypad_fallback=0 order kinds=0,0,1,0 transitions=0,2,1\nFAIL native keyboard queue: SDL modifiers and Caps/Shift table selection\n",
+  "executable_sha256": "bd12e07bce4d2f1117a5c656d552bbbb24a6d371c296baead4900bfa33cd4c86",
+  "executable_after_sha256": "bd12e07bce4d2f1117a5c656d552bbbb24a6d371c296baead4900bfa33cd4c86"
+}

@@ -85,7 +85,6 @@ struct NativeRetailMainState {
     std::unique_ptr<sound::NativePlaybackOwner> playback;
     std::optional<sound::NativeSoundContext> current_sound;
 
-    std::array<std::int32_t, 5> initial_main_record{};
     std::array<float, 3> timing_factors{};
     float milliseconds_per_frame{};
     std::uint32_t iteration{}, ordinary_iteration{}, reentry_value{};
@@ -108,8 +107,6 @@ bool construct_retail_record_owners(NativeRetailMainState&, StartupFailure&); //
 bool construct_retail_audio_statistics(NativeRetailMainState&, StartupFailure&); // 648930
 bool construct_retail_aux_dispatch_object(NativeRetailMainState&, StartupFailure&); // 648980
 bool construct_retail_two_service_objects(NativeRetailMainState&, StartupFailure&); // 6489D0
-bool register_retail_initialized_main_record(NativeRetailMainState&, StartupFailure&); // 648A40
-bool register_retail_existing_service_cleanup(NativeRetailMainState&, StartupFailure&); // 648A90
 bool construct_retail_key_action_records(NativeRetailMainState&, StartupFailure&); // 648AB0
 bool construct_retail_first_paired_key_records(NativeRetailMainState&, StartupFailure&); // 648C60
 bool construct_retail_empty_binding(NativeRetailMainState&, StartupFailure&); // 648E50

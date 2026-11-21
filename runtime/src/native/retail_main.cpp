@@ -19,9 +19,9 @@ bool construct_main_owners(NativeRetailMainState& m, StartupFailure& f) {
     if (!construct_retail_audio_statistics(m, f)) return false;
     if (!construct_retail_aux_dispatch_object(m, f)) return false;
     if (!construct_retail_two_service_objects(m, f)) return false;
-    m.initial_main_record = {0, 0, 1, 30, -1};
-    if (!register_retail_initialized_main_record(m, f)) return false;
-    if (!register_retail_existing_service_cleanup(m, f)) return false;
+    // 648A40/648A90 registered USB module bookkeeping and its guest cleanup.
+    // The native platform already owns the keyboard queue and retires it with
+    // the host input lifetime; no module records or fake registrations remain.
     if (!construct_retail_key_action_records(m, f)) return false;
     if (!construct_retail_first_paired_key_records(m, f)) return false;
     if (!construct_retail_empty_binding(m, f)) return false;

@@ -1,5 +1,6 @@
 #define SDL_MAIN_HANDLED
 #include "mka/retail_platform.hpp"
+#include "mka/retail_keyboard_sdl.hpp"
 #include "keymap.hpp"
 #include <SDL.h>
 #include <SDL_opengl.h>
@@ -77,6 +78,7 @@ struct NativeRetailPlatform::State {
     SDL_Window* window=nullptr;SDL_GLContext context=nullptr;
     Gl gl;GLuint texture=0,program=0,vao=0;GLint sampler=-1;
     input::ControllerInput samples;
+    std::unique_ptr<NativeRetailKeyboard> keyboard_events;
     keymap::Config keys=keymap::defaults();
     struct Pad {
         SDL_GameController* handle=nullptr;
@@ -157,6 +159,13 @@ struct NativeRetailPlatform::State {
     void release() noexcept {
         if(std::this_thread::get_id()!=owner) {
             std::fputs("[native-platform-stop] destruction on foreign thread\n",stderr);std::terminate();
+        }
+        if(keyboard_events) {
+            RetailKeyboardFailure failure;
+            const auto observation=keyboard_events->observe(failure);
+            if(!observation || (!observation->closed && !keyboard_events->shutdown(failure))) {
+                std::fputs("[native-platform-stop] keyboard lifetime retirement failed\n",stderr);std::terminate();
+            }
         }
         if(context) {
             if(SDL_GL_MakeCurrent(window,context)==0) {
@@ -242,6 +251,8 @@ std::unique_ptr<NativeRetailPlatform> NativeRetailPlatform::create(const content
     try {
         auto picture=load_retail_loading_picture(volume,f);if(!picture)return {};
         auto state=std::make_unique<State>();
+        state->keyboard_events=NativeRetailKeyboard::create(f.keyboard);
+        if(!state->keyboard_events){fail(f,RetailPlatformError::input,"native keyboard owner creation");return {};}
         SDL_SetMainReady();
         if(SDL_InitSubSystem(SDL_INIT_VIDEO|SDL_INIT_GAMECONTROLLER|SDL_INIT_EVENTS)!=0){fail(f,RetailPlatformError::initialization,"SDL native platform initialization",SDL_GetError());return {};}
         state->initialized=true;
@@ -285,10 +296,13 @@ std::unique_ptr<NativeRetailPlatform> NativeRetailPlatform::create(const content
     return {};
 }
 input::ControllerInput& NativeRetailPlatform::controller_samples() noexcept {return state_->samples;}
+NativeRetailKeyboard& NativeRetailPlatform::keyboard_events() noexcept {return *state_->keyboard_events;}
 bool NativeRetailPlatform::poll_events_and_input(RetailPlatformFailure& f) noexcept {
     f={};try {
         if(!state_->access(f))return false;SDL_Event event;
         while(SDL_PollEvent(&event)) {
+            if(!publish_retail_keyboard_sdl_event(*state_->keyboard_events,event,SDL_GetWindowID(state_->window),f.keyboard))
+                return fail(f,RetailPlatformError::input,"native keyboard event publication");
             if(event.type==SDL_QUIT||(event.type==SDL_WINDOWEVENT&&event.window.windowID==SDL_GetWindowID(state_->window)&&event.window.event==SDL_WINDOWEVENT_CLOSE))state_->quit=true;
             else if(event.type==SDL_CONTROLLERDEVICEADDED) {if(!state_->open_pad(event.cdevice.which,f))return false;}
             else if(event.type==SDL_CONTROLLERDEVICEREMOVED) {

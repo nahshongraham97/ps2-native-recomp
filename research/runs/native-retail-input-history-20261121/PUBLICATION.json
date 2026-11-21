@@ -1,0 +1,18 @@
+{
+  "fork_commit": "8eec087303670c6ff04af516d78102ad26f7c196",
+  "fork": {
+    "available": true,
+    "local_commit": "8eec087303670c6ff04af516d78102ad26f7c196",
+    "remote_commit": "8eec087303670c6ff04af516d78102ad26f7c196",
+    "synchronization": "verified"
+  },
+  "parent_commit": "4a0bf1c946f3058b03278e600f83e99fe9e1cfc4",
+  "parent": {
+    "available": true,
+    "local_commit": "4a0bf1c946f3058b03278e600f83e99fe9e1cfc4",
+    "remote_commit": "4a0bf1c946f3058b03278e600f83e99fe9e1cfc4",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "8e295aa0751de6bb99380972c2be089960ce125bf57b7c65a7f6cfd1eb5c7a5c",
+  "scope": "Twelve CPU/file fixtures; native action-history binding only, full game acceptance OPEN"
+}
