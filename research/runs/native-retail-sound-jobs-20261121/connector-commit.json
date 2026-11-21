@@ -1,0 +1,35 @@
+{
+  "sha": "f73b8d30fc1daa3a3998340daefd56280bd324be",
+  "node_id": "C_kwDOVceSb9oAKGY3M2I4ZDMwZmMxZGFhM2EzOTk4MzQwZGFlZmQ1NjI4MGJkMzI0YmU",
+  "url": "https://api.github.com/repos/nahshongraham97/ps2-native-recomp/git/commits/f73b8d30fc1daa3a3998340daefd56280bd324be",
+  "html_url": "https://github.com/nahshongraham97/ps2-native-recomp/commit/f73b8d30fc1daa3a3998340daefd56280bd324be",
+  "author": {
+    "name": "nahshongraham97",
+    "email": "nahshongraham97@gmail.com",
+    "date": "2026-11-21T22:31:38Z"
+  },
+  "committer": {
+    "name": "nahshongraham97",
+    "email": "nahshongraham97@gmail.com",
+    "date": "2026-11-21T22:31:38Z"
+  },
+  "tree": {
+    "sha": "06266046ca79626a10e60467c16ae9c22ea2b1d2",
+    "url": "https://api.github.com/repos/nahshongraham97/ps2-native-recomp/git/trees/06266046ca79626a10e60467c16ae9c22ea2b1d2"
+  },
+  "message": "Build native sound-bank jobs and preserve ownership failure evidence",
+  "parents": [
+    {
+      "sha": "8d3c37b2872e30fd84f5c028c04cb5cb1eee1be3",
+      "url": "https://api.github.com/repos/nahshongraham97/ps2-native-recomp/git/commits/8d3c37b2872e30fd84f5c028c04cb5cb1eee1be3",
+      "html_url": "https://github.com/nahshongraham97/ps2-native-recomp/commit/8d3c37b2872e30fd84f5c028c04cb5cb1eee1be3"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}

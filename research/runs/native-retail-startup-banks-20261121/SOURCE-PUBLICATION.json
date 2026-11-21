@@ -1,0 +1,41 @@
+{
+  "repository": "nahshongraham97/ps2-native-recomp",
+  "remote_commit": {
+    "sha": "61b12f50dbb24cd19ea9867e5738e9340252e12c",
+    "node_id": "C_kwDOVceSb9oAKDYxYjEyZjUwZGJiMjRjZDE5ZWE5ODY3ZTU3MzhlOTM0MDI1MmUxMmM",
+    "url": "https://api.github.com/repos/nahshongraham97/ps2-native-recomp/git/commits/61b12f50dbb24cd19ea9867e5738e9340252e12c",
+    "html_url": "https://github.com/nahshongraham97/ps2-native-recomp/commit/61b12f50dbb24cd19ea9867e5738e9340252e12c",
+    "author": {
+      "name": "nahshongraham97",
+      "email": "nahshongraham97@gmail.com",
+      "date": "2026-11-21T23:29:26Z"
+    },
+    "committer": {
+      "name": "nahshongraham97",
+      "email": "nahshongraham97@gmail.com",
+      "date": "2026-11-21T23:29:26Z"
+    },
+    "tree": {
+      "sha": "6caa7aa67a57cfbda2cc7766eb78d1c350a414a3",
+      "url": "https://api.github.com/repos/nahshongraham97/ps2-native-recomp/git/trees/6caa7aa67a57cfbda2cc7766eb78d1c350a414a3"
+    },
+    "message": "Check real startup bank completion and cancellation from clean native source",
+    "parents": [
+      {
+        "sha": "81d66f057e80cf05a510f7f6ad4af837c338c74d",
+        "url": "https://api.github.com/repos/nahshongraham97/ps2-native-recomp/git/commits/81d66f057e80cf05a510f7f6ad4af837c338c74d",
+        "html_url": "https://github.com/nahshongraham97/ps2-native-recomp/commit/81d66f057e80cf05a510f7f6ad4af837c338c74d"
+      }
+    ],
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "same_tree": "6caa7aa67a57cfbda2cc7766eb78d1c350a414a3",
+  "original_authored_commit": "ef53c205a2f5c3373b6c75f0a6f9d2c9351eb9e4",
+  "published": true
+}

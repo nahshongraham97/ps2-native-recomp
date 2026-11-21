@@ -1,0 +1,820 @@
+{
+  "manifest": {
+    "repository_full_name": "nahshongraham97/ps2-native-recomp",
+    "root": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp",
+    "base": "a6d749c269779cf0c282a2d3b28264d8b84e1f64",
+    "local_head": "56e079bf361507ffa9bf7698fbf707de0ef5da86",
+    "tree": "4761b59c3664c18af174c7a6ec75718c4c3afe9b",
+    "message": "Fix loose-asset client deployment and record clean-file verification and audio correction",
+    "entries": [
+      {
+        "path": "cmake/native_game.cmake",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "9e2b755df72050a16a037a79b7b917aa60a9133f",
+        "size": 39263
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/WORK.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "be5cfc81c3a0d526c4912222a42a8e9e8f541103",
+        "size": 886
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/WORK.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "5faf368de747bde02e50bb4ba030475359af629a",
+        "size": 2588
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/before/sample_payload.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3b9d241f2f567f1d3482714e6238b54458775a30",
+        "size": 7588
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/before/sound_archive.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "9ac18c33392c66b61dc270a48b8fca192efff1a8",
+        "size": 16305
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/reproduction-01/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4949343161d7efcfeab827a98a91cf2a31b5d4ea",
+        "size": 7176
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/reproduction-02/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "0fe9afca313928de214f70a52f9b1b9eae95d33d",
+        "size": 4833
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/reproduction-02/execute.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3be93b4e9a3c8971a6565d9bf04f3bd55f2f6936",
+        "size": 544
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/scope.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "0be3564b5b5f13fa459ab1a32342c2674f94d155",
+        "size": 549
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/verification-01/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3d4ef442761218056dd79668c5571d41be11683b",
+        "size": 1030
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/verification-01/test_native_content_sound_archive.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "342b5017b0a6eeaed09ce54c877589336eab46a9",
+        "size": 539
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/verification-01/test_native_retail_sound_bank_jobs.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b601853e9f799cda67f88aa29f3ed69952197bd7",
+        "size": 542
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/verification-01/test_native_sound_file_errors.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ba81b796ecf7a419d435af53b8cb7a09392d4637",
+        "size": 534
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/verification-01/verification.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "cf09db31dbbcf432ccb4fe6504b83d3f6dedb514",
+        "size": 1439
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/verification-02/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "2d29601d9589de99185b36d6cf42430ba6230ddb",
+        "size": 632
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/verification-02/execute.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c99d0877d837a47da8d4c25afb81c15be4c7aff2",
+        "size": 504
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/verification-02/verification.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "86392632959e33ccdb58de8c1fad206180e6fcad",
+        "size": 702
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/focused-01/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c14e47262405f406f4758ff9a75966779770a081",
+        "size": 8324
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/focused-01/provenance.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "aa5c7e054b798a04da8fe14782846c4a87fc37bd",
+        "size": 2733
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/focused-01/run.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "42f4b0cc3cdf9c0b14fc62fdf69d3f678f95efb8",
+        "size": 674
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/focused-01/verification.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a070dbb1ef02b9eb4493b0a48445b015d80d8d6d",
+        "size": 215
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/MANIFEST.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e16240ddd71d76fc42f55d14cf44eccee4a7f974",
+        "size": 2180
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/cmake/native_game.cmake",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "983d4acf9042917713184e7e5fd684f3fbe753ae",
+        "size": 39542
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/cmake/native_sound_resources.cmake",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "cf387d249f75034c7f6509f5dd8d3d3ed3e855b6",
+        "size": 10220
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/runtime/include/mka/audio_banks.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "98bbad6491032efc517692e14cb0d6a6b0f48e99",
+        "size": 6344
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/runtime/include/mka/audio_resource_domain.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "06cea9962b9f3c09cadedd817d1558bd7ce86805",
+        "size": 3146
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/runtime/include/mka/sample_payload.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "0671594d195a37dc17b291ba973e1dd5547a3d88",
+        "size": 2681
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/runtime/include/mka/sound_archive.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3c925780a1c84561162ba898d9a09fe6746085fc",
+        "size": 4921
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/runtime/include/mka/stream_source.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4587430d53e1c41703b18f71d93addeb4d044dcf",
+        "size": 3160
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/runtime/src/native/audio_banks.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3516954ffc4d55214fc1c14856cad8298dc5f68f",
+        "size": 19741
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/runtime/src/native/sample_payload.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "8f776a9463e31f9c1e4588030f731a2fc9213dc7",
+        "size": 7701
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/runtime/src/native/sound_archive.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "10c46e84e232fa58dd8c9ec636c1904625a414fc",
+        "size": 16493
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/runtime/src/native/stream_source.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bd37681514a4f677d64680c82e2015ed8131e21c",
+        "size": 7627
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/tests/test_content_sound_archive.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "1f0cf94e200f862ac03239e5427ac188c270003a",
+        "size": 10759
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/tests/test_sound_file_errors.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4d7c136989285d13643381f8b10f6d0ee71fe1f4",
+        "size": 7041
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/tracked-change.patch.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "dd0a894adf0d5982cc63b04d7675f9d7511b5b04",
+        "size": 45138
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/staging-patch-failure.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bc4c58d8fbbe9de344e4506a660683b4842017f8",
+        "size": 387
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/validation-connected-01/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3556518b041f5522306703f0f7cee9ed1c4fd891",
+        "size": 531
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/validation-connected-01/execute.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ad74831b50220f68aac5c0f4a0f2a1dce8d80c1c",
+        "size": 494
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/validation-connected-01/verification.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7199e5ba311a1f194f4afe9277fdc218133e4a8d",
+        "size": 1583
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/PUBLICATION.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "cf8947a6d0fad006ff4ef34d821149c0b12c0366",
+        "size": 218
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/WORK.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c1511ea6f3f4669647e6b25ccfbb775ad88e0ff1",
+        "size": 5235
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/before-cmake/native_game.cmake",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "53d013164931e2b791a74948ab61ee5180f86ea9",
+        "size": 39473
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-01/configure.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "250bd06dbc2f18b32db0d52539279b1b73fee4ad",
+        "size": 2026
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-02/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "84eef0aac13552d84ea72396e7cef9bed9cc4c72",
+        "size": 26147
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-02/configure.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "5b96380ed6ff8e95faa50cde6e8b35734e351911",
+        "size": 6072
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-02/imports.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e9cacff640d2622378a2903e700fa13abaa09d0a",
+        "size": 9606
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-02/sdk.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "386a8bd59cb933e70ae0defed2ae5b29a40bb1a7",
+        "size": 11061
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-02/test_native_retail_package.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4f24e34f749782af1718c02948d79a2e01f20d04",
+        "size": 610
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-03/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a5c5e99444694bc9dd9620682b4514620182cbe8",
+        "size": 5470
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-03/test_native_retail_package.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "f827fc740cb8157549337316253f7f5f71e4d46e",
+        "size": 724
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-03/test_native_retail_package_errors.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "dbe3ece80a51ae3c37b9ad47808d6d6b439ab908",
+        "size": 587
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-03/verification.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a1d8431f655e3212c856c56aaf1b455fc2525e6c",
+        "size": 944
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/cmake-fix.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "27a96e4c1e17516fa63911ff1927d8a06d940aed",
+        "size": 495
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/connector-commit.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "53c95459ba1d5d4073527b681e7ff86b9ec4541c",
+        "size": 17814
+      }
+    ],
+    "upload": [
+      {
+        "path": "cmake/native_game.cmake",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "9e2b755df72050a16a037a79b7b917aa60a9133f",
+        "size": 39263
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/WORK.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "be5cfc81c3a0d526c4912222a42a8e9e8f541103",
+        "size": 886
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/WORK.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "5faf368de747bde02e50bb4ba030475359af629a",
+        "size": 2588
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/before/sample_payload.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3b9d241f2f567f1d3482714e6238b54458775a30",
+        "size": 7588
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/before/sound_archive.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "9ac18c33392c66b61dc270a48b8fca192efff1a8",
+        "size": 16305
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/reproduction-01/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4949343161d7efcfeab827a98a91cf2a31b5d4ea",
+        "size": 7176
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/reproduction-02/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "0fe9afca313928de214f70a52f9b1b9eae95d33d",
+        "size": 4833
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/reproduction-02/execute.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3be93b4e9a3c8971a6565d9bf04f3bd55f2f6936",
+        "size": 544
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/scope.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "0be3564b5b5f13fa459ab1a32342c2674f94d155",
+        "size": 549
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/verification-01/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3d4ef442761218056dd79668c5571d41be11683b",
+        "size": 1030
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/verification-01/test_native_content_sound_archive.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "342b5017b0a6eeaed09ce54c877589336eab46a9",
+        "size": 539
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/verification-01/test_native_retail_sound_bank_jobs.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b601853e9f799cda67f88aa29f3ed69952197bd7",
+        "size": 542
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/verification-01/test_native_sound_file_errors.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ba81b796ecf7a419d435af53b8cb7a09392d4637",
+        "size": 534
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/verification-01/verification.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "cf09db31dbbcf432ccb4fe6504b83d3f6dedb514",
+        "size": 1439
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/verification-02/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "2d29601d9589de99185b36d6cf42430ba6230ddb",
+        "size": 632
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/verification-02/execute.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c99d0877d837a47da8d4c25afb81c15be4c7aff2",
+        "size": 504
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/error-propagation/verification-02/verification.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "86392632959e33ccdb58de8c1fad206180e6fcad",
+        "size": 702
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/focused-01/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c14e47262405f406f4758ff9a75966779770a081",
+        "size": 8324
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/focused-01/provenance.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "aa5c7e054b798a04da8fe14782846c4a87fc37bd",
+        "size": 2733
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/focused-01/run.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "42f4b0cc3cdf9c0b14fc62fdf69d3f678f95efb8",
+        "size": 674
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/focused-01/verification.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a070dbb1ef02b9eb4493b0a48445b015d80d8d6d",
+        "size": 215
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/MANIFEST.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e16240ddd71d76fc42f55d14cf44eccee4a7f974",
+        "size": 2180
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/cmake/native_game.cmake",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "983d4acf9042917713184e7e5fd684f3fbe753ae",
+        "size": 39542
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/cmake/native_sound_resources.cmake",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "cf387d249f75034c7f6509f5dd8d3d3ed3e855b6",
+        "size": 10220
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/runtime/include/mka/audio_banks.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "98bbad6491032efc517692e14cb0d6a6b0f48e99",
+        "size": 6344
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/runtime/include/mka/audio_resource_domain.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "06cea9962b9f3c09cadedd817d1558bd7ce86805",
+        "size": 3146
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/runtime/include/mka/sample_payload.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "0671594d195a37dc17b291ba973e1dd5547a3d88",
+        "size": 2681
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/runtime/include/mka/sound_archive.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3c925780a1c84561162ba898d9a09fe6746085fc",
+        "size": 4921
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/runtime/include/mka/stream_source.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4587430d53e1c41703b18f71d93addeb4d044dcf",
+        "size": 3160
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/runtime/src/native/audio_banks.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3516954ffc4d55214fc1c14856cad8298dc5f68f",
+        "size": 19741
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/runtime/src/native/sample_payload.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "8f776a9463e31f9c1e4588030f731a2fc9213dc7",
+        "size": 7701
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/runtime/src/native/sound_archive.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "10c46e84e232fa58dd8c9ec636c1904625a414fc",
+        "size": 16493
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/runtime/src/native/stream_source.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bd37681514a4f677d64680c82e2015ed8131e21c",
+        "size": 7627
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/tests/test_content_sound_archive.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "1f0cf94e200f862ac03239e5427ac188c270003a",
+        "size": 10759
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/tests/test_sound_file_errors.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4d7c136989285d13643381f8b10f6d0ee71fe1f4",
+        "size": 7041
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/preserved-working-tree/tracked-change.patch.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "dd0a894adf0d5982cc63b04d7675f9d7511b5b04",
+        "size": 45138
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/staging-patch-failure.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bc4c58d8fbbe9de344e4506a660683b4842017f8",
+        "size": 387
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/validation-connected-01/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3556518b041f5522306703f0f7cee9ed1c4fd891",
+        "size": 531
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/validation-connected-01/execute.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ad74831b50220f68aac5c0f4a0f2a1dce8d80c1c",
+        "size": 494
+      },
+      {
+        "path": "research/runs/native-retail-content-sound-20261121/validation-connected-01/verification.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7199e5ba311a1f194f4afe9277fdc218133e4a8d",
+        "size": 1583
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/PUBLICATION.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "cf8947a6d0fad006ff4ef34d821149c0b12c0366",
+        "size": 218
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/WORK.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c1511ea6f3f4669647e6b25ccfbb775ad88e0ff1",
+        "size": 5235
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/before-cmake/native_game.cmake",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "53d013164931e2b791a74948ab61ee5180f86ea9",
+        "size": 39473
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-01/configure.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "250bd06dbc2f18b32db0d52539279b1b73fee4ad",
+        "size": 2026
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-02/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "84eef0aac13552d84ea72396e7cef9bed9cc4c72",
+        "size": 26147
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-02/configure.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "5b96380ed6ff8e95faa50cde6e8b35734e351911",
+        "size": 6072
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-02/imports.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e9cacff640d2622378a2903e700fa13abaa09d0a",
+        "size": 9606
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-02/sdk.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "386a8bd59cb933e70ae0defed2ae5b29a40bb1a7",
+        "size": 11061
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-02/test_native_retail_package.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4f24e34f749782af1718c02948d79a2e01f20d04",
+        "size": 610
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-03/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a5c5e99444694bc9dd9620682b4514620182cbe8",
+        "size": 5470
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-03/test_native_retail_package.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "f827fc740cb8157549337316253f7f5f71e4d46e",
+        "size": 724
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-03/test_native_retail_package_errors.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "dbe3ece80a51ae3c37b9ad47808d6d6b439ab908",
+        "size": 587
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/clean-build-03/verification.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a1d8431f655e3212c856c56aaf1b455fc2525e6c",
+        "size": 944
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/cmake-fix.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "27a96e4c1e17516fa63911ff1927d8a06d940aed",
+        "size": 495
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/connector-commit.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "53c95459ba1d5d4073527b681e7ff86b9ec4541c",
+        "size": 17814
+      }
+    ]
+  },
+  "remote_commit": {
+    "sha": "81d66f057e80cf05a510f7f6ad4af837c338c74d",
+    "node_id": "C_kwDOVceSb9oAKDgxZDY2ZjA1N2U4MGNmMDVhNTEwZjdmNmFkNGFmODM3YzMzOGM3NGQ",
+    "url": "https://api.github.com/repos/nahshongraham97/ps2-native-recomp/git/commits/81d66f057e80cf05a510f7f6ad4af837c338c74d",
+    "html_url": "https://github.com/nahshongraham97/ps2-native-recomp/commit/81d66f057e80cf05a510f7f6ad4af837c338c74d",
+    "author": {
+      "name": "nahshongraham97",
+      "email": "nahshongraham97@gmail.com",
+      "date": "2026-11-21T23:22:35Z"
+    },
+    "committer": {
+      "name": "nahshongraham97",
+      "email": "nahshongraham97@gmail.com",
+      "date": "2026-11-21T23:22:35Z"
+    },
+    "tree": {
+      "sha": "4761b59c3664c18af174c7a6ec75718c4c3afe9b",
+      "url": "https://api.github.com/repos/nahshongraham97/ps2-native-recomp/git/trees/4761b59c3664c18af174c7a6ec75718c4c3afe9b"
+    },
+    "message": "Fix loose-asset client deployment and record clean-file verification and audio correction",
+    "parents": [
+      {
+        "sha": "a6d749c269779cf0c282a2d3b28264d8b84e1f64",
+        "url": "https://api.github.com/repos/nahshongraham97/ps2-native-recomp/git/commits/a6d749c269779cf0c282a2d3b28264d8b84e1f64",
+        "html_url": "https://github.com/nahshongraham97/ps2-native-recomp/commit/a6d749c269779cf0c282a2d3b28264d8b84e1f64"
+      }
+    ],
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "clean_build_source_commit": "330c32841048a7e72cc61d151b6437c08de50b4d"
+}
