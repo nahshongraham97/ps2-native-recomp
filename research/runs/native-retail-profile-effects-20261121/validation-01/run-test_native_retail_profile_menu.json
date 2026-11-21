@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_profile_menu.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS profile menu with actual scene lookup,18A260,18B0D0 and1892D0; required action/event/task producers open\n",
+  "stderr": "",
+  "executable_sha256": "b365f32433a56658f57b2267cc038955a557f825377fa4386075f2b262e6947f",
+  "executable_after_sha256": "b365f32433a56658f57b2267cc038955a557f825377fa4386075f2b262e6947f"
+}

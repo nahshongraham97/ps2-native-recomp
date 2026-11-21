@@ -2,6 +2,9 @@
 #include "mka/retail_main.hpp"
 #include "mka/retail_mode_state.hpp"
 #include "mka/retail_participants.hpp"
+#include "mka/retail_profile_entry_decision.hpp"
+#include "mka/retail_profile_transition_child.hpp"
+#include "mka/retail_input_assignments.hpp"
 #include "native_retail_startup.hpp"
 #include "retail_main_control.hpp"
 
@@ -38,8 +41,8 @@ void state(mka::retail::NativeRetailMainState& main,
 }
 } // namespace
 
-// Only the still-missing action/18B0D0 bodies are test-only. Scene lookup and
-// 18A260 use production code and the actual retained Session/object/fields.
+// Getter,18A260,18B0D0 and1892D0 are production. Only actual missing
+// action/permission/event/task effects below are fixture-defined.
 namespace mka::retail {
 bool invoke_retail_profile_select_from_2f1630(
     NativeRetailMainState& main, std::string_view path, RetailProfileMenuFailure&) {
@@ -57,12 +60,18 @@ bool invoke_retail_profile_select_from_2f1630(
     }
     return true;
 }
-bool transition_retail_profile_from_18b0d0(
-    NativeRetailMainState& main, std::uint32_t role, std::uint32_t argument,
+std::optional<std::uint32_t> observe_retail_profile_permission_from_4eee60(
+    NativeRetailMainState&,std::uint32_t,RetailProfileMenuFailure&) { return 0u; }
+bool publish_retail_profile_participant_from_189690(
+    NativeRetailMainState&,const std::shared_ptr<NativeRetailInputParticipant>&,
     RetailProfileMenuFailure&) {
-    require((role == 0 && argument == 0) || (role == 1 && argument == 9),
-        "source 18B0D0 argument pair");
-    children.calls.push_back("18b0d0_" + std::to_string(role));
+    require(false,"baseline index zero must not reach publication in this fixture");
+    return false;
+}
+bool apply_retail_profile_participant_from_188720(
+    NativeRetailMainState& main, std::uint32_t role,
+    RetailProfileMenuFailure&) {
+    children.calls.push_back("188720_" + std::to_string(role));
     if (role == 0 && children.first_transition_changes_second)
         state(main, 1, 2);
     return true;
@@ -111,7 +120,18 @@ int main() {
         RetailParticipantFailure participant_failure;
         main.participants = NativeRetailParticipants::create_first_two(participant_failure);
         require(bool(main.participants), "source-born first two participants");
+        RetailInputRoleFailure role_failure;
+        auto roles = NativeRetailInputRoles::create(role_failure);
+        RetailInputAssignmentFailure assignment_failure;
+        auto assignments = NativeRetailInputAssignments::create(roles,main.participants,assignment_failure);
+        require(assignments && assignments->bind_direct(
+            main.participants->first_two(0,participant_failure),RetailInputRole::role0,assignment_failure),
+            "real assignment changes first ordinal from five to zero");
         RetailGameSessionFailure session_failure;
+        std::array<RetailProfileAggregateParentView,2> parents{{{5,0,{}},{5,0,{}}}};
+        RetailProfileAggregateFailure aggregate_failure;
+        require(startup.game_session->profile_aggregate(session_failure)->refresh_data_from_2432a0(
+            parents,0,aggregate_failure),"actual profile mask computation before decision child");
         require(startup.game_session->store_scalar_mode_from_source(3, session_failure),
             "explicit non-four source mode for ordered lane writes");
         RetailProfileSceneValues initial{};
@@ -135,7 +155,7 @@ int main() {
         children.first_transition_changes_second = true;
         require(run_retail_profile_menu_from_1888c0(main, failure) &&
             children.calls == std::vector<std::string>{
-                "p_select", "18b0d0_0", "18b0d0_1"} &&
+                "p_select", "188720_0", "188720_1"} &&
             scene->observe(object_failure)->values.word_60 == 8 &&
             scene->observe(object_failure)->values.lanes[0].word_2c == 1 &&
             scene->observe(object_failure)->values.lanes[1].word_2c == 1,
@@ -147,7 +167,7 @@ int main() {
         children.first_transition_changes_second = true;
         require(run_retail_profile_menu_from_1888c0(main, failure) &&
             children.calls == std::vector<std::string>{
-                "p_select", "18b0d0_0", "18b0d0_1"} &&
+                "p_select", "188720_0", "188720_1"} &&
             scene->observe(object_failure)->values.word_60 == 7,
             "first transition changes live second status before final branch");
 
@@ -202,5 +222,5 @@ int main() {
             children.calls.empty(), "foreign Main call refuses before child effects");
     }
     require(std::filesystem::remove(root), "retire exclusively owned empty fixture root");
-    std::cout << "PASS profile menu with actual Session scene lookup and 18A260; test-only action/18B0D0 children, full producer open\n";
+    std::cout << "PASS profile menu with actual scene lookup,18A260,18B0D0 and1892D0; required action/event/task producers open\n";
 }

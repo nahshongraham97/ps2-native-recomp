@@ -50,6 +50,10 @@ public:
     // Same selected lane, then shared counter; no calls between those stores.
     bool stage_from_18a260(std::uint32_t role, bool source_byte14_bit0,
         RetailProfileSceneObjectFailure&) noexcept;
+    // The original18B0D0 stores the caller's word to +10/+3C at two distinct
+    // source points. Keep this separate from18A260's lane/counter stores.
+    bool store_lane_word_from_18b0d0(std::uint32_t role, std::uint32_t value,
+        RetailProfileSceneObjectFailure&) noexcept;
     std::optional<RetailProfileSceneObjectObservation> observe(
         RetailProfileSceneObjectFailure&) const noexcept;
 private:

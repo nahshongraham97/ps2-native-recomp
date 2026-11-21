@@ -1,6 +1,7 @@
 # Connected native live-scene and profile transition — 2026-11-21
 
-Current measured result: `validation-02/verification.json`, SHA-256
+Historical checkpoint result (superseded by the connected Work72/73 result in
+`../native-retail-profile-effects-20261121/README.md`): `validation-02/verification.json`, SHA-256
 `b539548a5b8ad757983da032a545039df35716578da55c1e2a5edf2e464d9a7d`.
 Status: `PASS_NATIVE_LIVE_SCENE_PROFILE_TRANSITION_CPU_CHECKS`.
 
@@ -35,9 +36,10 @@ The saved existing Ghidra program matches the original retail ELF; all11 getter,
 bytes. Full Work70/71 raw ranges and vtable data also join the original image.
 The processor-extension version was not reported and is not inferred.
 
-## Remaining production work
+## Remaining production work at this historical checkpoint
 
-The separate profile-effect fixture now refuses exactly three real children:
+At this checkpoint the separate profile-effect fixture refused exactly three
+real children:
 `invoke_retail_profile_select_from_2f1630`,
 `transition_retail_profile_from_18b0d0`, and
 `retire_matching_retail_secret_camera_from_446f80`.

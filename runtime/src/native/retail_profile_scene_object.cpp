@@ -94,6 +94,16 @@ bool NativeRetailProfileSceneObject::stage_from_18a260(std::uint32_t role,
     values_.word_60-=std::uint32_t{1};
     return true;
 }
+bool NativeRetailProfileSceneObject::store_lane_word_from_18b0d0(
+    std::uint32_t role,std::uint32_t value,RetailProfileSceneObjectFailure& f) noexcept {
+    const auto session=lock_owner(f);
+    if(!session) return false;
+    if(retired_) return fail(f,RetailProfileSceneObjectError::retired,"18B0D0 retired menu object lane");
+    if(role>=values_.lanes.size())
+        return fail(f,RetailProfileSceneObjectError::invalid_role,"18B0D0 source role outside0/1");
+    values_.lanes[role].word_10=value;
+    return true;
+}
 std::optional<RetailProfileSceneObjectObservation> NativeRetailProfileSceneObject::observe(
     RetailProfileSceneObjectFailure& f) const noexcept {
     const auto session=lock_owner(f);

@@ -14,7 +14,8 @@ struct NativeRetailMainState;
 enum class RetailProfileMenuError {
     none, main_lifetime, missing_mode_history, missing_participants,
     participant, required_child, allocation, native_exception_after_effect,
-    session, scene_reference, scene_object, invalid_role
+    session, scene_reference, scene_object, invalid_role, controls, task_domain,
+    profile_entry_index
 };
 struct RetailProfileMenuFailure {
     RetailProfileMenuError kind{RetailProfileMenuError::none};
@@ -33,8 +34,8 @@ bool run_retail_profile_menu_from_1888c0(
 
 // Source children use native error channels, not replacement retail results.
 // Live reference observation uses the retained Session cookie pair. Resource
-// action and18B0D0 remain strong requirements until their bodies are ported.
-// The18A260 adapter also preserves its source0/1 result through its own API.
+// action remains a strong requirement. The18A260/18B0D0 bodies preserve their
+// source effects and require actual downstream decision/event/task services.
 std::optional<bool> observe_retail_profile_live_scene_from_2f18f0(
     NativeRetailMainState&, RetailProfileMenuFailure&);
 bool invoke_retail_profile_select_from_2f1630(

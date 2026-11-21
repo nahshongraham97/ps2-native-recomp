@@ -1,5 +1,7 @@
 #include "mka/retail_profile_aggregate_main.hpp"
 #include "mka/retail_main.hpp"
+#include "mka/retail_profile_entry_decision.hpp"
+#include "mka/retail_profile_transition_child.hpp"
 #include "native_retail_startup.hpp"
 #include "../runtime/src/native/retail_main_control.hpp"
 
@@ -27,9 +29,16 @@ bool invoke_retail_profile_select_from_2f1630(NativeRetailMainState& main,
     main.startup.game_session->game_records_values(failure)->word_64e318 = 0x456;
     return true;
 }
-bool transition_retail_profile_from_18b0d0(NativeRetailMainState&, std::uint32_t role,
-    std::uint32_t argument, RetailProfileMenuFailure&) {
-    check(role == 0 && argument == 0, "expected source first participant transition");
+std::optional<std::uint32_t> observe_retail_profile_permission_from_4eee60(
+    NativeRetailMainState&,std::uint32_t,RetailProfileMenuFailure&) { return 0u; }
+bool publish_retail_profile_participant_from_189690(
+    NativeRetailMainState&,const std::shared_ptr<NativeRetailInputParticipant>&,
+    RetailProfileMenuFailure&) {
+    throw std::runtime_error("unexpected source event publication for baseline index zero");
+}
+bool apply_retail_profile_participant_from_188720(NativeRetailMainState&,std::uint32_t role,
+    RetailProfileMenuFailure&) {
+    check(role == 0, "expected first participant source task transition");
     return true;
 }
 }
@@ -88,7 +97,7 @@ int main(int argc, char** argv) {
             failure.kind == RetailProfileAggregateMainError::menu &&
             aggregate->observe(af)->or_words_660508_510_518_520[1] == 0x789,
             "named menu failure never rolls back source-before-call data effects");
-        std::puts("PASS same-Session aggregate, actual scene lookup and menu ordering; test-only action/18B0D0, full saved profiles open");
+        std::puts("PASS same-Session aggregate through actual menu,18B0D0 and1892D0; required action/event/task producers open");
         return 0;
     } catch (const std::exception& e) {
         std::fprintf(stderr,"FAIL native aggregate Main flow: %s\n",e.what()); return 1;

@@ -3,6 +3,8 @@
 #include "mka/retail_profile_scene_object.hpp"
 #include "mka/retail_live_scene_reference.hpp"
 #include "mka/retail_participants.hpp"
+#include "mka/retail_profile_entry_decision.hpp"
+#include "mka/retail_profile_transition_child.hpp"
 #include "native_retail_startup.hpp"
 #include "retail_main_control.hpp"
 
@@ -23,7 +25,7 @@ void check(bool okay, const char* label) {
 }
 struct ChildState {
     unsigned calls{};
-    std::uint32_t role{}, argument{};
+    std::uint32_t role{}, publications{};
     bool refuse{}, transfer{}, saw_live_scene{};
 } child;
 
@@ -43,14 +45,17 @@ std::uint32_t status(mka::retail::NativeRetailMainState& main,
 }
 } // namespace
 
-// Test-only definition: the real 18B0D0 and its reached effects stay
-// unresolved in production.
+// Actual18A260,18B0D0 and1892D0 connect to these explicit missing leaf effects.
 namespace mka::retail {
-bool transition_retail_profile_from_18b0d0(NativeRetailMainState& main,
-    std::uint32_t role, std::uint32_t argument, RetailProfileMenuFailure&) {
+std::optional<std::uint32_t> observe_retail_profile_permission_from_4eee60(
+    NativeRetailMainState&,std::uint32_t,RetailProfileMenuFailure&) { return 0u; }
+bool publish_retail_profile_participant_from_189690(
+    NativeRetailMainState&,const std::shared_ptr<NativeRetailInputParticipant>&,
+    RetailProfileMenuFailure&) { ++child.publications;return true; }
+bool apply_retail_profile_participant_from_188720(NativeRetailMainState& main,
+    std::uint32_t role, RetailProfileMenuFailure&) {
     ++child.calls;
     child.role = role;
-    child.argument = argument;
     RetailGameSessionFailure sf;
     RetailLiveSceneFailure lf;
     auto* reference = main.startup.game_session->live_scene_reference(sf);
@@ -86,6 +91,10 @@ int main() {
         RetailProfileMenuFailure f;
         RetailGameSessionFailure sf;
         check(bool(startup.game_session), "actual retained game Session");
+        std::array<RetailProfileAggregateParentView,2> parents{{{5,0,{}},{5,0,{}}}};
+        RetailProfileAggregateFailure aggregate_failure;
+        check(startup.game_session->profile_aggregate(sf)->refresh_data_from_2432a0(parents,0,aggregate_failure),
+            "actual source aggregate before nested entry decision");
 
         // The source getter precedes participant access and returns zero for
         // BSS-null, stale cookie, and an expired nonowning reference.
@@ -100,8 +109,8 @@ int main() {
         main.participants = NativeRetailParticipants::create_first_two(pf);
         check(bool(main.participants), "real first-two participant owner");
         RetailProfileSceneValues initial{};
-        initial.lanes[0] = {11, 12, 13};
-        initial.lanes[1] = {21, 22, 23};
+        initial.lanes[0] = {63, 12, 13};
+        initial.lanes[1] = {63, 22, 23};
         initial.word_60 = 0;
         RetailProfileSceneObjectFailure of;
         auto scene = NativeRetailProfileSceneObject::create(
@@ -132,7 +141,8 @@ int main() {
             observed->values.lanes[1].word_2c == 23 &&
             observed->values.word_60 == 0xffffffffu &&
             status(main, 0) == 1 && status(main, 1) == 0 &&
-            child.calls == 1 && child.role == 0 && child.argument == 0 &&
+            child.calls == 1 && child.role == 0 && child.publications == 1 &&
+            observed->values.lanes[0].word_10 == 0 &&
             child.saw_live_scene,
             "role zero ordered scene stores, wrap, selected one, opposite zero, child");
 
@@ -151,7 +161,8 @@ int main() {
             observed->values.lanes[1].word_24 == 0 &&
             observed->values.word_60 == 0xfffffffeu &&
             status(main, 1) == 1 && status(main, 0) == 3 &&
-            child.calls == 1 && child.role == 1 && child.argument == 9,
+            child.calls == 1 && child.role == 1 && child.publications == 1 &&
+            observed->values.lanes[1].word_10 == 9,
             "role one child failure retains preceding source writes");
 
         child = {};
@@ -187,5 +198,5 @@ int main() {
             "source byte +14 bit one maps to scene value two");
     }
     check(std::filesystem::remove(root), "retire empty exclusive fixture root");
-    std::cout << "PASS source-ordered profile transition CPU fixture; real scene producer and 18B0D0 open\n";
+    std::cout << "PASS source-ordered18A260 through actual18B0D0 and1892D0; scene/action/event/task producers open\n";
 }

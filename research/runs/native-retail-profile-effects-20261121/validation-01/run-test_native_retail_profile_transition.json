@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_profile_transition.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS source-ordered18A260 through actual18B0D0 and1892D0; scene/action/event/task producers open\n",
+  "stderr": "",
+  "executable_sha256": "b4a41c1877d6bdc3946cf88d881f52513b90439ac5301a400d277e639a0fe673",
+  "executable_after_sha256": "b4a41c1877d6bdc3946cf88d881f52513b90439ac5301a400d277e639a0fe673"
+}

@@ -220,6 +220,7 @@ if(WIN32)
         runtime/src/native/retail_profile_menu.cpp runtime/src/native/retail_profile_resource_ids.cpp
         runtime/src/native/retail_profile_aggregate_main.cpp
         runtime/src/native/retail_live_scene_main.cpp runtime/src/native/retail_profile_transition.cpp
+        runtime/src/native/retail_profile_transition_child.cpp runtime/src/native/retail_profile_entry_decision.cpp
         runtime/src/native/retail_game_records.cpp
         runtime/src/native/retail_game_records_main.cpp
         runtime/src/native/retail_task_lookup_main.cpp
@@ -269,6 +270,12 @@ if(WIN32)
     add_executable(test_native_retail_profile_transition EXCLUDE_FROM_ALL tests/test_retail_profile_transition.cpp)
     target_include_directories(test_native_retail_profile_transition PRIVATE runtime/src/native)
     target_link_libraries(test_native_retail_profile_transition PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_profile_transition_child EXCLUDE_FROM_ALL tests/test_retail_profile_transition_child.cpp)
+    target_include_directories(test_native_retail_profile_transition_child PRIVATE runtime/src/native)
+    target_link_libraries(test_native_retail_profile_transition_child PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_profile_entry_decision EXCLUDE_FROM_ALL tests/test_retail_profile_entry_decision.cpp)
+    target_include_directories(test_native_retail_profile_entry_decision PRIVATE runtime/src/native)
+    target_link_libraries(test_native_retail_profile_entry_decision PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_profile_resource_ids EXCLUDE_FROM_ALL tests/test_retail_profile_resource_ids.cpp)
     target_link_libraries(test_native_retail_profile_resource_ids PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_profile_aggregate_main EXCLUDE_FROM_ALL tests/test_retail_profile_aggregate_main.cpp)
