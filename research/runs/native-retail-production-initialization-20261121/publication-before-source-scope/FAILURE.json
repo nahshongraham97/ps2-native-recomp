@@ -1,0 +1,31 @@
+{
+  "status": "PUBLICATION_SCOPE_FAILED_BEFORE_COMMIT",
+  "reason": "Read-only verification inputs included ignored third-party SDL path in staging selection; no force-add or dependency change. Corrected to explicit authored paths.",
+  "component_result_unchanged": true,
+  "staged_authored_paths": [
+    "README.md",
+    "cmake/native_game.cmake",
+    "recomp/native_startup_codegen.cpp",
+    "research/runs/native-retail-production-initialization-20261121/check.py",
+    "research/runs/native-retail-production-initialization-20261121/publish.py",
+    "research/runs/native-retail-production-initialization-20261121/validation-01/build.json",
+    "research/runs/native-retail-production-initialization-20261121/validation-01/remaining-entry-link.json",
+    "research/runs/native-retail-production-initialization-20261121/validation-01/source-preflight.json",
+    "research/runs/native-retail-production-initialization-20261121/validation-01/test_native_retail_active_overlay.json",
+    "research/runs/native-retail-production-initialization-20261121/validation-01/test_native_retail_startup_initialization.json",
+    "research/runs/native-retail-production-initialization-20261121/validation-01/verification.json",
+    "runtime/include/mka/allocation_class.hpp",
+    "runtime/include/mka/retail_active_overlay.hpp",
+    "runtime/include/mka/retail_main.hpp",
+    "runtime/include/mka/retail_profile_main_state.hpp",
+    "runtime/include/mka/retail_profile_runtime.hpp",
+    "runtime/src/native/allocation_class.cpp",
+    "runtime/src/native/retail_active_overlay.cpp",
+    "runtime/src/native/retail_active_overlay_main.cpp",
+    "runtime/src/native/retail_post_overlay.cpp",
+    "runtime/src/native/retail_profile_main.cpp",
+    "runtime/src/native/retail_profile_main_state.cpp",
+    "tests/test_retail_active_overlay.cpp",
+    "tests/test_retail_startup_initialization.cpp"
+  ]
+}

@@ -19,7 +19,10 @@ bool role_known(AllocationClassRole r) noexcept {
     case AllocationClassRole::mksobj: case AllocationClassRole::mkproc: case AllocationClassRole::size_64:
     case AllocationClassRole::size_128: case AllocationClassRole::size_256: case AllocationClassRole::size_512:
     case AllocationClassRole::size_2048: case AllocationClassRole::size_4096: case AllocationClassRole::tiny_stack:
-    case AllocationClassRole::big_stack: return true;
+    case AllocationClassRole::big_stack:
+    case AllocationClassRole::npc_stack:
+    case AllocationClassRole::player_collision:
+    case AllocationClassRole::player_attack_collision: return true;
     default: return false;
     }
 }

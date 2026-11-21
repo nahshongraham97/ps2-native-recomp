@@ -33,3 +33,5 @@ endpoint was opened. Parent live status and dated work27 results own scope.
 No owner launch is requested.
 
 Targeted startup-task checkpoint, 2026-11-21: the native18E100 parent/18DB60 continuation and persistent session compile; two affected CPU clients pass. Eleven production child definitions remain required at link. Full entry/input/render/audio/game acceptance remains open. See research/runs/native-retail-initial-task-20261121/validation-01/verification.json and the parent current status.
+
+Production initialization checkpoint, 2026-11-21: profile reset, mode-one GAMER initializer and post-overlay state are wired into native Main. Two targeted clients pass; actual complete-entry link still refuses36 integration names. This is not game/physical-input/render/audio acceptance. See research/runs/native-retail-production-initialization-20261121/validation-01/verification.json and the parent current status.

@@ -232,6 +232,8 @@ std::optional<NativeStartupSources> emit_native_startup_closure(std::span<const 
         return NativeStartupSources{R"STARTUP(#pragma once
 #include "mka/content_volume.hpp"
 #include "mka/retail_memory_owners.hpp"
+#include "mka/retail_profile_main_state.hpp"
+#include "mka/retail_active_overlay.hpp"
 #include "mka/retail_crt.hpp"
 #include "mka/retail_platform.hpp"
 #include "mka/retail_main_timing.hpp"
@@ -246,8 +248,8 @@ std::optional<NativeStartupSources> emit_native_startup_closure(std::span<const 
 #include <utility>
 #include <vector>
 namespace mka::retail {
-enum class StartupError {none,missing_boot_argument,malformed_boot_argument,missing_directory_separator,content,allocation,host_capacity,native_exception,memory_owners,already_initialized,crt,platform,main_timing,game_session,middleware,middleware_frame};
-struct StartupFailure {StartupError kind=StartupError::none;const char* operation="";content::ContentVolumeFailure content;RetailMemoryOwnerFailure memory;RetailCrtFailure crt;RetailPlatformFailure platform;RetailMainTimingFailure timing;RetailGameSessionFailure game;RetailMiddlewareWorkFailure middleware;RetailMiddlewareFrameFailure middleware_frame;};
+enum class StartupError {none,missing_boot_argument,malformed_boot_argument,missing_directory_separator,content,allocation,host_capacity,native_exception,memory_owners,already_initialized,crt,platform,main_timing,game_session,middleware,middleware_frame,profile_main,active_overlay};
+struct StartupFailure {StartupError kind=StartupError::none;const char* operation="";content::ContentVolumeFailure content;RetailMemoryOwnerFailure memory;RetailCrtFailure crt;RetailPlatformFailure platform;RetailMainTimingFailure timing;RetailGameSessionFailure game;RetailMiddlewareWorkFailure middleware;RetailMiddlewareFrameFailure middleware_frame;RetailProfileMainFailure profile_main;RetailActiveOverlayFailure active_overlay;};
 // Native-owned replacements for the original startup arguments and writable
 // content/path state. Host executable location, boot-resource string and volume
 // are separate inputs; no guest argument block, pointer table or BSS is retained.
@@ -256,6 +258,11 @@ struct NativeRetailStartupState {
     std::vector<std::string> boot_arguments;
     std::string resource_prefix,boot_directory;
     std::unique_ptr<NativeRetailMemoryOwners> memory_owners;
+    // Companion class owners below retire before the actual overlay parent.
+    std::unique_ptr<NativeRetailActiveOverlay> active_overlay;
+    // Source profile/class state persists with its real program memory group.
+    // Declared after the group so child owners retire before their parent.
+    std::unique_ptr<NativeRetailProfileMainState> profile_main;
     std::unique_ptr<NativeRetailCrt> crt;
     std::unique_ptr<NativeRetailPlatform> platform;
     // Program-lifetime logical middleware time/callback; retired before platform/CRT.

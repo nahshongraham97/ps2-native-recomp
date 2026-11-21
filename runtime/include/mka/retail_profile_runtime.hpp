@@ -31,8 +31,8 @@ struct RetailProfileRuntimeObservation {
 
 // Program-lifetime numeric profile and native Wave-class generations. This is
 // the storage/reset prerequisite, not the full 182670 or 130350 main binding.
-// The later 311260 overlay classes and full 16-slot 310D30 retirement are
-// outside this owner. Their source effects remain unbound.
+// The later 311260 overlay classes and first three 310D30 retirements belong
+// to NativeRetailProfileMainState, which composes this Wave-only owner.
 // The source memory group must outlive this nonowning reference.
 class NativeRetailProfileRuntime final {
 public:
@@ -42,8 +42,9 @@ public:
     NativeRetailProfileRuntime& operator=(const NativeRetailProfileRuntime&) = delete;
 
     // Models numeric publication followed by retirement of old Wave classes
-    // and 13 new Wave-child constructions. The preceding three overlay slots,
-    // parent's 42A0B0 reset, callbacks and pool/object effects remain unbound.
+    // and 13 new Wave-child constructions. The preceding three overlay slots
+    // are handled by NativeRetailProfileMainState; parent resets and later
+    // callback/pool/object effects have separate source callpoints.
     bool apply_numeric_and_wave_classes(const NativeClassProfilePlan&,
         NativeRetailMemoryOwners&, RetailProfileRuntimeFailure&) noexcept;
     std::optional<RetailProfileRuntimeObservation> observe(

@@ -107,6 +107,8 @@ struct NativeRetailMainState {
     std::uint32_t iteration{}, ordinary_iteration{}, reentry_value{};
     std::uint32_t accumulated_input{}, previous_input{}, rising_input{};
     std::uint32_t mode_tick{}, sixty_step_intervals{}, mode_six_intervals{};
+    // Persistent Main game value cleared by original 182E50 (64E29C).
+    std::uint32_t post_overlay_state{};
     bool pre_loop_source_flag{};
 };
 

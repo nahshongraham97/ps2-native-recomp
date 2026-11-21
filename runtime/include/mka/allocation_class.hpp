@@ -7,7 +7,8 @@
 namespace mka::memory {
 enum class AllocationClassRole {
     unbound, pfx, mkobj, mkbone, mksobj, mkproc,
-    size_64, size_128, size_256, size_512, size_2048, size_4096, tiny_stack, big_stack
+    size_64, size_128, size_256, size_512, size_2048, size_4096, tiny_stack, big_stack,
+    npc_stack, player_collision, player_attack_collision
 };
 // Supported direct native payload only; no typed object-init or callback route implied.
 enum class AllocationClassSchema { unbound, source_kind2_payload };

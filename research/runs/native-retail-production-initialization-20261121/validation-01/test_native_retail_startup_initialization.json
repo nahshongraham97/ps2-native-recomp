@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_startup_initialization.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules"
+  ],
+  "exit": 0,
+  "stdout": "PASS real native startup profile, GAMER initializer and post-overlay state; full entry remains open\n",
+  "stderr": "",
+  "executable_sha256": "588e22761372ace3c637a37b8ab50480f6d427e98b6b7f0f32d28aab952943b1",
+  "executable_after_sha256": "588e22761372ace3c637a37b8ab50480f6d427e98b6b7f0f32d28aab952943b1"
+}
