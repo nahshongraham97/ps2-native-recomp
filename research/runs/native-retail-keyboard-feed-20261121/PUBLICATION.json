@@ -1,0 +1,18 @@
+{
+  "fork_commit": "fe7b73a4e59a629e5e5ef601ae0d198fff4c914e",
+  "fork": {
+    "available": true,
+    "remote_commit": "fe7b73a4e59a629e5e5ef601ae0d198fff4c914e",
+    "synchronization": "verified"
+  },
+  "parent_commit": "476806bf90f2b07326db71710e020f09871ffe25",
+  "parent": {
+    "available": true,
+    "local_commit": "476806bf90f2b07326db71710e020f09871ffe25",
+    "remote_commit": "476806bf90f2b07326db71710e020f09871ffe25",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "8181da7cd62dd02e6ab3b5f0bfc058d5cd83b94891b8c1d0c784a9100856527e",
+  "scope": "Thirteen CPU/file clients and actual platform archive compiled; UI/physical input/complete-game acceptance OPEN",
+  "publication_recovery": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-keyboard-feed-07\\PUBLICATION_RECOVERY.json"
+}

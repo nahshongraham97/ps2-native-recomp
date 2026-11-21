@@ -20,11 +20,12 @@ runtime-translation descriptions, is preserved for provenance at
 `research/history/native-port-docs-2026-11-18/README.md`. Those instructions
 do not describe the accepted Armageddon route.
 
-The source-ordered native entry remains incomplete. Keyboard-feed integration07
-passes thirteen native CPU/file checks against47 source/tool pins. The real
-platform owns and feeds the keyboard event queue; two obsolete USB module
-registration calls and their five-word record are removed. The complete entry
-still refuses49 native integration names; this count is not missing retail
-algorithms or a full work estimate. Real scene keyboard delivery, participant
-assignment and complete startup/render/audio/game behavior remain open.
-Parent live status owns current evidence. No owner launch is requested.
+The source-ordered native entry remains incomplete. Input-ownership integration08
+passes fifteen native CPU/file clients against56 source/tool pins. Real
+participant/role binding and main observations are joined to native owners,
+and26F1E0 now performs its actual two-word reset under a correct neutral name.
+Complete entry still refuses46 native integration names; this is not a count
+of missing original retail routines or a full work estimate. Actual startup
+resource/task effects, full participant fields, physical poll/selection,
+fighter, scene keyboard, render/audio and full game acceptance remain open.
+No owner launch is requested. Parent live status owns current evidence.

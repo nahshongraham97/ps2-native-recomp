@@ -1,6 +1,10 @@
 #include "mka/retail_main.hpp"
 #include "mka/retail_dispatch_owners.hpp"
 #include "mka/retail_record_owners.hpp"
+#include "mka/retail_input_roles.hpp"
+#include "mka/retail_participants.hpp"
+#include "mka/retail_input_assignments.hpp"
+#include <thread>
 #include "native_retail_startup.hpp"
 #include <cstdio>
 #include <cstdlib>
@@ -30,6 +34,53 @@ int main(int argc, char** argv) { try {
     check(&state.controller_samples == &samples && !state.mode_history && !state.audio_statistics,
         "main retains same real native sample store, does not manufacture readiness");
     StartupFailure f;
+    state.auxiliary_words = {0xffffffffu, 0x12345678u};
+    state.iteration = 73;
+    f = {StartupError::native_exception, "prior fixture error"};
+    fail_allocation = true;
+    const auto reset_auxiliary = main_binding::reset_retail_auxiliary_words(state, f);
+    fail_allocation = false;
+    check(reset_auxiliary && f.kind == StartupError::none && state.auxiliary_words.first == 0 &&
+        state.auxiliary_words.second == 0 && state.iteration == 73,
+        "actual auxiliary reset clears exactly two values without allocation or unrelated reset");
+    check(!main_binding::observe_retail_frame_role(state, 0, f) &&
+        f.kind == StartupError::native_exception && !state.input_roles,
+        "frame observer cannot manufacture missing retail role ownership");
+    RetailInputRoleFailure role_failure;
+    state.input_roles = NativeRetailInputRoles::create(role_failure);
+    check(bool(state.input_roles), "actual role owner for bound observation");
+    const auto role = main_binding::observe_retail_frame_role(state, 0, f);
+    const auto row = main_binding::observe_retail_action_row(state, 0, 15, f);
+    check(role && !role->initialized && !role->blocked && !role->assigned && row &&
+        row->action.rising_mask == 0x8000 && row->rising == 0 && f.kind == StartupError::none,
+        "bound observer reads actual live role and original action row");
+    check(!main_binding::observe_retail_frame_role(state, 256, f) &&
+        !main_binding::observe_retail_action_row(state, 0, 16, f),
+        "invalid role is refused before enum narrowing; invalid action row is refused");
+    bool off_thread = false;
+    std::thread foreign([&] {
+        StartupFailure other;
+        off_thread = !main_binding::observe_retail_frame_role(state, 0, other) &&
+            other.kind == StartupError::native_exception;
+    });
+    foreign.join();
+    check(off_thread, "actual main role observation retains native thread failure");
+    RetailParticipantFailure participant_failure;
+    state.participants = NativeRetailParticipants::create_first_two(participant_failure);
+    RetailInputAssignmentFailure assignment_failure;
+    state.input_assignments = NativeRetailInputAssignments::create(
+        state.input_roles, state.participants, assignment_failure);
+    check(bool(state.input_assignments), "main fixture owns actual same role and participant domain");
+    const auto first_participant = state.participants->first_two(0, participant_failure);
+    check(state.input_assignments->bind_other_to_role_two(first_participant, assignment_failure),
+        "actual source role-two assignment updates real role owner");
+    const auto assigned_role = main_binding::observe_retail_frame_role(state, 2, f);
+    check(assigned_role && assigned_role->initialized && assigned_role->assigned && !assigned_role->blocked,
+        "production main observer sees real assignment and initialized source flag");
+    check(state.input_assignments->detach(first_participant, assignment_failure), "actual source detach");
+    const auto detached_role = main_binding::observe_retail_frame_role(state, 2, f);
+    check(detached_role && !detached_role->initialized && !detached_role->assigned,
+        "production main observer sees inverse link retirement and source flag clear");
     check(!main_binding::read_retail_top_mode(state, f) && f.kind == StartupError::native_exception,
         "uninitialized mode reader fails by name");
     check(!main_binding::enter_retail_mode_zero(state, f) && f.kind == StartupError::native_exception,

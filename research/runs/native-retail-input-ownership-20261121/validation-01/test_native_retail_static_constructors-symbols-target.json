@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_static_constructors.exe",
+  "target_before_sha256": "f996147637bc1832729e45ce59957b448e53142ba6d7a71f42ba853e2e3987d8",
+  "target_after_sha256": "f996147637bc1832729e45ce59957b448e53142ba6d7a71f42ba853e2e3987d8",
+  "audited_target_expected_sha256": "f996147637bc1832729e45ce59957b448e53142ba6d7a71f42ba853e2e3987d8",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::retail::main_binding::construct_retail_key_action_records("
+  ],
+  "executed_target_sha256": "f996147637bc1832729e45ce59957b448e53142ba6d7a71f42ba853e2e3987d8"
+}

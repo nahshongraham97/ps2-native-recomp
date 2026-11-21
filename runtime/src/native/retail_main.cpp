@@ -132,7 +132,7 @@ std::optional<std::int64_t> continue_native_retail_main(NativeRetailStartupState
     initialize_frame_timing(m);
     if (!clear_retail_mode_stack(m, f) || !enter_retail_mode_zero(m, f) ||
         !initialize_retail_game_records(m, f) || !initialize_retail_loaded_sections(m, f) ||
-        !initialize_retail_random_state(m, f) || !initialize_retail_action_service(m, f)) return {};
+        !reset_retail_auxiliary_words(m, f) || !initialize_retail_action_service(m, f)) return {};
 
     auto gate = initialize_retail_timer_and_viewport(m, f);
     if (gate == RetailStartupGate::source_refused) return 0;

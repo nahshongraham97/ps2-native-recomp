@@ -72,7 +72,7 @@ std::optional<NativeRetailInputRoleObservation> NativeRetailInputRoles::observe(
     if (!state) return {};
     return NativeRetailInputRoleObservation{state->initialized, state->dispatch_blocked,
         state->analog_mapping, state->previous, state->current, state->rising, state->axes,
-        state->participant.lock()};
+        state->participant.lock(), state->source_control_word};
 }
 
 std::optional<RetailActionRowObservation> NativeRetailInputRoles::observe_action_row(

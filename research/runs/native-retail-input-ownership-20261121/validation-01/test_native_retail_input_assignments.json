@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_input_assignments.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native source assignment protocol; no host route, game or endpoint\n",
+  "stderr": "",
+  "executable_sha256": "05af3c3bd483623daee482fccfe6aa025a7a33cdb672a6138cb5a35ba4eb7153",
+  "executable_after_sha256": "05af3c3bd483623daee482fccfe6aa025a7a33cdb672a6138cb5a35ba4eb7153"
+}

@@ -1,0 +1,191 @@
+{
+  "status": "PASS_NATIVE_INPUT_OWNERSHIP_CPU_FILE_CHECKS",
+  "sources": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_game.cmake": "40d6957ce65b4965e9647045ea40c9afdeff7c2d573a80b1cbde9abd415298e0",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\host\\keymap.cpp": "18f0825202fd368142c21fa3e4ebb1ccade4a4e399ce9afaa8603cfad5edebd4",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\host\\keymap.hpp": "347020a993678066dd1f50b8a6de70eca0c66b73be0238961aedbc8bd14f1d88",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_action_history.hpp": "ce324dd94bd23c9f97b981bf2e1b745043f4e34543006594540c718fc74c54c8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_audio_statistics.hpp": "fe425bfcc80fd51d6fb6f627e56327eb39684a15715c4c5c5a21b834f121157c",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_auxiliary_words.hpp": "3c11ca0dbfb1cf06a7b8cafa5a0d2d7dc886351f30aa5b9b6651fc0bd4f91266",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_dispatch_owners.hpp": "776cdc473b5b84f3ef303c39fd582734f2e13e19977837dc7e9ef89ed3a6699f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_input_assignments.hpp": "e938f33687673298a2b5ec39ceea453541a534f4f56c60bf6400065e6651ca2e",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_input_roles.hpp": "c913abe0f0261b524d7920fed266408b9a1adb93fabcc735a96f449cfd2c2ccb",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_keyboard.hpp": "cec5ccc5650fd7c7a0b0c0001591b565e134394e6c98cc872a2861128d847317",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_keyboard_sdl.hpp": "65a8a0d7724eff487a68169580315d2d362680d2a7b7faf37c994741bbc51030",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_main.hpp": "d78fcfb46ab440314cab0e6185c6f4cf354fe49ad3f48512982a614b6fcca6b0",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_mode_state.hpp": "8326e686873b2efe65a98254bb3ea7e2ed578868bbf0902e9978e94921e811f6",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_package.hpp": "885e1685a0e768724aacdef9265d8b14a089dfd79e85687c7bd7308f73d67c0a",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_participants.hpp": "764e3efb062b9cdb0687b64107abb000c3f172596ee85466d8e54da19cddbc5d",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_platform.hpp": "9ceab4c08a6ef02bfa2af49fc471b910bd0abc78f711c05dab42bb1d589fb3b3",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_record_owners.hpp": "affb707e1228b45f74c575e3436611e58045fdd33ddc6d58c3ad90c070dec105",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_remaining_constructors.hpp": "a563c373cef4b8d0c186f1ef44fd5d1eda656ce5b5a7ce164577e5bc9521c678",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_service_constructors.hpp": "d2dd6bb6fe8b87434ac2a475f621aaaf5c99754c4b8af65a0fb45640f5501511",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_action_history.cpp": "e670eb2c9d78eb87fe2f0e7a9b1e051b21d0eb507d01b7a4e44b5bb2def70d13",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_audio_statistics.cpp": "32e1c992258edd9481e5a3fe5b4a30d7fb43c4b89ecd033217049b93296acee5",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_auxiliary_words.cpp": "8ebe161651c0ff4d280fd4421853c26d479a1cd1651f630396ba19439867c849",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_dispatch_owners.cpp": "f7e3aa22df395822c0920e15f6c0138b93212978d8580381e8fc75dfec65b535",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_input_assignments.cpp": "1644f6d808bf748595fa8d989c94c3d60b123c717e8dff19c404a60c94de9216",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_input_roles.cpp": "388d3bdb2a0629010cf45b4925ce4ff426dc4e72368c4384714d2474cc611b9d",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_keyboard.cpp": "536251581b5bd8a8b1cc637d2be9e16d4b735e8ac29a13ded2244f56071334fb",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_keyboard_sdl.cpp": "06124463a76a136fc7db4177250ca89a2eafccd613105220000b25bc92c39580",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_main.cpp": "dc30ab58782af7c423884fc8eaa778f17c7142ff3745b576d8549240758dfcc7",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_main_input_observation.cpp": "f10ab394fa3e09b32977cb158bce73377bfaef8a0b2189595e79b5e012cefe71",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_main_mode.cpp": "00c589a9dde6876bba0cdd3c040e046767b66bc78be5152d1367e25d675f5fca",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_main_state.cpp": "96d72f79e445277f7c1b40c408678cfac585136392a37c3ce0c0657627db0769",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_mode_state.cpp": "3bfdbb829d08dbe19712404fe8b4432679baa1d236d7196c69d3fe83b2b31e99",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_package.cpp": "b4a31031f9cbdf177f801c232029e9ac3390ab24b99ea6a560c1cbc7bd72193d",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_participants.cpp": "a9052860303d5a53f8b75ac3b91e51de6c2ab2d96d790a3c3437e9b45fabd30d",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_platform.cpp": "0e0fe7493877e416cd0674829d5afb9d8c2cf9aada1792c3801968c92eec75f8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_record_owners.cpp": "fbdec9713fd13651b606d60606b406df061ea27d285f3f4670ba0ef546bf5130",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_remaining_constructors.cpp": "669e6c32623eb6dd199a32627b448128b04899164ad0bf2d5d7b9d2e16257563",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_service_constructors.cpp": "133e365a80f069337403948232b4c4333fc437e7e4db4710ab09b44f882371cd",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_action_history.cpp": "f03a8cb4c327738dddde643f36ea7cbc00ab47f3275171f85d16fccfd045654a",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_audio_statistics.cpp": "f3861cbe93dbf542894ddb00580fb39504f08382c874bedf6a317e1e0440baf7",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_bound_owners.cpp": "16ec3f67d4241b6bb207353f00910c9dcb027831ea97ad4344834703683b9860",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_dispatch_owners.cpp": "a0b0c4775182de5cdcbcc0d00207464fea9f206a84cba3a5e2317c0921654365",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_input_assignments.cpp": "8dda5e6322762503242cac3909998351937c1f6df95e7a6986537e588cbedce9",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_input_roles.cpp": "4ea1d0bdaab70c6b7c29202de33944c09ca0decf60fe4872559f68ec66ecda81",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_keyboard.cpp": "98d85a78654d7d34faa4a2813094f9cd55e98e6958824f99684231f10ce8467a",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_mode_state.cpp": "e9d5cf9408b4d8046ef8317f22c1c1e76d61740f713b8afaa68092cdea237749",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_package.cpp": "18159696f33b1aac7e80ed868fc90929d57ea42ae5f5011dde1d46bc3fc85b7a",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_package_errors.cpp": "b49ef6e2dca97c5087e77ef7d2662776715e3452f408945c568e45d48c87caa4",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_participants.cpp": "7db828fedd2d8366b3231563f0b7ebe3d95e3e7a9b1ab67622db8af8f0825bb6",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_record_owners.cpp": "d1ecd15691129045109bed1cc1f3b7ca03c9f6d4b218121be0e5be08fd4dab4b",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_static_constructors.cpp": "f0490cf301c70fb0fed3bef1aaaa3b31b65c8fe4f246150b9de4e71ff37035e5",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\third_party\\sdl2\\include\\SDL2\\SDL_events.h": "ceb7bc717342e652e2c432fd1dd08a5508575cea6bd8615fb4ddea63c071ddc4",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\third_party\\sdl2\\include\\SDL2\\SDL_keyboard.h": "f68dfa4f784f0b22949a8df94f3c3653ea01a03ae02297d17579eb9e7ea94054",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\third_party\\sdl2\\include\\SDL2\\SDL_keycode.h": "291c769a05bc3e1ead011db3e07cb52415e1aa306f484904d203e94cbb3186cd",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\third_party\\sdl2\\include\\SDL2\\SDL_scancode.h": "eb14f3cedde58358f6456d185f473d7551e8234de260151ad0319861ff1444c2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-input-ownership-20261121\\verify.py": "5ad87c9ffd1d03f4bc5286e12a87cd5e802384ca9d375456e7d0a8a7a7668363"
+  },
+  "fixtures": [
+    {
+      "target": "test_native_retail_participants",
+      "sha256": "d9f5e27cf148a0bf27403edc19f3d8c206749d1641f55cb3baa51a2bcbe4d1c0"
+    },
+    {
+      "target": "test_native_retail_input_assignments",
+      "sha256": "05af3c3bd483623daee482fccfe6aa025a7a33cdb672a6138cb5a35ba4eb7153"
+    },
+    {
+      "target": "test_native_retail_keyboard",
+      "sha256": "547043989f2a7259a89bf9215484300e10f00a90b6144901481097b3abbce5e5"
+    },
+    {
+      "target": "test_native_retail_action_history",
+      "sha256": "e6dc620638561c18e9ed54ea6c8a57dfdd0d952e6143a8cca70754daf08aecb1"
+    },
+    {
+      "target": "test_native_retail_package",
+      "sha256": "2348282cbfc794b409b09ca59a43c02539a7523215b20710d30d84a8f988ffe8"
+    },
+    {
+      "target": "test_native_retail_package_errors",
+      "sha256": "46efed99c1c590c91c577ff6e85c6a9884fa3ae454663c429d52c184edc4c731"
+    },
+    {
+      "target": "test_native_retail_static_constructors",
+      "sha256": "f996147637bc1832729e45ce59957b448e53142ba6d7a71f42ba853e2e3987d8"
+    },
+    {
+      "target": "test_native_retail_mode_state",
+      "sha256": "4fc647c188729dec0848ee9600669bf01eebf31ec2e14183d9cdd3e0024796c1"
+    },
+    {
+      "target": "test_native_retail_audio_statistics",
+      "sha256": "13f854794b9afff9885edaa09fd2bf3de11b35af45876ef55a8bcf4f4be5b521"
+    },
+    {
+      "target": "test_native_retail_bound_owners",
+      "sha256": "8adb6e53be2e5451fe203908578b9c73230a07526972175e5b107b43db134c93"
+    },
+    {
+      "target": "test_native_retail_dispatch_owners",
+      "sha256": "81dd6fe820decb6ea33a52902eb1cb75d730697137f9573d5aead0f89db73761"
+    },
+    {
+      "target": "test_native_retail_record_owners",
+      "sha256": "2a1ca9547d18e1a0cf32b2435c95e8ad9b6f18ec37d061283f330b88acee3e1f"
+    },
+    {
+      "target": "test_native_retail_input_roles",
+      "sha256": "bd50a150e303a76e8519761b12c4bbb3abb1e9147a03315d56cd39f5f725b4ae"
+    },
+    {
+      "target": "test_native_retail_scene_owners",
+      "sha256": "c44b747846b45e750baa6c68b4c4a6847d972305c18b33cd67b8ad16517355d3"
+    },
+    {
+      "target": "test_native_retail_middleware_work",
+      "sha256": "d2d282586a019030b46493e7301ce724aa7833e72a7cb97a0c5668451322dc44"
+    }
+  ],
+  "archive_sha256": "e14b4512fc3cc0afde4ab30c663d2df4bb03a2444dc9aad4a91b96ef15555b85",
+  "keyboard_archive_sha256": "67355c27ce0070d86ec163329cfc9902e57c668387622955f45885a3946cfae8",
+  "platform_archive_sha256": "76cafab978de86c341bf1f341e78957f3dff9e7de9bb3ea1a9f24a77ff9cc49b",
+  "source_key_table_sha256": "16ae56231aea9d26c3a3f6108c7365ab475618556da7ca2fbf6303a054fba12d",
+  "independent_manifest_sha256": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\package-and-constructors-05\\input-manifests\\hash-vectors.tsv": "c7212e74016e7d581dbf7aab7688b48573a34394e1d5dcf8086c92832f1c687a",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\package-and-constructors-05\\input-manifests\\package-members.tsv": "acee1864c769a54c777bd54ff7730734df0a1e735d752ee8e534c25d1416eeac",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\package-and-constructors-05\\input-manifests\\static-labels.tsv": "35057c05d1a79dc2578d3ab46d9b3cd938b6727549edf58b6a156f74159d8dd5"
+  },
+  "source_asset_sha256": "ff51cdff04e6487460ef3c3a1db309a68ced43e4c4bfd084fa965cb41c8c227a",
+  "remaining_integration_symbols": [
+    "advance_retail_game_services",
+    "create_retail_action_task",
+    "create_retail_initial_mode_task",
+    "deliver_retail_builtin_scene_event",
+    "dispatch_retail_enabled_mode",
+    "dispatch_retail_task_lists",
+    "initialize_retail_active_overlay",
+    "initialize_retail_audio_configuration",
+    "initialize_retail_audio_stage",
+    "initialize_retail_current_sound",
+    "initialize_retail_first_frame_graphics",
+    "initialize_retail_first_scene",
+    "initialize_retail_game_records",
+    "initialize_retail_game_scene_records",
+    "initialize_retail_graphics_stage",
+    "initialize_retail_loaded_sections",
+    "initialize_retail_middleware_files",
+    "initialize_retail_mode_objects",
+    "initialize_retail_mode_service",
+    "initialize_retail_pad_service",
+    "initialize_retail_post_overlay_state",
+    "initialize_retail_post_scene_sections",
+    "initialize_retail_post_scene_timing",
+    "initialize_retail_scene_service",
+    "initialize_retail_section_service",
+    "initialize_retail_timer_and_viewport",
+    "poll_retail_controller_roles",
+    "prune_retail_associations",
+    "pump_retail_current_sound",
+    "pump_retail_middleware",
+    "read_retail_audio_boot_word",
+    "read_retail_frame_rate",
+    "read_retail_profile_selector",
+    "read_retail_startup_seed_component",
+    "render_retail_frame",
+    "reset_and_bind_retail_scene_event_graph",
+    "reset_and_initialize_retail_profile",
+    "retail_frame_processing_inhibited",
+    "retail_mode_dispatch_enabled",
+    "retail_ordinary_counter_inhibited",
+    "retail_render_enabled",
+    "retail_task_exists",
+    "retail_timing_override_active",
+    "retire_retail_deferred_storage",
+    "seed_retail_startup_random_state",
+    "service_retail_frame_input"
+  ],
+  "complete_game_entry_linkable": false,
+  "game_executed": false,
+  "physical_endpoints_opened": false,
+  "frames": null,
+  "audio": null,
+  "limits": [
+    "No native scene keyboard0x40A receiver, full participant record/fighter producer or live selector/current input producer; no complete game record/resource/task initialization",
+    "Source association protocol implemented, not actual host-to-retail sample/selection/poll integration",
+    "No main-menu/combat or complete native route acceptance"
+  ]
+}

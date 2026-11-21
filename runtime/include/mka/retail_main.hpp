@@ -6,6 +6,7 @@
 #include "mka/playback_owner.hpp"
 #include "mka/retail_action_history.hpp"
 #include "mka/retail_audio_statistics.hpp"
+#include "mka/retail_auxiliary_words.hpp"
 #include "mka/retail_main_timing.hpp"
 #include "mka/retail_mode_state.hpp"
 #include "mka/retail_package.hpp"
@@ -19,6 +20,9 @@ namespace mka::retail {
 struct NativeRetailStartupState;
 struct StartupFailure;
 class NativeRetailPlatform;
+class NativeRetailParticipants;
+class NativeRetailInputRoles;
+class NativeRetailInputAssignments;
 struct NativeRetailConstructorOwners;
 class NativeRetailMiddlewareWorkGroup;
 class NativeRetailPrefixDispatchDescriptor;
@@ -60,6 +64,12 @@ struct NativeRetailMainState {
     NativeRetailMainState(NativeRetailStartupState&, input::ControllerInput&) noexcept;
     NativeRetailStartupState& startup;
     NativeRetailMainTiming main_timing;
+    NativeRetailAuxiliaryWords auxiliary_words;
+    // These owners are populated only at their original game initialization
+    // points. Their existence never substitutes for completed startup.
+    std::shared_ptr<NativeRetailParticipants> participants;
+    std::shared_ptr<NativeRetailInputRoles> input_roles;
+    std::shared_ptr<NativeRetailInputAssignments> input_assignments;
     std::shared_ptr<NativeRetailConstructorOwners> constructors;
     std::shared_ptr<NativeRetailMiddlewareWorkGroup> middleware_work_group;
     std::shared_ptr<NativeRetailPrefixDispatchDescriptor> dispatch_object;
@@ -120,7 +130,7 @@ bool clear_retail_mode_stack(NativeRetailMainState&, StartupFailure&); // 185EC0
 bool enter_retail_mode_zero(NativeRetailMainState&, StartupFailure&); // 185D60(0)
 bool initialize_retail_game_records(NativeRetailMainState&, StartupFailure&); // 1303F0
 bool initialize_retail_loaded_sections(NativeRetailMainState&, StartupFailure&); // 19C4C0
-bool initialize_retail_random_state(NativeRetailMainState&, StartupFailure&); // 26F1E0
+bool reset_retail_auxiliary_words(NativeRetailMainState&, StartupFailure&); // 26F1E0, not PRNG
 bool initialize_retail_action_service(NativeRetailMainState&, StartupFailure&); // 163210
 bool initialize_retail_graphics_stage(NativeRetailMainState&, StartupFailure&); // 2E06E0
 bool initialize_retail_package_stage(NativeRetailMainState&, StartupFailure&); // 219050
