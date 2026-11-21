@@ -1,0 +1,18 @@
+{
+  "fork_commit": "ca9f3aee3aa8364a58f7f9ec7f34bb6d597d4796",
+  "fork": {
+    "available": true,
+    "local_commit": "ca9f3aee3aa8364a58f7f9ec7f34bb6d597d4796",
+    "remote_commit": "ca9f3aee3aa8364a58f7f9ec7f34bb6d597d4796",
+    "synchronization": "verified"
+  },
+  "parent_commit": "be78f4b0777d8712bcbe93bb73cc118da9f4e600",
+  "parent": {
+    "available": true,
+    "local_commit": "be78f4b0777d8712bcbe93bb73cc118da9f4e600",
+    "remote_commit": "be78f4b0777d8712bcbe93bb73cc118da9f4e600",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "20315e1d333ff2ced6a22b6c1ccd45e59f0bc181552f0618209f250e3a2390c2",
+  "scope": "Eight CPU/file fixtures including actual native main bindings; complete game acceptance OPEN"
+}

@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_bound_owners.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-package-constructors-20261121\\validation-01\\owned-content"
+  ],
+  "exit": 0,
+  "stdout": "PASS actual native main constructor/mode bindings and allocation failures; no game or endpoint\n",
+  "stderr": "",
+  "executable_sha256": "f59809b8f96ae5dd4b9ecbc98c560809a8d04dfdc2c8c6048ede1de545312ba6",
+  "executable_after_sha256": "f59809b8f96ae5dd4b9ecbc98c560809a8d04dfdc2c8c6048ede1de545312ba6"
+}

@@ -7,6 +7,8 @@
 #include "mka/retail_audio_statistics.hpp"
 #include "mka/retail_main_timing.hpp"
 #include "mka/retail_mode_state.hpp"
+#include "mka/retail_package.hpp"
+#include "mka/retail_remaining_constructors.hpp"
 #include <array>
 #include <cstdint>
 #include <memory>
@@ -64,6 +66,13 @@ struct NativeRetailMainState {
     std::shared_ptr<NativeRetailRecordOwners> record_owners;
     std::unique_ptr<NativeRetailAudioStatistics> audio_statistics;
     std::optional<NativeRetailModeState> mode_history;
+    std::unique_ptr<NativeRetailPackage> package;
+    std::shared_ptr<NativeRetailTwoServiceObjects> two_service_objects;
+    std::optional<NativeRetailEmptyBinding> empty_binding;
+    std::shared_ptr<NativeRetailStaticKeyOwners> static_keys;
+    RetailStaticKeyObserver static_key_observer;
+    bool static_key_initialization_failed{};
+    bool static_key_initialization_active{};
     std::shared_ptr<NativeRetailProfileOwners> profile;
     std::shared_ptr<NativeRetailSceneOwners> scene;
     // The startup platform owns the only controller sample store. Its lifetime

@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_mode_state.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native retail mode history source edge/failure checks; no game or endpoint\n",
+  "stderr": "",
+  "executable_sha256": "96770b29adcf084fa3f275fe621a6135f3421a380433e91c57aeda0a50495852",
+  "executable_after_sha256": "96770b29adcf084fa3f275fe621a6135f3421a380433e91c57aeda0a50495852"
+}

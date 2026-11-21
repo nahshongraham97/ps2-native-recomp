@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_middleware_work.exe",
+  "target_before_sha256": "9611ef10d1cc1a50e8fc0693f04245baabc66c4ac4125b07694a4a0bc9d1dbdb",
+  "target_after_sha256": "9611ef10d1cc1a50e8fc0693f04245baabc66c4ac4125b07694a4a0bc9d1dbdb",
+  "audited_target_expected_sha256": "9611ef10d1cc1a50e8fc0693f04245baabc66c4ac4125b07694a4a0bc9d1dbdb",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::retail::NativeRetailMiddlewareDispatcher::"
+  ],
+  "executed_target_sha256": "9611ef10d1cc1a50e8fc0693f04245baabc66c4ac4125b07694a4a0bc9d1dbdb"
+}

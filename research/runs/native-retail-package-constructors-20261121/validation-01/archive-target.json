@@ -1,0 +1,26 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_retail_startup.a",
+  "target_before_sha256": "d7baba6cabd71692fe259023fb9538001841601d7d4c1bf7b42020e283f15151",
+  "target_after_sha256": "d7baba6cabd71692fe259023fb9538001841601d7d4c1bf7b42020e283f15151",
+  "audited_target_expected_sha256": "d7baba6cabd71692fe259023fb9538001841601d7d4c1bf7b42020e283f15151",
+  "execution_applicable": false,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::retail::main_binding::construct_retail_dispatch_object(",
+    "mka::retail::main_binding::construct_retail_record_owners(",
+    "mka::retail::main_binding::construct_retail_aux_dispatch_object(",
+    "mka::retail::main_binding::construct_retail_audio_statistics(",
+    "mka::retail::main_binding::clear_retail_mode_stack(",
+    "mka::retail::main_binding::enter_retail_mode_zero(",
+    "mka::retail::main_binding::read_retail_top_mode(",
+    "mka::retail::main_binding::initialize_retail_package_stage(",
+    "mka::retail::main_binding::construct_retail_two_service_objects(",
+    "mka::retail::main_binding::construct_retail_empty_binding(",
+    "mka::retail::main_binding::construct_retail_key_action_records(",
+    "mka::retail::main_binding::construct_retail_first_paired_key_records(",
+    "mka::retail::main_binding::construct_retail_second_paired_key_records(",
+    "mka::retail::main_binding::construct_retail_first_handler_records(",
+    "mka::retail::main_binding::construct_retail_second_handler_records("
+  ]
+}
