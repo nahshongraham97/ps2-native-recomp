@@ -85,6 +85,7 @@ target_link_libraries(test_native_content_volume_owner PRIVATE mka_native_conten
 add_library(mka_native_retail_task_registry STATIC EXCLUDE_FROM_ALL
     runtime/src/native/retail_task_registry.cpp runtime/src/native/retail_task_execution.cpp
     runtime/src/native/retail_game_pool.cpp runtime/src/native/retail_observer_list.cpp
+    runtime/src/native/retail_input_task_argument.cpp
     runtime/src/native/retail_game_task_lists.cpp)
 target_include_directories(mka_native_retail_task_registry PUBLIC runtime/include)
 target_compile_features(mka_native_retail_task_registry PUBLIC cxx_std_20)
@@ -93,6 +94,8 @@ add_executable(test_native_retail_game_pool EXCLUDE_FROM_ALL tests/test_retail_g
 target_link_libraries(test_native_retail_game_pool PRIVATE mka_native_retail_task_registry)
 add_executable(test_native_retail_observer_list EXCLUDE_FROM_ALL tests/test_retail_observer_list.cpp)
 target_link_libraries(test_native_retail_observer_list PRIVATE mka_native_retail_task_registry)
+add_executable(test_native_retail_input_task_argument EXCLUDE_FROM_ALL tests/test_retail_input_task_argument.cpp)
+target_link_libraries(test_native_retail_input_task_argument PRIVATE mka_native_retail_task_registry)
 add_executable(test_native_retail_initial_game_tasks EXCLUDE_FROM_ALL tests/test_retail_initial_game_tasks.cpp)
 target_link_libraries(test_native_retail_initial_game_tasks PRIVATE mka_native_retail_game_session)
 add_library(mka_native_retail_text_storage STATIC EXCLUDE_FROM_ALL runtime/src/native/retail_text_storage.cpp)
@@ -178,6 +181,7 @@ if(WIN32)
         runtime/src/native/retail_section_workspace.cpp runtime/src/native/retail_section_workspace_main.cpp
         runtime/src/native/retail_game_info_resources.cpp
         runtime/src/native/retail_game_record_reset.cpp
+        runtime/src/native/retail_pad_control.cpp runtime/src/native/retail_pad_startup.cpp
         runtime/src/native/retail_game_records.cpp
         runtime/src/native/retail_game_records_main.cpp
         runtime/src/native/retail_task_lookup_main.cpp
@@ -213,6 +217,8 @@ if(WIN32)
     target_link_libraries(test_native_retail_startup_initialization PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_game_records_main EXCLUDE_FROM_ALL tests/test_retail_game_records_main.cpp)
     target_link_libraries(test_native_retail_game_records_main PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_pad_control EXCLUDE_FROM_ALL tests/test_retail_pad_control.cpp)
+    target_link_libraries(test_native_retail_pad_control PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_section_workspace EXCLUDE_FROM_ALL tests/test_retail_section_workspace.cpp)
     target_link_libraries(test_native_retail_section_workspace PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_task_domain EXCLUDE_FROM_ALL tests/test_retail_task_domain.cpp)

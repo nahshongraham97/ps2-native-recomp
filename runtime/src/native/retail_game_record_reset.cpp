@@ -1,4 +1,5 @@
 #include "mka/retail_game_record_reset.hpp"
+#include "mka/retail_pad_control.hpp"
 #include "retail_main_control.hpp"
 
 #include <new>
@@ -95,35 +96,7 @@ void NativeRetailGameRecordReset::reset_direct_185ee0(
 bool NativeRetailGameRecordReset::reset_163a50(
     NativeRetailTaskDomain& domain,NativeRetailInputRoles& roles,
     RetailGameRecordResetFailure& f) {
-    auto controls=session_->controls(f.session);
-    if(!controls)
-        return fail(f,RetailGameRecordResetError::missing_owner,
-                    "163A50 same-session primary game-info controls");
-    if(!controls->store_analog_input_inhibited_from_source(false,f.controls))
-        return fail(f,RetailGameRecordResetError::controls,
-                    "163A50 clear byte81 analog bit6");
-    if(!roles.clear_dispatch_blocked_first_three_from_163a50(f.roles))
-        return fail(f,RetailGameRecordResetError::roles,
-                    "163A50 initialized role block-bit clear");
-    auto* prior=domain.prior_registry_if_born(f.task_domain);
-    if(!prior) {
-        if(f.task_domain.kind!=RetailTaskDomainError::none)
-            return fail(f,RetailGameRecordResetError::task_domain,
-                        "163A50 retained prior task registry");
-        return true; // The source first-birth registry has not run 12F0D0.
-    }
-    // 280810 visits 2065 then 2066; 280760 visits 208B. Lookup is
-    // effectful and can retire stale links or transfer to Main.
-    for(const auto kind:{0x2065u,0x2066u,0x208bu}) {
-        const auto task=prior->find_first_live(kind,f.registry);
-        if(!task)
-            return fail(f,RetailGameRecordResetError::registry,
-                        "163A50 effectful prior task lookup");
-        if(*task)
-            return fail(f,RetailGameRecordResetError::task_argument_unbound,
-                        "280810/280760 live task +E8 argument route");
-    }
-    return true;
+    return resume_retail_input_from_163a50(*session_,domain,roles,f);
 }
 
 bool NativeRetailGameRecordReset::run_185ee0(

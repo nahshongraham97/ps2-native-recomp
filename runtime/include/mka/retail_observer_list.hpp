@@ -64,11 +64,22 @@ public:
     NativeRetailObserverList& operator=(const NativeRetailObserverList&)=delete;
     std::shared_ptr<NativeRetailObserverLink> insert_head_from_12f870(
         std::shared_ptr<NativeRetailObservedObject>,RetailObserverListFailure&);
+    // 12FEE0 attaches a task argument to +E8 with link bit 0 clear, so
+    // stale retirement owns and invokes its virtual +0xC cleanup.
+    // A null argument is the source's no-effect null result.
+    std::shared_ptr<NativeRetailObserverLink> insert_owned_argument_from_12fee0(
+        std::shared_ptr<NativeRetailObservedObject>,RetailObserverListFailure&);
     bool retire_link_from_12fa00(
         const std::shared_ptr<NativeRetailObserverLink>&,
         RetailObserverListFailure&);
     bool visit_from_12f4e0(NativeRetailObserverCallback&,
         RetailObserverListFailure&);
+    // 130860 returns the first live object on this head after effectful
+    // stale-link retirement. Engaged null means the source found no object;
+    // disengaged means a named owner/cleanup failure. A native main transfer
+    // from nested retirement propagates unchanged.
+    std::optional<std::shared_ptr<NativeRetailObservedObject>>
+    first_live_from_130860(RetailObserverListFailure&);
     // The 13A7A0 actor head has the same cookie/stale-link traversal but no
     // temporary bit-1 callback guard; its callback is source 13A870.
     bool visit_from_13a7a0(NativeRetailObserverCallback&,
@@ -85,6 +96,9 @@ public:
         RetailObserverListFailure&) const noexcept;
 private:
     bool access(RetailObserverListFailure&) const noexcept;
+    std::shared_ptr<NativeRetailObserverLink> insert_head(
+        std::shared_ptr<NativeRetailObservedObject>,std::uint8_t flags,
+        const char* operation,RetailObserverListFailure&);
     bool retire(const std::shared_ptr<detail::RetailObserverLinkState>&,
         RetailObserverListFailure&);
     std::shared_ptr<NativeRetailGamePool> pool_;

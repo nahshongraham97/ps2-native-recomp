@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_observer_list.exe"
+  ],
+  "exit": 0,
+  "stdout": "native retail observer list: PASS\n",
+  "stderr": "",
+  "executable_sha256": "4bb0bb91d9ca5f9b8a3a2cb3c456852c01f2d1d3bc96270020ccb6fa1df353c1",
+  "executable_after_sha256": "4bb0bb91d9ca5f9b8a3a2cb3c456852c01f2d1d3bc96270020ccb6fa1df353c1"
+}

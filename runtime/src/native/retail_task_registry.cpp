@@ -445,6 +445,42 @@ NativeRetailTaskRegistry::find_first_live(std::uint32_t kind,
     return std::shared_ptr<NativeRetailTaskObject>{};
 }
 
+std::optional<std::shared_ptr<NativeRetailInputTaskArgument>>
+NativeRetailTaskRegistry::input_argument_from_12e930(
+    const std::shared_ptr<NativeRetailTaskObject>& task,
+    RetailTaskRegistryFailure& f) {
+    if(!access(f)) return {};
+    if(!task || !owns(task)) {
+        fail(f,RetailTaskRegistryError::foreign_task,"12E930 native task owner");
+        return {};
+    }
+    if(task->retired_) {
+        fail(f,RetailTaskRegistryError::retired_task,"12E930 retired native task");
+        return {};
+    }
+    if(!task->observers_e8_) return std::shared_ptr<NativeRetailInputTaskArgument>{};
+    const auto found=task->observers_e8_->first_live_from_130860(f.observer);
+    if(!found) {
+        fail(f,RetailTaskRegistryError::observer_list,"12E930 effectful first-live argument lookup");
+        return {};
+    }
+    if(!*found) return std::shared_ptr<NativeRetailInputTaskArgument>{};
+    auto argument=std::dynamic_pointer_cast<NativeRetailInputTaskArgument>(*found);
+    if(!argument) {
+        fail(f,RetailTaskRegistryError::unsupported_source_branch,
+             "12E930 reached native object has no implemented source virtual+4 argument getter");
+        return {};
+    }
+    // Proven59FE40/12D860 returns the same native argument object. Other
+    // object getters must be implemented explicitly, never reinterpreted.
+    auto self=argument->self_from_12d860(f.argument);
+    if(!self) {
+        fail(f,RetailTaskRegistryError::input_argument,"12D860 retained input argument getter");
+        return {};
+    }
+    return self;
+}
+
 bool NativeRetailTaskRegistry::store_object_cookie_from_source(
     const std::shared_ptr<NativeRetailTaskObject>& task, std::uint32_t cookie,
     RetailTaskRegistryFailure& f) noexcept {

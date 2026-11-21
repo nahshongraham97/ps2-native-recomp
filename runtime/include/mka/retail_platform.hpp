@@ -46,6 +46,7 @@ public:
     NativeRetailPlatform& operator=(const NativeRetailPlatform&)=delete;
     input::ControllerInput& controller_samples() noexcept;
     NativeRetailKeyboard& keyboard_events() noexcept;
+    bool validate_input_owner(const input::ControllerInput&,RetailPlatformFailure&) const noexcept;
     bool poll_events_and_input(RetailPlatformFailure&) noexcept;
     std::optional<std::vector<RetailHostController>> controllers(RetailPlatformFailure&) const noexcept;
     // Game role ownership explicitly chooses players. Device arrival never

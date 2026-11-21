@@ -55,6 +55,22 @@ NativeRetailObserverList::insert_head_from_12f870(
              "12FF70 real observed object missing");
         return {};
     }
+    return insert_head(std::move(object),1u,"12FF70",f);
+}
+
+std::shared_ptr<NativeRetailObserverLink>
+NativeRetailObserverList::insert_owned_argument_from_12fee0(
+    std::shared_ptr<NativeRetailObservedObject> object,
+    RetailObserverListFailure& f) {
+    if(!access(f)) return {};
+    if(!object) return {}; // Source 12FEE0 null object returns null unchanged.
+    return insert_head(std::move(object),0u,"12FEE0",f);
+}
+
+std::shared_ptr<NativeRetailObserverLink>
+NativeRetailObserverList::insert_head(
+    std::shared_ptr<NativeRetailObservedObject> object,
+    std::uint8_t flags,const char* operation,RetailObserverListFailure& f) {
     try {
         auto node=std::make_shared<detail::RetailObserverLinkState>();
         auto handle=std::shared_ptr<NativeRetailObserverLink>(
@@ -62,12 +78,13 @@ NativeRetailObserverList::insert_head_from_12f870(
         auto lease=pool_->acquire_observer_link(object->source_cookie(),f.pool);
         if(!lease) {
             fail(f,RetailObserverListError::pool,
-                 "12FF70 shared-pool observer link allocation");
+                 operation);
             return {};
         }
         node->owner=this;
         node->object=std::move(object);
         node->cached_cookie=node->object->source_cookie();
+        node->flags=flags;
         node->lease=std::move(*lease);
         node->next=head_;
         node->linked=true;
@@ -77,10 +94,10 @@ NativeRetailObserverList::insert_head_from_12f870(
         return handle;
     } catch(const std::bad_alloc&) {
         fail(f,RetailObserverListError::allocation,
-             "12FF70 native observer link allocation");
+             operation);
     } catch(...) {
         fail(f,RetailObserverListError::native_exception,
-             "12FF70 native observer link construction");
+             operation);
     }
     return {};
 }
@@ -203,6 +220,29 @@ bool NativeRetailObserverList::visit_from_12f4e0(
     }
     f={};
     return true;
+}
+
+std::optional<std::shared_ptr<NativeRetailObservedObject>>
+NativeRetailObserverList::first_live_from_130860(
+    RetailObserverListFailure& f) {
+    if(!access(f)) return std::nullopt;
+    auto node=head_;
+    while(node) {
+        const auto object=node->object;
+        if(object && node->cached_cookie==object->source_cookie()) {
+            f={};
+            return object;
+        }
+        // 1308A0 saves the next link before the 1308A4 cached-cookie
+        // store. A guarded stale link stays attached, but traversal still
+        // advances to that saved next link.
+        auto next=node->next;
+        node->cached_cookie=1;
+        if(!(node->flags&2u) && !retire(node,f)) return std::nullopt;
+        node=std::move(next);
+    }
+    f={};
+    return std::shared_ptr<NativeRetailObservedObject>{};
 }
 
 bool NativeRetailObserverList::visit_from_13a7a0(

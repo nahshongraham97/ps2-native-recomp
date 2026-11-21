@@ -1,0 +1,65 @@
+{
+  "sources": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_observer_list.hpp": "0f4b244b015647a1f350e1bf71795a4ad6eff9411379685db336551d16b4a8b8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_observer_list.cpp": "56daea6a9e831950ad9be617e216710ad73a0606f330be4f32c09198aaa6c782",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_observer_list.cpp": "63288b2fcb409296a053e0caf3ecf0c41384351b3c1bcf2396d0ef025b5dd5ad",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_input_task_argument.hpp": "792e9e4ac1e975a136faf6724106cba155a57f97cfb6ee3e2669501c1bbc6cfc",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_input_task_argument.cpp": "a78d8becb0c735b82d45d668c9d6ad907d242ebcc5cfc6a60bb50613fd3fad09",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_input_task_argument.cpp": "a8c376cf0ac86aee08a164992d7b8e5e900d9cc4d0d857c45af73e45675abb30",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_task_registry.hpp": "8ac5f78fc374bf48735493370ad5338d5c52688e88ca24afb24aa89bfc4503da",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_task_registry.cpp": "6290251432baee519c01a3e751c3b01bca79be298d90e52450abf66cdecf330d",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_pad_control.hpp": "26fba6bde776527f50896d98a8085ef389fe2ccf04e70b2cbad9a089c906af1a",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_pad_control.cpp": "cab18816bb10e57627a7fb705adfe3687fcb7027d66502c314d91732bc8ce245",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_pad_startup.cpp": "98c64731e40317ef1770d319fcd17799f7083e68d1259c341e3c27d9af5e899e",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_platform.hpp": "c56d0e257aac9039164c934e3abf7734a9ce83ca400b39e24e2507056d033db4",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_platform.cpp": "369d4fdf6c3d822d1bbe4d12814019325504e413913a494010f833247132ec39",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_game_record_reset.cpp": "20f689bc5299afb78bfd734ab8378bb432f6b5aa07e834cf2265f2950ec6382d",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_input_roles.cpp": "c6fa2386ad95143290201fe30e9523eb060b71f2ce3dffc9adb59fdbd3bb5e36",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_task_domain.cpp": "2985fa89d4fb4ab8cb3d6368dc266ad69e681dc7f2d5c2a5dc821339ded194bd",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_game_controls.cpp": "39353608d8c1ab8426de578c5ba1f31ebd66d87a901a7b754a9f1c980af4b3bc",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_game_records_main.cpp": "14aaac712a008d95455eb0ef1315a11a80417a42d026b28ee1bb5524bdff0b48",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_pad_control.cpp": "5a91c0330e74a894dabd7d0ac6bc245b5340e0fbaa966147160132f22587d332",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_task_registry.cpp": "34ccc8630e57a19f1d66d7453088b2743189a972ced2d0f16f212387f2a1df9b",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_game_records_main.cpp": "98123f3c320c364eae7c265f1cc91106e4cb2cfb858389180b33789bf7fd92ab",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_game.cmake": "308cbeb7d92fcb638b5994a71b44d639b91ceffe8fb8babfb1947feb46d34472",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-pad-arguments-20261121\\check.py": "3ce1cf4eb5c22420fd3354484542e5a8902de58807c464afeaefdb1fc4a2f5dd"
+  },
+  "evidence": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-live-state-20261121\\validation-02\\verification.json": "3695233a08b22b48fee4d7cb1f670d6fd2d72fdc11ccb4d19de7e9501ed1ac7b",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-pad-arguments-55\\observer-author01\\IMPLEMENTATION.json": "620ae6f676bcbf3ffc5925470c5d1ceaa4fa68643f6d9ae7b19e80f371c537f5",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-pad-arguments-55\\argument-author01\\IMPLEMENTATION.json": "757a1115861e48c82b37a69c450c08236401daf1d9bb0d5a0512f2e211453363",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-pad-arguments-55\\observer-author01\\RAW_SOURCE.json": "b485416e668c7fdd92a6e47db88ce830151e7c1c957aeaff8591b110f32127d2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-task-arguments-54\\source-agent01\\RAW_SOURCE.json": "352058b87759f7598af2a4758d6ce68867b1b8f660df4a9a0344d246d74e419c",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-pad-arguments-55\\argument-author01\\SOURCE_JOIN.json": "4917037bb7f94967eebf661e9197388d560a5fb9717e64dd2581bdcef8b08c02",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-pad-arguments-55\\root01\\LIVE_FLAG_READS.json": "0b448e0505e923f08d88a5ad26d1c9eba5282c440d97d971837b8110a8783f97",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-pad-arguments-20261121\\validation-01\\source-preflight.json": "41f74996c6cef9c4c69cc4c3ddbff496b947d603c901dab21fccd05bf1fd641f"
+  },
+  "original_word_joins": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-pad-arguments-55\\observer-author01\\RAW_SOURCE.json": {
+      "130860_first_live": 86,
+      "12fee0_owned_attach": 33,
+      "12ff70_nonowning_birth": 25,
+      "12f870_head_link": 11,
+      "12fa00_retirement": 61
+    },
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-task-arguments-54\\source-agent01\\RAW_SOURCE.json": {
+      "task_arg_getter_12e930": 14,
+      "first_live_observer_130860": 86,
+      "argument_vtable_59fe40": 4,
+      "argument_self_return_12d860": 2,
+      "argument_cleanup_12df60": 2,
+      "argument_release_130cf0": 3,
+      "argument_allocation_130d00": 107,
+      "argument_link_12fee0": 33,
+      "task_create_12dcc0": 53,
+      "task_publish_12f100": 56,
+      "task_birth_12ea90": 56,
+      "input_task_producer_280890": 71,
+      "input_task_body_2800f0": 409,
+      "other_task_producer_154ac0": 88,
+      "other_task_body_154590": 262,
+      "update_two_280810": 29,
+      "update_one_280760": 19
+    }
+  }
+}

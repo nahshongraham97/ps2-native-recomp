@@ -2,6 +2,7 @@
 #include "mka/retail_task_execution.hpp"
 #include "mka/retail_game_pool.hpp"
 #include "mka/retail_observer_list.hpp"
+#include "mka/retail_input_task_argument.hpp"
 
 #include <cstddef>
 #include <cstdint>
@@ -18,7 +19,7 @@ enum class RetailTaskRegistryError {
     none, wrong_thread, invalid_body, foreign_task, already_linked,
     retired_task, retention_guard, callout_active, after_effect_unknown,
     unsupported_source_branch, game_pool, observer_list, execution, allocation,
-    native_exception
+    native_exception, input_argument
 };
 struct RetailTaskRegistryFailure {
     RetailTaskRegistryError kind{RetailTaskRegistryError::none};
@@ -26,6 +27,7 @@ struct RetailTaskRegistryFailure {
     RetailGamePoolFailure pool{};
     RetailObserverListFailure observer{};
     RetailTaskExecutionFailure execution{};
+    RetailInputTaskArgumentFailure argument{};
 };
 
 // A published task must have executable native code and a real retirement
@@ -105,6 +107,9 @@ public:
     // retire stale links and invoke real cleanup; control transfers propagate.
     std::optional<std::shared_ptr<NativeRetailTaskObject>> find_first_live(
         std::uint32_t kind, RetailTaskRegistryFailure&);
+    std::optional<std::shared_ptr<NativeRetailInputTaskArgument>>
+    input_argument_from_12e930(const std::shared_ptr<NativeRetailTaskObject>&,
+                             RetailTaskRegistryFailure&);
     bool store_object_cookie_from_source(
         const std::shared_ptr<NativeRetailTaskObject>&, std::uint32_t,
         RetailTaskRegistryFailure&) noexcept;

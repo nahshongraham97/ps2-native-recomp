@@ -330,6 +330,21 @@ std::unique_ptr<NativeRetailPlatform> NativeRetailPlatform::create(const content
 }
 input::ControllerInput& NativeRetailPlatform::controller_samples() noexcept {return state_->samples;}
 NativeRetailKeyboard& NativeRetailPlatform::keyboard_events() noexcept {return *state_->keyboard_events;}
+bool NativeRetailPlatform::validate_input_owner(
+    const input::ControllerInput& expected,RetailPlatformFailure& f) const noexcept {
+    f={};
+    if(!state_->access(f)) return false;
+    if(!state_->initialized || !state_->window || !state_->keyboard_events)
+        return fail(f,RetailPlatformError::input,"actual native input service not initialized");
+    if(&expected!=&state_->samples)
+        return fail(f,RetailPlatformError::publication,"foreign controller sample owner");
+    const auto keyboard=state_->keyboard_events->observe(f.keyboard);
+    if(!keyboard || keyboard->closed)
+        return fail(f,RetailPlatformError::input,"actual native keyboard queue inactive");
+    // Zero connected controllers is valid. No guest port count, module,
+    // transport or fabricated participant assignment establishes readiness.
+    return true;
+}
 bool NativeRetailPlatform::poll_events_and_input(RetailPlatformFailure& f) noexcept {
     f={};try {
         if(!state_->access(f))return false;SDL_Event event;
