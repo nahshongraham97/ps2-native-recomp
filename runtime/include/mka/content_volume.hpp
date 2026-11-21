@@ -4,8 +4,9 @@
 #include <optional>
 #include <string>
 #include <string_view>
+#include <vector>
 namespace mka::content {
-enum class ContentVolumeError {none,unsupported_host,invalid_root,moved_volume,invalid_key,invalid_utf8,foreign_prefix,traversal,unsafe_component,unsupported_suffix,root_changed,root_escape,not_regular_file,open_failed,opened_path_unavailable,moved_file,read_failed,seek_failed,position_failed,length_failed,allocation_failed,host_capacity,native_exception};
+enum class ContentVolumeError {none,unsupported_host,invalid_root,moved_volume,invalid_key,invalid_utf8,foreign_prefix,traversal,unsafe_component,unsupported_suffix,root_changed,root_escape,not_regular_file,open_failed,opened_path_unavailable,moved_file,read_failed,seek_failed,position_failed,length_failed,allocation_failed,host_capacity,native_exception,not_directory,directory_read_failed};
 struct ContentVolumeFailure {ContentVolumeError kind=ContentVolumeError::none;std::error_code host_error;};
 class NativeContentVolume;
 // Exclusive cursor ownership. The opened file and volume identity survive moves
@@ -41,6 +42,11 @@ public:
     // Validate the retained native directory identity without opening a game file.
     bool validate(ContentVolumeFailure&) const noexcept;
     std::optional<NativeContentFile> open_resource(std::string_view,ContentVolumeFailure&) const;
+    // Direct regular files in a retained native subdirectory. Every returned
+    // file owns its opened handle and directory identity. No recursive search,
+    // archive provider, or pathname reopening on reads.
+    std::optional<std::vector<NativeContentFile>> open_directory_files(
+        std::string_view,ContentVolumeFailure&) const;
 private:
     struct State;
     explicit NativeContentVolume(std::shared_ptr<State> s):state_(std::move(s)){}

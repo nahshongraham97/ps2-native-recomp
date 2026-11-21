@@ -1,0 +1,83 @@
+{
+  "status": "PASS_LOOSE_ASSET_COMPONENTS",
+  "fork_base": "f73b8d30fc1daa3a3998340daefd56280bd324be",
+  "dirty_source": true,
+  "sources": {
+    "runtime/include/mka/content_volume.hpp": "19e5534bc6782c4c58d7d8890a9b917c8948128dff12fbc9a9d4d9da251ebce1",
+    "runtime/src/native/content_volume.cpp": "77d3f723632ce32e8c170753168bc084531a9a38d9e1def85b8ee76bfba5f789",
+    "runtime/include/mka/retail_file_paths.hpp": "be84084e1ff2d3fd9cf0bf04bfa8b4bbd8a1e76c7627c9cd201fe0cc28fcbde2",
+    "runtime/src/native/retail_file_paths.cpp": "834da9b1229af7ba2057ef288c90c1b2595af34a5333485fe5a9db2789100e1c",
+    "runtime/include/mka/retail_package.hpp": "68790d0108aa2a3e04a7da1944cc0f6f7dd915433cc2b4b2d8b29a0fc2d2daf4",
+    "runtime/src/native/retail_package.cpp": "c0984dcb6356b7e3661bc9574b04f59720380b90ae7ea9bebe84b225c3f0f3e7",
+    "tests/test_retail_package.cpp": "04c6c32d81a3060fba1a910bd04f97fb995ab09935bd86dce96fb6863c7f1204",
+    "tests/test_retail_package_errors.cpp": "d62f71fc0f303df30e18dfa8ec0441bd7da846a02b9ec392c0c8e1b2e6acd254",
+    "tools/extract_retail_art.py": "80ce93f739b5e10898f4ebed913ea39003ed9530c4d6b38fc2a789c004bff42d"
+  },
+  "clients": {
+    "test_native_retail_package": {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_package.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\package-and-constructors-05\\input-manifests\\package-members.tsv"
+      ],
+      "cwd": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-loose-assets-20261121\\validation-02",
+      "binary_sha256": "38ed90fd8beb516deb27e031125e9d0f6e336c91fe85758b51aaf7ad017bfb34",
+      "exit": 0,
+      "stdout": "PASS native loose files all245 original name/size/byte comparisons and range checks; no PAK required; no game or endpoint\n",
+      "stderr": "",
+      "game_run": false,
+      "frames": [],
+      "audio": []
+    },
+    "test_native_retail_package_errors": {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_package_errors.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-loose-assets-20261121\\validation-02\\disposable-native-art"
+      ],
+      "cwd": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-loose-assets-20261121\\validation-02",
+      "binary_sha256": "9c90d8f35663a4b38adc6f186b99813ad6d268326ff2e7653687aa4d1df62344",
+      "exit": 0,
+      "stdout": "PASS native loose assets, no PAK fallback, range/thread/lifetime and 309 allocation cuts; no game or endpoint\n",
+      "stderr": "",
+      "game_run": false,
+      "frames": [],
+      "audio": []
+    },
+    "test_native_content_volume_owner": {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_content_volume_owner.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-loose-assets-20261121\\validation-02\\owned-volume"
+      ],
+      "cwd": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-loose-assets-20261121\\validation-02",
+      "binary_sha256": "639b13d76f53f99be350e0b3485fab8b8e0918f74febebb342feac023a5c9010",
+      "exit": 0,
+      "stdout": "SKIP symlink creation: 1314\nPASS_NATIVE_CONTENT_VOLUME_OWNER: opened identity/retail keys/containment/moves/root replacement/sparse64 files; no startup/schema claim\n",
+      "stderr": "",
+      "game_run": false,
+      "frames": [],
+      "audio": []
+    },
+    "test_native_retail_file_paths": {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_file_paths.exe"
+      ],
+      "cwd": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-loose-assets-20261121\\validation-02",
+      "binary_sha256": "f52db2d1b74e795f62397d98fbbe38fbedf65c3b7aeac2b38e9aaff57227c8ee",
+      "exit": 0,
+      "stdout": "PASS retail native source aliases and owned file route\n",
+      "stderr": "",
+      "game_run": false,
+      "frames": [],
+      "audio": []
+    }
+  },
+  "runtime_flags": "component test arguments only; no game executed",
+  "runtime_asset_root": "private-inputs/native-ps2-loose-20261121; no MKDA.PAK",
+  "limits": [
+    "Actual junction fixture creation denied; escape runtime case unexecuted",
+    "Full Main native game still unbound; no gameplay/physical input/frames/audio",
+    "Clean-source rebuild pending"
+  ],
+  "frames": [],
+  "audio": []
+}

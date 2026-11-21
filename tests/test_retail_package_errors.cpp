@@ -122,7 +122,7 @@ void operator delete(void* p, std::size_t) noexcept { std::free(p); }
 
 int main(int argc, char** argv) {
     try {
-        check(argc == 2, "expected explicitly disposable root argument");
+        check(argc == 2 || argc == 3, "expected disposable root and optional externally prepared escape fixture");
         const std::filesystem::path supplied_root(argv[1]);
         check(supplied_root.is_absolute(), "disposable root argument must be absolute");
         check(std::filesystem::is_directory(supplied_root), "disposable root must already exist");
@@ -132,66 +132,120 @@ int main(int argc, char** argv) {
             "disposable root name must contain disposable");
         check(std::filesystem::is_empty(root), "disposable root must be empty; no existing case is replaced");
 
+        if (argc == 3) {
+            auto escaped_volume = volume_at(std::filesystem::path(argv[2]));
+            mka::content::ContentVolumeFailure cf;
+            check(!escaped_volume->open_directory_files("art", cf) &&
+                cf.kind == mka::content::ContentVolumeError::root_escape,
+                "actual escaping art junction is rejected before enumeration");
+        }
         const std::string first = "\\ps2dvd\\art\\One.ssf";
-        const std::string second = "\\PS2DVD\\ART\\oNE.SSF";
-        auto good = make_pak({{first, {0x11, 0x12}}, {second, {0x21, 0x22}}});
-        auto short_header = std::vector<std::uint8_t>(good.begin(), good.begin()+19);
-        rejects(create_case(root, "truncated-header", short_header),
-            RetailPackageError::invalid_header, "truncated header rejected");
-        auto bad_magic = good; put_word(bad_magic, 0, 0x12345678u);
-        rejects(create_case(root, "bad-magic", bad_magic),
-            RetailPackageError::invalid_header, "native format guard rejects bad magic");
-        auto bad_version = good; put_word(bad_version, 4, 0x101u);
-        rejects(create_case(root, "bad-version", bad_version),
-            RetailPackageError::invalid_header, "native format guard rejects bad version");
-        auto bad_index = good; put_word(bad_index, 12, static_cast<std::uint32_t>(bad_index.size()+1));
-        rejects(create_case(root, "bad-index", bad_index),
-            RetailPackageError::invalid_index, "out-of-file table rejected");
-        auto bad_name_offset = good; put_word(bad_name_offset, 24, 0xffffffffu);
-        rejects(create_case(root, "bad-name-offset", bad_name_offset),
-            RetailPackageError::invalid_name, "out-of-string-table name offset rejected");
-        auto no_terminator = make_pak({{first, {0x11}}});
-        no_terminator.back() = 'X';
-        rejects(create_case(root, "unterminated-name", no_terminator),
-            RetailPackageError::invalid_name, "unterminated member name rejected");
-        auto bad_member = good; put_word(bad_member, 28, 0xffffffffu);
-        rejects(create_case(root, "bad-member-range", bad_member),
-            RetailPackageError::invalid_entry_range, "out-of-file member range rejected");
-
-        const auto valid_folder = create_case(root, "duplicate-casefold", good);
+        const auto archive = make_pak({{first, {0xa1, 0xa2}}});
+        const auto archive_only = create_case(root, "archive-only", archive);
+        rejects(archive_only, RetailPackageError::source_open,
+            "valid PAK without art directory is refused; no archive fallback");
+        const auto not_directory = create_case(root, "not-directory", archive);
+        { ExclusiveFile file(not_directory / "art"); file.write({1}); }
+        rejects(not_directory, RetailPackageError::source_open,
+            "art regular file is not a directory");
+        const auto empty = create_case(root, "empty-art", archive);
+        check(std::filesystem::create_directory(empty / "art"), "new empty art directory");
+        {
+            auto volume = volume_at(empty);
+            RetailFilePathFailure pf; auto paths = NativeRetailFilePaths::create(pf);
+            RetailPackageFailure failure;
+            auto package = NativeRetailPackage::open(*volume, *paths, failure);
+            check(package && package->member_count() == 0, "empty native catalog owns no assets");
+            check(!package->find(first, failure) && failure.kind == RetailPackageError::missing_member,
+                "missing loose file stays missing even with matching valid PAK data present");
+        }
+        const auto nonregular = create_case(root, "nonregular", archive);
+        check(std::filesystem::create_directories(nonregular / "art" / "One.ssf"), "asset directory fixture");
+        rejects(nonregular, RetailPackageError::source_open, "nonregular asset cannot become empty successful data");
+        const auto valid_folder = create_case(root, "loose-wins", archive);
+        check(std::filesystem::create_directory(valid_folder / "art"), "new loose art directory");
+        { ExclusiveFile file(valid_folder / "art" / "One.ssf"); file.write({0x21, 0x22}); }
+        { ExclusiveFile file(valid_folder / "art" / "zero.ssf"); file.write({}); }
+        { ExclusiveFile file(valid_folder / "art" / "short.ssf"); file.write({1, 2, 3, 4}); }
         auto volume = volume_at(valid_folder);
+        {
+            using C = mka::content::ContentVolumeError;
+            mka::content::ContentVolumeFailure cf;
+            check(!volume->open_directory_files("../art", cf) && cf.kind == C::traversal,
+                "directory traversal rejected");
+            check(!volume->open_directory_files("", cf) && cf.kind == C::invalid_key,
+                "empty directory key rejected");
+            auto retained = std::move(*volume);
+            check(!volume->open_directory_files("art", cf) && cf.kind == C::moved_volume,
+                "moved directory volume rejected");
+            *volume = std::move(retained);
+        }
         RetailFilePathFailure path_failure;
         auto paths = NativeRetailFilePaths::create(path_failure);
-        check(bool(paths), "real native file path owner before package fault");
+        check(bool(paths), "native alias owner before catalog fault");
+        check(!paths->open_directory_files(*volume, "/unknown/art", path_failure) &&
+            path_failure.kind == RetailFilePathError::unknown_alias,
+            "directory listing cannot bypass the real alias service");
         RetailPackageFailure failure;
-        fail_after.store(0, std::memory_order_relaxed);
-        auto failed = NativeRetailPackage::open(*volume, *paths, failure);
-        fail_after.store(-1, std::memory_order_relaxed);
-        check(!failed && failure.kind == RetailPackageError::allocation,
-            "allocation fault before publication reports failure");
-        auto package = NativeRetailPackage::open(*volume, *paths, failure);
-        check(bool(package) && package->member_count() == 2, "retry opens actual bounded index");
+        std::unique_ptr<NativeRetailPackage> package;
+        int cuts = 0;
+        for (; cuts < 512; ++cuts) {
+            fail_after.store(cuts, std::memory_order_relaxed);
+            package = NativeRetailPackage::open(*volume, *paths, failure);
+            fail_after.store(-1, std::memory_order_relaxed);
+            if (package) break;
+            check(failure.kind != RetailPackageError::none, "allocation cut cannot report success");
+            // Failed publication must retire all opened child handles. An
+            // outstanding retained directory handle would refuse this rename.
+            const auto old = valid_folder / "art", renamed = valid_folder / "art-renamed";
+            check(MoveFileExW(old.c_str(), renamed.c_str(), 0) != 0, "failure retires directory identity");
+            check(MoveFileExW(renamed.c_str(), old.c_str(), 0) != 0, "restore disposable directory");
+        }
+        check(package && package->member_count() == 3 && cuts > 10, "allocation cuts eventually publish full native catalog");
         const auto member = package->find(first, failure);
-        check(member && member->source_index == 1 && member->name == second,
-            "casefold duplicate replaces lookup value with last source row");
+        check(member && member->name == "One.ssf" && member->size == 2,
+            "original name decodes to actual loose basename");
+        check(package->find("oNE.SSF", failure).has_value(), "native basename casefold");
         std::array<std::uint8_t, 3> bytes{};
         const auto n = package->read(first, 0, bytes, failure);
         check(n && *n == 2 && bytes[0] == 0x21 && bytes[1] == 0x22,
-            "last duplicate row owns returned member bytes and clips at its end");
-        check(!package->find("\\ps2dvd\\art\\absent.ssf", failure) &&
-            failure.kind == RetailPackageError::missing_member, "missing member named");
+            "actual loose bytes override different archive bytes and clip at file end");
+        check(package->read("zero.ssf", 0, bytes, failure) == 0, "real empty file is zero-byte read");
+        check(!package->find("absent.ssf", failure) && failure.kind == RetailPackageError::missing_member,
+            "missing loose filename named");
+        for (const auto* bad : {"", ".", "..", "../One.ssf", "other/One.ssf", "C:One.ssf", "\\foreign\\One.ssf"})
+            check(!package->find(bad, failure) && failure.kind == RetailPackageError::invalid_name,
+                "unverified/path traversal identifier refused");
         check(!package->read(first, member->size+1, bytes, failure) &&
             failure.kind == RetailPackageError::invalid_read_range, "past-end read named");
         bool foreign_thread_rejected = false;
         std::thread other([&] {
-            RetailPackageFailure f;
-            std::array<std::uint8_t, 1> one{};
-            foreign_thread_rejected = !package->read(first, 0, one, f) &&
-                f.kind == RetailPackageError::wrong_thread;
-        });
-        other.join();
+            RetailPackageFailure f; std::array<std::uint8_t, 1> one{};
+            foreign_thread_rejected = !package->read(first, 0, one, f) && f.kind == RetailPackageError::wrong_thread;
+        }); other.join();
         check(foreign_thread_rejected, "foreign thread rejected before cursor use");
-        std::puts("PASS native package malformed/disposable file cases; no game or endpoint");
+        {
+            const auto file = valid_folder / "art" / "short.ssf";
+            const auto writer = CreateFileW(file.c_str(), GENERIC_WRITE, FILE_SHARE_READ|FILE_SHARE_WRITE,
+                nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+            check(writer != INVALID_HANDLE_VALUE, "open disposable truncation writer");
+            const bool shortened = SetEndOfFile(writer) != 0;
+            CloseHandle(writer);
+            check(shortened, "truncate actual opened asset");
+            check(!package->read("short.ssf", 0, bytes, failure) &&
+                failure.kind == RetailPackageError::source_read,
+                "shortened actual loose file returns named read failure");
+        }
+        volume.reset(); paths.reset();
+        check(package->read("one.ssf", 0, bytes, failure) == 2 && bytes[0] == 0x21,
+            "actual file and child directory survive volume and alias owners");
+        const auto old = valid_folder / "art", renamed = valid_folder / "retired-art";
+        check(MoveFileExW(old.c_str(), renamed.c_str(), 0) == 0,
+            "live catalog retains directory identity against rename");
+        package.reset();
+        check(MoveFileExW(old.c_str(), renamed.c_str(), 0) != 0,
+            "retirement releases directory identity");
+        std::printf("PASS native loose assets, no PAK fallback, range/thread/lifetime and %d allocation cuts; no game or endpoint\n", cuts);
         return 0;
     } catch (const std::exception& e) {
         fail_after.store(-1, std::memory_order_relaxed);

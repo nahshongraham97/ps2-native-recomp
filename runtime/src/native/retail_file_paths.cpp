@@ -137,4 +137,28 @@ std::optional<content::NativeContentFile> NativeRetailFilePaths::open(
     return {};
 }
 
+std::optional<std::vector<content::NativeContentFile>> NativeRetailFilePaths::open_directory_files(
+    const content::NativeContentVolume& volume, std::string_view retail_path,
+    RetailFilePathFailure& failure) const noexcept {
+    failure = {};
+    try {
+        auto key = resolve(retail_path, failure);
+        if (!key) return {};
+        if (key->empty()) {
+            failure.kind = RetailFilePathError::empty_file_key;
+            return {};
+        }
+        auto files = volume.open_directory_files(*key, failure.content);
+        if (!files) failure.kind = RetailFilePathError::content_file;
+        return files;
+    } catch (const std::bad_alloc&) {
+        failure.kind = RetailFilePathError::allocation;
+    } catch (const std::length_error&) {
+        failure.kind = RetailFilePathError::host_capacity;
+    } catch (...) {
+        failure.kind = RetailFilePathError::native_exception;
+    }
+    return {};
+}
+
 } // namespace mka::retail

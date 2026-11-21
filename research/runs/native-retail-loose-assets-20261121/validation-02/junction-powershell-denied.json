@@ -1,0 +1,6 @@
+{
+  "operation": "New-Item -ItemType Junction -Path escape-root/art -Target outside-root",
+  "exit": 1,
+  "error": "Access is denied.",
+  "scope": "Fixture preparation, not runtime failure; no root-escape execution credited"
+}

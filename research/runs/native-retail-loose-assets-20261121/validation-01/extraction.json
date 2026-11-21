@@ -1,0 +1,2219 @@
+{
+  "status": "extracted-and-byte-verified",
+  "source": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\mkda.pak",
+  "source_sha256": "ff51cdff04e6487460ef3c3a1db309a68ced43e4c4bfd084fa965cb41c8c227a",
+  "destination": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121\\art",
+  "members": [
+    {
+      "original_index": 0,
+      "original_name": "\\ps2dvd\\art\\armory.ssf",
+      "filename": "armory.ssf",
+      "original_offset": 2048,
+      "size": 2928640,
+      "sha256": "0e91a4f4c5cffc4fb4d41b1246b1756c961c1b77afc76dc03442386251bc7feb",
+      "written_sha256": "0e91a4f4c5cffc4fb4d41b1246b1756c961c1b77afc76dc03442386251bc7feb"
+    },
+    {
+      "original_index": 1,
+      "original_name": "\\ps2dvd\\art\\arttool.ssf",
+      "filename": "arttool.ssf",
+      "original_offset": 2930688,
+      "size": 79872,
+      "sha256": "e3f71db6211faae3e952ce280fd20b3aa2a321ac4192ba6cc44fae1d1332064a",
+      "written_sha256": "e3f71db6211faae3e952ce280fd20b3aa2a321ac4192ba6cc44fae1d1332064a"
+    },
+    {
+      "original_index": 2,
+      "original_name": "\\ps2dvd\\art\\arttool_kart.ssf",
+      "filename": "arttool_kart.ssf",
+      "original_offset": 3010560,
+      "size": 342016,
+      "sha256": "35d527a8a5a56c3447ce8fcfb0d401f6dc01213906ba8da8395a89c4de44f4ab",
+      "written_sha256": "35d527a8a5a56c3447ce8fcfb0d401f6dc01213906ba8da8395a89c4de44f4ab"
+    },
+    {
+      "original_index": 3,
+      "original_name": "\\ps2dvd\\art\\ashrah.ssf",
+      "filename": "ashrah.ssf",
+      "original_offset": 3352576,
+      "size": 3198976,
+      "sha256": "cb051c156ba3a677bdedf405c98b551e4f31158f9970ed374505850a45cc0fe8",
+      "written_sha256": "cb051c156ba3a677bdedf405c98b551e4f31158f9970ed374505850a45cc0fe8"
+    },
+    {
+      "original_index": 4,
+      "original_name": "\\ps2dvd\\art\\ashrah_alt.ssf",
+      "filename": "ashrah_alt.ssf",
+      "original_offset": 6551552,
+      "size": 3301376,
+      "sha256": "3fa4888d85e1eda76dc731a750e50003a2f9a720b35a266ec087ba0aab085f54",
+      "written_sha256": "3fa4888d85e1eda76dc731a750e50003a2f9a720b35a266ec087ba0aab085f54"
+    },
+    {
+      "original_index": 5,
+      "original_name": "\\ps2dvd\\art\\attract.ssf",
+      "filename": "attract.ssf",
+      "original_offset": 9852928,
+      "size": 3198976,
+      "sha256": "23276977948362fad4e4edcc9b20fbe34b784e4f08eb783bf9fe7cd70c4be7c9",
+      "written_sha256": "23276977948362fad4e4edcc9b20fbe34b784e4f08eb783bf9fe7cd70c4be7c9"
+    },
+    {
+      "original_index": 6,
+      "original_name": "\\ps2dvd\\art\\baraka.ssf",
+      "filename": "baraka.ssf",
+      "original_offset": 13051904,
+      "size": 3244032,
+      "sha256": "73d19decb6e6fd61fa4e09e9730d5c8b500e342c496a4cb9b5dc46b048355a43",
+      "written_sha256": "73d19decb6e6fd61fa4e09e9730d5c8b500e342c496a4cb9b5dc46b048355a43"
+    },
+    {
+      "original_index": 7,
+      "original_name": "\\ps2dvd\\art\\baraka_alt.ssf",
+      "filename": "baraka_alt.ssf",
+      "original_offset": 16295936,
+      "size": 3313664,
+      "sha256": "dd1d2f09ff49709e54325a9a50d6c9be9adbbe314ebd420ce115d9704181bac4",
+      "written_sha256": "dd1d2f09ff49709e54325a9a50d6c9be9adbbe314ebd420ce115d9704181bac4"
+    },
+    {
+      "original_index": 8,
+      "original_name": "\\ps2dvd\\art\\battlearena.ssf",
+      "filename": "battlearena.ssf",
+      "original_offset": 19609600,
+      "size": 2717696,
+      "sha256": "934a6bca164ca4bb67376fc3de480ddeb463cf947ef68aa0da2e62ff70a8738e",
+      "written_sha256": "934a6bca164ca4bb67376fc3de480ddeb463cf947ef68aa0da2e62ff70a8738e"
+    },
+    {
+      "original_index": 9,
+      "original_name": "\\ps2dvd\\art\\belltower.ssf",
+      "filename": "belltower.ssf",
+      "original_offset": 22327296,
+      "size": 3823616,
+      "sha256": "b8c85d483e1ef31fb08bd40c48d4da4b36b68ee39ad1053f6687aaeabd4877ba",
+      "written_sha256": "b8c85d483e1ef31fb08bd40c48d4da4b36b68ee39ad1053f6687aaeabd4877ba"
+    },
+    {
+      "original_index": 10,
+      "original_name": "\\ps2dvd\\art\\bio_text.ssf",
+      "filename": "bio_text.ssf",
+      "original_offset": 26150912,
+      "size": 245760,
+      "sha256": "6c0b01a5080730f8cff666ca6e432a6292169f37c5a507d5da8fe45202d945dd",
+      "written_sha256": "6c0b01a5080730f8cff666ca6e432a6292169f37c5a507d5da8fe45202d945dd"
+    },
+    {
+      "original_index": 11,
+      "original_name": "\\ps2dvd\\art\\boraicho.ssf",
+      "filename": "boraicho.ssf",
+      "original_offset": 26396672,
+      "size": 3489792,
+      "sha256": "301ded5dbf616c87cec0ef958427c6b647d6274a18c4eb77335907865836c577",
+      "written_sha256": "301ded5dbf616c87cec0ef958427c6b647d6274a18c4eb77335907865836c577"
+    },
+    {
+      "original_index": 12,
+      "original_name": "\\ps2dvd\\art\\boraicho_alt.ssf",
+      "filename": "boraicho_alt.ssf",
+      "original_offset": 29886464,
+      "size": 3362816,
+      "sha256": "579c21e8ed926c6dbe4ccec6e88639296ebbe17f88e9f9caad0d2f2d07041a4e",
+      "written_sha256": "579c21e8ed926c6dbe4ccec6e88639296ebbe17f88e9f9caad0d2f2d07041a4e"
+    },
+    {
+      "original_index": 13,
+      "original_name": "\\ps2dvd\\art\\bossblaze.ssf",
+      "filename": "bossblaze.ssf",
+      "original_offset": 33249280,
+      "size": 2596864,
+      "sha256": "b2ddf2dfcecf71a15f37c63595e0ae8889f501586ab1d1635136557c3d42825e",
+      "written_sha256": "b2ddf2dfcecf71a15f37c63595e0ae8889f501586ab1d1635136557c3d42825e"
+    },
+    {
+      "original_index": 14,
+      "original_name": "\\ps2dvd\\art\\cage.ssf",
+      "filename": "cage.ssf",
+      "original_offset": 35846144,
+      "size": 3280896,
+      "sha256": "9330472273ca669c5e7291873bf8ca375b891b42f2e059c9fd387d1f4061ad86",
+      "written_sha256": "9330472273ca669c5e7291873bf8ca375b891b42f2e059c9fd387d1f4061ad86"
+    },
+    {
+      "original_index": 15,
+      "original_name": "\\ps2dvd\\art\\cage_alt.ssf",
+      "filename": "cage_alt.ssf",
+      "original_offset": 39127040,
+      "size": 3121152,
+      "sha256": "6898c5836a67b0d47b8cb5e9286a10d15758ced70a28d801d6811ed7d31d3cb5",
+      "written_sha256": "6898c5836a67b0d47b8cb5e9286a10d15758ced70a28d801d6811ed7d31d3cb5"
+    },
+    {
+      "original_index": 16,
+      "original_name": "\\ps2dvd\\art\\cap.ssf",
+      "filename": "cap.ssf",
+      "original_offset": 42248192,
+      "size": 85125120,
+      "sha256": "37097d078215f9b7512477d3e4ecf1b07a82bbacbe11f8dc94160ea1f2ce8e49",
+      "written_sha256": "37097d078215f9b7512477d3e4ecf1b07a82bbacbe11f8dc94160ea1f2ce8e49"
+    },
+    {
+      "original_index": 17,
+      "original_name": "\\ps2dvd\\art\\cave1.ssf",
+      "filename": "cave1.ssf",
+      "original_offset": 127373312,
+      "size": 6608896,
+      "sha256": "854513dc5e75404a7387906dab70c817baa583bae1933af943d58060ab911c9f",
+      "written_sha256": "854513dc5e75404a7387906dab70c817baa583bae1933af943d58060ab911c9f"
+    },
+    {
+      "original_index": 18,
+      "original_name": "\\ps2dvd\\art\\cave2_trans.ssf",
+      "filename": "cave2_trans.ssf",
+      "original_offset": 133982208,
+      "size": 2736128,
+      "sha256": "365a22f16b63df78f475a8a8d648e0fbf751d257ec2e848b01842a2f5d1d303a",
+      "written_sha256": "365a22f16b63df78f475a8a8d648e0fbf751d257ec2e848b01842a2f5d1d303a"
+    },
+    {
+      "original_index": 19,
+      "original_name": "\\ps2dvd\\art\\cave5.ssf",
+      "filename": "cave5.ssf",
+      "original_offset": 136718336,
+      "size": 6662144,
+      "sha256": "8aa76497c0a8b00d320ba51e8f95f09e078757b316ad661d931118d17f8fdd62",
+      "written_sha256": "8aa76497c0a8b00d320ba51e8f95f09e078757b316ad661d931118d17f8fdd62"
+    },
+    {
+      "original_index": 20,
+      "original_name": "\\ps2dvd\\art\\chameleon.ssf",
+      "filename": "chameleon.ssf",
+      "original_offset": 143380480,
+      "size": 3379200,
+      "sha256": "0cfe9e0c1e959d2e8cf889330b10423d05bc3f632880b32721947b05150d7a41",
+      "written_sha256": "0cfe9e0c1e959d2e8cf889330b10423d05bc3f632880b32721947b05150d7a41"
+    },
+    {
+      "original_index": 21,
+      "original_name": "\\ps2dvd\\art\\chap1_intro_nis.ssf",
+      "filename": "chap1_intro_nis.ssf",
+      "original_offset": 146759680,
+      "size": 24852480,
+      "sha256": "6222bd85cf5d348b480b6475677267349b9113fe189da78753f7e56fd4c671eb",
+      "written_sha256": "6222bd85cf5d348b480b6475677267349b9113fe189da78753f7e56fd4c671eb"
+    },
+    {
+      "original_index": 22,
+      "original_name": "\\ps2dvd\\art\\cyrax.ssf",
+      "filename": "cyrax.ssf",
+      "original_offset": 171612160,
+      "size": 3504128,
+      "sha256": "1538c1ccb28ed1e2cebfe652cc87898bab68d2a403871c8f5b449986023029a1",
+      "written_sha256": "1538c1ccb28ed1e2cebfe652cc87898bab68d2a403871c8f5b449986023029a1"
+    },
+    {
+      "original_index": 23,
+      "original_name": "\\ps2dvd\\art\\cyrax_alt.ssf",
+      "filename": "cyrax_alt.ssf",
+      "original_offset": 175116288,
+      "size": 3606528,
+      "sha256": "ff7b1ac18033124c7cc2c5e6e63dc76824b1364ef3a1b78b917c8fc28e78de96",
+      "written_sha256": "ff7b1ac18033124c7cc2c5e6e63dc76824b1364ef3a1b78b917c8fc28e78de96"
+    },
+    {
+      "original_index": 24,
+      "original_name": "\\ps2dvd\\art\\daegon.ssf",
+      "filename": "daegon.ssf",
+      "original_offset": 178722816,
+      "size": 3477504,
+      "sha256": "faca5b873e2b473cc184bfeaea1053c71d91249662b24feadb1334c0b6ff25e4",
+      "written_sha256": "faca5b873e2b473cc184bfeaea1053c71d91249662b24feadb1334c0b6ff25e4"
+    },
+    {
+      "original_index": 25,
+      "original_name": "\\ps2dvd\\art\\dairou.ssf",
+      "filename": "dairou.ssf",
+      "original_offset": 182200320,
+      "size": 3180544,
+      "sha256": "f9a76533f384c489caf07c4e84d16da044b5315ab470dba4c0f2d6dfa4769664",
+      "written_sha256": "f9a76533f384c489caf07c4e84d16da044b5315ab470dba4c0f2d6dfa4769664"
+    },
+    {
+      "original_index": 26,
+      "original_name": "\\ps2dvd\\art\\dairou_alt.ssf",
+      "filename": "dairou_alt.ssf",
+      "original_offset": 185380864,
+      "size": 3364864,
+      "sha256": "912c5d8baeafedfc4cd1072b502f1dcf73a0dc0cd9794062c9fb8e31dcd61d72",
+      "written_sha256": "912c5d8baeafedfc4cd1072b502f1dcf73a0dc0cd9794062c9fb8e31dcd61d72"
+    },
+    {
+      "original_index": 27,
+      "original_name": "\\ps2dvd\\art\\darrius.ssf",
+      "filename": "darrius.ssf",
+      "original_offset": 188745728,
+      "size": 3229696,
+      "sha256": "9147466b1d3ac11bc95391b9a98b508e4f9a96db243a8e7b05a3e82dad657362",
+      "written_sha256": "9147466b1d3ac11bc95391b9a98b508e4f9a96db243a8e7b05a3e82dad657362"
+    },
+    {
+      "original_index": 28,
+      "original_name": "\\ps2dvd\\art\\darrius_alt.ssf",
+      "filename": "darrius_alt.ssf",
+      "original_offset": 191975424,
+      "size": 3041280,
+      "sha256": "a75912f8e851160d8e409cb207201e29dfe876a661197f2e2a17d6ca822be302",
+      "written_sha256": "a75912f8e851160d8e409cb207201e29dfe876a661197f2e2a17d6ca822be302"
+    },
+    {
+      "original_index": 29,
+      "original_name": "\\ps2dvd\\art\\dragonking.ssf",
+      "filename": "dragonking.ssf",
+      "original_offset": 195016704,
+      "size": 2902016,
+      "sha256": "81b74243597478b74e45332c2b2f55ff099852110ca15e8044642ef52dec535f",
+      "written_sha256": "81b74243597478b74e45332c2b2f55ff099852110ca15e8044642ef52dec535f"
+    },
+    {
+      "original_index": 30,
+      "original_name": "\\ps2dvd\\art\\drahmin.ssf",
+      "filename": "drahmin.ssf",
+      "original_offset": 197918720,
+      "size": 3117056,
+      "sha256": "1f0cd86d17b334b7424ea5e99f68d602350e57d4598a7fb8c6baff89e6d7f0da",
+      "written_sha256": "1f0cd86d17b334b7424ea5e99f68d602350e57d4598a7fb8c6baff89e6d7f0da"
+    },
+    {
+      "original_index": 31,
+      "original_name": "\\ps2dvd\\art\\drahmin_alt.ssf",
+      "filename": "drahmin_alt.ssf",
+      "original_offset": 201035776,
+      "size": 3223552,
+      "sha256": "4cea2ddb3abe424c60a3dacf53faef514b6206e14226c786749c1e0fa826be58",
+      "written_sha256": "4cea2ddb3abe424c60a3dacf53faef514b6206e14226c786749c1e0fa826be58"
+    },
+    {
+      "original_index": 32,
+      "original_name": "\\ps2dvd\\art\\dungeon3.ssf",
+      "filename": "dungeon3.ssf",
+      "original_offset": 204259328,
+      "size": 1855488,
+      "sha256": "9aef1924e364a301280204f2a89dd31d4c874c4e5c275a558f9c44b810cb21d0",
+      "written_sha256": "9aef1924e364a301280204f2a89dd31d4c874c4e5c275a558f9c44b810cb21d0"
+    },
+    {
+      "original_index": 33,
+      "original_name": "\\ps2dvd\\art\\dungeon4_trans.ssf",
+      "filename": "dungeon4_trans.ssf",
+      "original_offset": 206114816,
+      "size": 2590720,
+      "sha256": "6dbf7b707bcdfcf0f64f1b504137fb513009d0fe48c342339299e0e7a1e3705d",
+      "written_sha256": "6dbf7b707bcdfcf0f64f1b504137fb513009d0fe48c342339299e0e7a1e3705d"
+    },
+    {
+      "original_index": 34,
+      "original_name": "\\ps2dvd\\art\\dungeon5.ssf",
+      "filename": "dungeon5.ssf",
+      "original_offset": 208705536,
+      "size": 6703104,
+      "sha256": "3625f4c3708e6d2def091e1875db5831e5af39e22027b2a494f747b55b95f6b5",
+      "written_sha256": "3625f4c3708e6d2def091e1875db5831e5af39e22027b2a494f747b55b95f6b5"
+    },
+    {
+      "original_index": 35,
+      "original_name": "\\ps2dvd\\art\\elevator2_trans.ssf",
+      "filename": "elevator2_trans.ssf",
+      "original_offset": 215408640,
+      "size": 2541568,
+      "sha256": "e87f1af661282cf66735187639a064713f927287060df37d633a2ba95e6b0f94",
+      "written_sha256": "e87f1af661282cf66735187639a064713f927287060df37d633a2ba95e6b0f94"
+    },
+    {
+      "original_index": 36,
+      "original_name": "\\ps2dvd\\art\\elevator9_trans.ssf",
+      "filename": "elevator9_trans.ssf",
+      "original_offset": 217950208,
+      "size": 2895872,
+      "sha256": "1a6baa22e1da9221ec172ee6dbb0aa762729c8b60a199d42c23356747737b6a6",
+      "written_sha256": "1a6baa22e1da9221ec172ee6dbb0aa762729c8b60a199d42c23356747737b6a6"
+    },
+    {
+      "original_index": 37,
+      "original_name": "\\ps2dvd\\art\\endings.ssf",
+      "filename": "endings.ssf",
+      "original_offset": 220846080,
+      "size": 24674304,
+      "sha256": "39f2ff3c982c0b594aaed9d3f7ef9735427dad946c2a7845299918043ea93ec4",
+      "written_sha256": "39f2ff3c982c0b594aaed9d3f7ef9735427dad946c2a7845299918043ea93ec4"
+    },
+    {
+      "original_index": 38,
+      "original_name": "\\ps2dvd\\art\\ermac.ssf",
+      "filename": "ermac.ssf",
+      "original_offset": 245520384,
+      "size": 3459072,
+      "sha256": "f7d967145c3aa415646a6d4dfc905ffa2195a0376085ce5ecdfcf5ba3340e6bb",
+      "written_sha256": "f7d967145c3aa415646a6d4dfc905ffa2195a0376085ce5ecdfcf5ba3340e6bb"
+    },
+    {
+      "original_index": 39,
+      "original_name": "\\ps2dvd\\art\\ermac_alt.ssf",
+      "filename": "ermac_alt.ssf",
+      "original_offset": 248979456,
+      "size": 3475456,
+      "sha256": "8821dfbcc24a3f028924260f196d0e96b76e816f1f3806872354e59388e588da",
+      "written_sha256": "8821dfbcc24a3f028924260f196d0e96b76e816f1f3806872354e59388e588da"
+    },
+    {
+      "original_index": 40,
+      "original_name": "\\ps2dvd\\art\\evil_tower.ssf",
+      "filename": "evil_tower.ssf",
+      "original_offset": 252454912,
+      "size": 3416064,
+      "sha256": "9729b41439870c7ee55825f8b8c04f10fd4bedf6cabb65a051a4afdc1d2e0d61",
+      "written_sha256": "9729b41439870c7ee55825f8b8c04f10fd4bedf6cabb65a051a4afdc1d2e0d61"
+    },
+    {
+      "original_index": 41,
+      "original_name": "\\ps2dvd\\art\\fallingcliff.ssf",
+      "filename": "fallingcliff.ssf",
+      "original_offset": 255870976,
+      "size": 2144256,
+      "sha256": "00517d75376e1ed1c1c32bf9dc5ec43acdedde7d632944eef795e8f0c0d4acf0",
+      "written_sha256": "00517d75376e1ed1c1c32bf9dc5ec43acdedde7d632944eef795e8f0c0d4acf0"
+    },
+    {
+      "original_index": 42,
+      "original_name": "\\ps2dvd\\art\\firemountain1.ssf",
+      "filename": "firemountain1.ssf",
+      "original_offset": 258015232,
+      "size": 7729152,
+      "sha256": "c19840273c41a0e8bd1c565ce859b8b5b52b52cb8c947a6bec645a201810ffb9",
+      "written_sha256": "c19840273c41a0e8bd1c565ce859b8b5b52b52cb8c947a6bec645a201810ffb9"
+    },
+    {
+      "original_index": 43,
+      "original_name": "\\ps2dvd\\art\\firewell.ssf",
+      "filename": "firewell.ssf",
+      "original_offset": 265744384,
+      "size": 2729984,
+      "sha256": "36667afe49d55997fe83b57d1ed8748c5000d1954dfd055aa8f7974a5a4e260a",
+      "written_sha256": "36667afe49d55997fe83b57d1ed8748c5000d1954dfd055aa8f7974a5a4e260a"
+    },
+    {
+      "original_index": 44,
+      "original_name": "\\ps2dvd\\art\\forbidden_pass1.ssf",
+      "filename": "forbidden_pass1.ssf",
+      "original_offset": 268474368,
+      "size": 4943872,
+      "sha256": "e9d6dfe503d5ef6c526902570ded78f791c2b7f84a128985a408c58501253cbd",
+      "written_sha256": "e9d6dfe503d5ef6c526902570ded78f791c2b7f84a128985a408c58501253cbd"
+    },
+    {
+      "original_index": 45,
+      "original_name": "\\ps2dvd\\art\\forest1.ssf",
+      "filename": "forest1.ssf",
+      "original_offset": 273418240,
+      "size": 5068800,
+      "sha256": "67344ef318a1cc7976ce486a9ac87a67e28abb0d964a4a58a57672be54fc5cf9",
+      "written_sha256": "67344ef318a1cc7976ce486a9ac87a67e28abb0d964a4a58a57672be54fc5cf9"
+    },
+    {
+      "original_index": 46,
+      "original_name": "\\ps2dvd\\art\\frost.ssf",
+      "filename": "frost.ssf",
+      "original_offset": 278487040,
+      "size": 3153920,
+      "sha256": "109ff150ed4befca8d1e532a431c3f8ac172aa7355bcd9f5eaa08032fb78eb07",
+      "written_sha256": "109ff150ed4befca8d1e532a431c3f8ac172aa7355bcd9f5eaa08032fb78eb07"
+    },
+    {
+      "original_index": 47,
+      "original_name": "\\ps2dvd\\art\\frost_alt.ssf",
+      "filename": "frost_alt.ssf",
+      "original_offset": 281640960,
+      "size": 3137536,
+      "sha256": "11caedea7b648c8128467c8dca2d4f3291e862fd91903f0e160270f94f0d3f07",
+      "written_sha256": "11caedea7b648c8128467c8dca2d4f3291e862fd91903f0e160270f94f0d3f07"
+    },
+    {
+      "original_index": 48,
+      "original_name": "\\ps2dvd\\art\\fujin.ssf",
+      "filename": "fujin.ssf",
+      "original_offset": 284778496,
+      "size": 3379200,
+      "sha256": "4eb241fefc557e430a1051ded32e5a628b4dcf0908f689b13dca8d0e54bd2d77",
+      "written_sha256": "4eb241fefc557e430a1051ded32e5a628b4dcf0908f689b13dca8d0e54bd2d77"
+    },
+    {
+      "original_index": 49,
+      "original_name": "\\ps2dvd\\art\\fujin_alt.ssf",
+      "filename": "fujin_alt.ssf",
+      "original_offset": 288157696,
+      "size": 3301376,
+      "sha256": "5b91326ba9f65d537e365337ab917d18cfe35d2293e72a67b3b80f5666537a33",
+      "written_sha256": "5b91326ba9f65d537e365337ab917d18cfe35d2293e72a67b3b80f5666537a33"
+    },
+    {
+      "original_index": 50,
+      "original_name": "\\ps2dvd\\art\\gameart.ssf",
+      "filename": "gameart.ssf",
+      "original_offset": 291459072,
+      "size": 6823936,
+      "sha256": "9900120ff8782b16e0d73ee885c8f4df6c82545b915dd10105e6694a03658a39",
+      "written_sha256": "9900120ff8782b16e0d73ee885c8f4df6c82545b915dd10105e6694a03658a39"
+    },
+    {
+      "original_index": 51,
+      "original_name": "\\ps2dvd\\art\\generator8.ssf",
+      "filename": "generator8.ssf",
+      "original_offset": 298283008,
+      "size": 2729984,
+      "sha256": "fba36bc0ad1817453d15797a679d3ce849c35b012f5b17e2bc61bc38eec535be",
+      "written_sha256": "fba36bc0ad1817453d15797a679d3ce849c35b012f5b17e2bc61bc38eec535be"
+    },
+    {
+      "original_index": 52,
+      "original_name": "\\ps2dvd\\art\\goldcave_hub.ssf",
+      "filename": "goldcave_hub.ssf",
+      "original_offset": 301012992,
+      "size": 1986560,
+      "sha256": "d9e261d21b92574cca347c072e123dbdb731421ea25863aa1266c2dccfd89120",
+      "written_sha256": "d9e261d21b92574cca347c072e123dbdb731421ea25863aa1266c2dccfd89120"
+    },
+    {
+      "original_index": 53,
+      "original_name": "\\ps2dvd\\art\\goldcave_hub_4.ssf",
+      "filename": "goldcave_hub_4.ssf",
+      "original_offset": 302999552,
+      "size": 2807808,
+      "sha256": "6484c5d7b714c6a9d57d16de0c6d383f5949376b1d7adaa8eedd516724e3e6bf",
+      "written_sha256": "6484c5d7b714c6a9d57d16de0c6d383f5949376b1d7adaa8eedd516724e3e6bf"
+    },
+    {
+      "original_index": 54,
+      "original_name": "\\ps2dvd\\art\\goldcave_hub_7.ssf",
+      "filename": "goldcave_hub_7.ssf",
+      "original_offset": 305807360,
+      "size": 2613248,
+      "sha256": "12807d8194c0ccec57238f0202babd6f1e4f17a856b9a67366308f1c6e94f0ba",
+      "written_sha256": "12807d8194c0ccec57238f0202babd6f1e4f17a856b9a67366308f1c6e94f0ba"
+    },
+    {
+      "original_index": 55,
+      "original_name": "\\ps2dvd\\art\\goro.ssf",
+      "filename": "goro.ssf",
+      "original_offset": 308420608,
+      "size": 2625536,
+      "sha256": "a44c0773cc23b6959f8c167364ed9f08c447e6addccec8e15fdfeb5c8807edb4",
+      "written_sha256": "a44c0773cc23b6959f8c167364ed9f08c447e6addccec8e15fdfeb5c8807edb4"
+    },
+    {
+      "original_index": 56,
+      "original_name": "\\ps2dvd\\art\\goros_lair_arena.ssf",
+      "filename": "goros_lair_arena.ssf",
+      "original_offset": 311046144,
+      "size": 2693120,
+      "sha256": "3a7be488187070d5e81de5ce8e61877eff00648191a2d0bc54e25047a2fe9b6c",
+      "written_sha256": "3a7be488187070d5e81de5ce8e61877eff00648191a2d0bc54e25047a2fe9b6c"
+    },
+    {
+      "original_index": 57,
+      "original_name": "\\ps2dvd\\art\\goro_alt.ssf",
+      "filename": "goro_alt.ssf",
+      "original_offset": 313739264,
+      "size": 2662400,
+      "sha256": "2605009d5d3f90573a1166af38af0d6a41060c47f59ed4cb2bde9eb1f0fcc365",
+      "written_sha256": "2605009d5d3f90573a1166af38af0d6a41060c47f59ed4cb2bde9eb1f0fcc365"
+    },
+    {
+      "original_index": 58,
+      "original_name": "\\ps2dvd\\art\\grandhallway6.ssf",
+      "filename": "grandhallway6.ssf",
+      "original_offset": 316401664,
+      "size": 5496832,
+      "sha256": "df6ac78591f1be154885bc82318fcbbeffac32dab82fd566d66f9fea6b7b0577",
+      "written_sha256": "df6ac78591f1be154885bc82318fcbbeffac32dab82fd566d66f9fea6b7b0577"
+    },
+    {
+      "original_index": 59,
+      "original_name": "\\ps2dvd\\art\\greatentrance1.ssf",
+      "filename": "greatentrance1.ssf",
+      "original_offset": 321898496,
+      "size": 5906432,
+      "sha256": "fa67c78730fbd9b143c807ac4ea1a0ce4fc0343a86792f5ace13dbd02c08d716",
+      "written_sha256": "fa67c78730fbd9b143c807ac4ea1a0ce4fc0343a86792f5ace13dbd02c08d716"
+    },
+    {
+      "original_index": 60,
+      "original_name": "\\ps2dvd\\art\\havik.ssf",
+      "filename": "havik.ssf",
+      "original_offset": 327804928,
+      "size": 3479552,
+      "sha256": "ac82d85d7c60e03bb2ad821a489150c8aa8903a06ea0c19c96b23790721f8ab1",
+      "written_sha256": "ac82d85d7c60e03bb2ad821a489150c8aa8903a06ea0c19c96b23790721f8ab1"
+    },
+    {
+      "original_index": 61,
+      "original_name": "\\ps2dvd\\art\\havik_alt.ssf",
+      "filename": "havik_alt.ssf",
+      "original_offset": 331284480,
+      "size": 3217408,
+      "sha256": "251bac3622c526516ceface1022f874b2445a258063b1bd0fe0336727f76aff2",
+      "written_sha256": "251bac3622c526516ceface1022f874b2445a258063b1bd0fe0336727f76aff2"
+    },
+    {
+      "original_index": 62,
+      "original_name": "\\ps2dvd\\art\\hell.ssf",
+      "filename": "hell.ssf",
+      "original_offset": 334501888,
+      "size": 1761280,
+      "sha256": "e25371334e0df068b73211bd84c797eb7f16cf74c2825c93facf408e82ed1104",
+      "written_sha256": "e25371334e0df068b73211bd84c797eb7f16cf74c2825c93facf408e82ed1104"
+    },
+    {
+      "original_index": 63,
+      "original_name": "\\ps2dvd\\art\\hellsfoundry.ssf",
+      "filename": "hellsfoundry.ssf",
+      "original_offset": 336263168,
+      "size": 2074624,
+      "sha256": "9fe84d2e4d11135cfea4b31b02f6098a03f42b7058626732379d1c50b17dce35",
+      "written_sha256": "9fe84d2e4d11135cfea4b31b02f6098a03f42b7058626732379d1c50b17dce35"
+    },
+    {
+      "original_index": 64,
+      "original_name": "\\ps2dvd\\art\\hero_1.ssf",
+      "filename": "hero_1.ssf",
+      "original_offset": 338337792,
+      "size": 196608,
+      "sha256": "d14ec114fe67984104f71667b78b82cbed8ef690199d3fb2cf41401db2a35f80",
+      "written_sha256": "d14ec114fe67984104f71667b78b82cbed8ef690199d3fb2cf41401db2a35f80"
+    },
+    {
+      "original_index": 65,
+      "original_name": "\\ps2dvd\\art\\hero_2.ssf",
+      "filename": "hero_2.ssf",
+      "original_offset": 338534400,
+      "size": 188416,
+      "sha256": "6ac55dbcc2378b08bf565de656912b7a16100bef49cb8e86e4778b50b34f788a",
+      "written_sha256": "6ac55dbcc2378b08bf565de656912b7a16100bef49cb8e86e4778b50b34f788a"
+    },
+    {
+      "original_index": 66,
+      "original_name": "\\ps2dvd\\art\\hotaru.ssf",
+      "filename": "hotaru.ssf",
+      "original_offset": 338722816,
+      "size": 3241984,
+      "sha256": "db84d7735cc2eaaeae5294a970f7a7f35492d84b10809bedce6bac7ea5addbc9",
+      "written_sha256": "db84d7735cc2eaaeae5294a970f7a7f35492d84b10809bedce6bac7ea5addbc9"
+    },
+    {
+      "original_index": 67,
+      "original_name": "\\ps2dvd\\art\\hotaru_alt.ssf",
+      "filename": "hotaru_alt.ssf",
+      "original_offset": 341964800,
+      "size": 3067904,
+      "sha256": "c816da61d524aa1d8deb13651d5ee62091212240330cc36f892339e6f971ac43",
+      "written_sha256": "c816da61d524aa1d8deb13651d5ee62091212240330cc36f892339e6f971ac43"
+    },
+    {
+      "original_index": 68,
+      "original_name": "\\ps2dvd\\art\\hsuhao.ssf",
+      "filename": "hsuhao.ssf",
+      "original_offset": 345032704,
+      "size": 3174400,
+      "sha256": "3c50b346e3530c714e36cbad3475beda397376705d7619e37ce960faaf132ec2",
+      "written_sha256": "3c50b346e3530c714e36cbad3475beda397376705d7619e37ce960faaf132ec2"
+    },
+    {
+      "original_index": 69,
+      "original_name": "\\ps2dvd\\art\\hsuhao_alt.ssf",
+      "filename": "hsuhao_alt.ssf",
+      "original_offset": 348207104,
+      "size": 3151872,
+      "sha256": "a89427d3ba0cb10b9373a6234b8b3cbb261f6a0df3acade82042050739a47fe1",
+      "written_sha256": "a89427d3ba0cb10b9373a6234b8b3cbb261f6a0df3acade82042050739a47fe1"
+    },
+    {
+      "original_index": 70,
+      "original_name": "\\ps2dvd\\art\\icepalace1a.ssf",
+      "filename": "icepalace1a.ssf",
+      "original_offset": 351358976,
+      "size": 3637248,
+      "sha256": "88c5339c68178ef6f6ae75045e40a32830b02e7f79dbea0216ad58ed841f8a41",
+      "written_sha256": "88c5339c68178ef6f6ae75045e40a32830b02e7f79dbea0216ad58ed841f8a41"
+    },
+    {
+      "original_index": 71,
+      "original_name": "\\ps2dvd\\art\\icepalace1b_trans.ssf",
+      "filename": "icepalace1b_trans.ssf",
+      "original_offset": 354996224,
+      "size": 2650112,
+      "sha256": "9c9e951d9898dea9854943dc6010a6dcb1ad156de06857e70e8e86b92325b3c0",
+      "written_sha256": "9c9e951d9898dea9854943dc6010a6dcb1ad156de06857e70e8e86b92325b3c0"
+    },
+    {
+      "original_index": 72,
+      "original_name": "\\ps2dvd\\art\\icepalace1c.ssf",
+      "filename": "icepalace1c.ssf",
+      "original_offset": 357646336,
+      "size": 7587840,
+      "sha256": "d29b1284b82d61ea15eca399a9d724ec1e3c7d701d1519dc426e4be32c857d90",
+      "written_sha256": "d29b1284b82d61ea15eca399a9d724ec1e3c7d701d1519dc426e4be32c857d90"
+    },
+    {
+      "original_index": 73,
+      "original_name": "\\ps2dvd\\art\\icepalace3_trans.ssf",
+      "filename": "icepalace3_trans.ssf",
+      "original_offset": 365234176,
+      "size": 2871296,
+      "sha256": "643f5e905f9a8b3d2b5816685b5955e6f0b82323a7f38c97fe5cb02c64a5e615",
+      "written_sha256": "643f5e905f9a8b3d2b5816685b5955e6f0b82323a7f38c97fe5cb02c64a5e615"
+    },
+    {
+      "original_index": 74,
+      "original_name": "\\ps2dvd\\art\\icepalace4.ssf",
+      "filename": "icepalace4.ssf",
+      "original_offset": 368105472,
+      "size": 7495680,
+      "sha256": "402dda3a28bdfcb284ef72be4063543a2db708937f70057531502c62c8e8b3c2",
+      "written_sha256": "402dda3a28bdfcb284ef72be4063543a2db708937f70057531502c62c8e8b3c2"
+    },
+    {
+      "original_index": 75,
+      "original_name": "\\ps2dvd\\art\\icepalace_fa.ssf",
+      "filename": "icepalace_fa.ssf",
+      "original_offset": 375601152,
+      "size": 1048576,
+      "sha256": "2419c73b05b2de6c25f1d6ae1606b76541abc19898b3590623944ec85898287f",
+      "written_sha256": "2419c73b05b2de6c25f1d6ae1606b76541abc19898b3590623944ec85898287f"
+    },
+    {
+      "original_index": 76,
+      "original_name": "\\ps2dvd\\art\\icepath1.ssf",
+      "filename": "icepath1.ssf",
+      "original_offset": 376649728,
+      "size": 7997440,
+      "sha256": "cb8cc7b421fd56a61e3ed87640b78cb7bbea493a53158d43e10e3fec902b247b",
+      "written_sha256": "cb8cc7b421fd56a61e3ed87640b78cb7bbea493a53158d43e10e3fec902b247b"
+    },
+    {
+      "original_index": 77,
+      "original_name": "\\ps2dvd\\art\\icepath1b_trans.ssf",
+      "filename": "icepath1b_trans.ssf",
+      "original_offset": 384647168,
+      "size": 1949696,
+      "sha256": "2a945b180f648a860322b5b97f40169f28daabc79b4b5eec88ee18e94cbd6a83",
+      "written_sha256": "2a945b180f648a860322b5b97f40169f28daabc79b4b5eec88ee18e94cbd6a83"
+    },
+    {
+      "original_index": 78,
+      "original_name": "\\ps2dvd\\art\\icepath1c.ssf",
+      "filename": "icepath1c.ssf",
+      "original_offset": 386596864,
+      "size": 6481920,
+      "sha256": "fa5649bcb0f3729d8294cf4c25817ea07dea1cf922c3eed3e5db214c467bacd7",
+      "written_sha256": "fa5649bcb0f3729d8294cf4c25817ea07dea1cf922c3eed3e5db214c467bacd7"
+    },
+    {
+      "original_index": 79,
+      "original_name": "\\ps2dvd\\art\\icepath2_trans.ssf",
+      "filename": "icepath2_trans.ssf",
+      "original_offset": 393078784,
+      "size": 2842624,
+      "sha256": "2ec5a2a58a063c14719abd1b49dc3934e990accc1d43257b2314bf6f04287830",
+      "written_sha256": "2ec5a2a58a063c14719abd1b49dc3934e990accc1d43257b2314bf6f04287830"
+    },
+    {
+      "original_index": 80,
+      "original_name": "\\ps2dvd\\art\\icepath3.ssf",
+      "filename": "icepath3.ssf",
+      "original_offset": 395921408,
+      "size": 4835328,
+      "sha256": "0f6e0f5c40164beea486d1880285a4f489652cb5b1e005acb8cf0c9057347b13",
+      "written_sha256": "0f6e0f5c40164beea486d1880285a4f489652cb5b1e005acb8cf0c9057347b13"
+    },
+    {
+      "original_index": 81,
+      "original_name": "\\ps2dvd\\art\\innerspire1.ssf",
+      "filename": "innerspire1.ssf",
+      "original_offset": 400756736,
+      "size": 6965248,
+      "sha256": "1e7c7b119661f2bd26d956d34074aa6511b0036d5c2e7bd25f5aeb37abd0bd1c",
+      "written_sha256": "1e7c7b119661f2bd26d956d34074aa6511b0036d5c2e7bd25f5aeb37abd0bd1c"
+    },
+    {
+      "original_index": 82,
+      "original_name": "\\ps2dvd\\art\\innerspire2.ssf",
+      "filename": "innerspire2.ssf",
+      "original_offset": 407721984,
+      "size": 5171200,
+      "sha256": "bf4a0fcae820e23d893475abb2e7403db69ea2838e3e5726ed1eabccbc9cb6bd",
+      "written_sha256": "bf4a0fcae820e23d893475abb2e7403db69ea2838e3e5726ed1eabccbc9cb6bd"
+    },
+    {
+      "original_index": 83,
+      "original_name": "\\ps2dvd\\art\\jade.ssf",
+      "filename": "jade.ssf",
+      "original_offset": 412893184,
+      "size": 3223552,
+      "sha256": "e592f0fbbbf9c88d172a70fe40f9c1a232463abe375534c7195af4a837ac6274",
+      "written_sha256": "e592f0fbbbf9c88d172a70fe40f9c1a232463abe375534c7195af4a837ac6274"
+    },
+    {
+      "original_index": 84,
+      "original_name": "\\ps2dvd\\art\\jade_alt.ssf",
+      "filename": "jade_alt.ssf",
+      "original_offset": 416116736,
+      "size": 3215360,
+      "sha256": "ed4aa22550f8bc68ada743039d100d1e190b1d64510491dcad428abba5ff54a9",
+      "written_sha256": "ed4aa22550f8bc68ada743039d100d1e190b1d64510491dcad428abba5ff54a9"
+    },
+    {
+      "original_index": 85,
+      "original_name": "\\ps2dvd\\art\\jarek.ssf",
+      "filename": "jarek.ssf",
+      "original_offset": 419332096,
+      "size": 3241984,
+      "sha256": "9375a20c9028b413dbfe2c67154c01eacbc03d7a8965ae0678fe430ffa7c66bc",
+      "written_sha256": "9375a20c9028b413dbfe2c67154c01eacbc03d7a8965ae0678fe430ffa7c66bc"
+    },
+    {
+      "original_index": 86,
+      "original_name": "\\ps2dvd\\art\\jarek_alt.ssf",
+      "filename": "jarek_alt.ssf",
+      "original_offset": 422574080,
+      "size": 3213312,
+      "sha256": "55e88308fa44bd8720c8858935e8a15bf0516b1aaea6538233ba794d6441333a",
+      "written_sha256": "55e88308fa44bd8720c8858935e8a15bf0516b1aaea6538233ba794d6441333a"
+    },
+    {
+      "original_index": 87,
+      "original_name": "\\ps2dvd\\art\\jax.ssf",
+      "filename": "jax.ssf",
+      "original_offset": 425787392,
+      "size": 3274752,
+      "sha256": "2caddfe75c7c224a19de21679d463928b62f8395146b72dc5414ed6e1761d4f3",
+      "written_sha256": "2caddfe75c7c224a19de21679d463928b62f8395146b72dc5414ed6e1761d4f3"
+    },
+    {
+      "original_index": 88,
+      "original_name": "\\ps2dvd\\art\\jax_alt.ssf",
+      "filename": "jax_alt.ssf",
+      "original_offset": 429062144,
+      "size": 3287040,
+      "sha256": "d50418599be3710c998746f2cf7d3fcbd89d0074caecf899f3043a6e251a8c0d",
+      "written_sha256": "d50418599be3710c998746f2cf7d3fcbd89d0074caecf899f3043a6e251a8c0d"
+    },
+    {
+      "original_index": 89,
+      "original_name": "\\ps2dvd\\art\\jungle1.ssf",
+      "filename": "jungle1.ssf",
+      "original_offset": 432349184,
+      "size": 7524352,
+      "sha256": "e0f5d2ccf781b6f06bdcc42f23896fad0d13aad66429431d57224a9f98eb183f",
+      "written_sha256": "e0f5d2ccf781b6f06bdcc42f23896fad0d13aad66429431d57224a9f98eb183f"
+    },
+    {
+      "original_index": 90,
+      "original_name": "\\ps2dvd\\art\\jungle2_trans.ssf",
+      "filename": "jungle2_trans.ssf",
+      "original_offset": 439873536,
+      "size": 2459648,
+      "sha256": "59b55f0450ea1d608846259a7530b2f61c7b9f1ea22503fecd7446c914fbf054",
+      "written_sha256": "59b55f0450ea1d608846259a7530b2f61c7b9f1ea22503fecd7446c914fbf054"
+    },
+    {
+      "original_index": 91,
+      "original_name": "\\ps2dvd\\art\\jungle3.ssf",
+      "filename": "jungle3.ssf",
+      "original_offset": 442333184,
+      "size": 5666816,
+      "sha256": "a280b3660f5799543f8d36a261f3e717c67ad960053062269cc98382824fca73",
+      "written_sha256": "a280b3660f5799543f8d36a261f3e717c67ad960053062269cc98382824fca73"
+    },
+    {
+      "original_index": 92,
+      "original_name": "\\ps2dvd\\art\\kabal.ssf",
+      "filename": "kabal.ssf",
+      "original_offset": 448000000,
+      "size": 3414016,
+      "sha256": "982ba3ac051ab9576e39b99e7f42b375987f8c65f8089e2fd5d2dbc1a290aabc",
+      "written_sha256": "982ba3ac051ab9576e39b99e7f42b375987f8c65f8089e2fd5d2dbc1a290aabc"
+    },
+    {
+      "original_index": 93,
+      "original_name": "\\ps2dvd\\art\\kabal_alt.ssf",
+      "filename": "kabal_alt.ssf",
+      "original_offset": 451414016,
+      "size": 3477504,
+      "sha256": "dd98ad3359272e898af96a884df3625f72f7f8568e54ea9ac5f653946943360e",
+      "written_sha256": "dd98ad3359272e898af96a884df3625f72f7f8568e54ea9ac5f653946943360e"
+    },
+    {
+      "original_index": 94,
+      "original_name": "\\ps2dvd\\art\\kai.ssf",
+      "filename": "kai.ssf",
+      "original_offset": 454891520,
+      "size": 3289088,
+      "sha256": "94e4215dd3d4bf365a8cab17955e4e6a3611ff4f1b1f9a18d71b395789af64ea",
+      "written_sha256": "94e4215dd3d4bf365a8cab17955e4e6a3611ff4f1b1f9a18d71b395789af64ea"
+    },
+    {
+      "original_index": 95,
+      "original_name": "\\ps2dvd\\art\\kai_alt.ssf",
+      "filename": "kai_alt.ssf",
+      "original_offset": 458180608,
+      "size": 3053568,
+      "sha256": "c7fb8de2d49ffc1406a89b894a07a207562a4a446c3cdb8a1b0d4ce9da94fbb1",
+      "written_sha256": "c7fb8de2d49ffc1406a89b894a07a207562a4a446c3cdb8a1b0d4ce9da94fbb1"
+    },
+    {
+      "original_index": 96,
+      "original_name": "\\ps2dvd\\art\\kano.ssf",
+      "filename": "kano.ssf",
+      "original_offset": 461234176,
+      "size": 3178496,
+      "sha256": "1a0f7d3b9fc75a15c516c12be0e07ae6c58c0f2572c7ed012019e2d4d43a30a8",
+      "written_sha256": "1a0f7d3b9fc75a15c516c12be0e07ae6c58c0f2572c7ed012019e2d4d43a30a8"
+    },
+    {
+      "original_index": 97,
+      "original_name": "\\ps2dvd\\art\\kano_alt.ssf",
+      "filename": "kano_alt.ssf",
+      "original_offset": 464412672,
+      "size": 3137536,
+      "sha256": "5a5a3e6a565caebef1fd618ef702daaf6659623b263bf3e4fbe20bc44dfbface",
+      "written_sha256": "5a5a3e6a565caebef1fd618ef702daaf6659623b263bf3e4fbe20bc44dfbface"
+    },
+    {
+      "original_index": 98,
+      "original_name": "\\ps2dvd\\art\\kart.ssf",
+      "filename": "kart.ssf",
+      "original_offset": 467550208,
+      "size": 12093440,
+      "sha256": "9455abc9cf3e24c3bd4ed5fef34a92fcaf0085c393ab086f0b5e25831bf04e50",
+      "written_sha256": "9455abc9cf3e24c3bd4ed5fef34a92fcaf0085c393ab086f0b5e25831bf04e50"
+    },
+    {
+      "original_index": 99,
+      "original_name": "\\ps2dvd\\art\\kart_test_derby.ssf",
+      "filename": "kart_test_derby.ssf",
+      "original_offset": 479643648,
+      "size": 219136,
+      "sha256": "52366c31b741962b16e4f8174cd7482230bd4e909de1d97be5b3811b3cfbc8f1",
+      "written_sha256": "52366c31b741962b16e4f8174cd7482230bd4e909de1d97be5b3811b3cfbc8f1"
+    },
+    {
+      "original_index": 100,
+      "original_name": "\\ps2dvd\\art\\kart_track_desert.ssf",
+      "filename": "kart_track_desert.ssf",
+      "original_offset": 479862784,
+      "size": 4149248,
+      "sha256": "4cd6b335e5d6f3fff5b8a3413843d02f25b4436cde0eb9964e94b834c7c2bb8d",
+      "written_sha256": "4cd6b335e5d6f3fff5b8a3413843d02f25b4436cde0eb9964e94b834c7c2bb8d"
+    },
+    {
+      "original_index": 101,
+      "original_name": "\\ps2dvd\\art\\kart_track_desert_LOD.ssf",
+      "filename": "kart_track_desert_LOD.ssf",
+      "original_offset": 484012032,
+      "size": 3377152,
+      "sha256": "0851479ad9a80d711e3ff4ab338f5559426bc25423a22a7a11aaeb7ed7bb0236",
+      "written_sha256": "0851479ad9a80d711e3ff4ab338f5559426bc25423a22a7a11aaeb7ed7bb0236"
+    },
+    {
+      "original_index": 102,
+      "original_name": "\\ps2dvd\\art\\kart_track_jungle.ssf",
+      "filename": "kart_track_jungle.ssf",
+      "original_offset": 487389184,
+      "size": 4524032,
+      "sha256": "49b2b5faa25cf8decce17b6bb3f5851bb87261028adb07853811ff4a7a101959",
+      "written_sha256": "49b2b5faa25cf8decce17b6bb3f5851bb87261028adb07853811ff4a7a101959"
+    },
+    {
+      "original_index": 103,
+      "original_name": "\\ps2dvd\\art\\kart_track_jungle_LOD.ssf",
+      "filename": "kart_track_jungle_LOD.ssf",
+      "original_offset": 491913216,
+      "size": 3246080,
+      "sha256": "7f9732077c182e6928a0c62dd23bc1ce240601a5de0cb7a349f7eaa708e72d58",
+      "written_sha256": "7f9732077c182e6928a0c62dd23bc1ce240601a5de0cb7a349f7eaa708e72d58"
+    },
+    {
+      "original_index": 104,
+      "original_name": "\\ps2dvd\\art\\kart_track_kartarttool.ssf",
+      "filename": "kart_track_kartarttool.ssf",
+      "original_offset": 495159296,
+      "size": 26624,
+      "sha256": "d39628cbf8aa56e5384dc5d2d1c0d8e994ac3ae46ff3448c80d39cf434c18fbc",
+      "written_sha256": "d39628cbf8aa56e5384dc5d2d1c0d8e994ac3ae46ff3448c80d39cf434c18fbc"
+    },
+    {
+      "original_index": 105,
+      "original_name": "\\ps2dvd\\art\\kart_track_linkuei.ssf",
+      "filename": "kart_track_linkuei.ssf",
+      "original_offset": 495185920,
+      "size": 4677632,
+      "sha256": "99e450df7ce6082140b80169a883990eda38bd61bd45abaec247ecf74bbf7ce0",
+      "written_sha256": "99e450df7ce6082140b80169a883990eda38bd61bd45abaec247ecf74bbf7ce0"
+    },
+    {
+      "original_index": 106,
+      "original_name": "\\ps2dvd\\art\\kart_track_linkuei_LOD.ssf",
+      "filename": "kart_track_linkuei_LOD.ssf",
+      "original_offset": 499863552,
+      "size": 3872768,
+      "sha256": "73681f50d720ce25e4eac1deeb5c1060256451b7119b87f60fde1624167199a7",
+      "written_sha256": "73681f50d720ce25e4eac1deeb5c1060256451b7119b87f60fde1624167199a7"
+    },
+    {
+      "original_index": 107,
+      "original_name": "\\ps2dvd\\art\\kart_track_loop.ssf",
+      "filename": "kart_track_loop.ssf",
+      "original_offset": 503736320,
+      "size": 1404928,
+      "sha256": "02bf483c0bf23d241464daebae1b3436e6b64b45cd8c9e17966be34f27ed2a86",
+      "written_sha256": "02bf483c0bf23d241464daebae1b3436e6b64b45cd8c9e17966be34f27ed2a86"
+    },
+    {
+      "original_index": 108,
+      "original_name": "\\ps2dvd\\art\\kart_track_motortown.ssf",
+      "filename": "kart_track_motortown.ssf",
+      "original_offset": 505141248,
+      "size": 4503552,
+      "sha256": "33066df00f6267f5edfddb270132f65bbfc2ac7a1ced4266ed3a753321fa8c39",
+      "written_sha256": "33066df00f6267f5edfddb270132f65bbfc2ac7a1ced4266ed3a753321fa8c39"
+    },
+    {
+      "original_index": 109,
+      "original_name": "\\ps2dvd\\art\\kart_track_motortown_LOD.ssf",
+      "filename": "kart_track_motortown_LOD.ssf",
+      "original_offset": 509644800,
+      "size": 3551232,
+      "sha256": "6d146bd8df1908e24e1925d248ae06bb2da529baf1ba90aacbaa75d3b2b02c62",
+      "written_sha256": "6d146bd8df1908e24e1925d248ae06bb2da529baf1ba90aacbaa75d3b2b02c62"
+    },
+    {
+      "original_index": 110,
+      "original_name": "\\ps2dvd\\art\\kart_track_straightaway.ssf",
+      "filename": "kart_track_straightaway.ssf",
+      "original_offset": 513196032,
+      "size": 1001472,
+      "sha256": "0e76a84ce9fcb16d4baa92ec1463d349ee2f0564ccea2d2c731a5ad87ad49d02",
+      "written_sha256": "0e76a84ce9fcb16d4baa92ec1463d349ee2f0564ccea2d2c731a5ad87ad49d02"
+    },
+    {
+      "original_index": 111,
+      "original_name": "\\ps2dvd\\art\\kart_track_volcano.ssf",
+      "filename": "kart_track_volcano.ssf",
+      "original_offset": 514197504,
+      "size": 2928640,
+      "sha256": "e431713b7646e7a0e501010ebb0d16e1fc69b533814633663cb2bdee451e50c0",
+      "written_sha256": "e431713b7646e7a0e501010ebb0d16e1fc69b533814633663cb2bdee451e50c0"
+    },
+    {
+      "original_index": 112,
+      "original_name": "\\ps2dvd\\art\\kart_track_volcano_LOD.ssf",
+      "filename": "kart_track_volcano_LOD.ssf",
+      "original_offset": 517126144,
+      "size": 2484224,
+      "sha256": "a3b05043d212171c8f5e76f80eff133171a33e2fd55244fff5b5698a7b1712e0",
+      "written_sha256": "a3b05043d212171c8f5e76f80eff133171a33e2fd55244fff5b5698a7b1712e0"
+    },
+    {
+      "original_index": 113,
+      "original_name": "\\ps2dvd\\art\\kata.ssf",
+      "filename": "kata.ssf",
+      "original_offset": 519610368,
+      "size": 1607680,
+      "sha256": "7ef61d9c1ab1c37ee92c9dc5bff74e522345d7c6d7bac497ca106fbeab9c3dd4",
+      "written_sha256": "7ef61d9c1ab1c37ee92c9dc5bff74e522345d7c6d7bac497ca106fbeab9c3dd4"
+    },
+    {
+      "original_index": 114,
+      "original_name": "\\ps2dvd\\art\\kenshi.ssf",
+      "filename": "kenshi.ssf",
+      "original_offset": 521218048,
+      "size": 3018752,
+      "sha256": "336ee89a31ab38dd244582d9e9b3d8c77e5b0c89e708106b4956a0cd01283429",
+      "written_sha256": "336ee89a31ab38dd244582d9e9b3d8c77e5b0c89e708106b4956a0cd01283429"
+    },
+    {
+      "original_index": 115,
+      "original_name": "\\ps2dvd\\art\\kenshi_alt.ssf",
+      "filename": "kenshi_alt.ssf",
+      "original_offset": 524236800,
+      "size": 3006464,
+      "sha256": "9d12aeb49a0d713b31e86cec2d12c63620e6198d150383aff73bce93ac247c04",
+      "written_sha256": "9d12aeb49a0d713b31e86cec2d12c63620e6198d150383aff73bce93ac247c04"
+    },
+    {
+      "original_index": 116,
+      "original_name": "\\ps2dvd\\art\\kintaro.ssf",
+      "filename": "kintaro.ssf",
+      "original_offset": 527243264,
+      "size": 2942976,
+      "sha256": "3e6f6283aaa6252a4e4ae94f43d3805ca6af8a8efa3090368c9d3ee16b37ee20",
+      "written_sha256": "3e6f6283aaa6252a4e4ae94f43d3805ca6af8a8efa3090368c9d3ee16b37ee20"
+    },
+    {
+      "original_index": 117,
+      "original_name": "\\ps2dvd\\art\\kintaro_alt.ssf",
+      "filename": "kintaro_alt.ssf",
+      "original_offset": 530186240,
+      "size": 2902016,
+      "sha256": "4bfa81c2282e3b664d834ff0b9621da7ac7564a1c56000cda7a92bcb2515f29c",
+      "written_sha256": "4bfa81c2282e3b664d834ff0b9621da7ac7564a1c56000cda7a92bcb2515f29c"
+    },
+    {
+      "original_index": 118,
+      "original_name": "\\ps2dvd\\art\\kira.ssf",
+      "filename": "kira.ssf",
+      "original_offset": 533088256,
+      "size": 3196928,
+      "sha256": "02d4399d5820122d7010e064c51a9502aa95e378afa1dbff3e2ca025436e9ba3",
+      "written_sha256": "02d4399d5820122d7010e064c51a9502aa95e378afa1dbff3e2ca025436e9ba3"
+    },
+    {
+      "original_index": 119,
+      "original_name": "\\ps2dvd\\art\\kira_alt.ssf",
+      "filename": "kira_alt.ssf",
+      "original_offset": 536285184,
+      "size": 3254272,
+      "sha256": "793c8b884efbe3b1f560331487193899c78f51fbc8cea9e38f26ca65b65f9dad",
+      "written_sha256": "793c8b884efbe3b1f560331487193899c78f51fbc8cea9e38f26ca65b65f9dad"
+    },
+    {
+      "original_index": 120,
+      "original_name": "\\ps2dvd\\art\\kitana.ssf",
+      "filename": "kitana.ssf",
+      "original_offset": 539539456,
+      "size": 3254272,
+      "sha256": "1962079301cec0f2bcaa5b76eddddde61a6080527c8643dcbdec3b52b2b85bf4",
+      "written_sha256": "1962079301cec0f2bcaa5b76eddddde61a6080527c8643dcbdec3b52b2b85bf4"
+    },
+    {
+      "original_index": 121,
+      "original_name": "\\ps2dvd\\art\\kitana_alt.ssf",
+      "filename": "kitana_alt.ssf",
+      "original_offset": 542793728,
+      "size": 3303424,
+      "sha256": "8f76c3bbafff0ab543f844102e92127d87b278ce6ad8e27b67c9df70291cd915",
+      "written_sha256": "8f76c3bbafff0ab543f844102e92127d87b278ce6ad8e27b67c9df70291cd915"
+    },
+    {
+      "original_index": 122,
+      "original_name": "\\ps2dvd\\art\\kobra.ssf",
+      "filename": "kobra.ssf",
+      "original_offset": 546097152,
+      "size": 3278848,
+      "sha256": "eabfa5804efef019f0729a7c76770ae844df922b5e7b6769ee50f79ebd5a78a9",
+      "written_sha256": "eabfa5804efef019f0729a7c76770ae844df922b5e7b6769ee50f79ebd5a78a9"
+    },
+    {
+      "original_index": 123,
+      "original_name": "\\ps2dvd\\art\\kobra_alt.ssf",
+      "filename": "kobra_alt.ssf",
+      "original_offset": 549376000,
+      "size": 3162112,
+      "sha256": "b0f605fd23ecfb550c32e2010a7268a997ab0b1ebb40084563a46c6477484370",
+      "written_sha256": "b0f605fd23ecfb550c32e2010a7268a997ab0b1ebb40084563a46c6477484370"
+    },
+    {
+      "original_index": 124,
+      "original_name": "\\ps2dvd\\art\\konquest_common.ssf",
+      "filename": "konquest_common.ssf",
+      "original_offset": 552538112,
+      "size": 19650560,
+      "sha256": "a02b1871023283333d7783ec6827669a107ef0a4d474a69c3662bfd951bc44fe",
+      "written_sha256": "a02b1871023283333d7783ec6827669a107ef0a4d474a69c3662bfd951bc44fe"
+    },
+    {
+      "original_index": 125,
+      "original_name": "\\ps2dvd\\art\\kon_cave_fa.ssf",
+      "filename": "kon_cave_fa.ssf",
+      "original_offset": 572188672,
+      "size": 2215936,
+      "sha256": "dee6912595365ed30bbf97e65bdd518ed29d6764bcbd4664ba1fae2ff019a320",
+      "written_sha256": "dee6912595365ed30bbf97e65bdd518ed29d6764bcbd4664ba1fae2ff019a320"
+    },
+    {
+      "original_index": 126,
+      "original_name": "\\ps2dvd\\art\\kon_final_battle_fa.ssf",
+      "filename": "kon_final_battle_fa.ssf",
+      "original_offset": 574404608,
+      "size": 3383296,
+      "sha256": "c93f7356e00b20065fed067020fb3f903fa9538922e5443f1cb6466f34fde42b",
+      "written_sha256": "c93f7356e00b20065fed067020fb3f903fa9538922e5443f1cb6466f34fde42b"
+    },
+    {
+      "original_index": 127,
+      "original_name": "\\ps2dvd\\art\\kon_firemountain_arena.ssf",
+      "filename": "kon_firemountain_arena.ssf",
+      "original_offset": 577787904,
+      "size": 1755136,
+      "sha256": "f3cd06cb555708680992a8b705e63629a005382b0037320d65e7445171ede5b3",
+      "written_sha256": "f3cd06cb555708680992a8b705e63629a005382b0037320d65e7445171ede5b3"
+    },
+    {
+      "original_index": 128,
+      "original_name": "\\ps2dvd\\art\\kon_forest_fa.ssf",
+      "filename": "kon_forest_fa.ssf",
+      "original_offset": 579543040,
+      "size": 1761280,
+      "sha256": "9284ee86b8ac5196aabebcca19adbd38337db478f2ac47cc9122246dd53f00a7",
+      "written_sha256": "9284ee86b8ac5196aabebcca19adbd38337db478f2ac47cc9122246dd53f00a7"
+    },
+    {
+      "original_index": 129,
+      "original_name": "\\ps2dvd\\art\\kon_icepalace_arena.ssf",
+      "filename": "kon_icepalace_arena.ssf",
+      "original_offset": 581304320,
+      "size": 1142784,
+      "sha256": "a119a57357edd68668039c3ceab8492a26ca0b72194b1cd1d388e8beb1cfa815",
+      "written_sha256": "a119a57357edd68668039c3ceab8492a26ca0b72194b1cd1d388e8beb1cfa815"
+    },
+    {
+      "original_index": 130,
+      "original_name": "\\ps2dvd\\art\\kon_icepath_arena.ssf",
+      "filename": "kon_icepath_arena.ssf",
+      "original_offset": 582447104,
+      "size": 1257472,
+      "sha256": "35155454a0ceba48fe759cb1d963025c55b37de06260e11d599f9d8919ee1931",
+      "written_sha256": "35155454a0ceba48fe759cb1d963025c55b37de06260e11d599f9d8919ee1931"
+    },
+    {
+      "original_index": 131,
+      "original_name": "\\ps2dvd\\art\\kon_innerspire_arena1.ssf",
+      "filename": "kon_innerspire_arena1.ssf",
+      "original_offset": 583704576,
+      "size": 2025472,
+      "sha256": "5c187f0c6257a0a9efa023db683370bcce9085c2471d97a99a14bc764e5595d0",
+      "written_sha256": "5c187f0c6257a0a9efa023db683370bcce9085c2471d97a99a14bc764e5595d0"
+    },
+    {
+      "original_index": 132,
+      "original_name": "\\ps2dvd\\art\\kon_jungle4_fa.ssf",
+      "filename": "kon_jungle4_fa.ssf",
+      "original_offset": 585730048,
+      "size": 1341440,
+      "sha256": "d95b8e03ad737886c405f2dd2a15fec8c288158c77b378c42abae009fe952941",
+      "written_sha256": "d95b8e03ad737886c405f2dd2a15fec8c288158c77b378c42abae009fe952941"
+    },
+    {
+      "original_index": 133,
+      "original_name": "\\ps2dvd\\art\\kon_maproom_fa.ssf",
+      "filename": "kon_maproom_fa.ssf",
+      "original_offset": 587071488,
+      "size": 2439168,
+      "sha256": "7b7e10a86d9afeb93d920ceef77c9e721fcded2fd29a3ea3bd51b006a750ecbb",
+      "written_sha256": "7b7e10a86d9afeb93d920ceef77c9e721fcded2fd29a3ea3bd51b006a750ecbb"
+    },
+    {
+      "original_index": 134,
+      "original_name": "\\ps2dvd\\art\\kon_obelisk_01.ssf",
+      "filename": "kon_obelisk_01.ssf",
+      "original_offset": 589510656,
+      "size": 4096,
+      "sha256": "15094d8980bc28054f9f8e955fc31921b142d2665a3da974aed8b1b289c3865c",
+      "written_sha256": "15094d8980bc28054f9f8e955fc31921b142d2665a3da974aed8b1b289c3865c"
+    },
+    {
+      "original_index": 135,
+      "original_name": "\\ps2dvd\\art\\kon_obelisk_02.ssf",
+      "filename": "kon_obelisk_02.ssf",
+      "original_offset": 589514752,
+      "size": 59392,
+      "sha256": "cb3f5930ddd21f79b639692530128af8e5458bc72eb26fbd3f823b330d4049be",
+      "written_sha256": "cb3f5930ddd21f79b639692530128af8e5458bc72eb26fbd3f823b330d4049be"
+    },
+    {
+      "original_index": 136,
+      "original_name": "\\ps2dvd\\art\\kon_red_cave_fa.ssf",
+      "filename": "kon_red_cave_fa.ssf",
+      "original_offset": 589574144,
+      "size": 2682880,
+      "sha256": "2ff485db37a98708ae0cdf0708d1831ac33e18f59c401d77303c04d1b4ee603f",
+      "written_sha256": "2ff485db37a98708ae0cdf0708d1831ac33e18f59c401d77303c04d1b4ee603f"
+    },
+    {
+      "original_index": 137,
+      "original_name": "\\ps2dvd\\art\\kon_scorpion_lair_fa.ssf",
+      "filename": "kon_scorpion_lair_fa.ssf",
+      "original_offset": 592257024,
+      "size": 3303424,
+      "sha256": "1329208c312b4b0cd9742cb78cfe245385592c7df3934311ab3f052ae922c509",
+      "written_sha256": "1329208c312b4b0cd9742cb78cfe245385592c7df3934311ab3f052ae922c509"
+    },
+    {
+      "original_index": 138,
+      "original_name": "\\ps2dvd\\art\\kon_sk_balcony_fa.ssf",
+      "filename": "kon_sk_balcony_fa.ssf",
+      "original_offset": 595560448,
+      "size": 2590720,
+      "sha256": "e4e7fe795688074448dfd7c796579e4c2620e9161f57a02f916545713e99a320",
+      "written_sha256": "e4e7fe795688074448dfd7c796579e4c2620e9161f57a02f916545713e99a320"
+    },
+    {
+      "original_index": 139,
+      "original_name": "\\ps2dvd\\art\\kon_sk_throneroom_fa.ssf",
+      "filename": "kon_sk_throneroom_fa.ssf",
+      "original_offset": 598151168,
+      "size": 3409920,
+      "sha256": "dfb134c2815aa99c5f96e601ce3009f11d8044d219e8dde0338c3c58f8dd3bfb",
+      "written_sha256": "dfb134c2815aa99c5f96e601ce3009f11d8044d219e8dde0338c3c58f8dd3bfb"
+    },
+    {
+      "original_index": 140,
+      "original_name": "\\ps2dvd\\art\\kon_throneroom_fa.ssf",
+      "filename": "kon_throneroom_fa.ssf",
+      "original_offset": 601561088,
+      "size": 2371584,
+      "sha256": "2815ca18b6455893a3927e409addfc220e9db056886bab77f7c5ac2e231cafb4",
+      "written_sha256": "2815ca18b6455893a3927e409addfc220e9db056886bab77f7c5ac2e231cafb4"
+    },
+    {
+      "original_index": 141,
+      "original_name": "\\ps2dvd\\art\\kredits.ssf",
+      "filename": "kredits.ssf",
+      "original_offset": 603932672,
+      "size": 800768,
+      "sha256": "75a648c288ebc0ee36f5324c17ba3bddf9a26e4e83e827b5a82b2784ff6ab3c2",
+      "written_sha256": "75a648c288ebc0ee36f5324c17ba3bddf9a26e4e83e827b5a82b2784ff6ab3c2"
+    },
+    {
+      "original_index": 142,
+      "original_name": "\\ps2dvd\\art\\krypt.ssf",
+      "filename": "krypt.ssf",
+      "original_offset": 604733440,
+      "size": 2699264,
+      "sha256": "3ba1b0103ef81bd9ac70b8f7c4d436a9a03a932be0ef5c6973064ec556dc37d0",
+      "written_sha256": "3ba1b0103ef81bd9ac70b8f7c4d436a9a03a932be0ef5c6973064ec556dc37d0"
+    },
+    {
+      "original_index": 143,
+      "original_name": "\\ps2dvd\\art\\krypt_art.ssf",
+      "filename": "krypt_art.ssf",
+      "original_offset": 607432704,
+      "size": 131858432,
+      "sha256": "d1d7d63e0a397afd88a603b7a93e65ea6930585bd8be867df21c9e15e2c301ec",
+      "written_sha256": "d1d7d63e0a397afd88a603b7a93e65ea6930585bd8be867df21c9e15e2c301ec"
+    },
+    {
+      "original_index": 144,
+      "original_name": "\\ps2dvd\\art\\kunglao.ssf",
+      "filename": "kunglao.ssf",
+      "original_offset": 739291136,
+      "size": 3254272,
+      "sha256": "224cd966f52213b03f6fdcbec33e750757e15986aea0b61202556fc9dc773288",
+      "written_sha256": "224cd966f52213b03f6fdcbec33e750757e15986aea0b61202556fc9dc773288"
+    },
+    {
+      "original_index": 145,
+      "original_name": "\\ps2dvd\\art\\kunglao_alt.ssf",
+      "filename": "kunglao_alt.ssf",
+      "original_offset": 742545408,
+      "size": 3151872,
+      "sha256": "192728544139c7d2f8e0b00bab86a8af23c5f7debc5aa4b0d5fb2dd0f1516a0a",
+      "written_sha256": "192728544139c7d2f8e0b00bab86a8af23c5f7debc5aa4b0d5fb2dd0f1516a0a"
+    },
+    {
+      "original_index": 146,
+      "original_name": "\\ps2dvd\\art\\kweapons.ssf",
+      "filename": "kweapons.ssf",
+      "original_offset": 745697280,
+      "size": 1708032,
+      "sha256": "dd142944b4e774fc137c5fc878ab346364f6c2508294fa6c6ccf2c5842aa83c3",
+      "written_sha256": "dd142944b4e774fc137c5fc878ab346364f6c2508294fa6c6ccf2c5842aa83c3"
+    },
+    {
+      "original_index": 147,
+      "original_name": "\\ps2dvd\\art\\ladder.ssf",
+      "filename": "ladder.ssf",
+      "original_offset": 747405312,
+      "size": 2736128,
+      "sha256": "fefe02ee6354c95d69130ca09fb229d39c37eb03659bfc25b3d0264457ee5078",
+      "written_sha256": "fefe02ee6354c95d69130ca09fb229d39c37eb03659bfc25b3d0264457ee5078"
+    },
+    {
+      "original_index": 148,
+      "original_name": "\\ps2dvd\\art\\language_menu_art.ssf",
+      "filename": "language_menu_art.ssf",
+      "original_offset": 750141440,
+      "size": 1785856,
+      "sha256": "c6cbf169c7db5ce7cd45f3d2b641226b20763f91f07f0c263eecd6bca9c980bf",
+      "written_sha256": "c6cbf169c7db5ce7cd45f3d2b641226b20763f91f07f0c263eecd6bca9c980bf"
+    },
+    {
+      "original_index": 149,
+      "original_name": "\\ps2dvd\\art\\limei.ssf",
+      "filename": "limei.ssf",
+      "original_offset": 751927296,
+      "size": 3323904,
+      "sha256": "8f222dd91c37e62466b665bdec515f47bdfae26595ababde2a90dc30e1db0793",
+      "written_sha256": "8f222dd91c37e62466b665bdec515f47bdfae26595ababde2a90dc30e1db0793"
+    },
+    {
+      "original_index": 150,
+      "original_name": "\\ps2dvd\\art\\limei_alt.ssf",
+      "filename": "limei_alt.ssf",
+      "original_offset": 755251200,
+      "size": 3307520,
+      "sha256": "0a76a1a752f8b576f72e75c3c82ddc22e612a119483b9d2dc0b52997bd904925",
+      "written_sha256": "0a76a1a752f8b576f72e75c3c82ddc22e612a119483b9d2dc0b52997bd904925"
+    },
+    {
+      "original_index": 151,
+      "original_name": "\\ps2dvd\\art\\liukang.ssf",
+      "filename": "liukang.ssf",
+      "original_offset": 758558720,
+      "size": 2967552,
+      "sha256": "c41239320ec76c6fb02c512e26b036a41f65978fe28e5541cb3f896ef14a9d44",
+      "written_sha256": "c41239320ec76c6fb02c512e26b036a41f65978fe28e5541cb3f896ef14a9d44"
+    },
+    {
+      "original_index": 152,
+      "original_name": "\\ps2dvd\\art\\liukang_alt.ssf",
+      "filename": "liukang_alt.ssf",
+      "original_offset": 761526272,
+      "size": 3155968,
+      "sha256": "cd6df777a81927bb651bd57c9f57282a86d17a54197a95441c8ae0cf206675e1",
+      "written_sha256": "cd6df777a81927bb651bd57c9f57282a86d17a54197a95441c8ae0cf206675e1"
+    },
+    {
+      "original_index": 153,
+      "original_name": "\\ps2dvd\\art\\lumbermill.ssf",
+      "filename": "lumbermill.ssf",
+      "original_offset": 764682240,
+      "size": 1693696,
+      "sha256": "e35354415f390498de67801a4116fc340ffa7ade1716f67d8dfcb89d36ff8441",
+      "written_sha256": "e35354415f390498de67801a4116fc340ffa7ade1716f67d8dfcb89d36ff8441"
+    },
+    {
+      "original_index": 154,
+      "original_name": "\\ps2dvd\\art\\maproom7.ssf",
+      "filename": "maproom7.ssf",
+      "original_offset": 766375936,
+      "size": 5363712,
+      "sha256": "f1328c23b6aaa6e159f87a38951e894bb3ba04eca528c8e4dd39b7b14e459de9",
+      "written_sha256": "f1328c23b6aaa6e159f87a38951e894bb3ba04eca528c8e4dd39b7b14e459de9"
+    },
+    {
+      "original_index": 155,
+      "original_name": "\\ps2dvd\\art\\mavado.ssf",
+      "filename": "mavado.ssf",
+      "original_offset": 771739648,
+      "size": 3153920,
+      "sha256": "17ab5421588641d4baf692fe854c1f573d0767a053ebb55bae670a9fcc219944",
+      "written_sha256": "17ab5421588641d4baf692fe854c1f573d0767a053ebb55bae670a9fcc219944"
+    },
+    {
+      "original_index": 156,
+      "original_name": "\\ps2dvd\\art\\mavado_alt.ssf",
+      "filename": "mavado_alt.ssf",
+      "original_offset": 774893568,
+      "size": 3092480,
+      "sha256": "046fba4aaef1893fc70436a72e783eb687ac53a5ef79f3b676f4bdbd98fe16db",
+      "written_sha256": "046fba4aaef1893fc70436a72e783eb687ac53a5ef79f3b676f4bdbd98fe16db"
+    },
+    {
+      "original_index": 157,
+      "original_name": "\\ps2dvd\\art\\meat.ssf",
+      "filename": "meat.ssf",
+      "original_offset": 777986048,
+      "size": 3022848,
+      "sha256": "0f763910b3a5d85125b7b852a60b0e89883536644482a72943e1f571c0534fb6",
+      "written_sha256": "0f763910b3a5d85125b7b852a60b0e89883536644482a72943e1f571c0534fb6"
+    },
+    {
+      "original_index": 158,
+      "original_name": "\\ps2dvd\\art\\meteorstorm.ssf",
+      "filename": "meteorstorm.ssf",
+      "original_offset": 781008896,
+      "size": 2347008,
+      "sha256": "c825cda7d08afa7650ac5b7a85d38e6acf102018d90f332d292b970e922043fe",
+      "written_sha256": "c825cda7d08afa7650ac5b7a85d38e6acf102018d90f332d292b970e922043fe"
+    },
+    {
+      "original_index": 159,
+      "original_name": "\\ps2dvd\\art\\mileena.ssf",
+      "filename": "mileena.ssf",
+      "original_offset": 783355904,
+      "size": 3407872,
+      "sha256": "d919d3af515cd2fb5500a97e384972882cfc6cf9c3bf8e0ec9fb967b8668dc75",
+      "written_sha256": "d919d3af515cd2fb5500a97e384972882cfc6cf9c3bf8e0ec9fb967b8668dc75"
+    },
+    {
+      "original_index": 160,
+      "original_name": "\\ps2dvd\\art\\mileena_alt.ssf",
+      "filename": "mileena_alt.ssf",
+      "original_offset": 786763776,
+      "size": 3452928,
+      "sha256": "632c3aa2ddf66d9ae0897af7b8c13194da727b6baf2ea310c04ff9b327034f9a",
+      "written_sha256": "632c3aa2ddf66d9ae0897af7b8c13194da727b6baf2ea310c04ff9b327034f9a"
+    },
+    {
+      "original_index": 161,
+      "original_name": "\\ps2dvd\\art\\misc_anims_list.ssf",
+      "filename": "misc_anims_list.ssf",
+      "original_offset": 790216704,
+      "size": 1241088,
+      "sha256": "b699f5d92b0b2c727b810eaec826d1d9aa3fdf933431069d26978d5d427831e5",
+      "written_sha256": "b699f5d92b0b2c727b810eaec826d1d9aa3fdf933431069d26978d5d427831e5"
+    },
+    {
+      "original_index": 162,
+      "original_name": "\\ps2dvd\\art\\mokap.ssf",
+      "filename": "mokap.ssf",
+      "original_offset": 791457792,
+      "size": 3000320,
+      "sha256": "38cef0e05fee00a87bcf0d1b64b8a4abae8b969a32e96690552ca544dd5f9738",
+      "written_sha256": "38cef0e05fee00a87bcf0d1b64b8a4abae8b969a32e96690552ca544dd5f9738"
+    },
+    {
+      "original_index": 163,
+      "original_name": "\\ps2dvd\\art\\moloch.ssf",
+      "filename": "moloch.ssf",
+      "original_offset": 794458112,
+      "size": 2695168,
+      "sha256": "2d4eac1b80058e7e3fe4d86ccf356d121c2b7cc7d984166efd1375c8e0aaff62",
+      "written_sha256": "2d4eac1b80058e7e3fe4d86ccf356d121c2b7cc7d984166efd1375c8e0aaff62"
+    },
+    {
+      "original_index": 164,
+      "original_name": "\\ps2dvd\\art\\motaro.ssf",
+      "filename": "motaro.ssf",
+      "original_offset": 797153280,
+      "size": 2746368,
+      "sha256": "7202262648c8e130112c435a176e1407b63fd3338e602f39d237961b8a2ed234",
+      "written_sha256": "7202262648c8e130112c435a176e1407b63fd3338e602f39d237961b8a2ed234"
+    },
+    {
+      "original_index": 165,
+      "original_name": "\\ps2dvd\\art\\motaro_alt.ssf",
+      "filename": "motaro_alt.ssf",
+      "original_offset": 799899648,
+      "size": 2758656,
+      "sha256": "c581e4fb74259ba8a1682fc32dd94aa3f75073bdfb71422d3111960291c15deb",
+      "written_sha256": "c581e4fb74259ba8a1682fc32dd94aa3f75073bdfb71422d3111960291c15deb"
+    },
+    {
+      "original_index": 166,
+      "original_name": "\\ps2dvd\\art\\movelist.ssf",
+      "filename": "movelist.ssf",
+      "original_offset": 802658304,
+      "size": 260096,
+      "sha256": "88eee9cdefccefc0ce1bfc0a1cab8b8d99a5ccca1e891c8ecf79a0ef9ad9b797",
+      "written_sha256": "88eee9cdefccefc0ce1bfc0a1cab8b8d99a5ccca1e891c8ecf79a0ef9ad9b797"
+    },
+    {
+      "original_index": 167,
+      "original_name": "\\ps2dvd\\art\\nameentryart.ssf",
+      "filename": "nameentryart.ssf",
+      "original_offset": 802918400,
+      "size": 100352,
+      "sha256": "18c7a108f2703425a4e641cc5546f7376b066f6e48790b982115fb89dccff021",
+      "written_sha256": "18c7a108f2703425a4e641cc5546f7376b066f6e48790b982115fb89dccff021"
+    },
+    {
+      "original_index": 168,
+      "original_name": "\\ps2dvd\\art\\netherbelly.ssf",
+      "filename": "netherbelly.ssf",
+      "original_offset": 803018752,
+      "size": 2942976,
+      "sha256": "ca9e60bcccdd0bbb5f7b6f90edd2feedd34dcf155d48ef4adb76118e0140e4a6",
+      "written_sha256": "ca9e60bcccdd0bbb5f7b6f90edd2feedd34dcf155d48ef4adb76118e0140e4a6"
+    },
+    {
+      "original_index": 169,
+      "original_name": "\\ps2dvd\\art\\newtown_demo.ssf",
+      "filename": "newtown_demo.ssf",
+      "original_offset": 805961728,
+      "size": 3221504,
+      "sha256": "ebe9b851952f63afc89fdf88d80302682dc2f98585574ee27565f105f7f0f168",
+      "written_sha256": "ebe9b851952f63afc89fdf88d80302682dc2f98585574ee27565f105f7f0f168"
+    },
+    {
+      "original_index": 170,
+      "original_name": "\\ps2dvd\\art\\nexus_arena.ssf",
+      "filename": "nexus_arena.ssf",
+      "original_offset": 809183232,
+      "size": 1873920,
+      "sha256": "a7672051a1cdca73fc5092da12ddb7b6a9c8b8f7d1510c50b5c183fc27328ac2",
+      "written_sha256": "a7672051a1cdca73fc5092da12ddb7b6a9c8b8f7d1510c50b5c183fc27328ac2"
+    },
+    {
+      "original_index": 171,
+      "original_name": "\\ps2dvd\\art\\nightwolf.ssf",
+      "filename": "nightwolf.ssf",
+      "original_offset": 811057152,
+      "size": 3172352,
+      "sha256": "e374ac62c0d0253609ac9723bfce00ecbe7c848eb2302c70b4499be8a8bc5d74",
+      "written_sha256": "e374ac62c0d0253609ac9723bfce00ecbe7c848eb2302c70b4499be8a8bc5d74"
+    },
+    {
+      "original_index": 172,
+      "original_name": "\\ps2dvd\\art\\nightwolf_alt.ssf",
+      "filename": "nightwolf_alt.ssf",
+      "original_offset": 814229504,
+      "size": 3102720,
+      "sha256": "199f06d52a2304dffa5a1f27d643ebee898c15167e6cd661c12c1b1fa8ea688f",
+      "written_sha256": "199f06d52a2304dffa5a1f27d643ebee898c15167e6cd661c12c1b1fa8ea688f"
+    },
+    {
+      "original_index": 173,
+      "original_name": "\\ps2dvd\\art\\nis_bgnd.ssf",
+      "filename": "nis_bgnd.ssf",
+      "original_offset": 817332224,
+      "size": 118784,
+      "sha256": "0efbc14f63d751aa73b05332ba0e0ae96cb4c03d3b02ec6f810ceb1d78e41450",
+      "written_sha256": "0efbc14f63d751aa73b05332ba0e0ae96cb4c03d3b02ec6f810ceb1d78e41450"
+    },
+    {
+      "original_index": 174,
+      "original_name": "\\ps2dvd\\art\\nitara.ssf",
+      "filename": "nitara.ssf",
+      "original_offset": 817451008,
+      "size": 3164160,
+      "sha256": "987ec5f09991878a8d1312f2341624781aff97c369ebabab9c4642e8794fde97",
+      "written_sha256": "987ec5f09991878a8d1312f2341624781aff97c369ebabab9c4642e8794fde97"
+    },
+    {
+      "original_index": 175,
+      "original_name": "\\ps2dvd\\art\\nitara_alt.ssf",
+      "filename": "nitara_alt.ssf",
+      "original_offset": 820615168,
+      "size": 3090432,
+      "sha256": "66c813909c5d5778ed04c32cae7dd92d779c59ff89a8443ba0bed1ad1294b01b",
+      "written_sha256": "66c813909c5d5778ed04c32cae7dd92d779c59ff89a8443ba0bed1ad1294b01b"
+    },
+    {
+      "original_index": 176,
+      "original_name": "\\ps2dvd\\art\\noob.ssf",
+      "filename": "noob.ssf",
+      "original_offset": 823705600,
+      "size": 2914304,
+      "sha256": "0b18c2a70711408d4e4887d87f4f6c0f38b05a3b5d811b62391b6e3887e70829",
+      "written_sha256": "0b18c2a70711408d4e4887d87f4f6c0f38b05a3b5d811b62391b6e3887e70829"
+    },
+    {
+      "original_index": 177,
+      "original_name": "\\ps2dvd\\art\\noob_alt.ssf",
+      "filename": "noob_alt.ssf",
+      "original_offset": 826619904,
+      "size": 2918400,
+      "sha256": "3b6858fd7093d7fdb2a9c93cfa0104e3bd86806a02195e532a99fe2d64bf4e72",
+      "written_sha256": "3b6858fd7093d7fdb2a9c93cfa0104e3bd86806a02195e532a99fe2d64bf4e72"
+    },
+    {
+      "original_index": 178,
+      "original_name": "\\ps2dvd\\art\\obelisk_01.ssf",
+      "filename": "obelisk_01.ssf",
+      "original_offset": 829538304,
+      "size": 2826240,
+      "sha256": "5774eff604896e2bb710e8ba32d50a2d8711533a9e80e4529e7a19e916fb514c",
+      "written_sha256": "5774eff604896e2bb710e8ba32d50a2d8711533a9e80e4529e7a19e916fb514c"
+    },
+    {
+      "original_index": 179,
+      "original_name": "\\ps2dvd\\art\\obelisk_02.ssf",
+      "filename": "obelisk_02.ssf",
+      "original_offset": 832364544,
+      "size": 2947072,
+      "sha256": "febaf552248ddfa0ee76a7735f1e84208fff1025723be922988b47c0fa0eb161",
+      "written_sha256": "febaf552248ddfa0ee76a7735f1e84208fff1025723be922988b47c0fa0eb161"
+    },
+    {
+      "original_index": 180,
+      "original_name": "\\ps2dvd\\art\\obelisk_03.ssf",
+      "filename": "obelisk_03.ssf",
+      "original_offset": 835311616,
+      "size": 3540992,
+      "sha256": "61d6b0f88b4f7e5a24ebd7fddf5b3a0bc74298281467fac20e8887e047f7219e",
+      "written_sha256": "61d6b0f88b4f7e5a24ebd7fddf5b3a0bc74298281467fac20e8887e047f7219e"
+    },
+    {
+      "original_index": 181,
+      "original_name": "\\ps2dvd\\art\\obelisk_04.ssf",
+      "filename": "obelisk_04.ssf",
+      "original_offset": 838852608,
+      "size": 3264512,
+      "sha256": "1851ac025dc3ba47f47d7e46f9a516e3461fb57a1b0900e585c4b612a089a09b",
+      "written_sha256": "1851ac025dc3ba47f47d7e46f9a516e3461fb57a1b0900e585c4b612a089a09b"
+    },
+    {
+      "original_index": 182,
+      "original_name": "\\ps2dvd\\art\\outworldspire.ssf",
+      "filename": "outworldspire.ssf",
+      "original_offset": 842117120,
+      "size": 1814528,
+      "sha256": "0ce6944320ca55d5aabb128cd1456965b8b59b4470605eb9b49e14ae8d20eae8",
+      "written_sha256": "0ce6944320ca55d5aabb128cd1456965b8b59b4470605eb9b49e14ae8d20eae8"
+    },
+    {
+      "original_index": 183,
+      "original_name": "\\ps2dvd\\art\\pfx_debug.ssf",
+      "filename": "pfx_debug.ssf",
+      "original_offset": 843931648,
+      "size": 223232,
+      "sha256": "7cc684787e6d6ebe2052d8f12bd4919291c98bb0fab61293774ad999240badb5",
+      "written_sha256": "7cc684787e6d6ebe2052d8f12bd4919291c98bb0fab61293774ad999240badb5"
+    },
+    {
+      "original_index": 184,
+      "original_name": "\\ps2dvd\\art\\prison_arena.ssf",
+      "filename": "prison_arena.ssf",
+      "original_offset": 844154880,
+      "size": 3336192,
+      "sha256": "27c17d393662fc412bcb46dd6968adb9720b776cdcd4e3efd6715e7a6f0e9214",
+      "written_sha256": "27c17d393662fc412bcb46dd6968adb9720b776cdcd4e3efd6715e7a6f0e9214"
+    },
+    {
+      "original_index": 185,
+      "original_name": "\\ps2dvd\\art\\pselart.ssf",
+      "filename": "pselart.ssf",
+      "original_offset": 847491072,
+      "size": 14747648,
+      "sha256": "58b855a8813cdfd812f601c9b67449eb03101c1a0a6e1f5c4e9e4a58f2631aea",
+      "written_sha256": "58b855a8813cdfd812f601c9b67449eb03101c1a0a6e1f5c4e9e4a58f2631aea"
+    },
+    {
+      "original_index": 186,
+      "original_name": "\\ps2dvd\\art\\pselect.ssf",
+      "filename": "pselect.ssf",
+      "original_offset": 862238720,
+      "size": 4096,
+      "sha256": "b37b3a3c91cca7f4371e9b32597e91d2e515385c6efdfdac98c9ff5dac678bbc",
+      "written_sha256": "b37b3a3c91cca7f4371e9b32597e91d2e515385c6efdfdac98c9ff5dac678bbc"
+    },
+    {
+      "original_index": 187,
+      "original_name": "\\ps2dvd\\art\\pyramidtop.ssf",
+      "filename": "pyramidtop.ssf",
+      "original_offset": 862242816,
+      "size": 2107392,
+      "sha256": "1207c6569a2013d6a4a36130407f480a6d86d0e30d6ca256b6b6ece49eb7d667",
+      "written_sha256": "1207c6569a2013d6a4a36130407f480a6d86d0e30d6ca256b6b6ece49eb7d667"
+    },
+    {
+      "original_index": 188,
+      "original_name": "\\ps2dvd\\art\\quanchi.ssf",
+      "filename": "quanchi.ssf",
+      "original_offset": 864350208,
+      "size": 3067904,
+      "sha256": "2f9a90e9f71ff5a4a4dcfb9bab018d9c1391fab5836e8f10d7c7a473bd9683e6",
+      "written_sha256": "2f9a90e9f71ff5a4a4dcfb9bab018d9c1391fab5836e8f10d7c7a473bd9683e6"
+    },
+    {
+      "original_index": 189,
+      "original_name": "\\ps2dvd\\art\\quanchi_alt.ssf",
+      "filename": "quanchi_alt.ssf",
+      "original_offset": 867418112,
+      "size": 3092480,
+      "sha256": "018d342dcc883f5c84ee2edb0205dab73e6910d403fe21164be8d6feff4d4872",
+      "written_sha256": "018d342dcc883f5c84ee2edb0205dab73e6910d403fe21164be8d6feff4d4872"
+    },
+    {
+      "original_index": 190,
+      "original_name": "\\ps2dvd\\art\\raiden.ssf",
+      "filename": "raiden.ssf",
+      "original_offset": 870510592,
+      "size": 3506176,
+      "sha256": "0f162cb38527470f6e0d6f87589bbe2d6fab055b7fde76f6789569d0460918cb",
+      "written_sha256": "0f162cb38527470f6e0d6f87589bbe2d6fab055b7fde76f6789569d0460918cb"
+    },
+    {
+      "original_index": 191,
+      "original_name": "\\ps2dvd\\art\\raiden_alt.ssf",
+      "filename": "raiden_alt.ssf",
+      "original_offset": 874016768,
+      "size": 3422208,
+      "sha256": "019db453d5351f2152e96acb66bf7e29de259a30b48d630e62b6d91b86f03950",
+      "written_sha256": "019db453d5351f2152e96acb66bf7e29de259a30b48d630e62b6d91b86f03950"
+    },
+    {
+      "original_index": 192,
+      "original_name": "\\ps2dvd\\art\\rain.ssf",
+      "filename": "rain.ssf",
+      "original_offset": 877438976,
+      "size": 4110336,
+      "sha256": "93bc09f56ecdd116d16b97847bdef2b107d8d593ef83d472beb5899ca3bb1027",
+      "written_sha256": "93bc09f56ecdd116d16b97847bdef2b107d8d593ef83d472beb5899ca3bb1027"
+    },
+    {
+      "original_index": 193,
+      "original_name": "\\ps2dvd\\art\\rain_alt.ssf",
+      "filename": "rain_alt.ssf",
+      "original_offset": 881549312,
+      "size": 3672064,
+      "sha256": "9d913ccffda682aee0c340128e2d4500d1103aaef9ea97ecd342f24791760401",
+      "written_sha256": "9d913ccffda682aee0c340128e2d4500d1103aaef9ea97ecd342f24791760401"
+    },
+    {
+      "original_index": 194,
+      "original_name": "\\ps2dvd\\art\\reiko.ssf",
+      "filename": "reiko.ssf",
+      "original_offset": 885221376,
+      "size": 3262464,
+      "sha256": "7b6b91d27747db612e464faa952385b89b54ae64c364b10b1175fa105a366dc5",
+      "written_sha256": "7b6b91d27747db612e464faa952385b89b54ae64c364b10b1175fa105a366dc5"
+    },
+    {
+      "original_index": 195,
+      "original_name": "\\ps2dvd\\art\\reiko_alt.ssf",
+      "filename": "reiko_alt.ssf",
+      "original_offset": 888483840,
+      "size": 3278848,
+      "sha256": "2e1a40792fa402ea764d31a4e32f46b22ca759fad2637f60e17ce6245f6b4357",
+      "written_sha256": "2e1a40792fa402ea764d31a4e32f46b22ca759fad2637f60e17ce6245f6b4357"
+    },
+    {
+      "original_index": 196,
+      "original_name": "\\ps2dvd\\art\\reptile.ssf",
+      "filename": "reptile.ssf",
+      "original_offset": 891762688,
+      "size": 3172352,
+      "sha256": "630479552aa43d669d3acf9b4f2ba2ea45d8b9cc96b4aca7fd4daed9e39d18d4",
+      "written_sha256": "630479552aa43d669d3acf9b4f2ba2ea45d8b9cc96b4aca7fd4daed9e39d18d4"
+    },
+    {
+      "original_index": 197,
+      "original_name": "\\ps2dvd\\art\\reptiles_lair.ssf",
+      "filename": "reptiles_lair.ssf",
+      "original_offset": 894935040,
+      "size": 2353152,
+      "sha256": "9e9d978ba1cd0e2d5188df0d5f685c99b8480ef221c29b0c2a55b78279dd6b38",
+      "written_sha256": "9e9d978ba1cd0e2d5188df0d5f685c99b8480ef221c29b0c2a55b78279dd6b38"
+    },
+    {
+      "original_index": 198,
+      "original_name": "\\ps2dvd\\art\\reptile_alt.ssf",
+      "filename": "reptile_alt.ssf",
+      "original_offset": 897288192,
+      "size": 3344384,
+      "sha256": "1c7891fae00619c8c5674e866148adf61ec9205fa635f77cbfd83d140e5e6523",
+      "written_sha256": "1c7891fae00619c8c5674e866148adf61ec9205fa635f77cbfd83d140e5e6523"
+    },
+    {
+      "original_index": 199,
+      "original_name": "\\ps2dvd\\art\\sareena.ssf",
+      "filename": "sareena.ssf",
+      "original_offset": 900632576,
+      "size": 3588096,
+      "sha256": "1486a3cc60c22b25e8df3d3c8315ec26229cc0f14453d5e12f96d88088f133fd",
+      "written_sha256": "1486a3cc60c22b25e8df3d3c8315ec26229cc0f14453d5e12f96d88088f133fd"
+    },
+    {
+      "original_index": 200,
+      "original_name": "\\ps2dvd\\art\\sareena_alt.ssf",
+      "filename": "sareena_alt.ssf",
+      "original_offset": 904220672,
+      "size": 3608576,
+      "sha256": "24645ca204c83823c5099376610e0fc970da6d24715013a9dbe22b7d435b6a57",
+      "written_sha256": "24645ca204c83823c5099376610e0fc970da6d24715013a9dbe22b7d435b6a57"
+    },
+    {
+      "original_index": 201,
+      "original_name": "\\ps2dvd\\art\\scorpion.ssf",
+      "filename": "scorpion.ssf",
+      "original_offset": 907829248,
+      "size": 3303424,
+      "sha256": "256bfc4578ebe4c3339d772b64f61e23f10e4b58b1494feb837ba03d0f0571f9",
+      "written_sha256": "256bfc4578ebe4c3339d772b64f61e23f10e4b58b1494feb837ba03d0f0571f9"
+    },
+    {
+      "original_index": 202,
+      "original_name": "\\ps2dvd\\art\\scorpion_alt.ssf",
+      "filename": "scorpion_alt.ssf",
+      "original_offset": 911132672,
+      "size": 3663872,
+      "sha256": "5ec94eeaed5e35c0392f5120ef95994612326bc4bb1c09bbbe87b7fda7de8087",
+      "written_sha256": "5ec94eeaed5e35c0392f5120ef95994612326bc4bb1c09bbbe87b7fda7de8087"
+    },
+    {
+      "original_index": 203,
+      "original_name": "\\ps2dvd\\art\\screen_adjustments.ssf",
+      "filename": "screen_adjustments.ssf",
+      "original_offset": 914796544,
+      "size": 401408,
+      "sha256": "95866c2eba4bc424b35519d9539da1770be7a06846aebdb8fd69cb07dae79742",
+      "written_sha256": "95866c2eba4bc424b35519d9539da1770be7a06846aebdb8fd69cb07dae79742"
+    },
+    {
+      "original_index": 204,
+      "original_name": "\\ps2dvd\\art\\screen_engine.ssf",
+      "filename": "screen_engine.ssf",
+      "original_offset": 915197952,
+      "size": 367611904,
+      "sha256": "9e9c3677295d3302dc72a1dd617b15557075aa484fa3c486913593e8fab9a467",
+      "written_sha256": "9e9c3677295d3302dc72a1dd617b15557075aa484fa3c486913593e8fab9a467"
+    },
+    {
+      "original_index": 205,
+      "original_name": "\\ps2dvd\\art\\sektor.ssf",
+      "filename": "sektor.ssf",
+      "original_offset": 1282809856,
+      "size": 3571712,
+      "sha256": "e96235f5b4657f376fdb4f77ec55a2332dd53de065d94ea30f46c388f1bee203",
+      "written_sha256": "e96235f5b4657f376fdb4f77ec55a2332dd53de065d94ea30f46c388f1bee203"
+    },
+    {
+      "original_index": 206,
+      "original_name": "\\ps2dvd\\art\\sektor_alt.ssf",
+      "filename": "sektor_alt.ssf",
+      "original_offset": 1286381568,
+      "size": 3266560,
+      "sha256": "15ef5a043948eb49d935c57c9077f3c7c25d19d95b5ffae0a141aed672b6ada7",
+      "written_sha256": "15ef5a043948eb49d935c57c9077f3c7c25d19d95b5ffae0a141aed672b6ada7"
+    },
+    {
+      "original_index": 207,
+      "original_name": "\\ps2dvd\\art\\shangtsung.ssf",
+      "filename": "shangtsung.ssf",
+      "original_offset": 1289648128,
+      "size": 3188736,
+      "sha256": "cf29a433937d3ad5e475e886104f652719eec5f679a754076669e477cfcadd30",
+      "written_sha256": "cf29a433937d3ad5e475e886104f652719eec5f679a754076669e477cfcadd30"
+    },
+    {
+      "original_index": 208,
+      "original_name": "\\ps2dvd\\art\\shangtsung_alt.ssf",
+      "filename": "shangtsung_alt.ssf",
+      "original_offset": 1292836864,
+      "size": 3110912,
+      "sha256": "52a8949ad217e4a97ff38a32daf1cf5325e7c39c0256d8a906a7e0552242a6a0",
+      "written_sha256": "52a8949ad217e4a97ff38a32daf1cf5325e7c39c0256d8a906a7e0552242a6a0"
+    },
+    {
+      "original_index": 209,
+      "original_name": "\\ps2dvd\\art\\shaokahn.ssf",
+      "filename": "shaokahn.ssf",
+      "original_offset": 1295947776,
+      "size": 2895872,
+      "sha256": "e4f1f86dd79d1db613db8c15f19a484d144fea4ae39939b15eec7d4cc7271da3",
+      "written_sha256": "e4f1f86dd79d1db613db8c15f19a484d144fea4ae39939b15eec7d4cc7271da3"
+    },
+    {
+      "original_index": 210,
+      "original_name": "\\ps2dvd\\art\\shaokahn_alt.ssf",
+      "filename": "shaokahn_alt.ssf",
+      "original_offset": 1298843648,
+      "size": 2945024,
+      "sha256": "24287d3514858332a2cdd959a10dc2bed9d972548c4d8d6c0169d72bbc12d9f4",
+      "written_sha256": "24287d3514858332a2cdd959a10dc2bed9d972548c4d8d6c0169d72bbc12d9f4"
+    },
+    {
+      "original_index": 211,
+      "original_name": "\\ps2dvd\\art\\sheeva.ssf",
+      "filename": "sheeva.ssf",
+      "original_offset": 1301788672,
+      "size": 3266560,
+      "sha256": "1e7a877b39e3e8a85a5df72d7a1f6aebd64646e89350a7d059fbafc0458c4f33",
+      "written_sha256": "1e7a877b39e3e8a85a5df72d7a1f6aebd64646e89350a7d059fbafc0458c4f33"
+    },
+    {
+      "original_index": 212,
+      "original_name": "\\ps2dvd\\art\\sheeva_alt.ssf",
+      "filename": "sheeva_alt.ssf",
+      "original_offset": 1305055232,
+      "size": 3219456,
+      "sha256": "a99e0a539d00c158defecaa0f462a13a57b2612e6fed1c891007a439edb62e72",
+      "written_sha256": "a99e0a539d00c158defecaa0f462a13a57b2612e6fed1c891007a439edb62e72"
+    },
+    {
+      "original_index": 213,
+      "original_name": "\\ps2dvd\\art\\shinnok.ssf",
+      "filename": "shinnok.ssf",
+      "original_offset": 1308274688,
+      "size": 3213312,
+      "sha256": "47cdd696215d13d03a03bc637c47acf9457d5c3438fde9e0afa0fb1187468922",
+      "written_sha256": "47cdd696215d13d03a03bc637c47acf9457d5c3438fde9e0afa0fb1187468922"
+    },
+    {
+      "original_index": 214,
+      "original_name": "\\ps2dvd\\art\\shinnok_alt.ssf",
+      "filename": "shinnok_alt.ssf",
+      "original_offset": 1311488000,
+      "size": 3309568,
+      "sha256": "4d15145aa4f81c9b53853cad464e668fe6598550361560f15af351df17dbe1de",
+      "written_sha256": "4d15145aa4f81c9b53853cad464e668fe6598550361560f15af351df17dbe1de"
+    },
+    {
+      "original_index": 215,
+      "original_name": "\\ps2dvd\\art\\shujinko.ssf",
+      "filename": "shujinko.ssf",
+      "original_offset": 1314797568,
+      "size": 3297280,
+      "sha256": "45663cb3d69bf0400c4bbfcc51d30eb54788f13de0cbf9f3de122ba53512b6e5",
+      "written_sha256": "45663cb3d69bf0400c4bbfcc51d30eb54788f13de0cbf9f3de122ba53512b6e5"
+    },
+    {
+      "original_index": 216,
+      "original_name": "\\ps2dvd\\art\\shujinko_alt.ssf",
+      "filename": "shujinko_alt.ssf",
+      "original_offset": 1318094848,
+      "size": 3338240,
+      "sha256": "d97e237ad5331b5eba45e08a94951cca29eba3820e7e4b15b11fd498ce4f487e",
+      "written_sha256": "d97e237ad5331b5eba45e08a94951cca29eba3820e7e4b15b11fd498ce4f487e"
+    },
+    {
+      "original_index": 217,
+      "original_name": "\\ps2dvd\\art\\sindel.ssf",
+      "filename": "sindel.ssf",
+      "original_offset": 1321433088,
+      "size": 3258368,
+      "sha256": "d6eaeea894b72622606ec55be22b3b250cb7bfaaa3acc6416a534f756e778fd6",
+      "written_sha256": "d6eaeea894b72622606ec55be22b3b250cb7bfaaa3acc6416a534f756e778fd6"
+    },
+    {
+      "original_index": 218,
+      "original_name": "\\ps2dvd\\art\\sindel_alt.ssf",
+      "filename": "sindel_alt.ssf",
+      "original_offset": 1324691456,
+      "size": 3368960,
+      "sha256": "b7e0c6ef855ccead7c903cfe9209267e74a1757d26f6fd1368b79955674b90e4",
+      "written_sha256": "b7e0c6ef855ccead7c903cfe9209267e74a1757d26f6fd1368b79955674b90e4"
+    },
+    {
+      "original_index": 219,
+      "original_name": "\\ps2dvd\\art\\skytemple.ssf",
+      "filename": "skytemple.ssf",
+      "original_offset": 1328060416,
+      "size": 2947072,
+      "sha256": "c83f04dec01ee413895856486b6abc65225c8f816bfcb9064c88e89f37e9a428",
+      "written_sha256": "c83f04dec01ee413895856486b6abc65225c8f816bfcb9064c88e89f37e9a428"
+    },
+    {
+      "original_index": 220,
+      "original_name": "\\ps2dvd\\art\\smoke.ssf",
+      "filename": "smoke.ssf",
+      "original_offset": 1331007488,
+      "size": 2983936,
+      "sha256": "a1fcfd91aafab034b2683e9688adabd3bc835f2b04c8cd94648fc7d4e47c0c9b",
+      "written_sha256": "a1fcfd91aafab034b2683e9688adabd3bc835f2b04c8cd94648fc7d4e47c0c9b"
+    },
+    {
+      "original_index": 221,
+      "original_name": "\\ps2dvd\\art\\smoke_alt.ssf",
+      "filename": "smoke_alt.ssf",
+      "original_offset": 1333991424,
+      "size": 3004416,
+      "sha256": "0118a1550233a429ab230aa2746a4999f357a086beff427f613bae91b052a292",
+      "written_sha256": "0118a1550233a429ab230aa2746a4999f357a086beff427f613bae91b052a292"
+    },
+    {
+      "original_index": 222,
+      "original_name": "\\ps2dvd\\art\\sonya.ssf",
+      "filename": "sonya.ssf",
+      "original_offset": 1336995840,
+      "size": 3057664,
+      "sha256": "0d4e07e52d620b772b05eed631c2bd44b32386f624ba0875a5326bd49d8c14fd",
+      "written_sha256": "0d4e07e52d620b772b05eed631c2bd44b32386f624ba0875a5326bd49d8c14fd"
+    },
+    {
+      "original_index": 223,
+      "original_name": "\\ps2dvd\\art\\sonya_alt.ssf",
+      "filename": "sonya_alt.ssf",
+      "original_offset": 1340053504,
+      "size": 3127296,
+      "sha256": "1158f65b1551d87d4b83e0284a0ab7692b494f78b07a762af9f5c82b674b27c4",
+      "written_sha256": "1158f65b1551d87d4b83e0284a0ab7692b494f78b07a762af9f5c82b674b27c4"
+    },
+    {
+      "original_index": 224,
+      "original_name": "\\ps2dvd\\art\\soulchamber.ssf",
+      "filename": "soulchamber.ssf",
+      "original_offset": 1343180800,
+      "size": 1443840,
+      "sha256": "db4786d24940ba14382d80094eecaf8ed3897cd9dc5d6637a4c0ab56e4f57fbe",
+      "written_sha256": "db4786d24940ba14382d80094eecaf8ed3897cd9dc5d6637a4c0ab56e4f57fbe"
+    },
+    {
+      "original_index": 225,
+      "original_name": "\\ps2dvd\\art\\space1.ssf",
+      "filename": "space1.ssf",
+      "original_offset": 1344624640,
+      "size": 7276544,
+      "sha256": "46f0f9d593957c9b3d4b9e4e6771907b7533635bc19c3160c6657890329592ae",
+      "written_sha256": "46f0f9d593957c9b3d4b9e4e6771907b7533635bc19c3160c6657890329592ae"
+    },
+    {
+      "original_index": 226,
+      "original_name": "\\ps2dvd\\art\\space2_trans.ssf",
+      "filename": "space2_trans.ssf",
+      "original_offset": 1351901184,
+      "size": 2439168,
+      "sha256": "1853cb10e0b4c063bbc2bcb917720ed620bf8393e12d9322cbdcfd877e644fe5",
+      "written_sha256": "1853cb10e0b4c063bbc2bcb917720ed620bf8393e12d9322cbdcfd877e644fe5"
+    },
+    {
+      "original_index": 227,
+      "original_name": "\\ps2dvd\\art\\space3.ssf",
+      "filename": "space3.ssf",
+      "original_offset": 1354340352,
+      "size": 4751360,
+      "sha256": "034078ebbef8d59c32377eeb80c4d8991d7246b7bca9ccf3e894c29f4b24be8f",
+      "written_sha256": "034078ebbef8d59c32377eeb80c4d8991d7246b7bca9ccf3e894c29f4b24be8f"
+    },
+    {
+      "original_index": 228,
+      "original_name": "\\ps2dvd\\art\\startup.ssf",
+      "filename": "startup.ssf",
+      "original_offset": 1359091712,
+      "size": 4096,
+      "sha256": "362a6587b4dd495ebc1f07de1c910b77d772d9e4f74603d47c340d47ddd44eec",
+      "written_sha256": "362a6587b4dd495ebc1f07de1c910b77d772d9e4f74603d47c340d47ddd44eec"
+    },
+    {
+      "original_index": 229,
+      "original_name": "\\ps2dvd\\art\\stryker.ssf",
+      "filename": "stryker.ssf",
+      "original_offset": 1359095808,
+      "size": 3422208,
+      "sha256": "71cf9c2c142eeb48ced8fd428352b3922d256f8f22c746de7ffb6639b4569149",
+      "written_sha256": "71cf9c2c142eeb48ced8fd428352b3922d256f8f22c746de7ffb6639b4569149"
+    },
+    {
+      "original_index": 230,
+      "original_name": "\\ps2dvd\\art\\stryker_alt.ssf",
+      "filename": "stryker_alt.ssf",
+      "original_offset": 1362518016,
+      "size": 3328000,
+      "sha256": "cb45bfb2dc09af33850efef855f23125f0bdb94e95b414e79cb751907e64a5f6",
+      "written_sha256": "cb45bfb2dc09af33850efef855f23125f0bdb94e95b414e79cb751907e64a5f6"
+    },
+    {
+      "original_index": 231,
+      "original_name": "\\ps2dvd\\art\\subway.ssf",
+      "filename": "subway.ssf",
+      "original_offset": 1365846016,
+      "size": 3942400,
+      "sha256": "aaec7d4088e2a44a32de42fb04a8d606244948c55f7d2fcd4c5b79339028f263",
+      "written_sha256": "aaec7d4088e2a44a32de42fb04a8d606244948c55f7d2fcd4c5b79339028f263"
+    },
+    {
+      "original_index": 232,
+      "original_name": "\\ps2dvd\\art\\subzero.ssf",
+      "filename": "subzero.ssf",
+      "original_offset": 1369788416,
+      "size": 3149824,
+      "sha256": "d86995a8d99953ff8792fa190209e9adcd2033c200386e338c093c85cdc62de3",
+      "written_sha256": "d86995a8d99953ff8792fa190209e9adcd2033c200386e338c093c85cdc62de3"
+    },
+    {
+      "original_index": 233,
+      "original_name": "\\ps2dvd\\art\\subzero_alt.ssf",
+      "filename": "subzero_alt.ssf",
+      "original_offset": 1372938240,
+      "size": 3260416,
+      "sha256": "7f85ae746556f6d2c0b910c6575a4ae6358fa2c39122b1cf8289788287e17b7d",
+      "written_sha256": "7f85ae746556f6d2c0b910c6575a4ae6358fa2c39122b1cf8289788287e17b7d"
+    },
+    {
+      "original_index": 234,
+      "original_name": "\\ps2dvd\\art\\tanya.ssf",
+      "filename": "tanya.ssf",
+      "original_offset": 1376198656,
+      "size": 3436544,
+      "sha256": "8f594c18359809a409807fc16736b3871f4473baef6758df84e05608a2fdf78a",
+      "written_sha256": "8f594c18359809a409807fc16736b3871f4473baef6758df84e05608a2fdf78a"
+    },
+    {
+      "original_index": 235,
+      "original_name": "\\ps2dvd\\art\\tanya_alt.ssf",
+      "filename": "tanya_alt.ssf",
+      "original_offset": 1379635200,
+      "size": 3391488,
+      "sha256": "8024524f56e06e878272553b4da0ef24312aafe779e4defb5a17212347e224e1",
+      "written_sha256": "8024524f56e06e878272553b4da0ef24312aafe779e4defb5a17212347e224e1"
+    },
+    {
+      "original_index": 236,
+      "original_name": "\\ps2dvd\\art\\taven.ssf",
+      "filename": "taven.ssf",
+      "original_offset": 1383026688,
+      "size": 3371008,
+      "sha256": "92a97def7fd025ed43d754f91c39e91d6bb4da4b6fbd6f0d1d7f77e22b898358",
+      "written_sha256": "92a97def7fd025ed43d754f91c39e91d6bb4da4b6fbd6f0d1d7f77e22b898358"
+    },
+    {
+      "original_index": 237,
+      "original_name": "\\ps2dvd\\art\\taven_alt.ssf",
+      "filename": "taven_alt.ssf",
+      "original_offset": 1386397696,
+      "size": 3416064,
+      "sha256": "16dbeca76f809dd6ff93b045905d086cdfaf814520e8a9bc8c32967f7a166dc8",
+      "written_sha256": "16dbeca76f809dd6ff93b045905d086cdfaf814520e8a9bc8c32967f7a166dc8"
+    },
+    {
+      "original_index": 238,
+      "original_name": "\\ps2dvd\\art\\temple1.ssf",
+      "filename": "temple1.ssf",
+      "original_offset": 1389813760,
+      "size": 4581376,
+      "sha256": "cb1ad5b824c7651ce51b48000e6aea4a0ce5fc2a48401eda35ce7021ac9d94fa",
+      "written_sha256": "cb1ad5b824c7651ce51b48000e6aea4a0ce5fc2a48401eda35ce7021ac9d94fa"
+    },
+    {
+      "original_index": 239,
+      "original_name": "\\ps2dvd\\art\\temple2_trans.ssf",
+      "filename": "temple2_trans.ssf",
+      "original_offset": 1394395136,
+      "size": 2140160,
+      "sha256": "604413a847cdf974c541558d6ef984ec0d25e660dfa517c5f2e54ecb907d5879",
+      "written_sha256": "604413a847cdf974c541558d6ef984ec0d25e660dfa517c5f2e54ecb907d5879"
+    },
+    {
+      "original_index": 240,
+      "original_name": "\\ps2dvd\\art\\temple3.ssf",
+      "filename": "temple3.ssf",
+      "original_offset": 1396535296,
+      "size": 3166208,
+      "sha256": "6e5edaf6c7b99f4bb1fc0d3a1062463b85a72d1a11bebbe2505035da74d9f26a",
+      "written_sha256": "6e5edaf6c7b99f4bb1fc0d3a1062463b85a72d1a11bebbe2505035da74d9f26a"
+    },
+    {
+      "original_index": 241,
+      "original_name": "\\ps2dvd\\art\\temple4_trans.ssf",
+      "filename": "temple4_trans.ssf",
+      "original_offset": 1399701504,
+      "size": 2185216,
+      "sha256": "c917da1c2ab1afd0c89d1c9a08dd9fb019a8bf4ac0e6a3b97d8ea07b20daca35",
+      "written_sha256": "c917da1c2ab1afd0c89d1c9a08dd9fb019a8bf4ac0e6a3b97d8ea07b20daca35"
+    },
+    {
+      "original_index": 242,
+      "original_name": "\\ps2dvd\\art\\temple5.ssf",
+      "filename": "temple5.ssf",
+      "original_offset": 1401886720,
+      "size": 3854336,
+      "sha256": "78a1a04564e74fa561d1ec7705833e16ff4c84e964ab42606d6fe1c473202f71",
+      "written_sha256": "78a1a04564e74fa561d1ec7705833e16ff4c84e964ab42606d6fe1c473202f71"
+    },
+    {
+      "original_index": 243,
+      "original_name": "\\ps2dvd\\art\\usa_online_data.ssf",
+      "filename": "usa_online_data.ssf",
+      "original_offset": 1405741056,
+      "size": 104448,
+      "sha256": "0e34ecd0a26371647ec8d281755a6f96fbd45c78153fc9f86ea0e50e154bbb7c",
+      "written_sha256": "0e34ecd0a26371647ec8d281755a6f96fbd45c78153fc9f86ea0e50e154bbb7c"
+    },
+    {
+      "original_index": 244,
+      "original_name": "\\ps2dvd\\art\\wastelands.ssf",
+      "filename": "wastelands.ssf",
+      "original_offset": 1405845504,
+      "size": 2983936,
+      "sha256": "0c8197ee6072a00e7bd4051e2f2117ccbeb2c22f1d2de9b107803da2812ccf7f",
+      "written_sha256": "0c8197ee6072a00e7bd4051e2f2117ccbeb2c22f1d2de9b107803da2812ccf7f"
+    }
+  ],
+  "count": 245,
+  "bytes": 1408827392,
+  "runtime_archive_required": false,
+  "game_run": false,
+  "frames": [],
+  "audio": []
+}

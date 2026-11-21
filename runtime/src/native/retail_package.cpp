@@ -3,7 +3,6 @@
 #include "native_retail_startup.hpp"
 
 #include <algorithm>
-#include <array>
 #include <limits>
 #include <new>
 #include <stdexcept>
@@ -11,20 +10,14 @@
 
 namespace mka::retail {
 namespace {
-constexpr std::string_view source_request = "/game/mkda.pak";
-constexpr std::uint32_t pak_magic = 0x50414b20u; // actual LE bytes 20 4B 41 50
-constexpr std::uint32_t pak_version = 0x100u;
-constexpr std::size_t header_size = 20;
-constexpr std::size_t record_size = 12;
+constexpr std::string_view source_request = "/game/art";
+constexpr std::string_view retail_prefix = "\\ps2dvd\\art\\";
 
-std::uint32_t word(const std::uint8_t* p) noexcept {
-    return std::uint32_t(p[0]) | std::uint32_t(p[1]) << 8 |
-        std::uint32_t(p[2]) << 16 | std::uint32_t(p[3]) << 24;
-}
 RetailPackageError content_error(content::ContentVolumeError kind) noexcept {
     using C = content::ContentVolumeError;
     if (kind == C::allocation_failed) return RetailPackageError::allocation;
     if (kind == C::host_capacity) return RetailPackageError::host_capacity;
+    if (kind == C::native_exception) return RetailPackageError::native_exception;
     if (kind == C::length_failed) return RetailPackageError::source_length;
     if (kind == C::seek_failed) return RetailPackageError::source_seek;
     if (kind == C::read_failed) return RetailPackageError::source_read;
@@ -49,29 +42,36 @@ std::optional<std::string> NativeRetailPackage::key(std::string_view raw, Retail
         if (ch >= 'A' && ch <= 'Z') ch = static_cast<unsigned char>(ch + ('a' - 'A'));
         result.push_back(static_cast<char>(ch));
     }
+    if (result.starts_with(retail_prefix)) result.erase(0, retail_prefix.size());
+    if (result.empty() || result == "." || result == ".." ||
+        result.find_first_of("/\\:") != result.npos) {
+        f.kind = RetailPackageError::invalid_name;
+        f.operation = "native loose asset basename";
+        return {};
+    }
     return result;
 }
 
-bool NativeRetailPackage::exact_read(std::uint64_t offset, void* dst, std::size_t count,
-    RetailPackageFailure& f) {
-    if (offset > file_size_ || count > file_size_ - offset ||
+bool NativeRetailPackage::exact_read(Asset& asset, std::uint64_t offset,
+    void* dst, std::size_t count, RetailPackageFailure& f) {
+    if (offset > asset.member.size || count > asset.member.size - offset ||
         offset > static_cast<std::uint64_t>(std::numeric_limits<std::int64_t>::max())) {
         f.kind = RetailPackageError::invalid_read_range;
-        f.operation = "retail package bounded read";
+        f.operation = "native loose asset bounded read";
         return false;
     }
-    if (!file_.seek(static_cast<std::int64_t>(offset), content::SeekOrigin::begin, f.content)) {
+    if (!asset.file.seek(static_cast<std::int64_t>(offset), content::SeekOrigin::begin, f.content)) {
         f.kind = content_error(f.content.kind);
-        f.operation = "retail package seek";
+        f.operation = "native loose asset seek";
         return false;
     }
     auto* bytes = static_cast<std::uint8_t*>(dst);
     std::size_t done = 0;
     while (done < count) {
-        const auto r = file_.read(bytes + done, count - done, f.content);
+        const auto r = asset.file.read(bytes + done, count - done, f.content);
         if (r.error || r.bytes == 0) {
             f.kind = RetailPackageError::source_read;
-            f.operation = "retail package short read";
+            f.operation = "native loose asset short read";
             return false;
         }
         done += r.bytes;
@@ -79,74 +79,26 @@ bool NativeRetailPackage::exact_read(std::uint64_t offset, void* dst, std::size_
     return true;
 }
 
-bool NativeRetailPackage::build_index(RetailPackageFailure& f) {
-    const auto size = file_.length(f.content);
-    if (!size) {
-        f.kind = content_error(f.content.kind);
-        f.operation = "retail package length";
-        return false;
-    }
-    file_size_ = *size;
-    if (file_size_ < header_size) {
-        f.kind = RetailPackageError::invalid_header;
-        f.operation = "retail package short header";
-        return false;
-    }
-    std::array<std::uint8_t, header_size> header{};
-    if (!exact_read(0, header.data(), header.size(), f)) return false;
-    const auto magic = word(header.data());
-    const auto version = word(header.data() + 4);
-    const auto count = word(header.data() + 8);
-    const auto table_offset = word(header.data() + 12);
-    const auto names_size = word(header.data() + 16);
-    if (magic != pak_magic || version != pak_version) {
-        f.kind = RetailPackageError::invalid_header;
-        f.operation = "retail package format";
-        return false;
-    }
-    const auto table_bytes = std::uint64_t(count) * record_size;
-    if (table_offset > file_size_ || table_bytes > file_size_ - table_offset ||
-        names_size > file_size_ - table_offset - table_bytes ||
-        table_bytes > std::numeric_limits<std::size_t>::max() ||
-        names_size > std::numeric_limits<std::size_t>::max()) {
-        f.kind = RetailPackageError::invalid_index;
-        f.operation = "retail package table bounds";
-        return false;
-    }
-    std::vector<std::uint8_t> table(static_cast<std::size_t>(table_bytes));
-    std::vector<std::uint8_t> names(names_size);
-    if (!exact_read(table_offset, table.data(), table.size(), f) ||
-        !exact_read(table_offset + table_bytes, names.data(), names.size(), f)) return false;
-    members_.reserve(count);
-    by_name_.reserve(count);
-    for (std::uint32_t i = 0; i < count; ++i) {
-        const auto* row = table.data() + std::size_t(i) * record_size;
-        const auto name_offset = word(row);
-        const auto offset = word(row + 4);
-        const auto length = word(row + 8);
-        if (offset > file_size_ || length > file_size_ - offset) {
-            f.kind = RetailPackageError::invalid_entry_range;
-            f.operation = "retail package member bounds";
-            return false;
-        }
-        if (name_offset >= names.size()) {
-            f.kind = RetailPackageError::invalid_name;
-            f.operation = "retail package member name offset";
-            return false;
-        }
-        const auto begin = names.begin() + name_offset;
-        const auto end = std::find(begin, names.end(), std::uint8_t{0});
-        if (end == names.end()) {
-            f.kind = RetailPackageError::invalid_name;
-            f.operation = "retail package unterminated member name";
-            return false;
-        }
-        std::string name(begin, end);
+bool NativeRetailPackage::build_index(std::vector<content::NativeContentFile>&& files,
+    RetailPackageFailure& f) {
+    members_.reserve(files.size());
+    by_name_.reserve(files.size());
+    for (auto& file : files) {
+        const std::string name(file.logical_key());
         auto normalized = key(name, f);
         if (!normalized) return false;
-        members_.push_back({std::move(name), offset, length, i});
-        // 2404A0 replaces a matching value in its hash chain. Last index wins.
-        by_name_[std::move(*normalized)] = members_.size() - 1;
+        const auto size = file.length(f.content);
+        if (!size) {
+            f.kind = content_error(f.content.kind);
+            f.operation = "native loose asset length";
+            return false;
+        }
+        if (!by_name_.emplace(std::move(*normalized), members_.size()).second) {
+            f.kind = RetailPackageError::duplicate_name;
+            f.operation = "native loose asset ambiguous filename";
+            return false;
+        }
+        members_.push_back({{name, *size}, std::move(file)});
     }
     return true;
 }
@@ -156,8 +108,8 @@ std::unique_ptr<NativeRetailPackage> NativeRetailPackage::open(
     RetailPackageFailure& f) noexcept {
     f = {};
     try {
-        auto file = paths.open(volume, source_request, f.path);
-        if (!file) {
+        auto files = paths.open_directory_files(volume, source_request, f.path);
+        if (!files) {
             f.content = f.path.content;
             switch (f.path.kind) {
             case RetailFilePathError::content_file: f.kind = content_error(f.content.kind); break;
@@ -169,8 +121,8 @@ std::unique_ptr<NativeRetailPackage> NativeRetailPackage::open(
             f.operation = source_request.data();
             return {};
         }
-        auto owner = std::unique_ptr<NativeRetailPackage>(new NativeRetailPackage(std::move(*file)));
-        if (!owner->build_index(f)) return {};
+        auto owner = std::unique_ptr<NativeRetailPackage>(new NativeRetailPackage);
+        if (!owner->build_index(std::move(*files), f)) return {};
         return owner;
     } catch (const std::bad_alloc&) {
         f.kind = RetailPackageError::allocation;
@@ -195,7 +147,7 @@ std::optional<RetailPackageMember> NativeRetailPackage::find(
             f.operation = "retail package member lookup";
             return {};
         }
-        return members_[it->second];
+        return members_[it->second].member;
     } catch (const std::bad_alloc&) {
         f.kind = RetailPackageError::allocation;
     } catch (const std::length_error&) {
@@ -226,7 +178,10 @@ std::optional<std::size_t> NativeRetailPackage::read(std::string_view name,
         }
         const auto n = static_cast<std::size_t>(std::min<std::uint64_t>(
             member->size - relative_offset, out.size()));
-        if (n && !exact_read(member->offset + relative_offset, out.data(), n, f)) return {};
+        if (n) {
+            auto normalized = key(name, f);
+            if (!normalized || !exact_read(members_[by_name_.at(*normalized)], relative_offset, out.data(), n, f)) return {};
+        }
         return n;
     } catch (const std::bad_alloc&) {
         f.kind = RetailPackageError::allocation;

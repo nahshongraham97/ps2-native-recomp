@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_content_volume_owner.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-loose-assets-20261121\\validation-02\\owned-volume"
+  ],
+  "cwd": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-loose-assets-20261121\\validation-02",
+  "binary_sha256": "639b13d76f53f99be350e0b3485fab8b8e0918f74febebb342feac023a5c9010",
+  "exit": 0,
+  "stdout": "SKIP symlink creation: 1314\nPASS_NATIVE_CONTENT_VOLUME_OWNER: opened identity/retail keys/containment/moves/root replacement/sparse64 files; no startup/schema claim\n",
+  "stderr": "",
+  "game_run": false,
+  "frames": [],
+  "audio": []
+}

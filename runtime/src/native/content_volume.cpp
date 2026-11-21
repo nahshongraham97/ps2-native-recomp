@@ -186,4 +186,39 @@ std::optional<NativeContentFile> NativeContentVolume::open_resource(std::string_
         return NativeContentFile(state_,std::move(*logical),std::move(file));
     }catch(const std::bad_alloc&){f.kind=ContentVolumeError::allocation_failed;}catch(const std::length_error&){f.kind=ContentVolumeError::host_capacity;}catch(const std::filesystem::filesystem_error& e){f.kind=ContentVolumeError::open_failed;f.host_error=e.code();}catch(...){f.kind=ContentVolumeError::native_exception;}return {};
 }
+std::optional<std::vector<NativeContentFile>> NativeContentVolume::open_directory_files(
+    std::string_view name,ContentVolumeFailure& f)const{
+    f={};if(!state_){f.kind=ContentVolumeError::moved_volume;return {};}
+    try{
+        auto logical=key(name,f);if(!logical||!state_->unchanged(f))return {};
+        std::error_code ec;
+        const auto path=std::filesystem::canonical(io_path(state_->root)/std::filesystem::u8path(*logical),ec);
+        if(ec){f.kind=ContentVolumeError::open_failed;f.host_error=ec;return {};}
+        if(!inside(comparison_path(state_->root),comparison_path(path))){f.kind=ContentVolumeError::root_escape;return {};}
+        if(!std::filesystem::is_directory(io_path(path),ec)||ec){f.kind=ContentVolumeError::not_directory;f.host_error=ec;return {};}
+        // Retain the selected directory before enumeration. On Windows its
+        // handle disallows delete/rename, just like the parent volume handle.
+        auto directory=NativeContentVolume::open(path,f);if(!directory)return {};
+        if(!inside(state_->observed,directory->state_->observed)){f.kind=ContentVolumeError::root_escape;return {};}
+        std::vector<NativeContentFile> files;
+        std::filesystem::directory_iterator it(io_path(directory->state_->root),ec),end;
+        if(ec){f.kind=ContentVolumeError::directory_read_failed;f.host_error=ec;return {};}
+        for(;it!=end;it.increment(ec)){
+            if(ec){f.kind=ContentVolumeError::directory_read_failed;f.host_error=ec;return {};}
+            const auto utf8_name=it->path().filename().u8string();
+            const std::string filename(utf8_name.begin(),utf8_name.end());
+            // open_resource checks both canonical and actual opened-file
+            // containment. Nonregular entries and escaping links are errors.
+            auto file=directory->open_resource(filename,f);if(!file)return {};
+            files.push_back(std::move(*file));
+        }
+        if(ec){f.kind=ContentVolumeError::directory_read_failed;f.host_error=ec;return {};}
+        if(!directory->validate(f)||!state_->unchanged(f))return {};
+        return files;
+    }catch(const std::bad_alloc&){f.kind=ContentVolumeError::allocation_failed;}
+     catch(const std::length_error&){f.kind=ContentVolumeError::host_capacity;}
+     catch(const std::filesystem::filesystem_error& e){f.kind=ContentVolumeError::directory_read_failed;f.host_error=e.code();}
+     catch(...){f.kind=ContentVolumeError::native_exception;}
+    return {};
+}
 } // namespace mka::content

@@ -43,6 +43,9 @@ public:
     std::optional<content::NativeContentFile> open(
         const content::NativeContentVolume&, std::string_view retail_path,
         RetailFilePathFailure&) const noexcept;
+    std::optional<std::vector<content::NativeContentFile>> open_directory_files(
+        const content::NativeContentVolume&, std::string_view retail_path,
+        RetailFilePathFailure&) const noexcept;
 
 private:
     struct Alias {

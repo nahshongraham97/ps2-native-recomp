@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "C:\\Python315\\python.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tools\\extract_retail_art.py",
+    "--archive",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\mkda.pak",
+    "--destination",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121\\art",
+    "--receipt",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-loose-assets-20261121\\validation-01\\extraction.json"
+  ],
+  "exit": 0,
+  "stdout": "EXTRACTED 245 loose files; 1408827392 bytes verified\n",
+  "stderr": ""
+}

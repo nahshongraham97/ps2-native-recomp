@@ -1,0 +1,19 @@
+{
+  "fork_head": "f73b8d30fc1daa3a3998340daefd56280bd324be",
+  "parent_head": "cfb55fde19e4510eb43f8e56217c42cb4b6f72ce",
+  "before_sha256": {
+    "runtime/include/mka/content_volume.hpp": "2360fb14924da50d67f743f75b3344283cedfc21c36e7f620048f4e3e9ee7dd0",
+    "runtime/src/native/content_volume.cpp": "b7694be1409c127da664240e2641c2a032df383e514a2fed7bac49b1ff9ae700",
+    "runtime/include/mka/retail_file_paths.hpp": "a64c9b44ac533c4e71c6f303f857b996873565660bb3b97c7089ea7c1ef900d8",
+    "runtime/src/native/retail_file_paths.cpp": "322c5eb4893674f2bf9513aefb40f37ddf95bedc1eb2c3f146ef915ea5f0eddf",
+    "runtime/include/mka/retail_package.hpp": "a68d2fb4e13cdf500a81c3f51442ff010a78945022a234c1ec2a76b77a6d2a21",
+    "runtime/src/native/retail_package.cpp": "f824aa4aa62a85a878b05f7df71f26faa5ccfadf849729f9b5afb1441801a759",
+    "tests/test_retail_package.cpp": "01fceb896a8ef70306f56f563a1acda640110562560eaecef5fa0fc2cc00e094",
+    "tests/test_retail_package_errors.cpp": "52f9b9030020f60e3a047f0ea8e7e1f571a08f28f12de1a9ad91902dc06b34a8"
+  },
+  "authorization": "Owner requires loose named files instead of PAK. Preserve original input; no PAK fallback.",
+  "scope": "Native host file service change. This does not prove full game or original algorithm equivalence.",
+  "game_run": false,
+  "frames": [],
+  "audio": []
+}

@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "cmd.exe",
+    "/d",
+    "/c",
+    "mklink",
+    "/J",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-loose-assets-20261121\\validation-02\\escape-root\\art",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-loose-assets-20261121\\validation-02\\outside-root"
+  ],
+  "exit": 1,
+  "stdout": "",
+  "stderr": "Access is denied.\n"
+}

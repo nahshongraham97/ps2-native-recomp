@@ -25,10 +25,10 @@ std::vector<std::uint8_t> unhex(const std::string& value) {
 // The expected manifest is extracted independently from the original archive
 // and frozen before execution. No parser-produced offset is used as its oracle.
 int main(int argc, char** argv) { try {
-    check(argc == 3, "expected read-only original content root and frozen member manifest");
+    check(argc == 3, "expected loose native content root and frozen original member manifest");
     mka::content::ContentVolumeFailure vf;
     auto volume = mka::content::NativeContentVolume::open(std::filesystem::path(argv[1]), vf);
-    check(volume.has_value(), "actual original native content root");
+    check(volume.has_value(), "actual loose native content root");
     NativeRetailStartupState startup(std::move(*volume), {});
     mka::input::ControllerInput samples;
     NativeRetailMainState main(startup, samples);
@@ -43,23 +43,23 @@ int main(int argc, char** argv) { try {
         main_binding::initialize_retail_middleware_files(main, startup_failure) &&
         main.file_paths && main.middleware_dispatcher &&
         main_binding::initialize_retail_package_stage(main, startup_failure) && main.package,
-        "actual native CRT/source-group/file initializer/package chain opens original /game request");
+        "actual native CRT/source-group/file initializer/package chain opens loose /game/art directory");
     auto package = std::move(main.package);
     main.file_paths.reset();
     RetailPackageFailure f;
-    check(bool(package), "opened package retains file/volume after alias owner retirement");
+    check(bool(package), "opened package retains actual loose files after alias owner retirement");
     std::ifstream expected(argv[2]); check(bool(expected), "frozen independent manifest opened");
     std::string line; std::size_t rows = 0;
     while (std::getline(expected, line)) {
         std::istringstream fields(line);
         std::array<std::string, 6> data;
         for (auto& item : data) check(bool(std::getline(fields, item, '\t')), "complete independent manifest row");
-        const auto index = std::stoul(data[0]);
-        const auto offset = std::stoull(data[2]), size = std::stoull(data[3]);
+        const auto size = std::stoull(data[3]);
+        const auto basename = data[1].substr(data[1].find_last_of('\\') + 1);
         const auto first = unhex(data[4]), tail = unhex(data[5]);
         auto member = package->find(data[1], f);
-        check(member && member->source_index == index && member->name == data[1] &&
-            member->offset == offset && member->size == size, "native metadata equals frozen original index row");
+        check(member && member->name == basename && member->size == size, "loose native metadata equals original filename and size");
+        check(package->find(basename, f).has_value(), "same native basename resolves without retail prefix");
         std::array<std::uint8_t, 32> actual{};
         auto n = package->read(data[1], 0, actual, f);
         check(n && *n == first.size() && std::equal(first.begin(), first.end(), actual.begin()),
@@ -74,9 +74,9 @@ int main(int argc, char** argv) { try {
     }
     check(expected.eof() && rows == 245 && package->member_count() == rows, "all original245 index rows compared");
     const auto upper = package->find("\\PS2DVD\\ART\\WASTELANDS.SSF", f);
-    check(upper && upper->offset == 1405845504 && upper->size == 2983936, "actual ASCII case-insensitive member lookup");
-    check(!package->find("/PS2DVD/ART/WASTELANDS.SSF", f) && f.kind == RetailPackageError::missing_member,
-        "member separators stay literal; archive path conversion is separate");
+    check(upper && upper->name == "wastelands.ssf" && upper->size == 2983936, "actual ASCII case-insensitive member lookup");
+    check(!package->find("/PS2DVD/ART/WASTELANDS.SSF", f) && f.kind == RetailPackageError::invalid_name,
+        "unverified foreign path syntax is rejected");
     check(!package->find("\\ps2dvd\\art\\absent.ssf", f) && f.kind == RetailPackageError::missing_member,
         "missing member cannot report success");
     bool wrong_thread = false;
@@ -84,8 +84,8 @@ int main(int argc, char** argv) { try {
         RetailPackageFailure other; std::array<std::uint8_t, 1> byte{};
         wrong_thread = !package->read("\\ps2dvd\\art\\armory.ssf", 0, byte, other) &&
             other.kind == RetailPackageError::wrong_thread;
-    }); reader.join(); check(wrong_thread, "foreign thread rejected before archive cursor mutation");
-    std::puts("PASS native original package all245 metadata/byte comparisons and range checks; no game or endpoint");
+    }); reader.join(); check(wrong_thread, "foreign thread rejected before loose file cursor mutation");
+    std::puts("PASS native loose files all245 original name/size/byte comparisons and range checks; no PAK required; no game or endpoint");
     return 0;
 } catch (const std::exception& e) {
     std::fprintf(stderr, "FAIL native package: %s\n", e.what()); return 1;
