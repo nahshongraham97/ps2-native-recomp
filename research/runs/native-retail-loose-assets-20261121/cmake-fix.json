@@ -1,0 +1,6 @@
+{
+  "before_sha256": "4f0307471a3920541c6c803ff116daba90b7777852ef5979889a35152122be04",
+  "finding": "Clean compiled clients fail Windows loader with STATUS_DLL_NOT_FOUND(0xC0000135); COFF imports include SDL2.dll and no DLL was staged for these clients",
+  "fix": "Add the two affected existing package clients to the existing SDL2 post-build staging loop",
+  "preserved_preexisting": "Three unrelated content-audio test target lines remain working-tree-only and are not staged in this fix"
+}

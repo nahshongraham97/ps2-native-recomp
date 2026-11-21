@@ -1,0 +1,14 @@
+{
+  "status": "PASS_BOTH_NATIVE_FILE_ERROR_ROUTES",
+  "source_sha256": {
+    "runtime/src/native/sample_payload.cpp": "9cca558d65131a019338a8c910ccb3ec15c568d5a348328d632f52e4a1d745f4",
+    "runtime/src/native/sound_archive.cpp": "6f1d7cf07d17d2b358990e7608a9b2bddc63271b1f4ecfa329b03de9ddc590ef",
+    "tests/test_sound_file_errors.cpp": "edfccddf1ff6f69e6b9fd9e6cdd70b1d09a8ccf829b4897ab141421aecf46dc6",
+    "cmake/native_sound_resources.cmake": "20dd39f68af22e48f2aaac301f71479d1de992ab12a8012aaef3722b0a201a27"
+  },
+  "executable_sha256": "995c5f898f57df709c904e83f3409e26947aaf3e8aa3d831979dff6e57ee9e27",
+  "game_executed": false,
+  "frames": null,
+  "audio": null,
+  "full_acceptance": "OPEN"
+}

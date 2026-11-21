@@ -1,0 +1,6 @@
+{
+  "operation": "git diff --cached --check",
+  "exit": 2,
+  "reason": "Literal diff context blank lines in an evidence .patch have a leading space, which the outer diff checker flags as trailing whitespace.",
+  "resolution": "Preserve exact raw local patch bytes; commit a lossless base64 JSON representation and SHA instead of changing the measured source or weakening the checker."
+}

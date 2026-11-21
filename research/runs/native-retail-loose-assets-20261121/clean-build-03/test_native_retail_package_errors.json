@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-loose-20261121\\build-native-loose\\test_native_retail_package_errors.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-loose-assets-20261121\\clean-build-03\\disposable-clean-native-art"
+  ],
+  "exit": 0,
+  "stdout": "PASS native loose assets, no PAK fallback, range/thread/lifetime and 308 allocation cuts; no game or endpoint\n",
+  "stderr": ""
+}

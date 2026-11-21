@@ -1,0 +1,22 @@
+{
+  "status": "PASS_CLEAN_LOOSE_ASSET_COMPONENTS",
+  "commit": "330c32841048a7e72cc61d151b6437c08de50b4d",
+  "build_type": "Release",
+  "clean_tracked_source": true,
+  "clients": {
+    "test_native_retail_package": {
+      "sha256": "8c8a1cb1f2340162f52966d75349543185770cb17b79ede398e9c768f692cc14",
+      "execution": "test_native_retail_package.json"
+    },
+    "test_native_retail_package_errors": {
+      "sha256": "9c42e205132c2cf4ec9d66bd608dc790e4cc0d34e629c4d5c3f8d88867e23840",
+      "execution": "test_native_retail_package_errors.json"
+    }
+  },
+  "source_root": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-loose-20261121",
+  "staged_sdl2_sha256": "53e8fa7e9ed43c30bd650c39396f0d9d2067d2fff0b926c9433b75202592e4aa",
+  "game_run": false,
+  "frames": [],
+  "audio": [],
+  "scope": "native loose-file components only; no full game or escaping junction claim"
+}

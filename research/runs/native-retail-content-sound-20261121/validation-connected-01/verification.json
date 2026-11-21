@@ -1,0 +1,23 @@
+{
+  "status": "PASS_PREEXISTING_CONTENT_SOUND_ADOPTION_COMPONENT",
+  "fork_commit": "f73b8d30fc1daa3a3998340daefd56280bd324be",
+  "dirty": true,
+  "source_sha256": {
+    "cmake/native_game.cmake": "4f0307471a3920541c6c803ff116daba90b7777852ef5979889a35152122be04",
+    "runtime/include/mka/audio_banks.hpp": "175fc1f746a0f68cf5126d3a3f97283493b307465422dc82fbbfe7f9f9983026",
+    "runtime/include/mka/audio_resource_domain.hpp": "3afae605aebfd10ddd53e80c9a277fd9e4d94198078869221b8b6f3304c5597d",
+    "runtime/include/mka/sample_payload.hpp": "6097b6fbb70251982d2a9008761828d5f031a73a58b7b2c26a1e04050d01f920",
+    "runtime/include/mka/sound_archive.hpp": "9338842389743e1f553e771d71edafaf1d4eacfc509b9025abeb7866f09efc90",
+    "runtime/include/mka/stream_source.hpp": "a453f5c646acbbc6d79e6df1b95eb929209ae22184eb0bea32a84881a8d3aada",
+    "runtime/src/native/audio_banks.cpp": "da8484b00389dd0c34ff70799465a95477e0f611b8858f518a77f8ba35053365",
+    "runtime/src/native/sample_payload.cpp": "e1dbb921a7ea73092b8145f4f8e0c645b026fcf4e9f0603ad6e17392f868fc71",
+    "runtime/src/native/sound_archive.cpp": "1c7a16dc98514a4f5ade5916b8116fd97e71f6aa73b5ef38c1939e713b2ee5d1",
+    "runtime/src/native/stream_source.cpp": "001c2d1fd1ee8013078cad1cbff61f035cf087d0c439019556afb4eb77e66f11",
+    "tests/test_content_sound_archive.cpp": "66ecc146a50680f0a5530d575635fd3aac57580036302888b371373214addb20"
+  },
+  "executable_sha256": "18749c86eb715bb7e2471ce37ae8833b5f83210af6ed330d9e046a310fbb1828",
+  "Main_integration": "OPEN",
+  "game_executed": false,
+  "frames": null,
+  "audio": null
+}

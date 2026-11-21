@@ -386,7 +386,8 @@ target_link_libraries(test_native_retail_crt PRIVATE mka_native_retail_startup)
 add_executable(test_native_retail_main_timing EXCLUDE_FROM_ALL tests/test_retail_main_timing.cpp)
 target_link_libraries(test_native_retail_main_timing PRIVATE mka_native_retail_startup)
 if(WIN32)
-    foreach(_native_startup_client test_native_retail_crt test_native_retail_startup test_native_retail_main_timing)
+    foreach(_native_startup_client test_native_retail_crt test_native_retail_startup test_native_retail_main_timing
+        test_native_retail_package test_native_retail_package_errors)
         add_custom_command(TARGET ${_native_startup_client} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2>
                 $<TARGET_FILE_DIR:${_native_startup_client}> VERBATIM)

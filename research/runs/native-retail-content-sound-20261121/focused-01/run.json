@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_content_sound_archive.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-content-sound-20261121\\focused-01\\owned-fixture"
+  ],
+  "exit": 0,
+  "stdout": "PASS_CONTENT_SOUND_ARCHIVE\n",
+  "stderr": "",
+  "executable_sha256": "cd578b3bc22dd7f29eebca1794408a073081ec9c2a52ca203feb6d9fc4b37826",
+  "executable_after_sha256": "cd578b3bc22dd7f29eebca1794408a073081ec9c2a52ca203feb6d9fc4b37826"
+}

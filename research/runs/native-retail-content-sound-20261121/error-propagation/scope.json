@@ -1,0 +1,9 @@
+{
+  "issue": "Preexisting content-file adoption loses NativeFile read error details and overwrites a read failure during successful cursor restoration.",
+  "before_sha256": {
+    "sample_payload.cpp": "e1dbb921a7ea73092b8145f4f8e0c645b026fcf4e9f0603ad6e17392f868fc71",
+    "sound_archive.cpp": "1c7a16dc98514a4f5ade5916b8116fd97e71f6aa73b5ef38c1939e713b2ee5d1"
+  },
+  "expected": "Propagate original FileRead.error and preserve it across successful restoration. Failed restoration supersedes the original error by name.",
+  "game_executed": false
+}

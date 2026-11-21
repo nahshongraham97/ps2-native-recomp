@@ -1,0 +1,511 @@
+{
+  "manifest": {
+    "repository_full_name": "nahshongraham97/ps2-native-recomp",
+    "root": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp",
+    "base": "f73b8d30fc1daa3a3998340daefd56280bd324be",
+    "local_head": "e16c43417ea207dabf0ffcf0d29845412f4bc2d0",
+    "tree": "f06014735a7f22173103cdc120336f71b3db0ba2",
+    "message": "Load retail art from owned loose native files without PAK fallback",
+    "entries": [
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/INITIAL.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "8d38f14674645bda977da6de73ef6d7ce9cad1eb",
+        "size": 1329
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/WORK.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bd154b9a7338ad4e8a6d66ec55306c86e9e8c90a",
+        "size": 3772
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/before/parent/NATIVE_PORT_EXECUTION_CONTRACT.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "9bcfaea8578d7d9e5771df3669ed4ee6cefc6ac0",
+        "size": 23344
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/before/parent/PORT_STATUS.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ef020b38941e5abf62e93aacbea91169838e6bd9",
+        "size": 125016
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/before/parent/ROADMAP.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a9b819c3ff0512b857550314eab1bd3e08de076a",
+        "size": 88342
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/before/runtime/include/mka/content_volume.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7c0a9bada91c5c3b56141522018c1779f2caaf4c",
+        "size": 2600
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/before/runtime/include/mka/retail_file_paths.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b8837f82fe2bfe08b0919ce5eee68a79bc84bee6",
+        "size": 1852
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/before/runtime/include/mka/retail_package.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4c0eb24ab4520157a27136daa415aa34e5fd486c",
+        "size": 2698
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/before/runtime/src/native/content_volume.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e1d7230f6b1d3208b6ddbf147c4336b6f06ef9d1",
+        "size": 14178
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/before/runtime/src/native/retail_file_paths.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "9a6008c64197c9c1ccdd15f0eafdd67e54aefc89",
+        "size": 5022
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/before/runtime/src/native/retail_package.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a669b9970676921214ae7ebc8d6084f399d6a551",
+        "size": 11162
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/before/tests/test_retail_package.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "786cb91423508730e420d04c479733784c422fa5",
+        "size": 5474
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/before/tests/test_retail_package_errors.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "27f8de2a6f314a181b33dc68ebcd0e3b361ec66a",
+        "size": 9926
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/staging-failure.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a873d835bcd2bf5588715f9393f766a702ce6304",
+        "size": 3331
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-01/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a55d5500e0d28920efbb76cc93e06a3dec009661",
+        "size": 16929
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-01/extraction-execution.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b36801b04a5bb96ef0494aaea9faeb27067fba9e",
+        "size": 829
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-01/extraction.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b22bb3b320b1947ce1677d635b8130b4ec3ba2c8",
+        "size": 90618
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-01/source-pins.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "153ff054f9837c3ab3c5ba1ee4e15ae8ea4ed029",
+        "size": 48039
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-01/test_native_retail_package.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "54cf8517b014a180bfa3460860e1e975c0fd6a2a",
+        "size": 1052
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-01/test_native_retail_package_errors.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "2fc304940049ccc0eee3c29c99ad116f0dca27af",
+        "size": 908
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-02/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e811d7bbf1aae7fefcac0d65392cdfca550254dd",
+        "size": 2967
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-02/junction-powershell-denied.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "35bba6ec95a8480452f058764acc23e009912eaf",
+        "size": 227
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-02/junction-setup.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3014e876eadea25542adb031a2319ad5810014c7",
+        "size": 544
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-02/test_native_content_volume_owner.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c004c8b47d241e8493ed0b170a7df1d3a4824092",
+        "size": 954
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-02/test_native_retail_file_paths.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "d4f8b45b703e5aff6d5d5f8a656f0ee2465ab800",
+        "size": 641
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-02/test_native_retail_package.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "cddfcf8566421e2073965de8343380c144b9fa4b",
+        "size": 1052
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-02/test_native_retail_package_errors.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7e5055591397be51ccefdd2c2e8158af5cb0943e",
+        "size": 908
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-02/verification.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a75447f7f35640ca12ab76db713b8e6cd7ad9396",
+        "size": 5492
+      },
+      {
+        "path": "runtime/include/mka/content_volume.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "257ad4a664d09dd75c96b17270b3fe9df33bd1cb",
+        "size": 2996
+      },
+      {
+        "path": "runtime/include/mka/retail_file_paths.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c977788dba35329aec57e73620fb11044e6ef2b3",
+        "size": 2056
+      },
+      {
+        "path": "runtime/include/mka/retail_package.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "94faa4037bc9c8683547ac949245b5ce11375c4c",
+        "size": 2519
+      },
+      {
+        "path": "runtime/src/native/content_volume.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "8df7ac883dee7cb74ef6ac81974bac440a3c18d9",
+        "size": 16663
+      },
+      {
+        "path": "runtime/src/native/retail_file_paths.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7a107f74b3c920049593e82e0ca50f6bfa20af79",
+        "size": 5950
+      },
+      {
+        "path": "runtime/src/native/retail_package.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "786d9ddf4d866933ca08c3071f996aaca585d685",
+        "size": 9136
+      },
+      {
+        "path": "tests/test_retail_package.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bf7b1a2e0a8bad2b8f760d40591770e9f18c06a3",
+        "size": 5530
+      },
+      {
+        "path": "tests/test_retail_package_errors.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "2006dfbe34a27a211958c14af46975eb06980fce",
+        "size": 13663
+      },
+      {
+        "path": "tools/extract_retail_art.py",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "aff5b478a7592fb9c40d42c5cb54961f75661770",
+        "size": 4791
+      }
+    ],
+    "upload": [
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/INITIAL.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "8d38f14674645bda977da6de73ef6d7ce9cad1eb",
+        "size": 1329
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/WORK.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bd154b9a7338ad4e8a6d66ec55306c86e9e8c90a",
+        "size": 3772
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/before/parent/NATIVE_PORT_EXECUTION_CONTRACT.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "9bcfaea8578d7d9e5771df3669ed4ee6cefc6ac0",
+        "size": 23344
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/before/parent/PORT_STATUS.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ef020b38941e5abf62e93aacbea91169838e6bd9",
+        "size": 125016
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/before/parent/ROADMAP.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a9b819c3ff0512b857550314eab1bd3e08de076a",
+        "size": 88342
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/staging-failure.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a873d835bcd2bf5588715f9393f766a702ce6304",
+        "size": 3331
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-01/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a55d5500e0d28920efbb76cc93e06a3dec009661",
+        "size": 16929
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-01/extraction-execution.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b36801b04a5bb96ef0494aaea9faeb27067fba9e",
+        "size": 829
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-01/extraction.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b22bb3b320b1947ce1677d635b8130b4ec3ba2c8",
+        "size": 90618
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-01/source-pins.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "153ff054f9837c3ab3c5ba1ee4e15ae8ea4ed029",
+        "size": 48039
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-01/test_native_retail_package.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "54cf8517b014a180bfa3460860e1e975c0fd6a2a",
+        "size": 1052
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-01/test_native_retail_package_errors.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "2fc304940049ccc0eee3c29c99ad116f0dca27af",
+        "size": 908
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-02/build.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e811d7bbf1aae7fefcac0d65392cdfca550254dd",
+        "size": 2967
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-02/junction-powershell-denied.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "35bba6ec95a8480452f058764acc23e009912eaf",
+        "size": 227
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-02/junction-setup.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3014e876eadea25542adb031a2319ad5810014c7",
+        "size": 544
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-02/test_native_content_volume_owner.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c004c8b47d241e8493ed0b170a7df1d3a4824092",
+        "size": 954
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-02/test_native_retail_file_paths.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "d4f8b45b703e5aff6d5d5f8a656f0ee2465ab800",
+        "size": 641
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-02/test_native_retail_package.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "cddfcf8566421e2073965de8343380c144b9fa4b",
+        "size": 1052
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-02/test_native_retail_package_errors.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7e5055591397be51ccefdd2c2e8158af5cb0943e",
+        "size": 908
+      },
+      {
+        "path": "research/runs/native-retail-loose-assets-20261121/validation-02/verification.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a75447f7f35640ca12ab76db713b8e6cd7ad9396",
+        "size": 5492
+      },
+      {
+        "path": "runtime/include/mka/content_volume.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "257ad4a664d09dd75c96b17270b3fe9df33bd1cb",
+        "size": 2996
+      },
+      {
+        "path": "runtime/include/mka/retail_file_paths.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c977788dba35329aec57e73620fb11044e6ef2b3",
+        "size": 2056
+      },
+      {
+        "path": "runtime/include/mka/retail_package.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "94faa4037bc9c8683547ac949245b5ce11375c4c",
+        "size": 2519
+      },
+      {
+        "path": "runtime/src/native/content_volume.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "8df7ac883dee7cb74ef6ac81974bac440a3c18d9",
+        "size": 16663
+      },
+      {
+        "path": "runtime/src/native/retail_file_paths.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7a107f74b3c920049593e82e0ca50f6bfa20af79",
+        "size": 5950
+      },
+      {
+        "path": "runtime/src/native/retail_package.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "786d9ddf4d866933ca08c3071f996aaca585d685",
+        "size": 9136
+      },
+      {
+        "path": "tests/test_retail_package.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bf7b1a2e0a8bad2b8f760d40591770e9f18c06a3",
+        "size": 5530
+      },
+      {
+        "path": "tests/test_retail_package_errors.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "2006dfbe34a27a211958c14af46975eb06980fce",
+        "size": 13663
+      },
+      {
+        "path": "tools/extract_retail_art.py",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "aff5b478a7592fb9c40d42c5cb54961f75661770",
+        "size": 4791
+      }
+    ]
+  },
+  "remote_commit": {
+    "sha": "a6d749c269779cf0c282a2d3b28264d8b84e1f64",
+    "node_id": "C_kwDOVceSb9oAKGE2ZDc0OWMyNjk3NzljZjBjMjgyYTJkM2IyODI2NGQ4Yjg0ZTFmNjQ",
+    "url": "https://api.github.com/repos/nahshongraham97/ps2-native-recomp/git/commits/a6d749c269779cf0c282a2d3b28264d8b84e1f64",
+    "html_url": "https://github.com/nahshongraham97/ps2-native-recomp/commit/a6d749c269779cf0c282a2d3b28264d8b84e1f64",
+    "author": {
+      "name": "nahshongraham97",
+      "email": "nahshongraham97@gmail.com",
+      "date": "2026-11-21T23:15:12Z"
+    },
+    "committer": {
+      "name": "nahshongraham97",
+      "email": "nahshongraham97@gmail.com",
+      "date": "2026-11-21T23:15:12Z"
+    },
+    "tree": {
+      "sha": "f06014735a7f22173103cdc120336f71b3db0ba2",
+      "url": "https://api.github.com/repos/nahshongraham97/ps2-native-recomp/git/trees/f06014735a7f22173103cdc120336f71b3db0ba2"
+    },
+    "message": "Load retail art from owned loose native files without PAK fallback",
+    "parents": [
+      {
+        "sha": "f73b8d30fc1daa3a3998340daefd56280bd324be",
+        "url": "https://api.github.com/repos/nahshongraham97/ps2-native-recomp/git/commits/f73b8d30fc1daa3a3998340daefd56280bd324be",
+        "html_url": "https://github.com/nahshongraham97/ps2-native-recomp/commit/f73b8d30fc1daa3a3998340daefd56280bd324be"
+      }
+    ],
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "status": "PASS_CORRECTED_NATIVE_FILE_ERROR_PROPAGATION_AND_AFFECTED_COMPONENTS",
+  "fork_commit": "f73b8d30fc1daa3a3998340daefd56280bd324be",
+  "dirty": true,
+  "source_sha256": {
+    "runtime/src/native/sound_archive.cpp": "6f1d7cf07d17d2b358990e7608a9b2bddc63271b1f4ecfa329b03de9ddc590ef",
+    "runtime/src/native/sample_payload.cpp": "9cca558d65131a019338a8c910ccb3ec15c568d5a348328d632f52e4a1d745f4",
+    "tests/test_sound_file_errors.cpp": "8cba76674c653789d141e8a0b589fd08349cfb275a3923e8e267309fbebc3305",
+    "cmake/native_sound_resources.cmake": "20dd39f68af22e48f2aaac301f71479d1de992ab12a8012aaef3722b0a201a27"
+  },
+  "executed": [
+    {
+      "target": "test_native_sound_file_errors",
+      "executable_sha256": "5d83228fa09a56e82fc06d5e260827e15ea8f7a76435a48ef29249935a64e504",
+      "stdout": "PASS_NATIVE_SOUND_FILE_ERRORS\n"
+    },
+    {
+      "target": "test_native_content_sound_archive",
+      "executable_sha256": "fc412e6a155561cbb01b21f20a5d9b240487c0c891cebb6cdc5410759639371a",
+      "stdout": "PASS_CONTENT_SOUND_ARCHIVE\n"
+    },
+    {
+      "target": "test_native_retail_sound_bank_jobs",
+      "executable_sha256": "76dbe5bbed4422088c33452173fb5a0b0d6dc8c5c4edeb32ef8519b5675eb8cd",
+      "stdout": "PASS_RETAIL_SOUND_BANK_JOBS\n"
+    }
+  ],
+  "original_expected_failure": "../reproduction-02/execute.json",
+  "game_executed": false,
+  "frames": null,
+  "audio": null,
+  "Main_game_acceptance": "OPEN"
+}

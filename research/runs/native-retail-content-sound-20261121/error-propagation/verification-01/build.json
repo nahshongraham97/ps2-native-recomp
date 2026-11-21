@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+    "--target",
+    "test_native_sound_file_errors",
+    "test_native_content_sound_archive",
+    "test_native_retail_sound_bank_jobs",
+    "-j2"
+  ],
+  "exit": 0,
+  "stdout": "[0/2] Re-checking globbed directories...\n[1/7] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/sample_payload.cpp.obj\n[2/7] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/sound_archive.cpp.obj\n[3/7] Linking CXX static library libmka_native_sound_resources.a\n[4/7] Linking CXX executable test_native_sound_file_errors.exe\n[5/7] Linking CXX executable test_native_retail_sound_bank_jobs.exe\n[6/7] Linking CXX executable test_native_content_sound_archive.exe\n",
+  "stderr": ""
+}

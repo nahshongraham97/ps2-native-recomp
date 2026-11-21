@@ -1,0 +1,28 @@
+{
+  "base": "444c8dfb50c51fa40e1f403c19581612aed71597",
+  "pins": {
+    "cmake/native_game.cmake": "b7c1900eea2f12858ca3cf83a9d043d484097f31fa87e4dc5abb11e43718a795",
+    "cmake/native_sound_resources.cmake": "20dd39f68af22e48f2aaac301f71479d1de992ab12a8012aaef3722b0a201a27",
+    "runtime/include/mka/audio_banks.hpp": "175fc1f746a0f68cf5126d3a3f97283493b307465422dc82fbbfe7f9f9983026",
+    "runtime/include/mka/audio_resource_domain.hpp": "3afae605aebfd10ddd53e80c9a277fd9e4d94198078869221b8b6f3304c5597d",
+    "runtime/include/mka/sample_payload.hpp": "6097b6fbb70251982d2a9008761828d5f031a73a58b7b2c26a1e04050d01f920",
+    "runtime/include/mka/sound_archive.hpp": "9338842389743e1f553e771d71edafaf1d4eacfc509b9025abeb7866f09efc90",
+    "runtime/include/mka/stream_source.hpp": "a453f5c646acbbc6d79e6df1b95eb929209ae22184eb0bea32a84881a8d3aada",
+    "runtime/src/native/audio_banks.cpp": "da8484b00389dd0c34ff70799465a95477e0f611b8858f518a77f8ba35053365",
+    "runtime/src/native/sample_payload.cpp": "9cca558d65131a019338a8c910ccb3ec15c568d5a348328d632f52e4a1d745f4",
+    "runtime/src/native/sound_archive.cpp": "6f1d7cf07d17d2b358990e7608a9b2bddc63271b1f4ecfa329b03de9ddc590ef",
+    "runtime/src/native/stream_source.cpp": "001c2d1fd1ee8013078cad1cbff61f035cf087d0c439019556afb4eb77e66f11",
+    "tests/test_content_sound_archive.cpp": "66ecc146a50680f0a5530d575635fd3aac57580036302888b371373214addb20",
+    "tests/test_sound_file_errors.cpp": "edfccddf1ff6f69e6b9fd9e6cdd70b1d09a8ccf829b4897ab141421aecf46dc6"
+  },
+  "policy": "Explicit preservation of preexisting in-scope content-file adoption plus authored read-error correction/test. Snapshots are evidence, not an integrated clean production change. Original dirty production paths stay untouched.",
+  "authored_correction": [
+    "NativeFile read errors retained by sound/archive adapters",
+    "Successful cursor restore no longer clears original read failure",
+    "Focused failure injection check reproduced failure then passed correction"
+  ],
+  "scope": "Dated component evidence only. Full Main context/catalog ownership and clean adoption integration OPEN.",
+  "game_run": false,
+  "frames": [],
+  "audio": []
+}
