@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_pad_control.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native pad control and live task arguments; CPU test bodies, physical input/game still open\n",
+  "stderr": "",
+  "executable_sha256": "faf1e1be2d04466c6878c1a743382c560a1ad34e87f482db54503451575f0616",
+  "executable_after_sha256": "faf1e1be2d04466c6878c1a743382c560a1ad34e87f482db54503451575f0616"
+}

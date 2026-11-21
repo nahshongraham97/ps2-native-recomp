@@ -1,0 +1,15 @@
+# Native save/profile dependency and Main service checkpoint
+
+Status: compiled/tested CPU and owned-file components; complete game acceptance OPEN.
+
+The actual Main call path now reaches native saved-profile storage readiness before the remaining 0x171B10 profile-record initializer. Production resolves the Windows LocalAppData application/saves directory without flags, retains a real writable NativeSaveStore, validates before publishing a new owner, and clears the source service word only after readiness. Existing invalid owners fail by name without an implicit reopen fallback. The default known-folder branch is compiled only; the fixture uses exclusively owned native storage.
+
+Four component clients freshly passed: native save storage, known retail profile defaults, external retail save-image codec (both original footer modes), and aggregate-data calculation. The subsequent Main check freshly ran five connected/codegen clients across main-validation-02 and03: three unchanged successful executions from02 are retained, two corrected/generated clients run freshly in03. The four prior component executions are retained unchanged in the Main record. These are nine client identities, not gameplay.
+
+Saved failure/corrections: independent review found unowned temporary-path cleanup and path/effect identity gaps. The corrected implementation retains the successful open file handle through cleanup, rename and delete; failed replace/delete preserve existing bytes and retire only their owned temporary. Main validation01 failed to link NativeUserPaths; it was factored into one shared native library. Validation02 linked and its save, game-record and pad clients passed, but an old startup fixture still expected Wave to be unbound. The production initializer already explicitly bound the actual Wave owner; only that stale fixture was corrected to verify the real owner identity and separately absent overlay. Validation03 passes. No production guard was weakened; failures and exact before bytes are retained.
+
+The actual full-entry negative link still refuses exactly28 Main effects, including initialize_retail_saved_profile_records. The former misleading initialize_retail_game_scene_records name is replaced by the real saved-profile obligation. This does not reduce the remaining integration count. Source65 confirms additional active/staging gameplay fields and ID collections remain unresolved. Known scalar defaults and external file bytes are not a complete runtime profile; no opaque guest-layout runtime buffer or successful records stub was introduced.
+
+No game, physical input/audio/GPU endpoint, backup, local model or driver action was performed. No frames or audio were captured. Complete typed profile records/consumers, conditional menu effects, input tasks, game loop, rendering, sound and one-build whole-game acceptance remain OPEN.
+
+Owner: no action. Coding agent: finish the typed saved-profile/runtime collection and actual aggregate/menu dependencies in source order, then continue the connected entry path; do not request a launch.

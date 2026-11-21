@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_saved_profile_defaults.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native retail saved profile default leaves; aggregate/menu and unknown profile consumers open\n",
+  "stderr": "",
+  "executable_sha256": "44bd6b7c047170ef33dfffae33fd043a7174058685e5643bdad609881c8e7e76",
+  "executable_after_sha256": "44bd6b7c047170ef33dfffae33fd043a7174058685e5643bdad609881c8e7e76"
+}

@@ -34,8 +34,12 @@ int main(int argc,char** argv){try {
     check(!initialize_retail_memory_owners(state,f)&&f.kind==StartupError::already_initialized&&state.memory_owners.get()==owners,
         "duplicate initialization cannot replace live native owner identities");
     RetailMemoryOwnerFailure mf;
-    check(!state.memory_owners->wave_allocator(mf)&&mf.kind==RetailMemoryOwnerError::wave_unbound,
-        "created identities do not fabricate missing retail Wave/overlay readiness");
+    const auto wave=state.memory_owners->wave_allocator(mf);
+    const auto wave_owner=state.memory_owners->observe(RetailMemoryRole::wave,mf);
+    check(wave&&wave_owner&&mf.kind==RetailMemoryOwnerError::none&&
+          wave->observe().requested_owner==wave_owner->heap.identity&&
+          wave->observe().active_requests==0&&!state.active_overlay,
+        "startup binds the actual native Wave owner while the retail overlay remains absent");
     check(state.resource_prefix.empty()&&state.boot_directory.empty(),"native startup values independently initialized");
     check(initialize_retail_resource_prefix(state,f)&&state.resource_prefix=="cdrom0:","actual original content prefix in owned string");
     check(derive_retail_boot_directory(state,f)&&state.boot_directory=="cdrom0:\\","actual argv0 lexical leaf preserves device and trailing separator");

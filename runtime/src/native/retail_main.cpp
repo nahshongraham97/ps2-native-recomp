@@ -169,7 +169,10 @@ std::optional<std::int64_t> continue_native_retail_main(NativeRetailStartupState
     gate = initialize_retail_pad_service(m, 1, f);
     if (gate == RetailStartupGate::source_refused) return 0;
     if (gate != RetailStartupGate::ready) return {};
-    gate = initialize_retail_game_scene_records(m, f);
+    // Original171B10 first calls225000 and returns before profile mutations
+    // on service failure. Native storage replaces that console transport.
+    if (!initialize_retail_saved_profile_storage(m, f)) return {};
+    gate = initialize_retail_saved_profile_records(m, f);
     if (gate == RetailStartupGate::source_refused) return 0;
     if (gate != RetailStartupGate::ready) return {};
 

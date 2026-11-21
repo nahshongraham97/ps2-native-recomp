@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_startup.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-save-profile-20261121\\main-validation-02\\exclusive-startup-content"
+  ],
+  "exit": 1,
+  "stdout": "",
+  "stderr": "FAIL retail startup: created identities do not fabricate missing retail Wave/overlay readiness\n",
+  "executable_sha256": "c5c4eb695b7a648d0c40cc0f35e8dacce5b83dd750a66f3293fe87185596e57d",
+  "executable_after_sha256": "c5c4eb695b7a648d0c40cc0f35e8dacce5b83dd750a66f3293fe87185596e57d"
+}

@@ -81,6 +81,30 @@ target_include_directories(mka_native_content_volume PUBLIC runtime/include)
 target_compile_features(mka_native_content_volume PUBLIC cxx_std_20)
 add_executable(test_native_content_volume_owner EXCLUDE_FROM_ALL tests/test_native_content_volume_owner.cpp)
 target_link_libraries(test_native_content_volume_owner PRIVATE mka_native_content_volume)
+# Native saved-profile bytes use their own writable host directory capability.
+# This does not publish the unfinished retail profile/default initializer.
+add_library(mka_native_save_store STATIC EXCLUDE_FROM_ALL runtime/src/native/native_save_store.cpp)
+target_include_directories(mka_native_save_store PUBLIC runtime/include)
+target_compile_features(mka_native_save_store PUBLIC cxx_std_20)
+target_link_libraries(mka_native_save_store PUBLIC Threads::Threads)
+add_executable(test_native_save_store EXCLUDE_FROM_ALL tests/test_native_save_store.cpp)
+target_link_libraries(test_native_save_store PRIVATE mka_native_save_store)
+add_library(mka_native_saved_profile_defaults STATIC EXCLUDE_FROM_ALL
+    runtime/src/native/retail_saved_profile_defaults.cpp)
+target_include_directories(mka_native_saved_profile_defaults PUBLIC runtime/include)
+target_compile_features(mka_native_saved_profile_defaults PUBLIC cxx_std_20)
+add_executable(test_native_retail_saved_profile_defaults EXCLUDE_FROM_ALL tests/test_retail_saved_profile_defaults.cpp)
+target_link_libraries(test_native_retail_saved_profile_defaults PRIVATE mka_native_saved_profile_defaults)
+add_library(mka_native_profile_image STATIC EXCLUDE_FROM_ALL runtime/src/native/retail_profile_image.cpp)
+target_include_directories(mka_native_profile_image PUBLIC runtime/include)
+target_compile_features(mka_native_profile_image PUBLIC cxx_std_20)
+add_executable(test_native_retail_profile_image EXCLUDE_FROM_ALL tests/test_retail_profile_image.cpp)
+target_link_libraries(test_native_retail_profile_image PRIVATE mka_native_profile_image)
+add_library(mka_native_profile_aggregate STATIC EXCLUDE_FROM_ALL runtime/src/native/retail_profile_aggregate.cpp)
+target_include_directories(mka_native_profile_aggregate PUBLIC runtime/include)
+target_compile_features(mka_native_profile_aggregate PUBLIC cxx_std_20)
+add_executable(test_native_retail_profile_aggregate EXCLUDE_FROM_ALL tests/test_retail_profile_aggregate.cpp)
+target_link_libraries(test_native_retail_profile_aggregate PRIVATE mka_native_profile_aggregate)
 # Persistent game state uses native objects, not a guest address model.
 add_library(mka_native_retail_task_registry STATIC EXCLUDE_FROM_ALL
     runtime/src/native/retail_task_registry.cpp runtime/src/native/retail_task_execution.cpp
@@ -182,6 +206,7 @@ if(WIN32)
         runtime/src/native/retail_game_info_resources.cpp
         runtime/src/native/retail_game_record_reset.cpp
         runtime/src/native/retail_pad_control.cpp runtime/src/native/retail_pad_startup.cpp
+        runtime/src/native/retail_save_startup.cpp
         runtime/src/native/retail_game_records.cpp
         runtime/src/native/retail_game_records_main.cpp
         runtime/src/native/retail_task_lookup_main.cpp
@@ -205,6 +230,8 @@ if(WIN32)
     target_include_directories(mka_native_retail_startup PUBLIC "${_startup_dir}" runtime/include)
     target_link_libraries(mka_native_retail_startup PUBLIC mka_native_content_volume mka_native_retail_memory_owners
         mka_native_retail_text_storage
+        mka_native_save_store
+        mka_native_user_paths
         mka_native_retail_middleware_frame mka_native_retail_file_paths mka_native_retail_game_session mka_native_retail_crt mka_native_retail_platform mka_native_allocation_profile mka_native_retail_profile_owners mka_native_retail_game_resource_registry mka_native_game_actions mka_native_sound_resources)
     add_executable(test_native_retail_middleware_main EXCLUDE_FROM_ALL tests/test_retail_middleware_main.cpp)
     target_include_directories(test_native_retail_middleware_main PRIVATE runtime/src/native)
@@ -219,6 +246,8 @@ if(WIN32)
     target_link_libraries(test_native_retail_game_records_main PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_pad_control EXCLUDE_FROM_ALL tests/test_retail_pad_control.cpp)
     target_link_libraries(test_native_retail_pad_control PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_save_startup EXCLUDE_FROM_ALL tests/test_retail_save_startup.cpp)
+    target_link_libraries(test_native_retail_save_startup PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_section_workspace EXCLUDE_FROM_ALL tests/test_retail_section_workspace.cpp)
     target_link_libraries(test_native_retail_section_workspace PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_task_domain EXCLUDE_FROM_ALL tests/test_retail_task_domain.cpp)

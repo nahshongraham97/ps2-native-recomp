@@ -22,9 +22,13 @@ target_compile_features(mka_native_gpu_completion PUBLIC cxx_std_20)
 add_executable(test_native_movie_gpu_completion EXCLUDE_FROM_ALL tests/test_movie_gpu_completion.cpp)
 target_link_libraries(test_native_movie_gpu_completion PRIVATE mka_native_gpu_completion)
 
+add_library(mka_native_user_paths STATIC EXCLUDE_FROM_ALL runtime/src/native/native_user_paths.cpp)
+target_include_directories(mka_native_user_paths PUBLIC runtime/include)
+target_compile_features(mka_native_user_paths PUBLIC cxx_std_20)
+target_link_libraries(mka_native_user_paths PUBLIC shell32 ole32 uuid)
+
 add_library(mka_native_media STATIC EXCLUDE_FROM_ALL
     runtime/src/native/native_file.cpp
-    runtime/src/native/native_user_paths.cpp
     runtime/src/native/font_atlas.cpp
     runtime/src/native/font_metrics.cpp
     runtime/src/native/font_layout.cpp
@@ -84,7 +88,7 @@ target_include_directories(mka_native_media PUBLIC runtime/include PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/native-media-headers" "${MKA_NATIVE_MEDIA_HEADERS}")
 target_compile_features(mka_native_media PUBLIC cxx_std_20)
 target_link_libraries(mka_native_media PRIVATE opengl32 gdi32 user32 bcrypt shell32 ole32 uuid)
-target_link_libraries(mka_native_media PUBLIC mka_native_gpu_completion)
+target_link_libraries(mka_native_media PUBLIC mka_native_gpu_completion mka_native_user_paths)
 target_link_libraries(mka_native_media PRIVATE mka_native_audio_device)
 # Source font math uses ordered float32 steps and finite-value checks. These
 # modules must not inherit fast-math/reassociation or fused multiply-add from

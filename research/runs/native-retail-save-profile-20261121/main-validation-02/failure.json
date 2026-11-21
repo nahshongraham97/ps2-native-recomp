@@ -1,0 +1,5 @@
+{
+  "status": "FAILED",
+  "type": "RuntimeError",
+  "message": "unexpected exit: run-test_native_retail_startup"
+}

@@ -13,6 +13,7 @@
 #include "mka/retail_mode_state.hpp"
 #include "mka/retail_package.hpp"
 #include "mka/retail_remaining_constructors.hpp"
+#include "mka/native_save_store.hpp"
 #include <array>
 #include <cstdint>
 #include <memory>
@@ -93,6 +94,10 @@ struct NativeRetailMainState {
     std::optional<NativeRetailModeState> mode_history;
     std::unique_ptr<NativeRetailPackage> package;
     std::unique_ptr<NativeRetailFilePaths> file_paths;
+    // Real writable native storage, reached through 225000 before 171B10
+    // changes saved-profile records. It is separate from the content volume.
+    std::optional<save::NativeSaveStore> saved_profile_storage;
+    std::uint32_t saved_profile_service_word{}; // source64E8D8, reset on readiness
     std::shared_ptr<NativeRetailTwoServiceObjects> two_service_objects;
     std::optional<NativeRetailEmptyBinding> empty_binding;
     std::shared_ptr<NativeRetailStaticKeyOwners> static_keys;
@@ -185,7 +190,9 @@ std::optional<std::int32_t> read_retail_frame_rate(const NativeRetailMainState&,
 RetailStartupGate initialize_retail_timer_and_viewport(NativeRetailMainState&, StartupFailure&);
 std::optional<std::uint64_t> read_retail_coarse_milliseconds(NativeRetailMainState&, StartupFailure&);
 RetailStartupGate initialize_retail_pad_service(NativeRetailMainState&, unsigned mode, StartupFailure&);
-RetailStartupGate initialize_retail_game_scene_records(NativeRetailMainState&, StartupFailure&);
+bool initialize_retail_saved_profile_storage(NativeRetailMainState&, StartupFailure&); // 225000 native service
+// Remaining 171B10 record/default/aggregate/menu effects. No successful default.
+RetailStartupGate initialize_retail_saved_profile_records(NativeRetailMainState&, StartupFailure&);
 std::uint32_t read_retail_audio_boot_word(const NativeRetailMainState&);
 bool initialize_retail_audio_stage(NativeRetailMainState&, const std::array<std::uint32_t, 5>&, StartupFailure&);
 RetailStartupGate initialize_retail_first_scene(NativeRetailMainState&, StartupFailure&);

@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_profile_aggregate.exe"
+  ],
+  "exit": 0,
+  "stdout": "retail_profile_aggregate: passed\n",
+  "stderr": "",
+  "executable_sha256": "fac5810fc2ec2b0deb3eb2586af722b9a3263488dbf56fea6605f56ecc143203",
+  "executable_after_sha256": "fac5810fc2ec2b0deb3eb2586af722b9a3263488dbf56fea6605f56ecc143203"
+}
