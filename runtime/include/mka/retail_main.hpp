@@ -15,6 +15,7 @@ struct NativeRetailStartupState;
 struct StartupFailure;
 class NativeRetailPlatform;
 struct NativeRetailConstructorOwners;
+class NativeRetailMiddlewareWorkGroup;
 struct NativeRetailProfileOwners;
 struct NativeRetailSceneOwners;
 
@@ -53,6 +54,7 @@ struct NativeRetailMainState {
     NativeRetailStartupState& startup;
     NativeRetailMainTiming main_timing;
     std::shared_ptr<NativeRetailConstructorOwners> constructors;
+    std::shared_ptr<NativeRetailMiddlewareWorkGroup> middleware_work_group;
     std::shared_ptr<NativeRetailProfileOwners> profile;
     std::shared_ptr<NativeRetailSceneOwners> scene;
     // The startup platform owns the only controller sample store. Its lifetime
@@ -80,7 +82,7 @@ struct NativeRetailMainState {
 // are provided for outstanding constructors, subsystem effects, or bodies.
 namespace main_binding {
 bool construct_retail_initial_aggregate(NativeRetailMainState&, StartupFailure&); // 648680
-bool construct_retail_controller_owner(NativeRetailMainState&, StartupFailure&); // 6487D0
+bool construct_retail_middleware_work_group(NativeRetailMainState&, StartupFailure&); // 6487D0
 bool construct_retail_dispatch_object(NativeRetailMainState&, StartupFailure&); // 648810
 bool construct_retail_scene_records(NativeRetailMainState&, StartupFailure&); // 648860
 bool construct_retail_default_record(NativeRetailMainState&, StartupFailure&); // 648930

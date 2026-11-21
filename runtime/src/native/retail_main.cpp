@@ -32,7 +32,7 @@ constexpr std::array<RetailActionBinding, 16> action_bindings{{
 
 bool construct_main_owners(NativeRetailMainState& m, StartupFailure& f) {
     if (!construct_retail_initial_aggregate(m, f)) return false;
-    if (!construct_retail_controller_owner(m, f)) return false;
+    if (!construct_retail_middleware_work_group(m, f)) return false;
     if (!construct_retail_dispatch_object(m, f)) return false;
     if (!construct_retail_scene_records(m, f)) return false;
     if (!construct_retail_default_record(m, f)) return false;

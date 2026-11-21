@@ -1,0 +1,18 @@
+{
+  "fork_commit": "7e14e90c16cc746c764bf3ea80dce6ecf4685516",
+  "fork": {
+    "available": true,
+    "local_commit": "7e14e90c16cc746c764bf3ea80dce6ecf4685516",
+    "remote_commit": "7e14e90c16cc746c764bf3ea80dce6ecf4685516",
+    "synchronization": "verified"
+  },
+  "parent_commit": "7603f3382db65f7b43faa0e7609ff94a6de96c60",
+  "parent": {
+    "available": true,
+    "local_commit": "7603f3382db65f7b43faa0e7609ff94a6de96c60",
+    "remote_commit": "7603f3382db65f7b43faa0e7609ff94a6de96c60",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "c81053104c4f681e0b10638234c64bde2481a4fec6f6c2fd575f732eaa6602f6",
+  "scope": "Component checkpoint only; full entry blocked on67 actual main bodies."
+}

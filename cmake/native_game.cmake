@@ -99,7 +99,9 @@ if(WIN32)
     add_library(mka_native_retail_startup STATIC EXCLUDE_FROM_ALL
         "${_startup_dir}/native_retail_startup.cpp" "${_startup_dir}/native_retail_entry.cpp"
         runtime/src/native/retail_crt_startup.cpp runtime/src/native/retail_platform_startup.cpp
-        runtime/src/native/retail_main.cpp runtime/src/native/retail_main_timing.cpp)
+        runtime/src/native/retail_main.cpp runtime/src/native/retail_main_timing.cpp
+        runtime/src/native/retail_initial_objects.cpp runtime/src/native/retail_scene_events.cpp
+        runtime/src/native/retail_middleware_work.cpp)
     target_include_directories(mka_native_retail_startup PUBLIC "${_startup_dir}" runtime/include)
     target_link_libraries(mka_native_retail_startup PUBLIC mka_native_content_volume mka_native_retail_memory_owners
         mka_native_retail_crt mka_native_retail_platform mka_native_allocation_profile mka_native_game_actions mka_native_sound_resources)
@@ -109,6 +111,10 @@ if(WIN32)
     # Actual downstream main bodies remain missing; no test success providers.
     add_executable(test_native_startup_missing_bindings EXCLUDE_FROM_ALL tests/test_native_startup_missing_bindings.cpp)
     target_link_libraries(test_native_startup_missing_bindings PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_scene_owners EXCLUDE_FROM_ALL tests/test_retail_scene_owners.cpp)
+    target_link_libraries(test_native_retail_scene_owners PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_middleware_work EXCLUDE_FROM_ALL tests/test_retail_middleware_work.cpp)
+    target_link_libraries(test_native_retail_middleware_work PRIVATE mka_native_retail_startup)
 endif()
 
 # Source loading picture and actual host window/input/OpenGL services. No game
