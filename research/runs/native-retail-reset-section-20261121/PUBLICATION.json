@@ -1,0 +1,19 @@
+{
+  "schema": "native_retail_reset_section_publication_v1",
+  "fork_code_commit": "29670d90cbd2d01ce4120bc33eee3340809ee01f",
+  "fork": {
+    "available": true,
+    "local_commit": "29670d90cbd2d01ce4120bc33eee3340809ee01f",
+    "remote_commit": "29670d90cbd2d01ce4120bc33eee3340809ee01f",
+    "synchronization": "verified"
+  },
+  "parent_commit": "2e6eb466040dd088c72778cde24ed48a5324a117",
+  "parent": {
+    "available": true,
+    "local_commit": "2e6eb466040dd088c72778cde24ed48a5324a117",
+    "remote_commit": "2e6eb466040dd088c72778cde24ed48a5324a117",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "09341495b4b979ba26b651cf127d34c4e3f84ba16f82f3b59db71895e9fcf1cc",
+  "scope": "27 CPU/file identities:15fresh12reused;fullnativeentryunlinked;nogame"
+}
