@@ -27,7 +27,10 @@ enum class RetailInitialTransitionBody { source_245930, menu_18db60 };
 // the complete corresponding retail effects are ported. A test translation
 // unit may define explicit child procedures for a bounded CPU fixture.
 namespace initial_task_required {
-void run_reset_18d970(NativeRetailMainState&, NativeRetailGameSession&);
+// Reset can suspend in12ABD0 after12A4F0(1); its native child must retain
+// completed effects and its live resource/barrier state across1.0 waits.
+std::shared_ptr<NativeRetailInitialChild> begin_reset_18d970(
+    NativeRetailMainState&, NativeRetailGameSession&);
 std::shared_ptr<NativeRetailInitialChild> begin_intro_18deb0(
     NativeRetailMainState&, NativeRetailGameSession&);
 std::shared_ptr<NativeRetailInitialChild> begin_prompt_18dc10(

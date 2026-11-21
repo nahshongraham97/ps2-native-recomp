@@ -1,0 +1,18 @@
+{
+  "schema": "native_component_build_context_v1",
+  "measured": "after successful component checks; no claim of clean release build",
+  "fork_base_commit": "9c84828dfbea59632f8d493b88062775154bcce1",
+  "source_map": "verification.json:sources",
+  "build_directory": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+  "cache_sha256": "5173e9768f2b0e85a8738275ab1d7f287787871cafc81c1c13b077a581dabe90",
+  "ninja_sha256": "8dc5178b57b3d6b554498b6b44cfcb4c266789a75a1dd1331b0aff539edb4bc5",
+  "configured_values": {
+    "CMAKE_BUILD_TYPE:STRING": "Release",
+    "CMAKE_CXX_COMPILER:STRING": "C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/bin/clang++.exe",
+    "CMAKE_CXX_FLAGS:STRING": "",
+    "CMAKE_CXX_FLAGS_RELEASE:STRING": "-O3 -DNDEBUG",
+    "CMAKE_EXE_LINKER_FLAGS:STRING": "",
+    "CMAKE_GENERATOR:INTERNAL": "Ninja"
+  },
+  "game_executed": false
+}

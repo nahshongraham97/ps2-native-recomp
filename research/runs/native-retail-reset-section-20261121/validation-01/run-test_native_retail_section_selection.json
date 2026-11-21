@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_section_selection.exe"
+  ],
+  "exit": 0,
+  "stdout": "native retail Section selection: PASS\n",
+  "stderr": "",
+  "executable_sha256": "798e60c107d2ce027e16692837d09e2086e290f06e159faa54c5c6667c4a878b",
+  "executable_after_sha256": "798e60c107d2ce027e16692837d09e2086e290f06e159faa54c5c6667c4a878b"
+}

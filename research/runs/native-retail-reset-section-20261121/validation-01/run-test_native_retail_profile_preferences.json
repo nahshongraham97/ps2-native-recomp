@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_profile_preferences.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules"
+  ],
+  "exit": 0,
+  "stdout": "PASS actual Main current profile preferences, native alias lifetime and external encoding; full game open\n",
+  "stderr": "",
+  "executable_sha256": "aab673128f29a0357e3686b5ae64abea0997473fc558f81926b556367c464f04",
+  "executable_after_sha256": "aab673128f29a0357e3686b5ae64abea0997473fc558f81926b556367c464f04"
+}

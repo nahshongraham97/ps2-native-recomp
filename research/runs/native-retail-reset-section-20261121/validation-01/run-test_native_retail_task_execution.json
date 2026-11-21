@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_task_execution.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native retail typed task control: immediate continuation, retained wait, direct cleanup; original bodies and Main dispatch open\n",
+  "stderr": "",
+  "executable_sha256": "51d2c17dfb28fb32b8771becada469fcd899f62dbb096a7ad4c013551fdf1a06",
+  "executable_after_sha256": "51d2c17dfb28fb32b8771becada469fcd899f62dbb096a7ad4c013551fdf1a06",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-main-task-connection-20261121\\validation-01\\run-test_native_retail_task_execution.json",
+  "reused_record_sha256": "15f15a317612f9e7e4224931576f76213eb4d667ea2bdf345e6037beedbf5fb4"
+}

@@ -43,7 +43,7 @@ public:
     void cleanup(bool release_allowed) override;
 private:
     enum class Phase {
-        reset, start_words, choose_first_run, begin_intro, advance_intro,
+        begin_reset, advance_reset, start_words, choose_first_run, begin_intro, advance_intro,
         begin_prompt, advance_prompt, mark_first_run, transition_three,
         yield_menu, yielded
     };
@@ -55,7 +55,7 @@ private:
     std::weak_ptr<NativeRetailGameSession> session_;
     std::shared_ptr<NativeRetailInitialChild> child_;
     std::shared_ptr<NativeRetailMenuContinuation> menu_;
-    Phase phase_{Phase::reset};
+    Phase phase_{Phase::begin_reset};
     bool after_effect_unknown_{};
 };
 

@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_initial_game_tasks.exe"
+  ],
+  "exit": 0,
+  "stdout": "native retail initial game tasks: PASS\n",
+  "stderr": "",
+  "executable_sha256": "66f3fac137edba263af631322c779fa2e6ba668872ee3e2e127a050b37655ca4",
+  "executable_after_sha256": "66f3fac137edba263af631322c779fa2e6ba668872ee3e2e127a050b37655ca4",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-main-task-connection-20261121\\validation-01\\run-test_native_retail_initial_game_tasks.json",
+  "reused_record_sha256": "fb4853cc8b7f31567bec4901d01e46e593b2774c3f88a778e853d1f4a912fea6"
+}

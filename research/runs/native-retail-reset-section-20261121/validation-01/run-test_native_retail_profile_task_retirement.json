@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_profile_task_retirement.exe"
+  ],
+  "exit": 0,
+  "stdout": "native retail selective task retirement fixture passed\n",
+  "stderr": "",
+  "executable_sha256": "534636d17bb76e80ee141abbe8c07daff656b753a973927220cf10d87378e6e9",
+  "executable_after_sha256": "534636d17bb76e80ee141abbe8c07daff656b753a973927220cf10d87378e6e9"
+}

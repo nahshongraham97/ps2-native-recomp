@@ -133,10 +133,24 @@ NativeTaskStep NativeRetailInitialTaskBody::run() {
         fail(RetailInitialTaskError::after_effect_unknown,"initial task prior partial effect");
     try {
         for(;;) switch(phase_) {
-        case Phase::reset:
-            initial_task_required::run_reset_18d970(main_,*session);
+        case Phase::begin_reset:
+            child_=initial_task_required::begin_reset_18d970(main_,*session);
+            if(!child_) fail(RetailInitialTaskError::missing_child,"18D970 retained reset procedure owner");
+            phase_=Phase::advance_reset;
+            break;
+        case Phase::advance_reset: {
+            const auto step=child_->advance();
+            if(step.kind==RetailInitialChildStep::Kind::wait) {
+                if(step.duration!=1.0f)
+                    fail(RetailInitialTaskError::invalid_child_step,"12ABD0 source reset wait 1");
+                return NativeTaskStep::wait(shared_from_this(),step.duration);
+            }
+            if(step.kind!=RetailInitialChildStep::Kind::completed)
+                fail(RetailInitialTaskError::invalid_child_step,"18D970 reset progress");
+            child_.reset();
             phase_=Phase::start_words;
             break;
+        }
         case Phase::start_words: {
             RetailInitialTaskStateFailure sf;
             require_state(checked_state().store_start_words_from_18e100(sf),sf);

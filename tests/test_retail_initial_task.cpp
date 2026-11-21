@@ -28,8 +28,11 @@ struct Fixture {
     NativeRetailGameSession* session{};
     bool transition_zero_transfers{};
     bool empty_intro_result{};
+    bool reset_wait{},missing_reset{};
+    float reset_duration{1.0f};
     unsigned resets{},intro_begins{},prompt_begins{},menu_begins{};
     std::weak_ptr<NativeRetailInitialChild> intro_lifetime,prompt_lifetime,menu_lifetime;
+    std::weak_ptr<NativeRetailInitialChild> reset_lifetime;
 };
 Fixture* fixture{};
 struct Child final : NativeRetailInitialChild {
@@ -82,8 +85,13 @@ void install_known_owners(NativeRetailMainState& main) {
 // Explicit fixture-only child implementations. The production source has no
 // definitions for these symbols and therefore cannot link a fake game path.
 namespace mka::retail::initial_task_required {
-void run_reset_18d970(NativeRetailMainState&,NativeRetailGameSession&) {
+std::shared_ptr<NativeRetailInitialChild> begin_reset_18d970(
+    NativeRetailMainState&,NativeRetailGameSession&) {
     ++fixture->resets;fixture->calls.emplace_back("reset");
+    if(fixture->missing_reset) return {};
+    auto child=std::make_shared<Child>("reset",fixture->reset_duration,fixture->reset_wait);
+    fixture->reset_lifetime=child;
+    return child;
 }
 std::shared_ptr<NativeRetailInitialChild> begin_intro_18deb0(
     NativeRetailMainState&,NativeRetailGameSession&) {
@@ -137,7 +145,7 @@ int main(int argc,char** argv) {try {
     NativeRetailMainState main(startup,samples);
     install_known_owners(main);
     Fixture first;
-    first.session=startup.game_session.get();fixture=&first;
+    first.session=startup.game_session.get();first.reset_wait=true;fixture=&first;
     RetailInitialTaskFailure tf;
     auto body=NativeRetailInitialTaskBody::create(main,startup.game_session,tf);
     check(body&&tf.kind==RetailInitialTaskError::none,"same Main/session initial body factory");
@@ -223,12 +231,20 @@ int main(int argc,char** argv) {try {
     RetailTaskExecutionFailure ef;
     RetailInitialTaskStateFailure sf;
     auto* state=startup.game_session->initial_task_state(gf);
+    auto resetting=execution.invoke_virtual_10_initial(task,ef);
+    auto before_reset_complete=state->observe(sf);
+    check(resetting && resetting->kind==NativeTaskRunKind::retained_wait &&
+          resetting->stored_wait==1.0f && first.resets==1 && first.intro_begins==0 &&
+          before_reset_complete && before_reset_complete->game_word_660094==0 &&
+          before_reset_complete->cycle_word_6602ec==0 && before_reset_complete->first_run==0 &&
+          !first.reset_lifetime.expired(),
+          "source12ABD0 wait retains reset before18E100 start-word/intro effects");
     auto one=execution.invoke_virtual_10_initial(task,ef);
     auto words=state->observe(sf);
     check(one&&one->kind==NativeTaskRunKind::retained_wait&&one->stored_wait==300.0f&&
           first.resets==1&&first.intro_begins==1&&first.prompt_begins==0&&
           words&&words->game_word_660094==0x38&&words->cycle_word_6602ec==0&&
-          words->first_run==0&&!first.intro_lifetime.expired(),
+          words->first_run==0&&!first.intro_lifetime.expired()&&first.reset_lifetime.expired(),
           "valid owner still runs after foreign refusal; intro locals survive first +14 wait");
     auto two=execution.invoke_virtual_10_initial(task,ef);
     check(two&&two->kind==NativeTaskRunKind::retained_wait&&two->stored_wait==1.0f&&
@@ -321,6 +337,20 @@ int main(int argc,char** argv) {try {
     check(latched&&malformed.calls.size()==calls_before_retry&&malformed.resets==1,
           "after-effect failure cannot replay reset or malformed child");
     startup.game_session=std::move(original_session);
+    for(const bool missing_reset : {true,false}) {
+        Fixture bad_reset;bad_reset.session=startup.game_session.get();
+        bad_reset.missing_reset=missing_reset;bad_reset.reset_wait=true;
+        bad_reset.reset_duration=2.0f;fixture=&bad_reset;
+        auto reset_body=NativeRetailInitialTaskBody::create(main,startup.game_session,tf);
+        auto reset_registry=NativeRetailTaskRegistry::create(rf);
+        auto reset_task=reset_registry->publish_retained_task_from_12ea90(0x2001,0x20,27,reset_body,rf);
+        NativeRetailTaskExecution reset_execution(*reset_registry);
+        check(!reset_execution.invoke_virtual_10_initial(reset_task,ef) && bad_reset.resets==1 &&
+              bad_reset.intro_begins==0 && !reset_execution.invoke_virtual_10_initial(reset_task,ef) &&
+              bad_reset.resets==1,
+              "missing reset owner or non-source wait refuses without replay or intro effects");
+    }
+    fixture=&malformed;
     const auto calls_before_retirement=malformed.calls.size();
     main.lifetime->retire();
     bool retired_run=false, retired_cleanup=false;

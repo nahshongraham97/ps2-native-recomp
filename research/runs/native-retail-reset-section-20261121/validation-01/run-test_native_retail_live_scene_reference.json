@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_live_scene_reference.exe"
+  ],
+  "exit": 0,
+  "stdout": "",
+  "stderr": "",
+  "executable_sha256": "b22560d9872b0eed5e3ce3a6679fd372084fffe645759d9ac754ce4536cfb13f",
+  "executable_after_sha256": "b22560d9872b0eed5e3ce3a6679fd372084fffe645759d9ac754ce4536cfb13f",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-main-task-connection-20261121\\validation-01\\run-test_native_retail_live_scene_reference.json",
+  "reused_record_sha256": "4c082aff31f2c65ccf08ff8c8fdc9b4775eb0b8054b8521a03cecdbff894f817"
+}

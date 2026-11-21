@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_stock_task_execution.exe"
+  ],
+  "exit": 0,
+  "stdout": "native retail stock task execution fixture passed\n",
+  "stderr": "",
+  "executable_sha256": "c93188aaf22944b30b05ccb2a1742b29b6b6fbb7c1dfa3955a1c8ca69d1528e0",
+  "executable_after_sha256": "c93188aaf22944b30b05ccb2a1742b29b6b6fbb7c1dfa3955a1c8ca69d1528e0",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-main-task-connection-20261121\\validation-01\\run-test_native_retail_stock_task_execution.json",
+  "reused_record_sha256": "f094839045c96209086874f34fb86e20dd8858d3360fb9049017ce071db686db"
+}

@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_input_task_argument.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native retail input task argument; real task bodies open\n",
+  "stderr": "",
+  "executable_sha256": "b619a1f8486fd550ca3f44ccaae0b8a9ade48e99928dd0d35dba8efa1951dc3d",
+  "executable_after_sha256": "b619a1f8486fd550ca3f44ccaae0b8a9ade48e99928dd0d35dba8efa1951dc3d",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-main-task-connection-20261121\\validation-01\\run-test_native_retail_input_task_argument.json",
+  "reused_record_sha256": "0f87eadd6238dd4818325d8f2d5cd679d4fe867ffd535be85eb4f8b5c0d8daa2"
+}
