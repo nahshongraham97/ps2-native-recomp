@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_retail_profile_owners.a",
+  "target_before_sha256": "350951655964b3a4f8451017fd6abecea3a1f823ab2ebb7a0ef245b2f1c6d67c",
+  "target_after_sha256": "350951655964b3a4f8451017fd6abecea3a1f823ab2ebb7a0ef245b2f1c6d67c",
+  "audited_target_expected_sha256": "350951655964b3a4f8451017fd6abecea3a1f823ab2ebb7a0ef245b2f1c6d67c",
+  "execution_applicable": false,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::retail::NativeRetailProfileOwners::create_initial_storage(",
+    "mka::retail::NativeRetailProfileOwners::payload_leaf("
+  ]
+}

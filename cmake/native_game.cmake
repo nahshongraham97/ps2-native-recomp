@@ -94,6 +94,21 @@ add_executable(test_native_retail_random EXCLUDE_FROM_ALL tests/test_retail_rand
 target_link_libraries(test_native_retail_random PRIVATE mka_native_retail_game_session)
 add_executable(test_native_retail_game_session EXCLUDE_FROM_ALL tests/test_retail_game_session.cpp)
 target_link_libraries(test_native_retail_game_session PRIVATE mka_native_retail_game_session)
+# Retail logical path aliases terminate in native content-file handles.
+add_library(mka_native_retail_file_paths STATIC EXCLUDE_FROM_ALL
+    runtime/src/native/retail_file_paths.cpp)
+target_link_libraries(mka_native_retail_file_paths PUBLIC mka_native_content_volume)
+target_compile_features(mka_native_retail_file_paths PUBLIC cxx_std_20)
+add_executable(test_native_retail_file_paths EXCLUDE_FROM_ALL tests/test_retail_file_paths.cpp)
+target_link_libraries(test_native_retail_file_paths PRIVATE mka_native_retail_file_paths)
+# Source class graph is bound to the actual native memory-owner group.
+add_library(mka_native_retail_profile_owners STATIC EXCLUDE_FROM_ALL
+    runtime/src/native/retail_profile_owners.cpp)
+target_link_libraries(mka_native_retail_profile_owners PUBLIC
+    mka_native_allocation_profile mka_native_retail_memory_owners Threads::Threads)
+target_compile_features(mka_native_retail_profile_owners PUBLIC cxx_std_20)
+add_executable(test_native_retail_profile_owners EXCLUDE_FROM_ALL tests/test_retail_profile_owners.cpp)
+target_link_libraries(test_native_retail_profile_owners PRIVATE mka_native_retail_profile_owners)
 add_executable(test_native_startup_codegen EXCLUDE_FROM_ALL
     tests/test_native_startup_codegen.cpp recomp/native_closure_codegen.cpp recomp/native_startup_codegen.cpp)
 target_include_directories(test_native_startup_codegen PRIVATE recomp)
@@ -130,7 +145,7 @@ if(WIN32)
         runtime/src/native/retail_input_assignments.cpp)
     target_include_directories(mka_native_retail_startup PUBLIC "${_startup_dir}" runtime/include)
     target_link_libraries(mka_native_retail_startup PUBLIC mka_native_content_volume mka_native_retail_memory_owners
-        mka_native_retail_game_session mka_native_retail_crt mka_native_retail_platform mka_native_allocation_profile mka_native_game_actions mka_native_sound_resources)
+        mka_native_retail_file_paths mka_native_retail_game_session mka_native_retail_crt mka_native_retail_platform mka_native_allocation_profile mka_native_game_actions mka_native_sound_resources)
     add_executable(test_native_retail_startup EXCLUDE_FROM_ALL tests/test_native_retail_startup.cpp)
     target_link_libraries(test_native_retail_startup PRIVATE mka_native_retail_startup)
     # Expected-negative link fixture: never included in a successful build batch.

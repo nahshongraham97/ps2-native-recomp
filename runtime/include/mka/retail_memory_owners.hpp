@@ -33,6 +33,8 @@ struct RetailMemoryOwnerObservation {
 
 // The real ordered logical-owner phase only. It does not complete retail main.
 class NativeRetailMemoryOwners final {
+    // The source class factory consumes this exact group\'s Wave parent.
+    friend class NativeRetailProfileOwners;
 public:
     static std::unique_ptr<NativeRetailMemoryOwners> create(RetailMemoryOwnerFailure&) noexcept;
     std::optional<RetailMemoryOwnerObservation> observe(

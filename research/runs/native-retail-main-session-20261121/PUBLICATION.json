@@ -1,0 +1,15 @@
+{
+  "fork_commit": "a98ac281c933ff7d87535ec39e1a9fa9116154fc",
+  "fork": "synced",
+  "parent_commit": "b7a92a30df314a29ffd891a557b15f1ccb9a79ad",
+  "parent": {
+    "available": true,
+    "local_commit": "b7a92a30df314a29ffd891a557b15f1ccb9a79ad",
+    "remote_commit": "b7a92a30df314a29ffd891a557b15f1ccb9a79ad",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "b1f2064fab20de6059861c079b328660be09e2879832201feec93a4ed5e77db7",
+  "scope": "22 native CPU/file clients,74 pins,41 unresolved native integrations; full game acceptance OPEN",
+  "recovery": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-main-session-13\\publication-recovery01\\RECOVERY.json",
+  "recovery_sha256": "a0af8cfc251e3c565b9f350f2bf23d57143a633df04bb1780b80df65ffb0a7ec"
+}

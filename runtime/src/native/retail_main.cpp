@@ -74,9 +74,13 @@ bool publish_rising_action_tasks(NativeRetailMainState& m, StartupFailure& f) {
 }
 
 bool run_frame(NativeRetailMainState& m, StartupFailure& f) {
-    ++m.iteration;
-    if (!retail_frame_processing_inhibited(m) && !retail_ordinary_counter_inhibited(m)) {
-        ++m.ordinary_iteration;
+    const auto frame_inhibited = retail_frame_processing_inhibited(m, f);
+    if (!frame_inhibited) return false;
+    ++m.iteration; // Original branch delay slot increments total even when inhibited.
+    if (!*frame_inhibited) {
+        const auto counter_inhibited = retail_ordinary_counter_inhibited(m, f);
+        if (!counter_inhibited) return false;
+        if (!*counter_inhibited) ++m.ordinary_iteration;
     }
     // Pump only work already queued at this frame boundary. Work admitted by
     // a callout cannot extend this batch past the sampled work count.
@@ -99,12 +103,27 @@ bool run_frame(NativeRetailMainState& m, StartupFailure& f) {
         if (!mode) return false;
         if (*mode == 6) ++m.mode_six_intervals;
     }
-    if (!retail_task_exists(m, 0x2065) && !retail_task_exists(m, 0x2066) &&
-        retail_mode_dispatch_enabled(m) && !dispatch_retail_enabled_mode(m, f)) return false;
-    if (!retail_frame_processing_inhibited(m) && !publish_rising_action_tasks(m, f)) return false;
+    const auto first_mode_task = retail_task_exists(m, 0x2065, f);
+    if (!first_mode_task) return false;
+    bool mode_task_present = *first_mode_task;
+    if (!mode_task_present) {
+        const auto second_mode_task = retail_task_exists(m, 0x2066, f);
+        if (!second_mode_task) return false;
+        mode_task_present = *second_mode_task;
+    }
+    if (!mode_task_present) {
+        const auto mode_enabled = retail_mode_dispatch_enabled(m, f);
+        if (!mode_enabled) return false;
+        if (*mode_enabled && !dispatch_retail_enabled_mode(m, f)) return false;
+    }
+    const auto action_scan_inhibited = retail_frame_processing_inhibited(m, f);
+    if (!action_scan_inhibited) return false;
+    if (!*action_scan_inhibited && !publish_rising_action_tasks(m, f)) return false;
     if (!service_retail_frame_input(m, f) || !dispatch_retail_task_lists(m, f) ||
         !pump_retail_middleware(m, f) || !pump_retail_current_sound(m, f)) return false;
-    if (retail_render_enabled(m) && !render_retail_frame(m, f)) return false;
+    const auto render_enabled = retail_render_enabled(m, f);
+    if (!render_enabled) return false;
+    if (*render_enabled && !render_retail_frame(m, f)) return false;
     return prune_retail_associations(m, f);
 }
 

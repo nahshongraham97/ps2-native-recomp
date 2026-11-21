@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_file_paths.exe"
+  ],
+  "exit": 1,
+  "stdout": "",
+  "stderr": "FAIL retail native file paths: host volume rejects empty path component\n",
+  "executable_sha256": "26a92a216502743312d6f3d7a20dff168c9e5e74716d6285d1776797792ee324",
+  "executable_after_sha256": "26a92a216502743312d6f3d7a20dff168c9e5e74716d6285d1776797792ee324"
+}

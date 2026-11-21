@@ -5,6 +5,7 @@
 #include "mka/game_action_input.hpp"
 #include "mka/playback_owner.hpp"
 #include "mka/retail_action_history.hpp"
+#include "mka/retail_file_paths.hpp"
 #include "mka/retail_audio_statistics.hpp"
 #include "mka/retail_main_timing.hpp"
 #include "mka/retail_mode_state.hpp"
@@ -76,6 +77,7 @@ struct NativeRetailMainState {
     std::unique_ptr<NativeRetailAudioStatistics> audio_statistics;
     std::optional<NativeRetailModeState> mode_history;
     std::unique_ptr<NativeRetailPackage> package;
+    std::unique_ptr<NativeRetailFilePaths> file_paths;
     std::shared_ptr<NativeRetailTwoServiceObjects> two_service_objects;
     std::optional<NativeRetailEmptyBinding> empty_binding;
     std::shared_ptr<NativeRetailStaticKeyOwners> static_keys;
@@ -170,11 +172,12 @@ bool seed_retail_startup_random_state(NativeRetailMainState&, std::uint32_t, Sta
 // Source task allocation can return null without failing main. Return false
 // only for a native integration error that prevents preserving that behavior.
 bool create_retail_initial_mode_task(NativeRetailMainState&, const RetailMainTaskRequest&, StartupFailure&);
-bool retail_frame_processing_inhibited(const NativeRetailMainState&);
-bool retail_ordinary_counter_inhibited(const NativeRetailMainState&);
+std::optional<bool> retail_frame_processing_inhibited(const NativeRetailMainState&, StartupFailure&);
+std::optional<bool> retail_ordinary_counter_inhibited(const NativeRetailMainState&, StartupFailure&);
 std::optional<std::int32_t> read_retail_top_mode(const NativeRetailMainState&, StartupFailure&);
-bool retail_task_exists(const NativeRetailMainState&, std::uint32_t kind);
-bool retail_mode_dispatch_enabled(const NativeRetailMainState&);
+// Source task lookup can retire stale records; use the live mutable task authority.
+std::optional<bool> retail_task_exists(NativeRetailMainState&, std::uint32_t kind, StartupFailure&);
+std::optional<bool> retail_mode_dispatch_enabled(const NativeRetailMainState&, StartupFailure&);
 std::optional<RetailFrameRole> observe_retail_frame_role(const NativeRetailMainState&, std::uint32_t role, StartupFailure&);
 // Fetch the live role table row and live rising bits together for this attempt.
 std::optional<RetailActionRowObservation> observe_retail_action_row(const NativeRetailMainState&,
@@ -184,6 +187,6 @@ std::optional<RetailActionRowObservation> observe_retail_action_row(const Native
 // and, if still present, reload the live mask/argument for 162E70. The canonical
 // index is derived from that reloaded mask, with the caller row as fallback.
 bool create_retail_action_task(NativeRetailMainState&, const RetailActionTaskRequest&, StartupFailure&);
-bool retail_render_enabled(const NativeRetailMainState&);
+std::optional<bool> retail_render_enabled(const NativeRetailMainState&, StartupFailure&);
 } // namespace main_binding
 } // namespace mka::retail

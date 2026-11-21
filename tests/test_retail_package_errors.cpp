@@ -99,8 +99,11 @@ std::optional<mka::content::NativeContentVolume> volume_at(const std::filesystem
 void rejects(const std::filesystem::path& folder, RetailPackageError expected,
     const char* reason) {
     auto volume = volume_at(folder);
+    RetailFilePathFailure path_failure;
+    auto paths = NativeRetailFilePaths::create(path_failure);
+    check(bool(paths), "real native alias owner for malformed package");
     RetailPackageFailure failure;
-    auto package = NativeRetailPackage::open(*volume, failure);
+    auto package = NativeRetailPackage::open(*volume, *paths, failure);
     check(!package && failure.kind == expected, reason);
 }
 }
@@ -157,13 +160,16 @@ int main(int argc, char** argv) {
 
         const auto valid_folder = create_case(root, "duplicate-casefold", good);
         auto volume = volume_at(valid_folder);
+        RetailFilePathFailure path_failure;
+        auto paths = NativeRetailFilePaths::create(path_failure);
+        check(bool(paths), "real native file path owner before package fault");
         RetailPackageFailure failure;
         fail_after.store(0, std::memory_order_relaxed);
-        auto failed = NativeRetailPackage::open(*volume, failure);
+        auto failed = NativeRetailPackage::open(*volume, *paths, failure);
         fail_after.store(-1, std::memory_order_relaxed);
         check(!failed && failure.kind == RetailPackageError::allocation,
             "allocation fault before publication reports failure");
-        auto package = NativeRetailPackage::open(*volume, failure);
+        auto package = NativeRetailPackage::open(*volume, *paths, failure);
         check(bool(package) && package->member_count() == 2, "retry opens actual bounded index");
         const auto member = package->find(first, failure);
         check(member && member->source_index == 1 && member->name == second,

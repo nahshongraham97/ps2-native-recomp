@@ -20,12 +20,12 @@ runtime-translation descriptions, is preserved for provenance at
 `research/history/native-port-docs-2026-11-18/README.md`. Those instructions
 do not describe the accepted Armageddon route.
 
-Session13 connects persistent native game Controls/Settings/PRNG/auxiliary
-ownership and five actual main settings/seed bindings. All22 CPU/file clients
-pass with74 stable source/tool pins; deterministic RNG matches20,252 original
-AOT operations. Independent source and saved-execution reviews pass.
-The complete entry still refuses41 unresolved native integration names.
-This is component evidence, not game acceptance. Resource/script/task/overlay,
-physical input, fighter, rendering, sound and whole-game acceptance remain
-open. Parent live status and its dated session13 record own current evidence.
+Work16 connects native source aliases to the actual main package/file owner,
+adds actual-parent initial class storage and remaining known profile counts,
+and makes main gate reads failure-bearing. All28 CPU/file clients pass with92
+stable source/tool pins,245 original package rows and84 graph allocation fault
+cuts. Independent source and saved-execution reviews pass.
+The complete entry still refuses41 native integration names. File completion,
+full profile/resource/task/input/render/audio and all-game acceptance remain
+open. Parent live status and its dated work16 record own current evidence.
 No owner launch is requested.

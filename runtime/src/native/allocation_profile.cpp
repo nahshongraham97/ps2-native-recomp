@@ -36,7 +36,10 @@ NativeClassProfilePlan select_native_class_profile(std::uint32_t selector) noexc
     case 12: counts = &mode_twelve; break;
     default: break;
     }
-    NativeClassProfilePlan result{selector, selector < 13 ? selector : 13, {}};
+    NativeClassProfilePlan result{selector, selector < 13 ? selector : 13, {}, {}};
+    result.object_counts = selector == 11 ?
+        NativeProfileObjectCounts{5000, 19, 19, 6} :
+        NativeProfileObjectCounts{3072, 0, 0, 0};
     for (std::size_t i = 0; i < roles.size(); ++i)
         result.classes[i] = {roles[i], (*counts)[i], payloads[i], 16, callbacks[i]};
     return result;

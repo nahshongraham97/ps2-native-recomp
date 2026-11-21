@@ -12,9 +12,6 @@
 namespace mka::retail {
 namespace {
 constexpr std::string_view source_request = "/game/mkda.pak";
-// The original literal is a game-mount request. The NTSC-U disc tree has its
-// corresponding MKDA.PAK at the extracted content-volume root.
-constexpr std::string_view native_disc_key = "mkda.pak";
 constexpr std::uint32_t pak_magic = 0x50414b20u; // actual LE bytes 20 4B 41 50
 constexpr std::uint32_t pak_version = 0x100u;
 constexpr std::size_t header_size = 20;
@@ -155,12 +152,20 @@ bool NativeRetailPackage::build_index(RetailPackageFailure& f) {
 }
 
 std::unique_ptr<NativeRetailPackage> NativeRetailPackage::open(
-    const content::NativeContentVolume& volume, RetailPackageFailure& f) noexcept {
+    const content::NativeContentVolume& volume, const NativeRetailFilePaths& paths,
+    RetailPackageFailure& f) noexcept {
     f = {};
     try {
-        auto file = volume.open_resource(native_disc_key, f.content);
+        auto file = paths.open(volume, source_request, f.path);
         if (!file) {
-            f.kind = content_error(f.content.kind);
+            f.content = f.path.content;
+            switch (f.path.kind) {
+            case RetailFilePathError::content_file: f.kind = content_error(f.content.kind); break;
+            case RetailFilePathError::allocation: f.kind = RetailPackageError::allocation; break;
+            case RetailFilePathError::host_capacity: f.kind = RetailPackageError::host_capacity; break;
+            case RetailFilePathError::native_exception: f.kind = RetailPackageError::native_exception; break;
+            default: f.kind = RetailPackageError::source_path; break;
+            }
             f.operation = source_request.data();
             return {};
         }
@@ -242,14 +247,20 @@ bool initialize_retail_package_stage(NativeRetailMainState& main, StartupFailure
         failure.operation = "retail package owner exists";
         return false;
     }
+    if (!main.file_paths) {
+        failure.kind = StartupError::native_exception;
+        failure.operation = "retail package native file-path service missing";
+        return false;
+    }
     RetailPackageFailure source;
-    auto owner = NativeRetailPackage::open(main.startup.content, source);
+    auto owner = NativeRetailPackage::open(main.startup.content, *main.file_paths, source);
     if (!owner) {
         failure.content = source.content;
         failure.operation = source.operation;
         switch (source.kind) {
         case RetailPackageError::allocation: failure.kind = StartupError::allocation; break;
         case RetailPackageError::host_capacity: failure.kind = StartupError::host_capacity; break;
+        case RetailPackageError::source_path:
         case RetailPackageError::source_open:
         case RetailPackageError::source_read:
         case RetailPackageError::source_seek:

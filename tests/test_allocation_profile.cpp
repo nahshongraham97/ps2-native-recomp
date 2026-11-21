@@ -54,6 +54,11 @@ void compare_profiles(const char* path) {
         const auto plan = select_native_class_profile(mode);
         const auto resolved = mode < 13 ? mode : 13;
         check(plan.requested_selector == mode && plan.selected_profile == resolved, "unsigned default selection preserves selector provenance");
+        check(plan.object_counts.game_pool_records == expected.values[resolved][6] &&
+              plan.object_counts.npc_stacks == expected.values[resolved][8] &&
+              plan.object_counts.player_collision_objects == expected.values[resolved][9] &&
+              plan.object_counts.attack_collision_objects == expected.values[resolved][10],
+              "game-pool and companion-class counts match actual original stores without inventing word7");
         for (std::size_t i = 0; i < expected.descriptors.size(); ++i) {
             const auto& source = expected.descriptors[i];
             const auto* item = plan.find(source.role);
@@ -93,6 +98,6 @@ void real_profile_storage() {
 int main(int argc, char** argv) {
     check(argc == 2, "independent source-derived profile row argument");
     compare_profiles(argv[1]); real_profile_storage();
-    std::puts("PASS_NATIVE_CLASS_PROFILE: 20 selectors/13 classes match original stores; actual dynamic PFX storage and signed game predicate, no reset/producer/game claim");
+    std::puts("PASS_NATIVE_CLASS_PROFILE: 20 selectors/13 classes and game-pool/companion counts match original stores; actual dynamic PFX storage and signed game predicate, no reset/producer/game claim");
     return std::fflush(stdout) || std::ferror(stdout) ? 1 : 0;
 }

@@ -1,4 +1,6 @@
 #include "mka/retail_package.hpp"
+#include "mka/retail_main.hpp"
+#include "native_retail_startup.hpp"
 #include <algorithm>
 #include <array>
 #include <cstdio>
@@ -27,9 +29,22 @@ int main(int argc, char** argv) { try {
     mka::content::ContentVolumeFailure vf;
     auto volume = mka::content::NativeContentVolume::open(std::filesystem::path(argv[1]), vf);
     check(volume.has_value(), "actual original native content root");
+    NativeRetailStartupState startup(std::move(*volume), {});
+    mka::input::ControllerInput samples;
+    NativeRetailMainState main(startup, samples);
+    StartupFailure startup_failure;
+    check(!main_binding::initialize_retail_package_stage(main, startup_failure) &&
+        !main.package && startup_failure.kind == StartupError::native_exception &&
+        std::string_view(startup_failure.operation) == "retail package native file-path service missing",
+        "actual package stage refuses missing native file service rather than hardcoded key bypass");
+    RetailFilePathFailure path_failure;
+    main.file_paths = NativeRetailFilePaths::create(path_failure);
+    check(main.file_paths && main_binding::initialize_retail_package_stage(main, startup_failure) && main.package,
+        "actual main package stage consumes source /game alias through real native volume");
+    auto package = std::move(main.package);
+    main.file_paths.reset();
     RetailPackageFailure f;
-    auto package = NativeRetailPackage::open(*volume, f);
-    check(bool(package), "retained original package opened and indexed");
+    check(bool(package), "opened package retains file/volume after alias owner retirement");
     std::ifstream expected(argv[2]); check(bool(expected), "frozen independent manifest opened");
     std::string line; std::size_t rows = 0;
     while (std::getline(expected, line)) {

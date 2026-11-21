@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mka/content_volume.hpp"
+#include "mka/retail_file_paths.hpp"
 #include <cstddef>
 #include <cstdint>
 #include <memory>
@@ -15,7 +16,7 @@
 namespace mka::retail {
 
 enum class RetailPackageError {
-    none, source_open, source_read, source_seek, source_length,
+    none, source_path, source_open, source_read, source_seek, source_length,
     invalid_header, invalid_index, invalid_name, invalid_entry_range,
     missing_member, invalid_read_range, wrong_thread, allocation, host_capacity, native_exception
 };
@@ -23,6 +24,7 @@ struct RetailPackageFailure {
     RetailPackageError kind{RetailPackageError::none};
     const char* operation{""};
     content::ContentVolumeFailure content{};
+    RetailFilePathFailure path{};
 };
 struct RetailPackageMember {
     std::string name;
@@ -36,7 +38,7 @@ struct RetailPackageMember {
 class NativeRetailPackage final {
 public:
     static std::unique_ptr<NativeRetailPackage> open(
-        const content::NativeContentVolume&, RetailPackageFailure&) noexcept;
+        const content::NativeContentVolume&, const NativeRetailFilePaths&, RetailPackageFailure&) noexcept;
     NativeRetailPackage(const NativeRetailPackage&)=delete;
     NativeRetailPackage& operator=(const NativeRetailPackage&)=delete;
 
