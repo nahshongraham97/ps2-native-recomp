@@ -4,7 +4,9 @@
 #include "mka/frontend_scheduler.hpp"
 #include "mka/game_action_input.hpp"
 #include "mka/playback_owner.hpp"
+#include "mka/retail_audio_statistics.hpp"
 #include "mka/retail_main_timing.hpp"
+#include "mka/retail_mode_state.hpp"
 #include <array>
 #include <cstdint>
 #include <memory>
@@ -52,7 +54,7 @@ const std::array<RetailActionBinding, 16>& retail_default_action_bindings() noex
 std::uint32_t retail_canonical_action_index(std::uint32_t mask, std::uint32_t row) noexcept;
 
 struct NativeRetailMainState {
-    NativeRetailMainState(NativeRetailStartupState&, NativeRetailPlatform&) noexcept;
+    NativeRetailMainState(NativeRetailStartupState&, input::ControllerInput&) noexcept;
     NativeRetailStartupState& startup;
     NativeRetailMainTiming main_timing;
     std::shared_ptr<NativeRetailConstructorOwners> constructors;
@@ -60,6 +62,8 @@ struct NativeRetailMainState {
     std::shared_ptr<NativeRetailPrefixDispatchDescriptor> dispatch_object;
     std::shared_ptr<NativeRetailPrefixDispatchDescriptor> auxiliary_dispatch_object;
     std::shared_ptr<NativeRetailRecordOwners> record_owners;
+    std::unique_ptr<NativeRetailAudioStatistics> audio_statistics;
+    std::optional<NativeRetailModeState> mode_history;
     std::shared_ptr<NativeRetailProfileOwners> profile;
     std::shared_ptr<NativeRetailSceneOwners> scene;
     // The startup platform owns the only controller sample store. Its lifetime
@@ -90,7 +94,7 @@ bool construct_retail_initial_aggregate(NativeRetailMainState&, StartupFailure&)
 bool construct_retail_middleware_work_group(NativeRetailMainState&, StartupFailure&); // 6487D0
 bool construct_retail_dispatch_object(NativeRetailMainState&, StartupFailure&); // 648810
 bool construct_retail_record_owners(NativeRetailMainState&, StartupFailure&); // 648860
-bool construct_retail_default_record(NativeRetailMainState&, StartupFailure&); // 648930
+bool construct_retail_audio_statistics(NativeRetailMainState&, StartupFailure&); // 648930
 bool construct_retail_aux_dispatch_object(NativeRetailMainState&, StartupFailure&); // 648980
 bool construct_retail_two_service_objects(NativeRetailMainState&, StartupFailure&); // 6489D0
 bool register_retail_initialized_main_record(NativeRetailMainState&, StartupFailure&); // 648A40
@@ -152,7 +156,7 @@ bool seed_retail_startup_random_state(NativeRetailMainState&, std::uint32_t, Sta
 bool create_retail_initial_mode_task(NativeRetailMainState&, const RetailMainTaskRequest&, StartupFailure&);
 bool retail_frame_processing_inhibited(const NativeRetailMainState&);
 bool retail_ordinary_counter_inhibited(const NativeRetailMainState&);
-std::int32_t read_retail_top_mode(const NativeRetailMainState&);
+std::optional<std::int32_t> read_retail_top_mode(const NativeRetailMainState&, StartupFailure&);
 bool retail_task_exists(const NativeRetailMainState&, std::uint32_t kind);
 bool retail_mode_dispatch_enabled(const NativeRetailMainState&);
 std::optional<RetailFrameRole> observe_retail_frame_role(const NativeRetailMainState&, std::uint32_t role, StartupFailure&);

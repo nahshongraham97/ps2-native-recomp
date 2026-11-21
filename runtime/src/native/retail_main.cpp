@@ -16,7 +16,7 @@ bool construct_main_owners(NativeRetailMainState& m, StartupFailure& f) {
     if (!construct_retail_middleware_work_group(m, f)) return false;
     if (!construct_retail_dispatch_object(m, f)) return false;
     if (!construct_retail_record_owners(m, f)) return false;
-    if (!construct_retail_default_record(m, f)) return false;
+    if (!construct_retail_audio_statistics(m, f)) return false;
     if (!construct_retail_aux_dispatch_object(m, f)) return false;
     if (!construct_retail_two_service_objects(m, f)) return false;
     m.initial_main_record = {0, 0, 1, 30, -1};
@@ -83,7 +83,9 @@ bool run_frame(NativeRetailMainState& m, StartupFailure& f) {
     if (std::bit_cast<std::int32_t>(++m.mode_tick) > 59) {
         m.mode_tick = 0;
         ++m.sixty_step_intervals;
-        if (read_retail_top_mode(m) == 6) ++m.mode_six_intervals;
+        const auto mode = read_retail_top_mode(m, f);
+        if (!mode) return false;
+        if (*mode == 6) ++m.mode_six_intervals;
     }
     if (!retail_task_exists(m, 0x2065) && !retail_task_exists(m, 0x2066) &&
         retail_mode_dispatch_enabled(m) && !dispatch_retail_enabled_mode(m, f)) return false;
@@ -95,10 +97,6 @@ bool run_frame(NativeRetailMainState& m, StartupFailure& f) {
 }
 
 } // namespace
-
-NativeRetailMainState::NativeRetailMainState(NativeRetailStartupState& owner,
-    NativeRetailPlatform& platform) noexcept
-    : startup(owner), controller_samples(platform.controller_samples()) {}
 
 [[noreturn]] void reenter_native_retail_main(NativeRetailMainState& m, std::uint32_t value) {
     throw NativeMainReentry{&m, value == 0 ? 1 : value};
@@ -122,7 +120,7 @@ std::optional<std::int64_t> continue_native_retail_main(NativeRetailStartupState
         f.operation = "retail main platform owner missing";
         return {};
     }
-    NativeRetailMainState m(startup, *startup.platform);
+    NativeRetailMainState m(startup, startup.platform->controller_samples());
     if (!construct_main_owners(m, f) || !initialize_retail_memory_owners(startup, f)) return {};
     const auto selector = read_retail_profile_selector(m, f);
     if (!selector || !reset_and_initialize_retail_profile(m, select_native_class_profile(*selector), f) ||

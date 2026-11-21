@@ -1,0 +1,18 @@
+{
+  "fork_commit": "7c25c20a1c4189b01f546975cb98682bbf454483",
+  "fork": {
+    "available": true,
+    "local_commit": "7c25c20a1c4189b01f546975cb98682bbf454483",
+    "remote_commit": "7c25c20a1c4189b01f546975cb98682bbf454483",
+    "synchronization": "verified"
+  },
+  "parent_commit": "cb10921c0cd506be61a27bb0cc3531d2d9683ab1",
+  "parent": {
+    "available": true,
+    "local_commit": "cb10921c0cd506be61a27bb0cc3531d2d9683ab1",
+    "remote_commit": "cb10921c0cd506be61a27bb0cc3531d2d9683ab1",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "45d0d652da710668d695aa1c8fbfdbde28679479deb8e42575b0ec4b5ce29f1d",
+  "scope": "Five CPU/component fixtures; whole native entry and game acceptance OPEN"
+}
