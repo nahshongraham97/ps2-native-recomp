@@ -1,0 +1,19 @@
+{
+  "schema": "native_retail_profile_effects_publication_v1",
+  "fork_commit": "5b5f07469c46348795da0bb5cc102c4c0e748123",
+  "fork": {
+    "available": true,
+    "local_commit": "5b5f07469c46348795da0bb5cc102c4c0e748123",
+    "remote_commit": "5b5f07469c46348795da0bb5cc102c4c0e748123",
+    "synchronization": "verified"
+  },
+  "parent_commit": "8200a482fef1048df23d5a72c01056cab4363e30",
+  "parent": {
+    "available": true,
+    "local_commit": "8200a482fef1048df23d5a72c01056cab4363e30",
+    "remote_commit": "8200a482fef1048df23d5a72c01056cab4363e30",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "f9ed93e4e439510a0b9ae3667ef2bdf0d615f7b9f80a481cbdebe05de5a10515",
+  "scope": "Twelve CPU/file clients;actual18B0D0/1892D0;five native leaf requirements and27 Main;no gameplay"
+}
