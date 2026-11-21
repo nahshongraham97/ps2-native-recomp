@@ -31,11 +31,16 @@ settings or impose inference caps. If no instance is loaded, read source
 directly. Do not ask the owner to launch while any contract row is open.
 
 The parent AGENTS.md section "ELF authority, implementation and verification
-order" is binding here: decompiled C is not byte-exact authority. Join relevant
-instructions/data to the original hash-pinned ELF, resolve ABI/control flow
-from actual callers and delay slots, and preserve proven behavior in native
-code. Unknown behavior is an explicit blocker, never a guessed implementation.
-An exact-byte disassembly check is distinct from behavioral equivalence.
+order" is binding here, including its mandatory five-step protocol for every
+ported function: original ELF words/data -> verified EE instruction semantics
+-> decompiler used only for orientation and caller/consumer cross-checks ->
+typed native C++ -> independently derived behavioral checks. Record input
+identity, exact ranges, instruction widths/extensions, delay-slot effects,
+errors/lifetime and unresolved behavior. The EE plugin, a wrapper name or a
+decompiled type does not prove correctness. Unknown behavior is an explicit
+blocker, never a guessed implementation. An exact-byte disassembly check is
+distinct from behavioral equivalence and full-game acceptance. Keep the full
+protocol in the parent rule section; do not maintain a conflicting local copy.
 Advance retail entry -> native initialization -> game loop -> real input ->
 rendering and sound. Defer optional work until the connected full build;
 compile and check directly affected changes without rechecking unchanged
