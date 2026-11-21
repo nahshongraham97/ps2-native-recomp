@@ -29,11 +29,16 @@ struct ProgramStep {
     ProgramStopReason stop_reason=ProgramStopReason::command_kind7;
     std::uint16_t stop_mode_bit=0; // State+1E bit0 passed into cleanup; not fade semantics.
 };
+// Pure preflight for the implemented reachable normal timeline; no output or clock effects.
+bool validate_program_coverage(const PreparedProgram&, ProgramFailure&) noexcept;
+
 // Executes the proved normal command timeline into typed host operations.
 // No hardware/mixer/voice allocation or guessed gain/pan/pitch/loop behavior.
 // Caller supplies the already-activated initial source deadline explicitly.
 // Each step emits at most one operation; kind1 requires actual host start ACK
-// before advancing. Unknown/control kinds fail at their actual cursor position.
+// before advancing. Creation validates every reachable command and prepared
+// sample before any operation; kind7 terminates coverage, count end is valid.
+// Kind6/control loops remain unsupported, rather than guessed or skipped.
 class ProgramExecutor {
 public:
     ProgramExecutor(const ProgramExecutor&)=delete;

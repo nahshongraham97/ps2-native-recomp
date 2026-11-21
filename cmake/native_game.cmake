@@ -177,3 +177,9 @@ add_library(mka_native_art_section_data STATIC EXCLUDE_FROM_ALL runtime/src/nati
 target_link_libraries(mka_native_art_section_data PUBLIC mka_native_content_volume)
 add_executable(test_native_art_section_data EXCLUDE_FROM_ALL tests/test_art_section_data.cpp)
 target_link_libraries(test_native_art_section_data PRIVATE mka_native_art_section_data)
+
+# Decode verified serialized indexed artwork into owned stored channels.
+add_library(mka_native_indexed_sprite_data STATIC EXCLUDE_FROM_ALL runtime/src/native/indexed_sprite_data.cpp)
+target_link_libraries(mka_native_indexed_sprite_data PUBLIC mka_native_art_section_data)
+add_executable(test_native_indexed_sprite_data EXCLUDE_FROM_ALL tests/test_indexed_sprite_data.cpp)
+target_link_libraries(test_native_indexed_sprite_data PRIVATE mka_native_indexed_sprite_data)

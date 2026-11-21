@@ -1,5 +1,6 @@
 #include "mka/playback_owner.hpp"
 #include "mka/program_host_clock.hpp"
+#include "mka/runtime_preparation.hpp"
 
 #include <algorithm>
 #include <atomic>
@@ -48,7 +49,8 @@ struct Fixture {
     std::shared_ptr<NativeProgramHostClock> clock;
     std::optional<NativePlaybackOwner> owner;
     NativeSoundContext context;
-    explicit Fixture(const char* path) {
+    std::unique_ptr<RuntimeProgramReference> retained_donor;
+    explicit Fixture(const char* path,bool retain_donor=false) {
         ProgramHostClockFailure cf;
         clock = NativeProgramHostClock::create_with_reader(1000, [this](ProgramHostClockFailure& failure) { return reader.read(failure); }, cf);
         check(bool(clock), "explicit native host clock");
@@ -61,13 +63,20 @@ struct Fixture {
         BankServiceFailure sf;
         auto service = AudioBankService::create(std::move(*protocol), sf);
         check(bool(service), "actual bank Service");
+        if(retain_donor){
+            auto request=command(AudioBankOpcode::load_sync,first_bank);request.pathname="announcr";
+            check(bool(service->load_sync(request,{first_bank},sf)),"real donor bank before Owner move");
+            PreparationFailure prep;
+            retained_donor=service->acquire_runtime_program(command(AudioBankOpcode::play,first_bank),prep,sf);
+            check(bool(retained_donor),"retain actual runtime donor for negative injection");
+        }
         PlaybackFailure f;
         owner = NativePlaybackOwner::create_with_clock(std::move(*service), 48000, clock, f);
         check(bool(owner), "actual playback Owner with shared clock");
         auto owned = owner->create_sound_context(NativeSoundContextConfiguration{2}, f);
         check(bool(owned), "actual explicitly configured context");
         context = *owned;
-        load(first_bank);
+        if(!retain_donor)load(first_bank);
     }
     void load(std::uint32_t token) {
         AudioBankCommand request;
@@ -92,6 +101,7 @@ struct Fixture {
         return *result;
     }
     void finish() {
+        retained_donor.reset();
         PlaybackFailure f;
         check(owner->release_sound_context(context, f), "actual context retirement");
         check(owner->close_when_idle(f), "actual idle Service close");
@@ -331,6 +341,54 @@ void replacement_tail(const char* path) {
           "successor software tail retires");
     f.finish();
 }
+void invalid_successor_preserves_incumbent(const char* path){
+    Fixture f(path,true);auto old=f.activate(0,1);
+    PlaybackFailure failure;SoundContextUpdate update;
+    check(f.owner->update_ordinary_context(f.context,update,failure)&&update.steps.size()==1&&
+          update.steps[0].event&&update.steps[0].event->kind==ProgramStepKind::sample_start,
+          "valid incumbent starts before rejected successor");
+    auto pcm=f.owner->mix(512,failure);
+    check(pcm&&std::any_of(pcm->begin(),pcm->end(),[](float x){return x!=0;}),"real incumbent has nonzero PCM");
+    const auto before=f.observe(old);const auto reads=f.reader.reads.load();
+    // PreparedBank uses make_shared<PreparedProgram>, not a const allocation.
+    // Single-threaded negative injection changes only this donor's commands;
+    // the active incumbent has its separate cloned commands and untouched PCM.
+    auto donor=std::const_pointer_cast<PreparedProgram>(f.retained_donor->preparation()->data());
+    struct Restore {PreparedProgram& donor;std::vector<CommandRecord> commands;
+        ~Restore(){donor.commands=std::move(commands);}} restore{*donor,donor->commands};
+    auto unsupported=donor->commands.front();unsupported.bytes[8]=2;
+    donor->commands.insert(donor->commands.begin()+1,unsupported);
+    ProgramFailure coverage;
+    check(!validate_program_coverage(*donor,coverage)&&coverage.kind==ProgramError::unsupported_command_kind&&
+          coverage.command_index==1,"pure coverage diagnoses injected later kind2");
+    check(!f.owner->activate(f.context,command(AudioBankOpcode::play,first_bank),parameters(0,2),failure)&&
+          failure.kind==PlaybackError::program_failed&&failure.program.kind==ProgramError::unsupported_command_kind&&
+          failure.program.command_index==1,"unsupported successor refused before incumbent mutation");
+    donor->commands=restore.commands;
+    const auto after=f.observe(old);
+    check(!after.explicitly_stopped&&!after.replaced&&after.dispatch_live&&after.output_owned&&
+          after.active_voices==1&&after.first_voice_source_index==before.first_voice_source_index&&
+          f.reader.reads.load()==reads,"coverage refusal preserves actual incumbent and clock");
+    // Different command resource key keeps the original sample/PCM untouched.
+    // Clone accepts the instance; semantic preflight must reject its key mismatch.
+    donor->commands[0].bytes[0]^=1;
+    check(!validate_program_coverage(*donor,coverage)&&coverage.kind==ProgramError::invalid_prepared_sample&&
+          coverage.command_index==0,"pure coverage diagnoses injected resource mismatch");
+    check(!f.owner->activate(f.context,command(AudioBankOpcode::play,first_bank),parameters(0,2),failure)&&
+          failure.kind==PlaybackError::program_failed&&failure.program.kind==ProgramError::invalid_prepared_sample&&
+          failure.program.command_index==0,"malformed successor reaches preflight before incumbent mutation");
+    donor->commands=restore.commands;
+    const auto again=f.observe(old);auto context=f.owner->observe_sound_context(f.context,failure);
+    check(!again.explicitly_stopped&&!again.replaced&&again.dispatch_live&&again.output_owned&&
+          again.active_voices==1&&again.first_voice_source_index==before.first_voice_source_index&&
+          f.reader.reads.load()==reads&&context&&context->programs==1&&context->pending_preparations==0,
+          "both refusals publish no successor or output and rollback reservations");
+    check(bool(f.owner->mix(64,failure))&&f.observe(old).first_voice_source_index>before.first_voice_source_index,
+          "incumbent continues actual software playback after refusal");
+    check(f.owner->stop(old,failure)&&bool(f.owner->mix(32,failure)),"retire unchanged incumbent normally");
+    f.finish();
+}
+
 }
 
 int main(int argc, char** argv) {
@@ -345,6 +403,7 @@ int main(int argc, char** argv) {
     dispatches_all_due_commands(argv[1]);
     reader_reentry(argv[1]);
     replacement_tail(argv[1]);
-    std::puts("PASS_NATIVE_PROGRAM_OUTPUT_ACTIVATION: 7 actual role/clock/replacement groups; ordinary native output only");
+    invalid_successor_preserves_incumbent(argv[1]);
+    std::puts("PASS_NATIVE_PROGRAM_OUTPUT_ACTIVATION: 8 actual role/clock/replacement/coverage groups; ordinary native output only");
     return std::fflush(stdout) || std::ferror(stdout) ? 1 : 0;
 }

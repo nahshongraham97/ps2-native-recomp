@@ -1,0 +1,78 @@
+{
+  "status": "EXACT_INDEXED_COVERAGE_PRIOR_VERSIONS_RESOLVED",
+  "resolutions": [
+    {
+      "producer": "previous native component",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_game.cmake",
+      "expected_sha256": "670ef96ed5853f7088d7e085b1b4552cf89cd7453c2df4a0020615db0b8257c9",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-03\\before-root-integration\\cmake\\native_game.cmake"
+    },
+    {
+      "producer": "previous native component",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_program_executor.cpp",
+      "expected_sha256": "73add0ee29894c8e147135dc7363402e9e71f20b2b591809653e85212fa60bb9",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-03\\program-coverage\\before\\tests\\test_program_executor.cpp"
+    },
+    {
+      "producer": "previous native component",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_program_output_activation.cpp",
+      "expected_sha256": "a2619d1902a4efb7cca7924386abe4d72d7ce80bfa80dd9fc6d69d9315e30c08",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-03\\program-coverage\\before-owner-integration\\tests\\test_program_output_activation.cpp"
+    },
+    {
+      "producer": "previous native component",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\program_executor.hpp",
+      "expected_sha256": "2de49a3318c0ef5a27aa6aa2f964ec6481041a7b478fcf55b208205d4ed3cd81",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-03\\program-coverage\\before\\runtime\\include\\mka\\program_executor.hpp"
+    },
+    {
+      "producer": "previous native component",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\program_executor.cpp",
+      "expected_sha256": "cadfcca3012e8ad4f290af8d2f43bb378b8aca1e29686234bf8037e0cd9e74fd",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-03\\program-coverage\\before\\runtime\\src\\native\\program_executor.cpp"
+    },
+    {
+      "producer": "previous native component",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\playback_owner.cpp",
+      "expected_sha256": "45bd83ee8e1b306fd639662750590f3800c4ebca9d5cbcf5d6b53855c10117b4",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-03\\program-coverage\\before-owner-integration\\runtime\\src\\native\\playback_owner.cpp"
+    },
+    {
+      "producer": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-02\\AUDIO_EXIT_SOURCE.json",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\playback_owner.cpp",
+      "expected_sha256": "45bd83ee8e1b306fd639662750590f3800c4ebca9d5cbcf5d6b53855c10117b4",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-03\\program-coverage\\before-owner-integration\\runtime\\src\\native\\playback_owner.cpp"
+    },
+    {
+      "producer": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-02\\AUDIO_EXIT_SOURCE.json",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\program_executor.hpp",
+      "expected_sha256": "2de49a3318c0ef5a27aa6aa2f964ec6481041a7b478fcf55b208205d4ed3cd81",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-03\\program-coverage\\before\\runtime\\include\\mka\\program_executor.hpp"
+    },
+    {
+      "producer": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-02\\AUDIO_EXIT_SOURCE.json",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\program_executor.cpp",
+      "expected_sha256": "cadfcca3012e8ad4f290af8d2f43bb378b8aca1e29686234bf8037e0cd9e74fd",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-03\\program-coverage\\before\\runtime\\src\\native\\program_executor.cpp"
+    },
+    {
+      "producer": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-02\\CONTEXT_UPDATE_PASSES_SOURCE.json",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\playback_owner.cpp",
+      "expected_sha256": "45bd83ee8e1b306fd639662750590f3800c4ebca9d5cbcf5d6b53855c10117b4",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-03\\program-coverage\\before-owner-integration\\runtime\\src\\native\\playback_owner.cpp"
+    },
+    {
+      "producer": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-02\\CONTEXT_UPDATE_PASSES_SOURCE.json",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\program_executor.cpp",
+      "expected_sha256": "cadfcca3012e8ad4f290af8d2f43bb378b8aca1e29686234bf8037e0cd9e74fd",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-03\\program-coverage\\before\\runtime\\src\\native\\program_executor.cpp"
+    },
+    {
+      "producer": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-02\\CONTEXT_UPDATE_PASSES_SOURCE.json",
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\program_executor.hpp",
+      "expected_sha256": "2de49a3318c0ef5a27aa6aa2f964ec6481041a7b478fcf55b208205d4ed3cd81",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-03\\program-coverage\\before\\runtime\\include\\mka\\program_executor.hpp"
+    }
+  ],
+  "no_expected_hash_replacement": true
+}

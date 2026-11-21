@@ -282,6 +282,8 @@ std::optional<NativePlayHandle> NativePlaybackOwner::play_impl(const NativeSound
         if(!copy){f.kind=PlaybackError::copy_failed;return {};}
         auto schedule=copy->bind_preactivated_schedule(p.initial_deadline,flags,f.copy);
         if(!schedule){f.kind=PlaybackError::copy_failed;return {};}
+        // Semantic coverage must precede incumbent stop and host-clock sampling.
+        if(!validate_program_coverage(*schedule->data,f.program)){f.kind=PlaybackError::program_failed;return {};}
         {std::unique_lock lock(state->mutex);
          // No vector position is retained across resource construction.
          auto* destination=state->context(context,f);if(!state->available(f)||!destination)return {};
