@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_game_pool.exe"
+  ],
+  "exit": 0,
+  "stdout": "native retail game pool: PASS\n",
+  "stderr": "",
+  "executable_sha256": "27db931c328814631e9f7e26cd2c2c5cf45e1220f7450b43c4e679703bd8febd",
+  "executable_after_sha256": "27db931c328814631e9f7e26cd2c2c5cf45e1220f7450b43c4e679703bd8febd",
+  "retained_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-connected-initialization-20261121\\validation-02\\test_native_retail_game_pool.json",
+  "retained_receipt_sha256": "775663356973b2bc68f8941667fe9ab921c1b8f16b8a4658d51cc463012a3b68"
+}

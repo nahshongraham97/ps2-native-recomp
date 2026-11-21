@@ -89,4 +89,85 @@ RetailGameRecordResetSnapshot* NativeRetailGameSession::game_record_values(
     if (!validate_current_thread(failure)) return nullptr;
     return &game_record_values_;
 }
+RetailGameRecordsValues* NativeRetailGameSession::game_records_values(
+    RetailGameSessionFailure& failure) noexcept {
+    if (!validate_current_thread(failure)) return nullptr;
+    return &game_records_values_;
+}
+bool NativeRetailGameSession::ensure_game_task_lists(
+    std::shared_ptr<NativeRetailGamePool> pool,
+    RetailGameSessionFailure& failure) noexcept {
+    if(!validate_current_thread(failure)) return false;
+    if(game_task_lists_) {
+        if(game_task_lists_->same_pool(pool,failure.task_lists)) return true;
+        failure.kind=RetailGameSessionError::task_lists;
+        failure.operation="retained source callback heads use another pool";
+        return false;
+    }
+    auto lists=NativeRetailGameTaskLists::create(std::move(pool),failure.task_lists);
+    if(!lists) {
+        failure.kind=RetailGameSessionError::task_lists;
+        failure.operation="retained source callback-head birth";
+        return false;
+    }
+    game_task_lists_=std::move(lists);
+    return true;
+}
+std::shared_ptr<NativeRetailGameTaskLists>
+NativeRetailGameSession::game_task_lists(
+    RetailGameSessionFailure& failure) const noexcept {
+    if(!validate_current_thread(failure)) return {};
+    return game_task_lists_;
+}
+bool NativeRetailGameSession::ensure_initial_game_tasks(
+    std::shared_ptr<NativeRetailGamePool> pool,
+    RetailGameSessionFailure& failure) noexcept {
+    if(!validate_current_thread(failure)) return false;
+    if(!game_task_lists_ || !game_task_lists_->same_pool(pool,failure.task_lists)) {
+        failure.kind=RetailGameSessionError::task_lists;
+        failure.operation="initial game tasks require same-session callback heads";
+        return false;
+    }
+    if(initial_game_tasks_) {
+        if(initial_game_tasks_->same_pool(pool,failure.initial_game_tasks) &&
+           initial_game_tasks_->same_lists(game_task_lists_,failure.initial_game_tasks))
+            return true;
+        failure.kind=RetailGameSessionError::initial_game_tasks;
+        failure.operation="retained initial task owner uses another pool";
+        return false;
+    }
+    auto tasks=NativeRetailInitialGameTasks::create(
+        game_task_lists_,std::move(pool),failure.initial_game_tasks);
+    if(!tasks) {
+        failure.kind=RetailGameSessionError::initial_game_tasks;
+        failure.operation="retained initial game task owner birth";
+        return false;
+    }
+    initial_game_tasks_=std::move(tasks);
+    return true;
+}
+std::shared_ptr<NativeRetailInitialGameTasks>
+NativeRetailGameSession::initial_game_tasks(
+    RetailGameSessionFailure& failure) const noexcept {
+    if(!validate_current_thread(failure)) return {};
+    return initial_game_tasks_;
+}
+bool NativeRetailGameSession::retain_source_task_1588c0(
+    std::shared_ptr<NativeRetailTaskObject> task,
+    RetailGameSessionFailure& failure) noexcept {
+    if(!validate_current_thread(failure)) return false;
+    if(!task) {
+        failure.kind=RetailGameSessionError::task_domain;
+        failure.operation="1588C0 real published task missing";
+        return false;
+    }
+    source_task_1588c0_=std::move(task);
+    return true;
+}
+std::shared_ptr<NativeRetailTaskObject>
+NativeRetailGameSession::source_task_1588c0(
+    RetailGameSessionFailure& failure) const noexcept {
+    if(!validate_current_thread(failure)) return {};
+    return source_task_1588c0_;
+}
 } // namespace mka::retail

@@ -283,6 +283,21 @@ int main(int argc,char** argv) {try {
     check(latched&&malformed.calls.size()==calls_before_retry&&malformed.resets==1,
           "after-effect failure cannot replay reset or malformed child");
     startup.game_session=std::move(original_session);
+    const auto calls_before_retirement=malformed.calls.size();
+    main.lifetime->retire();
+    bool retired_run=false, retired_cleanup=false;
+    try { (void)body->run(); }
+    catch(const RetailInitialTaskException& e) {
+        retired_run=e.kind()==RetailInitialTaskError::retired_main;
+    }
+    try { body->cleanup(true); }
+    catch(const RetailInitialTaskException& e) {
+        retired_cleanup=e.kind()==RetailInitialTaskError::retired_main;
+    }
+    body->cleanup(false);
+    check(retired_run&&retired_cleanup&&
+          malformed.calls.size()==calls_before_retirement,
+          "retired Main witness refuses body access before borrowed Main read; guarded cleanup remains immediate");
     std::printf("PASS native initial task parent and menu continuation; test-only child effects, full Main/game open\n");
     return 0;
 } catch(const std::exception& e) {

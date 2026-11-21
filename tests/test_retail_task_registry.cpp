@@ -41,6 +41,10 @@ struct TestBody final: NativeRetailTaskBody {
     int cleanup_calls{};
     NativeRetailTaskRegistry* registry{};
 };
+struct RetainedObserved final: NativeRetailObservedObject {
+    std::uint32_t source_cookie() const noexcept override { return 1; }
+    void cleanup_from_12fa00() override {}
+};
 std::shared_ptr<NativeRetailTaskObject> publish(NativeRetailTaskRegistry& registry,
     std::uint32_t kind,std::int32_t priority,std::uint32_t cookie,
     const std::shared_ptr<TestBody>& body) {
@@ -199,6 +203,28 @@ int main() {
               !ordinary_registry->find_first_live(45,f)&&
               f.kind==RetailTaskRegistryError::after_effect_unknown,
               "ordinary callback failure retains pending object and names unknown effect");
+
+        RetailGamePoolFailure pf;
+        std::shared_ptr<NativeRetailGamePool> pool(
+            NativeRetailGamePool::initialize(2,pf));
+        auto failed_scan=NativeRetailTaskRegistry::create(pool,f);
+        auto stale_body=std::make_shared<TestBody>(events,15);
+        auto stale_task=publish(*failed_scan,61,5,17,stale_body);
+        check(failed_scan->set_current_task(stale_task,f),
+              "source current task exposes its real nested +E8 list");
+        auto nested=failed_scan->current_task_observers_from_158080(f);
+        check(bool(nested),"source task owns real +E8 observer root");
+        RetailObserverListFailure of;
+        auto stubborn=nested->insert_head_from_12f870(
+            std::make_shared<RetainedObserved>(),of);
+        check(stubborn&&failed_scan->clear_current_task(f)&&
+              failed_scan->store_object_cookie_from_source(stale_task,1,f),
+              "real source cookie-one stale path with retained nested observer");
+        auto refused=failed_scan->publish_task(
+            62,6,20,std::make_shared<TestBody>(events,16),f);
+        check(!refused&&f.kind==RetailTaskRegistryError::observer_list&&
+              failed_scan->observe(f)->after_effect_unknown,
+              "12F260 stale cleanup failure cannot still publish a task");
 
         auto fault_body=std::make_shared<TestBody>(events,9);
         auto measured=NativeRetailTaskRegistry::create(f);

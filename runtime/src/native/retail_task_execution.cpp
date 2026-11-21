@@ -59,9 +59,9 @@ std::optional<NativeTaskRunOutcome> NativeRetailTaskExecution::invoke_virtual_10
              "typed initial task link flags");
         return {};
     }
-    if(task->kind_!=0x2001u || task->priority_!=0x20 || task->retain_flag2_) {
+    if(task->retain_flag2_) {
         fail(f,RetailTaskExecutionError::unsupported_source_branch,
-             "typed initial task source kind, priority or flags");
+             "typed source task retained cleanup flag");
         return {};
     }
     if(!task->body_ || !task->continuation_) {
@@ -183,6 +183,18 @@ std::optional<NativeTaskRunOutcome> NativeRetailTaskExecution::invoke_virtual_10
         registry_.in_callout_=true;
         try {
             body->cleanup(release_allowed);
+            if(release_allowed) {
+                RetailTaskRegistryFailure nested_failure;
+                if(!registry_.drain_task_observers_from_12ee70(
+                        *task,nested_failure)) {
+                    registry_.in_callout_=false;
+                    task->execution_active_=false;
+                    registry_.after_effect_unknown_=true;
+                    fail(f,RetailTaskExecutionError::after_effect_unknown,
+                         nested_failure.operation);
+                    return {};
+                }
+            }
         } catch(const detail::NativeMainReentry&) {
             registry_.in_callout_=false;
             task->execution_active_=false;

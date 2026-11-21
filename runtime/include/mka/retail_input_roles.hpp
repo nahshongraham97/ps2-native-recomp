@@ -14,7 +14,7 @@ class NativeRetailParticipants;
 class NativeRetailAssignedPoll;
 
 enum class RetailInputRole : std::uint8_t { role0, role1, role2, role3 };
-enum class RetailInputRoleError { none, wrong_thread, invalid_role, invalid_action_row, allocation, native_exception };
+enum class RetailInputRoleError { none, wrong_thread, invalid_role, invalid_action_row, invalid_mapping_table, allocation, native_exception };
 struct RetailInputRoleFailure { RetailInputRoleError kind{RetailInputRoleError::none}; };
 
 struct NativeRetailInputRoleObservation {
@@ -43,6 +43,14 @@ public:
         RetailInputRole, RetailInputRoleFailure&) const noexcept;
     std::optional<RetailActionRowObservation> observe_action_row(
         RetailInputRole, std::size_t row, RetailInputRoleFailure&) const noexcept;
+    // The source initializes four game roles, while 281870 resets two
+    // separate physical-position mapping pairs. Both retain this owner.
+    bool initialize_roles_from_281e00(RetailInputRoleFailure&) noexcept;
+    bool reset_first_two_mapping_tables_from_281870(
+        RetailInputRoleFailure&) noexcept;
+    std::optional<std::array<RetailActionBinding,16>> observe_mapping_table(
+        std::size_t position, std::size_t variant,
+        RetailInputRoleFailure&) const noexcept;
     bool clear_dispatch_blocked_first_three_from_163a50(
         RetailInputRoleFailure&) noexcept;
 
@@ -63,6 +71,9 @@ private:
     // Four initialized source roles. This is not a physical input or host
     // controller capacity; the platform owner stores endpoints independently.
     std::array<RoleState, 4> roles_;
+    // Two distinct source tables for each of the first two physical positions.
+    std::array<std::array<std::array<RetailActionBinding,16>,2>,2> mapping_tables_{};
+    std::array<std::uint32_t,2> mapping_reset_words_{};
     // The association count is game context state, not a property of an
     // adapter. 281E00 role-record initialization does not reset it.
     std::int32_t association_count_{};

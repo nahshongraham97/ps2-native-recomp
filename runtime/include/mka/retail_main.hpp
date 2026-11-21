@@ -8,6 +8,7 @@
 #include "mka/retail_file_paths.hpp"
 #include "mka/retail_audio_statistics.hpp"
 #include "mka/retail_main_timing.hpp"
+#include "mka/retail_main_lifetime.hpp"
 #include "mka/retail_mode_state.hpp"
 #include "mka/retail_package.hpp"
 #include "mka/retail_remaining_constructors.hpp"
@@ -64,12 +65,13 @@ const std::array<RetailActionBinding, 16>& retail_default_action_bindings() noex
 std::uint32_t retail_canonical_action_index(std::uint32_t mask, std::uint32_t row) noexcept;
 
 struct NativeRetailMainState {
-    NativeRetailMainState(NativeRetailStartupState&, input::ControllerInput&) noexcept;
+    NativeRetailMainState(NativeRetailStartupState&, input::ControllerInput&);
     ~NativeRetailMainState();
     NativeRetailMainState(const NativeRetailMainState&) = delete;
     NativeRetailMainState& operator=(const NativeRetailMainState&) = delete;
     NativeRetailMainState(NativeRetailMainState&&) = delete;
     NativeRetailMainState& operator=(NativeRetailMainState&&) = delete;
+    const std::shared_ptr<NativeRetailMainLifetime> lifetime;
     NativeRetailStartupState& startup;
     NativeRetailMainTiming main_timing;
     // These owners are populated only at their original game initialization
@@ -156,10 +158,13 @@ bool initialize_retail_mode_objects(NativeRetailMainState&, StartupFailure&); //
 bool initialize_retail_scene_service(NativeRetailMainState&, StartupFailure&); // 295660
 bool initialize_retail_mode_service(NativeRetailMainState&, StartupFailure&); // 12A4F0(0)
 bool initialize_retail_section_service(NativeRetailMainState&, StartupFailure&); // 19A630
-bool initialize_retail_post_scene_timing(NativeRetailMainState&, StartupFailure&); // 1861B0
+// 1861B0 is full scene reset/bootstrap, including 12F030 and repeated130350.
+// The historical binding name does not imply a clock-only operation.
+bool initialize_retail_post_scene_timing(NativeRetailMainState&, StartupFailure&);
 bool initialize_retail_post_scene_sections(NativeRetailMainState&, StartupFailure&); // 19A5E0
 bool initialize_retail_first_frame_graphics(NativeRetailMainState&, StartupFailure&); // 2E9930 thunk
 bool retire_retail_deferred_storage(NativeRetailMainState&, StartupFailure&); // 12D930
+bool install_retail_text_allocator_pair_16fd80(NativeRetailMainState&, StartupFailure&);
 bool poll_retail_controller_roles(NativeRetailMainState&, StartupFailure&); // 2214D0
 bool advance_retail_game_services(NativeRetailMainState&, StartupFailure&); // 3429E0
 bool dispatch_retail_enabled_mode(NativeRetailMainState&, StartupFailure&); // 27B1D0

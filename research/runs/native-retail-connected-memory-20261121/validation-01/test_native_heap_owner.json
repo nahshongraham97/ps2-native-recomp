@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_heap_owner.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_HEAP_OWNER: 5 groups real aligned storage/roles/request guards/routing/lifetime/concurrency/subtree reset; complete retail initialization remains open\n",
+  "stderr": "",
+  "executable_sha256": "4e11e1c204850532617571541a10fa1f8b6f1a7cf4dd5ac585d2a86915e42df3",
+  "executable_after_sha256": "4e11e1c204850532617571541a10fa1f8b6f1a7cf4dd5ac585d2a86915e42df3"
+}

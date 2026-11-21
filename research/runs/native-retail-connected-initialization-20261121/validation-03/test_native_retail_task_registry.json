@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_task_registry.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native retail ordered task registry: 3 publication allocation cuts; actual task producers/dispatch/main gate open\n",
+  "stderr": "",
+  "executable_sha256": "bf79f072a05edb7d3e4830e6648e9f1d8fd753be9d9798119337faf2929bfe65",
+  "executable_after_sha256": "bf79f072a05edb7d3e4830e6648e9f1d8fd753be9d9798119337faf2929bfe65",
+  "retained_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-connected-initialization-20261121\\validation-02\\test_native_retail_task_registry.json",
+  "retained_receipt_sha256": "fb0cf6cc452da0623f0d6a1b5f2686aee460e7d0f28b46a05369c41991634c18"
+}

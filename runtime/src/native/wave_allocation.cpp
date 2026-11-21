@@ -50,10 +50,14 @@ std::unique_ptr<NativeWaveAllocator> NativeWaveAllocator::create(
     if (b.alternate_state == WaveAlternateState::unbound) {
         fail(f, WaveAllocationError::unbound_alternate); return {};
     }
-    if (b.alternate_state != WaveAlternateState::absent && b.alternate_state != WaveAlternateState::ordinary_owner) {
+    if (b.alternate_state != WaveAlternateState::absent && b.alternate_state != WaveAlternateState::ordinary_owner &&
+        b.alternate_state != WaveAlternateState::native_source) {
         fail(f, WaveAllocationError::invalid_alternate); return {};
     }
     if ((b.alternate_state == WaveAlternateState::ordinary_owner) != bool(b.alternate)) {
+        fail(f, WaveAllocationError::invalid_alternate); return {};
+    }
+    if ((b.alternate_state == WaveAlternateState::native_source) != bool(b.alternate_source)) {
         fail(f, WaveAllocationError::invalid_alternate); return {};
     }
     if (b.overflow_state == WaveOverflowState::unbound) {
@@ -120,8 +124,22 @@ std::optional<NativeAllocation> NativeWaveAllocator::allocate(
         auto result = attempt(bindings_.wave, WaveAllocationStage::primary);
         if (result) { f = {}; return result; }
         if (f.heap.kind != NativeHeapError::allocation_failed) { fail(f, WaveAllocationError::heap); return {}; }
-        if (bindings_.alternate) {
-            result = attempt(bindings_.alternate, WaveAllocationStage::alternate);
+        auto actual_alternate = bindings_.alternate;
+        if (bindings_.alternate_source) {
+            f.stage = WaveAllocationStage::alternate;
+            auto selected = bindings_.alternate_source->current(f);
+            if (!selected) {
+                if(f.kind == WaveAllocationError::none) fail(f, WaveAllocationError::unbound_alternate);
+                return {};
+            }
+            actual_alternate = std::move(*selected);
+            if (actual_alternate && actual_alternate != bindings_.wave) {
+                alternate = actual_alternate->retain_request(f.heap);
+                if (!alternate) { fail(f, WaveAllocationError::heap); return {}; }
+            }
+        }
+        if (actual_alternate) {
+            result = attempt(actual_alternate, WaveAllocationStage::alternate);
             if (result) { f = {}; return result; }
             if (f.heap.kind != NativeHeapError::allocation_failed) { fail(f, WaveAllocationError::heap); return {}; }
         }

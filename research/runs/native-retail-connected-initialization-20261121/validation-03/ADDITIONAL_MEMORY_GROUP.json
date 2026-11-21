@@ -1,0 +1,11 @@
+{
+  "status": "PASS_CHANGED_NATIVE_MEMORY_GROUP",
+  "primary_verification_sha256": "dcaa9683242cffa08ff0f07cb06e0fc13c1bc53cafe78a1f85da156da0ac104a",
+  "executed_client": {
+    "target": "test_native_retail_memory_owners",
+    "sha256": "d83f72a0043ed8d0670f7e1bc7f85f75582ac882054c4739f31413837a90edae"
+  },
+  "scope": "Only newly changed memory-group source checked; nine existing connected client receipts retained unchanged.",
+  "game_executed": false,
+  "physical_endpoints_opened": false
+}

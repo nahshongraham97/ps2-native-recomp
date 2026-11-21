@@ -7,9 +7,11 @@
 
 namespace mka::retail {
 NativeRetailMainState::NativeRetailMainState(NativeRetailStartupState& owner,
-    input::ControllerInput& samples) noexcept
-    : startup(owner), controller_samples(samples) {}
+    input::ControllerInput& samples)
+    : lifetime(std::make_shared<NativeRetailMainLifetime>()),
+      startup(owner), controller_samples(samples) {}
 NativeRetailMainState::~NativeRetailMainState() {
+    lifetime->retire();
     StartupFailure failure;
     if (!main_binding::shutdown_retail_middleware_files(*this, failure)) {
         std::fprintf(stderr, "native retail middleware teardown refused: %s (startup=%d work=%d)\n",

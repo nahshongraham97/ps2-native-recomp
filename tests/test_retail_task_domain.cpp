@@ -14,10 +14,21 @@ void check(bool good, const char* label) {
 }
 struct RealTestBody final : mka::retail::NativeRetailTaskBody {
     mka::retail::NativeTaskStep run() override {
+        ++run_calls;
         return mka::retail::NativeTaskStep::returned(1.0f);
     }
-    void cleanup(bool) override { ++cleanup_calls; }
+    void cleanup(bool) override {
+        ++cleanup_calls;
+        if (pool) {
+            mka::retail::RetailGamePoolFailure f;
+            auto state=pool->observe(f);
+            active_at_cleanup=state ? state->active_records : 0;
+        }
+    }
     int cleanup_calls{};
+    int run_calls{};
+    std::shared_ptr<mka::retail::NativeRetailGamePool> pool;
+    std::size_t active_at_cleanup{};
 };
 }
 
@@ -29,6 +40,10 @@ int main() {
     RetailTaskDomainFailure failure;
     auto domain = NativeRetailTaskDomain::create(controls, failure);
     check(bool(domain), "persistent source data and BSS birth");
+    RetailGamePoolFailure pool_failure;
+    std::shared_ptr<NativeRetailGamePool> pool(
+        NativeRetailGamePool::initialize(3, pool_failure));
+    check(bool(pool), "actual source game link pool");
     auto birth = domain->observe(failure);
     check(birth && birth->identity_counter == 0 && !birth->override_pending &&
               birth->live_current_word == 5 && birth->live_partner_word == 5 &&
@@ -40,7 +55,7 @@ int main() {
               domain->observe(failure)->identity_counter == 0xf0000000u &&
               domain->seed_counter_from_185ee0(failure),
           "185EE0 unsigned seed and high counter preservation");
-    check(domain->reset_task_roots_from_12f0d0(failure),
+    check(domain->reset_task_roots_from_12f0d0(pool, failure),
           "12F0D0 creates the one real registry");
     auto* registry = domain->registry(failure);
     check(registry && registry == domain->prior_registry_if_born(failure),
@@ -90,10 +105,32 @@ int main() {
     auto task = registry->publish_task(0x2001, 0x20, 0x55, body,
                                        registry_failure);
     check(bool(task), "real body enters same registry");
-    check(!domain->reset_task_roots_from_12f0d0(failure) &&
+    check(domain->dispatch_first_root_zero_flags_from_12e4e0(failure) &&
+              body->run_calls == 1 &&
+              domain->dispatch_first_root_zero_flags_from_12e4e0(failure) &&
+              body->run_calls == 2,
+          "12E670 decrements wait and invokes real body on each ready frame");
+    auto second_body = std::make_shared<RealTestBody>();
+    auto second_task = registry->publish_task(0x2002, 0x30, 0x57, second_body,
+                                               registry_failure);
+    check(bool(second_task), "second live first-root body for source pass order");
+    body->pool=pool;
+    second_body->pool=pool;
+    check(!domain->reset_task_roots_from_12f0d0(pool, failure) &&
               failure.kind == RetailTaskDomainError::active_registry_reset &&
               domain->registry(failure) == registry && body->cleanup_calls == 0,
           "reentry refuses to silently drop live body");
+    check(pool->observe(pool_failure)->active_records == 2 &&
+              domain->cancel_first_root_from_12f030(failure) &&
+              body->cleanup_calls == 1 && second_body->cleanup_calls == 1 &&
+              body->active_at_cleanup == 2 &&
+              second_body->active_at_cleanup == 2 &&
+              pool->observe(pool_failure)->active_records == 0,
+          "130AC0 calls each live body before the later stale-link recycle pass");
+    check(domain->reset_task_roots_from_12f0d0(pool, failure) &&
+              domain->registry(failure) &&
+              domain->registry(failure)->observe(registry_failure)->ordered.empty(),
+          "normal reentry rebirth after actual first-root retirement");
 
     auto pending = NativeRetailTaskDomain::create(controls, failure);
     check(bool(pending), "independent identity epoch for optional source call");

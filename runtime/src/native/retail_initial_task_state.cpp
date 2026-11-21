@@ -31,6 +31,13 @@ bool NativeRetailInitialTaskState::store_menu_index_from_source(
     words_.menu_index=index;
     return true;
 }
+bool NativeRetailInitialTaskState::reset_menu_index_and_advance_cycle_from_18d430(
+    RetailInitialTaskStateFailure& f) noexcept {
+    if(!owner(f)) return false;
+    words_.menu_index=0;
+    ++words_.cycle_word_6602ec;
+    return true;
+}
 std::optional<unsigned> NativeRetailInitialTaskState::select_menu_body_from_18db60(
     RetailInitialTaskStateFailure& f) noexcept {
     if(!owner(f)) return {};

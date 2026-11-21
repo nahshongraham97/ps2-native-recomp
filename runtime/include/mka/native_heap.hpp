@@ -32,7 +32,7 @@ struct NativeHeapObservation {
     std::size_t active_requests{};
     bool overflow_attempted{};
 };
-namespace detail { struct NativeHeapState; }
+namespace detail { struct NativeHeapState; struct NativeAllocationRecord; }
 class NativeHeapOwner;
 class NativeWaveAllocator;
 class NativeTierAllocator;
@@ -62,8 +62,8 @@ public:
     NativeAllocation& operator=(NativeAllocation&&) noexcept;
     NativeAllocation(const NativeAllocation&) = delete;
     NativeAllocation& operator=(const NativeAllocation&) = delete;
-    void* data() const noexcept { return pointer_; }
-    explicit operator bool() const noexcept { return pointer_ != nullptr; }
+    void* data() const noexcept;
+    explicit operator bool() const noexcept { return data() != nullptr; }
     std::size_t requested_size() const noexcept { return requested_size_; }
     std::size_t rounded_size() const noexcept { return rounded_size_; }
     std::size_t alignment() const noexcept { return alignment_; }
@@ -74,10 +74,9 @@ public:
 private:
     friend class NativeHeapOwner;
     void reset() noexcept;
-    void* pointer_{};
+    std::shared_ptr<detail::NativeAllocationRecord> record_;
     std::size_t requested_size_{}, rounded_size_{}, alignment_{};
     NativeHeapIdentity requested_identity_{}, actual_identity_{};
-    std::shared_ptr<detail::NativeHeapState> requested_, actual_;
 };
 
 class NativeHeapOwner final {
@@ -94,6 +93,12 @@ public:
     std::optional<NativeHeapRequest> retain_request(NativeHeapFailure&) noexcept;
     NativeHeapObservation observe() const;
     const std::string& name() const noexcept;
+    // Retire actual payloads in this ownership subtree, preserving owner/child
+    // identities. Used by the real kind0 Wave/overlay startup resets. This is
+    // not the distinct kind1 requested-tag reset or owner destruction.
+    // Outstanding handles become empty; their backing remains owned until
+    // those handles retire. Raw borrowed views must not cross this boundary.
+    bool reset_actual_subtree(NativeHeapFailure&) noexcept;
     bool shutdown(NativeHeapFailure&) noexcept;
     NativeHeapOwner(const NativeHeapOwner&) = delete;
     NativeHeapOwner& operator=(const NativeHeapOwner&) = delete;

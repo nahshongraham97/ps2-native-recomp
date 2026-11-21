@@ -2,6 +2,7 @@
 
 #include "mka/retail_game_session.hpp"
 #include "mka/retail_initial_task_required.hpp"
+#include "mka/retail_main_lifetime.hpp"
 #include "mka/retail_task_registry.hpp"
 
 #include <memory>
@@ -12,7 +13,7 @@ struct NativeRetailMainState;
 class NativeRetailInputParticipant;
 
 enum class RetailInitialTaskError {
-    none, missing_session, foreign_session, wrong_thread, missing_source_owner,
+    none, missing_session, foreign_session, wrong_thread, retired_main, missing_source_owner,
     invalid_menu_index, missing_child, invalid_child_step, after_effect_unknown,
     allocation, native_exception
 };
@@ -50,7 +51,8 @@ private:
         std::shared_ptr<NativeRetailGameSession>) noexcept;
     NativeRetailInitialTaskState& checked_state() const;
     NativeRetailMainState& main_;
-    std::shared_ptr<NativeRetailGameSession> session_;
+    std::weak_ptr<NativeRetailMainLifetime> main_lifetime_;
+    std::weak_ptr<NativeRetailGameSession> session_;
     std::shared_ptr<NativeRetailInitialChild> child_;
     std::shared_ptr<NativeRetailMenuContinuation> menu_;
     Phase phase_{Phase::reset};
@@ -74,7 +76,8 @@ private:
     };
     NativeRetailInitialTaskState& checked_state() const;
     NativeRetailMainState& main_;
-    std::shared_ptr<NativeRetailGameSession> session_;
+    std::weak_ptr<NativeRetailMainLifetime> main_lifetime_;
+    std::weak_ptr<NativeRetailGameSession> session_;
     std::shared_ptr<NativeRetailInputParticipant> first_, second_;
     std::shared_ptr<NativeRetailInitialChild> child_;
     unsigned selected_index_{};

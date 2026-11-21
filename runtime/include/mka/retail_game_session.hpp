@@ -3,6 +3,9 @@
 #include "mka/retail_initial_task_state.hpp"
 #include "mka/retail_game_controls.hpp"
 #include "mka/retail_game_record_values.hpp"
+#include "mka/retail_game_records_values.hpp"
+#include "mka/retail_game_task_lists.hpp"
+#include "mka/retail_initial_game_tasks.hpp"
 #include "mka/retail_main_settings.hpp"
 #include "mka/retail_random.hpp"
 #include "mka/retail_task_domain.hpp"
@@ -12,7 +15,7 @@
 #include <thread>
 
 namespace mka::retail {
-enum class RetailGameSessionError { none, wrong_thread, allocation, controls, settings, native_exception, task_domain };
+enum class RetailGameSessionError { none, wrong_thread, allocation, controls, settings, native_exception, task_domain, task_lists, initial_game_tasks };
 struct RetailGameSessionFailure {
     RetailGameSessionError kind{RetailGameSessionError::none};
     const char* operation{""};
@@ -20,6 +23,8 @@ struct RetailGameSessionFailure {
     RetailMainSettingsFailure settings;
     RetailRandomFailure random;
     RetailTaskDomainFailure task_domain;
+    RetailGameTaskListFailure task_lists;
+    RetailInitialGameTaskFailure initial_game_tasks;
 };
 // Native game globals outlive an individual main/frame-control object. This
 // owner has no guest address map, register state or platform device model.
@@ -41,6 +46,19 @@ public:
     NativeRetailInitialTaskState* initial_task_state(RetailGameSessionFailure&) noexcept;
     NativeRetailTaskDomain* task_domain(RetailGameSessionFailure&) noexcept;
     RetailGameRecordResetSnapshot* game_record_values(RetailGameSessionFailure&) noexcept;
+    RetailGameRecordsValues* game_records_values(RetailGameSessionFailure&) noexcept;
+    bool ensure_game_task_lists(std::shared_ptr<NativeRetailGamePool>,
+        RetailGameSessionFailure&) noexcept;
+    std::shared_ptr<NativeRetailGameTaskLists> game_task_lists(
+        RetailGameSessionFailure&) const noexcept;
+    bool ensure_initial_game_tasks(std::shared_ptr<NativeRetailGamePool>,
+        RetailGameSessionFailure&) noexcept;
+    std::shared_ptr<NativeRetailInitialGameTasks> initial_game_tasks(
+        RetailGameSessionFailure&) const noexcept;
+    bool retain_source_task_1588c0(std::shared_ptr<NativeRetailTaskObject>,
+        RetailGameSessionFailure&) noexcept;
+    std::shared_ptr<NativeRetailTaskObject> source_task_1588c0(
+        RetailGameSessionFailure&) const noexcept;
 private:
     NativeRetailGameSession(std::shared_ptr<NativeRetailGameControls>,
         std::shared_ptr<NativeRetailMainSettings>,
@@ -52,6 +70,10 @@ private:
     NativeRetailAuxiliaryWords auxiliary_;
     NativeRetailInitialTaskState initial_task_state_;
     RetailGameRecordResetSnapshot game_record_values_;
+    RetailGameRecordsValues game_records_values_;
+    std::shared_ptr<NativeRetailGameTaskLists> game_task_lists_;
+    std::shared_ptr<NativeRetailInitialGameTasks> initial_game_tasks_;
+    std::shared_ptr<NativeRetailTaskObject> source_task_1588c0_;
     std::int32_t scalar_mode_{}; // Source scalar has BSS zero birth, no guest storage.
     const std::thread::id owner_thread_{std::this_thread::get_id()};
 };

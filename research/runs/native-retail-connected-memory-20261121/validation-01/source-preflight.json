@@ -1,0 +1,20 @@
+{
+  "sources": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\native_heap.hpp": "d4eb879e7d50f0be7f8f8bf9445f59aa5cc0e6665f4755ec8592309274c131cd",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\native_heap.cpp": "a9ad818913a0bc001503763c5c1ee2c3cfab2c0250df462c50491b52d9eacd2a",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_memory_owners.hpp": "531ed15073d590f3dae7938a6dc1e0cb4311ee63e98899d4caf9aa7132b365e3",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_memory_owners.cpp": "c9d4d62cada1e729a1dfeccd90463958f10951c35928a6f48395bdd6aee41dd6",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_native_heap_owner.cpp": "43de1bcd15b8ae2b1903df8b9394ec47e56067854f65ba9d06eee7971944e9f0",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_native_heap_inflight.cpp": "7e8c42bedc988192dc114ed5bf7ef0139eb1454e36f18c3e60c4f5da91a25bd0",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_memory_owners.cpp": "4a364198a9d873c6eb9fb97549e6a6050187bfa31a78309f265d0fb3cd10ff38",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\wave_allocation.hpp": "0bfd51ba82b917d6e16fbfbca887cfdcdab84e0440a33c548a691d7fa8971a96",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\wave_allocation.cpp": "af67ad29db705cf1aaff52e674fa5aa9bf14f3aeca3f6e16c558f49110ae3587",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_game.cmake": "b148a61ddbe172a7b16c4d862a0bbbf65ae48adf991555592e6955c3fd3f7361"
+  },
+  "protected_inputs": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\iop\\mcserv.cpp": "ad2731a341409d87ffe1b171e99f28d7cedc5004aaf375a565d78673333414fb",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\iop\\msl_native.cpp": "756cfb3867ebb440223ddb8ab6fe441ad6f9f54d35e4119a8342f8dd9063bb23",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\doc-audit-20261118\\inventory.json": "26093151039b949348184f2e8a960b92d64e7f08408d43e58e1e0ed481a959f6",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\SLUS_214.10": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f"
+  }
+}

@@ -1,9 +1,35 @@
 #include "mka/retail_memory_owners.hpp"
+#include <cstdio>
 #include <new>
 #include <utility>
 
 namespace mka::retail {
+namespace detail {
+class RetailWaveOverlaySource final : public memory::WaveAlternateOwnerSource {
+public:
+    std::optional<std::shared_ptr<memory::NativeHeapOwner>> current(
+        memory::WaveAllocationFailure& f) override {
+        f={}; std::lock_guard lock(mutex_); return parent_;
+    }
+    void publish(std::shared_ptr<memory::NativeHeapOwner> parent) {
+        std::shared_ptr<memory::NativeHeapOwner> old;
+        { std::lock_guard lock(mutex_); old=std::move(parent_); parent_=std::move(parent); }
+    }
+private:
+    std::mutex mutex_;
+    std::shared_ptr<memory::NativeHeapOwner> parent_; // Original64EC50 BSS zero.
+};
+}
 namespace {
+class NativeWaveLog final : public memory::WaveAllocationDiagnostics {
+public:
+    bool report(const memory::WaveAllocationDiagnostic& d) override {
+        return std::fprintf(stderr,"[native-memory] Wave %s request=%llu bytes=%zu exhausted=%u\n",
+            d.kind==memory::WaveDiagnosticKind::overflow_attempt?"overflow allocation":"allocation failed",
+            static_cast<unsigned long long>(d.request),d.requested_bytes,d.exhausted_attempts)>=0 &&
+            std::fflush(stderr)==0;
+    }
+};
 constexpr const char* names[] = {"System", "Permanent", "Section", "mwFile", "Wave", "MPEG", "SECTION_TABLE", "OVERFLOW"};
 constexpr RetailMemoryPolicy policies[] = {
     RetailMemoryPolicy::logical_root, RetailMemoryPolicy::ordinary, RetailMemoryPolicy::ordinary,
@@ -140,5 +166,67 @@ std::shared_ptr<memory::NativeWaveAllocator> NativeRetailMemoryOwners::wave_allo
         if (!wave_) { fail(f, RetailMemoryOwnerError::wave_unbound); return {}; }
         return wave_;
     } catch (...) { fail(f, RetailMemoryOwnerError::native_exception); return {}; }
+}
+bool NativeRetailMemoryOwners::reset_wave_payloads(RetailMemoryOwnerFailure& f) noexcept {
+    f = {};
+    try {
+        {
+            std::lock_guard lock(mutex_);
+            if (wave_binding_) return fail(f, RetailMemoryOwnerError::wave_binding_active);
+        }
+        if (!owners_[4]->reset_actual_subtree(f.heap))
+            return fail(f, RetailMemoryOwnerError::heap);
+        return true;
+    } catch (...) { return fail(f, RetailMemoryOwnerError::native_exception); }
+}
+bool NativeRetailMemoryOwners::bind_wave_native_source(RetailMemoryOwnerFailure& f) noexcept {
+    f={}; bool admitted=false;
+    try {
+        {
+            std::lock_guard lock(mutex_);
+            if(wave_) return fail(f,RetailMemoryOwnerError::wave_already_bound);
+            if(wave_binding_) return fail(f,RetailMemoryOwnerError::wave_binding_active);
+            wave_binding_=admitted=true;
+        }
+        auto source=std::make_shared<detail::RetailWaveOverlaySource>();
+        memory::WaveAllocationBindings b;
+        b.wave=owners_[4];
+        b.alternate_state=memory::WaveAlternateState::native_source;
+        b.alternate_source=source;
+        b.overflow_state=memory::WaveOverflowState::ordinary_owner;
+        b.overflow=overflow_;
+        b.diagnostics=std::make_shared<NativeWaveLog>();
+        std::shared_ptr<memory::NativeWaveAllocator> wave=memory::NativeWaveAllocator::create(std::move(b),f.wave);
+        {
+            std::lock_guard lock(mutex_);
+            wave_binding_=admitted=false;
+            if(!wave) return fail(f,RetailMemoryOwnerError::wave_binding);
+            wave_=std::move(wave); wave_source_=std::move(source);
+        }
+        return true;
+    } catch(const std::bad_alloc&) { fail(f,RetailMemoryOwnerError::allocation_failed); }
+    catch(...) { fail(f,RetailMemoryOwnerError::native_exception); }
+    if(admitted) { std::lock_guard lock(mutex_); wave_binding_=false; }
+    return false;
+}
+bool NativeRetailMemoryOwners::publish_wave_overlay_parent(
+    std::shared_ptr<memory::NativeHeapOwner> parent,RetailMemoryOwnerFailure& f) noexcept {
+    f={};
+    try {
+        std::shared_ptr<detail::RetailWaveOverlaySource> source;
+        {
+            std::lock_guard lock(mutex_);
+            if(wave_binding_) return fail(f,RetailMemoryOwnerError::wave_binding_active);
+            source=wave_source_;
+        }
+        if(!source) return fail(f,RetailMemoryOwnerError::wave_unbound);
+        std::optional<memory::NativeHeapRequest> admitted;
+        if(parent) {
+            admitted=parent->retain_request(f.heap);
+            if(!admitted) return fail(f,RetailMemoryOwnerError::heap);
+        }
+        source->publish(std::move(parent));
+        return true;
+    } catch(...) { return fail(f,RetailMemoryOwnerError::native_exception); }
 }
 } // namespace mka::retail

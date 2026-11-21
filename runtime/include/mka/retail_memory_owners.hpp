@@ -8,6 +8,7 @@
 #include <optional>
 
 namespace mka::retail {
+namespace detail { class RetailWaveOverlaySource; }
 enum class RetailMemoryRole {
     system, permanent, section, mw_file, wave, mpeg, section_table, overflow,
     disabled_first, disabled_second
@@ -49,6 +50,12 @@ public:
         std::shared_ptr<memory::NativeHeapOwner> actual_alternate,
         std::shared_ptr<memory::WaveAllocationDiagnostics>, RetailMemoryOwnerFailure&) noexcept;
     std::shared_ptr<memory::NativeWaveAllocator> wave_allocator(RetailMemoryOwnerFailure&) const noexcept;
+    bool reset_wave_payloads(RetailMemoryOwnerFailure&) noexcept;
+    // Production311390 callback ownership. The source overlay starts absent;
+    //3DDA70 publishes its current actual native parent through this source.
+    bool bind_wave_native_source(RetailMemoryOwnerFailure&) noexcept;
+    bool publish_wave_overlay_parent(std::shared_ptr<memory::NativeHeapOwner>,
+        RetailMemoryOwnerFailure&) noexcept;
     NativeRetailMemoryOwners(const NativeRetailMemoryOwners&) = delete;
     NativeRetailMemoryOwners& operator=(const NativeRetailMemoryOwners&) = delete;
 private:
@@ -58,5 +65,6 @@ private:
     mutable std::mutex mutex_;
     bool wave_binding_{};
     std::shared_ptr<memory::NativeWaveAllocator> wave_;
+    std::shared_ptr<detail::RetailWaveOverlaySource> wave_source_;
 };
 } // namespace mka::retail

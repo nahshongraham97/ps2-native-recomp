@@ -232,10 +232,13 @@ std::optional<NativeStartupSources> emit_native_startup_closure(std::span<const 
         return NativeStartupSources{R"STARTUP(#pragma once
 #include "mka/content_volume.hpp"
 #include "mka/retail_memory_owners.hpp"
+#include "mka/retail_game_records.hpp"
 #include "mka/retail_profile_main_state.hpp"
 #include "mka/retail_active_overlay.hpp"
 #include "mka/retail_section_workspace.hpp"
 #include "mka/retail_game_record_reset.hpp"
+#include "mka/retail_game_pool.hpp"
+#include "mka/retail_text_storage.hpp"
 #include "mka/retail_crt.hpp"
 #include "mka/retail_platform.hpp"
 #include "mka/retail_main_timing.hpp"
@@ -250,8 +253,8 @@ std::optional<NativeStartupSources> emit_native_startup_closure(std::span<const 
 #include <utility>
 #include <vector>
 namespace mka::retail {
-enum class StartupError {none,missing_boot_argument,malformed_boot_argument,missing_directory_separator,content,allocation,host_capacity,native_exception,memory_owners,already_initialized,crt,platform,main_timing,game_session,middleware,middleware_frame,profile_main,active_overlay,section_workspace,game_record_reset};
-struct StartupFailure {StartupError kind=StartupError::none;const char* operation="";content::ContentVolumeFailure content;RetailMemoryOwnerFailure memory;RetailCrtFailure crt;RetailPlatformFailure platform;RetailMainTimingFailure timing;RetailGameSessionFailure game;RetailMiddlewareWorkFailure middleware;RetailMiddlewareFrameFailure middleware_frame;RetailProfileMainFailure profile_main;RetailActiveOverlayFailure active_overlay;RetailSectionWorkspaceFailure section_workspace;RetailGameRecordResetFailure game_record_reset;};
+enum class StartupError {none,missing_boot_argument,malformed_boot_argument,missing_directory_separator,content,allocation,host_capacity,native_exception,memory_owners,already_initialized,crt,platform,main_timing,game_session,middleware,middleware_frame,profile_main,active_overlay,section_workspace,game_record_reset,game_records,text_storage};
+struct StartupFailure {StartupError kind=StartupError::none;const char* operation="";content::ContentVolumeFailure content;RetailMemoryOwnerFailure memory;RetailCrtFailure crt;RetailPlatformFailure platform;RetailMainTimingFailure timing;RetailGameSessionFailure game;RetailMiddlewareWorkFailure middleware;RetailMiddlewareFrameFailure middleware_frame;RetailProfileMainFailure profile_main;RetailActiveOverlayFailure active_overlay;RetailSectionWorkspaceFailure section_workspace;RetailGameRecordResetFailure game_record_reset;RetailGameRecordsMainFailure game_records;RetailTextStorageFailure text_storage;};
 // Native-owned replacements for the original startup arguments and writable
 // content/path state. Host executable location, boot-resource string and volume
 // are separate inputs; no guest argument block, pointer table or BSS is retained.
@@ -260,6 +263,7 @@ struct NativeRetailStartupState {
     std::vector<std::string> boot_arguments;
     std::string resource_prefix,boot_directory;
     std::unique_ptr<NativeRetailMemoryOwners> memory_owners;
+    std::shared_ptr<NativeRetailGamePool> game_pool;
     std::unique_ptr<NativeRetailSectionWorkspace> section_workspace;
     // Companion class owners below retire before the actual overlay parent.
     std::unique_ptr<NativeRetailActiveOverlay> active_overlay;
@@ -272,6 +276,7 @@ struct NativeRetailStartupState {
     std::unique_ptr<NativeRetailMiddlewareFrame> middleware_frame;
     std::shared_ptr<NativeRetailGameSession> game_session;
     std::unique_ptr<NativeRetailGameRecordReset> game_record_reset;
+    std::shared_ptr<NativeRetailTextStorage> text_storage;
     NativeRetailStartupState(content::NativeContentVolume volume,std::vector<std::string> arguments)
         :content(std::move(volume)),boot_arguments(std::move(arguments)){}
 };
@@ -328,6 +333,7 @@ bool initialize_retail_memory_owners(NativeRetailStartupState& state,StartupFail
     if(state.memory_owners){f={StartupError::already_initialized,"retail memory owner group already initialized"};return false;}
     auto owners=NativeRetailMemoryOwners::create(f.memory);
     if(!owners){f.kind=StartupError::memory_owners;f.operation="retail main memory owner group";return false;}
+    if(!owners->bind_wave_native_source(f.memory)){f.kind=StartupError::memory_owners;f.operation="311390 real native Wave callback source";return false;}
     state.memory_owners=std::move(owners);return true;
 }
 } // namespace mka::retail

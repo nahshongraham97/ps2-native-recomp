@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_text_storage.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_RETAIL_TEXT_STORAGE: real Wave allocation, exact4-frame/signed countdown, nonzero phase, shared growing pool; game text producer integration open\n",
+  "stderr": "",
+  "executable_sha256": "69dd255a8f75978866f17cd500d3831308021139bd7835feee4d57ab3a030b80",
+  "executable_after_sha256": "69dd255a8f75978866f17cd500d3831308021139bd7835feee4d57ab3a030b80"
+}

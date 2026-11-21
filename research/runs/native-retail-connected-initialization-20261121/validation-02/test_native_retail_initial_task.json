@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_initial_task.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-connected-initialization-20261121\\validation-02\\disposable-initial-task-content"
+  ],
+  "exit": 1,
+  "stdout": "",
+  "stderr": "FAIL native initial task: direct parent run refuses wrong thread before Main read or child effects\n",
+  "executable_sha256": "418602b359dd5af3c01cd37c3f6810c8c1ec25b5c074718e4fb9c83795f9d3b8",
+  "executable_after_sha256": "418602b359dd5af3c01cd37c3f6810c8c1ec25b5c074718e4fb9c83795f9d3b8"
+}

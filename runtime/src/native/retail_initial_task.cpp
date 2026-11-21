@@ -76,7 +76,7 @@ RetailInitialTaskException::RetailInitialTaskException(
 
 NativeRetailInitialTaskBody::NativeRetailInitialTaskBody(
     NativeRetailMainState& main,std::shared_ptr<NativeRetailGameSession> session) noexcept
-    : main_(main),session_(std::move(session)) {}
+    : main_(main),main_lifetime_(main.lifetime),session_(session) {}
 
 std::shared_ptr<NativeRetailInitialTaskBody> NativeRetailInitialTaskBody::create(
     NativeRetailMainState& main,std::shared_ptr<NativeRetailGameSession> session,
@@ -89,6 +89,10 @@ std::shared_ptr<NativeRetailInitialTaskBody> NativeRetailInitialTaskBody::create
     RetailGameSessionFailure sf;
     if(!session->validate_current_thread(sf)) {
         f={RetailInitialTaskError::wrong_thread,"initial task game session owner thread"};
+        return {};
+    }
+    if(!main.lifetime || !main.lifetime->active_on_owner_thread()) {
+        f={RetailInitialTaskError::retired_main,"initial task Main lifetime retired"};
         return {};
     }
     if(main.startup.game_session!=session) {
@@ -107,19 +111,30 @@ std::shared_ptr<NativeRetailInitialTaskBody> NativeRetailInitialTaskBody::create
 }
 
 NativeRetailInitialTaskState& NativeRetailInitialTaskBody::checked_state() const {
-    if(!session_)
+    const auto session=session_.lock();
+    if(!session)
         fail(RetailInitialTaskError::missing_session,"initial task game session missing");
-    return state_for(main_,*session_);
+    RetailGameSessionFailure sf;
+    if(!session->validate_current_thread(sf))
+        fail(RetailInitialTaskError::wrong_thread,
+             "initial task game session owner thread");
+    const auto witness=main_lifetime_.lock();
+    if(!witness || !witness->active_on_owner_thread())
+        fail(RetailInitialTaskError::retired_main,"initial task Main lifetime retired");
+    return state_for(main_,*session);
 }
 
 NativeTaskStep NativeRetailInitialTaskBody::run() {
+    const auto session=session_.lock();
+    if(!session)
+        fail(RetailInitialTaskError::missing_session,"initial task game session missing");
     (void)checked_state(); // Admission before reading or changing body state.
     if(after_effect_unknown_)
         fail(RetailInitialTaskError::after_effect_unknown,"initial task prior partial effect");
     try {
         for(;;) switch(phase_) {
         case Phase::reset:
-            initial_task_required::run_reset_18d970(main_,*session_);
+            initial_task_required::run_reset_18d970(main_,*session);
             phase_=Phase::start_words;
             break;
         case Phase::start_words: {
@@ -136,7 +151,7 @@ NativeTaskStep NativeRetailInitialTaskBody::run() {
             break;
         }
         case Phase::begin_intro:
-            child_=initial_task_required::begin_intro_18deb0(main_,*session_);
+            child_=initial_task_required::begin_intro_18deb0(main_,*session);
             if(!child_) fail(RetailInitialTaskError::missing_child,"18DEB0 intro procedure owner");
             phase_=Phase::advance_intro;
             break;
@@ -154,7 +169,7 @@ NativeTaskStep NativeRetailInitialTaskBody::run() {
             break;
         }
         case Phase::begin_prompt:
-            child_=initial_task_required::begin_prompt_18dc10(main_,*session_);
+            child_=initial_task_required::begin_prompt_18dc10(main_,*session);
             if(!child_) fail(RetailInitialTaskError::missing_child,"18DC10 prompt procedure owner");
             phase_=Phase::advance_prompt;
             break;
@@ -183,7 +198,7 @@ NativeTaskStep NativeRetailInitialTaskBody::run() {
             phase_=Phase::yield_menu;
             break;
         case Phase::yield_menu: {
-            menu_=std::make_shared<NativeRetailMenuContinuation>(main_,session_);
+            menu_=std::make_shared<NativeRetailMenuContinuation>(main_,session);
             phase_=Phase::yielded;
             return NativeTaskStep::yield(menu_,0.0f);
         }
@@ -213,16 +228,27 @@ void NativeRetailInitialTaskBody::cleanup(bool release_allowed) {
 
 NativeRetailMenuContinuation::NativeRetailMenuContinuation(
     NativeRetailMainState& main,std::shared_ptr<NativeRetailGameSession> session) noexcept
-    : main_(main),session_(std::move(session)) {}
+    : main_(main),main_lifetime_(main.lifetime),session_(session) {}
 NativeRetailInitialTaskState& NativeRetailMenuContinuation::checked_state() const {
-    if(!session_)
+    const auto session=session_.lock();
+    if(!session)
         fail(RetailInitialTaskError::missing_session,"menu continuation game session missing");
-    return state_for(main_,*session_);
+    RetailGameSessionFailure sf;
+    if(!session->validate_current_thread(sf))
+        fail(RetailInitialTaskError::wrong_thread,
+             "menu continuation game session owner thread");
+    const auto witness=main_lifetime_.lock();
+    if(!witness || !witness->active_on_owner_thread())
+        fail(RetailInitialTaskError::retired_main,"menu continuation Main lifetime retired");
+    return state_for(main_,*session);
 }
 bool NativeRetailMenuContinuation::has_pending_child() const noexcept {
     return bool(child_);
 }
 NativeTaskStep NativeRetailMenuContinuation::run() {
+    const auto session=session_.lock();
+    if(!session)
+        fail(RetailInitialTaskError::missing_session,"menu continuation game session missing");
     (void)checked_state(); // Admission before reading or changing procedure state.
     if(after_effect_unknown_)
         fail(RetailInitialTaskError::after_effect_unknown,"menu continuation prior partial effect");
@@ -280,7 +306,7 @@ NativeTaskStep NativeRetailMenuContinuation::run() {
             break;
         }
         case Phase::begin_body:
-            child_=menu_factories[selected_index_](main_,*session_);
+            child_=menu_factories[selected_index_](main_,*session);
             if(!child_) fail(RetailInitialTaskError::missing_child,"18DB60 indexed child owner");
             phase_=Phase::advance_body;
             break;

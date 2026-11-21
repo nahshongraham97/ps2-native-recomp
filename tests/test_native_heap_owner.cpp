@@ -163,6 +163,53 @@ void request_guard_lifetime() {
     require(destructor_owner->observe().active_requests == 0 && destructor_owner->shutdown(f),
             "request destructor retires exactly once");
 }
+void payload_reset_preserves_owners() {
+    auto wave = owner("Wave reset target");
+    auto leaf = owner("persistent class identity", wave);
+    auto unrelated = owner("unrelated actual owner");
+    auto requested = owner("foreign requested identity");
+    NativeHeapFailure f;
+    const auto wave_id = wave->observe().identity;
+    const auto leaf_id = leaf->observe().identity;
+    auto direct = wave->allocate(64, f);
+    auto in_child = requested->allocate_from(leaf, 96, f);
+    auto outside = wave->allocate_from(unrelated, 128, f);
+    require(direct && in_child && outside, "real reset payloads in distinct actual/requested domains");
+    auto* retained_bytes = static_cast<unsigned char*>(in_child->data());
+    retained_bytes[95] = 71;
+    auto request = leaf->retain_request(f);
+    require(request && !wave->reset_actual_subtree(f) && f.kind == NativeHeapError::owner_busy,
+            "subtree reset refuses active request without partial retirement");
+    require(*direct && *in_child && *outside && requested->observe().requested_live_allocations == 1,
+            "failed reset preserves all backing/counters");
+    require(request->release() && wave->reset_actual_subtree(f), "quiescent actual payload reset");
+    require(!*direct && !direct->data() && !*in_child && !in_child->data() && *outside,
+            "reset invalidates subtree handles but keeps foreign actual allocation");
+    require(retained_bytes[95] == 71, "invalidated handle still owns physical backing until retirement");
+    require(wave->observe().active && leaf->observe().active && wave->observe().identity == wave_id &&
+            leaf->observe().identity == leaf_id && wave->observe().child_owners == 1,
+            "payload reset preserves parent/child identities and live owner registration");
+    require(requested->observe().live_allocations == 0 && leaf->observe().actual_live_allocations == 0 &&
+            wave->observe().requested_live_allocations == 1 && unrelated->observe().actual_live_allocations == 1,
+            "actual reset retires both roles exactly once, without requested-tag substitution");
+    require(!in_child->release(f) && f.kind == NativeHeapError::already_released,
+            "stale reset handle cannot free or decrement again");
+    direct.reset(); in_child.reset();
+    require(requested->observe().live_allocations == 0, "stale handle destructors do not underflow");
+    auto replacement = leaf->allocate(160, f);
+    require(replacement && *replacement && wave->reset_actual_subtree(f) && !*replacement &&
+            wave->reset_actual_subtree(f), "same child allocates after reset; normal repeated empty reset succeeds");
+    replacement.reset();
+    auto foreign_request = requested->retain_request(f);
+    auto routed = requested->allocate_from(leaf, 16, f);
+    require(routed && !wave->reset_actual_subtree(f) && f.kind == NativeHeapError::owner_busy && *routed,
+            "foreign request still using selected actual payload blocks reset");
+    require(foreign_request->release() && wave->reset_actual_subtree(f) && !*routed,
+            "foreign request completion allows correct actual retirement");
+    routed.reset();
+    require(outside->release(f) && leaf->shutdown(f) && wave->shutdown(f) &&
+            unrelated->shutdown(f) && requested->shutdown(f), "reset owners remain normally destructible");
+}
 void host_failure_and_concurrency() {
     auto heap = owner("host failure");
     NativeHeapFailure f;
@@ -207,5 +254,6 @@ int main() {
     routing_parent_and_lifetime();
     host_failure_and_concurrency();
     request_guard_lifetime();
-    std::cout << "PASS_NATIVE_HEAP_OWNER: 4 groups real aligned storage/roles/request guards/routing/lifetime/concurrency; no retail initialization or source callback claim\n";
+    payload_reset_preserves_owners();
+    std::cout << "PASS_NATIVE_HEAP_OWNER: 5 groups real aligned storage/roles/request guards/routing/lifetime/concurrency/subtree reset; complete retail initialization remains open\n";
 }

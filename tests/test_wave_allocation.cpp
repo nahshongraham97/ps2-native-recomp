@@ -186,6 +186,49 @@ void reentrant_diagnostic() {
     check(allocation && attempts == 3 && d.sink->events.size() == 1, "source-ordered outer route survives real nested native request");
     NativeHeapFailure release; check(allocation->release(release), "outer reentrant route real free"); d.retired();
 }
+void current_native_overlay_source() {
+    struct Source final : WaveAlternateOwnerSource {
+        unsigned reads{};
+        std::shared_ptr<NativeHeapOwner> selected;
+        std::optional<std::shared_ptr<NativeHeapOwner>> current(WaveAllocationFailure& f) override {
+            ++reads; f={}; return selected;
+        }
+    };
+    Domain d;
+    auto source=std::make_shared<Source>();
+    WaveAllocationBindings b;
+    b.wave=d.wave;
+    b.alternate_state=WaveAlternateState::native_source;
+    b.alternate_source=source;
+    b.overflow_state=WaveOverflowState::disabled;
+    b.diagnostics=d.sink;
+    WaveAllocationFailure f;
+    d.allocator=NativeWaveAllocator::create(std::move(b),f);
+    check(bool(d.allocator),"native current-owner source binding");
+    d.sink->allocator=d.allocator.get();
+    arm(0);
+    auto allocation=d.allocator->allocate(request_size,f);
+    NativeHeapFailure hf;
+    check(allocation&&source->reads==0&&attempts==1&&allocation->release(hf),
+          "source310850 primary success does not read alternate owner");
+    source->selected=d.alternate;
+    arm(1); allocation=d.allocator->allocate(request_size,f);
+    check(allocation&&source->reads==1&&attempts==2&&allocation->actual_owner()==d.alternate->observe().identity&&
+          allocation->release(hf),"primary failure reads current real overlay owner");
+    auto next=owner("new actual overlay publication");
+    source->selected=next;
+    arm(1); allocation=d.allocator->allocate(request_size,f);
+    check(allocation&&source->reads==2&&allocation->actual_owner()==next->observe().identity&&
+          allocation->release(hf),"same Wave service observes new overlay identity on next request");
+    check(next->shutdown(hf),"close actual alternate outside a request");
+    arm(0); allocation=d.allocator->allocate(request_size,f);
+    check(allocation&&source->reads==2&&attempts==1&&allocation->release(hf),
+          "unused retired alternate cannot block successful primary allocation");
+    arm(1); allocation=d.allocator->allocate(request_size,f);
+    check(!allocation&&source->reads==3&&attempts==1&&f.heap.kind==NativeHeapError::inactive_owner,
+          "actually needed retired alternate fails by name after real primary failure");
+    d.retired();
+}
 }
 extern "C" void* __real__ZnwySt11align_val_t(std::size_t, std::align_val_t);
 extern "C" void* __wrap__ZnwySt11align_val_t(std::size_t bytes, std::align_val_t alignment) {
@@ -198,6 +241,7 @@ extern "C" void* __wrap__ZnwySt11align_val_t(std::size_t bytes, std::align_val_t
 }
 int main() {
     bindings(); primary(); alternate(); overflow(); terminal(); diagnostic_errors(); lifecycle_errors(); reentrant_diagnostic();
-    std::puts("PASS_NATIVE_WAVE_ALLOCATION: 8 groups source-ordered native routes/ownership/diagnostics; test-only host faults, no retail producer execution");
+    current_native_overlay_source();
+    std::puts("PASS_NATIVE_WAVE_ALLOCATION: 9 groups source-ordered native routes/ownership/diagnostics/current overlay; test-only host faults, full production path remains open");
     return std::fflush(stdout) || std::ferror(stdout) ? 1 : 0;
 }

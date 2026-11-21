@@ -2,12 +2,19 @@
 
 #include <atomic>
 #include <limits>
+#include <list>
 #include <mutex>
 #include <new>
 #include <utility>
 
 namespace mka::memory {
+namespace {
+// Serializes registry publication/retirement, never a host allocation or callout.
+// Heap observations keep their existing independent state mutexes.
+std::recursive_mutex ownership_registry;
+}
 namespace detail {
+using AllocationLinks = std::list<std::weak_ptr<NativeAllocationRecord>>;
 struct NativeHeapState {
     std::mutex mutex;
     std::string name;
@@ -16,12 +23,28 @@ struct NativeHeapState {
     std::size_t live{}, inflight{}, children{};
     std::size_t requested_live{}, actual_live{}, requests{};
     bool overflow_attempted{};
+    bool resetting{};
     std::shared_ptr<NativeHeapState> parent;
+    std::list<std::weak_ptr<NativeHeapState>> child_states;
+    AllocationLinks allocations;
     ~NativeHeapState() {
         if (parent) {
             std::lock_guard lock(parent->mutex);
             --parent->children;
         }
+    }
+};
+struct NativeAllocationRecord {
+    void* pointer{};
+    std::size_t alignment{};
+    std::shared_ptr<NativeHeapState> requested, actual;
+    AllocationLinks::iterator requested_link, actual_link;
+    bool tracked{}; // ownership_registry protects links/counter retirement.
+    bool deleting{};
+    std::atomic<bool> valid{false};
+    ~NativeAllocationRecord() {
+        // The move-only handle drops the last record outside every owner lock.
+        if (pointer) ::operator delete(pointer, std::align_val_t{alignment});
     }
 };
 } // namespace detail
@@ -41,8 +64,10 @@ std::uint64_t identity() noexcept {
     return 0;
 }
 bool admit(const std::shared_ptr<State>& s, NativeHeapFailure& f) {
+    std::lock_guard registry(ownership_registry);
     std::lock_guard lock(s->mutex);
     if (!s->active) return fail(f, NativeHeapError::inactive_owner);
+    if (s->resetting) return fail(f, NativeHeapError::owner_busy);
     const auto max = std::numeric_limits<std::size_t>::max();
     if (s->live == max || s->inflight >= max - s->live)
         return fail(f, NativeHeapError::counter_overflow);
@@ -67,6 +92,61 @@ void released(const std::shared_ptr<State>& s, bool requested, bool actual) noex
     if (requested) --s->requested_live;
     if (actual) --s->actual_live;
 }
+// Caller owns ownership_registry. Retirement only revokes native ownership;
+// it cannot delete storage still held by a move-only allocation handle.
+void retire(detail::NativeAllocationRecord& record) noexcept {
+    if (!record.tracked) return;
+    record.valid.store(false, std::memory_order_release);
+    record.requested->allocations.erase(record.requested_link);
+    if (record.actual != record.requested)
+        record.actual->allocations.erase(record.actual_link);
+    released(record.requested, true, record.actual == record.requested);
+    if (record.actual != record.requested) released(record.actual, false, true);
+    record.tracked = false;
+}
+// The registry gate prevents child registration and fresh admission during the
+// walk. No snapshots or list nodes are allocated under this gate.
+bool freeze_subtree(const std::shared_ptr<State>& state, NativeHeapFailure& f) {
+    {
+        std::lock_guard lock(state->mutex);
+        if (!state->active) return fail(f, NativeHeapError::inactive_owner);
+        if (state->resetting || state->inflight || state->requests)
+            return fail(f, NativeHeapError::owner_busy);
+        state->resetting = true;
+    }
+    for (const auto& weak : state->child_states) {
+        auto child = weak.lock();
+        if (child && child->parent == state && !freeze_subtree(child, f)) return false;
+    }
+    for (const auto& weak : state->allocations) {
+        auto record = weak.lock();
+        if (!record || record->actual != state) continue;
+        if (record->deleting) return fail(f, NativeHeapError::owner_busy);
+        if (record->requested == state) continue;
+        std::lock_guard lock(record->requested->mutex);
+        if (record->requested->inflight || record->requested->requests)
+            return fail(f, NativeHeapError::owner_busy);
+    }
+    return true;
+}
+void thaw_subtree(const std::shared_ptr<State>& state) noexcept {
+    { std::lock_guard lock(state->mutex); state->resetting = false; }
+    for (const auto& weak : state->child_states) {
+        auto child = weak.lock();
+        if (child && child->parent == state) thaw_subtree(child);
+    }
+}
+void retire_subtree(const std::shared_ptr<State>& state) noexcept {
+    for (const auto& weak : state->child_states) {
+        auto child = weak.lock();
+        if (child && child->parent == state) retire_subtree(child);
+    }
+    for (auto it = state->allocations.begin(); it != state->allocations.end();) {
+        auto record = it->lock();
+        ++it;
+        if (record && record->actual == state) retire(*record);
+    }
+}
 } // namespace
 
 NativeHeapOwner::NativeHeapOwner(std::shared_ptr<State> state) noexcept
@@ -87,9 +167,17 @@ std::shared_ptr<NativeHeapOwner> NativeHeapOwner::create(
         // Allocate the public wrapper before registering a child; no failure follows registration.
         auto result = std::shared_ptr<NativeHeapOwner>(new NativeHeapOwner(state));
         if (parent) {
+            // Stage the weak list node before entering any owner mutex.
+            std::list<std::weak_ptr<State>> staged;
+            staged.emplace_back(state);
+            std::lock_guard registry(ownership_registry);
             std::lock_guard lock(parent->state_->mutex);
             if (!parent->state_->active) {
                 fail(f, NativeHeapError::inactive_owner);
+                return {};
+            }
+            if (parent->state_->resetting) {
+                fail(f, NativeHeapError::owner_busy);
                 return {};
             }
             if (parent->state_->children == std::numeric_limits<std::size_t>::max()) {
@@ -98,6 +186,8 @@ std::shared_ptr<NativeHeapOwner> NativeHeapOwner::create(
             }
             ++parent->state_->children;
             state->parent = parent->state_;
+            parent->state_->child_states.remove_if([](const auto& w) { return w.expired(); });
+            parent->state_->child_states.splice(parent->state_->child_states.end(), staged);
         }
         return result;
     } catch (const std::bad_alloc&) { fail(f, NativeHeapError::allocation_failed); }
@@ -138,6 +228,13 @@ std::optional<NativeAllocation> NativeHeapOwner::allocate_on(
     bool requested_admitted = false, actual_admitted = false;
     void* pointer = nullptr;
     try {
+        auto record = std::make_shared<detail::NativeAllocationRecord>();
+        record->requested = state_;
+        record->actual = target;
+        record->alignment = alignment;
+        detail::AllocationLinks requested_link, actual_link;
+        requested_link.emplace_back(record);
+        if (target != state_) actual_link.emplace_back(record);
         if (!admit(state_, f)) return {};
         requested_admitted = true;
         if (target != state_) {
@@ -149,18 +246,29 @@ std::optional<NativeAllocation> NativeHeapOwner::allocate_on(
         }
         // Host work is outside every owner mutex. Reservations prevent shutdown.
         pointer = ::operator new(rounded, std::align_val_t{alignment});
+        record->pointer = pointer;
+        pointer = nullptr; // Record now owns the physical host deleter.
         NativeAllocation result;
-        result.pointer_ = pointer;
+        result.record_ = record;
         result.requested_size_ = bytes;
         result.rounded_size_ = rounded;
         result.alignment_ = alignment;
-        result.requested_ = state_;
-        result.actual_ = target;
         // Shutdown cannot change the generation while admitted.
         result.requested_identity_ = state_->identity;
         result.actual_identity_ = target->identity;
-        complete(state_, true, true, target == state_);
-        if (actual_admitted) complete(target, true, false, true);
+        {
+            std::lock_guard registry(ownership_registry);
+            record->requested_link = requested_link.begin();
+            state_->allocations.splice(state_->allocations.end(), requested_link);
+            if (target != state_) {
+                record->actual_link = actual_link.begin();
+                target->allocations.splice(target->allocations.end(), actual_link);
+            }
+            complete(state_, true, true, target == state_);
+            if (actual_admitted) complete(target, true, false, true);
+            record->tracked = true;
+            record->valid.store(true, std::memory_order_release);
+        }
         return result;
     } catch (const std::bad_alloc&) { fail(f, NativeHeapError::allocation_failed); }
       catch (...) { fail(f, NativeHeapError::native_exception); }
@@ -173,9 +281,14 @@ std::optional<NativeAllocation> NativeHeapOwner::allocate_on(
 std::optional<NativeHeapRequest> NativeHeapOwner::retain_request(NativeHeapFailure& f) noexcept {
     f = {};
     try {
+        std::lock_guard registry(ownership_registry);
         std::lock_guard lock(state_->mutex);
         if (!state_->active) {
             fail(f, NativeHeapError::inactive_owner);
+            return {};
+        }
+        if (state_->resetting) {
+            fail(f, NativeHeapError::owner_busy);
             return {};
         }
         if (state_->requests == std::numeric_limits<std::size_t>::max()) {
@@ -224,14 +337,33 @@ void NativeHeapOwner::mark_overflow_attempted() noexcept {
     state_->overflow_attempted = true;
 }
 const std::string& NativeHeapOwner::name() const noexcept { return state_->name; }
+bool NativeHeapOwner::reset_actual_subtree(NativeHeapFailure& f) noexcept {
+    f = {};
+    try {
+        std::lock_guard registry(ownership_registry);
+        if (!freeze_subtree(state_, f)) {
+            thaw_subtree(state_);
+            return false;
+        }
+        retire_subtree(state_);
+        thaw_subtree(state_);
+        return true;
+    } catch (...) {
+        // All effected ownership is explicit; never report a completed reset.
+        std::lock_guard registry(ownership_registry);
+        thaw_subtree(state_);
+        return fail(f, NativeHeapError::native_exception);
+    }
+}
 bool NativeHeapOwner::shutdown(NativeHeapFailure& f) noexcept {
     f = {};
     std::shared_ptr<State> parent;
     try {
+        std::lock_guard registry(ownership_registry);
         {
             std::lock_guard lock(state_->mutex);
             if (!state_->active) return fail(f, NativeHeapError::inactive_owner);
-            if (state_->live || state_->inflight || state_->children || state_->requests)
+            if (state_->resetting || state_->live || state_->inflight || state_->children || state_->requests)
                 return fail(f, NativeHeapError::owner_busy);
             state_->active = false;
             ++state_->identity.generation;
@@ -250,38 +382,45 @@ NativeAllocation::NativeAllocation(NativeAllocation&& other) noexcept { *this = 
 NativeAllocation& NativeAllocation::operator=(NativeAllocation&& other) noexcept {
     if (this != &other) {
         reset();
-        pointer_ = std::exchange(other.pointer_, nullptr);
+        record_ = std::move(other.record_);
         requested_size_ = std::exchange(other.requested_size_, 0);
         rounded_size_ = std::exchange(other.rounded_size_, 0);
         alignment_ = std::exchange(other.alignment_, 0);
         requested_identity_ = std::exchange(other.requested_identity_, {});
         actual_identity_ = std::exchange(other.actual_identity_, {});
-        requested_ = std::move(other.requested_);
-        actual_ = std::move(other.actual_);
     }
     return *this;
 }
 void NativeAllocation::reset() noexcept {
-    if (!pointer_) return;
-    ::operator delete(pointer_, std::align_val_t{alignment_});
-    pointer_ = nullptr;
-    released(requested_, true, actual_ == requested_);
-    if (actual_ != requested_) released(actual_, false, true);
-    actual_.reset();
-    requested_.reset();
+    auto retained = std::move(record_);
+    if (!retained) return;
+    {
+        std::lock_guard registry(ownership_registry);
+        retained->deleting = true;
+        retained->valid.store(false, std::memory_order_release);
+    }
+    // Normal release keeps both live counters until real host deletion finishes.
+    // A prior bulk reset has already retired those logical counters; retire()
+    // then does nothing. Both routes perform the physical delete exactly once.
+    auto* pointer = std::exchange(retained->pointer, nullptr);
+    if (pointer) ::operator delete(pointer, std::align_val_t{retained->alignment});
+    { std::lock_guard registry(ownership_registry); retire(*retained); }
     requested_size_ = rounded_size_ = alignment_ = 0;
     requested_identity_ = actual_identity_ = {};
 }
+void* NativeAllocation::data() const noexcept {
+    return record_ && record_->valid.load(std::memory_order_acquire) ? record_->pointer : nullptr;
+}
 bool NativeAllocation::release(NativeHeapFailure& f) noexcept {
     f = {};
-    if (!pointer_) return fail(f, NativeHeapError::already_released);
+    if (!data()) return fail(f, NativeHeapError::already_released);
     reset();
     return true;
 }
 bool NativeAllocation::release_from(const NativeHeapOwner& owner, NativeHeapFailure& f) noexcept {
     f = {};
-    if (!pointer_) return fail(f, NativeHeapError::already_released);
-    if (actual_ != owner.state_) return fail(f, NativeHeapError::foreign_owner);
+    if (!data()) return fail(f, NativeHeapError::already_released);
+    if (record_->actual != owner.state_) return fail(f, NativeHeapError::foreign_owner);
     reset();
     return true;
 }

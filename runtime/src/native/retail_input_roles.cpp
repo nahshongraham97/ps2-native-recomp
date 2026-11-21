@@ -38,6 +38,57 @@ NativeRetailInputRoles::NativeRetailInputRoles() noexcept {
     for (auto& state : roles_) state.action_rows = retail_default_action_bindings();
 }
 
+bool NativeRetailInputRoles::initialize_roles_from_281e00(
+    RetailInputRoleFailure& failure) noexcept {
+    failure = {};
+    if (std::this_thread::get_id() != thread_) {
+        failure.kind = RetailInputRoleError::wrong_thread;
+        return false;
+    }
+    for (auto& state : roles_) {
+        state = RoleState{};
+        state.action_rows = retail_default_action_bindings();
+    }
+    // 281E00 does not write the separate association count.
+    return true;
+}
+
+bool NativeRetailInputRoles::reset_first_two_mapping_tables_from_281870(
+    RetailInputRoleFailure& failure) noexcept {
+    failure = {};
+    if (std::this_thread::get_id() != thread_) {
+        failure.kind = RetailInputRoleError::wrong_thread;
+        return false;
+    }
+    for (std::size_t position = 0; position != 2; ++position) {
+        mapping_reset_words_[position] = 0;
+        for (std::size_t row = 0; row != 16; ++row) {
+            mapping_tables_[position][0][row] = retail_default_action_bindings()[row];
+            mapping_tables_[position][1][row] = retail_default_action_bindings()[row];
+        }
+    }
+    roles_[0].source_control_word = 0;
+    roles_[1].source_control_word = 0;
+    return true;
+}
+
+std::optional<std::array<RetailActionBinding,16>>
+NativeRetailInputRoles::observe_mapping_table(
+    std::size_t position, std::size_t variant,
+    RetailInputRoleFailure& failure) const noexcept {
+    failure = {};
+    if (std::this_thread::get_id() != thread_) {
+        failure.kind = RetailInputRoleError::wrong_thread;
+        return {};
+    }
+    if (position >= mapping_tables_.size() ||
+        variant >= mapping_tables_[position].size()) {
+        failure.kind = RetailInputRoleError::invalid_mapping_table;
+        return {};
+    }
+    return mapping_tables_[position][variant];
+}
+
 std::shared_ptr<NativeRetailInputRoles> NativeRetailInputRoles::create(
     RetailInputRoleFailure& failure) noexcept {
     failure = {};

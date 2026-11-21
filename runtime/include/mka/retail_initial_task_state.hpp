@@ -30,6 +30,9 @@ public:
     bool store_start_words_from_18e100(RetailInitialTaskStateFailure&) noexcept;
     bool store_first_run_from_18e100(RetailInitialTaskStateFailure&) noexcept;
     bool store_menu_index_from_source(std::int32_t, RetailInitialTaskStateFailure&) noexcept;
+    // 18D430(0) stores the new menu index, then advances 6602EC.
+    bool reset_menu_index_and_advance_cycle_from_18d430(
+        RetailInitialTaskStateFailure&) noexcept;
     // Source 18DB60 wraps >=22 to one and increments 6602EC, then stores
     // index+1 before invoking the indexed body. Returns the selected slot.
     std::optional<unsigned> select_menu_body_from_18db60(RetailInitialTaskStateFailure&) noexcept;

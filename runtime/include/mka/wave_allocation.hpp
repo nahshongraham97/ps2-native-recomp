@@ -8,7 +8,7 @@
 
 namespace mka::memory {
 
-enum class WaveAlternateState { unbound, absent, ordinary_owner };
+enum class WaveAlternateState { unbound, absent, ordinary_owner, native_source };
 enum class WaveOverflowState { unbound, disabled, ordinary_owner };
 enum class WaveAllocationStage { primary, alternate, overflow, terminal };
 enum class WaveAllocationError {
@@ -20,6 +20,14 @@ struct WaveAllocationFailure {
     WaveAllocationError kind{WaveAllocationError::none};
     WaveAllocationStage stage{WaveAllocationStage::primary};
     NativeHeapFailure heap;
+};
+// A native producer publishes the current overlay owner. Source310850 reads
+// this only after the primary allocation fails, not at service construction.
+class WaveAlternateOwnerSource {
+public:
+    virtual ~WaveAlternateOwnerSource() = default;
+    // Engaged null is proven absence; disengaged is a named failure.
+    virtual std::optional<std::shared_ptr<NativeHeapOwner>> current(WaveAllocationFailure&) = 0;
 };
 enum class WaveDiagnosticKind { overflow_attempt, terminal_failure };
 struct WaveAllocationDiagnostic {
@@ -43,6 +51,7 @@ struct WaveAllocationBindings {
     std::shared_ptr<NativeHeapOwner> wave;
     WaveAlternateState alternate_state{WaveAlternateState::unbound};
     std::shared_ptr<NativeHeapOwner> alternate;
+    std::shared_ptr<WaveAlternateOwnerSource> alternate_source;
     WaveOverflowState overflow_state{WaveOverflowState::unbound};
     std::shared_ptr<NativeHeapOwner> overflow;
     std::shared_ptr<WaveAllocationDiagnostics> diagnostics;

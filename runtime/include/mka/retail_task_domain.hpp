@@ -51,7 +51,10 @@ public:
         std::shared_ptr<NativeRetailGameControls>,
         RetailTaskDomainFailure&) noexcept;
     bool seed_counter_from_185ee0(RetailTaskDomainFailure&) noexcept;
-    bool reset_task_roots_from_12f0d0(RetailTaskDomainFailure&) noexcept;
+    bool reset_task_roots_from_12f0d0(
+        std::shared_ptr<NativeRetailGamePool>, RetailTaskDomainFailure&) noexcept;
+    bool cancel_first_root_from_12f030(RetailTaskDomainFailure&);
+    bool dispatch_first_root_zero_flags_from_12e4e0(RetailTaskDomainFailure&);
     bool override_cookie_from_130ab0(std::uint32_t,
         RetailTaskDomainFailure&) noexcept;
     std::optional<std::uint32_t> next_cookie_from_130a50(
@@ -88,6 +91,7 @@ private:
     std::uint32_t live_current_word_{5}; // 64C7C0 original ELF word.
     std::uint32_t live_partner_word_{5}; // 64C7C4 original ELF word.
     std::int32_t return_guard_64ea98_{}; // Original BSS zero.
+    bool root_wait_inhibited_{}; // 64DF64, cleared by 12F0D0.
     RetailTaskLiveFollowup pending_followup_{RetailTaskLiveFollowup::none};
     const std::thread::id owner_thread_{std::this_thread::get_id()};
 };

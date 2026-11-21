@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_wave_allocation.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_WAVE_ALLOCATION: 9 groups source-ordered native routes/ownership/diagnostics/current overlay; test-only host faults, full production path remains open\n",
+  "stderr": "",
+  "executable_sha256": "c4e296b049ba4ac8b33ee58d58ff17a6f7c29f0349e6402698157efaa5af7518",
+  "executable_after_sha256": "c4e296b049ba4ac8b33ee58d58ff17a6f7c29f0349e6402698157efaa5af7518"
+}

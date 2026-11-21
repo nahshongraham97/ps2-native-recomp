@@ -58,6 +58,7 @@ bool NativeRetailTaskDomain::seed_counter_from_185ee0(
 }
 
 bool NativeRetailTaskDomain::reset_task_roots_from_12f0d0(
+    std::shared_ptr<NativeRetailGamePool> pool,
     RetailTaskDomainFailure& f) noexcept {
     if (!access(f)) return false;
     if (registry_) {
@@ -72,7 +73,7 @@ bool NativeRetailTaskDomain::reset_task_roots_from_12f0d0(
     // Prepare the native linked roots before clearing the source gate bits.
     // The second source root is BSS zero on first birth; a later live second
     // list cannot be silently dropped by this first-root implementation.
-    auto candidate = NativeRetailTaskRegistry::create(f.registry);
+    auto candidate = NativeRetailTaskRegistry::create(std::move(pool),f.registry);
     if (!candidate)
         return fail(f, RetailTaskDomainError::registry,
                     "12F0D0 native task root allocation");
@@ -80,6 +81,39 @@ bool NativeRetailTaskDomain::reset_task_roots_from_12f0d0(
         return fail(f, RetailTaskDomainError::controls,
                     "12F0D0 byte 660081 gate clear");
     registry_ = std::move(candidate);
+    root_wait_inhibited_ = false;
+    return true;
+}
+
+bool NativeRetailTaskDomain::cancel_first_root_from_12f030(
+    RetailTaskDomainFailure& f) {
+    if (!access(f)) return false;
+    if (!registry_)
+        return fail(f, RetailTaskDomainError::registry_unborn,
+                    "12F030 task first root absent");
+    // Real body cleanup may transfer to Main; never flatten that exception.
+    if (!registry_->cancel_first_root_from_12f030(f.registry))
+        return fail(f, RetailTaskDomainError::registry,
+                    "12F030 task first-root cleanup");
+    return true;
+}
+
+bool NativeRetailTaskDomain::dispatch_first_root_zero_flags_from_12e4e0(
+    RetailTaskDomainFailure& f) {
+    if (!access(f)) return false;
+    if (!registry_)
+        return fail(f, RetailTaskDomainError::registry_unborn,
+                    "12E4E0 task roots have not been born");
+    const auto inhibited=controls_->task_dispatch_inhibited_bit5(f.controls);
+    if (!inhibited)
+        return fail(f, RetailTaskDomainError::controls,
+                    "12E670 live byte 660081 bit5");
+    // This is the source initial first-list/no-script/zero-task-flags path.
+    // The second source root is BSS-empty until a real producer attaches it.
+    if (!registry_->dispatch_first_root_zero_flags_from_12e670(
+            *inhibited, root_wait_inhibited_, f.registry))
+        return fail(f, RetailTaskDomainError::registry,
+                    "12E4E0 first task-list dispatch");
     return true;
 }
 
