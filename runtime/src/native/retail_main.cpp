@@ -161,8 +161,11 @@ std::optional<std::int64_t> continue_native_retail_main(NativeRetailStartupState
 
     auto gate = initialize_retail_timer_and_viewport(m, f);
     if (gate == RetailStartupGate::source_refused) return 0;
-    if (gate != RetailStartupGate::ready || !initialize_retail_graphics_stage(m, f) ||
-        !initialize_retail_package_stage(m, f)) return {};
+    if (gate != RetailStartupGate::ready) return {};
+    // 2E06E0 only created the private ten-slot asynchronous file transport.
+    // The earlier native file initializer and following real Package owner
+    // supply native open/read/seek/lifetime directly, with no slot-table cap.
+    if (!initialize_retail_package_stage(m, f)) return {};
     gate = initialize_retail_pad_service(m, 1, f);
     if (gate == RetailStartupGate::source_refused) return 0;
     if (gate != RetailStartupGate::ready) return {};

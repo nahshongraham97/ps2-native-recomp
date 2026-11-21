@@ -14,6 +14,7 @@ class NativeRetailMainTiming final {
 public:
     bool start(unsigned,NativeRetailCrt&,RetailMainTimingFailure&) noexcept;
     std::optional<std::uint64_t> stop(unsigned,NativeRetailCrt&,RetailMainTimingFailure&) noexcept;
+    std::optional<std::uint64_t> coarse_milliseconds(NativeRetailCrt&,RetailMainTimingFailure&) noexcept;
     std::optional<NativeRetailStopwatchObservation> observe(unsigned)const noexcept;
     bool initialize_parsed_setting(RetailMainTimingFailure&) noexcept;
     std::optional<std::uint32_t> parsed_setting()const noexcept{if(std::this_thread::get_id()!=thread_)return {};return parsed_;}

@@ -26,6 +26,15 @@ int main(){try{
         observation->started_microseconds>=*before/1000&&observation->started_microseconds<=*after/1000,
         "native microsecond scale and shared epoch");
     auto other=NativeRetailCrt::create(cf);check(other&&other->finalize_pre_main(cf),"different real clock owner");
+    const auto coarse_before=crt->now_nanoseconds(cf);
+    const auto coarse=timing.coarse_milliseconds(*crt,f);
+    const auto coarse_after=crt->now_nanoseconds(cf);
+    check(coarse_before&&coarse&&coarse_after&&*coarse>=*coarse_before/1000000u&&
+          *coarse<=*coarse_after/1000000u,"native coarse milliseconds share actual steady-clock epoch/scale");
+    const auto coarse_again=timing.coarse_milliseconds(*crt,f);
+    check(coarse_again&&*coarse_again>=*coarse,"coarse clock is live and monotonic");
+    check(!timing.coarse_milliseconds(*other,f)&&f.kind==RetailMainTimingError::foreign_clock,
+          "coarse clock cannot silently change retained clock identity");
     check(!timing.stop(3,*other,f)&&f.kind==RetailMainTimingError::foreign_clock&&timing.observe(3)->running,
         "foreign CRT cannot stop or mutate the live stopwatch");
     const auto elapsed=timing.stop(3,*crt,f);observation=timing.observe(3);
@@ -41,6 +50,8 @@ int main(){try{
     bool foreign=false;std::thread worker([&]{
         RetailMainTimingFailure tf;foreign=!timing.start(3,*crt,tf)&&tf.kind==RetailMainTimingError::crt&&
             tf.crt.kind==RetailCrtError::wrong_thread&&!timing.observe(3)&&!timing.parsed_setting();
+        foreign=foreign&&!timing.coarse_milliseconds(*crt,tf)&&tf.kind==RetailMainTimingError::crt&&
+            tf.crt.kind==RetailCrtError::wrong_thread;
     });worker.join();check(foreign,"foreign thread cannot mutate or observe main timing");
     check(crt->shutdown(cf),"real CRT shutdown");
     const auto retained=timing.observe(3);

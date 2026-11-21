@@ -9,6 +9,7 @@
 #include "mka/retail_audio_statistics.hpp"
 #include "mka/retail_main_timing.hpp"
 #include "mka/retail_main_lifetime.hpp"
+#include "mka/retail_viewport.hpp"
 #include "mka/retail_mode_state.hpp"
 #include "mka/retail_package.hpp"
 #include "mka/retail_remaining_constructors.hpp"
@@ -111,6 +112,7 @@ struct NativeRetailMainState {
 
     std::array<float, 3> timing_factors{};
     float milliseconds_per_frame{};
+    std::optional<RetailLogicalViewport> logical_viewport;
     std::uint32_t iteration{}, ordinary_iteration{}, reentry_value{};
     std::uint32_t accumulated_input{}, previous_input{}, rising_input{};
     std::uint32_t mode_tick{}, sixty_step_intervals{}, mode_six_intervals{};
@@ -150,7 +152,6 @@ bool initialize_retail_game_records(NativeRetailMainState&, StartupFailure&); //
 bool initialize_retail_loaded_sections(NativeRetailMainState&, StartupFailure&); // 19C4C0
 bool reset_retail_auxiliary_words(NativeRetailMainState&, StartupFailure&); // 26F1E0, not PRNG
 bool initialize_retail_action_service(NativeRetailMainState&, StartupFailure&); // 163210
-bool initialize_retail_graphics_stage(NativeRetailMainState&, StartupFailure&); // 2E06E0
 bool initialize_retail_package_stage(NativeRetailMainState&, StartupFailure&); // 219050
 bool initialize_retail_audio_configuration(NativeRetailMainState&, StartupFailure&); // 164130
 bool initialize_retail_current_sound(NativeRetailMainState&, StartupFailure&); // 12D7E0
@@ -182,6 +183,7 @@ bool initialize_retail_parsed_timing_setting(NativeRetailMainState&, StartupFail
 std::optional<bool> retail_timing_override_active(const NativeRetailMainState&, StartupFailure&);
 std::optional<std::int32_t> read_retail_frame_rate(const NativeRetailMainState&, StartupFailure&);
 RetailStartupGate initialize_retail_timer_and_viewport(NativeRetailMainState&, StartupFailure&);
+std::optional<std::uint64_t> read_retail_coarse_milliseconds(NativeRetailMainState&, StartupFailure&);
 RetailStartupGate initialize_retail_pad_service(NativeRetailMainState&, unsigned mode, StartupFailure&);
 RetailStartupGate initialize_retail_game_scene_records(NativeRetailMainState&, StartupFailure&);
 std::uint32_t read_retail_audio_boot_word(const NativeRetailMainState&);

@@ -2,6 +2,7 @@
 #include "mka/content_volume.hpp"
 #include "mka/controller_input.hpp"
 #include "mka/retail_keyboard.hpp"
+#include "mka/retail_viewport.hpp"
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -54,6 +55,8 @@ public:
     bool remove_keyboard_assignment(RetailPlatformFailure&) noexcept;
     bool remove_controller_assignment(std::int32_t instance,RetailPlatformFailure&) noexcept;
     bool close_requested() const noexcept;
+    bool configure_logical_viewport(const RetailLogicalViewport&,RetailPlatformFailure&) noexcept;
+    std::optional<RetailLogicalViewport> logical_viewport(RetailPlatformFailure&) const noexcept;
     bool prepare_frame(RetailPlatformFailure&) noexcept;
     bool present(RetailPlatformFailure&) noexcept;
     bool drain(RetailPlatformFailure&) noexcept;

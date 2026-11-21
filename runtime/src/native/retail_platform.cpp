@@ -75,6 +75,7 @@ std::uint8_t compatibility_trigger(std::int16_t native) {
 struct NativeRetailPlatform::State {
     const std::thread::id owner=std::this_thread::get_id();
     bool initialized=false,closed=false;std::atomic_bool quit{false};
+    std::optional<RetailLogicalViewport> logical_viewport;
     SDL_Window* window=nullptr;SDL_GLContext context=nullptr;
     Gl gl;GLuint texture=0,program=0,vao=0;GLint sampler=-1;
     input::ControllerInput samples;
@@ -386,6 +387,26 @@ bool NativeRetailPlatform::remove_controller_assignment(std::int32_t instance,Re
     found->second.player.reset();return true;
 }
 bool NativeRetailPlatform::close_requested() const noexcept {return state_->quit.load(std::memory_order_relaxed);}
+bool NativeRetailPlatform::configure_logical_viewport(
+    const RetailLogicalViewport& viewport,RetailPlatformFailure& f) noexcept {
+    f={}; if(!state_->access(f)) return false;
+    if(!state_->initialized || !state_->window || !state_->context)
+        return fail(f,RetailPlatformError::initialization,"225DB0 actual native presentation owner missing");
+    if(!viewport.width || !viewport.height)
+        return fail(f,RetailPlatformError::settings,"native logical game extent must be nonzero");
+    // Preserve the host window/drawable dimensions and its native user sizing.
+    // Later renderer consumers read this distinct game-coordinate contract.
+    state_->logical_viewport=viewport;
+    return true;
+}
+std::optional<RetailLogicalViewport> NativeRetailPlatform::logical_viewport(
+    RetailPlatformFailure& f) const noexcept {
+    f={}; if(!state_->access(f)) return {};
+    if(!state_->logical_viewport) {
+        fail(f,RetailPlatformError::settings,"225DB0 native logical game viewport unbound"); return {};
+    }
+    return state_->logical_viewport;
+}
 bool NativeRetailPlatform::prepare_frame(RetailPlatformFailure& f) noexcept {f={};return state_->current(f);}
 bool NativeRetailPlatform::present(RetailPlatformFailure& f) noexcept {
     f={};if(!state_->current(f))return false;SDL_ClearError();SDL_GL_SwapWindow(state_->window);
