@@ -70,15 +70,30 @@ bool NativeRetailTaskRegistry::retire_active(
     const bool invoke=!(pending->flags&1u) &&
         pending->cached_cookie==task->cookie_ && task->cookie_!=0;
     if(!invoke) {
+        if(task->retired_ && task->cookie_==0 && !task->body_) {
+            // Direct virtual cleanup already released the native payload.
+            // Source 12FA00 recycles this later stale link without replay.
+            pending->object.reset();
+            pending->cached_cookie=1;
+            pending->flags=0;
+            recycled_.splice(recycled_.begin(),pending_,pending);
+            return true;
+        }
         retained_.splice(retained_.end(),pending_,pending);
         return true;
     }
     const bool release_allowed=current_!=task && !task->retain_flag2_;
+    auto body=task->body_; // Retain real nested owner across a transfer.
+    if(release_allowed) {
+        // Fixed 12EE70 stores object+4=0 before stack/nested release.
+        task->cookie_=0;
+        task->retired_=true;
+    }
     // Unlink precedes the callback in 12FA00. An exception may escape after
     // any part of that callback; retain the object and refuse later mutation.
     after_effect_unknown_=in_callout_=true;
     try {
-        task->body_->cleanup(release_allowed);
+        body->cleanup(release_allowed);
     } catch(const detail::NativeMainReentry&) {
         // Original nonlocal main transfer resumes after this callback; the
         // source unlink has happened. Keep the detached object owned, do not
@@ -96,9 +111,9 @@ bool NativeRetailTaskRegistry::retire_active(
         retained_.splice(retained_.end(),pending_,pending);
         return true;
     }
-    task->cookie_=0;
-    task->retired_=true;
     task->body_.reset();
+    task->continuation_.reset();
+    task->wait_resume_.reset();
     pending->object.reset();
     pending->cached_cookie=1;
     pending->flags=0;

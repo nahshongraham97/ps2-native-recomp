@@ -1,4 +1,5 @@
 #pragma once
+#include "mka/retail_task_execution.hpp"
 
 #include <cstddef>
 #include <cstdint>
@@ -24,10 +25,9 @@ struct RetailTaskRegistryFailure {
 // A published task must have executable native code and a real retirement
 // capability. Test clients provide explicit CPU-only bodies. The retail body
 // producers (18E100, 2800F0 and others) remain separate source work.
-class NativeRetailTaskBody {
+class NativeRetailTaskBody : public NativeRetailTaskContinuation {
 public:
     virtual ~NativeRetailTaskBody() = default;
-    virtual void execute() = 0;
     // 12FA00 invokes the callback before 12EE70 applies current-task/bit2
     // release guards. Implementations must preserve effects even when false.
     virtual void cleanup(bool release_allowed) = 0;
@@ -40,12 +40,17 @@ public:
     NativeRetailTaskObject& operator=(const NativeRetailTaskObject&) = delete;
 private:
     friend class NativeRetailTaskRegistry;
+    friend class NativeRetailTaskExecution;
     NativeRetailTaskObject(std::uint32_t kind, std::int32_t priority,
         std::uint32_t cookie, std::shared_ptr<NativeRetailTaskBody> body) noexcept
-        : kind_(kind), priority_(priority), cookie_(cookie), body_(std::move(body)) {}
+        : kind_(kind), priority_(priority), cookie_(cookie),
+          body_(body), continuation_(std::move(body)) {}
     std::uint32_t kind_{}, cookie_{};
     std::int32_t priority_{};
     std::shared_ptr<NativeRetailTaskBody> body_;
+    std::shared_ptr<NativeRetailTaskContinuation> continuation_, wait_resume_;
+    float stored_wait_{};
+    bool resume_pending_{}, execution_active_{}, execution_transfer_pending_{};
     bool linked_{}, retired_{}, retain_flag2_{};
 };
 
@@ -100,6 +105,7 @@ public:
         RetailTaskRegistryFailure&) const noexcept;
 
 private:
+    friend class NativeRetailTaskExecution;
     struct Link {
         std::shared_ptr<NativeRetailTaskObject> object;
         std::uint32_t cached_cookie{};
@@ -114,8 +120,8 @@ private:
     bool retire_active(std::list<Link>::iterator, RetailTaskRegistryFailure&);
 
     std::list<Link> active_, retained_, pending_, recycled_;
-    std::shared_ptr<NativeRetailTaskObject> current_;
-    bool in_callout_{}, after_effect_unknown_{};
+    std::shared_ptr<NativeRetailTaskObject> selected_, current_;
+    bool in_callout_{}, after_effect_unknown_{}, execution_call_active_{};
     const std::thread::id owner_thread_{std::this_thread::get_id()};
 };
 

@@ -1,0 +1,18 @@
+{
+  "fork_commit": "1ebdb89a1a9fc28b61c92ff5b4a0513e056d52c8",
+  "fork": {
+    "available": true,
+    "local_commit": "1ebdb89a1a9fc28b61c92ff5b4a0513e056d52c8",
+    "remote_commit": "1ebdb89a1a9fc28b61c92ff5b4a0513e056d52c8",
+    "synchronization": "verified"
+  },
+  "parent_commit": "65984829f90d4642b42ead4b77ca08c1be3b1dc9",
+  "parent": {
+    "available": true,
+    "local_commit": "65984829f90d4642b42ead4b77ca08c1be3b1dc9",
+    "remote_commit": "65984829f90d4642b42ead4b77ca08c1be3b1dc9",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "c4258d699bb82e0b61926ffd2f2b7fb3448f258907c882699d8c069375f8e577",
+  "scope": "Actual selector typed field reuse; task control source correction;39 main integrations and full game acceptance OPEN"
+}

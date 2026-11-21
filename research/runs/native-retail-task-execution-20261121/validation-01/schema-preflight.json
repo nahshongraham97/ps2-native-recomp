@@ -1,0 +1,58 @@
+{
+  "schema": {
+    "type": "str",
+    "size": null
+  },
+  "status": {
+    "type": "str",
+    "size": null
+  },
+  "original_elf_sha256": {
+    "type": "str",
+    "size": null
+  },
+  "source_evidence_sha256": {
+    "type": "dict",
+    "size": 4
+  },
+  "files_sha256": {
+    "type": "dict",
+    "size": 6
+  },
+  "before_directory": {
+    "type": "str",
+    "size": null
+  },
+  "before_sha256": {
+    "type": "dict",
+    "size": 5
+  },
+  "supported_scope": {
+    "type": "list",
+    "size": 9
+  },
+  "unbound": {
+    "type": "list",
+    "size": 6
+  },
+  "test_status": {
+    "type": "str",
+    "size": null
+  },
+  "line_endings": {
+    "type": "str",
+    "size": null
+  },
+  "cleanup_order_correction": {
+    "type": "str",
+    "size": null
+  },
+  "source_cleanup_raw_sha256": {
+    "type": "str",
+    "size": null
+  },
+  "pending_lifetime_fixture": {
+    "type": "str",
+    "size": null
+  }
+}

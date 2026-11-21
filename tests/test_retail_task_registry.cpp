@@ -18,7 +18,10 @@ void check(bool good,const char* message) {
 }
 struct TestBody final: NativeRetailTaskBody {
     explicit TestBody(std::vector<int>& events,int label):events(events),label(label) {}
-    void execute() override { events.push_back(100+label); }
+    NativeTaskStep run() override {
+        events.push_back(100+label);
+        return NativeTaskStep::returned(1.0f);
+    }
     void cleanup(bool release_allowed) override {
         ++cleanup_calls;
         if(!release_allowed) return;
@@ -80,7 +83,9 @@ int main() {
               "signed priority ascends, and equal-priority publication follows equals");
         auto first=registry->find_first_live(17,f);
         check(first&&*first==t1,"lookup returns first actual matching object in link order");
-        b0->execute();
+        const auto direct_step=b0->run();
+        check(direct_step.kind==NativeTaskStepKind::returned_float,
+              "test body supplies a typed native result");
         check(events.size()==1&&events[0]==100,"published body is executable native code");
         check(registry->store_object_cookie_from_source(t1,8,f),
               "source cookie writer may replace identity with arbitrary value");
