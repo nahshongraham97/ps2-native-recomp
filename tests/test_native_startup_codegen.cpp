@@ -27,6 +27,13 @@ int main(int argc,char** argv){try {
     check(result->header.find("unique_ptr<NativeRetailMemoryOwners>")!=std::string::npos&&
         result->header.find("initialize_retail_memory_owners")!=std::string::npos,
         "generated native state owns required memory group instead of guest heap globals");
+    check(result->header.find("shared_ptr<NativeRetailGameSession>")!=std::string::npos &&
+        result->header.find("RetailGameSessionFailure game;")!=std::string::npos,
+        "generated startup retains persistent native game state and its failures");
+    const auto session_call=result->entry.find("initialize_native_retail_game_session(state,f)");
+    const auto crt_call=result->entry.find("initialize_native_retail_crt(state,f)");
+    check(session_call!=std::string::npos && crt_call!=std::string::npos && session_call<crt_call,
+        "native persistent data is available before original CRT/main call chain");
     const auto expected=*result;
     auto rejected=[&](const auto& m,recomp::NativeClosureError error){
         check(!recomp::emit_native_startup_closure(bytes,m,f)&&f.kind==error,"named altered recipe refusal");

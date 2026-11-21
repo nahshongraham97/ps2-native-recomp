@@ -235,6 +235,7 @@ std::optional<NativeStartupSources> emit_native_startup_closure(std::span<const 
 #include "mka/retail_crt.hpp"
 #include "mka/retail_platform.hpp"
 #include "mka/retail_main_timing.hpp"
+#include "mka/retail_game_session.hpp"
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -243,8 +244,8 @@ std::optional<NativeStartupSources> emit_native_startup_closure(std::span<const 
 #include <utility>
 #include <vector>
 namespace mka::retail {
-enum class StartupError {none,missing_boot_argument,malformed_boot_argument,missing_directory_separator,content,allocation,host_capacity,native_exception,memory_owners,already_initialized,crt,platform,main_timing};
-struct StartupFailure {StartupError kind=StartupError::none;const char* operation="";content::ContentVolumeFailure content;RetailMemoryOwnerFailure memory;RetailCrtFailure crt;RetailPlatformFailure platform;RetailMainTimingFailure timing;};
+enum class StartupError {none,missing_boot_argument,malformed_boot_argument,missing_directory_separator,content,allocation,host_capacity,native_exception,memory_owners,already_initialized,crt,platform,main_timing,game_session};
+struct StartupFailure {StartupError kind=StartupError::none;const char* operation="";content::ContentVolumeFailure content;RetailMemoryOwnerFailure memory;RetailCrtFailure crt;RetailPlatformFailure platform;RetailMainTimingFailure timing;RetailGameSessionFailure game;};
 // Native-owned replacements for the original startup arguments and writable
 // content/path state. Host executable location, boot-resource string and volume
 // are separate inputs; no guest argument block, pointer table or BSS is retained.
@@ -255,6 +256,7 @@ struct NativeRetailStartupState {
     std::unique_ptr<NativeRetailMemoryOwners> memory_owners;
     std::unique_ptr<NativeRetailCrt> crt;
     std::unique_ptr<NativeRetailPlatform> platform;
+    std::shared_ptr<NativeRetailGameSession> game_session;
     NativeRetailStartupState(content::NativeContentVolume volume,std::vector<std::string> arguments)
         :content(std::move(volume)),boot_arguments(std::move(arguments)){}
 };
@@ -270,6 +272,8 @@ std::optional<content::NativeContentFile> open_retail_resource(const NativeRetai
 // Production native bindings; the CRT definitions own real host services.
 // No weak/default success implementations exist. Complete entry linking also
 // requires every platform/main downstream effect, never the guest runtime.
+// Persistent native game data exists before CRT/main; reentry retains it.
+bool initialize_native_retail_game_session(NativeRetailStartupState&,StartupFailure&);
 bool initialize_native_retail_crt(NativeRetailStartupState&,StartupFailure&);
 bool finalize_native_retail_pre_main(NativeRetailStartupState&,StartupFailure&);
 bool initialize_native_retail_platform(NativeRetailStartupState&,StartupFailure&);
@@ -319,6 +323,7 @@ std::optional<std::int64_t> run_native_retail(NativeRetailStartupState& state,St
     f={};try {
         // Original CRT calls precede main. Their required native definitions
         // cannot be replaced by entering the middle of the retail main.
+        if(!initialize_native_retail_game_session(state,f))return {};
         if(!initialize_native_retail_crt(state,f))return {};
         if(!finalize_native_retail_pre_main(state,f))return {};
         if(!initialize_retail_resource_prefix(state,f))return {};

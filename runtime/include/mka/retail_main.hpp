@@ -6,7 +6,6 @@
 #include "mka/playback_owner.hpp"
 #include "mka/retail_action_history.hpp"
 #include "mka/retail_audio_statistics.hpp"
-#include "mka/retail_auxiliary_words.hpp"
 #include "mka/retail_main_timing.hpp"
 #include "mka/retail_mode_state.hpp"
 #include "mka/retail_package.hpp"
@@ -64,7 +63,6 @@ struct NativeRetailMainState {
     NativeRetailMainState(NativeRetailStartupState&, input::ControllerInput&) noexcept;
     NativeRetailStartupState& startup;
     NativeRetailMainTiming main_timing;
-    NativeRetailAuxiliaryWords auxiliary_words;
     // These owners are populated only at their original game initialization
     // points. Their existence never substitutes for completed startup.
     std::shared_ptr<NativeRetailParticipants> participants;
@@ -158,8 +156,8 @@ std::optional<std::uint32_t> read_retail_profile_selector(NativeRetailMainState&
 bool reset_and_initialize_retail_profile(NativeRetailMainState&, const NativeClassProfilePlan&, StartupFailure&);
 bool start_retail_stopwatch(NativeRetailMainState&, unsigned slot, StartupFailure&);
 bool initialize_retail_parsed_timing_setting(NativeRetailMainState&, StartupFailure&);
-bool retail_timing_override_active(const NativeRetailMainState&);
-std::int32_t read_retail_frame_rate(const NativeRetailMainState&);
+std::optional<bool> retail_timing_override_active(const NativeRetailMainState&, StartupFailure&);
+std::optional<std::int32_t> read_retail_frame_rate(const NativeRetailMainState&, StartupFailure&);
 RetailStartupGate initialize_retail_timer_and_viewport(NativeRetailMainState&, StartupFailure&);
 RetailStartupGate initialize_retail_pad_service(NativeRetailMainState&, unsigned mode, StartupFailure&);
 RetailStartupGate initialize_retail_game_scene_records(NativeRetailMainState&, StartupFailure&);

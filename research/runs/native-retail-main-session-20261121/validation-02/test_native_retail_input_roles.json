@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_input_roles.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native four-role initialization and original action table; no assignment, polling, game or endpoint\n",
+  "stderr": "",
+  "executable_sha256": "d50c7b27368d0d0a7b1c85b7467faf23e890055ade0b322f2bdce6406110a923",
+  "executable_after_sha256": "d50c7b27368d0d0a7b1c85b7467faf23e890055ade0b322f2bdce6406110a923",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-main-session-20261121\\validation-01\\test_native_retail_input_roles.json",
+  "reused_record_sha256": "e91945c623393f085ba825d526d203f1ee864b7ce5beae92424bceb7af1a3030"
+}

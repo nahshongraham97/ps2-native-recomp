@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_package.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\package-and-constructors-05\\input-manifests\\package-members.tsv"
+  ],
+  "exit": 0,
+  "stdout": "PASS native original package all245 metadata/byte comparisons and range checks; no game or endpoint\n",
+  "stderr": "",
+  "executable_sha256": "d44b2b44f545ba72f2831bdcaa1a823a8b99a8edafca5b6e3b3c5d32fdfe8645",
+  "executable_after_sha256": "d44b2b44f545ba72f2831bdcaa1a823a8b99a8edafca5b6e3b3c5d32fdfe8645",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-main-session-20261121\\validation-01\\test_native_retail_package.json",
+  "reused_record_sha256": "f4f398bbf008dfa88e5d9269b0a2437b6a362f973b71467af735838ca4bc25a1"
+}

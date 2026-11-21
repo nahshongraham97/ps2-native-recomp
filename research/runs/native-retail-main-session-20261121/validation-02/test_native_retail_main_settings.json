@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_main_settings.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native main scalar settings and shared game-control flag; game and endpoints open\n",
+  "stderr": "",
+  "executable_sha256": "ddcb648bf5e0fbcf0aab31b5b1a806c86502f42375ef1f7a8c355550420298a9",
+  "executable_after_sha256": "ddcb648bf5e0fbcf0aab31b5b1a806c86502f42375ef1f7a8c355550420298a9",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-main-session-20261121\\validation-01\\test_native_retail_main_settings.json",
+  "reused_record_sha256": "ce6c3f5e0be0728d5c63db0585a70ae976dc924dd7a0f1dc41978028ca3c416e"
+}

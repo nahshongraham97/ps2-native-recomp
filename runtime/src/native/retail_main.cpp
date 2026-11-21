@@ -31,17 +31,29 @@ bool construct_main_owners(NativeRetailMainState& m, StartupFailure& f) {
     return true;
 }
 
-void initialize_frame_timing(NativeRetailMainState& m) {
-    if (!retail_timing_override_active(m) && read_retail_frame_rate(m) == 50) {
-        m.timing_factors = {
-            std::bit_cast<float>(0x3f8c378cu),
-            std::bit_cast<float>(0x3f555555u),
-            std::bit_cast<float>(0x3f99999au)
-        };
-    } else {
-        m.timing_factors = {1.0f, 1.0f, 1.0f};
+bool initialize_frame_timing(NativeRetailMainState& m, StartupFailure& f) {
+    const auto override_active = retail_timing_override_active(m, f);
+    if (!override_active) return false;
+    bool rate_is_fifty = false;
+    if (!*override_active) {
+        const auto rate = read_retail_frame_rate(m, f);
+        if (!rate) return false;
+        rate_is_fifty = *rate == 50;
     }
-    m.milliseconds_per_frame = 1000.0f / static_cast<float>(read_retail_frame_rate(m));
+    const auto rate = read_retail_frame_rate(m, f);
+    if (!rate) return false;
+    if (*rate <= 0) {
+        f = {StartupError::main_timing, "retail frame rate must be positive"};
+        return false;
+    }
+    // Publish only after all required live owner reads succeed.
+    m.timing_factors = rate_is_fifty ? std::array<float, 3>{
+        std::bit_cast<float>(0x3f8c378cu),
+        std::bit_cast<float>(0x3f555555u),
+        std::bit_cast<float>(0x3f99999au)
+    } : std::array<float, 3>{1.0f, 1.0f, 1.0f};
+    m.milliseconds_per_frame = 1000.0f / static_cast<float>(*rate);
+    return true;
 }
 
 bool publish_rising_action_tasks(NativeRetailMainState& m, StartupFailure& f) {
@@ -129,7 +141,7 @@ std::optional<std::int64_t> continue_native_retail_main(NativeRetailStartupState
     // 212B30 returns an unused constant without a reached side effect.
     if (!initialize_retail_post_overlay_state(m, f)) return {};
 
-    initialize_frame_timing(m);
+    if (!initialize_frame_timing(m, f)) return {};
     if (!clear_retail_mode_stack(m, f) || !enter_retail_mode_zero(m, f) ||
         !initialize_retail_game_records(m, f) || !initialize_retail_loaded_sections(m, f) ||
         !reset_retail_auxiliary_words(m, f) || !initialize_retail_action_service(m, f)) return {};

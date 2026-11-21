@@ -1,0 +1,18 @@
+{
+  "fork_commit": "4cd209a5098506d0b5b78ed4f7d3757427b488a6",
+  "fork": {
+    "available": true,
+    "local_commit": "4cd209a5098506d0b5b78ed4f7d3757427b488a6",
+    "remote_commit": "4cd209a5098506d0b5b78ed4f7d3757427b488a6",
+    "synchronization": "verified"
+  },
+  "parent_commit": "8ec545657b6eb777b1b8ecb71e4d850c3bf5d22f",
+  "parent": {
+    "available": true,
+    "local_commit": "8ec545657b6eb777b1b8ecb71e4d850c3bf5d22f",
+    "remote_commit": "8ec545657b6eb777b1b8ecb71e4d850c3bf5d22f",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "621b69b081746a1959c931d385f3460f3ce524be184cf0266aeb2df8a5907cbe",
+  "scope": "Fifteen CPU/file clients; actual protocol/observers/reset. Complete startup, host poll/selection, fighter, scene/render/audio/game acceptance OPEN"
+}

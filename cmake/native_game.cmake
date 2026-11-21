@@ -79,6 +79,21 @@ target_include_directories(mka_native_content_volume PUBLIC runtime/include)
 target_compile_features(mka_native_content_volume PUBLIC cxx_std_20)
 add_executable(test_native_content_volume_owner EXCLUDE_FROM_ALL tests/test_native_content_volume_owner.cpp)
 target_link_libraries(test_native_content_volume_owner PRIVATE mka_native_content_volume)
+# Persistent game state uses native objects, not a guest address model.
+add_library(mka_native_retail_game_session STATIC EXCLUDE_FROM_ALL
+    runtime/src/native/retail_game_controls.cpp
+    runtime/src/native/retail_main_settings.cpp
+    runtime/src/native/retail_random.cpp
+    runtime/src/native/retail_game_session.cpp)
+target_include_directories(mka_native_retail_game_session PUBLIC runtime/include)
+target_compile_features(mka_native_retail_game_session PUBLIC cxx_std_20)
+target_link_libraries(mka_native_retail_game_session PUBLIC Threads::Threads)
+add_executable(test_native_retail_main_settings EXCLUDE_FROM_ALL tests/test_retail_main_settings.cpp)
+target_link_libraries(test_native_retail_main_settings PRIVATE mka_native_retail_game_session)
+add_executable(test_native_retail_random EXCLUDE_FROM_ALL tests/test_retail_random.cpp)
+target_link_libraries(test_native_retail_random PRIVATE mka_native_retail_game_session)
+add_executable(test_native_retail_game_session EXCLUDE_FROM_ALL tests/test_retail_game_session.cpp)
+target_link_libraries(test_native_retail_game_session PRIVATE mka_native_retail_game_session)
 add_executable(test_native_startup_codegen EXCLUDE_FROM_ALL
     tests/test_native_startup_codegen.cpp recomp/native_closure_codegen.cpp recomp/native_startup_codegen.cpp)
 target_include_directories(test_native_startup_codegen PRIVATE recomp)
@@ -100,6 +115,7 @@ if(WIN32)
         "${_startup_dir}/native_retail_startup.cpp" "${_startup_dir}/native_retail_entry.cpp"
         runtime/src/native/retail_crt_startup.cpp runtime/src/native/retail_platform_startup.cpp
         runtime/src/native/retail_main.cpp runtime/src/native/retail_main_timing.cpp
+        runtime/src/native/retail_game_session_startup.cpp runtime/src/native/retail_main_settings_binding.cpp
         runtime/src/native/retail_initial_objects.cpp runtime/src/native/retail_scene_events.cpp
         runtime/src/native/retail_middleware_work.cpp
         runtime/src/native/retail_dispatch_owners.cpp runtime/src/native/retail_record_owners.cpp
@@ -114,7 +130,7 @@ if(WIN32)
         runtime/src/native/retail_input_assignments.cpp)
     target_include_directories(mka_native_retail_startup PUBLIC "${_startup_dir}" runtime/include)
     target_link_libraries(mka_native_retail_startup PUBLIC mka_native_content_volume mka_native_retail_memory_owners
-        mka_native_retail_crt mka_native_retail_platform mka_native_allocation_profile mka_native_game_actions mka_native_sound_resources)
+        mka_native_retail_game_session mka_native_retail_crt mka_native_retail_platform mka_native_allocation_profile mka_native_game_actions mka_native_sound_resources)
     add_executable(test_native_retail_startup EXCLUDE_FROM_ALL tests/test_native_retail_startup.cpp)
     target_link_libraries(test_native_retail_startup PRIVATE mka_native_retail_startup)
     # Expected-negative link fixture: never included in a successful build batch.

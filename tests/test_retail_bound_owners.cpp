@@ -34,15 +34,98 @@ int main(int argc, char** argv) { try {
     check(&state.controller_samples == &samples && !state.mode_history && !state.audio_statistics,
         "main retains same real native sample store, does not manufacture readiness");
     StartupFailure f;
-    state.auxiliary_words = {0xffffffffu, 0x12345678u};
+    check(!main_binding::read_retail_profile_selector(state, f) && f.kind == StartupError::game_session &&
+        !main_binding::retail_timing_override_active(state, f) && f.kind == StartupError::game_session &&
+        !main_binding::read_retail_frame_rate(state, f) && f.kind == StartupError::game_session &&
+        !main_binding::seed_retail_startup_random_state(state, 7, f) && f.kind == StartupError::game_session &&
+        !main_binding::reset_retail_auxiliary_words(state, f) && f.kind == StartupError::game_session,
+        "missing persistent native owners fail explicitly, never default selector/rate/seed/reset");
+    fail_allocation = true;
+    const bool failed_session = initialize_native_retail_game_session(startup, f);
+    fail_allocation = false;
+    check(!failed_session && !startup.game_session && f.kind == StartupError::game_session,
+        "failed session startup publishes no partial native owner");
+    check(initialize_native_retail_game_session(startup, f) && startup.game_session,
+        "startup retains one real persistent session");
+    const auto session = startup.game_session;
+    RetailGameSessionFailure game_failure;
+    auto settings = session->settings(game_failure);
+    auto controls = session->controls(game_failure);
+    auto* random = session->random(game_failure);
+    auto* auxiliary = session->auxiliary_words(game_failure);
+    check(settings && controls && random && auxiliary &&
+        main_binding::read_retail_profile_selector(state, f) == 13 &&
+        main_binding::retail_timing_override_active(state, f) == false &&
+        main_binding::read_retail_frame_rate(state, f) == 60,
+        "main readers consume verified ELF/BSS scalar defaults through real session");
+    RetailMainSettingsFailure settings_failure;
+    RetailGameControlsFailure controls_failure;
+    check(settings->store_profile_selector_from_1225d0(2, settings_failure) &&
+        settings->store_video_rate_from_220460(0, settings_failure) &&
+        settings->store_override_word_from_source(1, settings_failure) &&
+        controls->store_selection_flags_from_source(1, controls_failure) &&
+        main_binding::read_retail_profile_selector(state, f) == 2 &&
+        main_binding::retail_timing_override_active(state, f) == true &&
+        main_binding::read_retail_frame_rate(state, f) == 60,
+        "main observes actual shared live settings and game-control low bit");
+    check(controls->clear_selection_state_from_1303f0(controls_failure) &&
+        main_binding::read_retail_frame_rate(state, f) == 50,
+        "actual full-word source clear changes live effective rate");
+    RetailRandomFailure random_failure;
+    NativeRetailRandom reference_random;
+    check(random->low16_range(56, random_failure) == reference_random.low16_range(56, random_failure) &&
+        main_binding::seed_retail_startup_random_state(state, 0x12345678u, f) &&
+        reference_random.seed(0x12345678u, random_failure),
+        "pre-seed game draw and later explicit source seed share one phase");
+    for (unsigned i = 0; i < 700; ++i)
+        check(random->next(random_failure) == reference_random.next(random_failure),
+            "bound seed uses source algorithm and retained consumed phase");
+    *auxiliary = {0xffffffffu, 0x12345678u};
     state.iteration = 73;
     f = {StartupError::native_exception, "prior fixture error"};
     fail_allocation = true;
     const auto reset_auxiliary = main_binding::reset_retail_auxiliary_words(state, f);
     fail_allocation = false;
-    check(reset_auxiliary && f.kind == StartupError::none && state.auxiliary_words.first == 0 &&
-        state.auxiliary_words.second == 0 && state.iteration == 73,
+    check(reset_auxiliary && f.kind == StartupError::none && auxiliary->first == 0 &&
+        auxiliary->second == 0 && state.iteration == 73,
         "actual auxiliary reset clears exactly two values without allocation or unrelated reset");
+    auxiliary->first = 42;
+    NativeRetailMainState reentry(startup, samples);
+    fail_allocation = true;
+    const bool reused_session = initialize_native_retail_game_session(startup, f);
+    fail_allocation = false;
+    check(reused_session && startup.game_session == session &&
+        main_binding::read_retail_profile_selector(reentry, f) == 2 &&
+        main_binding::read_retail_frame_rate(reentry, f) == 50 && auxiliary->first == 42 &&
+        random->next(random_failure) == reference_random.next(random_failure),
+        "new main control object does not reset/reseed persistent game data");
+    check(!main_binding::read_retail_startup_seed_component(state, f) && f.kind == StartupError::crt,
+        "native seed entropy requires real retained CRT clock");
+    check(initialize_native_retail_crt(startup, f), "actual CPU native CRT constructed");
+    check(!main_binding::read_retail_startup_seed_component(state, f) &&
+        f.crt.kind == RetailCrtError::not_finalized, "seed counter does not bypass native CRT readiness");
+    check(finalize_native_retail_pre_main(startup, f) &&
+        main_binding::read_retail_startup_seed_component(state, f).has_value(),
+        "seed entropy uses actual validated native counter without EE Count emulation");
+    bool session_wrong_thread = false;
+    std::thread session_worker([&] {
+        StartupFailure other;
+        session_wrong_thread = !initialize_native_retail_game_session(startup, other) &&
+            other.game.kind == RetailGameSessionError::wrong_thread &&
+            !main_binding::read_retail_profile_selector(state, other) &&
+            other.game.kind == RetailGameSessionError::wrong_thread &&
+            !main_binding::retail_timing_override_active(state, other) &&
+            !main_binding::read_retail_frame_rate(state, other) &&
+            !main_binding::seed_retail_startup_random_state(state, 9, other) &&
+            !main_binding::reset_retail_auxiliary_words(state, other) &&
+            !main_binding::read_retail_startup_seed_component(state, other) &&
+            other.crt.kind == RetailCrtError::wrong_thread;
+    });
+    session_worker.join();
+    check(session_wrong_thread, "all persistent main bindings refuse cross-thread mutation/read");
+    check(startup.crt->shutdown(f.crt), "native CRT closed without endpoint");
+    check(!main_binding::read_retail_startup_seed_component(state, f) && f.crt.kind == RetailCrtError::closed,
+        "seed counter retains closed-clock failure");
     check(!main_binding::observe_retail_frame_role(state, 0, f) &&
         f.kind == StartupError::native_exception && !state.input_roles,
         "frame observer cannot manufacture missing retail role ownership");

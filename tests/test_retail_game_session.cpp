@@ -1,0 +1,103 @@
+#include "mka/retail_game_session.hpp"
+#include <atomic>
+#include <cstdio>
+#include <cstdlib>
+#include <new>
+#include <stdexcept>
+#include <thread>
+using namespace mka::retail;
+namespace {
+std::atomic<long> live_allocations{0};
+bool count_attempts = false;
+long fail_at = -1, attempts = 0;
+void check(bool ok, const char* text) { if (!ok) throw std::runtime_error(text); }
+}
+void* operator new(std::size_t bytes) {
+    if (count_attempts && attempts++ == fail_at) throw std::bad_alloc();
+    if (void* p = std::malloc(bytes ? bytes : 1)) { ++live_allocations; return p; }
+    throw std::bad_alloc();
+}
+void operator delete(void* p) noexcept { if (p) { --live_allocations; std::free(p); } }
+void operator delete(void* p, std::size_t) noexcept { ::operator delete(p); }
+int main() { try {
+    RetailGameSessionFailure f;
+    const auto initial_live = live_allocations.load();
+    count_attempts = true;
+    auto measured = NativeRetailGameSession::create(f);
+    count_attempts = false;
+    const auto creation_allocations = attempts;
+    check(measured && creation_allocations > 0 && f.kind == RetailGameSessionError::none,
+        "actual session creates complete native owners");
+    measured.reset();
+    check(live_allocations == initial_live, "complete destruction releases every session allocation");
+    for (long cut = 0; cut < creation_allocations; ++cut) {
+        attempts = 0; fail_at = cut; count_attempts = true;
+        auto failed = NativeRetailGameSession::create(f);
+        count_attempts = false; fail_at = -1;
+        check(!failed && f.kind != RetailGameSessionError::none && live_allocations == initial_live,
+            "every real object/control-block allocation failure is unpublished and fully released");
+    }
+    auto session = NativeRetailGameSession::create(f);
+    auto retained = session;
+    const std::weak_ptr<NativeRetailGameSession> root_lifetime = session;
+    auto controls = session->controls(f);
+    auto settings = session->settings(f);
+    auto* random = session->random(f);
+    auto* auxiliary = session->auxiliary_words(f);
+    check(controls && settings && random && auxiliary && auxiliary->first == 0 && auxiliary->second == 0,
+        "same session supplies actual controls/settings/BSS auxiliary and PRNG owners");
+    RetailGameControlsFailure cf;
+    RetailMainSettingsFailure sf;
+    RetailRandomFailure rf;
+    check(settings->profile_selector(sf) == 13 && settings->stored_frame_rate(sf) == 60 &&
+        settings->override_word(sf) == 0 && controls->selection_state_word(cf) == 0,
+        "verified source initial data and BSS defaults");
+    check(settings->store_video_rate_from_220460(0, sf) &&
+        settings->store_override_word_from_source(9, sf) &&
+        controls->store_selection_flags_from_source(1, cf) &&
+        settings->effective_frame_rate(sf) == 60 &&
+        controls->clear_selection_state_from_1303f0(cf) &&
+        settings->effective_frame_rate(sf) == 50,
+        "live settings share same game-control word and full-word reset");
+    NativeRetailRandom expected;
+    check(random->low16_range(56, rf) == expected.low16_range(56, rf) &&
+        random->seed(0xabcdef01u, rf) && expected.seed(0xabcdef01u, rf),
+        "pre-seed consumption and explicit source seed share same native PRNG");
+    auxiliary->first = 0xabcdef12u; auxiliary->second = 0x12345678u;
+    session.reset();
+    check(!root_lifetime.expired() && retained->controls(f) == controls &&
+        retained->settings(f) == settings && retained->auxiliary_words(f) == auxiliary &&
+        auxiliary->first == 0xabcdef12u && auxiliary->second == 0x12345678u,
+        "retained session keeps exact owners and data across main borrower lifetimes");
+    for (unsigned i = 0; i < 1500; ++i)
+        check(retained->random(f)->next(rf) == expected.next(rf),
+            "repeated borrowers never create implicit reseed or reset phase");
+    bool wrong_thread = false;
+    std::thread foreign([&] {
+        RetailGameSessionFailure other;
+        wrong_thread = !retained->validate_current_thread(other) &&
+            other.kind == RetailGameSessionError::wrong_thread &&
+            !retained->controls(other) && other.kind == RetailGameSessionError::wrong_thread &&
+            !retained->settings(other) && other.kind == RetailGameSessionError::wrong_thread &&
+            !retained->random(other) && other.kind == RetailGameSessionError::wrong_thread &&
+            !retained->auxiliary_words(other) && other.kind == RetailGameSessionError::wrong_thread;
+    });
+    foreign.join();
+    check(wrong_thread && retained->validate_current_thread(f) && f.kind == RetailGameSessionError::none &&
+        auxiliary->first == 0xabcdef12u && random->next(rf) == expected.next(rf),
+        "cross-thread refusal leaves persistent state intact and next valid access clears failure");
+    const std::weak_ptr<NativeRetailGameControls> controls_lifetime = controls;
+    retained.reset();
+    check(root_lifetime.expired() && settings->effective_frame_rate(sf) == 50,
+        "retained settings keep their own actual controls after root retirement");
+    controls.reset();
+    check(!controls_lifetime.expired(), "settings hold real controls independently of original root");
+    settings.reset();
+    check(controls_lifetime.expired(), "last settings retirement releases controls");
+    std::printf("PASS native persistent session: %ld creation allocation fault cuts, same-owner settings/PRNG/auxiliary, lifetime and thread failures; no game or endpoint\n",
+        creation_allocations);
+    return 0;
+} catch (const std::exception& e) {
+    count_attempts = false; fail_at = -1;
+    std::fprintf(stderr, "FAIL native game session: %s\n", e.what()); return 1;
+}}

@@ -20,12 +20,12 @@ runtime-translation descriptions, is preserved for provenance at
 `research/history/native-port-docs-2026-11-18/README.md`. Those instructions
 do not describe the accepted Armageddon route.
 
-The source-ordered native entry remains incomplete. Input-ownership integration08
-passes fifteen native CPU/file clients against56 source/tool pins. Real
-participant/role binding and main observations are joined to native owners,
-and26F1E0 now performs its actual two-word reset under a correct neutral name.
-Complete entry still refuses46 native integration names; this is not a count
-of missing original retail routines or a full work estimate. Actual startup
-resource/task effects, full participant fields, physical poll/selection,
-fighter, scene keyboard, render/audio and full game acceptance remain open.
-No owner launch is requested. Parent live status owns current evidence.
+Session13 connects persistent native game Controls/Settings/PRNG/auxiliary
+ownership and five actual main settings/seed bindings. All22 CPU/file clients
+pass with74 stable source/tool pins; deterministic RNG matches20,252 original
+AOT operations. Independent source and saved-execution reviews pass.
+The complete entry still refuses41 unresolved native integration names.
+This is component evidence, not game acceptance. Resource/script/task/overlay,
+physical input, fighter, rendering, sound and whole-game acceptance remain
+open. Parent live status and its dated session13 record own current evidence.
+No owner launch is requested.

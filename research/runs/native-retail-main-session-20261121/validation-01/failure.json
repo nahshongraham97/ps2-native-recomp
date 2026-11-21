@@ -1,0 +1,5 @@
+{
+  "status": "FAILED",
+  "error": "RuntimeError",
+  "message": "session allocation/thread/lifetime assertion footer"
+}
