@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_typed_codegen.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\SLUS_214.10",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-typed-retail-20261121\\validation-01\\fixture-generated"
+  ],
+  "exit": 0,
+  "stdout": "",
+  "stderr": "",
+  "executable_sha256": "088aab164e5ae7e2147709058a1504cbade90e2128e4ff68ec6bd880d69fd04f",
+  "executable_after_sha256": "088aab164e5ae7e2147709058a1504cbade90e2128e4ff68ec6bd880d69fd04f"
+}

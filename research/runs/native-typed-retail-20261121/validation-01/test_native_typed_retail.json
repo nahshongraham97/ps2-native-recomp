@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_typed_retail.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS compiled typed retail AOT: original getter/setter, signed state, owner lifetime, thread refusal and independent state; no guest runtime or endpoint\n",
+  "stderr": "",
+  "executable_sha256": "74ad445e7605cbd532dcfeef716e725f7f322d928302435b2117fea7f96e482d",
+  "executable_after_sha256": "74ad445e7605cbd532dcfeef716e725f7f322d928302435b2117fea7f96e482d"
+}

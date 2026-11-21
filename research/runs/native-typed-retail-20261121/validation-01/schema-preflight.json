@@ -1,0 +1,102 @@
+{
+  "status": {
+    "type": "str",
+    "size": null
+  },
+  "sources": {
+    "type": "dict",
+    "size": 120
+  },
+  "fixtures": {
+    "type": "list",
+    "size": 38
+  },
+  "executed_clients": {
+    "type": "list",
+    "size": 25
+  },
+  "reused_clients": {
+    "type": "list",
+    "size": 13
+  },
+  "archive_sha256": {
+    "type": "str",
+    "size": null
+  },
+  "frame_archive_sha256": {
+    "type": "str",
+    "size": null
+  },
+  "alias_archive_sha256": {
+    "type": "str",
+    "size": null
+  },
+  "profile_archive_sha256": {
+    "type": "str",
+    "size": null
+  },
+  "profile_oracle_sha256": {
+    "type": "str",
+    "size": null
+  },
+  "game_session_archive_sha256": {
+    "type": "str",
+    "size": null
+  },
+  "random_oracle_sha256": {
+    "type": "str",
+    "size": null
+  },
+  "keyboard_archive_sha256": {
+    "type": "str",
+    "size": null
+  },
+  "platform_archive_sha256": {
+    "type": "str",
+    "size": null
+  },
+  "source_key_table_sha256": {
+    "type": "str",
+    "size": null
+  },
+  "independent_manifest_sha256": {
+    "type": "dict",
+    "size": 3
+  },
+  "source_asset_sha256": {
+    "type": "str",
+    "size": null
+  },
+  "symlink_creation_exercised": {
+    "type": "bool",
+    "size": null
+  },
+  "remaining_integration_symbols": {
+    "type": "list",
+    "size": 39
+  },
+  "complete_game_entry_linkable": {
+    "type": "bool",
+    "size": null
+  },
+  "game_executed": {
+    "type": "bool",
+    "size": null
+  },
+  "physical_endpoints_opened": {
+    "type": "bool",
+    "size": null
+  },
+  "frames": {
+    "type": "NoneType",
+    "size": null
+  },
+  "audio": {
+    "type": "NoneType",
+    "size": null
+  },
+  "limits": {
+    "type": "list",
+    "size": 11
+  }
+}

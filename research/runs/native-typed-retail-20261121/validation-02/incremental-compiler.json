@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\native_typed_recomp.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\SLUS_214.10",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\native-typed-retail-5e96e6e06266f6c372acb8143486bdacd08716ea954ac36a45df7b54f9b72a28"
+  ],
+  "exit": 0,
+  "stdout": "",
+  "stderr": "",
+  "executable_sha256": "5fcb47ca20cea93df19b1f188efcf1ea3a8c5d1db1c962c2b55fcef0bd77b374",
+  "executable_after_sha256": "5fcb47ca20cea93df19b1f188efcf1ea3a8c5d1db1c962c2b55fcef0bd77b374"
+}

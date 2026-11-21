@@ -20,12 +20,14 @@ runtime-translation descriptions, is preserved for provenance at
 `research/history/native-port-docs-2026-11-18/README.md`. Those instructions
 do not describe the accepted Armageddon route.
 
-Work17 supplies the real source-point native file initializer and same-group
-dispatcher ownership, native file aliases, rollback and safe empty teardown.
-All30 CPU/file clients pass with95 stable source/tool pins,13 real allocation
-fault cuts,12 native files,65 children and245 original package comparisons.
-Volume symlink creation was explicitly skipped with privilege1314; that case
-is unexercised. Independent source and saved-evidence reviews pass. The complete entry still refuses40 native integration names, including
-the full middleware time/callback pump. No game/physical endpoint ran.
-Parent live status and its dated work22/23 record own current evidence.
+The work24/26 component checkpoint adds source-backed ordered task
+lookup/retirement and an offline compiler that emits the original scalar
+getter/setter as typed native C++. The generated output compiles and executes
+against the actual native session without guest/compiler/device linkage.
+Three current client identities are measured;38 earlier client binaries are
+unchanged. A deliberately modified generated source fails before compilation.
+The complete retail entry still refuses39 unimplemented native integration
+names. Real task bodies/dispatch/reset, whole-game input/render/audio and
+acceptance remain OPEN. No game or physical endpoint was opened.
+The parent live status and dated work24/26 results own the full scope.
 No owner launch is requested.

@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+    "--target",
+    "test_native_typed_retail",
+    "-j2"
+  ],
+  "exit": 0,
+  "stdout": "[0/2] Re-checking globbed directories...\n[1/6] AOT compile source-verified retail scalar functions to typed native C++\n",
+  "stderr": "",
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "executable_after_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3"
+}

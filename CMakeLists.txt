@@ -16,6 +16,7 @@ include(cmake/native_media.cmake)
 include(cmake/native_audio.cmake)
 include(cmake/native_sound_resources.cmake)
 include(cmake/native_game.cmake)
+include(cmake/native_typed.cmake)
 
 # Build identity. ps2run prints this at startup so every run log names the commit
 # and working-tree state that produced the binary; two runs are then comparable
