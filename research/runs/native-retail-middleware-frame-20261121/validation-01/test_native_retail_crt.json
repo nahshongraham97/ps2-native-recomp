@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_crt.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-middleware-frame-20261121\\validation-01\\owned-content"
+  ],
+  "exit": 0,
+  "stdout": "PASS production native CRT ownership/lifecycle, deferred work and callbacks; no game or device\n",
+  "stderr": "",
+  "executable_sha256": "1118cf3ab481892460b066a872f12042c82fe4b6ffbaee73c36afa2d48b6eee3",
+  "executable_after_sha256": "1118cf3ab481892460b066a872f12042c82fe4b6ffbaee73c36afa2d48b6eee3"
+}

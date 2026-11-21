@@ -94,6 +94,21 @@ bool initialize_retail_middleware_files(NativeRetailMainState& main,
         f.operation = "retail middleware content volume";
         return false;
     }
+    std::unique_ptr<NativeRetailMiddlewareFrame> new_frame;
+    if (main.startup.middleware_frame) {
+        if (!main.startup.middleware_frame->validate(*main.startup.crt, f.middleware_frame)) {
+            f.kind = StartupError::middleware_frame;
+            f.operation = "retail middleware retained frame owner";
+            return false;
+        }
+    } else {
+        new_frame = NativeRetailMiddlewareFrame::create(*main.startup.crt, f.middleware_frame);
+        if (!new_frame) {
+            f.kind = StartupError::middleware_frame;
+            f.operation = "retail middleware native frame construction";
+            return false;
+        }
+    }
     auto dispatcher = NativeRetailMiddlewareDispatcher::create(work);
     if (!dispatcher)
         return fail_work(f, "retail middleware dispatcher construction", work);
@@ -132,6 +147,7 @@ bool initialize_retail_middleware_files(NativeRetailMainState& main,
         return false;
     }
     main.file_paths = std::move(paths);
+    if (new_frame) main.startup.middleware_frame = std::move(new_frame);
     return true;
 }
 

@@ -237,6 +237,7 @@ std::optional<NativeStartupSources> emit_native_startup_closure(std::span<const 
 #include "mka/retail_main_timing.hpp"
 #include "mka/retail_game_session.hpp"
 #include "mka/retail_middleware_work.hpp"
+#include "mka/retail_middleware_frame.hpp"
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -245,8 +246,8 @@ std::optional<NativeStartupSources> emit_native_startup_closure(std::span<const 
 #include <utility>
 #include <vector>
 namespace mka::retail {
-enum class StartupError {none,missing_boot_argument,malformed_boot_argument,missing_directory_separator,content,allocation,host_capacity,native_exception,memory_owners,already_initialized,crt,platform,main_timing,game_session,middleware};
-struct StartupFailure {StartupError kind=StartupError::none;const char* operation="";content::ContentVolumeFailure content;RetailMemoryOwnerFailure memory;RetailCrtFailure crt;RetailPlatformFailure platform;RetailMainTimingFailure timing;RetailGameSessionFailure game;RetailMiddlewareWorkFailure middleware;};
+enum class StartupError {none,missing_boot_argument,malformed_boot_argument,missing_directory_separator,content,allocation,host_capacity,native_exception,memory_owners,already_initialized,crt,platform,main_timing,game_session,middleware,middleware_frame};
+struct StartupFailure {StartupError kind=StartupError::none;const char* operation="";content::ContentVolumeFailure content;RetailMemoryOwnerFailure memory;RetailCrtFailure crt;RetailPlatformFailure platform;RetailMainTimingFailure timing;RetailGameSessionFailure game;RetailMiddlewareWorkFailure middleware;RetailMiddlewareFrameFailure middleware_frame;};
 // Native-owned replacements for the original startup arguments and writable
 // content/path state. Host executable location, boot-resource string and volume
 // are separate inputs; no guest argument block, pointer table or BSS is retained.
@@ -257,6 +258,8 @@ struct NativeRetailStartupState {
     std::unique_ptr<NativeRetailMemoryOwners> memory_owners;
     std::unique_ptr<NativeRetailCrt> crt;
     std::unique_ptr<NativeRetailPlatform> platform;
+    // Program-lifetime logical middleware time/callback; retired before platform/CRT.
+    std::unique_ptr<NativeRetailMiddlewareFrame> middleware_frame;
     std::shared_ptr<NativeRetailGameSession> game_session;
     NativeRetailStartupState(content::NativeContentVolume volume,std::vector<std::string> arguments)
         :content(std::move(volume)),boot_arguments(std::move(arguments)){}

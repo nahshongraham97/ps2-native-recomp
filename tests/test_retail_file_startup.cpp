@@ -103,8 +103,8 @@ int main(int argc, char** argv) {
             auto original_group = env.main.middleware_work_group;
             check(main_binding::initialize_retail_middleware_files(env.main, f) &&
                   env.main.middleware_work_group == original_group &&
-                  env.main.middleware_dispatcher && env.main.file_paths,
-                  "source group configured and attached before aliases");
+                  env.main.middleware_dispatcher && env.main.file_paths && env.startup.middleware_frame,
+                  "source group attached before aliases and persistent native frame publication");
             auto group = env.main.middleware_work_group->observe();
             auto dispatcher = env.main.middleware_dispatcher->observe();
             check(group.enabled && group.attached && !group.closed &&
@@ -222,10 +222,10 @@ int main(int argc, char** argv) {
             const bool ready = main_binding::initialize_retail_middleware_files(env.main, f);
             allocation_cut = -1;
             if (ready) {
-                check(env.main.file_paths && env.main.middleware_dispatcher,
-                      "successful fault cut publishes complete startup");
+                check(env.main.file_paths && env.main.middleware_dispatcher && env.startup.middleware_frame,
+                      "successful fault cut publishes complete startup and frame owner");
             } else {
-                check(!env.main.file_paths && !env.main.middleware_dispatcher &&
+                check(!env.main.file_paths && !env.main.middleware_dispatcher && !env.startup.middleware_frame &&
                       !env.main.middleware_work_group->observe().attached,
                       "failed fault cut rolls back publication and attachment");
             }
@@ -269,7 +269,7 @@ int main(int argc, char** argv) {
                       "opened native files survive service retirement without provider fallback");
             }
         }
-        std::printf("PASS native middleware file startup: %td allocation cuts, 12 native files, 65 native children; full frame pump and game remain open\n", fault_cuts);
+        std::printf("PASS native middleware file startup: %td allocation cuts, 12 native files, 65 native children; source frame body covered separately; callback producers/game remain open\n", fault_cuts);
         return 0;
     } catch (const std::exception& e) {
         std::fprintf(stderr, "%s\n", e.what());

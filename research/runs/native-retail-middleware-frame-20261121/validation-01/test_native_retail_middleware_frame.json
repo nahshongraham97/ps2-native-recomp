@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_middleware_frame.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native middleware frame time and typed callback component\n",
+  "stderr": "",
+  "executable_sha256": "8356844dd23c8bf95208eaaec9342a7fe1d8603376d1d96a595dcd17ffff838b",
+  "executable_after_sha256": "8356844dd23c8bf95208eaaec9342a7fe1d8603376d1d96a595dcd17ffff838b"
+}

@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_package_errors.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-middleware-frame-20261121\\validation-01\\disposable-package-errors"
+  ],
+  "exit": 0,
+  "stdout": "PASS native package malformed/disposable file cases; no game or endpoint\n",
+  "stderr": "",
+  "executable_sha256": "2e4cee2ea1cdbb267cf1ac56fa32a60ffd7050672812cf9abb47e04c1e01d9aa",
+  "executable_after_sha256": "2e4cee2ea1cdbb267cf1ac56fa32a60ffd7050672812cf9abb47e04c1e01d9aa"
+}

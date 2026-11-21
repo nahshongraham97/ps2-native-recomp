@@ -1,15 +1,13 @@
 #include "mka/retail_main.hpp"
 #include "mka/retail_platform.hpp"
 #include "native_retail_startup.hpp"
+#include "retail_main_control.hpp"
 #include <bit>
 
 namespace mka::retail {
 namespace {
 using namespace main_binding;
-struct NativeMainReentry {
-    NativeRetailMainState* owner;
-    std::uint32_t value;
-};
+using detail::NativeMainReentry;
 
 bool construct_main_owners(NativeRetailMainState& m, StartupFailure& f) {
     if (!construct_retail_initial_aggregate(m, f)) return false;
@@ -128,10 +126,6 @@ bool run_frame(NativeRetailMainState& m, StartupFailure& f) {
 }
 
 } // namespace
-
-[[noreturn]] void reenter_native_retail_main(NativeRetailMainState& m, std::uint32_t value) {
-    throw NativeMainReentry{&m, value == 0 ? 1 : value};
-}
 
 std::optional<std::int64_t> continue_native_retail_main(NativeRetailStartupState& startup, StartupFailure& f) {
     f = {};
