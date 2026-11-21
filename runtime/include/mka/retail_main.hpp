@@ -153,7 +153,7 @@ bool initialize_retail_loaded_sections(NativeRetailMainState&, StartupFailure&);
 bool reset_retail_auxiliary_words(NativeRetailMainState&, StartupFailure&); // 26F1E0, not PRNG
 bool initialize_retail_action_service(NativeRetailMainState&, StartupFailure&); // 163210
 bool initialize_retail_package_stage(NativeRetailMainState&, StartupFailure&); // 219050
-bool initialize_retail_audio_configuration(NativeRetailMainState&, StartupFailure&); // 164130
+bool initialize_retail_game_options(NativeRetailMainState&, StartupFailure&); // 164130, not audio configuration
 bool initialize_retail_current_sound(NativeRetailMainState&, StartupFailure&); // 12D7E0
 bool initialize_retail_mode_objects(NativeRetailMainState&, StartupFailure&); // 2460B0
 bool initialize_retail_scene_service(NativeRetailMainState&, StartupFailure&); // 295660

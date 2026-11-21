@@ -1,0 +1,12 @@
+{
+  "reason": "Preserved Session snapshots are named by basename, not source-relative directory.",
+  "before_sha256": "b507f1dedc7bf81e5cd54005aad67669cfe4073cabc8a971cbf54f5c21592b2e",
+  "after_sha256": "bca8c13ac5d0eefe55ce32dfcfdf2a4be602fdeca5194982ce1d1ce1cf29ad32",
+  "prior_failure_sha256": "f6b7eded6e3f04ca48f0f922c0819e48418fbf66ef50dbb915186dfb42765c5f",
+  "prior_scope": "Failed preflight before source-preflight or compiler/client invocation.",
+  "changes": [
+    "Use verified snapshot basename paths",
+    "Keep failed validation-01 and write fresh validation-02"
+  ],
+  "runtime_source_changed": false
+}

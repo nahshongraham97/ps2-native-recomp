@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <stdexcept>
 #include <string>
+#include <thread>
 
 namespace {
 void check(bool okay,const char* label) {
@@ -34,6 +35,27 @@ int main(int argc,char** argv) {
         source_call(initialize_retail_memory_owners(startup,f),f,"actual memory group");
         mka::input::ControllerInput samples;
         NativeRetailMainState main(startup,samples);
+        RetailGameSessionFailure option_failure;
+        auto* options=startup.game_session->game_options(option_failure);
+        RetailGameOptionsFailure options_failure;
+        const std::uint8_t selected_record[]={'4','.'};
+        check(options&&options->parse_selected_record_from_3433c0(
+                  std::span<const std::uint8_t>{selected_record},options_failure),
+              "actual retained source option producer");
+        source_call(main_binding::initialize_retail_game_options(main,f),f,"production164130 game options");
+        check(options->observe(options_failure)->live_mode==3&&
+              options->observe(options_failure)->word_660380==1,
+              "Main164130 reads live source mode rather than assuming BSS zero");
+        check(options->parse_selected_record_from_3433c0(std::nullopt,options_failure),
+              "actual null-record mode reset");
+        source_call(main_binding::initialize_retail_game_options(main,f),f,"repeat production164130");
+        check(options->observe(options_failure)->live_mode==0&&
+              options->observe(options_failure)->word_660380==0,
+              "repeat Main option publication follows the same live source owner");
+        check(!main_binding::retail_task_exists(main,0x2065,f)&&
+              f.kind==StartupError::game_session&&
+              f.game.task_domain.kind==RetailTaskDomainError::registry_unborn,
+              "Main lookup refuses an unborn registry instead of reporting no task");
         auto selector=main_binding::read_retail_profile_selector(main,f);
         check(bool(selector),"source profile selector");
         source_call(main_binding::reset_and_initialize_retail_profile(main,select_native_class_profile(*selector),f),
@@ -57,6 +79,18 @@ int main(int argc,char** argv) {
         auto pool= startup.game_pool->observe(pf);
         check(state&&state->ordered.size()==4&&pool&&pool->active_records==4,
               "130350 published four actual task bodies using shared pool");
+        const auto present=main_binding::retail_task_exists(main,state->ordered.front().kind,f);
+        const auto absent=main_binding::retail_task_exists(main,0x2065,f);
+        check(present&&*present&&absent&&!*absent,
+              "Main uses the actual populated source registry for live and absent kinds");
+        bool foreign_refused=false;
+        std::thread foreign([&] {
+            StartupFailure wrong_thread;
+            foreign_refused=!main_binding::retail_task_exists(main,0x2065,wrong_thread)&&
+                wrong_thread.game.kind==RetailGameSessionError::wrong_thread;
+        });
+        foreign.join();
+        check(foreign_refused,"Main task lookup preserves actual Session thread ownership");
         RetailGameResourceRegistryFailure gf;
         const auto globals=main.resource_registry->observe(gf);
         check(globals&&globals->global_names==4,"185EE0 registered four actual native values");
@@ -80,9 +114,23 @@ int main(int argc,char** argv) {
         check(startup.text_storage==text_owner&&startup.game_session->initial_game_tasks(sf)==tasks&&
               startup.game_pool->observe(pf)->active_records==4,
               "repeat preserves actual text/camera ownership and recreates four source tasks");
+        registry=domain->registry(df);
+        check(registry!=nullptr,"same-session replacement root after source reset");
+        state=registry->observe(rf);
+        check(state&&state->ordered.size()==4,"reinitialized actual task batch");
+        // Original12ED10 writes cached identity1 before12FA00; identity1 makes
+        // the real cleanup condition true, exercising that effectful branch.
+        auto stale=state->ordered.front().object;
+        const auto stale_kind=state->ordered.front().kind;
+        check(registry->store_object_cookie_from_source(stale,1,rf),"actual stale identity source write");
+        const auto retired=main_binding::retail_task_exists(main,stale_kind,f);
+        state=registry->observe(rf);
+        check(retired&&!*retired&&state&&state->ordered.size()==3&&
+              startup.game_pool->observe(pf)->active_records==3,
+              "production Main lookup retires the stale body and shared link before returning not found");
         check(domain->cancel_first_root_from_12f030(df)&&startup.game_pool->observe(pf)->active_records==0,
               "second source task batch retires normally");
-        std::puts("PASS_NATIVE_RETAIL_GAME_RECORDS_MAIN: actual1303F0/130350, four source bodies, installed text/frame retirement, explicit-cleanup repeat; full1861B0/game path remains open");
+        std::puts("PASS_NATIVE_RETAIL_GAME_RECORDS_MAIN: actual1303F0/130350, four source bodies, effectful Main task lookup, text/frame retirement, explicit-cleanup repeat; full1861B0/game path remains open");
     } catch(const std::exception& error) {
         std::fprintf(stderr,"FAIL connected game-record main: %s\n",error.what());
         return 1;

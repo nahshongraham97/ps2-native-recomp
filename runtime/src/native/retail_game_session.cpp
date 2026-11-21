@@ -66,6 +66,10 @@ bool NativeRetailGameSession::store_scalar_mode_from_source(
     scalar_mode_ = mode;
     return true;
 }
+NativeRetailGameOptions* NativeRetailGameSession::game_options(RetailGameSessionFailure& failure) noexcept {
+    if (!validate_current_thread(failure)) return nullptr;
+    return &game_options_;
+}
 NativeRetailRandom* NativeRetailGameSession::random(RetailGameSessionFailure& failure) noexcept {
     if (!validate_current_thread(failure)) return nullptr;
     return &random_;

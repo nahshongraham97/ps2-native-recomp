@@ -51,6 +51,12 @@ public:
     std::optional<std::array<RetailActionBinding,16>> observe_mapping_table(
         std::size_t position, std::size_t variant,
         RetailInputRoleFailure&) const noexcept;
+    // 163BA0 clears the three digital words for roles 0..2, preserving
+    // source association, status, mapping and native host axes.
+    bool clear_digital_first_three_from_163ba0(
+        RetailInputRoleFailure&) noexcept;
+    // 163A50 tests the participant link, not initialized status, before
+    // clearing role status bit 0 for roles 0..2.
     bool clear_dispatch_blocked_first_three_from_163a50(
         RetailInputRoleFailure&) noexcept;
 

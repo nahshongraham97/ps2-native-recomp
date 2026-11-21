@@ -1,4 +1,7 @@
 #include "mka/retail_input_roles.hpp"
+#include "mka/retail_input_assignments.hpp"
+#include "mka/retail_input_poll.hpp"
+#include "mka/retail_participants.hpp"
 #include <array>
 #include <cstdio>
 #include <cstdlib>
@@ -51,12 +54,73 @@ int main() { try {
     check(retail_canonical_action_index(0x10000, 123) == 123, "source fallback retains caller row");
     check(!roles->observe(static_cast<RetailInputRole>(4), f) && f.kind == RetailInputRoleError::invalid_role,
         "unknown retail identity is distinct from host device capacity");
+    RetailParticipantFailure participant_failure;
+    auto participants = NativeRetailParticipants::create_first_two(participant_failure);
+    RetailInputAssignmentFailure assignment_failure;
+    auto assignments = NativeRetailInputAssignments::create(roles, participants, assignment_failure);
+    RetailGameControlsFailure controls_failure;
+    auto controls = NativeRetailGameControls::create(controls_failure);
+    mka::input::ControllerInput samples;
+    RetailAssignedPollFailure poll_failure;
+    auto poll = NativeRetailAssignedPoll::create(roles, controls, samples, poll_failure);
+    check(participants && assignments && controls && poll,
+        "actual source participant, role, controls and host sample owners");
+    auto participant = participants->first_two(0, participant_failure);
+    check(participant && assignments->bind_direct(participant, RetailInputRole::role0,
+              assignment_failure) &&
+          poll->store_gate_from_163930(*roles, *controls, 4, poll_failure),
+        "linked role zero can be blocked before its first ready sample");
+    auto linked_uninitialized = roles->observe(RetailInputRole::role0, f);
+    check(linked_uninitialized && linked_uninitialized->participant == participant &&
+          !linked_uninitialized->initialized && linked_uninitialized->dispatch_blocked &&
+          roles->clear_dispatch_blocked_first_three_from_163a50(f),
+        "163A50 reaches a linked role even when status bit 1 is clear");
+    auto linked_after = roles->observe(RetailInputRole::role0, f);
+    check(linked_after && !linked_after->dispatch_blocked &&
+          linked_after->participant == participant && !linked_after->initialized,
+        "linked predicate clears only status bit 0");
+
+    mka::input::NativeControllerAxes axes;
+    axes.sticks = {{0, 0, 32767, 0}};
+    check(samples.publish(7, mka::input::digital_state(1, true,
+              {{128, 128, 128, 128}}, 255, 255, axes)) &&
+          poll->ready_assigned(*roles, *controls, samples, RetailInputRole::role0,
+              7, RetailAnalogDeadzone{48}, poll_failure),
+        "source assigned poll produces initialized digital and retained host axes");
+    auto before_clear = roles->observe(RetailInputRole::role0, f);
+    check(before_clear && before_clear->initialized && before_clear->current != 0 &&
+          before_clear->rising != 0 && before_clear->axes &&
+          roles->clear_digital_first_three_from_163ba0(f),
+        "163BA0 clears real produced role digital words");
+    auto after_clear = roles->observe(RetailInputRole::role0, f);
+    check(after_clear && after_clear->previous == 0 && after_clear->current == 0 &&
+          after_clear->rising == 0 && after_clear->axes == before_clear->axes &&
+          after_clear->participant == participant && after_clear->initialized,
+        "163BA0 preserves axes, linked participant and status");
+
+    check(assignments->detach(participant, assignment_failure) &&
+          poll->store_gate_from_163930(*roles, *controls, 4, poll_failure),
+        "280F90 detaches role zero without clearing initialized bit");
+    auto unlinked_initialized = roles->observe(RetailInputRole::role0, f);
+    check(unlinked_initialized && !unlinked_initialized->participant &&
+          unlinked_initialized->initialized && unlinked_initialized->dispatch_blocked &&
+          roles->clear_dispatch_blocked_first_three_from_163a50(f),
+        "163A50 skips an initialized role after its participant detaches");
+    auto unlinked_after = roles->observe(RetailInputRole::role0, f);
+    check(unlinked_after && unlinked_after->dispatch_blocked &&
+          unlinked_after->initialized && !unlinked_after->participant,
+        "initialized is not the source association predicate");
     bool rejected = false;
     std::thread worker([&] {
         RetailInputRoleFailure other;
-        rejected = !roles->observe(RetailInputRole::role0, other) && other.kind == RetailInputRoleError::wrong_thread;
+        rejected = !roles->observe(RetailInputRole::role0, other) &&
+            other.kind == RetailInputRoleError::wrong_thread &&
+            !roles->clear_digital_first_three_from_163ba0(other) &&
+            other.kind == RetailInputRoleError::wrong_thread &&
+            !roles->clear_dispatch_blocked_first_three_from_163a50(other) &&
+            other.kind == RetailInputRoleError::wrong_thread;
     }); worker.join(); check(rejected, "retail role state stays on its owning thread");
-    std::puts("PASS native four-role initialization and original action table; no assignment, polling, game or endpoint");
+    std::puts("PASS native role initialization, source link predicate and digital reset; no endpoint or game");
     return 0;
 } catch (const std::exception& e) {
     fail_allocation = false; std::fprintf(stderr, "FAIL input roles: %s\n", e.what()); return 1;

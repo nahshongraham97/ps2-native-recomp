@@ -2,6 +2,7 @@
 #include "mka/retail_auxiliary_words.hpp"
 #include "mka/retail_initial_task_state.hpp"
 #include "mka/retail_game_controls.hpp"
+#include "mka/retail_game_options.hpp"
 #include "mka/retail_game_record_values.hpp"
 #include "mka/retail_game_records_values.hpp"
 #include "mka/retail_game_task_lists.hpp"
@@ -15,11 +16,12 @@
 #include <thread>
 
 namespace mka::retail {
-enum class RetailGameSessionError { none, wrong_thread, allocation, controls, settings, native_exception, task_domain, task_lists, initial_game_tasks };
+enum class RetailGameSessionError { none, wrong_thread, allocation, controls, settings, native_exception, task_domain, task_lists, initial_game_tasks, options };
 struct RetailGameSessionFailure {
     RetailGameSessionError kind{RetailGameSessionError::none};
     const char* operation{""};
     RetailGameControlsFailure controls;
+    RetailGameOptionsFailure options;
     RetailMainSettingsFailure settings;
     RetailRandomFailure random;
     RetailTaskDomainFailure task_domain;
@@ -41,6 +43,7 @@ public:
     std::optional<std::int32_t> scalar_mode(RetailGameSessionFailure&) const noexcept;
     bool store_scalar_mode_from_source(std::int32_t, RetailGameSessionFailure&) noexcept;
     // Borrowed values require this retained session to span the call.
+    NativeRetailGameOptions* game_options(RetailGameSessionFailure&) noexcept;
     NativeRetailRandom* random(RetailGameSessionFailure&) noexcept;
     NativeRetailAuxiliaryWords* auxiliary_words(RetailGameSessionFailure&) noexcept;
     NativeRetailInitialTaskState* initial_task_state(RetailGameSessionFailure&) noexcept;
@@ -66,6 +69,7 @@ private:
     std::shared_ptr<NativeRetailGameControls> controls_;
     std::shared_ptr<NativeRetailMainSettings> settings_;
     std::unique_ptr<NativeRetailTaskDomain> task_domain_;
+    NativeRetailGameOptions game_options_;
     NativeRetailRandom random_;
     NativeRetailAuxiliaryWords auxiliary_;
     NativeRetailInitialTaskState initial_task_state_;

@@ -1,0 +1,5 @@
+{
+  "status": "FAILED",
+  "error": "FileNotFoundError",
+  "message": "[Errno 2] No such file or directory: 'C:\\\\Users\\\\nahsh\\\\mk port\\\\Armageddon-backup\\\\armageddon-reimplementation\\\\research\\\\runs\\\\native-retail-startup-20261120\\\\connected-retail-entry-01\\\\native-retail-game-options-52\\\\author01\\\\before-newline-correction\\\\runtime\\\\include\\\\mka\\\\retail_game_session.hpp'"
+}

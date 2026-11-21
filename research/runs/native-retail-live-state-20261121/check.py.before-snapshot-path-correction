@@ -1,0 +1,109 @@
+"""Actual source-backed role, game-option and Main task-lookup checks."""
+import csv
+import importlib.util
+import json
+import re
+import struct
+from pathlib import Path
+
+F=Path(__file__).resolve().parents[3];P=F.parents[2];H=Path(__file__).resolve().parent
+C=P/'research/runs/native-retail-startup-20261120/connected-retail-entry-01'
+s=importlib.util.spec_from_file_location('checks',F/'research/runs/native-typed-retail-20261121/verify.py')
+c=importlib.util.module_from_spec(s);s.loader.exec_module(c)
+c.OUT=H/'validation-01'
+if __name__=='__main__':
+    c.ctypes.windll.kernel32.SetErrorMode(3);c.OUT.mkdir(exist_ok=False)
+    try:
+        prior_path=F/'research/runs/native-retail-viewport-clock-20261121/validation-01/verification.json'
+        c.require(c.sha(prior_path)=='8d9b66403a452f952d4c5578c9fee7988566d9f3eb09d06f4587837f8f45e435','exact previous connected result')
+        prior=json.loads(prior_path.read_text(encoding='utf-8'))
+        a51=C/'native-retail-pad-startup-51/author01'
+        a52=C/'native-retail-game-options-52/author01'
+        manifests=[(a51/'IMPLEMENTATION.json','a0e1e699957c2e5945102a9505828e89601458e49d11d266d4a93f781d616a7f'),
+                   (a52/'IMPLEMENTATION.json','85a9bf0519016b2485d44f54837db30eb24d4d2350ddeb04c921e5f6ddcaaeb2'),
+                   (a52/'NEWLINE_CORRECTION.json','479135be67e32960634f77c3048cc90feb0016a76e5ee65347cf061efbaf42e5')]
+        evidence={str(prior_path):c.sha(prior_path)}
+        for path,pin in manifests:
+            c.require(c.sha(path)==pin,'exact author record '+str(path));evidence[str(path)]=pin
+        m51=json.loads(manifests[0][0].read_text(encoding='utf-8'))
+        m52=json.loads(manifests[1][0].read_text(encoding='utf-8'))
+        c.require(m51['schema']=='native_retail_pad_startup_author_v1' and isinstance(m51['after'],dict) and
+                  m52['schema']=='native_retail_game_options_author_v1' and isinstance(m52['files_sha256'],dict),'actual author schema')
+        author_sources={**m51['after'],**m52['files_sha256']}
+        corrections={'runtime/include/mka/retail_game_session.hpp':'e77393c991cbcdee7a371b7e75f6e67b030d34134b362b785f916dad515ea581',
+                     'runtime/src/native/retail_game_session.cpp':'b85c841c8d0513614e14053948e6290b52963b540d260cf147af6181061f8bfd'}
+        for name,pin in corrections.items():
+            old=a52/'before-newline-correction'/name
+            c.require(c.sha(old)==author_sources[name] and old.read_bytes().replace(b'\r\n',b'\n')==(F/name).read_bytes() and
+                      c.sha(F/name)==pin,'preserved normalization-only correction '+name)
+        author_sources.update(corrections)
+        sources={str(F/name):pin for name,pin in author_sources.items()}
+        paths=['runtime/include/mka/retail_main.hpp','runtime/src/native/retail_main.cpp',
+               'runtime/src/native/retail_task_lookup_main.cpp','runtime/src/native/retail_task_registry.cpp',
+               'runtime/src/native/retail_task_domain.cpp','runtime/src/native/retail_game_records_main.cpp',
+               'runtime/src/native/retail_game_record_reset.cpp','runtime/src/native/retail_input_assignments.cpp',
+               'runtime/src/native/retail_input_poll.cpp','tests/test_retail_game_records_main.cpp',
+               'tests/test_retail_game_session.cpp','tests/test_retail_initial_task.cpp','cmake/native_game.cmake']
+        sources.update({str(F/n):c.sha(F/n) for n in paths});sources[str(Path(__file__).resolve())]=c.sha(__file__)
+        blob=(P/'research/inputs/SLUS_214.10').read_bytes()
+        c.require(c.sha(P/'research/inputs/SLUS_214.10')==m51['elf_sha256']==m52['original_elf_sha256'], 'same original retail ELF')
+        off=struct.unpack_from('<I',blob,28)[0];size,count=struct.unpack_from('<HH',blob,42)
+        loads=[struct.unpack_from('<8I',blob,off+i*size) for i in range(count)]
+        def original(va):
+            matches=[s for s in loads if s[0]==1 and s[2]<=va and va+4<=s[2]+s[4]]
+            c.require(len(matches)==1,'unambiguous original PT_LOAD word')
+            return struct.unpack_from('<I',blob,matches[0][1]+va-matches[0][2])[0]
+        raw51=a51/'RAW_SOURCE.json'
+        c.require(c.sha(raw51)==m51['raw_sha256'],'frozen source51 word input')
+        evidence[str(raw51)]=c.sha(raw51)
+        r51=json.loads(raw51.read_text(encoding='utf-8'))
+        joined51={}
+        for name,region in r51['functions'].items():
+            va=int(region['vaddr'],16)
+            c.require(all(original(va+i*4)==int(word,16) for i,word in enumerate(region['words'])),'original role/pad words '+name)
+            joined51[name]=len(region['words'])
+        src52=C/'native-retail-game-options-52/source-agent01'
+        c.require(c.sha(src52/'SOURCE.json')==m52['source_contract_sha256'],'exact option contract')
+        evidence[str(src52/'SOURCE.json')]=c.sha(src52/'SOURCE.json')
+        r52=json.loads((src52/'SOURCE.json').read_text(encoding='utf-8'));joined52={}
+        for name,pin in r52['raw_words_sha256'].items():
+            path=src52/name;c.require(c.sha(path)==pin,'frozen source52 words '+name);evidence[str(path)]=pin
+            rows=list(csv.DictReader(path.read_text(encoding='utf-8').splitlines()))
+            c.require(all(original(int(row['va'],16))==int(row['le32'],16) for row in rows),'original game-option words '+name)
+            joined52[name]=len(rows)
+        c.require(sum(joined52.values())==271,'exact source52 scope')
+        join53=C/'native-retail-task-lookup-main-53/SOURCE_JOIN.json'
+        r53=json.loads(join53.read_text(encoding='utf-8'))
+        c.require(r53['status']=='PASS_ORIGINAL_TASK_LOOKUP_AND_CALLER_WORDS','original lookup/caller proof')
+        evidence[str(join53)]=c.sha(join53);evidence.update(r53['inputs'])
+        def stable():
+            for group in (sources,evidence,prior['protected_inputs']):
+                c.require(all(c.sha(path)==pin for path,pin in group.items()),'stable measured source/evidence/protected bytes')
+        stable();c.save('source-preflight.json',dict(sources=sources,evidence=evidence,source51_words=joined51,source52_words=joined52))
+        targets=['test_native_retail_game_options','test_native_retail_input_roles','test_native_retail_game_records_main',
+                 'test_native_retail_game_session','test_native_retail_initial_task']
+        c.execute('build',[c.CMAKE,'--build',c.BUILD,'--target',*targets,'-j2'])
+        directory=c.OUT/'disposable-task-content';directory.mkdir()
+        arguments=[[],[],[P/'research/inputs/modules'],[],[directory]]
+        clients=[]
+        for name,args in zip(targets,arguments):
+            r=c.execute(name,[c.BUILD/(name+'.exe'),*args])
+            c.require('PASS' in r['stdout'] and not r['stderr'],'actual affected client '+name)
+            clients.append(dict(target=name,sha256=r['executable_sha256']))
+        r=c.execute('actual-entry-link',[c.CMAKE,'--build',c.BUILD,'--target','test_native_startup_missing_bindings','-j2'],expected=None)
+        symbols=re.findall(r'undefined symbol: ([^\n]+)',r['stdout']+r['stderr'])
+        missing=sorted(set(re.findall(r'undefined symbol: mka::retail::main_binding::(\w+)\(',r['stdout']+r['stderr'])))
+        c.require(missing==sorted(set(prior['remaining_integration_symbols'])-{'initialize_retail_audio_configuration','retail_task_exists'}) and
+                  len(symbols)==len(missing) and all(n.startswith('mka::retail::main_binding::') for n in symbols) and
+                  not (c.BUILD/'test_native_startup_missing_bindings.exe').exists(),'actual entry resolves options and real task lookup only')
+        stable()
+        c.save('verification.json',dict(status='PASS_NATIVE_LIVE_OPTIONS_ROLE_AND_MAIN_LOOKUP',sources=sources,evidence=evidence,
+            protected_inputs=prior['protected_inputs'],executed_clients=clients,source51_words=joined51,source52_words=joined52,
+            remaining_integration_symbols=missing,startup_archive_sha256=c.sha(c.BUILD/'libmka_native_retail_startup.a'),
+            complete_game_entry_linkable=False,game_executed=False,physical_endpoints_opened=False,frames=None,audio=None,
+            limits=['Input role source reset semantics tested; full pad and task-argument producers remain open.',
+                    'Actual Main options and lookup bindings exercised; general dispatch, network option producer/consumers remain open.',
+                    'No main menu, combat, rendering, physical input or audible output acceptance.']))
+        print(json.dumps(dict(status='PASS_NATIVE_LIVE_OPTIONS_ROLE_AND_MAIN_LOOKUP',fresh_clients=len(clients),remaining_Main_integrations=len(missing))))
+    except Exception as error:
+        c.save('failure.json',dict(status='FAILED',error=type(error).__name__,message=str(error)));raise

@@ -102,6 +102,7 @@ add_executable(test_native_retail_text_storage EXCLUDE_FROM_ALL tests/test_retai
 target_link_libraries(test_native_retail_text_storage PRIVATE mka_native_retail_text_storage)
 add_library(mka_native_retail_game_session STATIC EXCLUDE_FROM_ALL
     runtime/src/native/retail_game_controls.cpp
+    runtime/src/native/retail_game_options.cpp
     runtime/src/native/retail_main_settings.cpp
     runtime/src/native/retail_random.cpp
     runtime/src/native/retail_game_session.cpp runtime/src/native/retail_initial_task_state.cpp
@@ -115,6 +116,8 @@ add_executable(test_native_retail_random EXCLUDE_FROM_ALL tests/test_retail_rand
 target_link_libraries(test_native_retail_random PRIVATE mka_native_retail_game_session)
 add_executable(test_native_retail_game_session EXCLUDE_FROM_ALL tests/test_retail_game_session.cpp)
 target_link_libraries(test_native_retail_game_session PRIVATE mka_native_retail_game_session)
+add_executable(test_native_retail_game_options EXCLUDE_FROM_ALL tests/test_retail_game_options.cpp)
+target_link_libraries(test_native_retail_game_options PRIVATE mka_native_retail_game_session)
 # Native logical middleware time and typed callback ownership; no Count model.
 add_library(mka_native_retail_middleware_frame STATIC EXCLUDE_FROM_ALL
     runtime/src/native/retail_middleware_frame.cpp)
@@ -177,6 +180,8 @@ if(WIN32)
         runtime/src/native/retail_game_record_reset.cpp
         runtime/src/native/retail_game_records.cpp
         runtime/src/native/retail_game_records_main.cpp
+        runtime/src/native/retail_task_lookup_main.cpp
+        runtime/src/native/retail_game_options_main.cpp
         runtime/src/native/retail_text_storage_main.cpp
         runtime/src/native/retail_file_startup.cpp runtime/src/native/retail_middleware_main.cpp
         runtime/src/native/retail_main_reentry.cpp

@@ -175,7 +175,7 @@ std::optional<std::int64_t> continue_native_retail_main(NativeRetailStartupState
 
     const auto boot_word = read_retail_audio_boot_word(m);
     const std::array audio_boot_words{boot_word, boot_word, boot_word, boot_word, boot_word};
-    if (!initialize_retail_audio_stage(m, audio_boot_words, f) || !initialize_retail_audio_configuration(m, f) ||
+    if (!initialize_retail_audio_stage(m, audio_boot_words, f) || !initialize_retail_game_options(m, f) ||
         !initialize_retail_current_sound(m, f) || !initialize_retail_mode_objects(m, f) ||
         !initialize_retail_scene_service(m, f) || !initialize_retail_mode_service(m, f) ||
         !initialize_retail_section_service(m, f)) return {};

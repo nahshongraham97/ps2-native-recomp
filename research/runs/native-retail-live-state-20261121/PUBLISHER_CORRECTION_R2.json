@@ -1,0 +1,16 @@
+{
+  "scope": "Publication-only preflight; component checks and runtime source unchanged.",
+  "reason": "Seven prior hash-pinned source/author JSON receipts contain CRLF. Preserve measured bytes rather than rewrite immutable inputs.",
+  "frozen_records_sha256": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-audio-startup-48\\source-agent01\\SOURCE.json": "0a59c63e243aa5075da51c03965e32feb854ea54a49750185fa6e854078393b1",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-audio-startup-48\\source-agent01\\SOURCE_R2_CORRECTION.json": "9aa477c81f0e20932c05c61ac6f8e7194587da74fa8b028bed66028c3943cab0",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-audio-startup-48\\source-agent01\\STATIC_DATA.json": "386922b7ba1b9edd936ad77ccb72d04327e6f97760f8fc119eb0a64dfba4cf10",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-game-options-52\\author01\\IMPLEMENTATION.json": "85a9bf0519016b2485d44f54837db30eb24d4d2350ddeb04c921e5f6ddcaaeb2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-game-options-52\\author01\\NEWLINE_CORRECTION.json": "479135be67e32960634f77c3048cc90feb0016a76e5ee65347cf061efbaf42e5",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-game-options-52\\author01\\PRE_EDIT.json": "6a65eb137cb7fbf3a7e708d4284ec26529174608b86786a6ff6b774c2fdddc62",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-game-options-52\\source-agent01\\SOURCE.json": "b9a2081bbd246434229b1e6605b8634f432a3d15a16498194814a26c77b103c2"
+  },
+  "prior_publisher_sha256": "e5dc36b1842a03d4fc469369bc69cc299d3ba8bb8b1e8de881ebf821a06eb352",
+  "corrected_publisher_sha256": "3e5f4de1a547b945740a0bb9e172eda737360ce4cf3ee356fa4570614e53e443",
+  "policy": "Exact seven frozen pins classified as preserved evidence; new runtime/docs remain LF, all staging/content checks retained."
+}

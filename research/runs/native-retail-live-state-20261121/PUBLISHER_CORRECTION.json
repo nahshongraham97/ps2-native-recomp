@@ -1,0 +1,7 @@
+{
+  "scope": "Publisher-only preflight; no staging, commit or runtime/test execution occurred.",
+  "failure": "Approved cmake/native_game.cmake path was absent from the text-extension allowlist.",
+  "preserved_publisher_sha256": "0f247b556738e40e26f360013b1cd77d17e27f4dbc4129834ea5d67f1ab33aaa",
+  "current_publisher_sha256": "e5dc36b1842a03d4fc469369bc69cc299d3ba8bb8b1e8de881ebf821a06eb352",
+  "change": "Recognize the explicitly approved .cmake source; preserve all path/pin checks and exact staging."
+}
