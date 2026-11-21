@@ -1,0 +1,16 @@
+{
+  "status": "PASS_NATIVE_SOUND_JOB_COMPONENT",
+  "fork_commit": "8d3c37b2872e30fd84f5c028c04cb5cb1eee1be3",
+  "dirty": true,
+  "source_sha256": {
+    "runtime/include/mka/retail_sound_bank_jobs.hpp": "bc3720246c0368b26b3d93a34be2c37a7623ea3d5ebb34bcc6f2f1855f9fcbd8",
+    "runtime/src/native/retail_sound_bank_jobs.cpp": "65bc3de2f47b0e9bd39198c060ac97a69ea4ee5edeb3d1f2c75fa98c58ac940b",
+    "tests/test_retail_sound_bank_jobs.cpp": "c6f1067c34e052c16a3bc2debc7f68c79a6f0cb76e6990c3697a052b6217f4c9"
+  },
+  "executable_sha256": "499e02a7139f9f982c51d0f8d3d28229c620a6916a7ec4b915b9d05fc3d2e06b",
+  "scope": "Existing source queue plus corrected invalid-session declaration and negative ownership test. Source completion/cancellation parity is not certified by these synthetic fixtures.",
+  "Main_integration": "OPEN",
+  "game_executed": false,
+  "frames": null,
+  "audio": null
+}

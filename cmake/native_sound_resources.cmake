@@ -4,6 +4,7 @@ add_library(mka_native_sound_resources STATIC EXCLUDE_FROM_ALL
     runtime/src/native/native_file.cpp runtime/src/native/sound_bank.cpp
     runtime/src/native/sound_archive.cpp runtime/src/native/sample_payload.cpp
     runtime/src/native/stream_source.cpp runtime/src/native/bank_asset.cpp
+    runtime/src/native/retail_sound_bank_jobs.cpp
     runtime/src/native/normal_sample.cpp runtime/src/native/adpcm_codec.cpp
     runtime/src/native/bank_preparation.cpp runtime/src/native/audio_banks.cpp
     runtime/src/native/audio_bank_protocol.cpp runtime/src/native/audio_bank_service.cpp
@@ -17,6 +18,8 @@ add_executable(test_bank_asset EXCLUDE_FROM_ALL tests/test_bank_asset.cpp)
 target_link_libraries(test_bank_asset PRIVATE mka_native_sound_resources)
 add_executable(test_native_audio_banks EXCLUDE_FROM_ALL tests/test_audio_banks.cpp)
 target_link_libraries(test_native_audio_banks PRIVATE mka_native_sound_resources)
+add_executable(test_native_retail_sound_bank_jobs EXCLUDE_FROM_ALL tests/test_retail_sound_bank_jobs.cpp)
+target_link_libraries(test_native_retail_sound_bank_jobs PRIVATE mka_native_sound_resources)
 add_executable(test_native_audio_bank_protocol EXCLUDE_FROM_ALL tests/test_audio_bank_protocol.cpp)
 target_link_libraries(test_native_audio_bank_protocol PRIVATE mka_native_sound_resources)
 add_executable(test_native_bank_preparation EXCLUDE_FROM_ALL tests/test_bank_preparation.cpp)

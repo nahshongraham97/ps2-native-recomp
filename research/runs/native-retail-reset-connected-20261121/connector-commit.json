@@ -1,0 +1,35 @@
+{
+  "sha": "8d3c37b2872e30fd84f5c028c04cb5cb1eee1be3",
+  "node_id": "C_kwDOVceSb9oAKDhkM2MzN2IyODcyZTMwZmQ4NGY1YzAyOGMwNGNiNWNiMWVlZTFiZTM",
+  "url": "https://api.github.com/repos/nahshongraham97/ps2-native-recomp/git/commits/8d3c37b2872e30fd84f5c028c04cb5cb1eee1be3",
+  "html_url": "https://github.com/nahshongraham97/ps2-native-recomp/commit/8d3c37b2872e30fd84f5c028c04cb5cb1eee1be3",
+  "author": {
+    "name": "nahshongraham97",
+    "email": "nahshongraham97@gmail.com",
+    "date": "2026-11-21T22:10:00Z"
+  },
+  "committer": {
+    "name": "nahshongraham97",
+    "email": "nahshongraham97@gmail.com",
+    "date": "2026-11-21T22:10:00Z"
+  },
+  "tree": {
+    "sha": "b478316baa81bf1556b8f72b39d0794bb886a560",
+    "url": "https://api.github.com/repos/nahshongraham97/ps2-native-recomp/git/trees/b478316baa81bf1556b8f72b39d0794bb886a560"
+  },
+  "message": "Connect retained native initial reset state and wait lifecycle",
+  "parents": [
+    {
+      "sha": "d04a865aa7e6473620fef2e0286fe81b8b8aeb0a",
+      "url": "https://api.github.com/repos/nahshongraham97/ps2-native-recomp/git/commits/d04a865aa7e6473620fef2e0286fe81b8b8aeb0a",
+      "html_url": "https://github.com/nahshongraham97/ps2-native-recomp/commit/d04a865aa7e6473620fef2e0286fe81b8b8aeb0a"
+    }
+  ],
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null,
+    "verified_at": null
+  }
+}

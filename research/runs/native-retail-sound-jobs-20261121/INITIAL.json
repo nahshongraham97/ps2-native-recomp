@@ -1,0 +1,10 @@
+{
+  "status": "PREEXISTING_SOURCE_PRESERVED_BEFORE_COMPILE_FIX",
+  "source_sha256": {
+    "runtime/include/mka/retail_sound_bank_jobs.hpp": "017630d34629aa6c3b603495724644e2148732197ba828203f3fbb726dd98995",
+    "runtime/src/native/retail_sound_bank_jobs.cpp": "65bc3de2f47b0e9bd39198c060ac97a69ea4ee5edeb3d1f2c75fa98c58ac940b",
+    "tests/test_retail_sound_bank_jobs.cpp": "6d5122b3fa8af4850de8b16266f9462e644fe0527e43dcffc6141fd39da2109c"
+  },
+  "identified_issue": "create() uses RetailSoundBankJobError::invalid_session, absent from its enum",
+  "production_main_integration": "OPEN"
+}

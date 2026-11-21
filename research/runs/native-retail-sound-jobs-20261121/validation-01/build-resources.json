@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+    "--target",
+    "mka_native_sound_resources",
+    "-j2"
+  ],
+  "exit": 0,
+  "stdout": "[0/2] Re-checking globbed directories...\nninja: no work to do.\n",
+  "stderr": ""
+}

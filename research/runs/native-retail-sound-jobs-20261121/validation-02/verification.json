@@ -1,0 +1,25 @@
+{
+  "status": "PASS_NORMAL_CMAKE_NATIVE_SOUND_JOBS_COMPONENT",
+  "fork_commit": "8d3c37b2872e30fd84f5c028c04cb5cb1eee1be3",
+  "dirty": true,
+  "source_sha256": {
+    "cmake/native_sound_resources.cmake": "c0f7d702dbd65ca3fe9c3b29690c7c606d17a8c8971271c0b8a9d21cee0f3273",
+    "runtime/include/mka/retail_sound_bank_jobs.hpp": "bc3720246c0368b26b3d93a34be2c37a7623ea3d5ebb34bcc6f2f1855f9fcbd8",
+    "runtime/src/native/retail_sound_bank_jobs.cpp": "65bc3de2f47b0e9bd39198c060ac97a69ea4ee5edeb3d1f2c75fa98c58ac940b",
+    "tests/test_retail_sound_bank_jobs.cpp": "c6f1067c34e052c16a3bc2debc7f68c79a6f0cb76e6990c3697a052b6217f4c9"
+  },
+  "executable_sha256": "5816a4db61b123e713bc5302e7b40926c565317a7c0b685e666b14f31c737fe4",
+  "production_Main_integration": "OPEN",
+  "source_parity": "OPEN",
+  "game_executed": false,
+  "frames": null,
+  "audio": null,
+  "linked_archive_sha256": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_sound_resources.a": "b7d3b6b4cd398ae545296fb1c9c7edf1e60fb112f1086463917f7a01c787531f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_content_volume.a": "26e5dab20782420910b13898e7807225739914b6ca78cb685a8daeab5abfab49"
+  },
+  "compiler": {
+    "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+    "sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe"
+  }
+}

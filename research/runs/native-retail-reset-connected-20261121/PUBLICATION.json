@@ -1,0 +1,10 @@
+{
+  "status": "SYNCHRONIZED_VIA_GITHUB_CONNECTOR",
+  "local_and_remote_commit": "8d3c37b2872e30fd84f5c028c04cb5cb1eee1be3",
+  "tree_sha": "b478316baa81bf1556b8f72b39d0794bb886a560",
+  "preserved_initial_local_commit": "b9c801d223ece7e0a9a2a5c98f23599c4217177c",
+  "source_tree_identical": true,
+  "preexisting_worktree_edits_preserved": true,
+  "component_build_was_dirty": true,
+  "game_acceptance": "OPEN"
+}

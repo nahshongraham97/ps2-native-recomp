@@ -1,0 +1,7 @@
+# Native sound-bank job compilation
+
+The preexisting Work87 native job/header/test sources are preserved by identity and exact copies in INITIAL.json and before/. The create() implementation referenced an error enum value absent from its own header. The native invalid-session refusal now has that named error value. No queue/cancellation behavior was changed. Existing Work84 original request/completion/cancellation evidence is reused. Build and component checks are pending. Full Main/catalog/current-sound integration and game acceptance remain OPEN. Source files from the preexisting batch must be identified as such in any publication; this check does not certify all of their behavior.
+
+The preexisting native sound-bank jobs now compile and their direct native component checks pass after the missing invalid-session error declaration was corrected. A moved-session negative check passes. The queue source/test are now registered in the native sound-resource CMake target; that normal build path is awaiting its own run. Pending bank catalog/current-sound/Main integration, source parity and full acceptance remain OPEN.
+
+Validation02 also passes through the ordinary CMake native sound-resource target. Its verified source/binary identities are in validation-02/verification.json. The compiled test covers queue/completion/cancellation and caller error/lifetime scenarios. It does not close original callback parity, actual Main catalog/context composition or game acceptance.
