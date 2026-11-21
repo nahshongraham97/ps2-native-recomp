@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_hud_health_geometry.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\hud-health-geometry\\ORACLE_EXPECTATIONS.tsv"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_HUD_HEALTH_GEOMETRY: 3 groups actual paired position writes/dirty/preserved channels/lifetimes; saved full-health oracle frames=3; no task/resource producer/GPU or full game claim\n",
+  "stderr": "",
+  "executable_sha256": "ccd6714863a16f58dcf7578c082cf9806a4933abb7f2298fbe55ba56d593283f",
+  "executable_after_sha256": "ccd6714863a16f58dcf7578c082cf9806a4933abb7f2298fbe55ba56d593283f"
+}

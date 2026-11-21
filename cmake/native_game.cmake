@@ -162,3 +162,12 @@ if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
     target_link_libraries(test_native_class_tier_allocation PRIVATE mka_native_class_tier_allocation)
     target_link_options(test_native_class_tier_allocation PRIVATE "-Wl,--wrap=_ZnwySt11align_val_t")
 endif()
+
+# Mutable native HUD positions with owned object lifetime; no guest runtime.
+find_package(Threads REQUIRED)
+add_library(mka_native_hud_health_geometry STATIC EXCLUDE_FROM_ALL runtime/src/native/hud_health_geometry.cpp)
+target_include_directories(mka_native_hud_health_geometry PUBLIC runtime/include)
+target_compile_features(mka_native_hud_health_geometry PUBLIC cxx_std_20)
+target_link_libraries(mka_native_hud_health_geometry PUBLIC Threads::Threads)
+add_executable(test_native_hud_health_geometry EXCLUDE_FROM_ALL tests/test_hud_health_geometry.cpp)
+target_link_libraries(test_native_hud_health_geometry PRIVATE mka_native_hud_health_geometry)

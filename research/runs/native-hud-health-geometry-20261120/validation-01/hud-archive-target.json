@@ -1,0 +1,14 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_hud_health_geometry.a",
+  "target_before_sha256": "7204b29f311b4bb28da8ee76db0a7bcb62371384d24acd7fdb586eb0e50b3914",
+  "target_after_sha256": "7204b29f311b4bb28da8ee76db0a7bcb62371384d24acd7fdb586eb0e50b3914",
+  "audited_target_expected_sha256": "7204b29f311b4bb28da8ee76db0a7bcb62371384d24acd7fdb586eb0e50b3914",
+  "execution_applicable": false,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::retail::update_hud_health_geometry",
+    "mka::retail::NativeHudPositionGeometry::snapshot",
+    "mka::retail::NativeHudHealthObject::retire"
+  ]
+}

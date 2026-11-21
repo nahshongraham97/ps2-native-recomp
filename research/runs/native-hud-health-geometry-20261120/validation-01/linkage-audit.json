@@ -1,0 +1,18 @@
+{
+  "ninja_sha256": "976d819f6cc9f4ac67ce0f6069814bc6369ccbaed1180eb9ba8ffd4d39ac7821",
+  "target_rule": "build test_native_hud_health_geometry.exe: CXX_EXECUTABLE_LINKER__test_native_hud_health_geometry_Release CMakeFiles/test_native_hud_health_geometry.dir/tests/test_hud_health_geometry.cpp.obj | libmka_native_hud_health_geometry.a || libmka_native_hud_health_geometry.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_hud_health_geometry.a  -lpthread  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_hud_health_geometry.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_hud_health_geometry.exe\n  TARGET_IMPLIB = libtest_native_hud_health_geometry.dll.a\n  TARGET_PDB = test_native_hud_health_geometry.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_hud_health_geometry.dir",
+  "archive": {
+    "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_hud_health_geometry.a",
+    "target_before_sha256": "7204b29f311b4bb28da8ee76db0a7bcb62371384d24acd7fdb586eb0e50b3914",
+    "target_after_sha256": "7204b29f311b4bb28da8ee76db0a7bcb62371384d24acd7fdb586eb0e50b3914",
+    "audited_target_expected_sha256": "7204b29f311b4bb28da8ee76db0a7bcb62371384d24acd7fdb586eb0e50b3914",
+    "execution_applicable": false,
+    "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+    "forbidden": [],
+    "required_defined_symbols": [
+      "mka::retail::update_hud_health_geometry",
+      "mka::retail::NativeHudPositionGeometry::snapshot",
+      "mka::retail::NativeHudHealthObject::retire"
+    ]
+  }
+}

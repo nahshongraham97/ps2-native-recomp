@@ -1,0 +1,16 @@
+{
+  "status": "EXACT_HUD_PRIOR_VERSIONS_RESOLVED",
+  "resolutions": [
+    {
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_game.cmake",
+      "expected_sha256": "b0e53dc4d9dc0407404a1f137dc2776f4815642814389a0ebf817557c5513575",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\hud-health-geometry\\before-root-integration\\cmake\\native_game.cmake"
+    },
+    {
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\CLASS_CALLER_SOURCE.md",
+      "expected_sha256": "e4eec11e6048da95ec099b8f6aa0bac1aabba3532261eca44d4674fc55d62452",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\hud-health-geometry\\before-root-integration\\CLASS_CALLER_SOURCE.md"
+    }
+  ],
+  "no_expected_hash_replacement": true
+}
