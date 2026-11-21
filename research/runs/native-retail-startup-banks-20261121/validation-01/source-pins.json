@@ -1,0 +1,28 @@
+{
+  "head": "56e079bf361507ffa9bf7698fbf707de0ef5da86",
+  "dirty": true,
+  "sources": {
+    "tests/test_retail_sound_bank_jobs_retail.cpp": "de8c5ac2e8b423f848bd14dbbb0f31ffda639866ea161a8a5797fccb3e54ae91",
+    "cmake/native_sound_resources.cmake": "ff81e7d364b8ef1a6b7e384abc802ce9f6437257f8dc7b284ae6b1819b5da3bc",
+    "runtime/src/native/retail_sound_bank_jobs.cpp": "65bc3de2f47b0e9bd39198c060ac97a69ea4ee5edeb3d1f2c75fa98c58ac940b",
+    "runtime/src/native/sound_archive.cpp": "6f1d7cf07d17d2b358990e7608a9b2bddc63271b1f4ecfa329b03de9ddc590ef",
+    "runtime/src/native/audio_banks.cpp": "da8484b00389dd0c34ff70799465a95477e0f611b8858f518a77f8ba35053365",
+    "runtime/src/native/sample_payload.cpp": "9cca558d65131a019338a8c910ccb3ec15c568d5a348328d632f52e4a1d745f4",
+    "runtime/src/native/stream_source.cpp": "001c2d1fd1ee8013078cad1cbff61f035cf087d0c439019556afb4eb77e66f11"
+  },
+  "assets": [
+    {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2",
+      "size": 98273428,
+      "mtime_ns": 1156901608000000000,
+      "sha256": "74b7affaf2ec29052b39f531788ff12148f9870e79dde953e701c63e6e948d5d"
+    },
+    {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms4",
+      "size": 584581120,
+      "mtime_ns": 1156901656000000000,
+      "sha256": "bd97bd4ae76b41a18852555bebb7909e80c1287aba950ec1d85adacc10f46781"
+    }
+  ],
+  "game_run": false
+}

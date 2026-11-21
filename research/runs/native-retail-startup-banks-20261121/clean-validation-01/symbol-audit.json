@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-C",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-loose-20261121\\build-native-loose\\test_native_retail_sound_bank_jobs_retail.exe"
+  ],
+  "exit": 0,
+  "output_sha256": "540a1b60de0c58bea6b8d82cbf4ba9494aa3769e3c8ae812c7e598b4744e74d5",
+  "forbidden_regex": "(?<![A-Za-z0-9_])(?:ps2|gs|spu2|sif|Cpu|recomp)::|\\b(?:g_ram|g_spr)\\b",
+  "forbidden_matches": [],
+  "native_symbols": [
+    "140006730 T mka::sound::AudioBankSession::unload_bank(mka::sound::AudioBankHandle const&, mka::sound::AudioBanksFailure&)",
+    "140004860 T mka::sound::AudioBankSession::prepare_bank(mka::sound::AudioBankHandle const&, mka::sound::BankPreparationReport&, mka::sound::PreparationFailure&, mka::sound::AudioBanksFailure&)",
+    "140003e00 T mka::sound::AudioBankSession::load_bank(std::__1::basic_string_view<char, std::__1::char_traits<char>>, mka::sound::AudioBanksFailure&)",
+    "140009690 T mka::sound::NativeRetailSoundBankJobs::run_one(mka::sound::RetailSoundBankJobFailure&)",
+    "14001eb70 T mka::sound::SoundArchiveBacking::read_bytes(unsigned long long, unsigned long long, mka::sound::ArchiveFailure&) const",
+    "1400051d0 t mka::sound::AudioBankSession::prepare_bank(mka::sound::AudioBankHandle const&, mka::sound::BankPreparationReport&, mka::sound::PreparationFailure&, mka::sound::AudioBanksFailure&)::$_0::operator()() const",
+    "14001f3b0 t mka::sound::SoundArchiveBacking::read_bytes(unsigned long long, unsigned long long, mka::sound::ArchiveFailure&) const::$_1::operator()(std::__1::optional<std::__1::vector<unsigned char, std::__1::allocator<unsigned char>>>) const"
+  ],
+  "scope": "symbol diagnostic on this native component only; not full source reachability or game acceptance"
+}

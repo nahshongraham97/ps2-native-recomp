@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_sound_bank_jobs_retail.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms4"
+  ],
+  "exit": 0,
+  "stdout": "bank=permanent status=0 handle=1 bank_error=0 preparation_error=0\nbank=announcr status=0 handle=1 bank_error=0 preparation_error=0\nbank=shell_music status=0 handle=1 bank_error=0 preparation_error=0\nbank=shell status=0 handle=1 bank_error=0 preparation_error=0\nbank=__MKAR_no_such_bank__ status=2 handle=0 bank_error=8 preparation_error=0\nbank=shell status=3 handle=0 bank_error=0 preparation_error=0\nbank=announcr status=4 handle=0 bank_error=0 preparation_error=0\nPASS_RETAIL_SOUND_BANK_JOBS_REAL_FILES; no Main/game/playback/physical endpoint claim\n",
+  "stderr": "",
+  "elapsed_seconds": 0.06357789999310626,
+  "binary_sha256": "834ff8007a599581a293f89493023397de6a2a66fb4e3266558958bf89c233c8",
+  "game_run": false,
+  "frames": [],
+  "audio": []
+}
