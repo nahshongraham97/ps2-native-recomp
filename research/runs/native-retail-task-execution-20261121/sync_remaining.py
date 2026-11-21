@@ -37,7 +37,7 @@ if __name__ == '__main__':
     ph, ps = prior.commit_sync(P, sorted(parents), 'Sync original startup task source plan and corrected menu index ordering', pr)
     pub.need(ps.get('synchronization') == 'verified', 'parent synchronized')
     for root, paths in [(F, forks), (P, parents)]:
-        dirty = pub.names(root, 'status', '--porcelain', '-z') if False else pub.names(root, 'diff', 'HEAD', '--name-only', '-z')
+        dirty = pub.names(root, 'diff', 'HEAD', '--name-only', '-z')
         pub.need(not ({q.relative_to(root).as_posix() for q in paths} & dirty), 'authored paths clean after sync')
     for file, digest in v['protected_inputs'].items():
         pub.need(pub.sha(file) == digest, 'protected input after sync')
