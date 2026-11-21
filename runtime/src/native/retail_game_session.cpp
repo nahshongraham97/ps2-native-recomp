@@ -66,4 +66,9 @@ NativeRetailAuxiliaryWords* NativeRetailGameSession::auxiliary_words(RetailGameS
     if (!validate_current_thread(failure)) return nullptr;
     return &auxiliary_;
 }
+NativeRetailInitialTaskState* NativeRetailGameSession::initial_task_state(
+    RetailGameSessionFailure& failure) noexcept {
+    if (!validate_current_thread(failure)) return nullptr;
+    return &initial_task_state_;
+}
 } // namespace mka::retail

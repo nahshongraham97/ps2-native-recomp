@@ -52,3 +52,18 @@ add_executable(test_native_retail_task_registry EXCLUDE_FROM_ALL tests/test_reta
 target_link_libraries(test_native_retail_task_registry PRIVATE mka_native_retail_task_registry)
 add_executable(test_native_retail_task_execution EXCLUDE_FROM_ALL tests/test_retail_task_execution.cpp)
 target_link_libraries(test_native_retail_task_execution PRIVATE mka_native_retail_task_registry)
+if(TARGET mka_native_retail_startup)
+    add_library(mka_native_retail_initial_task STATIC EXCLUDE_FROM_ALL
+        runtime/src/native/retail_initial_task.cpp)
+    target_include_directories(mka_native_retail_initial_task PUBLIC runtime/include)
+    target_compile_features(mka_native_retail_initial_task PUBLIC cxx_std_20)
+    target_link_libraries(mka_native_retail_initial_task PUBLIC
+        mka_native_retail_startup mka_native_retail_task_registry)
+    add_executable(test_native_retail_initial_task EXCLUDE_FROM_ALL tests/test_retail_initial_task.cpp)
+    target_link_libraries(test_native_retail_initial_task PRIVATE mka_native_retail_initial_task)
+    # Deliberately has no fixture child definitions. It must remain unlinked
+    # until every actual required native child effect exists.
+    add_executable(test_native_retail_initial_task_missing_children EXCLUDE_FROM_ALL
+        tests/test_retail_initial_task_missing_children.cpp)
+    target_link_libraries(test_native_retail_initial_task_missing_children PRIVATE mka_native_retail_initial_task)
+endif()

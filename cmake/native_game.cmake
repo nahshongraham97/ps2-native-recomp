@@ -86,7 +86,7 @@ add_library(mka_native_retail_game_session STATIC EXCLUDE_FROM_ALL
     runtime/src/native/retail_game_controls.cpp
     runtime/src/native/retail_main_settings.cpp
     runtime/src/native/retail_random.cpp
-    runtime/src/native/retail_game_session.cpp)
+    runtime/src/native/retail_game_session.cpp runtime/src/native/retail_initial_task_state.cpp)
 target_include_directories(mka_native_retail_game_session PUBLIC runtime/include)
 target_compile_features(mka_native_retail_game_session PUBLIC cxx_std_20)
 target_link_libraries(mka_native_retail_game_session PUBLIC Threads::Threads)

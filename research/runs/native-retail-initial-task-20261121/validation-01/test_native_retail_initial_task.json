@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_initial_task.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-initial-task-20261121\\validation-01\\content-root"
+  ],
+  "exit": 0,
+  "stdout": "PASS native initial task parent and menu continuation; test-only child effects, full Main/game open\n",
+  "stderr": "",
+  "executable_sha256": "d316f21b016e68d87b4d0d40edeb37bea3114c325011d84ccdc8b07cfe29cbf3",
+  "executable_after_sha256": "d316f21b016e68d87b4d0d40edeb37bea3114c325011d84ccdc8b07cfe29cbf3"
+}

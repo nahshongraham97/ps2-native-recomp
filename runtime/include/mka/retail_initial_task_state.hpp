@@ -1,0 +1,43 @@
+#pragma once
+
+#include <cstdint>
+#include <optional>
+#include <thread>
+
+namespace mka::retail {
+
+enum class RetailInitialTaskStateError { none, wrong_thread, invalid_menu_index };
+struct RetailInitialTaskStateFailure {
+    RetailInitialTaskStateError kind{RetailInitialTaskStateError::none};
+    const char* operation{""};
+};
+struct RetailInitialTaskWords {
+    std::uint32_t first_run{};       // 64E32C, BSS zero, 18E154 writes one.
+    std::int32_t menu_index{};       // 64E350, BSS zero, menu bodies also write it.
+    std::uint32_t game_word_660094{};
+    std::uint32_t cycle_word_6602ec{};
+};
+
+// Four known persistent game values, not guest RAM or a complete game-info
+// facade. The containing game session determines their lifetime.
+class NativeRetailInitialTaskState final {
+public:
+    NativeRetailInitialTaskState() = default;
+    NativeRetailInitialTaskState(const NativeRetailInitialTaskState&) = delete;
+    NativeRetailInitialTaskState& operator=(const NativeRetailInitialTaskState&) = delete;
+
+    std::optional<RetailInitialTaskWords> observe(RetailInitialTaskStateFailure&) const noexcept;
+    bool store_start_words_from_18e100(RetailInitialTaskStateFailure&) noexcept;
+    bool store_first_run_from_18e100(RetailInitialTaskStateFailure&) noexcept;
+    bool store_menu_index_from_source(std::int32_t, RetailInitialTaskStateFailure&) noexcept;
+    // Source 18DB60 wraps >=22 to one and increments 6602EC, then stores
+    // index+1 before invoking the indexed body. Returns the selected slot.
+    std::optional<unsigned> select_menu_body_from_18db60(RetailInitialTaskStateFailure&) noexcept;
+
+private:
+    bool owner(RetailInitialTaskStateFailure&) const noexcept;
+    RetailInitialTaskWords words_{};
+    const std::thread::id owner_thread_{std::this_thread::get_id()};
+};
+
+} // namespace mka::retail

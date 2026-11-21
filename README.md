@@ -31,3 +31,5 @@ task bodies, full list/readiness dispatch, pending reset, complete physical
 input/render/audio and game acceptance remain OPEN. No game or physical
 endpoint was opened. Parent live status and dated work27 results own scope.
 No owner launch is requested.
+
+Targeted startup-task checkpoint, 2026-11-21: the native18E100 parent/18DB60 continuation and persistent session compile; two affected CPU clients pass. Eleven production child definitions remain required at link. Full entry/input/render/audio/game acceptance remains open. See research/runs/native-retail-initial-task-20261121/validation-01/verification.json and the parent current status.

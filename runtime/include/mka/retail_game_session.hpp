@@ -1,5 +1,6 @@
 #pragma once
 #include "mka/retail_auxiliary_words.hpp"
+#include "mka/retail_initial_task_state.hpp"
 #include "mka/retail_game_controls.hpp"
 #include "mka/retail_main_settings.hpp"
 #include "mka/retail_random.hpp"
@@ -34,6 +35,7 @@ public:
     // Borrowed values require this retained session to span the call.
     NativeRetailRandom* random(RetailGameSessionFailure&) noexcept;
     NativeRetailAuxiliaryWords* auxiliary_words(RetailGameSessionFailure&) noexcept;
+    NativeRetailInitialTaskState* initial_task_state(RetailGameSessionFailure&) noexcept;
 private:
     NativeRetailGameSession(std::shared_ptr<NativeRetailGameControls>,
         std::shared_ptr<NativeRetailMainSettings>) noexcept;
@@ -41,6 +43,7 @@ private:
     std::shared_ptr<NativeRetailMainSettings> settings_;
     NativeRetailRandom random_;
     NativeRetailAuxiliaryWords auxiliary_;
+    NativeRetailInitialTaskState initial_task_state_;
     std::int32_t scalar_mode_{}; // Source scalar has BSS zero birth, no guest storage.
     const std::thread::id owner_thread_{std::this_thread::get_id()};
 };

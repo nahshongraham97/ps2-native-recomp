@@ -44,8 +44,31 @@ int main() { try {
     auto settings = session->settings(f);
     auto* random = session->random(f);
     auto* auxiliary = session->auxiliary_words(f);
+    auto* initial_task = session->initial_task_state(f);
     check(controls && settings && random && auxiliary && auxiliary->first == 0 && auxiliary->second == 0,
         "same session supplies actual controls/settings/BSS auxiliary and PRNG owners");
+    RetailInitialTaskStateFailure initial_failure;
+    auto initial_words=initial_task ? initial_task->observe(initial_failure) : std::nullopt;
+    check(initial_words && initial_words->first_run==0 && initial_words->menu_index==0 &&
+        initial_words->game_word_660094==0 && initial_words->cycle_word_6602ec==0,
+        "same session owns four source BSS initial-task words");
+    check(initial_task->store_menu_index_from_source(22,initial_failure) &&
+        initial_task->select_menu_body_from_18db60(initial_failure)==1 &&
+        initial_task->observe(initial_failure)->menu_index==2 &&
+        initial_task->observe(initial_failure)->cycle_word_6602ec==1 &&
+        initial_task->store_first_run_from_18e100(initial_failure) &&
+        initial_task->store_start_words_from_18e100(initial_failure) &&
+        initial_task->observe(initial_failure)->first_run==1 &&
+        initial_task->observe(initial_failure)->menu_index==2 &&
+        initial_task->observe(initial_failure)->cycle_word_6602ec==0 &&
+        initial_task->observe(initial_failure)->game_word_660094==0x38,
+        "source menu wrap/index publication and parent stores retain unrelated words");
+    check(initial_task->store_menu_index_from_source(-1,initial_failure) &&
+        !initial_task->select_menu_body_from_18db60(initial_failure) &&
+        initial_failure.kind==RetailInitialTaskStateError::invalid_menu_index &&
+        initial_task->observe(initial_failure)->menu_index==-1 &&
+        initial_task->store_menu_index_from_source(2,initial_failure),
+        "negative original table address is named and leaves persistent words intact");
     RetailGameControlsFailure cf;
     RetailMainSettingsFailure sf;
     RetailRandomFailure rf;
@@ -76,8 +99,11 @@ int main() { try {
     session.reset();
     check(!root_lifetime.expired() && retained->controls(f) == controls &&
         retained->settings(f) == settings && retained->auxiliary_words(f) == auxiliary &&
+        retained->initial_task_state(f) == initial_task &&
         retained->controls(f)->analog_input_inhibited(cf)==true && retained->scalar_mode(f)==17 &&
-        auxiliary->first == 0xabcdef12u && auxiliary->second == 0x12345678u,
+        auxiliary->first == 0xabcdef12u && auxiliary->second == 0x12345678u &&
+        initial_task->observe(initial_failure)->first_run==1 &&
+        initial_task->observe(initial_failure)->menu_index==2,
         "retained session keeps exact owners and data across main borrower lifetimes");
     for (unsigned i = 0; i < 1500; ++i)
         check(retained->random(f)->next(rf) == expected.next(rf),
@@ -90,6 +116,7 @@ int main() { try {
             !controls->store_analog_input_inhibited_from_source(false,other_controls)&&
             other_controls.kind==RetailGameControlsError::wrong_thread;
         RetailGameSessionFailure other;
+        RetailInitialTaskStateFailure other_initial;
         wrong_thread = !retained->validate_current_thread(other) &&
             other.kind == RetailGameSessionError::wrong_thread &&
             !retained->scalar_mode(other) && other.kind == RetailGameSessionError::wrong_thread &&
@@ -97,7 +124,10 @@ int main() { try {
             !retained->controls(other) && other.kind == RetailGameSessionError::wrong_thread &&
             !retained->settings(other) && other.kind == RetailGameSessionError::wrong_thread &&
             !retained->random(other) && other.kind == RetailGameSessionError::wrong_thread &&
-            !retained->auxiliary_words(other) && other.kind == RetailGameSessionError::wrong_thread;
+            !retained->auxiliary_words(other) && other.kind == RetailGameSessionError::wrong_thread &&
+            !retained->initial_task_state(other) && other.kind == RetailGameSessionError::wrong_thread &&
+            !initial_task->observe(other_initial) &&
+            other_initial.kind==RetailInitialTaskStateError::wrong_thread;
     });
     foreign.join();
     check(wrong_thread && controls_wrong_thread&&controls->analog_input_inhibited(cf)==true&&retained->scalar_mode(f)==17&&retained->validate_current_thread(f) && f.kind == RetailGameSessionError::none &&

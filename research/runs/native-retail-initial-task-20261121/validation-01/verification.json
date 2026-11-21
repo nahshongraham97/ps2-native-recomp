@@ -1,0 +1,79 @@
+{
+  "schema": "native_retail_initial_task_targeted_checks_v1",
+  "status": "PASS_TARGETED_INITIAL_TASK",
+  "utc": "2026-11-21T13:18:00.670010+00:00",
+  "files": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_initial_task_state.hpp": "220338ac84b92c385feb1844ba366c46652b0851efeeff3a8b9240079d1eba05",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_initial_task_state.cpp": "a2b6ffa4d5be6f2f069ec5436e9692fd32a1500e708d4570e3db1fbbcc334951",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_initial_task_required.hpp": "243b8429b19061da10439e39c45cb7299da0287be17494fbe6a9fce80740d2ed",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_initial_task.hpp": "d691868023677abe61ffe32739894c512e34dab8154bc4d44833f26de9b27b95",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_initial_task.cpp": "f3b13c8fb34e72550b586b622bb325b01b1834ae7f619dc90b094e88f4a3be47",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_initial_task.cpp": "dc1e950cd6c67b6f5194a5c6512fb028f401d203ccc8450c7ca16fe6c092d58d",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_game_session.hpp": "d84313409e2f537990a1a748212f4b3070d88fb2b1babd735acd193d77ccc42f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_game_session.cpp": "02e55318341928fa4ea2b5064f7d6f2a42bd1fb4754abbc55bf340bbfb6559ad",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_game_session.cpp": "49daab9b74e5493d8e3b629030880cd35a21b3093086ecad0aca5b3622723baa",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_game.cmake": "fc655333bb12d42257390f9147acce6b81d80056526ae90aff3b0aedaae14747",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_typed.cmake": "5ae4419ee560b029ddedad64cc14032799fe435096c582a93909006ffeaf3e87",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_initial_task_missing_children.cpp": "4a50b216a6a0f2cea074c411fcab3d01db7bc199359ad3f47ec5bcbb5025fdec",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-initial-task-20261121\\check.py": "60b2c290b728c735d24fd1cd2a24cabbbad187411fd8b201c0b373775f9f6405"
+  },
+  "evidence": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-initial-task-29\\source-agent01\\RAW_PRODUCER.json": "0e40631f6db7ee1b0b13fdf214b062eadd798ddfe7f86c1acbe46850bc15ecf7",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-initial-task-29\\source-agent01\\SOURCE.md": "909eb789d819975735c5663096919f3e1d53baac5c7404c3e6466076694a839d",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-initial-task-29\\source-agent01\\DESIGN.md": "180f73ef18a86aa45dfbb03d7c1b68cb8d61b1d40e4dd0715ff4f806fe5b77f0",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-initial-task-29\\source-agent01\\DESIGN.json": "0e2c51c9ba5d8c3621d77557696e6852205dcd468948ac9587f3a74d75493137",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-initial-task-29\\source-agent01\\IMPLEMENTATION.md": "84b5d6192204aa7243bc5dbab7daa6c3336693ef9f3b320602add63cacb6d691",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-initial-task-29\\source-agent01\\CLEANUP_CONTRACT_CORRECTION.json": "ff08b1f26f786b8ac9385b3a20c3aa4b9ad3bb7d0db40277ce7724c29d54286e",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-initial-task-29\\source-agent01\\R2_INTERFACE_CORRECTION.json": "09427b074673bd9dd8b5b36e14453297a52ee60fb51e68e9aac45695801d7db2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-initial-task-29\\source-agent01\\R3_OWNER_ORDER_CORRECTION.json": "14376b50f63774fdaf09ada2927af2af8aadfa8dcb87570785bd3ed42a602dfa",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-initial-task-29\\source-agent01\\IMPLEMENTATION.json": "d0a856cbb85f408fdd351f2889b9c966f3947dc05719569337d0eca7c37175bc",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-initial-task-29\\review-interface-correction01\\FINAL.json": "5ed5214cb2c26bba31ef35d3f627d39981fc07d9dbbdee2eb980d16c8301a2ea"
+  },
+  "protected_inputs": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\iop\\mcserv.cpp": "ad2731a341409d87ffe1b171e99f28d7cedc5004aaf375a565d78673333414fb",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\iop\\msl_native.cpp": "756cfb3867ebb440223ddb8ab6fe441ad6f9f54d35e4119a8342f8dd9063bb23",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\doc-audit-20261118\\inventory.json": "26093151039b949348184f2e8a960b92d64e7f08408d43e58e1e0ed481a959f6",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\SLUS_214.10": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f"
+  },
+  "executed_clients": [
+    {
+      "target": "test_native_retail_initial_task",
+      "sha256": "d316f21b016e68d87b4d0d40edeb37bea3114c325011d84ccdc8b07cfe29cbf3",
+      "receipt": "test_native_retail_initial_task.json"
+    },
+    {
+      "target": "test_native_retail_game_session",
+      "sha256": "d3cf33e01e438b599bddfd8f420c22ef31e8233d214f8ef5e8bfea4b1ccf8fc1",
+      "receipt": "test_native_retail_game_session.json"
+    }
+  ],
+  "required_production_children": [
+    "run_reset_18d970",
+    "begin_intro_18deb0",
+    "begin_prompt_18dc10",
+    "transition_1225d0",
+    "begin_menu_18d450",
+    "begin_menu_18d870",
+    "begin_menu_18d8e0",
+    "begin_menu_18d700",
+    "begin_menu_18d800",
+    "begin_menu_18d660",
+    "begin_menu_18d770"
+  ],
+  "prior_task_verification_sha256": "78bd0c530e2a7689db2dcf05e4488a53498f4b6891f94af9ba19bf5ab65bb0c0",
+  "parent_archive_sha256": "1db9f1595367cf2237b8e396c96df1b9c121da56f23edaa3568f56dc39e73a28",
+  "game_executed": false,
+  "physical_endpoints_opened": false,
+  "frames": null,
+  "audio": null,
+  "limits": [
+    "real 18D970 reset and scene/resource child implementations",
+    "real 1225D0 transition and indexed menu body implementations",
+    "130A50 cookie state and 64C7C0 live bit owner",
+    "Main initial task creator and full 12E670/12E4E0 dispatch",
+    "game/physical endpoints",
+    "Only parent/session clients freshly run; broad regression deferred.",
+    "Test-only child procedures are not retail child implementations.",
+    "Full-entry gate was not rerun; prior 39 missing integrations is a dated observation."
+  ]
+}
