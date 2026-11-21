@@ -1,0 +1,18 @@
+{
+  "fork_commit": "a9614b46ec304b368e5b9c79c6963c162caba6ce",
+  "fork": {
+    "available": true,
+    "local_commit": "a9614b46ec304b368e5b9c79c6963c162caba6ce",
+    "remote_commit": "a9614b46ec304b368e5b9c79c6963c162caba6ce",
+    "synchronization": "verified"
+  },
+  "parent_commit": "d0c182c4d50ae683c4b9e66f264ccb983b22ee94",
+  "parent": {
+    "available": true,
+    "local_commit": "d0c182c4d50ae683c4b9e66f264ccb983b22ee94",
+    "remote_commit": "d0c182c4d50ae683c4b9e66f264ccb983b22ee94",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "78bd0c530e2a7689db2dcf05e4488a53498f4b6891f94af9ba19bf5ab65bb0c0",
+  "scope": "Two fresh native CPU clients/142 source pins; initial virtual10 branch only;39 main integrations and full game acceptance OPEN"
+}
