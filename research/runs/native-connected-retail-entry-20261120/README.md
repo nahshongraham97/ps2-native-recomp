@@ -1,0 +1,3 @@
+# Connected native startup evidence
+
+Current measured build: validation-03. Five native CPU/file fixtures pass; full-entry linking fails on67 explicit actual main bodies. Native platform/GL/input objects compile but no game, window, graphics/audio/controller endpoint or local model was run. No driver/settings operation occurred. Source and independent source/execution reviews, previous exact bytes and limitations are in the parent research/runs/native-retail-startup-20261120/connected-retail-entry-01/RESULTS.md. The first cache-wrapper refusal is preserved separately from passing native checks. No accepted game executable is delivered.

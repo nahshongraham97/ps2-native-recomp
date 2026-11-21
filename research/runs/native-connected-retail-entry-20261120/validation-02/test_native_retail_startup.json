@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_startup.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-connected-retail-entry-20261120\\validation-02\\owned-fixtures\\startup"
+  ],
+  "exit": 0,
+  "stdout": "PASS generated retail startup owns actual arguments/content/memory group; failed initialization is unpublished and full entry link remains blocked\n",
+  "stderr": "",
+  "executable_sha256": "f675f6bcb4eceeddef60126dfb0c0251b3b8a04788bfd618470cdf8c30d1eeb5",
+  "executable_after_sha256": "f675f6bcb4eceeddef60126dfb0c0251b3b8a04788bfd618470cdf8c30d1eeb5"
+}

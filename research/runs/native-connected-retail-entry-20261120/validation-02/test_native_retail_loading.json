@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_loading.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-connected-retail-entry-20261120\\validation-02\\owned-fixtures\\loading"
+  ],
+  "exit": 0,
+  "stdout": "PASS native production loading ingress: actual RAW bytes, ownership and error paths; no graphics/device/game\n",
+  "stderr": "",
+  "executable_sha256": "4b62abdd84c8f87151a8ff3d4017fddcc06a61197d80596018447510e9661900",
+  "executable_after_sha256": "4b62abdd84c8f87151a8ff3d4017fddcc06a61197d80596018447510e9661900"
+}

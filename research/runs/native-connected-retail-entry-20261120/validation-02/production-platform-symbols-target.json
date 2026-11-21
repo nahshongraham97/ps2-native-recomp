@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_retail_platform.a",
+  "target_before_sha256": "5d813d255b7708f04b82790b3cc64ecc9674b9ea3f9c26c91038f5d61f15cc0c",
+  "target_after_sha256": "5d813d255b7708f04b82790b3cc64ecc9674b9ea3f9c26c91038f5d61f15cc0c",
+  "audited_target_expected_sha256": "5d813d255b7708f04b82790b3cc64ecc9674b9ea3f9c26c91038f5d61f15cc0c",
+  "execution_applicable": false,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::retail::NativeRetailPlatform::create(",
+    "mka::retail::NativeRetailPlatform::poll_events_and_input("
+  ]
+}

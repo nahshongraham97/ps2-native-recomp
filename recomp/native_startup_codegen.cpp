@@ -232,6 +232,9 @@ std::optional<NativeStartupSources> emit_native_startup_closure(std::span<const 
         return NativeStartupSources{R"STARTUP(#pragma once
 #include "mka/content_volume.hpp"
 #include "mka/retail_memory_owners.hpp"
+#include "mka/retail_crt.hpp"
+#include "mka/retail_platform.hpp"
+#include "mka/retail_main_timing.hpp"
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -240,8 +243,8 @@ std::optional<NativeStartupSources> emit_native_startup_closure(std::span<const 
 #include <utility>
 #include <vector>
 namespace mka::retail {
-enum class StartupError {none,missing_boot_argument,malformed_boot_argument,missing_directory_separator,content,allocation,host_capacity,native_exception,memory_owners,already_initialized};
-struct StartupFailure {StartupError kind=StartupError::none;const char* operation="";content::ContentVolumeFailure content;RetailMemoryOwnerFailure memory;};
+enum class StartupError {none,missing_boot_argument,malformed_boot_argument,missing_directory_separator,content,allocation,host_capacity,native_exception,memory_owners,already_initialized,crt,platform,main_timing};
+struct StartupFailure {StartupError kind=StartupError::none;const char* operation="";content::ContentVolumeFailure content;RetailMemoryOwnerFailure memory;RetailCrtFailure crt;RetailPlatformFailure platform;RetailMainTimingFailure timing;};
 // Native-owned replacements for the original startup arguments and writable
 // content/path state. Host executable location, boot-resource string and volume
 // are separate inputs; no guest argument block, pointer table or BSS is retained.
@@ -250,6 +253,8 @@ struct NativeRetailStartupState {
     std::vector<std::string> boot_arguments;
     std::string resource_prefix,boot_directory;
     std::unique_ptr<NativeRetailMemoryOwners> memory_owners;
+    std::unique_ptr<NativeRetailCrt> crt;
+    std::unique_ptr<NativeRetailPlatform> platform;
     NativeRetailStartupState(content::NativeContentVolume volume,std::vector<std::string> arguments)
         :content(std::move(volume)),boot_arguments(std::move(arguments)){}
 };
@@ -262,9 +267,9 @@ bool initialize_retail_memory_owners(NativeRetailStartupState&,StartupFailure&) 
 // This is a platform destination, not an IRX loader or a disc API.
 std::optional<content::NativeContentFile> open_retail_resource(const NativeRetailStartupState&,
     std::string_view,StartupFailure&) noexcept;
-// Required native implementations. There are intentionally no successful
-// defaults or weak definitions. The full entry cannot link until these original
-// CRT/platform/remaining-game obligations have real implementations.
+// Production native bindings; the CRT definitions own real host services.
+// No weak/default success implementations exist. Complete entry linking also
+// requires every platform/main downstream effect, never the guest runtime.
 bool initialize_native_retail_crt(NativeRetailStartupState&,StartupFailure&);
 bool finalize_native_retail_pre_main(NativeRetailStartupState&,StartupFailure&);
 bool initialize_native_retail_platform(NativeRetailStartupState&,StartupFailure&);

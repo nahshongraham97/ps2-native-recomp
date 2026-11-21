@@ -97,15 +97,55 @@ if(WIN32)
         DEPENDS eerecomp "${_startup_elf}" recomp/native_startup_codegen.cpp recomp/native_closure_codegen.cpp
         VERBATIM COMMENT "AOT compile original retail startup into owned native state")
     add_library(mka_native_retail_startup STATIC EXCLUDE_FROM_ALL
-        "${_startup_dir}/native_retail_startup.cpp" "${_startup_dir}/native_retail_entry.cpp")
+        "${_startup_dir}/native_retail_startup.cpp" "${_startup_dir}/native_retail_entry.cpp"
+        runtime/src/native/retail_crt_startup.cpp runtime/src/native/retail_platform_startup.cpp
+        runtime/src/native/retail_main.cpp runtime/src/native/retail_main_timing.cpp)
     target_include_directories(mka_native_retail_startup PUBLIC "${_startup_dir}" runtime/include)
-    target_link_libraries(mka_native_retail_startup PUBLIC mka_native_content_volume mka_native_retail_memory_owners)
+    target_link_libraries(mka_native_retail_startup PUBLIC mka_native_content_volume mka_native_retail_memory_owners
+        mka_native_retail_crt mka_native_retail_platform mka_native_allocation_profile mka_native_game_actions mka_native_sound_resources)
     add_executable(test_native_retail_startup EXCLUDE_FROM_ALL tests/test_native_retail_startup.cpp)
     target_link_libraries(test_native_retail_startup PRIVATE mka_native_retail_startup)
     # Expected-negative link fixture: never included in a successful build batch.
-    # Four real production obligations are missing; no test success providers.
+    # Actual downstream main bodies remain missing; no test success providers.
     add_executable(test_native_startup_missing_bindings EXCLUDE_FROM_ALL tests/test_native_startup_missing_bindings.cpp)
     target_link_libraries(test_native_startup_missing_bindings PRIVATE mka_native_retail_startup)
+endif()
+
+# Source loading picture and actual host window/input/OpenGL services. No game
+# or endpoint is opened by these build targets or their file-only test.
+add_library(mka_native_retail_loading STATIC EXCLUDE_FROM_ALL runtime/src/native/retail_loading_picture.cpp)
+target_link_libraries(mka_native_retail_loading PUBLIC mka_native_content_volume)
+if(WIN32)
+    set(SDL2_NO_MWINDOWS ON)
+    find_package(SDL2 CONFIG REQUIRED HINTS "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sdl2/lib/cmake/SDL2")
+    add_library(mka_native_retail_platform STATIC EXCLUDE_FROM_ALL
+        runtime/src/native/retail_platform.cpp host/keymap.cpp)
+    target_include_directories(mka_native_retail_platform PRIVATE host)
+    target_link_libraries(mka_native_retail_platform PUBLIC mka_native_retail_loading
+        mka_native_game_actions SDL2::SDL2 PRIVATE opengl32)
+    add_executable(test_native_retail_loading EXCLUDE_FROM_ALL tests/test_retail_loading_picture.cpp)
+    target_link_libraries(test_native_retail_loading PRIVATE mka_native_retail_loading)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+        target_link_options(test_native_startup_missing_bindings PRIVATE "-Wl,--error-limit=0")
+    endif()
+endif()
+
+# Actual host CRT clock/thread/deferred-work owner, used by production startup.
+find_package(Threads REQUIRED)
+add_library(mka_native_retail_crt STATIC EXCLUDE_FROM_ALL runtime/src/native/retail_crt.cpp)
+target_include_directories(mka_native_retail_crt PUBLIC runtime/include)
+target_compile_features(mka_native_retail_crt PUBLIC cxx_std_20)
+target_link_libraries(mka_native_retail_crt PUBLIC Threads::Threads)
+add_executable(test_native_retail_crt EXCLUDE_FROM_ALL tests/test_retail_crt.cpp)
+target_link_libraries(test_native_retail_crt PRIVATE mka_native_retail_startup)
+add_executable(test_native_retail_main_timing EXCLUDE_FROM_ALL tests/test_retail_main_timing.cpp)
+target_link_libraries(test_native_retail_main_timing PRIVATE mka_native_retail_startup)
+if(WIN32)
+    foreach(_native_startup_client test_native_retail_crt test_native_retail_startup test_native_retail_main_timing)
+        add_custom_command(TARGET ${_native_startup_client} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2>
+                $<TARGET_FILE_DIR:${_native_startup_client}> VERBATIM)
+    endforeach()
 endif()
 
 # Native identities for the actual ordered retail main memory-owner phase.

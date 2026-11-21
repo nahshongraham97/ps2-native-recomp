@@ -1,0 +1,5 @@
+{
+  "status": "FAILED",
+  "type": "RuntimeError",
+  "message": "no legacy generated game in this build"
+}
