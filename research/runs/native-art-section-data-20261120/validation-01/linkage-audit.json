@@ -1,0 +1,17 @@
+{
+  "ninja_sha256": "614fa68b7b8c83710a2d8a0d52ee648533f7dbb839ef6b7e8e65cae2b9cc9604",
+  "target_rule": "build test_native_art_section_data.exe: CXX_EXECUTABLE_LINKER__test_native_art_section_data_Release CMakeFiles/test_native_art_section_data.dir/tests/test_art_section_data.cpp.obj | libmka_native_art_section_data.a libmka_native_content_volume.a || libmka_native_art_section_data.a libmka_native_content_volume.a\n  CONFIG = Release\n  FLAGS = -O3 -DNDEBUG\n  LINK_FLAGS = -static-libgcc -static-libstdc++\n  LINK_LIBRARIES = libmka_native_art_section_data.a  libmka_native_content_volume.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32\n  OBJECT_DIR = CMakeFiles\\test_native_art_section_data.dir\n  POST_BUILD = cd .\n  PRE_LINK = cd .\n  TARGET_FILE = test_native_art_section_data.exe\n  TARGET_IMPLIB = libtest_native_art_section_data.dll.a\n  TARGET_PDB = test_native_art_section_data.exe.dbg\n  TARGET_SUPPORT_DIR = CMakeFiles\\test_native_art_section_data.dir",
+  "archive": {
+    "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_art_section_data.a",
+    "target_before_sha256": "54d37581079a92713b0323001e18700f3cc027d02e0ae47f876219fc0ce2fb23",
+    "target_after_sha256": "54d37581079a92713b0323001e18700f3cc027d02e0ae47f876219fc0ce2fb23",
+    "audited_target_expected_sha256": "54d37581079a92713b0323001e18700f3cc027d02e0ae47f876219fc0ce2fb23",
+    "execution_applicable": false,
+    "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+    "forbidden": [],
+    "required_defined_symbols": [
+      "mka::content::NativeArtSectionData::read",
+      "mka::content::NativeArtSectionData::find_sprite"
+    ]
+  }
+}

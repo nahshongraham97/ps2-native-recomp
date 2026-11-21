@@ -171,3 +171,9 @@ target_compile_features(mka_native_hud_health_geometry PUBLIC cxx_std_20)
 target_link_libraries(mka_native_hud_health_geometry PUBLIC Threads::Threads)
 add_executable(test_native_hud_health_geometry EXCLUDE_FROM_ALL tests/test_hud_health_geometry.cpp)
 target_link_libraries(test_native_hud_health_geometry PRIVATE mka_native_hud_health_geometry)
+
+# Owned serialized art data from native filesystem ranges; no texture-ready claim.
+add_library(mka_native_art_section_data STATIC EXCLUDE_FROM_ALL runtime/src/native/art_section_data.cpp)
+target_link_libraries(mka_native_art_section_data PUBLIC mka_native_content_volume)
+add_executable(test_native_art_section_data EXCLUDE_FROM_ALL tests/test_art_section_data.cpp)
+target_link_libraries(test_native_art_section_data PRIVATE mka_native_art_section_data)

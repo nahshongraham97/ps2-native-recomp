@@ -1,0 +1,21 @@
+{
+  "status": "EXACT_ART_PRIOR_VERSIONS_RESOLVED",
+  "resolutions": [
+    {
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_game.cmake",
+      "expected_sha256": "5508fa2e8f9f7a94a6cc52ca91ff668760b7ad44d3557767e1a525c02c67a949",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\health-task-effects-01\\art-section\\before-root-integration\\cmake\\native_game.cmake"
+    },
+    {
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\hud-health-geometry\\IMPLEMENTATION.md",
+      "expected_sha256": "0a015b2ad32b9d09fb333e449eb4d8027b7ebde975b3a9f92455e4be7328b5b8",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\hud-health-geometry\\before-result-doc-label\\IMPLEMENTATION.md"
+    },
+    {
+      "original_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\hud-health-geometry\\ROOT_PLAN.md",
+      "expected_sha256": "9f39e3f66b1235835395d230fc1be630c269b1d8c53a34df7d533b4ceb948948",
+      "retained_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\hud-health-geometry\\before-result-doc-label\\ROOT_PLAN.md"
+    }
+  ],
+  "no_expected_hash_replacement": true
+}

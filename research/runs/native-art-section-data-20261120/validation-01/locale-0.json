@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_art_section_data.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-art-section-data-20261120\\validation-01\\owned-0",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\games\\mkarmageddon\\disc-files",
+    "MKDA.PAK",
+    "291459072",
+    "6823936",
+    "1998848",
+    "901120",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-art-section-data-20261120\\validation-01\\source-0.tsv"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_ART_SECTION_DATA: bounded owned SEC ingress and malformed cases; actual encoded sprites=2; no texture readiness or game claim\n",
+  "stderr": "",
+  "executable_sha256": "f42d0eb2251c6a4b11065f12a542307ca5e2beac427ef3868f4578385945d749",
+  "executable_after_sha256": "f42d0eb2251c6a4b11065f12a542307ca5e2beac427ef3868f4578385945d749"
+}
