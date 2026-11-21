@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_scene_owners.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native scene constructor/gates/structural ownership; no populated retail effects or game/device\n",
+  "stderr": "",
+  "executable_sha256": "fa9cd38a2c0b9d85d1edec12c8a10782949d906eb6c2592a131f486c4a93a847",
+  "executable_after_sha256": "fa9cd38a2c0b9d85d1edec12c8a10782949d906eb6c2592a131f486c4a93a847"
+}

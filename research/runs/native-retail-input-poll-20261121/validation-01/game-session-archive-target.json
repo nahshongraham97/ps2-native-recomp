@@ -1,0 +1,14 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_retail_game_session.a",
+  "target_before_sha256": "e06fa7ec50e6793868aaeaa3f41c331260fd705f1b85b3ec65a0f3a7d0078bd0",
+  "target_after_sha256": "e06fa7ec50e6793868aaeaa3f41c331260fd705f1b85b3ec65a0f3a7d0078bd0",
+  "audited_target_expected_sha256": "e06fa7ec50e6793868aaeaa3f41c331260fd705f1b85b3ec65a0f3a7d0078bd0",
+  "execution_applicable": false,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::retail::NativeRetailGameSession::create(",
+    "mka::retail::NativeRetailMainSettings::effective_frame_rate(",
+    "mka::retail::NativeRetailRandom::next("
+  ]
+}

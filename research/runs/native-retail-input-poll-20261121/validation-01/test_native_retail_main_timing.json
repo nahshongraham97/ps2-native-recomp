@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_main_timing.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native main shared-clock stopwatches and source parsed setting; no game/device\n",
+  "stderr": "",
+  "executable_sha256": "2ca8aa84fd0ed9bceb451b829db0dbfa97bbe9b24af0703f8d6ddb8eebd5293d",
+  "executable_after_sha256": "2ca8aa84fd0ed9bceb451b829db0dbfa97bbe9b24af0703f8d6ddb8eebd5293d"
+}

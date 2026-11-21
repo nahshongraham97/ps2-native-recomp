@@ -62,11 +62,11 @@ constexpr std::pair<keymap::Action,std::uint16_t> key_buttons[]{
     {keymap::L2,1u<<8},{keymap::R2,1u<<9},{keymap::L1,1u<<10},{keymap::R1,1u<<11},
     {keymap::Triangle,1u<<12},{keymap::Circle,1u<<13},{keymap::Cross,1u<<14},{keymap::Square,1u<<15}
 };
-std::uint8_t axis(SDL_GameController* pad,SDL_GameControllerAxis index) {
-    return static_cast<std::uint8_t>((static_cast<int>(SDL_GameControllerGetAxis(pad,index))+32768)>>8);
+std::uint8_t compatibility_axis(std::int16_t native) {
+    return static_cast<std::uint8_t>((static_cast<int>(native)+32768)>>8);
 }
-std::uint8_t trigger(SDL_GameController* pad,SDL_GameControllerAxis index) {
-    const int value=SDL_GameControllerGetAxis(pad,index);
+std::uint8_t compatibility_trigger(std::int16_t native) {
+    const int value=native;
     if(value<=2000)return 0;
     return static_cast<std::uint8_t>(std::max(1,value*255/32767));
 }
@@ -120,7 +120,9 @@ struct NativeRetailPlatform::State {
         return false;
     }
     input::ControllerState keyboard() {
-        if(SDL_GetKeyboardFocus()!=window)return input::digital_state(0,true);
+        if(SDL_GetKeyboardFocus()!=window)
+            return input::digital_state(0,true,{{128,128,128,128}},255,255,
+                input::NativeControllerAxes{});
         int count=0;const auto* down=SDL_GetKeyboardState(&count);
         const auto mouse=SDL_GetMouseState(nullptr,nullptr);
         const auto now=SDL_GetTicks();
@@ -128,32 +130,62 @@ struct NativeRetailPlatform::State {
         std::uint16_t buttons=0;for(const auto [action,mask]:key_buttons)if(held(action))buttons|=mask;
         if(held(keymap::Rage))buttons|=(1u<<1)|(1u<<2);
         auto direction=[&](keymap::Action minus,keymap::Action plus){return int(held(plus))-int(held(minus));};
-        auto push=[](int dx,int dy,std::uint8_t& x,std::uint8_t& y){
+        auto push=[](int dx,int dy,std::uint8_t& x,std::uint8_t& y,
+                     std::int16_t& native_x,std::int16_t& native_y){
             const bool diagonal=dx!=0&&dy!=0;
-            if(dx)x=diagonal?std::uint8_t(128+dx*90):std::uint8_t(dx<0?0:255);
-            if(dy)y=diagonal?std::uint8_t(128+dy*90):std::uint8_t(dy<0?0:255);
+            if(dx){x=diagonal?std::uint8_t(128+dx*90):std::uint8_t(dx<0?0:255);
+                native_x=diagonal?static_cast<std::int16_t>(dx*23040):
+                    static_cast<std::int16_t>(dx<0?-32768:32767);}
+            if(dy){y=diagonal?std::uint8_t(128+dy*90):std::uint8_t(dy<0?0:255);
+                native_y=diagonal?static_cast<std::int16_t>(dy*23040):
+                    static_cast<std::int16_t>(dy<0?-32768:32767);}
         };
         const int dx=direction(keymap::LeftLeft,keymap::LeftRight),dy=direction(keymap::LeftUp,keymap::LeftDown);
         std::array<std::uint8_t,4> axes{{128,128,128,128}};
-        push(direction(keymap::RightLeft,keymap::RightRight),direction(keymap::RightUp,keymap::RightDown),axes[0],axes[1]);
-        push(dx,dy,axes[2],axes[3]);
+        input::NativeControllerAxes native_axes;
+        push(direction(keymap::RightLeft,keymap::RightRight),direction(keymap::RightUp,keymap::RightDown),
+             axes[0],axes[1],native_axes.sticks[0],native_axes.sticks[1]);
+        push(dx,dy,axes[2],axes[3],native_axes.sticks[2],native_axes.sticks[3]);
         if(dx||dy){last_dx=dx;last_dy=dy;}
-        if(held(keymap::Roll))push(dx||dy?dx:last_dx,dx||dy?dy:last_dy,axes[0],axes[1]);
-        return input::digital_state(buttons,true,axes);
+        if(held(keymap::Roll))push(dx||dy?dx:last_dx,dx||dy?dy:last_dy,
+                                   axes[0],axes[1],native_axes.sticks[0],native_axes.sticks[1]);
+        native_axes.triggers[0]=held(keymap::L2)?32767:0;
+        native_axes.triggers[1]=held(keymap::R2)?32767:0;
+        return input::digital_state(buttons,true,axes,255,255,native_axes);
     }
     static input::ControllerState controller(SDL_GameController* pad) {
         if(!SDL_GameControllerGetAttached(pad))return {};
         std::uint16_t buttons=0;for(const auto [button,mask]:pad_buttons)if(SDL_GameControllerGetButton(pad,button))buttons|=mask;
-        const auto left=trigger(pad,SDL_CONTROLLER_AXIS_TRIGGERLEFT),right=trigger(pad,SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
+        input::NativeControllerAxes native_axes;
+        native_axes.sticks={{SDL_GameControllerGetAxis(pad,SDL_CONTROLLER_AXIS_RIGHTX),
+            SDL_GameControllerGetAxis(pad,SDL_CONTROLLER_AXIS_RIGHTY),
+            SDL_GameControllerGetAxis(pad,SDL_CONTROLLER_AXIS_LEFTX),
+            SDL_GameControllerGetAxis(pad,SDL_CONTROLLER_AXIS_LEFTY)}};
+        native_axes.triggers={{SDL_GameControllerGetAxis(pad,SDL_CONTROLLER_AXIS_TRIGGERLEFT),
+            SDL_GameControllerGetAxis(pad,SDL_CONTROLLER_AXIS_TRIGGERRIGHT)}};
+        const auto left=compatibility_trigger(native_axes.triggers[0]);
+        const auto right=compatibility_trigger(native_axes.triggers[1]);
         if(left)buttons|=1u<<8;if(right)buttons|=1u<<9;
-        return input::digital_state(buttons,true,{{axis(pad,SDL_CONTROLLER_AXIS_RIGHTX),axis(pad,SDL_CONTROLLER_AXIS_RIGHTY),
-            axis(pad,SDL_CONTROLLER_AXIS_LEFTX),axis(pad,SDL_CONTROLLER_AXIS_LEFTY)}},left,right);
+        return input::digital_state(buttons,true,{{compatibility_axis(native_axes.sticks[0]),
+            compatibility_axis(native_axes.sticks[1]),compatibility_axis(native_axes.sticks[2]),
+            compatibility_axis(native_axes.sticks[3])}},left,right,native_axes);
     }
     static void merge(input::ControllerState& into,const input::ControllerState& from) {
         into.connected=into.connected||from.connected;into.buttons|=from.buttons;
         for(std::size_t i=0;i<into.pressure.size();++i)into.pressure[i]=std::max(into.pressure[i],from.pressure[i]);
         for(std::size_t i=0;i<into.axes.size();++i) {
             if(into.axes[i]==128)into.axes[i]=from.axes[i];
+        }
+        if(from.native_axes) {
+            if(!into.native_axes)into.native_axes=from.native_axes;
+            else {
+                for(std::size_t i=0;i<into.native_axes->sticks.size();++i)
+                    if(into.native_axes->sticks[i]==0)
+                        into.native_axes->sticks[i]=from.native_axes->sticks[i];
+                for(std::size_t i=0;i<into.native_axes->triggers.size();++i)
+                    into.native_axes->triggers[i]=std::max(into.native_axes->triggers[i],
+                        from.native_axes->triggers[i]);
+            }
         }
     }
     void release() noexcept {

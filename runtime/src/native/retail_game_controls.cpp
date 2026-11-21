@@ -36,6 +36,18 @@ std::optional<std::uint32_t> NativeRetailGameControls::selection_state_word(
     return selection_state_;
 }
 
+std::optional<bool> NativeRetailGameControls::analog_input_inhibited(
+    RetailGameControlsFailure& failure) const noexcept {
+    if (!access(failure)) return {};
+    return analog_input_inhibited_;
+}
+bool NativeRetailGameControls::store_analog_input_inhibited_from_source(
+    bool value, RetailGameControlsFailure& failure) noexcept {
+    if (!access(failure)) return false;
+    analog_input_inhibited_ = value;
+    return true;
+}
+
 bool NativeRetailGameControls::store_selection_flags_from_source(
     std::uint8_t value, RetailGameControlsFailure& failure) noexcept {
     if (!access(failure)) return false;

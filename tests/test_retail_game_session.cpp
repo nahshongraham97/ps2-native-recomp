@@ -59,6 +59,11 @@ int main() { try {
         controls->clear_selection_state_from_1303f0(cf) &&
         settings->effective_frame_rate(sf) == 50,
         "live settings share same game-control word and full-word reset");
+    check(controls->analog_input_inhibited(cf)==false&&
+        controls->store_analog_input_inhibited_from_source(true,cf)&&
+        controls->analog_input_inhibited(cf)==true&&controls->selection_state_word(cf)==0&&
+        settings->effective_frame_rate(sf)==50,
+        "live analog gate is distinct from timing/selection state");
     NativeRetailRandom expected;
     check(random->low16_range(56, rf) == expected.low16_range(56, rf) &&
         random->seed(0xabcdef01u, rf) && expected.seed(0xabcdef01u, rf),
@@ -67,13 +72,19 @@ int main() { try {
     session.reset();
     check(!root_lifetime.expired() && retained->controls(f) == controls &&
         retained->settings(f) == settings && retained->auxiliary_words(f) == auxiliary &&
+        retained->controls(f)->analog_input_inhibited(cf)==true &&
         auxiliary->first == 0xabcdef12u && auxiliary->second == 0x12345678u,
         "retained session keeps exact owners and data across main borrower lifetimes");
     for (unsigned i = 0; i < 1500; ++i)
         check(retained->random(f)->next(rf) == expected.next(rf),
             "repeated borrowers never create implicit reseed or reset phase");
-    bool wrong_thread = false;
+    bool wrong_thread = false, controls_wrong_thread = false;
     std::thread foreign([&] {
+        RetailGameControlsFailure other_controls;
+        controls_wrong_thread=!controls->analog_input_inhibited(other_controls)&&
+            other_controls.kind==RetailGameControlsError::wrong_thread&&
+            !controls->store_analog_input_inhibited_from_source(false,other_controls)&&
+            other_controls.kind==RetailGameControlsError::wrong_thread;
         RetailGameSessionFailure other;
         wrong_thread = !retained->validate_current_thread(other) &&
             other.kind == RetailGameSessionError::wrong_thread &&
@@ -83,7 +94,7 @@ int main() { try {
             !retained->auxiliary_words(other) && other.kind == RetailGameSessionError::wrong_thread;
     });
     foreign.join();
-    check(wrong_thread && retained->validate_current_thread(f) && f.kind == RetailGameSessionError::none &&
+    check(wrong_thread && controls_wrong_thread&&controls->analog_input_inhibited(cf)==true&&retained->validate_current_thread(f) && f.kind == RetailGameSessionError::none &&
         auxiliary->first == 0xabcdef12u && random->next(rf) == expected.next(rf),
         "cross-thread refusal leaves persistent state intact and next valid access clears failure");
     const std::weak_ptr<NativeRetailGameControls> controls_lifetime = controls;

@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_audio_statistics.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native retail audio statistics finite/integer/failure checks; no sample producer, game or endpoint\n",
+  "stderr": "",
+  "executable_sha256": "8a6e833a11b199e3725aa34036a7f482fa4b14b71ba532b3a25dc2eab6524ffa",
+  "executable_after_sha256": "8a6e833a11b199e3725aa34036a7f482fa4b14b71ba532b3a25dc2eab6524ffa"
+}

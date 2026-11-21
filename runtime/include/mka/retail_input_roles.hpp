@@ -11,6 +11,7 @@ namespace mka::retail {
 class NativeRetailInputParticipant;
 class NativeRetailInputAssignments;
 class NativeRetailParticipants;
+class NativeRetailAssignedPoll;
 
 enum class RetailInputRole : std::uint8_t { role0, role1, role2, role3 };
 enum class RetailInputRoleError { none, wrong_thread, invalid_role, invalid_action_row, allocation, native_exception };
@@ -19,7 +20,9 @@ struct RetailInputRoleFailure { RetailInputRoleError kind{RetailInputRoleError::
 struct NativeRetailInputRoleObservation {
     bool initialized, dispatch_blocked, analog_mapping;
     std::uint32_t previous, current, rising;
-    std::optional<std::array<std::uint8_t, 4>> axes;
+    // Native host stick values retain full signed 16-bit precision. Source
+    // zero-born axis storage is represented by absence until first sample.
+    std::optional<std::array<std::int16_t, 4>> axes;
     std::shared_ptr<NativeRetailInputParticipant> participant;
     // Original role source value at 0x660268, cleared on participant detach.
     // The producer and gameplay meaning are not yet joined.
@@ -43,11 +46,12 @@ public:
 
 private:
     friend class NativeRetailInputAssignments;
+    friend class NativeRetailAssignedPoll;
     NativeRetailInputRoles() noexcept;
     struct RoleState {
         std::array<RetailActionBinding, 16> action_rows{};
         std::uint32_t previous{}, current{}, rising{};
-        std::optional<std::array<std::uint8_t, 4>> axes;
+        std::optional<std::array<std::int16_t, 4>> axes;
         std::weak_ptr<NativeRetailInputParticipant> participant;
         std::uint32_t source_control_word{};
         bool initialized{}, dispatch_blocked{}, analog_mapping{true};

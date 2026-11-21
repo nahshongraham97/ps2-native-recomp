@@ -1,0 +1,18 @@
+{
+  "fork_commit": "f847f7fbc73f89b433d01e264fd5a5673edd68a5",
+  "fork": {
+    "available": true,
+    "local_commit": "f847f7fbc73f89b433d01e264fd5a5673edd68a5",
+    "remote_commit": "f847f7fbc73f89b433d01e264fd5a5673edd68a5",
+    "synchronization": "verified"
+  },
+  "parent_commit": "9688ef356400907daeaff1e2f047211db027e59f",
+  "parent": {
+    "available": true,
+    "local_commit": "9688ef356400907daeaff1e2f047211db027e59f",
+    "remote_commit": "9688ef356400907daeaff1e2f047211db027e59f",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "e7b98f1371769cceb8677a484bdd16a83389eed4eda59ce791b482b870bb7c78",
+  "scope": "32 native CPU/file clients,102 pins,39 unresolved integrations; original callback producers, CRT lifetime precondition, symlink and game/endpoint acceptance OPEN"
+}

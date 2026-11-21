@@ -3,12 +3,15 @@
 #include <limits>
 #include <new>
 #include <stdexcept>
+#include <utility>
 
 namespace mka::input {
 ControllerState digital_state(std::uint16_t buttons,bool connected,
-    const std::array<std::uint8_t,4>& axes,std::uint8_t left,std::uint8_t right) {
+    const std::array<std::uint8_t,4>& axes,std::uint8_t left,std::uint8_t right,
+    std::optional<NativeControllerAxes> native_axes) {
     ControllerState state;
     state.buttons=buttons; state.connected=connected; state.axes=axes;
+    state.native_axes=std::move(native_axes);
     for(unsigned i=0;i<state.pressure.size();++i)
         state.pressure[i]=(buttons&(1u<<i))?255:0;
     state.pressure[8]=(buttons&(1u<<8))?left:0;

@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_retail_file_paths.a",
+  "target_before_sha256": "082d01516420856200a78de8a62198717c98818e169053eace29dcfe0e46cc05",
+  "target_after_sha256": "082d01516420856200a78de8a62198717c98818e169053eace29dcfe0e46cc05",
+  "audited_target_expected_sha256": "082d01516420856200a78de8a62198717c98818e169053eace29dcfe0e46cc05",
+  "execution_applicable": false,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::retail::NativeRetailFilePaths::create(",
+    "mka::retail::NativeRetailFilePaths::open("
+  ]
+}
