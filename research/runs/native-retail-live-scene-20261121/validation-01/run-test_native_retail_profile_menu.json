@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_profile_menu.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS profile menu with actual Session scene lookup and 18A260; test-only action/18B0D0 children, full producer open\n",
+  "stderr": "",
+  "executable_sha256": "ddf7334463bc81a1f20157cd788615df0c4173b1b8a7291a37892ac892b0ca6d",
+  "executable_after_sha256": "ddf7334463bc81a1f20157cd788615df0c4173b1b8a7291a37892ac892b0ca6d"
+}

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "mka/retail_participants.hpp"
+#include "mka/retail_game_session.hpp"
+#include "mka/retail_profile_scene_object.hpp"
 
 #include <cstdint>
 #include <optional>
@@ -11,12 +13,16 @@ struct NativeRetailMainState;
 
 enum class RetailProfileMenuError {
     none, main_lifetime, missing_mode_history, missing_participants,
-    participant, required_child, allocation, native_exception_after_effect
+    participant, required_child, allocation, native_exception_after_effect,
+    session, scene_reference, scene_object, invalid_role
 };
 struct RetailProfileMenuFailure {
     RetailProfileMenuError kind{RetailProfileMenuError::none};
     const char* operation{""};
     RetailParticipantFailure participant{};
+    RetailGameSessionFailure session{};
+    RetailLiveSceneFailure scene_reference{};
+    RetailProfileSceneObjectFailure scene_object{};
 };
 
 // The actual 2432A0 caller invokes this after publishing its aggregate data,
@@ -25,10 +31,10 @@ struct RetailProfileMenuFailure {
 bool run_retail_profile_menu_from_1888c0(
     NativeRetailMainState&, RetailProfileMenuFailure&);
 
-// Required source children. Production intentionally supplies no definitions
-// until the actual scene-cookie producer, resource/action route and transition
-// bodies are implemented. The bool/optional results are native error channels,
-// not replacement values for the original void/pointer calls.
+// Source children use native error channels, not replacement retail results.
+// Live reference observation uses the retained Session cookie pair. Resource
+// action and18B0D0 remain strong requirements until their bodies are ported.
+// The18A260 adapter also preserves its source0/1 result through its own API.
 std::optional<bool> observe_retail_profile_live_scene_from_2f18f0(
     NativeRetailMainState&, RetailProfileMenuFailure&);
 bool invoke_retail_profile_select_from_2f1630(

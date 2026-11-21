@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_profile_transition.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS source-ordered profile transition CPU fixture; real scene producer and 18B0D0 open\n",
+  "stderr": "",
+  "executable_sha256": "0f81cd0f1097c7295f15b6c7ff6bf96ea94e8711aef0eb448a8395cc77097880",
+  "executable_after_sha256": "0f81cd0f1097c7295f15b6c7ff6bf96ea94e8711aef0eb448a8395cc77097880"
+}

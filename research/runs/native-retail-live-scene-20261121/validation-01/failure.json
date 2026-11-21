@@ -1,0 +1,5 @@
+{
+  "status": "FAILED",
+  "type": "RuntimeError",
+  "message": "no guest/device/compiler or physical input endpoint symbols: test_native_retail_profile_transition"
+}

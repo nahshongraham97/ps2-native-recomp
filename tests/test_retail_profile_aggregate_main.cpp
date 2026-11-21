@@ -13,15 +13,13 @@ namespace {
 void check(bool v, const char* message) { if (!v) throw std::runtime_error(message); }
 enum class Action { normal, fail, transfer };
 Action action = Action::normal;
-bool scene_live = false;
-unsigned scene_calls = 0;
+unsigned action_calls = 0;
 }
 // Test-only native children. No such default definitions enter production.
 namespace mka::retail {
-std::optional<bool> observe_retail_profile_live_scene_from_2f18f0(
-    NativeRetailMainState&, RetailProfileMenuFailure&) { ++scene_calls; return scene_live; }
 bool invoke_retail_profile_select_from_2f1630(NativeRetailMainState& main,
     std::string_view path, RetailProfileMenuFailure&) {
+    ++action_calls;
     check(path == "common/p_select/p_select", "source menu action literal");
     if (action == Action::transfer) throw detail::NativeMainReentry{&main, 19};
     if (action == Action::fail) return false;
@@ -34,8 +32,6 @@ bool transition_retail_profile_from_18b0d0(NativeRetailMainState&, std::uint32_t
     check(role == 0 && argument == 0, "expected source first participant transition");
     return true;
 }
-bool transition_retail_profile_from_18a260(NativeRetailMainState&, std::uint32_t,
-    RetailProfileMenuFailure&) { throw std::runtime_error("unexpected source transition"); }
 }
 int main(int argc, char** argv) {
     try {
@@ -60,16 +56,22 @@ int main(int argc, char** argv) {
         RetailProfileAggregateFailure af;
         values->word_64e318 = 0x123;
         check(refresh_retail_profile_aggregate_from_2432a0(main, parents, failure) &&
-            aggregate->observe(af)->or_words_660508_510_518_520[1] == 0x123 && scene_calls == 0,
+            aggregate->observe(af)->or_words_660508_510_518_520[1] == 0x123 && action_calls == 0,
             "real aggregate publication precedes source history early return");
         check(main.mode_history->push(4, mf), "source history4");
-        scene_live = true;
+        RetailProfileSceneValues initial{};
+        RetailProfileSceneObjectFailure of;
+        auto scene = NativeRetailProfileSceneObject::create(startup.game_session,7,initial,of);
+        auto* reference = startup.game_session->live_scene_reference(sf);
+        RetailLiveSceneFailure lf;
+        check(scene && reference && reference->publish_from_2f1ad0(scene,lf) ==
+            RetailLiveScenePublishOutcome::published,"actual retained source scene reference");
         RetailParticipantFailure pf;
         main.participants = NativeRetailParticipants::create_first_two(pf);
         check(main.participants && main.participants->first_two(0,pf)->set_game_state(1,pf),
             "actual live participant status owner");
         check(refresh_retail_profile_aggregate_from_2432a0(main, parents, failure) &&
-            values->word_64e318 == 0x456 &&
+            values->word_64e318 == 0x456 && action_calls == 1 &&
             aggregate->observe(af)->or_words_660508_510_518_520[1] == 0x123,
             "menu effect runs after data publication and may update next refresh input");
         action = Action::transfer;
@@ -86,7 +88,7 @@ int main(int argc, char** argv) {
             failure.kind == RetailProfileAggregateMainError::menu &&
             aggregate->observe(af)->or_words_660508_510_518_520[1] == 0x789,
             "named menu failure never rolls back source-before-call data effects");
-        std::puts("PASS same-Session profile aggregate to actual menu driver ordering; test-only scene children, full saved profiles open");
+        std::puts("PASS same-Session aggregate, actual scene lookup and menu ordering; test-only action/18B0D0, full saved profiles open");
         return 0;
     } catch (const std::exception& e) {
         std::fprintf(stderr,"FAIL native aggregate Main flow: %s\n",e.what()); return 1;

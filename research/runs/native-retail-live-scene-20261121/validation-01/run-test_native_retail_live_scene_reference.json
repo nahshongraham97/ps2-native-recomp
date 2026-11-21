@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_live_scene_reference.exe"
+  ],
+  "exit": 0,
+  "stdout": "",
+  "stderr": "",
+  "executable_sha256": "1e5c35f11ed217e250b0068a6da080f2b32d7705bdb462920b1eadbc31721942",
+  "executable_after_sha256": "1e5c35f11ed217e250b0068a6da080f2b32d7705bdb462920b1eadbc31721942"
+}

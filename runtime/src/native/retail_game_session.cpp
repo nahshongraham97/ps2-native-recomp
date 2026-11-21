@@ -108,6 +108,11 @@ NativeRetailProfileAggregate* NativeRetailGameSession::profile_aggregate(
     if (!validate_current_thread(failure)) return nullptr;
     return &profile_aggregate_;
 }
+NativeRetailSceneReference* NativeRetailGameSession::live_scene_reference(
+    RetailGameSessionFailure& failure) noexcept {
+    if(!validate_current_thread(failure)) return nullptr;
+    return &live_scene_reference_;
+}
 bool NativeRetailGameSession::ensure_game_task_lists(
     std::shared_ptr<NativeRetailGamePool> pool,
     RetailGameSessionFailure& failure) noexcept {

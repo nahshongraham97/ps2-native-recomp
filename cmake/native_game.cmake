@@ -136,6 +136,7 @@ add_library(mka_native_retail_game_session STATIC EXCLUDE_FROM_ALL
     runtime/src/native/retail_main_settings.cpp
     runtime/src/native/retail_random.cpp
     runtime/src/native/retail_game_session.cpp runtime/src/native/retail_initial_task_state.cpp
+    runtime/src/native/retail_live_scene_reference.cpp runtime/src/native/retail_profile_scene_object.cpp
     runtime/src/native/retail_task_domain.cpp runtime/src/native/retail_initial_game_tasks.cpp)
 target_include_directories(mka_native_retail_game_session PUBLIC runtime/include)
 target_compile_features(mka_native_retail_game_session PUBLIC cxx_std_20)
@@ -147,6 +148,10 @@ add_executable(test_native_retail_random EXCLUDE_FROM_ALL tests/test_retail_rand
 target_link_libraries(test_native_retail_random PRIVATE mka_native_retail_game_session)
 add_executable(test_native_retail_game_session EXCLUDE_FROM_ALL tests/test_retail_game_session.cpp)
 target_link_libraries(test_native_retail_game_session PRIVATE mka_native_retail_game_session)
+add_executable(test_native_retail_live_scene_reference EXCLUDE_FROM_ALL tests/test_retail_live_scene_reference.cpp)
+target_link_libraries(test_native_retail_live_scene_reference PRIVATE mka_native_retail_game_session)
+add_executable(test_native_retail_profile_scene_object EXCLUDE_FROM_ALL tests/test_retail_profile_scene_object.cpp)
+target_link_libraries(test_native_retail_profile_scene_object PRIVATE mka_native_retail_game_session)
 add_executable(test_native_retail_game_options EXCLUDE_FROM_ALL tests/test_retail_game_options.cpp)
 target_link_libraries(test_native_retail_game_options PRIVATE mka_native_retail_game_session)
 # Native logical middleware time and typed callback ownership; no Count model.
@@ -214,6 +219,7 @@ if(WIN32)
         runtime/src/native/retail_profile_preferences_main.cpp
         runtime/src/native/retail_profile_menu.cpp runtime/src/native/retail_profile_resource_ids.cpp
         runtime/src/native/retail_profile_aggregate_main.cpp
+        runtime/src/native/retail_live_scene_main.cpp runtime/src/native/retail_profile_transition.cpp
         runtime/src/native/retail_game_records.cpp
         runtime/src/native/retail_game_records_main.cpp
         runtime/src/native/retail_task_lookup_main.cpp
@@ -260,6 +266,9 @@ if(WIN32)
     add_executable(test_native_retail_profile_menu EXCLUDE_FROM_ALL tests/test_retail_profile_menu.cpp)
     target_include_directories(test_native_retail_profile_menu PRIVATE runtime/src/native)
     target_link_libraries(test_native_retail_profile_menu PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_profile_transition EXCLUDE_FROM_ALL tests/test_retail_profile_transition.cpp)
+    target_include_directories(test_native_retail_profile_transition PRIVATE runtime/src/native)
+    target_link_libraries(test_native_retail_profile_transition PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_profile_resource_ids EXCLUDE_FROM_ALL tests/test_retail_profile_resource_ids.cpp)
     target_link_libraries(test_native_retail_profile_resource_ids PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_profile_aggregate_main EXCLUDE_FROM_ALL tests/test_retail_profile_aggregate_main.cpp)

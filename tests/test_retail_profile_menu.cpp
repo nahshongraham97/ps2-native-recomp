@@ -21,10 +21,9 @@ void require(bool value, const char* message) {
 }
 
 struct TestChildren {
-    bool live{};
-    bool scene_error{};
     bool resource_error{};
     bool resource_changes_status{};
+    bool resource_blocks_both{};
     bool first_transition_changes_second{};
     bool transfer{};
     std::vector<std::string> calls;
@@ -39,14 +38,9 @@ void state(mka::retail::NativeRetailMainState& main,
 }
 } // namespace
 
-// Explicit test-only bodies for production's deliberately undefined children.
+// Only the still-missing action/18B0D0 bodies are test-only. Scene lookup and
+// 18A260 use production code and the actual retained Session/object/fields.
 namespace mka::retail {
-std::optional<bool> observe_retail_profile_live_scene_from_2f18f0(
-    NativeRetailMainState&, RetailProfileMenuFailure&) {
-    children.calls.push_back("live_scene");
-    if (children.scene_error) return std::nullopt;
-    return children.live;
-}
 bool invoke_retail_profile_select_from_2f1630(
     NativeRetailMainState& main, std::string_view path, RetailProfileMenuFailure&) {
     require(path == "common/p_select/p_select", "exact source menu literal");
@@ -57,6 +51,10 @@ bool invoke_retail_profile_select_from_2f1630(
         state(main, 0, 2);
         state(main, 1, 1);
     }
+    if (children.resource_blocks_both) {
+        state(main, 0, 2);
+        state(main, 1, 2);
+    }
     return true;
 }
 bool transition_retail_profile_from_18b0d0(
@@ -65,14 +63,6 @@ bool transition_retail_profile_from_18b0d0(
     require((role == 0 && argument == 0) || (role == 1 && argument == 9),
         "source 18B0D0 argument pair");
     children.calls.push_back("18b0d0_" + std::to_string(role));
-    if (role == 0 && children.first_transition_changes_second)
-        state(main, 1, 2);
-    return true;
-}
-bool transition_retail_profile_from_18a260(
-    NativeRetailMainState& main, std::uint32_t role, RetailProfileMenuFailure&) {
-    require(role <= 1, "source 18A260 participant argument");
-    children.calls.push_back("18a260_" + std::to_string(role));
     if (role == 0 && children.first_transition_changes_second)
         state(main, 1, 2);
     return true;
@@ -95,6 +85,9 @@ int main() {
         auto content = mka::content::NativeContentVolume::open(root, cf);
         require(bool(content), "real native content root for Main lifetime");
         NativeRetailStartupState startup(std::move(*content), {});
+        StartupFailure startup_failure;
+        require(initialize_native_retail_game_session(startup, startup_failure),
+            "actual retained game Session birth");
         mka::input::ControllerInput samples;
         NativeRetailMainState main(startup, samples);
         RetailProfileMenuFailure failure;
@@ -112,49 +105,71 @@ int main() {
         require(main.mode_history->push(4, mode_failure), "source history contains four");
         children = {};
         require(run_retail_profile_menu_from_1888c0(main, failure) &&
-            children.calls == std::vector<std::string>{"live_scene"},
+            children.calls.empty(),
             "null source scene returns before participant lookup");
 
         RetailParticipantFailure participant_failure;
         main.participants = NativeRetailParticipants::create_first_two(participant_failure);
         require(bool(main.participants), "source-born first two participants");
+        RetailGameSessionFailure session_failure;
+        require(startup.game_session->store_scalar_mode_from_source(3, session_failure),
+            "explicit non-four source mode for ordered lane writes");
+        RetailProfileSceneValues initial{};
+        initial.word_60 = 10;
+        RetailProfileSceneObjectFailure object_failure;
+        auto scene = NativeRetailProfileSceneObject::create(
+            startup.game_session, 7, initial, object_failure);
+        auto* reference = startup.game_session->live_scene_reference(session_failure);
+        RetailLiveSceneFailure live_failure;
+        require(scene && reference && reference->publish_from_2f1ad0(scene, live_failure) ==
+            RetailLiveScenePublishOutcome::published, "real typed menu scene publication");
         children = {};
-        children.live = true;
         require(run_retail_profile_menu_from_1888c0(main, failure) &&
-            children.calls == std::vector<std::string>{"live_scene"},
+            children.calls.empty(),
             "neither source status one returns before resource action");
 
         state(main, 0, 1);
         state(main, 1, 2);
         children = {};
-        children.live = true;
         children.resource_changes_status = true;
         children.first_transition_changes_second = true;
         require(run_retail_profile_menu_from_1888c0(main, failure) &&
             children.calls == std::vector<std::string>{
-                "live_scene", "p_select", "18a260_0", "18a260_1"},
+                "p_select", "18b0d0_0", "18b0d0_1"} &&
+            scene->observe(object_failure)->values.word_60 == 8 &&
+            scene->observe(object_failure)->values.lanes[0].word_2c == 1 &&
+            scene->observe(object_failure)->values.lanes[1].word_2c == 1,
             "status zero reload follows resource and status one reload follows transition");
 
         state(main, 0, 1);
         state(main, 1, 1);
         children = {};
-        children.live = true;
         children.first_transition_changes_second = true;
         require(run_retail_profile_menu_from_1888c0(main, failure) &&
             children.calls == std::vector<std::string>{
-                "live_scene", "p_select", "18b0d0_0", "18a260_1"},
+                "p_select", "18b0d0_0", "18b0d0_1"} &&
+            scene->observe(object_failure)->values.word_60 == 7,
             "first transition changes live second status before final branch");
 
+        state(main, 0, 1);
+        state(main, 1, 1);
         children = {};
-        children.live = true;
+        children.resource_blocks_both = true;
+        require(run_retail_profile_menu_from_1888c0(main, failure) &&
+            children.calls == std::vector<std::string>{"p_select"} &&
+            failure.kind == RetailProfileMenuError::none &&
+            scene->observe(object_failure)->values.word_60 == 7,
+            "real 18A260 source-zero results are successful no-effect calls to its parent");
+
+        state(main, 0, 1);
+        children = {};
         children.resource_error = true;
         require(!run_retail_profile_menu_from_1888c0(main, failure) &&
             failure.kind == RetailProfileMenuError::required_child &&
-            children.calls == std::vector<std::string>{"live_scene", "p_select"},
+            children.calls == std::vector<std::string>{"p_select"},
             "reached missing resource child fails by name");
 
         children = {};
-        children.live = true;
         children.transfer = true;
         bool propagated = false;
         try { (void)run_retail_profile_menu_from_1888c0(main, failure); }
@@ -164,15 +179,19 @@ int main() {
         require(propagated, "Main nonlocal transfer propagates through menu child");
 
         children = {};
-        children.live = true;
         auto retained_participants = std::move(main.participants);
         require(!run_retail_profile_menu_from_1888c0(main, failure) &&
             failure.kind == RetailProfileMenuError::missing_participants,
             "live scene requires actual participant owner");
         main.participants = std::move(retained_participants);
 
+        auto retained_session = std::move(startup.game_session);
+        require(!run_retail_profile_menu_from_1888c0(main, failure) &&
+            failure.kind == RetailProfileMenuError::session,
+            "actual scene getter refuses a missing Session rather than reporting source null");
+        startup.game_session = std::move(retained_session);
+
         children = {};
-        children.live = true;
         RetailProfileMenuFailure foreign_failure;
         bool foreign_result = true;
         std::thread foreign([&] {
@@ -183,5 +202,5 @@ int main() {
             children.calls.empty(), "foreign Main call refuses before child effects");
     }
     require(std::filesystem::remove(root), "retire exclusively owned empty fixture root");
-    std::cout << "PASS source-ordered profile menu driver with explicit test-only children; production scene/action/transition children open\n";
+    std::cout << "PASS profile menu with actual Session scene lookup and 18A260; test-only action/18B0D0 children, full producer open\n";
 }
