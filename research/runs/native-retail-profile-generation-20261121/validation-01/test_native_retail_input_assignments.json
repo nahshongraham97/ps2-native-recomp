@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_input_assignments.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native source assignment protocol; no host route, game or endpoint\n",
+  "stderr": "",
+  "executable_sha256": "09be509054da755880026d135118a0eb684ddc3b8b30e2ea7d45ebaf750b87a0",
+  "executable_after_sha256": "09be509054da755880026d135118a0eb684ddc3b8b30e2ea7d45ebaf750b87a0",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-input-poll-20261121\\validation-01\\test_native_retail_input_assignments.json",
+  "reused_record_sha256": "5cf4d8eeb1ef1de801df5f24f07cff9846889d05d86b3fee0176a4e0e07ae08f",
+  "reuse_basis": "current rebuilt executable is byte-identical; exact prior execution retained, not replayed"
+}

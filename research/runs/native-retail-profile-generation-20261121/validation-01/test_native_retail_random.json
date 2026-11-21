@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_random.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-random-12\\reference-01\\reference-vectors.tsv"
+  ],
+  "exit": 0,
+  "stdout": "independent random oracle rows: 20252\n",
+  "stderr": "",
+  "executable_sha256": "7b0514b7f3d946a89065100aa8664f5db495e204db27f8504ec1c3d7e59df72d",
+  "executable_after_sha256": "7b0514b7f3d946a89065100aa8664f5db495e204db27f8504ec1c3d7e59df72d",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-input-poll-20261121\\validation-01\\test_native_retail_random.json",
+  "reused_record_sha256": "a64c77b47e213cbc01cfbbf2c49c79061e3ebd7476a1d067400a812a5c24c847",
+  "reuse_basis": "current rebuilt executable is byte-identical; exact prior execution retained, not replayed"
+}

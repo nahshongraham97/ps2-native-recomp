@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_dispatch_owners.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native prefix copy/failure/lifetime checks; no message parser, game or endpoint\n",
+  "stderr": "",
+  "executable_sha256": "cf1af62cfbd65994c09e4e4dd12092fb03f66ad7d57d928ad2b39f4c6d919f5a",
+  "executable_after_sha256": "cf1af62cfbd65994c09e4e4dd12092fb03f66ad7d57d928ad2b39f4c6d919f5a",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-input-poll-20261121\\validation-01\\test_native_retail_dispatch_owners.json",
+  "reused_record_sha256": "b04e319696ecc6b615f1627bd99022fe9545538666d48c7ebe78ccb2c4c161ec",
+  "reuse_basis": "current rebuilt executable is byte-identical; exact prior execution retained, not replayed"
+}

@@ -113,12 +113,14 @@ add_executable(test_native_retail_file_paths EXCLUDE_FROM_ALL tests/test_retail_
 target_link_libraries(test_native_retail_file_paths PRIVATE mka_native_retail_file_paths)
 # Source class graph is bound to the actual native memory-owner group.
 add_library(mka_native_retail_profile_owners STATIC EXCLUDE_FROM_ALL
-    runtime/src/native/retail_profile_owners.cpp)
+    runtime/src/native/retail_profile_owners.cpp runtime/src/native/retail_profile_runtime.cpp)
 target_link_libraries(mka_native_retail_profile_owners PUBLIC
     mka_native_allocation_profile mka_native_retail_memory_owners Threads::Threads)
 target_compile_features(mka_native_retail_profile_owners PUBLIC cxx_std_20)
 add_executable(test_native_retail_profile_owners EXCLUDE_FROM_ALL tests/test_retail_profile_owners.cpp)
 target_link_libraries(test_native_retail_profile_owners PRIVATE mka_native_retail_profile_owners)
+add_executable(test_native_retail_profile_runtime EXCLUDE_FROM_ALL tests/test_retail_profile_runtime.cpp)
+target_link_libraries(test_native_retail_profile_runtime PRIVATE mka_native_retail_profile_owners)
 add_executable(test_native_startup_codegen EXCLUDE_FROM_ALL
     tests/test_native_startup_codegen.cpp recomp/native_closure_codegen.cpp recomp/native_startup_codegen.cpp)
 target_include_directories(test_native_startup_codegen PRIVATE recomp)

@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_middleware_frame.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native middleware frame time and typed callback component\n",
+  "stderr": "",
+  "executable_sha256": "a9bad0674b08d600b820547e5a9c1e4765f3784dc51dbf86d2bb54aace0c6594",
+  "executable_after_sha256": "a9bad0674b08d600b820547e5a9c1e4765f3784dc51dbf86d2bb54aace0c6594",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-input-poll-20261121\\validation-01\\test_native_retail_middleware_frame.json",
+  "reused_record_sha256": "3cd871481b6ca7f7eb55da25f0e8a02fe11374de24048df6c2a23feed5067cd9",
+  "reuse_basis": "current rebuilt executable is byte-identical; exact prior execution retained, not replayed"
+}

@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_profile_runtime.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native retail profile generation prerequisite: 84 first-generation allocation cuts; full reset/callback/object effects open\n",
+  "stderr": "",
+  "executable_sha256": "b37e5e4103334260f53cb21f320786ead07aab421340563b46125acbe78fd6d1",
+  "executable_after_sha256": "b37e5e4103334260f53cb21f320786ead07aab421340563b46125acbe78fd6d1"
+}

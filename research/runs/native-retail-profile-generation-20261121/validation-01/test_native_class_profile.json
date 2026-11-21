@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_class_profile.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-allocation-class-20261120\\validation-01\\source-profile.tsv"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_CLASS_PROFILE: 20 selectors/13 classes and game-pool/companion counts match original stores; actual dynamic PFX storage and signed game predicate, no reset/producer/game claim\n",
+  "stderr": "",
+  "executable_sha256": "5f33e7d549e96492f495dd03e87e1debd246701b5063970b9867d92a06eb6df2",
+  "executable_after_sha256": "5f33e7d549e96492f495dd03e87e1debd246701b5063970b9867d92a06eb6df2",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-input-poll-20261121\\validation-01\\test_native_class_profile.json",
+  "reused_record_sha256": "6d9c34b02b25dc32908035335c1b80577d1fa2ce9d9e3befe11ab75872782e51",
+  "reuse_basis": "current rebuilt executable is byte-identical; exact prior execution retained, not replayed"
+}

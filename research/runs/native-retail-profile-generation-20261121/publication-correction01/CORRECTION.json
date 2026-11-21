@@ -1,0 +1,9 @@
+{
+  "stage": "publication preflight before any commit/staging",
+  "failure": "Publisher incorrectly treated independent review new_executions list as numeric count; actual schema stores exact two target names",
+  "correction": "Compare exact target-name list to producer executed_clients and separately require length2",
+  "no_source_or_result_changed": true,
+  "no_tests_rerun": true,
+  "before_publisher_sha256": "2c22bdea36d4e3935806159bc8aa5e55b7a3658047fc850fc5534b846675afe4",
+  "after_publisher_sha256": "965e46f3446ec2879d921d3b442e3bbdda224a1202fe71f79b2ba34ce8cc5734"
+}

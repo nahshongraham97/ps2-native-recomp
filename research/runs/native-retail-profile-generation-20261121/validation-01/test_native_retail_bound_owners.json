@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_bound_owners.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-input-poll-20261121\\validation-01\\owned-content"
+  ],
+  "exit": 0,
+  "stdout": "PASS actual native main constructor/mode bindings and allocation failures; no game or endpoint\n",
+  "stderr": "",
+  "executable_sha256": "1fee5524a89845a9f1c46c496ae34716aa6d5bf7f62cc3eb648f708454a99630",
+  "executable_after_sha256": "1fee5524a89845a9f1c46c496ae34716aa6d5bf7f62cc3eb648f708454a99630",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-input-poll-20261121\\validation-01\\test_native_retail_bound_owners.json",
+  "reused_record_sha256": "2fba76774e1aaeb4ec42dd478412f0a07c4e6eba564c9dbc6ad945e6533eba5d",
+  "reuse_basis": "current rebuilt executable is byte-identical; exact prior execution retained, not replayed"
+}

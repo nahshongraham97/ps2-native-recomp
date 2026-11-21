@@ -1,0 +1,18 @@
+{
+  "fork_commit": "f6e137f21641c4e07f621e508e8ed9c9ab9c8245",
+  "fork": {
+    "available": true,
+    "local_commit": "f6e137f21641c4e07f621e508e8ed9c9ab9c8245",
+    "remote_commit": "f6e137f21641c4e07f621e508e8ed9c9ab9c8245",
+    "synchronization": "verified"
+  },
+  "parent_commit": "c1e1ee46ad1edb83ff8b3f4f8fccc73f46b24507",
+  "parent": {
+    "available": true,
+    "local_commit": "c1e1ee46ad1edb83ff8b3f4f8fccc73f46b24507",
+    "remote_commit": "c1e1ee46ad1edb83ff8b3f4f8fccc73f46b24507",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "0c1b7bfad32fd57d285a2e55b926e57b655e8ccf313b4ec55b3a7be564bb2a7e",
+  "scope": "36 native CPU/file clients,114 pins,39 unresolved integrations; whole main poll/physical input/game acceptance OPEN"
+}

@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_keyboard.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-keyboard-feed-07\\source-key-table.bin"
+  ],
+  "exit": 0,
+  "stdout": "PASS native keyboard queue and SDL event decoding; physical UI/game open\n",
+  "stderr": "",
+  "executable_sha256": "547043989f2a7259a89bf9215484300e10f00a90b6144901481097b3abbce5e5",
+  "executable_after_sha256": "547043989f2a7259a89bf9215484300e10f00a90b6144901481097b3abbce5e5",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-input-poll-20261121\\validation-01\\test_native_retail_keyboard.json",
+  "reused_record_sha256": "aa686fcee5c8c83b55dd4c4f104f061f44cccc29fd7aed0db3efd6bf5e921de5",
+  "reuse_basis": "current rebuilt executable is byte-identical; exact prior execution retained, not replayed"
+}

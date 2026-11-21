@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_memory_owner_faults.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_RETAIL_MEMORY_OWNER_FAULTS: create=25 bind=2 forced ordinary allocation cuts; owner-group/binding rollback only, no retail startup/game\n",
+  "stderr": "",
+  "executable_sha256": "763b155fc2964cce25227b964ca58d6317e11305ceec9636f7a28e3e8443fa44",
+  "executable_after_sha256": "763b155fc2964cce25227b964ca58d6317e11305ceec9636f7a28e3e8443fa44",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-input-poll-20261121\\validation-01\\test_native_retail_memory_owner_faults.json",
+  "reused_record_sha256": "a6c7aeb23080152ba1124a5c9f0f81b940029b27d82a83360e389398dbb7f438",
+  "reuse_basis": "current rebuilt executable is byte-identical; exact prior execution retained, not replayed"
+}

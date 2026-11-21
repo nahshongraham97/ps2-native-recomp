@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_memory_owners.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_RETAIL_MEMORY_OWNERS: 4 groups ordered identities/policies/real storage; owner-group phase only, no full retail main\n",
+  "stderr": "",
+  "executable_sha256": "7fd8f4150b3d57b695b36c34fb1c56aa5cf9b7e7629e05cb9b1027d0dbbb95ad",
+  "executable_after_sha256": "7fd8f4150b3d57b695b36c34fb1c56aa5cf9b7e7629e05cb9b1027d0dbbb95ad",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-input-poll-20261121\\validation-01\\test_native_retail_memory_owners.json",
+  "reused_record_sha256": "c169c116bdbeb4d48535b409894dfb7bb02c47e099e6144e1d6a50015ba38802",
+  "reuse_basis": "current rebuilt executable is byte-identical; exact prior execution retained, not replayed"
+}

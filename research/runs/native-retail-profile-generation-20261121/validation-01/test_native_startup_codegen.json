@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_startup_codegen.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\SLUS_214.10"
+  ],
+  "exit": 0,
+  "stdout": "PASS native retail startup source identity, ordered prerequisites and owned emission; no game boot\n",
+  "stderr": "",
+  "executable_sha256": "be7951aeee28640be9398383db1015a9d5afe80f4c3a5f26559ac635e3209048",
+  "executable_after_sha256": "be7951aeee28640be9398383db1015a9d5afe80f4c3a5f26559ac635e3209048",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-input-poll-20261121\\validation-01\\test_native_startup_codegen.json",
+  "reused_record_sha256": "d5e2a27ee00901c161c2f580b6ebb38c265fd130e5ad09a4c5f3474368c7b72c",
+  "reuse_basis": "current rebuilt executable is byte-identical; exact prior execution retained, not replayed"
+}

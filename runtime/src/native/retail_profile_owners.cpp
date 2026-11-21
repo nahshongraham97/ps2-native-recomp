@@ -26,6 +26,10 @@ bool same_source_plan(const NativeClassProfilePlan& plan) noexcept {
 }
 } // namespace
 
+bool NativeRetailProfileOwners::valid_source_plan(const NativeClassProfilePlan& plan) noexcept {
+    return same_source_plan(plan);
+}
+
 std::unique_ptr<NativeRetailProfileOwners> NativeRetailProfileOwners::create_initial_storage(
     const NativeClassProfilePlan& plan, NativeRetailMemoryOwners& group,
     RetailProfileOwnerFailure& failure) noexcept {
@@ -65,11 +69,25 @@ std::unique_ptr<NativeRetailProfileOwners> NativeRetailProfileOwners::create_ini
     return {};
 }
 
+std::optional<memory::ClassAllocation> NativeRetailProfilePayload::allocate(
+    std::size_t bytes, memory::AllocationClassFailure& failure) noexcept {
+    return leaf_->allocate(child_, bytes, alignment_, failure);
+}
+memory::NativeHeapIdentity NativeRetailProfilePayload::child_identity() const {
+    return child_->observe().identity;
+}
 bool NativeRetailProfileOwners::access(RetailProfileOwnerFailure& failure) const noexcept {
     failure = {};
-    if (std::this_thread::get_id() == owner_thread_) return true;
-    failure.kind = RetailProfileOwnerError::wrong_thread;
-    return false;
+    if (std::this_thread::get_id() != owner_thread_) {
+        failure.kind = RetailProfileOwnerError::wrong_thread;
+        return false;
+    }
+    if (retired_ || retirement_partial_) {
+        failure.kind = retirement_partial_ ? RetailProfileOwnerError::retirement_partial :
+            RetailProfileOwnerError::retired;
+        return false;
+    }
+    return true;
 }
 const NativeRetailProfileOwners::Entry* NativeRetailProfileOwners::find(
     memory::AllocationClassRole role) const noexcept {
@@ -97,7 +115,13 @@ std::shared_ptr<memory::NativeAllocationClass> NativeRetailProfileOwners::payloa
     if (!entry) { failure.kind = RetailProfileOwnerError::missing_class; return {}; }
     return entry->leaf;
 }
-std::optional<memory::ClassAllocation> NativeRetailProfileOwners::allocate_direct_payload_leaf(
+std::optional<NativeRetailProfilePayload> NativeRetailProfileOwners::retained_direct_payload(
+    memory::AllocationClassRole role, RetailProfileOwnerFailure& failure) const noexcept {
+    if (!access(failure)) return {};
+    const auto* entry = find(role);
+    if (!entry) { failure.kind = RetailProfileOwnerError::missing_class; return {}; }
+    return NativeRetailProfilePayload(entry->child, entry->leaf, entry->profile.alignment);
+}std::optional<memory::ClassAllocation> NativeRetailProfileOwners::allocate_direct_payload_leaf(
     memory::AllocationClassRole role, std::size_t bytes,
     RetailProfileOwnerFailure& failure) noexcept {
     if (!access(failure)) return {};
@@ -107,5 +131,44 @@ std::optional<memory::ClassAllocation> NativeRetailProfileOwners::allocate_direc
         failure.class_leaf);
     if (!payload) failure.kind = RetailProfileOwnerError::class_leaf;
     return payload;
+}
+
+bool NativeRetailProfileOwners::retire_source_classes(RetailProfileOwnerFailure& failure) noexcept {
+    if (!access(failure)) return false;
+    // 310D30 first retires the three later overlay classes. This graph owns
+    // only its following 13 Wave classes, in source retirement order.
+    constexpr std::array<std::size_t, 13> order{0, 1, 2, 3, 4, 12, 11, 5, 6, 7, 8, 9, 10};
+    try {
+        for (const auto index : order) {
+            const auto state = entries_[index].child->observe();
+            if (!state.active || state.live_allocations || state.inflight_allocations ||
+                state.child_owners || state.active_requests) {
+                failure.kind = RetailProfileOwnerError::busy;
+                failure.heap.kind = state.active ? memory::NativeHeapError::owner_busy :
+                    memory::NativeHeapError::inactive_owner;
+                return false;
+            }
+        }
+        std::size_t completed = 0;
+        for (const auto index : order) {
+            if (!entries_[index].child->shutdown(failure.heap)) {
+                // A native exception can occur after shutdown marks this child
+                // inactive but before it unlinks the parent. Only owner_busy is
+                // known to refuse before mutation. Treat every other failure as
+                // an irreversible partial retirement, including the first slot.
+                retirement_partial_ = completed != 0 ||
+                    failure.heap.kind != memory::NativeHeapError::owner_busy;
+                failure.kind = retirement_partial_ ? RetailProfileOwnerError::retirement_partial :
+                    RetailProfileOwnerError::busy;
+                return false;
+            }
+            ++completed;
+        }
+        retired_ = true;
+        return true;
+    } catch (...) {
+        failure.kind = RetailProfileOwnerError::native_exception;
+        return false;
+    }
 }
 } // namespace mka::retail
