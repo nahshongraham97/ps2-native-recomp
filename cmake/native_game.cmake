@@ -111,6 +111,7 @@ target_compile_features(mka_native_profile_preferences PUBLIC cxx_std_20)
 # Persistent game state uses native objects, not a guest address model.
 add_library(mka_native_retail_task_registry STATIC EXCLUDE_FROM_ALL
     runtime/src/native/retail_task_registry.cpp runtime/src/native/retail_task_execution.cpp
+    runtime/src/native/retail_task_script_context.cpp
     runtime/src/native/retail_game_pool.cpp runtime/src/native/retail_observer_list.cpp
     runtime/src/native/retail_input_task_argument.cpp
     runtime/src/native/retail_game_task_lists.cpp)
@@ -227,6 +228,8 @@ if(WIN32)
         runtime/src/native/retail_live_scene_main.cpp runtime/src/native/retail_profile_transition.cpp
         runtime/src/native/retail_profile_transition_child.cpp runtime/src/native/retail_profile_entry_decision.cpp
         runtime/src/native/retail_profile_task_retirement.cpp
+        runtime/src/native/retail_task_dispatch_main.cpp runtime/src/native/retail_initial_task_main.cpp
+        runtime/src/native/retail_initial_task.cpp
         runtime/src/native/retail_game_records.cpp
         runtime/src/native/retail_game_records_main.cpp
         runtime/src/native/retail_task_lookup_main.cpp
@@ -298,6 +301,8 @@ if(WIN32)
     target_link_libraries(test_native_retail_section_workspace PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_task_domain EXCLUDE_FROM_ALL tests/test_retail_task_domain.cpp)
     target_link_libraries(test_native_retail_task_domain PRIVATE mka_native_retail_game_session)
+    add_executable(test_native_retail_task_dispatch_main EXCLUDE_FROM_ALL tests/test_retail_task_dispatch_main.cpp)
+    target_link_libraries(test_native_retail_task_dispatch_main PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_startup EXCLUDE_FROM_ALL tests/test_native_retail_startup.cpp)
     target_link_libraries(test_native_retail_startup PRIVATE mka_native_retail_startup)
     # Expected-negative link fixture: never included in a successful build batch.

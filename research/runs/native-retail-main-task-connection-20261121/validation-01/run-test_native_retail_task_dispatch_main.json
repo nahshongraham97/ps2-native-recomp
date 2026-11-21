@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_task_dispatch_main.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-main-task-connection-20261121\\validation-01\\content"
+  ],
+  "exit": 0,
+  "stdout": "PASS native Main task dispatch and per-body script-context release; full game open\n",
+  "stderr": "",
+  "executable_sha256": "904a1824c05313049d56c18d37370abe8894d6aaddf5d90024f2b21173911bbb",
+  "executable_after_sha256": "904a1824c05313049d56c18d37370abe8894d6aaddf5d90024f2b21173911bbb"
+}

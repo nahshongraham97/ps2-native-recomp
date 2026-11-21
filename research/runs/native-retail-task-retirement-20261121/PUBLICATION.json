@@ -1,0 +1,14 @@
+{
+  "schema": "native_retail_task_retirement_publication_v1",
+  "fork_commit": "f230d28e45e996988f985012a806af652974231f",
+  "fork_remote_verified": true,
+  "parent_commit": "04f081bde7feccc45f965adfa78844570c68ce54",
+  "parent": {
+    "available": true,
+    "local_commit": "04f081bde7feccc45f965adfa78844570c68ce54",
+    "remote_commit": "04f081bde7feccc45f965adfa78844570c68ce54",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "0995ee96ec310339b4bbe47ea8c881f741b8d5699f5bf469d8ce77f1fbdb662d",
+  "format_correction": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-task-class-execution-77\\root-publication01\\CORRECTION.json"
+}

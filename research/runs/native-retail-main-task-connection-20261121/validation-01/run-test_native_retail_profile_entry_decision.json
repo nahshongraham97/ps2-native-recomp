@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_profile_entry_decision.exe"
+  ],
+  "exit": 0,
+  "stdout": "native retail profile entry decision source fixture passed\n",
+  "stderr": "",
+  "executable_sha256": "f1c9403313633809bfc55ac8fdf258a33cf945cc8d1ffc0953240f970d749841",
+  "executable_after_sha256": "f1c9403313633809bfc55ac8fdf258a33cf945cc8d1ffc0953240f970d749841"
+}

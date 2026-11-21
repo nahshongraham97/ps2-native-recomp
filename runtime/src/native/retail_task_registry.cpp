@@ -71,6 +71,11 @@ bool NativeRetailTaskRegistry::access(RetailTaskRegistryFailure& f) const noexce
                     "retail task cleanup had an unknown partial effect");
     return true;
 }
+std::shared_ptr<NativeRetailGamePool> NativeRetailTaskRegistry::retained_pool(
+    RetailTaskRegistryFailure& f) const noexcept {
+    if(!access(f)) return {};
+    return pool_;
+}
 std::list<NativeRetailTaskRegistry::Link>::iterator
 NativeRetailTaskRegistry::find_active(
     const std::shared_ptr<NativeRetailTaskObject>& task) noexcept {
@@ -420,8 +425,13 @@ bool NativeRetailTaskRegistry::cancel_first_root_from_12f030(
 
 bool NativeRetailTaskRegistry::dispatch_first_root_zero_flags_from_12e670(
     bool source_bit5_inhibited, bool source_root_wait_inhibited,
+    NativeRetailTaskScriptContextState& script_context,
     RetailTaskRegistryFailure& f) {
     if(!access(f)) return false;
+    // Validate the same persistent context owner before any dispatch effect.
+    if(!script_context.validate_current_thread(f.script_context))
+        return fail(f,RetailTaskRegistryError::script_context,
+                    "12E670 native script context unavailable");
     NativeRetailTaskExecution execution(*this);
     for(auto it=active_.begin();it!=active_.end();) {
         // Source 12E670 saves next before any callback or stale retirement.
@@ -478,6 +488,14 @@ bool NativeRetailTaskRegistry::dispatch_first_root_zero_flags_from_12e670(
                 if(!outcome)
                     return fail(f,RetailTaskRegistryError::execution,
                                 "12E670 real task virtual+10");
+                // Original12E8E4 ->2168E0 executes only on normal return,
+                // after this task and before the next saved link. A Main
+                // transfer or failed body must leave the context untouched.
+                if(!script_context.clear_from_2168e0(f.script_context)) {
+                    after_effect_unknown_=true;
+                    return fail(f,RetailTaskRegistryError::script_context,
+                                "12E8E4 source task script context release");
+                }
             }
         }
         it=advance_to_saved_next();

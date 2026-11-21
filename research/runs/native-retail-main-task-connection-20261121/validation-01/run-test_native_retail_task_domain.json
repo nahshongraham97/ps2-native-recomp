@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_task_domain.exe"
+  ],
+  "exit": 0,
+  "stdout": "native retail task domain: PASS\n",
+  "stderr": "",
+  "executable_sha256": "028bdc3322285d772e0a0189db5cd8e50272a98241819b89cf38f6cd6438a521",
+  "executable_after_sha256": "028bdc3322285d772e0a0189db5cd8e50272a98241819b89cf38f6cd6438a521"
+}

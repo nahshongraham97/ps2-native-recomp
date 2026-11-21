@@ -3,6 +3,7 @@
 #include "mka/retail_game_pool.hpp"
 #include "mka/retail_observer_list.hpp"
 #include "mka/retail_input_task_argument.hpp"
+#include "mka/retail_task_script_context.hpp"
 
 #include <cstddef>
 #include <cstdint>
@@ -19,7 +20,7 @@ enum class RetailTaskRegistryError {
     none, wrong_thread, invalid_body, foreign_task, already_linked,
     retired_task, retention_guard, callout_active, after_effect_unknown,
     unsupported_source_branch, game_pool, observer_list, execution, allocation,
-    native_exception, input_argument
+    native_exception, input_argument, script_context
 };
 struct RetailTaskRegistryFailure {
     RetailTaskRegistryError kind{RetailTaskRegistryError::none};
@@ -28,6 +29,7 @@ struct RetailTaskRegistryFailure {
     RetailObserverListFailure observer{};
     RetailTaskExecutionFailure execution{};
     RetailInputTaskArgumentFailure argument{};
+    RetailTaskScriptContextFailure script_context{};
 };
 
 // Set by the original constructor path, never inferred from task kind.
@@ -100,6 +102,8 @@ public:
         std::shared_ptr<NativeRetailGamePool>, RetailTaskRegistryFailure&) noexcept;
     NativeRetailTaskRegistry(const NativeRetailTaskRegistry&) = delete;
     NativeRetailTaskRegistry& operator=(const NativeRetailTaskRegistry&) = delete;
+    std::shared_ptr<NativeRetailGamePool> retained_pool(
+        RetailTaskRegistryFailure&) const noexcept;
 
     // Existing publication is explicitly source 12EC50 plain-task birth.
     std::shared_ptr<NativeRetailTaskObject> publish_task(
@@ -157,6 +161,7 @@ public:
     bool cancel_first_root_from_12f030(RetailTaskRegistryFailure&);
     bool dispatch_first_root_zero_flags_from_12e670(
         bool source_bit5_inhibited, bool source_root_wait_inhibited,
+        NativeRetailTaskScriptContextState&,
         RetailTaskRegistryFailure&);
     // Explicit 12FA00 link retirement. A flag-bit1 link is left unchanged.
     bool retire_link(const std::shared_ptr<NativeRetailTaskObject>&,

@@ -55,6 +55,7 @@ public:
         std::shared_ptr<NativeRetailGamePool>, RetailTaskDomainFailure&) noexcept;
     bool cancel_first_root_from_12f030(RetailTaskDomainFailure&);
     bool dispatch_first_root_zero_flags_from_12e4e0(RetailTaskDomainFailure&);
+    NativeRetailTaskScriptContextState* script_context(RetailTaskDomainFailure&) noexcept;
     bool override_cookie_from_130ab0(std::uint32_t,
         RetailTaskDomainFailure&) noexcept;
     std::optional<std::uint32_t> next_cookie_from_130a50(
@@ -85,6 +86,7 @@ private:
 
     std::shared_ptr<NativeRetailGameControls> controls_;
     std::unique_ptr<NativeRetailTaskRegistry> registry_;
+    NativeRetailTaskScriptContextState script_context_;
     std::uint32_t identity_counter_{}; // 64DF7C original BSS zero.
     bool override_pending_{};          // 64DF74 original BSS zero.
     std::uint32_t override_word_{};     // 64DF78 original BSS zero.

@@ -111,10 +111,16 @@ bool NativeRetailTaskDomain::dispatch_first_root_zero_flags_from_12e4e0(
     // This is the source initial first-list/no-script/zero-task-flags path.
     // The second source root is BSS-empty until a real producer attaches it.
     if (!registry_->dispatch_first_root_zero_flags_from_12e670(
-            *inhibited, root_wait_inhibited_, f.registry))
+            *inhibited, root_wait_inhibited_, script_context_, f.registry))
         return fail(f, RetailTaskDomainError::registry,
                     "12E4E0 first task-list dispatch");
     return true;
+}
+
+NativeRetailTaskScriptContextState* NativeRetailTaskDomain::script_context(
+    RetailTaskDomainFailure& f) noexcept {
+    if(!access(f)) return nullptr;
+    return &script_context_;
 }
 
 bool NativeRetailTaskDomain::override_cookie_from_130ab0(

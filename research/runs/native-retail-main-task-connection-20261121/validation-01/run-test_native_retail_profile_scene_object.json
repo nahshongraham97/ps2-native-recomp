@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_profile_scene_object.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native profile scene fields, logical cookie retirement and Session lifetime; real scene producers open\n",
+  "stderr": "",
+  "executable_sha256": "75141c5c7496fdfe9e5dc16f51200d21c733dce03e869401933a1170d2fa3376",
+  "executable_after_sha256": "75141c5c7496fdfe9e5dc16f51200d21c733dce03e869401933a1170d2fa3376"
+}

@@ -5,6 +5,7 @@
 #include "mka/retail_mode_state.hpp"
 #include "mka/retail_participants.hpp"
 #include "mka/retail_task_execution.hpp"
+#include "mka/retail_task_domain.hpp"
 #include "native_retail_startup.hpp"
 #include "../runtime/src/native/retail_main_control.hpp"
 
@@ -178,9 +179,46 @@ int main(int argc,char** argv) {try {
     check(first.calls.empty(),
           "guarded source cleanup performs no identity validation or game effects");
     RetailTaskRegistryFailure rf;
-    auto registry=NativeRetailTaskRegistry::create(rf);
-    auto task=registry->publish_retained_task_from_12ea90(0x2001,0x20,17,body,rf); // CPU-only source-cookie input.
-    check(bool(task),"real typed task published with explicit fixture cookie");
+    StartupFailure startup_failure;
+    const RetailMainTaskRequest request{0x2001,0x20,RetailMainTaskBody::startup_18e100,0,0};
+    auto* domain=startup.game_session->task_domain(gf);
+    RetailTaskDomainFailure df;
+    check(domain && !main_binding::create_retail_initial_mode_task(main,request,startup_failure) &&
+          domain->observe(df)->identity_counter==0,
+          "production Main creator refuses unborn roots without consuming source cookie");
+    RetailGamePoolFailure pf;
+    startup.game_pool=NativeRetailGamePool::initialize(3,pf);
+    check(startup.game_pool && domain->reset_task_roots_from_12f0d0(startup.game_pool,df) &&
+          domain->seed_counter_from_185ee0(df),"real startup task pool/root and source identity seed");
+    auto* registry=domain->registry(df);
+    auto before_cookie=domain->observe(df)->identity_counter;
+    auto wrong_request=request;wrong_request.argument_size=4;
+    check(!main_binding::create_retail_initial_mode_task(main,wrong_request,startup_failure) &&
+          domain->observe(df)->identity_counter==before_cookie,
+          "unproved request refuses before source effects");
+    auto original_pool=startup.game_pool;
+    startup.game_pool=NativeRetailGamePool::initialize(2,pf);
+    check(!main_binding::create_retail_initial_mode_task(main,request,startup_failure) &&
+          domain->observe(df)->identity_counter==before_cookie,
+          "foreign startup pool refuses before cookie or task publication");
+    startup.game_pool=std::move(original_pool);
+    bool creator_wrong_thread=false;
+    std::thread creator_other([&] {
+        StartupFailure other_failure;
+        creator_wrong_thread=!main_binding::create_retail_initial_mode_task(main,request,other_failure);
+    });
+    creator_other.join();
+    check(creator_wrong_thread && domain->observe(df)->identity_counter==before_cookie &&
+          registry->observe(rf)->ordered.empty(),"foreign Main creator has no source effects");
+    check(main_binding::create_retail_initial_mode_task(main,request,startup_failure),
+          "production Main publishes actual18E100 typed body");
+    auto published=registry->observe(rf);
+    check(published && published->ordered.size()==1 &&
+          published->ordered[0].program_class==RetailTaskProgramClass::retained_frame_12ea90 &&
+          published->ordered[0].object_cookie==0xefffffffu &&
+          published->ordered[0].kind==0x2001 && published->ordered[0].priority==0x20,
+          "actual Main request consumes130A50 and constructs the retained source class");
+    auto task=published->ordered[0].object;
     NativeRetailTaskExecution execution(*registry);
     RetailTaskExecutionFailure ef;
     RetailInitialTaskStateFailure sf;
