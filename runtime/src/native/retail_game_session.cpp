@@ -47,6 +47,17 @@ std::shared_ptr<NativeRetailMainSettings> NativeRetailGameSession::settings(Reta
     if (!validate_current_thread(failure)) return {};
     return settings_;
 }
+std::optional<std::int32_t> NativeRetailGameSession::scalar_mode(
+    RetailGameSessionFailure& failure) const noexcept {
+    if (!validate_current_thread(failure)) return {};
+    return scalar_mode_;
+}
+bool NativeRetailGameSession::store_scalar_mode_from_source(
+    std::int32_t mode, RetailGameSessionFailure& failure) noexcept {
+    if (!validate_current_thread(failure)) return false;
+    scalar_mode_ = mode;
+    return true;
+}
 NativeRetailRandom* NativeRetailGameSession::random(RetailGameSessionFailure& failure) noexcept {
     if (!validate_current_thread(failure)) return nullptr;
     return &random_;

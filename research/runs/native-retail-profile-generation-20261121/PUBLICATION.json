@@ -1,0 +1,18 @@
+{
+  "fork_commit": "a4c3a6d9a782b95e785ada0d8fba250b652e4835",
+  "fork": {
+    "available": true,
+    "local_commit": "a4c3a6d9a782b95e785ada0d8fba250b652e4835",
+    "remote_commit": "a4c3a6d9a782b95e785ada0d8fba250b652e4835",
+    "synchronization": "verified"
+  },
+  "parent_commit": "07ed25ccbf36947150c50dda6f27c16d421eac9e",
+  "parent": {
+    "available": true,
+    "local_commit": "07ed25ccbf36947150c50dda6f27c16d421eac9e",
+    "remote_commit": "07ed25ccbf36947150c50dda6f27c16d421eac9e",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "b559abfe0e1f3135a03a374cf8345bff15ee4bcbdaea27fdd67b22b0c33ee25e",
+  "scope": "37 current CPU/file clients:2 fresh and35 byte-identical prior executions;117 pins,39 open integrations/full Main reset/game acceptance OPEN"
+}

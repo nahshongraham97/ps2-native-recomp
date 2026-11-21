@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_controller_samples.exe"
+  ],
+  "exit": 0,
+  "stdout": "native controller ownership, pressure, release, capacity and atomic publication PASS\n",
+  "stderr": "",
+  "executable_sha256": "603454865f37da5c3eb9acb97f5e77b47726565769b5bbe427d460e5c37d913a",
+  "executable_after_sha256": "603454865f37da5c3eb9acb97f5e77b47726565769b5bbe427d460e5c37d913a",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-profile-generation-20261121\\validation-01\\test_native_retail_controller_samples.json",
+  "reused_record_sha256": "58ff14f5b705167c0c4ac6e9583902e5b06e20d17edb6f87618da3c9aa60d55c",
+  "reuse_basis": "current rebuilt executable is byte-identical; exact chained prior execution retained, not replayed",
+  "original_execution_record": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-input-poll-20261121\\validation-01\\test_native_retail_controller_samples.json",
+  "original_execution_record_sha256": "72d26b8617fc82c985b6284e9c0cfb691ead0cf07f2202f4538eca11d458cf75"
+}

@@ -156,7 +156,8 @@ if(WIN32)
         runtime/src/native/retail_auxiliary_words.cpp
         runtime/src/native/retail_main_input_observation.cpp
         runtime/src/native/retail_participants.cpp
-        runtime/src/native/retail_input_assignments.cpp runtime/src/native/retail_input_poll.cpp)
+        runtime/src/native/retail_input_assignments.cpp runtime/src/native/retail_input_poll.cpp
+        runtime/src/native/retail_input_selection.cpp)
     target_include_directories(mka_native_retail_startup PUBLIC "${_startup_dir}" runtime/include)
     target_link_libraries(mka_native_retail_startup PUBLIC mka_native_content_volume mka_native_retail_memory_owners
         mka_native_retail_middleware_frame mka_native_retail_file_paths mka_native_retail_game_session mka_native_retail_crt mka_native_retail_platform mka_native_allocation_profile mka_native_game_actions mka_native_sound_resources)
@@ -201,6 +202,8 @@ if(WIN32)
     target_link_libraries(test_native_retail_input_assignments PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_input_poll EXCLUDE_FROM_ALL tests/test_retail_input_poll.cpp)
     target_link_libraries(test_native_retail_input_poll PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_input_selection EXCLUDE_FROM_ALL tests/test_retail_input_selection.cpp)
+    target_link_libraries(test_native_retail_input_selection PRIVATE mka_native_retail_startup)
 endif()
 
 # Source loading picture and actual host window/input/OpenGL services. No game

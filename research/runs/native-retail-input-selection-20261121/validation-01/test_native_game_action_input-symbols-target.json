@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_game_action_input.exe",
+  "target_before_sha256": "876f766b8832cc67eb7f6a44c8ca5f016fbb7d0c3dbf4fd92531ab69baa0981a",
+  "target_after_sha256": "876f766b8832cc67eb7f6a44c8ca5f016fbb7d0c3dbf4fd92531ab69baa0981a",
+  "audited_target_expected_sha256": "876f766b8832cc67eb7f6a44c8ca5f016fbb7d0c3dbf4fd92531ab69baa0981a",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::input::NativeGameActionInput::poll("
+  ],
+  "executed_target_sha256": "876f766b8832cc67eb7f6a44c8ca5f016fbb7d0c3dbf4fd92531ab69baa0981a"
+}

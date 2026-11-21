@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_input_selection.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native physical-role source candidate selection, controls, diagnostics and ownership\n",
+  "stderr": "",
+  "executable_sha256": "03268f48e2c78f05cec18e09dc0cff2165145246c563947fc21336c9ece41192",
+  "executable_after_sha256": "03268f48e2c78f05cec18e09dc0cff2165145246c563947fc21336c9ece41192"
+}

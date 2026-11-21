@@ -52,6 +52,10 @@ int main() { try {
     check(settings->profile_selector(sf) == 13 && settings->stored_frame_rate(sf) == 60 &&
         settings->override_word(sf) == 0 && controls->selection_state_word(cf) == 0,
         "verified source initial data and BSS defaults");
+    check(session->scalar_mode(f)==0,"actual retained scalar mode has source BSS birth");
+    check(session->store_scalar_mode_from_source(-1,f)&&session->scalar_mode(f)==-1&&
+          settings->profile_selector(sf)==13&&session->store_scalar_mode_from_source(17,f),
+          "signed source scalar mode is separate from profile selector and history");
     check(settings->store_video_rate_from_220460(0, sf) &&
         settings->store_override_word_from_source(9, sf) &&
         controls->store_selection_flags_from_source(1, cf) &&
@@ -72,7 +76,7 @@ int main() { try {
     session.reset();
     check(!root_lifetime.expired() && retained->controls(f) == controls &&
         retained->settings(f) == settings && retained->auxiliary_words(f) == auxiliary &&
-        retained->controls(f)->analog_input_inhibited(cf)==true &&
+        retained->controls(f)->analog_input_inhibited(cf)==true && retained->scalar_mode(f)==17 &&
         auxiliary->first == 0xabcdef12u && auxiliary->second == 0x12345678u,
         "retained session keeps exact owners and data across main borrower lifetimes");
     for (unsigned i = 0; i < 1500; ++i)
@@ -88,13 +92,15 @@ int main() { try {
         RetailGameSessionFailure other;
         wrong_thread = !retained->validate_current_thread(other) &&
             other.kind == RetailGameSessionError::wrong_thread &&
+            !retained->scalar_mode(other) && other.kind == RetailGameSessionError::wrong_thread &&
+            !retained->store_scalar_mode_from_source(0,other) && other.kind == RetailGameSessionError::wrong_thread &&
             !retained->controls(other) && other.kind == RetailGameSessionError::wrong_thread &&
             !retained->settings(other) && other.kind == RetailGameSessionError::wrong_thread &&
             !retained->random(other) && other.kind == RetailGameSessionError::wrong_thread &&
             !retained->auxiliary_words(other) && other.kind == RetailGameSessionError::wrong_thread;
     });
     foreign.join();
-    check(wrong_thread && controls_wrong_thread&&controls->analog_input_inhibited(cf)==true&&retained->validate_current_thread(f) && f.kind == RetailGameSessionError::none &&
+    check(wrong_thread && controls_wrong_thread&&controls->analog_input_inhibited(cf)==true&&retained->scalar_mode(f)==17&&retained->validate_current_thread(f) && f.kind == RetailGameSessionError::none &&
         auxiliary->first == 0xabcdef12u && random->next(rf) == expected.next(rf),
         "cross-thread refusal leaves persistent state intact and next valid access clears failure");
     const std::weak_ptr<NativeRetailGameControls> controls_lifetime = controls;

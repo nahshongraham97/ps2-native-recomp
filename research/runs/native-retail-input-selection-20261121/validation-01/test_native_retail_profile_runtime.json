@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_profile_runtime.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native retail profile generation prerequisite: 84 first-generation allocation cuts; full reset/callback/object effects open\n",
+  "stderr": "",
+  "executable_sha256": "b37e5e4103334260f53cb21f320786ead07aab421340563b46125acbe78fd6d1",
+  "executable_after_sha256": "b37e5e4103334260f53cb21f320786ead07aab421340563b46125acbe78fd6d1",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-profile-generation-20261121\\validation-01\\test_native_retail_profile_runtime.json",
+  "reused_record_sha256": "76f03e6969fa984ea74b58e9ef2410cba5574d887b173b852876a1ff9156959b",
+  "reuse_basis": "current rebuilt executable is byte-identical; exact chained prior execution retained, not replayed",
+  "original_execution_record": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-profile-generation-20261121\\validation-01\\test_native_retail_profile_runtime.json",
+  "original_execution_record_sha256": "76f03e6969fa984ea74b58e9ef2410cba5574d887b173b852876a1ff9156959b"
+}

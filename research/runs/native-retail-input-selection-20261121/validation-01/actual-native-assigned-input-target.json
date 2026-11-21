@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_retail_startup.a",
+  "target_before_sha256": "596e1ff4a170332894fbd23f3a789156cff4c20a1100781c7d2319243017cd5a",
+  "target_after_sha256": "596e1ff4a170332894fbd23f3a789156cff4c20a1100781c7d2319243017cd5a",
+  "audited_target_expected_sha256": "596e1ff4a170332894fbd23f3a789156cff4c20a1100781c7d2319243017cd5a",
+  "execution_applicable": false,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::retail::NativeRetailAssignedPoll::ready_assigned(",
+    "mka::retail::NativeRetailAssignedPoll::store_gate_from_163930("
+  ]
+}

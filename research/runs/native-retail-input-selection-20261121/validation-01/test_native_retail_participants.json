@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_participants.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native participant birth and menu reconstruction; no game or endpoint\n",
+  "stderr": "",
+  "executable_sha256": "fa64e3645169bf408f36ef371a97bad3fc6960d0e2fe3b586bac2cb14118f544",
+  "executable_after_sha256": "fa64e3645169bf408f36ef371a97bad3fc6960d0e2fe3b586bac2cb14118f544"
+}

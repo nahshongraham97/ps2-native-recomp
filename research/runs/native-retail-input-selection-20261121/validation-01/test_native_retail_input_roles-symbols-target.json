@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_input_roles.exe",
+  "target_before_sha256": "99fd4756cf5183be13bd98cdab12e16c7c646d7a31a531c928bce0ebc9350af3",
+  "target_after_sha256": "99fd4756cf5183be13bd98cdab12e16c7c646d7a31a531c928bce0ebc9350af3",
+  "audited_target_expected_sha256": "99fd4756cf5183be13bd98cdab12e16c7c646d7a31a531c928bce0ebc9350af3",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::retail::NativeRetailInputRoles::"
+  ],
+  "executed_target_sha256": "99fd4756cf5183be13bd98cdab12e16c7c646d7a31a531c928bce0ebc9350af3"
+}

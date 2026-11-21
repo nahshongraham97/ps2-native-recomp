@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_game_input_tasks.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native owned game input task restore/lifetime/first match/allocation; no task body execution\n",
+  "stderr": "",
+  "executable_sha256": "c2b8361294a078dea8fcf3e09f923a64c348e9c49baf1c255d359f2a01933bdd",
+  "executable_after_sha256": "c2b8361294a078dea8fcf3e09f923a64c348e9c49baf1c255d359f2a01933bdd",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-profile-generation-20261121\\validation-01\\test_native_game_input_tasks.json",
+  "reused_record_sha256": "c3e1dd4d050ca760e496fbaa181c97a02729c031cb59355749d91444a8a3faf0",
+  "reuse_basis": "current rebuilt executable is byte-identical; exact chained prior execution retained, not replayed",
+  "original_execution_record": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-input-poll-20261121\\validation-01\\test_native_game_input_tasks.json",
+  "original_execution_record_sha256": "b6191e2850fc0085afac6e7aa450ee72afd25cf0447fe8b85040d0b87f35ba06"
+}
