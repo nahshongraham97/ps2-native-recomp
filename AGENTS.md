@@ -30,6 +30,18 @@ For Qwen/LM Studio, follow `../../../MODEL_COORDINATION.md`; do not change
 settings or impose inference caps. If no instance is loaded, read source
 directly. Do not ask the owner to launch while any contract row is open.
 
+The parent AGENTS.md section "ELF authority, implementation and verification
+order" is binding here: decompiled C is not byte-exact authority. Join relevant
+instructions/data to the original hash-pinned ELF, resolve ABI/control flow
+from actual callers and delay slots, and preserve proven behavior in native
+code. Unknown behavior is an explicit blocker, never a guessed implementation.
+An exact-byte disassembly check is distinct from behavioral equivalence.
+Advance retail entry -> native initialization -> game loop -> real input ->
+rendering and sound. Defer optional work until the connected full build;
+compile and check directly affected changes without rechecking unchanged
+components unless a failure or material concern requires it. Never replace
+production progress with isolated wrappers, repeated reports or test counts.
+
 After each code/config change, test result, verified finding, decision,
 blocker, or rollback, update every affected active document before beginning
 the next implementation step. Parent `PORT_STATUS.md` owns live state;
