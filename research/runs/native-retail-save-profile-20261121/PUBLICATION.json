@@ -1,0 +1,15 @@
+{
+  "schema": "native_save_profile_publication_v1",
+  "fork_code_commit": "642ae1a7c4c08cb2c4c8e5ce50e2af06b9ef38f7",
+  "parent_commit": "ca3eb803d22f356c6576d44b6be03769fbb6f1df",
+  "parent_synchronization": {
+    "available": true,
+    "local_commit": "ca3eb803d22f356c6576d44b6be03769fbb6f1df",
+    "remote_commit": "ca3eb803d22f356c6576d44b6be03769fbb6f1df",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "e9fd260d1d5dcea9a22d68938d26a793f8c04623694b743199ce901a949accae",
+  "publication_interruption": "Initial fork commit/push succeeded; parent staging refused one long evidence path. No parent commit occurred before this recovery.",
+  "recovery": "Process-only Git core.longpaths=true; no persistent configuration or file relocation.",
+  "scope": "Four native components and five connected/generated clients; complete game still refuses28 Main effects; no gameplay claim"
+}
