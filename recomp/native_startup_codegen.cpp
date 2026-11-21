@@ -236,6 +236,7 @@ std::optional<NativeStartupSources> emit_native_startup_closure(std::span<const 
 #include "mka/retail_platform.hpp"
 #include "mka/retail_main_timing.hpp"
 #include "mka/retail_game_session.hpp"
+#include "mka/retail_middleware_work.hpp"
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -244,8 +245,8 @@ std::optional<NativeStartupSources> emit_native_startup_closure(std::span<const 
 #include <utility>
 #include <vector>
 namespace mka::retail {
-enum class StartupError {none,missing_boot_argument,malformed_boot_argument,missing_directory_separator,content,allocation,host_capacity,native_exception,memory_owners,already_initialized,crt,platform,main_timing,game_session};
-struct StartupFailure {StartupError kind=StartupError::none;const char* operation="";content::ContentVolumeFailure content;RetailMemoryOwnerFailure memory;RetailCrtFailure crt;RetailPlatformFailure platform;RetailMainTimingFailure timing;RetailGameSessionFailure game;};
+enum class StartupError {none,missing_boot_argument,malformed_boot_argument,missing_directory_separator,content,allocation,host_capacity,native_exception,memory_owners,already_initialized,crt,platform,main_timing,game_session,middleware};
+struct StartupFailure {StartupError kind=StartupError::none;const char* operation="";content::ContentVolumeFailure content;RetailMemoryOwnerFailure memory;RetailCrtFailure crt;RetailPlatformFailure platform;RetailMainTimingFailure timing;RetailGameSessionFailure game;RetailMiddlewareWorkFailure middleware;};
 // Native-owned replacements for the original startup arguments and writable
 // content/path state. Host executable location, boot-resource string and volume
 // are separate inputs; no guest argument block, pointer table or BSS is retained.

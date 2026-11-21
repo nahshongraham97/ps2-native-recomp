@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_file_startup.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-file-startup-20261121\\validation-01\\owned-content"
+  ],
+  "exit": 0,
+  "stdout": "PASS native middleware file startup: 13 allocation cuts, 12 native files, 65 native children; full frame pump and game remain open\n",
+  "stderr": "",
+  "executable_sha256": "585cfd18f5e9eb287fc9b760fbe8fe035515b3293c36b364d7bf4a36098d6a31",
+  "executable_after_sha256": "585cfd18f5e9eb287fc9b760fbe8fe035515b3293c36b364d7bf4a36098d6a31"
+}

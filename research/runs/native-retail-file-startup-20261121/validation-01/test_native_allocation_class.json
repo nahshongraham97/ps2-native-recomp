@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_allocation_class.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_ALLOCATION_CLASS: 3 groups actual class payload/ownership/fit/signed PFX predicate; no callback/object/reset or retail startup claim\n",
+  "stderr": "",
+  "executable_sha256": "11d3b3eed585552cbde62c12a19dd8d6344bcfd46eae8cf6366eb790de1269e6",
+  "executable_after_sha256": "11d3b3eed585552cbde62c12a19dd8d6344bcfd46eae8cf6366eb790de1269e6"
+}

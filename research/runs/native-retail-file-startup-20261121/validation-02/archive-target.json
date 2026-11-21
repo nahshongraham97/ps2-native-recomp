@@ -1,0 +1,32 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_retail_startup.a",
+  "target_before_sha256": "6d13c6a634010270e7f90c918bcc34e051fa4d7af5a327b62ac7a02415976a4c",
+  "target_after_sha256": "6d13c6a634010270e7f90c918bcc34e051fa4d7af5a327b62ac7a02415976a4c",
+  "audited_target_expected_sha256": "6d13c6a634010270e7f90c918bcc34e051fa4d7af5a327b62ac7a02415976a4c",
+  "execution_applicable": false,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::retail::main_binding::construct_retail_dispatch_object(",
+    "mka::retail::main_binding::construct_retail_record_owners(",
+    "mka::retail::main_binding::construct_retail_aux_dispatch_object(",
+    "mka::retail::main_binding::construct_retail_audio_statistics(",
+    "mka::retail::main_binding::clear_retail_mode_stack(",
+    "mka::retail::main_binding::enter_retail_mode_zero(",
+    "mka::retail::main_binding::read_retail_top_mode(",
+    "mka::retail::main_binding::initialize_retail_package_stage(",
+    "mka::retail::main_binding::construct_retail_two_service_objects(",
+    "mka::retail::main_binding::construct_retail_empty_binding(",
+    "mka::retail::main_binding::construct_retail_key_action_records(",
+    "mka::retail::main_binding::construct_retail_first_paired_key_records(",
+    "mka::retail::main_binding::construct_retail_second_paired_key_records(",
+    "mka::retail::main_binding::construct_retail_first_handler_records(",
+    "mka::retail::main_binding::construct_retail_second_handler_records(",
+    "mka::retail::main_binding::initialize_retail_action_service(",
+    "mka::retail::main_binding::reset_retail_auxiliary_words(",
+    "mka::retail::main_binding::observe_retail_frame_role(",
+    "mka::retail::main_binding::observe_retail_action_row(",
+    "mka::retail::NativeRetailInputAssignments::bind_direct(",
+    "mka::retail::NativeRetailParticipants::create_first_two("
+  ]
+}

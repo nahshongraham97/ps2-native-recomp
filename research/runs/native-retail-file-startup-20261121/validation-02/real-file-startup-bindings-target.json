@@ -1,0 +1,15 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\libmka_native_retail_startup.a",
+  "target_before_sha256": "6d13c6a634010270e7f90c918bcc34e051fa4d7af5a327b62ac7a02415976a4c",
+  "target_after_sha256": "6d13c6a634010270e7f90c918bcc34e051fa4d7af5a327b62ac7a02415976a4c",
+  "audited_target_expected_sha256": "6d13c6a634010270e7f90c918bcc34e051fa4d7af5a327b62ac7a02415976a4c",
+  "execution_applicable": false,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::retail::main_binding::initialize_retail_middleware_files(",
+    "mka::retail::main_binding::shutdown_retail_middleware_files(",
+    "mka::retail::NativeRetailMiddlewareDispatcher::validate_attachment(",
+    "mka::retail::NativeRetailMiddlewareWorkGroup::validate_current_thread("
+  ]
+}

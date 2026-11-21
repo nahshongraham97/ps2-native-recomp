@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_dispatch_owners.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native prefix copy/failure/lifetime checks; no message parser, game or endpoint\n",
+  "stderr": "",
+  "executable_sha256": "2bfe6d1413000f5abb641c02eba335d76c23f3162e956c7cff4d384293882ec5",
+  "executable_after_sha256": "2bfe6d1413000f5abb641c02eba335d76c23f3162e956c7cff4d384293882ec5"
+}

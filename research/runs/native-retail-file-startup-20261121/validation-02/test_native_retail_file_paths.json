@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_file_paths.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS retail native source aliases and owned file route\n",
+  "stderr": "",
+  "executable_sha256": "1331c406aeeef7b006458030b322c33dc061da48ec9e05b0f38a00400c5826b4",
+  "executable_after_sha256": "1331c406aeeef7b006458030b322c33dc061da48ec9e05b0f38a00400c5826b4",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-file-startup-20261121\\validation-01\\test_native_retail_file_paths.json",
+  "reused_record_sha256": "6d26f7004d28218ddd7d178e2c71088f49f57b6f2ac6514352107c64aa3d013e"
+}

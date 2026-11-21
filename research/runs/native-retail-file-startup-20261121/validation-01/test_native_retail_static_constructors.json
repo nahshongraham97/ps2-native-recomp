@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_static_constructors.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-file-startup-20261121\\validation-01\\owned-content",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\package-and-constructors-05\\input-manifests\\static-labels.tsv",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\package-and-constructors-05\\input-manifests\\hash-vectors.tsv"
+  ],
+  "exit": 0,
+  "stdout": "PASS native static constructors all44 source keys/observer/lifetime checks; runtime handlers/game/endpoints unexercised\n",
+  "stderr": "",
+  "executable_sha256": "71f9882d3ccddc91c418f2a4920ef6a07d83c5bdc3fa6ef97e64a9d7d3950336",
+  "executable_after_sha256": "71f9882d3ccddc91c418f2a4920ef6a07d83c5bdc3fa6ef97e64a9d7d3950336"
+}

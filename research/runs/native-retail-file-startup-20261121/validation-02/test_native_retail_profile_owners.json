@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_profile_owners.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native retail profile initial class storage: 84 allocation cuts, 13 Wave children; reset/callback/profile effects open\n",
+  "stderr": "",
+  "executable_sha256": "14fbe1623f20ac46b51ba03532dc5a41b064cd0bd464084414eb5a1e2211ba54",
+  "executable_after_sha256": "14fbe1623f20ac46b51ba03532dc5a41b064cd0bd464084414eb5a1e2211ba54",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-file-startup-20261121\\validation-01\\test_native_retail_profile_owners.json",
+  "reused_record_sha256": "888334eae1ebb6a28c83010dad583425ba52fa60c5cd57092febc00ccc77e71b"
+}

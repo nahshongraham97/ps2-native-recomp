@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_record_owners.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native named-record ownership/failure/growth checks; no profile provider, game or endpoint\n",
+  "stderr": "",
+  "executable_sha256": "d79deb497e5d71486fdffbd6dea0ee7b143d9784a69063347169c5159e251f5b",
+  "executable_after_sha256": "d79deb497e5d71486fdffbd6dea0ee7b143d9784a69063347169c5159e251f5b"
+}

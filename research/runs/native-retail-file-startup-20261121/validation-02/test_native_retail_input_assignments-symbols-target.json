@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_input_assignments.exe",
+  "target_before_sha256": "3fb32c738af150199a29447e36e3a01c650c9a57cd455e8b13f51d083bd40f58",
+  "target_after_sha256": "3fb32c738af150199a29447e36e3a01c650c9a57cd455e8b13f51d083bd40f58",
+  "audited_target_expected_sha256": "3fb32c738af150199a29447e36e3a01c650c9a57cd455e8b13f51d083bd40f58",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::retail::NativeRetailInputAssignments::bind_direct("
+  ],
+  "executed_target_sha256": "3fb32c738af150199a29447e36e3a01c650c9a57cd455e8b13f51d083bd40f58"
+}

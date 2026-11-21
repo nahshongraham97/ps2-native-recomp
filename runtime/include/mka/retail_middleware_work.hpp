@@ -42,6 +42,8 @@ class NativeRetailMiddlewareWorkGroup final {
 public:
     static std::shared_ptr<NativeRetailMiddlewareWorkGroup> create(RetailMiddlewareWorkFailure&) noexcept;
     ~NativeRetailMiddlewareWorkGroup();
+    // Thread identity only; closed owners still permit idempotent native teardown checks.
+    bool validate_current_thread(RetailMiddlewareWorkFailure&) const noexcept;
     bool configure(std::size_t reserve_hint,RetailMiddlewareWorkFailure&) noexcept;
     std::optional<NativeRetailMiddlewareSubmission> append(std::shared_ptr<NativeRetailMiddlewareChild>,RetailMiddlewareWorkFailure&) noexcept;
     std::optional<std::size_t> poll(RetailMiddlewareWorkFailure&) noexcept;
@@ -58,7 +60,10 @@ class NativeRetailMiddlewareDispatcher final {
 public:
     static std::shared_ptr<NativeRetailMiddlewareDispatcher> create(RetailMiddlewareWorkFailure&) noexcept;
     ~NativeRetailMiddlewareDispatcher();
+    bool validate_current_thread(RetailMiddlewareWorkFailure&) const noexcept;
     bool attach(std::shared_ptr<NativeRetailMiddlewareWorkGroup>,RetailMiddlewareWorkFailure&) noexcept;
+    // Authenticate the actual live root/group pair; never infer ownership from a count.
+    bool validate_attachment(const std::shared_ptr<NativeRetailMiddlewareWorkGroup>&,RetailMiddlewareWorkFailure&) const noexcept;
     bool detach(const std::shared_ptr<NativeRetailMiddlewareWorkGroup>&,RetailMiddlewareWorkFailure&) noexcept;
     std::optional<std::size_t> pump(RetailMiddlewareWorkFailure&) noexcept;
     RetailMiddlewareDispatcherObservation observe()const noexcept;

@@ -40,6 +40,9 @@ NativeRetailMiddlewareWorkGroup::~NativeRetailMiddlewareWorkGroup(){
   std::fputs("retail middleware group destroyed with live ownership\n",stderr);std::terminate();
  }
 }
+bool NativeRetailMiddlewareWorkGroup::validate_current_thread(RetailMiddlewareWorkFailure& f) const noexcept {
+ f={};return thread_ok(state_->thread,f);
+}
 std::shared_ptr<NativeRetailMiddlewareWorkGroup> NativeRetailMiddlewareWorkGroup::create(RetailMiddlewareWorkFailure& f)noexcept{
  f={};try{return std::shared_ptr<NativeRetailMiddlewareWorkGroup>(new NativeRetailMiddlewareWorkGroup(std::make_unique<State>()));}catch(const std::bad_alloc&){f.kind=RetailMiddlewareWorkError::allocation;}catch(...){f.kind=RetailMiddlewareWorkError::native_exception;}return {};
 }
@@ -86,6 +89,9 @@ NativeRetailMiddlewareDispatcher::~NativeRetailMiddlewareDispatcher(){
   std::fputs("retail middleware dispatcher destroyed with live ownership\n",stderr);std::terminate();
  }
 }
+bool NativeRetailMiddlewareDispatcher::validate_current_thread(RetailMiddlewareWorkFailure& f) const noexcept {
+ f={};return thread_ok(state_->thread,f);
+}
 std::shared_ptr<NativeRetailMiddlewareDispatcher> NativeRetailMiddlewareDispatcher::create(RetailMiddlewareWorkFailure& f)noexcept{
  f={};try{return std::shared_ptr<NativeRetailMiddlewareDispatcher>(new NativeRetailMiddlewareDispatcher(std::make_shared<State>()));}catch(const std::bad_alloc&){f.kind=RetailMiddlewareWorkError::allocation;}catch(...){f.kind=RetailMiddlewareWorkError::native_exception;}return {};
 }
@@ -97,6 +103,20 @@ bool NativeRetailMiddlewareDispatcher::attach(std::shared_ptr<NativeRetailMiddle
   if(std::find(state_->groups.begin(),state_->groups.end(),group)!=state_->groups.end())return true;
   state_->groups.push_back(group);group->state_->parent=state_;for(auto& entry:group->state_->children)entry.ticket->parent=state_->identity;state_->engaged=true;return true;
  }catch(const std::bad_alloc&){f.kind=RetailMiddlewareWorkError::allocation;}catch(const std::length_error&){f.kind=RetailMiddlewareWorkError::host_capacity;}catch(...){f.kind=RetailMiddlewareWorkError::native_exception;}return false;
+}
+bool NativeRetailMiddlewareDispatcher::validate_attachment(
+ const std::shared_ptr<NativeRetailMiddlewareWorkGroup>& group,RetailMiddlewareWorkFailure& f) const noexcept {
+ f={};if(!thread_ok(state_->thread,f))return false;
+ if(!group){f.kind=RetailMiddlewareWorkError::invalid_child;return false;}
+ if(!thread_ok(group->state_->thread,f))return false;
+ std::lock_guard lock(state_->mutex);std::lock_guard group_lock(group->state_->mutex);
+ if(state_->closed||group->state_->closed){f.kind=RetailMiddlewareWorkError::closed;return false;}
+ if(state_->pumping||group->state_->polling){f.kind=RetailMiddlewareWorkError::active;return false;}
+ if(group->state_->parent.lock()!=state_||
+    std::find(state_->groups.begin(),state_->groups.end(),group)==state_->groups.end()){
+  f.kind=RetailMiddlewareWorkError::foreign_parent;return false;
+ }
+ return true;
 }
 bool NativeRetailMiddlewareDispatcher::detach(const std::shared_ptr<NativeRetailMiddlewareWorkGroup>& group,RetailMiddlewareWorkFailure& f)noexcept{
  f={};if(!thread_ok(state_->thread,f))return false;if(!group){f.kind=RetailMiddlewareWorkError::invalid_child;return false;}if(!thread_ok(group->state_->thread,f))return false;

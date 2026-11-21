@@ -20,12 +20,12 @@ runtime-translation descriptions, is preserved for provenance at
 `research/history/native-port-docs-2026-11-18/README.md`. Those instructions
 do not describe the accepted Armageddon route.
 
-Work16 connects native source aliases to the actual main package/file owner,
-adds actual-parent initial class storage and remaining known profile counts,
-and makes main gate reads failure-bearing. All28 CPU/file clients pass with92
-stable source/tool pins,245 original package rows and84 graph allocation fault
-cuts. Independent source and saved-execution reviews pass.
-The complete entry still refuses41 native integration names. File completion,
-full profile/resource/task/input/render/audio and all-game acceptance remain
-open. Parent live status and its dated work16 record own current evidence.
+Work17 supplies the real source-point native file initializer and same-group
+dispatcher ownership, native file aliases, rollback and safe empty teardown.
+All30 CPU/file clients pass with95 stable source/tool pins,13 real allocation
+fault cuts,12 native files,65 children and245 original package comparisons.
+Volume symlink creation was explicitly skipped with privilege1314; that case
+is unexercised. Independent source and saved-evidence reviews pass. The complete entry still refuses40 native integration names, including
+the full middleware time/callback pump. No game/physical endpoint ran.
+Parent live status and its dated work17 record own current evidence.
 No owner launch is requested.

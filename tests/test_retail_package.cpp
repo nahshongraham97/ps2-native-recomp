@@ -37,10 +37,13 @@ int main(int argc, char** argv) { try {
         !main.package && startup_failure.kind == StartupError::native_exception &&
         std::string_view(startup_failure.operation) == "retail package native file-path service missing",
         "actual package stage refuses missing native file service rather than hardcoded key bypass");
-    RetailFilePathFailure path_failure;
-    main.file_paths = NativeRetailFilePaths::create(path_failure);
-    check(main.file_paths && main_binding::initialize_retail_package_stage(main, startup_failure) && main.package,
-        "actual main package stage consumes source /game alias through real native volume");
+    check(initialize_native_retail_crt(startup, startup_failure) &&
+        finalize_native_retail_pre_main(startup, startup_failure) &&
+        main_binding::construct_retail_middleware_work_group(main, startup_failure) &&
+        main_binding::initialize_retail_middleware_files(main, startup_failure) &&
+        main.file_paths && main.middleware_dispatcher &&
+        main_binding::initialize_retail_package_stage(main, startup_failure) && main.package,
+        "actual native CRT/source-group/file initializer/package chain opens original /game request");
     auto package = std::move(main.package);
     main.file_paths.reset();
     RetailPackageFailure f;

@@ -25,6 +25,7 @@ class NativeRetailInputRoles;
 class NativeRetailInputAssignments;
 struct NativeRetailConstructorOwners;
 class NativeRetailMiddlewareWorkGroup;
+class NativeRetailMiddlewareDispatcher;
 class NativeRetailPrefixDispatchDescriptor;
 class NativeRetailRecordOwners;
 struct NativeRetailProfileOwners;
@@ -62,6 +63,11 @@ std::uint32_t retail_canonical_action_index(std::uint32_t mask, std::uint32_t ro
 
 struct NativeRetailMainState {
     NativeRetailMainState(NativeRetailStartupState&, input::ControllerInput&) noexcept;
+    ~NativeRetailMainState();
+    NativeRetailMainState(const NativeRetailMainState&) = delete;
+    NativeRetailMainState& operator=(const NativeRetailMainState&) = delete;
+    NativeRetailMainState(NativeRetailMainState&&) = delete;
+    NativeRetailMainState& operator=(NativeRetailMainState&&) = delete;
     NativeRetailStartupState& startup;
     NativeRetailMainTiming main_timing;
     // These owners are populated only at their original game initialization
@@ -71,6 +77,7 @@ struct NativeRetailMainState {
     std::shared_ptr<NativeRetailInputAssignments> input_assignments;
     std::shared_ptr<NativeRetailConstructorOwners> constructors;
     std::shared_ptr<NativeRetailMiddlewareWorkGroup> middleware_work_group;
+    std::shared_ptr<NativeRetailMiddlewareDispatcher> middleware_dispatcher;
     std::shared_ptr<NativeRetailPrefixDispatchDescriptor> dispatch_object;
     std::shared_ptr<NativeRetailPrefixDispatchDescriptor> auxiliary_dispatch_object;
     std::shared_ptr<NativeRetailRecordOwners> record_owners;
@@ -124,6 +131,8 @@ bool construct_retail_second_paired_key_records(NativeRetailMainState&, StartupF
 bool construct_retail_first_handler_records(NativeRetailMainState&, StartupFailure&); // 6491A0
 bool construct_retail_second_handler_records(NativeRetailMainState&, StartupFailure&); // 649350
 bool initialize_retail_middleware_files(NativeRetailMainState&, StartupFailure&); // 2DF470(0)
+// Native owner teardown: pending work is retained and reported, never discarded.
+bool shutdown_retail_middleware_files(NativeRetailMainState&, StartupFailure&) noexcept;
 bool initialize_retail_active_overlay(NativeRetailMainState&, StartupFailure&); // 3DDA60
 bool initialize_retail_post_overlay_state(NativeRetailMainState&, StartupFailure&); // 182E50
 bool clear_retail_mode_stack(NativeRetailMainState&, StartupFailure&); // 185EC0

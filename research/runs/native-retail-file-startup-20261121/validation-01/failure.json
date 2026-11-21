@@ -1,0 +1,5 @@
+{
+  "status": "FAILED",
+  "error": "RuntimeError",
+  "message": "full fixture assertions test_native_content_volume_owner"
+}

@@ -1,0 +1,13 @@
+{
+  "target": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_mode_state.exe",
+  "target_before_sha256": "667ee5903d8ab6010c08aabf70686f61a9fe6f36111bf58890a8326726da47dd",
+  "target_after_sha256": "667ee5903d8ab6010c08aabf70686f61a9fe6f36111bf58890a8326726da47dd",
+  "audited_target_expected_sha256": "667ee5903d8ab6010c08aabf70686f61a9fe6f36111bf58890a8326726da47dd",
+  "execution_applicable": true,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "forbidden": [],
+  "required_defined_symbols": [
+    "mka::retail::NativeRetailModeState::"
+  ],
+  "executed_target_sha256": "667ee5903d8ab6010c08aabf70686f61a9fe6f36111bf58890a8326726da47dd"
+}

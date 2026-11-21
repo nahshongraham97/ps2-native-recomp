@@ -157,6 +157,18 @@ std::optional<NativeContentVolume> NativeContentVolume::open(const std::filesyst
     }catch(const std::bad_alloc&){f.kind=ContentVolumeError::allocation_failed;}catch(const std::length_error&){f.kind=ContentVolumeError::host_capacity;}catch(const std::filesystem::filesystem_error& e){f.kind=ContentVolumeError::invalid_root;f.host_error=e.code();}catch(...){f.kind=ContentVolumeError::native_exception;}return {};
 #endif
 }
+bool NativeContentVolume::validate(ContentVolumeFailure& f) const noexcept {
+    f = {};
+    if (!state_) { f.kind = ContentVolumeError::moved_volume; return false; }
+    try { return state_->unchanged(f); }
+    catch (const std::bad_alloc&) { f.kind = ContentVolumeError::allocation_failed; }
+    catch (const std::length_error&) { f.kind = ContentVolumeError::host_capacity; }
+    catch (const std::filesystem::filesystem_error& e) {
+        f.kind = ContentVolumeError::root_changed; f.host_error = e.code();
+    }
+    catch (...) { f.kind = ContentVolumeError::native_exception; }
+    return false;
+}
 std::optional<NativeContentFile> NativeContentVolume::open_resource(std::string_view name,ContentVolumeFailure& f)const{
     f={};if(!state_){f.kind=ContentVolumeError::moved_volume;return {};}
     try {auto logical=key(name,f);if(!logical)return {};if(!state_->unchanged(f))return {};

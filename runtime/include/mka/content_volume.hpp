@@ -38,6 +38,8 @@ public:
     NativeContentVolume(NativeContentVolume&&) noexcept=default;
     NativeContentVolume& operator=(NativeContentVolume&&) noexcept=default;
     static std::optional<NativeContentVolume> open(const std::filesystem::path& explicit_root,ContentVolumeFailure&);
+    // Validate the retained native directory identity without opening a game file.
+    bool validate(ContentVolumeFailure&) const noexcept;
     std::optional<NativeContentFile> open_resource(std::string_view,ContentVolumeFailure&) const;
 private:
     struct State;
