@@ -41,6 +41,11 @@ decompiled type does not prove correctness. Unknown behavior is an explicit
 blocker, never a guessed implementation. An exact-byte disassembly check is
 distinct from behavioral equivalence and full-game acceptance. Keep the full
 protocol in the parent rule section; do not maintain a conflicting local copy.
+Its "Required per-function evidence and claim gate" is also binding: record
+the actual EE listing used and original-word comparison, proved behavior,
+native destination, independent expectations and separate verification status.
+An installed plugin, agent agreement or a passing component test is not proof
+of source semantics or accepted gameplay.
 Advance retail entry -> native initialization -> game loop -> real input ->
 rendering and sound. Defer optional work until the connected full build;
 compile and check directly affected changes without rechecking unchanged
