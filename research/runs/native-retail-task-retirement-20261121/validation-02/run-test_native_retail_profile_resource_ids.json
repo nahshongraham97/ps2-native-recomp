@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_profile_resource_ids.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\modules"
+  ],
+  "exit": 0,
+  "stdout": "",
+  "stderr": "",
+  "executable_sha256": "78cec820c6e98e0c3b7da903b1a81090c0b10159a2db8580aaf52f3a1a1bc5f6",
+  "executable_after_sha256": "78cec820c6e98e0c3b7da903b1a81090c0b10159a2db8580aaf52f3a1a1bc5f6"
+}

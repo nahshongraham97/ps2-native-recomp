@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_initial_task.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-task-retirement-20261121\\validation-01\\initial-task-content"
+  ],
+  "exit": 1,
+  "stdout": "",
+  "stderr": "FAIL native initial task: valid owner still runs after foreign refusal; intro locals survive first +14 wait\n",
+  "executable_sha256": "d89e78b1512b58fed36db26f39531499b6d437dfb57b2e0080dff2c69159e5bd",
+  "executable_after_sha256": "d89e78b1512b58fed36db26f39531499b6d437dfb57b2e0080dff2c69159e5bd"
+}

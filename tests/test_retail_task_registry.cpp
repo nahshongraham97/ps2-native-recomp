@@ -126,9 +126,9 @@ int main() {
         check(registry->set_current_task(current,f)&&
               registry->store_object_retention_flag2_from_source(current,true,f)&&
               registry->retire_link(current,f)&&
-              current_body->cleanup_calls==1&&events.back()!=6&&
+              current_body->cleanup_calls==0&&events.back()!=6&&
               registry->observe(f)->retained_links==3,
-              "12FA00 calls virtual cleanup; 12EE70 current/flag2 guard retains body");
+              "12FA00 reaches stock12EFB0 current/flag2 guard before native body release");
         check(registry->clear_current_task(f)&&
               registry->store_object_retention_flag2_from_source(current,false,f)&&
               registry->observe(f)->retained_links==3&&events.back()!=6,

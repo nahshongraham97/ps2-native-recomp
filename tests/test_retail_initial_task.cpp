@@ -179,7 +179,7 @@ int main(int argc,char** argv) {try {
           "guarded source cleanup performs no identity validation or game effects");
     RetailTaskRegistryFailure rf;
     auto registry=NativeRetailTaskRegistry::create(rf);
-    auto task=registry->publish_task(0x2001,0x20,17,body,rf); // CPU-only source-cookie input.
+    auto task=registry->publish_retained_task_from_12ea90(0x2001,0x20,17,body,rf); // CPU-only source-cookie input.
     check(bool(task),"real typed task published with explicit fixture cookie");
     NativeRetailTaskExecution execution(*registry);
     RetailTaskExecutionFailure ef;
@@ -224,7 +224,7 @@ int main(int argc,char** argv) {try {
     check(state->store_menu_index_from_source(22,sf),"source menu index writer");
     auto later_body=NativeRetailInitialTaskBody::create(main,startup.game_session,tf);
     auto later_registry=NativeRetailTaskRegistry::create(rf);
-    auto later_task=later_registry->publish_task(0x2001,0x20,19,later_body,rf);
+    auto later_task=later_registry->publish_retained_task_from_12ea90(0x2001,0x20,19,later_body,rf);
     NativeRetailTaskExecution later_execution(*later_registry);
     auto later_result=later_execution.invoke_virtual_10_initial(later_task,ef);
     auto later_words=state->observe(sf);
@@ -240,7 +240,7 @@ int main(int argc,char** argv) {try {
     fixture=&transfer;
     auto transfer_body=NativeRetailInitialTaskBody::create(main,startup.game_session,tf);
     auto transfer_registry=NativeRetailTaskRegistry::create(rf);
-    auto transfer_task=transfer_registry->publish_task(0x2001,0x20,21,transfer_body,rf);
+    auto transfer_task=transfer_registry->publish_retained_task_from_12ea90(0x2001,0x20,21,transfer_body,rf);
     NativeRetailTaskExecution transfer_execution(*transfer_registry);
     bool propagated=false;
     try { (void)transfer_execution.invoke_virtual_10_initial(transfer_task,ef); }
@@ -252,7 +252,7 @@ int main(int argc,char** argv) {try {
           state->observe(sf)->menu_index==3,
           "mode transition Main transfer propagates after indexed body and prepublished index");
     auto another_body=NativeRetailInitialTaskBody::create(main,startup.game_session,tf);
-    auto another_task=transfer_registry->publish_task(0x2001,0x20,23,another_body,rf);
+    auto another_task=transfer_registry->publish_retained_task_from_12ea90(0x2001,0x20,23,another_body,rf);
     check(another_task&&rf.kind==RetailTaskRegistryError::none,
           "typed Main transfer does not poison unrelated task publication");
 
@@ -265,7 +265,7 @@ int main(int argc,char** argv) {try {
     fixture=&malformed;
     auto malformed_body=NativeRetailInitialTaskBody::create(main,startup.game_session,tf);
     auto malformed_registry=NativeRetailTaskRegistry::create(rf);
-    auto malformed_task=malformed_registry->publish_task(0x2001,0x20,25,malformed_body,rf);
+    auto malformed_task=malformed_registry->publish_retained_task_from_12ea90(0x2001,0x20,25,malformed_body,rf);
     NativeRetailTaskExecution malformed_execution(*malformed_registry);
     auto malformed_result=malformed_execution.invoke_virtual_10_initial(malformed_task,ef);
     RetailInitialTaskStateFailure malformed_failure;

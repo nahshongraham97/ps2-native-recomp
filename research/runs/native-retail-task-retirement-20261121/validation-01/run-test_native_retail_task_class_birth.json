@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_task_class_birth.exe"
+  ],
+  "exit": 0,
+  "stdout": "native retail task class birth fixture passed\n",
+  "stderr": "",
+  "executable_sha256": "1d87c0ced637b3098f6e22667a2a13924f20ba4630516a682b2e90e02f4e3121",
+  "executable_after_sha256": "1d87c0ced637b3098f6e22667a2a13924f20ba4630516a682b2e90e02f4e3121"
+}

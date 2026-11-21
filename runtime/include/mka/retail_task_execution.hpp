@@ -47,7 +47,8 @@ struct NativeTaskExecutionObservation {
     bool resume_pending{}, running{}, transfer_pending{};
 };
 
-// Bounded source 12E2F0/12E410/12E4C0 control path on a real registry task.
+// Class-aware source12DFF0 and12E2F0 control on a real registry task. Only
+// retained-frame12EA90 tasks can suspend at12E410; stock12E090 returns.
 // The caller proves 12E670 readiness and owns the registry for this lifetime.
 // Only the source initial no-script/flag-zero task branch is admitted here.
 class NativeRetailTaskExecution final {

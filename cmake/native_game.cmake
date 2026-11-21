@@ -117,6 +117,11 @@ add_library(mka_native_retail_task_registry STATIC EXCLUDE_FROM_ALL
 target_include_directories(mka_native_retail_task_registry PUBLIC runtime/include)
 target_compile_features(mka_native_retail_task_registry PUBLIC cxx_std_20)
 target_link_libraries(mka_native_retail_task_registry PUBLIC Threads::Threads)
+add_executable(test_native_retail_task_class_birth EXCLUDE_FROM_ALL tests/test_retail_task_class_birth.cpp)
+target_link_libraries(test_native_retail_task_class_birth PRIVATE mka_native_retail_task_registry)
+add_executable(test_native_retail_stock_task_execution EXCLUDE_FROM_ALL tests/test_retail_stock_task_execution.cpp)
+target_include_directories(test_native_retail_stock_task_execution PRIVATE runtime/src/native)
+target_link_libraries(test_native_retail_stock_task_execution PRIVATE mka_native_retail_task_registry)
 add_executable(test_native_retail_game_pool EXCLUDE_FROM_ALL tests/test_retail_game_pool.cpp)
 target_link_libraries(test_native_retail_game_pool PRIVATE mka_native_retail_task_registry)
 add_executable(test_native_retail_observer_list EXCLUDE_FROM_ALL tests/test_retail_observer_list.cpp)
@@ -221,6 +226,7 @@ if(WIN32)
         runtime/src/native/retail_profile_aggregate_main.cpp
         runtime/src/native/retail_live_scene_main.cpp runtime/src/native/retail_profile_transition.cpp
         runtime/src/native/retail_profile_transition_child.cpp runtime/src/native/retail_profile_entry_decision.cpp
+        runtime/src/native/retail_profile_task_retirement.cpp
         runtime/src/native/retail_game_records.cpp
         runtime/src/native/retail_game_records_main.cpp
         runtime/src/native/retail_task_lookup_main.cpp
@@ -273,6 +279,9 @@ if(WIN32)
     add_executable(test_native_retail_profile_transition_child EXCLUDE_FROM_ALL tests/test_retail_profile_transition_child.cpp)
     target_include_directories(test_native_retail_profile_transition_child PRIVATE runtime/src/native)
     target_link_libraries(test_native_retail_profile_transition_child PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_profile_task_retirement EXCLUDE_FROM_ALL tests/test_retail_profile_task_retirement.cpp)
+    target_include_directories(test_native_retail_profile_task_retirement PRIVATE runtime/src/native)
+    target_link_libraries(test_native_retail_profile_task_retirement PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_profile_entry_decision EXCLUDE_FROM_ALL tests/test_retail_profile_entry_decision.cpp)
     target_include_directories(test_native_retail_profile_entry_decision PRIVATE runtime/src/native)
     target_link_libraries(test_native_retail_profile_entry_decision PRIVATE mka_native_retail_startup)

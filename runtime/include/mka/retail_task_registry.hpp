@@ -30,14 +30,20 @@ struct RetailTaskRegistryFailure {
     RetailInputTaskArgumentFailure argument{};
 };
 
+// Set by the original constructor path, never inferred from task kind.
+enum class RetailTaskProgramClass { plain_12ec50, retained_frame_12ea90 };
+
 // A published task must have executable native code and a real retirement
 // capability. Test clients provide explicit CPU-only bodies. The retail body
 // producers (18E100, 2800F0 and others) remain separate source work.
 class NativeRetailTaskBody : public NativeRetailTaskContinuation {
 public:
     virtual ~NativeRetailTaskBody() = default;
-    // 12FA00 invokes the callback before 12EE70 applies current-task/bit2
-    // release guards. Implementations must preserve effects even when false.
+    // Native lifetime hook for task-body owned state, not an extra retail
+    // virtual call. Stock 12EC50 task vtable+0xC is 12EFB0; the selective
+    // route performs its current/bit2 guard and cookie writes. Stock 12EC50
+    // drains nested lists before native release; retained-frame 12EA90
+    // releases its native frame first. This hook is not a game callback.
     virtual void cleanup(bool release_allowed) = 0;
 };
 
@@ -49,14 +55,17 @@ public:
 private:
     friend class NativeRetailTaskRegistry;
     friend class NativeRetailTaskExecution;
-    NativeRetailTaskObject(std::uint32_t kind, std::int32_t priority,
+    NativeRetailTaskObject(RetailTaskProgramClass program_class,
+        std::uint32_t kind, std::int32_t priority,
         std::uint32_t cookie, std::shared_ptr<NativeRetailTaskBody> body) noexcept
         : kind_(kind), priority_(priority), cookie_(cookie),
-          body_(body), continuation_(std::move(body)) {}
+          program_class_(program_class), body_(body),
+          continuation_(std::move(body)) {}
     std::uint32_t kind_{}, cookie_{};
     std::int32_t priority_{};
+    const RetailTaskProgramClass program_class_;
     std::shared_ptr<NativeRetailTaskBody> body_;
-    // 12EC50 clears both heads. 12EE70 retires +E8 then +EC in that order.
+    // Both constructors clear distinct E8 and EC observer heads.
     std::shared_ptr<NativeRetailObserverList> observers_e8_, observers_ec_;
     std::shared_ptr<NativeRetailTaskContinuation> continuation_, wait_resume_;
     float stored_wait_{};
@@ -69,6 +78,7 @@ struct RetailTaskLinkObservation {
     std::uint32_t kind, object_cookie, cached_cookie;
     std::int32_t priority;
     std::uint8_t link_flags;
+    RetailTaskProgramClass program_class;
 };
 struct RetailTaskRegistryObservation {
     std::vector<RetailTaskLinkObservation> ordered;
@@ -91,6 +101,7 @@ public:
     NativeRetailTaskRegistry(const NativeRetailTaskRegistry&) = delete;
     NativeRetailTaskRegistry& operator=(const NativeRetailTaskRegistry&) = delete;
 
+    // Existing publication is explicitly source 12EC50 plain-task birth.
     std::shared_ptr<NativeRetailTaskObject> publish_task(
         std::uint32_t kind, std::int32_t priority, std::uint32_t source_cookie,
         std::shared_ptr<NativeRetailTaskBody> body,
@@ -103,10 +114,27 @@ public:
         std::shared_ptr<NativeRetailObserverList> observers_e8,
         std::shared_ptr<NativeRetailObserverList> observers_ec,
         RetailTaskRegistryFailure&);
+    // Source 12EA90 retained-frame birth. A real native body owns its typed
+    // continuation/frame; no guest-sized stack is allocated by this owner.
+    std::shared_ptr<NativeRetailTaskObject> publish_retained_task_from_12ea90(
+        std::uint32_t kind, std::int32_t priority, std::uint32_t source_cookie,
+        std::shared_ptr<NativeRetailTaskBody> body,
+        RetailTaskRegistryFailure&);
+    std::shared_ptr<NativeRetailTaskObject> publish_retained_task_from_12ea90(
+        std::uint32_t kind, std::int32_t priority, std::uint32_t source_cookie,
+        std::shared_ptr<NativeRetailTaskBody> body,
+        std::shared_ptr<NativeRetailObserverList> observers_e8,
+        std::shared_ptr<NativeRetailObserverList> observers_ec,
+        RetailTaskRegistryFailure&);
     // Engaged null means the original not-found result. This lookup may
     // retire stale links and invoke real cleanup; control transfers propagate.
     std::optional<std::shared_ptr<NativeRetailTaskObject>> find_first_live(
         std::uint32_t kind, RetailTaskRegistryFailure&);
+    // 12EDC0 stores a persistent kind/mask query, then visits this same
+    // first root with callback 12EDE0. Matching cleanup happens under the
+    // live link's temporary bit1 guard, before later stale-link recycling.
+    bool retire_matching_from_12edc0(
+        std::uint32_t full_kind, RetailTaskRegistryFailure&);
     std::optional<std::shared_ptr<NativeRetailInputTaskArgument>>
     input_argument_from_12e930(const std::shared_ptr<NativeRetailTaskObject>&,
                              RetailTaskRegistryFailure&);
@@ -152,12 +180,25 @@ private:
         const std::shared_ptr<NativeRetailTaskObject>&) noexcept;
     bool retire_active(std::list<Link>::iterator, RetailTaskRegistryFailure&);
     bool release_pool_link(Link&, RetailTaskRegistryFailure&) noexcept;
-    bool drain_task_observers_from_12ee70(
+    bool drain_task_observers_from_130ac0(
         NativeRetailTaskObject&, RetailTaskRegistryFailure&);
+    // Caller has already applied source current/bit2 guard, published the
+    // first cookie zero, and established the callback guard. Pointers are
+    // dropped by that caller only after this returns normally.
+    bool release_task_payload(NativeRetailTaskObject&,
+        RetailTaskRegistryFailure&);
+    std::shared_ptr<NativeRetailTaskObject> publish_task_class(
+        RetailTaskProgramClass, std::uint32_t, std::int32_t, std::uint32_t,
+        std::shared_ptr<NativeRetailTaskBody>,
+        std::shared_ptr<NativeRetailObserverList>,
+        std::shared_ptr<NativeRetailObserverList>, RetailTaskRegistryFailure&);
 
     std::shared_ptr<NativeRetailGamePool> pool_;
     std::list<Link> active_, retained_, pending_, recycled_;
     std::shared_ptr<NativeRetailTaskObject> selected_, current_;
+    std::uint32_t selective_kind_{}; // 64DF44, source BSS zero.
+    std::uint32_t selective_mask_{}; // 64DF40, source BSS zero.
+    bool selective_failure_latched_{}; // Nested after-effect refusal survives outer return.
     bool in_callout_{}, after_effect_unknown_{}, execution_call_active_{};
     const std::thread::id owner_thread_{std::this_thread::get_id()};
 };

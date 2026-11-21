@@ -68,6 +68,18 @@ std::optional<NativeTaskRunOutcome> NativeRetailTaskExecution::invoke_virtual_10
         fail(f,RetailTaskExecutionError::missing_body,"typed initial task body");
         return {};
     }
+    const bool plain=task->program_class_==RetailTaskProgramClass::plain_12ec50;
+    const bool retained=task->program_class_==RetailTaskProgramClass::retained_frame_12ea90;
+    if(!plain && !retained) {
+        fail(f,RetailTaskExecutionError::unsupported_source_branch,
+             "task constructor class has no verified native virtual execution");
+        return {};
+    }
+    if(plain && (task->resume_pending_ || task->wait_resume_)) {
+        fail(f,RetailTaskExecutionError::unsupported_source_branch,
+             "stock12EC50 task cannot own an extended saved wait");
+        return {};
+    }
     if(task->execution_active_ || registry_.execution_call_active_) {
         fail(f,RetailTaskExecutionError::reentrant,"typed task execution recursive entry");
         return {};
@@ -87,10 +99,11 @@ std::optional<NativeTaskRunOutcome> NativeRetailTaskExecution::invoke_virtual_10
     registry_.current_=task; // Source 12E8A8 after prebody callback and cookie reload.
     std::uint64_t calls=0;
     for(;;) {
-        // Equal F0/F4 invokes +E0. A saved +14 wait resumes +E4 once.
-        auto continuation=task->resume_pending_ ? task->wait_resume_
+        // Stock always invokes +E0. Only the retained frame has a saved
+        // source+14 continuation; no guest stack/register image is retained.
+        auto continuation=retained && task->resume_pending_ ? task->wait_resume_
                                                  : task->continuation_;
-        if(task->resume_pending_) {
+        if(retained && task->resume_pending_) {
             task->resume_pending_=false;
             task->wait_resume_.reset();
         }
@@ -124,6 +137,13 @@ std::optional<NativeTaskRunOutcome> NativeRetailTaskExecution::invoke_virtual_10
             return {};
         }
         if(step.kind==NativeTaskStepKind::wait_at) {
+            if(plain) {
+                task->execution_active_=false;
+                registry_.after_effect_unknown_=true;
+                fail(f,RetailTaskExecutionError::unsupported_source_branch,
+                     "stock virtual12E090 returns; retained wait requires12EA90 frame");
+                return {};
+            }
             if(!step.next) {
                 task->execution_active_=false;
                 registry_.after_effect_unknown_=true;
@@ -157,15 +177,10 @@ std::optional<NativeTaskRunOutcome> NativeRetailTaskExecution::invoke_virtual_10
         }
         // c.eq.s(0,f0): +0 and -0 both immediately reenter +E0.
         if(step.value==0.0f) continue;
-        task->stored_wait_=step.value; // 12E3AC; no +DC producer for this branch.
-        // Source reloads selected object/cookie after optional +DC. An initial
-        // task's +DC is null; live cookie may still change in the body.
-        const auto selected=registry_.selected_;
-        if(!selected || selected!=task || selected->cookie_==0) {
-            task->execution_active_=false;
-            return NativeTaskRunOutcome{NativeTaskRunKind::invalidated_by_callback,
-                                        task->stored_wait_,calls};
-        }
+        task->stored_wait_=step.value;
+        // Both proved constructors clear +DC.12E034 and12E3B4 bypass the
+        // selected/cookie recheck when that callback is null. A later nonnull
+        // producer needs its actual callback and live recheck before admission.
         if(0.0f<=task->stored_wait_) {
             task->execution_active_=false;
             return NativeTaskRunOutcome{NativeTaskRunKind::returned_nonnegative,
@@ -173,19 +188,17 @@ std::optional<NativeTaskRunOutcome> NativeRetailTaskExecution::invoke_virtual_10
         }
         registry_.current_.reset(); // 12E3EC before virtual cleanup +C.
         const bool release_allowed=!task->retain_flag2_;
-        auto body=task->body_; // Keep the callback owner alive through effects.
         if(release_allowed) {
-            // Fixed virtual 12EE70 invalidates +4 before releasing its
-            // stack/nested payload. A transfer must not expose a live cookie.
+            // Both concrete virtual+C routines invalidate before releasing
+            // native frame/nested ownership; their release order differs.
             task->cookie_=0;
             task->retired_=true;
         }
         registry_.in_callout_=true;
         try {
-            body->cleanup(release_allowed);
             if(release_allowed) {
                 RetailTaskRegistryFailure nested_failure;
-                if(!registry_.drain_task_observers_from_12ee70(
+                if(!registry_.release_task_payload(
                         *task,nested_failure)) {
                     registry_.in_callout_=false;
                     task->execution_active_=false;
@@ -213,7 +226,7 @@ std::optional<NativeTaskRunOutcome> NativeRetailTaskExecution::invoke_virtual_10
         if(!release_allowed)
             return NativeTaskRunOutcome{NativeTaskRunKind::cleanup_guarded,
                                         task->stored_wait_,calls};
-        // Virtual 12EE70 retires the object. The source link remains in its
+        // Concrete virtual cleanup retires the object. The source link remains in its
         // list until a later stale-identity pass; do not unlink it here.
         task->continuation_.reset();
         task->wait_resume_.reset();

@@ -87,20 +87,35 @@ bool NativeRetailTaskRegistry::owns(
     return false;
 }
 
-bool NativeRetailTaskRegistry::drain_task_observers_from_12ee70(
+bool NativeRetailTaskRegistry::drain_task_observers_from_130ac0(
     NativeRetailTaskObject& task, RetailTaskRegistryFailure& f) {
     if(!pool_) return true; // CPU-only test registry has no retail link pool.
     if(!task.observers_e8_ || !task.observers_ec_)
         return fail(f,RetailTaskRegistryError::observer_list,
-                    "12EE70 task nested observer roots absent");
-    // Original 12EE70 calls 130AC0(task+E8) then 130AC0(task+EC).
+                    "task virtual+C nested observer roots absent");
+    // Both proved virtual+C bodies call 130AC0(task+E8), then task+EC.
     // These are two distinct source list identities, not one merged list.
     if(!task.observers_e8_->drain_from_130ac0(f.observer))
         return fail(f,RetailTaskRegistryError::observer_list,
-                    "12EE70 first nested observer root cleanup");
+                    "task virtual+C first nested observer root cleanup");
     if(!task.observers_ec_->drain_from_130ac0(f.observer))
         return fail(f,RetailTaskRegistryError::observer_list,
-                    "12EE70 second nested observer root cleanup");
+                    "task virtual+C second nested observer root cleanup");
+    return true;
+}
+
+bool NativeRetailTaskRegistry::release_task_payload(
+    NativeRetailTaskObject& task, RetailTaskRegistryFailure& f) {
+    const auto body=task.body_; // Retain across nested effects and transfers.
+    if(!body)
+        return fail(f,RetailTaskRegistryError::invalid_body,
+                    "task virtual+C native frame owner absent");
+    if(task.program_class_==RetailTaskProgramClass::retained_frame_12ea90)
+        body->cleanup(true); // 12EE70 releases +F0 backing before E8.
+    if(!drain_task_observers_from_130ac0(task,f)) return false;
+    task.cookie_=0; // Both virtual+C bodies repeat zero at final release.
+    if(task.program_class_==RetailTaskProgramClass::plain_12ec50)
+        body->cleanup(true); // 12EFB0 releases after E8 and EC.
     return true;
 }
 
@@ -132,36 +147,39 @@ bool NativeRetailTaskRegistry::retire_active(
         return true;
     }
     const bool release_allowed=current_!=task && !task->retain_flag2_;
-    auto body=task->body_; // Retain real nested owner across a transfer.
     if(release_allowed) {
-        // Fixed 12EE70 stores object+4=0 before stack/nested release.
+        // Both virtual+C bodies zero object+4 before their payload work.
         task->cookie_=0;
         task->retired_=true;
     }
     // Unlink precedes the callback in 12FA00. An exception may escape after
     // any part of that callback; retain the object and refuse later mutation.
+    const bool prior_callout=in_callout_;
+    const bool prior_unknown=after_effect_unknown_;
     after_effect_unknown_=in_callout_=true;
     try {
-        body->cleanup(release_allowed);
-        if(release_allowed &&
-           !drain_task_observers_from_12ee70(*task,f)) {
-            in_callout_=false;
-            return false;
+        if(release_allowed) {
+            if(!release_task_payload(*task,f)) {
+                in_callout_=prior_callout;
+                return false;
+            }
         }
     } catch(const detail::NativeMainReentry&) {
         // Original nonlocal main transfer resumes after this callback; the
         // source unlink has happened. Keep the detached object owned, do not
         // replay cleanup, and allow the next source operation to proceed.
-        in_callout_=after_effect_unknown_=false;
+        in_callout_=prior_callout;
+        after_effect_unknown_=prior_unknown;
         throw;
     } catch (...) {
-        in_callout_=false;
+        in_callout_=prior_callout;
         throw;
     }
-    in_callout_=after_effect_unknown_=false;
+    in_callout_=prior_callout;
+    after_effect_unknown_=prior_unknown;
     if(!release_allowed) {
-        // 12EE70 returned under its object guard. The source link has still
-        // been unlinked; retain the native object for a later source effect.
+        // Virtual+C returned under its current/bit2 guard. The source link has
+        // still been unlinked; retain the object for a later source effect.
         if(!release_pool_link(*pending,f)) return false;
         retained_.splice(retained_.end(),pending_,pending);
         return true;
@@ -207,6 +225,56 @@ std::shared_ptr<NativeRetailTaskObject> NativeRetailTaskRegistry::publish_task(
     std::shared_ptr<NativeRetailObserverList> observers_e8,
     std::shared_ptr<NativeRetailObserverList> observers_ec,
     RetailTaskRegistryFailure& f) {
+    return publish_task_class(RetailTaskProgramClass::plain_12ec50,
+        kind,priority,source_cookie,std::move(body),
+        std::move(observers_e8),std::move(observers_ec),f);
+}
+
+std::shared_ptr<NativeRetailTaskObject>
+NativeRetailTaskRegistry::publish_retained_task_from_12ea90(
+    std::uint32_t kind, std::int32_t priority, std::uint32_t source_cookie,
+    std::shared_ptr<NativeRetailTaskBody> body,
+    RetailTaskRegistryFailure& f) {
+    if(!access(f)) return {};
+    std::shared_ptr<NativeRetailObserverList> observers_e8,observers_ec;
+    try {
+        if(pool_) {
+            observers_e8=std::make_shared<NativeRetailObserverList>(pool_);
+            observers_ec=std::make_shared<NativeRetailObserverList>(pool_);
+        }
+    } catch(const std::bad_alloc&) {
+        fail(f,RetailTaskRegistryError::allocation,
+             "12EA90 per-task observer root allocation");
+        return {};
+    } catch(...) {
+        fail(f,RetailTaskRegistryError::native_exception,
+             "12EA90 per-task observer root construction");
+        return {};
+    }
+    return publish_retained_task_from_12ea90(kind,priority,source_cookie,
+        std::move(body),std::move(observers_e8),std::move(observers_ec),f);
+}
+
+std::shared_ptr<NativeRetailTaskObject>
+NativeRetailTaskRegistry::publish_retained_task_from_12ea90(
+    std::uint32_t kind, std::int32_t priority, std::uint32_t source_cookie,
+    std::shared_ptr<NativeRetailTaskBody> body,
+    std::shared_ptr<NativeRetailObserverList> observers_e8,
+    std::shared_ptr<NativeRetailObserverList> observers_ec,
+    RetailTaskRegistryFailure& f) {
+    return publish_task_class(RetailTaskProgramClass::retained_frame_12ea90,
+        kind,priority,source_cookie,std::move(body),
+        std::move(observers_e8),std::move(observers_ec),f);
+}
+
+std::shared_ptr<NativeRetailTaskObject>
+NativeRetailTaskRegistry::publish_task_class(
+    RetailTaskProgramClass program_class,
+    std::uint32_t kind, std::int32_t priority, std::uint32_t source_cookie,
+    std::shared_ptr<NativeRetailTaskBody> body,
+    std::shared_ptr<NativeRetailObserverList> observers_e8,
+    std::shared_ptr<NativeRetailObserverList> observers_ec,
+    RetailTaskRegistryFailure& f) {
     if(!access(f)) return {};
     if(!body) {
         fail(f,RetailTaskRegistryError::invalid_body,
@@ -219,7 +287,7 @@ std::shared_ptr<NativeRetailTaskObject> NativeRetailTaskRegistry::publish_task(
            observers_e8->retained_pool(f.observer)!=pool_ ||
            observers_ec->retained_pool(f.observer)!=pool_) {
             fail(f,RetailTaskRegistryError::observer_list,
-                 "12EC50 distinct task observer roots must retain same source pool");
+             "task birth distinct observer roots must retain source pool");
             return {};
         }
     } else if(observers_e8 || observers_ec) {
@@ -232,7 +300,8 @@ std::shared_ptr<NativeRetailTaskObject> NativeRetailTaskRegistry::publish_task(
     std::list<Link> staged;
     try {
         task=std::shared_ptr<NativeRetailTaskObject>(
-            new NativeRetailTaskObject(kind,priority,source_cookie,body));
+            new NativeRetailTaskObject(program_class,kind,priority,
+                                       source_cookie,body));
         task->observers_e8_=std::move(observers_e8);
         task->observers_ec_=std::move(observers_ec);
         if(pool_) {
@@ -243,7 +312,7 @@ std::shared_ptr<NativeRetailTaskObject> NativeRetailTaskRegistry::publish_task(
                 return {};
             }
         }
-        // 12FFE0 clears the recycled link flag byte at publication.
+        // 12FFE0 clears the recycled link flag byte at publication for both.
         staged.push_back(Link{task,source_cookie,0,std::move(pool_lease)});
     } catch(const std::bad_alloc&) {
         fail(f,RetailTaskRegistryError::allocation,"retail task object/link allocation");
@@ -318,17 +387,15 @@ bool NativeRetailTaskRegistry::cancel_first_root_from_12f030(
                 return fail(f,RetailTaskRegistryError::unsupported_source_branch,
                             "130AC0 live object without cleanup capability");
             }
-            auto body=task->body_;
             const auto prior_bit1=it->flags&2u;
             it->flags|=2u; // Temporary source callback guard.
-            // The real task vtable's 12EE70 invalidates +4 before nested
-            // cleanup; retain its body until the call returns or transfers.
+            // Both virtual+C bodies invalidate +4 before their class-specific
+            // payload release; retain the body through transfer.
             task->cookie_=0;
             task->retired_=true;
             in_callout_=after_effect_unknown_=true;
             try {
-                body->cleanup(true);
-                if(!drain_task_observers_from_12ee70(*task,f)) {
+                if(!release_task_payload(*task,f)) {
                     in_callout_=false;
                     return false;
                 }
@@ -443,6 +510,113 @@ NativeRetailTaskRegistry::find_first_live(std::uint32_t kind,
         it=next;
     }
     return std::shared_ptr<NativeRetailTaskObject>{};
+}
+
+bool NativeRetailTaskRegistry::retire_matching_from_12edc0(
+    std::uint32_t full_kind, RetailTaskRegistryFailure& f) {
+    // 12EDC0 may be reached from a task callback. It is the only Registry
+    // operation admitted during that callout; unrelated mutation remains
+    // subject to access()'s guard. Its two source stores precede traversal.
+    if(!owner_thread(f)) return false;
+    if(selective_failure_latched_ || (after_effect_unknown_ && !in_callout_))
+        return fail(f,RetailTaskRegistryError::after_effect_unknown,
+                    "12EDC0 prior task cleanup effect unresolved");
+    selective_kind_=full_kind;          // 64DF44, signed GP immediate 9E54.
+    selective_mask_=0xffffffffu;       // 64DF40, signed GP immediate 9E50.
+
+    const auto failed_after_effect=[&](RetailTaskRegistryError kind,
+        const char* operation) {
+        selective_failure_latched_=after_effect_unknown_=true;
+        return fail(f,kind,operation);
+    };
+    for(auto it=active_.begin();it!=active_.end();) {
+        const auto task=it->object;
+        if(!task)
+            return failed_after_effect(RetailTaskRegistryError::invalid_body,
+                "12F4E0 first-root link missing task object");
+        if(it->cached_cookie!=task->cookie_) {
+            // 12F4E0 saves next on its stale path before 12FA00 retirement.
+            const auto next=std::next(it);
+            const bool has_next=next!=active_.end();
+            const auto* saved=has_next?std::addressof(*next):nullptr;
+            const auto saved_object=has_next?next->object:
+                std::shared_ptr<NativeRetailTaskObject>{};
+            it->cached_cookie=1;
+            if(!retire_active(it,f)) {
+                selective_failure_latched_=after_effect_unknown_=true;
+                return false;
+            }
+            if(!has_next) { it=active_.end(); continue; }
+            it=active_.end();
+            for(auto candidate=active_.begin();candidate!=active_.end();++candidate)
+                if(std::addressof(*candidate)==saved &&
+                   candidate->object==saved_object) { it=candidate; break; }
+            if(it==active_.end())
+                return failed_after_effect(RetailTaskRegistryError::after_effect_unknown,
+                    "12F4E0 saved next task link changed during stale cleanup");
+            continue;
+        }
+
+        // Live 12F4E0 path sets bit1 around callback 12EDE0. The callback
+        // obtains this same native task identity through virtual +0 (the
+        // 12EC50 task vtable at 59FC70 points to 12D880: JR RA, MOVE V0,A0), then
+        // excludes current before reading live query kind/mask and cookie.
+        const auto prior_bit=it->flags&2u;
+        it->flags=static_cast<std::uint8_t>((it->flags&~2u)|2u);
+        if(task!=current_ && (task->kind_&selective_mask_)==selective_kind_ &&
+           task->cookie_!=0) {
+            const bool release_allowed=!task->retain_flag2_;
+            if(release_allowed) {
+                const auto body=task->body_; // Retain across cleanup/transfer.
+                if(!body)
+                    return failed_after_effect(RetailTaskRegistryError::invalid_body,
+                        "12EDE0 live matching task lacks virtual cleanup");
+                // The constructor-born class selects virtual+C. Both
+                // invalidate object+4 before their ordered release effects.
+                task->cookie_=0;
+                task->retired_=true;
+                const bool prior_callout=in_callout_;
+                const bool prior_unknown=after_effect_unknown_;
+                in_callout_=after_effect_unknown_=true;
+                try {
+                    if(!release_task_payload(*task,f)) {
+                        in_callout_=prior_callout;
+                        selective_failure_latched_=after_effect_unknown_=true;
+                        return false;
+                    }
+                } catch(const detail::NativeMainReentry&) {
+                    // Source transfer skips 12F4E0's bit1 restoration. The
+                    // task and query stores remain; later same-root lookup
+                    // cannot replay this virtual cleanup.
+                    in_callout_=prior_callout;
+                    after_effect_unknown_=prior_unknown;
+                    throw;
+                } catch(const std::bad_alloc&) {
+                    in_callout_=prior_callout;
+                    return failed_after_effect(RetailTaskRegistryError::allocation,
+                        "12EDE0 task cleanup allocation after direct effect");
+                } catch(...) {
+                    in_callout_=prior_callout;
+                    return failed_after_effect(RetailTaskRegistryError::native_exception,
+                        "12EDE0 task cleanup exception after direct effect");
+                }
+                in_callout_=prior_callout;
+                after_effect_unknown_=prior_unknown;
+                if(selective_failure_latched_)
+                    return failed_after_effect(RetailTaskRegistryError::after_effect_unknown,
+                        "12EDE0 nested selective task effect unresolved");
+                task->body_.reset();
+                task->continuation_.reset();
+                task->wait_resume_.reset();
+            }
+            // Bit2 set: original 12EFB0 returns before touching cookie,
+            // nested heads or native body ownership.
+        }
+        it->flags=static_cast<std::uint8_t>((it->flags&~2u)|prior_bit);
+        it=std::next(it); // Source reloads next after callback effects.
+    }
+    f={};
+    return true;
 }
 
 std::optional<std::shared_ptr<NativeRetailInputTaskArgument>>
@@ -560,7 +734,8 @@ std::optional<RetailTaskRegistryObservation> NativeRetailTaskRegistry::observe(
         for(const auto& link:active_) {
             const auto& task=*link.object;
             result.ordered.push_back({link.object,task.kind_,task.cookie_,
-                                      link.cached_cookie,task.priority_,link.flags});
+                                      link.cached_cookie,task.priority_,link.flags,
+                                      task.program_class_});
         }
         result.retained_links=retained_.size();
         result.recycled_links=recycled_.size();

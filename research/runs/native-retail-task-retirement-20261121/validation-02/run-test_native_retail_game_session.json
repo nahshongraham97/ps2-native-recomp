@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_game_session.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native persistent session: 7 creation allocation fault cuts, same-owner settings/PRNG/auxiliary, lifetime and thread failures; no game or endpoint\n",
+  "stderr": "",
+  "executable_sha256": "189334253ca36915a758ecb4c218b8c74b250d3baa30f1282db47d52f57fe834",
+  "executable_after_sha256": "189334253ca36915a758ecb4c218b8c74b250d3baa30f1282db47d52f57fe834"
+}

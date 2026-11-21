@@ -71,9 +71,9 @@ struct Body final : NativeRetailTaskBody {
 std::shared_ptr<NativeRetailTaskObject> publish(
     NativeRetailTaskRegistry& registry,const std::shared_ptr<Body>& body) {
     RetailTaskRegistryFailure f;
-    auto task=registry.publish_task(0x2001,0x20,17,body,f);
+    auto task=registry.publish_retained_task_from_12ea90(0x2001,0x20,17,body,f);
     check(task&&f.kind==RetailTaskRegistryError::none,
-          "real typed body published in actual registry");
+          "real retained-frame12EA90 body published with explicit constructor class");
     body->registry=&registry;body->task=task;
     return task;
 }
@@ -179,18 +179,18 @@ int main() {
         auto guarded_task=publish(*registry,guarded);
         result=execution.invoke_virtual_10_initial(guarded_task,f);
         check(result&&result->kind==NativeTaskRunKind::cleanup_guarded&&
-              guarded->cleanups==1&&!guarded->last_release_allowed&&
+              guarded->cleanups==0&&
               registry->find_first_live(0x2001,rf),
-              "negative direct cleanup sees cleared current but retains flag2 object");
+              "negative cleanup sees cleared current; source bit2 returns before native release");
 
         auto invalid=std::make_shared<Body>(std::vector<NativeTaskStep>{
             NativeTaskStep::returned(4.0f)});
         invalid->invalidate=true;
         auto invalid_task=publish(*registry,invalid);
         result=execution.invoke_virtual_10_initial(invalid_task,f);
-        check(result&&result->kind==NativeTaskRunKind::invalidated_by_callback&&
+        check(result&&result->kind==NativeTaskRunKind::returned_nonnegative&&
               invalid->cleanups==0,
-              "post-body source identity is reloaded before return branch");
+              "null source DC callback bypasses cookie recheck before nonnegative return");
 
         auto nested_target=std::make_shared<Body>(std::vector<NativeTaskStep>{
             NativeTaskStep::returned(1.0f)});
