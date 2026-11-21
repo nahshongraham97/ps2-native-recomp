@@ -101,7 +101,9 @@ if(WIN32)
         runtime/src/native/retail_crt_startup.cpp runtime/src/native/retail_platform_startup.cpp
         runtime/src/native/retail_main.cpp runtime/src/native/retail_main_timing.cpp
         runtime/src/native/retail_initial_objects.cpp runtime/src/native/retail_scene_events.cpp
-        runtime/src/native/retail_middleware_work.cpp)
+        runtime/src/native/retail_middleware_work.cpp
+        runtime/src/native/retail_dispatch_owners.cpp runtime/src/native/retail_record_owners.cpp
+        runtime/src/native/retail_service_constructors.cpp runtime/src/native/retail_input_roles.cpp)
     target_include_directories(mka_native_retail_startup PUBLIC "${_startup_dir}" runtime/include)
     target_link_libraries(mka_native_retail_startup PUBLIC mka_native_content_volume mka_native_retail_memory_owners
         mka_native_retail_crt mka_native_retail_platform mka_native_allocation_profile mka_native_game_actions mka_native_sound_resources)
@@ -115,6 +117,12 @@ if(WIN32)
     target_link_libraries(test_native_retail_scene_owners PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_middleware_work EXCLUDE_FROM_ALL tests/test_retail_middleware_work.cpp)
     target_link_libraries(test_native_retail_middleware_work PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_dispatch_owners EXCLUDE_FROM_ALL tests/test_retail_dispatch_owners.cpp)
+    target_link_libraries(test_native_retail_dispatch_owners PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_record_owners EXCLUDE_FROM_ALL tests/test_retail_record_owners.cpp)
+    target_link_libraries(test_native_retail_record_owners PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_input_roles EXCLUDE_FROM_ALL tests/test_retail_input_roles.cpp)
+    target_link_libraries(test_native_retail_input_roles PRIVATE mka_native_retail_startup)
 endif()
 
 # Source loading picture and actual host window/input/OpenGL services. No game

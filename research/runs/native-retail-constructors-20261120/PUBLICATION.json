@@ -1,0 +1,18 @@
+{
+  "fork_commit": "7143a45f4f018d6010658d5746d3ac709bf4a4ee",
+  "fork": {
+    "available": true,
+    "local_commit": "7143a45f4f018d6010658d5746d3ac709bf4a4ee",
+    "remote_commit": "7143a45f4f018d6010658d5746d3ac709bf4a4ee",
+    "synchronization": "verified"
+  },
+  "parent_commit": "6ef8dacb277c0680cfa056fcf803fb8caff3778a",
+  "parent": {
+    "available": true,
+    "local_commit": "6ef8dacb277c0680cfa056fcf803fb8caff3778a",
+    "remote_commit": "6ef8dacb277c0680cfa056fcf803fb8caff3778a",
+    "synchronization": "verified"
+  },
+  "verification_sha256": "d260ef0a79776b8c19eb20e13efe0c2321a899fc34d7c87fcf1bcafeda4f6a0b",
+  "scope": "Two native constructor owners and test-port lifecycle evidence; no complete game."
+}

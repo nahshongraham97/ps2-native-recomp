@@ -1,0 +1,27 @@
+{
+  "at_utc": "2026-11-21T05:31:26.434655+00:00",
+  "fork_head": "7143a45f4f018d6010658d5746d3ac709bf4a4ee",
+  "parent_head": "6ef8dacb277c0680cfa056fcf803fb8caff3778a",
+  "working_tree": true,
+  "sources": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\cmake\\native_game.cmake": "796db790cffdc06dc8f95ea89fb26f469463198e1043599702f0c2d8e08d6f8b",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_main.hpp": "c7c058f5483fe4a0b1b5cb3828bac3c5e5ab54cbe154e72bf90979637cdf9859",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_main.cpp": "169937f4625b474f050210c7bee9ab8ab31c1a0c55c4748ee0e097954fdb9b51",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_dispatch_owners.hpp": "776cdc473b5b84f3ef303c39fd582734f2e13e19977837dc7e9ef89ed3a6699f",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_dispatch_owners.cpp": "f7e3aa22df395822c0920e15f6c0138b93212978d8580381e8fc75dfec65b535",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_record_owners.hpp": "affb707e1228b45f74c575e3436611e58045fdd33ddc6d58c3ad90c070dec105",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_record_owners.cpp": "fbdec9713fd13651b606d60606b406df061ea27d285f3f4670ba0ef546bf5130",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_service_constructors.hpp": "d2dd6bb6fe8b87434ac2a475f621aaaf5c99754c4b8af65a0fb45640f5501511",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_service_constructors.cpp": "133e365a80f069337403948232b4c4333fc437e7e4db4710ab09b44f882371cd",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\retail_input_roles.hpp": "4ab149df873dbab3a206816475fc08ef93e748f49c99ffc200d40f4567d4eaa4",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\src\\native\\retail_input_roles.cpp": "e831d10785f428d76d7914b8bb1d89d40af52592bb014f3856d8e75b9e27e2f8",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_dispatch_owners.cpp": "a0b0c4775182de5cdcbcc0d00207464fea9f206a84cba3a5e2317c0921654365",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_record_owners.cpp": "d1ecd15691129045109bed1cc1f3b7ca03c9f6d4b218121be0e5be08fd4dab4b",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_retail_input_roles.cpp": "4ea1d0bdaab70c6b7c29202de33944c09ca0decf60fe4872559f68ec66ecda81",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-owners-20261121\\verify.py": "713e395256e21919b16693058c09411a804e08c530b7926e2336f02a1657ce3e"
+  },
+  "compiler": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "5173e9768f2b0e85a8738275ab1d7f287787871cafc81c1c13b077a581dabe90",
+  "scope": "CPU ownership and serialized role data only; no game or physical endpoint"
+}

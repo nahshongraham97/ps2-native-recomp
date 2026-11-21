@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_middleware_work.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native middleware transfer/retry/ticket/lifetime checks; test ports only, no retail jobs or game/device\n",
+  "stderr": "",
+  "executable_sha256": "fe3842b92be6c96be43a31f922da12c6ebc81e71e3aefb0f9acdcb9ff02034f4",
+  "executable_after_sha256": "fe3842b92be6c96be43a31f922da12c6ebc81e71e3aefb0f9acdcb9ff02034f4"
+}

@@ -11,30 +11,11 @@ struct NativeMainReentry {
     std::uint32_t value;
 };
 
-constexpr std::array<RetailActionBinding, 16> action_bindings{{
-    {0x0001, 0x1607c0, 0x62a008},
-    {0x0002, 0x1604c0, 0x62a010},
-    {0x0004, 0x160a10, 0x62a018},
-    {0x0008, 0x160640, 0x62a020},
-    {0x0010, 0x161110, 0x62a028},
-    {0x0020, 0x160b90, 0x62a030},
-    {0x0040, 0x160ef0, 0x62a038},
-    {0x0080, 0x160d40, 0x62a040},
-    {0x0100, 0x160100, 0x62a048},
-    {0x0200, 0x15ff60, 0x62a058},
-    {0x0400, 0x15fe10, 0x62a068},
-    {0x0800, 0x160250, 0x62a078},
-    {0x1000, 0x1616b0, 0x62a088},
-    {0x2000, 0x1612c0, 0x62a090},
-    {0x4000, 0x161560, 0x62a098},
-    {0x8000, 0x161410, 0x62a0a0},
-}};
-
 bool construct_main_owners(NativeRetailMainState& m, StartupFailure& f) {
     if (!construct_retail_initial_aggregate(m, f)) return false;
     if (!construct_retail_middleware_work_group(m, f)) return false;
     if (!construct_retail_dispatch_object(m, f)) return false;
-    if (!construct_retail_scene_records(m, f)) return false;
+    if (!construct_retail_record_owners(m, f)) return false;
     if (!construct_retail_default_record(m, f)) return false;
     if (!construct_retail_aux_dispatch_object(m, f)) return false;
     if (!construct_retail_two_service_objects(m, f)) return false;
@@ -68,7 +49,7 @@ bool publish_rising_action_tasks(NativeRetailMainState& m, StartupFailure& f) {
         const auto frame_role = observe_retail_frame_role(m, role, f);
         if (!frame_role) return false;
         if (!frame_role->initialized || frame_role->blocked || !frame_role->assigned) continue;
-        for (std::uint32_t row = 0; row != action_bindings.size(); ++row) {
+        for (std::uint32_t row = 0; row != retail_default_action_bindings().size(); ++row) {
             const auto observed = observe_retail_action_row(m, role, row, f);
             if (!observed) return false;
             if (!(observed->rising & observed->action.rising_mask)) continue;
@@ -115,17 +96,6 @@ bool run_frame(NativeRetailMainState& m, StartupFailure& f) {
 
 } // namespace
 
-const std::array<RetailActionBinding, 16>& retail_default_action_bindings() noexcept {
-    return action_bindings;
-}
-
-std::uint32_t retail_canonical_action_index(std::uint32_t mask, std::uint32_t row) noexcept {
-    for (std::uint32_t index = 0; index != action_bindings.size(); ++index) {
-        if (action_bindings[index].rising_mask == mask) return index;
-    }
-    return row;
-}
-
 NativeRetailMainState::NativeRetailMainState(NativeRetailStartupState& owner,
     NativeRetailPlatform& platform) noexcept
     : startup(owner), controller_samples(platform.controller_samples()) {}
@@ -169,7 +139,7 @@ std::optional<std::int64_t> continue_native_retail_main(NativeRetailStartupState
     auto gate = initialize_retail_timer_and_viewport(m, f);
     if (gate == RetailStartupGate::source_refused) return 0;
     if (gate != RetailStartupGate::ready || !initialize_retail_graphics_stage(m, f) ||
-        !initialize_retail_controller_stage(m, f)) return {};
+        !initialize_retail_package_stage(m, f)) return {};
     gate = initialize_retail_pad_service(m, 1, f);
     if (gate == RetailStartupGate::source_refused) return 0;
     if (gate != RetailStartupGate::ready) return {};

@@ -16,6 +16,8 @@ struct StartupFailure;
 class NativeRetailPlatform;
 struct NativeRetailConstructorOwners;
 class NativeRetailMiddlewareWorkGroup;
+class NativeRetailPrefixDispatchDescriptor;
+class NativeRetailRecordOwners;
 struct NativeRetailProfileOwners;
 struct NativeRetailSceneOwners;
 
@@ -55,6 +57,9 @@ struct NativeRetailMainState {
     NativeRetailMainTiming main_timing;
     std::shared_ptr<NativeRetailConstructorOwners> constructors;
     std::shared_ptr<NativeRetailMiddlewareWorkGroup> middleware_work_group;
+    std::shared_ptr<NativeRetailPrefixDispatchDescriptor> dispatch_object;
+    std::shared_ptr<NativeRetailPrefixDispatchDescriptor> auxiliary_dispatch_object;
+    std::shared_ptr<NativeRetailRecordOwners> record_owners;
     std::shared_ptr<NativeRetailProfileOwners> profile;
     std::shared_ptr<NativeRetailSceneOwners> scene;
     // The startup platform owns the only controller sample store. Its lifetime
@@ -84,7 +89,7 @@ namespace main_binding {
 bool construct_retail_initial_aggregate(NativeRetailMainState&, StartupFailure&); // 648680
 bool construct_retail_middleware_work_group(NativeRetailMainState&, StartupFailure&); // 6487D0
 bool construct_retail_dispatch_object(NativeRetailMainState&, StartupFailure&); // 648810
-bool construct_retail_scene_records(NativeRetailMainState&, StartupFailure&); // 648860
+bool construct_retail_record_owners(NativeRetailMainState&, StartupFailure&); // 648860
 bool construct_retail_default_record(NativeRetailMainState&, StartupFailure&); // 648930
 bool construct_retail_aux_dispatch_object(NativeRetailMainState&, StartupFailure&); // 648980
 bool construct_retail_two_service_objects(NativeRetailMainState&, StartupFailure&); // 6489D0
@@ -106,7 +111,7 @@ bool initialize_retail_loaded_sections(NativeRetailMainState&, StartupFailure&);
 bool initialize_retail_random_state(NativeRetailMainState&, StartupFailure&); // 26F1E0
 bool initialize_retail_action_service(NativeRetailMainState&, StartupFailure&); // 163210
 bool initialize_retail_graphics_stage(NativeRetailMainState&, StartupFailure&); // 2E06E0
-bool initialize_retail_controller_stage(NativeRetailMainState&, StartupFailure&); // 219050
+bool initialize_retail_package_stage(NativeRetailMainState&, StartupFailure&); // 219050
 bool initialize_retail_audio_configuration(NativeRetailMainState&, StartupFailure&); // 164130
 bool initialize_retail_current_sound(NativeRetailMainState&, StartupFailure&); // 12D7E0
 bool initialize_retail_mode_objects(NativeRetailMainState&, StartupFailure&); // 2460B0

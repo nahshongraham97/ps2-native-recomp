@@ -20,9 +20,8 @@ runtime-translation descriptions, is preserved for provenance at
 `research/history/native-port-docs-2026-11-18/README.md`. Those instructions
 do not describe the accepted Armageddon route.
 
-The2026-11-20 connected-entry checkpoint compiles real native CRT/platform owners
-and source-ordered main control. Five CPU/file checks pass. The complete entry
-still refuses to link on67 actual main subsystem bodies; no boot/menu/combat or
-physical output is verified. See
-[`connected startup evidence`](research/runs/native-connected-retail-entry-20261120/README.md)
-and the parent status for the current next implementation, not a launch request.
+The source-ordered native entry remains incomplete. The2026-11-21 owner
+integration passes five native CPU/component checks and measures64 unresolved
+native integration symbols; these are not missing original retail algorithms.
+No native menu/combat or physical output is verified. See the parent live
+status and the dated owner verification record. No owner launch is requested.
