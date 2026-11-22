@@ -1,0 +1,8 @@
+{
+  "scope": "metadata helper only; all prior component checks passed",
+  "error": "KeyError: CMAKE_CXX_COMPILER:FILEPATH",
+  "actual_compiler_cache_keys": [
+    "CMAKE_CXX_COMPILER:UNINITIALIZED"
+  ],
+  "correction": "Preserve actual CMake type tag and select the verified compiler key by variable name; no source/binary/test changed"
+}

@@ -1,0 +1,53 @@
+{
+  "initial_staging_gate": "FAILED: active LF source hashes differ from clean CRLF working-copy hashes",
+  "cause": "Git automatic checkout conversion; original measured bytes and receipts retained",
+  "validation": "Both unchanged measured working copies verified independently against the exact same committed LF blobs; no source/test/expected result changed",
+  "source_commit": "4bdabb45ed0e004d13a266368b6c46562bf5bdd3",
+  "items": [
+    {
+      "path": "runtime/include/mka/retail_main.hpp",
+      "active_sha256": "443c967ad4b95f9cbeab87d66b680e45218e15f66181d14aba0eb5f23f02a67d",
+      "clean_sha256": "d1152dac3f5ac3caa03574f0d055958290f952999dcf8ce48f34160d36383687",
+      "git_blob_sha256": "443c967ad4b95f9cbeab87d66b680e45218e15f66181d14aba0eb5f23f02a67d",
+      "active_CR": 0,
+      "clean_CR": 240,
+      "exact_after_git_checkout_line_endings": true
+    },
+    {
+      "path": "runtime/include/mka/retail_current_sound_required.hpp",
+      "active_sha256": "d063766d726c01ab2a16f90976ec2273fe4454c207be86f857ec094dd5a36769",
+      "clean_sha256": "589a39b16294a328dcad6d23173a0f0d8e4421b13da4dec0df515febb122c331",
+      "git_blob_sha256": "d063766d726c01ab2a16f90976ec2273fe4454c207be86f857ec094dd5a36769",
+      "active_CR": 0,
+      "clean_CR": 14,
+      "exact_after_git_checkout_line_endings": true
+    },
+    {
+      "path": "runtime/src/native/retail_main_state.cpp",
+      "active_sha256": "d4eef474c3efb60f40bff323aa8523f186bd09506929845a54c9e67b20b9f3f4",
+      "clean_sha256": "87bed64dc0013eaa0427d34505a2be2a6d9f630ec765ef833d13332d4797e880",
+      "git_blob_sha256": "d4eef474c3efb60f40bff323aa8523f186bd09506929845a54c9e67b20b9f3f4",
+      "active_CR": 0,
+      "clean_CR": 46,
+      "exact_after_git_checkout_line_endings": true
+    },
+    {
+      "path": "runtime/src/native/retail_sound_bank_main.cpp",
+      "active_sha256": "267a99ea3477bc8e37c40a069ffbba82bbb8ff4195fbde1701a6f52351545a6d",
+      "clean_sha256": "f84d5c64235f31025432e95c06ee0c1120b7d543099c623b4f3b3aab8c080bde",
+      "git_blob_sha256": "267a99ea3477bc8e37c40a069ffbba82bbb8ff4195fbde1701a6f52351545a6d",
+      "active_CR": 0,
+      "clean_CR": 149,
+      "exact_after_git_checkout_line_endings": true
+    },
+    {
+      "path": "tests/test_retail_reset_sound.cpp",
+      "active_sha256": "6a22f62661f055913c88d9a095da5a10c317200330a654ea3cae82b0d6f3cf25",
+      "clean_sha256": "73524a6aae1578ee0ee19df3adf3fd8d16f1b3c574aead1b61e3054863e72b8c",
+      "git_blob_sha256": "6a22f62661f055913c88d9a095da5a10c317200330a654ea3cae82b0d6f3cf25",
+      "active_CR": 0,
+      "clean_CR": 303,
+      "exact_after_git_checkout_line_endings": true
+    }
+  ]
+}

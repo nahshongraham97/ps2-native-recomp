@@ -1,0 +1,14 @@
+{
+  "repository": "nahshongraham97/ps2-native-recomp",
+  "published_source_commit": "dacb2d445fd788cba695faae94c2aad119aeffc1",
+  "source_tree": "9583b08a925610858c43b82e940010c111491a85",
+  "authored_source_commit": "4bdabb45ed0e004d13a266368b6c46562bf5bdd3",
+  "clean_build_commit": "4bdabb45ed0e004d13a266368b6c46562bf5bdd3",
+  "identical_source_tree": true,
+  "transport": "Connected GitHub Git database API; native git push DNS unavailable",
+  "verification": "clean-validation-01/VERIFICATION.json",
+  "game_run": false,
+  "frames": [],
+  "audio": [],
+  "acceptance": "OPEN"
+}
