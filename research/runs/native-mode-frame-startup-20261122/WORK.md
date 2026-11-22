@@ -9,7 +9,7 @@ initialization,12A4F0(0) mode selection and2E9930 frame work storage. Existing
 saved-child/known-default and source records are reused, not reimplemented
 from decompiler names. Missing semantics remain named blockers.
 
-Stage: tested component; clean-commit verification pending. Audio files, original data,
+Stage: compiled/tested component on clean committed sourcea36ee13. Audio files, original data,
 saved profiles, preserved primary and local model/settings are untouched.
 Owner: no action.
 
@@ -56,8 +56,9 @@ was dirty and this result is not a clean-commit or full-game claim.
 FRAME_DATA.json now proves the original two full backing ranges lie in
 PT_LOAD loader-zero storage. Capacity150000 and bases6D0950/73E730 derive
 from the original words, including signed ADDIU(-18D0), not inferred C types.
-Source/referenced input bytes are untouched. Clean-source verification,
-same-scenario oracle comparison and game acceptance remain OPEN.
+Source/referenced input bytes are untouched. Clean-source verification now
+passes in validation-frame-clean-02; same-scenario oracle comparison and
+game acceptance remain OPEN.
 
 Owner reaffirmed choosing the easier matching PS2/Xbox portion per subsystem,
 using both already installed Ghidra/plugin setups. Next source work compares
@@ -67,3 +68,18 @@ architecture and PS2 observable baseline remain binding; audio files stay
 untouched. The authored checkpoint publisher validates exact source/log/
 binary identities and stages only seven runtime/test/CMake paths plus this
 record before its failure-propagating commit/push.
+
+Clean verification is complete on runtime source
+a36ee137c42d0dd7ee6250986f208ef179d5dc35: all four clients pass, including21
+frame allocation cuts and exact59-name negative. CLEAN_AUTHENTICATION.json
+authenticates900 committed source blobs and actual binary/log identities;
+the preserved dirty checkout/index remain unchanged. This is an incremental
+build/check on clean committed source, not a fresh-checkout build or game run.
+
+The owner's subsequent correction supersedes the earlier neutral source
+choice: **Xbox-first for everything still to be implemented**, not just CPU
+work. Reuse installed plugins/prepared projects, choose the easier matching
+portion and cross-check against PS2 behavior. Do not default to PS2-only
+recovery or restart setup. A private Xbox copy of the existing saved project
+is prepared for the next mode/scene boundary; it installs nothing and leaves
+the master unchanged. Owner: no action. Agent next: Xbox mode/scene source.

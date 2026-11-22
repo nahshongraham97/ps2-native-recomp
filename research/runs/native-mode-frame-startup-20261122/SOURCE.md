@@ -87,6 +87,11 @@ blocks prove removal of the old host ceilings, not game acceptance.
 
 ## Still open
 
+Clean committed runtime sourcea36ee13 passes the four affected clients in
+validation-frame-clean-02. CLEAN_AUTHENTICATION.json records900 exact source
+blob matches, four binary/log identities and the exact59-name diagnostic.
+This is component evidence from an incremental build, not accepted gameplay.
+
 Actual packet/draw producers, native rendering/renderer completion and
 same-scenario playable-oracle comparison remain OPEN. This storage API is not
 an EE-address compatibility arena. It does not supply a GS model, fallback,
