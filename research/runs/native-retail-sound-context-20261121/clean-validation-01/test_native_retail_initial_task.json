@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-loose-20261121\\build-native-loose\\test_native_retail_initial_task.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-sound-context-20261121\\clean-validation-01\\empty-content"
+  ],
+  "exit": 0,
+  "stdout": "PASS native initial task parent and menu continuation; test-only child effects, full Main/game open\n",
+  "stderr": "",
+  "seconds": 0.13636369998857845,
+  "source_commit": "d25617cd3d030456fc837df3d49146123fbe23b5",
+  "source_sha256": {
+    "runtime/include/mka/audio_banks.hpp": "afb7ae455737c89924975bd53c1f9a709d6638bebe70c4280be67e731ed2afbe",
+    "runtime/include/mka/playback_owner.hpp": "8c82b30763b08d81b3771410e344f85a56d102c1b93b8e7844e4ca5659e6f00c",
+    "runtime/src/native/playback_owner.cpp": "dd46f90e0e8ebdf0c7353c0181def87fe24130de922192b39aed5d7dbf2dd019",
+    "tests/test_native_bank_playback.cpp": "107381925dc198b3282d911e2fd317e95bddbac7ddb7506c37b28c4a5bca0b72",
+    "tests/test_retail_reset_sound.cpp": "e75a85cceb703c7038c07d8e5de815b761ecc21ab1abf5042cca5370b5e5597b",
+    "cmake/native_sound_resources.cmake": "e490f6e35351a41c37dcc9c8ae6d023ea98266cf791facc0bd33eba19268c333"
+  },
+  "tracked_status": "",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "d7eff5d600fe74cd980bbf2d5fa4a46701f1fbb5dea0dce6ec5d6f383154b867"
+}

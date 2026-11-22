@@ -21,6 +21,13 @@
       "original_bytes": 455503,
       "archive": "validation-02/native-client-symbols.json.gz",
       "archive_sha256": "2ae7cb01342e119e620c8e7ac2347f51ceabc448ef32e40488bc952122568f74"
+    },
+    {
+      "original": "clean-validation-01/native-client-symbols.json",
+      "original_sha256": "ec041d7eb1dcbf0d208cb0c63dfdf4aa7bdf86767db61f2d9558342cd8a70626",
+      "original_bytes": 455305,
+      "archive": "clean-validation-01/native-client-symbols.json.gz",
+      "archive_sha256": "94d2db5dc1b860d5108594052635f9c3602fef0beba0fee38232edc707e4cc9c"
     }
   ],
   "originals_preserved_locally": true

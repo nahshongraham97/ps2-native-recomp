@@ -1,0 +1,54 @@
+{
+  "source_commit": "d25617cd3d030456fc837df3d49146123fbe23b5",
+  "rows": [
+    {
+      "path": "runtime/include/mka/audio_banks.hpp",
+      "active_sha256": "1917e0a66a7354ac52bef0fd8fa10152794ae535fa7ce62aa126b282218ec4cd",
+      "clean_sha256": "afb7ae455737c89924975bd53c1f9a709d6638bebe70c4280be67e731ed2afbe",
+      "committed_blob_sha256": "1917e0a66a7354ac52bef0fd8fa10152794ae535fa7ce62aa126b282218ec4cd",
+      "same_committed_blob": true,
+      "clean_CR": 119
+    },
+    {
+      "path": "runtime/include/mka/playback_owner.hpp",
+      "active_sha256": "1171dbc49a7c14b7e80efedd2e35c56369fbd6ed1b5ab6ed0fedfdd8a8475505",
+      "clean_sha256": "8c82b30763b08d81b3771410e344f85a56d102c1b93b8e7844e4ca5659e6f00c",
+      "committed_blob_sha256": "1171dbc49a7c14b7e80efedd2e35c56369fbd6ed1b5ab6ed0fedfdd8a8475505",
+      "same_committed_blob": true,
+      "clean_CR": 182
+    },
+    {
+      "path": "runtime/src/native/playback_owner.cpp",
+      "active_sha256": "4d69d15ea29975831b7c2eba4734bc9682782b436f9e760b202cca02f5a77d9b",
+      "clean_sha256": "dd46f90e0e8ebdf0c7353c0181def87fe24130de922192b39aed5d7dbf2dd019",
+      "committed_blob_sha256": "4d69d15ea29975831b7c2eba4734bc9682782b436f9e760b202cca02f5a77d9b",
+      "same_committed_blob": true,
+      "clean_CR": 632
+    },
+    {
+      "path": "tests/test_native_bank_playback.cpp",
+      "active_sha256": "5857625dd9cacf957d1ff9c0213c1dbcd1063cd157a916cee82e28017bd2fd1f",
+      "clean_sha256": "107381925dc198b3282d911e2fd317e95bddbac7ddb7506c37b28c4a5bca0b72",
+      "committed_blob_sha256": "5857625dd9cacf957d1ff9c0213c1dbcd1063cd157a916cee82e28017bd2fd1f",
+      "same_committed_blob": true,
+      "clean_CR": 129
+    },
+    {
+      "path": "tests/test_retail_reset_sound.cpp",
+      "active_sha256": "c1391e0bc303c3c3734b996925e124a30a56f0a2dcfbef5a2bcb7b8de820574f",
+      "clean_sha256": "e75a85cceb703c7038c07d8e5de815b761ecc21ab1abf5042cca5370b5e5597b",
+      "committed_blob_sha256": "c1391e0bc303c3c3734b996925e124a30a56f0a2dcfbef5a2bcb7b8de820574f",
+      "same_committed_blob": true,
+      "clean_CR": 311
+    },
+    {
+      "path": "cmake/native_sound_resources.cmake",
+      "active_sha256": "440d648949116154180ace87fad7e7f30f4765149457f598b9f6c87f8172b3c1",
+      "clean_sha256": "e490f6e35351a41c37dcc9c8ae6d023ea98266cf791facc0bd33eba19268c333",
+      "committed_blob_sha256": "440d648949116154180ace87fad7e7f30f4765149457f598b9f6c87f8172b3c1",
+      "same_committed_blob": true,
+      "clean_CR": 150
+    }
+  ],
+  "scope": "Exact original measurements retained; Git checkout CRLF differs from authored LF"
+}
