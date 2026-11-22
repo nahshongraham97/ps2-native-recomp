@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-worker-21\\build-native\\test_native_sound_curves.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+  ],
+  "exit": 0,
+  "stdout": "PASS original600 curve coefficients/directional pan/phase/unknown policy and real native PCM propagation; no device/game\n",
+  "stderr": "",
+  "seconds": 0.02939709999191109,
+  "source_commit": "35662e48644d07f765279994160ba724b0adffc0",
+  "tracked_status": "",
+  "source_manifest_sha256": "bd70c2d18da3c1abde6f8b3460110d604df043a8d5edf094625630e6d34a0e58",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "46982faa5c238583b9a10131539859a7c2e67d3daa4bd26d9b5fd95d543f177b"
+}

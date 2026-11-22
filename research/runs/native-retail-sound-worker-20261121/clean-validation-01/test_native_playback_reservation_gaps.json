@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-worker-21\\build-native\\test_native_playback_reservation_gaps.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+  ],
+  "exit": 0,
+  "stdout": "PASS native playback reservation pre/post-service gaps/64 slot growth/unpublished rollback/exact-bank and close uncertainty; injected CPU fixture only\n",
+  "stderr": "",
+  "seconds": 0.03970079999999143,
+  "source_commit": "35662e48644d07f765279994160ba724b0adffc0",
+  "tracked_status": "",
+  "source_manifest_sha256": "bd70c2d18da3c1abde6f8b3460110d604df043a8d5edf094625630e6d34a0e58",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "0740aed6c8f32be5e5dbe23110015d34aa59f17884dcfd21f7f0f7a7f2204c04"
+}
