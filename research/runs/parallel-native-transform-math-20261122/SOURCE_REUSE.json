@@ -1,0 +1,38 @@
+{
+  "join_sha256": "2f450912d68e2cdaaa8547d0c9d6efbce457aee53b7ac598fc249b008577dbb0",
+  "ELF_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "listings": {
+    "source-01/001a3800.asm": {
+      "begin": "0x1a3800",
+      "end_exclusive": "0x1a3880",
+      "words": 32,
+      "sha256": "27e347d6c9a076fe8d63145805d98d593c56e9d6f227129ceda1e33de474941f",
+      "bytes_sha256": "2aed9aca55e9865302debbfe2d789d1d7bf80a643ac0ea46131c74d54770469e",
+      "file_offset": 669952
+    },
+    "source-01/001a3760.asm": {
+      "begin": "0x1a3760",
+      "end_exclusive": "0x1a3800",
+      "words": 40,
+      "sha256": "bbda95feac96872212eff4fbd0922e58ebece9a4cb5cd232c3a5749e28e444dc",
+      "bytes_sha256": "eaf1aa3f819f395944bfb451ffa469101aa16374cf410ad37ae6a90c88ae3555",
+      "file_offset": 669792
+    },
+    "source-01/001a36c0.asm": {
+      "begin": "0x1a36c0",
+      "end_exclusive": "0x1a3758",
+      "words": 38,
+      "sha256": "19debd147d519b8fa9271eb72d265e1ec655cbea8b00487497f0a1f370d58687",
+      "bytes_sha256": "1275880db14ef0da9966374c5ecb0e43e14d570970c0fd1acf357d388ff45c9e",
+      "file_offset": 669632
+    },
+    "source-01/001a3600.asm": {
+      "begin": "0x1a3600",
+      "end_exclusive": "0x1a36b8",
+      "words": 46,
+      "sha256": "7190b8c6add7c954d46de240f018a931e22f2f3120cdadf2cc17fb543c8c92d8",
+      "bytes_sha256": "8926de09e69fbb04f31bcd5185dc5ec50bbdde20e2237caab6b1508d378a6d3b",
+      "file_offset": 669440
+    }
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "status": "OPEN_NUMERIC_AUTHORITY_DISPUTE_NO_PRODUCTION_KERNEL",
+  "base": "fab3aee9c3b5edcce771affb93581f8628ce0b91",
+  "offline_clients": {
+    "compare-offline": {
+      "build_argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-O2",
+        "-I",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\research\\runs\\parallel-native-transform-math-20261122",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\research\\runs\\parallel-native-transform-math-20261122\\compare-offline.cpp",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\research\\runs\\parallel-native-transform-math-20261122\\parallel-ps2float.c",
+        "-o",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\build-transform-math\\compare-offline.exe"
+      ],
+      "build_exit_asserted_by_preserved_measure_script": 0,
+      "build_log_sha256": "9c7ffbaaf0ef52cbe61dca1af1d703c59d1b1fd28d076428c36f916578845d19",
+      "executable_sha256": "ac4fd26ccf822e5c94b4454ba70091cf39ae10b5e89a69bb566b5f8ae33ebdc9",
+      "run_argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\build-transform-math\\compare-offline.exe"
+      ],
+      "run_exit": 0,
+      "run_log_sha256": "1c2e5fc1c3f283378a7cb2200b755447770654dd6c12d07d14584e36b5e1f9fe"
+    },
+    "check-hardware": {
+      "build_argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-O2",
+        "-I",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\research\\runs\\parallel-native-transform-math-20261122",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\research\\runs\\parallel-native-transform-math-20261122\\check-hardware.cpp",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\research\\runs\\parallel-native-transform-math-20261122\\parallel-ps2float.c",
+        "-o",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\build-transform-math\\check-hardware.exe"
+      ],
+      "build_exit_asserted_by_preserved_measure_script": 0,
+      "build_log_sha256": "9c7ffbaaf0ef52cbe61dca1af1d703c59d1b1fd28d076428c36f916578845d19",
+      "executable_sha256": "b7dd3226cacce08d71a6f365379ab03990400a34b1e5da20d39d6bb0dbea7b72",
+      "run_argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\build-transform-math\\check-hardware.exe"
+      ],
+      "run_exit": 0,
+      "run_log_sha256": "9c827ae7a1d6d51f96069589ee35840c1392f14c676dfd1b4361509ffdd6913f"
+    },
+    "primary-compare": {
+      "build_argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-O2",
+        "-I",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\research\\runs\\parallel-native-transform-math-20261122",
+        "-include",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\research\\runs\\parallel-native-transform-math-20261122\\primary-ps2float.h",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\research\\runs\\parallel-native-transform-math-20261122\\primary-compare.cpp",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\research\\runs\\parallel-native-transform-math-20261122\\parallel-ps2float.c",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\research\\runs\\parallel-native-transform-math-20261122\\primary-ps2mul.cpp",
+        "-o",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\build-transform-math\\primary-compare.exe"
+      ],
+      "build_exit_asserted_by_preserved_measure_script": 0,
+      "build_log_sha256": "9c7ffbaaf0ef52cbe61dca1af1d703c59d1b1fd28d076428c36f916578845d19",
+      "executable_sha256": "be6d714612ad11c3dc76ada8574d1bd3cd3ca808a7e1739c5ea1eb5b254e7afe",
+      "run_argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\build-transform-math\\primary-compare.exe"
+      ],
+      "run_exit": 0,
+      "run_log_sha256": "fba44fd413e429bf5d0924dbbffd2e53d841612b12e26ca8b79e76f1a875ea6e"
+    },
+    "fixed127-offline": {
+      "build_argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-O2",
+        "-I",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\research\\runs\\parallel-native-transform-math-20261122",
+        "-I",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\runtime\\include",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\research\\runs\\parallel-native-transform-math-20261122\\fixed127-offline.cpp",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\research\\runs\\parallel-native-transform-math-20261122\\parallel-ps2float.c",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\runtime\\src\\native\\geometry_companion_quantizer.cpp",
+        "-o",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\build-transform-math\\fixed127-offline.exe"
+      ],
+      "build_exit_asserted_by_preserved_measure_script": 0,
+      "build_log_sha256": "9c7ffbaaf0ef52cbe61dca1af1d703c59d1b1fd28d076428c36f916578845d19",
+      "executable_sha256": "33a2be275d73d2df0a74ff2b80deb930b0a58b4f78fd08acce00a3a4d372e52a",
+      "run_argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\build-transform-math\\fixed127-offline.exe"
+      ],
+      "run_exit": 0,
+      "run_log_sha256": "8926d76bf63b45d55bf49a603e28ee1732a6a8d6bc0b9215403a8c0963157b11"
+    },
+    "vector-barrier": {
+      "build_argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-O2",
+        "-I",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\research\\runs\\parallel-native-transform-math-20261122",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\research\\runs\\parallel-native-transform-math-20261122\\vector-barrier.cpp",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\research\\runs\\parallel-native-transform-math-20261122\\parallel-ps2float.c",
+        "-o",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\build-transform-math\\vector-barrier.exe"
+      ],
+      "build_exit_asserted_by_preserved_measure_script": 0,
+      "build_log_sha256": "9c7ffbaaf0ef52cbe61dca1af1d703c59d1b1fd28d076428c36f916578845d19",
+      "executable_sha256": "0d651cba19844fb719911328a780f66b43958e3a9e70c65c8ccc6ab482f76a62",
+      "run_argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-transform-math\\build-transform-math\\vector-barrier.exe"
+      ],
+      "run_exit": 0,
+      "run_log_sha256": "3a115679a96a73215a94ad4cd114f2ddedf90db6885362ae1a799c4ceeb3855a"
+    }
+  },
+  "source_reuse_sha256": "c7b1438c086653c431ad83fd67ce70f10d4d5927d60538654babe82a1b0373db",
+  "pins_sha256": "2f9731cb180af4846042dc3dd5a227e9c904058429b334f0e1a411c5a5b9d1bf",
+  "limit": "Independent model agreement and published hardware190 cases do not establish disputed finite pair hardware result. No generic FPU/model enters accepted route."
+}

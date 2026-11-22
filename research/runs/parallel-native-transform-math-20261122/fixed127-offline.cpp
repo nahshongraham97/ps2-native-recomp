@@ -1,0 +1,10 @@
+#include "ps2float.h"
+#include "mka/geometry_companion_quantizer.hpp"
+#include <cstdio>
+#include <cstdint>
+static unsigned byte_of(unsigned w){unsigned e=(w>>23)&255u;if(!e||e<=126)return 0;if(e>=158)return w>>31?0:255;unsigned m=(w&0x7fffffu)|0x800000u;int shift=int(e)-150;unsigned whole=shift>=0?m<<shift:m>>-shift;return ((w>>31)?0u-whole:whole)&255u;}
+int main(){unsigned different=0,first=0,byte_different=0,byte_first=0,min_input_exp=255,max_input_exp=0;std::uint64_t hash=1469598103934665603ull;
+for(unsigned m=0;m<0x800000u;++m){const unsigned x=0x3f800000u|m;std::uint64_t p=std::uint64_t(0xfe0000u)*(0x800000u|m);p-=((m>>1)&1u);unsigned e=133;if(p>>47){p>>=24;++e;}else p>>=23;const unsigned specialized=(e<<23)|(unsigned(p)&0x7fffffu);const unsigned research=unsigned(ps2f_mul(0x42fe0000u,x));if(specialized!=research){if(!different){first=x;std::printf("first specialized%08x research%08x\n",specialized,research);}++different;
+for(unsigned ie=120;ie<=151;++ie){unsigned se=ie+e-127u,re=ie+((research>>23)&255u)-127u;for(unsigned sign=0;sign<=1;++sign){unsigned sw=(specialized&0x7fffffu)|(se<<23)|(sign<<31),rw=(research&0x7fffffu)|(re<<23)|(sign<<31);if(mka::game::quantize_geometry_companion_component({(ie<<23)|m|(sign<<31)})!=byte_of(rw)){if(!byte_different){byte_first=(ie<<23)|m|(sign<<31);std::printf("byte first input%08x specialized%u research%u\n",byte_first,byte_of(sw),byte_of(rw));}if(ie<min_input_exp)min_input_exp=ie;if(ie>max_input_exp)max_input_exp=ie;++byte_different;}}}}
+hash=(hash^research)*1099511628211ull;}
+std::printf("fixed127 first operand: all8388608 significands compared specialized-vs-research; mismatches%u first%08x hash%016llx\n",different,first,(unsigned long long)hash);std::printf("finalbyte disputes%u firstinput%08x; differing significands checked across input exponents120..151 both signs; others identical or conversion zero/saturated\n",byte_different,byte_first);std::printf("divergent input exponent range %u..%u\n",min_input_exp,max_input_exp);return 0;}

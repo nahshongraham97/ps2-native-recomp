@@ -1,0 +1,5 @@
+first specialized42fe00fe research42fe00fd
+byte first input47800080 specialized127 research126
+fixed127 first operand: all8388608 significands compared specialized-vs-research; mismatches57794 first3f800080 hash4e79e8f714ac6103
+finalbyte disputes1014694 firstinput47800080; differing significands checked across input exponents120..151 both signs; others identical or conversion zero/saturated
+divergent input exponent range 135..151

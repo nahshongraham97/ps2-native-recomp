@@ -1,0 +1,33 @@
+SCE CONFIDENTIAL                                                                         EE Core Instruction Set Manual Version 6.0 
+ 
+ 
+' SCEI 
+-362- 
+ else 
+ if (TEMP1.exp = 0x00) then 
+ ACC ← signedzero(TEMP1.sign) 
+ FCR31.SU ← 1 
+ FCR31.U ← 1 
+ else 
+ ACC ← TEMP1 
+ endif 
+ endif 
+ endif 
+ endif 
+endif 
+ 
+maxmin(sign) 
+begin 
+ if (sign = 1) 
+  maxmin ← 0xFFFFFFFF 
+ else 
+  maxmin ← 0x7FFFFFFF 
+end 
+ 
+signedzero(sign) 
+begin 
+ if (sign = 1) 
+  signedzero ← 0x80000000 
+ else 
+  signedzero ← 0x00000000 
+end 

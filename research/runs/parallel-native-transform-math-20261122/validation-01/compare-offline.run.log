@@ -1,0 +1,10 @@
+known 3f800000 3fffffff 3ffffffe 3ffffffe
+dispute 3f3d7186 3f5f1b2d imported=3f251a00 research=3f2519ff
+dispute 3f4e401e 3f6228e5 imported=3f36358d research=3f36358c
+dispute 3f5ca8e4 3f325ef3 imported=3f19bf46 research=3f19bf45
+dispute 3f0c523e 3f61d485 imported=3ef7918b research=3ef7918a
+dispute 3f21636c 3f4a07db imported=3efebace research=3efebacd
+dispute 3f12c724 3f3f6833 imported=3edb7ca4 research=3edb7ca3
+dispute 3f3fe99a 3f4b2c31 imported=3f184f5e research=3f184f5d
+dispute 3f32ed18 3f548d97 imported=3f148f4e research=3f148f4d
+mul disputes 1137/1000000
