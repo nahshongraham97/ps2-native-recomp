@@ -1,0 +1,193 @@
+{
+  "status": "PASS_BOUNDED_HISTORY_REVIEW_NO_CONCRETE_FINDING",
+  "candidate": "c9f3db8c71bc1b3d18594329c8478ed59798e327",
+  "base": "44d3d02bb205fad839634ffcfedcd9db5b943b15",
+  "source_files": 853,
+  "additional_pins": 106,
+  "source_views": 28,
+  "listed_words": 2527,
+  "archive_pairs": 83,
+  "clients": {
+    "test_native_runtime_program_work": {
+      "binary": "9b24f7664bc0a2bc189b1490855c5a2b6c1fa770e4afe9060fc1793db53c5413",
+      "receipt_sha256": "cfad386cdaf79bf629b7526ed73fa362460e8daeb00b732deea21455666faa82",
+      "log_sha256": "94570c3ec7f9be83b2d7dcf1ed3510078755630e0c5f96e3630efea5126806fa",
+      "reused": false
+    },
+    "test_native_runtime_preparation": {
+      "binary": "80044321ff9e3b3103585549f6f219f777785500962cd7dab65e74c970ef216e",
+      "receipt_sha256": "abe195035643d6f80020781631d4dffae1cf7621d541f17ae25137ee1189b9e1",
+      "log_sha256": "368e8bd2e69099c20f954f56bacdfd85286027b9e838791bf0074025e1d73208",
+      "reused": false
+    },
+    "test_native_sound_output_plan": {
+      "binary": "6b2a2b108cdc90b610f7a546a5104da786af0bee0e2fededb8c0f07d439cc92c",
+      "receipt_sha256": "2fded2298cb334cf73e770807b840a1a84cf89dde0fb7d3ebeee55eb974a0302",
+      "log_sha256": "f9f216ac1c3dae006e4eed87bbc415f57fbac665970943c06eab812879046e1a",
+      "reused": false
+    },
+    "test_native_retail_sound_context": {
+      "binary": "d6f02520f7c29a5dd2604ef7b01cea5c84c3b6bd9850c6788141a7d478b8a5d1",
+      "receipt_sha256": "58a9858e221b12db959d352674a1eb67f169213db869f0f65ad990a0b40feafa",
+      "log_sha256": "0fc7203bc29a4bb19c25ef9c3db3e070586693ba7432af3bc708492b1fd8078c",
+      "reused": false
+    },
+    "test_native_program_host_clock": {
+      "binary": "bbb8b59f3a53ba02b18ecf71e313fb2be5dc3dba15dacc8edabf8dfc9095123b",
+      "receipt_sha256": "648f4ba25246352168851a704c4e43ffcff886f62f9d63f094776ee88955f02e",
+      "log_sha256": "06ea316bfed25e107f95cb9da7c6e1652934a162b65b356c2b31ea298b26575c",
+      "reused": false
+    },
+    "test_native_audio_device": {
+      "binary": "9d6f8209e4e019bf3fcdb5817ebda1288304e360350952f2944cd30900c54dc1",
+      "receipt_sha256": "feaf99149e48cacbc69a46841f734944e6032a223a0caca73919c04178e1bd29",
+      "log_sha256": "7104d8c3637061140ac96c80e18d93444defbea295152bdb1fa8f2a05d47699b",
+      "reused": false
+    },
+    "test_native_held_playback": {
+      "binary": "0a3f11b9f83f1fcf505f32572a85ef4961fb57d462037918d672067aa789cca7",
+      "receipt_sha256": "9eda46e6047506d99aa2067b019b06c766ed3d74a872f612b622c49f88e4449f",
+      "log_sha256": "56895f0fe6344a0bfeb28d052d72388c782766fe3eeaa041e279a39547be3afb",
+      "reused": false
+    },
+    "test_native_sound_curves": {
+      "binary": "07620adcce5b0f89fc3ab2eb389c09ab60ef5e6d4562b3a65a2909bdfc699b8f",
+      "receipt_sha256": "e548c5a04bce7f76f53815ce85a62fa440d17e6c2ca2f47d08afcc947d7adcd2",
+      "log_sha256": "0b9f615a551421f3604008b5708f1e23142f44dd8698e65d7ccfc22666863ee3",
+      "reused": true
+    },
+    "test_native_host_voice": {
+      "binary": "24aef470817358d990afab8d853c3418685fa2b966b6215b34ba5df1d8aeb2f2",
+      "receipt_sha256": "b92c67625ccc898d62f9e72bb8d15e9fc7b23ee7bcbc2fc53e60cd2e33bae5c7",
+      "log_sha256": "ff0f07351a1d3f1b4063bbdd757cb64d634175459d90e50500531dd02c86c518",
+      "reused": true
+    },
+    "test_native_program_copy": {
+      "binary": "a53148863393aa4d4da8e329b7a8c825888e06b2d6209a1ae1f5fa3ebdbd1792",
+      "receipt_sha256": "1bcf34819ca8a99f87e63cd65d2667f481dcae1b8b6c8b7ad9e3cc518d977b7a",
+      "log_sha256": "7ce6ebd2147d69d589c13ee1b049e387854ff5b8db043b922d7fd5f55dfd083f",
+      "reused": true
+    },
+    "test_native_program_copy_failure": {
+      "binary": "044199952e21307d1b9f825d79ee59e5809157eeae3438faea2fe23e7564b989",
+      "receipt_sha256": "52cf20a58c131292c0dc4d26d54acab184fad8639cbc0de13ac2b35f46c35f74",
+      "log_sha256": "26ce2c4c30ef560547da7adf1e6a16d8c6d9a0e3c8edb7be26118ab1e971d632",
+      "reused": true
+    },
+    "test_native_bank_playback": {
+      "binary": "c070bd31514ecda24fc1811f83886930c16e229b7965c3754d1d9f96597e50ff",
+      "receipt_sha256": "6515829b04054ec8a0dd1e0d3362fbe2a87a903f04570393c0e49ef4d7d62820",
+      "log_sha256": "7d4ebef2e1b569829344cc21623b2ab1f4c8f2ce50cae2fe361ec7c228f7e151",
+      "reused": false
+    },
+    "test_native_playback_owner": {
+      "binary": "e1bbb01012d1a69fe53e744abe78c51d517e158801aedb871d84a899ff9f43e5",
+      "receipt_sha256": "19962f6b4801422246687a519b9bcda7fa865ea643a72e58e1d2d6d6e1d35681",
+      "log_sha256": "3278268a7df75b375285f0a2ae14ba111eae9d000d49d3c159a576c5d002fecf",
+      "reused": false
+    },
+    "test_native_playback_reservation": {
+      "binary": "b26d12da90299e78d7313faadf44bb09298a9a3c98159bd326bc508c6b541fbc",
+      "receipt_sha256": "09a75663e848e916c0fca4df87eaf6d8e672e757724b98fc8cceed9d68a2b9ce",
+      "log_sha256": "b2228420016464c807e77e3a412e10f981ea68a8bd7a4c0e1427165a7930cce5",
+      "reused": false
+    },
+    "test_native_playback_reservation_gaps": {
+      "binary": "172b55f79c6a3006bca17edc3c7a0fd1c7c25b1d2ace14593a93aaa8004fb095",
+      "receipt_sha256": "90fdd9f8aa2b283806e239d16674e4c212610a841da6fd87b6363bc662ccb742",
+      "log_sha256": "b62d90dd8f5f4d4bc56660bbe28272806a5778eafcdf6f3547487b59c2783335",
+      "reused": false
+    },
+    "test_native_default_playback_runtime": {
+      "binary": "02b0e0353af9c28fa6777cf2960d6065925f69642099391ebe0f21f79c2c945e",
+      "receipt_sha256": "b69ca1a6c819b06eec603eea0138f16a652cf01561ef0e9108ffeb08c433fc27",
+      "log_sha256": "0d432f84dba930a0860a054e941df277dd511657e0738aeecaf1b77ac06a4c9a",
+      "reused": false
+    },
+    "test_native_program_output_activation": {
+      "binary": "4903f389451b2ca06ca7ce1b99d6204dcc673585fd8f320400f065c0dea188d3",
+      "receipt_sha256": "baf37d2b1e15186b56ab5d7bc168555de01ef74b4168a11ecdd2e3c96d4bb6ff",
+      "log_sha256": "94b64bafdb3b4dbd1e691a5c373e13a1414827c8e6b9c02f7f7fd576c174976b",
+      "reused": false
+    },
+    "test_native_forced_output_retirement": {
+      "binary": "016c2c65015d361b3fc9c70327ebf69017318ff80f42fab1a5a86fbd2fb2f690",
+      "receipt_sha256": "bf91b05a440865f09e7127cd3e20829664f6bf61f3642e35200d339ac81675db",
+      "log_sha256": "ae0310f5699f720befdddb43ccc0f4707db9f429d35ce71c972d88f5581f8cb0",
+      "reused": false
+    },
+    "test_native_forced_output_retirement_failure": {
+      "binary": "0c77c28840902b36467d096262d8c8a6ca1fea5c99401c49ebf26d295fc6da6c",
+      "receipt_sha256": "aa60ae188ea6e84846f4a877937926329291936432de7409c37c8aa3509f9711",
+      "log_sha256": "60d3df9188629d58f8fa11b80bd071366fa545ff01ff6b304ebdd7a5334bfde0",
+      "reused": false
+    },
+    "test_native_retail_reset_sound": {
+      "binary": "57bfcc1d9501ed4e99bc2a6a1a211b86816b6cfbf5735a381a37cdbf72672b11",
+      "receipt_sha256": "ee163dec4f5750132377811c525421d972346b45423c14933fbc8eca5e3acd28",
+      "log_sha256": "1a36832a93a7b89bc117a34ab53cc3144e8e779a5ebbda6e3cf28ded6348c0a2",
+      "reused": false
+    },
+    "test_native_retail_initial_reset": {
+      "binary": "1fc3eb370b40ac1724781dab97465060796975090c96dcc086ed74b81b511978",
+      "receipt_sha256": "ce7ed7ddd1b27f54dffb0a79d845ea99aa569e32d4ad462d5914292f45da0f60",
+      "log_sha256": "1200225a53e7bd685df4350149e9aa0dd51191381f40e0370855c7d04ec9bcee",
+      "reused": false
+    },
+    "test_native_retail_initial_task": {
+      "binary": "0d68eadfe3aff24bd9e718dcd58331933d0865deabf326466e2c1409b02c44d7",
+      "receipt_sha256": "516fc2b279adfe47a5dbf2701a4227d95ba26215aa6a00117067ea28cf700837",
+      "log_sha256": "fe44162dbee12ec77fffd834e25cdc17a17f35c9f8374f94b3ac8af1da08cdd7",
+      "reused": false
+    },
+    "test_native_retail_startup": {
+      "binary": "dcef584e119695cbc9762f5d35e5039cdd2526a96ea5e66462c24313a6378c0d",
+      "receipt_sha256": "92088b3c6e051020afeb7133a989ed626d8afa7972959583db32381498b297a5",
+      "log_sha256": "1e83eb415d6709abb2f8f24589ed18ada1aabce3282a0c6ec5c639c1fc127a72",
+      "reused": false
+    },
+    "test_native_retail_file_startup": {
+      "binary": "50d9adf588e6b55a04f23cadc62621675766bf6ab4bbd7741f97eee297ec6f09",
+      "receipt_sha256": "d0a4dd3140dc446b4bbb9710d253e42be539039afefaa05ab73bcfc02584f054",
+      "log_sha256": "9e5a74e073053e562deb530e5c76e3f728e7353e808aa011c0b9cc83617d6692",
+      "reused": false
+    },
+    "test_native_retail_middleware_main": {
+      "binary": "3fdc6c1cff2bc84006b476c92b00925e94af071457e9e915c20cd6a1bc6616ba",
+      "receipt_sha256": "1415a8aba14e115f26740de1452431fdb65d6d92e729fbd48656fac2b1654e13",
+      "log_sha256": "b553e9fdfc683523c529aa64b67118af1e9090af7d5ed9e2577cfbf8544790c1",
+      "reused": false
+    },
+    "test_native_control_history": {
+      "binary": "d34e8c5dfa2cf0f078951972aa68dbbcb48f62900ee5ddb049e56ded9f4b3f7f",
+      "receipt_sha256": "7e13ab8321484609bf6586cebbd825fd84c18ea352c4306d1449b1fe6c21812a",
+      "log_sha256": "fe4895381809179f7ee2eadea3c7d28260d80e784e379867dcfdb32e98058b24",
+      "reused": true
+    }
+  },
+  "fresh": 21,
+  "exact_prior_reused": 5,
+  "curve_coefficients": 600,
+  "corpus_rows": 26576,
+  "corpus_sha256": "c8e2c3ad2d72efca9980f01e6ae7e1ee4ae0ff0a3f0469d57ca7a1d142330a5c",
+  "reference_generator_sha256": "f401cf990a02daf0394e61874ae29a7e33fd3db8adfd32bf23aac683272355c6",
+  "initial_6330_reuse_sha256": "bc5946d52dd1b6ae6561eff412d6152bd183700934d4064930f22b0b47754ad9",
+  "initial_6330_words": 78,
+  "direct_msl_callers": {
+    "0x9f1c": [
+      "0x4150",
+      "0xa410"
+    ],
+    "0x959c": [
+      "0x9fc8",
+      "0xa054"
+    ],
+    "0x3fcc": [
+      "0x4674",
+      "0x6384",
+      "0xa440"
+    ]
+  },
+  "historical_required_names": 34,
+  "limits": "Independent source/math/ownership review plus saved-artifact authentication. No candidate/reference rerun/build,source retail execution,heard audio or full pause/envelope/device/game acceptance."
+}
