@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_raster_registration.exe",
+    "."
+  ],
+  "exit": 0,
+  "deadline_seconds": 90,
+  "seconds": 0.3831730000092648,
+  "executable_sha256": "4f6fea833d4e3cd5625986357f0f06d76da7a53aae7eef25a6823707f573e7c6",
+  "log_sha256": "2f0cd2dbd357a45f80bf38c4da722ce811712484c7256b1ea015268bda40917e",
+  "source_commit": "77e58be423c3cf62071a3268c45dfb2218d605a4",
+  "tracked_status": "M cmake/native_game.cmake\n M runtime/include/mka/retail_renderer_core.hpp",
+  "source_manifest_sha256": "e9d97572470bf5fd060c6ce9258e249a81ca6e031abc627d9868a87454768c88",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "706dae305fa5122aafd8e2aa001b2eb743923cf842c6138f3c3d78c7cd830642",
+  "runner_sha256": "e3e2fa6180114acc7539e7a17235518ca95a3173f743879cc0b80336a5179892",
+  "process_temp": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\opencode",
+  "phase": "client",
+  "game_run": false,
+  "visible_window": false,
+  "audio_endpoint": false,
+  "acceptance": "OPEN"
+}

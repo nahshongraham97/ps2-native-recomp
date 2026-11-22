@@ -1,0 +1,30 @@
+{
+  "platform": "xbox",
+  "image_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "functions": {
+    "002c7670": {
+      "instructions": 2,
+      "listing_sha256": "ca8b4427a79b47a593c1e2889ee8f161bc3b1c7d6655627a88dbf47e31040639",
+      "original_spans": [
+        {
+          "vma": "0x2c7670",
+          "length": 5,
+          "section": ".text",
+          "file_offset": 2848368,
+          "file_backed": true,
+          "bytes_hex": "b838695a00"
+        },
+        {
+          "vma": "0x2c7675",
+          "length": 1,
+          "section": ".text",
+          "file_offset": 2848373,
+          "file_backed": true,
+          "bytes_hex": "c3"
+        }
+      ],
+      "gaps": []
+    }
+  },
+  "scope": "original listed-byte identity only; full-span coverage/ABI/semantics reviewed separately"
+}

@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_images.exe",
+    "research/runs/native-xbox-renderer-0406-implementation-20261122/images-01/fixtures",
+    "research/runs/native-xbox-renderer-0406-implementation-20261122/gamma-one-expected.json"
+  ],
+  "exit": 0,
+  "deadline_seconds": 90,
+  "seconds": 0.12140949998865835,
+  "executable_sha256": "c872dc527023392daab52d9b51892cc276b5272b5f2f0696ff9597796be380a9",
+  "log_sha256": "98b66d6149ed8dcc15b31f0795f6ad318cc69d5adf792b1f9693f4311846a752",
+  "source_commit": "77e58be423c3cf62071a3268c45dfb2218d605a4",
+  "tracked_status": "M cmake/native_game.cmake\n M runtime/include/mka/retail_renderer_core.hpp",
+  "source_manifest_sha256": "abf458377b78111eb9eb9ef46a246f4eea01edc52e2e3b55957564f1dae215b6",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "706dae305fa5122aafd8e2aa001b2eb743923cf842c6138f3c3d78c7cd830642",
+  "runner_sha256": "e3e2fa6180114acc7539e7a17235518ca95a3173f743879cc0b80336a5179892",
+  "process_temp": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\opencode",
+  "phase": "client",
+  "game_run": false,
+  "visible_window": false,
+  "audio_endpoint": false,
+  "acceptance": "OPEN"
+}

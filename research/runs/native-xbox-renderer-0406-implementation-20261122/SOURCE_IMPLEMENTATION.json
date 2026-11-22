@@ -1,0 +1,63 @@
+{
+  "status": "SOURCE_DERIVED_0406_IMPLEMENTATION_SELECTION",
+  "input_sha256": {
+    "xbox": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+    "ps2": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f"
+  },
+  "prior_recovery_authentication_sha256": "1a86fc3b47b2158e37d73814fc76c93c1736fa35de9ded846899eb74a9d96848",
+  "listings": {
+    "research/runs/native-xbox-renderer-0406-20261122/source-ps2-01/001a7de0.asm": "16f9e41c93dd0239c1766118c620dd3447eb6f5b032e049580f5017c569622f8",
+    "research/runs/native-xbox-renderer-0406-20261122/source-ps2-01/001a8000.asm": "898e49157d71a89577e7a3af9324d29b91a30fc698402760b1455c9897af9563",
+    "research/runs/native-xbox-renderer-0406-20261122/source-ps2-02/001a8380.asm": "d2201b47e0aae73a3c40e2d3964c094fd649c62508c21f5237d5b07915799462",
+    "research/runs/native-xbox-renderer-0406-20261122/source-ps2-05/001a8190.asm": "9a0c46ca97fab3305f99c30fa860523951bd9dfd45d2fbc8be49511b9f42503b",
+    "research/runs/native-xbox-renderer-0406-20261122/source-ps2-06/001a8240.asm": "37cf4464c1c2b6006bc3cde16b112d1f670823a10ced7b45ae5a544e43b2df30",
+    "research/runs/native-xbox-renderer-0406-20261122/source-ps2-07/001a82b0.asm": "743e3f508f168f231e07481a2d479827136e6ea17e24eb4838acd7c037b82099",
+    "research/runs/native-xbox-renderer-0406-20261122/source-xbox-01/002bbc00.asm": "3570b1bd2298107ce429dc35a41dc969d7d855178905f85f862f343f7f9cdc96",
+    "research/runs/native-xbox-renderer-0406-20261122/source-xbox-01/002bce10.asm": "fca29cc4ce184e8cdb6fecc5930209ec2dffe9e1302adb9bc7f737a5869f25b5",
+    "research/runs/native-xbox-renderer-0406-20261122/source-xbox-02/002bcd60.asm": "23cca15c8e86334d5bc371dec10a5d8b30b43d9fc1628249a9c731689df59aab",
+    "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03/002bbce0.asm": "552f48ee6320cb2fa427104f44d00fe67de7c2e62b66a69d76c09f17f5d65fb8",
+    "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03/002bbdd0.asm": "ac16ff0e10e348ccf2fda8757866cf7754577a1a957bd0a94cec847de9970afe",
+    "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03/002bbe30.asm": "62c02450723241315e4c6d38a6a7bbd901a9297cf20f33d9c968be52536cefb5",
+    "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03/002bc1d0.asm": "2333ee6127930b1da9ac0338fbd08b18207325edc5528ad414587b533d4d2fba",
+    "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03/002bc2b0.asm": "cd223363174dfefb03903a40440680497c15a3a041f5ce7935523946cffb9037",
+    "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03/002bc410.asm": "3ba57636839eee0c892b6f10bdd85c33509d1c8a3f2570dea75be5be91ac6651",
+    "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03/002bc590.asm": "504751052d94a68e3eec24b7205408a718fc6fd87f1fa1a4a67705449dcaee84",
+    "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03/002bcfc0.asm": "584f1aca8d1c0a6c49b319fbf888ce536d7db6f5782644610f83df9105f882d6",
+    "research/runs/native-xbox-renderer-0406-20261122/source-xbox-04/002bbe90.asm": "a853984dd412b11ddaedb2c1b4971254897519a53c43d5cf26034aacfb20d038",
+    "research/runs/native-xbox-renderer-0406-20261122/source-xbox-05/002bcc40.asm": "a66da430fd4b89178a3a2795f0362f955b79a294d448d20c266f50cdb55626a2",
+    "research/runs/native-xbox-renderer-0406-20261122/source-xbox-05/002bfeb0.asm": "1e2b3b0a8f7b306bac15c1ec53784e654667ad941d9cb90e03015316161fdc9c",
+    "research/runs/native-xbox-renderer-0406-implementation-20261122/source-init-01/002bc3e0.asm": "aa77f4aafb19d97cf9b9bfd831ac21c18c5132bbeb6d2073577cdeff202fc0d3",
+    "research/runs/native-xbox-renderer-0406-implementation-20261122/source-init-02/002c0dd0.asm": "9960ad4df7b100dc41a4b2a1bca348eebce227a4a6e6a38ea898e5a8a660a7c0",
+    "research/runs/native-xbox-renderer-0406-implementation-20261122/source-init-02/002ccec0.asm": "d7c70b62f09e2d48166c2217726de9842d0e9076d404e91bc5b0499151534bde",
+    "research/runs/native-xbox-renderer-0406-implementation-20261122/source-init-03/002bfe30.asm": "d11f33267bb844590edf3690a715b3b0f1b218356077e304c5cd89aaa1e0645c",
+    "research/runs/native-xbox-renderer-0406-implementation-20261122/source-init-03/002c04f0.asm": "74b9a7f3a7721632537a0d2392c62ac67bddbd918b45a9533f5d1c94ea5e7fc7",
+    "research/runs/native-xbox-renderer-0406-implementation-20261122/source-init-03/002c0da0.asm": "bdb5601a0493a6b66897bcb4376c8621e24c048c26285e3de92e348d2ec61b9c",
+    "research/runs/native-xbox-renderer-0406-implementation-20261122/source-init-03/002cce20.asm": "356e1686f4a8769b4310b7b30be37c74dceede92ff27d0572ab9622bbb7d9ef8",
+    "research/runs/native-xbox-renderer-0406-implementation-20261122/source-init-03/002cce50.asm": "966e96a0f53837f9fa723687cbacf3f5aa418793cf9279301b3eac4339e64b52",
+    "research/runs/native-xbox-renderer-0406-implementation-20261122/source-init-04/002c0250.asm": "a5a913a3d20ddf1cf9b8298ea995891f974a47074748f689792ecaff75b34518",
+    "research/runs/native-xbox-renderer-0406-implementation-20261122/source-init-04/002c0310.asm": "79b7b95c38b97406c02a92475743e1c6e4bdf8e6904f5e7dbb5c9af5b03485a1",
+    "research/runs/native-xbox-renderer-0406-implementation-20261122/source-init-05/002c7670.asm": "ca8b4427a79b47a593c1e2889ee8f161bc3b1c7d6655627a88dbf47e31040639",
+    "research/runs/native-xbox-renderer-0406-implementation-20261122/source-init-06/002c7370.asm": "505138e4df665fd05b248e8811c1a50799eae3acf651215e06f245f2078d55bd",
+    "research/runs/native-xbox-renderer-0403-20261122/source-0403-04/002c2b90.asm": "e872c589d5f1e6f41f2b94ab70eb649bed92a074cde9c8309abda52c9ffe500a",
+    "research/runs/native-xbox-renderer-0403-20261122/source-0403-04/002c2bf0.asm": "1567b2f7be1dec46c7600099d19ac08d97ad3051aa5829a0cd0721221da0e80b"
+  },
+  "device_descriptor_sha256": "6e696db93166fe64e50d9b7784ab4c6dec33c5cd9f102e468c20b4c7af3ccf4b",
+  "device_copy_switch_sha256": "91e2c474147360ee17bb121392590c96463d2158f6b1d75d36004414b8569c03",
+  "gamma_expected_sha256": "f5469388a51d6a42f43dfcb2875c4d79f0bc3ee5df5e2207f519aed435db996d",
+  "manual_sha256": "104205afc6f5a5071168d8bf693a6c8b4db9a02e1aa66eb51a828e8951f5c069",
+  "manual_text_sha256": "a908095a2fd871274ba4a5028117cc398f5f512d23ee0e34f236f982d4da1da2",
+  "manual_reference": "EE Core Instruction Set Manual v6 p356 CVT.W.S;p357 DIV.S; not generic TX79 rounding rules",
+  "native_before": {
+    "runtime/include/mka/retail_renderer_core.hpp": "71a85e1204da44bb296e80c9b003637c0bc6fa60494f2baca0451ab9a7be235e",
+    "cmake/native_game.cmake": "949aba9b617bc8de8ac74cd01f27da655402c910de0f9348696048f3e33e3081"
+  },
+  "selected_gamma_domain": "exact positive1.0 from actual Xbox descriptor/current callers; non1 fails by name",
+  "callbacks": "typed host callouts; forward init/reverse rollback; image birth preserves ignored registry refusal; reverse destruction; real content exists/read predicate",
+  "limitations": [
+    "non1 gamma numerical/oracle parity",
+    "concrete new format codecs and image plugins must supply actual implementations",
+    "raster/GPU/game acceptance"
+  ],
+  "implementation": "NOT_YET_EDITED",
+  "acceptance": "OPEN"
+}

@@ -1,0 +1,12 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "data": [
+    {
+      "vma": "0x2c7608",
+      "length": 92,
+      "section": ".text",
+      "file_offset": 2848264,
+      "bytes_hex": "ef742c00fe752c0086752c0090752c00ca742c00f8732c000e742c0088732c00fe752c005b752c00b4742c00b8752c005b752c00fd742c0011752c0062752c0076752c005b752c00cc752c00e1752c005b752c005b752c00f5752c00"
+    }
+  ]
+}
