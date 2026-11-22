@@ -1,0 +1,144 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "queries": {
+    "fn=002bb3f0": {
+      "mapping": {
+        "vma": "0x2bb3f0",
+        "length": 96,
+        "file_offset": 2798576,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "568b742408837e1401750ee8b0f7ffff8bc6e8a9ecffffeb0ce852feffff8bc6e83bf9ffff6a088d8624010000508d8e0c01000051e8861e010083c40c8bc65ec3cccccccccccccccccccccccccccccca1b0538300568b7424086a00566a00ff"
+    },
+    "fn=002bb470": {
+      "mapping": {
+        "vma": "0x2bb470",
+        "length": 96,
+        "file_offset": 2798704,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "568b742408893540538300e8b0210100a18c5383006a00566a00ffd083c40c85c0740d56e8e7e3000083c4048bc65ec333c05ec3cccccccccccccccccccccccca154735c008b804053830085c0741950e8fb8a00008b0d54735c0083c404c781"
+    },
+    "fn=002bb440": {
+      "mapping": {
+        "vma": "0x2bb440",
+        "length": 96,
+        "file_offset": 2798656,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "a1b0538300568b7424086a00566a00ffd083c40c85c0740e8bc6c70540538300000000005ec333c05ec3cccccccccccc568b742408893540538300e8b0210100a18c5383006a00566a00ffd083c40c85c0740d56e8e7e3000083c4048bc65ec3"
+    },
+    "fn=002c04d0": {
+      "mapping": {
+        "vma": "0x2c04d0",
+        "length": 96,
+        "file_offset": 2819280,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "8b4424048b480485c974118b480c8b500889118b48088b500c895104c3cccccc8b54240883ec0881fa000001005676276a32c744240801000000e8f11e00008944240c8d44240850e8531e000083c40833c05e83c408c3a1205383008b742410"
+    },
+    "fn=0007f0f0": {
+      "mapping": {
+        "vma": "0x7f0f0",
+        "length": 96,
+        "file_offset": 454896,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "558bec83ec106a056a208b4510508b4d0c51e849ad230083c4108945fc837dfc000f84fc0000006a016a008b5510528b450c50e828ad230083c4108945f8837df8000f84cf000000e8330024008945f4837df4000f84b1000000e811c8230089"
+    },
+    "fn=00236410": {
+      "mapping": {
+        "vma": "0x236410",
+        "length": 96,
+        "file_offset": 2253840,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "558bec83ec08e8455508008945fc837dfc007454e8478d0800508b45fc50e84da0080083c4088b4dfc8379040074396a016a008b5508528b450850e8003a080083c4108945f8837df800741c8b4dfc8b55f88951646a028b45fc50e890530800"
+    },
+    "ref=00835358:8": {
+      "mapping": {
+        "vma": "0x835358",
+        "length": 8,
+        "section": ".data"
+      },
+      "file_backed": false,
+      "loader_zero_initialized": true
+    },
+    "data=004d7cb8:8": {
+      "mapping": {
+        "vma": "0x4d7cb8",
+        "length": 8,
+        "file_offset": 5022936,
+        "section": ".rdata"
+      },
+      "file_backed": true,
+      "bytes_hex": "cdcc4c3d00002041"
+    },
+    "data=004d7c64:4": {
+      "mapping": {
+        "vma": "0x4d7c64",
+        "length": 4,
+        "file_offset": 5022852,
+        "section": ".rdata"
+      },
+      "file_backed": true,
+      "bytes_hex": "0000a040"
+    },
+    "data=004dd748:4": {
+      "mapping": {
+        "vma": "0x4dd748",
+        "length": 4,
+        "file_offset": 5046120,
+        "section": ".rdata"
+      },
+      "file_backed": true,
+      "bytes_hex": "17b7d138"
+    },
+    "data=0050b14c:8": {
+      "mapping": {
+        "vma": "0x50b14c",
+        "length": 8,
+        "file_offset": 5233004,
+        "section": ".rdata"
+      },
+      "file_backed": true,
+      "bytes_hex": "cdcca04143d44dbd"
+    },
+    "data=004d7c30:4": {
+      "mapping": {
+        "vma": "0x4d7c30",
+        "length": 4,
+        "file_offset": 5022800,
+        "section": ".rdata"
+      },
+      "file_backed": true,
+      "bytes_hex": "0000003f"
+    },
+    "data=004d7b54:4": {
+      "mapping": {
+        "vma": "0x4d7b54",
+        "length": 4,
+        "file_offset": 5022580,
+        "section": ".rdata"
+      },
+      "file_backed": true,
+      "bytes_hex": "0000803f"
+    },
+    "ref=005a6718:24": {
+      "mapping": {
+        "vma": "0x5a6718",
+        "length": 24,
+        "file_offset": 5873304,
+        "section": ".data"
+      },
+      "file_backed": true,
+      "bytes_hex": "900100009001000000000000000000000000000000000000"
+    }
+  }
+}

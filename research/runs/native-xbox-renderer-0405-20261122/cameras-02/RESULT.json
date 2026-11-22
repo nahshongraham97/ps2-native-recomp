@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_cameras.exe",
+    ".",
+    "research/runs/native-xbox-renderer-0405-20261122/depth-expected.tsv"
+  ],
+  "exit": 0,
+  "deadline_seconds": 90,
+  "seconds": 0.3420114000036847,
+  "executable_sha256": "5103383e5e042e8d1e3d951e13a94e49390969dc0a87f309196908a30013cf1b",
+  "log_sha256": "8624888017a4532e1134f22515e4778b243151bf2318a6371142c744fc4a9e83",
+  "source_commit": "0218826aa8c7cd2d80f5787edfaf491dd5352dbd",
+  "tracked_status": "M cmake/native_game.cmake\n M runtime/include/mka/retail_renderer_core.hpp",
+  "source_manifest_sha256": "91dbc25a7edb24e28318feefdd76194c76ceb5d13d0d5af36cf41d6190c16bd8",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "706dae305fa5122aafd8e2aa001b2eb743923cf842c6138f3c3d78c7cd830642",
+  "runner_sha256": "30537b1df41dee58f3e4e100ebd812e7df61b63a6e587e164673218cb429862d",
+  "process_temp": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\opencode",
+  "phase": "client",
+  "game_run": false,
+  "visible_window": false,
+  "audio_endpoint": false,
+  "acceptance": "OPEN"
+}

@@ -242,6 +242,7 @@ if(WIN32)
         runtime/src/native/retail_renderer_raster_registration.cpp
         runtime/src/native/retail_renderer_frames.cpp
         runtime/src/native/retail_renderer_streams.cpp
+        runtime/src/native/retail_renderer_cameras.cpp
         runtime/src/native/retail_renderer_transforms.cpp
         runtime/src/native/retail_renderer_matrix.cpp
         runtime/src/native/retail_first_scene_core.cpp runtime/src/native/retail_first_scene_allocator.cpp runtime/src/native/retail_camera_world.cpp
@@ -473,6 +474,8 @@ target_link_libraries(test_native_retail_renderer_frames PRIVATE mka_native_reta
 add_executable(test_native_retail_renderer_streams EXCLUDE_FROM_ALL tests/test_retail_renderer_streams.cpp)
 target_link_libraries(test_native_retail_renderer_streams PRIVATE mka_native_retail_startup)
 target_link_options(test_native_retail_renderer_streams PRIVATE "-Wl,--wrap=fclose" "-Wl,--wrap=fread")
+add_executable(test_native_retail_renderer_cameras EXCLUDE_FROM_ALL tests/test_retail_renderer_cameras.cpp)
+target_link_libraries(test_native_retail_renderer_cameras PRIVATE mka_native_retail_startup)
 
 add_executable(test_native_retail_renderer_allocator EXCLUDE_FROM_ALL tests/test_retail_renderer_allocator.cpp)
 target_link_libraries(test_native_retail_renderer_allocator PRIVATE mka_native_retail_startup)
@@ -483,7 +486,7 @@ target_link_libraries(test_native_retail_sound_metadata PRIVATE mka_native_retai
 if(WIN32)
     foreach(_native_startup_client test_native_retail_crt test_native_retail_startup test_native_retail_main_timing
         test_native_retail_scene_bootstrap_prefix test_native_retail_sound_metadata test_native_retail_camera_bootstrap test_native_retail_main_frame_gates test_native_retail_renderer_allocator test_native_retail_renderer_core test_native_retail_renderer_matrix test_native_retail_input_admission test_native_retail_arcade_reset test_native_retail_initial_reset_arcade
-        test_native_retail_package test_native_retail_package_errors test_native_retail_reset_sound test_native_retail_renderer_raster_registration test_native_retail_renderer_frames test_native_retail_renderer_streams)
+        test_native_retail_package test_native_retail_package_errors test_native_retail_reset_sound test_native_retail_renderer_raster_registration test_native_retail_renderer_frames test_native_retail_renderer_streams test_native_retail_renderer_cameras)
         add_custom_command(TARGET ${_native_startup_client} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2>
                 $<TARGET_FILE_DIR:${_native_startup_client}> VERBATIM)

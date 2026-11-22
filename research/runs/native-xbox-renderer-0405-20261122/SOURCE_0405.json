@@ -1,0 +1,185 @@
+{
+  "status": "SOURCE_DERIVED_0405_CAMERA_RESOURCE_BASE_SCOPE",
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "functions": {
+    "002bb510": {
+      "listing": "research/runs/native-xbox-scene-frame-20261122/source-module-callbacks-09/002bb510.asm",
+      "listing_sha256": "c1293d62670e53a60dc0b584f32ba3b3015722251f5ae6a3eb3cb8de1db46ce0",
+      "join_sha256": "0e9d2d85fcef94e32337f27957c74d28aed9570b80e74376e4c872106d7e05b1",
+      "inclusive_range": [
+        "002bb510",
+        "002bb55c"
+      ],
+      "instructions": 21,
+      "unlisted_gaps": []
+    },
+    "002bb4b0": {
+      "listing": "research/runs/native-xbox-scene-frame-20261122/source-module-callbacks-09/002bb4b0.asm",
+      "listing_sha256": "40ae94f392f951cd6b7523e26d65ec0444221a76b5aaf757dc4be3611908c03c",
+      "join_sha256": "0e9d2d85fcef94e32337f27957c74d28aed9570b80e74376e4c872106d7e05b1",
+      "inclusive_range": [
+        "002bb4b0",
+        "002bb4e2"
+      ],
+      "instructions": 12,
+      "unlisted_gaps": []
+    },
+    "002bb960": {
+      "listing": "research/runs/native-xbox-renderer-0405-20261122/source-0405-02/002bb960.asm",
+      "listing_sha256": "ff8ba08db927232f23dc7fcd0fe32c9bc201693404839d5700ae00f4404de0ef",
+      "join_sha256": "3dc828775899c8000cf9cb760be9482ded33636b290394640e4954a4bf450f92",
+      "inclusive_range": [
+        "002bb960",
+        "002bba81"
+      ],
+      "instructions": 62,
+      "unlisted_gaps": []
+    },
+    "002bb920": {
+      "listing": "research/runs/native-xbox-renderer-0405-20261122/source-0405-02/002bb920.asm",
+      "listing_sha256": "a85ed35edc45779468eb8f718873578d698a297d92a57d8cfaa872a4669ec7b0",
+      "join_sha256": "3dc828775899c8000cf9cb760be9482ded33636b290394640e4954a4bf450f92",
+      "inclusive_range": [
+        "002bb920",
+        "002bb952"
+      ],
+      "instructions": 16,
+      "unlisted_gaps": []
+    },
+    "002c04d0": {
+      "listing": "research/runs/native-xbox-renderer-0405-20261122/source-0405-03/002c04d0.asm",
+      "listing_sha256": "9b3f1caf5d5c6d469394429b170a03150f7127a1006c17256adf4c6acf9f3c1e",
+      "join_sha256": "0d2fd7eb2aa710246c0f4969a1da42ae6d7bf7097461a6ced57e49dcec352ae1",
+      "inclusive_range": [
+        "002c04d0",
+        "002c04ec"
+      ],
+      "instructions": 11,
+      "unlisted_gaps": []
+    },
+    "002bb870": {
+      "listing": "research/runs/native-xbox-renderer-0405-20261122/source-0405-04/002bb870.asm",
+      "listing_sha256": "1d6d40b2e87b7695acf1439d671c89bb1cfee6b339d58a1b3f05cc8b7abed8a7",
+      "join_sha256": "9d3f3bdc513e636324a06206c604f4c50188ef83086d2e2f3b12cede3521557f",
+      "inclusive_range": [
+        "002bb870",
+        "002bb8b6"
+      ],
+      "instructions": 22,
+      "unlisted_gaps": []
+    }
+  },
+  "data": {
+    "0x5a6718": {
+      "vma": "0x5a6718",
+      "length": 32,
+      "file_offset": 5873304,
+      "section": ".data",
+      "bytes_hex": "9001000090010000000000000000000000000000000000000400000001000000"
+    },
+    "0x4d7b54": {
+      "vma": "0x4d7b54",
+      "length": 4,
+      "file_offset": 5022580,
+      "section": ".rdata",
+      "bytes_hex": "0000803f"
+    },
+    "0x4d7cb8": {
+      "vma": "0x4d7cb8",
+      "length": 8,
+      "file_offset": 5022936,
+      "section": ".rdata",
+      "bytes_hex": "cdcc4c3d00002041"
+    },
+    "0x4d7c64": {
+      "vma": "0x4d7c64",
+      "length": 4,
+      "file_offset": 5022852,
+      "section": ".rdata",
+      "bytes_hex": "0000a040"
+    },
+    "0x4dd748": {
+      "vma": "0x4dd748",
+      "length": 4,
+      "file_offset": 5046120,
+      "section": ".rdata",
+      "bytes_hex": "17b7d138"
+    },
+    "0x50b14c": {
+      "vma": "0x50b14c",
+      "length": 8,
+      "file_offset": 5233004,
+      "section": ".rdata",
+      "bytes_hex": "cdcca04143d44dbd"
+    },
+    "0x4d7c30": {
+      "vma": "0x4d7c30",
+      "length": 4,
+      "file_offset": 5022800,
+      "section": ".rdata",
+      "bytes_hex": "0000003f"
+    }
+  },
+  "native_before": {
+    "runtime/include/mka/retail_renderer_core.hpp": "4ea99e117a37a183d17cf6e64453678aa539ba6fcc94f8baf1253ed81d967064",
+    "cmake/native_game.cmake": "3dc8b5987687a86dca0051564d0c8ac58531b8eb4a06eef8e8147ee8333762f5"
+  },
+  "depth_cases": [
+    {
+      "device_near_bits": 0,
+      "device_far_bits": 1065353216,
+      "scale_bits": 3175991737,
+      "shift_bits": 1065394522
+    },
+    {
+      "device_near_bits": 1065353216,
+      "device_far_bits": 0,
+      "scale_bits": 1028508089,
+      "shift_bits": 3147913856
+    },
+    {
+      "device_near_bits": 3212836864,
+      "device_far_bits": 1065353216,
+      "scale_bits": 3184380346,
+      "shift_bits": 1065435830
+    },
+    {
+      "device_near_bits": 1040187392,
+      "device_far_bits": 1063256064,
+      "scale_bits": 3172620107,
+      "shift_bits": 1063318024
+    },
+    {
+      "device_near_bits": 0,
+      "device_far_bits": 0,
+      "scale_bits": 2147483648,
+      "shift_bits": 0
+    },
+    {
+      "device_near_bits": 1056964608,
+      "device_far_bits": 1056964608,
+      "scale_bits": 2147483648,
+      "shift_bits": 1056964608
+    },
+    {
+      "device_near_bits": 1056964609,
+      "device_far_bits": 1056964610,
+      "scale_bits": 2974667843,
+      "shift_bits": 1056964611
+    }
+  ],
+  "expected_rounding": "binary32 nearest-even per source SSE operation",
+  "selected_scope": "real0405 owner; explicitly supplied depth inputs; source base-camera defaults/window update/destroy; initial empty camera registry",
+  "production_depth_provider": "OPEN_REQUIRED_EXPLICIT_INPUT_NOT_ASSUMED_FROM_BSS_OR_UNRELATED_INDEXED_FIELDS",
+  "unadopted": [
+    "nonempty camera plugins",
+    "frame/raster/world attachment",
+    "sync/view/frustum derivation",
+    "begin/end device/current-camera effects",
+    "clone/clip/projection setters",
+    "renderer/game acceptance"
+  ],
+  "verification_scope": "source-derived before native edit",
+  "owner_action": "none",
+  "acceptance": "OPEN"
+}

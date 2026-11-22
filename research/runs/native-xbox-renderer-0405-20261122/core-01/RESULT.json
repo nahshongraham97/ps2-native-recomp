@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_core.exe",
+    "research/runs/parallel-renderer-engine-init-20261122"
+  ],
+  "exit": 0,
+  "deadline_seconds": 90,
+  "seconds": 0.2785143000073731,
+  "executable_sha256": "593fed86220a138257a1af7bf6e7da520c7a9aae6aace969c9c4f26aa7c2a777",
+  "log_sha256": "7d64e1cf5d24d6ffb751ec174c7fd8e67a19623b31c40eac955eaff032f705ec",
+  "source_commit": "0218826aa8c7cd2d80f5787edfaf491dd5352dbd",
+  "tracked_status": "M cmake/native_game.cmake\n M runtime/include/mka/retail_renderer_core.hpp",
+  "source_manifest_sha256": "bcb360a330beaccca671826370a0aad367983f76b4b26786e4af9c0cb9588470",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "706dae305fa5122aafd8e2aa001b2eb743923cf842c6138f3c3d78c7cd830642",
+  "runner_sha256": "30537b1df41dee58f3e4e100ebd812e7df61b63a6e587e164673218cb429862d",
+  "process_temp": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\opencode",
+  "phase": "client",
+  "game_run": false,
+  "visible_window": false,
+  "audio_endpoint": false,
+  "acceptance": "OPEN"
+}
