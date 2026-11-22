@@ -1,4 +1,5 @@
 #include "mka/retail_renderer_core.hpp"
+#include "mka/retail_renderer_transforms.hpp"
 #include "mka/retail_main.hpp"
 #include "mka/retail_scene_bootstrap_required.hpp"
 #include "native_retail_startup.hpp"
@@ -23,9 +24,9 @@ int events[256]{};unsigned failed_plugin{};bool allow_plugin_fixtures{},recursiv
 void event(int value)noexcept{if(event_count>=256)std::abort();events[event_count++]=value;}
 bool fixture_construct(unsigned id,NativeRetailRendererCore& core,RetailRendererCoreFailure& f){
  if(!allow_plugin_fixtures)std::abort();event(static_cast<int>(id));
- if(id==0x401){RetailRendererCoreFailure nested;auto r=core.register_factory({123,0},{construct_native_renderer_error,destroy_native_renderer_error},nested);recursive_refused=!r&&nested.kind==RetailRendererCoreError::reentrant;}
- if(id==0x401&&callback_transfer_main)reenter_native_retail_main(*callback_transfer_main,23);
- if(id==0x401&&callback_native_exception)throw std::runtime_error("test-only native constructor exception");
+ if(id==0x402){RetailRendererCoreFailure nested;auto r=core.register_factory({123,0},{construct_native_renderer_error,destroy_native_renderer_error},nested);recursive_refused=!r&&nested.kind==RetailRendererCoreError::reentrant;}
+ if(id==0x402&&callback_transfer_main)reenter_native_retail_main(*callback_transfer_main,23);
+ if(id==0x402&&callback_native_exception)throw std::runtime_error("test-only native constructor exception");
  return id!=failed_plugin;
 }
 void fixture_destroy(unsigned id)noexcept{if(!allow_plugin_fixtures)std::abort();event(-static_cast<int>(id));}
@@ -41,9 +42,27 @@ struct Fixture {
  std::shared_ptr<NativeRetailRendererCore> core(){auto c=NativeRetailRendererCore::for_session(startup.game_session,allocator,startup.content,f);check(bool(c),f.operation);return c;}
 };
 }
+namespace {unsigned default_calls[4]{};unsigned custom_calls{};
+NativeRetailRendererTransforms* transform_probe{};NativeRetailRendererCore* transform_core{};NativeRetailMainState* transform_main{};
+std::shared_ptr<NativeRetailRendererTransforms>* release_transform_owner{};
+int transform_mode{};bool nested_transform_refused{};const void* observed_in{};const void* observed_out{};const void* observed_matrix{};
+void custom_one(RetailRendererPoint3& out,const RetailRendererPoint3& in,const RetailRendererAffine& matrix){
+ ++custom_calls;observed_in=&in;observed_out=&out;observed_matrix=&matrix;
+ if(transform_mode==1){RetailRendererCoreFailure f;const bool setter=transform_probe->set_callbacks({},f);const bool setter_reentry=!setter&&f.kind==RetailRendererCoreError::reentrant;const bool nested=transform_probe->point(out,in,matrix,f);nested_transform_refused=setter_reentry&&!nested&&f.kind==RetailRendererCoreError::reentrant;}
+ if(transform_mode==2)reenter_native_retail_main(*transform_main,31);
+ if(transform_mode==3)throw std::runtime_error("explicit transform fixture native failure");
+ if(transform_mode==4){if(release_transform_owner)release_transform_owner->reset();RetailRendererCoreFailure f;check(transform_core->destroy_constructed(f),"actual retirement inside typed callback");}
+ out=in;
+}
+void custom_many(std::span<RetailRendererPoint3> out,std::span<const RetailRendererPoint3> in,const RetailRendererAffine& matrix){++custom_calls;observed_in=in.data();observed_out=out.data();observed_matrix=&matrix;for(std::size_t i=0;i<in.size();++i)out[i]=in[i];}
+}
 namespace mka::retail::renderer_required {
-bool construct_core_plugin_0401(NativeRetailRendererCore& c,RetailRendererCoreFailure& f){return fixture_construct(0x0401,c,f);}
-void destroy_core_plugin_0401(NativeRetailRendererCore&)noexcept{fixture_destroy(0x0401);}
+// Explicit unresolved-math fixtures: test dispatch/alias/lifetime only,not EE math.
+void transform_point_exact(RetailRendererPoint3& o,const RetailRendererPoint3& i,const RetailRendererAffine& m){++default_calls[0];custom_one(o,i,m);}
+void transform_points_exact(std::span<RetailRendererPoint3> o,std::span<const RetailRendererPoint3> i,const RetailRendererAffine& m){++default_calls[1];custom_many(o,i,m);}
+void transform_vector_exact(RetailRendererPoint3& o,const RetailRendererPoint3& i,const RetailRendererAffine& m){++default_calls[2];custom_one(o,i,m);}
+void transform_vectors_exact(std::span<RetailRendererPoint3> o,std::span<const RetailRendererPoint3> i,const RetailRendererAffine& m){++default_calls[3];custom_many(o,i,m);}
+
 bool construct_core_plugin_0402(NativeRetailRendererCore& c,RetailRendererCoreFailure& f){return fixture_construct(0x0402,c,f);}
 void destroy_core_plugin_0402(NativeRetailRendererCore&)noexcept{fixture_destroy(0x0402);}
 bool construct_core_plugin_0403(NativeRetailRendererCore& c,RetailRendererCoreFailure& f){return fixture_construct(0x0403,c,f);}
@@ -91,9 +110,52 @@ bool continue_scene_reset_at_125d60(NativeRetailMainState&,StartupFailure&){std:
 static_assert(!std::is_copy_constructible_v<NativeRetailRendererCore>);
 static_assert(!std::is_move_constructible_v<NativeRetailRendererCore>);
 static_assert(!std::is_default_constructible_v<NativeRetailRendererCore>);
+static_assert(!std::is_copy_constructible_v<NativeRetailRendererTransforms>);
+static_assert(!std::is_move_constructible_v<NativeRetailRendererTransforms>);
+static_assert(!std::is_default_constructible_v<NativeRetailRendererTransforms>);
 int main(int argc,char** argv)try{
  check(argc==2,"existing root for CPU-only components");const std::filesystem::path path(argv[1]);
  Fixture x(path);auto core=x.core();check(core==x.core(),"Session persists same core identity");check(core->allocator_identity()==x.allocator->owner_identity(),"existing actual Permanent heap");
+ Fixture transforms_fixture(path);auto tcore=transforms_fixture.core();
+ check(!tcore->transforms(transforms_fixture.f)&&*tcore->module_0401_count(transforms_fixture.f)==0,"actual BSS count and no transform module before constructor");
+ check(bool(tcore->register_factory({0x401,24},{renderer_required::construct_core_plugin_0401,renderer_required::destroy_core_plugin_0401},transforms_fixture.f)),"actual0401 registration");
+ fail_new=true;const bool denied=renderer_required::construct_core_plugin_0401(*tcore,transforms_fixture.f);fail_new=false;
+ check(!denied&&transforms_fixture.f.kind==RetailRendererCoreError::allocator&&*tcore->module_0401_count(transforms_fixture.f)==0,"native typed owner allocation failure leaves no published module/count");
+ check(tcore->construct_registered(transforms_fixture.f)&&*tcore->module_0401_count(transforms_fixture.f)==1,"actual0401 constructor installs persistent module and increments count");
+ auto transforms=tcore->transforms(transforms_fixture.f);check(transforms&&transforms==tcore->transforms(transforms_fixture.f),"single authoritative retained module");
+ RetailRendererAffine matrix{};RetailRendererPoint3 value{2,3,4},output{};
+ check(transforms->point(output,value,matrix,transforms_fixture.f)&&output==value&&default_calls[0]==1&&observed_out==&output&&observed_in==&value&&observed_matrix==&matrix,"constructor point default with exact native argument identity");
+ check(transforms->point(value,value,matrix,transforms_fixture.f)&&observed_in==observed_out,"single destination aliases input without a copied adapter");
+ check(transforms->vector(output,value,matrix,transforms_fixture.f)&&default_calls[2]==1,"independent vector default");
+ RetailRendererPoint3 batch[]{{1,2,3},{4,5,6},{7,8,9}};
+ check(transforms->points(batch,batch,matrix,transforms_fixture.f)&&observed_in==observed_out&&default_calls[1]==1,"bulk exact alias forwarded");
+ check(transforms->points(std::span(batch).subspan(1),std::span<const RetailRendererPoint3>(batch,2),matrix,transforms_fixture.f)&&observed_in==batch&&observed_out==batch+1&&batch[2]==batch[0],"overlap is passed directly to ordered fixture kernel without array staging");
+ const auto bulk_before=default_calls[1];check(transforms->points({}, {},matrix,transforms_fixture.f)&&default_calls[1]==bulk_before+1,"source zero count still dispatches once");
+ check(transforms->vectors(batch,batch,matrix,transforms_fixture.f)&&default_calls[3]==1,"independent vectors default");
+ check(!transforms->points({},batch,matrix,transforms_fixture.f)&&transforms_fixture.f.kind==RetailRendererCoreError::construction,"native extent failure before callback");
+ const auto defaults_before=default_calls[0];check(transforms->set_callbacks({custom_one,nullptr,nullptr,custom_many},transforms_fixture.f)&&transforms->point(output,value,matrix,transforms_fixture.f)&&default_calls[0]==defaults_before,"nonnull selection replaces only requested function");
+ check(transforms->vector(output,value,matrix,transforms_fixture.f)&&default_calls[2]==2,"null selection independently restores actual vector default");
+ check(transforms->set_callbacks({},transforms_fixture.f)&&transforms->point(output,value,matrix,transforms_fixture.f)&&default_calls[0]==defaults_before+1,"all-null setter restores all source defaults");
+ for(unsigned mask=0;mask<16;++mask){
+  const unsigned before[]{default_calls[0],default_calls[1],default_calls[2],default_calls[3]};
+  check(transforms->set_callbacks({mask&1?custom_one:nullptr,mask&2?custom_many:nullptr,mask&4?custom_one:nullptr,mask&8?custom_many:nullptr},transforms_fixture.f),"all16 independent native callback selections");
+  check(transforms->point(output,value,matrix,transforms_fixture.f)&&transforms->points({}, {},matrix,transforms_fixture.f)&&transforms->vector(output,value,matrix,transforms_fixture.f)&&transforms->vectors({}, {},matrix,transforms_fixture.f),"all selected native slots invoked");
+  for(unsigned slot=0;slot<4;++slot)check(default_calls[slot]==before[slot]+((mask&(1u<<slot))?0:1),"source per-slot null selects only its own exact default");
+ }
+ check(transforms->set_callbacks({},transforms_fixture.f),"restore defaults before native lifetime cases");
+ transform_probe=transforms.get();transform_mode=1;check(transforms->point(output,value,matrix,transforms_fixture.f)&&nested_transform_refused,"setter and dispatch callback reentry refused without mutation");
+ transform_mode=2;transform_main=&transforms_fixture.main;bool moved=false;try{transforms->point(output,value,matrix,transforms_fixture.f);}catch(const detail::NativeMainReentry& e){moved=e.owner==transform_main&&e.value==31;}transform_mode=0;
+ check(moved&&transforms_fixture.f.kind==RetailRendererCoreError::none&&transforms->point(output,value,matrix,transforms_fixture.f),"actual Main transfer releases guard and leaves persistent transform usable");
+ bool wrong_transform_thread=false;std::thread wrong_transform([&]{RetailRendererCoreFailure f;wrong_transform_thread=!transforms->set_callbacks({},f)&&f.kind==RetailRendererCoreError::wrong_thread;});wrong_transform.join();check(wrong_transform_thread,"actual transform owner thread admission");
+ transform_core=tcore.get();transform_mode=4;check(!transforms->point(output,value,matrix,transforms_fixture.f)&&transforms_fixture.f.kind==RetailRendererCoreError::owner&&*tcore->module_0401_count(transforms_fixture.f)==0,"retirement during callback retains invocation memory but revokes module");transform_mode=0;
+ check(!transforms->point(output,value,matrix,transforms_fixture.f)&&transforms_fixture.f.kind==RetailRendererCoreError::owner,"detached retained retired module cannot dispatch");
+ check(tcore->construct_registered(transforms_fixture.f),"new lifetime after actual destructor");auto replacement=tcore->transforms(transforms_fixture.f);check(replacement&&replacement!=transforms,"fresh typed owner replaces retired identity");
+ transform_mode=3;check(!replacement->point(output,value,matrix,transforms_fixture.f)&&transforms_fixture.f.kind==RetailRendererCoreError::after_effect_unknown,"ordinary transform exception is distinct named after-effect failure");transform_mode=0;
+ check(!replacement->set_callbacks({},transforms_fixture.f)&&transforms_fixture.f.kind==RetailRendererCoreError::after_effect_unknown,"ordinary native transform exception remains blocked");check(tcore->destroy_constructed(transforms_fixture.f),"actual destructor can retire failed transform owner");
+ check(tcore->construct_registered(transforms_fixture.f),"fresh invocation lifetime fixture");auto last_owner=tcore->transforms(transforms_fixture.f);std::weak_ptr<NativeRetailRendererTransforms> last_weak=last_owner;auto* borrowed_invocation=last_owner.get();release_transform_owner=&last_owner;transform_mode=4;
+ check(!borrowed_invocation->point(output,value,matrix,transforms_fixture.f)&&transforms_fixture.f.kind==RetailRendererCoreError::owner&&last_weak.expired(),"in-flight self retention survives callback releasing every external/Core owner then retires after return");release_transform_owner=nullptr;transform_mode=0;
+ Fixture expired_transform(path);auto expired_core=expired_transform.core();check(bool(expired_core->register_factory({0x401,24},{renderer_required::construct_core_plugin_0401,renderer_required::destroy_core_plugin_0401},expired_transform.f))&&expired_core->construct_registered(expired_transform.f),"actual module before Session retirement");auto detached=expired_core->transforms(expired_transform.f);std::weak_ptr<NativeRetailGameSession> expired_session=expired_transform.startup.game_session;expired_transform.startup.game_record_reset.reset();expired_transform.startup.game_session.reset();
+ check(expired_session.expired()&&!detached->point(output,value,matrix,expired_transform.f)&&expired_transform.f.kind==RetailRendererCoreError::owner,"retained native module refuses dead Session independently of module retirement");
  const auto error_callbacks=RetailRendererPluginCallbacks{construct_native_renderer_error,destroy_native_renderer_error};
  check(*core->error_domain_count(x.f)==0,"source BSS modulecount before constructors");
  auto first=core->register_factory({0x40f,8},error_callbacks,x.f);check(bool(first),"actual errorfactory registration");
@@ -124,7 +186,7 @@ int main(int argc,char** argv)try{
  const auto specs=ic->registered(initialization.f);check(specs&&specs->size()==14,"literal return1 no extra pluginrow");for(unsigned i=0;i<14;++i)check((*specs)[i]==expected[i],"independent original registration order/sizeIDs");
  const auto before_tail=tail_calls;check(ic->initialize_core(initialization.f)==false&&tail_calls==before_tail,"actual alreadyinitialized refusal persists");
  allow_plugin_fixtures=true;failed_plugin=0x403;event_count=0;check(!ic->construct_registered(initialization.f)&&*ic->error_domain_count(initialization.f)==0&&*ic->module_040d_count(initialization.f)==0,"source constructor failure reverses prior successes including actual errorfactory");
- const int expected_failure[]{0x401,0x402,0x403,-0x402,-0x401};check(event_count==5,"failed callback itself is not destroyed by source unwind");for(unsigned i=0;i<5;++i)check(events[i]==expected_failure[i],"forward construct/reverse unwind order");check(recursive_refused,"callback registry mutation refused");
+ const int expected_failure[]{0x402,0x403,-0x402};check(event_count==3,"failed callback itself is not destroyed by source unwind");for(unsigned i=0;i<3;++i)check(events[i]==expected_failure[i],"forward construct/reverse unwind order");check(recursive_refused,"callback registry mutation refused");
  failed_plugin=0;event_count=0;check(ic->construct_registered(initialization.f)&&*ic->error_domain_count(initialization.f)==1&&*ic->module_040d_count(initialization.f)==1,"successful source callback protocol with explicitly fixture otherfamilies");check(ic->destroy_constructed(initialization.f)&&*ic->error_domain_count(initialization.f)==0&&*ic->module_040d_count(initialization.f)==0,"reverse explicit teardown");allow_plugin_fixtures=false;
  Fixture callback_transfer(path);auto tc=callback_transfer.core();tail_mode=0;check(tc->initialize_core(callback_transfer.f)==true,"native registry ready before callback Main transfer");allow_plugin_fixtures=true;callback_transfer_main=&callback_transfer.main;bool callback_transferred=false;
  try{tc->construct_registered(callback_transfer.f);}catch(const detail::NativeMainReentry& e){callback_transferred=e.owner==&callback_transfer.main&&e.value==23;}callback_transfer_main=nullptr;

@@ -221,6 +221,7 @@ if(WIN32)
         runtime/src/native/retail_scene_bootstrap_continuation.cpp
         runtime/src/native/retail_renderer_allocator.cpp
         runtime/src/native/retail_renderer_core.cpp
+        runtime/src/native/retail_renderer_transforms.cpp
         runtime/src/native/retail_first_scene_core.cpp runtime/src/native/retail_first_scene_allocator.cpp runtime/src/native/retail_camera_world.cpp
         runtime/src/native/retail_sound_metadata.cpp
         runtime/src/native/retail_game_session_startup.cpp runtime/src/native/retail_main_settings_binding.cpp
