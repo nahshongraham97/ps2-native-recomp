@@ -1,0 +1,12 @@
+{
+  "base": "a890c7278628278b477436680480e8dbec7ca36c",
+  "candidate": "9a88f4ec092164b219d377816094899b3d333f18",
+  "source_proof": "4a9fe32b846998eddfb8aa2a42853a86a4de8d31",
+  "pins": {
+    "cmake/native_game.cmake": "61417172f4c89b463761a02c001e4ab74f72af8d0e98d9e1ccfdbfa7e10dba6a",
+    "runtime/include/mka/retail_sound_metadata.hpp": null,
+    "runtime/src/native/retail_sound_metadata.cpp": null,
+    "runtime/src/native/retail_sound_metadata_data.inc": null,
+    "tests/test_retail_sound_metadata.cpp": null
+  }
+}

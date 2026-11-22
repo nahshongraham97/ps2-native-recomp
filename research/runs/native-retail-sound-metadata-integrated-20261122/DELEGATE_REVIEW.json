@@ -1,0 +1,10 @@
+{
+  "commit": "923b2e11ad43a74127c95ec766e173bde92be12d",
+  "files": {
+    "research/runs/parallel-sound-metadata-review-20261122/AUTHENTICATION.json": "c98a9d005c1fc325aa4690615f12f85976634a5de7a1d52db48f1454be652757",
+    "research/runs/parallel-sound-metadata-review-20261122/REVIEW.md": "8efadee10543284c192548a3736d0daf72d2e4a4f6b48026fe1b886f1d69b022",
+    "research/runs/parallel-sound-metadata-review-20261122/snapshot.tar.gz": "ac6827b078ad08a4dc26f932b67d8b54279d201d1bc1c71f025e85f3fda27746"
+  },
+  "imported_evidence_only": true,
+  "scope": "Independent metadata-only source/data/owner/result audit; no reviewer client execution"
+}

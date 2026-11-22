@@ -1,0 +1,37 @@
+{
+  "exit": 1,
+  "failure": "Reader initially assumed saved prior reference hashes were LF; actual saved private-checkout references are CRLF",
+  "identities": [
+    {
+      "path": "research\\runs\\native-retail-play-admission-20261122\\EE-12C440.json",
+      "saved": "b6dd09e4afe21fef4892585d65383419acb251e02234f0aef9ac9aae66e0f306",
+      "canonical": "f702e573108d14380a970173b7598941137c3443ff03784a36204dbb19e6c181",
+      "committed": "f702e573108d14380a970173b7598941137c3443ff03784a36204dbb19e6c181",
+      "committed_as_crlf": "b6dd09e4afe21fef4892585d65383419acb251e02234f0aef9ac9aae66e0f306",
+      "private": "b6dd09e4afe21fef4892585d65383419acb251e02234f0aef9ac9aae66e0f306",
+      "canonical_cr": 0,
+      "private_cr": 2396
+    },
+    {
+      "path": "research\\runs\\native-retail-play-admission-20261122\\EE-315C70.json",
+      "saved": "3fad34430aa82a9fc4eb68d847f5e0d12a46e9fd09b84a79d8e45022adbe219b",
+      "canonical": "dd3beab6e4198934683a01c1d2132217805e7a84ed5d3eafe2232b229641d695",
+      "committed": "dd3beab6e4198934683a01c1d2132217805e7a84ed5d3eafe2232b229641d695",
+      "committed_as_crlf": "3fad34430aa82a9fc4eb68d847f5e0d12a46e9fd09b84a79d8e45022adbe219b",
+      "private": "3fad34430aa82a9fc4eb68d847f5e0d12a46e9fd09b84a79d8e45022adbe219b",
+      "canonical_cr": 0,
+      "private_cr": 620
+    },
+    {
+      "path": "research\\runs\\native-retail-play-admission-20261122\\EE-ORIENTATION.json",
+      "saved": "cbf1c8eedf554995abe2c1bd2cdfc77f5682229c6dabfe4f18c35c52f36057e8",
+      "canonical": "23e865e89b1aa8defbac424c4197af93d9f8599bb65313b52c584f260dffc3be",
+      "committed": "23e865e89b1aa8defbac424c4197af93d9f8599bb65313b52c584f260dffc3be",
+      "committed_as_crlf": "cbf1c8eedf554995abe2c1bd2cdfc77f5682229c6dabfe4f18c35c52f36057e8",
+      "private": "cbf1c8eedf554995abe2c1bd2cdfc77f5682229c6dabfe4f18c35c52f36057e8",
+      "canonical_cr": 0,
+      "private_cr": 48
+    }
+  ],
+  "original_proof_preserved": true
+}

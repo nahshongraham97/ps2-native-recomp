@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\build-section-timing\\test_native_retail_sound_metadata.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\research\\runs\\parallel-sound-metadata-resolver-20261122\\expected-metadata.tsv"
+  ],
+  "exit": 0,
+  "executable_sha256": "bb0b7c4cd38c7a991cb3e1fe7a0bf84608da3d2fca09dbed302f367a1eb89c3d"
+}

@@ -1,0 +1,237 @@
+{
+  "final-join-failure-01.log": {
+    "archived": "final-join-failure-01.log.gz",
+    "original_sha256": "975575d188c0583bfe7a40a7c44df21abb7006a9ea74b18d55a6a0e935bc6bfb",
+    "archive_sha256": "633f10a993d83c273c06f3d4529efd5c57a6bba9148e32fe7c8060139bf4f899"
+  },
+  "final-join.log": {
+    "archived": "final-join.log.gz",
+    "original_sha256": "42b26f57185ffe93acf3274fe136b5e7ad69494874fb5954b04be7bdfe684893",
+    "archive_sha256": "aea325782e2d904f2e011a2b3c2a7d5c055d072e42e36179847770c85bc4bafb"
+  },
+  "ghidra-01.log": {
+    "archived": "ghidra-01.log.gz",
+    "original_sha256": "826bfe9d059c0ed9cc4da920f38f09feef1e0cf1e0ceb17d82109fc53e527a80",
+    "archive_sha256": "f2c5d8fcb9a5841cb57dce61c9c2492479d865ea44cd9d048b647b0ead13fe03"
+  },
+  "ghidra-02.log": {
+    "archived": "ghidra-02.log.gz",
+    "original_sha256": "115bca5a03c05849d0cae3a4c05ea54490a2b49a8f3bc56cc99f3047439a9b54",
+    "archive_sha256": "2c631decd657a1f3439f2ba5c3ffad7689b03c11b4f79fe873295f7a3cbcf764"
+  },
+  "ghidra-03.log": {
+    "archived": "ghidra-03.log.gz",
+    "original_sha256": "684e4524733a82843bed1b413c79fa011e1c8f14668ae62657c97f2a333fb8c0",
+    "archive_sha256": "a4c168928869cf219f0bc6ad3ce309c80868392a7b058a126bef3764028665e0"
+  },
+  "ghidra-04.log": {
+    "archived": "ghidra-04.log.gz",
+    "original_sha256": "56eb40bdc92000667f2e7ed45da7d8cc0e339f3029529ff6aa58215cf72385c8",
+    "archive_sha256": "022c4e7f7eb978a969d8829c1d0d5dd23d928b0773a8682d3ca33222a3d3d795"
+  },
+  "ghidra-05.log": {
+    "archived": "ghidra-05.log.gz",
+    "original_sha256": "58a8b9a7b9f9171bf67555922ec9dc9475f61102a059124395d9194f1a68daaf",
+    "archive_sha256": "1c3a6e68a58f2aca7509b0f18e09b56a52ac765f227cedb74ee56b9b60cb98c6"
+  },
+  "xbox-ghidra-01.log": {
+    "archived": "xbox-ghidra-01.log.gz",
+    "original_sha256": "555791fe7b050528b19ecf70354179c4ba08d60800bbd555b868de37b4f81de3",
+    "archive_sha256": "7e42c687d523a8132e50c7ffafbb63d4fd7df6cb876111b195c286ab6b3fc1f5"
+  },
+  "xbox-ghidra-02.log": {
+    "archived": "xbox-ghidra-02.log.gz",
+    "original_sha256": "a118f04b6b1763b06569e7787e2eaf54232253744d9cc6855ddce0592596e43f",
+    "archive_sha256": "ef13aa52402050751ab502d6db6582e1740c76e73e735eca1a3a0cf00bae5a60"
+  },
+  "xbox-ghidra-03.log": {
+    "archived": "xbox-ghidra-03.log.gz",
+    "original_sha256": "594b738e9d9d64ce792de8f483dc7b0f21db57f1c659227a4d3f513e7040babf",
+    "archive_sha256": "e0021a568d37e97c62e84400a1339f4ea807b5f8c752d109491e2350b6b3e650"
+  },
+  "source-01/0012c030.c": {
+    "archived": "source-01/0012c030.c.gz",
+    "original_sha256": "3db9cfc638bc080b2d60b4b7e4efc7834d05705584abb89a2f96b90a4a0601f2",
+    "archive_sha256": "ffc45012de56fee2a9756946aee95ba792bf3cace1bf33cf858bb12ec34c0746"
+  },
+  "source-01/0012c440.c": {
+    "archived": "source-01/0012c440.c.gz",
+    "original_sha256": "61e83f861cb93f4878f5895636ace984b8afd26e76e73abecb44a206fb31a759",
+    "archive_sha256": "d45909001d0f95127d1d3ccaf4fc7528f426bbb7a04ccd937bd4bff80f07efd0"
+  },
+  "source-01/00315c70.c": {
+    "archived": "source-01/00315c70.c.gz",
+    "original_sha256": "7b94de17e77f5acf3fd98f5817224fb911b4fb0868b51f7d1d6d1b39065c90a4",
+    "archive_sha256": "de0a65ba84798bd5fe9c04977117881b7fcd2c4a989f9969a0353d0fe7f3c668"
+  },
+  "source-02/0012c030.c": {
+    "archived": "source-02/0012c030.c.gz",
+    "original_sha256": "3db9cfc638bc080b2d60b4b7e4efc7834d05705584abb89a2f96b90a4a0601f2",
+    "archive_sha256": "ffc45012de56fee2a9756946aee95ba792bf3cace1bf33cf858bb12ec34c0746"
+  },
+  "source-02/0012c440.c": {
+    "archived": "source-02/0012c440.c.gz",
+    "original_sha256": "61e83f861cb93f4878f5895636ace984b8afd26e76e73abecb44a206fb31a759",
+    "archive_sha256": "d45909001d0f95127d1d3ccaf4fc7528f426bbb7a04ccd937bd4bff80f07efd0"
+  },
+  "source-02/00154410.c": {
+    "archived": "source-02/00154410.c.gz",
+    "original_sha256": "074f1ee4d9856e5dd7e53234f37d30d77ff09056508e4e88ee346f9fe148fbf9",
+    "archive_sha256": "fc27f435a37b770479b7f0e3835b3057bae160423856fa3fff794aa66b82371a"
+  },
+  "source-02/00294930.c": {
+    "archived": "source-02/00294930.c.gz",
+    "original_sha256": "88931a28be901512aaaa4701766b4c259298aee1948af1cff2f669e757fdd695",
+    "archive_sha256": "1f160b5bb6f79f8caebe71d3fa93bdff36d6ad21072a535ac28bf65fddcb7a9e"
+  },
+  "source-02/00294d20.c": {
+    "archived": "source-02/00294d20.c.gz",
+    "original_sha256": "e9798771b6dba90a2b512b2ba19616ea4b1968a92d2ded4a400530322922fb8d",
+    "archive_sha256": "60d4d6cb4e4443896428ce6c60726a754ec29759755c2d97740046e9b6b5c73e"
+  },
+  "source-02/00294f10.c": {
+    "archived": "source-02/00294f10.c.gz",
+    "original_sha256": "7323c0976f4e64bab27105d33660f2baa81d91e746ac13b489c21e5af381ed7c",
+    "archive_sha256": "4dfe18b4b88eef0010bd73d5373a2ee837d2968a94d95bfc63cc3a12959b786c"
+  },
+  "source-02/00294f80.c": {
+    "archived": "source-02/00294f80.c.gz",
+    "original_sha256": "ed18ecb9aac0f785e170c1d7bcf1e590b1c85c7c7bdd290babd3349046358c76",
+    "archive_sha256": "b88896fa904dde0cc127a0d80aab11892c7e5e5a59dade53e3f484dcf2797c22"
+  },
+  "source-02/00295380.c": {
+    "archived": "source-02/00295380.c.gz",
+    "original_sha256": "77942521e0b615bb21c88b7b151a69dfa00ef5c137b485830f2799f14d36fb85",
+    "archive_sha256": "c8964c511405cd270525e0ccd9b4f07648364c27741ba791c1a5ef6e09855a3e"
+  },
+  "source-02/002955c0.c": {
+    "archived": "source-02/002955c0.c.gz",
+    "original_sha256": "2a44a0c4da2b757b97b473563bc5c8549d9710df93409416db1d59856861fad5",
+    "archive_sha256": "2126bafbc86ea5519f44ef4e510840e525126b36dc848cea574427423ee7fc9a"
+  },
+  "source-02/002955e0.c": {
+    "archived": "source-02/002955e0.c.gz",
+    "original_sha256": "3ac907c2be01f21e8bbe23249e5ab3159031312a7e6c800a6bb939e119f8e899",
+    "archive_sha256": "1b57e8dba21fafa66bc96090f16ef88e778a2dcd521d086e3a87b55b4d425872"
+  },
+  "source-02/00295660.c": {
+    "archived": "source-02/00295660.c.gz",
+    "original_sha256": "fdf946b92be1596116b4b82f493fda9f9017d8583146996b6bbfbc213e7cc5c2",
+    "archive_sha256": "82a4c7cd38b26c1fd3da8e253d1e5e7800323b418bbd3a4353a15120c4853cb2"
+  },
+  "source-02/00315c70.c": {
+    "archived": "source-02/00315c70.c.gz",
+    "original_sha256": "7b94de17e77f5acf3fd98f5817224fb911b4fb0868b51f7d1d6d1b39065c90a4",
+    "archive_sha256": "de0a65ba84798bd5fe9c04977117881b7fcd2c4a989f9969a0353d0fe7f3c668"
+  },
+  "source-03/001db8a8.c": {
+    "archived": "source-03/001db8a8.c.gz",
+    "original_sha256": "0b2ec71b758c92381bb4b121caf84fbe9dc89354dabdb35215d3b4a05858596e",
+    "archive_sha256": "36175641ec25a42dcd82cc3c01e4aee4e4e87ba1453f709b73cecd14e2b3d7e5"
+  },
+  "source-03/002456a0.c": {
+    "archived": "source-03/002456a0.c.gz",
+    "original_sha256": "3dee8d5ad4882bf1f17d0a7196180335da2a7bbfc1b0d938d6b0c417b5eeaa25",
+    "archive_sha256": "a2797ec0cec1eb9dc093352695a31a04c3e2caa8aec0255da7d56d6c162b0c5a"
+  },
+  "source-03/00294fc0.c": {
+    "archived": "source-03/00294fc0.c.gz",
+    "original_sha256": "64a72fd6db3e792d3b948051a2b6ebdd9538312de748e76a8206a31218254d94",
+    "archive_sha256": "62eaebb2656fca6efe0de040e055e0cfb03bef828f6e019de2622b9564a17152"
+  },
+  "source-03/002955d0.c": {
+    "archived": "source-03/002955d0.c.gz",
+    "original_sha256": "0be9e803d202b7175902a9047f737446aaa9208e42e6055f098f67aa18873192",
+    "archive_sha256": "9f7b21cb64c256fa5636dde1f5c7cd05cdf49a30b5f3e625d942708e0443591e"
+  },
+  "source-03/002f34b0.c": {
+    "archived": "source-03/002f34b0.c.gz",
+    "original_sha256": "5d5bfd7b52d3884989d88406c2e4eaf11fa7ef44226f1b7d8af8ab588d42d14c",
+    "archive_sha256": "8f6f4143021b74191ed4d413f1109b93c09d5f3bdc295a8d1d7a4b2f619b07f8"
+  },
+  "source-03/00336410.c": {
+    "archived": "source-03/00336410.c.gz",
+    "original_sha256": "6c56774baa00dc11f4f65023d7206b450422423265f10f96f8db7c33e57db6b4",
+    "archive_sha256": "3f34d4c47e44af51b6dc2a01f8c854e005385ccc214fb575a5f4c8b99b729a21"
+  },
+  "source-03/00336d30.c": {
+    "archived": "source-03/00336d30.c.gz",
+    "original_sha256": "f8d449e706afa8e572b2995e4d11f2abec9d158dbabeb29f2f3aba7e8b4458a1",
+    "archive_sha256": "9022748a92670d8330f1d2be2583be51458eb73c9b5f6b0564f1c1090a105e33"
+  },
+  "source-04/001fc500.c": {
+    "archived": "source-04/001fc500.c.gz",
+    "original_sha256": "d6134ded9ee6a36d6756734ef2cfb2321f4ddfc0471c483c8b1c2569c1b0bb7d",
+    "archive_sha256": "f2297a97c91532b00d6274ad89d7ed99cd793c50d443aa1f5426bd4bd431a5bd"
+  },
+  "source-04/00366770.c": {
+    "archived": "source-04/00366770.c.gz",
+    "original_sha256": "fc99007487f37a827c92d365dbe284687257fc58ec4ae4bcbf328f8cb9163251",
+    "archive_sha256": "83dee1ee8a98d8843085502e5b26942549c4fd9cc636af7f4ca434686046a48d"
+  },
+  "source-05/0012bf10.c": {
+    "archived": "source-05/0012bf10.c.gz",
+    "original_sha256": "f04c717fb824e3140f5bcf16db72951c7214a5e43b817d1af6b79c193c772c16",
+    "archive_sha256": "0ce07eb5cc080c1b20d1a1e2873f75d2f3de4f78e89f93eefbe529bd6d9b548c"
+  },
+  "source-05/0012c130.c": {
+    "archived": "source-05/0012c130.c.gz",
+    "original_sha256": "f70518062a36bcb2b2cee4ce94f214975b6b636c22859cb4511cc7d605f06b80",
+    "archive_sha256": "3fb2c1e556c26e7ef27cb7d513c279bf3a873afa225038d1bbf3bf9dc8fc4b08"
+  },
+  "source-05/00294d50.c": {
+    "archived": "source-05/00294d50.c.gz",
+    "original_sha256": "e5616e017a46b5a5a6e7c0ef1e5f50a0976a87c7625f9dee20717243b758b3a5",
+    "archive_sha256": "7020738a8803065a8442d136a874dbbc3edd0ef512656312d41d0f03f8598b58"
+  },
+  "xbox-references/0023ad80.c": {
+    "archived": "xbox-references/0023ad80.c.gz",
+    "original_sha256": "05cbe739c895f668a002051e02fcc0f32855b22bc0f133529f9fb2aa238149f0",
+    "archive_sha256": "9727aa48f96e07a6351560246058705925195f5386ace2d88a321311d1a7bc38"
+  },
+  "xbox-source-01/00235bd0.c": {
+    "archived": "xbox-source-01/00235bd0.c.gz",
+    "original_sha256": "6000bee961d733c26967146ef8e7d3692356a8c831c11a4eb74020f5ad5ce524",
+    "archive_sha256": "431e1729296e69b3685793ba657dd1f37613040d5ae8105c27fc827698226102"
+  },
+  "xbox-source-01/0023b880.c": {
+    "archived": "xbox-source-01/0023b880.c.gz",
+    "original_sha256": "e488d0ce540bbe71748d29ab1ee068e4204a93d71b8fea280750fc00feb27018",
+    "archive_sha256": "546954f2aebcc347c6c6ecdf570fc4c9e440e24e8da035fd5a58fab6b49b51ae"
+  },
+  "xbox-source-01/0023b9c0.c": {
+    "archived": "xbox-source-01/0023b9c0.c.gz",
+    "original_sha256": "84a959baf79685bff2d22733cf2773fdccb8764967249e260dc4b596b8d0c2f1",
+    "archive_sha256": "dbc2e3301ca0ff07657856cb49e9971a325bb070817973b9628eb0ec89f498fe"
+  },
+  "xbox-source-01/0023be30.c": {
+    "archived": "xbox-source-01/0023be30.c.gz",
+    "original_sha256": "cd20fef0bb86e7f163dd6962fb4d511c0b2e0b1ff85424e6b74e10253cbd4249",
+    "archive_sha256": "c83dacc28544fa48ea582c5a2de00da1639c40b62dc61b4b0fd62039ef5efd52"
+  },
+  "xbox-source-01/0023c180.c": {
+    "archived": "xbox-source-01/0023c180.c.gz",
+    "original_sha256": "7e8baa9f31a8c02818a8c10e883b0ed409264fc7c6b0ef02fcc0f3222051ecb7",
+    "archive_sha256": "7d08078e6d19e0145d704e9307c6ae5208f41c9f5d224a1d420fa9f491f65183"
+  },
+  "xbox-source-02/00235ad0.c": {
+    "archived": "xbox-source-02/00235ad0.c.gz",
+    "original_sha256": "795d10e1c757373372ca29ab3eb32fe97a5869c73b118c9152d3b6e236c91437",
+    "archive_sha256": "39ca5b44c01a8ce0dd7e382ebe4666eee98317b83dedb47aa9966c2c872c8a47"
+  },
+  "xbox-source-02/002362e0.c": {
+    "archived": "xbox-source-02/002362e0.c.gz",
+    "original_sha256": "15b9f2433ca4132df2c040b4b60b126294fdce7097e55f42d7163ef05b833f41",
+    "archive_sha256": "4fd28f74444339550ebd1c29db380892699104befb85a99522501e6f0c4da0ba"
+  },
+  "xbox-source-02/0023bee0.c": {
+    "archived": "xbox-source-02/0023bee0.c.gz",
+    "original_sha256": "d89422b787cfed260989e9d45d3e32ed298fcb474e2a2340a719e8e87267e810",
+    "archive_sha256": "a7b02e2e0e22279beea836d82e28e0aa9a12ae3d4b3a9ddc57a7ede9f2bc9355"
+  },
+  "xbox-source-02/003797d0.c": {
+    "archived": "xbox-source-02/003797d0.c.gz",
+    "original_sha256": "f9432298392f3dd67269b65f6cdfd756b55ff33a42568677f5e3539e12dbda1c",
+    "archive_sha256": "97a8960924be5dd861c53ee8088be4d816c292d64bdcd8d4aaa0dbee952f87f4"
+  }
+}

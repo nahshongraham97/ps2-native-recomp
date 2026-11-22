@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "python",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\parallel-sound-parameters-source-20261122\\join.py"
+  ],
+  "exit": 1,
+  "failure": "Existing frozen source-join identity comparison failed; all prior instruction/data asserts passed",
+  "differences": [
+    {
+      "path": "/ps2/reused_evidence/research\\runs\\native-retail-play-admission-20261122\\EE-12C440.json",
+      "saved": "b6dd09e4afe21fef4892585d65383419acb251e02234f0aef9ac9aae66e0f306",
+      "current": "f702e573108d14380a970173b7598941137c3443ff03784a36204dbb19e6c181"
+    },
+    {
+      "path": "/ps2/reused_evidence/research\\runs\\native-retail-play-admission-20261122\\EE-315C70.json",
+      "saved": "3fad34430aa82a9fc4eb68d847f5e0d12a46e9fd09b84a79d8e45022adbe219b",
+      "current": "dd3beab6e4198934683a01c1d2132217805e7a84ed5d3eafe2232b229641d695"
+    },
+    {
+      "path": "/ps2/reused_evidence/research\\runs\\native-retail-play-admission-20261122\\EE-ORIENTATION.json",
+      "saved": "cbf1c8eedf554995abe2c1bd2cdfc77f5682229c6dabfe4f18c35c52f36057e8",
+      "current": "23e865e89b1aa8defbac424c4197af93d9f8599bb65313b52c584f260dffc3be"
+    }
+  ],
+  "original_proof_preserved": true,
+  "metadata_code_unbuilt": true
+}

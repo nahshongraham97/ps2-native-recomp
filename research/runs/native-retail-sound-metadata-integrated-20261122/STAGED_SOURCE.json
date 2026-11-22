@@ -1,0 +1,16 @@
+{
+  "approved": [
+    "cmake/native_game.cmake",
+    "runtime/include/mka/retail_sound_metadata.hpp",
+    "runtime/src/native/retail_sound_metadata.cpp",
+    "runtime/src/native/retail_sound_metadata_data.inc",
+    "tests/test_retail_sound_metadata.cpp"
+  ],
+  "raw_sha256": {
+    "cmake/native_game.cmake": "c343d616f093c425ffbdd54664a08e19afc4c3f019d90bab115a52889338c855",
+    "runtime/include/mka/retail_sound_metadata.hpp": "8eb95da7b706c82ea914bd2fd10e1783e49bbce3758129bdb567606ab8507ac2",
+    "runtime/src/native/retail_sound_metadata.cpp": "d501bfae19d175443c58e73a3350cbe2a5cd472101ce5428155a80b915c08555",
+    "runtime/src/native/retail_sound_metadata_data.inc": "a61f762ad4ae1089a29f296ea5774e86f21cca3e4069ccec560331461bedd9ea",
+    "tests/test_retail_sound_metadata.cpp": "e15a0d9885b5d4dc71a0c40e9a8dc1dd2a768008c533d1e5a729ac3756f81da7"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "validation-01/build.log": {
+    "archive": "validation-01/build.log.gz",
+    "original_sha256": "3e751cc594a6d462d6b1a8721213868d53a2dc372926e54af1b62bae7146c38a",
+    "archive_sha256": "d70dda3a47896baa635851395048f14cb5bc492521d0c37a2142087acb3b8594"
+  },
+  "validation-01/client.log": {
+    "archive": "validation-01/client.log.gz",
+    "original_sha256": "02d31cfaf5d0678946a14dc4547c6fce9b58ed3b7fae001dfd348525194ea0f2",
+    "archive_sha256": "45a857e97afdfca726dd54f1e9b66694f06b0b156ec5deaa85ba53e477b5b2a2"
+  },
+  "validation-02/build.log": {
+    "archive": "validation-02/build.log.gz",
+    "original_sha256": "c32237095f0225d0a4925378aa800957017fe0607cdd05deff2848c2180bea99",
+    "archive_sha256": "d79a749bfc711a8d5dc1ca038dde0a6420552c94d4d92a18dc6d451e5dcacbd4"
+  },
+  "validation-02/existing-preferences.log": {
+    "archive": "validation-02/existing-preferences.log.gz",
+    "original_sha256": "3a9ed67fdd7ace635cd4417822c3a386ce248c6228a82ce475337ff93b0c771d",
+    "archive_sha256": "30ebfa9533443f01fc901131b34060fe42ff3e238154319bb08ebab771dae819"
+  },
+  "validation-02/full-entry-negative.log": {
+    "archive": "validation-02/full-entry-negative.log.gz",
+    "original_sha256": "38ebd44c8f2b9f8de13be776f2ed21b378bfc460198a9baa3b05eaf607a71408",
+    "archive_sha256": "a9f4faa6233db0086db0ea65fb0d5b94452374e3567e4a42bf46d42182cbcd1a"
+  },
+  "validation-02/metadata-symbols.log": {
+    "archive": "validation-02/metadata-symbols.log.gz",
+    "original_sha256": "7ff22c3987ce5d7097bffdf65093536f0bf108c83ac147a5dba6db8a5aef17d5",
+    "archive_sha256": "3031e37bfa1e9512edf1c6d2ff61c964e220c5782a5d525f263d2a4b9b3e14f2"
+  },
+  "validation-02/metadata.log": {
+    "archive": "validation-02/metadata.log.gz",
+    "original_sha256": "02d31cfaf5d0678946a14dc4547c6fce9b58ed3b7fae001dfd348525194ea0f2",
+    "archive_sha256": "45a857e97afdfca726dd54f1e9b66694f06b0b156ec5deaa85ba53e477b5b2a2"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "EE_Core_Instruction_Set_Manual.pdf": {
+    "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\.agents\\skills\\ps2-recomp\\resources\\pdfs\\EE_Core_Instruction_Set_Manual.pdf",
+    "sha256": "104205afc6f5a5071168d8bf693a6c8b4db9a02e1aa66eb51a828e8951f5c069",
+    "version": "6.0",
+    "printed_pages": [
+      351,
+      352,
+      356
+    ],
+    "method": "pypdf text extraction; relevant operation/formula clauses inspected; no page-layout claim"
+  },
+  "EE_Core_Users_Manual.pdf": {
+    "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\.agents\\skills\\ps2-recomp\\resources\\pdfs\\EE_Core_Users_Manual.pdf",
+    "sha256": "0ad766eb827157fad19aa579fd9df54f2ca312211e7f0dbdb4b723992b566ce3",
+    "version": "6.0",
+    "printed_pages": [
+      156,
+      164,
+      165
+    ],
+    "method": "pypdf text extraction; relevant operation/formula clauses inspected; no page-layout claim"
+  }
+}

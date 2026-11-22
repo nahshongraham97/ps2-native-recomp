@@ -1,0 +1,43 @@
+{
+  "status": "PASS_ORIGINAL_METADATA_AND_NEWLINE_IDENTITIES",
+  "proof_sha256": "b9ae4cbd43a28e407cd00c461212a8c3a5b3061431b47b6779c86c7147b58d5e",
+  "source_helper_sha256": "689e1020215afc1fc74eaf8624ffc22939b3269107f8dc50354176a1cda527b3",
+  "reused_evidence_identities": {
+    "research\\runs\\native-retail-play-admission-20261122\\EE-12C440.json": {
+      "saved_sha256": "b6dd09e4afe21fef4892585d65383419acb251e02234f0aef9ac9aae66e0f306",
+      "committed_sha256": "f702e573108d14380a970173b7598941137c3443ff03784a36204dbb19e6c181",
+      "canonical_sha256": "f702e573108d14380a970173b7598941137c3443ff03784a36204dbb19e6c181",
+      "canonical_crlf_pairs": 0,
+      "saved_form": "private-checkout-CRLF",
+      "identity": "byte-identical"
+    },
+    "research\\runs\\native-retail-play-admission-20261122\\EE-315C70.json": {
+      "saved_sha256": "3fad34430aa82a9fc4eb68d847f5e0d12a46e9fd09b84a79d8e45022adbe219b",
+      "committed_sha256": "dd3beab6e4198934683a01c1d2132217805e7a84ed5d3eafe2232b229641d695",
+      "canonical_sha256": "dd3beab6e4198934683a01c1d2132217805e7a84ed5d3eafe2232b229641d695",
+      "canonical_crlf_pairs": 0,
+      "saved_form": "private-checkout-CRLF",
+      "identity": "byte-identical"
+    },
+    "research\\runs\\native-retail-play-admission-20261122\\EE-ORIENTATION.json": {
+      "saved_sha256": "cbf1c8eedf554995abe2c1bd2cdfc77f5682229c6dabfe4f18c35c52f36057e8",
+      "committed_sha256": "23e865e89b1aa8defbac424c4197af93d9f8599bb65313b52c584f260dffc3be",
+      "canonical_sha256": "23e865e89b1aa8defbac424c4197af93d9f8599bb65313b52c584f260dffc3be",
+      "canonical_crlf_pairs": 0,
+      "saved_form": "private-checkout-CRLF",
+      "identity": "byte-identical"
+    }
+  },
+  "generated_data_sha256": "a61f762ad4ae1089a29f296ea5774e86f21cca3e4069ccec560331461bedd9ea",
+  "expected_corpus_sha256": "5efbfc7e57e24087bcfc094cb15b81716cd2c4560d3a00d23c569576bf7239c3",
+  "original_word_data_unchanged": true,
+  "words": 9656,
+  "categories": 39,
+  "rows_checked": 9656,
+  "note": "Original joins/data equal frozen proof; only3 prior raw reference hashes require verified newline identity mapping",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "acceptance": "OPEN"
+}
