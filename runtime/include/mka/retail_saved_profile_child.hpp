@@ -125,7 +125,8 @@ public:
  std::uint8_t customization_flags()const noexcept{return static_cast<std::uint8_t>(known_.command.flag_bit2);}
  std::uint32_t customization_condition_word()const noexcept{return customization_condition_;}
 private:
- bool observable(RetailSavedProfileChildFailure&)const noexcept;
+  friend class NativeRetailSavedProfileRecords;
+  bool observable(RetailSavedProfileChildFailure&)const noexcept;
  RetailSavedChildPhase phase_{RetailSavedChildPhase::zero_born};
  RetailSavedProfileDefaults known_;
  RetailSavedChildIdentity identity_;

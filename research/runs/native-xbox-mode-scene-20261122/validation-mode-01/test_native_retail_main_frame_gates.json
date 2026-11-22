@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_main_frame_gates.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\research\\runs\\native-xbox-mode-scene-20261122\\validation-mode-01\\fixtures\\empty"
+  ],
+  "exit": 0,
+  "seconds": 0.0936546000011731,
+  "executable_sha256": "699ce932152ec8f1df87523d675dd3608490ff95e9cb087c704af4974a0edcbc",
+  "log_sha256": "14459d966411f0da990f5d7cc7e4c14b6173fbf648c1238df959381437f11708",
+  "source_manifest_sha256": "e854ad73c809788721c2c4aa5d897219d87e723a6f30fbc32fa6d24c5cb490df",
+  "source_commit": "98d5eba185d64eeecaa105dee6c7d8a3cb533259"
+}

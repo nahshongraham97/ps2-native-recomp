@@ -1,0 +1,8 @@
+{
+  "status": "REPORTING_ONLY_CORRECTION_PENDING_COMPILE",
+  "measured_test_sha256": "f225c978b1b6a08bd30820aea3efbff4f8005320760c353fdc7ae9512daab455",
+  "old_text": "child+240 payload/whole kart/gameplay remain required",
+  "new_text": "resolved startup fields; whole kart/time-writer/gameplay remain required",
+  "assertions_changed": false,
+  "initial_component_results": "PASS; stale second PASS label is preserved, not interpreted as current scope"
+}

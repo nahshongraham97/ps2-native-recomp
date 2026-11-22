@@ -1,5 +1,10 @@
 # Per-mode active-profile ownership
 
+This records the prior ownership-only checkpoint. The later field resolution
+is source-proved in MODE_FIELD_CONTRACT.json; its production startup/field
+implementation passes initial component checks, as recorded in
+MODE_FIELD_IMPLEMENTATION.md. Clean committed verification remains pending.
+
 ## Original input and actual decoding
 
 Xbox default.xbe SHA-256:
@@ -93,8 +98,10 @@ or speaker endpoint is used.
 
 ## Explicitly OPEN
 
-- The separate1F98D0 child+240 / PS2 child+8F8 payload projection. A carried
-  reference and a failed search do not establish its value contract.
+- The startup field projection was OPEN at this checkpoint. Subsequent direct
+  Xbox readers/writers and the preserved PS2 statistics/preset readers now
+  resolve it to existing typed data; compilation/behavioral verification of
+  that production connection is pending, not a full-game acceptance claim.
 - Whole E5A90's input-ordinal prefix and display-query suffix; actual race
   creation/callers are not implemented by this projection.
 - The full mode-object initialization binding, extra-player input/reset/load

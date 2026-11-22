@@ -234,3 +234,113 @@ acceptance remain OPEN. Owner: no action. Agent next:finish the actual startup
 child-field contract and connected callers without changing numerical or
 HD implementations before their gates. No background job remains after these
 completed checks.
+
+## Remaining field and real-caller continuation
+
+Owner requested resolving the still-open startup field and connecting real
+callers. Entry baselines parent67d8e6e4/fork98d5eba, tracked trees clean.
+The completed owner projection is reused, not rerun or mistaken for mode
+initialization. Trace original active-profile storage/getters beyond the
+already-inspected kart frontend; do not repeat the broad asset/offset probes.
+Audio, save codec, original/user data, reserved model, numerical and HD gates
+remain unchanged. Reuse the existing private Xbox project and installed tools.
+
+refs-profile-storage-14 finds the missing direct payload hop:actual child+240
+address7316A0 is read AND written by104AE0. This is distinct from reads of
+the published736500 alias. Inspect that exact function and its nearby
+profile/status callers; do not infer payload semantics from the address alone.
+
+source-kart-field-14 establishes concrete payload members:104AE0 and104B80
+increment the first/second32-bit words only when the SAME active status equals1;
+unsigned player bounds admit0..3 and ADD wraps32 bits.104C20 writes five
+eight-byte track-result records beginning child+248 after folding track43..52
+to43..47. Decompiled helper calls in the time arithmetic are NOT ABI proof;
+inspect actual instructions before adopting that arithmetic. Existing native
+child statistics already have counter-pair/timed-result values; prove the
+PS2 offsets and caller meanings before choosing the shared field projection.
+
+The preserved PS2241210 listing directly reads child1C/20,24/28 and8F8/8FC
+as the three displayed counter pairs, then five eight-byte900+8*i results.
+Its high-word presence check and packed low-byte display agree with the
+existing Native child statistics model. Thus the startup Motor projection
+can reference EXISTING statistics.mode_pairs[2]/timed_results, with no new
+storage or raw byte record. The third PS2 startup alias at child+238 points
+to the already-proved six named preset slots; names remain child+8.
+Next verify actual result caller and metadata helper arguments, then connect
+the real mode-object startup binding to these live native projections.
+
+source-kart-field-16 retains the real result callerF1330 and FA500 metadata
+helper. The caller passes the actual player's logical index to104AE0/104B80
+on opposite result branches; first/second counter labels remain neutral.
+FA500 confirms the first metadata argument selects the source save-parent
+and the second selects its child. No nine-parent Xbox file layout is adopted.
+
+Implementation plan:connect actual Main initialize_retail_mode_objects to the
+existing Session owner; reset actual child values/metadata in pairs, publish
+live name/Motor-statistic/preset views after the source first-pair prefix,
+then publish Xbox-proved extra-player name/statistic views after their pair.
+Presets remain the proved PS2 first-two projection. Field publication remains
+live across value reset; failed child resets must preserve ordered prefixes
+and refuse readiness. The field uses existing storage, not a new payload.
+
+The first mode-field join preflight rejected a partial preset listing.
+MODE_FIELD_JOIN_FAILURE_01.json preserves it. Prior SOURCE_JOIN explicitly
+records0034DC94 as original00000000/SLL zero,zero,0; it lies after the
+unconditional branch's actual delay-slot NOP and before the alternate target.
+Reuse that exact omission proof and require all original full-span hashes,
+not an assumption that missing instructions are padding. No runtime changed.
+
+MODE_FIELD_CONTRACT.json now joins all original full spans (including the
+explicit prior omission), derives all signed-immediate alias biases, confirms
+the same16 action-mask words in both versions and records both actual Xbox
+counter jump tables. The type contract is source-resolved.
+
+Implemented/tested-component:actual Main initialize_retail_mode_objects now calls the
+existing Session owner to perform verified child resets, metadata stores and
+pair-ordered field publication. Live capabilities resolve the SAME name,
+third counter pair/five track results and first-two six-preset arrays, never a
+byte slice or second profile. Publication survives later value resets.
+104AE0/104B80 counter updates use exact status==1 and unsigned32-bit wrap.
+Full race result/camera/timing bodies, packed-time arithmetic, loaded imports,
+numerical/HD and whole-game gates are not adopted by this change.
+
+Authored/unbuilt tests now invoke the real Main mode-object binding, check all
+three live first-pair projections and extra-player names/statistics, verify
+source-localized names, no duplicate data, no unintended parent/input cleanup,
+exact status/unsigned counter wrap and unchanged neighboring track results.
+Allocation cuts cover delayed pair publication/partial failure; reentry,
+foreign/move/thread/Main/last-owner lifetime and repeat reset are included.
+Typed const-cast mutations in the test are explicit source-state fixtures on
+nonconst owned values, not a loaded-save producer or runtime mutation API.
+
+Code review added the existing owner's mutation-admission guards to counter
+writes: reentrant or prior ordinary after-effect failure refuses by name.
+Read-only published prefixes remain inspectable. Authored checks also cover
+failure during repeat initialization: old publication is not cleared, the
+failed value refuses observation, and the untouched second child remains
+live. Stage remains implemented/unbuilt; no prior check was weakened.
+
+Build gate:existing configuredb/, incremental only, no cleanup/reconfigure.
+Eight affected native clients include real mode/records, child, Session,
+unchanged PS2 codec, aggregate, input reset, initial reset and Main frame gates.
+They use disposable fixtures/memory only, no visible window/GPU/audio endpoint.
+The new verifier preserves prior manifests, requires exactly five changed
+source paths and unchanged codec/store/child-body bytes, and checks the exact
+expected59->58 single mode-binding difference. Numerical/HD/time/race gates
+are separate; no previous verifier or required-symbol check is weakened.
+
+validation-mode-01 completed:all eight clients pass, including the real Main
+startup binding,64 allocation cuts and the exact59->58 single-binding check.
+Actual status is PASS_NATIVE_MODE_STARTUP_AND_RESOLVED_FIELDS; clients is a
+list of eight name/sha256 objects, resolved/remaining names are exact lists
+of1/58, mode_allocation_cuts is integer64 and source_field_contract_sha256
+pins the field proof. This is dirty-source component evidence, not gameplay.
+
+The final legacy records PASS string still said the startup payload was open.
+Measured test bytes/results are preserved in the gzip snapshot and
+MODE_PRECOMMIT_AUTHENTICATION.json; only that reporting string is corrected,
+with no changed assertion or runtime behavior. The publisher requires exact
+byte replacement, then compiles/tests the clean commit before pushing.
+The wait-status tasklist commands failed due host quoting; a read-only Win32
+process snapshot and the completion notification established the job ended.
+No game process, driver, model or setting was touched by that diagnosis.

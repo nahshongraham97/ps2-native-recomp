@@ -1,0 +1,25 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "queries": {
+    "000f1330:0": {
+      "mapping": {
+        "vma": "0xf1330",
+        "file_offset": 922416,
+        "length": 64,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "558bec81ec9c010000a1d0f75a0089850cffffffa134835b00898538ffffff8b8d38ffffff8b51188955f8a14c1a83008b88ac000000894dc88b151c1e830089"
+    },
+    "001fa500:0": {
+      "mapping": {
+        "vma": "0x1fa500",
+        "file_offset": 2008320,
+        "length": 64,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "558bec837d08007c12837d08097d0c837d0c007c06837d0c087c0633c075fceb178b4d0869c9c0af01008b550cc784913c657300000000005dc3cccccccccccc"
+    }
+  }
+}

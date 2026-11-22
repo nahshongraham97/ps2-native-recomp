@@ -109,6 +109,137 @@ NativeRetailActivePlayerProfile* NativeRetailMotorKombatProfiles::profile(
     }
     return records->active_player_for_scope(RetailActiveProfileScope::motor_kombat, player, f);
 }
+std::optional<NativeRetailPublishedProfileFields> NativeRetailSavedProfileRecords::published_fields_for_player(
+    const std::shared_ptr<NativeRetailGameSession>& retained, RetailActiveProfileScope scope,
+    std::uint32_t player, RetailSavedProfileRecordsFailure& f) noexcept {
+    if (!active_player_for_scope(scope, player, f)) return {};
+    if (retained.get() != session_) {
+        fail(f, RetailSavedProfileRecordsError::foreign_session, "published fields require this actual Session");
+        return {};
+    }
+    // Capability construction does not assert publication/readiness. Each
+    // field resolves the source's actual published prefix independently.
+    return NativeRetailPublishedProfileFields(retained, player);
+}
+NativeRetailActivePlayerProfile* NativeRetailSavedProfileRecords::checked_field(
+    std::uint32_t player, PublishedField field, RetailSavedProfileRecordsFailure& f) noexcept {
+    if (!access(f)) return nullptr;
+    if (player >= active_players_.size()) {
+        fail(f, RetailSavedProfileRecordsError::invalid_player, "published native profile player");
+        return nullptr;
+    }
+    const auto& published = published_fields_[player];
+    const bool present = field == PublishedField::name ? published.name :
+                         field == PublishedField::motor ? published.motor : published.presets;
+    if (!present) {
+        fail(f, RetailSavedProfileRecordsError::unbound_field, "actual mode profile field is not published");
+        return nullptr;
+    }
+    auto& active = active_players_[player];
+    if (!active.value.observable(f.child)) {
+        fail(f, RetailSavedProfileRecordsError::child, f.child.operation);
+        return nullptr;
+    }
+    return &active;
+}
+std::optional<std::string_view> NativeRetailSavedProfileRecords::published_name(
+    std::uint32_t player, RetailSavedProfileRecordsFailure& f) noexcept {
+    const auto* active = checked_field(player, PublishedField::name, f);
+    if (!active) return {};
+    return std::string_view(active->value.known_values().empty_name);
+}
+std::optional<RetailMotorKombatStatisticsView> NativeRetailSavedProfileRecords::published_motor_statistics(
+    std::uint32_t player, RetailSavedProfileRecordsFailure& f) noexcept {
+    const auto* active = checked_field(player, PublishedField::motor, f);
+    if (!active) return {};
+    const auto& statistics = active->value.statistics_;
+    return RetailMotorKombatStatisticsView{statistics.mode_pairs[2], statistics.timed_results};
+}
+const std::array<RetailSavedNamedPreset, 6>* NativeRetailSavedProfileRecords::published_presets(
+    std::uint32_t player, RetailSavedProfileRecordsFailure& f) noexcept {
+    const auto* active = checked_field(player, PublishedField::presets, f);
+    return active ? &active->value.named_presets() : nullptr;
+}
+NativeRetailSavedProfileRecords* NativeRetailPublishedProfileFields::records(
+    RetailSavedProfileRecordsFailure& f) const noexcept {
+    f = {};
+    if (!session_) {
+        fail(f, RetailSavedProfileRecordsError::retired_reference, "moved published profile Session reference");
+        return nullptr;
+    }
+    RetailGameSessionFailure game;
+    auto* result = session_->saved_profile_records(game);
+    if (!result) {
+        fail(f, game.kind == RetailGameSessionError::wrong_thread ?
+             RetailSavedProfileRecordsError::wrong_thread : RetailSavedProfileRecordsError::retired_reference,
+             "published profile actual retained Session access");
+    }
+    return result;
+}
+std::optional<std::string_view> NativeRetailPublishedProfileFields::display_name(
+    RetailSavedProfileRecordsFailure& f) const & noexcept {
+    auto* owner = records(f);
+    return owner ? owner->published_name(player_, f) : std::nullopt;
+}
+std::optional<RetailMotorKombatStatisticsView> NativeRetailPublishedProfileFields::motor_statistics(
+    RetailSavedProfileRecordsFailure& f) const & noexcept {
+    auto* owner = records(f);
+    return owner ? owner->published_motor_statistics(player_, f) : std::nullopt;
+}
+const std::array<RetailSavedNamedPreset, 6>* NativeRetailPublishedProfileFields::named_presets(
+    RetailSavedProfileRecordsFailure& f) const & noexcept {
+    auto* owner = records(f);
+    return owner ? owner->published_presets(player_, f) : nullptr;
+}
+bool NativeRetailSavedProfileRecords::initialize_mode_objects(
+    NativeRetailMainState& main, RetailSavedProfileRecordsFailure& f) {
+    if (!admit(main, f)) return false;
+    const auto retained = main.startup.game_session;
+    Busy busy(active_call_);
+    // Existing2460B0 first-two child bodies equal the already verified245CB0
+    // reset. Xbox1F98D0 supplies the additional pair; no Xbox layout is copied.
+    for (std::uint32_t first = 0; first != NativeRetailMotorKombatProfiles::player_count; first += 2) {
+        for (std::uint32_t player = first; player != first + 2; ++player) {
+            auto& active = active_players_[player];
+            if (!active.value.reset_from_245cb0(
+                    std::bit_cast<std::int32_t>(main.post_overlay_state), working_control_word_, f.child))
+                return after_effect_failure(f, RetailSavedProfileRecordsError::child, f.child.operation);
+            if (first != 0) active.status_word = 0; // Xbox extra-pair store order.
+            active.card_slot = -1;
+            active.profile_index = -1;
+            if (player == 0) active.status_word = 0; // Before the second clear.
+        }
+        for (auto player = first; player != first + 2; ++player) published_fields_[player].name = true;
+        for (auto player = first; player != first + 2; ++player) published_fields_[player].motor = true;
+        if (first == 0) {
+            active_players_[1].status_word = 0; //246310, before preset aliases.
+            for (std::uint32_t player = 0; player != retail_first_two_profile_players; ++player)
+                published_fields_[player].presets = true;
+        }
+    }
+    // Source reinitialization never clears an old published alias first.
+    // Capabilities resolve current values and preserve publication on failure.
+    return true;
+}
+bool NativeRetailSavedProfileRecords::increment_motor_counter(
+    std::uint32_t player, RetailMotorKombatCounter which, RetailSavedProfileRecordsFailure& f) noexcept {
+    if (!access(f)) return false;
+    if (active_call_)
+        return fail(f, RetailSavedProfileRecordsError::reentrant, "Motor Kombat counter during profile mutation");
+    if (failed_after_effect_)
+        return fail(f, RetailSavedProfileRecordsError::prior_partial_effect, "Motor Kombat counter after profile failure");
+    if (which != RetailMotorKombatCounter::first && which != RetailMotorKombatCounter::second)
+        return fail(f, RetailSavedProfileRecordsError::invalid_counter, "native Motor Kombat counter selector");
+    auto* active = active_player_for_scope(RetailActiveProfileScope::motor_kombat, player, f);
+    if (!active) return false;
+    if (active->status_word != 1) return true; //104AE0/104B80's proved empty case.
+    if (!active->value.observable(f.child))
+        return fail(f, RetailSavedProfileRecordsError::child, f.child.operation);
+    auto& counters = active->value.statistics_.mode_pairs[2];
+    auto& value = which == RetailMotorKombatCounter::first ? counters.first : counters.second;
+    value += std::uint32_t{1}; // Defined32-bit wrap, as the original ADD.
+    return true;
+}
 std::uint32_t* NativeRetailSavedProfileRecords::working_control_word(
     RetailSavedProfileRecordsFailure& f) noexcept {
     if (!access(f)) return nullptr;

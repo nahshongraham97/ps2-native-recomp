@@ -28,6 +28,19 @@ bool report_profile_failure(StartupFailure& failure) noexcept {
 }
 } // namespace
 namespace main_binding {
+bool initialize_retail_mode_objects(NativeRetailMainState& main, StartupFailure& failure) {
+    const auto session = actual_session(main, failure);
+    if (!session) return false;
+    auto* records = session->saved_profile_records(failure.game);
+    if (!records) {
+        failure.kind = StartupError::game_session;
+        failure.operation = failure.game.operation;
+        return false;
+    }
+    if (!records->initialize_mode_objects(main, failure.saved_profile_records))
+        return report_profile_failure(failure);
+    return true;
+}
 RetailStartupGate initialize_retail_saved_profile_records(NativeRetailMainState& main,
     StartupFailure& failure) {
     const auto session = actual_session(main, failure);

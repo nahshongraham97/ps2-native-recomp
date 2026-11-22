@@ -1,0 +1,9 @@
+{
+  "status": "JOIN_PREFLIGHT_REFUSED_PARTIAL_LISTING",
+  "command": ["python", "research/runs/native-xbox-mode-scene-20261122/join_mode_field_contract.py"],
+  "exit": 1,
+  "cause": "The strict contiguous-listing check rejected the already-documented omitted NOP at0034DC94 in the preset consumer.",
+  "runtime_or_original_bytes_changed": false,
+  "prior_evidence": "parallel-saved-profile-child-20261122/SOURCE_JOIN.json source-08/0034dc40.asm omitted0x34dc94",
+  "correction": "Join every listed word individually and require the exact prior omitted-word set, original zero bytes and saved NOP decoding. Verify the original full-span hash; do not weaken coverage or assume padding."
+}

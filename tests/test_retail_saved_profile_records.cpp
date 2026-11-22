@@ -10,12 +10,14 @@
 #include <filesystem>
 #include <new>
 #include <stdexcept>
+#include <string>
 #include <thread>
 
 using namespace mka::retail;
 extern "C" int SDL_InitSubSystem(unsigned) { std::abort(); }
 namespace {
 thread_local bool fail_next_allocation = false;
+thread_local int allocation_cut = -1;
 void check(bool value, const char* message) { if (!value) throw std::runtime_error(message); }
 using Hook = void (*)(NativeRetailMainState&);
 Hook menu_hook{};
@@ -110,9 +112,167 @@ void clear_participants_then_revoke(NativeRetailMainState& main) {
         check(main.participants->first_two(i, f)->set_game_state(0, f), "actual source participant status-clear fixture");
     revoke(main);
 }
+void recursive_mode(NativeRetailMainState& main) {
+    StartupFailure f;
+    check(!main_binding::initialize_retail_mode_objects(main, f) &&
+          f.saved_profile_records.kind == RetailSavedProfileRecordsError::reentrant,
+          "mode startup rejects reentry during actual profile/menu mutation");
+}
+void check_mode_fields(const std::filesystem::path& root) {
+    StartupFailure f;
+    {
+        Fixture x(root / "mode-fields"); auto& owner = records(*x.main);
+        auto fields = owner.published_fields_for_player(x.startup->game_session, RetailActiveProfileScope::first_two, 0, rf);
+        check(fields && !fields->display_name(rf) && rf.kind == RetailSavedProfileRecordsError::unbound_field,
+              "unpublished source alias is a named failure, not a default field");
+        check(!fields->motor_statistics(rf) && !fields->named_presets(rf), "all three source aliases start unbound");
+        x.main->post_overlay_state = 2; // Original language table: LEER.
+        auto* parent = owner.card_slot(0, rf); parent->children[6].in_use_word = 0x24681357;
+        *owner.working_control_word(rf) = 0xabcdef01;
+        RetailInputRoleFailure role;
+        check(x.main->input_roles->store_source_control_word_from_source(RetailInputRole::role0, 0x81234567, role),
+              "source-state input control fixture before mode initialization");
+        for (unsigned i = 0; i != 4; ++i) {
+            auto* active = owner.active_player_for_scope(RetailActiveProfileScope::motor_kombat, i, rf);
+            active->card_slot = 1; active->profile_index = 6; active->status_word = 99; active->player_status_word = 42;
+        }
+        check(main_binding::initialize_retail_mode_objects(*x.main, f), "ACTUAL production Main mode-object binding");
+        check(parent->children[6].in_use_word == 0x24681357 && *owner.working_control_word(rf) == 0 &&
+              x.main->input_roles->observe(RetailInputRole::role0, role)->source_control_word == 0x81234567,
+              "mode startup resets shared Working but does not perform later input/in-use cleanup");
+        for (unsigned i = 0; i != 4; ++i) {
+            auto active_fields = owner.published_fields_for_player(x.startup->game_session, RetailActiveProfileScope::motor_kombat, i, rf);
+            auto* active = owner.active_player_for_scope(RetailActiveProfileScope::motor_kombat, i, rf);
+            check(active_fields && active_fields->display_name(rf) == std::optional<std::string_view>{"LEER"} &&
+                  active->value.phase() == RetailSavedChildPhase::source_defaults &&
+                  active->card_slot == -1 && active->profile_index == -1 && active->status_word == 0 &&
+                  active->player_status_word == 42, "four actual values/metadata and localized live name projection");
+            auto statistics = active_fields->motor_statistics(rf);
+            check(statistics && &statistics->counters == &active->value.statistics().mode_pairs[2] &&
+                  &statistics->track_results == &active->value.statistics().timed_results &&
+                  statistics->counters.first == 0 && statistics->counters.second == 0,
+                  "resolved field references EXISTING third counter pair and five results");
+            for (const auto& result : statistics->track_results)
+                check(!result.present() && result.packed_clock == 0, "original clear resets all five packed results");
+            if (i < 2) {
+                auto* presets = active_fields->named_presets(rf);
+                check(presets == &active->value.named_presets() && presets->size() == 6,
+                      "PS2 preset alias resolves the same six source slots");
+                for (const auto& preset : *presets) {
+                    check(preset.first_name.empty() && preset.second_name.empty(), "source empty preset names");
+                    for (const auto& command : preset.command_text) check(command.empty(), "all thirty empty preset commands retained");
+                }
+            } else check(!active_fields->named_presets(rf) && rf.kind == RetailSavedProfileRecordsError::unbound_field,
+                         "no invented extra-player preset publication");
+            // Explicit typed source-state fixtures, NOT a completed load producer.
+            auto& counters = const_cast<RetailSavedCounterPair&>(statistics->counters);
+            counters.first = 0xffffffffu; counters.second = 0x80000001u;
+            auto& results = const_cast<std::array<RetailSavedTimedResult,5>&>(statistics->track_results);
+            results[4] = {0x12345678u, 0x3c010203u};
+            active->status_word = 1;
+            check(owner.increment_motor_counter(i, RetailMotorKombatCounter::first, rf) &&
+                  counters.first == 0 && owner.increment_motor_counter(i, RetailMotorKombatCounter::second, rf) &&
+                  counters.second == 0x80000002u && results[4].marker == 0x12345678u &&
+                  results[4].packed_clock == 0x3c010203u, "real counter writers wrap32 bits and preserve neighboring result data");
+            for (const auto status : {0u,2u,0x80000001u,0xffffffffu}) {
+                active->status_word = status;
+                check(owner.increment_motor_counter(i, RetailMotorKombatCounter::first, rf) && counters.first == 0,
+                      "only exact full-word status1 increments; other statuses are proved no-effects");
+            }
+        }
+        check(!owner.increment_motor_counter(4, RetailMotorKombatCounter::first, rf) &&
+              rf.kind == RetailSavedProfileRecordsError::invalid_player &&
+              !owner.increment_motor_counter(0, static_cast<RetailMotorKombatCounter>(99), rf) &&
+              rf.kind == RetailSavedProfileRecordsError::invalid_counter, "invalid native result selectors fail by name");
+        x.main->post_overlay_state = 4;
+        check(main_binding::initialize_retail_mode_objects(*x.main, f) &&
+              fields->display_name(rf) == std::optional<std::string_view>{"VUOTO"} &&
+              fields->motor_statistics(rf)->counters.second == 0,
+              "retained aliases resolve replacement values on repeat; no cached string/data pointers");
+        auto extra = owner.published_fields_for_player(x.startup->game_session, RetailActiveProfileScope::motor_kombat, 3, rf);
+        check(extra && extra->motor_statistics(rf)->track_results[4].marker == 0, "repeat resets extra-player statistics too");
+        Fixture foreign(root / "mode-foreign");
+        check(!owner.initialize_mode_objects(*foreign.main, rf) && rf.kind == RetailSavedProfileRecordsError::foreign_session &&
+              !owner.published_fields_for_player(foreign.startup->game_session, RetailActiveProfileScope::first_two, 0, rf),
+              "foreign Main and Session cannot publish or resolve these owners");
+        bool refused = false;
+        std::thread t([&] { RetailSavedProfileRecordsFailure q; StartupFailure sf;
+            refused = !fields->motor_statistics(q) && q.kind == RetailSavedProfileRecordsError::wrong_thread &&
+                      !main_binding::initialize_retail_mode_objects(*x.main, sf); });
+        t.join(); check(refused, "foreign thread cannot initialize or read published fields");
+    }
+    {
+        Fixture x(root / "mode-reentry"); x.enable_menu(); menu_hook = recursive_mode; menu_calls = 0;
+        check(main_binding::initialize_retail_saved_profile_records(*x.main, f) == RetailStartupGate::ready,
+              "rejected nested mode startup does not poison the actual outer profile operation");
+        menu_hook = nullptr;
+        check(main_binding::initialize_retail_mode_objects(*x.main, f), "mode guard is released after actual menu operation");
+    }
+    unsigned cuts = 0; bool saw_published_prefix = false; bool completed = false;
+    for (int cut = 0; cut != 128; ++cut) {
+        Fixture x(root / ("mode-cut-" + std::to_string(cut))); auto& owner = records(*x.main);
+        auto first = owner.published_fields_for_player(x.startup->game_session, RetailActiveProfileScope::first_two, 0, rf);
+        auto extra = owner.published_fields_for_player(x.startup->game_session, RetailActiveProfileScope::motor_kombat, 2, rf);
+        allocation_cut = cut;
+        const bool result = main_binding::initialize_retail_mode_objects(*x.main, f);
+        allocation_cut = -1;
+        if (result) { completed = true; break; }
+        ++cuts;
+        check(f.saved_profile_records.kind == RetailSavedProfileRecordsError::child, "native child allocation failure remains named");
+        unsigned failed = 0;
+        for (; failed != 4; ++failed)
+            if (owner.active_player_for_scope(RetailActiveProfileScope::motor_kombat, failed, rf)->value.phase() ==
+                RetailSavedChildPhase::failed_reset) break;
+        check(failed != 4, "failed body/ordered native prefix retained");
+        if (failed >= 2) {
+            saw_published_prefix = true;
+            check(first->display_name(rf).has_value() && first->motor_statistics(rf).has_value() &&
+                  first->named_presets(rf), "first pair is genuinely published before later-pair allocation failure");
+        } else check(!first->display_name(rf) && rf.kind == RetailSavedProfileRecordsError::unbound_field,
+                     "first-pair publication waits for both child bodies");
+        check(!extra->display_name(rf) && rf.kind == RetailSavedProfileRecordsError::unbound_field,
+              "extra-pair publication waits for both extra bodies");
+        check(!main_binding::initialize_retail_mode_objects(*x.main, f) &&
+              f.saved_profile_records.kind == RetailSavedProfileRecordsError::prior_partial_effect,
+              "ordinary after-effect failure never silently retries/reset-replays");
+        check(!owner.increment_motor_counter(0, RetailMotorKombatCounter::first, rf) &&
+              rf.kind == RetailSavedProfileRecordsError::prior_partial_effect,
+              "readable prefix does not permit new writes after required native failure");
+    }
+    check(completed && cuts >= 4 && cuts < 128 && saw_published_prefix, "all initial allocation cuts cover publication boundary");
+    {
+        Fixture x(root / "mode-repeat-failure"); auto& owner = records(*x.main);
+        check(main_binding::initialize_retail_mode_objects(*x.main, f), "initial publication before repeat failure");
+        auto first = owner.published_fields_for_player(x.startup->game_session, RetailActiveProfileScope::first_two, 0, rf);
+        auto second = owner.published_fields_for_player(x.startup->game_session, RetailActiveProfileScope::first_two, 1, rf);
+        const_cast<RetailSavedCounterPair&>(second->motor_statistics(rf)->counters).first = 0x12345678u;
+        allocation_cut = 0;
+        const bool result = main_binding::initialize_retail_mode_objects(*x.main, f);
+        allocation_cut = -1;
+        check(!result && !first->motor_statistics(rf) && rf.kind == RetailSavedProfileRecordsError::child &&
+              second->motor_statistics(rf)->counters.first == 0x12345678u,
+              "repeat does not unpublish old aliases; failed current value refuses while untouched child stays live");
+    }
+    {
+        Fixture x(root / "mode-live"); auto& owner = records(*x.main);
+        check(main_binding::initialize_retail_mode_objects(*x.main, f), "live-field production initialization");
+        auto fields = owner.published_fields_for_player(x.startup->game_session, RetailActiveProfileScope::motor_kombat, 2, rf);
+        std::weak_ptr<NativeRetailGameSession> live = x.startup->game_session;
+        x.main.reset(); x.startup->game_record_reset.reset(); x.startup->game_session.reset();
+        check(!live.expired() && fields->display_name(rf) == std::optional<std::string_view>{"EMPTY"} &&
+              fields->motor_statistics(rf).has_value(), "published fields retain real Session after Main retirement");
+        auto moved = std::move(*fields);
+        check(!fields->display_name(rf) && rf.kind == RetailSavedProfileRecordsError::retired_reference &&
+              moved.motor_statistics(rf).has_value(), "moved field capability does not resolve stale state");
+        fields = std::move(moved); fields.reset(); check(live.expired(), "published alias owner introduces no Session cycle");
+    }
+    std::printf("PASS production mode startup/live name-statistics-presets/counter wrap and%u allocation cuts; no numeric/HD/game acceptance\n", cuts);
+}
 } // namespace
 void* operator new(std::size_t size) {
-    if (fail_next_allocation) { fail_next_allocation = false; throw std::bad_alloc(); }
+    if (fail_next_allocation || (allocation_cut >= 0 && allocation_cut-- == 0)) {
+        fail_next_allocation = false; throw std::bad_alloc();
+    }
     if (void* result = std::malloc(size ? size : 1)) return result;
     throw std::bad_alloc();
 }
@@ -144,6 +304,7 @@ int main(int argc, char** argv) try {
     const auto root = std::filesystem::absolute(std::filesystem::u8path(argv[1]));
     check(!std::filesystem::exists(root), "all fixture directories must be new");
     std::filesystem::create_directories(root);
+    check_mode_fields(root);
     StartupFailure f;
     {
         Fixture x(root / "normal");
@@ -358,9 +519,9 @@ int main(int argc, char** argv) try {
               f.saved_profile_records.kind == RetailSavedProfileRecordsError::foreign_session && revoked_session.expired(),
               "source menu status rereads skip transitions;171B10 refuses revoked Session before preferences"); menu_hook = nullptr;
     }
-    std::puts("PASS actual171B10/246070 persistent records plus same-Session four-player kart profile bindings/all256 status orders; first-two reset/save layout/order/thread/allocation/lifetime preserved; child+240 payload/whole kart/gameplay remain required");
+    std::puts("PASS actual171B10/246070 persistent records plus same-Session four-player kart profile bindings/all256 status orders; first-two reset/save layout/order/thread/allocation/lifetime preserved; resolved startup fields; whole kart/time-writer/gameplay remain required");
     return 0;
 } catch (const std::exception& e) {
-    fail_next_allocation = false;
+    fail_next_allocation = false; allocation_cut = -1;
     std::fprintf(stderr, "saved profile records: %s\n", e.what()); return 1;
 }
