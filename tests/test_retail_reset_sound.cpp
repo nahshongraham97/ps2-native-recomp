@@ -6,6 +6,7 @@
 #include "mka/retail_sound_bank_catalog.hpp"
 #include "mka/retail_current_sound_required.hpp"
 #include "native_retail_startup.hpp"
+#include "../runtime/src/native/retail_main_control.hpp"
 #include <array>
 #include <cstdio>
 #include <filesystem>
@@ -17,7 +18,7 @@ using namespace mka::retail;
 namespace sound = mka::sound;
 namespace {
 void check(bool value, const char* reason) { if (!value) throw std::runtime_error(reason); }
-struct Fixture { std::vector<unsigned> effects; unsigned context{}, frames{}; bool refuse_context{}; };
+struct Fixture { std::vector<unsigned> effects; unsigned context{}, frames{}; bool refuse_context{}, refuse_frame{}, unwind_frame{}; };
 Fixture* fixture{};
 void install(NativeRetailMainState& main) {
     StartupFailure failure;
@@ -113,6 +114,10 @@ bool create_playback_context_316320(NativeRetailMainState& main, sound::AudioBan
 }
 bool update_programs_after_bank_results_3152c0(NativeRetailMainState& main, StartupFailure&) {
     ++fixture->frames;
+    if (fixture->unwind_frame) reenter_native_retail_main(main, 17);
+    if (fixture->refuse_frame) return false;
+    // Deliberate fixture scheduling substitute. Source command99 is status
+    // publication; this helper is not its production implementation.
     sound::SoundContextUpdate update;
     sound::PlaybackFailure failure;
     return main.playback->update_ordinary_context(*main.current_sound, update, failure);
@@ -213,6 +218,31 @@ int main(int argc, char** argv) try {
     check(wrong_thread, "foreign pending observer refused before state access");
     main.sound_frame_counter = 0xffffffffu;
     check(main_binding::pump_retail_current_sound(main, failure) && main.sound_frame_counter == 0, "original frame word has defined32-bit wrapping");
+    ordinary.refuse_frame = true;
+    check(!main_binding::pump_retail_current_sound(main, failure) && main.sound_frame_counter == 1 &&
+        failure.kind == StartupError::sound_catalog,
+        "required effect refusal retains named failure and counts the attempted source frame");
+    main.sound_frame_counter = 0xffffffffu;
+    check(!main_binding::pump_retail_current_sound(main, failure) && main.sound_frame_counter == 0,
+        "refused source attempt has the same32-bit wrapping increment");
+    ordinary.refuse_frame = false;
+    ordinary.unwind_frame = true;
+    bool reentered = false;
+    try { (void)main_binding::pump_retail_current_sound(main, failure); }
+    catch (const detail::NativeMainReentry& transfer) { reentered = transfer.owner == &main && transfer.value == 17; }
+    check(reentered && main.sound_frame_counter == 0,
+        "nonlocal Main reentry bypasses the unreached source increment");
+    ordinary.unwind_frame = false;
+    bool foreign_frame = false;
+    const auto before_foreign_frames = ordinary.frames;
+    std::thread foreign_frame_thread([&] {
+        StartupFailure f;
+        foreign_frame = !main_binding::pump_retail_current_sound(main, f) &&
+            f.sound_catalog.kind == RetailSoundCatalogError::wrong_owner;
+    });
+    foreign_frame_thread.join();
+    check(foreign_frame && main.sound_frame_counter == 0 && ordinary.frames == before_foreign_frames,
+        "invalid native thread admission changes neither counter nor required child");
     {
         // Same software profile as the existing playback client, explicitly test
         // input. This is a real bank/copy/mix connection, not retail gain proof.
@@ -285,7 +315,7 @@ int main(int argc, char** argv) try {
         check(failed && !failed->pending && !failed->bank &&
             failed->last_completion == sound::RetailSoundBankJobStatus::failed &&
             !initial_reset_required::banks_pending_12abd0(missing, failure) &&
-            missing.sound_frame_counter == 0 && missing_fixture.frames == 0,
+            missing.sound_frame_counter == 1 && missing_fixture.frames == 0,
             "failed callback state is source-correct but cannot release reset as success");
         // Destruction must complete real cancellation of the other pending
         // requests, not drop their callbacks or leave active native work.

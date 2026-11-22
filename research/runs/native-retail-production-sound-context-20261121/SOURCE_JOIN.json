@@ -1,0 +1,128 @@
+{
+  "status": "PASS_ORIGINAL_CONTEXT_DEPENDENCY_BYTE_JOIN",
+  "input_sha256": {
+    "EE": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+    "MSL": "f62dfbcedd39bc92cb8b9c02bb685b956a10357f9181d7f8c2801d8eaff07af7"
+  },
+  "module_exports": [
+    {
+      "path": "research\\runs\\native-retail-production-sound-context-20261121\\source-01\\LISTING.json",
+      "sha256": "b3ccb0c3b96f2a131018a3107c426b5bc1e2531e7249a30c03c6cade73570509",
+      "rows": 1380
+    },
+    {
+      "path": "research\\runs\\native-retail-production-sound-context-20261121\\source-02\\LISTING.json",
+      "sha256": "8a9a065d0b37da3ee1a72984384f4fe4e60b83e2e48563c769a155e5e59db78d",
+      "rows": 569
+    },
+    {
+      "path": "research\\runs\\native-retail-production-sound-context-20261121\\source-03\\LISTING.json",
+      "sha256": "9f2247954b801251219870b8789b9847b9be5f329f241a7a5b2de80495402dd4",
+      "rows": 139
+    }
+  ],
+  "full_coverage": [
+    {
+      "image": "MSL",
+      "begin": "0x334",
+      "end_exclusive": "0x3ac",
+      "full_word_coverage": true,
+      "words": 30
+    },
+    {
+      "image": "MSL",
+      "begin": "0x3784",
+      "end_exclusive": "0x38c8",
+      "full_word_coverage": true,
+      "words": 81
+    },
+    {
+      "image": "MSL",
+      "begin": "0x5244",
+      "end_exclusive": "0x5318",
+      "full_word_coverage": true,
+      "words": 53
+    },
+    {
+      "image": "MSL",
+      "begin": "0x4ccc",
+      "end_exclusive": "0x4d14",
+      "full_word_coverage": true,
+      "words": 18
+    },
+    {
+      "image": "MSL",
+      "begin": "0x2c6c",
+      "end_exclusive": "0x2cb4",
+      "full_word_coverage": true,
+      "words": 18
+    },
+    {
+      "image": "EE",
+      "begin": "0x314f30",
+      "end_exclusive": "0x3151c4",
+      "full_word_coverage": true,
+      "words": 165,
+      "language": "r5900:LE:32:default"
+    },
+    {
+      "image": "EE",
+      "begin": "0x3152c0",
+      "end_exclusive": "0x315334",
+      "full_word_coverage": true,
+      "words": 29,
+      "language": "r5900:LE:32:default"
+    }
+  ],
+  "xbox_exports": [
+    {
+      "path": "research\\runs\\native-retail-production-sound-context-20261121\\XBOX-CONTEXT-01.json",
+      "sha256": "60bc8e2bcd646c09905b21a1f43f0315deb5cad8ea151241af4fc99165edb08a",
+      "function_instruction_counts": {
+        "0023dcb0": 20,
+        "0023dcf0": 8,
+        "00258630": 96,
+        "0028ab00": 539,
+        "0023df70": 19,
+        "0023dff0": 13,
+        "0007d100": 20,
+        "0023c5a0": 8,
+        "0023dfc0": 13,
+        "0023ad80": 21,
+        "0023c660": 45,
+        "0023d920": 107,
+        "0023df30": 19,
+        "0023e050": 22
+      },
+      "behavioral_equivalence": false
+    },
+    {
+      "path": "research\\runs\\native-retail-production-sound-context-20261121\\XBOX-CONTEXT-02.json",
+      "sha256": "3a5392dbc1f17c9cc490b876625585a660ee581c889f07c70ecec8e732c1d61c",
+      "function_instruction_counts": {
+        "003755a0": 237,
+        "0023ad80": 21,
+        "00375a70": 29,
+        "0023c660": 45
+      },
+      "behavioral_equivalence": false
+    }
+  ],
+  "source_counter_paths": [
+    "admission0:3152E0->315318",
+    "reservation0:3152F8->31530C->315314",
+    "submitted99:315300->315314"
+  ],
+  "required_remaining": [
+    "production316320",
+    "status99/314F30 receiver",
+    "full5244/46F8 scheduling",
+    "native output configuration",
+    "envelope policy",
+    "play flags9"
+  ],
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

@@ -1,0 +1,15 @@
+{
+  "parent_commit": "e14e41dafd008b7c975828f361bd4fb0343e1d7a",
+  "fork_commit": "7fa313a84f608552763706f746b66733bf904654",
+  "branch": "main",
+  "original_tracked_fork_changes": [],
+  "original_parent_changes": [
+    "research/doc-audit-20261118/inventory.json"
+  ],
+  "inventory_sha256": "26093151039b949348184f2e8a960b92d64e7f08408d43e58e1e0ed481a959f6",
+  "source_blobs": {
+    "runtime/include/mka/retail_current_sound_required.hpp": "d063766d726c01ab2a16f90976ec2273fe4454c207be86f857ec094dd5a36769",
+    "runtime/src/native/retail_sound_bank_main.cpp": "267a99ea3477bc8e37c40a069ffbba82bbb8ff4195fbde1701a6f52351545a6d",
+    "tests/test_retail_reset_sound.cpp": "214be1afa771128399488958c5d565d7a70c22edf32cc772fc63d8b8bc9b7a7d"
+  }
+}

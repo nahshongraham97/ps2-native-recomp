@@ -118,19 +118,29 @@ bool initialize_retail_current_sound(NativeRetailMainState& main, StartupFailure
 
 bool pump_retail_current_sound(NativeRetailMainState& main, StartupFailure& failure) {
     if (!owner(main, failure, true)) return false;
+    // Original3152C0 increments64ECA8 even when transport admission or
+    // reservation refuses. Native failures retain their diagnostic, but an
+    // attempted frame still counts. Invalid Main admission above is separate.
+    const auto finish_attempt = [&](bool result) {
+        main.sound_frame_counter += std::uint32_t{1}; // ADDIU/SW word wrap.
+        return result;
+    };
+    // An unwinding game control transfer never reaches the source increment.
+    // Keep this explicit instead of incrementing from an unwinding destructor.
     const auto retained = main.sound_bank_catalog;
-    // Original3152C0 processes returned bank results/callbacks before asking
-    // its backend to advance. Native work replaces that transport here.
-    if (!catalog_result(retained->pump_one(failure.sound_catalog), failure)) return false;
+    // Returned bank callbacks precede the source command99 status request.
+    // Program dispatch belongs to the separate MSL timed worker, not99.
+    // The still-required effect retains its historical name until its complete
+    // native status/receiver contract is implemented.
+    if (!catalog_result(retained->pump_one(failure.sound_catalog), failure)) return finish_attempt(false);
     if (!required_result(current_sound_required::update_programs_after_bank_results_3152c0(main, failure),
-            failure, "3152C0 required native program/audio frame update")) return false;
+            failure, "3152C0 required native sound status publication")) return finish_attempt(false);
     if (main.sound_bank_catalog != retained || !main.lifetime->active_on_owner_thread()) {
         failure.kind = StartupError::sound_catalog;
         failure.operation = "3152C0 current-sound owner changed during native completion";
-        return false;
+        return finish_attempt(false);
     }
-    main.sound_frame_counter += std::uint32_t{1}; // Original ADDIU/SW, defined32-bit wrap.
-    return true;
+    return finish_attempt(true);
 }
 }
 

@@ -1,0 +1,212 @@
+[
+  {
+    "original": "ghidra-01.log",
+    "archive": "ghidra-01.log.gz",
+    "sha256": "7569d05e3ddc12c9eaa352f00a153eeb65638749ca1038a239019d0259630978"
+  },
+  {
+    "original": "ghidra-02.log",
+    "archive": "ghidra-02.log.gz",
+    "sha256": "1c4b0fa7fe5a161f50bd7b0dfcbd8135b0b5bacde7f3c2a23f99c2e7670edc9a"
+  },
+  {
+    "original": "ghidra-03.log",
+    "archive": "ghidra-03.log.gz",
+    "sha256": "a21ac7c98622bf41eabc478eb0297f6a07eb493b0e8e71a6906a1ad026694130"
+  },
+  {
+    "original": "scripts-01.log",
+    "archive": "scripts-01.log.gz",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "original": "scripts-02.log",
+    "archive": "scripts-02.log.gz",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "original": "scripts-03.log",
+    "archive": "scripts-03.log.gz",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "original": "xbox-ghidra-01.log",
+    "archive": "xbox-ghidra-01.log.gz",
+    "sha256": "63fdf742e16f7522dfd3c115abd01a4f6430d190d7a09f9e20f6f5403bfed06a"
+  },
+  {
+    "original": "xbox-ghidra-02.log",
+    "archive": "xbox-ghidra-02.log.gz",
+    "sha256": "87cafa23aa10cdbc901373dc288419ef9e55ed311a1778642514b4c8ad1279fa"
+  },
+  {
+    "original": "xbox-scripts-01.log",
+    "archive": "xbox-scripts-01.log.gz",
+    "sha256": "9c2f0673fca7433e500921f84719b46f5697009993dbe79bdd6e9afca6a8412f"
+  },
+  {
+    "original": "xbox-scripts-02.log",
+    "archive": "xbox-scripts-02.log.gz",
+    "sha256": "27c473411df6f273af3f56e3bc27c5e21cd061ca877f114923a70516c4cb9c37"
+  },
+  {
+    "original": "source-01\\280.c",
+    "archive": "source-01\\280.c.gz",
+    "sha256": "802476a7561bb003e63fe0941903634f468aac40756d1a5ee1ad719e5404e42f"
+  },
+  {
+    "original": "source-01\\2a00.c",
+    "archive": "source-01\\2a00.c.gz",
+    "sha256": "06955835d42e0d63e955faedca3020e4e6c52e2320b495094d36b55901e469bb"
+  },
+  {
+    "original": "source-01\\4708.c",
+    "archive": "source-01\\4708.c.gz",
+    "sha256": "88c55b1e98e858cc6de35ba19e57762924865e6f342ce64edaf61d533b75d631"
+  },
+  {
+    "original": "source-01\\4ec4.c",
+    "archive": "source-01\\4ec4.c.gz",
+    "sha256": "feaf9d516fb9f859b71942752ee0c2e882d086ee1f404622e81eada69b35e21b"
+  },
+  {
+    "original": "source-01\\5318.c",
+    "archive": "source-01\\5318.c.gz",
+    "sha256": "2181916a3aa547c6179d116a5401ddf7ba1948230eb0b4cdb5c00df19eef4594"
+  },
+  {
+    "original": "source-01\\c2f0.c",
+    "archive": "source-01\\c2f0.c.gz",
+    "sha256": "7f8ef6a44cbb9d6928b584734b0cc3dab4a270f0b06482bbb0f87b88bd5c4061"
+  },
+  {
+    "original": "source-01\\ca00.c",
+    "archive": "source-01\\ca00.c.gz",
+    "sha256": "8d3d65d7d167435281fc790e4a5ee2c494be9014d98296f06c38754c8b971edd"
+  },
+  {
+    "original": "source-01\\cd08.c",
+    "archive": "source-01\\cd08.c.gz",
+    "sha256": "c91a1aa7c69f70dbf2ecc95d086d9e74ce695ad4342d15601753a62bdad3fbd9"
+  },
+  {
+    "original": "source-01\\ec50.c",
+    "archive": "source-01\\ec50.c.gz",
+    "sha256": "591be43b5c7877ddb59cc11831394f642498cb2929a95bde1a3b0fd75702feea"
+  },
+  {
+    "original": "source-01\\ff1c.c",
+    "archive": "source-01\\ff1c.c.gz",
+    "sha256": "91acf0a09f22e43371559b11002b5bdf4736467bd7ed0285fdf82d46393830b9"
+  },
+  {
+    "original": "source-02\\334.c",
+    "archive": "source-02\\334.c.gz",
+    "sha256": "796e2e1e371efdd448e2fd988d4d1141098024400f3729bfb7cec6ff5ba66f3a"
+  },
+  {
+    "original": "source-02\\3784.c",
+    "archive": "source-02\\3784.c.gz",
+    "sha256": "4574cb19ac78ddb6587420862af3be275a46412150b0e509486dc78a8314a113"
+  },
+  {
+    "original": "source-02\\45b0.c",
+    "archive": "source-02\\45b0.c.gz",
+    "sha256": "39e61f151382a2127b5fcaffe3ff9769ff078bf58d0c2d8780cc050ab97d0f86"
+  },
+  {
+    "original": "source-03\\2c80.c",
+    "archive": "source-03\\2c80.c.gz",
+    "sha256": "87b6f7f6cde8bfc67913e2a2f33e697ac93fa9f3fc8f93d0805bf1726596ebbb"
+  },
+  {
+    "original": "source-03\\4ccc.c",
+    "archive": "source-03\\4ccc.c.gz",
+    "sha256": "10563b5394b201c9a6fa2022decd984580208fb181662b79d55a8c3512d7bd0e"
+  },
+  {
+    "original": "source-03\\5244.c",
+    "archive": "source-03\\5244.c.gz",
+    "sha256": "a5e315cb164490bdcf2e2421da0e16c1f421f9db40bd2099655483124f3362aa"
+  },
+  {
+    "original": "source-01/280.c",
+    "archive": "source-01/280.c.gz",
+    "sha256": "802476a7561bb003e63fe0941903634f468aac40756d1a5ee1ad719e5404e42f"
+  },
+  {
+    "original": "source-01/2a00.c",
+    "archive": "source-01/2a00.c.gz",
+    "sha256": "06955835d42e0d63e955faedca3020e4e6c52e2320b495094d36b55901e469bb"
+  },
+  {
+    "original": "source-01/4708.c",
+    "archive": "source-01/4708.c.gz",
+    "sha256": "88c55b1e98e858cc6de35ba19e57762924865e6f342ce64edaf61d533b75d631"
+  },
+  {
+    "original": "source-01/4ec4.c",
+    "archive": "source-01/4ec4.c.gz",
+    "sha256": "feaf9d516fb9f859b71942752ee0c2e882d086ee1f404622e81eada69b35e21b"
+  },
+  {
+    "original": "source-01/5318.c",
+    "archive": "source-01/5318.c.gz",
+    "sha256": "2181916a3aa547c6179d116a5401ddf7ba1948230eb0b4cdb5c00df19eef4594"
+  },
+  {
+    "original": "source-01/c2f0.c",
+    "archive": "source-01/c2f0.c.gz",
+    "sha256": "7f8ef6a44cbb9d6928b584734b0cc3dab4a270f0b06482bbb0f87b88bd5c4061"
+  },
+  {
+    "original": "source-01/ca00.c",
+    "archive": "source-01/ca00.c.gz",
+    "sha256": "8d3d65d7d167435281fc790e4a5ee2c494be9014d98296f06c38754c8b971edd"
+  },
+  {
+    "original": "source-01/cd08.c",
+    "archive": "source-01/cd08.c.gz",
+    "sha256": "c91a1aa7c69f70dbf2ecc95d086d9e74ce695ad4342d15601753a62bdad3fbd9"
+  },
+  {
+    "original": "source-01/ec50.c",
+    "archive": "source-01/ec50.c.gz",
+    "sha256": "591be43b5c7877ddb59cc11831394f642498cb2929a95bde1a3b0fd75702feea"
+  },
+  {
+    "original": "source-01/ff1c.c",
+    "archive": "source-01/ff1c.c.gz",
+    "sha256": "91acf0a09f22e43371559b11002b5bdf4736467bd7ed0285fdf82d46393830b9"
+  },
+  {
+    "original": "source-02/334.c",
+    "archive": "source-02/334.c.gz",
+    "sha256": "796e2e1e371efdd448e2fd988d4d1141098024400f3729bfb7cec6ff5ba66f3a"
+  },
+  {
+    "original": "source-02/3784.c",
+    "archive": "source-02/3784.c.gz",
+    "sha256": "4574cb19ac78ddb6587420862af3be275a46412150b0e509486dc78a8314a113"
+  },
+  {
+    "original": "source-02/45b0.c",
+    "archive": "source-02/45b0.c.gz",
+    "sha256": "39e61f151382a2127b5fcaffe3ff9769ff078bf58d0c2d8780cc050ab97d0f86"
+  },
+  {
+    "original": "source-03/2c80.c",
+    "archive": "source-03/2c80.c.gz",
+    "sha256": "87b6f7f6cde8bfc67913e2a2f33e697ac93fa9f3fc8f93d0805bf1726596ebbb"
+  },
+  {
+    "original": "source-03/4ccc.c",
+    "archive": "source-03/4ccc.c.gz",
+    "sha256": "10563b5394b201c9a6fa2022decd984580208fb181662b79d55a8c3512d7bd0e"
+  },
+  {
+    "original": "source-03/5244.c",
+    "archive": "source-03/5244.c.gz",
+    "sha256": "a5e315cb164490bdcf2e2421da0e16c1f421f9db40bd2099655483124f3362aa"
+  }
+]
