@@ -1,0 +1,14 @@
+{
+  "target_commit": "f2020665dcd02145cb9d65df926ac53e2c0303b2",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+    "-std=c++20",
+    "-fsyntax-only",
+    "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\research\\runs\\parallel-camera-bootstrap-review-20261122\\frozen",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\research\\runs\\parallel-camera-bootstrap-review-20261122\\copyability_probe.cpp"
+  ],
+  "exit": 0,
+  "frozen_header_sha256": "a92507e232b1d4c492dcbc5258521badc0423e5058035e25d9af50bb26d0c745",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "scope": "Private syntax-only review probe against exact frozen target header;no delivery candidate build/run"
+}

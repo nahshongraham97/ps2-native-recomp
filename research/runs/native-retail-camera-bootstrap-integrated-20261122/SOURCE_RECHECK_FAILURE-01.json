@@ -1,0 +1,4 @@
+{
+  "status": "FAIL_CHECKER_BRANCH_TARGET_ASSUMPTION",
+  "error": "Checker required unconditional branch target to equal first word immediately after omitted zero; actual target may skip farther. No production code or frozen proof changed; no build ran."
+}

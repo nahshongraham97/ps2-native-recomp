@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "-S",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-scene-continuation",
+    "-B",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-scene-continuation\\build-camera-continuation",
+    "-G",
+    "Ninja",
+    "-DCMAKE_BUILD_TYPE=Release",
+    "-DCMAKE_CXX_COMPILER=C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+    "-DCMAKE_MAKE_PROGRAM=C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\ninja\\ninja.exe",
+    "-DSDL2_DIR=C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-scene-continuation\\third_party\\sdl2\\lib\\cmake\\SDL2",
+    "-DMKA_NATIVE_MEDIA_HEADERS=C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\native-media\\ffmpeg-7.1.4"
+  ],
+  "exit": 0,
+  "seconds": 2.2580033999984153,
+  "log_sha256": "93522e46a1567f49bf87ab790babd27239f475302eb55bd32cf49a61633e89a8"
+}

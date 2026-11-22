@@ -1,0 +1,24 @@
+{
+  "commit": "ca8f780cb6e9934e1b4db88aeb9a119e9f84309f",
+  "files": {
+    "research/runs/parallel-camera-bootstrap-review-20261122/ARCHIVES.json": "a4ba2c73cd1ca352386067eaff1b7a08fd3478488ba395f523e2adb8488d6a87",
+    "research/runs/parallel-camera-bootstrap-review-20261122/AUDIT.json": "220f86d5e55e63bd113b29d4dc7fe69666d0a6b30e850492ad22600e77cf7fa8",
+    "research/runs/parallel-camera-bootstrap-review-20261122/AUTHOR_CORRECTION.patch.gz": "dc91b4e1cd74fb223b1965fcc7903ba56ce742ba2d43000c72eafaa94af45e5f",
+    "research/runs/parallel-camera-bootstrap-review-20261122/COPYABILITY_FROZEN.json": "f760dd75fe671b109fd96991c77d8220e5c875f1764f0d2b49fe0add52062452",
+    "research/runs/parallel-camera-bootstrap-review-20261122/COPYABILITY_PROBE.json": "3afef21f4f5e6c417de7611f7f86135b821accacb23644c79c7634be52ea0269",
+    "research/runs/parallel-camera-bootstrap-review-20261122/REVIEW.md": "664c8655f604b97746c8a4fba90ac7c7a371d4f0931b8e4c29eebb414725acc9",
+    "research/runs/parallel-camera-bootstrap-review-20261122/audit.py": "876e17288311b0df5456820ee29d94649dda07261e277be73cb5a3aa264cec51",
+    "research/runs/parallel-camera-bootstrap-review-20261122/copyability-probe-frozen.log.gz": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83",
+    "research/runs/parallel-camera-bootstrap-review-20261122/copyability-probe.log.gz": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83",
+    "research/runs/parallel-camera-bootstrap-review-20261122/copyability_probe.cpp": "7f3684d6add3d82257642a42249610c479417d76334b242ac2734ac29d2eec64",
+    "research/runs/parallel-camera-bootstrap-review-20261122/correction/AUDIT.json": "630bbb3a1af68d830aa594603633adaf1d69e7276ea0aae65931579bd1b120ea",
+    "research/runs/parallel-camera-bootstrap-review-20261122/correction/OWNERSHIP_PROBE.json": "5fda2c5ff9441c60e0da7781e8f32b69c71c1b57c63bd88ca910289128ecd244",
+    "research/runs/parallel-camera-bootstrap-review-20261122/correction/REVIEW.md": "25675f45fd7939963d4f07e2ff80f3ddf7c881c28386a3d051ed3ff056030764",
+    "research/runs/parallel-camera-bootstrap-review-20261122/correction/authenticate.py": "d492e53392889eb586126e8c8021252b8dfb4b411d9459548e41c123870ddd49",
+    "research/runs/parallel-camera-bootstrap-review-20261122/correction/frozen/mka/retail_camera_world.hpp": "aa0f4930b55050cce7fee25ea6aaff2a80baa741d19d247fd0fbbfad98fe9f6e",
+    "research/runs/parallel-camera-bootstrap-review-20261122/correction/ownership-probe.log.gz": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83",
+    "research/runs/parallel-camera-bootstrap-review-20261122/correction/ownership_probe.cpp": "a30a256f540e349d41765744d645342f2e3e4dc2922b98a7b85a669b7e0aa951",
+    "research/runs/parallel-camera-bootstrap-review-20261122/frozen/mka/retail_camera_world.hpp": "a92507e232b1d4c492dcbc5258521badc0423e5058035e25d9af50bb26d0c745"
+  },
+  "imported_evidence_only": true
+}

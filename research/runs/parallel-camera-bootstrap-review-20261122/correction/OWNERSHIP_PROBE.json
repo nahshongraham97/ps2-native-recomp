@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+    "-std=c++20",
+    "-fsyntax-only",
+    "-IC:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\research\\runs\\parallel-camera-bootstrap-review-20261122\\correction\\frozen",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\research\\runs\\parallel-camera-bootstrap-review-20261122\\correction\\ownership_probe.cpp"
+  ],
+  "exit": 0,
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "frozen_header_sha256": "aa0f4930b55050cce7fee25ea6aaff2a80baa741d19d247fd0fbbfad98fe9f6e",
+  "source_sha256": "a30a256f540e349d41765744d645342f2e3e4dc2922b98a7b85a669b7e0aa951",
+  "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "scope": "Private syntax-only probe;five ownership traits;no delivery build/run"
+}

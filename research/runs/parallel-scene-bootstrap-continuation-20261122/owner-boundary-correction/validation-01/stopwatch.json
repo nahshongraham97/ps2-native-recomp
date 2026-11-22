@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-scene-continuation\\build-camera-continuation\\test_native_retail_main_timing.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.107594600005541,
+  "source_manifest_sha256": "2abf29d9490e568923878881e889a4110af397af5b274a905179d87f15750989",
+  "executable_sha256": "6ef52b421d105f43c3b6c617205a9a8dfe3da0a56443dcae16fd37d820e39ad1",
+  "log_sha256": "8d2e429c1f63372a6bef2f7fd579417c783cd5d8236e82482e98d9bb4268a4f6",
+  "game_run": false,
+  "physical_endpoints_opened": false
+}

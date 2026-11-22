@@ -1,0 +1,10 @@
+{
+  "copyability-probe-frozen.log": {
+    "archive": "copyability-probe-frozen.log.gz",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "copyability-probe.log": {
+    "archive": "copyability-probe.log.gz",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

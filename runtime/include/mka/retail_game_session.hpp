@@ -13,6 +13,7 @@
 #include "mka/retail_profile_resource_ids.hpp"
 #include "mka/retail_profile_aggregate.hpp"
 #include "mka/retail_live_scene_reference.hpp"
+#include "mka/retail_camera_world.hpp"
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -53,6 +54,7 @@ public:
     NativeRetailTaskDomain* task_domain(RetailGameSessionFailure&) noexcept;
     RetailGameRecordResetSnapshot* game_record_values(RetailGameSessionFailure&) noexcept;
     RetailGameRecordsValues* game_records_values(RetailGameSessionFailure&) noexcept;
+    NativeRetailRenderCameras* render_cameras(RetailGameSessionFailure&) noexcept;
     NativeRetailProfileResourceIds* profile_resource_ids(RetailGameSessionFailure&) noexcept;
     NativeRetailProfileAggregate* profile_aggregate(RetailGameSessionFailure&) noexcept;
     NativeRetailSceneReference* live_scene_reference(RetailGameSessionFailure&) noexcept;
@@ -81,6 +83,7 @@ private:
     NativeRetailInitialTaskState initial_task_state_;
     RetailGameRecordResetSnapshot game_record_values_;
     RetailGameRecordsValues game_records_values_;
+    NativeRetailRenderCameras render_cameras_{*this};
     NativeRetailProfileResourceIds profile_resource_ids_{*this};
     NativeRetailProfileAggregate profile_aggregate_;
     NativeRetailSceneReference live_scene_reference_{*this};

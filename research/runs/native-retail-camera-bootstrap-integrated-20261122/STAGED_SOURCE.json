@@ -1,0 +1,12 @@
+{
+  "approved": [
+    "cmake/native_game.cmake",
+    "runtime/include/mka/retail_camera_world.hpp",
+    "runtime/include/mka/retail_game_session.hpp",
+    "runtime/include/mka/retail_scene_bootstrap_required.hpp",
+    "runtime/src/native/retail_camera_world.cpp",
+    "runtime/src/native/retail_game_session.cpp",
+    "runtime/src/native/retail_scene_bootstrap_continuation.cpp",
+    "tests/test_retail_camera_bootstrap.cpp"
+  ]
+}

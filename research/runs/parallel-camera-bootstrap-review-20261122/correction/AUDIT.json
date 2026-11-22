@@ -1,0 +1,62 @@
+{
+  "status": "PASS_CAMERA_OWNER_CORRECTION_SAVED_IDENTITIES",
+  "target_commit": "feb629e8fcd4dabefef1cb687393459475d3c74f",
+  "parent_commit": "f2020665dcd02145cb9d65df926ac53e2c0303b2",
+  "source_manifest_sha256": "2abf29d9490e568923878881e889a4110af397af5b274a905179d87f15750989",
+  "source_count": 839,
+  "changed_sources": [
+    "runtime/include/mka/retail_camera_world.hpp",
+    "tests/test_retail_camera_bootstrap.cpp"
+  ],
+  "source_before_sha256": "270ac5e0eb96f568511eb085cfd1a0c1fec12801502407f08d3d0e7ab46433c9",
+  "author_result_sha256": "a8551f48fc0d54a89cc0671a603b22c73fded3dc44826aab205faf7196b65b03",
+  "clients": {
+    "camera": {
+      "target": "test_native_retail_camera_bootstrap",
+      "binary_sha256": "f5e3ccd5a57e3a3c043c2db4c188190f9681e32c3d9cebaaa720904b92e6656a",
+      "execution_receipt_sha256": "3da5985fc0a177907193938b262374519ed95e56a89fdda1143ca4a0b932ff10",
+      "execution_log_sha256": "4b3cbd0a7a69eda7f01d07c6785e24303d6273e70e96b3bcd3aaccc06ea33d72",
+      "symbols_receipt_sha256": "08c6d2c71b531371f02d782aeedaca08cf611a32cc7de1bfbf84918b8ddfab3a",
+      "symbols_log_sha256": "2b5ad9a8aca3840d9ac388c0c4176122f19bd3c47974a1e1720084f1cf57c6f4"
+    },
+    "prefix": {
+      "target": "test_native_retail_scene_bootstrap_prefix",
+      "binary_sha256": "2c5931e40c0938d674fd19f6a7ae564e32fc3302b77d2d8acc53e54ab45aa5bd",
+      "execution_receipt_sha256": "36213e5ae6ba20820f1d00e2ababbb49190559c57dae3137f417b1f544abb82b",
+      "execution_log_sha256": "963eebab906008fa61cde1fc049bab5898bcb40cb145418e044096d73132a1dd",
+      "symbols_receipt_sha256": "ad2f7ef2f38f94328c35733f72edaa569fbe50943b2d96a8b4eaea5cc8b7f506",
+      "symbols_log_sha256": "b77b92c4e520a6f1784af1143a8c8df45daf08c9cb26053241cac6efa33cf3c1"
+    },
+    "stopwatch": {
+      "target": "test_native_retail_main_timing",
+      "binary_sha256": "6ef52b421d105f43c3b6c617205a9a8dfe3da0a56443dcae16fd37d820e39ad1",
+      "execution_receipt_sha256": "c1d369c93035736dad9f9718b17f92597868dc5580706ba233b3f9d5557483ec",
+      "execution_log_sha256": "8d2e429c1f63372a6bef2f7fd579417c783cd5d8236e82482e98d9bb4268a4f6",
+      "symbols_receipt_sha256": "d06539e7b6fdc0f36aec24e34a81cf8ed648afa9e837903a27d8b13900f17628",
+      "symbols_log_sha256": "6ab1407bd5b5b882f80dad115a7c6bff36525054a28771eda579ad0174f19359"
+    },
+    "session": {
+      "target": "test_native_retail_game_session",
+      "binary_sha256": "efc245c8335b1674bea962a92658d309ee4ff05273f63de939e137ca863cab1f",
+      "execution_receipt_sha256": "0730915422d2c23a7cb411680225b0747c8df115a87fe29c0254fda89122817f",
+      "execution_log_sha256": "8e3d35f8b803306dec91bf68b6ac0df7762f5978927050fb746d7e134d4cf814",
+      "symbols_receipt_sha256": "fad94f6cbef10c6c3cb5145b2a191023eedacd332f4ab4e41ea88329060f0e97",
+      "symbols_log_sha256": "e109714b039565af1be3fab96166daf7dd1e0d794cf2c0892edd6ddd4cbb6c0c"
+    }
+  },
+  "receipts": {
+    "build": {
+      "receipt_sha256": "3a86d4473acec959fb7fa93bc82b00e1e9f643acb593058d8e270a3bb4849365",
+      "log_sha256": "ea2add59d588cbea4119c0239d5d9bf2f0640156af7baacaf9d4faf7e86d1831",
+      "exit": 0
+    },
+    "full-entry-negative": {
+      "receipt_sha256": "b52a98b4f99a6ed0a8796b84ad092a3e934a26e2fe09936362fc716b758de2c4",
+      "log_sha256": "133c37ee16c3e0e0f1de4bae481edc1062c77a3207a5b541e9a9bbcd8d3284f8",
+      "exit": 1
+    }
+  },
+  "prior_original_source_review_sha256": "220f86d5e55e63bd113b29d4dc7fe69666d0a6b30e850492ad22600e77cf7fa8",
+  "frozen_header_sha256": "aa0f4930b55050cce7fee25ea6aaff2a80baa741d19d247fd0fbbfad98fe9f6e",
+  "scope": "Independent saved-result/source audit;no delivery builds/runs. Runtime interpretation limited to original bounded camera/count/link component,all required suffixes still unbound."
+}

@@ -1,0 +1,203 @@
+{
+  "status": "PASS_ORIGINAL_CAMERA_BOOTSTRAP_WORDS_AND_BSS",
+  "source_join_sha256": "b1895a9a3621b52ec750fd5e95448883c579fa898e01f1cc5d0074c4d2a75542",
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "functions": [
+    {
+      "path": "research\\runs\\parallel-scene-bootstrap-continuation-20261122\\source-01\\00126720.asm",
+      "listed_words": 3,
+      "span_words": 3,
+      "omitted_zero_after_unconditional_branch": [],
+      "raw_sha256": "204d9bbdb8565afa6460d2cb10952c8f472efd435811e57feeeb854d7f501f06",
+      "saved_hash_identities": [
+        "raw",
+        "lf"
+      ]
+    },
+    {
+      "path": "research\\runs\\parallel-scene-bootstrap-continuation-20261122\\source-01\\00127100.asm",
+      "listed_words": 2,
+      "span_words": 2,
+      "omitted_zero_after_unconditional_branch": [],
+      "raw_sha256": "370d55b90fc35763d1f2c324bf0d33d8b3e3f0cc07ca19ef86e5307525ebb034",
+      "saved_hash_identities": [
+        "raw",
+        "lf"
+      ]
+    },
+    {
+      "path": "research\\runs\\parallel-scene-bootstrap-continuation-20261122\\source-01\\001cf350.asm",
+      "listed_words": 10,
+      "span_words": 10,
+      "omitted_zero_after_unconditional_branch": [],
+      "raw_sha256": "e9ca018aba3e95f70c6ef5fa105a99ecf0e79ad3955afdfca1b5e970cf8f84fd",
+      "saved_hash_identities": [
+        "raw",
+        "lf"
+      ]
+    },
+    {
+      "path": "research\\runs\\parallel-scene-bootstrap-continuation-20261122\\source-01\\001cf380.asm",
+      "listed_words": 4,
+      "span_words": 4,
+      "omitted_zero_after_unconditional_branch": [],
+      "raw_sha256": "071ac3a8edfd28f604ec9e0a4c5dadedfc57ea9f540acf915dafcbd47de072e0",
+      "saved_hash_identities": [
+        "raw",
+        "lf"
+      ]
+    },
+    {
+      "path": "research\\runs\\parallel-scene-bootstrap-continuation-20261122\\source-02\\00127110.asm",
+      "listed_words": 2,
+      "span_words": 2,
+      "omitted_zero_after_unconditional_branch": [],
+      "raw_sha256": "219ff6c25f29a7f2851113d5ae04c636065fb21ad3e96b9e040f68ff12ac38ef",
+      "saved_hash_identities": [
+        "raw",
+        "lf"
+      ]
+    },
+    {
+      "path": "research\\runs\\parallel-scene-bootstrap-continuation-20261122\\source-02\\001cf300.asm",
+      "listed_words": 18,
+      "span_words": 18,
+      "omitted_zero_after_unconditional_branch": [],
+      "raw_sha256": "3d8eb784938aa0ddbd5de9c3e8ac7b6ecd412c82c715a275fde639a501c32eba",
+      "saved_hash_identities": [
+        "raw",
+        "lf"
+      ]
+    },
+    {
+      "path": "research\\runs\\parallel-scene-bootstrap-continuation-20261122\\source-02\\001cf020.asm",
+      "listed_words": 182,
+      "span_words": 182,
+      "omitted_zero_after_unconditional_branch": [],
+      "raw_sha256": "ecb4e9d0ce8a1c24406d807fee4e6bbdf22971337f3a7c5bf21064dd671cf479",
+      "saved_hash_identities": [
+        "raw",
+        "lf"
+      ]
+    },
+    {
+      "path": "research\\runs\\parallel-scene-bootstrap-continuation-20261122\\source-04\\00127260.asm",
+      "listed_words": 65,
+      "span_words": 65,
+      "omitted_zero_after_unconditional_branch": [],
+      "raw_sha256": "5a684e15553d9ac293ee37d83c90e1aac031ced2c607165ef2e58916fc813d79",
+      "saved_hash_identities": [
+        "raw",
+        "lf"
+      ]
+    },
+    {
+      "path": "research\\runs\\parallel-scene-bootstrap-continuation-20261122\\source-04\\001cdfd0.asm",
+      "listed_words": 23,
+      "span_words": 23,
+      "omitted_zero_after_unconditional_branch": [],
+      "raw_sha256": "b8a1b57c19a2ce66e4d365c7d245d0872e085d957ef59f01aa08ff23d5a34acd",
+      "saved_hash_identities": [
+        "raw",
+        "lf"
+      ]
+    },
+    {
+      "path": "research\\runs\\parallel-scene-bootstrap-continuation-20261122\\source-04\\0017ebb0.asm",
+      "listed_words": 73,
+      "span_words": 73,
+      "omitted_zero_after_unconditional_branch": [],
+      "raw_sha256": "f6045bb5a0369651403c6c59d17f4b559eb3fde1de6ddccc9885609fdda75fc8",
+      "saved_hash_identities": [
+        "raw",
+        "lf"
+      ]
+    },
+    {
+      "path": "research\\runs\\parallel-scene-bootstrap-continuation-20261122\\source-04\\001a65a0.asm",
+      "listed_words": 62,
+      "span_words": 62,
+      "omitted_zero_after_unconditional_branch": [],
+      "raw_sha256": "d31b1c28ea0ae9caea3b68cc44fdf077cc3b6562a605e25e2bdf5f2ce6862a4b",
+      "saved_hash_identities": [
+        "raw",
+        "lf"
+      ]
+    },
+    {
+      "path": "research\\runs\\parallel-scene-bootstrap-continuation-20261122\\source-04\\00180ed0.asm",
+      "listed_words": 268,
+      "span_words": 269,
+      "omitted_zero_after_unconditional_branch": [
+        "0x1812a4"
+      ],
+      "raw_sha256": "ebe82d3446cac17cc88c16876c2ccee1718b43e57d21da006b78ae583f361dd6",
+      "saved_hash_identities": [
+        "raw",
+        "lf"
+      ]
+    },
+    {
+      "path": "research\\runs\\parallel-section-timing-20261122\\source-joined\\00181a30.asm",
+      "listed_words": 40,
+      "span_words": 40,
+      "omitted_zero_after_unconditional_branch": [],
+      "raw_sha256": "f29e87dcd0541d24822fb15bd43955828b9a8a24fa5a49a7633ead0c20f3b5b2",
+      "saved_hash_identities": [
+        "crlf"
+      ]
+    },
+    {
+      "path": "research\\runs\\parallel-scene-bootstrap-continuation-20261122\\source-04\\001a6510.asm",
+      "listed_words": 11,
+      "span_words": 11,
+      "omitted_zero_after_unconditional_branch": [],
+      "raw_sha256": "38c7e4d8a7a3f1c9c42b78e6d1942468ec7190efebe3d39c9ef97b877667d48b",
+      "saved_hash_identities": [
+        "raw",
+        "lf"
+      ]
+    },
+    {
+      "path": "research\\runs\\parallel-scene-bootstrap-continuation-20261122\\source-04\\001a3190.asm",
+      "listed_words": 187,
+      "span_words": 187,
+      "omitted_zero_after_unconditional_branch": [],
+      "raw_sha256": "2d0cae9a0077ee3a7cf696e24adf576b5b2d6a046a0d894b221b6701a31af7bd",
+      "saved_hash_identities": [
+        "raw",
+        "lf"
+      ]
+    },
+    {
+      "path": "research\\runs\\parallel-scene-bootstrap-continuation-20261122\\source-01\\001cd6e0.asm",
+      "listed_words": 249,
+      "span_words": 250,
+      "omitted_zero_after_unconditional_branch": [
+        "0x1cd9e4"
+      ],
+      "raw_sha256": "ba076f32a7f4bbc786c17a68804198c3e89f225b3220f115cdaefd3e973c8d79",
+      "saved_hash_identities": [
+        "raw",
+        "lf"
+      ]
+    },
+    {
+      "path": "research\\runs\\parallel-scene-bootstrap-continuation-20261122\\source-02\\00126000.asm",
+      "listed_words": 38,
+      "span_words": 38,
+      "omitted_zero_after_unconditional_branch": [],
+      "raw_sha256": "01d260d38b3d4f27fbb654739e10f1b8ecfbe181f9d36f4bbf831b2cc6af3933",
+      "saved_hash_identities": [
+        "raw",
+        "lf"
+      ]
+    }
+  ],
+  "listed_words": 1237,
+  "storage_birth_records": 5,
+  "omitted_words_proved": 2,
+  "semantic_review": "parallel-camera-bootstrap-review-20261122/REVIEW.md and correction/REVIEW.md; no new live decompiler claim",
+  "game_run": false,
+  "acceptance": "OPEN"
+}

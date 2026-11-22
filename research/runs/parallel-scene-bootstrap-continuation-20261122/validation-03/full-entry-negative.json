@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-scene-continuation\\build-camera-continuation",
+    "--target",
+    "test_native_startup_missing_bindings",
+    "-j2"
+  ],
+  "exit": 1,
+  "seconds": 1.0103319000045303,
+  "source_manifest_sha256": "9db7d1355d10008ab24f85a8f8fcd5aead8d7d2705dfd3009c574840db07df6d",
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "log_sha256": "133c37ee16c3e0e0f1de4bae481edc1062c77a3207a5b541e9a9bbcd8d3284f8",
+  "game_run": false,
+  "physical_endpoints_opened": false
+}

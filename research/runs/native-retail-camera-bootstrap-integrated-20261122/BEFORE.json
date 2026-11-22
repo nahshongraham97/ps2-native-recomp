@@ -1,0 +1,17 @@
+{
+  "base": "4e73d4d09d8d9aee7cc4a9ee8d0eb6cd2ba97643",
+  "candidates": [
+    "f2020665dcd02145cb9d65df926ac53e2c0303b2",
+    "feb629e8fcd4dabefef1cb687393459475d3c74f"
+  ],
+  "pins": {
+    "cmake/native_game.cmake": "c343d616f093c425ffbdd54664a08e19afc4c3f019d90bab115a52889338c855",
+    "runtime/include/mka/retail_camera_world.hpp": null,
+    "runtime/include/mka/retail_game_session.hpp": "61a64501930954dabbc242f8829f93c312b3b18e5520f17eccd34d88d84f64e7",
+    "runtime/include/mka/retail_scene_bootstrap_required.hpp": "1716ca702e6f1269f1d158cb25ca93897b4e80bc2532f81fbc5eed575985ac56",
+    "runtime/src/native/retail_camera_world.cpp": null,
+    "runtime/src/native/retail_game_session.cpp": "4207080a3bad7612b0cd6fdb16ac046500ef2dcecad350ae35cdf66e430eaaaf",
+    "runtime/src/native/retail_scene_bootstrap_continuation.cpp": null,
+    "tests/test_retail_camera_bootstrap.cpp": null
+  }
+}
