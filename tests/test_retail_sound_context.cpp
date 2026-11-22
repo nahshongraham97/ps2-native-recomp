@@ -188,15 +188,50 @@ void exercise_pending(NativeRetailMainState& main,sound::AudioBankSession& sessi
     check(resumed.handle.same_identity(*gap)&&resumed.result.activated&&!resumed.result.failure,
         "lower construction lease retires before callback and exact owned plan activates after cleanup");
     check(main_binding::retire_retail_game_sound_references(main,f),"gap job's actual game reference retires");
-    auto unsupported=parameters;unsupported.caller_play_flags=9;
-    auto invalid=runtime.submit_queued_play(original,0,unsupported,rf);check(bool(invalid),"flag9 readiness scenario admitted as actual work");
+    // Source12C300/50 may arrive before construction. Promote the exact
+    // queued association, preserve first-match game order, and defer start.
+    auto third=session.load_bank("announcr",bf);check(bool(third),"third actual fresh bank for promotion ordering");
+    auto prepared_third=session.prepare_bank(*third,report,prep,bf);check(bool(prepared_third),"third deferred bank prepared");
+    auto held_parameters=parameters;held_parameters.caller_play_flags=9;
+    gate=block_next_build();auto lead=main_binding::submit_retail_queued_sound(main,*first,0,0xF0,parameters,f);
+    check(bool(lead),"actual blocked lead before pending resume");wait_gate(gate);
+    auto earlier=main_binding::submit_retail_queued_sound(main,*third,0,0xA0,parameters,f);
+    auto promoted=main_binding::submit_retail_queued_sound(main,*second,0,0xF1,held_parameters,f);
+    auto same_identifier=main_binding::submit_retail_queued_sound(main,*second,0,0xF1,held_parameters,f);
+    check(earlier&&promoted&&same_identifier&&main.game_sound_references.size()==4,"actual pending records include duplicate semantic identifier");
+    check(main_binding::resume_retail_game_sound_reference(main,0xF1,f)&&main.game_sound_references.size()==3&&
+        main.game_sound_references[0].playback.same_identity(*lead)&&main.game_sound_references[1].playback.same_identity(*earlier)&&
+        main.game_sound_references[2].playback.same_identity(*same_identifier),"12C300 removes first match and preserves remaining actual record order");
+    check(!main.playback->observe(*promoted,pf)&&pf.kind==sound::PlaybackError::operation_active,
+        "pending resume request neither creates a voice nor retires public work early");
+    check(main_binding::resume_retail_game_sound_reference(main,0xDEAD,f)&&main.game_sound_references.size()==3,
+        "absent semantic identifier has no native control effect");
+    check(runtime.request_resume(*lead,rf)&&runtime.request_resume(*lead,rf),"repeated running resume requests retain the exact current work");
+    gate->release();auto lead_result=poll(),promoted_result=poll(),cached_result=poll(),earlier_result=poll();
+    check(lead_result.resume_delivered&&!lead_result.resume_failure&&lead_result.handle.same_identity(*lead)&&promoted_result.handle.same_identity(*promoted)&&
+        cached_result.handle.same_identity(*same_identifier)&&earlier_result.handle.same_identity(*earlier),
+        "F980 promotion precedes earlier fresh work, then real cached priority wins again");
+    check(promoted_result.resume_delivered&&!promoted_result.resume_failure&&promoted_result.result.activated&&
+        promoted_result.result.runtime_ready&&!promoted_result.result.failure,"pending control is delivered after actual ready consumer and retirement");
+    auto resumed_play=main.playback->observe(*promoted,pf),held_play=main.playback->observe(*same_identifier,pf);
+    check(resumed_play&&resumed_play->dispatch_live&&!resumed_play->held&&resumed_play->voices==1&&held_play&&held_play->held&&
+        !held_play->dispatch_live&&!held_play->deadline_bound&&held_play->voices==0&&!cached_result.resume_delivered,
+        "only the exact promoted association starts; the equal-id suffix remains truly held");
+    check(main_binding::resume_retail_game_sound_reference(main,0xF1,f)&&main.game_sound_references.size()==2,
+        "ready held command50 removes the next exact matching record");
+    held_play=main.playback->observe(*same_identifier,pf);check(held_play&&held_play->dispatch_live&&held_play->voices==1,
+        "ready native resume starts exactly one real first-sample voice");
+    check(main_binding::retire_retail_game_sound_references(main,f)&&main.playback->stop(*promoted,pf)&&
+        main.playback->stop(*same_identifier,pf),"actual promoted/ready mode1 and remaining game references retire");
+    auto unsupported=parameters;unsupported.caller_play_flags=9;unsupported.output.selector=-2;
+    auto invalid=runtime.submit_queued_play(original,0,unsupported,rf);check(bool(invalid),"actual held readiness with unbound selector admitted as work");
     auto failure=poll();check(failure.handle.same_identity(*invalid)&&failure.result.runtime_ready&&failure.result.ordinary_callback_invoked&&
-        !failure.result.activated&&failure.result.failure&&failure.result.failure->kind==sound::PlaybackError::unsupported_play_flags,
+        !failure.result.activated&&failure.result.failure&&failure.result.failure->kind==sound::PlaybackError::unsupported_output_selector,
         "runtime-ready callback is not a voice or activation success acknowledgement");
     invalid=main_binding::submit_retail_queued_sound(main,original,0,0xE1,unsupported,f);check(bool(invalid),"Main owns named unsupported consumer job");
     await([&]{return !main.playback->observe(*invalid,pf)&&pf.kind==sound::PlaybackError::retired_handle;},"actual failed consumer disposes before Main status");
     await([&]{return !main_binding::pump_retail_current_sound(main,f);},"Main reports actual pending consumer failure");
-    check(f.sound_catalog.runtime.playback.kind==sound::PlaybackError::unsupported_play_flags,
+    check(f.sound_catalog.runtime.playback.kind==sound::PlaybackError::unsupported_output_selector,
         "Main preserves exact unsupported consumer failure before status");
     check(main_binding::retire_retail_game_sound_references(main,f),"failed job's retired reference removed");
     for(std::int64_t cut:{0,1}){fail_after=cut;auto rejected=main_binding::submit_retail_queued_sound(main,original,0,0,parameters,f);fail_after=-1;
@@ -204,10 +239,11 @@ void exercise_pending(NativeRetailMainState& main,sound::AudioBankSession& sessi
     bool refused=false;std::thread foreign([&]{RetailSoundRuntimeFailure other;
         refused=!runtime.submit_queued_play(original,0,parameters,other)&&other.kind==RetailSoundRuntimeError::wrong_thread&&
             !runtime.cancel_pending_play(*invalid,other)&&other.kind==RetailSoundRuntimeError::wrong_thread&&
-            !runtime.poll_play_completion(other)&&other.kind==RetailSoundRuntimeError::wrong_thread;});foreign.join();
+            !runtime.poll_play_completion(other)&&other.kind==RetailSoundRuntimeError::wrong_thread&&
+            !runtime.request_resume(*invalid,other)&&other.kind==RetailSoundRuntimeError::wrong_thread;});foreign.join();
     check(refused,"actual queue/poll/cancellation lifecycle stays on Main thread");
     await([&]{auto o=main.playback->observe_all_outputs(pf);return o&&!o->retired_groups&&!o->pending_preparations;},"pending scenarios retire real tails and jobs");
-    check(main.playback->unload(*first,pf)&&main.playback->unload(*second,pf),"actual duplicate bank instances unload after true job retirement");
+    check(main.playback->unload(*first,pf)&&main.playback->unload(*second,pf)&&main.playback->unload(*third,pf),"actual duplicate bank instances unload after true job retirement");
 }
 
 }
@@ -419,5 +455,5 @@ int main(int argc,char** argv) try {
             "actual output-close failure is returned after worker-thread release");
         check(host.main->sound_runtime->shutdown(failure),"already released failed output is not closed again");
     }
-    std::puts("PASS production Main pending/cached-priority/cancellation/reference/context/status/workers/PCM tails/70 identities/allocation/disposal gap/error/lifetime; physical output and fault probes wrapped; no game/endpoint");return 0;
+    std::puts("PASS production Main held/resume/first-match/promotion/pending/cached-priority/cancellation/reference/context/status/workers/PCM tails/70 identities/allocation/disposal gap/error/lifetime; physical output and fault probes wrapped; no game/endpoint");return 0;
 }catch(const std::exception& e){std::fprintf(stderr,"FAIL production sound context: %s\n",e.what());return 1;}

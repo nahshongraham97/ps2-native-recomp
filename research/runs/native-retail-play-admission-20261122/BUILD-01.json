@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "build_native_services_only_20261119-01",
+    "--target",
+    "test_native_default_playback_runtime",
+    "test_native_program_copy",
+    "-j2"
+  ],
+  "exit": 0,
+  "stdout": "[0/2] Re-checking globbed directories...\n[1/17] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/retail_sound_bank_jobs.cpp.obj\n[2/17] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/bank_preparation.cpp.obj\n[3/17] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_banks.cpp.obj\n[4/17] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_bank_protocol.cpp.obj\n[5/17] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_bank_service.cpp.obj\n[6/17] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/program_executor.cpp.obj\n[7/17] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_controls.cpp.obj\n[8/17] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/program_copy.cpp.obj\n[9/17] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/host_voice.cpp.obj\n[10/17] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/program_host_clock.cpp.obj\n[11/17] Building CXX object CMakeFiles/test_native_program_copy.dir/tests/test_program_copy.cpp.obj\n[12/17] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/playback_owner.cpp.obj\n[13/17] Building CXX object CMakeFiles/test_native_default_playback_runtime.dir/tests/test_default_playback_runtime.cpp.obj\n[14/17] Linking CXX static library libmka_native_sound_resources.a\n[15/17] Linking CXX executable test_native_default_playback_runtime.exe\n[16/17] Linking CXX executable test_native_program_copy.exe\n",
+  "stderr": "",
+  "source_sha256": {
+    "runtime/include/mka/program_copy.hpp": "de3562e872a5d6c43f0614a8bc4d38f7539b5c5fcc45c4182514cb8b5b3adebb",
+    "runtime/src/native/program_copy.cpp": "30116f5352ddfd177c7f4a9da12725e632975da4cc271d8a86aec7be6f39d721",
+    "runtime/include/mka/program_executor.hpp": "acdd9e675d0c7d3a89b186e731f5862cfd4253b3970f88f3ad719ed478af5486",
+    "runtime/src/native/program_executor.cpp": "def1c128c9bcc71242a7455a7f6c050ea24ad851822ba76ab39e86f91ffcb0f7",
+    "runtime/include/mka/playback_owner.hpp": "017028417a365739399f8c35ecf629675a2ff1824005408f211846b7f5ee56ab",
+    "runtime/src/native/playback_owner.cpp": "3a962fe4e45e6bf707830f1a3db495a847f4a7185dcd1598451a4afa7adaaa2f",
+    "runtime/include/mka/retail_sound_runtime.hpp": "66ba5d60c9112f90e4e8ac6fa6e1e2ca64aac0a0eaefa903185f9c22b8489dff",
+    "runtime/src/native/retail_sound_runtime.cpp": "cd602069ff6838aa216f39603a69921700eb134ba0e7d9cd5b3f09f5b7df7bda",
+    "runtime/include/mka/retail_main.hpp": "c716a81fbc72ff849fca9c8bb7e9dc4193058cd27a4cea3ff62a404c36f6aa45",
+    "runtime/src/native/retail_sound_bank_main.cpp": "4a2dd6816a2387f40f022e679462f33d709897119bc3c39c02c1b98cd4da73ea",
+    "tests/test_retail_sound_context.cpp": "2b8ca864bfdd7fd40c999333047345d4c605b5038d1a2903953edf64afb4b0b7",
+    "tests/test_default_playback_runtime.cpp": "8d1fbb1ada567d130a27a67aa66554ea6016f314b25102ba617c6b47491b1455",
+    "cmake/native_game.cmake": "afa615b2e42434ea61ad8df6369610a8aa5f75cd5e42153d35ea5ee6264f5383"
+  },
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "scope": "New held copy/executor compiled only; Owner connection and held behavioral tests not implemented yet"
+}

@@ -1,0 +1,613 @@
+{
+  "program": "msl-file-backed.bin",
+  "language": "MIPS:LE:32:default",
+  "image_base": "00000000",
+  "instructions": [
+    {
+      "original_vma": "00003a38",
+      "prior_loaded_notation": "0002bb38",
+      "word": "27bdffe8",
+      "instruction": "addiu sp,sp,-0x18"
+    },
+    {
+      "original_vma": "00003a3c",
+      "prior_loaded_notation": "0002bb3c",
+      "word": "afbf0010",
+      "instruction": "sw ra,0x10(sp)"
+    },
+    {
+      "original_vma": "00003a40",
+      "prior_loaded_notation": "0002bb40",
+      "word": "00803021",
+      "instruction": "move a2,a0"
+    },
+    {
+      "original_vma": "00003a44",
+      "prior_loaded_notation": "0002bb44",
+      "word": "8ca40014",
+      "instruction": "lw a0,0x14(a1)"
+    },
+    {
+      "original_vma": "00003a48",
+      "prior_loaded_notation": "0002bb48",
+      "word": "00000000",
+      "instruction": "nop"
+    },
+    {
+      "original_vma": "00003a4c",
+      "prior_loaded_notation": "0002bb4c",
+      "word": "14800003",
+      "instruction": "bne a0,zero,0x00003a5c"
+    },
+    {
+      "original_vma": "00003a50",
+      "prior_loaded_notation": "0002bb50",
+      "word": "00a03821",
+      "instruction": "_move a3,a1"
+    },
+    {
+      "original_vma": "00003a54",
+      "prior_loaded_notation": "0002bb54",
+      "word": "10000034",
+      "instruction": "b 0x00003b28"
+    },
+    {
+      "original_vma": "00003a58",
+      "prior_loaded_notation": "0002bb58",
+      "word": "00001021",
+      "instruction": "_clear v0"
+    },
+    {
+      "original_vma": "00003a5c",
+      "prior_loaded_notation": "0002bb5c",
+      "word": "84e30020",
+      "instruction": "lh v1,0x20(a3)"
+    },
+    {
+      "original_vma": "00003a60",
+      "prior_loaded_notation": "0002bb60",
+      "word": "24020001",
+      "instruction": "li v0,0x1"
+    },
+    {
+      "original_vma": "00003a64",
+      "prior_loaded_notation": "0002bb64",
+      "word": "a4830044",
+      "instruction": "sh v1,0x44(a0)"
+    },
+    {
+      "original_vma": "00003a68",
+      "prior_loaded_notation": "0002bb68",
+      "word": "84e40022",
+      "instruction": "lh a0,0x22(a3)"
+    },
+    {
+      "original_vma": "00003a6c",
+      "prior_loaded_notation": "0002bb6c",
+      "word": "8ce30014",
+      "instruction": "lw v1,0x14(a3)"
+    },
+    {
+      "original_vma": "00003a70",
+      "prior_loaded_notation": "0002bb70",
+      "word": "00000000",
+      "instruction": "nop"
+    },
+    {
+      "original_vma": "00003a74",
+      "prior_loaded_notation": "0002bb74",
+      "word": "a4640046",
+      "instruction": "sh a0,0x46(v1)"
+    },
+    {
+      "original_vma": "00003a78",
+      "prior_loaded_notation": "0002bb78",
+      "word": "84e40024",
+      "instruction": "lh a0,0x24(a3)"
+    },
+    {
+      "original_vma": "00003a7c",
+      "prior_loaded_notation": "0002bb7c",
+      "word": "8ce30014",
+      "instruction": "lw v1,0x14(a3)"
+    },
+    {
+      "original_vma": "00003a80",
+      "prior_loaded_notation": "0002bb80",
+      "word": "00000000",
+      "instruction": "nop"
+    },
+    {
+      "original_vma": "00003a84",
+      "prior_loaded_notation": "0002bb84",
+      "word": "a4640048",
+      "instruction": "sh a0,0x48(v1)"
+    },
+    {
+      "original_vma": "00003a88",
+      "prior_loaded_notation": "0002bb88",
+      "word": "8ce40010",
+      "instruction": "lw a0,0x10(a3)"
+    },
+    {
+      "original_vma": "00003a8c",
+      "prior_loaded_notation": "0002bb8c",
+      "word": "8ce30014",
+      "instruction": "lw v1,0x14(a3)"
+    },
+    {
+      "original_vma": "00003a90",
+      "prior_loaded_notation": "0002bb90",
+      "word": "00000000",
+      "instruction": "nop"
+    },
+    {
+      "original_vma": "00003a94",
+      "prior_loaded_notation": "0002bb94",
+      "word": "ac640028",
+      "instruction": "sw a0,0x28(v1)"
+    },
+    {
+      "original_vma": "00003a98",
+      "prior_loaded_notation": "0002bb98",
+      "word": "84e4000a",
+      "instruction": "lh a0,0xa(a3)"
+    },
+    {
+      "original_vma": "00003a9c",
+      "prior_loaded_notation": "0002bb9c",
+      "word": "8ce30014",
+      "instruction": "lw v1,0x14(a3)"
+    },
+    {
+      "original_vma": "00003aa0",
+      "prior_loaded_notation": "0002bba0",
+      "word": "00000000",
+      "instruction": "nop"
+    },
+    {
+      "original_vma": "00003aa4",
+      "prior_loaded_notation": "0002bba4",
+      "word": "a464000e",
+      "instruction": "sh a0,0xe(v1)"
+    },
+    {
+      "original_vma": "00003aa8",
+      "prior_loaded_notation": "0002bba8",
+      "word": "84e3000a",
+      "instruction": "lh v1,0xa(a3)"
+    },
+    {
+      "original_vma": "00003aac",
+      "prior_loaded_notation": "0002bbac",
+      "word": "00000000",
+      "instruction": "nop"
+    },
+    {
+      "original_vma": "00003ab0",
+      "prior_loaded_notation": "0002bbb0",
+      "word": "10620007",
+      "instruction": "beq v1,v0,0x00003ad0"
+    },
+    {
+      "original_vma": "00003ab4",
+      "prior_loaded_notation": "0002bbb4",
+      "word": "00000000",
+      "instruction": "_nop"
+    },
+    {
+      "original_vma": "00003ab8",
+      "prior_loaded_notation": "0002bbb8",
+      "word": "8ce30014",
+      "instruction": "lw v1,0x14(a3)"
+    },
+    {
+      "original_vma": "00003abc",
+      "prior_loaded_notation": "0002bbbc",
+      "word": "00000000",
+      "instruction": "nop"
+    },
+    {
+      "original_vma": "00003ac0",
+      "prior_loaded_notation": "0002bbc0",
+      "word": "9462000c",
+      "instruction": "lhu v0,0xc(v1)"
+    },
+    {
+      "original_vma": "00003ac4",
+      "prior_loaded_notation": "0002bbc4",
+      "word": "00000000",
+      "instruction": "nop"
+    },
+    {
+      "original_vma": "00003ac8",
+      "prior_loaded_notation": "0002bbc8",
+      "word": "34420001",
+      "instruction": "ori v0,v0,0x1"
+    },
+    {
+      "original_vma": "00003acc",
+      "prior_loaded_notation": "0002bbcc",
+      "word": "a462000c",
+      "instruction": "sh v0,0xc(v1)"
+    },
+    {
+      "original_vma": "00003ad0",
+      "prior_loaded_notation": "0002bbd0",
+      "word": "80e20009",
+      "instruction": "lb v0,0x9(a3)"
+    },
+    {
+      "original_vma": "00003ad4",
+      "prior_loaded_notation": "0002bbd4",
+      "word": "00000000",
+      "instruction": "nop"
+    },
+    {
+      "original_vma": "00003ad8",
+      "prior_loaded_notation": "0002bbd8",
+      "word": "30420001",
+      "instruction": "andi v0,v0,0x1"
+    },
+    {
+      "original_vma": "00003adc",
+      "prior_loaded_notation": "0002bbdc",
+      "word": "10400007",
+      "instruction": "beq v0,zero,0x00003afc"
+    },
+    {
+      "original_vma": "00003ae0",
+      "prior_loaded_notation": "0002bbe0",
+      "word": "00000000",
+      "instruction": "_nop"
+    },
+    {
+      "original_vma": "00003ae4",
+      "prior_loaded_notation": "0002bbe4",
+      "word": "8ce30014",
+      "instruction": "lw v1,0x14(a3)"
+    },
+    {
+      "original_vma": "00003ae8",
+      "prior_loaded_notation": "0002bbe8",
+      "word": "00000000",
+      "instruction": "nop"
+    },
+    {
+      "original_vma": "00003aec",
+      "prior_loaded_notation": "0002bbec",
+      "word": "9462000c",
+      "instruction": "lhu v0,0xc(v1)"
+    },
+    {
+      "original_vma": "00003af0",
+      "prior_loaded_notation": "0002bbf0",
+      "word": "00000000",
+      "instruction": "nop"
+    },
+    {
+      "original_vma": "00003af4",
+      "prior_loaded_notation": "0002bbf4",
+      "word": "34420004",
+      "instruction": "ori v0,v0,0x4"
+    },
+    {
+      "original_vma": "00003af8",
+      "prior_loaded_notation": "0002bbf8",
+      "word": "a462000c",
+      "instruction": "sh v0,0xc(v1)"
+    },
+    {
+      "original_vma": "00003afc",
+      "prior_loaded_notation": "0002bbfc",
+      "word": "8cc4003c",
+      "instruction": "lw a0,0x3c(a2)"
+    },
+    {
+      "original_vma": "00003b00",
+      "prior_loaded_notation": "0002bc00",
+      "word": "00c02821",
+      "instruction": "move a1,a2"
+    },
+    {
+      "original_vma": "00003b04",
+      "prior_loaded_notation": "0002bc04",
+      "word": "8ce60014",
+      "instruction": "lw a2,0x14(a3)"
+    },
+    {
+      "original_vma": "00003b08",
+      "prior_loaded_notation": "0002bc08",
+      "word": "8ce7000c",
+      "instruction": "lw a3,0xc(a3)"
+    },
+    {
+      "original_vma": "00003b0c",
+      "prior_loaded_notation": "0002bc0c",
+      "word": "0c002927",
+      "instruction": "jal 0x0000a49c"
+    },
+    {
+      "original_vma": "00003b10",
+      "prior_loaded_notation": "0002bc10",
+      "word": "00000000",
+      "instruction": "_nop"
+    },
+    {
+      "original_vma": "00003b14",
+      "prior_loaded_notation": "0002bc14",
+      "word": "10400003",
+      "instruction": "beq v0,zero,0x00003b24"
+    },
+    {
+      "original_vma": "00003b18",
+      "prior_loaded_notation": "0002bc18",
+      "word": "00000000",
+      "instruction": "_nop"
+    },
+    {
+      "original_vma": "00003b1c",
+      "prior_loaded_notation": "0002bc1c",
+      "word": "10000002",
+      "instruction": "b 0x00003b28"
+    },
+    {
+      "original_vma": "00003b20",
+      "prior_loaded_notation": "0002bc20",
+      "word": "24020001",
+      "instruction": "_li v0,0x1"
+    },
+    {
+      "original_vma": "00003b24",
+      "prior_loaded_notation": "0002bc24",
+      "word": "00001021",
+      "instruction": "clear v0"
+    },
+    {
+      "original_vma": "00003b28",
+      "prior_loaded_notation": "0002bc28",
+      "word": "8fbf0010",
+      "instruction": "lw ra,0x10(sp)"
+    },
+    {
+      "original_vma": "00003b2c",
+      "prior_loaded_notation": "0002bc2c",
+      "word": "00000000",
+      "instruction": "nop"
+    },
+    {
+      "original_vma": "00003b30",
+      "prior_loaded_notation": "0002bc30",
+      "word": "03e00008",
+      "instruction": "jr ra"
+    },
+    {
+      "original_vma": "00003b34",
+      "prior_loaded_notation": "0002bc34",
+      "word": "27bd0018",
+      "instruction": "_addiu sp,sp,0x18"
+    },
+    {
+      "original_vma": "00003b38",
+      "prior_loaded_notation": "0002bc38",
+      "word": "27bdffe8",
+      "instruction": "addiu sp,sp,-0x18"
+    },
+    {
+      "original_vma": "00003b3c",
+      "prior_loaded_notation": "0002bc3c",
+      "word": "afbf0010",
+      "instruction": "sw ra,0x10(sp)"
+    },
+    {
+      "original_vma": "00003b40",
+      "prior_loaded_notation": "0002bc40",
+      "word": "8c850000",
+      "instruction": "lw a1,0x0(a0)"
+    },
+    {
+      "original_vma": "00003b44",
+      "prior_loaded_notation": "0002bc44",
+      "word": "8c830004",
+      "instruction": "lw v1,0x4(a0)"
+    },
+    {
+      "original_vma": "00003b48",
+      "prior_loaded_notation": "0002bc48",
+      "word": "8ca20008",
+      "instruction": "lw v0,0x8(a1)"
+    },
+    {
+      "original_vma": "00003b4c",
+      "prior_loaded_notation": "0002bc4c",
+      "word": "8c66000c",
+      "instruction": "lw a2,0xc(v1)"
+    },
+    {
+      "original_vma": "00003b50",
+      "prior_loaded_notation": "0002bc50",
+      "word": "00000000",
+      "instruction": "nop"
+    },
+    {
+      "original_vma": "00003b54",
+      "prior_loaded_notation": "0002bc54",
+      "word": "00c2082a",
+      "instruction": "slt at,a2,v0"
+    },
+    {
+      "original_vma": "00003b58",
+      "prior_loaded_notation": "0002bc58",
+      "word": "10200015",
+      "instruction": "beq at,zero,0x00003bb0"
+    },
+    {
+      "original_vma": "00003b5c",
+      "prior_loaded_notation": "0002bc5c",
+      "word": "00000000",
+      "instruction": "_nop"
+    },
+    {
+      "original_vma": "00003b60",
+      "prior_loaded_notation": "0002bc60",
+      "word": "8ca2000c",
+      "instruction": "lw v0,0xc(a1)"
+    },
+    {
+      "original_vma": "00003b64",
+      "prior_loaded_notation": "0002bc64",
+      "word": "00061880",
+      "instruction": "sll v1,a2,0x2"
+    },
+    {
+      "original_vma": "00003b68",
+      "prior_loaded_notation": "0002bc68",
+      "word": "00661821",
+      "instruction": "addu v1,v1,a2"
+    },
+    {
+      "original_vma": "00003b6c",
+      "prior_loaded_notation": "0002bc6c",
+      "word": "000318c0",
+      "instruction": "sll v1,v1,0x3"
+    },
+    {
+      "original_vma": "00003b70",
+      "prior_loaded_notation": "0002bc70",
+      "word": "00431821",
+      "instruction": "addu v1,v0,v1"
+    },
+    {
+      "original_vma": "00003b74",
+      "prior_loaded_notation": "0002bc74",
+      "word": "80620008",
+      "instruction": "lb v0,0x8(v1)"
+    },
+    {
+      "original_vma": "00003b78",
+      "prior_loaded_notation": "0002bc78",
+      "word": "00000000",
+      "instruction": "nop"
+    },
+    {
+      "original_vma": "00003b7c",
+      "prior_loaded_notation": "0002bc7c",
+      "word": "30420080",
+      "instruction": "andi v0,v0,0x80"
+    },
+    {
+      "original_vma": "00003b80",
+      "prior_loaded_notation": "0002bc80",
+      "word": "10400003",
+      "instruction": "beq v0,zero,0x00003b90"
+    },
+    {
+      "original_vma": "00003b84",
+      "prior_loaded_notation": "0002bc84",
+      "word": "00000000",
+      "instruction": "_nop"
+    },
+    {
+      "original_vma": "00003b88",
+      "prior_loaded_notation": "0002bc88",
+      "word": "1000000a",
+      "instruction": "b 0x00003bb4"
+    },
+    {
+      "original_vma": "00003b8c",
+      "prior_loaded_notation": "0002bc8c",
+      "word": "00001021",
+      "instruction": "_clear v0"
+    },
+    {
+      "original_vma": "00003b90",
+      "prior_loaded_notation": "0002bc90",
+      "word": "8c650014",
+      "instruction": "lw a1,0x14(v1)"
+    },
+    {
+      "original_vma": "00003b94",
+      "prior_loaded_notation": "0002bc94",
+      "word": "00000000",
+      "instruction": "nop"
+    },
+    {
+      "original_vma": "00003b98",
+      "prior_loaded_notation": "0002bc98",
+      "word": "10a00005",
+      "instruction": "beq a1,zero,0x00003bb0"
+    },
+    {
+      "original_vma": "00003b9c",
+      "prior_loaded_notation": "0002bc9c",
+      "word": "00000000",
+      "instruction": "_nop"
+    },
+    {
+      "original_vma": "00003ba0",
+      "prior_loaded_notation": "0002bca0",
+      "word": "9486001e",
+      "instruction": "lhu a2,0x1e(a0)"
+    },
+    {
+      "original_vma": "00003ba4",
+      "prior_loaded_notation": "0002bca4",
+      "word": "8c84003c",
+      "instruction": "lw a0,0x3c(a0)"
+    },
+    {
+      "original_vma": "00003ba8",
+      "prior_loaded_notation": "0002bca8",
+      "word": "0c0028a6",
+      "instruction": "jal 0x0000a298"
+    },
+    {
+      "original_vma": "00003bac",
+      "prior_loaded_notation": "0002bcac",
+      "word": "00000000",
+      "instruction": "_nop"
+    },
+    {
+      "original_vma": "00003bb0",
+      "prior_loaded_notation": "0002bcb0",
+      "word": "00001021",
+      "instruction": "clear v0"
+    },
+    {
+      "original_vma": "00003bb4",
+      "prior_loaded_notation": "0002bcb4",
+      "word": "8fbf0010",
+      "instruction": "lw ra,0x10(sp)"
+    },
+    {
+      "original_vma": "00003bb8",
+      "prior_loaded_notation": "0002bcb8",
+      "word": "00000000",
+      "instruction": "nop"
+    },
+    {
+      "original_vma": "00003bbc",
+      "prior_loaded_notation": "0002bcbc",
+      "word": "03e00008",
+      "instruction": "jr ra"
+    },
+    {
+      "original_vma": "00003bc0",
+      "prior_loaded_notation": "0002bcc0",
+      "word": "27bd0018",
+      "instruction": "_addiu sp,sp,0x18"
+    },
+    {
+      "original_vma": "00003bc4",
+      "prior_loaded_notation": "0002bcc4",
+      "word": "27bdffc8",
+      "instruction": "addiu sp,sp,-0x38"
+    },
+    {
+      "original_vma": "00003bc8",
+      "prior_loaded_notation": "0002bcc8",
+      "word": "afbf0030",
+      "instruction": "sw ra,0x30(sp)"
+    }
+  ]
+}

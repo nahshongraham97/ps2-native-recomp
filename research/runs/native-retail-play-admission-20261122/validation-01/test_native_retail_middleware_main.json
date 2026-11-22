@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_middleware_main.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-play-admission-20261122\\validation-01\\empty-content"
+  ],
+  "exit": 0,
+  "stdout": "PASS actual native middleware main pump, source completion order and real main control transfer; game open\n",
+  "stderr": "",
+  "seconds": 0.10585269999864977,
+  "source_commit": "53e1a59bd4045d53eda35c29a154b9f1734f2382",
+  "tracked_status": "M cmake/native_sound_resources.cmake\n M runtime/include/mka/playback_owner.hpp\n M runtime/include/mka/program_copy.hpp\n M runtime/include/mka/program_executor.hpp\n M runtime/include/mka/retail_main.hpp\n M runtime/include/mka/retail_sound_runtime.hpp\n M runtime/src/native/playback_owner.cpp\n M runtime/src/native/program_copy.cpp\n M runtime/src/native/program_executor.cpp\n M runtime/src/native/retail_sound_bank_main.cpp\n M runtime/src/native/retail_sound_runtime.cpp\n M tests/test_default_playback_runtime.cpp\n M tests/test_retail_sound_context.cpp",
+  "source_manifest_sha256": "79e07b0514823ddaf2737871bba65e767ff2a5a67527cfebe7abb3f54df87055",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "356a4276437b29d9d06687d2c66f3ff555a03072cf189b8d2826f5699d88e4da"
+}

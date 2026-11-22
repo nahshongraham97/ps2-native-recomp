@@ -5,7 +5,7 @@ namespace mka::sound {
 struct ProgramClockWord { std::uint32_t milliseconds=0; };
 enum class ProgramError { none, null_program, empty_program, moved_executor, unsupported_command_kind,
     missing_prepared_sample, ambiguous_prepared_sample, invalid_prepared_sample,
-    invalid_start_acknowledgement, native_start_failed };
+    invalid_start_acknowledgement, native_start_failed, invalid_prebound_start };
 struct ProgramFailure { ProgramError kind=ProgramError::none; std::size_t command_index=0; std::int32_t command_kind=0; };
 struct SampleStartOperands {
     std::int16_t parameter_44=0, parameter_46=0, parameter_48=0;
@@ -31,6 +31,8 @@ struct ProgramStep {
 };
 // Pure preflight for the implemented reachable normal timeline; no output or clock effects.
 bool validate_program_coverage(const PreparedProgram&, ProgramFailure&) noexcept;
+// Original80A8's unsigned next-delay gate differs from ordinary dispatch.
+ProgramClockWord prebound_resume_next_deadline(ProgramClockWord,const CommandRecord&) noexcept;
 
 // Executes the proved normal command timeline into typed host operations.
 // No hardware/mixer/voice allocation or guessed gain/pan/pitch/loop behavior.
@@ -47,6 +49,10 @@ public:
     ProgramExecutor& operator=(ProgramExecutor&&) noexcept=default;
     static std::optional<ProgramExecutor> create(std::shared_ptr<const PreparedProgram>, ProgramClockWord initial_deadline, ProgramFailure&);
     std::optional<ProgramStep> step(ProgramClockWord now, ProgramFailure&);
+    // Resume explicitly starts the prebound first sample, even when its stored
+    // initial delay is later than this actual clock sample. ACK still follows
+    // successful native output creation; no synthetic observed time is used.
+    std::optional<ProgramStep> start_prebound_first(ProgramClockWord now,ProgramFailure&);
     bool acknowledge_start(bool actually_started, ProgramFailure&);
     std::optional<ProgramStep> stop_from_owner(ProgramFailure&);
     ProgramClockWord deadline() const noexcept { return {deadline_}; }
@@ -60,7 +66,7 @@ private:
     std::size_t cursor_=0;
     std::uint32_t deadline_=0;
     State state_=State::running;
-    bool structural_end_pending_=false;
+    bool structural_end_pending_=false,prebound_start_=false;
     ProgramFailure terminal_failure_;
 };
 } // namespace mka::sound

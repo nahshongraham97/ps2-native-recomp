@@ -1,0 +1,7 @@
+{
+  "error": "NameError: json was not imported in edit wrapper",
+  "phase": "After runtime/Main source writes, before source-join/document updates",
+  "correction": "Completed source-join and affected docs in a separate script before further implementation",
+  "game_run": false,
+  "build_result": null
+}

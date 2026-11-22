@@ -1,0 +1,88 @@
+{
+  "status": "PASS_ORIGINAL_HELD_PLAY_BYTES",
+  "image_sha256": "f62dfbcedd39bc92cb8b9c02bb685b956a10357f9181d7f8c2801d8eaff07af7",
+  "pt_load_file_offset": 144,
+  "full_coverage": [
+    {
+      "begin": "0x7c70",
+      "end_exclusive": "0x7d28",
+      "words": 46
+    },
+    {
+      "begin": "0x7d28",
+      "end_exclusive": "0x7ea0",
+      "words": 94
+    },
+    {
+      "begin": "0x7ea0",
+      "end_exclusive": "0x7f00",
+      "words": 24
+    },
+    {
+      "begin": "0x7f00",
+      "end_exclusive": "0x7fa0",
+      "words": 40
+    },
+    {
+      "begin": "0x7fa0",
+      "end_exclusive": "0x80a8",
+      "words": 66
+    },
+    {
+      "begin": "0x80a8",
+      "end_exclusive": "0x82f8",
+      "words": 148
+    },
+    {
+      "begin": "0x6330",
+      "end_exclusive": "0x6468",
+      "words": 78
+    },
+    {
+      "begin": "0xa49c",
+      "end_exclusive": "0xa598",
+      "words": 63
+    },
+    {
+      "begin": "0x8b54",
+      "end_exclusive": "0x8bc8",
+      "words": 29
+    },
+    {
+      "begin": "0xf980",
+      "end_exclusive": "0xfab8",
+      "words": 78
+    },
+    {
+      "begin": "0x3a38",
+      "end_exclusive": "0x3b38",
+      "words": 64
+    },
+    {
+      "begin": "0xa598",
+      "end_exclusive": "0xa6c4",
+      "words": 75
+    }
+  ],
+  "held_semantics": "7FA0 flags8 skips7F00 and3A38/A49C passes key-on=false to6330.6330 prebinds/configures sample but skips BEB8/BFBC key-on calls. No audible start before resume.",
+  "resume_semantics": "80A8 validates inactive actual association/role, clearsbit8,7F00 samplesclock+firstdelay and installsordinary, A598 starts firstprebound sample, then advances40 and conditionallyadds NEXT delay if unsigned delay < ~deadline.",
+  "mode1_cleanup": "8B54 passes actual flagsbit0 to87EC;1 means forced private-resource/association retirement with owned releasing tails.",
+  "donor_limit": "Xbox374370/374470 agrees on held prebind/resume intent, but uses float delays48byte commands and different output claim; PS2 widths/arithmetic/role semantics retained.",
+  "source_direct_routing_open": true,
+  "production_envelope_open": true,
+  "whole_game_equivalence": false,
+  "pending_resume": "F980 returns2 for current work; otherwise promotes exact queued association to head. Native request retains actual node, cached priority still applies, and control delivery follows actual callback/suppression and resource retirement.",
+  "ee_caller": {
+    "begin": "0x315b80",
+    "end_exclusive": "0x315bd0",
+    "words": 20,
+    "image_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+    "listing": "ee-source-01/LISTING.json",
+    "reused_complete_Main_body": "../native-retail-sound-state-20261121/0012c300.json"
+  },
+  "checked_msl_rows": 1375,
+  "held_scope": "Normal first-kind1/sample class only. No dynamic held-control/envelope or full first-command-class equivalence claim.",
+  "source_review_correction": "Earlier3A38 orientation export stopped before its return; source-10 adds the return and delay slot, joining the complete body with no additional effects or implementation change. Full coverage is credited only after this join. The A598 orientation span also lacked its final epilogue; source-11 joins the complete body through its actual return/delay, without an implementation change.",
+  "donor_checked_instruction_rows": 70420,
+  "donor_adoption": "No Xbox layouts, float timeline,SDK or hardware ownership adopted. Matching held/key-on suppression/resume intent supports PS2 trace; PS2 explicit held-role deferral and unsigned word delays retained."
+}

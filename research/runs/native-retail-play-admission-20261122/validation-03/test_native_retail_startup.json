@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_startup.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-play-admission-20261122\\validation-03\\startup-fixtures"
+  ],
+  "exit": 0,
+  "stdout": "PASS generated retail startup owns actual arguments/content/memory group; failed initialization is unpublished and full entry link remains blocked\n",
+  "stderr": "",
+  "seconds": 0.1059646000067005,
+  "source_commit": "53e1a59bd4045d53eda35c29a154b9f1734f2382",
+  "tracked_status": "M cmake/native_sound_resources.cmake\n M runtime/include/mka/playback_owner.hpp\n M runtime/include/mka/program_copy.hpp\n M runtime/include/mka/program_executor.hpp\n M runtime/include/mka/retail_main.hpp\n M runtime/include/mka/retail_sound_runtime.hpp\n M runtime/src/native/playback_owner.cpp\n M runtime/src/native/program_copy.cpp\n M runtime/src/native/program_executor.cpp\n M runtime/src/native/retail_sound_bank_main.cpp\n M runtime/src/native/retail_sound_runtime.cpp\n M tests/test_default_playback_runtime.cpp\n M tests/test_retail_sound_context.cpp",
+  "source_manifest_sha256": "e0e6250613d965cb46fcacd3208dbb0948a619ecdbe708ff2ce2c451eb31f74a",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "ab4483bbd20d694b0d57c10a48df31acb978fdc72378edcd3445379e8fa15cd2"
+}

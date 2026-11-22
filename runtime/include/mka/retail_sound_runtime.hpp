@@ -30,10 +30,13 @@ struct RetailSoundRuntimeStatus {
 struct RetailSoundPlayCompletion {
     sound::NativePlayHandle handle;
     sound::NativePlayWorkObservation result;
+    bool resume_delivered=false;
+    std::optional<sound::PlaybackFailure> resume_failure;
 };
 // Native Windows output/thread ownership for the actual current context.
-// It advances the admitted ordinary normal route; source control/queued-role
-// producers, alternate flags9 and full worker/DSP equivalence remain required.
+// It owns admitted ordinary and held normal work, including actual resume.
+// Source parameter/control producers, alternate sample classes and full
+// worker/DSP equivalence remain required.
 // Lifecycle belongs to Main's thread. Output/COM belongs to the worker thread.
 // Shutdown requires idle playback across the owner and drains pending/queued
 // client PCM on the worker. This is not a claim that physical sound was heard.
@@ -54,6 +57,9 @@ public:
     std::optional<sound::NativePlayHandle> submit_queued_play(const sound::AudioBankHandle&,std::int32_t,
         const sound::NativeActivationParameters&,RetailSoundRuntimeFailure&);
     std::optional<sound::ProgramWorkCancellation> cancel_pending_play(const sound::NativePlayHandle&,RetailSoundRuntimeFailure&);
+    // Pending work is promoted, then resumed only after its real consumer.
+    // Ready native plays resume directly; a genuinely retired identity is absent.
+    bool request_resume(const sound::NativePlayHandle&,RetailSoundRuntimeFailure&);
     std::optional<RetailSoundPlayCompletion> poll_play_completion(RetailSoundRuntimeFailure&);
     bool shutdown(RetailSoundRuntimeFailure&);
 private:

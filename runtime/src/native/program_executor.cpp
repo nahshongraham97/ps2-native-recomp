@@ -30,6 +30,11 @@ SampleStartOperands sample_start_operands(const CommandRecord& command)noexcept{
     value.repeat_operand=half(command.bytes,10);value.set_descriptor_flag_1=value.repeat_operand!=1;
     value.set_descriptor_flag_4=(command.bytes[9]&1u)!=0;return value;
 }
+ProgramClockWord prebound_resume_next_deadline(ProgramClockWord current,const CommandRecord& next)noexcept{
+    const auto delay=static_cast<std::uint32_t>(next.delay_milliseconds());
+    if(!(next.bytes[8]&0x80u)&&delay<~current.milliseconds)current.milliseconds+=delay;
+    return current;
+}
 bool validate_program_coverage(const PreparedProgram& program,ProgramFailure& failure) noexcept{
     failure={};
     if(program.commands.empty()){failure.kind=ProgramError::empty_program;return false;}
@@ -85,6 +90,16 @@ std::optional<ProgramStep> ProgramExecutor::step(ProgramClockWord now,ProgramFai
     default:fail(ProgramError::unsupported_command_kind,failure);return std::nullopt;
     }
 }
+std::optional<ProgramStep> ProgramExecutor::start_prebound_first(ProgramClockWord now,ProgramFailure& failure){
+    failure={};if(!program_){failure.kind=ProgramError::moved_executor;return {};}
+    if(cursor_!=0||state_!=State::running||prebound_start_||program_->commands.front().kind()!=1){
+        failure.kind=ProgramError::invalid_prebound_start;return {};
+    }
+    const auto* instance=validated_sample(*program_,0,failure);if(!instance)return {};
+    ProgramStep event;event.kind=ProgramStepKind::sample_start;event.owner=program_;event.command_index=0;
+    event.command=program_->commands.front();event.clip=instance->sample;event.start=sample_start_operands(event.command);
+    event.scheduled={deadline_};event.observed=now;state_=State::awaiting_start;prebound_start_=true;return event;
+}
 std::optional<ProgramStep> ProgramExecutor::stop_from_owner(ProgramFailure& failure){
     failure={};if(!program_){failure.kind=ProgramError::moved_executor;return std::nullopt;}
     ProgramStep event;event.kind=ProgramStepKind::program_stop;event.owner=program_;event.command_index=cursor_;
@@ -99,6 +114,11 @@ bool ProgramExecutor::acknowledge_start(bool started,ProgramFailure& failure){
     failure={};if(!program_){failure.kind=ProgramError::moved_executor;return false;}
     if(state_!=State::awaiting_start){failure.kind=ProgramError::invalid_start_acknowledgement;failure.command_index=cursor_;return false;}
     if(!started)return fail(ProgramError::native_start_failed,failure);
-    state_=State::running;advance();return true;
+    state_=State::running;
+    if(prebound_start_){
+        prebound_start_=false;++cursor_;
+        if(cursor_>=program_->commands.size()){state_=State::finished;structural_end_pending_=true;}
+        else deadline_=prebound_resume_next_deadline({deadline_},program_->commands[cursor_]).milliseconds;
+    }else advance();return true;
 }
 } // namespace mka::sound

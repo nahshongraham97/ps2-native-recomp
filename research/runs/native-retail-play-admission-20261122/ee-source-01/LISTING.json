@@ -1,0 +1,108 @@
+{
+  "program": "SLUS_214.10",
+  "language": "r5900:LE:32:default",
+  "image_base": "00100000",
+  "image_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "instructions": [
+    {
+      "original_vma": "00315b80",
+      "word": "27bdffe0",
+      "instruction": "addiu sp,sp,-0x20"
+    },
+    {
+      "original_vma": "00315b84",
+      "word": "ffbf0010",
+      "instruction": "sd ra,0x10(sp)"
+    },
+    {
+      "original_vma": "00315b88",
+      "word": "7fb00000",
+      "instruction": "sq s0,0x0(sp)"
+    },
+    {
+      "original_vma": "00315b8c",
+      "word": "0080802d",
+      "instruction": "move s0,a0"
+    },
+    {
+      "original_vma": "00315b90",
+      "word": "5200000c",
+      "instruction": "beql s0,zero,0x00315bc4"
+    },
+    {
+      "original_vma": "00315b94",
+      "word": "dfbf0010",
+      "instruction": "_ld ra,0x10(sp)"
+    },
+    {
+      "original_vma": "00315b98",
+      "word": "24040002",
+      "instruction": "li a0,0x2"
+    },
+    {
+      "original_vma": "00315b9c",
+      "word": "0000282d",
+      "instruction": "move a1,zero"
+    },
+    {
+      "original_vma": "00315ba0",
+      "word": "0c0c5988",
+      "instruction": "jal 0x00316620"
+    },
+    {
+      "original_vma": "00315ba4",
+      "word": "0000302d",
+      "instruction": "_move a2,zero"
+    },
+    {
+      "original_vma": "00315ba8",
+      "word": "10400005",
+      "instruction": "beq v0,zero,0x00315bc0"
+    },
+    {
+      "original_vma": "00315bac",
+      "word": "00000000",
+      "instruction": "_nop"
+    },
+    {
+      "original_vma": "00315bb0",
+      "word": "24030032",
+      "instruction": "li v1,0x32"
+    },
+    {
+      "original_vma": "00315bb4",
+      "word": "ac430000",
+      "instruction": "sw v1,0x0(v0)"
+    },
+    {
+      "original_vma": "00315bb8",
+      "word": "0c0c5978",
+      "instruction": "jal 0x003165e0"
+    },
+    {
+      "original_vma": "00315bbc",
+      "word": "ac500004",
+      "instruction": "_sw s0,0x4(v0)"
+    },
+    {
+      "original_vma": "00315bc0",
+      "word": "dfbf0010",
+      "instruction": "ld ra,0x10(sp)"
+    },
+    {
+      "original_vma": "00315bc4",
+      "word": "7bb00000",
+      "instruction": "lq s0,0x0(sp)"
+    },
+    {
+      "original_vma": "00315bc8",
+      "word": "03e00008",
+      "instruction": "jr ra"
+    },
+    {
+      "original_vma": "00315bcc",
+      "word": "27bd0020",
+      "instruction": "_addiu sp,sp,0x20"
+    }
+  ]
+}

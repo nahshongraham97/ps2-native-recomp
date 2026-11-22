@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_forced_output_retirement.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_FORCED_OUTPUT_RETIREMENT: 4 actual Owner output retirement groups; software tails only\n",
+  "stderr": "",
+  "seconds": 0.041387900011613965,
+  "source_commit": "53e1a59bd4045d53eda35c29a154b9f1734f2382",
+  "tracked_status": "M cmake/native_sound_resources.cmake\n M runtime/include/mka/playback_owner.hpp\n M runtime/include/mka/program_copy.hpp\n M runtime/include/mka/program_executor.hpp\n M runtime/include/mka/retail_main.hpp\n M runtime/include/mka/retail_sound_runtime.hpp\n M runtime/src/native/playback_owner.cpp\n M runtime/src/native/program_copy.cpp\n M runtime/src/native/program_executor.cpp\n M runtime/src/native/retail_sound_bank_main.cpp\n M runtime/src/native/retail_sound_runtime.cpp\n M tests/test_default_playback_runtime.cpp\n M tests/test_retail_sound_context.cpp",
+  "source_manifest_sha256": "cdcd9f86a7b8adb41450c56450252349db5bdad32e0235eb300d99cd34a65940",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "1ec24f019d24b2d3ad9f385101ad4c001e1dd5ead5c75491df0640789989a32a"
+}

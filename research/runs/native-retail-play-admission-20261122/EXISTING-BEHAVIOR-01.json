@@ -1,0 +1,29 @@
+{
+  "results": [
+    {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_default_playback_runtime.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+      ],
+      "exit": 0,
+      "stdout": "PASS_NATIVE_DEFAULT_PLAYBACK_RUNTIME: 7 actual default runtime/copy/flag/retirement cases; no source activation/callback/device/fidelity claim\n",
+      "stderr": "",
+      "executable_sha256": "7d159af2db1e70e2dd18b9ec7dfe2fd852c8b2d8b23ba869211ec7298b696b7d",
+      "game_run": false,
+      "physical_endpoints_opened": false
+    },
+    {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_program_copy.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+      ],
+      "exit": 0,
+      "stdout": "PASS_NATIVE_PROGRAM_COPY: actual ANNOUNCR copies/schedules/independent native outputs/semantic cleanup and pure command arithmetic; no source activation/callback/heard fidelity claim\n",
+      "stderr": "",
+      "executable_sha256": "6eff8b8ba9ff7a4293cf8e6124aabcf37ed136fd0fa6355715f4cfa16a10ca90",
+      "game_run": false,
+      "physical_endpoints_opened": false
+    }
+  ],
+  "scope": "Existing ordinary/copy behavior only; new held Owner/resume route remains unconnected and untested"
+}

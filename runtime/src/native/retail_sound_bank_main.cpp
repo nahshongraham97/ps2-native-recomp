@@ -5,6 +5,7 @@
 #include "mka/retail_sound_runtime.hpp"
 #include "native_retail_startup.hpp"
 #include <new>
+#include <algorithm>
 #include <stdexcept>
 
 namespace mka::retail {
@@ -191,6 +192,24 @@ bool retire_retail_game_sound_references(NativeRetailMainState& main, StartupFai
     }
     return true;
 }
+bool resume_retail_game_sound_reference(NativeRetailMainState& main,std::uint32_t identifier,StartupFailure& failure){
+    if(!owner(main,failure,false))return false;
+    auto found=std::find_if(main.game_sound_references.begin(),main.game_sound_references.end(),
+        [identifier](const auto& reference){return reference.sound_identifier==identifier;});
+    if(found==main.game_sound_references.end())return true;
+    if(!owner(main,failure,true))return false;
+    if(!main.sound_runtime||main.sound_runtime->playback_owner()!=main.playback||
+       !main.sound_runtime->sound_context().same_identity(*main.current_sound)){
+        failure.kind=StartupError::sound_catalog;failure.operation="12C300 requires actual native current-sound runtime";return false;
+    }
+    if(!found->playback.empty()&&!main.sound_runtime->request_resume(found->playback,failure.sound_catalog.runtime)){
+        failure.kind=StartupError::sound_catalog;failure.sound_catalog.kind=RetailSoundCatalogError::runtime;
+        failure.operation=failure.sound_catalog.runtime.operation;return false;
+    }
+    //12C300 removes only the first matching semantic identifier, preserving
+    // the suffix order. Native resources remain owned by playback/work.
+    main.game_sound_references.erase(found);return true;
+}
 bool pump_retail_current_sound(NativeRetailMainState& main, StartupFailure& failure) {
     if (!owner(main, failure, true)) return false;
     // Original3152C0 increments64ECA8 even when transport admission or
@@ -217,9 +236,9 @@ bool pump_retail_current_sound(NativeRetailMainState& main, StartupFailure& fail
     if(main.sound_runtime){
         auto completed=main.sound_runtime->poll_play_completion(failure.sound_catalog.runtime);
         if(failure.sound_catalog.runtime.kind!=RetailSoundRuntimeError::none||
-           (completed&&completed->result.failure)){
-            if(completed&&completed->result.failure){failure.sound_catalog.runtime.kind=RetailSoundRuntimeError::playback;
-                failure.sound_catalog.runtime.playback=*completed->result.failure;
+           (completed&&(completed->result.failure||completed->resume_failure))){
+            if(completed&&(completed->result.failure||completed->resume_failure)){failure.sound_catalog.runtime.kind=RetailSoundRuntimeError::playback;
+                failure.sound_catalog.runtime.playback=completed->resume_failure?*completed->resume_failure:*completed->result.failure;
                 failure.sound_catalog.runtime.operation="native queued play ordinary consumer failed";}
             failure.kind=StartupError::sound_catalog;failure.sound_catalog.kind=RetailSoundCatalogError::runtime;
             failure.operation=failure.sound_catalog.runtime.operation;return finish_attempt(false);

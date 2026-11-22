@@ -39,6 +39,7 @@ private:
 };
 // All values are required from the actual caller. No factory profile, neutral
 // per-play gain, guessed deadline or implicit output-device rate is selected.
+// initial_deadline is used by ordinary play; held flag8 binds no deadline.
 struct NativePlayParameters {
     AudioControlFactors context, program;
     NativeEnvelopeProfile envelope;
@@ -65,7 +66,8 @@ enum class PlaybackError { none, moved_owner, closed, invalid_output_rate,
     bank_unloading, bank_state_unknown, close_state_unknown, unknown_context, foreign_context, retired_context,
     unsupported_play_flags, copy_failed, invalid_output_selector, unsupported_output_selector,
     output_priority_refused, clock_failed, invalid_clock, unknown_retired_output, retired_output,
-    wrong_bank_interface, native_bank_failed, invalid_control_curve, wrong_thread, invalid_work_state, cancelled };
+    wrong_bank_interface, native_bank_failed, invalid_control_curve, wrong_thread, invalid_work_state, cancelled,
+    held_playback_requires_resume };
 struct PlaybackFailure {
     PlaybackError kind=PlaybackError::none;
     BankServiceFailure service;
@@ -86,6 +88,7 @@ struct PlaybackObservation {
     std::optional<PlaybackFailure> terminal_failure;
     std::optional<std::size_t> output_role;
     bool output_owned=false,dispatch_live=false,replaced=false;
+    bool held=false,deadline_bound=false;
     std::int16_t priority=0;
 };
 class NativeRetiredOutputHandle {
@@ -176,6 +179,9 @@ public:
     // after an owned HostVoice was created and inserted successfully.
     std::optional<ProgramStep> tick(const NativePlayHandle&,ProgramClockWord,PlaybackFailure&);
     bool stop(const NativePlayHandle&,PlaybackFailure&);
+    // Original command50: start the prebound first sample and enter ordinary
+    // dispatch. Already dispatch-live playback is unchanged.
+    bool resume(const NativePlayHandle&,PlaybackFailure&);
     std::optional<std::vector<float>> mix(std::size_t host_frames,PlaybackFailure&);
     std::optional<PlaybackObservation> observe(const NativePlayHandle&,PlaybackFailure&) const;
     bool release(const NativePlayHandle&,PlaybackFailure&); // Only inactive entries.
@@ -201,7 +207,8 @@ private:
     std::optional<NativePlayHandle> play_impl(const NativeSoundContext&,const AudioBankCommand*,
         const AudioBankHandle*,std::int32_t selector,const NativePlayParameters&,bool sample_activation_clock,PlaybackFailure&);
     bool unload_impl(const AudioBankCommand*,const AudioBankHandle*,PlaybackFailure&);
-    std::optional<std::vector<ForcedPlaybackRetirement>> force_retire_impl(const NativePlayHandle*,const NativeSoundContext*,PlaybackFailure&);
+    std::optional<std::vector<ForcedPlaybackRetirement>> force_retire_impl(const NativePlayHandle*,const NativeSoundContext*,PlaybackFailure&,
+        const std::shared_ptr<const void>* retained_context_exclusion=nullptr);
     explicit NativePlaybackOwner(std::shared_ptr<State> s):state_(std::move(s)){}
     std::shared_ptr<State> state_;
 };

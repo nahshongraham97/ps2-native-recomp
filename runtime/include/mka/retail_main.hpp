@@ -206,6 +206,7 @@ std::optional<sound::NativePlayHandle> submit_retail_queued_sound(NativeRetailMa
 //12C1D0 reverse removal for actual ready native play references. Public pending
 // jobs/command50 resume require their separate producers; no queued success.
 bool retire_retail_game_sound_references(NativeRetailMainState&, StartupFailure&);
+bool resume_retail_game_sound_reference(NativeRetailMainState&,std::uint32_t sound_identifier,StartupFailure&);
 bool render_retail_frame(NativeRetailMainState&, StartupFailure&); // 126940
 bool prune_retail_associations(NativeRetailMainState&, StartupFailure&); // 1304F0
 

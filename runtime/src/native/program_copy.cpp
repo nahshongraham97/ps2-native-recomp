@@ -19,7 +19,7 @@ struct NativeProgramCopy::Impl {
     std::shared_ptr<const NativeRuntimePreparation> runtime;
     std::shared_ptr<PreparedProgram> data;
     std::vector<Instance> instances;
-    bool scheduled=false,stopped=false,outputs_retired=false;
+    bool scheduled=false,stopped=false,outputs_retired=false,held=false;
     Instance* find(std::size_t index){for(auto& i:instances)if(i.command_index==index)return &i;return nullptr;}
     ~Impl(){instances.clear();data.reset();runtime.reset();reference.reset();}
 };
@@ -107,6 +107,27 @@ std::optional<OrdinaryProgramSchedule> NativeProgramCopy::bind_preactivated_sche
     if(!reset_ordinary_command_state(state_->data->commands,f))return {};
     state_->data->effective_flags=flags;state_->scheduled=true;
     return OrdinaryProgramSchedule{state_->data,deadline,flags};
+}
+std::optional<OrdinaryProgramSchedule> NativeProgramCopy::bind_held_schedule(std::uint16_t flags,ProgramCopyFailure& f){
+    f={};if(state_->scheduled){f.kind=ProgramCopyError::already_scheduled;return {};}
+    auto* first=state_->find(0);
+    if(!(flags&8u)||state_->data->commands.front().kind()!=1||!first){f.kind=ProgramCopyError::unsupported_held_first;return {};}
+    if(!reset_ordinary_command_state(state_->data->commands,f))return {};
+    const auto operands=sample_start_operands(state_->data->commands.front());
+    first->state.gain_q14=operands.parameter_44;first->state.pan_q14=operands.parameter_46;
+    first->state.pitch_q12=operands.parameter_48;first->state.descriptor_word=operands.descriptor_word_28;
+    first->state.repeat_operand=operands.repeat_operand;first->state.start_argument=operands.start_argument;
+    if(operands.set_descriptor_flag_1)first->state.flags|=1u;
+    if(operands.set_descriptor_flag_4)first->state.flags|=4u;
+    // Source3A38/A49C/6330 prebind normal state with key-on=false. There is
+    // no native voice, audible start, sampled deadline or ordinary membership.
+    state_->data->effective_flags=flags;state_->scheduled=true;state_->held=true;
+    return OrdinaryProgramSchedule{state_->data,{},flags};
+}
+std::optional<OrdinaryProgramSchedule> NativeProgramCopy::resume_held_schedule(ProgramClockWord deadline,ProgramCopyFailure& f){
+    f={};if(!state_->held){f.kind=ProgramCopyError::not_held;return {};}
+    state_->data->effective_flags&=~std::uint32_t{8};state_->held=false;
+    return OrdinaryProgramSchedule{state_->data,deadline,static_cast<std::uint16_t>(state_->data->effective_flags)};
 }
 NativeProgramOutputObservation NativeProgramCopy::output_observation()const noexcept{
     NativeProgramOutputObservation result;

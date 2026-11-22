@@ -150,3 +150,9 @@ add_executable(test_native_runtime_program_work EXCLUDE_FROM_ALL tests/test_runt
 target_link_libraries(test_native_runtime_program_work PRIVATE mka_native_sound_resources)
 add_executable(test_native_service_runtime_work EXCLUDE_FROM_ALL tests/test_service_runtime_work.cpp)
 target_link_libraries(test_native_service_runtime_work PRIVATE mka_native_sound_resources)
+
+add_executable(test_native_held_playback EXCLUDE_FROM_ALL tests/test_held_playback.cpp)
+target_link_libraries(test_native_held_playback PRIVATE mka_native_sound_resources)
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_link_options(test_native_held_playback PRIVATE "-Wl,--wrap=_Znwy" "-Wl,--wrap=_ZN3mka5sound17NativeProgramCopyD1Ev")
+endif()
