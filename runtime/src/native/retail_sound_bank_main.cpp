@@ -2,6 +2,7 @@
 #include "mka/retail_current_sound_required.hpp"
 #include "mka/retail_initial_reset_required.hpp"
 #include "mka/retail_sound_bank_catalog.hpp"
+#include "mka/retail_sound_runtime.hpp"
 #include "native_retail_startup.hpp"
 
 namespace mka::retail {
@@ -45,7 +46,7 @@ bool prepare_game_sound_state_12d7e0(NativeRetailMainState& main, StartupFailure
     // never be discarded by translating the original memset literally.
     if (main.current_sound_phase != RetailCurrentSoundPhase::empty ||
         main.game_sound_state_prepared || !main.game_sound_references.empty() ||
-        main.sound_bank_catalog || main.playback || main.current_sound) {
+        main.sound_bank_catalog || main.playback || main.current_sound || main.sound_runtime) {
         failure.kind = StartupError::sound_catalog;
         failure.operation = "12D7E0 game sound-state preparation requires a fresh owner";
         return false;
@@ -133,6 +134,12 @@ bool pump_retail_current_sound(NativeRetailMainState& main, StartupFailure& fail
     // The still-required effect retains its historical name until its complete
     // native status/receiver contract is implemented.
     if (!catalog_result(retained->pump_one(failure.sound_catalog), failure)) return finish_attempt(false);
+    if (main.sound_runtime && !main.sound_runtime->observe(failure.sound_catalog.runtime)) {
+        failure.kind = StartupError::sound_catalog;
+        failure.sound_catalog.kind = RetailSoundCatalogError::runtime;
+        failure.operation = failure.sound_catalog.runtime.operation;
+        return finish_attempt(false);
+    }
     if (!required_result(current_sound_required::update_programs_after_bank_results_3152c0(main, failure),
             failure, "3152C0 required native sound status publication")) return finish_attempt(false);
     if (main.sound_bank_catalog != retained || !main.lifetime->active_on_owner_thread()) {

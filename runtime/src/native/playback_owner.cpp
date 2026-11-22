@@ -164,6 +164,25 @@ struct NativePlaybackOwner::State {
         return event;
     }
     bool available(PlaybackFailure& f)const {if(clock_sampling){f.kind=PlaybackError::operation_active;return false;}if(closed){f.kind=PlaybackError::closed;return false;}if(close_unknown){f.kind=PlaybackError::close_state_unknown;return false;}if(closing){f.kind=PlaybackError::closing;return false;}return true;}
+    std::optional<ProgramClockWord> read_clock(std::unique_lock<std::mutex>& lock,PlaybackFailure& f){
+        // A fixed QPC/steady native counter has no game callback. Keeping this
+        // tiny platform query serialized avoids false busy admissions from the
+        // real worker. Explicit reader callouts keep their prior unlocked gap.
+        if(clock->uses_native_counter())return clock->read(f.clock);
+        clock_sampling=true;lock.unlock();auto now=clock->read(f.clock);lock.lock();clock_sampling=false;return now;
+    }
+    SoundContextObservation observe_outputs(const std::shared_ptr<const void>* filter=nullptr) const {
+        SoundContextObservation result;
+        for(const auto& slot:slots)if(slot.entry&&(!filter||slot.entry->context==*filter)){
+            const auto& e=*slot.entry;
+            if(e.preparing)++result.pending_preparations;else ++result.programs;
+            result.active_voices+=e.outputs().active_voices;
+        }
+        for(const auto& group:retired)if(!filter||group->context==*filter){
+            ++result.retired_groups;result.retired_voices+=group->voices.size();result.active_retired_voices+=group->active();
+        }
+        result.active_voices+=result.active_retired_voices;return result;
+    }
     Slot* find(const std::shared_ptr<const void>& owner,const std::shared_ptr<const void>& id,PlaybackFailure& f){
         if(!owner||!id){f.kind=PlaybackError::unknown_handle;return nullptr;}
         if(owner!=identity){f.kind=PlaybackError::foreign_owner;return nullptr;}
@@ -217,16 +236,12 @@ std::optional<NativeSoundContext> NativePlaybackOwner::create_sound_context(Nati
 std::optional<SoundContextObservation> NativePlaybackOwner::observe_sound_context(const NativeSoundContext& c,PlaybackFailure& f)const {
     f={};auto state=state_;if(!state){f.kind=PlaybackError::moved_owner;return {};}
     std::lock_guard lock(state->mutex);if(!state->available(f)||!state->context(c,f))return {};
-    SoundContextObservation result;
-    for(const auto& slot:state->slots)if(slot.entry&&slot.entry->context==c.identity_){
-        const auto& e=*slot.entry;
-        if(e.preparing)++result.pending_preparations;else ++result.programs;
-        result.active_voices+=e.outputs().active_voices;
-    }
-    for(const auto& group:state->retired)if(group->context==c.identity_){
-        ++result.retired_groups;result.retired_voices+=group->voices.size();result.active_retired_voices+=group->active();
-    }
-    result.active_voices+=result.active_retired_voices;return result;
+    return state->observe_outputs(&c.identity_);
+}
+std::optional<SoundContextObservation> NativePlaybackOwner::observe_all_outputs(PlaybackFailure& f)const {
+    f={};auto state=state_;if(!state){f.kind=PlaybackError::moved_owner;return {};}
+    std::lock_guard lock(state->mutex);if(!state->available(f))return {};
+    return state->observe_outputs();
 }
 bool NativePlaybackOwner::release_sound_context(const NativeSoundContext& c,PlaybackFailure& f){
     f={};auto state=state_;if(!state){f.kind=PlaybackError::moved_owner;return false;}
@@ -363,7 +378,7 @@ std::optional<NativePlayHandle> NativePlaybackOwner::play_impl(const NativeSound
              // Seal registry mutation, then release its lock around the host
              // counter port. Reentrant callers get a named busy result, not a
              // deadlock; pending preparations cannot commit across this phase.
-             state->clock_sampling=true;lock.unlock();auto now=state->clock->read(f.clock);lock.lock();state->clock_sampling=false;
+             auto now=state->read_clock(lock,f);
              if(!now){f.kind=PlaybackError::clock_failed;return {};}
              if(!state->available(f)||!state->context(context,f))return {};
              // A native host-clock callback can revoke the shared Session.
@@ -405,7 +420,7 @@ bool NativePlaybackOwner::update_ordinary_context(const NativeSoundContext& cont
             capacity+=remaining+1;
         }
         output.steps.reserve(capacity);
-        state->clock_sampling=true;lock.unlock();auto now=state->clock->read(f.clock);lock.lock();state->clock_sampling=false;
+        auto now=state->read_clock(lock,f);
         if(!now){f.kind=PlaybackError::clock_failed;return false;}
         if(!state->available(f)||!state->context(context,f))return false;output.observed=*now;
         for(const auto& id:identities){auto* e=state->entry_identity(id);if(!e||!e->dispatch_live)continue;

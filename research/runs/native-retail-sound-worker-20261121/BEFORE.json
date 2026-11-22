@@ -1,0 +1,60 @@
+{
+  "parent": "8d1e960f957ef04f495c75a479dc9fc8016dd9db",
+  "fork": "730c98388c244b0934c57165790c3035699c5b5d",
+  "tracked_fork_changes_before": [],
+  "protected_inventory_sha256": "26093151039b949348184f2e8a960b92d64e7f08408d43e58e1e0ed481a959f6",
+  "pins": {
+    "runtime/include/mka/audio_device.hpp": {
+      "sha256": "b3b2906c7e26c4388e09402ca899f7fc75442d2b2bb991b897350d571603a5f8",
+      "archive": "before\\runtime__include__mka__audio_device.hpp.gz"
+    },
+    "runtime/src/native/audio_device.cpp": {
+      "sha256": "8c1b9e9c6bbeb012d875bebce50a20a3e8541e6298a066dc56de973d73abc5be",
+      "archive": "before\\runtime__src__native__audio_device.cpp.gz"
+    },
+    "runtime/include/mka/retail_main.hpp": {
+      "sha256": "443c967ad4b95f9cbeab87d66b680e45218e15f66181d14aba0eb5f23f02a67d",
+      "archive": "before\\runtime__include__mka__retail_main.hpp.gz"
+    },
+    "runtime/src/native/retail_main_state.cpp": {
+      "sha256": "d4eef474c3efb60f40bff323aa8523f186bd09506929845a54c9e67b20b9f3f4",
+      "archive": "before\\runtime__src__native__retail_main_state.cpp.gz"
+    },
+    "runtime/include/mka/retail_sound_bank_catalog.hpp": {
+      "sha256": "0d89ef7802d2acf0cac0022446ddbc818e4e5cbed70a515939b75acfd16d1ace",
+      "archive": "before\\runtime__include__mka__retail_sound_bank_catalog.hpp.gz"
+    },
+    "runtime/include/mka/retail_current_sound_required.hpp": {
+      "sha256": "28b361f531ab66bb8ff84b97122c9d05d8bf4ddd93b96b9ecaf7befec599d04d",
+      "archive": "before\\runtime__include__mka__retail_current_sound_required.hpp.gz"
+    },
+    "runtime/src/native/retail_sound_bank_main.cpp": {
+      "sha256": "ad615cd722d96c597a3893480f774effbe2dee9594070c02615d899beedd247a",
+      "archive": "before\\runtime__src__native__retail_sound_bank_main.cpp.gz"
+    },
+    "cmake/native_audio.cmake": {
+      "sha256": "439cce74973e3b00fbbc621aaf1021cd70aa660f991e0bc2946f8f6892b2856d",
+      "archive": "before\\cmake__native_audio.cmake.gz"
+    },
+    "cmake/native_game.cmake": {
+      "sha256": "aa719def277c987f6bf2eec950df7ce33d916f8a3b285dc23759f1492c7c4b18",
+      "archive": "before\\cmake__native_game.cmake.gz"
+    },
+    "runtime/include/mka/program_host_clock.hpp": {
+      "sha256": "4533b0f315102adfb7ec8ada192b41830348cdad59a7d628321fb4c6329e7ed8",
+      "archive": "before\\runtime__include__mka__program_host_clock.hpp.gz"
+    },
+    "runtime/src/native/program_host_clock.cpp": {
+      "sha256": "f70db588ceaa9979cdd05bcb06a9b89f5dedc521320986eb4f4a5c5ebb7fe0b8",
+      "archive": "before\\runtime__src__native__program_host_clock.cpp.gz"
+    },
+    "runtime/src/native/playback_owner.cpp": {
+      "sha256": "46bbcfa734b70e58f133b8aad3811f920947244f0525a0a2904ec2b2dae5b198",
+      "archive": "before\\runtime__src__native__playback_owner.cpp.gz"
+    },
+    "runtime/include/mka/playback_owner.hpp": {
+      "sha256": "7cec8bbde6a7a503aa97279610e3520d20dc15f5942a4a078897af5fb9db9c28",
+      "archive": "before\\runtime__include__mka__playback_owner.hpp.gz"
+    }
+  }
+}

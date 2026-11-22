@@ -247,6 +247,7 @@ if(WIN32)
         runtime/src/native/retail_audio_statistics.cpp runtime/src/native/retail_mode_state.cpp
         runtime/src/native/retail_main_mode.cpp runtime/src/native/retail_main_state.cpp
         runtime/src/native/retail_sound_bank_catalog.cpp runtime/src/native/retail_sound_bank_main.cpp
+        runtime/src/native/retail_sound_context_main.cpp
         runtime/src/native/retail_package.cpp runtime/src/native/retail_remaining_constructors.cpp
         runtime/src/native/retail_action_history.cpp
         runtime/src/native/retail_auxiliary_words.cpp
@@ -255,7 +256,7 @@ if(WIN32)
         runtime/src/native/retail_input_assignments.cpp runtime/src/native/retail_input_poll.cpp
         runtime/src/native/retail_input_selection.cpp)
     target_include_directories(mka_native_retail_startup PUBLIC "${_startup_dir}" runtime/include)
-    target_link_libraries(mka_native_retail_startup PUBLIC mka_native_content_volume mka_native_retail_memory_owners
+    target_link_libraries(mka_native_retail_startup PUBLIC mka_native_retail_sound_runtime mka_native_content_volume mka_native_retail_memory_owners
         mka_native_retail_text_storage
         mka_native_save_store
         mka_native_user_paths
@@ -271,6 +272,11 @@ if(WIN32)
     target_link_libraries(test_native_retail_startup_initialization PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_reset_sound EXCLUDE_FROM_ALL tests/test_retail_reset_sound.cpp)
     target_link_libraries(test_native_retail_reset_sound PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_sound_context EXCLUDE_FROM_ALL tests/test_retail_sound_context.cpp)
+    target_link_libraries(test_native_retail_sound_context PRIVATE mka_native_retail_startup)
+    target_link_options(test_native_retail_sound_context PRIVATE
+        "-Wl,--wrap=_ZN3mka5sound29open_native_game_sound_outputERNS0_18AudioDeviceFailureE"
+        "-Wl,--wrap=_ZN3mka5sound17NativeAudioDevice4openERKNS0_17AudioDeviceConfigERNS0_18AudioDeviceFailureE")
     add_executable(test_native_retail_initial_reset EXCLUDE_FROM_ALL tests/test_retail_initial_reset.cpp)
     target_link_libraries(test_native_retail_initial_reset PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_game_records_main EXCLUDE_FROM_ALL tests/test_retail_game_records_main.cpp)

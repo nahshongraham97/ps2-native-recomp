@@ -13,6 +13,7 @@ struct NativeProgramHostClock::Impl {
     std::int64_t frequency,origin,last;
     ProgramHostTickReader reader;
     std::mutex mutex;
+    bool native_counter=false;
     Impl(std::int64_t f,std::int64_t first,ProgramHostTickReader r):frequency(f),origin(first),last(first),reader(std::move(r)){}
 };
 NativeProgramHostClock::NativeProgramHostClock(std::unique_ptr<Impl> state):state_(std::move(state)){}
@@ -39,19 +40,25 @@ std::shared_ptr<NativeProgramHostClock> NativeProgramHostClock::create_with_read
     catch(const std::bad_alloc&){f.kind=ProgramHostClockError::allocation_failed;return {};}
     catch(...){f.kind=ProgramHostClockError::native_exception;return {};}
 }
+std::shared_ptr<NativeProgramHostClock> NativeProgramHostClock::create_native_with_reader(std::int64_t frequency,ProgramHostTickReader reader,ProgramHostClockFailure& f){
+    auto clock=create_with_reader(frequency,std::move(reader),f);
+    if(clock)clock->state_->native_counter=true;
+    return clock;
+}
+bool NativeProgramHostClock::uses_native_counter() const noexcept{return state_->native_counter;}
 std::shared_ptr<NativeProgramHostClock> NativeProgramHostClock::create(ProgramHostClockFailure& f){
     f={};
 #ifdef _WIN32
     LARGE_INTEGER frequency;
     if(!QueryPerformanceFrequency(&frequency)){f={ProgramHostClockError::query,static_cast<std::int64_t>(GetLastError())};return {};}
-    try {return create_with_reader(frequency.QuadPart,[](ProgramHostClockFailure& failure)->std::optional<std::int64_t>{
+    try {return create_native_with_reader(frequency.QuadPart,[](ProgramHostClockFailure& failure)->std::optional<std::int64_t>{
         LARGE_INTEGER ticks;if(!QueryPerformanceCounter(&ticks)){failure={ProgramHostClockError::query,static_cast<std::int64_t>(GetLastError())};return {};}
         return ticks.QuadPart;
     },f);}
     catch(const std::bad_alloc&){f.kind=ProgramHostClockError::allocation_failed;return {};}
     catch(...){f.kind=ProgramHostClockError::native_exception;return {};}
 #else
-    try {return create_with_reader(1000000000,[](ProgramHostClockFailure& failure)->std::optional<std::int64_t>{
+    try {return create_native_with_reader(1000000000,[](ProgramHostClockFailure& failure)->std::optional<std::int64_t>{
         // Native steady counter expressed in integer nanoseconds. Bounds are
         // checked before conversion rather than relying on duration_cast wrap.
         using Clock=std::chrono::steady_clock;using Period=Clock::period;

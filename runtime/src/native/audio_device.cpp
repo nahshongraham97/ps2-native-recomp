@@ -56,6 +56,12 @@ bool endpoint_id(IMMDevice* endpoint,std::string& out,AudioDeviceFailure& f){
 void inspect_mix(IMMDevice* endpoint,AudioEndpointInfo& info){
     LocalCom<IAudioClient> client;
     if(!inspection_result(endpoint->Activate(__uuidof(IAudioClient),CLSCTX_ALL,nullptr,reinterpret_cast<void**>(&client.p)),AudioDeviceError::endpoint_open,"IMMDevice::Activate inspection only",info.mix_failure))return;
+    REFERENCE_TIME period=0;
+    if(inspection_result(client.p->GetDevicePeriod(&period,nullptr),AudioDeviceError::device_period,
+            "IAudioClient::GetDevicePeriod shared engine",info.period_failure)){
+        if(period>0)info.default_period_100ns=static_cast<std::uint64_t>(period);
+        else failure(info.period_failure,AudioDeviceError::invalid_duration,"nonpositive shared engine period");
+    }
     TaskMemory memory;WAVEFORMATEX* format=nullptr;HRESULT hr=client.p->GetMixFormat(&format);memory.p=format;
     if(!inspection_result(hr,AudioDeviceError::format_unsupported,"IAudioClient::GetMixFormat",info.mix_failure))return;
     if(!format){failure(info.mix_failure,AudioDeviceError::format_unsupported,"null shared mix format");return;}

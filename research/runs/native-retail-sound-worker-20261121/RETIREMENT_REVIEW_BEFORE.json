@@ -1,0 +1,18 @@
+{
+  "runtime/include/mka/retail_sound_runtime.hpp": {
+    "sha256": "efbc9679809106e58f193ca765bdfbf7bc0a65e6427b9b63c7cd944e04533709",
+    "archive": "before-output-retirement\\runtime__include__mka__retail_sound_runtime.hpp.gz"
+  },
+  "runtime/src/native/retail_sound_runtime.cpp": {
+    "sha256": "97a541a8b937d64f4eceec8227eacb1fb9a88eee29d9e0c147c2eae04180cbcd",
+    "archive": "before-output-retirement\\runtime__src__native__retail_sound_runtime.cpp.gz"
+  },
+  "runtime/src/native/playback_owner.cpp": {
+    "sha256": "b6a7559e4745753c38edbc4fbb601f1f26b2c5618892f4376ffff7ba54726592",
+    "archive": "before-output-retirement\\runtime__src__native__playback_owner.cpp.gz"
+  },
+  "tests/test_retail_sound_context.cpp": {
+    "sha256": "721769a0c0be5fae7d041c5d3ce65ade9defa07c697893a655e2d03606281232",
+    "archive": "before-output-retirement\\tests__test_retail_sound_context.cpp.gz"
+  }
+}

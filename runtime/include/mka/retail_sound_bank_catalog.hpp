@@ -2,6 +2,7 @@
 #include "mka/retail_file_paths.hpp"
 #include "mka/retail_main_lifetime.hpp"
 #include "mka/retail_sound_bank_jobs.hpp"
+#include "mka/retail_sound_runtime.hpp"
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -11,7 +12,7 @@ namespace mka::retail {
 enum class RetailSoundCatalogError {
     none, allocation, host_capacity, native_exception, wrong_owner, closed,
     after_effect_failure, content, bank_session, jobs, invalid_bank, missing_slot,
-    bank_failed, live_reference_cleanup_required
+    bank_failed, live_reference_cleanup_required, runtime
 };
 struct RetailSoundCatalogFailure {
     RetailSoundCatalogError kind{RetailSoundCatalogError::none};
@@ -19,6 +20,7 @@ struct RetailSoundCatalogFailure {
     RetailFilePathFailure path;
     sound::AudioBanksFailure bank;
     sound::RetailSoundBankJobFailure job;
+    RetailSoundRuntimeFailure runtime;
 };
 struct RetailSoundBankObservation {
     std::string_view name;

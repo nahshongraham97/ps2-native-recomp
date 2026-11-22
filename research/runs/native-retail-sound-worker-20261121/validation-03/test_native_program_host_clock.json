@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_program_host_clock.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_PROGRAM_HOST_CLOCK: shared explicit epoch/integer milliseconds/wrap/failure atomicity/reentry/concurrent readers; no original kernel epoch or physical timing fidelity claim\n",
+  "stderr": "",
+  "seconds": 0.05269320000661537,
+  "source_commit": "730c98388c244b0934c57165790c3035699c5b5d",
+  "tracked_status": "M cmake/native_audio.cmake\n M cmake/native_game.cmake\n M runtime/include/mka/audio_device.hpp\n M runtime/include/mka/playback_owner.hpp\n M runtime/include/mka/program_host_clock.hpp\n M runtime/include/mka/retail_current_sound_required.hpp\n M runtime/include/mka/retail_main.hpp\n M runtime/include/mka/retail_sound_bank_catalog.hpp\n M runtime/src/native/audio_device.cpp\n M runtime/src/native/playback_owner.cpp\n M runtime/src/native/program_host_clock.cpp\n M runtime/src/native/retail_main_state.cpp\n M runtime/src/native/retail_sound_bank_main.cpp",
+  "source_manifest_sha256": "dd1eb5d7a8d21dd27bce4be01da9241688c58ae0b00cfb670f1ba38db2c0def1",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "9e62a97b6edf3a89657b10730cb4ff2931d87eb030a1c548b93de13b277e99a6"
+}

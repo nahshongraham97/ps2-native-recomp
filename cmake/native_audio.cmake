@@ -8,3 +8,11 @@ target_compile_features(mka_native_audio_device PUBLIC cxx_std_20)
 target_link_libraries(mka_native_audio_device PRIVATE ole32 uuid)
 add_executable(test_native_audio_device EXCLUDE_FROM_ALL tests/test_native_audio_device.cpp)
 target_link_libraries(test_native_audio_device PRIVATE mka_native_audio_device)
+
+add_library(mka_native_retail_sound_runtime STATIC EXCLUDE_FROM_ALL
+    runtime/src/native/sound_output.cpp runtime/src/native/retail_sound_runtime.cpp)
+target_include_directories(mka_native_retail_sound_runtime PUBLIC runtime/include)
+target_compile_features(mka_native_retail_sound_runtime PUBLIC cxx_std_20)
+target_link_libraries(mka_native_retail_sound_runtime PUBLIC mka_native_audio_device mka_native_sound_resources Threads::Threads)
+add_executable(test_native_sound_output_plan EXCLUDE_FROM_ALL tests/test_sound_output_plan.cpp)
+target_link_libraries(test_native_sound_output_plan PRIVATE mka_native_retail_sound_runtime)

@@ -3,8 +3,9 @@
 namespace mka::retail {
 struct NativeRetailMainState;
 struct StartupFailure;
-// Game-state preparation is implemented. Context/program effects remain strong
-// requirements with no defaults. Context creation receives a view of the
+// Game-state preparation and native context construction are implemented.
+// Full source status/program effects remain strong requirements, with no
+// successful defaults. Context creation receives a view of the
 // exact same native bank registry used by reset's real work/completion queue.
 namespace current_sound_required {
 bool prepare_game_sound_state_12d7e0(NativeRetailMainState&, StartupFailure&);

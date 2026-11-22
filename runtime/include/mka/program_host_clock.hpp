@@ -16,7 +16,11 @@ public:
     NativeProgramHostClock(const NativeProgramHostClock&)=delete;
     NativeProgramHostClock& operator=(const NativeProgramHostClock&)=delete;
     std::optional<ProgramClockWord> read(ProgramHostClockFailure&) noexcept;
+    // True only for this class's fixed native counter implementation. Injected
+    // readers can call arbitrary code and must remain outside registry locks.
+    bool uses_native_counter() const noexcept;
 private:
+    static std::shared_ptr<NativeProgramHostClock> create_native_with_reader(std::int64_t,ProgramHostTickReader,ProgramHostClockFailure&);
     struct Impl;
     explicit NativeProgramHostClock(std::unique_ptr<Impl>);
     std::unique_ptr<Impl> state_;

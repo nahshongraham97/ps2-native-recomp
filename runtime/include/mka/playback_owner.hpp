@@ -134,6 +134,9 @@ public:
     std::optional<BankLoadCompletion> poll_completion(PlaybackFailure&);
     std::optional<NativeSoundContext> create_sound_context(NativeSoundContextConfiguration,PlaybackFailure&);
     std::optional<SoundContextObservation> observe_sound_context(const NativeSoundContext&,PlaybackFailure&) const;
+    // Aggregate actual ownership for native output teardown, including plays
+    // and retained tails in every context of this same owner.
+    std::optional<SoundContextObservation> observe_all_outputs(PlaybackFailure&) const;
     // Idle native teardown only: this is NOT retail command12/forced cleanup1.
     bool release_sound_context(const NativeSoundContext&,PlaybackFailure&);
     std::shared_ptr<AudioResourceDomain> resource_domain() const noexcept;

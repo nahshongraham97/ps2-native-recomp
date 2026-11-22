@@ -1,0 +1,18 @@
+{
+  "build_started": false,
+  "client_started": false,
+  "reason": "inherited CRLF in changed source",
+  "normalization": {
+    "runtime/include/mka/audio_device.hpp": {
+      "before_sha256": "6aa9f61b643e7273356570ac2d07f8f381869c1132374686621428bda41b3fb2",
+      "after_sha256": "266ee37219b4b9fd70f2c1834c7a3162e2e33cd08d3c35c27a12d73ed8f09ee6",
+      "archive": "before-lf-normalization\\runtime__include__mka__audio_device.hpp.gz"
+    },
+    "runtime/src/native/audio_device.cpp": {
+      "before_sha256": "7cf3252b4e3ebbb259325a9ea1a30f73aeaee90f6dbb365e2c1a0f7d46ac6ede",
+      "after_sha256": "f3a33da506ebf184c3bf7f19a39e3b7986c489241bfa457fa34d3ae4e0ae1cba",
+      "archive": "before-lf-normalization\\runtime__src__native__audio_device.cpp.gz"
+    }
+  },
+  "original_manifest": "validation-01/SOURCE_FILES.json"
+}

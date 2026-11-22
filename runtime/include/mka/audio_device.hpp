@@ -18,7 +18,7 @@ enum class AudioDeviceError {none,unsupported_host,invalid_format,invalid_endpoi
     unsupported_apartment,wrong_thread,invalid_owner,closed,invalid_state,
     endpoint_open,endpoint_unavailable,format_unsupported,initialize,service,
     device_lost,service_unavailable,failed_owner,invalid_pcm,buffer_full,buffer_query,
-    buffer_acquire,buffer_release,start,stop,reset,clock,invalid_role,enumeration};
+    buffer_acquire,buffer_release,start,stop,reset,clock,invalid_role,enumeration,device_period};
 struct AudioDeviceFailure {
     AudioDeviceError kind=AudioDeviceError::none;
     std::int32_t native_code=0;
@@ -38,6 +38,8 @@ struct AudioEndpointInfo {
     // or assigned a mono/stereo layout when the OS supplied no channel mask.
     AudioNativeMixFormat mix;
     AudioDeviceFailure mix_failure;
+    std::uint64_t default_period_100ns=0;
+    AudioDeviceFailure period_failure;
 };
 struct AudioEndpointInventory {
     AudioEndpointRole requested_role=AudioEndpointRole::unspecified;

@@ -1,0 +1,153 @@
+{
+  "status": "PASS_ORIGINAL_SOUND_WORKER_BYTE_JOIN",
+  "input_sha256": {
+    "EE": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+    "MSL": "f62dfbcedd39bc92cb8b9c02bb685b956a10357f9181d7f8c2801d8eaff07af7"
+  },
+  "module_exports": [
+    {
+      "path": "research\\runs\\native-retail-sound-worker-20261121\\source-01\\LISTING.json",
+      "sha256": "16c4889a84d6f41170b56bfcedc2d0f28f0a90ab3e4e6061d8cb59d3be231b8d",
+      "rows": 164
+    },
+    {
+      "path": "research\\runs\\native-retail-sound-worker-20261121\\source-02\\LISTING.json",
+      "sha256": "008cf091cbc56329bc124c0c5238644844eb8f61c249c1de6a986f059d446b3b",
+      "rows": 705
+    },
+    {
+      "path": "research\\runs\\native-retail-sound-worker-20261121\\source-03\\LISTING.json",
+      "sha256": "0f636c39650c2d7523d6fd1138df83c57abb5e18051b4492c9cef580d00752c5",
+      "rows": 395
+    },
+    {
+      "path": "research\\runs\\native-retail-sound-worker-20261121\\source-04\\LISTING.json",
+      "sha256": "d5100719a7241c3f3c273c9687dccc9fc9134fca869f2f0fe1c8191a08944ade",
+      "rows": 265
+    },
+    {
+      "path": "research\\runs\\native-retail-sound-worker-20261121\\source-05\\LISTING.json",
+      "sha256": "9aafe977cb697ab65db817fa8563a40cb4c50dee1b14cbc34a447e84735a628a",
+      "rows": 124
+    },
+    {
+      "path": "research\\runs\\native-retail-sound-worker-20261121\\source-06\\LISTING.json",
+      "sha256": "7ad8bc0e4cae173613fce3d02103a098216bb6a08f461a7cf99878261dd7d5c3",
+      "rows": 88
+    },
+    {
+      "path": "research\\runs\\native-retail-sound-worker-20261121\\source-07\\LISTING.json",
+      "sha256": "e11a4d5136bfcf3c952ea24f508019eb5ceba77dd2b5c291ba8ac44509835679",
+      "rows": 173
+    }
+  ],
+  "full_coverage": [
+    {
+      "begin": "0x46f8",
+      "end_exclusive": "0x47d8",
+      "words": 56,
+      "full_word_coverage": true
+    },
+    {
+      "begin": "0x5244",
+      "end_exclusive": "0x5318",
+      "words": 53,
+      "full_word_coverage": true
+    },
+    {
+      "begin": "0xaa88",
+      "end_exclusive": "0xaab8",
+      "words": 12,
+      "full_word_coverage": true
+    },
+    {
+      "begin": "0x3db0",
+      "end_exclusive": "0x3fcc",
+      "words": 135,
+      "full_word_coverage": true
+    },
+    {
+      "begin": "0x4180",
+      "end_exclusive": "0x4220",
+      "words": 40,
+      "full_word_coverage": true
+    },
+    {
+      "begin": "0x4220",
+      "end_exclusive": "0x45b0",
+      "words": 228,
+      "full_word_coverage": true
+    },
+    {
+      "begin": "0x45b0",
+      "end_exclusive": "0x46a8",
+      "words": 62,
+      "full_word_coverage": true
+    },
+    {
+      "begin": "0x4c50",
+      "end_exclusive": "0x4ccc",
+      "words": 31,
+      "full_word_coverage": true
+    }
+  ],
+  "xbox_exports": [
+    {
+      "path": "research\\runs\\native-retail-sound-worker-20261121\\XBOX-CONTEXT-01.json",
+      "sha256": "fae5cba0f46cc43c128908641ec66ed9e34cb014c2f5f2033b8f879d672526cf",
+      "function_instruction_counts": {
+        "00375390": 44,
+        "003755a0": 237,
+        "00375910": 16,
+        "00375950": 30
+      },
+      "behavioral_equivalence": false
+    },
+    {
+      "path": "research\\runs\\native-retail-sound-worker-20261121\\XBOX-CONTEXT-02.json",
+      "sha256": "6de8c7f44c5dd7a08d11d6a94904636c5096d6e26169ee96671601a75e31063e",
+      "function_instruction_counts": {
+        "00375440": 112,
+        "00378740": 26,
+        "00375390": 44
+      },
+      "behavioral_equivalence": false
+    },
+    {
+      "path": "research\\runs\\native-retail-sound-worker-20261121\\XBOX-CONTEXT-03.json",
+      "sha256": "c046eb2d8ccc387d81a01159f47d7debc7a67276b717945ad797bcf1ace4b3f5",
+      "function_instruction_counts": {
+        "0037baf0": 74,
+        "00374840": 100,
+        "00375440": 112,
+        "00374470": 91,
+        "00374370": 59
+      },
+      "behavioral_equivalence": false
+    },
+    {
+      "path": "research\\runs\\native-retail-sound-worker-20261121\\XBOX-CONTEXT-04.json",
+      "sha256": "bdb5145a1ce20a0a50010ddbabe5d415edeb1a5abe59289437aa24062a72373b",
+      "function_instruction_counts": {
+        "0037b6f0": 253,
+        "0037baf0": 74
+      },
+      "behavioral_equivalence": false
+    }
+  ],
+  "windows_references": [
+    "https://learn.microsoft.com/en-us/windows/win32/api/mmdeviceapi/ne-mmdeviceapi-erole",
+    "https://learn.microsoft.com/en-us/windows/win32/api/audioclient/nf-audioclient-iaudioclient-getdeviceperiod"
+  ],
+  "import_reference": "https://ps2dev.github.io/ps2sdk/thbase_8h_source.html",
+  "unresolved": [
+    "complete source worker passes and producers",
+    "source envelope policy",
+    "flags9",
+    "full game/output acceptance"
+  ],
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_sound_curves.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+  ],
+  "exit": 0,
+  "stdout": "PASS original600 curve coefficients/directional pan/phase/unknown policy and real native PCM propagation; no device/game\n",
+  "stderr": "",
+  "seconds": 0.0384561999962898,
+  "source_commit": "730c98388c244b0934c57165790c3035699c5b5d",
+  "tracked_status": "M cmake/native_audio.cmake\n M cmake/native_game.cmake\n M runtime/include/mka/audio_device.hpp\n M runtime/include/mka/playback_owner.hpp\n M runtime/include/mka/program_host_clock.hpp\n M runtime/include/mka/retail_current_sound_required.hpp\n M runtime/include/mka/retail_main.hpp\n M runtime/include/mka/retail_sound_bank_catalog.hpp\n M runtime/src/native/audio_device.cpp\n M runtime/src/native/playback_owner.cpp\n M runtime/src/native/program_host_clock.cpp\n M runtime/src/native/retail_main_state.cpp\n M runtime/src/native/retail_sound_bank_main.cpp",
+  "source_manifest_sha256": "dd1eb5d7a8d21dd27bce4be01da9241688c58ae0b00cfb670f1ba38db2c0def1",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "17f5b4e04bd54b6a6ca68c1fa25e220ad4633a21da40ae567eaf0c732eb610aa"
+}

@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_sound_context.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon"
+  ],
+  "exit": 0,
+  "stdout": "PASS production native sound context/Session/worker/PCM/error/idle lifetime; output and status fixtures; no game/endpoint\n",
+  "stderr": "",
+  "seconds": 0.27912730000389274,
+  "source_commit": "730c98388c244b0934c57165790c3035699c5b5d",
+  "tracked_status": "M cmake/native_audio.cmake\n M cmake/native_game.cmake\n M runtime/include/mka/audio_device.hpp\n M runtime/include/mka/program_host_clock.hpp\n M runtime/include/mka/retail_current_sound_required.hpp\n M runtime/include/mka/retail_main.hpp\n M runtime/include/mka/retail_sound_bank_catalog.hpp\n M runtime/src/native/audio_device.cpp\n M runtime/src/native/playback_owner.cpp\n M runtime/src/native/program_host_clock.cpp\n M runtime/src/native/retail_main_state.cpp\n M runtime/src/native/retail_sound_bank_main.cpp",
+  "source_manifest_sha256": "6894de38ccf6ae9153274dbb5c8663cd0079b082835e4bb9c51830a192e2261e",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "ad7e700829b9f942961fc199b4bfffc637ce650c43f3c3aaf01632022af7d252"
+}

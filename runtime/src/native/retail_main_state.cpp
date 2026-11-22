@@ -2,6 +2,7 @@
 #include "mka/retail_game_resource_registry.hpp"
 #include "mka/retail_game_info_resources.hpp"
 #include "mka/retail_sound_bank_catalog.hpp"
+#include "mka/retail_sound_runtime.hpp"
 #include "native_retail_startup.hpp"
 #include <cstdio>
 #include <exception>
@@ -15,6 +16,16 @@ NativeRetailMainState::~NativeRetailMainState() {
     if (!game_sound_references.empty()) {
         std::fputs("native retail sound teardown requires game-reference retirement\n", stderr);
         std::terminate();
+    }
+    if (sound_runtime) {
+        RetailSoundRuntimeFailure runtime_failure;
+        if (!sound_runtime->shutdown(runtime_failure)) {
+            std::fprintf(stderr, "native retail sound output teardown refused: %s (runtime=%d output=%d)\n",
+                runtime_failure.operation, static_cast<int>(runtime_failure.kind),
+                static_cast<int>(runtime_failure.output.kind));
+            std::terminate();
+        }
+        sound_runtime.reset();
     }
     if (sound_bank_catalog) {
         if (playback && current_sound) {
