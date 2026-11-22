@@ -1,0 +1,70 @@
+{
+  "first_apply": "CMake overlapping additions retained both arcade and renderer clients and DLL staging.",
+  "second_failure": "Post-import LF assertion stopped at cmake/native_sound_resources.cmake: git apply honored configured autocrlf. No build occurred. Raw imported authored bytes preserved before explicit LF normalization.",
+  "newline_changes": {
+    "cmake/native_sound_resources.cmake": {
+      "before": "62561b799c36ddbdf2d54de9c7ce4e9e4566faea5a0d68b16a4f4ec0be6ece57",
+      "after": "0da85eeb39a55a59c834107e41a13308219a8f0a5fed4241c39ecc6a6bca76c4"
+    },
+    "runtime/include/mka/audio_controls.hpp": {
+      "before": "ce85547bfae88f7bd0e6ffe4bed5daf67b0dac37b0dd79690c089122543c6e4c",
+      "after": "44dbbd8f795b3930a9f1f894024a3b35a9a3da72051031bf2d9394b57ec2a101"
+    },
+    "runtime/include/mka/content_volume.hpp": {
+      "before": "b795939e4f69a4562c2104e75baad81b7f140c9b63603ed58a93a5a683dafaab",
+      "after": "527c8f9192fcb20a3872f04cd47dc52e8ac707c7785df5e3fbff4e5cd3e9e7d1"
+    },
+    "runtime/include/mka/host_voice.hpp": {
+      "before": "2051e0f5b9f922e53f11210164234ff866c1c9ecc48696a83211f9e4c7ba4982",
+      "after": "61ce4064dda45b9e41e52477e87da463577ca8a9679ac2c1faf17e0932ca0ab4"
+    },
+    "runtime/include/mka/program_copy.hpp": {
+      "before": "9ee91c06333ad571e117429b37c5c591cc6c8ce8c003379e32f8b911a2940d2f",
+      "after": "a06886d1d0da3d61d816f3f5fe76eefefb9776c53046e2d4dfcd68dbacb2390f"
+    },
+    "runtime/include/mka/retail_game_session.hpp": {
+      "before": "eea3d064ee25673568a160bebfa3b7e93fc071f3daddc6206306f09b2947c2ea",
+      "after": "bb57ffdbeb26c73744dd09377ff2e49dd8085f6d4fa83c8abfdd544f49c75747"
+    },
+    "runtime/include/mka/retail_renderer_core.hpp": {
+      "before": "b0c843f4b8e469768c86c652a39543e3df7aba7d7cd96b1524896ad99650b242",
+      "after": "3adb5025b64beb1d92d6c9cd9264986292b49f07c773e1dd5c37965b5a18282e"
+    },
+    "runtime/include/mka/retail_scene_bootstrap_required.hpp": {
+      "before": "bb40061a848f96bc3d67b5c85d9ca1f8b6fd5e1d58ce89b41d73b9f69fef9d9d",
+      "after": "4a15b75672b4e1fc40f88f29d298236a31d9c5dedcae00cd4ab24b2d058bbf6b"
+    },
+    "runtime/src/native/audio_controls.cpp": {
+      "before": "f4a02e668571dc99961d4c2d0c2ac0b76b58bd3b9b53e54f67bbc536ca3e26e7",
+      "after": "cb288e2d2ed5bbfa265ec0fbc67461821edd6745c2e1e498f96463ceefd7066a"
+    },
+    "runtime/src/native/content_volume.cpp": {
+      "before": "b3ae38edd1ee68cecaadd2ce1904d2b141ad5ca43a9702379ac1ad2c06a873e0",
+      "after": "9263a2560a60e0cf35dfc61d885d7ee0947e563ad557b35c353d1400d6538c03"
+    },
+    "runtime/src/native/host_voice.cpp": {
+      "before": "e2267d8f86e2bb8e7235925610f7310c096c0802f1bbfd1e674f140df564792c",
+      "after": "8955ce4a3cb6e29a4947e4a18c3f62c4c2b5ceeac563480d09808fd5b94e92cf"
+    },
+    "runtime/src/native/program_copy.cpp": {
+      "before": "6b0a765c0a9b62290af99ca0273f0743fd9db4ac607558de1e410c425da9d686",
+      "after": "0824ca471ffe259c83ede965e63b8f2f21993abe21846b60db8b1ec705c76c5b"
+    },
+    "runtime/src/native/retail_first_scene_core.cpp": {
+      "before": "a36bc36df45ba7faa85d308ea6cd4d669ef85d1b87b2f7bed168b2f4fab69e44",
+      "after": "691919645876797e602a266dac832ab47c3b5cc0b47fce58b5d418058a59821a"
+    },
+    "runtime/src/native/retail_renderer_core.cpp": {
+      "before": "a51031decc11ad1beb0c5c9a4af3e7d55bd0026e4a142944d704725a613f6ca4",
+      "after": "a0f9fe29d2057569a6a26ef59b9b10d5b088cabf645e2ab6e5b5a68ddf22d1bc"
+    },
+    "tests/test_control_history.cpp": {
+      "before": "29320fd42b6d63ee4210ba31929cee4fa220457324e48606c8bb3d26487224c0",
+      "after": "a46f7da435ac5de5c3ee4d4b90962474a0e14337691485e69275f792bcaf7e5b"
+    },
+    "tests/test_retail_renderer_core.cpp": {
+      "before": "2ac55c79cb3da6be761ca0073a6a4c23749f3bbc1b3dd94cbe34d87a29c6fc65",
+      "after": "8cbb2a7d05d091595e474d54b9c380744639d61b9cab842346619eab258d29bd"
+    }
+  }
+}

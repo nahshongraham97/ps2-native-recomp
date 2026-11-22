@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_program_copy.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "seconds": 0.03307039999344852,
+  "source_commit": "974de8ef7e2282df697493264cc6fa931f14c402",
+  "tracked_status": "M  cmake/native_game.cmake\nM  cmake/native_sound_resources.cmake\nM  runtime/include/mka/audio_controls.hpp\nM  runtime/include/mka/content_volume.hpp\nM  runtime/include/mka/host_voice.hpp\nM  runtime/include/mka/program_copy.hpp\nM  runtime/include/mka/retail_game_session.hpp\nA  runtime/include/mka/retail_renderer_core.hpp\nM  runtime/include/mka/retail_scene_bootstrap_required.hpp\nM  runtime/src/native/audio_controls.cpp\nM  runtime/src/native/content_volume.cpp\nM  runtime/src/native/host_voice.cpp\nM  runtime/src/native/program_copy.cpp\nA  runtime/src/native/retail_first_scene_core.cpp\nA  runtime/src/native/retail_renderer_core.cpp\nA  tests/test_control_history.cpp\nA  tests/test_retail_renderer_core.cpp",
+  "source_manifest_sha256": "9609611426066ed80db9db607a3d92817b8b5bbdee9e7bd776e7f04c1cd235ed",
+  "executable_sha256": "c756246f3ea5aa2a24e24887d28beb77240b0419a2501355404413675968ceaf",
+  "log_sha256": "7ce6ebd2147d69d589c13ee1b049e387854ff5b8db043b922d7fd5f55dfd083f",
+  "compressed_log_sha256": "6e350c01f0beb406a5b669950138e59c57ec6d44e013fa728631be98ffee0857",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

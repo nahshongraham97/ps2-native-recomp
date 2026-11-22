@@ -1,0 +1,16 @@
+{
+  "source": "dcf002267aa40e07dac7dc6539d49152a7cd6942",
+  "files": {
+    "runtime/src/native/retail_renderer_core.cpp": {
+      "raw_sha256": "1e7b190bb4220f1a54815145dfc20a20cfc4cfcbd1745fd1955cf86364f6efd9",
+      "archive": "retail_renderer_core.cpp.before.gz",
+      "archive_sha256": "8acd5ad5321098289c98acd1391a359351a2a25306e0c01213df440fdd162be4"
+    },
+    "tests/test_retail_renderer_core.cpp": {
+      "raw_sha256": "274af47e38d286e58475fa39c82aca77fe3455835839207ad6240b6efbb38a3d",
+      "archive": "test_retail_renderer_core.cpp.before.gz",
+      "archive_sha256": "87c5db53e392f24dce8083695d8d0763822e6ecb577ab61db2955da971cc8f1d"
+    }
+  },
+  "binaries": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-engine\\build-renderer-engine\\history06"
+}

@@ -156,3 +156,6 @@ target_link_libraries(test_native_held_playback PRIVATE mka_native_sound_resourc
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_link_options(test_native_held_playback PRIVATE "-Wl,--wrap=_Znwy" "-Wl,--wrap=_ZN3mka5sound17NativeProgramCopyD1Ev")
 endif()
+
+add_executable(test_native_control_history EXCLUDE_FROM_ALL tests/test_control_history.cpp)
+target_link_libraries(test_native_control_history PRIVATE mka_native_sound_resources)

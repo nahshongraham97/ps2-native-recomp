@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-objdump.exe",
+    "-p",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-sound-history\\build-sound-history\\test_native_control_history.exe"
+  ],
+  "exit": 0,
+  "tool_sha256": "c21f18afa9d9679941df90e957f584c50762e03505dcfbe1be1736d5a494277d",
+  "binary_sha256": "d34e8c5dfa2cf0f078951972aa68dbbcb48f62900ee5ddb049e56ded9f4b3f7f",
+  "log_sha256": "534a94aa5017cef8662e03a964bf8e0cf45ad197c9837487a7c985cc1c12bfc8"
+}

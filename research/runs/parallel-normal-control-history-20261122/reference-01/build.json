@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+    "-std=c++20",
+    "-O0",
+    "-I",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-sound-history",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-sound-history\\research\\runs\\parallel-normal-control-history-20261122\\reference_history.cpp",
+    "-o",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-sound-history\\research\\runs\\parallel-normal-control-history-20261122\\reference-01\\reference_history.exe"
+  ],
+  "exit": 1,
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "source_sha256": "a4b2a0df7f130f8dbc580a19c64e02f962f051971d093b3f6d479027358aa21f",
+  "log_sha256": "c9f2e7e294a434ce7fbf5fef388f8b28e23e5695435b14efb850f326387f29a2"
+}

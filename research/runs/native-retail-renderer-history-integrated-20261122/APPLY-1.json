@@ -1,0 +1,8 @@
+{
+  "before": "44d3d02bb205fad839634ffcfedcd9db5b943b15",
+  "after": "dcf002267aa40e07dac7dc6539d49152a7cd6942",
+  "exit": 1,
+  "stdout": "",
+  "stderr": "Applied patch to 'cmake/native_game.cmake' with conflicts.\nApplied patch to 'runtime/include/mka/content_volume.hpp' cleanly.\nApplied patch to 'runtime/include/mka/retail_game_session.hpp' cleanly.\nFalling back to direct application...\nApplied patch to 'runtime/include/mka/retail_scene_bootstrap_required.hpp' cleanly.\nApplied patch to 'runtime/src/native/content_volume.cpp' cleanly.\nFalling back to direct application...\nFalling back to direct application...\nFalling back to direct application...\nU cmake/native_game.cmake\n",
+  "patch_sha256": "a9a9723844b60d6d519da4535a74d3730184fc2a4401e75ea55e5c0d79f022a3"
+}

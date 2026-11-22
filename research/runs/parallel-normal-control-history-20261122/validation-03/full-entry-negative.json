@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-sound-history\\build-sound-history",
+    "--target",
+    "test_native_startup_missing_bindings",
+    "-j2"
+  ],
+  "exit": 1,
+  "seconds": 1.000013900003978,
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "source_manifest_sha256": "06a969c29ed4637ade072446cb03e5371c125a46ecb1b5ad8e6b36354e918ad5",
+  "log_sha256": "bd727203cbc2c7e26f2421b5aae85c710d009aa0467ee7da105f2e76d0c49390",
+  "game_run": false,
+  "physical_endpoints_opened": false
+}

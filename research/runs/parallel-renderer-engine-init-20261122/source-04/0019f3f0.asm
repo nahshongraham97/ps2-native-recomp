@@ -1,0 +1,5 @@
+0019f3f0	7ca3838f	lw v1,-0x5c84(gp)
+0019f3f4	2d108000	move v0,a0
+0019f3f8	ffff6324	addiu v1,v1,-0x1
+0019f3fc	0800e003	jr ra
+0019f400	7ca383af	_sw v1,-0x5c84(gp)

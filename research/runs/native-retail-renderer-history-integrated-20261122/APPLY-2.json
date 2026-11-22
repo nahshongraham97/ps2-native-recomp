@@ -1,0 +1,8 @@
+{
+  "before": "dcf002267aa40e07dac7dc6539d49152a7cd6942",
+  "after": "feb05096e43fb0ae37bac6407d2567569ddb03e0",
+  "exit": 0,
+  "stdout": "",
+  "stderr": "Applied patch to 'runtime/src/native/retail_renderer_core.cpp' cleanly.\nApplied patch to 'tests/test_retail_renderer_core.cpp' cleanly.\n",
+  "patch_sha256": "6bcc32d5055c35b0d83f0f0925a005877c8fc7a2620b9eca1c3ff89ead50d4b2"
+}

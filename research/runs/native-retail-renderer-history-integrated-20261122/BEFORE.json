@@ -1,0 +1,27 @@
+{
+  "base": "974de8ef7e2282df697493264cc6fa931f14c402",
+  "candidates": [
+    "dcf002267aa40e07dac7dc6539d49152a7cd6942",
+    "feb05096e43fb0ae37bac6407d2567569ddb03e0",
+    "c9f3db8c71bc1b3d18594329c8478ed59798e327"
+  ],
+  "pins": {
+    "cmake/native_game.cmake": "6904562ff926243abdbd718fb99ed01feb28b62735e4c06f04c4b9991b4e15c7",
+    "cmake/native_sound_resources.cmake": "ad041f5fe87f600e5594ec1ad8b501662d97787b3c628db32b8a3106ae579c88",
+    "runtime/include/mka/audio_controls.hpp": "daa55328fe2c4f7d4bbd8c94bbe480f0c726ed85fd290284a8704550464b6747",
+    "runtime/include/mka/content_volume.hpp": "19e5534bc6782c4c58d7d8890a9b917c8948128dff12fbc9a9d4d9da251ebce1",
+    "runtime/include/mka/host_voice.hpp": "2d41db2b103f523b7a34e2da18ab3593c67f13b9eb72d9f03389b2705bb91888",
+    "runtime/include/mka/program_copy.hpp": "de3562e872a5d6c43f0614a8bc4d38f7539b5c5fcc45c4182514cb8b5b3adebb",
+    "runtime/include/mka/retail_game_session.hpp": "33021d758302e5311f1725411a0957df40070f03558ea0a06ee6e6605d838a03",
+    "runtime/include/mka/retail_renderer_core.hpp": null,
+    "runtime/include/mka/retail_scene_bootstrap_required.hpp": "65c39f719a3def5117a3ada1670feda9a6a99771d5d2d19b3a46670b2c9b59f3",
+    "runtime/src/native/audio_controls.cpp": "94546ef5e34ded6b69e173759d5be6f0beb6e450a93f1e6d9e116ec0fa621265",
+    "runtime/src/native/content_volume.cpp": "77d3f723632ce32e8c170753168bc084531a9a38d9e1def85b8ee76bfba5f789",
+    "runtime/src/native/host_voice.cpp": "5975891039e54bd6d506d397f3c5c97e7ab21bb67b6b272b02de5f789271b80c",
+    "runtime/src/native/program_copy.cpp": "30116f5352ddfd177c7f4a9da12725e632975da4cc271d8a86aec7be6f39d721",
+    "runtime/src/native/retail_first_scene_core.cpp": null,
+    "runtime/src/native/retail_renderer_core.cpp": null,
+    "tests/test_control_history.cpp": null,
+    "tests/test_retail_renderer_core.cpp": null
+  }
+}

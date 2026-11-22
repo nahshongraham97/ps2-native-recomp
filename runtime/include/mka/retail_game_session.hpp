@@ -36,6 +36,7 @@ struct RetailGameSessionFailure {
 // Native game globals outlive an individual main/frame-control object. This
 // owner has no guest address map, register state or platform device model.
 // Controls model only proven game-info state, not a complete registry value.
+class NativeRetailRendererCore;
 class NativeRetailGameSession final {
 public:
     static std::shared_ptr<NativeRetailGameSession> create(RetailGameSessionFailure&) noexcept;
@@ -73,6 +74,8 @@ public:
     std::shared_ptr<NativeRetailTaskObject> source_task_1588c0(
         RetailGameSessionFailure&) const noexcept;
 private:
+    friend class NativeRetailRendererCore;
+    std::shared_ptr<NativeRetailRendererCore> renderer_core_;
     NativeRetailGameSession(std::shared_ptr<NativeRetailGameControls>,
         std::shared_ptr<NativeRetailMainSettings>,
         std::unique_ptr<NativeRetailTaskDomain>) noexcept;

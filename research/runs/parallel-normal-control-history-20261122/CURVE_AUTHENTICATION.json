@@ -1,0 +1,28 @@
+{
+  "module_sha256": "f62dfbcedd39bc92cb8b9c02bb685b956a10357f9181d7f8c2801d8eaff07af7",
+  "fixture_sha256": "4635e920a2327029f358d9c5144465fc1ac6f6766c07b122ff567f01712cd82b",
+  "coefficients": 600,
+  "static_gain_vma": "102ac",
+  "static_pan_vma": "1043c",
+  "linear_writer_words": {
+    "0x57b8": "0x831825",
+    "0x57d0": "0x30420001",
+    "0x57d4": "0x10400019",
+    "0x57e4": "0x240500c7",
+    "0x57ec": "0x61380",
+    "0x57f0": "0x461023",
+    "0x57f4": "0x45001a",
+    "0x57f8": "0xa61023",
+    "0x5800": "0x2012",
+    "0x580c": "0xa4440000",
+    "0x5810": "0x28c200c8",
+    "0x5814": "0x1440fff5",
+    "0x581c": "0x24050063",
+    "0x5828": "0x52040",
+    "0x5830": "0x24a5ffff",
+    "0x5834": "0x4a1fffc",
+    "0x5838": "0xa0440000"
+  },
+  "linear_domain": "exact positive signed DIV for(i<<14)-i over0..199; pan2*i over0..99",
+  "scope": "Reference coefficients independently authenticated against original data/writer words; no candidate table output used"
+}

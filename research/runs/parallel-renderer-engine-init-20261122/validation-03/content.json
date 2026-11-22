@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-engine\\build-renderer-engine\\test_native_content_volume_owner.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-engine\\build-renderer-engine\\content-owner-03"
+  ],
+  "exit": 0,
+  "seconds": 0.06967353820800781,
+  "log_sha256": "42a434f1cdf859f7cca96cd57ede81c547c64e2c290b0e12f28a6298bcece717",
+  "executable_sha256": "b5a1570abb0eab145e34c13722d5ca30fd4ad8c58d77f5221fab75fa91bc4a3b",
+  "source_manifest_sha256": "f2b9ac1a6c4e7e71cf7f9b06ba67d5840f69ae7857c8171e5dafda150b1a4306"
+}

@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_arcade_reset.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-renderer-history-integrated-20261122\\validation-01\\empty-content",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-arcade-reset-20261122\\expected-ladders.tsv"
+  ],
+  "exit": 0,
+  "seconds": 0.10645579999254551,
+  "source_commit": "974de8ef7e2282df697493264cc6fa931f14c402",
+  "tracked_status": "M  cmake/native_game.cmake\nM  cmake/native_sound_resources.cmake\nM  runtime/include/mka/audio_controls.hpp\nM  runtime/include/mka/content_volume.hpp\nM  runtime/include/mka/host_voice.hpp\nM  runtime/include/mka/program_copy.hpp\nM  runtime/include/mka/retail_game_session.hpp\nA  runtime/include/mka/retail_renderer_core.hpp\nM  runtime/include/mka/retail_scene_bootstrap_required.hpp\nM  runtime/src/native/audio_controls.cpp\nM  runtime/src/native/content_volume.cpp\nM  runtime/src/native/host_voice.cpp\nM  runtime/src/native/program_copy.cpp\nA  runtime/src/native/retail_first_scene_core.cpp\nA  runtime/src/native/retail_renderer_core.cpp\nA  tests/test_control_history.cpp\nA  tests/test_retail_renderer_core.cpp",
+  "source_manifest_sha256": "9609611426066ed80db9db607a3d92817b8b5bbdee9e7bd776e7f04c1cd235ed",
+  "executable_sha256": "974172588aebd1bc786b46249a1ac19b5525a7b148289e2f77f94bada1195655",
+  "log_sha256": "7aa869a9aa6d8f1c44b778870d520b7ce28bd3db947255e6aad3106bc0f7b0c0",
+  "compressed_log_sha256": "cddbd5f7135a49931f5a2943d186127dde1a22746b56a5f58d6bff587a21b4b3",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

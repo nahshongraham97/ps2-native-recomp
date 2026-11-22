@@ -1,0 +1,10 @@
+{
+  "stage": "scoped git add before commit/push",
+  "error": "FileNotFoundError [WinError 206] command argument list exceeded Windows process command-line length",
+  "source_committed": false,
+  "pushed": false,
+  "source_changed": false,
+  "passed_clients_retained": 24,
+  "script_before_sha256": "b34178da85a12a0152e483e7504185f539338b7ced26928f62613e2b878edd26",
+  "correction": "Pass exact approved NUL-delimited paths through stdin using git add --pathspec-from-file=- --pathspec-file-nul. Scope validation and frozen blob checks retained."
+}

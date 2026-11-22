@@ -1,0 +1,8 @@
+{
+  "before": "44d3d02bb205fad839634ffcfedcd9db5b943b15",
+  "after": "c9f3db8c71bc1b3d18594329c8478ed59798e327",
+  "exit": 0,
+  "stdout": "",
+  "stderr": "Applied patch to 'cmake/native_sound_resources.cmake' cleanly.\nApplied patch to 'runtime/include/mka/audio_controls.hpp' cleanly.\nApplied patch to 'runtime/include/mka/host_voice.hpp' cleanly.\nApplied patch to 'runtime/include/mka/program_copy.hpp' cleanly.\nApplied patch to 'runtime/src/native/audio_controls.cpp' cleanly.\nApplied patch to 'runtime/src/native/host_voice.cpp' cleanly.\nApplied patch to 'runtime/src/native/program_copy.cpp' cleanly.\nFalling back to direct application...\n",
+  "patch_sha256": "5666f1b9f55cac1b4993201a38f9c440dd84295a506622468fccab75e9748c6e"
+}

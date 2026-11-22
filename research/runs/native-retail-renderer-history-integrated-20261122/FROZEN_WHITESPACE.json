@@ -1,0 +1,7 @@
+{
+  "path": "research/runs/parallel-renderer-core-review-20261122/authenticate.py",
+  "sha256": "3a5ab0ce72e89869c7fd445ea3b87cfd8a3270fdbf9b264fc017732b28650fd2",
+  "classification": "Historical immutable evidence script has one extra EOF blank line; exact committed bytes preserved. Not production source.",
+  "expected_check_output": "research/runs/parallel-renderer-core-review-20261122/authenticate.py:38: new blank line at EOF.\n",
+  "authored_checks": "Strict unchanged; any other full staged finding fails."
+}

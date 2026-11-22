@@ -1,0 +1,33 @@
+{
+  "27029e9825e48b532b69044d820e5f3df1c26cb5": {
+    "prefix": "research/runs/parallel-renderer-core-review-20261122/",
+    "files": {
+      "research/runs/parallel-renderer-core-review-20261122/AUTHENTICATION.json": "8c95b34cf82500ca74d180610f39e4262d8d5e1f88aca7ec58a2440b22a7512b",
+      "research/runs/parallel-renderer-core-review-20261122/REVIEW.md": "d1c682ed7653b8eb833e28b33c18f43c07dfea2c22a1df011ec4eb1ba60c8cd0",
+      "research/runs/parallel-renderer-core-review-20261122/authenticate.py": "3a5ab0ce72e89869c7fd445ea3b87cfd8a3270fdbf9b264fc017732b28650fd2",
+      "research/runs/parallel-renderer-core-review-20261122/snapshot/runtime/include/mka/retail_renderer_core.hpp.gz": "a0e2045db07d6be9efd1482bd2cb063bf1050e7c6d6822ddbccf2878faf844f6",
+      "research/runs/parallel-renderer-core-review-20261122/snapshot/runtime/src/native/content_volume.cpp.gz": "24e664c5ef230bc129f3dae8e249175c337881474b2bcc03b98a4b56c7773560",
+      "research/runs/parallel-renderer-core-review-20261122/snapshot/runtime/src/native/retail_first_scene_core.cpp.gz": "8fc1957b63eadd24fbca98d1e46062fefd39916d71cc7e274d55e75542212c00",
+      "research/runs/parallel-renderer-core-review-20261122/snapshot/runtime/src/native/retail_renderer_core.cpp.gz": "8acd5ad5321098289c98acd1391a359351a2a25306e0c01213df440fdd162be4",
+      "research/runs/parallel-renderer-core-review-20261122/snapshot/tests/test_retail_renderer_core.cpp.gz": "87c5db53e392f24dce8083695d8d0763822e6ecb577ab61db2955da971cc8f1d"
+    }
+  },
+  "87616695e8386f2e9fc46b454c6ed997b2f091e7": {
+    "prefix": "research/runs/parallel-renderer-transfer-review-20261122/",
+    "files": {
+      "research/runs/parallel-renderer-transfer-review-20261122/AUTHENTICATION.json": "33266d689c9144c7b7137958ed8e9bff9739fb2819a0889da76ec78ef48c70b1",
+      "research/runs/parallel-renderer-transfer-review-20261122/REVIEW.md": "0d0a7bec5e9635c193c7fdf17369da78d35474ed979d81f0f50a7bae6d758dd4",
+      "research/runs/parallel-renderer-transfer-review-20261122/authenticate.py": "358bb9554a513fe3cd961d8c1b8c6183982cbf6ebc88fe90b6031df60ceea634",
+      "research/runs/parallel-renderer-transfer-review-20261122/retail_renderer_core.cpp.gz": "7872b5e078f18f1ba285d227ee86d962c0464bd9ff1868d8c60c7c82aca35488",
+      "research/runs/parallel-renderer-transfer-review-20261122/test_retail_renderer_core.cpp.gz": "01edd407e31f27813397cfeea938195b3dc6a875bd2bfae665e0a96eda3bd9a4"
+    }
+  },
+  "acf9bbe4799a23d56981863c75b4c4f57a66e162": {
+    "prefix": "research/runs/parallel-control-history-review-20261122/",
+    "files": {
+      "research/runs/parallel-control-history-review-20261122/REVIEW.json": "84352e288568edfed0b51f237a43c2fd3a4810db080f1a261a3920aa01b56af2",
+      "research/runs/parallel-control-history-review-20261122/WORK.md": "67f6b693f8b0f921a15965b3b3ceef5e730833b205052d7e5285c2010ec6ae54",
+      "research/runs/parallel-control-history-review-20261122/authenticate.py": "92b382d3ccdc3416370bd10e3e37b8c9894fd29f093d6a0225638ef3846c3b78"
+    }
+  }
+}

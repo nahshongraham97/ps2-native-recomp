@@ -221,4 +221,8 @@ std::optional<std::vector<NativeContentFile>> NativeContentVolume::open_director
      catch(...){f.kind=ContentVolumeError::native_exception;}
     return {};
 }
+std::optional<NativeContentVolume> NativeContentVolume::retain(ContentVolumeFailure& f) const noexcept {
+    if(!validate(f))return {};
+    return NativeContentVolume(state_);
+}
 } // namespace mka::content

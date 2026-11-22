@@ -1,0 +1,11 @@
+{
+  "stage": "staged whitespace check before commit/push",
+  "error": "research/runs/parallel-renderer-core-review-20261122/authenticate.py:38: new blank line at EOF.",
+  "source_committed": false,
+  "pushed": false,
+  "source_changed": false,
+  "passed_clients_retained": 24,
+  "script_before_sha256": "47a878678b494034052976e8a68447fcc3161af9862c0074b820a806802f8c3f",
+  "frozen_evidence_sha256": "3a5ab0ce72e89869c7fd445ea3b87cfd8a3270fdbf9b264fc017732b28650fd2",
+  "correction": "Keep exact historical reviewed script bytes; strict authored source/record whitespace checks remain unchanged. Full staged check must have only this exact classified frozen-evidence EOF finding; all other findings fail."
+}

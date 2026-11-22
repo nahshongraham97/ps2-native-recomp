@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-sound-history\\build-sound-history\\test_native_program_copy_failure.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+  ],
+  "exit": 0,
+  "seconds": 0.02257084846496582,
+  "executable_sha256": "044199952e21307d1b9f825d79ee59e5809157eeae3438faea2fe23e7564b989",
+  "source_manifest_sha256": "1e52e8605a8206ddccc242a7a976b98c2a8cb38e1d8cd6e7ea06bff60b16ad6e",
+  "log_sha256": "26ce2c4c30ef560547da7adf1e6a16d8c6d9a0e3c8edb7be26118ab1e971d632",
+  "physical_endpoints_opened": false,
+  "game_run": false
+}

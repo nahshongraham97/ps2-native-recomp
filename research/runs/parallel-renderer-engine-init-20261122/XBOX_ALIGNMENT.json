@@ -1,0 +1,12 @@
+{
+  "gaps": {
+    "xbox-02/002c2990.asm": [
+      {
+        "vma": "0x2c2a7a",
+        "file_offset": 2828922,
+        "bytes": "8d9b00000000"
+      }
+    ]
+  },
+  "manual_decode": "2C2A7A:8D9B00000000 = LEA EBX,[EBX+0],six-byte identity alignment instruction,noEFLAGS change. Exported2C2990 body omitted this gap;raw original bytes explicitly joined. No other gaps in three listings."
+}

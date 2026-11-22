@@ -1,0 +1,10 @@
+{
+  "stage": "scoped git add before commit/push",
+  "error": "Imported candidate manual-42.png is deliberately tracked in candidate commit but ignored by canonical global rules; add exited1 after staging other approved files.",
+  "source_committed": false,
+  "pushed": false,
+  "source_changed": false,
+  "passed_clients_retained": 24,
+  "script_before_sha256": "434738be5108a94b2988b08509c05b67d46c7669be76686b625f7ce2cfc93cf5",
+  "correction": "Explicitly stage only this original committed, hash-authenticated manual evidence PNG using git add -f; all other paths retain normal staging and exact approved-set/blob checks."
+}

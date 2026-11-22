@@ -1,0 +1,27 @@
+{
+  "candidate": "dcf002267aa40e07dac7dc6539d49152a7cd6942",
+  "base": "44d3d02bb205fad839634ffcfedcd9db5b943b15",
+  "archives": 131,
+  "raw_source_files": 856,
+  "index_source_files": 856,
+  "additional_pins": 116,
+  "EE_full_listings": 28,
+  "EE_words": 999,
+  "Xbox_functions": 3,
+  "authenticated_clients": [
+    "core",
+    "allocator",
+    "session",
+    "content_prior03_unchanged_dependencies"
+  ],
+  "negative_names": 60,
+  "snapshot": {
+    "runtime/include/mka/retail_renderer_core.hpp": "3adb5025b64beb1d92d6c9cd9264986292b49f07c773e1dd5c37965b5a18282e",
+    "runtime/src/native/retail_renderer_core.cpp": "1e7b190bb4220f1a54815145dfc20a20cfc4cfcbd1745fd1955cf86364f6efd9",
+    "runtime/src/native/retail_first_scene_core.cpp": "691919645876797e602a266dac832ab47c3b5cc0b47fce58b5d418058a59821a",
+    "runtime/src/native/content_volume.cpp": "9263a2560a60e0cf35dfc61d885d7ee0947e563ad557b35c353d1400d6538c03",
+    "tests/test_retail_renderer_core.cpp": "274af47e38d286e58475fa39c82aca77fe3455835839207ad6240b6efbb38a3d"
+  },
+  "verification_receipt_sha256": "114ac23d6ea2fe56f28c86e29b85650f76950f1f165e4b4cf5e160c2dcb81201",
+  "executed_by_reviewer": "Byte/hash/listing/receipt checks only; no tests/builds/nm or gameplay. Delivery author executed saved clients."
+}

@@ -1,0 +1,220 @@
+{
+  "images": {
+    "ee": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\SLUS_214.10",
+      "sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f"
+    },
+    "msl": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\modules\\msl.irx",
+      "sha256": "f62dfbcedd39bc92cb8b9c02bb685b956a10357f9181d7f8c2801d8eaff07af7"
+    }
+  },
+  "listings": {
+    "ee/001298f0.tsv": {
+      "words": 10,
+      "begin": "0x1298f0",
+      "end_exclusive": "0x129918",
+      "sha256": "0a3b18a02e720ab1d79afedda1e394958b4289ee8575c02a9ae184ff5d6a7ca4",
+      "undecoded": []
+    },
+    "ee/00129920.tsv": {
+      "words": 10,
+      "begin": "0x129920",
+      "end_exclusive": "0x129948",
+      "sha256": "bee6de1c9dc5cda82818376214549a268e8d9e9b96b0fff86a2cc02b8f27eb6a",
+      "undecoded": []
+    },
+    "ee/00129950.tsv": {
+      "words": 21,
+      "begin": "0x129950",
+      "end_exclusive": "0x1299a4",
+      "sha256": "73514dc456a34736ef4249e38232a887e9525c7627ce745a0382725d18bef962",
+      "undecoded": []
+    },
+    "ee/001299b0.tsv": {
+      "words": 21,
+      "begin": "0x1299b0",
+      "end_exclusive": "0x129a04",
+      "sha256": "7a647eb828fd64de7fb78a7260ce04fc0c536bcedb7d809f42507882ef855975",
+      "undecoded": []
+    },
+    "ee/003155c0.tsv": {
+      "words": 23,
+      "begin": "0x3155c0",
+      "end_exclusive": "0x31561c",
+      "sha256": "7dfebfaa2955fd62cfd961d6a194826a0d8fe5ecbe1ecd90a0b9374c396ae29e",
+      "undecoded": []
+    },
+    "ee/00315620.tsv": {
+      "words": 23,
+      "begin": "0x315620",
+      "end_exclusive": "0x31567c",
+      "sha256": "b0cd53d3ec8937d89defaf0041e026b9cf23e963b527958b225942ae8de15ceb",
+      "undecoded": []
+    },
+    "ee/003158d0.tsv": {
+      "words": 51,
+      "begin": "0x3158d0",
+      "end_exclusive": "0x31599c",
+      "sha256": "c4a494abb1cbd99fd576f982badb8834becb34c5e2d215e3c96cc3e3b1a823fd",
+      "undecoded": []
+    },
+    "msl-02/00002998.tsv": {
+      "words": 836,
+      "begin": "0x2998",
+      "end_exclusive": "0x36a8",
+      "sha256": "a60b0795e2d83d1dcea7a0be9594756909316b37361422581a3fcd5ebffcd66c",
+      "undecoded": []
+    },
+    "msl-02/00004854.tsv": {
+      "words": 91,
+      "begin": "0x4854",
+      "end_exclusive": "0x49c0",
+      "sha256": "c0a4f1b360951d4b038cf2ceb2495b847f9de4d168794346c7db5a4e4c7600fc",
+      "undecoded": []
+    },
+    "msl-02/000049c0.tsv": {
+      "words": 82,
+      "begin": "0x49c0",
+      "end_exclusive": "0x4b08",
+      "sha256": "ebaf0164a43bc1d0114267ee3463ec499a8e1a469b871678a6a83290e733e3e9",
+      "undecoded": []
+    },
+    "msl-03/00004b08.tsv": {
+      "words": 82,
+      "begin": "0x4b08",
+      "end_exclusive": "0x4c50",
+      "sha256": "e10d5f3b5c0795caae69bd6bdd2aaf0494ec230776c74744254581daecb83b51",
+      "undecoded": []
+    },
+    "msl-03/00004cac.tsv": {
+      "words": 2,
+      "begin": "0x4cac",
+      "end_exclusive": "0x4cb4",
+      "sha256": "5f81bad1f2fd0035419e15961d3b3ab2f6bfa10168de67c667d4e62139ab453f",
+      "undecoded": []
+    },
+    "msl-03/00004ce4.tsv": {
+      "words": 3,
+      "begin": "0x4ce4",
+      "end_exclusive": "0x4cf0",
+      "sha256": "74621410e70bd75f3f31eb8223f9484363805fa6bf4768dbe0bfc184db7a0b39",
+      "undecoded": []
+    },
+    "msl-03/00008598.tsv": {
+      "words": 62,
+      "begin": "0x8598",
+      "end_exclusive": "0x8690",
+      "sha256": "96c0d5250761cef613f0fc5510462285e84c69851002cddc44f3585fbd2063d4",
+      "undecoded": []
+    },
+    "msl-03/00008ac4.tsv": {
+      "words": 36,
+      "begin": "0x8ac4",
+      "end_exclusive": "0x8b54",
+      "sha256": "e240ca40a29dcba005c2b0c178188c5f7d090dfc680b2a6cad3b6bcdee886815",
+      "undecoded": []
+    },
+    "msl-04/00008690.tsv": {
+      "words": 52,
+      "begin": "0x8690",
+      "end_exclusive": "0x8760",
+      "sha256": "7e5f67d1485f6790e4b969cb8260d53e2e9da4c61e5b7b9cd2d93b209eb2e142",
+      "undecoded": []
+    },
+    "msl-04/00008bc8.tsv": {
+      "words": 10,
+      "begin": "0x8bc8",
+      "end_exclusive": "0x8bf0",
+      "sha256": "759f73d44e020cb9da64c8fb0543fa6af41cf12478a5f92d9f8d2a2428f8a159",
+      "undecoded": []
+    },
+    "msl-04/00008fc8.tsv": {
+      "words": 71,
+      "begin": "0x8fc8",
+      "end_exclusive": "0x90e4",
+      "sha256": "12b1c496167045f21856d5ead4e6de64c899e3b8d21ff0f71de16e65d6ff3924",
+      "undecoded": []
+    },
+    "msl-04/0000a3e4.tsv": {
+      "words": 19,
+      "begin": "0xa3e4",
+      "end_exclusive": "0xa430",
+      "sha256": "0e7f177fad783e03d9fa739c93c0da45d7634ca599ef1b65dfdd835c543f6dbe",
+      "undecoded": []
+    },
+    "msl-05/00008760.tsv": {
+      "words": 35,
+      "begin": "0x8760",
+      "end_exclusive": "0x87ec",
+      "sha256": "b776d74cac434e316835487426ebe38f927ccd47cf6e6639fce3d1366102c201",
+      "undecoded": []
+    },
+    "msl-05/00009f1c.tsv": {
+      "words": 116,
+      "begin": "0x9f1c",
+      "end_exclusive": "0xa0ec",
+      "sha256": "d4e5a4d699faa508b1f419b325b197c916507109ab34b580b07ca63495948048",
+      "undecoded": []
+    },
+    "msl-05/0000a0ec.tsv": {
+      "words": 43,
+      "begin": "0xa0ec",
+      "end_exclusive": "0xa198",
+      "sha256": "af0151c3dddadcad49624cc03da0631ab155b2d7bb46264c6de2816fc191ea7e",
+      "undecoded": []
+    },
+    "msl-05/0000a430.tsv": {
+      "words": 10,
+      "begin": "0xa430",
+      "end_exclusive": "0xa458",
+      "sha256": "720c21961cb6cbb11287393796cee074d7135eae2126e9d44646e75dadb1f0cd",
+      "undecoded": []
+    },
+    "msl-06/00003fcc.tsv": {
+      "words": 109,
+      "begin": "0x3fcc",
+      "end_exclusive": "0x4180",
+      "sha256": "4c3c8130a2f47bf3de48eb1e31a7a436adb97b8c54c29e8eab60c158d9b6356b",
+      "undecoded": []
+    },
+    "msl-06/0000934c.tsv": {
+      "words": 12,
+      "begin": "0x934c",
+      "end_exclusive": "0x937c",
+      "sha256": "fec4b21a9811f167ed7b13d23fe9814b03c9d95ccb11e5faaef49b43e5f2124f",
+      "undecoded": []
+    },
+    "msl-06/00009534.tsv": {
+      "words": 26,
+      "begin": "0x9534",
+      "end_exclusive": "0x959c",
+      "sha256": "6ff2195ec307a1c0dd864c29c1b2d7737f24c133fcca0b8cee41dacbf059d670",
+      "undecoded": []
+    },
+    "msl-06/0000959c.tsv": {
+      "words": 608,
+      "begin": "0x959c",
+      "end_exclusive": "0x9f1c",
+      "sha256": "14785edcc93d39c4637ff2fa0ab4e1db1c2110e2be8ccf1ec1874f64f80e697e",
+      "undecoded": []
+    },
+    "msl-06/0000a49c.tsv": {
+      "words": 63,
+      "begin": "0xa49c",
+      "end_exclusive": "0xa598",
+      "sha256": "5ed1b7b8b58ae76d7e8fba24b3ba4635bbf74ce8cbc1c5cb956afec3d46656bb",
+      "undecoded": []
+    }
+  },
+  "mismatches": [],
+  "pause_latch_initial": {
+    "vma": "0x64df18",
+    "loader_zero_tail": true,
+    "segment_vma": "0x100000",
+    "file_end": "0x64de80",
+    "memory_end": "0x7c4880",
+    "value": 0
+  },
+  "scope": "Original word identities only; numeric/caller/native behavior is documented separately. Repeated views count as listed words,not unique coverage."
+}

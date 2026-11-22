@@ -1,0 +1,47 @@
+{
+  "candidate": "feb05096e43fb0ae37bac6407d2567569ddb03e0",
+  "superseded_for_transfer": "27029e9825e48b532b69044d820e5f3df1c26cb5",
+  "source_files": 856,
+  "archives": 6,
+  "clients": {
+    "core": {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-engine\\build-renderer-engine\\test_native_retail_renderer_core.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-engine\\research\\runs\\parallel-renderer-engine-init-20261122"
+      ],
+      "exit": 0,
+      "executable_sha256": "a35884775314336b4c2e5b57f7e00cda25cce3e6b025d62a49195b7b6c51c6f3",
+      "source_manifest_sha256": "dec45e2b31861c2dd3687ef77db618e25a58049fdd2b5ce7cadb63eed7e4d7f0",
+      "log_sha256": "7d64e1cf5d24d6ffb751ec174c7fd8e67a19623b31c40eac955eaff032f705ec"
+    },
+    "allocator": {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-engine\\build-renderer-engine\\test_native_retail_renderer_allocator.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-engine\\research\\runs\\parallel-renderer-engine-init-20261122"
+      ],
+      "exit": 0,
+      "executable_sha256": "604f833d1e5ba74930862cfccebd6b0ab228f631008918d29ba8358ccf7b6713",
+      "source_manifest_sha256": "82fee52588313fd6253caad14ebfe88ec3f55b407458d9d4380d58dd48cf4ff3",
+      "log_sha256": "f708c44121d52d01b73f83a75dfd8b1fdf13fd6c0ba74e94147a392ed99f3c70"
+    },
+    "session": {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-engine\\build-renderer-engine\\test_native_retail_game_session.exe"
+      ],
+      "exit": 0,
+      "executable_sha256": "88e4eb8e1532eb5bee4f5f906feb9ea5c3ab633955b2c6cc488f0d47c98f5ec2",
+      "source_manifest_sha256": "82fee52588313fd6253caad14ebfe88ec3f55b407458d9d4380d58dd48cf4ff3",
+      "log_sha256": "3788d05d7f165074cc66638897b3da09f3af202a64bec3f1be94b25b9ed07f54"
+    }
+  },
+  "validation02_changed_from01": [
+    "tests/test_retail_renderer_core.cpp"
+  ],
+  "required_names": 60,
+  "verification_sha256": "1c12d148bfde6cde765afe4ce487cc199af7f7ccdd258ae6392c9c5d5e68dae3",
+  "snapshots": {
+    "runtime/src/native/retail_renderer_core.cpp": "a0f9fe29d2057569a6a26ef59b9b10d5b088cabf645e2ab6e5b5a68ddf22d1bc",
+    "tests/test_retail_renderer_core.cpp": "8cbb2a7d05d091595e474d54b9c380744639d61b9cab842346619eab258d29bd"
+  },
+  "reviewer_execution": "Read-only source/hash/receipt checks only. No build/tests rerun."
+}

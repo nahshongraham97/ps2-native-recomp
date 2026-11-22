@@ -1,0 +1,7 @@
+{
+  "archive": "failed-fixtures/validation-02-test.cpp.gz",
+  "archive_sha256": "ee680b055061a7ff1768449d28f5bf201b2a81b7cd0fc28c354ed24353bbd03f",
+  "source_sha256": "a95b7607ff0eb1a0f906e8e2c1468ea4de165203edd8d228d14f8dc7403ebc20",
+  "matches": "validation-02/SOURCE_FILES.json:tests/test_retail_renderer_core.cpp",
+  "reason": "Fixture omitted actual retained game_record_reset companion before expecting Session destruction;production ownership was correct."
+}
