@@ -61,6 +61,16 @@ production progress with isolated wrappers, repeated reports or test counts.
 ## Xbox-first recovery and HD presentation rules
 
 Per the architecture plan in parent ROADMAP.md and PORT_STATUS.md:
+Xbox first is the investigation priority,not automatic adoption or a claim
+that every module becomes substantially easier. Follow the parent AGENTS.md
+donor-selection rule:choose verified behavior that reduces actual connected
+native work/dependencies,record concrete savings or their absence,and implement
+shared CPU behavior once using existing services. Shorter listings are not
+savings evidence;do not clone either console SDK/CRT/device or redo working
+native implementations. Bound comparisons to the current decision rather
+than building two versions.0406 establishes no substantial Xbox-specific
+dependency reduction within its recovered CPU-image scope.
+
 1. **Preserve existing native foundation**: Native files, content volume, async reads, heaps, Session, tasks, Main reentry, clocks, typed profiles, input sampling, audio decoders/jobs, textures/fonts, and GPU resources carry forward. Do not replace them with an Xbox runtime or emulated device.
 2. **Reconcile profile and player records**: Transfer state meanings, not console offsets. Native save/load is required; PS2 save-byte compatibility/import is optional. Keep useful native codecs where easiest without constraining the native state model. Establish actual per-mode player requirements rather than console limits.
 3. **Reconcile numerical behavior**: Distinguish gameplay-critical arithmetic from rendering arithmetic. Xbox x87/SSE routines can replace complex EE math only when proven functionally or visually equivalent without weakening parity.
