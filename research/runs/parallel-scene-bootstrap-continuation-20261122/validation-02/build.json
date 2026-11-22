@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-scene-continuation\\build-camera-continuation",
+    "--target",
+    "test_native_retail_camera_bootstrap",
+    "test_native_retail_scene_bootstrap_prefix",
+    "test_native_retail_main_timing",
+    "-j2"
+  ],
+  "exit": 0,
+  "seconds": 38.032159800000954,
+  "log_sha256": "a9f8159df13e47e75a3bec15b701b984ef56333f1938917ebc3728007a519127"
+}

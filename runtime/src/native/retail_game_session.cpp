@@ -189,4 +189,7 @@ NativeRetailGameSession::source_task_1588c0(
     if(!validate_current_thread(failure)) return {};
     return source_task_1588c0_;
 }
+NativeRetailRenderCameras* NativeRetailGameSession::render_cameras(RetailGameSessionFailure& failure) noexcept {
+ if(!validate_current_thread(failure))return nullptr;return &render_cameras_;
+}
 } // namespace mka::retail

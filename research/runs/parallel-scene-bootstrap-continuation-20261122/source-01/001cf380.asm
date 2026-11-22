@@ -1,0 +1,4 @@
+001cf380	58a6828f	lw v0,-0x59a8(gp)
+001cf384	21108200	addu v0,a0,v0
+001cf388	0800e003	jr ra
+001cf38c	0c00428c	_lw v0,0xc(v0)

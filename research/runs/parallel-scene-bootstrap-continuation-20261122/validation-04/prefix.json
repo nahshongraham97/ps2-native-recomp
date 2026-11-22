@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-scene-continuation\\build-camera-continuation\\test_native_retail_scene_bootstrap_prefix.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-scene-continuation\\research\\runs\\parallel-scene-bootstrap-continuation-20261122"
+  ],
+  "exit": 0,
+  "seconds": 0.09036790000391193,
+  "source_manifest_sha256": "1eb428086478c57dc78c8a8c3906f7f37f133baca52732118a773d033ce4bb73",
+  "executable_sha256": "4fad49e1372baa6b5d9fd002fc6b83b04f5367bba60ade30a51cc0adba19f974",
+  "log_sha256": "963eebab906008fa61cde1fc049bab5898bcb40cb145418e044096d73132a1dd",
+  "game_run": false,
+  "physical_endpoints_opened": false
+}
