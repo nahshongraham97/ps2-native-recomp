@@ -168,6 +168,66 @@
       "bytes": 85,
       "canonical_sha256": "9cdea159eed92f6dc0b504d33ddb5bcdc9b58d485fe368c82259b429818e2894",
       "correction": "One final newline in authored JSON serialization; raw bytes retained losslessly"
+    },
+    "ghidra-05.log": {
+      "archive": "ghidra-05.log.gz",
+      "sha256": "93843d048f88b618b16ef06eb4e018f0b3f9dd3986645a71dbb869fd2e7d2263",
+      "bytes": 5962
+    },
+    "ghidra-06.log": {
+      "archive": "ghidra-06.log.gz",
+      "sha256": "e6685364b9a88aee9dc908886ddb3f34f05835c1f53e17ddb51608d2d6b75dfd",
+      "bytes": 5950
+    },
+    "ghidra-07.log": {
+      "archive": "ghidra-07.log.gz",
+      "sha256": "55d75c744397c01dbe2bba3a8ca001703d05bd58a373703e1448ae2ace350117",
+      "bytes": 5974
+    },
+    "scripts-05.log": {
+      "archive": "scripts-05.log.gz",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "scripts-06.log": {
+      "archive": "scripts-06.log.gz",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "scripts-07.log": {
+      "archive": "scripts-07.log.gz",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "source-05/7f00.c": {
+      "archive": "source-05/7f00.c.gz",
+      "sha256": "da0c4a2a31ddff30b52cd34849596c69c12b2dd049c572e29856564b4c58077c",
+      "bytes": 641
+    },
+    "source-05/8b58.c": {
+      "archive": "source-05/8b58.c.gz",
+      "sha256": "4c8997015dd7f582819809ee6360927e0fdf59728d9c7421f3e0c199e2d2b791",
+      "bytes": 338
+    },
+    "source-06/88b8.c": {
+      "archive": "source-06/88b8.c.gz",
+      "sha256": "948a7e0bcd1476a9db7b3989fbc8e6c2f51fdf9cb585f5610b5c31dca54fa357",
+      "bytes": 3078
+    },
+    "source-07/7f00.c": {
+      "archive": "source-07/7f00.c.gz",
+      "sha256": "da0c4a2a31ddff30b52cd34849596c69c12b2dd049c572e29856564b4c58077c",
+      "bytes": 641
+    },
+    "source-07/87ec.c": {
+      "archive": "source-07/87ec.c.gz",
+      "sha256": "2c38f13385ed49910372433a807261d13a7e20d216c3fc61f030abef6a90f918",
+      "bytes": 2480
+    },
+    "source-07/8bc8.c": {
+      "archive": "source-07/8bc8.c.gz",
+      "sha256": "0af397ea265d0114632925339646e7c9a774b5f9ef0a0d4016eff45a0aacc88b",
+      "bytes": 201
     }
   }
 }

@@ -20,6 +20,9 @@ struct NativeRetailSoundRuntime::State {
     std::shared_ptr<sound::NativePlaybackOwner> playback;
     std::optional<sound::NativeSoundContext> context;
     RetailSoundRuntimeObservation observation;
+    // Actual retained context values. Future source control effects must mutate
+    // these under this mutex; they are not inferred from per-play parameters.
+    const sound::AudioControlFactors controls{NativeRetailSoundRuntime::initial_context_controls()};
     RetailSoundRuntimeFailure failure;
     bool initialized{},stop_requested{},closed{},pause_requested{},paused{},worker_finished{},cleanup_failed{},drain_requested{},drained{};
     void fail(RetailSoundRuntimeFailure value) noexcept {
@@ -224,6 +227,15 @@ std::optional<RetailSoundRuntimeObservation> NativeRetailSoundRuntime::observe(R
     if(state_->failure.kind!=RetailSoundRuntimeError::none){f=state_->failure;return {};}
     if(state_->closed){f.kind=RetailSoundRuntimeError::closed;f.operation="native sound runtime closed";return {};}
     return state_->observation;
+}
+std::optional<RetailSoundRuntimeStatus> NativeRetailSoundRuntime::snapshot_status(RetailSoundRuntimeFailure& f) const {
+    if(!state_->owner_access(f))return {};
+    std::lock_guard lock(state_->mutex);
+    if(state_->failure.kind!=RetailSoundRuntimeError::none){f=state_->failure;return {};}
+    if(state_->closed){f.kind=RetailSoundRuntimeError::closed;f.operation="native sound status after shutdown";return {};}
+    auto active=state_->playback->snapshot_active_plays(*state_->context,f.playback);
+    if(!active){f.kind=RetailSoundRuntimeError::playback;f.operation="snapshot actual native sound associations";return {};}
+    return RetailSoundRuntimeStatus{state_->controls,std::move(*active),state_->observation};
 }
 bool NativeRetailSoundRuntime::shutdown(RetailSoundRuntimeFailure& f){
     if(!state_->owner_access(f))return false;

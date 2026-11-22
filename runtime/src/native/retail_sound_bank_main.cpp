@@ -46,7 +46,7 @@ bool prepare_game_sound_state_12d7e0(NativeRetailMainState& main, StartupFailure
     // never be discarded by translating the original memset literally.
     if (main.current_sound_phase != RetailCurrentSoundPhase::empty ||
         main.game_sound_state_prepared || !main.game_sound_references.empty() ||
-        main.sound_bank_catalog || main.playback || main.current_sound || main.sound_runtime) {
+        main.sound_bank_catalog || main.playback || main.current_sound || main.sound_runtime || main.sound_status) {
         failure.kind = StartupError::sound_catalog;
         failure.operation = "12D7E0 game sound-state preparation requires a fresh owner";
         return false;
@@ -131,8 +131,8 @@ bool pump_retail_current_sound(NativeRetailMainState& main, StartupFailure& fail
     const auto retained = main.sound_bank_catalog;
     // Returned bank callbacks precede the source command99 status request.
     // Program dispatch belongs to the separate MSL timed worker, not99.
-    // The still-required effect retains its historical name until its complete
-    // native status/receiver contract is implemented.
+    // Typed status publication retains the historical effect name; it neither
+    // advances programs nor impersonates public-reference retirement events.
     if (!catalog_result(retained->pump_one(failure.sound_catalog), failure)) return finish_attempt(false);
     if (main.sound_runtime && !main.sound_runtime->observe(failure.sound_catalog.runtime)) {
         failure.kind = StartupError::sound_catalog;

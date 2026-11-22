@@ -3,6 +3,7 @@
 #include "mka/retail_game_info_resources.hpp"
 #include "mka/retail_sound_bank_catalog.hpp"
 #include "mka/retail_sound_runtime.hpp"
+#include "mka/retail_sound_status.hpp"
 #include "native_retail_startup.hpp"
 #include <cstdio>
 #include <exception>

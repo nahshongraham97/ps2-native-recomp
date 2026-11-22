@@ -21,6 +21,11 @@ struct RetailSoundRuntimeObservation {
     std::uint32_t observed_padding_frames{};
     bool output_started{};
 };
+struct RetailSoundRuntimeStatus {
+    sound::AudioControlFactors controls;
+    std::vector<sound::NativePlayHandle> active_plays;
+    RetailSoundRuntimeObservation native;
+};
 // Native Windows output/thread ownership for the actual current context.
 // It advances the admitted ordinary normal route; source control/queued-role
 // producers, alternate flags9 and full worker/DSP equivalence remain required.
@@ -40,6 +45,7 @@ public:
     static sound::AudioControlFactors initial_context_controls() noexcept;
     static constexpr std::uint32_t initial_output_mode() noexcept{return 3;}
     std::optional<RetailSoundRuntimeObservation> observe(RetailSoundRuntimeFailure&) const;
+    std::optional<RetailSoundRuntimeStatus> snapshot_status(RetailSoundRuntimeFailure&) const;
     bool shutdown(RetailSoundRuntimeFailure&);
 private:
     struct State;

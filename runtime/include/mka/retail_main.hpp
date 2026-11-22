@@ -36,6 +36,7 @@ class NativeRetailGameResourceRegistry;
 class NativeRetailGameInfoResources;
 class NativeRetailSoundBankCatalog;
 class NativeRetailSoundRuntime;
+struct NativeRetailSoundStatus;
 struct NativeRetailProfileOwners;
 struct NativeRetailSceneOwners;
 
@@ -127,6 +128,7 @@ struct NativeRetailMainState {
     std::shared_ptr<sound::NativePlaybackOwner> playback;
     std::optional<sound::NativeSoundContext> current_sound;
     std::unique_ptr<NativeRetailSoundRuntime> sound_runtime;
+    std::unique_ptr<NativeRetailSoundStatus> sound_status;
     std::shared_ptr<NativeRetailSoundBankCatalog> sound_bank_catalog;
     RetailCurrentSoundPhase current_sound_phase{RetailCurrentSoundPhase::empty};
     std::uint32_t sound_frame_counter{};

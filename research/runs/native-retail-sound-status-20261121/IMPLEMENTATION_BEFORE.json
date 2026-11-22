@@ -1,0 +1,16 @@
+{
+  "base": "dd860a6c2d2db5891aa6dd751f2b7c735d7f3eb9",
+  "pins": {
+    "runtime/include/mka/playback_owner.hpp": "e262c707422c4819276377b4a412e11efe898fcbb3e24c97e39e14d29eb5436d",
+    "runtime/src/native/playback_owner.cpp": "90148f319a04e05e9e890b1571bfd85d12281be8c9d23d95b7966bcd87a761ae",
+    "runtime/include/mka/retail_sound_runtime.hpp": "1565d762b294d229b70df1b9ce55b2ef9d0bb61a925dcaa250457f7c3dd076e7",
+    "runtime/src/native/retail_sound_runtime.cpp": "41a8fa2937a5742aace4b524d9be5914aeb3d10d41ea6cb5a1bb50f19f4338b1",
+    "runtime/include/mka/retail_main.hpp": "88f81fb6d288426b93982bc379edcf094f70d06d1a593121ba91d6c1b1095d45",
+    "runtime/src/native/retail_main_state.cpp": "0105630998dd5d970eb9cc21253ef51035b62a1af9d4cb8a5a610a9c7d000e45",
+    "runtime/include/mka/retail_current_sound_required.hpp": "53b1601179bbcc5918f91843cd5dcdaa46ae1232084724887c42b0ba9b0d1806",
+    "runtime/src/native/retail_sound_bank_main.cpp": "a1c298cfdb18d7963deef447521018db11f82944a5290987cd726e256bb25e47",
+    "cmake/native_game.cmake": "e5e8b273625239611a1afbe571e28688eab0af2bac135646dfe0488ef75a208f",
+    "tests/test_retail_sound_context.cpp": "2c8248757253a65750256225492e75c6701fc4d1fb50195a7b5074bd4165f1eb",
+    "runtime/src/native/retail_sound_context_main.cpp": "d87121eb7860da22de144a805febb35349e494fef8e1e862def93e063946a0d3"
+  }
+}

@@ -243,6 +243,21 @@ std::optional<SoundContextObservation> NativePlaybackOwner::observe_all_outputs(
     std::lock_guard lock(state->mutex);if(!state->available(f))return {};
     return state->observe_outputs();
 }
+std::optional<std::vector<NativePlayHandle>> NativePlaybackOwner::snapshot_active_plays(const NativeSoundContext& c,PlaybackFailure& f) const {
+    f={};auto state=state_;if(!state){f.kind=PlaybackError::moved_owner;return {};}
+    std::lock_guard lock(state->mutex);if(!state->available(f)||!state->context(c,f))return {};
+    try {
+        std::size_t count=0;
+        for(const auto& slot:state->slots)if(slot.entry&&!slot.entry->preparing&&slot.entry->dispatch_live)++count;
+        std::vector<NativePlayHandle> result;result.reserve(count);
+        for(const auto& slot:state->slots)if(slot.entry&&!slot.entry->preparing&&slot.entry->dispatch_live){
+            NativePlayHandle handle;handle.owner_=state->identity;handle.identity_=slot.identity;result.push_back(std::move(handle));
+        }
+        return result;
+    }catch(const std::bad_alloc&){f.kind=PlaybackError::allocation_failed;}
+     catch(const std::length_error&){f.kind=PlaybackError::host_capacity;}
+    return {};
+}
 bool NativePlaybackOwner::release_sound_context(const NativeSoundContext& c,PlaybackFailure& f){
     f={};auto state=state_;if(!state){f.kind=PlaybackError::moved_owner;return false;}
     State::Activity work;std::vector<std::shared_ptr<State::Entry>> retired;

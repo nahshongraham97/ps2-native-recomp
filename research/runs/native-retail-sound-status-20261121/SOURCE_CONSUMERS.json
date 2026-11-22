@@ -1,0 +1,29 @@
+{
+  "status": "PASS_STATUS_LIVE_IDENTITY_SOURCE_JOIN",
+  "msl_full_coverage": [
+    {
+      "begin": "0x7f00",
+      "end_exclusive": "0x7fa0",
+      "words": 40
+    },
+    {
+      "begin": "0x87ec",
+      "end_exclusive": "0x8ac4",
+      "words": 182
+    },
+    {
+      "begin": "0x8bc8",
+      "end_exclusive": "0x8bf0",
+      "words": 10
+    }
+  ],
+  "ee_full_coverage": {
+    "begin": "0x315a70",
+    "end_exclusive": "0x315ad4",
+    "words": 25
+  },
+  "prior_status_authority": "../native-retail-production-sound-context-20261121/SOURCE_JOIN.json",
+  "interpretation": "MSL8000 live state set on activation and cleared on stop; EE315A70 queries a distinct client registry, not command99 copied active list",
+  "device_diagnostics": "Removed IOP heap/arena bookkeeping is not recreated; native status carries actual native output observations instead",
+  "game_acceptance": "OPEN"
+}

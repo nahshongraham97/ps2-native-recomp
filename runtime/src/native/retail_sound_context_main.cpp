@@ -11,7 +11,7 @@ bool create_playback_context_316320(NativeRetailMainState& main,sound::AudioBank
         f.operation="316320 native context requires its Main owner thread";return false;
     }
     if(main.current_sound_phase!=RetailCurrentSoundPhase::bank_catalog_opened||!main.game_sound_state_prepared||
-       !main.sound_bank_catalog||main.playback||main.current_sound||main.sound_runtime){
+       !main.sound_bank_catalog||main.playback||main.current_sound||main.sound_runtime||main.sound_status){
         f.kind=StartupError::sound_catalog;f.operation="316320 native context requires the fresh opened catalog";return false;
     }
     auto runtime=NativeRetailSoundRuntime::create(std::move(session),f.sound_catalog.runtime);

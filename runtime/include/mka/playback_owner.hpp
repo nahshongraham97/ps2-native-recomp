@@ -8,6 +8,9 @@ class NativePlaybackOwner;
 class NativeSoundContext {
 public:
     NativeSoundContext()=default;
+    bool same_identity(const NativeSoundContext& other) const noexcept {
+        return owner_&&identity_&&owner_==other.owner_&&identity_==other.identity_;
+    }
 private:
     std::shared_ptr<const void> owner_,identity_;
     friend class NativePlaybackOwner;
@@ -23,6 +26,9 @@ struct SoundContextObservation {
 class NativePlayHandle {
 public:
     NativePlayHandle()=default;
+    bool same_identity(const NativePlayHandle& other) const noexcept {
+        return owner_&&identity_&&owner_==other.owner_&&identity_==other.identity_;
+    }
 private:
     std::shared_ptr<const void> owner_, identity_;
     friend class NativePlaybackOwner;
@@ -137,6 +143,10 @@ public:
     // Aggregate actual ownership for native output teardown, including plays
     // and retained tails in every context of this same owner.
     std::optional<SoundContextObservation> observe_all_outputs(PlaybackFailure&) const;
+    // Command99's active association observation, using actual native handles.
+    // The source registry is owner-wide; context validates the request target.
+    // No preparation, stopped entry, voice tail or fixed transport capacity.
+    std::optional<std::vector<NativePlayHandle>> snapshot_active_plays(const NativeSoundContext&,PlaybackFailure&) const;
     // Idle native teardown only: this is NOT retail command12/forced cleanup1.
     bool release_sound_context(const NativeSoundContext&,PlaybackFailure&);
     std::shared_ptr<AudioResourceDomain> resource_domain() const noexcept;

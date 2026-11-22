@@ -1,0 +1,68 @@
+[
+  {
+    "query": "00316320",
+    "result": {
+      "function": {
+        "name": "FUN_00316320",
+        "address": "00316320"
+      },
+      "code": "\r\nundefined4 FUN_00316320(undefined4 *param_1,long param_2)\r\n\r\n{\r\n  undefined4 *puVar1;\r\n  undefined4 uVar2;\r\n  long lVar3;\r\n  int iVar4;\r\n  int iVar5;\r\n  uint uVar6;\r\n  undefined4 *puVar7;\r\n  undefined1 auStack_220 [512];\r\n  undefined1 auStack_20 [4];\r\n  undefined4 uStack_1c;\r\n  undefined4 uStack_18;\r\n  undefined1 auStack_4 [4];\r\n  \r\n  uVar6 = 0;\r\n  if ((iRam0064ecac == 0) && (lVar3 = FUN_00317e60(), lVar3 != 0)) {\r\n    uVar2 = 0;\r\n  }\r\n  else {\r\n    lVar3 = thunk_FUN_0032c730();\r\n    if (lVar3 == 0) {\r\n      uVar2 = 0;\r\n    }\r\n    else {\r\n      puVar7 = (undefined4 *)param_2;\r\n      if ((param_2 != 0) && (puVar7[3] != 0)) {\r\n        lVar3 = FUN_00328090(auStack_220,puVar7[3],0x200,auStack_4);\r\n        if (lVar3 != 0) {\r\n          return 0;\r\n        }\r\n        iVar4 = FUN_001dee00(auStack_220);\r\n        uVar6 = iVar4 + 4U >> 2;\r\n      }\r\n      iRam0064ecac = 1;\r\n      uStack_18 = 1;\r\n      uStack_1c = 1;\r\n      lVar3 = CreateSema(auStack_20);\r\n      uRam0064ecb4 = (undefined4)lVar3;\r\n      if (lVar3 == 0) {\r\n        uVar2 = 0;\r\n      }\r\n      else {\r\n        iVar5 = 0;\r\n        iVar4 = 0x79a770;\r\n        do {\r\n          *(undefined4 *)(iVar4 + 0x10) = 0;\r\n          iVar5 = iVar5 + 5;\r\n          *(undefined4 *)(iVar4 + 0x24) = 0;\r\n          *(undefined4 *)(iVar4 + 0x38) = 0;\r\n          *(undefined4 *)(iVar4 + 0x4c) = 0;\r\n          *(undefined4 *)(iVar4 + 0x60) = 0;\r\n          iVar4 = iVar4 + 100;\r\n        } while (iVar5 < 10);\r\n        FUN_00317410(0x79a150,0x79a170,0x40,8);\r\n        lVar3 = FUN_00316ef0(0x12345);\r\n        if (lVar3 == 0) {\r\n          do {\r\n                    /* WARNING: Do nothing block with infinite loop */\r\n          } while( true );\r\n        }\r\n        lVar3 = FUN_00316620(1,0x314f30,0x64ecb0);\r\n        if (lVar3 != 0) {\r\n          *(undefined4 *)lVar3 = 1000;\r\n          FUN_003165e0();\r\n        }\r\n        lVar3 = FUN_00316620(1,0x314ee0,0x64ecb0);\r\n        if (lVar3 != 0) {\r\n          *(undefined4 *)lVar3 = 100;\r\n          FUN_003165e0();\r\n        }\r\n        lVar3 = FUN_00316620(1,0x314e40,0x64ecb0);\r\n        if (lVar3 != 0) {\r\n          *(undefined4 *)lVar3 = 0x67;\r\n          FUN_003165e0();\r\n        }\r\n        lVar3 = FUN_00316620(uVar6 + 7,0x3165b0,0x64ecb0);\r\n        if (lVar3 != 0) {\r\n          puVar1 = (undefined4 *)lVar3;\r\n          *puVar1 = 1;\r\n          puVar1[1] = *param_1;\r\n          puVar1[2] = param_1[1];\r\n          puVar1[3] = param_1[2];\r\n          puVar1[4] = *puVar7;\r\n          puVar1[5] = puVar7[1];\r\n          puVar1[6] = puVar7[2];\r\n          if (uVar6 == 0) {\r\n            puVar1[7] = 0;\r\n          }\r\n          else {\r\n            FUN_001dec58(puVar1 + 7,auStack_220);\r\n          }\r\n          FUN_003165e0();\r\n          FUN_003167e0(0x631a18);\r\n        }\r\n        if (iRam0064ecb0 == 0) {\r\n          uVar2 = 0;\r\n        }\r\n        else {\r\n          iRam0079a868 = iRam0064ecb0;\r\n          iRam0064ecb0 = 0x79a840;\r\n          uRam0079a864 = 3;\r\n          uVar2 = 0x79a840;\r\n        }\r\n      }\r\n    }\r\n  }\r\n  return uVar2;\r\n}\r\n\r\n",
+      "truncated": false
+    }
+  },
+  {
+    "query": "00314e70",
+    "result": {
+      "function": {
+        "name": "FUN_00314e40",
+        "address": "00314e40"
+      },
+      "code": "\r\nundefined4 FUN_00314e40(int *param_1)\r\n\r\n{\r\n  undefined4 uVar1;\r\n  long lVar2;\r\n  undefined8 uVar3;\r\n  undefined4 uStack_4;\r\n  \r\n  if (*(int *)param_1[2] == 0) {\r\n    uVar1 = 0;\r\n  }\r\n  else if (*param_1 == 0) {\r\n    uVar1 = 1;\r\n  }\r\n  else {\r\n    uVar1 = *(undefined4 *)param_1[1];\r\n    WaitSema(uRam0064ecb4);\r\n    lVar2 = FUN_00317170(0x79a150,uVar1);\r\n    uStack_4 = (undefined4)lVar2;\r\n    if (lVar2 != 0) {\r\n      uVar3 = FUN_00317080(&uStack_4);\r\n      FUN_003171f0(0x79a150,uVar3);\r\n    }\r\n    SignalSema(uRam0064ecb4);\r\n    uVar1 = 1;\r\n  }\r\n  return uVar1;\r\n}\r\n\r\n",
+      "truncated": false
+    }
+  },
+  {
+    "query": "00315a70",
+    "result": {
+      "function": {
+        "name": "FUN_00315a70",
+        "address": "00315a70"
+      },
+      "code": "\r\nbool FUN_00315a70(long param_1)\r\n\r\n{\r\n  long lVar1;\r\n  bool bVar2;\r\n  \r\n  bVar2 = false;\r\n  if (param_1 != 0) {\r\n    WaitSema(uRam0064ecb4);\r\n    lVar1 = FUN_00317170(0x79a150,param_1);\r\n    bVar2 = lVar1 != 0;\r\n    SignalSema(uRam0064ecb4);\r\n  }\r\n  return bVar2;\r\n}\r\n\r\n",
+      "truncated": false
+    }
+  },
+  {
+    "query": "003159c0",
+    "result": {
+      "function": {
+        "name": "FUN_003159a0",
+        "address": "003159a0"
+      },
+      "code": "\r\nvoid FUN_003159a0(float param_1,float *param_2)\r\n\r\n{\r\n  undefined4 *puVar1;\r\n  float fVar3;\r\n  long lVar2;\r\n  \r\n  fVar3 = 0.0;\r\n  if (param_2 != (float *)0x0) {\r\n    if (*param_2 == param_1) {\r\n      return;\r\n    }\r\n    *param_2 = param_1;\r\n    fVar3 = param_2[10];\r\n  }\r\n  if (fVar3 != 0.0) {\r\n    lVar2 = FUN_00316620(4,0,0);\r\n    puVar1 = (undefined4 *)lVar2;\r\n    if (lVar2 != 0) {\r\n      *puVar1 = 3;\r\n      param_1 = param_1 * 16384.0;\r\n      puVar1[1] = 0;\r\n      puVar1[2] = fVar3;\r\n      if (param_1 < 2.1474836e+09) {\r\n        puVar1[3] = (int)param_1;\r\n      }\r\n      else {\r\n        puVar1[3] = (int)(param_1 - 2.1474836e+09) | 0x80000000;\r\n      }\r\n      FUN_003165e0();\r\n    }\r\n  }\r\n  return;\r\n}\r\n\r\n",
+      "truncated": false
+    }
+  },
+  {
+    "query": "00315620",
+    "result": {
+      "function": {
+        "name": "FUN_00315620",
+        "address": "00315620"
+      },
+      "code": "\r\nvoid FUN_00315620(int param_1)\r\n\r\n{\r\n  long lVar1;\r\n  int iVar2;\r\n  \r\n  iVar2 = 0;\r\n  if (param_1 != 0) {\r\n    iVar2 = *(int *)(param_1 + 0x28);\r\n  }\r\n  if (iVar2 != 0) {\r\n    lVar1 = FUN_00316620(2,0,0);\r\n    if (lVar1 != 0) {\r\n      *(undefined4 *)lVar1 = 0x44f;\r\n      ((undefined4 *)lVar1)[1] = iVar2;\r\n      FUN_003165e0();\r\n    }\r\n  }\r\n  return;\r\n}\r\n\r\n",
+      "truncated": false
+    }
+  },
+  {
+    "query": "00315680",
+    "result": {
+      "function": {
+        "name": "FUN_00315680",
+        "address": "00315680"
+      },
+      "code": "\r\nvoid FUN_00315680(int param_1)\r\n\r\n{\r\n  long lVar1;\r\n  int iVar2;\r\n  \r\n  iVar2 = 0;\r\n  if (param_1 != 0) {\r\n    iVar2 = *(int *)(param_1 + 0x28);\r\n  }\r\n  if (iVar2 != 0) {\r\n    lVar1 = FUN_00316620(2,0,0);\r\n    if (lVar1 != 0) {\r\n      *(undefined4 *)lVar1 = 0x12;\r\n      ((undefined4 *)lVar1)[1] = iVar2;\r\n      FUN_003165e0();\r\n      FUN_003167e0(0x6319d8);\r\n    }\r\n    WaitSema(uRam0064ecb4);\r\n    FUN_00317340(0x79a150);\r\n    SignalSema(uRam0064ecb4);\r\n  }\r\n  return;\r\n}\r\n\r\n",
+      "truncated": false
+    }
+  }
+]

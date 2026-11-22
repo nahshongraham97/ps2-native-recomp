@@ -3,6 +3,7 @@
 #include "mka/retail_initial_reset_required.hpp"
 #include "mka/retail_sound_bank_catalog.hpp"
 #include "mka/retail_sound_runtime.hpp"
+#include "mka/retail_sound_status.hpp"
 #include "native_retail_startup.hpp"
 #include <algorithm>
 #include <chrono>
@@ -11,6 +12,7 @@
 #include <cstdlib>
 #include <functional>
 #include <mutex>
+#include <new>
 #include <stdexcept>
 #include <thread>
 using namespace mka::retail;
@@ -32,7 +34,7 @@ struct OutputState {
     std::vector<float> rejected;
 };
 std::shared_ptr<OutputState> output_state;
-unsigned status_fixture_calls{};
+thread_local std::int64_t fail_after=-1;
 class TestOutput final:public sound::NativeSoundOutput {
 public:
     explicit TestOutput(std::shared_ptr<OutputState> s):state_(std::move(s)){}
@@ -94,7 +96,7 @@ template<class Predicate> void await(Predicate ready,const char* reason){
     const auto until=std::chrono::steady_clock::now()+std::chrono::seconds(3);
     while(!ready()){check(std::chrono::steady_clock::now()<until,reason);std::this_thread::sleep_for(std::chrono::milliseconds(2));}
 }
-void setup(Scenario scenario){output_state=std::make_shared<OutputState>();output_state->scenario=scenario;status_fixture_calls=0;}
+void setup(Scenario scenario){output_state=std::make_shared<OutputState>();output_state->scenario=scenario;}
 }
 // Wrap only the physical output leaf. The actual production Main/context/Session,
 // QPC worker, program copy, voice and mixer still execute. No endpoint is opened.
@@ -109,13 +111,20 @@ std::unique_ptr<sound::NativeSoundOutput> wrapped_game_output(sound::AudioDevice
 extern "C" [[noreturn]] void __wrap__ZN3mka5sound17NativeAudioDevice4openERKNS0_17AudioDeviceConfigERNS0_18AudioDeviceFailureE(){
     std::fputs("FAIL physical NativeAudioDevice open reached endpoint-free context test\n",stderr);std::abort();
 }
-namespace mka::retail::current_sound_required {
-// Explicit fixture for the still-missing status99 response. It does not advance
-// programs: the real native background worker performs that operation.
-bool update_programs_after_bank_results_3152c0(NativeRetailMainState&,StartupFailure&){++status_fixture_calls;return true;}
+extern "C" void* real_new(std::size_t) __asm__("__real__Znwy");
+extern "C" void* wrapped_new(std::size_t) __asm__("__wrap__Znwy");
+extern "C" void* wrapped_new(std::size_t size){
+    if(fail_after==0)throw std::bad_alloc();
+    if(fail_after>0)--fail_after;
+    return real_new(size);
 }
 int main(int argc,char** argv) try {
     check(argc==2,"expected original native retail content root");
+    const auto neutral=retail_sound_status_controls({16384,0,4096,16384,0,4096});
+    check(neutral==std::array<float,6>{1,0,1,1,0,1},"original314F30 six neutral controls");
+    const auto edges=retail_sound_status_controls({16384,-16383,4096,-1,16383,-1});
+    check(edges==std::array<float,6>{1,-2,1,262144,2,1048576},
+        "source signed pan endpoints and high-bit unsigned gain/pitch conversion");
     for(auto scenario:{Scenario::open_failure,Scenario::allocation_failure,Scenario::bad_format}){
         setup(scenario);Host host(argv[1]);StartupFailure f;
         check(!main_binding::initialize_retail_current_sound(*host.main,f)&&
@@ -134,7 +143,7 @@ int main(int argc,char** argv) try {
         const auto code=scenario==Scenario::poll_failure?-73:-81;
         check(runtime_failure.output.native_code==code,"asynchronous host detail retained");
         check(!main_binding::pump_retail_current_sound(*host.main,f)&&f.sound_catalog.runtime.output.native_code==code&&
-            host.main->sound_frame_counter==1&&status_fixture_calls==0,"real Main propagates worker failure before status fixture");
+            host.main->sound_frame_counter==1&&!host.main->sound_status,"real Main propagates worker failure before status publication");
         host.main.reset();
         check(output_state->closed==1&&output_state->destroyed==1,"failed worker releases output on owning thread");
     }
@@ -155,10 +164,14 @@ int main(int argc,char** argv) try {
             "native worker clock sampling does not spuriously reject Main observers");
         bool foreign_refused=false;
         std::thread foreign([&]{RetailSoundRuntimeFailure other;foreign_refused=!main.sound_runtime->observe(other)&&
+            other.kind==RetailSoundRuntimeError::wrong_thread&&!main.sound_runtime->snapshot_status(other)&&
             other.kind==RetailSoundRuntimeError::wrong_thread&&!main.sound_runtime->shutdown(other)&&other.kind==RetailSoundRuntimeError::wrong_thread;});
         foreign.join();check(foreign_refused,"runtime lifecycle stays on Main's thread");
         check(initial_reset_required::request_mode_one_banks_12a4f0(main,f),"real source four-bank requests");
         for(unsigned i=0;i<4;++i)check(main_binding::pump_retail_current_sound(main,f),"real Main callback queue before status request");
+        check(main.sound_status&&main.sound_status->controls==neutral&&main.sound_frame_counter==1&&
+            main.sound_status->native.format==sound::AudioStreamFormat{44100,2,3},
+            "actual typed status delivery resets attempts before each outer frame increment");
         auto announcr=main.sound_bank_catalog->observe(8,catalog_failure);check(announcr&&announcr->bank,"actual announcr callback handle");
         // Explicit software envelope/caller inputs. This verifies the production
         // ownership/worker connection, not the still-unbound retail envelope.
@@ -170,11 +183,38 @@ int main(int argc,char** argv) try {
         sound::NativePlayParameters other_parameters{parameters.context,parameters.program,parameters.envelope,
             {0},parameters.source_output_mode,parameters.caller_play_flags,parameters.output};
         auto other_play=main.playback->play(*other_context,*announcr->bank,0,other_parameters,pf);
+        std::vector<sound::NativePlayHandle> future;
+        check(bool(other_play),"native future play for actual status association");future.push_back(*other_play);
+        for(unsigned i=1;i<70;++i){auto next=main.playback->play(*other_context,*announcr->bank,0,other_parameters,pf);
+            check(bool(next),"actual native association storage grows");future.push_back(*next);}
+        auto* previous=main.sound_status.get();
+        for(std::int64_t cut:{0,1}){
+            main.sound_frame_counter=17;fail_after=cut;
+            const bool delivered=current_sound_required::update_programs_after_bank_results_3152c0(main,f);fail_after=-1;
+            check(!delivered&&main.sound_status.get()==previous&&main.sound_frame_counter==17,
+                "snapshot/publication allocation failure retains prior status and undelivered attempt count");
+            if(cut==0)check(f.sound_catalog.runtime.playback.kind==sound::PlaybackError::allocation_failed,
+                "actual registry snapshot allocation failure is named");
+            else check(f.kind==StartupError::allocation,"actual publication allocation failure is named");
+        }
+        check(current_sound_required::update_programs_after_bank_results_3152c0(main,f)&&
+            main.sound_frame_counter==0&&main.sound_status->active_plays.size()==70,
+            "actual typed status has all70 owner-wide associations without the source transport cap");
+        for(unsigned i=0;i<70;++i)check(main.sound_status->active_plays[i].same_identity(future[i]),
+            "status carries actual native play identities in registry order");
+        previous=main.sound_status.get();auto current=*main.current_sound;main.current_sound=*other_context;main.sound_frame_counter=19;
+        check(!current_sound_required::update_programs_after_bank_results_3152c0(main,f)&&main.sound_status.get()==previous&&
+            main.sound_frame_counter==19,"foreign request target does not publish/reset a fabricated reply");main.current_sound=current;
         check(other_context&&other_play&&!main.sound_runtime->shutdown(runtime_failure)&&
             runtime_failure.kind==RetailSoundRuntimeError::active_playback,
             "output shutdown checks actual ownership in every context, not only current");
-        check(main.playback->stop(*other_play,pf)&&main.playback->release(*other_play,pf)&&
-            main.playback->release_sound_context(*other_context,pf),"other context explicitly retires its native program");
+        for(const auto& handle:future)check(main.playback->stop(handle,pf)&&main.playback->release(handle,pf),
+            "other context explicitly retires each native program");
+        check(main.playback->release_sound_context(*other_context,pf),"idle other context retires");
+        check(!main.playback->snapshot_active_plays(*other_context,pf)&&pf.kind==sound::PlaybackError::retired_context,
+            "snapshot rejects an actually retired target context");
+        check(main_binding::pump_retail_current_sound(main,f)&&main.sound_status->active_plays.empty()&&
+            main.sound_frame_counter==1,"actual status removes stopped/retired associations after typed delivery");
         auto play=main.playback->activate(*main.current_sound,*announcr->bank,0,parameters,pf);
         check(bool(play),"actual callback handle enters the real native worker playback");
         {std::lock_guard lock(output_state->mutex);output_state->reject_next=true;}
@@ -201,6 +241,10 @@ int main(int argc,char** argv) try {
             "real worker retains the actual mixed block after program ownership is gone");
         {std::lock_guard lock(output_state->mutex);output_state->padding_observations=6;}
         check(main.sound_runtime->shutdown(runtime_failure)&&main.sound_runtime->shutdown(runtime_failure),"idle worker joins and shutdown is idempotent");
+        main.sound_frame_counter=23;previous=main.sound_status.get();
+        check(!current_sound_required::update_programs_after_bank_results_3152c0(main,f)&&
+            f.sound_catalog.runtime.kind==RetailSoundRuntimeError::closed&&main.sound_status.get()==previous&&
+            main.sound_frame_counter==23,"closed native output cannot publish a successful status");
         check(output_state->starts==1&&output_state->closed==1&&output_state->destroyed==1&&output_state->retry_count==2&&
             output_state->replay_verified&&output_state->submitted==before_gap+128&&output_state->last_padding==0,
             "shutdown submits retained PCM exactly once and waits for actual client padding before close");
@@ -213,5 +257,5 @@ int main(int argc,char** argv) try {
             "actual output-close failure is returned after worker-thread release");
         check(host.main->sound_runtime->shutdown(failure),"already released failed output is not closed again");
     }
-    std::puts("PASS production native sound context/Session/worker/PCM/error/idle lifetime; output and status fixtures; no game/endpoint");return 0;
+    std::puts("PASS production native sound context/status/Session/worker/PCM/70 native identities/allocation/error/idle lifetime; only output fixture; no game/endpoint");return 0;
 }catch(const std::exception& e){std::fprintf(stderr,"FAIL production sound context: %s\n",e.what());return 1;}
