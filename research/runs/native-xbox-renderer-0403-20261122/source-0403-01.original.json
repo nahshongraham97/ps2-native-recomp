@@ -1,0 +1,53 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "queries": {
+    "ref=005c73fc:4": {
+      "mapping": {
+        "vma": "0x5c73fc",
+        "length": 4,
+        "section": ".data"
+      },
+      "file_backed": false,
+      "loader_zero_initialized": true
+    },
+    "ref=008353fc:8": {
+      "mapping": {
+        "vma": "0x8353fc",
+        "length": 8,
+        "section": ".data"
+      },
+      "file_backed": false,
+      "loader_zero_initialized": true
+    },
+    "data=005a6768:32": {
+      "mapping": {
+        "vma": "0x5a6768",
+        "length": 32,
+        "file_offset": 5873384,
+        "section": ".data"
+      },
+      "file_backed": true,
+      "bytes_hex": "b0000000b0000000000000000000000000000000000000003200000001000000"
+    },
+    "fn=002c4620": {
+      "mapping": {
+        "vma": "0x2c4620",
+        "length": 96,
+        "file_offset": 2836000,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "8b4424188b4c24108b542408508b442408518b4c241452508b442424e87ffeffff83c410c3cccccccccccccccccccccce90bfeffffcccccccccccccccccccccc6800000400b85c745c006a00a35c745c00a360745c006a106a24b864745c00b9"
+    },
+    "fn=002c3fc0": {
+      "mapping": {
+        "vma": "0x2c3fc0",
+        "length": 96,
+        "file_offset": 2834368,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "578b7c24088b47208b4f1c89088b571c8b4720894204e885ffffffb8010000005fc3cccccccccccccccccccccccccccc8b4424048b4c24088b501883e1fe0bd1895018c3cccccccccccccccccccccccc8b4424048b4018c3cccccccccccccccc"
+    }
+  }
+}

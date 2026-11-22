@@ -1,0 +1,203 @@
+{
+  "status": "SOURCE_DERIVED_0403_RESOURCE_AND_BASE_FRAME_LIFECYCLE",
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "functions": {
+    "002bef60": {
+      "listing": "research\\runs\\native-xbox-scene-frame-20261122\\source-module-callbacks-09\\002bef60.asm",
+      "listing_sha256": "f3819bc81ea268a95cb7471ee13aaba2a96e7f93656bc5ba948c3b1b4826152e",
+      "join_sha256": "0e9d2d85fcef94e32337f27957c74d28aed9570b80e74376e4c872106d7e05b1",
+      "inclusive_range": [
+        "002bef60",
+        "002befbb"
+      ],
+      "instructions": 24,
+      "decoded_unlisted_gaps": []
+    },
+    "002befc0": {
+      "listing": "research\\runs\\native-xbox-scene-frame-20261122\\source-module-callbacks-09\\002befc0.asm",
+      "listing_sha256": "1850f183f814af06500898d4e7965363703559c89c1ac1ebaa4e1c14ef7604ed",
+      "join_sha256": "0e9d2d85fcef94e32337f27957c74d28aed9570b80e74376e4c872106d7e05b1",
+      "inclusive_range": [
+        "002befc0",
+        "002beff2"
+      ],
+      "instructions": 12,
+      "decoded_unlisted_gaps": []
+    },
+    "002bf170": {
+      "listing": "research\\runs\\native-xbox-renderer-0403-20261122\\source-0403-02\\002bf170.asm",
+      "listing_sha256": "ca864129248c863607e58476bc399f4846937a044291a3a3e560fa2f93dd0791",
+      "join_sha256": "3643948c5c5237216092677af2212965e5e33776615b5a7e70b00eac4d2da250",
+      "inclusive_range": [
+        "002bf170",
+        "002bf19f"
+      ],
+      "instructions": 18,
+      "decoded_unlisted_gaps": []
+    },
+    "002bf090": {
+      "listing": "research\\runs\\native-xbox-renderer-0403-20261122\\source-0403-03\\002bf090.asm",
+      "listing_sha256": "1fcc7a4ef5f33126e43e861361ba7b1d475b76f81698aa800142acb7a4758a1c",
+      "join_sha256": "bcc05750b2da91ac73acb54494e8101a7c93baa2de8884981a8990f811a18e1a",
+      "inclusive_range": [
+        "002bf090",
+        "002bf169"
+      ],
+      "instructions": 47,
+      "decoded_unlisted_gaps": []
+    },
+    "002bf230": {
+      "listing": "research\\runs\\native-xbox-renderer-0403-20261122\\source-0403-02\\002bf230.asm",
+      "listing_sha256": "84b0159e7d48629e7ab92e875cd64c64133fe975cb26c9834f87ac8d00524e3c",
+      "join_sha256": "3643948c5c5237216092677af2212965e5e33776615b5a7e70b00eac4d2da250",
+      "inclusive_range": [
+        "002bf230",
+        "002bf298"
+      ],
+      "instructions": 37,
+      "decoded_unlisted_gaps": []
+    },
+    "002bf2c0": {
+      "listing": "research\\runs\\native-xbox-renderer-0403-20261122\\source-0403-02\\002bf2c0.asm",
+      "listing_sha256": "eea69c23ba5712cb0b71f809c2959f8daa08ce68557c93c20e930ef1c085e69c",
+      "join_sha256": "3643948c5c5237216092677af2212965e5e33776615b5a7e70b00eac4d2da250",
+      "inclusive_range": [
+        "002bf2c0",
+        "002bf31c"
+      ],
+      "instructions": 23,
+      "decoded_unlisted_gaps": []
+    },
+    "002bf7d0": {
+      "listing": "research\\runs\\native-xbox-renderer-0403-20261122\\source-0403-03\\002bf7d0.asm",
+      "listing_sha256": "43c35e7deaa7df38cee48f256bf5990df91ad5bc2b988cb05a57ba0c5d32eb55",
+      "join_sha256": "bcc05750b2da91ac73acb54494e8101a7c93baa2de8884981a8990f811a18e1a",
+      "inclusive_range": [
+        "002bf7d0",
+        "002bf831"
+      ],
+      "instructions": 30,
+      "decoded_unlisted_gaps": [
+        {
+          "vma": "0x2bf817",
+          "length": 9,
+          "file_offset": 2816023,
+          "section": ".text",
+          "bytes_hex": "8da424000000008bff",
+          "decoded": "LEA ESP,[ESP+0]; MOV EDI,EDI; skipped by unconditional JMP; no register/flag change"
+        }
+      ]
+    },
+    "002bf840": {
+      "listing": "research\\runs\\native-xbox-renderer-0403-20261122\\source-0403-02\\002bf840.asm",
+      "listing_sha256": "7ff3ffbd022e0dfe9ca0bebd1c0210a5059477911923be3586717566ba8f51dc",
+      "join_sha256": "3643948c5c5237216092677af2212965e5e33776615b5a7e70b00eac4d2da250",
+      "inclusive_range": [
+        "002bf840",
+        "002bf867"
+      ],
+      "instructions": 13,
+      "decoded_unlisted_gaps": []
+    },
+    "002bf350": {
+      "listing": "research\\runs\\native-xbox-renderer-0403-20261122\\source-0403-04\\002bf350.asm",
+      "listing_sha256": "2e9627a0e11f54d99ed8e4510e12fd36316188969f3d5a2166d21cc5cf5f2acf",
+      "join_sha256": "eeefe6b55d34f1275efc58accaf210ff9e724e8373894c2198b89208398fd3ac",
+      "inclusive_range": [
+        "002bf350",
+        "002bf3b8"
+      ],
+      "instructions": 29,
+      "decoded_unlisted_gaps": [
+        {
+          "vma": "0x2bf37a",
+          "length": 6,
+          "file_offset": 2814842,
+          "section": ".text",
+          "bytes_hex": "8d9b00000000",
+          "decoded": "LEA EBX,[EBX+0]; skipped by unconditional JMP; no register/flag change"
+        }
+      ]
+    },
+    "002bf000": {
+      "listing": "research\\runs\\native-xbox-renderer-0403-20261122\\source-0403-05\\002bf000.asm",
+      "listing_sha256": "dc10b83eff0a5daa362aab4f7c4161d07f91700ae864b926a362cd9a7bb93775",
+      "join_sha256": "cce3d0d6d74b9fb3f056c1cd3ce4c9444ba2f8c4955216b5a8f16d96b58c525c",
+      "inclusive_range": [
+        "002bf000",
+        "002bf036"
+      ],
+      "instructions": 19,
+      "decoded_unlisted_gaps": []
+    },
+    "002bf8e0": {
+      "listing": "research\\runs\\native-xbox-renderer-0403-20261122\\source-0403-05\\002bf8e0.asm",
+      "listing_sha256": "a52fad0fc2c9101472606edd0d33f89f5dbc9d91759ef36a95e42e4ff74658c2",
+      "join_sha256": "cce3d0d6d74b9fb3f056c1cd3ce4c9444ba2f8c4955216b5a8f16d96b58c525c",
+      "inclusive_range": [
+        "002bf8e0",
+        "002bf948"
+      ],
+      "instructions": 36,
+      "decoded_unlisted_gaps": []
+    },
+    "002c2b90": {
+      "listing": "research\\runs\\native-xbox-renderer-0403-20261122\\source-0403-04\\002c2b90.asm",
+      "listing_sha256": "e872c589d5f1e6f41f2b94ab70eb649bed92a074cde9c8309abda52c9ffe500a",
+      "join_sha256": "eeefe6b55d34f1275efc58accaf210ff9e724e8373894c2198b89208398fd3ac",
+      "inclusive_range": [
+        "002c2b90",
+        "002c2be2"
+      ],
+      "instructions": 43,
+      "decoded_unlisted_gaps": []
+    },
+    "002c2bf0": {
+      "listing": "research\\runs\\native-xbox-renderer-0403-20261122\\source-0403-04\\002c2bf0.asm",
+      "listing_sha256": "1567b2f7be1dec46c7600099d19ac08d97ad3051aa5829a0cd0721221da0e80b",
+      "join_sha256": "eeefe6b55d34f1275efc58accaf210ff9e724e8373894c2198b89208398fd3ac",
+      "inclusive_range": [
+        "002c2bf0",
+        "002c2c1c"
+      ],
+      "instructions": 23,
+      "decoded_unlisted_gaps": []
+    }
+  },
+  "data": {
+    "0x4d7b54": {
+      "vma": "0x4d7b54",
+      "length": 4,
+      "file_offset": 5022580,
+      "section": ".rdata",
+      "bytes_hex": "0000803f"
+    },
+    "0x5a6768": {
+      "vma": "0x5a6768",
+      "length": 32,
+      "file_offset": 5873384,
+      "section": ".data",
+      "bytes_hex": "b0000000b0000000000000000000000000000000000000003200000001000000"
+    }
+  },
+  "native_before": {
+    "runtime/include/mka/retail_renderer_core.hpp": "ba36ee73c2feec036cdcc0f5366ec4dd44b457e17800dd47ed809b1c589d0051",
+    "cmake/native_game.cmake": "90d27dcb6d340ce52a4e4e8c8810d6379ed6b1108e3cb3e2802e2a5aa66fc047"
+  },
+  "selected_scope": "real0403 owner; base-frame/initial-empty-registry allocation; hierarchy attach/detach/root destroy/leaf destroy; dirty root queue",
+  "original_errors": "allocation NULL leaves module/queue unpublished; source FrameCreate ignores plugin-constructor return",
+  "native_limits": "host-owned typed objects and native handles; no176-byte layout/50-entry block/offset/capacity model",
+  "unadopted": [
+    "nonempty frame plugin callbacks",
+    "clone/alias rewrites",
+    "single destroy with children",
+    "attached hierarchy destroy",
+    "matrix transform writers",
+    "generic/game synchronization",
+    "attached objects",
+    "GPU/renderer acceptance"
+  ],
+  "owner_action": "none",
+  "verification_scope": "source-derived before runtime edit",
+  "acceptance": "OPEN"
+}

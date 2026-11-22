@@ -1,0 +1,23 @@
+002bf2c0	8b442404	MOV EAX,dword ptr [ESP + 0x4]
+002bf2c4	8b90a0000000	MOV EDX,dword ptr [EAX + 0xa0]
+002bf2ca	0fb64a03	MOVZX ECX,byte ptr [EDX + 0x3]
+002bf2ce	f6c103	TEST CL,0x3
+002bf2d1	7539	JNZ 0x002bf30c
+002bf2d3	56	PUSH ESI
+002bf2d4	8b35fc538300	MOV ESI,dword ptr [0x008353fc]
+002bf2da	897208	MOV dword ptr [EDX + 0x8],ESI
+002bf2dd	8b90a0000000	MOV EDX,dword ptr [EAX + 0xa0]
+002bf2e3	c7420cfc538300	MOV dword ptr [EDX + 0xc],0x8353fc
+002bf2ea	8b90a0000000	MOV EDX,dword ptr [EAX + 0xa0]
+002bf2f0	8b35fc538300	MOV ESI,dword ptr [0x008353fc]
+002bf2f6	83c208	ADD EDX,0x8
+002bf2f9	895604	MOV dword ptr [ESI + 0x4],EDX
+002bf2fc	8b90a0000000	MOV EDX,dword ptr [EAX + 0xa0]
+002bf302	83c208	ADD EDX,0x8
+002bf305	8915fc538300	MOV dword ptr [0x008353fc],EDX
+002bf30b	5e	POP ESI
+002bf30c	8b90a0000000	MOV EDX,dword ptr [EAX + 0xa0]
+002bf312	80c903	OR CL,0x3
+002bf315	884a03	MOV byte ptr [EDX + 0x3],CL
+002bf318	8048030c	OR byte ptr [EAX + 0x3],0xc
+002bf31c	c3	RET
