@@ -1,0 +1,24 @@
+{
+  "status": "PASS_BOUNDED_SOURCE_PARAMETER_REVIEW",
+  "base_commit": "01fc1a60acdcb05245d945f9f5c25ad40a121380",
+  "argv": [
+    "C:\\Python315\\python.exe",
+    "research\\runs\\parallel-sound-parameters-source-20261122\\join.py"
+  ],
+  "exit": 0,
+  "python_sha256": "d4e19e9a33268fb0ce575a24ab2d4b85972524f1933df008a6befc14dce19fbd",
+  "source_join_sha256": "b9ae4cbd43a28e407cd00c461212a8c3a5b3061431b47b6779c86c7147b58d5e",
+  "join_script_sha256": "689e1020215afc1fc74eaf8624ffc22939b3269107f8dc50354176a1cda527b3",
+  "manual_reference_sha256": "f9de324411489bdd8700ae09b5c759c88be7f38481117d08d0b6ffb638c074cc",
+  "native_owner_sources": {
+    "runtime/include/mka/retail_profile_preferences.hpp": "3a2c3d19da590206a06448d5478435d37eff097e57fbeca481a7e81231c336b2",
+    "runtime/src/native/retail_profile_preferences.cpp": "9b6c81770851683a3674be54f3859ae9c1893c2ac25d0afe684ecd1a3bd3eafb",
+    "runtime/src/native/retail_profile_preferences_main.cpp": "06fa85af520ffd5bd50c99e5a3c74615376cbaa6a3d4aa9cc334a24cd3273c63",
+    "runtime/include/mka/retail_game_session.hpp": "79c7bfdcf600f7f37758aac2cbf4c9255f7fd817444fe5e38c8fe76cd5c5b052",
+    "runtime/src/native/retail_game_session.cpp": "2a90c825d1e7aa501e7487911c0a83e3a19e016360f456f527956e9a8c40bf45",
+    "runtime/include/mka/retail_game_records_values.hpp": "0eebe21968133ecc7b0dc87fa3c103b42ab569e976cea7211716dcfc054a7bb1",
+    "runtime/include/mka/retail_sound_bank_catalog.hpp": "f93b9f92377bdf8513fd8ba6674ef9856da2a285c838e62570fe9c5df793512c",
+    "runtime/include/mka/retail_main.hpp": "9333fa92b9193c0f64ca95a56bd7eeefad60639f64be53eaa95790b3d28df9f6"
+  },
+  "scope": "Source-only raw instruction/data joins and exhaustive field extraction; no production edit,build,endpoint or gameplay execution. Ordinary native math integration remains primary-owned; precise EE low-bit arithmetic parity OPEN."
+}

@@ -1,0 +1,15 @@
+# Sound parameter source review
+
+Evidence-only task on private branch section-timing-20261122 after01fc1a60. Primary owns every audio implementation. No production code changes are authorized in this task.
+
+Trace original PS2 12C030 ->12C440 ->315C70, actual six live gains6B6F60 and their callers/producers. Reuse prior bounded orientation/listings, authenticate original PT_LOAD words/data and full EE spans. Names are hypotheses. Native ownership/policy equivalence and gameplay remain separate OPEN gates.
+
+Source-01 actual EE listing exposes multiply order volume*sound_percent, then category scalar, then live gain (12C7D4/7F4/7F8), unlike reordered decompiler C.315C70 float ABI and flags9 verified in12C030; category gain producers located from original/recovered reference candidates, not yet proved.
+
+Actual gain ownership:294D20 copies24 bytes (SQ16+SD8), proving five0.75f words plus sixth1.0f. Existing Session game_records_values.profile_preferences holds first5 as levels and sixth as raw word_14.295660 copies88 defaults during Main122920;295380 copies88 from a valid saved-profile record;154410 backs up/restores88 through2955C0;294F10 writes indexed floats, actual script caller2F34B0 only indices0..4 for IDs2B5C..2B60. Sixth is a real readable alias, but exhaustive original sound data finds no records using category4 (the only category selecting gain5), correcting the initial inference that it was reached. No production code edited.
+
+Xbox source: original image hash78f99fca; actual XBE section mapping found identical parameter defaults at502A08 (file4F5228), sound table56CBE0 (file560360) and first24 preference defaults5684B0 (file55BC30).23BE30 is the actual flags9/reference-list analogue,23BEE0 resolves parameters,3797D0 admits native-source sound. Their x87 arithmetic/ABI are platform-specific; no transplant accepted. First Xbox batch stopped on an invalid candidate236300 despite process exit0; preserved log and partial exports. Follow-up exact2362E0 succeeded. All joins/semantic conclusions remain source-only until final receipt.
+
+Final rejoin initially exposed JSON integer counter keys becoming strings on reload. Canonical JSON comparison fixes only checker serialization; original SOURCE_JOIN.json bytes and all original data remain unchanged. Failure log preserved.
+
+Final bounded joins pass:27 EE listings (3333 listed instructions,duplicated views retained),10 full contiguous Xbox listings (479 instructions),original catalog/sound/category/default bytes,reused primary-listing byte identity,and65536 halfword/256 signed-byte cases. Four secondary-listing omissions are originalzero unreachable NOP padding,with prior branches/delay slots inspected. Xbox invalid-candidate batch failure is preserved. Native owner source hashes are recorded without changes. Raw C/log bytes are losslessly gzip archived with ARCHIVES.json. No generic EE/FPU interpretation or host arithmetic equivalence is claimed. Precise low-bit arithmetic parity remains separate from source input-domain and q14 conversion proofs.
