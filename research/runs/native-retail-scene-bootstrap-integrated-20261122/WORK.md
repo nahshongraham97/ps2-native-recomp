@@ -40,7 +40,7 @@ observes phase/timing before the required suffix, including native reentry,
 failure, lifetime and foreign-thread behavior. Its SDL abort guard must be
 linked as the actual symbol with no import. It creates no window/endpoint.
 
-Current status: validation-01 compiles and passes all9 directly affected
+Current status: clean published source2188e467375ff5a1613ad9a7a106bfc0a0251047 also passes all9 directly affected
 Main/bootstrap/stopwatch/sound clients. The exact full-entry set contains
 one substitution: old post-scene wrapper -> required
 continue_scene_reset_at_181a30, with37 total names. That diagnostic is not the
@@ -51,3 +51,5 @@ semantic sound metadata/parameters and real remaining scene producers.
 Primary readonly join.py recheck passes all519 original instruction words and referenced group/name bytes. All131 candidate evidence files are restored as exact committed bytes, correcting checkout newline conversion without altering measurements. Current code remains unbuilt in primary; subsequent verification checks the combined active audio/Main state rather than relabeling private results as current runs.
 
 Primary validation-01 passes9 affected clients, actual SDL/physical-output abort-symbol checks and exact37-symbol refusal. Only initialize_retail_post_scene_timing is removed and required continue_scene_reset_at_181a30 added. Full game remains OPEN. Next publish measured source and verify a fresh clean checkout; unchanged pure-audio clients retain their prior clean record.
+
+Clean-validation-01 confirms the integrated published source2188e467375ff5a1613ad9a7a106bfc0a0251047, all9 affected clients and the exact37-effect substitution. All835 committed source blobs authenticate;199 existing raw newline pairs are retained. Changed integration bytes are identical between canonical and clean trees. No game/window/physical endpoint/frame/audio capture; entire suffix and full acceptance OPEN.
