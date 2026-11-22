@@ -532,3 +532,11 @@ if(TARGET test_native_retail_system_art_cpu AND WIN32)
         $<TARGET_FILE:SDL2::SDL2>
         $<TARGET_FILE_DIR:test_native_retail_system_art_cpu> VERBATIM)
 endif()
+
+add_executable(test_native_gl_texture EXCLUDE_FROM_ALL tests/test_native_gl_texture.cpp)
+target_link_libraries(test_native_gl_texture PRIVATE mka_native_retail_system_art_cpu)
+if(WIN32)
+    add_custom_command(TARGET test_native_gl_texture POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2>
+            $<TARGET_FILE_DIR:test_native_gl_texture> VERBATIM)
+endif()

@@ -1,0 +1,1592 @@
+[
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-13.rgba",
+    "size": 131072,
+    "sha256": "d1f171431a482b3ed97929550a7632a51133026c9a88713e791eff01052c7b53"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-14.rgba",
+    "size": 262144,
+    "sha256": "c3c621bae4c752a95cc7bd9d60cdee9711ac1f6e3e9883ab1040296159f381e0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-15.rgba",
+    "size": 131072,
+    "sha256": "7ae43393f6f3392780e249daa4b85af9da43a6bf5583adabe65a8f66136d2588"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-16.rgba",
+    "size": 131072,
+    "sha256": "c8dd019e1da8a252f201d420d218671aa1fa108944bd72680676e4c4c983bbab"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-17.rgba",
+    "size": 131072,
+    "sha256": "de76edc806f1d1924ba9fbabbd57d5490afd37c3044ec26823e628aec047c049"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-18.rgba",
+    "size": 32768,
+    "sha256": "4d7112ffaa1f6cf0127f4eba7c217bbd2b8ad4a65172b71ac97d1794183ef65c"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-19.rgba",
+    "size": 32768,
+    "sha256": "647f14058aec5ac4e366d980839b2f75fad3667268fe800ba1230a989933db91"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-20.rgba",
+    "size": 65536,
+    "sha256": "6dcf0693049b914447e8f299ea36994e66e200980fe73e26c8b8639f9d7e64cf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-21.rgba",
+    "size": 131072,
+    "sha256": "898ab37c8d6d1afe4f558281ca1bae45bbf60aa89d338ad02c22f70df832b1da"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-22.rgba",
+    "size": 4096,
+    "sha256": "d911c5651ef68cd7e0b8c4712aec81a582f8ea0929a5d6317d19a00211703407"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-23.rgba",
+    "size": 4096,
+    "sha256": "3ff61be633bd10b1585a898d758143a3a58a065347bb721c003dd445075b89f0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-24.rgba",
+    "size": 1024,
+    "sha256": "d8cc0513f8841dd76fc138a155aa5623d275007dd58ed73fb44006e9d0991747"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-25.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-26.rgba",
+    "size": 16384,
+    "sha256": "aa40ea6688396c0f97d359eaa39bd9fcf50da9d218d2cf7e03488d3de87d9ba7"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-27.rgba",
+    "size": 512,
+    "sha256": "e64f67820c3bb6354139629b64ec0b8fc23e16f0382bc94609915e8cb1ced498"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-28.rgba",
+    "size": 2048,
+    "sha256": "e18035cba852553b6db048e6515bbc29dbd786f6d3275ea9f238b18c749edea5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-29.rgba",
+    "size": 256,
+    "sha256": "1b16eddcce0d554f07ba6b93b01c28f15ade0906f432ced765437acd25486ad3"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-30.rgba",
+    "size": 4096,
+    "sha256": "acdd1e4bf90996c52cdbba070a67f738d5b479fe6c25a80a7bab5c4eead82608"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-31.rgba",
+    "size": 256,
+    "sha256": "bef7c223a8ee71ece2a5cf87f8a9550e72ab993e887f89836ea8b46b54413977"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-32.rgba",
+    "size": 256,
+    "sha256": "9acd9f487db126ff36e283ffb989419421d4ee36fcc69ece7a7388c46c855808"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/0-33.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-13.rgba",
+    "size": 131072,
+    "sha256": "d1f171431a482b3ed97929550a7632a51133026c9a88713e791eff01052c7b53"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-14.rgba",
+    "size": 262144,
+    "sha256": "c3c621bae4c752a95cc7bd9d60cdee9711ac1f6e3e9883ab1040296159f381e0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-15.rgba",
+    "size": 131072,
+    "sha256": "7ae43393f6f3392780e249daa4b85af9da43a6bf5583adabe65a8f66136d2588"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-16.rgba",
+    "size": 131072,
+    "sha256": "c8dd019e1da8a252f201d420d218671aa1fa108944bd72680676e4c4c983bbab"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-17.rgba",
+    "size": 131072,
+    "sha256": "de76edc806f1d1924ba9fbabbd57d5490afd37c3044ec26823e628aec047c049"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-18.rgba",
+    "size": 32768,
+    "sha256": "4d7112ffaa1f6cf0127f4eba7c217bbd2b8ad4a65172b71ac97d1794183ef65c"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-19.rgba",
+    "size": 32768,
+    "sha256": "647f14058aec5ac4e366d980839b2f75fad3667268fe800ba1230a989933db91"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-20.rgba",
+    "size": 65536,
+    "sha256": "6dcf0693049b914447e8f299ea36994e66e200980fe73e26c8b8639f9d7e64cf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-21.rgba",
+    "size": 131072,
+    "sha256": "898ab37c8d6d1afe4f558281ca1bae45bbf60aa89d338ad02c22f70df832b1da"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-22.rgba",
+    "size": 4096,
+    "sha256": "d911c5651ef68cd7e0b8c4712aec81a582f8ea0929a5d6317d19a00211703407"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-23.rgba",
+    "size": 4096,
+    "sha256": "3ff61be633bd10b1585a898d758143a3a58a065347bb721c003dd445075b89f0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-24.rgba",
+    "size": 1024,
+    "sha256": "d8cc0513f8841dd76fc138a155aa5623d275007dd58ed73fb44006e9d0991747"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-25.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-26.rgba",
+    "size": 16384,
+    "sha256": "aa40ea6688396c0f97d359eaa39bd9fcf50da9d218d2cf7e03488d3de87d9ba7"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-27.rgba",
+    "size": 512,
+    "sha256": "e64f67820c3bb6354139629b64ec0b8fc23e16f0382bc94609915e8cb1ced498"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-28.rgba",
+    "size": 2048,
+    "sha256": "e18035cba852553b6db048e6515bbc29dbd786f6d3275ea9f238b18c749edea5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-29.rgba",
+    "size": 256,
+    "sha256": "1b16eddcce0d554f07ba6b93b01c28f15ade0906f432ced765437acd25486ad3"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-30.rgba",
+    "size": 4096,
+    "sha256": "acdd1e4bf90996c52cdbba070a67f738d5b479fe6c25a80a7bab5c4eead82608"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-31.rgba",
+    "size": 256,
+    "sha256": "bef7c223a8ee71ece2a5cf87f8a9550e72ab993e887f89836ea8b46b54413977"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-32.rgba",
+    "size": 256,
+    "sha256": "9acd9f487db126ff36e283ffb989419421d4ee36fcc69ece7a7388c46c855808"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/1-33.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-13.rgba",
+    "size": 131072,
+    "sha256": "d1f171431a482b3ed97929550a7632a51133026c9a88713e791eff01052c7b53"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-14.rgba",
+    "size": 262144,
+    "sha256": "c3c621bae4c752a95cc7bd9d60cdee9711ac1f6e3e9883ab1040296159f381e0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-15.rgba",
+    "size": 131072,
+    "sha256": "7ae43393f6f3392780e249daa4b85af9da43a6bf5583adabe65a8f66136d2588"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-16.rgba",
+    "size": 131072,
+    "sha256": "c8dd019e1da8a252f201d420d218671aa1fa108944bd72680676e4c4c983bbab"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-17.rgba",
+    "size": 131072,
+    "sha256": "de76edc806f1d1924ba9fbabbd57d5490afd37c3044ec26823e628aec047c049"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-18.rgba",
+    "size": 32768,
+    "sha256": "4d7112ffaa1f6cf0127f4eba7c217bbd2b8ad4a65172b71ac97d1794183ef65c"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-19.rgba",
+    "size": 32768,
+    "sha256": "647f14058aec5ac4e366d980839b2f75fad3667268fe800ba1230a989933db91"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-20.rgba",
+    "size": 65536,
+    "sha256": "6dcf0693049b914447e8f299ea36994e66e200980fe73e26c8b8639f9d7e64cf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-21.rgba",
+    "size": 131072,
+    "sha256": "898ab37c8d6d1afe4f558281ca1bae45bbf60aa89d338ad02c22f70df832b1da"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-22.rgba",
+    "size": 4096,
+    "sha256": "d911c5651ef68cd7e0b8c4712aec81a582f8ea0929a5d6317d19a00211703407"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-23.rgba",
+    "size": 4096,
+    "sha256": "3ff61be633bd10b1585a898d758143a3a58a065347bb721c003dd445075b89f0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-24.rgba",
+    "size": 1024,
+    "sha256": "d8cc0513f8841dd76fc138a155aa5623d275007dd58ed73fb44006e9d0991747"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-25.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-26.rgba",
+    "size": 16384,
+    "sha256": "aa40ea6688396c0f97d359eaa39bd9fcf50da9d218d2cf7e03488d3de87d9ba7"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-27.rgba",
+    "size": 512,
+    "sha256": "e64f67820c3bb6354139629b64ec0b8fc23e16f0382bc94609915e8cb1ced498"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-28.rgba",
+    "size": 2048,
+    "sha256": "e18035cba852553b6db048e6515bbc29dbd786f6d3275ea9f238b18c749edea5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-29.rgba",
+    "size": 256,
+    "sha256": "1b16eddcce0d554f07ba6b93b01c28f15ade0906f432ced765437acd25486ad3"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-30.rgba",
+    "size": 4096,
+    "sha256": "acdd1e4bf90996c52cdbba070a67f738d5b479fe6c25a80a7bab5c4eead82608"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-31.rgba",
+    "size": 256,
+    "sha256": "bef7c223a8ee71ece2a5cf87f8a9550e72ab993e887f89836ea8b46b54413977"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-32.rgba",
+    "size": 256,
+    "sha256": "9acd9f487db126ff36e283ffb989419421d4ee36fcc69ece7a7388c46c855808"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/2-33.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-13.rgba",
+    "size": 131072,
+    "sha256": "d1f171431a482b3ed97929550a7632a51133026c9a88713e791eff01052c7b53"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-14.rgba",
+    "size": 262144,
+    "sha256": "c3c621bae4c752a95cc7bd9d60cdee9711ac1f6e3e9883ab1040296159f381e0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-15.rgba",
+    "size": 131072,
+    "sha256": "7ae43393f6f3392780e249daa4b85af9da43a6bf5583adabe65a8f66136d2588"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-16.rgba",
+    "size": 131072,
+    "sha256": "c8dd019e1da8a252f201d420d218671aa1fa108944bd72680676e4c4c983bbab"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-17.rgba",
+    "size": 131072,
+    "sha256": "de76edc806f1d1924ba9fbabbd57d5490afd37c3044ec26823e628aec047c049"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-18.rgba",
+    "size": 32768,
+    "sha256": "4d7112ffaa1f6cf0127f4eba7c217bbd2b8ad4a65172b71ac97d1794183ef65c"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-19.rgba",
+    "size": 32768,
+    "sha256": "647f14058aec5ac4e366d980839b2f75fad3667268fe800ba1230a989933db91"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-20.rgba",
+    "size": 65536,
+    "sha256": "6dcf0693049b914447e8f299ea36994e66e200980fe73e26c8b8639f9d7e64cf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-21.rgba",
+    "size": 131072,
+    "sha256": "898ab37c8d6d1afe4f558281ca1bae45bbf60aa89d338ad02c22f70df832b1da"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-22.rgba",
+    "size": 4096,
+    "sha256": "d911c5651ef68cd7e0b8c4712aec81a582f8ea0929a5d6317d19a00211703407"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-23.rgba",
+    "size": 4096,
+    "sha256": "3ff61be633bd10b1585a898d758143a3a58a065347bb721c003dd445075b89f0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-24.rgba",
+    "size": 1024,
+    "sha256": "d8cc0513f8841dd76fc138a155aa5623d275007dd58ed73fb44006e9d0991747"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-25.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-26.rgba",
+    "size": 16384,
+    "sha256": "aa40ea6688396c0f97d359eaa39bd9fcf50da9d218d2cf7e03488d3de87d9ba7"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-27.rgba",
+    "size": 512,
+    "sha256": "e64f67820c3bb6354139629b64ec0b8fc23e16f0382bc94609915e8cb1ced498"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-28.rgba",
+    "size": 2048,
+    "sha256": "e18035cba852553b6db048e6515bbc29dbd786f6d3275ea9f238b18c749edea5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-29.rgba",
+    "size": 256,
+    "sha256": "1b16eddcce0d554f07ba6b93b01c28f15ade0906f432ced765437acd25486ad3"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-30.rgba",
+    "size": 4096,
+    "sha256": "acdd1e4bf90996c52cdbba070a67f738d5b479fe6c25a80a7bab5c4eead82608"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-31.rgba",
+    "size": 256,
+    "sha256": "bef7c223a8ee71ece2a5cf87f8a9550e72ab993e887f89836ea8b46b54413977"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-32.rgba",
+    "size": 256,
+    "sha256": "9acd9f487db126ff36e283ffb989419421d4ee36fcc69ece7a7388c46c855808"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/3-33.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-13.rgba",
+    "size": 131072,
+    "sha256": "d1f171431a482b3ed97929550a7632a51133026c9a88713e791eff01052c7b53"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-14.rgba",
+    "size": 262144,
+    "sha256": "c3c621bae4c752a95cc7bd9d60cdee9711ac1f6e3e9883ab1040296159f381e0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-15.rgba",
+    "size": 131072,
+    "sha256": "7ae43393f6f3392780e249daa4b85af9da43a6bf5583adabe65a8f66136d2588"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-16.rgba",
+    "size": 131072,
+    "sha256": "c8dd019e1da8a252f201d420d218671aa1fa108944bd72680676e4c4c983bbab"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-17.rgba",
+    "size": 131072,
+    "sha256": "de76edc806f1d1924ba9fbabbd57d5490afd37c3044ec26823e628aec047c049"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-18.rgba",
+    "size": 32768,
+    "sha256": "4d7112ffaa1f6cf0127f4eba7c217bbd2b8ad4a65172b71ac97d1794183ef65c"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-19.rgba",
+    "size": 32768,
+    "sha256": "647f14058aec5ac4e366d980839b2f75fad3667268fe800ba1230a989933db91"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-20.rgba",
+    "size": 65536,
+    "sha256": "6dcf0693049b914447e8f299ea36994e66e200980fe73e26c8b8639f9d7e64cf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-21.rgba",
+    "size": 131072,
+    "sha256": "898ab37c8d6d1afe4f558281ca1bae45bbf60aa89d338ad02c22f70df832b1da"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-22.rgba",
+    "size": 4096,
+    "sha256": "d911c5651ef68cd7e0b8c4712aec81a582f8ea0929a5d6317d19a00211703407"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-23.rgba",
+    "size": 4096,
+    "sha256": "3ff61be633bd10b1585a898d758143a3a58a065347bb721c003dd445075b89f0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-24.rgba",
+    "size": 1024,
+    "sha256": "d8cc0513f8841dd76fc138a155aa5623d275007dd58ed73fb44006e9d0991747"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-25.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-26.rgba",
+    "size": 16384,
+    "sha256": "aa40ea6688396c0f97d359eaa39bd9fcf50da9d218d2cf7e03488d3de87d9ba7"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-27.rgba",
+    "size": 512,
+    "sha256": "e64f67820c3bb6354139629b64ec0b8fc23e16f0382bc94609915e8cb1ced498"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-28.rgba",
+    "size": 2048,
+    "sha256": "e18035cba852553b6db048e6515bbc29dbd786f6d3275ea9f238b18c749edea5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-29.rgba",
+    "size": 256,
+    "sha256": "1b16eddcce0d554f07ba6b93b01c28f15ade0906f432ced765437acd25486ad3"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-30.rgba",
+    "size": 4096,
+    "sha256": "acdd1e4bf90996c52cdbba070a67f738d5b479fe6c25a80a7bab5c4eead82608"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-31.rgba",
+    "size": 256,
+    "sha256": "bef7c223a8ee71ece2a5cf87f8a9550e72ab993e887f89836ea8b46b54413977"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-32.rgba",
+    "size": 256,
+    "sha256": "9acd9f487db126ff36e283ffb989419421d4ee36fcc69ece7a7388c46c855808"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/4-33.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/private-readbacks/images.tsv",
+    "size": 8665,
+    "sha256": "4c52eca2b22dec8ed69bdcdadc15e6281907d20d4a0875f193a0dc6b62d1beaf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-13.rgba",
+    "size": 131072,
+    "sha256": "d1f171431a482b3ed97929550a7632a51133026c9a88713e791eff01052c7b53"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-14.rgba",
+    "size": 262144,
+    "sha256": "c3c621bae4c752a95cc7bd9d60cdee9711ac1f6e3e9883ab1040296159f381e0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-15.rgba",
+    "size": 131072,
+    "sha256": "7ae43393f6f3392780e249daa4b85af9da43a6bf5583adabe65a8f66136d2588"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-16.rgba",
+    "size": 131072,
+    "sha256": "c8dd019e1da8a252f201d420d218671aa1fa108944bd72680676e4c4c983bbab"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-17.rgba",
+    "size": 131072,
+    "sha256": "de76edc806f1d1924ba9fbabbd57d5490afd37c3044ec26823e628aec047c049"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-18.rgba",
+    "size": 32768,
+    "sha256": "4d7112ffaa1f6cf0127f4eba7c217bbd2b8ad4a65172b71ac97d1794183ef65c"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-19.rgba",
+    "size": 32768,
+    "sha256": "647f14058aec5ac4e366d980839b2f75fad3667268fe800ba1230a989933db91"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-20.rgba",
+    "size": 65536,
+    "sha256": "6dcf0693049b914447e8f299ea36994e66e200980fe73e26c8b8639f9d7e64cf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-21.rgba",
+    "size": 131072,
+    "sha256": "898ab37c8d6d1afe4f558281ca1bae45bbf60aa89d338ad02c22f70df832b1da"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-22.rgba",
+    "size": 4096,
+    "sha256": "d911c5651ef68cd7e0b8c4712aec81a582f8ea0929a5d6317d19a00211703407"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-23.rgba",
+    "size": 4096,
+    "sha256": "3ff61be633bd10b1585a898d758143a3a58a065347bb721c003dd445075b89f0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-24.rgba",
+    "size": 1024,
+    "sha256": "d8cc0513f8841dd76fc138a155aa5623d275007dd58ed73fb44006e9d0991747"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-25.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-26.rgba",
+    "size": 16384,
+    "sha256": "aa40ea6688396c0f97d359eaa39bd9fcf50da9d218d2cf7e03488d3de87d9ba7"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-27.rgba",
+    "size": 512,
+    "sha256": "e64f67820c3bb6354139629b64ec0b8fc23e16f0382bc94609915e8cb1ced498"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-28.rgba",
+    "size": 2048,
+    "sha256": "e18035cba852553b6db048e6515bbc29dbd786f6d3275ea9f238b18c749edea5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-29.rgba",
+    "size": 256,
+    "sha256": "1b16eddcce0d554f07ba6b93b01c28f15ade0906f432ced765437acd25486ad3"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-30.rgba",
+    "size": 4096,
+    "sha256": "acdd1e4bf90996c52cdbba070a67f738d5b479fe6c25a80a7bab5c4eead82608"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-31.rgba",
+    "size": 256,
+    "sha256": "bef7c223a8ee71ece2a5cf87f8a9550e72ab993e887f89836ea8b46b54413977"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-32.rgba",
+    "size": 256,
+    "sha256": "9acd9f487db126ff36e283ffb989419421d4ee36fcc69ece7a7388c46c855808"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/0-33.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-13.rgba",
+    "size": 131072,
+    "sha256": "d1f171431a482b3ed97929550a7632a51133026c9a88713e791eff01052c7b53"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-14.rgba",
+    "size": 262144,
+    "sha256": "c3c621bae4c752a95cc7bd9d60cdee9711ac1f6e3e9883ab1040296159f381e0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-15.rgba",
+    "size": 131072,
+    "sha256": "7ae43393f6f3392780e249daa4b85af9da43a6bf5583adabe65a8f66136d2588"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-16.rgba",
+    "size": 131072,
+    "sha256": "c8dd019e1da8a252f201d420d218671aa1fa108944bd72680676e4c4c983bbab"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-17.rgba",
+    "size": 131072,
+    "sha256": "de76edc806f1d1924ba9fbabbd57d5490afd37c3044ec26823e628aec047c049"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-18.rgba",
+    "size": 32768,
+    "sha256": "4d7112ffaa1f6cf0127f4eba7c217bbd2b8ad4a65172b71ac97d1794183ef65c"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-19.rgba",
+    "size": 32768,
+    "sha256": "647f14058aec5ac4e366d980839b2f75fad3667268fe800ba1230a989933db91"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-20.rgba",
+    "size": 65536,
+    "sha256": "6dcf0693049b914447e8f299ea36994e66e200980fe73e26c8b8639f9d7e64cf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-21.rgba",
+    "size": 131072,
+    "sha256": "898ab37c8d6d1afe4f558281ca1bae45bbf60aa89d338ad02c22f70df832b1da"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-22.rgba",
+    "size": 4096,
+    "sha256": "d911c5651ef68cd7e0b8c4712aec81a582f8ea0929a5d6317d19a00211703407"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-23.rgba",
+    "size": 4096,
+    "sha256": "3ff61be633bd10b1585a898d758143a3a58a065347bb721c003dd445075b89f0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-24.rgba",
+    "size": 1024,
+    "sha256": "d8cc0513f8841dd76fc138a155aa5623d275007dd58ed73fb44006e9d0991747"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-25.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-26.rgba",
+    "size": 16384,
+    "sha256": "aa40ea6688396c0f97d359eaa39bd9fcf50da9d218d2cf7e03488d3de87d9ba7"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-27.rgba",
+    "size": 512,
+    "sha256": "e64f67820c3bb6354139629b64ec0b8fc23e16f0382bc94609915e8cb1ced498"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-28.rgba",
+    "size": 2048,
+    "sha256": "e18035cba852553b6db048e6515bbc29dbd786f6d3275ea9f238b18c749edea5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-29.rgba",
+    "size": 256,
+    "sha256": "1b16eddcce0d554f07ba6b93b01c28f15ade0906f432ced765437acd25486ad3"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-30.rgba",
+    "size": 4096,
+    "sha256": "acdd1e4bf90996c52cdbba070a67f738d5b479fe6c25a80a7bab5c4eead82608"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-31.rgba",
+    "size": 256,
+    "sha256": "bef7c223a8ee71ece2a5cf87f8a9550e72ab993e887f89836ea8b46b54413977"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-32.rgba",
+    "size": 256,
+    "sha256": "9acd9f487db126ff36e283ffb989419421d4ee36fcc69ece7a7388c46c855808"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/1-33.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-13.rgba",
+    "size": 131072,
+    "sha256": "d1f171431a482b3ed97929550a7632a51133026c9a88713e791eff01052c7b53"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-14.rgba",
+    "size": 262144,
+    "sha256": "c3c621bae4c752a95cc7bd9d60cdee9711ac1f6e3e9883ab1040296159f381e0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-15.rgba",
+    "size": 131072,
+    "sha256": "7ae43393f6f3392780e249daa4b85af9da43a6bf5583adabe65a8f66136d2588"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-16.rgba",
+    "size": 131072,
+    "sha256": "c8dd019e1da8a252f201d420d218671aa1fa108944bd72680676e4c4c983bbab"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-17.rgba",
+    "size": 131072,
+    "sha256": "de76edc806f1d1924ba9fbabbd57d5490afd37c3044ec26823e628aec047c049"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-18.rgba",
+    "size": 32768,
+    "sha256": "4d7112ffaa1f6cf0127f4eba7c217bbd2b8ad4a65172b71ac97d1794183ef65c"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-19.rgba",
+    "size": 32768,
+    "sha256": "647f14058aec5ac4e366d980839b2f75fad3667268fe800ba1230a989933db91"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-20.rgba",
+    "size": 65536,
+    "sha256": "6dcf0693049b914447e8f299ea36994e66e200980fe73e26c8b8639f9d7e64cf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-21.rgba",
+    "size": 131072,
+    "sha256": "898ab37c8d6d1afe4f558281ca1bae45bbf60aa89d338ad02c22f70df832b1da"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-22.rgba",
+    "size": 4096,
+    "sha256": "d911c5651ef68cd7e0b8c4712aec81a582f8ea0929a5d6317d19a00211703407"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-23.rgba",
+    "size": 4096,
+    "sha256": "3ff61be633bd10b1585a898d758143a3a58a065347bb721c003dd445075b89f0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-24.rgba",
+    "size": 1024,
+    "sha256": "d8cc0513f8841dd76fc138a155aa5623d275007dd58ed73fb44006e9d0991747"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-25.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-26.rgba",
+    "size": 16384,
+    "sha256": "aa40ea6688396c0f97d359eaa39bd9fcf50da9d218d2cf7e03488d3de87d9ba7"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-27.rgba",
+    "size": 512,
+    "sha256": "e64f67820c3bb6354139629b64ec0b8fc23e16f0382bc94609915e8cb1ced498"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-28.rgba",
+    "size": 2048,
+    "sha256": "e18035cba852553b6db048e6515bbc29dbd786f6d3275ea9f238b18c749edea5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-29.rgba",
+    "size": 256,
+    "sha256": "1b16eddcce0d554f07ba6b93b01c28f15ade0906f432ced765437acd25486ad3"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-30.rgba",
+    "size": 4096,
+    "sha256": "acdd1e4bf90996c52cdbba070a67f738d5b479fe6c25a80a7bab5c4eead82608"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-31.rgba",
+    "size": 256,
+    "sha256": "bef7c223a8ee71ece2a5cf87f8a9550e72ab993e887f89836ea8b46b54413977"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-32.rgba",
+    "size": 256,
+    "sha256": "9acd9f487db126ff36e283ffb989419421d4ee36fcc69ece7a7388c46c855808"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/2-33.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-13.rgba",
+    "size": 131072,
+    "sha256": "d1f171431a482b3ed97929550a7632a51133026c9a88713e791eff01052c7b53"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-14.rgba",
+    "size": 262144,
+    "sha256": "c3c621bae4c752a95cc7bd9d60cdee9711ac1f6e3e9883ab1040296159f381e0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-15.rgba",
+    "size": 131072,
+    "sha256": "7ae43393f6f3392780e249daa4b85af9da43a6bf5583adabe65a8f66136d2588"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-16.rgba",
+    "size": 131072,
+    "sha256": "c8dd019e1da8a252f201d420d218671aa1fa108944bd72680676e4c4c983bbab"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-17.rgba",
+    "size": 131072,
+    "sha256": "de76edc806f1d1924ba9fbabbd57d5490afd37c3044ec26823e628aec047c049"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-18.rgba",
+    "size": 32768,
+    "sha256": "4d7112ffaa1f6cf0127f4eba7c217bbd2b8ad4a65172b71ac97d1794183ef65c"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-19.rgba",
+    "size": 32768,
+    "sha256": "647f14058aec5ac4e366d980839b2f75fad3667268fe800ba1230a989933db91"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-20.rgba",
+    "size": 65536,
+    "sha256": "6dcf0693049b914447e8f299ea36994e66e200980fe73e26c8b8639f9d7e64cf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-21.rgba",
+    "size": 131072,
+    "sha256": "898ab37c8d6d1afe4f558281ca1bae45bbf60aa89d338ad02c22f70df832b1da"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-22.rgba",
+    "size": 4096,
+    "sha256": "d911c5651ef68cd7e0b8c4712aec81a582f8ea0929a5d6317d19a00211703407"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-23.rgba",
+    "size": 4096,
+    "sha256": "3ff61be633bd10b1585a898d758143a3a58a065347bb721c003dd445075b89f0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-24.rgba",
+    "size": 1024,
+    "sha256": "d8cc0513f8841dd76fc138a155aa5623d275007dd58ed73fb44006e9d0991747"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-25.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-26.rgba",
+    "size": 16384,
+    "sha256": "aa40ea6688396c0f97d359eaa39bd9fcf50da9d218d2cf7e03488d3de87d9ba7"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-27.rgba",
+    "size": 512,
+    "sha256": "e64f67820c3bb6354139629b64ec0b8fc23e16f0382bc94609915e8cb1ced498"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-28.rgba",
+    "size": 2048,
+    "sha256": "e18035cba852553b6db048e6515bbc29dbd786f6d3275ea9f238b18c749edea5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-29.rgba",
+    "size": 256,
+    "sha256": "1b16eddcce0d554f07ba6b93b01c28f15ade0906f432ced765437acd25486ad3"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-30.rgba",
+    "size": 4096,
+    "sha256": "acdd1e4bf90996c52cdbba070a67f738d5b479fe6c25a80a7bab5c4eead82608"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-31.rgba",
+    "size": 256,
+    "sha256": "bef7c223a8ee71ece2a5cf87f8a9550e72ab993e887f89836ea8b46b54413977"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-32.rgba",
+    "size": 256,
+    "sha256": "9acd9f487db126ff36e283ffb989419421d4ee36fcc69ece7a7388c46c855808"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/3-33.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-13.rgba",
+    "size": 131072,
+    "sha256": "d1f171431a482b3ed97929550a7632a51133026c9a88713e791eff01052c7b53"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-14.rgba",
+    "size": 262144,
+    "sha256": "c3c621bae4c752a95cc7bd9d60cdee9711ac1f6e3e9883ab1040296159f381e0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-15.rgba",
+    "size": 131072,
+    "sha256": "7ae43393f6f3392780e249daa4b85af9da43a6bf5583adabe65a8f66136d2588"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-16.rgba",
+    "size": 131072,
+    "sha256": "c8dd019e1da8a252f201d420d218671aa1fa108944bd72680676e4c4c983bbab"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-17.rgba",
+    "size": 131072,
+    "sha256": "de76edc806f1d1924ba9fbabbd57d5490afd37c3044ec26823e628aec047c049"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-18.rgba",
+    "size": 32768,
+    "sha256": "4d7112ffaa1f6cf0127f4eba7c217bbd2b8ad4a65172b71ac97d1794183ef65c"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-19.rgba",
+    "size": 32768,
+    "sha256": "647f14058aec5ac4e366d980839b2f75fad3667268fe800ba1230a989933db91"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-20.rgba",
+    "size": 65536,
+    "sha256": "6dcf0693049b914447e8f299ea36994e66e200980fe73e26c8b8639f9d7e64cf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-21.rgba",
+    "size": 131072,
+    "sha256": "898ab37c8d6d1afe4f558281ca1bae45bbf60aa89d338ad02c22f70df832b1da"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-22.rgba",
+    "size": 4096,
+    "sha256": "d911c5651ef68cd7e0b8c4712aec81a582f8ea0929a5d6317d19a00211703407"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-23.rgba",
+    "size": 4096,
+    "sha256": "3ff61be633bd10b1585a898d758143a3a58a065347bb721c003dd445075b89f0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-24.rgba",
+    "size": 1024,
+    "sha256": "d8cc0513f8841dd76fc138a155aa5623d275007dd58ed73fb44006e9d0991747"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-25.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-26.rgba",
+    "size": 16384,
+    "sha256": "aa40ea6688396c0f97d359eaa39bd9fcf50da9d218d2cf7e03488d3de87d9ba7"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-27.rgba",
+    "size": 512,
+    "sha256": "e64f67820c3bb6354139629b64ec0b8fc23e16f0382bc94609915e8cb1ced498"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-28.rgba",
+    "size": 2048,
+    "sha256": "e18035cba852553b6db048e6515bbc29dbd786f6d3275ea9f238b18c749edea5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-29.rgba",
+    "size": 256,
+    "sha256": "1b16eddcce0d554f07ba6b93b01c28f15ade0906f432ced765437acd25486ad3"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-30.rgba",
+    "size": 4096,
+    "sha256": "acdd1e4bf90996c52cdbba070a67f738d5b479fe6c25a80a7bab5c4eead82608"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-31.rgba",
+    "size": 256,
+    "sha256": "bef7c223a8ee71ece2a5cf87f8a9550e72ab993e887f89836ea8b46b54413977"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-32.rgba",
+    "size": 256,
+    "sha256": "9acd9f487db126ff36e283ffb989419421d4ee36fcc69ece7a7388c46c855808"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/4-33.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/private-readbacks/images.tsv",
+    "size": 8665,
+    "sha256": "4c52eca2b22dec8ed69bdcdadc15e6281907d20d4a0875f193a0dc6b62d1beaf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-13.rgba",
+    "size": 131072,
+    "sha256": "d1f171431a482b3ed97929550a7632a51133026c9a88713e791eff01052c7b53"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-14.rgba",
+    "size": 262144,
+    "sha256": "c3c621bae4c752a95cc7bd9d60cdee9711ac1f6e3e9883ab1040296159f381e0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-15.rgba",
+    "size": 131072,
+    "sha256": "7ae43393f6f3392780e249daa4b85af9da43a6bf5583adabe65a8f66136d2588"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-16.rgba",
+    "size": 131072,
+    "sha256": "c8dd019e1da8a252f201d420d218671aa1fa108944bd72680676e4c4c983bbab"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-17.rgba",
+    "size": 131072,
+    "sha256": "de76edc806f1d1924ba9fbabbd57d5490afd37c3044ec26823e628aec047c049"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-18.rgba",
+    "size": 32768,
+    "sha256": "4d7112ffaa1f6cf0127f4eba7c217bbd2b8ad4a65172b71ac97d1794183ef65c"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-19.rgba",
+    "size": 32768,
+    "sha256": "647f14058aec5ac4e366d980839b2f75fad3667268fe800ba1230a989933db91"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-20.rgba",
+    "size": 65536,
+    "sha256": "6dcf0693049b914447e8f299ea36994e66e200980fe73e26c8b8639f9d7e64cf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-21.rgba",
+    "size": 131072,
+    "sha256": "898ab37c8d6d1afe4f558281ca1bae45bbf60aa89d338ad02c22f70df832b1da"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-22.rgba",
+    "size": 4096,
+    "sha256": "d911c5651ef68cd7e0b8c4712aec81a582f8ea0929a5d6317d19a00211703407"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-23.rgba",
+    "size": 4096,
+    "sha256": "3ff61be633bd10b1585a898d758143a3a58a065347bb721c003dd445075b89f0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-24.rgba",
+    "size": 1024,
+    "sha256": "d8cc0513f8841dd76fc138a155aa5623d275007dd58ed73fb44006e9d0991747"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-25.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-26.rgba",
+    "size": 16384,
+    "sha256": "aa40ea6688396c0f97d359eaa39bd9fcf50da9d218d2cf7e03488d3de87d9ba7"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-27.rgba",
+    "size": 512,
+    "sha256": "e64f67820c3bb6354139629b64ec0b8fc23e16f0382bc94609915e8cb1ced498"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-28.rgba",
+    "size": 2048,
+    "sha256": "e18035cba852553b6db048e6515bbc29dbd786f6d3275ea9f238b18c749edea5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-29.rgba",
+    "size": 256,
+    "sha256": "1b16eddcce0d554f07ba6b93b01c28f15ade0906f432ced765437acd25486ad3"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-30.rgba",
+    "size": 4096,
+    "sha256": "acdd1e4bf90996c52cdbba070a67f738d5b479fe6c25a80a7bab5c4eead82608"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-31.rgba",
+    "size": 256,
+    "sha256": "bef7c223a8ee71ece2a5cf87f8a9550e72ab993e887f89836ea8b46b54413977"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-32.rgba",
+    "size": 256,
+    "sha256": "9acd9f487db126ff36e283ffb989419421d4ee36fcc69ece7a7388c46c855808"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/0-33.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-13.rgba",
+    "size": 131072,
+    "sha256": "d1f171431a482b3ed97929550a7632a51133026c9a88713e791eff01052c7b53"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-14.rgba",
+    "size": 262144,
+    "sha256": "c3c621bae4c752a95cc7bd9d60cdee9711ac1f6e3e9883ab1040296159f381e0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-15.rgba",
+    "size": 131072,
+    "sha256": "7ae43393f6f3392780e249daa4b85af9da43a6bf5583adabe65a8f66136d2588"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-16.rgba",
+    "size": 131072,
+    "sha256": "c8dd019e1da8a252f201d420d218671aa1fa108944bd72680676e4c4c983bbab"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-17.rgba",
+    "size": 131072,
+    "sha256": "de76edc806f1d1924ba9fbabbd57d5490afd37c3044ec26823e628aec047c049"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-18.rgba",
+    "size": 32768,
+    "sha256": "4d7112ffaa1f6cf0127f4eba7c217bbd2b8ad4a65172b71ac97d1794183ef65c"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-19.rgba",
+    "size": 32768,
+    "sha256": "647f14058aec5ac4e366d980839b2f75fad3667268fe800ba1230a989933db91"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-20.rgba",
+    "size": 65536,
+    "sha256": "6dcf0693049b914447e8f299ea36994e66e200980fe73e26c8b8639f9d7e64cf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-21.rgba",
+    "size": 131072,
+    "sha256": "898ab37c8d6d1afe4f558281ca1bae45bbf60aa89d338ad02c22f70df832b1da"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-22.rgba",
+    "size": 4096,
+    "sha256": "d911c5651ef68cd7e0b8c4712aec81a582f8ea0929a5d6317d19a00211703407"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-23.rgba",
+    "size": 4096,
+    "sha256": "3ff61be633bd10b1585a898d758143a3a58a065347bb721c003dd445075b89f0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-24.rgba",
+    "size": 1024,
+    "sha256": "d8cc0513f8841dd76fc138a155aa5623d275007dd58ed73fb44006e9d0991747"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-25.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-26.rgba",
+    "size": 16384,
+    "sha256": "aa40ea6688396c0f97d359eaa39bd9fcf50da9d218d2cf7e03488d3de87d9ba7"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-27.rgba",
+    "size": 512,
+    "sha256": "e64f67820c3bb6354139629b64ec0b8fc23e16f0382bc94609915e8cb1ced498"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-28.rgba",
+    "size": 2048,
+    "sha256": "e18035cba852553b6db048e6515bbc29dbd786f6d3275ea9f238b18c749edea5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-29.rgba",
+    "size": 256,
+    "sha256": "1b16eddcce0d554f07ba6b93b01c28f15ade0906f432ced765437acd25486ad3"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-30.rgba",
+    "size": 4096,
+    "sha256": "acdd1e4bf90996c52cdbba070a67f738d5b479fe6c25a80a7bab5c4eead82608"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-31.rgba",
+    "size": 256,
+    "sha256": "bef7c223a8ee71ece2a5cf87f8a9550e72ab993e887f89836ea8b46b54413977"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-32.rgba",
+    "size": 256,
+    "sha256": "9acd9f487db126ff36e283ffb989419421d4ee36fcc69ece7a7388c46c855808"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/1-33.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-13.rgba",
+    "size": 131072,
+    "sha256": "d1f171431a482b3ed97929550a7632a51133026c9a88713e791eff01052c7b53"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-14.rgba",
+    "size": 262144,
+    "sha256": "c3c621bae4c752a95cc7bd9d60cdee9711ac1f6e3e9883ab1040296159f381e0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-15.rgba",
+    "size": 131072,
+    "sha256": "7ae43393f6f3392780e249daa4b85af9da43a6bf5583adabe65a8f66136d2588"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-16.rgba",
+    "size": 131072,
+    "sha256": "c8dd019e1da8a252f201d420d218671aa1fa108944bd72680676e4c4c983bbab"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-17.rgba",
+    "size": 131072,
+    "sha256": "de76edc806f1d1924ba9fbabbd57d5490afd37c3044ec26823e628aec047c049"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-18.rgba",
+    "size": 32768,
+    "sha256": "4d7112ffaa1f6cf0127f4eba7c217bbd2b8ad4a65172b71ac97d1794183ef65c"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-19.rgba",
+    "size": 32768,
+    "sha256": "647f14058aec5ac4e366d980839b2f75fad3667268fe800ba1230a989933db91"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-20.rgba",
+    "size": 65536,
+    "sha256": "6dcf0693049b914447e8f299ea36994e66e200980fe73e26c8b8639f9d7e64cf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-21.rgba",
+    "size": 131072,
+    "sha256": "898ab37c8d6d1afe4f558281ca1bae45bbf60aa89d338ad02c22f70df832b1da"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-22.rgba",
+    "size": 4096,
+    "sha256": "d911c5651ef68cd7e0b8c4712aec81a582f8ea0929a5d6317d19a00211703407"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-23.rgba",
+    "size": 4096,
+    "sha256": "3ff61be633bd10b1585a898d758143a3a58a065347bb721c003dd445075b89f0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-24.rgba",
+    "size": 1024,
+    "sha256": "d8cc0513f8841dd76fc138a155aa5623d275007dd58ed73fb44006e9d0991747"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-25.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-26.rgba",
+    "size": 16384,
+    "sha256": "aa40ea6688396c0f97d359eaa39bd9fcf50da9d218d2cf7e03488d3de87d9ba7"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-27.rgba",
+    "size": 512,
+    "sha256": "e64f67820c3bb6354139629b64ec0b8fc23e16f0382bc94609915e8cb1ced498"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-28.rgba",
+    "size": 2048,
+    "sha256": "e18035cba852553b6db048e6515bbc29dbd786f6d3275ea9f238b18c749edea5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-29.rgba",
+    "size": 256,
+    "sha256": "1b16eddcce0d554f07ba6b93b01c28f15ade0906f432ced765437acd25486ad3"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-30.rgba",
+    "size": 4096,
+    "sha256": "acdd1e4bf90996c52cdbba070a67f738d5b479fe6c25a80a7bab5c4eead82608"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-31.rgba",
+    "size": 256,
+    "sha256": "bef7c223a8ee71ece2a5cf87f8a9550e72ab993e887f89836ea8b46b54413977"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-32.rgba",
+    "size": 256,
+    "sha256": "9acd9f487db126ff36e283ffb989419421d4ee36fcc69ece7a7388c46c855808"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/2-33.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-13.rgba",
+    "size": 131072,
+    "sha256": "d1f171431a482b3ed97929550a7632a51133026c9a88713e791eff01052c7b53"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-14.rgba",
+    "size": 262144,
+    "sha256": "c3c621bae4c752a95cc7bd9d60cdee9711ac1f6e3e9883ab1040296159f381e0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-15.rgba",
+    "size": 131072,
+    "sha256": "7ae43393f6f3392780e249daa4b85af9da43a6bf5583adabe65a8f66136d2588"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-16.rgba",
+    "size": 131072,
+    "sha256": "c8dd019e1da8a252f201d420d218671aa1fa108944bd72680676e4c4c983bbab"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-17.rgba",
+    "size": 131072,
+    "sha256": "de76edc806f1d1924ba9fbabbd57d5490afd37c3044ec26823e628aec047c049"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-18.rgba",
+    "size": 32768,
+    "sha256": "4d7112ffaa1f6cf0127f4eba7c217bbd2b8ad4a65172b71ac97d1794183ef65c"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-19.rgba",
+    "size": 32768,
+    "sha256": "647f14058aec5ac4e366d980839b2f75fad3667268fe800ba1230a989933db91"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-20.rgba",
+    "size": 65536,
+    "sha256": "6dcf0693049b914447e8f299ea36994e66e200980fe73e26c8b8639f9d7e64cf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-21.rgba",
+    "size": 131072,
+    "sha256": "898ab37c8d6d1afe4f558281ca1bae45bbf60aa89d338ad02c22f70df832b1da"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-22.rgba",
+    "size": 4096,
+    "sha256": "d911c5651ef68cd7e0b8c4712aec81a582f8ea0929a5d6317d19a00211703407"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-23.rgba",
+    "size": 4096,
+    "sha256": "3ff61be633bd10b1585a898d758143a3a58a065347bb721c003dd445075b89f0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-24.rgba",
+    "size": 1024,
+    "sha256": "d8cc0513f8841dd76fc138a155aa5623d275007dd58ed73fb44006e9d0991747"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-25.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-26.rgba",
+    "size": 16384,
+    "sha256": "aa40ea6688396c0f97d359eaa39bd9fcf50da9d218d2cf7e03488d3de87d9ba7"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-27.rgba",
+    "size": 512,
+    "sha256": "e64f67820c3bb6354139629b64ec0b8fc23e16f0382bc94609915e8cb1ced498"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-28.rgba",
+    "size": 2048,
+    "sha256": "e18035cba852553b6db048e6515bbc29dbd786f6d3275ea9f238b18c749edea5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-29.rgba",
+    "size": 256,
+    "sha256": "1b16eddcce0d554f07ba6b93b01c28f15ade0906f432ced765437acd25486ad3"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-30.rgba",
+    "size": 4096,
+    "sha256": "acdd1e4bf90996c52cdbba070a67f738d5b479fe6c25a80a7bab5c4eead82608"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-31.rgba",
+    "size": 256,
+    "sha256": "bef7c223a8ee71ece2a5cf87f8a9550e72ab993e887f89836ea8b46b54413977"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-32.rgba",
+    "size": 256,
+    "sha256": "9acd9f487db126ff36e283ffb989419421d4ee36fcc69ece7a7388c46c855808"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/3-33.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-13.rgba",
+    "size": 131072,
+    "sha256": "d1f171431a482b3ed97929550a7632a51133026c9a88713e791eff01052c7b53"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-14.rgba",
+    "size": 262144,
+    "sha256": "c3c621bae4c752a95cc7bd9d60cdee9711ac1f6e3e9883ab1040296159f381e0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-15.rgba",
+    "size": 131072,
+    "sha256": "7ae43393f6f3392780e249daa4b85af9da43a6bf5583adabe65a8f66136d2588"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-16.rgba",
+    "size": 131072,
+    "sha256": "c8dd019e1da8a252f201d420d218671aa1fa108944bd72680676e4c4c983bbab"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-17.rgba",
+    "size": 131072,
+    "sha256": "de76edc806f1d1924ba9fbabbd57d5490afd37c3044ec26823e628aec047c049"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-18.rgba",
+    "size": 32768,
+    "sha256": "4d7112ffaa1f6cf0127f4eba7c217bbd2b8ad4a65172b71ac97d1794183ef65c"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-19.rgba",
+    "size": 32768,
+    "sha256": "647f14058aec5ac4e366d980839b2f75fad3667268fe800ba1230a989933db91"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-20.rgba",
+    "size": 65536,
+    "sha256": "6dcf0693049b914447e8f299ea36994e66e200980fe73e26c8b8639f9d7e64cf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-21.rgba",
+    "size": 131072,
+    "sha256": "898ab37c8d6d1afe4f558281ca1bae45bbf60aa89d338ad02c22f70df832b1da"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-22.rgba",
+    "size": 4096,
+    "sha256": "d911c5651ef68cd7e0b8c4712aec81a582f8ea0929a5d6317d19a00211703407"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-23.rgba",
+    "size": 4096,
+    "sha256": "3ff61be633bd10b1585a898d758143a3a58a065347bb721c003dd445075b89f0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-24.rgba",
+    "size": 1024,
+    "sha256": "d8cc0513f8841dd76fc138a155aa5623d275007dd58ed73fb44006e9d0991747"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-25.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-26.rgba",
+    "size": 16384,
+    "sha256": "aa40ea6688396c0f97d359eaa39bd9fcf50da9d218d2cf7e03488d3de87d9ba7"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-27.rgba",
+    "size": 512,
+    "sha256": "e64f67820c3bb6354139629b64ec0b8fc23e16f0382bc94609915e8cb1ced498"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-28.rgba",
+    "size": 2048,
+    "sha256": "e18035cba852553b6db048e6515bbc29dbd786f6d3275ea9f238b18c749edea5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-29.rgba",
+    "size": 256,
+    "sha256": "1b16eddcce0d554f07ba6b93b01c28f15ade0906f432ced765437acd25486ad3"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-30.rgba",
+    "size": 4096,
+    "sha256": "acdd1e4bf90996c52cdbba070a67f738d5b479fe6c25a80a7bab5c4eead82608"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-31.rgba",
+    "size": 256,
+    "sha256": "bef7c223a8ee71ece2a5cf87f8a9550e72ab993e887f89836ea8b46b54413977"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-32.rgba",
+    "size": 256,
+    "sha256": "9acd9f487db126ff36e283ffb989419421d4ee36fcc69ece7a7388c46c855808"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/4-33.rgba",
+    "size": 1024,
+    "sha256": "c0d9a1875aaf48c848d31c2f2e4c5e0cb0a0d346db63ee2abbdbe35768c1fbb5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/private-readbacks/images.tsv",
+    "size": 8665,
+    "sha256": "4c52eca2b22dec8ed69bdcdadc15e6281907d20d4a0875f193a0dc6b62d1beaf"
+  }
+]

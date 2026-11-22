@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-system-art-realization\\b-gl\\test_native_gl_texture.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-system-art-realization\\research\\runs\\parallel-system-art-realization-20261122\\validation-03\\private-readbacks"
+  ],
+  "exit": 0,
+  "executable_sha256": "175c1145e5d4ad683f218e4fadc394cc1f43a8f8ec7c6b501dd628064ea31b2f",
+  "log_sha256": "97ec9be2affe70c72fac6ce185299f1c3f73ab96449d710e74edad6e0f3425c8",
+  "source_manifest_sha256": "112807c318683f97875cfb06ab8d54e8d0ed0adaa7a3587bda3a5c495bb4e833",
+  "authorization": "root explicitly authorized never-visible/noShow/noSwap texture-only offscreen WGL execution",
+  "actual_gpu_context_opened": true,
+  "visible_window": false,
+  "presentation": false,
+  "audio_endpoint": false
+}

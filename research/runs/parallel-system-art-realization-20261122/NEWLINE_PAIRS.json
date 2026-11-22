@@ -1,0 +1,32 @@
+[
+  {
+    "path": "cmake/native_game.cmake",
+    "measured_raw_sha256": "d13090a1629c7350c965fe07100949f9099ec5ee8ce5f98fd54bb6d774cd3a21",
+    "committed_lf_sha256": "2a80d824cf15adea82aa88cdb5ae22065fc0a075ef8cb396561bb39d63c53c33",
+    "normalization": "CRLF to LF only"
+  },
+  {
+    "path": "runtime/include/mka/movie_gl_device.hpp",
+    "measured_raw_sha256": "781dcf8c18a04bafc150cb43221a9dbd7c57bdc042f9d772979cb44013bd3623",
+    "committed_lf_sha256": "0f80bad7c320e076c46ef6b3b02cf3391f20c62dbb7901ddafcd1a3b2328f949",
+    "normalization": "CRLF to LF only"
+  },
+  {
+    "path": "runtime/include/mka/native_gl_texture.hpp",
+    "measured_raw_sha256": "e98c55cf0b230087e30c3fb9dfab2b388faa1e76cf295d5ce018f8ab00d89e40",
+    "committed_lf_sha256": "d8e3ba9d89b6c11f07bafa506dca3b48e58c32264e7bb222450e3663826da444",
+    "normalization": "CRLF to LF only"
+  },
+  {
+    "path": "runtime/src/native/movie_gl_device.cpp",
+    "measured_raw_sha256": "99268f5cf72d38f9d1f591e99060dcdda902d649f1d505efc58a0824ff1185f5",
+    "committed_lf_sha256": "265df40bb03bfdd6df2317eee38304ea57666eb568eaf25a7f8d9ab71bd32c19",
+    "normalization": "CRLF to LF only"
+  },
+  {
+    "path": "tests/test_native_gl_texture.cpp",
+    "measured_raw_sha256": "2e820f04c3fa106c58f469eface27fc4c22b42cb03505b6d06a1352ff4dd99af",
+    "committed_lf_sha256": "65a74cc793e08909ea965077b9368ec16e8d293a435dd148a203da2a3ba547e7",
+    "normalization": "CRLF to LF only"
+  }
+]

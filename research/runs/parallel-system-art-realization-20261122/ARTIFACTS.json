@@ -1,0 +1,398 @@
+[
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/.gitignore",
+    "sha256": "2171260d0542a1c9d609b1e5b9584f1b67160a92a6ea3934038b25d9d85a0f84"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/ARCHIVES.json",
+    "sha256": "d73a3395a74736675e3bb3fa50ac56fd942d286ad47524c5808ecbda0da847f7"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/build.ninja.gz",
+    "sha256": "d831bacbb2922d754bb877e652e7b67e5abd4e79f68e19c7930bac49d24b5510"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/CLIENTS.json",
+    "sha256": "21b39757c93a7f91a55e901b73f62476f4c53b17d366e9cc83a045d632d7daf9"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/CMakeCache.txt.gz",
+    "sha256": "5c35bb70a1fb510a2822213144e460dc47286389373395ae69c444fe8637cef0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/COMMAND-01.json",
+    "sha256": "405c1c614624d47d2a1332d7f690bd1bc86dd42aadcb33daa1daf14d0cf71ddd"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/COMMAND-02.json",
+    "sha256": "460e8b06d5333b613fae5f17a723a2f4ffc1e92ce4d3115893a03aa15ed20e21"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/COMMAND-03.json",
+    "sha256": "8aadbffed554a25754306010d93afa24c862d1aabee78671055dc275970deca2"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/COMMAND-FULL.json",
+    "sha256": "af9db3cf543b89b4adfbb05796fd6ea0ead21c39a407efb273b4a38c0fa4d49a"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/COMMAND-REFS.json",
+    "sha256": "27c5d940a879bb6ee864048022c5697f6f9abd735e1c47eced9c683bfced0b91"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/COMMAND-SAMPLERS-02.json",
+    "sha256": "5eb99ef753692aefdeb3a9d7e0675b7e15a24bc2d1cdc9c8b7f439129de9a7f1"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/COMMAND-SAMPLERS.json",
+    "sha256": "73801a4d103772fc51c118541d6d6721bd799f728d084c205112adc9a6c85fcd"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/ExportFirstScene.java",
+    "sha256": "8272cf863c994fa5ff582973706595229995cc39dd9c6d9ab8af403f2cf4d58a"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/FontReferences.java",
+    "sha256": "293cfbfc641afda5ae8d5e0e75ad2601ec5bc899650f792fed7e64ca31276d5a"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/FONT_REFERENCES.tsv",
+    "sha256": "2cd13ec4d2b6785e5ff0a6b3367e473220fc745a76952808aefaf309ba370ff8"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/FullFontListing.java",
+    "sha256": "243e945fab96c5ccd4cc65e9012f3779dfda3896a342c274894a1d294ff50238"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/ghidra-01.log.gz",
+    "sha256": "82d68e61abf3ed77c9734a304827652d4940fb0966f98d5b2064112ac0a97c06"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/ghidra-02.log.gz",
+    "sha256": "8cefae606dabfb47cba4dadce851f3e8fee1193bbd82c4515b25133a541f59e8"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/ghidra-03.log.gz",
+    "sha256": "a5ba9908b1d3cf650e130613b5cce429b9bdd4027aa47cd7f9eb86b770a69ff8"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/ghidra-full.log.gz",
+    "sha256": "04e3a52da05ecb72030dca1331f7e6f4a1ca744a96d3621f581c658540031e2a"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/ghidra-refs.log.gz",
+    "sha256": "b8693439a1f8b810c55821c55eb06e359c33ceea8c9a8c87d34d45773de7a8fe"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/ghidra-samplers-02.log.gz",
+    "sha256": "5964af6626589eae9659ca070c9931f55257a230f904a7b2511e2fccc2ca38af"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/ghidra-samplers.log.gz",
+    "sha256": "0de3f88fe14775b952fcd4bf3cd45bbc4b5f8c8512d90b2756d5d7366dd4d76e"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/movie_gl_device.cpp.before-admission-refinement.gz",
+    "sha256": "1f2836d5fd4b57cd246e54638201cdd56a7cf827a9960562ca02a2bd00481a31"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/movie_gl_device.cpp.before-revoke.gz",
+    "sha256": "abeb653eb50c50039df892730f52a1e85849bb1dc70131ab0064f06f3d49cd89"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/movie_gl_device.hpp.before-admission-refinement.gz",
+    "sha256": "05a0d162a5fa17a5be80d97e7cd1b6e765732be5e654b9ab174603f4a229fba4"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/native_gl_texture.hpp.before-revoke.gz",
+    "sha256": "e83f5ccb75eec0156806645813972fb39603392e16b21b30cfaf18864ce82318"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/NEWLINE_PAIRS.json",
+    "sha256": "7e6319cf88191f9296c9889f8a8121533328fcd981b80b6fe5c936b91efc1b1d"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/READBACKS.json",
+    "sha256": "f61e22cc0e640757f2776df699a5e94bac6c8ef924aff75625088066a824ed97"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/sampler-candidates.txt",
+    "sha256": "60aee0f369f30f65b15385c006de14e351f0d1ed72b843d9b2c6c7107e19b7c0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/SamplerOwners.java",
+    "sha256": "98e997b3af244e68e7eef8b8673f5c0fc69a47af484d57b61296c3db478ba156"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/SAMPLER_OWNERS-02.tsv",
+    "sha256": "96b9d8ca1217f3f150ac0ce65518eb3e631252a638c7e4e4d091d45993fa8d80"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/SAMPLER_OWNERS.tsv",
+    "sha256": "158fa7dfa1272b84dc51419eb75a8120bb72469004cc6e696c68206b73f06fbe"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/SOURCE_CHECK.json",
+    "sha256": "06c57215badd61cddd0c2950de91c95e92e39ca6b8074d0c65da4943f24ca42e"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/test_native_gl_texture.before-pbo.cpp.gz",
+    "sha256": "2a09bdacba0c52b506af1806301a655e2210d445b4aaf4ccd829737a52b2a854"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/test_native_gl_texture.cpp.before-admission-refinement.gz",
+    "sha256": "5ff16a97dc76427606379de6e6ea9c9e1becf322bc928336ca4edf726f2a4ccd"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/test_native_gl_texture.cpp.before-revoke.gz",
+    "sha256": "88f7705027886d42d995e4e62cd4dc198ebbe55d00c21b4793ff969e6a0763db"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/WORK.md",
+    "sha256": "5fd5594d5cea4cb688b761723f22b12db4d120e45e77fceb73356cada8a91baf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-01/0019cfa0.asm",
+    "sha256": "7e3f743ee8111f924d5f0d9099d28018d7ad003ba9b668fedf5b0761a61e50b9"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-01/0019cfa0.c.gz",
+    "sha256": "b7d09d47d87e53d332219770e7547ef6e637d2c53bb75249f13cf4809a84fd85"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-01/00300e20.asm",
+    "sha256": "17fd4a1a7031a8047f7b178ee24a581e3daac3c8a84a12c68de691c51658d754"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-01/00300e20.c.gz",
+    "sha256": "146a8860376730d5210d49c249e351a37b050c1390f831329b53cde479cf7ff5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-01/00300e60.asm",
+    "sha256": "82f2de37e1218a1c7a82356be03543655931dd6b9352e26824d0e8f2eb75954e"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-01/00300e60.c.gz",
+    "sha256": "5ab0e1aca3fa0b41544cde43250c5fc656f03d9bb9cac85d0399979e23cbf923"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-01/003de190.asm",
+    "sha256": "6bf0f449f53d08012765062ffd3c007f41ca79aa19c27bde833f80c397214379"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-01/003de190.c.gz",
+    "sha256": "5c41ce97ab2b5046384fc3325145477341feb6bf26138808ec810813635049f3"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-01/batch-report.txt",
+    "sha256": "f511561ef53bb2c90e73aa45af19d497e36ea12a43432e78611a59656f66f79b"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-01/calls.tsv",
+    "sha256": "a62993bc1a9a226b3a511f9c723779339d7ed0b8c17a47f291ae0c9196483713"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-02/001a8680.asm",
+    "sha256": "5ca61ec503301b3ffdf45fbd58736f6f9c0058a82d14b2a2fbc8b8e1e755762c"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-02/001a8680.c.gz",
+    "sha256": "fe00445ef5223aaf9d0fae9a9f8d9da16700389da2aa75b124dbe24cce5867b7"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-02/002dfe50.asm",
+    "sha256": "a9d1366b15e750a185a36af624794e87b4047b73fdbbe8044e68dc8c74861c66"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-02/002dfe50.c.gz",
+    "sha256": "35e283c988b774f3ff127102781ac9cae2cf9b5b864abee69d82a84a0ab1feaf"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-02/002ffd60.asm",
+    "sha256": "9247c40a18b5a7bf295c0a788e349d32247bd0074505770e0703c6174d325338"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-02/002ffd60.c.gz",
+    "sha256": "3736c8ebf47145fc71d1cc192b88683dd5ca852284567400a1a2ed79223a2779"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-02/003de060.asm",
+    "sha256": "07c7b7e01ba6e4287ca11f03beb083e67384a193500fe518179dbe8072a15373"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-02/003de060.c.gz",
+    "sha256": "fc6c28622237d0a02319f9d72714bcd60f82c372fc82429a0c150a642cc75fc0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-02/batch-report.txt",
+    "sha256": "f511561ef53bb2c90e73aa45af19d497e36ea12a43432e78611a59656f66f79b"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-02/calls.tsv",
+    "sha256": "bcad8d2900d82651907e46d973d7061a0597a958aa8b06957635fe13f7f487ff"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-03/001a97e0.asm",
+    "sha256": "59679dbddc042540cf96b0aaba86f3544ca1951ac03ad18f02879298a6c918aa"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-03/001a97e0.c.gz",
+    "sha256": "13a4d54cf2bf920b86c505897cbc09a05a609ad4ddc4fa211dd3236b753a991e"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-03/001ab4f0.asm",
+    "sha256": "38ac83d26aa749f5938756d3b72e2af3c8d23c8eedf8d0d181c789b1dbaf35e5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-03/001ab4f0.c.gz",
+    "sha256": "d15aee79894f6814010759fe7194616cdc4ac96240b2bc704a0f8ac7759810ac"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-03/001b5780.asm",
+    "sha256": "9d8ca0b366ccfdd28d565bbdebd1a034ddeefaafe52815e4ffef01c6dfdb74a2"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-03/001b5780.c.gz",
+    "sha256": "4367c099818158e17ee173b49780b1a60077169338d2317b2e67a641eb18eca2"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-03/001d3490.asm",
+    "sha256": "db0c19e631acb24fb45cc0022a4c0b9ebe2dc76aaf6da6877c82e4fadd0a5a58"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-03/001d3490.c.gz",
+    "sha256": "f7f96034b6981479ac611990041de53f380574e2e5f7891622d853efeca708a2"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-03/batch-report.txt",
+    "sha256": "f511561ef53bb2c90e73aa45af19d497e36ea12a43432e78611a59656f66f79b"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-03/calls.tsv",
+    "sha256": "26c9c8f41cd79494bc2334c0a2101c1f4513d91df0790d77a9d90e3af7856fad"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-full/0019cfa0.asm",
+    "sha256": "e640f87f580448d01256375c1065bb384e5f2803516b3931de750a5c58ba2b8e"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-full/001a8680.asm",
+    "sha256": "042f08219c272e0aca362d4a5afec6e426b938b279e9f7aebe93fb9a6ce99033"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-full/001a97e0.asm",
+    "sha256": "fef776f5253d77dfd9440efcfceb88d626e90fbe032be4e43cf26351d1088598"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-full/002dfe50.asm",
+    "sha256": "ecbb31859ff273d15613ae7d8a3180f9978f955921c24d054a80392824afcb53"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-full/002ffd60.asm",
+    "sha256": "a2b2a410ef68916eb0f3ee4d7f3cdf3fde33c7fa2e4c054a7a28b28b3f5220fd"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-full/003de060.asm",
+    "sha256": "0860fe4c34d12d87059928efef6bf14f472360f0b27cd6201d1e335899c66ac4"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/source-full/003de190.asm",
+    "sha256": "6a601d00d8cc846e9098c36fba25e9d0533d524a5ab0d0b5d9c55c070fd1afbd"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-01/build.json",
+    "sha256": "4bce1b41b54c47712a55cbd4d1f924b622ebcecfdf1f2f9102646dcb426e82b5"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-01/build.log.gz",
+    "sha256": "7e02c46c496516704c0d1950ed7cb87e7f7f64510ed91437f6c2f5209fc4bff3"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-01/configure.json",
+    "sha256": "d44085d70b3e1a4ab3d84675fc4af9d271efd633553e44c95ff5b8cb38c473ad"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-01/configure.log.gz",
+    "sha256": "8693a2c5cf83940caf85ab6918b37a019f9377f84c0430501cbd32386c688b7c"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-01/SOURCE_FILES.json",
+    "sha256": "2697084ee55d0180134cc2e93df60ff105d133237dba6fe77e13554ca898fa97"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-02/build.json",
+    "sha256": "42d03dfe5422bb312e0e32fbe8e9541865b54df527f2cfdccac5575a1d788efd"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-02/build.log.gz",
+    "sha256": "acf128fc373cd58e13406485f5a1d4eded6f3b246cb5a05c9f35c82facc8998c"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-02/configure.json",
+    "sha256": "2eb7b211ee901f8b0a61be0fdbaa8d08be0abb1f8a1a651c9715dc46b563bdc0"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-02/configure.log.gz",
+    "sha256": "5a24610374bbbb343dd0e4e3cac0d04d5db4e4fec3733404d01061e035156d35"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/build.json",
+    "sha256": "7b6f8f859bbecfb04431837d03aed0cdd9b34891849ccd70e945bf711c5d07aa"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/build.log.gz",
+    "sha256": "4efaa3b9c39ba6c12e59d7b2c3de3c241fde1d48cce60135e9a6929d38469f15"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/SOURCE_FILES.json",
+    "sha256": "112807c318683f97875cfb06ab8d54e8d0ed0adaa7a3587bda3a5c495bb4e833"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/texture-only.json",
+    "sha256": "384b4d519b0a8e7d21053ab6130d7b115867dc14fa3941cdb0e4e736adfd1176"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-03/texture-only.log.gz",
+    "sha256": "ac7cc49d0e2be63da2ddc697752f366f1af7fa95bd48a86d2548f6f079137085"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/build.json",
+    "sha256": "7460c234a5e30d5e40704774832ab839e494e62ec460d0469635cce94fc1285b"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/build.log.gz",
+    "sha256": "8c992be99b648f5bf9b91a23dd7e7415d37e5485498ca9e302169594b5c66079"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/SOURCE_FILES.json",
+    "sha256": "afa8402b7db880264d9378efcc6f3ded8761245c48e2cfed30f34e7d8f9c03a6"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/texture-only.json",
+    "sha256": "46e7554f1ccf39cfb26f9765733cc2920835d94d7efbcdaf1f8a414952a61e97"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-04/texture-only.log.gz",
+    "sha256": "ac7cc49d0e2be63da2ddc697752f366f1af7fa95bd48a86d2548f6f079137085"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/build.json",
+    "sha256": "7b1fa2c6f09d04751b23d213b85ce01b66cf99eb6ea5e1cf4dd6ecc3ed87acaa"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/build.log.gz",
+    "sha256": "8c992be99b648f5bf9b91a23dd7e7415d37e5485498ca9e302169594b5c66079"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/SOURCE_FILES.json",
+    "sha256": "b8d27bfd576c93f857e60f99bbead9283735a4adf5d48f1ca56c7a302369434b"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/texture-only.json",
+    "sha256": "cfdd5f62f8a2591d10c5e197765c6ff8e980541658268227468461abe0382c5b"
+  },
+  {
+    "path": "research/runs/parallel-system-art-realization-20261122/validation-05/texture-only.log.gz",
+    "sha256": "ac7cc49d0e2be63da2ddc697752f366f1af7fa95bd48a86d2548f6f079137085"
+  }
+]
