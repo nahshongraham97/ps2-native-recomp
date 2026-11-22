@@ -1,0 +1,141 @@
+{
+  "lossless": true,
+  "originals_preserved_locally": true,
+  "files": {
+    "ghidra-01.log": {
+      "archive": "ghidra-01.log.gz",
+      "sha256": "7ff0816ff36339e3d6e3c774704cab88998139c37d6c339ff5f90b5b18899873",
+      "bytes": 5992
+    },
+    "ghidra-02.log": {
+      "archive": "ghidra-02.log.gz",
+      "sha256": "9f1339e58845ca59a1118503580c6c1dc4896e4cc44e333f3c15a82a0a89ea34",
+      "bytes": 5980
+    },
+    "ghidra-03.log": {
+      "archive": "ghidra-03.log.gz",
+      "sha256": "0e306bae8896e6e105dbaf90b82c8ffa824d1c6fc4a99fc3de4b6aa90e89e424",
+      "bytes": 5968
+    },
+    "scripts-01.log": {
+      "archive": "scripts-01.log.gz",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "scripts-02.log": {
+      "archive": "scripts-02.log.gz",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "scripts-03.log": {
+      "archive": "scripts-03.log.gz",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "source-01/2870.c": {
+      "archive": "source-01/2870.c.gz",
+      "sha256": "d381bddeef12af6f6d82585829207731932901c0bc4e6d73f8393209fd0b419e",
+      "bytes": 1058
+    },
+    "source-01/7918.c": {
+      "archive": "source-01/7918.c.gz",
+      "sha256": "76b37bb84c4db2ac7510357f62ee950e601c65578a5bac7ef643e7d0aeb59015",
+      "bytes": 860
+    },
+    "source-01/80a8.c": {
+      "archive": "source-01/80a8.c.gz",
+      "sha256": "fc0b027f8516e94bef93aedacc1c496c95db8fe660de4f55dbd7c1839c82bb3a",
+      "bytes": 2185
+    },
+    "source-01/8ac4.c": {
+      "archive": "source-01/8ac4.c.gz",
+      "sha256": "0600ec5a04207a3a991f3a4ca21a8db6978cc8a13443b038a91af49868593204",
+      "bytes": 417
+    },
+    "source-02/87ec.c": {
+      "archive": "source-02/87ec.c.gz",
+      "sha256": "2c38f13385ed49910372433a807261d13a7e20d216c3fc61f030abef6a90f918",
+      "bytes": 2480
+    },
+    "source-02/91fc.c": {
+      "archive": "source-02/91fc.c.gz",
+      "sha256": "8adaa60fa6f2c0d4dd0debe1b7de351e90c262042ccd2befcb682f2b1887ff2a",
+      "bytes": 772
+    },
+    "source-02/fd50.c": {
+      "archive": "source-02/fd50.c.gz",
+      "sha256": "db8fce6758c82841d750ed86a8034faa90d5bf2cd25c4542cb11183f39d748c3",
+      "bytes": 1298
+    },
+    "source-03/28a4.c": {
+      "archive": "source-03/28a4.c.gz",
+      "sha256": "c2726a75054cc284f970b7e1adc797d4fdd803333aef8671d64f11a6b6119ba1",
+      "bytes": 906
+    },
+    "source-03/36d4.c": {
+      "archive": "source-03/36d4.c.gz",
+      "sha256": "9874d35891575f6d95e2610f34d72e1cbeba17f81e08be5edb0193c6c93c88d8",
+      "bytes": 239
+    },
+    "xbox-ghidra-01.log": {
+      "archive": "xbox-ghidra-01.log.gz",
+      "sha256": "975c6d8616d5c5b6f2d6818e1c4a0cf4cfecb8af1f92797b1ded0bcdfed16e05",
+      "bytes": 5804
+    },
+    "xbox-ghidra-02.log": {
+      "archive": "xbox-ghidra-02.log.gz",
+      "sha256": "1f3a144540bdbb7ab39c751dd2dbe100e1b30b8fead81d300ffa6b57362a71fa",
+      "bytes": 5815
+    },
+    "xbox-ghidra-03.log": {
+      "archive": "xbox-ghidra-03.log.gz",
+      "sha256": "b9ee6bf75596d238abbd87d12bbf7fb37af60e957d36791386d156e701cc65a5",
+      "bytes": 5837
+    },
+    "xbox-ghidra-04.log": {
+      "archive": "xbox-ghidra-04.log.gz",
+      "sha256": "a454df8d5279e366df5765dafbedbc09f921e753c52c5f055ff0bd8be98cc58c",
+      "bytes": 5838
+    },
+    "xbox-ghidra-05.log": {
+      "archive": "xbox-ghidra-05.log.gz",
+      "sha256": "2efc7ad4c65332df3b094d34a44f30fd4472ad3fbea759796d1035bf4f573521",
+      "bytes": 5815
+    },
+    "xbox-ghidra-06.log": {
+      "archive": "xbox-ghidra-06.log.gz",
+      "sha256": "33bdca132e15de36932348ab52e617f328820aefbe1704cff9a18f16ddd9f585",
+      "bytes": 5804
+    },
+    "xbox-scripts-01.log": {
+      "archive": "xbox-scripts-01.log.gz",
+      "sha256": "9184c66c535000415ab383fb4f6538864ec5b5f20ec069597edb544a86e65cff",
+      "bytes": 96
+    },
+    "xbox-scripts-02.log": {
+      "archive": "xbox-scripts-02.log.gz",
+      "sha256": "868ddedc667fdd1c1948ed6f490b050bce7caed80e36bb9fa7fcc92aea020ef1",
+      "bytes": 96
+    },
+    "xbox-scripts-03.log": {
+      "archive": "xbox-scripts-03.log.gz",
+      "sha256": "7489a8d43f1ce80abd314acdb3b49ec15e64676fc0a33c8a95860c974aefcd13",
+      "bytes": 96
+    },
+    "xbox-scripts-04.log": {
+      "archive": "xbox-scripts-04.log.gz",
+      "sha256": "cba5394c655d1cfc02d9bd893f028af3355a22bdfafc1e5bb26ca50415184c7d",
+      "bytes": 97
+    },
+    "xbox-scripts-05.log": {
+      "archive": "xbox-scripts-05.log.gz",
+      "sha256": "32b139bc519ff1598ff483cead1cc4cefe7ada2f1faa56ea7ea34c2b7731f029",
+      "bytes": 96
+    },
+    "xbox-scripts-06.log": {
+      "archive": "xbox-scripts-06.log.gz",
+      "sha256": "d62353a9528b1ac302230111184a5f5353ee3c48f4961964a0718e1aaca7dd67",
+      "bytes": 96
+    }
+  }
+}

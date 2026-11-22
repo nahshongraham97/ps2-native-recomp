@@ -27,7 +27,7 @@ struct OutputState {
     Scenario scenario{Scenario::normal};
     unsigned opened{},closed{},destroyed{},starts{},retry_count{};
     std::uint64_t submitted{};
-    bool started{},nonzero{},reject_next{},replay_verified{},retired_during_gap{};
+    bool started{},nonzero{},reject_next{},replay_verified{},retired_during_gap{},force_full{};
     unsigned padding_observations{};
     std::uint32_t last_padding{};
     std::function<void()> on_reject;
@@ -35,6 +35,7 @@ struct OutputState {
 };
 std::shared_ptr<OutputState> output_state;
 thread_local std::int64_t fail_after=-1;
+thread_local std::function<void()> disposal_probe;
 class TestOutput final:public sound::NativeSoundOutput {
 public:
     explicit TestOutput(std::shared_ptr<OutputState> s):state_(std::move(s)){}
@@ -45,7 +46,7 @@ public:
     std::optional<sound::AudioQueueStatus> queue_status(sound::AudioDeviceFailure& f) override {
         std::lock_guard lock(state_->mutex);check_thread();f={};
         if(state_->scenario==Scenario::poll_failure){f={sound::AudioDeviceError::device_lost,-73,"fixture queue failure"};return {};}
-        const std::uint32_t padding=state_->padding_observations?64:0;
+        const std::uint32_t padding=state_->force_full?128:(state_->padding_observations?64:0);
         if(state_->padding_observations)--state_->padding_observations;
         state_->last_padding=padding;
         return sound::AudioQueueStatus{128,padding,128-padding,state_->submitted,0,state_->started};
@@ -117,6 +118,12 @@ extern "C" void* wrapped_new(std::size_t size){
     if(fail_after==0)throw std::bad_alloc();
     if(fail_after>0)--fail_after;
     return real_new(size);
+}
+extern "C" void real_copy_dispose(sound::NativeProgramCopy*) __asm__("__real__ZN3mka5sound17NativeProgramCopyD1Ev");
+extern "C" void wrapped_copy_dispose(sound::NativeProgramCopy*) __asm__("__wrap__ZN3mka5sound17NativeProgramCopyD1Ev");
+extern "C" void wrapped_copy_dispose(sound::NativeProgramCopy* copy){
+    if(disposal_probe)disposal_probe();
+    real_copy_dispose(copy);
 }
 int main(int argc,char** argv) try {
     check(argc==2,"expected original native retail content root");
@@ -215,16 +222,52 @@ int main(int argc,char** argv) try {
             "snapshot rejects an actually retired target context");
         check(main_binding::pump_retail_current_sound(main,f)&&main.sound_status->active_plays.empty()&&
             main.sound_frame_counter==1,"actual status removes stopped/retired associations after typed delivery");
-        auto play=main.playback->activate(*main.current_sound,*announcr->bank,0,parameters,pf);
+        auto public_parameters=parameters;public_parameters.envelope.release={4,-64,false};
+        auto play=main.playback->activate(*main.current_sound,*announcr->bank,0,public_parameters,pf);
         check(bool(play),"actual callback handle enters the real native worker playback");
         {std::lock_guard lock(output_state->mutex);output_state->reject_next=true;}
         await([&]{std::lock_guard lock(output_state->mutex);return output_state->nonzero&&output_state->replay_verified;},
             "actual worker drives announcr/copy/voice/mixer with exact pending-buffer retry");
         check(!main.sound_runtime->shutdown(runtime_failure)&&runtime_failure.kind==RetailSoundRuntimeError::active_playback,
             "idle shutdown refuses live native program/reference ownership");
-        check(main.playback->stop(*play,pf),"explicit native program stop");
-        await([&]{auto o=main.playback->observe(*play,pf);return o&&o->active_voices==0;},"actual worker drains the explicit software release");
-        check(main.playback->release(*play,pf),"native program reference retired before shutdown");
+        {std::lock_guard lock(output_state->mutex);output_state->force_full=true;}
+        await([&]{auto o=main.sound_runtime->observe(runtime_failure);return o&&o->observed_padding_frames==128&&
+            o->pending_pcm_frames==0;},"actual full output queue excludes further mixing for the lifetime check");
+        main.game_sound_references.push_back({*play,*announcr->bank,0x1234});
+        main.game_sound_references.push_back({{},{},0x5678});
+        bool retirement_foreign_refused=false;
+        std::thread foreign_retirement([&]{StartupFailure other;retirement_foreign_refused=
+            !main_binding::retire_retail_game_sound_references(main,other)&&other.sound_catalog.kind==RetailSoundCatalogError::wrong_owner;});
+        foreign_retirement.join();check(retirement_foreign_refused&&main.game_sound_references.size()==2,
+            "foreign-thread retirement leaves actual game references untouched");
+        fail_after=0;const bool retired_failure=main_binding::retire_retail_game_sound_references(main,f);fail_after=-1;
+        check(!retired_failure&&f.kind==StartupError::allocation&&main.game_sound_references.size()==1&&
+            main.game_sound_references.back().sound_identifier==0x1234&&main.playback->observe(*play,pf),
+            "reverse removal retains the failing live reference after removing the absent suffix");
+        unsigned disposal_probes=0;
+        disposal_probe=[&]{
+            ++disposal_probes;sound::PlaybackFailure during;StartupFailure reentrant;
+            check(!main.playback->observe(*play,during)&&during.kind==sound::PlaybackError::operation_active,
+                "actual native handle remains busy before private-copy disposal completes");
+            check(!main_binding::retire_retail_game_sound_references(main,reentrant)&&
+                reentrant.sound_catalog.runtime.playback.kind==sound::PlaybackError::operation_active&&
+                main.game_sound_references.size()==1,"reentrant actual cleanup cannot erase an unfinished reference");
+        };
+        check(main_binding::retire_retail_game_sound_references(main,f),"actual Main bulk reference retirement");
+        disposal_probe={};
+        auto tails=main.playback->observe_all_outputs(pf);
+        check(disposal_probes>0&&main.game_sound_references.empty()&&tails&&tails->programs==0&&
+            tails->retired_groups==1&&tails->active_retired_voices>0,
+            "real destructor/semantic disposal precedes record removal while active PCM tails stay owned");
+        check(!main.playback->observe(*play,pf)&&pf.kind==sound::PlaybackError::retired_handle,
+            "the actual native identity retires only after resource cleanup");
+        check(main_binding::pump_retail_current_sound(main,f)&&main.sound_status->active_plays.empty(),
+            "real status observes completed dispatch cleanup without fabricating a transport callback");
+        {std::lock_guard lock(output_state->mutex);output_state->nonzero=false;output_state->force_full=false;}
+        await([&]{auto o=main.playback->observe_all_outputs(pf);return o&&o->retired_groups==0;},
+            "actual worker drains and retires real reference-cleanup tails");
+        {std::lock_guard lock(output_state->mutex);check(output_state->nonzero,"new nonzero PCM is submitted from the retained tail alone");}
+        check(main_binding::retire_retail_game_sound_references(main,f),"empty Main reference retirement is idempotent");
         auto final_play=main.playback->activate(*main.current_sound,*announcr->bank,0,parameters,pf);
         check(bool(final_play),"second actual native play for pending-output lifetime");
         std::uint64_t before_gap=0;
@@ -257,5 +300,5 @@ int main(int argc,char** argv) try {
             "actual output-close failure is returned after worker-thread release");
         check(host.main->sound_runtime->shutdown(failure),"already released failed output is not closed again");
     }
-    std::puts("PASS production native sound context/status/Session/worker/PCM/70 native identities/allocation/error/idle lifetime; only output fixture; no game/endpoint");return 0;
+    std::puts("PASS production Main sound reference/context/status/worker/PCM tails/70 identities/allocation/disposal gap/error/lifetime; physical output and fault probes wrapped; no game/endpoint");return 0;
 }catch(const std::exception& e){std::fprintf(stderr,"FAIL production sound context: %s\n",e.what());return 1;}

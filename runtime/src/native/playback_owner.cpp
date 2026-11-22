@@ -48,7 +48,7 @@ struct NativePlaybackOwner::State {
             return std::move(copy);
         }
     };
-    struct Slot {std::shared_ptr<const void> identity;std::shared_ptr<Entry> entry;};
+    struct Slot {std::shared_ptr<const void> identity;std::shared_ptr<Entry> entry;bool retiring=false;};
     struct Retired {
         explicit Retired(BankReference b):bank(std::move(b)){}
         BankReference bank;
@@ -186,7 +186,10 @@ struct NativePlaybackOwner::State {
     Slot* find(const std::shared_ptr<const void>& owner,const std::shared_ptr<const void>& id,PlaybackFailure& f){
         if(!owner||!id){f.kind=PlaybackError::unknown_handle;return nullptr;}
         if(owner!=identity){f.kind=PlaybackError::foreign_owner;return nullptr;}
-        for(auto& s:slots)if(s.identity==id){if(!s.entry){f.kind=PlaybackError::retired_handle;return nullptr;}return &s;}
+        for(auto& s:slots)if(s.identity==id){
+            if(s.retiring||(s.entry&&s.entry->preparing)){f.kind=PlaybackError::operation_active;return nullptr;}
+            if(!s.entry){f.kind=PlaybackError::retired_handle;return nullptr;}return &s;
+        }
         f.kind=PlaybackError::unknown_handle;return nullptr;
     }
 };
@@ -499,9 +502,12 @@ bool NativePlaybackOwner::release(const NativePlayHandle& h,PlaybackFailure& f){
     {std::lock_guard lock(state->mutex);if(!state->available(f))return false;
      auto* slot=state->find(h.owner_,h.identity_,f);if(!slot)return false;
      if(slot->entry->busy()){f.kind=PlaybackError::active_playback;return false;}
-     if(!state->admit(state,work,f))return false;state->detach_entry(*slot->entry);retired=std::move(slot->entry);
+     if(!state->admit(state,work,f))return false;state->detach_entry(*slot->entry);
+     slot->retiring=true;retired=std::move(slot->entry);
     }
-    retired.reset();return true;
+    retired.reset();
+    {std::lock_guard lock(state->mutex);for(auto& slot:state->slots)if(slot.identity==h.identity_){slot.retiring=false;break;}}
+    return true;
 }
 std::optional<ForcedPlaybackRetirement> NativePlaybackOwner::force_retire(const NativePlayHandle& handle,PlaybackFailure& f){
     auto result=force_retire_impl(&handle,nullptr,f);if(!result)return {};return std::move(result->front());
@@ -551,14 +557,20 @@ std::optional<std::vector<ForcedPlaybackRetirement>> NativePlaybackOwner::force_
              state->retired.push_back(std::move(group));
              state->detach_entry(entry);entry.stopped=true;entry.finished=true;
              copies.push_back(std::move(entry.copy));
-             for(auto& slot:state->slots)if(slot.identity==entry.identity){disposed_entries.push_back(std::move(slot.entry));break;}
+             for(auto& slot:state->slots)if(slot.identity==entry.identity){
+                 slot.retiring=true;disposed_entries.push_back(std::move(slot.entry));break;
+             }
          }
         }
         // Semantic/runtime/Service cleanup must finish after actual clone
         // disposal and outside the registry mutex. Pool owns no such reference.
         copies.clear();disposed_entries.clear();targets.clear();
         {std::lock_guard lock(state->mutex);
-         for(auto& receipt:receipts){for(auto& group:state->retired)if(group->identity==receipt.outputs.identity_){group->resources_released=true;break;}
+         for(auto& receipt:receipts){for(auto& group:state->retired)if(group->identity==receipt.outputs.identity_){
+                 group->resources_released=true;
+                 for(auto& slot:state->slots)if(slot.identity==group->origin){slot.retiring=false;break;}
+                 break;
+             }
              receipt.native_resources_released=true;
          }
         }

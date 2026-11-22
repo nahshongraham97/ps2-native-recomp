@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_playback_reservation.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+  ],
+  "exit": 0,
+  "stdout": "PASS actual ANNOUNCR pending play reservation/context identity/registry growth/nonzero concurrent voice/resource domain; no device/game/PCM fidelity claim\n",
+  "stderr": "",
+  "seconds": 0.05822700000135228,
+  "source_commit": "39700fb2c8048cc15964ba29050d9b69cea70829",
+  "tracked_status": "M cmake/native_game.cmake\n M runtime/include/mka/playback_owner.hpp\n M runtime/include/mka/retail_main.hpp\n M runtime/src/native/playback_owner.cpp\n M runtime/src/native/retail_sound_bank_main.cpp\n M tests/test_retail_sound_context.cpp",
+  "source_manifest_sha256": "4ce1bfef4fe07d9079994a6556fc871cbcf80e2114c1f5bd2e1391ca4d0ece70",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "66f7bde43c369602ba6eba3ac88b506cde59377da4905cb731bc2d4f58d1f096"
+}

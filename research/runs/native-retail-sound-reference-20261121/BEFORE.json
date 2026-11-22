@@ -1,0 +1,11 @@
+{
+  "base": "39700fb2c8048cc15964ba29050d9b69cea70829",
+  "pins": {
+    "runtime/include/mka/playback_owner.hpp": "8f179754525ceabc76ff09ebb6811610a0b4f483df189ddcf3f49fc5b4d66848",
+    "runtime/src/native/playback_owner.cpp": "225ec84c8f8e2515c797a1824984b85f07181862d41f2706b2c9088c1e855287",
+    "runtime/include/mka/retail_main.hpp": "79a8be814d36538fe646b1134be7e57143b6b1a49a8177892acc66935aba8029",
+    "runtime/src/native/retail_sound_bank_main.cpp": "e2bc6691e28a178546e1b62c107e894edabb2d53bddd790083ef356dd6657030",
+    "tests/test_retail_sound_context.cpp": "e7941a6b7be4b6c599318afac2e6debc11f9ac1663f6fbf67ad936d266c58b30",
+    "cmake/native_game.cmake": "82292eaddabfc471efca4b63b4a3a1708ffc3c9eeb1a6cc2681984190d2f165d"
+  }
+}

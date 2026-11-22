@@ -277,6 +277,7 @@ if(WIN32)
     target_link_libraries(test_native_retail_sound_context PRIVATE mka_native_retail_startup)
     target_link_options(test_native_retail_sound_context PRIVATE
         "-Wl,--wrap=_Znwy"
+        "-Wl,--wrap=_ZN3mka5sound17NativeProgramCopyD1Ev"
         "-Wl,--wrap=_ZN3mka5sound29open_native_game_sound_outputERNS0_18AudioDeviceFailureE"
         "-Wl,--wrap=_ZN3mka5sound17NativeAudioDevice4openERKNS0_17AudioDeviceConfigERNS0_18AudioDeviceFailureE")
     add_executable(test_native_retail_initial_reset EXCLUDE_FROM_ALL tests/test_retail_initial_reset.cpp)

@@ -117,6 +117,45 @@ bool initialize_retail_current_sound(NativeRetailMainState& main, StartupFailure
     return true;
 }
 
+bool retire_retail_game_sound_references(NativeRetailMainState& main, StartupFailure& failure) {
+    if(!owner(main,failure,false))return false;
+    if(main.game_sound_references.empty())return true;
+    if(!owner(main,failure,true))return false;
+    if(!main.sound_runtime||main.sound_runtime->playback_owner()!=main.playback||
+       !main.sound_runtime->sound_context().same_identity(*main.current_sound)){
+        failure.kind=StartupError::sound_catalog;
+        failure.operation="12C1D0 references require the actual native current-sound owner";return false;
+    }
+    const auto fail_playback=[&](sound::PlaybackFailure value,const char* operation){
+        failure.kind=value.kind==sound::PlaybackError::allocation_failed?StartupError::allocation:StartupError::sound_catalog;
+        failure.sound_catalog.kind=RetailSoundCatalogError::runtime;
+        failure.sound_catalog.runtime.kind=RetailSoundRuntimeError::playback;
+        failure.sound_catalog.runtime.playback=std::move(value);
+        failure.operation=operation;return false;
+    };
+    while(!main.game_sound_references.empty()){
+        const auto& handle=main.game_sound_references.back().playback;
+        if(!handle.empty()){
+            sound::PlaybackFailure playback_failure;
+            const auto present=main.playback->observe(handle,playback_failure);
+            if(!present){
+                if(playback_failure.kind!=sound::PlaybackError::retired_handle)
+                    return fail_playback(std::move(playback_failure),"12C1D0 actual native play lookup");
+            }else {
+                auto retired=main.playback->force_retire(handle,playback_failure);
+                if(!retired)return fail_playback(std::move(playback_failure),"12C1D0 actual native forced play retirement");
+                if(!retired->native_resources_released){
+                    playback_failure.kind=sound::PlaybackError::operation_active;
+                    return fail_playback(std::move(playback_failure),"12C1D0 native private resources still retiring");
+                }
+            }
+        }
+        //12C1D0 removes the last record. Its stored bank/semantic identifier
+        // are not unload requests. Real releasing PCM remains in Owner's pool.
+        main.game_sound_references.pop_back();
+    }
+    return true;
+}
 bool pump_retail_current_sound(NativeRetailMainState& main, StartupFailure& failure) {
     if (!owner(main, failure, true)) return false;
     // Original3152C0 increments64ECA8 even when transport admission or

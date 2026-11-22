@@ -1,0 +1,133 @@
+{
+  "status": "PASS_REFERENCE_RETIREMENT_ORIGINAL_BYTES",
+  "input_sha256": {
+    "EE": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+    "MSL": "f62dfbcedd39bc92cb8b9c02bb685b956a10357f9181d7f8c2801d8eaff07af7"
+  },
+  "msl_full_coverage": [
+    {
+      "begin": "0x8ac4",
+      "end_exclusive": "0x8b54",
+      "words": 36
+    },
+    {
+      "begin": "0x87ec",
+      "end_exclusive": "0x8ac4",
+      "words": 182
+    },
+    {
+      "begin": "0xfd50",
+      "end_exclusive": "0xfed4",
+      "words": 97
+    },
+    {
+      "begin": "0x91fc",
+      "end_exclusive": "0x92d4",
+      "words": 54
+    }
+  ],
+  "ee_full_coverage": [
+    {
+      "path": "EE-315BD0.json",
+      "begin": "0x315bd0",
+      "end_exclusive": "0x315c64",
+      "words": 37
+    },
+    {
+      "path": "EE-314E40.json",
+      "begin": "0x314e40",
+      "end_exclusive": "0x314ed4",
+      "words": 37
+    }
+  ],
+  "xbox_exports": [
+    {
+      "path": "XBOX-CONTEXT-01.json",
+      "sha256": "fc07c7d227548249db16ec18e436bbff72be486ce73a36f4f5e081b9b10d24ef",
+      "function_instruction_counts": {
+        "0023bad0": 11,
+        "0023ad80": 21
+      }
+    },
+    {
+      "path": "XBOX-CONTEXT-02.json",
+      "sha256": "c8029f2dc35e588de8300682db3e1c9fc677d7c3791b36603a889af7eebc4d86",
+      "function_instruction_counts": {
+        "0023baf0": 18,
+        "0023c700": 12
+      }
+    },
+    {
+      "path": "XBOX-CONTEXT-03.json",
+      "sha256": "1b4ba16288a4491d66343001a6dfea91a6b104e3540a6dc6cdd80724f617eb4c",
+      "function_instruction_counts": {
+        "0023bb20": 25,
+        "0023baf0": 18,
+        "0023bb70": 29,
+        "0023bd90": 11,
+        "0023bdb0": 11,
+        "0023bdd0": 14
+      }
+    },
+    {
+      "path": "XBOX-CONTEXT-04.json",
+      "sha256": "c10e37ba61b1e397f835091a4695abb39486a6a1b487b8aeb32b1663a9180b4c",
+      "function_instruction_counts": {
+        "0023bbc0": 35,
+        "0023bb70": 29,
+        "0023bcd0": 29,
+        "0023bc30": 15,
+        "00374cc0": 36,
+        "0023c570": 18,
+        "00128140": 142,
+        "0023dd10": 57,
+        "0023c390": 54,
+        "0023c1f0": 46,
+        "0023c300": 54,
+        "001130a0": 34,
+        "00113120": 30,
+        "0011b500": 153,
+        "00155640": 466,
+        "00195a10": 256,
+        "00195ed0": 80,
+        "0023c270": 39,
+        "0023e700": 334,
+        "00374e70": 27
+      }
+    },
+    {
+      "path": "XBOX-CONTEXT-05.json",
+      "sha256": "7091279595b0886cfced54f570bbabc37a3dc010732f867dfb4f4ce8a63a79c3",
+      "function_instruction_counts": {
+        "00374820": 9,
+        "00374e70": 27,
+        "0037bc40": 47,
+        "00379ac0": 37,
+        "00374a20": 33,
+        "0023bdd0": 14,
+        "00294d90": 103,
+        "002963e0": 147
+      }
+    },
+    {
+      "path": "XBOX-CONTEXT-06.json",
+      "sha256": "de48e18ed62ab1e7897e6404e961c18c47f1a1d3948c6f4bfa32e62f8dceb52b",
+      "function_instruction_counts": {
+        "00374840": 100,
+        "00374820": 9,
+        "00374990": 17
+      }
+    }
+  ],
+  "prepared_branch_shared": "Reverse removal and direct forced private-copy cleanup; PS2 exact role ownership check retained",
+  "differences": [
+    "PS2 pending cancellation and103 client-transport retirement have no equivalent in the current native ready-handle ingress",
+    "Xbox clears selected role unconditionally; native keeps PS2 exact-occupant check",
+    "No donor addresses/layouts/SDK/device/pool capacities adopted"
+  ],
+  "whole_function_or_game_equivalence": false,
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

@@ -26,6 +26,8 @@ struct SoundContextObservation {
 class NativePlayHandle {
 public:
     NativePlayHandle()=default;
+    // Identity presence only; the actual owner still determines liveness.
+    bool empty() const noexcept {return !owner_||!identity_;}
     bool same_identity(const NativePlayHandle& other) const noexcept {
         return owner_&&identity_&&owner_==other.owner_&&identity_==other.identity_;
     }

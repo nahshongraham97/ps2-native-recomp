@@ -1,0 +1,208 @@
+{
+  "original_xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "queries": [
+    {
+      "address": "0023bad0",
+      "references": [
+        {
+          "from": "0023ad83",
+          "type": "UNCONDITIONAL_CALL",
+          "function": "0023ad80"
+        }
+      ]
+    }
+  ],
+  "function_candidates": [
+    {
+      "entry": "0023bad0",
+      "name_hypothesis": "FUN_0023bad0",
+      "ranges": [
+        {
+          "first": "0023bad0",
+          "last": "0023baee"
+        }
+      ],
+      "instructions": [
+        {
+          "address": "0023bad0",
+          "bytes_hex": "55",
+          "instruction": "PUSH EBP"
+        },
+        {
+          "address": "0023bad1",
+          "bytes_hex": "8bec",
+          "instruction": "MOV EBP,ESP"
+        },
+        {
+          "address": "0023bad3",
+          "bytes_hex": "57",
+          "instruction": "PUSH EDI"
+        },
+        {
+          "address": "0023bad4",
+          "bytes_hex": "b930000000",
+          "instruction": "MOV ECX,0x30"
+        },
+        {
+          "address": "0023bad9",
+          "bytes_hex": "33c0",
+          "instruction": "XOR EAX,EAX"
+        },
+        {
+          "address": "0023badb",
+          "bytes_hex": "bfc03a7200",
+          "instruction": "MOV EDI,0x723ac0"
+        },
+        {
+          "address": "0023bae0",
+          "bytes_hex": "f3ab",
+          "instruction": "STOSD.REP ES:EDI"
+        },
+        {
+          "address": "0023bae2",
+          "bytes_hex": "c705c4e35b0000000000",
+          "instruction": "MOV dword ptr [0x005be3c4],0x0"
+        },
+        {
+          "address": "0023baec",
+          "bytes_hex": "5f",
+          "instruction": "POP EDI"
+        },
+        {
+          "address": "0023baed",
+          "bytes_hex": "5d",
+          "instruction": "POP EBP"
+        },
+        {
+          "address": "0023baee",
+          "bytes_hex": "c3",
+          "instruction": "RET"
+        }
+      ],
+      "decompile_completed": true,
+      "decompiler_error": "",
+      "orientation_c": "\r\nvoid FUN_0023bad0(void)\r\n\r\n{\r\n  int iVar1;\r\n  undefined4 *puVar2;\r\n  \r\n  puVar2 \u003d \u0026DAT_00723ac0;\r\n  for (iVar1 \u003d 0x30; iVar1 !\u003d 0; iVar1 \u003d iVar1 + -1) {\r\n    *puVar2 \u003d 0;\r\n    puVar2 \u003d puVar2 + 1;\r\n  }\r\n  DAT_005be3c4 \u003d 0;\r\n  return;\r\n}\r\n\r\n"
+    },
+    {
+      "entry": "0023ad80",
+      "name_hypothesis": "FUN_0023ad80",
+      "ranges": [
+        {
+          "first": "0023ad80",
+          "last": "0023adcf"
+        }
+      ],
+      "instructions": [
+        {
+          "address": "0023ad80",
+          "bytes_hex": "55",
+          "instruction": "PUSH EBP"
+        },
+        {
+          "address": "0023ad81",
+          "bytes_hex": "8bec",
+          "instruction": "MOV EBP,ESP"
+        },
+        {
+          "address": "0023ad83",
+          "bytes_hex": "e8480d0000",
+          "instruction": "CALL 0x0023bad0"
+        },
+        {
+          "address": "0023ad88",
+          "bytes_hex": "c705bce35b0000000000",
+          "instruction": "MOV dword ptr [0x005be3bc],0x0"
+        },
+        {
+          "address": "0023ad92",
+          "bytes_hex": "6864855600",
+          "instruction": "PUSH 0x568564"
+        },
+        {
+          "address": "0023ad97",
+          "bytes_hex": "6858855600",
+          "instruction": "PUSH 0x568558"
+        },
+        {
+          "address": "0023ad9c",
+          "bytes_hex": "e8ffa71300",
+          "instruction": "CALL 0x003755a0"
+        },
+        {
+          "address": "0023ada1",
+          "bytes_hex": "83c408",
+          "instruction": "ADD ESP,0x8"
+        },
+        {
+          "address": "0023ada4",
+          "bytes_hex": "a3c0e35b00",
+          "instruction": "MOV [0x005be3c0],EAX"
+        },
+        {
+          "address": "0023ada9",
+          "bytes_hex": "833dc0e35b0000",
+          "instruction": "CMP dword ptr [0x005be3c0],0x0"
+        },
+        {
+          "address": "0023adb0",
+          "bytes_hex": "7504",
+          "instruction": "JNZ 0x0023adb6"
+        },
+        {
+          "address": "0023adb2",
+          "bytes_hex": "33c0",
+          "instruction": "XOR EAX,EAX"
+        },
+        {
+          "address": "0023adb4",
+          "bytes_hex": "eb18",
+          "instruction": "JMP 0x0023adce"
+        },
+        {
+          "address": "0023adb6",
+          "bytes_hex": "6810435000",
+          "instruction": "PUSH 0x504310"
+        },
+        {
+          "address": "0023adbb",
+          "bytes_hex": "a1c0e35b00",
+          "instruction": "MOV EAX,[0x005be3c0]"
+        },
+        {
+          "address": "0023adc0",
+          "bytes_hex": "50",
+          "instruction": "PUSH EAX"
+        },
+        {
+          "address": "0023adc1",
+          "bytes_hex": "e81ab01300",
+          "instruction": "CALL 0x00375de0"
+        },
+        {
+          "address": "0023adc6",
+          "bytes_hex": "83c408",
+          "instruction": "ADD ESP,0x8"
+        },
+        {
+          "address": "0023adc9",
+          "bytes_hex": "b801000000",
+          "instruction": "MOV EAX,0x1"
+        },
+        {
+          "address": "0023adce",
+          "bytes_hex": "5d",
+          "instruction": "POP EBP"
+        },
+        {
+          "address": "0023adcf",
+          "bytes_hex": "c3",
+          "instruction": "RET"
+        }
+      ],
+      "decompile_completed": true,
+      "decompiler_error": "",
+      "orientation_c": "\r\n/* WARNING: Globals starting with \u0027_\u0027 overlap smaller symbols at the same address */\r\n\r\nbool FUN_0023ad80(void)\r\n\r\n{\r\n  bool bVar1;\r\n  \r\n  FUN_0023bad0();\r\n  _DAT_005be3bc \u003d 0;\r\n  DAT_005be3c0 \u003d FUN_003755a0(\u0026DAT_00568558,\u0026DAT_00568564);\r\n  bVar1 \u003d DAT_005be3c0 !\u003d 0;\r\n  if (bVar1) {\r\n    FUN_00375de0(DAT_005be3c0,\"/sounds/\");\r\n  }\r\n  return bVar1;\r\n}\r\n\r\n"
+    }
+  ],
+  "verified_equivalence": false
+}
