@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "build_native_services_only_20261119-01",
+    "--target",
+    "test_native_retail_sound_context",
+    "-j2"
+  ],
+  "exit": 0,
+  "stdout": "[0/2] Re-checking globbed directories...\n[1/8] AOT compile source-verified retail scalar functions to typed native C++\n[2/4] Building CXX object CMakeFiles/test_native_retail_sound_context.dir/tests/test_retail_sound_context.cpp.obj\n[3/4] Linking CXX executable test_native_retail_sound_context.exe\n",
+  "stderr": "",
+  "seconds": 2.089340099992114,
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

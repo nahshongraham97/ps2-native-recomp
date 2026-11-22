@@ -1,0 +1,14 @@
+{
+  "pins": {
+    "runtime/include/mka/bank_preparation.hpp": "bcde3fa213720d90d6852d314446409fd33f0bc8c181a6cbef05d6b67a0853a4",
+    "runtime/src/native/bank_preparation.cpp": "88acf1b13ea6d35252322982c219fd71affada31cdc3707c39467f8ec3d2b2e4",
+    "runtime/include/mka/pending_play.hpp": "c66177d04c358ba396b8dd77c3188a735cde470c07536874d27298f6faa2063c",
+    "runtime/src/native/playback_owner.cpp": "7af4b650458aaba6eb6fa7e2e54989a19736c47e421276c95719c6d070d1c67e",
+    "runtime/include/mka/retail_sound_runtime.hpp": "4d278d968213fdc342cfc83c72d0ade92f1f9ddbe388e950d318cc8507f8ec0f",
+    "runtime/src/native/retail_sound_runtime.cpp": "2bd01323d4727e5ad39da9669d558d155fb2e86d2f08efc1e1533ccb28bd6b00",
+    "runtime/include/mka/retail_main.hpp": "4fac7beb6a42ea4aa7fac85320ac71c7081a02135fed43de87e5ba808e29ebc0",
+    "runtime/src/native/retail_sound_bank_main.cpp": "0d4d7a5a3367e31192180717b5d338d60778570ba5f0b8520a6ba0412715fd0b",
+    "tests/test_runtime_program_work.cpp": "2b832d38c0cb9bcdaac520c8edcf850b5e410fdf5042c7c72451e03eb28503e3",
+    "tests/test_retail_sound_context.cpp": "58942946262cc7d43a76ab34e68c51088e4aa7aabfc865f18ee3aa6978be0317"
+  }
+}

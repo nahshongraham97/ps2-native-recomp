@@ -1,0 +1,15 @@
+{
+  "compiler_header": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\include\\c++\\v1\\__functional\\function.h",
+  "sha256": "5ed4541897368d342b1e2b89f910ba567fa15501c3d299e452e28390af8399b1",
+  "lines": [
+    232,
+    241
+  ],
+  "finding": "small-object move clones source callable; heap move nulls source",
+  "fixture_fix": "Consume actual hooks with std::exchange(hook,{}) and assert both empty after retry",
+  "failed_receipts": [
+    "validation-01/test_native_retail_sound_context.json",
+    "diagnostic-01/client.json"
+  ],
+  "production_changed": false
+}

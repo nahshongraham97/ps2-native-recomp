@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_initial_reset.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-play-routing-20261122\\validation-03\\empty-content"
+  ],
+  "exit": 0,
+  "stdout": "PASS native reset ordering, live fields, suspension,1799-wait timeout, failure and lifetime; six effects substituted in this caller fixture\n",
+  "stderr": "",
+  "seconds": 0.1053263999929186,
+  "source_commit": "915da5fd8dfdc108a3bb256fe2d142a331e74c32",
+  "tracked_status": "M runtime/include/mka/bank_preparation.hpp\n M runtime/include/mka/pending_play.hpp\n M runtime/include/mka/retail_main.hpp\n M runtime/include/mka/retail_sound_runtime.hpp\n M runtime/src/native/bank_preparation.cpp\n M runtime/src/native/playback_owner.cpp\n M runtime/src/native/retail_sound_bank_main.cpp\n M runtime/src/native/retail_sound_runtime.cpp\n M tests/test_retail_sound_context.cpp\n M tests/test_runtime_program_work.cpp",
+  "source_manifest_sha256": "fc9207adfa55134ebaacf66b2802c51d9b9834772145667d8f3e2216a6f82f77",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "9e65112586858981dea2e656b85915759bbef9fa61b345c52a78d4155ec1799b"
+}

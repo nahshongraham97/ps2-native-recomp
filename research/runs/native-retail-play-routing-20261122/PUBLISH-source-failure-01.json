@@ -1,0 +1,8 @@
+{
+  "argv": ["python", "research/runs/native-retail-play-routing-20261122/publish.py", "source"],
+  "exit": 1,
+  "failure": "LF text check wrongly applied to imported original-word binary ee/00245dd0.words.bin",
+  "staging_commit_or_push_performed": false,
+  "correction": "Keep all authored text LF checks; preserve .bin original-word bytes and verify every imported review file against its committed SHA256 pin",
+  "runtime_tests": "Unchanged; final canonical validation-03 passed25 clients and exact37-effect refusal"
+}

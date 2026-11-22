@@ -18,6 +18,12 @@ bool owner(NativeRetailMainState& main, StartupFailure& failure, bool require_re
         failure.operation = "native current-sound Main lifetime/thread";
         return false;
     }
+    if(main.game_sound_reference_admission_active){
+        failure.kind=StartupError::sound_catalog;failure.sound_catalog.kind=RetailSoundCatalogError::runtime;
+        failure.sound_catalog.runtime.kind=RetailSoundRuntimeError::playback;
+        failure.sound_catalog.runtime.playback.kind=sound::PlaybackError::operation_active;
+        failure.operation="native game sound reference admission reentry";return false;
+    }
     if (require_ready && (main.current_sound_phase != RetailCurrentSoundPhase::ready ||
             !main.sound_bank_catalog || !main.playback || !main.current_sound)) {
         failure.kind = StartupError::sound_catalog;
@@ -120,27 +126,40 @@ bool initialize_retail_current_sound(NativeRetailMainState& main, StartupFailure
     return true;
 }
 
-std::optional<sound::NativePlayHandle> submit_retail_queued_sound(NativeRetailMainState& main,
+static std::optional<sound::NativePlayHandle> submit_game_sound(NativeRetailMainState& main,
     const sound::AudioBankHandle& bank,std::int32_t selector,std::uint32_t semantic_sound_id,
-    const sound::NativeActivationParameters& parameters,StartupFailure& failure){
+    const sound::NativeActivationParameters& parameters,bool explicitly_queued,StartupFailure& failure){
     if(!owner(main,failure,true))return {};
     if(!main.sound_runtime||main.sound_runtime->playback_owner()!=main.playback||
        !main.sound_runtime->sound_context().same_identity(*main.current_sound)){
         failure.kind=StartupError::sound_catalog;failure.operation="queued game sound requires actual current-sound runtime";return {};
     }
+    struct Admission {bool& active;explicit Admission(bool& value):active(value){active=true;}~Admission(){active=false;}}
+        admission(main.game_sound_reference_admission_active);
     try {
         // Reserve the real game record before exposing any pending identity.
         if(main.game_sound_references.size()==main.game_sound_references.max_size()){
             failure.kind=StartupError::allocation;failure.operation="native game sound reference capacity";return {};
         }
         main.game_sound_references.reserve(main.game_sound_references.size()+1);
-        auto play=main.sound_runtime->submit_queued_play(bank,selector,parameters,failure.sound_catalog.runtime);
+        auto play=explicitly_queued?main.sound_runtime->submit_queued_play(bank,selector,parameters,failure.sound_catalog.runtime):
+            main.sound_runtime->submit_play(bank,selector,parameters,failure.sound_catalog.runtime);
         if(!play){failure.kind=StartupError::sound_catalog;failure.sound_catalog.kind=RetailSoundCatalogError::runtime;
             failure.operation=failure.sound_catalog.runtime.operation;return {};}
         main.game_sound_references.push_back({*play,bank,semantic_sound_id});return play;
     }catch(const std::bad_alloc&){failure.kind=StartupError::allocation;}
      catch(const std::length_error&){failure.kind=StartupError::allocation;}
     failure.operation="native queued game sound reference admission";return {};
+}
+std::optional<sound::NativePlayHandle> submit_retail_queued_sound(NativeRetailMainState& main,
+    const sound::AudioBankHandle& bank,std::int32_t selector,std::uint32_t semantic_sound_id,
+    const sound::NativeActivationParameters& parameters,StartupFailure& failure){
+    return submit_game_sound(main,bank,selector,semantic_sound_id,parameters,true,failure);
+}
+std::optional<sound::NativePlayHandle> submit_retail_sound(NativeRetailMainState& main,
+    const sound::AudioBankHandle& bank,std::int32_t selector,std::uint32_t semantic_sound_id,
+    const sound::NativeActivationParameters& parameters,StartupFailure& failure){
+    return submit_game_sound(main,bank,selector,semantic_sound_id,parameters,false,failure);
 }
 bool retire_retail_game_sound_references(NativeRetailMainState& main, StartupFailure& failure) {
     if(!owner(main,failure,false))return false;

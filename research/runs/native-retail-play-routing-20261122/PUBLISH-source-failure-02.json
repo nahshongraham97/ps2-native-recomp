@@ -1,0 +1,7 @@
+{
+  "exit": 1,
+  "failure": "git add refused six imported bounded .words.bin evidence files under the repository *.bin ignore rule",
+  "effect": "115 approved paths staged; no commit or push performed; HEAD remained915da5f",
+  "correction": "Revalidate existing staged-path subset, stage normal files normally, and explicitly add only the six committed SHA256-pinned source-word files with --force; each is at most4096 bytes",
+  "runtime_tests": "Unchanged final canonical validation-03"
+}

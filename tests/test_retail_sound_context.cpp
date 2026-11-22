@@ -17,10 +17,11 @@
 #include <new>
 #include <stdexcept>
 #include <thread>
+#include <utility>
 using namespace mka::retail;
 namespace sound=mka::sound;
 namespace {
-void check(bool ok,const char* why){if(!ok)throw std::runtime_error(why);}
+void check(bool ok,const char* why){if(!ok){std::fprintf(stderr,"FAIL assertion: %s\n",why);std::fflush(stderr);throw std::runtime_error(why);}}
 enum class Scenario {normal,open_failure,allocation_failure,bad_format,poll_failure,start_failure,close_failure};
 struct OutputState {
     std::mutex mutex;
@@ -247,6 +248,70 @@ void exercise_pending(NativeRetailMainState& main,sound::AudioBankSession& sessi
 }
 
 }
+namespace {
+void exercise_direct(NativeRetailMainState& main,sound::AudioBankSession& session,sound::NativeActivationParameters parameters){
+    StartupFailure f;RetailSoundRuntimeFailure rf;sound::PlaybackFailure pf;sound::PreparationFailure prep;
+    sound::AudioBanksFailure bf;sound::BankPreparationReport report;auto& runtime=*main.sound_runtime;
+    parameters.caller_play_flags=9; // Actual source12C030 held/force1 request.
+    auto a=session.load_bank("announcr",bf),b=session.load_bank("announcr",bf),c=session.load_bank("bg_armory",bf);
+    check(a&&b&&c,"real same-Session banks for original direct/worker predicate");
+    auto pa=session.prepare_bank(*a,report,prep,bf),pb=session.prepare_bank(*b,report,prep,bf),pc=session.prepare_bank(*c,report,prep,bf);
+    check(pa&&pb&&pc,"actual deferred and eager bank preparation");
+    auto samples=pb->prepare_deferred_normal(0,prep);check(bool(samples),"actual sample cache ready without a runtime");
+    auto gate=block_next_build();auto pending=main_binding::submit_retail_sound(main,*a,0,0xA0,parameters,f);
+    check(bool(pending),"uncached actual sample chooses real pending worker");
+    await([&]{std::lock_guard lock(gate->mutex);return gate->entered;},"actual queued constructor is held before build");
+    bool reentry_checked=false;
+    {std::lock_guard lock(build_hook_mutex);before_runtime_build=[&]{
+        check(std::this_thread::get_id()==output_state->main_thread,"sample-ready constructor executes directly on submitting thread");
+        StartupFailure nested;RetailSoundRuntimeFailure nested_runtime;
+        check(!main_binding::retire_retail_game_sound_references(main,nested)&&nested.sound_catalog.runtime.playback.kind==sound::PlaybackError::operation_active,
+              "direct native construction reentry cannot erase reserved game records");
+        check(!runtime.shutdown(nested_runtime)&&nested_runtime.kind==RetailSoundRuntimeError::active_playback&&
+              !runtime.request_resume(*pending,nested_runtime)&&nested_runtime.playback.kind==sound::PlaybackError::operation_active,
+              "direct admission rejects reentrant shutdown/resume before worker waits or publication locks");
+        samples.reset();reentry_checked=true;
+    };}
+    auto direct=main_binding::submit_retail_sound(main,*b,0,0xB0,parameters,f);
+    check(direct&&reentry_checked,"actual sample-ready Main request completes while the resource worker remains blocked");
+    auto completion=runtime.poll_play_completion(rf);
+    check(completion&&completion->handle.same_identity(*direct)&&completion->result.direct_attempted&&
+        !completion->result.direct_retry_queued&&completion->result.branch==sound::RuntimeProgramWorkBranch::fresh&&completion->result.activated,
+        "direct sample constructor delivers its real consumer and retirement before return");
+    auto cached=main_binding::submit_retail_sound(main,*c,0,0xC0,parameters,f);
+    completion=runtime.poll_play_completion(rf);
+    check(cached&&completion&&completion->handle.same_identity(*cached)&&completion->result.direct_attempted&&
+        completion->result.branch==sound::RuntimeProgramWorkBranch::cached&&completion->result.activated,
+        "existing runtime bypasses unrelated queued work and acquires its actual private copy");
+    auto held=main.playback->observe(*direct,pf);check(held&&held->held&&!held->deadline_bound&&!held->voices,
+        "actual source flags9 direct readiness remains held without key-on");
+    auto unsupported=parameters;unsupported.output.selector=-2;
+    auto rejected=runtime.submit_play(*b,0,unsupported,rf);completion=runtime.poll_play_completion(rf);
+    check(rejected&&completion&&completion->handle.same_identity(*rejected)&&completion->result.direct_attempted&&
+        !completion->result.direct_retry_queued&&completion->result.runtime_ready&&!completion->result.activated&&
+        completion->result.failure&&completion->result.failure->kind==sound::PlaybackError::unsupported_output_selector,
+        "direct consumer failure is reported without a fresh constructor retry");
+    gate->release();
+    await([&]{completion=runtime.poll_play_completion(rf);return bool(completion);},"uncached worker completes after actual release");
+    check(completion->handle.same_identity(*pending)&&!completion->result.direct_attempted&&completion->result.activated,
+        "uncached construction keeps the real asynchronous branch");
+    check(main_binding::retire_retail_game_sound_references(main,f),"all direct/queued held game references retire actual resources");
+    samples=pb->prepare_deferred_normal(0,prep);check(bool(samples),"re-prime sample-only direct retry scenario");
+    bool retried_on_worker=false;
+    {std::lock_guard lock(build_hook_mutex);
+     before_runtime_build=[]{fail_after=0;};
+     after_runtime_build=[&]{fail_after=-1;std::lock_guard lock(build_hook_mutex);before_runtime_build=[&]{
+        check(std::this_thread::get_id()!=output_state->main_thread,"failed direct constructor is retried by the actual resource worker");retried_on_worker=true;};};}
+    auto retry=main_binding::submit_retail_sound(main,*b,0,0xD0,parameters,f);check(bool(retry),"fresh direct constructor failure retains the same public association for queued retry");
+    await([&]{completion=runtime.poll_play_completion(rf);return bool(completion);},"real queued retry completes");
+    check(completion->handle.same_identity(*retry)&&retried_on_worker&&completion->result.direct_retry_queued&&
+        completion->result.direct_constructor_failure&&completion->result.runtime_ready&&completion->result.activated,
+        "constructor failure is preserved separately from actual retried readiness/consumer success");
+    {std::lock_guard lock(build_hook_mutex);check(!before_runtime_build&&!after_runtime_build,"one-shot actual build fault hooks are fully consumed");}
+    check(main_binding::retire_retail_game_sound_references(main,f),"retried actual association retires");samples.reset();
+    check(main.playback->unload(*a,pf)&&main.playback->unload(*b,pf)&&main.playback->unload(*c,pf),"all direct/worker bank owners truly unload");
+}
+}
 // Wrap only the physical output leaf. The actual production Main/context/Session,
 // QPC worker, program copy, voice and mixer still execute. No endpoint is opened.
 std::unique_ptr<sound::NativeSoundOutput> wrapped_game_output(sound::AudioDeviceFailure& f)
@@ -276,7 +341,7 @@ extern "C" void wrapped_copy_dispose(sound::NativeProgramCopy* copy){
 extern "C" bool real_runtime_build(sound::RuntimeProgramWork*,sound::PreparationFailure&) __asm__("__real__ZN3mka5sound18RuntimeProgramWork5buildERNS0_18PreparationFailureE");
 extern "C" bool wrapped_runtime_build(sound::RuntimeProgramWork*,sound::PreparationFailure&) __asm__("__wrap__ZN3mka5sound18RuntimeProgramWork5buildERNS0_18PreparationFailureE");
 extern "C" bool wrapped_runtime_build(sound::RuntimeProgramWork* work,sound::PreparationFailure& f){
-    std::function<void()> before,after;{std::lock_guard lock(build_hook_mutex);before=std::move(before_runtime_build);after=std::move(after_runtime_build);}
+    std::function<void()> before,after;{std::lock_guard lock(build_hook_mutex);before=std::exchange(before_runtime_build,{});after=std::exchange(after_runtime_build,{});}
     if(before)before();const bool result=real_runtime_build(work,f);if(after)after();return result;
 }
 int main(int argc,char** argv) try {
@@ -307,6 +372,34 @@ int main(int argc,char** argv) try {
             host.main->sound_frame_counter==1&&!host.main->sound_status,"real Main propagates worker failure before status publication");
         host.main.reset();
         check(output_state->closed==1&&output_state->destroyed==1,"failed worker releases output on owning thread");
+    }
+    setup(Scenario::normal);
+    {
+        Host host(argv[1]);auto& main=*host.main;StartupFailure f;
+        check(main_binding::initialize_retail_current_sound(main,f),"real context for direct output-revocation gate");
+        RetailSoundCatalogFailure cf;auto session=main.sound_bank_catalog->share_bank_session(cf);
+        sound::AudioBanksFailure bf;sound::PreparationFailure prep;sound::BankPreparationReport report;
+        auto bank=session->load_bank("announcr",bf);auto prepared=bank?session->prepare_bank(*bank,report,prep,bf):std::nullopt;
+        check(bank&&prepared,"actual native bank for direct publication revocation");
+        auto samples=prepared->prepare_deferred_normal(0,prep);check(bool(samples),"actual cached sample enters direct publication test");
+        sound::NativeActivationParameters parameters;parameters.caller_play_flags=9;
+        auto gate=block_next_build();
+        std::thread revoke([&]{
+            await([&]{std::lock_guard lock(gate->mutex);return gate->entered;},"actual direct constructor reaches publication gap");
+            {std::lock_guard lock(output_state->mutex);output_state->scenario=Scenario::poll_failure;}
+            await([&]{std::lock_guard lock(output_state->mutex);return output_state->closed==1;},"actual native output failure records before direct publication");
+            gate->release();
+        });
+        auto play=main_binding::submit_retail_sound(main,*bank,0,0xFF,parameters,f);revoke.join();
+        RetailSoundRuntimeFailure rf;auto completion=main.sound_runtime->poll_play_completion(rf);
+        check(play&&completion&&completion->handle.same_identity(*play)&&completion->result.direct_attempted&&
+            completion->result.runtime_ready&&!completion->result.activated&&completion->result.failure&&
+            completion->result.failure->kind==sound::PlaybackError::closed,
+            "output failure during real direct construction revokes publication and reports same-identity closed completion");
+        sound::PlaybackFailure pf;check(!main.playback->observe(*play,pf)&&pf.kind==sound::PlaybackError::retired_handle&&
+            main_binding::retire_retail_game_sound_references(main,f),"revoked direct output exposes no play and actual game reference retires");
+        samples.reset();check(main.playback->unload(*bank,pf),"revoked direct bank has no leaked work/resource owners");
+        check(main.sound_runtime->shutdown(rf),"failed output with all real resources retired closes cleanly");
     }
     setup(Scenario::normal);
     {
@@ -377,6 +470,7 @@ int main(int argc,char** argv) try {
         check(main_binding::pump_retail_current_sound(main,f)&&main.sound_status->active_plays.empty()&&
             main.sound_frame_counter==1,"actual status removes stopped/retired associations after typed delivery");
         exercise_pending(main,*session,*announcr->bank,parameters);
+        exercise_direct(main,*session,parameters);
         auto public_parameters=parameters;public_parameters.envelope.release={4,-64,false};
         auto play=main.playback->activate(*main.current_sound,*announcr->bank,0,public_parameters,pf);
         check(bool(play),"actual callback handle enters the real native worker playback");
@@ -455,5 +549,5 @@ int main(int argc,char** argv) try {
             "actual output-close failure is returned after worker-thread release");
         check(host.main->sound_runtime->shutdown(failure),"already released failed output is not closed again");
     }
-    std::puts("PASS production Main held/resume/first-match/promotion/pending/cached-priority/cancellation/reference/context/status/workers/PCM tails/70 identities/allocation/disposal gap/error/lifetime; physical output and fault probes wrapped; no game/endpoint");return 0;
+    std::puts("PASS production Main direct/sample/cache/worker-retry/output-revocation/consumer-failure/held/resume/pending/cancellation/reference/context/status/workers/PCM tails/70 identities/allocation/disposal gap/error/lifetime; physical output and fault probes wrapped; no game/endpoint");return 0;
 }catch(const std::exception& e){std::fprintf(stderr,"FAIL production sound context: %s\n",e.what());return 1;}

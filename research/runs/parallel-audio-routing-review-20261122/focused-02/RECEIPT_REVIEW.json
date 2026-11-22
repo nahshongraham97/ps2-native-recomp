@@ -1,0 +1,398 @@
+{
+  "status": "PASS_FOCUSED_SOURCE_AND_SAVED_RECEIPT_REVIEW",
+  "executed_by": "primary; reviewer did not run builds or tests",
+  "verification_schema": {
+    "status": "str",
+    "clean_source": "bool",
+    "clients": "list",
+    "remaining_undefined_symbols": "list",
+    "limits": "list"
+  },
+  "manifest_entries": 832,
+  "manifest_sha256": "d68b4cb20e7d3d99c1f09b9f24dfa766dc764beb9821924e5e07187e791ced45",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "context_test_sha256": "ee83d47632bab5e7d0e6ca888d1529705d627c9489ff419870ceefa89f9092ee",
+  "production_pins_unchanged": [
+    "runtime/include/mka/bank_preparation.hpp",
+    "runtime/include/mka/pending_play.hpp",
+    "runtime/include/mka/retail_main.hpp",
+    "runtime/include/mka/retail_sound_runtime.hpp",
+    "runtime/src/native/bank_preparation.cpp",
+    "runtime/src/native/playback_owner.cpp",
+    "runtime/src/native/retail_sound_bank_main.cpp",
+    "runtime/src/native/retail_sound_runtime.cpp",
+    "runtime/src/native/audio_banks.cpp",
+    "runtime/src/native/audio_bank_service.cpp",
+    "runtime/src/native/audio_resource_domain.cpp",
+    "runtime/src/native/program_copy.cpp"
+  ],
+  "clients": [
+    {
+      "name": "test_native_runtime_program_work",
+      "receipt_sha256": "ba736d4fef0c337b7fee55f8ec4c139ec09fe78b4a0a64a3285fb5d7889ccd6d",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_runtime_program_work.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+      ],
+      "exit": 0,
+      "binary_sha256": "fbb87734a30e9703a9fbae62ba9fa04904929afc7129391c3d44ea9efd7f7003",
+      "stdout": "PASS_NATIVE_RUNTIME_PROGRAM_WORK: 6 actual direct/sample/cache selection, private build, cancellation, commit and retirement groups\n"
+    },
+    {
+      "name": "test_native_runtime_preparation",
+      "receipt_sha256": "34706ac21c77c899f5914093d5adf271f1d5f9c7ca4efd5b0e5fbfe12daa0e9b",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_runtime_preparation.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+      ],
+      "exit": 0,
+      "binary_sha256": "d78846af29677b0316c971191cbc08d4a3701abdd41eaee37139e75aa65ab809",
+      "stdout": "PASS_NATIVE_RUNTIME_PREPARATION: 5 actual bank runtime ownership cases; no callback/clone/output/voice/fidelity claim\n"
+    },
+    {
+      "name": "test_native_sound_output_plan",
+      "receipt_sha256": "d302453d0a13e62d3af171befba0274f9bb15f3f5f13017ca56e0820a6bf52cc",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_sound_output_plan.exe"
+      ],
+      "exit": 0,
+      "binary_sha256": "043379ae8e040f583d1fd68f78fba373aea04c412f39c3fa3096077fcf6a5fd6",
+      "stdout": "PASS native game-output planning/counter provenance; pure checks, no endpoint opened\n"
+    },
+    {
+      "name": "test_native_retail_sound_context",
+      "receipt_sha256": "e25e29cf6efe1718153e397247d29ef00fa4bfb2565fb0bb3d5392eefb31d92e",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_sound_context.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon"
+      ],
+      "exit": 0,
+      "binary_sha256": "ef99933f882944608b35de92edbb9583f371608564650b2b219cd3ffbb60db90",
+      "stdout": "PASS production Main held/resume/first-match/promotion/pending/cached-priority/cancellation/reference/context/status/workers/PCM tails/70 identities/allocation/disposal gap/error/lifetime; physical output and fault probes wrapped; no game/endpoint\n"
+    },
+    {
+      "name": "test_native_program_host_clock",
+      "receipt_sha256": "f4172aa1d3bd99dcdce1e3f81b08fe0ae5c7fde4f2a0b3ea4a47f413c7bf8bc9",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_program_host_clock.exe"
+      ],
+      "exit": 0,
+      "binary_sha256": "6f02e802928bd514ff4e5d260fa3e58cd7eecccda5a086c097650c12956116bc",
+      "stdout": "PASS_NATIVE_PROGRAM_HOST_CLOCK: shared explicit epoch/integer milliseconds/wrap/failure atomicity/reentry/concurrent readers; no original kernel epoch or physical timing fidelity claim\n"
+    },
+    {
+      "name": "test_native_audio_device",
+      "receipt_sha256": "65bb85c72864f14dc9c5de000200ee889f2eef5fe925b8887de497b45dd7da61",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_audio_device.exe"
+      ],
+      "exit": 0,
+      "binary_sha256": "289d39708e990b880a1bc8251b2aa0a02da6a6358da3079b0e51e359cf0f3342",
+      "stdout": "PASS pure format/PCM validation only; no device opened or audio generated\n"
+    },
+    {
+      "name": "test_native_held_playback",
+      "receipt_sha256": "6faa523964c1b445193e4e6be1f621d30ab4bcd23fe0a47ea10e73e864b2bb85",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_held_playback.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+      ],
+      "exit": 0,
+      "binary_sha256": "322150200c789fd96ddcef37c429db1802179ae141b3555c2fed395750546c01",
+      "stdout": "PASS native held flags9/prebind/no key-on/shared-clock resume/strict next-delay/priority/force1/PCM/lifetime/allocation; no endpoint/game\n"
+    },
+    {
+      "name": "test_native_sound_curves",
+      "receipt_sha256": "42dd42e6acfaee742c23997ead6cfe3972c7b4ae0c26aae0f2717337415bb4ea",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_sound_curves.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+      ],
+      "exit": 0,
+      "binary_sha256": "6d4e25b7561731268a4c1a79d5bd791e32cddb3379a0fa7ce583442d2b73fb0c",
+      "stdout": "PASS original600 curve coefficients/directional pan/phase/unknown policy and real native PCM propagation; no device/game\n"
+    },
+    {
+      "name": "test_native_host_voice",
+      "receipt_sha256": "dc5f2de0b4bd4a70a6bc1e1a884ca8c29fee3ca2f3cfafa4dc26993f1c6d8a63",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_host_voice.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+      ],
+      "exit": 0,
+      "binary_sha256": "3d2f71707cd966e4cbd81a1bfb84a9e171ba2f9fce1a2f469e74e5b6e89335f3",
+      "stdout": "PASS realannouncr freshpan/LUT/phase/explicitprofiles/signedDSP/hostresample/64voices/transactionalstop; no device/output/fidelity claim\n"
+    },
+    {
+      "name": "test_native_program_copy",
+      "receipt_sha256": "cb735042fbe0be562e974ad5080414a5354c2bb369ddbf63ed95514eb27501f8",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_program_copy.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+      ],
+      "exit": 0,
+      "binary_sha256": "344bff33897357c9590f2565187b5be07f460c9be0b3b40abf3e79573e2b76a5",
+      "stdout": "PASS_NATIVE_PROGRAM_COPY: actual ANNOUNCR copies/schedules/independent native outputs/semantic cleanup and pure command arithmetic; no source activation/callback/heard fidelity claim\n"
+    },
+    {
+      "name": "test_native_program_copy_failure",
+      "receipt_sha256": "f594a6d0e6f2fb13da714717699e192fe1ed7ea18adc8315f7d933a657956c3c",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_program_copy_failure.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+      ],
+      "exit": 0,
+      "binary_sha256": "d089311dce80ea5bf73e3fe590d7463320529f518168bb6e2458060d07c6de6c",
+      "stdout": "PASS native program copy allocation rollback: 7 failure sites; actual voice failure/retry; test-only allocator wrap\n"
+    },
+    {
+      "name": "test_native_bank_playback",
+      "receipt_sha256": "2e3ffb30add5e2fc9686041a8d3ebcb9f8ed518de2cbd44e9ca6c6af33c4fce5",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_bank_playback.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+      ],
+      "exit": 0,
+      "binary_sha256": "8a739f6820dd2f9e6a6bd4c56cec4aef0be896ecfd8b760feb5b9614d70327d4",
+      "stdout": "PASS native bank handles -> runtime/copy/clock/PCM/mixer/unload/retired-tail; no packets/tokens/device/game\n"
+    },
+    {
+      "name": "test_native_playback_owner",
+      "receipt_sha256": "6319eb8a891a054224d3b41b9aff09d7d27135420277eb8c0420ebf183f68701",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_playback_owner.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+      ],
+      "exit": 0,
+      "binary_sha256": "f870b7d6e834bb4a38243e0e67aee9052bebaa2ee96318a76e6d0bea9b7792c1",
+      "stdout": "PASS actualservice/fulltoken/deferredannouncr/HostVoiceACK/kind7/ownerstop/64voices/mix/refusedactiveunload; no boot/device/fidelity claim\n"
+    },
+    {
+      "name": "test_native_playback_reservation",
+      "receipt_sha256": "b900926aeaa1f6846f40e1308a841d8d0f0bf767f1f0ab282d0b8b582f01d25f",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_playback_reservation.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+      ],
+      "exit": 0,
+      "binary_sha256": "c4b9f688aa72db018060c1f1833ce44265ab052b6f790140bef8dd8a722a59b6",
+      "stdout": "PASS actual ANNOUNCR pending play reservation/context identity/registry growth/nonzero concurrent voice/resource domain; no device/game/PCM fidelity claim\n"
+    },
+    {
+      "name": "test_native_playback_reservation_gaps",
+      "receipt_sha256": "a8fa271f04463932708ec701ccc7af3193339982b1ff5b90735c5fd4ccf8dcf1",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_playback_reservation_gaps.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+      ],
+      "exit": 0,
+      "binary_sha256": "03795088ae7d750a86f839f8f12ae52e172dae443a05ccd1bd4d0abc0e92a135",
+      "stdout": "PASS native playback reservation pre/post-service gaps/64 slot growth/unpublished rollback/exact-bank and close uncertainty; injected CPU fixture only\n"
+    },
+    {
+      "name": "test_native_default_playback_runtime",
+      "receipt_sha256": "8c51ffe716f3c8a14034cc672d2771974474566f23a3be94de652588742b33ac",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_default_playback_runtime.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+      ],
+      "exit": 0,
+      "binary_sha256": "d5dacd21a426fa4eec73111883d906e05f31e6a78f4968ede311d1d56c979bb4",
+      "stdout": "PASS_NATIVE_DEFAULT_PLAYBACK_RUNTIME: 7 actual default runtime/copy/flag/retirement cases; no source activation/callback/device/fidelity claim\n"
+    },
+    {
+      "name": "test_native_program_output_activation",
+      "receipt_sha256": "3a3db7bc5f62bcb6dc3a5a370a52c8c5b9825e0b40e8ef81eaa02e577a2a7092",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_program_output_activation.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+      ],
+      "exit": 0,
+      "binary_sha256": "d6e65ad89014693a36d0d61f379a0040567d69118072f06b9263705c5b747bfe",
+      "stdout": "PASS_NATIVE_PROGRAM_OUTPUT_ACTIVATION: 8 actual role/clock/replacement/coverage groups; ordinary native output only\n"
+    },
+    {
+      "name": "test_native_forced_output_retirement",
+      "receipt_sha256": "93157581dbe30d986f71aa84a6adb1852e47e0e93d2453f3730695c5cd6743e6",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_forced_output_retirement.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+      ],
+      "exit": 0,
+      "binary_sha256": "6f0adea45bf528d3b459bc3e9a06589848309fc910e60e3df76f9392a4142038",
+      "stdout": "PASS_NATIVE_FORCED_OUTPUT_RETIREMENT: 4 actual Owner output retirement groups; software tails only\n"
+    },
+    {
+      "name": "test_native_forced_output_retirement_failure",
+      "receipt_sha256": "91595a9990f87e0454779f78112b8205bfbd973d0a00b22cbfbb9ecbbc0468b1",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_forced_output_retirement_failure.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+      ],
+      "exit": 0,
+      "binary_sha256": "01b122d9b5dc2af6111132bc6cd60dd14a122464906223d16ac7f66adb5862aa",
+      "stdout": "PASS_NATIVE_FORCED_OUTPUT_RETIREMENT_FAILURE: 8 single and 11 context allocation failures; mixed-pool rollback; test-only allocator wrap\n"
+    },
+    {
+      "name": "test_native_retail_reset_sound",
+      "receipt_sha256": "b0708aac311d49d17e12f6ab62d169698d1cd7bf40abcb7228f581bc4cfa4c2e",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_reset_sound.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-play-routing-20261122\\validation-02\\negative-content"
+      ],
+      "exit": 0,
+      "binary_sha256": "a92c253b6ef3ef6cad9b34d7336d4769a0f6c4e899a2f33cbf972cbd07bcd700",
+      "stdout": "PASS_CONNECTED_RETAIL_RESET_SOUND; production bank binding/four real callbacks/wait release; unrelated game/context fixtures; no game/endpoint\n"
+    },
+    {
+      "name": "test_native_retail_initial_reset",
+      "receipt_sha256": "af96e0b64d9a2920b45cc5d88bda6bd2b0e45b976dd67fa1160414a0ae227273",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_initial_reset.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-play-routing-20261122\\validation-02\\empty-content"
+      ],
+      "exit": 0,
+      "binary_sha256": "65424312ca79f4ec8fbd3d6a20cede57f1730e1f9f3a17d6d720c6790f896112",
+      "stdout": "PASS native reset ordering, live fields, suspension,1799-wait timeout, failure and lifetime; six effects substituted in this caller fixture\n"
+    },
+    {
+      "name": "test_native_retail_initial_task",
+      "receipt_sha256": "4628acb39e43ce7c8f115a443739ba7d3cfc1256d7990308b0dc6b319f6b7d19",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_initial_task.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-play-routing-20261122\\validation-02\\empty-content"
+      ],
+      "exit": 0,
+      "binary_sha256": "d5de9daab7888f02c6d2a05d84d2a07d7be120e3c2af8846df80e805d00ca8dc",
+      "stdout": "PASS native initial task parent and menu continuation; test-only child effects, full Main/game open\n"
+    },
+    {
+      "name": "test_native_retail_startup",
+      "receipt_sha256": "18f022e6d852b33f7c37d59d0caca31eb745b33a9f9065b38735be2f00120036",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_startup.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-play-routing-20261122\\validation-02\\startup-fixtures"
+      ],
+      "exit": 0,
+      "binary_sha256": "9f25d36bdb068baf2854eba413f5cabd5e91ddf00375e123b62a7796fdd96146",
+      "stdout": "PASS generated retail startup owns actual arguments/content/memory group; failed initialization is unpublished and full entry link remains blocked\n"
+    },
+    {
+      "name": "test_native_retail_file_startup",
+      "receipt_sha256": "a75943465372f81e9a192422f45640bda5fcb113ea0ab9c3ded5ba67351c17b6",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_file_startup.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-play-routing-20261122\\validation-02"
+      ],
+      "exit": 0,
+      "binary_sha256": "eb11ab4e323bb2535db5a114a56d60aa253f8976337f621513809df52af1546f",
+      "stdout": "PASS native middleware file startup: 15 allocation cuts, 12 native files, 65 native children; source frame body covered separately; callback producers/game remain open\n"
+    },
+    {
+      "name": "test_native_retail_middleware_main",
+      "receipt_sha256": "fef31246060d8c77d7b8ed8700d378044933b467df37193713fac5b2ede4c85e",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_middleware_main.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-play-routing-20261122\\validation-02\\empty-content"
+      ],
+      "exit": 0,
+      "binary_sha256": "1747c596f87a780df8b1fee5f9ce52313132cff18ea2786b8c005aacb853ff27",
+      "stdout": "PASS actual native middleware main pump, source completion order and real main control transfer; game open\n"
+    }
+  ],
+  "negative_link": {
+    "argv": [
+      "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+      "--build",
+      "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+      "--target",
+      "test_native_startup_missing_bindings",
+      "-j2"
+    ],
+    "exit": 1,
+    "exact_names": [
+      "mka::retail::main_binding::initialize_retail_saved_profile_records(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::read_retail_online_boot_word(mka::retail::NativeRetailMainState const&)",
+      "mka::retail::main_binding::initialize_retail_online_stage(mka::retail::NativeRetailMainState&, std::__1::array<unsigned int, 5ull> const&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::initialize_retail_mode_objects(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::initialize_retail_mode_service(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::initialize_retail_section_service(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::initialize_retail_first_scene(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::initialize_retail_post_scene_timing(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::initialize_retail_post_scene_sections(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::initialize_retail_first_frame_graphics(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::retail_frame_processing_inhibited(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::poll_retail_controller_roles(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::advance_retail_game_services(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::service_retail_frame_input(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::retail_render_enabled(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::render_retail_frame(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::prune_retail_associations(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::retail_ordinary_counter_inhibited(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::retail_mode_dispatch_enabled(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::dispatch_retail_enabled_mode(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::create_retail_action_task(mka::retail::NativeRetailMainState&, mka::retail::RetailActionTaskRequest const&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::deliver_retail_builtin_scene_event(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, unsigned int, unsigned int, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::reset_and_bind_retail_scene_event_graph(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, mka::retail::StartupFailure&)",
+      "mka::retail::initial_task_required::begin_intro_18deb0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::transition_1225d0(mka::retail::NativeRetailMainState&, unsigned int, mka::retail::RetailInitialTransitionBody)",
+      "mka::retail::initial_task_required::begin_prompt_18dc10(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d450(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d870(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d8e0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d700(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d800(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d660(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d770(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_reset_required::reset_saved_profile_children_246070(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::initial_reset_required::reset_selected_resource_334700(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::initial_reset_required::clear_nonowning_references_18da30(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::initial_reset_required::configure_selected_resource_zero_16fc70(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)"
+    ],
+    "prior_record": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-online-stage-20261122\\validation-01\\VERIFICATION.json",
+    "prior_exact_match": true
+  },
+  "archive_pins": {
+    "validation-02/test_native_runtime_program_work.json": "ba736d4fef0c337b7fee55f8ec4c139ec09fe78b4a0a64a3285fb5d7889ccd6d",
+    "validation-02/test_native_runtime_preparation.json": "34706ac21c77c899f5914093d5adf271f1d5f9c7ca4efd5b0e5fbfe12daa0e9b",
+    "validation-02/test_native_sound_output_plan.json": "d302453d0a13e62d3af171befba0274f9bb15f3f5f13017ca56e0820a6bf52cc",
+    "validation-02/test_native_retail_sound_context.json": "e25e29cf6efe1718153e397247d29ef00fa4bfb2565fb0bb3d5392eefb31d92e",
+    "validation-02/test_native_program_host_clock.json": "f4172aa1d3bd99dcdce1e3f81b08fe0ae5c7fde4f2a0b3ea4a47f413c7bf8bc9",
+    "validation-02/test_native_audio_device.json": "65bb85c72864f14dc9c5de000200ee889f2eef5fe925b8887de497b45dd7da61",
+    "validation-02/test_native_held_playback.json": "6faa523964c1b445193e4e6be1f621d30ab4bcd23fe0a47ea10e73e864b2bb85",
+    "validation-02/test_native_sound_curves.json": "42dd42e6acfaee742c23997ead6cfe3972c7b4ae0c26aae0f2717337415bb4ea",
+    "validation-02/test_native_host_voice.json": "dc5f2de0b4bd4a70a6bc1e1a884ca8c29fee3ca2f3cfafa4dc26993f1c6d8a63",
+    "validation-02/test_native_program_copy.json": "cb735042fbe0be562e974ad5080414a5354c2bb369ddbf63ed95514eb27501f8",
+    "validation-02/test_native_program_copy_failure.json": "f594a6d0e6f2fb13da714717699e192fe1ed7ea18adc8315f7d933a657956c3c",
+    "validation-02/test_native_bank_playback.json": "2e3ffb30add5e2fc9686041a8d3ebcb9f8ed518de2cbd44e9ca6c6af33c4fce5",
+    "validation-02/test_native_playback_owner.json": "6319eb8a891a054224d3b41b9aff09d7d27135420277eb8c0420ebf183f68701",
+    "validation-02/test_native_playback_reservation.json": "b900926aeaa1f6846f40e1308a841d8d0f0bf767f1f0ab282d0b8b582f01d25f",
+    "validation-02/test_native_playback_reservation_gaps.json": "a8fa271f04463932708ec701ccc7af3193339982b1ff5b90735c5fd4ccf8dcf1",
+    "validation-02/test_native_default_playback_runtime.json": "8c51ffe716f3c8a14034cc672d2771974474566f23a3be94de652588742b33ac",
+    "validation-02/test_native_program_output_activation.json": "3a3db7bc5f62bcb6dc3a5a370a52c8c5b9825e0b40e8ef81eaa02e577a2a7092",
+    "validation-02/test_native_forced_output_retirement.json": "93157581dbe30d986f71aa84a6adb1852e47e0e93d2453f3730695c5cd6743e6",
+    "validation-02/test_native_forced_output_retirement_failure.json": "91595a9990f87e0454779f78112b8205bfbd973d0a00b22cbfbb9ecbbc0468b1",
+    "validation-02/test_native_retail_reset_sound.json": "b0708aac311d49d17e12f6ab62d169698d1cd7bf40abcb7228f581bc4cfa4c2e",
+    "validation-02/test_native_retail_initial_reset.json": "af96e0b64d9a2920b45cc5d88bda6bd2b0e45b976dd67fa1160414a0ae227273",
+    "validation-02/test_native_retail_initial_task.json": "4628acb39e43ce7c8f115a443739ba7d3cfc1256d7990308b0dc6b319f6b7d19",
+    "validation-02/test_native_retail_startup.json": "18f022e6d852b33f7c37d59d0caca31eb745b33a9f9065b38735be2f00120036",
+    "validation-02/test_native_retail_file_startup.json": "a75943465372f81e9a192422f45640bda5fcb113ea0ab9c3ded5ba67351c17b6",
+    "validation-02/test_native_retail_middleware_main.json": "fef31246060d8c77d7b8ed8700d378044933b467df37193713fac5b2ede4c85e",
+    "published-online-baseline-VERIFICATION.json": "8b91847f4270be260bd32778303c2eab4bf73ba5a83ad664c2e42bbe012f1d56",
+    "compiler-function.h232-241.txt": "d0b9062c417d17a0d129c9b7fdc12fe03db27492f44336fbee234d7730ff4b83",
+    "WORK.md": "70391d89a4240314c7631ae01285c68142ffb0b1b4b33f54d8588c1ea9630f9a",
+    "HOOK_DIAGNOSIS.json": "70496a4389e334484ef3788efa134412b17e607886c9730906b9de7b603f6f42",
+    "validation-02/VERIFICATION.json": "7ca3dd936e3b8e85ab5607c899aa3bdc334b64b30e0abb25baa6bcc9d6b64c83",
+    "validation-02/SOURCE_FILES.json": "d68b4cb20e7d3d99c1f09b9f24dfa766dc764beb9821924e5e07187e791ced45",
+    "validation-02/build.json": "500af130c2d5606fa51b8093c867082ca8991329da7221075c69a875fb75535a",
+    "validation-02/full-entry-negative-link.json": "362fd632b2f14961faa4f736772efef1993a5b4ed9ba12f16c96b843ed938803",
+    "validation-01/test_native_retail_sound_context.json": "52af93234c8b60bdf73b54d481f6ec5e9e4f277cd5baff505e0423ae65104c8f",
+    "diagnostic-01/client.json": "b58eab6d8e951c8adcb758413e7807687c155fc24f4e875263ff4b1dc99ae76c",
+    "tests/test_retail_sound_context.cpp": "ee83d47632bab5e7d0e6ca888d1529705d627c9489ff419870ceefa89f9092ee"
+  },
+  "source_commit": "915da5fd8dfdc108a3bb256fe2d142a331e74c32",
+  "source_clean": false,
+  "preflight_correction": "Earlier historical held-play baseline has two audio->online symbol renames and therefore was not treated as exact same names; used actual published online-stage baseline915da5f instead. No target names weakened.",
+  "scope": "normal/sample/cache direct and real worker components; semantic parameters/envelopes and game acceptance OPEN"
+}

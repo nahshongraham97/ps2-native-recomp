@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "restored_delivery_paths": [
+    "cmake/native_game.cmake",
+    "research/runs/native-retail-saved-profile-records-20261122/README.md",
+    "research/runs/native-retail-saved-profile-records-20261122/VERIFICATION.json",
+    "runtime/include/mka/retail_main.hpp",
+    "runtime/include/mka/retail_saved_profile_records.hpp",
+    "runtime/src/native/retail_main_state.cpp",
+    "runtime/src/native/retail_saved_profile_records.cpp",
+    "tests/test_retail_saved_profile_records.cpp"
+  ],
+  "base": "915da5fd8dfdc108a3bb256fe2d142a331e74c32",
+  "net_existing_tracked_diff": [],
+  "checks": [
+    "all eight delivery paths byte-exact restored or absent",
+    "374 ELF words joined",
+    "nonzero omitted245E84 decoded; taken BNEL skips it and not-taken branch exits",
+    "zero return padding distinguished"
+  ],
+  "initial_preflight_failures": [
+    "Join refused nonzero omission245E84; preserved and resolved rather than counted as padding",
+    "Working tree base-blob equality detected Git CRLF conversion; existing three restored files rewritten to exact base blob bytes",
+    "Raw Ghidra log trailing spaces failed diff-check; exact log preserved gzip rather than changing measured bytes"
+  ],
+  "limitations": [
+    "No independently authenticated delivery compilation/test execution",
+    "No game/oracle execution",
+    "No production definitions added",
+    "No push"
+  ]
+}

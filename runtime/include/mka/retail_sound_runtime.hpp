@@ -54,6 +54,10 @@ public:
     static constexpr std::uint32_t initial_output_mode() noexcept{return 3;}
     std::optional<RetailSoundRuntimeObservation> observe(RetailSoundRuntimeFailure&) const;
     std::optional<RetailSoundRuntimeStatus> snapshot_status(RetailSoundRuntimeFailure&) const;
+    // Production EE8/E28 admission: real cached/sample-ready construction may
+    // complete before return; unavailable samples use the resource worker.
+    std::optional<sound::NativePlayHandle> submit_play(const sound::AudioBankHandle&,std::int32_t,
+        const sound::NativeActivationParameters&,RetailSoundRuntimeFailure&);
     std::optional<sound::NativePlayHandle> submit_queued_play(const sound::AudioBankHandle&,std::int32_t,
         const sound::NativeActivationParameters&,RetailSoundRuntimeFailure&);
     std::optional<sound::ProgramWorkCancellation> cancel_pending_play(const sound::NativePlayHandle&,RetailSoundRuntimeFailure&);
@@ -65,6 +69,8 @@ public:
 private:
     struct State;
     explicit NativeRetailSoundRuntime(std::shared_ptr<State>);
+    std::optional<sound::NativePlayHandle> submit_play_impl(const sound::AudioBankHandle&,std::int32_t,
+        const sound::NativeActivationParameters&,bool explicitly_queued,RetailSoundRuntimeFailure&);
     std::shared_ptr<State> state_;
 };
 }

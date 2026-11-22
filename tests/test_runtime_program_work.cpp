@@ -240,6 +240,47 @@ void cached_and_unload(const char* path) {
           "revoked work and independent post-unload reference retire cleanly");
 }
 }
+void direct_construction(const char* path) {
+    PreparationFailure f;
+    {
+        Fixture x(path);auto work=x.admit();
+        auto direct=work->try_begin_direct(f);
+        check(direct&&!*direct&&work->observe().state==RuntimeProgramWorkState::queued&&
+              !x.domain->observe()[0].depth,"E28 uncached sample leaves actual work queued without resource access");
+        check(work->cancel()==ProgramWorkCancellation::queued_removed&&work->retire(f),"declined direct selection remains cancellable queued work");
+    }
+    {
+        Fixture x(path);auto data=x.bank->prepare_deferred_normal(0,f);
+        check(data&&!data->normal_instances.empty()&&!x.record().cached,"normal sample readiness is distinct from runtime readiness");
+        const auto sample=data->normal_instances.front().sample;
+        std::weak_ptr<const void> owner=data->normal_instances.front().cache_reference;
+        auto work=x.admit();auto direct=work->try_begin_direct(f);
+        check(direct&&*direct&&work->observe().state==RuntimeProgramWorkState::building,
+              "E28 actual sample cache permits direct fresh constructor");
+        data.reset();check(!owner.expired(),"selected actual sample owner survives donor retirement");
+        check(work->build(f)&&work->finish_build(f),"direct constructor builds through actual source-derived work");
+        auto reference=work->take_result(f);
+        check(reference&&reference->preparation()->data()->normal_instances.front().sample==sample,
+              "direct constructor uses the identical retained PCM resource");
+        check(work->retire(f)&&reference->release(f)&&!x.record().cached&&owner.expired(),
+              "direct work and semantic reference retire their actual sample/cache owners");
+    }
+    {
+        Fixture x(path,"bg_armory");auto work=x.admit();auto direct=work->try_begin_direct(f);
+        check(direct&&*direct&&x.record().references==1&&work->observe().branch==RuntimeProgramWorkBranch::cached&&
+              !x.domain->observe()[0].depth,"EE8 existing runtime acquires one real reference without a fresh constructor lease");
+        check(work->cancel()==ProgramWorkCancellation::not_cancellable,"selected existing runtime bypasses fresh cancellation");
+        check(work->build(f)&&work->finish_build(f),"existing direct runtime becomes ready without a new construction");
+        auto reference=work->take_result(f);check(reference&&reference->reference_count(f)==1,"existing direct reference is not counted twice");
+        check(work->retire(f)&&reference->release(f)&&x.record().references==0,"existing direct reference retires exactly once");
+    }
+    {
+        Fixture x(path,"bg_armory");auto work=x.admit();auto direct=work->try_begin_direct(f);
+        check(direct&&*direct,"direct cache admitted before unload");x.bank->unload();
+        check(!work->build(f)&&f.kind==PreparationError::unloaded&&!work->finish_build(f)&&work->retire(f),
+              "actual bank unload revokes direct cached publication and releases its reference");
+    }
+}
 int main(int argc, char** argv) {
     if (argc != 2) return 2;
     selected_before_construction(argv[1]);
@@ -247,6 +288,7 @@ int main(int argc, char** argv) {
     cancellation(argv[1]);
     blocked_publication_cancel(argv[1]);
     cached_and_unload(argv[1]);
-    std::puts("PASS_NATIVE_RUNTIME_PROGRAM_WORK: 5 actual selection/private build, cancellation, commit and retirement groups");
+    direct_construction(argv[1]);
+    std::puts("PASS_NATIVE_RUNTIME_PROGRAM_WORK: 6 actual direct/sample/cache selection, private build, cancellation, commit and retirement groups");
     return std::fflush(stdout) || std::ferror(stdout) ? 1 : 0;
 }

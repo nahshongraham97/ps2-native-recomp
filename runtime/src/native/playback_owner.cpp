@@ -495,6 +495,8 @@ struct NativePlayWork::Impl {
     NativeSoundContext context;
     NativePlayParameters parameters;
     mutable std::mutex mutex;
+    AudioBankHandle bank;
+    std::int32_t selector=0;
     std::thread::id worker;
     NativePlayWorkObservation observation;
     bool body_started=false,completing=false;
@@ -514,7 +516,7 @@ std::shared_ptr<NativePlayWork> NativePlaybackOwner::admit_queued_play(const Nat
         NativePlayParameters parameters{p.context,p.program,p.envelope,{0},p.source_output_mode,p.caller_play_flags,p.output};
         auto data=std::make_shared<NativePlayWork::Impl>(parameters);
         auto result=std::shared_ptr<NativePlayWork>(new NativePlayWork(data));
-        data->admission=std::make_unique<State::Activity>();data->context=context;
+        data->admission=std::make_unique<State::Activity>();data->context=context;data->bank=bank;data->selector=selector;
         {std::lock_guard lock(state->mutex);
          if(!state->available(f)||!state->context(context,f))return {};
          if(const auto gate=state->unloading_state(bank)){f.kind=*gate?PlaybackError::bank_state_unknown:PlaybackError::bank_unloading;return {};}
@@ -541,6 +543,15 @@ bool NativePlayWork::begin_build(PlaybackFailure& f){
     if(!s->runtime->begin_build(f.preparation)){f.kind=PlaybackError::native_bank_failed;return false;}
     s->worker=std::this_thread::get_id();s->observation.state=NativePlayWorkState::building;return true;
 }
+std::optional<bool> NativePlayWork::try_begin_direct(PlaybackFailure& f){
+    f={};auto s=state_;std::lock_guard lock(s->mutex);
+    if(s->observation.state!=NativePlayWorkState::queued){f.kind=PlaybackError::invalid_work_state;return {};}
+    auto direct=s->runtime->try_begin_direct(f.preparation);
+    if(!direct){f.kind=PlaybackError::native_bank_failed;return {};}
+    if(!*direct)return false;
+    s->worker=std::this_thread::get_id();s->observation.state=NativePlayWorkState::building;
+    s->observation.direct_attempted=true;return true;
+}
 bool NativePlayWork::build(PlaybackFailure& f){
     f={};auto s=state_;
     {std::lock_guard lock(s->mutex);if(!s->worker_access(f))return false;
@@ -554,6 +565,23 @@ bool NativePlayWork::build(PlaybackFailure& f){
     s->observation.state=NativePlayWorkState::runtime_built;
     if(!s->reference&&!s->observation.cancelled){f.kind=PlaybackError::native_bank_failed;s->observation.failure=f;}
     return bool(s->reference);
+}
+bool NativePlayWork::retry_direct_construction_on_worker(PlaybackFailure& f){
+    f={};auto s=state_;
+    {std::lock_guard lock(s->mutex);if(!s->worker_access(f))return false;
+     if(s->observation.state!=NativePlayWorkState::runtime_built||!s->observation.direct_attempted||
+        s->observation.runtime_ready||s->observation.cancelled||s->observation.ordinary_callback_invoked||
+        s->observation.branch!=RuntimeProgramWorkBranch::fresh||s->completing){f.kind=PlaybackError::invalid_work_state;return false;}
+     s->completing=true;}
+    if(!s->runtime->retire(f.preparation)){
+        std::lock_guard lock(s->mutex);s->completing=false;f.kind=PlaybackError::native_bank_failed;return false;
+    }
+    auto retry=s->admission->state->native_session->admit_runtime_program(s->bank,s->selector,f.preparation,f.native_bank);
+    std::lock_guard lock(s->mutex);s->completing=false;
+    if(!retry){f.kind=PlaybackError::native_bank_failed;return false;}
+    s->observation.direct_constructor_failure=s->observation.failure;s->observation.failure.reset();
+    s->observation.direct_retry_queued=true;s->observation.branch=RuntimeProgramWorkBranch::unselected;
+    s->runtime=std::move(retry);s->worker={};s->body_started=false;s->observation.state=NativePlayWorkState::queued;return true;
 }
 bool NativePlayWork::complete(bool admitted,PlaybackFailure& f){
     f={};auto s=state_;

@@ -8,6 +8,8 @@ struct NativePlayWorkObservation {
     bool runtime_ready=false,ordinary_callback_invoked=false,activated=false;
     bool cancellation_requested=false,cancelled=false,pending=true;
     std::optional<PlaybackFailure> failure;
+    bool direct_attempted=false,direct_retry_queued=false;
+    std::optional<PlaybackFailure> direct_constructor_failure;
 };
 // One actual native association, runtime construction and ordinary consumer.
 // Runtime readiness is distinct from private-copy/activation and voice start.
@@ -21,6 +23,9 @@ public:
     NativePlayHandle handle() const;
     bool cached_runtime_available() const;
     bool begin_build(PlaybackFailure&);
+    std::optional<bool> try_begin_direct(PlaybackFailure&);
+    // EE8 queues only a failed fresh constructor, never a failed consumer.
+    bool retry_direct_construction_on_worker(PlaybackFailure&);
     bool build(PlaybackFailure&);
     // On transient context exclusion the same owned plan is retried. Lower
     // construction leases retire before entering the actual native consumer.

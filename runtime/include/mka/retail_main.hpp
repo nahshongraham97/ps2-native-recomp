@@ -134,6 +134,7 @@ struct NativeRetailMainState {
     std::uint32_t sound_frame_counter{};
     // size() replaces the source list count; no original16-entry capacity.
     std::vector<NativeRetailGameSoundReference> game_sound_references;
+    bool game_sound_reference_admission_active=false;
     std::uint32_t sound_auxiliary_word{}; // only the12D7E0 clear is established
     bool game_sound_state_prepared{};
 
@@ -201,6 +202,9 @@ bool dispatch_retail_task_lists(NativeRetailMainState&, StartupFailure&); // 12E
 bool pump_retail_middleware(NativeRetailMainState&, StartupFailure&); // 328CE0
 bool pump_retail_current_sound(NativeRetailMainState&, StartupFailure&); // 3152C0
 std::optional<sound::NativePlayHandle> submit_retail_queued_sound(NativeRetailMainState&,
+    const sound::AudioBankHandle&,std::int32_t selector,std::uint32_t semantic_sound_id,
+    const sound::NativeActivationParameters&,StartupFailure&);
+std::optional<sound::NativePlayHandle> submit_retail_sound(NativeRetailMainState&,
     const sound::AudioBankHandle&,std::int32_t selector,std::uint32_t semantic_sound_id,
     const sound::NativeActivationParameters&,StartupFailure&);
 //12C1D0 reverse removal for actual ready native play references. Public pending

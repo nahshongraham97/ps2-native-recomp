@@ -1,0 +1,41 @@
+{
+  "commit": "32447e0accc94bb773a0c9f1fd7eb816793b6866",
+  "imported_evidence_only": true,
+  "source_paths_unchanged": true,
+  "files": {
+    "research/runs/parallel-audio-routing-review-20261122/PINS.json": "f27bc4ecfce2fb88fd5dd049b6efafa8ef3a3629ee1ae11b8416836e565f0c87",
+    "research/runs/parallel-audio-routing-review-20261122/REVIEW.md": "05fd088fe81d71a103393f26d27e042bc5c37d5d1f313ad9e4f2c6b1bf6961d1",
+    "research/runs/parallel-audio-routing-review-20261122/TEST_CHANGE.json": "bdc06b8f536cb2e7b040f2fb0ac8dd0bcf0cb2882a5f7cad47d2cbd1f9cae526",
+    "research/runs/parallel-audio-routing-review-20261122/VERIFICATION.json": "3e10295476f62ac34cd0e714f27356c665965f09b228d92b46280683ab4666b5",
+    "research/runs/parallel-audio-routing-review-20261122/context-test-after-fixture-failure.cpp.gz": "5f061f7d8e6ef822bb82c85e67468419eb56a6bae075d182d0a796350e46821a",
+    "research/runs/parallel-audio-routing-review-20261122/focused-02/RECEIPT_REVIEW.json": "365f9180d9f53870acb8f61b5bf55f0d6ad8613aa3e0ca50a33e29731fa93274",
+    "research/runs/parallel-audio-routing-review-20261122/focused-02/REVIEW.md": "8fc7681ca6e8496f819b34a8e2c75f4afeb8df049a4b0e65f7d4fa4e60f17a72",
+    "research/runs/parallel-audio-routing-review-20261122/focused-02/snapshot.tar.gz": "af704ef793a6832afaa52be97143492a24d9f6ca9ef8b05b1100742fa7e300bb",
+    "research/runs/parallel-audio-routing-review-20261122/snapshot.tar.gz": "a554bc02b22ce03f532f2119a4a83608d7cdd6798ab6619987402597a1c3f27d",
+    "research/runs/parallel-audio-routing-review-20261122/tracked.patch.gz": "e636fe3d873028da52d62e317e892a33368e81c850161980a04770db7776f037",
+    "research/runs/parallel-profile-binding-review-20261122/ProfileReviewListing.java": "5d26ec47ab73f8a5e737dddaba39628810b46ef5d3509193a73daaca15c1528d",
+    "research/runs/parallel-profile-binding-review-20261122/RESTORE_VERIFICATION.json": "f7591772fad6b9850899d00c7754f0b06563b10a5e88c856e4ca5487990ec4dc",
+    "research/runs/parallel-profile-binding-review-20261122/REVIEW.md": "41eb1b88b85bffbfb49eff36cb15a39a73d7e996c0af8a4a33d5d20e3d43561b",
+    "research/runs/parallel-profile-binding-review-20261122/SOURCE_JOIN.json": "bf9428f15afcf9f41a8482257e835b1972a5700ac64e4c0563183f80783d05b3",
+    "research/runs/parallel-profile-binding-review-20261122/ee/00171b10.tsv": "e4a1802f06d7d7b27c92b8cc4e9ff394c754b7df7232c33e8086a681c5505dba",
+    "research/runs/parallel-profile-binding-review-20261122/ee/00171b10.words.bin": "2f17999a01b6652fe9ead022a49c175df45b68e0ffa7de6f86a8f5d9344018d6",
+    "research/runs/parallel-profile-binding-review-20261122/ee/00245cb0.tsv": "e7a44e28a5e01a92865d505247436cbd1f24a36631bf9351032c70a671693f67",
+    "research/runs/parallel-profile-binding-review-20261122/ee/00245cb0.words.bin": "e80de509034d01094c9c12ed5394d4a19f83426375898a78afc979f5c773b00d",
+    "research/runs/parallel-profile-binding-review-20261122/ee/00245dd0.tsv": "ace9acc0d0a0ab51243bb34ee4c5a3f33031598b2816f6d2dc4769cc2ad9f747",
+    "research/runs/parallel-profile-binding-review-20261122/ee/00245dd0.words.bin": "b13fd7034f88c355445a0d282611637ab2945a544b235de144d9aa01fa415d03",
+    "research/runs/parallel-profile-binding-review-20261122/ee/00246070.tsv": "6f6fb96826983d17737b993a01396bc469af1815a693be9018b4494f8ad3b7f0",
+    "research/runs/parallel-profile-binding-review-20261122/ee/00246070.words.bin": "b2d28df6692549ec27a28e7c5e8a8fdfb5e67d16119e8d72c145e8843daf5223",
+    "research/runs/parallel-profile-binding-review-20261122/ee/002817b0.tsv": "04dcc4419d19df3f0aac6adeebaaf5c4dd53d0689dab6a33b0c5c1c68248f548",
+    "research/runs/parallel-profile-binding-review-20261122/ee/002817b0.words.bin": "d769cada3bde61fa4bd7f7b48497be07c6e7d2e1df098a42c54e57f1c94eb72a",
+    "research/runs/parallel-profile-binding-review-20261122/ee/00281830.tsv": "85273201645d9019194e1c145dcd080bb1aa1310486afc598a0af1f43e0363b4",
+    "research/runs/parallel-profile-binding-review-20261122/ee/00281830.words.bin": "73b95f5cb73a4f654ad4c3718812d1dbef580ababd3243a055ac20237811d5bc",
+    "research/runs/parallel-profile-binding-review-20261122/ee/program.txt": "de943852f46e3eca77605d02a8260bc7bc142f564b24e621d808093dbed76c10",
+    "research/runs/parallel-profile-binding-review-20261122/ghidra.log.gz": "f7ceacd20945dbcdd697219c22554b46da82d353d5bcd487b05f434c04020a36",
+    "research/runs/parallel-profile-binding-review-20261122/join.py": "11c6fd5f59d5060d99e1850a8491ccf8e9a9778a8421fa598fcfd00424e8d159"
+  },
+  "notes": [
+    "Original incorrect profile production code remains reverted; no integration from b986341",
+    "Audio production source reviewed; final canonical03 adds only a Runtime.cpp comment clarification and test PASS message after focused02",
+    "Actual source/binary/client result receipts reviewed by delegate; no delegate execution/game claim"
+  ]
+}

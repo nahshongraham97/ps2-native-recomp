@@ -1,0 +1,14 @@
+{
+  "approved": [
+    "runtime/include/mka/bank_preparation.hpp",
+    "runtime/src/native/bank_preparation.cpp",
+    "runtime/include/mka/pending_play.hpp",
+    "runtime/src/native/playback_owner.cpp",
+    "runtime/include/mka/retail_sound_runtime.hpp",
+    "runtime/src/native/retail_sound_runtime.cpp",
+    "runtime/include/mka/retail_main.hpp",
+    "runtime/src/native/retail_sound_bank_main.cpp",
+    "tests/test_runtime_program_work.cpp",
+    "tests/test_retail_sound_context.cpp"
+  ]
+}

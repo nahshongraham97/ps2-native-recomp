@@ -27,7 +27,7 @@ struct NativeRetailSoundRuntime::State {
     };
     using Jobs=std::list<Job>;
     Jobs queued,active,completed;
-    bool resource_stop{};
+    bool resource_stop{},play_admission_active{};
     RetailSoundRuntimeFailure resource_failure;
     std::optional<sound::AudioBankSession> incoming;
     std::shared_ptr<sound::NativePlaybackOwner> playback;
@@ -302,16 +302,57 @@ std::optional<RetailSoundRuntimeStatus> NativeRetailSoundRuntime::snapshot_statu
 }
 std::optional<sound::NativePlayHandle> NativeRetailSoundRuntime::submit_queued_play(const sound::AudioBankHandle& bank,
     std::int32_t selector,const sound::NativeActivationParameters& parameters,RetailSoundRuntimeFailure& f){
+    return submit_play_impl(bank,selector,parameters,true,f);
+}
+std::optional<sound::NativePlayHandle> NativeRetailSoundRuntime::submit_play(const sound::AudioBankHandle& bank,
+    std::int32_t selector,const sound::NativeActivationParameters& parameters,RetailSoundRuntimeFailure& f){
+    return submit_play_impl(bank,selector,parameters,false,f);
+}
+std::optional<sound::NativePlayHandle> NativeRetailSoundRuntime::submit_play_impl(const sound::AudioBankHandle& bank,
+    std::int32_t selector,const sound::NativeActivationParameters& parameters,bool explicitly_queued,RetailSoundRuntimeFailure& f){
     if(!state_->owner_access(f))return {};
+    {std::lock_guard lock(state_->mutex);
+     if(state_->play_admission_active){f.kind=RetailSoundRuntimeError::playback;f.playback.kind=sound::PlaybackError::operation_active;
+         f.operation="native sound play admission reentry";return {};}
+     state_->play_admission_active=true;}
+    struct Admission {std::shared_ptr<State> state;~Admission(){std::lock_guard lock(state->mutex);state->play_admission_active=false;}}
+        admission_guard{state_};
     try {
         State::Jobs node;node.emplace_back();
-        std::lock_guard admission(state_->publication);
-        {std::lock_guard lock(state_->mutex);
+        {std::lock_guard admission(state_->publication);
+         std::lock_guard lock(state_->mutex);
          if(state_->failure.kind!=RetailSoundRuntimeError::none){f=state_->failure;return {};}
          if(state_->closed){f.kind=RetailSoundRuntimeError::closed;f.operation="queue native play after shutdown";return {};}}
         auto job=state_->playback->admit_queued_play(*state_->context,bank,selector,parameters,f.playback);
         if(!job){f.kind=RetailSoundRuntimeError::playback;f.operation="admit actual native pending play";return {};}
         node.front().work=job;auto handle=job->handle();
+        if(!explicitly_queued){
+            auto direct=job->try_begin_direct(f.playback);
+            if(!direct){f.kind=RetailSoundRuntimeError::playback;f.operation="select actual native direct construction";return {};}
+            if(*direct){
+                const bool ready=job->build(f.playback);
+                if(!ready&&job->observe().branch==sound::RuntimeProgramWorkBranch::fresh){
+                    if(!job->retry_direct_construction_on_worker(f.playback)){
+                        f.kind=RetailSoundRuntimeError::playback;f.operation="retire direct constructor before real worker retry";return {};
+                    }
+                }else {
+                    // Direct construction and final job retirement stay outside
+                    // this gate. Check actual output admission at the
+                    // same consumer boundary as the queued worker.
+                    {std::lock_guard admission(state_->publication);bool admitted;
+                     {std::lock_guard lock(state_->mutex);admitted=state_->failure.kind==RetailSoundRuntimeError::none&&!state_->closed;}
+                     job->complete(admitted,f.playback);}
+                    if(job->observe().state!=sound::NativePlayWorkState::callback_complete){
+                        // Context cleanup can reenter on this same thread.
+                        // Return its named exclusion instead of waiting on it.
+                        f.kind=RetailSoundRuntimeError::playback;f.operation="native direct consumer exclusion";return {};
+                    }
+                    if(!job->retire(f.playback)){f.kind=RetailSoundRuntimeError::playback;f.operation="native direct construction retirement";return {};}
+                    {std::lock_guard lock(state_->mutex);state_->completed.splice(state_->completed.end(),node);state_->condition.notify_all();}
+                    f={};return handle;
+                }
+            }
+        }
         {std::lock_guard lock(state_->mutex);state_->queued.splice(state_->queued.end(),node);state_->condition.notify_all();}
         return handle;
     }catch(const std::bad_alloc&){f.kind=RetailSoundRuntimeError::allocation;}
@@ -341,6 +382,8 @@ std::optional<sound::ProgramWorkCancellation> NativeRetailSoundRuntime::cancel_p
 bool NativeRetailSoundRuntime::request_resume(const sound::NativePlayHandle& handle,RetailSoundRuntimeFailure& f){
     if(!state_->owner_access(f))return false;
     {std::lock_guard lock(state_->mutex);
+     if(state_->play_admission_active){f.kind=RetailSoundRuntimeError::playback;f.playback.kind=sound::PlaybackError::operation_active;
+         f.operation="native sound resume during play admission";return false;}
      if(state_->failure.kind!=RetailSoundRuntimeError::none){f=state_->failure;return false;}
      if(state_->closed){f.kind=RetailSoundRuntimeError::closed;f.operation="resume native play after shutdown";return false;}
      for(auto it=state_->queued.begin();it!=state_->queued.end();++it)if(it->work->handle().same_identity(handle)){
@@ -365,7 +408,7 @@ bool NativeRetailSoundRuntime::shutdown(RetailSoundRuntimeFailure& f){
     if(!state_->owner_access(f))return false;
     {std::unique_lock lock(state_->mutex);
      if(state_->closed)return true;
-     if(!state_->queued.empty()||!state_->active.empty()||!state_->completed.empty()){
+     if(state_->play_admission_active||!state_->queued.empty()||!state_->active.empty()||!state_->completed.empty()){
          f.kind=RetailSoundRuntimeError::active_playback;f.operation="native sound shutdown requires retired and consumed program jobs";return false;
      }
      // Wait for the actual worker to leave clock/mixer mutation before the

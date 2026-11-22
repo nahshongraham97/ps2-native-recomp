@@ -145,6 +145,10 @@ public:
     // No resource access or construction occurs here. build() also supports
     // synchronous callers that have not selected their work separately.
     bool begin_build(PreparationFailure&);
+    // EE8/E28: begin on this thread only if an actual cached runtime or all
+    // required kind1 sample owners are available. False leaves work queued.
+    // A selected cached runtime acquires its real semantic reference here.
+    std::optional<bool> try_begin_direct(PreparationFailure&);
     bool cached_runtime_available() const;
     bool build(PreparationFailure&);
     bool finish_build(PreparationFailure&);

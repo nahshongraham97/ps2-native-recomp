@@ -183,6 +183,8 @@ struct RuntimeProgramWork::Impl {
     std::shared_ptr<PreparedProgramWork> data_work;
     std::shared_ptr<const NativeRuntimePreparation> candidate;
     std::unique_ptr<RuntimeProgramReference> result;
+    std::vector<std::shared_ptr<PreparedBank::State::NormalCache>> direct_samples;
+    bool direct_cached=false;
     void clear_marker(){if(marker&&bank){std::lock_guard lock(bank->mutex);bank->runtime_records[index].building=false;marker=false;}}
     ~Impl(){result.reset();candidate.reset();clear_marker();data_work.reset();lease.reset();backing.reset();bank.reset();}
 };
@@ -213,6 +215,47 @@ bool RuntimeProgramWork::cached_runtime_available()const{
     std::lock_guard bank_lock(s->bank->mutex);
     return !s->bank->unloaded&&bool(s->bank->runtime_records[s->index].cached);
 }
+std::optional<bool> RuntimeProgramWork::try_begin_direct(PreparationFailure& f){
+    f={};auto s=state_;
+    try {
+        std::lock_guard job_lock(s->mutex);
+        if(s->phase!=RuntimeProgramWorkState::queued){f.kind=PreparationError::invalid_work_state;return {};}
+        // Keep selected actual sample owners across the unlocked construction.
+        // Declare them before the bank lock so discarded owners leave afterward.
+        std::vector<std::shared_ptr<PreparedBank::State::NormalCache>> retained;
+        std::unique_ptr<RuntimeProgramReference> cached;
+        std::lock_guard bank_lock(s->bank->mutex);
+        if(s->bank->unloaded){f.kind=PreparationError::unloaded;return {};}
+        auto& record=s->bank->runtime_records[s->index];
+        if(record.cached){
+            if(record.references==std::numeric_limits<std::size_t>::max()){f.kind=PreparationError::host_capacity;return {};}
+            auto keeper=std::make_unique<RuntimeProgramReference::Impl>();keeper->bank=s->bank;keeper->index=s->index;
+            keeper->preparation=record.cached;
+            cached=std::unique_ptr<RuntimeProgramReference>(new RuntimeProgramReference(std::move(keeper)));
+            // All fallible allocations precede semantic acquisition.
+            cached->state_->active=true;++record.references;
+            s->result=std::move(cached);s->direct_cached=true;s->branch=RuntimeProgramWorkBranch::cached;
+        }else {
+            const auto& commands=s->bank->commands[s->index];retained.reserve(commands.size());
+            for(const auto& command:commands){
+                if(command.kind()!=1)continue; // E6C skips other signed-byte kinds.
+                auto resource=s->bank->resource(resource_key(command));
+                if(resource.status!=ResourceLookupStatus::found)return false;
+                // Source resource flag bit0 admits the alternate constructor;
+                // its unported native implementation still fails by name later.
+                if(word(resource.bytes,32)&1u)continue;
+                auto sample=s->bank->cache[resource.index].lock();if(!sample)return false;
+                retained.push_back(std::move(sample));
+            }
+            s->direct_samples=std::move(retained);
+            s->branch=RuntimeProgramWorkBranch::fresh;
+        }
+        s->worker=std::this_thread::get_id();s->phase=RuntimeProgramWorkState::building;
+        s->open=!s->direct_cached;return true;
+    }catch(const std::bad_alloc&){f.kind=PreparationError::allocation_failed;}
+     catch(const std::length_error&){f.kind=PreparationError::host_capacity;}
+     catch(...){f.kind=PreparationError::native_exception;}return {};
+}
 bool RuntimeProgramWork::build(PreparationFailure& f){
     f={};auto s=state_;
     {std::lock_guard lock(s->mutex);
@@ -223,6 +266,11 @@ bool RuntimeProgramWork::build(PreparationFailure& f){
      if(s->worker!=std::this_thread::get_id()){f.kind=PreparationError::wrong_thread;return false;}
      if(s->phase!=RuntimeProgramWorkState::building||s->body_started){f.kind=PreparationError::invalid_work_state;return false;}
      s->body_started=true;
+     if(s->direct_cached){
+         std::lock_guard bank_lock(s->bank->mutex);
+         if(s->bank->unloaded){f.kind=PreparationError::unloaded;s->failure=f;s->phase=RuntimeProgramWorkState::build_failed;return false;}
+         s->phase=RuntimeProgramWorkState::committed;return true;
+     }
     }
     try {
         auto lease=s->bank->domain->acquire(AudioResourceWork::program,f.resource);
@@ -313,7 +361,7 @@ bool RuntimeProgramWork::retire(PreparationFailure& f){
         unused.reset();discarded.reset();s->clear_marker();
         if(s->data_work&&s->data_work->observe().state!=ProgramWorkState::retired){if(!s->data_work->retire(f)){std::lock_guard lock(s->mutex);s->retiring=false;return false;}}
         if(s->lease&&!s->lease->release(f.resource)){f.kind=PreparationError::resource_access;std::lock_guard lock(s->mutex);s->retiring=false;return false;}
-        s->data_work.reset();s->lease.reset();s->backing.reset();s->bank.reset();
+        s->data_work.reset();s->lease.reset();s->direct_samples.clear();s->backing.reset();s->bank.reset();
     }catch(...){f.kind=PreparationError::native_exception;std::lock_guard lock(s->mutex);s->retiring=false;return false;}
     {std::lock_guard lock(s->mutex);s->phase=RuntimeProgramWorkState::retired;s->retiring=false;}return true;
 }
