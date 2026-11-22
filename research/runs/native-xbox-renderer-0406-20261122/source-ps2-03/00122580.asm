@@ -1,0 +1,5 @@
+00122580	f0ffbd27	addiu sp,sp,-0x10
+00122584	0000bfff	sd ra,0x0(sp)
+00122588	0000bfdf	ld ra,0x0(sp)
+0012258c	887a0408	j 0x0011ea20
+00122590	1000bd27	_addiu sp,sp,0x10

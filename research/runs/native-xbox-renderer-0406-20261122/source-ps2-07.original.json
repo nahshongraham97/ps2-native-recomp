@@ -1,0 +1,113 @@
+{
+  "platform": "ps2",
+  "image_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "sections": [
+    {
+      "name": "PT_LOAD_0",
+      "virtual_address": 1048576,
+      "virtual_size": 7096448,
+      "file_offset": 256,
+      "file_size": 5561984,
+      "original_program_header": [
+        1,
+        256,
+        1048576,
+        1048576,
+        5561984,
+        7096448,
+        7,
+        128
+      ]
+    },
+    {
+      "name": "PT_LOAD_1",
+      "virtual_address": 8145024,
+      "virtual_size": 1131008,
+      "file_offset": 5562240,
+      "file_size": 0,
+      "original_program_header": [
+        1,
+        5562240,
+        8145024,
+        8145024,
+        0,
+        1131008,
+        7,
+        128
+      ]
+    },
+    {
+      "name": "PT_LOAD_2",
+      "virtual_address": 8145024,
+      "virtual_size": 2097536,
+      "file_offset": 5562240,
+      "file_size": 0,
+      "original_program_header": [
+        1,
+        5562240,
+        8145024,
+        8145024,
+        0,
+        2097536,
+        7,
+        128
+      ]
+    },
+    {
+      "name": "PT_LOAD_3",
+      "virtual_address": 8145024,
+      "virtual_size": 1867392,
+      "file_offset": 5562240,
+      "file_size": 0,
+      "original_program_header": [
+        1,
+        5562240,
+        8145024,
+        8145024,
+        0,
+        1867392,
+        7,
+        128
+      ]
+    },
+    {
+      "name": "PT_LOAD_4",
+      "virtual_address": 10242560,
+      "virtual_size": 0,
+      "file_offset": 5562240,
+      "file_size": 0,
+      "original_program_header": [
+        1,
+        5562240,
+        10242560,
+        10242560,
+        0,
+        0,
+        6,
+        16
+      ]
+    }
+  ],
+  "queries": {
+    "fn=001a82b0": {
+      "mapping": {
+        "vma": "0x1a82b0",
+        "length": 32,
+        "section": "PT_LOAD_0",
+        "file_offset": 689072,
+        "file_backed": true
+      },
+      "bytes_hex": "e0ffbd276a00023c1000bfff0000b07f2d808000c8f3428c09f840001400848c"
+    },
+    "data=005a36e0:40": {
+      "mapping": {
+        "vma": "0x5a36e0",
+        "length": 40,
+        "section": "PT_LOAD_0",
+        "file_offset": 4863968,
+        "file_backed": true
+      },
+      "bytes_hex": "1c0000001c0000000000000000000000000000000000000000000000000000003400000034000000"
+    }
+  }
+}

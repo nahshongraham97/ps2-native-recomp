@@ -1,0 +1,224 @@
+{
+  "platform": "xbox",
+  "image_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "sections": [
+    {
+      "name": ".text",
+      "flags": 22,
+      "virtual_address": 73728,
+      "virtual_size": 4148796,
+      "file_offset": 8192,
+      "file_size": 4148796
+    },
+    {
+      "name": "D3D",
+      "flags": 7,
+      "virtual_address": 4222528,
+      "virtual_size": 144580,
+      "file_offset": 4157440,
+      "file_size": 129484
+    },
+    {
+      "name": "D3DX",
+      "flags": 7,
+      "virtual_address": 4367136,
+      "virtual_size": 12920,
+      "file_offset": 4288512,
+      "file_size": 12916
+    },
+    {
+      "name": "XGRPH",
+      "flags": 7,
+      "virtual_address": 4380064,
+      "virtual_size": 147992,
+      "file_offset": 4304896,
+      "file_size": 144796
+    },
+    {
+      "name": "XONLINE",
+      "flags": 38,
+      "virtual_address": 4528064,
+      "virtual_size": 253740,
+      "file_offset": 4452352,
+      "file_size": 253740
+    },
+    {
+      "name": "XNET",
+      "flags": 54,
+      "virtual_address": 4781824,
+      "virtual_size": 86356,
+      "file_offset": 4706304,
+      "file_size": 86356
+    },
+    {
+      "name": "PSFD00",
+      "flags": 54,
+      "virtual_address": 4868192,
+      "virtual_size": 8912,
+      "file_offset": 4796416,
+      "file_size": 8912
+    },
+    {
+      "name": "PSFD_I",
+      "flags": 54,
+      "virtual_address": 4877120,
+      "virtual_size": 968,
+      "file_offset": 4808704,
+      "file_size": 968
+    },
+    {
+      "name": "PSFD_B",
+      "flags": 22,
+      "virtual_address": 4878112,
+      "virtual_size": 2200,
+      "file_offset": 4812800,
+      "file_size": 2200
+    },
+    {
+      "name": "PSFD_P",
+      "flags": 6,
+      "virtual_address": 4880320,
+      "virtual_size": 1552,
+      "file_offset": 4816896,
+      "file_size": 1552
+    },
+    {
+      "name": "DSOUND",
+      "flags": 7,
+      "virtual_address": 4881888,
+      "virtual_size": 156812,
+      "file_offset": 4820992,
+      "file_size": 156180
+    },
+    {
+      "name": "XPP",
+      "flags": 7,
+      "virtual_address": 5038720,
+      "virtual_size": 38240,
+      "file_offset": 4980736,
+      "file_size": 38240
+    },
+    {
+      "name": ".rdata",
+      "flags": 6,
+      "virtual_address": 5076960,
+      "virtual_size": 458912,
+      "file_offset": 5021696,
+      "file_size": 458896
+    },
+    {
+      "name": ".data",
+      "flags": 7,
+      "virtual_address": 5535872,
+      "virtual_size": 4184196,
+      "file_offset": 5484544,
+      "file_size": 445824
+    },
+    {
+      "name": "XON_RD",
+      "flags": 38,
+      "virtual_address": 9720096,
+      "virtual_size": 14797,
+      "file_offset": 5931008,
+      "file_size": 14796
+    },
+    {
+      "name": "DOLBY",
+      "flags": 22,
+      "virtual_address": 9734912,
+      "virtual_size": 29056,
+      "file_offset": 5947392,
+      "file_size": 29036
+    },
+    {
+      "name": ".data1",
+      "flags": 7,
+      "virtual_address": 9763968,
+      "virtual_size": 224,
+      "file_offset": 5980160,
+      "file_size": 176
+    },
+    {
+      "name": "$$XTINFO",
+      "flags": 8,
+      "virtual_address": 9764192,
+      "virtual_size": 148,
+      "file_offset": 6004736,
+      "file_size": 148
+    },
+    {
+      "name": "$$XTIMAGE",
+      "flags": 40,
+      "virtual_address": 9764352,
+      "virtual_size": 10240,
+      "file_offset": 6008832,
+      "file_size": 10240
+    },
+    {
+      "name": "$$XSIMAGE",
+      "flags": 56,
+      "virtual_address": 9774592,
+      "virtual_size": 4096,
+      "file_offset": 6021120,
+      "file_size": 4096
+    },
+    {
+      "name": "dspimage",
+      "flags": 58,
+      "virtual_address": 9778688,
+      "virtual_size": 18608,
+      "file_offset": 5984256,
+      "file_size": 18608
+    },
+    {
+      "name": ".XTLID",
+      "flags": 56,
+      "virtual_address": 9797312,
+      "virtual_size": 6000,
+      "file_offset": 6025216,
+      "file_size": 6000
+    }
+  ],
+  "queries": {
+    "fn=002bce10": {
+      "mapping": {
+        "vma": "0x2bce10",
+        "length": 32,
+        "section": ".text",
+        "file_offset": 2805264,
+        "file_backed": true
+      },
+      "bytes_hex": "8b0d54675a008b4424088b1550675a005368180004006864735c00516a04a35c"
+    },
+    "fn=002bbc00": {
+      "mapping": {
+        "vma": "0x2bbc00",
+        "length": 32,
+        "section": ".text",
+        "file_offset": 2800640,
+        "file_backed": true
+      },
+      "bytes_hex": "a15c735c008b88505583005633f63bce741b51ff1578548300a15c735c0089b0"
+    },
+    "ref=002bce10:1": {
+      "mapping": {
+        "vma": "0x2bce10",
+        "length": 1,
+        "section": ".text",
+        "file_offset": 2805264,
+        "file_backed": true
+      },
+      "bytes_hex": "8b"
+    },
+    "ref=002bbc00:1": {
+      "mapping": {
+        "vma": "0x2bbc00",
+        "length": 1,
+        "section": ".text",
+        "file_offset": 2800640,
+        "file_backed": true
+      },
+      "bytes_hex": "a1"
+    }
+  }
+}

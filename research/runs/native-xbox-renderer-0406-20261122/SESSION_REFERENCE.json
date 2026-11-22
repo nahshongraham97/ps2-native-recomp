@@ -1,0 +1,25 @@
+{
+  "session_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\local-research\\ghidra-agent-sessions\\renderer-0406-82ead436c68a422ab4dd9b9165a61de1\\SESSION.json",
+  "session_sha256": "60f1d055faabb8daa4489eca2c660d6b842310076954083ed2a4d96935d75a14",
+  "helper_sha256": "5dc58f4263b69d38635b25bf16562975474791f6ebb9c462098170fb31b2184f",
+  "argv": [
+    "C:\\Python315\\python.exe",
+    "-u",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\tools\\research\\prepare_ghidra_session.py",
+    "--agent",
+    "renderer-0406",
+    "--platform",
+    "both"
+  ],
+  "exit": 0,
+  "seconds": 0.8007371000130661,
+  "deadline_seconds": 90,
+  "platforms": [
+    "ps2",
+    "xbox"
+  ],
+  "private_project_copies": true,
+  "masters_modified": false,
+  "game_run": false,
+  "local_model_used": false
+}

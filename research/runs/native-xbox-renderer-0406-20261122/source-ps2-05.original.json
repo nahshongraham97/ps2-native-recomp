@@ -1,0 +1,123 @@
+{
+  "platform": "ps2",
+  "image_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "sections": [
+    {
+      "name": "PT_LOAD_0",
+      "virtual_address": 1048576,
+      "virtual_size": 7096448,
+      "file_offset": 256,
+      "file_size": 5561984,
+      "original_program_header": [
+        1,
+        256,
+        1048576,
+        1048576,
+        5561984,
+        7096448,
+        7,
+        128
+      ]
+    },
+    {
+      "name": "PT_LOAD_1",
+      "virtual_address": 8145024,
+      "virtual_size": 1131008,
+      "file_offset": 5562240,
+      "file_size": 0,
+      "original_program_header": [
+        1,
+        5562240,
+        8145024,
+        8145024,
+        0,
+        1131008,
+        7,
+        128
+      ]
+    },
+    {
+      "name": "PT_LOAD_2",
+      "virtual_address": 8145024,
+      "virtual_size": 2097536,
+      "file_offset": 5562240,
+      "file_size": 0,
+      "original_program_header": [
+        1,
+        5562240,
+        8145024,
+        8145024,
+        0,
+        2097536,
+        7,
+        128
+      ]
+    },
+    {
+      "name": "PT_LOAD_3",
+      "virtual_address": 8145024,
+      "virtual_size": 1867392,
+      "file_offset": 5562240,
+      "file_size": 0,
+      "original_program_header": [
+        1,
+        5562240,
+        8145024,
+        8145024,
+        0,
+        1867392,
+        7,
+        128
+      ]
+    },
+    {
+      "name": "PT_LOAD_4",
+      "virtual_address": 10242560,
+      "virtual_size": 0,
+      "file_offset": 5562240,
+      "file_size": 0,
+      "original_program_header": [
+        1,
+        5562240,
+        10242560,
+        10242560,
+        0,
+        0,
+        6,
+        16
+      ]
+    }
+  ],
+  "queries": {
+    "fn=001a8190": {
+      "mapping": {
+        "vma": "0x1a8190",
+        "length": 32,
+        "section": "PT_LOAD_0",
+        "file_offset": 688784,
+        "file_backed": true
+      },
+      "bytes_hex": "b0ffbd270300033c4000bfff6a00023c3000b37f2000b27f1000b17f2d908000"
+    },
+    "ref=001a8190:1": {
+      "mapping": {
+        "vma": "0x1a8190",
+        "length": 1,
+        "section": "PT_LOAD_0",
+        "file_offset": 688784,
+        "file_backed": true
+      },
+      "bytes_hex": "b0"
+    },
+    "data=001a8200:384": {
+      "mapping": {
+        "vma": "0x1a8200",
+        "length": 384,
+        "section": "PT_LOAD_0",
+        "file_offset": 688896,
+        "file_backed": true
+      },
+      "bytes_hex": "2d286002140060ae180060ae208d060c000060ae2d1060024000bfdf3000b37b2000b27b1000b17b0000b07b0800e0035000bd27000000000000000000000000e0ffbd271000bfff0000b07f0000828c01004230030040102d808000aca0060c000000005a00043c2d280002488d060ce0368424e8a3848f6a00033c90f263246a00023cd8f3428c211864000000648c09f840002d2800021000bfdf010002240000b07b0800e0032000bd2700000000e0ffbd276a00023c1000bfff0000b07f2d808000c8f3428c09f840001400848c140000aefeff0324180000ae2d1000020000048e24188300000003ae1000bfdf0000b07b0800e0032000bd2700000000e0ffbd272d1080002d30a0000000bfff2d2840006a00023ce0f2428c09f840001c00a4271c00a28f0000bfdf0800e0032000bd27000000000000000000000000d0ffbd276a00023c1000bfff0000b07fe4f2428c2d8080002c00a5af09f840002c00a5272d1000021000bfdf0000b07b0800e0033000bd270000000000000000"
+    }
+  }
+}

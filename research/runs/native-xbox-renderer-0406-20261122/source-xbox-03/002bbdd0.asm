@@ -1,0 +1,27 @@
+002bbdd0	56	PUSH ESI
+002bbdd1	8b355c735c00	MOV ESI,dword ptr [0x005c735c]
+002bbdd7	57	PUSH EDI
+002bbdd8	8b7c2414	MOV EDI,dword ptr [ESP + 0x14]
+002bbddc	85ff	TEST EDI,EDI
+002bbdde	7447	JZ 0x002bbe27
+002bbde0	8b4c2410	MOV ECX,dword ptr [ESP + 0x10]
+002bbde4	8b44240c	MOV EAX,dword ptr [ESP + 0xc]
+002bbde8	eb06	JMP 0x002bbdf0
+002bbdf0	0fb611	MOVZX EDX,byte ptr [ECX]
+002bbdf3	8a94324c538300	MOV DL,byte ptr [EDX + ESI*0x1 + 0x83534c]
+002bbdfa	8810	MOV byte ptr [EAX],DL
+002bbdfc	0fb65101	MOVZX EDX,byte ptr [ECX + 0x1]
+002bbe00	8a94324c538300	MOV DL,byte ptr [EDX + ESI*0x1 + 0x83534c]
+002bbe07	885001	MOV byte ptr [EAX + 0x1],DL
+002bbe0a	0fb65102	MOVZX EDX,byte ptr [ECX + 0x2]
+002bbe0e	8a94324c538300	MOV DL,byte ptr [EDX + ESI*0x1 + 0x83534c]
+002bbe15	885002	MOV byte ptr [EAX + 0x2],DL
+002bbe18	8a5103	MOV DL,byte ptr [ECX + 0x3]
+002bbe1b	885003	MOV byte ptr [EAX + 0x3],DL
+002bbe1e	83c004	ADD EAX,0x4
+002bbe21	83c104	ADD ECX,0x4
+002bbe24	4f	DEC EDI
+002bbe25	75c9	JNZ 0x002bbdf0
+002bbe27	5f	POP EDI
+002bbe28	5e	POP ESI
+002bbe29	c3	RET

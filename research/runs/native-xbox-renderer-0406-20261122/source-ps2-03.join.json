@@ -1,0 +1,54 @@
+{
+  "platform": "ps2",
+  "image_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "functions": {
+    "00122580": {
+      "instructions": 5,
+      "listing_sha256": "1ea16ecf153c1859e4345f8fc01c8aeb3b02117842c62f6ae3d42b3a77a9faf4",
+      "original_spans": [
+        {
+          "vma": "0x122580",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 140928,
+          "file_backed": true,
+          "bytes_hex": "f0ffbd27"
+        },
+        {
+          "vma": "0x122584",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 140932,
+          "file_backed": true,
+          "bytes_hex": "0000bfff"
+        },
+        {
+          "vma": "0x122588",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 140936,
+          "file_backed": true,
+          "bytes_hex": "0000bfdf"
+        },
+        {
+          "vma": "0x12258c",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 140940,
+          "file_backed": true,
+          "bytes_hex": "887a0408"
+        },
+        {
+          "vma": "0x122590",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 140944,
+          "file_backed": true,
+          "bytes_hex": "1000bd27"
+        }
+      ],
+      "gaps": []
+    }
+  },
+  "scope": "original listed-byte identity only; full-span coverage/ABI/semantics reviewed separately"
+}

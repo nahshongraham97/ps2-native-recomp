@@ -1,0 +1,166 @@
+{
+  "platform": "ps2",
+  "image_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "functions": {
+    "001a82b0": {
+      "instructions": 19,
+      "listing_sha256": "743e3f508f168f231e07481a2d479827136e6ea17e24eb4838acd7c037b82099",
+      "original_spans": [
+        {
+          "vma": "0x1a82b0",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689072,
+          "file_backed": true,
+          "bytes_hex": "e0ffbd27"
+        },
+        {
+          "vma": "0x1a82b4",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689076,
+          "file_backed": true,
+          "bytes_hex": "6a00023c"
+        },
+        {
+          "vma": "0x1a82b8",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689080,
+          "file_backed": true,
+          "bytes_hex": "1000bfff"
+        },
+        {
+          "vma": "0x1a82bc",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689084,
+          "file_backed": true,
+          "bytes_hex": "0000b07f"
+        },
+        {
+          "vma": "0x1a82c0",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689088,
+          "file_backed": true,
+          "bytes_hex": "2d808000"
+        },
+        {
+          "vma": "0x1a82c4",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689092,
+          "file_backed": true,
+          "bytes_hex": "c8f3428c"
+        },
+        {
+          "vma": "0x1a82c8",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689096,
+          "file_backed": true,
+          "bytes_hex": "09f84000"
+        },
+        {
+          "vma": "0x1a82cc",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689100,
+          "file_backed": true,
+          "bytes_hex": "1400848c"
+        },
+        {
+          "vma": "0x1a82d0",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689104,
+          "file_backed": true,
+          "bytes_hex": "140000ae"
+        },
+        {
+          "vma": "0x1a82d4",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689108,
+          "file_backed": true,
+          "bytes_hex": "feff0324"
+        },
+        {
+          "vma": "0x1a82d8",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689112,
+          "file_backed": true,
+          "bytes_hex": "180000ae"
+        },
+        {
+          "vma": "0x1a82dc",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689116,
+          "file_backed": true,
+          "bytes_hex": "2d100002"
+        },
+        {
+          "vma": "0x1a82e0",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689120,
+          "file_backed": true,
+          "bytes_hex": "0000048e"
+        },
+        {
+          "vma": "0x1a82e4",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689124,
+          "file_backed": true,
+          "bytes_hex": "24188300"
+        },
+        {
+          "vma": "0x1a82e8",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689128,
+          "file_backed": true,
+          "bytes_hex": "000003ae"
+        },
+        {
+          "vma": "0x1a82ec",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689132,
+          "file_backed": true,
+          "bytes_hex": "1000bfdf"
+        },
+        {
+          "vma": "0x1a82f0",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689136,
+          "file_backed": true,
+          "bytes_hex": "0000b07b"
+        },
+        {
+          "vma": "0x1a82f4",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689140,
+          "file_backed": true,
+          "bytes_hex": "0800e003"
+        },
+        {
+          "vma": "0x1a82f8",
+          "length": 4,
+          "section": "PT_LOAD_0",
+          "file_offset": 689144,
+          "file_backed": true,
+          "bytes_hex": "2000bd27"
+        }
+      ],
+      "gaps": []
+    }
+  },
+  "scope": "original listed-byte identity only; full-span coverage/ABI/semantics reviewed separately"
+}

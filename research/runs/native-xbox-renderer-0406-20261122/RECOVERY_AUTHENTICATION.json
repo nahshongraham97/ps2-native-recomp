@@ -1,0 +1,668 @@
+{
+  "status": "AUTHENTICATED_SOURCE_DERIVED_0406_RECOVERY_ONLY",
+  "schema_preflight": {
+    "prior_status": "str",
+    "prior_symbols": "list",
+    "prior_symbol_items": [
+      "str"
+    ],
+    "pin_map": "dict",
+    "pin_values": [
+      "str"
+    ],
+    "export_result": {
+      "argv": "list",
+      "exit": "int",
+      "timed_out": "bool",
+      "seconds": "float",
+      "deadline_seconds": "int",
+      "session_sha256": "str",
+      "script_sha256": "str",
+      "runner_sha256": "str",
+      "log_sha256": "str",
+      "game_run": "bool"
+    }
+  },
+  "fork_base": "f3fb51973e271c6187d94709915ee7fe976eb200",
+  "unchanged_runtime_source": "316d5495bb58552dac00394097278fee5b2e8ca3",
+  "unchanged_source_files": 912,
+  "source_manifest_sha256": "91dbc25a7edb24e28318feefdd76194c76ceb5d13d0d5af36cf41d6190c16bd8",
+  "all_runtime_source_blobs_unchanged": true,
+  "exports": {
+    "source-ps2-01": {
+      "platform": "ps2",
+      "command_sha256": "ae1864dbfeea9a9aa402c60fe534622c33ed1dcd30af14cc9f6cc706186605ac",
+      "original_sha256": "1502262560e60968cd1934336af1f8a671bfa05faf8d7d7fa27c42f0ce3664fb",
+      "join_sha256": "f2be21e1111019cebadc3760c5b6f55f18374c69a0505a56892aa9ea94997946",
+      "seconds": 6.065823699987959,
+      "exit": 0
+    },
+    "source-ps2-02": {
+      "platform": "ps2",
+      "command_sha256": "bd303ae4f53cbec927e527281b1cf3d7478b112921343c7778ac978dbd0b1422",
+      "original_sha256": "0d1179a66faa323b6de01e27ec8d3e7f067f92e2703730a1de6375d127c4154b",
+      "join_sha256": "4e6448cd00e0c2e198d7bcf276f74225c02e911e1912ed8e2ebec005a56e359d",
+      "seconds": 4.778043900005287,
+      "exit": 0
+    },
+    "source-ps2-03": {
+      "platform": "ps2",
+      "command_sha256": "c275e1bd55a2ed7596f0edb2dba67b77f6e583c95ca8be434a6c6799d8235f89",
+      "original_sha256": "48f230d43be6480f327418e1bd6d7e85713c2f0371bd09651134666f21261c3d",
+      "join_sha256": "d1a9fbfb869dc567198f1d3d34c2792c7b3119d890fdede1a052dc497f7bb920",
+      "seconds": 4.8750691000022925,
+      "exit": 0
+    },
+    "source-ps2-04": {
+      "platform": "ps2",
+      "command_sha256": "d94d5e1eece6726414bda0deda078cf004fefad46cb8a57a807711305232b0f6",
+      "original_sha256": "374aa71108fe95ef9312e207d3b9f88fcb32f89e09f4bb47ee6d678ec0ffd1c0",
+      "join_sha256": "d0643ef82790b3e1061342a07a8935eca7cc64709d66f21fde825add755b2a44",
+      "seconds": 4.982171300012851,
+      "exit": 0
+    },
+    "source-ps2-05": {
+      "platform": "ps2",
+      "command_sha256": "01c32ad62ce17a2390cdd536d5efb7c90efdd79b8b3b0480b7bd2440447d9df0",
+      "original_sha256": "ed86266161bbec2fabd3f3532e9056b30035a72c1c365503e8efb87fb2fa6704",
+      "join_sha256": "39612cc55d2dd4325b3ea235f8d18896c4d9f09a5dcd7b5617d42bb1d9d66339",
+      "seconds": 4.525252699997509,
+      "exit": 0
+    },
+    "source-ps2-06": {
+      "platform": "ps2",
+      "command_sha256": "e3cc9059a9528b67dce802c534bf7fdcd6213ad33463b936277e546af50642d5",
+      "original_sha256": "6991428884db40322170b1751047dab0b6c9dc07fcda95621b3b504738745c71",
+      "join_sha256": "6a6538e2d35d117a84599eab9b286cadb9dca724a271bdc367210ca4b1be255b",
+      "seconds": 4.870584499993129,
+      "exit": 0
+    },
+    "source-ps2-07": {
+      "platform": "ps2",
+      "command_sha256": "5631cd8b9697c651df31066d6d3824fb37599ef79939bfd2f466a9749e644134",
+      "original_sha256": "f131a06f371f186fb790f26800c8aaf9e81f45733af9ca953b5cf24b84a616c3",
+      "join_sha256": "3bd12aac6c57f4e715a3c17c25f9ed55cf2fe421ad0842729a5e6be8c34ee671",
+      "seconds": 4.791802699997788,
+      "exit": 0
+    },
+    "source-xbox-01": {
+      "platform": "xbox",
+      "command_sha256": "6fe67e15866ff938658acb1a8313b53536838248d049a0d4f376170abf90b6e6",
+      "original_sha256": "8bb82d7feea311f663123ef93b86098d31a118d8d1e3162cf002ca553f9d5391",
+      "join_sha256": "6a80775937b5a451337d122e354a6c74f7e8c9611b32cf710b727c4bc49aa670",
+      "seconds": 5.928779700014275,
+      "exit": 0
+    },
+    "source-xbox-02": {
+      "platform": "xbox",
+      "command_sha256": "75cac10e1ccd8ada20339283b1c4b8b68c5b78a4e2da6bfc2d5ef9eb3b030623",
+      "original_sha256": "d5551b04dc1b2aacfa74c44174dd588ef3c5875e3a7727a421cfd27970e69d36",
+      "join_sha256": "2f7c77e03155967c183936a2f4eb309cf188f97033d72b3765b4585434ec3d84",
+      "seconds": 4.935834000003524,
+      "exit": 0
+    },
+    "source-xbox-03": {
+      "platform": "xbox",
+      "command_sha256": "aeae0d9f0577b05b01063e426038afa6a351e17b996792eb1fe0f6dda7151f2d",
+      "original_sha256": "52a5cda0541f41362c580415d411709dc3e718f17a3f7b52bfaf15c5282eb11a",
+      "join_sha256": "c61c584e9d36b0512703d9e21b45abb12c1d0f602f7bf52731faa9f24352c9cc",
+      "seconds": 5.978404199995566,
+      "exit": 0
+    },
+    "source-xbox-04": {
+      "platform": "xbox",
+      "command_sha256": "eb93561031280970dd115aa0687bb11086032be475487cf26f5e71323bc49c1e",
+      "original_sha256": "7cc715fbe708b47e423a6a69dc8f85adc39514f22c8ae725ef0d12d22882eed0",
+      "join_sha256": "e405c185549c0808ba759f2d64e16287a64935682a6753c233e77df023308b38",
+      "seconds": 4.958848100010073,
+      "exit": 0
+    },
+    "source-xbox-05": {
+      "platform": "xbox",
+      "command_sha256": "56677c12f1912b5ec339b263ccc05bab64978bedadb80b699185d23b29eed966",
+      "original_sha256": "1040d9540dc5f123967f798cbe61292fb97457c476a829e87622b97be6fcaaab",
+      "join_sha256": "037fba6e4bbed429414dc25dcdf966fb3f6c1063e6d9a0cb27bf40dd053ffa35",
+      "seconds": 5.970941099978518,
+      "exit": 0
+    }
+  },
+  "functions": {
+    "ps2:001a7de0": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-01/001a7de0.asm",
+      "listing_sha256": "16f9e41c93dd0239c1766118c620dd3447eb6f5b032e049580f5017c569622f8",
+      "entry": "001a7de0",
+      "end_inclusive": "001a7fff",
+      "instructions": 136,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-01.join.json",
+      "mapping_receipt_sha256": "f2be21e1111019cebadc3760c5b6f55f18374c69a0505a56892aa9ea94997946",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "ps2:001a8000": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-01/001a8000.asm",
+      "listing_sha256": "898e49157d71a89577e7a3af9324d29b91a30fc698402760b1455c9897af9563",
+      "entry": "001a8000",
+      "end_inclusive": "001a8183",
+      "instructions": 97,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-01.join.json",
+      "mapping_receipt_sha256": "f2be21e1111019cebadc3760c5b6f55f18374c69a0505a56892aa9ea94997946",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "ps2:001a8380": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-02/001a8380.asm",
+      "listing_sha256": "d2201b47e0aae73a3c40e2d3964c094fd649c62508c21f5237d5b07915799462",
+      "entry": "001a8380",
+      "end_inclusive": "001a849f",
+      "instructions": 72,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-02.join.json",
+      "mapping_receipt_sha256": "4e6448cd00e0c2e198d7bcf276f74225c02e911e1912ed8e2ebec005a56e359d",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "ps2:00122580": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-03/00122580.asm",
+      "listing_sha256": "1ea16ecf153c1859e4345f8fc01c8aeb3b02117842c62f6ae3d42b3a77a9faf4",
+      "entry": "00122580",
+      "end_inclusive": "00122593",
+      "instructions": 5,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-03.join.json",
+      "mapping_receipt_sha256": "d1a9fbfb869dc567198f1d3d34c2792c7b3119d890fdede1a052dc497f7bb920",
+      "scope": "CALLER_OR_DEPENDENCY_ORIENTATION_ONLY",
+      "compiled": false,
+      "tested_component": false
+    },
+    "ps2:0011ea20": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-04/0011ea20.asm",
+      "listing_sha256": "ccc675c452f0c845a6e3057ef05e9c62183bfe03e946064ed3ff6b3093ad40dc",
+      "entry": "0011ea20",
+      "end_inclusive": "0011f21b",
+      "instructions": 508,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-04.join.json",
+      "mapping_receipt_sha256": "d0643ef82790b3e1061342a07a8935eca7cc64709d66f21fde825add755b2a44",
+      "scope": "CALLER_OR_DEPENDENCY_ORIENTATION_ONLY",
+      "compiled": false,
+      "tested_component": false
+    },
+    "ps2:001a84a0": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-04/001a84a0.asm",
+      "listing_sha256": "979487a51e99df59f7541cb3b0c910c60d6ea3fa89e4d65aba86fba56d06ce2f",
+      "entry": "001a84a0",
+      "end_inclusive": "001a8503",
+      "instructions": 25,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-04.join.json",
+      "mapping_receipt_sha256": "d0643ef82790b3e1061342a07a8935eca7cc64709d66f21fde825add755b2a44",
+      "scope": "CALLER_OR_DEPENDENCY_ORIENTATION_ONLY",
+      "compiled": false,
+      "tested_component": false
+    },
+    "ps2:001a8190": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-05/001a8190.asm",
+      "listing_sha256": "9a0c46ca97fab3305f99c30fa860523951bd9dfd45d2fbc8be49511b9f42503b",
+      "entry": "001a8190",
+      "end_inclusive": "001a8233",
+      "instructions": 41,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-05.join.json",
+      "mapping_receipt_sha256": "39612cc55d2dd4325b3ea235f8d18896c4d9f09a5dcd7b5617d42bb1d9d66339",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "ps2:001a8240": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-06/001a8240.asm",
+      "listing_sha256": "37cf4464c1c2b6006bc3cde16b112d1f670823a10ced7b45ae5a544e43b2df30",
+      "entry": "001a8240",
+      "end_inclusive": "001a82ab",
+      "instructions": 27,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-06.join.json",
+      "mapping_receipt_sha256": "6a6538e2d35d117a84599eab9b286cadb9dca724a271bdc367210ca4b1be255b",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "ps2:002df860": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-06/002df860.asm",
+      "listing_sha256": "5017680342d2978d39d89a6309be3d5d0b0611a962b253832228f4afe6605de2",
+      "entry": "002df860",
+      "end_inclusive": "002dfa3b",
+      "instructions": 119,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-06.join.json",
+      "mapping_receipt_sha256": "6a6538e2d35d117a84599eab9b286cadb9dca724a271bdc367210ca4b1be255b",
+      "scope": "CALLER_OR_DEPENDENCY_ORIENTATION_ONLY",
+      "compiled": false,
+      "tested_component": false
+    },
+    "ps2:001a82b0": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-07/001a82b0.asm",
+      "listing_sha256": "743e3f508f168f231e07481a2d479827136e6ea17e24eb4838acd7c037b82099",
+      "entry": "001a82b0",
+      "end_inclusive": "001a82fb",
+      "instructions": 19,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-ps2-07.join.json",
+      "mapping_receipt_sha256": "3bd12aac6c57f4e715a3c17c25f9ed55cf2fe421ad0842729a5e6be8c34ee671",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:002bbc00": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-01/002bbc00.asm",
+      "listing_sha256": "3570b1bd2298107ce429dc35a41dc969d7d855178905f85f862f343f7f9cdc96",
+      "entry": "002bbc00",
+      "end_inclusive": "002bbcd7",
+      "instructions": 56,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-01.join.json",
+      "mapping_receipt_sha256": "6a80775937b5a451337d122e354a6c74f7e8c9611b32cf710b727c4bc49aa670",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:002bce10": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-01/002bce10.asm",
+      "listing_sha256": "fca29cc4ce184e8cdb6fecc5930209ec2dffe9e1302adb9bc7f737a5869f25b5",
+      "entry": "002bce10",
+      "end_inclusive": "002bcfb1",
+      "instructions": 108,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-01.join.json",
+      "mapping_receipt_sha256": "6a80775937b5a451337d122e354a6c74f7e8c9611b32cf710b727c4bc49aa670",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:002bcd60": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-02/002bcd60.asm",
+      "listing_sha256": "23cca15c8e86334d5bc371dec10a5d8b30b43d9fc1628249a9c731689df59aab",
+      "entry": "002bcd60",
+      "end_inclusive": "002bce0d",
+      "instructions": 39,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-02.join.json",
+      "mapping_receipt_sha256": "2f7c77e03155967c183936a2f4eb309cf188f97033d72b3765b4585434ec3d84",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:002bbce0": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03/002bbce0.asm",
+      "listing_sha256": "552f48ee6320cb2fa427104f44d00fe67de7c2e62b66a69d76c09f17f5d65fb8",
+      "entry": "002bbce0",
+      "end_inclusive": "002bbd61",
+      "instructions": 36,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03.join.json",
+      "mapping_receipt_sha256": "c61c584e9d36b0512703d9e21b45abb12c1d0f602f7bf52731faa9f24352c9cc",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:002bbdd0": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03/002bbdd0.asm",
+      "listing_sha256": "ac16ff0e10e348ccf2fda8757866cf7754577a1a957bd0a94cec847de9970afe",
+      "entry": "002bbdd0",
+      "end_inclusive": "002bbe29",
+      "instructions": 27,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03.join.json",
+      "mapping_receipt_sha256": "c61c584e9d36b0512703d9e21b45abb12c1d0f602f7bf52731faa9f24352c9cc",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:002bbe30": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03/002bbe30.asm",
+      "listing_sha256": "62c02450723241315e4c6d38a6a7bbd901a9297cf20f33d9c968be52536cefb5",
+      "entry": "002bbe30",
+      "end_inclusive": "002bbe83",
+      "instructions": 29,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03.join.json",
+      "mapping_receipt_sha256": "c61c584e9d36b0512703d9e21b45abb12c1d0f602f7bf52731faa9f24352c9cc",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:002bc1d0": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03/002bc1d0.asm",
+      "listing_sha256": "2333ee6127930b1da9ac0338fbd08b18207325edc5528ad414587b533d4d2fba",
+      "entry": "002bc1d0",
+      "end_inclusive": "002bc26f",
+      "instructions": 54,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03.join.json",
+      "mapping_receipt_sha256": "c61c584e9d36b0512703d9e21b45abb12c1d0f602f7bf52731faa9f24352c9cc",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:002bc2b0": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03/002bc2b0.asm",
+      "listing_sha256": "cd223363174dfefb03903a40440680497c15a3a041f5ce7935523946cffb9037",
+      "entry": "002bc2b0",
+      "end_inclusive": "002bc3d2",
+      "instructions": 119,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03.join.json",
+      "mapping_receipt_sha256": "c61c584e9d36b0512703d9e21b45abb12c1d0f602f7bf52731faa9f24352c9cc",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:002bc410": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03/002bc410.asm",
+      "listing_sha256": "3ba57636839eee0c892b6f10bdd85c33509d1c8a3f2570dea75be5be91ac6651",
+      "entry": "002bc410",
+      "end_inclusive": "002bc4d3",
+      "instructions": 75,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03.join.json",
+      "mapping_receipt_sha256": "c61c584e9d36b0512703d9e21b45abb12c1d0f602f7bf52731faa9f24352c9cc",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:002bc590": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03/002bc590.asm",
+      "listing_sha256": "504751052d94a68e3eec24b7205408a718fc6fd87f1fa1a4a67705449dcaee84",
+      "entry": "002bc590",
+      "end_inclusive": "002bc6ad",
+      "instructions": 98,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03.join.json",
+      "mapping_receipt_sha256": "c61c584e9d36b0512703d9e21b45abb12c1d0f602f7bf52731faa9f24352c9cc",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:002bcfc0": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03/002bcfc0.asm",
+      "listing_sha256": "584f1aca8d1c0a6c49b319fbf888ce536d7db6f5782644610f83df9105f882d6",
+      "entry": "002bcfc0",
+      "end_inclusive": "002bd00e",
+      "instructions": 26,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03.join.json",
+      "mapping_receipt_sha256": "c61c584e9d36b0512703d9e21b45abb12c1d0f602f7bf52731faa9f24352c9cc",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:00398614": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03/00398614.asm",
+      "listing_sha256": "885d6068618085ee0522b6bf59fc42ded68e5455ec10fe0ce45e7163a9808455",
+      "entry": "00398614",
+      "end_inclusive": "00398688",
+      "instructions": 37,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03.join.json",
+      "mapping_receipt_sha256": "c61c584e9d36b0512703d9e21b45abb12c1d0f602f7bf52731faa9f24352c9cc",
+      "scope": "CALLER_OR_DEPENDENCY_ORIENTATION_ONLY",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:00399a4c": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03/00399a4c.asm",
+      "listing_sha256": "76c110e701f99a8049093396cc3ae904140af5da476bdbe9d7ea1d529b17e0ce",
+      "entry": "00399a4c",
+      "end_inclusive": "00399a4d",
+      "instructions": 1,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-03.join.json",
+      "mapping_receipt_sha256": "c61c584e9d36b0512703d9e21b45abb12c1d0f602f7bf52731faa9f24352c9cc",
+      "scope": "CALLER_OR_DEPENDENCY_ORIENTATION_ONLY",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:002bbe90": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-04/002bbe90.asm",
+      "listing_sha256": "a853984dd412b11ddaedb2c1b4971254897519a53c43d5cf26034aacfb20d038",
+      "entry": "002bbe90",
+      "end_inclusive": "002bbf49",
+      "instructions": 76,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-04.join.json",
+      "mapping_receipt_sha256": "e405c185549c0808ba759f2d64e16287a64935682a6753c233e77df023308b38",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:00399a4e": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-04/00399a4e.asm",
+      "listing_sha256": "5d107a3f6c20a62a2a568a2ea501c8ae390aae213372a86087a7a1df1672ff16",
+      "entry": "00399a4e",
+      "end_inclusive": "00399a66",
+      "instructions": 8,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-04.join.json",
+      "mapping_receipt_sha256": "e405c185549c0808ba759f2d64e16287a64935682a6753c233e77df023308b38",
+      "scope": "CALLER_OR_DEPENDENCY_ORIENTATION_ONLY",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:00028990": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-05/00028990.asm",
+      "listing_sha256": "9ec2400c549127c10f82c0041ddcdba48556a483561e5082f41ad5452f0d5d49",
+      "entry": "00028990",
+      "end_inclusive": "00028ec8",
+      "instructions": 356,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-05.join.json",
+      "mapping_receipt_sha256": "037fba6e4bbed429414dc25dcdf966fb3f6c1063e6d9a0cb27bf40dd053ffa35",
+      "scope": "CALLER_OR_DEPENDENCY_ORIENTATION_ONLY",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:0007d350": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-05/0007d350.asm",
+      "listing_sha256": "b12bf6e071930966f88caa6a430bd4c05f0c37154f303e5356cf151e015f4b11",
+      "entry": "0007d350",
+      "end_inclusive": "0007d427",
+      "instructions": 77,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-05.join.json",
+      "mapping_receipt_sha256": "037fba6e4bbed429414dc25dcdf966fb3f6c1063e6d9a0cb27bf40dd053ffa35",
+      "scope": "CALLER_OR_DEPENDENCY_ORIENTATION_ONLY",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:002412e0": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-05/002412e0.asm",
+      "listing_sha256": "69873364233232b408f814e10f16c641ce8b6f75c51037723de6741a766e04f8",
+      "entry": "002412e0",
+      "end_inclusive": "00241475",
+      "instructions": 135,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-05.join.json",
+      "mapping_receipt_sha256": "037fba6e4bbed429414dc25dcdf966fb3f6c1063e6d9a0cb27bf40dd053ffa35",
+      "scope": "CALLER_OR_DEPENDENCY_ORIENTATION_ONLY",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:002bcc40": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-05/002bcc40.asm",
+      "listing_sha256": "a66da430fd4b89178a3a2795f0362f955b79a294d448d20c266f50cdb55626a2",
+      "entry": "002bcc40",
+      "end_inclusive": "002bcd42",
+      "instructions": 100,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-05.join.json",
+      "mapping_receipt_sha256": "037fba6e4bbed429414dc25dcdf966fb3f6c1063e6d9a0cb27bf40dd053ffa35",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:002bfeb0": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-05/002bfeb0.asm",
+      "listing_sha256": "1e2b3b0a8f7b306bac15c1ec53784e654667ad941d9cb90e03015316161fdc9c",
+      "entry": "002bfeb0",
+      "end_inclusive": "002bff72",
+      "instructions": 60,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-05.join.json",
+      "mapping_receipt_sha256": "037fba6e4bbed429414dc25dcdf966fb3f6c1063e6d9a0cb27bf40dd053ffa35",
+      "scope": "SOURCE_DERIVED_SELECTED_CONTRACT_WITH_RECORDED_LIMITS",
+      "compiled": false,
+      "tested_component": false
+    },
+    "xbox:00399a70": {
+      "listing": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-05/00399a70.asm",
+      "listing_sha256": "e17723aac650abdfa737c8522f74be779c3bed47d5a88c19abe4676c3850b476",
+      "entry": "00399a70",
+      "end_inclusive": "00399c34",
+      "instructions": 121,
+      "mapping_receipt": "research/runs/native-xbox-renderer-0406-20261122/source-xbox-05.join.json",
+      "mapping_receipt_sha256": "037fba6e4bbed429414dc25dcdf966fb3f6c1063e6d9a0cb27bf40dd053ffa35",
+      "scope": "CALLER_OR_DEPENDENCY_ORIENTATION_ONLY",
+      "compiled": false,
+      "tested_component": false
+    }
+  },
+  "image_sha256": {
+    "xbox": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+    "ps2": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f"
+  },
+  "decoded_listing_gaps": [
+    {
+      "platform": "xbox",
+      "function": "002bbdd0",
+      "vma": "0x2bbdea",
+      "bytes": "8d9b00000000",
+      "role": "LEA EBX,[EBX]; skipped local alignment after JMP2BBDE8"
+    },
+    {
+      "platform": "ps2",
+      "function": "0011ea20",
+      "vma": "0x11ebc4",
+      "bytes": "00000000",
+      "role": "SLL zero,zero,0 NOP; after unconditional branch and its already-listed delay slot"
+    },
+    {
+      "platform": "ps2",
+      "function": "0011ea20",
+      "vma": "0x11ec44",
+      "bytes": "00000000",
+      "role": "SLL zero,zero,0 NOP; after unconditional branch and its already-listed delay slot"
+    },
+    {
+      "platform": "ps2",
+      "function": "0011ea20",
+      "vma": "0x11ef94",
+      "bytes": "00000000",
+      "role": "SLL zero,zero,0 NOP; after unconditional branch and its already-listed delay slot"
+    }
+  ],
+  "ee_extension_available_identity": {
+    "extension.properties": "779b39aafd06c576e8dbf96638d8a2088b30591408682b549224ed987691ca98",
+    "data/languages/emotionengine.ldefs": "d5f1eee26409577865ced8c3cb0314d8da083efe06c2f52dd745ed640cf8034e",
+    "data/languages/r5900.sla": "703cc84a67b4a049e5a6e3d258975fb1e4ea27f024968bb6397cf57095418c6c"
+  },
+  "ee_extension_version": "12.1.4",
+  "ee_language_definition_version": "1.4.0",
+  "recovery_record_sha256": "ddd67fccd20c2c860289bfb7f5ee319bfd93a9e59b3f04a7faa5a19909d05785",
+  "source_derived_extent_expectations": [
+    {
+      "width": 3,
+      "height": 2,
+      "depth": 4,
+      "stride": 4,
+      "pixel_bytes": 8,
+      "palette_bytes": 64,
+      "total": 72,
+      "scope": "SOURCE_DERIVED_EXPECTATION_NOT_A_NATIVE_TEST"
+    },
+    {
+      "width": 3,
+      "height": 2,
+      "depth": 8,
+      "stride": 4,
+      "pixel_bytes": 8,
+      "palette_bytes": 1024,
+      "total": 1032,
+      "scope": "SOURCE_DERIVED_EXPECTATION_NOT_A_NATIVE_TEST"
+    },
+    {
+      "width": 3,
+      "height": 2,
+      "depth": 16,
+      "stride": 8,
+      "pixel_bytes": 16,
+      "palette_bytes": 0,
+      "total": 16,
+      "scope": "SOURCE_DERIVED_EXPECTATION_NOT_A_NATIVE_TEST"
+    },
+    {
+      "width": 3,
+      "height": 2,
+      "depth": 24,
+      "stride": 12,
+      "pixel_bytes": 24,
+      "palette_bytes": 0,
+      "total": 24,
+      "scope": "SOURCE_DERIVED_EXPECTATION_NOT_A_NATIVE_TEST"
+    },
+    {
+      "width": 3,
+      "height": 2,
+      "depth": 32,
+      "stride": 12,
+      "pixel_bytes": 24,
+      "palette_bytes": 0,
+      "total": 24,
+      "scope": "SOURCE_DERIVED_EXPECTATION_NOT_A_NATIVE_TEST"
+    }
+  ],
+  "route_decision": "NO_SUBSTANTIAL_XBOX_SPECIFIC_0406_NATIVE_DEPENDENCY_REDUCTION_ESTABLISHED",
+  "recommended_destination": "ONE_SHARED_TYPED_NATIVE_CPU_IMAGE_SERVICE_REUSING_EXISTING_OWNERS",
+  "retained_prior_negative_link": {
+    "status": "RETAINED_UNCHANGED_SOURCE_NOT_RERUN",
+    "authentication_sha256": "706fe5462ca1146d9ceacc45726d2b00967308fc3415a9aca91c629512d83eaa",
+    "names": [
+      "mka::retail::main_binding::read_retail_online_boot_word(mka::retail::NativeRetailMainState const&)",
+      "mka::retail::main_binding::initialize_retail_online_stage(mka::retail::NativeRetailMainState&, std::__1::array<unsigned int, 5ull> const&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::poll_retail_controller_roles(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::advance_retail_game_services(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::service_retail_frame_input(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::render_retail_frame(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::prune_retail_associations(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::retail_mode_dispatch_enabled(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::dispatch_retail_enabled_mode(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::create_retail_action_task(mka::retail::NativeRetailMainState&, mka::retail::RetailActionTaskRequest const&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::deliver_retail_builtin_scene_event(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, unsigned int, unsigned int, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::reset_and_bind_retail_scene_event_graph(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, mka::retail::StartupFailure&)",
+      "mka::retail::scene_bootstrap_required::continue_scene_reset_at_125d60(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::initial_task_required::begin_intro_18deb0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::transition_1225d0(mka::retail::NativeRetailMainState&, unsigned int, mka::retail::RetailInitialTransitionBody)",
+      "mka::retail::initial_task_required::begin_prompt_18dc10(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d450(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d870(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d8e0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d700(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d800(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d660(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d770(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::scene_bootstrap_required::continue_first_scene_at_225d40(mka::retail::NativeRetailMainState&, std::__1::shared_ptr<mka::retail::NativeRetailRendererCore>, mka::retail::StartupFailure&)",
+      "mka::retail::initial_reset_required::clear_nonowning_references_18da30(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::invoke_retail_profile_select_from_2f1630(mka::retail::NativeRetailMainState&, std::__1::basic_string_view<char, std::__1::char_traits<char>>, mka::retail::RetailProfileMenuFailure&)",
+      "mka::retail::renderer_required::construct_core_plugin_0406(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+      "mka::retail::renderer_required::destroy_core_plugin_0406(mka::retail::NativeRetailRendererCore&)",
+      "mka::retail::renderer_required::construct_core_plugin_0407(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+      "mka::retail::renderer_required::destroy_core_plugin_0407(mka::retail::NativeRetailRendererCore&)",
+      "mka::retail::renderer_required::construct_core_plugin_0408(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+      "mka::retail::renderer_required::destroy_core_plugin_0408(mka::retail::NativeRetailRendererCore&)",
+      "mka::retail::renderer_required::construct_core_plugin_0409(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+      "mka::retail::renderer_required::destroy_core_plugin_0409(mka::retail::NativeRetailRendererCore&)",
+      "mka::retail::renderer_required::construct_core_plugin_0412(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+      "mka::retail::renderer_required::destroy_core_plugin_0412(mka::retail::NativeRetailRendererCore&)",
+      "mka::retail::renderer_required::construct_core_plugin_040a(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+      "mka::retail::renderer_required::destroy_core_plugin_040a(mka::retail::NativeRetailRendererCore&)",
+      "mka::retail::renderer_required::construct_core_plugin_040b(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+      "mka::retail::renderer_required::destroy_core_plugin_040b(mka::retail::NativeRetailRendererCore&)",
+      "mka::retail::apply_retail_profile_participant_from_188720(mka::retail::NativeRetailMainState&, unsigned int, mka::retail::RetailProfileMenuFailure&)",
+      "mka::retail::publish_retail_profile_participant_from_189690(mka::retail::NativeRetailMainState&, std::__1::shared_ptr<mka::retail::NativeRetailInputParticipant> const&, mka::retail::RetailProfileMenuFailure&)",
+      "mka::retail::renderer_required::transform_point_exact(mka::retail::RetailRendererPoint3&, mka::retail::RetailRendererPoint3 const&, mka::retail::RetailRendererAffine const&)",
+      "mka::retail::renderer_required::transform_points_exact(std::__1::span<mka::retail::RetailRendererPoint3, 18446744073709551615ull>, std::__1::span<mka::retail::RetailRendererPoint3 const, 18446744073709551615ull>, mka::retail::RetailRendererAffine const&)",
+      "mka::retail::renderer_required::transform_vector_exact(mka::retail::RetailRendererPoint3&, mka::retail::RetailRendererPoint3 const&, mka::retail::RetailRendererAffine const&)",
+      "mka::retail::renderer_required::transform_vectors_exact(std::__1::span<mka::retail::RetailRendererPoint3, 18446744073709551615ull>, std::__1::span<mka::retail::RetailRendererPoint3 const, 18446744073709551615ull>, mka::retail::RetailRendererAffine const&)",
+      "mka::retail::renderer_required::multiply_affines_19f680(mka::retail::RetailRendererAffine&, mka::retail::RetailRendererAffine const&, mka::retail::RetailRendererAffine const&, mka::retail::RetailRendererMatrixFailure&)",
+      "mka::retail::renderer_required::classify_matrix_1a0240(mka::retail::RetailRendererMatrixValue&, mka::retail::RetailRendererMatrixTolerances const&, mka::retail::RetailRendererMatrixFailure&)",
+      "mka::retail::renderer_required::invert_nonidentity_matrix_1a07a0(mka::retail::RetailRendererMatrixValue&, mka::retail::RetailRendererMatrixValue const&, mka::retail::RetailRendererMatrixFailure&)"
+    ]
+  },
+  "open": [
+    "gamma-table quantization and835350 producer/domain",
+    "concrete format/extension callbacks and lifetime",
+    "native0406 implementation/connected tests",
+    "same-scenario oracle comparison",
+    "full game acceptance"
+  ],
+  "native_implementation_changed": false,
+  "component_build_or_test_run": false,
+  "game_run": false,
+  "visible_window": false,
+  "audio_endpoint": false,
+  "local_model_used": false,
+  "acceptance": "OPEN"
+}
