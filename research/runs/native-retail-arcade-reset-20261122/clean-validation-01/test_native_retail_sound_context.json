@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-arcade-22\\build-native\\test_native_retail_sound_context.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon"
+  ],
+  "exit": 0,
+  "seconds": 0.9801670000015292,
+  "source_commit": "7bf4ec5a613ca1d69abe9cb19bb47fb75ffeaa78",
+  "tracked_status": "",
+  "source_manifest_sha256": "71a0bda360ea3a2d98a49cf92071fbe91a3cb101c6ddba74438e98507ac28650",
+  "executable_sha256": "a1b6069137e0086af318b926807b14cf6e0b104f37593dada1e3b4150fdd28c7",
+  "log_sha256": "0fc7203bc29a4bb19c25ef9c3db3e070586693ba7432af3bc708492b1fd8078c",
+  "compressed_log_sha256": "56c8f7893e71790843e93ee2febe5989bf8a22a171f8b779c764d5a3744c62cf",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

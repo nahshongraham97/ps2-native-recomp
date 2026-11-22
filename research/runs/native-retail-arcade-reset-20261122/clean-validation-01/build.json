@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-arcade-22\\build-native",
+    "--target",
+    "test_native_retail_arcade_reset",
+    "test_native_retail_initial_reset_arcade",
+    "test_native_retail_initial_reset",
+    "test_native_retail_game_session",
+    "test_native_retail_sound_context",
+    "test_native_retail_main_frame_gates",
+    "-j2"
+  ],
+  "exit": 0,
+  "seconds": 72.0321144000045,
+  "source_commit": "7bf4ec5a613ca1d69abe9cb19bb47fb75ffeaa78",
+  "tracked_status": "",
+  "source_manifest_sha256": "71a0bda360ea3a2d98a49cf92071fbe91a3cb101c6ddba74438e98507ac28650",
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "log_sha256": "844519c358f20a57df33e7fdf070ce27e393565299c400c2c55d1d3205d5931e",
+  "compressed_log_sha256": "6c866918f07c675842a9d249fb2d84a41aaeb03b6a9862cbd3b8ee68133c2165",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

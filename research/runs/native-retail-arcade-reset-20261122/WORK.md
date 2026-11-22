@@ -41,3 +41,15 @@ SDL/output abort guards. Exact33 required full-entry names remove only334700.
 All856 source inputs are frozen, original MS2/MS4 unchanged. No runtime code
 changed after this pass; next publish and freshly clean-build/check the same
 source. Arcade progression/fighters/resources and full game remain OPEN.
+
+Clean published source7bf4ec5a613ca1d69abe9cb19bb47fb75ffeaa78 passes all6
+clients again in clean-validation-01, including real334700 inside reset flow,
+actual sameSession PRNG and all152 source rows. All856 committed source blobs
+authenticate;10 authored files are byte-identical,199 old raw newline pairs
+preserved. Exact33 required effects remove only334700. No complete arcade
+progression/game, physical input/output, frames/audio/oracle capture. This is
+a completed source reset effect/component, not full native game acceptance.
+Owner: no action. Primary next: finish actual saved-profile production bindings
+from complete original record/serialization proof, while delegates close
+renderer-core and native dynamic gain/pan history dependencies. Existing native
+save storage remains reused; the held mixed retry stays out of main.
