@@ -268,3 +268,14 @@ authored source, no game assets/binaries, all903 measured source blobs and
 saved component/source authentication are mandatory before commit/push.
 The postcommit receipt explicitly authenticates precommit measurements to
 identical committed sources, not a redundant rerun/fresh-checkout game build.
+
+Runtime sourceee537630777e9701db89b1e5ff5353794cde1907 is published
+to origin/main. All287 approved authored source/evidence paths passed scoped
+staging/raw-byte/LF/no-asset gates; all903 measured source blobs match the
+resulting commit exactly. REGISTRATION_COMMITTED_AUTHENTICATION.json binds
+that source/tree to the four component results and their explicit retained-
+result distinction. No native code, original assets or test expectation
+changed for publication. Full renderer/Open/Start/GPU/frame/game and oracle
+acceptance remain OPEN. Next publish the committed-source receipt and parent
+live documents; coding agent then recovers the first actual renderer module's
+resource creation/consumers, Xbox first. Owner:no action; no run is active.
