@@ -154,6 +154,21 @@ bool NativeRetailInputRoles::clear_dispatch_blocked_first_three_from_163a50(
     return true;
 }
 
+bool NativeRetailInputRoles::clear_source_control_word_from_281830(
+    std::size_t role_index, RetailInputRoleFailure& failure) noexcept {
+    failure = {};
+    if (std::this_thread::get_id() != thread_) {
+        failure.kind = RetailInputRoleError::wrong_thread;
+        return false;
+    }
+    if (role_index >= roles_.size()) {
+        failure.kind = RetailInputRoleError::invalid_role;
+        return false;
+    }
+    roles_[role_index].source_control_word = 0;
+    return true;
+}
+
 std::optional<RetailActionRowObservation> NativeRetailInputRoles::observe_action_row(
     RetailInputRole role_id, std::size_t row, RetailInputRoleFailure& failure) const noexcept {
     const auto* state = role(role_id, failure);

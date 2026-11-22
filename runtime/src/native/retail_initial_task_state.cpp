@@ -31,6 +31,19 @@ bool NativeRetailInitialTaskState::store_menu_index_from_source(
     words_.menu_index=index;
     return true;
 }
+bool NativeRetailInitialTaskState::clear_nonowning_references_from_18da30(
+    RetailInitialTaskStateFailure& f) noexcept {
+    if(!owner(f)) return false;
+    // 18DA30: sw zero, -0x5da8(gp) -> object reference (64E348)
+    words_.nonowning_object_reference = 0;
+    // 18DA34: sw zero, -0x5da4(gp) -> object cookie (64E34C)
+    words_.nonowning_object_cookie = 0;
+    // 18DA38: sw zero, -0x5db0(gp) -> task reference (64E340)
+    words_.nonowning_task_reference = 0;
+    // 18DA40: sw zero, -0x5dac(gp) -> task cookie (64E344)
+    words_.nonowning_task_cookie = 0;
+    return true;
+}
 bool NativeRetailInitialTaskState::store_first_transition_latch(
     bool value, RetailInitialTaskStateFailure& f) noexcept {
     if(!owner(f)) return false;

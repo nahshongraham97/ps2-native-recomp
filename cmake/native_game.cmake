@@ -254,12 +254,18 @@ if(WIN32)
         runtime/src/native/retail_auxiliary_words.cpp
         runtime/src/native/retail_main_input_observation.cpp
         runtime/src/native/retail_participants.cpp
+        runtime/src/native/retail_selected_resource.cpp
+        runtime/src/native/retail_saved_profile_records.cpp
         runtime/src/native/retail_input_assignments.cpp runtime/src/native/retail_input_poll.cpp
         runtime/src/native/retail_input_selection.cpp)
     target_include_directories(mka_native_retail_startup PUBLIC "${_startup_dir}" runtime/include)
     target_link_libraries(mka_native_retail_startup PUBLIC mka_native_retail_sound_runtime mka_native_content_volume mka_native_retail_memory_owners
         mka_native_retail_text_storage
         mka_native_save_store
+        mka_native_saved_profile_defaults
+        mka_native_profile_aggregate
+        mka_native_profile_preferences
+        mka_native_media
         mka_native_user_paths
         mka_native_retail_middleware_frame mka_native_retail_file_paths mka_native_retail_game_session mka_native_retail_crt mka_native_retail_platform mka_native_allocation_profile mka_native_retail_profile_owners mka_native_retail_game_resource_registry mka_native_game_actions mka_native_sound_resources)
     add_executable(test_native_retail_middleware_main EXCLUDE_FROM_ALL tests/test_retail_middleware_main.cpp)
@@ -289,6 +295,12 @@ if(WIN32)
     target_link_libraries(test_native_retail_pad_control PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_save_startup EXCLUDE_FROM_ALL tests/test_retail_save_startup.cpp)
     target_link_libraries(test_native_retail_save_startup PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_selected_resource EXCLUDE_FROM_ALL tests/test_retail_selected_resource.cpp)
+    target_include_directories(test_native_retail_selected_resource PRIVATE runtime/src/native)
+    target_link_libraries(test_native_retail_selected_resource PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_saved_profile_records EXCLUDE_FROM_ALL tests/test_retail_saved_profile_records.cpp)
+    target_include_directories(test_native_retail_saved_profile_records PRIVATE runtime/src/native)
+    target_link_libraries(test_native_retail_saved_profile_records PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_profile_preferences EXCLUDE_FROM_ALL tests/test_retail_profile_preferences.cpp)
     target_link_libraries(test_native_retail_profile_preferences PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_profile_menu EXCLUDE_FROM_ALL tests/test_retail_profile_menu.cpp)

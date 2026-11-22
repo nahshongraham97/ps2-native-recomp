@@ -59,6 +59,10 @@ public:
     // clearing role status bit 0 for roles 0..2.
     bool clear_dispatch_blocked_first_three_from_163a50(
         RetailInputRoleFailure&) noexcept;
+    // 281830 reads the role at 0x660268 + role_index * 0x20. 245DD0 / 2817B0 clears
+    // this role's first word (source_control_word) when present.
+    bool clear_source_control_word_from_281830(
+        std::size_t role_index, RetailInputRoleFailure&) noexcept;
 
 private:
     friend class NativeRetailInputAssignments;

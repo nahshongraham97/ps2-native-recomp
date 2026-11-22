@@ -39,6 +39,8 @@ class NativeRetailSoundRuntime;
 struct NativeRetailSoundStatus;
 struct NativeRetailProfileOwners;
 struct NativeRetailSceneOwners;
+class NativeRetailSelectedResource;
+class NativeRetailSavedProfileRecords;
 
 enum class RetailStartupGate { ready, source_refused, native_failure };
 enum class RetailCurrentSoundPhase { empty, game_state_prepared, bank_catalog_opened, ready, failed };
@@ -111,6 +113,8 @@ struct NativeRetailMainState {
     // changes saved-profile records. It is separate from the content volume.
     std::optional<save::NativeSaveStore> saved_profile_storage;
     std::uint32_t saved_profile_service_word{}; // source64E8D8, reset on readiness
+    std::shared_ptr<NativeRetailSavedProfileRecords> saved_profile_records;
+    std::shared_ptr<NativeRetailSelectedResource> selected_resource;
     std::shared_ptr<NativeRetailTwoServiceObjects> two_service_objects;
     std::optional<NativeRetailEmptyBinding> empty_binding;
     std::shared_ptr<NativeRetailStaticKeyOwners> static_keys;
