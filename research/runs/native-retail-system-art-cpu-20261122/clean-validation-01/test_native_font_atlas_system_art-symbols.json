@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-C",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-sysart-cpu-22\\build-native\\test_native_font_atlas_system_art.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.03788249999342952,
+  "log_sha256": "98f26869f918027d9e75f08c43a03fd022882c376c7b28ca5fc5b5e08a045172",
+  "source_manifest_sha256": "0d22503699df921a64aeae632322f731f85cde6360605dc86689cffd86e6021f",
+  "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10"
+}

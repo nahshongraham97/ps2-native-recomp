@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-C",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-sysart-cpu-22\\build-native\\test_native_art_section_data.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.03882450000673998,
+  "log_sha256": "5e1859e683145efefdc9e35d5e0773e88f41bf91fc38a0333caefa76101de15f",
+  "source_manifest_sha256": "0d22503699df921a64aeae632322f731f85cde6360605dc86689cffd86e6021f",
+  "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10"
+}

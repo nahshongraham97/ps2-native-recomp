@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-sysart-cpu-22\\build-native\\test_native_font_atlas.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-system-art-cpu-20261122\\clean-validation-01\\original-font-zero.atlas"
+  ],
+  "exit": 0,
+  "seconds": 0.030770299999858253,
+  "log_sha256": "e8284f25478e610f7ade5589880e7a09af39b05281b78bebf6edbdf144cba00b",
+  "source_manifest_sha256": "0d22503699df921a64aeae632322f731f85cde6360605dc86689cffd86e6021f",
+  "executable_sha256": "8ed6401f22048c15285dcdaec521a9e4fc85d4a3c100b6f3bc089020745c3a68"
+}

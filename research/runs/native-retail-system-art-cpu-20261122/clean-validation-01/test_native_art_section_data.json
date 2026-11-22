@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-sysart-cpu-22\\build-native\\test_native_art_section_data.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-system-art-cpu-20261122\\clean-validation-01\\disposable-section",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121",
+    "art/gameart.ssf",
+    "0",
+    "6823936",
+    "1998848",
+    "901120",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-art-section-data-20261120\\validation-01\\source-0.tsv"
+  ],
+  "exit": 0,
+  "seconds": 0.04462430000421591,
+  "log_sha256": "c7ca5de8ad71a15145184e00603adfee5d81c9c2336b3e9928728f5ef64c48f0",
+  "source_manifest_sha256": "0d22503699df921a64aeae632322f731f85cde6360605dc86689cffd86e6021f",
+  "executable_sha256": "bd33801acfc6103afc0e82cd5a98f43c6845121be4a44ae47c39797842736b0d"
+}

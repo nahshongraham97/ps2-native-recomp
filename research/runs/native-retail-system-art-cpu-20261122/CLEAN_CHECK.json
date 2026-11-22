@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "C:\\Python315\\python.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-system-art-cpu-20261122\\verify.py",
+    "--checkout",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-sysart-cpu-22",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-sysart-cpu-22\\build-native",
+    "--output",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-system-art-cpu-20261122\\clean-validation-01"
+  ],
+  "exit": 0,
+  "stdout": "build 0\ntest_native_retail_system_art_cpu 0\ntest_native_retail_system_art_cpu-symbols 0\ntest_native_font_atlas_system_art 0\ntest_native_font_atlas_system_art-symbols 0\ntest_native_font_atlas 0\ntest_native_font_atlas-symbols 0\ntest_native_art_section_data 0\ntest_native_art_section_data-symbols 0\ntest_native_indexed_sprite_data 0\ntest_native_indexed_sprite_data-symbols 0\nfull-entry-negative 1\nPASS five affected headless clients; exact62 required symbols; no game/endpoints/frames/audio\n",
+  "stderr": "",
+  "seconds": 95.49473849999777,
+  "source_commit": "00cb2ef641db816ad99345acd36289e3381dd2be",
+  "clean_checkout": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-sysart-cpu-22",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

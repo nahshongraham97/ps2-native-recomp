@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-sysart-cpu-22\\build-native\\test_native_indexed_sprite_data.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-system-art-cpu-20261122\\clean-validation-01\\decoded-owned",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121",
+    "art/gameart.ssf",
+    "0",
+    "6823936",
+    "1998848",
+    "901120",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-indexed-art-program-coverage-20261120\\validation-01\\indexed-source.tsv"
+  ],
+  "exit": 0,
+  "seconds": 0.041296600000350736,
+  "log_sha256": "8f6fd5910c477b0490ad727d6b93df7c8b7723e7b6e15c30d1c3f63ad14b4b03",
+  "source_manifest_sha256": "0d22503699df921a64aeae632322f731f85cde6360605dc86689cffd86e6021f",
+  "executable_sha256": "a3be09d7e714da46eb3ce604021f94542c78bae46f1ec993b64ffe22c53d6489"
+}

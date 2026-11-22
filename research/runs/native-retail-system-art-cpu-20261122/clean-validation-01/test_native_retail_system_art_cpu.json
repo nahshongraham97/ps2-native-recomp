@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-sysart-cpu-22\\build-native\\test_native_retail_system_art_cpu.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-system-art-cpu-20261122\\clean-validation-01\\disposable-errors"
+  ],
+  "exit": 0,
+  "seconds": 0.23236199999519158,
+  "log_sha256": "9637127edcef3127a496702c8a946027536970f03192626e51cdff734cfd3056",
+  "source_manifest_sha256": "0d22503699df921a64aeae632322f731f85cde6360605dc86689cffd86e6021f",
+  "executable_sha256": "10b9511070db9acaf36f503a1164cdb5eb0f18c160b552229ebb4d269180aa4a"
+}
