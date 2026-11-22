@@ -1,0 +1,16 @@
+{
+  "module_sha256": "f62dfbcedd39bc92cb8b9c02bb685b956a10357f9181d7f8c2801d8eaff07af7",
+  "language": "MIPS:LE:32:default",
+  "image_base": "00000000",
+  "original_begin": "000056fc",
+  "original_end_exclusive": "00005bc4",
+  "prior_loaded_begin": "0002d7fc",
+  "prior_loaded_end_exclusive": "0002dcc4",
+  "pt_load_file_offset": "00000090",
+  "full_constructor_words": 306,
+  "all_exported_words": 321,
+  "body_sha256": "417f0e1933ecea98cfcf687ec9ac9e432ae43fa3694717a49e91a11b6f825161",
+  "all_words_join": true,
+  "following_partial_function_words": 15,
+  "following_function_not_ported": true
+}

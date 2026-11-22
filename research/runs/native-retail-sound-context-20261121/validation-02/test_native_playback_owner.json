@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_playback_owner.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+  ],
+  "exit": 0,
+  "stdout": "PASS actualservice/fulltoken/deferredannouncr/HostVoiceACK/kind7/ownerstop/64voices/mix/refusedactiveunload; no boot/device/fidelity claim\n",
+  "stderr": "",
+  "seconds": 0.12814849999267608,
+  "source_commit": "17e67a695c3a3d5790963a47922fda0a3dfd4304",
+  "source_sha256": {
+    "runtime/include/mka/audio_banks.hpp": "1917e0a66a7354ac52bef0fd8fa10152794ae535fa7ce62aa126b282218ec4cd",
+    "runtime/include/mka/playback_owner.hpp": "1171dbc49a7c14b7e80efedd2e35c56369fbd6ed1b5ab6ed0fedfdd8a8475505",
+    "runtime/src/native/playback_owner.cpp": "4d69d15ea29975831b7c2eba4734bc9682782b436f9e760b202cca02f5a77d9b",
+    "tests/test_native_bank_playback.cpp": "5857625dd9cacf957d1ff9c0213c1dbcd1063cd157a916cee82e28017bd2fd1f",
+    "tests/test_retail_reset_sound.cpp": "c1391e0bc303c3c3734b996925e124a30a56f0a2dcfbef5a2bcb7b8de820574f",
+    "cmake/native_sound_resources.cmake": "440d648949116154180ace87fad7e7f30f4765149457f598b9f6c87f8172b3c1"
+  },
+  "tracked_status": "M cmake/native_sound_resources.cmake\n M runtime/include/mka/audio_banks.hpp\n M runtime/include/mka/playback_owner.hpp\n M runtime/src/native/playback_owner.cpp\n M tests/test_retail_reset_sound.cpp",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "9d9bd2f70cef9717d29670d8b3b8750365b8c4ada8b1ecf66ead0b5caafb580e"
+}

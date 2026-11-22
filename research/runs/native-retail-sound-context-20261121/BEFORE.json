@@ -1,0 +1,10 @@
+{
+  "base": "17e67a695c3a3d5790963a47922fda0a3dfd4304",
+  "sha256": {
+    "runtime/include/mka/audio_banks.hpp": "22103d09ef8a9ab94deaa0b1063765045b70ba8896b9574c765cf54dbeca36ae",
+    "runtime/include/mka/playback_owner.hpp": "d9de65166c285c4ee19e78bb541b760dd5c5e46e2470af484dd788a702590c6e",
+    "runtime/src/native/playback_owner.cpp": "0902727b1f718900d262f95e82e7f1f78320adac0f805c94ac2b83de7ef2752f",
+    "tests/test_retail_reset_sound.cpp": "6a22f62661f055913c88d9a095da5a10c317200330a654ea3cae82b0d6f3cf25",
+    "cmake/native_sound_resources.cmake": "c2b4f51818ff46b85f6a3cafd7485936ebcfe31cee764c3bfa40271c8beb5ebf"
+  }
+}

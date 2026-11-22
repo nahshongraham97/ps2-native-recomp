@@ -7,10 +7,18 @@
 #include <type_traits>
 #include <new>
 #include <stdexcept>
+#include <variant>
 namespace mka::sound {
 struct NativePlaybackOwner::State {
+    using BankReference=std::variant<BankWireToken,AudioBankHandle>;
+    static bool same_bank(const BankReference& a,const BankReference& b) noexcept {
+        if(a.index()!=b.index())return false;
+        if(const auto* native=std::get_if<AudioBankHandle>(&a))
+            return native->same_identity(std::get<AudioBankHandle>(b));
+        return std::get<BankWireToken>(a).value==std::get<BankWireToken>(b).value;
+    }
     struct Entry {
-        BankWireToken bank;
+        BankReference bank;
         NativePlayParameters parameters;
         std::shared_ptr<const void> context,identity,bank_identity;
         std::optional<std::size_t> output_role;
@@ -22,7 +30,7 @@ struct NativePlaybackOwner::State {
         std::uint16_t effective_play_flags=0;
         bool finished=false,stopped=false,resources_retired=false;
         std::optional<PlaybackFailure> terminal;
-        Entry(BankWireToken b,const NativePlayParameters& p,std::shared_ptr<const void> c):bank(b),parameters(p),context(std::move(c)){}
+        Entry(BankReference b,const NativePlayParameters& p,std::shared_ptr<const void> c):bank(std::move(b)),parameters(p),context(std::move(c)){}
         ~Entry(){copy.reset();executor.reset();}
         NativeProgramOutputObservation outputs()const noexcept{return copy?copy->output_observation():retired_outputs;}
         bool busy()const {return preparing||(!finished&&!stopped)||outputs().active_voices!=0;}
@@ -42,14 +50,16 @@ struct NativePlaybackOwner::State {
     };
     struct Slot {std::shared_ptr<const void> identity;std::shared_ptr<Entry> entry;};
     struct Retired {
-        BankWireToken bank;
+        explicit Retired(BankReference b):bank(std::move(b)){}
+        BankReference bank;
         std::shared_ptr<const void> identity,bank_identity,context,origin;
         std::vector<HostVoice> voices;
         bool resources_released=false;
         std::size_t active()const noexcept{std::size_t n=0;for(const auto& voice:voices)if(voice.active())++n;return n;}
     };
     mutable std::mutex mutex;
-    AudioBankService service;
+    std::optional<AudioBankService> service;
+    std::optional<AudioBankSession> native_session;
     std::shared_ptr<const void> identity;
     std::uint32_t rate;
     std::shared_ptr<NativeProgramHostClock> clock;
@@ -66,10 +76,15 @@ struct NativePlaybackOwner::State {
         bool cleaning=false;
     };
     std::vector<Context> contexts;
-    std::unordered_map<std::uint32_t,bool> unloading; // true: exceptional result, exact bank admission stays closed.
+    struct UnloadGate {BankReference bank;bool uncertain=false;};
+    std::vector<UnloadGate> unloading;
+    std::optional<bool> unloading_state(const BankReference& bank) const noexcept {
+        for(const auto& gate:unloading)if(same_bank(gate.bank,bank))return gate.uncertain;
+        return {};
+    }
     struct Activity {
         std::shared_ptr<State> state;
-        std::optional<std::uint32_t> bank;
+        std::optional<BankReference> bank;
         std::shared_ptr<const void> reservation,clearing_context;
         bool closes=false,uncertain=false;
         Activity()=default;
@@ -79,9 +94,8 @@ struct NativePlaybackOwner::State {
             if(!state)return;
             std::lock_guard lock(state->mutex);
             if(reservation)for(auto it=state->slots.begin();it!=state->slots.end();++it)if(it->identity==reservation&&it->entry&&it->entry->preparing){state->slots.erase(it);break;}
-            if(bank){auto found=state->unloading.find(*bank);if(found!=state->unloading.end()){
-                if(uncertain)found->second=true;else state->unloading.erase(found);
-            }}
+            if(bank)for(auto it=state->unloading.begin();it!=state->unloading.end();++it)
+                if(same_bank(it->bank,*bank)){if(uncertain)it->uncertain=true;else state->unloading.erase(it);break;}
             if(closes&&!state->closed){if(uncertain)state->close_unknown=true;else state->closing=false;}
             if(clearing_context)if(auto* c=state->context_identity(clearing_context))c->cleaning=false;
             --state->operations;
@@ -103,6 +117,8 @@ struct NativePlaybackOwner::State {
     }
     State(AudioBankService&& s,std::uint32_t r,std::shared_ptr<const void> id,std::shared_ptr<NativeProgramHostClock> timer)
         :service(std::move(s)),identity(std::move(id)),rate(r),clock(std::move(timer)){}
+    State(AudioBankSession&& s,std::uint32_t r,std::shared_ptr<const void> id,std::shared_ptr<NativeProgramHostClock> timer)
+        :native_session(std::move(s)),identity(std::move(id)),rate(r),clock(std::move(timer)){}
     Context* context_identity(const std::shared_ptr<const void>& id){for(auto& c:contexts)if(c.identity==id)return &c;return nullptr;}
     Entry* entry_identity(const std::shared_ptr<const void>& id){for(auto& s:slots)if(s.identity==id)return s.entry.get();return nullptr;}
     void detach_dispatch(Entry& e){
@@ -170,7 +186,21 @@ std::optional<NativePlaybackOwner> NativePlaybackOwner::create_with_clock(AudioB
     catch(const std::bad_alloc&){allocation_failure(f);}catch(const std::length_error&){f.kind=PlaybackError::host_capacity;}return {};
 }
 std::shared_ptr<AudioResourceDomain> NativePlaybackOwner::resource_domain() const noexcept {
-    return state_?state_->service.resource_domain():nullptr;
+    if(!state_)return nullptr;
+    return state_->native_session?state_->native_session->resource_domain():state_->service->resource_domain();
+}
+std::optional<NativePlaybackOwner> NativePlaybackOwner::create(AudioBankSession&& s,std::uint32_t rate,PlaybackFailure& f){
+    f={};if(!rate){f.kind=PlaybackError::invalid_output_rate;return {};}
+    auto clock=NativeProgramHostClock::create(f.clock);if(!clock){f.kind=PlaybackError::clock_failed;return {};}
+    return create_with_clock(std::move(s),rate,std::move(clock),f);
+}
+std::optional<NativePlaybackOwner> NativePlaybackOwner::create_with_clock(AudioBankSession&& s,std::uint32_t rate,
+    std::shared_ptr<NativeProgramHostClock> clock,PlaybackFailure& f){
+    f={};if(!rate){f.kind=PlaybackError::invalid_output_rate;return {};}
+    if(!clock){f.kind=PlaybackError::invalid_clock;return {};}
+    if(!s.share_native_services(f.native_bank)){f.kind=PlaybackError::native_bank_failed;return {};}
+    try{auto id=std::make_shared<int>(0);return NativePlaybackOwner(std::make_shared<State>(std::move(s),rate,std::move(id),std::move(clock)));}
+    catch(const std::bad_alloc&){allocation_failure(f);}catch(const std::length_error&){f.kind=PlaybackError::host_capacity;}return {};
 }
 std::optional<NativeSoundContext> NativePlaybackOwner::create_sound_context(NativeSoundContextConfiguration configuration,PlaybackFailure& f){
     f={};auto state=state_;if(!state){f.kind=PlaybackError::moved_owner;return {};}
@@ -219,61 +249,78 @@ bool NativePlaybackOwner::release_sound_context(const NativeSoundContext& c,Play
 }
 std::optional<BankLoadOutcome> NativePlaybackOwner::load_sync(const AudioBankCommand& c,BankWireToken token,PlaybackFailure& f){
     f={};auto state=state_;if(!state){f.kind=PlaybackError::moved_owner;return {};}
+    if(!state->service){f.kind=PlaybackError::wrong_bank_interface;return {};}
     State::Activity work;
     {std::lock_guard lock(state->mutex);if(!state->admit(state,work,f))return {};}
-    try {auto r=state->service.load_sync(c,token,f.service);if(!r)f.kind=PlaybackError::service_failed;return r;}
+    try {auto r=state->service->load_sync(c,token,f.service);if(!r)f.kind=PlaybackError::service_failed;return r;}
     catch(const std::bad_alloc&){allocation_failure(f);}catch(const std::length_error&){f.kind=PlaybackError::host_capacity;}
     catch(...){f.kind=PlaybackError::native_exception;}return {};
 }
 std::optional<AsyncBankSubmission> NativePlaybackOwner::submit_async(const AudioBankCommand& c,BankWireToken token,PlaybackFailure& f){
     f={};auto state=state_;if(!state){f.kind=PlaybackError::moved_owner;return {};}
+    if(!state->service){f.kind=PlaybackError::wrong_bank_interface;return {};}
     State::Activity work;
     {std::lock_guard lock(state->mutex);if(!state->admit(state,work,f))return {};}
-    try {auto r=state->service.submit_async(c,token,f.service);if(!r)f.kind=PlaybackError::service_failed;return r;}
+    try {auto r=state->service->submit_async(c,token,f.service);if(!r)f.kind=PlaybackError::service_failed;return r;}
     catch(const std::bad_alloc&){allocation_failure(f);}catch(const std::length_error&){f.kind=PlaybackError::host_capacity;}
     catch(...){f.kind=PlaybackError::native_exception;}return {};
 }
 bool NativePlaybackOwner::run_one(PlaybackFailure& f){
     f={};auto state=state_;if(!state){f.kind=PlaybackError::moved_owner;return false;}
+    if(!state->service){f.kind=PlaybackError::wrong_bank_interface;return false;}
     State::Activity work;
     {std::lock_guard lock(state->mutex);if(!state->admit(state,work,f))return false;}
-    try {if(!state->service.run_one(f.service)){f.kind=PlaybackError::service_failed;return false;}return true;}
+    try {if(!state->service->run_one(f.service)){f.kind=PlaybackError::service_failed;return false;}return true;}
     catch(const std::bad_alloc&){allocation_failure(f);}catch(const std::length_error&){f.kind=PlaybackError::host_capacity;}
     catch(...){f.kind=PlaybackError::native_exception;}return false;
 }
 std::optional<BankLoadCompletion> NativePlaybackOwner::poll_completion(PlaybackFailure& f){
     f={};auto state=state_;if(!state){f.kind=PlaybackError::moved_owner;return {};}
+    if(!state->service){f.kind=PlaybackError::wrong_bank_interface;return {};}
     State::Activity work;
     {std::lock_guard lock(state->mutex);if(!state->admit(state,work,f))return {};}
-    try {auto r=state->service.poll_completion(f.service);if(!r&&f.service.kind!=BankServiceError::none)f.kind=PlaybackError::service_failed;return r;}
+    try {auto r=state->service->poll_completion(f.service);if(!r&&f.service.kind!=BankServiceError::none)f.kind=PlaybackError::service_failed;return r;}
     catch(const std::bad_alloc&){allocation_failure(f);}catch(const std::length_error&){f.kind=PlaybackError::host_capacity;}
     catch(...){f.kind=PlaybackError::native_exception;}return {};
 }
 std::optional<NativePlayHandle> NativePlaybackOwner::play(const NativeSoundContext& context,
-    const AudioBankCommand& c,const NativePlayParameters& p,PlaybackFailure& f){return play_impl(context,c,p,false,f);}
+    const AudioBankCommand& c,const NativePlayParameters& p,PlaybackFailure& f){return play_impl(context,&c,nullptr,c.selector,p,false,f);}
 std::optional<NativePlayHandle> NativePlaybackOwner::activate(const NativeSoundContext& context,
     const AudioBankCommand& c,const NativeActivationParameters& p,PlaybackFailure& f){
     // This private placeholder is never a public activated deadline. The real
     // shared clock is sampled at commit after preparation/incumbent cleanup.
     NativePlayParameters pending(p.context,p.program,p.envelope,{0},p.source_output_mode,p.caller_play_flags,p.output);
-    return play_impl(context,c,pending,true,f);
+    return play_impl(context,&c,nullptr,c.selector,pending,true,f);
+}
+std::optional<NativePlayHandle> NativePlaybackOwner::play(const NativeSoundContext& context,
+    const AudioBankHandle& bank,std::int32_t selector,const NativePlayParameters& p,PlaybackFailure& f){
+    return play_impl(context,nullptr,&bank,selector,p,false,f);
+}
+std::optional<NativePlayHandle> NativePlaybackOwner::activate(const NativeSoundContext& context,
+    const AudioBankHandle& bank,std::int32_t selector,const NativeActivationParameters& p,PlaybackFailure& f){
+    NativePlayParameters pending(p.context,p.program,p.envelope,{0},p.source_output_mode,p.caller_play_flags,p.output);
+    return play_impl(context,nullptr,&bank,selector,pending,true,f);
 }
 std::optional<NativePlayHandle> NativePlaybackOwner::play_impl(const NativeSoundContext& context,
-    const AudioBankCommand& c,const NativePlayParameters& p,bool sample_activation_clock,PlaybackFailure& f){
+    const AudioBankCommand* c,const AudioBankHandle* native,std::int32_t selector,
+    const NativePlayParameters& p,bool sample_activation_clock,PlaybackFailure& f){
     f={};auto state=state_;if(!state){f.kind=PlaybackError::moved_owner;return {};}
+    if((native&&!state->native_session)||(!native&&!state->service)){f.kind=PlaybackError::wrong_bank_interface;return {};}
+    const State::BankReference bank=native?State::BankReference(*native):State::BankReference(c->bank_token);
     State::Activity work;std::shared_ptr<State::Entry> entry;NativePlayHandle handle;
     try {
         {std::lock_guard lock(state->mutex);
          if(!state->available(f)||!state->context(context,f))return {};
-         if(state->unloading.contains(c.bank_token.value)){f.kind=state->unloading.at(c.bank_token.value)?PlaybackError::bank_state_unknown:PlaybackError::bank_unloading;return {};}
+         if(const auto gate=state->unloading_state(bank)){f.kind=*gate?PlaybackError::bank_state_unknown:PlaybackError::bank_unloading;return {};}
          if(!state->admit(state,work,f))return {};
-         State::Slot slot;slot.identity=std::make_shared<int>(0);slot.entry=std::make_shared<State::Entry>(c.bank_token,p,context.identity_);
+         State::Slot slot;slot.identity=std::make_shared<int>(0);slot.entry=std::make_shared<State::Entry>(bank,p,context.identity_);
          entry=slot.entry;entry->identity=slot.identity;handle.owner_=state->identity;handle.identity_=slot.identity;
          state->slots.push_back(std::move(slot));work.reservation=handle.identity_;
         }
         // No registry lock spans resource construction/publication or callbacks.
-        auto reference=state->service.acquire_runtime_program(c,f.preparation,f.service);
-        if(!reference){f.kind=PlaybackError::service_failed;return {};}
+        auto reference=native?state->native_session->acquire_runtime_program(*native,selector,f.preparation,f.native_bank):
+            state->service->acquire_runtime_program(*c,f.preparation,f.service);
+        if(!reference){f.kind=native?PlaybackError::native_bank_failed:PlaybackError::service_failed;return {};}
         const auto flags=static_cast<std::uint16_t>(reference->preparation()->runtime_flags()|p.caller_play_flags);
         // Source mode1 cleanup and alternate activation have distinct unbound
         // producers. Reject before public publication rather than strand output.
@@ -287,6 +334,7 @@ std::optional<NativePlayHandle> NativePlaybackOwner::play_impl(const NativeSound
         {std::unique_lock lock(state->mutex);
          // No vector position is retained across resource construction.
          auto* destination=state->context(context,f);if(!state->available(f)||!destination)return {};
+         if(native&&!state->native_session->load_state(*native,f.native_bank)){f.kind=PlaybackError::native_bank_failed;return {};}
          auto role=state->select(*destination,p.output,f);if(!role)return {};
          auto found=destination->roles.find(*role);State::Entry* incumbent=nullptr;
          if(found!=destination->roles.end()&&found->second){incumbent=state->entry_identity(found->second);
@@ -315,6 +363,9 @@ std::optional<NativePlayHandle> NativePlaybackOwner::play_impl(const NativeSound
              state->clock_sampling=true;lock.unlock();auto now=state->clock->read(f.clock);lock.lock();state->clock_sampling=false;
              if(!now){f.kind=PlaybackError::clock_failed;return {};}
              if(!state->available(f)||!state->context(context,f))return {};
+             // A native host-clock callback can revoke the shared Session.
+             // Do not publish a prepared play after that known revocation.
+             if(native&&!state->native_session->load_state(*native,f.native_bank)){f.kind=PlaybackError::native_bank_failed;return {};}
              deadline=ordinary_initial_deadline(copy->commands().front(),*now);
          }
          // Copy/reset preflight established nonnull, nonempty immutable data.
@@ -443,14 +494,14 @@ std::optional<std::vector<ForcedPlaybackRetirement>> NativePlaybackOwner::force_
          std::size_t count=0;
          for(const auto& slot:state->slots)if(slot.entry&&slot.entry->context==scope->identity&&(!handle||slot.identity==handle->identity_)){
              if(slot.entry->preparing){f.kind=PlaybackError::operation_active;return {};}
-             if(state->unloading.contains(slot.entry->bank.value)){f.kind=state->unloading.at(slot.entry->bank.value)?PlaybackError::bank_state_unknown:PlaybackError::bank_unloading;return {};}++count;
+             if(const auto gate=state->unloading_state(slot.entry->bank)){f.kind=*gate?PlaybackError::bank_state_unknown:PlaybackError::bank_unloading;return {};}++count;
          }
          targets.reserve(count);disposed_entries.reserve(count);copies.reserve(count);groups.reserve(count);receipts.reserve(count);
          if(count>state->retired.max_size()-state->retired.size()){f.kind=PlaybackError::host_capacity;return {};}
          state->retired.reserve(state->retired.size()+count);
          for(const auto& slot:state->slots)if(slot.entry&&slot.entry->context==scope->identity&&(!handle||slot.identity==handle->identity_)){
-             const auto& entry=slot.entry;auto group=std::make_unique<State::Retired>();
-             group->identity=std::make_shared<int>(0);group->bank=entry->bank;group->bank_identity=entry->bank_identity;
+             const auto& entry=slot.entry;auto group=std::make_unique<State::Retired>(entry->bank);
+             group->identity=std::make_shared<int>(0);group->bank_identity=entry->bank_identity;
              group->context=entry->context;group->origin=entry->identity;group->voices.reserve(entry->outputs().voices);
              if(!group->bank_identity){f.kind=PlaybackError::copy_failed;f.copy.kind=ProgramCopyError::invalid_transfer_provenance;return {};}
              if(entry->copy&&!entry->copy->validate_forced_output_transfer(group->voices,f.copy)){f.kind=PlaybackError::copy_failed;return {};}
@@ -489,35 +540,60 @@ std::optional<RetiredOutputObservation> NativePlaybackOwner::observe_retired(con
     for(const auto& group:state->retired)if(group->identity==handle.identity_){
         RetiredOutputObservation result;result.voices=group->voices.size();result.active_voices=group->active();
         if(!group->voices.empty())result.first_voice_source_index=group->voices.front().source_index();
-        result.original_bank=group->bank;result.native_resources_released=group->resources_released;return result;
+        const auto* wire=std::get_if<BankWireToken>(&group->bank);
+        if(!wire){f.kind=PlaybackError::wrong_bank_interface;return {};}
+        result.original_bank=*wire;result.native_resources_released=group->resources_released;return result;
+    }
+    f.kind=PlaybackError::retired_output;return {};
+}
+std::optional<NativeRetiredOutputObservation> NativePlaybackOwner::observe_native_retired(const NativeRetiredOutputHandle& handle,PlaybackFailure& f)const{
+    f={};auto state=state_;if(!state){f.kind=PlaybackError::moved_owner;return {};}
+    std::lock_guard lock(state->mutex);if(!state->available(f))return {};
+    if(!handle.owner_||!handle.identity_){f.kind=PlaybackError::unknown_retired_output;return {};}
+    if(handle.owner_!=state->identity){f.kind=PlaybackError::foreign_owner;return {};}
+    for(const auto& group:state->retired)if(group->identity==handle.identity_){
+        const auto* bank=std::get_if<AudioBankHandle>(&group->bank);
+        if(!bank){f.kind=PlaybackError::wrong_bank_interface;return {};}
+        NativeRetiredOutputObservation result;result.voices=group->voices.size();result.active_voices=group->active();
+        if(!group->voices.empty())result.first_voice_source_index=group->voices.front().source_index();
+        result.original_bank=*bank;result.native_resources_released=group->resources_released;return result;
     }
     f.kind=PlaybackError::retired_output;return {};
 }
 bool NativePlaybackOwner::unload(const AudioBankCommand& c,PlaybackFailure& f){
-    f={};auto state=state_;if(!state){f.kind=PlaybackError::moved_owner;return false;}
+    f={};if(!state_){f.kind=PlaybackError::moved_owner;return false;}
     if(c.opcode!=AudioBankOpcode::unload){f.kind=PlaybackError::service_failed;f.service.kind=BankServiceError::wrong_command;return false;}
+    return unload_impl(&c,nullptr,f);
+}
+bool NativePlaybackOwner::unload(const AudioBankHandle& bank,PlaybackFailure& f){
+    return unload_impl(nullptr,&bank,f);
+}
+bool NativePlaybackOwner::unload_impl(const AudioBankCommand* c,const AudioBankHandle* native,PlaybackFailure& f){
+    f={};auto state=state_;if(!state){f.kind=PlaybackError::moved_owner;return false;}
+    if((native&&!state->native_session)||(!native&&!state->service)){f.kind=PlaybackError::wrong_bank_interface;return false;}
+    const State::BankReference bank=native?State::BankReference(*native):State::BankReference(c->bank_token);
     State::Activity work;std::vector<std::unique_ptr<NativeProgramCopy>> copies;
     std::vector<std::shared_ptr<State::Entry>> retired;bool downstream_started=false;
     try {
         {std::lock_guard lock(state->mutex);
          if(!state->available(f))return false;
-         if(state->unloading.contains(c.bank_token.value)){f.kind=state->unloading.at(c.bank_token.value)?PlaybackError::bank_state_unknown:PlaybackError::bank_unloading;return false;}
+         if(const auto gate=state->unloading_state(bank)){f.kind=*gate?PlaybackError::bank_state_unknown:PlaybackError::bank_unloading;return false;}
          std::size_t count=0;
-         for(const auto& slot:state->slots)if(slot.entry&&slot.entry->bank.value==c.bank_token.value){
+         for(const auto& slot:state->slots)if(slot.entry&&State::same_bank(slot.entry->bank,bank)){
              if(slot.entry->busy()){f.kind=PlaybackError::active_playback;return false;}++count;
          }
          copies.reserve(count);retired.reserve(count);
          if(!state->admit(state,work,f))return false;
-         state->unloading.emplace(c.bank_token.value,false);work.bank=c.bank_token.value;
-         for(auto& slot:state->slots)if(slot.entry&&slot.entry->bank.value==c.bank_token.value&&slot.entry->copy)copies.push_back(slot.entry->retire_copy());
+         state->unloading.push_back({bank,false});work.bank=bank;
+         for(auto& slot:state->slots)if(slot.entry&&State::same_bank(slot.entry->bank,bank)&&slot.entry->copy)copies.push_back(slot.entry->retire_copy());
         }
         copies.clear();downstream_started=true;
-        if(!state->service.unload(c,f.service)){
-            work.uncertain=f.service.kind==BankServiceError::native_exception||f.service.kind==BankServiceError::bank_state_unknown;
-            f.kind=PlaybackError::service_failed;return false;
+        if(native?!state->native_session->unload_bank(*native,f.native_bank):!state->service->unload(*c,f.service)){
+            work.uncertain=!native&&(f.service.kind==BankServiceError::native_exception||f.service.kind==BankServiceError::bank_state_unknown);
+            f.kind=native?PlaybackError::native_bank_failed:PlaybackError::service_failed;return false;
         }
         {std::lock_guard lock(state->mutex);
-         for(auto& slot:state->slots)if(slot.entry&&slot.entry->bank.value==c.bank_token.value){state->detach_entry(*slot.entry);retired.push_back(std::move(slot.entry));}
+         for(auto& slot:state->slots)if(slot.entry&&State::same_bank(slot.entry->bank,bank)){state->detach_entry(*slot.entry);retired.push_back(std::move(slot.entry));}
         }
         retired.clear();return true;
     }catch(const std::bad_alloc&){work.uncertain=downstream_started;allocation_failure(f);}catch(const std::length_error&){work.uncertain=downstream_started;f.kind=PlaybackError::host_capacity;}
@@ -541,7 +617,9 @@ bool NativePlaybackOwner::close_when_idle(PlaybackFailure& f){
          for(auto& slot:state->slots)if(slot.entry&&slot.entry->copy)copies.push_back(slot.entry->retire_copy());
         }
         copies.clear();outputs.clear();downstream_started=true;
-        if(!state->service.close_when_idle(f.service)){f.kind=PlaybackError::service_failed;return false;}
+        if(state->native_session?!state->native_session->close(f.native_bank):!state->service->close_when_idle(f.service)){
+            f.kind=state->native_session?PlaybackError::native_bank_failed:PlaybackError::service_failed;return false;
+        }
         {std::lock_guard lock(state->mutex);
          state->closed=true;state->closing=false;
          for(auto& slot:state->slots)if(slot.entry){state->detach_entry(*slot.entry);retired.push_back(std::move(slot.entry));}

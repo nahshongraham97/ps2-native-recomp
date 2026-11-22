@@ -44,6 +44,14 @@ add_executable(test_native_host_voice EXCLUDE_FROM_ALL tests/test_host_voice.cpp
 target_link_libraries(test_native_host_voice PRIVATE mka_native_sound_resources)
 add_executable(test_native_playback_owner EXCLUDE_FROM_ALL tests/test_playback_owner.cpp)
 target_link_libraries(test_native_playback_owner PRIVATE mka_native_sound_resources)
+add_executable(test_native_bank_playback EXCLUDE_FROM_ALL tests/test_native_bank_playback.cpp)
+target_link_libraries(test_native_bank_playback PRIVATE mka_native_sound_resources)
+if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    target_link_options(test_native_bank_playback PRIVATE
+        "-Wl,--wrap=_ZN3mka5sound17AudioBankProtocol6createEONS0_16AudioBankSessionERNS0_20AudioProtocolFailureE"
+        "-Wl,--wrap=_ZN3mka5sound16AudioBankService6createEONS0_17AudioBankProtocolERNS0_18BankServiceFailureE"
+        "-Wl,--wrap=_ZN3mka5sound23decode_audio_bank_frameEPKhyRNS0_20AudioProtocolFailureE")
+endif()
 if(WIN32)
     add_executable(test_native_stream_source EXCLUDE_FROM_ALL tests/test_stream_source.cpp)
     target_link_libraries(test_native_stream_source PRIVATE mka_native_sound_resources)

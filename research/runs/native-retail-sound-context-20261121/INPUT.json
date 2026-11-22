@@ -1,0 +1,22 @@
+{
+  "image": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\modules\\msl.irx",
+  "sha256": "f62dfbcedd39bc92cb8b9c02bb685b956a10357f9181d7f8c2801d8eaff07af7",
+  "pt_load": [
+    1,
+    144,
+    0,
+    0,
+    68096,
+    299104,
+    7,
+    16
+  ],
+  "raw_sha256": "ba6b1237eb8b67b4f0d3977e18a2f496dc117189fd63a22225e319bec43ef9cd",
+  "prior_loaded_notation_delta": "0x28100",
+  "scope": "offline source decode only; no game/device",
+  "llvm_objdump_attempt": {
+    "exit": 1,
+    "error": "cannot find target: invalid target 'mipsel'",
+    "source_changed": false
+  }
+}

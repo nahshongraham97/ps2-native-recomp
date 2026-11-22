@@ -36,6 +36,11 @@ public:
         if (this != &other) { identity_ = std::move(other.identity_); moved_ = other.moved_; other.moved_ = true; }
         return *this;
     }
+    // Opaque native object identity only. Equality does not establish that
+    // either handle is live; the owning Session still validates admission.
+    bool same_identity(const AudioBankHandle& other) const noexcept {
+        return identity_ == other.identity_ && moved_ == other.moved_;
+    }
 private:
     struct Identity;
     explicit AudioBankHandle(std::shared_ptr<Identity> identity) : identity_(std::move(identity)) {}

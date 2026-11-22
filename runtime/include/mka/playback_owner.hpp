@@ -54,7 +54,8 @@ enum class PlaybackError { none, moved_owner, closed, invalid_output_rate,
     allocation_failed, host_capacity, native_exception, operation_active, closing,
     bank_unloading, bank_state_unknown, close_state_unknown, unknown_context, foreign_context, retired_context,
     unsupported_play_flags, copy_failed, invalid_output_selector, unsupported_output_selector,
-    output_priority_refused, clock_failed, invalid_clock, unknown_retired_output, retired_output };
+    output_priority_refused, clock_failed, invalid_clock, unknown_retired_output, retired_output,
+    wrong_bank_interface, native_bank_failed };
 struct PlaybackFailure {
     PlaybackError kind=PlaybackError::none;
     BankServiceFailure service;
@@ -63,6 +64,7 @@ struct PlaybackFailure {
     HostVoiceFailure voice;
     ProgramCopyFailure copy;
     ProgramHostClockFailure clock;
+    AudioBanksFailure native_bank;
 };
 struct PlaybackObservation {
     ProgramClockWord deadline;
@@ -94,6 +96,12 @@ struct RetiredOutputObservation {
     BankWireToken original_bank;
     bool native_resources_released=false;
 };
+struct NativeRetiredOutputObservation {
+    std::size_t voices=0,active_voices=0;
+    std::optional<std::uint64_t> first_voice_source_index;
+    AudioBankHandle original_bank;
+    bool native_resources_released=false;
+};
 struct SoundContextStep {
     NativePlayHandle handle;
     std::optional<ProgramStep> event;
@@ -114,6 +122,12 @@ public:
         std::uint32_t explicit_output_rate,PlaybackFailure&);
     static std::optional<NativePlaybackOwner> create_with_clock(AudioBankService&&,
         std::uint32_t,std::shared_ptr<NativeProgramHostClock>,PlaybackFailure&);
+    // Accepted native ingress: retains the actual catalog Session/handles.
+    // No packet, wire token, compatibility service or second archive is made.
+    static std::optional<NativePlaybackOwner> create(AudioBankSession&&,
+        std::uint32_t explicit_output_rate,PlaybackFailure&);
+    static std::optional<NativePlaybackOwner> create_with_clock(AudioBankSession&&,
+        std::uint32_t,std::shared_ptr<NativeProgramHostClock>,PlaybackFailure&);
     std::optional<BankLoadOutcome> load_sync(const AudioBankCommand&,BankWireToken,PlaybackFailure&);
     std::optional<AsyncBankSubmission> submit_async(const AudioBankCommand&,BankWireToken,PlaybackFailure&);
     bool run_one(PlaybackFailure&);
@@ -129,6 +143,10 @@ public:
     // preparation/ordinary incumbent cleanup; initial deadline is not supplied.
     std::optional<NativePlayHandle> activate(const NativeSoundContext&,const AudioBankCommand&,
         const NativeActivationParameters&,PlaybackFailure&);
+    std::optional<NativePlayHandle> play(const NativeSoundContext&,const AudioBankHandle&,
+        std::int32_t selector,const NativePlayParameters&,PlaybackFailure&);
+    std::optional<NativePlayHandle> activate(const NativeSoundContext&,const AudioBankHandle&,
+        std::int32_t selector,const NativeActivationParameters&,PlaybackFailure&);
     // One clock sample; dispatch every due command per ordinary live entry. Other original
     // update passes/callbacks are distinct, still unbound work. A failed step
     // retains its exact prefix/results; no fabricated all-or-nothing update.
@@ -146,13 +164,16 @@ public:
     std::optional<ForcedPlaybackRetirement> force_retire(const NativePlayHandle&,PlaybackFailure&);
     std::optional<std::vector<ForcedPlaybackRetirement>> force_retire_context_outputs(const NativeSoundContext&,PlaybackFailure&);
     std::optional<RetiredOutputObservation> observe_retired(const NativeRetiredOutputHandle&,PlaybackFailure&) const;
+    std::optional<NativeRetiredOutputObservation> observe_native_retired(const NativeRetiredOutputHandle&,PlaybackFailure&) const;
     // No automatic pending-play cancellation/unload rule is inferred. A source
     // program awaiting its deadline or any active/releasing voice blocks unload.
     bool unload(const AudioBankCommand&,PlaybackFailure&);
+    bool unload(const AudioBankHandle&,PlaybackFailure&);
     bool close_when_idle(PlaybackFailure&);
 private:
-    std::optional<NativePlayHandle> play_impl(const NativeSoundContext&,const AudioBankCommand&,
-        const NativePlayParameters&,bool sample_activation_clock,PlaybackFailure&);
+    std::optional<NativePlayHandle> play_impl(const NativeSoundContext&,const AudioBankCommand*,
+        const AudioBankHandle*,std::int32_t selector,const NativePlayParameters&,bool sample_activation_clock,PlaybackFailure&);
+    bool unload_impl(const AudioBankCommand*,const AudioBankHandle*,PlaybackFailure&);
     std::optional<std::vector<ForcedPlaybackRetirement>> force_retire_impl(const NativePlayHandle*,const NativeSoundContext*,PlaybackFailure&);
     struct State;
     explicit NativePlaybackOwner(std::shared_ptr<State> s):state_(std::move(s)){}

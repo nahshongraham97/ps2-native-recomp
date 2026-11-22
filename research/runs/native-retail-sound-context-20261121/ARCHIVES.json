@@ -1,0 +1,27 @@
+{
+  "format": "gzip; lossless original measured bytes; deterministic mtime0",
+  "entries": [
+    {
+      "original": "ghidra-02.log",
+      "original_sha256": "c840e4610ba05088dccc62ca8278ed51984320d7b0d362e1680239ac1d694b86",
+      "original_bytes": 9286,
+      "archive": "ghidra-02.log.gz",
+      "archive_sha256": "1db7004fad2bf76d6cbcaf34e027854dfc667e3f8f48a0003e930031c1052535"
+    },
+    {
+      "original": "source-01/56fc.c",
+      "original_sha256": "69ebd99dd4b14577be8f0fffa24271c9308eb48d9bcd850863c79eb546b160b1",
+      "original_bytes": 4032,
+      "archive": "source-01/56fc.c.gz",
+      "archive_sha256": "9dbd3b510fc995ef1a7530ac6997757f730b1ff64b4efaba4d12a7007a0c7b07"
+    },
+    {
+      "original": "validation-02/native-client-symbols.json",
+      "original_sha256": "1ed79b6ae44b78f0d7c41a4583fd4f5820f136d66708fd3504ac2f67521429a4",
+      "original_bytes": 455503,
+      "archive": "validation-02/native-client-symbols.json.gz",
+      "archive_sha256": "2ae7cb01342e119e620c8e7ac2347f51ceabc448ef32e40488bc952122568f74"
+    }
+  ],
+  "originals_preserved_locally": true
+}

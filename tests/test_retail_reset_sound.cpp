@@ -5,7 +5,6 @@
 #include "mka/retail_section_workspace.hpp"
 #include "mka/retail_sound_bank_catalog.hpp"
 #include "mka/retail_current_sound_required.hpp"
-#include "mka/audio_bank_protocol.hpp"
 #include "native_retail_startup.hpp"
 #include <array>
 #include <cstdio>
@@ -102,17 +101,11 @@ bool create_playback_context_316320(NativeRetailMainState& main, sound::AudioBan
         "source12D7E0 game clears are visible before the context factory");
     ++fixture->context;
     if (fixture->refuse_context) return false;
-    sound::AudioProtocolFailure protocol_failure;
-    auto protocol = sound::AudioBankProtocol::create(std::move(session), protocol_failure);
-    check(bool(protocol), "real playback protocol view of catalog registry");
-    sound::BankServiceFailure service_failure;
-    auto service = sound::AudioBankService::create(std::move(*protocol), service_failure);
-    check(bool(service), "real native bank service");
     sound::PlaybackFailure playback_failure;
-    auto playback = sound::NativePlaybackOwner::create(std::move(*service), 48000, playback_failure);
+    auto playback = sound::NativePlaybackOwner::create(std::move(session), 48000, playback_failure);
     check(bool(playback), "real native playback owner with explicit test output rate");
-    auto context = playback->create_sound_context({1}, playback_failure);
-    check(bool(context), "real empty native context with explicit test role count");
+    auto context = playback->create_sound_context({3}, playback_failure);
+    check(bool(context), "real empty native context with source-proved logical role boundary");
     main.current_sound = std::move(context);
     main.playback = std::make_unique<sound::NativePlaybackOwner>(std::move(*playback));
     return true;
@@ -219,6 +212,21 @@ int main(int argc, char** argv) try {
     check(wrong_thread, "foreign pending observer refused before state access");
     main.sound_frame_counter = 0xffffffffu;
     check(main_binding::pump_retail_current_sound(main, failure) && main.sound_frame_counter == 0, "original frame word has defined32-bit wrapping");
+    {
+        // Same software profile as the existing playback client, explicitly test
+        // input. This is a real bank/copy/mix connection, not retail gain proof.
+        sound::PlaybackFailure playback_failure;
+        const auto announcr = main.sound_bank_catalog->observe(8, catalog_failure);
+        sound::NativePlayParameters parameters{sound::initial_program_control_factors(), sound::initial_program_control_factors(),
+            {{1,14336,false},{1,-16384,true},{1,14336,false},{1,-16384,false},2048},
+            {1000},3,0,sound::NativeProgramOutputRequest{-1,0}};
+        auto play = main.playback->play(*main.current_sound, *announcr->bank, 0, parameters, playback_failure);
+        check(play && main.playback->tick(*play, {1000}, playback_failure), "reset callback bank handle reaches actual native playback");
+        auto pcm = main.playback->mix(128, playback_failure);
+        check(pcm && pcm->size() == 256, "actual connected reset-bank PCM enters the native mixer");
+        check(main.playback->stop(*play, playback_failure) && main.playback->mix(32, playback_failure) &&
+            main.playback->release(*play, playback_failure), "connected native play explicitly retires before bank teardown");
+    }
     check(main.sound_bank_catalog->shutdown(catalog_failure), "actual native bank retirement");
     sound::PlaybackFailure pf;
     check(main.playback->release_sound_context(*main.current_sound, pf), "idle native context release");

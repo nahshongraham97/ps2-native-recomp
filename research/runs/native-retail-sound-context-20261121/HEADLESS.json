@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\ghidra\\ghidra_12.1.4_PUBLIC\\support\\analyzeHeadless.bat",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\local-research\\ghidra-msl-context-20261121",
+    "MslContext",
+    "-import",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\local-research\\ghidra-msl-context-20261121\\msl-file-backed.bin",
+    "-loader",
+    "BinaryLoader",
+    "-loader-baseAddr",
+    "0",
+    "-processor",
+    "MIPS:LE:32:default",
+    "-cspec",
+    "default",
+    "-noanalysis",
+    "-scriptPath",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-sound-context-20261121",
+    "-postScript",
+    "ExportMslContext.java",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-sound-context-20261121\\source-01",
+    "56fc:5c00"
+  ],
+  "exit": 1,
+  "stdout": "******************************************************************\nJDK 21+ (64-bit) could not be found and must be manually chosen!\n******************************************************************\nEnter path to JDK home directory (ENTER for dialog): \nERROR: Failed to find a supported JDK.\nPlease refer to the Getting Started document's Troubleshooting section.\nPress any key to continue . . . \n",
+  "stderr": "java.io.FileNotFoundException: C:\\Users\\nahsh\\AppData\\Roaming\\ghidra\\ghidra_12.1.4_PUBLIC\\java_home.save (Access is denied)\n\tat java.base/java.io.FileOutputStream.open0(Native Method)\n\tat java.base/java.io.FileOutputStream.open(FileOutputStream.java:289)\n\tat java.base/java.io.FileOutputStream.<init>(FileOutputStream.java:230)\n\tat java.base/java.io.FileOutputStream.<init>(FileOutputStream.java:179)\n\tat java.base/java.io.FileWriter.<init>(FileWriter.java:98)\n\tat ghidra.launch.AppConfig.saveJavaHome(AppConfig.java:148)\n\tat LaunchSupport.findJavaHome(LaunchSupport.java:210)\n\tat LaunchSupport.handleJavaHome(LaunchSupport.java:153)\n\tat LaunchSupport.main(LaunchSupport.java:113)\njava.lang.NullPointerException: Cannot invoke \"String.trim()\" because the return value of \"java.io.BufferedReader.readLine()\" is null\n\tat LaunchSupport.askJavaHome(LaunchSupport.java:300)\n\tat LaunchSupport.handleJavaHome(LaunchSupport.java:151)\n\tat LaunchSupport.main(LaunchSupport.java:113)\njava.io.FileNotFoundException: C:\\Users\\nahsh\\AppData\\Roaming\\ghidra\\ghidra_12.1.4_PUBLIC\\java_home.save (Access is denied)\n\tat java.base/java.io.FileOutputStream.open0(Native Method)\n\tat java.base/java.io.FileOutputStream.open(FileOutputStream.java:289)\n\tat java.base/java.io.FileOutputStream.<init>(FileOutputStream.java:230)\n\tat java.base/java.io.FileOutputStream.<init>(FileOutputStream.java:179)\n\tat java.base/java.io.FileWriter.<init>(FileWriter.java:98)\n\tat ghidra.launch.AppConfig.saveJavaHome(AppConfig.java:148)\n\tat LaunchSupport.findJavaHome(LaunchSupport.java:210)\n\tat LaunchSupport.handleJavaHome(LaunchSupport.java:153)\n\tat LaunchSupport.main(LaunchSupport.java:113)\n",
+  "seconds": 1.856669900007546
+}
