@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-C",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_saved_profile_records.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.051424500008579344,
+  "log_sha256": "2dd8685bf00b812eb2673e4a6b02ccfd5e99dd6fcb0e2d64a4acae3f001ac657",
+  "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3",
+  "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10"
+}

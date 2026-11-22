@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_main_frame_gates.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-saved-profile-records-20261122\\validation-02\\empty-content"
+  ],
+  "exit": 0,
+  "seconds": 0.09131740000157151,
+  "log_sha256": "14459d966411f0da990f5d7cc7e4c14b6173fbf648c1238df959381437f11708",
+  "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3",
+  "executable_sha256": "3813a14a4f89664351239acd3be273ea064d200b6b6d56640f41c9938ca80873"
+}

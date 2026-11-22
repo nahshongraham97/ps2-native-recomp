@@ -1,0 +1,23 @@
+{
+  "supersedes": "Historical child SOURCE_JOIN omitted245E84 direct-entry wording only; runtime unchanged, no rerun",
+  "245E84": {
+    "bytes": "0000458e",
+    "decode": "LW a1,0(s2)",
+    "role": "unreachable duplicate within full span",
+    "proof": [
+      "245E74 BNEL taken executes delay245E78 then245E88",
+      "not taken annuls245E78;245E7C unconditionalbranch246044 withNOP245E80",
+      "no body branch target245E84; no fallthrough"
+    ]
+  },
+  "4EEA2C": {
+    "bytes": "2da80000",
+    "decode": "DADDU s5,zero,zero",
+    "role": "unreachable duplicate within full span",
+    "proof": [
+      "4EEA1C BNEL taken executes4EEA20 then4EEA30",
+      "not taken annuls4EEA20;4EEA24 branches4EEB28 withLD4EEA28",
+      "no body branch target4EEA2C; no fallthrough"
+    ]
+  }
+}

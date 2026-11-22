@@ -1,0 +1,30 @@
+{
+  "base": "15bd7a39307e0978b46f163bc80fe82135014c15",
+  "paths": [
+    "cmake/native_game.cmake",
+    "recomp/native_startup_codegen.cpp",
+    "runtime/include/mka/retail_game_session.hpp",
+    "runtime/src/native/retail_game_session.cpp",
+    "runtime/include/mka/retail_saved_profile_records.hpp",
+    "runtime/src/native/retail_saved_profile_records.cpp",
+    "runtime/src/native/retail_saved_profile_bindings.cpp",
+    "runtime/include/mka/retail_saved_profile_child.hpp",
+    "runtime/src/native/retail_saved_profile_child.cpp",
+    "tests/test_retail_saved_profile_records.cpp",
+    "tests/test_retail_saved_profile_child.cpp"
+  ],
+  "pins": {
+    "cmake/native_game.cmake": "25f6d3214f00c4bbbafbec3356007201cb64a6b5ff0bdae9bbf9cf61ff4c0588",
+    "recomp/native_startup_codegen.cpp": "0f54b8d360c17d00eaffc0968c44fe6526e8d80db78d659951a46cd1e3ee83f5",
+    "runtime/include/mka/retail_game_session.hpp": "bb57ffdbeb26c73744dd09377ff2e49dd8085f6d4fa83c8abfdd544f49c75747",
+    "runtime/src/native/retail_game_session.cpp": "b3f79221fbf3da181e102a2b67a8bca793d3c340ac18e4ab663791b31afd08cb",
+    "runtime/include/mka/retail_saved_profile_records.hpp": null,
+    "runtime/src/native/retail_saved_profile_records.cpp": null,
+    "runtime/src/native/retail_saved_profile_bindings.cpp": null,
+    "runtime/include/mka/retail_saved_profile_child.hpp": null,
+    "runtime/src/native/retail_saved_profile_child.cpp": null,
+    "tests/test_retail_saved_profile_records.cpp": null,
+    "tests/test_retail_saved_profile_child.cpp": null
+  },
+  "scope": "Baseline tracked source before child integration/Session wiring. Root-owned untracked records header/body draft already exists; no user source modifications."
+}
