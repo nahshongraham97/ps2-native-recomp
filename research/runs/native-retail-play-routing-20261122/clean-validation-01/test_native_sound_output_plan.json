@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-route-22\\build-native\\test_native_sound_output_plan.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native game-output planning/counter provenance; pure checks, no endpoint opened\n",
+  "stderr": "",
+  "seconds": 0.04078720000688918,
+  "source_commit": "58bbfd78fb4335226ce455c043e4abd67febd61c",
+  "tracked_status": "",
+  "source_manifest_sha256": "4529e0dc5f31a1766b7dbef5ba88407cfc06b6d6463993d91636ff6c119c0c96",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "4cf5b7a13fa3a10568a39189c861e12e45a5ea603af6915b1377510fe6b3225a"
+}

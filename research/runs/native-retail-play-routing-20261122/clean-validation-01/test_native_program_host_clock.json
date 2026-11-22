@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-route-22\\build-native\\test_native_program_host_clock.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_PROGRAM_HOST_CLOCK: shared explicit epoch/integer milliseconds/wrap/failure atomicity/reentry/concurrent readers; no original kernel epoch or physical timing fidelity claim\n",
+  "stderr": "",
+  "seconds": 0.039601999989827164,
+  "source_commit": "58bbfd78fb4335226ce455c043e4abd67febd61c",
+  "tracked_status": "",
+  "source_manifest_sha256": "4529e0dc5f31a1766b7dbef5ba88407cfc06b6d6463993d91636ff6c119c0c96",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "5280120a2440243a2d611d8761cb573373913f0f7af0a5124cced293059ec577"
+}
