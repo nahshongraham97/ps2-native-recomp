@@ -1,0 +1,14 @@
+{
+  "status": "AUTHENTICATED_COMMITTED_NATIVE0406_SHARED_CPU_IMAGES",
+  "runtime_source_commit": "2f9ea3c1ddceb1b144f4ea812129cc49e7881d08",
+  "runtime_tree": "35822db76d0d35f4a9c41686ee69fd3d453a6d4d",
+  "source_files": 915,
+  "all_measured_source_blobs_match_commit": true,
+  "source_manifest_sha256": "e9d97572470bf5fd060c6ce9258e249a81ca6e031abc627d9868a87454768c88",
+  "component_authentication_sha256": "3d568ad2442183a922ab57dd85d7d11bbabd129eff1a313a9979d2ce7d5dd99b",
+  "implementation_record_sha256": "94175e81ae7442cff1cfba2a2447ed2da008c30019fb2fc7efc0faacb51ebcd7",
+  "verification_scope": "final precommit component executions on current identical bytes;no fresh-checkout rebuild",
+  "fresh_checkout_build": false,
+  "game_run": false,
+  "acceptance": "OPEN"
+}
