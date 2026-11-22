@@ -1,0 +1,23 @@
+{
+  "status": "NONZERO",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_mode_service.exe",
+    "../../../private-inputs/native-ps2-loose-20261121"
+  ],
+  "exit": 1,
+  "deadline_seconds": 90,
+  "seconds": 0.11397989999386482,
+  "executable_sha256": "6052fe0b3b1334fb49939e60b6e9c318be0206fb3ee2ad8d3c84275e15f27267",
+  "log_sha256": "7fa1a6f195f41eb57a5a9a9b0f7cf4054ebd6cc9e360821bf9a4c1343770ed5d",
+  "source_commit": "97bf25eeb7a541eefc48b9c618ae91c55d558e2c",
+  "tracked_status": "M AGENTS.md\n M cmake/native_game.cmake\n M research/runs/native-xbox-mode-scene-20261122/WORK.md\n M runtime/include/mka/retail_sound_bank_catalog.hpp\n M runtime/include/mka/retail_sound_catalog_data.hpp\n M runtime/src/native/retail_sound_bank_catalog.cpp\n M runtime/src/native/retail_sound_bank_main.cpp",
+  "source_manifest_sha256": "727a9531cbbc51a41acc37fa8da67223723cc618df99557c0319c67a0920c144",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "706dae305fa5122aafd8e2aa001b2eb743923cf842c6138f3c3d78c7cd830642",
+  "runner_sha256": "150bad29bf081ecea0af068f8b48323f0f8488627458c394d9542a23f872e216",
+  "phase": "client",
+  "visible_window": false,
+  "audio_endpoint": false,
+  "game_run": false,
+  "acceptance": "OPEN"
+}

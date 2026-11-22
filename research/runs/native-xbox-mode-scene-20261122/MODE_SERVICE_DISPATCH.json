@@ -1,0 +1,23 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "mapping": {
+    "vma": "0x23d154",
+    "file_offset": 2281812,
+    "length": 16,
+    "section": ".text"
+  },
+  "bytes_hex": "b1d02300f4d023000ed12300ced02300",
+  "policy_targets": [
+    "0x23d0b1",
+    "0x23d0f4",
+    "0x23d10e",
+    "0x23d0ce"
+  ],
+  "policy_zero_target": "0x23d0b1",
+  "listing": "source-mode-01/0023d060.asm",
+  "listing_sha256": "ebd5298c1bca93fd237e300f85e6575c86da019a98436a0091bf58b17e0467b5",
+  "scope": "actual indirect policy-zero target; policies1..3 not adopted",
+  "supersedes": "MODE_SERVICE_DISPATCH_FAILURE_01.json",
+  "correction": "Only assumed ordering of unadopted policies1..3 was wrong; original policy0 expectation unchanged",
+  "production_code_change": false
+}

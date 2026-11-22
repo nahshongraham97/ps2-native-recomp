@@ -1,0 +1,20 @@
+{
+  "status": "DISPATCH_HYPOTHESIS_DISPROVED",
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "vma": "0x23d154",
+  "file_offset": 2281812,
+  "bytes_hex": "b1d02300f4d023000ed12300ced02300",
+  "actual_targets": [
+    "0x23d0b1",
+    "0x23d0f4",
+    "0x23d10e",
+    "0x23d0ce"
+  ],
+  "disproved_targets": [
+    "0x23d0b1",
+    "0x23d0ce",
+    "0x23d0f4",
+    "0x23d10e"
+  ],
+  "production_change": "NONE; awaiting semantic resolution"
+}

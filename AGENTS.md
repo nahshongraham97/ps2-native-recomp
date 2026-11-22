@@ -12,6 +12,12 @@ Kombat Practice package. Preserve existing uncommitted `runtime/src/iop/
 mcserv.cpp` and `msl_native.cpp` work; neither is verified by a matching
 clean run. Preserve user cards, saves, states, keys, and local model/settings.
 
+This is one native Armageddon port in the existing repositories, not a PS2
+compatibility product. Choose the best/easiest verified retail portions and
+retain useful native services regardless of origin. Native saves/reload are
+required; PS2 save bytes/import are optional. Do not rewrite a native format
+merely to rename it. Do not create another repository or upstream PR.
+
 Do not claim acceptance from `runtime/src/compliance_census.cpp` or the
 300/2,500/3,000-frame scripted records. The census checks counters, not
 source reachability or correct card, audio, physical input, movie, visual,
@@ -32,7 +38,7 @@ directly. Do not ask the owner to launch while any contract row is open.
 
 The parent AGENTS.md section "ELF authority, implementation and verification
 order" is binding here, including its mandatory five-step protocol for every
-ported function: original ELF words/data -> verified EE instruction semantics
+ported function: selected original executable/data -> verified instructions/ABI
 -> decompiler used only for orientation and caller/consumer cross-checks ->
 typed native C++ -> independently derived behavioral checks. Record input
 identity, exact ranges, instruction widths/extensions, delay-slot effects,
@@ -56,7 +62,7 @@ production progress with isolated wrappers, repeated reports or test counts.
 
 Per the architecture plan in parent ROADMAP.md and PORT_STATUS.md:
 1. **Preserve existing native foundation**: Native files, content volume, async reads, heaps, Session, tasks, Main reentry, clocks, typed profiles, input sampling, audio decoders/jobs, textures/fonts, and GPU resources carry forward. Do not replace them with an Xbox runtime or emulated device.
-2. **Reconcile profile and player records**: Transfer field meanings, not structure offsets. Preserve existing PS2 save file decoding independently of runtime layout. Establish player limits per mode (do not impose 2-player limit where 4-player is required, such as Motor Kombat).
+2. **Reconcile profile and player records**: Transfer state meanings, not console offsets. Native save/load is required; PS2 save-byte compatibility/import is optional. Keep useful native codecs where easiest without constraining the native state model. Establish actual per-mode player requirements rather than console limits.
 3. **Reconcile numerical behavior**: Distinguish gameplay-critical arithmetic from rendering arithmetic. Xbox x87/SSE routines can replace complex EE math only when proven functionally or visually equivalent without weakening parity.
 4. **Enforce explicit asset provenance**: Do not assume matching filenames mean matching bytes. Distinguish version-specific decoders from shared native objects.
 5. **HD presentation policy**: Use Xbox 720p as the HD reference. Keep logical coordinates (640×448), render target resolution, and presentation resolution distinct. Apply widescreen camera projections instead of 4:3 stretching. Maintain simulation timing strictly independent of render resolution.

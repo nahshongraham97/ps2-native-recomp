@@ -1,0 +1,35 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "queries": {
+    "00398910:0": {
+      "mapping": {
+        "vma": "0x398910",
+        "file_offset": 3705104,
+        "length": 64,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "558bec57568b750c8b4d108b7d088bc18bd103c63bfe76083bf80f827c010000f7c7030000007514c1e90283e20383f9087229f3a5ff24955c8a39008bc7ba03"
+    },
+    "00374cc0:0": {
+      "mapping": {
+        "vma": "0x374cc0",
+        "file_offset": 3558592,
+        "length": 64,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "558bec83ec088b45088945fc8b4dfc516860787000e8268e000083c4088945f8837df800750433c0eb338b55f8526a00e8db8d000083c408894508837d080074"
+    },
+    "00374e70:0": {
+      "mapping": {
+        "vma": "0x374e70",
+        "file_offset": 3559024,
+        "length": 64,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "558bec83ec088b45088945f88b4df8516860787000e8768c000083c4088945fc837dfc007502eb1d8b55fc526a00e82d8c000083c4088945088b450850e86ef9"
+    }
+  }
+}

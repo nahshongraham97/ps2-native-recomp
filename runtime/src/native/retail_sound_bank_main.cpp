@@ -46,6 +46,92 @@ bool required_result(bool ok, StartupFailure& failure, const char* operation) {
     }
     return ok;
 }
+// Game-side23BAF0: repeatedly retire the first matching bank reference before
+//23C700 unloads bank backing. Native records are erased as records, never by
+// reproducing the donor's raw pointer-array memmove/storage constraints.
+class MainBankReferenceRetirement final : public NativeRetailBankReferenceRetirement {
+public:
+    explicit MainBankReferenceRetirement(NativeRetailMainState& main) noexcept : main_(main) {}
+    bool retire(const sound::AudioBankHandle& bank, RetailSoundCatalogFailure& failure) override {
+        failure = {};
+        auto& main = main_;
+        const auto lifetime = main.lifetime;
+        if (!main.playback || !main.current_sound) {
+            failure.kind = RetailSoundCatalogError::runtime;
+            failure.operation = "bank retirement actual native playback owner missing"; return false;
+        }
+        struct Admission { bool& flag; explicit Admission(bool& value):flag(value){flag=true;} ~Admission(){flag=false;} }
+            admission(main.game_sound_reference_admission_active);
+        const auto failed = [&](sound::PlaybackFailure value, const char* operation) {
+            failure.kind = value.kind == sound::PlaybackError::allocation_failed ?
+                RetailSoundCatalogError::allocation : RetailSoundCatalogError::runtime;
+            failure.runtime.kind = RetailSoundRuntimeError::playback;
+            failure.runtime.playback = std::move(value); failure.operation = operation; return false;
+        };
+        for (;;) {
+            auto found = std::find_if(main.game_sound_references.begin(), main.game_sound_references.end(),
+                [&](const auto& reference) { return reference.bank.same_identity(bank); });
+            if (found == main.game_sound_references.end()) return true;
+            const auto index = static_cast<std::size_t>(found - main.game_sound_references.begin());
+            const auto handle = found->playback; // No borrowed vector element across cleanup.
+            if (!handle.empty()) {
+                sound::PlaybackFailure pf;
+                auto present = main.playback->observe(handle, pf);
+                if (!present && pf.kind == sound::PlaybackError::operation_active && main.sound_runtime) {
+                    if (main.sound_runtime->playback_owner() != main.playback ||
+                        !main.sound_runtime->sound_context().same_identity(*main.current_sound)) {
+                        failure.kind = RetailSoundCatalogError::runtime;
+                        failure.operation = "bank retirement actual pending runtime identity"; return false;
+                    }
+                    RetailSoundRuntimeFailure cancellation_failure;
+                    auto cancellation = main.sound_runtime->cancel_pending_play(handle, cancellation_failure);
+                    if (cancellation && *cancellation != sound::ProgramWorkCancellation::not_cancellable) {
+                        main.game_sound_references.erase(main.game_sound_references.begin() + index);
+                        continue; // Actual work retains association until native cleanup completes.
+                    }
+                    present = main.playback->observe(handle, pf);
+                }
+                if (!present) {
+                    if (pf.kind != sound::PlaybackError::retired_handle)
+                        return failed(std::move(pf), "actual bank play-reference lookup");
+                } else {
+                    auto retired = main.playback->force_retire(handle, pf);
+                    if (!retired) return failed(std::move(pf), "actual bank play-reference retirement");
+                    if (!lifetime->active_on_owner_thread()) {
+                        failure.kind = RetailSoundCatalogError::wrong_owner;
+                        failure.operation = "bank retirement Main retired during cleanup"; return false;
+                    }
+                    if (!retired->native_resources_released) {
+                        pf.kind = sound::PlaybackError::operation_active;
+                        return failed(std::move(pf), "bank play resources still retiring");
+                    }
+                }
+            }
+            main.game_sound_references.erase(main.game_sound_references.begin() + index);
+        }
+    }
+private:
+    NativeRetailMainState& main_;
+};
+bool select_game_bank_mode(NativeRetailMainState& main, bool zero, StartupFailure& failure) {
+    if (!owner(main, failure, true)) return false;
+    const auto retained = main.sound_bank_catalog;
+    const auto lifetime = main.lifetime;
+    auto session = retained->share_bank_session(failure.sound_catalog);
+    if (!session) return catalog_result(false, failure);
+    if (session->resource_domain() != main.playback->resource_domain()) {
+        failure.kind = StartupError::sound_catalog;
+        failure.operation = "bank selection requires the actual shared native resource domain"; return false;
+    }
+    MainBankReferenceRetirement retirement(main);
+    const bool result = zero ? retained->select_mode_zero(retirement, failure.sound_catalog) :
+                               retained->select_mode_one(retirement, failure.sound_catalog);
+    if (!lifetime->active_on_owner_thread() || main.sound_bank_catalog != retained) {
+        failure.kind = StartupError::sound_catalog;
+        failure.operation = "native bank selection Main/catalog changed during cleanup"; return false;
+    }
+    return catalog_result(result, failure);
+}
 }
 
 namespace current_sound_required {
@@ -68,6 +154,9 @@ bool prepare_game_sound_state_12d7e0(NativeRetailMainState& main, StartupFailure
 }
 
 namespace main_binding {
+bool initialize_retail_mode_service(NativeRetailMainState& main, StartupFailure& failure) {
+    return select_game_bank_mode(main, true, failure);
+}
 bool initialize_retail_current_sound(NativeRetailMainState& main, StartupFailure& failure) {
     if (!owner(main, failure, false)) return false;
     if (main.current_sound_phase == RetailCurrentSoundPhase::ready ||
@@ -276,8 +365,7 @@ bool pump_retail_current_sound(NativeRetailMainState& main, StartupFailure& fail
 
 namespace initial_reset_required {
 bool request_mode_one_banks_12a4f0(NativeRetailMainState& main, StartupFailure& failure) {
-    if (!owner(main, failure, true)) return false;
-    return catalog_result(main.sound_bank_catalog->select_mode_one(failure.sound_catalog), failure);
+    return select_game_bank_mode(main, false, failure);
 }
 std::optional<bool> banks_pending_12abd0(NativeRetailMainState& main, StartupFailure& failure) {
     if (!owner(main, failure, true)) return {};

@@ -362,3 +362,208 @@ whole-game acceptance remain OPEN. No game/window/speaker endpoint ran.
 Owner:no action. Agent next:the actual remaining mode-service/scene/race
 callers through existing owners, maintaining the required gates.
 No background job remains active after the completed clean verification.
+
+## Requested mode-zero service continuation
+
+Owner requested actual12A4F0(0) effects through existing native services.
+Entry parentae75669f/fork97bf25e, tracked trees clean. Reuse Xbox23C8A0/
+23D060 and the existing catalog/jobs/playback/reference owners. Inspect the
+actual zero descriptor and policy0 scan/request callees before editing.
+Scope is game-side selection/retirement integration, not sound assets,
+decoder/playback algorithms, a second sound owner or a successful no-op stub.
+Original/user data, drivers, model/settings, numerical and HD gates stay intact.
+
+source-mode-zero-17 confirms policy0's actual order:23D060 first stores the
+selected descriptor, then23D4D0 scans344 game records in ascending order.
+Only a live handle or exact pending-word1 reaches membership23D540 and
+nonmember retirement23D230.23D830 separately traverses the selected request
+list and binds each slot. Establish the actual zero-list bytes, membership
+and retirement effects; do not call mode0 a no-op merely because its load
+list is empty.
+
+Mode-zero original-data preflight DISPROVED the tentative empty-list
+assumption:both versions contain TWO requests under no_sounds_bank_list.
+The failed assertion is preserved in MODE_ZERO_PREFLIGHT_FAILURE_01.json.
+Join the actual entries and implement their requests; no runtime was changed.
+
+Owner clarified product scope:one genuinely native Armageddon in the existing
+repositories, using the best/easiest verified portions of either retail
+version. PS2 save-byte compatibility/import is optional, not a native-port
+acceptance requirement. Existing native components remain where useful, but
+neither console's structures, hardware semantics or format limits constrain
+the product. Required native save/load remains; no save rewrite is requested
+merely to remove an old format. Upstream-useful changes may be curated later;
+this task creates no new repository or pull request. Apply this to current
+instructions without rewriting historical measured evidence.
+
+MODE_ZERO_DATA.json now proves mode0 requests catalog0/permanent at slot0
+and8/announcr at slot4; both original versions have exactly those two entries.
+Mode1's four-entry list remains regression data.23C700 first calls23BAF0
+with the bank handle, then37AD60, so establish that cleanup boundary before
+choosing a native retirement callback. Mode-zero integration must not retire
+the two still-selected banks or guess that pending cancellation is immediate.
+
+source-mode-zero-20/21/22 proves bank cleanup first repeatedly finds the first
+matching bank reference, looks up/retires its actual play, removes that record,
+then unloads bank backing. Existing native play observation/forced retirement,
+pending cancellation, native reference-container erase and bank jobs provide
+those operations. The donor's rawBBC0 array copy passes a count difference to
+a byte memmove; that storage behavior is NOT copied into native shared-owner
+records or claimed byte-equivalent. The already-used native per-record erase
+semantics are retained; multi-reference native state preservation is a required test.
+
+Compiled/tested-component (service-mode-zero-04):the game-side catalog now shares policy0 selection for
+mode0's actual two requests and existing mode1's four, with selected-state
+store first, ordered nonmember retirement, real pending cancellation and slot
+binding. Actual Main initialize_retail_mode_service and reset mode1 use a
+required typed retirement bridge into existing native services, not a second
+sound owner. Callback/reentry/after-effect/lifetime guards are explicit.
+Decoder/playback algorithms and sound assets are unchanged. This change does
+not implement other policies/modes, numerical/HD behavior or full game.
+
+service-compile-01 PASS:the existing connected reset/metadata clients compile
+and link on current service code in53.16s under a240s owned-process deadline.
+Output is streamed, not buffered. No client had yet executed at that point.
+The new service client now invokes actual Main mode0/mode1, real file reads/
+jobs/preparation/callbacks, selective ready-play retirement and bank unload.
+Only context construction uses an explicit real-native, endpoint-free fixture;
+an SDL abort guard and abort-only unused frame hook prevent accidental output.
+Tests cover actual two requests, pending/loaded repeat, cancellation, native
+bank identity versus semantic ID, order/stale slots, ordinary failure, thread,
+reentry and legitimate Main transfer. They make no heard-audio/gameplay claim.
+
+service-compile-02 PASS in4.12s. service-mode-zero-01 failed immediately
+(0.11s), not a hang:the supplied native-ps2-loose fixture root contains ONLY
+art, no sound assets. The failed invocation/log/binary/source identities are
+preserved. The prior successful reset/metadata receipts identify the actual
+complete content root SLUS_214.10.Mortal_Kombat_Armageddon. Correct only the
+test invocation; do not change native file-error checks or weaken assertions.
+
+service-mode-zero-02 reached actual ready-play setup, then failed at its held
+play fixture. The failed exit/log/binary/source are preserved. Inspect and
+print the actual native failure fields before choosing a correction; do not
+skip the retirement assertion, alter the decoder or manufacture a valid play.
+
+service-mode-zero-03 identifies the exact fixture error:PlaybackError33
+(native_bank_failed), PreparationError14(absent_program). Original selector0
+is absent in shell, while announcr0 is the established existing fixture.
+The measured diagnostic test source is preserved before correction. The test
+now chooses the first PRESENT selector from the original bank metadata using
+the existing native parser, not by trying/skipping failed plays; production
+lookup remains fail-closed. No native service/decoder assertion is relaxed.
+
+service-compile-04 PASS in1.41s; service-mode-zero-04 PASS in0.14s.
+Actual original shell metadata selects10, not absent0. The passing component
+executes two real requests, pending/loaded repeats, nonhead cancellation,
+selected identities, selective live-play reference retirement before backing
+unload, ascending cleanup, stale slots, ordinary failure, thread/reentry and
+Main-transfer guards. Exact binary/source/log identities are in its RESULT.json
+and SOURCE_FILES.json. No window, audio endpoint or full game ran.
+
+Continuation preflight confirms parentae75669f/fork97bf25e on main, matching
+origin/main, with only the recorded authored mode-zero/policy edits plus
+unrelated parent evidence left untouched. Before-head test bytes are preserved
+in test_mode_service.before-head-case.cpp. Next add the distinct deferred-head
+case:complete common0/8, select0 while2 heads the queue, require1's immediate
+queued callback but2 pending until a real pump delivers cancelled_after_active.
+Current reset/metadata regression execution, exact58->57 list, symbols and
+source/result publication remain pending. Pending-play cleanup requiring the
+actual sound_runtime is not exercised by this endpoint-free fixture and stays
+an explicit coverage limit. No local model is used (owner reservation).
+
+Deferred-head test added (unbuilt):independent expected statuses follow the
+existing verified317960 cancellation/3175E4 unload-before-status4 contract,
+not a new immediate-clear implementation. The test performs two real pumps
+for0/8, observes2 still pending after selection, observes1 cancelled_queued,
+then requires one actual pump to publish2 cancelled_after_active. It also
+checks that0/8 retain their existing native identities. Production code is
+unchanged from the passing04 service run.
+
+service-compile-05 PASS in1.42s:the expanded service client and existing
+reset/metadata clients compile/link against the same current production code.
+Next execute all three with the complete original content root; reset gets a
+new run-local negative-content directory and metadata its original-derived
+9656-row corpus. Source inspection confirms these are endpoint-free component
+routes (test context, no native output start/window construction), not game
+launches. The service and metadata clients additionally abort on SDL startup.
+
+service-mode-zero-05 PASS in0.15s, including deferred-head status4 only after
+one real pump and selected identity preservation. service-reset-01 PASS in
+0.13s (actual four callbacks and reset wait release); service-metadata-01 PASS
+in0.12s (all9656 original rows, same Session operands and four callback handles).
+All three exact binaries/logs/source maps are recorded separately; no game,
+window, speakers or source change occurred. Next require the exact prior58
+undefined names minus only initialize_retail_mode_service, and inspect linked
+service symbols. Pending-play runtime coverage/oracle/full game remain OPEN.
+
+service-negative-01 produced the expected nonzero link in0.99s (no game
+binary); service-symbols-01 exited0 in0.05s. These raw outcomes are preserved,
+not yet promoted to a validated57-name/symbol audit:inspect actual receipt
+types and predecessor remaining_undefined_symbols list, then compare exact
+names/lengths. The previous published producer has status string
+PASS_NATIVE_MODE_STARTUP_AND_RESOLVED_FIELDS, clients as a list of name/hash
+objects and remaining_undefined_symbols as a list of58 strings, not a count.
+Current runner RESULT.json uses status PASS/NONZERO/TIMEOUT and integer exit;
+SOURCE_FILES.json is a path->SHA256 object. Only the target-minus-one equality,
+not the nonzero exit alone, can pass the diagnostic.
+
+verify_service_results.py now authenticates saved records without rerunning
+builds/clients. It prints actual schema types, requires exact target lists
+and lengths, source delta limited to the six service/code/test paths, unchanged
+algorithm sources, all binary/log/config identities, exact58-minus-one names,
+typed service definitions/no guest symbols, and original source-listing joins.
+It also checks selected full-body coverage, original asset hashes and LF
+source bytes. This authentication is not an oracle or accepted-gameplay gate.
+
+SERVICE_COMPONENT_AUTHENTICATION.json PASS:all three exact target identities,
+901 source blobs, original MS2/MS4 hashes and saved Xbox listing joins match.
+Exact diagnostic58->57 removes ONLY initialize_retail_mode_service; all other
+names match the prior list. Linked symbols contain the actual typed binding/
+catalog service, the SDL abort guard and no audited guest-runtime symbols.
+The six-path production/test/config delta leaves decoder/playback algorithm
+and native save sources unchanged. This is authenticated precommit component
+evidence, not a fresh clean game build, runtime pending-play check or oracle
+comparison. Next scoped source/evidence review and failure-propagating publish.
+
+Scoped review confirms32-bit stack arguments/caller stack cleanup in the
+Xbox service chain; selection scan/membership, cleanup-first and slot-byte
+stores match the saved original listings. The indirect policy dispatch still
+needs its16 original table bytes saved explicitly (not inferred from case
+labels); join_mode_service_dispatch.py closes only that evidence gap. No
+production edit or redundant component rerun is needed. Disposable reset
+negative-content fixtures are excluded from publication, not deleted.
+
+Dispatch-table preflight failed its assumed ordering before writing a result.
+Publication is paused; component passes remain valid only in their stated
+scope, not proof of the assumed Xbox policy0 path. The exact failing script
+is preserved as join_mode_service_dispatch.before-diagnostic.py. Print/save
+the actual pinned bytes and the disproved hypothesis before any correction;
+do not repin expectations merely to pass or claim full policy equivalence.
+
+Actual dispatch bytes resolve the discrepancy:targets are23D0B1,23D0F4,
+23D10E,23D0CE. Policy0 is EXACTLY the independently expected23D0B1
+(scan23D4D0 then requests23D830). Only the unadopted policies1..3 were
+incorrectly assumed to follow listing order. MODE_SERVICE_DISPATCH_FAILURE_01
+retains the actual bytes and disproved full-order hypothesis; both failed
+script versions are preserved. Withdraw those out-of-scope expectations;
+keep the unchanged policy0 assertion and record other targets as data, not
+implemented semantics. No production/test expectation changes are needed.
+
+MODE_SERVICE_DISPATCH.json PASS:saved original16 bytes independently confirm
+policy0 ->23D0B1. Publication source blocker is resolved, not bypassed.
+MODE_SERVICE_IMPLEMENTATION.md consolidates per-function original mapping/
+actual listing/ABI/effect order/native owners/independent expectations and
+explicit limits, linking existing byte receipts instead of duplicating them.
+All six measured code/config/test paths are unchanged since compile05;
+no redundant component rerun is warranted. Scoped review is complete for
+this bounded service implementation; pending-play runtime/oracle/full-game
+acceptance remain OPEN. Next authenticate staged blobs, commit/push only
+authored service/policy/evidence paths, then publish parent live documents.
+
+publish_mode_service.py enforces exact approved staging paths and raw bytes,
+LF authored text, no assets/binaries/fixtures, all901 measured source blobs
+against index AND resulting commit, source/result authentication and original
+policy0 dispatch. Staging checks, commit and push run in one failure-propagating
+process; no failed gate can reach push. Postcommit authentication distinguishes
+the existing measured precommit build from its identical committed source,
+without describing it as a fresh-checkout rebuild or accepted game.

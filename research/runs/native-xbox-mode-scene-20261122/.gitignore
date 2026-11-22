@@ -2,3 +2,4 @@ source-*/*.c
 private-kart-modules/
 validation-profile-*/fixtures/
 validation-mode-*/fixtures/
+service-reset-*/negative-content/

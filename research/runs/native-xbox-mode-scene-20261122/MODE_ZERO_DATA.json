@@ -1,0 +1,249 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "descriptors": [
+    {
+      "platform": "xbox",
+      "rows": [
+        {
+          "index": 0,
+          "mapping": {
+            "vma": "0x56c938",
+            "file_offset": 5636280,
+            "length": 36,
+            "section": ".data"
+          },
+          "bytes_hex": "ffffffff0000000018c5560002000000000000000000000000000000fffffffff4295000",
+          "words": [
+            4294967295,
+            0,
+            5686552,
+            2,
+            0,
+            0,
+            0,
+            4294967295,
+            5253620
+          ],
+          "name": "no_sounds_bank_list",
+          "name_mapping": {
+            "vma": "0x5029f4",
+            "file_offset": 5198356,
+            "length": 96,
+            "section": ".rdata"
+          },
+          "list_pointer": "0x56c518",
+          "list_count": 2,
+          "policy": 0,
+          "retained_descriptor": 4294967295,
+          "list_data": {
+            "mapping": {
+              "vma": "0x56c518",
+              "file_offset": 5635224,
+              "length": 24,
+              "section": ".data"
+            },
+            "bytes_hex": "000000000000000001000000080000000400000001000000",
+            "entries": [
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                8,
+                4,
+                1
+              ]
+            ]
+          }
+        },
+        {
+          "index": 1,
+          "mapping": {
+            "vma": "0x56c95c",
+            "file_offset": 5636316,
+            "length": 36,
+            "section": ".data"
+          },
+          "bytes_hex": "00c9560000000000c0c5560004000000000000000000000000000000ffffffffdc295000",
+          "words": [
+            5687552,
+            0,
+            5686720,
+            4,
+            0,
+            0,
+            0,
+            4294967295,
+            5253596
+          ],
+          "name": "shell_sounds_bank_list",
+          "name_mapping": {
+            "vma": "0x5029dc",
+            "file_offset": 5198332,
+            "length": 96,
+            "section": ".rdata"
+          },
+          "list_pointer": "0x56c5c0",
+          "list_count": 4,
+          "policy": 0,
+          "retained_descriptor": 4294967295,
+          "list_data": {
+            "mapping": {
+              "vma": "0x56c5c0",
+              "file_offset": 5635392,
+              "length": 48,
+              "section": ".data"
+            },
+            "bytes_hex": "000000000000000001000000080000000400000001000000020000001600000001000000010000001500000001000000",
+            "entries": [
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                8,
+                4,
+                1
+              ],
+              [
+                2,
+                22,
+                1
+              ],
+              [
+                1,
+                21,
+                1
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "platform": "ps2",
+      "rows": [
+        {
+          "index": 0,
+          "mapping": {
+            "vma": "0x59f988",
+            "file_offset": 4848264,
+            "length": 36,
+            "section": 0
+          },
+          "bytes_hex": "ffffffff0000000030f5590002000000000000000000000000000000ffffffff60735f00",
+          "words": [
+            4294967295,
+            0,
+            5895472,
+            2,
+            0,
+            0,
+            0,
+            4294967295,
+            6255456
+          ],
+          "name": "no_sounds_bank_list",
+          "name_mapping": {
+            "vma": "0x5f7360",
+            "file_offset": 5207136,
+            "length": 96,
+            "section": 0
+          },
+          "list_pointer": "0x59f530",
+          "list_count": 2,
+          "policy": 0,
+          "retained_descriptor": 4294967295,
+          "list_data": {
+            "mapping": {
+              "vma": "0x59f530",
+              "file_offset": 4847152,
+              "length": 24,
+              "section": 0
+            },
+            "bytes_hex": "000000000000000001000000080000000400000001000000",
+            "entries": [
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                8,
+                4,
+                1
+              ]
+            ]
+          }
+        },
+        {
+          "index": 1,
+          "mapping": {
+            "vma": "0x59f9ac",
+            "file_offset": 4848300,
+            "length": 36,
+            "section": 0
+          },
+          "bytes_hex": "30f9590000000000e0f5590004000000000000000000000000000000ffffffff80735f00",
+          "words": [
+            5896496,
+            0,
+            5895648,
+            4,
+            0,
+            0,
+            0,
+            4294967295,
+            6255488
+          ],
+          "name": "shell_sounds_bank_list",
+          "name_mapping": {
+            "vma": "0x5f7380",
+            "file_offset": 5207168,
+            "length": 96,
+            "section": 0
+          },
+          "list_pointer": "0x59f5e0",
+          "list_count": 4,
+          "policy": 0,
+          "retained_descriptor": 4294967295,
+          "list_data": {
+            "mapping": {
+              "vma": "0x59f5e0",
+              "file_offset": 4847328,
+              "length": 48,
+              "section": 0
+            },
+            "bytes_hex": "000000000000000001000000080000000400000001000000020000001600000001000000010000001500000001000000",
+            "entries": [
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                8,
+                4,
+                1
+              ],
+              [
+                2,
+                22,
+                1
+              ],
+              [
+                1,
+                21,
+                1
+              ]
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "scope": "Original mode0 TWO-entry request list/policy0 and mode1 regression descriptors; live retirement semantics require callee proof"
+}

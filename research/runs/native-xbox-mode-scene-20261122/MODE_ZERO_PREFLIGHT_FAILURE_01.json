@@ -1,0 +1,8 @@
+{
+  "status": "ORIGINAL_DATA_DISPROVED_EMPTY_MODE_ZERO_ASSUMPTION",
+  "exit": 1,
+  "command": ["python", "research/runs/native-xbox-mode-scene-20261122/join_mode_zero_data.py"],
+  "observed": "Both original retail descriptors have count2/policy0, despite the no_sounds_bank_list name.",
+  "runtime_or_original_data_changed": false,
+  "correction": "Preserve the failure, join both actual entries and implement their requests. Never use the descriptor name as proof of an empty/no-op service."
+}

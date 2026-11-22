@@ -1,0 +1,488 @@
+{
+  "status": "AUTHENTICATED_MODE_ZERO_SERVICE_COMPONENT",
+  "schema_preflight": {
+    "predecessor_status": "str",
+    "predecessor_remaining_undefined_symbols": "list",
+    "predecessor_list_length": 58,
+    "runner": {
+      "status": "str",
+      "argv": "list",
+      "exit": "int",
+      "deadline_seconds": "int",
+      "seconds": "float",
+      "executable_sha256": "str",
+      "log_sha256": "str",
+      "source_commit": "str",
+      "tracked_status": "str",
+      "source_manifest_sha256": "str",
+      "compiler_sha256": "str",
+      "cache_sha256": "str",
+      "runner_sha256": "str",
+      "phase": "str",
+      "visible_window": "bool",
+      "audio_endpoint": "bool",
+      "game_run": "bool",
+      "acceptance": "str"
+    },
+    "pin_map_type": "dict",
+    "pin_map_value_types": [
+      "str"
+    ],
+    "expected_client_targets": [
+      "test_native_retail_mode_service",
+      "test_native_retail_reset_sound",
+      "test_native_retail_sound_metadata"
+    ],
+    "expected_client_target_count": 3
+  },
+  "measured_source_base": "97bf25eeb7a541eefc48b9c618ae91c55d558e2c",
+  "source_files": 901,
+  "source_manifest_sha256": "4664bbb7d9d4c089408af185970bc86bab76886280a1ff04ea940b2c6dd96107",
+  "changed_source_paths": [
+    "cmake/native_game.cmake",
+    "runtime/include/mka/retail_sound_bank_catalog.hpp",
+    "runtime/include/mka/retail_sound_catalog_data.hpp",
+    "runtime/src/native/retail_sound_bank_catalog.cpp",
+    "runtime/src/native/retail_sound_bank_main.cpp",
+    "tests/test_retail_mode_service.cpp"
+  ],
+  "client_targets": [
+    "test_native_retail_mode_service",
+    "test_native_retail_reset_sound",
+    "test_native_retail_sound_metadata"
+  ],
+  "client_target_count": 3,
+  "receipts": {
+    "service-compile-05": {
+      "result_sha256": "9edfee4c9fef17a499c5028c4452ebadf20e1fbd9e7a944fe2a0102a98291247",
+      "log_sha256": "a8fbccb0540ce7ea3e12ba938fdedae146636cd457fb3e73170ba3220ae1f207",
+      "compressed_log_sha256": "32cc6d46ddaf6f33dc45726193ac9522dc59f0c54ab56f74984e38d639df26ba",
+      "seconds": 1.4198679999972228,
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+        "--build",
+        "C:\\Users\\nahsh\\MKPORT~1\\ARMAGE~1\\ARMAGE~1\\external\\forks\\RETAIL~1\\b",
+        "--target",
+        "test_native_retail_mode_service",
+        "test_native_retail_reset_sound",
+        "test_native_retail_sound_metadata",
+        "-j2"
+      ],
+      "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3"
+    },
+    "service-mode-zero-05": {
+      "result_sha256": "18129f89895757f77079fac2ab386bda415599206f7e596060805c7eca7a1296",
+      "log_sha256": "bb72972479acbd42cec63f2abfdd235ac2664a3eddbaf5ce3a28c711807fb6b7",
+      "compressed_log_sha256": "33eba27f5d385acd1793b3435a6d666303a0c9d7ac2b3d2057ce7bd633530836",
+      "seconds": 0.14614170001004823,
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_mode_service.exe",
+        "../../../private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon"
+      ],
+      "executable_sha256": "2497d50bb7f3bce5e1273391ae7c694c8079d032c35b4ad74b2d56d8346140ae"
+    },
+    "service-reset-01": {
+      "result_sha256": "920db94b05eee81c9a4217eb46bd473f31fe8ee93b19418cf882dfd53c77045e",
+      "log_sha256": "1a36832a93a7b89bc117a34ab53cc3144e8e779a5ebbda6e3cf28ded6348c0a2",
+      "compressed_log_sha256": "6746f2bfd03d120fc179eeaf379874e9e001650f82ce57f2c1d97896b425add6",
+      "seconds": 0.13065740000456572,
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_reset_sound.exe",
+        "../../../private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon",
+        "research/runs/native-xbox-mode-scene-20261122/service-reset-01/negative-content"
+      ],
+      "executable_sha256": "cea3475afd31827ecca837a554b1da776893dae70f7a5f01e73471a5c56825cd"
+    },
+    "service-metadata-01": {
+      "result_sha256": "b665a1c3131c677e22aa8f086524597e625d732e6a4b2f7ba3d1794d037fba9c",
+      "log_sha256": "02d31cfaf5d0678946a14dc4547c6fce9b58ed3b7fae001dfd348525194ea0f2",
+      "compressed_log_sha256": "45a857e97afdfca726dd54f1e9b66694f06b0b156ec5deaa85ba53e477b5b2a2",
+      "seconds": 0.11519680000492372,
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_sound_metadata.exe",
+        "../../../private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon",
+        "research/runs/parallel-sound-metadata-resolver-20261122/expected-metadata.tsv"
+      ],
+      "executable_sha256": "701116c149728cfbc11f7eb98efd7b2ce5057494334ad3a02839732b9f59c056"
+    },
+    "service-negative-01": {
+      "result_sha256": "7e1b0a50144960c875cadf7043b5cb29dd3d833d5f6d7c991a7736b9ddad9276",
+      "log_sha256": "5d075a7aadc32d1edd09b16a1a281c804423ae9af644bbfef9feb6bf173ab46b",
+      "compressed_log_sha256": "1196d4e1381735b0a97bee278e024ffed11fb18d6d538a260a7c6f6affa83b70",
+      "seconds": 0.9945943999919109,
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+        "--build",
+        "C:\\Users\\nahsh\\MKPORT~1\\ARMAGE~1\\ARMAGE~1\\external\\forks\\RETAIL~1\\b",
+        "--target",
+        "test_native_startup_missing_bindings",
+        "-j2"
+      ],
+      "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3"
+    },
+    "service-symbols-01": {
+      "result_sha256": "344e5523c2dbe3622fdaecba3d268b230d411d51a465c14b35bc5103c6bdfe24",
+      "log_sha256": "fe0c0d47176cfeacfa42982b889ea1bce8803ab5004a5d205aed958686807c1c",
+      "compressed_log_sha256": "1dcb81052f745b374103539b1fc5b8300410ee559787d73bb6a02ddd4e36747f",
+      "seconds": 0.052271699998527765,
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+        "-C",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_mode_service.exe"
+      ],
+      "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10"
+    }
+  },
+  "configuration": {
+    "CMAKE_BUILD_TYPE:STRING": "Release",
+    "CMAKE_CXX_COMPILER:STRING": "C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/bin/clang++.exe",
+    "CMAKE_CXX_FLAGS:STRING": "",
+    "CMAKE_CXX_FLAGS_DEBUG:STRING": "-g",
+    "CMAKE_CXX_FLAGS_MINSIZEREL:STRING": "-Os -DNDEBUG",
+    "CMAKE_CXX_FLAGS_RELEASE:STRING": "-O3 -DNDEBUG",
+    "CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING": "-O2 -g -DNDEBUG",
+    "MKA_NATIVE_MEDIA_HEADERS:PATH": "C:/Users/nahsh/mk port/Armageddon-backup/dependencies/native-media/ffmpeg-7.1.4",
+    "PS2_GENERATED:PATH": "",
+    "PS2_IOP_AOT_IMPORTS:PATH": "C:/Users/nahsh/MKPORT~1/ARMAGE~1/ARMAGE~1/external/forks/RETAIL~1/runtime/src/iop/generated_modules",
+    "PS2_IOP_AOT_MODULES:PATH": "C:/Users/nahsh/MKPORT~1/ARMAGE~1/ARMAGE~1/external/forks/RETAIL~1/runtime/src/iop/generated_modules",
+    "PS2_RUNTIME_LIB:FILEPATH": "",
+    "PS2_WGPU_DIR:PATH": "C:/Users/nahsh/MKPORT~1/ARMAGE~1/ARMAGE~1/external/forks/RETAIL~1/third_party/wgpu-native",
+    "CMAKE_CXX_FLAGS-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_DEBUG-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_MINSIZEREL-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_RELEASE-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL": "1"
+  },
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "706dae305fa5122aafd8e2aa001b2eb743923cf842c6138f3c3d78c7cd830642",
+  "sdl2_sha256": "53e8fa7e9ed43c30bd650c39396f0d9d2067d2fff0b926c9433b75202592e4aa",
+  "predecessor_receipt_sha256": "6a60eb25fd9d6401b95f4871cb3c9d7f288e88238589f4230904a7d3781a8cd9",
+  "resolved_bindings": [
+    "mka::retail::main_binding::initialize_retail_mode_service(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)"
+  ],
+  "remaining_undefined_symbols": [
+    "mka::retail::main_binding::read_retail_online_boot_word(mka::retail::NativeRetailMainState const&)",
+    "mka::retail::main_binding::initialize_retail_online_stage(mka::retail::NativeRetailMainState&, std::__1::array<unsigned int, 5ull> const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::poll_retail_controller_roles(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::advance_retail_game_services(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::service_retail_frame_input(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::render_retail_frame(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::prune_retail_associations(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::retail_mode_dispatch_enabled(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::dispatch_retail_enabled_mode(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::create_retail_action_task(mka::retail::NativeRetailMainState&, mka::retail::RetailActionTaskRequest const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::deliver_retail_builtin_scene_event(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, unsigned int, unsigned int, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::reset_and_bind_retail_scene_event_graph(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, mka::retail::StartupFailure&)",
+    "mka::retail::scene_bootstrap_required::continue_scene_reset_at_125d60(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::initial_task_required::begin_intro_18deb0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::transition_1225d0(mka::retail::NativeRetailMainState&, unsigned int, mka::retail::RetailInitialTransitionBody)",
+    "mka::retail::initial_task_required::begin_prompt_18dc10(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d450(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d870(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d8e0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d700(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d800(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d660(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d770(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::scene_bootstrap_required::continue_first_scene_at_225d40(mka::retail::NativeRetailMainState&, std::__1::shared_ptr<mka::retail::NativeRetailRendererCore>, mka::retail::StartupFailure&)",
+    "mka::retail::initial_reset_required::clear_nonowning_references_18da30(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::invoke_retail_profile_select_from_2f1630(mka::retail::NativeRetailMainState&, std::__1::basic_string_view<char, std::__1::char_traits<char>>, mka::retail::RetailProfileMenuFailure&)",
+    "mka::retail::renderer_required::register_object_extensions_1b72b0(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::discard_object_extensions_after_core_init(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0403(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0403(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0404(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0404(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0405(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0405(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0406(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0406(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0407(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0407(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0408(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0408(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0409(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0409(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0412(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0412(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_040a(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_040a(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_040b(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_040b(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::apply_retail_profile_participant_from_188720(mka::retail::NativeRetailMainState&, unsigned int, mka::retail::RetailProfileMenuFailure&)",
+    "mka::retail::publish_retail_profile_participant_from_189690(mka::retail::NativeRetailMainState&, std::__1::shared_ptr<mka::retail::NativeRetailInputParticipant> const&, mka::retail::RetailProfileMenuFailure&)",
+    "mka::retail::renderer_required::transform_point_exact(mka::retail::RetailRendererPoint3&, mka::retail::RetailRendererPoint3 const&, mka::retail::RetailRendererAffine const&)",
+    "mka::retail::renderer_required::transform_points_exact(std::__1::span<mka::retail::RetailRendererPoint3, 18446744073709551615ull>, std::__1::span<mka::retail::RetailRendererPoint3 const, 18446744073709551615ull>, mka::retail::RetailRendererAffine const&)",
+    "mka::retail::renderer_required::transform_vector_exact(mka::retail::RetailRendererPoint3&, mka::retail::RetailRendererPoint3 const&, mka::retail::RetailRendererAffine const&)",
+    "mka::retail::renderer_required::transform_vectors_exact(std::__1::span<mka::retail::RetailRendererPoint3, 18446744073709551615ull>, std::__1::span<mka::retail::RetailRendererPoint3 const, 18446744073709551615ull>, mka::retail::RetailRendererAffine const&)",
+    "mka::retail::renderer_required::multiply_affines_19f680(mka::retail::RetailRendererAffine&, mka::retail::RetailRendererAffine const&, mka::retail::RetailRendererAffine const&, mka::retail::RetailRendererMatrixFailure&)",
+    "mka::retail::renderer_required::classify_matrix_1a0240(mka::retail::RetailRendererMatrixValue&, mka::retail::RetailRendererMatrixTolerances const&, mka::retail::RetailRendererMatrixFailure&)",
+    "mka::retail::renderer_required::invert_nonidentity_matrix_1a07a0(mka::retail::RetailRendererMatrixValue&, mka::retail::RetailRendererMatrixValue const&, mka::retail::RetailRendererMatrixFailure&)"
+  ],
+  "source_listings": {
+    "source-mode-01/0023c8a0": {
+      "range": [
+        "0023c8a0",
+        "0023c8f1"
+      ],
+      "instructions": 31,
+      "listing_sha256": "5b44474c8581f1e00deab0ed5b62320607958452398199624ad63f3f1f6d6ccb",
+      "unlisted_byte_gaps": []
+    },
+    "source-mode-01/0023c900": {
+      "range": [
+        "0023c900",
+        "0023ca0a"
+      ],
+      "instructions": 74,
+      "listing_sha256": "71d07e692f017d67f571336e1b15be9ba9384da88508bd7be0f7b8fa5fa666f3",
+      "unlisted_byte_gaps": []
+    },
+    "source-mode-01/0023d060": {
+      "range": [
+        "0023d060",
+        "0023d153"
+      ],
+      "instructions": 80,
+      "listing_sha256": "ebd5298c1bca93fd237e300f85e6575c86da019a98436a0091bf58b17e0467b5",
+      "unlisted_byte_gaps": []
+    },
+    "source-mode-zero-17/0023d4d0": {
+      "range": [
+        "0023d4d0",
+        "0023d539"
+      ],
+      "instructions": 35,
+      "listing_sha256": "f8d646100a55b6e796720650438432b544053915f8412068a6af0509a37200af",
+      "unlisted_byte_gaps": []
+    },
+    "source-mode-zero-17/0023d830": {
+      "range": [
+        "0023d830",
+        "0023d8cd"
+      ],
+      "instructions": 48,
+      "listing_sha256": "8f2f2ac880825cb7ea6ef999b7174bfe4a93bbe6b5f4c328950f767fbcf7988a",
+      "unlisted_byte_gaps": []
+    },
+    "source-mode-zero-18/0023d230": {
+      "range": [
+        "0023d230",
+        "0023d448"
+      ],
+      "instructions": 132,
+      "listing_sha256": "170fd300f395eee5c39b18b6b2db4bb36332de20b5210e463a46ccc63c18933c",
+      "unlisted_byte_gaps": []
+    },
+    "source-mode-zero-18/0023d540": {
+      "range": [
+        "0023d540",
+        "0023d5c0"
+      ],
+      "instructions": 41,
+      "listing_sha256": "815b533553ea185ff9e1069778d5d360a445631145be1243eba7811be026900c",
+      "unlisted_byte_gaps": []
+    },
+    "source-mode-zero-19/0023c700": {
+      "range": [
+        "0023c700",
+        "0023c71c"
+      ],
+      "instructions": 12,
+      "listing_sha256": "13030c68fecae27ac7cae57bf72725358240966810b5848e521543838e2428a2",
+      "unlisted_byte_gaps": []
+    },
+    "source-mode-zero-19/0023d8d0": {
+      "range": [
+        "0023d8d0",
+        "0023d91e"
+      ],
+      "instructions": 25,
+      "listing_sha256": "403c3d67d32b90693856a2bb4316eb15ad6f1d511d1852e152ae36e1d7d2506b",
+      "unlisted_byte_gaps": []
+    },
+    "source-mode-zero-20/0023baf0": {
+      "range": [
+        "0023baf0",
+        "0023bb1a"
+      ],
+      "instructions": 18,
+      "listing_sha256": "c3cfdd7f2a062e8aac1513a616c96db935ae8ba745dea9169dc2fa2b3ecfa5aa",
+      "unlisted_byte_gaps": []
+    },
+    "source-mode-zero-20/0037ad60": {
+      "range": [
+        "0037ad60",
+        "0037ae31"
+      ],
+      "instructions": 72,
+      "listing_sha256": "250052b431a273cd6247b7f87c82e9bfcbff3e873f870dd9152fa1cd3237e45e",
+      "unlisted_byte_gaps": []
+    },
+    "source-mode-zero-21/0023bb20": {
+      "range": [
+        "0023bb20",
+        "0023bb66"
+      ],
+      "instructions": 25,
+      "listing_sha256": "cedf465329ef9025124f364ef44ffd9b8f806f6017a5969d3401e2ad5541815f",
+      "unlisted_byte_gaps": []
+    },
+    "source-mode-zero-21/0023bb70": {
+      "range": [
+        "0023bb70",
+        "0023bbb8"
+      ],
+      "instructions": 29,
+      "listing_sha256": "78aa04c8da99552f18f087ddc8f32c6d6e328644e958ac13003e33176c4d6057",
+      "unlisted_byte_gaps": []
+    },
+    "source-mode-zero-22/0023bbc0": {
+      "range": [
+        "0023bbc0",
+        "0023bc25"
+      ],
+      "instructions": 35,
+      "listing_sha256": "c08ab72f7f3d88603af0178d92438ef2e3daf8b58fd1d1425922c26b9324f20c",
+      "unlisted_byte_gaps": []
+    },
+    "source-mode-zero-22/0023bc30": {
+      "range": [
+        "0023bc30",
+        "0023bc54"
+      ],
+      "instructions": 15,
+      "listing_sha256": "dc535e5797b75547480db40270e4735eb0c6b68607f97e344f5bd2852d87b2be",
+      "unlisted_byte_gaps": []
+    },
+    "source-mode-zero-23/00374cc0": {
+      "range": [
+        "00374cc0",
+        "00374d20"
+      ],
+      "instructions": 36,
+      "listing_sha256": "3b6150345eaaaced9b5b62ff777b9c08cc726bb6ee9403b38d73f7c66682aff6",
+      "unlisted_byte_gaps": []
+    },
+    "source-mode-zero-23/00374e70": {
+      "range": [
+        "00374e70",
+        "00374eb8"
+      ],
+      "instructions": 27,
+      "listing_sha256": "00fb71b291991daded3f9e56cabe3c350ca8bbcd5c75697e86bb9566d44d2c10",
+      "unlisted_byte_gaps": []
+    },
+    "source-mode-zero-23/00398910": {
+      "range": [
+        "00398910",
+        "00398c4c"
+      ],
+      "instructions": 231,
+      "listing_sha256": "782de8f85920f5ec055ef1713aa38b05693ec967041757acbf3ee922080bd046",
+      "unlisted_byte_gaps": [
+        [
+          "0x39896b",
+          "0x39896c"
+        ],
+        [
+          "0x398973",
+          "0x398980"
+        ],
+        [
+          "0x3989a9",
+          "0x3989ac"
+        ],
+        [
+          "0x3989cf",
+          "0x3989d0"
+        ],
+        [
+          "0x3989ed",
+          "0x398a10"
+        ],
+        [
+          "0x398a5a",
+          "0x398a6c"
+        ],
+        [
+          "0x398a73",
+          "0x398a74"
+        ],
+        [
+          "0x398a7f",
+          "0x398a80"
+        ],
+        [
+          "0x398a91",
+          "0x398a94"
+        ],
+        [
+          "0x398aab",
+          "0x398aac"
+        ],
+        [
+          "0x398ad2",
+          "0x398ad4"
+        ],
+        [
+          "0x398add",
+          "0x398ae0"
+        ],
+        [
+          "0x398aff",
+          "0x398b0c"
+        ],
+        [
+          "0x398b2d",
+          "0x398b30"
+        ],
+        [
+          "0x398b57",
+          "0x398b58"
+        ],
+        [
+          "0x398b89",
+          "0x398bac"
+        ],
+        [
+          "0x398bf6",
+          "0x398c08"
+        ],
+        [
+          "0x398c0f",
+          "0x398c10"
+        ],
+        [
+          "0x398c1d",
+          "0x398c20"
+        ],
+        [
+          "0x398c33",
+          "0x398c34"
+        ]
+      ]
+    }
+  },
+  "mode_data_sha256": "2797fa8d804d8da34a2fbb634fca30f44c36a98059248fc7ffc4bdec1594cdc4",
+  "assets": {
+    "MSLASSET.MS2": {
+      "sha256": "74b7affaf2ec29052b39f531788ff12148f9870e79dde953e701c63e6e948d5d",
+      "bytes": 98273428
+    },
+    "MSLASSET.MS4": {
+      "sha256": "bd97bd4ae76b41a18852555bebb7909e80c1287aba950ec1d85adacc10f46781",
+      "bytes": 584581120
+    }
+  },
+  "expected_metadata_sha256": "5efbfc7e57e24087bcfc094cb15b81716cd2c4560d3a00d23c569576bf7239c3",
+  "symbol_audit": "NO_GUEST_RUNTIME_SYMBOLS; SDL_STARTUP_ABORT_GUARD",
+  "verification_scope": "tested component; dirty precommit build",
+  "pending_play_runtime_branch": "OPEN_NOT_EXERCISED",
+  "oracle_comparison": "OPEN",
+  "native_save_reload": "OPEN",
+  "visible_window": false,
+  "audio_endpoint": false,
+  "game_run": false,
+  "acceptance": "OPEN"
+}

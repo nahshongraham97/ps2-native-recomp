@@ -303,6 +303,11 @@ if(WIN32)
     target_link_libraries(test_native_retail_startup_initialization PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_reset_sound EXCLUDE_FROM_ALL tests/test_retail_reset_sound.cpp)
     target_link_libraries(test_native_retail_reset_sound PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_mode_service EXCLUDE_FROM_ALL tests/test_retail_mode_service.cpp)
+    target_link_libraries(test_native_retail_mode_service PRIVATE mka_native_retail_startup)
+    add_custom_command(TARGET test_native_retail_mode_service POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2>
+        $<TARGET_FILE_DIR:test_native_retail_mode_service> VERBATIM)
     add_executable(test_native_retail_sound_context EXCLUDE_FROM_ALL tests/test_retail_sound_context.cpp)
     target_link_libraries(test_native_retail_sound_context PRIVATE mka_native_retail_startup)
     target_link_options(test_native_retail_sound_context PRIVATE

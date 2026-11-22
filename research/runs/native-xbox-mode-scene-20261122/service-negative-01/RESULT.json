@@ -1,0 +1,27 @@
+{
+  "status": "NONZERO",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\MKPORT~1\\ARMAGE~1\\ARMAGE~1\\external\\forks\\RETAIL~1\\b",
+    "--target",
+    "test_native_startup_missing_bindings",
+    "-j2"
+  ],
+  "exit": 1,
+  "deadline_seconds": 90,
+  "seconds": 0.9945943999919109,
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "log_sha256": "5d075a7aadc32d1edd09b16a1a281c804423ae9af644bbfef9feb6bf173ab46b",
+  "source_commit": "97bf25eeb7a541eefc48b9c618ae91c55d558e2c",
+  "tracked_status": "M AGENTS.md\n M cmake/native_game.cmake\n M research/runs/native-xbox-mode-scene-20261122/WORK.md\n M runtime/include/mka/retail_sound_bank_catalog.hpp\n M runtime/include/mka/retail_sound_catalog_data.hpp\n M runtime/src/native/retail_sound_bank_catalog.cpp\n M runtime/src/native/retail_sound_bank_main.cpp",
+  "source_manifest_sha256": "4664bbb7d9d4c089408af185970bc86bab76886280a1ff04ea940b2c6dd96107",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "706dae305fa5122aafd8e2aa001b2eb743923cf842c6138f3c3d78c7cd830642",
+  "runner_sha256": "150bad29bf081ecea0af068f8b48323f0f8488627458c394d9542a23f872e216",
+  "phase": "negative",
+  "visible_window": false,
+  "audio_endpoint": false,
+  "game_run": false,
+  "acceptance": "OPEN"
+}

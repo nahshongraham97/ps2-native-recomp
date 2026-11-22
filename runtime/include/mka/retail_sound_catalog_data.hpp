@@ -351,5 +351,7 @@ inline constexpr std::array<Bank, 344> banks{{
     {"kq_vo_npc_sks1", 38},
 }};
 struct Selection { std::uint32_t bank, slot; };
+// Actual no_sounds_bank_list still requests these two common banks.
+inline constexpr std::array<Selection, 2> mode_zero{{{0,0}, {8,4}}};
 inline constexpr std::array<Selection, 4> mode_one{{{0,0}, {8,4}, {2,22}, {1,21}}};
 } // namespace mka::retail::sound_catalog_data

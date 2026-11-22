@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_sound_metadata.exe",
+    "../../../private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon",
+    "research/runs/parallel-sound-metadata-resolver-20261122/expected-metadata.tsv"
+  ],
+  "exit": 0,
+  "deadline_seconds": 90,
+  "seconds": 0.11519680000492372,
+  "executable_sha256": "701116c149728cfbc11f7eb98efd7b2ce5057494334ad3a02839732b9f59c056",
+  "log_sha256": "02d31cfaf5d0678946a14dc4547c6fce9b58ed3b7fae001dfd348525194ea0f2",
+  "source_commit": "97bf25eeb7a541eefc48b9c618ae91c55d558e2c",
+  "tracked_status": "M AGENTS.md\n M cmake/native_game.cmake\n M research/runs/native-xbox-mode-scene-20261122/WORK.md\n M runtime/include/mka/retail_sound_bank_catalog.hpp\n M runtime/include/mka/retail_sound_catalog_data.hpp\n M runtime/src/native/retail_sound_bank_catalog.cpp\n M runtime/src/native/retail_sound_bank_main.cpp",
+  "source_manifest_sha256": "4664bbb7d9d4c089408af185970bc86bab76886280a1ff04ea940b2c6dd96107",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "706dae305fa5122aafd8e2aa001b2eb743923cf842c6138f3c3d78c7cd830642",
+  "runner_sha256": "150bad29bf081ecea0af068f8b48323f0f8488627458c394d9542a23f872e216",
+  "phase": "client",
+  "visible_window": false,
+  "audio_endpoint": false,
+  "game_run": false,
+  "acceptance": "OPEN"
+}

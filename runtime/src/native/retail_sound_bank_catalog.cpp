@@ -1,7 +1,9 @@
 #include "mka/retail_sound_bank_catalog.hpp"
 #include "mka/retail_sound_catalog_data.hpp"
+#include "retail_main_control.hpp"
 #include <algorithm>
 #include <new>
+#include <span>
 #include <stdexcept>
 #include <string>
 #include <thread>
@@ -26,9 +28,11 @@ struct NativeRetailSoundBankCatalog::State {
     const std::thread::id thread{std::this_thread::get_id()};
     std::vector<Record> records;
     std::unordered_map<std::uint32_t, RetailSoundSelection> slots;
-    bool closed{}, failed_after_effect{}, bank_failed{};
+    bool closed{}, failed_after_effect{}, bank_failed{}, selection_active{};
     std::optional<sound::RetailSoundBankJobCompletion> failed_completion;
     std::uint32_t selected_descriptor{};
+    bool select(std::uint32_t, std::span<const sound_catalog_data::Selection>,
+                NativeRetailBankReferenceRetirement*, RetailSoundCatalogFailure&);
 
     bool available(RetailSoundCatalogFailure& failure, bool check_terminal = false) const noexcept {
         failure = {};
@@ -126,38 +130,77 @@ std::shared_ptr<NativeRetailSoundBankCatalog> NativeRetailSoundBankCatalog::open
 }
 
 bool NativeRetailSoundBankCatalog::select_mode_one(RetailSoundCatalogFailure& failure) {
-    if (!state_->available(failure, true)) return false;
-    state_->selected_descriptor = 1;
+    return state_->select(1, sound_catalog_data::mode_one, nullptr, failure);
+}
+bool NativeRetailSoundBankCatalog::select_mode_one(
+    NativeRetailBankReferenceRetirement& retirement, RetailSoundCatalogFailure& failure) {
+    return state_->select(1, sound_catalog_data::mode_one, &retirement, failure);
+}
+bool NativeRetailSoundBankCatalog::select_mode_zero(
+    NativeRetailBankReferenceRetirement& retirement, RetailSoundCatalogFailure& failure) {
+    return state_->select(0, sound_catalog_data::mode_zero, &retirement, failure);
+}
+std::optional<std::uint32_t> NativeRetailSoundBankCatalog::selected_descriptor(
+    RetailSoundCatalogFailure& failure) const noexcept {
+    if (!state_->available(failure)) return {};
+    return state_->selected_descriptor;
+}
+bool NativeRetailSoundBankCatalog::State::select(
+    std::uint32_t descriptor, std::span<const sound_catalog_data::Selection> requests,
+    NativeRetailBankReferenceRetirement* retirement, RetailSoundCatalogFailure& failure) {
+    if (!available(failure, true)) return false;
+    if (selection_active) {
+        failure.kind = RetailSoundCatalogError::selection_active;
+        failure.operation = "native bank selection reentry"; return false;
+    }
+    struct Active { bool& flag; explicit Active(bool& value):flag(value){flag=true;} ~Active(){flag=false;} } active(selection_active);
+    selected_descriptor = descriptor; //23D091, before scan/cleanup/requests.
     try {
         // Source12A170(1,0) visits every active record before requesting the
         // selected descriptor. This is a game catalog scan, not a work limit.
-        for (std::size_t i = 0; i < state_->records.size(); ++i) {
-            auto& record = state_->records[i];
-            const bool selected = std::any_of(sound_catalog_data::mode_one.begin(), sound_catalog_data::mode_one.end(),
+        for (std::size_t i = 0; i < records.size(); ++i) {
+            auto& record = records[i];
+            const bool selected = std::any_of(requests.begin(), requests.end(),
                 [i](const auto& entry) { return entry.bank == i; });
             if (selected || (!record.bank && !record.pending)) continue;
             if (record.bank) {
-                //12B500 must first retire the actual live game references.
-                // Their producers are not ported; never pretend an unload is
-                // equivalent to that cleanup or silently discard live sound.
-                state_->failed_after_effect = true;
-                failure.kind = RetailSoundCatalogError::live_reference_cleanup_required;
-                failure.operation = "12B500 actual live bank reference cleanup required";
-                return false;
+                const auto bank = *record.bank;
+                if (!retirement || !retirement->retire(bank, failure)) {
+                    failed_after_effect = true;
+                    if (failure.kind == RetailSoundCatalogError::none) {
+                        failure.kind = RetailSoundCatalogError::live_reference_cleanup_required;
+                        failure.operation = "actual live bank reference retirement required";
+                    }
+                    return false;
+                }
+                if (!available(failure, true) || !jobs) {
+                    failed_after_effect = true;
+                    if (failure.kind == RetailSoundCatalogError::none) {
+                        failure.kind = RetailSoundCatalogError::closed;
+                        failure.operation = "native mode bank owner retired during cleanup";
+                    }
+                    return false;
+                }
+                if (!jobs->unload(bank, failure.job)) {
+                    failed_after_effect = true; failure.kind = RetailSoundCatalogError::jobs;
+                    failure.operation = "native mode bank backing unload"; return false;
+                }
+                record.bank.reset(); // Only after reference cleanup AND unload.
+                continue;
             }
-            if (!state_->jobs->cancel_path_from_317960(record.path, failure.job)) {
-                state_->failed_after_effect = true; failure.kind = RetailSoundCatalogError::jobs; return false;
+            if (!jobs->cancel_path_from_317960(record.path, failure.job)) {
+                failed_after_effect = true; failure.kind = RetailSoundCatalogError::jobs; return false;
             }
         }
-        for (const auto& entry : sound_catalog_data::mode_one) {
-            auto& record = state_->records.at(entry.bank);
+        for (const auto& entry : requests) {
+            auto& record = records.at(entry.bank);
             if (!record.bank && !record.pending) {
                 record.bank.reset();
                 record.pending = true;
                 record.completion.reset();
-                const auto submitted = state_->jobs->submit(record.path, record.target, failure.job);
+                const auto submitted = jobs->submit(record.path, record.target, failure.job);
                 if (!submitted) {
-                    state_->failed_after_effect = true;
+                    failed_after_effect = true;
                     failure.kind = RetailSoundCatalogError::jobs;
                     failure.operation = "12A560 native bank job submission failed";
                     return false;
@@ -165,13 +208,15 @@ bool NativeRetailSoundBankCatalog::select_mode_one(RetailSoundCatalogFailure& fa
             }
             // Source12A6C0 writes the slot even if a live/pending record
             // suppresses a new load. The byte is original data at record+8.
-            state_->slots[entry.slot] = {entry.bank, record.flags};
+            slots[entry.slot] = {entry.bank, record.flags};
         }
         return true;
-    } catch (const std::bad_alloc&) { failure.kind = RetailSoundCatalogError::allocation; }
+    } catch (const detail::NativeMainReentry&) { throw; }
+      catch (const std::bad_alloc&) { failure.kind = RetailSoundCatalogError::allocation; }
       catch (const std::length_error&) { failure.kind = RetailSoundCatalogError::host_capacity; }
-    state_->failed_after_effect = true;
-    failure.operation = "native mode-one bank request after-effect failure";
+      catch (...) { failure.kind = RetailSoundCatalogError::native_exception; }
+    failed_after_effect = true;
+    failure.operation = "native mode bank selection after-effect failure";
     return false;
 }
 
@@ -181,6 +226,10 @@ std::optional<bool> NativeRetailSoundBankCatalog::pending(RetailSoundCatalogFail
 }
 bool NativeRetailSoundBankCatalog::pump_one(RetailSoundCatalogFailure& failure) {
     if (!state_->available(failure, true)) return false;
+    if (state_->selection_active) {
+        failure.kind = RetailSoundCatalogError::selection_active;
+        failure.operation = "native bank pump during selection"; return false;
+    }
     if (!state_->jobs->queued_count()) return true;
     if (!state_->jobs->run_one(failure.job)) {
         failure.kind = RetailSoundCatalogError::jobs;
@@ -213,6 +262,10 @@ std::optional<sound::AudioBankSession> NativeRetailSoundBankCatalog::share_bank_
 bool NativeRetailSoundBankCatalog::shutdown(RetailSoundCatalogFailure& failure) {
     failure = {};
     if (state_->thread != std::this_thread::get_id()) { failure.kind = RetailSoundCatalogError::wrong_owner; return false; }
+    if (state_->selection_active) {
+        failure.kind = RetailSoundCatalogError::selection_active;
+        failure.operation = "native bank shutdown during selection"; return false;
+    }
     if (state_->closed) return true;
     // Explicit cancellation is completed by the real worker; pending state is
     // never cleared merely because Main is retiring.

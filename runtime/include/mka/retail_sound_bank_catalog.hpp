@@ -12,7 +12,7 @@ namespace mka::retail {
 enum class RetailSoundCatalogError {
     none, allocation, host_capacity, native_exception, wrong_owner, closed,
     after_effect_failure, content, bank_session, jobs, invalid_bank, missing_slot,
-    bank_failed, live_reference_cleanup_required, runtime
+    bank_failed, live_reference_cleanup_required, runtime, selection_active
 };
 struct RetailSoundCatalogFailure {
     RetailSoundCatalogError kind{RetailSoundCatalogError::none};
@@ -33,6 +33,13 @@ struct RetailSoundSelection {
     std::uint32_t bank{};
     std::uint8_t flags{};
 };
+// Required game-side retirement before bank backing unload (23C700).
+// This is a native service interface, not a source callback address.
+class NativeRetailBankReferenceRetirement {
+public:
+    virtual ~NativeRetailBankReferenceRetirement() = default;
+    virtual bool retire(const sound::AudioBankHandle&, RetailSoundCatalogFailure&) = 0;
+};
 // Persistent native game catalog. The source's record indices/selection slots
 // are game data; they are never device handles, native capacity or wire tokens.
 class NativeRetailSoundBankCatalog final {
@@ -41,6 +48,9 @@ public:
         const content::NativeContentVolume&, const NativeRetailFilePaths&,
         const std::shared_ptr<NativeRetailMainLifetime>&, RetailSoundCatalogFailure&) noexcept;
     bool select_mode_one(RetailSoundCatalogFailure&);
+    bool select_mode_one(NativeRetailBankReferenceRetirement&, RetailSoundCatalogFailure&);
+    bool select_mode_zero(NativeRetailBankReferenceRetirement&, RetailSoundCatalogFailure&);
+    std::optional<std::uint32_t> selected_descriptor(RetailSoundCatalogFailure&) const noexcept;
     std::optional<bool> pending(RetailSoundCatalogFailure&) const noexcept;
     bool pump_one(RetailSoundCatalogFailure&);
     bool shutdown(RetailSoundCatalogFailure&);
