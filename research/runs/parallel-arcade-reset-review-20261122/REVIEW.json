@@ -1,0 +1,67 @@
+{
+  "status": "PASS_BOUNDED_RESET_REVIEW_NO_CONCRETE_FINDING",
+  "source_commit": "7bf4ec5a613ca1d69abe9cb19bb47fb75ffeaa78",
+  "source_words": 360,
+  "implemented_words": 20,
+  "pointer_rows": [
+    19,
+    152
+  ],
+  "source_blobs": 856,
+  "clients": {
+    "test_native_retail_arcade_reset": {
+      "exe": "16539798b1b9549f40b39b5104612a24741e4f1108d4c8b14deaf6ca5696e4cf",
+      "log": "7aa869a9aa6d8f1c44b778870d520b7ce28bd3db947255e6aad3106bc0f7b0c0"
+    },
+    "test_native_retail_initial_reset_arcade": {
+      "exe": "0ac60e5af7b43c1e99319ca172c10d1a7b21e2e1c6895028b0f2a83700bb3b1c",
+      "log": "bb06c9ce02fc7c24f027992aa2ca97303ef9047f1becbd8681c341094a58c03f"
+    },
+    "test_native_retail_initial_reset": {
+      "exe": "ff634db3faddcca114c4983aefa5883fb6f37ccd49730a9c2a464531e6ce5478",
+      "log": "1200225a53e7bd685df4350149e9aa0dd51191381f40e0370855c7d04ec9bcee"
+    },
+    "test_native_retail_game_session": {
+      "exe": "5928abb35c8d8a47fca261a784f08023329fe952765ee331e9b19c5fd37e7148",
+      "log": "3788d05d7f165074cc66638897b3da09f3af202a64bec3f1be94b25b9ed07f54"
+    },
+    "test_native_retail_sound_context": {
+      "exe": "a1b6069137e0086af318b926807b14cf6e0b104f37593dada1e3b4150fdd28c7",
+      "log": "0fc7203bc29a4bb19c25ef9c3db3e070586693ba7432af3bc708492b1fd8078c"
+    },
+    "test_native_retail_main_frame_gates": {
+      "exe": "fd2cb0d428af72543bb6cf242005358e8e6bb48d2be7aa280f780e6f2febd871",
+      "log": "14459d966411f0da990f5d7cc7e4c14b6173fbf648c1238df959381437f11708"
+    }
+  },
+  "rng_phase": [
+    {
+      "seed": 0,
+      "reference_pre_consumed": 6,
+      "native_case_pre_consumed": 0,
+      "both_draws_before_twist": true
+    },
+    {
+      "seed": 3735928559,
+      "reference_pre_consumed": 338,
+      "native_case_pre_consumed": 2,
+      "both_draws_before_twist": true
+    },
+    {
+      "seed": 1,
+      "reference_pre_consumed": 0,
+      "native_case_pre_consumed": 4,
+      "both_draws_before_twist": true
+    },
+    {
+      "seed": 1985229328,
+      "reference_pre_consumed": 1,
+      "native_case_pre_consumed": 6,
+      "both_draws_before_twist": true
+    }
+  ],
+  "reference_sha256": "4077398fe5d5a4917c97c58c4204f31f4a8a1579a44d25aa4be8a26aed951f94",
+  "required_names": 33,
+  "receipt_sha256": "7faabcc1b5cd5148587542e9f59b7af4601ba401675ab57adef8d8994aa662a2",
+  "limits": "Saved clean artifacts authenticated,no rebuild/client execution. First-two-vector proof is before-twist only;doesnot reverify whole RNG or arcade progression."
+}
