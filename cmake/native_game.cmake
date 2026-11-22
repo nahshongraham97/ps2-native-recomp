@@ -233,6 +233,8 @@ if(WIN32)
         runtime/src/native/retail_loaded_system_art.cpp
         runtime/src/native/retail_loaded_system_art_main.cpp
         runtime/src/native/retail_permanent_strings.cpp
+        runtime/src/native/retail_frame_work_storage.cpp
+        runtime/src/native/retail_frame_work_storage_main.cpp
         runtime/src/native/retail_scene_bootstrap_prefix.cpp
         runtime/src/native/retail_scene_bootstrap_continuation.cpp
         runtime/src/native/retail_renderer_allocator.cpp
@@ -575,8 +577,10 @@ target_include_directories(test_native_retail_loaded_system_art PRIVATE runtime/
 target_link_libraries(test_native_retail_loaded_system_art PRIVATE mka_native_retail_system_art_cpu)
 add_executable(test_native_retail_permanent_strings EXCLUDE_FROM_ALL tests/test_retail_permanent_strings.cpp)
 target_link_libraries(test_native_retail_permanent_strings PRIVATE mka_native_retail_startup)
+add_executable(test_native_retail_frame_work_storage EXCLUDE_FROM_ALL tests/test_retail_frame_work_storage.cpp)
+target_link_libraries(test_native_retail_frame_work_storage PRIVATE mka_native_retail_startup)
 if(WIN32)
-    foreach(_client test_native_gl_texture test_native_file_read_job test_native_retail_loaded_system_art test_native_retail_permanent_strings)
+    foreach(_client test_native_gl_texture test_native_file_read_job test_native_retail_loaded_system_art test_native_retail_permanent_strings test_native_retail_frame_work_storage)
         add_custom_command(TARGET ${_client} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2>
                 $<TARGET_FILE_DIR:${_client}> VERBATIM)

@@ -1,0 +1,207 @@
+[
+  {
+    "pc": "00169500",
+    "word_le32": "8f82a0cc",
+    "signed_immediate": -24372
+  },
+  {
+    "pc": "00169528",
+    "word_le32": "8f82a0cc",
+    "signed_immediate": -24372
+  },
+  {
+    "pc": "00169588",
+    "word_le32": "8f82a0d0",
+    "signed_immediate": -24368
+  },
+  {
+    "pc": "001695b0",
+    "word_le32": "8f82a0d0",
+    "signed_immediate": -24368
+  },
+  {
+    "pc": "00183974",
+    "word_le32": "8f82a0cc",
+    "signed_immediate": -24372
+  },
+  {
+    "pc": "001839c4",
+    "word_le32": "8f82a0d0",
+    "signed_immediate": -24368
+  },
+  {
+    "pc": "002462e0",
+    "word_le32": "af84a0cc",
+    "signed_immediate": -24372
+  },
+  {
+    "pc": "002462ec",
+    "word_le32": "af83a0d0",
+    "signed_immediate": -24368
+  },
+  {
+    "pc": "002462f8",
+    "word_le32": "af84a0f0",
+    "signed_immediate": -24336
+  },
+  {
+    "pc": "00246304",
+    "word_le32": "af83a0f4",
+    "signed_immediate": -24332
+  },
+  {
+    "pc": "00246318",
+    "word_le32": "af84b030",
+    "signed_immediate": -20432
+  },
+  {
+    "pc": "0024631c",
+    "word_le32": "af83b034",
+    "signed_immediate": -20428
+  },
+  {
+    "pc": "00261900",
+    "word_le32": "8f84a0cc",
+    "signed_immediate": -24372
+  },
+  {
+    "pc": "00261918",
+    "word_le32": "8f84a0d0",
+    "signed_immediate": -24368
+  },
+  {
+    "pc": "0033e388",
+    "word_le32": "8f83a0cc",
+    "signed_immediate": -24372
+  },
+  {
+    "pc": "0033e3dc",
+    "word_le32": "8f83a0d0",
+    "signed_immediate": -24368
+  },
+  {
+    "pc": "0034d98c",
+    "word_le32": "8f82b030",
+    "signed_immediate": -20432
+  },
+  {
+    "pc": "0034da14",
+    "word_le32": "8f82b030",
+    "signed_immediate": -20432
+  },
+  {
+    "pc": "0034db10",
+    "word_le32": "8f82b030",
+    "signed_immediate": -20432
+  },
+  {
+    "pc": "0034db24",
+    "word_le32": "8f82b030",
+    "signed_immediate": -20432
+  },
+  {
+    "pc": "0034dbb0",
+    "word_le32": "8f82b030",
+    "signed_immediate": -20432
+  },
+  {
+    "pc": "0034dbc4",
+    "word_le32": "8f82b030",
+    "signed_immediate": -20432
+  },
+  {
+    "pc": "0034dbd4",
+    "word_le32": "8f82b030",
+    "signed_immediate": -20432
+  },
+  {
+    "pc": "0034dc78",
+    "word_le32": "8f82b030",
+    "signed_immediate": -20432
+  },
+  {
+    "pc": "0034dc98",
+    "word_le32": "8f82b030",
+    "signed_immediate": -20432
+  },
+  {
+    "pc": "0034dcc0",
+    "word_le32": "8f83b030",
+    "signed_immediate": -20432
+  },
+  {
+    "pc": "0034dcf0",
+    "word_le32": "8f82b030",
+    "signed_immediate": -20432
+  },
+  {
+    "pc": "0034dd68",
+    "word_le32": "8f82b030",
+    "signed_immediate": -20432
+  },
+  {
+    "pc": "0034dd88",
+    "word_le32": "8f82b030",
+    "signed_immediate": -20432
+  },
+  {
+    "pc": "0034de30",
+    "word_le32": "8f82b030",
+    "signed_immediate": -20432
+  },
+  {
+    "pc": "0034de50",
+    "word_le32": "8f82b030",
+    "signed_immediate": -20432
+  },
+  {
+    "pc": "0034de60",
+    "word_le32": "8f82b030",
+    "signed_immediate": -20432
+  },
+  {
+    "pc": "0043b8a4",
+    "word_le32": "8f82a0cc",
+    "signed_immediate": -24372
+  },
+  {
+    "pc": "0043bb54",
+    "word_le32": "8f82a0cc",
+    "signed_immediate": -24372
+  },
+  {
+    "pc": "0043cca8",
+    "word_le32": "8f82a0cc",
+    "signed_immediate": -24372
+  },
+  {
+    "pc": "0044c670",
+    "word_le32": "8f86a0cc",
+    "signed_immediate": -24372
+  },
+  {
+    "pc": "00514668",
+    "word_le32": "8f8ba0cc",
+    "signed_immediate": -24372
+  },
+  {
+    "pc": "005146a8",
+    "word_le32": "8f8ca0cc",
+    "signed_immediate": -24372
+  },
+  {
+    "pc": "005149c4",
+    "word_le32": "8f8ba0cc",
+    "signed_immediate": -24372
+  },
+  {
+    "pc": "00514a04",
+    "word_le32": "8f8ca0cc",
+    "signed_immediate": -24372
+  },
+  {
+    "pc": "0052bf74",
+    "word_le32": "2790a0f0",
+    "signed_immediate": -24336
+  }
+]

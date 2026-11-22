@@ -1,0 +1,24 @@
+{
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "source_block_byte_hint": 150000,
+  "ranges": [
+    {
+      "source_base": "0x6d0950",
+      "source_length": 450000,
+      "initial_windows": 3,
+      "segment": 0,
+      "file_backed": false,
+      "loader_zero_initialized": true
+    },
+    {
+      "source_base": "0x73e730",
+      "source_length": 300000,
+      "initial_windows": 2,
+      "segment": 0,
+      "file_backed": false,
+      "loader_zero_initialized": true
+    }
+  ],
+  "native_mapping": "Actual existing Permanent heap; source sizes/counts are warm hints, never ceilings.",
+  "source_addresses_in_runtime": false
+}

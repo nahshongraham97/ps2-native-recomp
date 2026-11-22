@@ -1,0 +1,87 @@
+{
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "pt_load": [
+    {
+      "index": 0,
+      "p_offset": 256,
+      "p_vaddr": 1048576,
+      "p_filesz": 5561984,
+      "p_memsz": 7096448
+    },
+    {
+      "index": 1,
+      "p_offset": 5562240,
+      "p_vaddr": 8145024,
+      "p_filesz": 0,
+      "p_memsz": 1131008
+    },
+    {
+      "index": 2,
+      "p_offset": 5562240,
+      "p_vaddr": 8145024,
+      "p_filesz": 0,
+      "p_memsz": 2097536
+    },
+    {
+      "index": 3,
+      "p_offset": 5562240,
+      "p_vaddr": 8145024,
+      "p_filesz": 0,
+      "p_memsz": 1867392
+    },
+    {
+      "index": 4,
+      "p_offset": 5562240,
+      "p_vaddr": 10242560,
+      "p_filesz": 0,
+      "p_memsz": 0
+    }
+  ],
+  "functions": {
+    "0012a4f0": {
+      "mapping": {
+        "vma": "0x12a4f0",
+        "file_offset": 173552,
+        "length": 64,
+        "segment": 0
+      },
+      "bytes_hex": "f0ffbd27160080040000bfff0900832804006054c0280400120000100000bfdfc02804005a00033c2128a400a0f9632480280500211865000000658c0800a004"
+    },
+    "002e9930": {
+      "mapping": {
+        "vma": "0x2e9930",
+        "file_offset": 2005552,
+        "length": 64,
+        "segment": 0
+      },
+      "bytes_hex": "84a30b080000000000000000000000007800033cf87b668c7800033c000086acfc7b638c0800e0030000a3ac000000007800033cf87b64ac7800033c0800e003"
+    },
+    "002e8e10": {
+      "mapping": {
+        "vma": "0x2e8e10",
+        "file_offset": 2002704,
+        "length": 64,
+        "segment": 0
+      },
+      "bytes_hex": "d0ffbd272000bfff1000b17f0000b07f2d8800006d00103c100910262d2000022d280000986e070c1c000624010031260200232af9ff60141c00102603000424"
+    },
+    "002e8ee0": {
+      "mapping": {
+        "vma": "0x2e8ee0",
+        "file_offset": 2002912,
+        "length": 64,
+        "segment": 0
+      },
+      "bytes_hex": "6d00053c2d3800001009a5240000a38c1b006018000000000000a0ac0800a0a01800a0ac0900a390090060100a00a49005008014000000000b00a3900a000010"
+    },
+    "002e8f80": {
+      "mapping": {
+        "vma": "0x2e8f80",
+        "file_offset": 2003072,
+        "length": 64,
+        "segment": 0
+      },
+      "bytes_hex": "c0180400232064006d00033c8020040010096324213064000800c3900c006010000000000800c0a00400c38c2a08650007002014000000000f00a424f0ff0324"
+    }
+  }
+}

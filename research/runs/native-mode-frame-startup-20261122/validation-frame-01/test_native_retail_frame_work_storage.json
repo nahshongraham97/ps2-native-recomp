@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_frame_work_storage.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\research\\runs\\native-mode-frame-startup-20261122\\validation-frame-01\\fixtures\\empty"
+  ],
+  "exit": 0,
+  "seconds": 0.12491830000362825,
+  "executable_sha256": "33aa8195a5acac15b7b7bfdd98f24789957c58bf5f547749dcbb51ca01a1542d",
+  "log_sha256": "27c062768fd1f76789530874423c3882a102a0bf79b5759143f33e2d2b5617ae",
+  "source_manifest_sha256": "886f977da4f0f134681b1358809f7d1150ffad6b7fc6fba4ef89eb6e24f3f094",
+  "source_commit": "b0e79e7627f93b57370751235b06e4f044079a81"
+}

@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_permanent_strings.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\research\\runs\\native-mode-frame-startup-20261122\\validation-frame-01\\original-strings.tsv",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\research\\runs\\native-mode-frame-startup-20261122\\validation-frame-01\\fixtures\\strings"
+  ],
+  "exit": 0,
+  "seconds": 0.8183042999880854,
+  "executable_sha256": "2e7d1bb0e460d35c353ff22bb60298a53c2ff5b297644dbc47cd3a79a5dd6398",
+  "log_sha256": "33dd02e550ecb53273f9b4d8bb2d018e501ef91b92a1ede2be0e9cc726bfbec9",
+  "source_manifest_sha256": "886f977da4f0f134681b1358809f7d1150ffad6b7fc6fba4ef89eb6e24f3f094",
+  "source_commit": "b0e79e7627f93b57370751235b06e4f044079a81"
+}
