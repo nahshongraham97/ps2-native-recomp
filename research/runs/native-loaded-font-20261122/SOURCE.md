@@ -94,7 +94,9 @@ the permanent-string owner and full UI/gameplay remain OPEN.
 
 Owner02 is compiled/tested-component evidence in `validation-owner-02/`;
 the earlier Owner01 lifetime-expectation failure remains preserved.
-Clean committed owner verification remains pending. Physical platform acquisition is compiled;
+Clean committed source156c76a now passes all11 affected clients in validation-owner-clean-03. Physical platform acquisition is compiled;
 the tests use only their explicit never-visible WGL host. There is no
 same-scenario playable-oracle capture, zero-flag game build or full acceptance
 claim from these component tests.
+
+`RESET_CALLER_SOURCE_JOIN.json` separately joins the actual60-word18D970 caller and proves a0=0 at18DA2C before the16FC70 call and its store delay slot.

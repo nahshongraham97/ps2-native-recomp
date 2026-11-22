@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-selected-owner\\b\\test_native_gl_texture.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-selected-owner\\research\\runs\\native-loaded-font-20261122\\validation-owner-clean-03\\readbacks"
+  ],
+  "exit": 0,
+  "seconds": 0.33714899999904446,
+  "executable_sha256": "3584655c58becea298d8431c0cdf4fddb07fc00957cef5b71fe20ee9afe31f67",
+  "log_sha256": "83507b939c17fbf4bd264f556b20b2bb9719ff415936f2d9e378f08a21118f9e",
+  "source_manifest_sha256": "c47ca7dc49afc9ac7aba15b631a0574fcd92b8311526c737c17aa9a2cb1b565c",
+  "base_commit": "156c76acd5193bc552677a5584b8673738dd0667"
+}

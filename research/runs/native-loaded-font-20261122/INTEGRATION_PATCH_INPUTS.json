@@ -1,0 +1,20 @@
+{
+  "parent_documents": {
+    "PORT_STATUS.md": {
+      "base_raw_sha256": "1f6d1d98ad5a69d1f8fa30f8905361b98f03dc5274c597f3644647e7c549a706",
+      "proposed_sha256": "3abfefc32ff1a5a13e9b12e1364f1270691d7c5ee0a872c7958044e0407feef5"
+    },
+    "ROADMAP.md": {
+      "base_raw_sha256": "7f020e8491278d355da4bfa3efbcbe4fa98599907b3416b6fa70c252df8cddcc",
+      "proposed_sha256": "28e0c8847a5f557c8e7c66744f2eae58226bc73e8d093b947ce007de2de3af39"
+    },
+    "research/runs/parallel-agent-preparation-20261122/READY_WORK.md": {
+      "base_raw_sha256": "b076bb1ac9b87d7bca4107107fcdfdbc2ed79ea5eb38b422ea560318555af02a",
+      "proposed_sha256": "a10d90000d857b3b06d1e2c7cc46f3f791830d705636e11eee908c55c00eeddc"
+    }
+  },
+  "primary_cmake_sha256": "6a0740e8bf503a8826002b31698bcdc612fbdff67b0522ab8c39a09ade3f5fe5",
+  "target_cmake_sha256": "ec6b0e0dd553f2bcd260aab8407f30d26bc83b63a789651f56b5a3085b4e91ba",
+  "Main_header_changed": false,
+  "base_main": "3f0155622a148ac490565337d65cb4aaf0cbce45"
+}

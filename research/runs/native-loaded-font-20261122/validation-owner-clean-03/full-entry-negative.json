@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\MKPORT~1\\ARMAGE~1\\ARMAGE~1\\external\\forks\\PSAFBA~1\\b",
+    "--target",
+    "test_native_startup_missing_bindings",
+    "-j2"
+  ],
+  "exit": 1,
+  "seconds": 0.23367960000177845,
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "log_sha256": "5757ce129d8e8bc04efd93a9af6fdf97a5d08876122a3a96a1dd76e26315894a",
+  "source_manifest_sha256": "c47ca7dc49afc9ac7aba15b631a0574fcd92b8311526c737c17aa9a2cb1b565c",
+  "base_commit": "156c76acd5193bc552677a5584b8673738dd0667"
+}

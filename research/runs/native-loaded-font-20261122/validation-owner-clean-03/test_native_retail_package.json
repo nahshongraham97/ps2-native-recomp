@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-selected-owner\\b\\test_native_retail_package.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\package-and-constructors-05\\input-manifests\\package-members.tsv"
+  ],
+  "exit": 0,
+  "seconds": 0.142502600006992,
+  "executable_sha256": "75ff8b066306cf3b4372155f7be0c24a56c7c066aefebbfc244f5dd64f6260e6",
+  "log_sha256": "cfed2acdcc87ce08f4190c903087a8e3d723dba0e62c42aa1f40cfebefa715c4",
+  "source_manifest_sha256": "c47ca7dc49afc9ac7aba15b631a0574fcd92b8311526c737c17aa9a2cb1b565c",
+  "base_commit": "156c76acd5193bc552677a5584b8673738dd0667"
+}

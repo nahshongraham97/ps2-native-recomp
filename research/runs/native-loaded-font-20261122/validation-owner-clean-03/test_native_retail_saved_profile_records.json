@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-selected-owner\\b\\test_native_retail_saved_profile_records.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-selected-owner\\research\\runs\\native-loaded-font-20261122\\validation-owner-clean-03\\records"
+  ],
+  "exit": 0,
+  "seconds": 0.11025739999604411,
+  "executable_sha256": "7ee1d9c41e01f27a169cd36b74155c5cc197a3f882b5b829f837280c245e230c",
+  "log_sha256": "63629368c51dc99c3d98aacf916bf5f28c22e803a53c169244befeb2014fd1cf",
+  "source_manifest_sha256": "c47ca7dc49afc9ac7aba15b631a0574fcd92b8311526c737c17aa9a2cb1b565c",
+  "base_commit": "156c76acd5193bc552677a5584b8673738dd0667"
+}

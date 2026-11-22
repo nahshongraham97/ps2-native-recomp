@@ -115,10 +115,12 @@ admission. Owner02 now compiles and all four affected clients pass freshly;
 the exact full-entry refusal is62 names (63 minus three Main names plus two
 real permanent-string descendants). The new client exercises production16FC70,
 all105 image allocations and selected-font readback/layout/geometry; it does
-not render gameplay. Owner01 failure remains intact. Clean committed owner
-verification is the remaining checkpoint before branch publication.
+not render gameplay. Owner01 failure remains intact. Clean committed source156c76a now passes all11 affected clients in validation-owner-clean-03.
 
 Final connected checks will also rebuild/run the seven prerequisite clients
 because the new Session/CPU data headers and CMake link graph changed their
 compiled interfaces. This is a concrete ABI/link-graph concern, not another
 unchanged-corpus progress count. No broader game or audio suite is run.
+
+Final clean source/binary/log/input/readback authentication passes. The final shared/parent patches and remaining blockers are in HANDOFF.md. No background run remains.
+Owner: no action. Coding agent next: reconcile the delivery, then implement actual permanent-string ownership.
