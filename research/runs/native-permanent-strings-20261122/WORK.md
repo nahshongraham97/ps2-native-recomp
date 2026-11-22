@@ -19,7 +19,7 @@ First extract/hash original instruction heads through real PT_LOAD mappings,
 then export complete EE bodies, join every word, inspect callers/consumers and
 actual data before writing native production code. No donor code is adopted.
 
-Current stage: original-source recovery; no new implementation/build/game run.
+Current stage: clean compiled/tested-component permanent-string implementation; no game run.
 Audio, drivers, user files and prior evidence remain untouched.
 Owner: no action. Agent next: prove the resource producer and native lifetime.
 
@@ -104,3 +104,6 @@ exact60-name negative and symbol audit complete. The initial six results
 authenticate in `RECOVERED_VERIFICATION.json`; their host-wrapper failure is
 separate and preserved. Next freeze this source, then run all six affected
 clients on the clean commit. No complete game was built or launched.
+
+Permanent-string source8f9bbe1 passes all six directly affected clients freshly on a clean commit. Actual215660/215730 bindings, worker/record publication, source2170E0/216D80 data-only linking, 215ED0 string lookup and215010/217FC0 retirement are implemented for the five original permanent-string modules and all390 original text values. Null/empty, malformed, allocation, tag order, global precedence, generation, Package/Main/escaped-owner lifetime checks pass. No MKO interpreter, guest pointer map, English fallback or successful parsed fixture is used. The60-name full-entry negative remains diagnostic; complete game, physical platform/input/audio, oracle comparison, general MKO functions/imports/rebind and acceptance remain OPEN.
+Owner: no action. Agent next: earliest remaining connected startup; no active background run.

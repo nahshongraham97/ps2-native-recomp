@@ -104,7 +104,7 @@ unsupported shapes, tag ordering, lookup precedence, allocation and lifetime.
 The first build and all six component clients completed successfully, including
 390 exact original strings. The host killed the reporting wrapper after its
 completed rows; the timeout and read-only row authentication are retained
-separately. Clean committed verification still remains required.
+separately. Clean committed source8f9bbe1 now passes all six clients in validation-clean-03.
 The focused corrected-lifetime check in validation02 passes, including actual
 retired-witness ownership and completed data after Package retirement.
 General MKO functions/imports, resource-copy/rebind paths, other primitive

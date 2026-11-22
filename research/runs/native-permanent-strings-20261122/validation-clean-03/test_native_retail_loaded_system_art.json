@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_loaded_system_art.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\research\\runs\\native-permanent-strings-20261122\\validation-clean-03\\fixtures\\font"
+  ],
+  "exit": 0,
+  "seconds": 0.9176976000017021,
+  "executable_sha256": "7b61ed6158501cd63b980c93affbc0687dfb7fbdfa172c83c890061a414a88f3",
+  "source_commit": "8f9bbe181f73addebe1cdba4f980aa4845d82aa6",
+  "source_manifest_sha256": "a41faf14d86f20e7e95e03f25785bf0658bb6f3d8ab3366399ccee30a0844023",
+  "log_sha256": "824a88e0fbadbefcaa778fafe0f7a29413ac3beb3fd54c2470c636a748ef4963"
+}
