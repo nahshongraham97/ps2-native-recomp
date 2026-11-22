@@ -1,0 +1,127 @@
+{
+  "status": "NO_FURTHER_FINDING_FOCUSED_GPU_SEAL_CORRECTION",
+  "source_count": 887,
+  "manifest_matches": true,
+  "current_source_mismatches": [],
+  "delta_from01": [
+    "runtime/src/native/movie_gl_device.cpp"
+  ],
+  "receipts": {
+    "build.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": true,
+      "reused_from": null
+    },
+    "full-entry-negative.json": {
+      "exit": 1,
+      "log_matches": true,
+      "source_manifest_matches": true,
+      "reused_from": null
+    },
+    "test_native_file.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": false,
+      "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-permission-textures-20261122\\validation-01\\test_native_file.json"
+    },
+    "test_native_file_read_job-symbols.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": true,
+      "reused_from": null
+    },
+    "test_native_file_read_job.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": true,
+      "reused_from": null
+    },
+    "test_native_gl_texture-symbols.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": true,
+      "reused_from": null
+    },
+    "test_native_gl_texture.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": true,
+      "reused_from": null
+    },
+    "test_native_retail_package.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": false,
+      "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-permission-textures-20261122\\validation-01\\test_native_retail_package.json"
+    },
+    "test_native_retail_profile_entry_decision.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": false,
+      "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-permission-textures-20261122\\validation-01\\test_native_retail_profile_entry_decision.json"
+    },
+    "test_native_retail_profile_permission-symbols.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": true,
+      "reused_from": null
+    },
+    "test_native_retail_profile_permission.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": false,
+      "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-permission-textures-20261122\\validation-01\\test_native_retail_profile_permission.json"
+    },
+    "test_native_retail_saved_profile_records.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": false,
+      "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-permission-textures-20261122\\validation-01\\test_native_retail_saved_profile_records.json"
+    }
+  },
+  "binaries": {
+    "test_native_retail_profile_permission": {
+      "hash_matches": true,
+      "executed_by_primary": true
+    },
+    "test_native_retail_profile_entry_decision": {
+      "hash_matches": true,
+      "executed_by_primary": true
+    },
+    "test_native_retail_saved_profile_records": {
+      "hash_matches": true,
+      "executed_by_primary": true
+    },
+    "test_native_file_read_job": {
+      "hash_matches": true,
+      "executed_by_primary": true
+    },
+    "test_native_file": {
+      "hash_matches": true,
+      "executed_by_primary": true
+    },
+    "test_native_retail_package": {
+      "hash_matches": true,
+      "executed_by_primary": true
+    },
+    "test_native_gl_texture": {
+      "hash_matches": true,
+      "executed_by_primary": true
+    },
+    "test_native_movie_gl_device": {
+      "hash_matches": true,
+      "executed_by_primary": false
+    },
+    "test_native_movie_pipeline": {
+      "hash_matches": true,
+      "executed_by_primary": false
+    },
+    "test_native_movie_gpu_completion": {
+      "hash_matches": true,
+      "executed_by_primary": false
+    }
+  },
+  "readbacks_checked": 106,
+  "negative_exact63": true
+}

@@ -1,0 +1,19 @@
+{
+  "cmake/native_game.cmake": "6a0740e8bf503a8826002b31698bcdc612fbdff67b0522ab8c39a09ade3f5fe5",
+  "runtime/include/mka/content_volume.hpp": "c973d249844a3844ea774c474f3193a200009ca42927f65b0f58b025984bdfb1",
+  "runtime/include/mka/movie_gl_device.hpp": "0f80bad7c320e076c46ef6b3b02cf3391f20c62dbb7901ddafcd1a3b2328f949",
+  "runtime/include/mka/native_file.hpp": "50152fd4899c2be5cb467f74c8261f6445758c0f3d7b2e35d030945f27feeffa",
+  "runtime/include/mka/native_file_read_job.hpp": "6b943088959bf32e7e5a676c96ddfade81827f19ac4cfff476a3e8b727104419",
+  "runtime/include/mka/native_gl_texture.hpp": "7f0e352c7ea37388e6018867ccc1dc08f1ce49d29f3a403e550aa869dae8bec1",
+  "runtime/include/mka/retail_package.hpp": "f80923f8162e2ad5263a6752e3fe12d26b24c4124e32208f1e6c09c73c3c53c4",
+  "runtime/include/mka/retail_profile_entry_decision.hpp": "c388395e9ff50fac3a97653ab83cd6b972ad23e47e1908b91bb080f805fc7098",
+  "runtime/include/mka/retail_saved_profile_child.hpp": "a3d0e3cb3ab4eae2f455842c304bf07db1e952e3e995a498eae8a70490544a43",
+  "runtime/src/native/movie_gl_device.cpp": "7ce94e997e2bc6cecaa715f4849faf68eb4722723a6aac1cb873bfcd4aff64dc",
+  "runtime/src/native/native_file_read_job.cpp": "d6eb47127b8e60adac79c736c9a7422811c5e7d0597a2c9368b1462963c3546a",
+  "runtime/src/native/retail_package.cpp": "22e65dc2d91ada6a64e7a49582f342a2b066dd197bca0573985fa68ffcc367b5",
+  "runtime/src/native/retail_profile_permission.cpp": "0b4c124a24066175a4b6a741f1d17a1995124dfd201ccb71610ea5cd9ad85c20",
+  "tests/test_native_file_read_job.cpp": "bc85d34e7d214ad89ac2cb80e42899807a53228a2b1a7d83b59247756f56aed6",
+  "tests/test_native_gl_texture.cpp": "c414785b569f31c3aa899c935f5e4890b8e5aa3dcedeb53da3bb69377f3dea60",
+  "tests/test_retail_profile_entry_decision.cpp": "f23b72b6cdf5a033c6e99d9f1c1109cab08308e7cf4a63dc9264303768546578",
+  "tests/test_retail_profile_permission.cpp": "6ef2d95217374c0e2631174d05d740e738c8d2598428ddcd0263db64071842a4"
+}
