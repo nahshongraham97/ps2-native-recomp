@@ -11,6 +11,7 @@ struct StartupFailure;
 // errors/lifetime. Missing resource producers prevent full-game linking.
 namespace initial_reset_required {
 bool reset_saved_profile_children_246070(NativeRetailMainState&, StartupFailure&);
+// Complete arcade ladder reset; actual Session RNG/records/selection.
 bool reset_selected_resource_334700(NativeRetailMainState&, StartupFailure&);
 bool request_mode_one_banks_12a4f0(NativeRetailMainState&, StartupFailure&);
 std::optional<bool> banks_pending_12abd0(NativeRetailMainState&, StartupFailure&);

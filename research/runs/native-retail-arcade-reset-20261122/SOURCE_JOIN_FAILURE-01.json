@@ -1,0 +1,31 @@
+{
+  "status": "FAIL_UNPROVED_ALL_ZERO_BIRTH_ASSUMPTION",
+  "births": [
+    {
+      "vma": "0x64ed90",
+      "file_backed": false,
+      "bytes": "00000000",
+      "value": 0
+    },
+    {
+      "vma": "0x64ed8c",
+      "file_backed": false,
+      "bytes": "00000000",
+      "value": 0
+    },
+    {
+      "vma": "0x64cc84",
+      "file_backed": true,
+      "bytes": "ffffffff",
+      "value": 4294967295
+    },
+    {
+      "vma": "0x64ed94",
+      "file_backed": false,
+      "bytes": "00000000",
+      "value": 0
+    }
+  ],
+  "runtime_code_changed": false,
+  "scope": "Original mapped data differs from zero at at least one field; retain actual ELF value in native owner before implementing."
+}

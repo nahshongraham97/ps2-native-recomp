@@ -1,0 +1,25 @@
+{
+  "scope": "Primary original-source extraction/data evidence, no retry runtime code imported",
+  "files": {
+    "research/runs/native-retail-arcade-reset-20261122/source-01/00185c30.asm": "93a744b87a7e9dd5a1015f3c6edd23bbfd155fb5b00e665bf1bd2bc08580b169",
+    "research/runs/native-retail-arcade-reset-20261122/source-01/00185c30.c.gz": "1feff6c379e5b196a5591b2c8460b81a8838a3ac540bab3f6a55792dd28a12d5",
+    "research/runs/native-retail-arcade-reset-20261122/source-01/00334520.asm": "46df6f769c83f72ca279dc1151210927ca6cee65d31cd7d23b92caeac4b57cf6",
+    "research/runs/native-retail-arcade-reset-20261122/source-01/00334520.c.gz": "6afa71b61fcfd21befc5b640a651ead4cb20234a97e4ac53ffe90b8fabc7fa2d",
+    "research/runs/native-retail-arcade-reset-20261122/source-01/00334540.asm": "509578fe07ef1c1f34642a711b01761ee8abfa8e2ab4e377189b9b44ef79e3d0",
+    "research/runs/native-retail-arcade-reset-20261122/source-01/00334540.c.gz": "06b531c8a19c6941e2a2a3675f684ece82489ffe5209626f0e40b94f34cb3a9d",
+    "research/runs/native-retail-arcade-reset-20261122/source-01/00334680.asm": "f31380c4dd07dd0bc141ab6db8db4ed2bda607c9e68c8a3afb94824de69cb13e",
+    "research/runs/native-retail-arcade-reset-20261122/source-01/00334680.c.gz": "8897c0709c5aebf4bb58b2605707058c6def230d4b54b68880043b68b999d7b3",
+    "research/runs/native-retail-arcade-reset-20261122/source-01/00334690.asm": "835ed55f5a3c1c558b44478fc0b9020c11475a22d0812dde9e9f46b66ef08ea2",
+    "research/runs/native-retail-arcade-reset-20261122/source-01/00334690.c.gz": "0b98bf2c56da5ba4e2939f2024a75ecee06b4d5aee8d39ed92d296de70846294",
+    "research/runs/native-retail-arcade-reset-20261122/source-01/00334700.asm": "571228590756c89fe9aad9405e1ec269c83c7ba9f347e6b731d6e8f9678cdcdc",
+    "research/runs/native-retail-arcade-reset-20261122/source-01/00334700.c.gz": "f0750e80d620211d17139facdeba94b311483955199ea92811a2a33566e43a13",
+    "research/runs/native-retail-arcade-reset-20261122/source-01/00334750.asm": "0169033418c87cf762f03dc9694890823bef109b1b65a6cdef48fb7a9685f8da",
+    "research/runs/native-retail-arcade-reset-20261122/source-01/00334750.c.gz": "97c9bd03a664ae76918cc9d524217fefbab899434393aaf79ba2a881744e9009",
+    "research/runs/native-retail-arcade-reset-20261122/source-01/batch-report.txt": "abe0fe21e4780fa768dfdca1141eaeca0d00ee2fe1db96a4d8d7ffce9706806e",
+    "research/runs/native-retail-arcade-reset-20261122/source-01/calls.tsv": "3283fceeb3bfa26d60bd7bb004e74f5eb22037f58b48cf523436bb069079a546",
+    "research/runs/native-retail-arcade-reset-20261122/source-01/identity.txt": "4988f8e3fd2bcaf3998344a2472658838c3a966e06067fef0fd4f43d8c177404",
+    "research/runs/native-retail-arcade-reset-20261122/GENERATED_DATA.inc": "0e8985b4955722491f16b29d8e973f5b85b9ca8f11cbc8b7346aa6d86601cf74",
+    "research/runs/native-retail-arcade-reset-20261122/expected-ladders.tsv": "ff5f00f8f9ef5c70d2017163425e92850b7440590f13783eab6e56987f976c3b",
+    "research/runs/native-retail-arcade-reset-20261122/GENERATED_DATA.before-birth-correction.inc.gz": "109241fb6c8a342cc885b75ed1c84ecb2a135cc83a04f68889c013d0aff31a7e"
+  }
+}

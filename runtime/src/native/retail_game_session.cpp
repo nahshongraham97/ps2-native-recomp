@@ -192,4 +192,9 @@ NativeRetailGameSession::source_task_1588c0(
 NativeRetailRenderCameras* NativeRetailGameSession::render_cameras(RetailGameSessionFailure& failure) noexcept {
  if(!validate_current_thread(failure))return nullptr;return &render_cameras_;
 }
+RetailArcadeLadderValues* NativeRetailGameSession::arcade_ladder_values(
+    RetailGameSessionFailure& failure) noexcept {
+    if (!validate_current_thread(failure)) return nullptr;
+    return &arcade_ladder_values_;
+}
 } // namespace mka::retail

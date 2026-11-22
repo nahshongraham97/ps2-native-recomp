@@ -11,6 +11,11 @@
 #include <stdexcept>
 #include <thread>
 #include <vector>
+#ifdef MKA_REAL_ARCADE_RESET
+#include "mka/retail_arcade_ladder.hpp"
+#include <cstdlib>
+extern "C" int SDL_InitSubSystem(unsigned) { std::abort(); }
+#endif
 
 using namespace mka::retail;
 namespace {
@@ -89,8 +94,18 @@ namespace mka::retail::initial_reset_required {
 bool reset_saved_profile_children_246070(NativeRetailMainState& main, StartupFailure&) {
     fixture->calls.push_back(246070);
     inspect_prefix(main);
+#ifdef MKA_REAL_ARCADE_RESET
+    RetailGameSessionFailure sf;
+    auto* selected=main.startup.game_session->arcade_ladder_values(sf);
+    selected->progress=23;selected->tier=7;selected->selected_index=0xffff1234u;
+    selected->active_ladder=&retail_arcade_ladders_from_source()[18];
+    main.startup.game_session->game_records_values(sf)->word_6602e8=0xabcdef02u;
+    RetailRandomFailure rf;
+    check(main.startup.game_session->random(sf)->seed(1,rf),"actual RNG input before real334700");
+#endif
     return true;
 }
+#ifndef MKA_REAL_ARCADE_RESET
 bool reset_selected_resource_334700(NativeRetailMainState&, StartupFailure&) {
     fixture->calls.push_back(334700);
     if (fixture->transfer_selected) {
@@ -99,7 +114,21 @@ bool reset_selected_resource_334700(NativeRetailMainState&, StartupFailure&) {
     }
     return !fixture->fail_selected;
 }
+#endif
 bool request_mode_one_banks_12a4f0(NativeRetailMainState& main, StartupFailure&) {
+#ifdef MKA_REAL_ARCADE_RESET
+    RetailGameSessionFailure sf;
+    const auto* selected=main.startup.game_session->arcade_ladder_values(sf);
+    check(selected->progress==-1&&selected->tier==0&&selected->selected_index==0&&
+          selected->active_ladder==&retail_arcade_ladders_from_source()[0]&&
+          main.startup.game_session->game_records_values(sf)->word_6602e8==0,
+          "real334700 effects occur after profiles and before bank requests");
+    RetailRandomFailure rf;
+    check(main.startup.game_session->random(sf)->next(rf)==1728641009u,
+          "real reset consumed exactlyone seeded Session draw");
+    // Record the observed completed real effect at the next source boundary.
+    fixture->calls.push_back(334700);
+#endif
     fixture->calls.push_back(12);
     RetailGameSessionFailure failure;
     check(main.startup.game_session->game_records_values(failure)->word_660098 == 0xffffffffu,
@@ -187,6 +216,7 @@ int main(int argc, char** argv) try {
     check(child->advance().kind == RetailInitialChildStep::Kind::completed && timeout.scans == 1800 &&
           timeout.calls == std::vector<unsigned>{246070,334700,12,18,16}, "exact source1799 waits, then continue");
 
+#ifndef MKA_REAL_ARCADE_RESET
     Fixture failure;
     fixture = &failure;
     failure.fail_selected = true;
@@ -208,6 +238,7 @@ int main(int argc, char** argv) try {
           transfer.calls == std::vector<unsigned>{246070,334700,334700,12,18,16},
           "known transfer preserves completed prefix and retries only the unfinished required child");
 
+#endif
     Fixture guarded;
     fixture = &guarded;
     child = initial_task_required::begin_reset_18d970(main, *startup.game_session);
@@ -223,7 +254,11 @@ int main(int argc, char** argv) try {
     bool retired = false;
     try { child->advance(); } catch (const RetailInitialTaskException&) { retired = true; }
     check(retired && guarded.calls.size() == 5, "retired Main refuses before borrowed state access");
+#ifdef MKA_REAL_ARCADE_RESET
+    std::puts("PASS connected reset with real334700:live ladder/record/RNG effects before banks,1799waits,lifetime;other five effects explicit fixtures");
+#else
     std::puts("PASS native reset ordering, live fields, suspension,1799-wait timeout, failure and lifetime; six effects substituted in this caller fixture");
+#endif
     return 0;
 } catch (const std::exception& error) {
     std::fprintf(stderr, "FAIL native reset: %s\n", error.what());

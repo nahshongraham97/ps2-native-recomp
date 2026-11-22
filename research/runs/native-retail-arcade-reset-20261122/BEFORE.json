@@ -1,0 +1,15 @@
+{
+  "base": "36f0ace8307fe2945251e694ec380acfd4e6876a",
+  "pins": {
+    "cmake/native_game.cmake": "69191b8708c575259d0c4f75a635b20798f679c401343a0f62f545b9750a460d",
+    "runtime/include/mka/retail_game_session.hpp": "e77714c7383daa1a99b5ac729e99f99d3ffae1522ae3db3ae3e94d5a87c52c0a",
+    "runtime/src/native/retail_game_session.cpp": "63f6bb43b858706a3eee55a8d2d25e007dbba45dca76fe99215aadb30295db1b",
+    "runtime/include/mka/retail_initial_reset_required.hpp": "4e3c7d8d4336bf0f7048ea70829f266e7b578d8d6531334796e00cfcb9e3cddf",
+    "runtime/src/native/retail_initial_reset.cpp": "4b485bc68686c3a0409110da28f6253ed392edd741ef57cfd33c8c2273d1a4ff",
+    "runtime/include/mka/retail_arcade_ladder.hpp": null,
+    "runtime/src/native/retail_arcade_ladder.cpp": null,
+    "runtime/src/native/retail_arcade_ladder_data.inc": null,
+    "tests/test_retail_arcade_reset.cpp": null,
+    "tests/test_retail_initial_reset.cpp": "d423fe385e55197ebae72f4654c8e716865fbd22fc79b3a3a00188f1be10401c"
+  }
+}

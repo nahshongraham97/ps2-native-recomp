@@ -46,7 +46,7 @@ public:
             }
             if (phase_ == Phase::selected_resource) {
                 require(initial_reset_required::reset_selected_resource_334700(main_, failure),
-                        "334700 actual native selected resource");
+                        "334700 actual native arcade ladder reset");
                 auto* records = session->game_records_values(failure.game);
                 require(records != nullptr, "165780 retained native game values");
                 records->word_660098 = 0xffffffffu; // Original165780(-1) full-word store.

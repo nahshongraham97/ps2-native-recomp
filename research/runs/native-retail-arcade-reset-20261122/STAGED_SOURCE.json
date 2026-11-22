@@ -1,0 +1,14 @@
+{
+  "approved": [
+    "cmake/native_game.cmake",
+    "runtime/include/mka/retail_game_session.hpp",
+    "runtime/src/native/retail_game_session.cpp",
+    "runtime/include/mka/retail_initial_reset_required.hpp",
+    "runtime/src/native/retail_initial_reset.cpp",
+    "runtime/include/mka/retail_arcade_ladder.hpp",
+    "runtime/src/native/retail_arcade_ladder.cpp",
+    "runtime/src/native/retail_arcade_ladder_data.inc",
+    "tests/test_retail_arcade_reset.cpp",
+    "tests/test_retail_initial_reset.cpp"
+  ]
+}

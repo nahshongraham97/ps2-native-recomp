@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-C",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_arcade_reset.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.056069700003718026,
+  "source_commit": "36f0ace8307fe2945251e694ec380acfd4e6876a",
+  "tracked_status": "M  cmake/native_game.cmake\nA  runtime/include/mka/retail_arcade_ladder.hpp\nM  runtime/include/mka/retail_game_session.hpp\nM  runtime/include/mka/retail_initial_reset_required.hpp\nA  runtime/src/native/retail_arcade_ladder.cpp\nA  runtime/src/native/retail_arcade_ladder_data.inc\nM  runtime/src/native/retail_game_session.cpp\nM  runtime/src/native/retail_initial_reset.cpp\nA  tests/test_retail_arcade_reset.cpp\nM  tests/test_retail_initial_reset.cpp",
+  "source_manifest_sha256": "de606adc4cab19c9bed37b6db3bd97d3fe8b3d1b635ccedb3671d8f6df2257bc",
+  "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "log_sha256": "cfdf4d8a64c8bf8b9c16cedd4acc8d0e74f4784811b2ac1c4740ac04ced89484",
+  "compressed_log_sha256": "f94ad9657f5dfec49e1d1c2b3ebee79a39d58a7cb56ffe1741123a13a8415bc0",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

@@ -1,0 +1,39 @@
+{
+  "reference": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\native-retail-random-12\\reference-01\\reference-vectors.tsv",
+  "reference_sha256": "4077398fe5d5a4917c97c58c4204f31f4a8a1579a44d25aa4be8a26aed951f94",
+  "cases": [
+    {
+      "seed": 0,
+      "first": 729696813,
+      "selected": 5,
+      "next_after_reset": 4267234555,
+      "reference_case": "0",
+      "reference_seed_consumed": 6
+    },
+    {
+      "seed": 3735928559,
+      "first": 3759560541,
+      "selected": 6,
+      "next_after_reset": 2369570450,
+      "reference_case": "0",
+      "reference_seed_consumed": 338
+    },
+    {
+      "seed": 1,
+      "first": 4194449,
+      "selected": 0,
+      "next_after_reset": 1728641009,
+      "reference_case": "1",
+      "reference_seed_consumed": 0
+    },
+    {
+      "seed": 1985229328,
+      "first": 909424411,
+      "selected": 13,
+      "next_after_reset": 818682336,
+      "reference_case": "4",
+      "reference_seed_consumed": 1
+    }
+  ],
+  "phase_proof": "All chosen reference seed consumed counts<623; seed resets cursor while retaining consumed. Firsttwo draws do not twist in either reference or native test phase."
+}
