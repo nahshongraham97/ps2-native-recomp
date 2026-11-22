@@ -1,0 +1,658 @@
+[
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/.gitignore",
+    "sha256": "15a92a53380974e3acfa83b0134a44eca650a2a88ed798774d987a7eabf9c3a9"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/ARCHIVES.json",
+    "sha256": "20eb289b7cf9448b2318a5f2049103c93abfb6d711964a675a0c0f246a856bf4"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/BEFORE_WORKER.json",
+    "sha256": "9e0abc83f4cb9b1c7fbce563dad43a69f716d5445c7d00952cf01fe32fd0ff5d"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/build.ninja.gz",
+    "sha256": "1b0156bf46fa4753068ffa8a5db580950a09276c0460b29db6a57008432175c1"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/CLIENTS.json",
+    "sha256": "63295ef6ee92b79d1e29a0abc33229ae071500c3c61a65ef20345b0f81455b32"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/CMakeCache.txt.gz",
+    "sha256": "203e238ed3e1d655e2f301f6a0c987d7de8630d141fba29262ba33b18457e7f1"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/COMMAND-01.json",
+    "sha256": "8d5b7d82492318cd09e23f5bb888ed99034691d2c240b207df2ea33185ce7404"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/COMMAND-02.json",
+    "sha256": "7f254a19f574e5809e3fc7128a56813e8ef1e66d40aed2bc19e9c2351707449b"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/COMMAND-03.json",
+    "sha256": "c7def84ac209e92375ed8532420004bb0ebfd92c05c41bc63fc6a08ecfe0574a"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/COMMAND-04.json",
+    "sha256": "adf49f871ef3973829e0aa2c4c7b345f0521733d041687534b7d8d2ebec21ba3"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/COMMAND-05.json",
+    "sha256": "cc960fbc6c5627a534965ad66fadb568d3b8364fc23f71ef5eef64c209255b9f"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/COMMAND-06.json",
+    "sha256": "8fd2cdebf7d65eef17294a68374839721f62c1261b1b2fe2beae5991c0ae23a4"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/COMMAND-FULL.json",
+    "sha256": "8da4cbc43bb1024e890dafa60a0756da55def5439b993375fae4a750a6a823f5"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/COMMAND-IDENTITY.json",
+    "sha256": "88630c419efa4058c0c07a8d891cadf8c5073cc7eda875cc90fb20f4085794ac"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/ExportFirstScene.java",
+    "sha256": "8272cf863c994fa5ff582973706595229995cc39dd9c6d9ab8af403f2cf4d58a"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/FullFontListing.java",
+    "sha256": "243e945fab96c5ccd4cc65e9012f3779dfda3896a342c274894a1d294ff50238"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/ghidra-01.log.gz",
+    "sha256": "801ef81c166ec482df263259d5260fdf1d007b4f3548961f2d7ae06a85a2dd83"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/ghidra-02.log.gz",
+    "sha256": "4ed7e4a7e055ff0885f8633a9ad00109845af6b3e805bb5fee7d4ce4db8cabea"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/ghidra-03.log.gz",
+    "sha256": "7ebd3608e03aba7eb5489d86a63e49112423ed8c786e36d7d91b25b8be624560"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/ghidra-04.log.gz",
+    "sha256": "79442db46d65d6ccf476f6335f227cc94d7192a83b53271f290eecb345f6a838"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/ghidra-05.log.gz",
+    "sha256": "89caa95b1cf8a4475e4134db4fd9655f9e2079a5d717c1f7cc96574397dcaf01"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/ghidra-06.log.gz",
+    "sha256": "fdc450ed97fbdb2d0fa871dc3bdca47b9c6dde3c78b30f5c4225150a4d929d1e"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/ghidra-full.log.gz",
+    "sha256": "3b4568d067622147880a1352c6dc1c2b1f7d597275d10cf8430e89a911dcffe9"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/ghidra-identity.log.gz",
+    "sha256": "8861b4c07a99af554a53f17b24a3b0bc893a666f001c2d29dba3ec5c1375dcfe"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/imports.txt",
+    "sha256": "fc23d4549ac6ab5082e3aa8f34c942d51ea400e0b752172f9cc1bfc194cefcae"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/IMPORT_COMMAND.json",
+    "sha256": "04d25af0d047f186b44a5442e2adfd4af5a6db292149f60b924fb7acfc0dae46"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/INPUTS_TOOLS.json",
+    "sha256": "7427a8e7e9145190bb8994195da33a8f6f765d71aa174148c789813084dd37fc"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/native_file_read_job.cpp.before-crt-worker.gz",
+    "sha256": "1187293fca5bab31acdd13e6d7587c652f6104a707cf503103c9a84b5e15e1fb"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/native_file_read_job.cpp.before-worker.gz",
+    "sha256": "b8cfe62be7a9556504349017ec5e0690afb0cc9c44afdb44c51f8a501e7dd574"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/native_file_read_job.hpp.before-worker.gz",
+    "sha256": "8dc619c262d13846ed2189bed6d092259596161673a36aa78f891c76db09478a"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/NEWLINE_PAIRS.json",
+    "sha256": "deacac1f7ce5d5be32275b3d98e638c7ca2b4b98750b2e47ce92d0ecaffa6046"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/ProgramIdentity.java",
+    "sha256": "7688763c85f77851bb6c58d2a64627a0d3a9abba12643fe54f5009188a22fa01"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/PROGRAM_IDENTITY.txt",
+    "sha256": "3409d31057cfb1bc41e1eeb52a8bdb7c738933a11bcad001f81e798c7f74fb35"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/SOURCE_CHECK.json",
+    "sha256": "a83c3ba4a6a4c5504edc6e4d8584f89cb861f7a7cae35914b232fb578d60d04b"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/VERIFY.py",
+    "sha256": "530c3ccc42f2afb4151d63d6563f04d6ee3d482f17f9776893a57db243e2b71c"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/WORK.md",
+    "sha256": "dfeceb872975a588191a8b18f4939be06b79077601ba97506c18fe58a8608817"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-01/0019aa30.asm",
+    "sha256": "7b53abec734cb69cd8f1fafbce8b658000f0927cce9e364353ce010a8f6bce37"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-01/0019aa30.c.gz",
+    "sha256": "db5805ce47577e7dd1a31d8981dc1e3755c3ffb38422e0a6a0b2cd869794ea62"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-01/0019c010.asm",
+    "sha256": "756be18bc79efb4041ef9c525bb8e2db53f49e503f614a6a6c059e7740b49cb5"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-01/0019c010.c.gz",
+    "sha256": "9d2ddab37b0559cda788041e61661bb32a7e47ceb7dae28424e1c52908ab211b"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-01/0019c140.asm",
+    "sha256": "9bfce48b81d11d6c6933f4a2a69d1e4282170ba1e93fe928f032457bbb9e9c92"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-01/0019c140.c.gz",
+    "sha256": "106897b5464b343b09f859837cb031e5deb4d919025bff62e58ee51aa359aabe"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-01/0019c320.asm",
+    "sha256": "755cae4a9e1bf787b79f88906d4931d8fcfb2e29425f0e91b36d0ef55571d905"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-01/0019c320.c.gz",
+    "sha256": "5376c3fba548f7b34b0dc00ae18eaff4aa56ed69c06eee116b3e7a2e9472ce51"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-01/002dff50.asm",
+    "sha256": "3510d35223e9bcad4aa8f4695fff028ba4eeb1131b30e52d259195193e79019d"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-01/002dff50.c.gz",
+    "sha256": "5282780ddd46e87f27260f37122e42b16ecf5d2d5644a71a9aa68172c3d111e4"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-01/00327120.asm",
+    "sha256": "080cd9649f8cbde4b6e3cd448c4fba288c3a78d30d90df791f8a91b128a4e026"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-01/00327120.c.gz",
+    "sha256": "fccdc88c8f0cd26e75ddda34b7622e092285eeb9feb5fe42a26b6066ccbba618"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-01/003ddc90.asm",
+    "sha256": "d940baeb86d8213bcc3ce5d0cef822c5b22ec0a02752d6e3ef1792b686e268bf"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-01/003ddc90.c.gz",
+    "sha256": "cd605b0767e851151252e7cfa8e2596b4bef7eedda452e8a307781ebeb28de18"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-01/003de890.asm",
+    "sha256": "334a5d3839db96a7c053157a78f226caea0c92cfcf0fd4c43d92599203e0142c"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-01/003de890.c.gz",
+    "sha256": "f297e4f7922202e5c23eda172515ada64a671ff7f52e48235bd79cdd5a878bed"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-01/batch-report.txt",
+    "sha256": "f2a5116feaa28a520e3c6c5248ec1842a2650dcb57729184d7916338b44327df"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-01/calls.tsv",
+    "sha256": "1d3655256be41c8ad9fb492ad1dc6dedea6f6ed6c7b2703ec4ccb7d530065d3a"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-02/002e05a0.asm",
+    "sha256": "001326301426983145671d90b54bb387ed41055538f65dcc75cbd00da9b755b9"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-02/002e05a0.c.gz",
+    "sha256": "61c17f7d422812656b0f6cab0d4148abcb27affd96c80d7cbbed696f3b97a80b"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-02/003271e0.asm",
+    "sha256": "c00ad627ab30771d3461855834518753f888d69422b90fcf13e82cae681ff918"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-02/003271e0.c.gz",
+    "sha256": "0f8abad9bece02823b390f3d9abbf04c151386c69144b5b04e3cb827cd9e4e91"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-02/003ddcd0.asm",
+    "sha256": "35bf1f0bfd471ce06c5ddffa1208c2c4c3737183dd562eb8a850db6be86c1352"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-02/003ddcd0.c.gz",
+    "sha256": "35324145d72592ce3d980f335a7d24e21b7a94927ff09b2a6916dac6c8c91ac7"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-02/003ddef0.asm",
+    "sha256": "34f0bfef09b9fa07be00c0ede3e77897a6553c09c11671fc5cb8c7adc5a02fb2"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-02/003ddef0.c.gz",
+    "sha256": "4cb16d36aa58fb4e4f6fcb2e5d62bfa7bbfab428adf29b0690ffaff918cc4707"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-02/003de210.asm",
+    "sha256": "cbb6df051c330863c3f6d8c65d42d2ec636f97821ccd4294bbe6682da67b2494"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-02/003de210.c.gz",
+    "sha256": "53b372e767c82dc5ef76850a92e172d55b1628a6727031ec32da33bf41318125"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-02/batch-report.txt",
+    "sha256": "98d3053e161204fe75b43685d5eed67bd0bc2c2b4fd22c75d963ad6e5beff630"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-02/calls.tsv",
+    "sha256": "d4a700fb0fa0a7e31bbc178325fc5e1360b80f3c7d522279c9b77b1dd1f82ba3"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-03/0026ecb0.asm",
+    "sha256": "444ffc93baaec14b39f9fced7c0730090f43f625d66aba3d13c1dbf23a6de52e"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-03/0026ecb0.c.gz",
+    "sha256": "8f384fafb4482f8521efff7d70cd777aa94675698d4a400a2b0d3141cca47bdc"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-03/0026ed00.asm",
+    "sha256": "a45e691b8b5507a683d021d195a73722ee8880014da65c0b334073332d6f0bcd"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-03/0026ed00.c.gz",
+    "sha256": "4c4c1942ebc8d6591c07b12b7f7262a5b2d7ecb76888281483b2a87a352eee12"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-03/0026ed50.asm",
+    "sha256": "d436725f43d8909e5561605a0df644d7d372c4032ec39bf934b8d85aadde9930"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-03/0026ed50.c.gz",
+    "sha256": "8179cf05ac40c06791460a565a9b3bddc9527ad13904828a880d6143305f5dcc"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-03/0026f060.asm",
+    "sha256": "70fd6a85dc663f955a1438a3500edae13ef86f7267426e98b96b46d7be065f55"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-03/0026f060.c.gz",
+    "sha256": "78991fe6ab80ebea6391b30f1ec27a2ba9e83fa239a29300a937120a1263f8cc"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-03/002dfe70.asm",
+    "sha256": "f3bd26da9d4d1a00f2fa9abd2beb4af239f97b50b12800c13e8986bfb3cc19cd"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-03/002dfe70.c.gz",
+    "sha256": "f0f6716affd1ddd377428eafbd702074a45f61e91ec1cdc07620d9e223fbeb4e"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-03/003de330.asm",
+    "sha256": "e86c59e98f719b1e966a19d79368678374ba1973f075ca2698d05845de65eb7a"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-03/003de330.c.gz",
+    "sha256": "65c978af42917b9a02ba4c08c97c3deca760da36b6af1570d249dd1ceaf56504"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-03/batch-report.txt",
+    "sha256": "06c11d85116b5e4aa21241321422136b8098ade6d1c232a409d7648cbd757237"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-03/calls.tsv",
+    "sha256": "9d1fea1ab17eb642e350c3f7a896e4177efb32258bd9ab8af38711eada522b91"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-04/0019cad0.asm",
+    "sha256": "6e85b948631e8547d0ed040d60d8621053678a100bdd1e88884f3ec9e8d9a3ee"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-04/0019cad0.c.gz",
+    "sha256": "ed4329041f729f5099522454f3a86efcbdb31b6d98b05f2cec821464741cb09a"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-04/00219100.asm",
+    "sha256": "9afdd6fd4ca1478b06283b2f5771bcb1e9640f42a475bd85e19a3ab961a0a023"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-04/00219100.c.gz",
+    "sha256": "9f5dad575710efa90a502f5506e79463ed5379997dd671013ec68b900b8b79b1"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-04/00219110.asm",
+    "sha256": "f45603df63b4a9f3bca51ed2f68b37e2c1bfa0546fdf835bb038ee7aac718f06"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-04/00219110.c.gz",
+    "sha256": "dfca9a72670ddc522ab7280065cbfb2b5ad7e681835af01305dc26a95057047c"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-04/0026eec0.asm",
+    "sha256": "520e93dbe75d4fee355fc5056de61d9f5bfc46a55b008671100177d9de67da31"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-04/0026eec0.c.gz",
+    "sha256": "c73a0fb2571b43078e55d6fa28a6650b27652a495ff86908cb9cfcc762da75ad"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-04/003de5b0.asm",
+    "sha256": "645e6c255f272fbb600eeca950e020de4895a6813a69d59c7121f932c7d3d4de"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-04/003de5b0.c.gz",
+    "sha256": "56b07278679aade812e31b4b7286a510b548c70a40ee8e000665dee6b8b95f75"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-04/batch-report.txt",
+    "sha256": "98d3053e161204fe75b43685d5eed67bd0bc2c2b4fd22c75d963ad6e5beff630"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-04/calls.tsv",
+    "sha256": "ccc965827484a373109e5cda422f4db333d5184c34bf358c6e634df276a2430d"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-05/002dfd10.asm",
+    "sha256": "8477761132f21da2fec1643719e44e06973ea7e623408c5b0839b6d32ccc5efc"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-05/002dfd10.c.gz",
+    "sha256": "765b43fd6b4031082ce4b96efc6a5f380d7e0fbf3ab45572cd3b86e8ed096bde"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-05/002dffb0.asm",
+    "sha256": "28efd6fe7e9a504e7adcb2e4625e46365a6cce14b44ba396f7a0847bd60c89e9"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-05/002dffb0.c.gz",
+    "sha256": "384bb52d4cb5b099a038421c3e8e00c4f8085b3e3789b8e8f8bb253210c4a87f"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-05/003271a0.asm",
+    "sha256": "5cc7808028de86b3493ee8e3c44bcb2a42a006e54525642538eef73987fc723b"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-05/003271a0.c.gz",
+    "sha256": "7cd82e1df1d237083b3d25d8b9dc4af3f4db939b67c5b4be612fe5870ace6a69"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-05/batch-report.txt",
+    "sha256": "0f7f61484a8f650616742db131895564f6c667d9e9fb177381c725ff074286c5"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-05/calls.tsv",
+    "sha256": "f2724405e23f0990bf7e976911d7bfd98ffbcd30ca66771ca09cf38ef7b3cf47"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-06/002df470.asm",
+    "sha256": "4803e1baa0dc76527c61104ab6698fef5ac5da1eb095df773085eafdd0de5eb4"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-06/002df470.c.gz",
+    "sha256": "ba9c50e1e3a8c9b53d9e357518fd9a36be6e2b2724d12380978d4d9f56c33152"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-06/003270c0.asm",
+    "sha256": "9a3a065a8d62487793914756b11d8a0c2b4830f0245413410dbf2f41bd88d994"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-06/003270c0.c.gz",
+    "sha256": "970b4977e5b9f6a432f2b8d9641836822cf479051625eed789e57f6e80696730"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-06/00327230.asm",
+    "sha256": "aabb7c6e89c781ae40a70bbba355766bb9ff56f06f190323b5821eb95475f97d"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-06/00327230.c.gz",
+    "sha256": "68e72b711fac0bd759c59e7cb73ed80a78d30dc71513679807725e4ea47acd76"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-06/batch-report.txt",
+    "sha256": "0f7f61484a8f650616742db131895564f6c667d9e9fb177381c725ff074286c5"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-06/calls.tsv",
+    "sha256": "1c0b5fb280d1532215fb99c271a904760b1b402d92841d491343cac3d7647c7b"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/0019aa30.asm",
+    "sha256": "b5823b68852e80f6fd5d3acfc3831c19590ce51cf45cf30cdac6e598554f2b21"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/0019c010.asm",
+    "sha256": "3936bd70e2d511df717df7ea04eb929775b6b58b0f42ee221bd36d08112a7608"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/0019c140.asm",
+    "sha256": "8ec162161ffd5223f3d6188fa90545813f3150dd0c51cb447218aadd8a1b992e"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/0019c320.asm",
+    "sha256": "3090a14f6f64530d198cdb620396ced5a7ba3c17c0eed15befeddf7c5ecb0d90"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/0019cad0.asm",
+    "sha256": "b43b3f9c77cedda7504dfea07e0c4c65dca9cbe3153a535818901269a0698830"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/00219100.asm",
+    "sha256": "6b6909a88154dc49c327db6265aae651f1d9c4510d48d5b001e73f45cfd0e996"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/00219110.asm",
+    "sha256": "edab2b6bdebb205826bbc2150c8f1ff5dc9a406823524fd2dcfed4d2fedb5927"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/0026ecb0.asm",
+    "sha256": "def13493afc974763a9300f2ec87c5ad16a78f12e8b194af7aa7aff298c7f3b0"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/0026ed00.asm",
+    "sha256": "54c81ab9d7b4878fda753cee7f1b1fa50346a76ad5dcfaf5ea8495535532c857"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/0026ed50.asm",
+    "sha256": "3361533d0b34005b290469213834390124232e5e456546f06f8cc5b7f0df67c5"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/0026eec0.asm",
+    "sha256": "050c951cfcd86779c7473298cf86af6b20b9a85a898aa65f7f0ea34b637bc845"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/0026f060.asm",
+    "sha256": "c1aa850d5295b4fb1680cde752fa17c328842f8f17a708a01e6179a0644dce3b"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/002df470.asm",
+    "sha256": "520f6f27e2e148c13c464e994e057921391660b9d15894b5d1d1f632afcf127c"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/002dfd10.asm",
+    "sha256": "34bec81a21d57e75e75a07b61e2cc92b42b048d64be2462494386fe12385c73e"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/002dfe70.asm",
+    "sha256": "be91ba1ef1075b7eb341f9cca9da69b01118a0d6b1dbe6ee9c4594dbb6196d28"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/002dff50.asm",
+    "sha256": "f7c1794363967b0118aa2b6d2b9ad947ba23a06f87e331e7ff29d7d8ff62d5ca"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/002dffb0.asm",
+    "sha256": "31f27c45ff3fb472f4f8b7e86c582cc9a7a6656e637dc623ca1c7672635198b4"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/002e05a0.asm",
+    "sha256": "f9b4b9eb283599e0127cbf7c5d7db8029ec05d54b81392cf205d5c1559a1a9cc"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/00327120.asm",
+    "sha256": "a147ef1ea1bbadb7579fa67335c780df10f2fad2b0a9df92659250354cf7827d"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/003271a0.asm",
+    "sha256": "0dfe4d05d6676bfe2db4fe8ac0c07544fc1428ca8269c681d05b557eb802e060"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/003271e0.asm",
+    "sha256": "8cb4cedeeee4446cf5f510ee83531d5607daae12894dfecb150aadf062ef7d2c"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/00327230.asm",
+    "sha256": "c45ddc0c1b429a731658333989041c6fbf02c456f086e279de92dc6cc8ee4cf0"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/003ddc90.asm",
+    "sha256": "c3f0717e647ca1ec3079bf36f6cf01bb5973d2ed606a28d7cb4ad15f7151efd7"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/003ddcd0.asm",
+    "sha256": "d3b228eb8457748fa05505b5bd2372580f1c47ef3f56ef38ca106745ab1b1c7d"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/003ddef0.asm",
+    "sha256": "56afdf0888e14c08a4ebce36a3ee69834874fc59254418364137b8153a67f9a7"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/003de210.asm",
+    "sha256": "30b1834096fe0af8ad218d062f87b7ba00f379ed5f2939cbc1b555c60c882ec3"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/003de330.asm",
+    "sha256": "91cd0dc860b483c3bff514ccc2ece1ec531a343674cf1fe6767f64a290118a30"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/003de5b0.asm",
+    "sha256": "30d8c5a2d7594d555b5bca7fd879594ae9bd73edbb8e638e3709ac793b74b0ee"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/source-full/003de890.asm",
+    "sha256": "8b2c777e82c8e2ad6c2b28351c1800483a99a2f434934153059a0537ff5585ef"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-01/build.json",
+    "sha256": "421ecf189019bd63b937199f92674ee25b9d0483ad5be1ed4097b48d8a5b5e64"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-01/build.log.gz",
+    "sha256": "f9b01764a33d68f75c09610fe05f9463694b951d64c0a03831eb8acbec5ff208"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-01/configure.json",
+    "sha256": "128de989c9033be5336e5fd3f3f49fa7edbb2a1a9a5e7a3f7774a26c855b033e"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-01/configure.log.gz",
+    "sha256": "970f6bdbe65caf9fcddb477ff72c9d3fe591ec5e72b9fee81aa2d9558b575e02"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-02/build.json",
+    "sha256": "c3025c4b1e80274d4804e8782bad93bc2ee8cfd45c762a076f9d281bab2dcb18"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-02/build.log.gz",
+    "sha256": "ddf8fbeeaa41c3dbe944a70d07cba34aa1edcf2c9cff79975bd6bfee3a724ec1"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-02/read-job.json",
+    "sha256": "111acbe08d2d81e84dff09d166ec3497b841c57f110e04b88b071bc44d6c210c"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-02/read-job.log.gz",
+    "sha256": "8596e3e5205791b368b27917ca2cde387171c01202877e0d46c4df8dcd9916ec"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-03/build.json",
+    "sha256": "c3025c4b1e80274d4804e8782bad93bc2ee8cfd45c762a076f9d281bab2dcb18"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-03/build.log.gz",
+    "sha256": "bf6d882650f2b7884608fa12c8b7ae5ca3f74fd295169632b80d1074de9fe442"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-03/read-job.json",
+    "sha256": "92bddd3d3dfe08900ee49995426e7abb061a44bd03a1e690405324adc44d4f77"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-03/read-job.log.gz",
+    "sha256": "8d1534db83c8f867dee43d4c5567b102cfa8e3eccfbadf17270d1536448794ef"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-04/build.json",
+    "sha256": "c3025c4b1e80274d4804e8782bad93bc2ee8cfd45c762a076f9d281bab2dcb18"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-04/build.log.gz",
+    "sha256": "73c424bd108a55eaa68a9aafb9a1c5169ff0feb6957b06a200511a7ae18f9d11"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-04/native-file.json",
+    "sha256": "ea884a83a43ac176cc242b40d63ea2752a80e95f58a54318f44481d9df43525f"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-04/native-file.log.gz",
+    "sha256": "81ffb88efd1d28ba34e4400b035139c38020337e7f7b1b1af4be32d4ea2a6432"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-04/read-job.json",
+    "sha256": "144bf1ae3f12b4341a5911bdd10d0210c33fdf468e3506f2b0758f1fdc2dca5d"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-04/read-job.log.gz",
+    "sha256": "ded192cbfbbc4ca22aa36b92819ff3bd5635238ce8d028bc600ce992a9c5e0ca"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-05/build.json",
+    "sha256": "c3025c4b1e80274d4804e8782bad93bc2ee8cfd45c762a076f9d281bab2dcb18"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-05/build.log.gz",
+    "sha256": "74c2e4bee64eeab3bd7250f956108a0c0a93496c8b47d4637653c3e92416277c"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-05/native-file.json",
+    "sha256": "4cd5738565fd3cdc9c99524b4fee51ed575073576dd536f4adc22e68ad74ee4e"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-05/native-file.log.gz",
+    "sha256": "81ffb88efd1d28ba34e4400b035139c38020337e7f7b1b1af4be32d4ea2a6432"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-05/package.json",
+    "sha256": "753f7ed33b2872d5973e089a2bc450525c02a786a49fa140f8c87edbd5a74ed6"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-05/package.log.gz",
+    "sha256": "ed2946f5ec4cb4aea84e5096945437ba8503f6f42901c4ff0349bbbc1a779d05"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-05/read-job.json",
+    "sha256": "9ed5436b6331f6813d93b979fea9dd04a6b7fedd0c643964d6b76805268c5f49"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-05/read-job.log.gz",
+    "sha256": "ded192cbfbbc4ca22aa36b92819ff3bd5635238ce8d028bc600ce992a9c5e0ca"
+  },
+  {
+    "path": "research/runs/parallel-section-lifecycle-20261122/validation-05/SOURCE_FILES.json",
+    "sha256": "2801540e5a44f34b1aa672e66c2468d1b618ee04cb953a7e7468df0d9bf1f2bb"
+  }
+]

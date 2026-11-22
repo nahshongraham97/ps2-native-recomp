@@ -1,0 +1,5 @@
+0026ed50	b8a8838f	lw v1,-0x5748(gp)
+0026ed54	2d100000	move v0,zero
+0026ed58	01006324	addiu v1,v1,0x1
+0026ed5c	0800e003	jr ra
+0026ed60	b8a883af	__sw v1,-0x5748(gp)

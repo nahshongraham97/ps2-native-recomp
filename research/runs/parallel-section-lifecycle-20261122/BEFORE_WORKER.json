@@ -1,0 +1,12 @@
+[
+  {
+    "path": "runtime/include/mka/native_file_read_job.hpp",
+    "raw_sha256": "c6e976872deed76f0ee819fa07a5d6d8542397ad845adb467008f36f6e1db6a5",
+    "archive": "research/runs/parallel-section-lifecycle-20261122/native_file_read_job.hpp.before-worker.gz"
+  },
+  {
+    "path": "runtime/src/native/native_file_read_job.cpp",
+    "raw_sha256": "9ed9868eeb9f307a0e258adb50035007bc9b8e79e4f4dbdd26a1a7b8a0a3362f",
+    "archive": "research/runs/parallel-section-lifecycle-20261122/native_file_read_job.cpp.before-worker.gz"
+  }
+]

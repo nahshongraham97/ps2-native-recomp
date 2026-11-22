@@ -1,0 +1,22 @@
+[
+  {
+    "binary": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-lifecycle\\b-io\\frozen05\\test_native_file_read_job.exe",
+    "sha256": "a9a86676f0341e3e8bd986f6d171f9460c3693098f6a9290102c898f5967045f",
+    "executed_05": true
+  },
+  {
+    "binary": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-lifecycle\\b-io\\frozen05\\test_native_file.exe",
+    "sha256": "08ef50449cc3adfa73dd8061804ea9ca41367ffe6c7cf6bfed1dab8117238fcd",
+    "executed_05": true
+  },
+  {
+    "binary": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-lifecycle\\b-io\\frozen05\\test_native_retail_package.exe",
+    "sha256": "40c88af2280f2c1c7f4685445ce60ac433ba1b61713fab4a5acd862be86da79b",
+    "executed_05": true
+  },
+  {
+    "binary": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-lifecycle\\b-io\\frozen05\\test_native_retail_system_art_cpu.exe",
+    "sha256": "a18dd6f6ee47d5f7fad20bfcabd32da014189b85dbcf7b5d0530b907ca2c3fc0",
+    "executed_05": false
+  }
+]

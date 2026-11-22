@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-readobj.exe",
+    "--coff-imports",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-lifecycle\\b-io\\test_native_file_read_job.exe"
+  ],
+  "exit": 0,
+  "tool_sha256": "949f3173f7ead228442c64d34962a2ad9738089d244458b3be809417ad6dedfb"
+}

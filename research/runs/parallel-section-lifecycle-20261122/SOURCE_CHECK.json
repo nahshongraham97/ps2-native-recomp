@@ -1,0 +1,11 @@
+{
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "original_PT_LOAD": {
+    "offset": "0x100",
+    "vaddr": "0x100000",
+    "file_bytes": "0x54de80"
+  },
+  "functions": 29,
+  "full_words": 1400,
+  "orientation_only_untrusted_interior": "003270c0 (not in source-full, not used)"
+}

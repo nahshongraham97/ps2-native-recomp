@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-lifecycle\\b-io\\test_native_file_read_job.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-lifecycle\\research\\runs\\parallel-section-lifecycle-20261122\\validation-02\\private-error-root"
+  ],
+  "exit": 0,
+  "binary_sha256": "fa8a8eda12801d2e562b6a01bdeb4dc7aa1850d85c2622bb9dc61bfaaf8c7b56"
+}

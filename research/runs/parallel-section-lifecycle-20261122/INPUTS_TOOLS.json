@@ -1,0 +1,18 @@
+[
+  {
+    "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+    "sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe"
+  },
+  {
+    "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3"
+  },
+  {
+    "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\ninja\\ninja.exe",
+    "sha256": "e52a7ad9538d9618c67a0bd777964e2eec8a30f68b810a2f6adce1f2daf847b8"
+  },
+  {
+    "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121\\art\\gameart.ssf",
+    "sha256": "9900120ff8782b16e0d73ee885c8f4df6c82545b915dd10105e6694a03658a39"
+  }
+]

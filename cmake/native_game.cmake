@@ -76,7 +76,7 @@ target_link_libraries(test_native_logon_pending PRIVATE mka_native_game_actions)
 
 # Native startup content and AOT retail state. No sector/content_vfs/runtime TU.
 add_library(mka_native_content_volume STATIC EXCLUDE_FROM_ALL
-    runtime/src/native/native_file.cpp runtime/src/native/content_volume.cpp)
+    runtime/src/native/native_file.cpp runtime/src/native/native_file_read_job.cpp runtime/src/native/content_volume.cpp)
 target_include_directories(mka_native_content_volume PUBLIC runtime/include)
 target_compile_features(mka_native_content_volume PUBLIC cxx_std_20)
 target_link_libraries(mka_native_sound_resources PUBLIC mka_native_content_volume)
@@ -539,4 +539,10 @@ if(WIN32)
     add_custom_command(TARGET test_native_gl_texture POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2>
             $<TARGET_FILE_DIR:test_native_gl_texture> VERBATIM)
+endif()
+
+add_executable(test_native_file_read_job EXCLUDE_FROM_ALL tests/test_native_file_read_job.cpp)
+target_link_libraries(test_native_file_read_job PRIVATE mka_native_retail_system_art_cpu)
+if(WIN32)
+    add_custom_command(TARGET test_native_file_read_job POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2> $<TARGET_FILE_DIR:test_native_file_read_job> VERBATIM)
 endif()

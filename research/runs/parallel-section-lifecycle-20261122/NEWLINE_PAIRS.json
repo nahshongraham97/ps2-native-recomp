@@ -1,0 +1,50 @@
+[
+  {
+    "path": "cmake/native_game.cmake",
+    "measured_raw_sha256": "f5ff42ef82d52573beab11e07ad0a766ca3b513fc24c719333dc23d0a7d092cc",
+    "committed_lf_sha256": "c08c1d0496cdd50f018a54f90ca43b25f8e6cd71003b699ee13d71ad3773ea97",
+    "normalization": "CRLF to LF only"
+  },
+  {
+    "path": "runtime/include/mka/content_volume.hpp",
+    "measured_raw_sha256": "a85a67c88c4b702319deda8a51d3f44656e6fb770c918dff222ec0fc383e2193",
+    "committed_lf_sha256": "c973d249844a3844ea774c474f3193a200009ca42927f65b0f58b025984bdfb1",
+    "normalization": "CRLF to LF only"
+  },
+  {
+    "path": "runtime/include/mka/native_file.hpp",
+    "measured_raw_sha256": "b8e443d036ad262b918eb99c1e1cbf3a2e9d2224ff4a06608368f8cd7482b011",
+    "committed_lf_sha256": "50152fd4899c2be5cb467f74c8261f6445758c0f3d7b2e35d030945f27feeffa",
+    "normalization": "CRLF to LF only"
+  },
+  {
+    "path": "runtime/include/mka/native_file_read_job.hpp",
+    "measured_raw_sha256": "0e82651db28d9b63242c188ede00f9a743360ad72c6e1fbd46e2b125f9a2fba1",
+    "committed_lf_sha256": "6b943088959bf32e7e5a676c96ddfade81827f19ac4cfff476a3e8b727104419",
+    "normalization": "CRLF to LF only"
+  },
+  {
+    "path": "runtime/include/mka/retail_package.hpp",
+    "measured_raw_sha256": "9bf0dfa4bb8e629aeec22b8a9b5d97da9132f1fb183e696bd6bf05876d7d5fc6",
+    "committed_lf_sha256": "f80923f8162e2ad5263a6752e3fe12d26b24c4124e32208f1e6c09c73c3c53c4",
+    "normalization": "CRLF to LF only"
+  },
+  {
+    "path": "runtime/src/native/retail_package.cpp",
+    "measured_raw_sha256": "302a45f705f85c1bbe27a17f0a5db46f93ff69f79fdfd97527bfdbaf5d2dbed3",
+    "committed_lf_sha256": "22e65dc2d91ada6a64e7a49582f342a2b066dd197bca0573985fa68ffcc367b5",
+    "normalization": "CRLF to LF only"
+  },
+  {
+    "path": "runtime/src/native/native_file_read_job.cpp",
+    "measured_raw_sha256": "316de502fbf1a68404ab8eb31d19ecc73069741250b88b66b92451c7d797d9ad",
+    "committed_lf_sha256": "d6eb47127b8e60adac79c736c9a7422811c5e7d0597a2c9368b1462963c3546a",
+    "normalization": "CRLF to LF only"
+  },
+  {
+    "path": "tests/test_native_file_read_job.cpp",
+    "measured_raw_sha256": "ebc20a41365c98abb61a7d6527159fa3bbd6e27af52a53c0390f8a0ca4254e67",
+    "committed_lf_sha256": "bc85d34e7d214ad89ac2cb80e42899807a53228a2b1a7d83b59247756f56aed6",
+    "normalization": "CRLF to LF only"
+  }
+]
