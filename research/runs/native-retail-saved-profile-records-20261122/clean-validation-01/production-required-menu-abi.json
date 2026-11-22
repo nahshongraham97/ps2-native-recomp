@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-C",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-profile-records-22\\build-native\\libmka_native_retail_startup.a"
+  ],
+  "exit": 0,
+  "seconds": 0.03482590000203345,
+  "log_sha256": "e930fa969509a23b878e0528ae0637f4bdcac1a1e7c808845d14bd35baf55615",
+  "source_manifest_sha256": "01bafdfaea410bda2ba0d33505bf34fb1f939156f5d8e9efd3f674eab670cae6",
+  "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10"
+}

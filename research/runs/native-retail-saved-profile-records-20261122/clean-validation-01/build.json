@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-profile-records-22\\build-native",
+    "--target",
+    "test_native_retail_saved_profile_records",
+    "test_native_retail_saved_profile_child",
+    "test_native_retail_game_session",
+    "test_native_retail_profile_aggregate_main",
+    "test_native_retail_profile_input_reset",
+    "test_native_retail_initial_reset_arcade",
+    "test_native_retail_main_frame_gates",
+    "-j2"
+  ],
+  "exit": 0,
+  "seconds": 79.06576469998981,
+  "log_sha256": "0dc3a961e378988721a887fddbcbaf6dd53ba3f71524bee04f77ea8c44a15d35",
+  "source_manifest_sha256": "01bafdfaea410bda2ba0d33505bf34fb1f939156f5d8e9efd3f674eab670cae6",
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3"
+}

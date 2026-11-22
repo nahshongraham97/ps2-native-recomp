@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-profile-records-22\\build-native\\test_native_retail_initial_reset_arcade.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-saved-profile-records-20261122\\clean-validation-01\\empty-content"
+  ],
+  "exit": 0,
+  "seconds": 0.10976190000656061,
+  "log_sha256": "bb06c9ce02fc7c24f027992aa2ca97303ef9047f1becbd8681c341094a58c03f",
+  "source_manifest_sha256": "01bafdfaea410bda2ba0d33505bf34fb1f939156f5d8e9efd3f674eab670cae6",
+  "executable_sha256": "07de4165c973bec8a0545dc9439e6ec61ad25fe544589cfdf711de20aeffe333"
+}

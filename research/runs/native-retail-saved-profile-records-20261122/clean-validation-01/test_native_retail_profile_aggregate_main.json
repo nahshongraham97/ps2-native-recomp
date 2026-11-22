@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-profile-records-22\\build-native\\test_native_retail_profile_aggregate_main.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-saved-profile-records-20261122\\clean-validation-01\\empty-content"
+  ],
+  "exit": 0,
+  "seconds": 0.09918710000056308,
+  "log_sha256": "8eb718bb277a5e94031b0ab7a51a62b377f1fea492d7222122cd2fd6d758232a",
+  "source_manifest_sha256": "01bafdfaea410bda2ba0d33505bf34fb1f939156f5d8e9efd3f674eab670cae6",
+  "executable_sha256": "099147d221f11ae4090f7a2ab43c4c7647988fd6bc6651f55ed4f531f5830c1f"
+}

@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-profile-records-22\\build-native\\test_native_retail_game_session.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.0397880999953486,
+  "log_sha256": "a6f07ee12bd8eaeca26280fb9ad793b25d067d3a0ce9a35631f85cf07ba31b20",
+  "source_manifest_sha256": "01bafdfaea410bda2ba0d33505bf34fb1f939156f5d8e9efd3f674eab670cae6",
+  "executable_sha256": "4f5efbcf053dcba5834ac0e059fccad5487b098b7a1bed5c0bdc868602216119"
+}

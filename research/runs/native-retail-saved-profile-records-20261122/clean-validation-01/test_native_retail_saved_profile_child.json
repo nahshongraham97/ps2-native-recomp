@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-profile-records-22\\build-native\\test_native_retail_saved_profile_child.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.03908420000516344,
+  "log_sha256": "d9090ed425aa44d7537dc02e503f62f4b8f01c6b737f374c7e2f43a9e73bd9d6",
+  "source_manifest_sha256": "01bafdfaea410bda2ba0d33505bf34fb1f939156f5d8e9efd3f674eab670cae6",
+  "executable_sha256": "70f48a90da9ac0f6120a3c0c52d870de0bf10e77aac65242dc81813482af560a"
+}
