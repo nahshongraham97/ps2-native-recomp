@@ -190,6 +190,8 @@ bool initialize_retail_section_service(NativeRetailMainState&, StartupFailure&);
 // 1861B0 is full scene reset/bootstrap, including 12F030 and repeated130350.
 // The historical binding name does not imply a clock-only operation.
 bool initialize_retail_post_scene_timing(NativeRetailMainState&, StartupFailure&);
+// Shared exact122AD0 effect; does not update milliseconds_per_frame.
+bool refresh_retail_timing_factors_122ad0(NativeRetailMainState&, StartupFailure&);
 bool initialize_retail_post_scene_sections(NativeRetailMainState&, StartupFailure&); // 19A5E0
 bool initialize_retail_first_frame_graphics(NativeRetailMainState&, StartupFailure&); // 2E9930 thunk
 bool retire_retail_deferred_storage(NativeRetailMainState&, StartupFailure&); // 12D930

@@ -1,0 +1,40 @@
+00181a30	addiu sp,sp,-0x40
+00181a34	sd ra,0x30(sp)
+00181a38	sq s2,0x20(sp)
+00181a3c	sq s1,0x10(sp)
+00181a40	jal 0x00126720
+00181a44	_sq s0,0x0(sp)
+00181a48	jal 0x00127100
+00181a4c	_move s2,zero
+00181a50	blez v0,0x00181ab8
+00181a54	_nop
+00181a58	lui s0,0x6a
+00181a5c	addiu s0,s0,-0x1520
+00181a60	lw s1,0x0(s0)
+00181a64	beq s1,zero,0x00181aa0
+00181a68	_nop
+00181a6c	lw v0,-0x621c(gp)
+00181a70	beq v0,zero,0x00181aa0
+00181a74	_nop
+00181a78	beq s1,zero,0x00181aa0
+00181a7c	_nop
+00181a80	jal 0x001cf380
+00181a84	_move a0,s1
+00181a88	beq v0,zero,0x00181aa0
+00181a8c	_nop
+00181a90	lw a0,-0x621c(gp)
+00181a94	jal 0x001cf350
+00181a98	_move a1,s1
+00181a9c	nop
+00181aa0	addiu s0,s0,0xe4
+00181aa4	jal 0x00127100
+00181aa8	_addiu s2,s2,0x1
+00181aac	slt v1,s2,v0
+00181ab0	bnel v1,zero,0x00181a64
+00181ab4	_lw s1,0x0(s0)
+00181ab8	ld ra,0x30(sp)
+00181abc	lq s2,0x20(sp)
+00181ac0	lq s1,0x10(sp)
+00181ac4	lq s0,0x0(sp)
+00181ac8	jr ra
+00181acc	_addiu sp,sp,0x40

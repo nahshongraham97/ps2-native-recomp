@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\build-section-timing\\test_native_retail_scene_bootstrap_prefix.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\research\\runs\\parallel-section-timing-20261122"
+  ],
+  "exit": 0,
+  "seconds": 0.1043703556060791,
+  "executable_sha256": "72dfa5ecaf3527324995dad00097c1c2c4c49acf481ac58e5ff7b78d95218449",
+  "log_sha256": "ce57846b30c28d82f68a459ec25cfdb1f736e408eafa83ca8336c622e2cffdf0"
+}

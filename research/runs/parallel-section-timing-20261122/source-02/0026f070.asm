@@ -1,0 +1,31 @@
+0026f070	addiu sp,sp,-0x20
+0026f074	sd ra,0x10(sp)
+0026f078	sq s0,0x0(sp)
+0026f07c	move s0,a0
+0026f080	lw a0,-0x5758(gp)
+0026f084	beql a0,s0,0x0026f0e0
+0026f088	_ld ra,0x10(sp)
+0026f08c	beql a0,zero,0x0026f0bc
+0026f090	_lw v0,0x0(s0)
+0026f094	jal 0x003de4c0
+0026f098	_nop
+0026f09c	lw a0,-0x5754(gp)
+0026f0a0	beql a0,zero,0x0026f0b8
+0026f0a4	_sw zero,-0x5758(gp)
+0026f0a8	jal 0x00219280
+0026f0ac	_nop
+0026f0b0	sw zero,-0x5754(gp)
+0026f0b4	sw zero,-0x5758(gp)
+0026f0b8	lw v0,0x0(s0)
+0026f0bc	lw a0,0x0(v0)
+0026f0c0	jal 0x002209e0
+0026f0c4	_li a1,0x1
+0026f0c8	lw a0,-0x58d8(gp)
+0026f0cc	jal 0x00219290
+0026f0d0	_move a1,v0
+0026f0d4	sw s0,-0x5758(gp)
+0026f0d8	sw v0,-0x5754(gp)
+0026f0dc	ld ra,0x10(sp)
+0026f0e0	lq s0,0x0(sp)
+0026f0e4	jr ra
+0026f0e8	_addiu sp,sp,0x20
