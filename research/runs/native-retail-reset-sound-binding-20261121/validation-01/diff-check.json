@@ -1,0 +1,5 @@
+{
+  "exit": 0,
+  "stdout": "",
+  "stderr": "warning: in the working copy of 'cmake/native_game.cmake', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'cmake/native_sound_resources.cmake', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'recomp/native_startup_codegen.cpp', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'runtime/include/mka/audio_banks.hpp', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'runtime/include/mka/retail_main.hpp', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'runtime/src/native/audio_banks.cpp', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'runtime/src/native/retail_main_state.cpp', LF will be replaced by CRLF the next time Git touches it\n"
+}

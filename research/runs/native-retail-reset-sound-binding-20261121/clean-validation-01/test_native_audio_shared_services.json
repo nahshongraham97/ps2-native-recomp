@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-loose-20261121\\build-native-loose\\test_native_audio_shared_services.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms4"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_AUDIO_SHARED_SERVICES; real files/handle/revocation only; no playback or endpoint\n",
+  "stderr": "",
+  "seconds": 0.08665130000736099,
+  "build_commit": "646e20365417e1620400dc956112d646d27094dc",
+  "game_run": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "d087d67b2b158b066fb2997223ebe04f3233e6f848735f885347b890faa56408"
+}

@@ -1,0 +1,156 @@
+{
+  "status": "PASS_CONNECTED_RESET_BANK_BINDING_COMPONENTS",
+  "fork_base": "dfaebb19ddc2a6dbcecce3ab12b2933a4a76db8f",
+  "dirty_source": true,
+  "source_sha256": {
+    "cmake/native_game.cmake": "aa719def277c987f6bf2eec950df7ce33d916f8a3b285dc23759f1492c7c4b18",
+    "cmake/native_sound_resources.cmake": "c2b4f51818ff46b85f6a3cafd7485936ebcfe31cee764c3bfa40271c8beb5ebf",
+    "recomp/native_startup_codegen.cpp": "0f54b8d360c17d00eaffc0968c44fe6526e8d80db78d659951a46cd1e3ee83f5",
+    "runtime/include/mka/audio_banks.hpp": "22103d09ef8a9ab94deaa0b1063765045b70ba8896b9574c765cf54dbeca36ae",
+    "runtime/include/mka/audio_resource_domain.hpp": "3afae605aebfd10ddd53e80c9a277fd9e4d94198078869221b8b6f3304c5597d",
+    "runtime/include/mka/sample_payload.hpp": "6097b6fbb70251982d2a9008761828d5f031a73a58b7b2c26a1e04050d01f920",
+    "runtime/include/mka/sound_archive.hpp": "9338842389743e1f553e771d71edafaf1d4eacfc509b9025abeb7866f09efc90",
+    "runtime/include/mka/stream_source.hpp": "a453f5c646acbbc6d79e6df1b95eb929209ae22184eb0bea32a84881a8d3aada",
+    "runtime/include/mka/retail_main.hpp": "43a55774e4f30f5e4c1371e9e5aff8b44753fdf4f488bb2757d4a765b62dd038",
+    "runtime/include/mka/retail_sound_bank_catalog.hpp": "0d89ef7802d2acf0cac0022446ddbc818e4e5cbed70a515939b75acfd16d1ace",
+    "runtime/include/mka/retail_sound_catalog_data.hpp": "d4382b6b5416ac590f38f0ab988f094cd0d592840b4fe7f1c0a10ff88f70c386",
+    "runtime/include/mka/retail_current_sound_required.hpp": "d032f473ab499f88b125af93a0bbb190d0e30dced0cfa1cf7e5362af9a494e59",
+    "runtime/src/native/audio_banks.cpp": "f2daeadeb7fbdd919cbd87f0a76f8f93d58776bbb82be28b058669c2ca69cb4c",
+    "runtime/src/native/sample_payload.cpp": "9cca558d65131a019338a8c910ccb3ec15c568d5a348328d632f52e4a1d745f4",
+    "runtime/src/native/sound_archive.cpp": "6f1d7cf07d17d2b358990e7608a9b2bddc63271b1f4ecfa329b03de9ddc590ef",
+    "runtime/src/native/stream_source.cpp": "001c2d1fd1ee8013078cad1cbff61f035cf087d0c439019556afb4eb77e66f11",
+    "runtime/src/native/retail_main_state.cpp": "7e6b355e4c6a1a2d3ffde3fd64104f6170e027934f90090be07a79393742fab5",
+    "runtime/src/native/retail_sound_bank_catalog.cpp": "bf1cd5e290649564da879497159ad33dd9a4437eacec18caff12317750a2ff5a",
+    "runtime/src/native/retail_sound_bank_main.cpp": "9eab1a7c00d9ea5c4228d4dc2e93d16ffdb464111b77eac5486a82face946663",
+    "tests/test_content_sound_archive.cpp": "66ecc146a50680f0a5530d575635fd3aac57580036302888b371373214addb20",
+    "tests/test_sound_file_errors.cpp": "edfccddf1ff6f69e6b9fd9e6cdd70b1d09a8ccf829b4897ab141421aecf46dc6",
+    "tests/test_audio_shared_services.cpp": "bff07679d14063915b6d1ecc587e3385a6a821d03530f4ff53c4d5e40b2b9ab4",
+    "tests/test_retail_reset_sound.cpp": "8735597d65b4534c4c59c47ca752567a97e06e4498bd5d1336c2689d13ee846d",
+    "tests/test_retail_initial_reset.cpp": "d423fe385e55197ebae72f4654c8e716865fbd22fc79b3a3a00188f1be10401c"
+  },
+  "clients": [
+    {
+      "receipt": "validation-04/test_native_audio_banks.json",
+      "binary_sha256": "963e58e9bd86443bd7d6439833eb489337b5c81a8da8226bd892a7afce0d3fa9",
+      "stdout": "PASS audio bank host ownership, exact real lookup and retained source bytes; no preparation/playback claim\n"
+    },
+    {
+      "receipt": "validation-04/test_native_audio_shared_services.json",
+      "binary_sha256": "da4e965012ba2797cf8adce59dd251f064a37d42f705f742f8d0feede1be0aba",
+      "stdout": "PASS_NATIVE_AUDIO_SHARED_SERVICES; real files/handle/revocation only; no playback or endpoint\n"
+    },
+    {
+      "receipt": "validation-04/test_native_content_sound_archive.json",
+      "binary_sha256": "c24f9e3e3333d3ca91a1b4a617e06a71d737a9a8069d8db785d870aec5be5832",
+      "stdout": "PASS_CONTENT_SOUND_ARCHIVE\n"
+    },
+    {
+      "receipt": "validation-04/test_native_retail_initial_reset.json",
+      "binary_sha256": "44a24047be3de02ec162e714db8e28a9286df7e8a82bfa2f892824e386083697",
+      "stdout": "PASS native reset ordering, live fields, suspension,1799-wait timeout, failure and lifetime; six effects substituted in this caller fixture\n"
+    },
+    {
+      "receipt": "validation-04/test_native_retail_reset_sound.json",
+      "binary_sha256": "bf6256c3e1557710af7fb51728f1de2a14cb29e57701d7f86a505a87650822dd",
+      "stdout": "PASS_CONNECTED_RETAIL_RESET_SOUND; production bank binding/four real callbacks/wait release; unrelated game/context fixtures; no game/endpoint\n"
+    },
+    {
+      "receipt": "validation-04/test_native_sound_file_errors.json",
+      "binary_sha256": "cc365d2cafd144a29b261501d5169a6d27b81e88655e8191b19e1060e64e8ee4",
+      "stdout": "PASS_NATIVE_SOUND_FILE_ERRORS\n"
+    },
+    {
+      "receipt": "caller-validation-01/test_native_retail_file_startup.json",
+      "binary_sha256": "6ea52d96f78424d5232d5d8550874a22f1bf7d00c545557f02c5490a14e633d1",
+      "stdout": "PASS native middleware file startup: 15 allocation cuts, 12 native files, 65 native children; source frame body covered separately; callback producers/game remain open\n"
+    },
+    {
+      "receipt": "caller-validation-01/test_native_retail_initial_reset.json",
+      "binary_sha256": "c57a083f7395b01109a090f040f34e11d736f6f094a349351b07d55e923a1a27",
+      "stdout": "PASS native reset ordering, live fields, suspension,1799-wait timeout, failure and lifetime; six resource children remain unported\n"
+    },
+    {
+      "receipt": "caller-validation-01/test_native_retail_initial_task.json",
+      "binary_sha256": "f9fca5ded24de717adc1ff202148e1d574079e9672b7268cca7c5bccac8a09d6",
+      "stdout": "PASS native initial task parent and menu continuation; test-only child effects, full Main/game open\n"
+    },
+    {
+      "receipt": "caller-validation-01/test_native_retail_middleware_main.json",
+      "binary_sha256": "d954e2eb668b777cc9887413412beb86d42f69b5da4e8101790e233241bffce3",
+      "stdout": "PASS actual native middleware main pump, source completion order and real main control transfer; game open\n"
+    },
+    {
+      "receipt": "caller-validation-01/test_native_retail_sound_bank_jobs_retail.json",
+      "binary_sha256": "c4194a7e70d7d782e277645aa0db29cbf4aea29a39f69f77040f33fcd97837c1",
+      "stdout": "bank=permanent status=0 handle=1 bank_error=0 preparation_error=0\nbank=announcr status=0 handle=1 bank_error=0 preparation_error=0\nbank=shell_music status=0 handle=1 bank_error=0 preparation_error=0\nbank=shell status=0 handle=1 bank_error=0 preparation_error=0\nbank=__MKAR_no_such_bank__ status=2 handle=0 bank_error=8 preparation_error=0\nbank=shell status=3 handle=0 bank_error=0 preparation_error=0\nbank=announcr status=4 handle=0 bank_error=0 preparation_error=0\nPASS_RETAIL_SOUND_BANK_JOBS_REAL_FILES; no Main/game/playback/physical endpoint claim\n"
+    },
+    {
+      "receipt": "caller-validation-01/test_native_retail_startup.json",
+      "binary_sha256": "5afdfdf494f0f1428d9f1313cf668a8827660038e55aae14299f8daa77fbd9c5",
+      "stdout": "PASS generated retail startup owns actual arguments/content/memory group; failed initialization is unpublished and full entry link remains blocked\n"
+    }
+  ],
+  "full_entry_undefined": [
+    "mka::retail::main_binding::initialize_retail_saved_profile_records(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::read_retail_audio_boot_word(mka::retail::NativeRetailMainState const&)",
+    "mka::retail::main_binding::initialize_retail_audio_stage(mka::retail::NativeRetailMainState&, std::__1::array<unsigned int, 5ull> const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_mode_objects(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_mode_service(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_section_service(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_first_scene(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_post_scene_timing(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_post_scene_sections(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_first_frame_graphics(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::retail_frame_processing_inhibited(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::poll_retail_controller_roles(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::advance_retail_game_services(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::service_retail_frame_input(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::retail_render_enabled(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::render_retail_frame(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::prune_retail_associations(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::retail_ordinary_counter_inhibited(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::retail_mode_dispatch_enabled(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::dispatch_retail_enabled_mode(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::create_retail_action_task(mka::retail::NativeRetailMainState&, mka::retail::RetailActionTaskRequest const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::deliver_retail_builtin_scene_event(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, unsigned int, unsigned int, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::reset_and_bind_retail_scene_event_graph(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, mka::retail::StartupFailure&)",
+    "mka::retail::current_sound_required::prepare_game_sound_state_12d7e0(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::current_sound_required::create_playback_context_316320(mka::retail::NativeRetailMainState&, mka::sound::AudioBankSession&&, mka::retail::StartupFailure&)",
+    "mka::retail::current_sound_required::update_programs_after_bank_results_3152c0(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::initial_task_required::begin_intro_18deb0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::transition_1225d0(mka::retail::NativeRetailMainState&, unsigned int, mka::retail::RetailInitialTransitionBody)",
+    "mka::retail::initial_task_required::begin_prompt_18dc10(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d450(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d870(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d8e0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d700(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d800(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d660(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d770(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_reset_required::reset_saved_profile_children_246070(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::initial_reset_required::reset_selected_resource_334700(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::initial_reset_required::clear_nonowning_references_18da30(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::initial_reset_required::configure_selected_resource_zero_16fc70(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)"
+  ],
+  "resolved_roots": [
+    "initialize_retail_current_sound",
+    "pump_retail_current_sound",
+    "request_mode_one_banks_12a4f0",
+    "banks_pending_12abd0"
+  ],
+  "new_required_children": [
+    "prepare_game_sound_state_12d7e0",
+    "create_playback_context_316320",
+    "update_programs_after_bank_results_3152c0"
+  ],
+  "game_run": false,
+  "frames": [],
+  "audio": [],
+  "scope": "Connected actual bank/reset caller with seven explicit unrelated game/context fixtures; full acceptance OPEN",
+  "limits": [
+    "Complete native context/game/program effects remain unimplemented",
+    "Live nonselected bank references and active playback teardown remain named blockers",
+    "Direct SEC/geometry/texture-to-game GPU draw is not implemented",
+    "Clean committed source validation pending"
+  ]
+}

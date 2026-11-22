@@ -1,0 +1,1777 @@
+{
+  "original_elf": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\SLUS_214.10",
+  "original_elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "program": {
+    "name": "SLUS_214.10",
+    "project_path": "/SLUS_214.10",
+    "executable_path": "/C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/local-research/ghidra-mcp/disc-files/SLUS_214.10",
+    "executable_format": "Executable and Linking Format (ELF)",
+    "language_id": "r5900:LE:32:default",
+    "compiler_spec": "default",
+    "processor": "MIPS-R5900",
+    "endian": "little",
+    "pointer_size": 4,
+    "image_base": "00100000",
+    "min_address": "00100000",
+    "max_address": "_elfSectionHeaders::000001b7",
+    "memory_size": 105345404,
+    "function_count": 13138,
+    "external_function_count": 1,
+    "entry_points": [
+      "00100008"
+    ],
+    "md5": "d79dee61099b6b206ee1da180fea0cf6",
+    "sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f"
+  },
+  "new_functions": [
+    {
+      "address": "0x12d7e0",
+      "start": "0x12d7e0",
+      "end_exclusive": "0x12d82c",
+      "words": 19,
+      "sha256": "9638a99c420ff8dc9c5a10fba12d7689754b4aa5e13bd4571363314430a5790b",
+      "full_word_coverage": true
+    },
+    {
+      "address": "0x3152c0",
+      "start": "0x3152c0",
+      "end_exclusive": "0x315334",
+      "words": 29,
+      "sha256": "695290b7514ef3abf40c3480647453c5c16ed5e81ae40b9cdf3665721911bb8a",
+      "full_word_coverage": true
+    },
+    {
+      "address": "0x316320",
+      "start": "0x316320",
+      "end_exclusive": "0x3165ac",
+      "words": 163,
+      "sha256": "c0bb5c69e2a4a0ceaf0d9ad1c92f2518fadf60c0a2dcd85a00cc8300c7a10fff",
+      "full_word_coverage": true
+    }
+  ],
+  "prior_source84_sha256": "7ea8d026dc0cb0afb6ed189e8c49af9bafffa7c87252886f2c14020ac7882a9d",
+  "records": [
+    {
+      "name": "permanent",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "b6921f9a0e0c2390b924d597893048a2dae0a35fbcdb21e86d872a28e3c7d3ef"
+    },
+    {
+      "name": "shell",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "4216fe7f3c71181be176cf91827ad20f9a7886555f8086c0fd12bcade9d42f64"
+    },
+    {
+      "name": "shell_music",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "68a816812e0df17f3bf58398b4b81632f170e9cd63ad1e0ee57050f4eef94c8f"
+    },
+    {
+      "name": "shell_cap",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "c743d57e4d5d09113ce144ad61e661e83aca73e4434113a68843b997e0644a74"
+    },
+    {
+      "name": "music_one_player_path",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "724b24c6b450d584749ce0495b579d51af2db0f3d457ccb396d2273ed86dabe0"
+    },
+    {
+      "name": "shell_jukebox",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "c66ae9f3daf491ff546c8359d2dd155dd80ef681db7eb43242c3a9cfff9d7251"
+    },
+    {
+      "name": "crypt",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "2b03da7b42260729330f8f70d53ba0a92d8d4928f529d5cee59e78c52967fb7b"
+    },
+    {
+      "name": "crypt_bats",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "53724dc5c4e32e325916fb5c23cceb981e8b31d5ae2ab304a8f6cf200c766f63"
+    },
+    {
+      "name": "announcr",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "59c00b657698a2e6c4ca7ee532edaa4315e9a9262e9880121dd1148094ed6e23"
+    },
+    {
+      "name": "fightfx1",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "f19314d37139b0c8e1beb3843f785c2c57f83ced4d107bf8f6baa7e80c8ef72b"
+    },
+    {
+      "name": "music_endings",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "aa1a67eada5dda991967379410155455b5ab363b85116a1f25a626a96edf19ae"
+    },
+    {
+      "name": "cap_fight_vo",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "db519792eaa803a4abd10e12c0abed8c16188282a22f669f9d06004ed259d690"
+    },
+    {
+      "name": "bg_red_dragon",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "700988ae919cdbd97ce9a13732ef512849591e688b364ca1204d172782a4eb80"
+    },
+    {
+      "name": "bg_subway_station",
+      "initial_flag_byte": 1,
+      "original_record_sha256": "9736f954b16ee24fa6c351a1b7ef9b310b394eae855cd5d634b4d01a6c6c6aee"
+    },
+    {
+      "name": "bg_prison",
+      "initial_flag_byte": 2,
+      "original_record_sha256": "39249ba5f04b8b0e34893a8538149ea2bd52fbbaa115cb308537e5961c16a68a"
+    },
+    {
+      "name": "bg_armory",
+      "initial_flag_byte": 3,
+      "original_record_sha256": "4a8c5ac0b23c37bfbb37cfef4d55e4fa2bb76ef56a7536e776147c0b3817ad67"
+    },
+    {
+      "name": "bg_goros_lair",
+      "initial_flag_byte": 4,
+      "original_record_sha256": "2ce80a429ca58a1e6317b6ae39046cd6dade4e9966bb2d820117c039747ddf31"
+    },
+    {
+      "name": "bg_battle_arena",
+      "initial_flag_byte": 5,
+      "original_record_sha256": "a953c8e346c9289761059afb7a35be4bccfb758e54359e4c781e298e5bd28d84"
+    },
+    {
+      "name": "bg_bell_tower",
+      "initial_flag_byte": 6,
+      "original_record_sha256": "68ab6550a758922c28001400729e90764221f4f1d4e309edf57a4c27aab5bb00"
+    },
+    {
+      "name": "bg_wasteland",
+      "initial_flag_byte": 7,
+      "original_record_sha256": "ad37dfeaa1ff00adc9521c527b2da5be56135da01d88b31ee40ad053980ae652"
+    },
+    {
+      "name": "bg_jungle_arena",
+      "initial_flag_byte": 8,
+      "original_record_sha256": "78a3d9ace3c9c84bf319a876de508c67de706156b644a70959de4e57e7da01d2"
+    },
+    {
+      "name": "bg_lumber_mill",
+      "initial_flag_byte": 9,
+      "original_record_sha256": "7aef02007e5303dddcfe4421a877577231f145af62d02b5eb0c8cd158332a6cf"
+    },
+    {
+      "name": "bg_evil_tower",
+      "initial_flag_byte": 10,
+      "original_record_sha256": "b83c18c5240f80695d5d62dcfa2e5a38cfa3129c35ae8e37a356093ee8e75abc"
+    },
+    {
+      "name": "bg_fire_well",
+      "initial_flag_byte": 11,
+      "original_record_sha256": "8ef171ee5bc6fd41d41ff6fcfc7cc8beb6b36296d2c5b16b49e89fe380d871c2"
+    },
+    {
+      "name": "bg_hell",
+      "initial_flag_byte": 12,
+      "original_record_sha256": "7ec367541f15abbae5c80240f91856db5ddf64445f21facf91b7b232ab374680"
+    },
+    {
+      "name": "bg_meteor_storm",
+      "initial_flag_byte": 13,
+      "original_record_sha256": "22822915713df98a2d9e96fdd21c2f74d2e08c8edad7baef0c584b956e3666ad"
+    },
+    {
+      "name": "bg_reptiles_lair",
+      "initial_flag_byte": 14,
+      "original_record_sha256": "0bf7a55b8d8a3d95cf2a37e5697a9469c531f0579b6f7e527a25803ab591a680"
+    },
+    {
+      "name": "bg_soul_chamber",
+      "initial_flag_byte": 15,
+      "original_record_sha256": "3fa299babb6929830b50b4073febb1dd1803707aee6a3ea3f55276e4718653e3"
+    },
+    {
+      "name": "bg_the_pyramid",
+      "initial_flag_byte": 16,
+      "original_record_sha256": "7eb0df610d76ff2133ce257209507f3888e24168ee46fef9ce643d4fc227ea48"
+    },
+    {
+      "name": "bg_throne_room",
+      "initial_flag_byte": 17,
+      "original_record_sha256": "34a80fdfa25939477bdc0fdac2f4ca2a8133dd91b2cceefc02fc8f8804ea7daf"
+    },
+    {
+      "name": "bg_hell_foundry",
+      "initial_flag_byte": 18,
+      "original_record_sha256": "9f1a29e27f084034d40c45b6db1be6b50bd56dcd57819a88d66736bd92bdd3c9"
+    },
+    {
+      "name": "bg_nether_belly",
+      "initial_flag_byte": 19,
+      "original_record_sha256": "5906364c605b47f44e95cd05a9c2abeccb6a31335a4c2521877110667e94f832"
+    },
+    {
+      "name": "bg_sky_temple",
+      "initial_flag_byte": 20,
+      "original_record_sha256": "4d8f9f219831f160d9be93e054f8b0fbbf5879a18ec6771c5dfd2c2a9f3f1f13"
+    },
+    {
+      "name": "bg_kollapsing_kliffs",
+      "initial_flag_byte": 21,
+      "original_record_sha256": "bba9af5c9462c143b99132ec51dff56f3c34224bfd1fd368252a896dd3666193"
+    },
+    {
+      "name": "bg_innerspire",
+      "initial_flag_byte": 22,
+      "original_record_sha256": "1007025ac403a530938a2ba4b57a522dbc9f6ffe0d3d2f1fc41597d048f1ab5f"
+    },
+    {
+      "name": "bg_balcony",
+      "initial_flag_byte": 23,
+      "original_record_sha256": "978bee0d6ec0edf9ddddb151c2c959bee01f984fb8d61724554b46dc655545bf"
+    },
+    {
+      "name": "bg_shinnok_throneroom",
+      "initial_flag_byte": 24,
+      "original_record_sha256": "4974e05b09421c29905bd9497cde9df8ced89db382a176d92f6a1ad49b024b74"
+    },
+    {
+      "name": "bg_shaokahn_throneroom",
+      "initial_flag_byte": 25,
+      "original_record_sha256": "f4543438ce774d5449d51deea6f8f60615b19a320b483223856b74fd93aaa0fd"
+    },
+    {
+      "name": "bg_fire_arena",
+      "initial_flag_byte": 26,
+      "original_record_sha256": "f856179299c605d52d282a71bd42d65d24a8874d19f8651f7d8d0e7ad13d5afe"
+    },
+    {
+      "name": "bg_forest_arena",
+      "initial_flag_byte": 27,
+      "original_record_sha256": "dafbbbdc02519f5397203dcc5f423da093e6eb07cd1cbad561f107390cf6de79"
+    },
+    {
+      "name": "bg_finalkqbattle",
+      "initial_flag_byte": 28,
+      "original_record_sha256": "24a67b0f604b36013de694f09b250c4cab7418f3dd5e76a17813c082d64b980f"
+    },
+    {
+      "name": "bg_scorpionslair",
+      "initial_flag_byte": 29,
+      "original_record_sha256": "b5f8a4dd048d7ac942dc924e89c71fc671424a1c5dcd629e2c02cf0306dd79a4"
+    },
+    {
+      "name": "bg_outworld",
+      "initial_flag_byte": 30,
+      "original_record_sha256": "9b2a85d3f076765ec7a3fb92377252d57e31997cba5cc5b2ced35fd16978a363"
+    },
+    {
+      "name": "c_jax",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "b7e5592a3afef7f334df406b8bba7035a28232befa6fc360e8b82190e2cad63d"
+    },
+    {
+      "name": "c_scorpion",
+      "initial_flag_byte": 1,
+      "original_record_sha256": "0dc197d81dbbfbc9a2cf17292e7151732efd593a8213b197344bf06a02b068fb"
+    },
+    {
+      "name": "c_subzero",
+      "initial_flag_byte": 2,
+      "original_record_sha256": "dcc0ad86d36627d472973c8d9ed6f0b8f166075dc16ebbe4fc18c2694522bff1"
+    },
+    {
+      "name": "c_baraka",
+      "initial_flag_byte": 3,
+      "original_record_sha256": "94ca77d559a1a98dd861c18e8feb7c8e05398ad9df42f8b32edefb10151a5d2a"
+    },
+    {
+      "name": "c_ermac",
+      "initial_flag_byte": 4,
+      "original_record_sha256": "ca3abe90a97f7e10f2463a241a88ef3693c83cdab9faae98080076205e709dcb"
+    },
+    {
+      "name": "c_hutaro",
+      "initial_flag_byte": 5,
+      "original_record_sha256": "0a4f248bfbf192e93603e6fb34d4ebc02f8d4e6179fc9b478d3787d1e5cbfb85"
+    },
+    {
+      "name": "c_kenshi",
+      "initial_flag_byte": 6,
+      "original_record_sha256": "357c23b9a7a9e0d2bdb707f0c9d0256acc14f4047d501623734080a25421336a"
+    },
+    {
+      "name": "c_limai",
+      "initial_flag_byte": 7,
+      "original_record_sha256": "bc3dd5afe39d190b0b4f72a954056503d0ca99a5eaa23430b968dd45b8d83051"
+    },
+    {
+      "name": "c_liukang",
+      "initial_flag_byte": 8,
+      "original_record_sha256": "8f5cb85a36ed9ce53256d31af8283e1c1fa5fa34677483431d0cf45c8e8104ff"
+    },
+    {
+      "name": "c_mileena",
+      "initial_flag_byte": 9,
+      "original_record_sha256": "953b23c39995fd39a309db46a9166ae0f9ceac5d2b140be2eddf6a22c59d830b"
+    },
+    {
+      "name": "c_nightwolf",
+      "initial_flag_byte": 10,
+      "original_record_sha256": "edb6f072a373bbfbf6afdc6d34ea8ac463c6e83270ceee2b606f68efab8f1a1a"
+    },
+    {
+      "name": "c_sindel",
+      "initial_flag_byte": 11,
+      "original_record_sha256": "463043be03a5aa59a06b6a7de11bfc544f780bdea2f07d594348cf5747c8ded1"
+    },
+    {
+      "name": "c_boraicho",
+      "initial_flag_byte": 12,
+      "original_record_sha256": "64e158eec0f5a75e4aad777cbdde26c7ba0c8e7c10a3abb145805873d43299b3"
+    },
+    {
+      "name": "c_ashrah",
+      "initial_flag_byte": 13,
+      "original_record_sha256": "4571a195d80981aa4ef2bbf9f0733edf67c2cc6e909e051951ac9e15d6797907"
+    },
+    {
+      "name": "c_jade",
+      "initial_flag_byte": 14,
+      "original_record_sha256": "27476964814d709afa2d2e3aea3e0a5bacedb82248f041b8212d0ee9e4b59518"
+    },
+    {
+      "name": "c_kabal",
+      "initial_flag_byte": 15,
+      "original_record_sha256": "36a6c7e2a531f8ee678bbf4d56d0039dcae22dd2181986c17c8d14a644114e5b"
+    },
+    {
+      "name": "c_darrius",
+      "initial_flag_byte": 16,
+      "original_record_sha256": "f78aef97690850e2e1dd670bc9d26b04a6ef632fde71e6d4d18ad18d34ff8a5c"
+    },
+    {
+      "name": "c_dragon_king",
+      "initial_flag_byte": 17,
+      "original_record_sha256": "827ee8f1af15eab456073308670cfce1407e4a076154af428fd3ce39c4bb82db"
+    },
+    {
+      "name": "c_kira",
+      "initial_flag_byte": 18,
+      "original_record_sha256": "478eee2cd9cf57d143c46dbd7ef4a04d28ce8ead1439350d94af394dcf2fec7c"
+    },
+    {
+      "name": "c_dairu",
+      "initial_flag_byte": 19,
+      "original_record_sha256": "a7188e0f5167c31ebed71da58f2f5ee9c5466b12caa4ceddf1561f1a4963c3ce"
+    },
+    {
+      "name": "c_havik",
+      "initial_flag_byte": 20,
+      "original_record_sha256": "957d9e1c4a436cd2daeed0401169c195c785b3d71ada0bf2f63a5db4eec9edb5"
+    },
+    {
+      "name": "c_kobra",
+      "initial_flag_byte": 21,
+      "original_record_sha256": "a16a96423816d4fd6fd318c0101090009018de4331795b6e3f0efea3f3984276"
+    },
+    {
+      "name": "c_raiden",
+      "initial_flag_byte": 22,
+      "original_record_sha256": "6958d7b2f10afe46cef266d5c63067a292fcd03f7434fff98f3d1c1ac6875a68"
+    },
+    {
+      "name": "c_shujinko",
+      "initial_flag_byte": 23,
+      "original_record_sha256": "1cd6611de2b4bc45141a0efade7cb37300ee2e20465c66291c942e1cf11580ec"
+    },
+    {
+      "name": "c_tanya",
+      "initial_flag_byte": 24,
+      "original_record_sha256": "efe232e58042b9d48a441e7bbc0ab8c79567b39accb93bd25851882973073dce"
+    },
+    {
+      "name": "c_blaze",
+      "initial_flag_byte": 25,
+      "original_record_sha256": "be47ed86d93cb93445f1cd1d12c8c4c633a5e0ab8976e6a087920495306344ad"
+    },
+    {
+      "name": "c_kitana",
+      "initial_flag_byte": 26,
+      "original_record_sha256": "b4ac96970c462f95911b4e44613c2f570f9c790928b7b9a5fa9fbcb4068d09a0"
+    },
+    {
+      "name": "c_frost",
+      "initial_flag_byte": 27,
+      "original_record_sha256": "8db591d9ac5beccd6feac43ad0f098e179f4d71679c1df2cca93e99bb03bfccc"
+    },
+    {
+      "name": "c_cap",
+      "initial_flag_byte": 28,
+      "original_record_sha256": "5e3744ec1993ac2e885b65ab9918c77c84ac1092ebc4da807efa116f92fe6fbc"
+    },
+    {
+      "name": "c_kai",
+      "initial_flag_byte": 29,
+      "original_record_sha256": "4c0574fc789fb7e333a903b1fe114705f0f75cf80755ae92c68ed7f3c2a4ae74"
+    },
+    {
+      "name": "c_stryker",
+      "initial_flag_byte": 30,
+      "original_record_sha256": "2d7a204646cfe78be08821262d61fdce27a2226005587555b22a7dc86de00be5"
+    },
+    {
+      "name": "c_rain",
+      "initial_flag_byte": 31,
+      "original_record_sha256": "3fe6b17c7005eb03b277e355f94f8fead8288278b2d0a759407d1e2160da6d54"
+    },
+    {
+      "name": "c_jarek",
+      "initial_flag_byte": 32,
+      "original_record_sha256": "42bf4192d6f254cacfb3411d84a467d1f3df24d181daadcca66a6ad1c2c907b6"
+    },
+    {
+      "name": "c_sheeva",
+      "initial_flag_byte": 33,
+      "original_record_sha256": "ad535ba31f8a15a94a41545562d66420a5936bcd6dbd2aea6e14261218eba1fe"
+    },
+    {
+      "name": "c_shinnok",
+      "initial_flag_byte": 34,
+      "original_record_sha256": "1df57178d1d8b2a616fbbbedcb5de44a34d8623d1e1653ec4dcae1241f722afd"
+    },
+    {
+      "name": "c_fujin",
+      "initial_flag_byte": 35,
+      "original_record_sha256": "ea349b80a85df58651ed32c13ed4e174d5c0660de70ad584e47baa69554b9d0d"
+    },
+    {
+      "name": "c_reiko",
+      "initial_flag_byte": 36,
+      "original_record_sha256": "71ed17e815acaab1851b364aee78fa8e38ee728227b76e567be22633c8ce8f73"
+    },
+    {
+      "name": "c_taven",
+      "initial_flag_byte": 37,
+      "original_record_sha256": "c46f17c15e94b988a358289ec8a3181b949ff07e404391ec298ce337edab1061"
+    },
+    {
+      "name": "c_kintaro",
+      "initial_flag_byte": 38,
+      "original_record_sha256": "511334f5a0a515c2db1c459e3c4945b6b9c75e844c57de9f0c290dfa735b97c1"
+    },
+    {
+      "name": "c_sareena",
+      "initial_flag_byte": 39,
+      "original_record_sha256": "51c6b07d5e98472e16a637d99fd36f5a16faa1cbdd31df5d21768a2d10f3350d"
+    },
+    {
+      "name": "c_sektor",
+      "initial_flag_byte": 40,
+      "original_record_sha256": "40521f6fbdcb14254a1d9c34d4a891992d07da5232b70f93d13e3ca9a10a1a13"
+    },
+    {
+      "name": "c_goro",
+      "initial_flag_byte": 41,
+      "original_record_sha256": "7d6eccc16774207949240716cba5ee5e394cb078f7000592bc154ed6db234a5b"
+    },
+    {
+      "name": "c_motaro",
+      "initial_flag_byte": 42,
+      "original_record_sha256": "a87c17a5e2e885df9088744f01da103ef2e5e0e2344405edadf089b4ce2abd6c"
+    },
+    {
+      "name": "c_shao_kahn",
+      "initial_flag_byte": 43,
+      "original_record_sha256": "65be02d4b3e513f505dc5e881844e379c105ffd6a5d424b017b5af30c827f483"
+    },
+    {
+      "name": "c_cyrax",
+      "initial_flag_byte": 44,
+      "original_record_sha256": "38818c4f40735353f7976b662edc1c3563fd5d435772740a5ddbbe7982075f69"
+    },
+    {
+      "name": "c_drahmin",
+      "initial_flag_byte": 45,
+      "original_record_sha256": "b9708d7f46a6995eb3f2180737a3131c3bffdd45e55a215abe0357a02731a46d"
+    },
+    {
+      "name": "c_hsu_hao",
+      "initial_flag_byte": 46,
+      "original_record_sha256": "30ce673635b3e6c2cb9319d4e698ee74dd7957398a191e09845d1d0ac0b6141b"
+    },
+    {
+      "name": "c_johnnycage",
+      "initial_flag_byte": 47,
+      "original_record_sha256": "658b566584014832e44ef6e63a7e3b5e0e3641f167869c03e70e0f61948a87d5"
+    },
+    {
+      "name": "c_kano",
+      "initial_flag_byte": 48,
+      "original_record_sha256": "d1bb7c505e7547db360a64e57bcb1dfc453bd5219299902b5b41cdbcf4465bde"
+    },
+    {
+      "name": "c_kunglao",
+      "initial_flag_byte": 49,
+      "original_record_sha256": "84f05cdbaca5451c6ecddc108912ca3eb0af358388d6af58652669a44c673236"
+    },
+    {
+      "name": "c_mavado",
+      "initial_flag_byte": 50,
+      "original_record_sha256": "e0f99fc66eadb969df8cd281887a0d5243b27b528b3d3b3d2203b834eb1e3c15"
+    },
+    {
+      "name": "c_mokap",
+      "initial_flag_byte": 51,
+      "original_record_sha256": "ed32acfaa3cbd47e3f91d6eaeab094a52463bf31d73cd50cb3942e127950a875"
+    },
+    {
+      "name": "c_moloch",
+      "initial_flag_byte": 52,
+      "original_record_sha256": "da3dbf9c3f3543171464eeb7a588281bad653c274f886d09d744e85eb6375f3a"
+    },
+    {
+      "name": "c_nitara",
+      "initial_flag_byte": 53,
+      "original_record_sha256": "1868b8bf04c9d840dd88d02eacdd493a5a757a4dd76de180c098b6731baafd76"
+    },
+    {
+      "name": "c_quanchi",
+      "initial_flag_byte": 54,
+      "original_record_sha256": "c66c9c8bb93eb49438a3327e2df142ada59c3dd4fb3fd086c20e4348bc03299e"
+    },
+    {
+      "name": "c_reptile",
+      "initial_flag_byte": 55,
+      "original_record_sha256": "135c36a0e42e44a577bf493c33338d531f23ccbaa6a7d8cb5bf11dcf3868a3ac"
+    },
+    {
+      "name": "c_shangtsung",
+      "initial_flag_byte": 56,
+      "original_record_sha256": "3cad10245dcf64ab341af7baa2689f01463844593b704b7997565a3584039b65"
+    },
+    {
+      "name": "c_sonya",
+      "initial_flag_byte": 57,
+      "original_record_sha256": "32f8a4c6161b11f7905eeafb3fd6364f5b9076c74654a5b301df4708262df5f0"
+    },
+    {
+      "name": "c_noob",
+      "initial_flag_byte": 58,
+      "original_record_sha256": "3accf16eb4c06e98f0c1cd6ab63262cd0b400e36a39f06fa28c94f427b820d23"
+    },
+    {
+      "name": "c_smoke",
+      "initial_flag_byte": 59,
+      "original_record_sha256": "094aee2198e950d5a9f713cf1e7e60eb7224edae055804ae61699fbce12a9dba"
+    },
+    {
+      "name": "c_chameleon",
+      "initial_flag_byte": 60,
+      "original_record_sha256": "e6b5383f47b3447b4083b619d6dbb8ae346592652f25f2028520aec6aeb5e8fc"
+    },
+    {
+      "name": "c_daegon",
+      "initial_flag_byte": 61,
+      "original_record_sha256": "82c79f4d3af1597c02573054eb47b709d0222848ba17297d5a729cef14ecfdfe"
+    },
+    {
+      "name": "c_meat",
+      "initial_flag_byte": 62,
+      "original_record_sha256": "1b5ea455db7a03cce14df530fdd48ff685798b3a319efddc8e3664718e74a9ad"
+    },
+    {
+      "name": "c_cap_skykick",
+      "initial_flag_byte": 63,
+      "original_record_sha256": "4e8d8d7ce8b1fdb711b99d14a8625c1029e3f006e95da058369ac16c2476134a"
+    },
+    {
+      "name": "c_cap_iceprojectile",
+      "initial_flag_byte": 64,
+      "original_record_sha256": "9e8b060825839c8c9fa1be23e6ad8b97903368932004d3c4f11e9b0b685e106b"
+    },
+    {
+      "name": "c_cap_neckbreak",
+      "initial_flag_byte": 65,
+      "original_record_sha256": "d8c05f084f0c7054dae15accdfc80514ace8415820fdc8e3293bff2b27a739aa"
+    },
+    {
+      "name": "c_cap_summonflames",
+      "initial_flag_byte": 66,
+      "original_record_sha256": "334ed927f15684e447d8a1a7e5ea1bbce1138601b7509268521e35ddc6af5ac5"
+    },
+    {
+      "name": "c_cap_j_teleport",
+      "initial_flag_byte": 67,
+      "original_record_sha256": "6e3f66673cd6e942cabc66b2e46c5dc1ef64f3b474551c940d253a341d620f18"
+    },
+    {
+      "name": "c_cap_boomerang",
+      "initial_flag_byte": 68,
+      "original_record_sha256": "8d9709e5c2c66284d506be54562ca137c361461b92c569b2489ad1a8a5858418"
+    },
+    {
+      "name": "c_cap_spear",
+      "initial_flag_byte": 69,
+      "original_record_sha256": "e90b4acfef3e977ffdf0bd3d69ad9a52277c6918a4d0857dc28efdf54bd58072"
+    },
+    {
+      "name": "c_cap_m_roll",
+      "initial_flag_byte": 70,
+      "original_record_sha256": "e31cf756e10efc3e7744607b18fa54c2ad8a07b574dbc746b77a7d6d0f0d2588"
+    },
+    {
+      "name": "c_cap_shadowkick",
+      "initial_flag_byte": 71,
+      "original_record_sha256": "cb3e85447ac447ba2f00d9081962b5ca66a386a798f1d69874eaf7c70de71224"
+    },
+    {
+      "name": "c_cap_fireball",
+      "initial_flag_byte": 72,
+      "original_record_sha256": "b7e76ffc7f2ae032c148f4fe167ebc0a2bf214656394fc91396a6cce205224b3"
+    },
+    {
+      "name": "c_cap_bellybounce",
+      "initial_flag_byte": 73,
+      "original_record_sha256": "f6313bbcb14d7695259b872d1ca552cbe3a4afa1266d902531367dde6523302b"
+    },
+    {
+      "name": "c_cap_brkaprojectile",
+      "initial_flag_byte": 74,
+      "original_record_sha256": "fcd2e46b0e1cc28612d45bb892fca84be4d137b9f534bc31a7b15df349a2afc7"
+    },
+    {
+      "name": "c_cap_dprojectile",
+      "initial_flag_byte": 75,
+      "original_record_sha256": "9e10a9ee309833de55e39ece46faf19bf15aeeb351e0540d7b7592707a8af291"
+    },
+    {
+      "name": "c_cap_dthump",
+      "initial_flag_byte": 76,
+      "original_record_sha256": "f9a2e1462f80ae19a206d8c0673be3fc94807a4d6e6678896f0a83148c7cc85b"
+    },
+    {
+      "name": "c_cap_flamefist",
+      "initial_flag_byte": 77,
+      "original_record_sha256": "deadcc0375b52e5f7a982c507eceb73683f38a85d20efb9b846961184aae6fba"
+    },
+    {
+      "name": "c_cap_flamekick",
+      "initial_flag_byte": 78,
+      "original_record_sha256": "65784b2857bd7f142f1e112027c809d6a3307bbe42df50b0b3b6b61f9bbcaf8f"
+    },
+    {
+      "name": "c_cap_fujdivekick",
+      "initial_flag_byte": 79,
+      "original_record_sha256": "f0caae9ffcd6f81bf7376d7a7f46af7c0684b683b649bf12c55bafb6f980fcc5"
+    },
+    {
+      "name": "c_cap_fujlift",
+      "initial_flag_byte": 80,
+      "original_record_sha256": "507526aa4ddb71f8cc49e52fdd0e1454c99064ab974ed1f7341e1c74f8d5a839"
+    },
+    {
+      "name": "c_cap_fujprojectile",
+      "initial_flag_byte": 81,
+      "original_record_sha256": "c561fef34bdb7f221617e60a0439b334c4ba7961bb17fb50241e7b6ac6ad891c"
+    },
+    {
+      "name": "c_cap_fujspin",
+      "initial_flag_byte": 82,
+      "original_record_sha256": "5911f696f767e61ef561504ed1bb95af169d7735a37ff79047aa800c15c06f69"
+    },
+    {
+      "name": "c_cap_hprojectile",
+      "initial_flag_byte": 83,
+      "original_record_sha256": "5876d746d91290ee3064fb61482abae29bf175a88996b26b49178e7e43804b9b"
+    },
+    {
+      "name": "c_cap_hvkprojectile",
+      "initial_flag_byte": 84,
+      "original_record_sha256": "8b9b45575de4c5f4da31c7edfa1514c9ac53ee75ecc2077ddcc2235d34f1aec2"
+    },
+    {
+      "name": "c_cap_hvkskrape",
+      "initial_flag_byte": 85,
+      "original_record_sha256": "71c2570d91b2032d18e85168bc401639a7a533b330d65a8f6b3bbd485cefcf43"
+    },
+    {
+      "name": "c_cap_hvktwist",
+      "initial_flag_byte": 86,
+      "original_record_sha256": "9d668ed7ea8b31a9712f17d12bbb76b66310dd41ec01ea9ef16d3ce1db2add72"
+    },
+    {
+      "name": "c_cap_jbackslam",
+      "initial_flag_byte": 87,
+      "original_record_sha256": "79a9d73c96720777a5fb4c7cf102fe33202fa7b5883fa68e58914d97f02dadc1"
+    },
+    {
+      "name": "c_cap_jball",
+      "initial_flag_byte": 88,
+      "original_record_sha256": "87fb7a2f76cde3eeaa194db22a3bcb4a45523f01ffc34efc569c86b905be0a6a"
+    },
+    {
+      "name": "c_cap_kaiduckkick",
+      "initial_flag_byte": 89,
+      "original_record_sha256": "9724adef24c7defded90b5925d9e3a43c116cf7526d349956d1b0a3a7853a63c"
+    },
+    {
+      "name": "c_cap_kaipropel",
+      "initial_flag_byte": 90,
+      "original_record_sha256": "0fa071063551840516457b3b36a6061baaa5f818c84e71e2a40f4fbc68b821f5"
+    },
+    {
+      "name": "c_cap_kanoball",
+      "initial_flag_byte": 91,
+      "original_record_sha256": "38ddada88740ff704f2ed9ddf5aa7b36ec329c16a070c89d003e34125894f7c4"
+    },
+    {
+      "name": "c_cap_kanolaser",
+      "initial_flag_byte": 92,
+      "original_record_sha256": "e737c21350c06cb4046dd1642dccfe3a70c290760393ffb258b5604fd9da9803"
+    },
+    {
+      "name": "c_cap_kirakiss",
+      "initial_flag_byte": 93,
+      "original_record_sha256": "feeb65d4eb824042288bbe35dafe47d6fed2bfe121c0341ca877845355a3ef53"
+    },
+    {
+      "name": "c_cap_kiraprojectile",
+      "initial_flag_byte": 94,
+      "original_record_sha256": "6c70d3cfc732bbe02809cff927e8681ec37874953c6c736e0980eb3dafe4a3f7"
+    },
+    {
+      "name": "c_cap_kobprojectile",
+      "initial_flag_byte": 95,
+      "original_record_sha256": "c189248a80eca41171236c29a8446718f80f4f3035f419511a4df7734a57ac88"
+    },
+    {
+      "name": "c_cap_kobteleport",
+      "initial_flag_byte": 96,
+      "original_record_sha256": "34562c5bee8570eadae0b9eb35b461fcb92aee646e365a56e53138d7458d8648"
+    },
+    {
+      "name": "c_cap_limai360kick",
+      "initial_flag_byte": 97,
+      "original_record_sha256": "eea872e6d59d30d660ab5351b3d9714ebd2554faae7c37226cbc7fe060e12d0e"
+    },
+    {
+      "name": "c_cap_limaiscissor",
+      "initial_flag_byte": 98,
+      "original_record_sha256": "566a478398624c111aa723ec2fede0c84d2235c4e8d2ad5282728d4aedae7cba"
+    },
+    {
+      "name": "c_cap_limaizap",
+      "initial_flag_byte": 99,
+      "original_record_sha256": "c6ac566c573ad6b7370978ca45ee69e040a31cd2b67808364ab6b6efa88706e6"
+    },
+    {
+      "name": "c_cap_mprojectile",
+      "initial_flag_byte": 100,
+      "original_record_sha256": "799729e92053d684a360f780ad9c2e8bd62442f865f5ab4de6ca7f455041aa9e"
+    },
+    {
+      "name": "c_cap_nwcharge",
+      "initial_flag_byte": 101,
+      "original_record_sha256": "d8742d341ba01ad6513a9fb53aa4bc69de0f859c0049653af4d80e86bb40f3c1"
+    },
+    {
+      "name": "c_cap_nwlightning",
+      "initial_flag_byte": 102,
+      "original_record_sha256": "9423a7ce477ed8023bac27f24695152beb4812dfcbb24537bbb8a8999d3a00e6"
+    },
+    {
+      "name": "c_cap_nwprojectile",
+      "initial_flag_byte": 103,
+      "original_record_sha256": "54e0e59d4c1317a64906c713caecd8a87e79343aea99ee02654d2f7319eed2fb"
+    },
+    {
+      "name": "c_cap_rainlightning",
+      "initial_flag_byte": 104,
+      "original_record_sha256": "526cbe45a59e5c86faf0ef3b9211ee8c0d5a9550180186546ebfd8095e6c3a8e"
+    },
+    {
+      "name": "c_cap_rainpropel",
+      "initial_flag_byte": 105,
+      "original_record_sha256": "52d4265ad1d2bfdb1f9184a4193678bde19e4bdd0f4692fbfbdb8edcfcecfa6e"
+    },
+    {
+      "name": "c_cap_rainteleport",
+      "initial_flag_byte": 106,
+      "original_record_sha256": "dc0db5b0b9421976cca0379b5fceb63c8ed8ac84673034bbb8d5907c48e71ca8"
+    },
+    {
+      "name": "c_cap_rainthrow",
+      "initial_flag_byte": 107,
+      "original_record_sha256": "8eaed68ad0c8d1091ea6183fe6f4de9229c91695940de2f2d28acb6e3e08a8f8"
+    },
+    {
+      "name": "c_cap_rcharge",
+      "initial_flag_byte": 108,
+      "original_record_sha256": "a5e1050eeeaa48408016a061c525f0c8e3c43fa0dd18171ea8a046c95dff6baa"
+    },
+    {
+      "name": "c_cap_rspinkick",
+      "initial_flag_byte": 109,
+      "original_record_sha256": "188779c853f12576d163dff0f61c092272f34e38facffc0b5eebf5fd577aeb94"
+    },
+    {
+      "name": "c_cap_rteleport",
+      "initial_flag_byte": 110,
+      "original_record_sha256": "4c430852e5c4a105fac7c176151137ec3765d70a8f53293a9f015016a68e310d"
+    },
+    {
+      "name": "c_cap_rthrow",
+      "initial_flag_byte": 111,
+      "original_record_sha256": "eae1cb2cb5b65ed523dde7d483b36009f41a9c8f19d38154696a97c919056d4c"
+    },
+    {
+      "name": "c_cap_sarcharge",
+      "initial_flag_byte": 112,
+      "original_record_sha256": "b618cdb97d397384258bc73ebe51778bcbf99a02fe516f1c3086438efbd7e289"
+    },
+    {
+      "name": "c_cap_sarkicks",
+      "initial_flag_byte": 113,
+      "original_record_sha256": "721cb5bf37761e07a91450f00f4d059959758f95ca972f8ec29f0de13d202c69"
+    },
+    {
+      "name": "c_cap_sarthrow",
+      "initial_flag_byte": 114,
+      "original_record_sha256": "484bf9cec40409d7df72ee530649e8ee4e3e9618b66e9d9c54cea77896022b9f"
+    },
+    {
+      "name": "c_cap_scrpteleport",
+      "initial_flag_byte": 115,
+      "original_record_sha256": "e3105abfdbb57ed81fc83ddbc8fd9ffb598ce85e5e7ad848716422d3129e0d28"
+    },
+    {
+      "name": "c_cap_sekflame",
+      "initial_flag_byte": 116,
+      "original_record_sha256": "c3bacd00782c9771b425a999f4e416f77bcc11b12ac5bd3fa44efd16b79cde9b"
+    },
+    {
+      "name": "c_cap_sekmissile",
+      "initial_flag_byte": 117,
+      "original_record_sha256": "c85e7d6af03d1be052ad7b80d8594d790091ede8b5f5098bac90a8ca06ca5282"
+    },
+    {
+      "name": "c_cap_sekteleport",
+      "initial_flag_byte": 118,
+      "original_record_sha256": "fd02db95b3f3fb574444893b40b9c384bc10d1d41e289233a90d371ad328630e"
+    },
+    {
+      "name": "c_cap_shinhandshake",
+      "initial_flag_byte": 119,
+      "original_record_sha256": "8cd771467caceb56b725d0383b16c0ed8cf7aae14509f26c9e2abf3eacbc7b96"
+    },
+    {
+      "name": "c_cap_shinprojectile",
+      "initial_flag_byte": 120,
+      "original_record_sha256": "33db05cc31aa0b83320b2d9319f97a8c99144872644ec640a961756fb971d72b"
+    },
+    {
+      "name": "c_cap_shinteleport",
+      "initial_flag_byte": 121,
+      "original_record_sha256": "6ebfc935470b0323cec031c65ea723e196cf7785b77a0b680b0a64544393a5bd"
+    },
+    {
+      "name": "c_cap_shvastompquake",
+      "initial_flag_byte": 122,
+      "original_record_sha256": "694fd05b1e00e80b1f6297e0fff14a2453869cbaa6d5e3d5cf1d02c812343018"
+    },
+    {
+      "name": "c_cap_sindprojectile",
+      "initial_flag_byte": 123,
+      "original_record_sha256": "e8b9d0648c706b26d395035c5e3a24a57eb808278cfc0db7cb8a91d2b739dd9c"
+    },
+    {
+      "name": "c_cap_sindscream",
+      "initial_flag_byte": 124,
+      "original_record_sha256": "682201238b39fcc437fa890139241264b159c87f5119e1a35b4065036d615bb2"
+    },
+    {
+      "name": "c_cap_sindslide",
+      "initial_flag_byte": 125,
+      "original_record_sha256": "e70b2f7de62e1c2abe8077de4cfa34238b4dacf47f5493d1ff180b1ccb7e415d"
+    },
+    {
+      "name": "c_cap_skcharge",
+      "initial_flag_byte": 126,
+      "original_record_sha256": "508cfd7cbfeeb981f90a0786943b19d79e28c08b18eac287d1cf5a9f4786a010"
+    },
+    {
+      "name": "c_cap_skforcefield",
+      "initial_flag_byte": 127,
+      "original_record_sha256": "ffafc83f590f4b898ccf2fdbad04beb0a5e55f48c6dfd8bc5a20f09ba0b43c23"
+    },
+    {
+      "name": "c_cap_sklaser",
+      "initial_flag_byte": 128,
+      "original_record_sha256": "0d7b4dbf4fbb13d0d15c57f553727fd9d6680cc1b3d533bbda5ced14aeb751d7"
+    },
+    {
+      "name": "c_cap_switcharoo",
+      "initial_flag_byte": 129,
+      "original_record_sha256": "d3d930df1ab3e7ffeec99344645539cf38934c6c63896199db4fa00a260f20aa"
+    },
+    {
+      "name": "c_cap_szpropel",
+      "initial_flag_byte": 130,
+      "original_record_sha256": "5a819a035b781603243e0fe905ecbc7662381076ffcdf0c299373c7a53eb5bbd"
+    },
+    {
+      "name": "c_cap_tdrill",
+      "initial_flag_byte": 131,
+      "original_record_sha256": "2a651f108bb0ec0a554ab21ab4c23f90fbd334a7a9e55d101190323264c6aebd"
+    },
+    {
+      "name": "c_cap_thighprojectile",
+      "initial_flag_byte": 132,
+      "original_record_sha256": "8eb93957edf1d24f0dbff0a1d8a1ecd875c09667bae7b311c13f5465ed5b70b7"
+    },
+    {
+      "name": "c_cap_tlegslam",
+      "initial_flag_byte": 133,
+      "original_record_sha256": "a2e576c1d5ebc83b92d76704bb47fec0ddf4819b2ccdc5a1aeb24933f43385a0"
+    },
+    {
+      "name": "c_cap_tprojectile",
+      "initial_flag_byte": 134,
+      "original_record_sha256": "0abae80d4f0970e6d86bb986b50400dde84e6ab9f82fb594aa9eef707d857de0"
+    },
+    {
+      "name": "c_cap_vomit",
+      "initial_flag_byte": 135,
+      "original_record_sha256": "605499f9e1cda8a800ad327f40f479d5f479b3f31a1248d513ca9906a18c0087"
+    },
+    {
+      "name": "c_cap_waterjet",
+      "initial_flag_byte": 136,
+      "original_record_sha256": "600d2e63f4d71e95915f1628d8569b639382791a41a3e760e0b90f4d21658bc5"
+    },
+    {
+      "name": "c_cap_hpowerpunch",
+      "initial_flag_byte": 137,
+      "original_record_sha256": "44bc3b2cf19a8265a551e9e7f725f0ac953109d4629cddf412f1ff6a05731825"
+    },
+    {
+      "name": "c_cap_hteleport",
+      "initial_flag_byte": 138,
+      "original_record_sha256": "80504a9f8a76d48d4b7efb3a24cec10854e373c48f33b13c800b8d909d8813f5"
+    },
+    {
+      "name": "fs_concrete",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "5258e5ff17751f5e7e89261e6415c41cc6d87d7f2027deb1dc962bdbe154e81a"
+    },
+    {
+      "name": "fs_marble",
+      "initial_flag_byte": 1,
+      "original_record_sha256": "707bcd40d6ee4448a26837518f2f2f19455068ec1209f9f30ebe8fc4a94730a7"
+    },
+    {
+      "name": "fs_dirt",
+      "initial_flag_byte": 2,
+      "original_record_sha256": "6404774bf2f0a730b0880bdbb01cd8c9d5d1dcdd83efca654e5dc443d4091395"
+    },
+    {
+      "name": "fs_wood",
+      "initial_flag_byte": 3,
+      "original_record_sha256": "4d6cbedbe1cd89cdb894a65ceb397696fe4c629f7c20a3c6ddfb0f5737afe528"
+    },
+    {
+      "name": "fs_metal",
+      "initial_flag_byte": 4,
+      "original_record_sha256": "40f584f12056ebce605145c5f94b001d1a6a81922f1821c765a7958eed47ba95"
+    },
+    {
+      "name": "fighter_mlna",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "f77dc75d3b817c810cf23babd3e58cd9b53493eaf05efac4eb2475115ca9cbb3"
+    },
+    {
+      "name": "fighter_sz",
+      "initial_flag_byte": 1,
+      "original_record_sha256": "16714574d64f3576478c1d11014e7e5ea19b97653ed0c64f73cd455bdea47cf6"
+    },
+    {
+      "name": "fighter_brc",
+      "initial_flag_byte": 2,
+      "original_record_sha256": "b9d78b181903fa71dcf1b9370d2f4636d68a18d029b18dd68ab0d57b76c17b49"
+    },
+    {
+      "name": "fighter_ashrah",
+      "initial_flag_byte": 3,
+      "original_record_sha256": "af7b52e924cfabf10b8d1ca142ea2c74ffe1beca542731a386b880c6df359a67"
+    },
+    {
+      "name": "fighter_baraka",
+      "initial_flag_byte": 4,
+      "original_record_sha256": "bdaa57e19ade639df3861291ac3674ff523ba0ff8ed96e7b23828e369dacbb2a"
+    },
+    {
+      "name": "fighter_dairu",
+      "initial_flag_byte": 5,
+      "original_record_sha256": "b808a59118d2b8755a0a9fc91afdc0ad37aa163f1a1dc17c06a3c6acc5f26686"
+    },
+    {
+      "name": "fighter_ermac",
+      "initial_flag_byte": 6,
+      "original_record_sha256": "f2eb995c8635ea6329f8fbbeefd9c83d6eeb6e5b529ddfb3280e5bef18a5ef32"
+    },
+    {
+      "name": "fighter_hotaru",
+      "initial_flag_byte": 7,
+      "original_record_sha256": "992d9c1b93f2687c66adf0bf22dd6f2bf4b8111dd25aaaefb9b05e939dbd62da"
+    },
+    {
+      "name": "fighter_jade",
+      "initial_flag_byte": 8,
+      "original_record_sha256": "b1addd0d6932d7a9658f90e0f6676b97dace0d107c36bcc9c24e77a242993fe9"
+    },
+    {
+      "name": "fighter_kabal",
+      "initial_flag_byte": 9,
+      "original_record_sha256": "6aa4b7e56b8bd31bbe5b50df3439cd6892a0109c3e47805f2acf14438d60f834"
+    },
+    {
+      "name": "fighter_kenshi",
+      "initial_flag_byte": 10,
+      "original_record_sha256": "10701a3f060ed22ea353e0f695519f07c100b25c572e18e9db8603778fa42c96"
+    },
+    {
+      "name": "fighter_kira",
+      "initial_flag_byte": 11,
+      "original_record_sha256": "b743f97a3a2c601f0dae7ee82e7b58584fe72c773c2ffb0075e809e02799145e"
+    },
+    {
+      "name": "fighter_kobra",
+      "initial_flag_byte": 12,
+      "original_record_sha256": "47ceba59d0f2f5e45113750e21a5aa257e5723b9a5fe968bff148f4649a5ed15"
+    },
+    {
+      "name": "fighter_limei",
+      "initial_flag_byte": 13,
+      "original_record_sha256": "2a763cf864a425d9b2ceaa35ae00005a2029077eaf1ea04e4acc4f8e70f190df"
+    },
+    {
+      "name": "fighter_lk",
+      "initial_flag_byte": 14,
+      "original_record_sha256": "e3304c3a6336b318178b9482cc676ee721d726cadedf3d592ac081fd0949de1e"
+    },
+    {
+      "name": "fighter_nwolf",
+      "initial_flag_byte": 15,
+      "original_record_sha256": "88a838500b2f0fe65c22b67d8e553830d5d4fd8929e4a7a3e5e503631747061f"
+    },
+    {
+      "name": "fighter_raiden",
+      "initial_flag_byte": 16,
+      "original_record_sha256": "b485a373d38fbcdc9ed841824b9d3cd077e7d320fad5c1abea696c049ed19be7"
+    },
+    {
+      "name": "fighter_scorp",
+      "initial_flag_byte": 17,
+      "original_record_sha256": "3be45495bcb8ba6f5df357ca7af95d8bcb033a33e79070026daed68324173d94"
+    },
+    {
+      "name": "fighter_shuj",
+      "initial_flag_byte": 18,
+      "original_record_sha256": "857afc1e43df74029cf00b650432f3f7da139fb9efa100fa87624faf8ad88f0f"
+    },
+    {
+      "name": "fighter_sindel",
+      "initial_flag_byte": 19,
+      "original_record_sha256": "b3b750f32c5eb91746e237ccde178b913602dee9e784a62fc811edc97e0f65d9"
+    },
+    {
+      "name": "fighter_tanya",
+      "initial_flag_byte": 20,
+      "original_record_sha256": "ba9723d78d1e698b2416d631b38075e42eb310f1011d00a082a26ec3367ff2ec"
+    },
+    {
+      "name": "fighter_dking",
+      "initial_flag_byte": 21,
+      "original_record_sha256": "cba946dc6a4c52096bcfd7ebe8a98a18f0a82fcb0ef854e33e840da4503ea1ff"
+    },
+    {
+      "name": "fighter_fujin",
+      "initial_flag_byte": 22,
+      "original_record_sha256": "30add38e84d9be0c0a847daf379c475f06c231dbbbbe3eb14fd2719be4e154e9"
+    },
+    {
+      "name": "fighter_goro",
+      "initial_flag_byte": 23,
+      "original_record_sha256": "44a4605f030eb6012660df3e55e8e3c48faa29e62e26c706af4dcfcd83896f91"
+    },
+    {
+      "name": "fighter_jarek",
+      "initial_flag_byte": 24,
+      "original_record_sha256": "4867e2cc6fbefee4d8dbbe8f38ef91507ea67df5affeae7eafc71f6f188fda13"
+    },
+    {
+      "name": "fighter_kahn",
+      "initial_flag_byte": 25,
+      "original_record_sha256": "ab77588f2a7385aa035d60e818a6de38b539b867473827b55b88bd5dab7bb273"
+    },
+    {
+      "name": "fighter_kai",
+      "initial_flag_byte": 26,
+      "original_record_sha256": "dbd8616064f7073383dab93a91b4d16402ed2ae49cc28ececff5c3e72cf27c95"
+    },
+    {
+      "name": "fighter_kintro",
+      "initial_flag_byte": 27,
+      "original_record_sha256": "a355116f57972d9cbe8f33a9d17ec688c9d955a7d7f8203410ee2755b76ce29e"
+    },
+    {
+      "name": "fighter_motaro",
+      "initial_flag_byte": 28,
+      "original_record_sha256": "72afb862119bda9fdd80a5222dad3584a81f46e9b983d43825f0b7422cd013a3"
+    },
+    {
+      "name": "fighter_rain",
+      "initial_flag_byte": 29,
+      "original_record_sha256": "b3851b24f49bee1b11efec972988a636e758ff80b9710c689c20aa9aa8f7fd5d"
+    },
+    {
+      "name": "fighter_reiko",
+      "initial_flag_byte": 30,
+      "original_record_sha256": "7bd83e6f9c6adc3013bbb5c4b57571192a20171c579642d13f10e33fe7414544"
+    },
+    {
+      "name": "fighter_sarena",
+      "initial_flag_byte": 31,
+      "original_record_sha256": "fe3f630c9d1d6e010d15f964728d3220dcd1db599a9c79b173d84d462e5bedaf"
+    },
+    {
+      "name": "fighter_sekt",
+      "initial_flag_byte": 32,
+      "original_record_sha256": "081c16266cadb415c4a1f4c2b3f606dd69d003eb2c6e84c8c8a24cc27dea35a8"
+    },
+    {
+      "name": "fighter_sheeva",
+      "initial_flag_byte": 33,
+      "original_record_sha256": "e9b74c40a2e6ab91a8f83ef33598e74e711b7e3fa5ed90fef8fedfd4a6fd7361"
+    },
+    {
+      "name": "fighter_shin",
+      "initial_flag_byte": 34,
+      "original_record_sha256": "b5158ff887f431f5d9ffc5239ac436972bb5de10d9d3b9e67baccdd60e05fb43"
+    },
+    {
+      "name": "fighter_sonya",
+      "initial_flag_byte": 35,
+      "original_record_sha256": "797d31b569d147e1043670494382bd1e14b2ad0907224834dc0dc424bd409350"
+    },
+    {
+      "name": "fighter_stryk",
+      "initial_flag_byte": 36,
+      "original_record_sha256": "c19bf9c2cbf12608e466477b533021f9c89f6c5f518fcfb496b42996926d9689"
+    },
+    {
+      "name": "fighter_taven",
+      "initial_flag_byte": 37,
+      "original_record_sha256": "1d837b9077980c9ce0f2bfc92874eae7e5fea70b05e711e6d747dd01fa2fe7f2"
+    },
+    {
+      "name": "fighter_cage",
+      "initial_flag_byte": 38,
+      "original_record_sha256": "b6967cc0b880290995dea7836b3561942ea9a95a8cf187f540facc45dd7b7ea4"
+    },
+    {
+      "name": "fighter_kano",
+      "initial_flag_byte": 39,
+      "original_record_sha256": "990a5d808aeb136e4d0d24093e1da8ff6acec9987e64f1a960e43225ba1416c6"
+    },
+    {
+      "name": "fighter_st",
+      "initial_flag_byte": 40,
+      "original_record_sha256": "ccae8ba99b08480a2811eb528c8ae56af3457adea1df7ba6b2f114e1208f67fa"
+    },
+    {
+      "name": "fighter_jax",
+      "initial_flag_byte": 41,
+      "original_record_sha256": "fef10fdaf6634f9fc9c505d44b8655be512712f7cabc725e101a7a916ac32f2c"
+    },
+    {
+      "name": "fighter_kit",
+      "initial_flag_byte": 42,
+      "original_record_sha256": "74d6abda7572cab6d26b30275011fe8bb72bbeb76a88e605dce31cb164fa5330"
+    },
+    {
+      "name": "fighter_kl",
+      "initial_flag_byte": 43,
+      "original_record_sha256": "1e558b6fac09ada9bdb6fd6dc3abc21395a5572229f0e4b711825d025e26251d"
+    },
+    {
+      "name": "fighter_rept",
+      "initial_flag_byte": 44,
+      "original_record_sha256": "afc8a02ef7e350b04a42a04e6e7c08798faad7f1cade861a37cd8952c84ab101"
+    },
+    {
+      "name": "fighter_cham",
+      "initial_flag_byte": 45,
+      "original_record_sha256": "9ff2882242b26c8c2d5dc43b395954a2ea19ff7a39ede42da9102eee270bfc13"
+    },
+    {
+      "name": "fighter_cyrax",
+      "initial_flag_byte": 46,
+      "original_record_sha256": "a552de118192bc4bf5ed426dc00914cad05bd5e094bce2105ca0afc3e8cf9b00"
+    },
+    {
+      "name": "fighter_meat",
+      "initial_flag_byte": 47,
+      "original_record_sha256": "b3834a56546eb458ff3f8e4f9040c791c032b34861c1aff8f2508710ac7f8330"
+    },
+    {
+      "name": "fighter_qc",
+      "initial_flag_byte": 48,
+      "original_record_sha256": "98789ef662ffbad62f8c33c37e69e742f3d7897b54e75867e0e94fcdcf336336"
+    },
+    {
+      "name": "fighter_nit",
+      "initial_flag_byte": 49,
+      "original_record_sha256": "7398c4bde41f329800efabf40494f075a8240bff1877c81eecdad1058b59918b"
+    },
+    {
+      "name": "fighter_drahm",
+      "initial_flag_byte": 50,
+      "original_record_sha256": "7b8bd3f7b1459f608fca7814abc4093718b3d2b49e11cd42b6db4f2b466fee7a"
+    },
+    {
+      "name": "fighter_frost",
+      "initial_flag_byte": 51,
+      "original_record_sha256": "6ae4295ec2b09d9ea19d6904db859048e328b2c62c42d474304272039e931c40"
+    },
+    {
+      "name": "fighter_hsu",
+      "initial_flag_byte": 52,
+      "original_record_sha256": "20f019269d4ce4f650255756cc012ce8f827a9d6f313f5c2f98f3cd8ffeaf700"
+    },
+    {
+      "name": "fighter_mav",
+      "initial_flag_byte": 53,
+      "original_record_sha256": "5f1e3ee2dfd424be4ed6164230bd2bd358da63915d0cabe4c50ee15ca10762f3"
+    },
+    {
+      "name": "fighter_mokap",
+      "initial_flag_byte": 54,
+      "original_record_sha256": "360b636aa5ece9cfbbdb2d9322122ee9799bdb756568fb2846e5f96bd96808a9"
+    },
+    {
+      "name": "fighter_moloch",
+      "initial_flag_byte": 55,
+      "original_record_sha256": "29290d35536410ce6fe785d1f7f859dd2eeba9b6b1d51297df8d0c6c15c7555e"
+    },
+    {
+      "name": "fighter_blaze",
+      "initial_flag_byte": 56,
+      "original_record_sha256": "2d97ff89078755c6145648f71d0bbfdd47ced39a2993bd92e0ad597e5e70cce5"
+    },
+    {
+      "name": "fighter_havik",
+      "initial_flag_byte": 57,
+      "original_record_sha256": "a1ef72785ee64a7d3fc2f2c9635fdd930250b0be0be51f9aa15ce3fdadbc3a45"
+    },
+    {
+      "name": "fighter_darrius",
+      "initial_flag_byte": 58,
+      "original_record_sha256": "a02f32eee0136e096d09709bbf50d108f99a4e2e11fe5c639a859784249215ba"
+    },
+    {
+      "name": "fighter_noob",
+      "initial_flag_byte": 59,
+      "original_record_sha256": "c9ab93b0016665d100ae5ff1c5076c7a9ba7f19bb3a7dc773467610d4245f4a4"
+    },
+    {
+      "name": "fighter_smoke",
+      "initial_flag_byte": 60,
+      "original_record_sha256": "6052a5e0574362d9ab94bd9be54c1e2b58fc4298efa61601087958cbaf58d98b"
+    },
+    {
+      "name": "fighter_daegon",
+      "initial_flag_byte": 61,
+      "original_record_sha256": "0ee0d37a8caaabf866ed5be7ad6c09a35c3228a4c157df2066d7a13c06f2f645"
+    },
+    {
+      "name": "motor_kombat",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "d25bc138a3d902179c158eac3d5a62bdca8bb275a2047dcd433559fd196164cc"
+    },
+    {
+      "name": "motor_kombat_2",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "55e522a24bfa039447ba5cacd8fc109231f71945b9630d82e008492b08db8355"
+    },
+    {
+      "name": "music_motor_kombat",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "e55c122e864f910617f262b3bac9739ffdfc3426256b2ea84f09f9d04835e114"
+    },
+    {
+      "name": "motor_engines",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "fcfb081ca709e495534ffa34f3ac55b934e20f178f137f121fbc86de926c03fd"
+    },
+    {
+      "name": "motor_driver_vo",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "bc839843671d1aacdee5d1ffeccdfe14aad55b7ecd39b1c9944dacf0d5de39ab"
+    },
+    {
+      "name": "mtr_track_ice_world",
+      "initial_flag_byte": 31,
+      "original_record_sha256": "3fba1a05961c1f1ee808c5b08f1bea75f78dbb94fd583d56a15f5dafc76d4156"
+    },
+    {
+      "name": "mtr_track_lava_world",
+      "initial_flag_byte": 32,
+      "original_record_sha256": "c1e77d1870fd1b376a7d4c11b2882c2d593c1bef7cfb5b183c7e97d5ee934a52"
+    },
+    {
+      "name": "mtr_track_desert_world",
+      "initial_flag_byte": 33,
+      "original_record_sha256": "fe5516a1b4f95c66df47aaa783f551d2b2ce08cde81f14ff0153d3b388a30495"
+    },
+    {
+      "name": "mtr_track_jungle_world",
+      "initial_flag_byte": 34,
+      "original_record_sha256": "672e4edaa49ebc611c3bc42ba6518e0dd9b3c1f41013f44d4e0cf5ef213ef91f"
+    },
+    {
+      "name": "mtr_track_motor_town",
+      "initial_flag_byte": 35,
+      "original_record_sha256": "51cdb89b338e02c037b377f8539e273cb7a371c53fd5c89a5f44f417b9df1cd0"
+    },
+    {
+      "name": "kq_music",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "7f5f44be8610ae7dd43068246eef269f5954b4e8e0cf620f506ee0f62b2d72d8"
+    },
+    {
+      "name": "kq_fx_general",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "e79a4b86d6565d65064471b1a06269ec452f29ee5a2b9988acaaf77bc7cd396a"
+    },
+    {
+      "name": "kq_vo_chapter_1",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "6cc27f2d532c4b2ff68f11d8b0c430daeae687094dfef9ec474e48d3ac327a5a"
+    },
+    {
+      "name": "kq_vo_chapter_2",
+      "initial_flag_byte": 1,
+      "original_record_sha256": "8c88696d63ad6ce01887308184f71e43dfef09fd8f712e0a8e4f0056f5d216fc"
+    },
+    {
+      "name": "kq_vo_chapter_3",
+      "initial_flag_byte": 2,
+      "original_record_sha256": "0acb31606a7779ad0c6654a71f9372753d796e0b61c95924d3df7983cb553e74"
+    },
+    {
+      "name": "kq_vo_chapter_4",
+      "initial_flag_byte": 3,
+      "original_record_sha256": "ed4b950f5a79961ba0ea7b3d23ed71c143c61e04b2f27494f60eae1cbd15b06e"
+    },
+    {
+      "name": "kq_vo_chapter_5",
+      "initial_flag_byte": 4,
+      "original_record_sha256": "b50845cad9b7404c8765facb39c94a08ea2ed793c5be1be8b3c2c6ef83060026"
+    },
+    {
+      "name": "kq_vo_chapter_6",
+      "initial_flag_byte": 5,
+      "original_record_sha256": "93f6255a2437aae8afcd0deddad991ffefd76f6a136d06c42f5b9072d35c65e0"
+    },
+    {
+      "name": "kq_vo_chapter_7",
+      "initial_flag_byte": 6,
+      "original_record_sha256": "57b7056d9b9ed912bea6f8d23160da0c19fa24895eb4b1b5c5757e22ec7ed729"
+    },
+    {
+      "name": "kq_vo_chapter_8",
+      "initial_flag_byte": 7,
+      "original_record_sha256": "2de65054cbaf79147e55a6b2e35fc6cea615f8e1e63db71e0ccaf0b86fd93b5b"
+    },
+    {
+      "name": "kq_fx_ch1_transition_1",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "618b09076d548ad4fae5b1e087f527bb0b7c817f9b4389e125b477fcc7e56148"
+    },
+    {
+      "name": "kq_fx_ch1_transition_2",
+      "initial_flag_byte": 1,
+      "original_record_sha256": "7e6ed781baa5c83bac56e2d40525adac943d960cb25ce61bfed81953914e27a7"
+    },
+    {
+      "name": "kq_fx_ch2_transition",
+      "initial_flag_byte": 2,
+      "original_record_sha256": "027573cdb30560d4cf882d54950d40edde07764a398aced15af8533492e80897"
+    },
+    {
+      "name": "kq_fx_ch3_transition",
+      "initial_flag_byte": 3,
+      "original_record_sha256": "53b4bbfe5fc54cc461a6712b942acf3c41046b02bb1ca6b563d4e4f86acbfe5e"
+    },
+    {
+      "name": "kq_fx_ch4_transition",
+      "initial_flag_byte": 4,
+      "original_record_sha256": "7ea6921f1f6d25fc8bc653b261b3709ead82375f3a0c970573968a2cb96a5759"
+    },
+    {
+      "name": "kq_fx_ch5_transition",
+      "initial_flag_byte": 5,
+      "original_record_sha256": "8241e7b6fa7fe3c1706edec146b7a5c149b9e080804874f53e64e815d6a9eeab"
+    },
+    {
+      "name": "kq_fx_ch7_transition",
+      "initial_flag_byte": 6,
+      "original_record_sha256": "94aaa0c27f45dac2c8468509c61d2abb0bb7b36370afefaf33d5b1a8a3b39e84"
+    },
+    {
+      "name": "kq_fx_ch8_transition",
+      "initial_flag_byte": 7,
+      "original_record_sha256": "8fb86e047b9c1e724d182330f3d244439c2803fa7c0ee94cc1ad6dc489f2a3bf"
+    },
+    {
+      "name": "kq_nis",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "53c68330908f2dce11d33210813f3b207e3e0e2577a943341d372053cb5365a6"
+    },
+    {
+      "name": "kq_fx_ch2_icepath1",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "3acbddfa752821537fc089646aa31f493aa949d446419c1dcc46fd3aeed21a9f"
+    },
+    {
+      "name": "kq_fx_ch2_icepath1c",
+      "initial_flag_byte": 1,
+      "original_record_sha256": "0fac07ba69f1d197b18a477a65dac3c8e3de4ea70c3f5f82c67d02cd500a6f4e"
+    },
+    {
+      "name": "kq_fx_ch2_icepath3",
+      "initial_flag_byte": 2,
+      "original_record_sha256": "da7a600f767308c3727e1edf3e8bc6678501d37e3ae69174f6ebb71e8c92fcc2"
+    },
+    {
+      "name": "kq_fx_ch2_icepalace2",
+      "initial_flag_byte": 3,
+      "original_record_sha256": "1459865506424d56470b45b6738574b9a878924c0a67d1d3ce665adbdfb6e60b"
+    },
+    {
+      "name": "kq_fx_ch2_icepalace4",
+      "initial_flag_byte": 4,
+      "original_record_sha256": "d4f84069fa11c7bc3edc433ac42278a6f938a27a6a3e403db764048b575902bd"
+    },
+    {
+      "name": "kq_fx_ch4_forest1",
+      "initial_flag_byte": 5,
+      "original_record_sha256": "c8edc10654c786498a5643225534cbd9af3e1274ebc80c0f0d92f06ed3d0b204"
+    },
+    {
+      "name": "kq_fx_ch5_cave1",
+      "initial_flag_byte": 6,
+      "original_record_sha256": "1003873ab9aa1747a71d82359eb39a93142c3aeb880824848034d6e9ddbdc012"
+    },
+    {
+      "name": "kq_fx_ch6_firemount1",
+      "initial_flag_byte": 7,
+      "original_record_sha256": "7d575b3490994076da7f9d492d28aa56412d338cee03eb33426b89e86801d4ef"
+    },
+    {
+      "name": "kq_fx_ch6_lowerspire1",
+      "initial_flag_byte": 8,
+      "original_record_sha256": "3d26df1da0bdf50633126cb4700bc7a91ccbfd18544a47efe66f02941431ef8b"
+    },
+    {
+      "name": "kq_fx_ch6_upperspire1",
+      "initial_flag_byte": 9,
+      "original_record_sha256": "159ca667f535691d77b9b0cb09e5e117f64dbca27cf477755dd07c07e2d7732c"
+    },
+    {
+      "name": "kq_fx_ch1_jungle1",
+      "initial_flag_byte": 10,
+      "original_record_sha256": "9bb93f61e5b41451f2be55ac7a79055df17c46fa76d4347f3a9440160a702c3f"
+    },
+    {
+      "name": "kq_fx_ch1_jungle3",
+      "initial_flag_byte": 11,
+      "original_record_sha256": "70c7b378e474bb9d6e9ceab65131626ff1ae2ca58289199aa2df18577cd70eaa"
+    },
+    {
+      "name": "kq_fx_ch1_temple1",
+      "initial_flag_byte": 12,
+      "original_record_sha256": "50f2b317fe94161858ed5b6710bdf9b047e485780da306f3dd8ddad24f7a573e"
+    },
+    {
+      "name": "kq_fx_ch1_temple3",
+      "initial_flag_byte": 13,
+      "original_record_sha256": "ae070cf52b355b0f558702751832960e7788d7d9264f26add96c17e05a2ff101"
+    },
+    {
+      "name": "kq_fx_ch1_temple5",
+      "initial_flag_byte": 14,
+      "original_record_sha256": "45286261ab40b92e2584057acb9179c8e7ad42047befc9f01d44321c860b198c"
+    },
+    {
+      "name": "kq_fx_ch1_sektek1",
+      "initial_flag_byte": 15,
+      "original_record_sha256": "ac444f653edd31ba1e8379d8ede403f3e680a17b8dfe4800774b19af62260742"
+    },
+    {
+      "name": "kq_fx_ch1_sektek3",
+      "initial_flag_byte": 16,
+      "original_record_sha256": "dae35c7762d1b08de9b46ad9fdebfbfd109ef728a87e300dff15361d0a3d25c1"
+    },
+    {
+      "name": "kq_fx_ch5_cave3",
+      "initial_flag_byte": 17,
+      "original_record_sha256": "3749ed3711b8cc0799a1aa25c917c32f0591f1975fb78b27aca0baad131cc606"
+    },
+    {
+      "name": "kq_fx_ch7_dungeon3",
+      "initial_flag_byte": 18,
+      "original_record_sha256": "1fb5c6e2e7526c8df6e48a95a9cf90c7f2fcf457929dd6c204a7b6b23d3c549d"
+    },
+    {
+      "name": "kq_fx_ch7_dungeon5",
+      "initial_flag_byte": 19,
+      "original_record_sha256": "76feaa4aa0c237c117e483205344728ecd355fd603963cbfb409dfaa829873ee"
+    },
+    {
+      "name": "kq_fx_ch7_entrance_1",
+      "initial_flag_byte": 20,
+      "original_record_sha256": "c883e5ac26d4e27e328dce2a48f068994450d94301e738fe146721c37051bce2"
+    },
+    {
+      "name": "kq_fx_ch7_grandhallway6",
+      "initial_flag_byte": 21,
+      "original_record_sha256": "a9e84c844daaf3f7ea66f9dc14b86992822aed7be85799506116c1471cd388de"
+    },
+    {
+      "name": "kq_fx_ch7_maproom7",
+      "initial_flag_byte": 22,
+      "original_record_sha256": "51b7a905dd2d52b60112b7dbbb5948b8cfc387444268c9683fb5da46daaf1413"
+    },
+    {
+      "name": "kq_fx_ch8_forbiddenpass1",
+      "initial_flag_byte": 23,
+      "original_record_sha256": "a7cd2cb548e1833a93cd69ca81617cacfd8f88b340cc6f311f9cb2a81eefe817"
+    },
+    {
+      "name": "kq_fx_obelisk",
+      "initial_flag_byte": 24,
+      "original_record_sha256": "61ce851ebb4285c6cc9d46a13c4ffd15819edb2a9d290019421558655bf242b0"
+    },
+    {
+      "name": "kq_fx_obelisk_4",
+      "initial_flag_byte": 25,
+      "original_record_sha256": "4bbdcdfa9af44f95a3dcf418fbd46b2b2a9b12285c0b1ac52f1debfa00f98fca"
+    },
+    {
+      "name": "kq_vo_hero",
+      "initial_flag_byte": 62,
+      "original_record_sha256": "a9ab94b859e6e4dfc46dc6edeeaaf71c17df30bf9764ea8f9714c86ed19f8578"
+    },
+    {
+      "name": "kq_vo_npc_dm1",
+      "initial_flag_byte": 0,
+      "original_record_sha256": "19dd973a4363462ead476c454f35f488e30734b16823f9c32275e8a4bdb23188"
+    },
+    {
+      "name": "kq_vo_npc_dm2",
+      "initial_flag_byte": 1,
+      "original_record_sha256": "987efd38a8d70948e117613fdc0421c776660c8dda70dacb9c9f44e041ba1e45"
+    },
+    {
+      "name": "kq_vo_npc_f1",
+      "initial_flag_byte": 2,
+      "original_record_sha256": "35ef9a38d0a97560c912cb0eb100cf0c7b123c78e550d9051d77647ebc474990"
+    },
+    {
+      "name": "kq_vo_npc_m1",
+      "initial_flag_byte": 3,
+      "original_record_sha256": "ae494c575ae00b7d24175e9223ac3bfa62e6cdc83a5da7bcb3e143fc735ca3b8"
+    },
+    {
+      "name": "kq_vo_npc_m2",
+      "initial_flag_byte": 4,
+      "original_record_sha256": "0be059458365244512d92c2d9335735f4a4a493a5ee44c7513efc2168c612d4b"
+    },
+    {
+      "name": "kq_vo_npc_mon1",
+      "initial_flag_byte": 5,
+      "original_record_sha256": "0a5835acf2e071e89db9356a179a7e84444669b44d0ac63aa51f0252ff8daba2"
+    },
+    {
+      "name": "kq_vo_npc_yeti_big",
+      "initial_flag_byte": 6,
+      "original_record_sha256": "bb365f23b8dcdf582fc81391534354830e18bbb3521d9db8e76c82637de6178f"
+    },
+    {
+      "name": "kq_vo_npc_sw",
+      "initial_flag_byte": 7,
+      "original_record_sha256": "7162b044e2cb9682c2560a553fe560617969bac0e815c5bd1de322df6e525670"
+    },
+    {
+      "name": "kq_vo_npc_sw1",
+      "initial_flag_byte": 8,
+      "original_record_sha256": "3e52a06be7af276cb14544db2ee4ac1dfe1711346fabd9c2e31337e65e2c4a4c"
+    },
+    {
+      "name": "kq_vo_npc_dmn1",
+      "initial_flag_byte": 9,
+      "original_record_sha256": "6fccb7d647cf491f2c7df105871efd14681bce0fa999275e501324107587dd2c"
+    },
+    {
+      "name": "kq_vo_npc_zom1",
+      "initial_flag_byte": 10,
+      "original_record_sha256": "a90e98b98fc28c7ad173f24b979405ea058113bb34255bdd96554c261cd30ac6"
+    },
+    {
+      "name": "kq_vo_npc_dm3",
+      "initial_flag_byte": 11,
+      "original_record_sha256": "c4924b7f9bd425bb1374db068f88ca128bfc410869768890f10884dd5751773b"
+    },
+    {
+      "name": "kq_vo_npc_dm4",
+      "initial_flag_byte": 12,
+      "original_record_sha256": "e2663b70f5de53995884afa8f6e00a87abe6fb6fa6012aeb04e0f956adbb0077"
+    },
+    {
+      "name": "kq_vo_npc_dm5",
+      "initial_flag_byte": 13,
+      "original_record_sha256": "33fa1ae0be7a11298fe0cf8b503108346ea357cad45561bbb157472be5b37526"
+    },
+    {
+      "name": "kq_vo_npc_dmn2",
+      "initial_flag_byte": 14,
+      "original_record_sha256": "45e3cdfb16c0f22cc7324d23152c020a5320367fb906db077bf7e06f20ef6f46"
+    },
+    {
+      "name": "kq_vo_npc_dr1",
+      "initial_flag_byte": 15,
+      "original_record_sha256": "2849ab68c275e6220320e4c5fe439b734441669eaabcbb7760a0a0ed679337dd"
+    },
+    {
+      "name": "kq_vo_npc_f2",
+      "initial_flag_byte": 16,
+      "original_record_sha256": "8454f2dfa1fea2cbee48298917e34c6b99b09193ea3e90e574460ac21cbe0ca5"
+    },
+    {
+      "name": "kq_vo_npc_f3",
+      "initial_flag_byte": 17,
+      "original_record_sha256": "35fdd26bef9433c5df6e6580377f567ec0df95c92650e7025d40e526a0da1eb0"
+    },
+    {
+      "name": "kq_vo_npc_m3",
+      "initial_flag_byte": 18,
+      "original_record_sha256": "99c24910df39d40836f2c8baeb59f7038892fc3bf6f212c124c2d6b5490f80e1"
+    },
+    {
+      "name": "kq_vo_npc_m4",
+      "initial_flag_byte": 19,
+      "original_record_sha256": "705cffade41a02bf964a0324435f743ac056011442c7b8d81d0232d080b1ad81"
+    },
+    {
+      "name": "kq_vo_npc_m5",
+      "initial_flag_byte": 20,
+      "original_record_sha256": "67f8d3fdd35579a7058ec5365cce08eeec05b358df074cb87967e12f337d50c5"
+    },
+    {
+      "name": "kq_vo_npc_sw2",
+      "initial_flag_byte": 21,
+      "original_record_sha256": "b9348c67d0401ade15cb3f64d691303d588c1bb0a43ffbaa5741e13cf30b13b6"
+    },
+    {
+      "name": "kq_vo_npc_tek1",
+      "initial_flag_byte": 22,
+      "original_record_sha256": "b88bb426d21f97b441555387746714b8aafc4a8f095ac4b59b31254add9a4b63"
+    },
+    {
+      "name": "kq_vo_npc_wr1",
+      "initial_flag_byte": 23,
+      "original_record_sha256": "aecfc4b176bd37ce5eec642d88f7ac6efe4346e31a3f19b4d618f7b6a309e1f5"
+    },
+    {
+      "name": "kq_vo_npc_wr2",
+      "initial_flag_byte": 24,
+      "original_record_sha256": "2e8f0ec2ea103a09902dc53092956bb358ce5fa1669f4b7421c91d6522f1e1ea"
+    },
+    {
+      "name": "kq_vo_npc_wr3",
+      "initial_flag_byte": 25,
+      "original_record_sha256": "a33a2448b2b57296577bb7051f972684ec65b9ba220cff6a45e5e4211a4dc33c"
+    },
+    {
+      "name": "kq_vo_npc_wr4",
+      "initial_flag_byte": 26,
+      "original_record_sha256": "41c1fa609de96154c9272e890505ea91a4705e8522d97807ab796b3b3682edcf"
+    },
+    {
+      "name": "kq_vo_npc_zom2",
+      "initial_flag_byte": 27,
+      "original_record_sha256": "3f80c1c27f5936776d4a572fbd85a44ba2e197a1290e2854c34a9e72f13f6a5a"
+    },
+    {
+      "name": "kq_vo_npc_zom3",
+      "initial_flag_byte": 28,
+      "original_record_sha256": "4a1f12574e2bd8cb360825572db1455c42a104e7c2dc4b1b65021dc5470d0313"
+    },
+    {
+      "name": "kq_vo_npc_zom4",
+      "initial_flag_byte": 29,
+      "original_record_sha256": "489b6a6d24edb8b12af8bbecef089aee0a9c79efdd6c8e6298839b849e8592b5"
+    },
+    {
+      "name": "kq_vo_npc_ba1",
+      "initial_flag_byte": 30,
+      "original_record_sha256": "4dc7967fed9e8a6c672bd42f6ed900ed27694a44280b2b7813853e5784e26d8e"
+    },
+    {
+      "name": "kq_vo_npc_ud1",
+      "initial_flag_byte": 31,
+      "original_record_sha256": "1b6962dc68d846f1c786b7d2e784a0161feb073eb06105b0e34d4b634f18f65e"
+    },
+    {
+      "name": "kq_vo_npc_ud2",
+      "initial_flag_byte": 32,
+      "original_record_sha256": "06ef1d720590c35b9611fc6defdc12dbbc3cbdd0fefcd7bb7ea550dfb26bf845"
+    },
+    {
+      "name": "kq_vo_npc_ud3",
+      "initial_flag_byte": 33,
+      "original_record_sha256": "f773fc4683cb1d7a895ea55374cac0d953e941cabf2e297bfd996d26d46d4a34"
+    },
+    {
+      "name": "kq_vo_npc_tek2",
+      "initial_flag_byte": 34,
+      "original_record_sha256": "61de8004fbec28a94ca958623cef4bf134c2069eda212cd7d0b1299d3815afd1"
+    },
+    {
+      "name": "kq_vo_npc_tek3",
+      "initial_flag_byte": 35,
+      "original_record_sha256": "3b11726fa795b2932a5173d60d26107bdf12510e2530fbde62a012cd5f620e69"
+    },
+    {
+      "name": "kq_vo_npc_imp1",
+      "initial_flag_byte": 36,
+      "original_record_sha256": "a8a76ec608bcc878377e5e0ba73989f70fb14f95c7e459fe783c5764a57b0625"
+    },
+    {
+      "name": "kq_vo_npc_imp2",
+      "initial_flag_byte": 37,
+      "original_record_sha256": "a677573872634018a98c5b60977735e0798c281cecc03fefe5036f05a65a7fab"
+    },
+    {
+      "name": "kq_vo_npc_sks1",
+      "initial_flag_byte": 38,
+      "original_record_sha256": "e320bc28a529bb114e36f9b5b269b1faf59c344be6b97b9cd44cb8d865381b19"
+    }
+  ],
+  "generated_header_sha256": "d4382b6b5416ac590f38f0ab988f094cd0d592840b4fe7f1c0a10ff88f70c386",
+  "scope": "Original words/data join; no full behavioral/gameplay claim"
+}

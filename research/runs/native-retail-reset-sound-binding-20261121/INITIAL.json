@@ -1,0 +1,20 @@
+{
+  "fork_head": "dfaebb19ddc2a6dbcecce3ab12b2933a4a76db8f",
+  "parent_head": "726d29cf6a084b46ab6197b204e6034176c6376c",
+  "before": {
+    "cmake/native_game.cmake": "b7c1900eea2f12858ca3cf83a9d043d484097f31fa87e4dc5abb11e43718a795",
+    "cmake/native_sound_resources.cmake": "ff81e7d364b8ef1a6b7e384abc802ce9f6437257f8dc7b284ae6b1819b5da3bc",
+    "recomp/native_startup_codegen.cpp": "849a1d3a81cf68a4a298c3ce0ac551e92d92a9e5859cb1edb60b5605c63f600d",
+    "runtime/include/mka/retail_main.hpp": "211f277527c75638239b9be84eb72ae33325aa7e820f0fc2b0d9afba15f0bbc0",
+    "runtime/src/native/retail_main_state.cpp": "f2d35d3cbec7ebd32a45aa93c0d082596b43abb6a2eecef4a1bfa2a256cd7e6b",
+    "runtime/src/native/retail_main.cpp": "3c8b414c9b265b2b005ad7538e09ba0319fd8c582c48005e310304dfe49ad884",
+    "runtime/src/native/retail_initial_reset.cpp": "4b485bc68686c3a0409110da28f6253ed392edd741ef57cfd33c8c2273d1a4ff",
+    "runtime/src/native/retail_middleware_main.cpp": "959e14d8b3bb10be40dff876a6c2086014346da9cec574245b205e5855624f70",
+    "tests/test_retail_initial_reset.cpp": "e12ee15308132f6d7c638fcd1acf678b738b6460475f66b7adb1a3eb2fafc986"
+  },
+  "user_authorization": "Connect actual reset bank queue/callback/wait and commit listed modified docs, tests and matching CMake/source dependencies. Existing audio adoption source may be integrated for those requested tests; preserve initial bytes.",
+  "scope": "Production reset/Main/catalog binding. No accepted game or playback claim from components.",
+  "game_run": false,
+  "frames": [],
+  "audio": []
+}

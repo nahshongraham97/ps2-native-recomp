@@ -33,10 +33,12 @@ class NativeRetailPrefixDispatchDescriptor;
 class NativeRetailRecordOwners;
 class NativeRetailGameResourceRegistry;
 class NativeRetailGameInfoResources;
+class NativeRetailSoundBankCatalog;
 struct NativeRetailProfileOwners;
 struct NativeRetailSceneOwners;
 
 enum class RetailStartupGate { ready, source_refused, native_failure };
+enum class RetailCurrentSoundPhase { empty, game_state_prepared, bank_catalog_opened, ready, failed };
 enum class RetailMainTaskBody { startup_18e100 };
 struct RetailMainTaskRequest {
     std::uint32_t kind, priority;
@@ -114,6 +116,9 @@ struct NativeRetailMainState {
     std::unique_ptr<game::NativeFrontendScheduler> task_scheduler;
     std::unique_ptr<sound::NativePlaybackOwner> playback;
     std::optional<sound::NativeSoundContext> current_sound;
+    std::shared_ptr<NativeRetailSoundBankCatalog> sound_bank_catalog;
+    RetailCurrentSoundPhase current_sound_phase{RetailCurrentSoundPhase::empty};
+    std::uint32_t sound_frame_counter{};
 
     std::array<float, 3> timing_factors{};
     float milliseconds_per_frame{};

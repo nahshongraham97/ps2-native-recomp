@@ -1,5 +1,6 @@
 #pragma once
 #include "mka/native_file.hpp"
+#include "mka/content_volume.hpp"
 #include <array>
 #include <cstddef>
 #include <memory>
@@ -22,6 +23,7 @@ class AudioResourceDomain;
 // never waits while a movie owner can exclude the current backing worker.
 struct AudioResourceBacking {
     content::NativeFile file;
+    std::optional<content::NativeContentFile> content_file;
 private:
     AudioResourceBacking* next_ = nullptr;
     friend class AudioResourceDomain;

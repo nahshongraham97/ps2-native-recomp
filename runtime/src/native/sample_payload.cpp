@@ -3,12 +3,49 @@
 #include <limits>
 #include <new>
 #include <stdexcept>
+#include <type_traits>
 
 namespace mka::sound {
 namespace {
 template<class Bytes> std::uint32_t u32(const Bytes& b, std::size_t at) {
     return std::uint32_t(b[at]) | (std::uint32_t(b[at+1])<<8) |
            (std::uint32_t(b[at+2])<<16) | (std::uint32_t(b[at+3])<<24);
+}
+template<class File> bool file_position(File& file, std::uint64_t& value, PayloadFailure& failure) {
+    if constexpr (std::is_same_v<File, content::NativeContentFile>) {
+        content::ContentVolumeFailure error;
+        auto result = file.position(error);
+        if (!result) { failure.content = error; failure.host_error = error.host_error; return false; }
+        value = *result; return true;
+    } else return file.position(value, failure.host_error);
+}
+template<class File> bool file_length(File& file, std::uint64_t& value, PayloadFailure& failure) {
+    if constexpr (std::is_same_v<File, content::NativeContentFile>) {
+        content::ContentVolumeFailure error;
+        auto result = file.length(error);
+        if (!result) { failure.content = error; failure.host_error = error.host_error; return false; }
+        value = *result; return true;
+    } else return file.length(value, failure.host_error);
+}
+template<class File> bool file_seek(File& file, std::int64_t offset, PayloadFailure& failure) {
+    if constexpr (std::is_same_v<File, content::NativeContentFile>) {
+        content::ContentVolumeFailure error;
+        const bool ok = file.seek(offset, content::SeekOrigin::begin, error);
+        if (!ok) { failure.content = error; failure.host_error = error.host_error; }
+        return ok;
+    } else return file.seek(offset, content::SeekOrigin::begin, failure.host_error);
+}
+template<class File> content::FileRead file_read(File& file, void* out, std::size_t size, PayloadFailure& failure) {
+    if constexpr (std::is_same_v<File, content::NativeContentFile>) {
+        content::ContentVolumeFailure error;
+        auto result = file.read(out, size, error);
+        if (result.error) { failure.content = error; failure.host_error = error.host_error; }
+        return result;
+    } else {
+        const auto result = file.read(out, size);
+        if (result.error) failure.host_error = result.error;
+        return result;
+    }
 }
 }
 std::uint32_t SamplePayload::word(std::size_t at) const noexcept {
@@ -26,9 +63,9 @@ PayloadBytes SamplePayload::encoded_payload() const noexcept {
     if (bytes_.size()<20) return {};
     return {bytes_.data()+20,bytes_.size()-20};
 }
-std::optional<SamplePayload> SamplePayload::read(content::NativeFile& file,const ResourceLookup& resource,PayloadFailure& failure) {
+template<class File> std::optional<SamplePayload> SamplePayload::read_opened(File& file,const ResourceLookup& resource,PayloadFailure& failure) {
     failure={};
-    auto fail=[&](PayloadError kind,std::error_code ec={}) -> std::optional<SamplePayload> { failure={kind,ec}; return std::nullopt; };
+    auto fail=[&](PayloadError kind) -> std::optional<SamplePayload> { failure.kind=kind; return std::nullopt; };
     if (resource.status!=ResourceLookupStatus::found) return fail(PayloadError::resource_not_found);
     // Named records store a string offset here; relocation changes its
     // meaning. Raw bit20000000 alone never proves the numeric extent route.
@@ -39,22 +76,23 @@ std::optional<SamplePayload> SamplePayload::read(content::NativeFile& file,const
     // MSL2DE74/2DEE8/2DEF8: this bounded view requires key bit20000000
     // and nonzero resource+10; other keys use an unresolved lookup route.
     if (!(u32(resource.bytes,8)&0x20000000u) || !offset) return fail(PayloadError::unsupported_key_lookup_route);
-    std::uint64_t saved=0; std::error_code error;
-    if (!file.position(saved,error)) return fail(PayloadError::io_error,error);
+    std::uint64_t saved=0;
+    if (!file_position(file,saved,failure)) return fail(PayloadError::io_error);
     auto restore=[&](std::optional<SamplePayload> value) -> std::optional<SamplePayload> {
-        std::error_code restore_error;
-        if (saved>std::uint64_t(INT64_MAX) || !file.seek(static_cast<std::int64_t>(saved),content::SeekOrigin::begin,restore_error))
-            return fail(PayloadError::cursor_restore_failed,restore_error);
+        PayloadFailure restore_failure;
+        if (saved>std::uint64_t(INT64_MAX) || !file_seek(file,static_cast<std::int64_t>(saved),restore_failure)) {
+            failure=restore_failure; return fail(PayloadError::cursor_restore_failed);
+        }
         return value;
     };
-    std::uint64_t length=0;
-    if (!file.length(length,error)) return restore(fail(PayloadError::io_error,error));
-    if (offset>length || extent>length-offset) return restore(fail(PayloadError::extent_out_of_bounds));
+    std::uint64_t actual_length=0;
+    if (!file_length(file,actual_length,failure)) return restore(fail(PayloadError::io_error));
+    if (offset>actual_length || extent>actual_length-offset) return restore(fail(PayloadError::extent_out_of_bounds));
     if (extent<20) return restore(fail(PayloadError::truncated_header));
-    if (!file.seek(static_cast<std::int64_t>(offset),content::SeekOrigin::begin,error)) return restore(fail(PayloadError::io_error,error));
+    if (!file_seek(file,static_cast<std::int64_t>(offset),failure)) return restore(fail(PayloadError::io_error));
     std::array<std::uint8_t,20> header{};
-    const auto first=file.read(header.data(),header.size());
-    if (first.error || first.bytes!=header.size()) return restore(fail(PayloadError::io_error,first.error));
+    const auto first=file_read(file,header.data(),header.size(),failure);
+    if (first.error || first.bytes!=header.size()) return restore(fail(PayloadError::io_error));
     const auto count=u32(header,8),rate=u32(header,12),stride=u32(header,16);
     //2DFB8 truncates count to16 bits,2DFD8 loads signed16. Support only
     // canonical positive encodings, never silently mask malformed metadata.
@@ -72,9 +110,15 @@ std::optional<SamplePayload> SamplePayload::read(content::NativeFile& file,const
     catch (const std::bad_alloc&) { return restore(fail(PayloadError::allocation_failed)); }
     catch (const std::length_error&) { return restore(fail(PayloadError::host_capacity)); }
     std::copy(header.begin(),header.end(),result.bytes_.begin());
-    const auto payload=file.read(result.bytes_.data()+20,result.bytes_.size()-20);
-    if (payload.error || payload.bytes!=result.bytes_.size()-20) return restore(fail(PayloadError::io_error,payload.error));
+    const auto payload=file_read(file,result.bytes_.data()+20,result.bytes_.size()-20,failure);
+    if (payload.error || payload.bytes!=result.bytes_.size()-20) return restore(fail(PayloadError::io_error));
     return restore(std::optional<SamplePayload>(std::move(result)));
+}
+std::optional<SamplePayload> SamplePayload::read(content::NativeFile& file,const ResourceLookup& resource,PayloadFailure& failure) {
+    return read_opened(file,resource,failure);
+}
+std::optional<SamplePayload> SamplePayload::read(content::NativeContentFile& file,const ResourceLookup& resource,PayloadFailure& failure) {
+    return read_opened(file,resource,failure);
 }
 std::optional<SamplePayload> SamplePayload::read(const std::filesystem::path& path,const ResourceLookup& resource,PayloadFailure& failure) {
     content::NativeFile file; std::error_code error;

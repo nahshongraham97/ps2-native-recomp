@@ -1,5 +1,6 @@
 #pragma once
 #include "mka/native_file.hpp"
+#include "mka/content_volume.hpp"
 #include "mka/audio_resource_domain.hpp"
 #include "mka/sound_bank.hpp"
 #include <array>
@@ -14,7 +15,7 @@ enum class PayloadError {
     unsupported_rate_mismatch, unsupported_zero_plane_size, inconsistent_extent,
     host_capacity, allocation_failed, io_error, cursor_restore_failed, resource_access
 };
-struct PayloadFailure { PayloadError kind = PayloadError::none; std::error_code host_error; AudioResourceFailure resource; };
+struct PayloadFailure { PayloadError kind = PayloadError::none; std::error_code host_error; AudioResourceFailure resource; content::ContentVolumeFailure content; };
 struct PayloadBytes { const std::uint8_t* data = nullptr; std::size_t size = 0; };
 // Owns serialized bytes only. No codec, channel order, Hz or playback meaning
 // is inferred. Views last until this owner is destroyed, assigned or moved.
@@ -34,10 +35,12 @@ public:
     // Uses the explicit open host file, restoring its cursor on success/failure.
     // An unsuccessful restoration is reported instead of returning payload.
     static std::optional<SamplePayload> read(content::NativeFile&, const ResourceLookup&, PayloadFailure&);
+    static std::optional<SamplePayload> read(content::NativeContentFile&, const ResourceLookup&, PayloadFailure&);
     // Owns a fresh temporary handle; no caller handle/cursor is involved.
     static std::optional<SamplePayload> read(const std::filesystem::path&, const ResourceLookup&, PayloadFailure&);
 private:
     SamplePayload() = default;
+    template<class File> static std::optional<SamplePayload> read_opened(File&, const ResourceLookup&, PayloadFailure&);
     std::vector<std::uint8_t> bytes_;
     std::uint32_t word(std::size_t offset) const noexcept;
 };

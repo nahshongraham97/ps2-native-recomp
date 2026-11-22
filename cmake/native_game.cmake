@@ -79,6 +79,9 @@ add_library(mka_native_content_volume STATIC EXCLUDE_FROM_ALL
     runtime/src/native/native_file.cpp runtime/src/native/content_volume.cpp)
 target_include_directories(mka_native_content_volume PUBLIC runtime/include)
 target_compile_features(mka_native_content_volume PUBLIC cxx_std_20)
+target_link_libraries(mka_native_sound_resources PUBLIC mka_native_content_volume)
+add_executable(test_native_content_sound_archive EXCLUDE_FROM_ALL tests/test_content_sound_archive.cpp)
+target_link_libraries(test_native_content_sound_archive PRIVATE mka_native_sound_resources)
 add_executable(test_native_content_volume_owner EXCLUDE_FROM_ALL tests/test_native_content_volume_owner.cpp)
 target_link_libraries(test_native_content_volume_owner PRIVATE mka_native_content_volume)
 # Native saved-profile bytes use their own writable host directory capability.
@@ -243,6 +246,7 @@ if(WIN32)
         runtime/src/native/retail_service_constructors.cpp runtime/src/native/retail_input_roles.cpp
         runtime/src/native/retail_audio_statistics.cpp runtime/src/native/retail_mode_state.cpp
         runtime/src/native/retail_main_mode.cpp runtime/src/native/retail_main_state.cpp
+        runtime/src/native/retail_sound_bank_catalog.cpp runtime/src/native/retail_sound_bank_main.cpp
         runtime/src/native/retail_package.cpp runtime/src/native/retail_remaining_constructors.cpp
         runtime/src/native/retail_action_history.cpp
         runtime/src/native/retail_auxiliary_words.cpp
@@ -265,6 +269,8 @@ if(WIN32)
     target_link_libraries(test_native_retail_active_overlay PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_startup_initialization EXCLUDE_FROM_ALL tests/test_retail_startup_initialization.cpp)
     target_link_libraries(test_native_retail_startup_initialization PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_reset_sound EXCLUDE_FROM_ALL tests/test_retail_reset_sound.cpp)
+    target_link_libraries(test_native_retail_reset_sound PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_initial_reset EXCLUDE_FROM_ALL tests/test_retail_initial_reset.cpp)
     target_link_libraries(test_native_retail_initial_reset PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_game_records_main EXCLUDE_FROM_ALL tests/test_retail_game_records_main.cpp)
@@ -387,7 +393,7 @@ add_executable(test_native_retail_main_timing EXCLUDE_FROM_ALL tests/test_retail
 target_link_libraries(test_native_retail_main_timing PRIVATE mka_native_retail_startup)
 if(WIN32)
     foreach(_native_startup_client test_native_retail_crt test_native_retail_startup test_native_retail_main_timing
-        test_native_retail_package test_native_retail_package_errors)
+        test_native_retail_package test_native_retail_package_errors test_native_retail_reset_sound)
         add_custom_command(TARGET ${_native_startup_client} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2>
                 $<TARGET_FILE_DIR:${_native_startup_client}> VERBATIM)

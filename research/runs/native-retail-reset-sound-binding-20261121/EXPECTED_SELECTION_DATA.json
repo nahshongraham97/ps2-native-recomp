@@ -1,0 +1,35 @@
+{
+  "authority_sha256": "7ea8d026dc0cb0afb6ed189e8c49af9bafffa7c87252886f2c14020ac7882a9d",
+  "original_elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "expectations": [
+    {
+      "name": "permanent",
+      "id": 0,
+      "slot": 0,
+      "source_flag_byte": 0,
+      "original_record_va": "0059bc30"
+    },
+    {
+      "name": "announcr",
+      "id": 8,
+      "slot": 4,
+      "source_flag_byte": 0,
+      "original_record_va": "0059bd70"
+    },
+    {
+      "name": "shell_music",
+      "id": 2,
+      "slot": 22,
+      "source_flag_byte": 0,
+      "original_record_va": "0059bc80"
+    },
+    {
+      "name": "shell",
+      "id": 1,
+      "slot": 21,
+      "source_flag_byte": 0,
+      "original_record_va": "0059bc58"
+    }
+  ],
+  "correction": "The first test incorrectly equated record IDs with record+8 bytes. Original words and a fresh ELF PT_LOAD read independently prove all four startup bytes0. The production data/header already matched those original bytes. Failed test and prior test bytes are preserved."
+}

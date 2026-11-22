@@ -242,6 +242,7 @@ std::optional<NativeStartupSources> emit_native_startup_closure(std::span<const 
 #include "mka/retail_crt.hpp"
 #include "mka/retail_platform.hpp"
 #include "mka/retail_main_timing.hpp"
+#include "mka/retail_sound_bank_catalog.hpp"
 #include "mka/retail_game_session.hpp"
 #include "mka/retail_middleware_work.hpp"
 #include "mka/retail_middleware_frame.hpp"
@@ -255,8 +256,8 @@ std::optional<NativeStartupSources> emit_native_startup_closure(std::span<const 
 #include <utility>
 #include <vector>
 namespace mka::retail {
-enum class StartupError {none,missing_boot_argument,malformed_boot_argument,missing_directory_separator,content,allocation,host_capacity,native_exception,memory_owners,already_initialized,crt,platform,main_timing,game_session,middleware,middleware_frame,profile_main,active_overlay,section_workspace,game_record_reset,game_records,text_storage,saved_profile_storage};
-struct StartupFailure {StartupError kind=StartupError::none;const char* operation="";content::ContentVolumeFailure content;RetailMemoryOwnerFailure memory;RetailCrtFailure crt;RetailPlatformFailure platform;RetailMainTimingFailure timing;RetailGameSessionFailure game;RetailMiddlewareWorkFailure middleware;RetailMiddlewareFrameFailure middleware_frame;RetailProfileMainFailure profile_main;RetailActiveOverlayFailure active_overlay;RetailSectionWorkspaceFailure section_workspace;RetailGameRecordResetFailure game_record_reset;RetailGameRecordsMainFailure game_records;RetailTextStorageFailure text_storage;save::SaveFailure saved_profile_storage;platform::UserPathFailure saved_profile_user_paths;};
+enum class StartupError {none,missing_boot_argument,malformed_boot_argument,missing_directory_separator,content,allocation,host_capacity,native_exception,memory_owners,already_initialized,crt,platform,main_timing,game_session,middleware,middleware_frame,profile_main,active_overlay,section_workspace,game_record_reset,game_records,text_storage,saved_profile_storage,sound_catalog};
+struct StartupFailure {StartupError kind=StartupError::none;const char* operation="";content::ContentVolumeFailure content;RetailMemoryOwnerFailure memory;RetailCrtFailure crt;RetailPlatformFailure platform;RetailMainTimingFailure timing;RetailGameSessionFailure game;RetailMiddlewareWorkFailure middleware;RetailMiddlewareFrameFailure middleware_frame;RetailProfileMainFailure profile_main;RetailActiveOverlayFailure active_overlay;RetailSectionWorkspaceFailure section_workspace;RetailGameRecordResetFailure game_record_reset;RetailGameRecordsMainFailure game_records;RetailTextStorageFailure text_storage;save::SaveFailure saved_profile_storage;platform::UserPathFailure saved_profile_user_paths;RetailSoundCatalogFailure sound_catalog;};
 // Native-owned replacements for the original startup arguments and writable
 // content/path state. Host executable location, boot-resource string and volume
 // are separate inputs; no guest argument block, pointer table or BSS is retained.

@@ -1,0 +1,5 @@
+{
+  "operation": "Pass full source listings in one exec command",
+  "error": "Windows CreateProcessW error206; launcher misleadingly described MSIX packaging",
+  "correction": "Chunked JSON transfer to a new record file, no runtime/tool installation changes"
+}

@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+    "--target",
+    "test_native_retail_reset_sound",
+    "test_native_audio_shared_services",
+    "test_native_content_sound_archive",
+    "test_native_sound_file_errors",
+    "test_native_retail_initial_reset",
+    "test_native_audio_banks",
+    "-j2"
+  ],
+  "exit": 0,
+  "stdout": "[0/2] Re-checking globbed directories...\n[1/15] AOT compile source-verified retail scalar functions to typed native C++\n[2/12] Building CXX object CMakeFiles/test_native_audio_banks.dir/tests/test_audio_banks.cpp.obj\n[3/12] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_main_state.cpp.obj\n[4/12] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_sound_bank_catalog.cpp.obj\n[5/12] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_sound_bank_main.cpp.obj\n[6/12] Linking CXX static library libmka_native_retail_startup.a\n[7/12] Building CXX object CMakeFiles/test_native_retail_reset_sound.dir/tests/test_retail_reset_sound.cpp.obj\n[8/12] Linking CXX executable test_native_audio_banks.exe\n[9/12] Linking CXX executable test_native_retail_reset_sound.exe\n[10/12] Building CXX object CMakeFiles/test_native_retail_initial_reset.dir/tests/test_retail_initial_reset.cpp.obj\nC:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp/tests/test_retail_initial_reset.cpp:144:76: warning: 'u8path<char *, 0>' is deprecated [-Wdeprecated-declarations]\n  144 |     auto volume = mka::content::NativeContentVolume::open(std::filesystem::u8path(argv[1]), content_failure);\n      |                                                                            ^\nC:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__filesystem/u8path.h:73:37: note: 'u8path<char *, 0>' has been explicitly marked deprecated here\n   73 | [[nodiscard]] _LIBCPP_HIDE_FROM_ABI _LIBCPP_DEPRECATED_WITH_CHAR8_T path u8path(const _Source& __s) {\n      |                                     ^\nC:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:465:43: note: expanded from macro '_LIBCPP_DEPRECATED_WITH_CHAR8_T'\n  465 | #  define _LIBCPP_DEPRECATED_WITH_CHAR8_T _LIBCPP_DEPRECATED\n      |                                           ^\nC:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:412:47: note: expanded from macro '_LIBCPP_DEPRECATED'\n  412 | #    define _LIBCPP_DEPRECATED __attribute__((__deprecated__))\n      |                                               ^\n1 warning generated.\n[11/12] Linking CXX executable test_native_retail_initial_reset.exe\n",
+  "stderr": ""
+}

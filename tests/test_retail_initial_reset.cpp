@@ -82,7 +82,8 @@ void inspect_prefix(NativeRetailMainState& main) {
 }
 } // namespace
 
-// Explicit fixture-only substitutes for the six unported production effects.
+// Explicit fixture-only substitutes for six effects to isolate caller behavior.
+// Production bank hooks are covered by test_retail_reset_sound.cpp.
 // They verify caller ordering and waits, never stand in for accepted gameplay.
 namespace mka::retail::initial_reset_required {
 bool reset_saved_profile_children_246070(NativeRetailMainState& main, StartupFailure&) {
@@ -222,7 +223,7 @@ int main(int argc, char** argv) try {
     bool retired = false;
     try { child->advance(); } catch (const RetailInitialTaskException&) { retired = true; }
     check(retired && guarded.calls.size() == 5, "retired Main refuses before borrowed state access");
-    std::puts("PASS native reset ordering, live fields, suspension,1799-wait timeout, failure and lifetime; six resource children remain unported");
+    std::puts("PASS native reset ordering, live fields, suspension,1799-wait timeout, failure and lifetime; six effects substituted in this caller fixture");
     return 0;
 } catch (const std::exception& error) {
     std::fprintf(stderr, "FAIL native reset: %s\n", error.what());

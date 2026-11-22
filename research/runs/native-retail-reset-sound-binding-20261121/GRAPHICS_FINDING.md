@@ -1,0 +1,5 @@
+# Loose art GPU boundary
+
+The actual loose armory.ssf starts with SEC/version4, not a native vertex-buffer header. NativeArtSectionData reads a bounded resource directory and returns ArtSpriteData::encoded_bytes, explicitly still encoded and possibly padded. NativeGeometryAttributes emits typed semantic attributes but explicitly excludes topology/admission, pipeline construction and GPU draw. The current retail_platform GL draw presents the loading picture; the other native GL device implementation serves movies. No production full-scene vertex upload/draw implementation was found in the bounded runtime/src/native source search. render_retail_frame remains a required Main effect.
+
+Recommendation3 therefore requires a verified SEC/resource-to-native geometry/texture producer and actual game draw submission. Uploading arbitrary loose SSF bytes as uncompressed meshes/textures would not establish format or behavior equivalence. Decoding serialized data into native resources is allowed; retaining GS VRAM/raster/device state is not. No rendered game frame or18226-transfer elimination is credited. This finding does not implement the GPU stage.

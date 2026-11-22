@@ -2,6 +2,7 @@
 #include <limits>
 #include <new>
 #include <stdexcept>
+#include <string>
 
 namespace mka::sound {
 namespace {
@@ -68,6 +69,32 @@ std::optional<StreamSource> StreamSource::open_associated_ms4(
         auto state = std::make_shared<State>();
         state->path = path;
         state->backing = SoundArchiveBacking::open(path, std::move(domain), failure.backing);
+        if (!state->backing) { failure.kind = StreamError::backing_failure; return std::nullopt; }
+        return StreamSource(std::move(state));
+    } catch (const std::bad_alloc&) { failure.kind = StreamError::allocation_failed; }
+      catch (const std::length_error&) { failure.kind = StreamError::host_capacity; }
+    return std::nullopt;
+}
+std::optional<StreamSource> StreamSource::adopt_associated_ms4(
+    content::NativeContentFile&& file, std::shared_ptr<AudioResourceDomain> domain, StreamFailure& failure) {
+    failure = {};
+    if (!file.valid()) {
+        failure.kind = StreamError::backing_failure;
+        failure.backing.kind = ArchiveError::invalid_content_file;
+        failure.backing.content.kind = content::ContentVolumeError::moved_file;
+        return std::nullopt;
+    }
+    if (!domain) {
+        failure.kind = StreamError::backing_failure;
+        failure.backing.kind = ArchiveError::resource_access;
+        failure.backing.resource.kind = AudioResourceError::invalid_owner;
+        return std::nullopt;
+    }
+    try {
+        auto state = std::make_shared<State>();
+        // Diagnostic identity only. This logical key is never reopened.
+        state->path = std::filesystem::u8path(std::string(file.logical_key()));
+        state->backing = SoundArchiveBacking::adopt(std::move(file), std::move(domain), failure.backing);
         if (!state->backing) { failure.kind = StreamError::backing_failure; return std::nullopt; }
         return StreamSource(std::move(state));
     } catch (const std::bad_alloc&) { failure.kind = StreamError::allocation_failed; }

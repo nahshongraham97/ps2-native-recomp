@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+    "--target",
+    "test_native_retail_reset_sound",
+    "test_native_audio_shared_services",
+    "test_native_content_sound_archive",
+    "test_native_sound_file_errors",
+    "-j2"
+  ],
+  "exit": 0,
+  "stdout": "[0/2] Re-checking globbed directories...\n[1/11] AOT compile source-verified retail scalar functions to typed native C++\n[2/8] Linking CXX executable test_native_audio_shared_services.exe\n[3/8] Linking CXX static library libmka_native_retail_startup.a\n[4/8] Linking CXX executable test_native_sound_file_errors.exe\n[5/8] Linking CXX executable test_native_content_sound_archive.exe\n[6/8] Building CXX object CMakeFiles/test_native_retail_reset_sound.dir/tests/test_retail_reset_sound.cpp.obj\n[7/8] Linking CXX executable test_native_retail_reset_sound.exe\n",
+  "stderr": ""
+}

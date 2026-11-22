@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-loose-20261121\\build-native-loose\\test_native_content_sound_archive.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-reset-sound-binding-20261121\\clean-validation-01\\adoption-fixtures"
+  ],
+  "exit": 0,
+  "stdout": "PASS_CONTENT_SOUND_ARCHIVE\n",
+  "stderr": "",
+  "seconds": 0.11051929999666754,
+  "build_commit": "646e20365417e1620400dc956112d646d27094dc",
+  "game_run": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "c4109ceec89061107e192e3c186a19dc1893a27d3391549ebd5d66f284d2fa76"
+}

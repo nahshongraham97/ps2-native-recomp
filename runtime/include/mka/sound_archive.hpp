@@ -14,7 +14,7 @@
 namespace mka::sound {
 
 enum class ArchiveError {
-    none, open_failed, io_error, cursor_restore_failed, short_read,
+    none, open_failed, invalid_content_file, io_error, cursor_restore_failed, short_read,
     truncated_header, unsupported_type, invalid_count, directory_out_of_bounds,
     entry_out_of_bounds, unterminated_name, duplicate_key, ambiguous_name,
     host_capacity, allocation_failed, absent_bank, closed, resource_access
@@ -23,6 +23,7 @@ struct ArchiveFailure {
     ArchiveError kind = ArchiveError::none;
     std::error_code host_error;
     AudioResourceFailure resource;
+    content::ContentVolumeFailure content;
 };
 struct ArchiveRecord {
     std::uint32_t key = 0;
@@ -40,11 +41,15 @@ public:
                                                       ArchiveFailure&);
     static std::shared_ptr<SoundArchiveBacking> open(const std::filesystem::path&,
         std::shared_ptr<AudioResourceDomain>, ArchiveFailure&);
+    static std::shared_ptr<SoundArchiveBacking> adopt(content::NativeContentFile&&,
+        std::shared_ptr<AudioResourceDomain>, ArchiveFailure&);
     std::shared_ptr<AudioResourceDomain> resource_domain() const noexcept;
     ~SoundArchiveBacking();
     SoundArchiveBacking(const SoundArchiveBacking&) = delete;
     SoundArchiveBacking& operator=(const SoundArchiveBacking&) = delete;
     std::uint64_t size() const noexcept;
+    // Native opened-handle observation; reads must restore this cursor.
+    std::optional<std::uint64_t> opened_position(ArchiveFailure&) const;
     std::optional<std::vector<std::uint8_t>> read_bytes(
         std::uint64_t offset, std::uint64_t count, ArchiveFailure&) const;
     std::optional<SamplePayload> read_payload(const ResourceLookup&, PayloadFailure&) const;
@@ -74,6 +79,9 @@ public:
     static std::optional<SoundArchive> open(const std::filesystem::path&, ArchiveFailure&);
     static std::optional<SoundArchive> open(const std::filesystem::path&,
         std::shared_ptr<AudioResourceDomain>, ArchiveFailure&);
+    static std::optional<SoundArchive> adopt(content::NativeContentFile&&, ArchiveFailure&);
+    static std::optional<SoundArchive> adopt(content::NativeContentFile&&,
+        std::shared_ptr<AudioResourceDomain>, ArchiveFailure&);
     std::shared_ptr<AudioResourceDomain> resource_domain() const noexcept {
         return backing_ ? backing_->resource_domain() : nullptr;
     }
@@ -86,6 +94,7 @@ public:
     const std::vector<ArchiveRecord>& directory_records() const noexcept { return records_; }
 private:
     SoundArchive() = default;
+    static std::optional<SoundArchive> parse(std::shared_ptr<SoundArchiveBacking>, ArchiveFailure&);
     void swap(SoundArchive&) noexcept;
     std::shared_ptr<SoundArchiveBacking> backing_;
     std::vector<ArchiveRecord> records_;

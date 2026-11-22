@@ -53,6 +53,48 @@ std::optional<AudioBankSession> AudioBankSession::open(
       catch (const std::length_error&) { failure.kind = AudioBanksError::host_capacity; }
     return std::nullopt;
 }
+std::optional<AudioBankSession> AudioBankSession::adopt(
+    content::NativeContentFile&& ms2, std::optional<content::NativeContentFile>&& ms4,
+    AudioBanksFailure& failure) {
+    failure = {};
+    if (!ms2.valid()) {
+        failure.kind = AudioBanksError::archive_failed;
+        failure.archive.kind = ArchiveError::invalid_content_file;
+        failure.archive.content.kind = content::ContentVolumeError::moved_file;
+        return std::nullopt;
+    }
+    if (ms4 && !ms4->valid()) {
+        failure.kind = AudioBanksError::stream_read_failed;
+        failure.stream.kind = StreamError::backing_failure;
+        failure.stream.backing.kind = ArchiveError::invalid_content_file;
+        failure.stream.backing.content.kind = content::ContentVolumeError::moved_file;
+        return std::nullopt;
+    }
+    auto domain = AudioResourceDomain::create(failure.resource);
+    if (!domain) { failure.kind = AudioBanksError::resource_access; return std::nullopt; }
+    return adopt(std::move(ms2), std::move(ms4), std::move(domain), failure);
+}
+std::optional<AudioBankSession> AudioBankSession::adopt(
+    content::NativeContentFile&& ms2, std::optional<content::NativeContentFile>&& ms4,
+    std::shared_ptr<AudioResourceDomain> domain, AudioBanksFailure& failure) {
+    failure = {};
+    if (!domain) { failure.kind = AudioBanksError::resource_access; failure.resource.kind = AudioResourceError::invalid_owner; return std::nullopt; }
+    if (!ms2.valid()) { failure.kind = AudioBanksError::archive_failed; failure.archive.kind = ArchiveError::invalid_content_file; failure.archive.content.kind = content::ContentVolumeError::moved_file; return std::nullopt; }
+    if (ms4 && !ms4->valid()) { failure.kind = AudioBanksError::stream_read_failed; failure.stream.kind = StreamError::backing_failure; failure.stream.backing.kind = ArchiveError::invalid_content_file; failure.stream.backing.content.kind = content::ContentVolumeError::moved_file; return std::nullopt; }
+    try {
+        auto archive = SoundArchive::adopt(std::move(ms2), domain, failure.archive);
+        if (!archive) { failure.kind = AudioBanksError::archive_failed; return std::nullopt; }
+        auto state = std::make_shared<State>(std::move(*archive));
+        state->domain = domain;
+        if (ms4) {
+            state->stream = StreamSource::adopt_associated_ms4(std::move(*ms4), domain, failure.stream);
+            if (!state->stream) { failure.kind = AudioBanksError::stream_read_failed; return std::nullopt; }
+        }
+        return AudioBankSession(std::move(state));
+    } catch (const std::bad_alloc&) { failure.kind = AudioBanksError::allocation_failed; }
+      catch (const std::length_error&) { failure.kind = AudioBanksError::host_capacity; }
+    return std::nullopt;
+}
 const BankAsset* AudioBankSession::checked_bank(const AudioBankHandle& handle, AudioBanksFailure& failure) const {
     if (state_->closed) { failure.kind = AudioBanksError::closed_session; return nullptr; }
     if (handle.moved_) { failure.kind = AudioBanksError::moved_handle; return nullptr; }
@@ -65,6 +107,14 @@ const BankAsset* AudioBankSession::checked_bank(const AudioBankHandle& handle, A
     if (it == state_->banks.end()) { failure.kind = AudioBanksError::unknown_handle; return nullptr; }
     return it->second.bank.get();
 }
+std::optional<AudioBankSession> AudioBankSession::share_native_services(AudioBanksFailure& failure) const {
+    failure = {};
+    if (!state_) { failure.kind = AudioBanksError::moved_session; return {}; }
+    std::lock_guard<std::mutex> lock(state_->mutex);
+    if (state_->closed) { failure.kind = AudioBanksError::closed_session; return {}; }
+    return AudioBankSession(state_);
+}
+
 std::optional<AudioBankHandle> AudioBankSession::load_bank(std::string_view name, AudioBanksFailure& failure) {
     failure = {};
     if (!state_) { failure.kind = AudioBanksError::moved_session; return std::nullopt; }

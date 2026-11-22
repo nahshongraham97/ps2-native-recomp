@@ -52,6 +52,8 @@ public:
         const std::filesystem::path&, StreamFailure&);
     static std::optional<StreamSource> open_associated_ms4(
         const std::filesystem::path&, std::shared_ptr<AudioResourceDomain>, StreamFailure&);
+    static std::optional<StreamSource> adopt_associated_ms4(
+        content::NativeContentFile&&, std::shared_ptr<AudioResourceDomain>, StreamFailure&);
     std::shared_ptr<AudioResourceDomain> resource_domain() const noexcept;
     std::optional<StreamSourceGroup> read_group(
         const ResourceLookup&, std::uint64_t ordinal, StreamFailure&) const;

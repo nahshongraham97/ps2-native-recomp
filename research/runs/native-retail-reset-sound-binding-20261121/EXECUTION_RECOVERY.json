@@ -1,0 +1,11 @@
+{
+  "previous_error": "failed to prepare process sandbox: invalid sandbox permission path: 'file:///workspace' is invalid on 'windows'",
+  "observed_mismatch": "Linux-style permission entries were supplied to the Windows execution service. The cause of metadata generation is unknown.",
+  "current_check": "Get-Location succeeds at C:/Users/nahsh/mk port/Armageddon-backup",
+  "previous_commit_attempt_ran": false,
+  "current_head_matches_before": true,
+  "index_empty_before_resume": true,
+  "tested_source_pins_unchanged": true,
+  "reconnected_to_linux": false,
+  "scope": "Execution service configuration interruption/recovery, not game/source behavior"
+}

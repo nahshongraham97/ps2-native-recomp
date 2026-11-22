@@ -68,7 +68,16 @@ public:
         const std::optional<std::filesystem::path>& associated_ms4, AudioBanksFailure&);
     static std::optional<AudioBankSession> open(const std::filesystem::path&,
         const std::optional<std::filesystem::path>&, std::shared_ptr<AudioResourceDomain>, AudioBanksFailure&);
+    static std::optional<AudioBankSession> adopt(content::NativeContentFile&&,
+        std::optional<content::NativeContentFile>&&, AudioBanksFailure&);
+    static std::optional<AudioBankSession> adopt(content::NativeContentFile&&,
+        std::optional<content::NativeContentFile>&&,
+        std::shared_ptr<AudioResourceDomain>, AudioBanksFailure&);
     std::shared_ptr<AudioResourceDomain> resource_domain() const noexcept;
+    // Explicit native service views share the SAME registry, cookie, backing
+    // files and close/revocation state. This does not open another archive or
+    // translate a bank handle into an integer token.
+    std::optional<AudioBankSession> share_native_services(AudioBanksFailure&) const;
     std::optional<AudioBankHandle> load_bank(std::string_view name, AudioBanksFailure&);
     std::optional<AudioBankLoadState> load_state(const AudioBankHandle&, AudioBanksFailure&) const;
     // Failed preparation invalidates ONLY this bank handle, matching candidate cleanup.
