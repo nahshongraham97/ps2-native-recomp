@@ -1,0 +1,11 @@
+{
+  "entries": [
+    {
+      "original": "validation-03/native-client-symbols.json",
+      "original_sha256": "ea5993675eccdd25ca8fede83f6fc0f59e30f98b3b89e4ce618ef89110c3dcb4",
+      "archive": "validation-03/native-client-symbols.json.gz",
+      "archive_sha256": "f24804885f16ab0cc1dda59c4aeb22364b49ee41fff5816255192b44a390686c",
+      "encoding": "lossless gzip; raw measured bytes preserved locally"
+    }
+  ]
+}

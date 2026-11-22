@@ -40,6 +40,16 @@ constexpr std::uint8_t pan_attenuation[100]={
     47,49,51,52,54,56,58,61,63,66,
     69,72,76,81,86,92,101,112,132,200,
 };
+constexpr auto linear_gain_curve=[] {
+    std::array<std::uint16_t,200> result{};
+    for(std::uint32_t i=0;i<200;++i)result[199-i]=static_cast<std::uint16_t>(i*16383u/199u);
+    return result;
+}();
+constexpr auto linear_pan_attenuation=[] {
+    std::array<std::uint8_t,100> result{};
+    for(std::size_t i=0;i<100;++i)result[i]=static_cast<std::uint8_t>(2*i);
+    return result;
+}();
 bool product(std::int64_t a,std::int64_t b,unsigned shift,std::int64_t& out){
     const auto wide=a*b; // Inputs are bounded source32/16 values at each stage.
     if(wide<std::numeric_limits<std::int32_t>::min()||wide>std::numeric_limits<std::int32_t>::max())return false;
@@ -48,8 +58,9 @@ bool product(std::int64_t a,std::int64_t b,unsigned shift,std::int64_t& out){
 }
 AudioControlFactors initial_program_control_factors()noexcept{return {0x4000,0,0x1000,0x4000,0,0x1000};}
 std::optional<NativeAudioControls> decode_audio_controls(const ProgramStep& event,
-    const AudioControlFactors& context,const AudioControlFactors& program,std::uint32_t mode,AudioControlFailure& failure,AudioControlUse use){
+    const AudioControlFactors& context,const AudioControlFactors& program,std::uint32_t mode,AudioControlFailure& failure,AudioControlUse use,AudioControlCurve curve){
     failure={};auto fail=[&](AudioControlError e)->std::optional<NativeAudioControls>{failure.kind=e;return std::nullopt;};
+    if(!valid_audio_control_curve(curve))return fail(AudioControlError::unsupported_curve);
     if(use!=AudioControlUse::fresh_start)return fail(AudioControlError::unsupported_dynamic_pan_update);
     if(event.kind!=ProgramStepKind::sample_start)return fail(AudioControlError::not_sample_start);
     if(!event.clip||!event.owner)return fail(AudioControlError::missing_clip);
@@ -60,7 +71,7 @@ std::optional<NativeAudioControls> decode_audio_controls(const ProgramStep& even
     if(event.start.repeat_operand!=1)return fail(AudioControlError::unsupported_repeat);
     if(event.start.start_argument)return fail(AudioControlError::unsupported_start_argument);
     if(event.start.descriptor_word_28)return fail(AudioControlError::unsupported_descriptor_word);
-    NativeAudioControls result;result.source_output_mode=mode;result.planes=event.clip->pcm.size();
+    NativeAudioControls result;result.source_output_mode=mode;result.planes=event.clip->pcm.size();result.curve=curve;
     if(result.planes<1||result.planes>2)return fail(AudioControlError::invalid_plane_count);
     std::int64_t gain=0,pitch=0,temp=0;
     if(!product(context.gain_q14,program.gain_q14,14,temp)||!product(event.start.parameter_44,temp,14,gain)||
@@ -92,14 +103,16 @@ std::optional<NativeAudioControls> decode_audio_controls(const ProgramStep& even
     if(mode==1){if(routed_pan>8192)routed_pan=16384-routed_pan;
                 else if(routed_pan<-8192)routed_pan=-16384-routed_pan;}
     result.routed_pan_q14=routed_pan;
-    const auto q15=std::int32_t(gain_curve[curve_index])*2;
+    const auto gain_at=[curve](std::size_t index){return curve==AudioControlCurve::startup_linear?linear_gain_curve[index]:gain_curve[index];};
+    const auto pan_at=[curve](std::size_t index){return curve==AudioControlCurve::startup_linear?linear_pan_attenuation[index]:pan_attenuation[index];};
+    const auto q15=std::int32_t(gain_at(curve_index))*2;
     std::array<std::int32_t,2> gains{q15,q15};
     if(mode){
         const auto magnitude=static_cast<unsigned>(routed_pan<0?-routed_pan:routed_pan);
         const bool phase_inverted=magnitude>8192;
         const auto table_index=phase_inverted ? 99u-(99u*(magnitude-8192u))/8192u : (99u*magnitude)/8192u;
-        const auto attenuated_index=std::min<std::size_t>(199,curve_index+pan_attenuation[table_index]);
-        auto attenuated=std::int32_t(gain_curve[attenuated_index])*2;
+        const auto attenuated_index=std::min<std::size_t>(199,curve_index+pan_at(table_index));
+        auto attenuated=std::int32_t(gain_at(attenuated_index))*2;
         if(phase_inverted)attenuated=-attenuated;
         // Positivepan attenuates/inverts left; negativepan right. Fresh3259C
         // sets50/52=F000,56=0; eachbranch publishes initial50/52 BEFORE

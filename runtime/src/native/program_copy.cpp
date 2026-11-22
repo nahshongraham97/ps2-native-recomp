@@ -135,7 +135,7 @@ bool NativeProgramCopy::start_output(const ProgramStep& event,const NormalOutput
     if(operands.set_descriptor_flag_1)i->state.flags|=1u;
     if(operands.set_descriptor_flag_4)i->state.flags|=4u;
     ProgramStep actual=event;actual.start=operands;
-    auto voice=HostVoice::start(actual,p.context,p.program,p.source_output_mode,p.envelope,p.host_output_rate,f.voice);
+    auto voice=HostVoice::start(actual,p.context,p.program,p.source_output_mode,p.envelope,p.host_output_rate,f.voice,p.curve);
     if(!voice){f.kind=ProgramCopyError::voice_failed;return false;}
     i->output=std::move(voice);i->state.start_argument=operands.start_argument;return true;
 }

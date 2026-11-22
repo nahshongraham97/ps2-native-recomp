@@ -62,6 +62,7 @@ struct NativePlaybackOwner::State {
     std::optional<AudioBankSession> native_session;
     std::shared_ptr<const void> identity;
     std::uint32_t rate;
+    const AudioControlCurve control_curve;
     std::shared_ptr<NativeProgramHostClock> clock;
     bool closed=false,closing=false,close_unknown=false,clock_sampling=false;
     std::size_t operations=0;
@@ -116,9 +117,9 @@ struct NativePlaybackOwner::State {
         f.kind=PlaybackError::unknown_context;return nullptr;
     }
     State(AudioBankService&& s,std::uint32_t r,std::shared_ptr<const void> id,std::shared_ptr<NativeProgramHostClock> timer)
-        :service(std::move(s)),identity(std::move(id)),rate(r),clock(std::move(timer)){}
-    State(AudioBankSession&& s,std::uint32_t r,std::shared_ptr<const void> id,std::shared_ptr<NativeProgramHostClock> timer)
-        :native_session(std::move(s)),identity(std::move(id)),rate(r),clock(std::move(timer)){}
+        :service(std::move(s)),identity(std::move(id)),rate(r),control_curve(AudioControlCurve::initial_nonlinear),clock(std::move(timer)){}
+    State(AudioBankSession&& s,std::uint32_t r,AudioControlCurve curve,std::shared_ptr<const void> id,std::shared_ptr<NativeProgramHostClock> timer)
+        :native_session(std::move(s)),identity(std::move(id)),rate(r),control_curve(curve),clock(std::move(timer)){}
     Context* context_identity(const std::shared_ptr<const void>& id){for(auto& c:contexts)if(c.identity==id)return &c;return nullptr;}
     Entry* entry_identity(const std::shared_ptr<const void>& id){for(auto& s:slots)if(s.identity==id)return s.entry.get();return nullptr;}
     void detach_dispatch(Entry& e){
@@ -151,7 +152,7 @@ struct NativePlaybackOwner::State {
         if(e.terminal){f=*e.terminal;return {};}
         auto event=e.executor->step(now,f.program);if(!event){f.kind=PlaybackError::program_failed;e.terminal=f;return {};}
         if(event->kind==ProgramStepKind::sample_start){
-            NormalOutputParameters p{e.parameters.context,e.parameters.program,e.parameters.envelope,e.parameters.source_output_mode,rate};
+            NormalOutputParameters p{e.parameters.context,e.parameters.program,e.parameters.envelope,e.parameters.source_output_mode,rate,control_curve};
             if(!e.copy||!e.copy->start_output(*event,p,f.copy)){
                 f.kind=f.copy.kind==ProgramCopyError::voice_failed?PlaybackError::voice_failed:PlaybackError::copy_failed;
                 f.voice=f.copy.voice;e.executor->acknowledge_start(false,f.program);e.terminal=f;return {};
@@ -189,17 +190,19 @@ std::shared_ptr<AudioResourceDomain> NativePlaybackOwner::resource_domain() cons
     if(!state_)return nullptr;
     return state_->native_session?state_->native_session->resource_domain():state_->service->resource_domain();
 }
-std::optional<NativePlaybackOwner> NativePlaybackOwner::create(AudioBankSession&& s,std::uint32_t rate,PlaybackFailure& f){
+std::optional<NativePlaybackOwner> NativePlaybackOwner::create(AudioBankSession&& s,std::uint32_t rate,AudioControlCurve curve,PlaybackFailure& f){
     f={};if(!rate){f.kind=PlaybackError::invalid_output_rate;return {};}
+    if(!valid_audio_control_curve(curve)){f.kind=PlaybackError::invalid_control_curve;return {};}
     auto clock=NativeProgramHostClock::create(f.clock);if(!clock){f.kind=PlaybackError::clock_failed;return {};}
-    return create_with_clock(std::move(s),rate,std::move(clock),f);
+    return create_with_clock(std::move(s),rate,curve,std::move(clock),f);
 }
 std::optional<NativePlaybackOwner> NativePlaybackOwner::create_with_clock(AudioBankSession&& s,std::uint32_t rate,
-    std::shared_ptr<NativeProgramHostClock> clock,PlaybackFailure& f){
+    AudioControlCurve curve,std::shared_ptr<NativeProgramHostClock> clock,PlaybackFailure& f){
     f={};if(!rate){f.kind=PlaybackError::invalid_output_rate;return {};}
+    if(!valid_audio_control_curve(curve)){f.kind=PlaybackError::invalid_control_curve;return {};}
     if(!clock){f.kind=PlaybackError::invalid_clock;return {};}
     if(!s.share_native_services(f.native_bank)){f.kind=PlaybackError::native_bank_failed;return {};}
-    try{auto id=std::make_shared<int>(0);return NativePlaybackOwner(std::make_shared<State>(std::move(s),rate,std::move(id),std::move(clock)));}
+    try{auto id=std::make_shared<int>(0);return NativePlaybackOwner(std::make_shared<State>(std::move(s),rate,curve,std::move(id),std::move(clock)));}
     catch(const std::bad_alloc&){allocation_failure(f);}catch(const std::length_error&){f.kind=PlaybackError::host_capacity;}return {};
 }
 std::optional<NativeSoundContext> NativePlaybackOwner::create_sound_context(NativeSoundContextConfiguration configuration,PlaybackFailure& f){

@@ -102,7 +102,8 @@ bool create_playback_context_316320(NativeRetailMainState& main, sound::AudioBan
     ++fixture->context;
     if (fixture->refuse_context) return false;
     sound::PlaybackFailure playback_failure;
-    auto playback = sound::NativePlaybackOwner::create(std::move(session), 48000, playback_failure);
+    auto playback = sound::NativePlaybackOwner::create(std::move(session), 48000,
+        sound::AudioControlCurve::startup_linear, playback_failure);
     check(bool(playback), "real native playback owner with explicit test output rate");
     auto context = playback->create_sound_context({3}, playback_failure);
     check(bool(context), "real empty native context with source-proved logical role boundary");

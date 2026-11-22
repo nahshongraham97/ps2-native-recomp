@@ -1,0 +1,20 @@
+{
+  "status": "REFUSED_BEFORE_BUILD",
+  "reason": "Authored audio_controls files inherited CRLF; all code must be LF before building",
+  "game_run": false,
+  "build_launched": false,
+  "rows": [
+    {
+      "path": "runtime/include/mka/audio_controls.hpp",
+      "prior_sha256": "580863fad90b307c08d9260604726c2063387f6f92350558f95c9d917dca5b5c",
+      "normalized_sha256": "daa55328fe2c4f7d4bbd8c94bbe480f0c726ed85fd290284a8704550464b6747",
+      "prior_bytes_archive": "before-lf-normalization/audio_controls.hpp.gz"
+    },
+    {
+      "path": "runtime/src/native/audio_controls.cpp",
+      "prior_sha256": "3e23ffc99c78df57a118dc5686018a131cf0c2a64c1bce946193d5c5cc45ba43",
+      "normalized_sha256": "94546ef5e34ded6b69e173759d5be6f0beb6e450a93f1e6d9e116ec0fa621265",
+      "prior_bytes_archive": "before-lf-normalization/audio_controls.cpp.gz"
+    }
+  ]
+}

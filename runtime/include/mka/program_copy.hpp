@@ -16,6 +16,9 @@ struct NormalOutputParameters {
     AudioControlFactors context,program;
     NativeEnvelopeProfile envelope;
     std::uint32_t source_output_mode,host_output_rate;
+    // Initial-data policy for standalone/compatibility clients. Native Session
+    // playback owners always supply their required explicit curve selection.
+    AudioControlCurve curve=AudioControlCurve::initial_nonlinear;
 };
 struct OrdinaryProgramSchedule {
     std::shared_ptr<const PreparedProgram> data;

@@ -1,0 +1,49 @@
+{
+  "base": "19f3062159f3c7b813b337ba3b7161af7185028e",
+  "pins": {
+    "runtime/include/mka/audio_controls.hpp": {
+      "sha256": "008f01b1a025174b47aace5c4c98c2d1cebd072d987d66de340aeb272973d3fe",
+      "archive": "before/audio_controls.hpp.gz"
+    },
+    "runtime/src/native/audio_controls.cpp": {
+      "sha256": "e4d156e21cc86dfce88f775376721844c663db8e1ece67bb967c857aadad32db",
+      "archive": "before/audio_controls.cpp.gz"
+    },
+    "runtime/include/mka/host_voice.hpp": {
+      "sha256": "39325b1991040f9bc2f0e4f7a74b83b44173927ff1947d04b4683266b5f61173",
+      "archive": "before/host_voice.hpp.gz"
+    },
+    "runtime/src/native/host_voice.cpp": {
+      "sha256": "4ab82f2b095dc184d2cb117fffcd098ae27bd0d23d2d9b808040411eb3b863a1",
+      "archive": "before/host_voice.cpp.gz"
+    },
+    "runtime/include/mka/program_copy.hpp": {
+      "sha256": "2a26f9baf1ef43fab827787b06b00ded661fa1d2d29005ac835b680fa29cb0dc",
+      "archive": "before/program_copy.hpp.gz"
+    },
+    "runtime/src/native/program_copy.cpp": {
+      "sha256": "1a600bc846b9a014db09e0fefaf672249b661819fec2a7939561e7f518567f0e",
+      "archive": "before/program_copy.cpp.gz"
+    },
+    "runtime/include/mka/playback_owner.hpp": {
+      "sha256": "1171dbc49a7c14b7e80efedd2e35c56369fbd6ed1b5ab6ed0fedfdd8a8475505",
+      "archive": "before/playback_owner.hpp.gz"
+    },
+    "runtime/src/native/playback_owner.cpp": {
+      "sha256": "4d69d15ea29975831b7c2eba4734bc9682782b436f9e760b202cca02f5a77d9b",
+      "archive": "before/playback_owner.cpp.gz"
+    },
+    "tests/test_native_bank_playback.cpp": {
+      "sha256": "5857625dd9cacf957d1ff9c0213c1dbcd1063cd157a916cee82e28017bd2fd1f",
+      "archive": "before/test_native_bank_playback.cpp.gz"
+    },
+    "tests/test_retail_reset_sound.cpp": {
+      "sha256": "c1391e0bc303c3c3734b996925e124a30a56f0a2dcfbef5a2bcb7b8de820574f",
+      "archive": "before/test_retail_reset_sound.cpp.gz"
+    },
+    "cmake/native_sound_resources.cmake": {
+      "sha256": "440d648949116154180ace87fad7e7f30f4765149457f598b9f6c87f8172b3c1",
+      "archive": "before/native_sound_resources.cmake.gz"
+    }
+  }
+}

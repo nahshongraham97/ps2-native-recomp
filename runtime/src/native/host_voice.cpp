@@ -66,10 +66,10 @@ HostVoice::~HostVoice()=default;
 HostVoice::HostVoice(HostVoice&&)noexcept=default;
 HostVoice& HostVoice::operator=(HostVoice&&)noexcept=default;
 std::optional<HostVoice> HostVoice::start(const ProgramStep& event,const AudioControlFactors& context,
-    const AudioControlFactors& program,std::uint32_t mode,const NativeEnvelopeProfile& profile,std::uint32_t rate,HostVoiceFailure& failure){
+    const AudioControlFactors& program,std::uint32_t mode,const NativeEnvelopeProfile& profile,std::uint32_t rate,HostVoiceFailure& failure,AudioControlCurve curve){
     failure={};if(!rate){failure.kind=HostVoiceError::invalid_output_rate;return std::nullopt;}
     if(!valid_profile(profile)){failure.kind=HostVoiceError::unsupported_envelope;return std::nullopt;}
-    auto controls=decode_audio_controls(event,context,program,mode,failure.control);
+    auto controls=decode_audio_controls(event,context,program,mode,failure.control,AudioControlUse::fresh_start,curve);
     if(!controls){failure.kind=HostVoiceError::control_failed;return std::nullopt;}
     for(const auto& pcm:event.clip->pcm)if(pcm.samples.size()<2||pcm.samples.size()!=event.clip->pcm[0].samples.size()){
         failure.kind=HostVoiceError::invalid_clip;return std::nullopt;

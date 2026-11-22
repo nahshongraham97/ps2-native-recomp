@@ -34,13 +34,13 @@ int main(int argc,char** argv)try{
     auto view=session->share_native_services(bank_failure);
     check(bool(view),"actual shared registry view");
     PlaybackFailure failure;
-    check(!NativePlaybackOwner::create(std::move(*view),0,failure)&&failure.kind==PlaybackError::invalid_output_rate,
+    check(!NativePlaybackOwner::create(std::move(*view),0,AudioControlCurve::initial_nonlinear,failure)&&failure.kind==PlaybackError::invalid_output_rate,
         "no guessed output rate and invalid factory does not consume Session");
     std::int64_t ticks=0;unsigned samples=0;
     ProgramHostClockFailure clock_failure;
     auto clock=NativeProgramHostClock::create_with_reader(1000,[&](ProgramHostClockFailure&){++samples;return std::optional<std::int64_t>{ticks};},clock_failure);
     check(bool(clock),"explicit shared native test clock");
-    auto owner=NativePlaybackOwner::create_with_clock(std::move(*view),48000,clock,failure);
+    auto owner=NativePlaybackOwner::create_with_clock(std::move(*view),48000,AudioControlCurve::initial_nonlinear,clock,failure);
     check(bool(owner)&&owner->resource_domain()==session->resource_domain(),"native owner retains exact catalog domain");
     auto context=owner->create_sound_context({3},failure);
     check(bool(context),"source-proved explicit logical boundary3");
@@ -101,7 +101,7 @@ int main(int argc,char** argv)try{
         "native revoked handle never reloads or falls back");
     check(owner->release_sound_context(*live_context,failure)&&owner->close_when_idle(failure),"native idle Session closes");
     check(!session->load_state(*second,bank_failure)&&bank_failure.kind==AudioBanksError::closed_session,"same Session close revokes catalog view");
-    check(!NativePlaybackOwner::create(std::move(*session),48000,failure)&&failure.native_bank.kind==AudioBanksError::closed_session,
+    check(!NativePlaybackOwner::create(std::move(*session),48000,AudioControlCurve::initial_nonlinear,failure)&&failure.native_bank.kind==AudioBanksError::closed_session,
         "closed Session cannot publish a new playback owner");
     {
         auto revoked=AudioBankSession::open(argv[1],std::nullopt,bank_failure);
@@ -113,7 +113,7 @@ int main(int argc,char** argv)try{
             if(close_during_clock){AudioBanksFailure f;closed_in_callback=revoked->close(f);}
             return std::optional<std::int64_t>{0};
         },clock_failure);
-        auto guarded=NativePlaybackOwner::create_with_clock(std::move(*shared),48000,revoking_clock,failure);
+        auto guarded=NativePlaybackOwner::create_with_clock(std::move(*shared),48000,AudioControlCurve::initial_nonlinear,revoking_clock,failure);
         check(bool(guarded),"revocation native owner");
         auto guarded_context=guarded->create_sound_context({3},failure);
         close_during_clock=true;

@@ -28,7 +28,8 @@ public:
     ~HostVoice();
     static std::optional<HostVoice> start(const ProgramStep&,const AudioControlFactors& context,
         const AudioControlFactors& program,std::uint32_t source_output_mode,
-        const NativeEnvelopeProfile&,std::uint32_t explicit_host_output_rate,HostVoiceFailure&);
+        const NativeEnvelopeProfile&,std::uint32_t explicit_host_output_rate,HostVoiceFailure&,
+        AudioControlCurve=AudioControlCurve::initial_nonlinear);
     std::optional<std::vector<float>> render(std::size_t frames,HostVoiceFailure&);
     // Proven normal stop path: freeze source position and enter release envelope.
     bool stop_from_program(const ProgramStep&,HostVoiceFailure&);

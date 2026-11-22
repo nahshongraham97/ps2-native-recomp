@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_forced_output_retirement_failure.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_FORCED_OUTPUT_RETIREMENT_FAILURE: 8 single and 11 context allocation failures; mixed-pool rollback; test-only allocator wrap\n",
+  "stderr": "",
+  "seconds": 0.10069349998957478,
+  "source_commit": "19f3062159f3c7b813b337ba3b7161af7185028e",
+  "source_sha256": {
+    "runtime/include/mka/audio_controls.hpp": "daa55328fe2c4f7d4bbd8c94bbe480f0c726ed85fd290284a8704550464b6747",
+    "runtime/src/native/audio_controls.cpp": "94546ef5e34ded6b69e173759d5be6f0beb6e450a93f1e6d9e116ec0fa621265",
+    "runtime/include/mka/host_voice.hpp": "2d41db2b103f523b7a34e2da18ab3593c67f13b9eb72d9f03389b2705bb91888",
+    "runtime/src/native/host_voice.cpp": "5975891039e54bd6d506d397f3c5c97e7ab21bb67b6b272b02de5f789271b80c",
+    "runtime/include/mka/program_copy.hpp": "561d24e2b7f695108d362034d962183bc34a33e85eed85562a00fa3ed3e79d9c",
+    "runtime/src/native/program_copy.cpp": "d751e059b84f8a7ccb83397f78371fe7bda9455a2ee8ac6dd9ddb2184ef82d2d",
+    "runtime/include/mka/playback_owner.hpp": "7cec8bbde6a7a503aa97279610e3520d20dc15f5942a4a078897af5fb9db9c28",
+    "runtime/src/native/playback_owner.cpp": "46bbcfa734b70e58f133b8aad3811f920947244f0525a0a2904ec2b2dae5b198",
+    "tests/test_native_bank_playback.cpp": "0293214b3fbcb15cdac4728929a4bd9ad2709d48ae4866cc1cd42ee1dfc8f34c",
+    "tests/test_retail_reset_sound.cpp": "214be1afa771128399488958c5d565d7a70c22edf32cc772fc63d8b8bc9b7a7d",
+    "cmake/native_sound_resources.cmake": "88524ce5ffe8dd7dd7aa6ce3a4976f17b08179f9e1d92f9407cf24e7250f9c7b",
+    "tests/test_sound_curves.cpp": "4518a8919b1f538dc796d485e38f037783443f61aaf35e30e8ef58746632bf8b",
+    "tests/fixtures/retail_sound_curve_data.hpp": "e1a795bcc417cdfbfee560bf66211dee99210388a148c517d7ba07f26f4f85e8"
+  },
+  "tracked_status": "M cmake/native_sound_resources.cmake\n M runtime/include/mka/audio_controls.hpp\n M runtime/include/mka/host_voice.hpp\n M runtime/include/mka/playback_owner.hpp\n M runtime/include/mka/program_copy.hpp\n M runtime/src/native/audio_controls.cpp\n M runtime/src/native/host_voice.cpp\n M runtime/src/native/playback_owner.cpp\n M runtime/src/native/program_copy.cpp\n M tests/test_native_bank_playback.cpp\n M tests/test_retail_reset_sound.cpp",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "f35379a65e0bb5f8e1a531c2c6a7458d82f2ded525063d7fb904791b9dd7ebc7"
+}

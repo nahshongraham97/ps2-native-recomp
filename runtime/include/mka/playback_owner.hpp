@@ -55,7 +55,7 @@ enum class PlaybackError { none, moved_owner, closed, invalid_output_rate,
     bank_unloading, bank_state_unknown, close_state_unknown, unknown_context, foreign_context, retired_context,
     unsupported_play_flags, copy_failed, invalid_output_selector, unsupported_output_selector,
     output_priority_refused, clock_failed, invalid_clock, unknown_retired_output, retired_output,
-    wrong_bank_interface, native_bank_failed };
+    wrong_bank_interface, native_bank_failed, invalid_control_curve };
 struct PlaybackFailure {
     PlaybackError kind=PlaybackError::none;
     BankServiceFailure service;
@@ -125,9 +125,9 @@ public:
     // Accepted native ingress: retains the actual catalog Session/handles.
     // No packet, wire token, compatibility service or second archive is made.
     static std::optional<NativePlaybackOwner> create(AudioBankSession&&,
-        std::uint32_t explicit_output_rate,PlaybackFailure&);
+        std::uint32_t explicit_output_rate,AudioControlCurve,PlaybackFailure&);
     static std::optional<NativePlaybackOwner> create_with_clock(AudioBankSession&&,
-        std::uint32_t,std::shared_ptr<NativeProgramHostClock>,PlaybackFailure&);
+        std::uint32_t,AudioControlCurve,std::shared_ptr<NativeProgramHostClock>,PlaybackFailure&);
     std::optional<BankLoadOutcome> load_sync(const AudioBankCommand&,BankWireToken,PlaybackFailure&);
     std::optional<AsyncBankSubmission> submit_async(const AudioBankCommand&,BankWireToken,PlaybackFailure&);
     bool run_one(PlaybackFailure&);
