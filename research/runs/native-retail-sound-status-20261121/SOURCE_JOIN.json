@@ -1,0 +1,82 @@
+{
+  "status": "PASS_ORIGINAL_STATUS_DEPENDENCY_BYTE_JOIN",
+  "original_msl_sha256": "f62dfbcedd39bc92cb8b9c02bb685b956a10357f9181d7f8c2801d8eaff07af7",
+  "original_xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "msl_exports": [
+    {
+      "path": "source-01/LISTING.json",
+      "sha256": "b0fbd6b8f044ebe7f7ae12d99e09b78e00751d7d6602147a0c03da3148db18af"
+    },
+    {
+      "path": "source-02/LISTING.json",
+      "sha256": "96c3ac68300c8c8c4bece73c867791b78e02a8170d4147066e388b90baca1f4f"
+    },
+    {
+      "path": "source-03/LISTING.json",
+      "sha256": "26a5d16aaf7457c660063844e0d97f725d03ffaf66995752bfdfd62832e9afe4"
+    },
+    {
+      "path": "source-04/LISTING.json",
+      "sha256": "26860020f11a3f6f464eeff77fa7ea19e716ec3afeaf16faf5fe5ebe3e5315a3"
+    }
+  ],
+  "full_coverage": [
+    {
+      "begin": "0x7148",
+      "end_exclusive": "0x7178",
+      "full_word_coverage": true,
+      "words": 12
+    },
+    {
+      "begin": "0xf318",
+      "end_exclusive": "0xf344",
+      "full_word_coverage": true,
+      "words": 11
+    },
+    {
+      "begin": "0xcd88",
+      "end_exclusive": "0xcf04",
+      "full_word_coverage": true,
+      "words": 95
+    },
+    {
+      "begin": "0xcf04",
+      "end_exclusive": "0xd018",
+      "full_word_coverage": true,
+      "words": 69
+    },
+    {
+      "begin": "0x6d8c",
+      "end_exclusive": "0x6fdc",
+      "full_word_coverage": true,
+      "words": 148
+    },
+    {
+      "begin": "0x6fdc",
+      "end_exclusive": "0x7148",
+      "full_word_coverage": true,
+      "words": 91
+    }
+  ],
+  "xbox_export": "XBOX-CONTEXT-02.json",
+  "xbox_instruction_counts": {
+    "0037bc20": 9,
+    "00258630": 96,
+    "0028ab00": 539,
+    "0023c5a0": 8
+  },
+  "behavioral_equivalence": false,
+  "native_status_implemented": false,
+  "prior_full_status_words": "../native-retail-production-sound-context-20261121/SOURCE_JOIN.json",
+  "unresolved": [
+    "Native mapping/consumers of source arena and heap counters",
+    "Typed active-play snapshot and actual source live-reference retirement",
+    "Complete source control/queued-role/envelope/flags9 behavior"
+  ],
+  "runtime_changed": false,
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "acceptance": "OPEN"
+}

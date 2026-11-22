@@ -1,0 +1,173 @@
+{
+  "originals_preserved_locally": true,
+  "lossless": true,
+  "files": {
+    "ghidra-01.log": {
+      "archive": "ghidra-01.log.gz",
+      "sha256": "b9b946891f4708d7f62928b23d1e1b7d538dbe69cc065daae90e1bc80c7a5a64",
+      "bytes": 5962
+    },
+    "ghidra-02.log": {
+      "archive": "ghidra-02.log.gz",
+      "sha256": "3c2d752fecdaf736796328d81c24717e34dbe877152dfafdf57e5ed0333d37a3",
+      "bytes": 5974
+    },
+    "ghidra-03.log": {
+      "archive": "ghidra-03.log.gz",
+      "sha256": "aeadfb32ddca5ec003ec4c9d0b3f851dbea6ce201c824da03d60ef66db30daf6",
+      "bytes": 5986
+    },
+    "ghidra-04.log": {
+      "archive": "ghidra-04.log.gz",
+      "sha256": "ee90bc080794b5eaa951aac6c339174105249d877b8c3ea2b59c661c6e9bf1a0",
+      "bytes": 5986
+    },
+    "scripts-01.log": {
+      "archive": "scripts-01.log.gz",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "scripts-02.log": {
+      "archive": "scripts-02.log.gz",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "scripts-03.log": {
+      "archive": "scripts-03.log.gz",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "scripts-04.log": {
+      "archive": "scripts-04.log.gz",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "source-01/7148.c": {
+      "archive": "source-01/7148.c.gz",
+      "sha256": "407a067f89cbd77fa1246855810f8905f14c03fe3bb635f358227d6f62606408",
+      "bytes": 67
+    },
+    "source-01/f318.c": {
+      "archive": "source-01/f318.c.gz",
+      "sha256": "127aecf4a0d4a39eee40a7540d6bda51f74bf037ee92b840a54ef714f6a4022f",
+      "bytes": 205
+    },
+    "source-02/7100.c": {
+      "archive": "source-02/7100.c.gz",
+      "sha256": "ea90cffd34972d794d686aec2a2e561e88d7e22d4290b4a8d47df1fe52c8a303",
+      "bytes": 1086
+    },
+    "source-02/ce30.c": {
+      "archive": "source-02/ce30.c.gz",
+      "sha256": "4d469c2ad66948b4a7ffa3acb03773ff93beef2272172db7fe652a096695b9ce",
+      "bytes": 1036
+    },
+    "source-02/f318.c": {
+      "archive": "source-02/f318.c.gz",
+      "sha256": "127aecf4a0d4a39eee40a7540d6bda51f74bf037ee92b840a54ef714f6a4022f",
+      "bytes": 205
+    },
+    "source-03/6b4c.c": {
+      "archive": "source-03/6b4c.c.gz",
+      "sha256": "35f141f560072079a96d37127600a5d3bb1cfb682dc4a5527f3032aaabc2ffe5",
+      "bytes": 281
+    },
+    "source-03/6f18.c": {
+      "archive": "source-03/6f18.c.gz",
+      "sha256": "4837d6edba3026e637f668cfdf1467f28f2c92ffa9fdafb1dfa2e3a4ad1bd3e1",
+      "bytes": 334
+    },
+    "source-03/cdc4.c": {
+      "archive": "source-03/cdc4.c.gz",
+      "sha256": "2b215bbd9c94209e46accc0223207fe6fd08d36c2c3eb67360ab96c4d1426e74",
+      "bytes": 1078
+    },
+    "source-03/cf14.c": {
+      "archive": "source-03/cf14.c.gz",
+      "sha256": "624c4fdd3442db8c55ac1f87fd554d5d82cf187ac3a55962e82e5c9aad4e0a2a",
+      "bytes": 770
+    },
+    "source-04/6d8c.c": {
+      "archive": "source-04/6d8c.c.gz",
+      "sha256": "dd788d15fb8dd4f9e0f5a17f6709fdff63ed9afd90e4f968a1c5167ca2befa32",
+      "bytes": 1965
+    },
+    "source-04/cd88.c": {
+      "archive": "source-04/cd88.c.gz",
+      "sha256": "12727de013e229b1483f6afe8b2bb166b01900c488afb08886788ff878700117",
+      "bytes": 1226
+    },
+    "source-04/cf04.c": {
+      "archive": "source-04/cf04.c.gz",
+      "sha256": "ccbf051d5388719bc8225d5fe44ccceaa97c7c7d78350953007baaf1a25915ed",
+      "bytes": 770
+    },
+    "source-04/f318.c": {
+      "archive": "source-04/f318.c.gz",
+      "sha256": "127aecf4a0d4a39eee40a7540d6bda51f74bf037ee92b840a54ef714f6a4022f",
+      "bytes": 205
+    },
+    "xbox-ghidra-01.log": {
+      "archive": "xbox-ghidra-01.log.gz",
+      "sha256": "616caaeb13eb129dbdf5ce2713e792ef8d796b1f4b18f149e37c4ff904547e93",
+      "bytes": 7102
+    },
+    "xbox-ghidra-02.log": {
+      "archive": "xbox-ghidra-02.log.gz",
+      "sha256": "4657c81407a78b50c4e43755fbe545e91f0ae42e8095fba5ccb49bc1b671120d",
+      "bytes": 5798
+    },
+    "xbox-scripts-01.log": {
+      "archive": "xbox-scripts-01.log.gz",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "xbox-scripts-02.log": {
+      "archive": "xbox-scripts-02.log.gz",
+      "sha256": "f194b9af9bf9ef9f771dc20c4c4dbb201f73fe3b693e92dc42266a6651d11363",
+      "bytes": 96
+    },
+    "EE_PROGRAM.json": {
+      "archive": "EE_PROGRAM.json.gz",
+      "sha256": "9f114a1650db5e02d0b28ea016df7404b11b44d6bb34960d71ceab28fc006670",
+      "bytes": 768,
+      "canonical_sha256": "d0fbe33a9b8370bb323a6a5a1570e632801f4a0ea4be74039373055fceb7d1c8",
+      "correction": "One final newline in authored JSON serialization; raw bytes retained losslessly"
+    },
+    "EE-XREFS-0079a050.json": {
+      "archive": "EE-XREFS-0079a050.json.gz",
+      "sha256": "d53940049130a97901f48817df126bf123c890b894a868138060987d1055577f",
+      "bytes": 85,
+      "canonical_sha256": "9cdea159eed92f6dc0b504d33ddb5bcdc9b58d485fe368c82259b429818e2894",
+      "correction": "One final newline in authored JSON serialization; raw bytes retained losslessly"
+    },
+    "EE-XREFS-0079a840.json": {
+      "archive": "EE-XREFS-0079a840.json.gz",
+      "sha256": "d53940049130a97901f48817df126bf123c890b894a868138060987d1055577f",
+      "bytes": 85,
+      "canonical_sha256": "9cdea159eed92f6dc0b504d33ddb5bcdc9b58d485fe368c82259b429818e2894",
+      "correction": "One final newline in authored JSON serialization; raw bytes retained losslessly"
+    },
+    "EE-XREFS-0079a858.json": {
+      "archive": "EE-XREFS-0079a858.json.gz",
+      "sha256": "d53940049130a97901f48817df126bf123c890b894a868138060987d1055577f",
+      "bytes": 85,
+      "canonical_sha256": "9cdea159eed92f6dc0b504d33ddb5bcdc9b58d485fe368c82259b429818e2894",
+      "correction": "One final newline in authored JSON serialization; raw bytes retained losslessly"
+    },
+    "EE-XREFS-0079a85c.json": {
+      "archive": "EE-XREFS-0079a85c.json.gz",
+      "sha256": "d53940049130a97901f48817df126bf123c890b894a868138060987d1055577f",
+      "bytes": 85,
+      "canonical_sha256": "9cdea159eed92f6dc0b504d33ddb5bcdc9b58d485fe368c82259b429818e2894",
+      "correction": "One final newline in authored JSON serialization; raw bytes retained losslessly"
+    },
+    "EE-XREFS-0079a860.json": {
+      "archive": "EE-XREFS-0079a860.json.gz",
+      "sha256": "d53940049130a97901f48817df126bf123c890b894a868138060987d1055577f",
+      "bytes": 85,
+      "canonical_sha256": "9cdea159eed92f6dc0b504d33ddb5bcdc9b58d485fe368c82259b429818e2894",
+      "correction": "One final newline in authored JSON serialization; raw bytes retained losslessly"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "source_trees": {
+    "runtime": "b9c89698218aa83976c3a76bf110f8e4e4ec513c",
+    "recomp": "96803db1d2f9d47a9f03debe9a69e5fee214e3d1",
+    "cmake": "a12370eec1b4d96135e0c408c8fa351f5f3d9905",
+    "tests": "c4acd326be73c98edf6ef029dde3879cf9e9933f",
+    "CMakeLists.txt": "a33606a67852337e766d249a25dadc74cd833532"
+  },
+  "clean_measured_source": "35662e48644d07f765279994160ba724b0adffc0",
+  "prior_clean_receipt": "../native-retail-sound-worker-20261121/clean-validation-01/VERIFICATION.json",
+  "new_native_changes": false,
+  "new_runtime_executions": false,
+  "source_only_status": "PASS_ORIGINAL_STATUS_DEPENDENCY_BYTE_JOIN",
+  "required_effects_remaining": 38,
+  "acceptance": "OPEN"
+}

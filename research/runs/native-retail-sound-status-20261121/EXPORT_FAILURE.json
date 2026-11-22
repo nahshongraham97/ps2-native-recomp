@@ -1,0 +1,9 @@
+{
+  "phase": "Xbox status source export",
+  "process_exit": 0,
+  "script_result": "NumberFormatException: missing hexadecimal prefix",
+  "output_created": false,
+  "receipt": "XBOX-HEADLESS-01.json",
+  "runtime_changed": false,
+  "correction": "Normalize hexadecimal query addresses; require output, nonempty function candidates and no script error"
+}
