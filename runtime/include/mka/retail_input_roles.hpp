@@ -6,6 +6,7 @@
 #include <memory>
 #include <optional>
 #include <thread>
+#include <utility>
 
 namespace mka::retail {
 class NativeRetailInputParticipant;
@@ -48,6 +49,15 @@ public:
     bool initialize_roles_from_281e00(RetailInputRoleFailure&) noexcept;
     bool reset_first_two_mapping_tables_from_281870(
         RetailInputRoleFailure&) noexcept;
+    // Actual shared words cleared by2811F0/2817B0 and written0/1 by153660.
+    // These leaf stores do not implement the latter's task/profile effects.
+    std::optional<std::uint32_t> profile_mapping_word(
+        std::size_t position, RetailInputRoleFailure&) const noexcept;
+    bool store_profile_mapping_active_from_source(
+        std::size_t position, bool, RetailInputRoleFailure&) noexcept;
+    // Full-word storage leaf of281550; no sample/mapping producer is implied.
+    bool store_source_control_word_from_source(
+        RetailInputRole, std::uint32_t, RetailInputRoleFailure&) noexcept;
     std::optional<std::array<RetailActionBinding,16>> observe_mapping_table(
         std::size_t position, std::size_t variant,
         RetailInputRoleFailure&) const noexcept;
@@ -79,6 +89,7 @@ private:
     std::array<RoleState, 4> roles_;
     // Two distinct source tables for each of the first two physical positions.
     std::array<std::array<std::array<RetailActionBinding,16>,2>,2> mapping_tables_{};
+    // position0/1 are the actual64EA94/64EA90 values, respectively.
     std::array<std::uint32_t,2> mapping_reset_words_{};
     // The association count is game context state, not a property of an
     // adapter. 281E00 role-record initialization does not reset it.
@@ -86,5 +97,24 @@ private:
     std::weak_ptr<NativeRetailParticipants> assignment_domain_;
     bool assignment_domain_bound_{};
     const std::thread::id thread_{std::this_thread::get_id()};
+};
+
+// A retained reference to an actual role slot, like the281830 result. Rebinding
+// a participant does not redirect this reference to a different role/domain.
+class NativeRetailRoleControlReference final {
+public:
+    // Reference values copy their retained capability, including rvalues.
+    // There is no public empty construction or destructive move state.
+    NativeRetailRoleControlReference(const NativeRetailRoleControlReference&) noexcept = default;
+    NativeRetailRoleControlReference& operator=(const NativeRetailRoleControlReference&) noexcept = default;
+    RetailInputRole role() const noexcept { return role_; }
+    std::optional<std::uint32_t> observe(RetailInputRoleFailure&) const noexcept;
+    bool clear_from_245dd0(RetailInputRoleFailure&) noexcept;
+private:
+    friend class NativeRetailInputAssignments;
+    NativeRetailRoleControlReference(std::shared_ptr<NativeRetailInputRoles> owner,
+        RetailInputRole role) noexcept : owner_(std::move(owner)), role_(role) {}
+    std::shared_ptr<NativeRetailInputRoles> owner_;
+    RetailInputRole role_;
 };
 } // namespace mka::retail

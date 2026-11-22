@@ -1,0 +1,98 @@
+{
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "language": "r5900:LE:32:default",
+  "gp": 6635760,
+  "segments": [
+    {
+      "offset": 256,
+      "address": 1048576,
+      "file_size": 5561984,
+      "memory_size": 7096448
+    },
+    {
+      "offset": 5562240,
+      "address": 8145024,
+      "file_size": 0,
+      "memory_size": 1131008
+    },
+    {
+      "offset": 5562240,
+      "address": 8145024,
+      "file_size": 0,
+      "memory_size": 2097536
+    },
+    {
+      "offset": 5562240,
+      "address": 8145024,
+      "file_size": 0,
+      "memory_size": 1867392
+    },
+    {
+      "offset": 5562240,
+      "address": 10242560,
+      "file_size": 0,
+      "memory_size": 0
+    }
+  ],
+  "functions": {
+    "00153660": {
+      "begin": 1390176,
+      "end": 1390564,
+      "listed_words": 97,
+      "omitted": {},
+      "listing_sha256": "17fade10c9070d4d6585bc4ce195d5c87e728caa31adde428fdad5e2947e6676"
+    },
+    "002811f0": {
+      "begin": 2626032,
+      "end": 2626316,
+      "listed_words": 70,
+      "omitted": {
+        "002812b4": "00000000"
+      },
+      "listing_sha256": "858db560a25b83bc1b30c8980b1fd49d330de4c342cad680f98efff3339f0a9f"
+    },
+    "00281550": {
+      "begin": 2626896,
+      "end": 2627264,
+      "listed_words": 92,
+      "omitted": {},
+      "listing_sha256": "1a10e3a6a982b1af1ce79a80c4804c845539b508269e0d5b22536f36b15bf98a"
+    },
+    "002817b0": {
+      "begin": 2627504,
+      "end": 2627624,
+      "listed_words": 30,
+      "omitted": {},
+      "listing_sha256": "33073c1f59dfc7b101ad5bc07655253925dada1cb2d7c152b18bf5b87b416417"
+    },
+    "00281830": {
+      "begin": 2627632,
+      "end": 2627688,
+      "listed_words": 14,
+      "omitted": {},
+      "listing_sha256": "568c9efa9741ead813f11edd26380f174dd643cddac19168286d9ff6cd05a1c7"
+    },
+    "00281870": {
+      "begin": 2627696,
+      "end": 2627756,
+      "listed_words": 15,
+      "omitted": {},
+      "listing_sha256": "3f9d4b18b65de6e01ae2805e7893ff4864ac36be7cccea2597aca4365a5c2a86"
+    }
+  },
+  "listed_words": 318,
+  "implemented_words": 44,
+  "mapping_word_births": {
+    "0": {
+      "address": 6613652,
+      "displacement": -22108,
+      "loader_zero": true
+    },
+    "1": {
+      "address": 6613648,
+      "displacement": -22112,
+      "loader_zero": true
+    }
+  },
+  "scope": "Complete2817B0/281830 source and existing mapping-word aliases; support functions are producer/consumer evidence, not claimed ported."
+}

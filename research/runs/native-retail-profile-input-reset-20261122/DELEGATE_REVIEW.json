@@ -1,0 +1,25 @@
+{
+  "commit": "db3e1ae21974701eb3396a2720b7c733d0e8c8d3",
+  "files": {
+    "research/runs/parallel-profile-input-reset-review-20261122/AUTHENTICATION.json": "ed5ae5e274ebbe7f7bb7267e498a9ebd1408db129a246e6fc2b3f78d51309925",
+    "research/runs/parallel-profile-input-reset-review-20261122/BEFORE.json.gz": "da8a9eaf2ee2d6a7015f48be4620a88a0df4688c5290e167e42cfe20d9e1bf60",
+    "research/runs/parallel-profile-input-reset-review-20261122/NATIVE_CONTRACT.md.gz": "13bb8344b0c70340692907d9ca9313ff9da9e2eac684ee9c36227cded18f76b2",
+    "research/runs/parallel-profile-input-reset-review-20261122/REVIEW.md": "c90c9825b9d90319e1fc8757d44aa2dbc95964ca11b461bc4b1b9e5629f6556a",
+    "research/runs/parallel-profile-input-reset-review-20261122/SOURCE_FILES.json.gz": "c9cee41e4b2d0269036484867dc75a612f63c5b7a8827948fb34f6dc0c741cfe",
+    "research/runs/parallel-profile-input-reset-review-20261122/SOURCE_JOIN.json.gz": "1b5dd6bc778e11c2c5b06778fa81c84de1bb88ca0c22645c7cbfe0ffe65ba482",
+    "research/runs/parallel-profile-input-reset-review-20261122/VERIFICATION.json.gz": "1f95a17f4a470c0e61bb1c9f9452a56bd00b2044cbe26c99283fae3773fb7057",
+    "research/runs/parallel-profile-input-reset-review-20261122/authenticate.py": "47905b762d9569a89841d8ab7652c213358656f96ad4d57e94fd127fa0bf89e1",
+    "research/runs/parallel-profile-input-reset-review-20261122/snapshot/cmake/native_game.cmake.gz": "7bd317b0bc0b7505a109ef701e3342a338a51ff212336336fd27a92bc8507ff6",
+    "research/runs/parallel-profile-input-reset-review-20261122/snapshot/runtime/include/mka/retail_input_assignments.hpp.gz": "41aad895347397ce8cc8f42802f03e33a5ba43be95228a7ae73a02e31dbaa203",
+    "research/runs/parallel-profile-input-reset-review-20261122/snapshot/runtime/include/mka/retail_input_roles.hpp.gz": "bf8646a0dc71bff634838813432e906137bb0d975cd5743849cbcae5e4c29c3d",
+    "research/runs/parallel-profile-input-reset-review-20261122/snapshot/runtime/src/native/retail_input_assignments.cpp.gz": "9ed7b1dbcd9bee7515d1c948432dc519d77385715b186f0d4fbecaebdab18189",
+    "research/runs/parallel-profile-input-reset-review-20261122/snapshot/runtime/src/native/retail_input_roles.cpp.gz": "5b2bc8093256aa6190abf0fe99cbb7a2838d36a1ceaa9bfd33a45bf342a4f7cb",
+    "research/runs/parallel-profile-input-reset-review-20261122/snapshot/tests/test_retail_profile_input_reset.cpp.gz": "2b4e64be2f44d3cca79f3b1029d724d2a376d77c5bfbd8c6c505570a8431b9a7",
+    "research/runs/parallel-profile-input-reset-review-20261122/source/00153660.asm.gz": "ed08a9e28835000caa6a31ceae90242c7004a6db34c52c2f6ee063cbeb120165",
+    "research/runs/parallel-profile-input-reset-review-20261122/source/002811f0.asm.gz": "c3c0cb5781be4c5083fdf9845439aaa01daf668e0234aed9e83954a54dba33fc",
+    "research/runs/parallel-profile-input-reset-review-20261122/source/00281550.asm.gz": "686d82a1beda032e4edbd898b775ee0219b96929b02b02115a101b090d6b3b46",
+    "research/runs/parallel-profile-input-reset-review-20261122/source/002817b0.asm.gz": "6619a6f1d08a029a6537fcc9d41fdf5c2e1e230415f020727f341d6e3474b9ee",
+    "research/runs/parallel-profile-input-reset-review-20261122/source/00281830.asm.gz": "f94721d037e4df21e2760939b92991b426f020c21e4480a34fea09fd0691f597",
+    "research/runs/parallel-profile-input-reset-review-20261122/source/00281870.asm.gz": "837de72bd82a6eed8e58b3216bf33610bcb59f70428587aaa1c453933fe41ee3"
+  }
+}

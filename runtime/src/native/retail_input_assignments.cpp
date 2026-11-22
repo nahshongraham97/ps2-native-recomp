@@ -195,4 +195,40 @@ bool NativeRetailInputAssignments::reset_count_from_18d970(
     return true;
 }
 
+std::optional<NativeRetailRoleControlReference>
+NativeRetailInputAssignments::role_control_from_281830(
+    std::uint32_t identity, RetailInputAssignmentFailure& failure) const noexcept {
+    if (!access(failure)) return {};
+    if (identity >= participants_->first_two_.size()) {
+        fail(failure, RetailInputAssignmentError::foreign_participant,
+            "281830 native participant identity");
+        return {};
+    }
+    const auto role = participants_->first_two_[identity]->state_.assigned_role;
+    if (role < 0) return {};
+    if (!checked_role(role, failure)) return {};
+    return NativeRetailRoleControlReference(roles_, static_cast<RetailInputRole>(role));
+}
+
+bool NativeRetailInputAssignments::reset_profile_controls_from_2817b0(
+    const std::shared_ptr<NativeRetailInputParticipant>& participant,
+    RetailInputAssignmentFailure& failure) noexcept {
+    if (!access(failure)) return false;
+    if (!participant) return true;
+    if (!checked_participant(participant, failure)) return false;
+    const auto ordinal = participant->state_.ordinal;
+    // Source2817F0..804 returns without stores for every other ordinal. Its
+    // unused ordinary table load has no volatile/callback/platform effect.
+    if (ordinal != 0 && ordinal != 1) return true;
+    const auto index = static_cast<std::size_t>(ordinal);
+    const auto role = participants_->first_two_[index]->state_.assigned_role;
+    if (role >= 0) {
+        if (!checked_role(role, failure)) return false;
+        roles_->roles_[static_cast<std::size_t>(role)].source_control_word = 0;
+    }
+    // Source281810 role store precedes28181C retained-word store.
+    roles_->mapping_reset_words_[index] = 0;
+    return true;
+}
+
 } // namespace mka::retail

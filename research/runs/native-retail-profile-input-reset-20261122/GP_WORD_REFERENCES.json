@@ -1,0 +1,45 @@
+{
+  "scope": "Original first file-backed PT_LOAD GP operand census; all8 hits are in the saved6 supporting function views",
+  "hits": [
+    {
+      "address": "001536e0",
+      "word": "2786a9a4",
+      "displacement": -22108
+    },
+    {
+      "address": "001536f8",
+      "word": "2786a9a0",
+      "displacement": -22112
+    },
+    {
+      "address": "00281218",
+      "word": "af80a9a4",
+      "displacement": -22108
+    },
+    {
+      "address": "0028123c",
+      "word": "af80a9a0",
+      "displacement": -22112
+    },
+    {
+      "address": "00281598",
+      "word": "2783a9a4",
+      "displacement": -22108
+    },
+    {
+      "address": "002815c4",
+      "word": "2783a9a0",
+      "displacement": -22112
+    },
+    {
+      "address": "002817f4",
+      "word": "2783a9a0",
+      "displacement": -22112
+    },
+    {
+      "address": "002817fc",
+      "word": "2783a9a4",
+      "displacement": -22108
+    }
+  ]
+}

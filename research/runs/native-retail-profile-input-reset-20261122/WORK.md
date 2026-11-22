@@ -1,0 +1,11 @@
+# Actual shared profile/input reset dependency
+
+Current canonical630849f. Production profile reset needs281830 captured role and later2817B0 live-ordinal control reset on the real existing participant/role/assignment owners. Existing mapping_reset_words_ already appear to own64EA94(player0)/64EA90(player1), both reset by2811F0 via281870. Trace original producers/consumers before changing code; never add reset-only shadow words or claim the partial known-default helper completes a child. Full171B10/245DD0 and typed runtime profile schema remain required. No game/physical endpoint/model access.
+
+Original source join passes318 listed words/6 bodies and the omitted zero NOP is decoded separately.44 lookup/reset words are contiguous. Actual shared native field aliases and source producer/consumer stores are established in NATIVE_CONTRACT.md. Existing storage/image/default helpers and complete profile record schema are not changed; implementation now targets the required real role/reset dependency only.
+
+Implemented/unbuilt: existing role owner now exposes its proved mapping/control storage leaves;281830 returns a strongly retained actual role reference;2817B0 clears from the live ordinal in source order. No reset-only state, detach/count changes, whole profile binding or source menu producer is introduced. Reference values must preserve a non-null owner under copy/move-as-copy, with no public default construction. Direct source-derived tests and affected existing clients are next.
+
+Direct client now covers nonzero source-leaf fixtures, source null/unassigned/ordinal5 branches, real bound ordinals0/1 and shared adapters, captured-role rebind identity, retained-reference copy/last-owner retirement, native identity/thread failures, unchanged count/associations and existing281870 alias reset. Source is frozen for first build; whole profile reset still undefined.
+
+Canonical validation01 passes all9 directly affected clients on862 frozen source files, including actual input role/assignment/poll/selection/admission and existing reset/Main-frame clients. New direct binary has no guest/device/SDL/audio endpoint symbols. Exact59 full-entry names remain unchanged and no full-entry executable exists. Independent review and clean committed verification pending. No whole171B10/245DD0/profile schema or physical acceptance claim.

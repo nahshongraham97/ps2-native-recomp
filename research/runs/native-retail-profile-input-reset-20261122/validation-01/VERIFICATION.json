@@ -1,0 +1,139 @@
+{
+  "status": "PASS_NATIVE_SHARED_PROFILE_INPUT_RESET_DEPENDENCY",
+  "source_commit": "630849fc3b981d65d9f3229a7ae7021612b7c166",
+  "clean_source": false,
+  "tracked_status": "M  cmake/native_game.cmake\nM  runtime/include/mka/retail_input_assignments.hpp\nM  runtime/include/mka/retail_input_roles.hpp\nM  runtime/src/native/retail_input_assignments.cpp\nM  runtime/src/native/retail_input_roles.cpp\nA  tests/test_retail_profile_input_reset.cpp",
+  "configuration": {
+    "CMAKE_BUILD_TYPE:STRING": "Release",
+    "CMAKE_CXX_COMPILER:STRING": "C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/bin/clang++.exe",
+    "CMAKE_CXX_FLAGS:STRING": "",
+    "CMAKE_CXX_FLAGS_DEBUG:STRING": "-g",
+    "CMAKE_CXX_FLAGS_MINSIZEREL:STRING": "-Os -DNDEBUG",
+    "CMAKE_CXX_FLAGS_RELEASE:STRING": "-O3 -DNDEBUG",
+    "CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING": "-O2 -g -DNDEBUG",
+    "PS2_GENERATED:PATH": "",
+    "CMAKE_CXX_FLAGS-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_DEBUG-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_MINSIZEREL-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_RELEASE-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL": "1"
+  },
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "5173e9768f2b0e85a8738275ab1d7f287787871cafc81c1c13b077a581dabe90",
+  "source_manifest_sha256": "cd152ffdea114b8475b3ed97e8782a95c836cd1905f7c59c13c13228ca4d9bd2",
+  "clients": [
+    {
+      "name": "test_native_retail_profile_input_reset",
+      "sha256": "cbd7c56e952f191a47a6b67c0e9aa9a2dc482a595d26cdfdb8cd2f2d13795ca4"
+    },
+    {
+      "name": "test_native_retail_input_roles",
+      "sha256": "a3c57a7e96b3d3c258327a43997de4be0107d2a4d818002f69def10ffe9c6697"
+    },
+    {
+      "name": "test_native_retail_input_assignments",
+      "sha256": "a4992c02c992d48468e0c99dd3e2a2418932bb65ff47f41485fe9fb8a524d7b3"
+    },
+    {
+      "name": "test_native_retail_input_poll",
+      "sha256": "986f19a573df998382189d92eadb1e256083b83fae2d2bffe4ce5975244bbf28"
+    },
+    {
+      "name": "test_native_retail_input_selection",
+      "sha256": "8f3d09b33d44579708f2dcf2eee5896cdb73e88dc968ebfc3f820be8e78b8fef"
+    },
+    {
+      "name": "test_native_retail_input_admission",
+      "sha256": "119abf2f8caa6c7564b890eb40359ea90d31c9a8b46f769d90c464a71f0e2640"
+    },
+    {
+      "name": "test_native_retail_initial_reset",
+      "sha256": "af7df678bc6220addc4fce9fcdec44d51d6618df96f42033e3c73c72c80b9dc9"
+    },
+    {
+      "name": "test_native_retail_initial_reset_arcade",
+      "sha256": "e0fee44b534e9236424d770397d19212d6da4a773b3c791443ea137b0c492400"
+    },
+    {
+      "name": "test_native_retail_main_frame_gates",
+      "sha256": "d65d4cf556c03cfef6f4c34d3979ab024b2964aadbeb5d05478ecab22ca5947d"
+    }
+  ],
+  "remaining_undefined_symbols": [
+    "mka::retail::main_binding::initialize_retail_saved_profile_records(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::read_retail_online_boot_word(mka::retail::NativeRetailMainState const&)",
+    "mka::retail::main_binding::initialize_retail_online_stage(mka::retail::NativeRetailMainState&, std::__1::array<unsigned int, 5ull> const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_mode_objects(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_mode_service(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_section_service(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_post_scene_sections(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_frame_work_buffers(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::poll_retail_controller_roles(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::advance_retail_game_services(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::service_retail_frame_input(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::render_retail_frame(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::prune_retail_associations(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::retail_mode_dispatch_enabled(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::dispatch_retail_enabled_mode(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::create_retail_action_task(mka::retail::NativeRetailMainState&, mka::retail::RetailActionTaskRequest const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::deliver_retail_builtin_scene_event(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, unsigned int, unsigned int, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::reset_and_bind_retail_scene_event_graph(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, mka::retail::StartupFailure&)",
+    "mka::retail::scene_bootstrap_required::continue_scene_reset_at_125d60(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::initial_task_required::begin_intro_18deb0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::transition_1225d0(mka::retail::NativeRetailMainState&, unsigned int, mka::retail::RetailInitialTransitionBody)",
+    "mka::retail::initial_task_required::begin_prompt_18dc10(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d450(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d870(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d8e0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d700(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d800(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d660(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d770(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::scene_bootstrap_required::continue_first_scene_at_225d40(mka::retail::NativeRetailMainState&, std::__1::shared_ptr<mka::retail::NativeRetailRendererCore>, mka::retail::StartupFailure&)",
+    "mka::retail::initial_reset_required::reset_saved_profile_children_246070(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::initial_reset_required::clear_nonowning_references_18da30(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::initial_reset_required::configure_selected_resource_zero_16fc70(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::renderer_required::register_object_extensions_1b72b0(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::discard_object_extensions_after_core_init(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0401(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0401(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0402(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0402(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0403(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0403(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0404(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0404(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0405(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0405(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0406(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0406(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0407(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0407(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0408(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0408(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0409(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0409(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0412(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0412(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_040a(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_040a(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_040b(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_040b(mka::retail::NativeRetailRendererCore&)"
+  ],
+  "assets_before_and_after": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\MSLASSET.MS2": "74b7affaf2ec29052b39f531788ff12148f9870e79dde953e701c63e6e948d5d",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\MSLASSET.MS4": "bd97bd4ae76b41a18852555bebb7909e80c1287aba950ec1d85adacc10f46781"
+  },
+  "source_join_sha256": "2c0605844bd6e37648d96bfeec7d638692ca0a5f648c2908d1ab2690eb091cbd",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "acceptance": "OPEN",
+  "limits": [
+    "Complete281830/2817B0 effects on actual existing native participant/role/mapping owners only",
+    "Nonzero test state uses proved source-leaf fixtures; whole153660/281550 producers remain unimplemented",
+    "Full171B10/245DD0 profile schemas/defaults/loaded ownership remain required",
+    "No game, physical input/output, frames or audio acceptance"
+  ]
+}

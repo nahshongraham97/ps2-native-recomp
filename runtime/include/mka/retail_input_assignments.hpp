@@ -48,6 +48,14 @@ public:
     // Source count stores from 280C50 admission and 18D970 game reset.
     bool increment_count_before_280c50_bind(RetailInputAssignmentFailure&) noexcept;
     bool reset_count_from_18d970(RetailInputAssignmentFailure&) noexcept;
+    // Empty with failure.none is the source negative-role/null result.
+    std::optional<NativeRetailRoleControlReference> role_control_from_281830(
+        std::uint32_t participant_identity, RetailInputAssignmentFailure&) const noexcept;
+    // Uses the live participant ordinal and the SAME retained role/mapping
+    // state; does not detach, clear digital edges or decrement the count.
+    bool reset_profile_controls_from_2817b0(
+        const std::shared_ptr<NativeRetailInputParticipant>&,
+        RetailInputAssignmentFailure&) noexcept;
 
 private:
     NativeRetailInputAssignments(std::shared_ptr<NativeRetailInputRoles>,

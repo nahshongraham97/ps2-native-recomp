@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+    "--target",
+    "test_native_startup_missing_bindings",
+    "-j2"
+  ],
+  "exit": 1,
+  "seconds": 1.0514626000076532,
+  "source_commit": "630849fc3b981d65d9f3229a7ae7021612b7c166",
+  "tracked_status": "M  cmake/native_game.cmake\nM  runtime/include/mka/retail_input_assignments.hpp\nM  runtime/include/mka/retail_input_roles.hpp\nM  runtime/src/native/retail_input_assignments.cpp\nM  runtime/src/native/retail_input_roles.cpp\nA  tests/test_retail_profile_input_reset.cpp",
+  "source_manifest_sha256": "cd152ffdea114b8475b3ed97e8782a95c836cd1905f7c59c13c13228ca4d9bd2",
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "log_sha256": "b86cef717a87c2b8427fbd67b87cc0ab03940d1ebbc6566ea420040de4a96d17",
+  "compressed_log_sha256": "8f5ed2a29b99d868a6b4905748f88acf0cf028e18a6d822d5de714f8cea824ef",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

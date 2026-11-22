@@ -1,0 +1,5 @@
+{
+  "stage": "ELF GP metadata",
+  "error": "Assumed REGINFO program header; original ELF supplies SHT_MIPS_REGINFO section. No runtime code or build changed.",
+  "correction": "Read actual section type70000006 and gp_value at offset20."
+}

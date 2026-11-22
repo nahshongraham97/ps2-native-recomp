@@ -1,0 +1,11 @@
+{
+  "base": "630849fc3b981d65d9f3229a7ae7021612b7c166",
+  "pins": {
+    "cmake/native_game.cmake": "74d034cefad945c8af14770d6f48855bbe7ed7788209b3b7b8bbfb3fc5e172f5",
+    "runtime/include/mka/retail_input_roles.hpp": "f5cde65a2b3812f48b5e84c23e629d16506ea0c0bb4158c3a847c09c79e3c09f",
+    "runtime/src/native/retail_input_roles.cpp": "c6fa2386ad95143290201fe30e9523eb060b71f2ce3dffc9adb59fdbd3bb5e36",
+    "runtime/include/mka/retail_input_assignments.hpp": "4620f9ea24c9ffafd1049aacf9d4619016660e97f7d7a8e221ca1a282e5bebb4",
+    "runtime/src/native/retail_input_assignments.cpp": "97ce5e559346871f0c3a54a6ea4a735f5436abe43bc662ee7b223d9dd8debe35",
+    "tests/test_retail_profile_input_reset.cpp": null
+  }
+}

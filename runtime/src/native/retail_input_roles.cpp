@@ -72,6 +72,45 @@ bool NativeRetailInputRoles::reset_first_two_mapping_tables_from_281870(
     return true;
 }
 
+std::optional<std::uint32_t> NativeRetailInputRoles::profile_mapping_word(
+    std::size_t position, RetailInputRoleFailure& failure) const noexcept {
+    failure = {};
+    if (std::this_thread::get_id() != thread_) {
+        failure.kind = RetailInputRoleError::wrong_thread;
+        return {};
+    }
+    if (position >= mapping_reset_words_.size()) {
+        failure.kind = RetailInputRoleError::invalid_mapping_table;
+        return {};
+    }
+    return mapping_reset_words_[position];
+}
+
+bool NativeRetailInputRoles::store_profile_mapping_active_from_source(
+    std::size_t position, bool active, RetailInputRoleFailure& failure) noexcept {
+    if (!profile_mapping_word(position, failure)) return false;
+    mapping_reset_words_[position] = active ? 1u : 0u;
+    return true;
+}
+
+bool NativeRetailInputRoles::store_source_control_word_from_source(
+    RetailInputRole id, std::uint32_t value, RetailInputRoleFailure& failure) noexcept {
+    if (!role(id, failure)) return false;
+    roles_[static_cast<std::size_t>(id)].source_control_word = value;
+    return true;
+}
+
+std::optional<std::uint32_t> NativeRetailRoleControlReference::observe(
+    RetailInputRoleFailure& failure) const noexcept {
+    const auto state = owner_->observe(role_, failure);
+    return state ? std::optional<std::uint32_t>{state->source_control_word} : std::nullopt;
+}
+
+bool NativeRetailRoleControlReference::clear_from_245dd0(
+    RetailInputRoleFailure& failure) noexcept {
+    return owner_->store_source_control_word_from_source(role_, 0, failure);
+}
+
 std::optional<std::array<RetailActionBinding,16>>
 NativeRetailInputRoles::observe_mapping_table(
     std::size_t position, std::size_t variant,

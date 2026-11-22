@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_input_poll.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.03542710001056548,
+  "source_commit": "630849fc3b981d65d9f3229a7ae7021612b7c166",
+  "tracked_status": "M  cmake/native_game.cmake\nM  runtime/include/mka/retail_input_assignments.hpp\nM  runtime/include/mka/retail_input_roles.hpp\nM  runtime/src/native/retail_input_assignments.cpp\nM  runtime/src/native/retail_input_roles.cpp\nA  tests/test_retail_profile_input_reset.cpp",
+  "source_manifest_sha256": "cd152ffdea114b8475b3ed97e8782a95c836cd1905f7c59c13c13228ca4d9bd2",
+  "executable_sha256": "986f19a573df998382189d92eadb1e256083b83fae2d2bffe4ce5975244bbf28",
+  "log_sha256": "ba7d6f71f91d907e574ca6e42882d30802dc44e1ebe0627e8fbe767e5939af32",
+  "compressed_log_sha256": "b5b149d6d032c359c3853c8bf74b8ca763cb95db55e3a0088150f8f2fe8e316a",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}
