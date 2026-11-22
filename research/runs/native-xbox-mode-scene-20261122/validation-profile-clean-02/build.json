@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\MKPORT~1\\ARMAGE~1\\ARMAGE~1\\external\\forks\\RETAIL~1\\b",
+    "--target",
+    "test_native_retail_saved_profile_records",
+    "test_native_retail_game_session",
+    "test_native_retail_profile_image",
+    "test_native_retail_profile_aggregate_main",
+    "test_native_retail_profile_input_reset",
+    "test_native_retail_initial_reset_arcade",
+    "test_native_retail_main_frame_gates",
+    "-j2"
+  ],
+  "exit": 0,
+  "seconds": 0.15360099999816157,
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "log_sha256": "31b751db9711e7ed508069fde15c2de0255a2194d662a474e329972d4780cfba",
+  "source_manifest_sha256": "14b7bc1d0089e4e9054e369c50c06fccaa6db6190140446d52bb08604fcd828d",
+  "source_commit": "d0c78a08511d9bb6d852adf6ca27fd1e09b06385"
+}

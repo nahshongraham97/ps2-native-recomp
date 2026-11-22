@@ -1,0 +1,10 @@
+{
+  "commit": "2baccd4599a7c74afbcb96e6ee89e580ee810a68",
+  "original_blobs": {
+    "runtime/include/mka/retail_saved_profile_records.hpp": "dfcb5aabf26cd0b73d890a5148da752aff7c181ad49693425d9f7a915ad789ba",
+    "runtime/src/native/retail_saved_profile_records.cpp": "7fedf19b1c0d2f2a5fda3b748bf63f007b8c1acea963c07713b92a33f2d38723",
+    "tests/test_retail_saved_profile_records.cpp": "7a64a9db80a119dc6c5e2f6ca98597983720644510b1d0eed3831739795df881"
+  },
+  "prior_manifest_sha256": "886f977da4f0f134681b1358809f7d1150ffad6b7fc6fba4ef89eb6e24f3f094",
+  "preservation": "Exact prior bytes remain in Git and the prior measured source manifest; no normalization/repin."
+}

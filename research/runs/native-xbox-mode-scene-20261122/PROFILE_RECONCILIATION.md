@@ -80,12 +80,15 @@ first-two reset preservation of players2/3, unchanged serialized constants,
 foreign/scope/thread/move errors, allocation-free binding, live status changes,
 call-time ordering, Main retirement and final Session lifetime.
 
-Current stage: **compiled/tested component on uncommitted source**.
-`validation-profile-01/VERIFICATION.json` records source/compiler/cache/
-configuration, seven passing binary/log identities and the exact unchanged
-59-name negative. The records client passes all256 status patterns and its
-owner/reset/error/lifetime checks; the existing codec fixed vectors pass.
-Clean committed verification remains pending. No game, visible window, GPU
+Current stage: **compiled/tested component on clean committed source**
+`d0c78a08511d9bb6d852adf6ca27fd1e09b06385`.
+`validation-profile-clean-02/VERIFICATION.json` and
+`PROFILE_CLEAN_AUTHENTICATION.json` authenticate900 exact committed source
+blobs, seven passing binary/log identities and the unchanged59-name negative.
+The records client passes all256 status patterns and its owner/reset/error/
+lifetime checks; existing codec fixed vectors pass. The initial dirty-source
+check and failed exploratory probes are preserved. This is an incremental
+build/check, not a fresh-checkout build or game run. No visible window, GPU
 or speaker endpoint is used.
 
 ## Explicitly OPEN

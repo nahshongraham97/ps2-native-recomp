@@ -216,3 +216,21 @@ string lists (59 and0 respectively); unchanged_codec_sources is a path/hash
 object; status_cases is integer256. Identity keys are source_commit,
 source_manifest_sha256, verifier_sha256, compiler_sha256 and cache_sha256.
 All missing production/numerical/HD/oracle/gameplay gates remain OPEN.
+
+Clean committed runtime sourced0c78a08511d9bb6d852adf6ca27fd1e09b06385 now
+passes the same seven clients in validation-profile-clean-02. The saved clean
+authentication checks900 exact committed source blobs, all seven current
+binary/log identities, unchanged codec/child/store sources and the unchanged
+59-name negative. No flags/checks were relaxed; failed exploratory probes and
+initial dirty-source results remain intact. This was an incremental build,
+not a fresh-checkout build or complete native game run.
+
+Ownership reconciliation is tested-component only:four native identities in
+one Session, two explicit participant scopes, live retained race references,
+and unchanged first-two reset/PS2 wire format. The separate startup child-field
+payload is still unresolved. Whole mode/race callers, additional input/reset/
+load producers, loaded-save import, oracle comparison and numerical/HD/game
+acceptance remain OPEN. Owner: no action. Agent next:finish the actual startup
+child-field contract and connected callers without changing numerical or
+HD implementations before their gates. No background job remains after these
+completed checks.

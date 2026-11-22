@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_game_session.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.014630199992097914,
+  "executable_sha256": "0dd484d01c03c4eae193a5269a8736cb35c783dcd746cf19eced2dc41d6eb88c",
+  "log_sha256": "a6f07ee12bd8eaeca26280fb9ad793b25d067d3a0ce9a35631f85cf07ba31b20",
+  "source_manifest_sha256": "14b7bc1d0089e4e9054e369c50c06fccaa6db6190140446d52bb08604fcd828d",
+  "source_commit": "d0c78a08511d9bb6d852adf6ca27fd1e09b06385"
+}
