@@ -82,5 +82,11 @@
     "raw_sha256": "2267a1d8a690c71ddd87f3f5dcfd2fe7b1ba70529cb7715674ed9a866dbe5e45",
     "archive": "PS2Float-commits.json.gz",
     "archive_sha256": "781d3515b513cae2f63f1d851bff330d510f7204b020138fa476a47dc3d1bc23"
+  },
+  {
+    "raw": "PS2Homebrew-tree.json",
+    "raw_sha256": "6b053684f1947933a50ef3227b7a4c09bfb37fce705f6b8466e8b71be82cc4cb",
+    "archive": "PS2Homebrew-tree.json.gz",
+    "archive_sha256": "02faba02be4f8bc769728292e3b4b2dc19d48dc32cfaad2b8aa773c4837c51b6"
   }
 ]

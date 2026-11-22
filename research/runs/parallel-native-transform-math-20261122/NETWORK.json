@@ -103,5 +103,20 @@
     "sha256": "2c7a6550a756f2e8e994ef5027ec67c4ed7cb07f81490da209a2f8e34d7b6b68",
     "bytes": 2537,
     "authenticated_pinned_url": "https://raw.githubusercontent.com/PCSX2/pcsx2/0392a64e992ac3fa5445dbe484933616cb204674/pcsx2/PS2Float.h"
+  },
+  "FMulMatcher.cpp": {
+    "url": "https://raw.githubusercontent.com/TellowKrinkle/PS2Homebrew/88af0168baab3680b12d9d45f03054af587d245f/FMulMatcher/main.cpp",
+    "sha256": "729dd127fc103ca10545faf3b82c544f9edf22779c0730161bd6fadac875823d",
+    "bytes": 7049
+  },
+  "FMulTester.cpp": {
+    "url": "https://raw.githubusercontent.com/TellowKrinkle/PS2Homebrew/88af0168baab3680b12d9d45f03054af587d245f/FMulTester/main.cpp",
+    "sha256": "305bd1cc164392c31623cb0c7e2f538440118d6812f0118dc33faf0326eaea3f",
+    "bytes": 5103
+  },
+  "FMulValidator.cpp": {
+    "url": "https://raw.githubusercontent.com/TellowKrinkle/PS2Homebrew/88af0168baab3680b12d9d45f03054af587d245f/FMulValidator/main.cpp",
+    "sha256": "8489d57ffaa2d8cbada4c720918c6484d1b0be6f5071dafbdfb3c73d003e311e",
+    "bytes": 15699
   }
 }
