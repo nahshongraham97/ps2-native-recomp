@@ -1,0 +1,87 @@
+{
+  "delivery": "b8fad5a21de958a346d15bfe3d238871cd2be637",
+  "executed_by_reviewer": "Python byte/hash authentication and manual extraction/render only; no delivery build/client run",
+  "checks": [
+    "module original SHA256",
+    "xbox original SHA256",
+    "manual original SHA256",
+    {
+      "receipt": "build.json",
+      "exit": 0,
+      "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+      "log_sha256": "7716162f3cd3b99cf3b8a8dd6decf324e08c7e941aae7e730baba5e4fc8c075b"
+    },
+    {
+      "receipt": "intent.json",
+      "exit": 0,
+      "executable_sha256": "d2d1e3677ccfb969ed4b09958c25249e0b7e5ff1eb5a899199a289ce795bfe8f",
+      "log_sha256": "989abecf1d2a6fb5176dbb98f97d7689751759ee9713ef7697d11df4ddc7d89f"
+    },
+    {
+      "receipt": "missing-timing.json",
+      "exit": 1,
+      "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+      "log_sha256": "604541514d627a9604a0b6fb2b0c271312050fd8f65a7992928cf2e7f9580db1"
+    },
+    {
+      "receipt": "source-join.json",
+      "exit": 0,
+      "executable_sha256": "d4e19e9a33268fb0ce575a24ab2d4b85972524f1933df008a6befc14dce19fbd",
+      "log_sha256": "2392a3c354397bfeb1e89d2802c055e3adf062c95d6e6cfb283fae5648f58714"
+    },
+    {
+      "receipt": "symbols.json",
+      "exit": 0,
+      "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+      "log_sha256": "f152c8e7b0616602d67a4015514d533faa5b05404954bf5b433493d4e7eab321"
+    }
+  ],
+  "archives_authenticated": 72,
+  "module_words": 1538,
+  "delivery_source_pins": {
+    "cmake/native_game.cmake": "df673beb0f8551ec1af4ee84933aeea51cb9433a43aba365b49401c319d8fc52",
+    "runtime/include/mka/retail_normal_envelope_intent.hpp": "ea8e45bbbf42a6c7b9a6881fe6d260e202f2778fa2b720d8c027180873864ba4",
+    "runtime/include/mka/retail_normal_envelope_required.hpp": "9d74effa86deadd74a2172d765deb297499d48f451770afb7a1c0183511ca39d",
+    "runtime/src/native/retail_normal_envelope_intent.cpp": "d0f65e37907508cffa25ef168ceaae4a63dbd990343cf7fa3977466c162268df",
+    "tests/test_retail_normal_envelope_intent.cpp": "a197adc53e08c07808a542e821f3934b2883e484b35edac2f89db7bf1a436591",
+    "tests/test_retail_normal_envelope_missing_timing.cpp": "cde07fc2eeef3d6e843f22a29d77a1c1fa83334c58dcc1ead54a8cd5ec1fe73a"
+  },
+  "verification": {
+    "status": "PASS_NORMAL_SETUP_INTENT_ONLY",
+    "base_commit": "9a88f4ec092164b219d377816094899b3d333f18",
+    "source_manifest_sha256": "6a5294b4135eed22c6f85e69cfc2d664d8e6fa5e25721b155b975a5bdbc84c12",
+    "original_join_sha256": "6f8b1f4b47c5506d8be91dd9bd7c73912a3d34181b7fe391e0d420923f51b800",
+    "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+    "cache_sha256": "180527672d087fb785c1186fd1fdbce730a1d1f3eab5745e00abb24799d74cf0",
+    "required_missing_symbols": [
+      "mka::sound::normal_envelope_required::realize_retail_normal_envelope_profile(mka::sound::RetailNormalEnvelopeIntent const&, unsigned int, mka::sound::RetailNormalEnvelopeFailure&)"
+    ],
+    "scope": "Source-decoded setup/start intent only. Timing/profile realization required,not implemented. No playback/rate/PCM/endpoint/gameplay equivalence."
+  },
+  "xbox_listing_instructions_claimed": 446,
+  "additional_pins": {
+    "join": {
+      "actual": "6f8b1f4b47c5506d8be91dd9bd7c73912a3d34181b7fe391e0d420923f51b800",
+      "saved": "6f8b1f4b47c5506d8be91dd9bd7c73912a3d34181b7fe391e0d420923f51b800",
+      "matches": true
+    },
+    "manifest": {
+      "actual": "6a5294b4135eed22c6f85e69cfc2d664d8e6fa5e25721b155b975a5bdbc84c12",
+      "saved": "6a5294b4135eed22c6f85e69cfc2d664d8e6fa5e25721b155b975a5bdbc84c12",
+      "matches": true
+    },
+    "compiler": {
+      "actual": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+      "saved": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+      "matches": true
+    },
+    "cache": {
+      "actual": "180527672d087fb785c1186fd1fdbce730a1d1f3eab5745e00abb24799d74cf0",
+      "saved": "180527672d087fb785c1186fd1fdbce730a1d1f3eab5745e00abb24799d74cf0",
+      "matches": true
+    }
+  },
+  "observed_missing_names": [
+    "mka::sound::normal_envelope_required::realize_retail_normal_envelope_profile(mka::sound::RetailNormalEnvelopeIntent const&, unsigned int, mka::sound::RetailNormalEnvelopeFailure&)"
+  ]
+}

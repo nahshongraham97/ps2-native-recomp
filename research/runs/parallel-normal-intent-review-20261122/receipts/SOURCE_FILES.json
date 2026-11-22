@@ -1,0 +1,8 @@
+{
+  "cmake/native_game.cmake": "df673beb0f8551ec1af4ee84933aeea51cb9433a43aba365b49401c319d8fc52",
+  "runtime/include/mka/retail_normal_envelope_intent.hpp": "ea8e45bbbf42a6c7b9a6881fe6d260e202f2778fa2b720d8c027180873864ba4",
+  "runtime/include/mka/retail_normal_envelope_required.hpp": "9d74effa86deadd74a2172d765deb297499d48f451770afb7a1c0183511ca39d",
+  "runtime/src/native/retail_normal_envelope_intent.cpp": "d0f65e37907508cffa25ef168ceaae4a63dbd990343cf7fa3977466c162268df",
+  "tests/test_retail_normal_envelope_intent.cpp": "a197adc53e08c07808a542e821f3934b2883e484b35edac2f89db7bf1a436591",
+  "tests/test_retail_normal_envelope_missing_timing.cpp": "cde07fc2eeef3d6e843f22a29d77a1c1fa83334c58dcc1ead54a8cd5ec1fe73a"
+}

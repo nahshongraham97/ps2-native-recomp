@@ -1,0 +1,48 @@
+SCE CONFIDENTIAL                                                                                                  SPU2 Overview Version 6.0 
+ 
+ 
+' SCEI 
+-26- 
+The mode specification, by which the volume varies over time, can be set for the L channel and R channel 
+independently, as in the case of the Sustain Rate of the envelope. 
+ 
+Mode VOLL/R Register Setting Volume Variation 
+Direct Bit 15=0 Constant (No variation) 
++lin Bit 15:13=100 Linear increment  
+-lin Bit 15:13=101 Linear decrement 
++exp Bit 15:13=110 Pseudo exponential increment 
+-exp Bit 15:13=111 Exponential decrement 
+ 
+First specify the standard volume in direct mode and start sound generation, even when specifying a mode other 
+than Direct mode.  If a mode other than Direct mode is specified again later with a variation rate, variation of 
+the volume starts instantly.  
+The phase can be reversed by setting a negative value in Direct mode.  
+ 
++lin
+-lin
++exp
+t
+1
+0.75
+0
+-exp
+Direct
+VOLL/R
+Register Setting
+Key on
+ 
+Figure 2-9 Volume Variation by Time 
+The volume varies successively in modes other than Direct mode, but the value is reflected in the VOLX register 
+and can be referred to.  
+ 
+2.1.6. Key-On/Key-Off 
+Key-on (starting sound generation) and key-off (stopping sound generation) can be controlled by the KON0/1 
+and KOF0/1 registers, respectively, for each voice.  
+ 
+At key-on, sound generation of the waveform data indicated by the SSAH/L register is started according to the 
+parameters of pitch, envelope, volume, etc.  
+At key-off, the envelope enters the Release phase and sound generation stops according to the Release Rate.  
+ 
+If there is no loop specification in the waveform data, sound generation of the voice ends when reaching the 
+endpoint block of waveform data even before key-off, and muting is applied by hardware.  
+ 

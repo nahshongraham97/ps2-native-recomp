@@ -1,0 +1,42 @@
+SCE CONFIDENTIAL                                                                                                  SPU2 Overview Version 6.0 
+ 
+ 
+' SCEI 
+-24- 
+Assuming the crest value of voice n-1 used for modulation of voice n to be OUTX and the pitch of voice n to 
+be P, then P’, the value to be used for pitch transformation of voice n, is decided by the following expression. 
+ 
+P’ = P (1 + OUTX) 
+ 
+Whether pitch modulation is performed or not can be specified with the PMON0/1 register.  When not 
+performed, the result becomes the same as the case for OUTX=0.  
+ 
+2.1.4. Envelope 
+The envelope specifies the volume variation by time from key-on to key-off according to the following five 
+parameters.  
+ 
+Parameter Code Description 
+Attack Rate AR Rising immediately after key-on 
+Decay Rate DR Attenuation from the maximum value 
+Sustain Level SL Transition point from Decay to Sustain 
+Sustain Rate SR Atte nuation (or increment) from Sustain Level 
+to key-off 
+Release Rate RR Attenu ation after key-off 
+ 
+For Attack Rate, Sustain Rate and Release Rate, curves of variation by time can be selected.  Attack Rate and 
+Release Rate can use two kinds and Sustain Rate can use four kinds of curves as shown in the table below.  
+Decay Rate is fixed to an exponential decrement curve.  
+ 
+Parameter Selection Set Value 
+Linear increment (+lin) ADSR1.X=0 Attack Rate 
+Pseudo exponential increment (+exp) ADSR1.X=1 
+Linear increment (+lin) ADSR2.Y=000 
+Linear decrement(-lin) ADSR2.Y=010 
+Pseudo exponential increment (+exp) ADSR2.Y=100 
+Sustain Rate 
+Exponential decrement (-exp) ADSR2.Y=110 
+Linear decrement (-lin) ADSR2.Z=0 Release Rate 
+Exponential decrement (-exp) ADSR2.Z=1 
+ 
+The "pseudo exponential increment" is a variation in line, in which linear volume increment is lowered in 
+increment rate when 75% of the maximum value (0x6000) is exceeded. 

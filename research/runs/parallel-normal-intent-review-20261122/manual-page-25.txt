@@ -1,0 +1,43 @@
+SCE CONFIDENTIAL                                                                                                  SPU2 Overview Version 6.0 
+ 
+ 
+' SCEI 
+-25- 
+SL
+AR(+exp)
+RR(-lin)
+DR(-exp)
+AR(+lin)
+SR(+lin)
+SR(-lin)
+0.75
+1
+0
+tkey-offkey-on
+SR(-exp)
+SR(+exp)
+RR(-lin)
+RR(-exp)
+RR(-exp)
+ 
+Figure 2-7 Parameters for Envelope and Their Curves 
+The value of the envelope varies successively, but the value is reflected in the ENVX register and can be referred 
+to.  When sound is generated from loop-less waveform data, ENVX is set to 0 regardless of the envelope status, 
+at the moment the ENDX register bit corresponding to the voice is set to 1.   
+ 
+2.1.5. Volume 
+In each voice, the volume for the L channel and R channel can be set independently.  By setting different values, 
+the panpot can be configured.   
+The volume settings are made in the VOLL and VOLR registers.  
+ 
+Envelope
+Control
+[VOLR]
+[VOLL]
+Volume(L)
+Control
+Volume(R)
+Control
+ 
+Figure 2-8 Volume Processing 
+ 

@@ -1,0 +1,44 @@
+SCE CONFIDENTIAL                                                                                                  SPU2 Overview Version 6.0 
+ 
+ 
+' SCEI 
+-45- 
+ADSR1 / ADSR2 : Envelope 
+ 
+ADSR1 
+15 12 8 4 0 
+X                 
+ 
+Name Pos. Format Contents 
+SL 3:0 int 0:4:0 Sustain Level 
+DR 7:4 int 0:4:0 Decay Rate 
+AR 14:8 int 0:7:0 Attack Rate 
+X 15 int 0:1:0 Mode specif ication for Attack Rate 
+0 Linear increment mode (+lin mode) 
+1 Pseudo exponential increment mode  
+ (+exp mode) 
+ 
+ADSR2 
+15 12 8 4 0 
+          Z      
+ 
+Name Pos. Format Contents 
+RR 4:0 int 0:5:0 Release Rate 
+Z 5 int 0:1:0 Mode specif ication for Release Rate 
+0 Linear decrement mode (-lin mode) 
+1 Exponential decrement mode (-exp mode) 
+SR 12:6 int 0:7:0 Sustain Rate 
+Y 15:13 int 0:3:0 Mode specif ication for Sustain Rate 
+000  Linear increment mode (+lin mode) 
+010  Linear decrement mode (-lin mode) 
+100  Pseudo exponential increment mode  
+  (+exp mode) 
+110  Exponential decrement mode  
+  (-exp mode) 
+ 
+Description 
+These registers specify each parameter for the envelope.   
+For the relationship between the Rate/Level field values and actual envelope duration, refer to "4.1. Rate 
+Parameter Table". 
+AR DR SL 
+SR Y RR 
