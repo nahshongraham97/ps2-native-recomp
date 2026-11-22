@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-core-history-22\\build-native\\test_native_playback_reservation_gaps.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "seconds": 0.049053399998229,
+  "source_commit": "2db58decfa42bd45aa119f391142619345ab9078",
+  "tracked_status": "",
+  "source_manifest_sha256": "e4a2791a23125a62cc8aca3f3491d9e32e7b90973e6f4ff0979917f322225b52",
+  "executable_sha256": "e47014d61647caa8f528ae565df764042664b33c3c9193dab88a51a2be53b3c8",
+  "log_sha256": "b62d90dd8f5f4d4bc56660bbe28272806a5778eafcdf6f3547487b59c2783335",
+  "compressed_log_sha256": "09203019a86feddc0b70d11e4e8829f83a33ddb85e698627bc777f0d24cd923d",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

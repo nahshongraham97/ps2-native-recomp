@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-core-history-22\\build-native\\test_native_retail_initial_reset_arcade.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-renderer-history-integrated-20261122\\clean-validation-01\\empty-content"
+  ],
+  "exit": 0,
+  "seconds": 0.10564429999794811,
+  "source_commit": "2db58decfa42bd45aa119f391142619345ab9078",
+  "tracked_status": "",
+  "source_manifest_sha256": "e4a2791a23125a62cc8aca3f3491d9e32e7b90973e6f4ff0979917f322225b52",
+  "executable_sha256": "462ebeec2cddebc277df34a1c4ddd7e10302c46d49d3606867374b1acef7a3e0",
+  "log_sha256": "bb06c9ce02fc7c24f027992aa2ca97303ef9047f1becbd8681c341094a58c03f",
+  "compressed_log_sha256": "bdb6ceb97015319a7fad72e8e3198c80e9ca2f3ee658012176eb7bcc3089c5a4",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

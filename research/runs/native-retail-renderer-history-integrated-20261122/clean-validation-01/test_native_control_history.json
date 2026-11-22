@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-core-history-22\\build-native\\test_native_control_history.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\MSLASSET.MS2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-renderer-history-integrated-20261122\\clean-validation-01\\history-corpus.txt"
+  ],
+  "exit": 0,
+  "seconds": 0.06924399999843445,
+  "source_commit": "2db58decfa42bd45aa119f391142619345ab9078",
+  "tracked_status": "",
+  "source_manifest_sha256": "e4a2791a23125a62cc8aca3f3491d9e32e7b90973e6f4ff0979917f322225b52",
+  "executable_sha256": "c713ecc2c1c6c5f203f9aeab941997c9ba6c3ad82a86c0f44221b193e24c5418",
+  "log_sha256": "fe4895381809179f7ee2eadea3c7d28260d80e784e379867dcfdb32e98058b24",
+  "compressed_log_sha256": "375855e554c5365995021ba599de133145ae0ee2bf14265ea0930be0526c424a",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

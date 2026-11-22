@@ -79,7 +79,7 @@ for path, digest in frozen.items():
     assert hashlib.sha256(subprocess.check_output(['git', 'show', ':' + path], cwd=fork)).hexdigest() == digest, path
 message = ('Connect native renderer core and retained sound history' if phase == 'source'
            else 'Record clean integrated renderer and sound history verification')
-subprocess.run(['git', 'commit', '-m', message], cwd=fork, check=True)
+subprocess.run(['git', 'commit', '--quiet', '-m', message], cwd=fork, check=True)
 head = git('rev-parse', 'HEAD')
 subprocess.run(['git', 'push', 'origin', 'main'], cwd=fork, check=True)
 assert head == git('rev-parse', 'origin/main') == git('ls-remote', 'origin', 'refs/heads/main').split()[0]

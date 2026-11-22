@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-core-history-22\\build-native\\test_native_forced_output_retirement_failure.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\MSLASSET.MS2"
+  ],
+  "exit": 0,
+  "seconds": 0.04427540001051966,
+  "source_commit": "2db58decfa42bd45aa119f391142619345ab9078",
+  "tracked_status": "",
+  "source_manifest_sha256": "e4a2791a23125a62cc8aca3f3491d9e32e7b90973e6f4ff0979917f322225b52",
+  "executable_sha256": "114f1a3c3546d40b4a91c618b7cc58ee1be19aaaa7c46600e87a7901ab3f13b8",
+  "log_sha256": "60d3df9188629d58f8fa11b80bd071366fa545ff01ff6b304ebdd7a5334bfde0",
+  "compressed_log_sha256": "0e6ddd1c8f18aa2ff89036e3f64cd30a9712df4c7c5539ba6287eda0e930cf65",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}
