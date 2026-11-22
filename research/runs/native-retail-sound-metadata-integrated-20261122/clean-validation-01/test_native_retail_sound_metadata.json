@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-metadata-22\\build-native\\test_native_retail_sound_metadata.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-metadata-22\\research\\runs\\parallel-sound-metadata-resolver-20261122\\expected-metadata.tsv"
+  ],
+  "exit": 0,
+  "seconds": 0.17648929999268148,
+  "source_commit": "57a799c2bd4b88fc891094c98c506bf6cfa17d04",
+  "tracked_status": "",
+  "source_manifest_sha256": "e6a957f09f55c2296100f8626fdf9b9f8dd1d80c9ac9067d1feef7946596a30d",
+  "executable_sha256": "061e92e33bfbd43cda616e6721c562f4f2e66bd5a16d0508c0f9c5ba3b4fb3a0",
+  "log_sha256": "02d31cfaf5d0678946a14dc4547c6fce9b58ed3b7fae001dfd348525194ea0f2",
+  "compressed_log_sha256": "45a857e97afdfca726dd54f1e9b66694f06b0b156ec5deaa85ba53e477b5b2a2",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

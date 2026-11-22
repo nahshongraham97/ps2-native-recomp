@@ -44,12 +44,16 @@ ownership. Actual unloaded/pending/closed owner, current operand mutation,
 missing Session, foreign thread and retired Main are exercised by the client.
 Do not report the defensive branch as executed.
 
-Current status: validation-01 compiles and passes3 directly affected metadata/preferences/current-sound clients, source/symbol guards and exact unchanged37-effect refusal. Five authored files use LF;
-all179 imported source/delivery evidence files retain exact committed bytes.
-Next verify metadata, existing preferences and real current-sound ownership,
-with exact unchanged37 required full-entry names. Original assets/saves/backup,
-model/settings/drivers and the rejected profile implementation stay untouched.
-Owner: no action. Primary next: verify/publish metadata, then actual source
-arithmetic/envelope policy and reviewed real scene/camera producers.
-
-Primary validation-01 passes metadata (all9656 rows/four actual callbacks), existing preferences and current-sound lifetime/PCM integration. Original MS2/MS4 hashes are unchanged. Actual SDL abort and physical output abort symbols are verified; no game or endpoint was opened. Next freeze/publish and measure the same combined source in a fresh clean checkout.
+Current status: clean published runtime source57a799c2bd4b88fc891094c98c506bf6cfa17d04
+passes the3 directly affected metadata/preferences/current-sound clients in
+clean-validation-01, including9656 source-derived rows and four actual catalog
+callback handles. Original MS2/MS4 hashes are unchanged. All839 source blobs
+authenticate to the committed trees;199 unchanged canonical CRLF/LF pairs are
+recorded and all5 changed source files are byte-identical. Effective SDL and
+physical-output abort guards are verified. Exact37 required full-entry names
+are unchanged. No game, endpoint, frames, audio or oracle scenario was run.
+Metadata/raw operands are complete at the stated component scope; actual
+source arithmetic/clamps/q14, envelope/control policy, playback caller and
+complete native game acceptance remain OPEN. Owner: no action. Primary next:
+integrate independently reviewed camera owner correction with continuation,
+then actual source sound arithmetic/envelopes and connected scene producers.

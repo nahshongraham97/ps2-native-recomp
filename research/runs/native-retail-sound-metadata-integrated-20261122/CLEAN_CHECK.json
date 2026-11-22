@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "C:\\Python315\\python.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-sound-metadata-integrated-20261122\\verify.py",
+    "--checkout",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-metadata-22",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-metadata-22\\build-native",
+    "--output",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-sound-metadata-integrated-20261122\\clean-validation-01"
+  ],
+  "exit": 0,
+  "stdout": "build 0\nmetadata-symbols 0\nsound-symbols 0\ntest_native_retail_sound_metadata 0\ntest_native_retail_profile_preferences 0\ntest_native_retail_sound_context 0\nfull-entry-negative 1\nPASS_CONNECTED_NATIVE_SOUND_METADATA 3 affected clients;9656 metadata rows; exact unchanged37 required effects\n",
+  "stderr": "",
+  "seconds": 75.71656050000456,
+  "source_commit": "57a799c2bd4b88fc891094c98c506bf6cfa17d04",
+  "clean_checkout": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-metadata-22",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}
