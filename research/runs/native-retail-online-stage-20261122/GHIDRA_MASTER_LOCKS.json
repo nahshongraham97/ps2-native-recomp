@@ -1,0 +1,21 @@
+{
+  "masters": {
+    "ps2": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\local-research\\ghidra-r5900-2026-11-05\\projects\\Armageddon_R5900_Transform_Audit.gpr",
+      "files": 10,
+      "locks_found": false
+    },
+    "xbox": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\local-research\\ghidra-xbox\\projects\\MKAR-Xbox-20261121.gpr",
+      "files": 9,
+      "locks_found": false
+    },
+    "msl": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\local-research\\ghidra-msl-worker-20261121\\SoundWorker.gpr",
+      "files": 10,
+      "locks_found": false
+    }
+  },
+  "action": "read-only lock/hash inspection; no locks removed; no project opened",
+  "prior_concurrency": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\parallel-agent-preparation-20261122\\CONCURRENCY.json"
+}

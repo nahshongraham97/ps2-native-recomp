@@ -222,8 +222,10 @@ RetailStartupGate initialize_retail_pad_service(NativeRetailMainState&, unsigned
 bool initialize_retail_saved_profile_storage(NativeRetailMainState&, StartupFailure&); // 225000 native service
 // Remaining 171B10 record/default/aggregate/menu effects. No successful default.
 RetailStartupGate initialize_retail_saved_profile_records(NativeRetailMainState&, StartupFailure&);
-std::uint32_t read_retail_audio_boot_word(const NativeRetailMainState&);
-bool initialize_retail_audio_stage(NativeRetailMainState&, const std::array<std::uint32_t, 5>&, StartupFailure&);
+// 3432D0 initializes the concrete Online object, not the sound context.
+// Its native services and the live five-word producer remain required.
+std::uint32_t read_retail_online_boot_word(const NativeRetailMainState&);
+bool initialize_retail_online_stage(NativeRetailMainState&, const std::array<std::uint32_t, 5>&, StartupFailure&);
 RetailStartupGate initialize_retail_first_scene(NativeRetailMainState&, StartupFailure&);
 std::optional<std::uint32_t> stop_retail_stopwatch(NativeRetailMainState&, unsigned slot, StartupFailure&);
 std::optional<std::uint16_t> read_retail_startup_seed_component(NativeRetailMainState&, StartupFailure&);

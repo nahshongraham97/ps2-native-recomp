@@ -1,0 +1,17 @@
+{
+  "online_allocation_label": {
+    "bytes": 16,
+    "sha256": "155a2180add67f335c05fcae062d165b950ebc5d08322a6be41b5eb4ba99f083",
+    "ghidra_matches": true
+  },
+  "concrete_vtable": {
+    "bytes": 100,
+    "sha256": "7bb41978c512fc7658314a239d5d7b2591da5c3a270506cab83e043bf74dfb92",
+    "ghidra_matches": true
+  },
+  "online_init_messages": {
+    "bytes": 272,
+    "sha256": "2f8cd340c7e592a3022faa1e08e63447f80175c2625d1fd9deef2304f2766291",
+    "ghidra_matches": true
+  }
+}
