@@ -1,0 +1,159 @@
+{
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "pt_load": [
+    {
+      "offset": 256,
+      "vaddr": 1048576,
+      "filesz": 5561984,
+      "memsz": 7096448
+    },
+    {
+      "offset": 5562240,
+      "vaddr": 8145024,
+      "filesz": 0,
+      "memsz": 1131008
+    },
+    {
+      "offset": 5562240,
+      "vaddr": 8145024,
+      "filesz": 0,
+      "memsz": 2097536
+    },
+    {
+      "offset": 5562240,
+      "vaddr": 8145024,
+      "filesz": 0,
+      "memsz": 1867392
+    },
+    {
+      "offset": 5562240,
+      "vaddr": 10242560,
+      "filesz": 0,
+      "memsz": 0
+    }
+  ],
+  "listings": [
+    {
+      "listing": "00171b10.tsv",
+      "start": "00171b10",
+      "end_inclusive": "00171c24",
+      "words": 70,
+      "joined_words": 70,
+      "omitted_resolution": [],
+      "sha256": "2f17999a01b6652fe9ead022a49c175df45b68e0ffa7de6f86a8f5d9344018d6"
+    },
+    {
+      "listing": "00245cb0.tsv",
+      "start": "00245cb0",
+      "end_inclusive": "00245dcc",
+      "words": 72,
+      "joined_words": 72,
+      "omitted_resolution": [
+        {
+          "address": "0x245dcc",
+          "decode": "SLL zero,zero,0",
+          "role": "zero padding after JR return delay slot; outside function body"
+        }
+      ],
+      "sha256": "e80de509034d01094c9c12ed5394d4a19f83426375898a78afc979f5c773b00d"
+    },
+    {
+      "listing": "00245dd0.tsv",
+      "start": "00245dd0",
+      "end_inclusive": "0024606c",
+      "words": 168,
+      "joined_words": 168,
+      "omitted_resolution": [
+        {
+          "address": "0x245e84",
+          "decode": "LW a1,0(s2); opcode35 rs18 rt5 imm0; sign-extends32 to64",
+          "role": "unreachable duplicate in this function: taken BNEL245E74 executes load245E78 then targets245E88; not-taken annuls245E78 and B245E7C exits to246044"
+        },
+        {
+          "address": "0x246068",
+          "decode": "SLL zero,zero,0",
+          "role": "zero padding after JR return delay slot; outside function body"
+        },
+        {
+          "address": "0x24606c",
+          "decode": "SLL zero,zero,0",
+          "role": "zero padding after JR return delay slot; outside function body"
+        }
+      ],
+      "sha256": "b13fd7034f88c355445a0d282611637ab2945a544b235de144d9aa01fa415d03"
+    },
+    {
+      "listing": "00246070.tsv",
+      "start": "00246070",
+      "end_inclusive": "002460ac",
+      "words": 16,
+      "joined_words": 16,
+      "omitted_resolution": [
+        {
+          "address": "0x2460ac",
+          "decode": "SLL zero,zero,0",
+          "role": "zero padding after JR return delay slot; outside function body"
+        }
+      ],
+      "sha256": "b2d28df6692549ec27a28e7c5e8a8fdfb5e67d16119e8d72c145e8843daf5223"
+    },
+    {
+      "listing": "002817b0.tsv",
+      "start": "002817b0",
+      "end_inclusive": "0028182c",
+      "words": 32,
+      "joined_words": 32,
+      "omitted_resolution": [
+        {
+          "address": "0x281828",
+          "decode": "SLL zero,zero,0",
+          "role": "zero padding after JR return delay slot; outside function body"
+        },
+        {
+          "address": "0x28182c",
+          "decode": "SLL zero,zero,0",
+          "role": "zero padding after JR return delay slot; outside function body"
+        }
+      ],
+      "sha256": "d769cada3bde61fa4bd7f7b48497be07c6e7d2e1df098a42c54e57f1c94eb72a"
+    },
+    {
+      "listing": "00281830.tsv",
+      "start": "00281830",
+      "end_inclusive": "0028186c",
+      "words": 16,
+      "joined_words": 16,
+      "omitted_resolution": [
+        {
+          "address": "0x281868",
+          "decode": "SLL zero,zero,0",
+          "role": "zero padding after JR return delay slot; outside function body"
+        },
+        {
+          "address": "0x28186c",
+          "decode": "SLL zero,zero,0",
+          "role": "zero padding after JR return delay slot; outside function body"
+        }
+      ],
+      "sha256": "73b95f5cb73a4f654ad4c3718812d1dbef580ababd3243a055ac20237811d5bc"
+    }
+  ],
+  "delivered_commit": "b986341d542c7b2848ba95fb6510e6fb38eae663",
+  "object_type": "commit",
+  "commit_raw": "tree 6b3c0cd1f6edbeb835ab1a552a3264670d3f8f5c\nparent 53e1a59bd4045d53eda35c29a154b9f1734f2382\nauthor Nahshon Graham <311961719+nahshongraham97@users.noreply.github.com> 1795327865 -0500\ncommitter Nahshon Graham <311961719+nahshongraham97@users.noreply.github.com> 1795327865 -0500\n\nImplement native retail saved profile records and reset 246070 bindings",
+  "delivery_paths": [
+    "cmake/native_game.cmake",
+    "research/runs/native-retail-saved-profile-records-20261122/README.md",
+    "research/runs/native-retail-saved-profile-records-20261122/VERIFICATION.json",
+    "runtime/include/mka/retail_main.hpp",
+    "runtime/include/mka/retail_saved_profile_records.hpp",
+    "runtime/src/native/retail_main_state.cpp",
+    "runtime/src/native/retail_saved_profile_records.cpp",
+    "tests/test_retail_saved_profile_records.cpp"
+  ],
+  "published_heads": "915da5fd8dfdc108a3bb256fe2d142a331e74c32\trefs/heads/main",
+  "remote_contains_delivery": "",
+  "private_branch": "profile-binding-review-20261122",
+  "applied_delivery": "40ab870a1907c86b1cd3c0c83bce21b25200fe5a",
+  "source_status": "joined full code spans plus resolved listing omission and zero padding; no gameplay execution"
+}
