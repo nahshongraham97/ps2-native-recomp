@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "C:\\Python315\\python.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-main-frame-gates-20261122\\verify.py",
+    "--checkout",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-gates-22",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-gates-22\\build-native",
+    "--output",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-main-frame-gates-20261122\\clean-validation-01"
+  ],
+  "exit": 0,
+  "stdout": "build 0\ntest_native_retail_main_frame_gates-symbols 0\ntest_native_retail_camera_bootstrap-symbols 0\nsound-symbols 0\ntest_native_retail_main_frame_gates 0\ntest_native_retail_task_domain 0\ntest_native_retail_game_session 0\ntest_native_retail_camera_bootstrap 0\ntest_native_retail_sound_context 0\ntest_native_retail_initial_reset 0\nfull-entry-negative 1\nPASS_CONNECTED_NATIVE_MAIN_FRAME_GATES 6 affected clients; exact34 required effects after three Main reads and one classification rename\n",
+  "stderr": "",
+  "seconds": 78.01172789999691,
+  "source_commit": "f6670ba43c0765ed78f38683f281d1b7b6178a7b",
+  "clean_checkout": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-gates-22",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-gates-22\\build-native",
+    "--target",
+    "test_native_startup_missing_bindings",
+    "-j2"
+  ],
+  "exit": 1,
+  "seconds": 0.9714207000070019,
+  "source_commit": "f6670ba43c0765ed78f38683f281d1b7b6178a7b",
+  "tracked_status": "",
+  "source_manifest_sha256": "3053fecf144502fddcefe723461a878dfc14dddf00ec5de9251ebcdc09e76566",
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "log_sha256": "727eb7ba131fbd2fd821445582e63be5c4d3546e5d8e4fd802f7e70b0b22d302",
+  "compressed_log_sha256": "f92f014faa9bad88db0b42479a6ba2b1bd9fa940c3d2d315a51bff2696ecf688",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-C",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-gates-22\\build-native\\test_native_retail_main_frame_gates.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.05483940000704024,
+  "source_commit": "f6670ba43c0765ed78f38683f281d1b7b6178a7b",
+  "tracked_status": "",
+  "source_manifest_sha256": "3053fecf144502fddcefe723461a878dfc14dddf00ec5de9251ebcdc09e76566",
+  "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "log_sha256": "35c3d39284580492c6cf46be45e388a9131a8f07ce6e80cef72e1c97b6ff7bdb",
+  "compressed_log_sha256": "f5f1a4e4640be875b8158baaf328904826bc157a77ecd19ec3fcfe101b4e9450",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

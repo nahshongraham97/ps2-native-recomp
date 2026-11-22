@@ -45,3 +45,16 @@ two omitted zero words are decoded after their unconditional branches/delay
 slots. These supporting full source bodies are reused for alias proof, not
 new claims of complete task-dispatch semantics. Next freeze/publish and check
 same source from a fresh clean checkout.
+
+Clean sourcef6670ba43c0765ed78f38683f281d1b7b6178a7b passes all6 affected
+clients again in clean-validation-01 with exact34 required names. All845
+source blobs authenticate against published trees;7 changed files are byte-
+identical and199 existing raw newline pairs remain recorded. No gameplay or
+physical output. Nonzero bit5/root-wait producer coverage remains OPEN.
+Private Ghidra master snapshot in parent checks allPS2/Xbox/MSL saved masters
+unlocked without opening them or deleting a lock. One helper read-only review
+of these small bindings found no concrete mismatch; its committed note is
+pending. No additional runtime test by that reviewer is claimed.
+Owner: no action. Primary next: review/integrate concrete native renderer
+allocator and physical-input admission candidates when their pinned evidence
+is ready, then source envelope/gain and actual renderer/game-loop work.

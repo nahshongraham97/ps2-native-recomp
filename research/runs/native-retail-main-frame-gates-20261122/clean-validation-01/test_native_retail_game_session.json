@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-gates-22\\build-native\\test_native_retail_game_session.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.04055990000779275,
+  "source_commit": "f6670ba43c0765ed78f38683f281d1b7b6178a7b",
+  "tracked_status": "",
+  "source_manifest_sha256": "3053fecf144502fddcefe723461a878dfc14dddf00ec5de9251ebcdc09e76566",
+  "executable_sha256": "8ed4f7557a252240b4711bbb32050ad8cd7579b5985620d5b33c024ee00b8b1f",
+  "log_sha256": "3788d05d7f165074cc66638897b3da09f3af202a64bec3f1be94b25b9ed07f54",
+  "compressed_log_sha256": "ee67b25dcc32c28367691a55910998a0cc06c4027dbb9eca38449d1d94738f95",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}
