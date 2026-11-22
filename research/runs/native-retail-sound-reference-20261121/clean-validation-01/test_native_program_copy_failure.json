@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-ref-21\\build-native\\test_native_program_copy_failure.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+  ],
+  "exit": 0,
+  "stdout": "PASS native program copy allocation rollback: 7 failure sites; actual voice failure/retry; test-only allocator wrap\n",
+  "stderr": "",
+  "seconds": 0.03897470000083558,
+  "source_commit": "dcf5687ead3df375ae6f613102f49bdb59ca3d5c",
+  "tracked_status": "",
+  "source_manifest_sha256": "0e19861680eb66d89d4b840c2a6a718e914022178121a09bdeda57e030062025",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "73c92b359f71ca85bde796effea257bab31c05310955bbdeb84380bda19ace17"
+}

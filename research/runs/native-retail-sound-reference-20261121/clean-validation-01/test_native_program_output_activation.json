@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-ref-21\\build-native\\test_native_program_output_activation.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_PROGRAM_OUTPUT_ACTIVATION: 8 actual role/clock/replacement/coverage groups; ordinary native output only\n",
+  "stderr": "",
+  "seconds": 0.05581910000182688,
+  "source_commit": "dcf5687ead3df375ae6f613102f49bdb59ca3d5c",
+  "tracked_status": "",
+  "source_manifest_sha256": "0e19861680eb66d89d4b840c2a6a718e914022178121a09bdeda57e030062025",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "b0ba4d0059f6f6e3b865a8bc8a4dbf292ac5cf87d820b90d9b48323e5f36cdf1"
+}

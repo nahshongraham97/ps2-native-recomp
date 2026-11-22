@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-ref-21\\build-native\\test_native_bank_playback.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+  ],
+  "exit": 0,
+  "stdout": "PASS native bank handles -> runtime/copy/clock/PCM/mixer/unload/retired-tail; no packets/tokens/device/game\n",
+  "stderr": "",
+  "seconds": 0.041452399993431754,
+  "source_commit": "dcf5687ead3df375ae6f613102f49bdb59ca3d5c",
+  "tracked_status": "",
+  "source_manifest_sha256": "0e19861680eb66d89d4b840c2a6a718e914022178121a09bdeda57e030062025",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "caafb8dfe1b18357d535eaa136c69d1ba3891663ebc4726b25a5ffc0ddc49355"
+}

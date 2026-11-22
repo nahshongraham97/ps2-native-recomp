@@ -1,0 +1,39 @@
+{
+  "status": "PREPARED_BRANCH_DISASSEMBLY_CROSS_CHECK",
+  "listing_files": [
+    "XBOX-CONTEXT-03.json",
+    "XBOX-CONTEXT-04.json",
+    "XBOX-CONTEXT-05.json",
+    "XBOX-CONTEXT-06.json"
+  ],
+  "facts": [
+    {
+      "function": "23BDD0",
+      "instructions": "23BDD3/DA signed CMP/JLE;23BDE1/E4 subtract1/IMUL12;23BDED call23BB70;23BDF5 branchback",
+      "meaning": "Reverse last-record removal until count is nonpositive"
+    },
+    {
+      "function": "23BB70",
+      "instructions": "23BB74 tests stack argument+8;23BB8C reads record+0;23BB8F calls374CC0;23BB99 skips zero;23BBA1 calls374E70;23BBAD removes record afterwards",
+      "meaning": "One actual stack-passed record pointer; decompiler extra thiscall parameter is not adopted"
+    },
+    {
+      "function": "374CC0",
+      "instructions": "374CD5 resolves identity;374CFF/374D07/374D12 gate descriptor/program/data-word presence",
+      "meaning": "Prepared-object validity, not a pending async-job completion"
+    },
+    {
+      "function": "374E70/374820",
+      "instructions": "374EAD calls374820 after identity resolution;374820 pushes explicit1 to374840",
+      "meaning": "Direct forced cleanup1"
+    },
+    {
+      "function": "374840",
+      "instructions": "37485E..882 walks outputs;374895..8BA retires auxiliary associations;3748DF clears selected role unconditionally;374922 masks8000;37495F disposes descriptor;374978 releases retained program identity",
+      "meaning": "Shared high-level disposal ordering; native retains PS2 exact-incumbent protection and real tails"
+    }
+  ],
+  "native_changed_by_cross_check": false,
+  "old_decompiler_abi_adopted": false,
+  "whole_game_equivalence": false
+}
