@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-camera-22\\build-native",
+    "--target",
+    "test_native_startup_missing_bindings",
+    "-j2"
+  ],
+  "exit": 1,
+  "seconds": 0.9730265999969561,
+  "source_commit": "9a4b2e49b177cd1a9096a3020a7c5aa70d7ea370",
+  "tracked_status": "",
+  "source_manifest_sha256": "816ddb627877feb2f83bed4bf7a98c220f9002cf51cb330c36a88525b61de587",
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "log_sha256": "f1905b74f8453442ab3ba8c500974b54257b9bd65dc7bd994a96f26a9f6bffff",
+  "compressed_log_sha256": "628f6a2863aa16bb1d6e9679adbfaeb2d20410d86d697cc784272300be6d82ab",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

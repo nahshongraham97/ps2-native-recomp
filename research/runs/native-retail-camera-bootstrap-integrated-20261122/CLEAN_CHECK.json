@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "C:\\Python315\\python.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-camera-bootstrap-integrated-20261122\\verify.py",
+    "--checkout",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-camera-22",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-camera-22\\build-native",
+    "--output",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-camera-bootstrap-integrated-20261122\\clean-validation-01"
+  ],
+  "exit": 0,
+  "stdout": "build 0\ntest_native_retail_camera_bootstrap-symbols 0\ntest_native_retail_scene_bootstrap_prefix-symbols 0\nsound-symbols 0\ntest_native_retail_camera_bootstrap 0\ntest_native_retail_scene_bootstrap_prefix 0\ntest_native_retail_main_timing 0\ntest_native_retail_game_session 0\ntest_native_retail_sound_metadata 0\ntest_native_retail_sound_context 0\ntest_native_retail_initial_reset 0\nfull-entry-negative 1\nPASS_CONNECTED_NATIVE_CAMERA_BOOTSTRAP 7 affected clients; exact37 required effects with two verified suffix substitutions\n",
+  "stderr": "",
+  "seconds": 77.62162999999418,
+  "source_commit": "9a4b2e49b177cd1a9096a3020a7c5aa70d7ea370",
+  "clean_checkout": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-camera-22",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

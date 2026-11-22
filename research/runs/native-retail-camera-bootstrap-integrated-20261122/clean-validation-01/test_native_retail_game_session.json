@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-camera-22\\build-native\\test_native_retail_game_session.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.04225050000241026,
+  "source_commit": "9a4b2e49b177cd1a9096a3020a7c5aa70d7ea370",
+  "tracked_status": "",
+  "source_manifest_sha256": "816ddb627877feb2f83bed4bf7a98c220f9002cf51cb330c36a88525b61de587",
+  "executable_sha256": "8a42de4f5c69d9200b109b282622c5b7d2447cadffbe6289f6f1ae0d408be1af",
+  "log_sha256": "3788d05d7f165074cc66638897b3da09f3af202a64bec3f1be94b25b9ed07f54",
+  "compressed_log_sha256": "ee67b25dcc32c28367691a55910998a0cc06c4027dbb9eca38449d1d94738f95",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

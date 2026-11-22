@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-C",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-camera-22\\build-native\\test_native_retail_camera_bootstrap.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.05726180000056047,
+  "source_commit": "9a4b2e49b177cd1a9096a3020a7c5aa70d7ea370",
+  "tracked_status": "",
+  "source_manifest_sha256": "816ddb627877feb2f83bed4bf7a98c220f9002cf51cb330c36a88525b61de587",
+  "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "log_sha256": "1afde533066dc3c950170736c57163621e8ee0a3dd569c9a73d45505ea2e3cd2",
+  "compressed_log_sha256": "40ba916d37a8b8e32c46e6da353574a3a1bf75c74d15d7d993bae76b4815cbcc",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

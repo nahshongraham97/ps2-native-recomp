@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-camera-22\\build-native",
+    "--target",
+    "test_native_retail_camera_bootstrap",
+    "test_native_retail_scene_bootstrap_prefix",
+    "test_native_retail_main_timing",
+    "test_native_retail_game_session",
+    "test_native_retail_sound_metadata",
+    "test_native_retail_sound_context",
+    "test_native_retail_initial_reset",
+    "-j2"
+  ],
+  "exit": 0,
+  "seconds": 70.96823730001051,
+  "source_commit": "9a4b2e49b177cd1a9096a3020a7c5aa70d7ea370",
+  "tracked_status": "",
+  "source_manifest_sha256": "816ddb627877feb2f83bed4bf7a98c220f9002cf51cb330c36a88525b61de587",
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "log_sha256": "a17e2276d71d48626fcedbcf7d52259d8da78633d92a0bdc7297c3c7f730bfb5",
+  "compressed_log_sha256": "1cd09dc5850fd1fc03961b5dce117ab3d90c3053cf0ff10942c5a272552ee153",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

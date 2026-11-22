@@ -27,11 +27,14 @@ zeros1812A4/1CD9E4. Frozen candidate WORK incorrectly called1812A8 the former
 target; this record supersedes that annotation. Neither broad supporting
 producer180ED0/1CD6E0 is claimed implemented.
 
-Current status: validation-01 compiles and passes all7 directly affected
-camera/prefix/timing/Session/metadata/sound/reset clients, effective abort
-guards, asset immutability and exact37 required names with only two known
-suffix substitutions. All843 source inputs are frozen. Next publish source
-and verify it in a fresh clean checkout. No full game/endpoint/frames/audio/oracle acceptance. Original
-assets, backup, saves/settings/model and inventory are preserved. Owner: no
-action. Primary next: verify/publish corrected camera integration, then actual
-renderer-engine services and source sound arithmetic/envelope dependencies.
+Current status: clean published runtime source9a4b2e49b177cd1a9096a3020a7c5aa70d7ea370
+passes all7 directly affected camera/prefix/timing/Session/metadata/sound/reset
+clients, effective abort guards, asset immutability and exact37 required names
+with only the two known suffix substitutions. All843 source blobs authenticate
+to committed trees,8 changed files byte-identical,199 preexisting raw newline
+pairs preserved. No game, endpoint, frames, audio or oracle scenario was run.
+The real camera/frame/raster/task/world/update producers and entire220900/
+125D60 remainders remain required. No native gameplay or renderer claim.
+Owner: no action. Primary next: actual first-frame native storage/service
+consumers while delegates continue real renderer allocator and input admission;
+source sound arithmetic/envelope/full-game gates remain OPEN.
