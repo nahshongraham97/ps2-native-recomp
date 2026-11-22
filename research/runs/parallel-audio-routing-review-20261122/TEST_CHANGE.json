@@ -1,0 +1,7 @@
+{
+  "path": "tests/test_retail_sound_context.cpp",
+  "first_sha256": "038549946c6be262acd4f064a717b4968c8feb742add84bc7d2766c5502d582c",
+  "subsequent_sha256": "ea4230726d741640f701699ada9c725fd2adb5060ea88ea67e68643c40b8c5a4",
+  "primary_report": "One-shot std::function hook source remained callable after move; primary diagnoses fixture consumption and will use exchange, assert consumption, add focused failure tests. Production files unchanged.",
+  "review_status": "new test revision not fully reviewed; production review pins remain valid"
+}

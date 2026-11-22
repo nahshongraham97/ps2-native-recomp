@@ -1,0 +1,13 @@
+{
+  "status": "PASS_PINNED_SOURCE_REVIEW_NO_CONCRETE_FINDINGS",
+  "base": "915da5fd8dfdc108a3bb256fe2d142a331e74c32",
+  "frozen_dirty_files": 10,
+  "snapshot_files": 16,
+  "source_join_words": 104,
+  "source_listing_sha256": "f82c09544693a9ce9f8d5939fac98aba59684e805af622874780ea57e63cbee0",
+  "changed_since_freeze": [
+    "tests/test_retail_sound_context.cpp"
+  ],
+  "executed_builds_or_tests": false,
+  "source_authority_limit": "Reused primary original IRX join and saved actual MIPS listing; independently rejoined all104 represented words/listing instructions; did not reextract original IRX file"
+}

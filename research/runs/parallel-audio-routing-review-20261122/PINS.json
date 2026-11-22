@@ -1,0 +1,18 @@
+{
+  "runtime/include/mka/bank_preparation.hpp": "4e91c2797bafaa9e77b0996e80bdbd5f16c10a84fbb3e54a3f4d039510836099",
+  "runtime/include/mka/pending_play.hpp": "0c5e5b6f87b7869e10cdfa31ec77f71e06d81587c1a8e302bacb0c08451a6b52",
+  "runtime/include/mka/retail_main.hpp": "d6e7a94139f5aaed42a823d818873cc470521a8ecce1bedee334434860d9a780",
+  "runtime/include/mka/retail_sound_runtime.hpp": "2f12565eb29a26427e8ee7d12a7153e42c2eb01e707618b8918a0c8540d188d4",
+  "runtime/src/native/bank_preparation.cpp": "f8668af133e5e9a955b7bb493bde577f3edc5b2e3c57493954327cffa1db5236",
+  "runtime/src/native/playback_owner.cpp": "949e44486513aa958b253fe78d6bdf7d31738ca770aa60779737374ba7c45676",
+  "runtime/src/native/retail_sound_bank_main.cpp": "72a7686c95655d329af908011fe97dfdd2a99adab7ae7e5d3b2389f84d93e449",
+  "runtime/src/native/retail_sound_runtime.cpp": "5d54f7f2e5fefa02896d45cb24c0d60afe4b3bda73b609cf4da1c6b94ca4cbfd",
+  "tests/test_runtime_program_work.cpp": "c87568e6135b4192444a192fe6e58fa4dfa8abd76c787c6fa4558e5caa234950",
+  "tests/test_retail_sound_context.cpp": "038549946c6be262acd4f064a717b4968c8feb742add84bc7d2766c5502d582c",
+  "research/runs/native-retail-play-routing-20261122/SOURCE_JOIN.json": "a87b7b2f71ff5fc6162d78a9cb1c232d20709178b51a14398f824ed877663515",
+  "research/runs/native-retail-play-routing-20261122/WORK.md": "353465b3873e6c7195d09a41c3cf6dad2f2315bda52608a45c0f28f2467fecd5",
+  "runtime/src/native/audio_banks.cpp": "f2daeadeb7fbdd919cbd87f0a76f8f93d58776bbb82be28b058669c2ca69cb4c",
+  "runtime/src/native/audio_bank_service.cpp": "33f0405cd926b5931a066e1e820b2ac7cb1bb32d2ec13a3f2c7a5f16f7ecc9e3",
+  "runtime/src/native/audio_resource_domain.cpp": "800a56a4548e3dc269dec2f36663b851523d9a2d2a69024a59e71c636651d1cc",
+  "runtime/src/native/program_copy.cpp": "30116f5352ddfd177c7f4a9da12725e632975da4cc271d8a86aec7be6f39d721"
+}
