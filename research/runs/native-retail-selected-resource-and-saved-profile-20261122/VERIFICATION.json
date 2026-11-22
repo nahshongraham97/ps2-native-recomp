@@ -1,0 +1,97 @@
+{
+  "branch": "selected-resource-work",
+  "base_commit": "a890c72b1aa59868bf030580979d554a9388df67",
+  "implemented_bindings": [
+    "mka::retail::initial_reset_required::reset_selected_resource_334700",
+    "mka::retail::initial_reset_required::configure_selected_resource_zero_16fc70",
+    "mka::retail::initial_reset_required::clear_nonowning_references_18da30",
+    "mka::retail::main_binding::initialize_retail_saved_profile_records",
+    "mka::retail::initial_reset_required::reset_saved_profile_children_246070"
+  ],
+  "source_files": [
+    "runtime/include/mka/retail_selected_resource.hpp",
+    "runtime/src/native/retail_selected_resource.cpp",
+    "runtime/include/mka/retail_saved_profile_records.hpp",
+    "runtime/src/native/retail_saved_profile_records.cpp",
+    "runtime/include/mka/retail_initial_task_state.hpp",
+    "runtime/src/native/retail_initial_task_state.cpp",
+    "runtime/include/mka/retail_input_roles.hpp",
+    "runtime/src/native/retail_input_roles.cpp",
+    "runtime/include/mka/retail_main.hpp",
+    "runtime/src/native/retail_main_state.cpp",
+    "tests/test_retail_selected_resource.cpp",
+    "tests/test_retail_saved_profile_records.cpp",
+    "cmake/native_game.cmake"
+  ],
+  "test_receipts": [
+    {
+      "binary": "test_native_retail_selected_resource.exe",
+      "result": "PASS",
+      "exit_code": 0,
+      "summary": "PASS: test_ladder_tables, PASS: test_selected_resource_lifecycle_and_bindings, PASS: test_wrong_thread_refusal"
+    },
+    {
+      "binary": "test_native_retail_saved_profile_records.exe",
+      "result": "PASS",
+      "exit_code": 0,
+      "summary": "PASS: test_initialization_order_and_card_slots, PASS: test_active_player_reset_and_association_cleanup, PASS: test_wrong_thread_refusal"
+    },
+    {
+      "binary": "test_native_retail_initial_reset.exe",
+      "result": "PASS",
+      "exit_code": 0,
+      "summary": "PASS native reset ordering, live fields, suspension,1799-wait timeout, failure and lifetime"
+    },
+    {
+      "binary": "test_native_retail_reset_sound.exe",
+      "result": "PASS",
+      "exit_code": 0,
+      "summary": "PASS_CONNECTED_RETAIL_RESET_SOUND"
+    },
+    {
+      "binary": "test_native_retail_save_startup.exe",
+      "result": "PASS",
+      "exit_code": 0,
+      "summary": "PASS Main native save readiness and retained file lifetime"
+    },
+    {
+      "binary": "test_native_retail_profile_preferences.exe",
+      "result": "PASS",
+      "exit_code": 0,
+      "summary": "PASS actual Main current profile preferences, native alias lifetime and external encoding"
+    },
+    {
+      "binary": "test_native_retail_profile_menu.exe",
+      "result": "PASS",
+      "exit_code": 0,
+      "summary": "PASS profile menu with actual scene lookup,18A260,18B0D0 and1892D0"
+    },
+    {
+      "binary": "test_native_retail_scene_bootstrap_prefix.exe",
+      "result": "PASS",
+      "exit_code": 0,
+      "summary": "PASS production1861B0 prefix: source phase/timing, real Session, errors, thread, lifetime, reentry"
+    }
+  ],
+  "audio_lane_isolation": {
+    "unmodified_files": [
+      "runtime/include/mka/bank_preparation.hpp",
+      "runtime/include/mka/pending_play.hpp",
+      "runtime/include/mka/playback_owner.hpp",
+      "runtime/include/mka/program_copy.hpp",
+      "runtime/include/mka/program_executor.hpp",
+      "runtime/include/mka/retail_sound_bank_catalog.hpp",
+      "runtime/include/mka/retail_sound_runtime.hpp",
+      "runtime/include/mka/retail_sound_status.hpp",
+      "runtime/src/native/bank_preparation.cpp",
+      "runtime/src/native/playback_owner.cpp",
+      "runtime/src/native/program_copy.cpp",
+      "runtime/src/native/program_executor.cpp",
+      "runtime/src/native/retail_sound_bank_catalog.cpp",
+      "runtime/src/native/retail_sound_bank_main.cpp",
+      "runtime/src/native/retail_sound_context_main.cpp",
+      "runtime/src/native/retail_sound_runtime.cpp",
+      "runtime/src/native/retail_sound_status_main.cpp"
+    ]
+  }
+}
