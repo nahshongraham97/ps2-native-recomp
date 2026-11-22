@@ -17,7 +17,7 @@ reserved local model. Preserve originals/saves/backups/drivers/settings and
 all unrelated untracked parent evidence. Existing Core/Session/heaps,
 0403/0404, content/audio/GPU services carry forward.
 
-Stage:source recovery only; no new runtime edit/build/client/game yet.
+Entry stage (historical):source recovery only; no new runtime edit/build/client/game yet.
 Owner:no action. Agent next:pin configuration/resource readers and recover
 actual consumers, then implement/test the verified resource and publish.
 Full renderer/numerical/HD/oracle/native-save/game gates remain OPEN.
@@ -136,3 +136,19 @@ superseded,not current-source authentication. Staging/raw-byte/LF/no-assets
 validation,commit and push are one failure-propagating process.
 IMPLEMENTATION.md consolidates per-function authority,ABI/effect/lifetime
 adaptation,selected base scope,independent expectations and OPEN gates.
+
+Publication gate PASS:all912 source identities,exact seven canonical02
+targets/results/binaries/config,selected source spans/data,independent depth
+corpus and exact51->49 (ONLY0405 constructor/destructor) authenticate.
+Scoped staging/raw-byte/LF/no-assets checks passed152 approved paths.
+Runtime source316d5495bb58552dac00394097278fee5b2e8ca3
+(tree e2b3ccebeff345a5afb1a588872c0945ec6d9ac4) is committed/pushed.
+COMMITTED_AUTHENTICATION.json binds the identical committed source and
+frozen IMPLEMENTATION.md; it does not claim a fresh-checkout rebuild.
+Parent3c1e778 and fork base0218826 were reverified before publication;
+only the authored paths were included,unrelated parent evidence preserved.
+Next publish this committed-source receipt/work update,then the affected
+parent documents and0405 publication record. After that checkpoint,
+agent next is0406's real allocation/consumer contract,Xbox first.
+Owner:no action. Full depth-provider/plugin/frame/raster/sync/device/
+numerical/HD/oracle/native-save/game gates remain OPEN; no game endpoint ran.

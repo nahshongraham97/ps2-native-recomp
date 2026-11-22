@@ -1,0 +1,16 @@
+{
+  "status": "AUTHENTICATED_COMMITTED_NATIVE0405_CAMERA_RESOURCE",
+  "runtime_source_commit": "316d5495bb58552dac00394097278fee5b2e8ca3",
+  "runtime_tree": "e2b3ccebeff345a5afb1a588872c0945ec6d9ac4",
+  "source_files": 912,
+  "all_measured_source_blobs_match_commit": true,
+  "source_manifest_sha256": "91dbc25a7edb24e28318feefdd76194c76ceb5d13d0d5af36cf41d6190c16bd8",
+  "component_authentication_sha256": "706fe5462ca1146d9ceacc45726d2b00967308fc3415a9aca91c629512d83eaa",
+  "implementation_record_sha256": "2d50ceb259247fcff5fcc20e0ceb9831d40165945d7be164dc014584bae22be0",
+  "verification_scope": "canonical02 precommit component executions authenticated against identical committed source; not a fresh-checkout rebuild",
+  "base_camera_scope": true,
+  "full_camera_renderer_game": "OPEN",
+  "fresh_checkout_build": false,
+  "game_run": false,
+  "acceptance": "OPEN"
+}
