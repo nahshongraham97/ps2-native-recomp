@@ -1,0 +1,6 @@
+{
+  "commit": "ad5dafda117839d720070416f32c5f0835cb0867",
+  "exit": 0,
+  "stdout": "Auto-merging cmake/native_game.cmake\nAuto-merging runtime/include/mka/retail_main.hpp\n",
+  "stderr": ""
+}

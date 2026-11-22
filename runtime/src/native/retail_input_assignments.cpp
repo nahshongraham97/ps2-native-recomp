@@ -105,6 +105,13 @@ void NativeRetailInputAssignments::clear_old_role(std::uint32_t index) noexcept 
     clear_three_role_edges();
 }
 
+bool NativeRetailInputAssignments::validate_domain(const NativeRetailInputRoles& roles,
+    const NativeRetailParticipants& participants,RetailInputAssignmentFailure& f) const noexcept {
+    if(!access(f))return false;
+    if(roles_.get()!=&roles||participants_.get()!=&participants)
+        return fail(f,RetailInputAssignmentError::foreign_domain,"retail assignment domain identity");
+    return true;
+}
 std::optional<std::int32_t> NativeRetailInputAssignments::association_count(
     RetailInputAssignmentFailure& failure) const noexcept {
     if (!access(failure)) return {};

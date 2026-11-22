@@ -36,6 +36,7 @@ struct RetailMemoryOwnerObservation {
 class NativeRetailMemoryOwners final {
     // The source class factory consumes this exact group\'s Wave parent.
     friend class NativeRetailProfileOwners;
+    friend class NativeRetailRendererAllocatorService;
 public:
     static std::unique_ptr<NativeRetailMemoryOwners> create(RetailMemoryOwnerFailure&) noexcept;
     std::optional<RetailMemoryOwnerObservation> observe(

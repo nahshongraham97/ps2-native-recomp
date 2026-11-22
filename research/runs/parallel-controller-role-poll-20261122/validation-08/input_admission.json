@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-input-poll\\build-input-poll\\test_native_retail_input_admission.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-input-poll\\research\\runs\\parallel-controller-role-poll-20261122"
+  ],
+  "exit": 0,
+  "seconds": 0.1046895980834961,
+  "executable_sha256": "c6abd79c9638d419816a40b5ca2fb440c67a21279a57bb29c9bd193f8843eee5",
+  "source_manifest_sha256": "47c4ebfa559b3032382ae35dec9fd00f5c5f94c38203b993980276493f81884e",
+  "log_sha256": "20dbe7d469186f4b8d2557567d15066d4ce76d92d572ab31852dd27e8dd927f5",
+  "game_run": false,
+  "physical_endpoints_opened": false
+}

@@ -1,0 +1,22 @@
+{
+  "base": "e6702f4ca72f1ab1e4473840dcf20debc03a6f7e",
+  "candidates": {
+    "allocator": "4cef3433f5549bdd5992219023cafc6339b8cc24",
+    "input_admission": "ad5dafda117839d720070416f32c5f0835cb0867"
+  },
+  "pins": {
+    "cmake/native_game.cmake": "f01a5ca37a691e14b4371a1425e2323e0961e9adf386bd47f65367e9cd8b44ec",
+    "runtime/include/mka/retail_input_admission.hpp": null,
+    "runtime/include/mka/retail_input_assignments.hpp": "e938f33687673298a2b5ec39ceea453541a534f4f56c60bf6400065e6651ca2e",
+    "runtime/include/mka/retail_main.hpp": "ee80413d5f7c750c521d437dadb15f68ee5f8ffbd0833e80a9770b5c97cc8dd9",
+    "runtime/include/mka/retail_memory_owners.hpp": "d9abc09005be9cc70b0607c97e9d853e715c5d7d92075ba1ca6c6b21993515f3",
+    "runtime/include/mka/retail_renderer_allocator.hpp": null,
+    "runtime/include/mka/retail_scene_bootstrap_required.hpp": "478c044c1a92edfc4fb11d99dfc62e809a8c347206f614e6b9529743011e78f4",
+    "runtime/src/native/retail_first_scene_allocator.cpp": null,
+    "runtime/src/native/retail_input_admission.cpp": null,
+    "runtime/src/native/retail_input_assignments.cpp": "1644f6d808bf748595fa8d989c94c3d60b123c717e8dff19c404a60c94de9216",
+    "runtime/src/native/retail_renderer_allocator.cpp": null,
+    "tests/test_retail_input_admission.cpp": null,
+    "tests/test_retail_renderer_allocator.cpp": null
+  }
+}

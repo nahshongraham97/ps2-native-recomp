@@ -1,0 +1,89 @@
+{
+  "status": "PASS_ORIGINAL_INPUT_ADMISSION_SOURCE_WORDS",
+  "source_join_sha256": "511b88a5aeef71d9fcabf244fe5e0124b5dc0ed1738c8ae148a13a2c0df899da",
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "functions": [
+    {
+      "path": "research\\runs\\parallel-controller-role-poll-20261122\\ee\\002214d0.tsv.gz",
+      "begin": "0x2214d0",
+      "end": "0x2217bc",
+      "words": 187,
+      "listed_undefined_zero_words": [
+        {
+          "va": "00221534",
+          "prior": [
+            [
+              2233644,
+              "98000010",
+              "b 0x00221790"
+            ],
+            [
+              2233648,
+              "00000000",
+              "_nop"
+            ]
+          ]
+        },
+        {
+          "va": "0022156c",
+          "prior": [
+            [
+              2233700,
+              "8a000010",
+              "b 0x00221790"
+            ],
+            [
+              2233704,
+              "000023ae",
+              "_sw v1,0x0(s1)"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "path": "research\\runs\\parallel-controller-role-poll-20261122\\ee\\002217c0.tsv.gz",
+      "begin": "0x2217c0",
+      "end": "0x2218d0",
+      "words": 68,
+      "listed_undefined_zero_words": []
+    },
+    {
+      "path": "research\\runs\\parallel-controller-role-poll-20261122\\ee\\00221e00.tsv.gz",
+      "begin": "0x221e00",
+      "end": "0x221fe0",
+      "words": 120,
+      "listed_undefined_zero_words": []
+    },
+    {
+      "path": "research\\runs\\parallel-controller-role-poll-20261122\\ee\\00280890.tsv.gz",
+      "begin": "0x280890",
+      "end": "0x2809ac",
+      "words": 71,
+      "listed_undefined_zero_words": []
+    },
+    {
+      "path": "research\\runs\\parallel-controller-role-poll-20261122\\ee\\00280bc0.tsv.gz",
+      "begin": "0x280bc0",
+      "end": "0x280c4c",
+      "words": 35,
+      "listed_undefined_zero_words": []
+    },
+    {
+      "path": "research\\runs\\parallel-controller-role-poll-20261122\\ee\\00280c50.tsv.gz",
+      "begin": "0x280c50",
+      "end": "0x280f88",
+      "words": 206,
+      "listed_undefined_zero_words": []
+    },
+    {
+      "path": "research\\runs\\parallel-controller-role-poll-20261122\\ee\\00281b80.tsv.gz",
+      "begin": "0x281b80",
+      "end": "0x281be4",
+      "words": 25,
+      "listed_undefined_zero_words": []
+    }
+  ],
+  "words": 712,
+  "scope": "All original mapped words; source loop0/1 and effects reviewed separately; no wholepoll/device/game claim"
+}

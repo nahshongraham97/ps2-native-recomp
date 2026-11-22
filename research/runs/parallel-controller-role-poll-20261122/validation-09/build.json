@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-input-poll\\build-input-poll",
+    "--target",
+    "test_native_retail_input_admission",
+    "test_native_retail_input_poll",
+    "test_native_retail_input_selection",
+    "test_native_retail_input_assignments",
+    "-j2"
+  ],
+  "exit": 0,
+  "seconds": 1.3293607234954834,
+  "log_sha256": "e3a1075f3f2479152c42020f68cc87c7ef95e852b6015e164e828392995a8f8d"
+}

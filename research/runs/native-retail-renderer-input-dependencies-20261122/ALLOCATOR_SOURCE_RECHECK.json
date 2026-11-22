@@ -1,0 +1,116 @@
+{
+  "status": "PASS_ORIGINAL_ALLOCATOR_SOURCE_WORDS",
+  "candidate": "4cef3433f5549bdd5992219023cafc6339b8cc24",
+  "source_join_sha256": "8f8b2bd90f57ce0f93f9f9d169ad7a4295383867462be2d3b0cf5eab01a62246",
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "functions": [
+    {
+      "path": "source-01/00127260.asm",
+      "listed_words": 65,
+      "omitted_words": {}
+    },
+    {
+      "path": "source-01/001a6dd0.asm",
+      "listed_words": 89,
+      "omitted_words": {}
+    },
+    {
+      "path": "source-01/00220900.asm",
+      "listed_words": 19,
+      "omitted_words": {}
+    },
+    {
+      "path": "source-02/001a1890.asm",
+      "listed_words": 70,
+      "omitted_words": {}
+    },
+    {
+      "path": "source-02/00220950.asm",
+      "listed_words": 7,
+      "omitted_words": {}
+    },
+    {
+      "path": "source-02/00220970.asm",
+      "listed_words": 9,
+      "omitted_words": {}
+    },
+    {
+      "path": "source-02/002209a0.asm",
+      "listed_words": 3,
+      "omitted_words": {}
+    },
+    {
+      "path": "source-02/002209b0.asm",
+      "listed_words": 7,
+      "omitted_words": {}
+    },
+    {
+      "path": "source-03/00311390.asm",
+      "listed_words": 232,
+      "omitted_words": {}
+    },
+    {
+      "path": "source-03/00429a90.asm",
+      "listed_words": 108,
+      "omitted_words": {
+        "0x429b54": 0
+      }
+    },
+    {
+      "path": "source-03/00429c50.asm",
+      "listed_words": 49,
+      "omitted_words": {}
+    },
+    {
+      "path": "source-03/00429d20.asm",
+      "listed_words": 23,
+      "omitted_words": {}
+    },
+    {
+      "path": "source-04/001a1a30.asm",
+      "listed_words": 63,
+      "omitted_words": {}
+    },
+    {
+      "path": "source-04/001a1b30.asm",
+      "listed_words": 22,
+      "omitted_words": {}
+    },
+    {
+      "path": "source-04/001a2020.asm",
+      "listed_words": 68,
+      "omitted_words": {}
+    },
+    {
+      "path": "source-04/0042c080.asm",
+      "listed_words": 55,
+      "omitted_words": {
+        "0x42c150": 4141,
+        "0x42c154": 268435458,
+        "0x42c158": 0
+      }
+    },
+    {
+      "path": "source-05/004293f0.asm",
+      "listed_words": 110,
+      "omitted_words": {}
+    },
+    {
+      "path": "source-05/004295b0.asm",
+      "listed_words": 148,
+      "omitted_words": {}
+    },
+    {
+      "path": "source-05/0042c1d0.asm",
+      "listed_words": 9,
+      "omitted_words": {}
+    },
+    {
+      "path": "source-06/0042bb00.asm",
+      "listed_words": 231,
+      "omitted_words": {}
+    }
+  ],
+  "listed_words": 1387,
+  "scope": "Independent original ELF PT_LOAD/listing/fullspan word join; semantic source/caller/owner audit separately recorded; no runtime/game claim"
+}

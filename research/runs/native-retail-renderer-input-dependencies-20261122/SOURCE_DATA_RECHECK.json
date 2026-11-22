@@ -1,0 +1,8 @@
+{
+  "status": "PASS_ORIGINAL_PERMANENT_ROLE_DATA",
+  "vma": "0x631898",
+  "file_offset": 5446040,
+  "size": 16,
+  "sha256": "2a78f7abaa2c6f0902c04a0f87b4230deb1f208d88e959c2899865184a042db8",
+  "scope": "Native allocator retains existing actual Permanent role; no new heap or platform pool"
+}

@@ -1,0 +1,18 @@
+{
+  "status": "FAIL_PUBLICATION_WHITESPACE_GATE",
+  "runtime_components": "validation-01 PASS unchanged",
+  "causes": [
+    "Authored CMake extra blank line at EOF after moving test target",
+    "Frozen candidate raw evidence uses CRLF; strict diff default treats CR as whitespace"
+  ],
+  "source_change": {
+    "path": "cmake\\native_game.cmake",
+    "before_sha256": "4f13f5bd59ef7e43b6ffe4d9c5ecd67b66e8c472a2cfbeda25350a775d90fa1b",
+    "after_sha256": "69191b8708c575259d0c4f75a635b20798f679c401343a0f62f545b9750a460d",
+    "only_trailing_blank_lines_removed": true
+  },
+  "raw_evidence_modified": false,
+  "commit_created": false,
+  "push_performed": false,
+  "clean_attempt": "Subsequent shell invocation refused dirty checkout before worktree creation; no clean measurement"
+}

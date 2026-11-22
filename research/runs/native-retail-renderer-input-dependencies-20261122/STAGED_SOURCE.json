@@ -1,0 +1,17 @@
+{
+  "approved": [
+    "cmake/native_game.cmake",
+    "runtime/include/mka/retail_input_admission.hpp",
+    "runtime/include/mka/retail_input_assignments.hpp",
+    "runtime/include/mka/retail_main.hpp",
+    "runtime/include/mka/retail_memory_owners.hpp",
+    "runtime/include/mka/retail_renderer_allocator.hpp",
+    "runtime/include/mka/retail_scene_bootstrap_required.hpp",
+    "runtime/src/native/retail_first_scene_allocator.cpp",
+    "runtime/src/native/retail_input_admission.cpp",
+    "runtime/src/native/retail_input_assignments.cpp",
+    "runtime/src/native/retail_renderer_allocator.cpp",
+    "tests/test_retail_input_admission.cpp",
+    "tests/test_retail_renderer_allocator.cpp"
+  ]
+}

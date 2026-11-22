@@ -1,0 +1,23 @@
+{
+  "commits": {
+    "allocator": "de36d97eaf12a8fb2c902609ebd20ec9837dbafc",
+    "input_admission": "6fbf60b1083066b0fd1bf84d81503db840813359"
+  },
+  "files": {
+    "research/runs/parallel-renderer-allocator-review-20261122/AUTHENTICATION.json": "b226ea76cb357fedb73d22abdc7c5243d065d70ebb96631e14b700afd92637d3",
+    "research/runs/parallel-renderer-allocator-review-20261122/REVIEW.md": "80e868c432176932d55b95123befdaafbb0da6fc547316dc1cc2e34b97c9d78d",
+    "research/runs/parallel-renderer-allocator-review-20261122/saved/ARCHIVES.json.gz": "72834cc68596e85348284c9a29c4a2c38f3ecc6e1fed0ee56c4c6b73f55c0ebb",
+    "research/runs/parallel-renderer-allocator-review-20261122/saved/SOURCE_JOIN.json.gz": "08e113a9c0efb2b4db9db385454bbb5e7e81af06191e40e71d6af63ff93aa4e2",
+    "research/runs/parallel-renderer-allocator-review-20261122/saved/validation-01/SOURCE_FILES.json.gz": "a653ca9f39df5b54a64fa2852509511b91d7f91f8f1b6a36e8d62e2f99a11880",
+    "research/runs/parallel-renderer-allocator-review-20261122/saved/validation-01/VERIFICATION.json.gz": "102a8e0eab1d40222006ffee014970040ba0ff186ebdc796b3d8013c90e21951",
+    "research/runs/parallel-renderer-allocator-review-20261122/snapshot/runtime/include/mka/retail_renderer_allocator.hpp.gz": "d9c6132872a4c59b9aa2e6a2498f6d77edfa27592a431f19bf4dd27d15c02c91",
+    "research/runs/parallel-renderer-allocator-review-20261122/snapshot/runtime/include/mka/retail_scene_bootstrap_required.hpp.gz": "0478506e12c9ae0d97115d3dc1f716271f7888ea865e917501fa86a48abd3a0b",
+    "research/runs/parallel-renderer-allocator-review-20261122/snapshot/runtime/src/native/retail_first_scene_allocator.cpp.gz": "b3825ad6118f300065c81036fe0f4abe7f4e324c80f5b43e4748b7199dc6ec48",
+    "research/runs/parallel-renderer-allocator-review-20261122/snapshot/runtime/src/native/retail_renderer_allocator.cpp.gz": "68c775d920f9978a5f186f936749fa53198af5f42f70bff19b69f33ffe7e447a",
+    "research/runs/parallel-renderer-allocator-review-20261122/snapshot/tests/test_retail_renderer_allocator.cpp.gz": "fbb4d3ed80b2639637c0bbb3a536ed060af7681b48a8fd87864ddf38b86aad15",
+    "research/runs/parallel-input-admission-review-20261122/REVIEW.json": "a6665c2732d5a57860576fcb57b68409f99400c721ec56b1638b318724b6b74e",
+    "research/runs/parallel-input-admission-review-20261122/WORK.md": "96bbb0fc845ab59337fa48e36b12a68585461e9fedfacba629a660488c22d7bb",
+    "research/runs/parallel-input-admission-review-20261122/authenticate.py": "de4f4f57042d7e5bfbe8a3156cbeffc9663fa06dd4d1d987a8843e0245140957"
+  },
+  "scope": "Independent original-source/owner and saved result authentication; neither reviewer rebuilt or executed candidate clients"
+}

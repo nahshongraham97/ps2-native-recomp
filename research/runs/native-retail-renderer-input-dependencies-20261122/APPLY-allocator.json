@@ -1,0 +1,6 @@
+{
+  "commit": "4cef3433f5549bdd5992219023cafc6339b8cc24",
+  "exit": 1,
+  "stdout": "Auto-merging cmake/native_game.cmake\nCONFLICT (content): Merge conflict in cmake/native_game.cmake\n",
+  "stderr": "error: could not apply 4cef343... Implement source-proved first-scene native allocator capability\nhint: after resolving the conflicts, mark the corrected paths\nhint: with 'git add <paths>' or 'git rm <paths>'\nhint: Disable this message with \"git config set advice.mergeConflict false\"\n"
+}
