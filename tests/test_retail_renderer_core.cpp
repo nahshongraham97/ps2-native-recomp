@@ -18,11 +18,14 @@ using namespace mka::retail;
 namespace {
 void check(bool ok,const char* text){if(!ok)throw std::runtime_error(text);}
 unsigned tail_calls{},tail_cleanup_calls{},suffix_calls{},event_count{};int tail_mode{},suffix_mode{};
+NativeRetailMainState* callback_transfer_main{};bool callback_native_exception{};
 int events[256]{};unsigned failed_plugin{};bool allow_plugin_fixtures{},recursive_refused{};
 void event(int value)noexcept{if(event_count>=256)std::abort();events[event_count++]=value;}
 bool fixture_construct(unsigned id,NativeRetailRendererCore& core,RetailRendererCoreFailure& f){
  if(!allow_plugin_fixtures)std::abort();event(static_cast<int>(id));
  if(id==0x401){RetailRendererCoreFailure nested;auto r=core.register_factory({123,0},{construct_native_renderer_error,destroy_native_renderer_error},nested);recursive_refused=!r&&nested.kind==RetailRendererCoreError::reentrant;}
+ if(id==0x401&&callback_transfer_main)reenter_native_retail_main(*callback_transfer_main,23);
+ if(id==0x401&&callback_native_exception)throw std::runtime_error("test-only native constructor exception");
  return id!=failed_plugin;
 }
 void fixture_destroy(unsigned id)noexcept{if(!allow_plugin_fixtures)std::abort();event(-static_cast<int>(id));}
@@ -123,6 +126,15 @@ int main(int argc,char** argv)try{
  allow_plugin_fixtures=true;failed_plugin=0x403;event_count=0;check(!ic->construct_registered(initialization.f)&&*ic->error_domain_count(initialization.f)==0&&*ic->module_040d_count(initialization.f)==0,"source constructor failure reverses prior successes including actual errorfactory");
  const int expected_failure[]{0x401,0x402,0x403,-0x402,-0x401};check(event_count==5,"failed callback itself is not destroyed by source unwind");for(unsigned i=0;i<5;++i)check(events[i]==expected_failure[i],"forward construct/reverse unwind order");check(recursive_refused,"callback registry mutation refused");
  failed_plugin=0;event_count=0;check(ic->construct_registered(initialization.f)&&*ic->error_domain_count(initialization.f)==1&&*ic->module_040d_count(initialization.f)==1,"successful source callback protocol with explicitly fixture otherfamilies");check(ic->destroy_constructed(initialization.f)&&*ic->error_domain_count(initialization.f)==0&&*ic->module_040d_count(initialization.f)==0,"reverse explicit teardown");allow_plugin_fixtures=false;
+ Fixture callback_transfer(path);auto tc=callback_transfer.core();tail_mode=0;check(tc->initialize_core(callback_transfer.f)==true,"native registry ready before callback Main transfer");allow_plugin_fixtures=true;callback_transfer_main=&callback_transfer.main;bool callback_transferred=false;
+ try{tc->construct_registered(callback_transfer.f);}catch(const detail::NativeMainReentry& e){callback_transferred=e.owner==&callback_transfer.main&&e.value==23;}callback_transfer_main=nullptr;
+ check(callback_transferred&&callback_transfer.f.kind==RetailRendererCoreError::none,"legitimate callback Main transfer propagates without named error");
+ const auto inspected=tc->registered(callback_transfer.f);const auto prefix_count=tc->error_domain_count(callback_transfer.f);check(inspected&&inspected->size()==14&&prefix_count&&*prefix_count==1,"Main transfer leaves registry inspectable and real constructed prefix retained");
+ check(tc->destroy_constructed(callback_transfer.f)&&*tc->error_domain_count(callback_transfer.f)==0,"Busy guard released and prior actual errorfactory prefix cleans up after Main transfer");
+ check(tc->construct_registered(callback_transfer.f)&&tc->destroy_constructed(callback_transfer.f)&&*tc->error_domain_count(callback_transfer.f)==0,"registry can construct and release again after legitimate transfer cleanup");
+ Fixture native_exception(path);auto ec=native_exception.core();check(ec->initialize_core(native_exception.f)==true,"separate actual registry before native constructor exception");callback_native_exception=true;
+ check(!ec->construct_registered(native_exception.f)&&native_exception.f.kind==RetailRendererCoreError::after_effect_unknown,"ordinary native exception remains an error-only partial-effect latch");callback_native_exception=false;
+ check(!ec->registered(native_exception.f)&&native_exception.f.kind==RetailRendererCoreError::after_effect_unknown&&!ec->destroy_constructed(native_exception.f),"native exception remains blocked rather than being mistaken for legitimate Main transfer");allow_plugin_fixtures=false;
  Fixture moved_content(path);auto removed_root=std::optional<mka::content::NativeContentVolume>(std::move(moved_content.startup.content));removed_root.reset();check(main_binding::initialize_retail_first_scene(moved_content.main,moved_content.sf)==RetailStartupGate::native_failure&&moved_content.sf.kind==StartupError::content&&moved_content.sf.content.kind==mka::content::ContentVolumeError::moved_volume,"connected content failure preserves actual cause after count producer");
  Fixture connected(path);tail_mode=0;suffix_mode=1;const auto before_suffix=suffix_calls;
  check(main_binding::initialize_retail_first_scene(connected.main,connected.sf)==RetailStartupGate::native_failure&&suffix_calls==before_suffix+1,"connected actual count/allocator/CoreInit then whole225D40 error fixture");

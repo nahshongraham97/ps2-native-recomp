@@ -156,7 +156,7 @@ bool NativeRetailRendererCore::construct_registered(RetailRendererCoreFailure& f
  for(const auto& entry:entries_){
   bool ok=false;
   try{ok=entry->callbacks_.construct(*this,f);}
-  catch(const detail::NativeMainReentry&){after_effect_unknown_=true;throw;}
+  catch(const detail::NativeMainReentry&){throw;} // Legitimate transfer retains prefix,not an error latch.
   catch(...){after_effect_unknown_=true;return fail(f,RetailRendererCoreError::after_effect_unknown,"1A3480 native constructor exception");}
   if(!ok){
    while(!constructed_.empty()){auto previous=constructed_.back();constructed_.pop_back();previous->callbacks_.destroy(*this);}

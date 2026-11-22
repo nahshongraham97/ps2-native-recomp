@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:/Users/nahsh/mk port/Armageddon-backup/dependencies/cmake/cmake-4.4.5-windows-x86_64/bin/cmake.exe",
+    "--build",
+    "build-renderer-engine",
+    "--target",
+    "test_native_retail_renderer_core",
+    "-j2"
+  ],
+  "exit": 0,
+  "evidence": "Actual exec tool result before this recorded run: scalar AOT check,compile test_retail_renderer_core.cpp,link test_native_retail_renderer_core.exe. No process raw log claimed; no redundant build rerun."
+}
