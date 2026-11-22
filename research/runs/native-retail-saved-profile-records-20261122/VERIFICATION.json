@@ -1,0 +1,64 @@
+{
+  "fork_branch": "saved-profile-work",
+  "base_commit": "53e1a59bd4045d53eda35c29a154b9f1734f2382",
+  "implemented_bindings": [
+    "mka::retail::main_binding::initialize_retail_saved_profile_records",
+    "mka::retail::initial_reset_required::reset_saved_profile_children_246070"
+  ],
+  "source_files": [
+    {
+      "path": "runtime/include/mka/retail_saved_profile_records.hpp",
+      "sha256": "dc73c792ec8c9ebe8a3bde1a9b2852cf3968a4e2b07d975d5fc2109d795618b9"
+    },
+    {
+      "path": "runtime/src/native/retail_saved_profile_records.cpp",
+      "sha256": "f90cf0631d5529ee9a394366e5f833cd7528c3b64c27c8e3511afd7159e243fe"
+    },
+    {
+      "path": "tests/test_retail_saved_profile_records.cpp",
+      "sha256": "957d72d094e603ca7df0d55f3b9235a2f7816709c3f8e3efed3ee337894ff8c5"
+    },
+    {
+      "path": "cmake/native_game.cmake",
+      "sha256": "6c90988cb87c4061ae86bb97b40d0ed59c60240c821dce7e84909a4233ff6f49"
+    },
+    {
+      "path": "runtime/include/mka/retail_main.hpp",
+      "sha256": "40a3f4e50e8e750155922dafaaa8b058a5b0d0674c2261d0947e8233018a9b3b"
+    },
+    {
+      "path": "runtime/src/native/retail_main_state.cpp",
+      "sha256": "84480562da24c0d072d3e0e3de3100b784436a1467d763ca0e6a1b59150a9a23"
+    }
+  ],
+  "test_receipts": [
+    {
+      "binary": "test_native_retail_saved_profile_records.exe",
+      "result": "PASS",
+      "output": "PASS native retail saved profile records and reset 246070"
+    },
+    {
+      "binary": "test_native_retail_initial_reset.exe",
+      "result": "PASS",
+      "output": "PASS native reset ordering, live fields, suspension,1799-wait timeout, failure and lifetime"
+    },
+    {
+      "binary": "test_native_startup_missing_bindings",
+      "result": "RESOLVED",
+      "output": "Both initialize_retail_saved_profile_records and reset_saved_profile_children_246070 confirmed absent from undefined symbols"
+    }
+  ],
+  "audio_lane_isolation": {
+    "unmodified": [
+      "runtime/include/mka/playback_owner.hpp",
+      "runtime/src/native/playback_owner.cpp",
+      "runtime/include/mka/program_copy.hpp",
+      "runtime/src/native/program_copy.cpp",
+      "runtime/include/mka/program_executor.hpp",
+      "runtime/src/native/program_executor.cpp",
+      "runtime/include/mka/retail_sound_runtime.hpp",
+      "runtime/src/native/retail_sound_runtime.cpp",
+      "runtime/src/native/retail_sound_bank_main.cpp"
+    ]
+  }
+}
