@@ -1,0 +1,11 @@
+{
+  "commit": "f6670ba43c0765ed78f38683f281d1b7b6178a7b",
+  "files": {
+    "runtime/src/native/retail_main_frame_gates.cpp": "6b406e8abfb8ef96da4d9f399f68a247ba69885b6b7f45b288ead2706ef896df",
+    "runtime/include/mka/retail_task_domain.hpp": "b83eef67d58434210a2f9d63c4891cae465e70c658990962273aa5b5b59f09e4",
+    "runtime/src/native/retail_task_domain.cpp": "bed23b2c134c8863b19872507b7a41edd76d6d2425ca4480a5d93f4d0fcb24c0"
+  },
+  "level": "Focused static read-only review;no rerun/build or complete raw-source/result authentication",
+  "finding": "No concrete mismatch found in these small bindings. Live game-info byte1bit5 uses mask0x2000;optionalfalse preserved. Checked same-domain root_wait field retains pending-followup failure;render gate uses actualhas_world independent of suspension. Main/Session thread/lifetime admission adds no writes/callbacks/reentry latch.",
+  "limits": "Nonzero bit5/root-wait producers remain OPEN and were not injected. Primary own6-client/34-effect result is not independently rerun here."
+}
