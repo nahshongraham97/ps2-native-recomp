@@ -1,0 +1,214 @@
+{
+  "status": "PASS_METADATA_ONLY_SOURCE_AND_SAVED_EXECUTION_REVIEW",
+  "delivery": "9a88f4ec092164b219d377816094899b3d333f18",
+  "manifest_files": 839,
+  "source_manifest_sha256": "7cbdac5ff78119ea7129cc01835bce615c85973993fa67d7bf26a719acb8d725",
+  "later_worktree_changes": [
+    "cmake/native_game.cmake"
+  ],
+  "source_proof_sha256": "b9ae4cbd43a28e407cd00c461212a8c3a5b3061431b47b6779c86c7147b58d5e",
+  "original_elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "ee_listed_words_rejoined": 3333,
+  "metadata_rows": 9656,
+  "category_rows": 39,
+  "reachable_gain_indices": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "priority_values": [
+    1
+  ],
+  "outputs": {
+    "-1": 9519,
+    "0": 137
+  },
+  "independent_packed_cases": 65536,
+  "receipts": [
+    {
+      "path": "build.json",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+        "--build",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\build-section-timing",
+        "--target",
+        "test_native_retail_sound_metadata",
+        "test_native_retail_profile_preferences",
+        "-j2"
+      ],
+      "exit": 0,
+      "tool_or_binary_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+      "log_sha256": "c32237095f0225d0a4925378aa800957017fe0607cdd05deff2848c2180bea99",
+      "log_available_in_snapshot": "research/runs/parallel-sound-metadata-resolver-20261122/validation-02/build.log.gz"
+    },
+    {
+      "path": "existing-preferences.json",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\build-section-timing\\test_native_retail_profile_preferences.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon"
+      ],
+      "exit": 0,
+      "tool_or_binary_sha256": "550fbf8c30079edc8bd60df81a8c181f9e7710a11f1108282eec1818000c3139",
+      "log_sha256": "3a9ed67fdd7ace635cd4417822c3a386ce248c6228a82ce475337ff93b0c771d",
+      "log": "PASS actual Main current profile preferences, native alias lifetime and external encoding; full game open\r\n"
+    },
+    {
+      "path": "full-entry-negative.json",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+        "--build",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\build-section-timing",
+        "--target",
+        "test_native_startup_missing_bindings",
+        "-j2"
+      ],
+      "exit": 1,
+      "tool_or_binary_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+      "log_sha256": "38ebd44c8f2b9f8de13be776f2ed21b378bfc460198a9baa3b05eaf607a71408",
+      "log_available_in_snapshot": "research/runs/parallel-sound-metadata-resolver-20261122/validation-02/full-entry-negative.log.gz"
+    },
+    {
+      "path": "metadata-symbols.json",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+        "-C",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\build-section-timing\\test_native_retail_sound_metadata.exe"
+      ],
+      "exit": 0,
+      "tool_or_binary_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+      "log_sha256": "7ff22c3987ce5d7097bffdf65093536f0bf108c83ac147a5dba6db8a5aef17d5",
+      "log_available_in_snapshot": "research/runs/parallel-sound-metadata-resolver-20261122/validation-02/metadata-symbols.log.gz"
+    },
+    {
+      "path": "metadata.json",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\build-section-timing\\test_native_retail_sound_metadata.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\research\\runs\\parallel-sound-metadata-resolver-20261122\\expected-metadata.tsv"
+      ],
+      "exit": 0,
+      "tool_or_binary_sha256": "7837f3c825b57428a22b3d22054fb17fec4bafd646af69422bdd38a2f7601617",
+      "log_sha256": "02d31cfaf5d0678946a14dc4547c6fce9b58ed3b7fae001dfd348525194ea0f2",
+      "log": "PASS sound metadata only:9656 original rows,4 real callback handles,current Session operands,normalization,thread/lifetime; arithmetic/playback OPEN\r\n"
+    }
+  ],
+  "exact37_missing_names": [
+    "mka::retail::main_binding::initialize_retail_saved_profile_records(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::read_retail_online_boot_word(mka::retail::NativeRetailMainState const&)",
+    "mka::retail::main_binding::initialize_retail_online_stage(mka::retail::NativeRetailMainState&, std::__1::array<unsigned int, 5ull> const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_mode_objects(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_mode_service(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_section_service(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_first_scene(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_post_scene_sections(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_first_frame_graphics(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::retail_frame_processing_inhibited(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::poll_retail_controller_roles(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::advance_retail_game_services(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::service_retail_frame_input(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::retail_render_enabled(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::render_retail_frame(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::prune_retail_associations(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::retail_ordinary_counter_inhibited(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::retail_mode_dispatch_enabled(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::dispatch_retail_enabled_mode(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::create_retail_action_task(mka::retail::NativeRetailMainState&, mka::retail::RetailActionTaskRequest const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::deliver_retail_builtin_scene_event(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, unsigned int, unsigned int, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::reset_and_bind_retail_scene_event_graph(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, mka::retail::StartupFailure&)",
+    "mka::retail::scene_bootstrap_required::continue_scene_reset_at_181a30(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::initial_task_required::begin_intro_18deb0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::transition_1225d0(mka::retail::NativeRetailMainState&, unsigned int, mka::retail::RetailInitialTransitionBody)",
+    "mka::retail::initial_task_required::begin_prompt_18dc10(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d450(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d870(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d8e0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d700(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d800(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d660(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d770(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_reset_required::reset_saved_profile_children_246070(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::initial_reset_required::reset_selected_resource_334700(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::initial_reset_required::clear_nonowning_references_18da30(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::initial_reset_required::configure_selected_resource_zero_16fc70(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)"
+  ],
+  "archive_hashes_verified": 7,
+  "snapshot_pins": {
+    "cmake/native_game.cmake": "c343d616f093c425ffbdd54664a08e19afc4c3f019d90bab115a52889338c855",
+    "research/runs/parallel-sound-metadata-resolver-20261122/ARCHIVES.json": "4a053f9af3f9546ac76b1c39732b2917b44132d8ad6d93e39dd6726cf30efff6",
+    "research/runs/parallel-sound-metadata-resolver-20261122/DATA_IDENTITY.json": "c51c29b76dda2d9b71d8375a849dfb14aa95108f0f6660da4870adb23555588f",
+    "research/runs/parallel-sound-metadata-resolver-20261122/WORK.md": "5d72b923a6ef67a91959a51128d041634b7fc1ab36422977476e1445d2862eae",
+    "research/runs/parallel-sound-metadata-resolver-20261122/expected-metadata.tsv": "5efbfc7e57e24087bcfc094cb15b81716cd2c4560d3a00d23c569576bf7239c3",
+    "research/runs/parallel-sound-metadata-resolver-20261122/validation-01/build.json": "71fb2acaa177cee8d01f690fe5791dd699ee85a64d37690698075ddcecb66d43",
+    "research/runs/parallel-sound-metadata-resolver-20261122/validation-01/build.log.gz": "d70dda3a47896baa635851395048f14cb5bc492521d0c37a2142087acb3b8594",
+    "research/runs/parallel-sound-metadata-resolver-20261122/validation-01/client.json": "8eecb1a3f178bfd3a90cabfdd953305c0f4b65f688e965c23582c2dadce86ed2",
+    "research/runs/parallel-sound-metadata-resolver-20261122/validation-01/client.log.gz": "45a857e97afdfca726dd54f1e9b66694f06b0b156ec5deaa85ba53e477b5b2a2",
+    "research/runs/parallel-sound-metadata-resolver-20261122/validation-02/SOURCE_FILES.json": "7cbdac5ff78119ea7129cc01835bce615c85973993fa67d7bf26a719acb8d725",
+    "research/runs/parallel-sound-metadata-resolver-20261122/validation-02/VERIFICATION.json": "4ed754f8189f8da74014090c4048598023400994954f389d9d4457c8a291de54",
+    "research/runs/parallel-sound-metadata-resolver-20261122/validation-02/build.json": "ef6d9c3084cf6af7e61ea088b633efee3253d6ec4c97602db7b707e442bb8d19",
+    "research/runs/parallel-sound-metadata-resolver-20261122/validation-02/build.log.gz": "d79a749bfc711a8d5dc1ca038dde0a6420552c94d4d92a18dc6d451e5dcacbd4",
+    "research/runs/parallel-sound-metadata-resolver-20261122/validation-02/existing-preferences.json": "6821a43975511e1cb16112b678bfafb286b1161b12822b191830839ef5323e3e",
+    "research/runs/parallel-sound-metadata-resolver-20261122/validation-02/existing-preferences.log.gz": "30ebfa9533443f01fc901131b34060fe42ff3e238154319bb08ebab771dae819",
+    "research/runs/parallel-sound-metadata-resolver-20261122/validation-02/full-entry-negative.json": "68fa871837384094cc450fd541605994fbcda7d1601fc7699ea7db34f6c82357",
+    "research/runs/parallel-sound-metadata-resolver-20261122/validation-02/full-entry-negative.log.gz": "a9f4faa6233db0086db0ea65fb0d5b94452374e3567e4a42bf46d42182cbcd1a",
+    "research/runs/parallel-sound-metadata-resolver-20261122/validation-02/metadata-symbols.json": "e85bf0f826ae929e08763ac0df4b9ebb0fa79d23c6ab8098326c5ccabe1c1a6d",
+    "research/runs/parallel-sound-metadata-resolver-20261122/validation-02/metadata-symbols.log.gz": "3031e37bfa1e9512edf1c6d2ff61c964e220c5782a5d525f263d2a4b9b3e14f2",
+    "research/runs/parallel-sound-metadata-resolver-20261122/validation-02/metadata.json": "d9f7c64b2ce406d86df9a3eaafb24c317dc559bff858dab303e22f6045b69656",
+    "research/runs/parallel-sound-metadata-resolver-20261122/validation-02/metadata.log.gz": "45a857e97afdfca726dd54f1e9b66694f06b0b156ec5deaa85ba53e477b5b2a2",
+    "research/runs/parallel-sound-metadata-resolver-20261122/verify.py": "fb41e6563dd6a6a00749c82427ce5fdfc64381742d6e334ea7fd0b128edb3ced",
+    "runtime/include/mka/retail_sound_metadata.hpp": "8eb95da7b706c82ea914bd2fd10e1783e49bbce3758129bdb567606ab8507ac2",
+    "runtime/src/native/retail_sound_metadata.cpp": "d501bfae19d175443c58e73a3350cbe2a5cd472101ce5428155a80b915c08555",
+    "runtime/src/native/retail_sound_metadata_data.inc": "a61f762ad4ae1089a29f296ea5774e86f21cca3e4069ccec560331461bedd9ea",
+    "tests/test_retail_sound_metadata.cpp": "e15a0d9885b5d4dc71a0c40e9a8dc1dd2a768008c533d1e5a729ac3756f81da7",
+    "proof/SOURCE_JOIN.json": "b9ae4cbd43a28e407cd00c461212a8c3a5b3061431b47b6779c86c7147b58d5e",
+    "proof/FINDINGS.md": "35fc7ae6e5948e5876fe55073d039d80551154394733f8a52b96857163d1581c",
+    "proof/WORK.md": "1715dd45f247f3bf255d27bea1e778d1c55ea59e1e47139f8f081f9ebddfbb69",
+    "proof/source-01/0012c030.asm": "31adaebdb56edae45adafd378889922f39e406d1062dec0ae9360c82c2f2650a",
+    "proof/source-01/0012c440.asm": "567f4a09370af3d42c0d95c3532e8e095705f774ce36f6fae81c12fe1205fa23",
+    "proof/source-01/00315c70.asm": "e698bd6866d7429df56d5fdc71712f48a317dc8a259569ee62fe0c1efacc8b74",
+    "dependencies/runtime/src/native/retail_sound_bank_catalog.cpp": "fe2f5aaaa45757dc9599987a9b3a63377b6a5bf6ab60881da96023af105b0e77",
+    "dependencies/runtime/src/native/audio_banks.cpp": "249d5a1b94f7c30df89016d7c6466b46c78fef0f6ad4a554b4f481be7283b37b",
+    "dependencies/runtime/src/native/retail_game_session.cpp": "2a90c825d1e7aa501e7487911c0a83e3a19e016360f456f527956e9a8c40bf45",
+    "dependencies/runtime/include/mka/retail_profile_preferences.hpp": "3a2c3d19da590206a06448d5478435d37eff097e57fbeca481a7e81231c336b2",
+    "later-CMake-unrelated.patch": "789ddae6eb54962d77005b85aa9d4aaa74b3d7d31260ebff4174d98802ea6993"
+  },
+  "reviewer_executed": "Python original-byte/data/corpus/hash audits only; no builds or client execution",
+  "execution_owner": "section_timing_startup agent",
+  "limits": "9656 source-derived metadata rows;4 real catalog callback handles and existing Session preferences; no playback/arithmetic/envelope/endpoint/gameplay acceptance. Stale external-unload safety branch compiled but not injected.",
+  "preference_default_first_six_words": [
+    1061158912,
+    1061158912,
+    1061158912,
+    1061158912,
+    1061158912,
+    1065353216
+  ],
+  "request_default_words": [
+    0,
+    1065353216,
+    0,
+    1065353216,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    1,
+    4294967295,
+    1
+  ],
+  "defensive_bank_not_live": "compiled and source-inspected, not injected/executed by saved client; no false branch-coverage claim",
+  "metadata_guard_symbols": [
+    "140001470 T SDL_InitSubSystem"
+  ],
+  "compiled_native_output_factory_present": true,
+  "required_owner_symbols": {
+    "resolve_retail_semantic_sound_operands(": true,
+    "NativeRetailSoundBankCatalog::observe(": true,
+    "NativeRetailGameSession::game_records_values(": true,
+    "AudioBankSession::load_state(": true
+  }
+}
