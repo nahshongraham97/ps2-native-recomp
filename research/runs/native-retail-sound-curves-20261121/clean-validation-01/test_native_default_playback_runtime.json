@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-loose-20261121\\build-native-loose\\test_native_default_playback_runtime.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_DEFAULT_PLAYBACK_RUNTIME: 7 actual default runtime/copy/flag/retirement cases; no source activation/callback/device/fidelity claim\n",
+  "stderr": "",
+  "seconds": 0.1326554999977816,
+  "source_commit": "a425ab34a1387ea8e53ca885b9c3f6013b7d990f",
+  "source_sha256": {
+    "runtime/include/mka/audio_controls.hpp": "580863fad90b307c08d9260604726c2063387f6f92350558f95c9d917dca5b5c",
+    "runtime/src/native/audio_controls.cpp": "3e23ffc99c78df57a118dc5686018a131cf0c2a64c1bce946193d5c5cc45ba43",
+    "runtime/include/mka/host_voice.hpp": "a8b6205124163500cd39ef72bc655bc6eabe9dbd93a730789587f5f6af263588",
+    "runtime/src/native/host_voice.cpp": "c1229bf4d4bd382cb7fb0266280e204b6b3541ecc784b4e893264c7ea7445cab",
+    "runtime/include/mka/program_copy.hpp": "9f196fa16e4d14e18dc3cc03db9d4b6464aa211b6283dc4b1cb2c1da61e879ca",
+    "runtime/src/native/program_copy.cpp": "e77633a72c54e6cd29a1e38e619609e3ff97597b05c68057c138542c15b0d6b6",
+    "runtime/include/mka/playback_owner.hpp": "d5178aa758b86a72db711f5fca55fb554b6c3341a8699d0ecc4f4bc975caa600",
+    "runtime/src/native/playback_owner.cpp": "e8739ee692b0a9c7293b8e6b52d4ff1ab5f148ccd70f4f98738c3f1c50d01d9f",
+    "tests/test_native_bank_playback.cpp": "f7623908b4a8474e98ac56af5725414c3b13f20bc256f00a12bf760c7f86fffb",
+    "tests/test_retail_reset_sound.cpp": "d7485fb3d3da4fb3b22238328a2ed98364f098135582ecb34fd781ee69f1f9a6",
+    "cmake/native_sound_resources.cmake": "fd71de277ec069cefc94ab99d2868f8124fbeffd6b47e1a57f5d3162367e1992",
+    "tests/test_sound_curves.cpp": "2e124f1803d3fb964593691516758fd822b9ce19ac4493fb332597c78f5e3b5c",
+    "tests/fixtures/retail_sound_curve_data.hpp": "4635e920a2327029f358d9c5144465fc1ac6f6766c07b122ff567f01712cd82b"
+  },
+  "tracked_status": "",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "1deadeb3fabbe4eae77006f1fa02a5df0dd4bda6ff8c26ad027b3f8b97c0813c"
+}

@@ -1,0 +1,15 @@
+{
+  "status": "UNCHANGED_PINNED_RETAIL_SOUND_FILES",
+  "assets": [
+    {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2",
+      "bytes": 98273428,
+      "sha256": "74b7affaf2ec29052b39f531788ff12148f9870e79dde953e701c63e6e948d5d"
+    },
+    {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms4",
+      "bytes": 584581120,
+      "sha256": "bd97bd4ae76b41a18852555bebb7909e80c1287aba950ec1d85adacc10f46781"
+    }
+  ]
+}
