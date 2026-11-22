@@ -200,6 +200,9 @@ bool service_retail_frame_input(NativeRetailMainState&, StartupFailure&); // 210
 bool dispatch_retail_task_lists(NativeRetailMainState&, StartupFailure&); // 12E4E0
 bool pump_retail_middleware(NativeRetailMainState&, StartupFailure&); // 328CE0
 bool pump_retail_current_sound(NativeRetailMainState&, StartupFailure&); // 3152C0
+std::optional<sound::NativePlayHandle> submit_retail_queued_sound(NativeRetailMainState&,
+    const sound::AudioBankHandle&,std::int32_t selector,std::uint32_t semantic_sound_id,
+    const sound::NativeActivationParameters&,StartupFailure&);
 //12C1D0 reverse removal for actual ready native play references. Public pending
 // jobs/command50 resume require their separate producers; no queued success.
 bool retire_retail_game_sound_references(NativeRetailMainState&, StartupFailure&);

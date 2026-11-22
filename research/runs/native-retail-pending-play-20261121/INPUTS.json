@@ -1,0 +1,22 @@
+{
+  "inputs": {
+    "EE": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\SLUS_214.10",
+      "sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f"
+    },
+    "MSL": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\modules\\msl.irx",
+      "sha256": "f62dfbcedd39bc92cb8b9c02bb685b956a10357f9181d7f8c2801d8eaff07af7"
+    },
+    "Xbox": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\xbox-mka-20261121\\default.xbe",
+      "sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393"
+    }
+  },
+  "xbox_project": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\local-research\\ghidra-xbox\\projects\\MKAR-Xbox-20261121.gpr",
+  "xbox_loader": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\ghidra\\ghidra_12.1.4_PUBLIC\\Ghidra\\Extensions\\XboxExecutableLoader",
+  "live_ghidra": "EE-PROGRAM.json",
+  "donor_evidence_reused": "../native-retail-sound-reference-20261121/XBOX_ABI_REVIEW.json",
+  "no_new_xbox_abi_adoption": true,
+  "local_model_accessed": false
+}

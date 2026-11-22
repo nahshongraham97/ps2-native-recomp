@@ -141,6 +141,11 @@ public:
     RuntimeProgramWork(const RuntimeProgramWork&)=delete;
     RuntimeProgramWork& operator=(const RuntimeProgramWork&)=delete;
     ~RuntimeProgramWork();
+    // Selection publishes running ownership before the worker leaves its queue.
+    // No resource access or construction occurs here. build() also supports
+    // synchronous callers that have not selected their work separately.
+    bool begin_build(PreparationFailure&);
+    bool cached_runtime_available() const;
     bool build(PreparationFailure&);
     bool finish_build(PreparationFailure&);
     ProgramWorkCancellation cancel();

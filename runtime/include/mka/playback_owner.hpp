@@ -4,6 +4,8 @@
 #include "mka/program_host_clock.hpp"
 namespace mka::sound {
 class NativePlaybackOwner;
+class NativePlayWork;
+struct NativePreparedPlay;
 // Explicit native ownership, unrelated to serialized context words or gain data.
 class NativeSoundContext {
 public:
@@ -63,7 +65,7 @@ enum class PlaybackError { none, moved_owner, closed, invalid_output_rate,
     bank_unloading, bank_state_unknown, close_state_unknown, unknown_context, foreign_context, retired_context,
     unsupported_play_flags, copy_failed, invalid_output_selector, unsupported_output_selector,
     output_priority_refused, clock_failed, invalid_clock, unknown_retired_output, retired_output,
-    wrong_bank_interface, native_bank_failed, invalid_control_curve };
+    wrong_bank_interface, native_bank_failed, invalid_control_curve, wrong_thread, invalid_work_state, cancelled };
 struct PlaybackFailure {
     PlaybackError kind=PlaybackError::none;
     BankServiceFailure service;
@@ -162,6 +164,10 @@ public:
         std::int32_t selector,const NativePlayParameters&,PlaybackFailure&);
     std::optional<NativePlayHandle> activate(const NativeSoundContext&,const AudioBankHandle&,
         std::int32_t selector,const NativeActivationParameters&,PlaybackFailure&);
+    // Explicit queued primitive; source direct-versus-worker routing is separate.
+    // Admission exposes one owned pending identity without starting resources.
+    std::shared_ptr<NativePlayWork> admit_queued_play(const NativeSoundContext&,const AudioBankHandle&,
+        std::int32_t selector,const NativeActivationParameters&,PlaybackFailure&);
     // One clock sample; dispatch every due command per ordinary live entry. Other original
     // update passes/callbacks are distinct, still unbound work. A failed step
     // retains its exact prefix/results; no fabricated all-or-nothing update.
@@ -186,11 +192,16 @@ public:
     bool unload(const AudioBankHandle&,PlaybackFailure&);
     bool close_when_idle(PlaybackFailure&);
 private:
+    friend class NativePlayWork;
+    struct State;
+    static std::unique_ptr<NativePreparedPlay> prepare_play_plan(std::unique_ptr<RuntimeProgramReference>&,
+        const NativePlayParameters&,PlaybackFailure&);
+    static bool commit_play_plan(const std::shared_ptr<State>&,const NativeSoundContext&,
+        const NativePlayHandle&,NativePreparedPlay&,bool,PlaybackFailure&);
     std::optional<NativePlayHandle> play_impl(const NativeSoundContext&,const AudioBankCommand*,
         const AudioBankHandle*,std::int32_t selector,const NativePlayParameters&,bool sample_activation_clock,PlaybackFailure&);
     bool unload_impl(const AudioBankCommand*,const AudioBankHandle*,PlaybackFailure&);
     std::optional<std::vector<ForcedPlaybackRetirement>> force_retire_impl(const NativePlayHandle*,const NativeSoundContext*,PlaybackFailure&);
-    struct State;
     explicit NativePlaybackOwner(std::shared_ptr<State> s):state_(std::move(s)){}
     std::shared_ptr<State> state_;
 };

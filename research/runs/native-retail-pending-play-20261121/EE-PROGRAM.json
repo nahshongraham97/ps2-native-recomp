@@ -1,0 +1,22 @@
+{
+  "name": "SLUS_214.10",
+  "project_path": "/SLUS_214.10",
+  "executable_path": "/C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/local-research/ghidra-mcp/disc-files/SLUS_214.10",
+  "executable_format": "Executable and Linking Format (ELF)",
+  "language_id": "r5900:LE:32:default",
+  "compiler_spec": "default",
+  "processor": "MIPS-R5900",
+  "endian": "little",
+  "pointer_size": 4,
+  "image_base": "00100000",
+  "min_address": "00100000",
+  "max_address": "_elfSectionHeaders::000001b7",
+  "memory_size": 105345404,
+  "function_count": 13138,
+  "external_function_count": 1,
+  "entry_points": [
+    "00100008"
+  ],
+  "md5": "d79dee61099b6b206ee1da180fea0cf6",
+  "sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f"
+}

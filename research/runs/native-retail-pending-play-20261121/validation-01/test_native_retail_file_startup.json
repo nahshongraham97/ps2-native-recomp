@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_file_startup.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-pending-play-20261121\\validation-01"
+  ],
+  "exit": 0,
+  "stdout": "PASS native middleware file startup: 15 allocation cuts, 12 native files, 65 native children; source frame body covered separately; callback producers/game remain open\n",
+  "stderr": "",
+  "seconds": 0.10697670000081416,
+  "source_commit": "f024d5aff8dfeea72c639c3117a214a5c95688b8",
+  "tracked_status": "M cmake/native_game.cmake\n M runtime/include/mka/bank_preparation.hpp\n M runtime/include/mka/playback_owner.hpp\n M runtime/include/mka/retail_main.hpp\n M runtime/include/mka/retail_sound_runtime.hpp\n M runtime/src/native/bank_preparation.cpp\n M runtime/src/native/playback_owner.cpp\n M runtime/src/native/retail_sound_bank_main.cpp\n M runtime/src/native/retail_sound_runtime.cpp\n M tests/test_retail_sound_context.cpp\n M tests/test_runtime_program_work.cpp",
+  "source_manifest_sha256": "983da19544520526e0b804714e033f4b5775fece2dd0cc01ee33b9a7673e2af8",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "c7a25ca2384560bbf46fc192c69e7cf0e9c2502bff4e9e673b931c714cbeecd1"
+}

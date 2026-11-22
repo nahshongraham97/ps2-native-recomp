@@ -1,5 +1,6 @@
 #pragma once
 #include "mka/playback_owner.hpp"
+#include "mka/pending_play.hpp"
 #include "mka/sound_output.hpp"
 #include <memory>
 namespace mka::retail {
@@ -26,6 +27,10 @@ struct RetailSoundRuntimeStatus {
     std::vector<sound::NativePlayHandle> active_plays;
     RetailSoundRuntimeObservation native;
 };
+struct RetailSoundPlayCompletion {
+    sound::NativePlayHandle handle;
+    sound::NativePlayWorkObservation result;
+};
 // Native Windows output/thread ownership for the actual current context.
 // It advances the admitted ordinary normal route; source control/queued-role
 // producers, alternate flags9 and full worker/DSP equivalence remain required.
@@ -46,6 +51,10 @@ public:
     static constexpr std::uint32_t initial_output_mode() noexcept{return 3;}
     std::optional<RetailSoundRuntimeObservation> observe(RetailSoundRuntimeFailure&) const;
     std::optional<RetailSoundRuntimeStatus> snapshot_status(RetailSoundRuntimeFailure&) const;
+    std::optional<sound::NativePlayHandle> submit_queued_play(const sound::AudioBankHandle&,std::int32_t,
+        const sound::NativeActivationParameters&,RetailSoundRuntimeFailure&);
+    std::optional<sound::ProgramWorkCancellation> cancel_pending_play(const sound::NativePlayHandle&,RetailSoundRuntimeFailure&);
+    std::optional<RetailSoundPlayCompletion> poll_play_completion(RetailSoundRuntimeFailure&);
     bool shutdown(RetailSoundRuntimeFailure&);
 private:
     struct State;

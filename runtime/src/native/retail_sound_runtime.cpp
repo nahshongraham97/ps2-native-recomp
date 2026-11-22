@@ -9,13 +9,21 @@
 #include <stdexcept>
 #include <system_error>
 #include <thread>
+#include <list>
 namespace mka::retail {
 struct NativeRetailSoundRuntime::State {
     explicit State(sound::AudioBankSession&& session):incoming(std::move(session)){}
     const std::thread::id owner{std::this_thread::get_id()};
     mutable std::mutex mutex;
     std::condition_variable condition;
-    std::thread worker;
+    // Output failure revokes publication under this separate admission gate;
+    // it never takes the playback mutex while holding the lifecycle mutex.
+    std::mutex publication;
+    std::thread worker,resource_worker;
+    using Jobs=std::list<std::shared_ptr<sound::NativePlayWork>>;
+    Jobs queued,active,completed;
+    bool resource_stop{};
+    RetailSoundRuntimeFailure resource_failure;
     std::optional<sound::AudioBankSession> incoming;
     std::shared_ptr<sound::NativePlaybackOwner> playback;
     std::optional<sound::NativeSoundContext> context;
@@ -26,6 +34,7 @@ struct NativeRetailSoundRuntime::State {
     RetailSoundRuntimeFailure failure;
     bool initialized{},stop_requested{},closed{},pause_requested{},paused{},worker_finished{},cleanup_failed{},drain_requested{},drained{};
     void fail(RetailSoundRuntimeFailure value) noexcept {
+        std::lock_guard admission(publication);
         std::lock_guard lock(mutex);
         if(failure.kind==RetailSoundRuntimeError::none)failure=std::move(value);
         else if(value.output.kind!=sound::AudioDeviceError::none)failure.cleanup=value.output;
@@ -34,6 +43,35 @@ struct NativeRetailSoundRuntime::State {
     bool owner_access(RetailSoundRuntimeFailure& f) const noexcept {
         f={};if(owner==std::this_thread::get_id())return true;
         f.kind=RetailSoundRuntimeError::wrong_thread;f.operation="native sound runtime Main thread";return false;
+    }
+    void run_resources() noexcept {
+        for(;;){
+            std::shared_ptr<sound::NativePlayWork> job;
+            {std::unique_lock lock(mutex);
+             condition.wait(lock,[&]{return resource_stop||!queued.empty();});
+             if(resource_stop)return;
+             // Source F710: first actual cached runtime, otherwise FIFO head.
+             auto chosen=queued.begin();
+             for(auto it=queued.begin();it!=queued.end();++it)if((*it)->cached_runtime_available()){chosen=it;break;}
+             job=*chosen;sound::PlaybackFailure error;
+             // Publish running ownership before queue exclusion ends.
+             if(!job->begin_build(error))std::terminate();
+             active.splice(active.end(),queued,chosen);}
+            sound::PlaybackFailure error;job->build(error);
+            for(;;){
+                {std::lock_guard admission(publication);bool admitted;
+                 {std::lock_guard lock(mutex);admitted=failure.kind==RetailSoundRuntimeError::none&&!closed;}
+                 job->complete(admitted,error);}
+                if(job->observe().state==sound::NativePlayWorkState::callback_complete)break;
+                std::unique_lock lock(mutex);
+                if(error.kind!=sound::PlaybackError::operation_active){
+                    resource_failure.kind=RetailSoundRuntimeError::playback;resource_failure.playback=error;
+                    resource_failure.operation="native pending play construction retirement";}
+                condition.wait_for(lock,std::chrono::microseconds(sound::retail_sound_worker_microseconds));
+            }
+            if(!job->retire(error))std::terminate();
+            {std::lock_guard lock(mutex);resource_failure={};completed.splice(completed.end(),active);condition.notify_all();}
+        }
     }
     void run() noexcept {
         struct Finished {
@@ -157,12 +195,12 @@ struct NativeRetailSoundRuntime::State {
                 // Real cleanup may own the context across an unlocked resource
                 // gap. It is transient exclusion, not a successful empty pass
                 // and not a permanent audio failure.
-                if(f.playback.kind==sound::PlaybackError::operation_active)continue;
-                f.kind=RetailSoundRuntimeError::playback;f.operation="native admitted ordinary program worker";fail(f);return;
+                if(f.playback.kind!=sound::PlaybackError::operation_active){
+                f.kind=RetailSoundRuntimeError::playback;f.operation="native admitted ordinary program worker";fail(f);return;}
             }
             auto ownership=owner.observe_all_outputs(f.playback);
-            if(!ownership){f.kind=RetailSoundRuntimeError::playback;f.operation="native output ownership observation";fail(f);return;}
-            if(!ownership->active_voices&&ownership->retired_groups){
+            if(!ownership&&f.playback.kind!=sound::PlaybackError::operation_active){f.kind=RetailSoundRuntimeError::playback;f.operation="native output ownership observation";fail(f);return;}
+            if(ownership&&!ownership->active_voices&&ownership->retired_groups){
                 // Reclaim actually finished native tail groups without creating
                 // an unnecessary silence block or advancing any voice.
                 if(!owner.mix(0,f.playback)){f.kind=RetailSoundRuntimeError::playback;
@@ -170,10 +208,10 @@ struct NativeRetailSoundRuntime::State {
             }
             auto status=query_output(output,submitted,started,f);
             if(!status){fail(f);return;}
-            if(pending.empty()&&status->writable_frames&&(!started||ownership->active_voices)){
+            if(ownership&&pending.empty()&&status->writable_frames&&(!started||ownership->active_voices)){
                 auto mixed=owner.mix(status->writable_frames,f.playback);
-                if(!mixed){f.kind=RetailSoundRuntimeError::playback;f.operation="mix actual native program outputs";fail(f);return;}
-                pending=std::move(*mixed);
+                if(!mixed){if(f.playback.kind!=sound::PlaybackError::operation_active){f.kind=RetailSoundRuntimeError::playback;f.operation="mix actual native program outputs";fail(f);return;}}
+                else pending=std::move(*mixed);
             }
             if(!submit_pending(output,*status,pending,submitted,started,f)){fail(f);return;}
             {std::lock_guard lock(mutex);remember_output(pending,*status,submitted,started);
@@ -200,6 +238,7 @@ std::unique_ptr<NativeRetailSoundRuntime> NativeRetailSoundRuntime::create(sound
             lock.unlock();runtime.reset();
             std::lock_guard final_lock(state->mutex);f=state->failure;return {};
         }
+        lock.unlock();state->resource_worker=std::thread([state]{state->run_resources();});
         return runtime;
     }catch(const std::bad_alloc&){f.kind=RetailSoundRuntimeError::allocation;f.operation="native sound runtime allocation";}
      catch(const std::length_error&){f.kind=RetailSoundRuntimeError::host_capacity;f.operation="native sound runtime capacity";}
@@ -225,6 +264,7 @@ std::optional<RetailSoundRuntimeObservation> NativeRetailSoundRuntime::observe(R
     if(!state_->owner_access(f))return {};
     std::lock_guard lock(state_->mutex);
     if(state_->failure.kind!=RetailSoundRuntimeError::none){f=state_->failure;return {};}
+    if(state_->resource_failure.kind!=RetailSoundRuntimeError::none){f=state_->resource_failure;return {};}
     if(state_->closed){f.kind=RetailSoundRuntimeError::closed;f.operation="native sound runtime closed";return {};}
     return state_->observation;
 }
@@ -232,15 +272,64 @@ std::optional<RetailSoundRuntimeStatus> NativeRetailSoundRuntime::snapshot_statu
     if(!state_->owner_access(f))return {};
     std::lock_guard lock(state_->mutex);
     if(state_->failure.kind!=RetailSoundRuntimeError::none){f=state_->failure;return {};}
+    if(state_->resource_failure.kind!=RetailSoundRuntimeError::none){f=state_->resource_failure;return {};}
     if(state_->closed){f.kind=RetailSoundRuntimeError::closed;f.operation="native sound status after shutdown";return {};}
     auto active=state_->playback->snapshot_active_plays(*state_->context,f.playback);
     if(!active){f.kind=RetailSoundRuntimeError::playback;f.operation="snapshot actual native sound associations";return {};}
     return RetailSoundRuntimeStatus{state_->controls,std::move(*active),state_->observation};
 }
+std::optional<sound::NativePlayHandle> NativeRetailSoundRuntime::submit_queued_play(const sound::AudioBankHandle& bank,
+    std::int32_t selector,const sound::NativeActivationParameters& parameters,RetailSoundRuntimeFailure& f){
+    if(!state_->owner_access(f))return {};
+    try {
+        State::Jobs node;node.emplace_back();
+        std::lock_guard admission(state_->publication);
+        {std::lock_guard lock(state_->mutex);
+         if(state_->failure.kind!=RetailSoundRuntimeError::none){f=state_->failure;return {};}
+         if(state_->closed){f.kind=RetailSoundRuntimeError::closed;f.operation="queue native play after shutdown";return {};}}
+        auto job=state_->playback->admit_queued_play(*state_->context,bank,selector,parameters,f.playback);
+        if(!job){f.kind=RetailSoundRuntimeError::playback;f.operation="admit actual native pending play";return {};}
+        node.front()=job;auto handle=job->handle();
+        {std::lock_guard lock(state_->mutex);state_->queued.splice(state_->queued.end(),node);state_->condition.notify_all();}
+        return handle;
+    }catch(const std::bad_alloc&){f.kind=RetailSoundRuntimeError::allocation;}
+     catch(const std::length_error&){f.kind=RetailSoundRuntimeError::host_capacity;}
+     catch(...){f.kind=RetailSoundRuntimeError::native_exception;}
+    f.operation="native pending play queue admission";return {};
+}
+std::optional<sound::ProgramWorkCancellation> NativeRetailSoundRuntime::cancel_pending_play(
+    const sound::NativePlayHandle& handle,RetailSoundRuntimeFailure& f){
+    if(!state_->owner_access(f))return {};
+    State::Jobs removed;std::shared_ptr<sound::NativePlayWork> job;
+    {std::lock_guard lock(state_->mutex);
+     for(auto it=state_->queued.begin();it!=state_->queued.end();++it)if((*it)->handle().same_identity(handle)){
+         job=*it;removed.splice(removed.end(),state_->queued,it);break;}
+     if(!job)for(auto& item:state_->active)if(item->handle().same_identity(handle)){job=item;break;}
+     if(!job)for(auto& item:state_->completed)if(item->handle().same_identity(handle))return sound::ProgramWorkCancellation::not_cancellable;}
+    if(!job){f.kind=RetailSoundRuntimeError::playback;f.operation="unknown actual pending play";f.playback.kind=sound::PlaybackError::unknown_handle;return {};}
+    const auto answer=job->cancel();
+    if(!removed.empty()){
+        if(answer!=sound::ProgramWorkCancellation::queued_removed)std::terminate();
+        job->complete(false,f.playback);
+        if(!job->retire(f.playback)){f.kind=RetailSoundRuntimeError::playback;f.operation="retire removed native pending play";return {};}
+        std::lock_guard lock(state_->mutex);state_->completed.splice(state_->completed.end(),removed);state_->condition.notify_all();
+    }
+    return answer;
+}
+std::optional<RetailSoundPlayCompletion> NativeRetailSoundRuntime::poll_play_completion(RetailSoundRuntimeFailure& f){
+    if(!state_->owner_access(f))return {};
+    std::lock_guard lock(state_->mutex);
+    if(state_->completed.empty())return {};
+    const auto& job=state_->completed.front();RetailSoundPlayCompletion result{job->handle(),job->observe()};
+    state_->completed.pop_front();return result;
+}
 bool NativeRetailSoundRuntime::shutdown(RetailSoundRuntimeFailure& f){
     if(!state_->owner_access(f))return false;
     {std::unique_lock lock(state_->mutex);
      if(state_->closed)return true;
+     if(!state_->queued.empty()||!state_->active.empty()||!state_->completed.empty()){
+         f.kind=RetailSoundRuntimeError::active_playback;f.operation="native sound shutdown requires retired and consumed program jobs";return false;
+     }
      // Wait for the actual worker to leave clock/mixer mutation before the
      // idle check. An observation during the unlocked QPC sample is not proof
      // of live playback and must not randomly make idle teardown fail.
@@ -261,7 +350,8 @@ bool NativeRetailSoundRuntime::shutdown(RetailSoundRuntimeFailure& f){
          state_->condition.wait(lock,[&]{return state_->drained||state_->worker_finished;});
          drain_failed=!state_->drained;
      }
-     state_->stop_requested=true;state_->condition.notify_all();}
+     state_->stop_requested=true;state_->resource_stop=true;state_->condition.notify_all();}
+    if(state_->resource_worker.joinable())state_->resource_worker.join();
     if(state_->worker.joinable())state_->worker.join();
     {std::lock_guard lock(state_->mutex);state_->closed=true;
      if(state_->cleanup_failed||drain_failed){f=state_->failure;return false;}}

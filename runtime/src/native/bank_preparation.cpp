@@ -177,7 +177,7 @@ struct RuntimeProgramWork::Impl {
     mutable std::mutex mutex;std::thread::id worker;
     RuntimeProgramWorkState phase=RuntimeProgramWorkState::queued;
     RuntimeProgramWorkBranch branch=RuntimeProgramWorkBranch::unselected;
-    bool open=false,requested=false,published=false,taken=false,marker=false,retiring=false;
+    bool open=false,requested=false,published=false,taken=false,marker=false,retiring=false,body_started=false;
     std::optional<PreparationFailure> failure;
     std::optional<AudioResourceLease> lease;
     std::shared_ptr<PreparedProgramWork> data_work;
@@ -199,12 +199,30 @@ std::shared_ptr<RuntimeProgramWork> PreparedBank::admit_runtime_program(std::int
     catch(const std::length_error&){f.kind=PreparationError::host_capacity;}
     catch(...){f.kind=PreparationError::native_exception;}return {};
 }
+bool RuntimeProgramWork::begin_build(PreparationFailure& f){
+    f={};auto s=state_;
+    std::lock_guard lock(s->mutex);
+     if(s->phase==RuntimeProgramWorkState::cancelled){f.kind=PreparationError::cancelled;return false;}
+     if(s->phase!=RuntimeProgramWorkState::queued){f.kind=PreparationError::invalid_work_state;return false;}
+     s->worker=std::this_thread::get_id();s->phase=RuntimeProgramWorkState::building;s->open=true;
+    return true;
+}
+bool RuntimeProgramWork::cached_runtime_available()const{
+    auto s=state_;std::lock_guard job_lock(s->mutex);
+    if(s->phase==RuntimeProgramWorkState::retired||s->retiring||!s->bank)return false;
+    std::lock_guard bank_lock(s->bank->mutex);
+    return !s->bank->unloaded&&bool(s->bank->runtime_records[s->index].cached);
+}
 bool RuntimeProgramWork::build(PreparationFailure& f){
     f={};auto s=state_;
     {std::lock_guard lock(s->mutex);
      if(s->phase==RuntimeProgramWorkState::cancelled){f.kind=PreparationError::cancelled;return false;}
-     if(s->phase!=RuntimeProgramWorkState::queued){f.kind=PreparationError::invalid_work_state;return false;}
-     s->worker=std::this_thread::get_id();s->phase=RuntimeProgramWorkState::building;s->open=true;
+     if(s->phase==RuntimeProgramWorkState::queued){
+         s->worker=std::this_thread::get_id();s->phase=RuntimeProgramWorkState::building;s->open=true;
+     }
+     if(s->worker!=std::this_thread::get_id()){f.kind=PreparationError::wrong_thread;return false;}
+     if(s->phase!=RuntimeProgramWorkState::building||s->body_started){f.kind=PreparationError::invalid_work_state;return false;}
+     s->body_started=true;
     }
     try {
         auto lease=s->bank->domain->acquire(AudioResourceWork::program,f.resource);

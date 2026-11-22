@@ -1,0 +1,32 @@
+{
+  "status": "PASS_PENDING_WORKER_ORIGINAL_BYTES",
+  "image_sha256": "f62dfbcedd39bc92cb8b9c02bb685b956a10357f9181d7f8c2801d8eaff07af7",
+  "full_coverage": [
+    {
+      "begin": "0xf6e4",
+      "end_exclusive": "0xf850",
+      "words": 91
+    },
+    {
+      "begin": "0x7178",
+      "end_exclusive": "0x732c",
+      "words": 109
+    },
+    {
+      "begin": "0x732c",
+      "end_exclusive": "0x73d0",
+      "words": 41
+    },
+    {
+      "begin": "0x1090",
+      "end_exclusive": "0x11b8",
+      "words": 74
+    }
+  ],
+  "worker_selection": "First queued job with actual cached runtime; otherwise queue head",
+  "activity": "Set before732C; fresh7178 closes activity after construction before cancellation decision; cached callback bypasses fresh decision",
+  "ordinary_callback": "Runtime readiness -> actual copy/activation -> outer bank/job retirement",
+  "target_cancellation_authority": "../native-retail-sound-reference-20261121/SOURCE_JOIN.json",
+  "source_ready_copy_activation": "../native-retail-sound-worker-20261121/SOURCE_JOIN.json",
+  "whole_game_equivalence": false
+}

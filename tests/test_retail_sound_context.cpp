@@ -7,6 +7,8 @@
 #include "native_retail_startup.hpp"
 #include <algorithm>
 #include <chrono>
+#include <atomic>
+#include <condition_variable>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -36,6 +38,18 @@ struct OutputState {
 std::shared_ptr<OutputState> output_state;
 thread_local std::int64_t fail_after=-1;
 thread_local std::function<void()> disposal_probe;
+std::mutex build_hook_mutex;
+std::function<void()> before_runtime_build,after_runtime_build;
+struct BuildGate {
+    std::mutex mutex;std::condition_variable condition;bool entered=false,released=false;
+    void block(){std::unique_lock lock(mutex);entered=true;condition.notify_all();
+        check(condition.wait_for(lock,std::chrono::seconds(10),[&]{return released;}),"bounded actual resource-worker hold");}
+    void release(){std::lock_guard lock(mutex);released=true;condition.notify_all();}
+};
+std::shared_ptr<BuildGate> block_next_build(bool after=false){
+    auto gate=std::make_shared<BuildGate>();std::lock_guard lock(build_hook_mutex);
+    (after?after_runtime_build:before_runtime_build)=[gate]{gate->block();};return gate;
+}
 class TestOutput final:public sound::NativeSoundOutput {
 public:
     explicit TestOutput(std::shared_ptr<OutputState> s):state_(std::move(s)){}
@@ -98,6 +112,104 @@ template<class Predicate> void await(Predicate ready,const char* reason){
     while(!ready()){check(std::chrono::steady_clock::now()<until,reason);std::this_thread::sleep_for(std::chrono::milliseconds(2));}
 }
 void setup(Scenario scenario){output_state=std::make_shared<OutputState>();output_state->scenario=scenario;}
+void exercise_pending(NativeRetailMainState& main,sound::AudioBankSession& session,
+    const sound::AudioBankHandle& original,sound::NativeActivationParameters parameters){
+    sound::PlaybackFailure pf;RetailSoundRuntimeFailure rf;StartupFailure f;
+    auto& runtime=*main.sound_runtime;
+    // Explicit software envelope solely for the lifetime/PCM observation.
+    parameters.envelope.sustain={1,0,false};parameters.envelope.release={1,-64,false};
+    auto keeper=main.playback->activate(*main.current_sound,original,0,parameters,pf);
+    check(bool(keeper),"real native cached donor remains owned during queue selection");
+    await([&]{auto o=main.playback->observe(*keeper,pf);return o&&o->active_voices>0;},"actual donor starts before resource hold");
+    sound::AudioBanksFailure bf;sound::PreparationFailure prep;sound::BankPreparationReport report;
+    auto first=session.load_bank("announcr",bf),second=session.load_bank("announcr",bf);
+    check(first&&second&&!first->same_identity(*second),"same Session owns distinct actual bank instances");
+    auto prepared_first=session.prepare_bank(*first,report,prep,bf),prepared_second=session.prepare_bank(*second,report,prep,bf);
+    check(prepared_first&&prepared_second,"actual deferred banks prepared on same resource domain");
+    const auto wait_gate=[&](const auto& gate){await([&]{std::lock_guard lock(gate->mutex);return gate->entered;},"actual selected worker reaches construction gate");};
+    const auto poll=[&]{std::optional<RetailSoundPlayCompletion> result;
+        await([&]{result=runtime.poll_play_completion(rf);check(rf.kind==RetailSoundRuntimeError::none,"completion poll admission");return bool(result);},"actual pending job finishes and retires");return *result;};
+    auto gate=block_next_build();auto running=main_binding::submit_retail_queued_sound(main,*first,0,0xA1,parameters,f);
+    check(bool(running),"Main publishes actual queued native identity");wait_gate(gate);
+    check(!main.playback->observe(*running,pf)&&pf.kind==sound::PlaybackError::operation_active,
+        "selected unbuilt native association remains pending");
+    auto queued=main_binding::submit_retail_queued_sound(main,*second,0,0xA2,parameters,f);
+    check(queued&&main.game_sound_references.size()==2,"Main owns both exact pending records");
+    check(!runtime.shutdown(rf)&&rf.kind==RetailSoundRuntimeError::active_playback,"queued/running work refuses output shutdown");
+    check(main_binding::retire_retail_game_sound_references(main,f)&&main.game_sound_references.empty(),
+        "Main reverse removal cancels queued and requests running without early disposal");
+    auto removed=poll();check(removed.handle.same_identity(*queued)&&removed.result.cancelled&&
+        !removed.result.ordinary_callback_invoked&&!removed.result.runtime_ready&&removed.result.state==sound::NativePlayWorkState::retired,
+        "queued target removal has no ordinary callback or runtime readiness");
+    check(!main.playback->observe(*queued,pf)&&pf.kind==sound::PlaybackError::retired_handle&&
+        !main.playback->observe(*running,pf)&&pf.kind==sound::PlaybackError::operation_active,
+        "queued identity actually retires while running requested identity stays owned");
+    check(!main.playback->unload(*first,pf)&&pf.kind==sound::PlaybackError::active_playback,
+        "running cancellation acknowledgement cannot release actual bank ownership");
+    std::uint64_t before=0;{std::lock_guard lock(output_state->mutex);before=output_state->submitted;output_state->nonzero=false;}
+    await([&]{std::lock_guard lock(output_state->mutex);return output_state->submitted>before&&output_state->nonzero;},
+        "actual PCM mixing continues while resource worker is blocked");
+    gate->release();auto cancelled=poll();check(cancelled.handle.same_identity(*running)&&cancelled.result.cancelled&&
+        !cancelled.result.runtime_ready&&!cancelled.result.ordinary_callback_invoked&&!cancelled.result.activated,
+        "fresh running cancellation suppresses actual ordinary consumer");
+    auto cache=prepared_first->runtime_cache(prep);check(cache&&!(*cache)[0].cached,"fresh cancellation publishes no cache");
+    check(!main.playback->observe(*running,pf)&&pf.kind==sound::PlaybackError::retired_handle,"running identity retires after real cleanup");
+    gate=block_next_build();auto primer=main_binding::submit_retail_queued_sound(main,*first,0,0xB1,parameters,f);
+    check(bool(primer),"priority primer admitted");wait_gate(gate);
+    auto fresh=main_binding::submit_retail_queued_sound(main,*second,0,0xB2,parameters,f);
+    auto cached=main_binding::submit_retail_queued_sound(main,original,0,0xB3,parameters,f);
+    check(fresh&&cached,"fresh then cached queue admitted in source comparison order");gate->release();
+    auto a=poll(),b=poll(),c=poll();
+    check(a.handle.same_identity(*primer)&&b.handle.same_identity(*cached)&&c.handle.same_identity(*fresh),
+        "actual cached runtime wins ahead of earlier queued fresh runtime");
+    for(const auto& result:{a,b,c})check(result.result.runtime_ready&&result.result.ordinary_callback_invoked&&result.result.activated&&
+        !result.result.failure&&result.result.state==sound::NativePlayWorkState::retired,"actual runtime -> copy -> activation -> job retirement");
+    check(main_binding::retire_retail_game_sound_references(main,f),"Main disposes actual priority scenario references");
+    gate=block_next_build();auto cached_cancel=main_binding::submit_retail_queued_sound(main,original,0,0xC1,parameters,f);
+    check(bool(cached_cancel),"cached cancellation candidate admitted");wait_gate(gate);
+    check(main_binding::retire_retail_game_sound_references(main,f)&&main.game_sound_references.empty(),"cached running request clears game reference only");
+    gate->release();auto accepted=poll();
+    check(accepted.handle.same_identity(*cached_cancel)&&accepted.result.branch==sound::RuntimeProgramWorkBranch::cached&&
+        accepted.result.cancellation_requested&&!accepted.result.cancelled&&accepted.result.runtime_ready&&
+        accepted.result.ordinary_callback_invoked&&accepted.result.activated,
+        "cached source branch bypasses requested fresh-cancel gate and activates actual copy");
+    check(bool(main.playback->force_retire(*cached_cancel,pf)),"actual cached result still needs native resource disposal");
+    // Hold the real construction lease after build, then dispose an actual
+    // incumbent. Its tail must still mix while context cleanup is waiting.
+    gate=block_next_build(true);auto gap=main_binding::submit_retail_queued_sound(main,*first,0,0xD1,parameters,f);
+    check(bool(gap),"actual construction/cleanup gap job admitted");wait_gate(gate);
+    {std::lock_guard lock(output_state->mutex);before=output_state->submitted;output_state->nonzero=false;}
+    std::atomic<bool> disposing=false;disposal_probe=[&]{disposing=true;};
+    std::thread observer([&]{await([&]{return disposing.load();},"real private-copy disposal begins");
+        await([&]{std::lock_guard lock(output_state->mutex);return output_state->submitted>before&&output_state->nonzero;},
+            "retained native PCM continues during context cleanup/resource exclusion");gate->release();});
+    check(bool(main.playback->force_retire(*keeper,pf)),"actual incumbent cleanup waits for construction lease");
+    disposal_probe={};observer.join();auto resumed=poll();
+    check(resumed.handle.same_identity(*gap)&&resumed.result.activated&&!resumed.result.failure,
+        "lower construction lease retires before callback and exact owned plan activates after cleanup");
+    check(main_binding::retire_retail_game_sound_references(main,f),"gap job's actual game reference retires");
+    auto unsupported=parameters;unsupported.caller_play_flags=9;
+    auto invalid=runtime.submit_queued_play(original,0,unsupported,rf);check(bool(invalid),"flag9 readiness scenario admitted as actual work");
+    auto failure=poll();check(failure.handle.same_identity(*invalid)&&failure.result.runtime_ready&&failure.result.ordinary_callback_invoked&&
+        !failure.result.activated&&failure.result.failure&&failure.result.failure->kind==sound::PlaybackError::unsupported_play_flags,
+        "runtime-ready callback is not a voice or activation success acknowledgement");
+    invalid=main_binding::submit_retail_queued_sound(main,original,0,0xE1,unsupported,f);check(bool(invalid),"Main owns named unsupported consumer job");
+    await([&]{return !main.playback->observe(*invalid,pf)&&pf.kind==sound::PlaybackError::retired_handle;},"actual failed consumer disposes before Main status");
+    await([&]{return !main_binding::pump_retail_current_sound(main,f);},"Main reports actual pending consumer failure");
+    check(f.sound_catalog.runtime.playback.kind==sound::PlaybackError::unsupported_play_flags,
+        "Main preserves exact unsupported consumer failure before status");
+    check(main_binding::retire_retail_game_sound_references(main,f),"failed job's retired reference removed");
+    for(std::int64_t cut:{0,1}){fail_after=cut;auto rejected=main_binding::submit_retail_queued_sound(main,original,0,0,parameters,f);fail_after=-1;
+        check(!rejected&&main.game_sound_references.empty(),"admission allocation failure exposes no pending game reference");}
+    bool refused=false;std::thread foreign([&]{RetailSoundRuntimeFailure other;
+        refused=!runtime.submit_queued_play(original,0,parameters,other)&&other.kind==RetailSoundRuntimeError::wrong_thread&&
+            !runtime.cancel_pending_play(*invalid,other)&&other.kind==RetailSoundRuntimeError::wrong_thread&&
+            !runtime.poll_play_completion(other)&&other.kind==RetailSoundRuntimeError::wrong_thread;});foreign.join();
+    check(refused,"actual queue/poll/cancellation lifecycle stays on Main thread");
+    await([&]{auto o=main.playback->observe_all_outputs(pf);return o&&!o->retired_groups&&!o->pending_preparations;},"pending scenarios retire real tails and jobs");
+    check(main.playback->unload(*first,pf)&&main.playback->unload(*second,pf),"actual duplicate bank instances unload after true job retirement");
+}
+
 }
 // Wrap only the physical output leaf. The actual production Main/context/Session,
 // QPC worker, program copy, voice and mixer still execute. No endpoint is opened.
@@ -124,6 +236,12 @@ extern "C" void wrapped_copy_dispose(sound::NativeProgramCopy*) __asm__("__wrap_
 extern "C" void wrapped_copy_dispose(sound::NativeProgramCopy* copy){
     if(disposal_probe)disposal_probe();
     real_copy_dispose(copy);
+}
+extern "C" bool real_runtime_build(sound::RuntimeProgramWork*,sound::PreparationFailure&) __asm__("__real__ZN3mka5sound18RuntimeProgramWork5buildERNS0_18PreparationFailureE");
+extern "C" bool wrapped_runtime_build(sound::RuntimeProgramWork*,sound::PreparationFailure&) __asm__("__wrap__ZN3mka5sound18RuntimeProgramWork5buildERNS0_18PreparationFailureE");
+extern "C" bool wrapped_runtime_build(sound::RuntimeProgramWork* work,sound::PreparationFailure& f){
+    std::function<void()> before,after;{std::lock_guard lock(build_hook_mutex);before=std::move(before_runtime_build);after=std::move(after_runtime_build);}
+    if(before)before();const bool result=real_runtime_build(work,f);if(after)after();return result;
 }
 int main(int argc,char** argv) try {
     check(argc==2,"expected original native retail content root");
@@ -222,6 +340,7 @@ int main(int argc,char** argv) try {
             "snapshot rejects an actually retired target context");
         check(main_binding::pump_retail_current_sound(main,f)&&main.sound_status->active_plays.empty()&&
             main.sound_frame_counter==1,"actual status removes stopped/retired associations after typed delivery");
+        exercise_pending(main,*session,*announcr->bank,parameters);
         auto public_parameters=parameters;public_parameters.envelope.release={4,-64,false};
         auto play=main.playback->activate(*main.current_sound,*announcr->bank,0,public_parameters,pf);
         check(bool(play),"actual callback handle enters the real native worker playback");
@@ -300,5 +419,5 @@ int main(int argc,char** argv) try {
             "actual output-close failure is returned after worker-thread release");
         check(host.main->sound_runtime->shutdown(failure),"already released failed output is not closed again");
     }
-    std::puts("PASS production Main sound reference/context/status/worker/PCM tails/70 identities/allocation/disposal gap/error/lifetime; physical output and fault probes wrapped; no game/endpoint");return 0;
+    std::puts("PASS production Main pending/cached-priority/cancellation/reference/context/status/workers/PCM tails/70 identities/allocation/disposal gap/error/lifetime; physical output and fault probes wrapped; no game/endpoint");return 0;
 }catch(const std::exception& e){std::fprintf(stderr,"FAIL production sound context: %s\n",e.what());return 1;}

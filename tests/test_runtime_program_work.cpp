@@ -44,6 +44,34 @@ struct Fixture {
         return (*result)[0];
     }
 };
+void selected_before_construction(const char* path) {
+    for(bool cached:{false,true}) {
+        Fixture x(path,cached?"bg_armory":"announcr");auto work=x.admit();PreparationFailure f;
+        check(work->cached_runtime_available()==cached&&!x.domain->observe()[0].depth,
+              "queue preference observes real cache without acquiring program resources");
+        std::promise<void> selected,resume;auto ready=selected.get_future();auto go=resume.get_future();
+        std::unique_ptr<RuntimeProgramReference> reference;
+        std::thread worker([&]{PreparationFailure error;
+            check(work->begin_build(error),"selected worker publishes running before construction");
+            check(!work->begin_build(error)&&error.kind==PreparationError::invalid_work_state,"selection cannot run twice");
+            selected.set_value();go.wait();
+            check(work->build(error),"same selected worker constructs real program once");
+            check(!work->build(error)&&error.kind==PreparationError::invalid_work_state,"construction cannot replay");
+            if(cached){check(work->finish_build(error),"cached branch bypasses pre-construction request");reference=work->take_result(error);check(bool(reference),"actual cached reference returned");}
+            else check(!work->finish_build(error)&&error.kind==PreparationError::cancelled,"fresh branch suppresses pre-construction request");
+            check(work->retire(error),"selected work retires on actual native thread");});
+        check(ready.wait_for(std::chrono::seconds(10))==std::future_status::ready,"actual worker selected");
+        auto observation=work->observe();
+        check(observation.state==RuntimeProgramWorkState::building&&observation.cancellation_open&&
+              observation.branch==RuntimeProgramWorkBranch::unselected&&!x.domain->observe()[0].depth,
+              "selection owns running identity without resources or guessed cache branch");
+        check(!work->build(f)&&f.kind==PreparationError::wrong_thread,"foreign construction cannot steal selected job");
+        check(work->cancel()==ProgramWorkCancellation::running_requested,"selected unstarted job has running cancellation");
+        resume.set_value();worker.join();
+        check(!work->cached_runtime_available(),"retired ticket supplies no queue preference");
+        if(reference)check(reference->release(f),"real cached reference released");
+    }
+}
 void fresh_commit(const char* path) {
     Fixture x(path);
     auto work = x.admit();
@@ -214,10 +242,11 @@ void cached_and_unload(const char* path) {
 }
 int main(int argc, char** argv) {
     if (argc != 2) return 2;
+    selected_before_construction(argv[1]);
     fresh_commit(argv[1]);
     cancellation(argv[1]);
     blocked_publication_cancel(argv[1]);
     cached_and_unload(argv[1]);
-    std::puts("PASS_NATIVE_RUNTIME_PROGRAM_WORK: 4 actual private build, cancellation, commit and retirement groups");
+    std::puts("PASS_NATIVE_RUNTIME_PROGRAM_WORK: 5 actual selection/private build, cancellation, commit and retirement groups");
     return std::fflush(stdout) || std::ferror(stdout) ? 1 : 0;
 }

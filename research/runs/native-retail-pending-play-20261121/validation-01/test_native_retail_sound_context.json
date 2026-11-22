@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_sound_context.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon"
+  ],
+  "exit": 0,
+  "stdout": "PASS production Main pending/cached-priority/cancellation/reference/context/status/workers/PCM tails/70 identities/allocation/disposal gap/error/lifetime; physical output and fault probes wrapped; no game/endpoint\n",
+  "stderr": "",
+  "seconds": 0.8043934000015724,
+  "source_commit": "f024d5aff8dfeea72c639c3117a214a5c95688b8",
+  "tracked_status": "M cmake/native_game.cmake\n M runtime/include/mka/bank_preparation.hpp\n M runtime/include/mka/playback_owner.hpp\n M runtime/include/mka/retail_main.hpp\n M runtime/include/mka/retail_sound_runtime.hpp\n M runtime/src/native/bank_preparation.cpp\n M runtime/src/native/playback_owner.cpp\n M runtime/src/native/retail_sound_bank_main.cpp\n M runtime/src/native/retail_sound_runtime.cpp\n M tests/test_retail_sound_context.cpp\n M tests/test_runtime_program_work.cpp",
+  "source_manifest_sha256": "983da19544520526e0b804714e033f4b5775fece2dd0cc01ee33b9a7673e2af8",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "2bbcb797f95568669c0ea2fa7416930f323cac3cd29eaf3c8da512f3c318bec1"
+}

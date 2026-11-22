@@ -1,4 +1,6 @@
 #include "mka/playback_owner.hpp"
+#include "mka/pending_play.hpp"
+#include <thread>
 #include <mutex>
 #include <map>
 #include <algorithm>
@@ -87,14 +89,14 @@ struct NativePlaybackOwner::State {
         std::shared_ptr<State> state;
         std::optional<BankReference> bank;
         std::shared_ptr<const void> reservation,clearing_context;
-        bool closes=false,uncertain=false;
+        bool closes=false,uncertain=false,public_reservation=false;
         Activity()=default;
         Activity(const Activity&)=delete;
         Activity& operator=(const Activity&)=delete;
         ~Activity(){
             if(!state)return;
             std::lock_guard lock(state->mutex);
-            if(reservation)for(auto it=state->slots.begin();it!=state->slots.end();++it)if(it->identity==reservation&&it->entry&&it->entry->preparing){state->slots.erase(it);break;}
+            if(reservation)for(auto it=state->slots.begin();it!=state->slots.end();++it)if(it->identity==reservation&&it->entry&&it->entry->preparing){if(public_reservation)it->entry.reset();else state->slots.erase(it);break;}
             if(bank)for(auto it=state->unloading.begin();it!=state->unloading.end();++it)
                 if(same_bank(it->bank,*bank)){if(uncertain)it->uncertain=true;else state->unloading.erase(it);break;}
             if(closes&&!state->closed){if(uncertain)state->close_unknown=true;else state->closing=false;}
@@ -337,6 +339,84 @@ std::optional<NativePlayHandle> NativePlaybackOwner::activate(const NativeSoundC
     NativePlayParameters pending(p.context,p.program,p.envelope,{0},p.source_output_mode,p.caller_play_flags,p.output);
     return play_impl(context,nullptr,&bank,selector,pending,true,f);
 }
+struct NativePreparedPlay {
+    std::unique_ptr<NativeProgramCopy> copy;
+    OrdinaryProgramSchedule schedule;
+    std::uint16_t flags=0;
+};
+std::unique_ptr<NativePreparedPlay> NativePlaybackOwner::prepare_play_plan(
+    std::unique_ptr<RuntimeProgramReference>& reference,const NativePlayParameters& p,PlaybackFailure& f){
+        const auto flags=static_cast<std::uint16_t>(reference->preparation()->runtime_flags()|p.caller_play_flags);
+        // Source mode1 cleanup and alternate activation have distinct unbound
+        // producers. Reject before public publication rather than strand output.
+        if(flags&9u){f.kind=PlaybackError::unsupported_play_flags;return {};}
+        auto copy=NativeProgramCopy::clone(reference,f.copy);
+        if(!copy){f.kind=PlaybackError::copy_failed;return {};}
+        auto schedule=copy->bind_preactivated_schedule(p.initial_deadline,flags,f.copy);
+        if(!schedule){f.kind=PlaybackError::copy_failed;return {};}
+        // Semantic coverage must precede incumbent stop and host-clock sampling.
+        if(!validate_program_coverage(*schedule->data,f.program)){f.kind=PlaybackError::program_failed;return {};}
+        auto plan=std::make_unique<NativePreparedPlay>();plan->copy=std::move(copy);plan->schedule=std::move(*schedule);plan->flags=flags;return plan;
+ }
+bool NativePlaybackOwner::commit_play_plan(const std::shared_ptr<State>& state,const NativeSoundContext& context,
+    const NativePlayHandle& handle,NativePreparedPlay& plan,bool sample_activation_clock,PlaybackFailure& f){
+    // The reservation is owned throughout this call, including unlocked clock
+    // callbacks. Re-fetch by identity after every resource/concurrency gap.
+    std::shared_ptr<State::Entry> entry;
+    {std::lock_guard lock(state->mutex);
+     for(auto& slot:state->slots)if(slot.identity==handle.identity_){entry=slot.entry;break;}}
+    if(!entry||!entry->preparing){f.kind=PlaybackError::invalid_work_state;return false;}
+    const auto& p=entry->parameters;
+    const auto* native=std::get_if<AudioBankHandle>(&entry->bank);
+        {std::unique_lock lock(state->mutex);
+         // No vector position is retained across resource construction.
+         auto* destination=state->context(context,f);if(!state->available(f)||!destination)return false;
+         if(native&&!state->native_session->load_state(*native,f.native_bank)){f.kind=PlaybackError::native_bank_failed;return false;}
+         auto role=state->select(*destination,p.output,f);if(!role)return false;
+         auto found=destination->roles.find(*role);State::Entry* incumbent=nullptr;
+         if(found!=destination->roles.end()&&found->second){incumbent=state->entry_identity(found->second);
+             if(!incumbent){f.kind=PlaybackError::unknown_handle;return false;}
+             const auto old_priority=incumbent->parameters.output.priority;
+             if(p.output.priority<old_priority||(p.output.priority==old_priority&&(plan.flags&0x80u))){f.kind=PlaybackError::output_priority_refused;return false;}
+         }
+         // Allocate all registry/list storage before an irreversible output stop.
+         if(destination->ordinary.size()==destination->ordinary.max_size()){f.kind=PlaybackError::host_capacity;return false;}
+         destination->ordinary.reserve(destination->ordinary.size()+1);
+         const bool inserted=found==destination->roles.end();
+         if(inserted)found=destination->roles.emplace(*role,std::shared_ptr<const void>{}).first;
+         struct RoleGuard {State::Context* context;std::size_t role;bool erase;
+             ~RoleGuard(){if(erase)context->roles.erase(role);}} role_guard{destination,*role,inserted};
+         if(incumbent){
+             auto stop=incumbent->executor->stop_from_owner(f.program);
+             if(!stop){f.kind=PlaybackError::program_failed;return false;}
+             if(!incumbent->stop_voices(*stop,f))return false;
+             incumbent->stopped=true;incumbent->finished=true;state->detach_dispatch(*incumbent);
+         }
+         auto deadline=p.initial_deadline;
+         if(sample_activation_clock){
+             // Seal registry mutation, then release its lock around the host
+             // counter port. Reentrant callers get a named busy result, not a
+             // deadlock; pending preparations cannot commit across this phase.
+             auto now=state->read_clock(lock,f);
+             if(!now){f.kind=PlaybackError::clock_failed;return false;}
+             if(!state->available(f)||!state->context(context,f))return false;
+             // A native host-clock callback can revoke the shared Session.
+             // Do not publish a prepared play after that known revocation.
+             if(native&&!state->native_session->load_state(*native,f.native_bank)){f.kind=PlaybackError::native_bank_failed;return false;}
+             deadline=ordinary_initial_deadline(plan.copy->commands().front(),*now);
+         }
+         // Copy/reset preflight established nonnull, nonempty immutable data.
+         // This local construction allocates no storage and publishes no callback.
+         auto executor=ProgramExecutor::create(plan.schedule.data,deadline,f.program);
+         if(!executor){f.kind=PlaybackError::program_failed;return false;}
+         entry->executor.emplace(std::move(*executor));entry->bank_identity=plan.copy->bank_identity();entry->copy=std::move(plan.copy);entry->effective_play_flags=plan.flags;
+         entry->output_role=*role;entry->dispatch_live=true;entry->preparing=false;
+         destination->ordinary.push_back(entry->identity);found->second=entry->identity;
+         if(incumbent)incumbent->replaced=true;
+         role_guard.erase=false;
+        }
+    return true;
+}
 std::optional<NativePlayHandle> NativePlaybackOwner::play_impl(const NativeSoundContext& context,
     const AudioBankCommand* c,const AudioBankHandle* native,std::int32_t selector,
     const NativePlayParameters& p,bool sample_activation_clock,PlaybackFailure& f){
@@ -357,66 +437,140 @@ std::optional<NativePlayHandle> NativePlaybackOwner::play_impl(const NativeSound
         auto reference=native?state->native_session->acquire_runtime_program(*native,selector,f.preparation,f.native_bank):
             state->service->acquire_runtime_program(*c,f.preparation,f.service);
         if(!reference){f.kind=native?PlaybackError::native_bank_failed:PlaybackError::service_failed;return {};}
-        const auto flags=static_cast<std::uint16_t>(reference->preparation()->runtime_flags()|p.caller_play_flags);
-        // Source mode1 cleanup and alternate activation have distinct unbound
-        // producers. Reject before public publication rather than strand output.
-        if(flags&9u){f.kind=PlaybackError::unsupported_play_flags;return {};}
-        auto copy=NativeProgramCopy::clone(reference,f.copy);
-        if(!copy){f.kind=PlaybackError::copy_failed;return {};}
-        auto schedule=copy->bind_preactivated_schedule(p.initial_deadline,flags,f.copy);
-        if(!schedule){f.kind=PlaybackError::copy_failed;return {};}
-        // Semantic coverage must precede incumbent stop and host-clock sampling.
-        if(!validate_program_coverage(*schedule->data,f.program)){f.kind=PlaybackError::program_failed;return {};}
-        {std::unique_lock lock(state->mutex);
-         // No vector position is retained across resource construction.
-         auto* destination=state->context(context,f);if(!state->available(f)||!destination)return {};
-         if(native&&!state->native_session->load_state(*native,f.native_bank)){f.kind=PlaybackError::native_bank_failed;return {};}
-         auto role=state->select(*destination,p.output,f);if(!role)return {};
-         auto found=destination->roles.find(*role);State::Entry* incumbent=nullptr;
-         if(found!=destination->roles.end()&&found->second){incumbent=state->entry_identity(found->second);
-             if(!incumbent){f.kind=PlaybackError::unknown_handle;return {};}
-             const auto old_priority=incumbent->parameters.output.priority;
-             if(p.output.priority<old_priority||(p.output.priority==old_priority&&(flags&0x80u))){f.kind=PlaybackError::output_priority_refused;return {};}
-         }
-         // Allocate all registry/list storage before an irreversible output stop.
-         if(destination->ordinary.size()==destination->ordinary.max_size()){f.kind=PlaybackError::host_capacity;return {};}
-         destination->ordinary.reserve(destination->ordinary.size()+1);
-         const bool inserted=found==destination->roles.end();
-         if(inserted)found=destination->roles.emplace(*role,std::shared_ptr<const void>{}).first;
-         struct RoleGuard {State::Context* context;std::size_t role;bool erase;
-             ~RoleGuard(){if(erase)context->roles.erase(role);}} role_guard{destination,*role,inserted};
-         if(incumbent){
-             auto stop=incumbent->executor->stop_from_owner(f.program);
-             if(!stop){f.kind=PlaybackError::program_failed;return {};}
-             if(!incumbent->stop_voices(*stop,f))return {};
-             incumbent->stopped=true;incumbent->finished=true;state->detach_dispatch(*incumbent);
-         }
-         auto deadline=p.initial_deadline;
-         if(sample_activation_clock){
-             // Seal registry mutation, then release its lock around the host
-             // counter port. Reentrant callers get a named busy result, not a
-             // deadlock; pending preparations cannot commit across this phase.
-             auto now=state->read_clock(lock,f);
-             if(!now){f.kind=PlaybackError::clock_failed;return {};}
-             if(!state->available(f)||!state->context(context,f))return {};
-             // A native host-clock callback can revoke the shared Session.
-             // Do not publish a prepared play after that known revocation.
-             if(native&&!state->native_session->load_state(*native,f.native_bank)){f.kind=PlaybackError::native_bank_failed;return {};}
-             deadline=ordinary_initial_deadline(copy->commands().front(),*now);
-         }
-         // Copy/reset preflight established nonnull, nonempty immutable data.
-         // This local construction allocates no storage and publishes no callback.
-         auto executor=ProgramExecutor::create(schedule->data,deadline,f.program);
-         if(!executor){f.kind=PlaybackError::program_failed;return {};}
-         entry->executor.emplace(std::move(*executor));entry->bank_identity=copy->bank_identity();entry->copy=std::move(copy);entry->effective_play_flags=flags;
-         entry->output_role=*role;entry->dispatch_live=true;entry->preparing=false;
-         destination->ordinary.push_back(entry->identity);found->second=entry->identity;
-         if(incumbent)incumbent->replaced=true;
-         role_guard.erase=false;work.reservation.reset();
-        }
+        auto plan=prepare_play_plan(reference,p,f);if(!plan)return {};
+        if(!commit_play_plan(state,context,handle,*plan,sample_activation_clock,f))return {};
+        work.reservation.reset();
         return handle;
     }catch(const std::bad_alloc&){allocation_failure(f);}catch(const std::length_error&){f.kind=PlaybackError::host_capacity;}
     catch(...){f.kind=PlaybackError::native_exception;}return {};
+}
+
+struct NativePlayWork::Impl {
+    // Release the public reservation only after all actual private resources.
+    std::unique_ptr<NativePlaybackOwner::State::Activity> admission;
+    std::shared_ptr<RuntimeProgramWork> runtime;
+    std::unique_ptr<RuntimeProgramReference> reference;
+    std::unique_ptr<NativePreparedPlay> plan;
+    NativePlayHandle handle;
+    NativeSoundContext context;
+    NativePlayParameters parameters;
+    mutable std::mutex mutex;
+    std::thread::id worker;
+    NativePlayWorkObservation observation;
+    bool body_started=false,completing=false;
+    explicit Impl(const NativePlayParameters& p):parameters(p){}
+    ~Impl(){plan.reset();reference.reset();runtime.reset();admission.reset();}
+    bool worker_access(PlaybackFailure& f)const {
+        if(worker==std::thread::id{}||worker==std::this_thread::get_id())return true;
+        f.kind=PlaybackError::wrong_thread;return false;
+    }
+};
+NativePlayWork::~NativePlayWork()=default;
+std::shared_ptr<NativePlayWork> NativePlaybackOwner::admit_queued_play(const NativeSoundContext& context,
+    const AudioBankHandle& bank,std::int32_t selector,const NativeActivationParameters& p,PlaybackFailure& f){
+    f={};auto state=state_;if(!state){f.kind=PlaybackError::moved_owner;return {};}
+    if(!state->native_session){f.kind=PlaybackError::wrong_bank_interface;return {};}
+    try {
+        NativePlayParameters parameters{p.context,p.program,p.envelope,{0},p.source_output_mode,p.caller_play_flags,p.output};
+        auto data=std::make_shared<NativePlayWork::Impl>(parameters);
+        auto result=std::shared_ptr<NativePlayWork>(new NativePlayWork(data));
+        data->admission=std::make_unique<State::Activity>();data->context=context;
+        {std::lock_guard lock(state->mutex);
+         if(!state->available(f)||!state->context(context,f))return {};
+         if(const auto gate=state->unloading_state(bank)){f.kind=*gate?PlaybackError::bank_state_unknown:PlaybackError::bank_unloading;return {};}
+         if(!state->admit(state,*data->admission,f))return {};
+         State::Slot slot;slot.identity=std::make_shared<int>(0);slot.entry=std::make_shared<State::Entry>(bank,parameters,context.identity_);
+         slot.entry->identity=slot.identity;data->handle.owner_=state->identity;data->handle.identity_=slot.identity;
+         state->slots.push_back(std::move(slot));data->admission->reservation=data->handle.identity_;
+        }
+        data->runtime=state->native_session->admit_runtime_program(bank,selector,f.preparation,f.native_bank);
+        if(!data->runtime){f.kind=PlaybackError::native_bank_failed;return {};}
+        // All fallible admission allocations precede public identity exposure.
+        data->admission->public_reservation=true;return result;
+    }catch(const std::bad_alloc&){allocation_failure(f);}
+     catch(const std::length_error&){f.kind=PlaybackError::host_capacity;}
+     catch(...){f.kind=PlaybackError::native_exception;}return {};
+}
+NativePlayHandle NativePlayWork::handle()const {return state_->handle;}
+bool NativePlayWork::cached_runtime_available()const {
+    std::lock_guard lock(state_->mutex);return state_->runtime&&state_->runtime->cached_runtime_available();
+}
+bool NativePlayWork::begin_build(PlaybackFailure& f){
+    f={};auto s=state_;std::lock_guard lock(s->mutex);
+    if(s->observation.state!=NativePlayWorkState::queued){f.kind=PlaybackError::invalid_work_state;return false;}
+    if(!s->runtime->begin_build(f.preparation)){f.kind=PlaybackError::native_bank_failed;return false;}
+    s->worker=std::this_thread::get_id();s->observation.state=NativePlayWorkState::building;return true;
+}
+bool NativePlayWork::build(PlaybackFailure& f){
+    f={};auto s=state_;
+    {std::lock_guard lock(s->mutex);if(!s->worker_access(f))return false;
+     if(s->observation.state!=NativePlayWorkState::building||s->body_started){f.kind=PlaybackError::invalid_work_state;return false;}s->body_started=true;}
+    s->runtime->build(f.preparation);PreparationFailure decision;
+    if(s->runtime->finish_build(decision))s->reference=s->runtime->take_result(f.preparation);
+    else f.preparation=decision;
+    const auto runtime=s->runtime->observe();
+    std::lock_guard lock(s->mutex);s->observation.branch=runtime.branch;
+    s->observation.runtime_ready=bool(s->reference);s->observation.cancelled=runtime.state==RuntimeProgramWorkState::cancelled;
+    s->observation.state=NativePlayWorkState::runtime_built;
+    if(!s->reference&&!s->observation.cancelled){f.kind=PlaybackError::native_bank_failed;s->observation.failure=f;}
+    return bool(s->reference);
+}
+bool NativePlayWork::complete(bool admitted,PlaybackFailure& f){
+    f={};auto s=state_;
+    {std::lock_guard lock(s->mutex);if(!s->worker_access(f))return false;
+     if(s->observation.state!=NativePlayWorkState::runtime_built||s->completing){f.kind=PlaybackError::invalid_work_state;return false;}s->completing=true;}
+    // Actual construction resources must leave before any context consumer.
+    // The outer bank/association reservation remains held across this gap.
+    bool done=true,activated=false,callback=false;
+    try {
+        if(s->runtime->observe().state!=RuntimeProgramWorkState::retired&&!s->runtime->retire(f.preparation)){
+            f.kind=PlaybackError::native_bank_failed;done=false;
+        }else {
+            {std::lock_guard lock(s->mutex);callback=!s->observation.cancelled;
+             if(callback)s->observation.ordinary_callback_invoked=true;}
+            if(callback){
+                if(!admitted){f.kind=PlaybackError::closed;}
+                else if(!s->reference&&!s->plan){std::lock_guard lock(s->mutex);if(s->observation.failure)f=*s->observation.failure;}
+                else {
+                    if(!s->plan)s->plan=NativePlaybackOwner::prepare_play_plan(s->reference,s->parameters,f);
+                    if(s->plan){activated=NativePlaybackOwner::commit_play_plan(s->admission->state,s->context,s->handle,*s->plan,true,f);
+                        if(!activated&&f.kind==PlaybackError::operation_active)done=false;}
+                }
+            }
+        }
+    }catch(const std::bad_alloc&){f.kind=PlaybackError::allocation_failed;}
+     catch(const std::length_error&){f.kind=PlaybackError::host_capacity;}
+     catch(...){f.kind=PlaybackError::native_exception;}
+    std::lock_guard lock(s->mutex);s->completing=false;
+    if(done){s->observation.activated=activated;s->observation.pending=false;s->observation.state=NativePlayWorkState::callback_complete;
+        if(f.kind!=PlaybackError::none)s->observation.failure=f;}
+    return done&&f.kind==PlaybackError::none;
+}
+bool NativePlayWork::retire(PlaybackFailure& f){
+    f={};auto s=state_;
+    {std::lock_guard lock(s->mutex);if(!s->worker_access(f))return false;
+     if(s->observation.state!=NativePlayWorkState::callback_complete||s->completing){f.kind=PlaybackError::invalid_work_state;return false;}s->completing=true;}
+    std::shared_ptr<RuntimeProgramWork> runtime;
+    {std::lock_guard lock(s->mutex);runtime=std::move(s->runtime);}
+    s->plan.reset();s->reference.reset();runtime.reset();s->admission.reset();
+    std::lock_guard lock(s->mutex);s->completing=false;s->observation.state=NativePlayWorkState::retired;return true;
+}
+ProgramWorkCancellation NativePlayWork::cancel(){
+    auto s=state_;std::lock_guard lock(s->mutex);
+    if(s->completing&&s->observation.branch==RuntimeProgramWorkBranch::cached){
+        s->observation.cancellation_requested=true;s->observation.pending=false;return ProgramWorkCancellation::running_requested;
+    }
+    if(!s->runtime||s->completing||s->observation.state==NativePlayWorkState::callback_complete||
+        s->observation.state==NativePlayWorkState::retired)return ProgramWorkCancellation::not_cancellable;
+    auto answer=s->runtime->cancel();
+    if(answer==ProgramWorkCancellation::not_cancellable&&s->runtime->observe().branch==RuntimeProgramWorkBranch::cached)
+        answer=ProgramWorkCancellation::running_requested;
+    if(answer!=ProgramWorkCancellation::not_cancellable){s->observation.cancellation_requested=true;s->observation.pending=false;}
+    if(answer==ProgramWorkCancellation::queued_removed){s->observation.cancelled=true;s->observation.state=NativePlayWorkState::runtime_built;}
+    return answer;
+}
+NativePlayWorkObservation NativePlayWork::observe()const {
+    std::lock_guard lock(state_->mutex);return state_->observation;
 }
 std::optional<ProgramStep> NativePlaybackOwner::tick(const NativePlayHandle& h,ProgramClockWord now,PlaybackFailure& f){
     f={};if(!state_){f.kind=PlaybackError::moved_owner;return {};}std::lock_guard lock(state_->mutex);if(!state_->available(f))return {};

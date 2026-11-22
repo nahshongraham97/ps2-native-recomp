@@ -4,6 +4,8 @@
 #include "mka/retail_sound_bank_catalog.hpp"
 #include "mka/retail_sound_runtime.hpp"
 #include "native_retail_startup.hpp"
+#include <new>
+#include <stdexcept>
 
 namespace mka::retail {
 namespace {
@@ -117,6 +119,28 @@ bool initialize_retail_current_sound(NativeRetailMainState& main, StartupFailure
     return true;
 }
 
+std::optional<sound::NativePlayHandle> submit_retail_queued_sound(NativeRetailMainState& main,
+    const sound::AudioBankHandle& bank,std::int32_t selector,std::uint32_t semantic_sound_id,
+    const sound::NativeActivationParameters& parameters,StartupFailure& failure){
+    if(!owner(main,failure,true))return {};
+    if(!main.sound_runtime||main.sound_runtime->playback_owner()!=main.playback||
+       !main.sound_runtime->sound_context().same_identity(*main.current_sound)){
+        failure.kind=StartupError::sound_catalog;failure.operation="queued game sound requires actual current-sound runtime";return {};
+    }
+    try {
+        // Reserve the real game record before exposing any pending identity.
+        if(main.game_sound_references.size()==main.game_sound_references.max_size()){
+            failure.kind=StartupError::allocation;failure.operation="native game sound reference capacity";return {};
+        }
+        main.game_sound_references.reserve(main.game_sound_references.size()+1);
+        auto play=main.sound_runtime->submit_queued_play(bank,selector,parameters,failure.sound_catalog.runtime);
+        if(!play){failure.kind=StartupError::sound_catalog;failure.sound_catalog.kind=RetailSoundCatalogError::runtime;
+            failure.operation=failure.sound_catalog.runtime.operation;return {};}
+        main.game_sound_references.push_back({*play,bank,semantic_sound_id});return play;
+    }catch(const std::bad_alloc&){failure.kind=StartupError::allocation;}
+     catch(const std::length_error&){failure.kind=StartupError::allocation;}
+    failure.operation="native queued game sound reference admission";return {};
+}
 bool retire_retail_game_sound_references(NativeRetailMainState& main, StartupFailure& failure) {
     if(!owner(main,failure,false))return false;
     if(main.game_sound_references.empty())return true;
@@ -137,7 +161,18 @@ bool retire_retail_game_sound_references(NativeRetailMainState& main, StartupFai
         const auto& handle=main.game_sound_references.back().playback;
         if(!handle.empty()){
             sound::PlaybackFailure playback_failure;
-            const auto present=main.playback->observe(handle,playback_failure);
+            auto present=main.playback->observe(handle,playback_failure);
+            if(!present&&playback_failure.kind==sound::PlaybackError::operation_active){
+                RetailSoundRuntimeFailure cancellation_failure;
+                auto cancellation=main.sound_runtime->cancel_pending_play(handle,cancellation_failure);
+                if(cancellation&&*cancellation!=sound::ProgramWorkCancellation::not_cancellable){
+                    // An accepted running request removes the game record only.
+                    // The actual resource job keeps the association until its
+                    // callback/suppression and native retirement really finish.
+                    main.game_sound_references.pop_back();continue;
+                }
+                present=main.playback->observe(handle,playback_failure);
+            }
             if(!present){
                 if(playback_failure.kind!=sound::PlaybackError::retired_handle)
                     return fail_playback(std::move(playback_failure),"12C1D0 actual native play lookup");
@@ -178,6 +213,17 @@ bool pump_retail_current_sound(NativeRetailMainState& main, StartupFailure& fail
         failure.sound_catalog.kind = RetailSoundCatalogError::runtime;
         failure.operation = failure.sound_catalog.runtime.operation;
         return finish_attempt(false);
+    }
+    if(main.sound_runtime){
+        auto completed=main.sound_runtime->poll_play_completion(failure.sound_catalog.runtime);
+        if(failure.sound_catalog.runtime.kind!=RetailSoundRuntimeError::none||
+           (completed&&completed->result.failure)){
+            if(completed&&completed->result.failure){failure.sound_catalog.runtime.kind=RetailSoundRuntimeError::playback;
+                failure.sound_catalog.runtime.playback=*completed->result.failure;
+                failure.sound_catalog.runtime.operation="native queued play ordinary consumer failed";}
+            failure.kind=StartupError::sound_catalog;failure.sound_catalog.kind=RetailSoundCatalogError::runtime;
+            failure.operation=failure.sound_catalog.runtime.operation;return finish_attempt(false);
+        }
     }
     if (!required_result(current_sound_required::update_programs_after_bank_results_3152c0(main, failure),
             failure, "3152C0 required native sound status publication")) return finish_attempt(false);
