@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "core.autocrlf=false",
+    "apply",
+    "--3way",
+    "--whitespace=error-all",
+    "-"
+  ],
+  "exit": 0,
+  "log": "Applied patch to 'cmake/native_game.cmake' cleanly.\nApplied patch to 'runtime/include/mka/art_section_data.hpp' cleanly.\nApplied patch to 'runtime/include/mka/font_atlas.hpp' cleanly.\nFalling back to direct application...\nApplied patch to 'runtime/src/native/art_section_data.cpp' cleanly.\nApplied patch to 'runtime/src/native/font_atlas.cpp' cleanly.\nFalling back to direct application...\nFalling back to direct application...\nFalling back to direct application...\nFalling back to direct application...\n"
+}

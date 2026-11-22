@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+    "--target",
+    "test_native_retail_system_art_cpu",
+    "test_native_font_atlas_system_art",
+    "test_native_font_atlas",
+    "test_native_art_section_data",
+    "test_native_indexed_sprite_data",
+    "-j2"
+  ],
+  "exit": 0,
+  "seconds": 10.309457799987285,
+  "log_sha256": "238e79b35870638be697a9db1d3328bc2946aa091b62cd231f2193aae9ad0475",
+  "source_manifest_sha256": "2c832ed9656c921b3ff81d8447b78caa9a507604a5cfbf4191bba5b588f55411",
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3"
+}

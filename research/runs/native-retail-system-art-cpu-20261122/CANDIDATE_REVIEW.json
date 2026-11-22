@@ -1,0 +1,37 @@
+{
+  "status": "PASS_BOUNDED_COMMITTED_SYSTEM_ART_CPU_CANDIDATE",
+  "candidate": "dbdce79b98c873021cf7575ce7eb6211d5b13118",
+  "source_blobs": 867,
+  "artifact_blobs": 175,
+  "complete_ee_bodies": 22,
+  "original_words": 2980,
+  "original_asset_sha256": "9900120ff8782b16e0d73ee885c8f4df6c82545b915dd10105e6694a03658a39",
+  "original_records": 170,
+  "retained_current_binaries": {
+    "cpu": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-font-zero\\build-font-zero\\test_native_retail_system_art_cpu.exe",
+      "sha256": "465b31adfb1c1b32ac6c5d7ace84e7c53a41b327a805a9024cbe427547a9ccfa"
+    },
+    "section-existing": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-font-zero\\build-font-zero\\test_native_art_section_data.exe",
+      "sha256": "090503c70d930c01a0135e4f9e6229fde1b941c0832e1dbef31e11bfba18a0fd"
+    },
+    "all-atlases": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-font-zero\\build-font-zero\\test_native_font_atlas_system_art.exe",
+      "sha256": "46b1bf6ae44f8dba25947298dae8da1347a999134dae3432f50742f3c905b2bb"
+    },
+    "atlas-existing": {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-font-zero\\build-font-zero\\test_native_font_atlas.exe",
+      "sha256": "20b53fee7fb6f013290a1589ae709788bb0426bbbd93486a81d4db3fe8f92fdc"
+    }
+  },
+  "runtime_review": "CPU data only; no Main binding closed.",
+  "source_loaded": false,
+  "converted": false,
+  "cache_published": false,
+  "gpu_realized": false,
+  "game_run": false,
+  "frames": [],
+  "audio": [],
+  "acceptance": "OPEN"
+}

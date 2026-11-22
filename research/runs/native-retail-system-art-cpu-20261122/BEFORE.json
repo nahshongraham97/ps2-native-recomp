@@ -1,0 +1,28 @@
+{
+  "base": "fec09d5e10fd076384db7f60cea989cbf337a15d",
+  "candidate": "dbdce79b98c873021cf7575ce7eb6211d5b13118",
+  "paths": [
+    "cmake/native_game.cmake",
+    "runtime/include/mka/art_section_data.hpp",
+    "runtime/include/mka/font_atlas.hpp",
+    "runtime/include/mka/retail_system_art_cpu.hpp",
+    "runtime/src/native/art_section_data.cpp",
+    "runtime/src/native/font_atlas.cpp",
+    "runtime/src/native/font_atlas_variants.hpp",
+    "runtime/src/native/retail_system_art_cpu.cpp",
+    "tests/test_font_atlas_system_art.cpp",
+    "tests/test_retail_system_art_cpu.cpp"
+  ],
+  "before": {
+    "cmake/native_game.cmake": "ef73a3b98cefe6573b2888d9488444c6fd918a6cdde647d92064bcad5f28a697",
+    "runtime/include/mka/art_section_data.hpp": "61ad5ccf48c97bbca5741f5f716352f87454de6d314ded0f859225a8cf97f053",
+    "runtime/include/mka/font_atlas.hpp": "edd8368dd89014dd9ae8f9135e3ca702f3574e47e7f460cb59db025a737997e2",
+    "runtime/include/mka/retail_system_art_cpu.hpp": null,
+    "runtime/src/native/art_section_data.cpp": "c76bde32e4e73d0777f8083a63dc2b1c258aa005c410da3c54086c944f8f73fc",
+    "runtime/src/native/font_atlas.cpp": "05bf36ca65ed68fa485d680c524d8f36e6970f42bf35f1760bbe8e79712046a0",
+    "runtime/src/native/font_atlas_variants.hpp": null,
+    "runtime/src/native/retail_system_art_cpu.cpp": null,
+    "tests/test_font_atlas_system_art.cpp": null,
+    "tests/test_retail_system_art_cpu.cpp": null
+  }
+}

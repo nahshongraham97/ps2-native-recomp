@@ -3,6 +3,7 @@
 #include <optional>
 #include <string>
 #include <vector>
+#include <utility>
 
 namespace mka {
 enum class FontAtlasError { none, truncated, malformed_wrapper, malformed_chunk,
@@ -19,16 +20,18 @@ public:
     FontAtlas& operator=(FontAtlas other) noexcept { swap(other); return *this; }
     void swap(FontAtlas& other) noexcept {
         source_.swap(other.source_);indices_.swap(other.indices_);rgba_.swap(other.rgba_);
+        std::swap(width_,other.width_);std::swap(height_,other.height_);
     }
     static std::optional<FontAtlas> decode(std::vector<std::uint8_t> serialized,
                                          FontAtlasFailure&);
-    std::uint32_t width() const noexcept { return 256; }
-    std::uint32_t height() const noexcept { return 128; }
+    std::uint32_t width() const noexcept { return width_; }
+    std::uint32_t height() const noexcept { return height_; }
     const std::vector<std::uint8_t>& serialized() const noexcept { return source_; }
     const std::vector<std::uint8_t>& indices() const noexcept { return indices_; }
     const std::vector<std::uint8_t>& rgba_raw_alpha() const noexcept { return rgba_; }
 private:
     FontAtlas() = default;
     std::vector<std::uint8_t> source_, indices_, rgba_;
+    std::uint32_t width_{},height_{};
 };
 } // namespace mka

@@ -513,6 +513,14 @@ target_link_libraries(test_native_hud_health_geometry PRIVATE mka_native_hud_hea
 # Owned serialized art data from native filesystem ranges; no texture-ready claim.
 add_library(mka_native_art_section_data STATIC EXCLUDE_FROM_ALL runtime/src/native/art_section_data.cpp)
 target_link_libraries(mka_native_art_section_data PUBLIC mka_native_content_volume)
+add_library(mka_native_retail_system_art_cpu STATIC EXCLUDE_FROM_ALL runtime/src/native/retail_system_art_cpu.cpp)
+target_include_directories(mka_native_retail_system_art_cpu PUBLIC runtime/include)
+target_link_libraries(mka_native_retail_system_art_cpu PUBLIC mka_native_retail_startup mka_native_art_section_data mka_native_media)
+add_executable(test_native_retail_system_art_cpu EXCLUDE_FROM_ALL tests/test_retail_system_art_cpu.cpp)
+target_link_libraries(test_native_retail_system_art_cpu PRIVATE mka_native_retail_system_art_cpu)
+add_executable(test_native_font_atlas_system_art EXCLUDE_FROM_ALL tests/test_font_atlas_system_art.cpp)
+target_link_libraries(test_native_font_atlas_system_art PRIVATE mka_native_media)
+
 add_executable(test_native_art_section_data EXCLUDE_FROM_ALL tests/test_art_section_data.cpp)
 target_link_libraries(test_native_art_section_data PRIVATE mka_native_art_section_data)
 
@@ -521,3 +529,10 @@ add_library(mka_native_indexed_sprite_data STATIC EXCLUDE_FROM_ALL runtime/src/n
 target_link_libraries(mka_native_indexed_sprite_data PUBLIC mka_native_art_section_data)
 add_executable(test_native_indexed_sprite_data EXCLUDE_FROM_ALL tests/test_indexed_sprite_data.cpp)
 target_link_libraries(test_native_indexed_sprite_data PRIVATE mka_native_indexed_sprite_data)
+
+if(TARGET test_native_retail_system_art_cpu AND WIN32)
+    add_custom_command(TARGET test_native_retail_system_art_cpu POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:SDL2::SDL2>
+        $<TARGET_FILE_DIR:test_native_retail_system_art_cpu> VERBATIM)
+endif()

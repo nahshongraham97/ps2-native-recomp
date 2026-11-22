@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-font-zero\\build-font-zero\\test_native_retail_system_art_cpu.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-font-zero\\research\\runs\\parallel-native-font-zero-20261122\\validation-03\\disposable-errors"
+  ],
+  "exit": 0,
+  "executable_sha256": "465b31adfb1c1b32ac6c5d7ace84e7c53a41b327a805a9024cbe427547a9ccfa",
+  "log_sha256": "9637127edcef3127a496702c8a946027536970f03192626e51cdff734cfd3056",
+  "source_manifest_sha256": "9e8055a8eda64503971fdeca897f49492ca8ec456d9b32bb98302baaffe20c4b"
+}

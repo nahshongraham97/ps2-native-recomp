@@ -1,0 +1,5 @@
+{
+  "status": "REPORTING_PREFLIGHT_FAILED",
+  "reason": "Read-only schema probe assumed DESCRIPTORS root was a dict; actual root is a list. No build/test result changed; corrected probe inspected actual schemas.",
+  "candidate": "dbdce79b98c873021cf7575ce7eb6211d5b13118"
+}

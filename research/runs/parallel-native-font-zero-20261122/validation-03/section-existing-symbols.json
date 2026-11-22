@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/bin/llvm-nm.exe",
+    "--demangle",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-font-zero\\build-font-zero\\test_native_art_section_data.exe"
+  ],
+  "exit": 0,
+  "log_sha256": "5e1859e683145efefdc9e35d5e0773e88f41bf91fc38a0333caefa76101de15f"
+}

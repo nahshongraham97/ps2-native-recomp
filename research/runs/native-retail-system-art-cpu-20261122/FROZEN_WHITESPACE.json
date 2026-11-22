@@ -1,0 +1,1105 @@
+{
+  "status": "HASH_CLASSIFIED_IMMUTABLE_CANDIDATE_DATA",
+  "candidate": "dbdce79b98c873021cf7575ce7eb6211d5b13118",
+  "findings": [
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-01.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "146077a3951732a1182010bd23b0ef8085e6b2eb502d75b86592a2682cd21330"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-01.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "146077a3951732a1182010bd23b0ef8085e6b2eb502d75b86592a2682cd21330"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-01.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "146077a3951732a1182010bd23b0ef8085e6b2eb502d75b86592a2682cd21330"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-01.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "146077a3951732a1182010bd23b0ef8085e6b2eb502d75b86592a2682cd21330"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-01.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "146077a3951732a1182010bd23b0ef8085e6b2eb502d75b86592a2682cd21330"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-01.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "146077a3951732a1182010bd23b0ef8085e6b2eb502d75b86592a2682cd21330"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-01.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "146077a3951732a1182010bd23b0ef8085e6b2eb502d75b86592a2682cd21330"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-01.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "146077a3951732a1182010bd23b0ef8085e6b2eb502d75b86592a2682cd21330"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-01.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "146077a3951732a1182010bd23b0ef8085e6b2eb502d75b86592a2682cd21330"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-01.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "146077a3951732a1182010bd23b0ef8085e6b2eb502d75b86592a2682cd21330"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-01.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "146077a3951732a1182010bd23b0ef8085e6b2eb502d75b86592a2682cd21330"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-01.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "146077a3951732a1182010bd23b0ef8085e6b2eb502d75b86592a2682cd21330"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-01.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "146077a3951732a1182010bd23b0ef8085e6b2eb502d75b86592a2682cd21330"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-01.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "146077a3951732a1182010bd23b0ef8085e6b2eb502d75b86592a2682cd21330"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-01.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "146077a3951732a1182010bd23b0ef8085e6b2eb502d75b86592a2682cd21330"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-01.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "146077a3951732a1182010bd23b0ef8085e6b2eb502d75b86592a2682cd21330"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-01.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "146077a3951732a1182010bd23b0ef8085e6b2eb502d75b86592a2682cd21330"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-01.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "146077a3951732a1182010bd23b0ef8085e6b2eb502d75b86592a2682cd21330"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-02.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "20669bef32c61df46f329088ca617bfa1db65b6098f2a1f502d0fbc66a0cc45e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-02.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "20669bef32c61df46f329088ca617bfa1db65b6098f2a1f502d0fbc66a0cc45e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-02.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "20669bef32c61df46f329088ca617bfa1db65b6098f2a1f502d0fbc66a0cc45e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-02.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "20669bef32c61df46f329088ca617bfa1db65b6098f2a1f502d0fbc66a0cc45e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-02.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "20669bef32c61df46f329088ca617bfa1db65b6098f2a1f502d0fbc66a0cc45e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-02.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "20669bef32c61df46f329088ca617bfa1db65b6098f2a1f502d0fbc66a0cc45e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-02.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "20669bef32c61df46f329088ca617bfa1db65b6098f2a1f502d0fbc66a0cc45e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-02.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "20669bef32c61df46f329088ca617bfa1db65b6098f2a1f502d0fbc66a0cc45e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-02.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "20669bef32c61df46f329088ca617bfa1db65b6098f2a1f502d0fbc66a0cc45e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-02.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "20669bef32c61df46f329088ca617bfa1db65b6098f2a1f502d0fbc66a0cc45e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-02.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "20669bef32c61df46f329088ca617bfa1db65b6098f2a1f502d0fbc66a0cc45e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-02.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "20669bef32c61df46f329088ca617bfa1db65b6098f2a1f502d0fbc66a0cc45e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-02.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "20669bef32c61df46f329088ca617bfa1db65b6098f2a1f502d0fbc66a0cc45e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-02.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "20669bef32c61df46f329088ca617bfa1db65b6098f2a1f502d0fbc66a0cc45e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-02.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "20669bef32c61df46f329088ca617bfa1db65b6098f2a1f502d0fbc66a0cc45e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-02.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "20669bef32c61df46f329088ca617bfa1db65b6098f2a1f502d0fbc66a0cc45e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-02.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "20669bef32c61df46f329088ca617bfa1db65b6098f2a1f502d0fbc66a0cc45e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-02.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "20669bef32c61df46f329088ca617bfa1db65b6098f2a1f502d0fbc66a0cc45e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-03.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "0cd8d11c8daec8cebb97aaf182124131979f92aa01e70c8443c4888d0fc27c78"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-03.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "0cd8d11c8daec8cebb97aaf182124131979f92aa01e70c8443c4888d0fc27c78"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-03.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "0cd8d11c8daec8cebb97aaf182124131979f92aa01e70c8443c4888d0fc27c78"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-03.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "0cd8d11c8daec8cebb97aaf182124131979f92aa01e70c8443c4888d0fc27c78"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-03.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "0cd8d11c8daec8cebb97aaf182124131979f92aa01e70c8443c4888d0fc27c78"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-03.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "0cd8d11c8daec8cebb97aaf182124131979f92aa01e70c8443c4888d0fc27c78"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-03.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "0cd8d11c8daec8cebb97aaf182124131979f92aa01e70c8443c4888d0fc27c78"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-03.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "0cd8d11c8daec8cebb97aaf182124131979f92aa01e70c8443c4888d0fc27c78"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-03.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "0cd8d11c8daec8cebb97aaf182124131979f92aa01e70c8443c4888d0fc27c78"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-03.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "0cd8d11c8daec8cebb97aaf182124131979f92aa01e70c8443c4888d0fc27c78"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-03.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "0cd8d11c8daec8cebb97aaf182124131979f92aa01e70c8443c4888d0fc27c78"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-03.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "0cd8d11c8daec8cebb97aaf182124131979f92aa01e70c8443c4888d0fc27c78"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-03.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "0cd8d11c8daec8cebb97aaf182124131979f92aa01e70c8443c4888d0fc27c78"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-03.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "0cd8d11c8daec8cebb97aaf182124131979f92aa01e70c8443c4888d0fc27c78"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-03.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "0cd8d11c8daec8cebb97aaf182124131979f92aa01e70c8443c4888d0fc27c78"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-03.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "0cd8d11c8daec8cebb97aaf182124131979f92aa01e70c8443c4888d0fc27c78"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-03.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "0cd8d11c8daec8cebb97aaf182124131979f92aa01e70c8443c4888d0fc27c78"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-03.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "0cd8d11c8daec8cebb97aaf182124131979f92aa01e70c8443c4888d0fc27c78"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-04.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "11337289361a56a68dbad69306ac230afdfb3dbe27e13f5d7ac79506f4228ad5"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-04.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "11337289361a56a68dbad69306ac230afdfb3dbe27e13f5d7ac79506f4228ad5"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-04.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "11337289361a56a68dbad69306ac230afdfb3dbe27e13f5d7ac79506f4228ad5"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-04.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "11337289361a56a68dbad69306ac230afdfb3dbe27e13f5d7ac79506f4228ad5"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-04.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "11337289361a56a68dbad69306ac230afdfb3dbe27e13f5d7ac79506f4228ad5"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-04.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "11337289361a56a68dbad69306ac230afdfb3dbe27e13f5d7ac79506f4228ad5"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-04.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "11337289361a56a68dbad69306ac230afdfb3dbe27e13f5d7ac79506f4228ad5"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-04.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "11337289361a56a68dbad69306ac230afdfb3dbe27e13f5d7ac79506f4228ad5"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-04.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "11337289361a56a68dbad69306ac230afdfb3dbe27e13f5d7ac79506f4228ad5"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-04.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "11337289361a56a68dbad69306ac230afdfb3dbe27e13f5d7ac79506f4228ad5"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-04.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "11337289361a56a68dbad69306ac230afdfb3dbe27e13f5d7ac79506f4228ad5"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-04.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "11337289361a56a68dbad69306ac230afdfb3dbe27e13f5d7ac79506f4228ad5"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-04.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "11337289361a56a68dbad69306ac230afdfb3dbe27e13f5d7ac79506f4228ad5"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-04.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "11337289361a56a68dbad69306ac230afdfb3dbe27e13f5d7ac79506f4228ad5"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-04.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "11337289361a56a68dbad69306ac230afdfb3dbe27e13f5d7ac79506f4228ad5"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-04.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "11337289361a56a68dbad69306ac230afdfb3dbe27e13f5d7ac79506f4228ad5"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-04.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "11337289361a56a68dbad69306ac230afdfb3dbe27e13f5d7ac79506f4228ad5"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-04.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "11337289361a56a68dbad69306ac230afdfb3dbe27e13f5d7ac79506f4228ad5"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-05.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "898dbbfedabe0fe0f6c159206d25e09b7fa576ee1512af48645b0973dbb51c90"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-05.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "898dbbfedabe0fe0f6c159206d25e09b7fa576ee1512af48645b0973dbb51c90"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-05.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "898dbbfedabe0fe0f6c159206d25e09b7fa576ee1512af48645b0973dbb51c90"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-05.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "898dbbfedabe0fe0f6c159206d25e09b7fa576ee1512af48645b0973dbb51c90"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-05.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "898dbbfedabe0fe0f6c159206d25e09b7fa576ee1512af48645b0973dbb51c90"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-05.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "898dbbfedabe0fe0f6c159206d25e09b7fa576ee1512af48645b0973dbb51c90"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-05.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "898dbbfedabe0fe0f6c159206d25e09b7fa576ee1512af48645b0973dbb51c90"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-05.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "898dbbfedabe0fe0f6c159206d25e09b7fa576ee1512af48645b0973dbb51c90"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-05.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "898dbbfedabe0fe0f6c159206d25e09b7fa576ee1512af48645b0973dbb51c90"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-05.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "898dbbfedabe0fe0f6c159206d25e09b7fa576ee1512af48645b0973dbb51c90"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-05.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "898dbbfedabe0fe0f6c159206d25e09b7fa576ee1512af48645b0973dbb51c90"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-05.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "898dbbfedabe0fe0f6c159206d25e09b7fa576ee1512af48645b0973dbb51c90"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-05.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "898dbbfedabe0fe0f6c159206d25e09b7fa576ee1512af48645b0973dbb51c90"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-05.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "898dbbfedabe0fe0f6c159206d25e09b7fa576ee1512af48645b0973dbb51c90"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-05.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "898dbbfedabe0fe0f6c159206d25e09b7fa576ee1512af48645b0973dbb51c90"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-05.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "898dbbfedabe0fe0f6c159206d25e09b7fa576ee1512af48645b0973dbb51c90"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-05.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "898dbbfedabe0fe0f6c159206d25e09b7fa576ee1512af48645b0973dbb51c90"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-05.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "898dbbfedabe0fe0f6c159206d25e09b7fa576ee1512af48645b0973dbb51c90"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-06.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "a67f7f9735f1de65da396d227155afe351d838abb1fc22903e5e152b48c60687"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-06.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "a67f7f9735f1de65da396d227155afe351d838abb1fc22903e5e152b48c60687"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-06.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "a67f7f9735f1de65da396d227155afe351d838abb1fc22903e5e152b48c60687"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-06.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "a67f7f9735f1de65da396d227155afe351d838abb1fc22903e5e152b48c60687"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-06.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "a67f7f9735f1de65da396d227155afe351d838abb1fc22903e5e152b48c60687"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-06.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "a67f7f9735f1de65da396d227155afe351d838abb1fc22903e5e152b48c60687"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-06.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "a67f7f9735f1de65da396d227155afe351d838abb1fc22903e5e152b48c60687"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-06.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "a67f7f9735f1de65da396d227155afe351d838abb1fc22903e5e152b48c60687"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-06.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "a67f7f9735f1de65da396d227155afe351d838abb1fc22903e5e152b48c60687"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-06.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "a67f7f9735f1de65da396d227155afe351d838abb1fc22903e5e152b48c60687"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-06.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "a67f7f9735f1de65da396d227155afe351d838abb1fc22903e5e152b48c60687"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-06.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "a67f7f9735f1de65da396d227155afe351d838abb1fc22903e5e152b48c60687"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-06.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "a67f7f9735f1de65da396d227155afe351d838abb1fc22903e5e152b48c60687"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-06.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "a67f7f9735f1de65da396d227155afe351d838abb1fc22903e5e152b48c60687"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-06.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "a67f7f9735f1de65da396d227155afe351d838abb1fc22903e5e152b48c60687"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-06.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "a67f7f9735f1de65da396d227155afe351d838abb1fc22903e5e152b48c60687"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-06.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "a67f7f9735f1de65da396d227155afe351d838abb1fc22903e5e152b48c60687"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-06.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "a67f7f9735f1de65da396d227155afe351d838abb1fc22903e5e152b48c60687"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-07.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "32121431151e0632b3307d4b05e217504a2842fdcbb3bbbfb2f6922d0c93de7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-07.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "32121431151e0632b3307d4b05e217504a2842fdcbb3bbbfb2f6922d0c93de7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-07.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "32121431151e0632b3307d4b05e217504a2842fdcbb3bbbfb2f6922d0c93de7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-07.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "32121431151e0632b3307d4b05e217504a2842fdcbb3bbbfb2f6922d0c93de7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-07.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "32121431151e0632b3307d4b05e217504a2842fdcbb3bbbfb2f6922d0c93de7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-07.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "32121431151e0632b3307d4b05e217504a2842fdcbb3bbbfb2f6922d0c93de7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-07.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "32121431151e0632b3307d4b05e217504a2842fdcbb3bbbfb2f6922d0c93de7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-07.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "32121431151e0632b3307d4b05e217504a2842fdcbb3bbbfb2f6922d0c93de7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-07.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "32121431151e0632b3307d4b05e217504a2842fdcbb3bbbfb2f6922d0c93de7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-07.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "32121431151e0632b3307d4b05e217504a2842fdcbb3bbbfb2f6922d0c93de7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-07.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "32121431151e0632b3307d4b05e217504a2842fdcbb3bbbfb2f6922d0c93de7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-07.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "32121431151e0632b3307d4b05e217504a2842fdcbb3bbbfb2f6922d0c93de7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-07.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "32121431151e0632b3307d4b05e217504a2842fdcbb3bbbfb2f6922d0c93de7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-07.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "32121431151e0632b3307d4b05e217504a2842fdcbb3bbbfb2f6922d0c93de7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-07.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "32121431151e0632b3307d4b05e217504a2842fdcbb3bbbfb2f6922d0c93de7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-07.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "32121431151e0632b3307d4b05e217504a2842fdcbb3bbbfb2f6922d0c93de7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-07.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "32121431151e0632b3307d4b05e217504a2842fdcbb3bbbfb2f6922d0c93de7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-07.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "32121431151e0632b3307d4b05e217504a2842fdcbb3bbbfb2f6922d0c93de7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-08.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "d9c7520344b51f8e6ba6dd8da488ed9098c8eb0e0a8ed514de0947edbb108c7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-08.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "d9c7520344b51f8e6ba6dd8da488ed9098c8eb0e0a8ed514de0947edbb108c7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-08.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "d9c7520344b51f8e6ba6dd8da488ed9098c8eb0e0a8ed514de0947edbb108c7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-08.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "d9c7520344b51f8e6ba6dd8da488ed9098c8eb0e0a8ed514de0947edbb108c7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-08.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "d9c7520344b51f8e6ba6dd8da488ed9098c8eb0e0a8ed514de0947edbb108c7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-08.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "d9c7520344b51f8e6ba6dd8da488ed9098c8eb0e0a8ed514de0947edbb108c7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-08.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "d9c7520344b51f8e6ba6dd8da488ed9098c8eb0e0a8ed514de0947edbb108c7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-08.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "d9c7520344b51f8e6ba6dd8da488ed9098c8eb0e0a8ed514de0947edbb108c7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-08.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "d9c7520344b51f8e6ba6dd8da488ed9098c8eb0e0a8ed514de0947edbb108c7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-08.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "d9c7520344b51f8e6ba6dd8da488ed9098c8eb0e0a8ed514de0947edbb108c7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-08.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "d9c7520344b51f8e6ba6dd8da488ed9098c8eb0e0a8ed514de0947edbb108c7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-08.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "d9c7520344b51f8e6ba6dd8da488ed9098c8eb0e0a8ed514de0947edbb108c7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-08.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "d9c7520344b51f8e6ba6dd8da488ed9098c8eb0e0a8ed514de0947edbb108c7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-08.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "d9c7520344b51f8e6ba6dd8da488ed9098c8eb0e0a8ed514de0947edbb108c7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-08.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "d9c7520344b51f8e6ba6dd8da488ed9098c8eb0e0a8ed514de0947edbb108c7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-08.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "d9c7520344b51f8e6ba6dd8da488ed9098c8eb0e0a8ed514de0947edbb108c7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-08.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "d9c7520344b51f8e6ba6dd8da488ed9098c8eb0e0a8ed514de0947edbb108c7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-08.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "d9c7520344b51f8e6ba6dd8da488ed9098c8eb0e0a8ed514de0947edbb108c7e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-09.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "13e31a2da5896f9c94a479bae679e51c2b354ad4444251d13750525536db3e18"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-09.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "13e31a2da5896f9c94a479bae679e51c2b354ad4444251d13750525536db3e18"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-09.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "13e31a2da5896f9c94a479bae679e51c2b354ad4444251d13750525536db3e18"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-09.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "13e31a2da5896f9c94a479bae679e51c2b354ad4444251d13750525536db3e18"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-09.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "13e31a2da5896f9c94a479bae679e51c2b354ad4444251d13750525536db3e18"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-09.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "13e31a2da5896f9c94a479bae679e51c2b354ad4444251d13750525536db3e18"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-09.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "13e31a2da5896f9c94a479bae679e51c2b354ad4444251d13750525536db3e18"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-09.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "13e31a2da5896f9c94a479bae679e51c2b354ad4444251d13750525536db3e18"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-09.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "13e31a2da5896f9c94a479bae679e51c2b354ad4444251d13750525536db3e18"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-09.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "13e31a2da5896f9c94a479bae679e51c2b354ad4444251d13750525536db3e18"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-09.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "13e31a2da5896f9c94a479bae679e51c2b354ad4444251d13750525536db3e18"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-09.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "13e31a2da5896f9c94a479bae679e51c2b354ad4444251d13750525536db3e18"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-09.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "13e31a2da5896f9c94a479bae679e51c2b354ad4444251d13750525536db3e18"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-09.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "13e31a2da5896f9c94a479bae679e51c2b354ad4444251d13750525536db3e18"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-09.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "13e31a2da5896f9c94a479bae679e51c2b354ad4444251d13750525536db3e18"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-09.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "13e31a2da5896f9c94a479bae679e51c2b354ad4444251d13750525536db3e18"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-09.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "13e31a2da5896f9c94a479bae679e51c2b354ad4444251d13750525536db3e18"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-09.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "13e31a2da5896f9c94a479bae679e51c2b354ad4444251d13750525536db3e18"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/ghidra-full.log",
+      "line": 43,
+      "kind": "trailing whitespace.",
+      "sha256": "ce6e978e7feb283afff50dde2b1536dd5e6369b970cc7c5977f71ba8031b9313"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/validation-01/build.log",
+      "line": 364,
+      "kind": "trailing whitespace.",
+      "sha256": "01c0fb851b65705a4761755583a13205bd6d40d3dc6427a5b5eff941639c522e"
+    },
+    {
+      "path": "research/runs/parallel-native-font-zero-20261122/validation-03/full-entry-negative.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "c73d456b57157de7209b2162032905903dfbe0f7226b1386512485215993bcef"
+    }
+  ],
+  "scope": "Only exact committed raw evidence; authored runtime/tests/configuration and root receipts retain strict whitespace checks."
+}

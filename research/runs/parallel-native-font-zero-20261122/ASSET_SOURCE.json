@@ -1,0 +1,4754 @@
+{
+  "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121\\art\\gameart.ssf",
+  "sha256": "9900120ff8782b16e0d73ee885c8f4df6c82545b915dd10105e6694a03658a39",
+  "length": 6823936,
+  "records": [
+    {
+      "locale": 0,
+      "ordinal": 0,
+      "type": 7,
+      "name": "MOVELIST_FONT_MET",
+      "offset": 1152,
+      "length": 8116,
+      "sha256": "e72e03dbdbe27f544e95a3fe1a966909180d0a8b0c73f1656f75faab203e68db"
+    },
+    {
+      "locale": 0,
+      "ordinal": 1,
+      "type": 7,
+      "name": "DANTON20_MET",
+      "offset": 9268,
+      "length": 8116,
+      "sha256": "6ae4146fcc470bce1beb829d1c5656e38717cca8b49bc37a8c00d259fc192c90"
+    },
+    {
+      "locale": 0,
+      "ordinal": 2,
+      "type": 7,
+      "name": "DANTONSILVER20_MET",
+      "offset": 17384,
+      "length": 8116,
+      "sha256": "4a8cc58ba9780a1be87a392d815e3a969df314b2cbbaacec347780a6edf4b4be"
+    },
+    {
+      "locale": 0,
+      "ordinal": 3,
+      "type": 7,
+      "name": "DANTONSILVER24_MET",
+      "offset": 25500,
+      "length": 8116,
+      "sha256": "2c0f03d15cfdbd23729a3aa88bdf33940933524fc47bd3c3e45a887b885ff283"
+    },
+    {
+      "locale": 0,
+      "ordinal": 4,
+      "type": 7,
+      "name": "EDDMONDGRAY14_MET",
+      "offset": 33616,
+      "length": 8116,
+      "sha256": "b91b6ee00f3bed46a1e89471c247ea659b88af927d7bd9576311b57fd0cfd497"
+    },
+    {
+      "locale": 0,
+      "ordinal": 5,
+      "type": 7,
+      "name": "EDDMONDGRAY24_MET",
+      "offset": 41732,
+      "length": 8116,
+      "sha256": "810d0a3752fe204c7646f6360f39d1b1ae4f3789f14dc70377aec90a405987b9"
+    },
+    {
+      "locale": 0,
+      "ordinal": 6,
+      "type": 7,
+      "name": "BAR_NUMBERFONT_MET",
+      "offset": 49848,
+      "length": 8116,
+      "sha256": "4fafd9247ee57a22f2275a0700425bd037518d3ee4a21f49caf671de57e6f490"
+    },
+    {
+      "locale": 0,
+      "ordinal": 7,
+      "type": 7,
+      "name": "ARIAL_BLACK_10PT_MET",
+      "offset": 57964,
+      "length": 8116,
+      "sha256": "d4b56fd1be3190589f1eabf009a57f8a0214f747b51f58f2cc02ba727f33721b"
+    },
+    {
+      "locale": 0,
+      "ordinal": 8,
+      "type": 7,
+      "name": "MINIONCOND_18_MET",
+      "offset": 66080,
+      "length": 8116,
+      "sha256": "8417cb1b978b9e14038ad4c9f43f55593beb71bf367d636cf7b37ef518f5834e"
+    },
+    {
+      "locale": 0,
+      "ordinal": 9,
+      "type": 7,
+      "name": "SCR_MANAGED",
+      "offset": 74196,
+      "length": 148,
+      "sha256": "9a58d7a057871f402f1b4c655e46f4e3f78a2ecc3e186bb77939d673a34a58c1"
+    },
+    {
+      "locale": 0,
+      "ordinal": 10,
+      "type": 4,
+      "name": "SHADOWBOX",
+      "offset": 74368,
+      "length": 3712,
+      "sha256": "75c94ea7c1d5a28ef8a2e311d1cf83c77b275b6d94a770473af2e2276a34676f"
+    },
+    {
+      "locale": 0,
+      "ordinal": 11,
+      "type": 4,
+      "name": "CAM_BONE",
+      "offset": 78080,
+      "length": 1280,
+      "sha256": "0312555695b5fb279adcf35fb64bdfe17bcdb55223e8c0f4e4e1eeb526429ff1"
+    },
+    {
+      "locale": 0,
+      "ordinal": 12,
+      "type": 4,
+      "name": "AXIS",
+      "offset": 79360,
+      "length": 5760,
+      "sha256": "390b07989142bf231c3cfe7155c730284efdcdcaa6950c9a234598626c9f4ac9"
+    },
+    {
+      "locale": 0,
+      "ordinal": 13,
+      "type": 2,
+      "name": "MOVELIST_FONT",
+      "offset": 85120,
+      "length": 34560,
+      "sha256": "86e2e9ab68f4271bc7981390491b675ec045ed11fe63be7c0d9c1934ab96d0c4",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 14,
+      "type": 2,
+      "name": "DANTON20",
+      "offset": 119680,
+      "length": 67328,
+      "sha256": "6c9c6eedbbbfa088e75bca77c7e8c9631491ac812038d600dc13b4ee42151108",
+      "fields": [
+        256,
+        256,
+        8,
+        140548,
+        556859392,
+        536870918,
+        256,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        65616,
+        1104,
+        18432,
+        4032
+      ],
+      "mode2_header": [
+        67072,
+        256,
+        65920
+      ],
+      "transfer": [
+        128,
+        128,
+        0
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 15,
+      "type": 2,
+      "name": "DANTONSILVER20",
+      "offset": 187008,
+      "length": 34560,
+      "sha256": "4dd400eb324426f3ffc9856d5ef9d16370fb5bb60d7d18b7607cfc016d195e53",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 16,
+      "type": 2,
+      "name": "DANTONSILVER24",
+      "offset": 221568,
+      "length": 34560,
+      "sha256": "347ed071c2d0374c137b227573b6dfa31efe98e9760b22a19a45aefb2a002567",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 17,
+      "type": 2,
+      "name": "EDDMONDGRAY14",
+      "offset": 256128,
+      "length": 34560,
+      "sha256": "085846ff5d595e179e118c2fcbe51f59f322f6c51fc871cac80354f19d1990bc",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 18,
+      "type": 2,
+      "name": "EDDMONDGRAY24",
+      "offset": 290688,
+      "length": 9984,
+      "sha256": "1401a2c298eefc75b1ec583a67ae008f9ad1bd42bf3c7837d158fdff0eb13e3f",
+      "fields": [
+        256,
+        32,
+        8,
+        140548,
+        1630601216,
+        536870917,
+        60,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        8272,
+        1104,
+        4096,
+        4032
+      ],
+      "mode2_header": [
+        9728,
+        256,
+        8576
+      ],
+      "transfer": [
+        128,
+        16,
+        0
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 19,
+      "type": 2,
+      "name": "BAR_NUMBERFONT",
+      "offset": 300672,
+      "length": 9984,
+      "sha256": "f3938b50c8ba32251a4c90d711295a396f4a93694c86c9dbe4878242a7e8af5e",
+      "fields": [
+        256,
+        32,
+        8,
+        140548,
+        1630601216,
+        536870917,
+        60,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        8272,
+        1104,
+        4096,
+        4032
+      ],
+      "mode2_header": [
+        9728,
+        256,
+        8576
+      ],
+      "transfer": [
+        128,
+        16,
+        0
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 20,
+      "type": 2,
+      "name": "ARIAL_BLACK_10PT",
+      "offset": 310656,
+      "length": 18176,
+      "sha256": "741bd54845ebfc78768d672b4a29ac3f98e482e0f03a949cc35947a48423bc95",
+      "fields": [
+        256,
+        64,
+        8,
+        140548,
+        2704343040,
+        536870917,
+        64,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        16464,
+        1104,
+        6144,
+        4032
+      ],
+      "mode2_header": [
+        17920,
+        256,
+        16768
+      ],
+      "transfer": [
+        128,
+        32,
+        0
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 21,
+      "type": 2,
+      "name": "MINIONCOND_18",
+      "offset": 328832,
+      "length": 34560,
+      "sha256": "a41c187a56f735cd85b2409cad09249f0d3ef2b4ed911b24a6d8991197718a8a",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 22,
+      "type": 2,
+      "name": "ONLINE_VOICE_ICON_A",
+      "offset": 363392,
+      "length": 2816,
+      "sha256": "62e2217ca209d292f59395011eb2059884155669a9992eee6569680d3fbc579a",
+      "fields": [
+        32,
+        32,
+        8,
+        140548,
+        1429241856,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        1104,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        2496,
+        256,
+        1360
+      ],
+      "transfer": [
+        16,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 23,
+      "type": 2,
+      "name": "ONLINE_VOICE_ICON_B",
+      "offset": 366208,
+      "length": 2816,
+      "sha256": "0234f5972482128c5e6464b9eba9c84a3e3d4fcd6ca2725c764f71b907bfd745",
+      "fields": [
+        32,
+        32,
+        8,
+        140548,
+        1429241856,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        1104,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        2496,
+        256,
+        1360
+      ],
+      "transfer": [
+        16,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 24,
+      "type": 2,
+      "name": "FADE_BOX",
+      "offset": 369024,
+      "length": 2048,
+      "sha256": "3b51eec6a8d218ed696b1d4308f9d6ee8aa1ec7facd5c3a74cc241688424dfbb",
+      "fields": [
+        16,
+        16,
+        8,
+        140548,
+        288391168,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        336,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1728,
+        256,
+        592
+      ],
+      "transfer": [
+        8,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 25,
+      "type": 2,
+      "name": "WHITE_FADEBOX",
+      "offset": 371072,
+      "length": 2048,
+      "sha256": "d3d9fc21aa0f47aa4512b74d16138b87dfb4073ce0b45f02792afec995d3514f",
+      "fields": [
+        16,
+        16,
+        8,
+        140548,
+        288391168,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        336,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1728,
+        256,
+        592
+      ],
+      "transfer": [
+        8,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 26,
+      "type": 2,
+      "name": "KOIN_GRAPHIC",
+      "offset": 373120,
+      "length": 5888,
+      "sha256": "b1b9b453dbb42488418da5b37de2c9c7f370b7e23c5f7dfccf2fa90106ed8522",
+      "fields": [
+        64,
+        64,
+        8,
+        140548,
+        2570092544,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        4176,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        5568,
+        256,
+        4432
+      ],
+      "transfer": [
+        32,
+        32,
+        1048624
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 27,
+      "type": 2,
+      "name": "KOIN_AWARD_BORDER",
+      "offset": 379008,
+      "length": 2304,
+      "sha256": "267f7b04237af55368d881d01f16c88f7fbdba501873e6627aa9f1a7cddd38db",
+      "fields": [
+        4,
+        32,
+        8,
+        140548,
+        1227915264,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        848
+      ],
+      "transfer": [
+        8,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 28,
+      "type": 2,
+      "name": "KOIN_AWARD_SIDE_BORDER",
+      "offset": 381312,
+      "length": 2304,
+      "sha256": "559a3423d0263fcc3768a73f6faaa309eec50e098626652940fdc03d5446cec3",
+      "fields": [
+        16,
+        32,
+        8,
+        140548,
+        1362132992,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        848
+      ],
+      "transfer": [
+        8,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 29,
+      "type": 2,
+      "name": "VID_LINE",
+      "offset": 383616,
+      "length": 2304,
+      "sha256": "48bf11b80ecad589e92e3cd3d87eed7724141d060f34591fee1023313d765215",
+      "fields": [
+        32,
+        2,
+        8,
+        140548,
+        1429241856,
+        536870916,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        464
+      ],
+      "transfer": [
+        16,
+        2,
+        1048624
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 30,
+      "type": 2,
+      "name": "BOG_LINE",
+      "offset": 385920,
+      "length": 2816,
+      "sha256": "f80a79a929a857f6d51eb8a914700c612680de11d96c180c1dfabce544de51c8",
+      "fields": [
+        64,
+        16,
+        8,
+        140548,
+        422608896,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        1104,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        2496,
+        256,
+        1360
+      ],
+      "transfer": [
+        32,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 31,
+      "type": 2,
+      "name": "FNC_LINE",
+      "offset": 388736,
+      "length": 2304,
+      "sha256": "c830541b20c867a081b7b2c05fce840864ac166423b71e65783d71c1b0ec94a9",
+      "fields": [
+        32,
+        2,
+        8,
+        140548,
+        1429241856,
+        536870916,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        464
+      ],
+      "transfer": [
+        16,
+        2,
+        1048624
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 32,
+      "type": 2,
+      "name": "CPU_LINE",
+      "offset": 391040,
+      "length": 2304,
+      "sha256": "8d102b7a407358716eeadb60885d7c9876872d527b227ddebfc3d7278a100eb0",
+      "fields": [
+        32,
+        2,
+        8,
+        140548,
+        1429241856,
+        536870916,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        464
+      ],
+      "transfer": [
+        16,
+        2,
+        1048624
+      ]
+    },
+    {
+      "locale": 0,
+      "ordinal": 33,
+      "type": 3,
+      "name": "SHADOWBOX1X3_000",
+      "offset": 393344,
+      "length": 2048,
+      "sha256": "d90daab1ce6342286be046375e6b18f89bd45af627af23f573321093c5b7e20c",
+      "fields": [
+        16,
+        16,
+        8,
+        140548,
+        288391168,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        336,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1728,
+        256,
+        592
+      ],
+      "transfer": [
+        8,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 0,
+      "type": 7,
+      "name": "MOVELIST_FONT_MET",
+      "offset": 1152,
+      "length": 8116,
+      "sha256": "e72e03dbdbe27f544e95a3fe1a966909180d0a8b0c73f1656f75faab203e68db"
+    },
+    {
+      "locale": 1,
+      "ordinal": 1,
+      "type": 7,
+      "name": "DANTON20_MET",
+      "offset": 9268,
+      "length": 8116,
+      "sha256": "6ae4146fcc470bce1beb829d1c5656e38717cca8b49bc37a8c00d259fc192c90"
+    },
+    {
+      "locale": 1,
+      "ordinal": 2,
+      "type": 7,
+      "name": "DANTONSILVER20_MET",
+      "offset": 17384,
+      "length": 8116,
+      "sha256": "4a8cc58ba9780a1be87a392d815e3a969df314b2cbbaacec347780a6edf4b4be"
+    },
+    {
+      "locale": 1,
+      "ordinal": 3,
+      "type": 7,
+      "name": "DANTONSILVER24_MET",
+      "offset": 25500,
+      "length": 8116,
+      "sha256": "2c0f03d15cfdbd23729a3aa88bdf33940933524fc47bd3c3e45a887b885ff283"
+    },
+    {
+      "locale": 1,
+      "ordinal": 4,
+      "type": 7,
+      "name": "EDDMONDGRAY14_MET",
+      "offset": 33616,
+      "length": 8116,
+      "sha256": "b91b6ee00f3bed46a1e89471c247ea659b88af927d7bd9576311b57fd0cfd497"
+    },
+    {
+      "locale": 1,
+      "ordinal": 5,
+      "type": 7,
+      "name": "EDDMONDGRAY24_MET",
+      "offset": 41732,
+      "length": 8116,
+      "sha256": "810d0a3752fe204c7646f6360f39d1b1ae4f3789f14dc70377aec90a405987b9"
+    },
+    {
+      "locale": 1,
+      "ordinal": 6,
+      "type": 7,
+      "name": "BAR_NUMBERFONT_MET",
+      "offset": 49848,
+      "length": 8116,
+      "sha256": "4fafd9247ee57a22f2275a0700425bd037518d3ee4a21f49caf671de57e6f490"
+    },
+    {
+      "locale": 1,
+      "ordinal": 7,
+      "type": 7,
+      "name": "ARIAL_BLACK_10PT_MET",
+      "offset": 57964,
+      "length": 8116,
+      "sha256": "d4b56fd1be3190589f1eabf009a57f8a0214f747b51f58f2cc02ba727f33721b"
+    },
+    {
+      "locale": 1,
+      "ordinal": 8,
+      "type": 7,
+      "name": "MINIONCOND_18_MET",
+      "offset": 66080,
+      "length": 8116,
+      "sha256": "8417cb1b978b9e14038ad4c9f43f55593beb71bf367d636cf7b37ef518f5834e"
+    },
+    {
+      "locale": 1,
+      "ordinal": 9,
+      "type": 7,
+      "name": "SCR_MANAGED",
+      "offset": 74196,
+      "length": 148,
+      "sha256": "9a58d7a057871f402f1b4c655e46f4e3f78a2ecc3e186bb77939d673a34a58c1"
+    },
+    {
+      "locale": 1,
+      "ordinal": 10,
+      "type": 4,
+      "name": "SHADOWBOX",
+      "offset": 74368,
+      "length": 3712,
+      "sha256": "75c94ea7c1d5a28ef8a2e311d1cf83c77b275b6d94a770473af2e2276a34676f"
+    },
+    {
+      "locale": 1,
+      "ordinal": 11,
+      "type": 4,
+      "name": "CAM_BONE",
+      "offset": 78080,
+      "length": 1280,
+      "sha256": "0312555695b5fb279adcf35fb64bdfe17bcdb55223e8c0f4e4e1eeb526429ff1"
+    },
+    {
+      "locale": 1,
+      "ordinal": 12,
+      "type": 4,
+      "name": "AXIS",
+      "offset": 79360,
+      "length": 5760,
+      "sha256": "390b07989142bf231c3cfe7155c730284efdcdcaa6950c9a234598626c9f4ac9"
+    },
+    {
+      "locale": 1,
+      "ordinal": 13,
+      "type": 2,
+      "name": "MOVELIST_FONT",
+      "offset": 85120,
+      "length": 34560,
+      "sha256": "c0c6326ab5af2b0ed73c5974b1167632cd97d5abcca964e667aa0c7cbe2b2935",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 14,
+      "type": 2,
+      "name": "DANTON20",
+      "offset": 119680,
+      "length": 67328,
+      "sha256": "af679c256d49a11aa44061f16b4f5ff0ca3c75631b45be84ac1b1d1f82274191",
+      "fields": [
+        256,
+        256,
+        8,
+        140548,
+        556859392,
+        536870918,
+        256,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        65616,
+        1104,
+        18432,
+        4032
+      ],
+      "mode2_header": [
+        67072,
+        256,
+        65920
+      ],
+      "transfer": [
+        128,
+        128,
+        0
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 15,
+      "type": 2,
+      "name": "DANTONSILVER20",
+      "offset": 187008,
+      "length": 34560,
+      "sha256": "b29d948270cb38059c62fc7091dff4b28376945c114567af67d4b327a181a1e0",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 16,
+      "type": 2,
+      "name": "DANTONSILVER24",
+      "offset": 221568,
+      "length": 34560,
+      "sha256": "0a3a47d0c9b8cc726766c524cd020d18e5d5c99370f043c7c12b78e57b6dfbac",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 17,
+      "type": 2,
+      "name": "EDDMONDGRAY14",
+      "offset": 256128,
+      "length": 34560,
+      "sha256": "e09a711d53233f6e7c8a580a4f3068d34e049b0fc1ff223d1b744edd981da443",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 18,
+      "type": 2,
+      "name": "EDDMONDGRAY24",
+      "offset": 290688,
+      "length": 9984,
+      "sha256": "8ca410971f76c0ad6373ad7f9bd56e32f39682f2b395fdb3658278d43ccc86cf",
+      "fields": [
+        256,
+        32,
+        8,
+        140548,
+        1630601216,
+        536870917,
+        60,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        8272,
+        1104,
+        4096,
+        4032
+      ],
+      "mode2_header": [
+        9728,
+        256,
+        8576
+      ],
+      "transfer": [
+        128,
+        16,
+        0
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 19,
+      "type": 2,
+      "name": "BAR_NUMBERFONT",
+      "offset": 300672,
+      "length": 9984,
+      "sha256": "e68a94a1cc411703e0a6c1a7a5e61be374faafeadfbf0c18ceec51cc63574cf3",
+      "fields": [
+        256,
+        32,
+        8,
+        140548,
+        1630601216,
+        536870917,
+        60,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        8272,
+        1104,
+        4096,
+        4032
+      ],
+      "mode2_header": [
+        9728,
+        256,
+        8576
+      ],
+      "transfer": [
+        128,
+        16,
+        0
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 20,
+      "type": 2,
+      "name": "ARIAL_BLACK_10PT",
+      "offset": 310656,
+      "length": 18176,
+      "sha256": "741bd54845ebfc78768d672b4a29ac3f98e482e0f03a949cc35947a48423bc95",
+      "fields": [
+        256,
+        64,
+        8,
+        140548,
+        2704343040,
+        536870917,
+        64,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        16464,
+        1104,
+        6144,
+        4032
+      ],
+      "mode2_header": [
+        17920,
+        256,
+        16768
+      ],
+      "transfer": [
+        128,
+        32,
+        0
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 21,
+      "type": 2,
+      "name": "MINIONCOND_18",
+      "offset": 328832,
+      "length": 34560,
+      "sha256": "9de86a2463abb60d76effb7702e119e3b7a2a98c14607c0db9d0eadbed094a70",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 22,
+      "type": 2,
+      "name": "ONLINE_VOICE_ICON_A",
+      "offset": 363392,
+      "length": 2816,
+      "sha256": "41b5c194cbc4a8b9b668b3aa3d168530b0d44e4cb7c001179a6043477478dc3f",
+      "fields": [
+        32,
+        32,
+        8,
+        140548,
+        1429241856,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        1104,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        2496,
+        256,
+        1360
+      ],
+      "transfer": [
+        16,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 23,
+      "type": 2,
+      "name": "ONLINE_VOICE_ICON_B",
+      "offset": 366208,
+      "length": 2816,
+      "sha256": "5835a0f483e3547f7017cc98c89ad61bf014564dea6bbbdabeaee5ef13900d35",
+      "fields": [
+        32,
+        32,
+        8,
+        140548,
+        1429241856,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        1104,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        2496,
+        256,
+        1360
+      ],
+      "transfer": [
+        16,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 24,
+      "type": 2,
+      "name": "FADE_BOX",
+      "offset": 369024,
+      "length": 2048,
+      "sha256": "3b51eec6a8d218ed696b1d4308f9d6ee8aa1ec7facd5c3a74cc241688424dfbb",
+      "fields": [
+        16,
+        16,
+        8,
+        140548,
+        288391168,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        336,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1728,
+        256,
+        592
+      ],
+      "transfer": [
+        8,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 25,
+      "type": 2,
+      "name": "WHITE_FADEBOX",
+      "offset": 371072,
+      "length": 2048,
+      "sha256": "d3d9fc21aa0f47aa4512b74d16138b87dfb4073ce0b45f02792afec995d3514f",
+      "fields": [
+        16,
+        16,
+        8,
+        140548,
+        288391168,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        336,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1728,
+        256,
+        592
+      ],
+      "transfer": [
+        8,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 26,
+      "type": 2,
+      "name": "KOIN_GRAPHIC",
+      "offset": 373120,
+      "length": 5888,
+      "sha256": "b1b9b453dbb42488418da5b37de2c9c7f370b7e23c5f7dfccf2fa90106ed8522",
+      "fields": [
+        64,
+        64,
+        8,
+        140548,
+        2570092544,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        4176,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        5568,
+        256,
+        4432
+      ],
+      "transfer": [
+        32,
+        32,
+        1048624
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 27,
+      "type": 2,
+      "name": "KOIN_AWARD_BORDER",
+      "offset": 379008,
+      "length": 2304,
+      "sha256": "267f7b04237af55368d881d01f16c88f7fbdba501873e6627aa9f1a7cddd38db",
+      "fields": [
+        4,
+        32,
+        8,
+        140548,
+        1227915264,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        848
+      ],
+      "transfer": [
+        8,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 28,
+      "type": 2,
+      "name": "KOIN_AWARD_SIDE_BORDER",
+      "offset": 381312,
+      "length": 2304,
+      "sha256": "559a3423d0263fcc3768a73f6faaa309eec50e098626652940fdc03d5446cec3",
+      "fields": [
+        16,
+        32,
+        8,
+        140548,
+        1362132992,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        848
+      ],
+      "transfer": [
+        8,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 29,
+      "type": 2,
+      "name": "VID_LINE",
+      "offset": 383616,
+      "length": 2304,
+      "sha256": "48bf11b80ecad589e92e3cd3d87eed7724141d060f34591fee1023313d765215",
+      "fields": [
+        32,
+        2,
+        8,
+        140548,
+        1429241856,
+        536870916,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        464
+      ],
+      "transfer": [
+        16,
+        2,
+        1048624
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 30,
+      "type": 2,
+      "name": "BOG_LINE",
+      "offset": 385920,
+      "length": 2816,
+      "sha256": "f80a79a929a857f6d51eb8a914700c612680de11d96c180c1dfabce544de51c8",
+      "fields": [
+        64,
+        16,
+        8,
+        140548,
+        422608896,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        1104,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        2496,
+        256,
+        1360
+      ],
+      "transfer": [
+        32,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 31,
+      "type": 2,
+      "name": "FNC_LINE",
+      "offset": 388736,
+      "length": 2304,
+      "sha256": "c830541b20c867a081b7b2c05fce840864ac166423b71e65783d71c1b0ec94a9",
+      "fields": [
+        32,
+        2,
+        8,
+        140548,
+        1429241856,
+        536870916,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        464
+      ],
+      "transfer": [
+        16,
+        2,
+        1048624
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 32,
+      "type": 2,
+      "name": "CPU_LINE",
+      "offset": 391040,
+      "length": 2304,
+      "sha256": "8d102b7a407358716eeadb60885d7c9876872d527b227ddebfc3d7278a100eb0",
+      "fields": [
+        32,
+        2,
+        8,
+        140548,
+        1429241856,
+        536870916,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        464
+      ],
+      "transfer": [
+        16,
+        2,
+        1048624
+      ]
+    },
+    {
+      "locale": 1,
+      "ordinal": 33,
+      "type": 3,
+      "name": "SHADOWBOX1X3_000",
+      "offset": 393344,
+      "length": 2048,
+      "sha256": "d90daab1ce6342286be046375e6b18f89bd45af627af23f573321093c5b7e20c",
+      "fields": [
+        16,
+        16,
+        8,
+        140548,
+        288391168,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        336,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1728,
+        256,
+        592
+      ],
+      "transfer": [
+        8,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 0,
+      "type": 7,
+      "name": "MOVELIST_FONT_MET",
+      "offset": 1152,
+      "length": 8116,
+      "sha256": "e72e03dbdbe27f544e95a3fe1a966909180d0a8b0c73f1656f75faab203e68db"
+    },
+    {
+      "locale": 2,
+      "ordinal": 1,
+      "type": 7,
+      "name": "DANTON20_MET",
+      "offset": 9268,
+      "length": 8116,
+      "sha256": "6ae4146fcc470bce1beb829d1c5656e38717cca8b49bc37a8c00d259fc192c90"
+    },
+    {
+      "locale": 2,
+      "ordinal": 2,
+      "type": 7,
+      "name": "DANTONSILVER20_MET",
+      "offset": 17384,
+      "length": 8116,
+      "sha256": "4a8cc58ba9780a1be87a392d815e3a969df314b2cbbaacec347780a6edf4b4be"
+    },
+    {
+      "locale": 2,
+      "ordinal": 3,
+      "type": 7,
+      "name": "DANTONSILVER24_MET",
+      "offset": 25500,
+      "length": 8116,
+      "sha256": "2c0f03d15cfdbd23729a3aa88bdf33940933524fc47bd3c3e45a887b885ff283"
+    },
+    {
+      "locale": 2,
+      "ordinal": 4,
+      "type": 7,
+      "name": "EDDMONDGRAY14_MET",
+      "offset": 33616,
+      "length": 8116,
+      "sha256": "b91b6ee00f3bed46a1e89471c247ea659b88af927d7bd9576311b57fd0cfd497"
+    },
+    {
+      "locale": 2,
+      "ordinal": 5,
+      "type": 7,
+      "name": "EDDMONDGRAY24_MET",
+      "offset": 41732,
+      "length": 8116,
+      "sha256": "810d0a3752fe204c7646f6360f39d1b1ae4f3789f14dc70377aec90a405987b9"
+    },
+    {
+      "locale": 2,
+      "ordinal": 6,
+      "type": 7,
+      "name": "BAR_NUMBERFONT_MET",
+      "offset": 49848,
+      "length": 8116,
+      "sha256": "4fafd9247ee57a22f2275a0700425bd037518d3ee4a21f49caf671de57e6f490"
+    },
+    {
+      "locale": 2,
+      "ordinal": 7,
+      "type": 7,
+      "name": "ARIAL_BLACK_10PT_MET",
+      "offset": 57964,
+      "length": 8116,
+      "sha256": "d4b56fd1be3190589f1eabf009a57f8a0214f747b51f58f2cc02ba727f33721b"
+    },
+    {
+      "locale": 2,
+      "ordinal": 8,
+      "type": 7,
+      "name": "MINIONCOND_18_MET",
+      "offset": 66080,
+      "length": 8116,
+      "sha256": "8417cb1b978b9e14038ad4c9f43f55593beb71bf367d636cf7b37ef518f5834e"
+    },
+    {
+      "locale": 2,
+      "ordinal": 9,
+      "type": 7,
+      "name": "SCR_MANAGED",
+      "offset": 74196,
+      "length": 148,
+      "sha256": "9a58d7a057871f402f1b4c655e46f4e3f78a2ecc3e186bb77939d673a34a58c1"
+    },
+    {
+      "locale": 2,
+      "ordinal": 10,
+      "type": 4,
+      "name": "SHADOWBOX",
+      "offset": 74368,
+      "length": 3712,
+      "sha256": "75c94ea7c1d5a28ef8a2e311d1cf83c77b275b6d94a770473af2e2276a34676f"
+    },
+    {
+      "locale": 2,
+      "ordinal": 11,
+      "type": 4,
+      "name": "CAM_BONE",
+      "offset": 78080,
+      "length": 1280,
+      "sha256": "0312555695b5fb279adcf35fb64bdfe17bcdb55223e8c0f4e4e1eeb526429ff1"
+    },
+    {
+      "locale": 2,
+      "ordinal": 12,
+      "type": 4,
+      "name": "AXIS",
+      "offset": 79360,
+      "length": 5760,
+      "sha256": "390b07989142bf231c3cfe7155c730284efdcdcaa6950c9a234598626c9f4ac9"
+    },
+    {
+      "locale": 2,
+      "ordinal": 13,
+      "type": 2,
+      "name": "MOVELIST_FONT",
+      "offset": 85120,
+      "length": 34560,
+      "sha256": "c0c6326ab5af2b0ed73c5974b1167632cd97d5abcca964e667aa0c7cbe2b2935",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 14,
+      "type": 2,
+      "name": "DANTON20",
+      "offset": 119680,
+      "length": 67328,
+      "sha256": "af679c256d49a11aa44061f16b4f5ff0ca3c75631b45be84ac1b1d1f82274191",
+      "fields": [
+        256,
+        256,
+        8,
+        140548,
+        556859392,
+        536870918,
+        256,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        65616,
+        1104,
+        18432,
+        4032
+      ],
+      "mode2_header": [
+        67072,
+        256,
+        65920
+      ],
+      "transfer": [
+        128,
+        128,
+        0
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 15,
+      "type": 2,
+      "name": "DANTONSILVER20",
+      "offset": 187008,
+      "length": 34560,
+      "sha256": "b29d948270cb38059c62fc7091dff4b28376945c114567af67d4b327a181a1e0",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 16,
+      "type": 2,
+      "name": "DANTONSILVER24",
+      "offset": 221568,
+      "length": 34560,
+      "sha256": "0a3a47d0c9b8cc726766c524cd020d18e5d5c99370f043c7c12b78e57b6dfbac",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 17,
+      "type": 2,
+      "name": "EDDMONDGRAY14",
+      "offset": 256128,
+      "length": 34560,
+      "sha256": "e09a711d53233f6e7c8a580a4f3068d34e049b0fc1ff223d1b744edd981da443",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 18,
+      "type": 2,
+      "name": "EDDMONDGRAY24",
+      "offset": 290688,
+      "length": 9984,
+      "sha256": "8ca410971f76c0ad6373ad7f9bd56e32f39682f2b395fdb3658278d43ccc86cf",
+      "fields": [
+        256,
+        32,
+        8,
+        140548,
+        1630601216,
+        536870917,
+        60,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        8272,
+        1104,
+        4096,
+        4032
+      ],
+      "mode2_header": [
+        9728,
+        256,
+        8576
+      ],
+      "transfer": [
+        128,
+        16,
+        0
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 19,
+      "type": 2,
+      "name": "BAR_NUMBERFONT",
+      "offset": 300672,
+      "length": 9984,
+      "sha256": "e68a94a1cc411703e0a6c1a7a5e61be374faafeadfbf0c18ceec51cc63574cf3",
+      "fields": [
+        256,
+        32,
+        8,
+        140548,
+        1630601216,
+        536870917,
+        60,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        8272,
+        1104,
+        4096,
+        4032
+      ],
+      "mode2_header": [
+        9728,
+        256,
+        8576
+      ],
+      "transfer": [
+        128,
+        16,
+        0
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 20,
+      "type": 2,
+      "name": "ARIAL_BLACK_10PT",
+      "offset": 310656,
+      "length": 18176,
+      "sha256": "741bd54845ebfc78768d672b4a29ac3f98e482e0f03a949cc35947a48423bc95",
+      "fields": [
+        256,
+        64,
+        8,
+        140548,
+        2704343040,
+        536870917,
+        64,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        16464,
+        1104,
+        6144,
+        4032
+      ],
+      "mode2_header": [
+        17920,
+        256,
+        16768
+      ],
+      "transfer": [
+        128,
+        32,
+        0
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 21,
+      "type": 2,
+      "name": "MINIONCOND_18",
+      "offset": 328832,
+      "length": 34560,
+      "sha256": "9de86a2463abb60d76effb7702e119e3b7a2a98c14607c0db9d0eadbed094a70",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 22,
+      "type": 2,
+      "name": "ONLINE_VOICE_ICON_A",
+      "offset": 363392,
+      "length": 2816,
+      "sha256": "41b5c194cbc4a8b9b668b3aa3d168530b0d44e4cb7c001179a6043477478dc3f",
+      "fields": [
+        32,
+        32,
+        8,
+        140548,
+        1429241856,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        1104,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        2496,
+        256,
+        1360
+      ],
+      "transfer": [
+        16,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 23,
+      "type": 2,
+      "name": "ONLINE_VOICE_ICON_B",
+      "offset": 366208,
+      "length": 2816,
+      "sha256": "5835a0f483e3547f7017cc98c89ad61bf014564dea6bbbdabeaee5ef13900d35",
+      "fields": [
+        32,
+        32,
+        8,
+        140548,
+        1429241856,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        1104,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        2496,
+        256,
+        1360
+      ],
+      "transfer": [
+        16,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 24,
+      "type": 2,
+      "name": "FADE_BOX",
+      "offset": 369024,
+      "length": 2048,
+      "sha256": "3b51eec6a8d218ed696b1d4308f9d6ee8aa1ec7facd5c3a74cc241688424dfbb",
+      "fields": [
+        16,
+        16,
+        8,
+        140548,
+        288391168,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        336,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1728,
+        256,
+        592
+      ],
+      "transfer": [
+        8,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 25,
+      "type": 2,
+      "name": "WHITE_FADEBOX",
+      "offset": 371072,
+      "length": 2048,
+      "sha256": "d3d9fc21aa0f47aa4512b74d16138b87dfb4073ce0b45f02792afec995d3514f",
+      "fields": [
+        16,
+        16,
+        8,
+        140548,
+        288391168,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        336,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1728,
+        256,
+        592
+      ],
+      "transfer": [
+        8,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 26,
+      "type": 2,
+      "name": "KOIN_GRAPHIC",
+      "offset": 373120,
+      "length": 5888,
+      "sha256": "b1b9b453dbb42488418da5b37de2c9c7f370b7e23c5f7dfccf2fa90106ed8522",
+      "fields": [
+        64,
+        64,
+        8,
+        140548,
+        2570092544,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        4176,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        5568,
+        256,
+        4432
+      ],
+      "transfer": [
+        32,
+        32,
+        1048624
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 27,
+      "type": 2,
+      "name": "KOIN_AWARD_BORDER",
+      "offset": 379008,
+      "length": 2304,
+      "sha256": "267f7b04237af55368d881d01f16c88f7fbdba501873e6627aa9f1a7cddd38db",
+      "fields": [
+        4,
+        32,
+        8,
+        140548,
+        1227915264,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        848
+      ],
+      "transfer": [
+        8,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 28,
+      "type": 2,
+      "name": "KOIN_AWARD_SIDE_BORDER",
+      "offset": 381312,
+      "length": 2304,
+      "sha256": "559a3423d0263fcc3768a73f6faaa309eec50e098626652940fdc03d5446cec3",
+      "fields": [
+        16,
+        32,
+        8,
+        140548,
+        1362132992,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        848
+      ],
+      "transfer": [
+        8,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 29,
+      "type": 2,
+      "name": "VID_LINE",
+      "offset": 383616,
+      "length": 2304,
+      "sha256": "48bf11b80ecad589e92e3cd3d87eed7724141d060f34591fee1023313d765215",
+      "fields": [
+        32,
+        2,
+        8,
+        140548,
+        1429241856,
+        536870916,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        464
+      ],
+      "transfer": [
+        16,
+        2,
+        1048624
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 30,
+      "type": 2,
+      "name": "BOG_LINE",
+      "offset": 385920,
+      "length": 2816,
+      "sha256": "f80a79a929a857f6d51eb8a914700c612680de11d96c180c1dfabce544de51c8",
+      "fields": [
+        64,
+        16,
+        8,
+        140548,
+        422608896,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        1104,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        2496,
+        256,
+        1360
+      ],
+      "transfer": [
+        32,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 31,
+      "type": 2,
+      "name": "FNC_LINE",
+      "offset": 388736,
+      "length": 2304,
+      "sha256": "c830541b20c867a081b7b2c05fce840864ac166423b71e65783d71c1b0ec94a9",
+      "fields": [
+        32,
+        2,
+        8,
+        140548,
+        1429241856,
+        536870916,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        464
+      ],
+      "transfer": [
+        16,
+        2,
+        1048624
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 32,
+      "type": 2,
+      "name": "CPU_LINE",
+      "offset": 391040,
+      "length": 2304,
+      "sha256": "8d102b7a407358716eeadb60885d7c9876872d527b227ddebfc3d7278a100eb0",
+      "fields": [
+        32,
+        2,
+        8,
+        140548,
+        1429241856,
+        536870916,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        464
+      ],
+      "transfer": [
+        16,
+        2,
+        1048624
+      ]
+    },
+    {
+      "locale": 2,
+      "ordinal": 33,
+      "type": 3,
+      "name": "SHADOWBOX1X3_000",
+      "offset": 393344,
+      "length": 2048,
+      "sha256": "d90daab1ce6342286be046375e6b18f89bd45af627af23f573321093c5b7e20c",
+      "fields": [
+        16,
+        16,
+        8,
+        140548,
+        288391168,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        336,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1728,
+        256,
+        592
+      ],
+      "transfer": [
+        8,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 0,
+      "type": 7,
+      "name": "MOVELIST_FONT_MET",
+      "offset": 1152,
+      "length": 8116,
+      "sha256": "e72e03dbdbe27f544e95a3fe1a966909180d0a8b0c73f1656f75faab203e68db"
+    },
+    {
+      "locale": 3,
+      "ordinal": 1,
+      "type": 7,
+      "name": "DANTON20_MET",
+      "offset": 9268,
+      "length": 8116,
+      "sha256": "6ae4146fcc470bce1beb829d1c5656e38717cca8b49bc37a8c00d259fc192c90"
+    },
+    {
+      "locale": 3,
+      "ordinal": 2,
+      "type": 7,
+      "name": "DANTONSILVER20_MET",
+      "offset": 17384,
+      "length": 8116,
+      "sha256": "4a8cc58ba9780a1be87a392d815e3a969df314b2cbbaacec347780a6edf4b4be"
+    },
+    {
+      "locale": 3,
+      "ordinal": 3,
+      "type": 7,
+      "name": "DANTONSILVER24_MET",
+      "offset": 25500,
+      "length": 8116,
+      "sha256": "2c0f03d15cfdbd23729a3aa88bdf33940933524fc47bd3c3e45a887b885ff283"
+    },
+    {
+      "locale": 3,
+      "ordinal": 4,
+      "type": 7,
+      "name": "EDDMONDGRAY14_MET",
+      "offset": 33616,
+      "length": 8116,
+      "sha256": "b91b6ee00f3bed46a1e89471c247ea659b88af927d7bd9576311b57fd0cfd497"
+    },
+    {
+      "locale": 3,
+      "ordinal": 5,
+      "type": 7,
+      "name": "EDDMONDGRAY24_MET",
+      "offset": 41732,
+      "length": 8116,
+      "sha256": "810d0a3752fe204c7646f6360f39d1b1ae4f3789f14dc70377aec90a405987b9"
+    },
+    {
+      "locale": 3,
+      "ordinal": 6,
+      "type": 7,
+      "name": "BAR_NUMBERFONT_MET",
+      "offset": 49848,
+      "length": 8116,
+      "sha256": "4fafd9247ee57a22f2275a0700425bd037518d3ee4a21f49caf671de57e6f490"
+    },
+    {
+      "locale": 3,
+      "ordinal": 7,
+      "type": 7,
+      "name": "ARIAL_BLACK_10PT_MET",
+      "offset": 57964,
+      "length": 8116,
+      "sha256": "d4b56fd1be3190589f1eabf009a57f8a0214f747b51f58f2cc02ba727f33721b"
+    },
+    {
+      "locale": 3,
+      "ordinal": 8,
+      "type": 7,
+      "name": "MINIONCOND_18_MET",
+      "offset": 66080,
+      "length": 8116,
+      "sha256": "8417cb1b978b9e14038ad4c9f43f55593beb71bf367d636cf7b37ef518f5834e"
+    },
+    {
+      "locale": 3,
+      "ordinal": 9,
+      "type": 7,
+      "name": "SCR_MANAGED",
+      "offset": 74196,
+      "length": 148,
+      "sha256": "9a58d7a057871f402f1b4c655e46f4e3f78a2ecc3e186bb77939d673a34a58c1"
+    },
+    {
+      "locale": 3,
+      "ordinal": 10,
+      "type": 4,
+      "name": "SHADOWBOX",
+      "offset": 74368,
+      "length": 3712,
+      "sha256": "75c94ea7c1d5a28ef8a2e311d1cf83c77b275b6d94a770473af2e2276a34676f"
+    },
+    {
+      "locale": 3,
+      "ordinal": 11,
+      "type": 4,
+      "name": "CAM_BONE",
+      "offset": 78080,
+      "length": 1280,
+      "sha256": "0312555695b5fb279adcf35fb64bdfe17bcdb55223e8c0f4e4e1eeb526429ff1"
+    },
+    {
+      "locale": 3,
+      "ordinal": 12,
+      "type": 4,
+      "name": "AXIS",
+      "offset": 79360,
+      "length": 5760,
+      "sha256": "390b07989142bf231c3cfe7155c730284efdcdcaa6950c9a234598626c9f4ac9"
+    },
+    {
+      "locale": 3,
+      "ordinal": 13,
+      "type": 2,
+      "name": "MOVELIST_FONT",
+      "offset": 85120,
+      "length": 34560,
+      "sha256": "c0c6326ab5af2b0ed73c5974b1167632cd97d5abcca964e667aa0c7cbe2b2935",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 14,
+      "type": 2,
+      "name": "DANTON20",
+      "offset": 119680,
+      "length": 67328,
+      "sha256": "af679c256d49a11aa44061f16b4f5ff0ca3c75631b45be84ac1b1d1f82274191",
+      "fields": [
+        256,
+        256,
+        8,
+        140548,
+        556859392,
+        536870918,
+        256,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        65616,
+        1104,
+        18432,
+        4032
+      ],
+      "mode2_header": [
+        67072,
+        256,
+        65920
+      ],
+      "transfer": [
+        128,
+        128,
+        0
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 15,
+      "type": 2,
+      "name": "DANTONSILVER20",
+      "offset": 187008,
+      "length": 34560,
+      "sha256": "b29d948270cb38059c62fc7091dff4b28376945c114567af67d4b327a181a1e0",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 16,
+      "type": 2,
+      "name": "DANTONSILVER24",
+      "offset": 221568,
+      "length": 34560,
+      "sha256": "0a3a47d0c9b8cc726766c524cd020d18e5d5c99370f043c7c12b78e57b6dfbac",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 17,
+      "type": 2,
+      "name": "EDDMONDGRAY14",
+      "offset": 256128,
+      "length": 34560,
+      "sha256": "e09a711d53233f6e7c8a580a4f3068d34e049b0fc1ff223d1b744edd981da443",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 18,
+      "type": 2,
+      "name": "EDDMONDGRAY24",
+      "offset": 290688,
+      "length": 9984,
+      "sha256": "8ca410971f76c0ad6373ad7f9bd56e32f39682f2b395fdb3658278d43ccc86cf",
+      "fields": [
+        256,
+        32,
+        8,
+        140548,
+        1630601216,
+        536870917,
+        60,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        8272,
+        1104,
+        4096,
+        4032
+      ],
+      "mode2_header": [
+        9728,
+        256,
+        8576
+      ],
+      "transfer": [
+        128,
+        16,
+        0
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 19,
+      "type": 2,
+      "name": "BAR_NUMBERFONT",
+      "offset": 300672,
+      "length": 9984,
+      "sha256": "e68a94a1cc411703e0a6c1a7a5e61be374faafeadfbf0c18ceec51cc63574cf3",
+      "fields": [
+        256,
+        32,
+        8,
+        140548,
+        1630601216,
+        536870917,
+        60,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        8272,
+        1104,
+        4096,
+        4032
+      ],
+      "mode2_header": [
+        9728,
+        256,
+        8576
+      ],
+      "transfer": [
+        128,
+        16,
+        0
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 20,
+      "type": 2,
+      "name": "ARIAL_BLACK_10PT",
+      "offset": 310656,
+      "length": 18176,
+      "sha256": "741bd54845ebfc78768d672b4a29ac3f98e482e0f03a949cc35947a48423bc95",
+      "fields": [
+        256,
+        64,
+        8,
+        140548,
+        2704343040,
+        536870917,
+        64,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        16464,
+        1104,
+        6144,
+        4032
+      ],
+      "mode2_header": [
+        17920,
+        256,
+        16768
+      ],
+      "transfer": [
+        128,
+        32,
+        0
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 21,
+      "type": 2,
+      "name": "MINIONCOND_18",
+      "offset": 328832,
+      "length": 34560,
+      "sha256": "9de86a2463abb60d76effb7702e119e3b7a2a98c14607c0db9d0eadbed094a70",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 22,
+      "type": 2,
+      "name": "ONLINE_VOICE_ICON_A",
+      "offset": 363392,
+      "length": 2816,
+      "sha256": "41b5c194cbc4a8b9b668b3aa3d168530b0d44e4cb7c001179a6043477478dc3f",
+      "fields": [
+        32,
+        32,
+        8,
+        140548,
+        1429241856,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        1104,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        2496,
+        256,
+        1360
+      ],
+      "transfer": [
+        16,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 23,
+      "type": 2,
+      "name": "ONLINE_VOICE_ICON_B",
+      "offset": 366208,
+      "length": 2816,
+      "sha256": "5835a0f483e3547f7017cc98c89ad61bf014564dea6bbbdabeaee5ef13900d35",
+      "fields": [
+        32,
+        32,
+        8,
+        140548,
+        1429241856,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        1104,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        2496,
+        256,
+        1360
+      ],
+      "transfer": [
+        16,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 24,
+      "type": 2,
+      "name": "FADE_BOX",
+      "offset": 369024,
+      "length": 2048,
+      "sha256": "3b51eec6a8d218ed696b1d4308f9d6ee8aa1ec7facd5c3a74cc241688424dfbb",
+      "fields": [
+        16,
+        16,
+        8,
+        140548,
+        288391168,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        336,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1728,
+        256,
+        592
+      ],
+      "transfer": [
+        8,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 25,
+      "type": 2,
+      "name": "WHITE_FADEBOX",
+      "offset": 371072,
+      "length": 2048,
+      "sha256": "d3d9fc21aa0f47aa4512b74d16138b87dfb4073ce0b45f02792afec995d3514f",
+      "fields": [
+        16,
+        16,
+        8,
+        140548,
+        288391168,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        336,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1728,
+        256,
+        592
+      ],
+      "transfer": [
+        8,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 26,
+      "type": 2,
+      "name": "KOIN_GRAPHIC",
+      "offset": 373120,
+      "length": 5888,
+      "sha256": "b1b9b453dbb42488418da5b37de2c9c7f370b7e23c5f7dfccf2fa90106ed8522",
+      "fields": [
+        64,
+        64,
+        8,
+        140548,
+        2570092544,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        4176,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        5568,
+        256,
+        4432
+      ],
+      "transfer": [
+        32,
+        32,
+        1048624
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 27,
+      "type": 2,
+      "name": "KOIN_AWARD_BORDER",
+      "offset": 379008,
+      "length": 2304,
+      "sha256": "267f7b04237af55368d881d01f16c88f7fbdba501873e6627aa9f1a7cddd38db",
+      "fields": [
+        4,
+        32,
+        8,
+        140548,
+        1227915264,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        848
+      ],
+      "transfer": [
+        8,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 28,
+      "type": 2,
+      "name": "KOIN_AWARD_SIDE_BORDER",
+      "offset": 381312,
+      "length": 2304,
+      "sha256": "559a3423d0263fcc3768a73f6faaa309eec50e098626652940fdc03d5446cec3",
+      "fields": [
+        16,
+        32,
+        8,
+        140548,
+        1362132992,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        848
+      ],
+      "transfer": [
+        8,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 29,
+      "type": 2,
+      "name": "VID_LINE",
+      "offset": 383616,
+      "length": 2304,
+      "sha256": "48bf11b80ecad589e92e3cd3d87eed7724141d060f34591fee1023313d765215",
+      "fields": [
+        32,
+        2,
+        8,
+        140548,
+        1429241856,
+        536870916,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        464
+      ],
+      "transfer": [
+        16,
+        2,
+        1048624
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 30,
+      "type": 2,
+      "name": "BOG_LINE",
+      "offset": 385920,
+      "length": 2816,
+      "sha256": "f80a79a929a857f6d51eb8a914700c612680de11d96c180c1dfabce544de51c8",
+      "fields": [
+        64,
+        16,
+        8,
+        140548,
+        422608896,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        1104,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        2496,
+        256,
+        1360
+      ],
+      "transfer": [
+        32,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 31,
+      "type": 2,
+      "name": "FNC_LINE",
+      "offset": 388736,
+      "length": 2304,
+      "sha256": "c830541b20c867a081b7b2c05fce840864ac166423b71e65783d71c1b0ec94a9",
+      "fields": [
+        32,
+        2,
+        8,
+        140548,
+        1429241856,
+        536870916,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        464
+      ],
+      "transfer": [
+        16,
+        2,
+        1048624
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 32,
+      "type": 2,
+      "name": "CPU_LINE",
+      "offset": 391040,
+      "length": 2304,
+      "sha256": "8d102b7a407358716eeadb60885d7c9876872d527b227ddebfc3d7278a100eb0",
+      "fields": [
+        32,
+        2,
+        8,
+        140548,
+        1429241856,
+        536870916,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        464
+      ],
+      "transfer": [
+        16,
+        2,
+        1048624
+      ]
+    },
+    {
+      "locale": 3,
+      "ordinal": 33,
+      "type": 3,
+      "name": "SHADOWBOX1X3_000",
+      "offset": 393344,
+      "length": 2048,
+      "sha256": "d90daab1ce6342286be046375e6b18f89bd45af627af23f573321093c5b7e20c",
+      "fields": [
+        16,
+        16,
+        8,
+        140548,
+        288391168,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        336,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1728,
+        256,
+        592
+      ],
+      "transfer": [
+        8,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 0,
+      "type": 7,
+      "name": "MOVELIST_FONT_MET",
+      "offset": 1152,
+      "length": 8116,
+      "sha256": "e72e03dbdbe27f544e95a3fe1a966909180d0a8b0c73f1656f75faab203e68db"
+    },
+    {
+      "locale": 4,
+      "ordinal": 1,
+      "type": 7,
+      "name": "DANTON20_MET",
+      "offset": 9268,
+      "length": 8116,
+      "sha256": "6ae4146fcc470bce1beb829d1c5656e38717cca8b49bc37a8c00d259fc192c90"
+    },
+    {
+      "locale": 4,
+      "ordinal": 2,
+      "type": 7,
+      "name": "DANTONSILVER20_MET",
+      "offset": 17384,
+      "length": 8116,
+      "sha256": "4a8cc58ba9780a1be87a392d815e3a969df314b2cbbaacec347780a6edf4b4be"
+    },
+    {
+      "locale": 4,
+      "ordinal": 3,
+      "type": 7,
+      "name": "DANTONSILVER24_MET",
+      "offset": 25500,
+      "length": 8116,
+      "sha256": "2c0f03d15cfdbd23729a3aa88bdf33940933524fc47bd3c3e45a887b885ff283"
+    },
+    {
+      "locale": 4,
+      "ordinal": 4,
+      "type": 7,
+      "name": "EDDMONDGRAY14_MET",
+      "offset": 33616,
+      "length": 8116,
+      "sha256": "b91b6ee00f3bed46a1e89471c247ea659b88af927d7bd9576311b57fd0cfd497"
+    },
+    {
+      "locale": 4,
+      "ordinal": 5,
+      "type": 7,
+      "name": "EDDMONDGRAY24_MET",
+      "offset": 41732,
+      "length": 8116,
+      "sha256": "810d0a3752fe204c7646f6360f39d1b1ae4f3789f14dc70377aec90a405987b9"
+    },
+    {
+      "locale": 4,
+      "ordinal": 6,
+      "type": 7,
+      "name": "BAR_NUMBERFONT_MET",
+      "offset": 49848,
+      "length": 8116,
+      "sha256": "4fafd9247ee57a22f2275a0700425bd037518d3ee4a21f49caf671de57e6f490"
+    },
+    {
+      "locale": 4,
+      "ordinal": 7,
+      "type": 7,
+      "name": "ARIAL_BLACK_10PT_MET",
+      "offset": 57964,
+      "length": 8116,
+      "sha256": "d4b56fd1be3190589f1eabf009a57f8a0214f747b51f58f2cc02ba727f33721b"
+    },
+    {
+      "locale": 4,
+      "ordinal": 8,
+      "type": 7,
+      "name": "MINIONCOND_18_MET",
+      "offset": 66080,
+      "length": 8116,
+      "sha256": "8417cb1b978b9e14038ad4c9f43f55593beb71bf367d636cf7b37ef518f5834e"
+    },
+    {
+      "locale": 4,
+      "ordinal": 9,
+      "type": 7,
+      "name": "SCR_MANAGED",
+      "offset": 74196,
+      "length": 148,
+      "sha256": "9a58d7a057871f402f1b4c655e46f4e3f78a2ecc3e186bb77939d673a34a58c1"
+    },
+    {
+      "locale": 4,
+      "ordinal": 10,
+      "type": 4,
+      "name": "SHADOWBOX",
+      "offset": 74368,
+      "length": 3712,
+      "sha256": "75c94ea7c1d5a28ef8a2e311d1cf83c77b275b6d94a770473af2e2276a34676f"
+    },
+    {
+      "locale": 4,
+      "ordinal": 11,
+      "type": 4,
+      "name": "CAM_BONE",
+      "offset": 78080,
+      "length": 1280,
+      "sha256": "0312555695b5fb279adcf35fb64bdfe17bcdb55223e8c0f4e4e1eeb526429ff1"
+    },
+    {
+      "locale": 4,
+      "ordinal": 12,
+      "type": 4,
+      "name": "AXIS",
+      "offset": 79360,
+      "length": 5760,
+      "sha256": "390b07989142bf231c3cfe7155c730284efdcdcaa6950c9a234598626c9f4ac9"
+    },
+    {
+      "locale": 4,
+      "ordinal": 13,
+      "type": 2,
+      "name": "MOVELIST_FONT",
+      "offset": 85120,
+      "length": 34560,
+      "sha256": "c0c6326ab5af2b0ed73c5974b1167632cd97d5abcca964e667aa0c7cbe2b2935",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 14,
+      "type": 2,
+      "name": "DANTON20",
+      "offset": 119680,
+      "length": 67328,
+      "sha256": "af679c256d49a11aa44061f16b4f5ff0ca3c75631b45be84ac1b1d1f82274191",
+      "fields": [
+        256,
+        256,
+        8,
+        140548,
+        556859392,
+        536870918,
+        256,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        65616,
+        1104,
+        18432,
+        4032
+      ],
+      "mode2_header": [
+        67072,
+        256,
+        65920
+      ],
+      "transfer": [
+        128,
+        128,
+        0
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 15,
+      "type": 2,
+      "name": "DANTONSILVER20",
+      "offset": 187008,
+      "length": 34560,
+      "sha256": "b29d948270cb38059c62fc7091dff4b28376945c114567af67d4b327a181a1e0",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 16,
+      "type": 2,
+      "name": "DANTONSILVER24",
+      "offset": 221568,
+      "length": 34560,
+      "sha256": "0a3a47d0c9b8cc726766c524cd020d18e5d5c99370f043c7c12b78e57b6dfbac",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 17,
+      "type": 2,
+      "name": "EDDMONDGRAY14",
+      "offset": 256128,
+      "length": 34560,
+      "sha256": "e09a711d53233f6e7c8a580a4f3068d34e049b0fc1ff223d1b744edd981da443",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 18,
+      "type": 2,
+      "name": "EDDMONDGRAY24",
+      "offset": 290688,
+      "length": 9984,
+      "sha256": "8ca410971f76c0ad6373ad7f9bd56e32f39682f2b395fdb3658278d43ccc86cf",
+      "fields": [
+        256,
+        32,
+        8,
+        140548,
+        1630601216,
+        536870917,
+        60,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        8272,
+        1104,
+        4096,
+        4032
+      ],
+      "mode2_header": [
+        9728,
+        256,
+        8576
+      ],
+      "transfer": [
+        128,
+        16,
+        0
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 19,
+      "type": 2,
+      "name": "BAR_NUMBERFONT",
+      "offset": 300672,
+      "length": 9984,
+      "sha256": "e68a94a1cc411703e0a6c1a7a5e61be374faafeadfbf0c18ceec51cc63574cf3",
+      "fields": [
+        256,
+        32,
+        8,
+        140548,
+        1630601216,
+        536870917,
+        60,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        8272,
+        1104,
+        4096,
+        4032
+      ],
+      "mode2_header": [
+        9728,
+        256,
+        8576
+      ],
+      "transfer": [
+        128,
+        16,
+        0
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 20,
+      "type": 2,
+      "name": "ARIAL_BLACK_10PT",
+      "offset": 310656,
+      "length": 18176,
+      "sha256": "741bd54845ebfc78768d672b4a29ac3f98e482e0f03a949cc35947a48423bc95",
+      "fields": [
+        256,
+        64,
+        8,
+        140548,
+        2704343040,
+        536870917,
+        64,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        16464,
+        1104,
+        6144,
+        4032
+      ],
+      "mode2_header": [
+        17920,
+        256,
+        16768
+      ],
+      "transfer": [
+        128,
+        32,
+        0
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 21,
+      "type": 2,
+      "name": "MINIONCOND_18",
+      "offset": 328832,
+      "length": 34560,
+      "sha256": "9de86a2463abb60d76effb7702e119e3b7a2a98c14607c0db9d0eadbed094a70",
+      "fields": [
+        256,
+        128,
+        8,
+        140548,
+        3778084864,
+        536870917,
+        128,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        32848,
+        1104,
+        10240,
+        4032
+      ],
+      "mode2_header": [
+        34304,
+        256,
+        33152
+      ],
+      "transfer": [
+        128,
+        64,
+        0
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 22,
+      "type": 2,
+      "name": "ONLINE_VOICE_ICON_A",
+      "offset": 363392,
+      "length": 2816,
+      "sha256": "41b5c194cbc4a8b9b668b3aa3d168530b0d44e4cb7c001179a6043477478dc3f",
+      "fields": [
+        32,
+        32,
+        8,
+        140548,
+        1429241856,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        1104,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        2496,
+        256,
+        1360
+      ],
+      "transfer": [
+        16,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 23,
+      "type": 2,
+      "name": "ONLINE_VOICE_ICON_B",
+      "offset": 366208,
+      "length": 2816,
+      "sha256": "5835a0f483e3547f7017cc98c89ad61bf014564dea6bbbdabeaee5ef13900d35",
+      "fields": [
+        32,
+        32,
+        8,
+        140548,
+        1429241856,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        1104,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        2496,
+        256,
+        1360
+      ],
+      "transfer": [
+        16,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 24,
+      "type": 2,
+      "name": "FADE_BOX",
+      "offset": 369024,
+      "length": 2048,
+      "sha256": "3b51eec6a8d218ed696b1d4308f9d6ee8aa1ec7facd5c3a74cc241688424dfbb",
+      "fields": [
+        16,
+        16,
+        8,
+        140548,
+        288391168,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        336,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1728,
+        256,
+        592
+      ],
+      "transfer": [
+        8,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 25,
+      "type": 2,
+      "name": "WHITE_FADEBOX",
+      "offset": 371072,
+      "length": 2048,
+      "sha256": "d3d9fc21aa0f47aa4512b74d16138b87dfb4073ce0b45f02792afec995d3514f",
+      "fields": [
+        16,
+        16,
+        8,
+        140548,
+        288391168,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        336,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1728,
+        256,
+        592
+      ],
+      "transfer": [
+        8,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 26,
+      "type": 2,
+      "name": "KOIN_GRAPHIC",
+      "offset": 373120,
+      "length": 5888,
+      "sha256": "b1b9b453dbb42488418da5b37de2c9c7f370b7e23c5f7dfccf2fa90106ed8522",
+      "fields": [
+        64,
+        64,
+        8,
+        140548,
+        2570092544,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        4176,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        5568,
+        256,
+        4432
+      ],
+      "transfer": [
+        32,
+        32,
+        1048624
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 27,
+      "type": 2,
+      "name": "KOIN_AWARD_BORDER",
+      "offset": 379008,
+      "length": 2304,
+      "sha256": "267f7b04237af55368d881d01f16c88f7fbdba501873e6627aa9f1a7cddd38db",
+      "fields": [
+        4,
+        32,
+        8,
+        140548,
+        1227915264,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        848
+      ],
+      "transfer": [
+        8,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 28,
+      "type": 2,
+      "name": "KOIN_AWARD_SIDE_BORDER",
+      "offset": 381312,
+      "length": 2304,
+      "sha256": "559a3423d0263fcc3768a73f6faaa309eec50e098626652940fdc03d5446cec3",
+      "fields": [
+        16,
+        32,
+        8,
+        140548,
+        1362132992,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        848
+      ],
+      "transfer": [
+        8,
+        16,
+        1048624
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 29,
+      "type": 2,
+      "name": "VID_LINE",
+      "offset": 383616,
+      "length": 2304,
+      "sha256": "48bf11b80ecad589e92e3cd3d87eed7724141d060f34591fee1023313d765215",
+      "fields": [
+        32,
+        2,
+        8,
+        140548,
+        1429241856,
+        536870916,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        464
+      ],
+      "transfer": [
+        16,
+        2,
+        1048624
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 30,
+      "type": 2,
+      "name": "BOG_LINE",
+      "offset": 385920,
+      "length": 2816,
+      "sha256": "f80a79a929a857f6d51eb8a914700c612680de11d96c180c1dfabce544de51c8",
+      "fields": [
+        64,
+        16,
+        8,
+        140548,
+        422608896,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        1104,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        2496,
+        256,
+        1360
+      ],
+      "transfer": [
+        32,
+        8,
+        1048624
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 31,
+      "type": 2,
+      "name": "FNC_LINE",
+      "offset": 388736,
+      "length": 2304,
+      "sha256": "c830541b20c867a081b7b2c05fce840864ac166423b71e65783d71c1b0ec94a9",
+      "fields": [
+        32,
+        2,
+        8,
+        140548,
+        1429241856,
+        536870916,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        464
+      ],
+      "transfer": [
+        16,
+        2,
+        1048624
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 32,
+      "type": 2,
+      "name": "CPU_LINE",
+      "offset": 391040,
+      "length": 2304,
+      "sha256": "8d102b7a407358716eeadb60885d7c9876872d527b227ddebfc3d7278a100eb0",
+      "fields": [
+        32,
+        2,
+        8,
+        140548,
+        1429241856,
+        536870916,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        592,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1984,
+        256,
+        464
+      ],
+      "transfer": [
+        16,
+        2,
+        1048624
+      ]
+    },
+    {
+      "locale": 4,
+      "ordinal": 33,
+      "type": 3,
+      "name": "SHADOWBOX1X3_000",
+      "offset": 393344,
+      "length": 2048,
+      "sha256": "d90daab1ce6342286be046375e6b18f89bd45af627af23f573321093c5b7e20c",
+      "fields": [
+        16,
+        16,
+        8,
+        140548,
+        288391168,
+        536870917,
+        28,
+        0,
+        16384,
+        4194308,
+        16384,
+        4194308,
+        336,
+        1104,
+        2048,
+        4032
+      ],
+      "mode2_header": [
+        1728,
+        256,
+        592
+      ],
+      "transfer": [
+        8,
+        8,
+        1048624
+      ]
+    }
+  ],
+  "variants": [
+    [
+      256,
+      128,
+      8,
+      140548,
+      3778084864,
+      536870917,
+      128,
+      0,
+      16384,
+      4194308,
+      16384,
+      4194308,
+      32848,
+      1104,
+      10240,
+      4032,
+      34304,
+      256,
+      33152,
+      128,
+      64,
+      0,
+      34560
+    ],
+    [
+      256,
+      256,
+      8,
+      140548,
+      556859392,
+      536870918,
+      256,
+      0,
+      16384,
+      4194308,
+      16384,
+      4194308,
+      65616,
+      1104,
+      18432,
+      4032,
+      67072,
+      256,
+      65920,
+      128,
+      128,
+      0,
+      67328
+    ],
+    [
+      256,
+      32,
+      8,
+      140548,
+      1630601216,
+      536870917,
+      60,
+      0,
+      16384,
+      4194308,
+      16384,
+      4194308,
+      8272,
+      1104,
+      4096,
+      4032,
+      9728,
+      256,
+      8576,
+      128,
+      16,
+      0,
+      9984
+    ],
+    [
+      256,
+      64,
+      8,
+      140548,
+      2704343040,
+      536870917,
+      64,
+      0,
+      16384,
+      4194308,
+      16384,
+      4194308,
+      16464,
+      1104,
+      6144,
+      4032,
+      17920,
+      256,
+      16768,
+      128,
+      32,
+      0,
+      18176
+    ],
+    [
+      32,
+      32,
+      8,
+      140548,
+      1429241856,
+      536870917,
+      28,
+      0,
+      16384,
+      4194308,
+      16384,
+      4194308,
+      1104,
+      1104,
+      2048,
+      4032,
+      2496,
+      256,
+      1360,
+      16,
+      16,
+      1048624,
+      2816
+    ],
+    [
+      16,
+      16,
+      8,
+      140548,
+      288391168,
+      536870917,
+      28,
+      0,
+      16384,
+      4194308,
+      16384,
+      4194308,
+      336,
+      1104,
+      2048,
+      4032,
+      1728,
+      256,
+      592,
+      8,
+      8,
+      1048624,
+      2048
+    ],
+    [
+      64,
+      64,
+      8,
+      140548,
+      2570092544,
+      536870917,
+      28,
+      0,
+      16384,
+      4194308,
+      16384,
+      4194308,
+      4176,
+      1104,
+      2048,
+      4032,
+      5568,
+      256,
+      4432,
+      32,
+      32,
+      1048624,
+      5888
+    ],
+    [
+      4,
+      32,
+      8,
+      140548,
+      1227915264,
+      536870917,
+      28,
+      0,
+      16384,
+      4194308,
+      16384,
+      4194308,
+      592,
+      1104,
+      2048,
+      4032,
+      1984,
+      256,
+      848,
+      8,
+      16,
+      1048624,
+      2304
+    ],
+    [
+      16,
+      32,
+      8,
+      140548,
+      1362132992,
+      536870917,
+      28,
+      0,
+      16384,
+      4194308,
+      16384,
+      4194308,
+      592,
+      1104,
+      2048,
+      4032,
+      1984,
+      256,
+      848,
+      8,
+      16,
+      1048624,
+      2304
+    ],
+    [
+      32,
+      2,
+      8,
+      140548,
+      1429241856,
+      536870916,
+      28,
+      0,
+      16384,
+      4194308,
+      16384,
+      4194308,
+      592,
+      1104,
+      2048,
+      4032,
+      1984,
+      256,
+      464,
+      16,
+      2,
+      1048624,
+      2304
+    ],
+    [
+      64,
+      16,
+      8,
+      140548,
+      422608896,
+      536870917,
+      28,
+      0,
+      16384,
+      4194308,
+      16384,
+      4194308,
+      1104,
+      1104,
+      2048,
+      4032,
+      2496,
+      256,
+      1360,
+      32,
+      8,
+      1048624,
+      2816
+    ]
+  ]
+}

@@ -1,0 +1,52 @@
+[
+  {
+    "selector": 0,
+    "descriptor_words": [
+      "0x6107c0",
+      "0x610980",
+      "0x1",
+      "0x0"
+    ],
+    "name": "sysart.sec"
+  },
+  {
+    "selector": 1,
+    "descriptor_words": [
+      "0x6107d0",
+      "0x610980",
+      "0x1",
+      "0x0"
+    ],
+    "name": "sysart_spa.sec"
+  },
+  {
+    "selector": 2,
+    "descriptor_words": [
+      "0x6107e0",
+      "0x610980",
+      "0x1",
+      "0x0"
+    ],
+    "name": "sysart_ger.sec"
+  },
+  {
+    "selector": 3,
+    "descriptor_words": [
+      "0x6107f0",
+      "0x610980",
+      "0x1",
+      "0x0"
+    ],
+    "name": "sysart_fre.sec"
+  },
+  {
+    "selector": 4,
+    "descriptor_words": [
+      "0x610800",
+      "0x610980",
+      "0x1",
+      "0x0"
+    ],
+    "name": "sysart_ita.sec"
+  }
+]

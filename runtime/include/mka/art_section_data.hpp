@@ -60,6 +60,10 @@ public:
     // independently of the file or volume. Range selection belongs to the caller.
     static std::optional<NativeArtSectionData> read(NativeContentFile&, ArtSectionRange,
         ArtSectionFailure&) noexcept;
+    // CPU serialized ownership only; never marks runtime section conversion complete.
+    static std::optional<NativeArtSectionData> parse(std::vector<std::byte>, ArtSectionFailure&) noexcept;
+    std::optional<std::span<const std::byte>> resource_bytes(std::size_t, ArtSectionFailure&) const & noexcept;
+    std::optional<std::span<const std::byte>> resource_bytes(std::size_t, ArtSectionFailure&) const && = delete;
     std::span<const ArtSectionRecord> records() const & noexcept { return records_; }
     std::span<const ArtSectionRecord> records() const && = delete;
     std::array<std::uint32_t, 7> header_words() const noexcept { return header_; }

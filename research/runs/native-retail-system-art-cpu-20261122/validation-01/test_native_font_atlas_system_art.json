@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_font_atlas_system_art.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121\\art\\gameart.ssf"
+  ],
+  "exit": 0,
+  "seconds": 0.05714820000866894,
+  "log_sha256": "4a2c114e853399426a67da1be3c3ee603237d2e57a8e38643fb6be1a57f2b8b7",
+  "source_manifest_sha256": "2c832ed9656c921b3ff81d8447b78caa9a507604a5cfbf4191bba5b588f55411",
+  "executable_sha256": "cca49a3d05c1fc26aa1a4696fa1f0b50e4bb08ac7fafbdf0fadab9fc6c28c6a1"
+}

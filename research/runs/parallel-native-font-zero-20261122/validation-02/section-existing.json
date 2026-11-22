@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-font-zero\\build-font-zero\\test_native_art_section_data.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-font-zero\\research\\runs\\parallel-native-font-zero-20261122\\validation-02\\disposable-section"
+  ],
+  "exit": 0,
+  "executable_sha256": "3043e606ad6320cceffa98331f082bb0d977d90e9e27caa548b36e04e641e65d",
+  "log_sha256": "f6e1c305d9b5ffad92b38314affc951c90241dc132e3dec03950ec202cad06c9",
+  "source_manifest_sha256": "63c097bf45dd3a5b719122c72c638dc4b6c912f2a2f51a5bd216033aaa64b7fd"
+}
