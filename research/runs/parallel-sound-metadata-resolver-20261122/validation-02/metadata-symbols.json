@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-C",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\build-section-timing\\test_native_retail_sound_metadata.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.04757881164550781,
+  "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "log_sha256": "7ff22c3987ce5d7097bffdf65093536f0bf108c83ac147a5dba6db8a5aef17d5"
+}

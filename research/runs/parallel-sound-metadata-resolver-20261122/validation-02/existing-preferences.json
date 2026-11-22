@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\build-section-timing\\test_native_retail_profile_preferences.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon"
+  ],
+  "exit": 0,
+  "seconds": 0.11647987365722656,
+  "executable_sha256": "550fbf8c30079edc8bd60df81a8c181f9e7710a11f1108282eec1818000c3139",
+  "log_sha256": "3a9ed67fdd7ace635cd4417822c3a386ce248c6228a82ce475337ff93b0c771d"
+}

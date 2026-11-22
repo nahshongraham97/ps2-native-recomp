@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\build-section-timing",
+    "--target",
+    "test_native_retail_sound_metadata",
+    "test_native_retail_profile_preferences",
+    "-j2"
+  ],
+  "exit": 0,
+  "seconds": 1.3341100215911865,
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "log_sha256": "c32237095f0225d0a4925378aa800957017fe0607cdd05deff2848c2180bea99"
+}
