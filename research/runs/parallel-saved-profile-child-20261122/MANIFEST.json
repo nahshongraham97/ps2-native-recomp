@@ -199,5 +199,19 @@
   "validation01/source-snapshot/runtime__src__native__retail_saved_profile_defaults.cpp.gz": "c7e8dc7cdcbd9c0d348d3ca945d242e99475c93f7e5fb51b7aa6a0b49f3dc072",
   "validation01/source-snapshot/tests__test_retail_saved_profile_child.cpp.gz": "cd8ca10dfee27d761c1f6ae4d3682ed645e863e2b443ea498e49b482bc14802f",
   "validation01/VERIFICATION.json": "250a845655a36f0f6cc7ac5b99042e1b34bf8c62eef8df2b81b95ba8f0f76026",
-  "WORK.md": "2b91786d38dc55372fb91d4e4a3f31ada9426b9a5b43f43919b1c28794cea2e1"
+  "validation02/child.exe.gz": "263cf10052e80dd08810bf2489489fa6194147099d4f1f210a0d3446d9963e8a",
+  "validation02/COMMAND.json": "217445ab6c4749b9233c2f322f1058b53f92be543aa39e6461a87979a8b1bc87",
+  "validation02/compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "validation02/run.log": "d9090ed425aa44d7537dc02e503f62f4b8f01c6b737f374c7e2f43a9e73bd9d6",
+  "validation02/source-snapshot/cmake__native_game.cmake.gz": "9dd01d79c5e03b478cd7f9db52e701b9d242777285ef560fcc7dfba4ad4060b3",
+  "validation02/source-snapshot/runtime__include__mka__retail_profile_aggregate.hpp.gz": "4144f15724453f80042686909097492d43cb20d25252d697c31c6ddea8efa3f3",
+  "validation02/source-snapshot/runtime__include__mka__retail_profile_image.hpp.gz": "9e393aa0c7334becd22716037c6d6d976a7751564c52cd4c7a5c5cabc7a692ac",
+  "validation02/source-snapshot/runtime__include__mka__retail_saved_profile_child.hpp.gz": "1d4a6eff81bfce1bec01c10c3895100fba6e2e85bc25f4acb7c7cb1440774d42",
+  "validation02/source-snapshot/runtime__include__mka__retail_saved_profile_defaults.hpp.gz": "60a3b8727c641af582b1ad897f88d0ee79ca6bb563c7a53a44a61ea3445dcdc5",
+  "validation02/source-snapshot/runtime__src__native__retail_profile_image.cpp.gz": "87cf599ce420b3665cda61ebe43bedca7311fb04a330306fb6702c8e8bf31ef2",
+  "validation02/source-snapshot/runtime__src__native__retail_saved_profile_child.cpp.gz": "dfe392667bdc1b69c60656a414fa78ab87e160b81ac84dbe341d1d84897c80fe",
+  "validation02/source-snapshot/runtime__src__native__retail_saved_profile_defaults.cpp.gz": "634fd4e22882284467862d1842d665127d7c0ec85072a84754f8b1985140d404",
+  "validation02/source-snapshot/tests__test_retail_saved_profile_child.cpp.gz": "9efdb0c9c5364c1a392ed0fc80e42077d938f77cc9646959af6c4e07fbd6bf13",
+  "validation02/VERIFICATION.json": "2300adbf8c645ba2e99ff6060d13883403b66fa3c81faf730e30de20b9f15ec8",
+  "WORK.md": "bd8f54930fc4e33d0cba7bdd9308eee38e3621c00d6d134de3b00bf43d1ca346"
 }

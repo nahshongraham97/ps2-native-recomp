@@ -34,13 +34,14 @@ void defaults(const RetailSavedProfileChildValue& x){
  for(auto v:view->or_words_100_108_110_118)check(v==0,"actual default masks zero");
  for(auto v:view->and_words_120)check(v==0xffffffffu,"first source final -1 indices");
  for(auto v:view->and_words_1c0)check(v==0xffffffffu,"second source final -1 indices");
- check(x.named_presets().empty()&&x.gameplay().additional.object_snapshots.empty()&&!x.gameplay().additional.preview_definition&&x.gameplay().additional.resource_ids.empty(),"proved empty saved domains,not live actor/scene retirement");
+ check(x.named_presets().size()==6&&x.gameplay().additional.object_snapshots.empty()&&!x.gameplay().additional.preview_definition&&x.gameplay().additional.resource_ids.empty(),"proved empty saved domains,not live actor/scene retirement");
  check(&x.gameplay().source_values==&x.known_values().gameplay&&&x.customization().source_values==&x.known_values().command,"semantic projections share actual field authorities");
  check(x.gameplay().source_values.bitword_1164==18&&x.gameplay().source_values.bitword_1188==4&&x.customization().source_values.bitword_1fc==1,"semantic projections expose nonzero defaults");
  check(x.customization_flags()==4&&x.customization_condition_word()==0,"custom bit0 absent,bit2 present,unconditional condition word0");
  check(x.wallet().current==0&&x.wallet().accumulated==0&&x.gameplay().additional.control40==0&&x.gameplay().additional.event_count==0,"retained scalar defaults");
  for(const auto& pair:x.statistics().mode_pairs)check(pair.first==0&&pair.second==0,"three counter pairs reset");
  for(const auto& result:x.statistics().timed_results)check(!result.present()&&result.packed_clock==0,"five packed results genuinely absent");
+ for(const auto& slot:x.named_presets()){check(slot.first_name.empty()&&slot.second_name.empty()&&slot.command_text.size()==30,"six actual empty slots retain direct-load extent");for(const auto& command:slot.command_text)check(command.empty(),"direct empty-slot30 command strings");}
  for(auto index:x.gameplay().additional.category_indices)check(index==0,"eight live category indices default0");
 }
 }

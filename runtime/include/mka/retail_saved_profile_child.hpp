@@ -37,7 +37,7 @@ struct RetailSavedChildStatistics {
 };
 struct RetailSavedNamedPreset {
  std::string first_name,second_name;
- std::vector<std::string> command_text;
+ std::array<std::string,30> command_text;
 };
 // Logical game flags. Secondary160..191 and primary0..31 share storage.
 // Source ID ranges are game-data namespaces,not host allocation ceilings.
@@ -118,7 +118,7 @@ public:
  const RetailSavedChildStatistics& statistics()const noexcept{return statistics_;}
  RetailSavedKafView gameplay()const noexcept{return {known_.gameplay,gameplay_};}
  RetailSavedCustomizationView customization()const noexcept{return {known_.command,customization_pending_,customization_condition_};}
- const std::vector<RetailSavedNamedPreset>& named_presets()const noexcept{return named_presets_;}
+ const std::array<RetailSavedNamedPreset,6>& named_presets()const noexcept{return named_presets_;}
  std::uint8_t customization_flags()const noexcept{return static_cast<std::uint8_t>(known_.command.flag_bit2);}
  std::uint32_t customization_condition_word()const noexcept{return customization_condition_;}
 private:
@@ -129,7 +129,7 @@ private:
  RetailSavedChildWallet wallet_;
  RetailSavedChildStatistics statistics_;
  RetailSavedKafSupplement gameplay_;
- std::vector<RetailSavedNamedPreset> named_presets_;
+ std::array<RetailSavedNamedPreset,6> named_presets_;
  std::set<std::uint32_t> achievement_flags_;
  std::uint32_t unlock_word_{};
  std::array<std::uint64_t,4> unlock_masks_{};
