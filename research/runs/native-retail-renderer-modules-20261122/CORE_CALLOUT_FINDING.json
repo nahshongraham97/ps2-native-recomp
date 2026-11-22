@@ -1,0 +1,15 @@
+{
+  "status": "SOURCE_CONFIRMED_AND_SAFE_DIAGNOSTIC_REPRODUCED_BY_AUTHOR",
+  "source_commit": "ea4e3c99de5f18869d472c9a802cbed2377ab31b",
+  "source_sha256": "a0f9fe29d2057569a6a26ef59b9b10d5b088cabf645e2ab6e5b5a68ddf22d1bc",
+  "candidate_0402": "37a3a82e980e38c4702cb1aecd2529dadba06363",
+  "methods": [
+    "initialize_core",
+    "construct_registered",
+    "destroy_constructed"
+  ],
+  "finding": "access locks Session only inside access; explicit factory/setup/cleanup callbacks can release all external Session/Core owners while Busy still references Core fields. Safe diagnostic retains emergency Core while proving Session expired and registry lookup failed inside each callback. Operation-long Session lease required; it also retains actual Session-owned Core.",
+  "scope": "No UAF executed or application crash claimed; focused correction/receipts pending. Existing connected Main binder retains its own Session; public Core callback operations still require their own lifetime contract.",
+  "acceptance": "OPEN",
+  "game_run": false
+}

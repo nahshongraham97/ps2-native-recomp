@@ -1,0 +1,20 @@
+{
+  "base": "ea4e3c99de5f18869d472c9a802cbed2377ab31b",
+  "candidate_base": "feb05096e43fb0ae37bac6407d2567569ddb03e0",
+  "candidates": [
+    "fab3aee9c3b5edcce771affb93581f8628ce0b91",
+    "37a3a82e980e38c4702cb1aecd2529dadba06363"
+  ],
+  "pins": {
+    "cmake/native_game.cmake": "2eeadce31b11a985a6330f51c9c3ab2273b76f7a14f9cc78171cc4c29c54b2a9",
+    "runtime/include/mka/retail_renderer_core.hpp": "3adb5025b64beb1d92d6c9cd9264986292b49f07c773e1dd5c37965b5a18282e",
+    "runtime/include/mka/retail_renderer_math.hpp": null,
+    "runtime/include/mka/retail_renderer_matrix.hpp": null,
+    "runtime/include/mka/retail_renderer_transforms.hpp": null,
+    "runtime/src/native/retail_renderer_core.cpp": "a0f9fe29d2057569a6a26ef59b9b10d5b088cabf645e2ab6e5b5a68ddf22d1bc",
+    "runtime/src/native/retail_renderer_matrix.cpp": null,
+    "runtime/src/native/retail_renderer_transforms.cpp": null,
+    "tests/test_retail_renderer_core.cpp": "8cbb2a7d05d091595e474d54b9c380744639d61b9cab842346619eab258d29bd",
+    "tests/test_retail_renderer_matrix.cpp": null
+  }
+}

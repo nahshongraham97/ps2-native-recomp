@@ -1,0 +1,3707 @@
+{
+  "classification": "Exact immutable candidate/research data whitespace, including raw Ghidra logs/decompiler text; original bytes retained. Current authored runtime/tests/configuration and root records retain strict checks.",
+  "findings": [
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/FMulMatcher.cpp",
+      "line": 140,
+      "kind": "trailing whitespace.",
+      "sha256": "729dd127fc103ca10545faf3b82c544f9edf22779c0730161bd6fadac875823d"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/FMulMatcher.cpp",
+      "line": 141,
+      "kind": "trailing whitespace.",
+      "sha256": "729dd127fc103ca10545faf3b82c544f9edf22779c0730161bd6fadac875823d"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 12,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 13,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 14,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 15,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 16,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 17,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 18,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 19,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 20,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 21,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 22,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 23,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 24,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 25,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 26,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 27,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 28,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 29,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 30,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 31,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 32,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 33,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 34,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 35,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-344.txt",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "a1156e1614194ac7ede7ff5879756d87a654db46c8fc12306b720fc08d0fb3ca"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 12,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 13,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 14,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 15,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 16,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 17,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 18,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 19,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 20,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 21,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 22,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 23,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 24,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 25,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 26,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 27,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 28,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 29,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 30,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 31,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 32,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 33,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 34,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 35,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 43,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 44,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 45,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 46,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 47,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 48,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 49,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 50,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 51,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 52,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 53,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 54,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 55,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 56,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 57,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 58,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 59,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 60,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-359.txt",
+      "line": 61,
+      "kind": "trailing whitespace.",
+      "sha256": "49bb9c69ab6f7ddd2a7df2325cc8e96725274aaea01c341acd2c4ae2065274d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 12,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 13,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 14,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 15,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 16,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 17,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 18,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 19,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 20,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 21,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 22,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 23,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 24,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 25,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 26,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 27,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 28,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 29,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 30,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 31,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 32,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-360.txt",
+      "line": 33,
+      "kind": "trailing whitespace.",
+      "sha256": "5f05db0ef1661621b36df9c3fdd25e7a8c59dde2c90435d63d60a9e3722fe213"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 12,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 13,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 14,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 15,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 16,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 17,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 18,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 19,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 20,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 21,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 22,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 23,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 24,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 25,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 26,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 27,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 28,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 29,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 30,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 31,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 32,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 33,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 34,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 35,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 43,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 44,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 45,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 46,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 47,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 48,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 49,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 50,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 51,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 52,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 53,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 54,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 55,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 56,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 57,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 58,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 59,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 60,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-361.txt",
+      "line": 61,
+      "kind": "trailing whitespace.",
+      "sha256": "44db370883a6c81628aafe56bee1f7053d258c0e0229c44e866d770f765fc6f1"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 12,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 13,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 14,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 15,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 16,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 17,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 18,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 19,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 20,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 21,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 22,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 23,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 24,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 25,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 26,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 27,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 28,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 29,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 30,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 31,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 32,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-362.txt",
+      "line": 33,
+      "kind": "trailing whitespace.",
+      "sha256": "596ec1d4ba026ab6fa354ed528227949c600186fd6bcb17da2a85b5af3781c48"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 12,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 13,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 14,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 15,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 16,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 17,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 18,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 19,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 20,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 21,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 22,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 23,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 24,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 25,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 26,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 27,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 28,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 29,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 30,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 31,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 32,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 33,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 34,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 35,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-372.txt",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "c2c6205a62684f84564eb2baa56c1399990487fb0d99fd16349efc6b4ea10334"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 12,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 13,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 14,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 15,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 16,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 17,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 18,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 19,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 20,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 21,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 22,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 23,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 24,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 25,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 26,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 27,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 28,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 29,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 30,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 31,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 32,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 33,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 34,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 35,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/instruction-manual-page-373.txt",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "dfabe749950dd5328105a94e61cbe198173e6f48c4bde79be3ccca0fdbffa5d2"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 12,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 13,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 14,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 15,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 16,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 17,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 18,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 19,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 20,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 21,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 22,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 23,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 24,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 25,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 26,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 27,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 28,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 29,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 30,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 31,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 32,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 33,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 34,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 35,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-161.txt",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "80c258a6fd2fad8279fc0145e6ac2a958265073fb24e8caea9212604a8d23923"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 12,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 13,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 14,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 15,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 16,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 17,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 18,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 19,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 20,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 21,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 22,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 23,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 24,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 25,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 26,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 27,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 28,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 29,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 30,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 31,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 32,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 33,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 34,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 35,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 43,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-native-transform-math-20261122/manual-page-50.txt",
+      "line": 44,
+      "kind": "trailing whitespace.",
+      "sha256": "728c6fcdc0cb135842ab7f734adb36fba6f0378b229ded35c4dad0bcdb5e2466"
+    },
+    {
+      "path": "research/runs/parallel-renderer-core-callout-lifetime-20261122/final/negative.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "b8f879db0651ae7cda7255a59bcf08469c673b7424822a517452e7eee955a731"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-01.log",
+      "line": 43,
+      "kind": "trailing whitespace.",
+      "sha256": "037598c0aae9621efe90e9a42c15beb5fed8ee526e58afa5e6290d011ac2273a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-02.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "e4426719f87657265dedc26daf400ea9d95856a9e343bde4ba05f35dd8a2cee3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-02.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "e4426719f87657265dedc26daf400ea9d95856a9e343bde4ba05f35dd8a2cee3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-02.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "e4426719f87657265dedc26daf400ea9d95856a9e343bde4ba05f35dd8a2cee3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-02.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "e4426719f87657265dedc26daf400ea9d95856a9e343bde4ba05f35dd8a2cee3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-02.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "e4426719f87657265dedc26daf400ea9d95856a9e343bde4ba05f35dd8a2cee3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-02.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "e4426719f87657265dedc26daf400ea9d95856a9e343bde4ba05f35dd8a2cee3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-02.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "e4426719f87657265dedc26daf400ea9d95856a9e343bde4ba05f35dd8a2cee3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-02.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "e4426719f87657265dedc26daf400ea9d95856a9e343bde4ba05f35dd8a2cee3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-02.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "e4426719f87657265dedc26daf400ea9d95856a9e343bde4ba05f35dd8a2cee3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-02.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "e4426719f87657265dedc26daf400ea9d95856a9e343bde4ba05f35dd8a2cee3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-02.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "e4426719f87657265dedc26daf400ea9d95856a9e343bde4ba05f35dd8a2cee3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-02.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "e4426719f87657265dedc26daf400ea9d95856a9e343bde4ba05f35dd8a2cee3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-02.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "e4426719f87657265dedc26daf400ea9d95856a9e343bde4ba05f35dd8a2cee3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-02.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "e4426719f87657265dedc26daf400ea9d95856a9e343bde4ba05f35dd8a2cee3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-02.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "e4426719f87657265dedc26daf400ea9d95856a9e343bde4ba05f35dd8a2cee3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-02.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "e4426719f87657265dedc26daf400ea9d95856a9e343bde4ba05f35dd8a2cee3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-02.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "e4426719f87657265dedc26daf400ea9d95856a9e343bde4ba05f35dd8a2cee3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-02.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "e4426719f87657265dedc26daf400ea9d95856a9e343bde4ba05f35dd8a2cee3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-03.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "a42b1b143f70799a08a4098e0f711455813ac8e8244937b7d7871ead2a7a5227"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-03.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "a42b1b143f70799a08a4098e0f711455813ac8e8244937b7d7871ead2a7a5227"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-03.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "a42b1b143f70799a08a4098e0f711455813ac8e8244937b7d7871ead2a7a5227"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-03.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "a42b1b143f70799a08a4098e0f711455813ac8e8244937b7d7871ead2a7a5227"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-03.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "a42b1b143f70799a08a4098e0f711455813ac8e8244937b7d7871ead2a7a5227"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-03.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "a42b1b143f70799a08a4098e0f711455813ac8e8244937b7d7871ead2a7a5227"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-03.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "a42b1b143f70799a08a4098e0f711455813ac8e8244937b7d7871ead2a7a5227"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-03.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "a42b1b143f70799a08a4098e0f711455813ac8e8244937b7d7871ead2a7a5227"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-03.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "a42b1b143f70799a08a4098e0f711455813ac8e8244937b7d7871ead2a7a5227"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-03.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "a42b1b143f70799a08a4098e0f711455813ac8e8244937b7d7871ead2a7a5227"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-03.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "a42b1b143f70799a08a4098e0f711455813ac8e8244937b7d7871ead2a7a5227"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-03.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "a42b1b143f70799a08a4098e0f711455813ac8e8244937b7d7871ead2a7a5227"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-03.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "a42b1b143f70799a08a4098e0f711455813ac8e8244937b7d7871ead2a7a5227"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-03.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "a42b1b143f70799a08a4098e0f711455813ac8e8244937b7d7871ead2a7a5227"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-03.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "a42b1b143f70799a08a4098e0f711455813ac8e8244937b7d7871ead2a7a5227"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-03.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "a42b1b143f70799a08a4098e0f711455813ac8e8244937b7d7871ead2a7a5227"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-03.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "a42b1b143f70799a08a4098e0f711455813ac8e8244937b7d7871ead2a7a5227"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-03.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "a42b1b143f70799a08a4098e0f711455813ac8e8244937b7d7871ead2a7a5227"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-04.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "cee3f3c5861d2fd1e36469be3950dc1d6131b45f1e987b59adb601f765eef889"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-04.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "cee3f3c5861d2fd1e36469be3950dc1d6131b45f1e987b59adb601f765eef889"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-04.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "cee3f3c5861d2fd1e36469be3950dc1d6131b45f1e987b59adb601f765eef889"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-04.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "cee3f3c5861d2fd1e36469be3950dc1d6131b45f1e987b59adb601f765eef889"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-04.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "cee3f3c5861d2fd1e36469be3950dc1d6131b45f1e987b59adb601f765eef889"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-04.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "cee3f3c5861d2fd1e36469be3950dc1d6131b45f1e987b59adb601f765eef889"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-04.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "cee3f3c5861d2fd1e36469be3950dc1d6131b45f1e987b59adb601f765eef889"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-04.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "cee3f3c5861d2fd1e36469be3950dc1d6131b45f1e987b59adb601f765eef889"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-04.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "cee3f3c5861d2fd1e36469be3950dc1d6131b45f1e987b59adb601f765eef889"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-04.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "cee3f3c5861d2fd1e36469be3950dc1d6131b45f1e987b59adb601f765eef889"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-04.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "cee3f3c5861d2fd1e36469be3950dc1d6131b45f1e987b59adb601f765eef889"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-04.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "cee3f3c5861d2fd1e36469be3950dc1d6131b45f1e987b59adb601f765eef889"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-04.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "cee3f3c5861d2fd1e36469be3950dc1d6131b45f1e987b59adb601f765eef889"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-04.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "cee3f3c5861d2fd1e36469be3950dc1d6131b45f1e987b59adb601f765eef889"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-04.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "cee3f3c5861d2fd1e36469be3950dc1d6131b45f1e987b59adb601f765eef889"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-04.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "cee3f3c5861d2fd1e36469be3950dc1d6131b45f1e987b59adb601f765eef889"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-04.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "cee3f3c5861d2fd1e36469be3950dc1d6131b45f1e987b59adb601f765eef889"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-04.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "cee3f3c5861d2fd1e36469be3950dc1d6131b45f1e987b59adb601f765eef889"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-absolute-refs.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "af0405cd4a38449089a19c6e211d3c3b85db760faaeae64636d4a1153dd15f33"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-absolute-refs.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "af0405cd4a38449089a19c6e211d3c3b85db760faaeae64636d4a1153dd15f33"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-absolute-refs.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "af0405cd4a38449089a19c6e211d3c3b85db760faaeae64636d4a1153dd15f33"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-absolute-refs.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "af0405cd4a38449089a19c6e211d3c3b85db760faaeae64636d4a1153dd15f33"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-absolute-refs.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "af0405cd4a38449089a19c6e211d3c3b85db760faaeae64636d4a1153dd15f33"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-absolute-refs.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "af0405cd4a38449089a19c6e211d3c3b85db760faaeae64636d4a1153dd15f33"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-absolute-refs.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "af0405cd4a38449089a19c6e211d3c3b85db760faaeae64636d4a1153dd15f33"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-absolute-refs.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "af0405cd4a38449089a19c6e211d3c3b85db760faaeae64636d4a1153dd15f33"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-absolute-refs.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "af0405cd4a38449089a19c6e211d3c3b85db760faaeae64636d4a1153dd15f33"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-absolute-refs.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "af0405cd4a38449089a19c6e211d3c3b85db760faaeae64636d4a1153dd15f33"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-absolute-refs.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "af0405cd4a38449089a19c6e211d3c3b85db760faaeae64636d4a1153dd15f33"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-absolute-refs.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "af0405cd4a38449089a19c6e211d3c3b85db760faaeae64636d4a1153dd15f33"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-absolute-refs.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "af0405cd4a38449089a19c6e211d3c3b85db760faaeae64636d4a1153dd15f33"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-absolute-refs.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "af0405cd4a38449089a19c6e211d3c3b85db760faaeae64636d4a1153dd15f33"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-absolute-refs.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "af0405cd4a38449089a19c6e211d3c3b85db760faaeae64636d4a1153dd15f33"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-absolute-refs.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "af0405cd4a38449089a19c6e211d3c3b85db760faaeae64636d4a1153dd15f33"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-absolute-refs.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "af0405cd4a38449089a19c6e211d3c3b85db760faaeae64636d4a1153dd15f33"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-absolute-refs.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "af0405cd4a38449089a19c6e211d3c3b85db760faaeae64636d4a1153dd15f33"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-entries.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "3aeded00a9449661a511863dfe35319caaa1f485752b1da205b1d3501f36bb20"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-entries.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "3aeded00a9449661a511863dfe35319caaa1f485752b1da205b1d3501f36bb20"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-entries.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "3aeded00a9449661a511863dfe35319caaa1f485752b1da205b1d3501f36bb20"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-entries.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "3aeded00a9449661a511863dfe35319caaa1f485752b1da205b1d3501f36bb20"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-entries.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "3aeded00a9449661a511863dfe35319caaa1f485752b1da205b1d3501f36bb20"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-entries.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "3aeded00a9449661a511863dfe35319caaa1f485752b1da205b1d3501f36bb20"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-entries.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "3aeded00a9449661a511863dfe35319caaa1f485752b1da205b1d3501f36bb20"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-entries.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "3aeded00a9449661a511863dfe35319caaa1f485752b1da205b1d3501f36bb20"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-entries.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "3aeded00a9449661a511863dfe35319caaa1f485752b1da205b1d3501f36bb20"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-entries.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "3aeded00a9449661a511863dfe35319caaa1f485752b1da205b1d3501f36bb20"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-entries.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "3aeded00a9449661a511863dfe35319caaa1f485752b1da205b1d3501f36bb20"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-entries.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "3aeded00a9449661a511863dfe35319caaa1f485752b1da205b1d3501f36bb20"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-entries.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "3aeded00a9449661a511863dfe35319caaa1f485752b1da205b1d3501f36bb20"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-entries.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "3aeded00a9449661a511863dfe35319caaa1f485752b1da205b1d3501f36bb20"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-entries.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "3aeded00a9449661a511863dfe35319caaa1f485752b1da205b1d3501f36bb20"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-entries.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "3aeded00a9449661a511863dfe35319caaa1f485752b1da205b1d3501f36bb20"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-entries.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "3aeded00a9449661a511863dfe35319caaa1f485752b1da205b1d3501f36bb20"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-entries.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "3aeded00a9449661a511863dfe35319caaa1f485752b1da205b1d3501f36bb20"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-pool-refs.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "7b65b62bba6b1c4956c292c143a64dea6cb6b304542977c48a78ce3faddf463f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-pool-refs.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "7b65b62bba6b1c4956c292c143a64dea6cb6b304542977c48a78ce3faddf463f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-pool-refs.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "7b65b62bba6b1c4956c292c143a64dea6cb6b304542977c48a78ce3faddf463f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-pool-refs.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "7b65b62bba6b1c4956c292c143a64dea6cb6b304542977c48a78ce3faddf463f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-pool-refs.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "7b65b62bba6b1c4956c292c143a64dea6cb6b304542977c48a78ce3faddf463f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-pool-refs.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "7b65b62bba6b1c4956c292c143a64dea6cb6b304542977c48a78ce3faddf463f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-pool-refs.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "7b65b62bba6b1c4956c292c143a64dea6cb6b304542977c48a78ce3faddf463f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-pool-refs.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "7b65b62bba6b1c4956c292c143a64dea6cb6b304542977c48a78ce3faddf463f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-pool-refs.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "7b65b62bba6b1c4956c292c143a64dea6cb6b304542977c48a78ce3faddf463f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-pool-refs.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "7b65b62bba6b1c4956c292c143a64dea6cb6b304542977c48a78ce3faddf463f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-pool-refs.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "7b65b62bba6b1c4956c292c143a64dea6cb6b304542977c48a78ce3faddf463f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-pool-refs.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "7b65b62bba6b1c4956c292c143a64dea6cb6b304542977c48a78ce3faddf463f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-pool-refs.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "7b65b62bba6b1c4956c292c143a64dea6cb6b304542977c48a78ce3faddf463f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-pool-refs.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "7b65b62bba6b1c4956c292c143a64dea6cb6b304542977c48a78ce3faddf463f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-pool-refs.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "7b65b62bba6b1c4956c292c143a64dea6cb6b304542977c48a78ce3faddf463f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-pool-refs.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "7b65b62bba6b1c4956c292c143a64dea6cb6b304542977c48a78ce3faddf463f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-pool-refs.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "7b65b62bba6b1c4956c292c143a64dea6cb6b304542977c48a78ce3faddf463f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-pool-refs.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "7b65b62bba6b1c4956c292c143a64dea6cb6b304542977c48a78ce3faddf463f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-01.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "dd5c17c48b504c3f5af04ac1baeed440a62c9d262529e47f3b1fe3605c3f4044"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-01.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "dd5c17c48b504c3f5af04ac1baeed440a62c9d262529e47f3b1fe3605c3f4044"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-01.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "dd5c17c48b504c3f5af04ac1baeed440a62c9d262529e47f3b1fe3605c3f4044"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-01.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "dd5c17c48b504c3f5af04ac1baeed440a62c9d262529e47f3b1fe3605c3f4044"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-01.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "dd5c17c48b504c3f5af04ac1baeed440a62c9d262529e47f3b1fe3605c3f4044"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-01.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "dd5c17c48b504c3f5af04ac1baeed440a62c9d262529e47f3b1fe3605c3f4044"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-01.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "dd5c17c48b504c3f5af04ac1baeed440a62c9d262529e47f3b1fe3605c3f4044"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-01.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "dd5c17c48b504c3f5af04ac1baeed440a62c9d262529e47f3b1fe3605c3f4044"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-01.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "dd5c17c48b504c3f5af04ac1baeed440a62c9d262529e47f3b1fe3605c3f4044"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-01.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "dd5c17c48b504c3f5af04ac1baeed440a62c9d262529e47f3b1fe3605c3f4044"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-01.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "dd5c17c48b504c3f5af04ac1baeed440a62c9d262529e47f3b1fe3605c3f4044"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-01.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "dd5c17c48b504c3f5af04ac1baeed440a62c9d262529e47f3b1fe3605c3f4044"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-01.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "dd5c17c48b504c3f5af04ac1baeed440a62c9d262529e47f3b1fe3605c3f4044"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-01.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "dd5c17c48b504c3f5af04ac1baeed440a62c9d262529e47f3b1fe3605c3f4044"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-01.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "dd5c17c48b504c3f5af04ac1baeed440a62c9d262529e47f3b1fe3605c3f4044"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-01.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "dd5c17c48b504c3f5af04ac1baeed440a62c9d262529e47f3b1fe3605c3f4044"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-01.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "dd5c17c48b504c3f5af04ac1baeed440a62c9d262529e47f3b1fe3605c3f4044"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-01.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "dd5c17c48b504c3f5af04ac1baeed440a62c9d262529e47f3b1fe3605c3f4044"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-02.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "185bd295efae4ed9478d5140c6264db172bec363703ce859720f008b41f146cb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-02.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "185bd295efae4ed9478d5140c6264db172bec363703ce859720f008b41f146cb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-02.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "185bd295efae4ed9478d5140c6264db172bec363703ce859720f008b41f146cb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-02.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "185bd295efae4ed9478d5140c6264db172bec363703ce859720f008b41f146cb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-02.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "185bd295efae4ed9478d5140c6264db172bec363703ce859720f008b41f146cb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-02.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "185bd295efae4ed9478d5140c6264db172bec363703ce859720f008b41f146cb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-02.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "185bd295efae4ed9478d5140c6264db172bec363703ce859720f008b41f146cb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-02.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "185bd295efae4ed9478d5140c6264db172bec363703ce859720f008b41f146cb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-02.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "185bd295efae4ed9478d5140c6264db172bec363703ce859720f008b41f146cb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-02.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "185bd295efae4ed9478d5140c6264db172bec363703ce859720f008b41f146cb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-02.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "185bd295efae4ed9478d5140c6264db172bec363703ce859720f008b41f146cb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-02.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "185bd295efae4ed9478d5140c6264db172bec363703ce859720f008b41f146cb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-02.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "185bd295efae4ed9478d5140c6264db172bec363703ce859720f008b41f146cb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-02.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "185bd295efae4ed9478d5140c6264db172bec363703ce859720f008b41f146cb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-02.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "185bd295efae4ed9478d5140c6264db172bec363703ce859720f008b41f146cb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-02.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "185bd295efae4ed9478d5140c6264db172bec363703ce859720f008b41f146cb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-02.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "185bd295efae4ed9478d5140c6264db172bec363703ce859720f008b41f146cb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/ghidra-refs-02.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "185bd295efae4ed9478d5140c6264db172bec363703ce859720f008b41f146cb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/source-01/0019f680.c",
+      "line": 22,
+      "kind": "new blank line at EOF.",
+      "sha256": "7a0994a5d94d3dd9093a58b373937f80b85892915fdfca3bd5a7c4c499fb7deb"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/source-01/001a0210.c",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "0968987caeccdcad4cb7cbd4cbf059bc2fde80ba15e7f79de39fa9c1a3b66ece"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/source-01/001a0210.c",
+      "line": 17,
+      "kind": "new blank line at EOF.",
+      "sha256": "0968987caeccdcad4cb7cbd4cbf059bc2fde80ba15e7f79de39fa9c1a3b66ece"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/source-01/001a0fd0.c",
+      "line": 12,
+      "kind": "trailing whitespace.",
+      "sha256": "239c720bbd5a5bbf22a64f4281fe61e74ef44a1cdb18495faf6f11b97611278a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/source-01/001a0fd0.c",
+      "line": 68,
+      "kind": "new blank line at EOF.",
+      "sha256": "239c720bbd5a5bbf22a64f4281fe61e74ef44a1cdb18495faf6f11b97611278a"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/source-01/001a10a0.c",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "50067e229dee617d6e6601b8817a0db8b8a4d06478713dcf4219941b564976ab"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/source-01/001a10a0.c",
+      "line": 32,
+      "kind": "new blank line at EOF.",
+      "sha256": "50067e229dee617d6e6601b8817a0db8b8a4d06478713dcf4219941b564976ab"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/source-02/0019ffa0.c",
+      "line": 11,
+      "kind": "new blank line at EOF.",
+      "sha256": "a476ef92657024d6cdfc425afe0ac0318d8f402bcf1888ca6f1233f3c422a5e4"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/source-02/001a0240.c",
+      "line": 19,
+      "kind": "trailing whitespace.",
+      "sha256": "267f5b1c370facf95a5595d90c41c1997c9f5475bbcfa4e596442519af77f1ec"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/source-02/001a0240.c",
+      "line": 74,
+      "kind": "new blank line at EOF.",
+      "sha256": "267f5b1c370facf95a5595d90c41c1997c9f5475bbcfa4e596442519af77f1ec"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/source-02/001a07a0.c",
+      "line": 12,
+      "kind": "trailing whitespace.",
+      "sha256": "3cd2b3aad281b02ef0475e7fd6e270aa52bc01b93c095eac063c78ea8406925e"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/source-02/001a07a0.c",
+      "line": 54,
+      "kind": "new blank line at EOF.",
+      "sha256": "3cd2b3aad281b02ef0475e7fd6e270aa52bc01b93c095eac063c78ea8406925e"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/source-03/0019fd60.c",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "9a7a2bcb473ac72aa0bb27ea73d2e486f2cc43272291207ce929d44e00c2afd3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/source-03/0019fd60.c",
+      "line": 35,
+      "kind": "new blank line at EOF.",
+      "sha256": "9a7a2bcb473ac72aa0bb27ea73d2e486f2cc43272291207ce929d44e00c2afd3"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/source-04/001a0e00.c",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "33d2a5f044e7ea3840577f502ce024d56392ef8446cc4ca1a46b9f8911e77104"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/source-04/001a0e00.c",
+      "line": 67,
+      "kind": "new blank line at EOF.",
+      "sha256": "33d2a5f044e7ea3840577f502ce024d56392ef8446cc4ca1a46b9f8911e77104"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/source-04/001a0fe0.c",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "ebc2babef5e9161e245840a4735d58b21d88816b5a5e697c15e2676ee41c4bcd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/source-04/001a0fe0.c",
+      "line": 30,
+      "kind": "new blank line at EOF.",
+      "sha256": "ebc2babef5e9161e245840a4735d58b21d88816b5a5e697c15e2676ee41c4bcd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/validation-02/full-entry-negative.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "1efd0b7a1d5c4a787a4978011168ecc6ea714dc16606222972db2c42f1f5a77f"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-01/002be230.c",
+      "line": 14,
+      "kind": "new blank line at EOF.",
+      "sha256": "05fd64c0b43eb99d93c20e6082586a11256d604902c2444f3ace4330c4215a91"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-01/002beea0.c",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "d75cc813db04106206395836c7fcc75b875fb0794e8bd2ddceca2e478f2a6e8e"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-01/002beea0.c",
+      "line": 27,
+      "kind": "new blank line at EOF.",
+      "sha256": "d75cc813db04106206395836c7fcc75b875fb0794e8bd2ddceca2e478f2a6e8e"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-02/002bd250.c",
+      "line": 22,
+      "kind": "new blank line at EOF.",
+      "sha256": "f21da8d2b6ce5a25fb48f9a4350985037148081ed63c77a0d955e32e64fd39ab"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-01.log",
+      "line": 43,
+      "kind": "trailing whitespace.",
+      "sha256": "27208736b896c32fa78a3e76b2c8d2f69afd16d29a27051c34943a2dabd47fdf"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    },
+    {
+      "path": "research/runs/parallel-renderer-plugin-0402-20261122/xbox-ghidra-02.log",
+      "line": 43,
+      "kind": "trailing whitespace.",
+      "sha256": "37cab3a9388ce4e1a7576cb9aac86b3b25d7319a95d66ce54ec776f54b5c41cd"
+    }
+  ]
+}

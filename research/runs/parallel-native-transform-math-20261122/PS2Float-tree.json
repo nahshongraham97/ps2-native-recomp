@@ -1,0 +1,103 @@
+{
+  "sha": "a5b2c0c80312e2582143fa801a25f4c4984fbe08",
+  "url": "https://api.github.com/repos/TellowKrinkle/PS2Float/git/trees/a5b2c0c80312e2582143fa801a25f4c4984fbe08",
+  "tree": [
+    {
+      "path": ".gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2afd5a20b7c9ee9390fe63241798aefb6c1c83c2",
+      "size": 24,
+      "url": "https://api.github.com/repos/TellowKrinkle/PS2Float/git/blobs/2afd5a20b7c9ee9390fe63241798aefb6c1c83c2"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "661d60f4454682e8620e98e90d83fa492a36e930",
+      "size": 1227,
+      "url": "https://api.github.com/repos/TellowKrinkle/PS2Float/git/blobs/661d60f4454682e8620e98e90d83fa492a36e930"
+    },
+    {
+      "path": "README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "015f952602098fe2c2dcb3445ebcb4ba2b8f1032",
+      "size": 178,
+      "url": "https://api.github.com/repos/TellowKrinkle/PS2Float/git/blobs/015f952602098fe2c2dcb3445ebcb4ba2b8f1032"
+    },
+    {
+      "path": "main.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1c54b42c2c8b1c38874c26c2aed7afe414d6f0c6",
+      "size": 16802,
+      "url": "https://api.github.com/repos/TellowKrinkle/PS2Float/git/blobs/1c54b42c2c8b1c38874c26c2aed7afe414d6f0c6"
+    },
+    {
+      "path": "ps2add-x86_64.S",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6772f63aae00513a83ad2112108c7bb6b6c778b5",
+      "size": 21370,
+      "url": "https://api.github.com/repos/TellowKrinkle/PS2Float/git/blobs/6772f63aae00513a83ad2112108c7bb6b6c778b5"
+    },
+    {
+      "path": "ps2add.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ad70cdf6a823703e52fb7a09f478c27de1e76e3b",
+      "size": 2006,
+      "url": "https://api.github.com/repos/TellowKrinkle/PS2Float/git/blobs/ad70cdf6a823703e52fb7a09f478c27de1e76e3b"
+    },
+    {
+      "path": "ps2divsqrt-x86_64.S",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7c7aa4c7e0eacba0c248ce2f712addae9a28356c",
+      "size": 14757,
+      "url": "https://api.github.com/repos/TellowKrinkle/PS2Float/git/blobs/7c7aa4c7e0eacba0c248ce2f712addae9a28356c"
+    },
+    {
+      "path": "ps2divsqrt.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e770570e73806ee8e0872261dbce47c45409a156",
+      "size": 2571,
+      "url": "https://api.github.com/repos/TellowKrinkle/PS2Float/git/blobs/e770570e73806ee8e0872261dbce47c45409a156"
+    },
+    {
+      "path": "ps2float.h",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "593f68d431ae52428a63a86858e57b2c6a1e5167",
+      "size": 2054,
+      "url": "https://api.github.com/repos/TellowKrinkle/PS2Float/git/blobs/593f68d431ae52428a63a86858e57b2c6a1e5167"
+    },
+    {
+      "path": "ps2mul-x86_64.S",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d85d85c532f4c61ac71fa567d47c69f6b6ff5b68",
+      "size": 55912,
+      "url": "https://api.github.com/repos/TellowKrinkle/PS2Float/git/blobs/d85d85c532f4c61ac71fa567d47c69f6b6ff5b68"
+    },
+    {
+      "path": "ps2mul.cpp",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "04bb884261959f7501dcdbe1d7e352c6f9b350c2",
+      "size": 6514,
+      "url": "https://api.github.com/repos/TellowKrinkle/PS2Float/git/blobs/04bb884261959f7501dcdbe1d7e352c6f9b350c2"
+    },
+    {
+      "path": "test-div-metal.mm",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fd6a89f1b3f228993d0c245ef9714a9804cab13b",
+      "size": 8281,
+      "url": "https://api.github.com/repos/TellowKrinkle/PS2Float/git/blobs/fd6a89f1b3f228993d0c245ef9714a9804cab13b"
+    }
+  ],
+  "truncated": false
+}

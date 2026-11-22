@@ -1,0 +1,92 @@
+[
+  {
+    "raw": "validation-01/check-hardware.build.log",
+    "raw_sha256": "9c7ffbaaf0ef52cbe61dca1af1d703c59d1b1fd28d076428c36f916578845d19",
+    "archive": "validation-01/check-hardware.build.log.gz",
+    "archive_sha256": "ce5874cb0e4b8153f67726a9f04a0752d9f25f08f489d6f66032f91b1c2fb026"
+  },
+  {
+    "raw": "validation-01/check-hardware.run.log",
+    "raw_sha256": "9c827ae7a1d6d51f96069589ee35840c1392f14c676dfd1b4361509ffdd6913f",
+    "archive": "validation-01/check-hardware.run.log.gz",
+    "archive_sha256": "a74c3ff69ff94036d69ab63758a4db3d2cb3f5fb220d72564d1b66e15019cab8"
+  },
+  {
+    "raw": "validation-01/compare-offline.build.log",
+    "raw_sha256": "9c7ffbaaf0ef52cbe61dca1af1d703c59d1b1fd28d076428c36f916578845d19",
+    "archive": "validation-01/compare-offline.build.log.gz",
+    "archive_sha256": "ce5874cb0e4b8153f67726a9f04a0752d9f25f08f489d6f66032f91b1c2fb026"
+  },
+  {
+    "raw": "validation-01/compare-offline.run.log",
+    "raw_sha256": "1c2e5fc1c3f283378a7cb2200b755447770654dd6c12d07d14584e36b5e1f9fe",
+    "archive": "validation-01/compare-offline.run.log.gz",
+    "archive_sha256": "048eef36c1c5436e6b4d1c23437c637de0404b8a4ae08efa5caca1178c219c16"
+  },
+  {
+    "raw": "validation-01/fixed127-offline.build.log",
+    "raw_sha256": "9c7ffbaaf0ef52cbe61dca1af1d703c59d1b1fd28d076428c36f916578845d19",
+    "archive": "validation-01/fixed127-offline.build.log.gz",
+    "archive_sha256": "ce5874cb0e4b8153f67726a9f04a0752d9f25f08f489d6f66032f91b1c2fb026"
+  },
+  {
+    "raw": "validation-01/fixed127-offline.run.log",
+    "raw_sha256": "8926d76bf63b45d55bf49a603e28ee1732a6a8d6bc0b9215403a8c0963157b11",
+    "archive": "validation-01/fixed127-offline.run.log.gz",
+    "archive_sha256": "2b5bd80ebb7f0ed45daaac997f5f6d90a6d8284aa2c23a0ede7dbd7e7d6bd0e6"
+  },
+  {
+    "raw": "validation-01/primary-compare.build.log",
+    "raw_sha256": "9c7ffbaaf0ef52cbe61dca1af1d703c59d1b1fd28d076428c36f916578845d19",
+    "archive": "validation-01/primary-compare.build.log.gz",
+    "archive_sha256": "ce5874cb0e4b8153f67726a9f04a0752d9f25f08f489d6f66032f91b1c2fb026"
+  },
+  {
+    "raw": "validation-01/primary-compare.run.log",
+    "raw_sha256": "fba44fd413e429bf5d0924dbbffd2e53d841612b12e26ca8b79e76f1a875ea6e",
+    "archive": "validation-01/primary-compare.run.log.gz",
+    "archive_sha256": "e3986889095e9990c4cf88c2af77a74768848b7ce87f4fa77f123f3ffc79eebb"
+  },
+  {
+    "raw": "validation-01/vector-barrier.build.log",
+    "raw_sha256": "9c7ffbaaf0ef52cbe61dca1af1d703c59d1b1fd28d076428c36f916578845d19",
+    "archive": "validation-01/vector-barrier.build.log.gz",
+    "archive_sha256": "ce5874cb0e4b8153f67726a9f04a0752d9f25f08f489d6f66032f91b1c2fb026"
+  },
+  {
+    "raw": "validation-01/vector-barrier.run.log",
+    "raw_sha256": "3a115679a96a73215a94ad4cd114f2ddedf90db6885362ae1a799c4ceeb3855a",
+    "archive": "validation-01/vector-barrier.run.log.gz",
+    "archive_sha256": "b222ff8d9fac4761c9db0aeff4b756cf2dfe907bf1be794d0847f74e5071cc88"
+  },
+  {
+    "raw": "PR12001-tree.json",
+    "raw_sha256": "4d685617fb381d993353ca8e1f32f0231eabc90479a0f63d9883f43d6f5536ce",
+    "archive": "PR12001-tree.json.gz",
+    "archive_sha256": "492fe1c0b7b3f3ff739bc502b645efb853bf1611edb0a5f444cd8181be274180"
+  },
+  {
+    "raw": "HardwareTests-tree.json",
+    "raw_sha256": "add5224fd55b1a020480bfd5c1bce557943748719610b29c225b23fd404dbb92",
+    "archive": "HardwareTests-tree.json.gz",
+    "archive_sha256": "aeabdaef4136b4b33881d8b016fd0550730253920fc9976fd1f282d1e6558f16"
+  },
+  {
+    "raw": "PR12001-comments.json",
+    "raw_sha256": "1a4441f509334240c5b94b0c216e25f53a55232de1ced3a28c0924ff01da3fcd",
+    "archive": "PR12001-comments.json.gz",
+    "archive_sha256": "470b5488246f3e5e53e504251ef4b0a76a081a244d0b6ee81a77c14dcabaaeec"
+  },
+  {
+    "raw": "PS2Float-commits.json",
+    "raw_sha256": "2267a1d8a690c71ddd87f3f5dcfd2fe7b1ba70529cb7715674ed9a866dbe5e45",
+    "archive": "PS2Float-commits.json.gz",
+    "archive_sha256": "781d3515b513cae2f63f1d851bff330d510f7204b020138fa476a47dc3d1bc23"
+  },
+  {
+    "raw": "PS2Homebrew-tree.json",
+    "raw_sha256": "6b053684f1947933a50ef3227b7a4c09bfb37fce705f6b8466e8b71be82cc4cb",
+    "archive": "PS2Homebrew-tree.json.gz",
+    "archive_sha256": "02faba02be4f8bc769728292e3b4b2dc19d48dc32cfaad2b8aa773c4837c51b6"
+  }
+]

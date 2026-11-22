@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+    "--target",
+    "test_native_retail_renderer_core",
+    "test_native_retail_renderer_matrix",
+    "test_native_retail_renderer_allocator",
+    "test_native_retail_memory_owners",
+    "test_native_retail_game_session",
+    "test_native_retail_camera_bootstrap",
+    "test_native_retail_main_frame_gates",
+    "test_native_retail_initial_reset_arcade",
+    "-j2"
+  ],
+  "exit": 0,
+  "seconds": 5.414443700006814,
+  "source_commit": "ea4e3c99de5f18869d472c9a802cbed2377ab31b",
+  "tracked_status": "M  cmake/native_game.cmake\nM  runtime/include/mka/retail_renderer_core.hpp\nA  runtime/include/mka/retail_renderer_math.hpp\nA  runtime/include/mka/retail_renderer_matrix.hpp\nA  runtime/include/mka/retail_renderer_transforms.hpp\nM  runtime/src/native/retail_renderer_core.cpp\nA  runtime/src/native/retail_renderer_matrix.cpp\nA  runtime/src/native/retail_renderer_transforms.cpp\nM  tests/test_retail_renderer_core.cpp\nA  tests/test_retail_renderer_matrix.cpp",
+  "source_manifest_sha256": "60afbd2400dcb3432b82f7b35a3cb5c6e0a57fb76509eea4bf4ef4a1c06ecc19",
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "log_sha256": "cf264c8a90bc9589184d3f470007a3939ee1996160d7e68b896466b0946e16a5",
+  "compressed_log_sha256": "3c2c30cd99619e88095eb5c262352e44b1adb1c462edfef9be15dd5caf05b60b",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

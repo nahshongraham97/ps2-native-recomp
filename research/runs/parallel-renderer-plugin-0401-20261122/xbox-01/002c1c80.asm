@@ -1,0 +1,3 @@
+002c1c80	ff0d10745c00	DEC dword ptr [0x005c7410]
+002c1c86	8b442404	MOV EAX,dword ptr [ESP + 0x4]
+002c1c8a	c3	RET

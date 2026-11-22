@@ -1,0 +1,7 @@
+{
+  "base": "feb05096e43fb0ae37bac6407d2567569ddb03e0",
+  "candidate": "37a3a82e980e38c4702cb1aecd2529dadba06363",
+  "exit": 1,
+  "stdout": "",
+  "stderr": "Applied patch to 'cmake/native_game.cmake' with conflicts.\nApplied patch to 'runtime/include/mka/retail_renderer_core.hpp' with conflicts.\nFalling back to direct application...\nFalling back to direct application...\nFalling back to direct application...\nU cmake/native_game.cmake\nU runtime/include/mka/retail_renderer_core.hpp\n"
+}

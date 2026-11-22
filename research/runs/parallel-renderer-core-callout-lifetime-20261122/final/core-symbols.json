@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/bin/llvm-nm.exe",
+    "--demangle",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-plugin-0402\\build-renderer-0402\\test_native_retail_renderer_core.exe"
+  ],
+  "exit": 0,
+  "log_sha256": "5afb22fea58cbd9c6d6246bea51a2581a2dbc34e76b5b68af9456f3c7e633793"
+}

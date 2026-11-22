@@ -1,0 +1,122 @@
+{
+  "autotests-list.json": {
+    "url": "https://api.github.com/repos/unknownbrackets/ps2autotests/contents/tests/cpu/ee_fpu",
+    "sha256": "64b06b5de8fe5d1f4691e3b24d17c0e0eb2e799224cdf18b3f6ad3f42de9da10",
+    "bytes": 27290
+  },
+  "parallel-ps2float.c": {
+    "url": "https://raw.githubusercontent.com/libretro/parallel-ps2/master/pcsx2/ps2float.c",
+    "sha256": "90f6a70ba391e1ed5d604613c1a2b27200d1bc80dcb6d33e49cfd015aa2f2001",
+    "bytes": 20730,
+    "authenticated_pinned_url": "https://raw.githubusercontent.com/libretro/parallel-ps2/f777604a56b7bf8eb812f7d055f2e4e063b648c7/pcsx2/ps2float.c"
+  },
+  "muldiv.cpp": {
+    "url": "https://raw.githubusercontent.com/unknownbrackets/ps2autotests/master/tests/cpu/ee_fpu/muldiv.cpp",
+    "sha256": "d5a2176e53a948f5cb94ea2f9bf8a3775fa5414113680b46dbd68b5400124689",
+    "bytes": 15738,
+    "authenticated_pinned_url": "https://raw.githubusercontent.com/unknownbrackets/ps2autotests/97469ffbed8631277b94e28d01dabd702aa97ef3/tests/cpu/ee_fpu/muldiv.cpp"
+  },
+  "muldiv.expected": {
+    "url": "https://raw.githubusercontent.com/unknownbrackets/ps2autotests/master/tests/cpu/ee_fpu/muldiv.expected",
+    "sha256": "b6fd66aa99dff116f89968f4186180ac86ed673aa5d5a00a13841da8d9fa8da4",
+    "bytes": 21716,
+    "authenticated_pinned_url": "https://raw.githubusercontent.com/unknownbrackets/ps2autotests/97469ffbed8631277b94e28d01dabd702aa97ef3/tests/cpu/ee_fpu/muldiv.expected"
+  },
+  "shared.h": {
+    "url": "https://raw.githubusercontent.com/unknownbrackets/ps2autotests/master/tests/cpu/ee_fpu/shared.h",
+    "sha256": "30ea059b35a90fb81db40a9b31a2f244c4e65128d7c6fa61589db0fbcdc30084",
+    "bytes": 1943,
+    "authenticated_pinned_url": "https://raw.githubusercontent.com/unknownbrackets/ps2autotests/97469ffbed8631277b94e28d01dabd702aa97ef3/tests/cpu/ee_fpu/shared.h"
+  },
+  "arithmetic.cpp": {
+    "url": "https://raw.githubusercontent.com/unknownbrackets/ps2autotests/master/tests/cpu/ee_fpu/arithmetic.cpp",
+    "sha256": "87b40710ae51d666793f87813e9db68921922450afd19eb7f9ed44d2ce5f7208",
+    "bytes": 8239,
+    "authenticated_pinned_url": "https://raw.githubusercontent.com/unknownbrackets/ps2autotests/97469ffbed8631277b94e28d01dabd702aa97ef3/tests/cpu/ee_fpu/arithmetic.cpp"
+  },
+  "arithmetic.expected": {
+    "url": "https://raw.githubusercontent.com/unknownbrackets/ps2autotests/master/tests/cpu/ee_fpu/arithmetic.expected",
+    "sha256": "7838819381f0339d0edbf5a8796ae893ff657514c8e3a145da85c58b5ced0753",
+    "bytes": 12200,
+    "authenticated_pinned_url": "https://raw.githubusercontent.com/unknownbrackets/ps2autotests/97469ffbed8631277b94e28d01dabd702aa97ef3/tests/cpu/ee_fpu/arithmetic.expected"
+  },
+  "ps2float.h": {
+    "url": "https://raw.githubusercontent.com/libretro/parallel-ps2/master/pcsx2/ps2float.h",
+    "sha256": "6300850df74363f5b7f488b22743fdac637ac56c9e3290e2aeab522733065cf0",
+    "bytes": 3404,
+    "authenticated_pinned_url": "https://raw.githubusercontent.com/libretro/parallel-ps2/f777604a56b7bf8eb812f7d055f2e4e063b648c7/pcsx2/ps2float.h"
+  },
+  "official-FPU.cpp": {
+    "url": "https://raw.githubusercontent.com/PCSX2/pcsx2/master/pcsx2/FPU.cpp",
+    "sha256": "204dcb290f9f56e9112622ab313ef12d2192eda5b43d24efcf2dbc8ca3fa7344",
+    "bytes": 11360
+  },
+  "official-iFPUd.cpp": {
+    "url": "https://raw.githubusercontent.com/PCSX2/pcsx2/master/pcsx2/x86/iFPUd.cpp",
+    "sha256": "b6c19019b9693a4d48da71d99c08d14790bddfadee3fbed746035ccaa7c14cae",
+    "bytes": 30330
+  },
+  "hwrealfpu.cpp": {
+    "url": "https://raw.githubusercontent.com/libretro/parallel-ps2/f777604a56b7bf8eb812f7d055f2e4e063b648c7/tests/fpu/hwrealfpu.cpp",
+    "sha256": "d081309522b582ab4dd9b2fe0043d25f23a7b83166feee903edf5ead9b365f64",
+    "bytes": 13943,
+    "authenticated_pinned_url": "https://raw.githubusercontent.com/libretro/parallel-ps2/f777604a56b7bf8eb812f7d055f2e4e063b648c7/tests/fpu/hwrealfpu.cpp"
+  },
+  "primary-README.md": {
+    "url": "https://raw.githubusercontent.com/TellowKrinkle/PS2Float/a5b2c0c80312e2582143fa801a25f4c4984fbe08/README.md",
+    "sha256": "cd0c647ff794c0e818d41f11e1d56de672c8c70bd9c4d642f3653f12ac7c9a24",
+    "bytes": 178,
+    "authenticated_pinned_url": "https://raw.githubusercontent.com/TellowKrinkle/PS2Float/a5b2c0c80312e2582143fa801a25f4c4984fbe08/README.md"
+  },
+  "primary-ps2mul.cpp": {
+    "url": "https://raw.githubusercontent.com/TellowKrinkle/PS2Float/a5b2c0c80312e2582143fa801a25f4c4984fbe08/ps2mul.cpp",
+    "sha256": "57c81efe99909a32d6d53ec3a551ec711a0ac8067c39e8e1423d42c73f7af61e",
+    "bytes": 6514,
+    "authenticated_pinned_url": "https://raw.githubusercontent.com/TellowKrinkle/PS2Float/a5b2c0c80312e2582143fa801a25f4c4984fbe08/ps2mul.cpp"
+  },
+  "primary-ps2add.cpp": {
+    "url": "https://raw.githubusercontent.com/TellowKrinkle/PS2Float/a5b2c0c80312e2582143fa801a25f4c4984fbe08/ps2add.cpp",
+    "sha256": "4ad1518989dbd32db458bd62008cf5a7bebdb694ff81e9046514b3b09571c044",
+    "bytes": 2006,
+    "authenticated_pinned_url": "https://raw.githubusercontent.com/TellowKrinkle/PS2Float/a5b2c0c80312e2582143fa801a25f4c4984fbe08/ps2add.cpp"
+  },
+  "primary-ps2float.h": {
+    "url": "https://raw.githubusercontent.com/TellowKrinkle/PS2Float/a5b2c0c80312e2582143fa801a25f4c4984fbe08/ps2float.h",
+    "sha256": "0dd5603d9c9bc07fe4a6b374ecee6ceff7c529e962f5e8f4c35f20650d11c96b",
+    "bytes": 2054,
+    "authenticated_pinned_url": "https://raw.githubusercontent.com/TellowKrinkle/PS2Float/a5b2c0c80312e2582143fa801a25f4c4984fbe08/ps2float.h"
+  },
+  "primary-main.cpp": {
+    "url": "https://raw.githubusercontent.com/TellowKrinkle/PS2Float/a5b2c0c80312e2582143fa801a25f4c4984fbe08/main.cpp",
+    "sha256": "e2b3790677daca8691ef49fa540ca13035664ba91e42dd0dc9b3cdc7488b1685",
+    "bytes": 16802,
+    "authenticated_pinned_url": "https://raw.githubusercontent.com/TellowKrinkle/PS2Float/a5b2c0c80312e2582143fa801a25f4c4984fbe08/main.cpp"
+  },
+  "PR12001-PS2Float.cpp": {
+    "url": "https://raw.githubusercontent.com/PCSX2/pcsx2/0392a64e992ac3fa5445dbe484933616cb204674/pcsx2/PS2Float.cpp",
+    "sha256": "2fa504d2ec7fbad7c3c7a40ea0e106f67e19321d46c2b6c54328327be53f5511",
+    "bytes": 16968,
+    "authenticated_pinned_url": "https://raw.githubusercontent.com/PCSX2/pcsx2/0392a64e992ac3fa5445dbe484933616cb204674/pcsx2/PS2Float.cpp"
+  },
+  "PR12001-PS2Float.h": {
+    "url": "https://raw.githubusercontent.com/PCSX2/pcsx2/0392a64e992ac3fa5445dbe484933616cb204674/pcsx2/PS2Float.h",
+    "sha256": "2c7a6550a756f2e8e994ef5027ec67c4ed7cb07f81490da209a2f8e34d7b6b68",
+    "bytes": 2537,
+    "authenticated_pinned_url": "https://raw.githubusercontent.com/PCSX2/pcsx2/0392a64e992ac3fa5445dbe484933616cb204674/pcsx2/PS2Float.h"
+  },
+  "FMulMatcher.cpp": {
+    "url": "https://raw.githubusercontent.com/TellowKrinkle/PS2Homebrew/88af0168baab3680b12d9d45f03054af587d245f/FMulMatcher/main.cpp",
+    "sha256": "729dd127fc103ca10545faf3b82c544f9edf22779c0730161bd6fadac875823d",
+    "bytes": 7049
+  },
+  "FMulTester.cpp": {
+    "url": "https://raw.githubusercontent.com/TellowKrinkle/PS2Homebrew/88af0168baab3680b12d9d45f03054af587d245f/FMulTester/main.cpp",
+    "sha256": "305bd1cc164392c31623cb0c7e2f538440118d6812f0118dc33faf0326eaea3f",
+    "bytes": 5103
+  },
+  "FMulValidator.cpp": {
+    "url": "https://raw.githubusercontent.com/TellowKrinkle/PS2Homebrew/88af0168baab3680b12d9d45f03054af587d245f/FMulValidator/main.cpp",
+    "sha256": "8489d57ffaa2d8cbada4c720918c6484d1b0be6f5071dafbdfb3c73d003e311e",
+    "bytes": 15699
+  }
+}

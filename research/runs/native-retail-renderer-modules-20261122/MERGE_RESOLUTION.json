@@ -1,0 +1,8 @@
+{
+  "conflict_snapshots": {
+    "cmake/native_game.cmake": "native_game.cmake.merge-conflict.gz",
+    "runtime/include/mka/retail_renderer_core.hpp": "retail_renderer_core.hpp.merge-conflict.gz"
+  },
+  "resolution": "Retain both module declarations/owners/factories, both native source units, all current arcade/profile-input clients, matrix target and SDL DLL staging. Common mathematical header confirmed byte-identical between committed candidates.",
+  "scope": "Unbuilt combined source; tests and Core lifetime correction not yet reconciled."
+}

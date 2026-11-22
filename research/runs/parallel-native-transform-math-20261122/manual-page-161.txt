@@ -1,0 +1,38 @@
+SCE CONFIDENTIAL                                                                                      EE Core User's Manual Version 6.0 
+ 
+ 
+© SCEI 
+-161- 
+Category Instruct. Description 
+Move LWC1 Load Word to FPR 
+Instruction SWC1 Store Word from FPR 
+ MTC1 Move Word to FPR 
+ MFC1 Move Word from FPR 
+ MOV.S Single Floating-point Move 
+ CTC1 Move Control Word to FCR 
+ CFC1 Move Control Word from FCR 
+Conversion CVT.S.W 32-bit Fixed Point Convert to Single Floating-point 
+Instruction CVT.W.S Single  Floating-point Convert to 32-bit Fixed Point 
+Computational ADD.S Single Floating-point Add 
+Instruction SUB.S Single Floating-point Subtract 
+ MUL.S Single Floating-point Multiply 
+ DIV.S Single Floating-point Divide 
+ ABS.S Single Floating-point Absolute 
+ NEG.S Single Floating-point Negate 
+ SQRT.S Single Floating-point Square Root 
+ ADDA.S Single Floating-point Add to Accumulator 
+ SUBA.S Single Floating-poi nt Subtract to Accumulator 
+ MULA.S Single Floating-point Multiply to Accumulator 
+ MADD.S Single Floating -point Multiply and Add 
+ MADDA.S Single Floating-point Multiply and Add to Accumulator 
+ MSUB.S Single Floating-poi nt Multiply and Subtract 
+ MSUBA.S Single Floating-point Mu ltiply/Subtract from Accumulator 
+ RSQRT.S Single Floating-poi nt Reciprocal Square Root 
+Computational MAX.S Single  Floating-point Maximum 
+Instruction MIN.S Single Floating-point Minimum 
+Comparison C.cond.S Single Floating-point Compare 
+Branch on  BC1T Branch on FPU True 
+FPU Condition BC1F Branch on FPU False 
+ BC1TL Branch on FPU True Likely 
+ BC1FL Branch on FPU False Likely 
+Table 8-3 FPU Instructions 

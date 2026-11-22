@@ -1,0 +1,44 @@
+SCE CONFIDENTIAL                                                                                      EE Core User's Manual Version 6.0 
+ 
+ 
+© SCEI 
+-50- 
+2.10. Coprocessor Instructions (COP1/COP2) 
+COP1 and COP2 instructions perform operations in their respective coprocessors. Loads and stores I-type. 
+Other instructions have coprocessor-dependent formats. 
+2.10.1. COP1(FPU) Instructions 
+The following are COP1 instructions. 
+ 
+Mnemonic Description 
+ABS.S Single Floating-Point Absolute 
+ADD.S Single Floating-Point Add 
+ADDA.S Single Floating-Point Add to Accumulator 
+BC1F Branch on FPU False 
+BC1FL Branch on FPU False Likely 
+BC1T Branch on FPU True 
+BC1TL Branch on FPU True Likely 
+C.cond.S Single Floating-Point Compare 
+CFC1 Move Control Word from FCR  
+CTC1 Move Control Word to FCR  
+CVT.S.W 32-bit Fixed Point Floating-Point  Convert to Single Floating-Point 
+CVT.W.S Single Floating-Point Convert to 32-bit Fixed Point 
+DIV.S Single Floating-Point Divide 
+LWC1 Load Word to FPR  
+MADD.S Single Floating-Point Multiply and Add 
+MADDA.S Single Floating-Point Multiply and Add to Accumulator 
+MAX.S Single Floati ng-Point Maximum 
+MFC1 Move Word from FPR 
+MIN.S Single Floating-Point Minimum 
+MOV.S Single Floating-Point Move 
+MSUB.S Single Floating-Poi nt Multiply and Subtract 
+MSUBA.S Single Floating-Point Mult iply / Subtract from Accumulator 
+MTC1 Move Word to FPR 
+MUL.S Single Floating-Point Multiply 
+MULA.S Single Floating-Point Multiply to Accumulator 
+NEG.S Single Floating-Point Negate 
+RSQRT.S Single Floating-Point  Reciprocal Square Root 
+SQRT.S Single Floating-Point Square Root 
+SUB.S Single Floati ng-Point Subtract 
+SUBA.S Single Floating-Point  Subtract to Accumulator 
+SWC1 Store Word from FPR 
+Table 2-7 Coprocessor 1 Instructions 

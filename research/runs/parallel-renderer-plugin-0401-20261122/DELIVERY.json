@@ -1,0 +1,12 @@
+{
+  "base": "feb05096e43fb0ae37bac6407d2567569ddb03e0",
+  "source_files": 859,
+  "newline_only_pairs": 855,
+  "source_manifest_sha256": "e100078939191b1008ebc5f37ce2e6fb3143b773fcb07789db46fc96d9b63248",
+  "index_manifest_sha256": "956799ccbb28b7b89f00e4e5bdc799bad66c807584358b153494f3f174a54623",
+  "verification_sha256": "45e4fdfe4b213dbadff35d9a0ee9c25ca418b5fd5d05cf063e2b137d2c9e43a9",
+  "source_join_sha256": "0ad8c54531572d71f452d509da7337aa22d70d6ad815b7cdd75eada344515fef",
+  "manual_pins_sha256": "9404b206d44a98831cc5793ab46a32e7888a5f8dcb2d0e849415f8e369712d6e",
+  "final_core_sha256": "1e3b340b235791502e4a6f5b391fc067a20277468b9954d57466725c92102fcc",
+  "scope": "Persistent typed0401 module constructor/destructor,setter,dispatch,retirement only. Four exact native math kernels required. No full engine/game acceptance."
+}

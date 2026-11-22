@@ -1,0 +1,10 @@
+{
+  "origin_commit": "84c79f55d6606160e9ced87be16fb059b74e4a67",
+  "pins": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\.agents\\skills\\ps2-recomp\\resources\\pdfs\\EE_Core_Users_Manual.pdf": "0ad766eb827157fad19aa579fd9df54f2ca312211e7f0dbdb4b723992b566ce3",
+    "EE_Core_Users_Manual.pdf.page156.txt": "93dca8ac4b9352616dbbfc3df5d13f277714372c0ba44df546bfe7e574ff135b",
+    "EE_Core_Users_Manual.pdf.page164.txt": "7bacaa6ebfc2471f2ce4b8a9f060a25174b016116de4ffe2af39d6d553b031ae",
+    "EE_Core_Users_Manual.pdf.page165.txt": "b85696427f81fc88a3873e0042a31cf5152d5f7125dbfa0b76e272436c3313ac"
+  },
+  "limit": "Existing original manual extraction reused and PDF identity reauthenticated. No new numerical equivalence proof."
+}

@@ -1,0 +1,3 @@
+from pathlib import Path
+import json,subprocess
+r=Path.cwd();d=r/'research/runs/parallel-renderer-plugin-0401-20261122';s=json.loads((d/'PRIVATE_SESSION.json').read_text());a=json.loads((d/'COMMAND.json').read_text());i=a.index('ghidra.app.util.headless.AnalyzeHeadless');a[i+1]=str(Path(s['projects']['xbox']['project']).parent);a[i+2]=Path(s['projects']['xbox']['project']).stem;a[a.index('-process')+1]=s['projects']['xbox']['program'];a[-2]=str(d/'xbox-01');a[-1]='002c1c90,002c1c80';(d/'XBOX_COMMAND.json').write_bytes((json.dumps(a,indent=2)+'\n').encode());p=subprocess.run(a,stdout=subprocess.PIPE,stderr=subprocess.STDOUT);(d/'xbox-01.log').write_bytes(p.stdout);print(p.returncode)

@@ -1,0 +1,37 @@
+{
+  "status": "PASS_MATRIX_SOURCE_AND_LATEST_CORE_LEASE_RESULTS",
+  "matrix_candidate": "37a3a82e980e38c4702cb1aecd2529dadba06363",
+  "corrected_candidate": "3acc3a23f2b184c8d42995d0409963218e94fe6c",
+  "committed_source_files": 860,
+  "reconstructed_raw_newline_pairs": 854,
+  "authenticated_pins": 112,
+  "lossless_archives": 47,
+  "original_words": 779,
+  "original_bodies": 12,
+  "donor_bodies": 3,
+  "latest_clients": {
+    "core": {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-plugin-0402\\build-renderer-0402\\test_native_retail_renderer_core.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-plugin-0402\\research\\runs\\parallel-renderer-engine-init-20261122"
+      ],
+      "exit": 0,
+      "seconds": 0.11232519149780273,
+      "log_sha256": "7d64e1cf5d24d6ffb751ec174c7fd8e67a19623b31c40eac955eaff032f705ec",
+      "executable_sha256": "1f611db9f36986474aaacaf2bc69662e418d5b18d9e345ddfd9e3d10bfcd6481",
+      "source_manifest_sha256": "c3acc98d8da84b3ed0d875db3d40d9d8aa96f3f8d9d9c24eb55ac11e6b41ea98"
+    },
+    "matrix": {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-plugin-0402\\build-renderer-0402\\test_native_retail_renderer_matrix.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-plugin-0402\\research\\runs\\parallel-renderer-plugin-0402-20261122"
+      ],
+      "exit": 0,
+      "log_sha256": "e6ca983715efa3c1951163d91ac2bd5a0363f87ee0008dfac1e602ba5c22291c",
+      "executable_sha256": "8e53cdd95c5cd302c91840e5ed9ef895df9f92dc07a760617da3714b0e89bd0a"
+    }
+  },
+  "historical_required_names": 61,
+  "superseded_matrix_binary": "Old37 matrix52547305 has frozen source/hash/log but no retained binary copy; latest3acc fresh matrix supersedes. No old current-binary authentication claimed.",
+  "scope": "Read-only original/source/archive/current-binary/log authentication; no test reruns. Root combined source verification is separate. Math and full engine/game remain OPEN."
+}

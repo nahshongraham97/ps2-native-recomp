@@ -1,0 +1,42 @@
+{
+  "status": "PASS_BOUNDED_INDEPENDENT_REVIEW_NO_FINDING",
+  "commit": "fab3aee9c3b5edcce771affb93581f8628ce0b91",
+  "source_files": 859,
+  "EE_words": 247,
+  "Xbox_instructions": 471,
+  "clients": {
+    "core": {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-0401\\build-renderer-0401\\test_native_retail_renderer_core.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-0401\\research\\runs\\parallel-renderer-engine-init-20261122"
+      ],
+      "exit": 0,
+      "log_sha256": "7d64e1cf5d24d6ffb751ec174c7fd8e67a19623b31c40eac955eaff032f705ec",
+      "executable_sha256": "1e3b340b235791502e4a6f5b391fc067a20277468b9954d57466725c92102fcc",
+      "source_manifest_sha256": "e100078939191b1008ebc5f37ce2e6fb3143b773fcb07789db46fc96d9b63248"
+    },
+    "allocator": {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-0401\\build-renderer-0401\\test_native_retail_renderer_allocator.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-0401\\research\\runs\\parallel-renderer-engine-init-20261122"
+      ],
+      "exit": 0,
+      "executable_sha256": "b35cf24638134eb07024faf931d52f3c14d492571c6c0d425f8d4b1e845be153",
+      "source_manifest_sha256": "5cfdf17d9474652b4a8a7e626b0188f74507bfc7116a93c02f8679f94a79a3e7",
+      "log_sha256": "f708c44121d52d01b73f83a75dfd8b1fdf13fd6c0ba74e94147a392ed99f3c70"
+    },
+    "session": {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-0401\\build-renderer-0401\\test_native_retail_game_session.exe"
+      ],
+      "exit": 0,
+      "executable_sha256": "5eede2249f834fc55a3ef183911338135db8f8f34174c9fb6293c6fe9d00ad2e",
+      "source_manifest_sha256": "5cfdf17d9474652b4a8a7e626b0188f74507bfc7116a93c02f8679f94a79a3e7",
+      "log_sha256": "3788d05d7f165074cc66638897b3da09f3af202a64bec3f1be94b25b9ed07f54"
+    }
+  },
+  "negative_names": 62,
+  "source_join_sha256": "0ad8c54531572d71f452d509da7337aa22d70d6ad815b7cdd75eada344515fef",
+  "verification_sha256": "45e4fdfe4b213dbadff35d9a0ee9c25ca418b5fd5d05cf063e2b137d2c9e43a9",
+  "no_build_or_execution": true
+}

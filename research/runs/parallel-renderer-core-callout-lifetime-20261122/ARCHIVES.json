@@ -1,0 +1,68 @@
+[
+  {
+    "raw": "corrected-01/build.log",
+    "raw_sha256": "0dd8680b50b6cf38c8219071786508f3862a306479c1570ab46fe90ab13dc173",
+    "archive": "corrected-01/build.log.gz",
+    "archive_sha256": "b253546c274c6149dfe27596ac9c4e45d5a600507602c5399c3557587160b486"
+  },
+  {
+    "raw": "corrected-01/core.log",
+    "raw_sha256": "7d64e1cf5d24d6ffb751ec174c7fd8e67a19623b31c40eac955eaff032f705ec",
+    "archive": "corrected-01/core.log.gz",
+    "archive_sha256": "187b1d20968067c168b43a21891330fccd4566a530d532c7683cc8be38072c0b"
+  },
+  {
+    "raw": "corrected-02/build.log",
+    "raw_sha256": "0287006f478f199986ba535b7bc363f16acc8cb76a774601debf8269917eba2d",
+    "archive": "corrected-02/build.log.gz",
+    "archive_sha256": "41bc69c9a858d686ac53bf195bb53109ef72941ef494e09b0a37c544dc630dc8"
+  },
+  {
+    "raw": "corrected-02/core.log",
+    "raw_sha256": "7d64e1cf5d24d6ffb751ec174c7fd8e67a19623b31c40eac955eaff032f705ec",
+    "archive": "corrected-02/core.log.gz",
+    "archive_sha256": "187b1d20968067c168b43a21891330fccd4566a530d532c7683cc8be38072c0b"
+  },
+  {
+    "raw": "diagnostic-01/build.log",
+    "raw_sha256": "0287006f478f199986ba535b7bc363f16acc8cb76a774601debf8269917eba2d",
+    "archive": "diagnostic-01/build.log.gz",
+    "archive_sha256": "41bc69c9a858d686ac53bf195bb53109ef72941ef494e09b0a37c544dc630dc8"
+  },
+  {
+    "raw": "diagnostic-01/core.log",
+    "raw_sha256": "7d64e1cf5d24d6ffb751ec174c7fd8e67a19623b31c40eac955eaff032f705ec",
+    "archive": "diagnostic-01/core.log.gz",
+    "archive_sha256": "187b1d20968067c168b43a21891330fccd4566a530d532c7683cc8be38072c0b"
+  },
+  {
+    "raw": "final/build-matrix.log",
+    "raw_sha256": "da1e4b7b1d7119b368fabd93bb4d179b236b48f2d293e627d3f376dfe5783da1",
+    "archive": "final/build-matrix.log.gz",
+    "archive_sha256": "f98593ec41d94e0e65c707fd5b4e9167b57d8c1bb107daabf3743f706ea28357"
+  },
+  {
+    "raw": "final/core-symbols.log",
+    "raw_sha256": "5afb22fea58cbd9c6d6246bea51a2581a2dbc34e76b5b68af9456f3c7e633793",
+    "archive": "final/core-symbols.log.gz",
+    "archive_sha256": "cf42e24db50409b7e2b605b1e1cd8d160a7da2ad8d60e2244120628b368876a2"
+  },
+  {
+    "raw": "final/matrix-symbols.log",
+    "raw_sha256": "1f2c4e84748ed2ca501471046634e004c4191a57cdbfbc35a163811212022852",
+    "archive": "final/matrix-symbols.log.gz",
+    "archive_sha256": "c28a6282249a8dca409e1108833ffcf611d9fbb893230ed93c1fb51dc97f44dc"
+  },
+  {
+    "raw": "final/matrix.log",
+    "raw_sha256": "e6ca983715efa3c1951163d91ac2bd5a0363f87ee0008dfac1e602ba5c22291c",
+    "archive": "final/matrix.log.gz",
+    "archive_sha256": "f73c6bb40bec8fe51ce9368bc025738b886b1027be63e6f9fa4021c14011d9b4"
+  },
+  {
+    "raw": "final/negative.log",
+    "raw_sha256": "b8f879db0651ae7cda7255a59bcf08469c673b7424822a517452e7eee955a731",
+    "archive": "final/negative.log.gz",
+    "archive_sha256": "0fd9a55cc502b412968403692af0e8c0e9b4c4c4d85729f7edfc0dd10e419512"
+  }
+]

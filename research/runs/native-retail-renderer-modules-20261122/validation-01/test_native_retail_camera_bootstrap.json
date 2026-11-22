@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_camera_bootstrap.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-renderer-modules-20261122\\validation-01\\empty-content"
+  ],
+  "exit": 0,
+  "seconds": 0.10101250000298023,
+  "source_commit": "ea4e3c99de5f18869d472c9a802cbed2377ab31b",
+  "tracked_status": "M  cmake/native_game.cmake\nM  runtime/include/mka/retail_renderer_core.hpp\nA  runtime/include/mka/retail_renderer_math.hpp\nA  runtime/include/mka/retail_renderer_matrix.hpp\nA  runtime/include/mka/retail_renderer_transforms.hpp\nM  runtime/src/native/retail_renderer_core.cpp\nA  runtime/src/native/retail_renderer_matrix.cpp\nA  runtime/src/native/retail_renderer_transforms.cpp\nM  tests/test_retail_renderer_core.cpp\nA  tests/test_retail_renderer_matrix.cpp",
+  "source_manifest_sha256": "60afbd2400dcb3432b82f7b35a3cb5c6e0a57fb76509eea4bf4ef4a1c06ecc19",
+  "executable_sha256": "217bf684bc19fa6b6ca6a9d0eeea42c608c085b3043547fa41c96bb36951a441",
+  "log_sha256": "7cdff27996386f491793ea2dfe0b556b123d9985f17fe0895f35c68727bf432b",
+  "compressed_log_sha256": "f966ec2637283c96c7d4fb8f4308bbc944f8d49489a94091ab592a1b60ba04a8",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-0401\\build-renderer-0401\\test_native_retail_game_session.exe"
+  ],
+  "exit": 0,
+  "executable_sha256": "5eede2249f834fc55a3ef183911338135db8f8f34174c9fb6293c6fe9d00ad2e",
+  "source_manifest_sha256": "5cfdf17d9474652b4a8a7e626b0188f74507bfc7116a93c02f8679f94a79a3e7",
+  "log_sha256": "3788d05d7f165074cc66638897b3da09f3af202a64bec3f1be94b25b9ed07f54"
+}

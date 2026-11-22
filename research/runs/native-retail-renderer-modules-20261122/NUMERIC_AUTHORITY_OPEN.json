@@ -1,0 +1,7 @@
+{
+  "status": "OPEN_REQUIRED_MATHEMATICAL_POLICY",
+  "evidence_commit": "ae64cf610b9389519722a18952a7de1ad2fdde27",
+  "authority_limit_path": "research/runs/parallel-native-transform-math-20261122/HARDWARE_AUTHORITY_LIMIT.json",
+  "authority_limit_sha256": "bc07b85a55538aa599a56f9a610c914e30fb0f105577bc08ec6b4c4715fc913f",
+  "scope": "Two offline reference policies disagree for finite COP1 multiplication and actual vector output. Existing190 console cases do not distinguish; no physical output for disputed pair is present. Existing quantizer/model differences do not prove reached-game or hardware error; its producer domain and hardware parity remain OPEN. No production numeric implementation changed; all7 matrix/vector kernels remain undefined."
+}

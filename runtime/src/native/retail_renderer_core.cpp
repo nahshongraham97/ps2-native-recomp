@@ -1,4 +1,5 @@
 #include "mka/retail_renderer_core.hpp"
+#include "mka/retail_renderer_transforms.hpp"
 #include "mka/retail_game_session.hpp"
 #include "retail_main_control.hpp"
 #include <new>
@@ -99,10 +100,28 @@ std::optional<std::uint32_t> NativeRetailRendererCore::module_040d_count(RetailR
  if(!access(f))return {};return module_040d_count_.load(std::memory_order_relaxed);
 }
 namespace renderer_required {
+bool construct_core_plugin_0401(NativeRetailRendererCore& core,RetailRendererCoreFailure& f){return core.construct_transforms(f);}
+void destroy_core_plugin_0401(NativeRetailRendererCore& core)noexcept{core.destroy_transforms();}
 bool construct_core_plugin_040d(NativeRetailRendererCore& core,RetailRendererCoreFailure& f){
  if(!core.access(f))return false;core.module_040d_count_.fetch_add(1,std::memory_order_relaxed);return true;
 }
 void destroy_core_plugin_040d(NativeRetailRendererCore& core)noexcept{core.module_040d_count_.fetch_sub(1,std::memory_order_relaxed);}
+}
+bool NativeRetailRendererCore::construct_transforms(RetailRendererCoreFailure& f)noexcept{
+ if(!access(f))return false;
+ if(transforms_)return fail(f,RetailRendererCoreError::reentrant,"0401 native transform already constructed");
+ auto module=heap_object<NativeRetailRendererTransforms>(allocator_,f,[&](void* p){return new(p)NativeRetailRendererTransforms(session_);});
+ if(!module)return false;
+ transforms_=std::move(module);module_0401_count_.fetch_add(1,std::memory_order_relaxed);return true;
+}
+void NativeRetailRendererCore::destroy_transforms()noexcept{
+ if(transforms_){transforms_->retire();transforms_.reset();module_0401_count_.fetch_sub(1,std::memory_order_relaxed);}
+}
+std::shared_ptr<NativeRetailRendererTransforms> NativeRetailRendererCore::transforms(RetailRendererCoreFailure& f)const noexcept{
+ if(!access(f))return {};if(!transforms_)fail(f,RetailRendererCoreError::owner,"0401 transform module not constructed");return transforms_;
+}
+std::optional<std::uint32_t> NativeRetailRendererCore::module_0401_count(RetailRendererCoreFailure& f)const noexcept{
+ if(!access(f))return {};return module_0401_count_.load(std::memory_order_relaxed);
 }
 bool construct_native_renderer_error(NativeRetailRendererCore& core,RetailRendererCoreFailure& f){core.error_domain_=core.construct_error_domain(f);return bool(core.error_domain_);}
 void destroy_native_renderer_error(NativeRetailRendererCore& core)noexcept{core.error_domain_.reset();}
@@ -132,6 +151,8 @@ bool NativeRetailRendererCore::register_core_plugins(RetailRendererCoreFailure& 
 }
 std::optional<bool> NativeRetailRendererCore::initialize_core(RetailRendererCoreFailure& f){
  if(!access(f))return {};
+ // Keep the actual Session-owned Core alive through every callback and guard unwind.
+ const auto session_lease=session_.lock();
  if(busy_||initializing_){fail(f,RetailRendererCoreError::reentrant,"1A6DD0 native initialization active");return {};}
  if(initialized_)return false; //1A6E64..6C returns source s1=0.
  Busy initialization(initializing_);
@@ -149,6 +170,8 @@ std::optional<bool> NativeRetailRendererCore::initialize_core(RetailRendererCore
 }
 bool NativeRetailRendererCore::construct_registered(RetailRendererCoreFailure& f){
  if(!access(f))return false;
+ // Keep the actual Session-owned Core alive through every callback and guard unwind.
+ const auto session_lease=session_.lock();
  if(busy_||!constructed_.empty())return fail(f,RetailRendererCoreError::reentrant,"1A3480 native construction active");
  // Reserve before the first source callback,so publication has no later allocation.
  try{constructed_.reserve(entries_.size());}catch(const std::bad_alloc&){return fail(f,RetailRendererCoreError::allocation,"1A3480 native construction retention");}
@@ -168,7 +191,9 @@ bool NativeRetailRendererCore::construct_registered(RetailRendererCoreFailure& f
  return true;
 }
 bool NativeRetailRendererCore::destroy_constructed(RetailRendererCoreFailure& f)noexcept{
- if(!access(f))return false;if(busy_)return fail(f,RetailRendererCoreError::reentrant,"native renderer destruction active");
+ if(!access(f))return false;
+ // Keep the actual Session-owned Core alive through every callback and guard unwind.
+ const auto session_lease=session_.lock();if(busy_)return fail(f,RetailRendererCoreError::reentrant,"native renderer destruction active");
  Busy guard(busy_);while(!constructed_.empty()){auto entry=constructed_.back();constructed_.pop_back();entry->callbacks_.destroy(*this);}return true;
 }
 void NativeRetailRendererCore::discard_object_extensions()noexcept{

@@ -1,0 +1,7 @@
+{
+  "base": "feb05096e43fb0ae37bac6407d2567569ddb03e0",
+  "candidate": "fab3aee9c3b5edcce771affb93581f8628ce0b91",
+  "exit": 0,
+  "stdout": "",
+  "stderr": "Applied patch to 'cmake/native_game.cmake' cleanly.\nApplied patch to 'runtime/include/mka/retail_renderer_core.hpp' cleanly.\nFalling back to direct application...\nFalling back to direct application...\nApplied patch to 'runtime/src/native/retail_renderer_core.cpp' cleanly.\nFalling back to direct application...\nApplied patch to 'tests/test_retail_renderer_core.cpp' cleanly.\n"
+}

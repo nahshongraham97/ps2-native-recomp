@@ -11,6 +11,8 @@ namespace mka::retail {
 class NativeRetailGameSession;
 class NativeRetailRendererCore;
 class NativeRetailRendererErrorDomain;
+class NativeRetailRendererTransforms;
+class NativeRetailRendererMatrixDomain;
 enum class RetailRendererCoreError {none,owner,wrong_thread,allocation,native_exception,allocator,content,unbound_factory,registration_closed,reentrant,construction,after_effect_unknown};
 struct RetailRendererCoreFailure {
  RetailRendererCoreError kind{RetailRendererCoreError::none};const char* operation{""};
@@ -25,6 +27,10 @@ struct RetailRendererPluginCallbacks {
  void(*destroy)(NativeRetailRendererCore&) noexcept;
 };
 namespace renderer_required {
+bool construct_core_plugin_0401(NativeRetailRendererCore&,RetailRendererCoreFailure&);
+void destroy_core_plugin_0401(NativeRetailRendererCore&)noexcept;
+bool construct_core_plugin_0402(NativeRetailRendererCore&,RetailRendererCoreFailure&);
+void destroy_core_plugin_0402(NativeRetailRendererCore&)noexcept;
 bool construct_core_plugin_040d(NativeRetailRendererCore&,RetailRendererCoreFailure&);
 void destroy_core_plugin_040d(NativeRetailRendererCore&)noexcept;
 }
@@ -68,7 +74,11 @@ public:
  std::optional<std::vector<RetailRendererPluginSpec>> registered(RetailRendererCoreFailure&)const noexcept;
  std::shared_ptr<NativeRetailRendererErrorDomain> construct_error_domain(RetailRendererCoreFailure&) noexcept;
  std::optional<std::uint32_t> error_domain_count(RetailRendererCoreFailure&)const noexcept;
+ std::shared_ptr<NativeRetailRendererMatrixDomain> matrix_domain(RetailRendererCoreFailure&)const noexcept;
+ std::optional<std::uint32_t> matrix_domain_count(RetailRendererCoreFailure&)const noexcept;
  std::optional<std::uint32_t> module_040d_count(RetailRendererCoreFailure&)const noexcept;
+ std::optional<std::uint32_t> module_0401_count(RetailRendererCoreFailure&)const noexcept;
+ std::shared_ptr<NativeRetailRendererTransforms> transforms(RetailRendererCoreFailure&)const noexcept;
  //1A3480 forward construction/reverse prior-success unwind. Explicitly later
  // than CoreInit; production EngineOpen/Start producers remain required.
  bool construct_registered(RetailRendererCoreFailure&);
@@ -81,17 +91,27 @@ private:
  void store_error(RetailRendererErrorRecord)noexcept;
  bool register_core_plugins(RetailRendererCoreFailure&)noexcept;
  void discard_object_extensions()noexcept;
+ bool construct_transforms(RetailRendererCoreFailure&)noexcept;
+ void destroy_transforms()noexcept;
  std::weak_ptr<NativeRetailGameSession> session_;
  std::shared_ptr<NativeRetailRendererAllocatorService> allocator_;
  content::NativeContentVolume content_;
  std::shared_ptr<NativeRetailRendererErrorDomain::State> errors_;
  std::shared_ptr<NativeRetailRendererErrorDomain> error_domain_;
+ std::shared_ptr<NativeRetailRendererTransforms> transforms_;
  std::vector<std::shared_ptr<NativeRetailRendererPluginRegistration>> entries_;
  std::vector<std::shared_ptr<NativeRetailRendererPluginRegistration>> constructed_;
+ std::shared_ptr<NativeRetailRendererMatrixDomain> matrix_domain_;
+ std::atomic<std::uint32_t> matrix_domain_count_{};
  std::atomic<std::uint32_t> module_040d_count_{};
+ std::atomic<std::uint32_t> module_0401_count_{};
  bool object_extensions_prepared_{},initialized_{},initializing_{},busy_{},sealed_{},after_effect_unknown_{};
  const std::thread::id thread_{std::this_thread::get_id()};
+ friend bool renderer_required::construct_core_plugin_0402(NativeRetailRendererCore&,RetailRendererCoreFailure&);
+ friend void renderer_required::destroy_core_plugin_0402(NativeRetailRendererCore&)noexcept;
  friend bool renderer_required::construct_core_plugin_040d(NativeRetailRendererCore&,RetailRendererCoreFailure&);
+ friend bool renderer_required::construct_core_plugin_0401(NativeRetailRendererCore&,RetailRendererCoreFailure&);
+ friend void renderer_required::destroy_core_plugin_0401(NativeRetailRendererCore&)noexcept;
  friend void renderer_required::destroy_core_plugin_040d(NativeRetailRendererCore&)noexcept;
  friend bool construct_native_renderer_error(NativeRetailRendererCore&,RetailRendererCoreFailure&);
  friend void destroy_native_renderer_error(NativeRetailRendererCore&)noexcept;

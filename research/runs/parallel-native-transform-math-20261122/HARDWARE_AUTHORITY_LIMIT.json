@@ -1,0 +1,16 @@
+{
+  "repository": "TellowKrinkle/PS2Homebrew",
+  "commit": "88af0168baab3680b12d9d45f03054af587d245f",
+  "COP1_capture_program": "FMulTester.cpp",
+  "COP1_COP2_comparison_program": "FMulMatcher.cpp",
+  "COP2_only_tree_validator": "FMulValidator.cpp",
+  "captured_disputed_pair_output_present": false,
+  "physical_execution_performed": false,
+  "required_case": {
+    "first_operand": "3f3d7186",
+    "second_operand": "3f5f1b2d",
+    "imported_project_result": "3f251a00",
+    "primary_derived_result": "3f2519ff"
+  },
+  "status": "OPEN_COP1_ORDERED_PRODUCT_LOW_BIT_AUTHORITY"
+}

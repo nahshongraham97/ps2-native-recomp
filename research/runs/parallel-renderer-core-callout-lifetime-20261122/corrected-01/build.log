@@ -1,0 +1,6 @@
+[0/2] Re-checking globbed directories...
+[1/9] AOT compile source-verified retail scalar functions to typed native C++
+[2/6] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_renderer_core.cpp.obj
+[3/6] Linking CXX static library libmka_native_retail_startup.a
+[4/6] Building CXX object CMakeFiles/test_native_retail_renderer_core.dir/tests/test_retail_renderer_core.cpp.obj
+[5/6] Linking CXX executable test_native_retail_renderer_core.exe
