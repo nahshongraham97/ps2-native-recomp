@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-status-21\\build-native\\test_native_retail_file_startup.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-sound-status-20261121\\clean-validation-01"
+  ],
+  "exit": 0,
+  "stdout": "PASS native middleware file startup: 15 allocation cuts, 12 native files, 65 native children; source frame body covered separately; callback producers/game remain open\n",
+  "stderr": "",
+  "seconds": 0.10718839999753982,
+  "source_commit": "2dbacbac41c45a9b5e5b073afc597161e2534410",
+  "tracked_status": "",
+  "source_manifest_sha256": "4cd88ad7b4a4930db6817170def4ffdc4d398c347d6d765a3d8f0e1665ba118c",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "3ca65506639ae8f6c6726e6844204c6ef465a406ac55139d36c6b5bb6a0e0b7c"
+}

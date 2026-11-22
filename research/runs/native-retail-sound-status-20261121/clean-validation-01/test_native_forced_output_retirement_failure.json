@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-status-21\\build-native\\test_native_forced_output_retirement_failure.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_FORCED_OUTPUT_RETIREMENT_FAILURE: 8 single and 11 context allocation failures; mixed-pool rollback; test-only allocator wrap\n",
+  "stderr": "",
+  "seconds": 0.040741900011198595,
+  "source_commit": "2dbacbac41c45a9b5e5b073afc597161e2534410",
+  "tracked_status": "",
+  "source_manifest_sha256": "4cd88ad7b4a4930db6817170def4ffdc4d398c347d6d765a3d8f0e1665ba118c",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "7dbe5b8197ad66bf04ec26b4408e78703b1acf493823e925ebe4808a00c98834"
+}

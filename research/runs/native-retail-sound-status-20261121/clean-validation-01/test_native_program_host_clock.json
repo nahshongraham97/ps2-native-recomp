@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-status-21\\build-native\\test_native_program_host_clock.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_PROGRAM_HOST_CLOCK: shared explicit epoch/integer milliseconds/wrap/failure atomicity/reentry/concurrent readers; no original kernel epoch or physical timing fidelity claim\n",
+  "stderr": "",
+  "seconds": 0.04014479999023024,
+  "source_commit": "2dbacbac41c45a9b5e5b073afc597161e2534410",
+  "tracked_status": "",
+  "source_manifest_sha256": "4cd88ad7b4a4930db6817170def4ffdc4d398c347d6d765a3d8f0e1665ba118c",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "e98e2b8a68733c497abb35c74d7596ec0e987ab5fd4d1cee4ff2fd6859125262"
+}

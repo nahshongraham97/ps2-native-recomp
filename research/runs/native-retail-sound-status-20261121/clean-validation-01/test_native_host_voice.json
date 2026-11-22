@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-status-21\\build-native\\test_native_host_voice.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+  ],
+  "exit": 0,
+  "stdout": "PASS realannouncr freshpan/LUT/phase/explicitprofiles/signedDSP/hostresample/64voices/transactionalstop; no device/output/fidelity claim\n",
+  "stderr": "",
+  "seconds": 0.04002309999486897,
+  "source_commit": "2dbacbac41c45a9b5e5b073afc597161e2534410",
+  "tracked_status": "",
+  "source_manifest_sha256": "4cd88ad7b4a4930db6817170def4ffdc4d398c347d6d765a3d8f0e1665ba118c",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "e55cf11d9a6a7beb72b5bfbe2714c7fae010f62a01eb4f695e9602e4a2725a25"
+}

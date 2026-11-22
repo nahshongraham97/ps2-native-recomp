@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "core.autocrlf=false",
+    "-c",
+    "core.longpaths=true",
+    "worktree",
+    "add",
+    "--detach",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-status-21",
+    "2dbacbac41c45a9b5e5b073afc597161e2534410"
+  ],
+  "exit": 0,
+  "stdout": "HEAD is now at 2dbacba Publish real native retail sound status through Main\n",
+  "stderr": "Preparing worktree (detached HEAD 2dbacba)\nUpdating files:  32% (1964/6086)\nUpdating files:  33% (2009/6086)\nUpdating files:  34% (2070/6086)\nUpdating files:  35% (2131/6086)\nUpdating files:  36% (2191/6086)\nUpdating files:  37% (2252/6086)\nUpdating files:  38% (2313/6086)\nUpdating files:  39% (2374/6086)\nUpdating files:  40% (2435/6086)\nUpdating files:  41% (2496/6086)\nUpdating files:  42% (2557/6086)\nUpdating files:  43% (2617/6086)\nUpdating files:  44% (2678/6086)\nUpdating files:  45% (2739/6086)\nUpdating files:  46% (2800/6086)\nUpdating files:  47% (2861/6086)\nUpdating files:  48% (2922/6086)\nUpdating files:  49% (2983/6086)\nUpdating files:  50% (3043/6086)\nUpdating files:  51% (3104/6086)\nUpdating files:  52% (3165/6086)\nUpdating files:  53% (3226/6086)\nUpdating files:  54% (3287/6086)\nUpdating files:  55% (3348/6086)\nUpdating files:  56% (3409/6086)\nUpdating files:  57% (3470/6086)\nUpdating files:  58% (3530/6086)\nUpdating files:  59% (3591/6086)\nUpdating files:  60% (3652/6086)\nUpdating files:  61% (3713/6086)\nUpdating files:  62% (3774/6086)\nUpdating files:  63% (3835/6086)\nUpdating files:  64% (3896/6086)\nUpdating files:  65% (3956/6086)\nUpdating files:  66% (4017/6086)\nUpdating files:  67% (4078/6086)\nUpdating files:  68% (4139/6086)\nUpdating files:  69% (4200/6086)\nUpdating files:  70% (4261/6086)\nUpdating files:  71% (4322/6086)\nUpdating files:  71% (4380/6086)\nUpdating files:  72% (4382/6086)\nUpdating files:  73% (4443/6086)\nUpdating files:  74% (4504/6086)\nUpdating files:  75% (4565/6086)\nUpdating files:  76% (4626/6086)\nUpdating files:  77% (4687/6086)\nUpdating files:  78% (4748/6086)\nUpdating files:  79% (4808/6086)\nUpdating files:  80% (4869/6086)\nUpdating files:  81% (4930/6086)\nUpdating files:  82% (4991/6086)\nUpdating files:  83% (5052/6086)\nUpdating files:  84% (5113/6086)\nUpdating files:  85% (5174/6086)\nUpdating files:  86% (5234/6086)\nUpdating files:  87% (5295/6086)\nUpdating files:  88% (5356/6086)\nUpdating files:  89% (5417/6086)\nUpdating files:  90% (5478/6086)\nUpdating files:  91% (5539/6086)\nUpdating files:  92% (5600/6086)\nUpdating files:  93% (5660/6086)\nUpdating files:  94% (5721/6086)\nUpdating files:  95% (5782/6086)\nUpdating files:  96% (5843/6086)\nUpdating files:  97% (5904/6086)\nUpdating files:  98% (5965/6086)\nUpdating files:  99% (6026/6086)\nUpdating files: 100% (6086/6086)\nUpdating files: 100% (6086/6086), done.\n",
+  "seconds": 2.849931699995068,
+  "source_commit": "2dbacbac41c45a9b5e5b073afc597161e2534410",
+  "clean_checkout": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-status-21",
+  "physical_endpoints_opened": false,
+  "game_run": false
+}

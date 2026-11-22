@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "-S",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-status-21",
+    "-B",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-status-21\\build-native",
+    "-G",
+    "Ninja",
+    "-DCMAKE_BUILD_TYPE=Release",
+    "-DCMAKE_CXX_COMPILER=C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+    "-DCMAKE_MAKE_PROGRAM=C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\ninja\\ninja.exe",
+    "-DSDL2_DIR=C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-status-21\\third_party\\sdl2\\lib\\cmake\\SDL2",
+    "-DMKA_NATIVE_MEDIA_HEADERS=C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\native-media\\ffmpeg-7.1.4"
+  ],
+  "exit": 0,
+  "stdout": "-- The CXX compiler identification is Clang 23.1.3\n-- Detecting CXX compiler ABI info\n-- Detecting CXX compiler ABI info - done\n-- Check for working CXX compiler: C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/bin/clang++.exe - skipped\n-- Detecting CXX compile features\n-- Detecting CXX compile features - done\n-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed\n-- Looking for pthread_create in pthreads\n-- Looking for pthread_create in pthreads - not found\n-- Looking for pthread_create in pthread\n-- Looking for pthread_create in pthread - found\n-- Found Threads: TRUE\n-- Configuring done (4.0s)\n-- Generating done (0.8s)\n-- Build files have been written to: C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-clean-status-21/build-native\n",
+  "stderr": "CMake Warning in CMakeLists.txt:\n  The object file directory\n\n    C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-clean-status-21/build-native/CMakeFiles/test_native_retail_initial_task_missing_children.dir/./\n\n  has 197 characters.  The maximum full path to an object file is 250\n  characters (see CMAKE_OBJECT_PATH_MAX).  Object file\n\n    tests/test_retail_initial_task_missing_children.cpp.obj\n\n  cannot be safely placed under this directory.  The build may not work\n  correctly.\n\n\nCMake Warning in CMakeLists.txt:\n  The object file directory\n\n    C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-clean-status-21/build-native/CMakeFiles/ps2runtime.dir/./\n\n  has 159 characters.  The maximum full path to an object file is 250\n  characters (see CMAKE_OBJECT_PATH_MAX).  Object file\n\n    8eeeb52ec54dabec17ed448439587928/iop_imports_CRI_ADXI_B00071300_H990112CDFA87D073_71300.cpp.obj\n\n  cannot be safely placed under this directory.  The build may not work\n  correctly.\n\n\n",
+  "seconds": 4.9500738000060664,
+  "source_commit": "2dbacbac41c45a9b5e5b073afc597161e2534410",
+  "clean_checkout": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-status-21",
+  "physical_endpoints_opened": false,
+  "game_run": false
+}

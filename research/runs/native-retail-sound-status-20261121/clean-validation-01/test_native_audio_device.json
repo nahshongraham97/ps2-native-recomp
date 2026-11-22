@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-status-21\\build-native\\test_native_audio_device.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS pure format/PCM validation only; no device opened or audio generated\n",
+  "stderr": "",
+  "seconds": 0.04205740000179503,
+  "source_commit": "2dbacbac41c45a9b5e5b073afc597161e2534410",
+  "tracked_status": "",
+  "source_manifest_sha256": "4cd88ad7b4a4930db6817170def4ffdc4d398c347d6d765a3d8f0e1665ba118c",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "4849c08efee9e309f3eec821f2cec95ccb67a87dd5eb2aebb0519e4614292a79"
+}

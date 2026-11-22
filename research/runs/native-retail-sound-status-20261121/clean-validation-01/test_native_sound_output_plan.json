@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-status-21\\build-native\\test_native_sound_output_plan.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS native game-output planning/counter provenance; pure checks, no endpoint opened\n",
+  "stderr": "",
+  "seconds": 0.04057570001168642,
+  "source_commit": "2dbacbac41c45a9b5e5b073afc597161e2534410",
+  "tracked_status": "",
+  "source_manifest_sha256": "4cd88ad7b4a4930db6817170def4ffdc4d398c347d6d765a3d8f0e1665ba118c",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "a20ee6bc7842d451eab13cf0e895b27f567bfb13276dde2fff45974c7516c724"
+}

@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-status-21\\build-native\\test_native_retail_sound_context.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon"
+  ],
+  "exit": 0,
+  "stdout": "PASS production native sound context/status/Session/worker/PCM/70 native identities/allocation/error/idle lifetime; only output fixture; no game/endpoint\n",
+  "stderr": "",
+  "seconds": 0.37751720000233036,
+  "source_commit": "2dbacbac41c45a9b5e5b073afc597161e2534410",
+  "tracked_status": "",
+  "source_manifest_sha256": "4cd88ad7b4a4930db6817170def4ffdc4d398c347d6d765a3d8f0e1665ba118c",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "fe12f6ea07bc16e613829cfb543c2280e7fea114349ffe41d5b6a012dccda5ab"
+}
