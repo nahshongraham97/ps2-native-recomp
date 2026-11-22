@@ -8,11 +8,19 @@
 #include <new>
 #include <stdexcept>
 #include <thread>
+#include <type_traits>
 extern "C" int SDL_InitSubSystem(unsigned){std::abort();}
 namespace {thread_local bool fail_new=false;}
 void* operator new(std::size_t size){if(fail_new)throw std::bad_alloc();if(auto* p=std::malloc(size?size:1))return p;throw std::bad_alloc();}
 void operator delete(void* p)noexcept{std::free(p);}void operator delete(void* p,std::size_t)noexcept{std::free(p);}
 using namespace mka::retail;
+// Only the enclosing Session may construct this borrowed-lifetime domain.
+// A detached copy/move would otherwise retain a dangling raw Session borrow.
+static_assert(!std::is_constructible_v<NativeRetailRenderCameras,NativeRetailGameSession&>);
+static_assert(!std::is_copy_constructible_v<NativeRetailRenderCameras>);
+static_assert(!std::is_copy_assignable_v<NativeRetailRenderCameras>);
+static_assert(!std::is_move_constructible_v<NativeRetailRenderCameras>);
+static_assert(!std::is_move_assignable_v<NativeRetailRenderCameras>);
 namespace {
 void check(bool value,const char* why){if(!value)throw std::runtime_error(why);}
 unsigned first_calls{},suffix_calls{};int effect{};

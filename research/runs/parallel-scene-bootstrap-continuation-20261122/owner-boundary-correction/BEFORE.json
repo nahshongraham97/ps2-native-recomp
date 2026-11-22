@@ -1,0 +1,8 @@
+{
+  "base": "f2020665dcd02145cb9d65df926ac53e2c0303b2",
+  "pins": {
+    "runtime/include/mka/retail_camera_world.hpp": "a92507e232b1d4c492dcbc5258521badc0423e5058035e25d9af50bb26d0c745",
+    "tests/test_retail_camera_bootstrap.cpp": "96f78aaa225ba09c0ff441a19cb9a98855977f4f49b726f7191a23022194fe75"
+  },
+  "finding": "Public Session-borrowing camera domain construction and implicit copy/move allowed a detached owning value to dereference dead Session after legal copy and owner reset. This was a real owner escape, not ordinary borrowed-pointer misuse."
+}

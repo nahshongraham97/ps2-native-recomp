@@ -48,7 +48,10 @@ struct RetailRenderCameraObservation {std::int32_t count{};bool count_producer_a
 // camera-record projections. Historical addresses are provenance only.
 class NativeRetailRenderCameras final {
 public:
- explicit NativeRetailRenderCameras(NativeRetailGameSession& session) noexcept:session_(&session){}
+ NativeRetailRenderCameras(const NativeRetailRenderCameras&)=delete;
+ NativeRetailRenderCameras& operator=(const NativeRetailRenderCameras&)=delete;
+ NativeRetailRenderCameras(NativeRetailRenderCameras&&)=delete;
+ NativeRetailRenderCameras& operator=(NativeRetailRenderCameras&&)=delete;
  //27270 source count store in220900 JAL delay slot; admits actual count
  // producer, not successful renderer/first-scene initialization.
  bool store_initial_count_from_127260(RetailCameraWorldFailure&) noexcept;
@@ -61,6 +64,8 @@ public:
  bool detach_cameras_from_181a30(RetailCameraWorldFailure&) noexcept;
  std::optional<RetailRenderCameraObservation> observe(RetailCameraWorldFailure&) const noexcept;
 private:
+ friend class NativeRetailGameSession;
+ explicit NativeRetailRenderCameras(NativeRetailGameSession& session) noexcept:session_(&session){}
  bool access(RetailCameraWorldFailure&) const noexcept;
  NativeRetailGameSession* session_; // borrowed from enclosing Session
  struct Record {std::weak_ptr<NativeRetailCameraWorldLink> camera;bool published{};};

@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-C",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-scene-continuation\\build-camera-continuation\\test_native_retail_camera_bootstrap.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.04802489999565296,
+  "source_manifest_sha256": "2abf29d9490e568923878881e889a4110af397af5b274a905179d87f15750989",
+  "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "log_sha256": "2b5ad9a8aca3840d9ac388c0c4176122f19bd3c47974a1e1720084f1cf57c6f4",
+  "game_run": false,
+  "physical_endpoints_opened": false
+}
