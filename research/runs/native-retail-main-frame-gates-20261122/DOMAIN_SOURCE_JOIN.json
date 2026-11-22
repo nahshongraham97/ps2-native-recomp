@@ -1,0 +1,39 @@
+{
+  "status": "PASS_ORIGINAL_SHARED_ROOT_WAIT_ALIAS",
+  "functions": [
+    {
+      "path": "research/runs/native-retail-main-frame-gates-20261122/source-domain/0012e670.asm",
+      "sha256": "334d1ca239d99e45d4b8e12502df4925eade40569b605d5aa560baa87801e0b1",
+      "listed_words": 171,
+      "begin": "0x12e670",
+      "end": "0x12e924",
+      "omitted_zero_after_branch": [
+        {
+          "address": "0x12e764",
+          "word": "00000000",
+          "predecessor_unconditional_branch": "0x12e75c",
+          "branch_target": "0x12e788",
+          "present_delay_slot": "0x12e760"
+        },
+        {
+          "address": "0x12e81c",
+          "word": "00000000",
+          "predecessor_unconditional_branch": "0x12e814",
+          "branch_target": "0x12e870",
+          "present_delay_slot": "0x12e818"
+        }
+      ]
+    },
+    {
+      "path": "research/runs/native-retail-main-frame-gates-20261122/source-domain/0012f0d0.asm",
+      "sha256": "e71e028bab863315e4b823482e830d85151e0e583bf08f3a8ac9518b7d221f5c",
+      "listed_words": 12,
+      "begin": "0x12f0d0",
+      "end": "0x12f100",
+      "omitted_zero_after_branch": []
+    }
+  ],
+  "same_word": "Main1229E4/TaskDispatch12E708 read GP-618C=64DF64; roots12F0F0 storeszero to sameword",
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "scope": "Reuses current native TaskDomain mapping, not a full new task-dispatch implementation"
+}

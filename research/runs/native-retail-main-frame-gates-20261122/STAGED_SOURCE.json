@@ -1,0 +1,11 @@
+{
+  "approved": [
+    "cmake/native_game.cmake",
+    "runtime/include/mka/retail_main.hpp",
+    "runtime/src/native/retail_main.cpp",
+    "runtime/include/mka/retail_task_domain.hpp",
+    "runtime/src/native/retail_task_domain.cpp",
+    "runtime/src/native/retail_main_frame_gates.cpp",
+    "tests/test_retail_main_frame_gates.cpp"
+  ]
+}

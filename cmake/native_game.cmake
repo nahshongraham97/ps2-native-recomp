@@ -216,6 +216,7 @@ if(WIN32)
         "${_startup_dir}/native_retail_startup.cpp" "${_startup_dir}/native_retail_entry.cpp"
         runtime/src/native/retail_crt_startup.cpp runtime/src/native/retail_platform_startup.cpp
         runtime/src/native/retail_main.cpp runtime/src/native/retail_main_timing.cpp
+        runtime/src/native/retail_main_frame_gates.cpp
         runtime/src/native/retail_scene_bootstrap_prefix.cpp
         runtime/src/native/retail_scene_bootstrap_continuation.cpp runtime/src/native/retail_camera_world.cpp
         runtime/src/native/retail_sound_metadata.cpp
@@ -404,6 +405,8 @@ add_executable(test_native_retail_crt EXCLUDE_FROM_ALL tests/test_retail_crt.cpp
 target_link_libraries(test_native_retail_crt PRIVATE mka_native_retail_startup)
 add_executable(test_native_retail_main_timing EXCLUDE_FROM_ALL tests/test_retail_main_timing.cpp)
 target_link_libraries(test_native_retail_main_timing PRIVATE mka_native_retail_startup)
+add_executable(test_native_retail_main_frame_gates EXCLUDE_FROM_ALL tests/test_retail_main_frame_gates.cpp)
+target_link_libraries(test_native_retail_main_frame_gates PRIVATE mka_native_retail_startup)
 add_executable(test_native_retail_camera_bootstrap EXCLUDE_FROM_ALL tests/test_retail_camera_bootstrap.cpp)
 target_link_libraries(test_native_retail_camera_bootstrap PRIVATE mka_native_retail_startup)
 add_executable(test_native_retail_scene_bootstrap_prefix EXCLUDE_FROM_ALL tests/test_retail_scene_bootstrap_prefix.cpp)
@@ -412,7 +415,7 @@ add_executable(test_native_retail_sound_metadata EXCLUDE_FROM_ALL tests/test_ret
 target_link_libraries(test_native_retail_sound_metadata PRIVATE mka_native_retail_startup)
 if(WIN32)
     foreach(_native_startup_client test_native_retail_crt test_native_retail_startup test_native_retail_main_timing
-        test_native_retail_scene_bootstrap_prefix test_native_retail_sound_metadata test_native_retail_camera_bootstrap
+        test_native_retail_scene_bootstrap_prefix test_native_retail_sound_metadata test_native_retail_camera_bootstrap test_native_retail_main_frame_gates
         test_native_retail_package test_native_retail_package_errors test_native_retail_reset_sound)
         add_custom_command(TARGET ${_native_startup_client} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2>

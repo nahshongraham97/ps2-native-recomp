@@ -72,6 +72,8 @@ public:
         std::int32_t source_64eed4,
         RetailTaskDomainFailure&) noexcept;
 
+    // Same live64DF64 read by Main1229E4 and task-list dispatch.
+    std::optional<bool> root_wait_inhibited(RetailTaskDomainFailure&) const noexcept;
     NativeRetailTaskRegistry* registry(RetailTaskDomainFailure&) noexcept;
     NativeRetailTaskRegistry* prior_registry_if_born(
         RetailTaskDomainFailure&) noexcept;

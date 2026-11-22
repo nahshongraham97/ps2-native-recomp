@@ -1,0 +1,12 @@
+{
+  "base": "9da065c3ea7955190d9e111e3c6d52c0af8e073a",
+  "pins": {
+    "cmake/native_game.cmake": "d6a11f3d65abff21402ce43daf519306c68b3f0429291623d4205afdbf283b3e",
+    "runtime/include/mka/retail_main.hpp": "374385d48e4df0875761297780cc2662108b1e98baf9de6949557bd0f7c41827",
+    "runtime/src/native/retail_main.cpp": "46f8d6e270edd23a6122d471dc82708e77be0e2c78774cb762943fcc14f04348",
+    "runtime/include/mka/retail_task_domain.hpp": "85787e0f74010dd7415e4fb476ff3b72724221da89014f2c13541af0d3a4d86c",
+    "runtime/src/native/retail_task_domain.cpp": "84e55eae3c1675082433a215fe7b101021a2bb57dbf78d0b22a51848ece62656",
+    "runtime/src/native/retail_main_frame_gates.cpp": null,
+    "tests/test_retail_main_frame_gates.cpp": null
+  }
+}

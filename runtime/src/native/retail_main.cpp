@@ -176,7 +176,7 @@ std::optional<std::int64_t> continue_native_retail_main(NativeRetailStartupState
         !initialize_retail_post_scene_sections(m, f)) return {};
 
     m.pre_loop_source_flag = true;
-    if (!initialize_retail_first_frame_graphics(m, f)) return {};
+    if (!initialize_retail_frame_work_buffers(m, f)) return {};
     const auto elapsed = stop_retail_stopwatch(m, 3, f);
     if (!elapsed) return {};
     const auto seed_component = read_retail_startup_seed_component(m, f);

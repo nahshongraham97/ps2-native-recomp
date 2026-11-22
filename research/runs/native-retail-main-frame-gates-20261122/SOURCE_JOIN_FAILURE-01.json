@@ -1,0 +1,5 @@
+{
+  "status": "FAIL_LISTING_FULL_COVERAGE_CHECK",
+  "omitted": "002e8f24",
+  "cause": "Supporting work-buffer rotation listing omits a zero word after unconditional2E8F1C branch/delay2E8F20. No runtime code changed or build ran."
+}

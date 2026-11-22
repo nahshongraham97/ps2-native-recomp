@@ -123,6 +123,12 @@ NativeRetailTaskScriptContextState* NativeRetailTaskDomain::script_context(
     return &script_context_;
 }
 
+std::optional<bool> NativeRetailTaskDomain::root_wait_inhibited(
+    RetailTaskDomainFailure& f) const noexcept {
+    if (!access(f)) return {};
+    return root_wait_inhibited_;
+}
+
 bool NativeRetailTaskDomain::override_cookie_from_130ab0(
     std::uint32_t value, RetailTaskDomainFailure& f) noexcept {
     if (!access(f)) return false;

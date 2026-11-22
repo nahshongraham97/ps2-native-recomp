@@ -1,0 +1,103 @@
+{
+  "status": "PASS_ORIGINAL_MAIN_BRANCHES_AND_WORK_BUFFER_BODIES",
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "language": "r5900:LE:32:default",
+  "gp_reginfo_offset": 5562348,
+  "gp": "0x6540f0",
+  "functions": [
+    {
+      "path": "research/runs/native-retail-first-frame-storage-source-20261122/source-01/00122740.asm",
+      "begin": "0x122740",
+      "end": "0x122ac8",
+      "words": 226,
+      "sha256": "e5b329538226d4e1ab8270b5e4f3b49f085596bef1a0a1b76c6fe29ce812c212",
+      "omitted_zero_after_unconditional_branch": []
+    },
+    {
+      "path": "research/runs/native-retail-first-frame-storage-source-20261122/source-01/002e8d50.asm",
+      "begin": "0x2e8d50",
+      "end": "0x2e8d68",
+      "words": 6,
+      "sha256": "f4115b7f5ac15c88a44182ef9e8c080e743b5000d2dd9a2f32c9b0bad7255f5a",
+      "omitted_zero_after_unconditional_branch": []
+    },
+    {
+      "path": "research/runs/native-retail-first-frame-storage-source-20261122/source-01/002e8e10.asm",
+      "begin": "0x2e8e10",
+      "end": "0x2e8ed4",
+      "words": 49,
+      "sha256": "ba23ec789116c8c598fb00bc24ea696dc0ba089c3b87ddec85fe94792b85b061",
+      "omitted_zero_after_unconditional_branch": []
+    },
+    {
+      "path": "research/runs/native-retail-first-frame-storage-source-20261122/source-01/002e8ee0.asm",
+      "begin": "0x2e8ee0",
+      "end": "0x2e8f78",
+      "words": 37,
+      "sha256": "8d49b20feaf346fa79880176dfb03b44443d0b928274c3904a13204b3af6ec5b",
+      "omitted_zero_after_unconditional_branch": [
+        "0x2e8f24"
+      ]
+    },
+    {
+      "path": "research/runs/native-retail-first-frame-storage-source-20261122/source-01/002e8f80.asm",
+      "begin": "0x2e8f80",
+      "end": "0x2e8fd8",
+      "words": 22,
+      "sha256": "6b1643299ae7fcec45270c6c2674c4040027bc5dc9fbd9c16d23b261c377aec5",
+      "omitted_zero_after_unconditional_branch": []
+    },
+    {
+      "path": "research/runs/native-retail-first-frame-storage-source-20261122/source-01/002e8fe0.asm",
+      "begin": "0x2e8fe0",
+      "end": "0x2e9070",
+      "words": 36,
+      "sha256": "1f30302f1543b7213396be61629f42c852101a62dc4e1a59dbffb1010f97fd40",
+      "omitted_zero_after_unconditional_branch": []
+    },
+    {
+      "path": "research/runs/native-retail-first-frame-storage-source-20261122/source-01/002e9930.asm",
+      "begin": "0x2e9930",
+      "end": "0x2e9938",
+      "words": 2,
+      "sha256": "640494730ab88f6757235e9f961c73a5903ced7a0977a7cc90c1d39d158c9b33",
+      "omitted_zero_after_unconditional_branch": []
+    }
+  ],
+  "source_checks": {
+    "bit5_byte_load": {
+      "address": "0x1229cc",
+      "word": "0x90420081"
+    },
+    "bit5_left64": {
+      "address": "0x1229d4",
+      "word": "0x216bc"
+    },
+    "bit5_right64": {
+      "address": "0x1229d8",
+      "word": "0x217fe"
+    },
+    "counter_word_load": {
+      "address": "0x1229e4",
+      "word": "0x8f829e74"
+    },
+    "world_word_load": {
+      "address": "0x122a90",
+      "word": "0x8f829de4"
+    },
+    "world_zero_branch": {
+      "address": "0x122a94",
+      "word": "0x10400004"
+    },
+    "thunk_jump": {
+      "address": "0x2e9930",
+      "word": "0x80ba384"
+    }
+  },
+  "frame_inhibit": "byte660081 bit5; actual Session controls",
+  "ordinary_inhibit": "word64DF64 !=0; actual TaskDomain root_wait_inhibited_",
+  "render_enabled": "word64DED4 !=0; actual current-world owner, not suspended64E0FC",
+  "first_frame_effect": "2E9930 ->2E8E10 work reservation/commit buffers; native destination still required, no GPU initialization established",
+  "game_run": false,
+  "acceptance": "OPEN"
+}

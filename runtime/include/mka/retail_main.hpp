@@ -193,7 +193,7 @@ bool initialize_retail_post_scene_timing(NativeRetailMainState&, StartupFailure&
 // Shared exact122AD0 effect; does not update milliseconds_per_frame.
 bool refresh_retail_timing_factors_122ad0(NativeRetailMainState&, StartupFailure&);
 bool initialize_retail_post_scene_sections(NativeRetailMainState&, StartupFailure&); // 19A5E0
-bool initialize_retail_first_frame_graphics(NativeRetailMainState&, StartupFailure&); // 2E9930 thunk
+bool initialize_retail_frame_work_buffers(NativeRetailMainState&, StartupFailure&); // 2E9930 ->2E8E10 work reservation/commit buffers; native implementation required
 bool retire_retail_deferred_storage(NativeRetailMainState&, StartupFailure&); // 12D930
 bool install_retail_text_allocator_pair_16fd80(NativeRetailMainState&, StartupFailure&);
 bool poll_retail_controller_roles(NativeRetailMainState&, StartupFailure&); // 2214D0
