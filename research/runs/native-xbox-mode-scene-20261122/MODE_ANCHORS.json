@@ -1,0 +1,392 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "sections": [
+    {
+      "name": ".text",
+      "flags": 22,
+      "virtual_address": 73728,
+      "virtual_size": 4148796,
+      "file_offset": 8192,
+      "file_size": 4148796
+    },
+    {
+      "name": "D3D",
+      "flags": 7,
+      "virtual_address": 4222528,
+      "virtual_size": 144580,
+      "file_offset": 4157440,
+      "file_size": 129484
+    },
+    {
+      "name": "D3DX",
+      "flags": 7,
+      "virtual_address": 4367136,
+      "virtual_size": 12920,
+      "file_offset": 4288512,
+      "file_size": 12916
+    },
+    {
+      "name": "XGRPH",
+      "flags": 7,
+      "virtual_address": 4380064,
+      "virtual_size": 147992,
+      "file_offset": 4304896,
+      "file_size": 144796
+    },
+    {
+      "name": "XONLINE",
+      "flags": 38,
+      "virtual_address": 4528064,
+      "virtual_size": 253740,
+      "file_offset": 4452352,
+      "file_size": 253740
+    },
+    {
+      "name": "XNET",
+      "flags": 54,
+      "virtual_address": 4781824,
+      "virtual_size": 86356,
+      "file_offset": 4706304,
+      "file_size": 86356
+    },
+    {
+      "name": "PSFD00",
+      "flags": 54,
+      "virtual_address": 4868192,
+      "virtual_size": 8912,
+      "file_offset": 4796416,
+      "file_size": 8912
+    },
+    {
+      "name": "PSFD_I",
+      "flags": 54,
+      "virtual_address": 4877120,
+      "virtual_size": 968,
+      "file_offset": 4808704,
+      "file_size": 968
+    },
+    {
+      "name": "PSFD_B",
+      "flags": 22,
+      "virtual_address": 4878112,
+      "virtual_size": 2200,
+      "file_offset": 4812800,
+      "file_size": 2200
+    },
+    {
+      "name": "PSFD_P",
+      "flags": 6,
+      "virtual_address": 4880320,
+      "virtual_size": 1552,
+      "file_offset": 4816896,
+      "file_size": 1552
+    },
+    {
+      "name": "DSOUND",
+      "flags": 7,
+      "virtual_address": 4881888,
+      "virtual_size": 156812,
+      "file_offset": 4820992,
+      "file_size": 156180
+    },
+    {
+      "name": "XPP",
+      "flags": 7,
+      "virtual_address": 5038720,
+      "virtual_size": 38240,
+      "file_offset": 4980736,
+      "file_size": 38240
+    },
+    {
+      "name": ".rdata",
+      "flags": 6,
+      "virtual_address": 5076960,
+      "virtual_size": 458912,
+      "file_offset": 5021696,
+      "file_size": 458896
+    },
+    {
+      "name": ".data",
+      "flags": 7,
+      "virtual_address": 5535872,
+      "virtual_size": 4184196,
+      "file_offset": 5484544,
+      "file_size": 445824
+    },
+    {
+      "name": "XON_RD",
+      "flags": 38,
+      "virtual_address": 9720096,
+      "virtual_size": 14797,
+      "file_offset": 5931008,
+      "file_size": 14796
+    },
+    {
+      "name": "DOLBY",
+      "flags": 22,
+      "virtual_address": 9734912,
+      "virtual_size": 29056,
+      "file_offset": 5947392,
+      "file_size": 29036
+    },
+    {
+      "name": ".data1",
+      "flags": 7,
+      "virtual_address": 9763968,
+      "virtual_size": 224,
+      "file_offset": 5980160,
+      "file_size": 176
+    },
+    {
+      "name": "$$XTINFO",
+      "flags": 8,
+      "virtual_address": 9764192,
+      "virtual_size": 148,
+      "file_offset": 6004736,
+      "file_size": 148
+    },
+    {
+      "name": "$$XTIMAGE",
+      "flags": 40,
+      "virtual_address": 9764352,
+      "virtual_size": 10240,
+      "file_offset": 6008832,
+      "file_size": 10240
+    },
+    {
+      "name": "$$XSIMAGE",
+      "flags": 56,
+      "virtual_address": 9774592,
+      "virtual_size": 4096,
+      "file_offset": 6021120,
+      "file_size": 4096
+    },
+    {
+      "name": "dspimage",
+      "flags": 58,
+      "virtual_address": 9778688,
+      "virtual_size": 18608,
+      "file_offset": 5984256,
+      "file_size": 18608
+    },
+    {
+      "name": ".XTLID",
+      "flags": 56,
+      "virtual_address": 9797312,
+      "virtual_size": 6000,
+      "file_offset": 6025216,
+      "file_size": 6000
+    }
+  ],
+  "prior_inventory_sha256": "77280e6a406e82bcb7564736abed84ee9ec03ec3ff6757ddb6d44c0c84e1405f",
+  "anchors": [
+    {
+      "source_mode": 0,
+      "name": "no_sounds_bank_list",
+      "ps2_name_address": "0x5f7360",
+      "xbox": [
+        {
+          "address": "0x5029f4",
+          "file_offset": 5198356,
+          "section": ".rdata",
+          "references": [
+            {
+              "address": "0x56c958",
+              "section": ".data",
+              "executable": true,
+              "file_offset": 5636312,
+              "context_file_offset": 5636280,
+              "context_bytes_hex": "ffffffff0000000018c5560002000000000000000000000000000000fffffffff429500000c9560000000000c0c5560004000000000000000000000000000000ffffffffdc29500000c956000100000060c65600150000000000000000000000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_mode": 1,
+      "name": "shell_sounds_bank_list",
+      "ps2_name_address": "0x5f7380",
+      "xbox": [
+        {
+          "address": "0x5029dc",
+          "file_offset": 5198332,
+          "section": ".rdata",
+          "references": [
+            {
+              "address": "0x56c97c",
+              "section": ".data",
+              "executable": true,
+              "file_offset": 5636348,
+              "context_file_offset": 5636316,
+              "context_bytes_hex": "00c9560000000000c0c5560004000000000000000000000000000000ffffffffdc29500000c956000100000060c6560015000000000000000000000000000000ffffffffbc29500014c956000100000060c75600070000000000000000000000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_mode": 2,
+      "name": "fighting_game_sounds_bank_list",
+      "ps2_name_address": "0x5f73a0",
+      "xbox": [
+        {
+          "address": "0x5029bc",
+          "file_offset": 5198300,
+          "section": ".rdata",
+          "references": [
+            {
+              "address": "0x56c9a0",
+              "section": ".data",
+              "executable": true,
+              "file_offset": 5636384,
+              "context_file_offset": 5636352,
+              "context_bytes_hex": "00c956000100000060c6560015000000000000000000000000000000ffffffffbc29500014c956000100000060c7560007000000000000000000000000000000ffffffffa429500000c9560001000000f0c55600050000000000000000000000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_mode": 3,
+      "name": "krypt_sounds_bank_list",
+      "ps2_name_address": "0x5f73c0",
+      "xbox": [
+        {
+          "address": "0x5029a4",
+          "file_offset": 5198276,
+          "section": ".rdata",
+          "references": [
+            {
+              "address": "0x56c9c4",
+              "section": ".data",
+              "executable": true,
+              "file_offset": 5636420,
+              "context_file_offset": 5636388,
+              "context_bytes_hex": "14c956000100000060c7560007000000000000000000000000000000ffffffffa429500000c9560001000000f0c5560005000000000000000000000000000000ffffffff8c29500000c95600010000002cc65600040000000000000000000000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_mode": 4,
+      "name": "ending_sounds_bank_list",
+      "ps2_name_address": "0x5f73e0",
+      "xbox": [
+        {
+          "address": "0x50298c",
+          "file_offset": 5198252,
+          "section": ".rdata",
+          "references": [
+            {
+              "address": "0x56c9e8",
+              "section": ".data",
+              "executable": true,
+              "file_offset": 5636456,
+              "context_file_offset": 5636424,
+              "context_bytes_hex": "00c9560001000000f0c5560005000000000000000000000000000000ffffffff8c29500000c95600010000002cc6560004000000000000000000000000000000ffffffff6829500000c9560001000000b8c756000e00000060c8560005000000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_mode": 5,
+      "name": "one_player_ladder_sounds_bank_list",
+      "ps2_name_address": "0x5f7400",
+      "xbox": [
+        {
+          "address": "0x502968",
+          "file_offset": 5198216,
+          "section": ".rdata",
+          "references": [
+            {
+              "address": "0x19c9b3",
+              "section": ".text",
+              "executable": true,
+              "file_offset": 1624499,
+              "context_file_offset": 1624467,
+              "context_bytes_hex": "cccccccccccccccccccccccccc558bec83ec088d45fc506a1068f0c919006a006829500000e8335d020083c4148945f8837df800741b8b4dfc8b55088951088b45fc8b4d0c89480c8b55f88b451089420c8b45f88be55dc3cccccccccc558bec"
+            },
+            {
+              "address": "0x56ca0c",
+              "section": ".data",
+              "executable": true,
+              "file_offset": 5636492,
+              "context_file_offset": 5636460,
+              "context_bytes_hex": "00c95600010000002cc6560004000000000000000000000000000000ffffffff6829500000c9560001000000b8c756000e00000060c856000500000003000000ffffffff5029500000c9560001000000a0c85600080000000000000000000000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_mode": 6,
+      "name": "konquest_mode_bank_list",
+      "ps2_name_address": "0x5f7430",
+      "xbox": [
+        {
+          "address": "0x502950",
+          "file_offset": 5198192,
+          "section": ".rdata",
+          "references": [
+            {
+              "address": "0x56ca30",
+              "section": ".data",
+              "executable": true,
+              "file_offset": 5636528,
+              "context_file_offset": 5636496,
+              "context_bytes_hex": "00c9560001000000b8c756000e00000060c856000500000003000000ffffffff5029500000c9560001000000a0c8560008000000000000000000000000000000ffffffff3829500028c956000100000030c556000c0000000000000000000000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_mode": 7,
+      "name": "kart_sounds_bank_list",
+      "ps2_name_address": "0x5f7450",
+      "xbox": [
+        {
+          "address": "0x502938",
+          "file_offset": 5198168,
+          "section": ".rdata",
+          "references": [
+            {
+              "address": "0x56ca54",
+              "section": ".data",
+              "executable": true,
+              "file_offset": 5636564,
+              "context_file_offset": 5636532,
+              "context_bytes_hex": "00c9560001000000a0c8560008000000000000000000000000000000ffffffff3829500028c956000100000030c556000c000000000000000000000000000000ffffffff2029500000c956000100000001000000020000000300000007000000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source_mode": 8,
+      "name": "cap_sounds_bank_list",
+      "ps2_name_address": "0x5f7470",
+      "xbox": [
+        {
+          "address": "0x502920",
+          "file_offset": 5198144,
+          "section": ".rdata",
+          "references": [
+            {
+              "address": "0x56ca78",
+              "section": ".data",
+              "executable": true,
+              "file_offset": 5636600,
+              "context_file_offset": 5636568,
+              "context_bytes_hex": "28c956000100000030c556000c000000000000000000000000000000ffffffff2029500000c95600010000000100000002000000030000000700000008000000090000000a0000000b000000110000001300000014000000150000000d000000"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "scope": "Original data/byte references only; no function equivalence assumed"
+}

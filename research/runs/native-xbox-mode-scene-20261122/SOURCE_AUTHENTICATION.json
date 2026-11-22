@@ -1,0 +1,234 @@
+{
+  "status": "AUTHENTICATED_XBOX_SOURCE_FINDINGS_NOT_IMPLEMENTED",
+  "base_fork_commit": "cded2a24881ad3e9ef2169a53d8f2cdfd17d71ca",
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "elf_comparison_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "outputs": {
+    "source-callers-02": {
+      "join_sha256": "852a6a49933af8af3678691fc958fee2a95f1510bf00c67b3d4633eb29dc9f0d",
+      "command_sha256": "f54f053acab573bc4dd58ee386620f797be4d0d4a226390bf5424cf8bf78746b",
+      "functions": {
+        "00027f00": {
+          "instructions": 53,
+          "instruction_range_gaps": []
+        },
+        "0008a260": {
+          "instructions": 358,
+          "instruction_range_gaps": []
+        },
+        "00096c60": {
+          "instructions": 223,
+          "instruction_range_gaps": []
+        },
+        "000e47b0": {
+          "instructions": 268,
+          "instruction_range_gaps": []
+        },
+        "001052b0": {
+          "instructions": 168,
+          "instruction_range_gaps": []
+        },
+        "00105b30": {
+          "instructions": 177,
+          "instruction_range_gaps": []
+        },
+        "00106080": {
+          "instructions": 85,
+          "instruction_range_gaps": []
+        },
+        "00111fe0": {
+          "instructions": 144,
+          "instruction_range_gaps": []
+        },
+        "001166e0": {
+          "instructions": 8,
+          "instruction_range_gaps": []
+        },
+        "00192700": {
+          "instructions": 131,
+          "instruction_range_gaps": [
+            [
+              "0x1928de",
+              "0x1928e8"
+            ]
+          ]
+        },
+        "00198420": {
+          "instructions": 423,
+          "instruction_range_gaps": []
+        },
+        "0019c680": {
+          "instructions": 177,
+          "instruction_range_gaps": []
+        },
+        "0019f3d0": {
+          "instructions": 365,
+          "instruction_range_gaps": []
+        },
+        "0019fce0": {
+          "instructions": 36,
+          "instruction_range_gaps": []
+        },
+        "001ea970": {
+          "instructions": 116,
+          "instruction_range_gaps": []
+        },
+        "001fd1c0": {
+          "instructions": 782,
+          "instruction_range_gaps": []
+        },
+        "001fe3d0": {
+          "instructions": 120,
+          "instruction_range_gaps": []
+        },
+        "001fee00": {
+          "instructions": 171,
+          "instruction_range_gaps": []
+        },
+        "00206000": {
+          "instructions": 54,
+          "instruction_range_gaps": []
+        },
+        "0023c8a0": {
+          "instructions": 31,
+          "instruction_range_gaps": []
+        },
+        "002455f0": {
+          "instructions": 477,
+          "instruction_range_gaps": []
+        },
+        "0024bd30": {
+          "instructions": 2162,
+          "instruction_range_gaps": []
+        },
+        "0024f1f0": {
+          "instructions": 162,
+          "instruction_range_gaps": []
+        },
+        "0024fe50": {
+          "instructions": 395,
+          "instruction_range_gaps": []
+        }
+      }
+    },
+    "source-child-05": {
+      "join_sha256": "32c0e098074c45eaaa767f738762114d6401846c8987bc7409d78c149dbc18e8",
+      "command_sha256": "9666df0bebd294240807d4caca5d0f2e94be834352ee3be4d05170e182cc664c",
+      "functions": {
+        "00105510": {
+          "instructions": 31,
+          "instruction_range_gaps": []
+        },
+        "001f98d0": {
+          "instructions": 36,
+          "instruction_range_gaps": []
+        },
+        "001f9bf0": {
+          "instructions": 78,
+          "instruction_range_gaps": []
+        }
+      }
+    },
+    "source-kart-06": {
+      "join_sha256": "eada6bff3e932507486c1ba0f288df6fbb330b3f350213a44f37be77616e17f6",
+      "command_sha256": "3ddbdbfb06b54172218998996041f9e3b80df92be8d0f44b9782278b774de0fb",
+      "functions": {
+        "000e68e0": {
+          "instructions": 535,
+          "instruction_range_gaps": []
+        },
+        "00105040": {
+          "instructions": 52,
+          "instruction_range_gaps": []
+        },
+        "001052b0": {
+          "instructions": 168,
+          "instruction_range_gaps": []
+        },
+        "00105510": {
+          "instructions": 31,
+          "instruction_range_gaps": []
+        },
+        "0020a540": {
+          "instructions": 91,
+          "instruction_range_gaps": []
+        },
+        "0020a710": {
+          "instructions": 68,
+          "instruction_range_gaps": []
+        },
+        "0020a9a0": {
+          "instructions": 61,
+          "instruction_range_gaps": []
+        },
+        "0020af20": {
+          "instructions": 227,
+          "instruction_range_gaps": []
+        },
+        "0020b640": {
+          "instructions": 8,
+          "instruction_range_gaps": []
+        }
+      }
+    },
+    "source-mode-01": {
+      "join_sha256": "caec9da7d3edf9c5a24f7701b32f3019e87a42d6f7b5d27bd6544f4002c7ef39",
+      "command_sha256": "05ec7f14d63c20d3687ab5fca76c70cea58a2b56f9a6c0f0c88ba85e884a14ee",
+      "functions": {
+        "0023c8a0": {
+          "instructions": 31,
+          "instruction_range_gaps": []
+        },
+        "0023c900": {
+          "instructions": 74,
+          "instruction_range_gaps": []
+        },
+        "0023d060": {
+          "instructions": 80,
+          "instruction_range_gaps": []
+        }
+      }
+    },
+    "source-objects-03": {
+      "join_sha256": "288a60e115b6d675635fb7dc3b09ea274cedbf501088edd53fa30dde8c25f938",
+      "command_sha256": "7d2dc61610aabff7cad2851a653920e89b1dbf0a66375066dff56c575d9dccaf",
+      "functions": {
+        "0019c680": {
+          "instructions": 177,
+          "instruction_range_gaps": []
+        },
+        "001f98d0": {
+          "instructions": 36,
+          "instruction_range_gaps": []
+        }
+      }
+    }
+  },
+  "critical_contiguous_listing_spans": [
+    {
+      "output": "source-mode-01",
+      "function": "0023c8a0"
+    },
+    {
+      "output": "source-mode-01",
+      "function": "0023d060"
+    },
+    {
+      "output": "source-objects-03",
+      "function": "001f98d0"
+    },
+    {
+      "output": "source-child-05",
+      "function": "001f9bf0"
+    },
+    {
+      "output": "source-child-05",
+      "function": "00105510"
+    }
+  ],
+  "adopted_donor_runtime_functions": [],
+  "remaining": "Motor Kombat profile-alias payload/native-field contract",
+  "source_priority": "XBOX_FIRST_ALL_REMAINING_IMPLEMENTATION",
+  "game_run": false,
+  "acceptance": "OPEN"
+}

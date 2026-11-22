@@ -1,0 +1,11 @@
+{
+  "status": "ORIGINAL_QUERY_PREFLIGHT_REFUSED_LOADER_ZERO_DATA",
+  "command": ["python", "research/runs/native-xbox-mode-scene-20261122/export_xbox.py", "source-child-04", "001f9bf0:0", "00736500:4"],
+  "exit": 1,
+  "error": "AssertionError: ('0x736500', 4)",
+  "before_ghidra": true,
+  "source_or_game_changed": false,
+  "cause": "Alias storage is not file-backed; the query exporter initially required file-backed data for every query.",
+  "correction": "Record loader-zero data separately after proving the XBE section virtual range; instruction joins still strictly require actual original file bytes.",
+  "retry_output": "source-child-05"
+}
