@@ -1,0 +1,73 @@
+{
+  "base": "630849fc3b981d65d9f3229a7ae7021612b7c166",
+  "canonical_uncommitted": true,
+  "scoped_source_sha256": {
+    "cmake/native_game.cmake": "2eeadce31b11a985a6330f51c9c3ab2273b76f7a14f9cc78171cc4c29c54b2a9",
+    "runtime/include/mka/retail_input_roles.hpp": "8e75804f14532eeeec72cdc17782692fe3a586dd6057c51ed35b4410cead00e0",
+    "runtime/src/native/retail_input_roles.cpp": "304a9535cc7fbd801e2d5a69a7c6720c56e38a85a4b04a10d506deda57d23a44",
+    "runtime/include/mka/retail_input_assignments.hpp": "b5165e26bf0a8d660c590f4dda230ddb168ab8f72f20174da3fae485a7973764",
+    "runtime/src/native/retail_input_assignments.cpp": "382b0344f3f8d2a69d8429fd952bc39cea56b30c0ec2f439c26d0e464cee8053",
+    "tests/test_retail_profile_input_reset.cpp": "0cad07706513534f9d0d9b05a7ab9459804257dbb1dd66a54c85386893ce406c"
+  },
+  "all_source_files": 862,
+  "source_join_sha256": "2c0605844bd6e37648d96bfeec7d638692ca0a5f648c2908d1ab2690eb091cbd",
+  "listed_words_total": 318,
+  "implemented_words_included": 44,
+  "support_words": 274,
+  "manual_omitted_zero_words": 1,
+  "clients": [
+    {
+      "name": "test_native_retail_profile_input_reset",
+      "sha256": "cbd7c56e952f191a47a6b67c0e9aa9a2dc482a595d26cdfdb8cd2f2d13795ca4"
+    },
+    {
+      "name": "test_native_retail_input_roles",
+      "sha256": "a3c57a7e96b3d3c258327a43997de4be0107d2a4d818002f69def10ffe9c6697"
+    },
+    {
+      "name": "test_native_retail_input_assignments",
+      "sha256": "a4992c02c992d48468e0c99dd3e2a2418932bb65ff47f41485fe9fb8a524d7b3"
+    },
+    {
+      "name": "test_native_retail_input_poll",
+      "sha256": "986f19a573df998382189d92eadb1e256083b83fae2d2bffe4ce5975244bbf28"
+    },
+    {
+      "name": "test_native_retail_input_selection",
+      "sha256": "8f3d09b33d44579708f2dcf2eee5896cdb73e88dc968ebfc3f820be8e78b8fef"
+    },
+    {
+      "name": "test_native_retail_input_admission",
+      "sha256": "119abf2f8caa6c7564b890eb40359ea90d31c9a8b46f769d90c464a71f0e2640"
+    },
+    {
+      "name": "test_native_retail_initial_reset",
+      "sha256": "af7df678bc6220addc4fce9fcdec44d51d6618df96f42033e3c73c72c80b9dc9"
+    },
+    {
+      "name": "test_native_retail_initial_reset_arcade",
+      "sha256": "e0fee44b534e9236424d770397d19212d6da4a773b3c791443ea137b0c492400"
+    },
+    {
+      "name": "test_native_retail_main_frame_gates",
+      "sha256": "d65d4cf556c03cfef6f4c34d3979ab024b2964aadbeb5d05478ecab22ca5947d"
+    }
+  ],
+  "receipts_authenticated": [
+    "build",
+    "full-entry-negative",
+    "profile-input-symbols",
+    "test_native_retail_initial_reset",
+    "test_native_retail_initial_reset_arcade",
+    "test_native_retail_input_admission",
+    "test_native_retail_input_assignments",
+    "test_native_retail_input_poll",
+    "test_native_retail_input_roles",
+    "test_native_retail_input_selection",
+    "test_native_retail_main_frame_gates",
+    "test_native_retail_profile_input_reset"
+  ],
+  "required_names": 59,
+  "verification_sha256": "9516433a88f6dbcadcc911631ed1e944ff9c8a0bc73367fc178235d9fd9fa4eb",
+  "reviewer_execution": "Read-only source/original-byte/hash/receipt checks. Tests/builds were executed by primary, not reviewer."
+}
