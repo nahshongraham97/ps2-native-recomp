@@ -1,0 +1,83 @@
+{
+  "timestamp": "2026-11-22T03:07:49.143174",
+  "candidate": "089c23c28f6cdb459adcffc366209251223fd20d",
+  "checks": {
+    "worktrees": {
+      "argv": [
+        "git",
+        "worktree",
+        "list",
+        "--porcelain"
+      ],
+      "exit": 0,
+      "output": "worktree C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp\nHEAD 57a799c2bd4b88fc891094c98c506bf6cfa17d04\nbranch refs/heads/main\n\nworktree C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/clean-bootstrap-22\nHEAD 2188e467375ff5a1613ad9a7a106bfc0a0251047\ndetached\n\nworktree C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/clean-held-22\nHEAD 04efbae9db832b4322de750156739c7c5378c3f4\ndetached\n\nworktree C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/clean-metadata-22\nHEAD 57a799c2bd4b88fc891094c98c506bf6cfa17d04\ndetached\n\nworktree C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/clean-pending-21\nHEAD b803318edf003f8056efcc5b9be6a2959914ef75\ndetached\n\nworktree C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/clean-route-22\nHEAD 58bbfd78fb4335226ce455c043e4abd67febd61c\ndetached\n\nworktree C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-clean-context-21\nHEAD c0e5d1cf155c8f88660e2afba77179118f375ee6\ndetached\n\nworktree C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-clean-loose-20261121\nHEAD a425ab34a1387ea8e53ca885b9c3f6013b7d990f\ndetached\n\nworktree C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-clean-ref-21\nHEAD dcf5687ead3df375ae6f613102f49bdb59ca3d5c\ndetached\n\nworktree C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-clean-status-21\nHEAD 2dbacbac41c45a9b5e5b073afc597161e2534410\ndetached\n\nworktree C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-clean-worker-21\nHEAD 35662e48644d07f765279994160ba724b0adffc0\ndetached\n\nworktree C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-profile-review\nHEAD 3e80aef9590b7f4a4800c46d23062501ad00e7e9\nbranch refs/heads/profile-binding-review-20261122\n\nworktree C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-saved-profile\nHEAD 5bc82da1ca68384e47698c9297a950aec9675933\nbranch refs/heads/saved-profile-work\n\nworktree C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-scene-continuation\nHEAD feb629e8fcd4dabefef1cb687393459475d3c74f\nbranch refs/heads/scene-bootstrap-continuation-20261122\n\nworktree C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-section-timing\nHEAD d732f352903185719e18b33237dd94509367b81c\nbranch refs/heads/section-timing-20261122\n\nworktree C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-selected-resource\nHEAD 177e05d83c963b5786293ebdc30ac1c8571c0e79\nbranch refs/heads/selected-resource-work\n\n"
+    },
+    "refs": {
+      "argv": [
+        "git",
+        "for-each-ref",
+        "--format=%(refname) %(objectname)",
+        "refs/heads",
+        "refs/remotes"
+      ],
+      "exit": 0,
+      "output": "refs/heads/main 57a799c2bd4b88fc891094c98c506bf6cfa17d04\nrefs/heads/profile-binding-review-20261122 3e80aef9590b7f4a4800c46d23062501ad00e7e9\nrefs/heads/safety/pre-native-iop-20261110 6d1d02f879a5cf13e2254a81e8ac346f4dc3d11f\nrefs/heads/saved-profile-work 5bc82da1ca68384e47698c9297a950aec9675933\nrefs/heads/scene-bootstrap-continuation-20261122 feb629e8fcd4dabefef1cb687393459475d3c74f\nrefs/heads/section-timing-20261122 d732f352903185719e18b33237dd94509367b81c\nrefs/heads/selected-resource-work 177e05d83c963b5786293ebdc30ac1c8571c0e79\nrefs/remotes/origin/HEAD 57a799c2bd4b88fc891094c98c506bf6cfa17d04\nrefs/remotes/origin/main 57a799c2bd4b88fc891094c98c506bf6cfa17d04\n"
+    },
+    "remote_heads": {
+      "argv": [
+        "git",
+        "ls-remote",
+        "--heads",
+        "origin"
+      ],
+      "exit": 0,
+      "output": "57a799c2bd4b88fc891094c98c506bf6cfa17d04\trefs/heads/main\n"
+    },
+    "candidate_status": {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "exit": 0,
+      "output": ""
+    },
+    "candidate_log": {
+      "argv": [
+        "git",
+        "log",
+        "-6",
+        "--format=%H %s"
+      ],
+      "exit": 0,
+      "output": "177e05d83c963b5786293ebdc30ac1c8571c0e79 Include integration patch in research run\n8c1ab5a1ce25c421fcaa254287ca3c900ef87688 Document native retail selected resource and saved profile verification\n526c7ee74bd6f8b1f8814c3d490fc75ca1ca1bff Merge remote-tracking branch 'origin/main' into selected-resource-work\n089c23c28f6cdb459adcffc366209251223fd20d Implement native retail selected resource, nonowning reference clearing, and saved profile records\na890c7278628278b477436680480e8dbec7ca36c Record clean connected scene bootstrap prefix verification\n2188e467375ff5a1613ad9a7a106bfc0a0251047 Integrate native scene phase and shared timing prefix\n"
+    },
+    "candidate_object": {
+      "argv": [
+        "git",
+        "cat-file",
+        "-p",
+        "089c23c28f6cdb459adcffc366209251223fd20d"
+      ],
+      "exit": 0,
+      "output": "tree 1526ab9dce7fcbf8c76727dffcd62b4e0ab3e715\nparent 58bbfd78fb4335226ce455c043e4abd67febd61c\nauthor Nahshon Graham <311961719+nahshongraham97@users.noreply.github.com> 1795332978 -0500\ncommitter Nahshon Graham <311961719+nahshongraham97@users.noreply.github.com> 1795332978 -0500\n\nImplement native retail selected resource, nonowning reference clearing, and saved profile records\n"
+    }
+  },
+  "snapshot": {
+    "runtime/src/native/retail_saved_profile_records.cpp": "4eeefa3399ace44918f4fdfaece5ef40a7ec0b526ae1d70bc549958cb4fb6c48",
+    "runtime/include/mka/retail_saved_profile_records.hpp": "d63530373bb733c0eda293209cae4008f2bb337fa1ad5020c7cb45b2869ee084",
+    "runtime/src/native/retail_input_roles.cpp": "5a556ba3654052ab7c897453a33715f5c306570545e02e81175d5b4450e3e8bc",
+    "runtime/src/native/retail_profile_aggregate_main.cpp": "455e6bcb1108b1ea97eec4391e7c3c95421547259171c8edb78f68493de9e45a",
+    "runtime/src/native/retail_profile_menu.cpp": "6c3164c98834fc278cc71ee7f3571b1cbd4d8b964cadbba909529e85b42da8b3",
+    "runtime/include/mka/retail_saved_profile_defaults.hpp": "3569b0a0285068c7fdb32809c6efb534e944b76586928ece03d517295149f64f",
+    "tests/test_retail_saved_profile_records.cpp": "d2e2a2e69159c79b94d7d0fd328b9191c7d0b91e26d7f4242b5c220ae887e0c6",
+    "research/runs/native-retail-selected-resource-and-saved-profile-20261122/README.md": "c32e2949008eea9644769ba51114ef6af24fc4dc70030a980516a5e157375f0e",
+    "research/runs/native-retail-selected-resource-and-saved-profile-20261122/VERIFICATION.json": "bd96c16d84b2afe7c17db43c7518f07375fb1e47eef4fb2b227ab21bb4d9a0c8",
+    "parent/ROADMAP.md": "89e3a58ef2473ebaf81d86a324443a40f7a3da0546605b34bdcfeff07b82f7ef",
+    "parent/NATIVE_PORT_EXECUTION_CONTRACT.md": "e0cb4b706bcdfecebece0cddf44f136675637d8ee60a3779f5d1ca8457479be1",
+    "00171b10.tsv": "e4a1802f06d7d7b27c92b8cc4e9ff394c754b7df7232c33e8086a681c5505dba",
+    "00245dd0.tsv": "ace9acc0d0a0ab51243bb34ee4c5a3f33031598b2816f6d2dc4769cc2ad9f747",
+    "002817b0.tsv": "04dcc4419d19df3f0aac6adeebaaf5c4dd53d0689dab6a33b0c5c1c68248f548"
+  },
+  "candidate_ancestor_remote_main_exit": 1
+}
