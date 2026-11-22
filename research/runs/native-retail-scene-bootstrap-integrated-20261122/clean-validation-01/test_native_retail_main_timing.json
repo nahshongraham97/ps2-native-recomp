@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-bootstrap-22\\build-native\\test_native_retail_main_timing.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.12040719999640714,
+  "source_commit": "2188e467375ff5a1613ad9a7a106bfc0a0251047",
+  "tracked_status": "",
+  "source_manifest_sha256": "399c053babf535a332ab6d4fe69d7f3f4b50505003fd342964212b26332a5bdf",
+  "log_sha256": "28b65b0ab13d7092c220a11bd8a07289425bec4f72ac129559dadca3014bb5b3",
+  "compressed_log_sha256": "03a9e2c09a999649102adecb3252d7b5ab902f9940b1314f867fbeae57d890f0",
+  "executable_sha256": "9a0a2bf38588c462d25d33325185a1facb14630cb5a1a0f44f5ebea3b512c610",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

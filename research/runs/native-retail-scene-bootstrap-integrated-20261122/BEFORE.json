@@ -1,0 +1,12 @@
+{
+  "base": "fb908b9912be66a847f250eb45cdb93439e28607",
+  "candidate": "01fc1a60acdcb05245d945f9f5c25ad40a121380",
+  "pins": {
+    "cmake/native_game.cmake": "afa615b2e42434ea61ad8df6369610a8aa5f75cd5e42153d35ea5ee6264f5383",
+    "runtime/include/mka/retail_main.hpp": "d6e7a94139f5aaed42a823d818873cc470521a8ecce1bedee334434860d9a780",
+    "runtime/include/mka/retail_scene_bootstrap_required.hpp": null,
+    "runtime/src/native/retail_main.cpp": "e9b0e1a0e78fdfabf0f7a51164027fc1bfaa841b89055e4c7b5e0e80a9cc6f6f",
+    "runtime/src/native/retail_scene_bootstrap_prefix.cpp": null,
+    "tests/test_retail_scene_bootstrap_prefix.cpp": null
+  }
+}

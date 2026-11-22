@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-route-22\\build-native\\test_native_retail_startup.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-play-routing-20261122\\clean-validation-01\\startup-fixtures"
+  ],
+  "exit": 0,
+  "stdout": "PASS generated retail startup owns actual arguments/content/memory group; failed initialization is unpublished and full entry link remains blocked\n",
+  "stderr": "",
+  "seconds": 0.10599730000831187,
+  "source_commit": "58bbfd78fb4335226ce455c043e4abd67febd61c",
+  "tracked_status": "",
+  "source_manifest_sha256": "4529e0dc5f31a1766b7dbef5ba88407cfc06b6d6463993d91636ff6c119c0c96",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "8498c20d3a4be516d65153e4c88619022fd0ba1793514c1ba707df9c73887891"
+}

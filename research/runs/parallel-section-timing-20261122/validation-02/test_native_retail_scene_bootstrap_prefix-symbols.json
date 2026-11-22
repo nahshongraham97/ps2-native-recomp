@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-C",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\build-section-timing\\test_native_retail_scene_bootstrap_prefix.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.04824566841125488,
+  "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "log_sha256": "5e75c270d72471b330877be14e4ed1654c0d8a7250050d8fbf53027885c52095"
+}

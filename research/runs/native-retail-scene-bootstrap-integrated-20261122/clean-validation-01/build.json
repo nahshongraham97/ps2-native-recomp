@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-bootstrap-22\\build-native",
+    "--target",
+    "test_native_retail_scene_bootstrap_prefix",
+    "test_native_retail_main_timing",
+    "test_native_retail_sound_context",
+    "test_native_retail_reset_sound",
+    "test_native_retail_initial_reset",
+    "test_native_retail_initial_task",
+    "test_native_retail_startup",
+    "test_native_retail_file_startup",
+    "test_native_retail_middleware_main",
+    "-j2"
+  ],
+  "exit": 0,
+  "seconds": 74.85962149999978,
+  "source_commit": "2188e467375ff5a1613ad9a7a106bfc0a0251047",
+  "tracked_status": "",
+  "source_manifest_sha256": "399c053babf535a332ab6d4fe69d7f3f4b50505003fd342964212b26332a5bdf",
+  "log_sha256": "b1215a2ebaa77e601246a3c7cd04880171199192db336268580de94cb12e6d5b",
+  "compressed_log_sha256": "23871cdc041f45a0edfb4d2c3102a4ea05932b8de961c5fda467d1e8b4de61f0",
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

@@ -1,0 +1,10 @@
+{
+  "approved": [
+    "cmake/native_game.cmake",
+    "runtime/include/mka/retail_main.hpp",
+    "runtime/include/mka/retail_scene_bootstrap_required.hpp",
+    "runtime/src/native/retail_main.cpp",
+    "runtime/src/native/retail_scene_bootstrap_prefix.cpp",
+    "tests/test_retail_scene_bootstrap_prefix.cpp"
+  ]
+}

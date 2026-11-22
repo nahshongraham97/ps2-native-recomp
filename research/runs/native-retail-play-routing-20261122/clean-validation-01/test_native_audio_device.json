@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-route-22\\build-native\\test_native_audio_device.exe"
+  ],
+  "exit": 0,
+  "stdout": "PASS pure format/PCM validation only; no device opened or audio generated\n",
+  "stderr": "",
+  "seconds": 0.043194599988055415,
+  "source_commit": "58bbfd78fb4335226ce455c043e4abd67febd61c",
+  "tracked_status": "",
+  "source_manifest_sha256": "4529e0dc5f31a1766b7dbef5ba88407cfc06b6d6463993d91636ff6c119c0c96",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "6d2a25b4ed717701941dd364c3ca22aa435d50345770375bae50291b2e01b490"
+}

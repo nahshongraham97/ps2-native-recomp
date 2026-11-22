@@ -1,0 +1,10 @@
+00125d60	lui a0,0x5a
+00125d64	lui v1,0x5a
+00125d68	sw zero,-0x4aa0(a0)
+00125d6c	sw zero,-0x4a9c(v1)
+00125d70	lui a0,0x5a
+00125d74	lui v1,0x5a
+00125d78	sw zero,-0x6238(gp)
+00125d7c	sw zero,-0x4a98(a0)
+00125d80	jr ra
+00125d84	_sw zero,-0x4a94(v1)

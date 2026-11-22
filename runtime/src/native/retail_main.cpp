@@ -30,26 +30,13 @@ bool construct_main_owners(NativeRetailMainState& m, StartupFailure& f) {
 }
 
 bool initialize_frame_timing(NativeRetailMainState& m, StartupFailure& f) {
-    const auto override_active = retail_timing_override_active(m, f);
-    if (!override_active) return false;
-    bool rate_is_fifty = false;
-    if (!*override_active) {
-        const auto rate = read_retail_frame_rate(m, f);
-        if (!rate) return false;
-        rate_is_fifty = *rate == 50;
-    }
+    if (!refresh_retail_timing_factors_122ad0(m, f)) return false;
     const auto rate = read_retail_frame_rate(m, f);
     if (!rate) return false;
     if (*rate <= 0) {
         f = {StartupError::main_timing, "retail frame rate must be positive"};
         return false;
     }
-    // Publish only after all required live owner reads succeed.
-    m.timing_factors = rate_is_fifty ? std::array<float, 3>{
-        std::bit_cast<float>(0x3f8c378cu),
-        std::bit_cast<float>(0x3f555555u),
-        std::bit_cast<float>(0x3f99999au)
-    } : std::array<float, 3>{1.0f, 1.0f, 1.0f};
     m.milliseconds_per_frame = 1000.0f / static_cast<float>(*rate);
     return true;
 }

@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-route-22\\build-native\\test_native_held_playback.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+  ],
+  "exit": 0,
+  "stdout": "PASS native held flags9/prebind/no key-on/shared-clock resume/strict next-delay/priority/force1/PCM/lifetime/allocation; no endpoint/game\n",
+  "stderr": "",
+  "seconds": 0.123188300000038,
+  "source_commit": "58bbfd78fb4335226ce455c043e4abd67febd61c",
+  "tracked_status": "",
+  "source_manifest_sha256": "4529e0dc5f31a1766b7dbef5ba88407cfc06b6d6463993d91636ff6c119c0c96",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "c1db77750ed8a92f735ab94ea29623feba06f0d32a2f38be30dbd21186ba7445"
+}

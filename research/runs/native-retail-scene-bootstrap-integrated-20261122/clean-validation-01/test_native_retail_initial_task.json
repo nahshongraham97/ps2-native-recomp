@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-bootstrap-22\\build-native\\test_native_retail_initial_task.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-scene-bootstrap-integrated-20261122\\clean-validation-01\\empty-content"
+  ],
+  "exit": 0,
+  "seconds": 0.10356759998830967,
+  "source_commit": "2188e467375ff5a1613ad9a7a106bfc0a0251047",
+  "tracked_status": "",
+  "source_manifest_sha256": "399c053babf535a332ab6d4fe69d7f3f4b50505003fd342964212b26332a5bdf",
+  "log_sha256": "fe44162dbee12ec77fffd834e25cdc17a17f35c9f8374f94b3ac8af1da08cdd7",
+  "compressed_log_sha256": "ec4da9937d92bed1ff4d3a6e5d7d08f2761ba75cbb77d3ffd3a4ac9f5f1f9c85",
+  "executable_sha256": "fb75257cca3a2b7082fe08dbe54b25b1e380935d6d982a2c61caf8bdf58648a1",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

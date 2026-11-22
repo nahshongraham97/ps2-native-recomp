@@ -1,6 +1,6 @@
 # Original direct/worker play admission
 
-Current component result: Final canonical validation-03 passes all25 affected clients and the exact unchanged37-effect full-entry refusal. Actual sample/runtime cache selection, same-association fresh constructor retry, Main reentry guards, real output-failure publication refusal and consumer-failure/no-retry are verified. The one-shot fixture hook fix is independently explained by the bundled libc++ implementation. No production source changed to repair that fixture. Source publication and new clean-checkout verification are next; full game/native acceptance remains OPEN.
+Current component result: Final canonical validation-03 passes all25 affected clients and the exact unchanged37-effect full-entry refusal. Actual sample/runtime cache selection, same-association fresh constructor retry, Main reentry guards, real output-failure publication refusal and consumer-failure/no-retry are verified. The one-shot fixture hook fix is independently explained by the bundled libc++ implementation. No production source changed to repair that fixture. Clean published source58bbfd78fb4335226ce455c043e4abd67febd61c also passes all25 clients and exact37-effect refusal in clean-validation-01. All832 source blobs authenticate against committed trees;199 existing raw newline pairs remain unchanged. Full game/native acceptance remains OPEN.
 
 Start parent2c86de2626092cb1bb6c4d4c7313a4372bbbf9b1 and
 fork915da5fd8dfdc108a3bb256fe2d142a331e74c32, main matching the published
@@ -68,3 +68,5 @@ six imported bounded source-word proofs. It staged115 approved paths but did
 not commit/push. Recovery revalidates that exact approved subset and explicitly
 adds only the six small committed/hash-pinned .words.bin files; no broad force
 add or original input/binary/asset staging is allowed. Preserve this failure.
+
+Clean publication completed for source58bbfd78fb4335226ce455c043e4abd67febd61c: clean-validation-01 passes all25 affected clients and exact37 required effects. CROSS_CHECKOUT_IDENTITY.json and SOURCE_PUBLICATION.json prove all832 committed blobs and identical changed runtime bytes. No game executable/window/physical endpoint/frame/audio capture. Next reviewed1861B0 prefix integration, then original12C030/12C440 semantic parameter producers and native envelope policy.
