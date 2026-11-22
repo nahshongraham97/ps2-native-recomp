@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-sound-history\\build-sound-history",
+    "--target",
+    "test_native_control_history",
+    "test_native_sound_curves",
+    "test_native_host_voice",
+    "test_native_program_copy",
+    "test_native_program_copy_failure",
+    "-j2"
+  ],
+  "exit": 0,
+  "seconds": 10.292328357696533,
+  "log_sha256": "64f68ab977c08d05d3136a7d8d06134f71f025fcd145bf3ed17b8bc8b939ed51"
+}

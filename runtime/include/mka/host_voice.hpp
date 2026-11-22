@@ -11,7 +11,7 @@ struct NativeEnvelopeProfile {
 enum class HostVoiceError { none, control_failed, invalid_output_rate, unsupported_envelope,
     invalid_clip, moved_voice, wrong_stop_event, foreign_program, unsupported_sample_end_control,
     arithmetic_overflow, null_voice, duplicate_voice, output_rate_mismatch,
-    allocation_failed, host_capacity };
+    allocation_failed, host_capacity, foreign_control_update };
 struct HostVoiceFailure { HostVoiceError kind=HostVoiceError::none; AudioControlFailure control; std::size_t frame_index=0, voice_index=0; };
 class HostVoice;
 // Additive float stereo in ordinary host memory, before any host master/output
@@ -31,6 +31,11 @@ public:
         const NativeEnvelopeProfile&,std::uint32_t explicit_host_output_rate,HostVoiceFailure&,
         AudioControlCurve=AudioControlCurve::initial_nonlinear);
     std::optional<std::vector<float>> render(std::size_t frames,HostVoiceFailure&);
+    //3FCC/9F1C control update on this actual descriptor. Preserves source
+    // cursor/fraction/envelope and invokes retained history per ordered plane.
+    bool update_controls(const ProgramStep&,const AudioControlFactors& context,
+        const AudioControlFactors& program,std::uint32_t source_output_mode,HostVoiceFailure&);
+    std::optional<AudioControlHistory> control_history() const noexcept;
     // Proven normal stop path: freeze source position and enter release envelope.
     bool stop_from_program(const ProgramStep&,HostVoiceFailure&);
     bool validate_program_owner(const std::shared_ptr<const PreparedProgram>&,HostVoiceFailure&) const noexcept;

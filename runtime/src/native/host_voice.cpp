@@ -13,6 +13,8 @@ struct HostVoice::Data {
     std::shared_ptr<const PreparedProgram> owner;
     std::shared_ptr<const PreparedNormal> clip;
     NativeAudioControls controls;
+    AudioControlHistory history;
+    std::size_t command_index{};
     NativeEnvelopeProfile profile;
     std::uint32_t output_rate=0;
     std::uint64_t index=0,fraction=0,envelope_fraction=0,counter=0;
@@ -69,14 +71,29 @@ std::optional<HostVoice> HostVoice::start(const ProgramStep& event,const AudioCo
     const AudioControlFactors& program,std::uint32_t mode,const NativeEnvelopeProfile& profile,std::uint32_t rate,HostVoiceFailure& failure,AudioControlCurve curve){
     failure={};if(!rate){failure.kind=HostVoiceError::invalid_output_rate;return std::nullopt;}
     if(!valid_profile(profile)){failure.kind=HostVoiceError::unsupported_envelope;return std::nullopt;}
-    auto controls=decode_audio_controls(event,context,program,mode,failure.control,AudioControlUse::fresh_start,curve);
+    AudioControlHistory history;
+    auto controls=decode_audio_controls_with_history(event,context,program,mode,history,failure.control,curve);
     if(!controls){failure.kind=HostVoiceError::control_failed;return std::nullopt;}
     for(const auto& pcm:event.clip->pcm)if(pcm.samples.size()<2||pcm.samples.size()!=event.clip->pcm[0].samples.size()){
         failure.kind=HostVoiceError::invalid_clip;return std::nullopt;
     }
-    try{auto d=std::make_unique<Data>();d->owner=event.owner;d->clip=event.clip;d->controls=*controls;d->profile=profile;d->output_rate=rate;return HostVoice(std::move(d));}
+    try{auto d=std::make_unique<Data>();d->owner=event.owner;d->clip=event.clip;d->controls=*controls;d->history=history;d->command_index=event.command_index;d->profile=profile;d->output_rate=rate;return HostVoice(std::move(d));}
     catch(const std::bad_alloc&){failure.kind=HostVoiceError::allocation_failed;}
     catch(const std::length_error&){failure.kind=HostVoiceError::host_capacity;}return std::nullopt;
+}
+bool HostVoice::update_controls(const ProgramStep& event,const AudioControlFactors& context,
+    const AudioControlFactors& program,std::uint32_t mode,HostVoiceFailure& f){
+    f={};if(!data_){f.kind=HostVoiceError::moved_voice;return false;}
+    if(event.owner!=data_->owner||event.clip!=data_->clip||event.command_index!=data_->command_index){
+        f.kind=HostVoiceError::foreign_control_update;return false;
+    }
+    auto history=data_->history;
+    const auto controls=decode_audio_controls_with_history(event,context,program,mode,history,f.control,data_->controls.curve);
+    if(!controls){f.kind=HostVoiceError::control_failed;return false;}
+    data_->controls=*controls;data_->history=history;return true;
+}
+std::optional<AudioControlHistory> HostVoice::control_history() const noexcept {
+    if(!data_)return {};return data_->history;
 }
 std::optional<std::vector<float>> HostVoice::render(std::size_t frames,HostVoiceFailure& failure){
     failure={};if(!data_){failure.kind=HostVoiceError::moved_voice;return std::nullopt;}

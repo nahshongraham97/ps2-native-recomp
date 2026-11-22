@@ -95,7 +95,7 @@ const std::vector<CommandRecord>& NativeProgramCopy::commands()const noexcept{re
 std::optional<NormalPlayInstanceObservation> NativeProgramCopy::instance(std::size_t index,ProgramCopyFailure& f)const{
     f={};auto* i=state_->find(index);if(!i){f.kind=ProgramCopyError::missing_instance;f.command_index=index;return {};}
     NormalPlayInstanceObservation result;result.state=i->state;result.output_bound=bool(i->output);
-    if(i->output){result.output_active=i->output->active();result.output_source_index=i->output->source_index();}
+    if(i->output){result.output_active=i->output->active();result.output_source_index=i->output->source_index();result.control_history=i->output->control_history();}
     return result;
 }
 std::optional<OrdinaryProgramSchedule> NativeProgramCopy::prepare_ordinary_schedule(ProgramClockWord clock,std::uint16_t flags,ProgramCopyFailure& f){
@@ -159,6 +159,24 @@ bool NativeProgramCopy::start_output(const ProgramStep& event,const NormalOutput
     auto voice=HostVoice::start(actual,p.context,p.program,p.source_output_mode,p.envelope,p.host_output_rate,f.voice,p.curve);
     if(!voice){f.kind=ProgramCopyError::voice_failed;return false;}
     i->output=std::move(voice);i->state.start_argument=operands.start_argument;return true;
+}
+bool NativeProgramCopy::update_output_controls(std::size_t index,const AudioControlFactors& context,
+    const AudioControlFactors& program,std::uint32_t mode,ProgramCopyFailure& f){
+    f={};f.command_index=index;
+    if(!state_->scheduled){f.kind=ProgramCopyError::not_scheduled;return false;}
+    if(state_->outputs_retired){f.kind=ProgramCopyError::outputs_retired;return false;}
+    auto* i=state_->find(index);
+    if(!i){f.kind=ProgramCopyError::missing_instance;return false;}
+    if(!i->output){f.kind=ProgramCopyError::missing_instance;return false;}
+    ProgramStep event;event.kind=ProgramStepKind::sample_start;event.command_index=index;
+    event.owner=state_->data;event.clip=i->sample;
+    event.start.parameter_44=static_cast<std::int16_t>(i->state.gain_q14);
+    event.start.parameter_46=static_cast<std::int16_t>(i->state.pan_q14);
+    event.start.parameter_48=static_cast<std::int16_t>(i->state.pitch_q12);
+    event.start.descriptor_word_28=i->state.descriptor_word;event.start.start_argument=i->state.start_argument;
+    event.start.repeat_operand=i->state.repeat_operand;event.start.set_descriptor_flag_4=(i->state.flags&4u)!=0;
+    if(!i->output->update_controls(event,context,program,mode,f.voice)){f.kind=ProgramCopyError::voice_failed;return false;}
+    return true;
 }
 std::optional<std::vector<float>> NativeProgramCopy::mix(std::size_t frames,ProgramCopyFailure& f){
     f={};if(!state_->scheduled){f.kind=ProgramCopyError::not_scheduled;return {};}

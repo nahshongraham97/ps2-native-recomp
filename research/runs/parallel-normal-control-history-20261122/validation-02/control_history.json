@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-sound-history\\build-sound-history\\test_native_control_history.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-sound-history\\research\\runs\\parallel-normal-control-history-20261122\\reference-03\\history-corpus.txt"
+  ],
+  "exit": 0,
+  "seconds": 0.049098968505859375,
+  "executable_sha256": "d34e8c5dfa2cf0f078951972aa68dbbcb48f62900ee5ddb049e56ded9f4b3f7f",
+  "source_manifest_sha256": "1e52e8605a8206ddccc242a7a976b98c2a8cb38e1d8cd6e7ea06bff60b16ad6e",
+  "log_sha256": "fe4895381809179f7ee2eadea3c7d28260d80e784e379867dcfdb32e98058b24",
+  "physical_endpoints_opened": false,
+  "game_run": false
+}

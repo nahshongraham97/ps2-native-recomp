@@ -1,5 +1,6 @@
 #include "mka/audio_controls.hpp"
 #include <algorithm>
+#include <bit>
 #include <limits>
 namespace mka::sound {
 namespace {
@@ -57,11 +58,10 @@ bool product(std::int64_t a,std::int64_t b,unsigned shift,std::int64_t& out){
 }
 }
 AudioControlFactors initial_program_control_factors()noexcept{return {0x4000,0,0x1000,0x4000,0,0x1000};}
-std::optional<NativeAudioControls> decode_audio_controls(const ProgramStep& event,
-    const AudioControlFactors& context,const AudioControlFactors& program,std::uint32_t mode,AudioControlFailure& failure,AudioControlUse use,AudioControlCurve curve){
+static std::optional<NativeAudioControls> decode_controls(const ProgramStep& event,
+    const AudioControlFactors& context,const AudioControlFactors& program,std::uint32_t mode,AudioControlFailure& failure,AudioControlHistory& history,AudioControlCurve curve){
     failure={};auto fail=[&](AudioControlError e)->std::optional<NativeAudioControls>{failure.kind=e;return std::nullopt;};
     if(!valid_audio_control_curve(curve))return fail(AudioControlError::unsupported_curve);
-    if(use!=AudioControlUse::fresh_start)return fail(AudioControlError::unsupported_dynamic_pan_update);
     if(event.kind!=ProgramStepKind::sample_start)return fail(AudioControlError::not_sample_start);
     if(!event.clip||!event.owner)return fail(AudioControlError::missing_clip);
     for(const auto value:{program.gain_q14,program.pan_q14,program.pitch_q12,program.secondary_gain_q14,program.secondary_pan_q14,program.secondary_pitch_q12})
@@ -105,25 +105,66 @@ std::optional<NativeAudioControls> decode_audio_controls(const ProgramStep& even
     result.routed_pan_q14=routed_pan;
     const auto gain_at=[curve](std::size_t index){return curve==AudioControlCurve::startup_linear?linear_gain_curve[index]:gain_curve[index];};
     const auto pan_at=[curve](std::size_t index){return curve==AudioControlCurve::startup_linear?linear_pan_attenuation[index]:pan_attenuation[index];};
-    const auto q15=std::int32_t(gain_at(curve_index))*2;
-    std::array<std::int32_t,2> gains{q15,q15};
-    if(mode){
-        const auto magnitude=static_cast<unsigned>(routed_pan<0?-routed_pan:routed_pan);
-        const bool phase_inverted=magnitude>8192;
-        const auto table_index=phase_inverted ? 99u-(99u*(magnitude-8192u))/8192u : (99u*magnitude)/8192u;
-        const auto attenuated_index=std::min<std::size_t>(199,curve_index+pan_at(table_index));
-        auto attenuated=std::int32_t(gain_at(attenuated_index))*2;
-        if(phase_inverted)attenuated=-attenuated;
-        // Positivepan attenuates/inverts left; negativepan right. Fresh3259C
-        // sets50/52=F000,56=0; eachbranch publishes initial50/52 BEFORE
-        // 31634 compareshistory, making bothdifferenceszero. No smoothingstate
-        // is fabricated here; dynamicupdates have a separate namedfailure.
-        gains[routed_pan<0?1:0]=attenuated;
-    }
+    auto next=history;
+    const auto narrow=[](std::int32_t value){return std::bit_cast<std::int16_t>(static_cast<std::uint16_t>(value));};
+    // The source emits a signed15-bit constant. Convert that game operand
+    // to native Q15 gain; no volume-register or sweep engine is retained.
+    const auto q15=[](std::int16_t value){
+        const auto word=static_cast<std::uint16_t>(value)&0x7fffu;
+        return 2*(word&0x4000u?static_cast<std::int32_t>(word)-32768:static_cast<std::int32_t>(word));
+    };
     for(std::size_t plane=0;plane<result.planes;++plane){
-        result.gains_q15[plane]=gains;
-        if(mode && result.planes==2)result.gains_q15[plane][plane==0?1:0]=0;
+        const auto base=static_cast<std::int32_t>(gain_at(curve_index));
+        std::int16_t left=static_cast<std::int16_t>(base),right=left;
+        if(mode){
+            const bool positive=routed_pan>=0;
+            const bool rear=routed_pan>8192||routed_pan<-8192;
+            const auto magnitude=static_cast<unsigned>(positive?routed_pan:-routed_pan);
+            const auto index=rear?99u-(99u*(magnitude-8192u))/8192u:(99u*magnitude)/8192u;
+            const auto attenuated=static_cast<std::int32_t>(gain_at(std::min<std::size_t>(199,curve_index+pan_at(index))));
+            const bool negative=positive?
+                ((rear?next.right<=0:next.right<0)&&next.right!=-4096):
+                (next.left<=0&&next.right!=-4096);
+            const auto sign=negative?-1:1;
+            if(positive){right=narrow(sign*base);left=narrow(sign*(rear?-attenuated:attenuated));}
+            else {left=narrow(sign*base);right=narrow(sign*(rear?-attenuated:attenuated));}
+            const std::int16_t region=positive?(rear?4:2):(rear?3:1);
+            if(next.right==-4096){next.left=left;next.right=right;}
+            const auto abs=[](std::int32_t value){return value<0?-value:value;};
+            if(next.region!=region&&
+               (abs(std::int32_t(next.left)-left)>=10001||abs(std::int32_t(next.right)-right)>=10001)){
+                const auto delta=narrow(positive?std::int32_t(next.left)-left:std::int32_t(next.right)-right);
+                const auto divisor=static_cast<std::int16_t>(abs(delta/2500));
+                next.transition=AudioControlTransition{delta,divisor};
+                next.remaining=divisor;
+            }
+            if(next.remaining>0){
+                if(!next.transition||next.transition->divisor<=0)return fail(AudioControlError::invalid_history);
+                const auto change=next.transition->delta/next.transition->divisor;
+                if(positive)left=narrow(std::int32_t(next.left)-change);
+                else right=narrow(std::int32_t(next.right)-change);
+                --next.remaining;
+            }
+            next.region=region;next.left=left;next.right=right;
+        }
+        //9F1C calls959C separately for each plane before its routing mask.
+        result.gains_q15[plane]={q15(left),q15(right)};
+        if(mode&&result.planes==2)result.gains_q15[plane][plane==0?1:0]=0;
     }
+    history=next;
     failure={};return result;
+}
+std::optional<NativeAudioControls> decode_audio_controls(const ProgramStep& event,
+    const AudioControlFactors& context,const AudioControlFactors& program,
+    std::uint32_t mode,AudioControlFailure& failure,AudioControlUse use,AudioControlCurve curve){
+    if(!valid_audio_control_curve(curve)){failure={};failure.kind=AudioControlError::unsupported_curve;return {};}
+    if(use!=AudioControlUse::fresh_start){failure={};failure.kind=AudioControlError::unsupported_dynamic_pan_update;return {};}
+    AudioControlHistory history;
+    return decode_controls(event,context,program,mode,failure,history,curve);
+}
+std::optional<NativeAudioControls> decode_audio_controls_with_history(const ProgramStep& event,
+    const AudioControlFactors& context,const AudioControlFactors& program,
+    std::uint32_t mode,AudioControlHistory& history,AudioControlFailure& failure,AudioControlCurve curve){
+    return decode_controls(event,context,program,mode,failure,history,curve);
 }
 } // namespace mka::sound

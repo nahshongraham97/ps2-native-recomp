@@ -1,0 +1,9 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-sound-history\\research\\runs\\parallel-normal-control-history-20261122\\reference-02\\reference_history.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-sound-history\\research\\runs\\parallel-normal-control-history-20261122\\reference-02\\history-corpus.txt"
+  ],
+  "exit": 3221225781,
+  "executable_sha256": "6dd75660d2d6ee03bc1ae1181755468644bd9cbcf0d1da7ef9f9e1ed8757935a",
+  "corpus_created": false
+}

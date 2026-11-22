@@ -11,6 +11,7 @@ struct NormalPlayInstanceObservation {
     NormalInstanceTemplateState state;
     bool output_bound=false,output_active=false;
     std::optional<std::uint64_t> output_source_index;
+    std::optional<AudioControlHistory> control_history;
 };
 struct NormalOutputParameters {
     AudioControlFactors context,program;
@@ -51,6 +52,10 @@ public:
     // Actual command operands are applied before attempting voice construction;
     // a failed voice leaves those operand writes, not a fabricated output.
     bool start_output(const ProgramStep&,const NormalOutputParameters&,ProgramCopyFailure&);
+    // Actual3FCC factor update for the bound normal descriptor. The caller
+    // retains serialization; no context pause/admission/timer is inferred.
+    bool update_output_controls(std::size_t command_index,const AudioControlFactors& context,
+        const AudioControlFactors& program,std::uint32_t source_output_mode,ProgramCopyFailure&);
     std::optional<std::vector<float>> mix(std::size_t host_frames,ProgramCopyFailure&);
     bool stop_outputs(const ProgramStep&,ProgramCopyFailure&);
 private:
