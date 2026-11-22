@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_profile_input_reset.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.03170369999133982,
+  "log_sha256": "65cccc46289320a9fe9774bff0786b6512665cc0bd45dc1f64c90976c937fbc6",
+  "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3",
+  "executable_sha256": "304c4f4a8076a81937735195f6ce68faf1b336facb58ca106eb9ace89eb0b0c2",
+  "reused_from": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-saved-profile-records-20261122\\validation-02\\test_native_retail_profile_input_reset.json",
+  "applicability": "Only the other record-client test source changed; exact executable and log unchanged."
+}

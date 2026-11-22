@@ -1,0 +1,148 @@
+{
+  "validation-02": {
+    "source_count": 880,
+    "manifest_matches": true,
+    "current_source_mismatches": [
+      "tests/test_retail_saved_profile_records.cpp"
+    ],
+    "receipts": {
+      "build.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3"
+      },
+      "full-entry-negative.json": {
+        "exit": 1,
+        "log_matches": true,
+        "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3"
+      },
+      "production-required-menu-abi.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3"
+      },
+      "records-symbols.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3"
+      },
+      "test_native_retail_game_session.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3"
+      },
+      "test_native_retail_initial_reset_arcade.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3"
+      },
+      "test_native_retail_main_frame_gates.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3"
+      },
+      "test_native_retail_profile_aggregate_main.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3"
+      },
+      "test_native_retail_profile_input_reset.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3"
+      },
+      "test_native_retail_saved_profile_child.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3"
+      },
+      "test_native_retail_saved_profile_records.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3"
+      }
+    },
+    "exact64": true,
+    "current_binaries": {
+      "test_native_retail_saved_profile_records": false,
+      "test_native_retail_saved_profile_child": true,
+      "test_native_retail_game_session": true,
+      "test_native_retail_profile_aggregate_main": true,
+      "test_native_retail_profile_input_reset": true,
+      "test_native_retail_initial_reset_arcade": true,
+      "test_native_retail_main_frame_gates": true
+    }
+  },
+  "validation-03": {
+    "source_count": 880,
+    "manifest_matches": true,
+    "current_source_mismatches": [],
+    "receipts": {
+      "build.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "03bad2f9352ec2b17599d288681c24e2a7400d67b716ee24bd61a2974ddf331c"
+      },
+      "full-entry-negative.json": {
+        "exit": 1,
+        "log_matches": true,
+        "source_manifest_sha256": "03bad2f9352ec2b17599d288681c24e2a7400d67b716ee24bd61a2974ddf331c"
+      },
+      "production-required-menu-abi.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "03bad2f9352ec2b17599d288681c24e2a7400d67b716ee24bd61a2974ddf331c"
+      },
+      "records-symbols.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "03bad2f9352ec2b17599d288681c24e2a7400d67b716ee24bd61a2974ddf331c"
+      },
+      "test_native_retail_game_session.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3"
+      },
+      "test_native_retail_initial_reset_arcade.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3"
+      },
+      "test_native_retail_main_frame_gates.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3"
+      },
+      "test_native_retail_profile_aggregate_main.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3"
+      },
+      "test_native_retail_profile_input_reset.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3"
+      },
+      "test_native_retail_saved_profile_child.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3"
+      },
+      "test_native_retail_saved_profile_records.json": {
+        "exit": 0,
+        "log_matches": true,
+        "source_manifest_sha256": "03bad2f9352ec2b17599d288681c24e2a7400d67b716ee24bd61a2974ddf331c"
+      }
+    },
+    "exact64": true,
+    "current_binaries": {
+      "test_native_retail_saved_profile_records": true,
+      "test_native_retail_saved_profile_child": true,
+      "test_native_retail_game_session": true,
+      "test_native_retail_profile_aggregate_main": true,
+      "test_native_retail_profile_input_reset": true,
+      "test_native_retail_initial_reset_arcade": true,
+      "test_native_retail_main_frame_gates": true
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "status": "PASS_TYPED_CHILD_ZERO_BSS_AND_SOURCE_RESET_DEFAULTS",
+  "executed_by": "profile_binding_review, isolated child worktree",
+  "base": "630849fc3b981d65d9f3229a7ae7021612b7c166",
+  "source_sha256": {
+    "runtime/include/mka/retail_saved_profile_child.hpp": "1b2011d01c70bb6f3468a3667dec2d98cf276fe4a816b86d47bab098d22bfb38",
+    "runtime/src/native/retail_saved_profile_child.cpp": "f19c50d7d26db5d01b9a988dc9a12c77f25e08bb6f48a50a37beeda6c29f2241",
+    "tests/test_retail_saved_profile_child.cpp": "8c467db506659648a9b7587efc762509d52772ae96bd15219c548f38ccfb3176",
+    "runtime/include/mka/retail_saved_profile_defaults.hpp": "3569b0a0285068c7fdb32809c6efb534e944b76586928ece03d517295149f64f",
+    "runtime/src/native/retail_saved_profile_defaults.cpp": "8d6754a15a38fc01564f69e04eab7200a4bb61f5d45e017af54c0d48f903d6e6",
+    "runtime/include/mka/retail_profile_image.hpp": "2dd6bce0f58eb3f3697e2abcade88fe4beada16685c05987288ce14231d6d93c",
+    "runtime/src/native/retail_profile_image.cpp": "01bbe96fc2ef926a8994947661697116d77a0c9b533540ad91053679082de68b",
+    "runtime/include/mka/retail_profile_aggregate.hpp": "bc19790f181383359eb25dd393932713c9e3f857771ee9bb31d15dfc8517c4db",
+    "cmake/native_game.cmake": "36d2644ab9d08715b0ccc75b48a0337270abccca376de15e1463b9c7d0265d48"
+  },
+  "compiler": {
+    "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+    "sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe"
+  },
+  "compile_argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+    "-std=c++20",
+    "-O0",
+    "-g",
+    "-Iruntime/include",
+    "tests/test_retail_saved_profile_child.cpp",
+    "runtime/src/native/retail_saved_profile_child.cpp",
+    "runtime/src/native/retail_saved_profile_defaults.cpp",
+    "runtime/src/native/retail_profile_image.cpp",
+    "-o",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-profile-child\\research\\runs\\parallel-saved-profile-child-20261122\\validation01\\child.exe"
+  ],
+  "compile_exit": 0,
+  "run_argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-profile-child\\research\\runs\\parallel-saved-profile-child-20261122\\validation01\\child.exe"
+  ],
+  "run_exit": 0,
+  "binary_sha256": "e403d4b3ded9c8b9c68c2fafc58392de80007c841624e0aac8224abbbc90b4be",
+  "compile_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "run_log_sha256": "d9090ed425aa44d7537dc02e503f62f4b8f01c6b737f374c7e2f43a9e73bd9d6",
+  "endpoint_guard": "SDL_InitSubSystem abort stub; no endpoint/service linked",
+  "scope": "direct typed value/default/image-refusal component only; no Main production binding, parent orchestration, populated import, gameplay or endpoint acceptance"
+}

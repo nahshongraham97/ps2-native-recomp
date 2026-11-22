@@ -1,0 +1,276 @@
+{
+  "status": "HASH_CLASSIFIED_IMMUTABLE_SOURCE_DATA",
+  "findings": [
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless-console.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless-console.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless-console.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless-console.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless-console.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless-console.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless-console.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless-console.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless-console.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless-console.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless-console.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless-console.log",
+      "line": 36,
+      "kind": "trailing whitespace.",
+      "sha256": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless-console.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless-console.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless-console.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless-console.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless-console.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless-console.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 1,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 2,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 3,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 4,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 5,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 7,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 8,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 10,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 12,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 37,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 38,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 39,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 40,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 41,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 42,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/headless.log",
+      "line": 43,
+      "kind": "trailing whitespace.",
+      "sha256": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/source-01/00171b10.c",
+      "line": 11,
+      "kind": "trailing whitespace.",
+      "sha256": "900e20e364e8c39932bbf407638bd1964ad000f4310b04c0c2dcd7c6cf4a780e"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/source-01/00171b10.c",
+      "line": 41,
+      "kind": "new blank line at EOF.",
+      "sha256": "900e20e364e8c39932bbf407638bd1964ad000f4310b04c0c2dcd7c6cf4a780e"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/source-01/00245cb0.c",
+      "line": 9,
+      "kind": "trailing whitespace.",
+      "sha256": "31650dd87a245a675a02d560085ac5f0721fc4ca41d0802629b32b7d41c307c3"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/source-01/00245cb0.c",
+      "line": 44,
+      "kind": "new blank line at EOF.",
+      "sha256": "31650dd87a245a675a02d560085ac5f0721fc4ca41d0802629b32b7d41c307c3"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/source-01/00245dd0.c",
+      "line": 16,
+      "kind": "trailing whitespace.",
+      "sha256": "86fdc0f81aa72791d449d8729cc03b312d2ec729edc07ad710baedcca9f69b59"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/source-01/00245dd0.c",
+      "line": 86,
+      "kind": "new blank line at EOF.",
+      "sha256": "86fdc0f81aa72791d449d8729cc03b312d2ec729edc07ad710baedcca9f69b59"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/source-01/00246070.c",
+      "line": 6,
+      "kind": "trailing whitespace.",
+      "sha256": "b994f5510109da97d1749090e8f9fe47d55adf78b54ec7f8077638e7bb3918bb"
+    },
+    {
+      "path": "research/runs/native-retail-saved-profile-records-20261122/source-01/00246070.c",
+      "line": 14,
+      "kind": "new blank line at EOF.",
+      "sha256": "b994f5510109da97d1749090e8f9fe47d55adf78b54ec7f8077638e7bb3918bb"
+    }
+  ],
+  "scope": "Exact immutable original export/delegate data only; authored runtime/config/tests/root records remain strictly checked. Alternate disposable index used; real index untouched. --no-renames avoids irrelevant rename search against other HEAD paths omitted from temporary index; does not suppress whitespace findings."
+}

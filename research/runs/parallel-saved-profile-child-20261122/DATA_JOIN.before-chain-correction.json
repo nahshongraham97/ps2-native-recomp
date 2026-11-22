@@ -1,0 +1,66 @@
+{
+  "ELF_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "data": {
+    "0x5ed210": {
+      "file_offset": 5165840,
+      "bytes": "90816100d004640000000000",
+      "sha256": "c5cd3fe0d9b012312a35bf58b3793985709b9f9c70f37142a8df9447e8ec2f2b",
+      "meaning": "actual selected immutable scene-definition list head"
+    },
+    "0x618190": {
+      "file_offset": 5341840,
+      "bytes": "f86d5b000000000000000000d86d5b00",
+      "sha256": "9c503b870bc4e8351709e65cb5b8d011211d946d38a0d8c27ba30b461ef3dd86",
+      "meaning": "first source resource descriptor"
+    },
+    "0x5b6df8": {
+      "file_offset": 4943608,
+      "bytes": "70816100",
+      "sha256": "546f5800ec0619b6b634a33032f2bd628a9232ba2f8e0b7651a352673dab742a",
+      "meaning": "first scene resource filename"
+    },
+    "0x60cfe0": {
+      "file_offset": 5296352,
+      "bytes": "c8325b000000000000000000",
+      "sha256": "e9e3b598adde865bd5b2e69d690eb9ddd0e1c5ef768f6df7014c090ee976e383",
+      "meaning": "actual selected immutable scene-definition list head"
+    },
+    "0x5b32c8": {
+      "file_offset": 4928456,
+      "bytes": "c8cf6000e0cf60000400000000000000",
+      "sha256": "8e23b6a7236f759e96846a0558201e66533762828f742f666f9f8ab650348333",
+      "meaning": "first source resource descriptor"
+    },
+    "0x60cfc8": {
+      "file_offset": 5296328,
+      "bytes": "68656c6c2e73736600",
+      "sha256": "9ff9373bee6caa39720efab0cc85d938ae9e5977d999295819dd3869301f8a3f",
+      "meaning": "first scene resource filename"
+    },
+    "0x611830": {
+      "file_offset": 5314864,
+      "bytes": "384d5b000000000000000000",
+      "sha256": "f91b9a2cd84e1036cb5e43d017aaf9308918806033985809e55f1e9ef6cfca8d",
+      "meaning": "actual selected immutable scene-definition list head"
+    },
+    "0x5b4d38": {
+      "file_offset": 4935224,
+      "bytes": "20186100301861000400000000000000",
+      "sha256": "0e639987be446576101c6575bb66e25efffa7ae01a2e8b2444d50ce340057216",
+      "meaning": "first source resource descriptor"
+    },
+    "0x611820": {
+      "file_offset": 5314848,
+      "bytes": "6f62656c69736b5f30312e73736600",
+      "sha256": "eacb5407282d41c88873606c1f9c14e32e949390655787c25dd5c1e606d1cd51",
+      "meaning": "first scene resource filename"
+    },
+    "0x5f2550": {
+      "file_offset": 5187152,
+      "bytes": "010000000d000000130000001a000000210000001f0000002c0000002a000000",
+      "sha256": "fbbab906039451d6eb834126a760e3c7c3aa36512bcfdbdc5b7e13085ad666a6",
+      "meaning": "existing Work60 scalar default and selected-option table; metadata only"
+    }
+  },
+  "limit": "This does not establish catalog extent, all resource descriptor ABI or a native scene/file owner. No source pointer is a native identity."
+}

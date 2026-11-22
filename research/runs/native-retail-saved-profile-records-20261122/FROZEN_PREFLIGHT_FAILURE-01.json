@@ -1,0 +1,5 @@
+{
+  "exit": 2,
+  "stderr": "warning: exhaustive rename detection was skipped due to too many files.\nwarning: you may want to set your diff.renameLimit variable to at least 9542 and retry the command.\n",
+  "reason": "Alternate-index raw-data whitespace preflight failed wrapper return-code/stderr assertion; inspect without weakening authored source checks."
+}

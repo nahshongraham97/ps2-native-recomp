@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_saved_profile_child.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.028067299994290806,
+  "log_sha256": "d9090ed425aa44d7537dc02e503f62f4b8f01c6b737f374c7e2f43a9e73bd9d6",
+  "source_manifest_sha256": "23c1c12d0b1942f7ffe4c4a45624abc72dc08ea32987c295a37dd0f4b12b39f3",
+  "executable_sha256": "3eae7c82037694bf4e08f88548116c6f10749ede9f4e862914c3fc6213d83174"
+}

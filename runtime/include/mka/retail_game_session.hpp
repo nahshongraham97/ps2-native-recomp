@@ -21,7 +21,7 @@
 #include <thread>
 
 namespace mka::retail {
-enum class RetailGameSessionError { none, wrong_thread, allocation, controls, settings, native_exception, task_domain, task_lists, initial_game_tasks, options };
+enum class RetailGameSessionError { none, wrong_thread, allocation, controls, settings, native_exception, task_domain, task_lists, initial_game_tasks, options, profile_records };
 struct RetailGameSessionFailure {
     RetailGameSessionError kind{RetailGameSessionError::none};
     const char* operation{""};
@@ -37,9 +37,11 @@ struct RetailGameSessionFailure {
 // owner has no guest address map, register state or platform device model.
 // Controls model only proven game-info state, not a complete registry value.
 class NativeRetailRendererCore;
+class NativeRetailSavedProfileRecords;
 class NativeRetailGameSession final {
 public:
     static std::shared_ptr<NativeRetailGameSession> create(RetailGameSessionFailure&) noexcept;
+    ~NativeRetailGameSession();
     NativeRetailGameSession(const NativeRetailGameSession&) = delete;
     NativeRetailGameSession& operator=(const NativeRetailGameSession&) = delete;
     bool validate_current_thread(RetailGameSessionFailure&) const noexcept;
@@ -60,6 +62,7 @@ public:
     RetailArcadeLadderValues* arcade_ladder_values(RetailGameSessionFailure&) noexcept;
     NativeRetailProfileResourceIds* profile_resource_ids(RetailGameSessionFailure&) noexcept;
     NativeRetailProfileAggregate* profile_aggregate(RetailGameSessionFailure&) noexcept;
+    NativeRetailSavedProfileRecords* saved_profile_records(RetailGameSessionFailure&) noexcept;
     NativeRetailSceneReference* live_scene_reference(RetailGameSessionFailure&) noexcept;
     bool ensure_game_task_lists(std::shared_ptr<NativeRetailGamePool>,
         RetailGameSessionFailure&) noexcept;
@@ -92,6 +95,7 @@ private:
     RetailArcadeLadderValues arcade_ladder_values_;
     NativeRetailProfileResourceIds profile_resource_ids_{*this};
     NativeRetailProfileAggregate profile_aggregate_;
+    std::unique_ptr<NativeRetailSavedProfileRecords> saved_profile_records_;
     NativeRetailSceneReference live_scene_reference_{*this};
     std::shared_ptr<NativeRetailGameTaskLists> game_task_lists_;
     std::shared_ptr<NativeRetailInitialGameTasks> initial_game_tasks_;

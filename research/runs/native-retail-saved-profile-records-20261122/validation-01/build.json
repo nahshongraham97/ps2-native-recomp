@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01",
+    "--target",
+    "test_native_retail_saved_profile_records",
+    "test_native_retail_saved_profile_child",
+    "test_native_retail_game_session",
+    "test_native_retail_profile_aggregate_main",
+    "test_native_retail_profile_input_reset",
+    "test_native_retail_initial_reset_arcade",
+    "test_native_retail_main_frame_gates",
+    "-j2"
+  ],
+  "exit": 0,
+  "seconds": 3.5210290999966674,
+  "log_sha256": "2577e8f00d246525dd95822e9f5a642a012b10c0164ce7938d244151cb49204f",
+  "source_manifest_sha256": "c62c90f63523e572485388e1b8034f9ced0d25faba263beb6e2b1dc6caac9539",
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3"
+}

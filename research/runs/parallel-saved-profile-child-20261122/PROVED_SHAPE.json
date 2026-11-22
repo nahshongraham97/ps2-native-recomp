@@ -1,0 +1,293 @@
+{
+  "status": "SOURCE_METADATA_NOT_RUNTIME_IMPLEMENTATION",
+  "child_region": {
+    "child_begin": "1130",
+    "child_end_exclusive": "3B24",
+    "source_bytes": "29F4"
+  },
+  "fixed_scalars": "Reuse RetailSavedProfileGameplayDefaults and Work60 literal data. Other always-live scalar fields must remain real typed values, not be erased by absence.",
+  "scene_definition": {
+    "child_field": "11B4",
+    "working_field": "84",
+    "default": "typed absence",
+    "meaning": "immutable scene-definition reference only",
+    "consumer": "151DC0 mode9 and working state6 ->26F070",
+    "producer": "511350 logical object identity/table selection before callback5117C0",
+    "retirement": "514D30/515450 clear definition only; no live scene/file close is proved by these clears",
+    "still_required": "complete populated scene-definition catalog/typed decoder and independent live scene/file lifecycle"
+  },
+  "actor_restoration": {
+    "wire_begin": "AC",
+    "wire_blocks": 4,
+    "wire_stride": "A28",
+    "default": "typed no saved actor snapshots",
+    "key": "actor object KIND+0C logical word OR10000000; populated producer restricts kind<48,not object instance/pointer identity",
+    "producer_search_order": "first matching kind;else first no-bit28 block;else first block;clear selected block before capture",
+    "duplicate_kind": "later source capture overwrites same first matching kind;do not key by distinct native instance",
+    "producer": "511F00 reads actual live gameplay object/component graphs",
+    "consumers": [
+      "5155D0",
+      "5157F0",
+      "515C40",
+      "515E60",
+      "515F70",
+      "516220"
+    ],
+    "absence_proof": "all zero keys miss every ORbit28 query; branch-likely miss paths return0 before payload/callout",
+    "native_capacity": "wire extent is not native actor capacity; no native four-slot pool",
+    "still_required": "real native gameplay actor identity/owner, populated snapshot representation/decoder/producers; do not alias menu scene objects"
+  },
+  "flag_sets": {
+    "first_source_range": "294C..2963",
+    "second_source_range": "2960..298B",
+    "default": "both logical namespaces empty",
+    "shared_word": "first IDs160..191 == second IDs0..31",
+    "consumers": "515400 reads6words first;515310 reads11words second",
+    "source_setter": "515240 affects staging, selected working bits13..15 and separate global6AF76C in source order",
+    "existing_fallback_owner": "Session NativeRetailProfileAggregateData.or_word_660500, only fallbackIDs13/14",
+    "still_required": "one native shared authority for overlapping flags; whole setter global6AF76C owner/producers must not be invented"
+  },
+  "resource_ids": {
+    "working_begin": "29B4",
+    "working_count": "29F0",
+    "default": "empty byte identity sequence",
+    "existing_owner": "Session NativeRetailProfileResourceIds active_/staging_ is the working/staging instance only",
+    "child_owner": "distinct per-child value until source copy publication; no private shadow of Session working IDs",
+    "publication": "514400/5144D0/514700/514600/514920 source copies; do not call whole copies implemented"
+  },
+  "always_live_examples": [
+    {
+      "field": "14",
+      "default": 0,
+      "consumer": "514210 unconditionally selects aggregate660500 bit(index&31)"
+    },
+    {
+      "field": "40",
+      "default": 0,
+      "consumer": "511260 direct comparison ==1; same global7BFC80 as Work60 shared reference"
+    },
+    {
+      "field": "58",
+      "default": 4,
+      "consumer": "511260 outputword"
+    },
+    {
+      "field": "5C",
+      "default": 1,
+      "consumer": "511260 outputword"
+    },
+    {
+      "field": "29B0",
+      "default": 0,
+      "consumer": "431030 reads,431040 clears; further game consumers remain source-dependent"
+    }
+  ],
+  "additional_typed_scalar_group": "working+8C..A8 is eight logical selection/cursor words;50D140/5103A0 use current category from context+9AC to index. Default0 entries are live values,not absent snapshots. More source-owned category/descriptor producers remain required.",
+  "unclosed_default_metadata": "Remaining header/live-game restore scalar classification and publication/alias contracts are not yet a complete typed child API. No generic zero getter/offset record may substitute.",
+  "header_groups": [
+    {
+      "begin": "0x0",
+      "end_exclusive": "0x4",
+      "meaning": "control flags word,low-byte updates preserve other bits",
+      "default_words": [
+        0
+      ]
+    },
+    {
+      "begin": "0x4",
+      "end_exclusive": "0x8",
+      "meaning": "working phase/state",
+      "default_words": [
+        0
+      ]
+    },
+    {
+      "begin": "0x8",
+      "end_exclusive": "0x14",
+      "meaning": "three captured component values,5125C0 from actual C026 object C0/C4/C8",
+      "default_words": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "begin": "0x14",
+      "end_exclusive": "0x18",
+      "meaning": "selected option index,514210/514240",
+      "default_words": [
+        0
+      ]
+    },
+    {
+      "begin": "0x18",
+      "end_exclusive": "0x24",
+      "meaning": "position triple passed to132EC0",
+      "default_words": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "begin": "0x24",
+      "end_exclusive": "0x30",
+      "meaning": "orientation triple passed to132EC0",
+      "default_words": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "begin": "0x30",
+      "end_exclusive": "0x34",
+      "meaning": "scalar copied to real1818D0-result field1C by513E50",
+      "default_words": [
+        0
+      ]
+    },
+    {
+      "begin": "0x34",
+      "end_exclusive": "0x3c",
+      "meaning": "logical object-kind pair,current/retained",
+      "default_words": [
+        18,
+        1
+      ]
+    },
+    {
+      "begin": "0x3c",
+      "end_exclusive": "0x44",
+      "meaning": "saved context104/control selector pair;working+40 is global7BFC80",
+      "default_words": [
+        0,
+        0
+      ]
+    },
+    {
+      "begin": "0x44",
+      "end_exclusive": "0x4c",
+      "meaning": "511350 derived selection value and context158 value",
+      "default_words": [
+        0,
+        0
+      ]
+    },
+    {
+      "begin": "0x4c",
+      "end_exclusive": "0x58",
+      "meaning": "active/saved/script sequence parameter words",
+      "default_words": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "begin": "0x58",
+      "end_exclusive": "0x64",
+      "meaning": "511260 output selectors and511350 first parameter",
+      "default_words": [
+        4,
+        1,
+        27
+      ]
+    },
+    {
+      "begin": "0x64",
+      "end_exclusive": "0x70",
+      "meaning": "saved source global7BFC3C and prior third/fourth parameters",
+      "default_words": [
+        4294967295,
+        0,
+        0
+      ]
+    },
+    {
+      "begin": "0x70",
+      "end_exclusive": "0x84",
+      "meaning": "sixth/seventh parameters,one-shot/retained controls and backups",
+      "default_words": [
+        0,
+        64,
+        0,
+        64,
+        64
+      ]
+    },
+    {
+      "begin": "0x84",
+      "end_exclusive": "0x88",
+      "meaning": "optional immutable preview scene definition,never numeric pointer",
+      "default_words": [
+        0
+      ]
+    },
+    {
+      "begin": "0x88",
+      "end_exclusive": "0x8c",
+      "meaning": "operation phase written by510B10",
+      "default_words": [
+        0
+      ]
+    },
+    {
+      "begin": "0x8c",
+      "end_exclusive": "0xac",
+      "meaning": "eight logical per-category selection/index values50D140/5103A0",
+      "default_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "tail_reserved": {
+    "begin": "298C",
+    "end_exclusive": "2994",
+    "default": "zero from whole514D30 clear",
+    "status": "no direct semantic consumer recovered;do not guess native padding/schema;external codec may retain these as source input data,not runtime offset access"
+  },
+  "tail_restore_fields": {
+    "begin": "2994",
+    "end_exclusive": "29AC",
+    "default": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "producers": "5125C0 captures context64/68/9C/A0/928/924;513E50 restoressame",
+    "owner_limit": "these are saved values,not the actual live context owner;do not alias unrelated Main counters or game-info first-word controls"
+  },
+  "tail_counters": [
+    {
+      "field": "29AC",
+      "default": 0,
+      "effect": "514600/514920 add to selected profile38/3C then clear;other additive gameplay producers required"
+    },
+    {
+      "field": "29B0",
+      "default": 0,
+      "effect": "431030 returns;431040 clears this plus distinct external7BFBE0;full event producers remain required"
+    }
+  ],
+  "default_reset_non_effects": [
+    "do not detach/retire live gameplay actors",
+    "do not clear/unload26F070 current scene/file handles",
+    "do not overwrite Session aggregate660500",
+    "do not clear separate6AF76C progress side-effect word",
+    "per-child tailIDs are not the Session Working/staging vectors until source publication",
+    "globalWorking7BFC80 clear is real separate effect even when target is another child"
+  ],
+  "default_admission": "Only source-created/reset default,or a separately fully validated exact default image. Flagbit0==0 alone does not identify whole-default state.",
+  "null_reset": "514D30 null target returns before every write,including separate global7BFC80 clear."
+}

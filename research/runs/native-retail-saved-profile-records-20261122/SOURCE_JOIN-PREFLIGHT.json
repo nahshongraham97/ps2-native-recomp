@@ -1,0 +1,69 @@
+{
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "language": "r5900:LE:32:default",
+  "segments": [
+    {
+      "offset": 256,
+      "address": 1048576,
+      "file_size": 5561984,
+      "memory_size": 7096448
+    },
+    {
+      "offset": 5562240,
+      "address": 8145024,
+      "file_size": 0,
+      "memory_size": 1131008
+    },
+    {
+      "offset": 5562240,
+      "address": 8145024,
+      "file_size": 0,
+      "memory_size": 2097536
+    },
+    {
+      "offset": 5562240,
+      "address": 8145024,
+      "file_size": 0,
+      "memory_size": 1867392
+    },
+    {
+      "offset": 5562240,
+      "address": 10242560,
+      "file_size": 0,
+      "memory_size": 0
+    }
+  ],
+  "functions": {
+    "00171b10": {
+      "start": 1514256,
+      "end": 1514536,
+      "listed_words": 70,
+      "omitted": {},
+      "listing_sha256": "e4a1802f06d7d7b27c92b8cc4e9ff394c754b7df7232c33e8086a681c5505dba"
+    },
+    "00245cb0": {
+      "start": 2383024,
+      "end": 2383308,
+      "listed_words": 71,
+      "omitted": {},
+      "listing_sha256": "a106be63fcab189cf9fed72d3140a731c9eb62be3b0312bea97ff802d17d3da9"
+    },
+    "00245dd0": {
+      "start": 2383312,
+      "end": 2383976,
+      "listed_words": 165,
+      "omitted": {
+        "00245e84": "0000458e"
+      },
+      "listing_sha256": "aaaf0376c0563c61a7f849d7769da1b6759e962e3c7cbf83c9761be8634d3129"
+    },
+    "00246070": {
+      "start": 2383984,
+      "end": 2384044,
+      "listed_words": 15,
+      "omitted": {},
+      "listing_sha256": "690b596d2a144d02ce0d655703000bfabecc6d537d7b69b80ae48f772d0b7160"
+    }
+  },
+  "scope": "Raw/listing join only; omitted instruction/control-width analysis required before binding."
+}

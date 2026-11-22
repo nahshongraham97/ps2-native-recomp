@@ -1,0 +1,6 @@
+{
+  "status": "TEST_EXPECTATION_CORRECTED_FROM_ACTUAL_CALLOUT_FLOW",
+  "failed_validation": "validation-01",
+  "measured_binary_sha256": "92dfe23c73058e6e9e9f89ce70cbfb617261be1ead506eb2a669f675a6c79959",
+  "finding": "After action revokes Session, actual1888C0 rereads participant state1 and calls actual18B0D0.18B0D0 refuses missingSession BEFORE returning to171B10 post-menu admission. Therefore the production domain correctly reports aggregate->menu->session, not its own laterforeign_session guard. Preserve this exact route and add a second legitimate callback fixture clearing both actualparticipant states before revocation so source1888C0 skips transitions and exercises the later171B10 guard. No production source changed."
+}

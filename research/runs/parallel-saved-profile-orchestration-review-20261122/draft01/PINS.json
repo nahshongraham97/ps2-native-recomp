@@ -1,0 +1,7 @@
+{
+  "status": "UNCOMMITTED_INITIAL_DRAFT_NOT_FINAL_ACCEPTANCE",
+  "sha256": {
+    "runtime/include/mka/retail_saved_profile_records.hpp": "bfe13744233a3992d07f29d510b003c1c04face5d117e2c5db11a0a31dacaedd",
+    "runtime/src/native/retail_saved_profile_records.cpp": "e185df55f63696da8baf2ebfc85cdbce4464128270ef2bf30d4cfd1805374a9f"
+  }
+}

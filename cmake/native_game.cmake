@@ -103,6 +103,13 @@ target_include_directories(mka_native_profile_image PUBLIC runtime/include)
 target_compile_features(mka_native_profile_image PUBLIC cxx_std_20)
 add_executable(test_native_retail_profile_image EXCLUDE_FROM_ALL tests/test_retail_profile_image.cpp)
 target_link_libraries(test_native_retail_profile_image PRIVATE mka_native_profile_image)
+add_library(mka_native_saved_profile_child STATIC EXCLUDE_FROM_ALL
+    runtime/src/native/retail_saved_profile_child.cpp)
+target_include_directories(mka_native_saved_profile_child PUBLIC runtime/include)
+target_compile_features(mka_native_saved_profile_child PUBLIC cxx_std_20)
+target_link_libraries(mka_native_saved_profile_child PUBLIC mka_native_saved_profile_defaults)
+add_executable(test_native_retail_saved_profile_child EXCLUDE_FROM_ALL tests/test_retail_saved_profile_child.cpp)
+target_link_libraries(test_native_retail_saved_profile_child PRIVATE mka_native_saved_profile_child mka_native_profile_image)
 add_library(mka_native_profile_aggregate STATIC EXCLUDE_FROM_ALL runtime/src/native/retail_profile_aggregate.cpp)
 target_include_directories(mka_native_profile_aggregate PUBLIC runtime/include)
 target_compile_features(mka_native_profile_aggregate PUBLIC cxx_std_20)
@@ -150,7 +157,7 @@ add_library(mka_native_retail_game_session STATIC EXCLUDE_FROM_ALL
 target_include_directories(mka_native_retail_game_session PUBLIC runtime/include)
 target_compile_features(mka_native_retail_game_session PUBLIC cxx_std_20)
 target_link_libraries(mka_native_retail_game_session PUBLIC Threads::Threads mka_native_retail_task_registry
-    mka_native_profile_aggregate mka_native_profile_preferences)
+    mka_native_profile_aggregate mka_native_profile_preferences mka_native_saved_profile_child)
 add_executable(test_native_retail_main_settings EXCLUDE_FROM_ALL tests/test_retail_main_settings.cpp)
 target_link_libraries(test_native_retail_main_settings PRIVATE mka_native_retail_game_session)
 add_executable(test_native_retail_random EXCLUDE_FROM_ALL tests/test_retail_random.cpp)
@@ -238,6 +245,7 @@ if(WIN32)
         runtime/src/native/retail_profile_preferences_main.cpp
         runtime/src/native/retail_profile_menu.cpp runtime/src/native/retail_profile_resource_ids.cpp
         runtime/src/native/retail_profile_aggregate_main.cpp
+        runtime/src/native/retail_saved_profile_records.cpp runtime/src/native/retail_saved_profile_bindings.cpp
         runtime/src/native/retail_live_scene_main.cpp runtime/src/native/retail_profile_transition.cpp
         runtime/src/native/retail_profile_transition_child.cpp runtime/src/native/retail_profile_entry_decision.cpp
         runtime/src/native/retail_profile_task_retirement.cpp
@@ -319,6 +327,11 @@ if(WIN32)
     target_link_libraries(test_native_retail_profile_entry_decision PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_profile_resource_ids EXCLUDE_FROM_ALL tests/test_retail_profile_resource_ids.cpp)
     target_link_libraries(test_native_retail_profile_resource_ids PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_saved_profile_records EXCLUDE_FROM_ALL tests/test_retail_saved_profile_records.cpp)
+    target_link_libraries(test_native_retail_saved_profile_records PRIVATE mka_native_retail_startup)
+    add_custom_command(TARGET test_native_retail_saved_profile_records POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2>
+        $<TARGET_FILE_DIR:test_native_retail_saved_profile_records> VERBATIM)
     add_executable(test_native_retail_profile_aggregate_main EXCLUDE_FROM_ALL tests/test_retail_profile_aggregate_main.cpp)
     target_link_libraries(test_native_retail_profile_aggregate_main PRIVATE mka_native_retail_startup)
     add_executable(test_native_profile_required_effects EXCLUDE_FROM_ALL tests/test_native_profile_required_effects.cpp)

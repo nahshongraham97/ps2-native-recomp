@@ -1,0 +1,5 @@
+{
+  "status": "REVIEW_WRAPPER_FAILED_MISSING_OPTIONAL_RAW_BINARY",
+  "script_sha256": "48651d2cc4508380d19cf437cc766048e051bf293ba0e1bd3e72c94b071f952c",
+  "reason": "The receipt original raw executable path is absent. The exact executable is retained losslessly as committed child.exe.gz and its decompressed bytes matched the measured binary hash. Correct authentication to distinguish retained compressed bytes from a current raw path; no runtime test failed/repeated."
+}

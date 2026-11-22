@@ -1,0 +1,38 @@
+004eee60	e0ffbd27	addiu sp,sp,-0x20
+004eee64	6600023c	lui v0,0x66
+004eee68	0000bfff	sd ra,0x0(sp)
+004eee6c	84004290	lbu v0,0x84(v0)
+004eee70	7c170200	dsll32 v0,v0,0x1d
+004eee74	fe170200	dsrl32 v0,v0,0x1f
+004eee78	03004050	beql v0,zero,0x004eee88
+004eee7c	1c00a527	_addiu a1,sp,0x1c
+004eee80	1a000010	b 0x004eeeec
+004eee84	01000224	_li v0,0x1
+004eee88	f416090c	jal 0x00245bd0
+004eee8c	00000000	_nop
+004eee90	00004290	lbu v0,0x0(v0)
+004eee94	01004230	andi v0,v0,0x1
+004eee98	03004014	bne v0,zero,0x004eeea8
+004eee9c	00000000	_nop
+004eeea0	12000010	b 0x004eeeec
+004eeea4	01000224	_li v0,0x1
+004eeea8	6600023c	lui v0,0x66
+004eeeac	84004290	lbu v0,0x84(v0)
+004eeeb0	01004230	andi v0,v0,0x1
+004eeeb4	08004050	beql v0,zero,0x004eeed8
+004eeeb8	12900434	_ori a0,zero,0x9012
+004eeebc	fc020d0c	jal 0x00340bf0
+004eeec0	00000000	_nop
+004eeec4	03004014	bne v0,zero,0x004eeed4
+004eeec8	00000000	_nop
+004eeecc	07000010	b 0x004eeeec
+004eeed0	01000224	_li v0,0x1
+004eeed4	12900434	ori a0,zero,0x9012
+004eeed8	44bb040c	jal 0x0012ed10
+004eeedc	00000000	_nop
+004eeee0	02004050	beql v0,zero,0x004eeeec
+004eeee4	2d100000	_move v0,zero
+004eeee8	01000224	li v0,0x1
+004eeeec	0000bfdf	ld ra,0x0(sp)
+004eeef0	0800e003	jr ra
+004eeef4	2000bd27	_addiu sp,sp,0x20

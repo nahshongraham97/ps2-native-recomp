@@ -1,0 +1,24 @@
+{
+  "status": "PASS_CORRECTED_CHILD_VALUE_SOURCE_AND_COMPONENT",
+  "candidate": "534f9fcf10f8309044c3d38f0a69754a0bcfddf3",
+  "artifact_blobs": 216,
+  "measured_source_files": 9,
+  "source_views": 60,
+  "listed_words": 7456,
+  "decoded_nonzero_omissions": {
+    "0x245e84": "0000458e",
+    "0x4eea2c": "2da80000"
+  },
+  "binary_sha256": "6e65f36d18540f8b3fc944741fba30d0ff9e333e353e82a8c88c1ee797be32aa",
+  "raw_original_binary_present": false,
+  "exact_executable_retained_compressed": true,
+  "source_correction": "245E84 is an unreachable duplicateLW; the candidate receipt role wording is superseded by root SOURCE_JOIN.json control-flow proof. The original word/actual LW decode remain correct.",
+  "auxiliary_path_limitation": "Older readOnly private-project commands reused another private session settings/cache/temp; no master project used. Kept as a limitation, not exclusive isolation proof.",
+  "source_defaults_only": true,
+  "loaded_import": "REQUIRED_REFUSAL",
+  "parent_main_binding": false,
+  "game_run": false,
+  "frames": [],
+  "audio": [],
+  "acceptance": "OPEN"
+}

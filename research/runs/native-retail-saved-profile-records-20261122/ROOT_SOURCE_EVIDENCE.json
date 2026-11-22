@@ -1,0 +1,19 @@
+{
+  "files": {
+    "research/runs/native-retail-saved-profile-records-20261122/source-01/00171b10.asm": "e4a1802f06d7d7b27c92b8cc4e9ff394c754b7df7232c33e8086a681c5505dba",
+    "research/runs/native-retail-saved-profile-records-20261122/source-01/00171b10.c": "900e20e364e8c39932bbf407638bd1964ad000f4310b04c0c2dcd7c6cf4a780e",
+    "research/runs/native-retail-saved-profile-records-20261122/source-01/00245cb0.asm": "a106be63fcab189cf9fed72d3140a731c9eb62be3b0312bea97ff802d17d3da9",
+    "research/runs/native-retail-saved-profile-records-20261122/source-01/00245cb0.c": "31650dd87a245a675a02d560085ac5f0721fc4ca41d0802629b32b7d41c307c3",
+    "research/runs/native-retail-saved-profile-records-20261122/source-01/00245dd0.asm": "aaaf0376c0563c61a7f849d7769da1b6759e962e3c7cbf83c9761be8634d3129",
+    "research/runs/native-retail-saved-profile-records-20261122/source-01/00245dd0.c": "86fdc0f81aa72791d449d8729cc03b312d2ec729edc07ad710baedcca9f69b59",
+    "research/runs/native-retail-saved-profile-records-20261122/source-01/00246070.asm": "690b596d2a144d02ce0d655703000bfabecc6d537d7b69b80ae48f772d0b7160",
+    "research/runs/native-retail-saved-profile-records-20261122/source-01/00246070.c": "b994f5510109da97d1749090e8f9fe47d55adf78b54ec7f8077638e7bb3918bb",
+    "research/runs/native-retail-saved-profile-records-20261122/source-01/batch-report.txt": "f511561ef53bb2c90e73aa45af19d497e36ea12a43432e78611a59656f66f79b",
+    "research/runs/native-retail-saved-profile-records-20261122/source-01/calls.tsv": "cb8962761f0d31249c03e4ca4eba8c7a7f1cb1a7e685fa0032b77426d13bd0a0",
+    "research/runs/native-retail-saved-profile-records-20261122/source-01/identity.txt": "4988f8e3fd2bcaf3998344a2472658838c3a966e06067fef0fd4f43d8c177404",
+    "research/runs/native-retail-saved-profile-records-20261122/headless-console.log": "45e406e05ddc5c8300261cf362afbba2f2b4c3f9cd183badbdd578dc73372f89",
+    "research/runs/native-retail-saved-profile-records-20261122/headless.log": "4121a2513e5789598330ee81ce7551a10f227ff527b6b8d174eb5c93ddc7b367",
+    "research/runs/native-retail-saved-profile-records-20261122/script.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "scope": "Original privateGhidra export and console logs; raw source data, never runtime code/instructions. SOURCE_JOIN.json authenticates original words."
+}

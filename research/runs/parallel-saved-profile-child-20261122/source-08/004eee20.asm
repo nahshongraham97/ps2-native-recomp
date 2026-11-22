@@ -1,0 +1,15 @@
+004eee20	e0ffbd27	addiu sp,sp,-0x20
+004eee24	0000bfff	sd ra,0x0(sp)
+004eee28	f416090c	jal 0x00245bd0
+004eee2c	1c00a527	_addiu a1,sp,0x1c
+004eee30	00004390	lbu v1,0x0(v0)
+004eee34	01006330	andi v1,v1,0x1
+004eee38	03006010	beq v1,zero,0x004eee48
+004eee3c	00000000	_nop
+004eee40	03000010	b 0x004eee50
+004eee44	bc054224	_addiu v0,v0,0x5bc
+004eee48	6400023c	lui v0,0x64
+004eee4c	886e4224	addiu v0,v0,0x6e88
+004eee50	0000bfdf	ld ra,0x0(sp)
+004eee54	0800e003	jr ra
+004eee58	2000bd27	_addiu sp,sp,0x20

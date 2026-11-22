@@ -1,0 +1,23 @@
+{
+  "status": "PASS_REVIEWED_SOURCE_PINS_AND_SAVED_CLIENTS",
+  "review_commit": "6ea32ac78548a732701d7e1fed7cf9374b352b61",
+  "review_schema": "AUTHENTICATION has validation-02/03 dicts;03 source_count880,manifest_matches true,source_mismatches empty,exact64 true,current_binaries map7. No producer status label invented.",
+  "review_source_paths": {
+    "cmake/native_game.cmake": "89f8f6436f5816b6063dbd5161449f129f3a8487f117e4551c6d4d24a42690b0",
+    "recomp/native_startup_codegen.cpp": "2299f08433ec0fa7ab4973d85d933fc49606aa208abe3da023d81c9ee6a526d8",
+    "runtime/include/mka/retail_game_session.hpp": "b89a1fa8da46be92a77cc160b08b7fc1a655a3cbca82c5e0db0e759826a1fddd",
+    "runtime/src/native/retail_game_session.cpp": "4c554a696d86c32935cb8b4443a4b448a091fe1a06c1183995ebe1c095338d53",
+    "runtime/include/mka/retail_saved_profile_records.hpp": "dfcb5aabf26cd0b73d890a5148da752aff7c181ad49693425d9f7a915ad789ba",
+    "runtime/src/native/retail_saved_profile_records.cpp": "7fedf19b1c0d2f2a5fda3b748bf63f007b8c1acea963c07713b92a33f2d38723",
+    "runtime/src/native/retail_saved_profile_bindings.cpp": "53763e9d84bb30c96903bcdd4dc06530c39ceb03d1db80e292a24a040e81cd02",
+    "runtime/include/mka/retail_saved_profile_child.hpp": "d937f03781464d3f022303fd1ff6ad4b62a92465bca65c380b8f7b427e854ab8",
+    "runtime/src/native/retail_saved_profile_child.cpp": "f19c50d7d26db5d01b9a988dc9a12c77f25e08bb6f48a50a37beeda6c29f2241",
+    "tests/test_retail_saved_profile_records.cpp": "7a64a9db80a119dc6c5e2f6ca98597983720644510b1d0eed3831739795df881",
+    "tests/test_retail_saved_profile_child.cpp": "f8cac8491d4ea501c9f0e2ebb866b86809308f3c4973efd963d3884d15ace9a0"
+  },
+  "review_receipt_sha256": "ed28776f4bd158610582ed1e68113914ccb261a766e5c68fee003a9f2311024f",
+  "review_md_sha256": "2d82015b2bb7bb5b2ec6eed691f94710a2b0d2a16fa3cf039bb8a12a00b48fc1",
+  "scope": "Read-only source review and saved-result authentication only; no reviewer test rerun, no publication/gameplay proof.",
+  "canonical_validation": "validation-03:1freshrecordclient+6exactunchangedvalidation02results",
+  "remaining": "Loaded import,required menu descendants,and fullnativegame acceptance OPEN"
+}

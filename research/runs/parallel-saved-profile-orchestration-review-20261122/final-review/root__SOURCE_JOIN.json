@@ -1,0 +1,194 @@
+{
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "language": "r5900:LE:32:default",
+  "segments": [
+    {
+      "offset": 256,
+      "address": 1048576,
+      "file_size": 5561984,
+      "memory_size": 7096448
+    },
+    {
+      "offset": 5562240,
+      "address": 8145024,
+      "file_size": 0,
+      "memory_size": 1131008
+    },
+    {
+      "offset": 5562240,
+      "address": 8145024,
+      "file_size": 0,
+      "memory_size": 2097536
+    },
+    {
+      "offset": 5562240,
+      "address": 8145024,
+      "file_size": 0,
+      "memory_size": 1867392
+    },
+    {
+      "offset": 5562240,
+      "address": 10242560,
+      "file_size": 0,
+      "memory_size": 0
+    }
+  ],
+  "functions": {
+    "00171b10": {
+      "start": 1514256,
+      "end": 1514536,
+      "listed_words": 70,
+      "omitted": {},
+      "listing_sha256": "e4a1802f06d7d7b27c92b8cc4e9ff394c754b7df7232c33e8086a681c5505dba"
+    },
+    "00245cb0": {
+      "start": 2383024,
+      "end": 2383308,
+      "listed_words": 71,
+      "omitted": {},
+      "listing_sha256": "a106be63fcab189cf9fed72d3140a731c9eb62be3b0312bea97ff802d17d3da9"
+    },
+    "00245dd0": {
+      "start": 2383312,
+      "end": 2383976,
+      "listed_words": 165,
+      "omitted": {
+        "00245e84": "0000458e"
+      },
+      "listing_sha256": "aaaf0376c0563c61a7f849d7769da1b6759e962e3c7cbf83c9761be8634d3129"
+    },
+    "00246070": {
+      "start": 2383984,
+      "end": 2384044,
+      "listed_words": 15,
+      "omitted": {},
+      "listing_sha256": "690b596d2a144d02ce0d655703000bfabecc6d537d7b69b80ae48f772d0b7160"
+    }
+  },
+  "scope": "Raw/listing join only; omitted instruction/control-width analysis required before binding.",
+  "status": "PASS_ORIGINAL_PROFILE_ORCHESTRATION_WORDS_AND_FLOW",
+  "full_words": 322,
+  "omitted_245e84": {
+    "original_word": "8E450000",
+    "decoded": "LW a1,0(s2)",
+    "width": "Load32 signed-extended into64; base native source argument mapping is s2.",
+    "role": "Unreachable duplicate after245E7C unconditional branch/delay.245E74 BNEL taken executes245E78 load and targets245E88; not-taken annuls245E78 and branches via245E7C to246044. No direct branch target enters245E84."
+  },
+  "branch_targets": [
+    {
+      "address": 2383356,
+      "target": 2383412,
+      "opcode": 4
+    },
+    {
+      "address": 2383364,
+      "target": 2383380,
+      "opcode": 4
+    },
+    {
+      "address": 2383372,
+      "target": 2383444,
+      "opcode": 4
+    },
+    {
+      "address": 2383404,
+      "target": 2383452,
+      "opcode": 4
+    },
+    {
+      "address": 2383436,
+      "target": 2383452,
+      "opcode": 4
+    },
+    {
+      "address": 2383444,
+      "target": 2383944,
+      "opcode": 4
+    },
+    {
+      "address": 2383452,
+      "target": 2383940,
+      "opcode": 4
+    },
+    {
+      "address": 2383460,
+      "target": 2383940,
+      "opcode": 4
+    },
+    {
+      "address": 2383468,
+      "target": 2383940,
+      "opcode": 4
+    },
+    {
+      "address": 2383476,
+      "target": 2383496,
+      "opcode": 21
+    },
+    {
+      "address": 2383484,
+      "target": 2383940,
+      "opcode": 4
+    },
+    {
+      "address": 2383520,
+      "target": 2383628,
+      "opcode": 4
+    },
+    {
+      "address": 2383528,
+      "target": 2383628,
+      "opcode": 1
+    },
+    {
+      "address": 2383540,
+      "target": 2383628,
+      "opcode": 4
+    },
+    {
+      "address": 2383548,
+      "target": 2383628,
+      "opcode": 1
+    },
+    {
+      "address": 2383560,
+      "target": 2383628,
+      "opcode": 4
+    },
+    {
+      "address": 2383628,
+      "target": 2383644,
+      "opcode": 20
+    },
+    {
+      "address": 2383840,
+      "target": 2383700,
+      "opcode": 5
+    }
+  ],
+  "initialization_order": [
+    "Validate existing native save storage before any profile mutation (original225000).",
+    "For logical parents0then1: status=-1; for children0..7 clearFULLin-use word in call-delay before245CB0 child reset.",
+    "Clear parent byte12 in2432A0 call delay; actual same-Session aggregate/menu before2955D0 preferences.",
+    "Only after both parent loops: status(parent0)=1 then status(parent1)=1.",
+    "No active-child reset/assignment writes in171B10."
+  ],
+  "reset_order": [
+    "246070 calls245DD0 with signed source0then1.",
+    "245DD0 first281830 captures actual role control reference. Only sourceplayer0/1 admitted.",
+    "Load signed32 slot/index. Release in-use ONLYwhen slot0..1,index0..7; guards also explicitly reject-1.",
+    "245F08 clears in-use BEFORE245F14 capturedrole control; null role reference skips just that clear.",
+    "245F1C..246018 resets inlinechild body through sameleafdata/order as245CB0; complete child semantic recovery belongs to child candidate.",
+    "246018 clears neutral status32,246020 slot=-1,24602C call-delay index=-1,actual2817B0 uses SAMElive participant.",
+    "246040 writes source file-backed playerstatus8; no invented active contextword or dirtybool."
+  ],
+  "native_plan": "Session-owned stablelogical card/child/active nodes and oneWorking.control40. Existing aggregate,active/staging profile-resource ID owners and inputrole/mapping owners are reused. No guest byte record,hardwaretransport/capacity or fake loaded decoder.",
+  "source_birth_receipt": "Parent research/runs/native-retail-saved-profile-metadata-source-20261122/BIRTHS_AND_REUSE.json",
+  "implemented": false,
+  "compiled": false,
+  "tested": false,
+  "game_run": false,
+  "frames": [],
+  "audio": [],
+  "acceptance": "OPEN"
+}

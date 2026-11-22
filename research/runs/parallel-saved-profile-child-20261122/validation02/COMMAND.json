@@ -1,0 +1,13 @@
+[
+  "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+  "-std=c++20",
+  "-O0",
+  "-g",
+  "-Iruntime/include",
+  "tests/test_retail_saved_profile_child.cpp",
+  "runtime/src/native/retail_saved_profile_child.cpp",
+  "runtime/src/native/retail_saved_profile_defaults.cpp",
+  "runtime/src/native/retail_profile_image.cpp",
+  "-o",
+  "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-profile-child\\research\\runs\\parallel-saved-profile-child-20261122\\validation02\\child.exe"
+]

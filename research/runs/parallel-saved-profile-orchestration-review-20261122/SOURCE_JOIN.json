@@ -1,0 +1,77 @@
+{
+  "ELF_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "functions": {
+    "source-01/00171b10.asm": {
+      "begin": "0x171b10",
+      "end_exclusive": "0x171c28",
+      "listed_words": 70,
+      "listing_sha256": "e4a1802f06d7d7b27c92b8cc4e9ff394c754b7df7232c33e8086a681c5505dba",
+      "file_offset": 465936,
+      "span_sha256": "2f17999a01b6652fe9ead022a49c175df45b68e0ffa7de6f86a8f5d9344018d6",
+      "omitted": {}
+    },
+    "source-01/00183330.asm": {
+      "begin": "0x183330",
+      "end_exclusive": "0x183480",
+      "listed_words": 84,
+      "listing_sha256": "f9a5d06468073bfcf82e8c21dfdedd339399067197757e2efbbd5c3460ebf6bc",
+      "file_offset": 537648,
+      "span_sha256": "882e6bcf1fb86c83ca9549084038d7a9f315e82d014331055639e152bbec5e08",
+      "omitted": {}
+    },
+    "source-01/00183840.asm": {
+      "begin": "0x183840",
+      "end_exclusive": "0x183a28",
+      "listed_words": 116,
+      "listing_sha256": "575fecb2a511d15a11f3b04a715ae879021b00a6d36ab331842b7b2dbd088779",
+      "file_offset": 538944,
+      "span_sha256": "1cc553698e4d88d66f18a324186e945d2131964074b24f2a09a5dc3b25636af5",
+      "omitted": {
+        "0x1838cc": {
+          "bytes": "ffff0224",
+          "decode": "ADDIU v0,zero,-1"
+        },
+        "0x1838e4": {
+          "bytes": "ffff0224",
+          "decode": "ADDIU v0,zero,-1"
+        },
+        "0x1838fc": {
+          "bytes": "2d100000",
+          "decode": "DADDU v0,zero,zero"
+        },
+        "0x183934": {
+          "bytes": "a4a1928f",
+          "decode": "LW s2,-0x5e5c(gp)"
+        },
+        "0x183984": {
+          "bytes": "a8a1928f",
+          "decode": "LW s2,-0x5e58(gp)"
+        },
+        "0x1839d4": {
+          "bytes": "2d100000",
+          "decode": "DADDU v0,zero,zero"
+        }
+      }
+    },
+    "source-01/00245070.asm": {
+      "begin": "0x245070",
+      "end_exclusive": "0x2451e8",
+      "listed_words": 94,
+      "listing_sha256": "32834252a3f7a42fcb7eaa7a6b5b1f772af486e729a14750ed10fd8796384e88",
+      "file_offset": 1331568,
+      "span_sha256": "19eeb081a0c6264780247a94fdc211038220975d4d583781bff6f98a31787368",
+      "omitted": {}
+    },
+    "source-01/002451f0.asm": {
+      "begin": "0x2451f0",
+      "end_exclusive": "0x245368",
+      "listed_words": 94,
+      "listing_sha256": "07b3e911bb5505bf1dfabbdc031a0a4018c879a753dda70118425b3307576e91",
+      "file_offset": 1331952,
+      "span_sha256": "9e4577660659c32eed2e2460b425234fc4620afd669adef0e4d2afc566aa7d3e",
+      "omitted": {}
+    }
+  },
+  "listed_words": 458,
+  "nonzero_omission_blockers": []
+}

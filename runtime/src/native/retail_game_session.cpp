@@ -1,4 +1,5 @@
 #include "mka/retail_game_session.hpp"
+#include "mka/retail_saved_profile_records.hpp"
 #include <new>
 #include <utility>
 
@@ -8,6 +9,7 @@ NativeRetailGameSession::NativeRetailGameSession(std::shared_ptr<NativeRetailGam
     std::unique_ptr<NativeRetailTaskDomain> task_domain) noexcept
     : controls_(std::move(controls)), settings_(std::move(settings)),
       task_domain_(std::move(task_domain)) {}
+NativeRetailGameSession::~NativeRetailGameSession() = default;
 std::shared_ptr<NativeRetailGameSession> NativeRetailGameSession::create(RetailGameSessionFailure& failure) noexcept {
     failure = {};
     try {
@@ -29,8 +31,12 @@ std::shared_ptr<NativeRetailGameSession> NativeRetailGameSession::create(RetailG
             failure.operation = "native persistent task domain construction";
             return {};
         }
-        return std::shared_ptr<NativeRetailGameSession>(new NativeRetailGameSession(
+        auto session = std::shared_ptr<NativeRetailGameSession>(new NativeRetailGameSession(
             std::move(controls), std::move(settings), std::move(task_domain)));
+        // Complete the persistent BSS-born native record owner before Session
+        // publication. It is never a temporary171B10/Main-local transaction.
+        session->saved_profile_records_.reset(new NativeRetailSavedProfileRecords(*session));
+        return session;
     } catch (const std::bad_alloc&) {
         failure.kind = RetailGameSessionError::allocation;
         failure.operation = "native game session allocation";
@@ -107,6 +113,16 @@ NativeRetailProfileAggregate* NativeRetailGameSession::profile_aggregate(
     RetailGameSessionFailure& failure) noexcept {
     if (!validate_current_thread(failure)) return nullptr;
     return &profile_aggregate_;
+}
+NativeRetailSavedProfileRecords* NativeRetailGameSession::saved_profile_records(
+    RetailGameSessionFailure& failure) noexcept {
+    if (!validate_current_thread(failure)) return nullptr;
+    if (!saved_profile_records_) {
+        failure.kind = RetailGameSessionError::profile_records;
+        failure.operation = "actual persistent native saved profile records";
+        return nullptr;
+    }
+    return saved_profile_records_.get();
 }
 NativeRetailSceneReference* NativeRetailGameSession::live_scene_reference(
     RetailGameSessionFailure& failure) noexcept {
