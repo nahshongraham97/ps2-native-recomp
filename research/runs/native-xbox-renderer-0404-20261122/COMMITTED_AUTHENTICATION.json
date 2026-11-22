@@ -1,0 +1,17 @@
+{
+  "status": "AUTHENTICATED_COMMITTED_NATIVE0404_READ_RESOURCE",
+  "runtime_source_commit": "128778d7851e1d0635f98ed67875ef1097f1f6e7",
+  "runtime_tree": "bbe88873617d5039af3b4527b940a9d6386df2ec",
+  "source_files": 909,
+  "all_measured_source_blobs_match_commit": true,
+  "source_manifest_sha256": "8d9123c74ee883bbb6723d38d5a1a038d3da74e1c90f7e56d345adc6ff7ae044",
+  "component_authentication_sha256": "a87ecfa104d7c5a13977c8b32b7ead005f2d4152ed8cb1f9368730c12c3cbee4",
+  "implementation_record_sha256": "d13d203806a3bd04f59bcfaaa78a2c6982384e762e688d55da76c7aab6678665",
+  "verification_scope": "recorded precommit component executions authenticated against identical committed sources; not a fresh-checkout rebuild",
+  "retained_regressions": "seven unchanged binaries/production inputs; unrelated expanded new test differs",
+  "read_only_scope": true,
+  "full_stream_renderer_game": "OPEN",
+  "fresh_checkout_build": false,
+  "game_run": false,
+  "acceptance": "OPEN"
+}

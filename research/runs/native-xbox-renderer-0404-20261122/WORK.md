@@ -186,3 +186,12 @@ limits, the skipped symlink branch and test-only fault hooks explicitly.
 Strict staged path/byte/LF/no-asset checks, commit and push are one
 failure-propagating process. IMPLEMENTATION.md consolidates authority/
 selected scope/native lifetimes/independent expectations and OPEN gates.
+
+Published runtime128778d7851e1d0635f98ed67875ef1097f1f6e7 to origin/main.
+All169 approved authored paths passed staging/byte/LF/no-asset gates; all909
+measured source blobs match committed source exactly. Eight canonical target
+identities and exact53->51 authenticate; seven unchanged regressions and all
+historical/skipped limitations remain explicit. COMMITTED_AUTHENTICATION.json
+binds recorded precommit executions to identical committed sources, not a
+fresh-checkout/game build. Next publish that receipt and parent live status;
+then0405's real resource, Xbox first. Owner:no action; no run remains active.
