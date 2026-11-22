@@ -50,6 +50,24 @@ There is no game/window/physical endpoint/frame/audio result. Native online,
 original sound direct/worker admission and semantic parameters/envelopes,
 remaining startup/reset effects, GPU and full-game acceptance remain OPEN.
 
-Owner: no action. Primary next: publish the correction/evidence and continue
-original sound play producers. Clean-source provenance is not yet recorded
-for this rename; validation-01 accurately records its precommit dirty state.
+Published runtime source: a6c1e71c9a9cbfa5248f395be2ecd151d93dd831.
+SOURCE_PUBLICATION.json and PUBLISHED_SOURCE_IDENTITY.json authenticate all832
+measured source files against that committed tree:633 byte-identical files
+and199 existing canonical-CRLF/committed-LF pairs. The two changed runtime
+files are byte-identical to their committed blobs. This authenticates the
+precommit compile; it is not a fresh clean rebuild. The measurement's dirty
+state is preserved, and unchanged audio clients were not rerun or reclassified.
+
+GHIDRA_MASTER_LOCKS.json confirms all three saved masters are free of project
+locks at this inspection. No lock was removed, master opened, shared bridge
+switched, or session left running by this check. Prior overlapping private
+PS2/Xbox session verification remains in the parent preparation record.
+
+Owner: no action. Primary next: original direct/worker sound admission and
+semantic parameter producers, then the remaining connected roadmap.
+
+Publication wrapper failure: the first evidence-phase attempt stopped before
+staging because the tracked-diff guard omitted its own WORK.md update. The
+failure receipt is preserved. The guard now checks the explicit runtime plus
+owned-record approved set; it still rejects unrelated edits and staged paths.
+This wrapper error does not change the passed compile/source evidence.

@@ -1,0 +1,18 @@
+{
+  "published_source_commit": "a6c1e71c9a9cbfa5248f395be2ecd151d93dd831",
+  "published_ref": "origin/main",
+  "source_identity_receipt": "PUBLISHED_SOURCE_IDENTITY.json",
+  "source_identity_sha256": "7f778c29b8c8c96e3e695c86d5b0151d9ecc261c6b1674af93be6e04a2dc2a85",
+  "measured_receipt": "validation-01/VERIFICATION.json",
+  "measured_receipt_sha256": "8b91847f4270be260bd32778303c2eab4bf73ba5a83ad664c2e42bbe012f1d56",
+  "measured_source_files": 832,
+  "byte_identical": 633,
+  "newline_only_pairs": 199,
+  "observed_compile_was_precommit": true,
+  "fresh_clean_build": false,
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "acceptance": "OPEN"
+}

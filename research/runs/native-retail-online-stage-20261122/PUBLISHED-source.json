@@ -1,0 +1,23 @@
+{
+  "phase": "source",
+  "commit": "a6c1e71c9a9cbfa5248f395be2ecd151d93dd831",
+  "remote_main": "a6c1e71c9a9cbfa5248f395be2ecd151d93dd831",
+  "staged_paths": [
+    "research/runs/native-retail-online-stage-20261122/ARCHIVES.json",
+    "research/runs/native-retail-online-stage-20261122/GHIDRA.json",
+    "research/runs/native-retail-online-stage-20261122/GHIDRA_MASTER_LOCKS.json",
+    "research/runs/native-retail-online-stage-20261122/ORIENTATION.json.gz",
+    "research/runs/native-retail-online-stage-20261122/SOURCE_DATA_JOIN.json",
+    "research/runs/native-retail-online-stage-20261122/SOURCE_JOIN.json",
+    "research/runs/native-retail-online-stage-20261122/WORK.md",
+    "research/runs/native-retail-online-stage-20261122/join.py",
+    "research/runs/native-retail-online-stage-20261122/publish.py",
+    "research/runs/native-retail-online-stage-20261122/validation-01/LINK.json",
+    "research/runs/native-retail-online-stage-20261122/validation-01/LINK.log.gz",
+    "research/runs/native-retail-online-stage-20261122/validation-01/SOURCE_FILES.json",
+    "research/runs/native-retail-online-stage-20261122/validation-01/VERIFICATION.json",
+    "research/runs/native-retail-online-stage-20261122/verify.py",
+    "runtime/include/mka/retail_main.hpp",
+    "runtime/src/native/retail_main.cpp"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "argv": ["python", "research/runs/native-retail-online-stage-20261122/publish.py", "evidence"],
+  "exit": 1,
+  "failure": "AssertionError at tracked diff subset check before staging",
+  "cause": "Publication helper allowed the runtime paths but omitted its own already committed WORK.md update from the tracked-diff guard",
+  "runtime_compile_result": "Unchanged; exact37-effect negative link passed",
+  "staging_commit_or_push_performed": false,
+  "correction": "Check tracked changed paths against the explicit runtime plus owned-record approved path set; the final staged-path subset guard remains enforced"
+}

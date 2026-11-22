@@ -14,10 +14,10 @@ def git(*argv):
 assert git('branch', '--show-current') == 'main'
 assert not git('diff', '--cached', '--name-only')
 runtime = ['runtime/include/mka/retail_main.hpp', 'runtime/src/native/retail_main.cpp']
-assert set(git('diff', '--name-only').splitlines()).issubset(set(runtime))
 owned = sorted(p.relative_to(fork).as_posix() for p in record.rglob('*') if p.is_file()
                and p.suffix in ('.json', '.gz', '.md', '.py') and p.name != 'ORIENTATION.json')
 approved = set(runtime + owned)
+assert set(git('diff', '--name-only').splitlines()).issubset(approved)
 for name in approved:
     path = fork/name
     if path.suffix != '.gz':
