@@ -52,6 +52,15 @@ compile and check directly affected changes without rechecking unchanged
 components unless a failure or material concern requires it. Never replace
 production progress with isolated wrappers, repeated reports or test counts.
 
+## Xbox-first recovery and HD presentation rules
+
+Per the architecture plan in parent ROADMAP.md and PORT_STATUS.md:
+1. **Preserve existing native foundation**: Native files, content volume, async reads, heaps, Session, tasks, Main reentry, clocks, typed profiles, input sampling, audio decoders/jobs, textures/fonts, and GPU resources carry forward. Do not replace them with an Xbox runtime or emulated device.
+2. **Reconcile profile and player records**: Transfer field meanings, not structure offsets. Preserve existing PS2 save file decoding independently of runtime layout. Establish player limits per mode (do not impose 2-player limit where 4-player is required, such as Motor Kombat).
+3. **Reconcile numerical behavior**: Distinguish gameplay-critical arithmetic from rendering arithmetic. Xbox x87/SSE routines can replace complex EE math only when proven functionally or visually equivalent without weakening parity.
+4. **Enforce explicit asset provenance**: Do not assume matching filenames mean matching bytes. Distinguish version-specific decoders from shared native objects.
+5. **HD presentation policy**: Use Xbox 720p as the HD reference. Keep logical coordinates (640×448), render target resolution, and presentation resolution distinct. Apply widescreen camera projections instead of 4:3 stretching. Maintain simulation timing strictly independent of render resolution.
+
 After each code/config change, test result, verified finding, decision,
 blocker, or rollback, update every affected active document before beginning
 the next implementation step. Parent `PORT_STATUS.md` owns live state;
