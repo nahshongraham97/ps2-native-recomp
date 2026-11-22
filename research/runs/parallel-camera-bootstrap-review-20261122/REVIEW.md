@@ -8,7 +8,7 @@ Target runtime/include/mka/retail_camera_world.hpp exposes NativeRetailRenderCam
 
 The target NativeRetailGameSession is already noncopyable;that does not prevent copying its publicly copyable member type. Private frozen-header static assertions prove both public copy and move construction are available. COPYABILITY_FROZEN.json pins compiler/header and successful syntax-only result. Fix:friend-Session-only construction and explicitly delete copy/move construction/assignment,or an equivalently proved lifetime-safe design. Add ownership type assertions to the actual compiled client. The issue was sent to primary and author before integration.
 
-Author reports correctionfeb629e8fcd4dabefef1cb687393459475d3c74f,parentf202066,with private friend construction/deleted operations,five traits and four fresh clients/exact37 refusal. AUTHOR_CORRECTION.patch.gz captures the exact source/test diff for the reported fix. Static inspection confirms it removes the flagged construction/copy path. This review's complete saved-result audit remains forf202;the author's new runtime result set is not independently authenticated here.
+Author reports correctionfeb629e8fcd4dabefef1cb687393459475d3c74f,parentf202066,with private friend construction/deleted operations,five traits and four fresh clients/exact37 refusal. AUTHOR_CORRECTION.patch.gz captures the exact source/test diff for the reported fix. Static inspection confirms it removes the flagged construction/copy path. The original complete saved-result audit below remains frozen forf202. The subsequent independent correction/source/result authentication is recorded separately in correction/REVIEW.md and correction/AUDIT.json.
 
 ## Source/control review
 
