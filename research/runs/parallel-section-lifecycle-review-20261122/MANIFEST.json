@@ -1,0 +1,20 @@
+{
+  ".gitattributes": "e97602ab9cac70102245345c5ab0fc9830df8b17f1072b188265a662a3a547ae",
+  "AUTHENTICATION.json": "b27503e7093b3b4fcf6c67a4345feb45b9e22307fefa70214340045291167caf",
+  "author__CLIENTS.json": "63295ef6ee92b79d1e29a0abc33229ae071500c3c61a65ef20345b0f81455b32",
+  "author__SOURCE_CHECK.json": "a83c3ba4a6a4c5504edc6e4d8584f89cb861f7a7cae35914b232fb578d60d04b",
+  "author__WORK.md": "dfeceb872975a588191a8b18f4939be06b79077601ba97506c18fe58a8608817",
+  "cmake__native_game.cmake.gz": "bb8b5d141158884b890456b51166ca05cb66bd413c1f73548c4a232423c47a92",
+  "receipt05__build.json": "c3025c4b1e80274d4804e8782bad93bc2ee8cfd45c762a076f9d281bab2dcb18",
+  "receipt05__native-file.json": "4cd5738565fd3cdc9c99524b4fee51ed575073576dd536f4adc22e68ad74ee4e",
+  "receipt05__package.json": "753f7ed33b2872d5973e089a2bc450525c02a786a49fa140f8c87edbd5a74ed6",
+  "receipt05__read-job.json": "9ed5436b6331f6813d93b979fea9dd04a6b7fedd0c643964d6b76805268c5f49",
+  "REVIEW.md": "0dfd4bac9a43a4967ae80d62248e6a13804e8006a08f157c72cd1c24fab87233",
+  "runtime__include__mka__content_volume.hpp.gz": "fb66ad8f60aeb9c375160c1575f2e09626e8a87593d8b829156be0a63df7ab78",
+  "runtime__include__mka__native_file.hpp.gz": "80217370b03e537a7e42144ea1c790b3f43e3a10835fff6702bc75e43ead805d",
+  "runtime__include__mka__native_file_read_job.hpp.gz": "96849a0bc2ef43e3dc0fd3e65ad1d3824ba92525937187917949dc11f878502d",
+  "runtime__include__mka__retail_package.hpp.gz": "a79da663f7f431ba5dc72005af48e86b37ecc4ed4f704ae4bb07c79b6dd988f1",
+  "runtime__src__native__native_file_read_job.cpp.gz": "986229f0e6f1a677e4e09a2544fc62283d4d35d274b93c58ab8a113438d4745e",
+  "runtime__src__native__retail_package.cpp.gz": "761975c29d5a1c75f0ddb136688e7a4bb1a2dd6022366380b5626f4598f69684",
+  "tests__test_native_file_read_job.cpp.gz": "e93be858d43799af8e71b9488d5e701d04c2a5b25e6d4be183d9b745ce1094f8"
+}

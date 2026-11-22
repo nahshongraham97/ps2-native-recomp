@@ -1,0 +1,253 @@
+{
+  "ARTIFACTS.json": {
+    "checked": 164,
+    "bad": []
+  },
+  "validation-05/SOURCE_FILES.json": {
+    "checked": 872,
+    "bad": []
+  },
+  "INPUTS_TOOLS.json": {
+    "checked": 4,
+    "bad": []
+  },
+  "archives_checked": 51,
+  "clients": [
+    {
+      "binary": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-lifecycle\\b-io\\frozen05\\test_native_file_read_job.exe",
+      "sha256": "a9a86676f0341e3e8bd986f6d171f9460c3693098f6a9290102c898f5967045f",
+      "executed_05": true
+    },
+    {
+      "binary": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-lifecycle\\b-io\\frozen05\\test_native_file.exe",
+      "sha256": "08ef50449cc3adfa73dd8061804ea9ca41367ffe6c7cf6bfed1dab8117238fcd",
+      "executed_05": true
+    },
+    {
+      "binary": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-lifecycle\\b-io\\frozen05\\test_native_retail_package.exe",
+      "sha256": "40c88af2280f2c1c7f4685445ce60ac433ba1b61713fab4a5acd862be86da79b",
+      "executed_05": true
+    },
+    {
+      "binary": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-lifecycle\\b-io\\frozen05\\test_native_retail_system_art_cpu.exe",
+      "sha256": "a18dd6f6ee47d5f7fad20bfcabd32da014189b85dbcf7b5d0530b907ca2c3fc0",
+      "executed_05": false
+    }
+  ],
+  "newline_pairs": [
+    {
+      "path": "cmake/native_game.cmake",
+      "measured_raw_sha256": "f5ff42ef82d52573beab11e07ad0a766ca3b513fc24c719333dc23d0a7d092cc",
+      "committed_lf_sha256": "c08c1d0496cdd50f018a54f90ca43b25f8e6cd71003b699ee13d71ad3773ea97",
+      "normalization": "CRLF to LF only"
+    },
+    {
+      "path": "runtime/include/mka/content_volume.hpp",
+      "measured_raw_sha256": "a85a67c88c4b702319deda8a51d3f44656e6fb770c918dff222ec0fc383e2193",
+      "committed_lf_sha256": "c973d249844a3844ea774c474f3193a200009ca42927f65b0f58b025984bdfb1",
+      "normalization": "CRLF to LF only"
+    },
+    {
+      "path": "runtime/include/mka/native_file.hpp",
+      "measured_raw_sha256": "b8e443d036ad262b918eb99c1e1cbf3a2e9d2224ff4a06608368f8cd7482b011",
+      "committed_lf_sha256": "50152fd4899c2be5cb467f74c8261f6445758c0f3d7b2e35d030945f27feeffa",
+      "normalization": "CRLF to LF only"
+    },
+    {
+      "path": "runtime/include/mka/native_file_read_job.hpp",
+      "measured_raw_sha256": "0e82651db28d9b63242c188ede00f9a743360ad72c6e1fbd46e2b125f9a2fba1",
+      "committed_lf_sha256": "6b943088959bf32e7e5a676c96ddfade81827f19ac4cfff476a3e8b727104419",
+      "normalization": "CRLF to LF only"
+    },
+    {
+      "path": "runtime/include/mka/retail_package.hpp",
+      "measured_raw_sha256": "9bf0dfa4bb8e629aeec22b8a9b5d97da9132f1fb183e696bd6bf05876d7d5fc6",
+      "committed_lf_sha256": "f80923f8162e2ad5263a6752e3fe12d26b24c4124e32208f1e6c09c73c3c53c4",
+      "normalization": "CRLF to LF only"
+    },
+    {
+      "path": "runtime/src/native/retail_package.cpp",
+      "measured_raw_sha256": "302a45f705f85c1bbe27a17f0a5db46f93ff69f79fdfd97527bfdbaf5d2dbed3",
+      "committed_lf_sha256": "22e65dc2d91ada6a64e7a49582f342a2b066dd197bca0573985fa68ffcc367b5",
+      "normalization": "CRLF to LF only"
+    },
+    {
+      "path": "runtime/src/native/native_file_read_job.cpp",
+      "measured_raw_sha256": "316de502fbf1a68404ab8eb31d19ecc73069741250b88b66b92451c7d797d9ad",
+      "committed_lf_sha256": "d6eb47127b8e60adac79c736c9a7422811c5e7d0597a2c9368b1462963c3546a",
+      "normalization": "CRLF to LF only"
+    },
+    {
+      "path": "tests/test_native_file_read_job.cpp",
+      "measured_raw_sha256": "ebc20a41365c98abb61a7d6527159fa3bbd6e27af52a53c0390f8a0ca4254e67",
+      "committed_lf_sha256": "bc85d34e7d214ad89ac2cb80e42899807a53228a2b1a7d83b59247756f56aed6",
+      "normalization": "CRLF to LF only"
+    }
+  ],
+  "original": {
+    "sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+    "views": {
+      "0019aa30.asm": {
+        "words": 111,
+        "sha256": "b5823b68852e80f6fd5d3acfc3831c19590ce51cf45cf30cdac6e598554f2b21"
+      },
+      "0019c010.asm": {
+        "words": 27,
+        "sha256": "3936bd70e2d511df717df7ea04eb929775b6b58b0f42ee221bd36d08112a7608"
+      },
+      "0019c140.asm": {
+        "words": 58,
+        "sha256": "8ec162161ffd5223f3d6188fa90545813f3150dd0c51cb447218aadd8a1b992e"
+      },
+      "0019c320.asm": {
+        "words": 34,
+        "sha256": "3090a14f6f64530d198cdb620396ced5a7ba3c17c0eed15befeddf7c5ecb0d90"
+      },
+      "0019cad0.asm": {
+        "words": 149,
+        "sha256": "b43b3f9c77cedda7504dfea07e0c4c65dca9cbe3153a535818901269a0698830"
+      },
+      "00219100.asm": {
+        "words": 2,
+        "sha256": "6b6909a88154dc49c327db6265aae651f1d9c4510d48d5b001e73f45cfd0e996"
+      },
+      "00219110.asm": {
+        "words": 18,
+        "sha256": "edab2b6bdebb205826bbc2150c8f1ff5dc9a406823524fd2dcfed4d2fedb5927"
+      },
+      "0026ecb0.asm": {
+        "words": 20,
+        "sha256": "def13493afc974763a9300f2ec87c5ad16a78f12e8b194af7aa7aff298c7f3b0"
+      },
+      "0026ed00.asm": {
+        "words": 2,
+        "sha256": "54c81ab9d7b4878fda753cee7f1b1fa50346a76ad5dcfaf5ea8495535532c857"
+      },
+      "0026ed50.asm": {
+        "words": 5,
+        "sha256": "3361533d0b34005b290469213834390124232e5e456546f06f8cc5b7f0df67c5"
+      },
+      "0026eec0.asm": {
+        "words": 43,
+        "sha256": "050c951cfcd86779c7473298cf86af6b20b9a85a898aa65f7f0ea34b637bc845"
+      },
+      "0026f060.asm": {
+        "words": 2,
+        "sha256": "c1aa850d5295b4fb1680cde752fa17c328842f8f17a708a01e6179a0644dce3b"
+      },
+      "002df470.asm": {
+        "words": 75,
+        "sha256": "520f6f27e2e148c13c464e994e057921391660b9d15894b5d1d1f632afcf127c"
+      },
+      "002dfd10.asm": {
+        "words": 2,
+        "sha256": "34bec81a21d57e75e75a07b61e2cc92b42b048d64be2462494386fe12385c73e"
+      },
+      "002dfe70.asm": {
+        "words": 7,
+        "sha256": "be91ba1ef1075b7eb341f9cca9da69b01118a0d6b1dbe6ee9c4594dbb6196d28"
+      },
+      "002dff50.asm": {
+        "words": 21,
+        "sha256": "f7c1794363967b0118aa2b6d2b9ad947ba23a06f87e331e7ff29d7d8ff62d5ca"
+      },
+      "002dffb0.asm": {
+        "words": 75,
+        "sha256": "31f27c45ff3fb472f4f8b7e86c582cc9a7a6656e637dc623ca1c7672635198b4"
+      },
+      "002e05a0.asm": {
+        "words": 56,
+        "sha256": "f9b4b9eb283599e0127cbf7c5d7db8029ec05d54b81392cf205d5c1559a1a9cc"
+      },
+      "00327120.asm": {
+        "words": 10,
+        "sha256": "a147ef1ea1bbadb7579fa67335c780df10f2fad2b0a9df92659250354cf7827d"
+      },
+      "003271a0.asm": {
+        "words": 14,
+        "sha256": "0dfe4d05d6676bfe2db4fe8ac0c07544fc1428ca8269c681d05b557eb802e060"
+      },
+      "003271e0.asm": {
+        "words": 18,
+        "sha256": "8cb4cedeeee4446cf5f510ee83531d5607daae12894dfecb150aadf062ef7d2c"
+      },
+      "00327230.asm": {
+        "words": 160,
+        "sha256": "c45ddc0c1b429a731658333989041c6fbf02c456f086e279de92dc6cc8ee4cf0"
+      },
+      "003ddc90.asm": {
+        "words": 14,
+        "sha256": "c3f0717e647ca1ec3079bf36f6cf01bb5973d2ed606a28d7cb4ad15f7151efd7"
+      },
+      "003ddcd0.asm": {
+        "words": 133,
+        "sha256": "d3b228eb8457748fa05505b5bd2372580f1c47ef3f56ef38ca106745ab1b1c7d"
+      },
+      "003ddef0.asm": {
+        "words": 64,
+        "sha256": "56afdf0888e14c08a4ebce36a3ee69834874fc59254418364137b8153a67f9a7"
+      },
+      "003de210.asm": {
+        "words": 69,
+        "sha256": "30b1834096fe0af8ad218d062f87b7ba00f379ed5f2939cbc1b555c60c882ec3"
+      },
+      "003de330.asm": {
+        "words": 100,
+        "sha256": "91cd0dc860b483c3bff514ccc2ece1ec531a343674cf1fe6767f64a290118a30"
+      },
+      "003de5b0.asm": {
+        "words": 91,
+        "sha256": "30d8c5a2d7594d555b5bca7fd879594ae9bd73edbb8e638e3709ac793b74b0ee"
+      },
+      "003de890.asm": {
+        "words": 20,
+        "sha256": "8b2c777e82c8e2ad6c2b28351c1800483a99a2f434934153059a0537ff5585ef"
+      }
+    },
+    "listed_full_words": 1400
+  },
+  "receipts05": {
+    "build.json": {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+        "--build",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-lifecycle\\b-io",
+        "--target",
+        "test_native_file_read_job",
+        "test_native_retail_system_art_cpu",
+        "test_native_file",
+        "test_native_retail_package",
+        "-j2"
+      ],
+      "exit": 0
+    },
+    "native-file.json": {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-lifecycle\\b-io\\test_native_file.exe"
+      ],
+      "exit": 0,
+      "binary_sha256": "08ef50449cc3adfa73dd8061804ea9ca41367ffe6c7cf6bfed1dab8117238fcd"
+    },
+    "package.json": {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-lifecycle\\b-io\\test_native_retail_package.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\native-retail-startup-20261120\\connected-retail-entry-01\\package-and-constructors-05\\input-manifests\\package-members.tsv"
+      ],
+      "exit": 0,
+      "binary_sha256": "40c88af2280f2c1c7f4685445ce60ac433ba1b61713fab4a5acd862be86da79b"
+    },
+    "read-job.json": {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-lifecycle\\b-io\\test_native_file_read_job.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-lifecycle\\research\\runs\\parallel-section-lifecycle-20261122\\validation-05\\private-error-root"
+      ],
+      "exit": 0,
+      "binary_sha256": "a9a86676f0341e3e8bd986f6d171f9460c3693098f6a9290102c898f5967045f"
+    }
+  },
+  "cancel_log05": "PASS actual OVERLAPPED native reads, all5 original sysart ranges, cursor/owner/lifetime/clipping/error; polls=50 cancelled=16 completed_race=0; pendingqueue/conversion/cache/Mainwait scheduling still unbound; GPU_context=false visible_window=false presentation=false audio_endpoint=false\r\n",
+  "candidate": "6382224a8a9ca7893cd35e6b9ac7427e6b39c687",
+  "executed_by_reviewer": false
+}
