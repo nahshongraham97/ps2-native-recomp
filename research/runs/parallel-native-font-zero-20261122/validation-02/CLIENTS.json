@@ -1,0 +1,43 @@
+{
+  "cpu": {
+    "argv": [
+      "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-font-zero\\build-font-zero\\test_native_retail_system_art_cpu.exe",
+      "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121",
+      "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-font-zero\\research\\runs\\parallel-native-font-zero-20261122\\validation-02\\disposable-errors"
+    ],
+    "exit": 0,
+    "executable_sha256": "148954dffa9648f33b085e6b97f8123291260c416c9c2b338252de80f39d323c",
+    "log_sha256": "335947b0e66329835adceb39b84a0576bf7cd17a31919abaa042e7b0742be67c",
+    "source_manifest_sha256": "63c097bf45dd3a5b719122c72c638dc4b6c912f2a2f51a5bd216033aaa64b7fd"
+  },
+  "all-atlases": {
+    "argv": [
+      "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-font-zero\\build-font-zero\\test_native_font_atlas_system_art.exe",
+      "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121\\art\\gameart.ssf"
+    ],
+    "exit": 0,
+    "executable_sha256": "46b1bf6ae44f8dba25947298dae8da1347a999134dae3432f50742f3c905b2bb",
+    "log_sha256": "4a2c114e853399426a67da1be3c3ee603237d2e57a8e38643fb6be1a57f2b8b7",
+    "source_manifest_sha256": "63c097bf45dd3a5b719122c72c638dc4b6c912f2a2f51a5bd216033aaa64b7fd"
+  },
+  "atlas-existing": {
+    "argv": [
+      "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-font-zero\\build-font-zero\\test_native_font_atlas.exe",
+      "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-font-zero\\build-font-zero\\font0-original.atlas"
+    ],
+    "exit": 0,
+    "executable_sha256": "20b53fee7fb6f013290a1589ae709788bb0426bbbd93486a81d4db3fe8f92fdc",
+    "log_sha256": "e8284f25478e610f7ade5589880e7a09af39b05281b78bebf6edbdf144cba00b",
+    "source_manifest_sha256": "63c097bf45dd3a5b719122c72c638dc4b6c912f2a2f51a5bd216033aaa64b7fd"
+  },
+  "section-existing": {
+    "argv": [
+      "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-font-zero\\build-font-zero\\test_native_art_section_data.exe",
+      "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-font-zero\\research\\runs\\parallel-native-font-zero-20261122\\validation-02\\disposable-section"
+    ],
+    "exit": 0,
+    "executable_sha256": "3043e606ad6320cceffa98331f082bb0d977d90e9e27caa548b36e04e641e65d",
+    "log_sha256": "f6e1c305d9b5ffad92b38314affc951c90241dc132e3dec03950ec202cad06c9",
+    "source_manifest_sha256": "63c097bf45dd3a5b719122c72c638dc4b6c912f2a2f51a5bd216033aaa64b7fd"
+  }
+}

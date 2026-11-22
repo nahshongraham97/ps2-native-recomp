@@ -1,0 +1,417 @@
+[0/2] Re-checking globbed directories...
+[1/2] Re-running CMake...
+-- Configuring done (0.1s)
+CMake Warning in CMakeLists.txt:
+  The object file directory
+
+    C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/build-font-zero/CMakeFiles/ps2runtime.dir/./
+
+  has 156 characters.  The maximum full path to an object file is 250
+  characters (see CMAKE_OBJECT_PATH_MAX).  Object file
+
+    8eeeb52ec54dabec17ed448439587928/iop_imports_CRI_ADXI_B00071300_H990112CDFA87D073_71300.cpp.obj
+
+  cannot be safely placed under this directory.  The build may not work
+  correctly.
+
+
+-- Generating done (0.4s)
+-- Build files have been written to: C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/build-font-zero
+[0/4] Re-checking globbed directories...
+[1/265] Building CXX object CMakeFiles/mka_native_typed_compiler.dir/recomp/native_typed_ir.cpp.obj
+[2/265] Building CXX object CMakeFiles/mka_native_typed_compiler.dir/recomp/native_typed_codegen.cpp.obj
+[3/265] Building CXX object CMakeFiles/mka_native_typed_compiler.dir/recomp/native_closure_codegen.cpp.obj
+[4/265] Building CXX object CMakeFiles/mka_native_typed_compiler.dir/recomp/r5900.cpp.obj
+[5/265] Linking CXX static library libmka_native_typed_compiler.a
+[6/265] Building CXX object CMakeFiles/mka_native_heap.dir/runtime/src/native/native_heap.cpp.obj
+[7/265] Building CXX object CMakeFiles/native_typed_recomp.dir/recomp/native_typed_main.cpp.obj
+[8/265] Building CXX object CMakeFiles/mka_native_content_volume.dir/runtime/src/native/native_file.cpp.obj
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/runtime/src/native/native_file.cpp:31:24: warning: result of comparison of constant 9223372036854775807 with expression of type 'DWORD' (aka 'unsigned long') is always false [-Wtautological-constant-out-of-range-compare]
+   31 |             if(capacity>buffer.max_size()){error=std::make_error_code(std::errc::value_too_large);return false;}
+      |                ~~~~~~~~^~~~~~~~~~~~~~~~~~
+1 warning generated.
+[9/265] Building CXX object CMakeFiles/mka_native_profile_aggregate.dir/runtime/src/native/retail_profile_aggregate.cpp.obj
+[10/265] Building CXX object CMakeFiles/mka_native_profile_preferences.dir/runtime/src/native/retail_profile_preferences.cpp.obj
+[11/265] Building CXX object CMakeFiles/mka_native_content_volume.dir/runtime/src/native/content_volume.cpp.obj
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/runtime/src/native/content_volume.cpp:19:24: warning: result of comparison of constant 9223372036854775807 with expression of type 'DWORD' (aka 'unsigned long') is always false [-Wtautological-constant-out-of-range-compare]
+   19 |             if(capacity>buffer.max_size()){error=std::make_error_code(std::errc::value_too_large);return false;}
+      |                ~~~~~~~~^~~~~~~~~~~~~~~~~~
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/runtime/src/native/content_volume.cpp:175:60: warning: 'u8path<std::string, 0>' is deprecated [-Wdeprecated-declarations]
+  175 |         auto joined=io_path(state_->root)/std::filesystem::u8path(*logical);joined.make_preferred();std::error_code ec;auto path=std::filesystem::canonical(joined,ec);
+      |                                                            ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__filesystem/u8path.h:73:37: note: 'u8path<std::string, 0>' has been explicitly marked deprecated here
+   73 | [[nodiscard]] _LIBCPP_HIDE_FROM_ABI _LIBCPP_DEPRECATED_WITH_CHAR8_T path u8path(const _Source& __s) {
+      |                                     ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:465:43: note: expanded from macro '_LIBCPP_DEPRECATED_WITH_CHAR8_T'
+  465 | #  define _LIBCPP_DEPRECATED_WITH_CHAR8_T _LIBCPP_DEPRECATED
+      |                                           ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:412:47: note: expanded from macro '_LIBCPP_DEPRECATED'
+  412 | #    define _LIBCPP_DEPRECATED __attribute__((__deprecated__))
+      |                                               ^
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/runtime/src/native/content_volume.cpp:195:91: warning: 'u8path<std::string, 0>' is deprecated [-Wdeprecated-declarations]
+  195 |         const auto path=std::filesystem::canonical(io_path(state_->root)/std::filesystem::u8path(*logical),ec);
+      |                                                                                           ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__filesystem/u8path.h:73:37: note: 'u8path<std::string, 0>' has been explicitly marked deprecated here
+   73 | [[nodiscard]] _LIBCPP_HIDE_FROM_ABI _LIBCPP_DEPRECATED_WITH_CHAR8_T path u8path(const _Source& __s) {
+      |                                     ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:465:43: note: expanded from macro '_LIBCPP_DEPRECATED_WITH_CHAR8_T'
+  465 | #  define _LIBCPP_DEPRECATED_WITH_CHAR8_T _LIBCPP_DEPRECATED
+      |                                           ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:412:47: note: expanded from macro '_LIBCPP_DEPRECATED'
+  412 | #    define _LIBCPP_DEPRECATED __attribute__((__deprecated__))
+      |                                               ^
+3 warnings generated.
+[12/265] Building CXX object CMakeFiles/mka_native_retail_task_registry.dir/runtime/src/native/retail_task_execution.cpp.obj
+[13/265] Building CXX object CMakeFiles/mka_native_retail_task_registry.dir/runtime/src/native/retail_task_registry.cpp.obj
+[14/265] Building CXX object CMakeFiles/mka_native_retail_task_registry.dir/runtime/src/native/retail_task_script_context.cpp.obj
+[15/265] Building CXX object CMakeFiles/mka_native_retail_task_registry.dir/runtime/src/native/retail_game_pool.cpp.obj
+[16/265] Building CXX object CMakeFiles/mka_native_retail_task_registry.dir/runtime/src/native/retail_input_task_argument.cpp.obj
+[17/265] Building CXX object CMakeFiles/mka_native_retail_task_registry.dir/runtime/src/native/retail_observer_list.cpp.obj
+[18/265] Linking CXX static library libmka_native_heap.a
+[19/265] Building CXX object CMakeFiles/mka_native_retail_task_registry.dir/runtime/src/native/retail_game_task_lists.cpp.obj
+[20/265] Building CXX object CMakeFiles/mka_native_wave_allocation.dir/runtime/src/native/wave_allocation.cpp.obj
+[21/265] Linking CXX executable native_typed_recomp.exe
+[22/265] Building CXX object CMakeFiles/mka_native_allocation_class.dir/runtime/src/native/allocation_class.cpp.obj
+[23/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_resource_domain.cpp.obj
+[24/265] Building CXX object CMakeFiles/mka_native_audio_device.dir/runtime/src/native/audio_device.cpp.obj
+[25/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/sound_bank.cpp.obj
+[26/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/native_file.cpp.obj
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/runtime/src/native/native_file.cpp:31:24: warning: result of comparison of constant 9223372036854775807 with expression of type 'DWORD' (aka 'unsigned long') is always false [-Wtautological-constant-out-of-range-compare]
+   31 |             if(capacity>buffer.max_size()){error=std::make_error_code(std::errc::value_too_large);return false;}
+      |                ~~~~~~~~^~~~~~~~~~~~~~~~~~
+1 warning generated.
+[27/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/sample_payload.cpp.obj
+[28/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/sound_archive.cpp.obj
+[29/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/stream_source.cpp.obj
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/runtime/src/native/stream_source.cpp:96:40: warning: 'u8path<std::string, 0>' is deprecated [-Wdeprecated-declarations]
+   96 |         state->path = std::filesystem::u8path(std::string(file.logical_key()));
+      |                                        ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__filesystem/u8path.h:73:37: note: 'u8path<std::string, 0>' has been explicitly marked deprecated here
+   73 | [[nodiscard]] _LIBCPP_HIDE_FROM_ABI _LIBCPP_DEPRECATED_WITH_CHAR8_T path u8path(const _Source& __s) {
+      |                                     ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:465:43: note: expanded from macro '_LIBCPP_DEPRECATED_WITH_CHAR8_T'
+  465 | #  define _LIBCPP_DEPRECATED_WITH_CHAR8_T _LIBCPP_DEPRECATED
+      |                                           ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:412:47: note: expanded from macro '_LIBCPP_DEPRECATED'
+  412 | #    define _LIBCPP_DEPRECATED __attribute__((__deprecated__))
+      |                                               ^
+1 warning generated.
+[30/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/bank_asset.cpp.obj
+[31/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/retail_sound_bank_jobs.cpp.obj
+[32/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/normal_sample.cpp.obj
+[33/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/adpcm_codec.cpp.obj
+[34/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_banks.cpp.obj
+[35/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/bank_preparation.cpp.obj
+[36/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_bank_protocol.cpp.obj
+[37/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_bank_service.cpp.obj
+[38/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/program_executor.cpp.obj
+[39/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_controls.cpp.obj
+[40/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/program_copy.cpp.obj
+[41/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/host_voice.cpp.obj
+[42/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/program_host_clock.cpp.obj
+[43/265] Building CXX object CMakeFiles/mka_native_game_actions.dir/runtime/src/native/controller_input.cpp.obj
+[44/265] Building CXX object CMakeFiles/mka_native_game_actions.dir/runtime/src/native/game_action_input.cpp.obj
+[45/265] Building CXX object CMakeFiles/mka_native_game_actions.dir/runtime/src/native/game_input_tasks.cpp.obj
+[46/265] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/playback_owner.cpp.obj
+[47/265] Building CXX object CMakeFiles/mka_native_game_actions.dir/runtime/src/native/game_transition_state.cpp.obj
+[48/265] Linking CXX static library libmka_native_content_volume.a
+[49/265] Linking CXX static library libmka_native_profile_aggregate.a
+[50/265] Linking CXX static library libmka_native_profile_preferences.a
+[51/265] Linking CXX static library libmka_native_retail_task_registry.a
+[52/265] Building CXX object CMakeFiles/mka_native_game_actions.dir/runtime/src/native/frontend_scheduler.cpp.obj
+[53/265] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_game_controls.cpp.obj
+[54/265] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_game_options.cpp.obj
+[55/265] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_main_settings.cpp.obj
+[56/265] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_random.cpp.obj
+[57/265] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_initial_task_state.cpp.obj
+[58/265] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_game_session.cpp.obj
+[59/265] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_live_scene_reference.cpp.obj
+[60/265] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_profile_scene_object.cpp.obj
+[61/265] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_task_domain.cpp.obj
+[62/265] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_initial_game_tasks.cpp.obj
+[63/265] Building CXX object CMakeFiles/mka_native_retail_loading.dir/runtime/src/native/retail_loading_picture.cpp.obj
+[64/265] Building CXX object CMakeFiles/mka_native_retail_keyboard.dir/runtime/src/native/retail_keyboard.cpp.obj
+[65/265] Building CXX object CMakeFiles/mka_native_retail_keyboard.dir/runtime/src/native/retail_keyboard_sdl.cpp.obj
+[66/265] Building CXX object CMakeFiles/mka_native_retail_memory_owners.dir/runtime/src/native/retail_memory_owners.cpp.obj
+[67/265] Building CXX object CMakeFiles/mka_native_retail_crt.dir/runtime/src/native/retail_crt.cpp.obj
+[68/265] Linking CXX static library libmka_native_wave_allocation.a
+[69/265] Linking CXX static library libmka_native_allocation_class.a
+[70/265] AOT compile source-verified retail scalar functions to typed native C++
+[71/265] Building CXX object CMakeFiles/mka_native_allocation_profile.dir/runtime/src/native/allocation_profile.cpp.obj
+[72/265] Linking CXX static library libmka_native_audio_device.a
+[73/265] Building CXX object CMakeFiles/mka_native_user_paths.dir/runtime/src/native/native_user_paths.cpp.obj
+[74/265] Building CXX object CMakeFiles/mka_native_retail_sound_runtime.dir/runtime/src/native/sound_output.cpp.obj
+[75/265] Linking CXX static library libmka_native_sound_resources.a
+[76/265] Linking CXX static library libmka_native_game_actions.a
+[77/265] Building CXX object CMakeFiles/mka_native_retail_sound_runtime.dir/runtime/src/native/retail_sound_runtime.cpp.obj
+[78/265] Building CXX object CMakeFiles/mka_native_retail_text_storage.dir/runtime/src/native/retail_text_storage.cpp.obj
+[79/265] Building CXX object CMakeFiles/mka_native_save_store.dir/runtime/src/native/native_save_store.cpp.obj
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/runtime/src/native/native_save_store.cpp:75:15: warning: result of comparison of constant 9223372036854775807 with expression of type 'DWORD' (aka 'unsigned long') is always false [-Wtautological-constant-out-of-range-compare]
+   75 |         if (n > buffer.max_size()) { f.kind = SaveError::host_capacity; return false; }
+      |             ~ ^ ~~~~~~~~~~~~~~~~~
+1 warning generated.
+[80/265] Linking CXX static library libmka_native_retail_game_session.a
+[81/265] Building CXX object CMakeFiles/mka_native_retail_middleware_frame.dir/runtime/src/native/retail_middleware_frame.cpp.obj
+[82/265] Building CXX object CMakeFiles/mka_native_retail_file_paths.dir/runtime/src/native/retail_file_paths.cpp.obj
+[83/265] Building CXX object CMakeFiles/mka_native_retail_profile_owners.dir/runtime/src/native/retail_profile_owners.cpp.obj
+[84/265] Building CXX object CMakeFiles/mka_native_retail_profile_owners.dir/runtime/src/native/retail_profile_runtime.cpp.obj
+[85/265] Linking CXX static library libmka_native_retail_loading.a
+[86/265] Linking CXX static library libmka_native_retail_keyboard.a
+[87/265] Building CXX object CMakeFiles/mka_native_retail_game_resource_registry.dir/runtime/src/native/retail_game_resource_registry.cpp.obj
+[88/265] Building CXX object CMakeFiles/mka_native_retail_platform.dir/host/keymap.cpp.obj
+[89/265] Linking CXX static library libmka_native_retail_crt.a
+[90/265] Linking CXX static library libmka_native_retail_memory_owners.a
+[91/265] Linking CXX static library libmka_native_allocation_profile.a
+[92/265] Building CXX object CMakeFiles/mka_native_retail_platform.dir/runtime/src/native/retail_platform.cpp.obj
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/runtime/src/native/retail_platform.cpp:295:46: warning: 'u8path<char *, 0>' is deprecated [-Wdeprecated-declarations]
+  295 |         const auto key_path=std::filesystem::u8path(base)/"keys.ini";
+      |                                              ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__filesystem/u8path.h:73:37: note: 'u8path<char *, 0>' has been explicitly marked deprecated here
+   73 | [[nodiscard]] _LIBCPP_HIDE_FROM_ABI _LIBCPP_DEPRECATED_WITH_CHAR8_T path u8path(const _Source& __s) {
+      |                                     ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:465:43: note: expanded from macro '_LIBCPP_DEPRECATED_WITH_CHAR8_T'
+  465 | #  define _LIBCPP_DEPRECATED_WITH_CHAR8_T _LIBCPP_DEPRECATED
+      |                                           ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:412:47: note: expanded from macro '_LIBCPP_DEPRECATED'
+  412 | #    define _LIBCPP_DEPRECATED __attribute__((__deprecated__))
+      |                                               ^
+1 warning generated.
+[93/265] Building CXX object CMakeFiles/mka_native_typed_retail.dir/761bce075c5e0efee3c8824345cb3bb4/native_typed_retail.cpp.obj
+[94/265] Building CXX object CMakeFiles/eerecomp.dir/recomp/r5900.cpp.obj
+[95/265] Building CXX object CMakeFiles/eerecomp.dir/recomp/elf.cpp.obj
+[96/265] Building CXX object CMakeFiles/eerecomp.dir/recomp/analysis.cpp.obj
+[97/265] Building CXX object CMakeFiles/eerecomp.dir/recomp/main.cpp.obj
+[98/265] Building CXX object CMakeFiles/eerecomp.dir/recomp/native_closure_codegen.cpp.obj
+[99/265] Building CXX object CMakeFiles/eerecomp.dir/recomp/native_startup_codegen.cpp.obj
+[100/265] Building CXX object CMakeFiles/eerecomp.dir/recomp/eerecomp_gen.cpp.obj
+[101/265] Building CXX object CMakeFiles/eerecomp.dir/recomp/snr2.cpp.obj
+[102/265] Linking CXX static library libmka_native_user_paths.a
+[103/265] Linking CXX static library libmka_native_retail_sound_runtime.a
+[104/265] Linking CXX static library libmka_native_save_store.a
+[105/265] Linking CXX static library libmka_native_retail_text_storage.a
+[106/265] Building CXX object CMakeFiles/eerecomp.dir/recomp/codegen.cpp.obj
+[107/265] Linking CXX static library libmka_native_retail_middleware_frame.a
+[108/265] Linking CXX static library libmka_native_retail_file_paths.a
+[109/265] Linking CXX static library libmka_native_retail_profile_owners.a
+[110/265] Linking CXX static library libmka_native_retail_game_resource_registry.a
+[111/265] Linking CXX static library libmka_native_retail_platform.a
+[112/265] Linking CXX static library libmka_native_typed_retail.a
+[113/265] Linking CXX executable eerecomp.exe
+[114/265] AOT compile original retail startup into owned native state
+native startup owned retail source emitted; platform link obligations remain
+[115/265] Building CXX object CMakeFiles/mka_native_gpu_completion.dir/runtime/src/native/movie_gpu_completion.cpp.obj
+[116/265] Linking CXX static library libmka_native_gpu_completion.a
+[117/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/native_file.cpp.obj
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/runtime/src/native/native_file.cpp:31:24: warning: result of comparison of constant 9223372036854775807 with expression of type 'DWORD' (aka 'unsigned long') is always false [-Wtautological-constant-out-of-range-compare]
+   31 |             if(capacity>buffer.max_size()){error=std::make_error_code(std::errc::value_too_large);return false;}
+      |                ~~~~~~~~^~~~~~~~~~~~~~~~~~
+1 warning generated.
+[118/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/font_atlas.cpp.obj
+[119/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/font_metrics.cpp.obj
+[120/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/font_geometry.cpp.obj
+[121/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/font_layout.cpp.obj
+[122/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_container.cpp.obj
+[123/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_assets.cpp.obj
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/runtime/src/native/movie_assets.cpp:108:59: warning: 'u8path<std::string, 0>' is deprecated [-Wdeprecated-declarations]
+  108 |             auto joined=io_path(s->root)/std::filesystem::u8path(*relative);
+      |                                                           ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__filesystem/u8path.h:73:37: note: 'u8path<std::string, 0>' has been explicitly marked deprecated here
+   73 | [[nodiscard]] _LIBCPP_HIDE_FROM_ABI _LIBCPP_DEPRECATED_WITH_CHAR8_T path u8path(const _Source& __s) {
+      |                                     ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:465:43: note: expanded from macro '_LIBCPP_DEPRECATED_WITH_CHAR8_T'
+  465 | #  define _LIBCPP_DEPRECATED_WITH_CHAR8_T _LIBCPP_DEPRECATED
+      |                                           ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:412:47: note: expanded from macro '_LIBCPP_DEPRECATED'
+  412 | #    define _LIBCPP_DEPRECATED __attribute__((__deprecated__))
+      |                                               ^
+1 warning generated.
+[124/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_pes_index.cpp.obj
+[125/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_metadata.cpp.obj
+[126/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_timecode.cpp.obj
+[127/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_clock_history.cpp.obj
+[128/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/mpeg2_timing.cpp.obj
+[129/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_clock_math.cpp.obj
+[130/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_clock_filter.cpp.obj
+[131/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_service_clock.cpp.obj
+[132/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_host_clock.cpp.obj
+[133/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_eligibility_numeric.cpp.obj
+[134/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_frame_eligibility.cpp.obj
+[135/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_control.cpp.obj
+[136/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_playback_adapters.cpp.obj
+[137/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_playback.cpp.obj
+[138/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_playback_session.cpp.obj
+[139/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_output_position.cpp.obj
+[140/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_native_context.cpp.obj
+[141/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_service.cpp.obj
+[142/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_backend_driver.cpp.obj
+[143/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_audio_clock_anchor.cpp.obj
+[144/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_frame_work.cpp.obj
+[145/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_descriptor_rewrite.cpp.obj
+[146/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_timestamp_association.cpp.obj
+[147/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_service_host_clock.cpp.obj
+[148/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_service_acquisition.cpp.obj
+[149/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_audio_progress.cpp.obj
+[150/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_admission_feed.cpp.obj
+[151/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_pcm_mix.cpp.obj
+[152/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_pcm_downmix.cpp.obj
+[153/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_adx_blocks.cpp.obj
+[154/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_adx_header.cpp.obj
+[155/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_adx_profile.cpp.obj
+[156/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_adx_stream.cpp.obj
+[157/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_decoder_mode.cpp.obj
+[158/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_prefix_events.cpp.obj
+[159/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_header_boundary.cpp.obj
+[160/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_header_unit.cpp.obj
+[161/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_userdata_retention.cpp.obj
+[162/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_source_syntax_index.cpp.obj
+[163/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_pcm_binding.cpp.obj
+[164/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_kernel_policies.cpp.obj
+[165/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_catalog.cpp.obj
+[166/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_gain.cpp.obj
+[167/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_source.cpp.obj
+[168/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_subtitles.cpp.obj
+[169/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_color.cpp.obj
+[170/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_gpu.cpp.obj
+[171/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_decode.cpp.obj
+[172/265] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_gl_device.cpp.obj
+[173/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/048c5b8e1ca884be71970378c967816f/native_retail_entry.cpp.obj
+[174/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/048c5b8e1ca884be71970378c967816f/native_retail_startup.cpp.obj
+[175/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_crt_startup.cpp.obj
+[176/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_platform_startup.cpp.obj
+[177/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_main.cpp.obj
+[178/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_main_frame_gates.cpp.obj
+[179/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_main_timing.cpp.obj
+[180/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_arcade_ladder.cpp.obj
+[181/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_scene_bootstrap_prefix.cpp.obj
+[182/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_renderer_allocator.cpp.obj
+[183/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_scene_bootstrap_continuation.cpp.obj
+[184/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_renderer_core.cpp.obj
+[185/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_first_scene_core.cpp.obj
+[186/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_first_scene_allocator.cpp.obj
+[187/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_camera_world.cpp.obj
+[188/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_sound_metadata.cpp.obj
+[189/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_game_session_startup.cpp.obj
+[190/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_main_state.cpp.obj
+[191/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_main_settings_binding.cpp.obj
+[192/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_active_overlay.cpp.obj
+[193/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_main.cpp.obj
+[194/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_active_overlay_main.cpp.obj
+[195/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_post_overlay.cpp.obj
+[196/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_section_workspace.cpp.obj
+[197/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_game_info_resources.cpp.obj
+[198/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_section_workspace_main.cpp.obj
+[199/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_game_record_reset.cpp.obj
+[200/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_pad_control.cpp.obj
+[201/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_pad_startup.cpp.obj
+[202/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_save_startup.cpp.obj
+[203/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_menu.cpp.obj
+[204/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_preferences_main.cpp.obj
+[205/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_resource_ids.cpp.obj
+[206/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_aggregate_main.cpp.obj
+[207/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_live_scene_main.cpp.obj
+[208/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_transition.cpp.obj
+[209/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_transition_child.cpp.obj
+[210/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_entry_decision.cpp.obj
+[211/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_task_retirement.cpp.obj
+[212/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_task_dispatch_main.cpp.obj
+[213/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_initial_task_main.cpp.obj
+[214/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_initial_task.cpp.obj
+[215/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_initial_reset.cpp.obj
+[216/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_game_records.cpp.obj
+[217/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_task_lookup_main.cpp.obj
+[218/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_game_records_main.cpp.obj
+[219/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_game_options_main.cpp.obj
+[220/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_text_storage_main.cpp.obj
+[221/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_file_startup.cpp.obj
+[222/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_middleware_main.cpp.obj
+[223/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_main_reentry.cpp.obj
+[224/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_scene_events.cpp.obj
+[225/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_initial_objects.cpp.obj
+[226/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_middleware_work.cpp.obj
+[227/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_dispatch_owners.cpp.obj
+[228/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_service_constructors.cpp.obj
+[229/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_record_owners.cpp.obj
+[230/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_input_roles.cpp.obj
+[231/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_mode_state.cpp.obj
+[232/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_audio_statistics.cpp.obj
+[233/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_main_state.cpp.obj
+[234/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_sound_bank_catalog.cpp.obj
+[235/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_main_mode.cpp.obj
+[236/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_sound_context_main.cpp.obj
+[237/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_sound_bank_main.cpp.obj
+[238/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_sound_status_main.cpp.obj
+[239/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_package.cpp.obj
+[240/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_action_history.cpp.obj
+[241/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_auxiliary_words.cpp.obj
+[242/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_main_input_observation.cpp.obj
+[243/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_participants.cpp.obj
+[244/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_input_assignments.cpp.obj
+[245/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_input_poll.cpp.obj
+[246/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_input_admission.cpp.obj
+[247/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_input_selection.cpp.obj
+[248/265] Building CXX object CMakeFiles/mka_native_art_section_data.dir/runtime/src/native/art_section_data.cpp.obj
+[249/265] Linking CXX static library libmka_native_media.a
+[250/265] Linking CXX static library libmka_native_art_section_data.a
+[251/265] Building CXX object CMakeFiles/mka_native_retail_system_art_cpu.dir/runtime/src/native/retail_system_art_cpu.cpp.obj
+[252/265] Building CXX object CMakeFiles/test_native_font_atlas.dir/tests/test_font_atlas.cpp.obj
+[253/265] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_remaining_constructors.cpp.obj
+[254/265] Linking CXX static library libmka_native_retail_startup.a
+[255/265] Linking CXX static library libmka_native_retail_system_art_cpu.a
+[256/265] Building CXX object CMakeFiles/test_native_retail_system_art_cpu.dir/tests/test_retail_system_art_cpu.cpp.obj
+[257/265] Building CXX object CMakeFiles/test_native_font_atlas_system_art.dir/tests/test_font_atlas_system_art.cpp.obj
+[258/265] Linking CXX executable test_native_font_atlas.exe
+[259/265] Linking CXX executable test_native_retail_system_art_cpu.exe
+FAILED: [code=1] test_native_retail_system_art_cpu.exe 
+C:\WINDOWS\system32\cmd.exe /C "cd . && "C:\Users\nahsh\mk port\Armageddon-backup\dependencies\compiler\llvm-mingw-20261006-ucrt-x86_64\bin\clang++.exe" -O3 -DNDEBUG -static-libgcc -static-libstdc++ CMakeFiles/test_native_retail_system_art_cpu.dir/tests/test_retail_system_art_cpu.cpp.obj -o test_native_retail_system_art_cpu.exe -Wl,--out-implib,libtest_native_retail_system_art_cpu.dll.a -Wl,--major-image-version,0,--minor-image-version,0 -LC:/Users/nahsh/MKPORT~1/ARMAGE~1/ARMAGE~1/external/forks/PSB3A8~1/THIRD_~1/sdl2/lib libmka_native_retail_system_art_cpu.a  libmka_native_retail_startup.a  libmka_native_retail_sound_runtime.a  libmka_native_retail_text_storage.a  libmka_native_save_store.a  libmka_native_retail_middleware_frame.a  libmka_native_retail_file_paths.a  libmka_native_retail_crt.a  libmka_native_retail_platform.a  libmka_native_retail_loading.a  libmka_native_retail_keyboard.a  "C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/third_party/sdl2/lib/libSDL2.dll.a"  libmka_native_retail_profile_owners.a  libmka_native_retail_memory_owners.a  libmka_native_wave_allocation.a  libmka_native_allocation_profile.a  libmka_native_allocation_class.a  libmka_native_heap.a  libmka_native_retail_game_resource_registry.a  libmka_native_game_actions.a  libmka_native_sound_resources.a  libmka_native_typed_retail.a  libmka_native_retail_game_session.a  libmka_native_retail_task_registry.a  -lpthread  libmka_native_profile_aggregate.a  libmka_native_profile_preferences.a  libmka_native_art_section_data.a  libmka_native_content_volume.a  libmka_native_media.a  libmka_native_user_paths.a  -lopengl32  -lgdi32  -luser32  -lbcrypt  -lshell32  libmka_native_gpu_completion.a  libmka_native_audio_device.a  -lole32  -luuid  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && C:\WINDOWS\system32\cmd.exe /C "cd /D "C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\external\forks\ps2-native-recomp-font-zero\build-font-zero" && "C:\Users\nahsh\mk port\Armageddon-backup\dependencies\cmake\cmake-4.4.5-windows-x86_64\bin\cmake.exe" -E copy_if_different "C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/third_party/sdl2/lib/x64/SDL2.dll" "C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/build-font-zero/SDL2.dll"""
+Error copying file (if different) from "C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/third_party/sdl2/lib/x64/SDL2.dll" to "C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/build-font-zero/SDL2.dll": No such file or directory
+[260/265] Building CXX object CMakeFiles/test_native_art_section_data.dir/tests/test_art_section_data.cpp.obj
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/tests/test_art_section_data.cpp:116:40: warning: 'u8path<char *, 0>' is deprecated [-Wdeprecated-declarations]
+  116 |     const auto root = std::filesystem::u8path(argv[2]);
+      |                                        ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__filesystem/u8path.h:73:37: note: 'u8path<char *, 0>' has been explicitly marked deprecated here
+   73 | [[nodiscard]] _LIBCPP_HIDE_FROM_ABI _LIBCPP_DEPRECATED_WITH_CHAR8_T path u8path(const _Source& __s) {
+      |                                     ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:465:43: note: expanded from macro '_LIBCPP_DEPRECATED_WITH_CHAR8_T'
+  465 | #  define _LIBCPP_DEPRECATED_WITH_CHAR8_T _LIBCPP_DEPRECATED
+      |                                           ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:412:47: note: expanded from macro '_LIBCPP_DEPRECATED'
+  412 | #    define _LIBCPP_DEPRECATED __attribute__((__deprecated__))
+      |                                               ^
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/tests/test_art_section_data.cpp:126:45: warning: 'u8path<char *, 0>' is deprecated [-Wdeprecated-declarations]
+  126 |     std::ifstream expected(std::filesystem::u8path(argv[8]));
+      |                                             ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__filesystem/u8path.h:73:37: note: 'u8path<char *, 0>' has been explicitly marked deprecated here
+   73 | [[nodiscard]] _LIBCPP_HIDE_FROM_ABI _LIBCPP_DEPRECATED_WITH_CHAR8_T path u8path(const _Source& __s) {
+      |                                     ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:465:43: note: expanded from macro '_LIBCPP_DEPRECATED_WITH_CHAR8_T'
+  465 | #  define _LIBCPP_DEPRECATED_WITH_CHAR8_T _LIBCPP_DEPRECATED
+      |                                           ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:412:47: note: expanded from macro '_LIBCPP_DEPRECATED'
+  412 | #    define _LIBCPP_DEPRECATED __attribute__((__deprecated__))
+      |                                               ^
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/tests/test_art_section_data.cpp:131:47: warning: 'u8path<char *, 0>' is deprecated [-Wdeprecated-declarations]
+  131 |     std::ifstream raw(root / std::filesystem::u8path(argv[3]), std::ios::binary);
+      |                                               ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__filesystem/u8path.h:73:37: note: 'u8path<char *, 0>' has been explicitly marked deprecated here
+   73 | [[nodiscard]] _LIBCPP_HIDE_FROM_ABI _LIBCPP_DEPRECATED_WITH_CHAR8_T path u8path(const _Source& __s) {
+      |                                     ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:465:43: note: expanded from macro '_LIBCPP_DEPRECATED_WITH_CHAR8_T'
+  465 | #  define _LIBCPP_DEPRECATED_WITH_CHAR8_T _LIBCPP_DEPRECATED
+      |                                           ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:412:47: note: expanded from macro '_LIBCPP_DEPRECATED'
+  412 | #    define _LIBCPP_DEPRECATED __attribute__((__deprecated__))
+      |                                               ^
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/tests/test_art_section_data.cpp:170:32: warning: 'u8path<char *, 0>' is deprecated [-Wdeprecated-declarations]
+  170 |     synthetic(std::filesystem::u8path(argv[1]));
+      |                                ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__filesystem/u8path.h:73:37: note: 'u8path<char *, 0>' has been explicitly marked deprecated here
+   73 | [[nodiscard]] _LIBCPP_HIDE_FROM_ABI _LIBCPP_DEPRECATED_WITH_CHAR8_T path u8path(const _Source& __s) {
+      |                                     ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:465:43: note: expanded from macro '_LIBCPP_DEPRECATED_WITH_CHAR8_T'
+  465 | #  define _LIBCPP_DEPRECATED_WITH_CHAR8_T _LIBCPP_DEPRECATED
+      |                                           ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:412:47: note: expanded from macro '_LIBCPP_DEPRECATED'
+  412 | #    define _LIBCPP_DEPRECATED __attribute__((__deprecated__))
+      |                                               ^
+4 warnings generated.
+ninja: build stopped: subcommand failed.

@@ -1,0 +1,27 @@
+[0/2] Re-checking globbed directories...
+[1/2] Re-running CMake...
+-- Configuring done (0.1s)
+CMake Warning in CMakeLists.txt:
+  The object file directory
+
+    C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/build-font-zero/CMakeFiles/ps2runtime.dir/./
+
+  has 156 characters.  The maximum full path to an object file is 250
+  characters (see CMAKE_OBJECT_PATH_MAX).  Object file
+
+    8eeeb52ec54dabec17ed448439587928/iop_imports_CRI_ADXI_B00071300_H990112CDFA87D073_71300.cpp.obj
+
+  cannot be safely placed under this directory.  The build may not work
+  correctly.
+
+
+-- Generating done (0.4s)
+-- Build files have been written to: C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-font-zero/build-font-zero
+[0/4] Re-checking globbed directories...
+[1/14] AOT compile source-verified retail scalar functions to typed native C++
+[2/10] Linking CXX executable test_native_art_section_data.exe
+[3/10] Building CXX object CMakeFiles/mka_native_media.dir/runtime/src/native/movie_decode.cpp.obj
+[4/10] Linking CXX static library libmka_native_media.a
+[5/10] Linking CXX executable test_native_font_atlas.exe
+[6/10] Linking CXX executable test_native_font_atlas_system_art.exe
+[7/10] Linking CXX executable test_native_retail_system_art_cpu.exe

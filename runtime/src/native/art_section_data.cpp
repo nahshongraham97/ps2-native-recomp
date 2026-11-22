@@ -52,21 +52,34 @@ std::optional<NativeArtSectionData> NativeArtSectionData::read(NativeContentFile
         }
         if (range.section_length < header_bytes) { f.kind = ArtSectionError::truncated; return {}; }
         const auto position = range.member_offset + range.section_offset;
-        auto storage = std::make_shared<std::vector<std::byte>>();
+        std::vector<std::byte> storage;
         if (position > static_cast<std::uint64_t>(std::numeric_limits<std::int64_t>::max()) ||
-            range.section_length > storage->max_size()) {
+            range.section_length > storage.max_size()) {
             f.kind = ArtSectionError::host_capacity;
             return {};
         }
-        storage->resize(static_cast<std::size_t>(range.section_length));
+        storage.resize(static_cast<std::size_t>(range.section_length));
         if (!file.seek(static_cast<std::int64_t>(position), SeekOrigin::begin, f.file)) {
             f.kind = ArtSectionError::file_operation;
             return {};
         }
-        const auto got = file.read(storage->data(), storage->size(), f.file);
+        const auto got = file.read(storage.data(), storage.size(), f.file);
         if (got.error) { f.kind = ArtSectionError::file_operation; return {}; }
-        if (got.bytes != storage->size()) { f.kind = ArtSectionError::truncated; return {}; }
+        if (got.bytes != storage.size()) { f.kind = ArtSectionError::truncated; return {}; }
 
+        return parse(std::move(storage), f);
+    } catch (const std::length_error&) { f.kind = ArtSectionError::host_capacity; }
+      catch (const std::bad_alloc&) { f.kind = ArtSectionError::allocation_failed; }
+      catch (...) { f.kind = ArtSectionError::native_exception; }
+    return {};
+}
+
+std::optional<NativeArtSectionData> NativeArtSectionData::parse(std::vector<std::byte> input,
+    ArtSectionFailure& f) noexcept {
+    f = {};
+    if(input.size()<header_bytes){f.kind=ArtSectionError::truncated;return {};}
+    try {
+        auto storage=std::make_shared<std::vector<std::byte>>(std::move(input));
         NativeArtSectionData result;
         const auto bytes = std::span<const std::byte>(*storage);
         for (std::size_t i = 0; i < result.header_.size(); ++i) result.header_[i] = le32(bytes, i * 4);
@@ -107,6 +120,15 @@ std::optional<NativeArtSectionData> NativeArtSectionData::read(NativeContentFile
       catch (const std::bad_alloc&) { f.kind = ArtSectionError::allocation_failed; }
       catch (...) { f.kind = ArtSectionError::native_exception; }
     return {};
+}
+
+std::optional<std::span<const std::byte>> NativeArtSectionData::resource_bytes(
+    std::size_t index,ArtSectionFailure& f) const & noexcept {
+    f={};if(!bytes_||index>=records_.size()){f.kind=ArtSectionError::missing_resource;return {};}
+    const auto& entry=records_[index];const std::size_t start=entry.payload_offset;
+    if(!start){f.kind=ArtSectionError::missing_payload;return {};}
+    std::size_t end=bytes_->size();for(const auto& other:records_)if(other.payload_offset>start)end=std::min(end,std::size_t(other.payload_offset));
+    return std::span<const std::byte>(*bytes_).subspan(start,end-start);
 }
 
 std::optional<ArtSpriteData> NativeArtSectionData::find_sprite(
