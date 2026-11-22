@@ -1,0 +1,7 @@
+{
+  "failed_check": "checkpoint.py rejected CR in edited cmake/native_game.cmake before staging/build",
+  "before_sha256": "00f93b81008334b7a06469c0036d79b8e29fe1fea5c4827a86c6ff092875167e",
+  "after_sha256": "7aafb4095075f66822609253b70f5e9065839d47d6d96bfd76c13075d43bda44",
+  "original_bytes_preserved": "native_game.before-LF.gz",
+  "cxx_build_attempted": false
+}

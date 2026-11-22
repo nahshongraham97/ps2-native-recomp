@@ -76,7 +76,7 @@ target_link_libraries(test_native_logon_pending PRIVATE mka_native_game_actions)
 
 # Native startup content and AOT retail state. No sector/content_vfs/runtime TU.
 add_library(mka_native_content_volume STATIC EXCLUDE_FROM_ALL
-    runtime/src/native/native_file.cpp runtime/src/native/content_volume.cpp)
+    runtime/src/native/native_file.cpp runtime/src/native/native_file_read_job.cpp runtime/src/native/content_volume.cpp)
 target_include_directories(mka_native_content_volume PUBLIC runtime/include)
 target_compile_features(mka_native_content_volume PUBLIC cxx_std_20)
 target_link_libraries(mka_native_sound_resources PUBLIC mka_native_content_volume)
@@ -246,6 +246,7 @@ if(WIN32)
         runtime/src/native/retail_profile_menu.cpp runtime/src/native/retail_profile_resource_ids.cpp
         runtime/src/native/retail_profile_aggregate_main.cpp
         runtime/src/native/retail_saved_profile_records.cpp runtime/src/native/retail_saved_profile_bindings.cpp
+        runtime/src/native/retail_profile_permission.cpp
         runtime/src/native/retail_live_scene_main.cpp runtime/src/native/retail_profile_transition.cpp
         runtime/src/native/retail_profile_transition_child.cpp runtime/src/native/retail_profile_entry_decision.cpp
         runtime/src/native/retail_profile_task_retirement.cpp
@@ -327,6 +328,11 @@ if(WIN32)
     target_link_libraries(test_native_retail_profile_entry_decision PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_profile_resource_ids EXCLUDE_FROM_ALL tests/test_retail_profile_resource_ids.cpp)
     target_link_libraries(test_native_retail_profile_resource_ids PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_profile_permission EXCLUDE_FROM_ALL tests/test_retail_profile_permission.cpp)
+    target_link_libraries(test_native_retail_profile_permission PRIVATE mka_native_retail_startup mka_native_profile_image)
+    add_custom_command(TARGET test_native_retail_profile_permission POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2>
+        $<TARGET_FILE_DIR:test_native_retail_profile_permission> VERBATIM)
     add_executable(test_native_retail_saved_profile_records EXCLUDE_FROM_ALL tests/test_retail_saved_profile_records.cpp)
     target_link_libraries(test_native_retail_saved_profile_records PRIVATE mka_native_retail_startup)
     add_custom_command(TARGET test_native_retail_saved_profile_records POST_BUILD
@@ -548,4 +554,16 @@ if(TARGET test_native_retail_system_art_cpu AND WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:SDL2::SDL2>
         $<TARGET_FILE_DIR:test_native_retail_system_art_cpu> VERBATIM)
+endif()
+
+add_executable(test_native_gl_texture EXCLUDE_FROM_ALL tests/test_native_gl_texture.cpp)
+target_link_libraries(test_native_gl_texture PRIVATE mka_native_retail_system_art_cpu)
+add_executable(test_native_file_read_job EXCLUDE_FROM_ALL tests/test_native_file_read_job.cpp)
+target_link_libraries(test_native_file_read_job PRIVATE mka_native_retail_system_art_cpu)
+if(WIN32)
+    foreach(_client test_native_gl_texture test_native_file_read_job)
+        add_custom_command(TARGET ${_client} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2>
+                $<TARGET_FILE_DIR:${_client}> VERBATIM)
+    endforeach()
 endif()

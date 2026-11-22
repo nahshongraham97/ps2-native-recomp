@@ -89,7 +89,7 @@ namespace {
 namespace video=mka::video;
 template<class T>T load(const char* name){auto p=wglGetProcAddress(name);if(!p||p==reinterpret_cast<PROC>(1)||p==reinterpret_cast<PROC>(2)||p==reinterpret_cast<PROC>(3)||p==reinterpret_cast<PROC>(-1))return nullptr;return reinterpret_cast<T>(p);}
 using Sync=void*;
-struct Texture {GLuint object=0;};
+struct Texture {GLuint object=0;bool revoked=false;};
 bool image_error(const char* operation);
 struct GlNativeFence final : MovieNativeFence { Sync sync = nullptr; };
 struct GlFencePort final : NativeMovieFencePort {
@@ -136,6 +136,9 @@ struct GlFencePort final : NativeMovieFencePort {
 struct Session : NativeMovieGpuRetirementTask {
     HGLRC context=nullptr;HDC dc=nullptr;HWND window=nullptr;std::thread::id owner;
     std::atomic<bool> revoked{false};bool cleaned=false;std::uint64_t destination=0,identity=0;
+    // A failed deletion leaves the identity of the retained GL name unknown.
+    // Do not retry deletion or resume this Session without host-context recovery.
+    bool image_delete_outcome_unknown=false;
     Sync(APIENTRY* fence)(GLenum,GLbitfield)=nullptr;
     GLenum(APIENTRY* wait)(Sync,GLbitfield,std::uint64_t)=nullptr;
     void(APIENTRY* erase)(Sync)=nullptr;
@@ -215,7 +218,39 @@ struct GlMovieFence final:video::MovieGpuFence {
 video::MovieGpuError movie_current(const Session& s){
     if(s.revoked.load(std::memory_order_acquire))return video::MovieGpuError::stale_resource;
     if(std::this_thread::get_id()!=s.owner||wglGetCurrentContext()!=s.context||wglGetCurrentDC()!=s.dc)return video::MovieGpuError::wrong_thread;
+    if(s.image_delete_outcome_unknown)return video::MovieGpuError::fence_failed;
     return video::MovieGpuError::none;
+}
+graphics::NativeTextureError texture_error(MovieGpuError e)noexcept{
+ using T=graphics::NativeTextureError;switch(e){
+ case MovieGpuError::none:return T::none;case MovieGpuError::wrong_thread:return T::wrong_thread;
+ case MovieGpuError::stale_resource:return T::stale_resource;case MovieGpuError::host_capacity:return T::host_capacity;
+ case MovieGpuError::admission_closed:return T::admission_closed;case MovieGpuError::upload_failed:return T::upload_failed;
+ case MovieGpuError::invalid_frame:return T::invalid_image;default:return T::completion_failed;}
+}
+struct ImageLease final:graphics::NativeGlTexture {
+ std::weak_ptr<Session> session;std::shared_ptr<Texture> texture;std::uint32_t w{},h{};std::uint64_t id{};
+ std::uint64_t identity()const noexcept override{return id;}
+ std::uint32_t width()const noexcept override{return w;}
+ std::uint32_t height()const noexcept override{return h;}
+ std::optional<std::uint32_t> gl_object(graphics::NativeTextureFailure& f)const noexcept override{
+  f={};auto owner=session.lock();if(!owner){f={graphics::NativeTextureError::stale_resource,"native GL image context retired"};return {};}
+  if(auto e=movie_current(*owner);e!=MovieGpuError::none){f={texture_error(e),"native GL image owner/context admission"};return {};}
+  if(auto e=owner->completion->admission();e!=MovieGpuError::none){f={texture_error(e),"native GL image command admission"};return {};}
+  if(!texture||texture->revoked||!texture->object){f={graphics::NativeTextureError::stale_resource,"native GL image released"};return {};}
+  return texture->object;
+ }
+};
+bool valid_sampler(graphics::NativeTextureSampler p)noexcept{
+ using F=graphics::NativeTextureFilter;using A=graphics::NativeTextureAddress;
+ return (p.filter==F::nearest||p.filter==F::linear)&&(p.u==A::repeat||p.u==A::clamp_to_edge)&&(p.v==A::repeat||p.v==A::clamp_to_edge);
+}
+void image_sampler(graphics::NativeTextureSampler p){
+ using F=graphics::NativeTextureFilter;using A=graphics::NativeTextureAddress;
+ glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,p.filter==F::nearest?GL_NEAREST:GL_LINEAR);
+ glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,p.filter==F::nearest?GL_NEAREST:GL_LINEAR);
+ glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,p.u==A::repeat?GL_REPEAT:GL_CLAMP_TO_EDGE);
+ glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,p.v==A::repeat?GL_REPEAT:GL_CLAMP_TO_EDGE);
 }
 using MovieBindBuffer=void(APIENTRY*)(GLenum,GLuint);
 // Client pixels must not be reinterpreted as an offset into a caller's PBO.
@@ -235,11 +270,43 @@ struct MovieUnpackState {
         glPixelStorei(GL_UNPACK_SWAP_BYTES,swap);glPixelStorei(GL_UNPACK_LSB_FIRST,lsb);
     }
 };
+// Common actual GL allocation path for movie and ordinary image resources.
+// Caller-visible lease allocation precedes this function's command admission.
+MovieGpuError validate_image_upload(Session& session,std::uint32_t width,std::uint32_t height,std::span<const std::uint8_t> rgba){
+ using E=MovieGpuError;
+ if(auto e=movie_current(session);e!=E::none)return e;
+ if(auto e=session.completion->admission();e!=E::none)return e;
+ if(!width||!height||!rgba.data())return E::invalid_frame;
+ if(std::size_t(width)>std::size_t(-1)/4/height)return E::host_capacity;
+ if(rgba.size()!=std::size_t(width)*height*4)return E::invalid_frame;
+ if(!collect_video(session))return E::fence_failed;
+ if(image_error("native image upload incoming GL state"))return E::upload_failed;
+ GLint limit=0;glGetIntegerv(GL_MAX_TEXTURE_SIZE,&limit);
+ // Movie collection and incoming-error precedence are preserved even when a
+ // representable input dimension exceeds the native GL signed dimension limit.
+ if(limit<=0||width>unsigned(limit)||height>unsigned(limit)||width>INT_MAX||height>INT_MAX)return E::host_capacity;
+ return E::none;
+}
+MovieGpuError store_image(Session& session,MovieBindBuffer bind,std::uint32_t width,std::uint32_t height,
+ std::span<const std::uint8_t> rgba,graphics::NativeTextureSampler sampler,std::shared_ptr<Texture>& result){
+ using E=MovieGpuError;
+ auto texture=std::make_shared<Texture>();session.textures.push_back(texture);
+ if(auto e=session.completion->commands_issued();e!=E::none)return e;
+ bool ok=false;{
+  VideoGlState state(session);MovieUnpackState unpack(bind);
+  glGenTextures(1,&texture->object);glBindTexture(GL_TEXTURE_2D,texture->object);image_sampler(sampler);
+  glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,GLsizei(width),GLsizei(height),0,GL_RGBA,GL_UNSIGNED_BYTE,rgba.data());
+  ok=texture->object&&!image_error("upload native RGBA8 image");
+ }
+ if(!ok||image_error("restore native image upload state"))return E::upload_failed;
+ result=std::move(texture);return E::none;
+}
 MovieFenceResult Session::poll_retirement() noexcept {
     revoked.store(true,std::memory_order_release);
     if(std::this_thread::get_id()!=owner||wglGetCurrentContext()!=context||wglGetCurrentDC()!=dc)
         return {MovieFenceState::failed,MovieGpuError::wrong_thread};
     if(cleaned)return {MovieFenceState::complete,MovieGpuError::none};
+    if(image_delete_outcome_unknown)return {MovieFenceState::failed,MovieGpuError::fence_failed};
     auto tail=completion->begin_drain();
     if(tail.result.state==MovieFenceState::failed)return tail.result;
     auto done=completion->poll_drain(tail.receipt);
@@ -256,6 +323,7 @@ MovieFenceResult Session::retry_retirement() noexcept {
     if(std::this_thread::get_id()!=owner||wglGetCurrentContext()!=context||wglGetCurrentDC()!=dc)
         return {MovieFenceState::failed,MovieGpuError::wrong_thread};
     if(cleaned)return {MovieFenceState::complete,MovieGpuError::none};
+    if(image_delete_outcome_unknown)return {MovieFenceState::failed,MovieGpuError::fence_failed};
     auto tail=completion->begin_drain();
     if(tail.result.state==MovieFenceState::failed && tail.receipt) {
         auto retry=completion->retry_drain(tail.receipt);
@@ -272,29 +340,70 @@ public:
         if(auto e=movie_current(*session_);e!=E::none)return {e,{}};
         if(auto e=session_->completion->admission();e!=E::none)return {e,{}};
         if(auto e=video::validate_movie_upload(f);e!=E::none)return {e,{}};
-        if(!collect_video(*session_))return {E::fence_failed,{}};
-        if(image_error("movie upload incoming GL state"))return {E::upload_failed,{}};
-        GLint limit=0;glGetIntegerv(GL_MAX_TEXTURE_SIZE,&limit);
-        if(limit<=0||f.width>unsigned(limit)||f.height>unsigned(limit)||f.width>INT_MAX||f.height>INT_MAX)return {E::host_capacity,{}};
+        if(auto e=validate_image_upload(*session_,f.width,f.height,f.rgba);e!=E::none)return {e,{}};
         try{
-            auto lease=std::make_shared<MovieLease>();auto texture=std::make_shared<Texture>();session_->textures.push_back(texture);
-            bool ok=false;
-            if (auto e=session_->completion->commands_issued();e!=E::none)return {e,{}};
-            {
-                VideoGlState state(*session_);MovieUnpackState unpack(bind_);
-                glGenTextures(1,&texture->object);glBindTexture(GL_TEXTURE_2D,texture->object);
-                glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-                glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
-                glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,GLsizei(f.width),GLsizei(f.height),0,GL_RGBA,GL_UNSIGNED_BYTE,f.rgba.data());
-                ok=texture->object&&!image_error("upload native movie RGBA8");
-            }
-            if(!ok||image_error("restore native movie upload state"))return {E::upload_failed,{}};
+            auto lease=std::make_shared<MovieLease>();std::shared_ptr<Texture> texture;
+            const graphics::NativeTextureSampler sampler{graphics::NativeTextureFilter::nearest,
+                graphics::NativeTextureAddress::clamp_to_edge,graphics::NativeTextureAddress::clamp_to_edge};
+            if(auto e=store_image(*session_,bind_,f.width,f.height,f.rgba,sampler,texture);e!=E::none)return {e,{}};
             if(session_->identity==UINT64_MAX)return {E::host_capacity,{}};auto id=session_->identity++;
             lease->session=session_;lease->texture=std::move(texture);lease->id=id+1;lease->w=f.width;lease->h=f.height;
             lease->info={f.conversion_role,f.source_pts,f.timestamp,f.source_sample_aspect_numerator,f.source_sample_aspect_denominator,
                 f.source_color_range,f.source_color_space,f.source_color_primaries,f.source_color_transfer,f.codec_timing};
             return {E::none,std::move(lease)};
         }catch(const std::bad_alloc&){return {E::host_capacity,{}};}catch(const std::length_error&){return {E::host_capacity,{}};}
+    }
+    graphics::NativeTextureUpload upload_rgba_image(const graphics::NativeTextureRgbaImage& input,graphics::NativeTextureSampler sampler)override{
+        using T=graphics::NativeTextureError;
+        if(auto e=movie_current(*session_);e!=MovieGpuError::none)return {{texture_error(e),"native image owner/context admission"},{}};
+        if(auto e=session_->completion->admission();e!=MovieGpuError::none)return {{texture_error(e),"native image command admission"},{}};
+        if(!valid_sampler(sampler))return {{T::invalid_sampler,"explicit native image sampler required"},{}};
+        if(auto e=validate_image_upload(*session_,input.width,input.height,input.bytes);e!=MovieGpuError::none)
+            return {{texture_error(e),"actual native GL image validation"},{}};
+        try{
+            auto lease=std::make_shared<ImageLease>();std::shared_ptr<Texture> texture;
+            if(auto e=store_image(*session_,bind_,input.width,input.height,input.bytes,sampler,texture);e!=MovieGpuError::none)
+                return {{texture_error(e),"actual native GL image upload"},{}};
+            if(session_->identity==UINT64_MAX)return {{T::host_capacity,"native GL image identity capacity"},{}};
+            lease->session=session_;lease->texture=std::move(texture);lease->w=input.width;lease->h=input.height;lease->id=++session_->identity;
+            return {{},std::move(lease)};
+        }catch(const std::bad_alloc&){return {{T::allocation,"native GL image ownership allocation"},{}};}
+         catch(const std::length_error&){return {{T::host_capacity,"native GL image ownership capacity"},{}};}
+    }
+    bool revoke_image(const std::shared_ptr<const graphics::NativeGlTexture>& image,
+        graphics::NativeTextureFailure& failure)override{
+        using T=graphics::NativeTextureError;failure={};
+        if(auto e=movie_current(*session_);e!=MovieGpuError::none){failure={texture_error(e),"native GL image revoke context"};return false;}
+        if(auto e=session_->completion->admission();e!=MovieGpuError::none){failure={texture_error(e),"native GL image revoke admission"};return false;}
+        const auto lease=std::dynamic_pointer_cast<const ImageLease>(image);
+        if(!lease||lease->session.lock()!=session_||!lease->texture){failure={T::stale_resource,"foreign native GL image revoke"};return false;}
+        auto& texture=*lease->texture;
+        if(!texture.object)return true;
+        if(image_error("native image revoke incoming state")){failure={T::completion_failed,"native GL image revoke incoming error"};return false;}
+        if(auto e=session_->completion->commands_issued();e!=MovieGpuError::none){failure={texture_error(e),"native GL image revoke command admission"};return false;}
+        texture.revoked=true;
+        // Do not restore a deleted texture binding: binding its old name would
+        // recreate storage. Native GL retains queued uses until driver completion.
+        glDeleteTextures(1,&texture.object);
+        if(image_error("native image revoke delete")){
+            session_->image_delete_outcome_unknown=true;
+            failure={T::completion_failed,"native GL delete outcome unknown; required host context recovery"};
+            return false;
+        }
+        texture.object=0;return true;
+    }
+    bool set_image_sampler(const std::shared_ptr<const graphics::NativeGlTexture>& image,
+        graphics::NativeTextureSampler sampler,graphics::NativeTextureFailure& failure)override{
+        using T=graphics::NativeTextureError;failure={};
+        if(auto e=movie_current(*session_);e!=MovieGpuError::none){failure={texture_error(e),"native GL sampler context"};return false;}
+        if(auto e=session_->completion->admission();e!=MovieGpuError::none){failure={texture_error(e),"native GL sampler admission"};return false;}
+        if(!valid_sampler(sampler)){failure={T::invalid_sampler,"explicit native image sampler required"};return false;}
+        const auto lease=std::dynamic_pointer_cast<const ImageLease>(image);
+        if(!lease||lease->session.lock()!=session_||!lease->texture||lease->texture->revoked||!lease->texture->object){failure={T::stale_resource,"foreign or retired native GL image"};return false;}
+        if(image_error("native image sampler incoming state")){failure={T::sampler_failed,"native GL sampler incoming error"};return false;}
+        if(auto e=session_->completion->commands_issued();e!=MovieGpuError::none){failure={texture_error(e),"native GL sampler command admission"};return false;}
+        {VideoGlState state(*session_);glBindTexture(GL_TEXTURE_2D,lease->texture->object);image_sampler(sampler);}
+        if(image_error("native image sampler update/state restore")){failure={T::sampler_failed,"native GL sampler possible partial update"};return false;}return true;
     }
     video::MovieGpuSubmission present(const video::NativeMoviePresentPlan& p,const video::MovieHostLayout& l)override{
         using E=video::MovieGpuError;
@@ -345,22 +454,28 @@ public:
         if(std::this_thread::get_id()!=session_->owner||wglGetCurrentContext()!=session_->context||wglGetCurrentDC()!=session_->dc)
             return {{MovieFenceState::failed,MovieGpuError::wrong_thread},{}};
         if(session_->cleaned)return {{MovieFenceState::failed,MovieGpuError::stale_resource},{}};
+        if(session_->image_delete_outcome_unknown)return {{MovieFenceState::failed,MovieGpuError::fence_failed},{}};
         return session_->completion->begin_drain();
     }
     MovieFenceResult poll_context_drain(const std::shared_ptr<MovieGpuDrainReceipt>& receipt) noexcept override {
         if(std::this_thread::get_id()!=session_->owner||wglGetCurrentContext()!=session_->context||wglGetCurrentDC()!=session_->dc)
             return {MovieFenceState::failed,MovieGpuError::wrong_thread};
         if(session_->cleaned)return {MovieFenceState::failed,MovieGpuError::stale_resource};
+        if(session_->image_delete_outcome_unknown)return {MovieFenceState::failed,MovieGpuError::fence_failed};
         return session_->completion->poll_drain(receipt);
     }
     MovieGpuDrain retry_context_drain(const std::shared_ptr<MovieGpuDrainReceipt>& receipt) noexcept override {
         if(std::this_thread::get_id()!=session_->owner||wglGetCurrentContext()!=session_->context||wglGetCurrentDC()!=session_->dc)
             return {{MovieFenceState::failed,MovieGpuError::wrong_thread},{}};
         if(session_->cleaned)return {{MovieFenceState::failed,MovieGpuError::stale_resource},{}};
+        if(session_->image_delete_outcome_unknown)return {{MovieFenceState::failed,MovieGpuError::fence_failed},{}};
         return session_->completion->retry_drain(receipt);
     }
     MovieGpuError resume_after_drain(const std::shared_ptr<MovieGpuDrainReceipt>& receipt) noexcept override {
         if(session_->revoked.load(std::memory_order_acquire))return MovieGpuError::stale_resource;
+        if(std::this_thread::get_id()!=session_->owner||wglGetCurrentContext()!=session_->context||wglGetCurrentDC()!=session_->dc)
+            return MovieGpuError::wrong_thread;
+        if(session_->image_delete_outcome_unknown)return MovieGpuError::fence_failed;
         return session_->completion->resume(receipt);
     }
     video::MovieGpuError shutdown()noexcept override{

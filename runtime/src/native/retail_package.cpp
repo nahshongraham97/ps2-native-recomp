@@ -194,6 +194,23 @@ std::optional<std::size_t> NativeRetailPackage::read(std::string_view name,
     return {};
 }
 
+std::unique_ptr<content::NativeFileReadJob> NativeRetailPackage::begin_read(std::string_view name,
+    std::uint64_t offset,std::size_t count,RetailPackageFailure& f,content::NativeFileReadFailure& read) noexcept {
+    f={};read={};if(owner_thread_!=std::this_thread::get_id()){f.kind=RetailPackageError::wrong_thread;f.operation="retail package asynchronous read owner thread";return {};}
+    try{
+        const auto member=find(name,f);if(!member)return {};
+        if(offset>member->size){f.kind=RetailPackageError::invalid_read_range;f.operation="retail package asynchronous member range";return {};}
+        const auto n=std::size_t(std::min<std::uint64_t>(count,member->size-offset));
+        const auto normalized=key(name,f);if(!normalized)return {};
+        auto job=content::NativeFileReadJob::begin(members_[by_name_.at(*normalized)].file,offset,n,read);
+        if(!job){f.kind=RetailPackageError::source_read;f.operation="actual native asynchronous member read";}
+        return job;
+    }catch(const std::bad_alloc&){f.kind=RetailPackageError::allocation;}
+     catch(const std::length_error&){f.kind=RetailPackageError::host_capacity;}
+     catch(...){f.kind=RetailPackageError::native_exception;}
+    f.operation="retail package asynchronous member read";return {};
+}
+
 namespace main_binding {
 bool initialize_retail_package_stage(NativeRetailMainState& main, StartupFailure& failure) {
     failure = {};

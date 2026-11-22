@@ -119,6 +119,9 @@ public:
  RetailSavedKafView gameplay()const noexcept{return {known_.gameplay,gameplay_};}
  RetailSavedCustomizationView customization()const noexcept{return {known_.command,customization_pending_,customization_condition_};}
  const std::array<RetailSavedNamedPreset,6>& named_presets()const noexcept{return named_presets_;}
+ std::optional<std::uint8_t> admitted_customization_flags(RetailSavedProfileChildFailure& f)const noexcept {
+  if(!observable(f))return {};return customization_flags();
+ }
  std::uint8_t customization_flags()const noexcept{return static_cast<std::uint8_t>(known_.command.flag_bit2);}
  std::uint32_t customization_condition_word()const noexcept{return customization_condition_;}
 private:

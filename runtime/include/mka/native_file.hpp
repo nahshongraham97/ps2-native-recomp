@@ -10,6 +10,7 @@ namespace mka::content {
 enum class SeekOrigin { begin, current, end };
 struct FileRead { std::size_t bytes = 0; bool eof = false; std::error_code error; };
 // An opened host file owns its handle. No guest addresses or disc-sector units.
+class NativeFileReadJob;
 class NativeFile {
 public:
     NativeFile() = default;
@@ -39,5 +40,6 @@ public:
     bool read_all(std::vector<std::uint8_t>&, std::error_code&);
 private:
     std::FILE* file_ = nullptr;
+    friend class NativeFileReadJob;
 };
 } // namespace mka::content

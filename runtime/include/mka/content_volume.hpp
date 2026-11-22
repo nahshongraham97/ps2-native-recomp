@@ -31,6 +31,7 @@ private:
     std::string key_;
     NativeFile file_;
     friend class NativeContentVolume;
+    friend class NativeFileReadJob;
 };
 class NativeContentVolume final {
 public:

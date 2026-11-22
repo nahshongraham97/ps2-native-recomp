@@ -1,0 +1,87 @@
+{
+  "base": "6debf1505f45b4ecc01698e6b31f49d80657499a",
+  "paths": {
+    "runtime/include/mka/retail_profile_entry_decision.hpp": {
+      "commit": "b6042e88dc072e369024e24ee353ec126cbfe737",
+      "prior_sha256": "aca8d585535a1c6c4856ae465785f9b2984ce73429532fc320ebe55716507201",
+      "imported_sha256": "c388395e9ff50fac3a97653ab83cd6b972ad23e47e1908b91bb080f805fc7098"
+    },
+    "runtime/include/mka/retail_saved_profile_child.hpp": {
+      "commit": "b6042e88dc072e369024e24ee353ec126cbfe737",
+      "prior_sha256": "bfd18ec5dd552027ec93559e677861cea34cc939c74e133d44f26cfe403b3f50",
+      "imported_sha256": "a3d0e3cb3ab4eae2f455842c304bf07db1e952e3e995a498eae8a70490544a43"
+    },
+    "runtime/src/native/retail_profile_permission.cpp": {
+      "commit": "b6042e88dc072e369024e24ee353ec126cbfe737",
+      "prior_sha256": null,
+      "imported_sha256": "0b4c124a24066175a4b6a741f1d17a1995124dfd201ccb71610ea5cd9ad85c20"
+    },
+    "tests/test_retail_profile_entry_decision.cpp": {
+      "commit": "b6042e88dc072e369024e24ee353ec126cbfe737",
+      "prior_sha256": "aae4b70df21edf22cb05d6204fbed34e674d08afa2fe0feb086cffc83cd3bca8",
+      "imported_sha256": "f23b72b6cdf5a033c6e99d9f1c1109cab08308e7cf4a63dc9264303768546578"
+    },
+    "tests/test_retail_profile_permission.cpp": {
+      "commit": "b6042e88dc072e369024e24ee353ec126cbfe737",
+      "prior_sha256": null,
+      "imported_sha256": "6ef2d95217374c0e2631174d05d740e738c8d2598428ddcd0263db64071842a4"
+    },
+    "runtime/include/mka/content_volume.hpp": {
+      "commit": "6382224a8a9ca7893cd35e6b9ac7427e6b39c687",
+      "prior_sha256": "b795939e4f69a4562c2104e75baad81b7f140c9b63603ed58a93a5a683dafaab",
+      "imported_sha256": "c973d249844a3844ea774c474f3193a200009ca42927f65b0f58b025984bdfb1"
+    },
+    "runtime/include/mka/native_file.hpp": {
+      "commit": "6382224a8a9ca7893cd35e6b9ac7427e6b39c687",
+      "prior_sha256": "488f26a75cd91801933f88d2df8feba66c1fdab04a45951bd2b88eab81f4d25d",
+      "imported_sha256": "50152fd4899c2be5cb467f74c8261f6445758c0f3d7b2e35d030945f27feeffa"
+    },
+    "runtime/include/mka/native_file_read_job.hpp": {
+      "commit": "6382224a8a9ca7893cd35e6b9ac7427e6b39c687",
+      "prior_sha256": null,
+      "imported_sha256": "6b943088959bf32e7e5a676c96ddfade81827f19ac4cfff476a3e8b727104419"
+    },
+    "runtime/include/mka/retail_package.hpp": {
+      "commit": "6382224a8a9ca7893cd35e6b9ac7427e6b39c687",
+      "prior_sha256": "a073f84da4511986f747624ed65c33ff33c1c9bd57d386fc17328c2f56ec1293",
+      "imported_sha256": "f80923f8162e2ad5263a6752e3fe12d26b24c4124e32208f1e6c09c73c3c53c4"
+    },
+    "runtime/src/native/native_file_read_job.cpp": {
+      "commit": "6382224a8a9ca7893cd35e6b9ac7427e6b39c687",
+      "prior_sha256": null,
+      "imported_sha256": "d6eb47127b8e60adac79c736c9a7422811c5e7d0597a2c9368b1462963c3546a"
+    },
+    "runtime/src/native/retail_package.cpp": {
+      "commit": "6382224a8a9ca7893cd35e6b9ac7427e6b39c687",
+      "prior_sha256": "7823ce98f132b30899bc4ee0d874cd4826c21dd3aa903a238fadfe4108913351",
+      "imported_sha256": "22e65dc2d91ada6a64e7a49582f342a2b066dd197bca0573985fa68ffcc367b5"
+    },
+    "tests/test_native_file_read_job.cpp": {
+      "commit": "6382224a8a9ca7893cd35e6b9ac7427e6b39c687",
+      "prior_sha256": null,
+      "imported_sha256": "bc85d34e7d214ad89ac2cb80e42899807a53228a2b1a7d83b59247756f56aed6"
+    },
+    "runtime/include/mka/movie_gl_device.hpp": {
+      "commit": "69e0f3ce9c5e242fa8b539a7e217fc093fc01566",
+      "prior_sha256": "1fd930faf88ed5e65bfe8668cba04fac7d51a9de6f25f33e47028d233c6d4257",
+      "imported_sha256": "0f80bad7c320e076c46ef6b3b02cf3391f20c62dbb7901ddafcd1a3b2328f949"
+    },
+    "runtime/include/mka/native_gl_texture.hpp": {
+      "commit": "69e0f3ce9c5e242fa8b539a7e217fc093fc01566",
+      "prior_sha256": null,
+      "imported_sha256": "d8e3ba9d89b6c11f07bafa506dca3b48e58c32264e7bb222450e3663826da444"
+    },
+    "runtime/src/native/movie_gl_device.cpp": {
+      "commit": "69e0f3ce9c5e242fa8b539a7e217fc093fc01566",
+      "prior_sha256": "aeaeb11904d53838467395957fe1a9a469b68a1af4c752868f8740c80a22d0a1",
+      "imported_sha256": "265df40bb03bfdd6df2317eee38304ea57666eb568eaf25a7f8d9ab71bd32c19"
+    },
+    "tests/test_native_gl_texture.cpp": {
+      "commit": "69e0f3ce9c5e242fa8b539a7e217fc093fc01566",
+      "prior_sha256": null,
+      "imported_sha256": "65a74cc793e08909ea965077b9368ec16e8d293a435dd148a203da2a3ba547e7"
+    }
+  },
+  "immutable_commit_blobs": true,
+  "primary_worktree_modified": false
+}

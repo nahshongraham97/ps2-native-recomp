@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mka/content_volume.hpp"
+#include "mka/native_file_read_job.hpp"
 #include "mka/retail_file_paths.hpp"
 #include <cstddef>
 #include <cstdint>
@@ -46,6 +47,8 @@ public:
     std::optional<RetailPackageMember> find(std::string_view, RetailPackageFailure&) const noexcept;
     // Read at a member-relative byte offset. The request is clipped at the
     // file end. A failed seek/read never reports success.
+    std::unique_ptr<content::NativeFileReadJob> begin_read(std::string_view,
+        std::uint64_t offset,std::size_t bytes,RetailPackageFailure&,content::NativeFileReadFailure&) noexcept;
     std::optional<std::size_t> read(std::string_view, std::uint64_t,
         std::span<std::uint8_t>, RetailPackageFailure&) noexcept;
 

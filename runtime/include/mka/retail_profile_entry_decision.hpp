@@ -15,9 +15,8 @@ std::optional<std::uint32_t> decide_retail_profile_entry_from_1892d0(
     NativeRetailMainState&, std::uint32_t key, std::uint32_t selector,
     std::uint32_t role, RetailProfileMenuFailure&);
 
-// Strong required 4EEE60 child. Its real retained profile first-byte owner
-// and 9012 task lookup must be joined before production can link this symbol.
-// A test may supply a fixture definition; there is no production default.
+// Actual4EEE60 selection/active-customization/task query. Only admitted
+// typed child projections may be observed; unknown loaded data is refused.
 std::optional<std::uint32_t> observe_retail_profile_permission_from_4eee60(
     NativeRetailMainState&, std::uint32_t role, RetailProfileMenuFailure&);
 } // namespace mka::retail

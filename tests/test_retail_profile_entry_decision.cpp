@@ -27,7 +27,8 @@ struct ChildFixture {
 } child;
 } // namespace
 
-// This is the fixture's only replacement. Production has no 4EEE60 body.
+// This isolated1892D0 fixture replaces the production4EEE60 child.
+// The actual child has a separate actual-owner permission client.
 namespace mka::retail {
 std::optional<std::uint32_t> observe_retail_profile_permission_from_4eee60(
     NativeRetailMainState& main, std::uint32_t role, RetailProfileMenuFailure&) {
