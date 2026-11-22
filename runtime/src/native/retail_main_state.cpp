@@ -4,6 +4,7 @@
 #include "mka/retail_sound_bank_catalog.hpp"
 #include "mka/retail_sound_runtime.hpp"
 #include "mka/retail_sound_status.hpp"
+#include "mka/retail_permanent_strings.hpp"
 #include "native_retail_startup.hpp"
 #include <cstdio>
 #include <exception>
@@ -14,6 +15,9 @@ NativeRetailMainState::NativeRetailMainState(NativeRetailStartupState& owner,
     : lifetime(std::make_shared<NativeRetailMainLifetime>()),
       startup(owner), controller_samples(samples) {}
 NativeRetailMainState::~NativeRetailMainState() {
+    // Retire the actual queued/loaded record while its parent registry and
+    // native Main lifetime still exist. This does not touch game save data.
+    permanent_strings.reset();
     if (!game_sound_references.empty()) {
         std::fputs("native retail sound teardown requires game-reference retirement\n", stderr);
         std::terminate();

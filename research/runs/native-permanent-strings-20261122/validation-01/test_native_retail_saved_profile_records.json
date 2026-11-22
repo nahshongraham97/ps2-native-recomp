@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_saved_profile_records.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\research\\runs\\native-permanent-strings-20261122\\validation-01\\fixtures\\profiles"
+  ],
+  "exit": 0,
+  "seconds": 0.09937539999373257,
+  "executable_sha256": "4735141f595761d5d75b75f35b24ffb97042242e65315df22271b3e1b5bc4807",
+  "source_commit": "f6a1aae55531f9133ac66b2a9bb46f3e9f6c54ce",
+  "source_manifest_sha256": "c4526d59c87c9bde767965384b839ffd31a0c9f4dfda4c2a37718493c5ee1879",
+  "log_sha256": "63629368c51dc99c3d98aacf916bf5f28c22e803a53c169244befeb2014fd1cf"
+}

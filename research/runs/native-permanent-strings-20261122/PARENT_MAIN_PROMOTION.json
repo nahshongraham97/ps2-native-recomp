@@ -1,0 +1,14 @@
+{
+  "status": "PROMOTED_VERIFIED_DELIVERY_WITH_DIRTY_DRAFT_PRESERVED",
+  "main_worktree": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22",
+  "main_head": "f6a1aae55531f9133ac66b2a9bb46f3e9f6c54ce",
+  "origin_main": "f6a1aae55531f9133ac66b2a9bb46f3e9f6c54ce",
+  "preserved_worktree": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp",
+  "preserved_branch": "preserved-main-draft-20261122",
+  "preserved_head": "3f0155622a148ac490565337d65cb4aaf0cbce45",
+  "dirty_files_byte_identical": true,
+  "index_byte_identical": true,
+  "prior_component_evidence_reused": true,
+  "new_game_run": false,
+  "acceptance": "OPEN"
+}

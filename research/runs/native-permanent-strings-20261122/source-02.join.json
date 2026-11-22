@@ -1,0 +1,72 @@
+{
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "functions": {
+    "002170e0": {
+      "mapping": {
+        "vma": "0x2170e0",
+        "file_offset": 1143264,
+        "length": 408,
+        "segment": 0
+      },
+      "original_sha256": "05794a0ab6f4ae1e7e8cfa7d2df8619d4766a7d04258797a0da9a45ceb6e1aba",
+      "listing_sha256": "e2aa0e4d0b56dc3bd8def8ac4fde64dd38ec747e3ebcab0d57f03d1e0906767e",
+      "words": 102
+    },
+    "0019c430": {
+      "mapping": {
+        "vma": "0x19c430",
+        "file_offset": 640304,
+        "length": 132,
+        "segment": 0
+      },
+      "original_sha256": "145a546b7b4aac07bb110e0ca503d50b11ea3d9d67271d65c4207149d5c23f42",
+      "listing_sha256": "b950bcb4e336ca4d864e8433964546f2c1b1b03debb4699911e7c789701163b4",
+      "words": 33
+    },
+    "0019bfa0": {
+      "mapping": {
+        "vma": "0x19bfa0",
+        "file_offset": 639136,
+        "length": 104,
+        "segment": 0
+      },
+      "original_sha256": "55e589b2aa0f1b832d9e01615d3218b4d70c76bb1dca58fc5f9b9ca468b6bd37",
+      "listing_sha256": "7a6e30ffc5d2f1fbe1232dd4f536963096c026610d4c990e2e7e4164a3c54732",
+      "words": 26
+    },
+    "00217fc0": {
+      "mapping": {
+        "vma": "0x217fc0",
+        "file_offset": 1147072,
+        "length": 124,
+        "segment": 0
+      },
+      "original_sha256": "d451daffb125510be993ee079e1294d85b08259b48731153d728eb375cc99278",
+      "listing_sha256": "d537a700a5703964bce89bb3c8c3711dc51973bafcb391c2aa2fa9e71992c243",
+      "words": 31
+    },
+    "00216aa0": {
+      "mapping": {
+        "vma": "0x216aa0",
+        "file_offset": 1141664,
+        "length": 188,
+        "segment": 0
+      },
+      "original_sha256": "082e560e8d76cea119a4da16054b18cd4737eb1c59a6fa9bbb8f9a3a145034c2",
+      "listing_sha256": "84d34f9b036e68ebf982e5422ce165c602dce647b77098edf0cd7f30554032f8",
+      "words": 47
+    },
+    "002152a0": {
+      "mapping": {
+        "vma": "0x2152a0",
+        "file_offset": 1135520,
+        "length": 252,
+        "segment": 0
+      },
+      "original_sha256": "5c78291e914194096252e21ceca27c7de1c276e4e4c04baea6c3f012bb99b7b8",
+      "listing_sha256": "a70a44e0ffe1ad3ebc87d6441ae5936decf65219d4f2e5bd844c29270ce4b4b8",
+      "words": 63
+    }
+  },
+  "scope": "Byte/disassembly identity; behavior and production implementation separate"
+}

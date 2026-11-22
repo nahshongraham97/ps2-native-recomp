@@ -1,0 +1,61 @@
+{
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "functions": {
+    "00216d80": {
+      "mapping": {
+        "vma": "0x216d80",
+        "file_offset": 1142400,
+        "length": 704,
+        "segment": 0
+      },
+      "original_sha256": "96d927bd7db90e76846a3bf4211ee4fd830bd1bb724c2a67eb043c7792eb5751",
+      "listing_sha256": "cdf78cd70b78c0088b2c7add2fd2f585b27eff91024115bf16071fc3f1d40a85",
+      "words": 176
+    },
+    "00216c90": {
+      "mapping": {
+        "vma": "0x216c90",
+        "file_offset": 1142160,
+        "length": 240,
+        "segment": 0
+      },
+      "original_sha256": "e2411cf7c88ea41a3446eae54464c607cbe235138919bb7b4c1fd7e0b8210c1b",
+      "listing_sha256": "309d61b1e0ba2e12afc92a783260704bc1179ad9f92be0269fe66b0e7ac44072",
+      "words": 60
+    },
+    "00216f70": {
+      "mapping": {
+        "vma": "0x216f70",
+        "file_offset": 1142896,
+        "length": 208,
+        "segment": 0
+      },
+      "original_sha256": "77509fdb37e9fd4cce4e44200c39c204020558ac4d7e5062a341515f526109c3",
+      "listing_sha256": "92c437e6c249d5e8a1d9bd8f18dc50287ac841b9b167e2f0da98c0ff5d16637a",
+      "words": 52
+    },
+    "002164d0": {
+      "mapping": {
+        "vma": "0x2164d0",
+        "file_offset": 1140176,
+        "length": 340,
+        "segment": 0
+      },
+      "original_sha256": "91dde92726ddaff082051978a138dc36e9757f6f74b3803381c0ad3a3e3c2ee3",
+      "listing_sha256": "69860219df73dbbb9714d18fe4c465d8406338d72d32ee6c695963cbee068948",
+      "words": 85
+    },
+    "001deb10": {
+      "mapping": {
+        "vma": "0x1deb10",
+        "file_offset": 912400,
+        "length": 324,
+        "segment": 0
+      },
+      "original_sha256": "0d7de6655503cb4da5fb662fd3458aa2316f3b3c15bd4e5a692a1e54e5104d71",
+      "listing_sha256": "2ea6fc569d1106c531330f235332d6a9762cad5e8fd8e4f19dda1597fa1fae5b",
+      "words": 81
+    }
+  },
+  "scope": "Byte/disassembly identity; behavior and production implementation separate"
+}

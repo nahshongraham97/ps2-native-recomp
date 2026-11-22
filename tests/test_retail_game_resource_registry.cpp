@@ -14,7 +14,6 @@ class NativeRetailGameInfoResource {};
 class NativeRetailHumanBoneTable {};
 class NativeRetailFlippedHumanBoneTable {};
 class NativeRetailNpcGroundCollisions {};
-class NativeRetailLoadedResource {};
 }
 
 namespace {
@@ -81,8 +80,9 @@ int main() {
 
     std::vector<RetailGameResourceRecordHandle> handles;
     for(std::size_t i=0;i<21;++i) {
+        RetailStringDataFailure data;
         auto record=registry->activate_loaded_record(
-            std::make_shared<NativeRetailLoadedResource>(),f);
+            NativeRetailLoadedResource::prepare_permanent_strings(0,data),f);
         check(record&&record->slot==i,"source free order and native growth after twenty");
         handles.push_back(*record);
     }
@@ -91,12 +91,13 @@ int main() {
           full->active_order.front()==20&&full->active_order.back()==0,
           "source active head prepend and dynamic host storage");
     auto retained=registry->retained_loaded_record(handles[7],f);
-    check(bool(retained),"active record retains parsed native owner");
+    check(bool(retained),"active record retains real queued native owner");
     check(registry->retire_loaded_record(handles[7],f),"217FC0 record unlink");
     check(!registry->retained_loaded_record(handles[7],f)&&
           f.kind==Error::stale_record,"retired token cannot see reused content");
+    RetailStringDataFailure data;
     auto reused=registry->activate_loaded_record(
-        std::make_shared<NativeRetailLoadedResource>(),f);
+        NativeRetailLoadedResource::prepare_permanent_strings(0,data),f);
     check(reused&&reused->slot==7&&reused->generation!=handles[7].generation,
           "retired source slot returns to free head with fresh native token");
     auto foreign=NativeRetailGameResourceRegistry::create(f);

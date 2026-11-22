@@ -39,6 +39,7 @@ class NativeRetailSoundRuntime;
 struct NativeRetailSoundStatus;
 struct NativeRetailProfileOwners;
 struct NativeRetailSceneOwners;
+class NativeRetailPermanentStrings;
 
 enum class RetailStartupGate { ready, source_refused, native_failure };
 enum class RetailCurrentSoundPhase { empty, game_state_prepared, bank_catalog_opened, ready, failed };
@@ -104,6 +105,7 @@ struct NativeRetailMainState {
     std::shared_ptr<NativeRetailRecordOwners> record_owners;
     // Created only at the real2173D0 point of game-record initialization.
     std::unique_ptr<NativeRetailGameResourceRegistry> resource_registry;
+    std::unique_ptr<NativeRetailPermanentStrings> permanent_strings;
     std::unique_ptr<NativeRetailGameInfoResources> game_info_resources;
     std::unique_ptr<NativeRetailAudioStatistics> audio_statistics;
     std::optional<NativeRetailModeState> mode_history;

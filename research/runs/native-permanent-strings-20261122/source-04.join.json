@@ -1,0 +1,17 @@
+{
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "functions": {
+    "002173d0": {
+      "mapping": {
+        "vma": "0x2173d0",
+        "file_offset": 1144016,
+        "length": 228,
+        "segment": 0
+      },
+      "original_sha256": "b5298b1b4736da08279f5af71f5a4217cccdabb91b4e9a39dc7d02e2fea8d2b7",
+      "listing_sha256": "73bf6022e35988249155ff9a6f2cfb4879b31f1c14f390069a9932728c0f4705",
+      "words": 57
+    }
+  },
+  "scope": "Byte/disassembly identity; behavior and production implementation separate"
+}

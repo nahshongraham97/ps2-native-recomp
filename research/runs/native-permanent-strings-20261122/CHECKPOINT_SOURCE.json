@@ -1,0 +1,22 @@
+{
+  "base_main": "f6a1aae55531f9133ac66b2a9bb46f3e9f6c54ce",
+  "paths": [
+    "cmake/native_game.cmake",
+    "runtime/include/mka/retail_game_resource_registry.hpp",
+    "runtime/include/mka/retail_loaded_system_art.hpp",
+    "runtime/include/mka/retail_main.hpp",
+    "runtime/include/mka/retail_permanent_string_data.hpp",
+    "runtime/include/mka/retail_permanent_strings.hpp",
+    "runtime/src/native/retail_game_resource_registry.cpp",
+    "runtime/src/native/retail_main_state.cpp",
+    "runtime/src/native/retail_permanent_string_data.cpp",
+    "runtime/src/native/retail_permanent_strings.cpp",
+    "tests/test_retail_game_resource_registry.cpp",
+    "tests/test_retail_loaded_system_art.cpp",
+    "tests/test_retail_permanent_strings.cpp"
+  ],
+  "source_manifest_sha256": "a41faf14d86f20e7e95e03f25785bf0658bb6f3d8ab3366399ccee30a0844023",
+  "focused_result_sha256": "0816d36252d1223bc23a70246751d95e988c83b71f8493238c885b325d5449e3",
+  "initial_completed_rows_sha256": "111b658d30751380e61afbe3dbf16cf93744ef6c65e7a7c5d00b967364e5a0ab",
+  "stage": "TESTED_COMPONENT_CLEAN_COMMITTED_CHECK_PENDING"
+}

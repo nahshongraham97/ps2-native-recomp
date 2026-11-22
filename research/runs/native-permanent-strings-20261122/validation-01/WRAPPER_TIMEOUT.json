@@ -1,0 +1,8 @@
+{
+  "status": "HOST_WRAPPER_TIMEOUT_AFTER_COMPLETED_ROWS",
+  "host_timeout_ms": 120000,
+  "host_exit": 143,
+  "component_failures": false,
+  "summary_missing": true,
+  "scope": "Compile, six client rows, exact60 negative and nm all completed; this read-only recovery does not rerun them."
+}

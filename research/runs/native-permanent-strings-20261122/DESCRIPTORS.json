@@ -1,0 +1,208 @@
+{
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "root_vma": "0x610980",
+  "root_bytes": "48485b000000000000000000",
+  "selected": [
+    {
+      "index": 5,
+      "row_mapping": {
+        "vma": "0x6109c8",
+        "file_offset": 5311176,
+        "length": 12,
+        "segment": 0
+      },
+      "row_bytes": "78475b0000581e00e0060000",
+      "descriptor_mapping": {
+        "vma": "0x5b4778",
+        "file_offset": 4933752,
+        "length": 16,
+        "segment": 0
+      },
+      "descriptor_words": [
+        "0x610810",
+        "0x610980",
+        "0x3",
+        "0x0"
+      ],
+      "name": {
+        "text": "permanent_strings_eng.mko",
+        "bytes_hex": "7065726d616e656e745f737472696e67735f656e672e6d6b6f00",
+        "mapping": {
+          "vma": "0x610810",
+          "file_offset": 5310736,
+          "length": 26,
+          "segment": 0
+        }
+      },
+      "offset": 1988608,
+      "length": 1760,
+      "payload_sha256": "a8e31af662530f0b5c63db3d8f9feb5ca3502c29010fa3889300d6c67b3bbe24",
+      "first_64_bytes_hex": "00000000000000000c000000100400000800000001000000010000003c010000000000000100000001000000010000004e0000004e0000000000000010000000"
+    },
+    {
+      "index": 6,
+      "row_mapping": {
+        "vma": "0x6109d4",
+        "file_offset": 5311188,
+        "length": 12,
+        "segment": 0
+      },
+      "row_bytes": "88475b0000601e0000080000",
+      "descriptor_mapping": {
+        "vma": "0x5b4788",
+        "file_offset": 4933768,
+        "length": 16,
+        "segment": 0
+      },
+      "descriptor_words": [
+        "0x610830",
+        "0x610980",
+        "0x3",
+        "0x0"
+      ],
+      "name": {
+        "text": "permanent_strings_spa.mko",
+        "bytes_hex": "7065726d616e656e745f737472696e67735f7370612e6d6b6f00",
+        "mapping": {
+          "vma": "0x610830",
+          "file_offset": 5310768,
+          "length": 26,
+          "segment": 0
+        }
+      },
+      "offset": 1990656,
+      "length": 2048,
+      "payload_sha256": "c679a918a9bc6fb8ec9c28d68dddd4844ea70224fcee4c0ba938835047bc3e60",
+      "first_64_bytes_hex": "00000000000000000c000000240500000800000001000000010000003c010000000000000100000001000000010000004e0000004e0000000000000018000000"
+    },
+    {
+      "index": 7,
+      "row_mapping": {
+        "vma": "0x6109e0",
+        "file_offset": 5311200,
+        "length": 12,
+        "segment": 0
+      },
+      "row_bytes": "98475b0000681e0000070000",
+      "descriptor_mapping": {
+        "vma": "0x5b4798",
+        "file_offset": 4933784,
+        "length": 16,
+        "segment": 0
+      },
+      "descriptor_words": [
+        "0x610850",
+        "0x610980",
+        "0x3",
+        "0x0"
+      ],
+      "name": {
+        "text": "permanent_strings_ger.mko",
+        "bytes_hex": "7065726d616e656e745f737472696e67735f6765722e6d6b6f00",
+        "mapping": {
+          "vma": "0x610850",
+          "file_offset": 5310800,
+          "length": 26,
+          "segment": 0
+        }
+      },
+      "offset": 1992704,
+      "length": 1792,
+      "payload_sha256": "8530eca22b66d8afd1dd6f99d2793c1ff4f604ea7bb3ee71f0d369db02f2f9c1",
+      "first_64_bytes_hex": "00000000000000000c000000340400000800000001000000010000003c010000000000000100000001000000010000004e0000004e0000000000000014000000"
+    },
+    {
+      "index": 8,
+      "row_mapping": {
+        "vma": "0x6109ec",
+        "file_offset": 5311212,
+        "length": 12,
+        "segment": 0
+      },
+      "row_bytes": "a8475b0000701e0060070000",
+      "descriptor_mapping": {
+        "vma": "0x5b47a8",
+        "file_offset": 4933800,
+        "length": 16,
+        "segment": 0
+      },
+      "descriptor_words": [
+        "0x610870",
+        "0x610980",
+        "0x3",
+        "0x0"
+      ],
+      "name": {
+        "text": "permanent_strings_fre.mko",
+        "bytes_hex": "7065726d616e656e745f737472696e67735f6672652e6d6b6f00",
+        "mapping": {
+          "vma": "0x610870",
+          "file_offset": 5310832,
+          "length": 26,
+          "segment": 0
+        }
+      },
+      "offset": 1994752,
+      "length": 1888,
+      "payload_sha256": "908bdb00216750e194f1ffd79750b4b60b8d1b1a810f09c0650dc0298a123809",
+      "first_64_bytes_hex": "00000000000000000c000000900400000800000001000000010000003c010000000000000100000001000000010000004e0000004e000000000000001c000000"
+    },
+    {
+      "index": 9,
+      "row_mapping": {
+        "vma": "0x6109f8",
+        "file_offset": 5311224,
+        "length": 12,
+        "segment": 0
+      },
+      "row_bytes": "b8475b0000781e0060070000",
+      "descriptor_mapping": {
+        "vma": "0x5b47b8",
+        "file_offset": 4933816,
+        "length": 16,
+        "segment": 0
+      },
+      "descriptor_words": [
+        "0x610890",
+        "0x610980",
+        "0x3",
+        "0x0"
+      ],
+      "name": {
+        "text": "permanent_strings_ita.mko",
+        "bytes_hex": "7065726d616e656e745f737472696e67735f6974612e6d6b6f00",
+        "mapping": {
+          "vma": "0x610890",
+          "file_offset": 5310864,
+          "length": 26,
+          "segment": 0
+        }
+      },
+      "offset": 1996800,
+      "length": 1888,
+      "payload_sha256": "52aaea1300017c7d3bc2c8b840ba55c7442cfb547eace429435dcfa3c5627f47",
+      "first_64_bytes_hex": "00000000000000000c000000980400000800000001000000010000003c010000000000000100000001000000010000004e0000004e0000000000000018000000"
+    }
+  ],
+  "original_gameart_sha256": "9900120ff8782b16e0d73ee885c8f4df6c82545b915dd10105e6694a03658a39",
+  "all_source_names": [
+    "sysart.sec",
+    "sysart_spa.sec",
+    "sysart_ger.sec",
+    "sysart_fre.sec",
+    "sysart_ita.sec",
+    "permanent_strings_eng.mko",
+    "permanent_strings_spa.mko",
+    "permanent_strings_ger.mko",
+    "permanent_strings_fre.mko",
+    "permanent_strings_ita.mko",
+    "fightingart.sec",
+    "fightingart_spa.sec",
+    "fightingart_ger.sec",
+    "fightingart_fre.sec",
+    "fightingart_ita.sec",
+    "caf.mko",
+    "caf_boss.mko",
+    "fatality_art.sec"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "binaries": {
+    "test_native_retail_permanent_strings": "848ca08a44cf23d9d6cfa0fd39b19a3f05d2e155a6acc41bac25cb95d74be902",
+    "test_native_retail_game_resource_registry": "6d2fb0c709533304ac0e52110baf41746133bb38beee59b17aa214ff6461d662",
+    "test_native_retail_loaded_system_art": "78501a7bbf166c2967d3b8b4f88920e27c6345e1352a129cfdb47c11c9412024",
+    "test_native_retail_game_session": "1d4a75c28f0925a5c4d17c6f02e7442eccd0c87965cd0a89f7e82692f489e836",
+    "test_native_retail_saved_profile_records": "4735141f595761d5d75b75f35b24ffb97042242e65315df22271b3e1b5bc4807",
+    "test_native_retail_initial_reset_arcade": "d7bf9113d5e89cb1f38c3cadc16a541b2118075a9e94492cc387418181001920"
+  },
+  "history": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\history-strings-01",
+  "source_manifest_sha256": "c4526d59c87c9bde767965384b839ffd31a0c9f4dfda4c2a37718493c5ee1879",
+  "reason": "Actual lifetime declaration shows a still-retained retired witness does not establish that raw Main remains alive."
+}

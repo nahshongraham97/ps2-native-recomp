@@ -240,6 +240,33 @@ NativeRetailGameResourceRegistry::retained_loaded_record(
     return records_[handle.slot].resource;
 }
 
+std::optional<RetailGameResourceRecordHandle> NativeRetailGameResourceRegistry::find_loaded_tag(
+    std::int32_t tag,RetailGameResourceRegistryFailure& f) const noexcept {
+    if(!access(f))return {};
+    for(auto i=active_head_;i!=no_slot;i=records_[i].next)
+        if(records_[i].resource->tag_==tag)
+            return RetailGameResourceRecordHandle{identity_,records_[i].generation,i};
+    return {};
+}
+std::optional<NativeRetailStringTableBinding>
+NativeRetailGameResourceRegistry::lookup_string_table_from_215ed0(
+    std::optional<std::string_view> name,RetailGameResourceRegistryFailure& f) const noexcept {
+    if(!access(f)||!name)return {};
+    const auto global=lookup_global(name,f);
+    if(f.kind!=RetailGameResourceRegistryError::none)return {};
+    if(global) {
+        fail(f,RetailGameResourceRegistryError::type_mismatch,"215ED0 native global is not a string-array binding");return {};
+    }
+    const auto key=c_prefix(*name);
+    for(auto i=active_head_;i!=no_slot;i=records_[i].next) {
+        const auto& resource=records_[i].resource;
+        if(resource->phase_!=RetailLoadedStringPhase::ready||!resource->image_)continue;
+        //1DEB10 compares exact bytes here; only the preceding global lookup folds.
+        if(resource->image_->export_name()==key)return NativeRetailStringTableBinding(resource);
+    }
+    return {};
+}
+
 std::optional<RetailGameResourceRegistryObservation>
 NativeRetailGameResourceRegistry::observe(
     RetailGameResourceRegistryFailure& f) const noexcept {

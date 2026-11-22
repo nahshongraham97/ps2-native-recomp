@@ -108,8 +108,8 @@ private:
 };
 
 // Separate permanent_strings_eng.mko descendants of19A630/19A5E0 (the actual
-// key at5FCE60). Their native resource owner remains required; texture
-// conversion is not a successful substitute for215660/215730.
+// key at5FCE60). Implemented by the permanent-string producer, never replaced
+// by successful texture conversion.
 namespace loaded_art_required {
 bool queue_permanent_strings_215660(NativeRetailMainState&, StartupFailure&);
 bool complete_permanent_strings_215730(NativeRetailMainState&, StartupFailure&);

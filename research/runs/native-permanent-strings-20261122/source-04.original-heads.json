@@ -1,0 +1,51 @@
+{
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "pt_load": [
+    {
+      "index": 0,
+      "p_offset": 256,
+      "p_vaddr": 1048576,
+      "p_filesz": 5561984,
+      "p_memsz": 7096448
+    },
+    {
+      "index": 1,
+      "p_offset": 5562240,
+      "p_vaddr": 8145024,
+      "p_filesz": 0,
+      "p_memsz": 1131008
+    },
+    {
+      "index": 2,
+      "p_offset": 5562240,
+      "p_vaddr": 8145024,
+      "p_filesz": 0,
+      "p_memsz": 2097536
+    },
+    {
+      "index": 3,
+      "p_offset": 5562240,
+      "p_vaddr": 8145024,
+      "p_filesz": 0,
+      "p_memsz": 1867392
+    },
+    {
+      "index": 4,
+      "p_offset": 5562240,
+      "p_vaddr": 10242560,
+      "p_filesz": 0,
+      "p_memsz": 0
+    }
+  ],
+  "heads": {
+    "002173d0": {
+      "mapping": {
+        "vma": "0x2173d0",
+        "file_offset": 1144016,
+        "length": 64,
+        "segment": 0
+      },
+      "bytes_hex": "f0ffbd276a00043c0000bfffc062842450ab868f1c02090c170005246a00083c10a780af905608252d2000002d4800002d1800019c0026253801252521386600"
+    }
+  }
+}

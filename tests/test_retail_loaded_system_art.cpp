@@ -31,12 +31,8 @@ void* operator new(std::size_t n) {
 }
 void operator delete(void* p) noexcept { std::free(p); }
 void operator delete(void* p,std::size_t) noexcept { std::free(p); }
-// Unimplemented managed-resource descendants are tripwires, never successful
-// fixtures. This client exercises the real font binding, not those descendants.
-namespace mka::retail::loaded_art_required {
-bool queue_permanent_strings_215660(NativeRetailMainState&,StartupFailure&) { std::abort(); }
-bool complete_permanent_strings_215730(NativeRetailMainState&,StartupFailure&) { std::abort(); }
-}
+// Permanent-string descendants now link their real production implementations.
+// This client still measures the font path; the string client exercises them.
 namespace {
 void check(bool value,const char* message) { if(!value) throw std::runtime_error(message); }
 std::string sha(std::span<const std::uint8_t> bytes) {

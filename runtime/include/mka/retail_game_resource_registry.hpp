@@ -1,4 +1,5 @@
 #pragma once
+#include "mka/retail_permanent_string_data.hpp"
 
 #include <array>
 #include <cstddef>
@@ -17,7 +18,6 @@ class NativeRetailGameInfoResource;
 class NativeRetailHumanBoneTable;
 class NativeRetailFlippedHumanBoneTable;
 class NativeRetailNpcGroundCollisions;
-class NativeRetailLoadedResource;
 
 // A source global name resolves to one of these real native owners. Their
 // producers belong to their own source callpoints; no guest address or void
@@ -30,7 +30,7 @@ using NativeRetailGameResourceValue = std::variant<
 
 enum class RetailGameResourceRegistryError {
     none, wrong_thread, missing_value, allocation, native_exception,
-    foreign_record, stale_record, identity_exhausted
+    foreign_record, stale_record, identity_exhausted, type_mismatch
 };
 struct RetailGameResourceRegistryFailure {
     RetailGameResourceRegistryError kind{RetailGameResourceRegistryError::none};
@@ -73,9 +73,8 @@ public:
         std::optional<std::string_view> name,
         RetailGameResourceRegistryFailure&) const noexcept;
 
-    // Actual loaded-resource admission is separate from global names. A
-    // parsed native resource must exist before taking a record from the free
-    // list. These methods do not implement 214120 parsing or 215ED0 lookup.
+    // Actual215180 publishes a real queued record before parsing. The owner
+    // must exist, but need not be ready; no parsed-success fixture is admitted.
     std::optional<RetailGameResourceRecordHandle> activate_loaded_record(
         std::shared_ptr<const NativeRetailLoadedResource>,
         RetailGameResourceRegistryFailure&) noexcept;
@@ -84,6 +83,10 @@ public:
     std::shared_ptr<const NativeRetailLoadedResource> retained_loaded_record(
         RetailGameResourceRecordHandle,
         RetailGameResourceRegistryFailure&) const noexcept;
+    std::optional<RetailGameResourceRecordHandle> find_loaded_tag(
+        std::int32_t,RetailGameResourceRegistryFailure&) const noexcept;
+    std::optional<NativeRetailStringTableBinding> lookup_string_table_from_215ed0(
+        std::optional<std::string_view>,RetailGameResourceRegistryFailure&) const noexcept;
     std::optional<RetailGameResourceRegistryObservation> observe(
         RetailGameResourceRegistryFailure&) const noexcept;
 

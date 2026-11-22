@@ -195,11 +195,16 @@ add_executable(test_native_retail_profile_owners EXCLUDE_FROM_ALL tests/test_ret
 target_link_libraries(test_native_retail_profile_owners PRIVATE mka_native_retail_profile_owners)
 add_executable(test_native_retail_profile_runtime EXCLUDE_FROM_ALL tests/test_retail_profile_runtime.cpp)
 target_link_libraries(test_native_retail_profile_runtime PRIVATE mka_native_retail_profile_owners)
+add_library(mka_native_permanent_string_data STATIC EXCLUDE_FROM_ALL
+    runtime/src/native/retail_permanent_string_data.cpp)
+target_include_directories(mka_native_permanent_string_data PUBLIC runtime/include)
+target_compile_features(mka_native_permanent_string_data PUBLIC cxx_std_20)
 add_library(mka_native_retail_game_resource_registry STATIC EXCLUDE_FROM_ALL
     runtime/src/native/retail_game_resource_registry.cpp)
 target_include_directories(mka_native_retail_game_resource_registry PUBLIC runtime/include)
 target_compile_features(mka_native_retail_game_resource_registry PUBLIC cxx_std_20)
 target_link_libraries(mka_native_retail_game_resource_registry PUBLIC Threads::Threads)
+target_link_libraries(mka_native_retail_game_resource_registry PUBLIC mka_native_permanent_string_data)
 add_executable(test_native_retail_game_resource_registry EXCLUDE_FROM_ALL tests/test_retail_game_resource_registry.cpp)
 target_link_libraries(test_native_retail_game_resource_registry PRIVATE mka_native_retail_game_resource_registry)
 add_executable(test_native_startup_codegen EXCLUDE_FROM_ALL
@@ -227,6 +232,7 @@ if(WIN32)
         runtime/src/native/retail_arcade_ladder.cpp
         runtime/src/native/retail_loaded_system_art.cpp
         runtime/src/native/retail_loaded_system_art_main.cpp
+        runtime/src/native/retail_permanent_strings.cpp
         runtime/src/native/retail_scene_bootstrap_prefix.cpp
         runtime/src/native/retail_scene_bootstrap_continuation.cpp
         runtime/src/native/retail_renderer_allocator.cpp
@@ -567,8 +573,10 @@ target_link_libraries(test_native_file_read_job PRIVATE mka_native_retail_system
 add_executable(test_native_retail_loaded_system_art EXCLUDE_FROM_ALL tests/test_retail_loaded_system_art.cpp)
 target_include_directories(test_native_retail_loaded_system_art PRIVATE runtime/src/native)
 target_link_libraries(test_native_retail_loaded_system_art PRIVATE mka_native_retail_system_art_cpu)
+add_executable(test_native_retail_permanent_strings EXCLUDE_FROM_ALL tests/test_retail_permanent_strings.cpp)
+target_link_libraries(test_native_retail_permanent_strings PRIVATE mka_native_retail_startup)
 if(WIN32)
-    foreach(_client test_native_gl_texture test_native_file_read_job test_native_retail_loaded_system_art)
+    foreach(_client test_native_gl_texture test_native_file_read_job test_native_retail_loaded_system_art test_native_retail_permanent_strings)
         add_custom_command(TARGET ${_client} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2>
                 $<TARGET_FILE_DIR:${_client}> VERBATIM)
