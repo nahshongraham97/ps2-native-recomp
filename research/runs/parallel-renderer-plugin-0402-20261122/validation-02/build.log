@@ -1,0 +1,4 @@
+[0/2] Re-checking globbed directories...
+[1/8] AOT compile source-verified retail scalar functions to typed native C++
+[2/4] Building CXX object CMakeFiles/test_native_retail_renderer_matrix.dir/tests/test_retail_renderer_matrix.cpp.obj
+[3/4] Linking CXX executable test_native_retail_renderer_matrix.exe
