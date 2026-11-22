@@ -1,0 +1,45 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "queries": {
+    "fn=002b8fb0": {
+      "mapping": {
+        "vma": "0x2b8fb0",
+        "length": 96,
+        "file_offset": 2789296,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "83ec08538b5c24105633f685db75085e33c05b83c408c38b4c241c8b4424208b542418890b4983f9038943048953200f8784000000ff248d94902b008b74242456ff152c54830083c40483f8ff750a33f68bc65e5b83c408c389730c8bf38bc6"
+    },
+    "ref=002b95a0:1": {
+      "mapping": {
+        "vma": "0x2b95a0",
+        "length": 1,
+        "file_offset": 2790816,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "a1"
+    },
+    "ref=002b94d0:1": {
+      "mapping": {
+        "vma": "0x2b94d0",
+        "length": 1,
+        "file_offset": 2790608,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "83"
+    },
+    "data=002b9584:16": {
+      "mapping": {
+        "vma": "0x2b9584",
+        "length": 16,
+        "file_offset": 2790788,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "2f952b00e8942b00fe942b001f952b00"
+    }
+  }
+}

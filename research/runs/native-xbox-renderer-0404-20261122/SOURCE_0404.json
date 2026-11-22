@@ -1,0 +1,260 @@
+{
+  "status": "SOURCE_DERIVED_0404_OWNED_STREAM_RESOURCE_READ_SCOPE",
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "functions": {
+    "002b8de0": {
+      "listing": "research/runs/native-xbox-scene-frame-20261122/source-module-callbacks-09/002b8de0.asm",
+      "listing_sha256": "c924a76cfbbc19ab86adbb978c63787e701a435efa30143e2e508cfbb163b057",
+      "join_sha256": "0e9d2d85fcef94e32337f27957c74d28aed9570b80e74376e4c872106d7e05b1",
+      "inclusive_range": [
+        "002b8de0",
+        "002b8e28"
+      ],
+      "instructions": 20,
+      "unlisted_gaps": []
+    },
+    "002b8e30": {
+      "listing": "research/runs/native-xbox-scene-frame-20261122/source-module-callbacks-09/002b8e30.asm",
+      "listing_sha256": "b09eadf3122fa33d14a9c13f422f739d497e17764d37e69e548df4b0eb0a065e",
+      "join_sha256": "0e9d2d85fcef94e32337f27957c74d28aed9570b80e74376e4c872106d7e05b1",
+      "inclusive_range": [
+        "002b8e30",
+        "002b8e52"
+      ],
+      "instructions": 10,
+      "unlisted_gaps": []
+    },
+    "002b95a0": {
+      "listing": "research/runs/native-xbox-renderer-0404-20261122/source-0404-02/002b95a0.asm",
+      "listing_sha256": "48c023d7c294d614563f0b8ae05a38f79b69dbc6f396f555df419d565dd32b08",
+      "join_sha256": "bcf671e095a8b26312779cb2d8af7328e0e8901599a442739f476bc3f00100e4",
+      "inclusive_range": [
+        "002b95a0",
+        "002b95f6"
+      ],
+      "instructions": 31,
+      "unlisted_gaps": []
+    },
+    "002b8fb0": {
+      "listing": "research/runs/native-xbox-renderer-0404-20261122/source-0404-03/002b8fb0.asm",
+      "listing_sha256": "d428cb28aaec2394da113512930f0c53a2127cd16ce29794f19cd3208db32cd9",
+      "join_sha256": "02aae260c17cc8b002631d1c6dd779d400a1151d342e8815b03d530f2116ba58",
+      "inclusive_range": [
+        "002b8fb0",
+        "002b9090"
+      ],
+      "instructions": 88,
+      "unlisted_gaps": []
+    },
+    "002b8e80": {
+      "listing": "research/runs/native-xbox-renderer-0404-20261122/source-0404-04/002b8e80.asm",
+      "listing_sha256": "f2c82dae501281cbc9aebd0cd12cc1a098815f2aa39f295ebb87d18a6f7b9ed2",
+      "join_sha256": "59b75a6637677b88c2a358d56d4dfc5110d85a13035f5e0e022f878eab4796c8",
+      "inclusive_range": [
+        "002b8e80",
+        "002b8f04"
+      ],
+      "instructions": 45,
+      "unlisted_gaps": []
+    },
+    "002b8f10": {
+      "listing": "research/runs/native-xbox-renderer-0404-20261122/source-0404-04/002b8f10.asm",
+      "listing_sha256": "aad2dfe4f8caff998a80e587d7d0640b3657b1342d62b8d03c27af7e1e157f66",
+      "join_sha256": "59b75a6637677b88c2a358d56d4dfc5110d85a13035f5e0e022f878eab4796c8",
+      "inclusive_range": [
+        "002b8f10",
+        "002b8f7c"
+      ],
+      "instructions": 44,
+      "unlisted_gaps": []
+    },
+    "00241140": {
+      "listing": "research/runs/native-xbox-renderer-0404-20261122/source-0404-04/00241140.asm",
+      "listing_sha256": "d9d3724e08e441e9090894f4e13e2f82274c97454e2601fc32c5496a4e726298",
+      "join_sha256": "59b75a6637677b88c2a358d56d4dfc5110d85a13035f5e0e022f878eab4796c8",
+      "inclusive_range": [
+        "00241140",
+        "00241166"
+      ],
+      "instructions": 17,
+      "unlisted_gaps": []
+    },
+    "002b90b0": {
+      "listing": "research/runs/native-xbox-renderer-0404-20261122/source-0404-05/002b90b0.asm",
+      "listing_sha256": "a7f663bce1bffa607894593bf124bcbb2ea271fe9c2c0126d07ab0bc3a31ded4",
+      "join_sha256": "3df82cf2a196a437efefa03c846bcf9e6dde5d3b7f2d4c0d1058dc5418010333",
+      "inclusive_range": [
+        "002b90b0",
+        "002b91ef"
+      ],
+      "instructions": 123,
+      "unlisted_gaps": []
+    },
+    "002b93c0": {
+      "listing": "research/runs/native-xbox-renderer-0404-20261122/source-0404-06/002b93c0.asm",
+      "listing_sha256": "b8acfe166ccb1a5fca143b7e7cfc17d59cd9eb235d5871fcc8279a36a92df12f",
+      "join_sha256": "543ed1c4ab9083949f13fa41bfc8f2873351ca4cc4b2776a9eb28c68437d77d7",
+      "inclusive_range": [
+        "002b93c0",
+        "002b94ba"
+      ],
+      "instructions": 92,
+      "unlisted_gaps": []
+    },
+    "002b94d0": {
+      "listing": "research/runs/native-xbox-renderer-0404-20261122/source-0404-02/002b94d0.asm",
+      "listing_sha256": "cff4ea8930ce6ee67548dfbf5d68f30756135e5e53adb5633c40d9b54609c3f3",
+      "join_sha256": "bcf671e095a8b26312779cb2d8af7328e0e8901599a442739f476bc3f00100e4",
+      "inclusive_range": [
+        "002b94d0",
+        "002b9581"
+      ],
+      "instructions": 65,
+      "unlisted_gaps": []
+    },
+    "002c0dd0": {
+      "listing": "research/runs/native-xbox-renderer-0404-20261122/source-0404-06/002c0dd0.asm",
+      "listing_sha256": "9960ad4df7b100dc41a4b2a1bca348eebce227a4a6e6a38ea898e5a8a660a7c0",
+      "join_sha256": "543ed1c4ab9083949f13fa41bfc8f2873351ca4cc4b2776a9eb28c68437d77d7",
+      "inclusive_range": [
+        "002c0dd0",
+        "002c0e43"
+      ],
+      "instructions": 13,
+      "unlisted_gaps": []
+    },
+    "0039b16e": {
+      "listing": "research/runs/native-xbox-renderer-0404-20261122/source-0404-07/0039b16e.asm",
+      "listing_sha256": "7d46e6c7b6c38dc7282658c10fb9de64fb4a4d067cb1e5893c1c454618c02488",
+      "join_sha256": "66cf851dcd925a0df59472e04f962b4437c6f026253c3c220a42c29d94108a3d",
+      "inclusive_range": [
+        "0039b16e",
+        "0039b178"
+      ],
+      "instructions": 4,
+      "unlisted_gaps": []
+    }
+  },
+  "data": {
+    "0x5a66f0": {
+      "vma": "0x5a66f0",
+      "length": 8,
+      "file_offset": 5873264,
+      "section": ".data",
+      "bytes_hex": "1000000001000000"
+    },
+    "0x4e1458": {
+      "vma": "0x4e1458",
+      "length": 3,
+      "file_offset": 5061752,
+      "section": ".rdata",
+      "bytes_hex": "726200"
+    },
+    "0x50b05c": {
+      "vma": "0x50b05c",
+      "length": 7,
+      "file_offset": 5232764,
+      "section": ".rdata",
+      "bytes_hex": "77620000616200"
+    },
+    "0x2b9094": {
+      "vma": "0x2b9094",
+      "length": 16,
+      "file_offset": 2789524,
+      "section": ".text",
+      "bytes_hex": "ec8f2b0016902b0027902b003c902b00"
+    },
+    "0x2b91f0": {
+      "vma": "0x2b91f0",
+      "length": 16,
+      "file_offset": 2789872,
+      "section": ".text",
+      "bytes_hex": "ce902b00ce902b004a912b00aa912b00"
+    },
+    "0x2b94bc": {
+      "vma": "0x2b94bc",
+      "length": 16,
+      "file_offset": 2790588,
+      "section": ".text",
+      "bytes_hex": "eb932b00eb932b003e942b007e942b00"
+    },
+    "0x2b9584": {
+      "vma": "0x2b9584",
+      "length": 16,
+      "file_offset": 2790788,
+      "section": ".text",
+      "bytes_hex": "2f952b00e8942b00fe942b001f952b00"
+    }
+  },
+  "tables": {
+    "0x2b9094": [
+      "0x2b8fec",
+      "0x2b9016",
+      "0x2b9027",
+      "0x2b903c"
+    ],
+    "0x2b91f0": [
+      "0x2b90ce",
+      "0x2b90ce",
+      "0x2b914a",
+      "0x2b91aa"
+    ],
+    "0x2b94bc": [
+      "0x2b93eb",
+      "0x2b93eb",
+      "0x2b943e",
+      "0x2b947e"
+    ],
+    "0x2b9584": [
+      "0x2b952f",
+      "0x2b94e8",
+      "0x2b94fe",
+      "0x2b951f"
+    ]
+  },
+  "native_before": {
+    "runtime/include/mka/retail_renderer_core.hpp": {
+      "sha256": "9333844812e4b3ab5da2cec3a4856e0b44f0bedb11662d39d83ddfd37f1d28e6",
+      "crlf_pairs": 0
+    },
+    "runtime/src/native/retail_renderer_core.cpp": {
+      "sha256": "f0ac8e521c980e28893c3d83153a5a7ad215b9f4116efd0c915c5b51aab3e1cd",
+      "crlf_pairs": 0
+    },
+    "cmake/native_game.cmake": {
+      "sha256": "085f78f7c1034f7f68b8f18e2fe346b41af6aed529acb716feff6be0100e1fac",
+      "crlf_pairs": 0
+    },
+    "runtime/include/mka/native_file.hpp": {
+      "sha256": "50152fd4899c2be5cb467f74c8261f6445758c0f3d7b2e35d030945f27feeffa",
+      "crlf_pairs": 0
+    },
+    "runtime/src/native/native_file.cpp": {
+      "sha256": "087c92a9e7a62f2d6e6c691ecd81c8b923adce55451c02e2fe6deb61992b1982",
+      "crlf_pairs": 0
+    },
+    "runtime/include/mka/content_volume.hpp": {
+      "sha256": "c973d249844a3844ea774c474f3193a200009ca42927f65b0f58b025984bdfb1",
+      "crlf_pairs": 0
+    },
+    "runtime/src/native/content_volume.cpp": {
+      "sha256": "9263a2560a60e0cf35dfc61d885d7ee0947e563ad557b35c353d1400d6538c03",
+      "crlf_pairs": 0
+    }
+  },
+  "selected_scope": "real0404 native owner; immutable-memory and borrowed/owned native-file READ streams; read/forward skip/close",
+  "close_dependency": "source filename close compares fclose result to zero then frees owned record even on failure",
+  "native_cleanup": "checked retirement failure must remain visible through Core cleanup; no retry/replay or success stub",
+  "numerical_policy": "host-wide lengths/cursors, no36-byte/16-element/4GiB model; invalid source32-wrap skip remains named unadopted",
+  "unadopted": [
+    "write/append",
+    "custom callbacks",
+    "caller-allocated source stream records",
+    "source wraparound skip",
+    "chunk/version helpers",
+    "full renderer/game"
+  ],
+  "owner_action": "none",
+  "verification_scope": "source-derived before runtime edits",
+  "acceptance": "OPEN"
+}

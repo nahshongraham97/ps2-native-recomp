@@ -1,0 +1,44 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "queries": {
+    "fn=002b93c0": {
+      "mapping": {
+        "vma": "0x2b93c0",
+        "length": 96,
+        "file_offset": 2790336,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "8b44240883ec0885c075088b44240c83c408c3568b7424108b0e4983f9030f87b0000000ff248dbc942b00578b7e0c6a015057ff152454830083c40c85c0743657ff152054830083c40485c074206a05c744240c01000000e8e38f0000894424"
+    },
+    "fn=002c0dd0": {
+      "mapping": {
+        "vma": "0x2c0dd0",
+        "length": 96,
+        "file_offset": 2821584,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "c70504548300a00d2c00c7050854830021b63900c7050c54830074b53900c70510548300dcb43900c7051454830098b33900c70518548300fbb13900c7051c54830084b13900c705205483006eb13900c7052454830025b13900c70528548300"
+    },
+    "ref=00835420:4": {
+      "mapping": {
+        "vma": "0x835420",
+        "length": 4,
+        "section": ".data"
+      },
+      "file_backed": false,
+      "loader_zero_initialized": true
+    },
+    "data=002b91f0:16": {
+      "mapping": {
+        "vma": "0x2b91f0",
+        "length": 16,
+        "file_offset": 2789872,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "ce902b00ce902b004a912b00aa912b00"
+    }
+  }
+}

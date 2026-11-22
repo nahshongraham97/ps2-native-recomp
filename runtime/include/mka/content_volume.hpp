@@ -6,7 +6,7 @@
 #include <string_view>
 #include <vector>
 namespace mka::content {
-enum class ContentVolumeError {none,unsupported_host,invalid_root,moved_volume,invalid_key,invalid_utf8,foreign_prefix,traversal,unsafe_component,unsupported_suffix,root_changed,root_escape,not_regular_file,open_failed,opened_path_unavailable,moved_file,read_failed,seek_failed,position_failed,length_failed,allocation_failed,host_capacity,native_exception,not_directory,directory_read_failed};
+enum class ContentVolumeError {none,unsupported_host,invalid_root,moved_volume,invalid_key,invalid_utf8,foreign_prefix,traversal,unsafe_component,unsupported_suffix,root_changed,root_escape,not_regular_file,open_failed,opened_path_unavailable,moved_file,read_failed,seek_failed,position_failed,length_failed,allocation_failed,host_capacity,native_exception,not_directory,directory_read_failed,close_failed,status_failed};
 struct ContentVolumeFailure {ContentVolumeError kind=ContentVolumeError::none;std::error_code host_error;};
 class NativeContentVolume;
 // Exclusive cursor ownership. The opened file and volume identity survive moves
@@ -24,6 +24,8 @@ public:
     bool seek(std::int64_t,SeekOrigin,ContentVolumeFailure&);
     std::optional<std::uint64_t> length(ContentVolumeFailure&);
     std::optional<std::uint64_t> position(ContentVolumeFailure&);
+    bool close_checked(ContentVolumeFailure&) noexcept;
+    std::optional<bool> end_of_file(ContentVolumeFailure&)const noexcept;
 private:
     NativeContentFile(std::shared_ptr<const void>,std::string,NativeFile&&);
     bool available(ContentVolumeFailure&) const;

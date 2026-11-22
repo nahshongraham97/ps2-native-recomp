@@ -15,10 +15,11 @@ class NativeRetailRendererErrorDomain;
 class NativeRetailRendererTransforms;
 class NativeRetailRendererMatrixDomain;
 class NativeRetailRendererFrames;
+class NativeRetailRendererStreams;
 enum class RetailRendererCoreError {none,owner,wrong_thread,allocation,native_exception,allocator,content,unbound_factory,registration_closed,reentrant,construction,after_effect_unknown};
 struct RetailRendererCoreFailure {
  RetailRendererCoreError kind{RetailRendererCoreError::none};const char* operation{""};
- RetailRendererAllocatorFailure allocator;content::ContentVolumeFailure content;
+ RetailRendererAllocatorFailure allocator;content::ContentVolumeFailure content,cleanup_content;
 };
 struct RetailRendererErrorRecord {std::uint32_t plugin{},code{};bool operator==(const RetailRendererErrorRecord&)const=default;};
 struct RetailRendererPluginSpec {std::uint32_t id{},source_payload_bytes{};bool operator==(const RetailRendererPluginSpec&)const=default;};
@@ -54,6 +55,8 @@ bool construct_core_plugin_0402(NativeRetailRendererCore&,RetailRendererCoreFail
 void destroy_core_plugin_0402(NativeRetailRendererCore&)noexcept;
 bool construct_core_plugin_0403(NativeRetailRendererCore&,RetailRendererCoreFailure&);
 void destroy_core_plugin_0403(NativeRetailRendererCore&)noexcept;
+bool construct_core_plugin_0404(NativeRetailRendererCore&,RetailRendererCoreFailure&);
+void destroy_core_plugin_0404(NativeRetailRendererCore&)noexcept;
 bool construct_core_plugin_040d(NativeRetailRendererCore&,RetailRendererCoreFailure&);
 void destroy_core_plugin_040d(NativeRetailRendererCore&)noexcept;
 std::optional<bool> register_object_extensions_1b72b0(NativeRetailRendererCore&,RetailRendererCoreFailure&);
@@ -108,6 +111,8 @@ public:
       RetailRendererCoreFailure&)const noexcept;
  std::shared_ptr<NativeRetailRendererFrames> frames(RetailRendererCoreFailure&)const noexcept;
  std::optional<std::uint32_t> module_0403_count(RetailRendererCoreFailure&)const noexcept;
+ std::shared_ptr<NativeRetailRendererStreams> streams(RetailRendererCoreFailure&)const noexcept;
+ std::optional<std::uint32_t> module_0404_count(RetailRendererCoreFailure&)const noexcept;
  //1A3480 forward construction/reverse prior-success unwind. Explicitly later
  // than CoreInit; production EngineOpen/Start producers remain required.
  bool construct_registered(RetailRendererCoreFailure&);
@@ -136,6 +141,9 @@ private:
   std::shared_ptr<NativeRetailRendererRasterExtensionRegistration> raster_extension_;
  std::shared_ptr<NativeRetailRendererFrames> frames_;
  std::atomic<std::uint32_t> module_0403_count_{};
+ std::shared_ptr<NativeRetailRendererStreams> streams_;
+ std::atomic<std::uint32_t> module_0404_count_{};
+ content::ContentVolumeFailure cleanup_content_failure_;
  std::atomic<std::uint32_t> matrix_domain_count_{};
  std::atomic<std::uint32_t> module_040d_count_{};
  std::atomic<std::uint32_t> module_0401_count_{};
@@ -153,6 +161,8 @@ private:
   friend void renderer_required::discard_object_extensions_after_core_init(NativeRetailRendererCore&)noexcept;
  friend bool renderer_required::construct_core_plugin_0403(NativeRetailRendererCore&,RetailRendererCoreFailure&);
  friend void renderer_required::destroy_core_plugin_0403(NativeRetailRendererCore&)noexcept;
+ friend bool renderer_required::construct_core_plugin_0404(NativeRetailRendererCore&,RetailRendererCoreFailure&);
+ friend void renderer_required::destroy_core_plugin_0404(NativeRetailRendererCore&)noexcept;
 };
 bool construct_native_renderer_error(NativeRetailRendererCore&,RetailRendererCoreFailure&);
 void destroy_native_renderer_error(NativeRetailRendererCore&)noexcept;

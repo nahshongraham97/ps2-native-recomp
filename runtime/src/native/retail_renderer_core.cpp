@@ -66,7 +66,11 @@ bool NativeRetailRendererCore::access(RetailRendererCoreFailure& f)const noexcep
  f={};if(std::this_thread::get_id()!=thread_)return fail(f,RetailRendererCoreError::wrong_thread,"native renderer registry thread");
  const auto owner=session_.lock();RetailGameSessionFailure sf;
  if(!owner||!owner->validate_current_thread(sf))return fail(f,RetailRendererCoreError::owner,"native renderer registry Session lifetime");
- if(after_effect_unknown_)return fail(f,RetailRendererCoreError::after_effect_unknown,"native renderer constructor partial effect");
+ if(after_effect_unknown_){
+  f.cleanup_content=cleanup_content_failure_;
+  return fail(f,RetailRendererCoreError::after_effect_unknown,cleanup_content_failure_.kind==content::ContentVolumeError::none?
+   "native renderer constructor partial effect":"0404 prior checked stream cleanup failed; effects cannot replay");
+ }
  return true;
 }
 void NativeRetailRendererCore::store_error(RetailRendererErrorRecord r)noexcept{errors_->store(r);}
@@ -212,8 +216,13 @@ bool NativeRetailRendererCore::construct_registered(RetailRendererCoreFailure& f
   try{ok=entry->callbacks_.construct(*this,f);}
   catch(const detail::NativeMainReentry&){throw;} // Legitimate transfer retains prefix,not an error latch.
   catch(...){after_effect_unknown_=true;return fail(f,RetailRendererCoreError::after_effect_unknown,"1A3480 native constructor exception");}
-  if(!ok){
-   while(!constructed_.empty()){auto previous=constructed_.back();constructed_.pop_back();previous->callbacks_.destroy(*this);}
+   if(!ok){
+    while(!constructed_.empty()){auto previous=constructed_.back();constructed_.pop_back();previous->callbacks_.destroy(*this);}
+    if(cleanup_content_failure_.kind!=content::ContentVolumeError::none){
+     f.kind=RetailRendererCoreError::after_effect_unknown;f.cleanup_content=cleanup_content_failure_;
+     if(!f.operation||!*f.operation)f.operation="0404 checked stream cleanup failed during constructor unwind";
+     return false;
+    }
    if(f.kind==RetailRendererCoreError::none)f.operation="1A3480 source constructor refusal";
    return false;
   }
@@ -225,7 +234,12 @@ bool NativeRetailRendererCore::destroy_constructed(RetailRendererCoreFailure& f)
  if(!access(f))return false;
  // Keep the actual Session-owned Core alive through every callback and guard unwind.
  const auto session_lease=session_.lock();if(busy_)return fail(f,RetailRendererCoreError::reentrant,"native renderer destruction active");
- Busy guard(busy_);while(!constructed_.empty()){auto entry=constructed_.back();constructed_.pop_back();entry->callbacks_.destroy(*this);}return true;
+ Busy guard(busy_);while(!constructed_.empty()){auto entry=constructed_.back();constructed_.pop_back();entry->callbacks_.destroy(*this);}
+ if(cleanup_content_failure_.kind!=content::ContentVolumeError::none){
+  f.cleanup_content=cleanup_content_failure_;
+  return fail(f,RetailRendererCoreError::after_effect_unknown,"0404 checked stream cleanup failed; successful prefix already retired");
+ }
+ return true;
 }
 void NativeRetailRendererCore::discard_object_extensions()noexcept{
  if(object_extensions_prepared_){renderer_required::discard_object_extensions_after_core_init(*this);object_extensions_prepared_=false;}

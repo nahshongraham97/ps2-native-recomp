@@ -1,0 +1,40 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "functions": {
+    "0039b16e": {
+      "instructions": 4,
+      "listing_sha256": "7d46e6c7b6c38dc7282658c10fb9de64fb4a4d067cb1e5893c1c454618c02488",
+      "original_spans": [
+        {
+          "vma": "0x39b16e",
+          "length": 4,
+          "file_offset": 3715438,
+          "section": ".text",
+          "bytes_hex": "8b442404"
+        },
+        {
+          "vma": "0x39b172",
+          "length": 3,
+          "file_offset": 3715442,
+          "section": ".text",
+          "bytes_hex": "8b400c"
+        },
+        {
+          "vma": "0x39b175",
+          "length": 3,
+          "file_offset": 3715445,
+          "section": ".text",
+          "bytes_hex": "83e010"
+        },
+        {
+          "vma": "0x39b178",
+          "length": 1,
+          "file_offset": 3715448,
+          "section": ".text",
+          "bytes_hex": "c3"
+        }
+      ]
+    }
+  },
+  "scope": "actual original bytes/listings; full coverage and semantics reviewed separately"
+}

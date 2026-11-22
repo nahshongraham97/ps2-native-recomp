@@ -70,6 +70,19 @@ NativeFile& NativeFile::operator=(NativeFile&& other) noexcept {
     return *this;
 }
 void NativeFile::close() noexcept { if (file_) { std::fclose(file_); file_ = nullptr; } }
+bool NativeFile::close_checked(std::error_code& error) noexcept {
+    error.clear();
+    if (!file_) { error = std::make_error_code(std::errc::bad_file_descriptor); return false; }
+    auto* file = std::exchange(file_, nullptr);
+    errno = 0;
+    if (std::fclose(file)) { error = io_error(); return false; }
+    return true;
+}
+bool NativeFile::end_of_file(bool& out,std::error_code& error) const noexcept {
+    out=false;error.clear();
+    if(!file_){error=std::make_error_code(std::errc::bad_file_descriptor);return false;}
+    out=std::feof(file_)!=0;return true;
+}
 bool NativeFile::open(const std::filesystem::path& path, std::error_code& error) {
     close(); error.clear(); errno = 0;
 #ifdef _WIN32

@@ -142,6 +142,14 @@ FileRead NativeContentFile::read(void* out,std::size_t count,ContentVolumeFailur
 bool NativeContentFile::seek(std::int64_t off,SeekOrigin origin,ContentVolumeFailure& f){if(!available(f))return false;if(!file_.seek(off,origin,f.host_error)){f.kind=ContentVolumeError::seek_failed;return false;}return true;}
 std::optional<std::uint64_t> NativeContentFile::length(ContentVolumeFailure& f){if(!available(f))return {};std::uint64_t n;if(!file_.length(n,f.host_error)){f.kind=ContentVolumeError::length_failed;return {};}return n;}
 std::optional<std::uint64_t> NativeContentFile::position(ContentVolumeFailure& f){if(!available(f))return {};std::uint64_t n;if(!file_.position(n,f.host_error)){f.kind=ContentVolumeError::position_failed;return {};}return n;}
+bool NativeContentFile::close_checked(ContentVolumeFailure& f)noexcept{
+    f={};if(!valid()){f.kind=ContentVolumeError::moved_file;f.host_error=std::make_error_code(std::errc::bad_file_descriptor);return false;}
+    if(!file_.close_checked(f.host_error)){f.kind=ContentVolumeError::close_failed;return false;}return true;
+}
+std::optional<bool> NativeContentFile::end_of_file(ContentVolumeFailure& f)const noexcept{
+    f={};if(!valid()){f.kind=ContentVolumeError::moved_file;f.host_error=std::make_error_code(std::errc::bad_file_descriptor);return {};}
+    bool eof{};if(!file_.end_of_file(eof,f.host_error)){f.kind=ContentVolumeError::status_failed;return {};}return eof;
+}
 std::optional<NativeContentVolume> NativeContentVolume::open(const std::filesystem::path& root,ContentVolumeFailure& f){
     f={};
 #ifndef _WIN32

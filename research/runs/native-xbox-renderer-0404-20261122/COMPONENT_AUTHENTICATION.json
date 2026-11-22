@@ -1,0 +1,391 @@
+{
+  "status": "AUTHENTICATED_NATIVE0404_READ_STREAM_RESOURCE_COMPONENT",
+  "schema_preflight": {
+    "prior_status": "str",
+    "prior_symbols": "list",
+    "prior_symbol_count": 53,
+    "result": {
+      "status": "str",
+      "argv": "list",
+      "exit": "int",
+      "deadline_seconds": "int",
+      "seconds": "float",
+      "executable_sha256": "str",
+      "log_sha256": "str",
+      "source_commit": "str",
+      "tracked_status": "str",
+      "source_manifest_sha256": "str",
+      "compiler_sha256": "str",
+      "cache_sha256": "str",
+      "runner_sha256": "str",
+      "process_temp": "str",
+      "phase": "str",
+      "game_run": "bool",
+      "visible_window": "bool",
+      "audio_endpoint": "bool",
+      "acceptance": "str"
+    },
+    "pin_map": "dict",
+    "pin_values": [
+      "str"
+    ],
+    "source_functions": "dict",
+    "source_before_values": "dict",
+    "expected_targets": [
+      "test_native_retail_renderer_streams",
+      "test_native_retail_renderer_frames",
+      "test_native_retail_renderer_core",
+      "test_native_retail_renderer_matrix",
+      "test_native_retail_renderer_raster_registration",
+      "test_native_retail_renderer_allocator",
+      "test_native_file",
+      "test_native_content_volume_owner"
+    ],
+    "expected_count": 8
+  },
+  "measured_source_base": "e81087e937b159a6c325c93a5f10fe78aa16150b",
+  "source_files": 909,
+  "source_manifest_sha256": "8d9123c74ee883bbb6723d38d5a1a038d3da74e1c90f7e56d345adc6ff7ae044",
+  "changed_source_paths": [
+    "cmake/native_game.cmake",
+    "runtime/include/mka/retail_renderer_core.hpp",
+    "runtime/src/native/retail_renderer_core.cpp",
+    "runtime/include/mka/native_file.hpp",
+    "runtime/src/native/native_file.cpp",
+    "runtime/include/mka/content_volume.hpp",
+    "runtime/src/native/content_volume.cpp",
+    "runtime/include/mka/retail_renderer_streams.hpp",
+    "runtime/src/native/retail_renderer_streams.cpp",
+    "tests/test_retail_renderer_streams.cpp"
+  ],
+  "client_targets": [
+    "test_native_retail_renderer_streams",
+    "test_native_retail_renderer_frames",
+    "test_native_retail_renderer_core",
+    "test_native_retail_renderer_matrix",
+    "test_native_retail_renderer_raster_registration",
+    "test_native_retail_renderer_allocator",
+    "test_native_file",
+    "test_native_content_volume_owner"
+  ],
+  "client_target_count": 8,
+  "module_allocation_cuts": 5,
+  "stream_open_allocation_cuts": 58,
+  "host_stream_growth": 64,
+  "receipts": {
+    "streams-02": {
+      "result_sha256": "bdd4bc53ef375b9f564451ec98bcad705b50cb0f4e9462c20fa4f31d78a9cc39",
+      "source_manifest_sha256": "8d9123c74ee883bbb6723d38d5a1a038d3da74e1c90f7e56d345adc6ff7ae044",
+      "allowed_source_difference": [],
+      "log_sha256": "677576590414a4708a210a6f6f2a5563cf2f53b0182ea7285a57f7a18fead051",
+      "compressed_log_sha256": "f30c66b715b0191ccefb5a91dd9021ed740cb77279212da77614a99de1e21bc6",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_streams.exe",
+        "research/runs/native-xbox-renderer-0404-20261122/streams-02/fixtures"
+      ],
+      "executable_sha256": "b8589e66b6290334614a86983303854295da34fb853016c28f261e0f6acd3519",
+      "seconds": 0.14061000000219792,
+      "binary_authentication": "CURRENT_BYTES_MATCH"
+    },
+    "frames-01": {
+      "result_sha256": "9f341db77c8d95c3b94e3c81a87b3e318a27d522925ec1c2427938fa15600ade",
+      "source_manifest_sha256": "2fd8880a4669dc62f25ef1a25f9721f0fa2dd61ab11c9e7a194a55f422218c3e",
+      "allowed_source_difference": [
+        "tests/test_retail_renderer_streams.cpp"
+      ],
+      "log_sha256": "af5db6a8eaf6325c1f3d2f669853eed817c2e0e9aaf607ef9689208d7d24d284",
+      "compressed_log_sha256": "44f76f9dbd2b5fd8db237510bbe8323e81170d9fd7dd40135a33c644b6706698",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_frames.exe",
+        "."
+      ],
+      "executable_sha256": "e2ddd73b0ce1ac81d454a042fd5a83d8da5b73ee8f79b6c338dc677241c4bcba",
+      "seconds": 0.33717489999253303,
+      "binary_authentication": "CURRENT_BYTES_MATCH"
+    },
+    "core-01": {
+      "result_sha256": "b63e1bae610e989ee805cc6c6459ae9464fbe0ce77251ae43961c7bed2d0147a",
+      "source_manifest_sha256": "2fd8880a4669dc62f25ef1a25f9721f0fa2dd61ab11c9e7a194a55f422218c3e",
+      "allowed_source_difference": [
+        "tests/test_retail_renderer_streams.cpp"
+      ],
+      "log_sha256": "7d64e1cf5d24d6ffb751ec174c7fd8e67a19623b31c40eac955eaff032f705ec",
+      "compressed_log_sha256": "187b1d20968067c168b43a21891330fccd4566a530d532c7683cc8be38072c0b",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_core.exe",
+        "research/runs/parallel-renderer-engine-init-20261122"
+      ],
+      "executable_sha256": "04eca6ed23e94ee600d1f0f9a0ff24dc654b5150936d526f239df95a8db1ec2e",
+      "seconds": 0.43286029997398145,
+      "binary_authentication": "CURRENT_BYTES_MATCH"
+    },
+    "matrix-01": {
+      "result_sha256": "9d24f2bd7630f991a73b703454031b49aa09bdad8e1fd862678b57f8ca103b56",
+      "source_manifest_sha256": "2fd8880a4669dc62f25ef1a25f9721f0fa2dd61ab11c9e7a194a55f422218c3e",
+      "allowed_source_difference": [
+        "tests/test_retail_renderer_streams.cpp"
+      ],
+      "log_sha256": "e6ca983715efa3c1951163d91ac2bd5a0363f87ee0008dfac1e602ba5c22291c",
+      "compressed_log_sha256": "f73c6bb40bec8fe51ce9368bc025738b886b1027be63e6f9fa4021c14011d9b4",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_matrix.exe",
+        "."
+      ],
+      "executable_sha256": "69290d87ee64c86beb2ac1657c4374626e36965ec715e02b73f472048daa6fcb",
+      "seconds": 0.42220519998227246,
+      "binary_authentication": "CURRENT_BYTES_MATCH"
+    },
+    "registration-01": {
+      "result_sha256": "632b86d026fdf7febcac0b8eaada6c86766a6e34b22dc1063fd3f5143039a1a9",
+      "source_manifest_sha256": "2fd8880a4669dc62f25ef1a25f9721f0fa2dd61ab11c9e7a194a55f422218c3e",
+      "allowed_source_difference": [
+        "tests/test_retail_renderer_streams.cpp"
+      ],
+      "log_sha256": "2f0cd2dbd357a45f80bf38c4da722ce811712484c7256b1ea015268bda40917e",
+      "compressed_log_sha256": "4a8a68e8d5d8b70615f8bd62dd79eb184ebc66d668ce026938e1db0b70578d3a",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_raster_registration.exe",
+        "."
+      ],
+      "executable_sha256": "56039768bdf84b50c8457aa0c25a1668a5500280a85f9904a5c8bbac9df05804",
+      "seconds": 0.401232300006086,
+      "binary_authentication": "CURRENT_BYTES_MATCH"
+    },
+    "allocator-01": {
+      "result_sha256": "a67ee2fd459a51fa74832387402512cb7b66b2da443bfc6993db7468c4460922",
+      "source_manifest_sha256": "2fd8880a4669dc62f25ef1a25f9721f0fa2dd61ab11c9e7a194a55f422218c3e",
+      "allowed_source_difference": [
+        "tests/test_retail_renderer_streams.cpp"
+      ],
+      "log_sha256": "f708c44121d52d01b73f83a75dfd8b1fdf13fd6c0ba74e94147a392ed99f3c70",
+      "compressed_log_sha256": "3cabb9802a06b606ed8cc266f2c729bb2fe3894882961a7366db3daeba7970ad",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_allocator.exe",
+        "."
+      ],
+      "executable_sha256": "a1a36d005c62953da13bbbf280dd419347355ac5e194aee3ca1e635510ee46e2",
+      "seconds": 0.33744649999425747,
+      "binary_authentication": "CURRENT_BYTES_MATCH"
+    },
+    "native-file-01": {
+      "result_sha256": "1b342e219dd6eb9de8c5af0021554dffb64ac8915c70d7cd817d99d6beedd4d9",
+      "source_manifest_sha256": "2fd8880a4669dc62f25ef1a25f9721f0fa2dd61ab11c9e7a194a55f422218c3e",
+      "allowed_source_difference": [
+        "tests/test_retail_renderer_streams.cpp"
+      ],
+      "log_sha256": "294b951feb4fbe616a4f904e7f97c02bf3f041691c79609e57a047d79e720a79",
+      "compressed_log_sha256": "81ffb88efd1d28ba34e4400b035139c38020337e7f7b1b1af4be32d4ea2a6432",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_file.exe"
+      ],
+      "executable_sha256": "714cd86c025b5f2b9d29166bbbf9ccd045b04bfa805b3bf6ca371f80c3e16753",
+      "seconds": 0.3361825000029057,
+      "binary_authentication": "CURRENT_BYTES_MATCH"
+    },
+    "volume-01": {
+      "result_sha256": "b029af597666ed381566cd53eb4b775978f2d14993b0c7cdbc704f69aa134cbd",
+      "source_manifest_sha256": "2fd8880a4669dc62f25ef1a25f9721f0fa2dd61ab11c9e7a194a55f422218c3e",
+      "allowed_source_difference": [
+        "tests/test_retail_renderer_streams.cpp"
+      ],
+      "log_sha256": "42a434f1cdf859f7cca96cd57ede81c547c64e2c290b0e12f28a6298bcece717",
+      "compressed_log_sha256": "88ffb5e0d27c9ec2734c440592bcd1fab814ccf682c20d44b30f2325ba6685aa",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_content_volume_owner.exe",
+        "research/runs/native-xbox-renderer-0404-20261122/volume-01/fixtures"
+      ],
+      "executable_sha256": "37920f450af3948bd53faccad800ac124ec9551951a947e8e813843877987b01",
+      "seconds": 0.33547440002439544,
+      "binary_authentication": "CURRENT_BYTES_MATCH"
+    },
+    "compile-01": {
+      "result_sha256": "d4800ffb973213e9eb5fa90b5f9a7f210592406438f0277308369485974214c1",
+      "source_manifest_sha256": "2fd8880a4669dc62f25ef1a25f9721f0fa2dd61ab11c9e7a194a55f422218c3e",
+      "allowed_source_difference": [
+        "tests/test_retail_renderer_streams.cpp"
+      ],
+      "log_sha256": "387a7bd498f1b67f8db17062e7b55c3e0663960d356c1a98943575d1a9f82f67",
+      "compressed_log_sha256": "27a0ce7679641d3bb38c57e0192981d8a51aaf73f6cfca479f8a7b2ed9892c3c",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+        "--build",
+        "C:\\Users\\nahsh\\MKPORT~1\\ARMAGE~1\\ARMAGE~1\\external\\forks\\RETAIL~1\\b",
+        "--target",
+        "test_native_retail_renderer_streams",
+        "test_native_retail_renderer_frames",
+        "test_native_retail_renderer_core",
+        "test_native_retail_renderer_matrix",
+        "test_native_retail_renderer_raster_registration",
+        "test_native_retail_renderer_allocator",
+        "test_native_file",
+        "test_native_content_volume_owner",
+        "-j2"
+      ],
+      "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+      "seconds": 84.34785109999939,
+      "binary_authentication": "CURRENT_BYTES_MATCH"
+    },
+    "compile-02": {
+      "result_sha256": "596219eea5196aa82f7fb6b56e0b236a2a362335e56e1c2a10e8abbac1f1f954",
+      "source_manifest_sha256": "8d9123c74ee883bbb6723d38d5a1a038d3da74e1c90f7e56d345adc6ff7ae044",
+      "allowed_source_difference": [],
+      "log_sha256": "d064ab0a41cc7638a5f6fccf6e72db0d20b28d05ed222d42ea26092e3ea0f5cb",
+      "compressed_log_sha256": "ac680053b7b69482db15c76b41e2c76fba3ce494cc9efa451c212d5cc6f96e44",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+        "--build",
+        "C:\\Users\\nahsh\\MKPORT~1\\ARMAGE~1\\ARMAGE~1\\external\\forks\\RETAIL~1\\b",
+        "--target",
+        "test_native_retail_renderer_streams",
+        "-j2"
+      ],
+      "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+      "seconds": 2.4105820000113454,
+      "binary_authentication": "CURRENT_BYTES_MATCH"
+    },
+    "streams-01": {
+      "result_sha256": "02f4a2449c2e0898373cdbc01f058e540b1778e8ef137cffbe29bc2b9a1426b7",
+      "source_manifest_sha256": "2fd8880a4669dc62f25ef1a25f9721f0fa2dd61ab11c9e7a194a55f422218c3e",
+      "allowed_source_difference": [
+        "tests/test_retail_renderer_streams.cpp"
+      ],
+      "log_sha256": "677576590414a4708a210a6f6f2a5563cf2f53b0182ea7285a57f7a18fead051",
+      "compressed_log_sha256": "f30c66b715b0191ccefb5a91dd9021ed740cb77279212da77614a99de1e21bc6",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_streams.exe",
+        "research/runs/native-xbox-renderer-0404-20261122/streams-01/fixtures"
+      ],
+      "executable_sha256": "ac05cc4fa06cc5ae9da3626d96f1adfa521241252e0461285c2aa4ef8d6e516b",
+      "seconds": 0.42231990001164377,
+      "binary_authentication": "HISTORICAL_STREAMS01_HASH_ONLY_NOT_RETAINED"
+    },
+    "negative-01": {
+      "result_sha256": "9cab3fe657b523bfd9767cb7e356793b25c231e851214f34524c747fd106e945",
+      "source_manifest_sha256": "8d9123c74ee883bbb6723d38d5a1a038d3da74e1c90f7e56d345adc6ff7ae044",
+      "allowed_source_difference": [],
+      "log_sha256": "c77e7f39c6c66e13bac1c5805be3e371f97421d8d44b35d128b1bcd8abe748a9",
+      "compressed_log_sha256": "7797292379838b813f1a557c6cc513649826b2d15773256af213b722449ffe5b",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+        "--build",
+        "C:\\Users\\nahsh\\MKPORT~1\\ARMAGE~1\\ARMAGE~1\\external\\forks\\RETAIL~1\\b",
+        "--target",
+        "test_native_startup_missing_bindings",
+        "-j2"
+      ],
+      "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+      "seconds": 1.0550839999923483,
+      "binary_authentication": "CURRENT_BYTES_MATCH"
+    },
+    "symbols-01": {
+      "result_sha256": "7b9e79da9ac17968c0d7c2610db5cd8d5d14c46fc6e20c50f8c32bb9d8527877",
+      "source_manifest_sha256": "8d9123c74ee883bbb6723d38d5a1a038d3da74e1c90f7e56d345adc6ff7ae044",
+      "allowed_source_difference": [],
+      "log_sha256": "de8633f515281b1bacd79a3996b2326fd89c055d76eb107875d1821520c1984f",
+      "compressed_log_sha256": "129dca4b5e4c36e47346f6fb9eec77e480f2fd1f8361c4c77170d31a6f0a1919",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+        "-C",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_streams.exe"
+      ],
+      "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+      "seconds": 0.06057729999884032,
+      "binary_authentication": "CURRENT_BYTES_MATCH"
+    }
+  },
+  "resolved_bindings": [
+    "mka::retail::renderer_required::construct_core_plugin_0404(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0404(mka::retail::NativeRetailRendererCore&)"
+  ],
+  "remaining_undefined_symbols": [
+    "mka::retail::main_binding::read_retail_online_boot_word(mka::retail::NativeRetailMainState const&)",
+    "mka::retail::main_binding::initialize_retail_online_stage(mka::retail::NativeRetailMainState&, std::__1::array<unsigned int, 5ull> const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::poll_retail_controller_roles(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::advance_retail_game_services(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::service_retail_frame_input(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::render_retail_frame(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::prune_retail_associations(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::retail_mode_dispatch_enabled(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::dispatch_retail_enabled_mode(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::create_retail_action_task(mka::retail::NativeRetailMainState&, mka::retail::RetailActionTaskRequest const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::deliver_retail_builtin_scene_event(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, unsigned int, unsigned int, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::reset_and_bind_retail_scene_event_graph(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, mka::retail::StartupFailure&)",
+    "mka::retail::scene_bootstrap_required::continue_scene_reset_at_125d60(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::initial_task_required::begin_intro_18deb0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::transition_1225d0(mka::retail::NativeRetailMainState&, unsigned int, mka::retail::RetailInitialTransitionBody)",
+    "mka::retail::initial_task_required::begin_prompt_18dc10(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d450(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d870(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d8e0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d700(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d800(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d660(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d770(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::scene_bootstrap_required::continue_first_scene_at_225d40(mka::retail::NativeRetailMainState&, std::__1::shared_ptr<mka::retail::NativeRetailRendererCore>, mka::retail::StartupFailure&)",
+    "mka::retail::initial_reset_required::clear_nonowning_references_18da30(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::invoke_retail_profile_select_from_2f1630(mka::retail::NativeRetailMainState&, std::__1::basic_string_view<char, std::__1::char_traits<char>>, mka::retail::RetailProfileMenuFailure&)",
+    "mka::retail::renderer_required::construct_core_plugin_0405(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0405(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0406(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0406(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0407(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0407(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0408(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0408(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0409(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0409(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0412(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0412(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_040a(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_040a(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_040b(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_040b(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::apply_retail_profile_participant_from_188720(mka::retail::NativeRetailMainState&, unsigned int, mka::retail::RetailProfileMenuFailure&)",
+    "mka::retail::publish_retail_profile_participant_from_189690(mka::retail::NativeRetailMainState&, std::__1::shared_ptr<mka::retail::NativeRetailInputParticipant> const&, mka::retail::RetailProfileMenuFailure&)",
+    "mka::retail::renderer_required::transform_point_exact(mka::retail::RetailRendererPoint3&, mka::retail::RetailRendererPoint3 const&, mka::retail::RetailRendererAffine const&)",
+    "mka::retail::renderer_required::transform_points_exact(std::__1::span<mka::retail::RetailRendererPoint3, 18446744073709551615ull>, std::__1::span<mka::retail::RetailRendererPoint3 const, 18446744073709551615ull>, mka::retail::RetailRendererAffine const&)",
+    "mka::retail::renderer_required::transform_vector_exact(mka::retail::RetailRendererPoint3&, mka::retail::RetailRendererPoint3 const&, mka::retail::RetailRendererAffine const&)",
+    "mka::retail::renderer_required::transform_vectors_exact(std::__1::span<mka::retail::RetailRendererPoint3, 18446744073709551615ull>, std::__1::span<mka::retail::RetailRendererPoint3 const, 18446744073709551615ull>, mka::retail::RetailRendererAffine const&)",
+    "mka::retail::renderer_required::multiply_affines_19f680(mka::retail::RetailRendererAffine&, mka::retail::RetailRendererAffine const&, mka::retail::RetailRendererAffine const&, mka::retail::RetailRendererMatrixFailure&)",
+    "mka::retail::renderer_required::classify_matrix_1a0240(mka::retail::RetailRendererMatrixValue&, mka::retail::RetailRendererMatrixTolerances const&, mka::retail::RetailRendererMatrixFailure&)",
+    "mka::retail::renderer_required::invert_nonidentity_matrix_1a07a0(mka::retail::RetailRendererMatrixValue&, mka::retail::RetailRendererMatrixValue const&, mka::retail::RetailRendererMatrixFailure&)"
+  ],
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "706dae305fa5122aafd8e2aa001b2eb743923cf842c6138f3c3d78c7cd830642",
+  "configuration": {
+    "CMAKE_BUILD_TYPE:STRING": "Release",
+    "CMAKE_CXX_COMPILER:STRING": "C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/bin/clang++.exe",
+    "CMAKE_CXX_FLAGS:STRING": "",
+    "CMAKE_CXX_FLAGS_DEBUG:STRING": "-g",
+    "CMAKE_CXX_FLAGS_MINSIZEREL:STRING": "-Os -DNDEBUG",
+    "CMAKE_CXX_FLAGS_RELEASE:STRING": "-O3 -DNDEBUG",
+    "CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING": "-O2 -g -DNDEBUG",
+    "MKA_NATIVE_MEDIA_HEADERS:PATH": "C:/Users/nahsh/mk port/Armageddon-backup/dependencies/native-media/ffmpeg-7.1.4",
+    "PS2_GENERATED:PATH": "",
+    "PS2_IOP_AOT_IMPORTS:PATH": "C:/Users/nahsh/MKPORT~1/ARMAGE~1/ARMAGE~1/external/forks/RETAIL~1/runtime/src/iop/generated_modules",
+    "PS2_IOP_AOT_MODULES:PATH": "C:/Users/nahsh/MKPORT~1/ARMAGE~1/ARMAGE~1/external/forks/RETAIL~1/runtime/src/iop/generated_modules",
+    "PS2_RUNTIME_LIB:FILEPATH": "",
+    "PS2_WGPU_DIR:PATH": "C:/Users/nahsh/MKPORT~1/ARMAGE~1/ARMAGE~1/external/forks/RETAIL~1/third_party/wgpu-native",
+    "CMAKE_CXX_FLAGS-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_DEBUG-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_MINSIZEREL-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_RELEASE-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL": "1"
+  },
+  "sdl2_sha256": "53e8fa7e9ed43c30bd650c39396f0d9d2067d2fff0b926c9433b75202592e4aa",
+  "source_receipt_sha256": "eba1d02c461de1888af04bda29ff671dcb384825c7a62ff35a5f4293d85cdc15",
+  "fixture_bytes_sha256": "261305762671a58cae5b74990bcfc236c2336fb04a0fbac626166d9491d2884c",
+  "legacy_file_methods_unchanged_normalized_lf": true,
+  "preflight_import_object": "HISTORICAL_PREBUILD_IMPORT_SPELLING_ONLY",
+  "verification_scope": "tested READ component; precommit build; seven unchanged regressions differ only in unrelated expanded new test",
+  "writes_custom_caller_records": "OPEN",
+  "source_wrapping_skip": "OPEN_NAMED_REFUSAL",
+  "chunk_helpers": "OPEN",
+  "volume_symlink_execution": "OPEN_PRIVILEGE1314_SKIP",
+  "renderer_gpu": "OPEN",
+  "oracle_comparison": "OPEN",
+  "game_run": false,
+  "visible_window": false,
+  "audio_endpoint": false,
+  "acceptance": "OPEN"
+}

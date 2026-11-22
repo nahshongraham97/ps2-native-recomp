@@ -1,0 +1,28 @@
+{
+  "status": "NONZERO",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\MKPORT~1\\ARMAGE~1\\ARMAGE~1\\external\\forks\\RETAIL~1\\b",
+    "--target",
+    "test_native_startup_missing_bindings",
+    "-j2"
+  ],
+  "exit": 1,
+  "deadline_seconds": 90,
+  "seconds": 1.0550839999923483,
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "log_sha256": "c77e7f39c6c66e13bac1c5805be3e371f97421d8d44b35d128b1bcd8abe748a9",
+  "source_commit": "e81087e937b159a6c325c93a5f10fe78aa16150b",
+  "tracked_status": "M cmake/native_game.cmake\n M runtime/include/mka/content_volume.hpp\n M runtime/include/mka/native_file.hpp\n M runtime/include/mka/retail_renderer_core.hpp\n M runtime/src/native/content_volume.cpp\n M runtime/src/native/native_file.cpp\n M runtime/src/native/retail_renderer_core.cpp",
+  "source_manifest_sha256": "8d9123c74ee883bbb6723d38d5a1a038d3da74e1c90f7e56d345adc6ff7ae044",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "706dae305fa5122aafd8e2aa001b2eb743923cf842c6138f3c3d78c7cd830642",
+  "runner_sha256": "f5e4b91e1276770b33ff9dc5a8523d493728faa940ee11c253916f746be83de1",
+  "process_temp": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\opencode",
+  "phase": "negative",
+  "game_run": false,
+  "visible_window": false,
+  "audio_endpoint": false,
+  "acceptance": "OPEN"
+}

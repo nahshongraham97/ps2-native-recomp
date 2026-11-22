@@ -21,6 +21,10 @@ public:
     NativeFile& operator=(NativeFile&& other) noexcept;
     bool open(const std::filesystem::path&, std::error_code&);
     void close() noexcept;
+    // Checked ownership consumption. The handle is consumed even when fclose
+    // reports failure; callers must not retry close on that handle.
+    bool close_checked(std::error_code&) noexcept;
+    bool end_of_file(bool& out,std::error_code&) const noexcept;
     bool is_open() const noexcept { return file_ != nullptr; }
     // Queries this already opened handle, without reopening or moving its
     // cursor. Windows returns the normalized extended DOS/UNC path, retaining
