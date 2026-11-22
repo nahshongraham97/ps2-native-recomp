@@ -1,0 +1,198 @@
+{
+  "status": "PASS_NATIVE_RETAIL_HELD_RESUME_COMPONENTS",
+  "source_commit": "04efbae9db832b4322de750156739c7c5378c3f4",
+  "clean_source": true,
+  "tracked_status": "",
+  "configuration": {
+    "CMAKE_BUILD_TYPE:STRING": "Release",
+    "CMAKE_CXX_COMPILER:STRING": "C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/bin/clang++.exe",
+    "CMAKE_CXX_FLAGS:STRING": "",
+    "CMAKE_CXX_FLAGS_DEBUG:STRING": "-g",
+    "CMAKE_CXX_FLAGS_MINSIZEREL:STRING": "-Os -DNDEBUG",
+    "CMAKE_CXX_FLAGS_RELEASE:STRING": "-O3 -DNDEBUG",
+    "CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING": "-O2 -g -DNDEBUG",
+    "CMAKE_EXE_LINKER_FLAGS:STRING": "",
+    "CMAKE_EXE_LINKER_FLAGS_DEBUG:STRING": "",
+    "CMAKE_EXE_LINKER_FLAGS_MINSIZEREL:STRING": "",
+    "CMAKE_EXE_LINKER_FLAGS_RELEASE:STRING": "",
+    "CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO:STRING": "",
+    "MKA_NATIVE_MEDIA_HEADERS:PATH": "C:/Users/nahsh/mk port/Armageddon-backup/dependencies/native-media/ffmpeg-7.1.4",
+    "PS2_GENERATED:PATH": "",
+    "PS2_IOP_AOT_IMPORTS:PATH": "C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/clean-held-22/runtime/src/iop/generated_modules",
+    "PS2_IOP_AOT_MODULES:PATH": "C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/clean-held-22/runtime/src/iop/generated_modules",
+    "PS2_RUNTIME_LIB:FILEPATH": "",
+    "PS2_WGPU_DIR:PATH": "C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/clean-held-22/third_party/wgpu-native",
+    "CMAKE_CXX_FLAGS-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_DEBUG-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_MINSIZEREL-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_RELEASE-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL": "1",
+    "CMAKE_EXE_LINKER_FLAGS-ADVANCED:INTERNAL": "1",
+    "CMAKE_EXE_LINKER_FLAGS_DEBUG-ADVANCED:INTERNAL": "1",
+    "CMAKE_EXE_LINKER_FLAGS_MINSIZEREL-ADVANCED:INTERNAL": "1",
+    "CMAKE_EXE_LINKER_FLAGS_RELEASE-ADVANCED:INTERNAL": "1",
+    "CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL": "1"
+  },
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "77267858da467ba810789536dee083c7f1a49d1485f997f6dd6831ee37e77323",
+  "source_manifest_sha256": "5405bc7d7b258f4fc9f125c197d1836c74afa8f50252469095f0c8dce34ab28a",
+  "clients": [
+    {
+      "name": "test_native_runtime_program_work",
+      "sha256": "49412709cf3426a34ef2cd744af0ece67d12e4ce1bcae663f3d344b70905069c"
+    },
+    {
+      "name": "test_native_runtime_preparation",
+      "sha256": "1ce4f26f0b2dbe0c090e2b5e77f4e412c15aa659f26b6fc44193e6567fa22be9"
+    },
+    {
+      "name": "test_native_sound_output_plan",
+      "sha256": "caf3d01ce395d1373fc0295abc642718194806c5ed3cad4ef8ed05bd7c7b6b7d"
+    },
+    {
+      "name": "test_native_retail_sound_context",
+      "sha256": "47313b1d06e017f146710ed366133b011226b19adfa8ce5672e61a9ecc82dbd3"
+    },
+    {
+      "name": "test_native_program_host_clock",
+      "sha256": "ea8afdf8469635c5c294dbb4368e394519b5be1f1a25e5d6299876ca29e17084"
+    },
+    {
+      "name": "test_native_audio_device",
+      "sha256": "2716b0169112162254a0375a50726a4f50943599e0af20cfaa751e544279becb"
+    },
+    {
+      "name": "test_native_held_playback",
+      "sha256": "6656481f5c2de35664ae53d378cd94597339e0efee4585f7e9ce8bfb654c1b47"
+    },
+    {
+      "name": "test_native_sound_curves",
+      "sha256": "e38efb15ad3239feb55b5b46988a674dfe77b757c2dea6929fdcb8e97778ec5a"
+    },
+    {
+      "name": "test_native_host_voice",
+      "sha256": "4cc2d85f474234bb29179503258a265c6796c968290f97402282c39d22acdd86"
+    },
+    {
+      "name": "test_native_program_copy",
+      "sha256": "2944819dcfd39444cf027b909dbf13418f0cf13ccf10e6993c04444824a95a1a"
+    },
+    {
+      "name": "test_native_program_copy_failure",
+      "sha256": "a8ef30e8efa5ec224acce08492981284fa31f4312ca259070062f4edf7e69e4c"
+    },
+    {
+      "name": "test_native_bank_playback",
+      "sha256": "130216c023fa030b22e28ef77e7f117adf7a88471ec130fb74db14743a65971b"
+    },
+    {
+      "name": "test_native_playback_owner",
+      "sha256": "fd25335a91ebc187c57eb9aebd6d99ac7d86088087339d6aedcb4b634647fd08"
+    },
+    {
+      "name": "test_native_playback_reservation",
+      "sha256": "929172e31e0f991eac36bb66674229f41f641d4889eae3bbbfb55da524fd8170"
+    },
+    {
+      "name": "test_native_playback_reservation_gaps",
+      "sha256": "3b1137251f15cd858393c98ca2f5d0bfe5de927300634cb4d48ed260030cccac"
+    },
+    {
+      "name": "test_native_default_playback_runtime",
+      "sha256": "734b882917cc8aa85d084e86049adff43ba1d402dc572c1e4437122bbad988b7"
+    },
+    {
+      "name": "test_native_program_output_activation",
+      "sha256": "72594d5d52f1606f80ce9a830b1e27728496f98152f86c563eb87b8974adae1a"
+    },
+    {
+      "name": "test_native_forced_output_retirement",
+      "sha256": "ef4fdd3b76bb7d350c13c600970e6e29a4509566e89b28e362aeebd182ae4d17"
+    },
+    {
+      "name": "test_native_forced_output_retirement_failure",
+      "sha256": "f8de2fd84b06500ba5d26aac50b3a08779dd35424a05e6a09550cc80d66edab5"
+    },
+    {
+      "name": "test_native_retail_reset_sound",
+      "sha256": "7f4dc22e6581275f245120bea66709f3e4c46fdb4552a73779df86bb3dc5383c"
+    },
+    {
+      "name": "test_native_retail_initial_reset",
+      "sha256": "67dd123c65b28f1b592dcfc1bc20a10538aa1d011ca74a0205142f7435fc3e9a"
+    },
+    {
+      "name": "test_native_retail_initial_task",
+      "sha256": "d068a97d6fdef5f16e6fb2b94fc81564b3b6d44a9394f967e442418ade8676cb"
+    },
+    {
+      "name": "test_native_retail_startup",
+      "sha256": "1b282ceb14f2bc82d5f31819ba507eea9b74353bc2e2d4ddef5cb3711f3bfd05"
+    },
+    {
+      "name": "test_native_retail_file_startup",
+      "sha256": "3597a39414e6edc2465362beaef334316de45bae4bb18718db82e7c369baf092"
+    },
+    {
+      "name": "test_native_retail_middleware_main",
+      "sha256": "78a2d226739d7646602954fcf0963963c13c213249c15102d3cb1eea6b1f8218"
+    }
+  ],
+  "physical_output_abort_guard_symbols": [
+    "__wrap__ZN3mka5sound29open_native_game_sound_outputERNS0_18AudioDeviceFailureE",
+    "__wrap__ZN3mka5sound17NativeAudioDevice4openERKNS0_17AudioDeviceConfigERNS0_18AudioDeviceFailureE",
+    "__wrap__ZN3mka5sound18RuntimeProgramWork5buildERNS0_18PreparationFailureE",
+    "__wrap__Znwy",
+    "__wrap__ZN3mka5sound17NativeProgramCopyD1Ev"
+  ],
+  "removed_required_effects": [],
+  "remaining_undefined_symbols": [
+    "mka::retail::main_binding::initialize_retail_saved_profile_records(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::read_retail_audio_boot_word(mka::retail::NativeRetailMainState const&)",
+    "mka::retail::main_binding::initialize_retail_audio_stage(mka::retail::NativeRetailMainState&, std::__1::array<unsigned int, 5ull> const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_mode_objects(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_mode_service(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_section_service(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_first_scene(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_post_scene_timing(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_post_scene_sections(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::initialize_retail_first_frame_graphics(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::retail_frame_processing_inhibited(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::poll_retail_controller_roles(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::advance_retail_game_services(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::service_retail_frame_input(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::retail_render_enabled(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::render_retail_frame(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::prune_retail_associations(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::retail_ordinary_counter_inhibited(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::retail_mode_dispatch_enabled(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::dispatch_retail_enabled_mode(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::create_retail_action_task(mka::retail::NativeRetailMainState&, mka::retail::RetailActionTaskRequest const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::deliver_retail_builtin_scene_event(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, unsigned int, unsigned int, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::reset_and_bind_retail_scene_event_graph(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, mka::retail::StartupFailure&)",
+    "mka::retail::initial_task_required::begin_intro_18deb0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::transition_1225d0(mka::retail::NativeRetailMainState&, unsigned int, mka::retail::RetailInitialTransitionBody)",
+    "mka::retail::initial_task_required::begin_prompt_18dc10(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d450(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d870(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d8e0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d700(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d800(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d660(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d770(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_reset_required::reset_saved_profile_children_246070(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::initial_reset_required::reset_selected_resource_334700(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::initial_reset_required::clear_nonowning_references_18da30(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::initial_reset_required::configure_selected_resource_zero_16fc70(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)"
+  ],
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "limits": [
+    "Actual Main ready-reference/context/status/Session/QPC worker/mixer execute; physical output, allocation faults and destructor gap probe are wrapped",
+    "Removed IOP allocator/arena fields are replaced by actual native diagnostics, not synthetic original counters",
+    "Windows output selection is compiled/pure-policy tested, not a physical stream test",
+    "Normal held flags8/9 and command50 verified; original direct/worker routing, production semantic parameters, broad reset/mode callers, controls/envelope and full game remain OPEN"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-held-22\\build-native\\test_native_retail_sound_context.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon"
+  ],
+  "exit": 0,
+  "stdout": "PASS production Main held/resume/first-match/promotion/pending/cached-priority/cancellation/reference/context/status/workers/PCM tails/70 identities/allocation/disposal gap/error/lifetime; physical output and fault probes wrapped; no game/endpoint\n",
+  "stderr": "",
+  "seconds": 0.9578738999989582,
+  "source_commit": "04efbae9db832b4322de750156739c7c5378c3f4",
+  "tracked_status": "",
+  "source_manifest_sha256": "5405bc7d7b258f4fc9f125c197d1836c74afa8f50252469095f0c8dce34ab28a",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "47313b1d06e017f146710ed366133b011226b19adfa8ce5672e61a9ecc82dbd3"
+}

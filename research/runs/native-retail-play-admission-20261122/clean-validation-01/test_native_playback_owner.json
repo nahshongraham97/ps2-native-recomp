@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-held-22\\build-native\\test_native_playback_owner.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+  ],
+  "exit": 0,
+  "stdout": "PASS actualservice/fulltoken/deferredannouncr/HostVoiceACK/kind7/ownerstop/64voices/mix/refusedactiveunload; no boot/device/fidelity claim\n",
+  "stderr": "",
+  "seconds": 0.06214249999902677,
+  "source_commit": "04efbae9db832b4322de750156739c7c5378c3f4",
+  "tracked_status": "",
+  "source_manifest_sha256": "5405bc7d7b258f4fc9f125c197d1836c74afa8f50252469095f0c8dce34ab28a",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "fd25335a91ebc187c57eb9aebd6d99ac7d86088087339d6aedcb4b634647fd08"
+}

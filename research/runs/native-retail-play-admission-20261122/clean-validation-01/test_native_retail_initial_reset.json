@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-held-22\\build-native\\test_native_retail_initial_reset.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-play-admission-20261122\\clean-validation-01\\empty-content"
+  ],
+  "exit": 0,
+  "stdout": "PASS native reset ordering, live fields, suspension,1799-wait timeout, failure and lifetime; six effects substituted in this caller fixture\n",
+  "stderr": "",
+  "seconds": 0.12052229999972042,
+  "source_commit": "04efbae9db832b4322de750156739c7c5378c3f4",
+  "tracked_status": "",
+  "source_manifest_sha256": "5405bc7d7b258f4fc9f125c197d1836c74afa8f50252469095f0c8dce34ab28a",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "67dd123c65b28f1b592dcfc1bc20a10538aa1d011ca74a0205142f7435fc3e9a"
+}

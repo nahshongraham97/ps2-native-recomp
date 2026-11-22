@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-held-22\\build-native\\test_native_program_copy.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_PROGRAM_COPY: actual ANNOUNCR copies/schedules/independent native outputs/semantic cleanup and pure command arithmetic; no source activation/callback/heard fidelity claim\n",
+  "stderr": "",
+  "seconds": 0.05024820000107866,
+  "source_commit": "04efbae9db832b4322de750156739c7c5378c3f4",
+  "tracked_status": "",
+  "source_manifest_sha256": "5405bc7d7b258f4fc9f125c197d1836c74afa8f50252469095f0c8dce34ab28a",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "2944819dcfd39444cf027b909dbf13418f0cf13ccf10e6993c04444824a95a1a"
+}
