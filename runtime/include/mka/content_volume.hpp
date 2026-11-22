@@ -41,6 +41,9 @@ public:
     static std::optional<NativeContentVolume> open(const std::filesystem::path& explicit_root,ContentVolumeFailure&);
     // Validate the retained native directory identity without opening a game file.
     bool validate(ContentVolumeFailure&) const noexcept;
+    // Retain the same opened native root identity; no reopen or second volume.
+    std::optional<NativeContentVolume> retain(ContentVolumeFailure&) const noexcept;
+    bool same_volume(const NativeContentVolume& other) const noexcept{return state_&&state_==other.state_;}
     std::optional<NativeContentFile> open_resource(std::string_view,ContentVolumeFailure&) const;
     // Direct regular files in a retained native subdirectory. Every returned
     // file owns its opened handle and directory identity. No recursive search,

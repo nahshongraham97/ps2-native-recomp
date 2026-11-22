@@ -1,0 +1,14 @@
+{
+  "core": {
+    "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-engine\\build-renderer-engine\\history05\\test_native_retail_renderer_core.exe",
+    "sha256": "300a7fb6c254f9d0e138083a838b31932c37868f980ae8f2b3e2919073de280c"
+  },
+  "allocator": {
+    "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-engine\\build-renderer-engine\\history05\\test_native_retail_renderer_allocator.exe",
+    "sha256": "6f30e5cfbcf48b51e4f05c2a55426a6c8e1a38e6c96b45a08a0e2ea84fb0bba4"
+  },
+  "session": {
+    "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-engine\\build-renderer-engine\\history05\\test_native_retail_game_session.exe",
+    "sha256": "88e4eb8e1532eb5bee4f5f906feb9ea5c3ab633955b2c6cc488f0d47c98f5ec2"
+  }
+}

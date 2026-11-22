@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-engine\\build-renderer-engine\\test_native_retail_renderer_allocator.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-engine\\research\\runs\\parallel-renderer-engine-init-20261122"
+  ],
+  "exit": 0,
+  "executable_sha256": "70cdb30a2e4e2491b9beaa211c60a5cd28854ad2224c79e507017f72292656aa",
+  "source_manifest_sha256": "f2b9ac1a6c4e7e71cf7f9b06ba67d5840f69ae7857c8171e5dafda150b1a4306",
+  "log_sha256": "f708c44121d52d01b73f83a75dfd8b1fdf13fd6c0ba74e94147a392ed99f3c70"
+}

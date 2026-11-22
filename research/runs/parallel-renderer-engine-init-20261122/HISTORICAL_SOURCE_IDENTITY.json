@@ -1,0 +1,12 @@
+{
+  "tests/test_retail_renderer_core.cpp": {
+    "raw_sha256": "463561da67f3ea43fed24a6dd3242887d873758a86c99e9b89a340a01b707d57",
+    "archive": "historical-source/validation05-test.cpp.gz",
+    "archive_sha256": "61bc9a77ae5f2545efe7e92a0d8d29ee29edd518c5fc4e007371a5ebdf321e48"
+  },
+  "runtime/src/native/retail_first_scene_core.cpp": {
+    "raw_sha256": "1e26a5d6053d4bf1899fb2e66531e77fc9471bd0318030d013e71dc56cba9b48",
+    "archive": "historical-source/validation05-main.cpp.gz",
+    "archive_sha256": "78f4d49e004fe46aa3511e3298d1a35f7b772e4a14369f407a41564aaee70031"
+  }
+}

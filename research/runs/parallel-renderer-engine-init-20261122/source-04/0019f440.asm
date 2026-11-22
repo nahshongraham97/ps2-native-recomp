@@ -1,0 +1,5 @@
+0019f440	84a3838f	lw v1,-0x5c7c(gp)
+0019f444	2d108000	move v0,a0
+0019f448	ffff6324	addiu v1,v1,-0x1
+0019f44c	0800e003	jr ra
+0019f450	84a383af	_sw v1,-0x5c7c(gp)

@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-engine\\build-renderer-engine",
+    "--target",
+    "test_native_content_volume_owner",
+    "-j2"
+  ],
+  "exit": 0,
+  "seconds": 1.0933454036712646,
+  "log_sha256": "6fdf7acfa52ea235faae36773ed500a5f394730f986b50634885cd4b901d5d17"
+}
