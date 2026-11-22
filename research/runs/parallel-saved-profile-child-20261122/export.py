@@ -1,0 +1,3 @@
+from pathlib import Path
+import json,subprocess
+r=Path.cwd();d=r/'research/runs/parallel-saved-profile-child-20261122';a=json.loads((r.parent/'ps2-native-recomp-renderer-0401/research/runs/parallel-renderer-plugin-0401-20261122/COMMAND.json').read_text());a[a.index('-scriptPath')+1]=str(d);a[-2]=str(d/'source-01');a[-1]='00514d30,00514400,005144d0,00514600,00514700,00514920,00511260,00511350,005f2550';(d/'COMMAND.json').write_bytes((json.dumps(a,indent=2)+'\n').encode());p=subprocess.run(a,stdout=subprocess.PIPE,stderr=subprocess.STDOUT);(d/'export-01.log').write_bytes(p.stdout);print(p.returncode);print(p.stdout.decode(errors='replace')[-600:])

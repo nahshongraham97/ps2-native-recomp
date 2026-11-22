@@ -1,0 +1,64 @@
+004eef00	e0ffbd27	addiu sp,sp,-0x20
+004eef04	0000bfff	sd ra,0x0(sp)
+004eef08	f416090c	jal 0x00245bd0
+004eef0c	1c00a527	_addiu a1,sp,0x1c
+004eef10	00004490	lbu a0,0x0(v0)
+004eef14	04004624	addiu a2,v0,0x4
+004eef18	01008430	andi a0,a0,0x1
+004eef1c	03008014	bne a0,zero,0x004eef2c
+004eef20	2d180000	_move v1,zero
+004eef24	33000010	b 0x004eeff4
+004eef28	19000224	_li v0,0x19
+004eef2c	6400053c	lui a1,0x64
+004eef30	03006324	addiu v1,v1,0x3
+004eef34	2d380000	move a3,zero
+004eef38	906ea524	addiu a1,a1,0x6e90
+004eef3c	0400c48c	lw a0,0x4(a2)
+004eef40	03008010	beq a0,zero,0x004eef50
+004eef44	00000000	_nop
+004eef48	0b000010	b 0x004eef78
+004eef4c	01006324	_addiu v1,v1,0x1
+004eef50	0900e12c	sltiu at,a3,0x9
+004eef54	08002010	beq at,zero,0x004eef78
+004eef58	00000000	_nop
+004eef5c	80200700	sll a0,a3,0x2
+004eef60	21208500	addu a0,a0,a1
+004eef64	0000848c	lw a0,0x0(a0)
+004eef68	08008000	jr a0
+004eef6c	00000000	_nop
+004eef70	01006324	addiu v1,v1,0x1
+004eef74	00000000	nop
+004eef78	0100e724	addiu a3,a3,0x1
+004eef7c	1000e42c	sltiu a0,a3,0x10
+004eef80	eeff8014	bne a0,zero,0x004eef3c
+004eef84	0800c624	_addiu a2,a2,0x8
+004eef88	2d380000	move a3,zero
+004eef8c	01000624	li a2,0x1
+004eef90	00024824	addiu t0,v0,0x200
+004eef94	2d480000	move t1,zero
+004eef98	2d500000	move t2,zero
+004eef9c	00000000	nop
+004eefa0	02000495	lhu a0,0x2(t0)
+004eefa4	0a008010	beq a0,zero,0x004eefd0
+004eefa8	00000000	_nop
+004eefac	00000491	lbu a0,0x0(t0)
+004eefb0	04288600	sllv a1,a2,a0
+004eefb4	24202501	and a0,t1,a1
+004eefb8	03008014	bne a0,zero,0x004eefc8
+004eefbc	00000000	_nop
+004eefc0	01006324	addiu v1,v1,0x1
+004eefc4	00000000	nop
+004eefc8	25482501	or t1,t1,a1
+004eefcc	00000000	nop
+004eefd0	01004a25	addiu t2,t2,0x1
+004eefd4	1400442d	sltiu a0,t2,0x14
+004eefd8	f1ff8014	bne a0,zero,0x004eefa0
+004eefdc	04000825	_addiu t0,t0,0x4
+004eefe0	0100e724	addiu a3,a3,0x1
+004eefe4	0200e42c	sltiu a0,a3,0x2
+004eefe8	e9ff8014	bne a0,zero,0x004eef90
+004eefec	6c004224	_addiu v0,v0,0x6c
+004eeff0	14006224	addiu v0,v1,0x14
+004eeff4	0000bfdf	ld ra,0x0(sp)
+004eeff8	0800e003	jr ra
+004eeffc	2000bd27	_addiu sp,sp,0x20

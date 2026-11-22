@@ -1,0 +1,26 @@
+{
+  "source": "source-09/00245dd0.asm",
+  "child_interval_inclusive": [
+    "00245F18",
+    "00246014"
+  ],
+  "equivalent_to": "source-07/00245cb0.asm child body, same final source values and leaf call order",
+  "ordered_effects": [
+    "clear child3C30",
+    "initialized byte1",
+    "263E40 language-name resolution,1DEC58 copy to child+8",
+    "sixteen5BE100 masks copied to7C andBC",
+    "514D30 target KAF clear/defaults and distinct actual Working.control40 clear",
+    "4F3C80 child+930 defaults",
+    "40 words at120 setFFFFFFFF",
+    "30 words at1C0 setFFFFFFFF"
+  ],
+  "outside_component": [
+    "prior captured281830 reference and live-ordinal in-use clear",
+    "later active metadata zero/-1,2817B0 mapping clear,file-backed player-status8"
+  ],
+  "direct_word_correction": {
+    "245E84": "0000458e LW a1,0(s2); original bytes independently joined; listing omitted this direct-entry instruction"
+  },
+  "null_scope": "514D30 null target skips local and shared effects; reference-taking child API is non-null, parent must preserve null branch; no global live scene/file retirement"
+}
