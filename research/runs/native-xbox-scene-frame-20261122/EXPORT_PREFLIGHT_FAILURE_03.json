@@ -1,0 +1,9 @@
+{
+  "status": "QUERY_NOT_FILE_BACKED",
+  "query": "005b8890:4",
+  "command": "export_source.py source-scene-dispatch-03 001b27f0:0 001eb220:0 0019cc00:0 001c4d70:0 000a2760:0 005b8890:4",
+  "headless_started": false,
+  "output_created": false,
+  "measured_runner": "export_source.before-bss.py",
+  "correction": "Distinguish section-proven loader-zero query storage from file-backed instructions; never manufacture original file bytes"
+}

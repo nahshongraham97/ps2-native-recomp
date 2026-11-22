@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_matrix.exe",
+    "."
+  ],
+  "exit": 0,
+  "deadline_seconds": 90,
+  "seconds": 0.11204940002062358,
+  "executable_sha256": "e6e2f8997f8256fdf290a3de9a26adc9024848c3fa589025322b37096a39727b",
+  "log_sha256": "e6ca983715efa3c1951163d91ac2bd5a0363f87ee0008dfac1e602ba5c22291c",
+  "source_commit": "2c2d9dcdfb46583e7ce68f0342007804e1b0bdda",
+  "tracked_status": "M cmake/native_game.cmake\n M runtime/include/mka/retail_renderer_core.hpp\n M runtime/src/native/retail_renderer_core.cpp",
+  "source_manifest_sha256": "cde5b83f59c652516388159205a4a3128a8c6c8d63d85af40f2b69410dd02820",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "706dae305fa5122aafd8e2aa001b2eb743923cf842c6138f3c3d78c7cd830642",
+  "runner_sha256": "94968d5ed3cc0bd705b74726e9fc4f76354fdb6208e364eabee5218919610d33",
+  "phase": "client",
+  "visible_window": false,
+  "audio_endpoint": false,
+  "game_run": false,
+  "acceptance": "OPEN"
+}

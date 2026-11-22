@@ -6,6 +6,7 @@
 #include <memory>
 #include <optional>
 #include <thread>
+#include <utility>
 #include <vector>
 namespace mka::retail {
 class NativeRetailGameSession;
@@ -20,6 +21,25 @@ struct RetailRendererCoreFailure {
 };
 struct RetailRendererErrorRecord {std::uint32_t plugin{},code{};bool operator==(const RetailRendererErrorRecord&)const=default;};
 struct RetailRendererPluginSpec {std::uint32_t id{},source_payload_bytes{};bool operator==(const RetailRendererPluginSpec&)const=default;};
+// Selected Xbox2C84D0 registers metadata only. The source's24-byte device
+// extension and registry offset are NOT a native object layout or GPU owner.
+struct RetailRendererRasterExtensionSpec {
+ std::uint32_t id{};
+ bool construct_callback{},destroy_callback{},copy_callback{};
+ bool operator==(const RetailRendererRasterExtensionSpec&)const=default;
+};
+class NativeRetailRendererRasterExtensionRegistration final {
+public:
+ NativeRetailRendererRasterExtensionRegistration(const NativeRetailRendererRasterExtensionRegistration&)=delete;
+ NativeRetailRendererRasterExtensionRegistration& operator=(const NativeRetailRendererRasterExtensionRegistration&)=delete;
+ std::optional<RetailRendererRasterExtensionSpec> observe(RetailRendererCoreFailure&)const noexcept;
+private:
+ friend class NativeRetailRendererCore;
+ explicit NativeRetailRendererRasterExtensionRegistration(std::weak_ptr<NativeRetailGameSession> session):session_(std::move(session)){}
+ std::weak_ptr<NativeRetailGameSession> session_;
+ std::atomic<bool> active_{true};
+ const std::thread::id thread_{std::this_thread::get_id()};
+};
 // Native code references, never source addresses or a numeric dispatch table.
 // Constructors own typed native data in the actual Core; no guest extensions.
 struct RetailRendererPluginCallbacks {
@@ -33,6 +53,8 @@ bool construct_core_plugin_0402(NativeRetailRendererCore&,RetailRendererCoreFail
 void destroy_core_plugin_0402(NativeRetailRendererCore&)noexcept;
 bool construct_core_plugin_040d(NativeRetailRendererCore&,RetailRendererCoreFailure&);
 void destroy_core_plugin_040d(NativeRetailRendererCore&)noexcept;
+std::optional<bool> register_object_extensions_1b72b0(NativeRetailRendererCore&,RetailRendererCoreFailure&);
+void discard_object_extensions_after_core_init(NativeRetailRendererCore&)noexcept;
 }
 class NativeRetailRendererPluginRegistration final {
 public:
@@ -78,7 +100,9 @@ public:
  std::optional<std::uint32_t> matrix_domain_count(RetailRendererCoreFailure&)const noexcept;
  std::optional<std::uint32_t> module_040d_count(RetailRendererCoreFailure&)const noexcept;
  std::optional<std::uint32_t> module_0401_count(RetailRendererCoreFailure&)const noexcept;
- std::shared_ptr<NativeRetailRendererTransforms> transforms(RetailRendererCoreFailure&)const noexcept;
+  std::shared_ptr<NativeRetailRendererTransforms> transforms(RetailRendererCoreFailure&)const noexcept;
+  std::shared_ptr<const NativeRetailRendererRasterExtensionRegistration> raster_extension(
+      RetailRendererCoreFailure&)const noexcept;
  //1A3480 forward construction/reverse prior-success unwind. Explicitly later
  // than CoreInit; production EngineOpen/Start producers remain required.
  bool construct_registered(RetailRendererCoreFailure&);
@@ -92,7 +116,9 @@ private:
  bool register_core_plugins(RetailRendererCoreFailure&)noexcept;
  void discard_object_extensions()noexcept;
  bool construct_transforms(RetailRendererCoreFailure&)noexcept;
- void destroy_transforms()noexcept;
+  void destroy_transforms()noexcept;
+  std::optional<bool> register_native_raster_extension(RetailRendererCoreFailure&)noexcept;
+  void discard_native_raster_extension()noexcept;
  std::weak_ptr<NativeRetailGameSession> session_;
  std::shared_ptr<NativeRetailRendererAllocatorService> allocator_;
  content::NativeContentVolume content_;
@@ -101,7 +127,8 @@ private:
  std::shared_ptr<NativeRetailRendererTransforms> transforms_;
  std::vector<std::shared_ptr<NativeRetailRendererPluginRegistration>> entries_;
  std::vector<std::shared_ptr<NativeRetailRendererPluginRegistration>> constructed_;
- std::shared_ptr<NativeRetailRendererMatrixDomain> matrix_domain_;
+  std::shared_ptr<NativeRetailRendererMatrixDomain> matrix_domain_;
+  std::shared_ptr<NativeRetailRendererRasterExtensionRegistration> raster_extension_;
  std::atomic<std::uint32_t> matrix_domain_count_{};
  std::atomic<std::uint32_t> module_040d_count_{};
  std::atomic<std::uint32_t> module_0401_count_{};
@@ -114,7 +141,9 @@ private:
  friend void renderer_required::destroy_core_plugin_0401(NativeRetailRendererCore&)noexcept;
  friend void renderer_required::destroy_core_plugin_040d(NativeRetailRendererCore&)noexcept;
  friend bool construct_native_renderer_error(NativeRetailRendererCore&,RetailRendererCoreFailure&);
- friend void destroy_native_renderer_error(NativeRetailRendererCore&)noexcept;
+  friend void destroy_native_renderer_error(NativeRetailRendererCore&)noexcept;
+  friend std::optional<bool> renderer_required::register_object_extensions_1b72b0(NativeRetailRendererCore&,RetailRendererCoreFailure&);
+  friend void renderer_required::discard_object_extensions_after_core_init(NativeRetailRendererCore&)noexcept;
 };
 bool construct_native_renderer_error(NativeRetailRendererCore&,RetailRendererCoreFailure&);
 void destroy_native_renderer_error(NativeRetailRendererCore&)noexcept;
@@ -145,11 +174,11 @@ bool construct_core_plugin_040a(NativeRetailRendererCore&,RetailRendererCoreFail
 void destroy_core_plugin_040a(NativeRetailRendererCore&) noexcept;
 bool construct_core_plugin_040b(NativeRetailRendererCore&,RetailRendererCoreFailure&);
 void destroy_core_plugin_040b(NativeRetailRendererCore&) noexcept;
-// Full1B72B0 needs the concrete typed object-family/stream extension owners.
-// This entire core tail is required until those services are implemented.
+// Historical native integration name; selected Xbox2C84D0 now registers the
+// real native raster-extension definition. PS2 device/stream layouts are not
+// adopted. No raster construction, device open/start or GPU effect is implied.
 std::optional<bool> register_object_extensions_1b72b0(NativeRetailRendererCore&,RetailRendererCoreFailure&);
-// Actual owned object-family metadata cleanup within1A2FD0; required on
-// partial registration failure and eventual core lifetime retirement.
+// Retire actual typed metadata on partial CoreInit failure or Core retirement.
 void discard_object_extensions_after_core_init(NativeRetailRendererCore&)noexcept;
 }
 }

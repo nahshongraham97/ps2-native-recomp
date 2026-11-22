@@ -1,0 +1,8 @@
+{
+  "status": "WRAPPER_PREFLIGHT_FAILED",
+  "headless_started": false,
+  "output_created": false,
+  "measured_wrapper": "export_callbacks.before-preflight.py",
+  "discrepancy": "The original script name occurs twice, in argv and script_sha256; the wrapper incorrectly required exactly one occurrence.",
+  "correction": "Require both exact occurrences and replace both; preserve the original runner and callback wrapper identities in the receipt."
+}

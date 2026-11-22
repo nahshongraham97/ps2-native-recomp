@@ -123,6 +123,37 @@ std::shared_ptr<NativeRetailRendererTransforms> NativeRetailRendererCore::transf
 std::optional<std::uint32_t> NativeRetailRendererCore::module_0401_count(RetailRendererCoreFailure& f)const noexcept{
  if(!access(f))return {};return module_0401_count_.load(std::memory_order_relaxed);
 }
+std::optional<RetailRendererRasterExtensionSpec> NativeRetailRendererRasterExtensionRegistration::observe(
+ RetailRendererCoreFailure& f)const noexcept{
+ f={};
+ if(std::this_thread::get_id()!=thread_){fail(f,RetailRendererCoreError::wrong_thread,"native raster-extension registration thread");return {};}
+ const auto session=session_.lock();RetailGameSessionFailure sf;
+ if(!active_.load(std::memory_order_acquire)||!session||!session->validate_current_thread(sf)){
+  fail(f,RetailRendererCoreError::owner,"native raster-extension registration retired");return {};
+ }
+ return RetailRendererRasterExtensionSpec{0x040c,false,false,false};
+}
+std::optional<bool> NativeRetailRendererCore::register_native_raster_extension(RetailRendererCoreFailure& f)noexcept{
+ if(!access(f))return {};
+ if(busy_||sealed_){store_error({1,0x80000017u});fail(f,RetailRendererCoreError::registration_closed,"native raster-extension registry sealed");return {};}
+ if(raster_extension_){store_error({1,0x80000017u});return true;} // Existing identity; never replace its definition.
+ auto registration=heap_object<NativeRetailRendererRasterExtensionRegistration>(allocator_,f,[&](void* p){
+  return new(p)NativeRetailRendererRasterExtensionRegistration(session_);
+ });
+ if(!registration)return {};
+ raster_extension_=std::move(registration);
+ return true;
+}
+void NativeRetailRendererCore::discard_native_raster_extension()noexcept{
+ if(raster_extension_)raster_extension_->active_.store(false,std::memory_order_release);
+ raster_extension_.reset();
+}
+std::shared_ptr<const NativeRetailRendererRasterExtensionRegistration> NativeRetailRendererCore::raster_extension(
+ RetailRendererCoreFailure& f)const noexcept{
+ if(!access(f))return {};
+ if(!raster_extension_){fail(f,RetailRendererCoreError::owner,"native raster-extension definition not registered");return {};}
+ return raster_extension_;
+}
 bool construct_native_renderer_error(NativeRetailRendererCore& core,RetailRendererCoreFailure& f){core.error_domain_=core.construct_error_domain(f);return bool(core.error_domain_);}
 void destroy_native_renderer_error(NativeRetailRendererCore& core)noexcept{core.error_domain_.reset();}
 bool NativeRetailRendererCore::register_core_plugins(RetailRendererCoreFailure& f)noexcept{
@@ -157,8 +188,8 @@ std::optional<bool> NativeRetailRendererCore::initialize_core(RetailRendererCore
  if(initialized_)return false; //1A6E64..6C returns source s1=0.
  Busy initialization(initializing_);
  if(!register_core_plugins(f)){entries_.clear();return {};}
- // Entire1B72B0 remains a typed required producer; its object-family and
- // stream callbacks are not guessed from the core extension metadata.
+ // Selected Xbox2C84D0 owns a real typed raster-extension definition.
+ // Registration is not object construction or native GPU open/start.
  std::optional<bool> tail;
  object_extensions_prepared_=true;
  try{tail=renderer_required::register_object_extensions_1b72b0(*this,f);}

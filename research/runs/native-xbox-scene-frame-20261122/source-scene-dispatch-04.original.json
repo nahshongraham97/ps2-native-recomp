@@ -1,0 +1,64 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "queries": {
+    "001b27f0:0": {
+      "mapping": {
+        "vma": "0x1b27f0",
+        "file_offset": 1714160,
+        "length": 64,
+        "section": ".text"
+      },
+      "bytes_hex": "558bec833da08a5b00007402eb2568808a5b006a1068e0895b006a0a688c8a5b00e81a00000083c414c705a08a5b00010000005dc3cccccccccccccccccccccc",
+      "file_backed": true
+    },
+    "001eb220:0": {
+      "mapping": {
+        "vma": "0x1eb220",
+        "file_offset": 1946144,
+        "length": 64,
+        "section": ".text"
+      },
+      "bytes_hex": "558becc705a8be5b0000000000b8010000005dc3cccccccccccccccccccccccc558bec8b45088b4d0c89088b5508c74204000000005dc3cccccccccccccccccc",
+      "file_backed": true
+    },
+    "0019cc00:0": {
+      "mapping": {
+        "vma": "0x19cc00",
+        "file_offset": 1625088,
+        "length": 64,
+        "section": ".text"
+      },
+      "bytes_hex": "558bec83ec08c745f80000000033c0833d8c885b00000f9cc033c9833d8c885b00170f9dc10bc1741d33d275fcc70590885b00000000006a00e802fb0b0083c4",
+      "file_backed": true
+    },
+    "001c4d70:0": {
+      "mapping": {
+        "vma": "0x1c4d70",
+        "file_offset": 1789296,
+        "length": 64,
+        "section": ".text"
+      },
+      "bytes_hex": "558bec83ec0c535657895df48975f8897dfc68bc507300e84400000083c40468b8507300e83700000083c40468b8507300e83a27000083c404c705c050730000",
+      "file_backed": true
+    },
+    "000a2760:0": {
+      "mapping": {
+        "vma": "0xa2760",
+        "file_offset": 599904,
+        "length": 64,
+        "section": ".text"
+      },
+      "bytes_hex": "558beca19c1c83003305981c830023059c1c8300a3a01c83008b0d9c1c8300890d981c8300c7059c1c8300000000005dc3cccccccccccccccccccccccccccccc",
+      "file_backed": true
+    },
+    "005b8890:4": {
+      "mapping": {
+        "vma": "0x5b8890",
+        "length": 4,
+        "section": ".data"
+      },
+      "file_backed": false,
+      "loader_zero_initialized": true
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "status": "SOURCE_DERIVED_SELECTED_XBOX_REGISTRATION",
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "functions": {
+    "002c84d0": {
+      "listing": "source-module-callbacks-09/002c84d0.asm",
+      "listing_sha256": "f7b73b13bccf7236efec8edc0267b3a561ab4dc136231c0e436c9773fd128274",
+      "join_sha256": "0e9d2d85fcef94e32337f27957c74d28aed9570b80e74376e4c872106d7e05b1",
+      "inclusive_range": [
+        "002c84d0",
+        "0x2c84f3"
+      ],
+      "instructions": 13,
+      "unlisted_byte_gaps": []
+    },
+    "002b9cf0": {
+      "listing": "source-raster-registration-10/002b9cf0.asm",
+      "listing_sha256": "ea9bf03c2eb710f7c636b4daa71b2cf35102da625f94f5ba371dcdbd57093bc8",
+      "join_sha256": "52000f6ff3d8601fa4933f39d8e8367864ae94da24f759a4b556fd813b09e038",
+      "inclusive_range": [
+        "002b9cf0",
+        "0x2b9d16"
+      ],
+      "instructions": 14,
+      "unlisted_byte_gaps": []
+    },
+    "002b9e50": {
+      "listing": "source-raster-consumers-11/002b9e50.asm",
+      "listing_sha256": "a1ccae20a3f33559e0cc6ef95bf4ab392731109f158a4de5f2811ffd323a22c6",
+      "join_sha256": "509518149ae78b950394a843e36015cb2d40a515e1de1623ba743877d6cde007",
+      "inclusive_range": [
+        "002b9e50",
+        "0x2b9ede"
+      ],
+      "instructions": 48,
+      "unlisted_byte_gaps": []
+    },
+    "002b9c70": {
+      "listing": "source-raster-consumers-11/002b9c70.asm",
+      "listing_sha256": "c5e1118278adfe1b045c5aa775e75dfb321ef35d49ce849aac99b06085e65321",
+      "join_sha256": "509518149ae78b950394a843e36015cb2d40a515e1de1623ba743877d6cde007",
+      "inclusive_range": [
+        "002b9c70",
+        "0x2b9ca7"
+      ],
+      "instructions": 18,
+      "unlisted_byte_gaps": []
+    }
+  },
+  "native_before": {
+    "runtime/include/mka/retail_renderer_core.hpp": "efc6bca720f0a02c0d2832ee771497b298c807aebb01336aac06ee6b98bada17",
+    "runtime/src/native/retail_renderer_core.cpp": "68297aa19ecda780c3930f33c2199a69d8e5771b18258d2731d412af1ed4cee7",
+    "cmake/native_game.cmake": "25d8d03a09228a0eb9e3a894f03eaa0b04207810355b7e3476397ca161957e85"
+  },
+  "existing_registry_evidence": "research/runs/parallel-renderer-engine-init-20261122/XBOX_WORD_JOIN.json",
+  "existing_registry_evidence_sha256": "a8c4bd7d387eb038d2297e4c04bb4e6557b36583545b810c9719caef56bf3f9f",
+  "selected_behavior": {
+    "object_family": "raster",
+    "id": 1036,
+    "source_payload_bytes": 24,
+    "constructor": null,
+    "destructor": null,
+    "copy": null,
+    "success": "signed32 registration result >= 0",
+    "consumer_order": "2B9E50 device creation before registry construction; 2B9C70 registry destruction before device destruction"
+  },
+  "native_policy": "real typed registration identity owned by existing Core/heap; no console offset/payload or GPU-success stub",
+  "version_differences": "PS2 92/216-byte040C and0110 stream/device layouts are not adopted; native GPU/object consumers remain required",
+  "verification_scope": "source-derived before native edit",
+  "game_run": false,
+  "acceptance": "OPEN"
+}

@@ -1,0 +1,8 @@
+{
+  "status": "CHECKER_WRAPPER_PREFLIGHT_FAILED",
+  "compiler_or_client_started": false,
+  "output_created": false,
+  "measured_wrapper": "run_scene_check.before-anchor.py",
+  "discrepancy": "The measured checker builds a dict with keyword arguments; the wrapper looked for a JSON-style quoted key.",
+  "correction": "Use the direct measured checker implementation instead of a fragile source-text wrapper; keep separate new evidence directories."
+}

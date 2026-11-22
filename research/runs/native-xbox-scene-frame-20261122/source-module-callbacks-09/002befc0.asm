@@ -1,0 +1,12 @@
+002befc0	a1fc735c00	MOV EAX,[0x005c73fc]
+002befc5	8b8040538300	MOV EAX,dword ptr [EAX + 0x835340]
+002befcb	85c0	TEST EAX,EAX
+002befcd	7419	JZ 0x002befe8
+002befcf	50	PUSH EAX
+002befd0	e8eb4f0000	CALL 0x002c3fc0
+002befd5	8b0dfc735c00	MOV ECX,dword ptr [0x005c73fc]
+002befdb	83c404	ADD ESP,0x4
+002befde	c7814053830000000000	MOV dword ptr [ECX + 0x835340],0x0
+002befe8	ff0d00745c00	DEC dword ptr [0x005c7400]
+002befee	8b442404	MOV EAX,dword ptr [ESP + 0x4]
+002beff2	c3	RET

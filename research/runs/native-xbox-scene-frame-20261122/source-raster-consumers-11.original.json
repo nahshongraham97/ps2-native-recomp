@@ -1,0 +1,15 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "queries": {
+    "005a66f8:1": {
+      "mapping": {
+        "vma": "0x5a66f8",
+        "file_offset": 5873272,
+        "length": 1,
+        "section": ".data"
+      },
+      "bytes_hex": "34",
+      "file_backed": true
+    }
+  }
+}

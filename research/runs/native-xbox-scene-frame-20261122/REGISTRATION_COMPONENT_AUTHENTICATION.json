@@ -1,0 +1,549 @@
+{
+  "status": "AUTHENTICATED_NATIVE_RASTER_REGISTRATION_COMPONENT",
+  "schema_preflight": {
+    "prior_status": "str",
+    "prior_remaining_symbols": "list",
+    "prior_remaining_count": 57,
+    "current_result": {
+      "status": "str",
+      "argv": "list",
+      "exit": "int",
+      "deadline_seconds": "int",
+      "seconds": "float",
+      "executable_sha256": "str",
+      "log_sha256": "str",
+      "source_commit": "str",
+      "tracked_status": "str",
+      "source_manifest_sha256": "str",
+      "compiler_sha256": "str",
+      "cache_sha256": "str",
+      "runner_sha256": "str",
+      "phase": "str",
+      "visible_window": "bool",
+      "audio_endpoint": "bool",
+      "game_run": "bool",
+      "acceptance": "str"
+    },
+    "source_pin_map": "dict",
+    "source_pin_values": [
+      "str"
+    ],
+    "client_targets": [
+      "test_native_retail_renderer_raster_registration",
+      "test_native_retail_renderer_core",
+      "test_native_retail_renderer_allocator",
+      "test_native_retail_renderer_matrix"
+    ],
+    "client_count": 4
+  },
+  "measured_source_base": "2c2d9dcdfb46583e7ce68f0342007804e1b0bdda",
+  "source_files": 903,
+  "source_manifest_sha256": "9bc879fb62b7af2edebcc9ab819271352bef4928fa38648dc6229ca4f9167b62",
+  "changed_source_paths": [
+    "cmake/native_game.cmake",
+    "runtime/include/mka/retail_renderer_core.hpp",
+    "runtime/src/native/retail_renderer_core.cpp",
+    "runtime/src/native/retail_renderer_raster_registration.cpp",
+    "tests/test_retail_renderer_raster_registration.cpp"
+  ],
+  "client_targets": [
+    "test_native_retail_renderer_raster_registration",
+    "test_native_retail_renderer_core",
+    "test_native_retail_renderer_allocator",
+    "test_native_retail_renderer_matrix"
+  ],
+  "client_target_count": 4,
+  "allocation_cuts": 3,
+  "receipts": {
+    "scene-registration-02": {
+      "result_sha256": "5a6447c448a6a864932c1b51f84614aaad7870bc56da7beda23f5979e3a1a267",
+      "source_manifest_sha256": "9bc879fb62b7af2edebcc9ab819271352bef4928fa38648dc6229ca4f9167b62",
+      "allowed_unlinked_test_difference": [],
+      "log_sha256": "2f0cd2dbd357a45f80bf38c4da722ce811712484c7256b1ea015268bda40917e",
+      "compressed_log_sha256": "4a8a68e8d5d8b70615f8bd62dd79eb184ebc66d668ce026938e1db0b70578d3a",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_raster_registration.exe",
+        "."
+      ],
+      "executable_sha256": "d9cc66f924176fbc9cded2d70b5dc3159af71b09aa018143e4d7f2642fe121ab",
+      "seconds": 0.09961509998538531,
+      "status": "PASS",
+      "exit": 0
+    },
+    "scene-core-02": {
+      "result_sha256": "34d71d2845498267ac43c112268512a0aa9ee9ae0d39461881b03aca37e326f8",
+      "source_manifest_sha256": "9bc879fb62b7af2edebcc9ab819271352bef4928fa38648dc6229ca4f9167b62",
+      "allowed_unlinked_test_difference": [],
+      "log_sha256": "7d64e1cf5d24d6ffb751ec174c7fd8e67a19623b31c40eac955eaff032f705ec",
+      "compressed_log_sha256": "187b1d20968067c168b43a21891330fccd4566a530d532c7683cc8be38072c0b",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_core.exe",
+        "research/runs/parallel-renderer-engine-init-20261122"
+      ],
+      "executable_sha256": "7623e475d9285e492f9571f514a11fe4f506d7ab0403c170529a50dcf441bbc4",
+      "seconds": 0.08037399998283945,
+      "status": "PASS",
+      "exit": 0
+    },
+    "scene-allocator-01": {
+      "result_sha256": "e9d73aae5a600ba078b68eb97066d8165b8f7212d2d7ef00d6d01f45caa31522",
+      "source_manifest_sha256": "cde5b83f59c652516388159205a4a3128a8c6c8d63d85af40f2b69410dd02820",
+      "allowed_unlinked_test_difference": [
+        "tests/test_retail_renderer_raster_registration.cpp"
+      ],
+      "log_sha256": "f708c44121d52d01b73f83a75dfd8b1fdf13fd6c0ba74e94147a392ed99f3c70",
+      "compressed_log_sha256": "3cabb9802a06b606ed8cc266f2c729bb2fe3894882961a7366db3daeba7970ad",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_allocator.exe",
+        "."
+      ],
+      "executable_sha256": "2a396f474950b28ad7f5736d248934c795bdfbb9da3d4cd1e792c31fb5ca408f",
+      "seconds": 0.10272759999497794,
+      "status": "PASS",
+      "exit": 0
+    },
+    "scene-matrix-01": {
+      "result_sha256": "ec2af444623256b64264e3858b477b9ab0f5c824c31f7e4d07fd77082504d024",
+      "source_manifest_sha256": "cde5b83f59c652516388159205a4a3128a8c6c8d63d85af40f2b69410dd02820",
+      "allowed_unlinked_test_difference": [
+        "tests/test_retail_renderer_raster_registration.cpp"
+      ],
+      "log_sha256": "e6ca983715efa3c1951163d91ac2bd5a0363f87ee0008dfac1e602ba5c22291c",
+      "compressed_log_sha256": "f73c6bb40bec8fe51ce9368bc025738b886b1027be63e6f9fa4021c14011d9b4",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_matrix.exe",
+        "."
+      ],
+      "executable_sha256": "e6e2f8997f8256fdf290a3de9a26adc9024848c3fa589025322b37096a39727b",
+      "seconds": 0.11204940002062358,
+      "status": "PASS",
+      "exit": 0
+    },
+    "scene-compile-03": {
+      "result_sha256": "bc9b5d7bf2251ffd84fa7ed71ad3cdfff4260b50c68d77d14143e4d475f2332c",
+      "source_manifest_sha256": "cde5b83f59c652516388159205a4a3128a8c6c8d63d85af40f2b69410dd02820",
+      "allowed_unlinked_test_difference": [
+        "tests/test_retail_renderer_raster_registration.cpp"
+      ],
+      "log_sha256": "3037a921d523e24d570aa8bad0405ca9a2344a5706bdec21ea8967efef5618c8",
+      "compressed_log_sha256": "3af1315115a81ff819711a0ae6866046f758893e7a9ab1bc44e1c349d0a2b33c",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+        "--build",
+        "C:\\Users\\nahsh\\MKPORT~1\\ARMAGE~1\\ARMAGE~1\\external\\forks\\RETAIL~1\\b",
+        "--target",
+        "test_native_retail_renderer_raster_registration",
+        "test_native_retail_renderer_core",
+        "test_native_retail_renderer_allocator",
+        "test_native_retail_renderer_matrix",
+        "-j2"
+      ],
+      "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+      "seconds": 4.068696800008183,
+      "status": "PASS",
+      "exit": 0
+    },
+    "scene-compile-04": {
+      "result_sha256": "2643fc47bdf65e9b4710a3c1cc71634344221b0363f053752a983d38d80fa502",
+      "source_manifest_sha256": "9bc879fb62b7af2edebcc9ab819271352bef4928fa38648dc6229ca4f9167b62",
+      "allowed_unlinked_test_difference": [],
+      "log_sha256": "bdd874f67b5313720eac68ddbed80586139e9e1fbbf8620ab35c38ab13251484",
+      "compressed_log_sha256": "4295225d0ab916f2137e634af4a5cb64f9f4db9f34f06354b428a82693918f75",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+        "--build",
+        "C:\\Users\\nahsh\\MKPORT~1\\ARMAGE~1\\ARMAGE~1\\external\\forks\\RETAIL~1\\b",
+        "--target",
+        "test_native_retail_renderer_raster_registration",
+        "-j2"
+      ],
+      "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+      "seconds": 1.6108216000138782,
+      "status": "PASS",
+      "exit": 0
+    },
+    "scene-registration-01": {
+      "result_sha256": "4aebdc2f3e83a561a7b2ff4f6b9135866c44657a0b6aa2592a3bd510f9bd798b",
+      "source_manifest_sha256": "cde5b83f59c652516388159205a4a3128a8c6c8d63d85af40f2b69410dd02820",
+      "allowed_unlinked_test_difference": [
+        "tests/test_retail_renderer_raster_registration.cpp"
+      ],
+      "log_sha256": "83cf35e0a9bbce929beddc3903ec02b4bb5221f944aebd17d375fa63ea96260a",
+      "compressed_log_sha256": "6068d0d1fb782b57f79c9554d0bf3d85728745c6a42397692ff95abfe1ee1a9b",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_raster_registration.exe",
+        "."
+      ],
+      "executable_sha256": "312839570aaec6d3e42a95c381c223c851286d06a60b21344ba6577ba4903027",
+      "seconds": 0.11823639998328872,
+      "status": "NONZERO",
+      "exit": 1
+    },
+    "scene-core-01": {
+      "result_sha256": "c4d36302cf7284ad346b6994b4f9e569ec358108b14f9bb21d560c752dcfb863",
+      "source_manifest_sha256": "cde5b83f59c652516388159205a4a3128a8c6c8d63d85af40f2b69410dd02820",
+      "allowed_unlinked_test_difference": [
+        "tests/test_retail_renderer_raster_registration.cpp"
+      ],
+      "log_sha256": "a27472b55bc83e0d06ab8c66f166c3e97109f278307654c4adf7daddd76f8866",
+      "compressed_log_sha256": "bb959f41505459ad7a294b6693aeb8d058034ef137c2acafd779acb56fb276a7",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_core.exe",
+        "."
+      ],
+      "executable_sha256": "7623e475d9285e492f9571f514a11fe4f506d7ab0403c170529a50dcf441bbc4",
+      "seconds": 0.10417079998296686,
+      "status": "NONZERO",
+      "exit": 1
+    },
+    "scene-negative-01": {
+      "result_sha256": "8faaf9557815826ed29570daa6f92ba2e6803ff43c7495b243fe987026cc3be1",
+      "source_manifest_sha256": "9bc879fb62b7af2edebcc9ab819271352bef4928fa38648dc6229ca4f9167b62",
+      "allowed_unlinked_test_difference": [],
+      "log_sha256": "7755b619816eb5d7321afedc8d8eadf266a3d593ecd0e56b174a6561deee9d7d",
+      "compressed_log_sha256": "932a9c4929c7833bd26443b69406276ef092f5e0e0533941d73903f577f32b7f",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+        "--build",
+        "C:\\Users\\nahsh\\MKPORT~1\\ARMAGE~1\\ARMAGE~1\\external\\forks\\RETAIL~1\\b",
+        "--target",
+        "test_native_startup_missing_bindings",
+        "-j2"
+      ],
+      "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+      "seconds": 0.2405750000034459,
+      "status": "NONZERO",
+      "exit": 1
+    },
+    "scene-symbols-01": {
+      "result_sha256": "ebdcb8684de755dd774ea85a1077c16934aac19c23a552bc39e47f5aa8417325",
+      "source_manifest_sha256": "9bc879fb62b7af2edebcc9ab819271352bef4928fa38648dc6229ca4f9167b62",
+      "allowed_unlinked_test_difference": [],
+      "log_sha256": "b9d954b1e242d3ffb469dae4f26efd0400bb40899a2022cb798e08f544ea6747",
+      "compressed_log_sha256": "6eb651b0388d8f209d3c44d0d0093a6eb3c0b05325c3c11bbd9e4e2ab655aa24",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+        "-C",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_raster_registration.exe"
+      ],
+      "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+      "seconds": 0.04999679999309592,
+      "status": "PASS",
+      "exit": 0
+    }
+  },
+  "resolved_bindings": [
+    "mka::retail::renderer_required::register_object_extensions_1b72b0(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::discard_object_extensions_after_core_init(mka::retail::NativeRetailRendererCore&)"
+  ],
+  "remaining_undefined_symbols": [
+    "mka::retail::main_binding::read_retail_online_boot_word(mka::retail::NativeRetailMainState const&)",
+    "mka::retail::main_binding::initialize_retail_online_stage(mka::retail::NativeRetailMainState&, std::__1::array<unsigned int, 5ull> const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::poll_retail_controller_roles(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::advance_retail_game_services(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::service_retail_frame_input(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::render_retail_frame(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::prune_retail_associations(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::retail_mode_dispatch_enabled(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::dispatch_retail_enabled_mode(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::create_retail_action_task(mka::retail::NativeRetailMainState&, mka::retail::RetailActionTaskRequest const&, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::deliver_retail_builtin_scene_event(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, unsigned int, unsigned int, mka::retail::StartupFailure&)",
+    "mka::retail::main_binding::reset_and_bind_retail_scene_event_graph(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, mka::retail::StartupFailure&)",
+    "mka::retail::scene_bootstrap_required::continue_scene_reset_at_125d60(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::initial_task_required::begin_intro_18deb0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::transition_1225d0(mka::retail::NativeRetailMainState&, unsigned int, mka::retail::RetailInitialTransitionBody)",
+    "mka::retail::initial_task_required::begin_prompt_18dc10(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d450(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d870(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d8e0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d700(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d800(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d660(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::initial_task_required::begin_menu_18d770(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+    "mka::retail::scene_bootstrap_required::continue_first_scene_at_225d40(mka::retail::NativeRetailMainState&, std::__1::shared_ptr<mka::retail::NativeRetailRendererCore>, mka::retail::StartupFailure&)",
+    "mka::retail::initial_reset_required::clear_nonowning_references_18da30(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+    "mka::retail::invoke_retail_profile_select_from_2f1630(mka::retail::NativeRetailMainState&, std::__1::basic_string_view<char, std::__1::char_traits<char>>, mka::retail::RetailProfileMenuFailure&)",
+    "mka::retail::renderer_required::construct_core_plugin_0403(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0403(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0404(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0404(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0405(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0405(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0406(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0406(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0407(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0407(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0408(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0408(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0409(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0409(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_0412(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_0412(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_040a(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_040a(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::renderer_required::construct_core_plugin_040b(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+    "mka::retail::renderer_required::destroy_core_plugin_040b(mka::retail::NativeRetailRendererCore&)",
+    "mka::retail::apply_retail_profile_participant_from_188720(mka::retail::NativeRetailMainState&, unsigned int, mka::retail::RetailProfileMenuFailure&)",
+    "mka::retail::publish_retail_profile_participant_from_189690(mka::retail::NativeRetailMainState&, std::__1::shared_ptr<mka::retail::NativeRetailInputParticipant> const&, mka::retail::RetailProfileMenuFailure&)",
+    "mka::retail::renderer_required::transform_point_exact(mka::retail::RetailRendererPoint3&, mka::retail::RetailRendererPoint3 const&, mka::retail::RetailRendererAffine const&)",
+    "mka::retail::renderer_required::transform_points_exact(std::__1::span<mka::retail::RetailRendererPoint3, 18446744073709551615ull>, std::__1::span<mka::retail::RetailRendererPoint3 const, 18446744073709551615ull>, mka::retail::RetailRendererAffine const&)",
+    "mka::retail::renderer_required::transform_vector_exact(mka::retail::RetailRendererPoint3&, mka::retail::RetailRendererPoint3 const&, mka::retail::RetailRendererAffine const&)",
+    "mka::retail::renderer_required::transform_vectors_exact(std::__1::span<mka::retail::RetailRendererPoint3, 18446744073709551615ull>, std::__1::span<mka::retail::RetailRendererPoint3 const, 18446744073709551615ull>, mka::retail::RetailRendererAffine const&)",
+    "mka::retail::renderer_required::multiply_affines_19f680(mka::retail::RetailRendererAffine&, mka::retail::RetailRendererAffine const&, mka::retail::RetailRendererAffine const&, mka::retail::RetailRendererMatrixFailure&)",
+    "mka::retail::renderer_required::classify_matrix_1a0240(mka::retail::RetailRendererMatrixValue&, mka::retail::RetailRendererMatrixTolerances const&, mka::retail::RetailRendererMatrixFailure&)",
+    "mka::retail::renderer_required::invert_nonidentity_matrix_1a07a0(mka::retail::RetailRendererMatrixValue&, mka::retail::RetailRendererMatrixValue const&, mka::retail::RetailRendererMatrixFailure&)"
+  ],
+  "configuration": {
+    "CMAKE_BUILD_TYPE:STRING": "Release",
+    "CMAKE_CXX_COMPILER:STRING": "C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/bin/clang++.exe",
+    "CMAKE_CXX_FLAGS:STRING": "",
+    "CMAKE_CXX_FLAGS_DEBUG:STRING": "-g",
+    "CMAKE_CXX_FLAGS_MINSIZEREL:STRING": "-Os -DNDEBUG",
+    "CMAKE_CXX_FLAGS_RELEASE:STRING": "-O3 -DNDEBUG",
+    "CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING": "-O2 -g -DNDEBUG",
+    "MKA_NATIVE_MEDIA_HEADERS:PATH": "C:/Users/nahsh/mk port/Armageddon-backup/dependencies/native-media/ffmpeg-7.1.4",
+    "PS2_GENERATED:PATH": "",
+    "PS2_IOP_AOT_IMPORTS:PATH": "C:/Users/nahsh/MKPORT~1/ARMAGE~1/ARMAGE~1/external/forks/RETAIL~1/runtime/src/iop/generated_modules",
+    "PS2_IOP_AOT_MODULES:PATH": "C:/Users/nahsh/MKPORT~1/ARMAGE~1/ARMAGE~1/external/forks/RETAIL~1/runtime/src/iop/generated_modules",
+    "PS2_RUNTIME_LIB:FILEPATH": "",
+    "PS2_WGPU_DIR:PATH": "C:/Users/nahsh/MKPORT~1/ARMAGE~1/ARMAGE~1/external/forks/RETAIL~1/third_party/wgpu-native",
+    "CMAKE_CXX_FLAGS-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_DEBUG-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_MINSIZEREL-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_RELEASE-ADVANCED:INTERNAL": "1",
+    "CMAKE_CXX_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL": "1"
+  },
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "706dae305fa5122aafd8e2aa001b2eb743923cf842c6138f3c3d78c7cd830642",
+  "sdl2_sha256": "53e8fa7e9ed43c30bd650c39396f0d9d2067d2fff0b926c9433b75202592e4aa",
+  "source_listings": {
+    "source-core-registrations-07/002c0020.asm": {
+      "sha256": "59e56a2298bec5db6f4b7b9c956e440104e9a961c2340d4223c8780d9316c0ad",
+      "instructions": 153
+    },
+    "source-core-registrations-07/002c66d0.asm": {
+      "sha256": "971e69340ca2b3d0d0dc262550e41997cd1400a6b75a80ac11eb93ec7fb36d7d",
+      "instructions": 1
+    },
+    "source-first-scene-01/002330c0.asm": {
+      "sha256": "6c5e9e2d89eeaca7378829520fec9e5e0b1f4e143db0c1a1bc9a4b629cd2513a",
+      "instructions": 20
+    },
+    "source-graphics-startup-05/0007d460.asm": {
+      "sha256": "7ad5f9ae6c85294ae16a3c21e3ebbcb17ea362a143a3a21d64a9b715032db827",
+      "instructions": 58
+    },
+    "source-graphics-startup-05/000a0dc0.asm": {
+      "sha256": "2b06aee9c872782b17b6ecfc44cc0f87de0d7c237fc0c68156b29fcb5a1ebb2a",
+      "instructions": 112
+    },
+    "source-graphics-startup-05/002694f0.asm": {
+      "sha256": "8173a3fd53be23ca6cce12f88f5022cc17903a2ee4c2c6a7503554efb8044c30",
+      "instructions": 8
+    },
+    "source-module-callbacks-09/002b8de0.asm": {
+      "sha256": "c924a76cfbbc19ab86adbb978c63787e701a435efa30143e2e508cfbb163b057",
+      "instructions": 20
+    },
+    "source-module-callbacks-09/002b8e30.asm": {
+      "sha256": "b09eadf3122fa33d14a9c13f422f739d497e17764d37e69e548df4b0eb0a065e",
+      "instructions": 10
+    },
+    "source-module-callbacks-09/002bb4b0.asm": {
+      "sha256": "40ae94f392f951cd6b7523e26d65ec0444221a76b5aaf757dc4be3611908c03c",
+      "instructions": 12
+    },
+    "source-module-callbacks-09/002bb510.asm": {
+      "sha256": "c1293d62670e53a60dc0b584f32ba3b3015722251f5ae6a3eb3cb8de1db46ce0",
+      "instructions": 21
+    },
+    "source-module-callbacks-09/002bef60.asm": {
+      "sha256": "f3819bc81ea268a95cb7471ee13aaba2a96e7f93656bc5ba948c3b1b4826152e",
+      "instructions": 24
+    },
+    "source-module-callbacks-09/002befc0.asm": {
+      "sha256": "1850f183f814af06500898d4e7965363703559c89c1ac1ebaa4e1c14ef7604ed",
+      "instructions": 12
+    },
+    "source-module-callbacks-09/002c84d0.asm": {
+      "sha256": "f7b73b13bccf7236efec8edc0267b3a561ab4dc136231c0e436c9773fd128274",
+      "instructions": 13
+    },
+    "source-raster-consumers-11/002b9c70.asm": {
+      "sha256": "c5e1118278adfe1b045c5aa775e75dfb321ef35d49ce849aac99b06085e65321",
+      "instructions": 18
+    },
+    "source-raster-consumers-11/002b9cf0.asm": {
+      "sha256": "ea9bf03c2eb710f7c636b4daa71b2cf35102da625f94f5ba371dcdbd57093bc8",
+      "instructions": 14
+    },
+    "source-raster-consumers-11/002b9e50.asm": {
+      "sha256": "a1ccae20a3f33559e0cc6ef95bf4ab392731109f158a4de5f2811ffd323a22c6",
+      "instructions": 48
+    },
+    "source-raster-registration-10/002b9cf0.asm": {
+      "sha256": "ea9bf03c2eb710f7c636b4daa71b2cf35102da625f94f5ba371dcdbd57093bc8",
+      "instructions": 14
+    },
+    "source-renderer-lifecycle-06/0007d680.asm": {
+      "sha256": "c9efc52a08a9ed68ea622730ab78a034cac7e1270ccb4f50004a9201af002f7e",
+      "instructions": 12
+    },
+    "source-renderer-lifecycle-06/0007ebf0.asm": {
+      "sha256": "0d5f0ce959c2dafd15e15765ef55af9150802a4c21df21921163cd5d2328d59c",
+      "instructions": 94
+    },
+    "source-renderer-lifecycle-06/00269530.asm": {
+      "sha256": "e9a90e50ef6a02e75880292d20de953bd2045b032464eff8f45faf5c04767094",
+      "instructions": 53
+    },
+    "source-renderer-lifecycle-06/002695f0.asm": {
+      "sha256": "295f0c224730adb95ec63d2bd62a150e39861ed82dd35c92dc0fb2f719fe7d1d",
+      "instructions": 89
+    },
+    "source-renderer-lifecycle-06/002bfeb0.asm": {
+      "sha256": "1e2b3b0a8f7b306bac15c1ec53784e654667ad941d9cb90e03015316161fdc9c",
+      "instructions": 60
+    },
+    "source-renderer-lifecycle-06/002bff80.asm": {
+      "sha256": "20d46b98d7151895a9f0197108bc3b1dd1c28fe1319d8e994b69733edb8b5945",
+      "instructions": 30
+    },
+    "source-renderer-lifecycle-06/002bffe0.asm": {
+      "sha256": "2ecf5403bd243c53872baefa85d722c470558a6d370c0841e2fbecc4a08e8a55",
+      "instructions": 15
+    },
+    "source-renderer-lifecycle-06/002c0310.asm": {
+      "sha256": "79b7b95c38b97406c02a92475743e1c6e4bdf8e6904f5e7dbb5c9af5b03485a1",
+      "instructions": 60
+    },
+    "source-renderer-lifecycle-06/002c03c0.asm": {
+      "sha256": "0be47e161faf427256891da00f911b1667f74091bc9bf19907e6379ca5c9bb00",
+      "instructions": 56
+    },
+    "source-scene-dispatch-04/000a2760.asm": {
+      "sha256": "819b2d72557e62eb2a1394c7fcd9fd9de17ba0f424dcbc9f084dbe894242786d",
+      "instructions": 11
+    },
+    "source-scene-dispatch-04/0019cad0.asm": {
+      "sha256": "53e9486304cf9eb4e216502e2f864a288fffc217653952c6dbcb1236d98863b5",
+      "instructions": 13
+    },
+    "source-scene-dispatch-04/0019cb00.asm": {
+      "sha256": "32092aa7f4bd23547267e82fa438f6a01f6cfd32c0ceb5afd0f4c0417facd2cc",
+      "instructions": 21
+    },
+    "source-scene-dispatch-04/0019cb50.asm": {
+      "sha256": "0e4b85002cd4e749763fed9a29ef9a77dbdd0c1730c8ebd9d116bd2e713e34ea",
+      "instructions": 25
+    },
+    "source-scene-dispatch-04/0019cbb0.asm": {
+      "sha256": "d2afcc80a50966a417f0ed7dd5ed9d7c94effea902d04f109e2d0bfa33d19b3b",
+      "instructions": 5
+    },
+    "source-scene-dispatch-04/0019cbc0.asm": {
+      "sha256": "5931a643dc00a2fb6892063b0ceeec2ecc9b264a95b171783f885ee3d1439c73",
+      "instructions": 18
+    },
+    "source-scene-dispatch-04/0019cc00.asm": {
+      "sha256": "2c60c139a8d8305fd45901c0a22ee8ca1e1298159e17dfa41210274859521e0d",
+      "instructions": 48
+    },
+    "source-scene-dispatch-04/0019cfd0.asm": {
+      "sha256": "ea94e6732cc5242251c0b11f3b21f80b7f1121398ea1a9b1a874c68ac8f03062",
+      "instructions": 221
+    },
+    "source-scene-dispatch-04/001b27f0.asm": {
+      "sha256": "b288cbf5652ed2232cb5600119435a61985929b653385aefbbd28b1ed8a887bb",
+      "instructions": 15
+    },
+    "source-scene-dispatch-04/001c4d70.asm": {
+      "sha256": "e31ea206dda59bc037c02f3e3df8debc36dee5e61f6501fe7ba1b811a8b3317f",
+      "instructions": 29
+    },
+    "source-scene-dispatch-04/001eb220.asm": {
+      "sha256": "0dbb57ab1e63c9bb61092fdeb8af3d9b9e2ec09d4fed347c4cd9124226d246c9",
+      "instructions": 6
+    },
+    "source-scene-dispatch-04/0026d940.asm": {
+      "sha256": "3aeab2a0cfc579b943eab615cc10cfd01fd3b7b509c95dbc09c65399f1b413bc",
+      "instructions": 36
+    },
+    "source-scene-dispatch-04/0026dcf0.asm": {
+      "sha256": "c89a4a107d581d80030235223f9f3edd06f0d1768b871246b5d4de88a5a33530",
+      "instructions": 36
+    },
+    "source-scene-dispatch-04/0026deb0.asm": {
+      "sha256": "82125f9a2b3293fd3e37e35fd9c3fe199f288b74bf2ab14d8cf314aac7272d61",
+      "instructions": 70
+    },
+    "source-scene-dispatch-04/0026e1f0.asm": {
+      "sha256": "6d629461ba0cee623e5c558b7016f57ee9bca4e60040b9bd3a37dd9d6cece7a2",
+      "instructions": 101
+    },
+    "source-scene-dispatch-04/0026e570.asm": {
+      "sha256": "67c698bd282549cc9e0323859cb834de8faecb89cf07628760b17b2010b75342",
+      "instructions": 71
+    },
+    "source-scene-dispatch-04/0026e720.asm": {
+      "sha256": "43e2b80a237076e2ab7ebaba0645dcdba46fbd4c5019d667487cbaa1539e44b5",
+      "instructions": 36
+    },
+    "source-scene-dispatch-04/0026e840.asm": {
+      "sha256": "e58430dbf43f75d5b63971a290673151b7c0aa812dcae3843842be610547e446",
+      "instructions": 36
+    },
+    "source-scene-dispatch-04/0026e960.asm": {
+      "sha256": "ed0e408308b36e068bb35379ef826b243f6379d86b333bdc94731a9a77d109b6",
+      "instructions": 36
+    },
+    "source-scene-dispatch-04/0026eab0.asm": {
+      "sha256": "840dd2ebc6fc255da5abf730c0550a53e6386f84d67bc83dca2c27e00ada547e",
+      "instructions": 36
+    },
+    "source-scene-dispatch-04/0026ece0.asm": {
+      "sha256": "7388669d064a9063bd0e3784f05c2dc0b31f7b3574193ae8471ea8e42799e9e1",
+      "instructions": 187
+    },
+    "source-scene-dispatch-04/0026f050.asm": {
+      "sha256": "4c239646ab8a87b862464b26acdbc71a39e2592ac123ff7062f38fe5b299b904",
+      "instructions": 70
+    },
+    "source-scene-dispatch-04/0026f1f0.asm": {
+      "sha256": "93a5b1c4f49941e8a8871556fe45a0233e1a226422948b56678ed4d3ce72dd84",
+      "instructions": 42
+    },
+    "source-scene-dispatch-04/0026f320.asm": {
+      "sha256": "22325942f6c37fa1ac88af18b5769323c925ca3d187d279ee9ea7290c28f76de",
+      "instructions": 70
+    },
+    "source-startup-frame-02/0019c930.asm": {
+      "sha256": "ece1eab4b5b34b3a4c205226b504ce035052841015d9e3f02166ad1444ec622c",
+      "instructions": 7
+    },
+    "source-startup-frame-02/0019c950.asm": {
+      "sha256": "2415181b3249def6127986135d9901d8e3fd51ca8cb8d567a87179502df39e69",
+      "instructions": 13
+    },
+    "source-startup-frame-02/0019cbb0.asm": {
+      "sha256": "d2afcc80a50966a417f0ed7dd5ed9d7c94effea902d04f109e2d0bfa33d19b3b",
+      "instructions": 5
+    },
+    "source-startup-frame-02/0025c1e0.asm": {
+      "sha256": "67d0c52cd3375ca947a9c7bb520fb416753c50e09d2add6b68fc111aaf19976e",
+      "instructions": 19
+    }
+  },
+  "registration_source_sha256": "5cf0534a1eb44a864aff5660cf45c9ed792b7077c7f7b956e307338a1721cc6b",
+  "verification_scope": "tested component; precommit build authenticated; retained unchanged allocator/matrix executions",
+  "raster_gpu_creation": "OPEN",
+  "renderer_factories": "OPEN",
+  "engine_open_start": "OPEN",
+  "oracle_comparison": "OPEN",
+  "native_save_reload": "OPEN",
+  "numerical_hd": "OPEN",
+  "game_run": false,
+  "visible_window": false,
+  "audio_endpoint": false,
+  "acceptance": "OPEN"
+}

@@ -1,0 +1,15 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "queries": {
+    "002b9cf0:0": {
+      "mapping": {
+        "vma": "0x2b9cf0",
+        "file_offset": 2792688,
+        "length": 64,
+        "section": ".text"
+      },
+      "bytes_hex": "8b4424148b4c24108b54240c508b44240c518b4c240c52505168f8665a00e87d8c000083c418c3cccccccccccccccccc518b44240c8b4c240850518d54240852",
+      "file_backed": true
+    }
+  }
+}
