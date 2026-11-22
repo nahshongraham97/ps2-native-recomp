@@ -216,3 +216,15 @@ measured source blobs against both index and resulting commit. Validation,
 commit and push are one failure-propagating process. Its postcommit receipt
 will distinguish authenticated precommit measurements from a fresh rebuild
 and retain the base/empty-registry scope and full-game OPEN gates.
+
+Runtime sourcead3e37efd54636791e49815993645de2e3793350 is published
+to origin/main. All177 approved authored paths passed strict staging/
+raw-byte/LF/no-asset gates; all906 measured source blobs match the resulting
+commit. COMMITTED_AUTHENTICATION.json binds that exact source/tree to
+canonical results and their retained-regression distinction, without a
+fresh-checkout/game claim. No code/test expectation changed for publication.
+Next publish the committed-source receipt and parent live documents, then
+continue the next connected0404 real resource through existing owners.
+Full0403 plugins/clone/sync/unsupported teardown and renderer/Open/Start/
+GPU/native-save/oracle/game acceptance stay OPEN. Owner:no action; no run
+is active.

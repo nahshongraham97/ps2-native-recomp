@@ -1,0 +1,20 @@
+{
+  "status": "AUTHENTICATED_COMMITTED_NATIVE0403_BASE_RESOURCE",
+  "runtime_source_commit": "ad3e37efd54636791e49815993645de2e3793350",
+  "runtime_tree": "9f78ddb3ca9264948f708a12bd087ce841675283",
+  "origin_main_at_publication": "ad3e37efd54636791e49815993645de2e3793350",
+  "source_files": 906,
+  "all_measured_source_blobs_match_commit": true,
+  "source_manifest_sha256": "c640796a60f8300c19b497ce31c4d6a0e3d43463bf3ce84364e52706bd2ad968",
+  "component_authentication_sha256": "f60d8eaa6a7089417fbd5258918702711273a211e22fa8e55c52e32be180fffa",
+  "implementation_record_sha256": "d28891e2b51254439e684eeab48c389276357010dc927c2e4bd39dff1ff01c52",
+  "verification_scope": "recorded precommit component executions authenticated against identical committed source; not a fresh-checkout rebuild",
+  "retained_regressions": "four unchanged binaries/production inputs; only unrelated expanded test source differs",
+  "base_empty_registry_only": true,
+  "frame_plugins_clone_sync": "OPEN",
+  "renderer_gpu": "OPEN",
+  "fresh_checkout_build": false,
+  "game_run": false,
+  "oracle_comparison": "OPEN",
+  "acceptance": "OPEN"
+}
