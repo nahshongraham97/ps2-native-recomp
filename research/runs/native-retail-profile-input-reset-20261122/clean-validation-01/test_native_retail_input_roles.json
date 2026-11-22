@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-profile-input-22\\build-native\\test_native_retail_input_roles.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.04053260000364389,
+  "source_commit": "c3aa06a9212e357bdb64d2e44aa9a82a5803fa62",
+  "tracked_status": "",
+  "source_manifest_sha256": "1e7aa8cc1bfd57a2cfea8750e47de3e46a98273c32a716ef8e74e46b5640d806",
+  "executable_sha256": "f1075f151c09feeb75646260a77f75341e40b614a14ff1905731787e686db457",
+  "log_sha256": "596b2f54ef0f3157fd3db7e96d20bce773ab8a57ef49e523f7c39280ac08f004",
+  "compressed_log_sha256": "dd08067a13d691ccc106acfbb6e5c55955a3857732bb7be7e2ff14ca597b1008",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

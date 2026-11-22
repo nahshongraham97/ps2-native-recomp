@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-C",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-profile-input-22\\build-native\\test_native_retail_profile_input_reset.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.04546280000067782,
+  "source_commit": "c3aa06a9212e357bdb64d2e44aa9a82a5803fa62",
+  "tracked_status": "",
+  "source_manifest_sha256": "1e7aa8cc1bfd57a2cfea8750e47de3e46a98273c32a716ef8e74e46b5640d806",
+  "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "log_sha256": "94c71405cfd128cc0c2a473aa5af718d39c43b071c6f95ce5b1d2f4adc8886cc",
+  "compressed_log_sha256": "b3ac7e07bc94fe5b60d60f32d57181301de15543b8e9374f08659ef11e0b3ed2",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

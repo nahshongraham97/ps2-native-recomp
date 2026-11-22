@@ -1,0 +1,20 @@
+{
+  "clean_source_commit": "c3aa06a9212e357bdb64d2e44aa9a82a5803fa62",
+  "published_source_commit": "c3aa06a9212e357bdb64d2e44aa9a82a5803fa62",
+  "published_ref": "origin/main",
+  "source_trees": {
+    "runtime": "1db7faf01edf5d3fd703d360f633d70555ea8681",
+    "recomp": "96803db1d2f9d47a9f03debe9a69e5fee214e3d1",
+    "cmake": "5c2be804cf1e10d8075589de9b8d86409e9ce6cd",
+    "tests": "7d4fb9839c3ffb30715af37d9a1b8d78874fdad3",
+    "CMakeLists.txt": "a33606a67852337e766d249a25dadc74cd833532"
+  },
+  "clean_receipt": "clean-validation-01/VERIFICATION.json",
+  "clean_receipt_sha256": "719398d4e42e51df9fc6e511a66853e18e32687dd94ae7a017fca389a195baa8",
+  "source_blob_identity_receipt": "CROSS_CHECKOUT_IDENTITY.json",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "acceptance": "OPEN"
+}

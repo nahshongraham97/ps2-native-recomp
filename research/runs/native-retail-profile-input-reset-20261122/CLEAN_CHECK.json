@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "C:\\Python315\\python.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-profile-input-reset-20261122\\verify.py",
+    "--checkout",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-profile-input-22",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-profile-input-22\\build-native",
+    "--output",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-profile-input-reset-20261122\\clean-validation-01"
+  ],
+  "exit": 0,
+  "stdout": "build 0\nprofile-input-symbols 0\ntest_native_retail_profile_input_reset 0\ntest_native_retail_input_roles 0\ntest_native_retail_input_assignments 0\ntest_native_retail_input_poll 0\ntest_native_retail_input_selection 0\ntest_native_retail_input_admission 0\ntest_native_retail_initial_reset 0\ntest_native_retail_initial_reset_arcade 0\ntest_native_retail_main_frame_gates 0\nfull-entry-negative 1\nPASS_NATIVE_SHARED_PROFILE_INPUT_RESET_DEPENDENCY 9 affected clients; exact59 required effects unchanged\n",
+  "stderr": "",
+  "seconds": 81.297212400008,
+  "source_commit": "c3aa06a9212e357bdb64d2e44aa9a82a5803fa62",
+  "clean_checkout": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-profile-input-22",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}
