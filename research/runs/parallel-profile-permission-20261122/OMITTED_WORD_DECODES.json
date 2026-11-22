@@ -1,0 +1,267 @@
+{
+  "0x18b130": {
+    "bytes": "2d300000",
+    "decode": "DADDU a2,zero,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x18b144": {
+    "bytes": "3c00d124",
+    "decode": "ADDIU s1,a2,60",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x18b1d0": {
+    "bytes": "3c00c28c",
+    "decode": "LW v0,60(a2)",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f5fa0": {
+    "bytes": "2d200000",
+    "decode": "DADDU a0,zero,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f5fd0": {
+    "bytes": "3000678e",
+    "decode": "LW a3,48(s3)",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f600c": {
+    "bytes": "0800c58c",
+    "decode": "LW a1,8(a2)",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6038": {
+    "bytes": "1c00f08c",
+    "decode": "LW s0,28(a3)",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6094": {
+    "bytes": "0000eaac",
+    "decode": "SW t2,0(a3)",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6114": {
+    "bytes": "2d200000",
+    "decode": "DADDU a0,zero,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f61dc": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6218": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6284": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6308": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6360": {
+    "bytes": "42180200",
+    "decode": "SRL v1,v0,1",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f648c": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f64d8": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6508": {
+    "bytes": "80180300",
+    "decode": "SLL v1,v1,2",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6554": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6570": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f658c": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f65b8": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f65e4": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6620": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6654": {
+    "bytes": "80180200",
+    "decode": "SLL v1,v0,2",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f66f8": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f674c": {
+    "bytes": "00011024",
+    "decode": "ADDIU s0,zero,256",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6770": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f678c": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f67b8": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f695c": {
+    "bytes": "2c00628e",
+    "decode": "LW v0,44(s3)",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f69b4": {
+    "bytes": "2c00628e",
+    "decode": "LW v0,44(s3)",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6a10": {
+    "bytes": "3000628e",
+    "decode": "LW v0,48(s3)",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6ab0": {
+    "bytes": "2d200002",
+    "decode": "DADDU a0,s0,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6ba4": {
+    "bytes": "2d200000",
+    "decode": "DADDU a0,zero,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6bb8": {
+    "bytes": "01000424",
+    "decode": "ADDIU a0,zero,1",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6c0c": {
+    "bytes": "01000224",
+    "decode": "ADDIU v0,zero,1",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6c10": {
+    "bytes": "9b000010",
+    "decode": "BEQ zero,zero,0x002f6e80",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6c18": {
+    "bytes": "01000224",
+    "decode": "ADDIU v0,zero,1",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6c1c": {
+    "bytes": "98000010",
+    "decode": "BEQ zero,zero,0x002f6e80",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6c24": {
+    "bytes": "01000224",
+    "decode": "ADDIU v0,zero,1",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6c28": {
+    "bytes": "95000010",
+    "decode": "BEQ zero,zero,0x002f6e80",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6c30": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6c4c": {
+    "bytes": "02000324",
+    "decode": "ADDIU v1,zero,2",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6c74": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6cdc": {
+    "bytes": "01000224",
+    "decode": "ADDIU v0,zero,1",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6ce0": {
+    "bytes": "67000010",
+    "decode": "BEQ zero,zero,0x002f6e80",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6cf8": {
+    "bytes": "01000224",
+    "decode": "ADDIU v0,zero,1",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6cfc": {
+    "bytes": "60000010",
+    "decode": "BEQ zero,zero,0x002f6e80",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6d24": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6d50": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6d84": {
+    "bytes": "80180200",
+    "decode": "SLL v1,v0,2",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6dcc": {
+    "bytes": "80180200",
+    "decode": "SLL v1,v0,2",
+    "role": "source-word decode only; no blanket reachability claim"
+  },
+  "0x2f6dfc": {
+    "bytes": "2d202002",
+    "decode": "DADDU a0,s1,zero",
+    "role": "source-word decode only; no blanket reachability claim"
+  }
+}

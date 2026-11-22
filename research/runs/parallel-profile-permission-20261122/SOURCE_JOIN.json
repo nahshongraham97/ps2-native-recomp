@@ -1,0 +1,322 @@
+{
+  "ELF_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "functions": {
+    "source-01/0012ed10.asm": {
+      "begin": "0x12ed10",
+      "end_exclusive": "0x12eda0",
+      "listed_words": 35,
+      "listing_sha256": "031e4ec8dc2452ad1d6e0c8c18d611783ce330c706732fabc0bea655430db63d",
+      "file_offset": 192016,
+      "span_sha256": "e611defbc78ffaecc38f2f5e59065e8e4cf8f0ff774696287d920577673c63e1",
+      "omitted": {
+        "0x12ed64": {
+          "bytes": "00000000",
+          "decode": "SLL zero,zero,0 (NOP)"
+        }
+      }
+    },
+    "source-01/001892d0.asm": {
+      "begin": "0x1892d0",
+      "end_exclusive": "0x189394",
+      "listed_words": 49,
+      "listing_sha256": "c9460e273b71ff5796f7ae918698bd1cd2cbc2e4f7aa9003a91ff7d993190872",
+      "file_offset": 562128,
+      "span_sha256": "1c9fe2458b55e83609a54e50c406fe2dd4e59251e1c4c6e5da3d87a99b37b391",
+      "omitted": {}
+    },
+    "source-01/0018a260.asm": {
+      "begin": "0x18a260",
+      "end_exclusive": "0x18a378",
+      "listed_words": 70,
+      "listing_sha256": "c3fb85a30e0b3196aa571781a155d53eeedb6fb4794f52da2003108bd3b2ffaf",
+      "file_offset": 566112,
+      "span_sha256": "63ef26af8120e703e68a37ae93075343b61741e4c1ff4526475f82c675d7d38d",
+      "omitted": {}
+    },
+    "source-01/0018b0d0.asm": {
+      "begin": "0x18b0d0",
+      "end_exclusive": "0x18b268",
+      "listed_words": 99,
+      "listing_sha256": "ef3d4238507d3aa71fc97e761bb7409bcc9eb53a4a74ad17cdb2e80648ad0655",
+      "file_offset": 569808,
+      "span_sha256": "3e83077a0cd94e375cc683d4b41412e7617d2851a854866315b25582f58b2f24",
+      "omitted": {
+        "0x18b130": {
+          "bytes": "2d300000",
+          "decode": "DADDU a2,zero,zero"
+        },
+        "0x18b144": {
+          "bytes": "3c00d124",
+          "decode": "ADDIU s1,a2,0x3c"
+        },
+        "0x18b1d0": {
+          "bytes": "3c00c28c",
+          "decode": "LW v0,0x3c(a2)"
+        }
+      }
+    },
+    "source-01/00245bd0.asm": {
+      "begin": "0x245bd0",
+      "end_exclusive": "0x245c18",
+      "listed_words": 18,
+      "listing_sha256": "9b35b3484f60287ad7657595b294840ddd89f68ec58dcb54b8fbf1e65ae8936b",
+      "file_offset": 1334480,
+      "span_sha256": "8dc40b9051720154f294805be38d3907296578004ae329608958a7be2387e1c6",
+      "omitted": {}
+    },
+    "source-01/00340bf0.asm": {
+      "begin": "0x340bf0",
+      "end_exclusive": "0x340c00",
+      "listed_words": 4,
+      "listing_sha256": "04087d3285055e4556509d098ff52a328fb0f693bba604243f610db976296a7e",
+      "file_offset": 2362608,
+      "span_sha256": "068f715e798bee47286465c02618c158bd6ef6659f74131c10dae32850b75e5b",
+      "omitted": {}
+    },
+    "source-01/004eee60.asm": {
+      "begin": "0x4eee60",
+      "end_exclusive": "0x4eeef8",
+      "listed_words": 38,
+      "listing_sha256": "0c023d5a311cae44aeff49d145f5a101d84bdd2cba159a0dc6966bb316f69662",
+      "file_offset": 4124512,
+      "span_sha256": "3478285c0999bf03613eaadf3f8681796189fa85a0179019ffbdfc966cd256da",
+      "omitted": {}
+    },
+    "source-02/002f5c70.asm": {
+      "begin": "0x2f5c70",
+      "end_exclusive": "0x2f6ea0",
+      "listed_words": 1108,
+      "listing_sha256": "e1d78986f21b6e588bebfedd70870c5e139be607b5497e0c7e4d7c1bbd046479",
+      "file_offset": 2055536,
+      "span_sha256": "715657d7e2638773f9d4e77c33f6a50ac348501badcb1ec9e188439dfedca902",
+      "omitted": {
+        "0x2f5fa0": {
+          "bytes": "2d200000",
+          "decode": "DADDU a0,zero,zero"
+        },
+        "0x2f5fd0": {
+          "bytes": "3000678e",
+          "decode": "LW a3,48(s3)"
+        },
+        "0x2f600c": {
+          "bytes": "0800c58c",
+          "decode": "LW a1,8(a2)"
+        },
+        "0x2f6038": {
+          "bytes": "1c00f08c",
+          "decode": "LW s0,28(a3)"
+        },
+        "0x2f6094": {
+          "bytes": "0000eaac",
+          "decode": "SW t2,0(a3)"
+        },
+        "0x2f60a4": {
+          "bytes": "00000000",
+          "decode": "SLL zero,zero,0 (NOP)"
+        },
+        "0x2f6114": {
+          "bytes": "2d200000",
+          "decode": "DADDU a0,zero,zero"
+        },
+        "0x2f61dc": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f6218": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f6284": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f6308": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f6360": {
+          "bytes": "42180200",
+          "decode": "SRL v1,v0,1"
+        },
+        "0x2f648c": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f64d8": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f6508": {
+          "bytes": "80180300",
+          "decode": "SLL v1,v1,2"
+        },
+        "0x2f6554": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f6570": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f658c": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f65b8": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f65e4": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f6620": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f6654": {
+          "bytes": "80180200",
+          "decode": "SLL v1,v0,2"
+        },
+        "0x2f66f8": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f674c": {
+          "bytes": "00011024",
+          "decode": "ADDIU s0,zero,256"
+        },
+        "0x2f6770": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f678c": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f67b8": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f695c": {
+          "bytes": "2c00628e",
+          "decode": "LW v0,44(s3)"
+        },
+        "0x2f69b4": {
+          "bytes": "2c00628e",
+          "decode": "LW v0,44(s3)"
+        },
+        "0x2f6a10": {
+          "bytes": "3000628e",
+          "decode": "LW v0,48(s3)"
+        },
+        "0x2f6ab0": {
+          "bytes": "2d200002",
+          "decode": "DADDU a0,s0,zero"
+        },
+        "0x2f6ba4": {
+          "bytes": "2d200000",
+          "decode": "DADDU a0,zero,zero"
+        },
+        "0x2f6bb8": {
+          "bytes": "01000424",
+          "decode": "ADDIU a0,zero,1"
+        },
+        "0x2f6c0c": {
+          "bytes": "01000224",
+          "decode": "ADDIU v0,zero,1"
+        },
+        "0x2f6c10": {
+          "bytes": "9b000010",
+          "decode": "BEQ zero,zero,0x002f6e80"
+        },
+        "0x2f6c14": {
+          "bytes": "00000000",
+          "decode": "SLL zero,zero,0 (NOP)"
+        },
+        "0x2f6c18": {
+          "bytes": "01000224",
+          "decode": "ADDIU v0,zero,1"
+        },
+        "0x2f6c1c": {
+          "bytes": "98000010",
+          "decode": "BEQ zero,zero,0x002f6e80"
+        },
+        "0x2f6c20": {
+          "bytes": "00000000",
+          "decode": "SLL zero,zero,0 (NOP)"
+        },
+        "0x2f6c24": {
+          "bytes": "01000224",
+          "decode": "ADDIU v0,zero,1"
+        },
+        "0x2f6c28": {
+          "bytes": "95000010",
+          "decode": "BEQ zero,zero,0x002f6e80"
+        },
+        "0x2f6c2c": {
+          "bytes": "00000000",
+          "decode": "SLL zero,zero,0 (NOP)"
+        },
+        "0x2f6c30": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f6c4c": {
+          "bytes": "02000324",
+          "decode": "ADDIU v1,zero,2"
+        },
+        "0x2f6c74": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f6cdc": {
+          "bytes": "01000224",
+          "decode": "ADDIU v0,zero,1"
+        },
+        "0x2f6ce0": {
+          "bytes": "67000010",
+          "decode": "BEQ zero,zero,0x002f6e80"
+        },
+        "0x2f6ce4": {
+          "bytes": "00000000",
+          "decode": "SLL zero,zero,0 (NOP)"
+        },
+        "0x2f6cf8": {
+          "bytes": "01000224",
+          "decode": "ADDIU v0,zero,1"
+        },
+        "0x2f6cfc": {
+          "bytes": "60000010",
+          "decode": "BEQ zero,zero,0x002f6e80"
+        },
+        "0x2f6d00": {
+          "bytes": "00000000",
+          "decode": "SLL zero,zero,0 (NOP)"
+        },
+        "0x2f6d24": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f6d50": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        },
+        "0x2f6d84": {
+          "bytes": "80180200",
+          "decode": "SLL v1,v0,2"
+        },
+        "0x2f6dcc": {
+          "bytes": "80180200",
+          "decode": "SLL v1,v0,2"
+        },
+        "0x2f6dfc": {
+          "bytes": "2d202002",
+          "decode": "DADDU a0,s1,zero"
+        }
+      }
+    }
+  },
+  "listed_words": 1421,
+  "nonzero_omission_blockers": []
+}

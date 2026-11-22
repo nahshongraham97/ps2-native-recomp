@@ -1,0 +1,4 @@
+00340bf0	00ad828f	lw v0,-0x5300(gp)
+00340bf4	01004238	xori v0,v0,0x1
+00340bf8	0800e003	jr ra
+00340bfc	2b100200	_sltu v0,zero,v0

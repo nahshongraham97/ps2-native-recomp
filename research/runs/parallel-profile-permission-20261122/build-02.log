@@ -1,0 +1,159 @@
+[0/2] Re-checking globbed directories...
+[1/135] Building CXX object CMakeFiles/mka_native_retail_keyboard.dir/runtime/src/native/retail_keyboard_sdl.cpp.obj
+[2/135] Building CXX object CMakeFiles/mka_native_retail_crt.dir/runtime/src/native/retail_crt.cpp.obj
+[3/135] Building CXX object CMakeFiles/mka_native_retail_memory_owners.dir/runtime/src/native/retail_memory_owners.cpp.obj
+[4/135] Linking CXX static library libmka_native_wave_allocation.a
+[5/135] Linking CXX static library libmka_native_allocation_class.a
+[6/135] AOT compile source-verified retail scalar functions to typed native C++
+[7/135] Building CXX object CMakeFiles/mka_native_allocation_profile.dir/runtime/src/native/allocation_profile.cpp.obj
+[8/135] Linking CXX static library libmka_native_audio_device.a
+[9/135] Building CXX object CMakeFiles/mka_native_user_paths.dir/runtime/src/native/native_user_paths.cpp.obj
+[10/135] Building CXX object CMakeFiles/mka_native_retail_sound_runtime.dir/runtime/src/native/sound_output.cpp.obj
+[11/135] Linking CXX static library libmka_native_sound_resources.a
+[12/135] Linking CXX static library libmka_native_game_actions.a
+[13/135] Building CXX object CMakeFiles/mka_native_retail_sound_runtime.dir/runtime/src/native/retail_sound_runtime.cpp.obj
+[14/135] Building CXX object CMakeFiles/mka_native_save_store.dir/runtime/src/native/native_save_store.cpp.obj
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-profile-permission/runtime/src/native/native_save_store.cpp:75:15: warning: result of comparison of constant 9223372036854775807 with expression of type 'DWORD' (aka 'unsigned long') is always false [-Wtautological-constant-out-of-range-compare]
+   75 |         if (n > buffer.max_size()) { f.kind = SaveError::host_capacity; return false; }
+      |             ~ ^ ~~~~~~~~~~~~~~~~~
+1 warning generated.
+[15/135] Linking CXX static library libmka_native_retail_game_session.a
+[16/135] Building CXX object CMakeFiles/mka_native_retail_text_storage.dir/runtime/src/native/retail_text_storage.cpp.obj
+[17/135] Building CXX object CMakeFiles/mka_native_retail_middleware_frame.dir/runtime/src/native/retail_middleware_frame.cpp.obj
+[18/135] Building CXX object CMakeFiles/mka_native_retail_file_paths.dir/runtime/src/native/retail_file_paths.cpp.obj
+[19/135] Building CXX object CMakeFiles/mka_native_retail_profile_owners.dir/runtime/src/native/retail_profile_owners.cpp.obj
+[20/135] Building CXX object CMakeFiles/mka_native_retail_profile_owners.dir/runtime/src/native/retail_profile_runtime.cpp.obj
+[21/135] Linking CXX static library libmka_native_retail_loading.a
+[22/135] Linking CXX static library libmka_native_retail_keyboard.a
+[23/135] Building CXX object CMakeFiles/mka_native_retail_game_resource_registry.dir/runtime/src/native/retail_game_resource_registry.cpp.obj
+[24/135] Building CXX object CMakeFiles/mka_native_retail_platform.dir/host/keymap.cpp.obj
+[25/135] Linking CXX static library libmka_native_retail_crt.a
+[26/135] Linking CXX static library libmka_native_retail_memory_owners.a
+[27/135] Linking CXX static library libmka_native_allocation_profile.a
+[28/135] Building CXX object CMakeFiles/mka_native_retail_platform.dir/runtime/src/native/retail_platform.cpp.obj
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-profile-permission/runtime/src/native/retail_platform.cpp:295:46: warning: 'u8path<char *, 0>' is deprecated [-Wdeprecated-declarations]
+  295 |         const auto key_path=std::filesystem::u8path(base)/"keys.ini";
+      |                                              ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__filesystem/u8path.h:73:37: note: 'u8path<char *, 0>' has been explicitly marked deprecated here
+   73 | [[nodiscard]] _LIBCPP_HIDE_FROM_ABI _LIBCPP_DEPRECATED_WITH_CHAR8_T path u8path(const _Source& __s) {
+      |                                     ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:465:43: note: expanded from macro '_LIBCPP_DEPRECATED_WITH_CHAR8_T'
+  465 | #  define _LIBCPP_DEPRECATED_WITH_CHAR8_T _LIBCPP_DEPRECATED
+      |                                           ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:412:47: note: expanded from macro '_LIBCPP_DEPRECATED'
+  412 | #    define _LIBCPP_DEPRECATED __attribute__((__deprecated__))
+      |                                               ^
+1 warning generated.
+[29/135] Building CXX object CMakeFiles/mka_native_typed_retail.dir/761bce075c5e0efee3c8824345cb3bb4/native_typed_retail.cpp.obj
+[30/135] Building CXX object CMakeFiles/eerecomp.dir/recomp/r5900.cpp.obj
+[31/135] Building CXX object CMakeFiles/eerecomp.dir/recomp/elf.cpp.obj
+[32/135] Building CXX object CMakeFiles/eerecomp.dir/recomp/analysis.cpp.obj
+[33/135] Building CXX object CMakeFiles/eerecomp.dir/recomp/main.cpp.obj
+[34/135] Building CXX object CMakeFiles/eerecomp.dir/recomp/native_closure_codegen.cpp.obj
+[35/135] Building CXX object CMakeFiles/eerecomp.dir/recomp/native_startup_codegen.cpp.obj
+[36/135] Building CXX object CMakeFiles/eerecomp.dir/recomp/eerecomp_gen.cpp.obj
+[37/135] Building CXX object CMakeFiles/eerecomp.dir/recomp/snr2.cpp.obj
+[38/135] Linking CXX static library libmka_native_user_paths.a
+[39/135] Linking CXX static library libmka_native_retail_sound_runtime.a
+[40/135] Linking CXX static library libmka_native_save_store.a
+[41/135] Linking CXX static library libmka_native_retail_text_storage.a
+[42/135] Building CXX object CMakeFiles/eerecomp.dir/recomp/codegen.cpp.obj
+[43/135] Linking CXX static library libmka_native_retail_middleware_frame.a
+[44/135] Linking CXX static library libmka_native_retail_file_paths.a
+[45/135] Linking CXX static library libmka_native_retail_profile_owners.a
+[46/135] Linking CXX static library libmka_native_retail_game_resource_registry.a
+[47/135] Linking CXX static library libmka_native_retail_platform.a
+[48/135] Linking CXX static library libmka_native_typed_retail.a
+[49/135] Linking CXX executable eerecomp.exe
+[50/135] AOT compile original retail startup into owned native state
+native startup owned retail source emitted; platform link obligations remain
+[51/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/11c96ac8b2139f6f8f3d6dab40152eef/native_retail_entry.cpp.obj
+[52/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_crt_startup.cpp.obj
+[53/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/11c96ac8b2139f6f8f3d6dab40152eef/native_retail_startup.cpp.obj
+[54/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_platform_startup.cpp.obj
+[55/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_main.cpp.obj
+[56/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_main_frame_gates.cpp.obj
+[57/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_main_timing.cpp.obj
+[58/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_arcade_ladder.cpp.obj
+[59/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_scene_bootstrap_prefix.cpp.obj
+[60/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_scene_bootstrap_continuation.cpp.obj
+[61/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_renderer_allocator.cpp.obj
+[62/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_renderer_transforms.cpp.obj
+[63/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_renderer_core.cpp.obj
+[64/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_renderer_matrix.cpp.obj
+[65/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_first_scene_core.cpp.obj
+[66/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_camera_world.cpp.obj
+[67/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_first_scene_allocator.cpp.obj
+[68/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_sound_metadata.cpp.obj
+[69/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_game_session_startup.cpp.obj
+[70/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_main_state.cpp.obj
+[71/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_main_settings_binding.cpp.obj
+[72/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_main.cpp.obj
+[73/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_active_overlay.cpp.obj
+[74/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_active_overlay_main.cpp.obj
+[75/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_post_overlay.cpp.obj
+[76/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_section_workspace.cpp.obj
+[77/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_game_info_resources.cpp.obj
+[78/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_section_workspace_main.cpp.obj
+[79/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_game_record_reset.cpp.obj
+[80/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_pad_control.cpp.obj
+[81/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_pad_startup.cpp.obj
+[82/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_save_startup.cpp.obj
+[83/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_menu.cpp.obj
+[84/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_preferences_main.cpp.obj
+[85/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_resource_ids.cpp.obj
+[86/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_aggregate_main.cpp.obj
+[87/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_saved_profile_records.cpp.obj
+[88/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_saved_profile_bindings.cpp.obj
+[89/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_permission.cpp.obj
+[90/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_live_scene_main.cpp.obj
+[91/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_transition.cpp.obj
+[92/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_transition_child.cpp.obj
+[93/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_entry_decision.cpp.obj
+[94/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_profile_task_retirement.cpp.obj
+[95/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_task_dispatch_main.cpp.obj
+[96/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_initial_task_main.cpp.obj
+[97/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_initial_task.cpp.obj
+[98/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_initial_reset.cpp.obj
+[99/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_game_records.cpp.obj
+[100/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_task_lookup_main.cpp.obj
+[101/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_game_records_main.cpp.obj
+[102/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_game_options_main.cpp.obj
+[103/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_text_storage_main.cpp.obj
+[104/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_file_startup.cpp.obj
+[105/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_middleware_main.cpp.obj
+[106/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_main_reentry.cpp.obj
+[107/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_scene_events.cpp.obj
+[108/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_initial_objects.cpp.obj
+[109/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_middleware_work.cpp.obj
+[110/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_dispatch_owners.cpp.obj
+[111/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_record_owners.cpp.obj
+[112/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_service_constructors.cpp.obj
+[113/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_input_roles.cpp.obj
+[114/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_mode_state.cpp.obj
+[115/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_audio_statistics.cpp.obj
+[116/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_main_state.cpp.obj
+[117/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_sound_bank_catalog.cpp.obj
+[118/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_main_mode.cpp.obj
+[119/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_sound_context_main.cpp.obj
+[120/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_sound_bank_main.cpp.obj
+[121/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_sound_status_main.cpp.obj
+[122/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_package.cpp.obj
+[123/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_action_history.cpp.obj
+[124/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_auxiliary_words.cpp.obj
+[125/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_main_input_observation.cpp.obj
+[126/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_participants.cpp.obj
+[127/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_input_assignments.cpp.obj
+[128/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_input_poll.cpp.obj
+[129/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_input_admission.cpp.obj
+[130/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_input_selection.cpp.obj
+[131/135] Building CXX object CMakeFiles/test_native_retail_profile_permission.dir/tests/test_retail_profile_permission.cpp.obj
+[132/135] Building CXX object CMakeFiles/mka_native_retail_startup.dir/runtime/src/native/retail_remaining_constructors.cpp.obj
+[133/135] Linking CXX static library libmka_native_retail_startup.a
+[134/135] Linking CXX executable test_native_retail_profile_permission.exe
+FAILED: [code=1] test_native_retail_profile_permission.exe 
+C:\WINDOWS\system32\cmd.exe /C "cd . && "C:\Users\nahsh\mk port\Armageddon-backup\dependencies\compiler\llvm-mingw-20261006-ucrt-x86_64\bin\clang++.exe" -O3 -DNDEBUG -static-libgcc -static-libstdc++ CMakeFiles/test_native_retail_profile_permission.dir/tests/test_retail_profile_permission.cpp.obj -o test_native_retail_profile_permission.exe -Wl,--out-implib,libtest_native_retail_profile_permission.dll.a -Wl,--major-image-version,0,--minor-image-version,0 -LC:/Users/nahsh/MKPORT~1/ARMAGE~1/ARMAGE~1/external/forks/PS2-NA~1/THIRD_~1/sdl2/lib libmka_native_retail_startup.a  libmka_native_retail_sound_runtime.a  libmka_native_audio_device.a  libmka_native_retail_text_storage.a  libmka_native_save_store.a  libmka_native_user_paths.a  -lshell32  -lole32  -luuid  libmka_native_retail_middleware_frame.a  libmka_native_retail_file_paths.a  libmka_native_retail_crt.a  libmka_native_retail_platform.a  libmka_native_retail_loading.a  libmka_native_retail_keyboard.a  "C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp/third_party/sdl2/lib/libSDL2.dll.a"  -lopengl32  libmka_native_retail_profile_owners.a  libmka_native_retail_memory_owners.a  libmka_native_wave_allocation.a  libmka_native_allocation_profile.a  libmka_native_allocation_class.a  libmka_native_heap.a  libmka_native_retail_game_resource_registry.a  libmka_native_game_actions.a  libmka_native_sound_resources.a  libmka_native_content_volume.a  libmka_native_typed_retail.a  libmka_native_retail_game_session.a  libmka_native_retail_task_registry.a  -lpthread  libmka_native_profile_aggregate.a  libmka_native_profile_preferences.a  libmka_native_saved_profile_child.a  libmka_native_saved_profile_defaults.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+ld.lld: error: undefined symbol: mka::retail::NativeRetailProfileImage::encode_card_write_222da0(mka::retail::RetailProfileImageEncodedParts const&, mka::retail::RetailProfileImageFooterMode, mka::retail::RetailProfileImageFailure&)
+>>> referenced by CMakeFiles/test_native_retail_profile_permission.dir/tests/test_retail_profile_permission.cpp.obj:(main)
+clang-23: error: linker command failed with exit code 1 (use -v to see invocation)
+ninja: build stopped: subcommand failed.

@@ -1,0 +1,30 @@
+{
+  "status": "PASS_ADMITTED_NATIVE_PROFILE_PERMISSION",
+  "base": "a4147aade316382eeaf6b989cdec1b5b72f85baf",
+  "executed_by": "profile_binding_review isolated worktree",
+  "source_count": 862,
+  "source_manifest_sha256": "140af56bcb470463dad15fe09d46ac0543f591a730d1803c9383c5bc0683b844",
+  "modified_source_sha256": {
+    "cmake/native_game.cmake": "89f4ccacc6e5cd7f111edaadd25906538e857effbfc3f7b538b8ef972ec82355",
+    "runtime/include/mka/retail_saved_profile_child.hpp": "b0fb2461036c3e950bcfa08108af9a3aa1e7654798694f5aa06d82822de975cd",
+    "runtime/include/mka/retail_profile_entry_decision.hpp": "99e828e26b64e03ac2379e3b333014eb107378c269d505666466972a2cef08a0",
+    "runtime/src/native/retail_profile_permission.cpp": "1a6d3c62a324c8ecdb7dbf5abc98d408c45e7e3fb56d6d2d3ad18c8955ab10ad",
+    "tests/test_retail_profile_permission.cpp": "72a8d59acb4c36db3792a25372980bdd6943eb4912d9d6be63d90c14b81762e2"
+  },
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "build_cache_sha256": "186f312d6ec336fda44f386977283172ff3fb9500c37cbaa48a7adc308ba97fd",
+  "binary_sha256": "6b8503532d059b8594c580fc3573bcbdf5fafc4c676d6444e4563baf4818cc9d",
+  "SDL2_dependency_sha256": "53e8fa7e9ed43c30bd650c39396f0d9d2067d2fff0b926c9433b75202592e4aa",
+  "build_exit": 0,
+  "run_exit": 0,
+  "run_argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-profile-permission\\build_profile_permission\\test_native_retail_profile_permission.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-profile-permission\\research\\runs\\parallel-profile-permission-20261122\\test-content-02"
+  ],
+  "run_log_sha256": "6aeba8e3e8bee2ea6aaf7571a26fc56dba3f4434e64867b6cee91fc388811552",
+  "negative_exit": 1,
+  "negative_exact_names": 63,
+  "negative_log_sha256": "732339e28012ae32835eb73b00578e6eb529c8e10a995f259cb225dea9104d45",
+  "scope": "Actual admitted BSS/reset child values; loaded/import-blocked refusal. Real populated options/task continuation compiled but uninjected. No unchanged child tests rerun, no canonical output mutation, physical endpoint or game acceptance.",
+  "post_measurement_change": "Only unbuilt isolated1892D0 fixture comment corrected; no compiled dependency/source changed"
+}

@@ -246,6 +246,7 @@ if(WIN32)
         runtime/src/native/retail_profile_menu.cpp runtime/src/native/retail_profile_resource_ids.cpp
         runtime/src/native/retail_profile_aggregate_main.cpp
         runtime/src/native/retail_saved_profile_records.cpp runtime/src/native/retail_saved_profile_bindings.cpp
+        runtime/src/native/retail_profile_permission.cpp
         runtime/src/native/retail_live_scene_main.cpp runtime/src/native/retail_profile_transition.cpp
         runtime/src/native/retail_profile_transition_child.cpp runtime/src/native/retail_profile_entry_decision.cpp
         runtime/src/native/retail_profile_task_retirement.cpp
@@ -327,6 +328,11 @@ if(WIN32)
     target_link_libraries(test_native_retail_profile_entry_decision PRIVATE mka_native_retail_startup)
     add_executable(test_native_retail_profile_resource_ids EXCLUDE_FROM_ALL tests/test_retail_profile_resource_ids.cpp)
     target_link_libraries(test_native_retail_profile_resource_ids PRIVATE mka_native_retail_startup)
+    add_executable(test_native_retail_profile_permission EXCLUDE_FROM_ALL tests/test_retail_profile_permission.cpp)
+    target_link_libraries(test_native_retail_profile_permission PRIVATE mka_native_retail_startup mka_native_profile_image)
+    add_custom_command(TARGET test_native_retail_profile_permission POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2>
+        $<TARGET_FILE_DIR:test_native_retail_profile_permission> VERBATIM)
     add_executable(test_native_retail_saved_profile_records EXCLUDE_FROM_ALL tests/test_retail_saved_profile_records.cpp)
     target_link_libraries(test_native_retail_saved_profile_records PRIVATE mka_native_retail_startup)
     add_custom_command(TARGET test_native_retail_saved_profile_records POST_BUILD

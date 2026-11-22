@@ -1,0 +1,126 @@
+[0/2] Re-checking globbed directories...
+[1/203] Building CXX object CMakeFiles/mka_native_typed_compiler.dir/recomp/native_typed_ir.cpp.obj
+[2/203] Building CXX object CMakeFiles/mka_native_typed_compiler.dir/recomp/native_typed_codegen.cpp.obj
+[3/203] Building CXX object CMakeFiles/mka_native_typed_compiler.dir/recomp/native_closure_codegen.cpp.obj
+[4/203] Building CXX object CMakeFiles/mka_native_typed_compiler.dir/recomp/r5900.cpp.obj
+[5/203] Building CXX object CMakeFiles/mka_native_saved_profile_defaults.dir/runtime/src/native/retail_saved_profile_defaults.cpp.obj
+[6/203] Linking CXX static library libmka_native_typed_compiler.a
+[7/203] Building CXX object CMakeFiles/mka_native_heap.dir/runtime/src/native/native_heap.cpp.obj
+[8/203] Building CXX object CMakeFiles/native_typed_recomp.dir/recomp/native_typed_main.cpp.obj
+[9/203] Building CXX object CMakeFiles/mka_native_content_volume.dir/runtime/src/native/native_file.cpp.obj
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-profile-permission/runtime/src/native/native_file.cpp:31:24: warning: result of comparison of constant 9223372036854775807 with expression of type 'DWORD' (aka 'unsigned long') is always false [-Wtautological-constant-out-of-range-compare]
+   31 |             if(capacity>buffer.max_size()){error=std::make_error_code(std::errc::value_too_large);return false;}
+      |                ~~~~~~~~^~~~~~~~~~~~~~~~~~
+1 warning generated.
+[10/203] Linking CXX static library libmka_native_saved_profile_defaults.a
+[11/203] Building CXX object CMakeFiles/mka_native_saved_profile_child.dir/runtime/src/native/retail_saved_profile_child.cpp.obj
+[12/203] Building CXX object CMakeFiles/mka_native_content_volume.dir/runtime/src/native/content_volume.cpp.obj
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-profile-permission/runtime/src/native/content_volume.cpp:19:24: warning: result of comparison of constant 9223372036854775807 with expression of type 'DWORD' (aka 'unsigned long') is always false [-Wtautological-constant-out-of-range-compare]
+   19 |             if(capacity>buffer.max_size()){error=std::make_error_code(std::errc::value_too_large);return false;}
+      |                ~~~~~~~~^~~~~~~~~~~~~~~~~~
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-profile-permission/runtime/src/native/content_volume.cpp:175:60: warning: 'u8path<std::string, 0>' is deprecated [-Wdeprecated-declarations]
+  175 |         auto joined=io_path(state_->root)/std::filesystem::u8path(*logical);joined.make_preferred();std::error_code ec;auto path=std::filesystem::canonical(joined,ec);
+      |                                                            ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__filesystem/u8path.h:73:37: note: 'u8path<std::string, 0>' has been explicitly marked deprecated here
+   73 | [[nodiscard]] _LIBCPP_HIDE_FROM_ABI _LIBCPP_DEPRECATED_WITH_CHAR8_T path u8path(const _Source& __s) {
+      |                                     ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:465:43: note: expanded from macro '_LIBCPP_DEPRECATED_WITH_CHAR8_T'
+  465 | #  define _LIBCPP_DEPRECATED_WITH_CHAR8_T _LIBCPP_DEPRECATED
+      |                                           ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:412:47: note: expanded from macro '_LIBCPP_DEPRECATED'
+  412 | #    define _LIBCPP_DEPRECATED __attribute__((__deprecated__))
+      |                                               ^
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-profile-permission/runtime/src/native/content_volume.cpp:195:91: warning: 'u8path<std::string, 0>' is deprecated [-Wdeprecated-declarations]
+  195 |         const auto path=std::filesystem::canonical(io_path(state_->root)/std::filesystem::u8path(*logical),ec);
+      |                                                                                           ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__filesystem/u8path.h:73:37: note: 'u8path<std::string, 0>' has been explicitly marked deprecated here
+   73 | [[nodiscard]] _LIBCPP_HIDE_FROM_ABI _LIBCPP_DEPRECATED_WITH_CHAR8_T path u8path(const _Source& __s) {
+      |                                     ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:465:43: note: expanded from macro '_LIBCPP_DEPRECATED_WITH_CHAR8_T'
+  465 | #  define _LIBCPP_DEPRECATED_WITH_CHAR8_T _LIBCPP_DEPRECATED
+      |                                           ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:412:47: note: expanded from macro '_LIBCPP_DEPRECATED'
+  412 | #    define _LIBCPP_DEPRECATED __attribute__((__deprecated__))
+      |                                               ^
+3 warnings generated.
+[13/203] Building CXX object CMakeFiles/mka_native_profile_aggregate.dir/runtime/src/native/retail_profile_aggregate.cpp.obj
+[14/203] Building CXX object CMakeFiles/mka_native_profile_preferences.dir/runtime/src/native/retail_profile_preferences.cpp.obj
+[15/203] Building CXX object CMakeFiles/mka_native_retail_task_registry.dir/runtime/src/native/retail_task_execution.cpp.obj
+[16/203] Building CXX object CMakeFiles/mka_native_retail_task_registry.dir/runtime/src/native/retail_task_registry.cpp.obj
+[17/203] Building CXX object CMakeFiles/mka_native_retail_task_registry.dir/runtime/src/native/retail_task_script_context.cpp.obj
+[18/203] Building CXX object CMakeFiles/mka_native_retail_task_registry.dir/runtime/src/native/retail_game_pool.cpp.obj
+[19/203] Building CXX object CMakeFiles/mka_native_retail_task_registry.dir/runtime/src/native/retail_observer_list.cpp.obj
+[20/203] Building CXX object CMakeFiles/mka_native_retail_task_registry.dir/runtime/src/native/retail_input_task_argument.cpp.obj
+[21/203] Linking CXX static library libmka_native_heap.a
+[22/203] Building CXX object CMakeFiles/mka_native_retail_task_registry.dir/runtime/src/native/retail_game_task_lists.cpp.obj
+[23/203] Building CXX object CMakeFiles/mka_native_wave_allocation.dir/runtime/src/native/wave_allocation.cpp.obj
+[24/203] Linking CXX executable native_typed_recomp.exe
+[25/203] Building CXX object CMakeFiles/mka_native_allocation_class.dir/runtime/src/native/allocation_class.cpp.obj
+[26/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_resource_domain.cpp.obj
+[27/203] Building CXX object CMakeFiles/mka_native_audio_device.dir/runtime/src/native/audio_device.cpp.obj
+[28/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/sound_bank.cpp.obj
+[29/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/native_file.cpp.obj
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-profile-permission/runtime/src/native/native_file.cpp:31:24: warning: result of comparison of constant 9223372036854775807 with expression of type 'DWORD' (aka 'unsigned long') is always false [-Wtautological-constant-out-of-range-compare]
+   31 |             if(capacity>buffer.max_size()){error=std::make_error_code(std::errc::value_too_large);return false;}
+      |                ~~~~~~~~^~~~~~~~~~~~~~~~~~
+1 warning generated.
+[30/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/sample_payload.cpp.obj
+[31/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/sound_archive.cpp.obj
+[32/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/stream_source.cpp.obj
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-profile-permission/runtime/src/native/stream_source.cpp:96:40: warning: 'u8path<std::string, 0>' is deprecated [-Wdeprecated-declarations]
+   96 |         state->path = std::filesystem::u8path(std::string(file.logical_key()));
+      |                                        ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__filesystem/u8path.h:73:37: note: 'u8path<std::string, 0>' has been explicitly marked deprecated here
+   73 | [[nodiscard]] _LIBCPP_HIDE_FROM_ABI _LIBCPP_DEPRECATED_WITH_CHAR8_T path u8path(const _Source& __s) {
+      |                                     ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:465:43: note: expanded from macro '_LIBCPP_DEPRECATED_WITH_CHAR8_T'
+  465 | #  define _LIBCPP_DEPRECATED_WITH_CHAR8_T _LIBCPP_DEPRECATED
+      |                                           ^
+C:/Users/nahsh/mk port/Armageddon-backup/dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/include/c++/v1/__configuration/attributes.h:412:47: note: expanded from macro '_LIBCPP_DEPRECATED'
+  412 | #    define _LIBCPP_DEPRECATED __attribute__((__deprecated__))
+      |                                               ^
+1 warning generated.
+[33/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/bank_asset.cpp.obj
+[34/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/normal_sample.cpp.obj
+[35/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/retail_sound_bank_jobs.cpp.obj
+[36/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/adpcm_codec.cpp.obj
+[37/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_banks.cpp.obj
+[38/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/bank_preparation.cpp.obj
+[39/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_bank_protocol.cpp.obj
+[40/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_bank_service.cpp.obj
+[41/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/program_executor.cpp.obj
+[42/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/program_copy.cpp.obj
+[43/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/audio_controls.cpp.obj
+[44/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/host_voice.cpp.obj
+[45/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/program_host_clock.cpp.obj
+[46/203] Building CXX object CMakeFiles/mka_native_game_actions.dir/runtime/src/native/controller_input.cpp.obj
+[47/203] Building CXX object CMakeFiles/mka_native_game_actions.dir/runtime/src/native/game_action_input.cpp.obj
+[48/203] Building CXX object CMakeFiles/mka_native_game_actions.dir/runtime/src/native/game_input_tasks.cpp.obj
+[49/203] Building CXX object CMakeFiles/mka_native_sound_resources.dir/runtime/src/native/playback_owner.cpp.obj
+[50/203] Building CXX object CMakeFiles/mka_native_game_actions.dir/runtime/src/native/game_transition_state.cpp.obj
+[51/203] Linking CXX static library libmka_native_content_volume.a
+[52/203] Linking CXX static library libmka_native_saved_profile_child.a
+[53/203] Linking CXX static library libmka_native_profile_aggregate.a
+[54/203] Linking CXX static library libmka_native_profile_preferences.a
+[55/203] Linking CXX static library libmka_native_retail_task_registry.a
+[56/203] Building CXX object CMakeFiles/mka_native_game_actions.dir/runtime/src/native/frontend_scheduler.cpp.obj
+[57/203] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_game_controls.cpp.obj
+[58/203] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_game_options.cpp.obj
+[59/203] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_main_settings.cpp.obj
+[60/203] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_random.cpp.obj
+[61/203] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_initial_task_state.cpp.obj
+[62/203] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_live_scene_reference.cpp.obj
+[63/203] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_game_session.cpp.obj
+[64/203] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_profile_scene_object.cpp.obj
+[65/203] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_task_domain.cpp.obj
+[66/203] Building CXX object CMakeFiles/mka_native_retail_game_session.dir/runtime/src/native/retail_initial_game_tasks.cpp.obj
+[67/203] Building CXX object CMakeFiles/mka_native_retail_loading.dir/runtime/src/native/retail_loading_picture.cpp.obj
+[68/203] Building CXX object CMakeFiles/mka_native_retail_keyboard.dir/runtime/src/native/retail_keyboard_sdl.cpp.obj
+FAILED: [code=1] CMakeFiles/mka_native_retail_keyboard.dir/runtime/src/native/retail_keyboard_sdl.cpp.obj 
+"C:\Users\nahsh\mk port\Armageddon-backup\dependencies\compiler\llvm-mingw-20261006-ucrt-x86_64\bin\clang++.exe"  -I"C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-profile-permission/runtime/include" -I"C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-profile-permission/third_party/sdl2/include/SDL2" -O3 -DNDEBUG -std=gnu++20 -MD -MT CMakeFiles/mka_native_retail_keyboard.dir/runtime/src/native/retail_keyboard_sdl.cpp.obj -MF CMakeFiles\mka_native_retail_keyboard.dir\runtime\src\native\retail_keyboard_sdl.cpp.obj.d -o CMakeFiles/mka_native_retail_keyboard.dir/runtime/src/native/retail_keyboard_sdl.cpp.obj -c "C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-profile-permission/runtime/src/native/retail_keyboard_sdl.cpp"
+C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/external/forks/ps2-native-recomp-profile-permission/runtime/src/native/retail_keyboard_sdl.cpp:2:10: fatal error: 'SDL_events.h' file not found
+    2 | #include <SDL_events.h>
+      |          ^~~~~~~~~~~~~~
+1 error generated.
+[69/203] Building CXX object CMakeFiles/mka_native_retail_keyboard.dir/runtime/src/native/retail_keyboard.cpp.obj
+ninja: build stopped: subcommand failed.
