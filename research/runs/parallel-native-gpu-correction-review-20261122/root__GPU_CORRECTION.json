@@ -1,0 +1,13 @@
+{
+  "status": "CORRECTED_UNBUILT",
+  "native_movie_order": "collect/incoming-error then queriedGL/INT_MAX limits. Representableover-INT_MAX case is source-reviewed, not runtime-exercised; no giant allocation.",
+  "delete_failure": "Failed post-delete outcome seals this owningSession and blocksitsordinarycommands/native-nameaccess/retirementretry; retainednamesare not assumed safe. Actual borrowed-context recovery stillrequired, sharedotherSessions not claimed quarantined. Failurepathnotinjected.",
+  "legacy_movie_scope": "Focusedtextureclient now also callsrealoldmovieupload with2x2RGBAandvalidconversionmetadata, checks actualstate/PBOrestore and malformedinput; no playback/presentation.",
+  "primary_sources": [
+    "https://raw.githubusercontent.com/KhronosGroup/OpenGL-Refpages/main/gl4/glGetError.xml",
+    "https://raw.githubusercontent.com/KhronosGroup/OpenGL-Refpages/main/gl4/glDeleteTextures.xml"
+  ],
+  "review": "c27b8bbdfd138d87307578a211c05cd7cac7b361",
+  "no_driver_or_settings_changes": true,
+  "acceptance": "OPEN"
+}

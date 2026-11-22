@@ -1,0 +1,113 @@
+{
+  "source_count": 887,
+  "manifest_matches": true,
+  "current_source_mismatches": [],
+  "receipts": {
+    "build.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": true
+    },
+    "full-entry-negative.json": {
+      "exit": 1,
+      "log_matches": true,
+      "source_manifest_matches": true
+    },
+    "test_native_file.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": true
+    },
+    "test_native_file_read_job-symbols.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": true
+    },
+    "test_native_file_read_job.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": true
+    },
+    "test_native_gl_texture-symbols.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": true
+    },
+    "test_native_gl_texture.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": true
+    },
+    "test_native_retail_package.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": true
+    },
+    "test_native_retail_profile_entry_decision.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": true
+    },
+    "test_native_retail_profile_permission-symbols.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": true
+    },
+    "test_native_retail_profile_permission.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": true
+    },
+    "test_native_retail_saved_profile_records.json": {
+      "exit": 0,
+      "log_matches": true,
+      "source_manifest_matches": true
+    }
+  },
+  "binaries": {
+    "test_native_retail_profile_permission": {
+      "hash_matches": true,
+      "executed_by_primary": true
+    },
+    "test_native_retail_profile_entry_decision": {
+      "hash_matches": true,
+      "executed_by_primary": true
+    },
+    "test_native_retail_saved_profile_records": {
+      "hash_matches": true,
+      "executed_by_primary": true
+    },
+    "test_native_file_read_job": {
+      "hash_matches": true,
+      "executed_by_primary": true
+    },
+    "test_native_file": {
+      "hash_matches": true,
+      "executed_by_primary": true
+    },
+    "test_native_retail_package": {
+      "hash_matches": true,
+      "executed_by_primary": true
+    },
+    "test_native_gl_texture": {
+      "hash_matches": true,
+      "executed_by_primary": true
+    },
+    "test_native_movie_gl_device": {
+      "hash_matches": true,
+      "executed_by_primary": false
+    },
+    "test_native_movie_pipeline": {
+      "hash_matches": true,
+      "executed_by_primary": false
+    },
+    "test_native_movie_gpu_completion": {
+      "hash_matches": true,
+      "executed_by_primary": false
+    }
+  },
+  "readbacks_schema_count": 106,
+  "readbacks_checked": 106,
+  "readbacks_bad": [],
+  "negative_exact63": true
+}
