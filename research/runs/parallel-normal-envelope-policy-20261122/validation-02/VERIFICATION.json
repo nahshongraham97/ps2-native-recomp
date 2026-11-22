@@ -1,0 +1,12 @@
+{
+  "status": "PASS_NORMAL_SETUP_INTENT_ONLY",
+  "base_commit": "9a88f4ec092164b219d377816094899b3d333f18",
+  "source_manifest_sha256": "6a5294b4135eed22c6f85e69cfc2d664d8e6fa5e25721b155b975a5bdbc84c12",
+  "original_join_sha256": "6f8b1f4b47c5506d8be91dd9bd7c73912a3d34181b7fe391e0d420923f51b800",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "180527672d087fb785c1186fd1fdbce730a1d1f3eab5745e00abb24799d74cf0",
+  "required_missing_symbols": [
+    "mka::sound::normal_envelope_required::realize_retail_normal_envelope_profile(mka::sound::RetailNormalEnvelopeIntent const&, unsigned int, mka::sound::RetailNormalEnvelopeFailure&)"
+  ],
+  "scope": "Source-decoded setup/start intent only. Timing/profile realization required,not implemented. No playback/rate/PCM/endpoint/gameplay equivalence."
+}

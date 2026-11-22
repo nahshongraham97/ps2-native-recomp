@@ -1,0 +1,9 @@
+{
+  "scope": "Read-only import/field corroboration;no SDK/device code adopted",
+  "files": {
+    "iop/sound/libsd/include/libsd.h": "b01ba5c7c2cbac4de3588cd6a1b44f45502c4150689d5f4ca155e287e623cc14",
+    "common/include/libsd-common.h": "294ad86d15c140bb1c41773c54a63fc95dba8142b27f66f8f6ea84cb35b7e174"
+  },
+  "sdk_head": "d41ea62946e53d9a0c8788bb9eb8c8faf488b559",
+  "import_identity": "MSL libsd1.5 stub00288 ordinal5:sceSdSetParam;ADSR1=0300,ADSR2=0400"
+}
