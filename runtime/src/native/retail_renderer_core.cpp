@@ -132,6 +132,8 @@ bool NativeRetailRendererCore::register_core_plugins(RetailRendererCoreFailure& 
 }
 std::optional<bool> NativeRetailRendererCore::initialize_core(RetailRendererCoreFailure& f){
  if(!access(f))return {};
+ // Keep the actual Session-owned Core alive through every callback and guard unwind.
+ const auto session_lease=session_.lock();
  if(busy_||initializing_){fail(f,RetailRendererCoreError::reentrant,"1A6DD0 native initialization active");return {};}
  if(initialized_)return false; //1A6E64..6C returns source s1=0.
  Busy initialization(initializing_);
@@ -149,6 +151,8 @@ std::optional<bool> NativeRetailRendererCore::initialize_core(RetailRendererCore
 }
 bool NativeRetailRendererCore::construct_registered(RetailRendererCoreFailure& f){
  if(!access(f))return false;
+ // Keep the actual Session-owned Core alive through every callback and guard unwind.
+ const auto session_lease=session_.lock();
  if(busy_||!constructed_.empty())return fail(f,RetailRendererCoreError::reentrant,"1A3480 native construction active");
  // Reserve before the first source callback,so publication has no later allocation.
  try{constructed_.reserve(entries_.size());}catch(const std::bad_alloc&){return fail(f,RetailRendererCoreError::allocation,"1A3480 native construction retention");}
@@ -168,7 +172,9 @@ bool NativeRetailRendererCore::construct_registered(RetailRendererCoreFailure& f
  return true;
 }
 bool NativeRetailRendererCore::destroy_constructed(RetailRendererCoreFailure& f)noexcept{
- if(!access(f))return false;if(busy_)return fail(f,RetailRendererCoreError::reentrant,"native renderer destruction active");
+ if(!access(f))return false;
+ // Keep the actual Session-owned Core alive through every callback and guard unwind.
+ const auto session_lease=session_.lock();if(busy_)return fail(f,RetailRendererCoreError::reentrant,"native renderer destruction active");
  Busy guard(busy_);while(!constructed_.empty()){auto entry=constructed_.back();constructed_.pop_back();entry->callbacks_.destroy(*this);}return true;
 }
 void NativeRetailRendererCore::discard_object_extensions()noexcept{

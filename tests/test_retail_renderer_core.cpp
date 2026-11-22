@@ -17,6 +17,7 @@ void operator delete(void* p)noexcept{std::free(p);}void operator delete(void* p
 using namespace mka::retail;
 namespace {
 void check(bool ok,const char* text){if(!ok)throw std::runtime_error(text);}
+void lifetime_probe(NativeRetailRendererCore&);bool lifetime_tail_probe{};int lifetime_action{};NativeRetailMainState* lifetime_main{};
 unsigned tail_calls{},tail_cleanup_calls{},suffix_calls{},event_count{};int tail_mode{},suffix_mode{};
 NativeRetailMainState* callback_transfer_main{};bool callback_native_exception{};
 int events[256]{};unsigned failed_plugin{};bool allow_plugin_fixtures{},recursive_refused{};
@@ -40,6 +41,22 @@ struct Fixture {
  static mka::content::NativeContentVolume open(const std::filesystem::path& p){mka::content::ContentVolumeFailure f;auto v=mka::content::NativeContentVolume::open(p,f);check(bool(v),"actual content root");return std::move(*v);}
  std::shared_ptr<NativeRetailRendererCore> core(){auto c=NativeRetailRendererCore::for_session(startup.game_session,allocator,startup.content,f);check(bool(c),f.operation);return c;}
 };
+NativeRetailStartupState* released_startup{};
+std::shared_ptr<NativeRetailRendererCore>* released_core{};
+std::weak_ptr<NativeRetailGameSession> probe_session;
+bool observed_session_live{},observed_registry_live{};unsigned lifetime_destroyed{};
+void lifetime_probe(NativeRetailRendererCore& core){
+ if(!released_startup)return;
+ released_startup->game_record_reset.reset();released_startup->game_session.reset();released_core->reset();
+ observed_session_live=!probe_session.expired();RetailRendererCoreFailure f;observed_registry_live=bool(core.registered(f));
+ released_startup=nullptr;
+}
+bool lifetime_plain_construct(NativeRetailRendererCore&,RetailRendererCoreFailure&){return true;}
+bool lifetime_construct(NativeRetailRendererCore& core,RetailRendererCoreFailure&){
+ lifetime_probe(core);if(lifetime_action==2)throw std::runtime_error("lifetime native exception fixture");
+ if(lifetime_action==3)reenter_native_retail_main(*lifetime_main,41);return lifetime_action!=1;
+}
+void lifetime_destroy(NativeRetailRendererCore& core)noexcept{++lifetime_destroyed;lifetime_probe(core);}
 }
 namespace mka::retail::renderer_required {
 bool construct_core_plugin_0401(NativeRetailRendererCore& c,RetailRendererCoreFailure& f){return fixture_construct(0x0401,c,f);}
@@ -68,6 +85,10 @@ bool construct_core_plugin_040b(NativeRetailRendererCore& c,RetailRendererCoreFa
 void destroy_core_plugin_040b(NativeRetailRendererCore&)noexcept{fixture_destroy(0x040b);}
 void discard_object_extensions_after_core_init(NativeRetailRendererCore&)noexcept{++tail_cleanup_calls;}
 std::optional<bool> register_object_extensions_1b72b0(NativeRetailRendererCore& core,RetailRendererCoreFailure& f){
+ if(lifetime_tail_probe){lifetime_probe(core);
+  if(lifetime_action==2)throw std::runtime_error("lifetime setup exception fixture");
+  if(lifetime_action==3)reenter_native_retail_main(*lifetime_main,41);
+ }
  ++tail_calls; // Explicit ENTIRE1B72B0 fixture,not production object/stream policy.
  if(tail_mode==1)return false;
  if(tail_mode==2){f.kind=RetailRendererCoreError::construction;f.operation="test-only whole1B72B0 refusal";return {};}
@@ -93,6 +114,37 @@ static_assert(!std::is_move_constructible_v<NativeRetailRendererCore>);
 static_assert(!std::is_default_constructible_v<NativeRetailRendererCore>);
 int main(int argc,char** argv)try{
  check(argc==2,"existing root for CPU-only components");const std::filesystem::path path(argv[1]);
+ const bool expected_retained=true; // The actual Session must survive every callout.
+ for(int scenario=0;scenario<6;++scenario){
+  const int phase=scenario%3;const bool emergency_retained=scenario<3;
+  Fixture diagnostic(path);auto original=diagnostic.core();auto emergency=original;auto* raw=original.get();
+  if(phase!=1)check(bool(raw->register_factory({0x777,0},{lifetime_construct,lifetime_destroy},diagnostic.f)),"diagnostic callback registration");
+  if(phase==2)check(raw->construct_registered(diagnostic.f),"diagnostic prefix before destroy");
+  probe_session=diagnostic.startup.game_session;released_startup=&diagnostic.startup;released_core=&original;observed_session_live=observed_registry_live=false;lifetime_tail_probe=phase==1;const auto destroyed_before=lifetime_destroyed;const auto cleanup_before=tail_cleanup_calls;
+  if(!emergency_retained)emergency.reset();
+  if(phase==0)check(raw->construct_registered(diagnostic.f),"diagnostic construct completion");
+  if(phase==1){auto initialized=raw->initialize_core(diagnostic.f);check(initialized&&*initialized,"diagnostic initialization completion");}
+  if(phase==2)check(raw->destroy_constructed(diagnostic.f),"diagnostic destroy completion");
+  check(observed_session_live==expected_retained&&observed_registry_live==expected_retained,"operation-long Session/registry observation");
+  check(probe_session.expired(),"Session lease ends after operation");lifetime_tail_probe=false;emergency.reset();
+  check(phase==1?tail_cleanup_calls==cleanup_before+1:lifetime_destroyed==destroyed_before+1,"one cleanup after last owner release");
+ }
+ // Last-owner release also covers refusal, ordinary exceptions and real Main transfer.
+ for(int phase=0;phase<2;++phase)for(int action=1;action<=3;++action){
+  if(phase==1&&action==1)continue;
+  Fixture detached(path);auto original=detached.core();auto* raw=original.get();
+  if(phase==0){check(bool(raw->register_factory({0x776,0},{lifetime_plain_construct,lifetime_destroy},detached.f)),"prefix lifetime registration");check(bool(raw->register_factory({0x777,0},{lifetime_construct,lifetime_destroy},detached.f)),"callout lifetime registration");}
+  probe_session=detached.startup.game_session;released_startup=&detached.startup;released_core=&original;observed_session_live=observed_registry_live=false;
+  lifetime_tail_probe=phase==1;lifetime_action=action;lifetime_main=&detached.main;const auto destroyed_before=lifetime_destroyed;const auto cleanup_before=tail_cleanup_calls;
+  bool moved=false;try{if(phase==0)check(!raw->construct_registered(detached.f),"constructor failure result");else check(!raw->initialize_core(detached.f),"setup failure result");}
+  catch(const detail::NativeMainReentry& e){moved=e.owner==&detached.main&&e.value==41;}
+  check(observed_session_live&&observed_registry_live&&probe_session.expired(),"owner retained through failing callout then released");
+  check(moved==(action==3),"actual Main transfer identity preserved");
+  if(action==2)check(detached.f.kind==(phase==0?RetailRendererCoreError::after_effect_unknown:RetailRendererCoreError::native_exception),"ordinary exception remains distinct from transfer");
+  if(action==3)check(detached.f.kind==RetailRendererCoreError::none,"Main transfer never poisons failure");
+  check(phase==0?lifetime_destroyed==destroyed_before+1:tail_cleanup_calls==cleanup_before+1,"successful prefix/setup cleaned once on unwind");
+  lifetime_tail_probe=false;lifetime_action=0;lifetime_main=nullptr;
+ }
  Fixture x(path);auto core=x.core();check(core==x.core(),"Session persists same core identity");check(core->allocator_identity()==x.allocator->owner_identity(),"existing actual Permanent heap");
  const auto error_callbacks=RetailRendererPluginCallbacks{construct_native_renderer_error,destroy_native_renderer_error};
  check(*core->error_domain_count(x.f)==0,"source BSS modulecount before constructors");

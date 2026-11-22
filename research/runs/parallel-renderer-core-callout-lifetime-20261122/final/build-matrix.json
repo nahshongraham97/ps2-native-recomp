@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-renderer-plugin-0402\\build-renderer-0402",
+    "--target",
+    "test_native_retail_renderer_matrix",
+    "-j2"
+  ],
+  "exit": 0,
+  "log_sha256": "da1e4b7b1d7119b368fabd93bb4d179b236b48f2d293e627d3f376dfe5783da1"
+}

@@ -1,0 +1,12 @@
+{
+  "runtime/src/native/retail_renderer_core.cpp": {
+    "raw_sha256": "95ce783cde5456120deb9f455812b7975b0f19e75c2c842b229e3844f71450a9",
+    "index_sha256": "fa332d48476e6274f6ad7f9d512800a1ed2186ae6c677e458efdca8a0b776f4f",
+    "blob": "18db73a9abb6c0b3f02c6e9856d03f7bed634656"
+  },
+  "tests/test_retail_renderer_core.cpp": {
+    "raw_sha256": "d1cee0fea38a7a0d436795cb2168730f21d23100e3cba8ceaa5934d686b9d05f",
+    "index_sha256": "d5e4e23fbdfd3a2269a3e86032fc962fb1d0be55b8fb7bd657d678ce1bbc15d9",
+    "blob": "14da703f31e4e0ed3b65480ac7e28ceaf932a948"
+  }
+}
