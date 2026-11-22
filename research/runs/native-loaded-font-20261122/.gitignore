@@ -3,3 +3,7 @@ validation-*/io/
 validation-*/permission/
 validation-*/records/
 validation-*/font-fixtures/
+validation-*/cpu-errors/
+validation-*/empty-content/
+source-consumers-01/*.c
+source-filter-01/*.c

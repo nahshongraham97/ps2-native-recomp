@@ -1,0 +1,168 @@
+{
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "pt_load": [
+    {
+      "index": 0,
+      "p_offset": 256,
+      "p_vaddr": 1048576,
+      "p_filesz": 5561984,
+      "p_memsz": 7096448
+    },
+    {
+      "index": 1,
+      "p_offset": 5562240,
+      "p_vaddr": 8145024,
+      "p_filesz": 0,
+      "p_memsz": 1131008
+    },
+    {
+      "index": 2,
+      "p_offset": 5562240,
+      "p_vaddr": 8145024,
+      "p_filesz": 0,
+      "p_memsz": 2097536
+    },
+    {
+      "index": 3,
+      "p_offset": 5562240,
+      "p_vaddr": 8145024,
+      "p_filesz": 0,
+      "p_memsz": 1867392
+    },
+    {
+      "index": 4,
+      "p_offset": 5562240,
+      "p_vaddr": 10242560,
+      "p_filesz": 0,
+      "p_memsz": 0
+    }
+  ],
+  "spans": {
+    "source-consumers-01\\001a4fc0.asm": {
+      "mapping": {
+        "vma": "0x1a4fc0",
+        "file_offset": 676032,
+        "length": 2072,
+        "segment": 0,
+        "file_backed": true
+      },
+      "words": 518,
+      "original_sha256": "1070cf20f041d0be305dd6abceae0fec33145e59dc3f4e837bbd7b052b01f7d7",
+      "listing_sha256": "2c027266bf628a8adfd543c96ea6b8394d9f5f39832917b5e9737631f79437aa"
+    },
+    "source-consumers-01\\001a5970.asm": {
+      "mapping": {
+        "vma": "0x1a5970",
+        "file_offset": 678512,
+        "length": 1336,
+        "segment": 0,
+        "file_backed": true
+      },
+      "words": 334,
+      "original_sha256": "0eae6f71688f1c9304d4663b76229ade1e06ff5560e3b1a40caf2d97b72eb232",
+      "listing_sha256": "b2c2845783f6fe8d612942f9b2e2894ab800b8ed88aefe61a096350544e44da6"
+    },
+    "source-consumers-01\\001cd6e0.asm": {
+      "mapping": {
+        "vma": "0x1cd6e0",
+        "file_offset": 841696,
+        "length": 1000,
+        "segment": 0,
+        "file_backed": true
+      },
+      "words": 250,
+      "original_sha256": "566bce3b12565bb9533aedacfb90536c9c05c65548dd5e92bade38f5db678503",
+      "listing_sha256": "038a832307b8b787da14643da9b02373b12f2ef68b23255e9ec70e5cd083292f"
+    },
+    "source-consumers-01\\001ce1f0.asm": {
+      "mapping": {
+        "vma": "0x1ce1f0",
+        "file_offset": 844528,
+        "length": 452,
+        "segment": 0,
+        "file_backed": true
+      },
+      "words": 113,
+      "original_sha256": "2045ea7ccbe5eb3658f6ef9cc411ec4a6186f0c739ded68d0080d238b0f49904",
+      "listing_sha256": "211d40a937c4bcfd3897cc63266b6f42170b6f1fd2fdf55243c7d98d25f129fa"
+    },
+    "source-consumers-01\\001d3490.asm": {
+      "mapping": {
+        "vma": "0x1d3490",
+        "file_offset": 865680,
+        "length": 1552,
+        "segment": 0,
+        "file_backed": true
+      },
+      "words": 388,
+      "original_sha256": "ce65126fbf9d513eea64a42f4b79ab560bf50c6f32cf6d64e24c0aec74b4a854",
+      "listing_sha256": "c365fc291e377eeb06f0e1af5212129ba154cafc5b278f6dcdc1a18475884fda"
+    },
+    "source-consumers-01\\00215660.asm": {
+      "mapping": {
+        "vma": "0x215660",
+        "file_offset": 1136480,
+        "length": 208,
+        "segment": 0,
+        "file_backed": true
+      },
+      "words": 52,
+      "original_sha256": "935323745ff507e9cda27d3d0d8e93c709d9bec9b2722d49eef3887de05aee70",
+      "listing_sha256": "3b80fb85e8498081060991d1acf93d7f5a88b673407564fe69fe01f002ac41eb"
+    },
+    "source-consumers-01\\00215730.asm": {
+      "mapping": {
+        "vma": "0x215730",
+        "file_offset": 1136688,
+        "length": 220,
+        "segment": 0,
+        "file_backed": true
+      },
+      "words": 55,
+      "original_sha256": "7c6d4bb980b1f3af1919d2bf90440ff140d060980e93e931ec8e32cbcd29aaa7",
+      "listing_sha256": "175705b6383556ab74923c3684ae14a465f1af415264ec844fe15cf6a4a8ae71"
+    },
+    "source-filter-01\\0019b3e0.asm": {
+      "mapping": {
+        "vma": "0x19b3e0",
+        "file_offset": 636128,
+        "length": 328,
+        "segment": 0,
+        "file_backed": true
+      },
+      "words": 82,
+      "original_sha256": "dbe864fc9af98e7a7f2d98589711edfb9e146d7eb0ad43a85004dc685df32a7b",
+      "listing_sha256": "4bfbd98a7c95cb9ba6083f96a856b2872e41dba39809485565273fd3ca87030c"
+    },
+    "source-filter-01\\001cfca0.asm": {
+      "mapping": {
+        "vma": "0x1cfca0",
+        "file_offset": 851360,
+        "length": 88,
+        "segment": 0,
+        "file_backed": true
+      },
+      "words": 22,
+      "original_sha256": "6397264408903d07f688d531439ab215fcd18f7727e435407e194f21d1919fff",
+      "listing_sha256": "24c0e2dc1e6a48d39ab71d81a6cc41f870de06c82acc6246cbcdd005c311775c"
+    }
+  },
+  "managed_resource_key": {
+    "mapping": {
+      "vma": "0x60ce60",
+      "file_offset": 5295968,
+      "length": 64,
+      "segment": 0,
+      "file_backed": true
+    },
+    "bytes_hex": "676f726f735f6c6169725f676174655f7472616e736974696f6e5f616e696d732e73656300",
+    "text": "goros_lair_gate_transition_anims.sec"
+  },
+  "source_policy": {
+    "filter1": "1CFCA0 clears bits5..8 and ORs0",
+    "filter2": "1CFCDC branch-likely taken delay ORs60; MMAG/MMIN=1",
+    "address3": "1D3584..35C8 sets U/V clamp bits;1D38F0..3910 emits TEX1=14 and CLAMP=08",
+    "source_word3301": "original16FC70 verified in preceding SOURCE_RECEIPT",
+    "no_runtime_register_model": true
+  }
+}

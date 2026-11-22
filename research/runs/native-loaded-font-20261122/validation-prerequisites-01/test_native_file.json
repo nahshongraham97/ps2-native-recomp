@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-selected-owner\\b\\test_native_file.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.04350030000205152,
+  "log_sha256": "294b951feb4fbe616a4f904e7f97c02bf3f041691c79609e57a047d79e720a79",
+  "source_commit": "5805592383b98326fd7b105f1bc694ff0da4ac64",
+  "source_manifest_sha256": "32afc61bf54cffc0b65e0f4caa908fab0162766e6ac53176c36cb6ac6477e82f",
+  "executable_sha256": "ccee89a4a016b8bd317e2385f8572c60bf98388bd9c2fd75c817198f8357fb80"
+}

@@ -38,6 +38,7 @@ struct RetailGameSessionFailure {
 // Controls model only proven game-info state, not a complete registry value.
 class NativeRetailRendererCore;
 class NativeRetailSavedProfileRecords;
+class NativeRetailLoadedSystemArt;
 class NativeRetailGameSession final {
 public:
     static std::shared_ptr<NativeRetailGameSession> create(RetailGameSessionFailure&) noexcept;
@@ -63,6 +64,7 @@ public:
     NativeRetailProfileResourceIds* profile_resource_ids(RetailGameSessionFailure&) noexcept;
     NativeRetailProfileAggregate* profile_aggregate(RetailGameSessionFailure&) noexcept;
     NativeRetailSavedProfileRecords* saved_profile_records(RetailGameSessionFailure&) noexcept;
+    std::shared_ptr<NativeRetailLoadedSystemArt> loaded_system_art(RetailGameSessionFailure&) const noexcept;
     NativeRetailSceneReference* live_scene_reference(RetailGameSessionFailure&) noexcept;
     bool ensure_game_task_lists(std::shared_ptr<NativeRetailGamePool>,
         RetailGameSessionFailure&) noexcept;
@@ -78,6 +80,8 @@ public:
         RetailGameSessionFailure&) const noexcept;
 private:
     friend class NativeRetailRendererCore;
+    friend class NativeRetailLoadedSystemArt;
+    std::shared_ptr<NativeRetailLoadedSystemArt> system_art_;
     std::shared_ptr<NativeRetailRendererCore> renderer_core_;
     NativeRetailGameSession(std::shared_ptr<NativeRetailGameControls>,
         std::shared_ptr<NativeRetailMainSettings>,

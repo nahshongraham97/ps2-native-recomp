@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+namespace mka::graphics { class NativeGlTextureUpload; }
 namespace mka::retail {
 enum class RetailPlatformError {
     none, allocation, native_exception, wrong_thread, closed, missing_crt,
@@ -59,6 +60,9 @@ public:
     bool configure_logical_viewport(const RetailLogicalViewport&,RetailPlatformFailure&) noexcept;
     std::optional<RetailLogicalViewport> logical_viewport(RetailPlatformFailure&) const noexcept;
     bool prepare_frame(RetailPlatformFailure&) noexcept;
+    // Shares this platform's actual current host GL context and retirement
+    // owner; no independently created game window or diagnostic context.
+    std::shared_ptr<graphics::NativeGlTextureUpload> texture_upload_device(RetailPlatformFailure&) noexcept;
     bool present(RetailPlatformFailure&) noexcept;
     bool drain(RetailPlatformFailure&) noexcept;
     bool shutdown(RetailPlatformFailure&) noexcept;

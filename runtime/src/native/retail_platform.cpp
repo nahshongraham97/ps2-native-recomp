@@ -1,10 +1,14 @@
 #define SDL_MAIN_HANDLED
 #include "mka/retail_platform.hpp"
 #include "mka/retail_keyboard_sdl.hpp"
+#include "mka/movie_gl_device.hpp"
 #include "keymap.hpp"
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <SDL_opengl_glext.h>
+#ifdef _WIN32
+#include <SDL_syswm.h>
+#endif
 #include <algorithm>
 #include <atomic>
 #include <bit>
@@ -78,6 +82,8 @@ struct NativeRetailPlatform::State {
     std::optional<RetailLogicalViewport> logical_viewport;
     SDL_Window* window=nullptr;SDL_GLContext context=nullptr;
     Gl gl;GLuint texture=0,program=0,vao=0;GLint sampler=-1;
+    std::shared_ptr<video::NativeMovieGpuRetirementOwner> image_retirement;
+    std::shared_ptr<video::NativeMovieGlDevice> image_device;
     input::ControllerInput samples;
     std::unique_ptr<NativeRetailKeyboard> keyboard_events;
     keymap::Config keys=keymap::defaults();
@@ -203,9 +209,24 @@ struct NativeRetailPlatform::State {
         if(context) {
             if(SDL_GL_MakeCurrent(window,context)==0) {
                 glFinish();
+                if(image_device) {
+                    auto result=image_device->shutdown();
+                    if(result==video::MovieGpuError::pending) {
+                        glFinish(); result=image_device->shutdown();
+                    }
+                    if(result!=video::MovieGpuError::none ||
+                       image_retirement->poll().state!=video::MovieFenceState::complete) {
+                        std::fputs("[native-platform-stop] actual image/context retirement failed\n",stderr);
+                        std::terminate();
+                    }
+                    image_device.reset(); image_retirement.reset();
+                }
                 if(texture)glDeleteTextures(1,&texture);
                 if(program&&gl.DeleteProgram)gl.DeleteProgram(program);
                 if(vao&&gl.DeleteVertexArrays)gl.DeleteVertexArrays(1,&vao);
+            } else if(image_device) {
+                std::fputs("[native-platform-stop] image owner requires its actual current context for retirement\n",stderr);
+                std::terminate();
             }
             SDL_GL_DeleteContext(context);context=nullptr;texture=program=vao=0;
         }
@@ -423,6 +444,36 @@ std::optional<RetailLogicalViewport> NativeRetailPlatform::logical_viewport(
     return state_->logical_viewport;
 }
 bool NativeRetailPlatform::prepare_frame(RetailPlatformFailure& f) noexcept {f={};return state_->current(f);}
+std::shared_ptr<graphics::NativeGlTextureUpload> NativeRetailPlatform::texture_upload_device(
+    RetailPlatformFailure& f) noexcept {
+    f={}; if(!state_->current(f)) return {};
+    if(state_->image_device) return state_->image_device;
+#ifdef _WIN32
+    try {
+        SDL_SysWMinfo info{}; SDL_VERSION(&info.version);
+        if(!SDL_GetWindowWMInfo(state_->window,&info)||info.subsystem!=SDL_SYSWM_WINDOWS) {
+            fail(f,RetailPlatformError::context,"actual platform Win32 GL window",SDL_GetError()); return {};
+        }
+        video::MovieGpuError error;
+        if(!state_->image_retirement) {
+            state_->image_retirement=video::NativeMovieGpuRetirementOwner::create(error);
+            if(!state_->image_retirement) {
+                fail(f,RetailPlatformError::graphics,"native image host retirement owner"); return {};
+            }
+        }
+        auto device=video::NativeMovieGlDevice::attach_current_context(
+            info.info.win.window,1,state_->image_retirement,error);
+        if(!device) {
+            fail(f,RetailPlatformError::graphics,"attach actual platform native image context"); return {};
+        }
+        state_->image_device=std::move(device); return state_->image_device;
+    } catch(const std::bad_alloc&) { fail(f,RetailPlatformError::allocation,"native image context capability"); }
+    catch(...) { fail(f,RetailPlatformError::native_exception,"native image context capability"); }
+#else
+    fail(f,RetailPlatformError::context,"native image context acquisition unsupported on this host");
+#endif
+    return {};
+}
 bool NativeRetailPlatform::present(RetailPlatformFailure& f) noexcept {
     f={};if(!state_->current(f))return false;SDL_ClearError();SDL_GL_SwapWindow(state_->window);
     return !*SDL_GetError() || fail(f,RetailPlatformError::graphics,"native frame swap",SDL_GetError());

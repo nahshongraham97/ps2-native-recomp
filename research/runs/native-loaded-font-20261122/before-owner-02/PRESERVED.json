@@ -1,0 +1,13 @@
+{
+  "first_result": "FAIL_TEST_LAST_OWNER_EXPECTATION",
+  "binaries": {
+    "test_native_retail_loaded_system_art": "bbe2d2fbc6aff774f9a9c7004e4aab0667a36e08f082df1d5cedd44ba363fc5b",
+    "test_native_retail_system_art_cpu": "552870d1f5f54b5754121e39c9f8b8c014ae6ad886b5940779cf977ac32d7a6e",
+    "test_native_retail_game_session": "019c36a3ab2eb4fddf10156f935c6b62c41a63441f19c8879a989a4950276f80",
+    "test_native_retail_initial_reset_arcade": "eda435d045bad36646c481a7d67700cb1e3d9ea12fce809eec8b3787b4debad2"
+  },
+  "private_history": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-selected-owner\\b\\history-owner-01",
+  "source_manifest_sha256": "7145e48965770422a9947fc08df621bdfd09b7fc24fe1dbb3f4d1611d74c6394",
+  "cause": "NativeRetailGameRecordReset::session_ is a real strong owner; clearing game_session alone is not final Session release.",
+  "original_failure_receipt": "validation-owner-01/test_native_retail_loaded_system_art.json"
+}

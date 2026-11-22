@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-selected-owner\\b\\test_native_retail_profile_entry_decision.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.09238199998799246,
+  "log_sha256": "c0386ff3336e93aae4297edb93b3dd108491773698ec487ee24896930d0bfe93",
+  "source_commit": "5805592383b98326fd7b105f1bc694ff0da4ac64",
+  "source_manifest_sha256": "32afc61bf54cffc0b65e0f4caa908fab0162766e6ac53176c36cb6ac6477e82f",
+  "executable_sha256": "5ff335f4e41ae147204b81dd242b0482e0b39013d7d511e7c263a20f2403a52c"
+}

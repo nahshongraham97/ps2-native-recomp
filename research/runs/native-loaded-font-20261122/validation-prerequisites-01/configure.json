@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "-S",
+    "C:\\Users\\nahsh\\MKPORT~1\\ARMAGE~1\\ARMAGE~1\\external\\forks\\PSAFBA~1",
+    "-B",
+    "C:\\Users\\nahsh\\MKPORT~1\\ARMAGE~1\\ARMAGE~1\\external\\forks\\PSAFBA~1\\b",
+    "-G",
+    "Ninja",
+    "-DCMAKE_BUILD_TYPE=Release",
+    "-DCMAKE_CXX_COMPILER=C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+    "-DCMAKE_MAKE_PROGRAM=C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\ninja\\ninja.exe",
+    "-DSDL2_DIR=C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-selected-owner\\third_party\\sdl2\\lib\\cmake\\SDL2",
+    "-DMKA_NATIVE_MEDIA_HEADERS=C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\native-media\\ffmpeg-7.1.4"
+  ],
+  "exit": 0,
+  "seconds": 3.154397099991911,
+  "log_sha256": "71974224d6982dd9adcd8e10af5fdfccebc5dfc85491afb3427509799c2bb91a",
+  "source_commit": "5805592383b98326fd7b105f1bc694ff0da4ac64",
+  "source_manifest_sha256": "32afc61bf54cffc0b65e0f4caa908fab0162766e6ac53176c36cb6ac6477e82f",
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3"
+}

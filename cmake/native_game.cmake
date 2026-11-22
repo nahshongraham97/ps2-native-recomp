@@ -225,6 +225,8 @@ if(WIN32)
         runtime/src/native/retail_main.cpp runtime/src/native/retail_main_timing.cpp
         runtime/src/native/retail_main_frame_gates.cpp
         runtime/src/native/retail_arcade_ladder.cpp
+        runtime/src/native/retail_loaded_system_art.cpp
+        runtime/src/native/retail_loaded_system_art_main.cpp
         runtime/src/native/retail_scene_bootstrap_prefix.cpp
         runtime/src/native/retail_scene_bootstrap_continuation.cpp
         runtime/src/native/retail_renderer_allocator.cpp
@@ -535,6 +537,8 @@ target_link_libraries(mka_native_art_section_data PUBLIC mka_native_content_volu
 add_library(mka_native_retail_system_art_cpu STATIC EXCLUDE_FROM_ALL runtime/src/native/retail_system_art_cpu.cpp)
 target_include_directories(mka_native_retail_system_art_cpu PUBLIC runtime/include)
 target_link_libraries(mka_native_retail_system_art_cpu PUBLIC mka_native_retail_startup mka_native_art_section_data mka_native_media)
+target_link_libraries(mka_native_retail_startup PUBLIC mka_native_retail_system_art_cpu)
+target_link_libraries(mka_native_retail_platform PUBLIC mka_native_media)
 add_executable(test_native_retail_system_art_cpu EXCLUDE_FROM_ALL tests/test_retail_system_art_cpu.cpp)
 target_link_libraries(test_native_retail_system_art_cpu PRIVATE mka_native_retail_system_art_cpu)
 add_executable(test_native_font_atlas_system_art EXCLUDE_FROM_ALL tests/test_font_atlas_system_art.cpp)
@@ -560,8 +564,11 @@ add_executable(test_native_gl_texture EXCLUDE_FROM_ALL tests/test_native_gl_text
 target_link_libraries(test_native_gl_texture PRIVATE mka_native_retail_system_art_cpu)
 add_executable(test_native_file_read_job EXCLUDE_FROM_ALL tests/test_native_file_read_job.cpp)
 target_link_libraries(test_native_file_read_job PRIVATE mka_native_retail_system_art_cpu)
+add_executable(test_native_retail_loaded_system_art EXCLUDE_FROM_ALL tests/test_retail_loaded_system_art.cpp)
+target_include_directories(test_native_retail_loaded_system_art PRIVATE runtime/src/native)
+target_link_libraries(test_native_retail_loaded_system_art PRIVATE mka_native_retail_system_art_cpu)
 if(WIN32)
-    foreach(_client test_native_gl_texture test_native_file_read_job)
+    foreach(_client test_native_gl_texture test_native_file_read_job test_native_retail_loaded_system_art)
         add_custom_command(TARGET ${_client} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2>
                 $<TARGET_FILE_DIR:${_client}> VERBATIM)

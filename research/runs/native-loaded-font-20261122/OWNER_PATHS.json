@@ -1,0 +1,42 @@
+{
+  "paths": [
+    "cmake/native_game.cmake",
+    "runtime/include/mka/retail_game_session.hpp",
+    "runtime/include/mka/retail_loaded_system_art.hpp",
+    "runtime/include/mka/retail_platform.hpp",
+    "runtime/include/mka/retail_system_art_cpu.hpp",
+    "runtime/src/native/retail_loaded_system_art.cpp",
+    "runtime/src/native/retail_loaded_system_art_main.cpp",
+    "runtime/src/native/retail_platform.cpp",
+    "runtime/src/native/retail_system_art_cpu.cpp",
+    "tests/test_retail_loaded_system_art.cpp"
+  ],
+  "newline_pairs": {
+    "runtime/include/mka/retail_game_session.hpp": {
+      "before_sha256": "71f3335a95fd7fd85b60b18fc800c0fb30409b0fb646a26bde397186297a9950",
+      "after_sha256": "0175e6b252809d5343d9b5d080cd893998090bdb674469c689122722bfb2b259",
+      "preserved": "before-owner-LF-runtime__include__mka__retail_game_session.hpp.gz"
+    },
+    "runtime/include/mka/retail_platform.hpp": {
+      "before_sha256": "a94e6ef5db63c8d2d429558d3abfde4b32ee73199704869efdda3dea36dec861",
+      "after_sha256": "ba76205b020aaba3701ca960969c5a2a1ce3228d36f593c0685b4d0235652485",
+      "preserved": "before-owner-LF-runtime__include__mka__retail_platform.hpp.gz"
+    },
+    "runtime/include/mka/retail_system_art_cpu.hpp": {
+      "before_sha256": "bbc7f8660192806787018b8ad56cc38f17b35bf9a729453a045447cf77608220",
+      "after_sha256": "3274362efd88eb79d533950019bbdf4f3a1f636d0b608fa72a2796b522cac715",
+      "preserved": "before-owner-LF-runtime__include__mka__retail_system_art_cpu.hpp.gz"
+    },
+    "runtime/src/native/retail_platform.cpp": {
+      "before_sha256": "72abf754c2f95d708e881e5b3ade77466e1fbf93be6d93a8ac3a6a38edf604e4",
+      "after_sha256": "68026e753fd7ac4414b5d2ef7acd1adab38ca695b125cb32034182a1e5f50d04",
+      "preserved": "before-owner-LF-runtime__src__native__retail_platform.cpp.gz"
+    },
+    "runtime/src/native/retail_system_art_cpu.cpp": {
+      "before_sha256": "ea4b289568868dfd9f6629c64b34420f06a9d42ed105fefd23642a87e7b9268f",
+      "after_sha256": "33dc96ab1f678ce760c9c0d565f5d3ff9f216a7f9b1b2957c1c0746911b91406",
+      "preserved": "before-owner-LF-runtime__src__native__retail_system_art_cpu.cpp.gz"
+    }
+  },
+  "phase": "IMPLEMENTED_UNBUILT"
+}
