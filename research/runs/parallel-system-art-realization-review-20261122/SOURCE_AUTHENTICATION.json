@@ -1,0 +1,35 @@
+{
+  "original_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "listed_words_checked": 353,
+  "functions": {
+    "0019cfa0.asm": {
+      "words": 120,
+      "sha256": "e640f87f580448d01256375c1065bb384e5f2803516b3931de750a5c58ba2b8e"
+    },
+    "001a8680.asm": {
+      "words": 21,
+      "sha256": "042f08219c272e0aca362d4a5afec6e426b938b279e9f7aebe93fb9a6ce99033"
+    },
+    "001a97e0.asm": {
+      "words": 47,
+      "sha256": "fef776f5253d77dfd9440efcfceb88d626e90fbe032be4e43cf26351d1088598"
+    },
+    "002dfe50.asm": {
+      "words": 8,
+      "sha256": "ecbb31859ff273d15613ae7d8a3180f9978f955921c24d054a80392824afcb53"
+    },
+    "002ffd60.asm": {
+      "words": 55,
+      "sha256": "a2b2a410ef68916eb0f3ee4d7f3cdf3fde33c7fa2e4c054a7a28b28b3f5220fd"
+    },
+    "003de060.asm": {
+      "words": 73,
+      "sha256": "0860fe4c34d12d87059928efef6bf14f472360f0b27cd6201d1e335899c66ac4"
+    },
+    "003de190.asm": {
+      "words": 29,
+      "sha256": "6a601d00d8cc846e9098c36fba25e9d0533d524a5ab0d0b5d9c55c070fd1afbd"
+    }
+  },
+  "scope": "Raw listed words only; no claim whole game/render semantics or hidden source dependencies implemented"
+}

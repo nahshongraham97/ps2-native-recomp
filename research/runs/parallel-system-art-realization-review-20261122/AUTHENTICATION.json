@@ -1,0 +1,90 @@
+{
+  "ARTIFACTS.json": {
+    "checked": 99,
+    "bad": []
+  },
+  "READBACKS.json": {
+    "checked": 318,
+    "bad": []
+  },
+  "archives_checked": 29,
+  "source05": {
+    "checked": 869,
+    "bad": []
+  },
+  "clients": [
+    {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-system-art-realization\\b-gl\\frozen05\\test_native_gl_texture.exe",
+      "sha256": "17ef094f802a28151c4d71343428675698035529313c72ca44aabcabf95ac9b6",
+      "executed": true,
+      "hash_matches": true
+    },
+    {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-system-art-realization\\b-gl\\frozen05\\test_native_movie_gl_device.exe",
+      "sha256": "95ed6bf2c9b56f5c4d52134d546d1ea99008ce9a8a9f89371b54f25ae4c29317",
+      "executed": false,
+      "hash_matches": true
+    },
+    {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-system-art-realization\\b-gl\\frozen05\\test_native_movie_pipeline.exe",
+      "sha256": "f544ac2d4e6b7bb2fdc41ced942638496de63b74f39beeb87cd4a7dbb44b1146",
+      "executed": false,
+      "hash_matches": true
+    },
+    {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-system-art-realization\\b-gl\\frozen05\\test_native_movie_gpu_completion.exe",
+      "sha256": "042634313c3015aa967904471c17f65ad25bb9e76474ba5ddf1ddf95b8aa7eb9",
+      "executed": false,
+      "hash_matches": true
+    }
+  ],
+  "newline_pairs": [
+    {
+      "path": "cmake/native_game.cmake",
+      "measured_raw_sha256": "d13090a1629c7350c965fe07100949f9099ec5ee8ce5f98fd54bb6d774cd3a21",
+      "committed_lf_sha256": "2a80d824cf15adea82aa88cdb5ae22065fc0a075ef8cb396561bb39d63c53c33",
+      "normalization": "CRLF to LF only"
+    },
+    {
+      "path": "runtime/include/mka/movie_gl_device.hpp",
+      "measured_raw_sha256": "781dcf8c18a04bafc150cb43221a9dbd7c57bdc042f9d772979cb44013bd3623",
+      "committed_lf_sha256": "0f80bad7c320e076c46ef6b3b02cf3391f20c62dbb7901ddafcd1a3b2328f949",
+      "normalization": "CRLF to LF only"
+    },
+    {
+      "path": "runtime/include/mka/native_gl_texture.hpp",
+      "measured_raw_sha256": "e98c55cf0b230087e30c3fb9dfab2b388faa1e76cf295d5ce018f8ab00d89e40",
+      "committed_lf_sha256": "d8e3ba9d89b6c11f07bafa506dca3b48e58c32264e7bb222450e3663826da444",
+      "normalization": "CRLF to LF only"
+    },
+    {
+      "path": "runtime/src/native/movie_gl_device.cpp",
+      "measured_raw_sha256": "99268f5cf72d38f9d1f591e99060dcdda902d649f1d505efc58a0824ff1185f5",
+      "committed_lf_sha256": "265df40bb03bfdd6df2317eee38304ea57666eb568eaf25a7f8d9ab71bd32c19",
+      "normalization": "CRLF to LF only"
+    },
+    {
+      "path": "tests/test_native_gl_texture.cpp",
+      "measured_raw_sha256": "2e820f04c3fa106c58f469eface27fc4c22b42cb03505b6d06a1352ff4dd99af",
+      "committed_lf_sha256": "65a74cc793e08909ea965077b9368ec16e8d293a435dd148a203da2a3ba547e7",
+      "normalization": "CRLF to LF only"
+    }
+  ],
+  "receipt05": {
+    "argv": [
+      "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-system-art-realization\\b-gl\\test_native_gl_texture.exe",
+      "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\native-ps2-loose-20261121",
+      "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-system-art-realization\\research\\runs\\parallel-system-art-realization-20261122\\validation-05\\private-readbacks"
+    ],
+    "exit": 0,
+    "executable_sha256": "17ef094f802a28151c4d71343428675698035529313c72ca44aabcabf95ac9b6",
+    "log_sha256": "97ec9be2affe70c72fac6ce185299f1c3f73ab96449d710e74edad6e0f3425c8",
+    "actual_gpu_context_opened": true,
+    "visible_window": false,
+    "presentation": false,
+    "audio_endpoint": false
+  },
+  "candidate": "69e0f3ce9c5e242fa8b539a7e217fc093fc01566",
+  "base": "dbdce79",
+  "executed_by_reviewer": false
+}

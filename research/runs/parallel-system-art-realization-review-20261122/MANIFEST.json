@@ -1,0 +1,21 @@
+{
+  ".gitattributes": "e97602ab9cac70102245345c5ab0fc9830df8b17f1072b188265a662a3a547ae",
+  "AUTHENTICATION.json": "021b3306c18782ba2525a576e29640ce26368d2d4a209c868313b8bb795577fd",
+  "author__CLIENTS.json": "21b39757c93a7f91a55e901b73f62476f4c53b17d366e9cc83a045d632d7daf9",
+  "author__NEWLINE_PAIRS.json": "7e6319cf88191f9296c9889f8a8121533328fcd981b80b6fe5c936b91efc1b1d",
+  "author__SOURCE_CHECK.json": "06c57215badd61cddd0c2950de91c95e92e39ca6b8074d0c65da4943f24ca42e",
+  "author__WORK.md": "5fd5594d5cea4cb688b761723f22b12db4d120e45e77fceb73356cada8a91baf",
+  "cmake__native_game.cmake.git.gz": "73b28bf605202bf2197b94098303cef3cd968cdc82e7d18828089ad291d0d29f",
+  "cmake__native_game.cmake.raw.gz": "ed6394219f8d00660543f0f3a40b5731a1709f4183a8b68da806fe07ff0eea99",
+  "old_movie_gl_device.cpp.gz": "699cecf37040a81623326db7ccbce9228a3052769ef64e01cf07a952fb949dd6",
+  "REVIEW.md": "b853ecda19b9ff8b6c446d598a5a9e41d3fd55fe801ea23aeadcb3e4577a7bb6",
+  "runtime__include__mka__movie_gl_device.hpp.git.gz": "24c1bdad19c5dc284673b5f520e15b95786f13e7242556c73c6b3b0ac79c6ddc",
+  "runtime__include__mka__movie_gl_device.hpp.raw.gz": "e0baf30ca7641aedd7860df07797c32ef2f21594ff2aad1c811469c4f1b0aa58",
+  "runtime__include__mka__native_gl_texture.hpp.git.gz": "935434c269015e3cbc82930c306e700c35863bdafa5fadc1dec1099132c6db6f",
+  "runtime__include__mka__native_gl_texture.hpp.raw.gz": "6a1defba9d4462d7e9902294a343def513b2f6418392881c8931ba43e3f465b3",
+  "runtime__src__native__movie_gl_device.cpp.git.gz": "177092a644624a2e2b852a962b1837fff89484866a0f235803c7f4dcb1def2e9",
+  "runtime__src__native__movie_gl_device.cpp.raw.gz": "933dc5f4a8bc0062be587956a88cd738e1e5cb82fe6e53e35ad38e49da216d03",
+  "SOURCE_AUTHENTICATION.json": "65dadd02926ed017731595795b362398cfbfa451d459fb88d600d9d258c50e55",
+  "tests__test_native_gl_texture.cpp.git.gz": "576ee30d31f2f2bda521e96f0900dd3e37e4ce05c6c818445a9e728c8bc6dbd9",
+  "tests__test_native_gl_texture.cpp.raw.gz": "979bfcc44234d93d347c8cd2bfd8b3713b90d5b9c6bcad0122402f395346fd5a"
+}
