@@ -567,3 +567,17 @@ policy0 dispatch. Staging checks, commit and push run in one failure-propagating
 process; no failed gate can reach push. Postcommit authentication distinguishes
 the existing measured precommit build from its identical committed source,
 without describing it as a fresh-checkout rebuild or accepted game.
+
+Published runtime/service checkpointb9ce51a92daff5abe4517c970916a2914c256e2a
+to origin/main. All162 approved authored paths passed strict staged path/byte/
+LF/no-asset checks; all901 measured source blobs match the index and resulting
+commit exactly. SERVICE_COMMITTED_AUTHENTICATION.json links the published
+commit/tree to component/dispatch/source receipts and explicitly distinguishes
+authenticated precommit execution from a fresh-checkout rebuild. No assertion,
+decoder, original asset or user/device/model setting changed for publication.
+The earlier three passing clients and exact57-name diagnostic remain their
+original measurements. Next publish this committed-source receipt and parent
+live status; then the coding agent's next implementation is connected scene/
+frame/input/render work, Xbox first. Online stays deferred. Pending-play
+runtime coverage, native save/reload, oracle and full-game gates remain OPEN.
+Owner:no action. No background run is active.

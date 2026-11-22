@@ -1,0 +1,17 @@
+{
+  "status": "AUTHENTICATED_COMMITTED_SERVICE_SOURCE",
+  "runtime_source_commit": "b9ce51a92daff5abe4517c970916a2914c256e2a",
+  "runtime_tree": "2b7694965eb23f85a7bb091c012eb47e37135f52",
+  "origin_main_at_publication": "b9ce51a92daff5abe4517c970916a2914c256e2a",
+  "source_files": 901,
+  "all_measured_source_blobs_match_commit": true,
+  "source_manifest_sha256": "4664bbb7d9d4c089408af185970bc86bab76886280a1ff04ea940b2c6dd96107",
+  "component_authentication_sha256": "faadd249b185f2cb34e824bb8452c0b2cdba963fb754684585eea0cc409cf9d0",
+  "dispatch_sha256": "1aac61623a7de0eb1a8975ad08ed4b54914153e008eb91410ac5cd5cca9caff2",
+  "implementation_record_sha256": "4690c4351532f461c5d0385fcf3a5034d97a87ee1821633c5819442767ceb6fb",
+  "verification_scope": "precommit compiled/tested bytes authenticated exactly against clean committed sources; no redundant rerun",
+  "fresh_checkout_build": false,
+  "game_run": false,
+  "oracle_comparison": "OPEN",
+  "acceptance": "OPEN"
+}
