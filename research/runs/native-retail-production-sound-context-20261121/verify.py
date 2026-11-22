@@ -21,7 +21,7 @@ assert output.is_relative_to(record)
 output.mkdir(exist_ok=False)
 
 def git(*argv):
-    return subprocess.check_output(['git', *argv], cwd=fork, text=True).strip()
+    return subprocess.check_output(['git', '-c', 'core.longpaths=true', *argv], cwd=fork, text=True).strip()
 
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()

@@ -1,0 +1,7 @@
+{
+  "reason": "Raw-hash equality incorrectly included unchanged checkout LF/CRLF differences",
+  "changed_implementation_bytes": false,
+  "measured_records_rewritten": false,
+  "differing_unchanged_source_files": 201,
+  "component_results": "four clean clients passed separately"
+}

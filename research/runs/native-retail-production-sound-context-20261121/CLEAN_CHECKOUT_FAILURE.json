@@ -1,0 +1,10 @@
+{
+  "exit": 128,
+  "source_commit": "c0e5d1cf155c8f88660e2afba77179118f375ee6",
+  "phase": "git worktree add before configuration/build",
+  "representative_error": "Filename too long",
+  "attempted_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-production-context-20261121",
+  "partial_worktree_remains": false,
+  "game_run": false,
+  "physical_endpoints_opened": false
+}

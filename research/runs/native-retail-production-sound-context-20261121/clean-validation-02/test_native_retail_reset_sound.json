@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-context-21\\build-native\\test_native_retail_reset_sound.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-production-sound-context-20261121\\clean-validation-02\\negative-content"
+  ],
+  "exit": 0,
+  "stdout": "PASS_CONNECTED_RETAIL_RESET_SOUND; production bank binding/four real callbacks/wait release; unrelated game/context fixtures; no game/endpoint\n",
+  "stderr": "",
+  "seconds": 0.18338840000797063,
+  "source_commit": "c0e5d1cf155c8f88660e2afba77179118f375ee6",
+  "tracked_status": "",
+  "source_manifest_sha256": "83306faf40bf1c7d166bd23c168a978c3306c6f87ce34faa24def1f0bcd1ba39",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "d7534e864d5ca1c78a38c977d6afeb47e48c9e1c0967e3625aa9795ee5c87b65"
+}

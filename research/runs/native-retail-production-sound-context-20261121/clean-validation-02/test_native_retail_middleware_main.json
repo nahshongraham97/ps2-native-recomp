@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-clean-context-21\\build-native\\test_native_retail_middleware_main.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-production-sound-context-20261121\\clean-validation-02\\empty-content"
+  ],
+  "exit": 0,
+  "stdout": "PASS actual native middleware main pump, source completion order and real main control transfer; game open\n",
+  "stderr": "",
+  "seconds": 0.10626140001113527,
+  "source_commit": "c0e5d1cf155c8f88660e2afba77179118f375ee6",
+  "tracked_status": "",
+  "source_manifest_sha256": "83306faf40bf1c7d166bd23c168a978c3306c6f87ce34faa24def1f0bcd1ba39",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "563838fb4bf5da0fa50d8b7f60ad036cc886edb263674d117bd230792716e994"
+}
