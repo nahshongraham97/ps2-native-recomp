@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "C:\\Python315\\python.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-renderer-input-dependencies-20261122\\verify.py",
+    "--checkout",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-deps-22",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-deps-22\\build-native",
+    "--output",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-renderer-input-dependencies-20261122\\clean-validation-01"
+  ],
+  "exit": 0,
+  "stdout": "build 0\ntest_native_retail_renderer_allocator-symbols 0\ntest_native_retail_input_admission-symbols 0\nsound-symbols 0\ntest_native_retail_renderer_allocator 0\ntest_native_retail_memory_owners 0\ntest_native_retail_camera_bootstrap 0\ntest_native_retail_main_frame_gates 0\ntest_native_retail_input_admission 0\ntest_native_retail_input_poll 0\ntest_native_retail_input_selection 0\ntest_native_retail_input_assignments 0\ntest_native_retail_task_domain 0\ntest_native_retail_sound_context 0\ntest_native_retail_initial_reset 0\nfull-entry-negative 1\nPASS_NATIVE_RENDERER_ALLOCATOR_INPUT_ADMISSION_DEPENDENCIES 11 affected clients; exact34 required effects with complete renderer-suffix substitution\n",
+  "stderr": "",
+  "seconds": 82.68015569999989,
+  "source_commit": "44d3d02bb205fad839634ffcfedcd9db5b943b15",
+  "clean_checkout": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-deps-22",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

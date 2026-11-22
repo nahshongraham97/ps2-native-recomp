@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-deps-22\\build-native\\test_native_retail_task_domain.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.03809750000073109,
+  "source_commit": "44d3d02bb205fad839634ffcfedcd9db5b943b15",
+  "tracked_status": "",
+  "source_manifest_sha256": "59f9d542b99d47f802e54205913bfcb33cac371e8564230e0ef354017964ac1a",
+  "executable_sha256": "479c25c78fc94b7c4fa50d7537bf83f8505f0baf9820ff5d9f3d120aac20bbd0",
+  "log_sha256": "5c3cf05ac3e2cde66ad019a62c0dc26a0757eb92f6d133be2219adb68767a677",
+  "compressed_log_sha256": "e832767d7edf6dd7533bc01c8f22b125828b413392565371e88d86089baa0700",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-deps-22\\build-native\\test_native_retail_input_assignments.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.03747009999642614,
+  "source_commit": "44d3d02bb205fad839634ffcfedcd9db5b943b15",
+  "tracked_status": "",
+  "source_manifest_sha256": "59f9d542b99d47f802e54205913bfcb33cac371e8564230e0ef354017964ac1a",
+  "executable_sha256": "f02239bfb092366e815e4a57d5cfdd4dc51c48ad3e65a63617cc1da93be57cbf",
+  "log_sha256": "c7efc0b2c224258d27481666fc1eed2d3127362fd97e40ce4c8ac824a172d7d6",
+  "compressed_log_sha256": "8fbfcc649ba4fe99dd701eefbc29b47a94d71ab534a65943211a585c39546b1f",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

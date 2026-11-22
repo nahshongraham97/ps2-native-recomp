@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-deps-22\\build-native\\test_native_retail_memory_owners.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.03740089999337215,
+  "source_commit": "44d3d02bb205fad839634ffcfedcd9db5b943b15",
+  "tracked_status": "",
+  "source_manifest_sha256": "59f9d542b99d47f802e54205913bfcb33cac371e8564230e0ef354017964ac1a",
+  "executable_sha256": "25e7f8a5291deebadd99b437c628bace3f12c07a6df74557a905d04acf78831f",
+  "log_sha256": "f2fb596daea386112506300240356bcf3426c25fb9da1188d6b1cea35a05650e",
+  "compressed_log_sha256": "e8f8a06f44ad3a22cd3ef13771e6a3def11f31c8ecb963663823bc097c405b03",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

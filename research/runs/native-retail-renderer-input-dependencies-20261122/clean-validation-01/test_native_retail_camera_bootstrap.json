@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-deps-22\\build-native\\test_native_retail_camera_bootstrap.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-renderer-input-dependencies-20261122\\clean-validation-01\\empty-content"
+  ],
+  "exit": 0,
+  "seconds": 0.10962769998877775,
+  "source_commit": "44d3d02bb205fad839634ffcfedcd9db5b943b15",
+  "tracked_status": "",
+  "source_manifest_sha256": "59f9d542b99d47f802e54205913bfcb33cac371e8564230e0ef354017964ac1a",
+  "executable_sha256": "f63d3299624e178cfcd75a50ca28222791581aa19c443ee7657b98eda7d77969",
+  "log_sha256": "7cdff27996386f491793ea2dfe0b556b123d9985f17fe0895f35c68727bf432b",
+  "compressed_log_sha256": "f966ec2637283c96c7d4fb8f4308bbc944f8d49489a94091ab592a1b60ba04a8",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

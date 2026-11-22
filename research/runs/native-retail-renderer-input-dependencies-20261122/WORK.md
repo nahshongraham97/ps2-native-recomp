@@ -68,3 +68,15 @@ clients, native symbol/abort guards, immutable original assets and exact34
 negative link. This is a fresh recorded check, not a hash rewrite of01.
 Next scoped source publication and clean checkout; unchanged runtime binaries
 and test outcomes are preserved with both source manifests.
+
+Clean published source44d3d02bb205fad839634ffcfedcd9db5b943b15 passes all11
+affected clients again in clean-validation-01, with exact34 required names.
+All852 committed source blobs authenticate;13 authored files are byte-identical
+between canonical/clean,199 existing raw newline pairs retained. Frozen raw
+candidate evidence is staged byte-exactly, including CRLF; no new signature,
+source behavior or test expectation was weakened. Original MS2/MS4 hashes
+remain unchanged. No game/window/physical input/audio/output/capture/oracle
+run. This completes allocator/admission dependency components at stated scope,
+not renderer/poll/full-game acceptance. Owner: no action. Primary next: review
+and port remaining real reset effects; delegates continue actual renderer core
+services and retained native dynamic gain/pan history required by game pause.

@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-deps-22\\build-native\\test_native_retail_input_poll.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.046695199998794124,
+  "source_commit": "44d3d02bb205fad839634ffcfedcd9db5b943b15",
+  "tracked_status": "",
+  "source_manifest_sha256": "59f9d542b99d47f802e54205913bfcb33cac371e8564230e0ef354017964ac1a",
+  "executable_sha256": "0ca096bef0a5b506d021b2f041585916a19b69335cb727d2249b5ed2081ddcbb",
+  "log_sha256": "ba7d6f71f91d907e574ca6e42882d30802dc44e1ebe0627e8fbe767e5939af32",
+  "compressed_log_sha256": "b5b149d6d032c359c3853c8bf74b8ca763cb95db55e3a0088150f8f2fe8e316a",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}
