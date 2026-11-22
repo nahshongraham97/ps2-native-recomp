@@ -38,6 +38,25 @@ bool required_result(bool ok, StartupFailure& failure, const char* operation) {
 }
 }
 
+namespace current_sound_required {
+bool prepare_game_sound_state_12d7e0(NativeRetailMainState& main, StartupFailure& failure) {
+    if (!owner(main, failure, false)) return false;
+    // This prefix runs once before316320. Existing native references must
+    // never be discarded by translating the original memset literally.
+    if (main.current_sound_phase != RetailCurrentSoundPhase::empty ||
+        main.game_sound_state_prepared || !main.game_sound_references.empty() ||
+        main.sound_bank_catalog || main.playback || main.current_sound) {
+        failure.kind = StartupError::sound_catalog;
+        failure.operation = "12D7E0 game sound-state preparation requires a fresh owner";
+        return false;
+    }
+    main.game_sound_references.clear();
+    main.sound_auxiliary_word = 0;
+    main.game_sound_state_prepared = true;
+    return true;
+}
+}
+
 namespace main_binding {
 bool initialize_retail_current_sound(NativeRetailMainState& main, StartupFailure& failure) {
     if (!owner(main, failure, false)) return false;
@@ -53,8 +72,8 @@ bool initialize_retail_current_sound(NativeRetailMainState& main, StartupFailure
         return false;
     }
     if (main.current_sound_phase == RetailCurrentSoundPhase::empty) {
-        // Original12D7E0 clears game state before316320 opens its archive.
-        // These unported game effects remain a strong required child.
+        // Actual native game-reference/auxiliary clear precedes the archive
+        // and still-required playback/context factory, matching12D7E0.
         if (!required_result(current_sound_required::prepare_game_sound_state_12d7e0(main, failure),
                 failure, "12D7E0 required game sound-state preparation")) {
             main.current_sound_phase = RetailCurrentSoundPhase::failed;

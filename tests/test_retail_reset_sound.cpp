@@ -18,7 +18,7 @@ using namespace mka::retail;
 namespace sound = mka::sound;
 namespace {
 void check(bool value, const char* reason) { if (!value) throw std::runtime_error(reason); }
-struct Fixture { std::vector<unsigned> effects; unsigned prepared{}, context{}, frames{}; bool refuse_context{}; };
+struct Fixture { std::vector<unsigned> effects; unsigned context{}, frames{}; bool refuse_context{}; };
 Fixture* fixture{};
 void install(NativeRetailMainState& main) {
     StartupFailure failure;
@@ -93,12 +93,13 @@ bool configure_selected_resource_zero_16fc70(NativeRetailMainState&, StartupFail
     fixture->effects.push_back(16); return true;
 }
 }
-// These three effects remain unresolved in production. This fixture supplies
+// These two effects remain unresolved in production. This fixture supplies
 // an actual native empty playback context at explicit test rate/role count;
 // it does not establish their original retail configuration/game semantics.
 namespace mka::retail::current_sound_required {
-bool prepare_game_sound_state_12d7e0(NativeRetailMainState&, StartupFailure&) { ++fixture->prepared; return true; }
 bool create_playback_context_316320(NativeRetailMainState& main, sound::AudioBankSession&& session, StartupFailure&) {
+    check(main.game_sound_state_prepared && main.game_sound_references.empty() && main.sound_auxiliary_word == 0,
+        "source12D7E0 game clears are visible before the context factory");
     ++fixture->context;
     if (fixture->refuse_context) return false;
     sound::AudioProtocolFailure protocol_failure;
@@ -146,15 +147,37 @@ int main(int argc, char** argv) try {
     check(initialize_native_retail_game_session(startup, failure), "actual persistent game Session");
     check(initialize_native_retail_crt(startup, failure) && finalize_native_retail_pre_main(startup, failure), "actual native CRT owner");
     mka::input::ControllerInput samples;
+    {
+        NativeRetailMainState guarded(startup, samples);
+        guarded.sound_auxiliary_word = 0xaabbccddu;
+        guarded.game_sound_references.push_back({});
+        check(!current_sound_required::prepare_game_sound_state_12d7e0(guarded, failure) &&
+            guarded.game_sound_references.size() == 1 && !guarded.game_sound_state_prepared &&
+            guarded.sound_auxiliary_word == 0xaabbccddu,
+            "unexpected existing references are refused before native state is erased");
+        guarded.game_sound_references.clear(); // Explicitly retire test-only default records.
+        bool foreign_refused = false;
+        std::thread foreign([&] { StartupFailure f;
+            foreign_refused = !current_sound_required::prepare_game_sound_state_12d7e0(guarded, f) &&
+                f.sound_catalog.kind == RetailSoundCatalogError::wrong_owner;
+        });
+        foreign.join();
+        check(foreign_refused && !guarded.game_sound_state_prepared && guarded.sound_auxiliary_word == 0xaabbccddu,
+            "foreign-thread preparation cannot change game fields");
+    }
     NativeRetailMainState main(startup, samples);
+    main.sound_auxiliary_word = 0xffffffffu;
     Fixture ordinary; fixture = &ordinary;
     check(!initial_reset_required::request_mode_one_banks_12a4f0(main, failure) &&
         !initial_reset_required::banks_pending_12abd0(main, failure), "uninitialized sound owner cannot report ready");
     install(main);
     check(main_binding::construct_retail_middleware_work_group(main, failure) &&
         main_binding::initialize_retail_middleware_files(main, failure), "actual native Main file initialization");
-    check(main_binding::initialize_retail_current_sound(main, failure) && ordinary.prepared == 1 && ordinary.context == 1 &&
+    check(main_binding::initialize_retail_current_sound(main, failure) && main.game_sound_state_prepared && ordinary.context == 1 &&
         main.sound_bank_catalog && main.current_sound_phase == RetailCurrentSoundPhase::ready, "production current-sound file/catalog path");
+    check(!current_sound_required::prepare_game_sound_state_12d7e0(main, failure) &&
+        main.current_sound_phase == RetailCurrentSoundPhase::ready && main.sound_auxiliary_word == 0,
+        "repeated preparation cannot erase an initialized sound owner");
     RetailSoundCatalogFailure catalog_failure;
     auto shared_session = main.sound_bank_catalog->share_bank_session(catalog_failure);
     check(shared_session && shared_session->resource_domain() == main.playback->resource_domain(), "catalog and playback retain same native resource domain");
@@ -228,6 +251,8 @@ int main(int argc, char** argv) try {
         Fixture reject; fixture = &reject; reject.refuse_context = true;
         check(!main_binding::initialize_retail_current_sound(rejected, failure) &&
             rejected.current_sound_phase == RetailCurrentSoundPhase::failed &&
+            rejected.game_sound_state_prepared && rejected.game_sound_references.empty() &&
+            rejected.sound_auxiliary_word == 0 &&
             !initial_reset_required::banks_pending_12abd0(rejected, failure),
             "unimplemented/failed required context cannot turn file-open into ready success");
     }

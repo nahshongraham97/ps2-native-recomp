@@ -12,6 +12,10 @@ NativeRetailMainState::NativeRetailMainState(NativeRetailStartupState& owner,
     : lifetime(std::make_shared<NativeRetailMainLifetime>()),
       startup(owner), controller_samples(samples) {}
 NativeRetailMainState::~NativeRetailMainState() {
+    if (!game_sound_references.empty()) {
+        std::fputs("native retail sound teardown requires game-reference retirement\n", stderr);
+        std::terminate();
+    }
     if (sound_bank_catalog) {
         if (playback && current_sound) {
             sound::PlaybackFailure playback_failure;

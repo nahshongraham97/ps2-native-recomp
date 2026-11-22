@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "git",
+    "push",
+    "origin",
+    "main"
+  ],
+  "exit": 128,
+  "stdout": "",
+  "stderr": "fatal: unable to access 'https://github.com/nahshongraham97/ps2-native-recomp.git/': Could not resolve host: github.com\n",
+  "head": "163b4eb602c893161248e0c9c276a2b2b3329cb2"
+}

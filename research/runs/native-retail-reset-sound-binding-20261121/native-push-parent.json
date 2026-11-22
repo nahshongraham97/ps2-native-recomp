@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "git",
+    "push",
+    "origin",
+    "main"
+  ],
+  "exit": 128,
+  "stdout": "",
+  "stderr": "fatal: unable to access 'https://github.com/nahshongraham97/armageddon-reimplementation.git/': Could not resolve host: github.com\n",
+  "head": "5b47d4845213783d4c017643f73a0470785f17c6"
+}

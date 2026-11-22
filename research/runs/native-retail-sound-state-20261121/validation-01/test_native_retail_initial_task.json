@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build_native_services_only_20261119-01\\test_native_retail_initial_task.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-sound-state-20261121\\validation-01\\empty-content"
+  ],
+  "exit": 0,
+  "stdout": "PASS native initial task parent and menu continuation; test-only child effects, full Main/game open\n",
+  "stderr": "",
+  "seconds": 0.09020500000042375,
+  "source_commit": "337c0a0ea5ba31b754788672dfe6576d41a24742",
+  "source_sha256": {
+    "runtime/include/mka/retail_main.hpp": "443c967ad4b95f9cbeab87d66b680e45218e15f66181d14aba0eb5f23f02a67d",
+    "runtime/include/mka/retail_current_sound_required.hpp": "d063766d726c01ab2a16f90976ec2273fe4454c207be86f857ec094dd5a36769",
+    "runtime/src/native/retail_main_state.cpp": "d4eef474c3efb60f40bff323aa8523f186bd09506929845a54c9e67b20b9f3f4",
+    "runtime/src/native/retail_sound_bank_main.cpp": "267a99ea3477bc8e37c40a069ffbba82bbb8ff4195fbde1701a6f52351545a6d",
+    "tests/test_retail_reset_sound.cpp": "6a22f62661f055913c88d9a095da5a10c317200330a654ea3cae82b0d6f3cf25"
+  },
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "7eaf931115dc0c8eb8526efe17603a435e8173ee12ae25997d479619db07fc26"
+}

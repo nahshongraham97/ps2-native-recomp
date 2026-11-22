@@ -1,0 +1,43 @@
+{
+  "repository": "nahshongraham97/ps2-native-recomp",
+  "remote_commit": {
+    "sha": "337c0a0ea5ba31b754788672dfe6576d41a24742",
+    "node_id": "C_kwDOVceSb9oAKDMzN2MwYTBlYTViYTMxYjc1NDc4ODY3MmRmZTY1NzZkNDFhMjQ3NDI",
+    "url": "https://api.github.com/repos/nahshongraham97/ps2-native-recomp/git/commits/337c0a0ea5ba31b754788672dfe6576d41a24742",
+    "html_url": "https://github.com/nahshongraham97/ps2-native-recomp/commit/337c0a0ea5ba31b754788672dfe6576d41a24742",
+    "author": {
+      "name": "nahshongraham97",
+      "email": "nahshongraham97@gmail.com",
+      "date": "2026-11-22T00:44:27Z"
+    },
+    "committer": {
+      "name": "nahshongraham97",
+      "email": "nahshongraham97@gmail.com",
+      "date": "2026-11-22T00:44:27Z"
+    },
+    "tree": {
+      "sha": "757b5d18fbce666a932bba2eccc0bb50c78dabe3",
+      "url": "https://api.github.com/repos/nahshongraham97/ps2-native-recomp/git/trees/757b5d18fbce666a932bba2eccc0bb50c78dabe3"
+    },
+    "message": "Bind and verify production native reset bank ownership, callbacks and pending wait",
+    "parents": [
+      {
+        "sha": "dfaebb19ddc2a6dbcecce3ab12b2933a4a76db8f",
+        "url": "https://api.github.com/repos/nahshongraham97/ps2-native-recomp/git/commits/dfaebb19ddc2a6dbcecce3ab12b2933a4a76db8f",
+        "html_url": "https://github.com/nahshongraham97/ps2-native-recomp/commit/dfaebb19ddc2a6dbcecce3ab12b2933a4a76db8f"
+      }
+    ],
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "same_tree": "757b5d18fbce666a932bba2eccc0bb50c78dabe3",
+  "original_authored_commit": "163b4eb602c893161248e0c9c276a2b2b3329cb2",
+  "clean_build_source_commit": "646e20365417e1620400dc956112d646d27094dc",
+  "local_remote_same_tree": true,
+  "transport": "Connected GitHub Git database API; native git push DNS unavailable"
+}

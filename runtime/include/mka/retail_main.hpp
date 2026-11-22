@@ -18,6 +18,7 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <vector>
 
 namespace mka::retail {
 struct NativeRetailStartupState;
@@ -61,6 +62,14 @@ struct RetailFrameRole {
 struct RetailActionRowObservation {
     RetailActionBinding action;
     std::uint32_t rising;
+};
+
+// Original12C030/12C300 game references; native handles replace serialized
+// playback/bank words. The identifier is game data, not a host address/token.
+struct NativeRetailGameSoundReference {
+    sound::NativePlayHandle playback;
+    sound::AudioBankHandle bank;
+    std::uint32_t sound_identifier{};
 };
 
 // 281E00 installs these rows as defaults. A live role can use a different
@@ -119,6 +128,10 @@ struct NativeRetailMainState {
     std::shared_ptr<NativeRetailSoundBankCatalog> sound_bank_catalog;
     RetailCurrentSoundPhase current_sound_phase{RetailCurrentSoundPhase::empty};
     std::uint32_t sound_frame_counter{};
+    // size() replaces the source list count; no original16-entry capacity.
+    std::vector<NativeRetailGameSoundReference> game_sound_references;
+    std::uint32_t sound_auxiliary_word{}; // only the12D7E0 clear is established
+    bool game_sound_state_prepared{};
 
     std::array<float, 3> timing_factors{};
     float milliseconds_per_frame{};
