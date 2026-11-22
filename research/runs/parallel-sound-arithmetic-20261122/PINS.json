@@ -1,0 +1,19 @@
+{
+  "base": "4e73d4d09d8d9aee7cc4a9ee8d0eb6cd2ba97643",
+  "pins": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\.agents\\skills\\ps2-recomp\\resources\\pdfs\\EE_Core_Users_Manual.pdf": "0ad766eb827157fad19aa579fd9df54f2ca312211e7f0dbdb4b723992b566ce3",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\.agents\\skills\\ps2-recomp\\resources\\pdfs\\EE_Core_Instruction_Set_Manual.pdf": "104205afc6f5a5071168d8bf693a6c8b4db9a02e1aa66eb51a828e8951f5c069",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\SLUS_214.10": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+    "research\\runs\\parallel-sound-parameters-source-20261122\\source-01\\0012c030.asm": "f6175cbe91286a1d8ce389d4135b03ff697e5f70c9a9271253fc7dfe0101019c",
+    "research\\runs\\parallel-sound-parameters-source-20261122\\source-01\\0012c440.asm": "61fc8a6d235f85fb21d89680b9515bb6baa4e1fb94e21aa66700695762775243",
+    "research\\runs\\parallel-sound-parameters-source-20261122\\source-01\\00315c70.asm": "79f5a9b9f795e245ab962534bd5dd69c33c41f23edf0c975c656bc68a73eff9b",
+    "research\\runs\\parallel-sound-parameters-source-20261122\\xbox-source-02\\0023bee0.asm": "7f8912f8bd0762ffa5f129330c313d742b2ea8f6e698d930d7cc4b1b6a9d1a69",
+    "research\\runs\\parallel-sound-parameters-source-20261122\\xbox-source-01\\0023b9c0.asm": "ceec839aaf111d9b9cbc4f435da061c56920e80acf47f20de9f532f88a535bc1",
+    "runtime/src/native/retail_sound_metadata.cpp": "6f686e16e1d86fc6c2049b9189d55c93e606df69488d2dddec59a462eae6ac5b",
+    "runtime/src/native/retail_sound_metadata_data.inc": "4bc976582911575e0f9f73fa14a9a6638014ad3aab56620964759b715cbe585b",
+    "runtime/src/native/audio_controls.cpp": "3e23ffc99c78df57a118dc5686018a131cf0c2a64c1bce946193d5c5cc45ba43",
+    "runtime/src/native/retail_sound_status_main.cpp": "4888ffdfc3a7b5f237ae56a0aa1794e8900bfb9a06a889403b389bd47afab2da"
+  },
+  "source_word_join": "three complete PS2 saved spans directly matched pinned original ELF; no new disassembler",
+  "xbox_limit": "reuse original source record; x87 listing corroboration only"
+}

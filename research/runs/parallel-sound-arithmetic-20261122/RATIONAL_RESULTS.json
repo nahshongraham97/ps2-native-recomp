@@ -1,0 +1,28 @@
+{
+  "input_volume_bits": "0x39034835",
+  "sound_index": 0,
+  "packed_word": "0x06fc8000",
+  "category_scalar_bits": "0x3f266666",
+  "live_gain_bits": "0x3f400000",
+  "rne": {
+    "stages": [
+      "0x3f800000",
+      "0x39034835",
+      "0x38aaaaab",
+      "0x38800000"
+    ],
+    "q14": 1,
+    "last_exact_value": "1/16384"
+  },
+  "rtz": {
+    "stages": [
+      "0x3f800000",
+      "0x39034835",
+      "0x38aaaaaa",
+      "0x387fffff"
+    ],
+    "q14": 0,
+    "last_exact_value": "16777215/274877906944"
+  },
+  "limit": "Exact rational comparison of two IEEE mathematical choices only; neither establishes EE hardware result."
+}

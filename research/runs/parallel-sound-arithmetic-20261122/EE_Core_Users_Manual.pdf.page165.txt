@@ -1,0 +1,61 @@
+SCE CONFIDENTIAL                                                                                      EE Core User's Manual Version 6.0 
+ 
+ 
+© SCEI 
+-165- 
+8.8. IEEE 754 Compatibility 
+The FPU is not compatible with the IEEE 754 Floating-Point standard. Only single-precision operations are 
+supported. Overflow and Underflow are detected only for overflow or underflow of the exponent. While the 
+IEEE standard recommends trapping a computational exception, in the FPU, processing continues by just 
+setting a flag. Since these flags can be sampled on an instruction by instruction basis, emulating this trap is 
+possible if necessary. 
+In addition, the following shows the differences from the IEEE 754 specification. When computational results 
+are different, refer to Table 8-6. 
+• NaN (Not a Number), +∞, -∞ and denormalized numbers are not supported. 
+• The FPU does not use the Guard, Round and Sticky bits during computations. The computed result usually 
+differs from IEEE 754 only in the least-significant bit. For saturating instructions, bits other than the least-
+significant bit can be different. 
+• Only "Rounding towards 0" is supported and "Rounding towards Nearest", "Rounding towards +/-∞" are 
+not supported. The result of "Rounding towards 0" can differ from IEEE 754 in the least significant bit.   
+• IEEE 754-defined exceptions are not fully supported. In particular, Invalid Operation exceptions due to 
+NaN, +/-∞ and Inexact exceptions are not supported.  
+ 
+Operation IEEE 754 FPU 
+0/0 Result is a "NaN". 
+Invalid Operation exception is 
+taken. 
+Result is +Fmax or -Fmax. 
+I bit (SI bit) is set. 
+Sqrt  
+(negative number) 
+Result is a "NaN". 
+Invalid Operation exception is 
+taken. 
+Result is Sqrt (|x|). 
+I bit (SI bit) is set. 
+Division by zero Result is +∞ or -∞ 
+Division by Zero exception is 
+taken 
+Result is +Fmax or -Fmax. 
+D bit (SD bit) is set. 
+Exponent overflow Result is +∞, -∞,+Fmax or -Fmax 
+(determined by the rounding 
+mode) 
+Overflow exception is taken 
+Result is +Fmax or -Fmax. 
+O bit (SO bit) is set. 
+Exponent 
+underflow 
+Result is Denormalized value. 
+Underflow exception is taken 
+Result is +0 or -0. 
+U bit (SU bit) is set. 
+Conversion of 
+Floating-point to 
+Integer Overflow 
+Result is not defined. 
+Invalid Operation exception is 
+taken. 
+Result is 231-1 or -231 
+I bit (SI bit) is set. 
+Table 8-6 Differences of the Computational Results between IEEE 754 and FPU 

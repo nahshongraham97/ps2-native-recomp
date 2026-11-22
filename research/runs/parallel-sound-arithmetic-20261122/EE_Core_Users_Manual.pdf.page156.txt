@@ -1,0 +1,45 @@
+SCE CONFIDENTIAL                                                                                      EE Core User's Manual Version 6.0 
+ 
+ 
+© SCEI 
+-156- 
+8.1. Data Formats 
+8.1.1. Floating-Point Format 
+The FPU only supports 32-bit single-precision for floating-point numbers. The numeric value format is based 
+on the IEEE754 standard, and has a 24-bit signed fraction and an 8-bit exponent. 
+31 30 23 22 0 
+s 
+Sign 
+e 
+Exponent 
+f 
+Fraction 
+1 8 23 
+ 
+Specification  
+Size (Width) 32 bits 
+Exponent 8 bits 
+Integer bit hidden 
+Fraction 24 bits 
+Emax 
+(Maximum Exponent) 
++128 
+Emin 
+(Minimum Exponent) 
+-126 
+Biased Exponent +127 
+Figure 8-1 Single-Precision Floating-Point Format 
+The true exponent E is calculated by subtracting the biased value from the exponent e. The range of E can be 
+every integer value between Emin and Emax. The value of a single-precision floating-point number is shown 
+below. 
+IF 0 < e <=255,  then(-1) s•2e-127(1.f) 
+IF e = 0,  then(-1) s•0 
+Note that FPU does not support denormalized numbers, plus and minus infinities, and NaN (Not a Number) as 
+defined in IEEE754. 
+8.1.2. Fixed-Point Format 
+Fixed-point values are in 2's complement format, shown in Figure 8-2, and unsigned fixed-point values are not 
+directly supported. 
+31  0 
+Fixed-point (2's complement) 
+ 32 
+Figure 8-2 Fixed-Point Format 

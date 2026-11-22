@@ -1,0 +1,40 @@
+SCE CONFIDENTIAL                                                                         EE Core Instruction Set Manual Version 6.0 
+ 
+ 
+' SCEI 
+-356- 
+CVT.W.S : Floating Point Convert to Word Fixed-point 
+MIPS I 
+To convert a 32-bit signed integer to a single-precision fixed-point value. 
+Operation Code 
+31 26 25 21 20 16 15 11 10 6 5 0 
+COP1 
+010001 
+S 
+10000 
+0 
+00000 
+fs 
+ 
+fd 
+ 
+CVTW 
+100100 
+6 5 5 5 5 6 
+Format 
+CVT.W.S  fd, fs 
+Description 
+FPR[fd] ← convert_and_round(FPR[fs]) 
+Converts the value of FPR[fs] to a 32-bit signed integer considered to be a single-precision floating-point 
+value with rounding toward 0, and stores it in FPR[fd].  If the biased exponent of FPR[fs] exceeds 0x9d, 
+clamping is performed. 
+Exceptions 
+Coprocessor unusable 
+Operation 
+if (FPR[fs]30..23 <= 0x9d) then 
+ FPR[fd] ← convert(FPR[fs], W) 
+else if (FPR[fs]31 = 0) then 
+ FPR[fd] ← 0x7FFFFFFF 
+else 
+ FPR[fd] ← 0x80000000 
+endif 

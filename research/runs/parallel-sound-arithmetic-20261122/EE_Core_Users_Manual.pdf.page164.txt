@@ -1,0 +1,14 @@
+SCE CONFIDENTIAL                                                                                      EE Core User's Manual Version 6.0 
+ 
+ 
+© SCEI 
+-164- 
+8.7. Rounding 
+The FPU only supports "Rounding towards 0". "Rounding towards Nearest" and  "Rounding towards +/- 
+infinities" as defined by IEEE 754 are not supported. 
+Since "Rounding towards Nearest" is not supported, the FPU does not use the Guard, Round and Sticky bits 
+during rounding. Also, since "Rounding toward 0" does not require full value prior to rounding, unlike the 
+definition of IEEE 754, the results may differ from the IEEE 754 Rounding to 0. This difference is usually 
+restricted to the least significant bit only. 
+Since the rounding mode is not programmable in this FPU, the two least significant bits of the Control and 
+Status registers (FCR31) are hardwired to "01". 
