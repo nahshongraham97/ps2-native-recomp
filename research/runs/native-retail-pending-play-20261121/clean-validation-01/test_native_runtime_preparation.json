@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-pending-21\\build-native\\test_native_runtime_preparation.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\SLUS_214.10.Mortal_Kombat_Armageddon\\sndsps2\\mslasset.ms2"
+  ],
+  "exit": 0,
+  "stdout": "PASS_NATIVE_RUNTIME_PREPARATION: 5 actual bank runtime ownership cases; no callback/clone/output/voice/fidelity claim\n",
+  "stderr": "",
+  "seconds": 0.08921130000089761,
+  "source_commit": "b803318edf003f8056efcc5b9be6a2959914ef75",
+  "tracked_status": "",
+  "source_manifest_sha256": "d6325dda269d182a005169814316219686a2f5a08679948818680f3ce46d786a",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": [],
+  "executable_sha256": "db7e8a4bf5f4b8133d186675b6a8e7da428500e5c706d3d7a36c7b57ed8e4a35"
+}

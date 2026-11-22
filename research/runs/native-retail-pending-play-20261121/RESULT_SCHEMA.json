@@ -1,0 +1,10 @@
+{
+  "producer": "verify.py",
+  "status": "PASS_NATIVE_RETAIL_PENDING_PLAY_COMPONENTS",
+  "clients_type": "list[{name:str,sha256:str}]",
+  "remaining_undefined_symbols_type": "list[str]",
+  "clients": 24,
+  "required_effects": 37,
+  "game_run": false,
+  "physical_endpoints_opened": false
+}
