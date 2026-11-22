@@ -257,6 +257,7 @@ if(WIN32)
         runtime/src/native/retail_main_input_observation.cpp
         runtime/src/native/retail_participants.cpp
         runtime/src/native/retail_input_assignments.cpp runtime/src/native/retail_input_poll.cpp
+    runtime/src/native/retail_input_admission.cpp
         runtime/src/native/retail_input_selection.cpp)
     target_include_directories(mka_native_retail_startup PUBLIC "${_startup_dir}" runtime/include)
     target_link_libraries(mka_native_retail_startup PUBLIC mka_native_retail_sound_runtime mka_native_content_volume mka_native_retail_memory_owners
@@ -492,3 +493,6 @@ add_library(mka_native_indexed_sprite_data STATIC EXCLUDE_FROM_ALL runtime/src/n
 target_link_libraries(mka_native_indexed_sprite_data PUBLIC mka_native_art_section_data)
 add_executable(test_native_indexed_sprite_data EXCLUDE_FROM_ALL tests/test_indexed_sprite_data.cpp)
 target_link_libraries(test_native_indexed_sprite_data PRIVATE mka_native_indexed_sprite_data)
+
+add_executable(test_native_retail_input_admission EXCLUDE_FROM_ALL tests/test_retail_input_admission.cpp)
+target_link_libraries(test_native_retail_input_admission PRIVATE mka_native_retail_startup)

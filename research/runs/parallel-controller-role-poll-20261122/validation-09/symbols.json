@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-C",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-input-poll\\build-input-poll\\test_native_retail_input_admission.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.03841757774353027,
+  "tool_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "log_sha256": "2ad33701f8cf324132ba2c7ab1ca5796c1fdc531182f16a7fa89168d4ab906eb"
+}

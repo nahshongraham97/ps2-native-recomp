@@ -1,0 +1,117 @@
+{
+  "elf": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\SLUS_214.10",
+  "sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "language": "SLUS_214.10\nr5900:LE:32:default\na2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "functions": {
+    "002214d0.tsv": {
+      "begin": "0x2214d0",
+      "end_exclusive": "0x2217bc",
+      "words": 187,
+      "sha256": "4d5284f4a1da15e3b85faae07917d15f55d0be1ba4e3026b7fdd425e665dd350",
+      "undecoded_zero_padding": [
+        {
+          "va": "00221534",
+          "prior": [
+            [
+              2233644,
+              "98000010",
+              "b 0x00221790"
+            ],
+            [
+              2233648,
+              "00000000",
+              "_nop"
+            ]
+          ]
+        },
+        {
+          "va": "0022156c",
+          "prior": [
+            [
+              2233700,
+              "8a000010",
+              "b 0x00221790"
+            ],
+            [
+              2233704,
+              "000023ae",
+              "_sw v1,0x0(s1)"
+            ]
+          ]
+        }
+      ]
+    },
+    "002217c0.tsv": {
+      "begin": "0x2217c0",
+      "end_exclusive": "0x2218d0",
+      "words": 68,
+      "sha256": "d02b607b6f3b753aaa5ecdbcf6d1faa7183a7577306452503bd27df8a7288ff2",
+      "undecoded_zero_padding": []
+    },
+    "00221e00.tsv": {
+      "begin": "0x221e00",
+      "end_exclusive": "0x221fe0",
+      "words": 120,
+      "sha256": "cef018499bc48e71b2c7d2e895296d7f9602e4d71a305d1b9848d52db194547a",
+      "undecoded_zero_padding": []
+    },
+    "00280890.tsv": {
+      "begin": "0x280890",
+      "end_exclusive": "0x2809ac",
+      "words": 71,
+      "sha256": "7229ed1372aa06c610f7d821ac3e2da40a6c28839d67195f2ab41288eeae9c14",
+      "undecoded_zero_padding": []
+    },
+    "00280bc0.tsv": {
+      "begin": "0x280bc0",
+      "end_exclusive": "0x280c4c",
+      "words": 35,
+      "sha256": "e1a6984108e08515053c113e88c19cbc02e7af7837705b494d0ebc176a83200a",
+      "undecoded_zero_padding": []
+    },
+    "00280c50.tsv": {
+      "begin": "0x280c50",
+      "end_exclusive": "0x280f88",
+      "words": 206,
+      "sha256": "f08c181b567e9a675c505c276b1943644fad477e0854dde302c6aceee9e9c607",
+      "undecoded_zero_padding": []
+    },
+    "00281b80.tsv": {
+      "begin": "0x281b80",
+      "end_exclusive": "0x281be4",
+      "words": 25,
+      "sha256": "ddb499caf937407de984bb674733c55b2a7dcbfe5d2e114a9799172fa71d78a3",
+      "undecoded_zero_padding": []
+    }
+  },
+  "calls": {
+    "0x2214d0": [
+      "0x122a08",
+      "0x152938",
+      "0x18e028",
+      "0x18e098",
+      "0x33b948"
+    ],
+    "0x280c50": [
+      "0x18b3a8",
+      "0x18b3b0",
+      "0x18b958",
+      "0x221618",
+      "0x2216d8",
+      "0x34260c",
+      "0x44e4a8",
+      "0x4f6808",
+      "0x52be4c"
+    ],
+    "0x2217c0": [
+      "0x221538"
+    ],
+    "0x280890": [
+      "0x221874",
+      "0x22188c",
+      "0x2809fc",
+      "0x280a48"
+    ]
+  },
+  "limits": "Direct JAL census in original executable ELF sections only; no exclusion of indirect/overlay callers. Native admission offers only physical0/1 from2214D0; firmware retry and game disconnect producer remain unimplemented."
+}

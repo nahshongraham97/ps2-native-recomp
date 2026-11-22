@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-input-poll\\build-input-poll\\test_native_retail_input_selection.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.029160737991333008,
+  "executable_sha256": "839a55a9f56c38ddd21345a025789b293a62865ac9a104cf3bdc062c1b09ee54",
+  "source_manifest_sha256": "47c4ebfa559b3032382ae35dec9fd00f5c5f94c38203b993980276493f81884e",
+  "log_sha256": "20eaf6b34bdf012320c932e64f99e99b8aff166fcd0f62f014abcc95c6520480",
+  "game_run": false,
+  "physical_endpoints_opened": false
+}

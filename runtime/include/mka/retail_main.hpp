@@ -79,6 +79,7 @@ struct NativeRetailGameSoundReference {
 const std::array<RetailActionBinding, 16>& retail_default_action_bindings() noexcept;
 std::uint32_t retail_canonical_action_index(std::uint32_t mask, std::uint32_t row) noexcept;
 
+class NativeRetailInputAdmission;
 struct NativeRetailMainState {
     NativeRetailMainState(NativeRetailStartupState&, input::ControllerInput&);
     ~NativeRetailMainState();
@@ -94,6 +95,7 @@ struct NativeRetailMainState {
     std::shared_ptr<NativeRetailParticipants> participants;
     std::shared_ptr<NativeRetailInputRoles> input_roles;
     std::shared_ptr<NativeRetailInputAssignments> input_assignments;
+    std::shared_ptr<NativeRetailInputAdmission> input_admission;
     std::shared_ptr<NativeRetailConstructorOwners> constructors;
     std::shared_ptr<NativeRetailMiddlewareWorkGroup> middleware_work_group;
     std::shared_ptr<NativeRetailMiddlewareDispatcher> middleware_dispatcher;

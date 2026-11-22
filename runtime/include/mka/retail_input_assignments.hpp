@@ -29,6 +29,8 @@ public:
     NativeRetailInputAssignments(const NativeRetailInputAssignments&) = delete;
     NativeRetailInputAssignments& operator=(const NativeRetailInputAssignments&) = delete;
 
+    bool validate_domain(const NativeRetailInputRoles&, const NativeRetailParticipants&,
+        RetailInputAssignmentFailure&) const noexcept;
     std::optional<std::int32_t> association_count(
         RetailInputAssignmentFailure&) const noexcept;
     // 281060: its internal detach condition is exactly old>0 && old!=new.
