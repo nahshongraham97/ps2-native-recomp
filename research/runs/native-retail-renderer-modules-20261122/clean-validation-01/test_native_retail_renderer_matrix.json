@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-renderer-mods-22\\build-native\\test_native_retail_renderer_matrix.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\parallel-renderer-plugin-0402-20261122"
+  ],
+  "exit": 0,
+  "seconds": 0.10547130000486504,
+  "source_commit": "bea6196a892afff718411e1c4606560f75cd3358",
+  "tracked_status": "",
+  "source_manifest_sha256": "953ddb593a717248dc8ea961e3071705d6d56d8370ba7d416d49000400dd8382",
+  "executable_sha256": "a2e8a3c3a596597580cad95100af73c873edb3e3e4839d584dacc82d7b5949c0",
+  "log_sha256": "e6ca983715efa3c1951163d91ac2bd5a0363f87ee0008dfac1e602ba5c22291c",
+  "compressed_log_sha256": "f73c6bb40bec8fe51ce9368bc025738b886b1027be63e6f9fa4021c14011d9b4",
+  "game_run": false,
+  "visible_window": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}

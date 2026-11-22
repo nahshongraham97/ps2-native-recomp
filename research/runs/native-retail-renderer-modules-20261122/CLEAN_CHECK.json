@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "C:\\Python315\\python.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-renderer-modules-20261122\\verify.py",
+    "--checkout",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-renderer-mods-22",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-renderer-mods-22\\build-native",
+    "--output",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\research\\runs\\native-retail-renderer-modules-20261122\\clean-validation-01"
+  ],
+  "exit": 0,
+  "stdout": "build 0\ntest_native_retail_renderer_core-symbols 0\ntest_native_retail_renderer_matrix-symbols 0\nproduction-math-dependencies 0\ntest_native_retail_renderer_core 0\ntest_native_retail_renderer_matrix 0\ntest_native_retail_renderer_allocator 0\ntest_native_retail_memory_owners 0\ntest_native_retail_game_session 0\ntest_native_retail_camera_bootstrap 0\ntest_native_retail_main_frame_gates 0\ntest_native_retail_initial_reset_arcade 0\nfull-entry-negative 1\nPASS_NATIVE_RENDERER_MODULES_AND_CORE_CALLOUT_LEASE 8 affected clients; exact62 effects with7 real math dependencies\n",
+  "stderr": "",
+  "seconds": 81.53774400000111,
+  "source_commit": "bea6196a892afff718411e1c4606560f75cd3358",
+  "clean_checkout": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\clean-renderer-mods-22",
+  "game_run": false,
+  "physical_endpoints_opened": false,
+  "frames": [],
+  "audio": []
+}
