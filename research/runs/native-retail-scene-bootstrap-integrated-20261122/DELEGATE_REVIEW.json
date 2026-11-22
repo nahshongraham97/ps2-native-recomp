@@ -1,0 +1,9 @@
+{
+  "commit": "6001db8a01c2f5a3e370562d376e7f0119e52808",
+  "files": {
+    "research/runs/parallel-bootstrap-prefix-review-20261122/AUTHENTICATION.json": "8f895d04f8ef9407c8fe4f1429ab6c366a0acee6099961de63333caae80e7a1f",
+    "research/runs/parallel-bootstrap-prefix-review-20261122/REVIEW.md": "fc65cee9f35018dad5ddba2dc00bdc405deffe2589db9bf0a751af02223a110c",
+    "research/runs/parallel-bootstrap-prefix-review-20261122/snapshot.tar.gz": "717a17a84c78d2032833d23e1d4ccbbb8a3f499ba9b31126ddddfb62444296a4"
+  },
+  "imported_evidence_only": true
+}

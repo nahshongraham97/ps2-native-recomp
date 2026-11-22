@@ -1,0 +1,39 @@
+# Scene startup prefix — active bounded work
+
+Base fork915da5fd8dfdc108a3bb256fe2d142a331e74c32; private branch section-timing-20261122. Shared parent documents are primary-owned and untouched.
+
+Source-derived: private saved-project PS2 session uses r5900:LE:32:default and original ELF SHA256 a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f. source-01 contains actual122740,19A630,19A5E0 and1861B0 EE listings; source-02/03 trace immediate children. Full word/data joins are pending.
+
+19A630/19A5E0 select a group catalog through26F070, resolve the source descriptor through182E30/26EF70, request logical section10 through19ABF0/19A9D0, then named resource1 through215660/215730. The latter variant additionally waits through19B3E0. These are not19C4C0 workspace initialization and remain undefined production effects. Existing native resource registry explicitly excludes214120 parsing/215ED0 lookup. No donor equivalence is established.
+
+1861B0 writes phase1 to the persistent source64E2A0 word in the122AD0 call delay slot, refreshes timing factors, then181A30 removes live actor graph links. The remainder is a large reset/bootstrap, not stopwatch initialization. Primary approved only the proved connected prefix plus a named required181A30 suffix boundary. Existing Main timing-factor logic will be shared rather than duplicated. Missing real live-actor graph ownership and all subsequent suffix effects remain required. No gameplay acceptance, oracle comparison, rendering/audio/window or endpoint execution is claimed.
+
+Implemented/unbuilt: shared122AD0 timing-factor effect extracted from Main into retail_scene_bootstrap_prefix.cpp. Main retains the separate milliseconds-per-frame calculation. Production1861B0 now writes the actual Session phase before refreshing factors and calls the undefined required continue_scene_reset_at_181a30 suffix. No resource-pair success implementation was added. The suffix includes181A30 and every remaining1861B0 effect; fixture success will be explicitly test-only.
+
+Source join completed: SOURCE_JOIN.json records519 exact original words across full contiguous122740(226),122AD0(40),181A30(40),1861B0(173),19A5E0(20),19A630(20) listings (total519), plus descriptor/name bytes. Actual private Ghidra output includes instruction bytes; every address and word joins through actual PT_LOAD. Test authored from instruction stores/branches and actual Session setting producers; not yet compiled.
+
+validation-01 configure passed; first build failed on missing SDL_events.h because a private worktree does not contain the untracked SDL dependency. This is setup failure, not a tested prefix result. The original build log is retained. Copy the existing dependency into this private worktree with exact file hash authentication; do not alter the active checkout dependency.
+
+Test review tightened the test-only suffix observer to check all three timing factors on entry, proving the refresh precedes181A30 rather than checking only final state. Build remains in progress; final rebuild required after this test change. Source source-joined/00122740.asm proves Main call sites122930,122938,122950,122958 for19A630,127260,1861B0,19A5E0 respectively.
+
+validation-01 build-02 compiled and linked both production-prefix fixture client and existing stopwatch client successfully after the authenticated SDL copy. Execution and final link-set comparison remain pending.
+
+validation-02: production-prefix and existing stopwatch clients both executed successfully. The subsequent overbroad symbol checker failed on linked SDL_InitSubSystem (native keyboard/platform branch), not any guest model or audio initialization. The platform owner is never constructed in this fixture. Preserve this checker failure and add an abort guard for that actual native import to prove it cannot be reached during the bounded execution. Then rerun the affected client and classify native SDL import separately from forbidden guest/device symbols.
+
+validation-03 passes both executed clients, source-word rejoin, guest/device symbol absence and exact37-name connected negative link. Only initialize_retail_post_scene_timing is replaced by the required181A30 suffix; no executable game is linked. Packaging review added the new client to the existing SDL DLL staging rule so building it alone has the actual runtime dependency. Final verification must rerun after this CMake change.
+
+Final verification: validation-05/VERIFICATION.json reports PASS_CONNECTED_SCENE_BOOTSTRAP_PREFIX. The production prefix fixture and unchanged existing stopwatch client both execute successfully, and both linked executables have no forbidden guest/device/compiler model symbols. Prefix fixture has an abort guard for SDL_InitSubSystem and does not construct a platform/window/audio owner. Native SDL linkage is retained by the existing platform library; symbol presence is not endpoint execution. All previous setup/checker failures remain in validation-01/02.
+
+Instruction semantics:1861B4 loads signed immediate1,1861C0 stores low32 bits to64E2A0 before122AD0 executes.122ADC is LBU, ANDI isolates bit0;122AEC LW produces sign-extended32 but only a zero comparison follows.122B20 BNEL compares the returned effective rate to signed immediate50; its LUI delay slot is annulled on equality.50Hz assigns exact binary32 inverse0x3F555555 and scale0x3F99999A, SQRT.S yields the preexisting verified native root0x3F8C378C. Other rates/active override assign1.0 to all three. No new stopwatch, frame interval, guest address storage or host token is created. The actual shared owners already prove video modes and override behavior; their unchanged evidence is retained.
+
+Error/lifetime behavior: native Main lifetime and current Session/thread validation precede the first effect. The prefix has no allocation. Missing/revoked Main lifetime or missing Session/wrong thread refuses without phase/factor mutation or suffix call. An ordinary required-child error preserves phase1 and timing writes. Actual NativeMainReentry propagates unchanged; the next source entry remains usable and repeats the source stores. Test-only suffix success establishes no actor/resource/reset implementation.
+
+Open production dependency:continue_scene_reset_at_181a30 must implement the entire remainder of1861B0, beginning181A30 actor traversal/unlinking via126720/127100/1CF380/1CF350, then125D60 and all later scene teardown/bootstrap effects, preserving the phase2/phase0 transitions and native task lifetime. This branch implements no part of that suffix and does not claim an empty actor list.19A630 and19A5E0 remain their exact separate required resource effects. Their bound name is permanent_strings_eng.mko at5FCE60;5B472C selects group610980. No Xbox mapping/adoption, same-scenario playable oracle comparison or full native game acceptance is established.
+
+Primary-owned shared PORT_STATUS/ROADMAP were not edited per assignment; primary must reconcile these bounded observations on integration. Only this private branch/worktree was changed. No push/merge, audio/saved-profile lane, original asset/save/settings/driver or reserved model action occurred.
+
+Scoped diff check found one added trailing blank line in CMake after moving the target; repaired before freezing source. Final source manifest will be validation-05.
+
+Final validation-05 passes after the LF/EOF repair; the source manifest is exact and the connected required-effect set remains37. No production source changed after this verification.
+
+Staging validation refused original Ghidra decompiler/log trailing whitespace. No commit occurred. Preserve their exact original bytes in verified gzip archives, indexed by ARCHIVES.json with both hashes; no source/evidence content was normalized to manufacture a check pass. Receipts retain their original uncompressed-log hashes, resolvable through that archive index. Source and test binaries are unchanged.
