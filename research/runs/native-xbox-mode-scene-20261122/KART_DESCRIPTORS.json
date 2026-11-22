@@ -1,0 +1,236 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "rows": [
+    {
+      "mapping": {
+        "address": "0x55ab68",
+        "file_offset": 5563112,
+        "length": 48,
+        "section": ".data"
+      },
+      "bytes_hex": "0c554f00c8d64e000300000000554f00c8d64e0003000000e8544f00c8d64e0003000000d0544f00c8d64e0003000000",
+      "words": [
+        5199116,
+        5166792,
+        3,
+        5199104,
+        5166792,
+        3,
+        5199080,
+        5166792,
+        3,
+        5199056,
+        5166792,
+        3
+      ],
+      "pointed_strings": [
+        {
+          "word_index": 0,
+          "mapping": {
+            "address": "0x4f550c",
+            "file_offset": 5143852,
+            "length": 128,
+            "section": ".rdata"
+          },
+          "text": "kart_core.mko"
+        },
+        {
+          "word_index": 3,
+          "mapping": {
+            "address": "0x4f5500",
+            "file_offset": 5143840,
+            "length": 128,
+            "section": ".rdata"
+          },
+          "text": "kart_fx.mko"
+        },
+        {
+          "word_index": 6,
+          "mapping": {
+            "address": "0x4f54e8",
+            "file_offset": 5143816,
+            "length": 128,
+            "section": ".rdata"
+          },
+          "text": "kart_fx_fullscreen.mko"
+        },
+        {
+          "word_index": 9,
+          "mapping": {
+            "address": "0x4f54d0",
+            "file_offset": 5143792,
+            "length": 128,
+            "section": ".rdata"
+          },
+          "text": "kart_fx_splitscreen.mko"
+        }
+      ]
+    },
+    {
+      "mapping": {
+        "address": "0x55ab74",
+        "file_offset": 5563124,
+        "length": 48,
+        "section": ".data"
+      },
+      "bytes_hex": "00554f00c8d64e0003000000e8544f00c8d64e0003000000d0544f00c8d64e0003000000c4d84d00c8d64e0003000000",
+      "words": [
+        5199104,
+        5166792,
+        3,
+        5199080,
+        5166792,
+        3,
+        5199056,
+        5166792,
+        3,
+        5101764,
+        5166792,
+        3
+      ],
+      "pointed_strings": [
+        {
+          "word_index": 0,
+          "mapping": {
+            "address": "0x4f5500",
+            "file_offset": 5143840,
+            "length": 128,
+            "section": ".rdata"
+          },
+          "text": "kart_fx.mko"
+        },
+        {
+          "word_index": 3,
+          "mapping": {
+            "address": "0x4f54e8",
+            "file_offset": 5143816,
+            "length": 128,
+            "section": ".rdata"
+          },
+          "text": "kart_fx_fullscreen.mko"
+        },
+        {
+          "word_index": 6,
+          "mapping": {
+            "address": "0x4f54d0",
+            "file_offset": 5143792,
+            "length": 128,
+            "section": ".rdata"
+          },
+          "text": "kart_fx_splitscreen.mko"
+        },
+        {
+          "word_index": 9,
+          "mapping": {
+            "address": "0x4dd8c4",
+            "file_offset": 5046500,
+            "length": 128,
+            "section": ".rdata"
+          },
+          "text": "kart_strings_eng.mko"
+        }
+      ]
+    },
+    {
+      "mapping": {
+        "address": "0x55abe0",
+        "file_offset": 5563232,
+        "length": 48,
+        "section": ".data"
+      },
+      "bytes_hex": "a8584f00c8d64e000100000038544f0008d94e0004000000107e4d0008d94e00030000004c544f0008d94e0001000000",
+      "words": [
+        5200040,
+        5166792,
+        1,
+        5198904,
+        5167368,
+        4,
+        5078544,
+        5167368,
+        3,
+        5198924,
+        5167368,
+        1
+      ],
+      "pointed_strings": [
+        {
+          "word_index": 0,
+          "mapping": {
+            "address": "0x4f58a8",
+            "file_offset": 5144776,
+            "length": 128,
+            "section": ".rdata"
+          },
+          "text": "kart.sec"
+        },
+        {
+          "word_index": 3,
+          "mapping": {
+            "address": "0x4f5438",
+            "file_offset": 5143640,
+            "length": 128,
+            "section": ".rdata"
+          },
+          "text": "kart_test_derby.ssf"
+        },
+        {
+          "word_index": 6,
+          "mapping": {
+            "address": "0x4d7e10",
+            "file_offset": 5023280,
+            "length": 128,
+            "section": ".rdata"
+          },
+          "text": "kart_test_derby.mko"
+        },
+        {
+          "word_index": 9,
+          "mapping": {
+            "address": "0x4f544c",
+            "file_offset": 5143660,
+            "length": 128,
+            "section": ".rdata"
+          },
+          "text": "kart_test_derby.sec"
+        }
+      ]
+    },
+    {
+      "mapping": {
+        "address": "0x4ed6c8",
+        "file_offset": 5111528,
+        "length": 48,
+        "section": ".rdata"
+      },
+      "bytes_hex": "b8a955000000000000000000e0ab550000080000009f1600c4a9550000a81600009f1600d0a9550000482d00009f1600",
+      "words": [
+        5614008,
+        0,
+        0,
+        5614560,
+        2048,
+        1482496,
+        5614020,
+        1484800,
+        1482496,
+        5614032,
+        2967552,
+        1482496
+      ],
+      "pointed_strings": [
+        {
+          "word_index": 9,
+          "mapping": {
+            "address": "0x55a9d0",
+            "file_offset": 5562704,
+            "length": 128,
+            "section": ".data"
+          },
+          "text": "|XO"
+        }
+      ]
+    }
+  ],
+  "scope": "Original bytes; descriptor meanings require1B04C0 consumer"
+}

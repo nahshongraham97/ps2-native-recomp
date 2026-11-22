@@ -1,0 +1,65 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "queries": {
+    "00105160:0": {
+      "mapping": {
+        "vma": "0x105160",
+        "file_offset": 1003872,
+        "length": 64,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "558bec83ec08a1c85073008945f8e8adfeffff8945fc837dfc00751333c975fc33d275fcd905587b4d00e99c000000837df800751333c975fc33d275fcd90558"
+    },
+    "00105230:0": {
+      "mapping": {
+        "vma": "0x105230",
+        "file_offset": 1004080,
+        "length": 64,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "558bec51e8e7fdffff8945fc837dfc00751033c075fc33c975fcd905587b4d00eb238b45fc8b484083c1018b55fc894a408b45fcc740440000000033c975fcd9"
+    },
+    "00105280:0": {
+      "mapping": {
+        "vma": "0x105280",
+        "file_offset": 1004160,
+        "length": 64,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "558bec51e897fdffff8945fc837dfc00750633c075fceb0f8b4dfc8b514083ea018b45fc8950408be55dc3cccccccccc558bec83ec0c6a01e8c383f7ff83c404"
+    },
+    "0020a8f0:0": {
+      "mapping": {
+        "vma": "0x20a8f0",
+        "file_offset": 2074864,
+        "length": 64,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "558bec83ec1456894df0e821a7efff8945fc8b45088945ec817dec540e01000f8c83000000817dec570e01007e02eb788b4d0881e9540e0100894df48b550cc7"
+    },
+    "0020b280:0": {
+      "mapping": {
+        "vma": "0x20b280",
+        "file_offset": 2077312,
+        "length": 64,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "558bec83ec18e8959defff8945f08b45f08b4830894df48b55088b45f4890268102750006a008b4df4c1e10251e86ec5120083c40c8945f8c745fc00000000eb"
+    },
+    "0020b310:0": {
+      "mapping": {
+        "vma": "0x20b310",
+        "file_offset": 2077456,
+        "length": 64,
+        "section": ".text"
+      },
+      "file_backed": true,
+      "bytes_hex": "558bec83ec3cc745ec08000000c745fc00000000e8f79cefff8945e8c745f40a000000837d08000f84e10200008b45f40faf45ec50e8e604fdff83c4048b4d08"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_initial_reset_arcade.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\research\\runs\\native-xbox-mode-scene-20261122\\validation-profile-01\\fixtures\\empty"
+  ],
+  "exit": 0,
+  "seconds": 0.10288600000785664,
+  "executable_sha256": "05b5da1276b4d636af7dde4126d4cb22e370f8621eb6c5a80530573fcf23f043",
+  "log_sha256": "bb06c9ce02fc7c24f027992aa2ca97303ef9047f1becbd8681c341094a58c03f",
+  "source_manifest_sha256": "14b7bc1d0089e4e9054e369c50c06fccaa6db6190140446d52bb08604fcd828d",
+  "source_commit": "2baccd4599a7c74afbcb96e6ee89e580ee810a68"
+}

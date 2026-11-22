@@ -1,0 +1,77 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "nodes": [
+    {
+      "child": "0x731460",
+      "metadata_begin": "0x731440",
+      "total_source_bytes": 13824,
+      "source_child_bytes": 13792,
+      "section": ".data",
+      "file_backed": false,
+      "loader_zero_initialized": true
+    },
+    {
+      "child": "0x72de60",
+      "metadata_begin": "0x72de40",
+      "total_source_bytes": 13824,
+      "source_child_bytes": 13792,
+      "section": ".data",
+      "file_backed": false,
+      "loader_zero_initialized": true
+    },
+    {
+      "child": "0x72a860",
+      "metadata_begin": "0x72a840",
+      "total_source_bytes": 13824,
+      "source_child_bytes": 13792,
+      "section": ".data",
+      "file_backed": false,
+      "loader_zero_initialized": true
+    },
+    {
+      "child": "0x727260",
+      "metadata_begin": "0x727240",
+      "total_source_bytes": 13824,
+      "source_child_bytes": 13792,
+      "section": ".data",
+      "file_backed": false,
+      "loader_zero_initialized": true
+    }
+  ],
+  "player_status_mapping": {
+    "vma": "0x56162c",
+    "file_offset": 5590444,
+    "length": 16,
+    "section": ".data"
+  },
+  "player_status_bytes_hex": "08000000080000000800000008000000",
+  "projection_mapping": {
+    "vma": "0xe5ad8",
+    "file_offset": 875224,
+    "length": 222,
+    "section": ".text"
+  },
+  "projection_bytes_hex": "8b45f4c7804c100000601473008b4df4c7815010000060de72008b55f4c7825c100000481473008b45f4c7806010000048de72008b4df4c7815410000060a872008b55f4c78258100000607272008b45f4c7806410000048a872008b4df4c7816810000048727200c745f800000000c745f000000000eb098b55f083c2018955f08b45f03b45fc7d2f8b4df08b55f48b848a5c1000008338017402ebdb8b4df88b55f48b45f089848a6c1000008b4df883c101894df8ebc0eb098b55f883c2018955f88b45f83b45fc7d138b4df88b55f4c7848a6c100000ffffffffebdc",
+  "evidence_sha256": {
+    "source-objects-03/001f98d0.asm": "ebe90cb00c2dc4d99457ac2000727917c60f3da2cd75f28cccc814c777ed840d",
+    "source-kart-profile-10/000e5a90.asm": "887ffcedc7a5b56b7b6bb4928ab7435239d2730aa87f14a2d68ecc724a2f8e65",
+    "source-kart-profile-10.join.json": "7489331b0f281fc6f798a61132145f5409c253d7ea4da63a633d0fc02c9b336f",
+    "source-kart-06/000e68e0.asm": "4579eff6a5c9357f250743f6e8d231caf11affec6946f8238bf292d320c85bed"
+  },
+  "native_contract": "Same Session nodes; mode-scoped access, live child/status references and call-time status==1 index order.",
+  "not_implemented": [
+    "whole E5A90",
+    "input ordinal prefix",
+    "display-query suffix",
+    "startup child+240 payload",
+    "loaded profile import",
+    "gameplay"
+  ],
+  "ps2_codec_sizes": {
+    "child": 15408,
+    "image": 123360,
+    "children_per_image": 8
+  },
+  "numerical_gate": "OPEN",
+  "hd_gate": "OPEN"
+}

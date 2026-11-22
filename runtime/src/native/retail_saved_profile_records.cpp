@@ -4,6 +4,7 @@
 #include "retail_main_control.hpp"
 #include <bit>
 #include <new>
+#include <utility>
 
 namespace mka::retail {
 namespace {
@@ -55,12 +56,58 @@ NativeRetailSavedCardSlot* NativeRetailSavedProfileRecords::card_slot(
 }
 NativeRetailActivePlayerProfile* NativeRetailSavedProfileRecords::active_player(
     std::uint32_t index, RetailSavedProfileRecordsFailure& f) noexcept {
+    return active_player_for_scope(RetailActiveProfileScope::first_two, index, f);
+}
+NativeRetailActivePlayerProfile* NativeRetailSavedProfileRecords::active_player_for_scope(
+    RetailActiveProfileScope scope, std::uint32_t index, RetailSavedProfileRecordsFailure& f) noexcept {
     if (!access(f)) return nullptr;
-    if (index >= active_players_.size()) {
+    std::size_t count{};
+    switch (scope) {
+    case RetailActiveProfileScope::first_two: count = retail_first_two_profile_players; break;
+    case RetailActiveProfileScope::motor_kombat: count = NativeRetailMotorKombatProfiles::player_count; break;
+    default:
+        fail(f, RetailSavedProfileRecordsError::invalid_scope, "native active profile participant scope");
+        return nullptr;
+    }
+    if (index >= count) {
         fail(f, RetailSavedProfileRecordsError::invalid_player, "retail active profile player");
         return nullptr;
     }
     return &active_players_[index];
+}
+std::optional<NativeRetailMotorKombatProfiles> NativeRetailSavedProfileRecords::bind_motor_kombat_profiles(
+    const std::shared_ptr<NativeRetailGameSession>& retained, RetailSavedProfileRecordsFailure& f) noexcept {
+    if (!access(f)) return {};
+    if (retained.get() != session_) {
+        fail(f, RetailSavedProfileRecordsError::foreign_session, "kart profiles require this actual Session");
+        return {};
+    }
+    std::array<std::int32_t, NativeRetailMotorKombatProfiles::player_count> order;
+    order.fill(-1);
+    std::size_t next{};
+    // E5B6E compares the whole 32-bit status to exactly1. E5B7E appends in
+    // player order; E5BA9 fills the rest with-1. Live status stays on each node.
+    for (std::size_t player = 0; player < order.size(); ++player)
+        if (active_players_[player].status_word == 1)
+            order[next++] = static_cast<std::int32_t>(player);
+    return NativeRetailMotorKombatProfiles(retained, order);
+}
+NativeRetailActivePlayerProfile* NativeRetailMotorKombatProfiles::profile(
+    std::uint32_t player, RetailSavedProfileRecordsFailure& f) const & noexcept {
+    f = {};
+    if (!session_) {
+        fail(f, RetailSavedProfileRecordsError::retired_reference, "moved kart profile Session reference");
+        return nullptr;
+    }
+    RetailGameSessionFailure game;
+    auto* records = session_->saved_profile_records(game);
+    if (!records) {
+        fail(f, game.kind == RetailGameSessionError::wrong_thread ?
+             RetailSavedProfileRecordsError::wrong_thread : RetailSavedProfileRecordsError::retired_reference,
+             "kart profile actual retained Session access");
+        return nullptr;
+    }
+    return records->active_player_for_scope(RetailActiveProfileScope::motor_kombat, player, f);
 }
 std::uint32_t* NativeRetailSavedProfileRecords::working_control_word(
     RetailSavedProfileRecordsFailure& f) noexcept {
@@ -139,7 +186,9 @@ bool NativeRetailSavedProfileRecords::reset_first_two_from_246070(NativeRetailMa
         return fail(f, kind, operation);
     };
     try {
-        for (std::uint32_t player = 0; player != active_players_.size(); ++player) {
+        // 246070 resets only0/1. Native Motor Kombat owners2/3 are not an
+        // excuse to replay profile/input cleanup for additional participants.
+        for (std::uint32_t player = 0; player != retail_first_two_profile_players; ++player) {
             if (!main.input_assignments || !main.input_roles || !main.participants)
                 return error(RetailSavedProfileRecordsError::missing_input_owner,
                              "245DD0 actual input assignment/role/participant owners");

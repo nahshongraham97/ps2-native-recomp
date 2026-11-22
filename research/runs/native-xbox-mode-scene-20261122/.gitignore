@@ -1,1 +1,3 @@
 source-*/*.c
+private-kart-modules/
+validation-profile-*/fixtures/

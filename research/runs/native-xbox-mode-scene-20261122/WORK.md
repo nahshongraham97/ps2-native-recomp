@@ -75,3 +75,144 @@ the alias a named-preset pointer. The simpler Xbox reset algorithm is identified
 but NOT yet adopted. Next inspect the actual kart script/data consumer or
 an equivalent verified native field, then implement/test mode-object startup.
 The saved partial proof is retained without blocking use of Xbox elsewhere.
+
+## Per-mode profile reconciliation continuation
+
+Owner requested reconciling actual per-mode ownership and the Motor Kombat
+reference, preserving PS2 save compatibility. Baselines: parent525fb5b0,
+fork2baccd4, both main/clean at entry. Reuse this private Xbox project and
+all valid original-byte joins. Numerical and HD-presentation gates remain
+OPEN and are outside adoption in this change. Audio, originals, user saves,
+the preserved dirty checkout and reserved model/settings stay untouched.
+
+Next source boundary is the actual570A0 kart-start call and105590 continuation
+from the saved1052B0 listing. Follow the12-byte selection-record payload into
+its true readers/writers rather than guessing the child+240 representation.
+The PS2 file codec remains a separate3C30-byte encoded format; extending
+native per-mode ownership must not enlarge or reinterpret that wire image.
+
+Source-kart-profile-07:570A0 is scene/frame association, not a profile-copy
+routine. Actual105590 counts four local participants and calls105830 before
+per-player reset1F9A10 for nonparticipating records, then enters the kart mode.
+Next inspect those two actual callees. Do not promote the decompiler's guessed
+types or treat the scene association as profile publication.
+
+Source-kart-profile-08:105830 is a bounded frame-yield wait, not the alias
+payload reader.1F9A10 explicitly selects each of four active records, releases
+its saved selection when both metadata words are not-1, clears the captured
+input control, resets the child, then metadata/mapping/status in that order.
+Its four-player selection is source-proved; no save-layout equivalence is
+inferred from that count. Follow actual race initializationE4B70/E5F80/E66C0,
+already called by the savedE47B0, for the carried selection-record reference.
+
+Source-kart-profile-09:the race allocatorE4B70 owns the actual107C-byte race
+state and invokesE4E70/E5A90 before its name/UI consumerE68E0. E5F80 loads
+actual kart_core/kart_fx managed resources; their calls are not replaced with
+success or an interpreter. E66C0 binds split-screen camera callbacks and is
+outside this profile change's numerical/HD gates. Follow the race profile
+setup callees only; do not implement those rendering/resource effects here.
+
+Source-kart-profile-10:E5A90 publishes the SAME four active child owners and
+their SAME status-word addresses into race state, then derives ordered player
+indices only for status==1 and fills the remaining entries with-1. Thus race
+state must not own duplicate save/profile values. E4E70 is track-object setup,
+not the remaining alias payload reader. Its renderer effects stay unadopted.
+Next inspect original selected kart resources for the actual payload consumer;
+all encoded PS2 save sizes/checksum behavior remain unchanged.
+
+KART_RESOURCE_HEADERS.json is a read-only SEC-candidate probe, not proof of
+module layout: the inspected SEC resource directories contain kart art but
+did not locate the managed-module payloads. Original asset bytes are unchanged.
+Use the actual XBE descriptors55AB68/55AB74 and their1B04C0 consumer rather
+than assuming modules must be named SEC records. The probe's verbose stdout
+is not another verification claim or a reason to repeat the asset scan.
+
+KART_DESCRIPTORS.json now saves actual original descriptor bytes:55AB68 names
+kart_core.mko and points to table4ED6C8, not directly to a file offset;
+55AB74 similarly names kart_fx.mko. Source-kart-profile-11 shows1B04C0 is a
+managed-record wrapper, not the byte decoder. Next read the selected table
+entries and original module name/type data using each image/container's own
+mapping. No interpreted execution or runtime resource adoption is authorized.
+
+The first selected-module probe failed before extraction because it incorrectly
+restricted references to.data; actual4ED6C8 is in.rdata. The saved failure is
+MODULE_PREFLIGHT_FAILURE_01.json. Correct only the section selection using
+the table's proved VMA; preserve the empty first private directory and use
+attempt-02. No original file, runtime, save or earlier measurement changed.
+
+KART_MODULE_SLICES.json now pins selected original table slices and privately
+saved bytes. Actual kart_core has0 functions and61 variables; it is data,
+not the missing executable profile reader. kart_fx has120 functions, but its
+inspected names concern effects, not evidence of the profile contract.
+No module interpreter was added and no original asset changed. Follow the
+already-saved69000 command's207480 callee and race setupE5280 next.
+
+Source-kart-profile-12 shows207480 is the ordinary two-player character-grid
+handler, not the kart profile payload reader; E5280 is track navigation
+geometry and remains outside this change. Stop expanding those unrelated
+callees. Query the actual105020 selection-owner accessor's complete saved
+reference list, then inspect only callers that consume its record pointer.
+
+PROFILE_OWNER_REFS.tsv identifies twelve saved direct callers of105020;
+six are already inspected. The only saved direct reference to82ECA8 is its
+initial store, so absence of a reader is not yet proof the payload is unused:
+inspect the remaining six owner-accessor callers and any pointer escapes.
+
+Source-kart-profile-13 covers the remaining saved105020 callers. Their
+inspected paths use character selection, readiness or art lists, not the
+third profile-reference word. E5A90 gives the race whole-profile pointers
+independently, so the next bounded check is direct child+240/+278 accesses
+within the already identified kart/gameplay/frontend code range. Do not
+claim the alias payload unused merely because the frontend does not read it.
+
+The bounded kart displacement listing is saved in KART_OFFSET_USERS.tsv and
+joined to original bytes. It does not establish a child+240 payload contract;
+the common240 comparisons are object fields, not a justified profile mapping.
+Do not substitute that scan for a type proof.
+
+Implementation decision:reconcile the PROVED whole-profile ownership from
+E5AD8..E5BB5 now. Keep one Session-owned set of four active nodes, expose
+first-two and Motor-Kombat scopes separately, retain the Session in a race
+binding and snapshot only the source status==1 index order. The binding must
+resolve live values/status from those SAME nodes. Keep246070's reset limited
+to its original first two; do not loop over all native storage after growth.
+The separate startup child+240/+8F8 projection remains a named OPEN contract,
+not a guessed field or a completed2460B0 binding. This is a directly needed
+ownership dependency, not adoption of wholeE5A90, its input-ordinal prefix,
+its display-query suffix, numerical code or rendering.
+
+Implemented/tested-component:the existing NativeRetailSavedProfileRecords now owns
+four zero-born active identities with explicit first-two/Motor-Kombat access.
+The existing accessor and246070 reset remain first-two only. A native kart
+binding retains the same Session, resolves live child/status owners and stores
+only the independently derived status==1 ordering. New checks cover256 status
+patterns, native identity, unchanged first-two cleanup, scope/foreign/thread/
+moved errors and Main/last-owner lifetime. No codec or serialized size changed.
+This does not resolve the separate startup child+240 payload or complete
+mode-object initialization; numerical/HD/loaded-save/gameplay gates stay OPEN.
+
+Build gate:use the existing configuredb/ incremental build, no cleanup or
+reconfiguration. The seven selected clients are records, Session, unchanged
+save-codec compatibility, aggregate/Main, profile input reset, initial reset
+and Main frame gates. They use disposable fixtures or memory only, no visible
+game window/GPU/audio endpoint. Verify the exact prior59-name negative without
+claiming a closed mode binding. Prior code bytes remain in baseline2baccd4 and
+the authenticated frame source manifest; unchanged codec/child/store hashes
+are checked before the build. Commands, logs, binary/compiler/cache/source
+identities are saved by verify_profile_ownership.py through the direct shell.
+
+validation-profile-01 passed all seven affected clients, the exact unchanged
+59-name negative and native symbol audit on dirty source based2baccd4.
+The records client passes all256 source-derived status cases plus scope/
+identity/reset/move/thread/Main/last-owner checks. Existing PS2 image checksum,
+size, body-byte and malformed-image vectors pass. Codec/child/native-store
+source hashes are exactly unchanged. This is NOT full mode initialization,
+complete Motor Kombat, populated save import or accepted gameplay.
+
+Actual verifier schema preflight:status is the string
+PASS_NATIVE_PER_MODE_PROFILE_OWNERSHIP_COMPONENTS; clients is a list of seven
+name/sha256 objects; remaining_undefined_symbols and resolved_bindings are
+string lists (59 and0 respectively); unchanged_codec_sources is a path/hash
+object; status_cases is integer256. Identity keys are source_commit,
+source_manifest_sha256, verifier_sha256, compiler_sha256 and cache_sha256.
+All missing production/numerical/HD/oracle/gameplay gates remain OPEN.

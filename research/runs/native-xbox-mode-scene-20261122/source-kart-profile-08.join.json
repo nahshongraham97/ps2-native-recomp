@@ -1,0 +1,1096 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "functions": {
+    "00105830": {
+      "instructions": 56,
+      "listing_sha256": "26b59d7b6d952f4d466967102507ef524aeca89cf31777aa5f8ef63639615301",
+      "original_spans": [
+        {
+          "vma": "0x105830",
+          "file_offset": 1005616,
+          "length": 1,
+          "section": ".text",
+          "bytes_hex": "55"
+        },
+        {
+          "vma": "0x105831",
+          "file_offset": 1005617,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "8bec"
+        },
+        {
+          "vma": "0x105833",
+          "file_offset": 1005619,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "83ec10"
+        },
+        {
+          "vma": "0x105836",
+          "file_offset": 1005622,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745f4b4000000"
+        },
+        {
+          "vma": "0x10583d",
+          "file_offset": 1005629,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745f800000000"
+        },
+        {
+          "vma": "0x105844",
+          "file_offset": 1005636,
+          "length": 5,
+          "section": ".text",
+          "bytes_hex": "e8d7f7ffff"
+        },
+        {
+          "vma": "0x105849",
+          "file_offset": 1005641,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8945f0"
+        },
+        {
+          "vma": "0x10584c",
+          "file_offset": 1005644,
+          "length": 4,
+          "section": ".text",
+          "bytes_hex": "837df000"
+        },
+        {
+          "vma": "0x105850",
+          "file_offset": 1005648,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "7509"
+        },
+        {
+          "vma": "0x105852",
+          "file_offset": 1005650,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "33c0"
+        },
+        {
+          "vma": "0x105854",
+          "file_offset": 1005652,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "75fc"
+        },
+        {
+          "vma": "0x105856",
+          "file_offset": 1005654,
+          "length": 5,
+          "section": ".text",
+          "bytes_hex": "e987000000"
+        },
+        {
+          "vma": "0x10585b",
+          "file_offset": 1005659,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "33c9"
+        },
+        {
+          "vma": "0x10585d",
+          "file_offset": 1005661,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "75fc"
+        },
+        {
+          "vma": "0x10585f",
+          "file_offset": 1005663,
+          "length": 10,
+          "section": ".text",
+          "bytes_hex": "c705c45073000000803f"
+        },
+        {
+          "vma": "0x105869",
+          "file_offset": 1005673,
+          "length": 6,
+          "section": ".text",
+          "bytes_hex": "8b15c0507300"
+        },
+        {
+          "vma": "0x10586f",
+          "file_offset": 1005679,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "8b02"
+        },
+        {
+          "vma": "0x105871",
+          "file_offset": 1005681,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "ff5014"
+        },
+        {
+          "vma": "0x105874",
+          "file_offset": 1005684,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "33c9"
+        },
+        {
+          "vma": "0x105876",
+          "file_offset": 1005686,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "75e3"
+        },
+        {
+          "vma": "0x105878",
+          "file_offset": 1005688,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745fc00000000"
+        },
+        {
+          "vma": "0x10587f",
+          "file_offset": 1005695,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "eb09"
+        },
+        {
+          "vma": "0x105881",
+          "file_offset": 1005697,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b55fc"
+        },
+        {
+          "vma": "0x105884",
+          "file_offset": 1005700,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "83c201"
+        },
+        {
+          "vma": "0x105887",
+          "file_offset": 1005703,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8955fc"
+        },
+        {
+          "vma": "0x10588a",
+          "file_offset": 1005706,
+          "length": 4,
+          "section": ".text",
+          "bytes_hex": "837dfc04"
+        },
+        {
+          "vma": "0x10588e",
+          "file_offset": 1005710,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "7d1a"
+        },
+        {
+          "vma": "0x105890",
+          "file_offset": 1005712,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b45fc"
+        },
+        {
+          "vma": "0x105893",
+          "file_offset": 1005715,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "6bc048"
+        },
+        {
+          "vma": "0x105896",
+          "file_offset": 1005718,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "83b8f41a830002"
+        },
+        {
+          "vma": "0x10589d",
+          "file_offset": 1005725,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "7509"
+        },
+        {
+          "vma": "0x10589f",
+          "file_offset": 1005727,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b4df8"
+        },
+        {
+          "vma": "0x1058a2",
+          "file_offset": 1005730,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "83c101"
+        },
+        {
+          "vma": "0x1058a5",
+          "file_offset": 1005733,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "894df8"
+        },
+        {
+          "vma": "0x1058a8",
+          "file_offset": 1005736,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "ebd7"
+        },
+        {
+          "vma": "0x1058aa",
+          "file_offset": 1005738,
+          "length": 4,
+          "section": ".text",
+          "bytes_hex": "837df400"
+        },
+        {
+          "vma": "0x1058ae",
+          "file_offset": 1005742,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "7e32"
+        },
+        {
+          "vma": "0x1058b0",
+          "file_offset": 1005744,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b55f0"
+        },
+        {
+          "vma": "0x1058b3",
+          "file_offset": 1005747,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b4240"
+        },
+        {
+          "vma": "0x1058b6",
+          "file_offset": 1005750,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "3b45f8"
+        },
+        {
+          "vma": "0x1058b9",
+          "file_offset": 1005753,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "7d27"
+        },
+        {
+          "vma": "0x1058bb",
+          "file_offset": 1005755,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b4df4"
+        },
+        {
+          "vma": "0x1058be",
+          "file_offset": 1005758,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "83e901"
+        },
+        {
+          "vma": "0x1058c1",
+          "file_offset": 1005761,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "894df4"
+        },
+        {
+          "vma": "0x1058c4",
+          "file_offset": 1005764,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "33d2"
+        },
+        {
+          "vma": "0x1058c6",
+          "file_offset": 1005766,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "75fc"
+        },
+        {
+          "vma": "0x1058c8",
+          "file_offset": 1005768,
+          "length": 10,
+          "section": ".text",
+          "bytes_hex": "c705c45073000000803f"
+        },
+        {
+          "vma": "0x1058d2",
+          "file_offset": 1005778,
+          "length": 5,
+          "section": ".text",
+          "bytes_hex": "a1c0507300"
+        },
+        {
+          "vma": "0x1058d7",
+          "file_offset": 1005783,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "8b08"
+        },
+        {
+          "vma": "0x1058d9",
+          "file_offset": 1005785,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "ff5114"
+        },
+        {
+          "vma": "0x1058dc",
+          "file_offset": 1005788,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "33d2"
+        },
+        {
+          "vma": "0x1058de",
+          "file_offset": 1005790,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "75e4"
+        },
+        {
+          "vma": "0x1058e0",
+          "file_offset": 1005792,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "ebc8"
+        },
+        {
+          "vma": "0x1058e2",
+          "file_offset": 1005794,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "8be5"
+        },
+        {
+          "vma": "0x1058e4",
+          "file_offset": 1005796,
+          "length": 1,
+          "section": ".text",
+          "bytes_hex": "5d"
+        },
+        {
+          "vma": "0x1058e5",
+          "file_offset": 1005797,
+          "length": 1,
+          "section": ".text",
+          "bytes_hex": "c3"
+        }
+      ]
+    },
+    "001f9a10": {
+      "instructions": 98,
+      "listing_sha256": "6853232a37227d3b623af6f57488da3347638a50da72c65aa6955f5690c54206",
+      "original_spans": [
+        {
+          "vma": "0x1f9a10",
+          "file_offset": 2005520,
+          "length": 1,
+          "section": ".text",
+          "bytes_hex": "55"
+        },
+        {
+          "vma": "0x1f9a11",
+          "file_offset": 2005521,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "8bec"
+        },
+        {
+          "vma": "0x1f9a13",
+          "file_offset": 2005523,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "83ec1c"
+        },
+        {
+          "vma": "0x1f9a16",
+          "file_offset": 2005526,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745ec00000000"
+        },
+        {
+          "vma": "0x1f9a1d",
+          "file_offset": 2005533,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745fc00000000"
+        },
+        {
+          "vma": "0x1f9a24",
+          "file_offset": 2005540,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745f400000000"
+        },
+        {
+          "vma": "0x1f9a2b",
+          "file_offset": 2005547,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745f000000000"
+        },
+        {
+          "vma": "0x1f9a32",
+          "file_offset": 2005554,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745f800000000"
+        },
+        {
+          "vma": "0x1f9a39",
+          "file_offset": 2005561,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b4508"
+        },
+        {
+          "vma": "0x1f9a3c",
+          "file_offset": 2005564,
+          "length": 1,
+          "section": ".text",
+          "bytes_hex": "50"
+        },
+        {
+          "vma": "0x1f9a3d",
+          "file_offset": 2005565,
+          "length": 5,
+          "section": ".text",
+          "bytes_hex": "e86e15e8ff"
+        },
+        {
+          "vma": "0x1f9a42",
+          "file_offset": 2005570,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "83c404"
+        },
+        {
+          "vma": "0x1f9a45",
+          "file_offset": 2005573,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8945e8"
+        },
+        {
+          "vma": "0x1f9a48",
+          "file_offset": 2005576,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b4d08"
+        },
+        {
+          "vma": "0x1f9a4b",
+          "file_offset": 2005579,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "894de4"
+        },
+        {
+          "vma": "0x1f9a4e",
+          "file_offset": 2005582,
+          "length": 4,
+          "section": ".text",
+          "bytes_hex": "837de403"
+        },
+        {
+          "vma": "0x1f9a52",
+          "file_offset": 2005586,
+          "length": 6,
+          "section": ".text",
+          "bytes_hex": "0f879e000000"
+        },
+        {
+          "vma": "0x1f9a58",
+          "file_offset": 2005592,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b55e4"
+        },
+        {
+          "vma": "0x1f9a5b",
+          "file_offset": 2005595,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "ff24959f9b1f00"
+        },
+        {
+          "vma": "0x1f9a62",
+          "file_offset": 2005602,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745ec44147300"
+        },
+        {
+          "vma": "0x1f9a69",
+          "file_offset": 2005609,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745fc40147300"
+        },
+        {
+          "vma": "0x1f9a70",
+          "file_offset": 2005616,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745f448147300"
+        },
+        {
+          "vma": "0x1f9a77",
+          "file_offset": 2005623,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745f0ec1a8300"
+        },
+        {
+          "vma": "0x1f9a7e",
+          "file_offset": 2005630,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745f860147300"
+        },
+        {
+          "vma": "0x1f9a85",
+          "file_offset": 2005637,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "eb78"
+        },
+        {
+          "vma": "0x1f9a87",
+          "file_offset": 2005639,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745ec44de7200"
+        },
+        {
+          "vma": "0x1f9a8e",
+          "file_offset": 2005646,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745fc40de7200"
+        },
+        {
+          "vma": "0x1f9a95",
+          "file_offset": 2005653,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745f448de7200"
+        },
+        {
+          "vma": "0x1f9a9c",
+          "file_offset": 2005660,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745f0341b8300"
+        },
+        {
+          "vma": "0x1f9aa3",
+          "file_offset": 2005667,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745f860de7200"
+        },
+        {
+          "vma": "0x1f9aaa",
+          "file_offset": 2005674,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "eb53"
+        },
+        {
+          "vma": "0x1f9aac",
+          "file_offset": 2005676,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745ec44a87200"
+        },
+        {
+          "vma": "0x1f9ab3",
+          "file_offset": 2005683,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745fc40a87200"
+        },
+        {
+          "vma": "0x1f9aba",
+          "file_offset": 2005690,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745f448a87200"
+        },
+        {
+          "vma": "0x1f9ac1",
+          "file_offset": 2005697,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745f07c1b8300"
+        },
+        {
+          "vma": "0x1f9ac8",
+          "file_offset": 2005704,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745f860a87200"
+        },
+        {
+          "vma": "0x1f9acf",
+          "file_offset": 2005711,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "eb2e"
+        },
+        {
+          "vma": "0x1f9ad1",
+          "file_offset": 2005713,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745ec44727200"
+        },
+        {
+          "vma": "0x1f9ad8",
+          "file_offset": 2005720,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745fc40727200"
+        },
+        {
+          "vma": "0x1f9adf",
+          "file_offset": 2005727,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745f448727200"
+        },
+        {
+          "vma": "0x1f9ae6",
+          "file_offset": 2005734,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745f0c41b8300"
+        },
+        {
+          "vma": "0x1f9aed",
+          "file_offset": 2005741,
+          "length": 7,
+          "section": ".text",
+          "bytes_hex": "c745f860727200"
+        },
+        {
+          "vma": "0x1f9af4",
+          "file_offset": 2005748,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "eb09"
+        },
+        {
+          "vma": "0x1f9af6",
+          "file_offset": 2005750,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "33c0"
+        },
+        {
+          "vma": "0x1f9af8",
+          "file_offset": 2005752,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "75fc"
+        },
+        {
+          "vma": "0x1f9afa",
+          "file_offset": 2005754,
+          "length": 5,
+          "section": ".text",
+          "bytes_hex": "e99c000000"
+        },
+        {
+          "vma": "0x1f9aff",
+          "file_offset": 2005759,
+          "length": 4,
+          "section": ".text",
+          "bytes_hex": "837dec00"
+        },
+        {
+          "vma": "0x1f9b03",
+          "file_offset": 2005763,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "7412"
+        },
+        {
+          "vma": "0x1f9b05",
+          "file_offset": 2005765,
+          "length": 4,
+          "section": ".text",
+          "bytes_hex": "837dfc00"
+        },
+        {
+          "vma": "0x1f9b09",
+          "file_offset": 2005769,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "740c"
+        },
+        {
+          "vma": "0x1f9b0b",
+          "file_offset": 2005771,
+          "length": 4,
+          "section": ".text",
+          "bytes_hex": "837df000"
+        },
+        {
+          "vma": "0x1f9b0f",
+          "file_offset": 2005775,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "7406"
+        },
+        {
+          "vma": "0x1f9b11",
+          "file_offset": 2005777,
+          "length": 4,
+          "section": ".text",
+          "bytes_hex": "837df800"
+        },
+        {
+          "vma": "0x1f9b15",
+          "file_offset": 2005781,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "7506"
+        },
+        {
+          "vma": "0x1f9b17",
+          "file_offset": 2005783,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "33c9"
+        },
+        {
+          "vma": "0x1f9b19",
+          "file_offset": 2005785,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "75fc"
+        },
+        {
+          "vma": "0x1f9b1b",
+          "file_offset": 2005787,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "eb7e"
+        },
+        {
+          "vma": "0x1f9b1d",
+          "file_offset": 2005789,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b55ec"
+        },
+        {
+          "vma": "0x1f9b20",
+          "file_offset": 2005792,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "33c0"
+        },
+        {
+          "vma": "0x1f9b22",
+          "file_offset": 2005794,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "833aff"
+        },
+        {
+          "vma": "0x1f9b25",
+          "file_offset": 2005797,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "0f95c0"
+        },
+        {
+          "vma": "0x1f9b28",
+          "file_offset": 2005800,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b4dfc"
+        },
+        {
+          "vma": "0x1f9b2b",
+          "file_offset": 2005803,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "33d2"
+        },
+        {
+          "vma": "0x1f9b2d",
+          "file_offset": 2005805,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8339ff"
+        },
+        {
+          "vma": "0x1f9b30",
+          "file_offset": 2005808,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "0f95c2"
+        },
+        {
+          "vma": "0x1f9b33",
+          "file_offset": 2005811,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "23c2"
+        },
+        {
+          "vma": "0x1f9b35",
+          "file_offset": 2005813,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "7414"
+        },
+        {
+          "vma": "0x1f9b37",
+          "file_offset": 2005815,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b45fc"
+        },
+        {
+          "vma": "0x1f9b3a",
+          "file_offset": 2005818,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "8b08"
+        },
+        {
+          "vma": "0x1f9b3c",
+          "file_offset": 2005820,
+          "length": 1,
+          "section": ".text",
+          "bytes_hex": "51"
+        },
+        {
+          "vma": "0x1f9b3d",
+          "file_offset": 2005821,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b55ec"
+        },
+        {
+          "vma": "0x1f9b40",
+          "file_offset": 2005824,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "8b02"
+        },
+        {
+          "vma": "0x1f9b42",
+          "file_offset": 2005826,
+          "length": 1,
+          "section": ".text",
+          "bytes_hex": "50"
+        },
+        {
+          "vma": "0x1f9b43",
+          "file_offset": 2005827,
+          "length": 5,
+          "section": ".text",
+          "bytes_hex": "e8b8090000"
+        },
+        {
+          "vma": "0x1f9b48",
+          "file_offset": 2005832,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "83c408"
+        },
+        {
+          "vma": "0x1f9b4b",
+          "file_offset": 2005835,
+          "length": 4,
+          "section": ".text",
+          "bytes_hex": "837de800"
+        },
+        {
+          "vma": "0x1f9b4f",
+          "file_offset": 2005839,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "7409"
+        },
+        {
+          "vma": "0x1f9b51",
+          "file_offset": 2005841,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b4de8"
+        },
+        {
+          "vma": "0x1f9b54",
+          "file_offset": 2005844,
+          "length": 6,
+          "section": ".text",
+          "bytes_hex": "c70100000000"
+        },
+        {
+          "vma": "0x1f9b5a",
+          "file_offset": 2005850,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b55f8"
+        },
+        {
+          "vma": "0x1f9b5d",
+          "file_offset": 2005853,
+          "length": 1,
+          "section": ".text",
+          "bytes_hex": "52"
+        },
+        {
+          "vma": "0x1f9b5e",
+          "file_offset": 2005854,
+          "length": 5,
+          "section": ".text",
+          "bytes_hex": "e88d000000"
+        },
+        {
+          "vma": "0x1f9b63",
+          "file_offset": 2005859,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "83c404"
+        },
+        {
+          "vma": "0x1f9b66",
+          "file_offset": 2005862,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b45f4"
+        },
+        {
+          "vma": "0x1f9b69",
+          "file_offset": 2005865,
+          "length": 6,
+          "section": ".text",
+          "bytes_hex": "c70000000000"
+        },
+        {
+          "vma": "0x1f9b6f",
+          "file_offset": 2005871,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b4dec"
+        },
+        {
+          "vma": "0x1f9b72",
+          "file_offset": 2005874,
+          "length": 6,
+          "section": ".text",
+          "bytes_hex": "c701ffffffff"
+        },
+        {
+          "vma": "0x1f9b78",
+          "file_offset": 2005880,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b55fc"
+        },
+        {
+          "vma": "0x1f9b7b",
+          "file_offset": 2005883,
+          "length": 6,
+          "section": ".text",
+          "bytes_hex": "c702ffffffff"
+        },
+        {
+          "vma": "0x1f9b81",
+          "file_offset": 2005889,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b45f0"
+        },
+        {
+          "vma": "0x1f9b84",
+          "file_offset": 2005892,
+          "length": 1,
+          "section": ".text",
+          "bytes_hex": "50"
+        },
+        {
+          "vma": "0x1f9b85",
+          "file_offset": 2005893,
+          "length": 5,
+          "section": ".text",
+          "bytes_hex": "e86614e8ff"
+        },
+        {
+          "vma": "0x1f9b8a",
+          "file_offset": 2005898,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "83c404"
+        },
+        {
+          "vma": "0x1f9b8d",
+          "file_offset": 2005901,
+          "length": 3,
+          "section": ".text",
+          "bytes_hex": "8b4d08"
+        },
+        {
+          "vma": "0x1f9b90",
+          "file_offset": 2005904,
+          "length": 11,
+          "section": ".text",
+          "bytes_hex": "c7048d2c16560008000000"
+        },
+        {
+          "vma": "0x1f9b9b",
+          "file_offset": 2005915,
+          "length": 2,
+          "section": ".text",
+          "bytes_hex": "8be5"
+        },
+        {
+          "vma": "0x1f9b9d",
+          "file_offset": 2005917,
+          "length": 1,
+          "section": ".text",
+          "bytes_hex": "5d"
+        },
+        {
+          "vma": "0x1f9b9e",
+          "file_offset": 2005918,
+          "length": 1,
+          "section": ".text",
+          "bytes_hex": "c3"
+        }
+      ]
+    }
+  },
+  "scope": "Actual Xbox listing bytes only; full-body coverage and PS2 equivalence must be reviewed"
+}

@@ -170,6 +170,14 @@ int main(int argc, char** argv) try {
               active->player_status_word == 99 && active->value.phase() == RetailSavedChildPhase::zero_born,
               "171B10 does not invent an active-player reset");
         auto* second_active = owner.active_player(1, rf);
+        auto* kart2 = owner.active_player_for_scope(RetailActiveProfileScope::motor_kombat, 2, rf);
+        auto* kart3 = owner.active_player_for_scope(RetailActiveProfileScope::motor_kombat, 3, rf);
+        check(kart2 && kart3 && kart2->value.phase() == RetailSavedChildPhase::zero_born &&
+              kart3->player_status_word == 8, "additional native identities keep source zero/file-backed births");
+        kart2->card_slot = 0; kart2->profile_index = 6; kart2->status_word = 0x12345678;
+        kart3->card_slot = 1; kart3->profile_index = 4; kart3->status_word = 1;
+        first->children[6].in_use_word = 0x24681357;
+        owner.card_slot(1, rf)->children[4].in_use_word = 0x76543210;
         second_active->card_slot = 0; second_active->profile_index = 3; second_active->status_word = 0xffffffff;
         owner.card_slot(1, rf)->children[7].in_use_word = 0x12345678;
         first->children[3].in_use_word = 0xffffffff;
@@ -187,7 +195,13 @@ int main(int argc, char** argv) try {
         check(active->card_slot == -1 && active->profile_index == -1 && active->status_word == 0 && active->player_status_word == 8 &&
               second_active->card_slot == -1 && second_active->profile_index == -1 && second_active->status_word == 0 &&
               active->value.phase() == RetailSavedChildPhase::source_defaults && second_active->value.phase() == RetailSavedChildPhase::source_defaults,
-              "both actual active records reset with source metadata order");
+               "both actual active records reset with source metadata order");
+        check(kart2->card_slot == 0 && kart2->profile_index == 6 && kart2->status_word == 0x12345678 &&
+              kart3->card_slot == 1 && kart3->profile_index == 4 && kart3->status_word == 1 &&
+              kart2->value.phase() == RetailSavedChildPhase::zero_born &&
+              first->children[6].in_use_word == 0x24681357 &&
+              owner.card_slot(1, rf)->children[4].in_use_word == 0x76543210,
+              "source first-two reset never resets/releases additional kart identities");
         check(owner.card_slot(1, rf)->children[7].in_use_word == 0 && first->children[3].in_use_word == 0 &&
               first->children[2].in_use_word == 0x13579bdf, "only selected parent in-use full words released");
         check(x.main->input_roles->observe(RetailInputRole::role2, role)->source_control_word == 0 &&
@@ -211,6 +225,70 @@ int main(int argc, char** argv) try {
                   active->card_slot == -1 && active->profile_index == -1,
                   "invalid signed parent/index skips just in-use release and still performs actual active reset");
         }
+    }
+    {
+        Fixture x(root / "kart-ownership"); auto& owner = records(*x.main);
+        static_assert(retail_profile_child_count == 8 && retail_profile_child_image_size == 0x3c30 &&
+                      retail_profile_image_size == 0x1e1e0);
+        check(!owner.active_player(2, rf) && rf.kind == RetailSavedProfileRecordsError::invalid_player,
+              "existing first-two accessor is not silently widened");
+        check(!owner.active_player_for_scope(static_cast<RetailActiveProfileScope>(99), 0, rf) &&
+              rf.kind == RetailSavedProfileRecordsError::invalid_scope, "unknown mode scope fails by name");
+        check(!owner.active_player_for_scope(RetailActiveProfileScope::motor_kombat, 4, rf) &&
+              rf.kind == RetailSavedProfileRecordsError::invalid_player, "actual kart participant extent");
+        check(!owner.bind_motor_kombat_profiles({}, rf) && rf.kind == RetailSavedProfileRecordsError::foreign_session,
+              "missing Session cannot publish a kart owner");
+        Fixture foreign(root / "kart-foreign");
+        check(!owner.bind_motor_kombat_profiles(foreign.startup->game_session, rf) &&
+              rf.kind == RetailSavedProfileRecordsError::foreign_session, "foreign Session rejected before binding");
+        const std::array<std::uint32_t,4> statuses{0,1,0x80000001u,0xffffffffu};
+        for (unsigned pattern = 0; pattern != 256; ++pattern) {
+            auto digits = pattern;
+            std::array<std::int32_t,4> expected{-1,-1,-1,-1}; std::size_t next = 0;
+            for (unsigned player = 0; player != 4; ++player) {
+                const auto choice = digits & 3u; digits >>= 2;
+                owner.active_player_for_scope(RetailActiveProfileScope::motor_kombat, player, rf)->status_word = statuses[choice];
+                // Choice1 is the literal CMP(status,1)/JZ source case; high-bit
+                // variants are independently required NOT to match.
+                if (choice == 1) expected[next++] = static_cast<std::int32_t>(player);
+            }
+            auto binding = owner.bind_motor_kombat_profiles(x.startup->game_session, rf);
+            check(binding && binding->status_one_player_order() == expected, "all256 original full-word status/order cases");
+            for (unsigned player = 0; player != 4; ++player)
+                check(binding->profile(player, rf) ==
+                      owner.active_player_for_scope(RetailActiveProfileScope::motor_kombat, player, rf),
+                      "race resolves SAME live active profile, not a copied save child");
+        }
+        for (unsigned i = 0; i != 4; ++i)
+            owner.active_player_for_scope(RetailActiveProfileScope::motor_kombat, i, rf)->status_word = i == 2 ? 1u : 0u;
+        fail_next_allocation = true;
+        auto binding = owner.bind_motor_kombat_profiles(x.startup->game_session, rf);
+        const bool no_allocation = fail_next_allocation; fail_next_allocation = false;
+        check(binding && no_allocation, "actual shared-owner binding needs no extra heap allocation");
+        auto* profile2 = binding->profile(2, rf);
+        profile2->status_word = 2;
+        check(binding->profile(2, rf)->status_word == 2 &&
+              binding->status_one_player_order() == std::array<std::int32_t,4>{2,-1,-1,-1},
+              "status pointer stays live while source derived ordering stays a call-time snapshot");
+        auto rebound = owner.bind_motor_kombat_profiles(x.startup->game_session, rf);
+        check(rebound && rebound->status_one_player_order() == std::array<std::int32_t,4>{-1,-1,-1,-1},
+              "a new source binding samples changed status");
+        bool refused = false;
+        std::thread t([&] { RetailSavedProfileRecordsFailure q;
+            refused = !binding->profile(0, q) && q.kind == RetailSavedProfileRecordsError::wrong_thread; });
+        t.join(); check(refused, "retained race owner does not authorize foreign-thread access");
+        check(!binding->profile(4, rf) && rf.kind == RetailSavedProfileRecordsError::invalid_player,
+              "retained binding rejects out-of-range local player");
+        rebound.reset();
+        std::weak_ptr<NativeRetailGameSession> live = x.startup->game_session;
+        x.main.reset(); x.startup->game_record_reset.reset(); x.startup->game_session.reset();
+        check(!live.expired() && binding->profile(2, rf) == profile2 && profile2->status_word == 2,
+              "race retains actual Session/profiles across Main destruction and external owner release");
+        auto moved = std::move(*binding);
+        check(!binding->profile(0, rf) && rf.kind == RetailSavedProfileRecordsError::retired_reference &&
+              moved.profile(2, rf) == profile2, "moved capability fails; live native identity is preserved");
+        binding = std::move(moved); binding.reset();
+        check(live.expired(), "last race binding releases real Session with no ownership cycle");
     }
     {
         Fixture x(root / "storage"); auto& owner = records(*x.main);
@@ -280,7 +358,7 @@ int main(int argc, char** argv) try {
               f.saved_profile_records.kind == RetailSavedProfileRecordsError::foreign_session && revoked_session.expired(),
               "source menu status rereads skip transitions;171B10 refuses revoked Session before preferences"); menu_hook = nullptr;
     }
-    std::puts("PASS actual171B10/246070 persistent records,storage/menu ordering,input identity,prefix,transfer,thread,allocation and lifetime;loaded save import/gameplay remain required");
+    std::puts("PASS actual171B10/246070 persistent records plus same-Session four-player kart profile bindings/all256 status orders; first-two reset/save layout/order/thread/allocation/lifetime preserved; child+240 payload/whole kart/gameplay remain required");
     return 0;
 } catch (const std::exception& e) {
     fail_next_allocation = false;

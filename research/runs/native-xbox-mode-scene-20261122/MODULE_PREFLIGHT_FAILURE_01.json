@@ -1,0 +1,9 @@
+{
+  "status": "ORIGINAL_MODULE_TABLE_PROBE_FAILED",
+  "command": ["python", "research/runs/native-xbox-mode-scene-20261122/inspect_kart_modules.py"],
+  "exit": 1,
+  "error": "AssertionError: ('kart_core.mko', 0)",
+  "cause": "The probe incorrectly restricted table references to .data; the established 4ED6C8 table is mapped in the XBE's .rdata section.",
+  "runtime_or_original_files_changed": false,
+  "correction": "Select the section actually containing the original table VMA. Preserve the first empty private directory and use attempt-02."
+}
