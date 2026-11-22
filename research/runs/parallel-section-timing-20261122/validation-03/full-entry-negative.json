@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\build-section-timing",
+    "--target",
+    "test_native_startup_missing_bindings",
+    "-j2"
+  ],
+  "exit": 1,
+  "seconds": 0.973365068435669,
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "log_sha256": "33dddd27ec7e711877cfae2fc42f8fe5f3b1963cfacde5e5c4c3225750375e05"
+}

@@ -1,0 +1,40 @@
+00122ad0	addiu sp,sp,-0x10
+00122ad4	lui v1,0x66
+00122ad8	sd ra,0x0(sp)
+00122adc	lbu v1,0x84(v1)
+00122ae0	andi v1,v1,0x1
+00122ae4	beq v1,zero,0x00122b14
+00122ae8	_nop
+00122aec	lw v1,-0x622c(gp)
+00122af0	beq v1,zero,0x00122b14
+00122af4	_nop
+00122af8	lui v1,0x3f80
+00122afc	sw v1,-0x625c(gp)
+00122b00	mtc1 v1,f0
+00122b04	sw v1,-0x6260(gp)
+00122b08	sqrt.S f0,f0
+00122b0c	b 0x00122b64
+00122b10	_swc1 f0,-0x6264(gp)
+00122b14	jal 0x002207e0
+00122b18	_nop
+00122b1c	li v1,0x32
+00122b20	bnel v0,v1,0x00122b50
+00122b24	_lui v1,0x3f80
+00122b28	lui a0,0x3f99
+00122b2c	lui v1,0x3f55
+00122b30	ori a0,a0,0x999a
+00122b34	ori v1,v1,0x5555
+00122b38	sw v1,-0x6260(gp)
+00122b3c	mtc1 a0,f0
+00122b40	sw a0,-0x625c(gp)
+00122b44	sqrt.S f0,f0
+00122b48	b 0x00122b64
+00122b4c	_swc1 f0,-0x6264(gp)
+00122b50	sw v1,-0x625c(gp)
+00122b54	mtc1 v1,f0
+00122b58	sw v1,-0x6260(gp)
+00122b5c	sqrt.S f0,f0
+00122b60	swc1 f0,-0x6264(gp)
+00122b64	ld ra,0x0(sp)
+00122b68	jr ra
+00122b6c	_addiu sp,sp,0x10

@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp-section-timing\\build-section-timing",
+    "--target",
+    "test_native_retail_scene_bootstrap_prefix",
+    "test_native_retail_main_timing",
+    "-j2"
+  ],
+  "exit": 0,
+  "seconds": 0.9210724830627441,
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "log_sha256": "7ef5d8c33460e1ce493714616fa24234cc5be3b0927100e8c08ef5262a85fe34"
+}
