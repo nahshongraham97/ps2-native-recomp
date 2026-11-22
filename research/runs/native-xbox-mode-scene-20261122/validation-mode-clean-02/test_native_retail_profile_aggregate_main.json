@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_profile_aggregate_main.exe",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\research\\runs\\native-xbox-mode-scene-20261122\\validation-mode-clean-02\\fixtures\\empty"
+  ],
+  "exit": 0,
+  "seconds": 0.09400860001915134,
+  "executable_sha256": "360128c03a3e0b3973f4a46562c087df41b2b6cf959bf640bd6403f38d0f243e",
+  "log_sha256": "8eb718bb277a5e94031b0ab7a51a62b377f1fea492d7222122cd2fd6d758232a",
+  "source_manifest_sha256": "eb240c3d74c9c52389de0966ffd19de54571586c3f14f7b9745c21adc8ee3656",
+  "source_commit": "b698338b99363714a5d3ce29b7d8505d80fe753a"
+}

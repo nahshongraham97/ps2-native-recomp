@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_saved_profile_child.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.03237610001815483,
+  "executable_sha256": "28f1159ef69214682d219aa3d77ed681a5768237c1e8e85b24859b7b9109ced9",
+  "log_sha256": "d9090ed425aa44d7537dc02e503f62f4b8f01c6b737f374c7e2f43a9e73bd9d6",
+  "source_manifest_sha256": "eb240c3d74c9c52389de0966ffd19de54571586c3f14f7b9745c21adc8ee3656",
+  "source_commit": "b698338b99363714a5d3ce29b7d8505d80fe753a"
+}

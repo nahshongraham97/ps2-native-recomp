@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-C",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_saved_profile_records.exe"
+  ],
+  "exit": 0,
+  "seconds": 0.07519040000624955,
+  "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "log_sha256": "e49b2db652887abb68d1f7c3ad5aa286d7c105d3b2df8a55e76caa5050c9ac37",
+  "source_manifest_sha256": "eb240c3d74c9c52389de0966ffd19de54571586c3f14f7b9745c21adc8ee3656",
+  "source_commit": "b698338b99363714a5d3ce29b7d8505d80fe753a"
+}

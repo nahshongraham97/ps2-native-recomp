@@ -344,3 +344,21 @@ byte replacement, then compiles/tests the clean commit before pushing.
 The wait-status tasklist commands failed due host quoting; a read-only Win32
 process snapshot and the completion notification established the job ended.
 No game process, driver, model or setting was touched by that diagnosis.
+
+Clean committed runtime sourceb698338b99363714a5d3ce29b7d8505d80fe753a now
+passes all eight clients and64 mode allocation cuts in validation-mode-clean-02.
+MODE_CLEAN_AUTHENTICATION.json authenticates900 exact committed source blobs,
+eight binary/log identities, original field-contract identity and unchanged
+codec/store/child-body sources. The label-only correction was compiled and
+tested without changing any assertion. Full-entry negative is exactly58,
+resolving only initialize_retail_mode_objects from the prior59.
+
+The remaining field contract is now source-resolved AND component-tested:
+live names, existing Motor counter/result values and first-two preset slots;
+the actual production Main startup caller is connected. This is not a claim
+that F1330/FA3A0 or the whole race/input/camera/mode-service path is native.
+Packed-time arithmetic is unadopted. Loaded saves, numerical/HD/oracle and
+whole-game acceptance remain OPEN. No game/window/speaker endpoint ran.
+Owner:no action. Agent next:the actual remaining mode-service/scene/race
+callers through existing owners, maintaining the required gates.
+No background job remains active after the completed clean verification.

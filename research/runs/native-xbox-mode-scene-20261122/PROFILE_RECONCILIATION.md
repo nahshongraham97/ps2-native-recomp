@@ -3,7 +3,8 @@
 This records the prior ownership-only checkpoint. The later field resolution
 is source-proved in MODE_FIELD_CONTRACT.json; its production startup/field
 implementation passes initial component checks, as recorded in
-MODE_FIELD_IMPLEMENTATION.md. Clean committed verification remains pending.
+MODE_FIELD_IMPLEMENTATION.md. Clean sourceb698338 passes eight affected
+clients; this older record's d0c78a0 measurements remain preserved separately.
 
 ## Original input and actual decoding
 

@@ -69,8 +69,14 @@ claimed loaded-save or completed race-result producer.
 
 The initial records client's final legacy PASS label incorrectly still said
 the field was open. Original measured test bytes/results are preserved; the
-only correction is that string, with no assertion/runtime change. Final clean
-committed compilation/testing remains pending before publication.
+only correction is that string, with no assertion/runtime change.
+
+Clean runtime source `b698338b99363714a5d3ce29b7d8505d80fe753a` now passes all
+eight clients,64 cuts, the native symbol audit and exact58-name negative in
+validation-mode-clean-02. MODE_CLEAN_AUTHENTICATION.json authenticates900 exact
+committed source blobs, all eight binary/log identities and unchanged codec/
+store/child-body source bytes. The corrected test label is compiled and passes.
+This was an incremental component build/check, not a fresh-checkout game build.
 
 This is component evidence, not complete gameplay. The fullF1330/FA3A0 race
 callers, packed-time writer, other mode/scene/input producers, loaded-profile
