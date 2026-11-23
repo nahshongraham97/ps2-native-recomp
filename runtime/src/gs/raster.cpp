@@ -83,7 +83,7 @@ std::uint32_t fetch(const Setup &s, int x, int y) {
 }
 
 std::uint32_t sample(const Setup &s, float u, float v) {
-    // Barycentric interpolation of an exactly-integer coordinate lands at
+    // Coordinate interpolation of an exactly-integer coordinate lands at
     // k-1e-5 as often as k+1e-5 in float32 (a 1:1 surface hits an integer at
     // every pixel). Flooring that noise selected the texel below the intended
     // one, disagreeing with both exact math and the hardware DDA - a traced
@@ -398,6 +398,8 @@ Attr attr_of(const Setup &s, const Vertex &v) {
     return a;
 }
 
+#if defined(MKA_REFERENCE_RASTER)
+// Standalone comparison oracle only; absent from the game runtime object.
 // Colour, fog and depth are the first vertex's value plus the weighted differences to the others, so a value that is the
 // same at all three vertices (flat shading, one colour, no fog) comes out exactly, as on the GS. Summing a*wa + b*wb + c*wc
 // instead gives 254.99 for 255 now and then, which truncates to 254: God of War II counts its shadow volumes with +1 and -1
@@ -560,8 +562,6 @@ bool decode_texture_rgba(const State &st, std::vector<std::uint32_t> &pixels, st
     return true;
 }
 
-#if defined(MKA_REFERENCE_RASTER)
-// Standalone comparison oracle only; absent from the game runtime object.
 void draw(const State &st, const Vertex *v, int count) {
     const Setup s = make_setup(st);
     switch (st.prim & 7u) {
