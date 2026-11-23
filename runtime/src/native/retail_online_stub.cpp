@@ -36,6 +36,13 @@ namespace mka::retail::main_binding {
 // Allocation-profile tests count typed pool objects (AllocationClassRole) across 14 game modes, not
 // general heap allocations, so omitting this 84-byte object has zero observable impact on gameplay or memory tests.
 //
+// DEVIATION_NATIVE_GO_ONLINE_MODAL_MESSAGE:
+// In retail offline play, selecting "Go Online" from the main menu (0x005CB7D4 / "ONLINE" 0x006311F0)
+// displays an offline modal notification without loading NETR.ovl or reading -21272(gp).
+// In native PC recompilation, selecting "Go Online" displays an offline modal notification
+// ("Online network features are disabled in the native offline port") and immediately returns
+// the player to the main menu without attempting to load NETR.ovl or allocate unmanaged sockets.
+//
 // Under named deviation DEVIATION_ONLINE_STAGE_RETURN_BOOL, initialize_retail_online_stage returns
 // bool true with StartupError::none to indicate non-failing offline progression to the native orchestrator,
 // directly matching retail caller 0x00122900's uninterrupted continuation past 0x003432D0.
