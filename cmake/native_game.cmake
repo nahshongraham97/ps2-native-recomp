@@ -229,6 +229,7 @@ if(WIN32)
         runtime/src/native/retail_crt_startup.cpp runtime/src/native/retail_platform_startup.cpp
         runtime/src/native/retail_main.cpp runtime/src/native/retail_main_timing.cpp
         runtime/src/native/retail_main_frame_gates.cpp
+        runtime/src/native/retail_online_stub.cpp
         runtime/src/native/retail_arcade_ladder.cpp
         runtime/src/native/retail_loaded_system_art.cpp
         runtime/src/native/retail_loaded_system_art_main.cpp
@@ -615,6 +616,8 @@ add_executable(test_native_retail_permanent_strings EXCLUDE_FROM_ALL tests/test_
 target_link_libraries(test_native_retail_permanent_strings PRIVATE mka_native_retail_startup)
 add_executable(test_native_retail_frame_work_storage EXCLUDE_FROM_ALL tests/test_retail_frame_work_storage.cpp)
 target_link_libraries(test_native_retail_frame_work_storage PRIVATE mka_native_retail_startup)
+add_executable(test_native_retail_online_stub EXCLUDE_FROM_ALL tests/test_retail_online_stub.cpp)
+target_link_libraries(test_native_retail_online_stub PRIVATE mka_native_retail_startup)
 if(WIN32)
     foreach(_client test_native_gl_texture test_native_file_read_job test_native_retail_loaded_system_art test_native_retail_permanent_strings test_native_retail_frame_work_storage)
         add_custom_command(TARGET ${_client} POST_BUILD
