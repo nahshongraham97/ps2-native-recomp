@@ -1,6 +1,7 @@
 #include "mka/retail_main.hpp"
+#include "native_retail_startup.hpp"
 
-namespace mka::retail {
+namespace mka::retail::main_binding {
 
 // Original 3432D0 online initialization is formally out of scope per Owner Decision
 // (research/decisions/DECISION_ONLINE_OUT_OF_SCOPE.json).
@@ -19,4 +20,4 @@ bool initialize_retail_online_stage(NativeRetailMainState&,
     return true;
 }
 
-} // namespace mka::retail
+} // namespace mka::retail::main_binding
