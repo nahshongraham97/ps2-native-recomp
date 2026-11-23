@@ -28,11 +28,15 @@ int main() {
           "offline boot word is 0 (offline path, no network boot override)");
 
     // 2. Verify initialize_retail_online_stage routes cleanly to the offline route:
-    // Retail PS2 disassembly at 0x003432D0:
-    // Takes argument a0 (5 configuration words). Reads network manager pointer at -0x5318(gp).
-    // When network manager is absent (NULL), line 00343350 executes beql a0, zero, 0x00343368
-    // and returns -1 (0xFFFFFFFF), completely bypassing socket/network initialization at 0x0033ECF0.
-    // However, the sole caller at 0x00122900 completely discards this return value (jal 00164130 immediately follows).
+    // Retail PS2 disassembly from SLUS_214.10 (caller 0x00122900 -> 0x003432D0):
+    // 0x00122900 sets up stack config buffer at sp+32 and calls 0x003432D0.
+    // 0x003432D0 calls 0x0034F380 (allocates 84-byte "Online" object and stores it at -0x5318(gp)),
+    // copies 5 config words, and calls 0x0033ECF0 (cOnline::InitializeOnline).
+    // In 0x0033ECF0, 0x00115B68 attempts to load dev9.irx; on a console without network hardware,
+    // this fails with "TRC Violation*** -> Unable to load dev9.irx\n", calls ShutdownPartial (0x00343E80),
+    // and returns -1 (0xFFFFFFFF). 0x003432D0 returns -1, which caller 0x00122900 completely discards
+    // (storing to 48(sp) and continuing to offline options at 0x00164130).
+    // Omission of the 84-byte dynamic heap allocation in native C++ has zero impact on subsequent host subsystems.
     // Under named deviation DEVIATION_ONLINE_STAGE_RETURN_BOOL, initialize_retail_online_stage handles
     // the network-absent condition cleanly by returning true with StartupError::none to indicate
     // non-failing offline progression, allocating zero network resources.
