@@ -1,10 +1,14 @@
 {
   "status": "AUTHENTICATED_NATIVE0407_SHARED_RASTER_COMPONENT",
-  "measured_source_base": "c27fbc44495fb7f355ed7ce39c6465f713c6b1ca",
+  "measured_source_base": "2ee8738d82d82d62c4418bfde21db4804e5861aa",
+  "source_files": 918,
+  "source_manifest_sha256": "d251c26bd036eabab5c94279c588ec19c152c3a9bc8232c7aaa04c240542ceb2",
   "changed_source_paths": [
     "cmake/native_game.cmake",
+    "runtime/include/mka/retail_game_session.hpp",
     "runtime/include/mka/retail_renderer_core.hpp",
     "runtime/include/mka/retail_renderer_rasters.hpp",
+    "runtime/src/native/retail_renderer_core.cpp",
     "runtime/src/native/retail_renderer_rasters.cpp",
     "tests/test_retail_renderer_rasters.cpp"
   ],
@@ -19,6 +23,163 @@
     "test_native_retail_renderer_raster_registration",
     "test_native_retail_renderer_allocator"
   ],
+  "client_target_count": 9,
+  "receipts": {
+    "rasters-01": {
+      "result_sha256": "a42dce2f42bde522aa7289fce05a5cd43b02999a322809cd76c5564e7b8e0282",
+      "source_manifest_sha256": "d251c26bd036eabab5c94279c588ec19c152c3a9bc8232c7aaa04c240542ceb2",
+      "log_sha256": "6141b3459591aceed7ad61509a10837a2a568f8cc908ed22ce375d8f97ffa399",
+      "compressed_log_sha256": "baebcbb5db1340c68f4bbacc7ff32450d3940efbde8128fb0c11879f9e41c43a",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_rasters.exe"
+      ],
+      "executable_sha256": "6bb8c2e21e086076b23d2a6417439c3b0a32f9876ccc6d953d813f97c9a45691",
+      "seconds": 0.18765340000391006
+    },
+    "compile-01": {
+      "result_sha256": "f5db87eede9b79b41ab5289eb74dc59cb7149bd3c27cef6fba912ac6e48f118d",
+      "source_manifest_sha256": "d251c26bd036eabab5c94279c588ec19c152c3a9bc8232c7aaa04c240542ceb2",
+      "log_sha256": "dd3eeba9f4b04bd26ad3febd6ea9df22320c95e72780cf8ce44e7b60c200072d",
+      "compressed_log_sha256": "041ee224f8cd17149daace604774e18f24ffc364de75a6fff11ed604b3f12fa6",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+        "--build",
+        "C:\\Users\\nahsh\\MKPORT~1\\ARMAGE~1\\ARMAGE~1\\external\\forks\\RETAIL~1\\b",
+        "--target",
+        "test_native_retail_renderer_rasters",
+        "-j2"
+      ],
+      "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+      "seconds": 0.16785849997540936
+    },
+    "negative-01": {
+      "result_sha256": "e0e9282669c6d06528e4d79d05e6a141819b2739e6b66aaed9cd3dbe9632ca4d",
+      "source_manifest_sha256": "d251c26bd036eabab5c94279c588ec19c152c3a9bc8232c7aaa04c240542ceb2",
+      "log_sha256": "180dacc05fdcb87f1bfb4b6871ea642d40bdbbdafbf211d44f2bb3636f738f50",
+      "compressed_log_sha256": "085333a8c24866b96c19ae9103616b95faa8dc0fc17039e4d1adbf1204874375",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+        "--build",
+        "C:\\Users\\nahsh\\MKPORT~1\\ARMAGE~1\\ARMAGE~1\\external\\forks\\RETAIL~1\\b",
+        "--target",
+        "test_native_startup_missing_bindings",
+        "-j2"
+      ],
+      "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+      "seconds": 0.2630644000018947
+    },
+    "symbols-01": {
+      "result_sha256": "1714e41385c92559058a071f49563e9c64c16bf491f99fdaf359e6a556b2938d",
+      "source_manifest_sha256": "d251c26bd036eabab5c94279c588ec19c152c3a9bc8232c7aaa04c240542ceb2",
+      "log_sha256": "12cd5daf79731a94561c0d2f726783f7e6c14a858afa93be19bb035338ea3bb5",
+      "compressed_log_sha256": "4421faa63510543a29aac56b5f03fca6f35d9bb7016b7bf1604c428b5aab2e0d",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+        "-C",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_rasters.exe"
+      ],
+      "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+      "seconds": 0.0722696999728214
+    },
+    "allocator-01": {
+      "result_sha256": "32f9c41e1ca81618f3a60393d666e4f243e36a1e7628fa4dc037d81bbe625809",
+      "source_manifest_sha256": "d251c26bd036eabab5c94279c588ec19c152c3a9bc8232c7aaa04c240542ceb2",
+      "log_sha256": "f708c44121d52d01b73f83a75dfd8b1fdf13fd6c0ba74e94147a392ed99f3c70",
+      "compressed_log_sha256": "3cabb9802a06b606ed8cc266f2c729bb2fe3894882961a7366db3daeba7970ad",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_allocator.exe",
+        "."
+      ],
+      "executable_sha256": "322b4b345888c0117e0bd979d8fa16e00835331811ca32f18b03b6f4d1f8c78b",
+      "seconds": 0.09225300000980496
+    },
+    "cameras-01": {
+      "result_sha256": "3e91d11a14fb15786c4e41652eab68e2d56ad69bae60d5d1420b135369c72dc3",
+      "source_manifest_sha256": "d251c26bd036eabab5c94279c588ec19c152c3a9bc8232c7aaa04c240542ceb2",
+      "log_sha256": "8624888017a4532e1134f22515e4778b243151bf2318a6371142c744fc4a9e83",
+      "compressed_log_sha256": "517276dcc3a45d0abcc7981fc686d3632bf553e7701627d389833497f604d8c6",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_cameras.exe",
+        ".",
+        "research/runs/native-xbox-renderer-0405-20261122/depth-expected.tsv"
+      ],
+      "executable_sha256": "7ee2e10886b65ed8efa6625acee1d007edccc6e31c30c0d4826746f61ffa235c",
+      "seconds": 0.07990589999826625
+    },
+    "core-01": {
+      "result_sha256": "1cd8b7fcd7afe3c7398addebab0d721d7565465a21b2f8babc566dacc810d65c",
+      "source_manifest_sha256": "d251c26bd036eabab5c94279c588ec19c152c3a9bc8232c7aaa04c240542ceb2",
+      "log_sha256": "7d64e1cf5d24d6ffb751ec174c7fd8e67a19623b31c40eac955eaff032f705ec",
+      "compressed_log_sha256": "187b1d20968067c168b43a21891330fccd4566a530d532c7683cc8be38072c0b",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_core.exe",
+        "research/runs/parallel-renderer-engine-init-20261122"
+      ],
+      "executable_sha256": "e70cf5edfe73f840be2948d4e5c53901f93d96c81ef7dd9ad7f47e781cce6d68",
+      "seconds": 0.1002847999916412
+    },
+    "frames-01": {
+      "result_sha256": "eadf2a9060aa5b668b3c22a82b0faef1f933c8e5578a1b75b20c89c33622ff0e",
+      "source_manifest_sha256": "d251c26bd036eabab5c94279c588ec19c152c3a9bc8232c7aaa04c240542ceb2",
+      "log_sha256": "af5db6a8eaf6325c1f3d2f669853eed817c2e0e9aaf607ef9689208d7d24d284",
+      "compressed_log_sha256": "44f76f9dbd2b5fd8db237510bbe8323e81170d9fd7dd40135a33c644b6706698",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_frames.exe",
+        "."
+      ],
+      "executable_sha256": "1ae82dd76989096e105a167a8311d8106d8fad8e32ad0ba342ba32f856ae33a7",
+      "seconds": 0.082769400003599
+    },
+    "matrix-01": {
+      "result_sha256": "cc766f08567d9d0e35df8fc4fd89bf709cbd6bda01dddb0c3e8617ee088c60ba",
+      "source_manifest_sha256": "d251c26bd036eabab5c94279c588ec19c152c3a9bc8232c7aaa04c240542ceb2",
+      "log_sha256": "e6ca983715efa3c1951163d91ac2bd5a0363f87ee0008dfac1e602ba5c22291c",
+      "compressed_log_sha256": "f73c6bb40bec8fe51ce9368bc025738b886b1027be63e6f9fa4021c14011d9b4",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_matrix.exe",
+        "."
+      ],
+      "executable_sha256": "de0b10f2b586c56518a3748d8f7c8b5cf555788a4a45b4dd99fa63de36c58316",
+      "seconds": 0.08605189999798313
+    },
+    "registration-01": {
+      "result_sha256": "aab41c80d9ba6b16a73b3bf52608e5a105e1524b2d90fc7458ba722755a18b16",
+      "source_manifest_sha256": "d251c26bd036eabab5c94279c588ec19c152c3a9bc8232c7aaa04c240542ceb2",
+      "log_sha256": "2f0cd2dbd357a45f80bf38c4da722ce811712484c7256b1ea015268bda40917e",
+      "compressed_log_sha256": "4a8a68e8d5d8b70615f8bd62dd79eb184ebc66d668ce026938e1db0b70578d3a",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_raster_registration.exe",
+        "."
+      ],
+      "executable_sha256": "0c310dc0ccdbbdd4e35e9764fc259a1d259625a86d50b6b22839b3fa961a129a",
+      "seconds": 0.09043419998488389
+    },
+    "streams-01": {
+      "result_sha256": "a4ea6accbdbec27994982000f84b41d4fccd298e4169b956e96e8a3e59d83194",
+      "source_manifest_sha256": "d251c26bd036eabab5c94279c588ec19c152c3a9bc8232c7aaa04c240542ceb2",
+      "log_sha256": "677576590414a4708a210a6f6f2a5563cf2f53b0182ea7285a57f7a18fead051",
+      "compressed_log_sha256": "f30c66b715b0191ccefb5a91dd9021ed740cb77279212da77614a99de1e21bc6",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_streams.exe",
+        "research/runs/native-xbox-renderer-0407-implementation-20261122/streams-01/fixtures"
+      ],
+      "executable_sha256": "01a3785c5c2e657d4b454229492a7d243348317a70ccfba591adba136fc6c5dc",
+      "seconds": 0.14412899999297224
+    },
+    "images-01": {
+      "result_sha256": "3184164961455f982d21fbb4c076d4076b470b8fe8992f3febcffa50bb3ff794",
+      "source_manifest_sha256": "d251c26bd036eabab5c94279c588ec19c152c3a9bc8232c7aaa04c240542ceb2",
+      "log_sha256": "98b66d6149ed8dcc15b31f0795f6ad318cc69d5adf792b1f9693f4311846a752",
+      "compressed_log_sha256": "cde8bba6c0834af8b791b2c1bb7b26c99e9af2e19bf1d8bc409327e3aafc0159",
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_images.exe",
+        "research/runs/native-xbox-renderer-0407-implementation-20261122/images-01/fixtures",
+        "research/runs/native-xbox-renderer-0406-implementation-20261122/gamma-one-expected.json"
+      ],
+      "executable_sha256": "2d50e51e14dc3188e028bb4c85f9d982e0d51c9cef0b18e71b103f5bf9cdd424",
+      "seconds": 0.103768900007708
+    }
+  },
   "resolved_bindings": [
     "mka::retail::renderer_required::construct_core_plugin_0407(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
     "mka::retail::renderer_required::destroy_core_plugin_0407(mka::retail::NativeRetailRendererCore&)"
@@ -71,6 +232,9 @@
     "mka::retail::scene_bootstrap_required::continue_scene_reset_at_125d60(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)"
   ],
   "remaining_undefined_count": 45,
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "runner_sha256": "cf8639e283679ee6bfad246f57a1479de1ff0586ec26c0d037100c1257ec68dc",
+  "cache_sha256": "706dae305fa5122aafd8e2aa001b2eb743923cf842c6138f3c3d78c7cd830642",
   "game_run": false,
   "visible_window": false,
   "audio_endpoint": false,

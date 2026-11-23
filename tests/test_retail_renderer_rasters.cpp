@@ -19,6 +19,11 @@
 #include <string>
 #include <thread>
 #include <vector>
+#ifdef _WIN32
+#include <windows.h>
+#include <GL/gl.h>
+#include "mka/movie_gl_device.hpp"
+#endif
 
 extern "C" int SDL_InitSubSystem(unsigned) { std::abort(); }
 
@@ -36,6 +41,8 @@ void operator delete(void* p) noexcept { std::free(p); }
 void operator delete(void* p, std::size_t) noexcept { std::free(p); }
 
 using namespace mka::retail;
+using namespace mka::graphics;
+using namespace mka::video;
 
 namespace {
 
@@ -68,58 +75,65 @@ bool fixture_construct(unsigned id, NativeRetailRendererCore& c, RetailRendererC
  return true;
 }
 
-struct TestGlTexture final : public mka::graphics::NativeGlTexture {
- std::uint32_t id_{0};
- std::uint32_t w_{0};
- std::uint32_t h_{0};
- bool revoked_{false};
- explicit TestGlTexture(std::uint32_t id, std::uint32_t w, std::uint32_t h) : id_(id), w_(w), h_(h) {}
- std::uint64_t identity() const noexcept override { return id_; }
- std::uint32_t width() const noexcept override { return w_; }
- std::uint32_t height() const noexcept override { return h_; }
- std::optional<std::uint32_t> gl_object(mka::graphics::NativeTextureFailure&) const noexcept override {
-  if (revoked_) return {};
-  return id_;
+#ifdef _WIN32
+struct HiddenGl {
+ HWND window{nullptr};
+ HDC dc{nullptr};
+ HGLRC context{nullptr};
+ std::shared_ptr<mka::video::NativeMovieGpuRetirementOwner> retirement;
+ std::shared_ptr<mka::video::NativeMovieGlDevice> device;
+
+ HiddenGl() {
+  WNDCLASSW wc{};
+  wc.style = CS_OWNDC;
+  wc.lpfnWndProc = DefWindowProcW;
+  wc.hInstance = GetModuleHandleW(nullptr);
+  wc.lpszClassName = L"NativeRetailRendererRastersGlTest";
+  check(RegisterClassW(&wc) || GetLastError() == ERROR_CLASS_ALREADY_EXISTS, "fixture window class");
+  window = CreateWindowExW(0, wc.lpszClassName, L"", WS_POPUP | WS_DISABLED, 0, 0, 64, 64, nullptr, nullptr, wc.hInstance, nullptr);
+  check(window && !IsWindowVisible(window), "never-visible native test window");
+  dc = GetDC(window);
+  PIXELFORMATDESCRIPTOR p{};
+  p.nSize = sizeof(p);
+  p.nVersion = 1;
+  p.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+  p.iPixelType = PFD_TYPE_RGBA;
+  p.cColorBits = 32;
+  p.cAlphaBits = 8;
+  p.iLayerType = PFD_MAIN_PLANE;
+  const auto format = ChoosePixelFormat(dc, &p);
+  check(format && SetPixelFormat(dc, format, &p), "test native pixel format");
+  context = wglCreateContext(dc);
+  check(context && wglMakeCurrent(dc, context), "test current WGL context");
+  mka::video::MovieGpuError error;
+  retirement = mka::video::NativeMovieGpuRetirementOwner::create(error);
+  check(bool(retirement) && error == mka::video::MovieGpuError::none, "actual native retirement owner");
+  device = mka::video::NativeMovieGlDevice::attach_current_context(window, 1, retirement, error);
+  check(bool(device) && error == mka::video::MovieGpuError::none, "actual native GPU owner");
  }
-};
 
-struct TestGlTextureUpload final : public mka::graphics::NativeGlTextureUpload {
- std::uint32_t next_id_{100};
- std::size_t uploads_count_{0};
- std::size_t revokes_count_{0};
- std::vector<std::uint8_t> last_uploaded_bytes_;
- mka::graphics::NativeTextureSampler last_sampler_{};
- bool fail_upload_{false};
-
- mka::graphics::NativeTextureUpload upload_rgba_image(
-  const mka::graphics::NativeTextureRgbaImage& input,
-  mka::graphics::NativeTextureSampler sampler) override {
-  if (fail_upload_) {
-   return {{mka::graphics::NativeTextureError::upload_failed, "simulated GL upload failure"}, {}};
+ ~HiddenGl() {
+  if (device) {
+   for (;;) {
+    const auto result = device->shutdown();
+    if (result == mka::video::MovieGpuError::none) break;
+    if (result != mka::video::MovieGpuError::pending) std::abort();
+    glFinish();
+   }
   }
-  ++uploads_count_;
-  last_uploaded_bytes_.assign(input.bytes.begin(), input.bytes.end());
-  last_sampler_ = sampler;
-  auto tex = std::make_shared<TestGlTexture>(++next_id_, input.width, input.height);
-  return {{}, std::move(tex)};
- }
-
- bool revoke_image(
-  const std::shared_ptr<const mka::graphics::NativeGlTexture>& image,
-  mka::graphics::NativeTextureFailure&) override {
-  ++revokes_count_;
-  auto* tex = const_cast<TestGlTexture*>(dynamic_cast<const TestGlTexture*>(image.get()));
-  if (tex) tex->revoked_ = true;
-  return true;
- }
-
- bool set_image_sampler(
-  const std::shared_ptr<const mka::graphics::NativeGlTexture>&,
-  mka::graphics::NativeTextureSampler,
-  mka::graphics::NativeTextureFailure&) override {
-  return true;
+  if (retirement) {
+   check(retirement->poll().state == mka::video::MovieFenceState::complete, "real context retirement completed");
+  }
+  check(!IsWindowVisible(window), "fixture was never visible");
+  device.reset();
+  retirement.reset();
+  if (wglGetCurrentContext() == context) wglMakeCurrent(nullptr, nullptr);
+  if (context) wglDeleteContext(context);
+  if (dc) ReleaseDC(window, dc);
+  if (window) DestroyWindow(window);
  }
 };
+#endif
 
 struct Fixture {
  NativeRetailStartupState startup;
@@ -258,6 +272,19 @@ int main() {
    check(obs1->stride == 16 * 4, "stride is 4-byte aligned");
    check(obs1->pixel_bytes == 16 * 4 * 8, "pixel bytes computed");
 
+   // Type 4 texture with nonzero incoming depth (e.g. 16): unconditionally normalizes to depth 32
+   RetailRendererRasterDescription desc16;
+   desc16.width = 16;
+   desc16.height = 8;
+   desc16.depth = 16;
+   desc16.flags = 4;
+   auto r16 = rasters->create_raster(desc16, rf);
+   check(r16.has_value(), "create type 4 with nonzero incoming depth");
+   auto obs16 = rasters->observe(*r16, rf);
+   check(obs16->format == 0x0500, "type 4 normalized format 0x0500");
+   check(obs16->description.depth == 32, "type 4 unconditionally normalizes to depth 32");
+   check(rasters->destroy_raster(*r16, rf), "destroy r16");
+
    // Camera target (type 5, flags 5, depth 32)
    RetailRendererRasterDescription cam_desc;
    cam_desc.width = 640;
@@ -346,10 +373,11 @@ int main() {
    check(!pop_res.has_value(), "pop callback refused");
    check(rasters->context_depth(rf) == 2, "stack index remained decremented despite callback failure");
 
-   // Successful pop
+   // Successful pop returns the popped target (r1), while current_target becomes previous (sentinel)
    callback_refuse = false;
    pop_res = rasters->pop_context(rf);
-   check(pop_res.has_value() && pop_res->same_identity(sentinel), "pop returned sentinel");
+   check(pop_res.has_value() && pop_res->same_identity(*r1), "pop returned popped target r1");
+   check(rasters->current_target(rf)->same_identity(sentinel), "current target after pop is restored previous sentinel");
    check(rasters->context_depth(rf) == 1, "stack back to base depth 1");
 
    // Underflow test: cannot pop below base sentinel
@@ -456,15 +484,21 @@ int main() {
    check(bool(rasters), "rasters module");
 
    // Case A: ext2 refuses.
-   // 2B9E50: ext1 unwound, but raster creation still succeeds!
+   // 2B9E50 ignores extension refusal return. States are retained for full definition-chain destruction.
    ext2_refuse = true;
    ext_events.clear();
    RetailRendererRasterFailure rf;
    auto r_ext_fail = rasters->create_raster({8, 8, 32, 4, 4, 0x0500}, rf);
    check(r_ext_fail.has_value(), "raster creation succeeds even when extension refuses");
-   check(ext_events.size() == 3 && ext_events[0] == 0x101 && ext_events[1] == 0x102 && ext_events[2] == -0x101, "extension 1 unwound in reverse on extension 2 refusal");
+   check(ext_events.size() == 2 && ext_events[0] == 0x101 && ext_events[1] == 0x102, "extensions attempted forward in definition order");
    auto obs_ext_fail = rasters->observe(*r_ext_fail, rf);
    check(!obs_ext_fail->extension_chain_completed, "extension chain marked incomplete");
+
+   // Subsequent destruction traverses the full reverse definition chain
+   ext_events.clear();
+   check(rasters->destroy_raster(*r_ext_fail, rf), "destroy raster with refused extension");
+   check(ext_events.size() == 2 && ext_events[0] == -0x102 && ext_events[1] == -0x101,
+         "subsequent destruction traverses full reverse definition chain");
 
    // Case B: all extensions succeed.
    ext2_refuse = false;
@@ -530,6 +564,18 @@ int main() {
    auto img_h = images->create_image({2, 2, 32}, img_f);
    check(img_h.has_value() && images->allocate_pixels(*img_h, img_f), "allocate image");
 
+   // Verify that texture conversion without attached GPU is rejected by name (missing_backing)
+   auto r_unbacked = rasters->create_raster({2, 2, 32, 4, 4, 0x0500}, rf);
+   check(r_unbacked.has_value(), "create unbacked raster");
+   check(!rasters->set_from_image(*r_unbacked, *images, *img_h, rf) &&
+         rf.kind == RetailRendererRasterError::missing_backing, "texture conversion without GPU rejected");
+   check(rasters->destroy_raster(*r_unbacked, rf), "destroy unbacked test raster");
+
+#ifdef _WIN32
+   HiddenGl host_gl;
+   check(rasters->attach_gpu_device(host_gl.device, rf), "attach GPU device");
+#endif
+
    // RGBA bytes:
    // Pixel 0: 0x12, 0x34, 0x56, 0x78
    // Pixel 1: 0xAA, 0xBB, 0xCC, 0xDD
@@ -567,8 +613,8 @@ int main() {
    check(p_0600[0] == 0x56 && p_0600[1] == 0x34 && p_0600[2] == 0x12 && p_0600[3] == 0xFF, "0600 scalar word 0xFF123456");
    check(rasters->unlock_pixels(*r_0600, rf), "unlock 0600");
 
-   // Case C: Gamma flag 2 propagation into raster private bit 1
-   // Image conversion must succeed before gamma flag 2 propagates into raster private bit 1
+   // Case C: Gamma flag 2 propagation into raster private bit 0 (mask 0x01 per 2C0EB0)
+   // Image conversion must succeed before gamma flag 2 propagates into raster private bit 0
    // Create an image with gamma applied (which sets image flag 2)
    auto img_gamma = images->create_image({2, 2, 32}, img_f);
    check(images->allocate_pixels(*img_gamma, img_f), "allocate gamma image");
@@ -580,7 +626,27 @@ int main() {
    auto r_gamma = rasters->create_raster({2, 2, 32, 4, 4, 0x0500}, rf);
    check(rasters->set_from_image(*r_gamma, *images, *img_gamma, rf), "set_from_image with gamma");
    auto r_gamma_obs = rasters->observe(*r_gamma, rf);
-   check((r_gamma_obs->private_flags & 2) != 0, "raster private bit 1 set from image gamma flag 2");
+   check((r_gamma_obs->private_flags & 1) != 0, "raster private bit 0 set from image gamma flag 2");
+
+   // Case D: Destination capacity / bounds validation (2x2 image into 1x1 raster fails extent)
+   auto r_small = rasters->create_raster({1, 1, 32, 4, 4, 0x0500}, rf);
+   check(r_small.has_value(), "create 1x1 raster");
+   check(!rasters->set_from_image(*r_small, *images, *img_h, rf) &&
+         rf.kind == RetailRendererRasterError::extent, "2x2 image into 1x1 raster rejected by extent");
+
+   // Case E: Unsupported source image depth (e.g. 16 bpp) rejected by name
+   auto img_16 = images->create_image({2, 2, 16}, img_f);
+   check(img_16.has_value(), "create 16bpp image");
+   check(images->allocate_pixels(*img_16, img_f), "allocate 16bpp image pixels");
+   auto r_for_16 = rasters->create_raster({2, 2, 32, 4, 4, 0x0500}, rf);
+   check(!rasters->set_from_image(*r_for_16, *images, *img_16, rf) &&
+         rf.kind == RetailRendererRasterError::unsupported_depth, "unsupported 16bpp image depth rejected");
+
+   // Case F: Unsupported destination raster depth (e.g. 16 bpp) rejected by name
+   auto r_depth16 = rasters->create_raster({2, 2, 16, 1, 1, 0x0100}, rf);
+   check(r_depth16.has_value(), "create 16bpp raster");
+   check(!rasters->set_from_image(*r_depth16, *images, *img_h, rf) &&
+         rf.kind == RetailRendererRasterError::unsupported_depth, "unsupported 16bpp raster depth rejected");
 
    renderer_required::destroy_core_plugin_0407(*core);
    renderer_required::destroy_core_plugin_0406(*core);
@@ -633,24 +699,53 @@ int main() {
    RetailRendererImageFailure img_f;
    RetailRendererRasterFailure rf;
 
-   auto gl_device = std::make_shared<TestGlTextureUpload>();
-   check(rasters->attach_gpu_device(gl_device, rf), "attach GPU device");
+#ifdef _WIN32
+   HiddenGl host_gl;
+   check(rasters->attach_gpu_device(host_gl.device, rf), "attach real GPU device");
 
    auto img_h = images->create_image({4, 4, 32}, img_f);
    check(images->allocate_pixels(*img_h, img_f), "allocate image");
 
    auto r_gpu = rasters->create_raster({4, 4, 32, 4, 4, 0x0500}, rf);
-   check(rasters->set_from_image(*r_gpu, *images, *img_h, rf), "set_from_image with GPU attached");
+   check(rasters->set_from_image(*r_gpu, *images, *img_h, rf), "set_from_image with real GPU attached");
 
-   check(gl_device->uploads_count_ == 1, "GL upload called once");
    auto obs = rasters->observe(*r_gpu, rf);
-   check(obs->has_gpu_backing, "raster observes GPU backing");
+   check(obs->has_gpu_backing, "raster observes real GPU backing");
    auto tex = rasters->gpu_texture(*r_gpu, rf);
    check(bool(tex), "gpu_texture handle retrieved");
+   NativeTextureFailure gtf;
+   auto gl_id = tex->gl_object(gtf);
+   check(gl_id.has_value() && *gl_id > 0, "real OpenGL texture object allocated");
+   check(glIsTexture(*gl_id) == GL_TRUE, "valid OpenGL texture object verified via glIsTexture");
 
-   // Destroying raster revokes GPU texture
+   // Create a subview and verify it shares the GPU texture
+   auto sub_gpu = rasters->create_subview(*r_gpu, 0, 0, 2, 2, rf);
+   check(sub_gpu.has_value(), "subview of GPU raster created");
+   auto sub_obs = rasters->observe(*sub_gpu, rf);
+   check(sub_obs->has_gpu_backing, "subview observes GPU backing");
+
+   // Re-upload with second image: verify prior GPU texture is retired cleanly before new one is assigned
+   auto img_h2 = images->create_image({4, 4, 32}, img_f);
+   check(images->allocate_pixels(*img_h2, img_f), "allocate second image");
+   check(rasters->set_from_image(*r_gpu, *images, *img_h2, rf), "re-upload over existing GPU raster");
+   auto tex2 = rasters->gpu_texture(*r_gpu, rf);
+   check(bool(tex2), "second texture handle valid");
+
+   // Sampler configuration
+   NativeTextureSampler custom_sampler{
+    NativeTextureFilter::nearest,
+    NativeTextureAddress::repeat,
+    NativeTextureAddress::repeat
+   };
+   check(rasters->set_sampler(*r_gpu, custom_sampler, rf), "set custom sampler on GPU raster");
+   auto s_opt = rasters->sampler(*r_gpu, rf);
+   check(s_opt.has_value() && s_opt->filter == mka::graphics::NativeTextureFilter::nearest, "custom sampler verified");
+
+   // Destroying root raster revokes GPU texture and clears subview GPU backing
    check(rasters->destroy_raster(*r_gpu, rf), "destroy GPU raster");
-   check(gl_device->revokes_count_ == 1, "GPU texture revoked on raster destruction");
+   auto sub_obs_after = rasters->observe(*sub_gpu, rf);
+   check(!sub_obs_after->has_gpu_backing, "subview GPU backing cleared after root destruction");
+#endif
 
    renderer_required::destroy_core_plugin_0407(*core);
    renderer_required::destroy_core_plugin_0406(*core);
@@ -725,7 +820,71 @@ int main() {
    later = Later::refuse;
   }
 
-  std::printf("PASS_NATIVE0407_SHARED_RASTERS; default sentinel flags80, format normalization 0500/0600, stack push/pop/underflow, wrapping 16-bit subview (0000, 8000), extension rollback/reverse order, mip query, image->raster conversion with gamma propagation, lock/unlock, GPU upload/revocation, thread/session boundaries\n");
+  // 12. Extension Constructor Reentry & Resumable Destruction Cursor
+  {
+   Fixture fix(root);
+   fix.prepare();
+   auto core = fix.core();
+
+   std::vector<int> lifecycle_events;
+   bool throw_in_destroy = true;
+
+   auto ext_a = std::make_shared<RetailRendererRasterExtension>();
+   ext_a->id = 0x201;
+   ext_a->construct = [&](NativeRetailRendererRasters&, NativeRetailRasterHandle, std::shared_ptr<NativeRetailRasterExtensionState>&, RetailRendererRasterFailure&) {
+    lifecycle_events.push_back(0x201);
+    return true;
+   };
+   ext_a->destroy = [&](NativeRetailRendererRasters&, NativeRetailRasterHandle, std::shared_ptr<NativeRetailRasterExtensionState>&) {
+    lifecycle_events.push_back(-0x201);
+   };
+
+   auto ext_b = std::make_shared<RetailRendererRasterExtension>();
+   ext_b->id = 0x202;
+   ext_b->construct = [&](NativeRetailRendererRasters&, NativeRetailRasterHandle, std::shared_ptr<NativeRetailRasterExtensionState>&, RetailRendererRasterFailure&) {
+    lifecycle_events.push_back(0x202);
+    return true;
+   };
+   ext_b->destroy = [&](NativeRetailRendererRasters&, NativeRetailRasterHandle, std::shared_ptr<NativeRetailRasterExtensionState>&) {
+    lifecycle_events.push_back(-0x202);
+    if (throw_in_destroy) {
+     throw_in_destroy = false;
+     reenter_native_retail_main(fix.main, 42);
+    }
+   };
+
+   check(core->register_raster_extension(ext_a, fix.f), "reg ext_a");
+   check(core->register_raster_extension(ext_b, fix.f), "reg ext_b");
+   check(renderer_required::construct_core_plugin_0407(*core, fix.f), "construct 0407");
+   auto rasters = core->rasters(fix.f);
+   RetailRendererRasterFailure rf;
+
+   auto r = rasters->create_raster({8, 8, 32, 4, 4, 0x0500}, rf);
+   check(r.has_value(), "create raster for resumable destruction");
+   check(lifecycle_events.size() == 2 && lifecycle_events[0] == 0x201 && lifecycle_events[1] == 0x202, "extensions constructed in order");
+
+   // First destruction attempt: ext_b throws Main reentry
+   lifecycle_events.clear();
+   bool reentry_caught = false;
+   try {
+    (void)rasters->destroy_raster(*r, rf);
+   } catch (const detail::NativeMainReentry& e) {
+    reentry_caught = (e.value == 42);
+   }
+   check(reentry_caught, "Main reentry thrown from extension destructor");
+   check(lifecycle_events.size() == 1 && lifecycle_events[0] == -0x202, "ext_b destructor executed before reentry");
+
+   auto obs_destroying = rasters->observe(*r, rf);
+   check(obs_destroying.has_value() && obs_destroying->destroying, "raster marked destroying with preserved cursor");
+
+   // Second destruction attempt: resumes from destroy_cursor, executing ext_a destructor
+   check(rasters->destroy_raster(*r, rf), "destroy_raster resumed and completed");
+   check(lifecycle_events.size() == 2 && lifecycle_events[1] == -0x201, "resumed destruction executed ext_a destructor");
+
+   renderer_required::destroy_core_plugin_0407(*core);
+  }
+
+  std::printf("PASS_NATIVE0407_SHARED_RASTERS; default sentinel flags80, format normalization 0500/0600, stack push/pop/underflow, wrapping 16-bit subview (0000, 8000), extension rollback/reverse order, mip query, image->raster conversion with gamma propagation, lock/unlock, GPU upload/revocation, thread/session boundaries, resumable cursor\n");
   return 0;
  } catch (const std::exception& e) {
   fail_after = -1;

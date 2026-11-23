@@ -149,6 +149,8 @@ public:
  // GPU device binding
  bool attach_gpu_device(std::shared_ptr<graphics::NativeGlTextureUpload>, RetailRendererRasterFailure&) noexcept;
  std::shared_ptr<const graphics::NativeGlTexture> gpu_texture(const NativeRetailRasterHandle&, RetailRendererRasterFailure&) const noexcept;
+ bool set_sampler(const NativeRetailRasterHandle&, graphics::NativeTextureSampler, RetailRendererRasterFailure&) noexcept;
+ std::optional<graphics::NativeTextureSampler> sampler(const NativeRetailRasterHandle&, RetailRendererRasterFailure&) const noexcept;
 
  // Backend callbacks hook (for test fixtures / custom backend)
  void set_backend_callbacks(RetailRendererRasterBackendCallbacks) noexcept;

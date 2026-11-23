@@ -65,6 +65,7 @@ public:
     NativeRetailProfileAggregate* profile_aggregate(RetailGameSessionFailure&) noexcept;
     NativeRetailSavedProfileRecords* saved_profile_records(RetailGameSessionFailure&) noexcept;
     std::shared_ptr<NativeRetailLoadedSystemArt> loaded_system_art(RetailGameSessionFailure&) const noexcept;
+    std::shared_ptr<NativeRetailRendererCore> renderer_core(RetailGameSessionFailure&) const noexcept;
     NativeRetailSceneReference* live_scene_reference(RetailGameSessionFailure&) noexcept;
     bool ensure_game_task_lists(std::shared_ptr<NativeRetailGamePool>,
         RetailGameSessionFailure&) noexcept;

@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_core.exe",
+    "research/runs/parallel-renderer-engine-init-20261122"
+  ],
+  "exit": 0,
+  "deadline_seconds": 90,
+  "seconds": 0.1002847999916412,
+  "executable_sha256": "e70cf5edfe73f840be2948d4e5c53901f93d96c81ef7dd9ad7f47e781cce6d68",
+  "log_sha256": "7d64e1cf5d24d6ffb751ec174c7fd8e67a19623b31c40eac955eaff032f705ec",
+  "source_commit": "2ee8738d82d82d62c4418bfde21db4804e5861aa",
+  "tracked_status": "M cmake/native_game.cmake\n M runtime/include/mka/retail_game_session.hpp\n M runtime/include/mka/retail_renderer_core.hpp\n M runtime/include/mka/retail_renderer_rasters.hpp\n M runtime/src/native/retail_renderer_core.cpp\n M runtime/src/native/retail_renderer_rasters.cpp\n M tests/test_retail_renderer_rasters.cpp",
+  "source_manifest_sha256": "d251c26bd036eabab5c94279c588ec19c152c3a9bc8232c7aaa04c240542ceb2",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "706dae305fa5122aafd8e2aa001b2eb743923cf842c6138f3c3d78c7cd830642",
+  "runner_sha256": "cf8639e283679ee6bfad246f57a1479de1ff0586ec26c0d037100c1257ec68dc",
+  "process_temp": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\opencode",
+  "phase": "client",
+  "game_run": false,
+  "visible_window": false,
+  "audio_endpoint": false,
+  "acceptance": "OPEN"
+}

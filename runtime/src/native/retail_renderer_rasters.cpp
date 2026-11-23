@@ -85,13 +85,20 @@ struct NativeRetailRasterRecord {
  std::vector<std::byte> pixel_data;
  std::vector<std::byte> palette_data;
  std::shared_ptr<const graphics::NativeGlTexture> gpu_texture;
+ graphics::NativeTextureSampler sampler{
+  graphics::NativeTextureFilter::linear,
+  graphics::NativeTextureAddress::clamp_to_edge,
+  graphics::NativeTextureAddress::clamp_to_edge
+ };
 
  std::vector<std::shared_ptr<NativeRetailRasterExtensionState>> extensions;
+ std::size_t destroy_cursor{0};
  bool alive{true};
  bool constructing{false};
  bool extensions_complete{false};
  bool destroying{false};
  bool callout_active{false};
+ bool backend_destroyed{false};
  bool locked_pixels{false};
  bool locked_palette{false};
 };
@@ -132,6 +139,11 @@ void NativeRetailRendererRasters::retire() noexcept {
   for (const auto& r : records_) {
    if (r && r->gpu_texture && !r->is_subview) {
     gpu_device_->revoke_image(r->gpu_texture, tf);
+    r->gpu_texture.reset();
+   }
+  }
+  for (const auto& r : records_) {
+   if (r && r->is_subview) {
     r->gpu_texture.reset();
    }
   }
@@ -246,7 +258,12 @@ std::optional<NativeRetailRasterHandle> NativeRetailRendererRasters::create_rast
  }
  if (desc.type == 4 && desc.format == 0) {
   desc.format = 0x0500;
-  if (desc.depth == 0) desc.depth = 32;
+  desc.depth = 32;
+ }
+ if ((desc.flags & 0x80) == 0 && desc.depth == 0) {
+  if (desc.format == 0x0500 || desc.format == 0x0600 || desc.type == 4 || desc.type == 5) {
+   desc.depth = 32;
+  }
  }
 
  auto layout_opt = compute_layout(desc);
@@ -269,12 +286,27 @@ std::optional<NativeRetailRasterHandle> NativeRetailRendererRasters::create_rast
   rec->offset_y = 0;
   rec->alive = true;
   rec->constructing = true;
+  rec->destroy_cursor = extensions_.size();
 
   if (layout.pixels > 0) {
    rec->pixel_data.resize(layout.pixels, std::byte{0});
   }
   if (layout.palette > 0) {
    rec->palette_data.resize(layout.palette, std::byte{0});
+  }
+
+  if (gpu_device_ && (desc.flags & 0x80) == 0 && (desc.type == 4 || desc.type == 5) &&
+      layout.pixels > 0 && desc.width > 0 && desc.height > 0) {
+   std::vector<std::uint8_t> blank_pixels(layout.pixels, 0);
+   graphics::NativeTextureRgbaImage upload_img{
+    static_cast<std::uint32_t>(desc.width),
+    static_cast<std::uint32_t>(desc.height),
+    blank_pixels
+   };
+   auto upload = gpu_device_->upload_rgba_image(upload_img, rec->sampler);
+   if (upload.failure.kind == graphics::NativeTextureError::none) {
+    rec->gpu_texture = std::move(upload.texture);
+   }
   }
  } catch (const std::bad_alloc&) {
   reject(f, RetailRendererRasterError::allocation, "0407 raster record allocation");
@@ -284,21 +316,39 @@ std::optional<NativeRetailRasterHandle> NativeRetailRendererRasters::create_rast
   return {};
  }
 
+ // Publish record before callbacks so Main reentry retains ownership
+ records_.push_back(rec);
  NativeRetailRasterHandle handle(shared_from_this(), rec);
+
+ auto rollback_record = [&]() {
+  auto it = std::find(records_.begin(), records_.end(), rec);
+  if (it != records_.end()) records_.erase(it);
+  rec->alive = false;
+  if (rec->gpu_texture && gpu_device_) {
+   graphics::NativeTextureFailure tf;
+   gpu_device_->revoke_image(rec->gpu_texture, tf);
+   rec->gpu_texture.reset();
+  }
+ };
 
  // Invoke concrete create(0, raster, flags) callback
  if (backend_callbacks_.create) {
   bool ok = false;
+  rec->callout_active = true;
   try {
    ok = backend_callbacks_.create(*this, handle, desc.flags, f);
+   rec->callout_active = false;
   } catch (const detail::NativeMainReentry&) {
+   rec->callout_active = false;
    throw;
   } catch (...) {
+   rec->callout_active = false;
+   rollback_record();
    reject(f, RetailRendererRasterError::after_effect_unknown, "0407 backend create exception");
    return {};
   }
   if (!ok) {
-   // Refusal frees record
+   rollback_record();
    if (f.kind == RetailRendererRasterError::none) {
     reject(f, RetailRendererRasterError::backend_refusal, "0407 backend create refusal");
    }
@@ -308,48 +358,34 @@ std::optional<NativeRetailRasterHandle> NativeRetailRendererRasters::create_rast
 
  // Extension initialization: 2B9E50 ignores extension refusal return
  if (!extensions_.empty()) {
+  rec->extensions.assign(extensions_.size(), nullptr);
   bool ext_ok = true;
-  std::vector<std::shared_ptr<NativeRetailRasterExtensionState>> states;
-  states.reserve(extensions_.size());
 
-  for (const auto& ext : extensions_) {
+  for (std::size_t i = 0; i < extensions_.size(); ++i) {
    std::shared_ptr<NativeRetailRasterExtensionState> state;
    RetailRendererRasterFailure ext_f;
    bool ok = false;
+   rec->callout_active = true;
    try {
-    ok = ext->construct(*this, handle, state, ext_f);
+    ok = extensions_[i]->construct(*this, handle, state, ext_f);
+    rec->callout_active = false;
    } catch (const detail::NativeMainReentry&) {
+    rec->callout_active = false;
     throw;
    } catch (...) {
+    rec->callout_active = false;
     ok = false;
    }
    if (!ok) {
     ext_ok = false;
     break;
    }
-   states.push_back(std::move(state));
+   rec->extensions[i] = std::move(state);
   }
-
-  if (!ext_ok) {
-   // Reverse unwind prior successfully constructed extensions
-   while (!states.empty()) {
-    const auto idx = states.size() - 1;
-    if (idx < extensions_.size() && extensions_[idx]->destroy) {
-     try {
-      extensions_[idx]->destroy(*this, handle, states.back());
-     } catch (...) {}
-    }
-    states.pop_back();
-   }
-   rec->extensions_complete = false;
-  } else {
-   rec->extensions = std::move(states);
-   rec->extensions_complete = true;
-  }
+  rec->extensions_complete = ext_ok;
  }
 
  rec->constructing = false;
- records_.push_back(rec);
  return handle;
 }
 
@@ -359,51 +395,86 @@ bool NativeRetailRendererRasters::destroy_raster(
  if (!admit(f)) return false;
  auto rec = record(handle, f);
  if (!rec) return false;
- if (rec->destroying) {
-  return reject(f, RetailRendererRasterError::retired_raster, "0407 raster already destroying");
- }
- rec->destroying = true;
 
- // 2B9C70: Reverse extension destruction BEFORE platform destroy
- if (!rec->extensions.empty()) {
-  for (std::size_t i = rec->extensions.size(); i > 0; --i) {
-   const auto idx = i - 1;
-   if (idx < extensions_.size() && extensions_[idx]->destroy) {
-    try {
-     extensions_[idx]->destroy(*this, handle, rec->extensions[idx]);
-    } catch (const detail::NativeMainReentry&) {
-     throw;
-    } catch (...) {}
+ if (rec->callout_active) {
+  return reject(f, RetailRendererRasterError::reentrant, "0407 raster destruction reentrant callout");
+ }
+
+ if (!rec->destroying) {
+  rec->destroying = true;
+  rec->destroy_cursor = rec->extensions.size();
+ }
+
+ // 2B9C70: Reverse extension destruction BEFORE platform destroy.
+ // Resumable cleanup cursor preserves progress on Main reentry.
+ while (rec->destroy_cursor > 0) {
+  const auto idx = rec->destroy_cursor - 1;
+  rec->destroy_cursor = idx;
+  if (idx < extensions_.size() && extensions_[idx]->destroy) {
+   rec->callout_active = true;
+   try {
+    extensions_[idx]->destroy(*this, handle, rec->extensions[idx]);
+    rec->callout_active = false;
+   } catch (const detail::NativeMainReentry&) {
+    rec->callout_active = false;
+    rec->extensions[idx].reset();
+    throw;
+   } catch (...) {
+    rec->callout_active = false;
    }
   }
-  rec->extensions.clear();
+  rec->extensions[idx].reset();
  }
+ rec->extensions.clear();
 
  // Platform destroy callback (caller ignores platform return)
- if (backend_callbacks_.destroy) {
+ if (!rec->backend_destroyed && backend_callbacks_.destroy) {
+  rec->callout_active = true;
   try {
    backend_callbacks_.destroy(*this, handle);
+   rec->callout_active = false;
+   rec->backend_destroyed = true;
   } catch (const detail::NativeMainReentry&) {
+   rec->callout_active = false;
    throw;
-  } catch (...) {}
+  } catch (...) {
+   rec->callout_active = false;
+   rec->backend_destroyed = true;
+  }
  }
 
- // Release backing (views do not free root storage)
+ // Release backing and GPU texture
+ bool gpu_revocation_failed = false;
  if (!rec->is_subview) {
   if (rec->gpu_texture && gpu_device_) {
    graphics::NativeTextureFailure tf;
-   gpu_device_->revoke_image(rec->gpu_texture, tf);
+   if (!gpu_device_->revoke_image(rec->gpu_texture, tf)) {
+    gpu_revocation_failed = true;
+   }
    rec->gpu_texture.reset();
   }
   rec->pixel_data.clear();
   rec->palette_data.clear();
+
+  // Invalidate any subviews aliasing this root raster
+  for (const auto& other : records_) {
+   if (other && other->is_subview && (other->root_alias == rec || other->parent.lock() == rec)) {
+    other->gpu_texture.reset();
+    other->root_alias.reset();
+   }
+  }
  } else {
   rec->root_alias.reset();
+  rec->gpu_texture.reset();
  }
 
  rec->alive = false;
  auto it = std::find(records_.begin(), records_.end(), rec);
  if (it != records_.end()) records_.erase(it);
+
+ if (gpu_revocation_failed) {
+  return reject(f, RetailRendererRasterError::after_effect_unknown, "0407 GPU texture revocation failed");
+ }
 
  return true;
 }
@@ -503,7 +574,9 @@ std::optional<NativeRetailRasterHandle> NativeRetailRendererRasters::pop_context
   return {};
  }
 
- // 2B9D50: Pop decrements BEFORE selecting previous target and does NOT restore index on failure
+ // 2B9D50: Pop decrements BEFORE selecting previous target and does NOT restore index on failure.
+ // Returns the popped target upon successful restoration of the previous target.
+ auto popped = context_stack_.back();
  context_stack_.pop_back();
  auto previous = context_stack_.back();
  std::optional<NativeRetailRasterHandle> prev_handle;
@@ -529,7 +602,7 @@ std::optional<NativeRetailRasterHandle> NativeRetailRendererRasters::pop_context
   }
  }
 
- return prev_handle ? *prev_handle : NativeRetailRasterHandle{};
+ return popped ? NativeRetailRasterHandle(shared_from_this(), popped) : NativeRetailRasterHandle{};
 }
 
 std::optional<std::size_t> NativeRetailRendererRasters::context_depth(
@@ -749,36 +822,101 @@ bool NativeRetailRendererRasters::set_from_image(
   return reject(f, RetailRendererRasterError::image_conversion, "0407 source image is destroying");
  }
 
+ // Depth validation: source image must be 32 or 24 bpp
+ if (img_obs.description.depth != 32 && img_obs.description.depth != 24) {
+  return reject(f, RetailRendererRasterError::unsupported_depth, "0407 unsupported source image depth");
+ }
+
+ // Destination raster depth and format validation
+ if (raster->description.depth != 32) {
+  return reject(f, RetailRendererRasterError::unsupported_depth, "0407 unsupported destination raster depth");
+ }
+ if (raster->format != 0x0500 && raster->format != 0x0600 &&
+     (raster->format & 0x0F00) != 0x0500 && (raster->format & 0x0F00) != 0x0600 &&
+     raster->format != 0) {
+  return reject(f, RetailRendererRasterError::unsupported_format, "0407 unsupported raster format for image conversion");
+ }
+
  const auto w = static_cast<std::size_t>(img_obs.description.width);
  const auto h = static_cast<std::size_t>(img_obs.description.height);
  if (w == 0 || h == 0) {
   return reject(f, RetailRendererRasterError::extent, "0407 zero image dimensions");
  }
 
- // Conditionally acquire raster pixels lock
+ // Destination capacity validation: raster dimensions must be sufficient for image
+ if (static_cast<std::size_t>(raster->description.width) < w ||
+     static_cast<std::size_t>(raster->description.height) < h) {
+  return reject(f, RetailRendererRasterError::extent, "0407 destination dimensions insufficient");
+ }
+
+ // For texture rasters (types 4 and 5), GPU device is required for connected conversion
+ if ((raster->description.type == 4 || raster->description.type == 5) && !gpu_device_) {
+  return reject(f, RetailRendererRasterError::missing_backing, "0407 GPU device required for texture raster upload");
+ }
+
+ const auto max_size = std::numeric_limits<std::size_t>::max();
+
+ // Destination buffer capacity check
+ const auto dst_stride = raster->stride;
+ const std::size_t dst_bpp = 4; // depth 32
+ if (dst_stride > 0 && h > 0 && (h - 1) > max_size / dst_stride) {
+  return reject(f, RetailRendererRasterError::extent, "0407 destination stride overflow");
+ }
+ const auto required_dst_bytes = (h - 1) * dst_stride + (w * dst_bpp);
+
+ // Acquire raster pixels lock
  auto raster_span_opt = lock_pixels(raster_handle, f);
  if (!raster_span_opt) return false;
  auto raster_span = *raster_span_opt;
 
- // Buffer for reading image pixels
+ if (raster_span.size() < required_dst_bytes) {
+  unlock_pixels(raster_handle, f);
+  return reject(f, RetailRendererRasterError::extent, "0407 destination buffer capacity insufficient");
+ }
+
+ // Source backing bounds and stride check
+ const std::size_t src_bpp = static_cast<std::size_t>(img_obs.description.depth) / 8;
+ if (w > max_size / src_bpp) {
+  unlock_pixels(raster_handle, f);
+  return reject(f, RetailRendererRasterError::extent, "0407 source row width overflow");
+ }
+ const auto src_row_bytes = w * src_bpp;
+ const auto src_stride = img_obs.stride.value_or(src_row_bytes);
+ if (src_stride < src_row_bytes) {
+  unlock_pixels(raster_handle, f);
+  return reject(f, RetailRendererRasterError::extent, "0407 source stride smaller than row bytes");
+ }
+ if (src_stride > 0 && h > 0 && (h - 1) > max_size / src_stride) {
+  unlock_pixels(raster_handle, f);
+  return reject(f, RetailRendererRasterError::extent, "0407 source stride overflow");
+ }
+ const auto required_src_bytes = (h - 1) * src_stride + src_row_bytes;
+
+ // Read image pixels
  std::vector<std::byte> img_bytes(img_obs.pixel_bytes);
  if (!images.read_bytes(image_handle, false, 0, img_bytes, img_f)) {
   unlock_pixels(raster_handle, f);
   return reject(f, RetailRendererRasterError::image_conversion, "0407 failed to read image bytes");
  }
 
+ if (img_bytes.size() < required_src_bytes) {
+  unlock_pixels(raster_handle, f);
+  return reject(f, RetailRendererRasterError::extent, "0407 source image buffer insufficient");
+ }
+
  // Buffer for GPU upload if device attached
  std::vector<std::uint8_t> gpu_rgba;
  if (gpu_device_ && (raster->description.type == 4 || raster->description.type == 5)) {
+  if (w > max_size / (h * 4)) {
+   unlock_pixels(raster_handle, f);
+   return reject(f, RetailRendererRasterError::extent, "0407 GPU upload buffer overflow");
+  }
   gpu_rgba.resize(w * h * 4);
  }
 
  // Convert rows based on format:
  // 2D04E0: Format 0x0500 maps RGBA -> word 0xAARRGGBB (on LE bytes: B G R A)
  // 2D04C0: Format 0x0600 maps RGBA -> word 0xFFRRGGBB (forces alpha 0xFF)
- const auto dst_stride = raster->stride;
- const auto src_stride = img_obs.stride.value_or(w * 4);
-
  for (std::size_t y = 0; y < h; ++y) {
   const auto* src_row = reinterpret_cast<const std::uint8_t*>(img_bytes.data() + (y * src_stride));
   auto* dst_row = reinterpret_cast<std::uint8_t*>(raster_span.data() + (y * dst_stride));
@@ -800,16 +938,14 @@ bool NativeRetailRendererRasters::set_from_image(
     a = 255;
    }
 
-   if (raster->description.depth == 32) {
-    // Little-endian word AARRGGBB -> byte 0: B, byte 1: G, byte 2: R, byte 3: A
-    dst_row[x * 4 + 0] = b;
-    dst_row[x * 4 + 1] = g;
-    dst_row[x * 4 + 2] = r;
-    dst_row[x * 4 + 3] = a;
-   }
+   // Destination depth 32
+   // Little-endian word AARRGGBB -> byte 0: B, byte 1: G, byte 2: R, byte 3: A
+   dst_row[x * 4 + 0] = b;
+   dst_row[x * 4 + 1] = g;
+   dst_row[x * 4 + 2] = r;
+   dst_row[x * 4 + 3] = a;
 
    if (!gpu_rgba.empty()) {
-    // Standard RGBA for GL upload
     const auto idx = (y * w + x) * 4;
     gpu_rgba[idx + 0] = r;
     gpu_rgba[idx + 1] = g;
@@ -821,29 +957,42 @@ bool NativeRetailRendererRasters::set_from_image(
 
  // GPU texture upload
  if (!gpu_rgba.empty()) {
-  graphics::NativeTextureSampler sampler{
-   graphics::NativeTextureFilter::linear,
-   graphics::NativeTextureAddress::clamp_to_edge,
-   graphics::NativeTextureAddress::clamp_to_edge
-  };
   graphics::NativeTextureRgbaImage upload_img{
    static_cast<std::uint32_t>(w),
    static_cast<std::uint32_t>(h),
    gpu_rgba
   };
-  auto upload = gpu_device_->upload_rgba_image(upload_img, sampler);
+  auto upload = gpu_device_->upload_rgba_image(upload_img, raster->sampler);
   if (upload.failure.kind != graphics::NativeTextureError::none) {
    unlock_pixels(raster_handle, f);
    return reject(f, RetailRendererRasterError::image_conversion, "0407 native GL texture upload failed");
   }
+
+  // Explicit retirement of prior backing before assigning new texture
+  if (raster->gpu_texture) {
+   graphics::NativeTextureFailure tf;
+   if (!gpu_device_->revoke_image(raster->gpu_texture, tf)) {
+    unlock_pixels(raster_handle, f);
+    return reject(f, RetailRendererRasterError::after_effect_unknown, "0407 prior GPU texture revocation failed");
+   }
+   raster->gpu_texture.reset();
+  }
+
   raster->gpu_texture = std::move(upload.texture);
+
+  // Synchronize GPU texture to aliased subviews
+  for (const auto& other : records_) {
+   if (other && other->is_subview && (other->root_alias == raster || other->parent.lock() == raster)) {
+    other->gpu_texture = raster->gpu_texture;
+   }
+  }
  }
 
  unlock_pixels(raster_handle, f);
 
- // 2C0E90: Image conversion must succeed before gamma flag 2 propagates into raster private bit 1
+ // 2C0EB0: Image conversion must succeed before gamma flag 2 propagates into raster private bit 0 (mask 0x01)
  if (img_obs.flags & 2) {
-  raster->private_flags |= 2;
+  raster->private_flags |= 1;
  }
 
  return true;
@@ -853,8 +1002,53 @@ bool NativeRetailRendererRasters::attach_gpu_device(
  std::shared_ptr<graphics::NativeGlTextureUpload> device,
  RetailRendererRasterFailure& f) noexcept {
  if (!admit(f)) return false;
+ if (gpu_device_ && gpu_device_ != device) {
+  // Revoke live GPU textures from old device
+  graphics::NativeTextureFailure tf;
+  bool failed = false;
+  for (const auto& r : records_) {
+   if (r && r->gpu_texture && !r->is_subview) {
+    if (!gpu_device_->revoke_image(r->gpu_texture, tf)) {
+     failed = true;
+    }
+    r->gpu_texture.reset();
+   }
+  }
+  for (const auto& r : records_) {
+   if (r && r->is_subview) r->gpu_texture.reset();
+  }
+  if (failed) {
+   return reject(f, RetailRendererRasterError::after_effect_unknown, "0407 prior GPU texture revocation failed on device replacement");
+  }
+ }
  gpu_device_ = std::move(device);
  return true;
+}
+
+bool NativeRetailRendererRasters::set_sampler(
+ const NativeRetailRasterHandle& handle,
+ graphics::NativeTextureSampler sampler,
+ RetailRendererRasterFailure& f) noexcept {
+ if (!admit(f)) return false;
+ auto rec = record(handle, f);
+ if (!rec) return false;
+ rec->sampler = sampler;
+ if (rec->gpu_texture && gpu_device_) {
+  graphics::NativeTextureFailure tf;
+  if (!gpu_device_->set_image_sampler(rec->gpu_texture, sampler, tf)) {
+   return reject(f, RetailRendererRasterError::after_effect_unknown, "0407 failed to set GPU sampler");
+  }
+ }
+ return true;
+}
+
+std::optional<graphics::NativeTextureSampler> NativeRetailRendererRasters::sampler(
+ const NativeRetailRasterHandle& handle,
+ RetailRendererRasterFailure& f) const noexcept {
+ if (!admit(f)) return {};
+ auto rec = record(handle, f);
+ if (!rec) return {};
+ return rec->sampler;
 }
 
 std::shared_ptr<const graphics::NativeGlTexture> NativeRetailRendererRasters::gpu_texture(
@@ -864,6 +1058,24 @@ std::shared_ptr<const graphics::NativeGlTexture> NativeRetailRendererRasters::gp
  auto rec = record(handle, f);
  if (!rec) return {};
  return rec->gpu_texture;
+}
+
+bool NativeRetailRendererCore::attach_gpu_device(
+ std::shared_ptr<graphics::NativeGlTextureUpload> device,
+ RetailRendererCoreFailure& f) noexcept {
+ if (!access(f)) return false;
+ if (!rasters_) {
+  f.kind = RetailRendererCoreError::unbound_factory;
+  f.operation = "0407 rasters module unbound for GPU device attachment";
+  return false;
+ }
+ RetailRendererRasterFailure rf;
+ if (!rasters_->attach_gpu_device(std::move(device), rf)) {
+  f.kind = RetailRendererCoreError::after_effect_unknown;
+  f.operation = rf.operation;
+  return false;
+ }
+ return true;
 }
 
 std::shared_ptr<NativeRetailRendererRasters> NativeRetailRendererCore::rasters(RetailRendererCoreFailure& f) const noexcept {

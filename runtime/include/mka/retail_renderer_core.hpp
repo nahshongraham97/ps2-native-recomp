@@ -8,6 +8,7 @@
 #include <thread>
 #include <utility>
 #include <vector>
+namespace mka::graphics { class NativeGlTextureUpload; }
 namespace mka::retail {
 class NativeRetailGameSession;
 class NativeRetailRendererCore;
@@ -132,6 +133,7 @@ public:
  std::shared_ptr<NativeRetailRendererRasters> rasters(RetailRendererCoreFailure&)const noexcept;
  std::optional<std::uint32_t> module_0407_count(RetailRendererCoreFailure&)const noexcept;
  bool register_raster_extension(std::shared_ptr<const RetailRendererRasterExtension>,RetailRendererCoreFailure&)noexcept;
+ bool attach_gpu_device(std::shared_ptr<graphics::NativeGlTextureUpload>,RetailRendererCoreFailure&)noexcept;
  //1A3480 forward construction/reverse prior-success unwind. Explicitly later
  // than CoreInit; production EngineOpen/Start producers remain required.
  bool construct_registered(RetailRendererCoreFailure&);

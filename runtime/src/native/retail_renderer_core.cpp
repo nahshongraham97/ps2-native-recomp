@@ -62,6 +62,11 @@ std::shared_ptr<NativeRetailRendererCore> NativeRetailRendererCore::for_session(
  if(!core->errors_)return {};
  core->errors_->session=session;session->renderer_core_=core;return core;
 }
+std::shared_ptr<NativeRetailRendererCore> NativeRetailGameSession::renderer_core(
+ RetailGameSessionFailure& f) const noexcept {
+ if (!validate_current_thread(f)) return {};
+ return renderer_core_;
+}
 bool NativeRetailRendererCore::access(RetailRendererCoreFailure& f)const noexcept{
  f={};if(std::this_thread::get_id()!=thread_)return fail(f,RetailRendererCoreError::wrong_thread,"native renderer registry thread");
  const auto owner=session_.lock();RetailGameSessionFailure sf;
