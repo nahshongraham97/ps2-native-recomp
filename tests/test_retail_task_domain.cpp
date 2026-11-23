@@ -109,7 +109,7 @@ int main() {
               body->run_calls == 1 &&
               domain->dispatch_first_root_zero_flags_from_12e4e0(failure) &&
               body->run_calls == 2,
-          "12E670 decrements wait and invokes real body on each ready frame");
+          "12E4E0 dispatches first root and invokes body when wait is zero");
     auto second_body = std::make_shared<RealTestBody>();
     auto second_task = registry->publish_task(0x2002, 0x30, 0x57, second_body,
                                                registry_failure);

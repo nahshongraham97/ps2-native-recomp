@@ -24,9 +24,17 @@ namespace mka::retail::main_binding {
 //    and returns -1 (0xFFFFFFFF).
 // 6. 0x003432D0 propagates this -1 return value back to caller 0x00122900, which stores it to 48(sp)
 //    and completely discards it, proceeding immediately with offline initialization (0x00164130, 0x0012D7E0).
-// 7. Heap impact: Omission of the 84-byte dynamic "Online" heap allocation in the native port has zero
-//    effect on subsequent systems because native components use typed host memory ownership rather than
-//    fixed guest heap addresses.
+//
+// DEVIATION_ONLINE_LEFTOVER_ALLOCATION_OMITTED:
+// On retail PS2 hardware without a network adapter, cOnline::ShutdownPartial (0x00343E80) resets internal
+// buffer descriptors (+0x24) but never frees the 84-byte "Online" heap allocation and never zeroes out
+// the global pointer -21272(gp) (0x0064EDD8), leaving a dangling non-NULL pointer to an inactive object.
+// The native reimplementation intentionally omits this 84-byte allocation and leaves the network pointer
+// as NULL (nullptr). Static disassembly proves that none of the 37 non-init reader functions of -21272(gp)
+// are reachable during offline gameplay or offline menu navigation (including the "Go Online" menu item,
+// which dynamically requires NETR.ovl, formally dropped per DECISION_ONLINE_OUT_OF_SCOPE.json).
+// Allocation-profile tests count typed pool objects (AllocationClassRole) across 14 game modes, not
+// general heap allocations, so omitting this 84-byte object has zero observable impact on gameplay or memory tests.
 //
 // Under named deviation DEVIATION_ONLINE_STAGE_RETURN_BOOL, initialize_retail_online_stage returns
 // bool true with StartupError::none to indicate non-failing offline progression to the native orchestrator,
