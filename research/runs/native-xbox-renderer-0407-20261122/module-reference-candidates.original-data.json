@@ -1,0 +1,100 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "queries": [
+    {
+      "mode": "refs",
+      "reference": "005c7304",
+      "candidates": [
+        {
+          "immediate_vma": "0x2b9ae1",
+          "vma": "0x2b9ad9",
+          "length": 20,
+          "file_offset": 2792153,
+          "section": ".text",
+          "bytes_hex": "cccccccccccccca104735c008b88685383008b84"
+        },
+        {
+          "immediate_vma": "0x2b9b62",
+          "vma": "0x2b9b5a",
+          "length": 20,
+          "file_offset": 2792282,
+          "section": ".text",
+          "bytes_hex": "cccccccccccc8b0d04735c008b916853830033c0"
+        },
+        {
+          "immediate_vma": "0x2b9c8c",
+          "vma": "0x2b9c84",
+          "length": 20,
+          "file_offset": 2792580,
+          "section": ".text",
+          "bytes_hex": "00ff159c538300a104735c008b88a05383005651"
+        },
+        {
+          "immediate_vma": "0x2b9cc8",
+          "vma": "0x2b9cc0",
+          "length": 20,
+          "file_offset": 2792640,
+          "section": ".text",
+          "bytes_hex": "83c40c85c0741da104735c008b88685383004189"
+        },
+        {
+          "immediate_vma": "0x2b9d51",
+          "vma": "0x2b9d49",
+          "length": 20,
+          "file_offset": 2792777,
+          "section": ".text",
+          "bytes_hex": "cccccccccccccca104735c008b88685383008d51"
+        },
+        {
+          "immediate_vma": "0x2b9e51",
+          "vma": "0x2b9e49",
+          "length": 20,
+          "file_offset": 2793033,
+          "section": ".text",
+          "bytes_hex": "5ec3cccccccccca104735c008b88a05383005668"
+        },
+        {
+          "immediate_vma": "0x2b9eb6",
+          "vma": "0x2b9eae",
+          "length": 20,
+          "file_offset": 2793134,
+          "section": ".text",
+          "bytes_hex": "c40c85c0567519a104735c008b88a053830051ff"
+        },
+        {
+          "immediate_vma": "0x2b9f11",
+          "vma": "0x2b9f09",
+          "length": 20,
+          "file_offset": 2793225,
+          "section": ".text",
+          "bytes_hex": "c023c1c3cccccca104735c008b80a053830085c0"
+        },
+        {
+          "immediate_vma": "0x2b9f27",
+          "vma": "0x2b9f1f",
+          "length": 20,
+          "file_offset": 2793247,
+          "section": ".text",
+          "bytes_hex": "50e89ba000008b0d04735c0083c404c781a05383"
+        },
+        {
+          "immediate_vma": "0x2b9fd5",
+          "vma": "0x2b9fcd",
+          "length": 20,
+          "file_offset": 2793421,
+          "section": ".text",
+          "bytes_hex": "685383006a04891504735c0089b2405383008b15"
+        },
+        {
+          "immediate_vma": "0x2b9fee",
+          "vma": "0x2b9fe6",
+          "length": 20,
+          "file_offset": 2793446,
+          "section": ".text",
+          "bytes_hex": "52e834a600008b0d04735c0083c4185f5e3bc389"
+        }
+      ],
+      "scope": "raw immediate candidates,not proved instructions/callers"
+    }
+  ]
+}

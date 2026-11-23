@@ -1,0 +1,1 @@
+Original0x1B9CF0..0x1BA107 explicit span,including switch arms/alignment;not a decompiler/full-semantics claim.

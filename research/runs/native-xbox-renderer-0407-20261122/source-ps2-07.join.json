@@ -1,0 +1,6 @@
+{
+  "platform": "ps2",
+  "image_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "functions": {},
+  "scope": "original listed-byte identity only; full-span coverage/ABI/semantics reviewed separately"
+}

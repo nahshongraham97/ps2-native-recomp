@@ -1,0 +1,2 @@
+MIPS-R5900/little/32/PS2
+default

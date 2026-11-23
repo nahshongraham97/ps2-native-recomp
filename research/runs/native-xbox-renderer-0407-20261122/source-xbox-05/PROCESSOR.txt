@@ -1,0 +1,2 @@
+x86/little/32/default
+windows

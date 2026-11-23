@@ -1,0 +1,1187 @@
+{
+  "status": "AUTHENTICATED_SOURCE_DERIVED_0407_RASTER_RECOVERY_ONLY",
+  "schema_preflight": {
+    "prior_status": "str",
+    "prior_names": "list",
+    "pin_map": "dict",
+    "pin_values": [
+      "str"
+    ],
+    "export_result": {
+      "argv": "list",
+      "exit": "int",
+      "timed_out": "bool",
+      "seconds": "float",
+      "deadline_seconds": "int",
+      "session_sha256": "str",
+      "script_sha256": "str",
+      "runner_sha256": "str",
+      "log_sha256": "str",
+      "game_run": "bool"
+    },
+    "scope": "source-derived recovery;no component build/test or new negative-link execution"
+  },
+  "fork_base": "dedae248d0761a105483e932466edfd53d53d0a0",
+  "unchanged_runtime_source": "2f9ea3c1ddceb1b144f4ea812129cc49e7881d08",
+  "unchanged_source_files": 915,
+  "all_runtime_source_blobs_unchanged": true,
+  "source_manifest_sha256": "e9d97572470bf5fd060c6ce9258e249a81ca6e031abc627d9868a87454768c88",
+  "image_sha256": {
+    "xbox": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+    "ps2": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f"
+  },
+  "exports": {
+    "source-ps2-01": {
+      "platform": "ps2",
+      "command_sha256": "81c67405f3efe87fa85cb1e6393c942c294f4c0b0aa570e10ca67aaa3092a2e0",
+      "original_sha256": "909409a8cec1ddd8f8614353f6ffea373cd2b888c7afdee2c883a1296dd9365a",
+      "join_sha256": "891147aeab16fbeba5bab8699964e969e34e78c297facddc933b99632f709440",
+      "seconds": 5.4998184999858495,
+      "exit": 0
+    },
+    "source-ps2-02": {
+      "platform": "ps2",
+      "command_sha256": "9c61fb727bde9b716cefe7fc60367859dd5d236377f8c1910f0b963a9d43fbe0",
+      "original_sha256": "343d50a2d0c8d65448da20811ee8ca188a9c171a1a4d88caf4ac0c119f5d2db0",
+      "join_sha256": "70c60150ad0a3d90e8d153f49d447766d637d0467441541729ede950c24a4abb",
+      "seconds": 6.171576799999457,
+      "exit": 0
+    },
+    "source-ps2-03": {
+      "platform": "ps2",
+      "command_sha256": "cde8d9616a0ba6e65c1f32733077c72787e0140d2e54b1036cd415a54477f9a0",
+      "original_sha256": "cb39cc92814965809eeaff18025bd35634b8d109febd8abd05915ccbd4622de6",
+      "join_sha256": "7e92957b18ea40dd8a63f5d690d77e5c671fc6a56354d09b340acdaec520821b",
+      "seconds": 5.805854999984149,
+      "exit": 0
+    },
+    "source-ps2-04": {
+      "platform": "ps2",
+      "command_sha256": "c923882bdbc9eaa63a3e6c14f3d59989b024782c1fa6887a3c3e6b1df558b1b6",
+      "original_sha256": "814f0ffc9daf77d861cdf0fbcf5b503bd9df0a1c74509efdd76644bf5e1c8d15",
+      "join_sha256": "5719e75070178eef7a87e83da46662e075bc5557daf8e468c763bc394d8f88f7",
+      "seconds": 4.816555799974594,
+      "exit": 0
+    },
+    "source-ps2-05": {
+      "platform": "ps2",
+      "command_sha256": "abac0c5adab0de67b7250d87657ed45d34b2353c4ca1c83667c53f25033dc543",
+      "original_sha256": "8f7e4daf0d289d582a06e9a2646d165a1182a7570199f95828c650b1ef1b9c2b",
+      "join_sha256": "7e92957b18ea40dd8a63f5d690d77e5c671fc6a56354d09b340acdaec520821b",
+      "seconds": 4.829872499976773,
+      "exit": 0
+    },
+    "source-ps2-06": {
+      "platform": "ps2",
+      "command_sha256": "bbbe40b5a57839f14963020f7e2cb4a59a50cd20c1458cac294a05188911532f",
+      "original_sha256": "b3af3a4cc15045a9af517cc03eaccbb54afa71a65719e2a068b9b02f6a62277f",
+      "join_sha256": "cd6fbdc14bfbdb975aea9dc0921d5ffd7445571d1e54fc95707abe23ea57475e",
+      "seconds": 4.890304600005038,
+      "exit": 0
+    },
+    "source-ps2-07": {
+      "platform": "ps2",
+      "command_sha256": "51c87c88fcacded3ff670f4d6fe2296e8b293c04c4bf5f02df790febd7e6ea14",
+      "original_sha256": "4b58c1012ffc25b2cc8131783dca5425fe5f4be43afc37294f463940caca2739",
+      "join_sha256": "7e92957b18ea40dd8a63f5d690d77e5c671fc6a56354d09b340acdaec520821b",
+      "seconds": 4.480620000016643,
+      "exit": 0
+    },
+    "source-ps2-08": {
+      "platform": "ps2",
+      "command_sha256": "2de029bb15142ae6f008ec746b3bec7d187d84ba5901bc4657acaa765d740a3c",
+      "original_sha256": "b3af3a4cc15045a9af517cc03eaccbb54afa71a65719e2a068b9b02f6a62277f",
+      "join_sha256": "985a0280b75303e70d721f77da46cb41fc5c0fd19da06f2a4402d8f04b449600",
+      "seconds": 5.496565500012366,
+      "exit": 0
+    },
+    "source-ps2-09": {
+      "platform": "ps2",
+      "command_sha256": "5239881b0a09362780e593453639cc2718658179ce6700c2a45b0c19a5d5b655",
+      "original_sha256": "5b4fcc4b1335e8c0865709679e5fde41944c784a07f1295c80dddef012dbe859",
+      "join_sha256": "f40a7fbcebd9766e43c6b0858b3698a27f5e9d5f6917d1a69da872a84045d98a",
+      "seconds": 4.555437199975131,
+      "exit": 0
+    },
+    "source-ps2-10": {
+      "platform": "ps2",
+      "command_sha256": "c63a1749a1facdd25bd5473fe8dca4574a6e35fd68c67b5cbddc66ae0dbbe7d4",
+      "original_sha256": "a0165a08d32e5a8d61137c290a69af1635eb3ca1a4042fe1dd5dc09c707feec6",
+      "join_sha256": "c60201e96261afe0924d211d688d38eeaa1d2cc8009fe71e6a4e605fc0b31ecd",
+      "seconds": 4.923930399992969,
+      "exit": 0
+    },
+    "source-xbox-01": {
+      "platform": "xbox",
+      "command_sha256": "5aafccfd5c33532e2e16f42a4df17e8d95ceaa8674b05c33d8feeffc51cbca8d",
+      "original_sha256": "20f58366d98bc99068ea808c767978d1e4cd57311392952ecb1ecae469419300",
+      "join_sha256": "9af1503e75c0ae65546af1b2230cc4b4fcf3847c577d38e92f6c2560db9272df",
+      "seconds": 5.36714389998815,
+      "exit": 0
+    },
+    "source-xbox-02": {
+      "platform": "xbox",
+      "command_sha256": "0adc2824fec08a91dd5776abf90ab355d87b6dd95d4c67b6c4b97108fd4a32a9",
+      "original_sha256": "baa20f7b5b1b8a8df57206b8b8d3fad9ced7bc576af6cb60580a04085866edce",
+      "join_sha256": "b914db9283eb6e951b68118e82dbd08a0452753e719e83d475a1d0743e120d49",
+      "seconds": 5.661948000022676,
+      "exit": 0
+    },
+    "source-xbox-03": {
+      "platform": "xbox",
+      "command_sha256": "d00231dc0b9ef119cc2c518260557f0b000a7b409511f303a2640f8d990d4793",
+      "original_sha256": "b78d4f546f7117f5849d804fe50a739efe36441e19a0a1ae5deb989103cb75f8",
+      "join_sha256": "2ce52c454493976a68e6eb0aeff6aa3353fba9bee758ca59066968c7d96842d6",
+      "seconds": 5.110779700014973,
+      "exit": 0
+    },
+    "source-xbox-04": {
+      "platform": "xbox",
+      "command_sha256": "f3309deef4a8229d39a878f64129db8042b588524eea495843021109c496555b",
+      "original_sha256": "d455a7076b2693a66b50dab0fce25fcf5b745d37149f6229b11c17e37a947bb5",
+      "join_sha256": "7932a83e81756bda7222f88085044736bd4f9dd5a06edc9688fb458a3190be5b",
+      "seconds": 7.566263899992919,
+      "exit": 0
+    },
+    "source-xbox-05": {
+      "platform": "xbox",
+      "command_sha256": "58c91363b67c1245ac9b6e56bfe72802f5aacb68affe727b8ef194f7fba8b11b",
+      "original_sha256": "92dc1a47d1d16b783805583a615829ecd78766a881d337ee25c6f89cbaf906ee",
+      "join_sha256": "99e23dc80262cbc5fb77ba7a7e3a80ab716fe9cf6503f09127da843b0bb3aa21",
+      "seconds": 5.104084999999031,
+      "exit": 0
+    },
+    "source-xbox-06": {
+      "platform": "xbox",
+      "command_sha256": "318643558515343595e616982a22e4a53ea450a0629052c965dc6278a47a0f23",
+      "original_sha256": "94b68206aebf391d42b26050e6ca05885fa594893a5d6b3770f123ed99fbbd76",
+      "join_sha256": "b510fd659094114c20712feb37bf11d50446b4ad6c5ab8543865b1be614f61b4",
+      "seconds": 6.2906709999952,
+      "exit": 0
+    },
+    "source-xbox-07": {
+      "platform": "xbox",
+      "command_sha256": "6eb8299a130cc5d3bc08373b580cd6da5ac1d5ff6ee521f7d048b2f6e147a22b",
+      "original_sha256": "50f49a15a59c430a33678690640aedb546cd37182155020b45436efcf32c7d41",
+      "join_sha256": "865a069744edb534aae104a0a87803795277883068f9dbd3ec342599c238d161",
+      "seconds": 5.047130799997831,
+      "exit": 0
+    },
+    "source-xbox-08": {
+      "platform": "xbox",
+      "command_sha256": "7c84b5394893ec2ff0709cb6baba5e67c366333a24318cf9af5ba8f8b9ad4a47",
+      "original_sha256": "f63a41eebb2e3b727e0871466cddf98076441ffdf869957421a560b520f16fef",
+      "join_sha256": "5beb42481630d857d42865806a02ae5bb7efe166dc744e9e83c5a72d8280347b",
+      "seconds": 5.977784700022312,
+      "exit": 0
+    },
+    "source-xbox-09": {
+      "platform": "xbox",
+      "command_sha256": "cf38d15454dce10b712735bae8948ce8bcbe7598d836714da8bd52c7e9d4a273",
+      "original_sha256": "3e80c111a5be1e52c849fd7489a3c2e2b8e95b4330da4dfa52049d313a187b9f",
+      "join_sha256": "634b062e94593922dedc172ba04a89dbb6c789986ec89cd1811d58da43509a2c",
+      "seconds": 4.666006100014783,
+      "exit": 0
+    },
+    "source-xbox-10": {
+      "platform": "xbox",
+      "command_sha256": "e76f99b43ead5475d4d2efc6d957f00381d4f81f0b675bd2f0b852ec0ea98448",
+      "original_sha256": "e593001f2811634a8edb89481a1ceee1d5359616be66ab05df4f5d6154377f97",
+      "join_sha256": "5dcd000b43be422c6a412324353c0d4be3a72d72c97ecf70ff102fd3f335cd56",
+      "seconds": 4.760375200014096,
+      "exit": 0
+    },
+    "source-xbox-11": {
+      "platform": "xbox",
+      "command_sha256": "8b033c03af67e502bda11a10e7de09628e86fe6502587f5c8a5fa7c4fc3a73d1",
+      "original_sha256": "fa7fedb630af7d4c572242a6b9b47072e4db6f9b61440e7544c5479ee6eff39a",
+      "join_sha256": "0608da76e4592a99b66fedb60bb83a7099364aa09881d25d9e04216872377fda",
+      "seconds": 5.075172899989411,
+      "exit": 0
+    }
+  },
+  "functions": {
+    "source-ps2-01/001a8950": {
+      "platform": "ps2",
+      "entry": "001a8950",
+      "end_inclusive": "001a89b7",
+      "instructions": 26,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-ps2-01/001a8950.asm",
+      "listing_sha256": "f1af8c4f43ee6e6edbc3639f73fae11b7a26e887a9afdef56c60970220324545",
+      "join_sha256": "891147aeab16fbeba5bab8699964e969e34e78c297facddc933b99632f709440",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-ps2-01/001a89c0": {
+      "platform": "ps2",
+      "entry": "001a89c0",
+      "end_inclusive": "001a8a93",
+      "instructions": 53,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-ps2-01/001a89c0.asm",
+      "listing_sha256": "f0908df15c7d5fbd8050dafd2c62bc767c75d02fe0f0d373b21da1c34b50a1ad",
+      "join_sha256": "891147aeab16fbeba5bab8699964e969e34e78c297facddc933b99632f709440",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-ps2-02/001a87f0": {
+      "platform": "ps2",
+      "entry": "001a87f0",
+      "end_inclusive": "001a88f7",
+      "instructions": 66,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-ps2-02/001a87f0.asm",
+      "listing_sha256": "072fcc5249f7c899568ed0b8c56190c25320c2278aeb90d6313d467d3f6e01b0",
+      "join_sha256": "70c60150ad0a3d90e8d153f49d447766d637d0467441541729ede950c24a4abb",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-ps2-04/001a68f0": {
+      "platform": "ps2",
+      "entry": "001a68f0",
+      "end_inclusive": "001a6a03",
+      "instructions": 69,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-ps2-04/001a68f0.asm",
+      "listing_sha256": "e6d612504f10514a537348fb8db2626d949f47d8f3f4d5f723b7dc2a52a2a101",
+      "join_sha256": "5719e75070178eef7a87e83da46662e075bc5557daf8e468c763bc394d8f88f7",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-ps2-04/001ba110": {
+      "platform": "ps2",
+      "entry": "001ba110",
+      "end_inclusive": "001ba11b",
+      "instructions": 3,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-ps2-04/001ba110.asm",
+      "listing_sha256": "2fb24a49f37db0d3fd950ec54deff4a8017eb936efd1a715ed18533eca227bab",
+      "join_sha256": "5719e75070178eef7a87e83da46662e075bc5557daf8e468c763bc394d8f88f7",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-ps2-06/001b9cf0": {
+      "platform": "ps2",
+      "entry": "001b9cf0",
+      "end_inclusive": "001ba107",
+      "instructions": 21,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-ps2-06/001b9cf0.asm",
+      "listing_sha256": "1f30dec0b44cf6d4da540f838f0c854ed96e6f459cef704661076d3d1d1b53e0",
+      "join_sha256": "cd6fbdc14bfbdb975aea9dc0921d5ffd7445571d1e54fc95707abe23ea57475e",
+      "gaps": [
+        {
+          "vma": "0x1b9d2c",
+          "file_offset": 761388,
+          "bytes_hex": "80a5828f2b1002000100423802004010000000005900e2280300401000000000ffffe22801004238e80040502000bfdf1100e00488a587af401807005a00043c2128670068378424c028050020000324212085000000848c0500835400010324000503240e00001084a583af000103240b00001084a583af6a00033c200004243849638c0500645400010324000503240300001084a583af0001032484a583afc9000010000000005900032401000224c5000010000023ae5900e2280300401000000000ffffe22801004238be004010000000001400e00400000000402007005a00033c2120870060376324c020040021186400000063c4040062c4080061c40c0060c4000023e6040022e6080021e60c0020e6100061c4140060c4100021e613000010140020e66a00043c6a00033c304983c4344962c46a00043c6a00033c384981c43c4960c46a00043c000023e66a00033c040022e6080021e60c0020e6404981c4444960c4100021e6140020e6950000100000000088a5838f0100022491000010000023ae8f0000100100022444e8060c00000000070005240000448cffffa5240400438c000024ae08004224040023aef9ffa01c080031267ca590af8100001001000224dcdc060c000000007d000010000000007b000010010002247ce0060c00000000770000100000000004bc060c000000006a00033c6a00023c7c3f60ac783f40ac6a00033c6a00023c743f60ac7c0b070c703f40ac0100022480a580afcca480af67000010e48382af1404070c0000000014ed060c000000002b800200040000120000000030ea060c000000002b80020005000016000000002804070c000000000e000010803f053c1c00043ce87f060ce0b184241c00043c1c00053c1c00063c1c00073c60b28424c0b2a52460b3c624208e060cc0b3e724803f053c6a00033c6a00043c584565ac6a00033c444585ac6a00043c304565ac6a00033c404580ac6a00043c384560ac6a00033c344580ac6a00043c544560ac6a00033c504580ac6a00043c484560ac6a00033c684580ac6a00043c644560ac6a00033c604580ac0200043c3c45668c030085342d100002adde043cadde84346a00033c2528c50050a584af260000103c4565ac34ed060c0000000008e9060c000000002804070c000000001e0000100100022400040324010002241a000010000023ae80a5828f170040100000000054a5838f1000043c2318830080180300000023ae10000010000000000e000010010002242d28e0005a00063c2d2020025040c62418dc060c1c0007240600001001000224060003240100022402000010000023a6",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        }
+      ],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-ps2-08/001b9cf0": {
+      "platform": "ps2",
+      "entry": "001b9cf0",
+      "end_inclusive": "001ba107",
+      "instructions": 262,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-ps2-08/001b9cf0.asm",
+      "listing_sha256": "db0e6633af49c2834ecab24decc556a0ba1f9a7615012123866eadf3bd486a93",
+      "join_sha256": "985a0280b75303e70d721f77da46cb41fc5c0fd19da06f2a4402d8f04b449600",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-ps2-09/001b7060": {
+      "platform": "ps2",
+      "entry": "001b7060",
+      "end_inclusive": "001b715f",
+      "instructions": 64,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-ps2-09/001b7060.asm",
+      "listing_sha256": "4543a1c57a039f75b7a711c6ba5206809e78750f5f9dddd5a8a6a962bcab7e5e",
+      "join_sha256": "f40a7fbcebd9766e43c6b0858b3698a27f5e9d5f6917d1a69da872a84045d98a",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-ps2-10/001b34c0": {
+      "platform": "ps2",
+      "entry": "001b34c0",
+      "end_inclusive": "001b4fcf",
+      "instructions": 1687,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-ps2-10/001b34c0.asm",
+      "listing_sha256": "93cb2a0942f4e5ff44f645f2007c2343c3c5acf1f2ee77283617168f595380a4",
+      "join_sha256": "c60201e96261afe0924d211d688d38eeaa1d2cc8009fe71e6a4e605fc0b31ecd",
+      "gaps": [
+        {
+          "vma": "0x1b350c",
+          "file_offset": 734732,
+          "bytes_hex": "23004292",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b35d4",
+          "file_offset": 734932,
+          "bytes_hex": "23004592",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b3608",
+          "file_offset": 734984,
+          "bytes_hex": "3f006524",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b371c",
+          "file_offset": 735260,
+          "bytes_hex": "82290d00",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b3790",
+          "file_offset": 735376,
+          "bytes_hex": "0f00c630",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b37cc",
+          "file_offset": 735436,
+          "bytes_hex": "0800038e",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b37ec",
+          "file_offset": 735468,
+          "bytes_hex": "0800038e",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b3810",
+          "file_offset": 735504,
+          "bytes_hex": "2802a2af",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b3834",
+          "file_offset": 735540,
+          "bytes_hex": "0800088e",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b3890",
+          "file_offset": 735632,
+          "bytes_hex": "3001a28f",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b38b0",
+          "file_offset": 735664,
+          "bytes_hex": "04000224",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b38bc",
+          "file_offset": 735676,
+          "bytes_hex": "2002a2af",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b38e0",
+          "file_offset": 735712,
+          "bytes_hex": "0800078e",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b3938",
+          "file_offset": 735800,
+          "bytes_hex": "0c00068e",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b395c",
+          "file_offset": 735836,
+          "bytes_hex": "04000224",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b396c",
+          "file_offset": 735852,
+          "bytes_hex": "1802a2af",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b3990",
+          "file_offset": 735888,
+          "bytes_hex": "1002a2af",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b3c74",
+          "file_offset": 736628,
+          "bytes_hex": "00000000",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b3ca4",
+          "file_offset": 736676,
+          "bytes_hex": "00000000",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b3ecc",
+          "file_offset": 737228,
+          "bytes_hex": "100000ae540000100000000010004a8e",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b3fd0",
+          "file_offset": 737488,
+          "bytes_hex": "3001a38f",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b4338",
+          "file_offset": 738360,
+          "bytes_hex": "1001a0ff02000010000000001001a0ff",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b43b4",
+          "file_offset": 738484,
+          "bytes_hex": "2d180001",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b43d0",
+          "file_offset": 738512,
+          "bytes_hex": "2d28e000",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b4598",
+          "file_offset": 738968,
+          "bytes_hex": "000054ac",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b46c0",
+          "file_offset": 739264,
+          "bytes_hex": "2d980001",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b46dc",
+          "file_offset": 739292,
+          "bytes_hex": "2d18e000",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b47bc",
+          "file_offset": 739516,
+          "bytes_hex": "00000000",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b48d4",
+          "file_offset": 739796,
+          "bytes_hex": "00000000",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b4b34",
+          "file_offset": 740404,
+          "bytes_hex": "0c00078e",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b4bc4",
+          "file_offset": 740548,
+          "bytes_hex": "3c100400",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b4c28",
+          "file_offset": 740648,
+          "bytes_hex": "0400448e",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b4d18",
+          "file_offset": 740888,
+          "bytes_hex": "040040ae",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b4d68",
+          "file_offset": 740968,
+          "bytes_hex": "1400468e",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b4e3c",
+          "file_offset": 741180,
+          "bytes_hex": "040040ae",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b4e54",
+          "file_offset": 741204,
+          "bytes_hex": "3f006324",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b4ea8",
+          "file_offset": 741288,
+          "bytes_hex": "180040ae",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b4ecc",
+          "file_offset": 741324,
+          "bytes_hex": "c8a4858f",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        },
+        {
+          "vma": "0x1b4f64",
+          "file_offset": 741476,
+          "bytes_hex": "2d100000",
+          "role": "OPEN_NOT_FULL_SEMANTICS"
+        }
+      ],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-ps2-10/001be5d0": {
+      "platform": "ps2",
+      "entry": "001be5d0",
+      "end_inclusive": "001be713",
+      "instructions": 81,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-ps2-10/001be5d0.asm",
+      "listing_sha256": "f8cf33488f50519a4eeefe81e0ceb0741fd6ca890b7837b41cdad3cf34660085",
+      "join_sha256": "c60201e96261afe0924d211d688d38eeaa1d2cc8009fe71e6a4e605fc0b31ecd",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-01/002b9f10": {
+      "platform": "xbox",
+      "entry": "002b9f10",
+      "end_inclusive": "002b9f42",
+      "instructions": 12,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-01/002b9f10.asm",
+      "listing_sha256": "fac0d63ef94a5c16223ed9d51c97710764207303ec3896069cba0f0538de9843",
+      "join_sha256": "9af1503e75c0ae65546af1b2230cc4b4fcf3847c577d38e92f6c2560db9272df",
+      "gaps": [],
+      "scope": "SOURCE_DERIVED_SCALAR_CONTRACT",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-01/002b9f70": {
+      "platform": "xbox",
+      "entry": "002b9f70",
+      "end_inclusive": "002ba00f",
+      "instructions": 43,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-01/002b9f70.asm",
+      "listing_sha256": "8aa88aa55cb1d241f92b1cdb906a5d7548861a3d1737d044db816eee6fcaf784",
+      "join_sha256": "9af1503e75c0ae65546af1b2230cc4b4fcf3847c577d38e92f6c2560db9272df",
+      "gaps": [],
+      "scope": "SOURCE_DERIVED_SCALAR_CONTRACT",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-02/002b9e50": {
+      "platform": "xbox",
+      "entry": "002b9e50",
+      "end_inclusive": "002b9ede",
+      "instructions": 48,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-02/002b9e50.asm",
+      "listing_sha256": "a1ccae20a3f33559e0cc6ef95bf4ab392731109f158a4de5f2811ffd323a22c6",
+      "join_sha256": "b914db9283eb6e951b68118e82dbd08a0452753e719e83d475a1d0743e120d49",
+      "gaps": [],
+      "scope": "SOURCE_DERIVED_SCALAR_CONTRACT",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-03/002b9c70": {
+      "platform": "xbox",
+      "entry": "002b9c70",
+      "end_inclusive": "002b9ca7",
+      "instructions": 18,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-03/002b9c70.asm",
+      "listing_sha256": "c5e1118278adfe1b045c5aa775e75dfb321ef35d49ce849aac99b06085e65321",
+      "join_sha256": "2ce52c454493976a68e6eb0aeff6aa3353fba9bee758ca59066968c7d96842d6",
+      "gaps": [],
+      "scope": "SOURCE_DERIVED_SCALAR_CONTRACT",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-03/002c0e90": {
+      "platform": "xbox",
+      "entry": "002c0e90",
+      "end_inclusive": "002c0ebd",
+      "instructions": 22,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-03/002c0e90.asm",
+      "listing_sha256": "8da721495230d0d3bce9fbf61e0970629f86f40e5e55e356ce6b88c089d9b654",
+      "join_sha256": "2ce52c454493976a68e6eb0aeff6aa3353fba9bee758ca59066968c7d96842d6",
+      "gaps": [],
+      "scope": "SOURCE_DERIVED_SCALAR_CONTRACT",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-03/002c7140": {
+      "platform": "xbox",
+      "entry": "002c7140",
+      "end_inclusive": "002c736f",
+      "instructions": 76,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-03/002c7140.asm",
+      "listing_sha256": "a13b2e4a77818c6a874200903f40990d5c044b68e5fd82e684fb4e6fb0ccf3b4",
+      "join_sha256": "2ce52c454493976a68e6eb0aeff6aa3353fba9bee758ca59066968c7d96842d6",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-04/002c9380": {
+      "platform": "xbox",
+      "entry": "002c9380",
+      "end_inclusive": "002c95af",
+      "instructions": 197,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-04/002c9380.asm",
+      "listing_sha256": "77857524836420f298448c132e717ffe05e0b9625fa91b465b71f2c207197273",
+      "join_sha256": "7932a83e81756bda7222f88085044736bd4f9dd5a06edc9688fb458a3190be5b",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-04/002c95d0": {
+      "platform": "xbox",
+      "entry": "002c95d0",
+      "end_inclusive": "002c9755",
+      "instructions": 127,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-04/002c95d0.asm",
+      "listing_sha256": "fb3888735af540f0ddf68fc6a7ffcfef41bc1b1d855d873f64e33815b66896f3",
+      "join_sha256": "7932a83e81756bda7222f88085044736bd4f9dd5a06edc9688fb458a3190be5b",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-04/002c9810": {
+      "platform": "xbox",
+      "entry": "002c9810",
+      "end_inclusive": "002c9835",
+      "instructions": 12,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-04/002c9810.asm",
+      "listing_sha256": "0619628f98483abc846849c28660c795fd8cf4efcc044b9795c29d5726e4c250",
+      "join_sha256": "7932a83e81756bda7222f88085044736bd4f9dd5a06edc9688fb458a3190be5b",
+      "gaps": [],
+      "scope": "SOURCE_DERIVED_SCALAR_CONTRACT",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-04/002d14c0": {
+      "platform": "xbox",
+      "entry": "002d14c0",
+      "end_inclusive": "002d160e",
+      "instructions": 119,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-04/002d14c0.asm",
+      "listing_sha256": "5fe492dfbe6bc388a68583b60208fc8f2037c382ecc67594f3bd9b22568ae7b9",
+      "join_sha256": "7932a83e81756bda7222f88085044736bd4f9dd5a06edc9688fb458a3190be5b",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-05/002b9ae0": {
+      "platform": "xbox",
+      "entry": "002b9ae0",
+      "end_inclusive": "002b9af2",
+      "instructions": 4,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-05/002b9ae0.asm",
+      "listing_sha256": "97d212553212ad60c98cebc5a5010c4265e4c48ead92a794d4494785e5a10a92",
+      "join_sha256": "99e23dc80262cbc5fb77ba7a7e3a80ab716fe9cf6503f09127da843b0bb3aa21",
+      "gaps": [],
+      "scope": "SOURCE_DERIVED_SCALAR_CONTRACT",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-05/002b9b60": {
+      "platform": "xbox",
+      "entry": "002b9b60",
+      "end_inclusive": "002b9bbc",
+      "instructions": 32,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-05/002b9b60.asm",
+      "listing_sha256": "eedbe7ed1a5fca01ccb3d2a2490dc125d0ecefe2ebed31224ea43b3bbe144ac6",
+      "join_sha256": "99e23dc80262cbc5fb77ba7a7e3a80ab716fe9cf6503f09127da843b0bb3aa21",
+      "gaps": [],
+      "scope": "SOURCE_DERIVED_SCALAR_CONTRACT",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-05/002b9cb0": {
+      "platform": "xbox",
+      "entry": "002b9cb0",
+      "end_inclusive": "002b9ce7",
+      "instructions": 20,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-05/002b9cb0.asm",
+      "listing_sha256": "c131dcd32a1732a225efdf896dc13355061cb224bb8541651cd93b69facae0c1",
+      "join_sha256": "99e23dc80262cbc5fb77ba7a7e3a80ab716fe9cf6503f09127da843b0bb3aa21",
+      "gaps": [],
+      "scope": "SOURCE_DERIVED_SCALAR_CONTRACT",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-05/002b9d50": {
+      "platform": "xbox",
+      "entry": "002b9d50",
+      "end_inclusive": "002b9d8a",
+      "instructions": 18,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-05/002b9d50.asm",
+      "listing_sha256": "a0687d37801fa6b57472194f180cc4393864e8c8a60cec4bde7a31411b721fbf",
+      "join_sha256": "99e23dc80262cbc5fb77ba7a7e3a80ab716fe9cf6503f09127da843b0bb3aa21",
+      "gaps": [],
+      "scope": "SOURCE_DERIVED_SCALAR_CONTRACT",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-05/002c8bd0": {
+      "platform": "xbox",
+      "entry": "002c8bd0",
+      "end_inclusive": "002c8eb0",
+      "instructions": 231,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-05/002c8bd0.asm",
+      "listing_sha256": "c9e104e40cd11451388be0ad7beb47133312988499f6d5a543c5065b771170a1",
+      "join_sha256": "99e23dc80262cbc5fb77ba7a7e3a80ab716fe9cf6503f09127da843b0bb3aa21",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-05/002c91c0": {
+      "platform": "xbox",
+      "entry": "002c91c0",
+      "end_inclusive": "002c930c",
+      "instructions": 109,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-05/002c91c0.asm",
+      "listing_sha256": "161b1fd9a870d1edaacb1a7f157eefa38af30b418ad989c7bbc428f0226cd9a3",
+      "join_sha256": "99e23dc80262cbc5fb77ba7a7e3a80ab716fe9cf6503f09127da843b0bb3aa21",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-05/002d1170": {
+      "platform": "xbox",
+      "entry": "002d1170",
+      "end_inclusive": "002d11b8",
+      "instructions": 35,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-05/002d1170.asm",
+      "listing_sha256": "15e000443baa3ed6cff3ef050c173d2f98037dc4810f0b36dd1bcbbbf68e9b08",
+      "join_sha256": "99e23dc80262cbc5fb77ba7a7e3a80ab716fe9cf6503f09127da843b0bb3aa21",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-06/002b9cf0": {
+      "platform": "xbox",
+      "entry": "002b9cf0",
+      "end_inclusive": "002b9d16",
+      "instructions": 14,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-06/002b9cf0.asm",
+      "listing_sha256": "ea9bf03c2eb710f7c636b4daa71b2cf35102da625f94f5ba371dcdbd57093bc8",
+      "join_sha256": "b510fd659094114c20712feb37bf11d50446b4ad6c5ab8543865b1be614f61b4",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-06/002c85f0": {
+      "platform": "xbox",
+      "entry": "002c85f0",
+      "end_inclusive": "002c8947",
+      "instructions": 290,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-06/002c85f0.asm",
+      "listing_sha256": "8f2e8e7c2bab178e1cbfcbac2927371ca7ca7b2f50b1a8b932bc822de296c335",
+      "join_sha256": "b510fd659094114c20712feb37bf11d50446b4ad6c5ab8543865b1be614f61b4",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-06/002c8f70": {
+      "platform": "xbox",
+      "entry": "002c8f70",
+      "end_inclusive": "002c90b7",
+      "instructions": 120,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-06/002c8f70.asm",
+      "listing_sha256": "c3173ede9ff6acbbad3c53695065c07121d2d261ea90f7ce865df2edeb211702",
+      "join_sha256": "b510fd659094114c20712feb37bf11d50446b4ad6c5ab8543865b1be614f61b4",
+      "gaps": [
+        {
+          "vma": "0x2c902d",
+          "file_offset": 2854957,
+          "bytes_hex": "8d4900",
+          "role": "LEA ECX,[ECX];alignment skipped byJMP2C902B->2C9030"
+        }
+      ],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-06/002d03b0": {
+      "platform": "xbox",
+      "entry": "002d03b0",
+      "end_inclusive": "002d03be",
+      "instructions": 4,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-06/002d03b0.asm",
+      "listing_sha256": "e239b6a12b7051480d742f063d0cf38543bcfdb5b2d68aea9d18a2b6127992d8",
+      "join_sha256": "b510fd659094114c20712feb37bf11d50446b4ad6c5ab8543865b1be614f61b4",
+      "gaps": [],
+      "scope": "SOURCE_DERIVED_SCALAR_CONTRACT",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-06/002d13c0": {
+      "platform": "xbox",
+      "entry": "002d13c0",
+      "end_inclusive": "002d14b9",
+      "instructions": 98,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-06/002d13c0.asm",
+      "listing_sha256": "7340ddb3cb914f787e564e8a6970fd3b6ea5738b0b514971928d83c179b44d35",
+      "join_sha256": "b510fd659094114c20712feb37bf11d50446b4ad6c5ab8543865b1be614f61b4",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-07/002d1010": {
+      "platform": "xbox",
+      "entry": "002d1010",
+      "end_inclusive": "002d10bd",
+      "instructions": 59,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-07/002d1010.asm",
+      "listing_sha256": "a401870a68f70f86afb2dc2b73ce6d94ffc234d61f854c61064290367139a3dd",
+      "join_sha256": "865a069744edb534aae104a0a87803795277883068f9dbd3ec342599c238d161",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-08/002d04c0": {
+      "platform": "xbox",
+      "entry": "002d04c0",
+      "end_inclusive": "002d04de",
+      "instructions": 10,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-08/002d04c0.asm",
+      "listing_sha256": "a0d2d749a04316f3ca7c1ad19d7b9917c495825639e484c7039f0f231770f675",
+      "join_sha256": "5beb42481630d857d42865806a02ae5bb7efe166dc744e9e83c5a72d8280347b",
+      "gaps": [],
+      "scope": "SOURCE_DERIVED_SCALAR_CONTRACT",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-08/002d04e0": {
+      "platform": "xbox",
+      "entry": "002d04e0",
+      "end_inclusive": "002d04fd",
+      "instructions": 11,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-08/002d04e0.asm",
+      "listing_sha256": "7e563c97a4891db2e448a0c12310dec9db14fe8258328c5a8fcf62bc958ee720",
+      "join_sha256": "5beb42481630d857d42865806a02ae5bb7efe166dc744e9e83c5a72d8280347b",
+      "gaps": [],
+      "scope": "SOURCE_DERIVED_SCALAR_CONTRACT",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-09/002b9d90": {
+      "platform": "xbox",
+      "entry": "002b9d90",
+      "end_inclusive": "002b9dbf",
+      "instructions": 19,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-09/002b9d90.asm",
+      "listing_sha256": "cdcd7aaf20a7a020e7a56cfabaa06f091543b14a2a683d4be6e2d0c49e5941b5",
+      "join_sha256": "634b062e94593922dedc172ba04a89dbb6c789986ec89cd1811d58da43509a2c",
+      "gaps": [],
+      "scope": "SOURCE_DERIVED_SCALAR_CONTRACT",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-10/002b9dc0": {
+      "platform": "xbox",
+      "entry": "002b9dc0",
+      "end_inclusive": "002b9de9",
+      "instructions": 18,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-10/002b9dc0.asm",
+      "listing_sha256": "08aa82ee9bcc299d4ecab46b3666cd1199a36a5271dea1901f9cc126a5616694",
+      "join_sha256": "5dcd000b43be422c6a412324353c0d4be3a72d72c97ecf70ff102fd3f335cd56",
+      "gaps": [],
+      "scope": "BOUNDARY_OR_DEPENDENCY_ONLY_HELPERS_OPEN",
+      "compiled": false,
+      "tested_component": false
+    },
+    "source-xbox-11/002b9df0": {
+      "platform": "xbox",
+      "entry": "002b9df0",
+      "end_inclusive": "002b9e4a",
+      "instructions": 38,
+      "listing": "research/runs/native-xbox-renderer-0407-20261122/source-xbox-11/002b9df0.asm",
+      "listing_sha256": "5c3a5302f76fbdea51c4a8e43e205e0beedc6a1e992d9574c8af38f61a7bc9ec",
+      "join_sha256": "0608da76e4592a99b66fedb60bb83a7099364aa09881d25d9e04216872377fda",
+      "gaps": [],
+      "scope": "SOURCE_DERIVED_SCALAR_CONTRACT",
+      "compiled": false,
+      "tested_component": false
+    }
+  },
+  "ps2_standard_pairs": [
+    [
+      1,
+      1771440
+    ],
+    [
+      10,
+      1773888
+    ],
+    [
+      21,
+      1774064
+    ],
+    [
+      20,
+      1775328
+    ],
+    [
+      2,
+      1817840
+    ],
+    [
+      3,
+      1818096
+    ],
+    [
+      7,
+      1828304
+    ],
+    [
+      6,
+      1818800
+    ],
+    [
+      5,
+      1790928
+    ],
+    [
+      4,
+      1782976
+    ],
+    [
+      12,
+      1789904
+    ],
+    [
+      9,
+      1818336
+    ],
+    [
+      8,
+      1775488
+    ],
+    [
+      15,
+      1794128
+    ],
+    [
+      16,
+      1797104
+    ],
+    [
+      23,
+      1797664
+    ],
+    [
+      24,
+      1797856
+    ],
+    [
+      14,
+      1817760
+    ],
+    [
+      13,
+      1817152
+    ],
+    [
+      17,
+      0
+    ],
+    [
+      18,
+      0
+    ],
+    [
+      19,
+      0
+    ],
+    [
+      11,
+      0
+    ],
+    [
+      22,
+      1798208
+    ],
+    [
+      25,
+      0
+    ],
+    [
+      27,
+      0
+    ],
+    [
+      26,
+      0
+    ],
+    [
+      28,
+      1798112
+    ]
+  ],
+  "source_derived_color_expectations": [
+    {
+      "rgba": [
+        18,
+        52,
+        86,
+        120
+      ],
+      "format0500_word": "0x78123456",
+      "format0600_word": "0xff123456",
+      "scope": "SOURCE_DERIVED_EXPECTATION_NOT_NATIVE_TEST"
+    },
+    {
+      "rgba": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "format0500_word": "0x0",
+      "format0600_word": "0xff000000",
+      "scope": "SOURCE_DERIVED_EXPECTATION_NOT_NATIVE_TEST"
+    },
+    {
+      "rgba": [
+        255,
+        0,
+        128,
+        255
+      ],
+      "format0500_word": "0xffff0080",
+      "format0600_word": "0xffff0080",
+      "scope": "SOURCE_DERIVED_EXPECTATION_NOT_NATIVE_TEST"
+    },
+    {
+      "rgba": [
+        1,
+        2,
+        3,
+        128
+      ],
+      "format0500_word": "0x80010203",
+      "format0600_word": "0xff010203",
+      "scope": "SOURCE_DERIVED_EXPECTATION_NOT_NATIVE_TEST"
+    }
+  ],
+  "recovery_record_sha256": "e9450297b967b9e3a7701a46a41ba086d29d39486fadea2768f94b021b805c70",
+  "reused_native_services": {
+    "runtime/include/mka/native_gl_texture.hpp": "663a46a90494ba78b5926a0f7a7741c432b95b78619035213ed8efbae7a064ea",
+    "runtime/src/native/movie_gl_device.cpp": "e1f60afaf7b33a22c89b5b9105e59b2a58783ddc86d36349604735f01829206f",
+    "runtime/include/mka/retail_loaded_system_art.hpp": "cdd052158b133d301770264402320c1e27efa4a4b353e9a5e26692fc51778399",
+    "runtime/include/mka/retail_renderer_images.hpp": "76b7a39709214adb3a29cf1ed70d868bbc65557075d86e0525a531b08135a5b4"
+  },
+  "route_decision": "COMMON_TYPED_OWNERSHIP_AND_XBOX_SCALAR_FORMAT_BRIDGE_REUSE_EXISTING_NATIVE_GPU_NOT_EITHER_CONSOLE_BACKEND",
+  "advantage_scope": "avoids adoptingEE packed backing descriptors;Xbox headers/aligned memory also discarded;no measured whole0407 speedup",
+  "sparse_coverage": "oldPS2 system21 instructions preserved;new262-word span closes switch coverage;PS2 backing-create omitted words/helpers OPEN",
+  "retained_prior_negative_link": {
+    "status": "RETAINED_UNCHANGED_SOURCE_NOT_RERUN",
+    "authentication_sha256": "3d568ad2442183a922ab57dd85d7d11bbabd129eff1a313a9979d2ce7d5dd99b",
+    "names": [
+      "mka::retail::main_binding::read_retail_online_boot_word(mka::retail::NativeRetailMainState const&)",
+      "mka::retail::main_binding::initialize_retail_online_stage(mka::retail::NativeRetailMainState&, std::__1::array<unsigned int, 5ull> const&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::poll_retail_controller_roles(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::advance_retail_game_services(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::service_retail_frame_input(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::render_retail_frame(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::prune_retail_associations(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::retail_mode_dispatch_enabled(mka::retail::NativeRetailMainState const&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::dispatch_retail_enabled_mode(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::create_retail_action_task(mka::retail::NativeRetailMainState&, mka::retail::RetailActionTaskRequest const&, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::deliver_retail_builtin_scene_event(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, unsigned int, unsigned int, mka::retail::StartupFailure&)",
+      "mka::retail::main_binding::reset_and_bind_retail_scene_event_graph(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailSceneEventGraph&, mka::retail::StartupFailure&)",
+      "mka::retail::scene_bootstrap_required::continue_scene_reset_at_125d60(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::initial_task_required::begin_intro_18deb0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::transition_1225d0(mka::retail::NativeRetailMainState&, unsigned int, mka::retail::RetailInitialTransitionBody)",
+      "mka::retail::initial_task_required::begin_prompt_18dc10(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d450(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d870(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d8e0(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d700(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d800(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d660(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::initial_task_required::begin_menu_18d770(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
+      "mka::retail::scene_bootstrap_required::continue_first_scene_at_225d40(mka::retail::NativeRetailMainState&, std::__1::shared_ptr<mka::retail::NativeRetailRendererCore>, mka::retail::StartupFailure&)",
+      "mka::retail::initial_reset_required::clear_nonowning_references_18da30(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
+      "mka::retail::invoke_retail_profile_select_from_2f1630(mka::retail::NativeRetailMainState&, std::__1::basic_string_view<char, std::__1::char_traits<char>>, mka::retail::RetailProfileMenuFailure&)",
+      "mka::retail::renderer_required::construct_core_plugin_0407(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+      "mka::retail::renderer_required::destroy_core_plugin_0407(mka::retail::NativeRetailRendererCore&)",
+      "mka::retail::renderer_required::construct_core_plugin_0408(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+      "mka::retail::renderer_required::destroy_core_plugin_0408(mka::retail::NativeRetailRendererCore&)",
+      "mka::retail::renderer_required::construct_core_plugin_0409(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+      "mka::retail::renderer_required::destroy_core_plugin_0409(mka::retail::NativeRetailRendererCore&)",
+      "mka::retail::renderer_required::construct_core_plugin_0412(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+      "mka::retail::renderer_required::destroy_core_plugin_0412(mka::retail::NativeRetailRendererCore&)",
+      "mka::retail::renderer_required::construct_core_plugin_040a(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+      "mka::retail::renderer_required::destroy_core_plugin_040a(mka::retail::NativeRetailRendererCore&)",
+      "mka::retail::renderer_required::construct_core_plugin_040b(mka::retail::NativeRetailRendererCore&, mka::retail::RetailRendererCoreFailure&)",
+      "mka::retail::renderer_required::destroy_core_plugin_040b(mka::retail::NativeRetailRendererCore&)",
+      "mka::retail::apply_retail_profile_participant_from_188720(mka::retail::NativeRetailMainState&, unsigned int, mka::retail::RetailProfileMenuFailure&)",
+      "mka::retail::publish_retail_profile_participant_from_189690(mka::retail::NativeRetailMainState&, std::__1::shared_ptr<mka::retail::NativeRetailInputParticipant> const&, mka::retail::RetailProfileMenuFailure&)",
+      "mka::retail::renderer_required::transform_point_exact(mka::retail::RetailRendererPoint3&, mka::retail::RetailRendererPoint3 const&, mka::retail::RetailRendererAffine const&)",
+      "mka::retail::renderer_required::transform_points_exact(std::__1::span<mka::retail::RetailRendererPoint3, 18446744073709551615ull>, std::__1::span<mka::retail::RetailRendererPoint3 const, 18446744073709551615ull>, mka::retail::RetailRendererAffine const&)",
+      "mka::retail::renderer_required::transform_vector_exact(mka::retail::RetailRendererPoint3&, mka::retail::RetailRendererPoint3 const&, mka::retail::RetailRendererAffine const&)",
+      "mka::retail::renderer_required::transform_vectors_exact(std::__1::span<mka::retail::RetailRendererPoint3, 18446744073709551615ull>, std::__1::span<mka::retail::RetailRendererPoint3 const, 18446744073709551615ull>, mka::retail::RetailRendererAffine const&)",
+      "mka::retail::renderer_required::multiply_affines_19f680(mka::retail::RetailRendererAffine&, mka::retail::RetailRendererAffine const&, mka::retail::RetailRendererAffine const&, mka::retail::RetailRendererMatrixFailure&)",
+      "mka::retail::renderer_required::classify_matrix_1a0240(mka::retail::RetailRendererMatrixValue&, mka::retail::RetailRendererMatrixTolerances const&, mka::retail::RetailRendererMatrixFailure&)",
+      "mka::retail::renderer_required::invert_nonidentity_matrix_1a07a0(mka::retail::RetailRendererMatrixValue&, mka::retail::RetailRendererMatrixValue const&, mka::retail::RetailRendererMatrixFailure&)"
+    ]
+  },
+  "open": [
+    "0407 native implementation/connected tests",
+    "full platform format/helper/asset behavior",
+    "native targets/depth/views/locks/readback/mips",
+    "parent/view retirement and unknown GPU deletion outcomes",
+    "same-scenario oracle and game acceptance"
+  ],
+  "native_implementation_changed": false,
+  "component_build_or_test_run": false,
+  "game_run": false,
+  "visible_window": false,
+  "audio_endpoint": false,
+  "local_model_used": false,
+  "owner_action": "none",
+  "agent_next": "implement0407 real ownership/context and connected verified native backing path",
+  "acceptance": "OPEN"
+}

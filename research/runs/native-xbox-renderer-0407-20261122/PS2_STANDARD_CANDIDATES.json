@@ -1,0 +1,439 @@
+{
+  "image_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "candidates": [
+    {
+      "vma": "0x1a6a88",
+      "word": "0x2484f2a0",
+      "file_offset": 682888,
+      "window_vma": "0x1a6a74",
+      "window_file_offset": 682868,
+      "words_le32": [
+        "0x382d",
+        "0x80802d",
+        "0x3c04006a",
+        "0x200302d",
+        "0xc069a3c",
+        "0x2484f2a0",
+        "0x54400003",
+        "0x200102d",
+        "0x802d",
+        "0x200102d",
+        "0xdfbf0010"
+      ],
+      "segment": [
+        1,
+        256,
+        1048576,
+        1048576,
+        5561984,
+        7096448,
+        7,
+        128
+      ],
+      "scope": "instruction/address candidates only"
+    },
+    {
+      "vma": "0x1a6abc",
+      "word": "0x2484f2a0",
+      "file_offset": 682940,
+      "window_vma": "0x1a6aa8",
+      "window_file_offset": 682920,
+      "words_le32": [
+        "0x27bd0020",
+        "0x0",
+        "0x27bdffe0",
+        "0x3c04006a",
+        "0xffbf0000",
+        "0x2484f2a0",
+        "0x2405000a",
+        "0x27a6001c",
+        "0x382d",
+        "0xc069a3c",
+        "0x402d"
+      ],
+      "segment": [
+        1,
+        256,
+        1048576,
+        1048576,
+        5561984,
+        7096448,
+        7,
+        128
+      ],
+      "scope": "instruction/address candidates only"
+    },
+    {
+      "vma": "0x1a6b00",
+      "word": "0x2484f2a0",
+      "file_offset": 683008,
+      "window_vma": "0x1a6aec",
+      "window_file_offset": 682988,
+      "words_le32": [
+        "0x0",
+        "0x27bdfff0",
+        "0x80402d",
+        "0x3c04006a",
+        "0xffbf0000",
+        "0x2484f2a0",
+        "0x24050007",
+        "0x302d",
+        "0xc069a3c",
+        "0x382d",
+        "0xdfbf0000"
+      ],
+      "segment": [
+        1,
+        256,
+        1048576,
+        1048576,
+        5561984,
+        7096448,
+        7,
+        128
+      ],
+      "scope": "instruction/address candidates only"
+    },
+    {
+      "vma": "0x1a6b50",
+      "word": "0x2610f2a0",
+      "file_offset": 683088,
+      "window_vma": "0x1a6b3c",
+      "window_file_offset": 683068,
+      "words_le32": [
+        "0x302d",
+        "0x7fb00000",
+        "0x382d",
+        "0x3c10006a",
+        "0x402d",
+        "0x2610f2a0",
+        "0xc069a3c",
+        "0x200202d",
+        "0x5040001b",
+        "0x102d",
+        "0x3c04005a"
+      ],
+      "segment": [
+        1,
+        256,
+        1048576,
+        1048576,
+        5561984,
+        7096448,
+        7,
+        128
+      ],
+      "scope": "instruction/address candidates only"
+    },
+    {
+      "vma": "0x1a6bec",
+      "word": "0x2484f2a0",
+      "file_offset": 683244,
+      "window_vma": "0x1a6bd8",
+      "window_file_offset": 683224,
+      "words_le32": [
+        "0x27bd0020",
+        "0x0",
+        "0x27bdfff0",
+        "0x3c04006a",
+        "0xffbf0000",
+        "0x2484f2a0",
+        "0x24050001",
+        "0x302d",
+        "0x382d",
+        "0xc069a3c",
+        "0x402d"
+      ],
+      "segment": [
+        1,
+        256,
+        1048576,
+        1048576,
+        5561984,
+        7096448,
+        7,
+        128
+      ],
+      "scope": "instruction/address candidates only"
+    },
+    {
+      "vma": "0x1a6c98",
+      "word": "0x24c6f2a0",
+      "file_offset": 683416,
+      "window_vma": "0x1a6c84",
+      "window_file_offset": 683396,
+      "words_le32": [
+        "0x220102d",
+        "0x3c06006a",
+        "0x3c07006a",
+        "0x260202d",
+        "0x24050004",
+        "0x24c6f2a0",
+        "0x24e7f3c4",
+        "0xc069a3c",
+        "0x402d",
+        "0x240382d",
+        "0x260202d"
+      ],
+      "segment": [
+        1,
+        256,
+        1048576,
+        1048576,
+        5561984,
+        7096448,
+        7,
+        128
+      ],
+      "scope": "instruction/address candidates only"
+    },
+    {
+      "vma": "0x1a6cd4",
+      "word": "0x24c6f2d8",
+      "file_offset": 683476,
+      "window_vma": "0x1a6cc0",
+      "window_file_offset": 683456,
+      "words_le32": [
+        "0x5040000c",
+        "0x882d",
+        "0x3c06006a",
+        "0x260202d",
+        "0x2405000b",
+        "0x24c6f2d8",
+        "0x382d",
+        "0xc069a3c",
+        "0x2408001d",
+        "0x8f82a3d8",
+        "0x24110001"
+      ],
+      "segment": [
+        1,
+        256,
+        1048576,
+        1048576,
+        5561984,
+        7096448,
+        7,
+        128
+      ],
+      "scope": "instruction/address candidates only"
+    },
+    {
+      "vma": "0x1a8858",
+      "word": "0x8c42f2e8",
+      "file_offset": 690520,
+      "window_vma": "0x1a8844",
+      "window_file_offset": 690500,
+      "words_le32": [
+        "0x40802d",
+        "0x52000023",
+        "0x102d",
+        "0x3c02006a",
+        "0x220302d",
+        "0x8c42f2e8",
+        "0x202d",
+        "0x200282d",
+        "0xa2000022",
+        "0xa2000021",
+        "0xae14000c"
+      ],
+      "segment": [
+        1,
+        256,
+        1048576,
+        1048576,
+        5561984,
+        7096448,
+        7,
+        128
+      ],
+      "scope": "instruction/address candidates only"
+    },
+    {
+      "vma": "0x2b7810",
+      "word": "0x8c62f2e8",
+      "file_offset": 1800464,
+      "window_vma": "0x2b77fc",
+      "window_file_offset": 1800444,
+      "words_le32": [
+        "0x3e00008",
+        "0x27bd00b0",
+        "0x0",
+        "0x3c03005c",
+        "0x27bdfff0",
+        "0x8c62f2e8",
+        "0x10400011",
+        "0xafa40000",
+        "0x3c02005c",
+        "0x8c4402f0",
+        "0x1080001c"
+      ],
+      "segment": [
+        1,
+        256,
+        1048576,
+        1048576,
+        5561984,
+        7096448,
+        7,
+        128
+      ],
+      "scope": "instruction/address candidates only"
+    },
+    {
+      "vma": "0x2b95a4",
+      "word": "0xaca4f2e8",
+      "file_offset": 1808036,
+      "window_vma": "0x2b9590",
+      "window_file_offset": 1808016,
+      "words_le32": [
+        "0x24040001",
+        "0x3c05005c",
+        "0x3c02005c",
+        "0x3c03005c",
+        "0xac44f2ec",
+        "0xaca4f2e8",
+        "0xfc60f308",
+        "0x3c02005c",
+        "0x2443f2f0",
+        "0xac40f2f0",
+        "0x3e00008"
+      ],
+      "segment": [
+        1,
+        256,
+        1048576,
+        1048576,
+        5561984,
+        7096448,
+        7,
+        128
+      ],
+      "scope": "instruction/address candidates only"
+    },
+    {
+      "vma": "0x2bec38",
+      "word": "0x2508f2e8",
+      "file_offset": 1830200,
+      "window_vma": "0x2bec24",
+      "window_file_offset": 1830180,
+      "words_le32": [
+        "0x3c08005c",
+        "0xc0202d",
+        "0x140282d",
+        "0x160302d",
+        "0xc0a8010",
+        "0x2508f2e8",
+        "0x100000a0",
+        "0xdfbf0030",
+        "0x3c10005c",
+        "0xc0202d",
+        "0x26080170"
+      ],
+      "segment": [
+        1,
+        256,
+        1048576,
+        1048576,
+        5561984,
+        7096448,
+        7,
+        128
+      ],
+      "scope": "instruction/address candidates only"
+    },
+    {
+      "vma": "0x3ce928",
+      "word": "0x2463f2a0",
+      "file_offset": 2943528,
+      "window_vma": "0x3ce914",
+      "window_file_offset": 2943508,
+      "words_le32": [
+        "0x2c410006",
+        "0x1020002a",
+        "0x8c65001c",
+        "0x3c030064",
+        "0x21080",
+        "0x2463f2a0",
+        "0x431021",
+        "0x8c420000",
+        "0x400008",
+        "0x0",
+        "0x3c07003e"
+      ],
+      "segment": [
+        1,
+        256,
+        1048576,
+        1048576,
+        5561984,
+        7096448,
+        7,
+        128
+      ],
+      "scope": "instruction/address candidates only"
+    },
+    {
+      "vma": "0x43f23c",
+      "word": "0x2463f2a0",
+      "file_offset": 3404604,
+      "window_vma": "0x43f228",
+      "window_file_offset": 3404584,
+      "words_le32": [
+        "0x3c030044",
+        "0x2405fffd",
+        "0x64060002",
+        "0x2484f2b0",
+        "0xacf20010",
+        "0x2463f2a0",
+        "0x8f88b1a8",
+        "0x8fa7004c",
+        "0xace8000c",
+        "0x8fa7004c",
+        "0xacf10008"
+      ],
+      "segment": [
+        1,
+        256,
+        1048576,
+        1048576,
+        5561984,
+        7096448,
+        7,
+        128
+      ],
+      "scope": "instruction/address candidates only"
+    },
+    {
+      "vma": "0x4f21e0",
+      "word": "0x24a5f2e8",
+      "file_offset": 4137696,
+      "window_vma": "0x4f21cc",
+      "window_file_offset": 4137676,
+      "words_le32": [
+        "0x21080",
+        "0xa21021",
+        "0x10000071",
+        "0x8c420000",
+        "0x3c050066",
+        "0x24a5f2e8",
+        "0x2463026c",
+        "0x832023",
+        "0x4810003",
+        "0x41883",
+        "0x24830003"
+      ],
+      "segment": [
+        1,
+        256,
+        1048576,
+        1048576,
+        5561984,
+        7096448,
+        7,
+        128
+      ],
+      "scope": "instruction/address candidates only"
+    }
+  ]
+}

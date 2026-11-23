@@ -1,0 +1,113 @@
+{
+  "platform": "ps2",
+  "image_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "sections": [
+    {
+      "name": "PT_LOAD_0",
+      "virtual_address": 1048576,
+      "virtual_size": 7096448,
+      "file_offset": 256,
+      "file_size": 5561984,
+      "original_program_header": [
+        1,
+        256,
+        1048576,
+        1048576,
+        5561984,
+        7096448,
+        7,
+        128
+      ]
+    },
+    {
+      "name": "PT_LOAD_1",
+      "virtual_address": 8145024,
+      "virtual_size": 1131008,
+      "file_offset": 5562240,
+      "file_size": 0,
+      "original_program_header": [
+        1,
+        5562240,
+        8145024,
+        8145024,
+        0,
+        1131008,
+        7,
+        128
+      ]
+    },
+    {
+      "name": "PT_LOAD_2",
+      "virtual_address": 8145024,
+      "virtual_size": 2097536,
+      "file_offset": 5562240,
+      "file_size": 0,
+      "original_program_header": [
+        1,
+        5562240,
+        8145024,
+        8145024,
+        0,
+        2097536,
+        7,
+        128
+      ]
+    },
+    {
+      "name": "PT_LOAD_3",
+      "virtual_address": 8145024,
+      "virtual_size": 1867392,
+      "file_offset": 5562240,
+      "file_size": 0,
+      "original_program_header": [
+        1,
+        5562240,
+        8145024,
+        8145024,
+        0,
+        1867392,
+        7,
+        128
+      ]
+    },
+    {
+      "name": "PT_LOAD_4",
+      "virtual_address": 10242560,
+      "virtual_size": 0,
+      "file_offset": 5562240,
+      "file_size": 0,
+      "original_program_header": [
+        1,
+        5562240,
+        10242560,
+        10242560,
+        0,
+        0,
+        6,
+        16
+      ]
+    }
+  ],
+  "queries": {
+    "fn=001b7060": {
+      "mapping": {
+        "vma": "0x1b7060",
+        "length": 32,
+        "section": "PT_LOAD_0",
+        "file_offset": 749920,
+        "file_backed": true
+      },
+      "bytes_hex": "2b00a0182d5800000900a1281a002014f8ffa9240700a0042d180000ff7f013c"
+    },
+    "data=005a4050:224": {
+      "mapping": {
+        "vma": "0x5a4050",
+        "length": 224,
+        "section": "PT_LOAD_0",
+        "file_offset": 4866384,
+        "file_backed": true
+      },
+      "bytes_hex": "01000000b0071b000a00000040111b0015000000f0111b0014000000e0161b0002000000f0bc1b0003000000f0bd1b0007000000d0e51b0006000000b0c01b0005000000d0531b0004000000c0341b000c000000d04f1b0009000000e0be1b000800000080171b000f00000050601b0010000000f06b1b0017000000206e1b0018000000e06e1b000e000000a0bc1b000d00000040ba1b001100000000000000120000000000000013000000000000000b000000000000001600000040701b0019000000000000001b000000000000001a000000000000001c000000e06f1b00"
+    }
+  }
+}

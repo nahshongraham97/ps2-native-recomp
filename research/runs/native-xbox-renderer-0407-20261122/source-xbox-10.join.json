@@ -1,0 +1,158 @@
+{
+  "platform": "xbox",
+  "image_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "functions": {
+    "002b9dc0": {
+      "instructions": 18,
+      "listing_sha256": "08aa82ee9bcc299d4ecab46b3666cd1199a36a5271dea1901f9cc126a5616694",
+      "original_spans": [
+        {
+          "vma": "0x2b9dc0",
+          "length": 1,
+          "section": ".text",
+          "file_offset": 2792896,
+          "file_backed": true,
+          "bytes_hex": "56"
+        },
+        {
+          "vma": "0x2b9dc1",
+          "length": 6,
+          "section": ".text",
+          "file_offset": 2792897,
+          "file_backed": true,
+          "bytes_hex": "8b35d8538300"
+        },
+        {
+          "vma": "0x2b9dc7",
+          "length": 1,
+          "section": ".text",
+          "file_offset": 2792903,
+          "file_backed": true,
+          "bytes_hex": "57"
+        },
+        {
+          "vma": "0x2b9dc8",
+          "length": 5,
+          "section": ".text",
+          "file_offset": 2792904,
+          "file_backed": true,
+          "bytes_hex": "e803900000"
+        },
+        {
+          "vma": "0x2b9dcd",
+          "length": 4,
+          "section": ".text",
+          "file_offset": 2792909,
+          "file_backed": true,
+          "bytes_hex": "8b442414"
+        },
+        {
+          "vma": "0x2b9dd1",
+          "length": 4,
+          "section": ".text",
+          "file_offset": 2792913,
+          "file_backed": true,
+          "bytes_hex": "8b4c2410"
+        },
+        {
+          "vma": "0x2b9dd5",
+          "length": 4,
+          "section": ".text",
+          "file_offset": 2792917,
+          "file_backed": true,
+          "bytes_hex": "8b7c240c"
+        },
+        {
+          "vma": "0x2b9dd9",
+          "length": 1,
+          "section": ".text",
+          "file_offset": 2792921,
+          "file_backed": true,
+          "bytes_hex": "50"
+        },
+        {
+          "vma": "0x2b9dda",
+          "length": 1,
+          "section": ".text",
+          "file_offset": 2792922,
+          "file_backed": true,
+          "bytes_hex": "51"
+        },
+        {
+          "vma": "0x2b9ddb",
+          "length": 1,
+          "section": ".text",
+          "file_offset": 2792923,
+          "file_backed": true,
+          "bytes_hex": "57"
+        },
+        {
+          "vma": "0x2b9ddc",
+          "length": 2,
+          "section": ".text",
+          "file_offset": 2792924,
+          "file_backed": true,
+          "bytes_hex": "ffd6"
+        },
+        {
+          "vma": "0x2b9dde",
+          "length": 3,
+          "section": ".text",
+          "file_offset": 2792926,
+          "file_backed": true,
+          "bytes_hex": "83c40c"
+        },
+        {
+          "vma": "0x2b9de1",
+          "length": 2,
+          "section": ".text",
+          "file_offset": 2792929,
+          "file_backed": true,
+          "bytes_hex": "f7d8"
+        },
+        {
+          "vma": "0x2b9de3",
+          "length": 2,
+          "section": ".text",
+          "file_offset": 2792931,
+          "file_backed": true,
+          "bytes_hex": "1bc0"
+        },
+        {
+          "vma": "0x2b9de5",
+          "length": 2,
+          "section": ".text",
+          "file_offset": 2792933,
+          "file_backed": true,
+          "bytes_hex": "23c7"
+        },
+        {
+          "vma": "0x2b9de7",
+          "length": 1,
+          "section": ".text",
+          "file_offset": 2792935,
+          "file_backed": true,
+          "bytes_hex": "5f"
+        },
+        {
+          "vma": "0x2b9de8",
+          "length": 1,
+          "section": ".text",
+          "file_offset": 2792936,
+          "file_backed": true,
+          "bytes_hex": "5e"
+        },
+        {
+          "vma": "0x2b9de9",
+          "length": 1,
+          "section": ".text",
+          "file_offset": 2792937,
+          "file_backed": true,
+          "bytes_hex": "c3"
+        }
+      ],
+      "gaps": []
+    }
+  },
+  "scope": "original listed-byte identity only; full-span coverage/ABI/semantics reviewed separately"
+}

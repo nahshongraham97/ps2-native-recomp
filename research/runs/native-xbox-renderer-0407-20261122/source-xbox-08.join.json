@@ -1,0 +1,189 @@
+{
+  "platform": "xbox",
+  "image_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "functions": {
+    "002d04c0": {
+      "instructions": 10,
+      "listing_sha256": "a0d2d749a04316f3ca7c1ad19d7b9917c495825639e484c7039f0f231770f675",
+      "original_spans": [
+        {
+          "vma": "0x2d04c0",
+          "length": 4,
+          "section": ".text",
+          "file_offset": 2884800,
+          "file_backed": true,
+          "bytes_hex": "8b4c2404"
+        },
+        {
+          "vma": "0x2d04c4",
+          "length": 3,
+          "section": ".text",
+          "file_offset": 2884804,
+          "file_backed": true,
+          "bytes_hex": "0fb601"
+        },
+        {
+          "vma": "0x2d04c7",
+          "length": 4,
+          "section": ".text",
+          "file_offset": 2884807,
+          "file_backed": true,
+          "bytes_hex": "0fb65101"
+        },
+        {
+          "vma": "0x2d04cb",
+          "length": 4,
+          "section": ".text",
+          "file_offset": 2884811,
+          "file_backed": true,
+          "bytes_hex": "0fb64902"
+        },
+        {
+          "vma": "0x2d04cf",
+          "length": 5,
+          "section": ".text",
+          "file_offset": 2884815,
+          "file_backed": true,
+          "bytes_hex": "0d00ffffff"
+        },
+        {
+          "vma": "0x2d04d4",
+          "length": 3,
+          "section": ".text",
+          "file_offset": 2884820,
+          "file_backed": true,
+          "bytes_hex": "c1e008"
+        },
+        {
+          "vma": "0x2d04d7",
+          "length": 2,
+          "section": ".text",
+          "file_offset": 2884823,
+          "file_backed": true,
+          "bytes_hex": "0bc2"
+        },
+        {
+          "vma": "0x2d04d9",
+          "length": 3,
+          "section": ".text",
+          "file_offset": 2884825,
+          "file_backed": true,
+          "bytes_hex": "c1e008"
+        },
+        {
+          "vma": "0x2d04dc",
+          "length": 2,
+          "section": ".text",
+          "file_offset": 2884828,
+          "file_backed": true,
+          "bytes_hex": "0bc1"
+        },
+        {
+          "vma": "0x2d04de",
+          "length": 1,
+          "section": ".text",
+          "file_offset": 2884830,
+          "file_backed": true,
+          "bytes_hex": "c3"
+        }
+      ],
+      "gaps": []
+    },
+    "002d04e0": {
+      "instructions": 11,
+      "listing_sha256": "7e563c97a4891db2e448a0c12310dec9db14fe8258328c5a8fcf62bc958ee720",
+      "original_spans": [
+        {
+          "vma": "0x2d04e0",
+          "length": 4,
+          "section": ".text",
+          "file_offset": 2884832,
+          "file_backed": true,
+          "bytes_hex": "8b442404"
+        },
+        {
+          "vma": "0x2d04e4",
+          "length": 4,
+          "section": ".text",
+          "file_offset": 2884836,
+          "file_backed": true,
+          "bytes_hex": "0fb65001"
+        },
+        {
+          "vma": "0x2d04e8",
+          "length": 2,
+          "section": ".text",
+          "file_offset": 2884840,
+          "file_backed": true,
+          "bytes_hex": "33c9"
+        },
+        {
+          "vma": "0x2d04ea",
+          "length": 3,
+          "section": ".text",
+          "file_offset": 2884842,
+          "file_backed": true,
+          "bytes_hex": "8a6803"
+        },
+        {
+          "vma": "0x2d04ed",
+          "length": 2,
+          "section": ".text",
+          "file_offset": 2884845,
+          "file_backed": true,
+          "bytes_hex": "8a08"
+        },
+        {
+          "vma": "0x2d04ef",
+          "length": 4,
+          "section": ".text",
+          "file_offset": 2884847,
+          "file_backed": true,
+          "bytes_hex": "0fb64002"
+        },
+        {
+          "vma": "0x2d04f3",
+          "length": 3,
+          "section": ".text",
+          "file_offset": 2884851,
+          "file_backed": true,
+          "bytes_hex": "c1e108"
+        },
+        {
+          "vma": "0x2d04f6",
+          "length": 2,
+          "section": ".text",
+          "file_offset": 2884854,
+          "file_backed": true,
+          "bytes_hex": "0bca"
+        },
+        {
+          "vma": "0x2d04f8",
+          "length": 3,
+          "section": ".text",
+          "file_offset": 2884856,
+          "file_backed": true,
+          "bytes_hex": "c1e108"
+        },
+        {
+          "vma": "0x2d04fb",
+          "length": 2,
+          "section": ".text",
+          "file_offset": 2884859,
+          "file_backed": true,
+          "bytes_hex": "0bc1"
+        },
+        {
+          "vma": "0x2d04fd",
+          "length": 1,
+          "section": ".text",
+          "file_offset": 2884861,
+          "file_backed": true,
+          "bytes_hex": "c3"
+        }
+      ],
+      "gaps": []
+    }
+  },
+  "scope": "original listed-byte identity only; full-span coverage/ABI/semantics reviewed separately"
+}
