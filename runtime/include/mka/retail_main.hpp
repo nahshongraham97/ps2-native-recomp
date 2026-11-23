@@ -238,6 +238,15 @@ RetailStartupGate initialize_retail_saved_profile_records(NativeRetailMainState&
 // Its native services and the live five-word producer remain required.
 std::uint32_t read_retail_online_boot_word(const NativeRetailMainState&);
 bool initialize_retail_online_stage(NativeRetailMainState&, const std::array<std::uint32_t, 5>&, StartupFailure&);
+
+// Native Go Online modal state and interaction (DEVIATION_NATIVE_GO_ONLINE_MODAL_MESSAGE)
+struct RetailOnlineModalState {
+    bool active{false};
+    const char* message{nullptr};
+    bool return_to_main_menu{false};
+};
+const char* get_retail_online_modal_string();
+bool trigger_retail_go_online_modal(RetailOnlineModalState& state);
 RetailStartupGate initialize_retail_first_scene(NativeRetailMainState&, StartupFailure&);
 std::optional<std::uint32_t> stop_retail_stopwatch(NativeRetailMainState&, unsigned slot, StartupFailure&);
 std::optional<std::uint16_t> read_retail_startup_seed_component(NativeRetailMainState&, StartupFailure&);

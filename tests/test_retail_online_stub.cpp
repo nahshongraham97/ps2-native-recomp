@@ -46,6 +46,21 @@ int main() {
     check(stage_ok, "initialize_retail_online_stage routes cleanly to offline route (DEVIATION_ONLINE_STAGE_RETURN_BOOL)");
     check(failure.kind == StartupError::none, "no failure reported on clean offline route");
 
+    // 3. Verify native "Go Online" modal behavior (DEVIATION_NATIVE_GO_ONLINE_MODAL_MESSAGE):
+    // In retail SLUS_214.10, selecting "Go Online" when network hardware/connection is missing
+    // presents an offline modal message from address 0x005E6320:
+    // "Could not authenticate user ID and Password. Please check your network configuration and try again."
+    // and returns the user to the main menu without loading NETR.ovl.
+    // Native implements this exact modal response with retail's authentic string.
+    main_binding::RetailOnlineModalState modal_state{};
+    const bool modal_ok = main_binding::trigger_retail_go_online_modal(modal_state);
+    check(modal_ok, "trigger_retail_go_online_modal succeeds");
+    check(modal_state.active, "modal state marked active upon selecting Go Online");
+    check(std::string(modal_state.message) == "Could not authenticate user ID and Password. Please check your network configuration and try again.",
+          "modal message matches retail SLUS_214.10 string at 0x005E6320");
+    check(modal_state.return_to_main_menu, "modal dismisses with return to main menu");
+
     std::cout << "PASS_RETAIL_ONLINE_OFFLINE_ROUTE" << std::endl;
+    std::cout << "PASS_RETAIL_ONLINE_MODAL_DISMISSED" << std::endl;
     return 0;
 }
