@@ -484,6 +484,17 @@ target_link_options(test_native_retail_renderer_images PRIVATE "-Wl,--wrap=fclos
 add_executable(test_native_retail_renderer_rasters EXCLUDE_FROM_ALL tests/test_retail_renderer_rasters.cpp)
 target_link_libraries(test_native_retail_renderer_rasters PRIVATE mka_native_retail_system_art_cpu opengl32 gdi32 user32)
 
+find_package(Python3 COMPONENTS Interpreter QUIET)
+if(Python3_FOUND)
+    add_custom_target(check_cpu_raster_ban
+        COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/../../../tools/acceptance/check_acceptance.py" --audit-cpu-raster --checkout "${CMAKE_CURRENT_SOURCE_DIR}"
+        COMMENT "Enforcing CPU-raster ban across renderer, presentation, readbacks, and 0406 boundaries"
+        VERBATIM
+    )
+    add_dependencies(test_native_retail_renderer_rasters check_cpu_raster_ban)
+    add_dependencies(test_native_retail_renderer_images check_cpu_raster_ban)
+endif()
+
 add_executable(test_native_retail_renderer_allocator EXCLUDE_FROM_ALL tests/test_retail_renderer_allocator.cpp)
 target_link_libraries(test_native_retail_renderer_allocator PRIVATE mka_native_retail_startup)
 add_executable(test_native_retail_scene_bootstrap_prefix EXCLUDE_FROM_ALL tests/test_retail_scene_bootstrap_prefix.cpp)
