@@ -419,3 +419,26 @@ add_executable(ps2padtest EXCLUDE_FROM_ALL host/pad_test.cpp host/window.cpp hos
         target_link_libraries(ps2padtest PRIVATE ps2runtime SDL2::SDL2)
     endif()
 endif()
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/build/generated-aot/phase4-all/table.cpp" AND EXISTS "${CMAKE_SOURCE_DIR}/build/generated-aot/vu1/vu1_table.cpp")
+    file(GLOB PS2_PHASE4_EE_UNITS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/build/generated-aot/phase4-all/*.cpp")
+    file(GLOB PS2_PHASE4_VU_UNITS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/build/generated-aot/vu1/*.cpp")
+    list(REMOVE_ITEM PS2_PHASE4_VU_UNITS "${CMAKE_SOURCE_DIR}/build/generated-aot/vu1/vu1_table.cpp")
+    add_library(ps2_phase4_aot STATIC EXCLUDE_FROM_ALL ${PS2_PHASE4_EE_UNITS} ${PS2_PHASE4_VU_UNITS})
+    target_include_directories(ps2_phase4_aot PRIVATE "${CMAKE_SOURCE_DIR}/build/generated-aot/phase4-all" "${CMAKE_SOURCE_DIR}/runtime/include")
+    if(MSVC)
+        target_compile_options(ps2_phase4_aot PRIVATE /wd4100 /wd4101)
+    else()
+        target_compile_options(ps2_phase4_aot PRIVATE -Wno-unused-label -Wno-unused-variable)
+    endif()
+    add_executable(test_phase4_aot_equivalence EXCLUDE_FROM_ALL
+        tests/test_phase4_aot_equivalence.cpp
+        "${CMAKE_SOURCE_DIR}/build/generated-aot/vu1/vu1_table.cpp"
+        runtime/src/dispatch.cpp
+        runtime/src/observer_hook.cpp
+        runtime/src/native_hook.cpp
+        runtime/src/cop.cpp
+        runtime/src/vu_micro.cpp)
+    target_include_directories(test_phase4_aot_equivalence PRIVATE runtime/include runtime/src)
+    target_link_libraries(test_phase4_aot_equivalence PRIVATE ps2_phase4_aot)
+endif()

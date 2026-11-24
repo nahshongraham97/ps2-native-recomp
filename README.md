@@ -10,7 +10,7 @@ Neither the canonical playable oracle (`../../milestone_work_verified_playable_2
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`499e49c0`](https://github.com/nahshongraham97/ps2-native-recomp/commit/499e49c0865dce875fa9f28a4e66c5cb98b5b423) (pinned active fork)
+**Verified Fork Commit**: [`1843e89a`](https://github.com/nahshongraham97/ps2-native-recomp/commit/1843e89a6f15cb9510f2d2132c31b0effc9e6b5c) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - **Total PS2 Function Catalog**: **17,510** functions (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
@@ -18,17 +18,17 @@ Neither the canonical playable oracle (`../../milestone_work_verified_playable_2
 - **Code-Computed Role Partition (`function_classification_inventory.json`)**: `49` `platform-boundary` + `15,450` `retail-logic` + `2,011` `sdk-or-library` = **17,510** (in-scope: `49` + `13,610` + `2,011` = **15,670**)
 
 ### Tier 2 · Build-Time Static AOT Generated (`research/ledger/aot_coverage_inventory.json`)
-- **In-Scope Static AOT C++**: **83.84%** (**13,138 / 15,670** reproduced via `eerecomp` into untracked `build/generated-aot/ee/`, `311` units; `0` tracked generated `.cpp` files in Git)
+- **In-Scope Static AOT C++**: **100.00%** (**15,670 / 15,670** reproduced via `eerecomp` into untracked `build/generated-aot/`, `395` units total; `0` tracked generated `.cpp` files in Git)
 
 | Module / Artifact | Build-Time Static AOT Status | Static AOT / Catalog | Reference % |
 |---|---|---|---|
-| **Base `SLUS_214.10`** | `311` static `unit_*.cpp` files reproduced from pinned ELF (`reproduce_aot_pipeline.py`) | 13,138 / 13,138 | 100.00% |
-| **`MOVIER.ovl` Overlay** | Build-time static overlay C++ NOT generated (`Phase 4` target) | 0 / 2,537 | 0.00% |
-| **`GAMER.ovl` Overlay** | Build-time static overlay C++ NOT generated (`Phase 4` target) | 0 / 1 | 0.00% |
-| **In-Scope AOT Subtotal** | *Build-time static C++ across `SLUS_214.10` + `MOVIER.ovl` + `GAMER.ovl`* | **13,138 / 15,670** | **83.84%** |
+| **Base `SLUS_214.10`** | `311` static `unit_*.cpp` files reproduced from pinned ELF (`reproduce_aot_pipeline.py`; `13,132` in-scope + `6` excluded online) | 13,138 / 13,138 | 100.00% |
+| **`MOVIER.ovl` Overlay** | `34` static `m_MOVIER_unit_*.cpp` files reproduced from `MWo3` overlay | 2,537 / 2,537 | 100.00% |
+| **`GAMER.ovl` Overlay** | `1` static `m_GAMER_unit_0000.cpp` file reproduced from `MWo3` overlay | 1 / 1 | 100.00% |
+| **In-Scope AOT Subtotal** | *Build-time static C++ across `SLUS_214.10` (`13,132`) + `MOVIER.ovl` (`2,537`) + `GAMER.ovl` (`1`)* | **15,670 / 15,670** | **100.00%** |
 | **Excluded `NETR.ovl`** | Out of scope (`DECISION_ONLINE_OUT_OF_SCOPE.json`) | 0 / 1,834 | — |
-| **Dynamic Overlay Windows (`kModules`)** | Runtime memory snapshots (`private-inputs/mkarmageddon-aot-inputs/overlays/`) | 4 captured windows | — |
-| **VU1 Microprograms (Separate VU Domain)** | `vurecomp` generates `493` keys from `211` `.bin` captures (`490` legacy table keys + 3 continuations; `44` oracle `vu1-live/` DLLs; earlier `114` claim retracted) | 490 / 493 keys | — |
+| **Dynamic Overlay Windows (`kModules`)** | `4` runtime RAM window snapshots (`49` static `m_007C*` units) | 4 captured windows | — |
+| **VU1 Microprograms (Separate VU Domain)** | `vurecomp` generates `494` static keys from `212` `.bin` captures (`61/61` oracle states match `883AC7731B3857A8`; `44` oracle `vu1-live/` DLLs; `0/61` VU0 microprograms) | 494 / 494 keys | — |
 
 ### Tier 3 · Memory & ABI Transformed (`Phase 5` Target)
 - **Contract-Transformed Functions**: **0.00%** (**0 / 15,670** — generated AOT units still retain `c.r[...]`, `g_ram`, `$gp`, and guest vtables pending Phase 5)

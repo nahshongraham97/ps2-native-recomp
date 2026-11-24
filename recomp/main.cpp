@@ -74,6 +74,7 @@ std::vector<Snr2Module> read_modules(const std::string &dir) {
         std::ifstream file(path, std::ios::binary);
         std::vector<std::uint8_t> bytes{std::istreambuf_iterator<char>(file), {}};
         auto module = read_snr2_module(bytes);
+        if (!module) module = read_mwo3_module(bytes, ps2::os::utf8(path.filename()));
         if (!module) module = read_xff2_module(std::move(bytes), ps2::os::utf8(path.filename()));
         if (!module) continue;
         if (std::any_of(modules.begin(), modules.end(), [&](const Snr2Module &m) { return m.bytes == module->bytes; })) continue;
@@ -363,7 +364,19 @@ int main(int argc, char **argv) {
             if (const auto it = entries.modules.find(m.name); it != entries.modules.end()) seeds.insert(seeds.end(), it->second.begin(), it->second.end());
             programs.push_back(analyse(images.back(), seeds, dynamic_sites(m.links)));
             module_code += code_size(programs.back());
-            translations.push_back({&images.back(), &programs.back(), &m.links, "m_" + m.name + "_", true, m.name, m.size, checks_for(m, programs.back())});
+            if (m.fixed) {
+                for (std::uint32_t pc = m.base + m.code_begin; pc + 4 <= m.base + m.code_end; pc += 4) {
+                    if (!programs.back().is_code(pc)) continue;
+                    const Insn i = decode(*images.back().word(pc), pc);
+                    const Flow f = flow(i.op);
+                    const std::uint32_t t = i.jump_target();
+                    if ((f == Flow::Jump || f == Flow::Call) && t >= program.base && t < program.end && !program.entries.count(t)) called_out.insert(t);
+                }
+                translations.push_back({&images.back(), &programs.back(), nullptr, "m_" + m.name + "_", false, m.name, m.size,
+                                        checks_for_window(m, programs.back()), true, m.base});
+            } else {
+                translations.push_back({&images.back(), &programs.back(), &m.links, "m_" + m.name + "_", true, m.name, m.size, checks_for(m, programs.back())});
+            }
         }
         if (!modules.empty())
             std::printf("%zu modules, code %zu instructions (%zu KiB), %zu sites in the program linked at run time\n", modules.size(), module_code,

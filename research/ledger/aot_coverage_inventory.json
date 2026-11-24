@@ -3,21 +3,26 @@
   "measured_date": "2026-11-24",
   "definition": "Build-time static AOT C++ generation only; excludes dynamic overlay RAM snapshots (kModules) and live runtime JIT/DLL caches.",
   "active_fork_tracked_cpp_count": 0,
-  "active_fork_build_generated_units": 311,
-  "active_fork_status": "Phase 3 fresh-clone reproducible build verified: eerecomp emits 311 SLUS_214.10 static units and vurecomp emits 493 VU1 keys into untracked build/generated-aot/.",
+  "active_fork_build_generated_units": 395,
+  "active_fork_status": "Phase 4 complete: eerecomp emits 395 static units into untracked build/generated-aot/phase4-all/ (311 SLUS_214.10 + 34 MOVIER.ovl + 1 GAMER.ovl + 49 kModules dynamic windows = 15,670/15,670 in-scope 100.00%); vurecomp emits 494 VU1 programs from 212 captures (covering 61/61 playable oracle states).",
   "sources": {
     "pinned_elf": {
       "rel_path": "private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/SLUS_214.10",
       "sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f"
     },
     "entries_seed_list": {
-      "rel_path": "recomp/mkarmageddon_entries.txt",
-      "sha256": "51b96ed520382dd3e637e2740217ab6de348144f78e8a1dce22c0ba75086745b"
+      "rel_path": "recomp/mkarmageddon_all_entries.txt",
+      "sha256": "7aad95df6b17fcde32425575e67593c9383bb7d9db126948d8d1473f2c9265e5",
+      "base_entries_sha256": "51b96ed520382dd3e637e2740217ab6de348144f78e8a1dce22c0ba75086745b"
     },
     "reproduced_table_cpp": {
-      "rel_path": "external/forks/ps2-native-recomp/build/generated-aot/ee/table.cpp",
-      "sha256": "9885ac6e926c8f9629d3a0584309f818a5b51616d8cab9aefa64ed5e3eba1dbf",
-      "static_unit_count": 311
+      "rel_path": "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/table.cpp",
+      "sha256": "5388aaa642c4ac7b5a66e561828b06470a902646d7c496181ccf6a385be58268",
+      "static_unit_count": 395,
+      "slus_unit_count": 311,
+      "movier_unit_count": 34,
+      "gamer_unit_count": 1,
+      "dynamic_window_unit_count": 49
     },
     "overlay_manifest": {
       "rel_path": "recomp/overlays/OVERLAY-MAP-MANIFEST.json",
@@ -27,14 +32,17 @@
     },
     "reproduced_vu1_table_cpp": {
       "rel_path": "external/forks/ps2-native-recomp/build/generated-aot/vu1/vu1_table.cpp",
-      "sha256": "11d07042258a2359ffaa7e5d0b656dd53ce156b6276c9dbdf5919ce99fc543c1",
-      "keys": 493
+      "sha256": "798fd5d4336bc02ef38c84e0c9fc9df98a41250d390c94b6b9f060d2e9125611",
+      "keys": 494
     },
     "vu_corpus_strict": {
       "rel_path": "research/runs/native-bank-service-20261118/VU_CORPUS_STRICT.json",
       "sha256": "82204adf952343878a45285ba655cfc9b182037e09bc88643e745ee1fd1acc0c",
       "vu1_bin_captures": 211,
-      "strict_keys": 493
+      "strict_keys": 493,
+      "oracle_state_capture_added": "883AC7731B3857A8_0000.bin",
+      "total_bin_captures_phase4": 212,
+      "total_aot_keys_phase4": 494
     }
   },
   "modules": {
@@ -1913,16 +1921,59 @@
       ]
     },
     "MOVIER.ovl": {
-      "static_aot_count": 0,
+      "static_aot_count": 2537,
       "catalog_total": 2537,
-      "static_overlay_sources": [],
-      "note": "No build-time static AOT C++ compilation from MOVIER.ovl yet; Phase 4 target."
+      "static_units": 34,
+      "static_overlay_sources": [
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0000.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0001.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0002.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0003.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0004.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0005.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0006.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0007.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0008.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0009.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_000A.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_000B.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_000C.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_000D.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_000E.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_000F.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0010.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0011.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0012.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0013.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0014.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0015.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0016.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0017.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0018.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0019.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_001A.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_001B.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_001C.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_001D.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_001E.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_001F.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0020.cpp",
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_MOVIER_unit_0021.cpp"
+      ],
+      "source_ovl_sha256": "3a34e3838042aa0bde0ce687a4e61e128b2eb965e60e65c34713e0a73891adb8",
+      "format": "MWo3 (base 0x007C4880 aligned to 0x007C4000 with pad=0x880)",
+      "note": "Build-time static AOT C++ generated for all 2,537 / 2,537 catalogued MOVIER.ovl functions (34 units); verified overlay switching & check-word sweep."
     },
     "GAMER.ovl": {
-      "static_aot_count": 0,
+      "static_aot_count": 1,
       "catalog_total": 1,
-      "static_overlay_sources": [],
-      "note": "No build-time static AOT C++ compilation from GAMER.ovl yet; Phase 4 target."
+      "static_units": 1,
+      "static_overlay_sources": [
+        "external/forks/ps2-native-recomp/build/generated-aot/phase4-all/m_GAMER_unit_0000.cpp"
+      ],
+      "source_ovl_sha256": "70714c6f147128fb6462ac57bfe28e3e27a0dcf90730c4054e90c70908feba89",
+      "format": "MWo3 (base 0x007C4880 aligned to 0x007C4000 with pad=0x880)",
+      "note": "Build-time static AOT C++ generated for 1 / 1 GAMER.ovl function (0x007C4980); matches all 61/61 playable oracle states."
     },
     "NETR.ovl": {
       "static_aot_count": 0,
@@ -1958,15 +2009,20 @@
     }
   ],
   "vu_microprograms": {
-    "vu1_static_table_keys": 490,
-    "vu1_strict_corpus_keys": 493,
-    "vu1_bin_captures": 211,
+    "vu0_microprogram_count": 0,
+    "vu0_oracle_nonzero_states": 0,
+    "vu0_note": "0/61 playable oracle states contain VU0 microcode; EE COP2/VU0 vector arithmetic executes inline in EE AOT units.",
+    "vu1_static_table_keys": 494,
+    "vu1_strict_corpus_keys": 494,
+    "vu1_bin_captures": 212,
     "oracle_vu1_live_dll_count": 44,
-    "reconciliation_note": "Current vurecomp reproduces 493 reachable VU1 keys (all 490 legacy table keys plus 3 continuation entries) from 211 .bin captures; canonical oracle vu1-live/ contains 44 live DLLs (retracting earlier unverified 114 claim)."
+    "oracle_state_vu1_key": "883AC7731B3857A8",
+    "oracle_state_vu1_matched": "61/61",
+    "reconciliation_note": "vurecomp generates 494 reachable VU1 keys (490 legacy + 3 strict continuations + oracle state entry-0 key 883AC7731B3857A8) across 212 .bin captures with 0 omitted; 61/61 oracle states match key 883AC7731B3857A8 and execute under AOT VU1 dispatch."
   },
   "memory_abi_transform": {
     "transformed_count": 0,
-    "in_scope_total": 15676,
+    "in_scope_total": 15670,
     "note": "Generated C++ retains c.r[...], g_ram, $gp, and guest vtables until Phase 5 transform."
   }
 }

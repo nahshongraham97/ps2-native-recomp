@@ -33,9 +33,11 @@ struct Snr2Module {
     std::vector<std::uint32_t> seeds;
     // Functions of the boot program the module's own symbols name
     std::vector<std::uint32_t> program_entries;
+    bool fixed{};
 };
 
 std::optional<Snr2Module> read_snr2_module(std::vector<std::uint8_t> bytes);
+std::optional<Snr2Module> read_mwo3_module(std::vector<std::uint8_t> bytes, const std::string &fallback_name);
 Links snr2_imports(const Image &image);
 Image snr2_image(const Snr2Module &module);
 

@@ -116,6 +116,41 @@ std::optional<Snr2Module> read_snr2_module(std::vector<std::uint8_t> bytes) {
     return m;
 }
 
+
+std::optional<Snr2Module> read_mwo3_module(std::vector<std::uint8_t> bytes, const std::string &fallback_name) {
+    constexpr std::uint32_t kMwo3Magic = 0x336F574Du; // "MWo3"
+    if (bytes.size() < 0x40u || u32(bytes, 0) != kMwo3Magic) return std::nullopt;
+    Snr2Module m;
+    m.magic = kMwo3Magic;
+    m.fixed = true;
+    const std::uint32_t raw_base = u32(bytes, 0x08);
+    const std::uint32_t raw_size = static_cast<std::uint32_t>(bytes.size());
+    if (!raw_base || raw_size <= 0x40u) return std::nullopt;
+    const std::uint32_t pad = raw_base & 0x3FFFu;
+    m.base = raw_base - pad;
+    m.size = raw_size + pad;
+    std::string stem = fallback_name;
+    if (const auto slash = stem.find_last_of("\\/"); slash != std::string::npos) stem = stem.substr(slash + 1);
+    if (const auto dot = stem.find('.'); dot != std::string::npos) stem = stem.substr(0, dot);
+    std::string clean;
+    for (char ch : stem) clean += std::isalnum(static_cast<unsigned char>(ch)) ? ch : '_';
+    m.name = clean.empty() ? "mwo3_module" : clean;
+
+    m.code_begin = pad + 0x40u;
+    m.code_end = m.size;
+    const std::uint32_t ctors_start = u32(bytes, 0x18);
+    const std::uint32_t ctors_end = u32(bytes, 0x1C);
+    if (ctors_start >= raw_base + 0x40u && ctors_end >= ctors_start && ctors_end - raw_base <= raw_size) {
+        for (std::uint32_t va = ctors_start; va + 4 <= ctors_end; va += 4) {
+            const std::uint32_t fn = u32(bytes, va - raw_base);
+            if (fn >= raw_base + 0x40u && fn - raw_base < raw_size) m.seeds.push_back(fn);
+        }
+    }
+    m.bytes.assign(pad, 0u);
+    m.bytes.insert(m.bytes.end(), bytes.begin(), bytes.end());
+    return m;
+}
+
 Links snr2_imports(const Image &image) {
     Links links;
     for (const auto &segment : image.segments()) {
@@ -135,6 +170,7 @@ Links snr2_imports(const Image &image) {
 }
 
 Image snr2_image(const Snr2Module &module) {
+    if (module.fixed) return Image::raw(module.base, module.bytes, {module.base + module.code_begin, module.base + module.code_end});
     return Image::raw(0, module.bytes, {module.code_begin, module.code_end});
 }
 
