@@ -246,6 +246,7 @@ if(WIN32)
         runtime/src/native/retail_renderer_cameras.cpp
         runtime/src/native/retail_renderer_images.cpp
         runtime/src/native/retail_renderer_rasters.cpp
+        runtime/src/native/retail_renderer_textures.cpp
         runtime/src/native/retail_renderer_transforms.cpp
         runtime/src/native/retail_renderer_matrix.cpp
         runtime/src/native/retail_first_scene_core.cpp runtime/src/native/retail_first_scene_allocator.cpp runtime/src/native/retail_camera_world.cpp
@@ -484,6 +485,8 @@ target_link_libraries(test_native_retail_renderer_images PRIVATE mka_native_reta
 target_link_options(test_native_retail_renderer_images PRIVATE "-Wl,--wrap=fclose")
 add_executable(test_native_retail_renderer_rasters EXCLUDE_FROM_ALL tests/test_retail_renderer_rasters.cpp)
 target_link_libraries(test_native_retail_renderer_rasters PRIVATE mka_native_retail_system_art_cpu opengl32 gdi32 user32)
+add_executable(test_native_retail_renderer_textures EXCLUDE_FROM_ALL tests/test_retail_renderer_textures.cpp)
+target_link_libraries(test_native_retail_renderer_textures PRIVATE mka_native_retail_system_art_cpu opengl32 gdi32 user32)
 
 find_package(Python3 COMPONENTS Interpreter QUIET)
 if(Python3_FOUND)

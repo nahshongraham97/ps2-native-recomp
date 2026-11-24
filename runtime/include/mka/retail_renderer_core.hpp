@@ -22,6 +22,7 @@ class NativeRetailRendererImages;
 struct RetailRendererImageExtension;
 class NativeRetailRendererRasters;
 struct RetailRendererRasterExtension;
+class NativeRetailRendererTextures;
 enum class RetailRendererCoreError {none,owner,wrong_thread,allocation,native_exception,allocator,content,unbound_factory,registration_closed,reentrant,construction,after_effect_unknown};
 struct RetailRendererCoreFailure {
  RetailRendererCoreError kind{RetailRendererCoreError::none};const char* operation{""};
@@ -69,6 +70,8 @@ bool construct_core_plugin_0406(NativeRetailRendererCore&,RetailRendererCoreFail
 void destroy_core_plugin_0406(NativeRetailRendererCore&)noexcept;
 bool construct_core_plugin_0407(NativeRetailRendererCore&,RetailRendererCoreFailure&);
 void destroy_core_plugin_0407(NativeRetailRendererCore&)noexcept;
+bool construct_core_plugin_0408(NativeRetailRendererCore&,RetailRendererCoreFailure&);
+void destroy_core_plugin_0408(NativeRetailRendererCore&)noexcept;
 bool construct_core_plugin_040d(NativeRetailRendererCore&,RetailRendererCoreFailure&);
 void destroy_core_plugin_040d(NativeRetailRendererCore&)noexcept;
 std::optional<bool> register_object_extensions_1b72b0(NativeRetailRendererCore&,RetailRendererCoreFailure&);
@@ -133,6 +136,8 @@ public:
  std::shared_ptr<NativeRetailRendererRasters> rasters(RetailRendererCoreFailure&)const noexcept;
  std::optional<std::uint32_t> module_0407_count(RetailRendererCoreFailure&)const noexcept;
  bool register_raster_extension(std::shared_ptr<const RetailRendererRasterExtension>,RetailRendererCoreFailure&)noexcept;
+ std::shared_ptr<NativeRetailRendererTextures> textures(RetailRendererCoreFailure&)const noexcept;
+ std::optional<std::uint32_t> module_0408_count(RetailRendererCoreFailure&)const noexcept;
  bool attach_gpu_device(std::shared_ptr<graphics::NativeGlTextureUpload>,RetailRendererCoreFailure&)noexcept;
  //1A3480 forward construction/reverse prior-success unwind. Explicitly later
  // than CoreInit; production EngineOpen/Start producers remain required.
@@ -171,6 +176,8 @@ private:
  std::shared_ptr<NativeRetailRendererRasters> rasters_;
  std::vector<std::shared_ptr<const RetailRendererRasterExtension>> raster_extensions_;
  std::atomic<std::uint32_t> module_0407_count_{};
+ std::shared_ptr<NativeRetailRendererTextures> textures_;
+ std::atomic<std::uint32_t> module_0408_count_{};
  content::ContentVolumeFailure cleanup_content_failure_;
  std::atomic<std::uint32_t> matrix_domain_count_{};
  std::atomic<std::uint32_t> module_040d_count_{};
@@ -199,6 +206,9 @@ private:
  friend class NativeRetailRendererRasters;
  friend bool renderer_required::construct_core_plugin_0407(NativeRetailRendererCore&,RetailRendererCoreFailure&);
  friend void renderer_required::destroy_core_plugin_0407(NativeRetailRendererCore&)noexcept;
+ friend class NativeRetailRendererTextures;
+ friend bool renderer_required::construct_core_plugin_0408(NativeRetailRendererCore&,RetailRendererCoreFailure&);
+ friend void renderer_required::destroy_core_plugin_0408(NativeRetailRendererCore&)noexcept;
 };
 bool construct_native_renderer_error(NativeRetailRendererCore&,RetailRendererCoreFailure&);
 void destroy_native_renderer_error(NativeRetailRendererCore&)noexcept;
