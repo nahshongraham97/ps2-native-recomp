@@ -2,7 +2,6 @@
 #include "mka/retail_game_session.hpp"
 #include "retail_main_control.hpp"
 #include <algorithm>
-#include <cctype>
 #include <cstring>
 #include <new>
 
@@ -38,22 +37,10 @@ std::shared_ptr<T> heap_object(
     return {};
 }
 
-bool iequals(std::string_view a, std::string_view b) noexcept {
-    if (a.size() != b.size()) return false;
-    for (std::size_t i = 0; i < a.size(); ++i) {
-        if (std::tolower(static_cast<unsigned char>(a[i])) !=
-            std::tolower(static_cast<unsigned char>(b[i]))) {
-            return false;
-        }
-    }
-    return true;
-}
-
 } // namespace
 
 struct NativeRetailTextureDictionaryRecord final {
     std::string name;
-    std::vector<NativeRetailTextureHandle> textures;
     bool is_current{false};
     bool destroying{false};
     bool retired{false};
@@ -63,11 +50,9 @@ struct NativeRetailTextureDictionaryRecord final {
 
 NativeRetailRendererTextureDictionaries::NativeRetailRendererTextureDictionaries(
     std::weak_ptr<NativeRetailGameSession> session,
-    std::shared_ptr<NativeRetailRendererAllocatorService> allocator,
-    std::shared_ptr<NativeRetailRendererTextures> textures)
+    std::shared_ptr<NativeRetailRendererAllocatorService> allocator)
     : session_(std::move(session)),
-      allocator_(std::move(allocator)),
-      textures_(std::move(textures)) {}
+      allocator_(std::move(allocator)) {}
 
 NativeRetailRendererTextureDictionaries::~NativeRetailRendererTextureDictionaries() {
     retire();
@@ -131,10 +116,9 @@ std::shared_ptr<NativeRetailRendererTextureDictionaries> NativeRetailRendererTex
         f.operation = "0409 allocator missing";
         return {};
     }
-    auto textures = core.textures_;
     try {
         return std::shared_ptr<NativeRetailRendererTextureDictionaries>(
-            new NativeRetailRendererTextureDictionaries(core.session_, std::move(allocator), std::move(textures)));
+            new NativeRetailRendererTextureDictionaries(core.session_, std::move(allocator)));
     } catch (const std::bad_alloc&) {
         f.kind = RetailRendererTextureDictionaryError::allocation;
         f.operation = "0409 dictionary service allocation";
@@ -199,14 +183,6 @@ bool NativeRetailRendererTextureDictionaries::destroy_dictionary(
         current_handle_ = {};
     }
 
-    if (textures_) {
-        for (auto& tex : rec->textures) {
-            RetailRendererTextureFailure tf;
-            textures_->destroy_texture(tex, tf);
-        }
-    }
-    rec->textures.clear();
-
     rec->retired = true;
     auto it = std::find(records_.begin(), records_.end(), rec);
     if (it != records_.end()) {
@@ -241,111 +217,6 @@ NativeRetailTextureDictionaryHandle NativeRetailRendererTextureDictionaries::cur
     return current_handle_;
 }
 
-bool NativeRetailRendererTextureDictionaries::add_texture(
-    NativeRetailTextureDictionaryHandle dict_handle,
-    NativeRetailTextureHandle tex_handle,
-    RetailRendererTextureDictionaryFailure& f) noexcept {
-    if (!access(f)) return false;
-    auto rec = validate(dict_handle, f);
-    if (!rec) return false;
-    if (tex_handle.empty()) {
-        f.kind = RetailRendererTextureDictionaryError::invalid_handle;
-        f.operation = "0409 empty texture handle";
-        return false;
-    }
-
-    for (const auto& r : records_) {
-        for (const auto& th : r->textures) {
-            if (th.same_identity(tex_handle)) {
-                f.kind = RetailRendererTextureDictionaryError::texture_already_in_dictionary;
-                f.operation = "0409 texture already bound to dictionary";
-                return false;
-            }
-        }
-    }
-
-    try {
-        rec->textures.push_back(tex_handle);
-    } catch (...) {
-        f.kind = RetailRendererTextureDictionaryError::allocation;
-        f.operation = "0409 dictionary texture vector growth";
-        return false;
-    }
-
-    if (textures_) {
-        RetailRendererTextureFailure tf;
-        textures_->add_ref(tex_handle, tf);
-    }
-    return true;
-}
-
-bool NativeRetailRendererTextureDictionaries::remove_texture(
-    NativeRetailTextureHandle tex_handle,
-    RetailRendererTextureDictionaryFailure& f) noexcept {
-    if (!access(f)) return false;
-    if (tex_handle.empty()) {
-        f.kind = RetailRendererTextureDictionaryError::invalid_handle;
-        f.operation = "0409 empty texture handle";
-        return false;
-    }
-
-    for (auto& r : records_) {
-        auto it = std::find_if(r->textures.begin(), r->textures.end(), [&](const auto& th) {
-            return th.same_identity(tex_handle);
-        });
-        if (it != r->textures.end()) {
-            r->textures.erase(it);
-            if (textures_) {
-                RetailRendererTextureFailure tf;
-                textures_->destroy_texture(tex_handle, tf);
-            }
-            return true;
-        }
-    }
-
-    f.kind = RetailRendererTextureDictionaryError::texture_not_found;
-    f.operation = "0409 texture not in any dictionary";
-    return false;
-}
-
-std::optional<NativeRetailTextureHandle> NativeRetailRendererTextureDictionaries::find_texture(
-    NativeRetailTextureDictionaryHandle dict_handle,
-    std::string_view name,
-    RetailRendererTextureDictionaryFailure& f) const noexcept {
-    if (!access(f)) return {};
-    auto rec = validate(dict_handle, f);
-    if (!rec) return {};
-    if (!textures_) return {};
-
-    for (const auto& th : rec->textures) {
-        RetailRendererTextureFailure tf;
-        auto obs = textures_->observe(th, tf);
-        if (obs && iequals(obs->name, name)) {
-            return th;
-        }
-    }
-    return {};
-}
-
-std::optional<NativeRetailTextureHandle> NativeRetailRendererTextureDictionaries::find_texture_current(
-    std::string_view name,
-    RetailRendererTextureDictionaryFailure& f) const noexcept {
-    if (!access(f)) return {};
-    if (!current_record_ || current_record_->retired) {
-        return {};
-    }
-    return find_texture(current_handle_, name, f);
-}
-
-std::optional<std::size_t> NativeRetailRendererTextureDictionaries::texture_count(
-    NativeRetailTextureDictionaryHandle dict_handle,
-    RetailRendererTextureDictionaryFailure& f) const noexcept {
-    if (!access(f)) return {};
-    auto rec = validate(dict_handle, f);
-    if (!rec) return {};
-    return rec->textures.size();
-}
-
 std::optional<RetailRendererTextureDictionaryObservation> NativeRetailRendererTextureDictionaries::observe(
     NativeRetailTextureDictionaryHandle dict_handle,
     RetailRendererTextureDictionaryFailure& f) const noexcept {
@@ -355,20 +226,8 @@ std::optional<RetailRendererTextureDictionaryObservation> NativeRetailRendererTe
 
     RetailRendererTextureDictionaryObservation obs;
     obs.name = rec->name;
-    obs.texture_count = rec->textures.size();
     obs.is_current = (rec == current_record_);
     obs.destroying = rec->destroying;
-
-    if (textures_) {
-        obs.texture_names.reserve(rec->textures.size());
-        for (const auto& th : rec->textures) {
-            RetailRendererTextureFailure tf;
-            auto tobs = textures_->observe(th, tf);
-            if (tobs) {
-                obs.texture_names.push_back(tobs->name);
-            }
-        }
-    }
     return obs;
 }
 
@@ -384,13 +243,6 @@ void NativeRetailRendererTextureDictionaries::retire() noexcept {
     for (auto& rec : records_) {
         if (rec && !rec->retired) {
             rec->destroying = true;
-            if (textures_) {
-                for (auto& tex : rec->textures) {
-                    RetailRendererTextureFailure tf;
-                    textures_->destroy_texture(tex, tf);
-                }
-            }
-            rec->textures.clear();
             rec->retired = true;
         }
     }

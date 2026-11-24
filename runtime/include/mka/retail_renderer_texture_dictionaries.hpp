@@ -1,6 +1,5 @@
 #pragma once
 #include "mka/retail_renderer_core.hpp"
-#include "mka/retail_renderer_textures.hpp"
 #include <array>
 #include <cstdint>
 #include <memory>
@@ -25,9 +24,6 @@ enum class RetailRendererTextureDictionaryError {
     reentrant,
     allocator,
     allocation,
-    duplicate_texture,
-    texture_not_found,
-    texture_already_in_dictionary,
     after_effect_unknown,
     native_exception
 };
@@ -64,12 +60,17 @@ struct RetailRendererTextureDictionaryDescription {
 
 struct RetailRendererTextureDictionaryObservation {
     std::string name;
-    std::size_t texture_count{0};
-    std::vector<std::string> texture_names;
     bool is_current{false};
     bool destroying{false};
 };
 
+// Plugin 0409 scope strictly recovered from Xbox 0x002c9840/0x002c9860/0x002c9907/0x002c9890/0x002c9bf0
+// and PS2 0x001a4a80/0x001a4ac0/0x001a7690/0x001a75d0:
+// - FreeList-backed 96-byte dictionary container allocation & circular list membership
+// - Module open/close reference counting
+// - Global current dictionary pointer tracking
+// Note: downstream texture containment (add_texture, find_texture, locale-dependent comparisons)
+// is unverified from the plugin registration contract and explicitly omitted.
 class NativeRetailRendererTextureDictionaries final
     : public std::enable_shared_from_this<NativeRetailRendererTextureDictionaries> {
 public:
@@ -97,28 +98,6 @@ public:
 
     NativeRetailTextureDictionaryHandle current_dictionary() const noexcept;
 
-    bool add_texture(
-        NativeRetailTextureDictionaryHandle dict_handle,
-        NativeRetailTextureHandle tex_handle,
-        RetailRendererTextureDictionaryFailure& f) noexcept;
-
-    bool remove_texture(
-        NativeRetailTextureHandle tex_handle,
-        RetailRendererTextureDictionaryFailure& f) noexcept;
-
-    std::optional<NativeRetailTextureHandle> find_texture(
-        NativeRetailTextureDictionaryHandle dict_handle,
-        std::string_view name,
-        RetailRendererTextureDictionaryFailure& f) const noexcept;
-
-    std::optional<NativeRetailTextureHandle> find_texture_current(
-        std::string_view name,
-        RetailRendererTextureDictionaryFailure& f) const noexcept;
-
-    std::optional<std::size_t> texture_count(
-        NativeRetailTextureDictionaryHandle dict_handle,
-        RetailRendererTextureDictionaryFailure& f) const noexcept;
-
     std::optional<RetailRendererTextureDictionaryObservation> observe(
         NativeRetailTextureDictionaryHandle dict_handle,
         RetailRendererTextureDictionaryFailure& f) const noexcept;
@@ -131,8 +110,7 @@ private:
     friend class NativeRetailRendererCore;
     NativeRetailRendererTextureDictionaries(
         std::weak_ptr<NativeRetailGameSession> session,
-        std::shared_ptr<NativeRetailRendererAllocatorService> allocator,
-        std::shared_ptr<NativeRetailRendererTextures> textures);
+        std::shared_ptr<NativeRetailRendererAllocatorService> allocator);
 
     bool access(RetailRendererTextureDictionaryFailure& f) const noexcept;
     std::shared_ptr<NativeRetailTextureDictionaryRecord> validate(
@@ -141,7 +119,6 @@ private:
 
     std::weak_ptr<NativeRetailGameSession> session_;
     std::shared_ptr<NativeRetailRendererAllocatorService> allocator_;
-    std::shared_ptr<NativeRetailRendererTextures> textures_;
 
     std::vector<std::shared_ptr<NativeRetailTextureDictionaryRecord>> records_;
     std::shared_ptr<NativeRetailTextureDictionaryRecord> current_record_;

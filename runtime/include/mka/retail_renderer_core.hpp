@@ -24,6 +24,7 @@ class NativeRetailRendererRasters;
 struct RetailRendererRasterExtension;
 class NativeRetailRendererTextures;
 class NativeRetailRendererTextureDictionaries;
+class NativeRetailRendererWorldModule;
 enum class RetailRendererCoreError {none,owner,wrong_thread,allocation,native_exception,allocator,content,unbound_factory,registration_closed,reentrant,construction,after_effect_unknown};
 struct RetailRendererCoreFailure {
  RetailRendererCoreError kind{RetailRendererCoreError::none};const char* operation{""};
@@ -75,6 +76,8 @@ bool construct_core_plugin_0408(NativeRetailRendererCore&,RetailRendererCoreFail
 void destroy_core_plugin_0408(NativeRetailRendererCore&)noexcept;
 bool construct_core_plugin_0409(NativeRetailRendererCore&,RetailRendererCoreFailure&);
 void destroy_core_plugin_0409(NativeRetailRendererCore&)noexcept;
+bool construct_core_plugin_0412(NativeRetailRendererCore&,RetailRendererCoreFailure&);
+void destroy_core_plugin_0412(NativeRetailRendererCore&)noexcept;
 bool construct_core_plugin_040d(NativeRetailRendererCore&,RetailRendererCoreFailure&);
 void destroy_core_plugin_040d(NativeRetailRendererCore&)noexcept;
 std::optional<bool> register_object_extensions_1b72b0(NativeRetailRendererCore&,RetailRendererCoreFailure&);
@@ -143,6 +146,8 @@ public:
  std::optional<std::uint32_t> module_0408_count(RetailRendererCoreFailure&)const noexcept;
  std::shared_ptr<NativeRetailRendererTextureDictionaries> texture_dictionaries(RetailRendererCoreFailure&)const noexcept;
  std::optional<std::uint32_t> module_0409_count(RetailRendererCoreFailure&)const noexcept;
+ std::shared_ptr<NativeRetailRendererWorldModule> world_module(RetailRendererCoreFailure&)const noexcept;
+ std::optional<std::uint32_t> module_0412_count(RetailRendererCoreFailure&)const noexcept;
  bool attach_gpu_device(std::shared_ptr<graphics::NativeGlTextureUpload>,RetailRendererCoreFailure&)noexcept;
  //1A3480 forward construction/reverse prior-success unwind. Explicitly later
  // than CoreInit; production EngineOpen/Start producers remain required.
@@ -185,6 +190,8 @@ private:
  std::atomic<std::uint32_t> module_0408_count_{};
  std::shared_ptr<NativeRetailRendererTextureDictionaries> texture_dictionaries_;
  std::atomic<std::uint32_t> module_0409_count_{};
+ std::shared_ptr<NativeRetailRendererWorldModule> world_module_;
+ std::atomic<std::uint32_t> module_0412_count_{};
  content::ContentVolumeFailure cleanup_content_failure_;
  std::atomic<std::uint32_t> matrix_domain_count_{};
  std::atomic<std::uint32_t> module_040d_count_{};
@@ -219,6 +226,9 @@ private:
  friend void renderer_required::destroy_core_plugin_0408(NativeRetailRendererCore&)noexcept;
  friend bool renderer_required::construct_core_plugin_0409(NativeRetailRendererCore&,RetailRendererCoreFailure&);
  friend void renderer_required::destroy_core_plugin_0409(NativeRetailRendererCore&)noexcept;
+ friend class NativeRetailRendererWorldModule;
+ friend bool renderer_required::construct_core_plugin_0412(NativeRetailRendererCore&,RetailRendererCoreFailure&);
+ friend void renderer_required::destroy_core_plugin_0412(NativeRetailRendererCore&)noexcept;
 };
 bool construct_native_renderer_error(NativeRetailRendererCore&,RetailRendererCoreFailure&);
 void destroy_native_renderer_error(NativeRetailRendererCore&)noexcept;

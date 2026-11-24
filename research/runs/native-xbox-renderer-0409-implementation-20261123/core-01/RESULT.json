@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_core.exe",
+    "research/runs/parallel-renderer-engine-init-20261122"
+  ],
+  "exit": 0,
+  "deadline_seconds": 90,
+  "seconds": 0.09247559998766519,
+  "executable_sha256": "27504a40ba7e889445a39bdc66042ca35943556ee5c68d36e5476383d5172be7",
+  "log_sha256": "7d64e1cf5d24d6ffb751ec174c7fd8e67a19623b31c40eac955eaff032f705ec",
+  "source_commit": "9be7e7063ea63550e8a00d151b99b14e891be49e",
+  "tracked_status": "M research/runs/native-xbox-renderer-0408-implementation-20261123/IMPLEMENTATION.md\n M runtime/include/mka/retail_renderer_texture_dictionaries.hpp\n M runtime/src/native/retail_renderer_texture_dictionaries.cpp\n M tests/test_retail_renderer_texture_dictionaries.cpp",
+  "source_manifest_sha256": "b6557bc4cf5ea1823d700cd434894b6389f84e1ecaba279d1e7b33a318dde006",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "3cdeb3a5cbeddece37e0e94ec0bc76cad9419af51838d0b4b99a643185f28439",
+  "runner_sha256": "05edc2b7014895f8bcd0eccfe1b7eac83e4f0422556a7a716200790196f228e7",
+  "process_temp": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\opencode",
+  "phase": "client",
+  "game_run": false,
+  "visible_window": false,
+  "audio_endpoint": false,
+  "acceptance": "OPEN"
+}

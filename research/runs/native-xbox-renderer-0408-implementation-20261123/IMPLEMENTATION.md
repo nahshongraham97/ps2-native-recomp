@@ -37,12 +37,16 @@ No console texture headers, aligned memory pools, or PS2 packed backing descript
 
 ## Default-texture sentinel behavior
 
-The default sentinel texture behavior is derived directly from 0x002b8500 in Xbox default.xbe:
-When a texture lookup fails, or when a material lacks an explicit raster binding during early scene bootstrap, RenderWare requires a valid RwTexture object rather than returning nullptr or crashing during state validation. The sentinel texture provides:
-1. Valid native handle with name "__sentinel__" and empty mask.
-2. Default filtering mode (linear) and wrapping addressing modes (wrap_u = 1, wrap_v = 1).
-3. Weak reference semantics so destruction of dictionaries or scenes cleanly releases or retains the sentinel without orphan leaks.
-4. Prevents GPU state bindings from attempting to sample unallocated VRAM addresses.
+Direct disassembly of 0x002b8500 in Xbox default.xbe reveals the following exact sequence:
+1. `mov eax, [0x005c72a8]`: loads texture module global base.
+2. `mov ecx, [eax + 0x0083534c]`: extracts texture freelist pointer.
+3. `push 0x30016; push ecx`: passes hint `0x30016` and freelist.
+4. `call [0x00835484]`: calls `RwFreeListAlloc` to allocate a raw 52-byte texture container.
+5. `test eax, eax; jz return_null`: if allocation fails, returns null pointer.
+6. `mov [esi+1], al; mov [esi+2], al; mov [esi+3], al`: zero-initializes filter mode (0), addressing mode U (0), addressing mode V (0).
+7. `mov [esi+4], eax`: zero-initializes raster pointer / initial refcount fields.
+
+Note: Downstream assumptions (such as "preventing null dereferences in materials" or "safe fallback sentinel") represent architectural interpretations of RenderWare default texture semantics rather than explicit instruction effects of 0x002b8500 itself. The concrete binary instruction effect is strictly: freelist allocation, null return on failure, and zero-initialization of header flags and raster pointers.
 
 ## Production symbols verified
 

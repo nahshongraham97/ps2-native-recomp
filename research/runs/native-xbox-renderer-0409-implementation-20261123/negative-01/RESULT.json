@@ -1,0 +1,28 @@
+{
+  "status": "NONZERO",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\MKPORT~1\\ARMAGE~1\\ARMAGE~1\\external\\forks\\RETAIL~1\\b",
+    "--target",
+    "test_native_startup_missing_bindings",
+    "-j2"
+  ],
+  "exit": 1,
+  "deadline_seconds": 90,
+  "seconds": 0.2777926999842748,
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "log_sha256": "73fa326ae4a9a2175df53351f38e4be4d2acd9438e42398742e1ab6293a3ef61",
+  "source_commit": "9be7e7063ea63550e8a00d151b99b14e891be49e",
+  "tracked_status": "M research/runs/native-xbox-renderer-0408-implementation-20261123/IMPLEMENTATION.md\n M runtime/include/mka/retail_renderer_texture_dictionaries.hpp\n M runtime/src/native/retail_renderer_texture_dictionaries.cpp\n M tests/test_retail_renderer_texture_dictionaries.cpp",
+  "source_manifest_sha256": "b6557bc4cf5ea1823d700cd434894b6389f84e1ecaba279d1e7b33a318dde006",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "3cdeb3a5cbeddece37e0e94ec0bc76cad9419af51838d0b4b99a643185f28439",
+  "runner_sha256": "05edc2b7014895f8bcd0eccfe1b7eac83e4f0422556a7a716200790196f228e7",
+  "process_temp": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\opencode",
+  "phase": "negative",
+  "game_run": false,
+  "visible_window": false,
+  "audio_endpoint": false,
+  "acceptance": "OPEN"
+}
