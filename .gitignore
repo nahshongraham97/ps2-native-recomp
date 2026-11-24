@@ -5,6 +5,8 @@
 *.zip
 *.7z
 *.rar
+*.xbe
+/research/inputs/
 
 /generated/
 tools/*.exe

@@ -168,10 +168,24 @@ def audit_gp_access_uncovered_functions(repo_root: Path = REPO_ROOT) -> Dict[str
         / "export-20261118-230132-1875-18160"
         / "functions.tsv"
     )
-    gp_json_path = repo_root / "research" / "analysis" / "GP_ACCESSES_73.json"
+    if not funcs_tsv.exists() and len(repo_root.parents) > 2:
+        parent_tsv = (
+            repo_root.parents[2]
+            / "research"
+            / "runs"
+            / "ghidra-function-coverage-20261118"
+            / "export-20261118-230132-1875-18160"
+            / "functions.tsv"
+        )
+        if parent_tsv.exists():
+            funcs_tsv = parent_tsv
 
-    catalog = load_catalogued_functions(funcs_tsv)
-    catalog_ranges = [(va, va + sz) for va, sz, _ in catalog]
+    gp_json_path = repo_root / "research" / "analysis" / "GP_ACCESSES_73.json"
+    if funcs_tsv.exists():
+        catalog = load_catalogued_functions(funcs_tsv)
+        catalog_ranges = [(va, va + sz) for va, sz, _ in catalog]
+    else:
+        catalog_ranges = []
 
     gp_data = json.loads(gp_json_path.read_text(encoding="utf-8"))
 

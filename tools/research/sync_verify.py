@@ -24,9 +24,11 @@ def find_roots(start_path: Path = None):
     for parent in [p, *p.parents]:
         if parent.name == "retail-main-22":
             fork_root = parent
-            # Parent repository is at armageddon-reimplementation
-            parent_repo = fork_root.parents[2]
-            return fork_root, parent_repo
+            # Check if parent repo exists 2 levels up
+            if len(fork_root.parents) >= 3 and (fork_root.parents[2] / "research" / "runs" / "ghidra-function-coverage-20261118").exists():
+                parent_repo = fork_root.parents[2]
+                return fork_root, parent_repo
+            return fork_root, None
         if parent.name == "armageddon-reimplementation":
             parent_repo = parent
             fork_root = parent_repo / "external/forks/retail-main-22"
@@ -77,6 +79,9 @@ def sync_from_parent_to_fork(parent_repo: Path, fork_root: Path):
 
 def assert_synced():
     fork_root, parent_repo = find_roots()
+    if parent_repo is None or not parent_repo.exists():
+        print("SKIP: Standalone fork environment detected (no parent repository found). Parent-fork ledger sync check skipped.")
+        return
     check = verify_sync(fork_root, parent_repo)
     if check["mismatches"]:
         msg = "Parent and fork ledger files are NOT synchronized:\n" + "\n".join(check["mismatches"])

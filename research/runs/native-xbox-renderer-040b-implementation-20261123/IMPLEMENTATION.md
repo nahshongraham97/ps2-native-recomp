@@ -22,7 +22,7 @@ The binary registration site (Xbox `default.xbe` `0x002c021a`..`0x002c0234`, PS2
 - Object Container Size: `0x28` (40 bytes)
 - Constructor: Xbox `0x002c2d40` / PS2 `0x001a1b30`
 - Destructor: Xbox `0x002c30a0` / PS2 `0x001a1b90`
-- Call Target: calls engine plugin registration helper `_rwPluginRegistryAddPlugin` (Xbox `0x002c2990`, PS2 `0x001a6a20`)
+- Call Target: calls engine plugin registration helper (Xbox `0x002c2990`, PS2 `0x001a6a20`) and central extension freelist allocation helper (Xbox `0x002c4620`, PS2 `0x0019fc80`)
 - **Zero String Names in Binary**: The binary engine registration table contains zero string identifiers or names. The name "Geometry" (or `RpGeometry` / `RwGeometry`) is an unrecovered RenderWare library convention name used for code navigation, not a string present in retail binary data.
 
 ## Scoping of Vertex/Triangle Descriptors (Unrecovered Library Conventions)
