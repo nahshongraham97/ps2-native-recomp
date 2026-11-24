@@ -252,8 +252,10 @@ if(WIN32)
         runtime/src/native/retail_renderer_materials.cpp
         runtime/src/native/retail_renderer_geometry.cpp
         runtime/src/native/retail_renderer_transforms.cpp
+        runtime/src/native/retail_renderer_transforms_kernels.cpp
         runtime/src/native/retail_renderer_matrix.cpp
-        runtime/src/native/retail_first_scene_core.cpp runtime/src/native/retail_first_scene_allocator.cpp runtime/src/native/retail_camera_world.cpp
+        runtime/src/native/retail_renderer_matrix_kernels.cpp
+        runtime/src/native/retail_first_scene_core.cpp runtime/src/native/retail_first_scene_continuations.cpp runtime/src/native/retail_first_scene_allocator.cpp runtime/src/native/retail_camera_world.cpp
         runtime/src/native/retail_sound_metadata.cpp
         runtime/src/native/retail_game_session_startup.cpp runtime/src/native/retail_main_settings_binding.cpp
         runtime/src/native/retail_profile_main_state.cpp runtime/src/native/retail_profile_main.cpp

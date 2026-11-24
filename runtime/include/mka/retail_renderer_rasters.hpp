@@ -57,8 +57,15 @@ public:
  bool same_identity(const NativeRetailRasterHandle& x) const noexcept {
   return assigned_ && x.assigned_ && !record_.owner_before(x.record_) && !x.record_.owner_before(record_);
  }
+ static NativeRetailRasterHandle test_handle(std::weak_ptr<NativeRetailRasterRecord> r = {}) noexcept {
+  NativeRetailRasterHandle h;
+  h.assigned_ = true;
+  h.record_ = std::move(r);
+  return h;
+ }
 private:
  friend class NativeRetailRendererRasters;
+ friend class NativeRetailRendererCameraModule;
  NativeRetailRasterHandle(std::weak_ptr<NativeRetailRendererRasters> o, std::weak_ptr<NativeRetailRasterRecord> r)
   : owner_(std::move(o)), record_(std::move(r)), assigned_(true) {}
  std::weak_ptr<NativeRetailRendererRasters> owner_;

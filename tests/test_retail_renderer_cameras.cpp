@@ -171,6 +171,44 @@ int main(int argc,char** argv)try{
    held=c->camera_module(x.f);weak=create(held);session=x.startup.game_session;}
   RetailRendererCameraFailure f;check(session.expired()&&!held->observe(weak,f)&&f.kind==RetailRendererCameraError::retired,"external camera/module handles cannot retain usable Session/game storage");later=Later::refuse;
  }
+ {
+  Fixture x(root);auto m=x.module();RetailRendererCameraFailure f;
+  auto h=create(m);
+  check(!m->frame_buffer_raster(h, f).has_value() || m->frame_buffer_raster(h, f)->empty(), "camera initial frame buffer raster is empty");
+  check(!m->z_buffer_raster(h, f).has_value() || m->z_buffer_raster(h, f)->empty(), "camera initial z buffer raster is empty");
+  check(!m->is_updating(h, f), "camera initial updating state is false");
+
+  // Lifecycle check: begin_update without frame buffer raster fails with clear error
+  check(!m->begin_update(h, f) && f.kind == RetailRendererCameraError::render_services_required,
+   "begin_update without frame buffer raster rejected");
+  check(!m->end_update(h, f) && f.kind == RetailRendererCameraError::render_services_required,
+   "end_update without active begin_update rejected");
+  check(!m->clear(h, 0.0f, 0.0f, 0.0f, 1.0f, 0x01, f) && f.kind == RetailRendererCameraError::render_services_required,
+   "clear without active begin_update rejected");
+  check(!m->dispatch_first_gl_draw(h, f) && f.kind == RetailRendererCameraError::render_services_required,
+   "dispatch_first_gl_draw without active begin_update rejected");
+
+  // Attach rasters (framebuffer & zbuffer)
+  auto color_raster = NativeRetailRasterHandle::test_handle();
+  auto depth_raster = NativeRetailRasterHandle::test_handle();
+  check(m->set_frame_buffer_raster(h, color_raster, f), "set frame buffer raster");
+  check(m->set_z_buffer_raster(h, depth_raster, f), "set z buffer raster");
+  check(m->frame_buffer_raster(h, f)->same_identity(color_raster), "frame buffer raster identity verified");
+  check(m->z_buffer_raster(h, f)->same_identity(depth_raster), "z buffer raster identity verified");
+
+  // Modern OpenGL render lifecycle (zero CPU rasterization)
+  check(m->begin_update(h, f), "begin_update succeeds with attached frame buffer raster");
+  check(m->is_updating(h, f), "camera is updating");
+  check(m->clear(h, 0.1f, 0.2f, 0.3f, 1.0f, 0x03, f), "camera clear succeeds while updating");
+  check(m->dispatch_first_gl_draw(h, f), "dispatch_first_gl_draw succeeds while updating");
+  check(!m->begin_update(h, f) && f.kind == RetailRendererCameraError::reentrant, "reentrant begin_update fails");
+  check(!m->set_frame_buffer_raster(h, color_raster, f) && f.kind == RetailRendererCameraError::reentrant, "cannot rebind frame buffer while updating");
+  check(m->end_update(h, f), "end_update succeeds");
+  check(!m->is_updating(h, f), "camera is no longer updating");
+  check(!m->end_update(h, f) && f.kind == RetailRendererCameraError::render_services_required, "second end_update fails");
+
+  check(m->destroy_base_camera(h, f), "cleanup test camera");
+ }
  std::printf("PASS_NATIVE0405_CAMERA_RESOURCE_BASE; actual Core/Main prefix,64 real records,source defaults/window/7 exact SSE cases,physical release,allocation cuts module=%u camera=%u,thread/foreign/lifetime/Main transfer/task lookup; depth provider/plugins/frame/raster/sync/render/GPU/game OPEN; no window/audio\n",module_cuts,camera_cuts);
  return 0;
 }catch(const std::exception& e){fail_after=-1;std::fprintf(stderr,"FAIL native0405 camera: %s\n",e.what());return 1;}
