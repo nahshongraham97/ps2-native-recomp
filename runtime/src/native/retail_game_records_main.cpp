@@ -236,6 +236,15 @@ bool initialize_retail_game_records(NativeRetailMainState& m,StartupFailure& f) 
     if(!m.participants)
         return refuse(f,RetailGameRecordsMainError::participants,
                       "1303F0 two real 137810 participant births");
+    if(!m.input_assignments) {
+        RetailInputAssignmentFailure assignment_failure;
+        m.input_assignments = NativeRetailInputAssignments::create(
+            m.input_roles, m.participants, assignment_failure);
+        if(!m.input_assignments)
+            return refuse(f,RetailGameRecordsMainError::missing_owner,
+                          "281830 retail assignment owner birth");
+        m.input_assignments->increment_count_before_280c50_bind(assignment_failure);
+    }
     if(!reset_retail_game_records_tail_163fd0(*session,f.game_records.values))
         return refuse(f,RetailGameRecordsMainError::source_values,
                       "163FD0 final source scalar stores");

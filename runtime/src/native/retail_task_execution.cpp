@@ -1,4 +1,5 @@
 #include "mka/retail_task_execution.hpp"
+
 #include "mka/retail_task_registry.hpp"
 #include "retail_main_control.hpp"
 

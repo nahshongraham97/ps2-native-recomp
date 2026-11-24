@@ -210,6 +210,21 @@ int main(int, char**) {
         std::filesystem::remove_all(fixture_root, ec);
     }
 
-    std::printf("PASS: Headless full-entry observation completed successfully.\n");
+    // Assert pinned expected stop point:
+    // With task 0x18e100 wired and input_assignments bound, execution reaches the bounded frame limit
+    // (MKA_HEADLESS_MAX_FRAMES=60), executing 60 frames cleanly (StartupFailure kind: 0),
+    // encountering exactly 13 distinct placeholders across 369 total invocations.
+    const bool reached_expected_frame_limit = (f.kind == mka::retail::StartupError::none &&
+                                              seen_ids.size() == 13 &&
+                                              log.size() == 369);
+    if (!reached_expected_frame_limit) {
+        std::fprintf(stderr, "FAIL: Headless run diverged from pinned expected stop point!\n");
+        std::fprintf(stderr, "  Expected: frame limit 60 reached, failure kind 0, 13 distinct placeholders, 369 invocations\n");
+        std::fprintf(stderr, "  Observed: failure kind %d, %zu distinct placeholders, %zu invocations\n",
+            static_cast<int>(f.kind), seen_ids.size(), log.size());
+        return 1;
+    }
+
+    std::printf("[headless-gate] Pinned expected stop verified: bounded 60-frame run completed cleanly with task 0x18e100 dispatched at frame 5 (13 distinct placeholders, 369 invocations).\n");
     return 0;
 }

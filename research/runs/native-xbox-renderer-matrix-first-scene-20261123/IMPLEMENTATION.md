@@ -372,20 +372,25 @@ Under repository governance, function progress is divided strictly into two tier
 - **Honest Accounting**: This file is **NOT** an authentic emulator execution trace. Citing it as runtime evidence for function qualification would be fraudulent.
 
 ### Genuine Retail Emulator Trace Producer Specification
-To produce authentic dual-platform test vectors for donor qualification, a genuine trace must be captured according to this specification:
-1. **Execution Environment**:
-   - Headless instrumented emulator (e.g. customized PCSX2 or QEMU-MIPS with instruction trace logging) executing pinned `SLUS_214.10` (SHA-256 `a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f`).
-   - The emulator must replay states from the 2026-11-10 playable oracle state suite (61 verified states) driven by the 72 input sidecars to reach the authenticated code block.
+To produce authentic dual-platform test vectors for donor qualification, genuine traces must be captured using the existing emulator toolchains already utilized by the project's verified playable oracles:
+1. **Execution Environments**:
+   - **PlayStation 2**: Headless PCSX2 (`pcsx2-v2.8.2-windows-x64-Qt` in Downloads, configured via `tools/batch_session_runner.py` and `launch_verified_playable_20261110.bat`) executing pinned retail `SLUS_214.10` (SHA-256 `a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f`).
+     - *Inspection & Hook Mechanism*: PCSX2 exposes an integrated GDB remote debugging server (`-gdb 1234`) and a Lua scripting API (`--lua <script.lua>`) with direct memory/register hooks (`pcsx2.add_instruction_hook`, `memory.read_u32`, `memory.get_register`).
+     - *Minimal Trace Slice Extraction*: The smallest change needed is a standalone Lua harness or GDB RSP script that sets an execution breakpoint at the function entry (e.g. `0x0018da30`), records GPR state, steps instructions until return (`jr $ra`), and dumps the register writeback and memory store delta.
+   - **Xbox**: Headless/minimized xemu 0.8.139 (`C:\Users\nahsh\Downloads\xemu-0.8.139-windows-x86_64\xemu.exe`, QEMU 10.2.0) executing pinned retail `default.xbe` (via `Mortal Kombat - Armageddon (USA).xiso.iso`, SHA-256 `87abec079a45b5b603f1310e45e011951d629c86b8451bfad97d1a7f8088f17e`).
+     - *Inspection & Hook Mechanism*: Built-in QEMU guest GDB server (`-s -S` on `localhost:1234`) and QEMU monitor (`-monitor tcp:127.0.0.1:4444,server,nowait`).
+     - *Verified Extraction*: Demonstrated and verified in Round 12 via `research/runs/capture_xemu_trace.py`, capturing authentic 40-step execution from movie selector `0x0025d5b0` to `ret` (`0x0025d605` -> `0x0025d40e`) and evaluating savevm snapshots (`live_trace_snap`).
 2. **Trace Log Schema**:
    - Cycle timestamp (64-bit unsigned integer).
    - Program Counter ($PC$, 32-bit hexadecimal).
    - Instruction opcode (32-bit hexadecimal).
-   - Disassembled mnemonic.
-   - Register writeback delta: target register name and 64-bit / 128-bit value written.
+   - Disassembled mnemonic and operands.
+   - Register writeback delta: target register name and 32-bit / 64-bit value written.
    - Memory access delta: load/store type, virtual/physical address, and data bytes read/written.
 3. **Trace Archival & Verification**:
    - The trace binary slice is hashed with SHA-256 and stored under `research/test_vectors/traces/`.
    - The test vector file references the trace file by name and records its exact SHA-256 hash in `oracle_trace_hash`.
+   - Retail images and BIOS ROMs remain strictly local and untracked.
 
 ### Minimal Dual-Platform Vector Specification (Representative Function: `0x0018da30`)
 For a representative routine such as `clear_nonowning_references_18da30` (PS2 `0x0018da30` / Xbox `0x00027df0`) to qualify for ledger credit, a minimal vector must supply:

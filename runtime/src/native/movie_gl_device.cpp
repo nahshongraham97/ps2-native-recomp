@@ -43,7 +43,7 @@
 #ifndef GL_TEXTURE0
 #define GL_TEXTURE0 0x84C0
 #define GL_TEXTURE1 0x84C1
-#define GL_MAX_TEXTURE_UNITS 0x84E2
+#define GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS 0x8B4D
 #endif
 #ifndef GL_ACTIVE_TEXTURE
 #define GL_ACTIVE_TEXTURE 0x84E0
@@ -157,15 +157,18 @@ bool collect_video(Session& s){
     return true;
 }
 struct VideoGlState {
-    GLint read=0,draw=0,program=0,active=GL_TEXTURE0,mode=GL_MODELVIEW;
+    GLint read=0,draw=0,program=0,active=GL_TEXTURE0;
     using UseProgram=void(APIENTRY*)(GLuint);
     Session& session;
     UseProgram use;
     explicit VideoGlState(Session& s):session(s),use(s.use){
-        glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING,&read);glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING,&draw);
-        glGetIntegerv(GL_CURRENT_PROGRAM,&program);glGetIntegerv(GL_ACTIVE_TEXTURE,&active);glGetIntegerv(GL_MATRIX_MODE,&mode);
-        glPushAttrib(GL_ALL_ATTRIB_BITS);if(use)use(0);
-        GLint units=0;glGetIntegerv(GL_MAX_TEXTURE_UNITS,&units);
+        glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING,&read);
+        glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING,&draw);
+        glGetIntegerv(GL_CURRENT_PROGRAM,&program);
+        glGetIntegerv(GL_ACTIVE_TEXTURE,&active);
+        glPushAttrib(GL_ALL_ATTRIB_BITS);
+        if(use)use(0);
+        GLint units=4;
         for(GLint i=units-1;i>=1;--i){session.active(GL_TEXTURE0+i);glDisable(GL_TEXTURE_2D);}
         session.active(GL_TEXTURE0);
         glMatrixMode(GL_TEXTURE);glPushMatrix();glLoadIdentity();
@@ -176,7 +179,7 @@ struct VideoGlState {
         glMatrixMode(GL_TEXTURE);glPopMatrix();
         glMatrixMode(GL_MODELVIEW);glPopMatrix();glMatrixMode(GL_PROJECTION);glPopMatrix();
         session.bind_framebuffer(GL_READ_FRAMEBUFFER,read);session.bind_framebuffer(GL_DRAW_FRAMEBUFFER,draw);
-        glPopAttrib();if(use)use(program);if(session.active)session.active(active);glMatrixMode(mode);
+        glPopAttrib();if(use)use(program);if(session.active)session.active(active);
     }
 };
 void video_quad(GLuint texture,unsigned width,unsigned height,float u0,float v0,float u1,float v1,bool final_pass,unsigned x=0,unsigned y=0,bool linear=false){
