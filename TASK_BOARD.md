@@ -11,7 +11,7 @@ archived at `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`d6350cab`](https://github.com/nahshongraham97/ps2-native-recomp/commit/d6350cab8fd72ca1f197926a5d36dfcdc80ed66a) (in `external/forks/retail-main-22`)
+**Verified Fork Commit**: [`3ea03e1a`](https://github.com/nahshongraham97/ps2-native-recomp/commit/3ea03e1a0157e286d98ddc58c61fe3e62e70f6d6) (in `external/forks/retail-main-22`)
 
 ### Primary Function Ledgers & Correspondence
 - **PS2 Retail Function Ledger**: [`research/ledger/functions.csv`](research/ledger/functions.csv) (17,510 total catalog functions)
