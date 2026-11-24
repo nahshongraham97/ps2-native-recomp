@@ -1,9 +1,9 @@
 # Native-only rule for this fork
 
-The binding rule is the parent project's
-`../../../NATIVE_PORT_EXECUTION_CONTRACT.md`. Current status is
-`../../../PORT_STATUS.md`; exact implementation order is
-`../../../ROADMAP.md`. The old fork rule text is archived at
+The binding rule is
+[`NATIVE_PORT_EXECUTION_CONTRACT.md`](NATIVE_PORT_EXECUTION_CONTRACT.md). Current status is
+[`PORT_STATUS.md`](PORT_STATUS.md); exact implementation order is
+[`ROADMAP.md`](ROADMAP.md). The old fork rule text is archived at
 `research/history/native-port-docs-2026-11-18/NATIVE_PORT_ONLY.md` and does
 not define current progress.
 

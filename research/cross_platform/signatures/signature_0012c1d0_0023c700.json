@@ -1,0 +1,169 @@
+{
+  "schema": "cross_isa_pair_signature_v1",
+  "ps2_address": "0012c1d0",
+  "xbox_address": "0023c700",
+  "match_confidence": "mapped-by-role",
+  "ps2": {
+    "arch": "mips_r5900",
+    "entry": "0012c1d0",
+    "size_bytes": 296,
+    "instruction_count": 74,
+    "basic_block_count": 11,
+    "edge_count": 10,
+    "callees": [
+      "00315a70",
+      "00315bd0",
+      "001db958",
+      "001dba60"
+    ],
+    "memory_offsets": [
+      -25036,
+      0,
+      48
+    ],
+    "cfg_blocks": [
+      {
+        "id": 0,
+        "start": "0012c1d0",
+        "end": "0012c1f0",
+        "instruction_count": 8,
+        "successors": [
+          "0012c1f0",
+          "0012c2e0"
+        ]
+      },
+      {
+        "id": 1,
+        "start": "0012c1f0",
+        "end": "0012c1fc",
+        "instruction_count": 3,
+        "successors": []
+      },
+      {
+        "id": 2,
+        "start": "0012c1fc",
+        "end": "0012c21c",
+        "instruction_count": 8,
+        "successors": [
+          "0012c21c",
+          "0012c2d0"
+        ]
+      },
+      {
+        "id": 3,
+        "start": "0012c21c",
+        "end": "0012c230",
+        "instruction_count": 5,
+        "successors": [
+          "0012c230",
+          "0012c238"
+        ]
+      },
+      {
+        "id": 4,
+        "start": "0012c230",
+        "end": "0012c238",
+        "instruction_count": 2,
+        "successors": []
+      },
+      {
+        "id": 5,
+        "start": "0012c238",
+        "end": "0012c264",
+        "instruction_count": 11,
+        "successors": [
+          "0012c264",
+          "0012c2a8"
+        ]
+      },
+      {
+        "id": 6,
+        "start": "0012c264",
+        "end": "0012c2a8",
+        "instruction_count": 17,
+        "successors": []
+      },
+      {
+        "id": 7,
+        "start": "0012c2a8",
+        "end": "0012c2d0",
+        "instruction_count": 10,
+        "successors": []
+      },
+      {
+        "id": 8,
+        "start": "0012c2d0",
+        "end": "0012c2dc",
+        "instruction_count": 3,
+        "successors": [
+          "0012c1fc",
+          "0012c2dc"
+        ]
+      },
+      {
+        "id": 9,
+        "start": "0012c2dc",
+        "end": "0012c2e0",
+        "instruction_count": 1,
+        "successors": []
+      },
+      {
+        "id": 10,
+        "start": "0012c2e0",
+        "end": "0012c2f8",
+        "instruction_count": 6,
+        "successors": []
+      }
+    ]
+  },
+  "xbox": {
+    "arch": "x86_32",
+    "entry": "0023c700",
+    "size_bytes": 29,
+    "instruction_count": 12,
+    "basic_block_count": 1,
+    "edge_count": 0,
+    "callees": [
+      "0x0023baf0",
+      "0x0037ad60"
+    ],
+    "memory_offsets": [
+      8
+    ],
+    "cfg_blocks": [
+      {
+        "id": 0,
+        "start": "0023c700",
+        "end": "0023c71d",
+        "instruction_count": 12,
+        "successors": []
+      }
+    ]
+  },
+  "semantic_alignment": {
+    "match_confidence": "mapped-by-role",
+    "evidence_type": "subsystem_role_correspondence_pending_dual_platform_vectors",
+    "notes": "Sound reverse-removal helper (modular part 1)",
+    "shared_memory_offsets": [],
+    "nontrivial_offsets": [],
+    "cfg_topology_match": false,
+    "raw_ps2_block_count": 11,
+    "raw_xbox_block_count": 1,
+    "raw_ps2_edge_count": 10,
+    "raw_xbox_edge_count": 0,
+    "normalized_ps2": {
+      "vertices": 11,
+      "edges": 10,
+      "cyclomatic_complexity": 1,
+      "decision_blocks": 5
+    },
+    "normalized_xbox": {
+      "vertices": 1,
+      "edges": 0,
+      "cyclomatic_complexity": 1,
+      "decision_blocks": 0
+    },
+    "mapped_callee_match": false,
+    "common_mapped_callees": []
+  }
+}

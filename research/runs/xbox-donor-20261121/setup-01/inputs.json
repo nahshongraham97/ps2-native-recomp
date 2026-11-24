@@ -1,0 +1,36 @@
+{
+  "extension_source": "C:\\Users\\nahsh\\Downloads\\Mortal Kombat - Armageddon (USA)\\ghidra-xbe-master\\ghidra-xbe-master",
+  "extension_source_sha256": {
+    ".gitignore": "c74483a90ff15b2b11b297b8279559fedc69163ea37cf79ac5898f3fcc0e6b9e",
+    "build.gradle": "5a80fc27f20c2ab399842ba4730d4424a2c3b242e157a9e8e2f7465b5a097ccf",
+    "build.sh": "789b8433ab4c4f7857f53951725ca7961656a69fcc74f7ddf4153a33bfb5dfd1",
+    "extension.properties": "a7eb401e322fbeabffbcdd2265172e5c00e03eb915708ff41d0dbd010c315fcf",
+    "Module.manifest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "README.md": "6d77c17652934eb07f89e7e3d8c430e0bcc08c3f9d96d38e0a1e60f3abd40ed6",
+    "settings.gradle": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "xtlid2java.xslt": "a71e4083889361a1bca054b18282d97a4a0715a057663f24b4d9b53a0c9e9322",
+    ".github\\dependabot.yml": "a72ef3d89e9b5159f7d346c6c03d0862c294c67ada59fcec0753ee255e9ce0d1",
+    "ghidra_scripts\\DemangleMore.py": "136d66506f9b42dc8aee66ffe1af5597b45694f251d43f4167fd5170904b38af",
+    "tests\\test_load.py": "e5dd70afbc5de375c42317a48287860496696d4019bbf1948f2f57e0ebad6f21",
+    "tests\\xbefiles\\triangle.xbe": "420d47ee31063ba6bcc2f6836c87467b46f5ad074b380ef115e0e16042d81eeb",
+    "tests\\xbefiles\\triangle.xbe.readme": "6036f5c086ca39c3606496ce3e0300b80f388819c7a31983be15cf766d024829",
+    "src\\main\\java\\XbeLoader\\XbeCertificateHeader.java": "4314f78929e4fa0a964e6726aac58da5868e9a998790412b1961cd5ce9648ebc",
+    "src\\main\\java\\XbeLoader\\XbeImageHeader.java": "3ced7f8186b87e28c810faa0817d20395cdf8d8a96efcd8c2c15e0caf38556d0",
+    "src\\main\\java\\XbeLoader\\XbeLibraryHeader.java": "cb7d4da6c15749ff431fc8070edeb2e9f059267e850338ff357675647b607f9e",
+    "src\\main\\java\\XbeLoader\\XbeLoader.java": "484f95c765735edd1af92cd3317d1063ad947361f777649973235299c6ab85a7",
+    "src\\main\\java\\XbeLoader\\XbeSectionHeader.java": "1dc7f8eb41c0a3961040f84e7764e4cbf6edea44b69126657ca7aff3d3d32870",
+    "src\\main\\java\\XbeLoader\\XbeTlsHeader.java": "916113ff230f3992f41dc658c556eb36b34e0c9c433b3cc1d62320de35fcd2d0",
+    "src\\main\\java\\XbeLoader\\XbeXbSymbolDatabaseAnalyzer.java": "5f081b2e9e6289d4804cedab02bc83192a7b10110aae227d4a2a0897ad66d6d5",
+    "src\\main\\java\\XbeLoader\\XbeXtlidAnalyzer.java": "896c193dda66f1b0b7f6140247ffd106e1fa7cb603be66fe733ead931631c2ed",
+    "os\\linux_x86_64\\README.txt": "0b0845bc39643e747bd0c005e149de373debb86c7cd4d4cc37d3d4174b5564f0",
+    "os\\mac_x86_64\\README.txt": "dcc0feb5e11df7e805a5682e3d89b1a31cde48edcde52c8c6cb400cff9b86eb7",
+    "os\\win_x86_64\\README.txt": "67618d08f9abb5d800b158ef82bb994f586213e5a2f1c38a9e9aa76e1874edd1",
+    ".github\\workflows\\build.yml": "60e6811c5839edfa586dad2ab800e18b574e13cf5716b9f59855c3c9a4bda33c"
+  },
+  "donor_executable": {
+    "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\Mortal Kombat - Armageddon (USA).xiso\\default.xbe",
+    "size": 6033408,
+    "sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+    "directory_is_extracted_content": true
+  }
+}

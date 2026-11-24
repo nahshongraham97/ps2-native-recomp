@@ -1,0 +1,117 @@
+2026-11-21 17:16:10 INFO  (LoggingInitialization) Using log config file: jar:file:/C:/Users/nahsh/mk%20port/Armageddon-backup/dependencies/ghidra/ghidra_12.1.4_PUBLIC/Ghidra/Framework/Generic/lib/Generic.jar!/generic.log4j.xml  
+2026-11-21 17:16:10 INFO  (LoggingInitialization) Using log file: C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\research\runs\xbox-donor-20261121\import-03\ghidra.log  
+2026-11-21 17:16:11 DEBUG (GhidraObjectInputFilter) Including serial input filter: FileSystem/data/client.rmi.serial.filter  
+2026-11-21 17:16:11 INFO  (Preferences) Loading user preferences: C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\local-research\ghidra-xbox\settings\ghidra\ghidra_12.1.4_PUBLIC\preferences  
+2026-11-21 17:16:11 INFO  (ClassSearcher) Searching for classes...  
+2026-11-21 17:16:11 INFO  (ClassSearcher) Class search complete (666 ms)  
+2026-11-21 17:16:11 INFO  (DefaultSSLContextInitializer) Initializing SSL Context  
+2026-11-21 17:16:11 INFO  (SecureRandomFactory) Initializing Random Number Generator...  
+2026-11-21 17:16:11 INFO  (SecureRandomFactory) Random Number Generator initialization complete: SHA1PRNG  
+2026-11-21 17:16:11 INFO  (DefaultTrustManagerFactory) Trust manager disabled, cacerts have not been set  
+2026-11-21 17:16:11 INFO  (FileCacheMaintenanceDaemon) Starting cache cleanup: C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\local-research\ghidra-xbox\cache\ghidra\fscache2  
+2026-11-21 17:16:11 INFO  (FileCacheMaintenanceDaemon) Finished cache cleanup, estimated storage used: 0  
+2026-11-21 17:16:12 INFO  (AnalyzeHeadless) Headless startup complete (2889 ms)  
+2026-11-21 17:16:12 INFO  (ClassSearcher) Class searcher loaded 94 extension points (46 false positives)  
+2026-11-21 17:16:12 INFO  (HeadlessAnalyzer) HEADLESS Script Paths:
+    C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\tools\donors
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Features\FunctionID\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Processors\Atmel\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Processors\JVM\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Features\DecompilerDependent\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Features\BytePatterns\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Features\BSim\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Features\GnuDemangler\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Debug\Debugger-rmi-trace\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Extensions\ghidra-emotionengine-reloaded\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Features\VersionTracking\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Features\PyGhidra\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Features\MicrosoftCodeAnalyzer\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Features\PDB\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Debug\Debugger\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Features\WildcardAssembler\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Features\SwiftDemangler\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Features\Decompiler\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Features\Base\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Processors\PIC\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Features\SystemEmulation\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Features\FileFormats\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Processors\8051\ghidra_scripts
+    C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Processors\DATA\ghidra_scripts  
+2026-11-21 17:16:12 INFO  (HeadlessAnalyzer) HEADLESS: execution starts  
+2026-11-21 17:16:12 INFO  (HeadlessAnalyzer) Creating project: C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\local-research\ghidra-xbox\projects\MKAR-Xbox-20261121  
+2026-11-21 17:16:12 DEBUG (DefaultProjectManager) No tools found; Installing default tools  
+2026-11-21 17:16:12 DEBUG (DefaultProjectManager) 	no recent project directories found  
+2026-11-21 17:16:12 INFO  (DefaultProject) Creating project: C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\local-research\ghidra-xbox\projects\MKAR-Xbox-20261121  
+2026-11-21 17:16:12 INFO  (HeadlessAnalyzer) REPORT: Processing input files:   
+2026-11-21 17:16:12 INFO  (HeadlessAnalyzer)      project: C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\local-research\ghidra-xbox\projects\MKAR-Xbox-20261121  
+2026-11-21 17:16:12 INFO  (HeadlessAnalyzer) IMPORTING: file:///C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/private-inputs/xbox-mka-20261121/default.xbe  
+2026-11-21 17:16:14 INFO  (ProgramLoader) Using Loader: Xbox Executable Format (XBE)  
+2026-11-21 17:16:14 INFO  (ProgramLoader) Using Language/Compiler: x86:LE:32:default:windows  
+2026-11-21 17:16:14 INFO  (ProgramLoader) Using Library Search Path: [., C:\WINDOWS\SysWOW64, C:\Users\nahsh\mk port\Armageddon-backup\dependencies\jdk21\jdk-21.0.13+9\bin, C:\WINDOWS\Sun\Java\bin, C:\WINDOWS\system32, C:\WINDOWS, C:\Program Files\WindowsApps\OpenAI.CodexPrimaryRuntime.v26-1119-907-0_26.1119.907.0_x64__3k8sg7r9htsxt\dependencies\native\powershell, C:\Users\nahsh\.codex\tmp\arg0-windows\codex-arg0CXv591, C:\Program Files\WindowsApps\OpenAI.CodexPrimaryRuntime.v26-1119-907-0_26.1119.907.0_x64__3k8sg7r9htsxt\dependencies\native\libheif\libheif\bin, C:\Program Files\WindowsApps\OpenAI.CodexPrimaryRuntime.v26-1119-907-0_26.1119.907.0_x64__3k8sg7r9htsxt\dependencies\native\jxrlib\jxrlib\bin, C:\Program Files\WindowsApps\OpenAI.CodexPrimaryRuntime.v26-1119-907-0_26.1119.907.0_x64__3k8sg7r9htsxt\dependencies\native\poppler\Library\bin, C:\Program Files\WindowsApps\OpenAI.CodexPrimaryRuntime.v26-1119-907-0_26.1119.907.0_x64__3k8sg7r9htsxt\dependencies\native\tectonic, C:\Python315\Scripts\, C:\Python315\, C:\WINDOWS\System32\Wbem, C:\WINDOWS\System32\WindowsPowerShell\v1.0\, C:\WINDOWS\System32\OpenSSH\, C:\Program Files\dotnet\, C:\Program Files\nodejs\, C:\ProgramData\chocolatey\bin, C:\Program Files\Git\cmd, C:\Program Files\Docker\Docker\resources\bin, C:\Program Files\WSL\, C:\Program Files (x86)\cloudflared\, C:\Users\nahsh\AppData\Local\Programs\Python\Python314\Scripts\, C:\Users\nahsh\AppData\Local\Programs\Python\Python314\, C:\Users\nahsh\.local\bin, C:\Users\nahsh\AppData\Local\Microsoft\WindowsApps, C:\Users\nahsh\.lmstudio\bin, C:\Users\nahsh\AppData\Local\Programs\Microsoft VS Code\bin, C:\Users\nahsh\AppData\Roaming\npm, C:\Program Files\WindowsApps\OpenAI.CodexPrimaryRuntime.v26-1119-907-0_26.1119.907.0_x64__3k8sg7r9htsxt\dependencies\node\bin, C:\Program Files\WindowsApps\OpenAI.CodexPrimaryRuntime.v26-1119-907-0_26.1119.907.0_x64__3k8sg7r9htsxt\dependencies\native\git\cmd]  
+2026-11-21 17:16:15 INFO  (ProgramLoader) Additional info:
+Loading file:///C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/private-inputs/xbox-mka-20261121/default.xbe?MD5=3bc9e87625341ee90f771884864f5407...
+------------------------------------------------
+
+Linking the External Programs of 'default.xbe' to imported libraries...
+  [xboxkrnl.exe] -> not found in project
+------------------------------------------------
+
+  
+2026-11-21 17:16:15 INFO  (HeadlessAnalyzer) IMPORTING: Loaded 0 additional files  
+2026-11-21 17:16:15 INFO  (HeadlessAnalyzer) ANALYZING all memory and code: file:///C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/private-inputs/xbox-mka-20261121/default.xbe  
+2026-11-21 17:16:41 WARN  (DecompileCallback) Decompiling 004115f0: Unable to read bytes at ram:0000ef81  
+2026-11-21 17:16:41 WARN  (DecompileCallback) Decompiling 004115f0, pcode error at 10e7c15c: Could not follow disassembly flow into non-existing memory at 10e7c15c  
+2026-11-21 17:16:41 WARN  (DecompileCallback) Decompiling 004115f0: Unable to read bytes at ram:0000ef81  
+2026-11-21 17:16:41 WARN  (DecompileCallback) Decompiling 004115f0, pcode error at 10e7c15c: Could not follow disassembly flow into non-existing memory at 10e7c15c  
+2026-11-21 17:16:41 WARN  (DecompileCallback) Decompiling 004115f0: Unable to read bytes at ram:0000ef81  
+2026-11-21 17:16:43 WARN  (DecompileCallback) Decompiling 00314800: Unable to read bytes at ram:02020100  
+2026-11-21 17:16:43 WARN  (DecompileCallback) Decompiling 00318260: Unable to read bytes at ram:02020100  
+2026-11-21 17:17:13 WARN  (DecompileCallback) Decompiling 0031bcf0: Unable to read bytes at ram:02020100  
+2026-11-21 17:17:21 INFO  (PackedDatabaseCache) Packed database cache: C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\local-research\ghidra-xbox\cache\ghidra\packed-db-cache  
+2026-11-21 17:17:21 DEBUG (PackedDatabaseCache) Caching packed database: C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Features\Base\data\typeinfo\generic\generic_clib.gdt  
+2026-11-21 17:17:21 DEBUG (PackedDatabase) Unpacking database C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Features\Base\data\typeinfo\generic\generic_clib.gdt -> C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\local-research\ghidra-xbox\cache\ghidra\packed-db-cache\pdbFEE78BE1\db.1.gbf  
+2026-11-21 17:17:21 DEBUG (PackedDatabaseCache) Cache update completed: C:\Users\nahsh\mk port\Armageddon-backup\dependencies\ghidra\ghidra_12.1.4_PUBLIC\Ghidra\Features\Base\data\typeinfo\generic\generic_clib.gdt  
+2026-11-21 17:17:22 INFO  (ApplyDataArchiveAnalyzer) Applied data type archive: generic_clib  
+2026-11-21 17:17:32 WARN  (DecompileCallback) Decompiling 0041a900: Unable to read bytes at ram:cccccccc  
+2026-11-21 17:19:26 INFO  (AutoAnalysisManager) -----------------------------------------------------
+    Apply Data Archives                        0.259 secs
+    Call Convention ID                         0.870 secs
+    Call-Fixup Installer                       0.604 secs
+    Create Address Tables                      0.544 secs
+    Create Address Tables - One Time          21.930 secs
+    Create Function                            2.363 secs
+    Data Reference                            29.815 secs
+    Decompiler Switch Analysis                31.441 secs
+    Disassemble                               10.045 secs
+    Disassemble Entry Points                   0.157 secs
+    Embedded Media                             0.113 secs
+    External Entry References                  0.000 secs
+    Function ID                                5.227 secs
+    Function Start Pre Search                  0.092 secs
+    Function Start Search                      2.813 secs
+    Function Start Search After Code           0.335 secs
+    Function Start Search After Data           0.976 secs
+    Function Start Search delayed - One Time   0.015 secs
+    Non-Returning Functions - Discovered       2.070 secs
+    Reference                                 30.931 secs
+    Shared Return Calls                        1.249 secs
+    Stack                                     24.462 secs
+    Subroutine References                      1.318 secs
+    Subroutine References - One Time           0.012 secs
+    X86 Function Callee Purge                  0.650 secs
+    Xbox Symbol Database Analyzer              4.426 secs
+    Xbox XTLID Symbol ID Analyzer              0.026 secs
+    x86 Constant Reference Analyzer           18.253 secs
+-----------------------------------------------------
+     Total Time   190 secs
+-----------------------------------------------------
+  
+2026-11-21 17:19:26 INFO  (HeadlessAnalyzer) REPORT: Analysis succeeded for file: file:///C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/private-inputs/xbox-mka-20261121/default.xbe  
+2026-11-21 17:19:26 INFO  (HeadlessAnalyzer) REPORT: Execute script: ExportXboxDonorIndex.java 'C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\research\runs\xbox-donor-20261121\import-03\index.json'   
+2026-11-21 17:19:28 INFO  (HeadlessAnalyzer) SCRIPT: C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\tools\donors\ExportXboxDonorIndex.java  
+2026-11-21 17:19:28 INFO  (GhidraScript) ExportXboxDonorIndex.java> MKAR_XBOX_DONOR_INDEX C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation\research\runs\xbox-donor-20261121\import-03\index.json functions=22579  
+2026-11-21 17:19:28 INFO  (HeadlessAnalyzer) ANALYZING changes made by post scripts: file:///C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/private-inputs/xbox-mka-20261121/default.xbe  
+2026-11-21 17:19:28 INFO  (HeadlessAnalyzer) REPORT: Post-analysis succeeded for file: file:///C:/Users/nahsh/mk port/Armageddon-backup/armageddon-reimplementation/private-inputs/xbox-mka-20261121/default.xbe  
+2026-11-21 17:19:28 INFO  (LocalFileSystem) /default.xbe: file created (nahsh)  
+2026-11-21 17:19:28 INFO  (HeadlessAnalyzer) REPORT: Save succeeded for: /default.xbe (MKAR-Xbox-20261121:/default.xbe)  
+2026-11-21 17:19:28 INFO  (HeadlessAnalyzer) REPORT: Import succeeded  

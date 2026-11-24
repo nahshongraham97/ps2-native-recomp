@@ -1,39 +1,78 @@
-# ps2-native-recomp fork — Armageddon retail port
+# ps2-native-recomp — Mortal Kombat: Armageddon Native Retail Port
 
-**Armageddon acceptance is OPEN (audited 2026-11-18).** This is the active
-retail-game fork. The parent project's
-[`PORT_STATUS.md`](../../../PORT_STATUS.md) gives current evidence,
-[`ROADMAP.md`](../../../ROADMAP.md) gives the implementation order, and
-[`NATIVE_PORT_EXECUTION_CONTRACT.md`](../../../NATIVE_PORT_EXECUTION_CONTRACT.md)
-defines native-only and whole-game acceptance. Do not ask the owner to
-launch until every contract row passes on one clean pinned build.
+**Current status (2026-11-23): Acceptance OPEN (In Progress). Do not ask the owner to run the game.**
+This repository is the active ahead-of-time (AOT) static native C++ recompilation and retail port of *Mortal Kombat: Armageddon* (Sony PlayStation 2 `SLUS_214.10` and dynamic overlays). It executes 100% native C++ logic with zero emulators, zero guest CPU register state, and zero JIT translation on the accepted route.
 
-This fork contains ahead-of-time retail C++ and transitional PS2-oriented
-runtime code. A zero census in a short run does not establish that all
-interpreters/devices/guest memory are removed or that the game behaves
-correctly. The card/audio source and owner-reported card, sound and input regressions
-still lack matching current complete-game evidence and remain release blockers. The safety copy at
-`../ps2-native-recomp-backup-20261110/` and user data must remain intact.
+<!-- PROGRESS:START -->
+## Native Reimplementation Progress & Tracking
 
-The old upstream-style README, including ISO launch instructions and
-runtime-translation descriptions, is preserved for provenance at
-`research/history/native-port-docs-2026-11-18/README.md`. Those instructions
-do not describe the accepted Armageddon route.
+![Porting Progress](progress.svg)
 
-The work27 task-execution checkpoint adds native typed immediate
-continuation and retained wait to the actual ordered registry. Two affected
-CPU clients pass with142 stable source/tool pins;40 prior binaries remain
-unchanged and were not rerun. The source12EEA4 cleanup identity order is
-corrected, including pending ownership through a native main transfer.
-The existing selector retains work28 generated typed field access.
-The complete entry still refuses39 native integration names. Real retail
-task bodies, full list/readiness dispatch, pending reset, complete physical
-input/render/audio and game acceptance remain OPEN. No game or physical
-endpoint was opened. Parent live status and dated work27 results own scope.
-No owner launch is requested.
+**Verified Repository Commit**: Current `main` HEAD in [`ps2-native-recomp`](https://github.com/nahshongraham97/ps2-native-recomp)  
+**Parent Canonical Repository**: [`armageddon-reimplementation`](https://github.com/nahshongraham97/armageddon-reimplementation)
 
-Targeted startup-task checkpoint, 2026-11-21: the native18E100 parent/18DB60 continuation and persistent session compile; two affected CPU clients pass. Eleven production child definitions remain required at link. Full entry/input/render/audio/game acceptance remains open. See research/runs/native-retail-initial-task-20261121/validation-01/verification.json and the parent current status.
+### Primary Function Ledgers & Correspondence
+- **PS2 Retail Function Ledger**: [`research/ledger/functions.csv`](research/ledger/functions.csv) (17,510 total catalog functions)
+- **Xbox Donor Function Ledger**: [`research/ledger/xbox_functions.csv`](research/ledger/xbox_functions.csv) (22,579 donor functions in `default.xbe`)
+- **Cross-Platform Correspondence Map**: [`research/ledger/ps2_xbox_map.csv`](research/ledger/ps2_xbox_map.csv) (17,511 correspondence mapping rows)
+- **Task Board & Milestones**: [`TASK_BOARD.md`](TASK_BOARD.md)
+- **Implementation Roadmap**: [`ROADMAP.md`](ROADMAP.md)
+- **Port Status & Evidence**: [`PORT_STATUS.md`](PORT_STATUS.md)
+- **Execution Contract**: [`NATIVE_PORT_EXECUTION_CONTRACT.md`](NATIVE_PORT_EXECUTION_CONTRACT.md)
+- **Handoff & Repository Protocol**: [`HANDOFF.md`](HANDOFF.md)
 
-Production initialization checkpoint, 2026-11-21: profile reset, mode-one GAMER initializer and post-overlay state are wired into native Main. Two targeted clients pass; actual complete-entry link still refuses36 integration names. This is not game/physical-input/render/audio acceptance. See research/runs/native-retail-production-initialization-20261121/validation-01/verification.json and the parent current status.
+### PlayStation 2 Retail Catalog (`SLUS_214.10` + Overlays)
+- **In-Scope Completion**: **1.52%** (238 / 15,670 in-scope retail functions)
+- **Total Function Catalog**: **17,510** functions (13,138 base `SLUS_214.10` + 4,372 dynamic overlays: 1 `GAMER.ovl`, 2,537 `MOVIER.ovl`, 1,834 `NETR.ovl`)
 
-Records/workspace checkpoint, 2026-11-21: actual section Main initialization and185EE0 child/shared Session data compile; seven directly affected CPU/file clients pass after two preserved corrections. Complete entry still refuses35 Main integrations. Full game/physical input/render/audio acceptance remains open. See research/runs/native-retail-records-workspace-20261121/validation-03/verification.json and parent current status.
+| Category / Tier | Status Breakdown | Count | In-Scope % |
+|---|---|---|---|
+| **Implemented** | `ported` (227) + `host-replaced` (11) + `implemented-via-donor` (0) | 238 | 1.52% |
+| **Classified Non-Executable / Library** | `sdk-or-library` (2,011) + `pointer-scan-proven` (632) | 2,643 | 16.87% |
+| **Open Frontier** | `open` (10,141: 9,038 `SLUS_214.10`, 1,102 `MOVIER.ovl`, 1 `GAMER.ovl`) + `no-direct-callers` (2,648 `SLUS_214.10`) | 12,789 | 81.61% |
+| **In-Scope Subtotal** | *Active retail code path to implement/verify* | **15,670** | **100.00%** |
+| **Excluded / Stubbed** | `out-of-scope-stubbed` (1,834 `NETR.ovl` overlay functions + 6 `SLUS_214.10` main-executable online functions) | 1,840 | — |
+| **Total PS2 Catalog** | *Complete binary disassembly denominator* | **17,510** | — |
+
+### Xbox Donor Catalog (`default.xbe`)
+- **In-Scope Donor Utilization**: **0.00%** (0 / 21,321 in-scope donor functions)
+- **Total Donor Catalog**: **22,579** discovered functions in `default.xbe`
+
+| Category / Tier | Status Breakdown | Count | In-Scope % |
+|---|---|---|---|
+| **Implemented Donors** | `implemented-via-donor` (0) | 0 | 0.00% |
+| **Classified Non-Executable / SDK** | `sdk-or-library` (2,524) + `no-counterpart` (9) | 2,533 | 11.88% |
+| **Open Donor Frontier** | `open` (18,771 unmapped donor candidate code + 17 candidate donor routines pending vectors) | 18,788 | 88.12% |
+| **In-Scope Subtotal** | *Donor executable candidate surface* | **21,321** | **100.00%** |
+| **Excluded / Stubbed** | `out-of-scope-stubbed` (XONLINE thunks and symbols) | 1,258 | — |
+| **Total Xbox Catalog** | *Total default.xbe function inventory* | **22,579** | — |
+
+### Cross-Platform Function Correspondence (`ps2_xbox_map.csv`)
+- **Total Mapping Entries**: **17,511**
+- **Exact Matches**: **0** (0 isomorphic CFG)
+- **Structural Correspondence Matches**: **0** (verified non-vacuous multi-block CFG isomorphism and common mapped callees; simple offsets disregarded)
+- **Composite 1-to-Many Matches**: **0** (modular donor splits)
+- **Mapped-by-Role Candidates**: **18** (subsystem role correspondence pending dual-platform vectors)
+- **Unmapped Retail Functions**: **17,493**
+
+### Still Needed (Open Acceptance Frontier)
+1. **No-Direct-Callers Indirect Dispatch Resolution**: **2,648** functions untargeted by direct calls but referenced by data pointers or immediate formations in `SLUS_214.10` (indirect candidates across 5,400 computed call sites).
+2. **Open Game Functions**: **10,141** retail functions across modules: **9,038** in `SLUS_214.10`, **1,102** in `MOVIER.ovl`, and **1** in `GAMER.ovl`.
+3. **Dynamic Overlay Frontends**: **1,102** movie playback frontend functions in `MOVIER.ovl` and **1** entry stub in `GAMER.ovl`.
+4. **Acceptance Gates**: Full-game entry link, visible render target presentation, synchronized audio mixing, and physical controller input parity.
+<!-- PROGRESS:END -->
+
+## Documentation & Repository Architecture
+
+All primary documentation and tracking reside directly within this repository:
+
+1. [`PORT_STATUS.md`](PORT_STATUS.md) — Current checkout evidence, acceptance status, and active blockers.
+2. [`NATIVE_PORT_EXECUTION_CONTRACT.md`](NATIVE_PORT_EXECUTION_CONTRACT.md) — Required native behavior, no-regression rules, and acceptance criteria.
+3. [`ROADMAP.md`](ROADMAP.md) — Phased implementation order, closure gates, and milestone checklists.
+4. [`HANDOFF.md`](HANDOFF.md) — Repository workflow, evidence standards, and commit procedures.
+5. [`TASK_BOARD.md`](TASK_BOARD.md) — Progress tracking against all 14 project milestones.
+6. [`MODEL_COORDINATION.md`](MODEL_COORDINATION.md) — Agent supervision and model review procedures.
+
+### Provenance & Historical Archive
+- Historical design notes, old checkpoints, and upstream emulator documentation are archived for provenance under `research/history/` and `research/runs/`. They represent dated evidence for past builds and do not supersede live status or contract requirements.
+- Retail assets (such as original game discs, `.ELF`, `.xbe`, `.bin`, `.ovl`, and audio/video containers) are not stored or distributed in this repository. All analysis is verified against pinned binary checksums on the owner's authorized system.

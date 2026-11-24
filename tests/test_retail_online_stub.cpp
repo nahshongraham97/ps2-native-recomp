@@ -46,12 +46,11 @@ int main() {
     check(stage_ok, "initialize_retail_online_stage routes cleanly to offline route (DEVIATION_ONLINE_STAGE_RETURN_BOOL)");
     check(failure.kind == StartupError::none, "no failure reported on clean offline route");
 
-    // 3. Verify native "Go Online" modal behavior (DEVIATION_NATIVE_GO_ONLINE_MODAL_MESSAGE):
-    // In retail SLUS_214.10, selecting "Go Online" when network hardware/connection is missing
-    // presents an offline modal message from address 0x005E6320:
-    // "Could not authenticate user ID and Password. Please check your network configuration and try again."
-    // and returns the user to the main menu without loading NETR.ovl.
-    // Native implements this exact modal response with retail's authentic string.
+    // 3. Verify native unwired component modal helper (DEVIATION_NATIVE_GO_ONLINE_MODAL_MESSAGE):
+    // On retail hardware without a network adapter, 0x0034A110 immediately presents 0x00639C80
+    // ("No network adaptor detected"). The string at 0x005E6320 is the authentication-failure fallback
+    // reached if adapter hardware is present but DNAS authentication fails.
+    // This test exercises the unwired component helper returning the authentic 0x005E6320 string.
     main_binding::RetailOnlineModalState modal_state{};
     const bool modal_ok = main_binding::trigger_retail_go_online_modal(modal_state);
     check(modal_ok, "trigger_retail_go_online_modal succeeds");

@@ -1,0 +1,64 @@
+{
+  "files": {
+    "research/runs/native-audio-codec-contract-20261118/SOURCE.md": {
+      "after_sha256": "2e5a7ad480f1138bf825b212f493aa16c8e1fd4a07b3fa5e4748f28b7307d211",
+      "status": "rebuilt_durable_cpp_goldens_and_retained_reference_harness_passed",
+      "evidence": [
+        "Configured standalone target rebuilt changed test source/relinked exit0",
+        "Retained script verified exact fullasset/payload/backup SHA andall69440 PCMbytes plus finalhistory;temporaryPCMremoved",
+        "Earlier pre-rebuild record retained separately"
+      ],
+      "limitations": "Software reference only; no hardware/audible/stereo/loop/envelope parity or game/fullbuild."
+    },
+    "research/runs/native-audio-codec-contract-20261118/provenance.json": {
+      "after_sha256": "590e9f52c23111840dea8e931819aa3d93c5240ea793baef56704f598249d734",
+      "status": "partial_source_and_data_codec_boundary_reviewed",
+      "evidence": [
+        "Original mono transfer34BF4\u219234988\u2192LIBSDordinal17 preservesrawbytes",
+        "Original321EC rate/pitch multiply and divide48000; parameter0200",
+        "Pinned7950unique count1extents/5821182blocks compatiblewithreferenceheaders"
+      ],
+      "limitations": "No independent codec/PCM/hardware-output oracle; no count2/stream/envelope/playback acceptance. No game/build."
+    },
+    "research/runs/native-audio-codec-contract-20261118/raw-observations.json": {
+      "after_sha256": "a93c409f9edc675ca0f498a7a8f0a17a635590e06fd35560429e80e5b4a6a737",
+      "status": "partial_source_and_data_codec_boundary_reviewed",
+      "evidence": [
+        "Original mono transfer34BF4\u219234988\u2192LIBSDordinal17 preservesrawbytes",
+        "Original321EC rate/pitch multiply and divide48000; parameter0200",
+        "Pinned7950unique count1extents/5821182blocks compatiblewithreferenceheaders"
+      ],
+      "limitations": "No independent codec/PCM/hardware-output oracle; no count2/stream/envelope/playback acceptance. No game/build."
+    },
+    "research/runs/native-audio-codec-contract-20261118/codec-implementation.json": {
+      "after_sha256": "e66c66f5408a46dc60944b6b06b1548edc234f675ac6c0b92db2f73da2036312",
+      "status": "rebuilt_durable_cpp_goldens_and_retained_reference_harness_passed",
+      "evidence": [
+        "Configured standalone target rebuilt changed test source/relinked exit0",
+        "Retained script verified exact fullasset/payload/backup SHA andall69440 PCMbytes plus finalhistory;temporaryPCMremoved",
+        "Earlier pre-rebuild record retained separately",
+        "Independent currency metadata correction preserves mixed old pins under explicit historical snapshot; current source keys normalized, current test hash retained; no rerun"
+      ],
+      "limitations": "Software reference only; no hardware/audible/stereo/loop/envelope parity or game/fullbuild."
+    },
+    "research/runs/native-audio-codec-contract-20261118/pre-rebuild-harness.json": {
+      "after_sha256": "ec52a2fbeb1b62745d6abc0c96b3547f43b4b6df8f5c8f042d892faa370cbfd3",
+      "status": "durable_harness_passed_against_old_binary_new_cpp_build_pending",
+      "evidence": [
+        "Retained explicit-input backup-word reference tools/research/verify_adpcm_codec.py",
+        "Fullasset/payload/backupSHA verified;69440PCMbytes/reference/historygolden match;temporary PCMremoved"
+      ],
+      "limitations": "Pre-rebuild binary only; new C++ checksum assertions await coordinated build. No hardware/audible parity."
+    },
+    "research/runs/native-audio-codec-contract-20261118/verified-harness.json": {
+      "after_sha256": "b45e232e50eec990189983cae7b8a50fe2f9ccb3d429f9bf2902da837e7338c6",
+      "status": "rebuilt_durable_cpp_goldens_and_retained_reference_harness_passed",
+      "evidence": [
+        "Configured standalone target rebuilt changed test source/relinked exit0",
+        "Retained script verified exact fullasset/payload/backup SHA andall69440 PCMbytes plus finalhistory;temporaryPCMremoved",
+        "Earlier pre-rebuild record retained separately"
+      ],
+      "limitations": "Software reference only; no hardware/audible/stereo/loop/envelope parity or game/fullbuild."
+    }
+  }
+}

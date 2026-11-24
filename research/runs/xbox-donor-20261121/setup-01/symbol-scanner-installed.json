@@ -1,0 +1,15 @@
+{
+  "release": "https://github.com/Cxbx-Reloaded/XbSymbolDatabase/releases/tag/v3.1.160",
+  "archive": "C:\\Users\\nahsh\\Downloads\\XbSymbolDatabase.zip",
+  "archive_sha256": "c0d45b6df55bac5387e1f816e6a55132b59a699aa91973587beafba9f47f0dc6",
+  "files": {
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\ghidra\\ghidra_12.1.4_PUBLIC\\Ghidra\\Extensions\\XboxExecutableLoader\\os\\win_x86_64\\XbSymbolDatabaseCLI.exe": "8b49a7a851f0f3338bcdc56ae6be4c62e0402f5b59b80d3cf47f8b0c372e98c5",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\ghidra\\ghidra_12.1.4_PUBLIC\\Ghidra\\Extensions\\XboxExecutableLoader\\os\\win_x86_64\\XbSymbolDatabaseUnitTest.exe": "8eb6cbd0ee4294cf6335d1299225954547c26b3ffb841532c043e07d26ccca2a",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\ghidra\\ghidra_12.1.4_PUBLIC\\Ghidra\\Extensions\\XboxExecutableLoader\\os\\win_x86_64\\_unittest_cache.bat": "73550de423653d78b12d31893315e47dae783aa37aaa006ac3c98ae4ee1f5ddf",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\ghidra\\ghidra_12.1.4_PUBLIC\\Ghidra\\Extensions\\XboxExecutableLoader\\os\\win_x86_64\\_unittest_cache.sh": "0f12d56d8351913441c1d7541102e4ba9edee166d2ec15aa744e77760759184b",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\ghidra\\ghidra_12.1.4_PUBLIC\\Ghidra\\Extensions\\XboxExecutableLoader\\os\\win_x86_64\\_unittest_log.bat": "58b01c843882937c2098c435c71c9068e168bfa85cc4fd4895ed7c9edb7544d6",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\ghidra\\ghidra_12.1.4_PUBLIC\\Ghidra\\Extensions\\XboxExecutableLoader\\os\\win_x86_64\\_unittest_log.sh": "e2c812a2e45ed89c710b35cf7efe13560a71c64996f2a099d2009ebd2479093e",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\ghidra\\ghidra_12.1.4_PUBLIC\\Ghidra\\Extensions\\XboxExecutableLoader\\os\\win_x86_64\\_unittest_verbose.bat": "114c7ead7dad1fabaac710df643dfb323a19a79ec5956b5db847bc62a067bac0",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\ghidra\\ghidra_12.1.4_PUBLIC\\Ghidra\\Extensions\\XboxExecutableLoader\\os\\win_x86_64\\_unittest_verbose.sh": "e5b986dad12eead18b5a5c13f706d8769816d533059eba270fd17817095d4a7b"
+  }
+}

@@ -1,6 +1,6 @@
 # Native port only — the rules of this project
 
-> Historical guidance audit (2026-11-18): This page is preserved design/report context, not current instructions or a verification certificate. Any current/active/locked/ready wording refers to its original date. Historical asserted results remain unverified unless their exact source and matching artifacts are supplied; authored mechanics or proposed architecture must not be mistaken for recovered retail behavior. Current authority: [PORT_STATUS.md](../../../../../../PORT_STATUS.md) and [execution contract](../../../../../../NATIVE_PORT_EXECUTION_CONTRACT.md). Hardware caps, model directives, hybrid/UE5 plans and launch requests here do not override those rules.
+> Historical guidance audit (2026-11-18): This page is preserved design/report context, not current instructions or a verification certificate. Any current/active/locked/ready wording refers to its original date. Historical asserted results remain unverified unless their exact source and matching artifacts are supplied; authored mechanics or proposed architecture must not be mistaken for recovered retail behavior. Current authority: [PORT_STATUS.md](../../../PORT_STATUS.md) and [execution contract](../../../NATIVE_PORT_EXECUTION_CONTRACT.md). Hardware caps, model directives, hybrid/UE5 plans and launch requests here do not override those rules.
 
 **These rules are absolute. They are not a roadmap, not a preference, and not
 something to trade off against a schedule. An agent that breaks one of them
@@ -66,8 +66,8 @@ served **from the GPU**. A host-side VRAM array that is the source of truth
 is an emulated VRAM and must not exist. A fixed guest RAM/scratchpad address
 map is transitional and does not satisfy the owner's clarified native-memory
 requirement. Game data must use host allocations and native pointers or
-verified native handles. See the parent project's
-`../../../NATIVE_PORT_EXECUTION_CONTRACT.md`.
+verified native handles. See the fork root
+[`NATIVE_PORT_EXECUTION_CONTRACT.md`](../../../NATIVE_PORT_EXECUTION_CONTRACT.md).
 
 ## 3. Platform calls terminate in native game/Windows services
 

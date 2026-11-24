@@ -1,0 +1,21 @@
+{
+  "status": "transfer/pitch source boundary proved; codec compatibility corroborated, no independent PCM oracle",
+  "inputs": {
+    "private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/modules/msl.irx": {
+      "sha256": "f62dfbcedd39bc92cb8b9c02bb685b956a10357f9181d7f8c2801d8eaff07af7"
+    },
+    "private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/modules/libsd.irx": {
+      "sha256": "94915a3d9673e8a370e144ae493552d5e1f3956bb9ae5bd91e2da5f36c83ce7d"
+    },
+    "private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/sndsps2/mslasset.ms2": {
+      "sha256": "74b7affaf2ec29052b39f531788ff12148f9870e79dde953e701c63e6e948d5d"
+    },
+    "external/forks/ps2-native-recomp/runtime/src/iop/audio_service.cpp": {
+      "sha256": "7f33ffe18a7d5015a66b5f121ba645b5ec64ce79d85179a1852167d804fb1ac6"
+    },
+    "external/forks/ps2-native-recomp/runtime/src/iop/generated_modules/iopn_MSL_B00028100_H7308BB2C3E647540_28100.cpp": {
+      "sha256": "df40eb8fccc5f7470584e91e4e774b85d2f254b6753b85177b9f54149007fddb"
+    }
+  },
+  "method": "Original IRX instruction reads (.text MSLfile90/base28100; LIBSDfileB0/object0), crosschecked generated line references; data-only bounded344-bank scan; no game/build"
+}

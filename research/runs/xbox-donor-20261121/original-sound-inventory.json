@@ -1,0 +1,292 @@
+{
+  "schema": "original_xbe_sound_inventory_v1",
+  "source": "private-inputs\\Mortal Kombat - Armageddon (USA).xiso\\default.xbe",
+  "source_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "image_base": "0x10000",
+  "mapping_rule": "file-backed XBE section offset plus original virtual displacement",
+  "sections": [
+    {
+      "name": ".text",
+      "flags": 22,
+      "virtual_address": 73728,
+      "virtual_size": 4148796,
+      "file_offset": 8192,
+      "file_size": 4148796
+    },
+    {
+      "name": "D3D",
+      "flags": 7,
+      "virtual_address": 4222528,
+      "virtual_size": 144580,
+      "file_offset": 4157440,
+      "file_size": 129484
+    },
+    {
+      "name": "D3DX",
+      "flags": 7,
+      "virtual_address": 4367136,
+      "virtual_size": 12920,
+      "file_offset": 4288512,
+      "file_size": 12916
+    },
+    {
+      "name": "XGRPH",
+      "flags": 7,
+      "virtual_address": 4380064,
+      "virtual_size": 147992,
+      "file_offset": 4304896,
+      "file_size": 144796
+    },
+    {
+      "name": "XONLINE",
+      "flags": 38,
+      "virtual_address": 4528064,
+      "virtual_size": 253740,
+      "file_offset": 4452352,
+      "file_size": 253740
+    },
+    {
+      "name": "XNET",
+      "flags": 54,
+      "virtual_address": 4781824,
+      "virtual_size": 86356,
+      "file_offset": 4706304,
+      "file_size": 86356
+    },
+    {
+      "name": "PSFD00",
+      "flags": 54,
+      "virtual_address": 4868192,
+      "virtual_size": 8912,
+      "file_offset": 4796416,
+      "file_size": 8912
+    },
+    {
+      "name": "PSFD_I",
+      "flags": 54,
+      "virtual_address": 4877120,
+      "virtual_size": 968,
+      "file_offset": 4808704,
+      "file_size": 968
+    },
+    {
+      "name": "PSFD_B",
+      "flags": 22,
+      "virtual_address": 4878112,
+      "virtual_size": 2200,
+      "file_offset": 4812800,
+      "file_size": 2200
+    },
+    {
+      "name": "PSFD_P",
+      "flags": 6,
+      "virtual_address": 4880320,
+      "virtual_size": 1552,
+      "file_offset": 4816896,
+      "file_size": 1552
+    },
+    {
+      "name": "DSOUND",
+      "flags": 7,
+      "virtual_address": 4881888,
+      "virtual_size": 156812,
+      "file_offset": 4820992,
+      "file_size": 156180
+    },
+    {
+      "name": "XPP",
+      "flags": 7,
+      "virtual_address": 5038720,
+      "virtual_size": 38240,
+      "file_offset": 4980736,
+      "file_size": 38240
+    },
+    {
+      "name": ".rdata",
+      "flags": 6,
+      "virtual_address": 5076960,
+      "virtual_size": 458912,
+      "file_offset": 5021696,
+      "file_size": 458896
+    },
+    {
+      "name": ".data",
+      "flags": 7,
+      "virtual_address": 5535872,
+      "virtual_size": 4184196,
+      "file_offset": 5484544,
+      "file_size": 445824
+    },
+    {
+      "name": "XON_RD",
+      "flags": 38,
+      "virtual_address": 9720096,
+      "virtual_size": 14797,
+      "file_offset": 5931008,
+      "file_size": 14796
+    },
+    {
+      "name": "DOLBY",
+      "flags": 22,
+      "virtual_address": 9734912,
+      "virtual_size": 29056,
+      "file_offset": 5947392,
+      "file_size": 29036
+    },
+    {
+      "name": ".data1",
+      "flags": 7,
+      "virtual_address": 9763968,
+      "virtual_size": 224,
+      "file_offset": 5980160,
+      "file_size": 176
+    },
+    {
+      "name": "$$XTINFO",
+      "flags": 8,
+      "virtual_address": 9764192,
+      "virtual_size": 148,
+      "file_offset": 6004736,
+      "file_size": 148
+    },
+    {
+      "name": "$$XTIMAGE",
+      "flags": 40,
+      "virtual_address": 9764352,
+      "virtual_size": 10240,
+      "file_offset": 6008832,
+      "file_size": 10240
+    },
+    {
+      "name": "$$XSIMAGE",
+      "flags": 56,
+      "virtual_address": 9774592,
+      "virtual_size": 4096,
+      "file_offset": 6021120,
+      "file_size": 4096
+    },
+    {
+      "name": "dspimage",
+      "flags": 58,
+      "virtual_address": 9778688,
+      "virtual_size": 18608,
+      "file_offset": 5984256,
+      "file_size": 18608
+    },
+    {
+      "name": ".XTLID",
+      "flags": 56,
+      "virtual_address": 9797312,
+      "virtual_size": 6000,
+      "file_offset": 6025216,
+      "file_size": 6000
+    }
+  ],
+  "exact_name_strings": [
+    {
+      "name": "permanent",
+      "file_offset": 5204772,
+      "address": "0x504304",
+      "serialized_pointer_candidates": [
+        {
+          "file_offset": 5620644,
+          "address": "0x568c24"
+        },
+        {
+          "file_offset": 5634404,
+          "address": "0x56c1e4"
+        }
+      ]
+    },
+    {
+      "name": "announcr",
+      "file_offset": 5204668,
+      "address": "0x50429c",
+      "serialized_pointer_candidates": [
+        {
+          "file_offset": 5620964,
+          "address": "0x568d64"
+        }
+      ]
+    },
+    {
+      "name": "shell_music",
+      "file_offset": 5204752,
+      "address": "0x5042f0",
+      "serialized_pointer_candidates": [
+        {
+          "file_offset": 5620724,
+          "address": "0x568c74"
+        }
+      ]
+    },
+    {
+      "name": "shell",
+      "file_offset": 5204764,
+      "address": "0x5042fc",
+      "serialized_pointer_candidates": [
+        {
+          "file_offset": 5620684,
+          "address": "0x568c4c"
+        },
+        {
+          "file_offset": 5634740,
+          "address": "0x56c334"
+        }
+      ]
+    }
+  ],
+  "four_bank_asset_pairs": [
+    {
+      "name": "permanent.mbx",
+      "bytes": 2496,
+      "sha256": "f905b826c8f796f6a831e126a6f3c2622d95fab25449774b36692d878a7d7449",
+      "prefix_hex": "0b000000130000000c000e0019000000600000002002000000030000e003000080090000c0090000c00900000000000000000000000000000000000000000000"
+    },
+    {
+      "name": "permanent.msx",
+      "bytes": 7177256,
+      "sha256": "0364e413fad08765293b1a7eab88d0a065b715f55cefbff757884d58efca2482",
+      "prefix_hex": "020000000d00000000080000340300000008000000700100000000000000000028846d0000000000000000000000000000000000010000200000000000120000"
+    },
+    {
+      "name": "announcr.mbx",
+      "bytes": 31968,
+      "sha256": "922a47fcd9b7661f1406c586b3db99ac356daa7524454c0fe7ca3f12ccafa9af",
+      "prefix_hex": "0b00000013000000c000c000c000000060000000601b00006027000060330000607b0000e07c0000e07c00000000000000000000000000000000000000000000"
+    },
+    {
+      "name": "announcr.msx",
+      "bytes": 5984440,
+      "sha256": "d1a96798fcfc2b58a3fb59a8eba33f19b6f68768d0e0ed534c03dd47528cfdfa",
+      "prefix_hex": "02000000c1000000003800003430000000380000000000000000000000000000b8505b00000000000000000000000000000000000100002000380000144c0000"
+    },
+    {
+      "name": "shell_music.mbx",
+      "bytes": 960,
+      "sha256": "8ff9d8957126b173026b71fc7f4099c6bddeaff0d61fd651d360479e00b21c6d",
+      "prefix_hex": "0b000000130000000600040006000000600000004001000080010000c0010000a0030000c0030000c00300000000000000000000000000000000000000000000"
+    },
+    {
+      "name": "shell_music.msx",
+      "bytes": 7727104,
+      "sha256": "ebde62304b3795b767c93718c1ee6752988e4c4938211129652403c15aaeaf9e",
+      "prefix_hex": "020000000700000000080000b40100000008000000680f00000000000000000000e87500000000000000000000000000000000000100002000700f0058550700"
+    },
+    {
+      "name": "shell.mbx",
+      "bytes": 7648,
+      "sha256": "bb472792f1895229c455108d321d5605c27589daa612108b47c2addf62eb13a0",
+      "prefix_hex": "0b0000001300000022002b0060000000600000004005000000080000c00a0000201d0000e01d0000e01d00000000000000000000000000000000000000000000"
+    },
+    {
+      "name": "shell.msx",
+      "bytes": 7301744,
+      "sha256": "812dc0634809024163f01d7a425b113ea8aa7ab0063fa37f2452525746de390b",
+      "prefix_hex": "020000002300000000100000b408000000100000004006000000000000000000706a6f0000000000000000000000000000000000010000200000000058560000"
+    }
+  ],
+  "source_of_mapping": "User-supplied XbeImageHeader.java and XbeSectionHeader.java",
+  "function_equivalence": "UNVERIFIED",
+  "game_executed": false
+}

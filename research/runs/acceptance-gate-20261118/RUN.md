@@ -7,7 +7,7 @@ counters on its short scripted route. It did not establish source-path
 removal, physical controls, correct sound identity, card profile save/reload,
 movies, or all-mode gameplay. Its original claims below are preserved as
 dated claims, not the current verdict. Full acceptance is OPEN under the
-parent `../../../NATIVE_PORT_EXECUTION_CONTRACT.md` (from the fork root).
+fork root [`NATIVE_PORT_EXECUTION_CONTRACT.md`](../../../NATIVE_PORT_EXECUTION_CONTRACT.md).
 
 ## 1. Pinned Build & Binary Identification
 

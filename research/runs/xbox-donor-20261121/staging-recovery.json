@@ -1,0 +1,6 @@
+{
+  "first_failure": "text-mode patch stdin introduced CR in staged text",
+  "second_failure": "Git restore could not create an MSYS named object in the sandbox",
+  "recovery": "Use Git update-index only to restore our own staged document entries, then apply LF byte stdin. Working files and preexisting staged source were preserved.",
+  "game_build_checks_affected": false
+}

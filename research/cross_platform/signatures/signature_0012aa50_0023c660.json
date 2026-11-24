@@ -1,0 +1,408 @@
+{
+  "schema": "cross_isa_pair_signature_v1",
+  "ps2_address": "0012aa50",
+  "xbox_address": "0023c660",
+  "match_confidence": "mapped-by-role",
+  "ps2": {
+    "arch": "mips_r5900",
+    "entry": "0012aa50",
+    "size_bytes": 364,
+    "instruction_count": 91,
+    "basic_block_count": 27,
+    "edge_count": 36,
+    "callees": [
+      "0012b500"
+    ],
+    "memory_offsets": [
+      0,
+      4,
+      64
+    ],
+    "cfg_blocks": [
+      {
+        "id": 0,
+        "start": "0012aa50",
+        "end": "0012aa74",
+        "instruction_count": 9,
+        "successors": [
+          "0012aa74",
+          "0012aba8"
+        ]
+      },
+      {
+        "id": 1,
+        "start": "0012aa74",
+        "end": "0012aa90",
+        "instruction_count": 7,
+        "successors": []
+      },
+      {
+        "id": 2,
+        "start": "0012aa90",
+        "end": "0012aab0",
+        "instruction_count": 8,
+        "successors": [
+          "0012aab0",
+          "0012ab98"
+        ]
+      },
+      {
+        "id": 3,
+        "start": "0012aab0",
+        "end": "0012aac0",
+        "instruction_count": 4,
+        "successors": [
+          "0012aac0",
+          "0012aae8"
+        ]
+      },
+      {
+        "id": 4,
+        "start": "0012aac0",
+        "end": "0012aacc",
+        "instruction_count": 3,
+        "successors": [
+          "0012aacc",
+          "0012aad8"
+        ]
+      },
+      {
+        "id": 5,
+        "start": "0012aacc",
+        "end": "0012aad4",
+        "instruction_count": 2,
+        "successors": [
+          "0012aad4",
+          "0012aaf0"
+        ]
+      },
+      {
+        "id": 6,
+        "start": "0012aad4",
+        "end": "0012aad8",
+        "instruction_count": 1,
+        "successors": []
+      },
+      {
+        "id": 7,
+        "start": "0012aad8",
+        "end": "0012aae8",
+        "instruction_count": 4,
+        "successors": [
+          "0012aac0",
+          "0012aae8"
+        ]
+      },
+      {
+        "id": 8,
+        "start": "0012aae8",
+        "end": "0012aaf0",
+        "instruction_count": 2,
+        "successors": []
+      },
+      {
+        "id": 9,
+        "start": "0012aaf0",
+        "end": "0012aaf8",
+        "instruction_count": 2,
+        "successors": [
+          "0012aaf8",
+          "0012ab98"
+        ]
+      },
+      {
+        "id": 10,
+        "start": "0012aaf8",
+        "end": "0012ab00",
+        "instruction_count": 2,
+        "successors": [
+          "0012ab00",
+          "0012ab98"
+        ]
+      },
+      {
+        "id": 11,
+        "start": "0012ab00",
+        "end": "0012ab0c",
+        "instruction_count": 3,
+        "successors": [
+          "0012ab0c",
+          "0012ab98"
+        ]
+      },
+      {
+        "id": 12,
+        "start": "0012ab0c",
+        "end": "0012ab1c",
+        "instruction_count": 4,
+        "successors": [
+          "0012ab1c",
+          "0012ab28"
+        ]
+      },
+      {
+        "id": 13,
+        "start": "0012ab1c",
+        "end": "0012ab24",
+        "instruction_count": 2,
+        "successors": [
+          "0012ab24",
+          "0012ab58"
+        ]
+      },
+      {
+        "id": 14,
+        "start": "0012ab24",
+        "end": "0012ab28",
+        "instruction_count": 1,
+        "successors": []
+      },
+      {
+        "id": 15,
+        "start": "0012ab28",
+        "end": "0012ab38",
+        "instruction_count": 4,
+        "successors": []
+      },
+      {
+        "id": 16,
+        "start": "0012ab38",
+        "end": "0012ab44",
+        "instruction_count": 3,
+        "successors": [
+          "0012ab44",
+          "0012ab48"
+        ]
+      },
+      {
+        "id": 17,
+        "start": "0012ab44",
+        "end": "0012ab48",
+        "instruction_count": 1,
+        "successors": []
+      },
+      {
+        "id": 18,
+        "start": "0012ab48",
+        "end": "0012ab58",
+        "instruction_count": 4,
+        "successors": [
+          "0012ab38",
+          "0012ab58"
+        ]
+      },
+      {
+        "id": 19,
+        "start": "0012ab58",
+        "end": "0012ab64",
+        "instruction_count": 3,
+        "successors": [
+          "0012ab64",
+          "0012ab70"
+        ]
+      },
+      {
+        "id": 20,
+        "start": "0012ab64",
+        "end": "0012ab70",
+        "instruction_count": 3,
+        "successors": []
+      },
+      {
+        "id": 21,
+        "start": "0012ab70",
+        "end": "0012ab7c",
+        "instruction_count": 3,
+        "successors": [
+          "0012ab7c",
+          "0012ab98"
+        ]
+      },
+      {
+        "id": 22,
+        "start": "0012ab7c",
+        "end": "0012ab84",
+        "instruction_count": 2,
+        "successors": [
+          "0012ab84",
+          "0012ab98"
+        ]
+      },
+      {
+        "id": 23,
+        "start": "0012ab84",
+        "end": "0012ab90",
+        "instruction_count": 3,
+        "successors": [
+          "0012ab90",
+          "0012ab98"
+        ]
+      },
+      {
+        "id": 24,
+        "start": "0012ab90",
+        "end": "0012ab98",
+        "instruction_count": 2,
+        "successors": []
+      },
+      {
+        "id": 25,
+        "start": "0012ab98",
+        "end": "0012aba8",
+        "instruction_count": 4,
+        "successors": [
+          "0012aa90",
+          "0012aba8"
+        ]
+      },
+      {
+        "id": 26,
+        "start": "0012aba8",
+        "end": "0012abbc",
+        "instruction_count": 5,
+        "successors": []
+      }
+    ]
+  },
+  "xbox": {
+    "arch": "x86_32",
+    "entry": "0023c660",
+    "size_bytes": 159,
+    "instruction_count": 45,
+    "basic_block_count": 11,
+    "edge_count": 10,
+    "callees": [
+      "0x0023c700",
+      "0x00375a70"
+    ],
+    "memory_offsets": [
+      -4,
+      5671960,
+      5685720,
+      5685724,
+      6022080
+    ],
+    "cfg_blocks": [
+      {
+        "id": 0,
+        "start": "0023c660",
+        "end": "0023c66d",
+        "instruction_count": 5,
+        "successors": [
+          "0023c676"
+        ]
+      },
+      {
+        "id": 1,
+        "start": "0023c66d",
+        "end": "0023c676",
+        "instruction_count": 3,
+        "successors": []
+      },
+      {
+        "id": 2,
+        "start": "0023c676",
+        "end": "0023c67f",
+        "instruction_count": 2,
+        "successors": [
+          "0023c67f",
+          "0023c6b5"
+        ]
+      },
+      {
+        "id": 3,
+        "start": "0023c67f",
+        "end": "0023c68e",
+        "instruction_count": 4,
+        "successors": [
+          "0023c68e",
+          "0023c6a3"
+        ]
+      },
+      {
+        "id": 4,
+        "start": "0023c68e",
+        "end": "0023c6a3",
+        "instruction_count": 6,
+        "successors": []
+      },
+      {
+        "id": 5,
+        "start": "0023c6a3",
+        "end": "0023c6b5",
+        "instruction_count": 4,
+        "successors": [
+          "0023c66d"
+        ]
+      },
+      {
+        "id": 6,
+        "start": "0023c6b5",
+        "end": "0023c6be",
+        "instruction_count": 2,
+        "successors": [
+          "0023c6c7"
+        ]
+      },
+      {
+        "id": 7,
+        "start": "0023c6be",
+        "end": "0023c6c7",
+        "instruction_count": 3,
+        "successors": []
+      },
+      {
+        "id": 8,
+        "start": "0023c6c7",
+        "end": "0023c6cd",
+        "instruction_count": 2,
+        "successors": [
+          "0023c6cd",
+          "0023c6ec"
+        ]
+      },
+      {
+        "id": 9,
+        "start": "0023c6cd",
+        "end": "0023c6ec",
+        "instruction_count": 7,
+        "successors": [
+          "0023c6be"
+        ]
+      },
+      {
+        "id": 10,
+        "start": "0023c6ec",
+        "end": "0023c6ff",
+        "instruction_count": 7,
+        "successors": []
+      }
+    ]
+  },
+  "semantic_alignment": {
+    "match_confidence": "mapped-by-role",
+    "evidence_type": "subsystem_role_correspondence_pending_dual_platform_vectors",
+    "notes": "Sound catalog range validator",
+    "shared_memory_offsets": [],
+    "nontrivial_offsets": [],
+    "cfg_topology_match": false,
+    "raw_ps2_block_count": 27,
+    "raw_xbox_block_count": 11,
+    "raw_ps2_edge_count": 36,
+    "raw_xbox_edge_count": 10,
+    "normalized_ps2": {
+      "vertices": 27,
+      "edges": 36,
+      "cyclomatic_complexity": 11,
+      "decision_blocks": 18
+    },
+    "normalized_xbox": {
+      "vertices": 7,
+      "edges": 6,
+      "cyclomatic_complexity": 1,
+      "decision_blocks": 3
+    },
+    "mapped_callee_match": false,
+    "common_mapped_callees": []
+  }
+}

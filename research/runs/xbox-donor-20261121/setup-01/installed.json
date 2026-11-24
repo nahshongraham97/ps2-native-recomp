@@ -1,0 +1,10 @@
+{
+  "status": "CORE_LOADER_AND_XTLID_ANALYZER_INSTALLED",
+  "ghidra_version": "12.1.4",
+  "extension_path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\ghidra\\ghidra_12.1.4_PUBLIC\\Ghidra\\Extensions\\XboxExecutableLoader",
+  "jar_sha256": "88dfb8cc4f8b1ef6b8c05fcd3b084acd92e2d17d01a5ef43b86ee5c3b1053b88",
+  "source_unchanged": true,
+  "generated_xtlid_entries": 1624,
+  "missing_optional_tool": "XbSymbolDatabaseCLI.exe",
+  "next": "Headless import must verify actual XBE loading and analysis; optional database scanner remains unavailable."
+}

@@ -1,0 +1,13 @@
+{
+  "active_fork_head": "ef53c205a2f5c3373b6c75f0a6f9d2c9351eb9e4",
+  "source_sha256": {
+    "runtime/include/mka/retail_sound_bank_jobs.hpp": "bc3720246c0368b26b3d93a34be2c37a7623ea3d5ebb34bcc6f2f1855f9fcbd8",
+    "runtime/include/mka/audio_banks.hpp": "175fc1f746a0f68cf5126d3a3f97283493b307465422dc82fbbfe7f9f9983026",
+    "runtime/include/mka/audio_bank_protocol.hpp": "55d522bac9d935da71c74ed2de11939b7ed0da2d6d02b53ee192e5c63747acb2",
+    "runtime/include/mka/audio_bank_service.hpp": "6e17ef597426f8d3756488457f2da3cfd408b96a984bf6f71528b3cb481b532c",
+    "runtime/include/mka/playback_owner.hpp": "d9de65166c285c4ee19e78bb541b760dd5c5e46e2470af484dd788a702590c6e",
+    "runtime/include/mka/retail_main.hpp": "211f277527c75638239b9be84eb72ae33325aa7e820f0fc2b0d9afba15f0bbc0"
+  },
+  "dirty_audio_adoption_preserved": true,
+  "claims": "API ownership gap only, not a game execution claim"
+}

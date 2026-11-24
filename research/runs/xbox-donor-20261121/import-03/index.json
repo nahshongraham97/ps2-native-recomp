@@ -1,0 +1,280 @@
+{
+  "program": "default.xbe",
+  "executable_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "format": "Xbox Executable Format (XBE)",
+  "language": "x86:LE:32:default",
+  "image_base": "00010000",
+  "function_count": 22579,
+  "blocks": [
+    {
+      "name": "headers",
+      "start": "00010000",
+      "size": 8192,
+      "initialized": true,
+      "execute": false
+    },
+    {
+      "name": ".text",
+      "start": "00012000",
+      "size": 4148796,
+      "initialized": true,
+      "execute": true
+    },
+    {
+      "name": "D3D",
+      "start": "00406e40",
+      "size": 144580,
+      "initialized": true,
+      "execute": true
+    },
+    {
+      "name": "D3DX",
+      "start": "0042a320",
+      "size": 12920,
+      "initialized": true,
+      "execute": true
+    },
+    {
+      "name": "XGRPH",
+      "start": "0042d5a0",
+      "size": 147992,
+      "initialized": true,
+      "execute": true
+    },
+    {
+      "name": "XONLINE",
+      "start": "004517c0",
+      "size": 253740,
+      "initialized": true,
+      "execute": true
+    },
+    {
+      "name": "XNET",
+      "start": "0048f700",
+      "size": 86356,
+      "initialized": true,
+      "execute": true
+    },
+    {
+      "name": "PSFD00",
+      "start": "004a4860",
+      "size": 8912,
+      "initialized": true,
+      "execute": true
+    },
+    {
+      "name": "PSFD_I",
+      "start": "004a6b40",
+      "size": 968,
+      "initialized": true,
+      "execute": true
+    },
+    {
+      "name": "PSFD_B",
+      "start": "004a6f20",
+      "size": 2200,
+      "initialized": true,
+      "execute": true
+    },
+    {
+      "name": "PSFD_P",
+      "start": "004a77c0",
+      "size": 1552,
+      "initialized": true,
+      "execute": true
+    },
+    {
+      "name": "DSOUND",
+      "start": "004a7de0",
+      "size": 156812,
+      "initialized": true,
+      "execute": true
+    },
+    {
+      "name": "XPP",
+      "start": "004ce280",
+      "size": 38240,
+      "initialized": true,
+      "execute": true
+    },
+    {
+      "name": ".rdata",
+      "start": "004d77e0",
+      "size": 458912,
+      "initialized": true,
+      "execute": true
+    },
+    {
+      "name": ".data",
+      "start": "00547880",
+      "size": 4184196,
+      "initialized": true,
+      "execute": true
+    },
+    {
+      "name": "XON_RD",
+      "start": "00945120",
+      "size": 14797,
+      "initialized": true,
+      "execute": true
+    },
+    {
+      "name": "DOLBY",
+      "start": "00948b00",
+      "size": 29056,
+      "initialized": true,
+      "execute": true
+    },
+    {
+      "name": ".data1",
+      "start": "0094fc80",
+      "size": 224,
+      "initialized": true,
+      "execute": true
+    },
+    {
+      "name": "$$XTINFO",
+      "start": "0094fd60",
+      "size": 148,
+      "initialized": true,
+      "execute": false
+    },
+    {
+      "name": "$$XTIMAGE",
+      "start": "0094fe00",
+      "size": 10240,
+      "initialized": true,
+      "execute": false
+    },
+    {
+      "name": "$$XSIMAGE",
+      "start": "00952600",
+      "size": 4096,
+      "initialized": true,
+      "execute": false
+    },
+    {
+      "name": "dspimage",
+      "start": "00953600",
+      "size": 18608,
+      "initialized": true,
+      "execute": false
+    },
+    {
+      "name": ".XTLID",
+      "start": "00957ec0",
+      "size": 6000,
+      "initialized": true,
+      "execute": false
+    }
+  ],
+  "sound_string_candidates": [
+    {
+      "address": "004f9348",
+      "value": "permanent_strings_ita.mko",
+      "references": [
+        {
+          "from": "00558930",
+          "type": "DATA"
+        }
+      ]
+    },
+    {
+      "address": "004f9364",
+      "value": "permanent_strings_fre.mko",
+      "references": [
+        {
+          "from": "00558924",
+          "type": "DATA"
+        }
+      ]
+    },
+    {
+      "address": "004f9380",
+      "value": "permanent_strings_ger.mko",
+      "references": [
+        {
+          "from": "00558918",
+          "type": "DATA"
+        }
+      ]
+    },
+    {
+      "address": "004f939c",
+      "value": "permanent_strings_spa.mko",
+      "references": [
+        {
+          "from": "0055890c",
+          "type": "DATA"
+        }
+      ]
+    },
+    {
+      "address": "004f93b8",
+      "value": "permanent_strings_eng.mko",
+      "references": [
+        {
+          "from": "002330e4",
+          "type": "DATA",
+          "function": "002330c0"
+        },
+        {
+          "from": "00233124",
+          "type": "DATA",
+          "function": "00233100"
+        },
+        {
+          "from": "00233178",
+          "type": "DATA",
+          "function": "00233140"
+        },
+        {
+          "from": "00558900",
+          "type": "DATA"
+        }
+      ]
+    },
+    {
+      "address": "00504304",
+      "value": "permanent",
+      "references": [
+        {
+          "from": "00568c24",
+          "type": "DATA"
+        }
+      ]
+    },
+    {
+      "address": "00504e58",
+      "value": "Stai per eliminare un profilo in modo permanente. Vuoi continuare?",
+      "references": [
+        {
+          "from": "0059cf88",
+          "type": "DATA"
+        }
+      ]
+    },
+    {
+      "address": "00504f78",
+      "value": "You are about to permanently delete a profile. Continue with deletion?",
+      "references": [
+        {
+          "from": "0059cf78",
+          "type": "DATA"
+        }
+      ]
+    },
+    {
+      "address": "0050a368",
+      "value": "Permanent heap",
+      "references": [
+        {
+          "from": "002a0ed8",
+          "type": "DATA",
+          "function": "002a0e90"
+        }
+      ]
+    }
+  ],
+  "behavioral_equivalence": "UNVERIFIED"
+}

@@ -1,0 +1,81 @@
+{
+  "schema": "cross_isa_pair_signature_v1",
+  "ps2_address": "00127370",
+  "xbox_address": "002330c0",
+  "match_confidence": "mapped-by-role",
+  "ps2": {
+    "arch": "mips_r5900",
+    "entry": "00127370",
+    "size_bytes": 24,
+    "instruction_count": 6,
+    "basic_block_count": 1,
+    "edge_count": 0,
+    "callees": [],
+    "memory_offsets": [
+      -25140,
+      -25139,
+      -25138,
+      -25137
+    ],
+    "cfg_blocks": [
+      {
+        "id": 0,
+        "start": "00127370",
+        "end": "00127388",
+        "instruction_count": 6,
+        "successors": []
+      }
+    ]
+  },
+  "xbox": {
+    "arch": "x86_32",
+    "entry": "002330c0",
+    "size_bytes": 60,
+    "instruction_count": 20,
+    "basic_block_count": 1,
+    "edge_count": 0,
+    "callees": [
+      "0x001b20e0",
+      "0x00232f20",
+      "0x001b0380"
+    ],
+    "memory_offsets": [
+      5605792
+    ],
+    "cfg_blocks": [
+      {
+        "id": 0,
+        "start": "002330c0",
+        "end": "002330fc",
+        "instruction_count": 20,
+        "successors": []
+      }
+    ]
+  },
+  "semantic_alignment": {
+    "match_confidence": "mapped-by-role",
+    "evidence_type": "subsystem_role_correspondence_pending_dual_platform_vectors",
+    "notes": "Game records byte storage",
+    "shared_memory_offsets": [],
+    "nontrivial_offsets": [],
+    "cfg_topology_match": true,
+    "raw_ps2_block_count": 1,
+    "raw_xbox_block_count": 1,
+    "raw_ps2_edge_count": 0,
+    "raw_xbox_edge_count": 0,
+    "normalized_ps2": {
+      "vertices": 1,
+      "edges": 0,
+      "cyclomatic_complexity": 1,
+      "decision_blocks": 0
+    },
+    "normalized_xbox": {
+      "vertices": 1,
+      "edges": 0,
+      "cyclomatic_complexity": 1,
+      "decision_blocks": 0
+    },
+    "mapped_callee_match": false,
+    "common_mapped_callees": []
+  }
+}

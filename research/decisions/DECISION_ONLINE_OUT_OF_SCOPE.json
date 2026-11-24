@@ -1,0 +1,59 @@
+{
+  "decision_id": "DECISION_ONLINE_OUT_OF_SCOPE",
+  "title": "Online Features, Network Services, and NETR.ovl Formally Classified Out of Scope",
+  "date": "2026-11-23",
+  "status": "APPROVED",
+  "owner": "Nahshon Graham",
+  "scope": {
+    "ps2_overlay_dropped": {
+      "module": "NETR.ovl",
+      "function_count": 1834,
+      "base_address": "0x007C4880",
+      "action": "Removed from dynamic overlay manifest (recomp/overlays/OVERLAY-MAP-MANIFEST.json); never loaded on accepted route"
+    },
+    "ps2_main_elf_online_functions": {
+      "module": "SLUS_214.10",
+      "functions": [
+        "003432d0",
+        "0034f380",
+        "00344000",
+        "0033efd0",
+        "0033ecf0",
+        "00343ee0"
+      ],
+      "action": "Classified as out-of-scope-stubbed; routed to retail offline path"
+    },
+    "xbox_donor_online_functions": {
+      "module": "default.xbe",
+      "section": "XONLINE",
+      "function_count": 1248,
+      "action": "Classified as out-of-scope-stubbed; Xbox Live thunks and APIs excluded from donor recovery"
+    }
+  },
+  "implementation_rules": [
+    "Route online startup strictly through the game's retail offline path (matching physical PS2 console with no network adapter attached).",
+    "Never fake success: synthetic network success or silent no-ops are strictly forbidden by the native port contract.",
+    "Any direct invocation that cannot function offline fails by name (e.g. online_unavailable / source_refused).",
+    "UI menus for network/online match original PS2-without-network behavior (disabled or absent).",
+    "Acceptance checkers skip online scenarios only when this decision file is authenticated."
+  ],
+  "deviations": [
+    {
+      "deviation_id": "DEVIATION_ONLINE_STAGE_RETURN_BOOL",
+      "rationale": "Caller 0x00122900 discards return value of 0x003432d0; returning true with StartupError::none signals uninterrupted continuation along retail offline path."
+    },
+    {
+      "deviation_id": "DEVIATION_ONLINE_LEFTOVER_ALLOCATION_OMITTED",
+      "rationale": "Retail PS2 offline failure in 0x0033ecf0 resets internal buffers in ShutdownPartial (0x00343e80) but leaves the 84-byte 'Online' heap object allocated and -21272(gp) non-NULL. Native port leaves the pointer strictly NULL and omits the 84-byte dangling allocation. Disassembly proves zero offline gameplay functions read -21272(gp), offline update handlers explicitly null-guard the pointer, and allocation-profile tests do not measure general heap objects."
+    },
+    {
+      "deviation_id": "DEVIATION_NATIVE_GO_ONLINE_MODAL_MESSAGE",
+      "rationale": "In retail SLUS_214.10, selecting 'Go Online' on hardware without a network adapter immediately triggers the adapter-less hardware preemption path presenting error string 0x00639C80 ('No network adaptor (Ethernet/modem) (for PlayStation2) detected. You will not be able to access the online features of this title.'), returning to the main menu; the authentication-failure string at 0x005E6320 ('Could not authenticate user ID and Password. Please check your network configuration and try again.') is only reached if a network adapter is attached and configuration authentication fails. In native PC recompilation, trigger_retail_go_online_modal and get_retail_online_modal_string are unwired component helpers (extracting authentic string 0x005E6320 for offline tests), not completed missing-adapter fallbacks in the live menu loop. The intended native response when main menu dispatch is ported is to display an authentic unavailable-online modal dialog based on 0x00639C80 ('No network adaptor detected / Online features unavailable in offline native recompilation') and cleanly return to the main menu without loading NETR.ovl or allocating sockets."
+    }
+  ],
+  "verification": {
+    "offline_route_validated": true,
+    "overlay_removed_from_manifest": true,
+    "acceptance_skip_authorized": true
+  }
+}

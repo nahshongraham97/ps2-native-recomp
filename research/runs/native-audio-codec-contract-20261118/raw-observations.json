@@ -1,0 +1,14 @@
+{
+  "method": "Data-only comparison with existing audio_service decode_block header interpretation; not independent codec proof",
+  "counts": {
+    "unique_mono_extents": 7950,
+    "blocks": 5821182
+  },
+  "first_noncanonical_headers": [],
+  "last_block_flag_histogram": {
+    "7": 7796,
+    "3": 154
+  },
+  "first_real_payload_offset": "0x2219C",
+  "first_two_blocks": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 05 00 00 00 00 00 00 00 00 00 00 00 ac c5 0f 21"
+}

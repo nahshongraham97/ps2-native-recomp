@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\ghidra\\ghidra_12.1.4_PUBLIC\\support\\analyzeHeadless.bat",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\local-research\\ghidra-xbox\\projects",
+    "MKAR-Xbox-20261121",
+    "-import",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\private-inputs\\Mortal Kombat - Armageddon (USA).xiso\\default.xbe",
+    "-loader",
+    "XbeLoader",
+    "-analysisTimeoutPerFile",
+    "300",
+    "-max-cpu",
+    "2",
+    "-scriptPath",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\tools\\donors",
+    "-postScript",
+    "ExportXboxDonorIndex.java",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\xbox-donor-20261121\\import-01\\index.json",
+    "-log",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\xbox-donor-20261121\\import-01\\ghidra.log",
+    "-scriptlog",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\xbox-donor-20261121\\import-01\\scripts.log"
+  ],
+  "environment_overrides": {
+    "JAVA_HOME": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\jdk21\\jdk-21.0.13+9",
+    "GHIDRA_HEADLESS_JAVA_OPTIONS": "-Djava.awt.headless=true"
+  },
+  "donor_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "game_executed": false
+}

@@ -1,0 +1,3111 @@
+{
+  "original_xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "queries": [
+    {
+      "address": "00568c18",
+      "references": [
+        {
+          "from": "0023e039",
+          "type": "DATA",
+          "function": "0023e020"
+        },
+        {
+          "from": "0023d8e1",
+          "type": "DATA",
+          "function": "0023d8d0"
+        },
+        {
+          "from": "0023da34",
+          "type": "DATA",
+          "function": "0023d920"
+        },
+        {
+          "from": "0023da5a",
+          "type": "DATA",
+          "function": "0023d920"
+        },
+        {
+          "from": "0023db6f",
+          "type": "DATA",
+          "function": "0023daf0"
+        },
+        {
+          "from": "0023dc79",
+          "type": "DATA",
+          "function": "0023dc70"
+        },
+        {
+          "from": "0023d363",
+          "type": "DATA",
+          "function": "0023d230"
+        },
+        {
+          "from": "0023d372",
+          "type": "DATA",
+          "function": "0023d230"
+        },
+        {
+          "from": "0023d387",
+          "type": "DATA",
+          "function": "0023d230"
+        },
+        {
+          "from": "0023d431",
+          "type": "DATA",
+          "function": "0023d230"
+        },
+        {
+          "from": "0023d41b",
+          "type": "DATA",
+          "function": "0023d230"
+        },
+        {
+          "from": "0023d3df",
+          "type": "DATA",
+          "function": "0023d230"
+        },
+        {
+          "from": "0023d3ee",
+          "type": "DATA",
+          "function": "0023d230"
+        },
+        {
+          "from": "0023d409",
+          "type": "DATA",
+          "function": "0023d230"
+        },
+        {
+          "from": "0023d4fc",
+          "type": "DATA",
+          "function": "0023d4d0"
+        },
+        {
+          "from": "0023d74c",
+          "type": "DATA",
+          "function": "0023d720"
+        },
+        {
+          "from": "0023c685",
+          "type": "DATA",
+          "function": "0023c660"
+        },
+        {
+          "from": "0023c694",
+          "type": "DATA",
+          "function": "0023c660"
+        },
+        {
+          "from": "0023c6a9",
+          "type": "DATA",
+          "function": "0023c660"
+        }
+      ]
+    },
+    {
+      "address": "00568c1c",
+      "references": [
+        {
+          "from": "0023da47",
+          "type": "DATA",
+          "function": "0023d920"
+        },
+        {
+          "from": "0023da6a",
+          "type": "DATA",
+          "function": "0023d920"
+        },
+        {
+          "from": "0023db7b",
+          "type": "DATA",
+          "function": "0023daf0"
+        },
+        {
+          "from": "0023dc89",
+          "type": "DATA",
+          "function": "0023dc70"
+        },
+        {
+          "from": "0023d39c",
+          "type": "DATA",
+          "function": "0023d230"
+        },
+        {
+          "from": "0023d50b",
+          "type": "DATA",
+          "function": "0023d4d0"
+        },
+        {
+          "from": "0023c74c",
+          "type": "DATA",
+          "function": "0023c720"
+        },
+        {
+          "from": "0023c79d",
+          "type": "DATA",
+          "function": "0023c770"
+        }
+      ]
+    },
+    {
+      "address": "00568c24",
+      "references": [
+        {
+          "from": "0023d94b",
+          "type": "DATA",
+          "function": "0023d920"
+        },
+        {
+          "from": "0023d27a",
+          "type": "DATA",
+          "function": "0023d230"
+        }
+      ]
+    },
+    {
+      "address": "0056c5c0",
+      "references": []
+    },
+    {
+      "address": "0056c964",
+      "references": []
+    }
+  ],
+  "function_candidates": [
+    {
+      "entry": "0023e020",
+      "name_hypothesis": "FUN_0023e020",
+      "ranges": [
+        {
+          "first": "0023e020",
+          "last": "0023e042"
+        }
+      ],
+      "instructions": [
+        {
+          "address": "0023e020",
+          "bytes_hex": "55",
+          "instruction": "PUSH EBP"
+        },
+        {
+          "address": "0023e021",
+          "bytes_hex": "8bec",
+          "instruction": "MOV EBP,ESP"
+        },
+        {
+          "address": "0023e023",
+          "bytes_hex": "51",
+          "instruction": "PUSH ECX"
+        },
+        {
+          "address": "0023e024",
+          "bytes_hex": "8b4508",
+          "instruction": "MOV EAX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023e027",
+          "bytes_hex": "50",
+          "instruction": "PUSH EAX"
+        },
+        {
+          "address": "0023e028",
+          "bytes_hex": "e8c3d8ffff",
+          "instruction": "CALL 0x0023b8f0"
+        },
+        {
+          "address": "0023e02d",
+          "bytes_hex": "83c404",
+          "instruction": "ADD ESP,0x4"
+        },
+        {
+          "address": "0023e030",
+          "bytes_hex": "8945fc",
+          "instruction": "MOV dword ptr [EBP + -0x4],EAX"
+        },
+        {
+          "address": "0023e033",
+          "bytes_hex": "8b4dfc",
+          "instruction": "MOV ECX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023e036",
+          "bytes_hex": "6bc928",
+          "instruction": "IMUL ECX,ECX,0x28"
+        },
+        {
+          "address": "0023e039",
+          "bytes_hex": "8b81188c5600",
+          "instruction": "MOV EAX,dword ptr [ECX + 0x568c18]"
+        },
+        {
+          "address": "0023e03f",
+          "bytes_hex": "8be5",
+          "instruction": "MOV ESP,EBP"
+        },
+        {
+          "address": "0023e041",
+          "bytes_hex": "5d",
+          "instruction": "POP EBP"
+        },
+        {
+          "address": "0023e042",
+          "bytes_hex": "c3",
+          "instruction": "RET"
+        }
+      ],
+      "decompile_completed": true,
+      "decompiler_error": "",
+      "orientation_c": "\r\nundefined4 __thiscall FUN_0023e020(undefined4 param_1,undefined4 param_2)\r\n\r\n{\r\n  int iVar1;\r\n  \r\n  iVar1 \u003d FUN_0023b8f0(param_2,param_1);\r\n  return *(undefined4 *)(\u0026DAT_00568c18 + iVar1 * 0x28);\r\n}\r\n\r\n"
+    },
+    {
+      "entry": "0023d8d0",
+      "name_hypothesis": "FUN_0023d8d0",
+      "ranges": [
+        {
+          "first": "0023d8d0",
+          "last": "0023d91e"
+        }
+      ],
+      "instructions": [
+        {
+          "address": "0023d8d0",
+          "bytes_hex": "55",
+          "instruction": "PUSH EBP"
+        },
+        {
+          "address": "0023d8d1",
+          "bytes_hex": "8bec",
+          "instruction": "MOV EBP,ESP"
+        },
+        {
+          "address": "0023d8d3",
+          "bytes_hex": "837d08ff",
+          "instruction": "CMP dword ptr [EBP + 0x8],-0x1"
+        },
+        {
+          "address": "0023d8d7",
+          "bytes_hex": "7502",
+          "instruction": "JNZ 0x0023d8db"
+        },
+        {
+          "address": "0023d8d9",
+          "bytes_hex": "eb42",
+          "instruction": "JMP 0x0023d91d"
+        },
+        {
+          "address": "0023d8db",
+          "bytes_hex": "8b4508",
+          "instruction": "MOV EAX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d8de",
+          "bytes_hex": "6bc028",
+          "instruction": "IMUL EAX,EAX,0x28"
+        },
+        {
+          "address": "0023d8e1",
+          "bytes_hex": "83b8188c560000",
+          "instruction": "CMP dword ptr [EAX + 0x568c18],0x0"
+        },
+        {
+          "address": "0023d8e8",
+          "bytes_hex": "750c",
+          "instruction": "JNZ 0x0023d8f6"
+        },
+        {
+          "address": "0023d8ea",
+          "bytes_hex": "8b4d08",
+          "instruction": "MOV ECX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d8ed",
+          "bytes_hex": "51",
+          "instruction": "PUSH ECX"
+        },
+        {
+          "address": "0023d8ee",
+          "bytes_hex": "e82d000000",
+          "instruction": "CALL 0x0023d920"
+        },
+        {
+          "address": "0023d8f3",
+          "bytes_hex": "83c404",
+          "instruction": "ADD ESP,0x4"
+        },
+        {
+          "address": "0023d8f6",
+          "bytes_hex": "8b550c",
+          "instruction": "MOV EDX,dword ptr [EBP + 0xc]"
+        },
+        {
+          "address": "0023d8f9",
+          "bytes_hex": "c1e204",
+          "instruction": "SHL EDX,0x4"
+        },
+        {
+          "address": "0023d8fc",
+          "bytes_hex": "8b4508",
+          "instruction": "MOV EAX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d8ff",
+          "bytes_hex": "8982d8c15600",
+          "instruction": "MOV dword ptr [EDX + 0x56c1d8],EAX"
+        },
+        {
+          "address": "0023d905",
+          "bytes_hex": "8b4d08",
+          "instruction": "MOV ECX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d908",
+          "bytes_hex": "6bc928",
+          "instruction": "IMUL ECX,ECX,0x28"
+        },
+        {
+          "address": "0023d90b",
+          "bytes_hex": "8b550c",
+          "instruction": "MOV EDX,dword ptr [EBP + 0xc]"
+        },
+        {
+          "address": "0023d90e",
+          "bytes_hex": "c1e204",
+          "instruction": "SHL EDX,0x4"
+        },
+        {
+          "address": "0023d911",
+          "bytes_hex": "8a81208c5600",
+          "instruction": "MOV AL,byte ptr [ECX + 0x568c20]"
+        },
+        {
+          "address": "0023d917",
+          "bytes_hex": "8882dcc15600",
+          "instruction": "MOV byte ptr [EDX + 0x56c1dc],AL"
+        },
+        {
+          "address": "0023d91d",
+          "bytes_hex": "5d",
+          "instruction": "POP EBP"
+        },
+        {
+          "address": "0023d91e",
+          "bytes_hex": "c3",
+          "instruction": "RET"
+        }
+      ],
+      "decompile_completed": true,
+      "decompiler_error": "",
+      "orientation_c": "\r\nvoid FUN_0023d8d0(int param_1,int param_2)\r\n\r\n{\r\n  if (param_1 !\u003d -1) {\r\n    if (*(int *)(\u0026DAT_00568c18 + param_1 * 0x28) \u003d\u003d 0) {\r\n      FUN_0023d920(param_1);\r\n    }\r\n    *(int *)(\u0026DAT_0056c1d8 + param_2 * 0x10) \u003d param_1;\r\n    (\u0026DAT_0056c1dc)[param_2 * 0x10] \u003d (\u0026DAT_00568c20)[param_1 * 0x28];\r\n  }\r\n  return;\r\n}\r\n\r\n"
+    },
+    {
+      "entry": "0023d920",
+      "name_hypothesis": "FUN_0023d920",
+      "ranges": [
+        {
+          "first": "0023d920",
+          "last": "0023daee"
+        }
+      ],
+      "instructions": [
+        {
+          "address": "0023d920",
+          "bytes_hex": "55",
+          "instruction": "PUSH EBP"
+        },
+        {
+          "address": "0023d921",
+          "bytes_hex": "8bec",
+          "instruction": "MOV EBP,ESP"
+        },
+        {
+          "address": "0023d923",
+          "bytes_hex": "81ecc4000000",
+          "instruction": "SUB ESP,0xc4"
+        },
+        {
+          "address": "0023d929",
+          "bytes_hex": "a1d0f75a00",
+          "instruction": "MOV EAX,[0x005af7d0]"
+        },
+        {
+          "address": "0023d92e",
+          "bytes_hex": "8945fc",
+          "instruction": "MOV dword ptr [EBP + -0x4],EAX"
+        },
+        {
+          "address": "0023d931",
+          "bytes_hex": "56",
+          "instruction": "PUSH ESI"
+        },
+        {
+          "address": "0023d932",
+          "bytes_hex": "57",
+          "instruction": "PUSH EDI"
+        },
+        {
+          "address": "0023d933",
+          "bytes_hex": "837d08ff",
+          "instruction": "CMP dword ptr [EBP + 0x8],-0x1"
+        },
+        {
+          "address": "0023d937",
+          "bytes_hex": "7505",
+          "instruction": "JNZ 0x0023d93e"
+        },
+        {
+          "address": "0023d939",
+          "bytes_hex": "e9a3010000",
+          "instruction": "JMP 0x0023dae1"
+        },
+        {
+          "address": "0023d93e",
+          "bytes_hex": "c68560ffffff00",
+          "instruction": "MOV byte ptr [EBP + 0xffffff60],0x0"
+        },
+        {
+          "address": "0023d945",
+          "bytes_hex": "8b4508",
+          "instruction": "MOV EAX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d948",
+          "bytes_hex": "6bc028",
+          "instruction": "IMUL EAX,EAX,0x28"
+        },
+        {
+          "address": "0023d94b",
+          "bytes_hex": "8b88248c5600",
+          "instruction": "MOV ECX,dword ptr [EAX + 0x568c24]"
+        },
+        {
+          "address": "0023d951",
+          "bytes_hex": "898d5cffffff",
+          "instruction": "MOV dword ptr [EBP + 0xffffff5c],ECX"
+        },
+        {
+          "address": "0023d957",
+          "bytes_hex": "8b955cffffff",
+          "instruction": "MOV EDX,dword ptr [EBP + 0xffffff5c]"
+        },
+        {
+          "address": "0023d95d",
+          "bytes_hex": "899558ffffff",
+          "instruction": "MOV dword ptr [EBP + 0xffffff58],EDX"
+        },
+        {
+          "address": "0023d963",
+          "bytes_hex": "8b855cffffff",
+          "instruction": "MOV EAX,dword ptr [EBP + 0xffffff5c]"
+        },
+        {
+          "address": "0023d969",
+          "bytes_hex": "8a08",
+          "instruction": "MOV CL,byte ptr [EAX]"
+        },
+        {
+          "address": "0023d96b",
+          "bytes_hex": "888d57ffffff",
+          "instruction": "MOV byte ptr [EBP + 0xffffff57],CL"
+        },
+        {
+          "address": "0023d971",
+          "bytes_hex": "ff855cffffff",
+          "instruction": "INC dword ptr [EBP + 0xffffff5c]"
+        },
+        {
+          "address": "0023d977",
+          "bytes_hex": "80bd57ffffff00",
+          "instruction": "CMP byte ptr [EBP + 0xffffff57],0x0"
+        },
+        {
+          "address": "0023d97e",
+          "bytes_hex": "75e3",
+          "instruction": "JNZ 0x0023d963"
+        },
+        {
+          "address": "0023d980",
+          "bytes_hex": "8b955cffffff",
+          "instruction": "MOV EDX,dword ptr [EBP + 0xffffff5c]"
+        },
+        {
+          "address": "0023d986",
+          "bytes_hex": "2b9558ffffff",
+          "instruction": "SUB EDX,dword ptr [EBP + 0xffffff58]"
+        },
+        {
+          "address": "0023d98c",
+          "bytes_hex": "8b8558ffffff",
+          "instruction": "MOV EAX,dword ptr [EBP + 0xffffff58]"
+        },
+        {
+          "address": "0023d992",
+          "bytes_hex": "898550ffffff",
+          "instruction": "MOV dword ptr [EBP + 0xffffff50],EAX"
+        },
+        {
+          "address": "0023d998",
+          "bytes_hex": "89954cffffff",
+          "instruction": "MOV dword ptr [EBP + 0xffffff4c],EDX"
+        },
+        {
+          "address": "0023d99e",
+          "bytes_hex": "8d8d60ffffff",
+          "instruction": "LEA ECX,[EBP + 0xffffff60]"
+        },
+        {
+          "address": "0023d9a4",
+          "bytes_hex": "83c1ff",
+          "instruction": "ADD ECX,-0x1"
+        },
+        {
+          "address": "0023d9a7",
+          "bytes_hex": "898d48ffffff",
+          "instruction": "MOV dword ptr [EBP + 0xffffff48],ECX"
+        },
+        {
+          "address": "0023d9ad",
+          "bytes_hex": "8b9548ffffff",
+          "instruction": "MOV EDX,dword ptr [EBP + 0xffffff48]"
+        },
+        {
+          "address": "0023d9b3",
+          "bytes_hex": "8a4201",
+          "instruction": "MOV AL,byte ptr [EDX + 0x1]"
+        },
+        {
+          "address": "0023d9b6",
+          "bytes_hex": "888547ffffff",
+          "instruction": "MOV byte ptr [EBP + 0xffffff47],AL"
+        },
+        {
+          "address": "0023d9bc",
+          "bytes_hex": "ff8548ffffff",
+          "instruction": "INC dword ptr [EBP + 0xffffff48]"
+        },
+        {
+          "address": "0023d9c2",
+          "bytes_hex": "80bd47ffffff00",
+          "instruction": "CMP byte ptr [EBP + 0xffffff47],0x0"
+        },
+        {
+          "address": "0023d9c9",
+          "bytes_hex": "75e2",
+          "instruction": "JNZ 0x0023d9ad"
+        },
+        {
+          "address": "0023d9cb",
+          "bytes_hex": "8bbd48ffffff",
+          "instruction": "MOV EDI,dword ptr [EBP + 0xffffff48]"
+        },
+        {
+          "address": "0023d9d1",
+          "bytes_hex": "8bb550ffffff",
+          "instruction": "MOV ESI,dword ptr [EBP + 0xffffff50]"
+        },
+        {
+          "address": "0023d9d7",
+          "bytes_hex": "8b954cffffff",
+          "instruction": "MOV EDX,dword ptr [EBP + 0xffffff4c]"
+        },
+        {
+          "address": "0023d9dd",
+          "bytes_hex": "8bca",
+          "instruction": "MOV ECX,EDX"
+        },
+        {
+          "address": "0023d9df",
+          "bytes_hex": "c1e902",
+          "instruction": "SHR ECX,0x2"
+        },
+        {
+          "address": "0023d9e2",
+          "bytes_hex": "f3a5",
+          "instruction": "MOVSD.REP ES:EDI,ESI"
+        },
+        {
+          "address": "0023d9e4",
+          "bytes_hex": "8bca",
+          "instruction": "MOV ECX,EDX"
+        },
+        {
+          "address": "0023d9e6",
+          "bytes_hex": "83e103",
+          "instruction": "AND ECX,0x3"
+        },
+        {
+          "address": "0023d9e9",
+          "bytes_hex": "f3a4",
+          "instruction": "MOVSB.REP ES:EDI,ESI"
+        },
+        {
+          "address": "0023d9eb",
+          "bytes_hex": "8d8560ffffff",
+          "instruction": "LEA EAX,[EBP + 0xffffff60]"
+        },
+        {
+          "address": "0023d9f1",
+          "bytes_hex": "83c0ff",
+          "instruction": "ADD EAX,-0x1"
+        },
+        {
+          "address": "0023d9f4",
+          "bytes_hex": "898540ffffff",
+          "instruction": "MOV dword ptr [EBP + 0xffffff40],EAX"
+        },
+        {
+          "address": "0023d9fa",
+          "bytes_hex": "8b8d40ffffff",
+          "instruction": "MOV ECX,dword ptr [EBP + 0xffffff40]"
+        },
+        {
+          "address": "0023da00",
+          "bytes_hex": "8a5101",
+          "instruction": "MOV DL,byte ptr [ECX + 0x1]"
+        },
+        {
+          "address": "0023da03",
+          "bytes_hex": "88953fffffff",
+          "instruction": "MOV byte ptr [EBP + 0xffffff3f],DL"
+        },
+        {
+          "address": "0023da09",
+          "bytes_hex": "ff8540ffffff",
+          "instruction": "INC dword ptr [EBP + 0xffffff40]"
+        },
+        {
+          "address": "0023da0f",
+          "bytes_hex": "80bd3fffffff00",
+          "instruction": "CMP byte ptr [EBP + 0xffffff3f],0x0"
+        },
+        {
+          "address": "0023da16",
+          "bytes_hex": "75e2",
+          "instruction": "JNZ 0x0023d9fa"
+        },
+        {
+          "address": "0023da18",
+          "bytes_hex": "8bbd40ffffff",
+          "instruction": "MOV EDI,dword ptr [EBP + 0xffffff40]"
+        },
+        {
+          "address": "0023da1e",
+          "bytes_hex": "a18c435000",
+          "instruction": "MOV EAX,[0x0050438c]"
+        },
+        {
+          "address": "0023da23",
+          "bytes_hex": "8907",
+          "instruction": "MOV dword ptr [EDI],EAX"
+        },
+        {
+          "address": "0023da25",
+          "bytes_hex": "8a0d90435000",
+          "instruction": "MOV CL,byte ptr [0x00504390]"
+        },
+        {
+          "address": "0023da2b",
+          "bytes_hex": "884f04",
+          "instruction": "MOV byte ptr [EDI + 0x4],CL"
+        },
+        {
+          "address": "0023da2e",
+          "bytes_hex": "8b5508",
+          "instruction": "MOV EDX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023da31",
+          "bytes_hex": "6bd228",
+          "instruction": "IMUL EDX,EDX,0x28"
+        },
+        {
+          "address": "0023da34",
+          "bytes_hex": "83ba188c560000",
+          "instruction": "CMP dword ptr [EDX + 0x568c18],0x0"
+        },
+        {
+          "address": "0023da3b",
+          "bytes_hex": "0f85a0000000",
+          "instruction": "JNZ 0x0023dae1"
+        },
+        {
+          "address": "0023da41",
+          "bytes_hex": "8b4508",
+          "instruction": "MOV EAX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023da44",
+          "bytes_hex": "6bc028",
+          "instruction": "IMUL EAX,EAX,0x28"
+        },
+        {
+          "address": "0023da47",
+          "bytes_hex": "83b81c8c560000",
+          "instruction": "CMP dword ptr [EAX + 0x568c1c],0x0"
+        },
+        {
+          "address": "0023da4e",
+          "bytes_hex": "0f858d000000",
+          "instruction": "JNZ 0x0023dae1"
+        },
+        {
+          "address": "0023da54",
+          "bytes_hex": "8b4d08",
+          "instruction": "MOV ECX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023da57",
+          "bytes_hex": "6bc928",
+          "instruction": "IMUL ECX,ECX,0x28"
+        },
+        {
+          "address": "0023da5a",
+          "bytes_hex": "c781188c560000000000",
+          "instruction": "MOV dword ptr [ECX + 0x568c18],0x0"
+        },
+        {
+          "address": "0023da64",
+          "bytes_hex": "8b5508",
+          "instruction": "MOV EDX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023da67",
+          "bytes_hex": "6bd228",
+          "instruction": "IMUL EDX,EDX,0x28"
+        },
+        {
+          "address": "0023da6a",
+          "bytes_hex": "c7821c8c560001000000",
+          "instruction": "MOV dword ptr [EDX + 0x568c1c],0x1"
+        },
+        {
+          "address": "0023da74",
+          "bytes_hex": "8b4508",
+          "instruction": "MOV EAX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023da77",
+          "bytes_hex": "6bc028",
+          "instruction": "IMUL EAX,EAX,0x28"
+        },
+        {
+          "address": "0023da7a",
+          "bytes_hex": "c780288c5600f0da2300",
+          "instruction": "MOV dword ptr [EAX + 0x568c28],0x23daf0"
+        },
+        {
+          "address": "0023da84",
+          "bytes_hex": "8b4d08",
+          "instruction": "MOV ECX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023da87",
+          "bytes_hex": "6bc928",
+          "instruction": "IMUL ECX,ECX,0x28"
+        },
+        {
+          "address": "0023da8a",
+          "bytes_hex": "c781308c560000000000",
+          "instruction": "MOV dword ptr [ECX + 0x568c30],0x0"
+        },
+        {
+          "address": "0023da94",
+          "bytes_hex": "8b5508",
+          "instruction": "MOV EDX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023da97",
+          "bytes_hex": "6bd228",
+          "instruction": "IMUL EDX,EDX,0x28"
+        },
+        {
+          "address": "0023da9a",
+          "bytes_hex": "81c2388c5600",
+          "instruction": "ADD EDX,0x568c38"
+        },
+        {
+          "address": "0023daa0",
+          "bytes_hex": "8b4508",
+          "instruction": "MOV EAX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023daa3",
+          "bytes_hex": "6bc028",
+          "instruction": "IMUL EAX,EAX,0x28"
+        },
+        {
+          "address": "0023daa6",
+          "bytes_hex": "8990348c5600",
+          "instruction": "MOV dword ptr [EAX + 0x568c34],EDX"
+        },
+        {
+          "address": "0023daac",
+          "bytes_hex": "8b4d08",
+          "instruction": "MOV ECX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023daaf",
+          "bytes_hex": "6bc928",
+          "instruction": "IMUL ECX,ECX,0x28"
+        },
+        {
+          "address": "0023dab2",
+          "bytes_hex": "c7812c8c560000000000",
+          "instruction": "MOV dword ptr [ECX + 0x568c2c],0x0"
+        },
+        {
+          "address": "0023dabc",
+          "bytes_hex": "8b5508",
+          "instruction": "MOV EDX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023dabf",
+          "bytes_hex": "6bd228",
+          "instruction": "IMUL EDX,EDX,0x28"
+        },
+        {
+          "address": "0023dac2",
+          "bytes_hex": "81c2288c5600",
+          "instruction": "ADD EDX,0x568c28"
+        },
+        {
+          "address": "0023dac8",
+          "bytes_hex": "52",
+          "instruction": "PUSH EDX"
+        },
+        {
+          "address": "0023dac9",
+          "bytes_hex": "8d8560ffffff",
+          "instruction": "LEA EAX,[EBP + 0xffffff60]"
+        },
+        {
+          "address": "0023dacf",
+          "bytes_hex": "50",
+          "instruction": "PUSH EAX"
+        },
+        {
+          "address": "0023dad0",
+          "bytes_hex": "6a00",
+          "instruction": "PUSH 0x0"
+        },
+        {
+          "address": "0023dad2",
+          "bytes_hex": "8b0dc0e35b00",
+          "instruction": "MOV ECX,dword ptr [0x005be3c0]"
+        },
+        {
+          "address": "0023dad8",
+          "bytes_hex": "51",
+          "instruction": "PUSH ECX"
+        },
+        {
+          "address": "0023dad9",
+          "bytes_hex": "e892e61300",
+          "instruction": "CALL 0x0037c170"
+        },
+        {
+          "address": "0023dade",
+          "bytes_hex": "83c410",
+          "instruction": "ADD ESP,0x10"
+        },
+        {
+          "address": "0023dae1",
+          "bytes_hex": "8b4dfc",
+          "instruction": "MOV ECX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023dae4",
+          "bytes_hex": "e808a81500",
+          "instruction": "CALL 0x003982f1"
+        },
+        {
+          "address": "0023dae9",
+          "bytes_hex": "5f",
+          "instruction": "POP EDI"
+        },
+        {
+          "address": "0023daea",
+          "bytes_hex": "5e",
+          "instruction": "POP ESI"
+        },
+        {
+          "address": "0023daeb",
+          "bytes_hex": "8be5",
+          "instruction": "MOV ESP,EBP"
+        },
+        {
+          "address": "0023daed",
+          "bytes_hex": "5d",
+          "instruction": "POP EBP"
+        },
+        {
+          "address": "0023daee",
+          "bytes_hex": "c3",
+          "instruction": "RET"
+        }
+      ],
+      "decompile_completed": true,
+      "decompiler_error": "",
+      "orientation_c": "\r\n/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */\r\n\r\nvoid FUN_0023d920(int param_1)\r\n\r\n{\r\n  char cVar1;\r\n  char *pcVar2;\r\n  undefined4 *puVar3;\r\n  uint uVar4;\r\n  char *pcVar5;\r\n  undefined4 *local_c4;\r\n  char *local_bc;\r\n  undefined1 local_a8 [4];\r\n  char local_a4 [4];\r\n  undefined1 local_a0 [152];\r\n  undefined4 local_8;\r\n  \r\n  local_8 \u003d DAT_005af7d0;\r\n  if (param_1 !\u003d -1) {\r\n    local_a4[0] \u003d \u0027\\0\u0027;\r\n    pcVar2 \u003d (\u0026PTR_s_permanent_00568c24)[param_1 * 10];\r\n    local_a8 \u003d (undefined1  [4])pcVar2;\r\n    do {\r\n      cVar1 \u003d *(char *)local_a8;\r\n      local_a8 \u003d (undefined1  [4])((int)local_a8 + 1);\r\n    } while (cVar1 !\u003d \u0027\\0\u0027);\r\n    local_bc \u003d local_a8 + 3;\r\n    do {\r\n      pcVar5 \u003d local_bc + 1;\r\n      local_bc \u003d local_bc + 1;\r\n    } while (*pcVar5 !\u003d \u0027\\0\u0027);\r\n    pcVar5 \u003d pcVar2;\r\n    for (uVar4 \u003d (uint)((int)local_a8 - (int)pcVar2) \u003e\u003e 2; uVar4 !\u003d 0; uVar4 \u003d uVar4 - 1) {\r\n      *(undefined4 *)local_bc \u003d *(undefined4 *)pcVar5;\r\n      pcVar5 \u003d pcVar5 + 4;\r\n      local_bc \u003d local_bc + 4;\r\n    }\r\n    for (uVar4 \u003d (int)local_a8 - (int)pcVar2 \u0026 3; uVar4 !\u003d 0; uVar4 \u003d uVar4 - 1) {\r\n      *local_bc \u003d *pcVar5;\r\n      pcVar5 \u003d pcVar5 + 1;\r\n      local_bc \u003d local_bc + 1;\r\n    }\r\n    puVar3 \u003d (undefined4 *)(local_a8 + 3);\r\n    do {\r\n      local_c4 \u003d puVar3;\r\n      puVar3 \u003d (undefined4 *)((int)local_c4 + 1);\r\n    } while (*(char *)((int)local_c4 + 1) !\u003d \u0027\\0\u0027);\r\n    *(undefined4 *)((int)local_c4 + 1) \u003d DAT_0050438c;\r\n    *(undefined1 *)((int)local_c4 + 5) \u003d DAT_00504390;\r\n    if ((*(int *)(\u0026DAT_00568c18 + param_1 * 0x28) \u003d\u003d 0) \u0026\u0026\r\n       (*(int *)(\u0026DAT_00568c1c + param_1 * 0x28) \u003d\u003d 0)) {\r\n      *(undefined4 *)(\u0026DAT_00568c18 + param_1 * 0x28) \u003d 0;\r\n      *(undefined4 *)(\u0026DAT_00568c1c + param_1 * 0x28) \u003d 1;\r\n      *(code **)(\u0026DAT_00568c28 + param_1 * 0x28) \u003d FUN_0023daf0;\r\n      *(undefined4 *)(\u0026DAT_00568c30 + param_1 * 0x28) \u003d 0;\r\n      *(int *)(\u0026DAT_00568c34 + param_1 * 0x28) \u003d param_1 * 0x28 + 0x568c38;\r\n      *(undefined4 *)(\u0026DAT_00568c2c + param_1 * 0x28) \u003d 0;\r\n      FUN_0037c170(DAT_005be3c0,0,local_a4,\u0026DAT_00568c28 + param_1 * 0x28);\r\n    }\r\n  }\r\n  return;\r\n}\r\n\r\n"
+    },
+    {
+      "entry": "0023daf0",
+      "name_hypothesis": "FUN_0023daf0",
+      "ranges": [
+        {
+          "first": "0023daf0",
+          "last": "0023dc2c"
+        }
+      ],
+      "instructions": [
+        {
+          "address": "0023daf0",
+          "bytes_hex": "55",
+          "instruction": "PUSH EBP"
+        },
+        {
+          "address": "0023daf1",
+          "bytes_hex": "8bec",
+          "instruction": "MOV EBP,ESP"
+        },
+        {
+          "address": "0023daf3",
+          "bytes_hex": "83ec14",
+          "instruction": "SUB ESP,0x14"
+        },
+        {
+          "address": "0023daf6",
+          "bytes_hex": "c745fcffffffff",
+          "instruction": "MOV dword ptr [EBP + -0x4],0xffffffff"
+        },
+        {
+          "address": "0023dafd",
+          "bytes_hex": "c745f800000000",
+          "instruction": "MOV dword ptr [EBP + -0x8],0x0"
+        },
+        {
+          "address": "0023db04",
+          "bytes_hex": "c745f400000000",
+          "instruction": "MOV dword ptr [EBP + -0xc],0x0"
+        },
+        {
+          "address": "0023db0b",
+          "bytes_hex": "837d0800",
+          "instruction": "CMP dword ptr [EBP + 0x8],0x0"
+        },
+        {
+          "address": "0023db0f",
+          "bytes_hex": "7509",
+          "instruction": "JNZ 0x0023db1a"
+        },
+        {
+          "address": "0023db11",
+          "bytes_hex": "33c0",
+          "instruction": "XOR EAX,EAX"
+        },
+        {
+          "address": "0023db13",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023db11"
+        },
+        {
+          "address": "0023db15",
+          "bytes_hex": "e90f010000",
+          "instruction": "JMP 0x0023dc29"
+        },
+        {
+          "address": "0023db1a",
+          "bytes_hex": "8b4d08",
+          "instruction": "MOV ECX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023db1d",
+          "bytes_hex": "83790c00",
+          "instruction": "CMP dword ptr [ECX + 0xc],0x0"
+        },
+        {
+          "address": "0023db21",
+          "bytes_hex": "7509",
+          "instruction": "JNZ 0x0023db2c"
+        },
+        {
+          "address": "0023db23",
+          "bytes_hex": "33d2",
+          "instruction": "XOR EDX,EDX"
+        },
+        {
+          "address": "0023db25",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023db23"
+        },
+        {
+          "address": "0023db27",
+          "bytes_hex": "e9fd000000",
+          "instruction": "JMP 0x0023dc29"
+        },
+        {
+          "address": "0023db2c",
+          "bytes_hex": "8b4508",
+          "instruction": "MOV EAX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023db2f",
+          "bytes_hex": "8b480c",
+          "instruction": "MOV ECX,dword ptr [EAX + 0xc]"
+        },
+        {
+          "address": "0023db32",
+          "bytes_hex": "894df8",
+          "instruction": "MOV dword ptr [EBP + -0x8],ECX"
+        },
+        {
+          "address": "0023db35",
+          "bytes_hex": "8b55f8",
+          "instruction": "MOV EDX,dword ptr [EBP + -0x8]"
+        },
+        {
+          "address": "0023db38",
+          "bytes_hex": "8b02",
+          "instruction": "MOV EAX,dword ptr [EDX]"
+        },
+        {
+          "address": "0023db3a",
+          "bytes_hex": "8945fc",
+          "instruction": "MOV dword ptr [EBP + -0x4],EAX"
+        },
+        {
+          "address": "0023db3d",
+          "bytes_hex": "8b4d08",
+          "instruction": "MOV ECX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023db40",
+          "bytes_hex": "8b5108",
+          "instruction": "MOV EDX,dword ptr [ECX + 0x8]"
+        },
+        {
+          "address": "0023db43",
+          "bytes_hex": "8955f4",
+          "instruction": "MOV dword ptr [EBP + -0xc],EDX"
+        },
+        {
+          "address": "0023db46",
+          "bytes_hex": "8b4508",
+          "instruction": "MOV EAX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023db49",
+          "bytes_hex": "8b4804",
+          "instruction": "MOV ECX,dword ptr [EAX + 0x4]"
+        },
+        {
+          "address": "0023db4c",
+          "bytes_hex": "894df0",
+          "instruction": "MOV dword ptr [EBP + -0x10],ECX"
+        },
+        {
+          "address": "0023db4f",
+          "bytes_hex": "837df004",
+          "instruction": "CMP dword ptr [EBP + -0x10],0x4"
+        },
+        {
+          "address": "0023db53",
+          "bytes_hex": "0f87cc000000",
+          "instruction": "JA 0x0023dc25"
+        },
+        {
+          "address": "0023db59",
+          "bytes_hex": "8b55f0",
+          "instruction": "MOV EDX,dword ptr [EBP + -0x10]"
+        },
+        {
+          "address": "0023db5c",
+          "bytes_hex": "ff24952ddc2300",
+          "instruction": "JMP dword ptr [EDX*0x4 + 0x23dc2d]"
+        },
+        {
+          "address": "0023db63",
+          "bytes_hex": "8b45fc",
+          "instruction": "MOV EAX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023db66",
+          "bytes_hex": "6bc028",
+          "instruction": "IMUL EAX,EAX,0x28"
+        },
+        {
+          "address": "0023db69",
+          "bytes_hex": "8b4d08",
+          "instruction": "MOV ECX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023db6c",
+          "bytes_hex": "8b5108",
+          "instruction": "MOV EDX,dword ptr [ECX + 0x8]"
+        },
+        {
+          "address": "0023db6f",
+          "bytes_hex": "8990188c5600",
+          "instruction": "MOV dword ptr [EAX + 0x568c18],EDX"
+        },
+        {
+          "address": "0023db75",
+          "bytes_hex": "8b45fc",
+          "instruction": "MOV EAX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023db78",
+          "bytes_hex": "6bc028",
+          "instruction": "IMUL EAX,EAX,0x28"
+        },
+        {
+          "address": "0023db7b",
+          "bytes_hex": "c7801c8c560000000000",
+          "instruction": "MOV dword ptr [EAX + 0x568c1c],0x0"
+        },
+        {
+          "address": "0023db85",
+          "bytes_hex": "e99f000000",
+          "instruction": "JMP 0x0023dc29"
+        },
+        {
+          "address": "0023db8a",
+          "bytes_hex": "33c9",
+          "instruction": "XOR ECX,ECX"
+        },
+        {
+          "address": "0023db8c",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023db8a"
+        },
+        {
+          "address": "0023db8e",
+          "bytes_hex": "8b55fc",
+          "instruction": "MOV EDX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023db91",
+          "bytes_hex": "52",
+          "instruction": "PUSH EDX"
+        },
+        {
+          "address": "0023db92",
+          "bytes_hex": "e8d9000000",
+          "instruction": "CALL 0x0023dc70"
+        },
+        {
+          "address": "0023db97",
+          "bytes_hex": "83c404",
+          "instruction": "ADD ESP,0x4"
+        },
+        {
+          "address": "0023db9a",
+          "bytes_hex": "e98a000000",
+          "instruction": "JMP 0x0023dc29"
+        },
+        {
+          "address": "0023db9f",
+          "bytes_hex": "8b45f4",
+          "instruction": "MOV EAX,dword ptr [EBP + -0xc]"
+        },
+        {
+          "address": "0023dba2",
+          "bytes_hex": "8945ec",
+          "instruction": "MOV dword ptr [EBP + -0x14],EAX"
+        },
+        {
+          "address": "0023dba5",
+          "bytes_hex": "837dec0a",
+          "instruction": "CMP dword ptr [EBP + -0x14],0xa"
+        },
+        {
+          "address": "0023dba9",
+          "bytes_hex": "774c",
+          "instruction": "JA 0x0023dbf7"
+        },
+        {
+          "address": "0023dbab",
+          "bytes_hex": "8b4dec",
+          "instruction": "MOV ECX,dword ptr [EBP + -0x14]"
+        },
+        {
+          "address": "0023dbae",
+          "bytes_hex": "ff248d41dc2300",
+          "instruction": "JMP dword ptr [ECX*0x4 + 0x23dc41]"
+        },
+        {
+          "address": "0023dbb5",
+          "bytes_hex": "33d2",
+          "instruction": "XOR EDX,EDX"
+        },
+        {
+          "address": "0023dbb7",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023dbb5"
+        },
+        {
+          "address": "0023dbb9",
+          "bytes_hex": "eb40",
+          "instruction": "JMP 0x0023dbfb"
+        },
+        {
+          "address": "0023dbbb",
+          "bytes_hex": "33c0",
+          "instruction": "XOR EAX,EAX"
+        },
+        {
+          "address": "0023dbbd",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023dbbb"
+        },
+        {
+          "address": "0023dbbf",
+          "bytes_hex": "eb3a",
+          "instruction": "JMP 0x0023dbfb"
+        },
+        {
+          "address": "0023dbc1",
+          "bytes_hex": "33c9",
+          "instruction": "XOR ECX,ECX"
+        },
+        {
+          "address": "0023dbc3",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023dbc1"
+        },
+        {
+          "address": "0023dbc5",
+          "bytes_hex": "eb34",
+          "instruction": "JMP 0x0023dbfb"
+        },
+        {
+          "address": "0023dbc7",
+          "bytes_hex": "33d2",
+          "instruction": "XOR EDX,EDX"
+        },
+        {
+          "address": "0023dbc9",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023dbc7"
+        },
+        {
+          "address": "0023dbcb",
+          "bytes_hex": "eb2e",
+          "instruction": "JMP 0x0023dbfb"
+        },
+        {
+          "address": "0023dbcd",
+          "bytes_hex": "33c0",
+          "instruction": "XOR EAX,EAX"
+        },
+        {
+          "address": "0023dbcf",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023dbcd"
+        },
+        {
+          "address": "0023dbd1",
+          "bytes_hex": "eb28",
+          "instruction": "JMP 0x0023dbfb"
+        },
+        {
+          "address": "0023dbd3",
+          "bytes_hex": "33c9",
+          "instruction": "XOR ECX,ECX"
+        },
+        {
+          "address": "0023dbd5",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023dbd3"
+        },
+        {
+          "address": "0023dbd7",
+          "bytes_hex": "eb22",
+          "instruction": "JMP 0x0023dbfb"
+        },
+        {
+          "address": "0023dbd9",
+          "bytes_hex": "33d2",
+          "instruction": "XOR EDX,EDX"
+        },
+        {
+          "address": "0023dbdb",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023dbd9"
+        },
+        {
+          "address": "0023dbdd",
+          "bytes_hex": "eb1c",
+          "instruction": "JMP 0x0023dbfb"
+        },
+        {
+          "address": "0023dbdf",
+          "bytes_hex": "33c0",
+          "instruction": "XOR EAX,EAX"
+        },
+        {
+          "address": "0023dbe1",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023dbdf"
+        },
+        {
+          "address": "0023dbe3",
+          "bytes_hex": "eb16",
+          "instruction": "JMP 0x0023dbfb"
+        },
+        {
+          "address": "0023dbe5",
+          "bytes_hex": "33c9",
+          "instruction": "XOR ECX,ECX"
+        },
+        {
+          "address": "0023dbe7",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023dbe5"
+        },
+        {
+          "address": "0023dbe9",
+          "bytes_hex": "eb10",
+          "instruction": "JMP 0x0023dbfb"
+        },
+        {
+          "address": "0023dbeb",
+          "bytes_hex": "33d2",
+          "instruction": "XOR EDX,EDX"
+        },
+        {
+          "address": "0023dbed",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023dbeb"
+        },
+        {
+          "address": "0023dbef",
+          "bytes_hex": "eb0a",
+          "instruction": "JMP 0x0023dbfb"
+        },
+        {
+          "address": "0023dbf1",
+          "bytes_hex": "33c0",
+          "instruction": "XOR EAX,EAX"
+        },
+        {
+          "address": "0023dbf3",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023dbf1"
+        },
+        {
+          "address": "0023dbf5",
+          "bytes_hex": "eb04",
+          "instruction": "JMP 0x0023dbfb"
+        },
+        {
+          "address": "0023dbf7",
+          "bytes_hex": "33c9",
+          "instruction": "XOR ECX,ECX"
+        },
+        {
+          "address": "0023dbf9",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023dbf7"
+        },
+        {
+          "address": "0023dbfb",
+          "bytes_hex": "8b55fc",
+          "instruction": "MOV EDX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023dbfe",
+          "bytes_hex": "52",
+          "instruction": "PUSH EDX"
+        },
+        {
+          "address": "0023dbff",
+          "bytes_hex": "e86c000000",
+          "instruction": "CALL 0x0023dc70"
+        },
+        {
+          "address": "0023dc04",
+          "bytes_hex": "83c404",
+          "instruction": "ADD ESP,0x4"
+        },
+        {
+          "address": "0023dc07",
+          "bytes_hex": "eb20",
+          "instruction": "JMP 0x0023dc29"
+        },
+        {
+          "address": "0023dc09",
+          "bytes_hex": "8b45fc",
+          "instruction": "MOV EAX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023dc0c",
+          "bytes_hex": "50",
+          "instruction": "PUSH EAX"
+        },
+        {
+          "address": "0023dc0d",
+          "bytes_hex": "e85e000000",
+          "instruction": "CALL 0x0023dc70"
+        },
+        {
+          "address": "0023dc12",
+          "bytes_hex": "83c404",
+          "instruction": "ADD ESP,0x4"
+        },
+        {
+          "address": "0023dc15",
+          "bytes_hex": "eb12",
+          "instruction": "JMP 0x0023dc29"
+        },
+        {
+          "address": "0023dc17",
+          "bytes_hex": "8b4dfc",
+          "instruction": "MOV ECX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023dc1a",
+          "bytes_hex": "51",
+          "instruction": "PUSH ECX"
+        },
+        {
+          "address": "0023dc1b",
+          "bytes_hex": "e850000000",
+          "instruction": "CALL 0x0023dc70"
+        },
+        {
+          "address": "0023dc20",
+          "bytes_hex": "83c404",
+          "instruction": "ADD ESP,0x4"
+        },
+        {
+          "address": "0023dc23",
+          "bytes_hex": "eb04",
+          "instruction": "JMP 0x0023dc29"
+        },
+        {
+          "address": "0023dc25",
+          "bytes_hex": "33d2",
+          "instruction": "XOR EDX,EDX"
+        },
+        {
+          "address": "0023dc27",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023dc25"
+        },
+        {
+          "address": "0023dc29",
+          "bytes_hex": "8be5",
+          "instruction": "MOV ESP,EBP"
+        },
+        {
+          "address": "0023dc2b",
+          "bytes_hex": "5d",
+          "instruction": "POP EBP"
+        },
+        {
+          "address": "0023dc2c",
+          "bytes_hex": "c3",
+          "instruction": "RET"
+        }
+      ],
+      "decompile_completed": true,
+      "decompiler_error": "",
+      "orientation_c": "\r\nvoid FUN_0023daf0(int param_1)\r\n\r\n{\r\n  int iVar1;\r\n  \r\n  if ((param_1 !\u003d 0) \u0026\u0026 (*(int *)(param_1 + 0xc) !\u003d 0)) {\r\n    iVar1 \u003d **(int **)(param_1 + 0xc);\r\n    switch(*(undefined4 *)(param_1 + 4)) {\r\n    case 0:\r\n      *(undefined4 *)(\u0026DAT_00568c18 + iVar1 * 0x28) \u003d *(undefined4 *)(param_1 + 8);\r\n      *(undefined4 *)(\u0026DAT_00568c1c + iVar1 * 0x28) \u003d 0;\r\n      break;\r\n    case 1:\r\n      FUN_0023dc70(iVar1);\r\n      break;\r\n    case 2:\r\n      switch(*(undefined4 *)(param_1 + 8)) {\r\n      case 0:\r\n        break;\r\n      case 1:\r\n        break;\r\n      case 2:\r\n        break;\r\n      case 3:\r\n        break;\r\n      case 4:\r\n        break;\r\n      case 5:\r\n        break;\r\n      case 6:\r\n        break;\r\n      case 7:\r\n        break;\r\n      case 8:\r\n        break;\r\n      case 9:\r\n        break;\r\n      case 10:\r\n      }\r\n      FUN_0023dc70(iVar1);\r\n      break;\r\n    case 3:\r\n      FUN_0023dc70(iVar1);\r\n      break;\r\n    case 4:\r\n      FUN_0023dc70(iVar1);\r\n    }\r\n  }\r\n  return;\r\n}\r\n\r\n"
+    },
+    {
+      "entry": "0023dc70",
+      "name_hypothesis": "FUN_0023dc70",
+      "ranges": [
+        {
+          "first": "0023dc70",
+          "last": "0023dca4"
+        }
+      ],
+      "instructions": [
+        {
+          "address": "0023dc70",
+          "bytes_hex": "55",
+          "instruction": "PUSH EBP"
+        },
+        {
+          "address": "0023dc71",
+          "bytes_hex": "8bec",
+          "instruction": "MOV EBP,ESP"
+        },
+        {
+          "address": "0023dc73",
+          "bytes_hex": "8b4508",
+          "instruction": "MOV EAX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023dc76",
+          "bytes_hex": "6bc028",
+          "instruction": "IMUL EAX,EAX,0x28"
+        },
+        {
+          "address": "0023dc79",
+          "bytes_hex": "c780188c560000000000",
+          "instruction": "MOV dword ptr [EAX + 0x568c18],0x0"
+        },
+        {
+          "address": "0023dc83",
+          "bytes_hex": "8b4d08",
+          "instruction": "MOV ECX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023dc86",
+          "bytes_hex": "6bc928",
+          "instruction": "IMUL ECX,ECX,0x28"
+        },
+        {
+          "address": "0023dc89",
+          "bytes_hex": "c7811c8c560000000000",
+          "instruction": "MOV dword ptr [ECX + 0x568c1c],0x0"
+        },
+        {
+          "address": "0023dc93",
+          "bytes_hex": "8b5508",
+          "instruction": "MOV EDX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023dc96",
+          "bytes_hex": "6bd228",
+          "instruction": "IMUL EDX,EDX,0x28"
+        },
+        {
+          "address": "0023dc99",
+          "bytes_hex": "c7822c8c560000000000",
+          "instruction": "MOV dword ptr [EDX + 0x568c2c],0x0"
+        },
+        {
+          "address": "0023dca3",
+          "bytes_hex": "5d",
+          "instruction": "POP EBP"
+        },
+        {
+          "address": "0023dca4",
+          "bytes_hex": "c3",
+          "instruction": "RET"
+        }
+      ],
+      "decompile_completed": true,
+      "decompiler_error": "",
+      "orientation_c": "\r\nvoid FUN_0023dc70(int param_1)\r\n\r\n{\r\n  *(undefined4 *)(\u0026DAT_00568c18 + param_1 * 0x28) \u003d 0;\r\n  *(undefined4 *)(\u0026DAT_00568c1c + param_1 * 0x28) \u003d 0;\r\n  *(undefined4 *)(\u0026DAT_00568c2c + param_1 * 0x28) \u003d 0;\r\n  return;\r\n}\r\n\r\n"
+    },
+    {
+      "entry": "0023d230",
+      "name_hypothesis": "FUN_0023d230",
+      "ranges": [
+        {
+          "first": "0023d230",
+          "last": "0023d448"
+        }
+      ],
+      "instructions": [
+        {
+          "address": "0023d230",
+          "bytes_hex": "55",
+          "instruction": "PUSH EBP"
+        },
+        {
+          "address": "0023d231",
+          "bytes_hex": "8bec",
+          "instruction": "MOV EBP,ESP"
+        },
+        {
+          "address": "0023d233",
+          "bytes_hex": "81ecc8000000",
+          "instruction": "SUB ESP,0xc8"
+        },
+        {
+          "address": "0023d239",
+          "bytes_hex": "a1d0f75a00",
+          "instruction": "MOV EAX,[0x005af7d0]"
+        },
+        {
+          "address": "0023d23e",
+          "bytes_hex": "8945f8",
+          "instruction": "MOV dword ptr [EBP + -0x8],EAX"
+        },
+        {
+          "address": "0023d241",
+          "bytes_hex": "56",
+          "instruction": "PUSH ESI"
+        },
+        {
+          "address": "0023d242",
+          "bytes_hex": "57",
+          "instruction": "PUSH EDI"
+        },
+        {
+          "address": "0023d243",
+          "bytes_hex": "c745fc00000000",
+          "instruction": "MOV dword ptr [EBP + -0x4],0x0"
+        },
+        {
+          "address": "0023d24a",
+          "bytes_hex": "837d08ff",
+          "instruction": "CMP dword ptr [EBP + 0x8],-0x1"
+        },
+        {
+          "address": "0023d24e",
+          "bytes_hex": "7505",
+          "instruction": "JNZ 0x0023d255"
+        },
+        {
+          "address": "0023d250",
+          "bytes_hex": "e9e6010000",
+          "instruction": "JMP 0x0023d43b"
+        },
+        {
+          "address": "0023d255",
+          "bytes_hex": "837d0800",
+          "instruction": "CMP dword ptr [EBP + 0x8],0x0"
+        },
+        {
+          "address": "0023d259",
+          "bytes_hex": "7c09",
+          "instruction": "JL 0x0023d264"
+        },
+        {
+          "address": "0023d25b",
+          "bytes_hex": "817d0858010000",
+          "instruction": "CMP dword ptr [EBP + 0x8],0x158"
+        },
+        {
+          "address": "0023d262",
+          "bytes_hex": "7c09",
+          "instruction": "JL 0x0023d26d"
+        },
+        {
+          "address": "0023d264",
+          "bytes_hex": "33c0",
+          "instruction": "XOR EAX,EAX"
+        },
+        {
+          "address": "0023d266",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023d264"
+        },
+        {
+          "address": "0023d268",
+          "bytes_hex": "e9ce010000",
+          "instruction": "JMP 0x0023d43b"
+        },
+        {
+          "address": "0023d26d",
+          "bytes_hex": "c68560ffffff00",
+          "instruction": "MOV byte ptr [EBP + 0xffffff60],0x0"
+        },
+        {
+          "address": "0023d274",
+          "bytes_hex": "8b4d08",
+          "instruction": "MOV ECX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d277",
+          "bytes_hex": "6bc928",
+          "instruction": "IMUL ECX,ECX,0x28"
+        },
+        {
+          "address": "0023d27a",
+          "bytes_hex": "8b91248c5600",
+          "instruction": "MOV EDX,dword ptr [ECX + 0x568c24]"
+        },
+        {
+          "address": "0023d280",
+          "bytes_hex": "89955cffffff",
+          "instruction": "MOV dword ptr [EBP + 0xffffff5c],EDX"
+        },
+        {
+          "address": "0023d286",
+          "bytes_hex": "8b855cffffff",
+          "instruction": "MOV EAX,dword ptr [EBP + 0xffffff5c]"
+        },
+        {
+          "address": "0023d28c",
+          "bytes_hex": "898558ffffff",
+          "instruction": "MOV dword ptr [EBP + 0xffffff58],EAX"
+        },
+        {
+          "address": "0023d292",
+          "bytes_hex": "8b8d5cffffff",
+          "instruction": "MOV ECX,dword ptr [EBP + 0xffffff5c]"
+        },
+        {
+          "address": "0023d298",
+          "bytes_hex": "8a11",
+          "instruction": "MOV DL,byte ptr [ECX]"
+        },
+        {
+          "address": "0023d29a",
+          "bytes_hex": "889557ffffff",
+          "instruction": "MOV byte ptr [EBP + 0xffffff57],DL"
+        },
+        {
+          "address": "0023d2a0",
+          "bytes_hex": "ff855cffffff",
+          "instruction": "INC dword ptr [EBP + 0xffffff5c]"
+        },
+        {
+          "address": "0023d2a6",
+          "bytes_hex": "80bd57ffffff00",
+          "instruction": "CMP byte ptr [EBP + 0xffffff57],0x0"
+        },
+        {
+          "address": "0023d2ad",
+          "bytes_hex": "75e3",
+          "instruction": "JNZ 0x0023d292"
+        },
+        {
+          "address": "0023d2af",
+          "bytes_hex": "8b855cffffff",
+          "instruction": "MOV EAX,dword ptr [EBP + 0xffffff5c]"
+        },
+        {
+          "address": "0023d2b5",
+          "bytes_hex": "2b8558ffffff",
+          "instruction": "SUB EAX,dword ptr [EBP + 0xffffff58]"
+        },
+        {
+          "address": "0023d2bb",
+          "bytes_hex": "8b8d58ffffff",
+          "instruction": "MOV ECX,dword ptr [EBP + 0xffffff58]"
+        },
+        {
+          "address": "0023d2c1",
+          "bytes_hex": "898d50ffffff",
+          "instruction": "MOV dword ptr [EBP + 0xffffff50],ECX"
+        },
+        {
+          "address": "0023d2c7",
+          "bytes_hex": "89854cffffff",
+          "instruction": "MOV dword ptr [EBP + 0xffffff4c],EAX"
+        },
+        {
+          "address": "0023d2cd",
+          "bytes_hex": "8d9560ffffff",
+          "instruction": "LEA EDX,[EBP + 0xffffff60]"
+        },
+        {
+          "address": "0023d2d3",
+          "bytes_hex": "83c2ff",
+          "instruction": "ADD EDX,-0x1"
+        },
+        {
+          "address": "0023d2d6",
+          "bytes_hex": "899548ffffff",
+          "instruction": "MOV dword ptr [EBP + 0xffffff48],EDX"
+        },
+        {
+          "address": "0023d2dc",
+          "bytes_hex": "8b8548ffffff",
+          "instruction": "MOV EAX,dword ptr [EBP + 0xffffff48]"
+        },
+        {
+          "address": "0023d2e2",
+          "bytes_hex": "8a4801",
+          "instruction": "MOV CL,byte ptr [EAX + 0x1]"
+        },
+        {
+          "address": "0023d2e5",
+          "bytes_hex": "888d47ffffff",
+          "instruction": "MOV byte ptr [EBP + 0xffffff47],CL"
+        },
+        {
+          "address": "0023d2eb",
+          "bytes_hex": "ff8548ffffff",
+          "instruction": "INC dword ptr [EBP + 0xffffff48]"
+        },
+        {
+          "address": "0023d2f1",
+          "bytes_hex": "80bd47ffffff00",
+          "instruction": "CMP byte ptr [EBP + 0xffffff47],0x0"
+        },
+        {
+          "address": "0023d2f8",
+          "bytes_hex": "75e2",
+          "instruction": "JNZ 0x0023d2dc"
+        },
+        {
+          "address": "0023d2fa",
+          "bytes_hex": "8bbd48ffffff",
+          "instruction": "MOV EDI,dword ptr [EBP + 0xffffff48]"
+        },
+        {
+          "address": "0023d300",
+          "bytes_hex": "8bb550ffffff",
+          "instruction": "MOV ESI,dword ptr [EBP + 0xffffff50]"
+        },
+        {
+          "address": "0023d306",
+          "bytes_hex": "8b954cffffff",
+          "instruction": "MOV EDX,dword ptr [EBP + 0xffffff4c]"
+        },
+        {
+          "address": "0023d30c",
+          "bytes_hex": "8bca",
+          "instruction": "MOV ECX,EDX"
+        },
+        {
+          "address": "0023d30e",
+          "bytes_hex": "c1e902",
+          "instruction": "SHR ECX,0x2"
+        },
+        {
+          "address": "0023d311",
+          "bytes_hex": "f3a5",
+          "instruction": "MOVSD.REP ES:EDI,ESI"
+        },
+        {
+          "address": "0023d313",
+          "bytes_hex": "8bca",
+          "instruction": "MOV ECX,EDX"
+        },
+        {
+          "address": "0023d315",
+          "bytes_hex": "83e103",
+          "instruction": "AND ECX,0x3"
+        },
+        {
+          "address": "0023d318",
+          "bytes_hex": "f3a4",
+          "instruction": "MOVSB.REP ES:EDI,ESI"
+        },
+        {
+          "address": "0023d31a",
+          "bytes_hex": "8d8560ffffff",
+          "instruction": "LEA EAX,[EBP + 0xffffff60]"
+        },
+        {
+          "address": "0023d320",
+          "bytes_hex": "83c0ff",
+          "instruction": "ADD EAX,-0x1"
+        },
+        {
+          "address": "0023d323",
+          "bytes_hex": "898540ffffff",
+          "instruction": "MOV dword ptr [EBP + 0xffffff40],EAX"
+        },
+        {
+          "address": "0023d329",
+          "bytes_hex": "8b8d40ffffff",
+          "instruction": "MOV ECX,dword ptr [EBP + 0xffffff40]"
+        },
+        {
+          "address": "0023d32f",
+          "bytes_hex": "8a5101",
+          "instruction": "MOV DL,byte ptr [ECX + 0x1]"
+        },
+        {
+          "address": "0023d332",
+          "bytes_hex": "88953fffffff",
+          "instruction": "MOV byte ptr [EBP + 0xffffff3f],DL"
+        },
+        {
+          "address": "0023d338",
+          "bytes_hex": "ff8540ffffff",
+          "instruction": "INC dword ptr [EBP + 0xffffff40]"
+        },
+        {
+          "address": "0023d33e",
+          "bytes_hex": "80bd3fffffff00",
+          "instruction": "CMP byte ptr [EBP + 0xffffff3f],0x0"
+        },
+        {
+          "address": "0023d345",
+          "bytes_hex": "75e2",
+          "instruction": "JNZ 0x0023d329"
+        },
+        {
+          "address": "0023d347",
+          "bytes_hex": "8bbd40ffffff",
+          "instruction": "MOV EDI,dword ptr [EBP + 0xffffff40]"
+        },
+        {
+          "address": "0023d34d",
+          "bytes_hex": "a18c435000",
+          "instruction": "MOV EAX,[0x0050438c]"
+        },
+        {
+          "address": "0023d352",
+          "bytes_hex": "8907",
+          "instruction": "MOV dword ptr [EDI],EAX"
+        },
+        {
+          "address": "0023d354",
+          "bytes_hex": "8a0d90435000",
+          "instruction": "MOV CL,byte ptr [0x00504390]"
+        },
+        {
+          "address": "0023d35a",
+          "bytes_hex": "884f04",
+          "instruction": "MOV byte ptr [EDI + 0x4],CL"
+        },
+        {
+          "address": "0023d35d",
+          "bytes_hex": "8b5508",
+          "instruction": "MOV EDX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d360",
+          "bytes_hex": "6bd228",
+          "instruction": "IMUL EDX,EDX,0x28"
+        },
+        {
+          "address": "0023d363",
+          "bytes_hex": "83ba188c560000",
+          "instruction": "CMP dword ptr [EDX + 0x568c18],0x0"
+        },
+        {
+          "address": "0023d36a",
+          "bytes_hex": "742a",
+          "instruction": "JZ 0x0023d396"
+        },
+        {
+          "address": "0023d36c",
+          "bytes_hex": "8b4508",
+          "instruction": "MOV EAX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d36f",
+          "bytes_hex": "6bc028",
+          "instruction": "IMUL EAX,EAX,0x28"
+        },
+        {
+          "address": "0023d372",
+          "bytes_hex": "8b88188c5600",
+          "instruction": "MOV ECX,dword ptr [EAX + 0x568c18]"
+        },
+        {
+          "address": "0023d378",
+          "bytes_hex": "51",
+          "instruction": "PUSH ECX"
+        },
+        {
+          "address": "0023d379",
+          "bytes_hex": "e882f3ffff",
+          "instruction": "CALL 0x0023c700"
+        },
+        {
+          "address": "0023d37e",
+          "bytes_hex": "83c404",
+          "instruction": "ADD ESP,0x4"
+        },
+        {
+          "address": "0023d381",
+          "bytes_hex": "8b5508",
+          "instruction": "MOV EDX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d384",
+          "bytes_hex": "6bd228",
+          "instruction": "IMUL EDX,EDX,0x28"
+        },
+        {
+          "address": "0023d387",
+          "bytes_hex": "c782188c560000000000",
+          "instruction": "MOV dword ptr [EDX + 0x568c18],0x0"
+        },
+        {
+          "address": "0023d391",
+          "bytes_hex": "e9a5000000",
+          "instruction": "JMP 0x0023d43b"
+        },
+        {
+          "address": "0023d396",
+          "bytes_hex": "8b4508",
+          "instruction": "MOV EAX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d399",
+          "bytes_hex": "6bc028",
+          "instruction": "IMUL EAX,EAX,0x28"
+        },
+        {
+          "address": "0023d39c",
+          "bytes_hex": "83b81c8c560001",
+          "instruction": "CMP dword ptr [EAX + 0x568c1c],0x1"
+        },
+        {
+          "address": "0023d3a3",
+          "bytes_hex": "7405",
+          "instruction": "JZ 0x0023d3aa"
+        },
+        {
+          "address": "0023d3a5",
+          "bytes_hex": "e991000000",
+          "instruction": "JMP 0x0023d43b"
+        },
+        {
+          "address": "0023d3aa",
+          "bytes_hex": "8d8d60ffffff",
+          "instruction": "LEA ECX,[EBP + 0xffffff60]"
+        },
+        {
+          "address": "0023d3b0",
+          "bytes_hex": "51",
+          "instruction": "PUSH ECX"
+        },
+        {
+          "address": "0023d3b1",
+          "bytes_hex": "e8eaee1300",
+          "instruction": "CALL 0x0037c2a0"
+        },
+        {
+          "address": "0023d3b6",
+          "bytes_hex": "83c404",
+          "instruction": "ADD ESP,0x4"
+        },
+        {
+          "address": "0023d3b9",
+          "bytes_hex": "8945fc",
+          "instruction": "MOV dword ptr [EBP + -0x4],EAX"
+        },
+        {
+          "address": "0023d3bc",
+          "bytes_hex": "8b55fc",
+          "instruction": "MOV EDX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023d3bf",
+          "bytes_hex": "899538ffffff",
+          "instruction": "MOV dword ptr [EBP + 0xffffff38],EDX"
+        },
+        {
+          "address": "0023d3c5",
+          "bytes_hex": "83bd38ffffff00",
+          "instruction": "CMP dword ptr [EBP + 0xffffff38],0x0"
+        },
+        {
+          "address": "0023d3cc",
+          "bytes_hex": "740b",
+          "instruction": "JZ 0x0023d3d9"
+        },
+        {
+          "address": "0023d3ce",
+          "bytes_hex": "83bd38ffffff01",
+          "instruction": "CMP dword ptr [EBP + 0xffffff38],0x1"
+        },
+        {
+          "address": "0023d3d5",
+          "bytes_hex": "743e",
+          "instruction": "JZ 0x0023d415"
+        },
+        {
+          "address": "0023d3d7",
+          "bytes_hex": "eb4e",
+          "instruction": "JMP 0x0023d427"
+        },
+        {
+          "address": "0023d3d9",
+          "bytes_hex": "8b4508",
+          "instruction": "MOV EAX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d3dc",
+          "bytes_hex": "6bc028",
+          "instruction": "IMUL EAX,EAX,0x28"
+        },
+        {
+          "address": "0023d3df",
+          "bytes_hex": "83b8188c560000",
+          "instruction": "CMP dword ptr [EAX + 0x568c18],0x0"
+        },
+        {
+          "address": "0023d3e6",
+          "bytes_hex": "7417",
+          "instruction": "JZ 0x0023d3ff"
+        },
+        {
+          "address": "0023d3e8",
+          "bytes_hex": "8b4d08",
+          "instruction": "MOV ECX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d3eb",
+          "bytes_hex": "6bc928",
+          "instruction": "IMUL ECX,ECX,0x28"
+        },
+        {
+          "address": "0023d3ee",
+          "bytes_hex": "8b91188c5600",
+          "instruction": "MOV EDX,dword ptr [ECX + 0x568c18]"
+        },
+        {
+          "address": "0023d3f4",
+          "bytes_hex": "52",
+          "instruction": "PUSH EDX"
+        },
+        {
+          "address": "0023d3f5",
+          "bytes_hex": "e806f3ffff",
+          "instruction": "CALL 0x0023c700"
+        },
+        {
+          "address": "0023d3fa",
+          "bytes_hex": "83c404",
+          "instruction": "ADD ESP,0x4"
+        },
+        {
+          "address": "0023d3fd",
+          "bytes_hex": "eb04",
+          "instruction": "JMP 0x0023d403"
+        },
+        {
+          "address": "0023d3ff",
+          "bytes_hex": "33c0",
+          "instruction": "XOR EAX,EAX"
+        },
+        {
+          "address": "0023d401",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023d3ff"
+        },
+        {
+          "address": "0023d403",
+          "bytes_hex": "8b4d08",
+          "instruction": "MOV ECX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d406",
+          "bytes_hex": "6bc928",
+          "instruction": "IMUL ECX,ECX,0x28"
+        },
+        {
+          "address": "0023d409",
+          "bytes_hex": "c781188c560000000000",
+          "instruction": "MOV dword ptr [ECX + 0x568c18],0x0"
+        },
+        {
+          "address": "0023d413",
+          "bytes_hex": "eb26",
+          "instruction": "JMP 0x0023d43b"
+        },
+        {
+          "address": "0023d415",
+          "bytes_hex": "8b5508",
+          "instruction": "MOV EDX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d418",
+          "bytes_hex": "6bd228",
+          "instruction": "IMUL EDX,EDX,0x28"
+        },
+        {
+          "address": "0023d41b",
+          "bytes_hex": "c782188c560000000000",
+          "instruction": "MOV dword ptr [EDX + 0x568c18],0x0"
+        },
+        {
+          "address": "0023d425",
+          "bytes_hex": "eb14",
+          "instruction": "JMP 0x0023d43b"
+        },
+        {
+          "address": "0023d427",
+          "bytes_hex": "33c0",
+          "instruction": "XOR EAX,EAX"
+        },
+        {
+          "address": "0023d429",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023d427"
+        },
+        {
+          "address": "0023d42b",
+          "bytes_hex": "8b4d08",
+          "instruction": "MOV ECX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d42e",
+          "bytes_hex": "6bc928",
+          "instruction": "IMUL ECX,ECX,0x28"
+        },
+        {
+          "address": "0023d431",
+          "bytes_hex": "c781188c560000000000",
+          "instruction": "MOV dword ptr [ECX + 0x568c18],0x0"
+        },
+        {
+          "address": "0023d43b",
+          "bytes_hex": "8b4df8",
+          "instruction": "MOV ECX,dword ptr [EBP + -0x8]"
+        },
+        {
+          "address": "0023d43e",
+          "bytes_hex": "e8aeae1500",
+          "instruction": "CALL 0x003982f1"
+        },
+        {
+          "address": "0023d443",
+          "bytes_hex": "5f",
+          "instruction": "POP EDI"
+        },
+        {
+          "address": "0023d444",
+          "bytes_hex": "5e",
+          "instruction": "POP ESI"
+        },
+        {
+          "address": "0023d445",
+          "bytes_hex": "8be5",
+          "instruction": "MOV ESP,EBP"
+        },
+        {
+          "address": "0023d447",
+          "bytes_hex": "5d",
+          "instruction": "POP EBP"
+        },
+        {
+          "address": "0023d448",
+          "bytes_hex": "c3",
+          "instruction": "RET"
+        }
+      ],
+      "decompile_completed": true,
+      "decompiler_error": "",
+      "orientation_c": "\r\n/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */\r\n\r\nvoid FUN_0023d230(int param_1)\r\n\r\n{\r\n  char cVar1;\r\n  char *pcVar2;\r\n  undefined4 *puVar3;\r\n  uint uVar4;\r\n  char *pcVar5;\r\n  undefined4 *local_c4;\r\n  char *local_bc;\r\n  undefined1 local_a8 [4];\r\n  char local_a4 [4];\r\n  undefined1 local_a0 [148];\r\n  undefined4 local_c;\r\n  int local_8;\r\n  \r\n  local_c \u003d DAT_005af7d0;\r\n  local_8 \u003d 0;\r\n  if (((param_1 !\u003d -1) \u0026\u0026 (-1 \u003c param_1)) \u0026\u0026 (param_1 \u003c 0x158)) {\r\n    local_a4[0] \u003d \u0027\\0\u0027;\r\n    pcVar2 \u003d (\u0026PTR_s_permanent_00568c24)[param_1 * 10];\r\n    local_a8 \u003d (undefined1  [4])pcVar2;\r\n    do {\r\n      cVar1 \u003d *(char *)local_a8;\r\n      local_a8 \u003d (undefined1  [4])((int)local_a8 + 1);\r\n    } while (cVar1 !\u003d \u0027\\0\u0027);\r\n    local_bc \u003d local_a8 + 3;\r\n    do {\r\n      pcVar5 \u003d local_bc + 1;\r\n      local_bc \u003d local_bc + 1;\r\n    } while (*pcVar5 !\u003d \u0027\\0\u0027);\r\n    pcVar5 \u003d pcVar2;\r\n    for (uVar4 \u003d (uint)((int)local_a8 - (int)pcVar2) \u003e\u003e 2; uVar4 !\u003d 0; uVar4 \u003d uVar4 - 1) {\r\n      *(undefined4 *)local_bc \u003d *(undefined4 *)pcVar5;\r\n      pcVar5 \u003d pcVar5 + 4;\r\n      local_bc \u003d local_bc + 4;\r\n    }\r\n    for (uVar4 \u003d (int)local_a8 - (int)pcVar2 \u0026 3; uVar4 !\u003d 0; uVar4 \u003d uVar4 - 1) {\r\n      *local_bc \u003d *pcVar5;\r\n      pcVar5 \u003d pcVar5 + 1;\r\n      local_bc \u003d local_bc + 1;\r\n    }\r\n    puVar3 \u003d (undefined4 *)(local_a8 + 3);\r\n    do {\r\n      local_c4 \u003d puVar3;\r\n      puVar3 \u003d (undefined4 *)((int)local_c4 + 1);\r\n    } while (*(char *)((int)local_c4 + 1) !\u003d \u0027\\0\u0027);\r\n    *(undefined4 *)((int)local_c4 + 1) \u003d DAT_0050438c;\r\n    *(undefined1 *)((int)local_c4 + 5) \u003d DAT_00504390;\r\n    if (*(int *)(\u0026DAT_00568c18 + param_1 * 0x28) \u003d\u003d 0) {\r\n      if (*(int *)(\u0026DAT_00568c1c + param_1 * 0x28) \u003d\u003d 1) {\r\n        local_8 \u003d FUN_0037c2a0(local_a4);\r\n        if (local_8 \u003d\u003d 0) {\r\n          if (*(int *)(\u0026DAT_00568c18 + param_1 * 0x28) !\u003d 0) {\r\n            FUN_0023c700(*(undefined4 *)(\u0026DAT_00568c18 + param_1 * 0x28));\r\n          }\r\n          *(undefined4 *)(\u0026DAT_00568c18 + param_1 * 0x28) \u003d 0;\r\n        }\r\n        else if (local_8 \u003d\u003d 1) {\r\n          *(undefined4 *)(\u0026DAT_00568c18 + param_1 * 0x28) \u003d 0;\r\n        }\r\n        else {\r\n          *(undefined4 *)(\u0026DAT_00568c18 + param_1 * 0x28) \u003d 0;\r\n        }\r\n      }\r\n    }\r\n    else {\r\n      FUN_0023c700(*(undefined4 *)(\u0026DAT_00568c18 + param_1 * 0x28));\r\n      *(undefined4 *)(\u0026DAT_00568c18 + param_1 * 0x28) \u003d 0;\r\n    }\r\n  }\r\n  return;\r\n}\r\n\r\n"
+    },
+    {
+      "entry": "0023d4d0",
+      "name_hypothesis": "FUN_0023d4d0",
+      "ranges": [
+        {
+          "first": "0023d4d0",
+          "last": "0023d539"
+        }
+      ],
+      "instructions": [
+        {
+          "address": "0023d4d0",
+          "bytes_hex": "55",
+          "instruction": "PUSH EBP"
+        },
+        {
+          "address": "0023d4d1",
+          "bytes_hex": "8bec",
+          "instruction": "MOV EBP,ESP"
+        },
+        {
+          "address": "0023d4d3",
+          "bytes_hex": "51",
+          "instruction": "PUSH ECX"
+        },
+        {
+          "address": "0023d4d4",
+          "bytes_hex": "c745fcffffffff",
+          "instruction": "MOV dword ptr [EBP + -0x4],0xffffffff"
+        },
+        {
+          "address": "0023d4db",
+          "bytes_hex": "c745fc00000000",
+          "instruction": "MOV dword ptr [EBP + -0x4],0x0"
+        },
+        {
+          "address": "0023d4e2",
+          "bytes_hex": "eb09",
+          "instruction": "JMP 0x0023d4ed"
+        },
+        {
+          "address": "0023d4e4",
+          "bytes_hex": "8b45fc",
+          "instruction": "MOV EAX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023d4e7",
+          "bytes_hex": "83c001",
+          "instruction": "ADD EAX,0x1"
+        },
+        {
+          "address": "0023d4ea",
+          "bytes_hex": "8945fc",
+          "instruction": "MOV dword ptr [EBP + -0x4],EAX"
+        },
+        {
+          "address": "0023d4ed",
+          "bytes_hex": "817dfc58010000",
+          "instruction": "CMP dword ptr [EBP + -0x4],0x158"
+        },
+        {
+          "address": "0023d4f4",
+          "bytes_hex": "7d40",
+          "instruction": "JGE 0x0023d536"
+        },
+        {
+          "address": "0023d4f6",
+          "bytes_hex": "8b4dfc",
+          "instruction": "MOV ECX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023d4f9",
+          "bytes_hex": "6bc928",
+          "instruction": "IMUL ECX,ECX,0x28"
+        },
+        {
+          "address": "0023d4fc",
+          "bytes_hex": "83b9188c560000",
+          "instruction": "CMP dword ptr [ECX + 0x568c18],0x0"
+        },
+        {
+          "address": "0023d503",
+          "bytes_hex": "750f",
+          "instruction": "JNZ 0x0023d514"
+        },
+        {
+          "address": "0023d505",
+          "bytes_hex": "8b55fc",
+          "instruction": "MOV EDX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023d508",
+          "bytes_hex": "6bd228",
+          "instruction": "IMUL EDX,EDX,0x28"
+        },
+        {
+          "address": "0023d50b",
+          "bytes_hex": "83ba1c8c560001",
+          "instruction": "CMP dword ptr [EDX + 0x568c1c],0x1"
+        },
+        {
+          "address": "0023d512",
+          "bytes_hex": "7520",
+          "instruction": "JNZ 0x0023d534"
+        },
+        {
+          "address": "0023d514",
+          "bytes_hex": "8b4508",
+          "instruction": "MOV EAX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d517",
+          "bytes_hex": "50",
+          "instruction": "PUSH EAX"
+        },
+        {
+          "address": "0023d518",
+          "bytes_hex": "8b4dfc",
+          "instruction": "MOV ECX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023d51b",
+          "bytes_hex": "51",
+          "instruction": "PUSH ECX"
+        },
+        {
+          "address": "0023d51c",
+          "bytes_hex": "e81f000000",
+          "instruction": "CALL 0x0023d540"
+        },
+        {
+          "address": "0023d521",
+          "bytes_hex": "83c408",
+          "instruction": "ADD ESP,0x8"
+        },
+        {
+          "address": "0023d524",
+          "bytes_hex": "85c0",
+          "instruction": "TEST EAX,EAX"
+        },
+        {
+          "address": "0023d526",
+          "bytes_hex": "750c",
+          "instruction": "JNZ 0x0023d534"
+        },
+        {
+          "address": "0023d528",
+          "bytes_hex": "8b55fc",
+          "instruction": "MOV EDX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023d52b",
+          "bytes_hex": "52",
+          "instruction": "PUSH EDX"
+        },
+        {
+          "address": "0023d52c",
+          "bytes_hex": "e8fffcffff",
+          "instruction": "CALL 0x0023d230"
+        },
+        {
+          "address": "0023d531",
+          "bytes_hex": "83c404",
+          "instruction": "ADD ESP,0x4"
+        },
+        {
+          "address": "0023d534",
+          "bytes_hex": "ebae",
+          "instruction": "JMP 0x0023d4e4"
+        },
+        {
+          "address": "0023d536",
+          "bytes_hex": "8be5",
+          "instruction": "MOV ESP,EBP"
+        },
+        {
+          "address": "0023d538",
+          "bytes_hex": "5d",
+          "instruction": "POP EBP"
+        },
+        {
+          "address": "0023d539",
+          "bytes_hex": "c3",
+          "instruction": "RET"
+        }
+      ],
+      "decompile_completed": true,
+      "decompiler_error": "",
+      "orientation_c": "\r\nvoid FUN_0023d4d0(undefined4 param_1)\r\n\r\n{\r\n  int iVar1;\r\n  int local_8;\r\n  \r\n  for (local_8 \u003d 0; local_8 \u003c 0x158; local_8 \u003d local_8 + 1) {\r\n    if ((*(int *)(\u0026DAT_00568c18 + local_8 * 0x28) !\u003d 0) ||\r\n       (*(int *)(\u0026DAT_00568c1c + local_8 * 0x28) \u003d\u003d 1)) {\r\n      iVar1 \u003d FUN_0023d540(local_8,param_1);\r\n      if (iVar1 \u003d\u003d 0) {\r\n        FUN_0023d230(local_8);\r\n      }\r\n    }\r\n  }\r\n  return;\r\n}\r\n\r\n"
+    },
+    {
+      "entry": "0023d720",
+      "name_hypothesis": "FUN_0023d720",
+      "ranges": [
+        {
+          "first": "0023d720",
+          "last": "0023d770"
+        }
+      ],
+      "instructions": [
+        {
+          "address": "0023d720",
+          "bytes_hex": "55",
+          "instruction": "PUSH EBP"
+        },
+        {
+          "address": "0023d721",
+          "bytes_hex": "8bec",
+          "instruction": "MOV EBP,ESP"
+        },
+        {
+          "address": "0023d723",
+          "bytes_hex": "51",
+          "instruction": "PUSH ECX"
+        },
+        {
+          "address": "0023d724",
+          "bytes_hex": "c745fc00000000",
+          "instruction": "MOV dword ptr [EBP + -0x4],0x0"
+        },
+        {
+          "address": "0023d72b",
+          "bytes_hex": "837d08ff",
+          "instruction": "CMP dword ptr [EBP + 0x8],-0x1"
+        },
+        {
+          "address": "0023d72f",
+          "bytes_hex": "743c",
+          "instruction": "JZ 0x0023d76d"
+        },
+        {
+          "address": "0023d731",
+          "bytes_hex": "8b4508",
+          "instruction": "MOV EAX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d734",
+          "bytes_hex": "50",
+          "instruction": "PUSH EAX"
+        },
+        {
+          "address": "0023d735",
+          "bytes_hex": "e886ffffff",
+          "instruction": "CALL 0x0023d6c0"
+        },
+        {
+          "address": "0023d73a",
+          "bytes_hex": "83c404",
+          "instruction": "ADD ESP,0x4"
+        },
+        {
+          "address": "0023d73d",
+          "bytes_hex": "8945fc",
+          "instruction": "MOV dword ptr [EBP + -0x4],EAX"
+        },
+        {
+          "address": "0023d740",
+          "bytes_hex": "837dfc01",
+          "instruction": "CMP dword ptr [EBP + -0x4],0x1"
+        },
+        {
+          "address": "0023d744",
+          "bytes_hex": "751b",
+          "instruction": "JNZ 0x0023d761"
+        },
+        {
+          "address": "0023d746",
+          "bytes_hex": "8b4d08",
+          "instruction": "MOV ECX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d749",
+          "bytes_hex": "6bc928",
+          "instruction": "IMUL ECX,ECX,0x28"
+        },
+        {
+          "address": "0023d74c",
+          "bytes_hex": "83b9188c560000",
+          "instruction": "CMP dword ptr [ECX + 0x568c18],0x0"
+        },
+        {
+          "address": "0023d753",
+          "bytes_hex": "740c",
+          "instruction": "JZ 0x0023d761"
+        },
+        {
+          "address": "0023d755",
+          "bytes_hex": "8b5508",
+          "instruction": "MOV EDX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023d758",
+          "bytes_hex": "52",
+          "instruction": "PUSH EDX"
+        },
+        {
+          "address": "0023d759",
+          "bytes_hex": "e8d2faffff",
+          "instruction": "CALL 0x0023d230"
+        },
+        {
+          "address": "0023d75e",
+          "bytes_hex": "83c404",
+          "instruction": "ADD ESP,0x4"
+        },
+        {
+          "address": "0023d761",
+          "bytes_hex": "8b450c",
+          "instruction": "MOV EAX,dword ptr [EBP + 0xc]"
+        },
+        {
+          "address": "0023d764",
+          "bytes_hex": "50",
+          "instruction": "PUSH EAX"
+        },
+        {
+          "address": "0023d765",
+          "bytes_hex": "e816ffffff",
+          "instruction": "CALL 0x0023d680"
+        },
+        {
+          "address": "0023d76a",
+          "bytes_hex": "83c404",
+          "instruction": "ADD ESP,0x4"
+        },
+        {
+          "address": "0023d76d",
+          "bytes_hex": "8be5",
+          "instruction": "MOV ESP,EBP"
+        },
+        {
+          "address": "0023d76f",
+          "bytes_hex": "5d",
+          "instruction": "POP EBP"
+        },
+        {
+          "address": "0023d770",
+          "bytes_hex": "c3",
+          "instruction": "RET"
+        }
+      ],
+      "decompile_completed": true,
+      "decompiler_error": "",
+      "orientation_c": "\r\nvoid FUN_0023d720(int param_1,undefined4 param_2)\r\n\r\n{\r\n  int iVar1;\r\n  \r\n  if (param_1 !\u003d -1) {\r\n    iVar1 \u003d FUN_0023d6c0(param_1,0);\r\n    if ((iVar1 \u003d\u003d 1) \u0026\u0026 (*(int *)(\u0026DAT_00568c18 + param_1 * 0x28) !\u003d 0)) {\r\n      FUN_0023d230(param_1);\r\n    }\r\n    FUN_0023d680(param_2);\r\n  }\r\n  return;\r\n}\r\n\r\n"
+    },
+    {
+      "entry": "0023c660",
+      "name_hypothesis": "FUN_0023c660",
+      "ranges": [
+        {
+          "first": "0023c660",
+          "last": "0023c6fe"
+        }
+      ],
+      "instructions": [
+        {
+          "address": "0023c660",
+          "bytes_hex": "55",
+          "instruction": "PUSH EBP"
+        },
+        {
+          "address": "0023c661",
+          "bytes_hex": "8bec",
+          "instruction": "MOV EBP,ESP"
+        },
+        {
+          "address": "0023c663",
+          "bytes_hex": "51",
+          "instruction": "PUSH ECX"
+        },
+        {
+          "address": "0023c664",
+          "bytes_hex": "c745fc00000000",
+          "instruction": "MOV dword ptr [EBP + -0x4],0x0"
+        },
+        {
+          "address": "0023c66b",
+          "bytes_hex": "eb09",
+          "instruction": "JMP 0x0023c676"
+        },
+        {
+          "address": "0023c66d",
+          "bytes_hex": "8b45fc",
+          "instruction": "MOV EAX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023c670",
+          "bytes_hex": "83c001",
+          "instruction": "ADD EAX,0x1"
+        },
+        {
+          "address": "0023c673",
+          "bytes_hex": "8945fc",
+          "instruction": "MOV dword ptr [EBP + -0x4],EAX"
+        },
+        {
+          "address": "0023c676",
+          "bytes_hex": "817dfc58010000",
+          "instruction": "CMP dword ptr [EBP + -0x4],0x158"
+        },
+        {
+          "address": "0023c67d",
+          "bytes_hex": "7d36",
+          "instruction": "JGE 0x0023c6b5"
+        },
+        {
+          "address": "0023c67f",
+          "bytes_hex": "8b4dfc",
+          "instruction": "MOV ECX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023c682",
+          "bytes_hex": "6bc928",
+          "instruction": "IMUL ECX,ECX,0x28"
+        },
+        {
+          "address": "0023c685",
+          "bytes_hex": "83b9188c560000",
+          "instruction": "CMP dword ptr [ECX + 0x568c18],0x0"
+        },
+        {
+          "address": "0023c68c",
+          "bytes_hex": "7415",
+          "instruction": "JZ 0x0023c6a3"
+        },
+        {
+          "address": "0023c68e",
+          "bytes_hex": "8b55fc",
+          "instruction": "MOV EDX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023c691",
+          "bytes_hex": "6bd228",
+          "instruction": "IMUL EDX,EDX,0x28"
+        },
+        {
+          "address": "0023c694",
+          "bytes_hex": "8b82188c5600",
+          "instruction": "MOV EAX,dword ptr [EDX + 0x568c18]"
+        },
+        {
+          "address": "0023c69a",
+          "bytes_hex": "50",
+          "instruction": "PUSH EAX"
+        },
+        {
+          "address": "0023c69b",
+          "bytes_hex": "e860000000",
+          "instruction": "CALL 0x0023c700"
+        },
+        {
+          "address": "0023c6a0",
+          "bytes_hex": "83c404",
+          "instruction": "ADD ESP,0x4"
+        },
+        {
+          "address": "0023c6a3",
+          "bytes_hex": "8b4dfc",
+          "instruction": "MOV ECX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023c6a6",
+          "bytes_hex": "6bc928",
+          "instruction": "IMUL ECX,ECX,0x28"
+        },
+        {
+          "address": "0023c6a9",
+          "bytes_hex": "c781188c560000000000",
+          "instruction": "MOV dword ptr [ECX + 0x568c18],0x0"
+        },
+        {
+          "address": "0023c6b3",
+          "bytes_hex": "ebb8",
+          "instruction": "JMP 0x0023c66d"
+        },
+        {
+          "address": "0023c6b5",
+          "bytes_hex": "c745fc00000000",
+          "instruction": "MOV dword ptr [EBP + -0x4],0x0"
+        },
+        {
+          "address": "0023c6bc",
+          "bytes_hex": "eb09",
+          "instruction": "JMP 0x0023c6c7"
+        },
+        {
+          "address": "0023c6be",
+          "bytes_hex": "8b55fc",
+          "instruction": "MOV EDX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023c6c1",
+          "bytes_hex": "83c201",
+          "instruction": "ADD EDX,0x1"
+        },
+        {
+          "address": "0023c6c4",
+          "bytes_hex": "8955fc",
+          "instruction": "MOV dword ptr [EBP + -0x4],EDX"
+        },
+        {
+          "address": "0023c6c7",
+          "bytes_hex": "837dfc34",
+          "instruction": "CMP dword ptr [EBP + -0x4],0x34"
+        },
+        {
+          "address": "0023c6cb",
+          "bytes_hex": "7d1f",
+          "instruction": "JGE 0x0023c6ec"
+        },
+        {
+          "address": "0023c6cd",
+          "bytes_hex": "8b45fc",
+          "instruction": "MOV EAX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023c6d0",
+          "bytes_hex": "c1e004",
+          "instruction": "SHL EAX,0x4"
+        },
+        {
+          "address": "0023c6d3",
+          "bytes_hex": "c780d8c15600ffffffff",
+          "instruction": "MOV dword ptr [EAX + 0x56c1d8],0xffffffff"
+        },
+        {
+          "address": "0023c6dd",
+          "bytes_hex": "8b4dfc",
+          "instruction": "MOV ECX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023c6e0",
+          "bytes_hex": "c1e104",
+          "instruction": "SHL ECX,0x4"
+        },
+        {
+          "address": "0023c6e3",
+          "bytes_hex": "c681dcc1560000",
+          "instruction": "MOV byte ptr [ECX + 0x56c1dc],0x0"
+        },
+        {
+          "address": "0023c6ea",
+          "bytes_hex": "ebd2",
+          "instruction": "JMP 0x0023c6be"
+        },
+        {
+          "address": "0023c6ec",
+          "bytes_hex": "8b15c0e35b00",
+          "instruction": "MOV EDX,dword ptr [0x005be3c0]"
+        },
+        {
+          "address": "0023c6f2",
+          "bytes_hex": "52",
+          "instruction": "PUSH EDX"
+        },
+        {
+          "address": "0023c6f3",
+          "bytes_hex": "e878931300",
+          "instruction": "CALL 0x00375a70"
+        },
+        {
+          "address": "0023c6f8",
+          "bytes_hex": "83c404",
+          "instruction": "ADD ESP,0x4"
+        },
+        {
+          "address": "0023c6fb",
+          "bytes_hex": "8be5",
+          "instruction": "MOV ESP,EBP"
+        },
+        {
+          "address": "0023c6fd",
+          "bytes_hex": "5d",
+          "instruction": "POP EBP"
+        },
+        {
+          "address": "0023c6fe",
+          "bytes_hex": "c3",
+          "instruction": "RET"
+        }
+      ],
+      "decompile_completed": true,
+      "decompiler_error": "",
+      "orientation_c": "\r\nvoid FUN_0023c660(void)\r\n\r\n{\r\n  int local_8;\r\n  \r\n  for (local_8 \u003d 0; local_8 \u003c 0x158; local_8 \u003d local_8 + 1) {\r\n    if (*(int *)(\u0026DAT_00568c18 + local_8 * 0x28) !\u003d 0) {\r\n      FUN_0023c700(*(undefined4 *)(\u0026DAT_00568c18 + local_8 * 0x28));\r\n    }\r\n    *(undefined4 *)(\u0026DAT_00568c18 + local_8 * 0x28) \u003d 0;\r\n  }\r\n  for (local_8 \u003d 0; local_8 \u003c 0x34; local_8 \u003d local_8 + 1) {\r\n    *(undefined4 *)(\u0026DAT_0056c1d8 + local_8 * 0x10) \u003d 0xffffffff;\r\n    (\u0026DAT_0056c1dc)[local_8 * 0x10] \u003d 0;\r\n  }\r\n  FUN_00375a70(DAT_005be3c0);\r\n  return;\r\n}\r\n\r\n"
+    },
+    {
+      "entry": "0023c720",
+      "name_hypothesis": "FUN_0023c720",
+      "ranges": [
+        {
+          "first": "0023c720",
+          "last": "0023c763"
+        }
+      ],
+      "instructions": [
+        {
+          "address": "0023c720",
+          "bytes_hex": "55",
+          "instruction": "PUSH EBP"
+        },
+        {
+          "address": "0023c721",
+          "bytes_hex": "8bec",
+          "instruction": "MOV EBP,ESP"
+        },
+        {
+          "address": "0023c723",
+          "bytes_hex": "51",
+          "instruction": "PUSH ECX"
+        },
+        {
+          "address": "0023c724",
+          "bytes_hex": "c745fc00000000",
+          "instruction": "MOV dword ptr [EBP + -0x4],0x0"
+        },
+        {
+          "address": "0023c72b",
+          "bytes_hex": "c745fc00000000",
+          "instruction": "MOV dword ptr [EBP + -0x4],0x0"
+        },
+        {
+          "address": "0023c732",
+          "bytes_hex": "eb09",
+          "instruction": "JMP 0x0023c73d"
+        },
+        {
+          "address": "0023c734",
+          "bytes_hex": "8b45fc",
+          "instruction": "MOV EAX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023c737",
+          "bytes_hex": "83c001",
+          "instruction": "ADD EAX,0x1"
+        },
+        {
+          "address": "0023c73a",
+          "bytes_hex": "8945fc",
+          "instruction": "MOV dword ptr [EBP + -0x4],EAX"
+        },
+        {
+          "address": "0023c73d",
+          "bytes_hex": "817dfc58010000",
+          "instruction": "CMP dword ptr [EBP + -0x4],0x158"
+        },
+        {
+          "address": "0023c744",
+          "bytes_hex": "7d15",
+          "instruction": "JGE 0x0023c75b"
+        },
+        {
+          "address": "0023c746",
+          "bytes_hex": "8b4dfc",
+          "instruction": "MOV ECX,dword ptr [EBP + -0x4]"
+        },
+        {
+          "address": "0023c749",
+          "bytes_hex": "6bc928",
+          "instruction": "IMUL ECX,ECX,0x28"
+        },
+        {
+          "address": "0023c74c",
+          "bytes_hex": "83b91c8c560001",
+          "instruction": "CMP dword ptr [ECX + 0x568c1c],0x1"
+        },
+        {
+          "address": "0023c753",
+          "bytes_hex": "7504",
+          "instruction": "JNZ 0x0023c759"
+        },
+        {
+          "address": "0023c755",
+          "bytes_hex": "33c0",
+          "instruction": "XOR EAX,EAX"
+        },
+        {
+          "address": "0023c757",
+          "bytes_hex": "eb07",
+          "instruction": "JMP 0x0023c760"
+        },
+        {
+          "address": "0023c759",
+          "bytes_hex": "ebd9",
+          "instruction": "JMP 0x0023c734"
+        },
+        {
+          "address": "0023c75b",
+          "bytes_hex": "b801000000",
+          "instruction": "MOV EAX,0x1"
+        },
+        {
+          "address": "0023c760",
+          "bytes_hex": "8be5",
+          "instruction": "MOV ESP,EBP"
+        },
+        {
+          "address": "0023c762",
+          "bytes_hex": "5d",
+          "instruction": "POP EBP"
+        },
+        {
+          "address": "0023c763",
+          "bytes_hex": "c3",
+          "instruction": "RET"
+        }
+      ],
+      "decompile_completed": true,
+      "decompiler_error": "",
+      "orientation_c": "\r\nundefined4 FUN_0023c720(void)\r\n\r\n{\r\n  int local_8;\r\n  \r\n  local_8 \u003d 0;\r\n  while( true ) {\r\n    if (0x157 \u003c local_8) {\r\n      return 1;\r\n    }\r\n    if (*(int *)(\u0026DAT_00568c1c + local_8 * 0x28) \u003d\u003d 1) break;\r\n    local_8 \u003d local_8 + 1;\r\n  }\r\n  return 0;\r\n}\r\n\r\n"
+    },
+    {
+      "entry": "0023c770",
+      "name_hypothesis": "FUN_0023c770",
+      "ranges": [
+        {
+          "first": "0023c770",
+          "last": "0023c7b0"
+        }
+      ],
+      "instructions": [
+        {
+          "address": "0023c770",
+          "bytes_hex": "55",
+          "instruction": "PUSH EBP"
+        },
+        {
+          "address": "0023c771",
+          "bytes_hex": "8bec",
+          "instruction": "MOV EBP,ESP"
+        },
+        {
+          "address": "0023c773",
+          "bytes_hex": "837d08ff",
+          "instruction": "CMP dword ptr [EBP + 0x8],-0x1"
+        },
+        {
+          "address": "0023c777",
+          "bytes_hex": "7507",
+          "instruction": "JNZ 0x0023c780"
+        },
+        {
+          "address": "0023c779",
+          "bytes_hex": "b801000000",
+          "instruction": "MOV EAX,0x1"
+        },
+        {
+          "address": "0023c77e",
+          "bytes_hex": "eb2f",
+          "instruction": "JMP 0x0023c7af"
+        },
+        {
+          "address": "0023c780",
+          "bytes_hex": "837d0800",
+          "instruction": "CMP dword ptr [EBP + 0x8],0x0"
+        },
+        {
+          "address": "0023c784",
+          "bytes_hex": "7c09",
+          "instruction": "JL 0x0023c78f"
+        },
+        {
+          "address": "0023c786",
+          "bytes_hex": "817d0858010000",
+          "instruction": "CMP dword ptr [EBP + 0x8],0x158"
+        },
+        {
+          "address": "0023c78d",
+          "bytes_hex": "7c08",
+          "instruction": "JL 0x0023c797"
+        },
+        {
+          "address": "0023c78f",
+          "bytes_hex": "33c0",
+          "instruction": "XOR EAX,EAX"
+        },
+        {
+          "address": "0023c791",
+          "bytes_hex": "75fc",
+          "instruction": "JNZ 0x0023c78f"
+        },
+        {
+          "address": "0023c793",
+          "bytes_hex": "33c0",
+          "instruction": "XOR EAX,EAX"
+        },
+        {
+          "address": "0023c795",
+          "bytes_hex": "eb18",
+          "instruction": "JMP 0x0023c7af"
+        },
+        {
+          "address": "0023c797",
+          "bytes_hex": "8b4d08",
+          "instruction": "MOV ECX,dword ptr [EBP + 0x8]"
+        },
+        {
+          "address": "0023c79a",
+          "bytes_hex": "6bc928",
+          "instruction": "IMUL ECX,ECX,0x28"
+        },
+        {
+          "address": "0023c79d",
+          "bytes_hex": "83b91c8c560001",
+          "instruction": "CMP dword ptr [ECX + 0x568c1c],0x1"
+        },
+        {
+          "address": "0023c7a4",
+          "bytes_hex": "7504",
+          "instruction": "JNZ 0x0023c7aa"
+        },
+        {
+          "address": "0023c7a6",
+          "bytes_hex": "33c0",
+          "instruction": "XOR EAX,EAX"
+        },
+        {
+          "address": "0023c7a8",
+          "bytes_hex": "eb05",
+          "instruction": "JMP 0x0023c7af"
+        },
+        {
+          "address": "0023c7aa",
+          "bytes_hex": "b801000000",
+          "instruction": "MOV EAX,0x1"
+        },
+        {
+          "address": "0023c7af",
+          "bytes_hex": "5d",
+          "instruction": "POP EBP"
+        },
+        {
+          "address": "0023c7b0",
+          "bytes_hex": "c3",
+          "instruction": "RET"
+        }
+      ],
+      "decompile_completed": true,
+      "decompiler_error": "",
+      "orientation_c": "\r\nundefined4 FUN_0023c770(int param_1)\r\n\r\n{\r\n  undefined4 uVar1;\r\n  \r\n  if (param_1 \u003d\u003d -1) {\r\n    uVar1 \u003d 1;\r\n  }\r\n  else if ((param_1 \u003c 0) || (0x157 \u003c param_1)) {\r\n    uVar1 \u003d 0;\r\n  }\r\n  else if (*(int *)(\u0026DAT_00568c1c + param_1 * 0x28) \u003d\u003d 1) {\r\n    uVar1 \u003d 0;\r\n  }\r\n  else {\r\n    uVar1 \u003d 1;\r\n  }\r\n  return uVar1;\r\n}\r\n\r\n"
+    }
+  ],
+  "verified_equivalence": false
+}

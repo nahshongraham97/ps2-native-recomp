@@ -1,0 +1,41 @@
+{
+  "repository": "nahshongraham97/armageddon-reimplementation",
+  "remote_commit": {
+    "sha": "e9a32827d84f73db998f79e36577f689a9caf348",
+    "node_id": "C_kwDOVRt6S9oAKGU5YTMyODI3ZDg0ZjczZGI5OThmNzllMzY1NzdmNjg5YTljYWYzNDg",
+    "url": "https://api.github.com/repos/nahshongraham97/armageddon-reimplementation/git/commits/e9a32827d84f73db998f79e36577f689a9caf348",
+    "html_url": "https://github.com/nahshongraham97/armageddon-reimplementation/commit/e9a32827d84f73db998f79e36577f689a9caf348",
+    "author": {
+      "name": "nahshongraham97",
+      "email": "nahshongraham97@gmail.com",
+      "date": "2026-11-21T23:29:26Z"
+    },
+    "committer": {
+      "name": "nahshongraham97",
+      "email": "nahshongraham97@gmail.com",
+      "date": "2026-11-21T23:29:26Z"
+    },
+    "tree": {
+      "sha": "a67f37a7fe88501eafd68e11a7cccfaa68163664",
+      "url": "https://api.github.com/repos/nahshongraham97/armageddon-reimplementation/git/trees/a67f37a7fe88501eafd68e11a7cccfaa68163664"
+    },
+    "message": "Verify real native startup bank files and record loose-asset contract and ownership blockers",
+    "parents": [
+      {
+        "sha": "d09cf4a14154214ef7bc533b4bc06d6842bc83b6",
+        "url": "https://api.github.com/repos/nahshongraham97/armageddon-reimplementation/git/commits/d09cf4a14154214ef7bc533b4bc06d6842bc83b6",
+        "html_url": "https://github.com/nahshongraham97/armageddon-reimplementation/commit/d09cf4a14154214ef7bc533b4bc06d6842bc83b6"
+      }
+    ],
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "same_tree": "a67f37a7fe88501eafd68e11a7cccfaa68163664",
+  "original_authored_commit": "f2e109802c76fcd4cf865490ed10ef2399042552",
+  "published": true
+}

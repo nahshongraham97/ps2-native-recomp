@@ -1,0 +1,191 @@
+{
+  "schema": "cross_isa_pair_signature_v1",
+  "ps2_address": "002ba610",
+  "xbox_address": "002ba610",
+  "match_confidence": "mapped-by-role",
+  "ps2": {
+    "arch": "mips_r5900",
+    "entry": "002ba610",
+    "size_bytes": 156,
+    "instruction_count": 39,
+    "basic_block_count": 12,
+    "edge_count": 12,
+    "callees": [
+      "00296d08",
+      "indirect_r19"
+    ],
+    "memory_offsets": [
+      0,
+      8,
+      16,
+      32,
+      48,
+      64,
+      72,
+      80,
+      96
+    ],
+    "cfg_blocks": [
+      {
+        "id": 0,
+        "start": "002ba610",
+        "end": "002ba650",
+        "instruction_count": 16,
+        "successors": [
+          "002ba650",
+          "002ba694"
+        ]
+      },
+      {
+        "id": 1,
+        "start": "002ba650",
+        "end": "002ba658",
+        "instruction_count": 2,
+        "successors": [
+          "002ba658",
+          "002ba698"
+        ]
+      },
+      {
+        "id": 2,
+        "start": "002ba658",
+        "end": "002ba664",
+        "instruction_count": 3,
+        "successors": [
+          "002ba664",
+          "002ba698"
+        ]
+      },
+      {
+        "id": 3,
+        "start": "002ba664",
+        "end": "002ba66c",
+        "instruction_count": 2,
+        "successors": [
+          "002ba66c",
+          "002ba674"
+        ]
+      },
+      {
+        "id": 4,
+        "start": "002ba66c",
+        "end": "002ba670",
+        "instruction_count": 1,
+        "successors": []
+      },
+      {
+        "id": 5,
+        "start": "002ba670",
+        "end": "002ba674",
+        "instruction_count": 1,
+        "successors": []
+      },
+      {
+        "id": 6,
+        "start": "002ba674",
+        "end": "002ba67c",
+        "instruction_count": 2,
+        "successors": [
+          "002ba67c",
+          "002ba684"
+        ]
+      },
+      {
+        "id": 7,
+        "start": "002ba67c",
+        "end": "002ba684",
+        "instruction_count": 2,
+        "successors": []
+      },
+      {
+        "id": 8,
+        "start": "002ba684",
+        "end": "002ba690",
+        "instruction_count": 3,
+        "successors": [
+          "002ba670",
+          "002ba690"
+        ]
+      },
+      {
+        "id": 9,
+        "start": "002ba690",
+        "end": "002ba694",
+        "instruction_count": 1,
+        "successors": []
+      },
+      {
+        "id": 10,
+        "start": "002ba694",
+        "end": "002ba698",
+        "instruction_count": 1,
+        "successors": []
+      },
+      {
+        "id": 11,
+        "start": "002ba698",
+        "end": "002ba6ac",
+        "instruction_count": 5,
+        "successors": []
+      }
+    ]
+  },
+  "xbox": {
+    "arch": "x86_32",
+    "entry": "002ba610",
+    "size_bytes": 112,
+    "instruction_count": 22,
+    "basic_block_count": 1,
+    "edge_count": 0,
+    "callees": [],
+    "memory_offsets": [
+      40,
+      44,
+      48,
+      52,
+      56,
+      84,
+      88,
+      92,
+      128,
+      132
+    ],
+    "cfg_blocks": [
+      {
+        "id": 0,
+        "start": "002ba613",
+        "end": "002ba67f",
+        "instruction_count": 22,
+        "successors": []
+      }
+    ]
+  },
+  "semantic_alignment": {
+    "match_confidence": "mapped-by-role",
+    "evidence_type": "subsystem_role_correspondence_pending_dual_platform_vectors",
+    "notes": "RenderWare 0407 raster consumer interface transformation",
+    "shared_memory_offsets": [
+      48
+    ],
+    "nontrivial_offsets": [],
+    "cfg_topology_match": false,
+    "raw_ps2_block_count": 12,
+    "raw_xbox_block_count": 1,
+    "raw_ps2_edge_count": 12,
+    "raw_xbox_edge_count": 0,
+    "normalized_ps2": {
+      "vertices": 12,
+      "edges": 12,
+      "cyclomatic_complexity": 2,
+      "decision_blocks": 6
+    },
+    "normalized_xbox": {
+      "vertices": 1,
+      "edges": 0,
+      "cyclomatic_complexity": 1,
+      "decision_blocks": 0
+    },
+    "mapped_callee_match": false,
+    "common_mapped_callees": []
+  }
+}

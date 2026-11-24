@@ -1,0 +1,73 @@
+{
+  "date": "2026-11-19",
+  "status": "new fixture frozen; not built or run by implementation agent",
+  "files": {
+    "tests/test_native_movie_inventory.cpp": "f2fcaf99a199c12be32a29292139207e99ccd9dc7575b348023d0f020249a01e",
+    "tests/native_test_sha256.hpp": "f90189e16a9ab989bd2228e752d65e9935dad0250ac1cbdc0a76ead8e3504bf7",
+    "tests/data/movie_decode_oracle.hpp": "cf849c9c04065d1719bea10b8bbff0d31799a285c15c0a39af4393cee8c54a84",
+    "runtime/include/mka/movie_decode.hpp": "5cce752b39f90a5f99797cc69aea8c6cb61b6d0d183c0c25251d361a5cb0969d",
+    "runtime/src/native/movie_decode.cpp": "9aeec2fe41fe07f2372d64646b47b1e81c7f6daee53e03be9641e0ed9eecd83f",
+    "runtime/include/mka/movie_assets.hpp": "777f2383e4b25db43ee5b6ffbff96cd179baa82dd4acf6d317b88b9b945624da",
+    "runtime/src/native/movie_assets.cpp": "47f2f4a74c32f5e832e08647c3484a0bbc9b55e6a1c9927b0c8ea9a76d6b7135"
+  },
+  "evidence_sha256": "59f8435662c5af9641bfa39cb455163a2ae5bc1645fb45b87bb7c66f06726d7e",
+  "asset_discovery_snapshot": {
+    "root": "games\\mkarmageddon\\disc-files\\MOVIEPS2",
+    "actual_sfd_files": 38,
+    "relative_keys": [
+      "ATTRACTN.SFD",
+      "ATTRACTW.SFD",
+      "KRYPT/V_BLOOP2.SFD",
+      "KRYPT/V_BLOOP3.SFD",
+      "KRYPT/V_BLOOP4.SFD",
+      "KRYPT/V_BLOOP5.SFD",
+      "KRYPT/V_BLOOPR.SFD",
+      "KRYPT/V_BLUES.SFD",
+      "KRYPT/V_ERMACB.SFD",
+      "KRYPT/V_KANO.SFD",
+      "KRYPT/V_KONQIN.SFD",
+      "KRYPT/V_LOAD1.SFD",
+      "KRYPT/V_LOAD2.SFD",
+      "KRYPT/V_MKAKON.SFD",
+      "KRYPT/V_MKDACC.SFD",
+      "KRYPT/V_MKHAND.SFD",
+      "KRYPT/V_MOTOGI.SFD",
+      "KRYPT/V_MOTORK.SFD",
+      "KRYPT/V_MOTRBK.SFD",
+      "KRYPT/V_MOTRFT.SFD",
+      "KRYPT/V_RAIDON.SFD",
+      "KRYPT/V_SCORP.SFD",
+      "KRYPT/V_SHINOK.SFD",
+      "KRYPT/V_SNDOUT.SFD",
+      "KRYPT/V_SUBZER.SFD",
+      "KRYPT/V_SZCCKY.SFD",
+      "LOGON.SFD",
+      "LOGOW.SFD",
+      "OPENINGN.SFD",
+      "OPENINGW.SFD",
+      "QUADN.SFD",
+      "QUADW.SFD",
+      "SPYHUNN.SFD",
+      "SPYHUNW.SFD",
+      "STRANGN.SFD",
+      "STRANGW.SFD",
+      "TITLEN.SFD",
+      "TITLEW.SFD"
+    ],
+    "scope": "filesystem names only; no codec execution/sourceasset hashing in implementation step"
+  },
+  "target": "test_native_movie_inventory",
+  "target_sources": [
+    "tests/test_native_movie_inventory.cpp"
+  ],
+  "link": "mka_native_media plus BCrypt test SHA helper",
+  "structured_output": "JSONL begin + perasset + end; progress stderr",
+  "claims_not_made": [
+    "retail reachability",
+    "independent fidelity beyond three exact named goldens",
+    "nominal videoFPS unavailable via current API",
+    "A/V scheduling",
+    "physical video/audio",
+    "game acceptance"
+  ]
+}

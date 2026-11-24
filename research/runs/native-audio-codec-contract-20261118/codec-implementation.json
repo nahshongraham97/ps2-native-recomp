@@ -1,0 +1,88 @@
+{
+  "status": "rebuilt durable C++ goldens and retained verification harness passed",
+  "files": {
+    "external/forks/ps2-native-recomp/runtime/include/mka/adpcm_codec.hpp": {
+      "after_sha256": "c7a79c28fe6b32ffdc36f98f27caf1b4c4878fc534c97a9b94f71c5ec7f8ed95"
+    },
+    "external/forks/ps2-native-recomp/runtime/src/native/adpcm_codec.cpp": {
+      "after_sha256": "2a104f1778225f4a5017a4425bb3cb682e4a8272a24f9d8b70d39e15a28fecb7"
+    },
+    "external/forks/ps2-native-recomp/tests/test_adpcm_codec.cpp": {
+      "after_sha256": "1a5c2a2a047b30c60e96d613644b6c3434cc664de7be95c4164874776038de54"
+    },
+    "tools/research/verify_adpcm_codec.py": {
+      "after_sha256": "e13a50f8c40b1933a13457702a3a531c5ca43711cbcd257b85d7b7061a243d3d"
+    }
+  },
+  "backup_reference": {
+    "path": "external/forks/ps2-native-recomp-backup-20261110/runtime/src/iop/spu2.cpp",
+    "sha256": "2ea5811f9e5802cfed16b8ded5c8df9ffefea385d2cc0fc6914c120db85babfa",
+    "lines": "164..191",
+    "limits": "Software behavioral reference, not independent hardware-output proof"
+  },
+  "verification": {
+    "build": "Configured CMake --build build_native_gl_full --target test_adpcm_codec -j2; exit0",
+    "test": "test_adpcm_codec explicit pinned MS2 and dated PCM path; exit0; 34720samples1240flags history28672/28672",
+    "pcm_sha256": "9f80ed99501ec7213408eb951b5036d6b3644bf310c0ed4d446277799cbaeee6",
+    "pcm_bytes": 69440,
+    "backup_word_reference": "Independent Python transcription of read-only backup word-oriented codec produced byte-identical69440-byte PCM; original source164..178 and hash pinned; no hardware execution",
+    "limits": "Manual golden arithmetic and software-reference parity only. No audible/hardware/loop/envelope/stereo parity. Canonical filter<=4 shift<=12 subset only."
+  },
+  "verification_before_durable_harness": {
+    "build": "Configured CMake --build build_native_gl_full --target test_adpcm_codec -j2; exit0",
+    "test": "test_adpcm_codec explicit pinned MS2 and dated PCM path; exit0; 34720samples1240flags history28672/28672",
+    "pcm_sha256": "9f80ed99501ec7213408eb951b5036d6b3644bf310c0ed4d446277799cbaeee6",
+    "pcm_bytes": 69440,
+    "backup_word_reference": "Independent Python transcription of read-only backup word-oriented codec produced byte-identical69440-byte PCM; original source164..178 and hash pinned; no hardware execution",
+    "limits": "Manual golden arithmetic and software-reference parity only. No audible/hardware/loop/envelope/stereo parity. Canonical filter<=4 shift<=12 subset only."
+  },
+  "current_verification": {
+    "status": "passed",
+    "asset_sha256": "74b7affaf2ec29052b39f531788ff12148f9870e79dde953e701c63e6e948d5d",
+    "payload_sha256": "636a906394aaf2eac9082f05bd581a864af20c9ff67e8ea4de2a9f0fd25f169c",
+    "backup_source_sha256": "2ea5811f9e5802cfed16b8ded5c8df9ffefea385d2cc0fc6914c120db85babfa",
+    "decoder_sha256": "ac108042825ef2e9da0b5e0771ceccee11ee2a4c0a8ec71d487e3422251f26e0",
+    "verification_script_sha256": "e13a50f8c40b1933a13457702a3a531c5ca43711cbcd257b85d7b7061a243d3d",
+    "payload_offset": 139676,
+    "payload_bytes": 19840,
+    "pcm_sha256": "9f80ed99501ec7213408eb951b5036d6b3644bf310c0ed4d446277799cbaeee6",
+    "pcm_bytes": 69440,
+    "samples": 34720,
+    "history": [
+      28672,
+      28672
+    ],
+    "decoder_stdout": "Pinned mono: 34720 samples, 1240 flags, history 28672/28672\nadpcm codec tests passed\n",
+    "temporary_pcm_removed": true,
+    "limits": "Software reference parity only; no hardware/audible/loop/envelope/stereo acceptance."
+  },
+  "current_build": "Configured CMake --build external/forks/ps2-native-recomp/build_native_gl_full --target test_adpcm_codec -j2 exit0; test source recompiled and executable relinked",
+  "historical_files_map_before_metadata_correction": {
+    "scope": "Original mixed map retained verbatim: initial backslash-key source pins and later slash-key durable-test/script pins; duplicate Windows-equivalent keys are historical metadata, not simultaneous current source identities. CMake pin is the earlier codec build snapshot, before later GPU target changes.",
+    "files": {
+      "external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\adpcm_codec.hpp": {
+        "after_sha256": "c7a79c28fe6b32ffdc36f98f27caf1b4c4878fc534c97a9b94f71c5ec7f8ed95"
+      },
+      "external\\forks\\ps2-native-recomp\\runtime\\src\\native\\adpcm_codec.cpp": {
+        "after_sha256": "2a104f1778225f4a5017a4425bb3cb682e4a8272a24f9d8b70d39e15a28fecb7"
+      },
+      "external\\forks\\ps2-native-recomp\\tests\\test_adpcm_codec.cpp": {
+        "after_sha256": "4af43998644a7645be534f6bed6be2eda3a61faaee1724b62579cd35aeb236da"
+      },
+      "external/forks/ps2-native-recomp/CMakeLists.txt": {
+        "after_sha256": "8b091ac40f3681f79440ee156c545b4bb00e5fe66a704e24bbf900fd04cd13e0"
+      },
+      "external/forks/ps2-native-recomp/tests/test_adpcm_codec.cpp": {
+        "after_sha256": "1a5c2a2a047b30c60e96d613644b6c3434cc664de7be95c4164874776038de54"
+      },
+      "tools/research/verify_adpcm_codec.py": {
+        "after_sha256": "e13a50f8c40b1933a13457702a3a531c5ca43711cbcd257b85d7b7061a243d3d"
+      }
+    }
+  },
+  "files_scope": "Current reviewed codec header/source/test and retained verification script only; normalized repository-relative paths. Hashes do not assert a new full-game build or current CMake tested snapshot.",
+  "tested_cmake_scope": "Historical CMake8b091ac40f3681f79440ee156c545b4bb00e5fe66a704e24bbf900fd04cd13e0 remains in historical_files_map_before_metadata_correction; later shared CMake changes are not represented as tested codec changes by that old pin.",
+  "metadata_correction": "Independent currency review found duplicate Windows-equivalent test paths and an unlabeled historical CMake pin. Preserved entire original files map as historical; current map normalized with current test source hash. No source, build or test behavior changed.",
+  "implementation_commit": "34391cb76347a261659689f2baf913954fd82910",
+  "implementation_commit_scope": "Authored source checkpoint only; historical build/test source fingerprints remain as recorded. No full-game binary or run is implied."
+}

@@ -37,18 +37,29 @@ namespace mka::retail::main_binding {
 // general heap allocations, so omitting this 84-byte object has zero observable impact on gameplay or memory tests.
 //
 // DEVIATION_NATIVE_GO_ONLINE_MODAL_MESSAGE:
-// In retail offline play, selecting "Go Online" from the main menu (0x005CB7D4 / "ONLINE" 0x006311F0)
-// initiates network startup which fails early in 0x0033ECF0 (dev9 driver missing/offline), returning
-// to display retail's authentic offline connection prompt from SLUS_214.10 address 0x005E6320:
-// "Could not authenticate user ID and Password. Please check your network configuration and try again."
-// In native PC recompilation, trigger_retail_go_online_modal sets the modal state with retail's
-// authentic string and returns to the main menu without attempting to load NETR.ovl or allocate unmanaged sockets.
+// Retail hardware error modal distinction:
+// 1. On physical PS2 consoles without a network adapter attached, selecting "Go Online" from the main menu
+//    (0x005CB7B0 index 9 / "ONLINE" 0x006311F0) hits the hardware check preemption path in 0x0034A110.
+//    Because dev9 hardware is missing, it immediately displays the missing-adapter error string from
+//    SLUS_214.10 address 0x00639C80 (message table 0x005EB580 + 0x38, pointer at 0x005EB5B8):
+//    "No network adaptor (Ethernet/modem) (for PlayStation2) detected. You will not be able to access the online features of this title."
+// 2. The authentication-failure error string at 0x005E6320 (string at 0x005E6367):
+//    "Could not authenticate user ID and Password. Please check your network configuration and try again."
+//    is only reached much later (after network adapter detection and network configuration selection from the
+//    memory card) if DNAS authentication fails at 0x00358434 / 0x00358474.
+//
+// In native recompilation, trigger_retail_go_online_modal and get_retail_online_modal_string are unwired
+// component helpers (extracted for standalone component testing) rather than a completed missing-adapter
+// fallback in the live game loop. The intended unavailable-online response when main menu dispatch is ported
+// is to display an authentic unavailable-online dialog based on 0x00639C80 and return cleanly to the main menu
+// without loading NETR.ovl or allocating sockets.
 const char* get_retail_online_modal_string() {
-    // Exact retail string from SLUS_214.10 address 0x005E6320
+    // Unwired component helper: returns retail authentication-failure string from SLUS_214.10 address 0x005E6320
     return "Could not authenticate user ID and Password. Please check your network configuration and try again.";
 }
 
 bool trigger_retail_go_online_modal(RetailOnlineModalState& state) {
+    // Unwired component helper for testing modal dismissal state flow
     state.active = true;
     state.message = get_retail_online_modal_string();
     state.return_to_main_menu = true;

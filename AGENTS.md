@@ -1,8 +1,8 @@
 # Agent instructions — active retail recomp fork
 
-The parent project's `../../../PORT_STATUS.md` is the sole live status;
-`../../../ROADMAP.md` is the implementation order;
-`../../../NATIVE_PORT_EXECUTION_CONTRACT.md` is the binding acceptance and
+[`PORT_STATUS.md`](PORT_STATUS.md) is the sole live status;
+[`ROADMAP.md`](ROADMAP.md) is the implementation order;
+[`NATIVE_PORT_EXECUTION_CONTRACT.md`](NATIVE_PORT_EXECUTION_CONTRACT.md) is the binding acceptance and
 whole-game non-regression rule. Read those before editing this fork. The
 old fork guidance is preserved at
 `research/history/native-port-docs-2026-11-18/AGENTS.md` as history only.
@@ -32,7 +32,7 @@ forbidden-path source audit, clean binary hash and matching run record.
 Keep the backup and old run measurements intact. Commit only authored files
 to this fork's `main` and push to `origin/main` after verifying the diff.
 
-For Qwen/LM Studio, follow `../../../MODEL_COORDINATION.md`; do not change
+For Qwen/LM Studio, follow [`MODEL_COORDINATION.md`](MODEL_COORDINATION.md); do not change
 settings or impose inference caps. If no instance is loaded, read source
 directly. Do not ask the owner to launch while any contract row is open.
 

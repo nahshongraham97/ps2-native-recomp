@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CrossPlatformTestVectorV1",
+  "type": "object",
+  "required": [
+    "schema",
+    "target_platform",
+    "donor_platform",
+    "target_address",
+    "donor_address",
+    "symbol_name",
+    "oracle_source",
+    "oracle_trace_hash",
+    "test_cases"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "enum": ["cross_platform_test_vector_v1"]
+    },
+    "target_platform": {
+      "type": "string",
+      "enum": ["ps2_mips"]
+    },
+    "donor_platform": {
+      "type": "string",
+      "enum": ["xbox_x86"]
+    },
+    "target_address": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{8}$"
+    },
+    "donor_address": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{8}$"
+    },
+    "symbol_name": {
+      "type": "string"
+    },
+    "oracle_source": {
+      "type": "string"
+    },
+    "oracle_type": {
+      "type": "string",
+      "enum": ["fixture", "production_oracle"]
+    },
+    "oracle_producer": {
+      "type": "string"
+    },
+    "pinned_binary_identity": {
+      "type": "string"
+    },
+    "implementation_kind": {
+      "type": "string",
+      "enum": ["compiled_cpp", "infrastructure_testing_python"]
+    },
+    "oracle_trace_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{64}$"
+    },
+    "test_cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "case_id",
+          "inputs",
+          "expected_outputs",
+          "ps2_result",
+          "xbox_result",
+          "outputs_match"
+        ],
+        "properties": {
+          "case_id": { "type": "string" },
+          "inputs": {
+            "type": "object",
+            "required": ["arguments"],
+            "properties": {
+              "arguments": { "type": "array" },
+              "memory_state": { "type": "object" }
+            }
+          },
+          "expected_outputs": {
+            "type": "object",
+            "required": ["return_value"],
+            "properties": {
+              "return_value": {},
+              "memory_mutations": { "type": "object" }
+            }
+          },
+          "ps2_result": {
+            "type": "object",
+            "required": ["return_value"],
+            "properties": {
+              "return_value": {},
+              "memory_mutations": { "type": "object" }
+            }
+          },
+          "xbox_result": {
+            "type": "object",
+            "required": ["return_value"],
+            "properties": {
+              "return_value": {},
+              "memory_mutations": { "type": "object" }
+            }
+          },
+          "outputs_match": {
+            "type": "boolean",
+            "enum": [true]
+          }
+        }
+      }
+    }
+  }
+}

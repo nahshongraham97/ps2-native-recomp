@@ -1,0 +1,44 @@
+{
+  "source_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "function_listing_sha256": "82374e7f59e73011bfb6b1ffe9c6871028999042ffb1b59c6b0bac0b96ee6b1c",
+  "functions": [
+    {
+      "entry": "0037c170",
+      "instructions": 90,
+      "all_instruction_bytes_match_original": true,
+      "decompile_completed": true
+    },
+    {
+      "entry": "0023d920",
+      "instructions": 107,
+      "all_instruction_bytes_match_original": true,
+      "decompile_completed": true
+    },
+    {
+      "entry": "0037c2a0",
+      "instructions": 76,
+      "all_instruction_bytes_match_original": true,
+      "decompile_completed": true
+    },
+    {
+      "entry": "0023d230",
+      "instructions": 132,
+      "all_instruction_bytes_match_original": true,
+      "decompile_completed": true
+    },
+    {
+      "entry": "0023c700",
+      "instructions": 12,
+      "all_instruction_bytes_match_original": true,
+      "decompile_completed": true
+    },
+    {
+      "entry": "0023c660",
+      "instructions": 45,
+      "all_instruction_bytes_match_original": true,
+      "decompile_completed": true
+    }
+  ],
+  "behavioral_equivalence": "UNVERIFIED",
+  "game_executed": false
+}

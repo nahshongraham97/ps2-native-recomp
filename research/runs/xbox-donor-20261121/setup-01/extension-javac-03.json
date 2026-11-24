@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\jdk21\\jdk-21.0.13+9\\bin\\javac.exe",
+    "@C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\xbox-donor-20261121\\setup-01\\javac-03.args"
+  ],
+  "exit": 0,
+  "stdout": "",
+  "stderr": "",
+  "generated_symbols": 1624,
+  "xml_sha256": "ec2724884db8244cb00f0b5819b69c5d8b1d8813dbd3e39068bdf93ace140ed6",
+  "generated_java_sha256": "1d56c0f83f387ecfb1963586fa9ab05ccb20bd38e1dface076239d1460d7c58e"
+}

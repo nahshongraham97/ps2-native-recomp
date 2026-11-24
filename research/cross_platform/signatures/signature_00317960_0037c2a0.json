@@ -1,0 +1,441 @@
+{
+  "schema": "cross_isa_pair_signature_v1",
+  "ps2_address": "00317960",
+  "xbox_address": "0037c2a0",
+  "match_confidence": "mapped-by-role",
+  "ps2": {
+    "arch": "mips_r5900",
+    "entry": "00317960",
+    "size_bytes": 448,
+    "instruction_count": 112,
+    "basic_block_count": 24,
+    "edge_count": 32,
+    "callees": [
+      "001deb10",
+      "001deb10",
+      "indirect_r2",
+      "001dba60",
+      "00317470"
+    ],
+    "memory_offsets": [
+      -30864,
+      -21544,
+      0,
+      4,
+      8,
+      112,
+      264,
+      268,
+      276
+    ],
+    "cfg_blocks": [
+      {
+        "id": 0,
+        "start": "00317960",
+        "end": "00317998",
+        "instruction_count": 14,
+        "successors": [
+          "00317998",
+          "00317af0"
+        ]
+      },
+      {
+        "id": 1,
+        "start": "00317998",
+        "end": "003179a0",
+        "instruction_count": 2,
+        "successors": [
+          "003179a0",
+          "00317af0"
+        ]
+      },
+      {
+        "id": 2,
+        "start": "003179a0",
+        "end": "003179ac",
+        "instruction_count": 3,
+        "successors": [
+          "003179ac",
+          "00317af0"
+        ]
+      },
+      {
+        "id": 3,
+        "start": "003179ac",
+        "end": "003179b4",
+        "instruction_count": 2,
+        "successors": [
+          "003179b4",
+          "00317af0"
+        ]
+      },
+      {
+        "id": 4,
+        "start": "003179b4",
+        "end": "003179bc",
+        "instruction_count": 2,
+        "successors": []
+      },
+      {
+        "id": 5,
+        "start": "003179bc",
+        "end": "003179c4",
+        "instruction_count": 2,
+        "successors": [
+          "003179c4",
+          "003179c8"
+        ]
+      },
+      {
+        "id": 6,
+        "start": "003179c4",
+        "end": "003179c8",
+        "instruction_count": 1,
+        "successors": []
+      },
+      {
+        "id": 7,
+        "start": "003179c8",
+        "end": "003179d4",
+        "instruction_count": 3,
+        "successors": [
+          "003179d4",
+          "00317ae8"
+        ]
+      },
+      {
+        "id": 8,
+        "start": "003179d4",
+        "end": "003179e0",
+        "instruction_count": 3,
+        "successors": [
+          "003179e0",
+          "00317ae8"
+        ]
+      },
+      {
+        "id": 9,
+        "start": "003179e0",
+        "end": "003179f4",
+        "instruction_count": 5,
+        "successors": [
+          "003179f4",
+          "00317ae8"
+        ]
+      },
+      {
+        "id": 10,
+        "start": "003179f4",
+        "end": "00317a08",
+        "instruction_count": 5,
+        "successors": [
+          "00317a08",
+          "00317a18"
+        ]
+      },
+      {
+        "id": 11,
+        "start": "00317a08",
+        "end": "00317a14",
+        "instruction_count": 3,
+        "successors": [
+          "00317a14",
+          "00317ae0"
+        ]
+      },
+      {
+        "id": 12,
+        "start": "00317a14",
+        "end": "00317a18",
+        "instruction_count": 1,
+        "successors": []
+      },
+      {
+        "id": 13,
+        "start": "00317a18",
+        "end": "00317a30",
+        "instruction_count": 6,
+        "successors": [
+          "00317a30",
+          "00317ae0"
+        ]
+      },
+      {
+        "id": 14,
+        "start": "00317a30",
+        "end": "00317a3c",
+        "instruction_count": 3,
+        "successors": [
+          "00317a3c",
+          "00317ae0"
+        ]
+      },
+      {
+        "id": 15,
+        "start": "00317a3c",
+        "end": "00317a54",
+        "instruction_count": 6,
+        "successors": [
+          "00317a54",
+          "00317a60"
+        ]
+      },
+      {
+        "id": 16,
+        "start": "00317a54",
+        "end": "00317a60",
+        "instruction_count": 3,
+        "successors": []
+      },
+      {
+        "id": 17,
+        "start": "00317a60",
+        "end": "00317aac",
+        "instruction_count": 19,
+        "successors": [
+          "00317aac",
+          "00317ad8"
+        ]
+      },
+      {
+        "id": 18,
+        "start": "00317aac",
+        "end": "00317ac4",
+        "instruction_count": 6,
+        "successors": [
+          "00317ac4",
+          "00317ad8"
+        ]
+      },
+      {
+        "id": 19,
+        "start": "00317ac4",
+        "end": "00317ad8",
+        "instruction_count": 5,
+        "successors": []
+      },
+      {
+        "id": 20,
+        "start": "00317ad8",
+        "end": "00317ae0",
+        "instruction_count": 2,
+        "successors": []
+      },
+      {
+        "id": 21,
+        "start": "00317ae0",
+        "end": "00317ae8",
+        "instruction_count": 2,
+        "successors": []
+      },
+      {
+        "id": 22,
+        "start": "00317ae8",
+        "end": "00317af0",
+        "instruction_count": 2,
+        "successors": [
+          "003179bc",
+          "00317af0"
+        ]
+      },
+      {
+        "id": 23,
+        "start": "00317af0",
+        "end": "00317b20",
+        "instruction_count": 12,
+        "successors": []
+      }
+    ]
+  },
+  "xbox": {
+    "arch": "x86_32",
+    "entry": "0037c2a0",
+    "size_bytes": 271,
+    "instruction_count": 76,
+    "basic_block_count": 14,
+    "edge_count": 18,
+    "callees": [
+      "0x0037c920",
+      "0x0037c920",
+      "0x0037c930",
+      "0x0039b800",
+      "0x0039b800",
+      "0x0037c520"
+    ],
+    "memory_offsets": [
+      -24,
+      -20,
+      -16,
+      -12,
+      -8,
+      -4,
+      4,
+      8,
+      264,
+      268,
+      5959876
+    ],
+    "cfg_blocks": [
+      {
+        "id": 0,
+        "start": "0037c2a0",
+        "end": "0037c2c6",
+        "instruction_count": 9,
+        "successors": [
+          "0037c2c6",
+          "0037c3a1"
+        ]
+      },
+      {
+        "id": 1,
+        "start": "0037c2c6",
+        "end": "0037c2d0",
+        "instruction_count": 2,
+        "successors": [
+          "0037c2d0",
+          "0037c3a1"
+        ]
+      },
+      {
+        "id": 2,
+        "start": "0037c2d0",
+        "end": "0037c2e2",
+        "instruction_count": 5,
+        "successors": [
+          "0037c2e2",
+          "0037c3a1"
+        ]
+      },
+      {
+        "id": 3,
+        "start": "0037c2e2",
+        "end": "0037c2ea",
+        "instruction_count": 2,
+        "successors": []
+      },
+      {
+        "id": 4,
+        "start": "0037c2ea",
+        "end": "0037c2f4",
+        "instruction_count": 2,
+        "successors": [
+          "0037c2f4",
+          "0037c3a1"
+        ]
+      },
+      {
+        "id": 5,
+        "start": "0037c2f4",
+        "end": "0037c315",
+        "instruction_count": 10,
+        "successors": [
+          "0037c315",
+          "0037c396"
+        ]
+      },
+      {
+        "id": 6,
+        "start": "0037c315",
+        "end": "0037c321",
+        "instruction_count": 3,
+        "successors": [
+          "0037c321",
+          "0037c396"
+        ]
+      },
+      {
+        "id": 7,
+        "start": "0037c321",
+        "end": "0037c338",
+        "instruction_count": 9,
+        "successors": [
+          "0037c338",
+          "0037c396"
+        ]
+      },
+      {
+        "id": 8,
+        "start": "0037c338",
+        "end": "0037c352",
+        "instruction_count": 10,
+        "successors": [
+          "0037c352",
+          "0037c361"
+        ]
+      },
+      {
+        "id": 9,
+        "start": "0037c352",
+        "end": "0037c361",
+        "instruction_count": 3,
+        "successors": [
+          "0037c38d"
+        ]
+      },
+      {
+        "id": 10,
+        "start": "0037c361",
+        "end": "0037c38d",
+        "instruction_count": 10,
+        "successors": []
+      },
+      {
+        "id": 11,
+        "start": "0037c38d",
+        "end": "0037c396",
+        "instruction_count": 3,
+        "successors": []
+      },
+      {
+        "id": 12,
+        "start": "0037c396",
+        "end": "0037c3a1",
+        "instruction_count": 3,
+        "successors": [
+          "0037c2ea"
+        ]
+      },
+      {
+        "id": 13,
+        "start": "0037c3a1",
+        "end": "0037c3af",
+        "instruction_count": 5,
+        "successors": []
+      }
+    ]
+  },
+  "semantic_alignment": {
+    "match_confidence": "mapped-by-role",
+    "evidence_type": "subsystem_role_correspondence_pending_dual_platform_vectors",
+    "notes": "Sound job cancel path",
+    "shared_memory_offsets": [
+      4,
+      8,
+      264,
+      268
+    ],
+    "nontrivial_offsets": [
+      264,
+      268
+    ],
+    "cfg_topology_match": false,
+    "raw_ps2_block_count": 24,
+    "raw_xbox_block_count": 14,
+    "raw_ps2_edge_count": 32,
+    "raw_xbox_edge_count": 18,
+    "normalized_ps2": {
+      "vertices": 24,
+      "edges": 32,
+      "cyclomatic_complexity": 10,
+      "decision_blocks": 16
+    },
+    "normalized_xbox": {
+      "vertices": 12,
+      "edges": 16,
+      "cyclomatic_complexity": 6,
+      "decision_blocks": 8
+    },
+    "mapped_callee_match": false,
+    "common_mapped_callees": []
+  }
+}

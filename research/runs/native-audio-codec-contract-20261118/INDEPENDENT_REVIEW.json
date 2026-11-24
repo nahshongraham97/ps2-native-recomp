@@ -1,0 +1,130 @@
+{
+  "scope": "Independent read-only mono data-codec source and existing evidence review; no implementation/test/CMake/game/settings/backup changes or extra agents. Only these review artifacts written.",
+  "utc": "2026-11-19T00:11:36.862342+00:00",
+  "fork_head": "2b0cbdf4c4c0c70a4bd68c16ebdb572f812cadea",
+  "conclusion": "No concrete arithmetic, bounds or transactional failure defect found in declared canonical mono subset. Durable pinnedPCM regression evidence gap and documentation phase/hash qualification reported to root. No audio/playback acceptance.",
+  "files": {
+    "external/forks/ps2-native-recomp/runtime/include/mka/adpcm_codec.hpp": {
+      "after_sha256": "c7a79c28fe6b32ffdc36f98f27caf1b4c4878fc534c97a9b94f71c5ec7f8ed95",
+      "status": "individually_reviewed_codec_source_or_attributed_evidence",
+      "evidence": [
+        "Explicit16-byte PS-style codec subset with caller history, signed16 output and opaque flags; no container autodetection, loop/envelope/device/resampling/stereo contract."
+      ],
+      "limitations": "Read-only source/artifact review, no new implementation/test/build/game/model execution. Software reference subset only; no hardware/audible/full-game fidelity."
+    },
+    "external/forks/ps2-native-recomp/runtime/src/native/adpcm_codec.cpp": {
+      "after_sha256": "2a104f1778225f4a5017a4425bb3cb682e4a8272a24f9d8b70d39e15a28fecb7",
+      "status": "individually_reviewed_codec_source_or_attributed_evidence",
+      "evidence": [
+        "Lines8-9 floor division correctly replaces arithmetic right shifts for bounded negative operands. Signed nibbles expand low-first to nibble*4096, shift<=12; five coefficient pairs and +32 predictor bias match backup canonical subset.",
+        "Predictor numerator absolute magnitude <6000000 for int16 history; adding expanded sample remains safely int32. Clamp happens before history update. No negative left shift or INT32_MIN negation occurs within these bounds.",
+        "Block validation occurs before staged result/history assignment. Bulk validates size/null/capacity, catches bad_alloc/length_error, stages completePCM/flags/next history and publishes history only after every block succeeds; invalid suffix leaks no PCM/history.",
+        "Canonical filter>4 or shift>12 explicitly unsupported; no backup filter-clamping normalization is silently imported. Empty bytes returns empty host result."
+      ],
+      "limitations": "Read-only source/artifact review, no new implementation/test/build/game/model execution. Software reference subset only; no hardware/audible/full-game fidelity."
+    },
+    "external/forks/ps2-native-recomp/tests/test_adpcm_codec.cpp": {
+      "after_sha256": "4af43998644a7645be534f6bed6be2eda3a61faaee1724b62579cd35aeb236da",
+      "status": "individually_reviewed_codec_source_or_attributed_evidence",
+      "evidence": [
+        "Individually reviewed manual signednibble/allpredictor/negativefloor/saturation/history golden checks and valid-prefix invalid-suffix transactional checks.",
+        "Pinned optional payload path reads offset0x2219C length0x4D80 and asserts34720samples/1240flags; currently does not assert fullinput/hash/PCMbytes/finalhistory. No test executed by this reviewer."
+      ],
+      "limitations": "Read-only source/artifact review, no new implementation/test/build/game/model execution. Software reference subset only; no hardware/audible/full-game fidelity."
+    },
+    "external/forks/ps2-native-recomp-backup-20261110/runtime/src/iop/spu2.cpp": {
+      "after_sha256": "2ea5811f9e5802cfed16b8ded5c8df9ffefea385d2cc0fc6914c120db85babfa",
+      "status": "individually_reviewed_codec_source_or_attributed_evidence",
+      "evidence": [
+        "Read-only lines164-178 word-oriented decoder matches canonical coefficient/nibble/shift/clamp/history arithmetic;164-191 includes hardware flags/address/loop/envelope behavior deliberately excluded from native data codec. Backupfile SHA matches recorded reference."
+      ],
+      "limitations": "Read-only source/artifact review, no new implementation/test/build/game/model execution. Software reference subset only; no hardware/audible/full-game fidelity."
+    },
+    "external/forks/ps2-native-recomp/CMakeLists.txt": {
+      "after_sha256": "c18525b7b98abd7f22ca30c142a230dd6bfcd7fcbd4a681d2f5a506c0c4cd60b",
+      "status": "individually_reviewed_codec_source_or_attributed_evidence",
+      "evidence": [
+        "Current standalone codec target lines239-240 compiles only codec+test, no ps2runtime. Current CMakealsoincludesGPUdiagnosticstarget; priorcodec-implementation CMakeSHA is historical pre-target addition."
+      ],
+      "limitations": "Read-only source/artifact review, no new implementation/test/build/game/model execution. Software reference subset only; no hardware/audible/full-game fidelity."
+    },
+    "research/runs/native-audio-codec-contract-20261118/SOURCE.md": {
+      "after_sha256": "cab6026e53a054e20d68530c93e8859a2f3c1dc1a57a87211b05ff9c3e001424",
+      "status": "individually_reviewed_codec_source_or_attributed_evidence",
+      "evidence": [
+        "Individually read source/transfer/pitch/corpus/implementation/verification sections; hardware/audible/loop/stereo/effects parity explicitly unproved.",
+        "No-build introduction and Buildpending implementation sentence need phase qualification after reported successful standalone result."
+      ],
+      "limitations": "Read-only source/artifact review, no new implementation/test/build/game/model execution. Software reference subset only; no hardware/audible/full-game fidelity."
+    },
+    "research/runs/native-audio-codec-contract-20261118/codec-implementation.json": {
+      "after_sha256": "cd3654322a9c4756e1aaaa9e0410e0051146e4fb0348f494e688e76f9e1c89b4",
+      "status": "individually_reviewed_codec_source_or_attributed_evidence",
+      "evidence": [
+        "Current three codec source hashes and backupSHA match; stored69440-byte PCMhash matches9f80ed99501ec7213408eb951b5036d6b3644bf310c0ed4d446277799cbaeee6.",
+        "Reported independentPython backup transcription has no retained script/rawcomparison artifact or in-test hashassertion; current review cannot independently reproduce that authoredstatement without new execution. CMakepin predatesGPUtarget."
+      ],
+      "limitations": "Read-only source/artifact review, no new implementation/test/build/game/model execution. Software reference subset only; no hardware/audible/full-game fidelity."
+    },
+    "research/runs/native-audio-codec-contract-20261118/provenance.json": {
+      "after_sha256": "590e9f52c23111840dea8e931819aa3d93c5240ea793baef56704f598249d734",
+      "status": "individually_reviewed_codec_source_or_attributed_evidence",
+      "evidence": [
+        "Original IRX/MS2/generated/reference input pins and read-only source-method scope recorded; no independent hardwarePCM oracle claimed."
+      ],
+      "limitations": "Read-only source/artifact review, no new implementation/test/build/game/model execution. Software reference subset only; no hardware/audible/full-game fidelity."
+    },
+    "research/runs/native-audio-codec-contract-20261118/raw-observations.json": {
+      "after_sha256": "a93c409f9edc675ca0f498a7a8f0a17a635590e06fd35560429e80e5b4a6a737",
+      "status": "individually_reviewed_codec_source_or_attributed_evidence",
+      "evidence": [
+        "Attributed bounded344-record corpus scan:7950unique monoextents/5821182blocks, no noncanonical header; finalflaghistogram7796+154=7950. Original corpus not re-walked."
+      ],
+      "limitations": "Read-only source/artifact review, no new implementation/test/build/game/model execution. Software reference subset only; no hardware/audible/full-game fidelity."
+    },
+    "research/runs/native-audio-codec-contract-20261118/pinned-mono-s16le.pcm": {
+      "after_sha256": "9f80ed99501ec7213408eb951b5036d6b3644bf310c0ed4d446277799cbaeee6",
+      "status": "individually_reviewed_codec_source_or_attributed_evidence",
+      "evidence": [
+        "Read/hash only:69440bytes, recordedSHA matches; does not authenticate input/procedure or heard output."
+      ],
+      "limitations": "Read-only source/artifact review, no new implementation/test/build/game/model execution. Software reference subset only; no hardware/audible/full-game fidelity."
+    },
+    "research/runs/native-audio-codec-contract-20261118/review-rows.json": {
+      "after_sha256": "e80db3e57e2c962b65aa1c820da5f16e735f7c601d1637ed3ef7b662b8e369f3",
+      "status": "individually_reviewed_codec_source_or_attributed_evidence",
+      "evidence": [
+        "Prior author review rows inspected as source/test report dispositions; this independent record adds explicit verification gaps and current hashes without altering prior evidence."
+      ],
+      "limitations": "Read-only source/artifact review, no new implementation/test/build/game/model execution. Software reference subset only; no hardware/audible/full-game fidelity."
+    }
+  },
+  "findings": [
+    {
+      "id": "durable-pinned-pcm-regression",
+      "severity": "verification_gap",
+      "path": "external/forks/ps2-native-recomp/tests/test_adpcm_codec.cpp",
+      "line": 41,
+      "status": "reported_to_root_open",
+      "finding": "Optional actualpayload case checks shape only and writes PCM; no exactinput/outputhash, golden bytes, or finalhistory assertion. Reported independentPython reference is not retained as a reproducible comparison artifact.",
+      "correction": "Retain independent reference procedure/output and add exact pinnedinput/output/hash or byte comparison assertion; otherwise qualify result as authored one-off software-parity report, not durable pinned-output regression."
+    },
+    {
+      "id": "codec-doc-phase",
+      "severity": "documentation",
+      "path": "research/runs/native-audio-codec-contract-20261118/SOURCE.md",
+      "line": 3,
+      "status": "reported_to_root_open",
+      "finding": "Unqualified no-build scope and line33 Buildpending sentence survive later implemented/tested section.",
+      "correction": "Qualify initial investigation and prebuild snapshot locally; keep current source/test status explicit."
+    },
+    {
+      "id": "codec-cmake-historical",
+      "severity": "ledger",
+      "path": "research/runs/native-audio-codec-contract-20261118/codec-implementation.json",
+      "status": "historical_pin_explicitly_scoped_here",
+      "finding": "CMakeSHA predates GPUdiagnosticstarget addition; other3 source/backup/PCM pins match.",
+      "correction": "Preserve original source snapshot with explicit historical label and add current sharedCMakepin; this independent map supplies current pin."
+    }
+  ]
+}

@@ -1,0 +1,199 @@
+{
+  "schema": "cross_isa_pair_signature_v1",
+  "ps2_address": "003152a0",
+  "xbox_address": "0037c170",
+  "match_confidence": "mapped-by-role",
+  "ps2": {
+    "arch": "mips_r5900",
+    "entry": "003152a0",
+    "size_bytes": 28,
+    "instruction_count": 7,
+    "basic_block_count": 3,
+    "edge_count": 2,
+    "callees": [],
+    "memory_offsets": [
+      4,
+      8
+    ],
+    "cfg_blocks": [
+      {
+        "id": 0,
+        "start": "003152a0",
+        "end": "003152a8",
+        "instruction_count": 2,
+        "successors": [
+          "003152a8",
+          "003152b4"
+        ]
+      },
+      {
+        "id": 1,
+        "start": "003152a8",
+        "end": "003152b4",
+        "instruction_count": 3,
+        "successors": []
+      },
+      {
+        "id": 2,
+        "start": "003152b4",
+        "end": "003152bc",
+        "instruction_count": 2,
+        "successors": []
+      }
+    ]
+  },
+  "xbox": {
+    "arch": "x86_32",
+    "entry": "0037c170",
+    "size_bytes": 303,
+    "instruction_count": 90,
+    "basic_block_count": 10,
+    "edge_count": 10,
+    "callees": [
+      "0x0037ec50",
+      "0x0037c800",
+      "0x0037c590",
+      "0x00398740",
+      "0x0037c950",
+      "0x0037c920",
+      "0x0037c4a0",
+      "0x0037ec70",
+      "0x0037c880",
+      "0x0037ec70"
+    ],
+    "memory_offsets": [
+      -12,
+      -6,
+      -5,
+      -4,
+      4,
+      8,
+      12,
+      16,
+      20,
+      263,
+      264,
+      268,
+      272,
+      276,
+      5959876
+    ],
+    "cfg_blocks": [
+      {
+        "id": 0,
+        "start": "0037c170",
+        "end": "0037c19d",
+        "instruction_count": 13,
+        "successors": [
+          "0037c19d",
+          "0037c282"
+        ]
+      },
+      {
+        "id": 1,
+        "start": "0037c19d",
+        "end": "0037c1b8",
+        "instruction_count": 8,
+        "successors": [
+          "0037c1b8",
+          "0037c280"
+        ]
+      },
+      {
+        "id": 2,
+        "start": "0037c1b8",
+        "end": "0037c23c",
+        "instruction_count": 36,
+        "successors": [
+          "0037c23c",
+          "0037c262"
+        ]
+      },
+      {
+        "id": 3,
+        "start": "0037c23c",
+        "end": "0037c25b",
+        "instruction_count": 8,
+        "successors": [
+          "0037c25b",
+          "0037c260"
+        ]
+      },
+      {
+        "id": 4,
+        "start": "0037c25b",
+        "end": "0037c260",
+        "instruction_count": 1,
+        "successors": []
+      },
+      {
+        "id": 5,
+        "start": "0037c260",
+        "end": "0037c262",
+        "instruction_count": 1,
+        "successors": [
+          "0037c280"
+        ]
+      },
+      {
+        "id": 6,
+        "start": "0037c262",
+        "end": "0037c280",
+        "instruction_count": 11,
+        "successors": []
+      },
+      {
+        "id": 7,
+        "start": "0037c280",
+        "end": "0037c282",
+        "instruction_count": 1,
+        "successors": [
+          "0037c294"
+        ]
+      },
+      {
+        "id": 8,
+        "start": "0037c282",
+        "end": "0037c294",
+        "instruction_count": 7,
+        "successors": []
+      },
+      {
+        "id": 9,
+        "start": "0037c294",
+        "end": "0037c29f",
+        "instruction_count": 4,
+        "successors": []
+      }
+    ]
+  },
+  "semantic_alignment": {
+    "match_confidence": "mapped-by-role",
+    "evidence_type": "subsystem_role_correspondence_pending_dual_platform_vectors",
+    "notes": "Sound job enqueue",
+    "shared_memory_offsets": [
+      4,
+      8
+    ],
+    "nontrivial_offsets": [],
+    "cfg_topology_match": false,
+    "raw_ps2_block_count": 3,
+    "raw_xbox_block_count": 10,
+    "raw_ps2_edge_count": 2,
+    "raw_xbox_edge_count": 10,
+    "normalized_ps2": {
+      "vertices": 3,
+      "edges": 2,
+      "cyclomatic_complexity": 1,
+      "decision_blocks": 1
+    },
+    "normalized_xbox": {
+      "vertices": 9,
+      "edges": 9,
+      "cyclomatic_complexity": 2,
+      "decision_blocks": 4
+    },
+    "mapped_callee_match": false,
+    "common_mapped_callees": []
+  }
+}

@@ -1,0 +1,558 @@
+{
+  "schema": "cross_isa_pair_signature_v1",
+  "ps2_address": "0012c1d0",
+  "xbox_address": "0023daf0",
+  "match_confidence": "mapped-by-role",
+  "ps2": {
+    "arch": "mips_r5900",
+    "entry": "0012c1d0",
+    "size_bytes": 296,
+    "instruction_count": 74,
+    "basic_block_count": 11,
+    "edge_count": 10,
+    "callees": [
+      "00315a70",
+      "00315bd0",
+      "001db958",
+      "001dba60"
+    ],
+    "memory_offsets": [
+      -25036,
+      0,
+      48
+    ],
+    "cfg_blocks": [
+      {
+        "id": 0,
+        "start": "0012c1d0",
+        "end": "0012c1f0",
+        "instruction_count": 8,
+        "successors": [
+          "0012c1f0",
+          "0012c2e0"
+        ]
+      },
+      {
+        "id": 1,
+        "start": "0012c1f0",
+        "end": "0012c1fc",
+        "instruction_count": 3,
+        "successors": []
+      },
+      {
+        "id": 2,
+        "start": "0012c1fc",
+        "end": "0012c21c",
+        "instruction_count": 8,
+        "successors": [
+          "0012c21c",
+          "0012c2d0"
+        ]
+      },
+      {
+        "id": 3,
+        "start": "0012c21c",
+        "end": "0012c230",
+        "instruction_count": 5,
+        "successors": [
+          "0012c230",
+          "0012c238"
+        ]
+      },
+      {
+        "id": 4,
+        "start": "0012c230",
+        "end": "0012c238",
+        "instruction_count": 2,
+        "successors": []
+      },
+      {
+        "id": 5,
+        "start": "0012c238",
+        "end": "0012c264",
+        "instruction_count": 11,
+        "successors": [
+          "0012c264",
+          "0012c2a8"
+        ]
+      },
+      {
+        "id": 6,
+        "start": "0012c264",
+        "end": "0012c2a8",
+        "instruction_count": 17,
+        "successors": []
+      },
+      {
+        "id": 7,
+        "start": "0012c2a8",
+        "end": "0012c2d0",
+        "instruction_count": 10,
+        "successors": []
+      },
+      {
+        "id": 8,
+        "start": "0012c2d0",
+        "end": "0012c2dc",
+        "instruction_count": 3,
+        "successors": [
+          "0012c1fc",
+          "0012c2dc"
+        ]
+      },
+      {
+        "id": 9,
+        "start": "0012c2dc",
+        "end": "0012c2e0",
+        "instruction_count": 1,
+        "successors": []
+      },
+      {
+        "id": 10,
+        "start": "0012c2e0",
+        "end": "0012c2f8",
+        "instruction_count": 6,
+        "successors": []
+      }
+    ]
+  },
+  "xbox": {
+    "arch": "x86_32",
+    "entry": "0023daf0",
+    "size_bytes": 317,
+    "instruction_count": 110,
+    "basic_block_count": 41,
+    "edge_count": 58,
+    "callees": [
+      "0x0023dc70",
+      "0x0023dc70",
+      "0x0023dc70",
+      "0x0023dc70"
+    ],
+    "memory_offsets": [
+      -20,
+      -16,
+      -12,
+      -8,
+      -4,
+      4,
+      8,
+      12,
+      2350125,
+      2350145,
+      5671960,
+      5671964
+    ],
+    "cfg_blocks": [
+      {
+        "id": 0,
+        "start": "0023daf0",
+        "end": "0023db11",
+        "instruction_count": 8,
+        "successors": [
+          "0023db11",
+          "0023db1a"
+        ]
+      },
+      {
+        "id": 1,
+        "start": "0023db11",
+        "end": "0023db15",
+        "instruction_count": 2,
+        "successors": [
+          "0023db11",
+          "0023db15"
+        ]
+      },
+      {
+        "id": 2,
+        "start": "0023db15",
+        "end": "0023db1a",
+        "instruction_count": 1,
+        "successors": [
+          "0023dc29"
+        ]
+      },
+      {
+        "id": 3,
+        "start": "0023db1a",
+        "end": "0023db23",
+        "instruction_count": 3,
+        "successors": [
+          "0023db23",
+          "0023db2c"
+        ]
+      },
+      {
+        "id": 4,
+        "start": "0023db23",
+        "end": "0023db27",
+        "instruction_count": 2,
+        "successors": [
+          "0023db23",
+          "0023db27"
+        ]
+      },
+      {
+        "id": 5,
+        "start": "0023db27",
+        "end": "0023db2c",
+        "instruction_count": 1,
+        "successors": [
+          "0023dc29"
+        ]
+      },
+      {
+        "id": 6,
+        "start": "0023db2c",
+        "end": "0023db59",
+        "instruction_count": 14,
+        "successors": [
+          "0023db59",
+          "0023dc25"
+        ]
+      },
+      {
+        "id": 7,
+        "start": "0023db59",
+        "end": "0023db63",
+        "instruction_count": 2,
+        "successors": []
+      },
+      {
+        "id": 8,
+        "start": "0023db63",
+        "end": "0023db8a",
+        "instruction_count": 9,
+        "successors": [
+          "0023dc29"
+        ]
+      },
+      {
+        "id": 9,
+        "start": "0023db8a",
+        "end": "0023db8e",
+        "instruction_count": 2,
+        "successors": [
+          "0023db8a",
+          "0023db8e"
+        ]
+      },
+      {
+        "id": 10,
+        "start": "0023db8e",
+        "end": "0023db9f",
+        "instruction_count": 5,
+        "successors": [
+          "0023dc29"
+        ]
+      },
+      {
+        "id": 11,
+        "start": "0023db9f",
+        "end": "0023dbab",
+        "instruction_count": 4,
+        "successors": [
+          "0023dbab",
+          "0023dbf7"
+        ]
+      },
+      {
+        "id": 12,
+        "start": "0023dbab",
+        "end": "0023dbb5",
+        "instruction_count": 2,
+        "successors": []
+      },
+      {
+        "id": 13,
+        "start": "0023dbb5",
+        "end": "0023dbb9",
+        "instruction_count": 2,
+        "successors": [
+          "0023dbb5",
+          "0023dbb9"
+        ]
+      },
+      {
+        "id": 14,
+        "start": "0023dbb9",
+        "end": "0023dbbb",
+        "instruction_count": 1,
+        "successors": [
+          "0023dbfb"
+        ]
+      },
+      {
+        "id": 15,
+        "start": "0023dbbb",
+        "end": "0023dbbf",
+        "instruction_count": 2,
+        "successors": [
+          "0023dbbb",
+          "0023dbbf"
+        ]
+      },
+      {
+        "id": 16,
+        "start": "0023dbbf",
+        "end": "0023dbc1",
+        "instruction_count": 1,
+        "successors": [
+          "0023dbfb"
+        ]
+      },
+      {
+        "id": 17,
+        "start": "0023dbc1",
+        "end": "0023dbc5",
+        "instruction_count": 2,
+        "successors": [
+          "0023dbc1",
+          "0023dbc5"
+        ]
+      },
+      {
+        "id": 18,
+        "start": "0023dbc5",
+        "end": "0023dbc7",
+        "instruction_count": 1,
+        "successors": [
+          "0023dbfb"
+        ]
+      },
+      {
+        "id": 19,
+        "start": "0023dbc7",
+        "end": "0023dbcb",
+        "instruction_count": 2,
+        "successors": [
+          "0023dbc7",
+          "0023dbcb"
+        ]
+      },
+      {
+        "id": 20,
+        "start": "0023dbcb",
+        "end": "0023dbcd",
+        "instruction_count": 1,
+        "successors": [
+          "0023dbfb"
+        ]
+      },
+      {
+        "id": 21,
+        "start": "0023dbcd",
+        "end": "0023dbd1",
+        "instruction_count": 2,
+        "successors": [
+          "0023dbcd",
+          "0023dbd1"
+        ]
+      },
+      {
+        "id": 22,
+        "start": "0023dbd1",
+        "end": "0023dbd3",
+        "instruction_count": 1,
+        "successors": [
+          "0023dbfb"
+        ]
+      },
+      {
+        "id": 23,
+        "start": "0023dbd3",
+        "end": "0023dbd7",
+        "instruction_count": 2,
+        "successors": [
+          "0023dbd3",
+          "0023dbd7"
+        ]
+      },
+      {
+        "id": 24,
+        "start": "0023dbd7",
+        "end": "0023dbd9",
+        "instruction_count": 1,
+        "successors": [
+          "0023dbfb"
+        ]
+      },
+      {
+        "id": 25,
+        "start": "0023dbd9",
+        "end": "0023dbdd",
+        "instruction_count": 2,
+        "successors": [
+          "0023dbd9",
+          "0023dbdd"
+        ]
+      },
+      {
+        "id": 26,
+        "start": "0023dbdd",
+        "end": "0023dbdf",
+        "instruction_count": 1,
+        "successors": [
+          "0023dbfb"
+        ]
+      },
+      {
+        "id": 27,
+        "start": "0023dbdf",
+        "end": "0023dbe3",
+        "instruction_count": 2,
+        "successors": [
+          "0023dbdf",
+          "0023dbe3"
+        ]
+      },
+      {
+        "id": 28,
+        "start": "0023dbe3",
+        "end": "0023dbe5",
+        "instruction_count": 1,
+        "successors": [
+          "0023dbfb"
+        ]
+      },
+      {
+        "id": 29,
+        "start": "0023dbe5",
+        "end": "0023dbe9",
+        "instruction_count": 2,
+        "successors": [
+          "0023dbe5",
+          "0023dbe9"
+        ]
+      },
+      {
+        "id": 30,
+        "start": "0023dbe9",
+        "end": "0023dbeb",
+        "instruction_count": 1,
+        "successors": [
+          "0023dbfb"
+        ]
+      },
+      {
+        "id": 31,
+        "start": "0023dbeb",
+        "end": "0023dbef",
+        "instruction_count": 2,
+        "successors": [
+          "0023dbeb",
+          "0023dbef"
+        ]
+      },
+      {
+        "id": 32,
+        "start": "0023dbef",
+        "end": "0023dbf1",
+        "instruction_count": 1,
+        "successors": [
+          "0023dbfb"
+        ]
+      },
+      {
+        "id": 33,
+        "start": "0023dbf1",
+        "end": "0023dbf5",
+        "instruction_count": 2,
+        "successors": [
+          "0023dbf1",
+          "0023dbf5"
+        ]
+      },
+      {
+        "id": 34,
+        "start": "0023dbf5",
+        "end": "0023dbf7",
+        "instruction_count": 1,
+        "successors": [
+          "0023dbfb"
+        ]
+      },
+      {
+        "id": 35,
+        "start": "0023dbf7",
+        "end": "0023dbfb",
+        "instruction_count": 2,
+        "successors": [
+          "0023dbf7",
+          "0023dbfb"
+        ]
+      },
+      {
+        "id": 36,
+        "start": "0023dbfb",
+        "end": "0023dc09",
+        "instruction_count": 5,
+        "successors": [
+          "0023dc29"
+        ]
+      },
+      {
+        "id": 37,
+        "start": "0023dc09",
+        "end": "0023dc17",
+        "instruction_count": 5,
+        "successors": [
+          "0023dc29"
+        ]
+      },
+      {
+        "id": 38,
+        "start": "0023dc17",
+        "end": "0023dc25",
+        "instruction_count": 5,
+        "successors": [
+          "0023dc29"
+        ]
+      },
+      {
+        "id": 39,
+        "start": "0023dc25",
+        "end": "0023dc29",
+        "instruction_count": 2,
+        "successors": [
+          "0023dc25",
+          "0023dc29"
+        ]
+      },
+      {
+        "id": 40,
+        "start": "0023dc29",
+        "end": "0023dc2d",
+        "instruction_count": 3,
+        "successors": []
+      }
+    ]
+  },
+  "semantic_alignment": {
+    "match_confidence": "mapped-by-role",
+    "evidence_type": "subsystem_role_correspondence_pending_dual_platform_vectors",
+    "notes": "Sound reverse-removal helper (modular part 2)",
+    "shared_memory_offsets": [],
+    "nontrivial_offsets": [],
+    "cfg_topology_match": false,
+    "raw_ps2_block_count": 11,
+    "raw_xbox_block_count": 41,
+    "raw_ps2_edge_count": 10,
+    "raw_xbox_edge_count": 58,
+    "normalized_ps2": {
+      "vertices": 11,
+      "edges": 10,
+      "cyclomatic_complexity": 1,
+      "decision_blocks": 5
+    },
+    "normalized_xbox": {
+      "vertices": 41,
+      "edges": 58,
+      "cyclomatic_complexity": 19,
+      "decision_blocks": 20
+    },
+    "mapped_callee_match": false,
+    "common_mapped_callees": []
+  }
+}

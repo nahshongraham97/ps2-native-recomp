@@ -1,0 +1,294 @@
+{
+  "xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
+  "PS2_original_evidence": "research/runs/native-retail-startup-20261120/connected-retail-entry-01/native-retail-reset-resource-producer-84/source-agent01/RAW_SOURCE.json",
+  "Xbox_4_descriptor_exact_candidates": [
+    {
+      "file_offset": 5635392,
+      "address": "0x56c5c0",
+      "bytes_hex": "000000000000000001000000080000000400000001000000020000001600000001000000010000001500000001000000",
+      "serialized_pointer_candidates": [
+        {
+          "file_offset": 5636324,
+          "address": "0x56c964"
+        }
+      ]
+    }
+  ],
+  "catalog_base_candidate": "0x568c18",
+  "first_nine_catalog_names_and_source_indices_match": true,
+  "whole_catalog_equivalence": "UNVERIFIED",
+  "function_equivalence": "UNVERIFIED",
+  "original_PS2_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "bounded_original_record_comparison": [
+    {
+      "ordinal": 0,
+      "PS2_name": "permanent",
+      "Xbox_name": "permanent",
+      "PS2_words_le32": [
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5f54b8",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0"
+      ],
+      "Xbox_words_le32": [
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x504304",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0"
+      ],
+      "equal_except_native_image_string_pointer": true
+    },
+    {
+      "ordinal": 1,
+      "PS2_name": "shell",
+      "Xbox_name": "shell",
+      "PS2_words_le32": [
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5f54c8",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x1",
+        "0x1"
+      ],
+      "Xbox_words_le32": [
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5042fc",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x1",
+        "0x1"
+      ],
+      "equal_except_native_image_string_pointer": true
+    },
+    {
+      "ordinal": 2,
+      "PS2_name": "shell_music",
+      "Xbox_name": "shell_music",
+      "PS2_words_le32": [
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5f54d0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x2",
+        "0x2"
+      ],
+      "Xbox_words_le32": [
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5042f0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x2",
+        "0x2"
+      ],
+      "equal_except_native_image_string_pointer": true
+    },
+    {
+      "ordinal": 3,
+      "PS2_name": "shell_cap",
+      "Xbox_name": "shell_cap",
+      "PS2_words_le32": [
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5f54e0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x3",
+        "0x3"
+      ],
+      "Xbox_words_le32": [
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5042e4",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x3",
+        "0x3"
+      ],
+      "equal_except_native_image_string_pointer": true
+    },
+    {
+      "ordinal": 4,
+      "PS2_name": "music_one_player_path",
+      "Xbox_name": "music_one_player_path",
+      "PS2_words_le32": [
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5f54f0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x4",
+        "0x4"
+      ],
+      "Xbox_words_le32": [
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5042cc",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x4",
+        "0x4"
+      ],
+      "equal_except_native_image_string_pointer": true
+    },
+    {
+      "ordinal": 5,
+      "PS2_name": "shell_jukebox",
+      "Xbox_name": "shell_jukebox",
+      "PS2_words_le32": [
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5f5508",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5",
+        "0x5"
+      ],
+      "Xbox_words_le32": [
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5042bc",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5",
+        "0x5"
+      ],
+      "equal_except_native_image_string_pointer": true
+    },
+    {
+      "ordinal": 6,
+      "PS2_name": "crypt",
+      "Xbox_name": "crypt",
+      "PS2_words_le32": [
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5f5518",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x6",
+        "0x6"
+      ],
+      "Xbox_words_le32": [
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5042b4",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x6",
+        "0x6"
+      ],
+      "equal_except_native_image_string_pointer": true
+    },
+    {
+      "ordinal": 7,
+      "PS2_name": "crypt_bats",
+      "Xbox_name": "crypt_bats",
+      "PS2_words_le32": [
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5f5520",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x7",
+        "0x7"
+      ],
+      "Xbox_words_le32": [
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5042a8",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x7",
+        "0x7"
+      ],
+      "equal_except_native_image_string_pointer": true
+    },
+    {
+      "ordinal": 8,
+      "PS2_name": "announcr",
+      "Xbox_name": "announcr",
+      "PS2_words_le32": [
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x5f5530",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x8",
+        "0x8"
+      ],
+      "Xbox_words_le32": [
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x50429c",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x0",
+        "0x8",
+        "0x8"
+      ],
+      "equal_except_native_image_string_pointer": true
+    }
+  ]
+}
