@@ -15,6 +15,23 @@ Native source is `runtime/include/mka/retail_renderer_geometry.hpp` and `runtime
 No guest console emulation (`g_ram`, `g_spr`, `g_memory`, emulated SPU2/IOP, JITs) is used.
 No console geometry structures, raw pointer arrays, or GS packets are imported into host memory.
 
+## Settle Plugin Name & Authentic Binary Registration Site
+
+The binary registration site (Xbox `default.xbe` `0x002c021a`..`0x002c0234`, PS2 `SLUS_214.10` `0x001a6858`..`0x001a6870`) establishes:
+- Plugin Numeric ID: `0x040b`
+- Object Container Size: `0x28` (40 bytes)
+- Constructor: Xbox `0x002c2d40` / PS2 `0x001a1b30`
+- Destructor: Xbox `0x002c30a0` / PS2 `0x001a1b90`
+- Call Target: calls engine plugin registration helper `_rwPluginRegistryAddPlugin` (Xbox `0x002c2990`, PS2 `0x001a6a20`)
+- **Zero String Names in Binary**: The binary engine registration table contains zero string identifiers or names. The name "Geometry" (or `RpGeometry` / `RwGeometry`) is an unrecovered RenderWare library convention name used for code navigation, not a string present in retail binary data.
+
+## Scoping of Vertex/Triangle Descriptors (Unrecovered Library Conventions)
+
+The 40-byte container registration in authentic binaries registers the container lifecycle and module counter tracking, but does NOT evidence high-level vertex or triangle descriptor functions:
+- `RetailRendererGeometryDescription` (`flags`, `num_triangles`, `num_vertices`) represents an unrecovered RenderWare library convention (derived from standard `RpGeometry` signatures), rather than recovered binary subroutines.
+- In native C++, these fields are retained purely as optional native design checks for test staging and do NOT constitute source-verified binary logic.
+- Test stages exercising `RetailRendererGeometryDescription` are strictly classified as `[native-design-check]` (not `[source-derived]`). Only container allocation (40 bytes), module counter manipulation, and constructor/destructor lifetime tracking are classified as `[source-derived]`.
+
 ## Binary source words and disassembly
 
 ### Xbox default.xbe source words

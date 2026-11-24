@@ -1,14 +1,33 @@
-"""Bounded streamed 0409 checks with exclusive source/build/result evidence."""
+"""Bounded streamed checks with exclusive source/build/result evidence."""
 from pathlib import Path
 import ctypes, gzip, hashlib, io, json, os, subprocess, sys, threading, time
 
-R = Path(__file__).resolve().parent
-ROOT = R.parents[2]
-PARENT = ROOT.parents[2]
+TOOL_DIR = Path(__file__).resolve().parent
+# Resolve ROOT, PARENT, and BACKUP
+if (TOOL_DIR.parents[1] / "runtime").is_dir():
+    ROOT = TOOL_DIR.parents[1]
+    PARENT = ROOT.parents[2]
+    BACKUP = PARENT.parent
+elif (TOOL_DIR.parent / "runtime").is_dir():
+    ROOT = TOOL_DIR.parent
+    PARENT = ROOT
+    BACKUP = PARENT.parent
+else:
+    ROOT = Path.cwd()
+    PARENT = ROOT
+    BACKUP = ROOT.parent
 
 name = sys.argv[1]
 phase = sys.argv[2]
-OUT = R / name
+
+p_name = Path(name)
+if p_name.is_absolute():
+    OUT = p_name
+elif ("/" in name or "\\" in name) and (ROOT / name).parent.exists():
+    OUT = (ROOT / name).resolve()
+else:
+    OUT = (Path.cwd() / name).resolve()
+
 OUT.mkdir(parents=True, exist_ok=True)
 
 def sha(p):
@@ -23,7 +42,7 @@ pins = {n: sha(ROOT / n) for n in sorted(set(names))}
 (OUT / "SOURCE_FILES.json").write_text(json.dumps(pins, indent=2) + "\n", newline="\n")
 git("diff", "--check", "--", "runtime", "tests", "cmake")
 
-deps = PARENT.parent / "dependencies"
+deps = BACKUP / "dependencies"
 bin_dir = deps / "compiler/llvm-mingw-20261006-ucrt-x86_64/bin"
 cmake = deps / "cmake/cmake-4.4.5-windows-x86_64/bin/cmake.exe"
 build = ROOT / "b"
@@ -152,7 +171,7 @@ elif phase == "symbols":
 else:
     raise ValueError("build/client/negative/symbols required")
 
-print("START0409", phase, "deadline", deadline, "seconds", " ".join(argv), flush=True)
+print("START_CHECK", phase, "deadline", deadline, "seconds", " ".join(argv), flush=True)
 start = time.monotonic()
 raw = bytearray()
 p = subprocess.Popen(argv, cwd=ROOT, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess.CREATE_NO_WINDOW)

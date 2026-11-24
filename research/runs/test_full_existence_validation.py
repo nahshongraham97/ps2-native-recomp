@@ -13,9 +13,20 @@ else:
     FORK_ROOT = _this_file.parents[2]
     REPO = FORK_ROOT.parents[2]
 
-# Import validate_ledgers logic
+# Import validate_ledgers logic and sync_verify
 sys.path.insert(0, str(REPO / "tools" / "research"))
+sys.path.insert(0, str(FORK_ROOT / "tools" / "research"))
 from generate_ledgers import validate_ledgers, FORK_COMMIT_SHA
+import generate_ledgers
+generate_ledgers.REPO = REPO
+import sync_verify
+
+
+def test_parent_fork_sync():
+    """Verify that all ledger files are byte-for-byte identical between parent and fork."""
+    print("Testing parent-fork ledger synchronization...")
+    sync_verify.assert_synced()
+    print("PASS: Parent and fork ledgers are 100% in sync.")
 
 
 def test_sha_resolution():
@@ -398,6 +409,7 @@ def test_planted_failures():
 
 
 if __name__ == "__main__":
+    test_parent_fork_sync()
     test_sha_resolution()
     test_production_existence()
     test_planted_failures()

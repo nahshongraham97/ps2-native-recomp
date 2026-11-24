@@ -54,6 +54,11 @@ private:
     bool assigned_{false};
 };
 
+// Unrecovered RenderWare library convention descriptor:
+// In authentic retail binaries (Xbox default.xbe 0x002c021a, PS2 SLUS_214.10 0x001a6858),
+// Plugin 0x040b registers only a numeric ID (0x040b) with a 40-byte container size and zero string names.
+// Flags, triangle counts, and vertex counts are conventional RenderWare fields (e.g. RpGeometry),
+// NOT recovered binary functions. Retained purely as optional native design checks.
 struct RetailRendererGeometryDescription {
     std::uint32_t flags{0};
     std::int32_t num_triangles{0};

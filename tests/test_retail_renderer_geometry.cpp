@@ -137,7 +137,9 @@ int main() {
             check(bool(geom1) && !geom1->empty(), "create geometry 1");
             check(geom_mgr->active_count() == 1, "active geometry count is 1");
 
-            // Stage 4 [source-derived]: Geometry Description & Observation
+            // Stage 4 [native-design-check]: Optional Geometry Description & Observation
+            // Note: flags, triangles, and vertices are unrecovered RenderWare library convention
+            // descriptors, not recovered binary functions. Retained and verified as a native design check.
             RetailRendererGeometryDescription desc{0x00000008, 128, 64};
             auto geom2 = geom_mgr->create_geometry(desc, gf);
             check(bool(geom2) && !geom2->empty(), "create geometry 2 with desc");

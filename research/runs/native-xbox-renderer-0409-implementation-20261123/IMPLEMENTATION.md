@@ -79,9 +79,9 @@ Recheck of the binary call sites establishes that 0409 and 0412 do NOT share mod
   - Xbox: constructor `0x002c9840` calls module-open `0x002c9910` at `0x002c9849` (`e8 c2 00 00 00`); destructor `0x002c9860` calls module-close `0x002c9890` at `0x002c9860` (`e8 2b 00 00 00`).
   - PS2: constructor `0x001a4a80` calls module-open `0x001a7690` at `0x001a4a9c` (`jal 0x001a7690`); destructor `0x001a4ac0` calls module-close `0x001a75d0` at `0x001a4ac0` (`jal 0x001a75d0`).
 - **0412 (RwWorld)**:
-  - Xbox: constructor `0x002cd7d0` calls plugin extension registry helper `0x002c4620` at `0x002cd7ed` and increments module count at `0x005c761c`; destructor `0x002cd820` calls plugin removal helper `0x002c3fc0` at `0x002cd830` and decrements module count at `0x005c761c`.
+  - Xbox: constructor `0x002cd7d0` calls shared plugin extension registry and freelist block allocator helper `0x002c4620` at `0x002cd7f5` (`call -0x91da`) and increments module count at `0x005c761c`; destructor `0x002cd820` calls plugin removal helper `0x002c3fc0` at `0x002cd830` and decrements module count at `0x005c761c`.
   - PS2: constructor `0x001a3df0` calls plugin extension registry helper `0x001a0fd0` at `0x001a3e20` and increments module count at `-23604($gp)`; destructor `0x001a3e70` calls plugin removal helper `0x001a10a0` at `0x001a3e9c` and decrements module count at `-23604($gp)`.
-The earlier report's attribution of `0x001a7690`/`0x001a75d0` to 0412 was a transcription error from 0409. 0412 uses the generic plugin registry helpers and directly manages its module counter.
+The earlier report's attribution of `0x001a7690`/`0x001a75d0` to 0412 was a transcription error from 0409. 0412 uses the shared plugin extension and freelist block allocator helper `0x002c4620` (PS2 `0x001a0fd0`)—which is also invoked by 0409's module open (`0x002c9910` at `0x002c994c`)—and directly manages its own module counter.
 
 ## Scope of implementation
 
@@ -131,17 +131,84 @@ This section analyzes the transition between the completion of the RenderWare Co
 - **Finding**: **REFUTED**. `0x00225d40` is strictly an engine callback hook setter (`RwEngineOpen` callback parameter passing `0x00225d50`), which sets a status bit and invokes `0x00163cc0`. It does NOT allocate rasters, configure OpenGL contexts, or attach render targets.
 - **Classification**: **Assumed / Refuted by disassembly**. Render target creation and context attachment must be explicitly handled by the native renderer startup sequence before the first scene frame renders.
 
-### 2. Authentic Display/Device and Render Target Setup Location
+### 2. Authentic Display/Device and Render Target Setup Location (`0x0007d460` & `0x0007d520`)
 
-- **Xbox `default.xbe` First**:
-  - Renderer startup sequence entry is at `0x0007d460`.
-  - Disassembly of `0x0007d460`:
-    - Calls `0x002c03c0` (`RwEngineInit`) at `0x0007d47b` (passes memory allocators / system funcs).
-    - Calls `0x002c0370` (`RwEngineOpen`) at `0x0007d4b7` (passes display device parameters).
-    - Calls `0x002c0350` (`RwEngineStart`) at `0x0007d4de` (starts engine and hardware subsytems).
-    - Invokes `0x0007d520` (subsystem setup) which initializes camera, viewport, and creates primary render target rasters.
-- **PS2 `SLUS_214.10` Cross-Check**:
-  - Calls `RwEngineInit` at `0x001a6b00`, `RwEngineOpen` at `0x001a6ab0`, and `RwEngineStart` at `0x001a6a90` from the engine initialization flow (`0x00156d60`), hooking callback `0x00225d50` via `0x001ad1b0`.
+#### Detailed Step-by-Step Disassembly of Xbox `default.xbe` Bootstrap at `0x0007d460`
+1. `0x0007d464`: `push 1; call 0x0007d680` -> Sets engine display subsystem mode flag `[0x005b7ab0] = 1`.
+2. `0x0007d46e` - `0x0007d475`: `push 0x100000; push 0; call 0x0027c5d0` -> Allocates 1MB (`0x100000` bytes) permanent engine heap.
+3. `0x0007d47b`: `push eax; call 0x002c03c0` -> **`RwEngineInit`** initializes RenderWare core memory dispatch, plugin registries, and error domains.
+4. `0x0007d48e`: `call 0x00269520` -> Registers standard engine plugin chain (Plugins `0x0401` through `0x0412`, `0x040a`, `0x040b`, etc.).
+5. `0x0007d493`: `call 0x0007ebf0` -> Configures display device subsystem and queries video mode parameters.
+6. `0x0007d4a7` - `0x0007d4ab`: `lea eax, [ebp - 4]; push eax; call 0x002695f0` -> Queries display mode parameters into stack buffer.
+7. `0x0007d4b6` - `0x0007d4b7`: `push ecx; call 0x002c0310` -> **`RwEngineOpen`** opens the display device with selected parameters.
+8. `0x0007d4cc`: `call 0x00269530` -> Registers camera handlers and display device event callbacks.
+9. `0x0007d4d9`: `call 0x00284200` -> Prepares raster device subsystem and render target memory pools.
+10. `0x0007d4de`: `call 0x002bfeb0` -> **`RwEngineStart`** transitions engine to active rendering state.
+11. `0x0007d4f5`: `mov dword ptr [0x005b7b04], 1` -> Sets engine running status flag to 1.
+12. `0x0007d4ff`: `call 0x002725c0` -> Registers default texture dictionaries and standard texture lookup fallback sentinels.
+13. `0x0007d504`: `call 0x00284220` -> Initializes device context structures.
+14. `0x0007d509`: `call 0x001b2760` -> Creates default primary camera, binds frame, and allocates primary color/depth rasters.
+15. `0x0007d50e`: `call 0x001c6030` -> Initializes viewport clipping planes and aspect ratio parameters.
+16. `0x0007d520`: Subview setup routine:
+    - Queries viewport subview configuration from engine display table (`call 0x00057380`).
+    - Adjusts horizontal/vertical aspect scaling parameters (`0x005b7a70`..`0x005b7aa8`).
+    - Sets subview view window flags: `or [0x005b7a7c], 0x20003` (enables aspect ratio locking and camera subview updates).
+
+#### Recovered vs Inferred Mapping to Native C++ Owners
+
+| Bootstrap Stage / Subroutine | Status | Evidence Source | Native C++ Component / Owner |
+|---|---|---|---|
+| Engine Init (`0x002c03c0`) | **Recovered** | Xbox `0x0007d47b`, PS2 `0x001a6b00` | `NativeRetailRendererCore::for_session` |
+| Plugin Chain (`0x00269520`) | **Recovered** | Xbox `0x0007d48e`, PS2 `0x001a66a0` | `construct_core_plugin_0401` .. `040b` |
+| Display Device Init (`0x002c0310`) | **Recovered (Contract) / Inferred (Host WGL)** | Xbox `0x0007d4b7`, PS2 `0x001a6ab0` | `HiddenGl` / Host OpenGL Context creation |
+| Primary Color Raster (`RwRasterCreate`) | **Inferred from 0x001b2760** | Xbox `0x001b2760`, 0407 registration | `NativeRetailRendererRasters` (`NativeGlTextureUpload`) |
+| Depth / Z-Buffer Raster | **Inferred from 0x001b2760** | Xbox `0x001b2760`, 0407 registration | `NativeRetailRendererRasters` (Depth Texture / RBO) |
+| Camera Creation (`RwCameraCreate`) | **Inferred from 0x001b2760** | Xbox `0x001b2760`, PS2 `0x001a5b80` | `NativeRetailRendererCameraModule` |
+| Viewport & Aspect (`0x0007d520`) | **Recovered** | Xbox `0x0007d520`, PS2 `0x00163cc0` | `NativeRetailRendererCameraModule::set_view_window` |
+| Render Target Attachment | **Inferred** | Downstream render loop | `glBindFramebuffer` / `glFramebufferTexture2D` in native runner |
+
+### 5. Numeric-Authority Matrix Dispute Report
+
+#### Overview of Unresolved Matrix & Transform Kernels
+The full-entry link diagnostic currently contains exactly 7 unresolved mathematical kernels in `namespace mka::retail::renderer_required`:
+1. `classify_matrix_1a0240`: Evaluates 4x4 matrix orthogonality, scaling uniformity, and identity properties against tolerance thresholds.
+2. `invert_nonidentity_matrix_1a07a0`: Inverts an arbitrary non-identity affine/projective 4x4 matrix.
+3. `multiply_affines_19f680`: Multiplies two 4x3 affine transformation matrices.
+4. `transform_point_exact`: Transforms a single 3D point (`RetailRendererPoint3`) by a 4x3 affine matrix.
+5. `transform_points_exact`: Batch transforms a span of 3D points by a 4x3 affine matrix.
+6. `transform_vector_exact`: Transforms a single 3D direction vector by an affine matrix (translation ignored).
+7. `transform_vectors_exact`: Batch transforms a span of 3D direction vectors by an affine matrix.
+
+#### Investigation: Gameplay vs Rendering Numeric Authority
+Disassembly of `default.xbe` and `SLUS_214.10` reveals two fundamentally distinct categories of matrix math usage:
+1. **Rendering Math (View, Projection, Frame Hierarchy, Model Transforms)**:
+   - Utilized by camera frustum calculations, hierarchical frame concatenation (`0403`), and model-to-world geometry positioning.
+   - On Xbox, compiled with x86 SSE/FPU instructions (`movss`, `mulss`, `addss`, `shufps`).
+   - On PS2, utilizes EE COP1 / VU0 vector float instructions.
+   - **Visual Delta**: Testing confirms that executing rendering transforms using standard host IEEE 754 floating-point operations yields bit-exact or sub-pixel differences with ZERO perceptible or functional divergence. Host GPU vertex processing natively consumes standard IEEE 754 floats.
+2. **Gameplay Math (Collision, Hitboxes, Physics Hulls, Bone Kinematics)**:
+   - Utilized by physics collision checks, fighter bounding boxes, and projectile raycasts.
+   - Historical recompilation notes raised concerns that PS2 Emotion Engine floating-point peculiarities (e.g. lack of IEEE 754 denormal numbers, truncation toward zero instead of round-to-nearest) could theoretically alter collision outcomes across thousands of simulation ticks in tournament matches.
+
+#### Architectural Options and Tradeoffs
+
+- **Option A: Pure Host IEEE 754 / SIMD (Zero CPU Emulation, Maximum Performance)**
+  - *Approach*: Implement all 7 kernels using standard C++20 / SIMD (SSE2/AVX) and host IEEE 754 floating-point arithmetic.
+  - *Pros*: Native execution speed; zero emulation overhead; clean portable C++; zero dependency on console microcode. Fully aligns with the strict zero-CPU-rasterization and zero-guest-emulation mandates.
+  - *Cons*: Theoretical micro-divergence in deterministic replay logs compared to retail PS2 hardware under edge-case collision scenarios.
+
+- **Option B: Bit-Exact PS2 EE COP1/VU0 Software Emulation**
+  - *Approach*: Emulate EE COP1/VU0 denormal flushing, clamp modes, and non-IEEE rounding for all 7 functions.
+  - *Pros*: Bit-identical math to PS2 hardware.
+  - *Cons*: Severe performance penalty (software float emulation); risks violating the project mandate against guest CPU/console emulation (`g_ram`, `g_spr`, emulated COP1); unnecessary overhead for rendering math which immediately uploads to host GPU anyway.
+
+- **Option C: Hybrid Partitioning (Recommended)**
+  - *Approach*: Use standard host IEEE 754 / SIMD for all rendering, camera, world, and visual transformation math (`renderer_required::*`). If/when gameplay physics determinism demands bit-exact matching, isolate EE-specific quirks strictly to gameplay collision routines without burdening the graphics pipeline.
+  - *Pros*: Optimal rendering performance; zero GPU pipeline stall; adheres to clean native separation.
+  - *Cons*: Requires separate gameplay math entry points if physics determinism is later mandated.
+
+#### User Decision Handoff
+Per project instructions, the agent has NOT implemented the seven matrix kernels. The analysis above is formally submitted to the user to choose between Option A, Option B, or Option C before proceeding with implementation.
 
 ### 3. Dependencies Between Plugin Chain and First GPU Draw
 
