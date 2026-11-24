@@ -294,5 +294,138 @@
   "004f3c80": "runtime/src/native/retail_saved_profile_defaults.cpp:92 [initialize_retail_saved_profile_known_defaults] (tests/test_retail_saved_profile_defaults.cpp:74 \"4F3C80 scalar defaults\")",
   "00514240": "runtime/src/native/retail_profile_resource_ids.cpp:97 [record] (tests/test_retail_profile_resource_ids.cpp:60 \"source callback's nested same-ID append\")",
   "00514700": "runtime/src/native/retail_profile_resource_ids.cpp:97 [record] (tests/test_retail_profile_resource_ids.cpp:85 \"source first ID invokes actor effect then appends\")",
-  "00514d30": "runtime/src/native/retail_saved_profile_defaults.cpp:87 [initialize_retail_saved_profile_known_defaults] (tests/test_retail_saved_profile_defaults.cpp:38 \"514D30 shared-word reset\")"
+  "00514d30": "runtime/src/native/retail_saved_profile_defaults.cpp:87 [initialize_retail_saved_profile_known_defaults] (tests/test_retail_saved_profile_defaults.cpp:38 \"514D30 shared-word reset\")",
+  "placeholders": [
+    {
+      "function": "00225d40",
+      "owning_symbol": "mka::retail::initial_task_required::continue_first_scene_at_225d40",
+      "what_is_missing": "Whole 3D scene continuation bootstrap logic and scene actor graphs"
+    },
+    {
+      "function": "00125d60",
+      "owning_symbol": "mka::retail::initial_task_required::continue_scene_reset_at_125d60",
+      "what_is_missing": "Scene reset resource recreation and dynamic camera actor linking"
+    },
+    {
+      "function": "00126940",
+      "owning_symbol": "mka::retail::main_binding::render_retail_frame",
+      "what_is_missing": "Whole 3D world and character mesh raster submission to GPU pipeline"
+    },
+    {
+      "function": "0018d450",
+      "owning_symbol": "mka::retail::initial_task_required::begin_menu_18d450",
+      "what_is_missing": "Continuous multi-frame streaming decode loops across multi-second playback (only offscreen frame 0 presentation authenticated)"
+    },
+    {
+      "function": "0018d870",
+      "owning_symbol": "mka::retail::initial_task_required::begin_menu_18d870",
+      "what_is_missing": "Multi-frame video stream decode loop for OPENING movie"
+    },
+    {
+      "function": "0018d8e0",
+      "owning_symbol": "mka::retail::initial_task_required::begin_menu_18d8e0",
+      "what_is_missing": "Multi-frame video stream decode loop for TITLE movie and idle attract transition"
+    },
+    {
+      "function": "0018d800",
+      "owning_symbol": "mka::retail::initial_task_required::begin_menu_18d800",
+      "what_is_missing": "Multi-frame video stream decode loop for ATTRACT movie"
+    },
+    {
+      "function": "0018d770",
+      "owning_symbol": "mka::retail::initial_task_required::begin_menu_18d770",
+      "what_is_missing": "Multi-frame video stream decode loop for QUAD movie"
+    },
+    {
+      "function": "0018d700",
+      "owning_symbol": "mka::retail::initial_task_required::begin_menu_18d700",
+      "what_is_missing": "Interactive options menu widget navigation and audio/video settings persistence"
+    },
+    {
+      "function": "0018d660",
+      "owning_symbol": "mka::retail::initial_task_required::begin_menu_18d660",
+      "what_is_missing": "Fight engine AI simulation and character state playback during kombat demo"
+    },
+    {
+      "function": "0018deb0",
+      "owning_symbol": "mka::retail::initial_task_required::begin_intro_18deb0",
+      "what_is_missing": "Live ROM font glyph rasterization during interactive intro playback"
+    },
+    {
+      "function": "0018dc10",
+      "owning_symbol": "mka::retail::initial_task_required::begin_prompt_18dc10",
+      "what_is_missing": "Interactive controller button polling and gamepad interrupt service"
+    },
+    {
+      "function": "001225d0",
+      "owning_symbol": "mka::retail::initial_task_required::transition_1225d0",
+      "what_is_missing": "Complex interactive mode task dispatch bodies (Options, Kombat demo, Arcade ladders)"
+    },
+    {
+      "function": "0018da30",
+      "owning_symbol": "mka::retail::initial_reset_required::clear_nonowning_references_18da30",
+      "what_is_missing": "Complete non-owning reference cleanup across all subsystem task nodes"
+    },
+    {
+      "function": "002214d0",
+      "owning_symbol": "mka::retail::main_binding::poll_retail_controller_roles",
+      "what_is_missing": "Multi-controller role assignment and hardware pad device detection"
+    },
+    {
+      "function": "003429e0",
+      "owning_symbol": "mka::retail::main_binding::advance_retail_game_services",
+      "what_is_missing": "Live online network protocol exchange and multi-stream audio updates"
+    },
+    {
+      "function": "0027b1d0",
+      "owning_symbol": "mka::retail::main_binding::retail_mode_dispatch_enabled",
+      "what_is_missing": "60-step mode-table dispatch cycle timing verification"
+    },
+    {
+      "function": "0027b1d0",
+      "owning_symbol": "mka::retail::main_binding::dispatch_retail_enabled_mode",
+      "what_is_missing": "Live gameplay fight mode transitions and arcade ladder dispatch"
+    },
+    {
+      "function": "00210570",
+      "owning_symbol": "mka::retail::main_binding::service_retail_frame_input",
+      "what_is_missing": "Hardware gamepad analog calibration and port polling"
+    },
+    {
+      "function": "00130000",
+      "owning_symbol": "mka::retail::main_binding::create_retail_action_task",
+      "what_is_missing": "Dynamic task priority queue scheduling and fiber execution"
+    },
+    {
+      "function": "001304f0",
+      "owning_symbol": "mka::retail::main_binding::prune_retail_associations",
+      "what_is_missing": "Generational garbage collection of dead scene event listener nodes"
+    },
+    {
+      "function": "004c4d80",
+      "owning_symbol": "mka::retail::main_binding::reset_and_bind_retail_scene_event_graph",
+      "what_is_missing": "Dynamic scene event listener registration and event dispatch traversal"
+    },
+    {
+      "function": "004c6a70",
+      "owning_symbol": "mka::retail::main_binding::deliver_retail_builtin_scene_event",
+      "what_is_missing": "Multi-level scene hierarchy event propagation and routing"
+    },
+    {
+      "function": "002f1630",
+      "owning_symbol": "mka::retail::invoke_retail_profile_select_from_2f1630",
+      "what_is_missing": "Interactive UI dialogue rendering and memory card writeback"
+    },
+    {
+      "function": "00188720",
+      "owning_symbol": "mka::retail::apply_retail_profile_participant_from_188720",
+      "what_is_missing": "Profile participant record synchronization with NVRAM / memory card saves"
+    },
+    {
+      "function": "00189690",
+      "owning_symbol": "mka::retail::publish_retail_profile_participant_from_189690",
+      "what_is_missing": "Active session participant broadcast across network and split-screen multiplayer"
+    }
+  ],
+  "acceptance": "OPEN"
 }

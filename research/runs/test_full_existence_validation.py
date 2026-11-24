@@ -97,7 +97,7 @@ def test_production_existence():
 
     all_entries = []
     for addr, ev in ps2_ev.items():
-        if addr in ("_meta", "components"):
+        if addr in ("_meta", "components", "placeholders", "acceptance", "acceptance_status") or not isinstance(ev, str):
             continue
         all_entries.append(("PS2", addr, ev))
     for addr, (ev, ps2_addr) in xbox_ev.items():
@@ -422,7 +422,25 @@ def test_planted_failures():
     finally:
         ev_path.write_text(orig_ev_text, encoding="utf-8", newline="\n")
 
+    # Planted Failure 11: Acceptance claim rejected while placeholder registry is non-empty
+    print("Testing planted failure 11: acceptance claim rejection while placeholder registry is non-empty...")
+    ev_path = REPO / "research" / "ledger" / "ported_function_evidence.json"
+    orig_ev_text = ev_path.read_text(encoding="utf-8")
+    try:
+        bad_ev3 = json.loads(orig_ev_text)
+        bad_ev3["acceptance"] = "CLOSED"
+        ev_path.write_text(json.dumps(bad_ev3), encoding="utf-8", newline="\n")
+        try:
+            validate_ledgers(ps2_ledger, xbox_ledger, ps2_map)
+            assert False, "Acceptance claim with non-empty placeholders FAILED to raise AssertionError!"
+        except AssertionError as e:
+            assert "Acceptance claimed while placeholder registry is non-empty" in str(e), f"Unexpected error: {e}"
+            print(f"  Acceptance claim with non-empty placeholders caught as expected: {e}")
+    finally:
+        ev_path.write_text(orig_ev_text, encoding="utf-8", newline="\n")
+
     print("PASS: All planted-failure cases successfully caught and proven to fail closed.")
+
 
 
 if __name__ == "__main__":

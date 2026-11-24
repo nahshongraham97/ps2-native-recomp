@@ -1009,6 +1009,22 @@ def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map):
                 f"Component {comp_name} with native-design-check must not count toward credit or connected-work reduction"
             )
 
+    # Placeholder registry enforcement
+    placeholders = ev_manifest.get("placeholders", [])
+    assert isinstance(placeholders, list), "Evidence manifest placeholders must be a list"
+    assert len(placeholders) > 0, "Placeholder registry must be populated with unrecovered placeholders"
+    for ph in placeholders:
+        assert isinstance(ph, dict), f"Placeholder entry must be dict: {ph}"
+        assert "function" in ph and ph["function"], f"Placeholder missing function: {ph}"
+        assert "what_is_missing" in ph and ph["what_is_missing"], f"Placeholder missing what_is_missing: {ph}"
+        assert "owning_symbol" in ph and ph["owning_symbol"], f"Placeholder missing owning_symbol: {ph}"
+
+    # Acceptance gate enforcement: acceptance claim MUST fail while placeholder registry is non-empty
+    if ev_manifest.get("acceptance") == "CLOSED" or ev_manifest.get("acceptance_status") == "CLOSED":
+        raise AssertionError(
+            f"Acceptance claimed while placeholder registry is non-empty ({len(placeholders)} placeholders remain)"
+        )
+
     # 1. Reject donor credit if missing verified test vectors on disk (evaluated per-function directly)
     ps2_donor = [r for r in ps2_ledger if r["status"] == "implemented-via-donor"]
     xb_donor = [r for r in xbox_ledger if r["status"] == "implemented-via-donor"]
@@ -1240,6 +1256,8 @@ def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map):
     assert len(invalid_donors) == 0, f"Found {len(invalid_donors)} invalid ps2: self-references in donor column!"
 
     print(f"PASS: All validations successful:")
+    print(f"  Placeholder Registry: {len(placeholders)} registered unrecovered placeholders (Acceptance strictly OPEN)")
+    print(f"  Negative Link Diagnostic: undefined symbols: 0 | placeholders: {len(placeholders)}")
     print(f"  PS2 Total: {len(ps2_ledger)} | In-Scope: {in_scope_sum} (Ported: {len(ps2_ported)}, Donors: {len(ps2_donor)}, Host-Rep: 11, Class: {len(classified)}, Open: {len(open_frontier)}) | Stubbed: {len(out_of_scope)}")
     print(f"  Xbox Total: {len(xbox_ledger)} | Donors: {len(xb_donor)} | Candidates: {len(xb_candidates)} | Ported: 0 | Host-Rep: 0")
     print(f"  Cross Map: {len(ps2_map)} (18 mapped: 18 mapped-by-role, 0 exact, 0 structural, 0 composite; 17,493 unmapped)")

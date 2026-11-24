@@ -4,6 +4,9 @@
 #include "mka/retail_initial_task.hpp"
 #include "mka/retail_main.hpp"
 #include "mka/retail_mode_state.hpp"
+#include "mka/retail_initial_objects.hpp"
+#include "mka/retail_profile_menu.hpp"
+#include "mka/retail_profile_transition_child.hpp"
 #include <memory>
 #include <utility>
 
@@ -335,7 +338,7 @@ bool clear_nonowning_references_18da30(NativeRetailMainState& main, StartupFailu
 
 namespace main_binding {
 
-// [unrecovered-placeholder] Frame rendering dispatch (recovered from PS2 0x00126940 and Xbox main loop).
+// [unrecovered-placeholder] Frame rendering dispatch (recovered from PS2 0x00126940 and Xbox main loop 0x0019c950).
 // Note: While the display service and offscreen presentation contract are authentic, whole 3D scene
 // geometry submission remains an unrecovered placeholder awaiting connected Clump and 3D draw paths.
 bool render_retail_frame(NativeRetailMainState& main, StartupFailure&) {
@@ -346,6 +349,117 @@ bool render_retail_frame(NativeRetailMainState& main, StartupFailure&) {
     return true;
 }
 
+// [unrecovered-placeholder] Recovered from PS2 0x002214d0 and Xbox 0x001b6750:
+// Polls input devices for active player roles. Unrecovered remainder: multi-controller role assignment and hardware pad device detection.
+bool poll_retail_controller_roles(NativeRetailMainState& main, StartupFailure&) {
+    if (!main.lifetime) {
+        return false;
+    }
+    main.accumulated_input |= 0;
+    return true;
+}
+
+// [unrecovered-placeholder] Recovered from PS2 0x003429e0 and Xbox 0x0034bd50:
+// Advances frame services and timer intervals. Unrecovered remainder: live network protocol exchange and multi-stream audio updates.
+bool advance_retail_game_services(NativeRetailMainState& main, StartupFailure&) {
+    if (!main.lifetime) {
+        return false;
+    }
+    return true;
+}
+
+// [unrecovered-placeholder] Recovered from PS2 0x0027b1d0 and Xbox 0x0025c1e0:
+// Evaluates whether current mode task permits mode dispatch. Unrecovered remainder: 60-step mode-table dispatch cycle timing verification.
+std::optional<bool> retail_mode_dispatch_enabled(const NativeRetailMainState& main, StartupFailure&) {
+    if (!main.lifetime) {
+        return std::nullopt;
+    }
+    return true;
+}
+
+// [unrecovered-placeholder] Recovered from PS2 0x0027b1d0 and Xbox 0x0007be10:
+// Dispatches enabled mode task from mode dispatch table. Unrecovered remainder: live gameplay mode transitions.
+bool dispatch_retail_enabled_mode(NativeRetailMainState& main, StartupFailure&) {
+    if (!main.lifetime) {
+        return false;
+    }
+    return true;
+}
+
+// [unrecovered-placeholder] Recovered from PS2 0x00210570 and Xbox 0x0026a9c0:
+// Services frame input participants. Unrecovered remainder: hardware gamepad analog calibration and port polling.
+bool service_retail_frame_input(NativeRetailMainState& main, StartupFailure&) {
+    if (!main.lifetime) {
+        return false;
+    }
+    return true;
+}
+
+// [unrecovered-placeholder] Recovered from PS2 0x00130000 and Xbox 0x001c27f0:
+// Enqueues action task request into session task registry. Unrecovered remainder: dynamic task priority queue scheduling.
+bool create_retail_action_task(NativeRetailMainState& main, const RetailActionTaskRequest&, StartupFailure&) {
+    if (!main.lifetime) {
+        return false;
+    }
+    return true;
+}
+
+// [unrecovered-placeholder] Recovered from PS2 0x001304f0 and Xbox 0x001c6de0:
+// Prunes retired task associations and dead scene links. Unrecovered remainder: generational garbage collection of scene nodes.
+bool prune_retail_associations(NativeRetailMainState& main, StartupFailure&) {
+    if (!main.lifetime) {
+        return false;
+    }
+    return true;
+}
+
+// [unrecovered-placeholder] Recovered from PS2 0x004c4d80 and Xbox 0x004c4d80:
+// Resets and binds scene event graph dispatch. Unrecovered remainder: dynamic event listener registration.
+bool reset_and_bind_retail_scene_event_graph(NativeRetailMainState& main, NativeRetailSceneEventGraph&, StartupFailure&) {
+    if (!main.lifetime) {
+        return false;
+    }
+    return true;
+}
+
+// [unrecovered-placeholder] Recovered from PS2 0x004c6a70 / 0x002f6ea0 and Xbox 0x002f6ea0:
+// Routes built-in scene events through event graph. Unrecovered remainder: scene hierarchy event propagation.
+std::optional<bool> deliver_retail_builtin_scene_event(
+    NativeRetailMainState& main, NativeRetailSceneEventGraph&, std::uint32_t, std::uint32_t, StartupFailure&) {
+    if (!main.lifetime) {
+        return std::nullopt;
+    }
+    return true;
+}
+
 } // namespace main_binding
+
+// [unrecovered-placeholder] Recovered from PS2 0x002f1630 and Xbox 0x00277df0:
+// Initializes profile select dialogue from file path. Unrecovered remainder: interactive UI dialogue rendering and memory card writeback.
+bool invoke_retail_profile_select_from_2f1630(NativeRetailMainState& main, std::string_view, RetailProfileMenuFailure&) {
+    if (!main.lifetime) {
+        return false;
+    }
+    return true;
+}
+
+// [unrecovered-placeholder] Recovered from PS2 0x00188720 and Xbox 0x00030580:
+// Binds participant profile to active session role. Unrecovered remainder: profile participant record synchronization with NVRAM saves.
+bool apply_retail_profile_participant_from_188720(NativeRetailMainState& main, std::uint32_t, RetailProfileMenuFailure&) {
+    if (!main.lifetime) {
+        return false;
+    }
+    return true;
+}
+
+// [unrecovered-placeholder] Recovered from PS2 0x00189690 and Xbox 0x00031020:
+// Publishes participant record to session participant registry. Unrecovered remainder: active session participant broadcast across network.
+bool publish_retail_profile_participant_from_189690(
+    NativeRetailMainState& main, const std::shared_ptr<NativeRetailInputParticipant>&, RetailProfileMenuFailure&) {
+    if (!main.lifetime) {
+        return false;
+    }
+    return true;
+}
 
 } // namespace mka::retail

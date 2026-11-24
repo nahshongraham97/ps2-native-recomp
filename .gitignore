@@ -79,8 +79,8 @@ __pycache__/
 *.[yY][uU][vV]
 *.[rR][gG][bB][aA]
 *.[rR][aA][wW]
-/research/runs/native-movie-decode-*/**/decoded*/
-/research/runs/native-movie-decode-*/decoded*/
+research/runs/native-movie-decode-*/**/decoded*/
+research/runs/native-movie-decode-*/decoded*/
 
 # Per-lane git worktrees, and the old fork clone until it is removed.
 /wt/
