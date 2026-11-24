@@ -284,8 +284,9 @@ with gzip.GzipFile(filename="", mode="wb", fileobj=buf, mtime=0) as gz:
     gz.write(bytes(raw))
 (OUT / "output.log.gz").write_bytes(buf.getvalue())
 
+is_skip = (b"[headless-gate] SKIP:" in raw)
 receipt = dict(
-    status="TIMEOUT" if timed_out else "PASS" if exit_code == 0 else "NONZERO",
+    status="TIMEOUT" if timed_out else "SKIP" if is_skip else "PASS" if exit_code == 0 else "NONZERO",
     argv=argv,
     exit=exit_code,
     deadline_seconds=deadline,

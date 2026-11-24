@@ -3,6 +3,7 @@
 #include "mka/content_volume.hpp"
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -11,12 +12,98 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#undef near
+#undef far
+#include <GL/gl.h>
+#include <bcrypt.h>
+#endif
+
+namespace {
+
+static bool s_corrupt_planted_failure = false;
+
+static std::uint64_t compute_fnv1a64(const std::uint8_t* data, std::size_t size) {
+    std::uint64_t hash = 14695981039346656037ull;
+    for (std::size_t i = 0; i < size; ++i) {
+        hash ^= data[i];
+        hash *= 1099511628211ull;
+    }
+    return hash;
+}
+
+#ifdef _WIN32
+static std::string compute_sha256_hex(const std::uint8_t* data, std::size_t size) {
+    BCRYPT_ALG_HANDLE alg = nullptr;
+    BCRYPT_HASH_HANDLE hash = nullptr;
+    if (BCryptOpenAlgorithmProvider(&alg, BCRYPT_SHA256_ALGORITHM, nullptr, 0) != 0) return "";
+    DWORD hash_obj_size = 0, data_len = 0;
+    BCryptGetProperty(alg, BCRYPT_OBJECT_LENGTH, reinterpret_cast<PUCHAR>(&hash_obj_size), sizeof(DWORD), &data_len, 0);
+    std::vector<UCHAR> hash_obj(hash_obj_size);
+    UCHAR hash_buf[32]{};
+    BCryptCreateHash(alg, &hash, hash_obj.data(), hash_obj_size, nullptr, 0, 0);
+    BCryptHashData(hash, const_cast<PUCHAR>(data), static_cast<ULONG>(size), 0);
+    BCryptFinishHash(hash, hash_buf, sizeof(hash_buf), 0);
+    BCryptDestroyHash(hash);
+    BCryptCloseAlgorithmProvider(alg, 0);
+    char hex[65]{};
+    for (int i = 0; i < 32; ++i) {
+        std::snprintf(hex + i * 2, 3, "%02x", hash_buf[i]);
+    }
+    return std::string(hex, 64);
+}
+
+static void headless_movie_diagnostic_hook(
+    void*,
+    mka::retail::NativeProductionDisplayService& display,
+    std::uint32_t client_w,
+    std::uint32_t client_h,
+    std::uint32_t /*movie_id*/,
+    bool /*widescreen_active*/) {
+    // Legitimate diagnostic capture in test harness under tests/
+    std::vector<std::uint8_t> actual_pixels(std::size_t(client_w) * client_h * 4);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glReadBuffer(GL_BACK);
+    glReadPixels(0, 0, client_w, client_h, GL_RGBA, GL_UNSIGNED_BYTE, actual_pixels.data());
+    display.record_diagnostic_readback(1);
+
+    if (s_corrupt_planted_failure && !actual_pixels.empty()) {
+        actual_pixels[0] ^= 0xff;
+    }
+
+    const std::uint64_t actual_fnv = compute_fnv1a64(actual_pixels.data(), actual_pixels.size());
+    const std::string actual_sha = compute_sha256_hex(actual_pixels.data(), actual_pixels.size());
+
+    mka::retail::RetailMoviePresentationTelemetry t{};
+    t.gl_draw_calls = display.telemetry().gl_draw_calls;
+    t.presents = 1;
+    t.frame_readbacks = display.telemetry().frame_readbacks;
+    t.diagnostic_readbacks = display.telemetry().diagnostic_readbacks;
+    t.last_frame_fnv1a64 = actual_fnv;
+    std::memcpy(t.last_frame_sha256, actual_sha.c_str(), 64);
+    t.last_frame_sha256[64] = '\0';
+    mka::retail::record_movie_presentation_telemetry(t);
+}
+#endif
+
+} // namespace
 
 auto* volatile required_native_entry = &mka::retail::run_native_retail;
 
-int main(int, char**) {
+int main(int argc, char** argv) {
     std::printf("=== Headless Offscreen Full-Entry Run (Zero Visible Windows, Zero Audio Endpoints) ===\n");
     std::printf("TASK_BOARD.md row 10 compliance: offscreen SDL_WINDOW_HIDDEN context only.\n\n");
+
+    for (int i = 1; i < argc; ++i) {
+        if (std::string_view(argv[i]) == "--planted-failure-corrupt-pixels") {
+            s_corrupt_planted_failure = true;
+            std::printf("[headless-planted-failure] Corrupt pixels mode active\n");
+        }
+    }
 
     // Set bounded iteration count for headless diagnostic observation
     if (!std::getenv("MKA_HEADLESS_MAX_FRAMES")) {
@@ -144,6 +231,38 @@ int main(int, char**) {
         return 1;
     }
 
+    // Check for movie presentation assets
+    const std::filesystem::path movier_candidates[] = {
+        "../../../../private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/MOVIER.ovl",
+        "../../../private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/MOVIER.ovl",
+        "../../private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/MOVIER.ovl",
+        "../../../research/inputs/modules/MOVIER.ovl",
+        "../../../../research/inputs/modules/MOVIER.ovl",
+        "research/inputs/modules/MOVIER.ovl",
+        "private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/MOVIER.ovl"
+    };
+    bool movier_found = false;
+    for (const auto& c : movier_candidates) {
+        if (std::filesystem::exists(c)) { movier_found = true; break; }
+    }
+
+    const std::filesystem::path plane_candidates[] = {
+        "../../../../research/runs/native-movie-decode-20261119/decoded-02/LOGOW.SFD.first.plane0",
+        "../../../research/runs/native-movie-decode-20261119/decoded-02/LOGOW.SFD.first.plane0",
+        "../../research/runs/native-movie-decode-20261119/decoded-02/LOGOW.SFD.first.plane0",
+        "research/runs/native-movie-decode-20261119/decoded-02/LOGOW.SFD.first.plane0"
+    };
+    bool planes_found = false;
+    for (const auto& c : plane_candidates) {
+        if (std::filesystem::exists(c)) { planes_found = true; break; }
+    }
+
+    const bool movie_assets_available = (movier_found && planes_found);
+    if (!movie_assets_available) {
+        std::printf("[headless-setup] SKIP: Required local movie assets missing (MOVIER.ovl or decoded LOGOW.SFD planes not found).\n");
+        std::printf("[headless-setup] Local assets must be staged for movie presentation verification (see README.md / PORT_STATUS.md for clone setup).\n");
+    }
+
     // Initialize startup state
     mka::retail::NativeRetailStartupState state(std::move(*volume), {"cdrom0:\\SLUS_214.10"});
     mka::retail::StartupFailure f;
@@ -151,8 +270,18 @@ int main(int, char**) {
     // Clear telemetry log prior to run
     mka::retail::clear_placeholder_telemetry();
 
+    // Register legitimate diagnostic capture hook in test fixture if assets available
+    if (movie_assets_available) {
+#ifdef _WIN32
+        mka::retail::set_movie_presentation_diagnostic_hook(&headless_movie_diagnostic_hook, nullptr);
+#endif
+    }
+
     std::printf("[headless-run] Calling run_native_retail...\n");
     auto result = mka::retail::run_native_retail(state, f);
+
+    // Unregister diagnostic hook
+    mka::retail::set_movie_presentation_diagnostic_hook(nullptr, nullptr);
 
     // Retrieve recorded placeholder telemetry
     const auto& log = mka::retail::placeholder_telemetry_log();
@@ -205,6 +334,14 @@ int main(int, char**) {
     std::printf("   Placeholder #12 (transition_1225d0) / Placeholder #17 (dispatch_retail_enabled_mode):\n");
     std::printf("   Pushes mode transition records into mode_history, but mode task bodies remain placeholders.\n\n");
 
+    if (!movie_assets_available) {
+        std::printf("[headless-gate] SKIP: Bounded run reached without movie presentation assets (movie planes not found).\n");
+        if (!fixture_root.empty()) {
+            std::filesystem::remove_all(fixture_root, ec);
+        }
+        return 0;
+    }
+
     // Query and verify authentic movie presentation telemetry from frame 5 (begin_menu_18d450 -> LOGOW.SFD frame 0)
     const auto movie_telemetry = mka::retail::last_movie_presentation_telemetry();
     std::printf("[headless-movie-telemetry] GL draw calls = %u, buffer presents = %u, frame readbacks = %u, diagnostic readbacks = %u, FNV1a64 = 0x%016llx, SHA256 = %s\n",
@@ -219,15 +356,17 @@ int main(int, char**) {
                                         movie_telemetry.presents == 1 &&
                                         movie_telemetry.frame_readbacks == 0 &&
                                         movie_telemetry.diagnostic_readbacks == 1 &&
-                                        movie_telemetry.last_frame_fnv1a64 == 0x2cb5ec60e4e72325ull);
+                                        movie_telemetry.last_frame_fnv1a64 == 0x2cb5ec60e4e72325ull &&
+                                        std::string_view(movie_telemetry.last_frame_sha256) == "ba848e89025edbb7a00d11be30040c23e036d1e57606c86074e65dd2c70191d7");
     if (!movie_telemetry_valid) {
         std::fprintf(stderr, "FAIL: Headless movie presentation telemetry mismatch!\n");
-        std::fprintf(stderr, "  Observed: draws=%u, presents=%u, frame_readbacks=%u, diagnostic_readbacks=%u, FNV=0x%016llx\n",
+        std::fprintf(stderr, "  Observed: draws=%u, presents=%u, frame_readbacks=%u, diagnostic_readbacks=%u, FNV=0x%016llx, SHA=%s\n",
             movie_telemetry.gl_draw_calls,
             movie_telemetry.presents,
             movie_telemetry.frame_readbacks,
             movie_telemetry.diagnostic_readbacks,
-            static_cast<unsigned long long>(movie_telemetry.last_frame_fnv1a64));
+            static_cast<unsigned long long>(movie_telemetry.last_frame_fnv1a64),
+            movie_telemetry.last_frame_sha256);
         return 1;
     }
 

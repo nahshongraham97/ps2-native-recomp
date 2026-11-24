@@ -28,6 +28,8 @@
 namespace mka::retail {
 
 static RetailMoviePresentationTelemetry s_movie_telemetry{};
+static MoviePresentationDiagnosticHook s_diagnostic_hook{nullptr};
+static void* s_diagnostic_hook_user_data{nullptr};
 
 RetailMoviePresentationTelemetry last_movie_presentation_telemetry() noexcept {
     return s_movie_telemetry;
@@ -35,6 +37,11 @@ RetailMoviePresentationTelemetry last_movie_presentation_telemetry() noexcept {
 
 void record_movie_presentation_telemetry(const RetailMoviePresentationTelemetry& t) noexcept {
     s_movie_telemetry = t;
+}
+
+void set_movie_presentation_diagnostic_hook(MoviePresentationDiagnosticHook hook, void* user_data) noexcept {
+    s_diagnostic_hook = hook;
+    s_diagnostic_hook_user_data = user_data;
 }
 
 std::vector<PlaceholderTelemetryRecord>& placeholder_telemetry_log() noexcept {
@@ -353,17 +360,23 @@ public:
                                             0, *display, *backend, *table, video, /*widescreen_active=*/true);
 
                                         if (play_result.success) {
-                                            display->record_diagnostic_readback(1);
+                                            RECT client{};
+                                            GetClientRect(static_cast<HWND>(display->native_display_handle()), &client);
+                                            const std::uint32_t client_w = static_cast<std::uint32_t>(client.right);
+                                            const std::uint32_t client_h = static_cast<std::uint32_t>(client.bottom);
 
-                                            RetailMoviePresentationTelemetry t{};
-                                            t.gl_draw_calls = display->telemetry().gl_draw_calls;
-                                            t.presents = 1;
-                                            t.frame_readbacks = display->telemetry().frame_readbacks;
-                                            t.diagnostic_readbacks = display->telemetry().diagnostic_readbacks;
-                                            t.last_frame_fnv1a64 = 0x2cb5ec60e4e72325ull;
-                                            std::memcpy(t.last_frame_sha256, "ba848e89025edbb7a00d11be30040c23e036d1e57606c86074e65dd2c70191d7", 64);
-                                            t.last_frame_sha256[64] = '\0';
-                                            record_movie_presentation_telemetry(t);
+                                            if (s_diagnostic_hook) {
+                                                s_diagnostic_hook(s_diagnostic_hook_user_data, *display, client_w, client_h, 0, true);
+                                            } else {
+                                                RetailMoviePresentationTelemetry t{};
+                                                t.gl_draw_calls = display->telemetry().gl_draw_calls;
+                                                t.presents = 1;
+                                                t.frame_readbacks = display->telemetry().frame_readbacks;
+                                                t.diagnostic_readbacks = display->telemetry().diagnostic_readbacks;
+                                                t.last_frame_fnv1a64 = 0;
+                                                t.last_frame_sha256[0] = '\0';
+                                                record_movie_presentation_telemetry(t);
+                                            }
                                         }
                                     }
                                 }

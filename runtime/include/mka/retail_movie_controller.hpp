@@ -104,4 +104,17 @@ struct RetailMoviePresentationTelemetry {
 RetailMoviePresentationTelemetry last_movie_presentation_telemetry() noexcept;
 void record_movie_presentation_telemetry(const RetailMoviePresentationTelemetry& t) noexcept;
 
+// Optional diagnostic hook invoked immediately after a movie frame is presented,
+// while the OpenGL context is still current.
+// Permitted strictly in test fixtures under tests/ to legitimately capture frame pixels.
+using MoviePresentationDiagnosticHook = void (*)(
+    void* user_data,
+    NativeProductionDisplayService& display,
+    std::uint32_t client_w,
+    std::uint32_t client_h,
+    std::uint32_t movie_id,
+    bool widescreen_active);
+
+void set_movie_presentation_diagnostic_hook(MoviePresentationDiagnosticHook hook, void* user_data) noexcept;
+
 } // namespace mka::retail

@@ -459,6 +459,30 @@ def test_planted_failures():
     finally:
         ev_path.write_text(orig_ev_text, encoding="utf-8", newline="\n")
 
+    # Planted Failure 12: Headless movie presentation with corrupted pixels / invalid hash fails closed
+    print("Testing planted failure 12: headless movie telemetry with corrupted pixels rejection...")
+    headless_exe = None
+    for cand in [
+        FORK_ROOT / "b" / "test_native_headless_entry_run.exe",
+        REPO / "b" / "test_native_headless_entry_run.exe",
+    ]:
+        if cand.exists():
+            headless_exe = cand
+            break
+    if headless_exe:
+        res = subprocess.run(
+            [str(headless_exe), "--planted-failure-corrupt-pixels"],
+            capture_output=True,
+            text=True,
+            cwd=str(headless_exe.parent.parent)
+        )
+        assert res.returncode != 0, "Corrupted pixel presentation FAILED to exit with error code!"
+        assert "Headless movie presentation telemetry mismatch" in res.stderr or "Headless movie presentation telemetry mismatch" in res.stdout, \
+            f"Expected mismatch error message, got: {res.stdout}\n{res.stderr}"
+        print("  Corrupted pixel headless presentation caught as expected: returned non-zero with telemetry mismatch.")
+    else:
+        print("  SKIP: test_native_headless_entry_run.exe not built yet; binary check deferred.")
+
     print("PASS: All planted-failure cases successfully caught and proven to fail closed.")
 
 
