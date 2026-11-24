@@ -73,11 +73,14 @@ __pycache__/
 *.webm
 *.avi
 *.mkv
-*.plane*
-*.s16
-*.sfd
-*.yuv
-/research/runs/native-movie-decode-*/
+*.[pP][lL][aA][nN][eE]*
+*.[sS]16
+*.[sS][fF][dD]
+*.[yY][uU][vV]
+*.[rR][gG][bB][aA]
+*.[rR][aA][wW]
+/research/runs/native-movie-decode-*/**/decoded*/
+/research/runs/native-movie-decode-*/decoded*/
 
 # Per-lane git worktrees, and the old fork clone until it is removed.
 /wt/

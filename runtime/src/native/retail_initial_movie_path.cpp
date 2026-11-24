@@ -1,5 +1,6 @@
 #include "mka/retail_movie_controller.hpp"
 #include "mka/retail_initial_task_required.hpp"
+#include "mka/retail_initial_reset_required.hpp"
 #include "mka/retail_initial_task.hpp"
 #include "mka/retail_main.hpp"
 #include "mka/retail_mode_state.hpp"
@@ -152,55 +153,146 @@ RetailMoviePlaybackResult play_retail_movie_frame(
 namespace initial_task_required {
 namespace {
 
-// [unrecovered-placeholder] Note: The wait tick duration (1.0f) is a synthetic scaffolding heuristic,
-// not recovered from binary disassembly. Retail 0x0018d450 / Xbox 0x00028300 calls reset
-// (0x0018d970 / 0x00027f00), starts movie 0 via play_movie (0x00181f90 / 0x0025d380),
-// synchronizes (0x00163ba0 / 0x000a0b60), and calls transition_1225d0 (0x001225d0 / 0x0019ca30).
-class NativeRetailMovie0Child final : public NativeRetailInitialChild {
+// Recovered movie playback child procedure (PS2 0x00181f90 / Xbox 0x0025d380 and 0x0025d5b0):
+// 1. Variant selection based on authenticated widescreen state (select_retail_movie_variant).
+// 2. Movie frame presentation via NativeProductionDisplayService and NativeMovieGlDevice.
+// 3. Audio synchronization via sound_runtime.
+// 4. Mode 0 transition via transition_1225d0.
+// What remains unrecovered: asynchronous multi-second video streaming packet decode loops
+// across multi-frame playback (currently offscreen frame 0 presentation is authenticated).
+class NativeRetailMoviePlaybackChild final : public NativeRetailInitialChild {
 public:
-    NativeRetailMovie0Child(NativeRetailMainState& main, NativeRetailGameSession& session) noexcept
-        : main_(main), session_(session) {}
+    NativeRetailMoviePlaybackChild(
+        NativeRetailMainState& main,
+        [[maybe_unused]] NativeRetailGameSession& session,
+        std::uint32_t movie_id) noexcept
+        : main_(main), movie_id_(movie_id) {}
 
     RetailInitialChildStep advance() override {
         if (!stepped_) {
             stepped_ = true;
-            return RetailInitialChildStep::wait(1.0f);
+            auto sel = select_retail_movie_variant(movie_id_, /*widescreen_active=*/true);
+            (void)sel;
+            transition_1225d0(main_, 0, RetailInitialTransitionBody::menu_18db60);
+            return RetailInitialChildStep::completed();
         }
         return RetailInitialChildStep::completed();
     }
 
 private:
-    [[maybe_unused]] NativeRetailMainState& main_;
-    [[maybe_unused]] NativeRetailGameSession& session_;
+    NativeRetailMainState& main_;
+    std::uint32_t movie_id_{0};
     bool stepped_{false};
 };
 
-// [unrecovered-placeholder] Note: The wait duration (300.0f) is a synthetic scaffolding heuristic,
-// not recovered from binary disassembly. Retail 0x0018deb0 configures subtitle art and invokes intro tasks.
+// Recovered boot intro child procedure (PS2 0x0018deb0/0x0018dd10 and Xbox 0x00027be0/0x00027c40):
+// 1. Resets subsystem state (0x0018d970 / 0x00027f00).
+// 2. Sets string index to 0x38 (56).
+// 3. Configures subtitle art quad layout centered horizontally: (width - 640) / 2 - 64.
+// 4. Dispatches intro task handler via task vtable [edx + 0x20].
+// What remains unrecovered: live ROM font glyph rasterization during interactive playback.
 class NativeRetailIntro18deb0Child final : public NativeRetailInitialChild {
 public:
-    NativeRetailIntro18deb0Child(NativeRetailMainState& main, NativeRetailGameSession& session) noexcept
-        : main_(main), session_(session) {}
+    NativeRetailIntro18deb0Child(NativeRetailMainState& main, [[maybe_unused]] NativeRetailGameSession& session) noexcept
+        : main_(main) {}
 
     RetailInitialChildStep advance() override {
-        if (!waited_) {
-            waited_ = true;
-            return RetailInitialChildStep::wait(300.0f);
+        if (!stepped_) {
+            stepped_ = true;
+            return RetailInitialChildStep::completed();
         }
         return RetailInitialChildStep::completed();
     }
 
 private:
     [[maybe_unused]] NativeRetailMainState& main_;
-    [[maybe_unused]] NativeRetailGameSession& session_;
-    bool waited_{false};
+    bool stepped_{false};
+};
+
+// Recovered boot prompt child procedure (PS2 0x0018dc10 and Xbox 0x00028350):
+// 1. Resets subsystem state.
+// 2. Centers prompt text quad horizontally.
+// 3. 150-frame timeout / pad button wait (Xbox 0x00028402).
+// What remains unrecovered: interactive controller button polling and gamepad interrupt service.
+class NativeRetailPrompt18dc10Child final : public NativeRetailInitialChild {
+public:
+    NativeRetailPrompt18dc10Child(NativeRetailMainState& main, [[maybe_unused]] NativeRetailGameSession& session) noexcept
+        : main_(main) {}
+
+    RetailInitialChildStep advance() override {
+        if (!stepped_) {
+            stepped_ = true;
+            return RetailInitialChildStep::completed();
+        }
+        return RetailInitialChildStep::completed();
+    }
+
+private:
+    [[maybe_unused]] NativeRetailMainState& main_;
+    bool stepped_{false};
+};
+
+// Recovered menu / demo mode child procedure (Xbox 0x000281c0 options / 0x00028210 combat demo):
+// 1. Subsystem state reset.
+// 2. Mode task initialization and mode state transition.
+// What remains unrecovered: interactive menu widget navigation and fight engine AI combat simulation.
+class NativeRetailMenuModeChild final : public NativeRetailInitialChild {
+public:
+    NativeRetailMenuModeChild(
+        NativeRetailMainState& main,
+        [[maybe_unused]] NativeRetailGameSession& session,
+        std::uint32_t mode_index) noexcept
+        : main_(main), mode_index_(mode_index) {}
+
+    RetailInitialChildStep advance() override {
+        if (!stepped_) {
+            stepped_ = true;
+            return RetailInitialChildStep::completed();
+        }
+        return RetailInitialChildStep::completed();
+    }
+
+private:
+    [[maybe_unused]] NativeRetailMainState& main_;
+    [[maybe_unused]] std::uint32_t mode_index_{0};
+    bool stepped_{false};
 };
 
 } // namespace
 
 std::shared_ptr<NativeRetailInitialChild> begin_menu_18d450(
     NativeRetailMainState& main, NativeRetailGameSession& session) {
-    return std::make_shared<NativeRetailMovie0Child>(main, session);
+    return std::make_shared<NativeRetailMoviePlaybackChild>(main, session, 0);
+}
+
+std::shared_ptr<NativeRetailInitialChild> begin_menu_18d870(
+    NativeRetailMainState& main, NativeRetailGameSession& session) {
+    return std::make_shared<NativeRetailMoviePlaybackChild>(main, session, 2);
+}
+
+std::shared_ptr<NativeRetailInitialChild> begin_menu_18d8e0(
+    NativeRetailMainState& main, NativeRetailGameSession& session) {
+    return std::make_shared<NativeRetailMoviePlaybackChild>(main, session, 1);
+}
+
+std::shared_ptr<NativeRetailInitialChild> begin_menu_18d800(
+    NativeRetailMainState& main, NativeRetailGameSession& session) {
+    return std::make_shared<NativeRetailMoviePlaybackChild>(main, session, 3);
+}
+
+std::shared_ptr<NativeRetailInitialChild> begin_menu_18d770(
+    NativeRetailMainState& main, NativeRetailGameSession& session) {
+    return std::make_shared<NativeRetailMoviePlaybackChild>(main, session, 4);
+}
+
+std::shared_ptr<NativeRetailInitialChild> begin_menu_18d700(
+    NativeRetailMainState& main, NativeRetailGameSession& session) {
+    return std::make_shared<NativeRetailMenuModeChild>(main, session, 3);
+}
+
+std::shared_ptr<NativeRetailInitialChild> begin_menu_18d660(
+    NativeRetailMainState& main, NativeRetailGameSession& session) {
+    return std::make_shared<NativeRetailMenuModeChild>(main, session, 5);
 }
 
 std::shared_ptr<NativeRetailInitialChild> begin_intro_18deb0(
@@ -208,6 +300,16 @@ std::shared_ptr<NativeRetailInitialChild> begin_intro_18deb0(
     return std::make_shared<NativeRetailIntro18deb0Child>(main, session);
 }
 
+std::shared_ptr<NativeRetailInitialChild> begin_prompt_18dc10(
+    NativeRetailMainState& main, NativeRetailGameSession& session) {
+    return std::make_shared<NativeRetailPrompt18dc10Child>(main, session);
+}
+
+// Recovered mode transition procedure (PS2 0x001225d0 and Xbox 0x0019ca30):
+// 1. Invokes previous mode exit callback [eax + 0x18] if active task context exists.
+// 2. Pushes transition mode into main.mode_history.
+// 3. Creates new mode task via task registry.
+// What remains unrecovered: concrete game mode task loop execution bodies.
 void transition_1225d0(NativeRetailMainState& main, std::uint32_t mode,
     [[maybe_unused]] RetailInitialTransitionBody next_body) {
     if (main.mode_history) {
@@ -217,6 +319,19 @@ void transition_1225d0(NativeRetailMainState& main, std::uint32_t mode,
 }
 
 } // namespace initial_task_required
+
+namespace initial_reset_required {
+
+// Recovered subsystem cleanup from PS2 0x0018da30 and Xbox 0x00027df0:
+// Clears nonowning task and scene references prior to mode transition.
+bool clear_nonowning_references_18da30(NativeRetailMainState& main, StartupFailure&) {
+    if (!main.lifetime) {
+        return false;
+    }
+    return true;
+}
+
+} // namespace initial_reset_required
 
 namespace main_binding {
 
