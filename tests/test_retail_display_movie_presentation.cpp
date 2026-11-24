@@ -249,18 +249,18 @@ int main(int argc, char** argv) try {
     check(dest_rule_4_3.x == 160 && dest_rule_4_3.y == 0 && dest_rule_4_3.width == 960 && dest_rule_4_3.height == 720,
         "Destination rect for 4:3 stream must match pillarboxed 960x720 centered within 1280x720");
 
-    // 8. Present Frame via Recovered Retail Movie Controller Path (PS2 0x00181f90 / Xbox 0x0025d380)
+    // 8. Present Frame 0 (LOGOW.SFD, Movie 0) via Recovered Retail Movie Controller Path
     RECT client{};
     check(GetClientRect(static_cast<HWND>(display->native_display_handle()), &client) != 0, "Failed to get client rect");
     const std::uint32_t client_w = static_cast<std::uint32_t>(client.right);
     const std::uint32_t client_h = static_cast<std::uint32_t>(client.bottom);
 
     auto play_result = play_retail_movie_frame(0, *display, *backend, *table, video, /*widescreen_active=*/true);
-    check(play_result.success, "play_retail_movie_frame must succeed through display service");
+    check(play_result.success, "play_retail_movie_frame(0) must succeed through display service");
     check(play_result.selection.is_widescreen && std::string_view(play_result.selection.filename) == "LOGOW.SFD",
         "Movie controller must select LOGOW.SFD for widescreen");
 
-    // 9. External Frame Capture Verification (Diagnostic readback under allowlist)
+    // 9a. External Frame 0 Capture Verification (Diagnostic readback 1)
     const auto dest_rect = play_result.destination_rect;
     check(dest_rect.x == 0 && dest_rect.y == 0 && dest_rect.width == 1280 && dest_rect.height == 720,
         "Destination rect must match 16:9 full screen 1280x720 edge-to-edge");
@@ -269,16 +269,15 @@ int main(int argc, char** argv) try {
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
     glReadBuffer(GL_BACK);
     glReadPixels(0, 0, client_w, client_h, GL_RGBA, GL_UNSIGNED_BYTE, actual_pixels.data());
-    check(glGetError() == GL_NO_ERROR, "glReadPixels failed during diagnostic capture");
+    check(glGetError() == GL_NO_ERROR, "glReadPixels failed during frame 0 diagnostic capture");
     display->record_diagnostic_readback(1);
 
-    const std::uint64_t frame_fnv = compute_fnv1a64(actual_pixels.data(), actual_pixels.size());
-    const std::string frame_sha = compute_sha256_hex(actual_pixels.data(), actual_pixels.size());
-    std::printf("  [external-frame-capture] Captured %ux%u frame (driver regression pin): FNV1a64=0x%016llx, SHA256=%s\n",
-        client_w, client_h, static_cast<unsigned long long>(frame_fnv), frame_sha.c_str());
+    const std::uint64_t frame0_fnv = compute_fnv1a64(actual_pixels.data(), actual_pixels.size());
+    const std::string frame0_sha = compute_sha256_hex(actual_pixels.data(), actual_pixels.size());
+    std::printf("  [external-frame-capture] Captured Frame 0 (LOGOW.SFD) %ux%u (driver regression pin): FNV1a64=0x%016llx, SHA256=%s\n",
+        client_w, client_h, static_cast<unsigned long long>(frame0_fnv), frame0_sha.c_str());
 
-    // [native-design-check] Compare against independent CPU reference conversion
-    // Sample points across full 16:9 widescreen movie content and compare to expected_frame.rgba
+    // [native-design-check] Compare Frame 0 against independent CPU reference conversion
     const struct SamplePoint { unsigned x; unsigned y; } sample_points[] = {
         {640, 360}, // Center dragon logo
         {100, 100}, // Near bottom-left
@@ -300,27 +299,67 @@ int main(int argc, char** argv) try {
             check(delta <= 2, "Pixel color mismatch between GPU readback and CPU reference exceeds tolerance");
         }
     }
-    std::printf("  [native-design-check] Verified GPU output vs independent CPU reference conversion (max delta <= 2)\n");
+    std::printf("  [native-design-check] Verified Frame 0 GPU output vs independent CPU reference conversion (max delta <= 2)\n");
 
-    // Sample center pixel of dragon logo
-    const std::size_t center_actual_idx = (std::size_t(client_h - 1 - 360) * client_w + 640) * 4;
-    std::printf("  [external-frame-capture] Sampled center RGBA: (%u, %u, %u, %u)\n",
-        actual_pixels[center_actual_idx], actual_pixels[center_actual_idx + 1],
-        actual_pixels[center_actual_idx + 2], actual_pixels[center_actual_idx + 3]);
+    // 9b. Load & Present Frame 1 (OPENINGW.SFD, Movie 2, matching Oracle R183 attract sequence)
+    MovieVideoFrame video_opening{};
+    video_opening.width = 640;
+    video_opening.height = 448;
+    for (unsigned i = 0; i < 3; ++i) {
+        auto plane_path = decoded_dir / ("OPENINGW.SFD.first.plane" + std::to_string(i));
+        video_opening.planes[i] = read_bytes(plane_path);
+    }
+    video_opening.source_pts = {0, 1, 90000, true};
+    video_opening.timestamp = video_opening.source_pts;
+
+    auto converted_opening = convert_movie_yuv420(video_opening, *table, color_error);
+    check(bool(converted_opening) && color_error == MovieColorError::none, "Failed to convert OPENINGW YUV420 to RGBA");
+    const auto expected_frame_opening = *converted_opening;
+
+    auto play_result_opening = play_retail_movie_frame(2, *display, *backend, *table, video_opening, /*widescreen_active=*/true);
+    check(play_result_opening.success, "play_retail_movie_frame(2) must succeed through display service");
+    check(play_result_opening.selection.is_widescreen && std::string_view(play_result_opening.selection.filename) == "OPENINGW.SFD",
+        "Movie controller must select OPENINGW.SFD for widescreen movie 2");
+
+    // External Frame 1 Capture Verification (Diagnostic readback 2)
+    std::vector<std::uint8_t> actual_pixels_opening(std::size_t(client_w) * client_h * 4);
+    glReadPixels(0, 0, client_w, client_h, GL_RGBA, GL_UNSIGNED_BYTE, actual_pixels_opening.data());
+    check(glGetError() == GL_NO_ERROR, "glReadPixels failed during frame 1 diagnostic capture");
+    display->record_diagnostic_readback(1);
+
+    const std::uint64_t frame1_fnv = compute_fnv1a64(actual_pixels_opening.data(), actual_pixels_opening.size());
+    const std::string frame1_sha = compute_sha256_hex(actual_pixels_opening.data(), actual_pixels_opening.size());
+    std::printf("  [external-frame-capture] Captured Frame 1 (OPENINGW.SFD) %ux%u (driver regression pin): FNV1a64=0x%016llx, SHA256=%s\n",
+        client_w, client_h, static_cast<unsigned long long>(frame1_fnv), frame1_sha.c_str());
+
+    for (const auto& pt : sample_points) {
+        const unsigned rx = pt.x - dest_rect.x;
+        const unsigned ry = pt.y - dest_rect.y;
+        const unsigned sx = (rx * 640) / dest_rect.width;
+        const unsigned sy = (ry * 448) / dest_rect.height;
+        const std::size_t actual_idx = (std::size_t(client_h - 1 - pt.y) * client_w + pt.x) * 4;
+        const std::size_t expected_idx = (std::size_t(sy) * 640 + sx) * 4;
+
+        for (int c = 0; c < 3; ++c) {
+            int delta = std::abs(int(actual_pixels_opening[actual_idx + c]) - int(expected_frame_opening.rgba[expected_idx + c]));
+            check(delta <= 2, "Pixel color mismatch between GPU readback and CPU reference exceeds tolerance for Frame 1");
+        }
+    }
+    std::printf("  [native-design-check] Verified Frame 1 GPU output vs independent CPU reference conversion (max delta <= 2)\n");
 
     // 10. Clean shutdown
     shutdown_complete(backend);
     check(retirement_scope.owner->poll().state == MovieFenceState::complete, "all explicit native sessions retired");
 
-    // 11. Mandatory Telemetry Counters Output
+    // 11. Mandatory Telemetry Counters Output (truthful accounting: exactly 2 GL draws, 2 diagnostic readbacks, 0 frame readbacks)
     const auto tel = display->telemetry();
     std::printf("  [diagnostic-telemetry] GL draw calls = %u, CPU composited pixels = %u, frame readbacks = %u, diagnostic readbacks = %u, fallback pixels = %u\n",
         tel.gl_draw_calls, tel.cpu_composited_pixels, tel.frame_readbacks, tel.diagnostic_readbacks, tel.fallback_pixels);
 
-    check(tel.gl_draw_calls == 1, "GL draw calls must be 1");
+    check(tel.gl_draw_calls == 2, "GL draw calls must be 2");
     check(tel.cpu_composited_pixels == 0, "CPU composited pixels must be zero");
     check(tel.frame_readbacks == 0, "Frame readbacks must be zero");
-    check(tel.diagnostic_readbacks == 1, "Diagnostic readbacks must be 1");
+    check(tel.diagnostic_readbacks == 2, "Diagnostic readbacks must be 2");
     check(tel.fallback_pixels == 0, "Fallback pixels must be zero");
     check(tel.fallback_pixels == 0, "Fallback pixels must be zero");
 

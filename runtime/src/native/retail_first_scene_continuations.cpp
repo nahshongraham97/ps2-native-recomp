@@ -3,6 +3,7 @@
 #include "mka/retail_main.hpp"
 #include "mka/retail_camera_world.hpp"
 #include "mka/retail_game_session.hpp"
+#include "mka/retail_movie_controller.hpp"
 #include "native_retail_startup.hpp"
 
 namespace mka::retail::scene_bootstrap_required {
@@ -14,6 +15,7 @@ namespace mka::retail::scene_bootstrap_required {
 // as satisfying link diagnostics rather than recovered game behavior.
 RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState& main,
     std::shared_ptr<NativeRetailRendererCore> core, StartupFailure& f) {
+    record_placeholder_hit(0, "continue_first_scene_at_225d40", main.iteration);
     f = {};
     if (!main.lifetime || !main.lifetime->active_on_owner_thread() || !main.startup.game_session) {
         f = {StartupError::game_session, "225D40 placeholder: Main lifetime/thread/Session required"};
@@ -41,6 +43,7 @@ RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState& main,
 // (which zeros 5 global words: 0x005ab560, 0x005ab564, -25144($gp), 0x005ab568, 0x005ab56c).
 // It is relabeled here as an unrecovered placeholder.
 bool continue_scene_reset_at_125d60(NativeRetailMainState& main, StartupFailure& f) {
+    record_placeholder_hit(1, "continue_scene_reset_at_125d60", main.iteration);
     f = {};
     if (!main.lifetime || !main.lifetime->active_on_owner_thread() || !main.startup.game_session) {
         f = {StartupError::game_session, "125D60 placeholder: Main lifetime/thread/Session required"};

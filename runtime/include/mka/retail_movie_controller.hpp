@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <span>
 #include <string_view>
+#include <vector>
 #include "mka/retail_display_service.hpp"
 #include "mka/movie_gl_device.hpp"
 #include "mka/movie_color.hpp"
@@ -61,5 +62,33 @@ RetailMoviePlaybackResult play_retail_movie_frame(
     const video::NativeMovieColorTable& color_table,
     const video::MovieVideoFrame& raw_frame,
     bool widescreen_active);
+
+// Multi-frame retail movie sequence playback result (matching Oracle R183 sequence LOGON -> OPENINGN).
+struct RetailMovieSequenceResult {
+    bool success{false};
+    std::uint32_t movies_presented{0};
+    std::uint32_t frames_presented{0};
+    DisplayServiceError display_error{DisplayServiceError::none};
+    video::MovieGpuError gpu_error{video::MovieGpuError::none};
+};
+
+RetailMovieSequenceResult play_retail_movie_sequence(
+    std::span<const std::uint32_t> movie_ids,
+    NativeProductionDisplayService& display,
+    video::NativeMovieGlDevice& movie_device,
+    const video::NativeMovieColorTable& color_table,
+    std::span<const video::MovieVideoFrame> frames,
+    bool widescreen_active);
+
+// Machine-readable placeholder hit telemetry
+struct PlaceholderTelemetryRecord {
+    std::uint32_t placeholder_id;
+    const char* name;
+    std::uint64_t frame_hit;
+};
+
+std::vector<PlaceholderTelemetryRecord>& placeholder_telemetry_log() noexcept;
+void record_placeholder_hit(std::uint32_t id, const char* name, std::uint64_t frame) noexcept;
+void clear_placeholder_telemetry() noexcept;
 
 } // namespace mka::retail

@@ -330,7 +330,7 @@ std::unique_ptr<NativeRetailPlatform> NativeRetailPlatform::create(const content
             if(SDL_GL_SetAttribute(attribute,value)!=0){fail(f,RetailPlatformError::context,"SDL_GL_SetAttribute",SDL_GetError());return {};}
         }
         state->window=SDL_CreateWindow("Mortal Kombat Armageddon",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,
-            640,224,SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE|SDL_WINDOW_ALLOW_HIGHDPI);
+            640,224,SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE|SDL_WINDOW_ALLOW_HIGHDPI|SDL_WINDOW_HIDDEN);
         if(!state->window){fail(f,RetailPlatformError::window,"SDL_CreateWindow",SDL_GetError());return {};}
         state->context=SDL_GL_CreateContext(state->window);
         if(!state->context){fail(f,RetailPlatformError::context,"SDL_GL_CreateContext",SDL_GetError());return {};}

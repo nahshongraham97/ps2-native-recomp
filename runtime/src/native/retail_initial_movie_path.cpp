@@ -9,8 +9,25 @@
 #include "mka/retail_profile_transition_child.hpp"
 #include <memory>
 #include <utility>
+#include <vector>
 
 namespace mka::retail {
+
+std::vector<PlaceholderTelemetryRecord>& placeholder_telemetry_log() noexcept {
+    static std::vector<PlaceholderTelemetryRecord> s_log;
+    return s_log;
+}
+
+void record_placeholder_hit(std::uint32_t id, const char* name, std::uint64_t frame) noexcept {
+    auto& log = placeholder_telemetry_log();
+    if (log.size() < 512) {
+        log.push_back({id, name, frame});
+    }
+}
+
+void clear_placeholder_telemetry() noexcept {
+    placeholder_telemetry_log().clear();
+}
 
 // 33-entry authentic retail movie descriptor table recovered from Xbox 0x00579828 and PS2 0x005a24c0.
 // Indices 0..4 contain standard 4:3, widescreen 16:9, and PS2 PAL60 variants (6N, 6W).
@@ -153,6 +170,33 @@ RetailMoviePlaybackResult play_retail_movie_frame(
     return result;
 }
 
+RetailMovieSequenceResult play_retail_movie_sequence(
+    std::span<const std::uint32_t> movie_ids,
+    NativeProductionDisplayService& display,
+    video::NativeMovieGlDevice& movie_device,
+    const video::NativeMovieColorTable& color_table,
+    std::span<const video::MovieVideoFrame> frames,
+    bool widescreen_active) {
+    RetailMovieSequenceResult seq{};
+    if (movie_ids.empty() || frames.empty() || movie_ids.size() != frames.size()) {
+        return seq;
+    }
+    for (std::size_t i = 0; i < movie_ids.size(); ++i) {
+        auto res = play_retail_movie_frame(
+            movie_ids[i], display, movie_device, color_table, frames[i], widescreen_active);
+        if (!res.success) {
+            seq.display_error = res.display_error;
+            seq.gpu_error = res.gpu_error;
+            seq.success = false;
+            return seq;
+        }
+        ++seq.movies_presented;
+        ++seq.frames_presented;
+    }
+    seq.success = true;
+    return seq;
+}
+
 namespace initial_task_required {
 namespace {
 
@@ -265,46 +309,55 @@ private:
 
 std::shared_ptr<NativeRetailInitialChild> begin_menu_18d450(
     NativeRetailMainState& main, NativeRetailGameSession& session) {
+    record_placeholder_hit(3, "begin_menu_18d450", main.iteration);
     return std::make_shared<NativeRetailMoviePlaybackChild>(main, session, 0);
 }
 
 std::shared_ptr<NativeRetailInitialChild> begin_menu_18d870(
     NativeRetailMainState& main, NativeRetailGameSession& session) {
+    record_placeholder_hit(4, "begin_menu_18d870", main.iteration);
     return std::make_shared<NativeRetailMoviePlaybackChild>(main, session, 2);
 }
 
 std::shared_ptr<NativeRetailInitialChild> begin_menu_18d8e0(
     NativeRetailMainState& main, NativeRetailGameSession& session) {
+    record_placeholder_hit(5, "begin_menu_18d8e0", main.iteration);
     return std::make_shared<NativeRetailMoviePlaybackChild>(main, session, 1);
 }
 
 std::shared_ptr<NativeRetailInitialChild> begin_menu_18d800(
     NativeRetailMainState& main, NativeRetailGameSession& session) {
+    record_placeholder_hit(6, "begin_menu_18d800", main.iteration);
     return std::make_shared<NativeRetailMoviePlaybackChild>(main, session, 3);
 }
 
 std::shared_ptr<NativeRetailInitialChild> begin_menu_18d770(
     NativeRetailMainState& main, NativeRetailGameSession& session) {
+    record_placeholder_hit(7, "begin_menu_18d770", main.iteration);
     return std::make_shared<NativeRetailMoviePlaybackChild>(main, session, 4);
 }
 
 std::shared_ptr<NativeRetailInitialChild> begin_menu_18d700(
     NativeRetailMainState& main, NativeRetailGameSession& session) {
+    record_placeholder_hit(8, "begin_menu_18d700", main.iteration);
     return std::make_shared<NativeRetailMenuModeChild>(main, session, 3);
 }
 
 std::shared_ptr<NativeRetailInitialChild> begin_menu_18d660(
     NativeRetailMainState& main, NativeRetailGameSession& session) {
+    record_placeholder_hit(9, "begin_menu_18d660", main.iteration);
     return std::make_shared<NativeRetailMenuModeChild>(main, session, 5);
 }
 
 std::shared_ptr<NativeRetailInitialChild> begin_intro_18deb0(
     NativeRetailMainState& main, NativeRetailGameSession& session) {
+    record_placeholder_hit(10, "begin_intro_18deb0", main.iteration);
     return std::make_shared<NativeRetailIntro18deb0Child>(main, session);
 }
 
 std::shared_ptr<NativeRetailInitialChild> begin_prompt_18dc10(
     NativeRetailMainState& main, NativeRetailGameSession& session) {
+    record_placeholder_hit(11, "begin_prompt_18dc10", main.iteration);
     return std::make_shared<NativeRetailPrompt18dc10Child>(main, session);
 }
 
@@ -315,6 +368,7 @@ std::shared_ptr<NativeRetailInitialChild> begin_prompt_18dc10(
 // What remains unrecovered: concrete game mode task loop execution bodies.
 void transition_1225d0(NativeRetailMainState& main, std::uint32_t mode,
     [[maybe_unused]] RetailInitialTransitionBody next_body) {
+    record_placeholder_hit(12, "transition_1225d0", main.iteration);
     if (main.mode_history) {
         RetailModeFailure mf;
         (void)main.mode_history->push(mode, mf);
@@ -328,6 +382,7 @@ namespace initial_reset_required {
 // Recovered subsystem cleanup from PS2 0x0018da30 and Xbox 0x00027df0:
 // Clears nonowning task and scene references prior to mode transition.
 bool clear_nonowning_references_18da30(NativeRetailMainState& main, StartupFailure&) {
+    record_placeholder_hit(13, "clear_nonowning_references_18da30", main.iteration);
     if (!main.lifetime) {
         return false;
     }
@@ -342,6 +397,7 @@ namespace main_binding {
 // Note: While the display service and offscreen presentation contract are authentic, whole 3D scene
 // geometry submission remains an unrecovered placeholder awaiting connected Clump and 3D draw paths.
 bool render_retail_frame(NativeRetailMainState& main, StartupFailure&) {
+    record_placeholder_hit(2, "render_retail_frame", main.iteration);
     if (!main.lifetime) {
         return false;
     }
@@ -352,6 +408,7 @@ bool render_retail_frame(NativeRetailMainState& main, StartupFailure&) {
 // [unrecovered-placeholder] Recovered from PS2 0x002214d0 and Xbox 0x001b6750:
 // Polls input devices for active player roles. Unrecovered remainder: multi-controller role assignment and hardware pad device detection.
 bool poll_retail_controller_roles(NativeRetailMainState& main, StartupFailure&) {
+    record_placeholder_hit(14, "poll_retail_controller_roles", main.iteration);
     if (!main.lifetime) {
         return false;
     }
@@ -362,6 +419,7 @@ bool poll_retail_controller_roles(NativeRetailMainState& main, StartupFailure&) 
 // [unrecovered-placeholder] Recovered from PS2 0x003429e0 and Xbox 0x0034bd50:
 // Advances frame services and timer intervals. Unrecovered remainder: live network protocol exchange and multi-stream audio updates.
 bool advance_retail_game_services(NativeRetailMainState& main, StartupFailure&) {
+    record_placeholder_hit(15, "advance_retail_game_services", main.iteration);
     if (!main.lifetime) {
         return false;
     }
@@ -371,6 +429,7 @@ bool advance_retail_game_services(NativeRetailMainState& main, StartupFailure&) 
 // [unrecovered-placeholder] Recovered from PS2 0x0027b1d0 and Xbox 0x0025c1e0:
 // Evaluates whether current mode task permits mode dispatch. Unrecovered remainder: 60-step mode-table dispatch cycle timing verification.
 std::optional<bool> retail_mode_dispatch_enabled(const NativeRetailMainState& main, StartupFailure&) {
+    record_placeholder_hit(16, "retail_mode_dispatch_enabled", main.iteration);
     if (!main.lifetime) {
         return std::nullopt;
     }
@@ -380,6 +439,7 @@ std::optional<bool> retail_mode_dispatch_enabled(const NativeRetailMainState& ma
 // [unrecovered-placeholder] Recovered from PS2 0x0027b1d0 and Xbox 0x0007be10:
 // Dispatches enabled mode task from mode dispatch table. Unrecovered remainder: live gameplay mode transitions.
 bool dispatch_retail_enabled_mode(NativeRetailMainState& main, StartupFailure&) {
+    record_placeholder_hit(17, "dispatch_retail_enabled_mode", main.iteration);
     if (!main.lifetime) {
         return false;
     }
@@ -389,6 +449,7 @@ bool dispatch_retail_enabled_mode(NativeRetailMainState& main, StartupFailure&) 
 // [unrecovered-placeholder] Recovered from PS2 0x00210570 and Xbox 0x0026a9c0:
 // Services frame input participants. Unrecovered remainder: hardware gamepad analog calibration and port polling.
 bool service_retail_frame_input(NativeRetailMainState& main, StartupFailure&) {
+    record_placeholder_hit(18, "service_retail_frame_input", main.iteration);
     if (!main.lifetime) {
         return false;
     }
@@ -398,6 +459,7 @@ bool service_retail_frame_input(NativeRetailMainState& main, StartupFailure&) {
 // [unrecovered-placeholder] Recovered from PS2 0x00130000 and Xbox 0x001c27f0:
 // Enqueues action task request into session task registry. Unrecovered remainder: dynamic task priority queue scheduling.
 bool create_retail_action_task(NativeRetailMainState& main, const RetailActionTaskRequest&, StartupFailure&) {
+    record_placeholder_hit(19, "create_retail_action_task", main.iteration);
     if (!main.lifetime) {
         return false;
     }
@@ -407,6 +469,7 @@ bool create_retail_action_task(NativeRetailMainState& main, const RetailActionTa
 // [unrecovered-placeholder] Recovered from PS2 0x001304f0 and Xbox 0x001c6de0:
 // Prunes retired task associations and dead scene links. Unrecovered remainder: generational garbage collection of scene nodes.
 bool prune_retail_associations(NativeRetailMainState& main, StartupFailure&) {
+    record_placeholder_hit(20, "prune_retail_associations", main.iteration);
     if (!main.lifetime) {
         return false;
     }
@@ -416,6 +479,7 @@ bool prune_retail_associations(NativeRetailMainState& main, StartupFailure&) {
 // [unrecovered-placeholder] Recovered from PS2 0x004c4d80 and Xbox 0x004c4d80:
 // Resets and binds scene event graph dispatch. Unrecovered remainder: dynamic event listener registration.
 bool reset_and_bind_retail_scene_event_graph(NativeRetailMainState& main, NativeRetailSceneEventGraph&, StartupFailure&) {
+    record_placeholder_hit(21, "reset_and_bind_retail_scene_event_graph", main.iteration);
     if (!main.lifetime) {
         return false;
     }
@@ -426,6 +490,7 @@ bool reset_and_bind_retail_scene_event_graph(NativeRetailMainState& main, Native
 // Routes built-in scene events through event graph. Unrecovered remainder: scene hierarchy event propagation.
 std::optional<bool> deliver_retail_builtin_scene_event(
     NativeRetailMainState& main, NativeRetailSceneEventGraph&, std::uint32_t, std::uint32_t, StartupFailure&) {
+    record_placeholder_hit(22, "deliver_retail_builtin_scene_event", main.iteration);
     if (!main.lifetime) {
         return std::nullopt;
     }
@@ -437,6 +502,7 @@ std::optional<bool> deliver_retail_builtin_scene_event(
 // [unrecovered-placeholder] Recovered from PS2 0x002f1630 and Xbox 0x00277df0:
 // Initializes profile select dialogue from file path. Unrecovered remainder: interactive UI dialogue rendering and memory card writeback.
 bool invoke_retail_profile_select_from_2f1630(NativeRetailMainState& main, std::string_view, RetailProfileMenuFailure&) {
+    record_placeholder_hit(23, "invoke_retail_profile_select_from_2f1630", main.iteration);
     if (!main.lifetime) {
         return false;
     }
@@ -446,6 +512,7 @@ bool invoke_retail_profile_select_from_2f1630(NativeRetailMainState& main, std::
 // [unrecovered-placeholder] Recovered from PS2 0x00188720 and Xbox 0x00030580:
 // Binds participant profile to active session role. Unrecovered remainder: profile participant record synchronization with NVRAM saves.
 bool apply_retail_profile_participant_from_188720(NativeRetailMainState& main, std::uint32_t, RetailProfileMenuFailure&) {
+    record_placeholder_hit(24, "apply_retail_profile_participant_from_188720", main.iteration);
     if (!main.lifetime) {
         return false;
     }
@@ -456,6 +523,7 @@ bool apply_retail_profile_participant_from_188720(NativeRetailMainState& main, s
 // Publishes participant record to session participant registry. Unrecovered remainder: active session participant broadcast across network.
 bool publish_retail_profile_participant_from_189690(
     NativeRetailMainState& main, const std::shared_ptr<NativeRetailInputParticipant>&, RetailProfileMenuFailure&) {
+    record_placeholder_hit(25, "publish_retail_profile_participant_from_189690", main.iteration);
     if (!main.lifetime) {
         return false;
     }

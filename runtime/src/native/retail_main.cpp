@@ -59,6 +59,10 @@ bool publish_rising_action_tasks(NativeRetailMainState& m, StartupFailure& f) {
 }
 
 bool run_frame(NativeRetailMainState& m, StartupFailure& f) {
+    const char* frame_limit = std::getenv("MKA_HEADLESS_MAX_FRAMES");
+    if (frame_limit && m.iteration >= static_cast<std::uint64_t>(std::strtoull(frame_limit, nullptr, 10))) {
+        return false;
+    }
     const auto frame_inhibited = retail_frame_processing_inhibited(m, f);
     if (!frame_inhibited) return false;
     ++m.iteration; // Original branch delay slot increments total even when inhibited.

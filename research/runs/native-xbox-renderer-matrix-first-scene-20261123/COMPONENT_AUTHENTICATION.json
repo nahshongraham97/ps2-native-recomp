@@ -9,11 +9,14 @@
     "runtime/include/mka/retail_movie_controller.hpp",
     "runtime/include/mka/retail_renderer_cameras.hpp",
     "runtime/src/native/retail_display_service.cpp",
+    "runtime/src/native/retail_first_scene_continuations.cpp",
     "runtime/src/native/retail_initial_movie_path.cpp",
+    "runtime/src/native/retail_main.cpp",
+    "runtime/src/native/retail_platform.cpp",
     "runtime/src/native/retail_renderer_cameras.cpp",
     "runtime/src/native/retail_renderer_matrix_kernels.cpp",
     "runtime/src/native/retail_renderer_transforms_kernels.cpp",
-    "runtime/src/native/retail_first_scene_continuations.cpp",
+    "tests/test_native_startup_missing_bindings.cpp",
     "tests/test_retail_display_movie_presentation.cpp",
     "tests/test_retail_renderer_cameras.cpp",
     "tests/test_retail_renderer_matrix.cpp",
@@ -36,18 +39,66 @@
     }
   },
   "presentation_verification": {
-    "target": "LOGOW.SFD frame 0",
+    "target": "LOGOW.SFD frame 0 + OPENINGW.SFD frame 1 (Oracle R183 Attract Sequence)",
     "dimensions": "1280x720",
-    "fnv1a64": "0x2cb5ec60e4e72325",
-    "sha256": "ba848e89025edbb7a00d11be30040c23e036d1e57606c86074e65dd2c70191d7",
+    "frames": [
+      {
+        "frame_index": 0,
+        "movie_id": 0,
+        "stream": "LOGOW.SFD",
+        "fnv1a64": "0x2cb5ec60e4e72325",
+        "sha256": "ba848e89025edbb7a00d11be30040c23e036d1e57606c86074e65dd2c70191d7",
+        "verification_class": "native-design-check (max delta <= 2 vs CPU reference)"
+      },
+      {
+        "frame_index": 1,
+        "movie_id": 2,
+        "stream": "OPENINGW.SFD",
+        "fnv1a64": "0x53145fe3f4ded499",
+        "sha256": "256021b4912883b1df555b3f88e9f59f32110bb082c175100229ba163cffdca3",
+        "verification_class": "native-design-check (max delta <= 2 vs CPU reference)"
+      }
+    ],
     "verification_class": "native-design-check",
-    "notes": "Driver-dependent regression pin captured via diagnostic readback under 16:9 full-screen edge-to-edge layout (0, 0, 1280, 720) without pillarboxing on Xbox offscreen target, driven through retail movie controller path (play_retail_movie_frame) starting LOGOW.SFD frame 0. Verified against independent CPU reference conversion (max delta <= 2). Also verified 4:3 pillarbox destination geometry rule (160, 0, 960, 720) for standard 4:3 N streams without an extra draw call.",
+    "notes": "Driver-dependent regression pins captured via diagnostic readback under 16:9 full-screen edge-to-edge layout (0, 0, 1280, 720) without pillarboxing on Xbox offscreen target, driven through retail movie controller path (play_retail_movie_frame) presenting LOGOW.SFD frame 0 and OPENINGW.SFD frame 1 in Oracle R183 attract order. Verified against independent CPU reference conversion (max delta <= 2). Also verified 4:3 pillarbox destination geometry rule (160, 0, 960, 720) for standard 4:3 N streams without an extra draw call.",
     "telemetry": {
-      "gl_draw_calls": 1,
+      "gl_draw_calls": 2,
       "cpu_composited_pixels": 0,
       "frame_readbacks": 0,
-      "diagnostic_readbacks": 1,
+      "diagnostic_readbacks": 2,
       "fallback_pixels": 0
+    }
+  },
+  "headless_full_entry_run": {
+    "status": "PASS_HEADLESS_OBSERVATION",
+    "policy_compliance": "TASK_BOARD.md row 10 (SDL_WINDOW_HIDDEN, zero visible windows, zero audio endpoints)",
+    "frame_limit": 60,
+    "first_failure": {
+      "kind": 18,
+      "operation": "3011D0 native texture conversion",
+      "reason": "upload native RGBA8 image GL error=0x500 in headless GL context"
+    },
+    "placeholders_hit_sequence": [
+      {
+        "order": 1,
+        "id": 0,
+        "symbol": "continue_first_scene_at_225d40",
+        "first_frame": 0,
+        "call_count": 1
+      },
+      {
+        "order": 2,
+        "id": 1,
+        "symbol": "continue_scene_reset_at_125d60",
+        "first_frame": 0,
+        "call_count": 1
+      }
+    ],
+    "distinct_placeholders_encountered": 2,
+    "blocker_analysis": {
+      "blocker_3d_geometry": "Placeholder #0 (continue_first_scene_at_225d40) returns ready lifecycle without loading world sector / clump geometry, so retail_render_enabled() observes has_world = false, preventing Placeholder #2 (render_retail_frame) from being called with live scene geometry.",
+      "blocker_movie_streaming": "Placeholder #3 (begin_menu_18d450) child procedure completes immediately upon presenting frame 0 rather than driving asynchronous MPEG-2 / SFD stream packet demuxing loops.",
+      "blocker_mode_dispatch": "Placeholder #12 (transition_1225d0) / Placeholder #17 (dispatch_retail_enabled_mode) pushes mode transition records into mode_history, but mode task bodies remain placeholders."
     }
   },
   "remaining_undefined_symbols": [],
@@ -61,134 +112,238 @@
     {
       "function": "00225d40",
       "owning_symbol": "mka::retail::initial_task_required::continue_first_scene_at_225d40",
+      "provenance_round": "Round 7/8",
+      "ps2_address": "0x00225d40",
+      "xbox_address": "0x0019c86b",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Whole 3D scene continuation bootstrap logic and scene actor graphs"
     },
     {
       "function": "00125d60",
       "owning_symbol": "mka::retail::initial_task_required::continue_scene_reset_at_125d60",
+      "provenance_round": "Round 7/8",
+      "ps2_address": "0x00125d60",
+      "xbox_address": "0x0019c878",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Scene reset resource recreation and dynamic camera actor linking"
     },
     {
       "function": "00126940",
       "owning_symbol": "mka::retail::main_binding::render_retail_frame",
+      "provenance_round": "Round 7/8",
+      "ps2_address": "0x00126940",
+      "xbox_address": "0x0019c927",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Whole 3D world and character mesh raster submission to GPU pipeline"
     },
     {
       "function": "0018d450",
       "owning_symbol": "mka::retail::initial_task_required::begin_menu_18d450",
-      "what_is_missing": "Continuous multi-frame streaming decode loops across multi-second playback (only offscreen frame 0 presentation authenticated)"
+      "provenance_round": "Round 9/10",
+      "ps2_address": "0x0018d450",
+      "xbox_address": "0x00028300",
+      "disassembly_status": "MIPS and x86 disassembled",
+      "what_is_missing": "Continuous multi-frame streaming decode loops across multi-second playback (only offscreen frame 0 and frame 1 presentation authenticated)"
     },
     {
       "function": "0018d870",
       "owning_symbol": "mka::retail::initial_task_required::begin_menu_18d870",
+      "provenance_round": "Round 9/10",
+      "ps2_address": "0x0018d870",
+      "xbox_address": "0x00028090",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Multi-frame video stream decode loop for OPENING movie"
     },
     {
       "function": "0018d8e0",
       "owning_symbol": "mka::retail::initial_task_required::begin_menu_18d8e0",
+      "provenance_round": "Round 9/10",
+      "ps2_address": "0x0018d8e0",
+      "xbox_address": "0x00028000",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Multi-frame video stream decode loop for TITLE movie and idle attract transition"
     },
     {
       "function": "0018d800",
       "owning_symbol": "mka::retail::initial_task_required::begin_menu_18d800",
+      "provenance_round": "Round 9/10",
+      "ps2_address": "0x0018d800",
+      "xbox_address": "0x00028110",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Multi-frame video stream decode loop for ATTRACT movie"
     },
     {
       "function": "0018d770",
       "owning_symbol": "mka::retail::initial_task_required::begin_menu_18d770",
+      "provenance_round": "Round 9/10",
+      "ps2_address": "0x0018d770",
+      "xbox_address": "0x00028170",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Multi-frame video stream decode loop for QUAD movie"
     },
     {
       "function": "0018d700",
       "owning_symbol": "mka::retail::initial_task_required::begin_menu_18d700",
+      "provenance_round": "Round 9/10",
+      "ps2_address": "0x0018d700",
+      "xbox_address": "0x000281c0",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Interactive options menu widget navigation and audio/video settings persistence"
     },
     {
       "function": "0018d660",
       "owning_symbol": "mka::retail::initial_task_required::begin_menu_18d660",
+      "provenance_round": "Round 9/10",
+      "ps2_address": "0x0018d660",
+      "xbox_address": "0x00028210",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Fight engine AI simulation and character state playback during kombat demo"
     },
     {
       "function": "0018deb0",
       "owning_symbol": "mka::retail::initial_task_required::begin_intro_18deb0",
+      "provenance_round": "Round 9/10",
+      "ps2_address": "0x0018deb0",
+      "xbox_address": "0x00027be0",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Live ROM font glyph rasterization during interactive intro playback"
     },
     {
       "function": "0018dc10",
       "owning_symbol": "mka::retail::initial_task_required::begin_prompt_18dc10",
+      "provenance_round": "Round 9/10",
+      "ps2_address": "0x0018dc10",
+      "xbox_address": "0x00028350",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Interactive controller button polling and gamepad interrupt service"
     },
     {
       "function": "001225d0",
       "owning_symbol": "mka::retail::initial_task_required::transition_1225d0",
+      "provenance_round": "Round 9/10",
+      "ps2_address": "0x001225d0",
+      "xbox_address": "0x0019ca30",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Complex interactive mode task dispatch bodies (Options, Kombat demo, Arcade ladders)"
     },
     {
       "function": "0018da30",
       "owning_symbol": "mka::retail::initial_reset_required::clear_nonowning_references_18da30",
+      "provenance_round": "Round 9/10",
+      "ps2_address": "0x0018da30",
+      "xbox_address": "0x00027df0",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Complete non-owning reference cleanup across all subsystem task nodes"
     },
     {
       "function": "002214d0",
       "owning_symbol": "mka::retail::main_binding::poll_retail_controller_roles",
+      "provenance_round": "Round 11",
+      "ps2_address": "0x002214d0",
+      "xbox_address": "0x001b6750",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Multi-controller role assignment and hardware pad device detection"
     },
     {
       "function": "003429e0",
       "owning_symbol": "mka::retail::main_binding::advance_retail_game_services",
+      "provenance_round": "Round 11",
+      "ps2_address": "0x003429e0",
+      "xbox_address": "0x0034bd50",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Live online network protocol exchange and multi-stream audio updates"
     },
     {
       "function": "0027b1d0",
       "owning_symbol": "mka::retail::main_binding::retail_mode_dispatch_enabled",
+      "provenance_round": "Round 11",
+      "ps2_address": "0x0027b1d0",
+      "xbox_address": "0x0025c1e0",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "60-step mode-table dispatch cycle timing verification"
     },
     {
       "function": "0027b1d0",
       "owning_symbol": "mka::retail::main_binding::dispatch_retail_enabled_mode",
+      "provenance_round": "Round 11",
+      "ps2_address": "0x0027b1d0",
+      "xbox_address": "0x0007be10",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Live gameplay fight mode transitions and arcade ladder dispatch"
     },
     {
       "function": "00210570",
       "owning_symbol": "mka::retail::main_binding::service_retail_frame_input",
+      "provenance_round": "Round 11",
+      "ps2_address": "0x00210570",
+      "xbox_address": "0x0026a9c0",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Hardware gamepad analog calibration and port polling"
     },
     {
       "function": "00130000",
       "owning_symbol": "mka::retail::main_binding::create_retail_action_task",
+      "provenance_round": "Round 11",
+      "ps2_address": "0x00130000",
+      "xbox_address": "0x001c27f0",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Dynamic task priority queue scheduling and fiber execution"
     },
     {
       "function": "001304f0",
       "owning_symbol": "mka::retail::main_binding::prune_retail_associations",
+      "provenance_round": "Round 11",
+      "ps2_address": "0x001304f0",
+      "xbox_address": "0x001c6de0",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Generational garbage collection of dead scene event listener nodes"
     },
     {
       "function": "004c4d80",
       "owning_symbol": "mka::retail::main_binding::reset_and_bind_retail_scene_event_graph",
+      "provenance_round": "Round 11",
+      "ps2_address": "0x004c4d80",
+      "xbox_address": "0x004c4d80",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Dynamic scene event listener registration and event dispatch traversal"
     },
     {
       "function": "004c6a70",
       "owning_symbol": "mka::retail::main_binding::deliver_retail_builtin_scene_event",
+      "provenance_round": "Round 11",
+      "ps2_address": "0x004c6a70",
+      "xbox_address": "0x002f6ea0",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Multi-level scene hierarchy event propagation and routing"
     },
     {
       "function": "002f1630",
       "owning_symbol": "mka::retail::invoke_retail_profile_select_from_2f1630",
+      "provenance_round": "Round 11",
+      "ps2_address": "0x002f1630",
+      "xbox_address": "0x00277df0",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Interactive UI dialogue rendering and memory card writeback"
     },
     {
       "function": "00188720",
       "owning_symbol": "mka::retail::apply_retail_profile_participant_from_188720",
+      "provenance_round": "Round 11",
+      "ps2_address": "0x00188720",
+      "xbox_address": "0x00030580",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Profile participant record synchronization with NVRAM / memory card saves"
     },
     {
       "function": "00189690",
       "owning_symbol": "mka::retail::publish_retail_profile_participant_from_189690",
+      "provenance_round": "Round 11",
+      "ps2_address": "0x00189690",
+      "xbox_address": "0x00031020",
+      "disassembly_status": "MIPS and x86 disassembled",
       "what_is_missing": "Active session participant broadcast across network and split-screen multiplayer"
     }
   ],
   "link_diagnostic_status": "LINK_DIAGNOSTIC_COMPLETE_WITH_PLACEHOLDERS",
-  "notes": "Negative link undefined count reached 0 as an ordered link diagnostic. 26 unrecovered placeholders remain registered in the machine-readable manifest. Full acceptance remains strictly OPEN awaiting whole 3D world geometry pipeline, live controller polling, audio mixing, and playable fight loop."
+  "notes": "Negative link undefined count reached 0 as an ordered link diagnostic. 26 unrecovered placeholders remain registered in the machine-readable manifest across Rounds 7/8, 9/10, and 11. In Round 11, all 12 routines had authentic disassembly recovery from Xbox default.xbe frame loop (0x0019c86b..0x0019c927) and PS2 MIPS routines, but all 12 simultaneously registered placeholders for deep engine subsystems. Full acceptance remains strictly OPEN awaiting whole 3D world geometry pipeline, live controller polling, audio mixing, and playable fight loop."
 }

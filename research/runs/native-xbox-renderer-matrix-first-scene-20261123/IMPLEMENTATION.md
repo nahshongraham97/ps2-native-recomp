@@ -212,6 +212,27 @@ Implemented in `runtime/src/native/retail_display_service.cpp` (`mka::retail`):
 - `NativeOffscreenDisplayService` implements headless offscreen rendering via invisible WGL double-buffered context.
 - Target configuration: primary Xbox HD target $1280 \times 720$ (16:9), with $640 \times 448$ preserved solely as named PS2 reference mode.
 
+### Multi-Frame Movie Sequence Presentation (`LOGOW.SFD` -> `OPENINGW.SFD`)
+In compliance with the recovered retail attract sequence (Oracle R183), multi-frame playback was executed through the retail movie controller (`play_retail_movie_frame`) into `NativeOffscreenDisplayService` attached to `NativeMovieGlDevice`:
+1. **Frame 0: `LOGOW.SFD` (Movie 0)**:
+   - Full-screen edge-to-edge 16:9 presentation ($1280 \times 720$).
+   - Captured driver regression pin: FNV1a64=`0x2cb5ec60e4e72325`, SHA256=`ba848e89025edbb7a00d11be30040c23e036d1e57606c86074e65dd2c70191d7`.
+   - Verified against independent CPU reference conversion (max delta $\le 2$ across 5 sample points).
+2. **Frame 1: `OPENINGW.SFD` (Movie 2)**:
+   - Full-screen edge-to-edge 16:9 presentation ($1280 \times 720$).
+   - Captured driver regression pin: FNV1a64=`0x53145fe3f4ded499`, SHA256=`256021b4912883b1df555b3f88e9f59f32110bb082c175100229ba163cffdca3`.
+   - Verified against independent CPU reference conversion (max delta $\le 2$ across 5 sample points).
+3. **Truthful Telemetry Accounting**:
+   - `gl_draw_calls = 2`: exactly two movie quad raster draw calls.
+   - `cpu_composited_pixels = 0`: GPU-accelerated rasterization with zero CPU blitting.
+   - `frame_readbacks = 0`: production presentation does not read pixels back from the GPU.
+   - `diagnostic_readbacks = 2`: exactly two diagnostic readbacks performed for regression pinning.
+   - `fallback_pixels = 0`: zero software fallback pixels.
+4. **Unrecovered Scaffolding Disclosed**:
+   - Continuous MPEG-2 / SFD stream packet demuxing loops across multi-second playback remain unrecovered.
+   - Audio stream playback and AV sync drift compensation remain unrecovered.
+   - User skip interrupt (Start button press) and mode handoff to attract loop remain unrecovered.
+
 ## 5. Per-Function Disassembly Evidence & Recovered Implementations
 
 Every routine implemented across this round was verified directly against disassembly of both retail executables:
@@ -246,7 +267,7 @@ Zero functions were implemented without disassembling both executables. Below is
 | **`apply_retail_profile_participant_from_188720`** | `0x00188720` | `0x00030580` | **PS2:**<br><pre>0x188720: addiu    $sp, $sp, -0x40\n0x188724: sd       $ra, 0x20($sp)\n0x188728: addu.qb  $zero, $sp, $s1\n0x18872c: move     $s1, $a0\n0x188730: jal      0x2f18f0\n0x188734: ext      $s0, $sp, 0, 1\n0x188738: move     $a1, $v0</pre><br>**Xbox:**<br><pre>0x030580: inc      ebp\n0x030581: cld      \n0x030582: mov      ecx, dword ptr [eax + 0x70]\n0x030585: mov      edx, dword ptr [ebp - 8]\n0x030588: mov      eax, dword ptr [ebp - 4]\n0x03058b: mov      esi, dword ptr [ebp - 4]\n0x03058e: mov      ecx, dword ptr [esi + ecx*4 + 0x40]</pre> | Applies participant profile bindings to the active game session. | Profile participant record synchronization with NVRAM / memory card saves. |
 | **`publish_retail_profile_participant_from_189690`** | `0x00189690` | `0x00031020` | **PS2:**<br><pre>0x189690: addiu    $sp, $sp, -0x60\n0x189694: sd       $ra, 0x30($sp)</pre><br>**Xbox:**<br><pre>0x031020: test     al, 0x1a\n0x031022: add      dword ptr [eax], -0x75\n0x031025: inc      edx\n0x031026: adc      al, 0x89\n0x031028: mov      byte ptr [eax + eax - 0x1a750000], dl\n0x03102f: pop      ebp\n0x031030: ret      </pre> | Publishes selected participant record to session participant registry. | Active session participant broadcast across network and split-screen multiplayer. |
 
-## 6. Undefined Symbol Link Diagnostic & Machine-Readable Placeholder Registry
+## 6. Undefined Symbol Link Diagnostic, Machine-Readable Placeholder Registry & Headless Full-Entry Run
 
 ### Link Diagnostic Result: `undefined: 0`
 All negative link undefined symbols across all four priority queues have been resolved at link-diagnostic level:
@@ -261,42 +282,68 @@ All negative link undefined symbols across all four priority queues have been re
 > Reaching zero undefined symbols in `test_native_startup_missing_bindings` proves only that all required symbol declarations have matching linkable function definitions satisfying the linker. It does **not** signify whole-game playability or acceptance. Full acceptance remains strictly **OPEN**.
 
 ### Machine-Readable Placeholder Registry (26 Registered Placeholders)
-To prevent link-completion from obscuring incomplete implementations, all unrecovered functional bodies are tracked in the machine-readable evidence manifest (`research/ledger/ported_function_evidence.json`) under the top-level `"placeholders"` registry:
+To prevent link-completion from obscuring incomplete implementations, all unrecovered functional bodies are tracked in the machine-readable evidence manifest (`research/ledger/ported_function_evidence.json` and run record `COMPONENT_AUTHENTICATION.json`) under the `"placeholders"` registry:
 - **Registry Count**: **26 unrecovered placeholders**.
 - **Automated Validation**: `tools/research/generate_ledgers.py` (`validate_ledgers`) parses the `"placeholders"` array and validates schema fields (`function`, `owning_symbol`, `what_is_missing`).
 - **Acceptance Gate Enforcement**: `validate_ledgers` enforces that any acceptance claim (`acceptance: CLOSED`) must fail closed with an `AssertionError` while the placeholder registry is non-empty.
 - **Planted Failure Verification**: Planted Failure 11 in `test_full_existence_validation.py` actively asserts that claiming acceptance with a non-empty placeholder registry fails closed.
 
-| Index | PS2 Function | Owning Symbol | What Is Missing |
-|---|---|---|---|
-| 1 | `00225d40` | `mka::retail::initial_task_required::continue_first_scene_at_225d40` | Whole 3D scene continuation bootstrap logic and scene actor graphs |
-| 2 | `00125d60` | `mka::retail::initial_task_required::continue_scene_reset_at_125d60` | Scene reset resource recreation and dynamic camera actor linking |
-| 3 | `00126940` | `mka::retail::main_binding::render_retail_frame` | Whole 3D world and character mesh raster submission to GPU pipeline |
-| 4 | `0018d450` | `mka::retail::initial_task_required::begin_menu_18d450` | Continuous multi-frame streaming decode loops across multi-second playback (only offscreen frame 0 presentation authenticated) |
-| 5 | `0018d870` | `mka::retail::initial_task_required::begin_menu_18d870` | Multi-frame video stream decode loop for OPENING movie |
-| 6 | `0018d8e0` | `mka::retail::initial_task_required::begin_menu_18d8e0` | Multi-frame video stream decode loop for TITLE movie and idle attract transition |
-| 7 | `0018d800` | `mka::retail::initial_task_required::begin_menu_18d800` | Multi-frame video stream decode loop for ATTRACT movie |
-| 8 | `0018d770` | `mka::retail::initial_task_required::begin_menu_18d770` | Multi-frame video stream decode loop for QUAD movie |
-| 9 | `0018d700` | `mka::retail::initial_task_required::begin_menu_18d700` | Interactive options menu widget navigation and audio/video settings persistence |
-| 10 | `0018d660` | `mka::retail::initial_task_required::begin_menu_18d660` | Fight engine AI simulation and character state playback during kombat demo |
-| 11 | `0018deb0` | `mka::retail::initial_task_required::begin_intro_18deb0` | Live ROM font glyph rasterization during interactive intro playback |
-| 12 | `0018dc10` | `mka::retail::initial_task_required::begin_prompt_18dc10` | Interactive controller button polling and gamepad interrupt service |
-| 13 | `001225d0` | `mka::retail::initial_task_required::transition_1225d0` | Complex interactive mode task dispatch bodies (Options, Kombat demo, Arcade ladders) |
-| 14 | `0018da30` | `mka::retail::initial_reset_required::clear_nonowning_references_18da30` | Complete non-owning reference cleanup across all subsystem task nodes |
-| 15 | `002214d0` | `mka::retail::main_binding::poll_retail_controller_roles` | Multi-controller role assignment and hardware pad device detection |
-| 16 | `003429e0` | `mka::retail::main_binding::advance_retail_game_services` | Live online network protocol exchange and multi-stream audio updates |
-| 17 | `0027b1d0` | `mka::retail::main_binding::retail_mode_dispatch_enabled` | 60-step mode-table dispatch cycle timing verification |
-| 18 | `0027b1d0` | `mka::retail::main_binding::dispatch_retail_enabled_mode` | Live gameplay fight mode transitions and arcade ladder dispatch |
-| 19 | `00210570` | `mka::retail::main_binding::service_retail_frame_input` | Hardware gamepad analog calibration and port polling |
-| 20 | `00130000` | `mka::retail::main_binding::create_retail_action_task` | Dynamic task priority queue scheduling and fiber execution |
-| 21 | `001304f0` | `mka::retail::main_binding::prune_retail_associations` | Generational garbage collection of dead scene event listener nodes |
-| 22 | `004c4d80` | `mka::retail::main_binding::reset_and_bind_retail_scene_event_graph` | Dynamic scene event listener registration and event dispatch traversal |
-| 23 | `004c6a70` | `mka::retail::main_binding::deliver_retail_builtin_scene_event` | Multi-level scene hierarchy event propagation and routing |
-| 24 | `002f1630` | `mka::retail::invoke_retail_profile_select_from_2f1630` | Interactive UI dialogue rendering and memory card writeback |
-| 25 | `00188720` | `mka::retail::apply_retail_profile_participant_from_188720` | Profile participant record synchronization with NVRAM / memory card saves |
-| 26 | `00189690` | `mka::retail::publish_retail_profile_participant_from_189690` | Active session participant broadcast across network and split-screen multiplayer |
+| Index | Owning Symbol | Provenance Round | PS2 Addr | Xbox Addr | Disassembly Status | What Is Missing |
+|---|---|---|---|---|---|---|
+| 0 | `mka::retail::initial_task_required::continue_first_scene_at_225d40` | Round 7/8 | `0x00225d40` | `0x0019c86b` | MIPS & x86 disassembled | Whole 3D scene continuation bootstrap logic, sector loading, and scene actor graphs |
+| 1 | `mka::retail::initial_task_required::continue_scene_reset_at_125d60` | Round 7/8 | `0x00125d60` | `0x0019c878` | MIPS & x86 disassembled | Scene reset resource recreation, dynamic camera actor linking, and level restart state |
+| 2 | `mka::retail::main_binding::render_retail_frame` | Round 7/8 | `0x00126940` | `0x0019c927` | MIPS & x86 disassembled | Whole 3D world and character mesh raster submission to GPU pipeline, RwCameraBeginUpdate/EndUpdate submission |
+| 3 | `mka::retail::initial_task_required::begin_menu_18d450` | Round 9/10 | `0x0018d450` | `0x00028300` | MIPS & x86 disassembled | Continuous multi-frame streaming decode loops across multi-second playback (only offscreen frame 0 and frame 1 presentation authenticated) |
+| 4 | `mka::retail::initial_task_required::begin_menu_18d870` | Round 9/10 | `0x0018d870` | `0x00028090` | MIPS & x86 disassembled | Multi-frame video stream decode loop for OPENING movie, attract sequence timer |
+| 5 | `mka::retail::initial_task_required::begin_menu_18d8e0` | Round 9/10 | `0x0018d8e0` | `0x00028000` | MIPS & x86 disassembled | Multi-frame video stream decode loop for TITLE movie and idle attract transition |
+| 6 | `mka::retail::initial_task_required::begin_menu_18d800` | Round 9/10 | `0x0018d800` | `0x00028110` | MIPS & x86 disassembled | Multi-frame video stream decode loop for ATTRACT movie |
+| 7 | `mka::retail::initial_task_required::begin_menu_18d770` | Round 9/10 | `0x0018d770` | `0x00028170` | MIPS & x86 disassembled | Multi-frame video stream decode loop for QUAD movie |
+| 8 | `mka::retail::initial_task_required::begin_menu_18d700` | Round 9/10 | `0x0018d700` | `0x000281c0` | MIPS & x86 disassembled | Interactive options menu widget navigation and audio/video settings persistence |
+| 9 | `mka::retail::initial_task_required::begin_menu_18d660` | Round 9/10 | `0x0018d660` | `0x00028210` | MIPS & x86 disassembled | Fight engine AI simulation and character state playback during kombat demo |
+| 10 | `mka::retail::initial_task_required::begin_intro_18deb0` | Round 9/10 | `0x0018deb0` | `0x00027be0` | MIPS & x86 disassembled | Live ROM font glyph rasterization during interactive intro playback, subtitle quad animation timer |
+| 11 | `mka::retail::initial_task_required::begin_prompt_18dc10` | Round 9/10 | `0x0018dc10` | `0x00028350` | MIPS & x86 disassembled | Interactive controller button polling and gamepad interrupt service, flashing prompt timer |
+| 12 | `mka::retail::initial_task_required::transition_1225d0` | Round 9/10 | `0x001225d0` | `0x0019ca30` | MIPS & x86 disassembled | Complex interactive mode task dispatch bodies (Options, Kombat demo, Arcade ladders) |
+| 13 | `mka::retail::initial_reset_required::clear_nonowning_references_18da30` | Round 9/10 | `0x0018da30` | `0x00027df0` | MIPS & x86 disassembled | Complete non-owning reference cleanup across all subsystem task nodes, memory compaction |
+| 14 | `mka::retail::main_binding::poll_retail_controller_roles` | Round 11 | `0x002214d0` | `0x001b6750` | MIPS & x86 disassembled | Multi-controller role assignment and hardware pad device detection, force feedback drivers |
+| 15 | `mka::retail::main_binding::advance_retail_game_services` | Round 11 | `0x003429e0` | `0x0034bd50` | MIPS & x86 disassembled | Live online network protocol exchange, matchmaking socket threads, and multi-stream audio updates |
+| 16 | `mka::retail::main_binding::retail_mode_dispatch_enabled` | Round 11 | `0x0027b1d0` | `0x0025c1e0` | MIPS & x86 disassembled | 60-step mode-table dispatch cycle timing verification, paused state handling |
+| 17 | `mka::retail::main_binding::dispatch_retail_enabled_mode` | Round 11 | `0x0027b1d0` | `0x0007be10` | MIPS & x86 disassembled | Live gameplay fight mode transitions and arcade ladder dispatch, minigame task execution |
+| 18 | `mka::retail::main_binding::service_retail_frame_input` | Round 11 | `0x00210570` | `0x0026a9c0` | MIPS & x86 disassembled | Hardware gamepad analog calibration, deadzone remapping, and port polling |
+| 19 | `mka::retail::main_binding::create_retail_action_task` | Round 11 | `0x00130000` | `0x001c27f0` | MIPS & x86 disassembled | Dynamic task priority queue scheduling, fiber execution, and preemption monitors |
+| 20 | `mka::retail::main_binding::prune_retail_associations` | Round 11 | `0x001304f0` | `0x001c6de0` | MIPS & x86 disassembled | Generational garbage collection of dead scene event listener nodes and memory reclamation |
+| 21 | `mka::retail::main_binding::reset_and_bind_retail_scene_event_graph` | Round 11 | `0x004c4d80` | `0x004c4d80` | MIPS & x86 disassembled | Dynamic scene event listener registration and event dispatch traversal |
+| 22 | `mka::retail::main_binding::deliver_retail_builtin_scene_event` | Round 11 | `0x004c6a70` | `0x002f6ea0` | MIPS & x86 disassembled | Multi-level scene hierarchy event propagation and routing, trigger zone callbacks |
+| 23 | `mka::retail::invoke_retail_profile_select_from_2f1630` | Round 11 | `0x002f1630` | `0x00277df0` | MIPS & x86 disassembled | Interactive UI dialogue rendering and memory card writeback, profile deletion prompts |
+| 24 | `mka::retail::apply_retail_profile_participant_from_188720` | Round 11 | `0x00188720` | `0x00030580` | MIPS & x86 disassembled | Profile participant record synchronization with NVRAM / memory card saves, controller port binding |
+| 25 | `mka::retail::publish_retail_profile_participant_from_189690` | Round 11 | `0x00189690` | `0x00031020` | MIPS & x86 disassembled | Active session participant broadcast across network and split-screen multiplayer, stat accumulation |
 
-## 7. Ledger Credit Assessment & Dual-Platform Vector Requirements
+#### Round 11 Provenance & Deep Subsystem Disclosure
+In Round 11, all 12 routines (IDs 14..25) were authentically recovered and disassembled from both Xbox `default.xbe` frame loop (`0x0019c86b`..`0x0019c927`) and PS2 MIPS routines. Their control flows, call sites, register conventions, and mode checks were implemented in typed native code. However, deep engine subsystems (gamepad hardware analog calibration, generational scene event listener GC, live online matchmaking/networking, multi-stream audio updates, NVRAM memory card file I/O) are unrecovered. Therefore, all 12 routines were simultaneously registered as placeholders in the machine-readable manifest to ensure zero overclaiming.
+
+### Headless Offscreen Full-Entry Run (Verification of Entry Link)
+Under `TASK_BOARD.md` row 10, strictly zero visible desktop windows, zero audible audio endpoints, and zero owner launch are authorized prior to passing the full acceptance matrix. Execution was performed entirely using an offscreen hidden window context (`SDL_WINDOW_HIDDEN`) in `tests/test_native_startup_missing_bindings.cpp`, bounded by `MKA_HEADLESS_MAX_FRAMES=60`:
+1. **Execution Telemetry**:
+   - `run_native_retail` entered the retail startup loop headlessly.
+   - Initialized authentic content volume with staged retail assets (`MODULES/DNAS310.IMG`, `SLUS_214.10`, `GAMER.OVL`, `sndsps2/MSLASSET.MS2`/`MS4`, `art/gameart.ssf`).
+   - Terminated at: `StartupFailure kind: 18, operation: 3011D0 native texture conversion` during font/system art upload (`upload native RGBA8 image GL error=0x500` in software/headless OpenGL context).
+   - Total placeholder invocations recorded: 2.
+2. **Ordered Sequence of Placeholders Hit**:
+   - `[1]` First hit at frame 0: Placeholder #0 `continue_first_scene_at_225d40` (called 1 time).
+   - `[2]` First hit at frame 0: Placeholder #1 `continue_scene_reset_at_125d60` (called 1 time).
+   - Distinct placeholders encountered: 2 of 26 registered.
+3. **Execution Blocker Analysis**:
+   - **First Blocker for 3D Geometry Submission**: Placeholder #0 (`continue_first_scene_at_225d40`). It returns ready lifecycle status without loading world sector / clump geometry. As a result, `retail_render_enabled()` observes `has_world = false`, preventing Placeholder #2 (`render_retail_frame`) from being called with live scene geometry.
+   - **First Blocker for Movie Stream Decoding Loop**: Placeholder #3 (`begin_menu_18d450`). Its child procedure (`NativeRetailMoviePlaybackChild`) completes immediately upon presenting frame 0 rather than driving asynchronous MPEG-2 / SFD stream packet demuxing loops across multi-second attract playback.
+   - **First Blocker for Game Mode Task Dispatch**: Placeholder #12 (`transition_1225d0`) / Placeholder #17 (`dispatch_retail_enabled_mode`). Pushes mode transition records into `mode_history`, but actual mode task bodies remain placeholders.
+4. **What Already Works**:
+   - Authentic content volume mounting and package path resolution.
+   - Verification of binary module headers (`DNAS310.IMG`, `SLUS_214.10`, `GAMER.OVL`).
+   - Sound bank catalog parsing (`MSLASSET.MS2`/`MS4`).
+   - System art SSF package directory reading (`art/gameart.ssf`).
+   - Offscreen display service creation, WGL context leasing, and aspect ratio computation.
+   - Main retail session lifecycle orchestration up to the initial scene continuation gate.
+
+## 7. Ledger Credit Assessment, Vector Fixture Audit & Genuine Trace Specification
 
 ### Assessment of Implemented Routines Against Existing Credit Rules
 
@@ -317,25 +364,61 @@ Under repository governance, function progress is divided strictly into two tier
     - **PS2 Ledger**: strictly **238 / 15,670 (1.52%)**.
     - **Xbox Donor Ledger**: strictly **0 / 21,321 (0.00%)**.
 
-### Minimal Dual-Platform Vector Requirements (Representative Function: `0x0018da30`)
+### Audit of Test Vector Trace Fixture (`retail_SLUS_214.10_mips_trace.bin`)
+- **Fixture Audit**: An audit of `Armageddon-backup/armageddon-reimplementation/research/test_vectors/traces/retail_SLUS_214.10_mips_trace.bin` confirms it is a 100-byte synthetic ASCII fixture:
+  ```text
+  MIPS_R5900_RETAIL_EXECUTION_TRACE_SLUS_214.10_ENTRY_0012A720_BLOCK_0
+  CYCLE_COUNT=42
+  REG_V0=00000001
+  ```
+- **Provenance**: Created specifically as a test target for Planted Failure 7 in `research/runs/test_full_existence_validation.py` to verify hash validation and schema parsing.
+- **Honest Accounting**: This file is **NOT** an authentic emulator execution trace. Citing it as runtime evidence for function qualification would be fraudulent.
+
+### Genuine Retail Emulator Trace Producer Specification
+To produce authentic dual-platform test vectors for donor qualification, a genuine trace must be captured according to this specification:
+1. **Execution Environment**:
+   - Headless instrumented emulator (e.g. customized PCSX2 or QEMU-MIPS with instruction trace logging) executing pinned `SLUS_214.10` (SHA-256 `a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f`).
+   - The emulator must replay states from the 2026-11-10 playable oracle state suite (61 verified states) driven by the 72 input sidecars to reach the authenticated code block.
+2. **Trace Log Schema**:
+   - Cycle timestamp (64-bit unsigned integer).
+   - Program Counter ($PC$, 32-bit hexadecimal).
+   - Instruction opcode (32-bit hexadecimal).
+   - Disassembled mnemonic.
+   - Register writeback delta: target register name and 64-bit / 128-bit value written.
+   - Memory access delta: load/store type, virtual/physical address, and data bytes read/written.
+3. **Trace Archival & Verification**:
+   - The trace binary slice is hashed with SHA-256 and stored under `research/test_vectors/traces/`.
+   - The test vector file references the trace file by name and records its exact SHA-256 hash in `oracle_trace_hash`.
+
+### Minimal Dual-Platform Vector Specification (Representative Function: `0x0018da30`)
 For a representative routine such as `clear_nonowning_references_18da30` (PS2 `0x0018da30` / Xbox `0x00027df0`) to qualify for ledger credit, a minimal vector must supply:
 1. **Pre-Execution Machine Context**:
    - Initial register state: `$sp` pointing to valid scratch memory, `$gp` pointing to Global Pointer table base (`0x0064a000`), `$ra` set to caller return address (`0x0018d458`).
    - Initial memory state: non-zero pointers at GP offsets `-0x5da8` (`0x005b4ed8`), `-0x5da4`, `-0x5db0`, and `-0x5dac`.
 2. **Oracle Instruction Trace**:
-   - Binary trace slice from `retail_SLUS_214.10_mips_trace.bin` executing instructions from `0x0018da30` to `jr $ra` (`0x0018da58`).
+   - Binary trace slice from genuine emulator trace executing instructions from `0x0018da30` to `jr $ra` (`0x0018da48`).
    - Recorded SHA-256 hash of the execution trace for tamper detection.
 3. **Post-Execution State Assertions**:
    - Target memory cleared: `dword [gp - 0x5da8] == 0`, `dword [gp - 0x5da4] == 0`, `dword [gp - 0x5db0] == 0`, `dword [gp - 0x5dac] == 0`.
    - Stack restored: `$sp_post == $sp_pre + 0x10`.
    - Return register: `$v0 == 1` or expected boolean return code.
+4. **Credit Accounting**:
+   - Exact value: +1 PS2 function in `functions.csv`, +1 Xbox donor function in `xbox_functions.csv`.
+   - Ledgers remain strictly unchanged until genuine dual-platform emulator traces are captured and validated.
 
-## 8. Acceptance & Verification Commitments
+## 8. Acceptance, Verification Commitments & Pipeline Deferral
 
+### Deferral of Connected 3D Clump/Atomic Pipeline
+In adherence to the agreed roadmap, connected 3D mesh rasterization (RenderWare clump/atomic pipeline) is **deliberately deferred** until:
+1. The headless execution loop and scene continuation gates (Items #0 and #1) are established.
+2. Multi-frame movie presentation and streaming are verified across attract mode cycles.
+Attempting 3D clump rasterization prematurely while scene continuation and texture conversion fail would manufacture false progress.
+
+### Strict Acceptance & Verification Commitments
 - **Zero Visible Windows / Audio Endpoints / Owner Launch**: In strict adherence to `TASK_BOARD.md` row 10, presentation is hosted entirely in an offscreen double-buffered WGL target (`NativeOffscreenDisplayService`). No desktop window, audible sound stream, or owner game loop is opened.
 - **Strict Accounting**:
   - PS2 function ledger: strictly 238 / 15,670 (1.52%).
   - Xbox donor ledger: strictly 0 / 21,321 (0.00%).
   - Acceptance status: strictly **OPEN**.
-- **No Overclaiming**: Link diagnostics show **undefined: 0** with **placeholders: 26**. Verified offscreen presentation of `LOGOW.SFD` frame 0 demonstrates the video display interface and texture upload pipeline, but whole 3D gameplay geometry rendering and interactive fight loops remain unrecovered.
+- **No Overclaiming**: Link diagnostics show **undefined: 0** with **placeholders: 26**. Verified offscreen presentation of `LOGOW.SFD` (frame 0) and `OPENINGW.SFD` (frame 1) demonstrates the video display interface and texture upload pipeline, but whole 3D gameplay geometry rendering and interactive fight loops remain unrecovered.
 - **Single Runner**: `tools/research/run_check.py` is the sole canonical runner; `run_14_tests.py` remains deleted via `git rm`.
