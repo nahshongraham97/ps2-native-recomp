@@ -761,45 +761,95 @@ def layout_svg(sections):
 
 
 def generate_progress_svg(ps2_ledger, xbox_ledger, output_path: Path):
-    ps2_sorted = sorted(ps2_ledger, key=lambda r: (r.get("module", ""), r["address"]))
-    ps2_tuples = [(r.get("module") or "SLUS_214.10", r["status"]) for r in ps2_sorted]
+    """Render a compact multi-tier progress SVG from stored measurements (zero % on Xbox reference)."""
+    ps2_in_scope = sum(1 for r in ps2_ledger if r["status"] != "out-of-scope-stubbed")
+    ps2_impl = sum(1 for r in ps2_ledger if r["status"] in ("ported", "host-replaced", "implemented-via-donor"))
+    ps2_class = sum(1 for r in ps2_ledger if r["status"] in ("sdk-or-library", "pointer-scan-proven"))
+    aot = compute_aot_metrics(ps2_ledger)
+    cls_inv = load_classification_inventory()
+    ev_path = REPO / "research" / "ledger" / "ported_function_evidence.json"
+    ev_data = json.loads(ev_path.read_text(encoding="utf-8"))
+    ph_cnt = len(ev_data.get("placeholders", []))
 
-    xb_sorted = sorted(xbox_ledger, key=lambda r: (r.get("module", ""), r["address"]))
-    xb_tuples = [(r.get("module") or "default.xbe", r.get("evidence_state") if r.get("evidence_state") in COL else r["status"]) for r in xb_sorted]
+    xb_total = len(xbox_ledger)
+    xb_donor = sum(1 for r in xbox_ledger if r["status"] == "implemented-via-donor")
 
-    sections = [
-        ("PS2 retail (SLUS_214.10 + overlays)", ps2_tuples),
-        ("Xbox default.xbe (donor, not a separate target)", xb_tuples),
+    W = 920
+    H = 390
+    BAR_X = 290
+    BAR_W = 470
+    BAR_H = 18
+
+    def pct(n, d):
+        return (100.0 * n / d) if d else 0.0
+
+    def fill_w(n, d):
+        return max(0.0, min(BAR_W, BAR_W * n / d)) if d else 0.0
+
+    tiers = [
+        ("Tier 1 · Catalogued &amp; In-Scope", f"{ps2_in_scope:,} / {len(ps2_ledger):,} in-scope ({ps2_class:,} lib/non-exec)", fill_w(ps2_in_scope, len(ps2_ledger)), "#388bfd"),
+        ("Tier 2 · Static AOT C++ Generated", f"{aot['in_scope_aot']:,} / {ps2_in_scope:,} ({pct(aot['in_scope_aot'], ps2_in_scope):.2f}%) · {aot['vu1_strict_keys']} VU1 keys", fill_w(aot["in_scope_aot"], ps2_in_scope), "#58a6ff"),
+        ("Tier 3 · Memory &amp; ABI Transformed", f"{aot['transformed_count']:,} / {ps2_in_scope:,} ({pct(aot['transformed_count'], ps2_in_scope):.2f}%)", fill_w(aot["transformed_count"], ps2_in_scope), "#a371f7"),
+        ("Tier 4 · Credited Native", f"{ps2_impl:,} / {ps2_in_scope:,} ({pct(ps2_impl, ps2_in_scope):.2f}%) · {cls_inv['credited_breakdown']['platform-boundary']} plat / {cls_inv['credited_breakdown']['retail-logic']} retail", fill_w(ps2_impl, ps2_in_scope), "#2ea043"),
+        ("Tier 5 · Vectors &amp; Placeholders", f"72/72 movie-variant vectors · {ph_cnt} placeholders OPEN", fill_w(72, 72), "#d29922"),
     ]
 
-    legend_h = 36 + 18 * len(LEGEND)
-    items, h = layout_svg(sections)
-    o = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{SVG_W}" height="{int(h+legend_h+10)}" viewBox="0 0 {SVG_W} {int(h+legend_h+10)}">',
-        f'<rect width="{SVG_W}" height="{int(h+legend_h+10)}" fill="#0d1117"/>',
+    lines = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">',
+        f'  <rect width="{W}" height="{H}" rx="8" fill="#0d1117"/>',
+        '  <text x="24" y="34" fill="#f0f6fc" font-family="Segoe UI, Arial, sans-serif" font-size="17" font-weight="600">Mortal Kombat: Armageddon Native Port — Measured Multi-Tier Ledger</text>',
+        f'  <text x="24" y="54" fill="#8b949e" font-family="Segoe UI, Arial, sans-serif" font-size="12">Acceptance: OPEN · Partition ({len(ps2_ledger):,} total): {cls_inv["catalog_3way_partition"]["platform-boundary"]} platform-boundary + {cls_inv["catalog_3way_partition"]["retail-logic"]:,} retail-logic + {cls_inv["catalog_3way_partition"]["sdk-or-library"]:,} sdk-or-library</text>',
     ]
-    ly = 21
-    o.append(f'<text x="4" y="{ly}" fill="#fff" font-family="sans-serif" font-size="16">Legend (one square = one function, ordered by address)</text>')
-    o.append(f'<text x="4" y="{ly+16}" fill="#8b949e" font-family="sans-serif" font-size="11">Note: 0% donor credit indicates no donor functions have received dual-platform vector certification, not that work has stalled.</text>')
-    for i, (c, t) in enumerate(LEGEND):
-        yy = ly + 28 + 18 * i
-        o.append(f'<rect x="4" y="{yy-9}" width="11" height="11" fill="{c}" stroke="#6e7681" stroke-width="0.5"/>')
-        o.append(f'<text x="22" y="{yy}" fill="#c9d1d9" font-family="sans-serif" font-size="12">{html.escape(t)}</text>')
-    off, open_g = legend_h, False
-    for it in items:
-        if it[0] == "t":
-            if open_g: o.append("</g>"); open_g = False
-            o.append(f'<text x="4" y="{it[2]+off:.2f}" fill="#fff" font-family="sans-serif" font-size="16">{html.escape(it[3])}</text>')
-        elif it[0] == "g":
-            if open_g: o.append("</g>")
-            o.append(f'<g><title>{html.escape(it[1])}</title>'); open_g = True
-        else:
-            o.append(f'<rect x="{it[1]:.2f}" y="{it[2]+off:.2f}" width="2.17" height="2.17" fill="{it[3]}" stroke="#0d1117" stroke-width="0.5"/>')
-    if open_g: o.append("</g>")
-    o.append("</svg>")
-    output_path.write_bytes("\n".join(o).encode("utf-8"))
+
+    y = 84
+    for label, detail, fw, col in tiers:
+        lines.append(f'  <text x="24" y="{y + 13}" fill="#c9d1d9" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="500">{label}</text>')
+        lines.append(f'  <rect x="{BAR_X}" y="{y}" width="{BAR_W}" height="{BAR_H}" rx="4" fill="#21262d" stroke="#30363d" stroke-width="1"/>')
+        if fw > 0:
+            lines.append(f'  <rect x="{BAR_X}" y="{y}" width="{fw:.1f}" height="{BAR_H}" rx="4" fill="{col}"/>')
+        lines.append(f'  <text x="{BAR_X + BAR_W + 12}" y="{y + 13}" fill="#f0f6fc" font-family="Segoe UI, Arial, sans-serif" font-size="12">{detail}</text>')
+        y += 46
+
+    # Xbox Reference Line (explicitly NO percentage)
+    lines.append('  <line x1="24" y1="320" x2="896" y2="320" stroke="#30363d" stroke-width="1"/>')
+    lines.append(f'  <text x="24" y="344" fill="#8b949e" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="600">Xbox Reference (default.xbe — Renderer / Viewport / HD Presentation Scope Only)</text>')
+    lines.append(f'  <text x="24" y="366" fill="#c9d1d9" font-family="Segoe UI, Arial, sans-serif" font-size="12">{xb_total:,} catalogued routines · {xb_donor} donor-credited · 18 role-mapped candidates (reference source, not a separate target)</text>')
+    lines.append('</svg>')
+    output_path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
 
+def load_classification_inventory():
+    p = REPO / "research" / "ledger" / "function_classification_inventory.json"
+    if not p.exists():
+        raise AssertionError(f"Missing function classification inventory: {p}")
+    return json.loads(p.read_text(encoding="utf-8"))
+
+
+def validate_classifications(repo_root: Path, ps2_ledger):
+    cls_inv = load_classification_inventory()
+    if cls_inv.get("schema") != "function_classification_inventory_v1":
+        raise AssertionError("Invalid schema in function_classification_inventory.json")
+    cat = cls_inv.get("catalog_3way_partition", {})
+    ins = cls_inv.get("in_scope_3way_partition", {})
+    cred = cls_inv.get("credited_breakdown", {})
+    if sum(cat.values()) != len(ps2_ledger):
+        raise AssertionError(f"Classification catalog sum {sum(cat.values())} != {len(ps2_ledger)}")
+    in_scope_cnt = sum(1 for r in ps2_ledger if r["status"] != "out-of-scope-stubbed")
+    if sum(ins.values()) != in_scope_cnt:
+        raise AssertionError(f"Classification in-scope sum {sum(ins.values())} != {in_scope_cnt}")
+    impl_cnt = sum(1 for r in ps2_ledger if r["status"] in ("ported", "host-replaced", "implemented-via-donor"))
+    if sum(cred.values()) != impl_cnt:
+        raise AssertionError(f"Classification credited sum {sum(cred.values())} != {impl_cnt}")
+    sdk_cnt = sum(1 for r in ps2_ledger if r["status"] == "sdk-or-library")
+    if cat.get("sdk-or-library") != sdk_cnt or ins.get("sdk-or-library") != sdk_cnt:
+        raise AssertionError("Classification sdk-or-library count contradicts functions.csv")
+
+    mod_p = repo_root / "research" / "ledger" / "native_module_classification.json"
+    if not mod_p.exists():
+        raise AssertionError(f"Missing native module classification: {mod_p}")
+    mods = json.loads(mod_p.read_text(encoding="utf-8"))
+    if mods.get("schema") != "native_module_classification_v1" or len(mods.get("modules", [])) < 15:
+        raise AssertionError("Invalid or incomplete native_module_classification.json")
 
 
 def validate_current_docs(repo_root: Path):
@@ -837,12 +887,25 @@ def validate_current_docs(repo_root: Path):
 
 
 def validate_progress_aot_tier(repo_root: Path, ps2_ledger):
-    """Fail closed if README.md, TASK_BOARD.md, or PORT_STATUS.md AOT Tier 2 block contradicts computed aot_coverage_inventory."""
+    """Fail closed if README.md, TASK_BOARD.md, or PORT_STATUS.md progress block or progress.svg has unmeasured/hand-edited tier numbers or Xbox %."""
     aot = compute_aot_metrics(ps2_ledger)
-    expected_base = f"{aot['base_aot']:,} / {aot['base_total']:,}"
-    expected_movier = f"{aot['movier_aot']:,} / {aot['movier_total']:,}"
-    expected_gamer = f"{aot['gamer_aot']:,} / {aot['gamer_total']:,}"
-    expected_sub = f"**{aot['in_scope_aot']:,} / "
+    cls_inv = load_classification_inventory()
+    ev_data = json.loads((repo_root / "research" / "ledger" / "ported_function_evidence.json").read_text(encoding="utf-8"))
+    ph_cnt = len(ev_data.get("placeholders", []))
+    ps2_in_scope = sum(1 for r in ps2_ledger if r["status"] != "out-of-scope-stubbed")
+    ps2_impl = sum(1 for r in ps2_ledger if r["status"] in ("ported", "host-replaced", "implemented-via-donor"))
+
+    expected_tokens = [
+        f"{aot['base_aot']:,} / {aot['base_total']:,}",
+        f"{aot['movier_aot']:,} / {aot['movier_total']:,}",
+        f"{aot['gamer_aot']:,} / {aot['gamer_total']:,}",
+        f"**{aot['in_scope_aot']:,} / {ps2_in_scope:,}**",
+        f"**{aot['transformed_count']:,} / {ps2_in_scope:,}**",
+        f"**{100.0 * ps2_impl / ps2_in_scope:.2f}%** ({ps2_impl:,} / {ps2_in_scope:,}",
+        f"**{ph_cnt}** registered unrecovered placeholders",
+        f"`{cls_inv['catalog_3way_partition']['platform-boundary']:,}` `platform-boundary`",
+        "no completion percentage",
+    ]
     for rel in ("README.md", "TASK_BOARD.md", "PORT_STATUS.md"):
         p = repo_root / rel
         if not p.exists():
@@ -851,10 +914,20 @@ def validate_progress_aot_tier(repo_root: Path, ps2_ledger):
         m = re.search(r"<!-- PROGRESS:START -->(.*?)<!-- PROGRESS:END -->", txt, re.DOTALL)
         assert m, f"Missing PROGRESS markers in {rel}"
         blk = m.group(1)
-        assert expected_base in blk, f"Unmeasured/mismatched SLUS_214.10 AOT count in {rel} (expected {expected_base})"
-        assert expected_movier in blk, f"Unmeasured/mismatched MOVIER.ovl AOT count in {rel} (expected {expected_movier})"
-        assert expected_gamer in blk, f"Unmeasured/mismatched GAMER.ovl AOT count in {rel} (expected {expected_gamer})"
-        assert expected_sub in blk, f"Unmeasured/mismatched AOT subtotal in {rel} (expected {expected_sub})"
+        for tok in expected_tokens:
+            assert tok in blk, f"Unmeasured/mismatched multi-tier token in {rel}: missing {tok!r}"
+        # Check Xbox Reference subsection contains zero percentage signs
+        if "### Xbox Reference" in blk:
+            xb_sec = blk.split("### Xbox Reference", 1)[1].split("### ", 1)[0]
+            assert "%" not in xb_sec, f"Forbidden percentage metric in Xbox Reference section of {rel}"
+
+    svg_p = repo_root / "progress.svg"
+    if svg_p.exists():
+        assert svg_p.stat().st_size < 100_000, f"progress.svg must be compact (<100KB), got {svg_p.stat().st_size}"
+        svg_txt = svg_p.read_text(encoding="utf-8")
+        assert f"{aot['in_scope_aot']:,} / {ps2_in_scope:,}" in svg_txt, "progress.svg AOT count mismatch"
+        assert f"{ps2_impl:,} / {ps2_in_scope:,}" in svg_txt, "progress.svg credited count mismatch"
+
 
 def compute_aot_metrics(ps2_ledger):
     inv_path = REPO / "research" / "ledger" / "aot_coverage_inventory.json"
@@ -934,8 +1007,11 @@ def compute_aot_metrics(ps2_ledger):
         raise AssertionError("VU static table keys exceed strict corpus keys")
 
     in_scope_aot = computed_base_aot + movier_mod.get("static_aot_count", 0) + gamer_mod.get("static_aot_count", 0)
+    tx = inv.get("memory_abi_transform", {})
     return {
-        "active_fork_static_cpp_count": inv.get("active_fork_static_cpp_count", 0),
+        "active_fork_static_cpp_count": inv.get("active_fork_tracked_cpp_count", inv.get("active_fork_static_cpp_count", 0)),
+        "build_generated_units": inv.get("active_fork_build_generated_units", len(unit_ranges)),
+        "transformed_count": tx.get("transformed_count", 0),
         "base_aot": computed_base_aot,
         "base_total": len(base_rows),
         "base_units": len(unit_ranges),
@@ -953,7 +1029,6 @@ def compute_aot_metrics(ps2_ledger):
     }
 
 def generate_progress_markdown_block(ps2_ledger, xbox_ledger, ps2_map, fork_sha=FORK_COMMIT_SHA):
-    # PS2 totals
     ps2_impl = [r for r in ps2_ledger if r["status"] in ("ported", "host-replaced", "implemented-via-donor")]
     ps2_class = [r for r in ps2_ledger if r["status"] in ("sdk-or-library", "pointer-scan-proven")]
     ps2_frontier = [r for r in ps2_ledger if r["status"] in ("open", "no-direct-callers")]
@@ -973,38 +1048,18 @@ def generate_progress_markdown_block(ps2_ledger, xbox_ledger, ps2_map, fork_sha=
     ps2_gamer_open = sum(1 for r in ps2_ledger if r["status"] == "open" and r["module"] == "GAMER.ovl")
 
     aot = compute_aot_metrics(ps2_ledger)
-
-    # Xbox totals
-    xb_impl = [r for r in xbox_ledger if r["status"] in ("ported", "host-replaced", "implemented-via-donor")]
-    xb_class = [r for r in xbox_ledger if r["status"] in ("sdk-or-library", "no-counterpart")]
-    xb_open = [r for r in xbox_ledger if r["status"] == "open"]
-    xb_stubbed = [r for r in xbox_ledger if r["status"] == "out-of-scope-stubbed"]
-    xb_in_scope = len(xb_impl) + len(xb_class) + len(xb_open)
-
-    xb_donor_cnt = sum(1 for r in xbox_ledger if r["status"] == "implemented-via-donor")
-    xb_sdk_cnt = sum(1 for r in xbox_ledger if r["status"] == "sdk-or-library")
-    xb_no_counterpart_cnt = sum(1 for r in xbox_ledger if r["status"] == "no-counterpart")
+    cls_inv = load_classification_inventory()
+    cat_part = cls_inv["catalog_3way_partition"]
+    ins_part = cls_inv["in_scope_3way_partition"]
+    cred_part = cls_inv["credited_breakdown"]
 
     ev_path = REPO / "research" / "ledger" / "ported_function_evidence.json"
-    ev_manifest = {}
-    if ev_path.exists():
-        with ev_path.open(encoding="utf-8") as f:
-            ev_manifest = json.load(f)
-    meta = ev_manifest.get("_meta", {})
-    investigation_note = meta.get(
-        "xbox_investigation_source",
-        "Xbox default.xbe serves as an authoritative secondary binary investigation source for recovering algorithm contracts and data structures; donor credit requires verified dual-platform vectors."
-    )
-    legend_note = meta.get(
-        "legend_zero_percent_note",
-        "0% donor credit indicates no donor functions have received dual-platform vector certification, not that work has stalled."
-    )
+    ev_manifest = json.loads(ev_path.read_text(encoding="utf-8"))
+    ph_cnt = len(ev_manifest.get("placeholders", []))
 
-    xb_blocked_cnt = sum(1 for r in xbox_ledger if r.get("evidence_state") == "blocked-on-dual-platform-vectors")
-    xb_investigating_cnt = sum(1 for r in xbox_ledger if r.get("evidence_state") == "investigating")
-    xb_not_started_cnt = sum(1 for r in xbox_ledger if r.get("evidence_state") == "not-started")
+    xb_donor_cnt = sum(1 for r in xbox_ledger if r["status"] == "implemented-via-donor")
+    xb_in_scope = sum(1 for r in xbox_ledger if r["status"] != "out-of-scope-stubbed")
 
-    # Map totals
     map_exact = sum(1 for r in ps2_map if r["match_confidence"] == "exact")
     map_comp = sum(1 for r in ps2_map if r["match_confidence"] == "composite")
     map_struct = sum(1 for r in ps2_map if r["match_confidence"] == "structural")
@@ -1013,68 +1068,43 @@ def generate_progress_markdown_block(ps2_ledger, xbox_ledger, ps2_map, fork_sha=
 
     lines = [
         "<!-- PROGRESS:START -->",
-        "## Native Reimplementation Progress & Tracking",
+        "## Native Reimplementation Progress & Multi-Tier Ledger",
         "",
         "![Porting Progress](progress.svg)",
         "",
         f"**Verified Fork Commit**: [`{fork_sha[:8]}`](https://github.com/nahshongraham97/ps2-native-recomp/commit/{fork_sha}) (pinned active fork)",
         "",
-        "### PlayStation 2 Retail Catalog (`SLUS_214.10` + Overlays)",
-        f"- **In-Scope Completion**: **{100.0 * len(ps2_impl) / ps2_in_scope:.2f}%** ({len(ps2_impl):,} / {ps2_in_scope:,} in-scope retail functions)",
-        f"- **Total Function Catalog**: **{len(ps2_ledger):,}** functions (13,138 base `SLUS_214.10` + 4,372 dynamic overlays: 1 `GAMER.ovl`, 2,537 `MOVIER.ovl`, 1,834 `NETR.ovl`)",
+        "### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)",
+        f"- **Total PS2 Function Catalog**: **{len(ps2_ledger):,}** functions (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)",
+        f"- **In-Scope Retail Path**: **{ps2_in_scope:,}** (`{ps2_class and len(ps2_class):,}` non-exec/library: `sdk-or-library` {ps2_sdk_cnt:,} + `pointer-scan-proven` {ps2_proven_cnt:,}; `{len(ps2_frontier):,}` open frontier) | **Excluded Online (`out-of-scope-stubbed`)**: **{len(ps2_stubbed):,}**",
+        f"- **Code-Computed Role Partition (`function_classification_inventory.json`)**: `{cat_part['platform-boundary']:,}` `platform-boundary` + `{cat_part['retail-logic']:,}` `retail-logic` + `{cat_part['sdk-or-library']:,}` `sdk-or-library` = **{len(ps2_ledger):,}** (in-scope: `{ins_part['platform-boundary']:,}` + `{ins_part['retail-logic']:,}` + `{ins_part['sdk-or-library']:,}` = **{ps2_in_scope:,}**)",
         "",
-        "| Category / Tier | Status Breakdown | Count | In-Scope % |",
-        "|---|---|---|---|",
-        f"| **Implemented** | `ported` ({ps2_ported_cnt:,}) + `host-replaced` ({ps2_host_rep_cnt:,}) + `implemented-via-donor` ({ps2_donor_cnt:,}) | {len(ps2_impl):,} | {100.0 * len(ps2_impl) / ps2_in_scope:.2f}% |",
-        f"| **Classified Non-Executable / Library** | `sdk-or-library` ({ps2_sdk_cnt:,}) + `pointer-scan-proven` ({ps2_proven_cnt:,}) | {len(ps2_class):,} | {100.0 * len(ps2_class) / ps2_in_scope:.2f}% |",
-        f"| **Open Frontier** | `open` ({ps2_open_cnt:,}: {ps2_base_open:,} `SLUS_214.10`, {ps2_movier_open:,} `MOVIER.ovl`, {ps2_gamer_open:,} `GAMER.ovl`) + `no-direct-callers` ({ps2_no_direct_cnt:,} `SLUS_214.10`) | {len(ps2_frontier):,} | {100.0 * len(ps2_frontier) / ps2_in_scope:.2f}% |",
-        f"| **In-Scope Subtotal** | *Active retail code path to implement/verify* | **{ps2_in_scope:,}** | **100.00%** |",
-        f"| **Excluded / Stubbed** | `out-of-scope-stubbed` (1,834 `NETR.ovl` overlay functions + 6 `SLUS_214.10` main-executable online functions) | {len(ps2_stubbed):,} | — |",
-        f"| **Total PS2 Catalog** | *Complete binary disassembly denominator* | **{len(ps2_ledger):,}** | — |",
-        "",
-        "### Tier 2: Build-Time Static AOT Coverage (`research/ledger/aot_coverage_inventory.json`)",
-        f"- **Reference Static AOT C++ Coverage**: **{100.0 * aot['in_scope_aot'] / ps2_in_scope:.2f}%** ({aot['in_scope_aot']:,} / {ps2_in_scope:,} in-scope EE functions in reference `ps2-native-recomp-legacy-20261118/generated/mkarmageddon/table.cpp`; **{aot['active_fork_static_cpp_count']:,}** generated `.cpp` units currently built in active fork `generated/` pending Phase 3 reproducible pipeline)",
+        "### Tier 2 · Build-Time Static AOT Generated (`research/ledger/aot_coverage_inventory.json`)",
+        f"- **In-Scope Static AOT C++**: **{100.0 * aot['in_scope_aot'] / ps2_in_scope:.2f}%** (**{aot['in_scope_aot']:,} / {ps2_in_scope:,}** reproduced via `eerecomp` into untracked `build/generated-aot/ee/`, `{aot['base_units']:,}` units; `{aot['active_fork_static_cpp_count']:,}` tracked generated `.cpp` files in Git)",
         "",
         "| Module / Artifact | Build-Time Static AOT Status | Static AOT / Catalog | Reference % |",
         "|---|---|---|---|",
-        f"| **Base `SLUS_214.10`** | `{aot['base_units']:,}` static `unit_*.cpp` files (`table.cpp`) | {aot['base_aot']:,} / {aot['base_total']:,} | {100.0 * aot['base_aot'] / aot['base_total']:.2f}% |",
-        f"| **`MOVIER.ovl` Overlay** | Build-time static overlay C++ NOT generated (`kModules` RAM slices excluded) | {aot['movier_aot']:,} / {aot['movier_total']:,} | {100.0 * aot['movier_aot'] / aot['movier_total']:.2f}% |",
-        f"| **`GAMER.ovl` Overlay** | Build-time static overlay C++ NOT generated (`kModules` RAM slices excluded) | {aot['gamer_aot']:,} / {aot['gamer_total']:,} | {100.0 * aot['gamer_aot'] / aot['gamer_total']:.2f}% |",
-        f"| **In-Scope AOT Subtotal** | *Measured build-time static C++ across `SLUS_214.10` + `MOVIER.ovl` + `GAMER.ovl`* | **{aot['in_scope_aot']:,} / {ps2_in_scope:,}** | **{100.0 * aot['in_scope_aot'] / ps2_in_scope:.2f}%** |",
+        f"| **Base `SLUS_214.10`** | `{aot['base_units']:,}` static `unit_*.cpp` files reproduced from pinned ELF (`reproduce_aot_pipeline.py`) | {aot['base_aot']:,} / {aot['base_total']:,} | {100.0 * aot['base_aot'] / aot['base_total']:.2f}% |",
+        f"| **`MOVIER.ovl` Overlay** | Build-time static overlay C++ NOT generated (`Phase 4` target) | {aot['movier_aot']:,} / {aot['movier_total']:,} | {100.0 * aot['movier_aot'] / aot['movier_total']:.2f}% |",
+        f"| **`GAMER.ovl` Overlay** | Build-time static overlay C++ NOT generated (`Phase 4` target) | {aot['gamer_aot']:,} / {aot['gamer_total']:,} | {100.0 * aot['gamer_aot'] / aot['gamer_total']:.2f}% |",
+        f"| **In-Scope AOT Subtotal** | *Build-time static C++ across `SLUS_214.10` + `MOVIER.ovl` + `GAMER.ovl`* | **{aot['in_scope_aot']:,} / {ps2_in_scope:,}** | **{100.0 * aot['in_scope_aot'] / ps2_in_scope:.2f}%** |",
         f"| **Excluded `NETR.ovl`** | Out of scope (`DECISION_ONLINE_OUT_OF_SCOPE.json`) | 0 / {aot['netr_total']:,} | — |",
-        f"| **Dynamic Overlay Windows (`kModules`)** | Runtime memory snapshots only (not full module AOT) | {len(aot['dyn_windows']):,} captured windows | — |",
-        f"| **VU1 Microprograms (Separate VU Domain)** | `vu1_table.cpp` keys vs `VU_CORPUS_STRICT.json` ({aot['vu1_captures']:,} `.bin` captures; {aot['oracle_vu1_dlls']:,} oracle `vu1-live/` DLLs) | {aot['vu1_static_keys']:,} / {aot['vu1_strict_keys']:,} keys | — |",
+        f"| **Dynamic Overlay Windows (`kModules`)** | Runtime memory snapshots (`private-inputs/mkarmageddon-aot-inputs/overlays/`) | {len(aot['dyn_windows']):,} captured windows | — |",
+        f"| **VU1 Microprograms (Separate VU Domain)** | `vurecomp` generates `{aot['vu1_strict_keys']:,}` keys from `{aot['vu1_captures']:,}` `.bin` captures (`{aot['vu1_static_keys']:,}` legacy table keys + 3 continuations; `{aot['oracle_vu1_dlls']:,}` oracle `vu1-live/` DLLs; earlier `114` claim retracted) | {aot['vu1_static_keys']:,} / {aot['vu1_strict_keys']:,} keys | — |",
         "",
-        "### Xbox Donor Catalog (`default.xbe`)",
-        "> [!NOTE]",
-        f"> **Investigation Authority**: {investigation_note}",
-        f"> **Donor Credit Policy**: {legend_note}",
+        "### Tier 3 · Memory & ABI Transformed (`Phase 5` Target)",
+        f"- **Contract-Transformed Functions**: **{100.0 * aot['transformed_count'] / ps2_in_scope:.2f}%** (**{aot['transformed_count']:,} / {ps2_in_scope:,}** — generated AOT units still retain `c.r[...]`, `g_ram`, `$gp`, and guest vtables pending Phase 5)",
         "",
-        f"- **In-Scope Donor Utilization**: **{100.0 * len(xb_impl) / xb_in_scope:.2f}%** ({len(xb_impl):,} / {xb_in_scope:,} in-scope donor functions)",
-        f"- **Total Donor Catalog**: **{len(xbox_ledger):,}** discovered functions in `default.xbe`",
+        "### Tier 4 · Credited Native Implementations (`functions.csv` & `ported_function_evidence.json`)",
+        f"- **Credited Completion**: **{100.0 * len(ps2_impl) / ps2_in_scope:.2f}%** ({len(ps2_impl):,} / {ps2_in_scope:,} in-scope: `{ps2_ported_cnt:,}` `ported` + `{ps2_host_rep_cnt:,}` `host-replaced` + `{ps2_donor_cnt:,}` `implemented-via-donor`; code partition: `{cred_part['platform-boundary']}` `platform-boundary` + `{cred_part['retail-logic']}` `retail-logic`)",
+        f"- **Open Frontier**: **{len(ps2_frontier):,}** (`{ps2_base_open:,}` `SLUS_214.10`, `{ps2_movier_open:,}` `MOVIER.ovl`, `{ps2_gamer_open:,}` `GAMER.ovl`, `{ps2_no_direct_cnt:,}` `no-direct-callers` across 5,400 indirect call sites)",
         "",
-        "| Category / Tier | Status Breakdown | Count | In-Scope % |",
-        "|---|---|---|---|",
-        f"| **Implemented Donors** | `implemented-via-donor` ({xb_donor_cnt:,}) | {len(xb_impl):,} | {100.0 * len(xb_impl) / xb_in_scope:.2f}% |",
-        f"| **Classified Non-Executable / SDK** | `sdk-or-library` ({xb_sdk_cnt:,}) + `no-counterpart` ({xb_no_counterpart_cnt:,}) | {len(xb_class):,} | {100.0 * len(xb_class) / xb_in_scope:.2f}% |",
-        f"| **Open Donor Frontier** | `blocked-on-dual-platform-vectors` ({xb_blocked_cnt:,} candidates pending vectors) + `investigating` ({xb_investigating_cnt:,} active recovery) + `not-started` ({xb_not_started_cnt:,} unmapped) | {len(xb_open):,} | {100.0 * len(xb_open) / xb_in_scope:.2f}% |",
-        f"| **In-Scope Subtotal** | *Donor executable candidate surface* | **{xb_in_scope:,}** | **100.00%** |",
-        f"| **Excluded / Stubbed** | `out-of-scope-stubbed` (XONLINE thunks and symbols) | {len(xb_stubbed):,} | — |",
-        f"| **Total Xbox Catalog** | *Total default.xbe function inventory* | **{len(xbox_ledger):,}** | — |",
+        "### Tier 5 · Verified Vectors & Acceptance Placeholders",
+        f"- **Verified Differential Vectors**: **72 / 72** bit-exact match on xemu movie-variant oracle (`LOGON`/`LOGOW` selector); **0** dual-platform whole-function vectors awarding donor credit (`ps2_xbox_map.csv`: `{len(ps2_map):,}` rows = `{map_exact}` exact, `{map_struct}` structural, `{map_comp}` composite, `{map_role}` mapped-by-role, `{map_none:,}` unmapped)",
+        f"- **Acceptance Placeholders**: **{ph_cnt}** registered unrecovered placeholders (`0` undefined link symbols; `13` hit across 369 calls in 60-frame headless probe); whole-game acceptance strictly **OPEN**",
         "",
-        "### Cross-Platform Function Correspondence (`ps2_xbox_map.csv`)",
-        f"- **Total Mapping Entries**: **{len(ps2_map):,}**",
-        f"- **Exact Matches**: **{map_exact:,}** (0 isomorphic CFG)",
-        f"- **Structural Correspondence Matches**: **{map_struct:,}** (verified non-vacuous multi-block CFG isomorphism and common mapped callees; simple offsets disregarded)",
-        f"- **Composite 1-to-Many Matches**: **{map_comp:,}** (modular donor splits)",
-        f"- **Mapped-by-Role Candidates**: **{map_role:,}** (subsystem role correspondence pending dual-platform vectors)",
-        f"- **Unmapped Retail Functions**: **{map_none:,}**",
-        "",
-        "### Still Needed (Open Acceptance Frontier)",
-        f"1. **No-Direct-Callers Indirect Dispatch Resolution**: **{ps2_no_direct_cnt:,}** functions untargeted by direct calls but referenced by data pointers or immediate formations (indirect candidates across 5,400 computed call sites).",
-        f"2. **Open Game Functions**: **{ps2_open_cnt:,}** retail game functions across modules: **{ps2_base_open:,}** in `SLUS_214.10`, **{ps2_movier_open:,}** in `MOVIER.ovl`, and **{ps2_gamer_open:,}** in `GAMER.ovl`.",
-        f"3. **Dynamic Overlay Frontends**: **{ps2_movier_open:,}** movie playback frontend functions in `MOVIER.ovl` and **{ps2_gamer_open:,}** entry stub in `GAMER.ovl`.",
-        "4. **Acceptance Gates**: Full-game entry link, visible render target presentation, synchronized audio mixing, and physical controller input parity.",
+        "### Xbox Reference (`default.xbe` — Renderer / Viewport / HD Presentation Scope Only; no completion percentage)",
+        f"- **Reference Catalog**: **{len(xbox_ledger):,}** `default.xbe` routines inspected (`{xb_in_scope:,}` in non-XONLINE candidate set, `{xb_donor_cnt}` donor-credited, `{map_role}` role-mapped candidates). Limited strictly to renderer, viewport, and HD presentation per `DECISION_OWNER_CORRECTIONS_20261124.json` (not a separate target; GS packet decoding is an interim concession only).",
         "<!-- PROGRESS:END -->",
     ]
     return "\n".join(lines)
@@ -1438,6 +1468,7 @@ def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map):
 
     # 6b. Validate AOT coverage inventory & Phase 1 current document gates
     compute_aot_metrics(ps2_ledger)
+    validate_classifications(REPO, ps2_ledger)
     validate_current_docs(REPO)
 
     # 7. PS2 donor column verification: zero ps2: self-references

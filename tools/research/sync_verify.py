@@ -12,6 +12,8 @@ SYNC_FILES = [
     "research/ledger/ps2_xbox_map.csv",
     "research/ledger/ported_function_evidence.json",
     "research/ledger/aot_coverage_inventory.json",
+    "research/ledger/function_classification_inventory.json",
+    "research/ledger/native_module_classification.json",
     "progress.svg",
     "tools/research/generate_ledgers.py",
 ]

@@ -35,7 +35,8 @@ This document defines the physical directory layout, repository boundaries, Phas
             │   ├── tests/                       # Headless gates, component tests, and regression tests
             │   ├── research/runs/               # Dated run records and empirical measurements
             │   └── build/oracle-telemetry/      # Git-ignored destination for oracle parity manifests & telemetry
-            ├── ps2-native-recomp-legacy-20261118/    # Renamed superseded dirty fork checkout (deferred until Phase 3 reproduces AOT output)
+            └── ps2-native-recomp-backup-20261110/    # Protected duplicate of oracle game tree (3,249 shared files SHA-256 identical)
+# (41 noncompliant checkouts including legacy dirty tree removed in Phase 3 after relocating 982 unique files to private-inputs/legacy-mkarmageddon-20261118/)
             └── ps2-native-recomp-backup-20261110/    # Protected duplicate of oracle game tree (3,249 shared files SHA-256 identical)
 ```
 
@@ -48,9 +49,9 @@ This document defines the physical directory layout, repository boundaries, Phas
 | **Canonical Playable Oracle** | `../../milestone_work_verified_playable_20261110` | `../../milestone_work_verified_playable_20261110` (unchanged) | **Retain (Protected)**: SOLE separate directory outside repo (`ps2run.exe` `B9EEF7DA...`, 3,256 files restored) |
 | **Kombat Practice Oracle Descendant** | `../../milestone_build_kombat_practice` | `../../milestone_build_kombat_practice` (unchanged) | **Retain (Oracle Lineage)**: Hook-enabled descendant (`8B763DCC...`) sharing `cd33a7f..67612aa` |
 | **Active Native Port Fork** | Pre-consolidation active worktree under `external/forks/` | `external/forks/ps2-native-recomp` | **Active Primary Fork**: Promoted to standalone primary `.git` tracking `origin/main` |
-| **Legacy Fork Checkout** | `external/forks/ps2-native-recomp` (`3f015562`) | `external/forks/ps2-native-recomp-legacy-20261118` | **Renamed / Staged**: Holds legacy `generated/mkarmageddon/`; removal deferred until Phase 3 reproduces AOT output |
+| **Legacy Fork Checkout** | `external/forks/ps2-native-recomp` (`3f015562`) | Relocated protected inputs -> `private-inputs/legacy-mkarmageddon-20261118/` | **Removed (Phase 3)**: 982 unique files relocated before deletion; AOT reproduced cleanly via `reproduce_aot_pipeline.py` |
 | **Protected Duplicate Backup** | `external/forks/ps2-native-recomp-backup-20261110` | `external/forks/ps2-native-recomp-backup-20261110` | **Protected Duplicate**: Retained until owner approves cleanup (`3,249` files SHA-256 identical to oracle) |
-| **Phase Review / Clean Worktrees (`clean-*-22`, `ps2-native-recomp-*`, `God-Of-War-Native-Port`, `MortalKombat`)** | `external/forks/*` (42 sibling dirs per `checkout_inventory.json`) | Remain under `external/forks/` temporarily | **Deferred Removal (Phase 3)**: Inventoried; removed one-by-one after Phase 3 proves clean AOT reproduction |
+| **Phase Review / Clean Worktrees (`clean-*-22`, `ps2-native-recomp-*`)** | `external/forks/*` (40 sibling MKA worktrees per `checkout_inventory.json`) | Removed in Phase 3 (`phase3_checkout_removal_log.json`) | **Removed (Phase 3)**: Verified 0 protected/dirty files before deletion (`God-Of-War-Native-Port` & `MortalKombat` retained) |
 | **External Tool / Reference Mirrors** | `../../Armageddon-backup/forks/*` (64 external repos per `checkout_inventory.json`) | `../forks/*` (sibling to `armageddon-reimplementation`) | **Read-Only External References**: `ghidra`, `pcsx2`, `PS2Recomp`, `parallel-gs`, etc.; never edit |
 
 ---

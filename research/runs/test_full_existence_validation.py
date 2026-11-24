@@ -23,7 +23,7 @@ else:
 if PARENT_PRESENT:
     sys.path.insert(0, str(REPO / "tools" / "research"))
 sys.path.insert(0, str(FORK_ROOT / "tools" / "research"))
-from generate_ledgers import validate_ledgers, validate_current_docs, validate_progress_aot_tier, compute_aot_metrics, FORK_COMMIT_SHA
+from generate_ledgers import validate_ledgers, validate_current_docs, validate_progress_aot_tier, validate_classifications, compute_aot_metrics, FORK_COMMIT_SHA
 import generate_ledgers
 generate_ledgers.REPO = REPO
 import sync_verify
@@ -558,7 +558,7 @@ def test_planted_failures():
             validate_progress_aot_tier(REPO, ps2_ledger)
             assert False, "Hand-edited README.md Tier 2 numerator FAILED to raise AssertionError!"
         except AssertionError as e:
-            assert "Unmeasured/mismatched MOVIER.ovl AOT count" in str(e), f"Unexpected error: {e}"
+            assert "missing '0 / 2,537'" in str(e), f"Unexpected error: {e}"
             print(f"  Hand-edited README.md Tier 2 numerator caught as expected: {e}")
     finally:
         readme_p.write_text(orig_readme2, encoding="utf-8", newline="\n")
@@ -578,6 +578,45 @@ def test_planted_failures():
             print(f"  Retired fork reference caught as expected: {e}")
     finally:
         handoff_p.write_text(orig_handoff, encoding="utf-8", newline="\n")
+
+
+    # Planted Failure 17: Multi-tier hand-edited numbers / Xbox % / mismatched classification sums fail closed
+    print("Testing planted failure 17: multi-tier hand-edit, Xbox %, and classification sum rejection...")
+    orig_readme_p3 = readme_p.read_text(encoding="utf-8")
+    try:
+        readme_p.write_text(orig_readme_p3.replace("**0 / 15,670**", "**500 / 15,670**"), encoding="utf-8", newline="\n")
+        try:
+            validate_progress_aot_tier(REPO, ps2_ledger)
+            assert False, "Hand-edited Tier 3 transformed count FAILED to raise AssertionError!"
+        except AssertionError as e:
+            assert "Unmeasured/mismatched multi-tier token" in str(e), f"Unexpected error: {e}"
+            print(f"  Hand-edited Tier 3 count caught as expected: {e}")
+
+        bad_xb = orig_readme_p3.replace("22,579** `default.xbe` routines inspected", "22,579** `default.xbe` routines inspected (0.00%)")
+        readme_p.write_text(bad_xb, encoding="utf-8", newline="\n")
+        try:
+            validate_progress_aot_tier(REPO, ps2_ledger)
+            assert False, "Percentage on Xbox Reference line FAILED to raise AssertionError!"
+        except AssertionError as e:
+            assert "Forbidden percentage metric in Xbox Reference" in str(e), f"Unexpected error: {e}"
+            print(f"  Xbox Reference percentage caught as expected: {e}")
+    finally:
+        readme_p.write_text(orig_readme_p3, encoding="utf-8", newline="\n")
+
+    cls_p = REPO / "research" / "ledger" / "function_classification_inventory.json"
+    orig_cls = cls_p.read_text(encoding="utf-8")
+    try:
+        bad_cls = json.loads(orig_cls)
+        bad_cls["catalog_3way_partition"]["platform-boundary"] += 5
+        cls_p.write_text(json.dumps(bad_cls, indent=2) + "\n", encoding="utf-8", newline="\n")
+        try:
+            validate_classifications(REPO, ps2_ledger)
+            assert False, "Mismatched classification sum FAILED to raise AssertionError!"
+        except AssertionError as e:
+            assert "Classification catalog sum" in str(e), f"Unexpected error: {e}"
+            print(f"  Mismatched classification partition sum caught as expected: {e}")
+    finally:
+        cls_p.write_text(orig_cls, encoding="utf-8", newline="\n")
 
     print("PASS: All planted-failure cases successfully caught and proven to fail closed.")
 

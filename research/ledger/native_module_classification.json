@@ -1,0 +1,224 @@
+{
+  "schema": "native_module_classification_v1",
+  "measured_date": "2026-11-24",
+  "modules": [
+    {
+      "name": "0401 Transforms",
+      "sources": [
+        "runtime/src/native/retail_renderer_transforms.cpp",
+        "runtime/src/native/retail_renderer_transforms_kernels.cpp"
+      ],
+      "classification": "platform-boundary",
+      "phase_disposition": "Retain/evaluate in Phase 6 (OpenGL/SIMD host math kernels)"
+    },
+    {
+      "name": "0402 Matrix",
+      "sources": [
+        "runtime/src/native/retail_renderer_matrix.cpp",
+        "runtime/src/native/retail_renderer_matrix_kernels.cpp"
+      ],
+      "classification": "platform-boundary",
+      "phase_disposition": "Retain/evaluate in Phase 6"
+    },
+    {
+      "name": "0403 Frames",
+      "sources": [
+        "runtime/src/native/retail_renderer_frames.cpp"
+      ],
+      "classification": "platform-boundary",
+      "phase_disposition": "Retain/evaluate in Phase 6"
+    },
+    {
+      "name": "0404 Streams",
+      "sources": [
+        "runtime/src/native/retail_renderer_streams.cpp"
+      ],
+      "classification": "platform-boundary",
+      "phase_disposition": "Retain/evaluate in Phase 6 (host file/memory stream adapter)"
+    },
+    {
+      "name": "0405 Cameras",
+      "sources": [
+        "runtime/src/native/retail_renderer_cameras.cpp"
+      ],
+      "classification": "platform-boundary",
+      "phase_disposition": "Retain/evaluate in Phase 6"
+    },
+    {
+      "name": "0406 Images",
+      "sources": [
+        "runtime/src/native/retail_renderer_images.cpp"
+      ],
+      "classification": "platform-boundary",
+      "phase_disposition": "Retain/evaluate in Phase 6"
+    },
+    {
+      "name": "0407 Rasters & Registration",
+      "sources": [
+        "runtime/src/native/retail_renderer_rasters.cpp",
+        "runtime/src/native/retail_renderer_raster_registration.cpp"
+      ],
+      "classification": "platform-boundary",
+      "phase_disposition": "Retain/evaluate in Phase 6 (host OpenGL WGL resource layer)"
+    },
+    {
+      "name": "0408 Textures",
+      "sources": [
+        "runtime/src/native/retail_renderer_textures.cpp"
+      ],
+      "classification": "platform-boundary",
+      "phase_disposition": "Retain/evaluate in Phase 6"
+    },
+    {
+      "name": "0409 Texture Dictionaries",
+      "sources": [
+        "runtime/src/native/retail_renderer_texture_dictionaries.cpp"
+      ],
+      "classification": "platform-boundary",
+      "phase_disposition": "Retain/evaluate in Phase 6"
+    },
+    {
+      "name": "040a Materials",
+      "sources": [
+        "runtime/src/native/retail_renderer_materials.cpp",
+        "runtime/src/native/material_maintenance.cpp",
+        "runtime/src/native/material_translation.cpp"
+      ],
+      "classification": "platform-boundary",
+      "phase_disposition": "Retain/evaluate in Phase 6"
+    },
+    {
+      "name": "040b Geometry",
+      "sources": [
+        "runtime/src/native/retail_renderer_geometry.cpp",
+        "runtime/src/native/geometry_attributes.cpp"
+      ],
+      "classification": "platform-boundary",
+      "phase_disposition": "Retain/evaluate in Phase 6"
+    },
+    {
+      "name": "0412 World",
+      "sources": [
+        "runtime/src/native/retail_renderer_world.cpp",
+        "runtime/src/native/retail_camera_world.cpp"
+      ],
+      "classification": "platform-boundary",
+      "phase_disposition": "Retain/evaluate in Phase 6"
+    },
+    {
+      "name": "Core Renderer & Allocator",
+      "sources": [
+        "runtime/src/native/retail_renderer_core.cpp",
+        "runtime/src/native/retail_renderer_allocator.cpp"
+      ],
+      "classification": "platform-boundary",
+      "phase_disposition": "Retain/evaluate in Phase 6"
+    },
+    {
+      "name": "Display & Movie GL Presentation",
+      "sources": [
+        "runtime/src/native/retail_display_service.cpp",
+        "runtime/src/native/movie_gl_device.cpp",
+        "runtime/src/native/video_gpu_adapter.cpp"
+      ],
+      "classification": "platform-boundary",
+      "phase_disposition": "Retain (host OpenGL presentation & offscreen test fixture)"
+    },
+    {
+      "name": "VFS, Files & Saves",
+      "sources": [
+        "runtime/src/native/native_file.cpp",
+        "runtime/src/native/content_volume.cpp",
+        "runtime/src/native/content_vfs.cpp",
+        "runtime/src/native/native_save_store.cpp"
+      ],
+      "classification": "platform-boundary",
+      "phase_disposition": "Retain permanently (host storage boundary)"
+    },
+    {
+      "name": "Audio / Sound / Codecs",
+      "sources": [
+        "runtime/src/native/audio_bank_service.cpp",
+        "runtime/src/native/host_voice.cpp",
+        "runtime/src/native/adpcm_codec.cpp",
+        "runtime/src/native/movie_adx_stream.cpp",
+        "runtime/src/native/mpeg2_timing.cpp"
+      ],
+      "classification": "platform-boundary",
+      "phase_disposition": "Retain permanently (host audio/media device & decoder boundary)"
+    },
+    {
+      "name": "Input & Haptics",
+      "sources": [
+        "runtime/src/native/controller_input.cpp",
+        "runtime/src/native/retail_keyboard_sdl.cpp",
+        "runtime/src/native/retail_haptics_bridge.cpp"
+      ],
+      "classification": "platform-boundary",
+      "phase_disposition": "Retain permanently (host SDL/HID boundary)"
+    },
+    {
+      "name": "Session (Host Container + Game Bindings)",
+      "sources": [
+        "runtime/src/native/retail_game_session.cpp",
+        "runtime/src/native/retail_game_session_startup.cpp"
+      ],
+      "classification": "mixed",
+      "phase_disposition": "Keep host ownership container; replace game orchestration state transitions via Phase 7 AOT code"
+    },
+    {
+      "name": "Tasks (Task Domain & Registry)",
+      "sources": [
+        "runtime/src/native/retail_task_domain.cpp",
+        "runtime/src/native/retail_task_registry.cpp",
+        "runtime/src/native/retail_task_dispatch_main.cpp",
+        "runtime/src/native/retail_task_execution.cpp"
+      ],
+      "classification": "retail-logic",
+      "phase_disposition": "Hand-written temporary replacement (Main12E4E0 stops at task 0x18e100); replace with transformed AOT C++ in Phase 7"
+    },
+    {
+      "name": "Main Reentry & Frame Loop",
+      "sources": [
+        "runtime/src/native/retail_main.cpp",
+        "runtime/src/native/retail_main_reentry.cpp",
+        "runtime/src/native/retail_main_frame_gates.cpp",
+        "runtime/src/native/retail_main_timing.cpp"
+      ],
+      "classification": "retail-logic",
+      "phase_disposition": "Hand-written temporary replacement; replace with transformed AOT C++ in Phase 7"
+    },
+    {
+      "name": "Profiles (Aggregate, Records, Preferences, Menu)",
+      "sources": [
+        "runtime/src/native/retail_profile_aggregate.cpp",
+        "runtime/src/native/retail_saved_profile_records.cpp",
+        "runtime/src/native/retail_saved_profile_child.cpp",
+        "runtime/src/native/retail_profile_preferences.cpp",
+        "runtime/src/native/retail_profile_menu.cpp"
+      ],
+      "classification": "retail-logic",
+      "phase_disposition": "Hand-written temporary replacement; replace with transformed AOT C++ in Phase 7"
+    },
+    {
+      "name": "Modes (Mode State & Dispatch)",
+      "sources": [
+        "runtime/src/native/retail_main_mode.cpp",
+        "runtime/src/native/retail_mode_state.cpp",
+        "runtime/src/native/retail_arcade_ladder.cpp"
+      ],
+      "classification": "retail-logic",
+      "phase_disposition": "Hand-written temporary replacement (hits placeholders #12/#16/#17); replace with transformed AOT C++ in Phase 7"
+    },
+    {
+      "name": "First-Scene Allocator & Continuations",
+      "sources": [
+        "runtime/src/native/retail_first_scene_allocator.cpp",
+        "runtime/src/native/retail_first_scene_continuations.cpp",
+        "runtime/src/native/retail_first_scene_core.cpp"
+      ],
+      "classification": "retail-logic",
+      "phase_disposition": "Hand-written temporary replacement (hits placeholder #0); replace with transformed AOT C++ in Phase 7"
+    }
+  ]
+}

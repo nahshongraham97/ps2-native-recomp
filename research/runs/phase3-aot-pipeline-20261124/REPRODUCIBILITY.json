@@ -1,0 +1,13 @@
+{
+  "schema": "phase3_aot_reproducibility_v1",
+  "date": "2026-11-24",
+  "method": "Clean git clone to sibling directory external/forks/_phase3-fresh-clone-verify, CMake Ninja + clang++ 20 configure & build of eerecomp and vurecomp, build-time static codegen against pinned SLUS_214.10 and 211 VU1 .bin captures.",
+  "slus_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "entries_seed_sha256": "51b96ed520382dd3e637e2740217ab6de348144f78e8a1dce22c0ba75086745b",
+  "eerecomp_stats": "code 1079332 instructions (4216 KiB), functions 8917, entries 93354, rejected seeds 14983, 311 units written",
+  "kUnits_exact_match_vs_legacy": true,
+  "unit_count": 311,
+  "unit_file_note": "5/311 unit_*.cpp files SHA-256 identical to legacy; remaining units differ only in local entry table indices discovered inside SLUS_214.10 due to legacy kModules RAM window cross-references (identical line count 16,092 on unit_0000.cpp).",
+  "vurecomp_stats": "493 VU1 programs, 282 jump targets, 0 omitted from generated C++",
+  "vu1_keys_legacy_subset_preserved": true
+}

@@ -1,0 +1,54 @@
+{
+  "schema": "function_classification_inventory_v1",
+  "measured_date": "2026-11-24",
+  "total_catalog": 17510,
+  "in_scope_total": 15670,
+  "credited_total": 238,
+  "platform_boundary_source_files": [
+    "font_atlas.cpp",
+    "iop_native.h",
+    "material_maintenance.cpp",
+    "retail_audio_statistics.cpp",
+    "retail_auxiliary_words.cpp",
+    "retail_camera_world.cpp",
+    "retail_file_paths.cpp",
+    "retail_input_admission.cpp",
+    "retail_input_poll.cpp",
+    "retail_middleware_frame.cpp",
+    "retail_pad_control.cpp",
+    "retail_pad_startup.cpp",
+    "retail_renderer_core.cpp",
+    "retail_renderer_matrix.cpp",
+    "retail_renderer_rasters.cpp",
+    "retail_save_startup.cpp",
+    "retail_sound_bank_jobs.cpp",
+    "retail_sound_bank_main.cpp",
+    "retail_sound_metadata.cpp",
+    "retail_sound_status_main.cpp"
+  ],
+  "catalog_3way_partition": {
+    "platform-boundary": 49,
+    "retail-logic": 15450,
+    "sdk-or-library": 2011
+  },
+  "in_scope_3way_partition": {
+    "platform-boundary": 49,
+    "retail-logic": 13610,
+    "sdk-or-library": 2011
+  },
+  "credited_breakdown": {
+    "platform-boundary": 49,
+    "retail-logic": 189,
+    "sdk-or-library": 0
+  },
+  "role_by_status_matrix": {
+    "platform-boundary:host-replaced": 11,
+    "platform-boundary:ported": 38,
+    "retail-logic:no-direct-callers": 2648,
+    "retail-logic:open": 10141,
+    "retail-logic:out-of-scope-stubbed": 1840,
+    "retail-logic:pointer-scan-proven": 632,
+    "retail-logic:ported": 189,
+    "sdk-or-library:sdk-or-library": 2011
+  }
+}

@@ -2,12 +2,21 @@
   "schema": "aot_coverage_inventory_v1",
   "measured_date": "2026-11-24",
   "definition": "Build-time static AOT C++ generation only; excludes dynamic overlay RAM snapshots (kModules) and live runtime JIT/DLL caches.",
-  "active_fork_static_cpp_count": 0,
-  "active_fork_status": "Reproducible Phase 3 pipeline not yet materialized in active fork generated/ directory; legacy reference generator table.cpp holds base SLUS_214.10 units.",
+  "active_fork_tracked_cpp_count": 0,
+  "active_fork_build_generated_units": 311,
+  "active_fork_status": "Phase 3 fresh-clone reproducible build verified: eerecomp emits 311 SLUS_214.10 static units and vurecomp emits 493 VU1 keys into untracked build/generated-aot/.",
   "sources": {
-    "reference_table_cpp": {
-      "rel_path": "external/forks/ps2-native-recomp-legacy-20261118/generated/mkarmageddon/table.cpp",
-      "sha256": "398610659664a005ba378c8dc2f4866ed6793f2233f966684b184eb0d8a18da5",
+    "pinned_elf": {
+      "rel_path": "private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/SLUS_214.10",
+      "sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f"
+    },
+    "entries_seed_list": {
+      "rel_path": "recomp/mkarmageddon_entries.txt",
+      "sha256": "51b96ed520382dd3e637e2740217ab6de348144f78e8a1dce22c0ba75086745b"
+    },
+    "reproduced_table_cpp": {
+      "rel_path": "external/forks/ps2-native-recomp/build/generated-aot/ee/table.cpp",
+      "sha256": "9885ac6e926c8f9629d3a0584309f818a5b51616d8cab9aefa64ed5e3eba1dbf",
       "static_unit_count": 311
     },
     "overlay_manifest": {
@@ -16,10 +25,10 @@
       "MOVIER_functions_count": 2537,
       "GAMER_functions_count": 1
     },
-    "vu1_table_cpp": {
-      "rel_path": "external/forks/ps2-native-recomp-legacy-20261118/generated/mkarmageddon/vu1_table.cpp",
-      "sha256": "732e5aa827053d56886edd6cf3b0365c8a92b14885ddeb86732d8067f7cf7c1b",
-      "keys": 490
+    "reproduced_vu1_table_cpp": {
+      "rel_path": "external/forks/ps2-native-recomp/build/generated-aot/vu1/vu1_table.cpp",
+      "sha256": "11d07042258a2359ffaa7e5d0b656dd53ce156b6276c9dbdf5919ce99fc543c1",
+      "keys": 493
     },
     "vu_corpus_strict": {
       "rel_path": "research/runs/native-bank-service-20261118/VU_CORPUS_STRICT.json",
@@ -33,7 +42,7 @@
       "static_aot_count": 13138,
       "catalog_total": 13138,
       "static_units": 311,
-      "source": "reference_table_cpp",
+      "source": "reproduced_table_cpp",
       "unit_ranges": [
         {
           "unit": "unit_0000",
@@ -1907,13 +1916,13 @@
       "static_aot_count": 0,
       "catalog_total": 2537,
       "static_overlay_sources": [],
-      "note": "No build-time static AOT C++ compilation from MOVIER.ovl; only runtime RAM window slices exist in kModules."
+      "note": "No build-time static AOT C++ compilation from MOVIER.ovl yet; Phase 4 target."
     },
     "GAMER.ovl": {
       "static_aot_count": 0,
       "catalog_total": 1,
       "static_overlay_sources": [],
-      "note": "No build-time static AOT C++ compilation from GAMER.ovl."
+      "note": "No build-time static AOT C++ compilation from GAMER.ovl yet; Phase 4 target."
     },
     "NETR.ovl": {
       "static_aot_count": 0,
@@ -1927,35 +1936,37 @@
       "name": "007C4000_526A97B1",
       "base_addr": "0x007c4000",
       "span_bytes": 16384,
-      "check_words": 3487,
-      "unit_count": 1
+      "sha256": "0f95fa6d8b15d0a00bfd8efb884b79e3d45a9d27fb1184c9114db5c06e32cb77"
     },
     {
       "name": "007C4000_658F322A",
       "base_addr": "0x007c4000",
       "span_bytes": 262144,
-      "check_words": 54712,
-      "unit_count": 16
+      "sha256": "be0236d3f647ba0e7a565d02c7df77518ca34252b43a88f52df9e84e9f1fc2c0"
     },
     {
       "name": "007C8000_B476BC35",
       "base_addr": "0x007c8000",
       "span_bytes": 262144,
-      "check_words": 53421,
-      "unit_count": 16
+      "sha256": "58057730e3fee823df5c5ab29827f31d65d02e936140cc3ae857560c07957e59"
     },
     {
       "name": "007CC000_3D648FAA",
       "base_addr": "0x007cc000",
       "span_bytes": 262144,
-      "check_words": 50093,
-      "unit_count": 16
+      "sha256": "4c06f75baee2ac47d90a14064cfdfda3a8210f78219c2e4fd524528d905faf5b"
     }
   ],
   "vu_microprograms": {
     "vu1_static_table_keys": 490,
     "vu1_strict_corpus_keys": 493,
     "vu1_bin_captures": 211,
-    "oracle_vu1_live_dll_count": 44
+    "oracle_vu1_live_dll_count": 44,
+    "reconciliation_note": "Current vurecomp reproduces 493 reachable VU1 keys (all 490 legacy table keys plus 3 continuation entries) from 211 .bin captures; canonical oracle vu1-live/ contains 44 live DLLs (retracting earlier unverified 114 claim)."
+  },
+  "memory_abi_transform": {
+    "transformed_count": 0,
+    "in_scope_total": 15676,
+    "note": "Generated C++ retains c.r[...], g_ram, $gp, and guest vtables until Phase 5 transform."
   }
 }

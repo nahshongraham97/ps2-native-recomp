@@ -6,68 +6,43 @@ Retail game logic outside platform boundaries comes from ahead-of-time (AOT) sta
 Neither the canonical playable oracle (`../../milestone_work_verified_playable_20261110/`, `ps2run.exe` `B9EEF7DA...`) nor its descendant Kombat Practice (`../../milestone_build_kombat_practice/`, `8B763DCC...`) satisfies the zero-emulation shipped-port acceptance contract.
 
 <!-- PROGRESS:START -->
-## Native Reimplementation Progress & Tracking
+## Native Reimplementation Progress & Multi-Tier Ledger
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`a546e18b`](https://github.com/nahshongraham97/ps2-native-recomp/commit/a546e18b4136a23952ac3ee4a8a165325bad184e) (pinned active fork)
+**Verified Fork Commit**: [`499e49c0`](https://github.com/nahshongraham97/ps2-native-recomp/commit/499e49c0865dce875fa9f28a4e66c5cb98b5b423) (pinned active fork)
 
-### PlayStation 2 Retail Catalog (`SLUS_214.10` + Overlays)
-- **In-Scope Completion**: **1.52%** (238 / 15,670 in-scope retail functions)
-- **Total Function Catalog**: **17,510** functions (13,138 base `SLUS_214.10` + 4,372 dynamic overlays: 1 `GAMER.ovl`, 2,537 `MOVIER.ovl`, 1,834 `NETR.ovl`)
+### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
+- **Total PS2 Function Catalog**: **17,510** functions (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
+- **In-Scope Retail Path**: **15,670** (`2,643` non-exec/library: `sdk-or-library` 2,011 + `pointer-scan-proven` 632; `12,789` open frontier) | **Excluded Online (`out-of-scope-stubbed`)**: **1,840**
+- **Code-Computed Role Partition (`function_classification_inventory.json`)**: `49` `platform-boundary` + `15,450` `retail-logic` + `2,011` `sdk-or-library` = **17,510** (in-scope: `49` + `13,610` + `2,011` = **15,670**)
 
-| Category / Tier | Status Breakdown | Count | In-Scope % |
-|---|---|---|---|
-| **Implemented** | `ported` (227) + `host-replaced` (11) + `implemented-via-donor` (0) | 238 | 1.52% |
-| **Classified Non-Executable / Library** | `sdk-or-library` (2,011) + `pointer-scan-proven` (632) | 2,643 | 16.87% |
-| **Open Frontier** | `open` (10,141: 9,038 `SLUS_214.10`, 1,102 `MOVIER.ovl`, 1 `GAMER.ovl`) + `no-direct-callers` (2,648 `SLUS_214.10`) | 12,789 | 81.61% |
-| **In-Scope Subtotal** | *Active retail code path to implement/verify* | **15,670** | **100.00%** |
-| **Excluded / Stubbed** | `out-of-scope-stubbed` (1,834 `NETR.ovl` overlay functions + 6 `SLUS_214.10` main-executable online functions) | 1,840 | — |
-| **Total PS2 Catalog** | *Complete binary disassembly denominator* | **17,510** | — |
-
-### Tier 2: Build-Time Static AOT Coverage (`research/ledger/aot_coverage_inventory.json`)
-- **Reference Static AOT C++ Coverage**: **83.84%** (13,138 / 15,670 in-scope EE functions in reference `ps2-native-recomp-legacy-20261118/generated/mkarmageddon/table.cpp`; **0** generated `.cpp` units currently built in active fork `generated/` pending Phase 3 reproducible pipeline)
+### Tier 2 · Build-Time Static AOT Generated (`research/ledger/aot_coverage_inventory.json`)
+- **In-Scope Static AOT C++**: **83.84%** (**13,138 / 15,670** reproduced via `eerecomp` into untracked `build/generated-aot/ee/`, `311` units; `0` tracked generated `.cpp` files in Git)
 
 | Module / Artifact | Build-Time Static AOT Status | Static AOT / Catalog | Reference % |
 |---|---|---|---|
-| **Base `SLUS_214.10`** | `311` static `unit_*.cpp` files (`table.cpp`) | 13,138 / 13,138 | 100.00% |
-| **`MOVIER.ovl` Overlay** | Build-time static overlay C++ NOT generated (`kModules` RAM slices excluded) | 0 / 2,537 | 0.00% |
-| **`GAMER.ovl` Overlay** | Build-time static overlay C++ NOT generated (`kModules` RAM slices excluded) | 0 / 1 | 0.00% |
-| **In-Scope AOT Subtotal** | *Measured build-time static C++ across `SLUS_214.10` + `MOVIER.ovl` + `GAMER.ovl`* | **13,138 / 15,670** | **83.84%** |
+| **Base `SLUS_214.10`** | `311` static `unit_*.cpp` files reproduced from pinned ELF (`reproduce_aot_pipeline.py`) | 13,138 / 13,138 | 100.00% |
+| **`MOVIER.ovl` Overlay** | Build-time static overlay C++ NOT generated (`Phase 4` target) | 0 / 2,537 | 0.00% |
+| **`GAMER.ovl` Overlay** | Build-time static overlay C++ NOT generated (`Phase 4` target) | 0 / 1 | 0.00% |
+| **In-Scope AOT Subtotal** | *Build-time static C++ across `SLUS_214.10` + `MOVIER.ovl` + `GAMER.ovl`* | **13,138 / 15,670** | **83.84%** |
 | **Excluded `NETR.ovl`** | Out of scope (`DECISION_ONLINE_OUT_OF_SCOPE.json`) | 0 / 1,834 | — |
-| **Dynamic Overlay Windows (`kModules`)** | Runtime memory snapshots only (not full module AOT) | 4 captured windows | — |
-| **VU1 Microprograms (Separate VU Domain)** | `vu1_table.cpp` keys vs `VU_CORPUS_STRICT.json` (211 `.bin` captures; 44 oracle `vu1-live/` DLLs) | 490 / 493 keys | — |
+| **Dynamic Overlay Windows (`kModules`)** | Runtime memory snapshots (`private-inputs/mkarmageddon-aot-inputs/overlays/`) | 4 captured windows | — |
+| **VU1 Microprograms (Separate VU Domain)** | `vurecomp` generates `493` keys from `211` `.bin` captures (`490` legacy table keys + 3 continuations; `44` oracle `vu1-live/` DLLs; earlier `114` claim retracted) | 490 / 493 keys | — |
 
-### Xbox Donor Catalog (`default.xbe`)
-> [!NOTE]
-> **Investigation Authority**: Xbox default.xbe serves as an authoritative secondary binary investigation source for recovering algorithm contracts and data structures; donor credit requires verified dual-platform vectors.
-> **Donor Credit Policy**: 0% donor credit means no donor credit has been awarded pending verified dual-platform vectors, not that work has stalled.
+### Tier 3 · Memory & ABI Transformed (`Phase 5` Target)
+- **Contract-Transformed Functions**: **0.00%** (**0 / 15,670** — generated AOT units still retain `c.r[...]`, `g_ram`, `$gp`, and guest vtables pending Phase 5)
 
-- **In-Scope Donor Utilization**: **0.00%** (0 / 21,321 in-scope donor functions)
-- **Total Donor Catalog**: **22,579** discovered functions in `default.xbe`
+### Tier 4 · Credited Native Implementations (`functions.csv` & `ported_function_evidence.json`)
+- **Credited Completion**: **1.52%** (238 / 15,670 in-scope: `227` `ported` + `11` `host-replaced` + `0` `implemented-via-donor`; code partition: `49` `platform-boundary` + `189` `retail-logic`)
+- **Open Frontier**: **12,789** (`9,038` `SLUS_214.10`, `1,102` `MOVIER.ovl`, `1` `GAMER.ovl`, `2,648` `no-direct-callers` across 5,400 indirect call sites)
 
-| Category / Tier | Status Breakdown | Count | In-Scope % |
-|---|---|---|---|
-| **Implemented Donors** | `implemented-via-donor` (0) | 0 | 0.00% |
-| **Classified Non-Executable / SDK** | `sdk-or-library` (2,524) + `no-counterpart` (9) | 2,533 | 11.88% |
-| **Open Donor Frontier** | `blocked-on-dual-platform-vectors` (17 candidates pending vectors) + `investigating` (10 active recovery) + `not-started` (18,761 unmapped) | 18,788 | 88.12% |
-| **In-Scope Subtotal** | *Donor executable candidate surface* | **21,321** | **100.00%** |
-| **Excluded / Stubbed** | `out-of-scope-stubbed` (XONLINE thunks and symbols) | 1,258 | — |
-| **Total Xbox Catalog** | *Total default.xbe function inventory* | **22,579** | — |
+### Tier 5 · Verified Vectors & Acceptance Placeholders
+- **Verified Differential Vectors**: **72 / 72** bit-exact match on xemu movie-variant oracle (`LOGON`/`LOGOW` selector); **0** dual-platform whole-function vectors awarding donor credit (`ps2_xbox_map.csv`: `17,511` rows = `0` exact, `0` structural, `0` composite, `18` mapped-by-role, `17,493` unmapped)
+- **Acceptance Placeholders**: **26** registered unrecovered placeholders (`0` undefined link symbols; `13` hit across 369 calls in 60-frame headless probe); whole-game acceptance strictly **OPEN**
 
-### Cross-Platform Function Correspondence (`ps2_xbox_map.csv`)
-- **Total Mapping Entries**: **17,511**
-- **Exact Matches**: **0** (0 isomorphic CFG)
-- **Structural Correspondence Matches**: **0** (verified non-vacuous multi-block CFG isomorphism and common mapped callees; simple offsets disregarded)
-- **Composite 1-to-Many Matches**: **0** (modular donor splits)
-- **Mapped-by-Role Candidates**: **18** (subsystem role correspondence pending dual-platform vectors)
-- **Unmapped Retail Functions**: **17,493**
-
-### Still Needed (Open Acceptance Frontier)
-1. **No-Direct-Callers Indirect Dispatch Resolution**: **2,648** functions untargeted by direct calls but referenced by data pointers or immediate formations (indirect candidates across 5,400 computed call sites).
-2. **Open Game Functions**: **10,141** retail game functions across modules: **9,038** in `SLUS_214.10`, **1,102** in `MOVIER.ovl`, and **1** in `GAMER.ovl`.
-3. **Dynamic Overlay Frontends**: **1,102** movie playback frontend functions in `MOVIER.ovl` and **1** entry stub in `GAMER.ovl`.
-4. **Acceptance Gates**: Full-game entry link, visible render target presentation, synchronized audio mixing, and physical controller input parity.
+### Xbox Reference (`default.xbe` — Renderer / Viewport / HD Presentation Scope Only; no completion percentage)
+- **Reference Catalog**: **22,579** `default.xbe` routines inspected (`21,321` in non-XONLINE candidate set, `0` donor-credited, `18` role-mapped candidates). Limited strictly to renderer, viewport, and HD presentation per `DECISION_OWNER_CORRECTIONS_20261124.json` (not a separate target; GS packet decoding is an interim concession only).
 <!-- PROGRESS:END -->
 
 ## Documentation & Entry Points
