@@ -1,0 +1,45 @@
+{
+  "function": "0x0025d5b0",
+  "description": "Xbox retail movie variant filename selector",
+  "entry_registers": {
+    "eax": "0x00000000",
+    "ecx": "0x00000000",
+    "edx": "0x00000000",
+    "ebx": "0x00000000",
+    "esp": "0x00ecb204",
+    "ebp": "0x00ecb328",
+    "esi": "0x00000000",
+    "edi": "0xd0065de8",
+    "eip": "0x0025d5b0",
+    "eflags": "0x00000246"
+  },
+  "argument_movie_id": 0,
+  "caller_return_address": "0x0025d40e",
+  "at_ret_registers": {
+    "eax": "0x00504b7c",
+    "ecx": "0x00504b7c",
+    "edx": "0x00000004",
+    "ebx": "0x00000000",
+    "esp": "0x00ecb204",
+    "ebp": "0x00ecb328",
+    "esi": "0x00000000",
+    "edi": "0xd0065de8",
+    "eip": "0x0025d605",
+    "eflags": "0x00000246"
+  },
+  "after_ret_registers": {
+    "eax": "0x00504b7c",
+    "ecx": "0x00504b7c",
+    "edx": "0x00000004",
+    "ebx": "0x00000000",
+    "esp": "0x00ecb208",
+    "ebp": "0x00ecb328",
+    "esi": "0x00000000",
+    "edi": "0xd0065de8",
+    "eip": "0x0025d40e",
+    "eflags": "0x00000246"
+  },
+  "return_value_eax": "0x00504b7c",
+  "string_memory_at_eax_hex": "4c4f474f4e2e534644000000",
+  "selected_filename": "LOGON.SFD"
+}
