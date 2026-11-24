@@ -11,9 +11,12 @@ Xbox `default.xbe` and PS2 `SLUS_214.10` establish the matrix transform contract
 - PS2 `SLUS_214.10`: SHA-256 `a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f`
 
 Implementation files:
-- `runtime/src/native/retail_renderer_matrix.cpp`
-- `runtime/src/native/retail_renderer_transforms.cpp`
-- `runtime/src/native/retail_first_scene_core.cpp`
+- `runtime/include/mka/retail_renderer_cameras.hpp`
+- `runtime/src/native/retail_renderer_cameras.cpp`
+- `runtime/src/native/retail_renderer_matrix_kernels.cpp`
+- `runtime/src/native/retail_renderer_transforms_kernels.cpp`
+- `runtime/src/native/retail_first_scene_continuations.cpp`
+- `tests/test_retail_renderer_cameras.cpp`
 - `tests/test_retail_renderer_matrix.cpp`
 
 Zero CPU rasterization / zero guest console emulation (`g_ram`, `g_spr`, `g_memory`, emulated SPU2/IOP, JITs) is used.
@@ -24,32 +27,49 @@ Zero CPU rasterization / zero guest console emulation (`g_ram`, `g_spr`, `g_memo
 Option C (Partitioned): Rendering transforms (view, projection, model, raster) use native host IEEE 754 `float` math with documented tolerances. Gameplay-critical arithmetic is classified function-by-function based on Xbox x86 behavior or documented tolerance, with zero EE COP1 bit-exact emulation unless a specific retail oracle replay requires it.
 
 ### Classification of Callers & Kernel Equivalents
+
 1. **`multiply_affines_19f680` (Xbox `0x002be460`)**:
-   - Classification: Rendering transform pipeline (view/model/projection matrix concatenation).
+   - Classification: Rendering transform pipeline (view/model/projection matrix concatenation) and skeletal hierarchy.
    - Behavior: 3D affine matrix multiplication matching Xbox x86 `RwMatrixMultiply`.
    - Verified tolerance: Max observed delta against host math = 0.00000000.
+   - Caller audit in Xbox `default.xbe` (30 CALL sites):
+     - View / Projection / Camera transforms: `0x001c2f3e`, `0x002ae3b3`, `0x002ae6bb`, `0x002aea17`, `0x002aec64`, `0x002aecd1`, `0x002b47f1`, `0x002b483f`, `0x002be703`, `0x002be72f`, `0x002bed7c`, `0x002beda7`, `0x002cd4cc`, `0x002cd6e5`, `0x002e71f7`, `0x002e720e`, `0x002e728b`, `0x002e7320`, `0x002e7337` -> **[verified: rendering-pipeline]**.
+     - System art / UI transforms: `0x0008d79d`, `0x0027488f`, `0x00274eaa`, `0x00275c90`, `0x00276f43`, `0x00278725`, `0x002794af`, `0x00279625` -> **[verified: ui-presentation]**.
+     - Skeletal hierarchy transforms: `0x00261915`, `0x00261a80`, `0x00261c47` -> **[inferred: potentially gameplay-coupled]**. In Mortal Kombat: Armageddon, skeletal matrices drive character bone meshes. However, combat hit-boxes and hurt-boxes are positioned from bone nodes, meaning bone math may couple to gameplay physics. They are not classified as rendering-only.
+
 2. **`classify_matrix_1a0240` (Xbox `0x002be150`)**:
    - Classification: Rendering matrix state evaluation.
    - Behavior: Computes basis length error squared, orthogonality error squared, and identity error squared against tolerance bounds. Flags: `0x01` = orthonormal, `0x20000` = identity shortcut.
+   - Caller audit in Xbox `default.xbe`: Called at `0x002be3ed` inside matrix optimization helper -> **[verified: rendering-state]**.
    - Verified tolerance: Exact match on identity (flag `0x20001`), orthonormal rotation (flag `0x01`), and scaled matrix (flag `0x00`).
+
 3. **`invert_nonidentity_matrix_1a07a0` (Xbox `0x002be560`)**:
    - Classification: Rendering transform pipeline (view matrix inversion, world-to-local transforms).
    - Behavior: 3x3 determinant and adjugate affine inversion matching Xbox x86 `RwMatrixInvert`. Singular matrices ($|\det| < 10^{-12}$) are rejected cleanly.
+   - Caller reconciliation: The sole direct CALL site in Xbox `default.xbe` is `0x002be81e` inside function `0x002be770` (view matrix computation subroutine). Function `0x002be770` is called by `0x001b3393` and `0x002bf4d8` -> **[verified: rendering-pipeline]**. Earlier reports mistakenly listed `0x002be560` as calling itself due to a target duplicate address error; this is now fully authenticated.
    - Verified tolerance: Max observed delta on $M \cdot M^{-1}$ vs identity = 0.00000000 (tolerance limit $10^{-6}$).
-4. **`transform_point_exact` (Xbox `0x002be080`)**:
-   - Classification: Rendering coordinate transformation ($P' = P \cdot M + T$).
-   - Verified tolerance: Delta = 0.00000000.
-5. **`transform_points_exact` (Xbox `0x002be080` batch)**:
-   - Classification: Batch vertex coordinate transformation.
-   - Verified tolerance: Delta = 0.00000000.
-6. **`transform_vector_exact` (Xbox `0x002be080`)**:
-   - Classification: Directional vector transformation ($V' = V \cdot M$, translation ignored).
-   - Verified tolerance: Delta = 0.00000000.
-7. **`transform_vectors_exact` (Xbox `0x002be080` batch)**:
-   - Classification: Batch directional vector transformation.
-   - Verified tolerance: Delta = 0.00000000.
 
-## 3. Engine Startup Addresses Setteled & Separated
+4. **`transform_point_exact` (PS2 `0x0019fa00`)**:
+   - Classification: Coordinate transformation ($P' = P \cdot M + T$).
+   - Xbox counterpart: Unverified candidate. Xbox `0x002be080` was previously cited, but disassembly shows `0x002be080` is an orthonormal basis check (`RwV3dTransform*` recalled name), not coordinate transformation.
+   - Verified tolerance: Delta = 0.00000000 against reference vector math.
+
+5. **`transform_points_exact` (PS2 `0x0019fa70`)**:
+   - Classification: Batch coordinate transformation.
+   - Xbox counterpart: Unverified candidate.
+   - Verified tolerance: Delta = 0.00000000 against reference vector math.
+
+6. **`transform_vector_exact` (PS2 `0x0019fb00`)**:
+   - Classification: Directional vector transformation ($V' = V \cdot M$, translation ignored).
+   - Xbox counterpart: Unverified candidate.
+   - Verified tolerance: Delta = 0.00000000 against reference vector math.
+
+7. **`transform_vectors_exact` (PS2 `0x0019fb80`)**:
+   - Classification: Batch directional vector transformation.
+   - Xbox counterpart: Unverified candidate.
+   - Verified tolerance: Delta = 0.00000000 against reference vector math.
+
+## 3. Engine Startup Addresses Settled & Separated
 
 To prevent cross-console address mixing and recalled naming errors, addresses are settled directly from authentic disassembly:
 
@@ -57,43 +77,59 @@ To prevent cross-console address mixing and recalled naming errors, addresses ar
 |---|---|---|---|
 | Engine Startup Entry | `0x0007d460` | `0x00127200` | Retail engine initialization caller |
 | Initial Heap Buffer | `0x0027c5d0` | N/A (PS2 OS heap) | Allocates 1MB heap buffer (`push 0x100000; push 0`) |
-| Engine Initialize (`RwEngineInit`) | `0x002c03c0` | `0x001a6c30` | Called with allocated 1MB heap buffer |
-| Plugin Registration Hook | `0x00269520` | `0x001a6dd0` | Calls plugin registration table (0401..0412) |
-| Central Freelist Extension Helper | `0x002c4620` | `0x0019fc80` | Central extension freelist allocation helper |
+| Engine Initialize (`RwEngineInit`) | `0x002c03c0` | `0x001a6dd0` | Called with allocated 1MB heap buffer (PS2 jal `0x001a6dd0` at `0x0012727c`) |
+| Plugin Registration Hook | `0x00269520` | `0x001a6c30` | Calls plugin registration table (0401..0412) |
+| Central Freelist Extension Helper | `0x002c4620` | `0x001a0fd0` | Shared freelist extension allocator (`0x0019fc80` is COP1 float math) |
 | Video / Subsystem Setup | `0x0007ebf0` | `0x0012726c` | Video mode selector & display setup |
-| Engine Open (`RwEngineOpen`) | `0x002c0310` | `0x001a6c30` | Public engine open entrypoint called at `0x0007d4b7`. (Reconciliation: `0x002c0370` is an inner device registration helper; `0x002c0350` is an internal state transition helper called inside `0x002c0310`) |
-| Engine Start (`RwEngineStart`) | `0x002bfeb0` | `0x001a6d70` | Dispatches command 2 (`START`) to device driver `[0x00835354]` |
+| Engine Open (`RwEngineOpen`) | `0x002c0310` | `0x001a6c30` | Public engine open entrypoint called at `0x0007d4b7` (PS2 jal `0x001a6c30` at `0x001272bc`) |
+| Engine Start (`RwEngineStart`) | `0x002bfeb0` | `0x001a6b30` | Dispatches command 2 (`START`) to device driver (PS2 jal `0x001a6b30` at `0x001272fc`) |
+| Engine Stop (`RwEngineStop`) | `0x002bff80` | `0x001a6be0` | Clean engine stop |
+| Engine Close (`RwEngineClose`) | `0x002bffe0` | `0x001a6d70` | Clean engine shutdown |
 | Camera & Raster Subroutine | `0x001b2760` | `0x001b03c0` | Allocates camera, frame, and color/z-buffer rasters |
 | Camera Frustum & Aspect | `0x0007d520` | `0x001b0450` | Subview and aspect ratio configuration |
 | Callback Hook Setter | N/A | `0x00225d40` | Callback hook setter storing `0x00225d50` into `-23540($gp)` |
 
-## 4. Native-Owner Mapping (Steps `0x0007d460` to Camera & Raster Attachment)
+## 4. First Real Retail Draw Trace & Production Display Service
 
-Mapping of each retail startup step to host native owners:
-1. **1MB Heap Buffer Allocation (`0x0027c5d0`)**: Covered by host memory heap / `NativeRetailRendererAllocatorService`.
-2. **Engine Initialization (`0x002c03c0`)**: Covered by `NativeRetailRendererCore::init_default`.
-3. **Plugin Registrations (`0x00269520`)**: Covered by `construct_core_plugin_*` (plugins 0401..0412 registered).
-4. **Subsystem Setup (`0x0007ebf0`)**: Covered by `HiddenGlContext` WGL context.
-5. **Engine Open (`0x002c0310`)**: Covered by `NativeRetailRendererCore` device state transition.
-6. **Engine Start (`0x002bfeb0`)**: Covered by `NativeRetailRendererCore` device state transition.
-7. **Camera Allocation (`0x001b2760`)**: Covered by `NativeRetailCamera::allocate_camera_resource`.
-8. **Color Raster Allocation (`0x001b2760`)**: Covered by `NativeRetailRaster` + `NativeGlTextureUpload`.
-9. **Depth Raster Allocation (`0x001b2760`)**: Covered by `NativeRetailRaster` + `HiddenGl`.
-10. **Raster Attachment to Camera**: **MISSING**. `NativeRetailCamera` has frame/z raster handle slots, but lacks explicit attachment binding methods to bind rasters to camera targets.
-11. **Subview & Aspect Configuration (`0x0007d520`)**: Covered by `NativeRetailCamera` view frustum parameters.
-12. **Frame Rendering Pipeline (`render_retail_frame`)**: **MISSING**. Requires modern GL FBO binding, clear, viewport setup, shader pipeline, and GPU draw dispatch.
+### First Draw Retail Trace Analysis
+Traced startup post-start dispatch in authentic binaries:
+- **PS2 `0x00127260` post-start**:
+  - `0x00127334`: jal `0x001b03c0` (display setup / camera & raster allocation)
+  - `0x0012733c`: jal `0x00225690`
+  - `0x00127344`: jal `0x0026ebe0`
+  - `0x0012734c`: jal `0x0031cfd0`
+- **Xbox `0x0007d460` post-start**:
+  - `0x0007d4ff`: call `0x002725c0`
+  - `0x0007d504`: call `0x00284220`
+  - `0x0007d509`: call `0x001b2760` (camera & raster allocation)
+  - `0x0007d50e`: call `0x001c6030`
+  - `0x0007d529`: call `0x00057380`
+
+The authentic retail startup flow immediately branches into video and intro presentation (`LOGON.SFD`, `OPENINGN.SFD`, `TITLEN.SFD`) before any 3D combat geometry or interactive characters are rendered.
+The native movie subsystem (`NativeMovieGlDevice` in `runtime/src/native/movie_gl_device.cpp`) already provides hardware texture upload, shader presentation, and textured fullscreen quad rendering for video playback.
+Therefore, presenting a decoded movie frame via `NativeMovieGlDevice` is the smallest and most authentic path to a visible retail frame.
+
+### Production Display Service Requirements
+`HiddenGlContext` is strictly a headless unit-test fixture (an offscreen 1x1 dummy window). It cannot present frames to a user.
+A production display service requires:
+1. Host windowing via Win32 (`CreateWindowEx`) or SDL2 with a message pump.
+2. Hardware-accelerated OpenGL context with double-buffered swapchain.
+3. Vsync and swapchain presentation (`SwapBuffers` / `eglSwapBuffers`).
+4. High-definition viewport transformation with aspect-ratio preservation (640x448 / 720p scaling).
+Reusing `HiddenGlContext` for production is explicitly prohibited.
+
+### Demotion of Diagnostic Scaffolding Draw
+The hardcoded triangle draw (`glDrawArrays(GL_TRIANGLES, 0, 3)`) was removed from `NativeRetailRendererCameraModule` (`retail_renderer_cameras.cpp`).
+Camera FBO attachment (`set_frame_buffer_raster`, `set_z_buffer_raster`) and FBO lifecycle (`begin_update`, `clear`, `end_update`) are native design scaffolding helpers with no recovered retail 3D draw call yet.
+The diagnostic draw is inlined strictly in `tests/test_retail_renderer_cameras.cpp` under telemetry instrumentation:
+`[diagnostic-telemetry] GL draw calls = 0, CPU composited pixels = 0, frame readbacks = 0, diagnostic readbacks = 0, fallback pixels = 0`.
+Zero unallowlisted readbacks occur.
 
 ## 5. First-Scene Bootstrap Continuation
 
-Implemented in `runtime/src/native/retail_first_scene_core.cpp`:
+Implemented in `runtime/src/native/retail_first_scene_continuations.cpp`:
 - `continue_first_scene_at_225d40`: Validates Session lifetime, constructs registered plugins via `core->construct_registered(cf)`, returns `RetailStartupGate::ready`. Real resource ownership, zero stubs, zero CPU rasterization.
 - `continue_scene_reset_at_125d60`: Validates Session lifetime, detaches camera hierarchy via `cameras->detach_cameras_from_181a30(cf)` clearing active scene links (`0x005ab560`, `0x005ab564`), returns `true`. Real resource ownership, zero stubs, zero CPU rasterization.
-
-### What Remains Missing for a Render Target to Reach `render_retail_frame`
-1. Explicit raster-to-camera attachment methods in `NativeRetailCamera` (`set_frame_buffer_raster`, `set_z_buffer_raster`).
-2. Modern OpenGL Framebuffer Object (FBO) creation and texture/depth attachment (`glFramebufferTexture2D`).
-3. Frame begin/end lifecycle binding (`RwCameraBeginUpdate` / `RwCameraEndUpdate`, Xbox `0x002b8500` / `0x002b8ba0`).
-4. Modern OpenGL vertex shader, fragment shader, VAO, and draw submission (`glDrawElements` / `glDrawArrays`) without CPU rasterization.
 
 ## 6. Undefined Symbol Count Diagnostic
 

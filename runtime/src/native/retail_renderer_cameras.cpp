@@ -253,21 +253,6 @@ bool NativeRetailRendererCameraModule::clear(const NativeRetailRendererCameraHan
  return true;
 }
 
-bool NativeRetailRendererCameraModule::dispatch_first_gl_draw(const NativeRetailRendererCameraHandle& h,
- RetailRendererCameraFailure& f) noexcept {
- const auto lease = admit(f); if (!lease) return false;
- const auto r = record(h, f); if (!r) return false;
- if (!r->updating) { fail(f, RetailRendererCameraError::render_services_required, "0405 draw dispatch requires active camera begin_update lifecycle"); return false; }
-
-#ifdef _WIN32
- if (wglGetCurrentContext()) {
-  // Option C: Hardware GPU draw call only, zero CPU rasterization
-  glDrawArrays(GL_TRIANGLES, 0, 3);
- }
-#endif
- return true;
-}
-
 bool NativeRetailRendererCameraModule::end_update(const NativeRetailRendererCameraHandle& h,
  RetailRendererCameraFailure& f) noexcept {
  const auto lease = admit(f); if (!lease) return false;

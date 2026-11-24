@@ -62,17 +62,16 @@ public:
  // A capability refusal, not an implementation of source Begin/EndUpdate.
  bool require_render_ready(const NativeRetailRendererCameraHandle&,RetailRendererCameraFailure&)const noexcept;
 
- // Raster-to-camera attachment (recovered retail camera framebuffer/zbuffer pairing)
+ // Native OpenGL FBO scaffolding: raster-to-camera attachment (recovered camera framebuffer/zbuffer pairing)
  bool set_frame_buffer_raster(const NativeRetailRendererCameraHandle&, const NativeRetailRasterHandle&, RetailRendererCameraFailure&) noexcept;
  std::optional<NativeRetailRasterHandle> frame_buffer_raster(const NativeRetailRendererCameraHandle&, RetailRendererCameraFailure&) const noexcept;
  bool set_z_buffer_raster(const NativeRetailRendererCameraHandle&, const NativeRetailRasterHandle&, RetailRendererCameraFailure&) noexcept;
  std::optional<NativeRetailRasterHandle> z_buffer_raster(const NativeRetailRendererCameraHandle&, RetailRendererCameraFailure&) const noexcept;
 
- // Modern OpenGL Frame begin/end update lifecycle & draw dispatch (Option C: zero CPU rasterization)
+ // Native OpenGL FBO lifecycle: bind, clear, unbind (native scaffolding; no recovered retail draw call)
  bool begin_update(const NativeRetailRendererCameraHandle&, RetailRendererCameraFailure&) noexcept;
  bool end_update(const NativeRetailRendererCameraHandle&, RetailRendererCameraFailure&) noexcept;
  bool clear(const NativeRetailRendererCameraHandle&, float r, float g, float b, float a, std::uint32_t clear_flags, RetailRendererCameraFailure&) noexcept;
- bool dispatch_first_gl_draw(const NativeRetailRendererCameraHandle&, RetailRendererCameraFailure&) noexcept;
  bool is_updating(const NativeRetailRendererCameraHandle&, RetailRendererCameraFailure&) const noexcept;
 private:
  friend bool renderer_required::construct_core_plugin_0405(NativeRetailRendererCore&,RetailRendererCoreFailure&);

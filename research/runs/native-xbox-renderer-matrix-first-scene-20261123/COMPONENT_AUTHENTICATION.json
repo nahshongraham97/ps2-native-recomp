@@ -3,15 +3,19 @@
   "measured_source_base": "8443d6ce433fe01b63dd3b609eeb7eb762b32230",
   "source_files": 938,
   "changed_source_paths": [
-    "runtime/src/native/retail_renderer_matrix.cpp",
-    "runtime/src/native/retail_renderer_transforms.cpp",
-    "runtime/src/native/retail_first_scene_core.cpp",
+    "runtime/include/mka/retail_renderer_cameras.hpp",
+    "runtime/src/native/retail_renderer_cameras.cpp",
+    "runtime/src/native/retail_renderer_matrix_kernels.cpp",
+    "runtime/src/native/retail_renderer_transforms_kernels.cpp",
+    "runtime/src/native/retail_first_scene_continuations.cpp",
+    "tests/test_retail_renderer_cameras.cpp",
     "tests/test_retail_renderer_matrix.cpp"
   ],
   "client_targets": [
-    "test_native_retail_renderer_matrix"
+    "test_native_retail_renderer_matrix",
+    "test_native_retail_renderer_cameras"
   ],
-  "client_target_count": 1,
+  "client_target_count": 2,
   "binary_identities": {
     "xbox_default_xbe": {
       "path": "Armageddon-backup/armageddon-reimplementation/private-inputs/xbox-mka-20261121/default.xbe",
