@@ -17,6 +17,8 @@ namespace mka::retail {
 struct NativeOffscreenDisplayService::Impl {
     std::uint32_t width_ = 0;
     std::uint32_t height_ = 0;
+    std::uint32_t logical_width_ = NativeProductionDisplayService::LOGICAL_WIDTH;
+    std::uint32_t logical_height_ = NativeProductionDisplayService::LOGICAL_HEIGHT;
     std::thread::id owner_thread_{};
     DisplayTelemetry telemetry_{};
     std::uint64_t destination_identity_ = 0x300000001ull;
@@ -27,8 +29,9 @@ struct NativeOffscreenDisplayService::Impl {
     HGLRC context_ = nullptr;
 #endif
 
-    Impl(std::uint32_t width, std::uint32_t height)
-        : width_(width), height_(height) {}
+    Impl(std::uint32_t width, std::uint32_t height, std::uint32_t logical_w, std::uint32_t logical_h)
+        : width_(width), height_(height), logical_width_(logical_w), logical_height_(logical_h) {}
+
 
     ~Impl() {
 #ifdef _WIN32
@@ -52,15 +55,17 @@ struct NativeOffscreenDisplayService::Impl {
 };
 
 std::shared_ptr<NativeOffscreenDisplayService> NativeOffscreenDisplayService::create(
-    std::uint32_t width, std::uint32_t height, DisplayServiceFailure& failure) {
+    std::uint32_t width, std::uint32_t height, DisplayServiceFailure& failure,
+    std::uint32_t logical_w, std::uint32_t logical_h) {
     failure = {};
-    if (width == 0 || height == 0) {
-        failure = {DisplayServiceError::invalid_dimensions, "Target display dimensions must be non-zero"};
+    if (width == 0 || height == 0 || logical_w == 0 || logical_h == 0) {
+        failure = {DisplayServiceError::invalid_dimensions, "Target and logical display dimensions must be non-zero"};
         return nullptr;
     }
 
     try {
-        auto impl = std::make_unique<Impl>(width, height);
+        auto impl = std::make_unique<Impl>(width, height, logical_w, logical_h);
+
 #ifdef _WIN32
         WNDCLASSW wc{};
         wc.style = CS_OWNDC;
@@ -173,14 +178,30 @@ std::uint64_t NativeOffscreenDisplayService::destination_identity() const noexce
     return impl_ ? impl_->destination_identity_ : 0;
 }
 
+std::uint32_t NativeOffscreenDisplayService::logical_width() const noexcept {
+    return impl_ ? impl_->logical_width_ : LOGICAL_WIDTH;
+}
+
+std::uint32_t NativeOffscreenDisplayService::logical_height() const noexcept {
+    return impl_ ? impl_->logical_height_ : LOGICAL_HEIGHT;
+}
+
 DisplayViewportRect NativeOffscreenDisplayService::compute_viewport(
     std::uint32_t target_w, std::uint32_t target_h, DisplayAspectMode aspect_mode) const noexcept {
-    if (target_w == LOGICAL_WIDTH && target_h == LOGICAL_HEIGHT) {
+    // If target matches 16:9 Xbox 720p logical resolution and 16:9 aspect requested
+    if (target_w == LOGICAL_WIDTH && target_h == LOGICAL_HEIGHT && aspect_mode == DisplayAspectMode::widescreen_16_9) {
         return DisplayViewportRect{0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT};
+    }
+    // If target matches PS2 640x448 (anamorphic 4:3 NTSC framebuffer) and 4:3 aspect requested
+    if (target_w == PS2_LOGICAL_WIDTH && target_h == PS2_LOGICAL_HEIGHT && aspect_mode == DisplayAspectMode::standard_4_3) {
+        return DisplayViewportRect{0, 0, PS2_LOGICAL_WIDTH, PS2_LOGICAL_HEIGHT};
     }
     double aspect = (aspect_mode == DisplayAspectMode::widescreen_16_9) ? (16.0 / 9.0) : (4.0 / 3.0);
     double target_aspect = (target_h > 0) ? (double(target_w) / double(target_h)) : aspect;
     DisplayViewportRect rect{};
+    if (std::abs(target_aspect - aspect) < 0.001) {
+        return DisplayViewportRect{0, 0, target_w, target_h};
+    }
     if (target_aspect > aspect) {
         // Target is wider than aspect ratio -> Pillarbox (vertical fit, center horizontally)
         rect.height = target_h;
@@ -236,6 +257,18 @@ DisplayTelemetry NativeOffscreenDisplayService::telemetry() const noexcept {
 void NativeOffscreenDisplayService::record_gl_draw(std::uint32_t count) noexcept {
     if (impl_) {
         impl_->telemetry_.gl_draw_calls += count;
+    }
+}
+
+void NativeOffscreenDisplayService::record_diagnostic_readback(std::uint32_t count) noexcept {
+    if (impl_) {
+        impl_->telemetry_.diagnostic_readbacks += count;
+    }
+}
+
+void NativeOffscreenDisplayService::record_frame_readback(std::uint32_t count) noexcept {
+    if (impl_) {
+        impl_->telemetry_.frame_readbacks += count;
     }
 }
 

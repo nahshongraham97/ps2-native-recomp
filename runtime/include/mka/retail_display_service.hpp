@@ -45,12 +45,17 @@ struct DisplayTelemetry {
 };
 
 // Abstract interface for the production host display service.
-// Defines context ownership, viewport scaling (logical 640x448 vs host target),
-// and swap/vsync presentation contracts.
+// Defines context ownership, viewport scaling (logical 1280x720 primary Xbox target,
+// named 640x448 PS2 reference mode vs host target), and swap/vsync presentation contracts.
 class NativeProductionDisplayService {
 public:
-    static constexpr std::uint32_t LOGICAL_WIDTH = 640;
-    static constexpr std::uint32_t LOGICAL_HEIGHT = 448;
+    // Xbox 720p Primary Logical Target (Recovered from default.xbe 0x002695f0)
+    static constexpr std::uint32_t LOGICAL_WIDTH = 1280;
+    static constexpr std::uint32_t LOGICAL_HEIGHT = 720;
+
+    // PS2 Reference Logical Dimensions (Named test case / GS frame buffer)
+    static constexpr std::uint32_t PS2_LOGICAL_WIDTH = 640;
+    static constexpr std::uint32_t PS2_LOGICAL_HEIGHT = 448;
 
     virtual ~NativeProductionDisplayService() noexcept = default;
 
@@ -61,7 +66,9 @@ public:
     virtual void* native_display_handle() const noexcept = 0;
     virtual std::uint64_t destination_identity() const noexcept = 0;
 
-    // Viewport & Aspect Ratio Management (Letterbox / Pillarbox centering)
+    // Logical Dimensions & Viewport & Aspect Ratio Management
+    virtual std::uint32_t logical_width() const noexcept = 0;
+    virtual std::uint32_t logical_height() const noexcept = 0;
     virtual DisplayViewportRect compute_viewport(std::uint32_t target_w, std::uint32_t target_h,
         DisplayAspectMode aspect_mode) const noexcept = 0;
 
@@ -77,6 +84,8 @@ public:
     virtual std::uint32_t target_height() const noexcept = 0;
     virtual DisplayTelemetry telemetry() const noexcept = 0;
     virtual void record_gl_draw(std::uint32_t count = 1) noexcept = 0;
+    virtual void record_diagnostic_readback(std::uint32_t count = 1) noexcept = 0;
+    virtual void record_frame_readback(std::uint32_t count = 1) noexcept = 0;
     virtual void reset_telemetry() noexcept = 0;
 };
 
@@ -87,7 +96,8 @@ public:
 class NativeOffscreenDisplayService final : public NativeProductionDisplayService {
 public:
     static std::shared_ptr<NativeOffscreenDisplayService> create(
-        std::uint32_t width, std::uint32_t height, DisplayServiceFailure& failure);
+        std::uint32_t width, std::uint32_t height, DisplayServiceFailure& failure,
+        std::uint32_t logical_w = LOGICAL_WIDTH, std::uint32_t logical_h = LOGICAL_HEIGHT);
 
     ~NativeOffscreenDisplayService() noexcept override;
 
@@ -97,6 +107,8 @@ public:
     void* native_display_handle() const noexcept override;
     std::uint64_t destination_identity() const noexcept override;
 
+    std::uint32_t logical_width() const noexcept override;
+    std::uint32_t logical_height() const noexcept override;
     DisplayViewportRect compute_viewport(std::uint32_t target_w, std::uint32_t target_h,
         DisplayAspectMode aspect_mode) const noexcept override;
 
@@ -107,6 +119,8 @@ public:
     std::uint32_t target_height() const noexcept override;
     DisplayTelemetry telemetry() const noexcept override;
     void record_gl_draw(std::uint32_t count = 1) noexcept override;
+    void record_diagnostic_readback(std::uint32_t count = 1) noexcept override;
+    void record_frame_readback(std::uint32_t count = 1) noexcept override;
     void reset_telemetry() noexcept override;
 
 private:

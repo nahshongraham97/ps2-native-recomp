@@ -1,4 +1,4 @@
-# Native Xbox Matrix Kernels (Option C) & First Retail Presentation Service
+# Native Xbox 1280x720 Target Presentation & Retail Video Mode Architecture
 
 Stage: compiled and tested components through actual Core/Main prefix.
 Not a complete whole-scene renderer, graphics driver, oracle, or whole-game acceptance result.
@@ -6,7 +6,7 @@ Acceptance status: **OPEN** (Matrix kernels, scene bootstrap, and offscreen movi
 
 ## 1. Authority and Binary Identities
 
-Xbox `default.xbe` and PS2 `SLUS_214.10` establish the matrix transform contracts, engine initialization call graph, and scene bootstrap sequence:
+Xbox `default.xbe` and PS2 `SLUS_214.10` establish the video mode selection, matrix transform contracts, engine initialization call graph, and scene bootstrap sequence:
 - Xbox `default.xbe`: SHA-256 `78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393`
 - PS2 `SLUS_214.10`: SHA-256 `a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f`
 
@@ -24,7 +24,45 @@ Implementation files:
 
 Zero CPU rasterization / zero guest console emulation (`g_ram`, `g_spr`, `g_memory`, emulated SPU2/IOP, JITs) is used.
 
-## 2. Option C (Partitioned) Mathematical Authority & Matrix Kernels
+## 2. Xbox Video Mode Recovery & 1280x720 TargetParity
+
+### Owner Confirmation & Binary Recovery Evidence
+Owner confirmed: **1280x720 is the primary Xbox target resolution** for native reimplementation. Disassembly of Xbox `default.xbe` conclusively proves this configuration:
+- In `0x0007d460` (retail engine startup), `0x002695f0` is invoked to configure `RwEngineOpenParams` at `0x005bf520`.
+- In `0x002695f0`:
+  - Queries Xbox dashboard / hardware video flags via `call 0x002a37cb`.
+  - Bit 1 test (`test eax, 2` / HDTV 720p enabled):
+    - Sets logical width: `0x005bf520 = 0x500` (1280)
+    - Sets logical height: `0x005bf524 = 0x2d0` (720)
+    - Sets backbuffer count: `0x005bf534 = 2` (double-buffered presentation)
+    - Sets refresh rate: `0x005bf540 = 0x3c` (60 Hz)
+    - Sets widescreen mode: `0x005bf53c = 0x50` (`0x40 | 0x10`)
+    - Sets format/depth: `0x005bf528 = 0x11` (32-bit ARGB8888 color, 24-bit D24S8 depth)
+    - Sets camera aspect ratio: `0x0054ca88 = 0x3fe38e39` (1.7777778f = 16:9 widescreen)
+    - Sets render target dimensions: `0x00831e1c = 1280`, `0x00831e18 = 720`
+  - Bit 0 test (480p widescreen): Sets 720x480 (`0x2d0` x `0x1e0`) with 16:9 aspect (`0x3fe38e39`).
+  - Standard 480i: Sets 640x480 (`0x280` x `0x1e0`) with 4:3 aspect (`0x3faaaaab` = 1.3333334f).
+  - **Evidence conclusion**: 640x448 does NOT exist on Xbox; it is strictly a PS2 GS NTSC legacy resolution.
+
+### PS2 Comparison (`SLUS_214.10`)
+- PS2 startup at `0x0012726c`, `0x001b03c0`, and `0x001b0450`:
+  - Mode 7 in the Sky2 GS subsystem selects 640x448 NTSC active raster (interlaced/progressive) with anamorphic CRT scanout.
+
+### Movie Assets Audit & Layout Rule
+- Retail disc contains both standard 4:3 (`*N.SFD`) and widescreen 16:9 (`*W.SFD`) movie streams (`LOGON.SFD`, `LOGOW.SFD`, `OPENINGN.SFD`, `OPENINGW.SFD`, `TITLEN.SFD`, `TITLEW.SFD`, etc.).
+- Project inputs contain only `default.xbe` under `private-inputs/xbox-mka-20261121`. The decoded frame corpus in `research/runs/native-movie-decode-20261119/decoded-02` contains only decoded planes for 4:3 PS2 `LOGON.SFD` (640x448).
+- The presence of 640x448 frames is strictly an input corpus availability constraint, not an Xbox architectural default.
+- **Layout Rule for 640x448 assets on 1280x720 target**:
+  - We employ **4:3 Pillarboxed Centered Fit** (`MovieWindowPolicy::centered_fit`, `MovieAspectMode::explicit_display_aspect` with 4:3).
+  - Viewport rect on 1280x720: width = 960, height = 720, centered at x = 160, y = 0, with 160-pixel black margins on left and right. This preserves original aspect ratio with zero anamorphic geometric distortion.
+
+### Audit of 640x448 Assumptions Across Codebase
+1. `runtime/include/mka/retail_display_service.hpp`: Parameterized logical dimensions. Primary target is 1280x720 (`LOGICAL_WIDTH/HEIGHT`). 640x448 is retained as named PS2 reference constants (`PS2_LOGICAL_WIDTH/HEIGHT`).
+2. `runtime/src/gs/`: GS hardware emulation paths (832x448 FBW=13, 640x448 display window) are authentic to PS2 GS hardware model and safe.
+3. `tests/test_retail_loaded_system_art.cpp`: Text coordinate space requires a scaling transform for true HD.
+4. `tests/test_retail_renderer_rasters.cpp`: Camera and depth rasters reflect 1280x720 on Xbox.
+
+## 3. Option C (Partitioned) Mathematical Authority & Matrix Kernels
 
 ### Owner Decision
 Option C (Partitioned): Rendering transforms (view, projection, model, raster) use native host IEEE 754 `float` math with documented tolerances. Gameplay-critical arithmetic is classified function-by-function based on Xbox x86 behavior or documented tolerance, with zero EE COP1 bit-exact emulation unless a specific retail oracle replay requires it.
@@ -103,53 +141,51 @@ To prevent cross-console address mixing and recalled naming errors, addresses ar
 
 ## 4. Authentic Retail Presentation Order & Production Display Service
 
-### Retail Startup Presentation Chain Recovered
-Disassembly of `SLUS_214.10` reveals the movie table and controller logic governing the initial presentation:
-- Array `movie_descriptors[4]` at `0x005a24c0` (40 bytes per entry):
-  - Index 0: `LOGON.SFD` (`0x005fbb80`, 640x448, 152 frames) + variants `LOGOW.SFD`, `LOGO6N.SFD`, `LOGO6W.SFD` (Midway logo intro).
-  - Index 1: `TITLEN.SFD` (`0x005fbbc0`, 640x448, 900 frames) + variants `TITLEW.SFD`, `TITLE6N.SFD`, `TITLE6W.SFD`.
-  - Index 2: `OPENINGN.SFD` (`0x005fbc00`, 640x448, 7,841 frames) + variants `OPENINGW.SFD`.
-  - Index 3: `ATTRACTN.SFD` (`0x005fbc40`, 640x448).
-- Execution sequence:
-  - Startup task `0x0018d450` (`begin_menu_18d450`, menu state 0 / intro bootstrap) calls `0x00181f90` (intro movie controller).
-  - Intro movie controller `0x00181f90` configures `movie_descriptors[0]` (`LOGON.SFD`) and calls `0x00336410` (movie player).
-  - When `LOGON.SFD` completes or is skipped via controller Start/Cross, `0x00181f90` advances to index 1 (`TITLEN.SFD`) and index 2 (`OPENINGN.SFD`).
-- Playable Oracle Log (`research/issues/ps2-native-recomp-upstream-mka-playtest-2026-10-30.md`):
-  - Oracle run R183 verified `LOGON.SFD` is presented first, followed by `OPENINGN.SFD`, before reaching the interactive Kombat main menu at frame 19,800.
-- Recovered vs Inferred:
-  - **Recovered**: `LOGON.SFD` is strictly recovered as the first contentful visual presentation submitted by retail.
-  - **Inferred**: Whether a prior black/clear buffer is submitted during display setup `0x001b03c0`/`0x001b2760` is inferred.
+### Retail Startup Presentation Chain & Sequence Reconciliation
+Disassembly of `SLUS_214.10` and Xbox `default.xbe` reconciles the movie descriptor table with runtime state progression:
+- Array `movie_descriptors[4]` at `0x005a24c0` (40 bytes per entry) is an indexed asset array:
+  - Index 0: `LOGON.SFD` (`0x005fbb80`, 640x448, 152 frames) + widescreen variant `LOGOW.SFD` (Midway logo intro).
+  - Index 1: `TITLEN.SFD` (`0x005fbbc0`, 640x448, 900 frames) + widescreen variant `TITLEW.SFD` (idle title screen).
+  - Index 2: `OPENINGN.SFD` (`0x005fbc00`, 640x448, 7,841 frames) + widescreen variant `OPENINGW.SFD` (intro story cutscene).
+  - Index 3: `ATTRACTN.SFD` (`0x005fbc40`, 640x448) + widescreen variant `ATTRACTW.SFD` (gameplay attract demo).
+- State Machine Dispatch Table at `0x005a3410`:
+  - State 0 (`0x005a3410`): Calls `0x0018d450` (`begin_menu_18d450`) -> calls `0x00181f90` with parameter $a0 = 0$ (`LOGON.SFD`).
+  - State 1 (`0x005a3414`): Calls `0x0018d870` (`begin_menu_18d870`) -> calls `0x00181f90` with parameter $a0 = 2$ (`OPENINGN.SFD`).
+  - State 2 (`0x005a3418`): Calls `0x0018d8e0` (`begin_menu_18d8e0`) -> calls `0x00181f90` with parameter $a0 = 1$ (`TITLEN.SFD`).
+- Sequence reconciliation:
+  - In retail boot / Playable Oracle R183, boot executes State 0 (`LOGON.SFD`) followed immediately by State 1 (`OPENINGN.SFD`), and upon completion (or button press) transitions directly to the Kombat main menu at frame 19,800.
+  - State 2 (`TITLEN.SFD`) is an idle title screen entered only when the attract timer expires while waiting at the main menu. Thus `TITLEN.SFD` is conditional, explaining why Oracle R183 observes `LOGON -> OPENINGN -> Menu`.
 
-### Production Display Interface
+### Production Display Interface (1280x720 Primary Target)
 Implemented in `runtime/include/mka/retail_display_service.hpp` and `runtime/src/native/retail_display_service.cpp`:
-- `NativeProductionDisplayService` defines the production display contract: context lease lifecycle (`acquire_context`, `release_context`), viewport calculation with aspect scaling (`compute_viewport`), buffer presentation (`present_frame`), and vsync control (`set_vsync_enabled`).
+- `NativeProductionDisplayService` defines the production display contract: context lease lifecycle (`acquire_context`, `release_context`), viewport calculation with aspect scaling (`compute_viewport`), buffer presentation (`present_frame`), and vsync control (`set_vsync`).
+- Primary logical resolution: `LOGICAL_WIDTH = 1280`, `LOGICAL_HEIGHT = 720` (Xbox target resolution).
+- Named PS2 reference mode: `PS2_LOGICAL_WIDTH = 640`, `PS2_LOGICAL_HEIGHT = 448`.
 - `NativeOffscreenDisplayService` implements the interface for headless and offscreen targets:
   - Context ownership: Hosts an offscreen double-buffered WGL context without an active desktop window.
-  - Viewport & aspect scaling: Computes 640x448 logical scaling with pillarboxing/letterboxing; returns exact 1:1 (640x448) when the target dimensions match the logical dimensions.
-  - Swap & vsync semantics: Virtual swap via `glFlush()` for offscreen targets. Vsync control via `set_vsync_enabled` cleanly returns `false` (unsupported on headless/offscreen targets without a monitor refresh clock).
-
-### Physical Window vs Offscreen Target Partition
-Explicitly documented responsibilities:
-- **Physical OS Window**:
-  - Required for: OS message loop pump (`WM_PAINT`, `WM_SIZE`, `WM_CLOSE`), hardware desktop swapchain (`SwapBuffers`), desktop compositor integration, and hardware vsync synchronization (`wglSwapIntervalEXT`).
-  - Prohibited under current acceptance rules (TASK_BOARD.md row 10 prohibition on visible windows and user endpoints prior to acceptance matrix completion).
-- **Offscreen Display Service**:
-  - Provides: Double-buffered WGL context hosting, context lease acquisition, virtual swap via `glFlush()`, and deterministic offline timing without monitor refresh waits.
-  - Reusing `HiddenGlContext` (a 1x1 test fixture) for production is strictly avoided by providing the dedicated `NativeOffscreenDisplayService`.
+  - Viewport & aspect scaling: Computes exact 1:1 on 1280x720 16:9 widescreen, 4:3 pillarboxing (960x720 centered with 160px black borders) on 1280x720, and 1:1 on named 640x448 PS2 reference mode.
+  - Swap & vsync semantics: Virtual swap via `glFlush()` for offscreen targets. Vsync control via `set_vsync` cleanly returns `false` (`vsync_unsupported_offscreen`).
+  - Telemetry: Tracks `gl_draw_calls`, `cpu_composited_pixels`, `frame_readbacks`, `diagnostic_readbacks`, `fallback_pixels`.
 
 ### Authentic Movie Presentation & External Frame Capture
 Verified in `tests/test_retail_display_movie_presentation.cpp`:
 - Pipeline:
-  - Instantiates `NativeOffscreenDisplayService` at 640x448.
+  - Instantiates `NativeOffscreenDisplayService` at 1280x720.
   - Attaches `NativeMovieGlDevice` to the display service under a valid context lease.
   - Decodes frame 0 of authentic retail `LOGON.SFD` YUV420 planes (`LOGON.SFD.first.plane{0,1,2}`) using the authentic `MOVIER.ovl` color transformation matrix (`0x77dd8`).
-  - Uploads texture planes to OpenGL and presents via `NativeMovieGlDevice::present`.
+  - Uploads texture planes to OpenGL and presents via `NativeMovieGlDevice::present` with `MovieWindowPolicy::centered_fit` and explicit 4:3 display aspect.
+  - Destination rect computed: `[160, 0, 960, 720]` (4:3 pillarbox).
   - Executes hardware draw call (`glBegin(GL_QUADS)` inside `NativeMovieGlDevice`).
-- External Frame Capture Hashes:
-  - `FNV1a64 = 0xd382738805ef4d35`
-  - `SHA256 = 9fe4654ba12932cc05dca96ef194bf9d9b71c52a6985804ffdbca054e352cd9b`
+- Diagnostic Frame Capture & Regression Pin:
+  - Frame buffer readback via allowlisted diagnostic readback:
+    - `FNV1a64 = 0xf185564585568325`
+    - `SHA256 = 0d649a12e097324ad0a7f60d0de43d666409094efbc7946111b92f662e9c0d0a`
+    - Documented: Frame hashes are driver-dependent regression pins.
+- Independent CPU Reference Verification (`[native-design-check]`):
+  - Black pillarbox margins verified: Left bar (x=80) and right bar (x=1200) strictly black `(0, 0, 0, 255)`.
+  - Sample points across active movie quad (center logo and near quad corners) compared against CPU-converted reference `expected_frame.rgba` with maximum absolute delta $\le 2$.
 - Production Presentation Telemetry:
-  - `[diagnostic-telemetry] GL draw calls = 1, CPU composited pixels = 0, frame readbacks = 0, diagnostic readbacks = 0, fallback pixels = 0`
+  - `[diagnostic-telemetry] GL draw calls = 1, CPU composited pixels = 0, frame readbacks = 0, diagnostic readbacks = 1, fallback pixels = 0`
   - Zero unallowlisted CPU readbacks or software fallbacks occur.
 
 ## 5. First-Scene Bootstrap Continuation
@@ -173,34 +209,35 @@ Resolved symbols in this subsystem (9):
 8. `mka::retail::scene_bootstrap_required::continue_first_scene_at_225d40`
 9. `mka::retail::scene_bootstrap_required::continue_scene_reset_at_125d60`
 
-Remaining undefined symbols queue order (24):
-1. **10 main-binding symbols** (Priority queue 1):
-   - `render_retail_frame` (primary frame render dispatcher)
-   - `advance_retail_game_services`
-   - `create_retail_action_task`
-   - `deliver_retail_builtin_scene_event`
-   - `dispatch_retail_enabled_mode`
-   - `poll_retail_controller_roles`
-   - `prune_retail_associations`
-   - `reset_and_bind_retail_scene_event_graph`
-   - `retail_mode_dispatch_enabled`
-   - `service_retail_frame_input`
-2. **11 initial-task symbols** (Priority queue 2):
-   - `begin_intro_18deb0`
-   - `begin_menu_18d450`
-   - `begin_menu_18d660`
-   - `begin_menu_18d700`
-   - `begin_menu_18d770`
-   - `begin_menu_18d800`
-   - `begin_menu_18d870`
-   - `begin_menu_18d8e0`
-   - `begin_prompt_18dc10`
-   - `clear_nonowning_references_18da30`
-   - `transition_1225d0`
-3. **3 profile symbols** (Priority queue 3):
-   - `apply_retail_profile_participant_from_188720`
-   - `invoke_retail_profile_select_from_2f1630`
-   - `publish_retail_profile_participant_from_189690`
+Remaining undefined symbols queue order (24) - Reordered with Retail Movie Path First:
+1. **Priority Queue 1: Retail Movie Presentation Path (4 symbols)**:
+   - `mka::retail::initial_task_required::begin_menu_18d450` (launches LOGON.SFD first movie presentation)
+   - `mka::retail::initial_task_required::begin_intro_18deb0` (advances movie playback to OPENINGN.SFD)
+   - `mka::retail::initial_task_required::transition_1225d0` (handles transition from movie to main menu)
+   - `mka::retail::main_binding::render_retail_frame` (primary frame presentation pipeline dispatcher)
+2. **Priority Queue 2: Remaining Initial Task & Reset Symbols (8 symbols)**:
+   - `mka::retail::initial_task_required::begin_menu_18d660`
+   - `mka::retail::initial_task_required::begin_menu_18d700`
+   - `mka::retail::initial_task_required::begin_menu_18d770`
+   - `mka::retail::initial_task_required::begin_menu_18d800`
+   - `mka::retail::initial_task_required::begin_menu_18d870`
+   - `mka::retail::initial_task_required::begin_menu_18d8e0`
+   - `mka::retail::initial_task_required::begin_prompt_18dc10`
+   - `mka::retail::initial_reset_required::clear_nonowning_references_18da30`
+3. **Priority Queue 3: Remaining Main-Binding Dispatch Symbols (9 symbols)**:
+   - `mka::retail::main_binding::advance_retail_game_services`
+   - `mka::retail::main_binding::create_retail_action_task`
+   - `mka::retail::main_binding::deliver_retail_builtin_scene_event`
+   - `mka::retail::main_binding::dispatch_retail_enabled_mode`
+   - `mka::retail::main_binding::poll_retail_controller_roles`
+   - `mka::retail::main_binding::prune_retail_associations`
+   - `mka::retail::main_binding::reset_and_bind_retail_scene_event_graph`
+   - `mka::retail::main_binding::retail_mode_dispatch_enabled`
+   - `mka::retail::main_binding::service_retail_frame_input`
+4. **Priority Queue 4: Profile Registration Symbols (3 symbols)**:
+   - `mka::retail::apply_retail_profile_participant_from_188720`
+   - `mka::retail::invoke_retail_profile_select_from_2f1630`
+   - `mka::retail::publish_retail_profile_participant_from_189690`
 
 ## 7. Acceptance & Verification Commitments
 

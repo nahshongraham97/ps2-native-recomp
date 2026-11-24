@@ -145,23 +145,35 @@ int main(int argc, char** argv) try {
     check(!movier_path.empty() && std::filesystem::exists(movier_path), "MOVIER.ovl path must exist");
     check(!decoded_dir.empty() && std::filesystem::exists(decoded_dir), "Decoded planes directory must exist");
 
-    // 2. Initialize offscreen production display service (1103x601 non-4:3 host target)
+    // 2. Initialize offscreen production display service (1280x720 primary Xbox target)
     DisplayServiceFailure failure;
-    const std::uint32_t host_w = 1103;
-    const std::uint32_t host_h = 601;
+    const std::uint32_t host_w = 1280;
+    const std::uint32_t host_h = 720;
     auto display = NativeOffscreenDisplayService::create(host_w, host_h, failure);
     check(bool(display) && failure.error == DisplayServiceError::none, "Failed to create offscreen display service");
     check(display->target_width() == host_w && display->target_height() == host_h, "Display target dimensions mismatch");
+    check(display->logical_width() == 1280 && display->logical_height() == 720, "Display logical dimensions mismatch");
 
     // 3. Viewport & Aspect Ratio Handling checks
-    auto vp_4_3 = display->compute_viewport(host_w, host_h, DisplayAspectMode::standard_4_3);
-    check(vp_4_3.height == host_h, "4:3 in 1103x601 should fit vertically");
-    check(vp_4_3.width == static_cast<std::uint32_t>(std::round(double(host_h) * 4.0 / 3.0)), "4:3 width calculation");
-    check(vp_4_3.x == (host_w - vp_4_3.width) / 2, "4:3 pillarbox center x");
-    check(vp_4_3.y == 0, "4:3 pillarbox center y");
+    // 16:9 full viewport on 1280x720
+    auto vp_16_9 = display->compute_viewport(host_w, host_h, DisplayAspectMode::widescreen_16_9);
+    check(vp_16_9.x == 0 && vp_16_9.y == 0 && vp_16_9.width == host_w && vp_16_9.height == host_h, "16:9 full 720p viewport");
 
-    auto vp_exact = display->compute_viewport(640, 448, DisplayAspectMode::standard_4_3);
-    check(vp_exact.x == 0 && vp_exact.y == 0 && vp_exact.width == 640 && vp_exact.height == 448, "640x448 exact viewport");
+    // 4:3 standard aspect on 1280x720 -> Pillarbox (960x720 centered, 160px borders)
+    auto vp_4_3 = display->compute_viewport(host_w, host_h, DisplayAspectMode::standard_4_3);
+    check(vp_4_3.height == host_h, "4:3 in 1280x720 should fit vertically");
+    check(vp_4_3.width == static_cast<std::uint32_t>(std::round(double(host_h) * 4.0 / 3.0)), "4:3 width calculation");
+    check(vp_4_3.x == (host_w - vp_4_3.width) / 2 && vp_4_3.x == 160, "4:3 pillarbox center x == 160");
+    check(vp_4_3.y == 0, "4:3 pillarbox center y == 0");
+
+    // Named PS2 reference mode check (640x448)
+    auto ps2_display = NativeOffscreenDisplayService::create(
+        640, 448, failure,
+        NativeProductionDisplayService::PS2_LOGICAL_WIDTH,
+        NativeProductionDisplayService::PS2_LOGICAL_HEIGHT);
+    check(bool(ps2_display) && failure.error == DisplayServiceError::none, "Failed to create PS2 reference display");
+    auto ps2_vp = ps2_display->compute_viewport(640, 448, DisplayAspectMode::standard_4_3);
+    check(ps2_vp.x == 0 && ps2_vp.y == 0 && ps2_vp.width == 640 && ps2_vp.height == 448, "640x448 exact PS2 viewport");
 
     // 4. Context Ownership Lease
     check(!display->is_context_current(), "Context should not be current before acquire");
@@ -216,8 +228,8 @@ int main(int argc, char** argv) try {
         client_w,
         client_h,
         MovieAspectMode::explicit_display_aspect,
-        640,
-        448,
+        4,
+        3,
         MovieWindowPolicy::centered_fit
     };
     NativeMoviePresentPlan plan{
@@ -236,24 +248,62 @@ int main(int argc, char** argv) try {
     // 9. External Frame Capture Verification (Diagnostic readback under allowlist)
     const auto dest_rect = movie_destination(plan, layout);
     check(bool(dest_rect), "Valid movie destination rect");
+    check(dest_rect->x == 160 && dest_rect->y == 0 && dest_rect->width == 960 && dest_rect->height == 720,
+        "Destination rect must match 4:3 pillarboxed 960x720 centered within 1280x720");
 
     std::vector<std::uint8_t> actual_pixels(std::size_t(client_w) * client_h * 4);
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
     glReadBuffer(GL_BACK);
     glReadPixels(0, 0, client_w, client_h, GL_RGBA, GL_UNSIGNED_BYTE, actual_pixels.data());
     check(glGetError() == GL_NO_ERROR, "glReadPixels failed during diagnostic capture");
+    display->record_diagnostic_readback(1);
 
     const std::uint64_t frame_fnv = compute_fnv1a64(actual_pixels.data(), actual_pixels.size());
     const std::string frame_sha = compute_sha256_hex(actual_pixels.data(), actual_pixels.size());
-    std::printf("  [external-frame-capture] Captured %ux%u frame: FNV1a64=0x%016llx, SHA256=%s\n",
+    std::printf("  [external-frame-capture] Captured %ux%u frame (driver regression pin): FNV1a64=0x%016llx, SHA256=%s\n",
         client_w, client_h, static_cast<unsigned long long>(frame_fnv), frame_sha.c_str());
 
-    // Verify center pixel of dragon logo in destination rect
-    const unsigned center_x = dest_rect->x + dest_rect->width / 2;
-    const unsigned center_y = dest_rect->y + dest_rect->height / 2;
-    const std::size_t center_idx = (std::size_t(client_h - 1 - center_y) * client_w + center_x) * 4;
+    // [native-design-check] Compare against independent CPU reference conversion
+    // 1. Verify black pillarbox bars (x < 160 and x >= 1120)
+    const unsigned check_bar_x_left = 80;
+    const unsigned check_bar_x_right = 1200;
+    const unsigned check_bar_y = 360;
+    const std::size_t left_bar_idx = (std::size_t(client_h - 1 - check_bar_y) * client_w + check_bar_x_left) * 4;
+    const std::size_t right_bar_idx = (std::size_t(client_h - 1 - check_bar_y) * client_w + check_bar_x_right) * 4;
+    check(actual_pixels[left_bar_idx] == 0 && actual_pixels[left_bar_idx + 1] == 0 && actual_pixels[left_bar_idx + 2] == 0,
+        "Left pillarbox bar must be cleared black");
+    check(actual_pixels[right_bar_idx] == 0 && actual_pixels[right_bar_idx + 1] == 0 && actual_pixels[right_bar_idx + 2] == 0,
+        "Right pillarbox bar must be cleared black");
+
+    // 2. Sample points across movie content and compare to expected_frame.rgba
+    const struct SamplePoint { unsigned x; unsigned y; } sample_points[] = {
+        {640, 360}, // Center dragon logo
+        {200, 100}, // Near bottom-left of quad
+        {200, 620}, // Near top-left of quad
+        {1080, 100}, // Near bottom-right of quad
+        {1080, 620}  // Near top-right of quad
+    };
+
+    for (const auto& pt : sample_points) {
+        const unsigned rx = pt.x - dest_rect->x;
+        const unsigned ry = pt.y - dest_rect->y;
+        const unsigned sx = (rx * 640) / dest_rect->width;
+        const unsigned sy = (ry * 448) / dest_rect->height;
+        const std::size_t actual_idx = (std::size_t(client_h - 1 - pt.y) * client_w + pt.x) * 4;
+        const std::size_t expected_idx = (std::size_t(sy) * 640 + sx) * 4;
+
+        for (int c = 0; c < 3; ++c) {
+            int delta = std::abs(int(actual_pixels[actual_idx + c]) - int(expected_frame.rgba[expected_idx + c]));
+            check(delta <= 2, "Pixel color mismatch between GPU readback and CPU reference exceeds tolerance");
+        }
+    }
+    std::printf("  [native-design-check] Verified GPU output vs independent CPU reference conversion (max delta <= 2)\n");
+
+    // Sample center pixel of dragon logo
+    const std::size_t center_actual_idx = (std::size_t(client_h - 1 - 360) * client_w + 640) * 4;
     std::printf("  [external-frame-capture] Sampled center RGBA: (%u, %u, %u, %u)\n",
-        actual_pixels[center_idx], actual_pixels[center_idx + 1], actual_pixels[center_idx + 2], actual_pixels[center_idx + 3]);
+        actual_pixels[center_actual_idx], actual_pixels[center_actual_idx + 1],
+        actual_pixels[center_actual_idx + 2], actual_pixels[center_actual_idx + 3]);
 
     // 10. Clean shutdown
     backend->retire(std::move(submission.fence));
@@ -265,9 +315,11 @@ int main(int argc, char** argv) try {
     std::printf("  [diagnostic-telemetry] GL draw calls = %u, CPU composited pixels = %u, frame readbacks = %u, diagnostic readbacks = %u, fallback pixels = %u\n",
         tel.gl_draw_calls, tel.cpu_composited_pixels, tel.frame_readbacks, tel.diagnostic_readbacks, tel.fallback_pixels);
 
-    check(tel.gl_draw_calls > 0, "GL draw calls must be greater than zero");
+    check(tel.gl_draw_calls == 1, "GL draw calls must be 1");
     check(tel.cpu_composited_pixels == 0, "CPU composited pixels must be zero");
     check(tel.frame_readbacks == 0, "Frame readbacks must be zero");
+    check(tel.diagnostic_readbacks == 1, "Diagnostic readbacks must be 1");
+    check(tel.fallback_pixels == 0, "Fallback pixels must be zero");
     check(tel.fallback_pixels == 0, "Fallback pixels must be zero");
 
     std::printf("PASS: test_retail_display_movie_presentation completed successfully.\n");
