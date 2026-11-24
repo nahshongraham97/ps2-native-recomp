@@ -12,6 +12,19 @@ During initial testing of the texture dictionary implementation:
 1. `create_texture` invocation failed: The test called `tex_mgr->create_texture(tdesc1, {}, tf)` passing an empty raster handle `{}`. This resulted in `FAIL: create texture 1` with error `RetailRendererTextureError::raster_required`, as the 0408 texture implementation strictly enforces raster attachment upon texture creation.
 2. Resolution and binary scoping: Rather than coupling texture dictionaries to simulated texture containment methods (`add_texture`, `find_texture`, `remove_texture`) which are not authenticated in the plugin 0409 registration site, those methods and tests were removed. The implementation was properly scoped strictly to the binary-recovered 0409 contract: 96-byte container freelist allocation, circular list membership, module open/close reference counting, and current-dictionary pointer tracking.
 
+## Fixture repeatability and directory deletion explanation
+
+During regression client execution, `streams-01` and `images-01` initially failed with non-zero exit codes:
+- `test_native_retail_renderer_streams`: failed with `FAIL native0404 streams: exclusive new stream fixture directory`.
+- `test_native_retail_renderer_images`: failed with `FAIL native0406 images: exclusive new image fixture`.
+
+Root cause:
+Both test harnesses verify test isolation by checking that the destination directory passed on `argv[1]` does not exist prior to test startup (`std::filesystem::exists(dir)` immediately fails). In the initial runner execution, the fixture directories had been manually pre-created, violating the exclusivity check.
+
+Remediation and repeatability fix:
+1. The pre-existing directories were cleared and the tests rerun, producing successful passes (`PASS_NATIVE0404_READ_STREAM_RESOURCE` and `PASS_NATIVE0406_SHARED_CPU_IMAGES`).
+2. To guarantee deterministic repeatability without manual directory cleanup, `run_check.py` was updated to inspect `sys.argv[4:]` during client phase and automatically remove any pre-existing fixture directories before spawning the test executable, and to open `output.log.gz` in `"wb"` mode. All client runs are now idempotent and repeatable on clean checkouts.
+
 ## Verification results
 
 - test_native_retail_renderer_texture_dictionaries: **PASS** (PASS: test_native_retail_renderer_texture_dictionaries passed all 9 scoped verification stages.)

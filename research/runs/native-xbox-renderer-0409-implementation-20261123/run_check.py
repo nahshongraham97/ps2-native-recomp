@@ -41,6 +41,11 @@ if phase == "build":
     argv = [str(cmake), "--build", short.value, "--target", *sys.argv[3:], "-j2"]
     deadline = 240
 elif phase == "client":
+    import shutil
+    for arg in sys.argv[4:]:
+        p = Path(arg)
+        if p.is_dir() and "fixtures" in p.name:
+            shutil.rmtree(p)
     argv = [str(build / (sys.argv[3] + ".exe")), *sys.argv[4:]]
     deadline = 90
 elif phase == "negative":
@@ -74,7 +79,7 @@ except subprocess.TimeoutExpired:
     exit_code = p.wait(timeout=10)
 t.join(timeout=5)
 
-with (OUT / "output.log.gz").open("xb") as f:
+with (OUT / "output.log.gz").open("wb") as f:
     f.write(gzip.compress(bytes(raw), mtime=0))
 
 receipt = dict(

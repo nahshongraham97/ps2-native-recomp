@@ -40,16 +40,13 @@ std::shared_ptr<T> heap_object(
 } // namespace
 
 NativeRetailWorld::NativeRetailWorld(
-    const std::shared_ptr<NativeRetailGameSession>& session,
-    RetailRendererWorldDescription desc) noexcept
-    : NativeRetailRenderWorld(session),
-      desc_(std::move(desc)) {}
+    const std::shared_ptr<NativeRetailGameSession>& session) noexcept
+    : NativeRetailRenderWorld(session) {}
 
 NativeRetailWorld::~NativeRetailWorld() = default;
 
 struct NativeRetailWorldRecord final {
     std::shared_ptr<NativeRetailWorld> world;
-    RetailRendererWorldDescription desc;
     bool destroying{false};
     bool retired{false};
 
@@ -139,7 +136,6 @@ std::shared_ptr<NativeRetailRendererWorldModule> NativeRetailRendererWorldModule
 }
 
 std::optional<NativeRetailWorldHandle> NativeRetailRendererWorldModule::create_world(
-    RetailRendererWorldDescription desc,
     RetailRendererWorldFailure& f) noexcept {
     if (!access(f)) return {};
     if (busy_) {
@@ -166,10 +162,9 @@ std::optional<NativeRetailWorldHandle> NativeRetailRendererWorldModule::create_w
         });
     if (!rec) return {};
 
-    rec->desc = desc;
     try {
         rec->world = std::shared_ptr<NativeRetailWorld>(
-            new NativeRetailWorld(session, desc));
+            new NativeRetailWorld(session));
     } catch (const std::bad_alloc&) {
         f.kind = RetailRendererWorldError::allocation;
         f.operation = "0412 native world object allocation";
@@ -222,22 +217,6 @@ std::shared_ptr<NativeRetailWorld> NativeRetailRendererWorldModule::resolve_worl
     auto rec = validate(handle, f);
     if (!rec) return {};
     return rec->world;
-}
-
-std::optional<RetailRendererWorldObservation> NativeRetailRendererWorldModule::observe(
-    NativeRetailWorldHandle handle,
-    RetailRendererWorldFailure& f) const noexcept {
-    if (!access(f)) return {};
-    auto rec = validate(handle, f);
-    if (!rec) return {};
-
-    RetailRendererWorldObservation obs;
-    obs.name = rec->desc.name;
-    obs.box_min = rec->desc.box_min;
-    obs.box_max = rec->desc.box_max;
-    obs.flags = rec->desc.flags;
-    obs.destroying = rec->destroying;
-    return obs;
 }
 
 std::size_t NativeRetailRendererWorldModule::active_count() const noexcept {

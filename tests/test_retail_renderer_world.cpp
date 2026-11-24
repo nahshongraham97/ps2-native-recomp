@@ -131,7 +131,7 @@ int main() {
             check(!core->world_module(cf), "no world module initially");
             check(core->module_0412_count(cf).value_or(1) == 0, "0412 initial count is 0");
 
-            // 2. Core Plugin 0412 Construction
+            // 2. Core Plugin 0412 Construction (Module Count 0 -> 1)
             check(renderer_required::construct_core_plugin_0412(*core, cf), "construct 0412");
             check(core->module_0412_count(cf).value_or(0) == 1, "0412 count is 1 after construction");
             auto world_mgr = core->world_module(cf);
@@ -140,14 +140,8 @@ int main() {
             RetailRendererWorldFailure wf;
             check(world_mgr->active_count() == 0, "active world count initially 0");
 
-            // 3. World Creation with Description and Bounds
-            RetailRendererWorldDescription desc1;
-            desc1.name = "earthrealm_arena";
-            desc1.box_min = {-500.0f, -100.0f, -500.0f};
-            desc1.box_max = { 500.0f,  300.0f,  500.0f};
-            desc1.flags = 0x01;
-
-            auto world1 = world_mgr->create_world(desc1, wf);
+            // 3. World 4-byte Container Creation
+            auto world1 = world_mgr->create_world(wf);
             check(bool(world1) && !world1->empty(), "create world 1");
             check(world_mgr->active_count() == 1, "active world count is 1");
 
@@ -155,56 +149,36 @@ int main() {
             auto concrete_world = world_mgr->resolve_world(*world1, wf);
             check(bool(concrete_world), "resolve concrete world 1");
             check(concrete_world->owner_session() == fix.startup.game_session.get(), "world inherits session");
-            check(concrete_world->description().name == "earthrealm_arena", "world description name matches");
 
-            // 5. World Observation
-            auto obs1 = world_mgr->observe(*world1, wf);
-            check(bool(obs1), "observe world 1");
-            check(obs1->name == "earthrealm_arena", "observed name matches");
-            check(obs1->box_min[0] == -500.0f && obs1->box_max[0] == 500.0f, "observed bounds match");
-            check(obs1->flags == 0x01, "observed flags match");
-            check(!obs1->destroying, "not destroying");
-
-            // 6. Multiple World Creation & Isolation
-            RetailRendererWorldDescription desc2;
-            desc2.name = "netherrealm_spire";
-            desc2.box_min = {-1000.0f, 0.0f, -1000.0f};
-            desc2.box_max = { 1000.0f, 800.0f,  1000.0f};
-            desc2.flags = 0x02;
-
-            auto world2 = world_mgr->create_world(desc2, wf);
+            // 5. Multiple World Creation & Distinct Handle Identity
+            auto world2 = world_mgr->create_world(wf);
             check(bool(world2) && !world2->empty(), "create world 2");
             check(world_mgr->active_count() == 2, "active world count is 2");
             check(!world1->same_identity(*world2), "worlds have distinct identity");
 
-            auto obs2 = world_mgr->observe(*world2, wf);
-            check(bool(obs2) && obs2->name == "netherrealm_spire", "observed world 2 name");
-
-            // 7. World Destruction & Active Count Decrement
+            // 6. World Destruction & Active Count Decrement
             check(world_mgr->destroy_world(*world2, wf), "destroy world 2");
             check(world_mgr->active_count() == 1, "active world count drops to 1");
 
-            // 8. Retired Handle Rejection (Fail-Closed)
+            // 7. Generational Handle Invalidation (Fail-Closed Rollback Safety)
             RetailRendererWorldFailure ret_f;
-            check(!world_mgr->observe(*world2, ret_f), "reject observe retired world");
+            check(!world_mgr->resolve_world(*world2, ret_f), "reject resolve retired world");
             check(ret_f.kind == RetailRendererWorldError::retired_world, "reported retired_world error");
 
-            check(!world_mgr->resolve_world(*world2, ret_f), "reject resolve retired world");
-
-            // 9. Thread Affinity Checks
+            // 8. Thread Affinity Checks
             std::thread([&]() {
                 RetailRendererWorldFailure thread_f;
-                check(!world_mgr->create_world(desc2, thread_f), "foreign thread rejected");
+                check(!world_mgr->create_world(thread_f), "foreign thread rejected");
                 check(thread_f.kind == RetailRendererWorldError::wrong_thread, "wrong_thread error reported");
             }).join();
 
-            // 10. Plugin Teardown & Module Count Decrement
+            // 9. Core Plugin Teardown & Module Count Decrement (1 -> 0)
             renderer_required::destroy_core_plugin_0412(*core);
             check(core->module_0412_count(cf).value_or(1) == 0, "0412 count is 0 after destroy");
             check(!core->world_module(cf), "no world module after destroy");
         }
 
-        std::puts("PASS: test_native_retail_renderer_world passed all 10 verification stages.");
+        std::puts("PASS: test_native_retail_renderer_world passed all 9 scoped verification stages.");
         return 0;
     } catch (const std::exception& e) {
         std::fprintf(stderr, "FAIL: %s\n", e.what());

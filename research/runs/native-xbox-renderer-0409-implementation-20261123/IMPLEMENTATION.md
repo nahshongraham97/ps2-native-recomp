@@ -66,10 +66,22 @@ Registration sequence and exact object sizes derived directly from binary calls:
    - PS2: size 0x04 (4 bytes) at 0x001a6808 (construct 0x001a3df0, destroy 0x001a3e70).
 4. Plugin 040a (RwMaterial):
    - Xbox: size 0x74 (**116 bytes**) at 0x002c020a (push 0x74).
-   - PS2: size 0x7c (**124 bytes**) at 0x001a6838 (li $a0, 0x7c; 8 additional bytes for PS2 GS extension structure).
+   - PS2: size 0x7c (**124 bytes**) at 0x001a6838 (li $a0, 0x7c).
+   - Note on console sizes: Per project policy, neither console's in-memory layout or struct padding defines the native design. The native material model follows recovered behavioral interfaces, not either console memory structure. The hypothesis that the 8-byte difference between PS2 and Xbox represents a "GS extension delta" is unverified and represents an architectural interpretation rather than binary proof.
 5. Plugin 040b (RwAtomic / RwClump):
    - Xbox: size 0x28 (40 bytes) at 0x002c021a (push 0x28).
    - PS2: size 0x28 (40 bytes) at 0x001a6858 (li $a0, 0x28).
+
+## Module open/close resolution (0409 vs 0412)
+
+Recheck of the binary call sites establishes that 0409 and 0412 do NOT share module open/close addresses:
+- **0409 (RwTexDictionary)**:
+  - Xbox: constructor `0x002c9840` calls module-open `0x002c9910` at `0x002c9849` (`e8 c2 00 00 00`); destructor `0x002c9860` calls module-close `0x002c9890` at `0x002c9860` (`e8 2b 00 00 00`).
+  - PS2: constructor `0x001a4a80` calls module-open `0x001a7690` at `0x001a4a9c` (`jal 0x001a7690`); destructor `0x001a4ac0` calls module-close `0x001a75d0` at `0x001a4ac0` (`jal 0x001a75d0`).
+- **0412 (RwWorld)**:
+  - Xbox: constructor `0x002cd7d0` calls plugin extension registry helper `0x002c461d` at `0x002cd7ed` and increments module count at `0x005c761c`; destructor `0x002cd820` calls plugin removal helper `0x002c3fc0` at `0x002cd830` and decrements module count at `0x005c761c`.
+  - PS2: constructor `0x001a3df0` calls plugin extension registry helper `0x001a0fd0` at `0x001a3e20` and increments module count at `-23604($gp)`; destructor `0x001a3e70` calls plugin removal helper `0x001a10a0` at `0x001a3e9c` and decrements module count at `-23604($gp)`.
+The earlier report's attribution of `0x001a7690`/`0x001a75d0` to 0412 was a transcription error from 0409. 0412 uses the generic plugin registry helpers and directly manages its module counter.
 
 ## Scope of implementation
 
