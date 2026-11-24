@@ -277,6 +277,7 @@ if(WIN32)
         runtime/src/native/retail_profile_task_retirement.cpp
         runtime/src/native/retail_task_dispatch_main.cpp runtime/src/native/retail_initial_task_main.cpp
         runtime/src/native/retail_initial_task.cpp runtime/src/native/retail_initial_reset.cpp
+        runtime/src/native/retail_initial_movie_path.cpp
         runtime/src/native/retail_game_records.cpp
         runtime/src/native/retail_game_records_main.cpp
         runtime/src/native/retail_task_lookup_main.cpp

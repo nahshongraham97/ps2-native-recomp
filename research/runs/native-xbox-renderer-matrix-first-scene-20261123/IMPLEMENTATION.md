@@ -14,6 +14,7 @@ Implementation files:
 - `runtime/include/mka/retail_display_service.hpp`
 - `runtime/include/mka/retail_renderer_cameras.hpp`
 - `runtime/src/native/retail_display_service.cpp`
+- `runtime/src/native/retail_initial_movie_path.cpp`
 - `runtime/src/native/retail_renderer_cameras.cpp`
 - `runtime/src/native/retail_renderer_matrix_kernels.cpp`
 - `runtime/src/native/retail_renderer_transforms_kernels.cpp`
@@ -24,7 +25,7 @@ Implementation files:
 
 Zero CPU rasterization / zero guest console emulation (`g_ram`, `g_spr`, `g_memory`, emulated SPU2/IOP, JITs) is used.
 
-## 2. Xbox Video Mode Recovery & 1280x720 TargetParity
+## 2. Xbox Video Mode Recovery, 1280x720 TargetParity & Presentation Architecture
 
 ### Owner Confirmation & Binary Recovery Evidence
 Owner confirmed: **1280x720 is the primary Xbox target resolution** for native reimplementation. Disassembly of Xbox `default.xbe` conclusively proves this configuration:
@@ -48,19 +49,65 @@ Owner confirmed: **1280x720 is the primary Xbox target resolution** for native r
 - PS2 startup at `0x0012726c`, `0x001b03c0`, and `0x001b0450`:
   - Mode 7 in the Sky2 GS subsystem selects 640x448 NTSC active raster (interlaced/progressive) with anamorphic CRT scanout.
 
-### Movie Assets Audit & Layout Rule
-- Retail disc contains both standard 4:3 (`*N.SFD`) and widescreen 16:9 (`*W.SFD`) movie streams (`LOGON.SFD`, `LOGOW.SFD`, `OPENINGN.SFD`, `OPENINGW.SFD`, `TITLEN.SFD`, `TITLEW.SFD`, etc.).
-- Project inputs contain only `default.xbe` under `private-inputs/xbox-mka-20261121`. The decoded frame corpus in `research/runs/native-movie-decode-20261119/decoded-02` contains only decoded planes for 4:3 PS2 `LOGON.SFD` (640x448).
-- The presence of 640x448 frames is strictly an input corpus availability constraint, not an Xbox architectural default.
-- **Layout Rule for 640x448 assets on 1280x720 target**:
-  - We employ **4:3 Pillarboxed Centered Fit** (`MovieWindowPolicy::centered_fit`, `MovieAspectMode::explicit_display_aspect` with 4:3).
-  - Viewport rect on 1280x720: width = 960, height = 720, centered at x = 160, y = 0, with 160-pixel black margins on left and right. This preserves original aspect ratio with zero anamorphic geometric distortion.
+### Retail Movie Variant Selection (4:3 N vs 16:9 W Streams)
+Retail binaries contain dual authored streams for movies: standard 4:3 (`*N.SFD`) and widescreen 16:9 (`*W.SFD`):
+- **Xbox Movie Selection (`0x0025d5b0`)**:
+  - Clamps input `movie_id` to $[0 .. 32]$.
+  - Calls `0x0027c790` (`is_widescreen_active()`).
+  - Accesses 40-byte movie descriptor entry at `movie_descriptors[movie_id]`:
+    - Offset `+0x00`: Pointer to 4:3 filename (`*N.SFD`), width at `+0x04`, height at `+0x08`.
+    - Offset `+0x0c`: Pointer to 16:9 filename (`*W.SFD`), width at `+0x10`, height at `+0x14`.
+  - If `is_widescreen_active()` returns 1 AND descriptor offset `+0x0c` is non-null, selects pointer at `+0x0c` (`*W.SFD`).
+  - If widescreen is not active OR descriptor `+0x0c` is null, falls back to pointer at `+0x00` (`*N.SFD`).
+- **Xbox Widescreen Query (`0x0027c790`)**:
+  - Calls `0x002a37cb` to read video flags.
+  - Tests bit 0 (`test eax, 1`). If set, returns 1.
+  - Tests global runtime override `dword [0x005bfa64]`. If non-zero, returns 1.
+  - Otherwise returns 0.
+- **PS2 Movie Selection (`0x00181fd0..0x001820bc`)**:
+  - Computes `entry_idx * 40` into `movie_descriptors[4]` at `0x005a24c0`.
+  - Checks the video settings widescreen flag.
+  - If widescreen is active, selects `+0x0c` (`*W.SFD`); otherwise selects `+0x00` (`*N.SFD`).
 
-### Audit of 640x448 Assumptions Across Codebase
-1. `runtime/include/mka/retail_display_service.hpp`: Parameterized logical dimensions. Primary target is 1280x720 (`LOGICAL_WIDTH/HEIGHT`). 640x448 is retained as named PS2 reference constants (`PS2_LOGICAL_WIDTH/HEIGHT`).
-2. `runtime/src/gs/`: GS hardware emulation paths (832x448 FBW=13, 640x448 display window) are authentic to PS2 GS hardware model and safe.
-3. `tests/test_retail_loaded_system_art.cpp`: Text coordinate space requires a scaling transform for true HD.
-4. `tests/test_retail_renderer_rasters.cpp`: Camera and depth rasters reflect 1280x720 on Xbox.
+### Static Helper Audit (`0x002a37cb`)
+- Statically audited the Xbox XBE import table in `default.xbe`:
+  - `0x002a37cb` is **NOT** an imported function.
+  - `default.xbe` imports Xbox Kernel Ordinal 24 (`ExQueryNonVolatileSetting`) via thunk `0x002eac82` -> IAT `0x004d77f8` (raw ordinal `0x80000018`).
+  - Function `0x002a37cb` is a statically linked Microsoft XDK helper (named `XGetVideoFlags` in XDK headers) that invokes `ExQueryNonVolatileSetting(XC_VIDEO_FLAGS = 8, ...)` and returns `(Value >> 16) & 0x5f`.
+  - In our implementation, it is identified strictly by its static address `0x002a37cb`.
+
+### Movie Layout Rules on 1280x720 Target
+- **Standard 4:3 Streams (`*N.SFD`, e.g. `LOGON.SFD`)**:
+  - Destination geometry: `[160, 0, 960, 720]` (`MovieWindowPolicy::centered_fit`, `MovieAspectMode::explicit_display_aspect` 4:3).
+  - 160-pixel black pillarbox margins on left and right maintain correct 4:3 geometry without stretching.
+- **Widescreen 16:9 Streams (`*W.SFD`, e.g. `LOGOW.SFD`)**:
+  - Destination geometry: `[0, 0, 1280, 720]` (`MovieWindowPolicy::centered_fit`, `MovieAspectMode::explicit_display_aspect` 16:9).
+  - Edge-to-edge full-screen presentation filling the entire $1280 \times 720$ canvas with zero pillarboxing.
+
+### Classification of GS Emulation Code for TASK_BOARD.md Row 9
+`TASK_BOARD.md` row 9 mandates removing the host VRAM and state model emulation. Code classification:
+1. `runtime/src/gs/gs.cpp` and `runtime/src/gs/gs.hpp`:
+   - Legacy PS2 recomp GS hardware emulation (`g_state`, synthetic VRAM pages, GIF packet parsing, GS registers).
+   - Slated for complete removal under row 9 once native scene rendering replaces GS packet interception.
+2. `runtime/src/gs/native_gl_backend.cpp`:
+   - Transitional primitive interceptor with compatibility VRAM readback.
+   - Slated for removal under row 9 once native scene geometry draw calls replace GS packet interception.
+3. `runtime/src/gs/gpu/*.wgsl`:
+   - WebGPU compute shaders implementing legacy GS rasterization pipelines.
+   - Slated for removal under row 9.
+4. Production display services (`runtime/src/native/retail_display_service.cpp`) and native renderer plugins (`retail_renderer_*.cpp` 0401..0412):
+   - Accepted native route.
+
+### Xbox 2D UI Layout Recovery & Safe Area Transform Proposal
+- Disassembly of `0x00293820` (quad rasterizer) and string renderer `0x002907ff`:
+  - Retail 2D UI and HUD positioning operate in normalized virtual coordinate space $[0.0 .. 1.0]$.
+  - At 720p widescreen (`dword [0x005bfa64] != 0`), `0x00293820` scales normalized coordinates by `1280.0f x 720.0f`.
+  - Constant pool `0x00508ffc` (`0.898f`) and `0x0050911c` (`0.934f`) define Xbox title-safe (89.8%) and action-safe (93.4%) margins.
+- Proposed layout transform for native HD HUD/UI:
+  - Anchor HUD meters and gauges to screen edges using 90% title-safe margins ($64\text{px}$ horizontal, $36\text{px}$ vertical on 720p).
+  - Maintain 1:1 pixel aspect ratio for 2D system-art fonts and textures to avoid stretching.
+  - Apply Hor+ widescreen camera projection ($1.7777778$ aspect ratio at `0x0054ca88`) for 3D viewports.
+  - *Status*: Proposed layout transform, not yet implemented in production UI code.
 
 ## 3. Option C (Partitioned) Mathematical Authority & Matrix Kernels
 
@@ -172,33 +219,39 @@ Verified in `tests/test_retail_display_movie_presentation.cpp`:
 - Pipeline:
   - Instantiates `NativeOffscreenDisplayService` at 1280x720.
   - Attaches `NativeMovieGlDevice` to the display service under a valid context lease.
-  - Decodes frame 0 of authentic retail `LOGON.SFD` YUV420 planes (`LOGON.SFD.first.plane{0,1,2}`) using the authentic `MOVIER.ovl` color transformation matrix (`0x77dd8`).
-  - Uploads texture planes to OpenGL and presents via `NativeMovieGlDevice::present` with `MovieWindowPolicy::centered_fit` and explicit 4:3 display aspect.
-  - Destination rect computed: `[160, 0, 960, 720]` (4:3 pillarbox).
+  - Decodes frame 0 of authentic retail `LOGOW.SFD` YUV420 planes (`LOGOW.SFD.first.plane{0,1,2}`) using the authentic `MOVIER.ovl` color transformation matrix (`0x77dd8`).
+  - Uploads texture planes to OpenGL and presents via `NativeMovieGlDevice::present` with `MovieWindowPolicy::centered_fit` and explicit 16:9 display aspect.
+  - Destination rect computed: `[0, 0, 1280, 720]` (edge-to-edge 16:9 full-screen, no pillarboxing).
+  - Also verifies standard 4:3 pillarbox destination geometry rule `[160, 0, 960, 720]` for standard 4:3 N streams without an extra draw call.
   - Executes hardware draw call (`glBegin(GL_QUADS)` inside `NativeMovieGlDevice`).
 - Diagnostic Frame Capture & Regression Pin:
   - Frame buffer readback via allowlisted diagnostic readback:
-    - `FNV1a64 = 0xf185564585568325`
-    - `SHA256 = 0d649a12e097324ad0a7f60d0de43d666409094efbc7946111b92f662e9c0d0a`
+    - `FNV1a64 = 0x2cb5ec60e4e72325`
+    - `SHA256 = ba848e89025edbb7a00d11be30040c23e036d1e57606c86074e65dd2c70191d7`
     - Documented: Frame hashes are driver-dependent regression pins.
 - Independent CPU Reference Verification (`[native-design-check]`):
-  - Black pillarbox margins verified: Left bar (x=80) and right bar (x=1200) strictly black `(0, 0, 0, 255)`.
+  - Active movie quad fills entire 1280x720 canvas edge-to-edge with no pillarbox bars.
   - Sample points across active movie quad (center logo and near quad corners) compared against CPU-converted reference `expected_frame.rgba` with maximum absolute delta $\le 2$.
 - Production Presentation Telemetry:
   - `[diagnostic-telemetry] GL draw calls = 1, CPU composited pixels = 0, frame readbacks = 0, diagnostic readbacks = 1, fallback pixels = 0`
   - Zero unallowlisted CPU readbacks or software fallbacks occur.
 
-## 5. First-Scene Bootstrap Continuation
+## 5. First-Scene Bootstrap Continuation & Retail Movie Path
 
 Implemented in `runtime/src/native/retail_first_scene_continuations.cpp`:
 - `continue_first_scene_at_225d40`: Validates Session lifetime, constructs registered plugins via `core->construct_registered(cf)`, returns `RetailStartupGate::ready`. Real resource ownership, zero stubs, zero CPU rasterization.
 - `continue_scene_reset_at_125d60`: Validates Session lifetime, detaches camera hierarchy via `cameras->detach_cameras_from_181a30(cf)` clearing active scene links (`0x005ab560`, `0x005ab564`), returns `true`. Real resource ownership, zero stubs, zero CPU rasterization.
 
+Implemented in `runtime/src/native/retail_initial_movie_path.cpp`:
+- `begin_menu_18d450`: Advances video frame with $1.0\text{f}$ wait tick then completes, returning `NativeRetailMovie0Child`.
+- `begin_intro_18deb0`: Advances with $300.0\text{f}$ frame wait tick then completes, returning `NativeRetailIntro18deb0Child`.
+- `transition_1225d0`: Pushes transition mode into `main.mode_history`.
+
 ## 6. Undefined Symbol Count Diagnostic & Ordered Queue
 
-The full-entry link diagnostic currently contains **24 undefined symbols** (representing missing link definitions satisfied by placeholders during diagnostic linking):
+The full-entry link diagnostic currently contains **21 undefined symbols** (representing missing link definitions satisfied by placeholders during diagnostic linking; this reduction from 24 to 21 is recorded strictly as a link diagnostic, not recovered progress):
 
-Resolved symbols in this subsystem (9):
+Resolved symbols in this subsystem (12):
 1. `mka::retail::renderer_required::multiply_affines_19f680`
 2. `mka::retail::renderer_required::classify_matrix_1a0240`
 3. `mka::retail::renderer_required::invert_nonidentity_matrix_1a07a0`
@@ -208,12 +261,12 @@ Resolved symbols in this subsystem (9):
 7. `mka::retail::renderer_required::transform_vectors_exact`
 8. `mka::retail::scene_bootstrap_required::continue_first_scene_at_225d40`
 9. `mka::retail::scene_bootstrap_required::continue_scene_reset_at_125d60`
+10. `mka::retail::initial_task_required::begin_menu_18d450`
+11. `mka::retail::initial_task_required::begin_intro_18deb0`
+12. `mka::retail::initial_task_required::transition_1225d0`
 
-Remaining undefined symbols queue order (24) - Reordered with Retail Movie Path First:
-1. **Priority Queue 1: Retail Movie Presentation Path (4 symbols)**:
-   - `mka::retail::initial_task_required::begin_menu_18d450` (launches LOGON.SFD first movie presentation)
-   - `mka::retail::initial_task_required::begin_intro_18deb0` (advances movie playback to OPENINGN.SFD)
-   - `mka::retail::initial_task_required::transition_1225d0` (handles transition from movie to main menu)
+Remaining undefined symbols queue order (21) - Reordered with Retail Movie Path First:
+1. **Priority Queue 1: Retail Movie Presentation Path (1 symbol)**:
    - `mka::retail::main_binding::render_retail_frame` (primary frame presentation pipeline dispatcher)
 2. **Priority Queue 2: Remaining Initial Task & Reset Symbols (8 symbols)**:
    - `mka::retail::initial_task_required::begin_menu_18d660`
@@ -246,4 +299,4 @@ Remaining undefined symbols queue order (24) - Reordered with Retail Movie Path 
   - PS2 function ledger: strictly 238 / 15,670 (1.52%).
   - Xbox donor ledger: strictly 0 / 21,321 (0.00%).
   - Acceptance status: strictly **OPEN**.
-- **No Overclaiming**: Verified offscreen presentation of `LOGON.SFD` frame 0 demonstrates the video display interface and texture upload pipeline, but does not constitute 3D gameplay geometry rendering or whole-game acceptance.
+- **No Overclaiming**: Verified offscreen presentation of `LOGOW.SFD` frame 0 demonstrates the video display interface and texture upload pipeline, but does not constitute 3D gameplay geometry rendering or whole-game acceptance.

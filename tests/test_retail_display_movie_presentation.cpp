@@ -198,12 +198,12 @@ int main(int argc, char** argv) try {
         MovieColorRole::helper_default, movier_bytes.data() + 0x77dd8, 6144, color_error);
     check(bool(table) && color_error == MovieColorError::none, "Failed to decode movie color table");
 
-    // 6. Load Authentic Retail First Movie Frame (LOGON.SFD frame 0)
+    // 6. Load Authentic Retail First Movie Frame (LOGOW.SFD frame 0 for 720p widescreen)
     MovieVideoFrame video{};
     video.width = 640;
     video.height = 448;
     for (unsigned i = 0; i < 3; ++i) {
-        auto plane_path = decoded_dir / ("LOGON.SFD.first.plane" + std::to_string(i));
+        auto plane_path = decoded_dir / ("LOGOW.SFD.first.plane" + std::to_string(i));
         video.planes[i] = read_bytes(plane_path);
     }
     video.source_pts = {0, 1, 90000, true};
@@ -223,13 +223,14 @@ int main(int argc, char** argv) try {
     const std::uint32_t client_w = static_cast<std::uint32_t>(client.right);
     const std::uint32_t client_h = static_cast<std::uint32_t>(client.bottom);
 
+    // 16:9 layout for widescreen stream on 1280x720 primary target
     MovieHostLayout layout{
         display->destination_identity(),
         client_w,
         client_h,
         MovieAspectMode::explicit_display_aspect,
-        4,
-        3,
+        16,
+        9,
         MovieWindowPolicy::centered_fit
     };
     NativeMoviePresentPlan plan{
@@ -238,6 +239,21 @@ int main(int argc, char** argv) try {
         MovieFilter::nearest,
         MovieAlpha::replace_rgba8
     };
+
+    // Verify 4:3 pillarbox destination geometry rule without extra draw call
+    MovieHostLayout layout_4_3{
+        display->destination_identity(),
+        client_w,
+        client_h,
+        MovieAspectMode::explicit_display_aspect,
+        4,
+        3,
+        MovieWindowPolicy::centered_fit
+    };
+    const auto dest_rect_4_3 = movie_destination(plan, layout_4_3);
+    check(bool(dest_rect_4_3), "Valid 4:3 movie destination rect");
+    check(dest_rect_4_3->x == 160 && dest_rect_4_3->y == 0 && dest_rect_4_3->width == 960 && dest_rect_4_3->height == 720,
+        "Destination rect for 4:3 stream must match pillarboxed 960x720 centered within 1280x720");
 
     auto submission = backend->present(plan, layout);
     check(submission.error == MovieGpuError::none, "Movie frame present failed");
@@ -248,8 +264,8 @@ int main(int argc, char** argv) try {
     // 9. External Frame Capture Verification (Diagnostic readback under allowlist)
     const auto dest_rect = movie_destination(plan, layout);
     check(bool(dest_rect), "Valid movie destination rect");
-    check(dest_rect->x == 160 && dest_rect->y == 0 && dest_rect->width == 960 && dest_rect->height == 720,
-        "Destination rect must match 4:3 pillarboxed 960x720 centered within 1280x720");
+    check(dest_rect->x == 0 && dest_rect->y == 0 && dest_rect->width == 1280 && dest_rect->height == 720,
+        "Destination rect must match 16:9 full screen 1280x720 edge-to-edge");
 
     std::vector<std::uint8_t> actual_pixels(std::size_t(client_w) * client_h * 4);
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
@@ -264,24 +280,13 @@ int main(int argc, char** argv) try {
         client_w, client_h, static_cast<unsigned long long>(frame_fnv), frame_sha.c_str());
 
     // [native-design-check] Compare against independent CPU reference conversion
-    // 1. Verify black pillarbox bars (x < 160 and x >= 1120)
-    const unsigned check_bar_x_left = 80;
-    const unsigned check_bar_x_right = 1200;
-    const unsigned check_bar_y = 360;
-    const std::size_t left_bar_idx = (std::size_t(client_h - 1 - check_bar_y) * client_w + check_bar_x_left) * 4;
-    const std::size_t right_bar_idx = (std::size_t(client_h - 1 - check_bar_y) * client_w + check_bar_x_right) * 4;
-    check(actual_pixels[left_bar_idx] == 0 && actual_pixels[left_bar_idx + 1] == 0 && actual_pixels[left_bar_idx + 2] == 0,
-        "Left pillarbox bar must be cleared black");
-    check(actual_pixels[right_bar_idx] == 0 && actual_pixels[right_bar_idx + 1] == 0 && actual_pixels[right_bar_idx + 2] == 0,
-        "Right pillarbox bar must be cleared black");
-
-    // 2. Sample points across movie content and compare to expected_frame.rgba
+    // Sample points across full 16:9 widescreen movie content and compare to expected_frame.rgba
     const struct SamplePoint { unsigned x; unsigned y; } sample_points[] = {
         {640, 360}, // Center dragon logo
-        {200, 100}, // Near bottom-left of quad
-        {200, 620}, // Near top-left of quad
-        {1080, 100}, // Near bottom-right of quad
-        {1080, 620}  // Near top-right of quad
+        {100, 100}, // Near bottom-left
+        {100, 620}, // Near top-left
+        {1180, 100}, // Near bottom-right
+        {1180, 620}  // Near top-right
     };
 
     for (const auto& pt : sample_points) {

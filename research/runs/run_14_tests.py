@@ -27,8 +27,9 @@ tests = [
     ("textures", ["test_native_retail_renderer_textures.exe", "."]),
     ("dictionaries", ["test_native_retail_renderer_texture_dictionaries.exe", "."]),
     ("world", ["test_native_retail_renderer_world.exe", "."]),
-    ("materials", ["test_native_retail_renderer_materials.exe", "."]),
+    ("materials", ["test_native_retail_materials.exe" if False else "test_native_retail_renderer_materials.exe", "."]),
     ("geometry", ["test_native_retail_renderer_geometry.exe"]),
+    ("display_movie", ["test_native_retail_display_movie_presentation.exe"]),
 ]
 
 passed = 0
