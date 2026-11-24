@@ -116,12 +116,18 @@ RetailStartupGate continue_first_scene_at_225d40(
 bool continue_scene_reset_at_125d60(NativeRetailMainState&, StartupFailure&) { std::abort(); }
 } // namespace mka::retail::scene_bootstrap_required
 
+// Verification Classifications:
+// - [source-derived]: Directly verified against instructions in Xbox default.xbe or PS2 SLUS_214.10.
+// - [native-design-check]: Fail-closed RAII, thread affinity, rollback, or generational handle safety.
+// - [oracle-differential]: NONE. None of these stages is oracle-differential because no usable retail
+//   oracle execution trace exists for offline isolated component runs.
+
 int main() {
     try {
         const std::filesystem::path root = ".";
         Fixture fix(root);
 
-        // 1. Initial State: No world module, module count is 0
+        // Stage 1 [source-derived]: Initial State: No world module, module count is 0
         {
             RetailRendererCoreFailure cf;
             auto core = NativeRetailRendererCore::for_session(
@@ -131,7 +137,8 @@ int main() {
             check(!core->world_module(cf), "no world module initially");
             check(core->module_0412_count(cf).value_or(1) == 0, "0412 initial count is 0");
 
-            // 2. Core Plugin 0412 Construction (Module Count 0 -> 1)
+            // Stage 2 [source-derived]: Core Plugin 0412 Construction (Module Count 0 -> 1)
+            // Provenance: Xbox default.xbe 0x002cd7d0 / 0x002c0194, PS2 SLUS_214.10 0x001a3df0 / 0x001a6808
             check(renderer_required::construct_core_plugin_0412(*core, cf), "construct 0412");
             check(core->module_0412_count(cf).value_or(0) == 1, "0412 count is 1 after construction");
             auto world_mgr = core->world_module(cf);
@@ -140,39 +147,42 @@ int main() {
             RetailRendererWorldFailure wf;
             check(world_mgr->active_count() == 0, "active world count initially 0");
 
-            // 3. World 4-byte Container Creation
+            // Stage 3 [source-derived]: World 4-byte Container Creation
+            // Provenance: Xbox 0x002cd7d0, PS2 0x001a3df0 (4-byte RwWorld object)
             auto world1 = world_mgr->create_world(wf);
             check(bool(world1) && !world1->empty(), "create world 1");
             check(world_mgr->active_count() == 1, "active world count is 1");
 
-            // 4. Resolve Typed NativeRetailWorld and Verify Session Inheritance
+            // Stage 4 [native-design-check]: Resolve Typed NativeRetailWorld and Verify Session Inheritance
             auto concrete_world = world_mgr->resolve_world(*world1, wf);
             check(bool(concrete_world), "resolve concrete world 1");
             check(concrete_world->owner_session() == fix.startup.game_session.get(), "world inherits session");
 
-            // 5. Multiple World Creation & Distinct Handle Identity
+            // Stage 5 [native-design-check]: Multiple World Creation & Distinct Handle Identity
             auto world2 = world_mgr->create_world(wf);
             check(bool(world2) && !world2->empty(), "create world 2");
             check(world_mgr->active_count() == 2, "active world count is 2");
             check(!world1->same_identity(*world2), "worlds have distinct identity");
 
-            // 6. World Destruction & Active Count Decrement
+            // Stage 6 [source-derived]: World Destruction & Active Count Decrement
+            // Provenance: Xbox 0x002cd820, PS2 0x001a3e70
             check(world_mgr->destroy_world(*world2, wf), "destroy world 2");
             check(world_mgr->active_count() == 1, "active world count drops to 1");
 
-            // 7. Generational Handle Invalidation (Fail-Closed Rollback Safety)
+            // Stage 7 [native-design-check]: Generational Handle Invalidation (Fail-Closed Rollback Safety)
             RetailRendererWorldFailure ret_f;
             check(!world_mgr->resolve_world(*world2, ret_f), "reject resolve retired world");
             check(ret_f.kind == RetailRendererWorldError::retired_world, "reported retired_world error");
 
-            // 8. Thread Affinity Checks
+            // Stage 8 [native-design-check]: Thread Affinity Checks
             std::thread([&]() {
                 RetailRendererWorldFailure thread_f;
                 check(!world_mgr->create_world(thread_f), "foreign thread rejected");
                 check(thread_f.kind == RetailRendererWorldError::wrong_thread, "wrong_thread error reported");
             }).join();
 
-            // 9. Core Plugin Teardown & Module Count Decrement (1 -> 0)
+            // Stage 9 [source-derived]: Core Plugin Teardown & Module Count Decrement (1 -> 0)
+            // Provenance: Xbox 0x002cd820, PS2 0x001a3e70
             renderer_required::destroy_core_plugin_0412(*core);
             check(core->module_0412_count(cf).value_or(1) == 0, "0412 count is 0 after destroy");
             check(!core->world_module(cf), "no world module after destroy");

@@ -5,8 +5,13 @@ import copy
 import sys
 import subprocess
 
-REPO = Path(__file__).resolve().parents[2]
-FORK_ROOT = REPO / "external" / "forks" / "retail-main-22"
+_this_file = Path(__file__).resolve()
+if (_this_file.parents[2] / "external" / "forks" / "retail-main-22").exists():
+    REPO = _this_file.parents[2]
+    FORK_ROOT = REPO / "external" / "forks" / "retail-main-22"
+else:
+    FORK_ROOT = _this_file.parents[2]
+    REPO = FORK_ROOT.parents[2]
 
 # Import validate_ledgers logic
 sys.path.insert(0, str(REPO / "tools" / "research"))
@@ -64,6 +69,8 @@ def test_production_existence():
 
     all_entries = []
     for addr, ev in ps2_ev.items():
+        if addr in ("_meta", "components"):
+            continue
         all_entries.append(("PS2", addr, ev))
     for addr, (ev, ps2_addr) in xbox_ev.items():
         all_entries.append(("Xbox", addr, ev))
@@ -357,6 +364,35 @@ def test_planted_failures():
     assert audit_res["all_confirmed_uncatalogued_in_tsv"], "Expected all 8 accesses to be uncatalogued in functions.tsv"
     assert audit_res["all_confirmed_valid_function_bounds"], "Expected all 8 accesses to have non-zero function sizes"
     print("  PASS: Uncatalogued code audit successfully confirmed all 8 routines.")
+
+    # Planted Failure 10: Untagged component in evidence manifest or native-design-check claiming credit
+    print("Testing planted failure 10: untagged component rejection in validate_ledgers...")
+    ev_path = REPO / "research" / "ledger" / "ported_function_evidence.json"
+    orig_ev_text = ev_path.read_text(encoding="utf-8")
+    try:
+        bad_ev = json.loads(orig_ev_text)
+        del bad_ev["components"]["materials"]["verification_class"]
+        ev_path.write_text(json.dumps(bad_ev), encoding="utf-8", newline="\n")
+        try:
+            validate_ledgers(ps2_ledger, xbox_ledger, ps2_map)
+            assert False, "Untagged component FAILED to raise AssertionError!"
+        except AssertionError as e:
+            assert "materials has invalid or missing verification_class" in str(e), f"Unexpected error: {e}"
+            print(f"  Untagged component caught as expected: {e}")
+
+        # native-design-check claiming credit
+        bad_ev2 = json.loads(orig_ev_text)
+        bad_ev2["components"]["materials"]["verification_class"] = "native-design-check"
+        bad_ev2["components"]["materials"]["credited"] = True
+        ev_path.write_text(json.dumps(bad_ev2), encoding="utf-8", newline="\n")
+        try:
+            validate_ledgers(ps2_ledger, xbox_ledger, ps2_map)
+            assert False, "native-design-check claiming credit FAILED to raise AssertionError!"
+        except AssertionError as e:
+            assert "native-design-check must not count toward credit" in str(e), f"Unexpected error: {e}"
+            print(f"  native-design-check claiming credit caught as expected: {e}")
+    finally:
+        ev_path.write_text(orig_ev_text, encoding="utf-8", newline="\n")
 
     print("PASS: All planted-failure cases successfully caught and proven to fail closed.")
 

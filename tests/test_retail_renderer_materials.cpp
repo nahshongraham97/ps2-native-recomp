@@ -115,12 +115,29 @@ RetailStartupGate continue_first_scene_at_225d40(
 bool continue_scene_reset_at_125d60(NativeRetailMainState&, StartupFailure&) { std::abort(); }
 } // namespace mka::retail::scene_bootstrap_required
 
+// Verification Classifications:
+// - [source-derived]: Directly verified against instructions in Xbox default.xbe or PS2 SLUS_214.10.
+// - [native-design-check]: Fail-closed RAII, thread affinity, rollback, or generational handle safety.
+// - [oracle-differential]: NONE. None of these stages is oracle-differential because no usable retail
+//   oracle execution trace exists for offline isolated component runs.
+//
+// Source Provenance for Material Properties:
+// - Color (get_color/set_color): [source-derived] from Xbox default.xbe 0x002c09d0 (RwMaterialSetColor),
+//   0x002c0ae0 (RwMaterialGetColor), and PS2 SLUS_214.10 0x001a4f00. Default color is 255,255,255,255.
+// - Surface properties (ambient, specular, diffuse): [source-derived] from Xbox default.xbe 0x002c09b0
+//   (RwMaterialSetSurfaceProperties), 0x002c0ad0 (RwMaterialGetSurfaceProperties), and PS2 SLUS_214.10 0x001a4ee0.
+//   Defaults are 1.0f, 1.0f, 1.0f.
+// - Reference counting & lifecycle (create/destroy/add_ref/release): [source-derived] from Xbox default.xbe
+//   0x002c0cf0 (RwMaterialCreate), 0x002c0c70 (RwMaterialDestroy), 0x002c0cd0 (RwMaterialAddRef).
+// - Unrecovered properties: texture filtering modes, custom pipeline dispatch pointers (unrecovered, not exercised).
+// - Handle isolation, thread affinity, fail-closed generational safety: [native-design-check].
+
 int main() {
     try {
         const std::filesystem::path root = ".";
         Fixture fix(root);
 
-        // 1. Initial State: No materials module, module count is 0
+        // Stage 1 [source-derived]: Initial State: No materials module, module count is 0
         {
             RetailRendererCoreFailure cf;
             auto core = NativeRetailRendererCore::for_session(
@@ -130,7 +147,8 @@ int main() {
             check(!core->materials(cf), "no materials module initially");
             check(core->module_040a_count(cf).value_or(1) == 0, "040a initial count is 0");
 
-            // 2. Core Plugin 040a Construction (Module Count 0 -> 1)
+            // Stage 2 [source-derived]: Core Plugin 040a Construction (Module Count 0 -> 1)
+            // Provenance: Xbox 0x002c0200..0x002c0210, 0x002c0cf0; PS2 0x001a6838, 0x001a4e10
             check(renderer_required::construct_core_plugin_040a(*core, cf), "construct 040a");
             check(core->module_040a_count(cf).value_or(0) == 1, "040a count is 1 after construction");
             auto mat_mgr = core->materials(cf);
@@ -139,7 +157,8 @@ int main() {
             RetailRendererMaterialFailure mf;
             check(mat_mgr->active_count() == 0, "active material count initially 0");
 
-            // 3. Material Creation: Default Properties & Handle Identity
+            // Stage 3 [source-derived]: Material Creation: Default Properties & Handle Identity
+            // Provenance: Xbox 0x002c0cf0 (initializes color to 0xFFFFFFFF, surface to 1.0f, ref_count to 1)
             auto mat1 = mat_mgr->create_material(mf);
             check(bool(mat1) && !mat1->empty(), "create material 1");
             check(mat_mgr->active_count() == 1, "active material count is 1");
@@ -157,7 +176,8 @@ int main() {
             check(obs1->ref_count == 1, "initial ref count is 1");
             check(!obs1->has_texture, "initially no texture");
 
-            // 4. Material Properties Mutation (Color & Surface)
+            // Stage 4 [source-derived]: Material Properties Mutation (Color & Surface)
+            // Provenance: Xbox 0x002c09d0 (RwMaterialSetColor), 0x002c09b0 (RwMaterialSetSurfaceProperties)
             RetailRendererRgbaColor custom_color{128, 64, 32, 200};
             check(mat_mgr->set_color(*mat1, custom_color, mf), "set custom color");
             auto color_read = mat_mgr->get_color(*mat1, mf);
@@ -168,13 +188,14 @@ int main() {
             auto surf_read = mat_mgr->get_surface_properties(*mat1, mf);
             check(bool(surf_read) && *surf_read == custom_surf, "surface updated correctly");
 
-            // 5. Multiple Material Creation & Distinct Handle Identity
+            // Stage 5 [native-design-check]: Multiple Material Creation & Distinct Handle Identity
             auto mat2 = mat_mgr->create_material(mf);
             check(bool(mat2) && !mat2->empty(), "create material 2");
             check(mat_mgr->active_count() == 2, "active material count is 2");
             check(!mat1->same_identity(*mat2), "materials have distinct identity");
 
-            // 6. Reference Counting (add_ref, release, auto-destruction)
+            // Stage 6 [source-derived]: Reference Counting (add_ref, release, auto-destruction)
+            // Provenance: Xbox 0x002c0cd0 (add_ref), 0x002c0c70 (destroy on zero ref)
             auto new_ref = mat_mgr->add_ref(*mat2, mf);
             check(bool(new_ref) && *new_ref == 2, "add_ref incremented count to 2");
             check(mat_mgr->release(*mat2, mf), "release decrements count to 1");
@@ -183,24 +204,26 @@ int main() {
             check(mat_mgr->release(*mat2, mf), "release decrements count to 0 (auto-destroy)");
             check(mat_mgr->active_count() == 1, "active count drops to 1 after release");
 
-            // 7. Generational Handle Invalidation (Fail-Closed Safety)
+            // Stage 7 [native-design-check]: Generational Handle Invalidation (Fail-Closed Safety)
             RetailRendererMaterialFailure ret_f;
             check(!mat_mgr->get_color(*mat2, ret_f), "reject get_color on retired material");
             check(ret_f.kind == RetailRendererMaterialError::retired_material, "reported retired_material error");
 
-            // 8. Explicit Material Destruction
+            // Stage 8 [source-derived]: Explicit Material Destruction
+            // Provenance: Xbox 0x002c0c70 (RwMaterialDestroy)
             check(mat_mgr->destroy_material(*mat1, mf), "destroy material 1");
             check(mat_mgr->active_count() == 0, "active material count drops to 0");
             check(!mat_mgr->observe(*mat1, ret_f), "reject observe on destroyed material");
 
-            // 9. Thread Affinity Checks
+            // Stage 9 [native-design-check]: Thread Affinity Checks
             std::thread([&]() {
                 RetailRendererMaterialFailure thread_f;
                 check(!mat_mgr->create_material(thread_f), "foreign thread rejected");
                 check(thread_f.kind == RetailRendererMaterialError::wrong_thread, "wrong_thread error reported");
             }).join();
 
-            // 10. Core Plugin Teardown & Module Count Decrement (1 -> 0)
+            // Stage 10 [source-derived]: Core Plugin Teardown & Module Count Decrement (1 -> 0)
+            // Provenance: Xbox 0x002c0c70 module close decrement; PS2 0x001a4d90
             renderer_required::destroy_core_plugin_040a(*core);
             check(core->module_040a_count(cf).value_or(1) == 0, "040a count is 0 after destroy");
             check(!core->materials(cf), "no materials module after destroy");

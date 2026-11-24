@@ -1,0 +1,30 @@
+{
+  "status": "PASS",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\cmake\\cmake-4.4.5-windows-x86_64\\bin\\cmake.exe",
+    "--build",
+    "C:\\Users\\nahsh\\MKPORT~1\\ARMAGE~1\\ARMAGE~1\\external\\forks\\RETAIL~1\\b",
+    "--target",
+    "test_native_retail_renderer_geometry",
+    "-j2"
+  ],
+  "exit": 0,
+  "deadline_seconds": 240,
+  "seconds": 0.1671718999859877,
+  "executable_sha256": "84935c0b7cb09c140de0d3b042d4e93e5fac4e6371e75bf28eae3d841f79dfb3",
+  "uncompressed_log_sha256": "dd3eeba9f4b04bd26ad3febd6ea9df22320c95e72780cf8ce44e7b60c200072d",
+  "log_sha256": "dd3eeba9f4b04bd26ad3febd6ea9df22320c95e72780cf8ce44e7b60c200072d",
+  "log_stream_order": "stdout_stderr_interleaved",
+  "source_commit": "a028effeaf9da59df82a43138a7c07eb76eca6c6",
+  "tracked_status": "M cmake/native_game.cmake\n M research/ledger/ported_function_evidence.json\nD  research/runs/native-xbox-renderer-0409-implementation-20261123/FIRST_DRAW_PATH_DESIGN.md\n M research/runs/native-xbox-renderer-0409-implementation-20261123/IMPLEMENTATION.md\n M research/runs/native-xbox-renderer-0409-implementation-20261123/run_check.py\n M research/runs/test_full_existence_validation.py\n M runtime/include/mka/retail_renderer_core.hpp\n M runtime/include/mka/retail_renderer_world.hpp\n M tests/test_retail_renderer_materials.cpp\n M tests/test_retail_renderer_texture_dictionaries.cpp\n M tests/test_retail_renderer_world.cpp",
+  "source_manifest_sha256": "e2294539fc2bc2f6058d814f6e9f9f5b8a1089e8ff14da3285c3e73ad8275cba",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "3cdeb3a5cbeddece37e0e94ec0bc76cad9419af51838d0b4b99a643185f28439",
+  "runner_sha256": "550aec3dfc8ad907c6277effefe3f6b9c8d75f42a2aa6f09a50067acd36f183d",
+  "process_temp": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\opencode",
+  "phase": "build",
+  "game_run": false,
+  "visible_window": false,
+  "audio_endpoint": false,
+  "acceptance": "OPEN"
+}

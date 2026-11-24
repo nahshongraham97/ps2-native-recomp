@@ -1,4 +1,67 @@
 {
+  "_meta": {
+    "xbox_investigation_source": "Xbox default.xbe serves as an authoritative secondary binary investigation source for recovering algorithm contracts and data structures; donor credit requires verified dual-platform vectors.",
+    "donor_credit_requires_dual_platform_vectors": true,
+    "legend_zero_percent_note": "0% donor credit means no donor credit has been awarded pending verified dual-platform vectors, not that work has stalled."
+  },
+  "components": {
+    "allocator": {
+      "verification_class": "source-derived",
+      "evidence_state": "investigating"
+    },
+    "core": {
+      "verification_class": "source-derived",
+      "evidence_state": "investigating"
+    },
+    "matrix": {
+      "verification_class": "source-derived",
+      "evidence_state": "investigating"
+    },
+    "frames": {
+      "verification_class": "source-derived",
+      "evidence_state": "investigating"
+    },
+    "streams": {
+      "verification_class": "source-derived",
+      "evidence_state": "investigating"
+    },
+    "cameras": {
+      "verification_class": "source-derived",
+      "evidence_state": "investigating"
+    },
+    "images": {
+      "verification_class": "source-derived",
+      "evidence_state": "investigating"
+    },
+    "raster_registration": {
+      "verification_class": "source-derived",
+      "evidence_state": "investigating"
+    },
+    "rasters": {
+      "verification_class": "source-derived",
+      "evidence_state": "investigating"
+    },
+    "textures": {
+      "verification_class": "source-derived",
+      "evidence_state": "investigating"
+    },
+    "texture_dictionaries": {
+      "verification_class": "source-derived",
+      "evidence_state": "investigating"
+    },
+    "world": {
+      "verification_class": "source-derived",
+      "evidence_state": "investigating"
+    },
+    "materials": {
+      "verification_class": "source-derived",
+      "evidence_state": "investigating"
+    },
+    "geometry": {
+      "verification_class": "source-derived",
+      "evidence_state": "investigating"
+    }
+  },
   "00127120": "runtime/src/native/retail_initial_game_tasks.cpp:141 [run_camera_127120] (tests/test_retail_initial_game_tasks.cpp:67 \"127120 no-actor BSS branch writes identity camera \")",
   "00127370": "runtime/src/native/retail_game_records.cpp:78 [store_retail_game_records_bytes_127370] (tests/test_retail_game_records_main.cpp:66 \"production1303F0/130350\")",
   "0012a4f0": "runtime/src/native/retail_initial_reset.cpp:56 [advance] (tests/test_retail_initial_reset.cpp:184 \"empty pending scan returns immediately\")",

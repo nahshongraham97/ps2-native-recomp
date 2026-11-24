@@ -35,6 +35,10 @@ This repository is the active ahead-of-time (AOT) static native C++ recompilatio
 | **Total PS2 Catalog** | *Complete binary disassembly denominator* | **17,510** | — |
 
 ### Xbox Donor Catalog (`default.xbe`)
+> [!NOTE]
+> **Investigation Authority**: Xbox default.xbe serves as an authoritative secondary binary investigation source for recovering algorithm contracts and data structures; donor credit requires verified dual-platform vectors.
+> **Donor Credit Policy**: 0% donor credit means no donor credit has been awarded pending verified dual-platform vectors, not that work has stalled.
+
 - **In-Scope Donor Utilization**: **0.00%** (0 / 21,321 in-scope donor functions)
 - **Total Donor Catalog**: **22,579** discovered functions in `default.xbe`
 
@@ -42,7 +46,7 @@ This repository is the active ahead-of-time (AOT) static native C++ recompilatio
 |---|---|---|---|
 | **Implemented Donors** | `implemented-via-donor` (0) | 0 | 0.00% |
 | **Classified Non-Executable / SDK** | `sdk-or-library` (2,524) + `no-counterpart` (9) | 2,533 | 11.88% |
-| **Open Donor Frontier** | `open` (18,771 unmapped donor candidate code + 17 candidate donor routines pending vectors) | 18,788 | 88.12% |
+| **Open Donor Frontier** | `blocked-on-dual-platform-vectors` (17 candidates pending vectors) + `investigating` (10 active recovery) + `not-started` (18,761 unmapped) | 18,788 | 88.12% |
 | **In-Scope Subtotal** | *Donor executable candidate surface* | **21,321** | **100.00%** |
 | **Excluded / Stubbed** | `out-of-scope-stubbed` (XONLINE thunks and symbols) | 1,258 | — |
 | **Total Xbox Catalog** | *Total default.xbe function inventory* | **22,579** | — |

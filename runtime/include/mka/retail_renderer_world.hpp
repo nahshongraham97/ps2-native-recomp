@@ -57,7 +57,7 @@ private:
 // Plugin 0412 scope strictly recovered from Xbox default.xbe (0x002cd7d0/0x002cd820)
 // and PS2 SLUS_214.10 (0x001a3df0/0x001a3e70):
 // - FreeList-backed 4-byte container registration via plugin registry helper
-// - Module open/close via extension registration helpers (0x002c461d on Xbox, 0x001a0fd0 on PS2)
+// - Module open/close via extension registration helpers (0x002c4620 on Xbox, 0x001a0fd0 on PS2)
 // - Global module count tracking (Xbox 0x005c761c, PS2 -23604($gp))
 // - Real typed container ownership, thread affinity, and rollback
 // Note: downstream bounding box, sector hierarchy, flags, names, and observation queries

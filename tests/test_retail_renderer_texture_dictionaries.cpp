@@ -117,11 +117,18 @@ RetailStartupGate continue_first_scene_at_225d40(
 bool continue_scene_reset_at_125d60(NativeRetailMainState&, StartupFailure&) { std::abort(); }
 } // namespace mka::retail::scene_bootstrap_required
 
+// Verification Classifications:
+// - [source-derived]: Directly verified against instructions in Xbox default.xbe or PS2 SLUS_214.10.
+// - [native-design-check]: Fail-closed RAII, thread affinity, rollback, or generational handle safety.
+// - [oracle-differential]: NONE. None of these stages is oracle-differential because no usable retail
+//   oracle execution trace exists for offline isolated component runs.
+
 int main() {
     try {
         const std::filesystem::path root = ".";
 
-        // 1. Core Registration & Lifecycle of 0409
+        // Stage 1 [source-derived]: Core Registration & Lifecycle of 0409
+        // Provenance: Xbox default.xbe 0x002c9840 / 0x002c0173, PS2 SLUS_214.10 0x001a4a80 / 0x001a67e8
         {
             Fixture fix(root);
             RetailRendererCoreFailure cf;
@@ -140,12 +147,13 @@ int main() {
             check(dict_mgr->active_count() == 0, "initially 0 active dictionaries");
             check(dict_mgr->current_dictionary().empty(), "initially no current dictionary");
 
-            // 2. Reentrant Construction Rejection
+            // Stage 2 [native-design-check]: Reentrant Construction Rejection
             RetailRendererCoreFailure reentrant_f;
             check(!renderer_required::construct_core_plugin_0409(*core, reentrant_f), "reentrant construction rejected");
             check(reentrant_f.kind == RetailRendererCoreError::reentrant, "reentrant error reported");
 
-            // 3. Dictionary Creation & Observation (FreeList-backed container)
+            // Stage 3 [source-derived]: Dictionary Creation & Observation (FreeList-backed container, 96 bytes)
+            // Provenance: Xbox default.xbe 0x002c9910, PS2 SLUS_214.10 0x001a7690
             RetailRendererTextureDictionaryFailure df;
             auto dict1 = dict_mgr->create_dictionary({"arena_textures"}, df);
             check(bool(dict1) && !dict1->empty(), "create dictionary 1");
@@ -156,7 +164,8 @@ int main() {
             check(obs1->name == "arena_textures", "dictionary 1 name matches");
             check(!obs1->is_current, "dictionary 1 initially not current");
 
-            // 4. Current Dictionary Tracking (matching 0x005c75e8 in default.xbe)
+            // Stage 4 [source-derived]: Current Dictionary Tracking (matching 0x005c75e8 in default.xbe)
+            // Provenance: Xbox default.xbe 0x002c9bf0 (RwTexDictionaryGetCurrent reading global 0x005c75e8)
             check(dict_mgr->set_current_dictionary(*dict1, df), "set dict1 as current");
             check(dict_mgr->current_dictionary().same_identity(*dict1), "current dictionary is dict1");
 
@@ -168,7 +177,8 @@ int main() {
 
             check(dict_mgr->set_current_dictionary(*dict1, df), "restore dict1 as current");
 
-            // 5. Multiple Dictionary Creation & Circular List Tracking
+            // Stage 5 [source-derived]: Multiple Dictionary Creation & Circular List Tracking
+            // Provenance: Xbox default.xbe 0x002c9910 (circular linked list head insertion)
             auto dict2 = dict_mgr->create_dictionary({"stage_textures"}, df);
             check(bool(dict2) && !dict2->empty(), "create dictionary 2");
             check(dict_mgr->active_count() == 2, "active count is 2");
@@ -177,7 +187,8 @@ int main() {
             check(bool(obs2) && obs2->name == "stage_textures", "dict2 name matches");
             check(!obs2->is_current, "dict2 is not current");
 
-            // 6. Dictionary Destruction & Auto-Clear of Current Dictionary
+            // Stage 6 [source-derived]: Dictionary Destruction & Auto-Clear of Current Dictionary
+            // Provenance: Xbox default.xbe 0x002c9890 (clearing active pointer if current destroyed)
             check(dict_mgr->set_current_dictionary(*dict2, df), "set dict2 as current");
             check(dict_mgr->current_dictionary().same_identity(*dict2), "dict2 is current");
 
@@ -185,19 +196,20 @@ int main() {
             check(dict_mgr->active_count() == 1, "active count drops to 1");
             check(dict_mgr->current_dictionary().empty(), "current dictionary cleared on destruction");
 
-            // 7. Retired Dictionary Handle Rejection
+            // Stage 7 [native-design-check]: Retired Dictionary Handle Rejection (Fail-Closed Rollback Safety)
             RetailRendererTextureDictionaryFailure ret_f;
             check(!dict_mgr->observe(*dict2, ret_f), "observe retired dictionary rejected");
             check(ret_f.kind == RetailRendererTextureDictionaryError::retired_dictionary, "retired error reported");
 
-            // 8. Thread Affinity Check
+            // Stage 8 [native-design-check]: Thread Affinity Check
             std::thread([&]() {
                 RetailRendererTextureDictionaryFailure thread_f;
                 check(!dict_mgr->create_dictionary({"foreign"}, thread_f), "foreign thread rejected");
                 check(thread_f.kind == RetailRendererTextureDictionaryError::wrong_thread, "wrong_thread error");
             }).join();
 
-            // 9. Core Plugin Teardown & Module Decrement
+            // Stage 9 [source-derived]: Core Plugin Teardown & Module Decrement
+            // Provenance: Xbox default.xbe 0x002c9860, PS2 SLUS_214.10 0x001a4ac0
             renderer_required::destroy_core_plugin_0409(*core);
             check(core->module_0409_count(cf).value_or(1) == 0, "0409 count is 0 after destroy");
             check(!core->texture_dictionaries(cf), "no dictionaries manager after destroy");

@@ -250,6 +250,7 @@ if(WIN32)
         runtime/src/native/retail_renderer_texture_dictionaries.cpp
         runtime/src/native/retail_renderer_world.cpp
         runtime/src/native/retail_renderer_materials.cpp
+        runtime/src/native/retail_renderer_geometry.cpp
         runtime/src/native/retail_renderer_transforms.cpp
         runtime/src/native/retail_renderer_matrix.cpp
         runtime/src/native/retail_first_scene_core.cpp runtime/src/native/retail_first_scene_allocator.cpp runtime/src/native/retail_camera_world.cpp
@@ -496,6 +497,8 @@ add_executable(test_native_retail_renderer_world EXCLUDE_FROM_ALL tests/test_ret
 target_link_libraries(test_native_retail_renderer_world PRIVATE mka_native_retail_system_art_cpu opengl32 gdi32 user32)
 add_executable(test_native_retail_renderer_materials EXCLUDE_FROM_ALL tests/test_retail_renderer_materials.cpp)
 target_link_libraries(test_native_retail_renderer_materials PRIVATE mka_native_retail_system_art_cpu opengl32 gdi32 user32)
+add_executable(test_native_retail_renderer_geometry EXCLUDE_FROM_ALL tests/test_retail_renderer_geometry.cpp)
+target_link_libraries(test_native_retail_renderer_geometry PRIVATE mka_native_retail_system_art_cpu opengl32 gdi32 user32)
 
 find_package(Python3 COMPONENTS Interpreter QUIET)
 if(Python3_FOUND)
