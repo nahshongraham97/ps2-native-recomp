@@ -7,10 +7,11 @@ whole-game non-regression rule. Read those before editing this fork. The
 old fork guidance is preserved at
 `research/history/native-port-docs-2026-11-18/AGENTS.md` as history only.
 
-Work in this active fork, not `../ps2-native-recomp-backup-20261110/` or the
-Kombat Practice package. Preserve existing uncommitted `runtime/src/iop/
-mcserv.cpp` and `msl_native.cpp` work; neither is verified by a matching
-clean run. Preserve user cards, saves, states, keys, and local model/settings.
+Work in this active fork, not `../ps2-native-recomp-backup-20261110/` or
+Kombat Practice (`milestone_build_kombat_practice/`, which shares direct hook
+lineage with the playable oracle `B9EEF7DA...`). Discard noncompliant commits,
+dirty files, and prior checkouts locally without rewriting pushed history.
+Preserve protected backup files, user cards, saves, states, keys, and local model/settings.
 
 This is one native Armageddon port in the existing repositories, not a PS2
 compatibility product. Choose the best/easiest verified retail portions and

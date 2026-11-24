@@ -1,0 +1,36 @@
+{
+  "decision_id": "DECISION_OWNER_CORRECTIONS_20261124",
+  "title": "Owner Corrections: Oracle & Kombat Practice Lineage, Noncompliant Work Discard Rule, and Xbox Renderer Scope",
+  "date": "2026-11-24",
+  "status": "APPROVED",
+  "owner": "Nahshon Graham",
+  "corrections": {
+    "oracle_and_kombat_practice_relationship": {
+      "canonical_oracle_path": "../../milestone_work_verified_playable_20261110",
+      "oracle_exe_sha256": "b9eef7dad3cfa0e1216493cf12301f14aa4b3a8b1456fcdc60d9c39502a0d860",
+      "kombat_practice_path": "../../milestone_build_kombat_practice",
+      "kombat_practice_exe_sha256": "8b763dcc3e0c47188b535803117fa44cf81d9b7f36d103df3247336b16a321b9",
+      "duplicate_backup_path": "external/forks/ps2-native-recomp-backup-20261110",
+      "relationship_proven_by_git_and_binary": "Kombat Practice (8b763dcc) is a direct descendant snapshot of the oracle source repository (ps2-native-recomp-backup-20261110 HEAD 67612aa plus dirty host/mka_unit_wrappers.cpp). All 33 hook commits from cd33a7f through 67612aa (including 76282ae practice dummy auto-align 1.10f, 10b6aa5 hazard collision avoidance, and 67612aa pad delegation / 2+ hit combo detection) are compiled into the oracle executable B9EEF7DA. Prior claims that Kombat Practice is unrelated to the oracle are retracted.",
+      "hook_disabled_parity_config": {
+        "launcher_flag": "--no-hooks (or --parity)",
+        "env_vars": {
+          "MKA_INTERCEPT_COMBAT": "0",
+          "MKA_TRACE_MODE_INPUT": "0",
+          "PS2_OBSERVER_HOOKS": "0",
+          "PS2_PROFILE_SUBSYSTEMS": "0",
+          "PS2_NATIVE_VERTEX": "0"
+        }
+      },
+      "shipped_game_exclusion": "All combat/practice assist hooks (auto-align, hazard snap, damage scaling, video bypasses, fatality/stance shortcuts) stay out of the shipped native port."
+    },
+    "discard_noncompliant_work": {
+      "rule": "Commits, dirty files, and prior checkouts violating contract or standing rules are discarded locally (git reset / git rebase); never rewrite pushed history, never force-push, and never run git gc --prune.",
+      "removed_wording": "Removed obsolete 'preserve existing dirty or uncommitted work' guidance from AGENTS.md (both repos) and HANDOFF.md."
+    },
+    "xbox_investigation_scope": {
+      "scope": "Limited strictly to the renderer, viewport, and HD presentation.",
+      "gs_packet_decoding": "Interim concession only, not a final target."
+    }
+  }
+}

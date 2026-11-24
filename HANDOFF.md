@@ -6,7 +6,7 @@ The initial Nov 18 baseline handoff is preserved at `research/history/native-por
 1. **Active Repositories & Worktrees**:
    - Work in `external/forks/retail-main-22/` for the retail runtime source (HEAD `d1bfc0e2`).
    - Parent repository is `C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation` (HEAD `effbbbf4`).
-   - `external/forks/ps2-native-recomp-backup-20261110/`, user saves, states, cards, and original assets are strictly preserved.
+   - The canonical oracle (`milestone_work_verified_playable_20261110/`), duplicate backup (`external/forks/ps2-native-recomp-backup-20261110/`), user saves, states, cards, and original assets are strictly protected; noncompliant commits and dirty files are discarded.
    - Isolated private Ghidra analysis sessions (`a92b59f4`) are established for Xbox (`default.xbe`) and PS2 (`SLUS_214.10`) binaries.
 
 2. **Required Reading & Orientation**:
@@ -15,7 +15,7 @@ The initial Nov 18 baseline handoff is preserved at `research/history/native-por
 
 3. **Port Strategy & Donor Selection**:
    - The product is **ONE genuine native Armageddon port**, not a PS2 compatibility runtime or an emulated engine.
-   - **Xbox-first investigation** for everything still to be implemented: investigate the 32-bit x86 Xbox binary first to recover algorithms and desktop-like boundaries, and select verified portions that reduce connected native work.
+   - **Xbox investigation scope**: limited strictly to the renderer, viewport, and HD presentation (`DECISION_OWNER_CORRECTIONS_20261124`). GS packet decoding is an interim concession, not a target.
    - Cross-check with PS2 for differences, compatibility, or simpler verified logic.
    - Both versions join **one authoritative native architecture**: shared native Session, task system, memory owners, host loose-file VFS, and host OpenGL GPU services.
    - Native save/reload is required; legacy console save byte import is an optional input adapter, not an acceptance gate.

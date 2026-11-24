@@ -138,9 +138,7 @@ portrait, ignores a controller, skips a movie, changes timing, or breaks a
 mode is a failed change. Reaching a later screen never excuses an earlier
 loss. Restore the last verified behavior or fix the regression before stacking
 another subsystem change. A previous playable build is an oracle for behavior,
-not proof that its architecture satisfies this contract. The authored app and
-`milestone_build_kombat_practice/` are not substitutes for the verified
-playable recomp checkpoint.
+not proof that its architecture satisfies this contract. The authored app does not establish retail behavior. `milestone_build_kombat_practice/` (`8B763DCC...`) shares direct hook ancestry (`cd33a7f..67612aa` + `host/mka_unit_wrappers.cpp`) with the playable oracle (`milestone_work_verified_playable_20261110/`, `B9EEF7DA...`), though neither satisfies final native-port acceptance.
 
 For **every** change, capture the same action on the pinned behavioral oracle
 and the candidate, and compare the request/response trace, visible output,
@@ -197,9 +195,7 @@ Current coding priority is the connected route in ROADMAP.md: retail entry, real
 
 1. **Pin provenance and preserve data.** Record parent/fork HEAD and dirty
    state, compiler, binary SHA-256, launch flags, and extracted asset manifest.
-   Preserve the dated backup and save/state files. Identify and hash the
-   verified playable recomp checkpoint separately from the Kombat Practice
-   package. Never overwrite the checkpoint, memory cards, saves, keys, or
+   Preserve the dated backup and save/state files. Identify and hash the verified playable oracle (`milestone_work_verified_playable_20261110/`, `B9EEF7DA...`) and note its measured hook lineage with Kombat Practice (`8B763DCC...`). Never overwrite the checkpoint, memory cards, saves, keys, or
    local model/settings. A `dirty` binary cannot be accepted or credited with
    another binary's log.
 2. **Enumerate retail behavior offline.** Inventory ELF functions and indirect
