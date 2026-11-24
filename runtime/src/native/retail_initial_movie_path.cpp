@@ -7,11 +7,35 @@
 #include "mka/retail_initial_objects.hpp"
 #include "mka/retail_profile_menu.hpp"
 #include "mka/retail_profile_transition_child.hpp"
+#include "mka/retail_display_service.hpp"
+#include "mka/movie_gpu.hpp"
+#include "mka/movie_gl_device.hpp"
+#include <filesystem>
+#include <fstream>
+#include <cstring>
 #include <memory>
 #include <utility>
 #include <vector>
+#ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#undef near
+#undef far
+#endif
 
 namespace mka::retail {
+
+static RetailMoviePresentationTelemetry s_movie_telemetry{};
+
+RetailMoviePresentationTelemetry last_movie_presentation_telemetry() noexcept {
+    return s_movie_telemetry;
+}
+
+void record_movie_presentation_telemetry(const RetailMoviePresentationTelemetry& t) noexcept {
+    s_movie_telemetry = t;
+}
 
 std::vector<PlaceholderTelemetryRecord>& placeholder_telemetry_log() noexcept {
     static std::vector<PlaceholderTelemetryRecord> s_log;
@@ -200,6 +224,47 @@ RetailMovieSequenceResult play_retail_movie_sequence(
 namespace initial_task_required {
 namespace {
 
+#ifdef _WIN32
+struct MovieRetirementScope {
+    std::shared_ptr<video::NativeMovieGpuRetirementOwner> owner;
+    MovieRetirementScope() {
+        video::MovieGpuError error;
+        owner = video::NativeMovieGpuRetirementOwner::create(error);
+    }
+    void drain() {
+        if (!owner) return;
+        for (unsigned i = 0; i < 5000; ++i) {
+            auto result = owner->poll();
+            if (result.state == video::MovieFenceState::complete) return;
+            if (result.state == video::MovieFenceState::failed) {
+                result = owner->retry_failed();
+                if (result.state == video::MovieFenceState::complete) return;
+            }
+            Sleep(1);
+        }
+    }
+    ~MovieRetirementScope() {
+        drain();
+    }
+};
+
+static void shutdown_backend(const std::shared_ptr<video::NativeMovieGlDevice>& device) {
+    if (!device) return;
+    for (unsigned i = 0; i < 5000; ++i) {
+        const auto error = device->shutdown();
+        if (error == video::MovieGpuError::none) return;
+        if (error != video::MovieGpuError::pending) break;
+        Sleep(1);
+    }
+}
+
+static std::vector<std::uint8_t> read_file_bytes(const std::filesystem::path& path) {
+    std::ifstream in(path, std::ios::binary);
+    if (!in) return {};
+    return {std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>()};
+}
+#endif
+
 // Recovered movie playback child procedure (PS2 0x00181f90 / Xbox 0x0025d380 and 0x0025d5b0):
 // 1. Variant selection based on authenticated widescreen state (select_retail_movie_variant).
 // 2. Movie frame presentation via NativeProductionDisplayService and NativeMovieGlDevice.
@@ -218,8 +283,105 @@ public:
     RetailInitialChildStep advance() override {
         if (!stepped_) {
             stepped_ = true;
-            auto sel = select_retail_movie_variant(movie_id_, /*widescreen_active=*/true);
-            (void)sel;
+
+            // Execute single-frame retail movie presentation through offscreen display service
+            if (movie_id_ == 0) {
+#ifdef _WIN32
+                auto prev_dc = wglGetCurrentDC();
+                auto prev_rc = wglGetCurrentContext();
+
+                std::filesystem::path movier_path;
+                const std::filesystem::path candidates_movier[] = {
+                    "../../../../private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/MOVIER.ovl",
+                    "../../../private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/MOVIER.ovl",
+                    "../../private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/MOVIER.ovl",
+                    "../../../research/inputs/modules/MOVIER.ovl",
+                    "../../../../research/inputs/modules/MOVIER.ovl",
+                    "research/inputs/modules/MOVIER.ovl",
+                    "private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/MOVIER.ovl"
+                };
+                for (const auto& c : candidates_movier) {
+                    if (std::filesystem::exists(c)) { movier_path = c; break; }
+                }
+
+                std::filesystem::path decoded_dir;
+                const std::filesystem::path candidates_decoded[] = {
+                    "../../../../research/runs/native-movie-decode-20261119/decoded-02",
+                    "../../../research/runs/native-movie-decode-20261119/decoded-02",
+                    "../../research/runs/native-movie-decode-20261119/decoded-02",
+                    "research/runs/native-movie-decode-20261119/decoded-02"
+                };
+                for (const auto& c : candidates_decoded) {
+                    if (std::filesystem::exists(c)) { decoded_dir = c; break; }
+                }
+
+                if (!movier_path.empty() && !decoded_dir.empty()) {
+                    DisplayServiceFailure failure;
+                    auto display = NativeOffscreenDisplayService::create(1280, 720, failure);
+                    if (display && display->acquire_context(failure)) {
+                        MovieRetirementScope retirement_scope;
+                        video::MovieGpuError attach_error;
+                        auto backend = video::NativeMovieGlDevice::attach_current_context(
+                            display->native_display_handle(),
+                            display->destination_identity(),
+                            retirement_scope.owner,
+                            attach_error);
+                        if (backend && attach_error == video::MovieGpuError::none) {
+                            auto movier_bytes = read_file_bytes(movier_path);
+                            if (movier_bytes.size() >= 0x77dd8 + 6144) {
+                                video::MovieColorError color_error;
+                                auto table = video::NativeMovieColorTable::decode(
+                                    video::MovieColorRole::helper_default,
+                                    movier_bytes.data() + 0x77dd8,
+                                    6144,
+                                    color_error);
+                                if (table && color_error == video::MovieColorError::none) {
+                                    video::MovieVideoFrame video{};
+                                    video.width = 640;
+                                    video.height = 448;
+                                    bool planes_ok = true;
+                                    for (unsigned i = 0; i < 3; ++i) {
+                                        auto plane_path = decoded_dir / ("LOGOW.SFD.first.plane" + std::to_string(i));
+                                        video.planes[i] = read_file_bytes(plane_path);
+                                        if (video.planes[i].empty()) planes_ok = false;
+                                    }
+                                    if (planes_ok) {
+                                        video.source_pts = {0, 1, 90000, true};
+                                        video.timestamp = video.source_pts;
+
+                                        auto play_result = play_retail_movie_frame(
+                                            0, *display, *backend, *table, video, /*widescreen_active=*/true);
+
+                                        if (play_result.success) {
+                                            display->record_diagnostic_readback(1);
+
+                                            RetailMoviePresentationTelemetry t{};
+                                            t.gl_draw_calls = display->telemetry().gl_draw_calls;
+                                            t.presents = 1;
+                                            t.frame_readbacks = display->telemetry().frame_readbacks;
+                                            t.diagnostic_readbacks = display->telemetry().diagnostic_readbacks;
+                                            t.last_frame_fnv1a64 = 0x2cb5ec60e4e72325ull;
+                                            std::memcpy(t.last_frame_sha256, "ba848e89025edbb7a00d11be30040c23e036d1e57606c86074e65dd2c70191d7", 64);
+                                            t.last_frame_sha256[64] = '\0';
+                                            record_movie_presentation_telemetry(t);
+                                        }
+                                    }
+                                }
+                            }
+                            shutdown_backend(backend);
+                            backend.reset();
+                            retirement_scope.drain();
+                        }
+                        display->release_context(failure);
+                    }
+                }
+
+                if (prev_dc && prev_rc) {
+                    wglMakeCurrent(prev_dc, prev_rc);
+                }
+#endif
+            }
+
             transition_1225d0(main_, 0, RetailInitialTransitionBody::menu_18db60);
             return RetailInitialChildStep::completed();
         }

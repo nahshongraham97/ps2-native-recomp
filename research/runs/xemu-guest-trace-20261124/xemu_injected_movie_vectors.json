@@ -1,0 +1,441 @@
+{
+  "generator": "xemu 0.8.139 GDB RSP injected execution",
+  "target": "default.xbe",
+  "function": "0x0025d5b0",
+  "convention": "__cdecl",
+  "test_count": 72,
+  "vectors": [
+    {
+      "widescreen": 0,
+      "movie_id": -1,
+      "return_pointer_eax": "0x00504b7c",
+      "filename": "LOGON.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 0,
+      "return_pointer_eax": "0x00504b7c",
+      "filename": "LOGON.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 1,
+      "return_pointer_eax": "0x00504b64",
+      "filename": "TITLEN.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 2,
+      "return_pointer_eax": "0x00504b48",
+      "filename": "OPENINGN.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 3,
+      "return_pointer_eax": "0x00504b28",
+      "filename": "ATTRACTN.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 4,
+      "return_pointer_eax": "0x00504b0c",
+      "filename": "QUADN.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 5,
+      "return_pointer_eax": "0x00504af4",
+      "filename": "STRANGN.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 6,
+      "return_pointer_eax": "0x00504adc",
+      "filename": "SPYHUNN.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 7,
+      "return_pointer_eax": "0x00504ac4",
+      "filename": "BLITZN.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 8,
+      "return_pointer_eax": "0x00504aa8",
+      "filename": "V_SNDOUT.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 9,
+      "return_pointer_eax": "0x00504a98",
+      "filename": "V_ERMACB.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 10,
+      "return_pointer_eax": "0x00504a88",
+      "filename": "V_MOTORK.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 11,
+      "return_pointer_eax": "0x00504a7c",
+      "filename": "V_SCORP.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 12,
+      "return_pointer_eax": "0x00504a6c",
+      "filename": "V_RAIDON.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 13,
+      "return_pointer_eax": "0x00504a5c",
+      "filename": "V_SZCCKY.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 14,
+      "return_pointer_eax": "0x00504a50",
+      "filename": "V_LOAD2.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 15,
+      "return_pointer_eax": "0x00504a40",
+      "filename": "V_BLOOPR.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 16,
+      "return_pointer_eax": "0x00504a34",
+      "filename": "V_LOAD1.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 17,
+      "return_pointer_eax": "0x00504a24",
+      "filename": "V_SHINOK.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 18,
+      "return_pointer_eax": "0x00504a14",
+      "filename": "V_SUBZER.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 19,
+      "return_pointer_eax": "0x00504a08",
+      "filename": "V_KANO.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 20,
+      "return_pointer_eax": "0x005049f8",
+      "filename": "V_MOTRBK.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 21,
+      "return_pointer_eax": "0x005049e8",
+      "filename": "V_MOTRFT.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 22,
+      "return_pointer_eax": "0x005049d8",
+      "filename": "V_BLOOP5.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 23,
+      "return_pointer_eax": "0x005049c8",
+      "filename": "V_BLOOP4.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 24,
+      "return_pointer_eax": "0x005049b8",
+      "filename": "V_BLOOP2.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 25,
+      "return_pointer_eax": "0x005049a8",
+      "filename": "V_BLOOP3.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 26,
+      "return_pointer_eax": "0x00504998",
+      "filename": "V_KONQIN.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 27,
+      "return_pointer_eax": "0x00504988",
+      "filename": "V_MKDACC.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 28,
+      "return_pointer_eax": "0x0050497c",
+      "filename": "V_BLUES.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 29,
+      "return_pointer_eax": "0x0050496c",
+      "filename": "V_MKAKON.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 30,
+      "return_pointer_eax": "0x0050495c",
+      "filename": "V_MKHAND.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 31,
+      "return_pointer_eax": "0x00504950",
+      "filename": "V_FIN.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 32,
+      "return_pointer_eax": "0x00504940",
+      "filename": "V_MOTOGI.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 33,
+      "return_pointer_eax": "0x00504b7c",
+      "filename": "LOGON.SFD"
+    },
+    {
+      "widescreen": 0,
+      "movie_id": 999,
+      "return_pointer_eax": "0x00504b7c",
+      "filename": "LOGON.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": -1,
+      "return_pointer_eax": "0x00504b70",
+      "filename": "LOGOW.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 0,
+      "return_pointer_eax": "0x00504b70",
+      "filename": "LOGOW.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 1,
+      "return_pointer_eax": "0x00504b58",
+      "filename": "TITLEW.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 2,
+      "return_pointer_eax": "0x00504b38",
+      "filename": "OPENINGW.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 3,
+      "return_pointer_eax": "0x00504b18",
+      "filename": "ATTRACTW.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 4,
+      "return_pointer_eax": "0x00504b00",
+      "filename": "QUADW.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 5,
+      "return_pointer_eax": "0x00504ae8",
+      "filename": "STRANGW.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 6,
+      "return_pointer_eax": "0x00504ad0",
+      "filename": "SPYHUNW.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 7,
+      "return_pointer_eax": "0x00504ab8",
+      "filename": "BLITZW.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 8,
+      "return_pointer_eax": "0x00504aa8",
+      "filename": "V_SNDOUT.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 9,
+      "return_pointer_eax": "0x00504a98",
+      "filename": "V_ERMACB.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 10,
+      "return_pointer_eax": "0x00504a88",
+      "filename": "V_MOTORK.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 11,
+      "return_pointer_eax": "0x00504a7c",
+      "filename": "V_SCORP.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 12,
+      "return_pointer_eax": "0x00504a6c",
+      "filename": "V_RAIDON.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 13,
+      "return_pointer_eax": "0x00504a5c",
+      "filename": "V_SZCCKY.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 14,
+      "return_pointer_eax": "0x00504a50",
+      "filename": "V_LOAD2.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 15,
+      "return_pointer_eax": "0x00504a40",
+      "filename": "V_BLOOPR.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 16,
+      "return_pointer_eax": "0x00504a34",
+      "filename": "V_LOAD1.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 17,
+      "return_pointer_eax": "0x00504a24",
+      "filename": "V_SHINOK.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 18,
+      "return_pointer_eax": "0x00504a14",
+      "filename": "V_SUBZER.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 19,
+      "return_pointer_eax": "0x00504a08",
+      "filename": "V_KANO.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 20,
+      "return_pointer_eax": "0x005049f8",
+      "filename": "V_MOTRBK.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 21,
+      "return_pointer_eax": "0x005049e8",
+      "filename": "V_MOTRFT.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 22,
+      "return_pointer_eax": "0x005049d8",
+      "filename": "V_BLOOP5.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 23,
+      "return_pointer_eax": "0x005049c8",
+      "filename": "V_BLOOP4.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 24,
+      "return_pointer_eax": "0x005049b8",
+      "filename": "V_BLOOP2.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 25,
+      "return_pointer_eax": "0x005049a8",
+      "filename": "V_BLOOP3.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 26,
+      "return_pointer_eax": "0x00504998",
+      "filename": "V_KONQIN.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 27,
+      "return_pointer_eax": "0x00504988",
+      "filename": "V_MKDACC.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 28,
+      "return_pointer_eax": "0x0050497c",
+      "filename": "V_BLUES.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 29,
+      "return_pointer_eax": "0x0050496c",
+      "filename": "V_MKAKON.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 30,
+      "return_pointer_eax": "0x0050495c",
+      "filename": "V_MKHAND.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 31,
+      "return_pointer_eax": "0x00504950",
+      "filename": "V_FIN.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 32,
+      "return_pointer_eax": "0x00504940",
+      "filename": "V_MOTOGI.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 33,
+      "return_pointer_eax": "0x00504b70",
+      "filename": "LOGOW.SFD"
+    },
+    {
+      "widescreen": 1,
+      "movie_id": 999,
+      "return_pointer_eax": "0x00504b70",
+      "filename": "LOGOW.SFD"
+    }
+  ]
+}

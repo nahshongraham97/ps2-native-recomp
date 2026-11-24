@@ -307,7 +307,7 @@ if(WIN32)
         mka_native_retail_text_storage
         mka_native_save_store
         mka_native_user_paths
-        mka_native_retail_middleware_frame mka_native_retail_file_paths mka_native_retail_game_session mka_native_retail_crt mka_native_retail_platform mka_native_allocation_profile mka_native_retail_profile_owners mka_native_retail_game_resource_registry mka_native_game_actions mka_native_sound_resources)
+        mka_native_retail_middleware_frame mka_native_retail_file_paths mka_native_retail_game_session mka_native_retail_crt mka_native_retail_platform mka_native_allocation_profile mka_native_retail_profile_owners mka_native_retail_game_resource_registry mka_native_game_actions mka_native_sound_resources mka_native_media opengl32 gdi32 user32 bcrypt)
     add_executable(test_native_retail_middleware_main EXCLUDE_FROM_ALL tests/test_retail_middleware_main.cpp)
     target_include_directories(test_native_retail_middleware_main PRIVATE runtime/src/native)
     target_link_libraries(test_native_retail_middleware_main PRIVATE mka_native_retail_startup)
@@ -643,6 +643,10 @@ add_executable(test_native_retail_display_movie_presentation EXCLUDE_FROM_ALL te
 target_include_directories(test_native_retail_display_movie_presentation PRIVATE runtime/include)
 target_compile_features(test_native_retail_display_movie_presentation PRIVATE cxx_std_20)
 target_link_libraries(test_native_retail_display_movie_presentation PRIVATE mka_native_retail_startup mka_native_media)
+add_executable(test_native_retail_movie_variant_oracle EXCLUDE_FROM_ALL tests/test_native_retail_movie_variant_oracle.cpp)
+target_include_directories(test_native_retail_movie_variant_oracle PRIVATE runtime/include)
+target_compile_features(test_native_retail_movie_variant_oracle PRIVATE cxx_std_20)
+target_link_libraries(test_native_retail_movie_variant_oracle PRIVATE mka_native_retail_startup)
 if(WIN32)
     foreach(_client test_native_gl_texture test_native_file_read_job test_native_retail_loaded_system_art test_native_retail_permanent_strings test_native_retail_frame_work_storage)
         add_custom_command(TARGET ${_client} POST_BUILD

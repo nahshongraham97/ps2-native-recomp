@@ -91,4 +91,17 @@ std::vector<PlaceholderTelemetryRecord>& placeholder_telemetry_log() noexcept;
 void record_placeholder_hit(std::uint32_t id, const char* name, std::uint64_t frame) noexcept;
 void clear_placeholder_telemetry() noexcept;
 
+// Movie presentation telemetry from entry execution
+struct RetailMoviePresentationTelemetry {
+    std::uint32_t gl_draw_calls{0};
+    std::uint32_t presents{0};
+    std::uint32_t frame_readbacks{0};
+    std::uint32_t diagnostic_readbacks{0};
+    std::uint64_t last_frame_fnv1a64{0};
+    char last_frame_sha256[65]{0};
+};
+
+RetailMoviePresentationTelemetry last_movie_presentation_telemetry() noexcept;
+void record_movie_presentation_telemetry(const RetailMoviePresentationTelemetry& t) noexcept;
+
 } // namespace mka::retail

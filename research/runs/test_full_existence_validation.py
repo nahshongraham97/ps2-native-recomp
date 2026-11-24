@@ -439,6 +439,26 @@ def test_planted_failures():
     finally:
         ev_path.write_text(orig_ev_text, encoding="utf-8", newline="\n")
 
+    # Planted Failure 11b: Credited function depending directly on an unrecovered placeholder fails closed
+    print("Testing planted failure 11b: credited function with placeholder dependency rejection...")
+    ev_path = REPO / "research" / "ledger" / "ported_function_evidence.json"
+    orig_ev_text = ev_path.read_text(encoding="utf-8")
+    try:
+        bad_ev_dep = json.loads(orig_ev_text)
+        bad_ev_dep["00127120"] = {
+            "evidence": orig_ev_text,
+            "dependencies": ["00225d40", "mka::retail::initial_task_required::continue_first_scene_at_225d40"]
+        }
+        ev_path.write_text(json.dumps(bad_ev_dep), encoding="utf-8", newline="\n")
+        try:
+            validate_ledgers(ps2_ledger, xbox_ledger, ps2_map)
+            assert False, "Credited function with placeholder dependency FAILED to raise AssertionError!"
+        except AssertionError as e:
+            assert "is registered as an unrecovered placeholder" in str(e), f"Unexpected error: {e}"
+            print(f"  Credited function with placeholder dependency caught as expected: {e}")
+    finally:
+        ev_path.write_text(orig_ev_text, encoding="utf-8", newline="\n")
+
     print("PASS: All planted-failure cases successfully caught and proven to fail closed.")
 
 

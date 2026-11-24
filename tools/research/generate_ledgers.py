@@ -1025,6 +1025,24 @@ def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map):
             f"Acceptance claimed while placeholder registry is non-empty ({len(placeholders)} placeholders remain)"
         )
 
+    # Scoped dependency placeholder enforcement:
+    # A candidate function claiming credit (status in ported, implemented-via-donor)
+    # cannot depend directly on any symbol or function in the placeholder registry.
+    placeholder_funcs = {ph["function"].lower() for ph in placeholders if "function" in ph}
+    placeholder_symbols = {ph["owning_symbol"] for ph in placeholders if "owning_symbol" in ph}
+    for r in ps2_ledger + xbox_ledger:
+        if r["status"] in ("ported", "implemented-via-donor"):
+            addr = r["address"].lower()
+            ev_entry = ev_manifest.get(addr)
+            if isinstance(ev_entry, dict):
+                direct_deps = ev_entry.get("dependencies", [])
+                for dep in direct_deps:
+                    dep_str = str(dep).strip()
+                    if dep_str.lower() in placeholder_funcs or dep_str in placeholder_symbols:
+                        raise AssertionError(
+                            f"Credit rejected for {addr}: direct dependency {dep_str} is registered as an unrecovered placeholder"
+                        )
+
     # 1. Reject donor credit if missing verified test vectors on disk (evaluated per-function directly)
     ps2_donor = [r for r in ps2_ledger if r["status"] == "implemented-via-donor"]
     xb_donor = [r for r in xbox_ledger if r["status"] == "implemented-via-donor"]

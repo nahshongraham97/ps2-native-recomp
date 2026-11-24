@@ -205,6 +205,32 @@ int main(int, char**) {
     std::printf("   Placeholder #12 (transition_1225d0) / Placeholder #17 (dispatch_retail_enabled_mode):\n");
     std::printf("   Pushes mode transition records into mode_history, but mode task bodies remain placeholders.\n\n");
 
+    // Query and verify authentic movie presentation telemetry from frame 5 (begin_menu_18d450 -> LOGOW.SFD frame 0)
+    const auto movie_telemetry = mka::retail::last_movie_presentation_telemetry();
+    std::printf("[headless-movie-telemetry] GL draw calls = %u, buffer presents = %u, frame readbacks = %u, diagnostic readbacks = %u, FNV1a64 = 0x%016llx, SHA256 = %s\n",
+        movie_telemetry.gl_draw_calls,
+        movie_telemetry.presents,
+        movie_telemetry.frame_readbacks,
+        movie_telemetry.diagnostic_readbacks,
+        static_cast<unsigned long long>(movie_telemetry.last_frame_fnv1a64),
+        movie_telemetry.last_frame_sha256);
+
+    const bool movie_telemetry_valid = (movie_telemetry.gl_draw_calls == 1 &&
+                                        movie_telemetry.presents == 1 &&
+                                        movie_telemetry.frame_readbacks == 0 &&
+                                        movie_telemetry.diagnostic_readbacks == 1 &&
+                                        movie_telemetry.last_frame_fnv1a64 == 0x2cb5ec60e4e72325ull);
+    if (!movie_telemetry_valid) {
+        std::fprintf(stderr, "FAIL: Headless movie presentation telemetry mismatch!\n");
+        std::fprintf(stderr, "  Observed: draws=%u, presents=%u, frame_readbacks=%u, diagnostic_readbacks=%u, FNV=0x%016llx\n",
+            movie_telemetry.gl_draw_calls,
+            movie_telemetry.presents,
+            movie_telemetry.frame_readbacks,
+            movie_telemetry.diagnostic_readbacks,
+            static_cast<unsigned long long>(movie_telemetry.last_frame_fnv1a64));
+        return 1;
+    }
+
     // Clean up temporary fixture if one was created
     if (!fixture_root.empty()) {
         std::filesystem::remove_all(fixture_root, ec);

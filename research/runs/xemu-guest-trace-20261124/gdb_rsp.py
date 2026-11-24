@@ -45,6 +45,10 @@ class GdbClient:
         except Exception:
             return b""
 
+    def write_mem(self, addr: int, data: bytes) -> bool:
+        resp = self.send_cmd(f"M{addr:x},{len(data):x}:{data.hex()}")
+        return resp == "OK"
+
     def read_regs(self) -> dict:
         resp = self.send_cmd("g")
         raw = bytes.fromhex(resp)
@@ -55,6 +59,11 @@ class GdbClient:
                 val = int.from_bytes(raw[i*4:(i+1)*4], 'little')
                 regs[n] = val
         return regs
+
+    def write_reg(self, reg_index: int, value: int) -> bool:
+        val_bytes = value.to_bytes(4, 'little').hex()
+        resp = self.send_cmd(f"P{reg_index:x}={val_bytes}")
+        return resp == "OK"
 
     def set_hw_breakpoint(self, addr: int):
         return self.send_cmd(f"Z1,{addr:x},1")
