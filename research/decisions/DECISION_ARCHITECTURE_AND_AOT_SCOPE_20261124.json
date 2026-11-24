@@ -1,0 +1,14 @@
+{
+  "decision_id": "DECISION_ARCHITECTURE_AND_AOT_SCOPE_20261124",
+  "title": "Architectural Transformation Scope, Run-Doc Consolidation, and Strict Tier 2 Build-Time AOT Measurement",
+  "date": "2026-11-24",
+  "status": "APPROVED",
+  "owner": "Nahshon Graham",
+  "rules": {
+    "game_logic_origin": "Ahead-of-time (AOT) static C++ compiled from pinned PS2 retail executables and overlays, transformed to typed native memory and ABI (zero g_ram, zero c.r, zero $gp, zero 32-bit guest vtables).",
+    "hand_written_boundary": "Hand-written native C++ is restricted strictly to platform boundaries (files, display/GL, SDL2, audio, input, threading) and verified runtime services.",
+    "xbox_scope": "Limited strictly to renderer, viewport, and HD presentation per DECISION_OWNER_CORRECTIONS_20261124; GS packet decoding is an interim concession, not a target.",
+    "tier2_aot_definition": "AOT-generated counts strictly build-time static C++ output measured from generator unit tables and overlay manifests, never runtime RAM slices or unmeasured estimates.",
+    "doc_discipline": "Update all relevant current documents in place (README.md, TASK_BOARD.md, PORT_STATUS.md, ROADMAP.md, HANDOFF.md, REPO_LAYOUT.md, NATIVE_PORT_EXECUTION_CONTRACT.md); never spawn competing root status docs, file:/// links, machine-local paths, or time estimates."
+  }
+}

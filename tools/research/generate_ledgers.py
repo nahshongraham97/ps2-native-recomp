@@ -800,6 +800,156 @@ def generate_progress_svg(ps2_ledger, xbox_ledger, output_path: Path):
     output_path.write_bytes("\n".join(o).encode("utf-8"))
 
 
+
+
+def validate_current_docs(repo_root: Path):
+    """Enforce Phase 1 doc hygiene: no file:/// or machine-local user paths, no broken relative links, no old Xbox-everything wording."""
+    doc_names = [
+        "README.md", "TASK_BOARD.md", "PORT_STATUS.md", "ROADMAP.md",
+        "AGENTS.md", "HANDOFF.md", "MODEL_COORDINATION.md", "REPO_LAYOUT.md",
+        "NATIVE_PORT_EXECUTION_CONTRACT.md",
+    ]
+    if (repo_root / "launchers" / "README.md").exists():
+        doc_names.append("launchers/README.md")
+
+    rx_local = re.compile(r"(?:file:///|[A-Za-z]:[/\\]{1,2}Users[/\\]|/home/nahsh)", re.I)
+    rx_xb_all = re.compile(r"xbox[- ]first.*(?:everything|all remaining)|start with the prepared xbox program for \*\*all remaining", re.I)
+    rx_mdlink = re.compile(r"\[[^\]]+\]\(([^)#\s]+)(?:#[^)]+)?\)")
+
+    for rel in doc_names:
+        p = repo_root / rel
+        if not p.exists():
+            continue
+        lines = p.read_text(encoding="utf-8", errors="replace").splitlines()
+        for i, line in enumerate(lines, 1):
+            if rx_local.search(line):
+                raise AssertionError(f"Machine-local path or file:/// link forbidden in {rel}:{i}: {line[:120]}")
+            if rx_xb_all.search(line):
+                raise AssertionError(f"Forbidden old Xbox-first 'everything' wording in {rel}:{i}: {line[:120]}")
+            for target in rx_mdlink.findall(line):
+                if target.startswith(("http://", "https://", "mailto:")):
+                    continue
+                resolved = (p.parent / target).resolve()
+                if not resolved.exists():
+                    raise AssertionError(f"Broken relative markdown link in {rel}:{i}: {target}")
+
+
+def validate_progress_aot_tier(repo_root: Path, ps2_ledger):
+    """Fail closed if README.md, TASK_BOARD.md, or PORT_STATUS.md AOT Tier 2 block contradicts computed aot_coverage_inventory."""
+    aot = compute_aot_metrics(ps2_ledger)
+    expected_base = f"{aot['base_aot']:,} / {aot['base_total']:,}"
+    expected_movier = f"{aot['movier_aot']:,} / {aot['movier_total']:,}"
+    expected_gamer = f"{aot['gamer_aot']:,} / {aot['gamer_total']:,}"
+    expected_sub = f"**{aot['in_scope_aot']:,} / "
+    for rel in ("README.md", "TASK_BOARD.md", "PORT_STATUS.md"):
+        p = repo_root / rel
+        if not p.exists():
+            continue
+        txt = p.read_text(encoding="utf-8")
+        m = re.search(r"<!-- PROGRESS:START -->(.*?)<!-- PROGRESS:END -->", txt, re.DOTALL)
+        assert m, f"Missing PROGRESS markers in {rel}"
+        blk = m.group(1)
+        assert expected_base in blk, f"Unmeasured/mismatched SLUS_214.10 AOT count in {rel} (expected {expected_base})"
+        assert expected_movier in blk, f"Unmeasured/mismatched MOVIER.ovl AOT count in {rel} (expected {expected_movier})"
+        assert expected_gamer in blk, f"Unmeasured/mismatched GAMER.ovl AOT count in {rel} (expected {expected_gamer})"
+        assert expected_sub in blk, f"Unmeasured/mismatched AOT subtotal in {rel} (expected {expected_sub})"
+
+def compute_aot_metrics(ps2_ledger):
+    inv_path = REPO / "research" / "ledger" / "aot_coverage_inventory.json"
+    if not inv_path.exists():
+        raise AssertionError(f"Missing measured AOT inventory: {inv_path}")
+    inv = json.loads(inv_path.read_text(encoding="utf-8"))
+    if inv.get("schema") != "aot_coverage_inventory_v1":
+        raise AssertionError(f"Invalid AOT inventory schema: {inv.get('schema')}")
+
+    mods = inv.get("modules", {})
+    base_mod = mods.get("SLUS_214.10", {})
+    unit_ranges = base_mod.get("unit_ranges", [])
+    if not unit_ranges:
+        raise AssertionError("AOT inventory SLUS_214.10 missing measured unit_ranges")
+    base_rows = [r for r in ps2_ledger if r["module"] == "SLUS_214.10"]
+    computed_base_aot = sum(
+        1 for r in base_rows
+        if any(u["start"] <= int(r["address"], 16) < u["start"] + u["size"] for u in unit_ranges)
+    )
+    if base_mod.get("static_aot_count") != computed_base_aot:
+        raise AssertionError(
+            f"Hardcoded/mismatched SLUS_214.10 AOT numerator: inventory says {base_mod.get('static_aot_count')} != measured {computed_base_aot}"
+        )
+    if base_mod.get("catalog_total") != len(base_rows):
+        raise AssertionError(
+            f"SLUS_214.10 catalog_total mismatch: {base_mod.get('catalog_total')} != {len(base_rows)}"
+        )
+    if base_mod.get("static_units") != len(unit_ranges):
+        raise AssertionError(
+            f"SLUS_214.10 static_units mismatch: {base_mod.get('static_units')} != {len(unit_ranges)}"
+        )
+
+    movier_rows = [r for r in ps2_ledger if r["module"] == "MOVIER.ovl"]
+    gamer_rows = [r for r in ps2_ledger if r["module"] == "GAMER.ovl"]
+    netr_rows = [r for r in ps2_ledger if r["module"] == "NETR.ovl"]
+    movier_mod = mods.get("MOVIER.ovl", {})
+    gamer_mod = mods.get("GAMER.ovl", {})
+    netr_mod = mods.get("NETR.ovl", {})
+
+    if movier_mod.get("catalog_total") != len(movier_rows):
+        raise AssertionError(f"MOVIER.ovl total mismatch: {movier_mod.get('catalog_total')} != {len(movier_rows)}")
+    if gamer_mod.get("catalog_total") != len(gamer_rows):
+        raise AssertionError(f"GAMER.ovl total mismatch: {gamer_mod.get('catalog_total')} != {len(gamer_rows)}")
+    if netr_mod.get("catalog_total") != len(netr_rows):
+        raise AssertionError(f"NETR.ovl total mismatch: {netr_mod.get('catalog_total')} != {len(netr_rows)}")
+
+    # Check OVERLAY-MAP-MANIFEST.json if present
+    for cand_manifest in [
+        REPO / "recomp" / "overlays" / "OVERLAY-MAP-MANIFEST.json",
+        REPO / "external" / "forks" / "retail-main-22" / "recomp" / "overlays" / "OVERLAY-MAP-MANIFEST.json",
+    ]:
+        if cand_manifest.exists():
+            ovm = json.loads(cand_manifest.read_text(encoding="utf-8"))
+            if ovm.get("MOVIER", {}).get("functions_count") != len(movier_rows):
+                raise AssertionError("OVERLAY-MAP-MANIFEST MOVIER count contradicts functions.csv")
+            if ovm.get("GAMER", {}).get("functions_count") != len(gamer_rows):
+                raise AssertionError("OVERLAY-MAP-MANIFEST GAMER count contradicts functions.csv")
+            break
+
+    # Reject unmeasured nonzero static overlay numerators without listed build-time C++ overlay sources
+    for name, mod in [("MOVIER.ovl", movier_mod), ("GAMER.ovl", gamer_mod)]:
+        cnt = mod.get("static_aot_count", 0)
+        srcs = mod.get("static_overlay_sources", [])
+        if cnt > 0 and not srcs:
+            raise AssertionError(f"Unmeasured AOT numerator: {name} claims {cnt} static functions with empty static_overlay_sources")
+        if cnt < 0 or cnt > mod.get("catalog_total", 0):
+            raise AssertionError(f"Out-of-range AOT numerator for {name}: {cnt}")
+
+    # Check VU strict corpus consistency if present
+    vu = inv.get("vu_microprograms", {})
+    vu_json = REPO / "research" / "runs" / "native-bank-service-20261118" / "VU_CORPUS_STRICT.json"
+    if vu_json.exists():
+        vd = json.loads(vu_json.read_text(encoding="utf-8"))
+        if vu.get("vu1_strict_corpus_keys") != vd.get("new_table", {}).get("keys"):
+            raise AssertionError("VU strict corpus key count contradicts VU_CORPUS_STRICT.json")
+    if vu.get("vu1_static_table_keys", 0) > vu.get("vu1_strict_corpus_keys", 0):
+        raise AssertionError("VU static table keys exceed strict corpus keys")
+
+    in_scope_aot = computed_base_aot + movier_mod.get("static_aot_count", 0) + gamer_mod.get("static_aot_count", 0)
+    return {
+        "active_fork_static_cpp_count": inv.get("active_fork_static_cpp_count", 0),
+        "base_aot": computed_base_aot,
+        "base_total": len(base_rows),
+        "base_units": len(unit_ranges),
+        "movier_aot": movier_mod.get("static_aot_count", 0),
+        "movier_total": len(movier_rows),
+        "gamer_aot": gamer_mod.get("static_aot_count", 0),
+        "gamer_total": len(gamer_rows),
+        "netr_total": len(netr_rows),
+        "in_scope_aot": in_scope_aot,
+        "dyn_windows": inv.get("dynamic_overlay_windows_kModules", []),
+        "vu1_static_keys": vu.get("vu1_static_table_keys", 0),
+        "vu1_strict_keys": vu.get("vu1_strict_corpus_keys", 0),
+        "vu1_captures": vu.get("vu1_bin_captures", 0),
+        "oracle_vu1_dlls": vu.get("oracle_vu1_live_dll_count", 0),
+    }
+
 def generate_progress_markdown_block(ps2_ledger, xbox_ledger, ps2_map, fork_sha=FORK_COMMIT_SHA):
     # PS2 totals
     ps2_impl = [r for r in ps2_ledger if r["status"] in ("ported", "host-replaced", "implemented-via-donor")]
@@ -819,6 +969,8 @@ def generate_progress_markdown_block(ps2_ledger, xbox_ledger, ps2_map, fork_sha=
     ps2_base_open = sum(1 for r in ps2_ledger if r["status"] == "open" and r["module"] == "SLUS_214.10")
     ps2_movier_open = sum(1 for r in ps2_ledger if r["status"] == "open" and r["module"] == "MOVIER.ovl")
     ps2_gamer_open = sum(1 for r in ps2_ledger if r["status"] == "open" and r["module"] == "GAMER.ovl")
+
+    aot = compute_aot_metrics(ps2_ledger)
 
     # Xbox totals
     xb_impl = [r for r in xbox_ledger if r["status"] in ("ported", "host-replaced", "implemented-via-donor")]
@@ -863,7 +1015,7 @@ def generate_progress_markdown_block(ps2_ledger, xbox_ledger, ps2_map, fork_sha=
         "",
         "![Porting Progress](progress.svg)",
         "",
-        f"**Verified Fork Commit**: [`{fork_sha[:8]}`](https://github.com/nahshongraham97/ps2-native-recomp/commit/{fork_sha}) (in `external/forks/retail-main-22`)",
+        f"**Verified Fork Commit**: [`{fork_sha[:8]}`](https://github.com/nahshongraham97/ps2-native-recomp/commit/{fork_sha}) (pinned active fork)",
         "",
         "### PlayStation 2 Retail Catalog (`SLUS_214.10` + Overlays)",
         f"- **In-Scope Completion**: **{100.0 * len(ps2_impl) / ps2_in_scope:.2f}%** ({len(ps2_impl):,} / {ps2_in_scope:,} in-scope retail functions)",
@@ -877,6 +1029,19 @@ def generate_progress_markdown_block(ps2_ledger, xbox_ledger, ps2_map, fork_sha=
         f"| **In-Scope Subtotal** | *Active retail code path to implement/verify* | **{ps2_in_scope:,}** | **100.00%** |",
         f"| **Excluded / Stubbed** | `out-of-scope-stubbed` (1,834 `NETR.ovl` overlay functions + 6 `SLUS_214.10` main-executable online functions) | {len(ps2_stubbed):,} | — |",
         f"| **Total PS2 Catalog** | *Complete binary disassembly denominator* | **{len(ps2_ledger):,}** | — |",
+        "",
+        "### Tier 2: Build-Time Static AOT Coverage (`research/ledger/aot_coverage_inventory.json`)",
+        f"- **Reference Static AOT C++ Coverage**: **{100.0 * aot['in_scope_aot'] / ps2_in_scope:.2f}%** ({aot['in_scope_aot']:,} / {ps2_in_scope:,} in-scope EE functions in reference `ps2-native-recomp/generated/mkarmageddon/table.cpp`; **{aot['active_fork_static_cpp_count']:,}** generated `.cpp` units currently built in active fork `generated/` pending Phase 3 reproducible pipeline)",
+        "",
+        "| Module / Artifact | Build-Time Static AOT Status | Static AOT / Catalog | Reference % |",
+        "|---|---|---|---|",
+        f"| **Base `SLUS_214.10`** | `{aot['base_units']:,}` static `unit_*.cpp` files (`table.cpp`) | {aot['base_aot']:,} / {aot['base_total']:,} | {100.0 * aot['base_aot'] / aot['base_total']:.2f}% |",
+        f"| **`MOVIER.ovl` Overlay** | Build-time static overlay C++ NOT generated (`kModules` RAM slices excluded) | {aot['movier_aot']:,} / {aot['movier_total']:,} | {100.0 * aot['movier_aot'] / aot['movier_total']:.2f}% |",
+        f"| **`GAMER.ovl` Overlay** | Build-time static overlay C++ NOT generated (`kModules` RAM slices excluded) | {aot['gamer_aot']:,} / {aot['gamer_total']:,} | {100.0 * aot['gamer_aot'] / aot['gamer_total']:.2f}% |",
+        f"| **In-Scope AOT Subtotal** | *Measured build-time static C++ across `SLUS_214.10` + `MOVIER.ovl` + `GAMER.ovl`* | **{aot['in_scope_aot']:,} / {ps2_in_scope:,}** | **{100.0 * aot['in_scope_aot'] / ps2_in_scope:.2f}%** |",
+        f"| **Excluded `NETR.ovl`** | Out of scope (`DECISION_ONLINE_OUT_OF_SCOPE.json`) | 0 / {aot['netr_total']:,} | — |",
+        f"| **Dynamic Overlay Windows (`kModules`)** | Runtime memory snapshots only (not full module AOT) | {len(aot['dyn_windows']):,} captured windows | — |",
+        f"| **VU1 Microprograms (Separate VU Domain)** | `vu1_table.cpp` keys vs `VU_CORPUS_STRICT.json` ({aot['vu1_captures']:,} `.bin` captures; {aot['oracle_vu1_dlls']:,} oracle `vu1-live/` DLLs) | {aot['vu1_static_keys']:,} / {aot['vu1_strict_keys']:,} keys | — |",
         "",
         "### Xbox Donor Catalog (`default.xbe`)",
         "> [!NOTE]",
@@ -1269,6 +1434,10 @@ def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map):
     # 6. Global pointer accesses data validation (rescan SLUS_214.10 from ELF header)
     validate_gp_accesses(REPO)
 
+    # 6b. Validate AOT coverage inventory & Phase 1 current document gates
+    compute_aot_metrics(ps2_ledger)
+    validate_current_docs(REPO)
+
     # 7. PS2 donor column verification: zero ps2: self-references
     invalid_donors = [r for r in ps2_ledger if r["donor"].startswith("ps2:")]
     assert len(invalid_donors) == 0, f"Found {len(invalid_donors)} invalid ps2: self-references in donor column!"
@@ -1346,9 +1515,10 @@ def main():
     progress_md = generate_progress_markdown_block(ps2_ledger, xbox_ledger, ps2_map, FORK_COMMIT_SHA)
     update_markdown_progress(REPO / "README.md", progress_md)
     update_markdown_progress(REPO / "TASK_BOARD.md", progress_md)
+    update_markdown_progress(REPO / "PORT_STATUS.md", progress_md)
 
     # Post-update validation on markdown files
-    for doc in (REPO / "README.md", REPO / "TASK_BOARD.md"):
+    for doc in (REPO / "README.md", REPO / "TASK_BOARD.md", REPO / "PORT_STATUS.md"):
         txt = doc.read_text(encoding="utf-8")
         assert "<!-- PROGRESS:START -->" in txt and "<!-- PROGRESS:END -->" in txt, f"Missing markers in {doc}"
         assert FORK_COMMIT_SHA in txt, f"Missing fork commit SHA in {doc}"
@@ -1356,7 +1526,8 @@ def main():
         assert "17,510" in txt and "22,579" in txt and "17,511" in txt, f"Ledger totals missing in {doc}"
         assert "2,648" in txt and "1,102" in txt and "9,038" in txt, f"Still-needed counts missing in {doc}"
 
-    print("PASS: Markdown synchronization verified in README.md and TASK_BOARD.md.")
+    validate_progress_aot_tier(REPO, ps2_ledger)
+    print("PASS: Markdown synchronization verified in README.md, TASK_BOARD.md, and PORT_STATUS.md.")
 
 
 if __name__ == "__main__":

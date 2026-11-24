@@ -1,0 +1,1961 @@
+{
+  "schema": "aot_coverage_inventory_v1",
+  "measured_date": "2026-11-24",
+  "definition": "Build-time static AOT C++ generation only; excludes dynamic overlay RAM snapshots (kModules) and live runtime JIT/DLL caches.",
+  "active_fork_static_cpp_count": 0,
+  "active_fork_status": "Reproducible Phase 3 pipeline not yet materialized in active fork generated/ directory; legacy reference generator table.cpp holds base SLUS_214.10 units.",
+  "sources": {
+    "reference_table_cpp": {
+      "rel_path": "external/forks/ps2-native-recomp/generated/mkarmageddon/table.cpp",
+      "sha256": "398610659664a005ba378c8dc2f4866ed6793f2233f966684b184eb0d8a18da5",
+      "static_unit_count": 311
+    },
+    "overlay_manifest": {
+      "rel_path": "recomp/overlays/OVERLAY-MAP-MANIFEST.json",
+      "sha256": "259c440333f85f7c6752aa1591499138474d2f7dcd563a42871ba3159021a530",
+      "MOVIER_functions_count": 2537,
+      "GAMER_functions_count": 1
+    },
+    "vu1_table_cpp": {
+      "rel_path": "external/forks/ps2-native-recomp/generated/mkarmageddon/vu1_table.cpp",
+      "sha256": "732e5aa827053d56886edd6cf3b0365c8a92b14885ddeb86732d8067f7cf7c1b",
+      "keys": 490
+    },
+    "vu_corpus_strict": {
+      "rel_path": "research/runs/native-bank-service-20261118/VU_CORPUS_STRICT.json",
+      "sha256": "82204adf952343878a45285ba655cfc9b182037e09bc88643e745ee1fd1acc0c",
+      "vu1_bin_captures": 211,
+      "strict_keys": 493
+    }
+  },
+  "modules": {
+    "SLUS_214.10": {
+      "static_aot_count": 13138,
+      "catalog_total": 13138,
+      "static_units": 311,
+      "source": "reference_table_cpp",
+      "unit_ranges": [
+        {
+          "unit": "unit_0000",
+          "start_hex": "0x00100000",
+          "start": 1048576,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0001",
+          "start_hex": "0x00104000",
+          "start": 1064960,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0002",
+          "start_hex": "0x00108000",
+          "start": 1081344,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0003",
+          "start_hex": "0x0010c000",
+          "start": 1097728,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0004",
+          "start_hex": "0x00110000",
+          "start": 1114112,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0005",
+          "start_hex": "0x00114000",
+          "start": 1130496,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0006",
+          "start_hex": "0x00118000",
+          "start": 1146880,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0007",
+          "start_hex": "0x0011c000",
+          "start": 1163264,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0008",
+          "start_hex": "0x00120000",
+          "start": 1179648,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0009",
+          "start_hex": "0x00124000",
+          "start": 1196032,
+          "size": 16384
+        },
+        {
+          "unit": "unit_000A",
+          "start_hex": "0x00128000",
+          "start": 1212416,
+          "size": 16384
+        },
+        {
+          "unit": "unit_000B",
+          "start_hex": "0x0012c000",
+          "start": 1228800,
+          "size": 16384
+        },
+        {
+          "unit": "unit_000C",
+          "start_hex": "0x00130000",
+          "start": 1245184,
+          "size": 16384
+        },
+        {
+          "unit": "unit_000D",
+          "start_hex": "0x00134000",
+          "start": 1261568,
+          "size": 16384
+        },
+        {
+          "unit": "unit_000E",
+          "start_hex": "0x00138000",
+          "start": 1277952,
+          "size": 16384
+        },
+        {
+          "unit": "unit_000F",
+          "start_hex": "0x0013c000",
+          "start": 1294336,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0010",
+          "start_hex": "0x00140000",
+          "start": 1310720,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0011",
+          "start_hex": "0x00144000",
+          "start": 1327104,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0012",
+          "start_hex": "0x00148000",
+          "start": 1343488,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0013",
+          "start_hex": "0x0014c000",
+          "start": 1359872,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0014",
+          "start_hex": "0x00150000",
+          "start": 1376256,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0015",
+          "start_hex": "0x00154000",
+          "start": 1392640,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0016",
+          "start_hex": "0x00158000",
+          "start": 1409024,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0017",
+          "start_hex": "0x0015c000",
+          "start": 1425408,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0018",
+          "start_hex": "0x00160000",
+          "start": 1441792,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0019",
+          "start_hex": "0x00164000",
+          "start": 1458176,
+          "size": 16384
+        },
+        {
+          "unit": "unit_001A",
+          "start_hex": "0x00168000",
+          "start": 1474560,
+          "size": 16384
+        },
+        {
+          "unit": "unit_001B",
+          "start_hex": "0x0016c000",
+          "start": 1490944,
+          "size": 16384
+        },
+        {
+          "unit": "unit_001C",
+          "start_hex": "0x00170000",
+          "start": 1507328,
+          "size": 16384
+        },
+        {
+          "unit": "unit_001D",
+          "start_hex": "0x00174000",
+          "start": 1523712,
+          "size": 16384
+        },
+        {
+          "unit": "unit_001E",
+          "start_hex": "0x00178000",
+          "start": 1540096,
+          "size": 16384
+        },
+        {
+          "unit": "unit_001F",
+          "start_hex": "0x0017c000",
+          "start": 1556480,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0020",
+          "start_hex": "0x00180000",
+          "start": 1572864,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0021",
+          "start_hex": "0x00184000",
+          "start": 1589248,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0022",
+          "start_hex": "0x00188000",
+          "start": 1605632,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0023",
+          "start_hex": "0x0018c000",
+          "start": 1622016,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0024",
+          "start_hex": "0x00190000",
+          "start": 1638400,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0025",
+          "start_hex": "0x00194000",
+          "start": 1654784,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0026",
+          "start_hex": "0x00198000",
+          "start": 1671168,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0027",
+          "start_hex": "0x0019c000",
+          "start": 1687552,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0028",
+          "start_hex": "0x001a0000",
+          "start": 1703936,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0029",
+          "start_hex": "0x001a4000",
+          "start": 1720320,
+          "size": 16384
+        },
+        {
+          "unit": "unit_002A",
+          "start_hex": "0x001a8000",
+          "start": 1736704,
+          "size": 16384
+        },
+        {
+          "unit": "unit_002B",
+          "start_hex": "0x001ac000",
+          "start": 1753088,
+          "size": 16384
+        },
+        {
+          "unit": "unit_002C",
+          "start_hex": "0x001b0000",
+          "start": 1769472,
+          "size": 16384
+        },
+        {
+          "unit": "unit_002D",
+          "start_hex": "0x001b4000",
+          "start": 1785856,
+          "size": 16384
+        },
+        {
+          "unit": "unit_002E",
+          "start_hex": "0x001b8000",
+          "start": 1802240,
+          "size": 16384
+        },
+        {
+          "unit": "unit_002F",
+          "start_hex": "0x001bc000",
+          "start": 1818624,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0030",
+          "start_hex": "0x001c0000",
+          "start": 1835008,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0031",
+          "start_hex": "0x001c4000",
+          "start": 1851392,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0032",
+          "start_hex": "0x001c8000",
+          "start": 1867776,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0033",
+          "start_hex": "0x001cc000",
+          "start": 1884160,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0034",
+          "start_hex": "0x001d0000",
+          "start": 1900544,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0035",
+          "start_hex": "0x001d4000",
+          "start": 1916928,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0036",
+          "start_hex": "0x001d8000",
+          "start": 1933312,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0037",
+          "start_hex": "0x001dc000",
+          "start": 1949696,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0038",
+          "start_hex": "0x001e0000",
+          "start": 1966080,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0039",
+          "start_hex": "0x001e4000",
+          "start": 1982464,
+          "size": 16384
+        },
+        {
+          "unit": "unit_003A",
+          "start_hex": "0x001e8000",
+          "start": 1998848,
+          "size": 16384
+        },
+        {
+          "unit": "unit_003B",
+          "start_hex": "0x001ec000",
+          "start": 2015232,
+          "size": 16384
+        },
+        {
+          "unit": "unit_003C",
+          "start_hex": "0x001f0000",
+          "start": 2031616,
+          "size": 16384
+        },
+        {
+          "unit": "unit_003D",
+          "start_hex": "0x001f4000",
+          "start": 2048000,
+          "size": 16384
+        },
+        {
+          "unit": "unit_003E",
+          "start_hex": "0x001f8000",
+          "start": 2064384,
+          "size": 16384
+        },
+        {
+          "unit": "unit_003F",
+          "start_hex": "0x001fc000",
+          "start": 2080768,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0040",
+          "start_hex": "0x00200000",
+          "start": 2097152,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0041",
+          "start_hex": "0x00204000",
+          "start": 2113536,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0042",
+          "start_hex": "0x00208000",
+          "start": 2129920,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0043",
+          "start_hex": "0x0020c000",
+          "start": 2146304,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0044",
+          "start_hex": "0x00210000",
+          "start": 2162688,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0045",
+          "start_hex": "0x00214000",
+          "start": 2179072,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0046",
+          "start_hex": "0x00218000",
+          "start": 2195456,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0047",
+          "start_hex": "0x0021c000",
+          "start": 2211840,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0048",
+          "start_hex": "0x00220000",
+          "start": 2228224,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0049",
+          "start_hex": "0x00224000",
+          "start": 2244608,
+          "size": 16384
+        },
+        {
+          "unit": "unit_004A",
+          "start_hex": "0x00228000",
+          "start": 2260992,
+          "size": 16384
+        },
+        {
+          "unit": "unit_004B",
+          "start_hex": "0x0022c000",
+          "start": 2277376,
+          "size": 16384
+        },
+        {
+          "unit": "unit_004C",
+          "start_hex": "0x00230000",
+          "start": 2293760,
+          "size": 16384
+        },
+        {
+          "unit": "unit_004D",
+          "start_hex": "0x00234000",
+          "start": 2310144,
+          "size": 16384
+        },
+        {
+          "unit": "unit_004E",
+          "start_hex": "0x00238000",
+          "start": 2326528,
+          "size": 16384
+        },
+        {
+          "unit": "unit_004F",
+          "start_hex": "0x0023c000",
+          "start": 2342912,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0050",
+          "start_hex": "0x00240000",
+          "start": 2359296,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0051",
+          "start_hex": "0x00244000",
+          "start": 2375680,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0052",
+          "start_hex": "0x00248000",
+          "start": 2392064,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0053",
+          "start_hex": "0x0024c000",
+          "start": 2408448,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0054",
+          "start_hex": "0x00250000",
+          "start": 2424832,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0055",
+          "start_hex": "0x00254000",
+          "start": 2441216,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0056",
+          "start_hex": "0x00258000",
+          "start": 2457600,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0057",
+          "start_hex": "0x0025c000",
+          "start": 2473984,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0058",
+          "start_hex": "0x00260000",
+          "start": 2490368,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0059",
+          "start_hex": "0x00264000",
+          "start": 2506752,
+          "size": 16384
+        },
+        {
+          "unit": "unit_005A",
+          "start_hex": "0x00268000",
+          "start": 2523136,
+          "size": 16384
+        },
+        {
+          "unit": "unit_005B",
+          "start_hex": "0x0026c000",
+          "start": 2539520,
+          "size": 16384
+        },
+        {
+          "unit": "unit_005C",
+          "start_hex": "0x00270000",
+          "start": 2555904,
+          "size": 16384
+        },
+        {
+          "unit": "unit_005D",
+          "start_hex": "0x00274000",
+          "start": 2572288,
+          "size": 16384
+        },
+        {
+          "unit": "unit_005E",
+          "start_hex": "0x00278000",
+          "start": 2588672,
+          "size": 16384
+        },
+        {
+          "unit": "unit_005F",
+          "start_hex": "0x0027c000",
+          "start": 2605056,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0060",
+          "start_hex": "0x00280000",
+          "start": 2621440,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0061",
+          "start_hex": "0x00284000",
+          "start": 2637824,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0062",
+          "start_hex": "0x00288000",
+          "start": 2654208,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0063",
+          "start_hex": "0x0028c000",
+          "start": 2670592,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0064",
+          "start_hex": "0x00290000",
+          "start": 2686976,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0065",
+          "start_hex": "0x00294000",
+          "start": 2703360,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0066",
+          "start_hex": "0x00298000",
+          "start": 2719744,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0067",
+          "start_hex": "0x0029c000",
+          "start": 2736128,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0068",
+          "start_hex": "0x002a0000",
+          "start": 2752512,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0069",
+          "start_hex": "0x002a4000",
+          "start": 2768896,
+          "size": 16384
+        },
+        {
+          "unit": "unit_006A",
+          "start_hex": "0x002a8000",
+          "start": 2785280,
+          "size": 16384
+        },
+        {
+          "unit": "unit_006B",
+          "start_hex": "0x002ac000",
+          "start": 2801664,
+          "size": 16384
+        },
+        {
+          "unit": "unit_006C",
+          "start_hex": "0x002b0000",
+          "start": 2818048,
+          "size": 16384
+        },
+        {
+          "unit": "unit_006D",
+          "start_hex": "0x002b4000",
+          "start": 2834432,
+          "size": 16384
+        },
+        {
+          "unit": "unit_006E",
+          "start_hex": "0x002b8000",
+          "start": 2850816,
+          "size": 16384
+        },
+        {
+          "unit": "unit_006F",
+          "start_hex": "0x002bc000",
+          "start": 2867200,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0070",
+          "start_hex": "0x002c0000",
+          "start": 2883584,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0071",
+          "start_hex": "0x002c4000",
+          "start": 2899968,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0072",
+          "start_hex": "0x002c8000",
+          "start": 2916352,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0073",
+          "start_hex": "0x002cc000",
+          "start": 2932736,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0074",
+          "start_hex": "0x002d0000",
+          "start": 2949120,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0075",
+          "start_hex": "0x002d4000",
+          "start": 2965504,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0076",
+          "start_hex": "0x002d8000",
+          "start": 2981888,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0077",
+          "start_hex": "0x002dc000",
+          "start": 2998272,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0078",
+          "start_hex": "0x002e0000",
+          "start": 3014656,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0079",
+          "start_hex": "0x002e4000",
+          "start": 3031040,
+          "size": 16384
+        },
+        {
+          "unit": "unit_007A",
+          "start_hex": "0x002e8000",
+          "start": 3047424,
+          "size": 16384
+        },
+        {
+          "unit": "unit_007B",
+          "start_hex": "0x002ec000",
+          "start": 3063808,
+          "size": 16384
+        },
+        {
+          "unit": "unit_007C",
+          "start_hex": "0x002f0000",
+          "start": 3080192,
+          "size": 16384
+        },
+        {
+          "unit": "unit_007D",
+          "start_hex": "0x002f4000",
+          "start": 3096576,
+          "size": 16384
+        },
+        {
+          "unit": "unit_007E",
+          "start_hex": "0x002f8000",
+          "start": 3112960,
+          "size": 16384
+        },
+        {
+          "unit": "unit_007F",
+          "start_hex": "0x002fc000",
+          "start": 3129344,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0080",
+          "start_hex": "0x00300000",
+          "start": 3145728,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0081",
+          "start_hex": "0x00304000",
+          "start": 3162112,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0082",
+          "start_hex": "0x00308000",
+          "start": 3178496,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0083",
+          "start_hex": "0x0030c000",
+          "start": 3194880,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0084",
+          "start_hex": "0x00310000",
+          "start": 3211264,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0085",
+          "start_hex": "0x00314000",
+          "start": 3227648,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0086",
+          "start_hex": "0x00318000",
+          "start": 3244032,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0087",
+          "start_hex": "0x0031c000",
+          "start": 3260416,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0088",
+          "start_hex": "0x00320000",
+          "start": 3276800,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0089",
+          "start_hex": "0x00324000",
+          "start": 3293184,
+          "size": 16384
+        },
+        {
+          "unit": "unit_008A",
+          "start_hex": "0x00328000",
+          "start": 3309568,
+          "size": 16384
+        },
+        {
+          "unit": "unit_008B",
+          "start_hex": "0x0032c000",
+          "start": 3325952,
+          "size": 16384
+        },
+        {
+          "unit": "unit_008C",
+          "start_hex": "0x00330000",
+          "start": 3342336,
+          "size": 16384
+        },
+        {
+          "unit": "unit_008D",
+          "start_hex": "0x00334000",
+          "start": 3358720,
+          "size": 16384
+        },
+        {
+          "unit": "unit_008E",
+          "start_hex": "0x00338000",
+          "start": 3375104,
+          "size": 16384
+        },
+        {
+          "unit": "unit_008F",
+          "start_hex": "0x0033c000",
+          "start": 3391488,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0090",
+          "start_hex": "0x00340000",
+          "start": 3407872,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0091",
+          "start_hex": "0x00344000",
+          "start": 3424256,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0092",
+          "start_hex": "0x00348000",
+          "start": 3440640,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0093",
+          "start_hex": "0x0034c000",
+          "start": 3457024,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0094",
+          "start_hex": "0x00350000",
+          "start": 3473408,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0095",
+          "start_hex": "0x00354000",
+          "start": 3489792,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0096",
+          "start_hex": "0x00358000",
+          "start": 3506176,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0097",
+          "start_hex": "0x0035c000",
+          "start": 3522560,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0098",
+          "start_hex": "0x00360000",
+          "start": 3538944,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0099",
+          "start_hex": "0x00364000",
+          "start": 3555328,
+          "size": 16384
+        },
+        {
+          "unit": "unit_009A",
+          "start_hex": "0x00368000",
+          "start": 3571712,
+          "size": 16384
+        },
+        {
+          "unit": "unit_009B",
+          "start_hex": "0x0036c000",
+          "start": 3588096,
+          "size": 16384
+        },
+        {
+          "unit": "unit_009C",
+          "start_hex": "0x00370000",
+          "start": 3604480,
+          "size": 16384
+        },
+        {
+          "unit": "unit_009D",
+          "start_hex": "0x00374000",
+          "start": 3620864,
+          "size": 16384
+        },
+        {
+          "unit": "unit_009E",
+          "start_hex": "0x00378000",
+          "start": 3637248,
+          "size": 16384
+        },
+        {
+          "unit": "unit_009F",
+          "start_hex": "0x0037c000",
+          "start": 3653632,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00A0",
+          "start_hex": "0x00380000",
+          "start": 3670016,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00A1",
+          "start_hex": "0x00384000",
+          "start": 3686400,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00A2",
+          "start_hex": "0x00388000",
+          "start": 3702784,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00A3",
+          "start_hex": "0x0038c000",
+          "start": 3719168,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00A4",
+          "start_hex": "0x00390000",
+          "start": 3735552,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00A5",
+          "start_hex": "0x00394000",
+          "start": 3751936,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00A6",
+          "start_hex": "0x00398000",
+          "start": 3768320,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00A7",
+          "start_hex": "0x0039c000",
+          "start": 3784704,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00A8",
+          "start_hex": "0x003a0000",
+          "start": 3801088,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00A9",
+          "start_hex": "0x003a4000",
+          "start": 3817472,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00AA",
+          "start_hex": "0x003a8000",
+          "start": 3833856,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00AB",
+          "start_hex": "0x003ac000",
+          "start": 3850240,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00AC",
+          "start_hex": "0x003b0000",
+          "start": 3866624,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00AD",
+          "start_hex": "0x003b4000",
+          "start": 3883008,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00AE",
+          "start_hex": "0x003b8000",
+          "start": 3899392,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00AF",
+          "start_hex": "0x003bc000",
+          "start": 3915776,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00B0",
+          "start_hex": "0x003c0000",
+          "start": 3932160,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00B1",
+          "start_hex": "0x003c4000",
+          "start": 3948544,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00B2",
+          "start_hex": "0x003c8000",
+          "start": 3964928,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00B3",
+          "start_hex": "0x003cc000",
+          "start": 3981312,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00B4",
+          "start_hex": "0x003d0000",
+          "start": 3997696,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00B5",
+          "start_hex": "0x003d4000",
+          "start": 4014080,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00B6",
+          "start_hex": "0x003d8000",
+          "start": 4030464,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00B7",
+          "start_hex": "0x003dc000",
+          "start": 4046848,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00B8",
+          "start_hex": "0x003e0000",
+          "start": 4063232,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00B9",
+          "start_hex": "0x003e4000",
+          "start": 4079616,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00BA",
+          "start_hex": "0x003e8000",
+          "start": 4096000,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00BB",
+          "start_hex": "0x003ec000",
+          "start": 4112384,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00BC",
+          "start_hex": "0x003f0000",
+          "start": 4128768,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00BD",
+          "start_hex": "0x003f4000",
+          "start": 4145152,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00BE",
+          "start_hex": "0x003f8000",
+          "start": 4161536,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00BF",
+          "start_hex": "0x003fc000",
+          "start": 4177920,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00C0",
+          "start_hex": "0x00400000",
+          "start": 4194304,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00C1",
+          "start_hex": "0x00404000",
+          "start": 4210688,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00C2",
+          "start_hex": "0x00408000",
+          "start": 4227072,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00C3",
+          "start_hex": "0x0040c000",
+          "start": 4243456,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00C4",
+          "start_hex": "0x00410000",
+          "start": 4259840,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00C5",
+          "start_hex": "0x00414000",
+          "start": 4276224,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00C6",
+          "start_hex": "0x00418000",
+          "start": 4292608,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00C7",
+          "start_hex": "0x0041c000",
+          "start": 4308992,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00C8",
+          "start_hex": "0x00420000",
+          "start": 4325376,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00C9",
+          "start_hex": "0x00424000",
+          "start": 4341760,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00CA",
+          "start_hex": "0x00428000",
+          "start": 4358144,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00CB",
+          "start_hex": "0x0042c000",
+          "start": 4374528,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00CC",
+          "start_hex": "0x00430000",
+          "start": 4390912,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00CD",
+          "start_hex": "0x00434000",
+          "start": 4407296,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00CE",
+          "start_hex": "0x00438000",
+          "start": 4423680,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00CF",
+          "start_hex": "0x0043c000",
+          "start": 4440064,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00D0",
+          "start_hex": "0x00440000",
+          "start": 4456448,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00D1",
+          "start_hex": "0x00444000",
+          "start": 4472832,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00D2",
+          "start_hex": "0x00448000",
+          "start": 4489216,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00D3",
+          "start_hex": "0x0044c000",
+          "start": 4505600,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00D4",
+          "start_hex": "0x00450000",
+          "start": 4521984,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00D5",
+          "start_hex": "0x00454000",
+          "start": 4538368,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00D6",
+          "start_hex": "0x00458000",
+          "start": 4554752,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00D7",
+          "start_hex": "0x0045c000",
+          "start": 4571136,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00D8",
+          "start_hex": "0x00460000",
+          "start": 4587520,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00D9",
+          "start_hex": "0x00464000",
+          "start": 4603904,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00DA",
+          "start_hex": "0x00468000",
+          "start": 4620288,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00DB",
+          "start_hex": "0x0046c000",
+          "start": 4636672,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00DC",
+          "start_hex": "0x00470000",
+          "start": 4653056,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00DD",
+          "start_hex": "0x00474000",
+          "start": 4669440,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00DE",
+          "start_hex": "0x00478000",
+          "start": 4685824,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00DF",
+          "start_hex": "0x0047c000",
+          "start": 4702208,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00E0",
+          "start_hex": "0x00480000",
+          "start": 4718592,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00E1",
+          "start_hex": "0x00484000",
+          "start": 4734976,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00E2",
+          "start_hex": "0x00488000",
+          "start": 4751360,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00E3",
+          "start_hex": "0x0048c000",
+          "start": 4767744,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00E4",
+          "start_hex": "0x00490000",
+          "start": 4784128,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00E5",
+          "start_hex": "0x00494000",
+          "start": 4800512,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00E6",
+          "start_hex": "0x00498000",
+          "start": 4816896,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00E7",
+          "start_hex": "0x0049c000",
+          "start": 4833280,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00E8",
+          "start_hex": "0x004a0000",
+          "start": 4849664,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00E9",
+          "start_hex": "0x004a4000",
+          "start": 4866048,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00EA",
+          "start_hex": "0x004a8000",
+          "start": 4882432,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00EB",
+          "start_hex": "0x004ac000",
+          "start": 4898816,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00EC",
+          "start_hex": "0x004b0000",
+          "start": 4915200,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00ED",
+          "start_hex": "0x004b4000",
+          "start": 4931584,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00EE",
+          "start_hex": "0x004b8000",
+          "start": 4947968,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00EF",
+          "start_hex": "0x004bc000",
+          "start": 4964352,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00F0",
+          "start_hex": "0x004c0000",
+          "start": 4980736,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00F1",
+          "start_hex": "0x004c4000",
+          "start": 4997120,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00F2",
+          "start_hex": "0x004c8000",
+          "start": 5013504,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00F3",
+          "start_hex": "0x004cc000",
+          "start": 5029888,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00F4",
+          "start_hex": "0x004d0000",
+          "start": 5046272,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00F5",
+          "start_hex": "0x004d4000",
+          "start": 5062656,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00F6",
+          "start_hex": "0x004d8000",
+          "start": 5079040,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00F7",
+          "start_hex": "0x004dc000",
+          "start": 5095424,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00F8",
+          "start_hex": "0x004e0000",
+          "start": 5111808,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00F9",
+          "start_hex": "0x004e4000",
+          "start": 5128192,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00FA",
+          "start_hex": "0x004e8000",
+          "start": 5144576,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00FB",
+          "start_hex": "0x004ec000",
+          "start": 5160960,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00FC",
+          "start_hex": "0x004f0000",
+          "start": 5177344,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00FD",
+          "start_hex": "0x004f4000",
+          "start": 5193728,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00FE",
+          "start_hex": "0x004f8000",
+          "start": 5210112,
+          "size": 16384
+        },
+        {
+          "unit": "unit_00FF",
+          "start_hex": "0x004fc000",
+          "start": 5226496,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0100",
+          "start_hex": "0x00500000",
+          "start": 5242880,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0101",
+          "start_hex": "0x00504000",
+          "start": 5259264,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0102",
+          "start_hex": "0x00508000",
+          "start": 5275648,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0103",
+          "start_hex": "0x0050c000",
+          "start": 5292032,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0104",
+          "start_hex": "0x00510000",
+          "start": 5308416,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0105",
+          "start_hex": "0x00514000",
+          "start": 5324800,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0106",
+          "start_hex": "0x00518000",
+          "start": 5341184,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0107",
+          "start_hex": "0x0051c000",
+          "start": 5357568,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0108",
+          "start_hex": "0x00520000",
+          "start": 5373952,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0109",
+          "start_hex": "0x00524000",
+          "start": 5390336,
+          "size": 16384
+        },
+        {
+          "unit": "unit_010A",
+          "start_hex": "0x00528000",
+          "start": 5406720,
+          "size": 16384
+        },
+        {
+          "unit": "unit_010B",
+          "start_hex": "0x0052c000",
+          "start": 5423104,
+          "size": 16384
+        },
+        {
+          "unit": "unit_011A",
+          "start_hex": "0x00568000",
+          "start": 5668864,
+          "size": 16384
+        },
+        {
+          "unit": "unit_011F",
+          "start_hex": "0x0057c000",
+          "start": 5750784,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0120",
+          "start_hex": "0x00580000",
+          "start": 5767168,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0121",
+          "start_hex": "0x00584000",
+          "start": 5783552,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0124",
+          "start_hex": "0x00590000",
+          "start": 5832704,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0126",
+          "start_hex": "0x00598000",
+          "start": 5865472,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0127",
+          "start_hex": "0x0059c000",
+          "start": 5881856,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0128",
+          "start_hex": "0x005a0000",
+          "start": 5898240,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0129",
+          "start_hex": "0x005a4000",
+          "start": 5914624,
+          "size": 16384
+        },
+        {
+          "unit": "unit_012A",
+          "start_hex": "0x005a8000",
+          "start": 5931008,
+          "size": 16384
+        },
+        {
+          "unit": "unit_012B",
+          "start_hex": "0x005ac000",
+          "start": 5947392,
+          "size": 16384
+        },
+        {
+          "unit": "unit_012C",
+          "start_hex": "0x005b0000",
+          "start": 5963776,
+          "size": 16384
+        },
+        {
+          "unit": "unit_012D",
+          "start_hex": "0x005b4000",
+          "start": 5980160,
+          "size": 16384
+        },
+        {
+          "unit": "unit_012E",
+          "start_hex": "0x005b8000",
+          "start": 5996544,
+          "size": 16384
+        },
+        {
+          "unit": "unit_012F",
+          "start_hex": "0x005bc000",
+          "start": 6012928,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0130",
+          "start_hex": "0x005c0000",
+          "start": 6029312,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0132",
+          "start_hex": "0x005c8000",
+          "start": 6062080,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0136",
+          "start_hex": "0x005d8000",
+          "start": 6127616,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0138",
+          "start_hex": "0x005e0000",
+          "start": 6160384,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0139",
+          "start_hex": "0x005e4000",
+          "start": 6176768,
+          "size": 16384
+        },
+        {
+          "unit": "unit_013A",
+          "start_hex": "0x005e8000",
+          "start": 6193152,
+          "size": 16384
+        },
+        {
+          "unit": "unit_013B",
+          "start_hex": "0x005ec000",
+          "start": 6209536,
+          "size": 16384
+        },
+        {
+          "unit": "unit_013C",
+          "start_hex": "0x005f0000",
+          "start": 6225920,
+          "size": 16384
+        },
+        {
+          "unit": "unit_013D",
+          "start_hex": "0x005f4000",
+          "start": 6242304,
+          "size": 16384
+        },
+        {
+          "unit": "unit_013E",
+          "start_hex": "0x005f8000",
+          "start": 6258688,
+          "size": 16384
+        },
+        {
+          "unit": "unit_013F",
+          "start_hex": "0x005fc000",
+          "start": 6275072,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0140",
+          "start_hex": "0x00600000",
+          "start": 6291456,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0141",
+          "start_hex": "0x00604000",
+          "start": 6307840,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0142",
+          "start_hex": "0x00608000",
+          "start": 6324224,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0143",
+          "start_hex": "0x0060c000",
+          "start": 6340608,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0144",
+          "start_hex": "0x00610000",
+          "start": 6356992,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0145",
+          "start_hex": "0x00614000",
+          "start": 6373376,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0146",
+          "start_hex": "0x00618000",
+          "start": 6389760,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0147",
+          "start_hex": "0x0061c000",
+          "start": 6406144,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0148",
+          "start_hex": "0x00620000",
+          "start": 6422528,
+          "size": 16384
+        },
+        {
+          "unit": "unit_014A",
+          "start_hex": "0x00628000",
+          "start": 6455296,
+          "size": 16384
+        },
+        {
+          "unit": "unit_014B",
+          "start_hex": "0x0062c000",
+          "start": 6471680,
+          "size": 16384
+        },
+        {
+          "unit": "unit_014C",
+          "start_hex": "0x00630000",
+          "start": 6488064,
+          "size": 16384
+        },
+        {
+          "unit": "unit_014D",
+          "start_hex": "0x00634000",
+          "start": 6504448,
+          "size": 16384
+        },
+        {
+          "unit": "unit_014F",
+          "start_hex": "0x0063c000",
+          "start": 6537216,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0150",
+          "start_hex": "0x00640000",
+          "start": 6553600,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0151",
+          "start_hex": "0x00644000",
+          "start": 6569984,
+          "size": 16384
+        },
+        {
+          "unit": "unit_0152",
+          "start_hex": "0x00648000",
+          "start": 6586368,
+          "size": 16384
+        }
+      ]
+    },
+    "MOVIER.ovl": {
+      "static_aot_count": 0,
+      "catalog_total": 2537,
+      "static_overlay_sources": [],
+      "note": "No build-time static AOT C++ compilation from MOVIER.ovl; only runtime RAM window slices exist in kModules."
+    },
+    "GAMER.ovl": {
+      "static_aot_count": 0,
+      "catalog_total": 1,
+      "static_overlay_sources": [],
+      "note": "No build-time static AOT C++ compilation from GAMER.ovl."
+    },
+    "NETR.ovl": {
+      "static_aot_count": 0,
+      "catalog_total": 1834,
+      "excluded": true,
+      "decision": "research/decisions/DECISION_ONLINE_OUT_OF_SCOPE.json"
+    }
+  },
+  "dynamic_overlay_windows_kModules": [
+    {
+      "name": "007C4000_526A97B1",
+      "base_addr": "0x007c4000",
+      "span_bytes": 16384,
+      "check_words": 3487,
+      "unit_count": 1
+    },
+    {
+      "name": "007C4000_658F322A",
+      "base_addr": "0x007c4000",
+      "span_bytes": 262144,
+      "check_words": 54712,
+      "unit_count": 16
+    },
+    {
+      "name": "007C8000_B476BC35",
+      "base_addr": "0x007c8000",
+      "span_bytes": 262144,
+      "check_words": 53421,
+      "unit_count": 16
+    },
+    {
+      "name": "007CC000_3D648FAA",
+      "base_addr": "0x007cc000",
+      "span_bytes": 262144,
+      "check_words": 50093,
+      "unit_count": 16
+    }
+  ],
+  "vu_microprograms": {
+    "vu1_static_table_keys": 490,
+    "vu1_strict_corpus_keys": 493,
+    "vu1_bin_captures": 211,
+    "oracle_vu1_live_dll_count": 44
+  }
+}

@@ -1,25 +1,16 @@
-# ps2-native-recomp — Mortal Kombat: Armageddon Native Retail Port
+# Mortal Kombat: Armageddon retail native port
 
-**Current status (2026-11-23): Acceptance OPEN (In Progress). Do not ask the owner to run the game.**
-This repository is the active ahead-of-time (AOT) static native C++ recompilation and retail port of *Mortal Kombat: Armageddon* (Sony PlayStation 2 `SLUS_214.10` and dynamic overlays). It executes 100% native C++ logic with zero emulators, zero guest CPU register state, and zero JIT translation on the accepted route.
+**Current status (2026-11-24): acceptance OPEN. Do not ask the owner to run the game.**
+This project builds a native Windows port of retail *Mortal Kombat: Armageddon* (Sony PlayStation 2 `SLUS_214.10` and overlays).
+Retail game logic outside platform boundaries comes from ahead-of-time (AOT) static C++ transformed to typed native memory and ABI (zero `g_ram`, zero `c.r`, zero `$gp`, zero guest vtables, zero runtime JIT or interpreter); hand-written C++ is restricted to platform boundaries and verified runtime services. Xbox investigation (`default.xbe`) is limited strictly to renderer, viewport, and HD presentation (`DECISION_OWNER_CORRECTIONS_20261124.json`). Whole-game native acceptance remains **OPEN** (`238 / 15,670` credited functions; headless 60-frame probe hits `13 / 26` registered placeholders; active fork build-time AOT regeneration pending Phase 3).
+Neither the canonical playable oracle (`../../milestone_work_verified_playable_20261110/`, `ps2run.exe` `B9EEF7DA...`) nor its descendant Kombat Practice (`../../milestone_build_kombat_practice/`, `8B763DCC...`) satisfies the zero-emulation shipped-port acceptance contract.
 
 <!-- PROGRESS:START -->
 ## Native Reimplementation Progress & Tracking
 
 ![Porting Progress](progress.svg)
 
-**Verified Repository Commit**: Current `main` HEAD in [`ps2-native-recomp`](https://github.com/nahshongraham97/ps2-native-recomp)  
-**Parent Canonical Repository**: [`armageddon-reimplementation`](https://github.com/nahshongraham97/armageddon-reimplementation)
-
-### Primary Function Ledgers & Correspondence
-- **PS2 Retail Function Ledger**: [`research/ledger/functions.csv`](research/ledger/functions.csv) (17,510 total catalog functions)
-- **Xbox Donor Function Ledger**: [`research/ledger/xbox_functions.csv`](research/ledger/xbox_functions.csv) (22,579 donor functions in `default.xbe`)
-- **Cross-Platform Correspondence Map**: [`research/ledger/ps2_xbox_map.csv`](research/ledger/ps2_xbox_map.csv) (17,511 correspondence mapping rows)
-- **Task Board & Milestones**: [`TASK_BOARD.md`](TASK_BOARD.md)
-- **Implementation Roadmap**: [`ROADMAP.md`](ROADMAP.md)
-- **Port Status & Evidence**: [`PORT_STATUS.md`](PORT_STATUS.md)
-- **Execution Contract**: [`NATIVE_PORT_EXECUTION_CONTRACT.md`](NATIVE_PORT_EXECUTION_CONTRACT.md)
-- **Handoff & Repository Protocol**: [`HANDOFF.md`](HANDOFF.md)
+**Verified Fork Commit**: [`d387c4b9`](https://github.com/nahshongraham97/ps2-native-recomp/commit/d387c4b942c8b9a33f0820f62bfe622ab2633b18) (pinned active fork)
 
 ### PlayStation 2 Retail Catalog (`SLUS_214.10` + Overlays)
 - **In-Scope Completion**: **1.52%** (238 / 15,670 in-scope retail functions)
@@ -33,6 +24,19 @@ This repository is the active ahead-of-time (AOT) static native C++ recompilatio
 | **In-Scope Subtotal** | *Active retail code path to implement/verify* | **15,670** | **100.00%** |
 | **Excluded / Stubbed** | `out-of-scope-stubbed` (1,834 `NETR.ovl` overlay functions + 6 `SLUS_214.10` main-executable online functions) | 1,840 | — |
 | **Total PS2 Catalog** | *Complete binary disassembly denominator* | **17,510** | — |
+
+### Tier 2: Build-Time Static AOT Coverage (`research/ledger/aot_coverage_inventory.json`)
+- **Reference Static AOT C++ Coverage**: **83.84%** (13,138 / 15,670 in-scope EE functions in reference `ps2-native-recomp/generated/mkarmageddon/table.cpp`; **0** generated `.cpp` units currently built in active fork `generated/` pending Phase 3 reproducible pipeline)
+
+| Module / Artifact | Build-Time Static AOT Status | Static AOT / Catalog | Reference % |
+|---|---|---|---|
+| **Base `SLUS_214.10`** | `311` static `unit_*.cpp` files (`table.cpp`) | 13,138 / 13,138 | 100.00% |
+| **`MOVIER.ovl` Overlay** | Build-time static overlay C++ NOT generated (`kModules` RAM slices excluded) | 0 / 2,537 | 0.00% |
+| **`GAMER.ovl` Overlay** | Build-time static overlay C++ NOT generated (`kModules` RAM slices excluded) | 0 / 1 | 0.00% |
+| **In-Scope AOT Subtotal** | *Measured build-time static C++ across `SLUS_214.10` + `MOVIER.ovl` + `GAMER.ovl`* | **13,138 / 15,670** | **83.84%** |
+| **Excluded `NETR.ovl`** | Out of scope (`DECISION_ONLINE_OUT_OF_SCOPE.json`) | 0 / 1,834 | — |
+| **Dynamic Overlay Windows (`kModules`)** | Runtime memory snapshots only (not full module AOT) | 4 captured windows | — |
+| **VU1 Microprograms (Separate VU Domain)** | `vu1_table.cpp` keys vs `VU_CORPUS_STRICT.json` (211 `.bin` captures; 44 oracle `vu1-live/` DLLs) | 490 / 493 keys | — |
 
 ### Xbox Donor Catalog (`default.xbe`)
 > [!NOTE]
@@ -60,23 +64,25 @@ This repository is the active ahead-of-time (AOT) static native C++ recompilatio
 - **Unmapped Retail Functions**: **17,493**
 
 ### Still Needed (Open Acceptance Frontier)
-1. **No-Direct-Callers Indirect Dispatch Resolution**: **2,648** functions untargeted by direct calls but referenced by data pointers or immediate formations in `SLUS_214.10` (indirect candidates across 5,400 computed call sites).
-2. **Open Game Functions**: **10,141** retail functions across modules: **9,038** in `SLUS_214.10`, **1,102** in `MOVIER.ovl`, and **1** in `GAMER.ovl`.
+1. **No-Direct-Callers Indirect Dispatch Resolution**: **2,648** functions untargeted by direct calls but referenced by data pointers or immediate formations (indirect candidates across 5,400 computed call sites).
+2. **Open Game Functions**: **10,141** retail game functions across modules: **9,038** in `SLUS_214.10`, **1,102** in `MOVIER.ovl`, and **1** in `GAMER.ovl`.
 3. **Dynamic Overlay Frontends**: **1,102** movie playback frontend functions in `MOVIER.ovl` and **1** entry stub in `GAMER.ovl`.
 4. **Acceptance Gates**: Full-game entry link, visible render target presentation, synchronized audio mixing, and physical controller input parity.
 <!-- PROGRESS:END -->
 
-## Documentation & Repository Architecture
+## Documentation & Entry Points
 
-All primary documentation and tracking reside directly within this repository:
+Read in order:
 
-1. [`PORT_STATUS.md`](PORT_STATUS.md) — Current checkout evidence, acceptance status, and active blockers.
-2. [`NATIVE_PORT_EXECUTION_CONTRACT.md`](NATIVE_PORT_EXECUTION_CONTRACT.md) — Required native behavior, no-regression rules, and acceptance criteria.
-3. [`ROADMAP.md`](ROADMAP.md) — Phased implementation order, closure gates, and milestone checklists.
-4. [`HANDOFF.md`](HANDOFF.md) — Repository workflow, evidence standards, and commit procedures.
-5. [`TASK_BOARD.md`](TASK_BOARD.md) — Progress tracking against all 14 project milestones.
-6. [`MODEL_COORDINATION.md`](MODEL_COORDINATION.md) — Agent supervision and model review procedures.
+1. [PORT_STATUS.md](PORT_STATUS.md) — audited checkout state, component receipts, and active blockers.
+2. [NATIVE_PORT_ONLY.md](NATIVE_PORT_ONLY.md) — non-negotiable zero-emulation architecture rules.
+3. [NATIVE_PORT_EXECUTION_CONTRACT.md](NATIVE_PORT_EXECUTION_CONTRACT.md) — acceptance gates and non-regression contract.
+4. [ROADMAP.md](ROADMAP.md) — ordered implementation sequence and closure checks.
+5. [TASK_BOARD.md](TASK_BOARD.md) — milestone status table and xemu trace exception.
+6. [HANDOFF.md](HANDOFF.md) — active repository workflow and falsification checklist.
+7. [REPO_LAYOUT.md](REPO_LAYOUT.md) — directory layout and parent/fork mechanics.
+8. [AGENTS.md](AGENTS.md) — binding agent rules and transform-and-verify protocol.
+9. [MODEL_COORDINATION.md](MODEL_COORDINATION.md) — local source-review model workflow.
 
-### Provenance & Historical Archive
-- Historical design notes, old checkpoints, and upstream emulator documentation are archived for provenance under `research/history/` and `research/runs/`. They represent dated evidence for past builds and do not supersede live status or contract requirements.
-- Retail assets (such as original game discs, `.ELF`, `.xbe`, `.bin`, `.ovl`, and audio/video containers) are not stored or distributed in this repository. All analysis is verified against pinned binary checksums on the owner's authorized system.
+The protected duplicate oracle game copy is `external/forks/ps2-native-recomp-backup-20261110/`. Preserve it along with all user saves, memory cards, key files, and model settings; noncompliant local commits and dirty files are discarded per `DECISION_OWNER_CORRECTIONS_20261124.json`.
+Historical logs and experiments live in `research/runs/` and `research/history/`; they are evidence for dated builds, never live instructions. The consolidated status archive lives in `research/history/superseded-status-docs-20261124/`. Retail binary assets (`.ELF`, `.xbe`, `.bin`, `.ovl`, audio/video streams) remain local and untracked.

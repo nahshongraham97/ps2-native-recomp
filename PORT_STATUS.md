@@ -1,5 +1,70 @@
 # Retail Armageddon native port — current status
 
+<!-- PROGRESS:START -->
+## Native Reimplementation Progress & Tracking
+
+![Porting Progress](progress.svg)
+
+**Verified Fork Commit**: [`d387c4b9`](https://github.com/nahshongraham97/ps2-native-recomp/commit/d387c4b942c8b9a33f0820f62bfe622ab2633b18) (pinned active fork)
+
+### PlayStation 2 Retail Catalog (`SLUS_214.10` + Overlays)
+- **In-Scope Completion**: **1.52%** (238 / 15,670 in-scope retail functions)
+- **Total Function Catalog**: **17,510** functions (13,138 base `SLUS_214.10` + 4,372 dynamic overlays: 1 `GAMER.ovl`, 2,537 `MOVIER.ovl`, 1,834 `NETR.ovl`)
+
+| Category / Tier | Status Breakdown | Count | In-Scope % |
+|---|---|---|---|
+| **Implemented** | `ported` (227) + `host-replaced` (11) + `implemented-via-donor` (0) | 238 | 1.52% |
+| **Classified Non-Executable / Library** | `sdk-or-library` (2,011) + `pointer-scan-proven` (632) | 2,643 | 16.87% |
+| **Open Frontier** | `open` (10,141: 9,038 `SLUS_214.10`, 1,102 `MOVIER.ovl`, 1 `GAMER.ovl`) + `no-direct-callers` (2,648 `SLUS_214.10`) | 12,789 | 81.61% |
+| **In-Scope Subtotal** | *Active retail code path to implement/verify* | **15,670** | **100.00%** |
+| **Excluded / Stubbed** | `out-of-scope-stubbed` (1,834 `NETR.ovl` overlay functions + 6 `SLUS_214.10` main-executable online functions) | 1,840 | — |
+| **Total PS2 Catalog** | *Complete binary disassembly denominator* | **17,510** | — |
+
+### Tier 2: Build-Time Static AOT Coverage (`research/ledger/aot_coverage_inventory.json`)
+- **Reference Static AOT C++ Coverage**: **83.84%** (13,138 / 15,670 in-scope EE functions in reference `ps2-native-recomp/generated/mkarmageddon/table.cpp`; **0** generated `.cpp` units currently built in active fork `generated/` pending Phase 3 reproducible pipeline)
+
+| Module / Artifact | Build-Time Static AOT Status | Static AOT / Catalog | Reference % |
+|---|---|---|---|
+| **Base `SLUS_214.10`** | `311` static `unit_*.cpp` files (`table.cpp`) | 13,138 / 13,138 | 100.00% |
+| **`MOVIER.ovl` Overlay** | Build-time static overlay C++ NOT generated (`kModules` RAM slices excluded) | 0 / 2,537 | 0.00% |
+| **`GAMER.ovl` Overlay** | Build-time static overlay C++ NOT generated (`kModules` RAM slices excluded) | 0 / 1 | 0.00% |
+| **In-Scope AOT Subtotal** | *Measured build-time static C++ across `SLUS_214.10` + `MOVIER.ovl` + `GAMER.ovl`* | **13,138 / 15,670** | **83.84%** |
+| **Excluded `NETR.ovl`** | Out of scope (`DECISION_ONLINE_OUT_OF_SCOPE.json`) | 0 / 1,834 | — |
+| **Dynamic Overlay Windows (`kModules`)** | Runtime memory snapshots only (not full module AOT) | 4 captured windows | — |
+| **VU1 Microprograms (Separate VU Domain)** | `vu1_table.cpp` keys vs `VU_CORPUS_STRICT.json` (211 `.bin` captures; 44 oracle `vu1-live/` DLLs) | 490 / 493 keys | — |
+
+### Xbox Donor Catalog (`default.xbe`)
+> [!NOTE]
+> **Investigation Authority**: Xbox default.xbe serves as an authoritative secondary binary investigation source for recovering algorithm contracts and data structures; donor credit requires verified dual-platform vectors.
+> **Donor Credit Policy**: 0% donor credit means no donor credit has been awarded pending verified dual-platform vectors, not that work has stalled.
+
+- **In-Scope Donor Utilization**: **0.00%** (0 / 21,321 in-scope donor functions)
+- **Total Donor Catalog**: **22,579** discovered functions in `default.xbe`
+
+| Category / Tier | Status Breakdown | Count | In-Scope % |
+|---|---|---|---|
+| **Implemented Donors** | `implemented-via-donor` (0) | 0 | 0.00% |
+| **Classified Non-Executable / SDK** | `sdk-or-library` (2,524) + `no-counterpart` (9) | 2,533 | 11.88% |
+| **Open Donor Frontier** | `blocked-on-dual-platform-vectors` (17 candidates pending vectors) + `investigating` (10 active recovery) + `not-started` (18,761 unmapped) | 18,788 | 88.12% |
+| **In-Scope Subtotal** | *Donor executable candidate surface* | **21,321** | **100.00%** |
+| **Excluded / Stubbed** | `out-of-scope-stubbed` (XONLINE thunks and symbols) | 1,258 | — |
+| **Total Xbox Catalog** | *Total default.xbe function inventory* | **22,579** | — |
+
+### Cross-Platform Function Correspondence (`ps2_xbox_map.csv`)
+- **Total Mapping Entries**: **17,511**
+- **Exact Matches**: **0** (0 isomorphic CFG)
+- **Structural Correspondence Matches**: **0** (verified non-vacuous multi-block CFG isomorphism and common mapped callees; simple offsets disregarded)
+- **Composite 1-to-Many Matches**: **0** (modular donor splits)
+- **Mapped-by-Role Candidates**: **18** (subsystem role correspondence pending dual-platform vectors)
+- **Unmapped Retail Functions**: **17,493**
+
+### Still Needed (Open Acceptance Frontier)
+1. **No-Direct-Callers Indirect Dispatch Resolution**: **2,648** functions untargeted by direct calls but referenced by data pointers or immediate formations (indirect candidates across 5,400 computed call sites).
+2. **Open Game Functions**: **10,141** retail game functions across modules: **9,038** in `SLUS_214.10`, **1,102** in `MOVIER.ovl`, and **1** in `GAMER.ovl`.
+3. **Dynamic Overlay Frontends**: **1,102** movie playback frontend functions in `MOVIER.ovl` and **1** entry stub in `GAMER.ovl`.
+4. **Acceptance Gates**: Full-game entry link, visible render target presentation, synchronized audio mixing, and physical controller input parity.
+<!-- PROGRESS:END -->
+
 > [!NOTE]
 > **Dated Public History Correction (Commit 77d11186)**:
 > In public history commit `77d11186`, movie work was strictly single-frame attract presentation (LOGOW.SFD frame 0 and OPENINGW.SFD frame 0), and the full-entry headless observation run terminated at `StartupFailure kind: 18 at 3011D0 native texture conversion` (due to GL error 0x500 from legacy fixed-function queries). Subsequent commits `c0a008e7` and current HEAD resolve these GL state queries and advance full-entry execution past startup.
@@ -30,7 +95,7 @@
 >     4. Global state cleaner (`0x0018da30` / `L_0018DA2C` `clear_nonowning_references`): structurally blocked without flat `PS2_RAM` because writes are raw offsets from `$gp` (`$gp - 23976`, `$gp - 23972`, `$gp - 23984`, `$gp - 23980`) and absolute `.bss` (`0x006602D0`); requires full data-segment symbol mapping.
 >     5. Virtual method transition (`0x001225d0` / `L_001225D0` `transition_1225d0`): fundamentally blocked by guest vtables holding 32-bit guest addresses (`call(c, t)`); executing `0x00214B80` on host causes immediate `0xC0000005` Access Violation without full native class hierarchy reconstruction.
 >   - **Technical Blockers**: (1) arbitrary 16 KB linear slicing with no function signatures; (2) 32-bit guest pointers vs 64-bit host pointers; (3) raw `$gp` global variable offsets; (4) indirect virtual dispatch via guest memory; (5) 128-bit MMI quadword registers; (6) dynamic code rewriting in overlays (`MOVIER.ovl`, `GAMER.ovl` at `0x007C4000`, `0x007C8000`, `0x007CC000`); (7) cooperative thread cycle budgeting (`c.budget`); (8) contractual prohibition in `NATIVE_PORT_ONLY.md`.
->   - **Recommendation on 15,670 Functions**: Generated code cannot be used as drop-in runtime source, but serves as a verified AST decompilation reference. Breakdown: ~35% (5,500 funcs) leaf math/logic is mechanically liftable; ~30% (4,700 funcs) struct accessors liftable once struct headers exist; ~20% (3,100 funcs) subsystem callers semi-liftable; ~15% (2,370 funcs) hardware/DMA/vtables/overlays must remain hand-written native services. Full report in `research_generated_code_deep_investigation.md`.
+>   - **Classification Basis (Measured Phase 1 Correction)**: Generated register-machine C++ (`c.r[...]`, `g_ram`, `$gp`, guest vtables) cannot ship unmodified, and earlier `~35% / ~30% / ~20% / ~15%` token-bucket estimates (`5,500 / 4,700 / 3,100 / 2,370`) are **retracted** as unmeasured approximations. Retail game logic is scheduled for AOT generation (Phase 4) and automated memory/ABI transform (Phase 5), keeping hand-written code restricted to platform boundaries; exact per-function classification is computed in code in Phase 3.
 >   - **Phase 0 Remediation, Restoration & Baseline Verification (2026-11-24)**:
 >     - **Discarded Noncompliant Unpushed Commits & Dirty Checkouts**: Reset `external/forks/retail-main-22` to `origin/main` (`b15604a4`), discarding local commits `44ab7b37`, `e8dc7173`, `6bebd90b`, and `07d5827b` (tracked generated C++ slices/`MockCpu`/flat RAM, unmeasured/hardcoded `16,166` AOT numbers and `77` vectors, dev-time estimates, and thin-shim proposals). Reset parent to `origin/main` (`3e8dcaf8`) plus cherry-pick of compliant doc-consolidation `32c93d10` (`e4446e53`), discarding `6752e59e`, `1b4b25b0`, and `3972b16f`. Discarded superseded dirty edits in legacy `external/forks/ps2-native-recomp` (`preserved-main-draft-20261122` `3f015562`, already integrated into `b15604a4`) and fixed parent `README.md` CRLF-only drift. Removed obsolete `'preserve existing dirty or uncommitted work'` wording from `AGENTS.md` (both repos) and `HANDOFF.md`.
 >     - **Oracle Directory Restoration & Manifest Proof**: Restored canonical oracle `../../milestone_work_verified_playable_20261110` from `3,250` preexisting files to `3,256` files (`0` modified/deleted) by copying 6 runtime/launcher files from `external/forks/ps2-native-recomp-backup-20261110`: `ps2run.exe` (`b9eef7da...`), `SDL2.dll` (`53e8fa7e...`), `dxcompiler.dll` (`0689e2fe...`), `dxil.dll` (`64be2368...`), `armageddon-keys.ini` (`be9f5317...`), and `launch_game.bat` (`6ceedc57...`, 14/14 referenced paths verified on disk). Saved before/after SHA-256 manifests (`oracle_manifest_before.json`, `oracle_manifest_after.json`) and full 110-directory checkout inventory (`checkout_inventory.json`) in git-ignored `external/forks/retail-main-22/build/oracle-telemetry/`.
@@ -62,9 +127,9 @@ Scene/frame reconciliation:actual Xbox7D460 contains renderer startup;2330C0 is 
 
 Prior published mode-field checkpoint is compiled/tested-component on clean sourceb698338: the field is the existing third counter pair/five track results, with live name and first-two six-preset projections. Actual Main initialize_retail_mode_objects performs source child resets, metadata and pair publication on the SAME four-identity Session owner. Eight clients pass in validation-mode-clean-02, including64 allocation cuts;900 source blobs authenticate and exact59->58 resolves only that binding. PS2 codec, file sizes and native-store source bytes are unchanged. This remains bounded component evidence, not whole-game acceptance. No game/window/speaker endpoint ran. Record: fork `research/runs/native-xbox-mode-scene-20261122/`. Owner: no action.
 
-Owner source priority is **Xbox-first investigation for everything still to be implemented**,not automatic adoption or a promise of savings in each module. Choose verified portions that reduce actual connected native work/dependencies;record concrete savings or their absence.0406 offers no established substantial Xbox-specific CPU-service reduction,so implement shared behavior once using existing owners,not either console CRT/device. PS2 supplies behavioral cross-checks/differences or an easier verified portion. Bound comparisons to the decision;do not redo native services/setup or build two implementations. Both AGENTS.md files and the execution contract now state this policy explicitly.
+Owner source priority (`DECISION_OWNER_CORRECTIONS_20261124.json`): **Xbox investigation is limited strictly to the renderer, viewport, and HD presentation** (with GS packet decoding as an interim concession only), not automatic adoption across unrelated game systems. Choose verified portions that reduce actual connected native work/dependencies;record concrete savings or their absence.0406 offers no established substantial Xbox-specific CPU-service reduction,so implement shared behavior once using existing owners,not either console CRT/device. PS2 supplies behavioral cross-checks/differences or an easier verified portion. Bound comparisons to the decision;do not redo native services/setup or build two implementations. Both AGENTS.md files and the execution contract now state this policy explicitly.
 
-## Active architectural review: Xbox-first recovery and HD presentation
+## Active architectural review: Xbox renderer/HD presentation and PS2 AOT transform
 
 Owner clarification:the product is ONE genuinely native Armageddon port, not PS2 compatibility because of a fork/repository name. Reuse the best/easiest verified retail portions in the existing native architecture and existing repositories; the owner may curate useful upstream changes later. Neither console's layouts, hardware semantics or save bytes define acceptance. Native persistent save/load remains required; PS2 save import/byte compatibility is optional. Existing native codecs/services remain where useful/easiest, with no gratuitous save rewrite. Old byte-compatible codec measurements are retained as historical component evidence, not a continuing product gate.
 
@@ -567,13 +632,13 @@ and symbol checks. Actual capacity was 4,800 client frames: epoch 0 accepted
 `[0,2400)` then `[2400,4800)`; Reset began epoch 1 at `[0,1)`, and the boolean
 queue path brought the same submitted counter to 2. All samples were checked
 `+0.0f`. These are successful host-buffer acceptance records, not heard frames,
-source progress, elapsed time or drain. See the [submission contract](research/runs/native-audio-device-20261119/SUBMISSION_RECEIPT_CONTRACT.md)
-and fork [validation-01](external/forks/ps2-native-recomp/research/runs/native-audio-submission-20261119/validation-01/verification.json).
+source progress, elapsed time or drain. See the `research/runs/native-audio-device-20261119/SUBMISSION_RECEIPT_CONTRACT.md` (parent repo)
+and fork `research/runs/native-audio-submission-20261119/validation-01/verification.json` (historical fork record).
 
-The [movie clock producer source](research/runs/native-movie-ingress-20261119/MOVIE_CLOCK_PRODUCER_SOURCE.md)
+The `research/runs/native-movie-ingress-20261119/MOVIE_CLOCK_PRODUCER_SOURCE.md` (parent repo)
 closes the cached-pair producer and ordinary source/timer inputs, not a native
 sink/heard clock binding. Its source progress is not WASAPI played frames.
-The [server scheduler source](research/runs/native-movie-ingress-20261119/MOVIE_SERVER_SCHEDULER_SOURCE.md)
+The `research/runs/native-movie-ingress-20261119/MOVIE_SERVER_SCHEDULER_SOURCE.md` (parent repo)
 now proves the initialized worker/class-2 dispatch to the per-instance clock
 updater, with the class-5 route conditional. Native scheduler/clock/output
 binding and higher pause/reset mapping remain open. The original audio/no-audio
@@ -716,8 +781,8 @@ execution, with independent raw-chain confirmation; native block explicit-pair
 inputs are unaffected. The corrected native header binding now passes the
 all29 original-header checks below. Do not use the superseded temporary-array
 ordering to initialize a decoder.
-The [overlay addressing proof](research/runs/native-movie-ingress-20261119/DECODER_SELECTOR_OVERLAY_SOURCE.md)
-and [constructed-address check](research/runs/native-movie-ingress-20261119/DECODER_SELECTOR_CONSTRUCTED_SOURCE.md)
+The `research/runs/native-movie-ingress-20261119/DECODER_SELECTOR_OVERLAY_SOURCE.md` (parent repo)
+and `research/runs/native-movie-ingress-20261119/DECODER_SELECTOR_CONSTRUCTED_SOURCE.md` (parent repo)
 retain the unresolved incoming decoder-selector edge; initial zero and bounded
 missing references do not authorize a mode or automatic speaker route.
 
@@ -826,7 +891,7 @@ still OPEN. Rebuilt archive/control traces, exact gain-failure cleanup and
 independent source review cover that control boundary.
 Routing review additionally finds a decoder mode that mixes and duplicates
 both channels; its actual selector and caller pan binding remain unresolved.
-The [header-pan source proof](research/runs/native-movie-ingress-20261119/HEADER_PAN_SOURCE.md)
+The `research/runs/native-movie-ingress-20261119/HEADER_PAN_SOURCE.md` (parent repo)
 closes absent AINF metadata for the 29 pinned initial audio headers, not
 all-session caller pan or speaker routing.
 No automatic stereo routing or inverse-gain approximation is authorized.
@@ -1094,7 +1159,7 @@ reviews and coverage OPEN;
 it does not certify technical accuracy. Broad documentation cleanup remains
 stopped; current implementation evidence is maintained in the affected owners.
 
-Dedicated pinned launchers are listed in [launchers/README.md](launchers/README.md).
+Dedicated pinned launchers are listed in `launchers/README.md` (parent repo).
 Root `launch_game.bat` no longer silently selects the mutable latest build.
 The playable oracle's 61 states, 72 input sidecars, caches, and card have been
 copied and verified in a separate work folder; the original backup is intact.
@@ -1214,7 +1279,7 @@ Published fork `55e8e56b9d883a6802d188626947803a93271af3`: native allocation own
 
 Historical component plan, superseded by connected-entry priority: Current implementation step: separate native requested/actual allocation counts and retain one request admission across Wave primary/alternate/overflow attempts. Source overlay teardown queries actual allocations, whereas the current native lifecycle count includes both roles. Explicit unknown alternate/overflow/diagnostic bindings must fail before allocation; no ordinary/Permanent default is permitted. Published fork `04c6975e52961ee36673363ef36fa3227bb755a5`: source-bound Wave transaction/role accounting passes3 actual native clients (749 stable pins,715 unchanged prior). Four owner groups, deterministic real host lifetime cuts and8 policy groups cover primary/alternate/overflow/terminal paths, diagnostic rejection/exception/reentry, request-wide retention and sticky status across wrapper recreation. Native ABI/symbol/linkage audits pass; independent saved-results review verifies all three executions and exact binary/tool/source joins. This is component policy execution, not the real retail producer: startup-created ownership, overlay readiness/loading and typed live-object retirement remain OPEN. See research/runs/native-retail-startup-20261120/native-heap/role-accounting/ROOT_PLAN.md.
 
-Local work continues if GitHub becomes unavailable; commits and synchronization outcomes are recorded separately. See [REMOTE_WORK_CONTINUITY.md](REMOTE_WORK_CONTINUITY.md). No owner launch is requested.
+Local work continues if GitHub becomes unavailable; commits and synchronization outcomes are recorded separately. See `research/history/superseded-status-docs-20261124/REMOTE_WORK_CONTINUITY.md` (archived in parent repo). No owner launch is requested.
 
 Historical component plan, superseded by connected-entry priority: Current implementation draft: actual source-ordered native memory-owner identities are connected to generated startup ownership, with failure-before-publication/duplicate checks and explicit missing Wave readiness. Published fork `84e5af891e77a2900d0f951dd6867fc3fa323c16`: integrated native owner-group/startup ownership passes4 actual native clients (835 stable pins,745 unchanged prior,1222 original ELF words rejoined). Actual fault coverage is25 group-create allocations and2 initial-bind allocations; partial publication/retry and3MiB+17 native Wave storage checks pass. Expected negative linking still reports all4 missing production startup bindings. Independent saved-results review verifies all4 executions, exact source/binary/tool/generated joins and expected incomplete-entry refusal; full retail startup/profile reset/fixed/MPEG/middleware/overlay/input/game remain OPEN. This is a subordinate main phase, not complete CRT/platform/main. Newly verified next order is profile-driven memory setup182670, stopwatch186150(3), parsed scale16AA10, file service2DF470(0), then overlay3DDA60; none may be labeled input setup or skipped. The MPEG descriptor is source literal9F, correcting the older derived-budget description; it imposes no native capacity. See research/runs/native-retail-startup-20261120/native-heap/retail-owner-group/ROOT_PLAN.md and SOURCE.md.
 

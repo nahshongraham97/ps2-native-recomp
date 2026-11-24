@@ -20,7 +20,7 @@ and MCP configuration. Never kill LM Studio or unload a model to cancel work.
    For generated formatting/control order, verify actual emitted output;
    an argument-list transcription alone cannot establish generated behavior.
 3. Inspect the actual tool configuration. The 2026-11-18 check of
-   `C:/Users/nahsh/.lmstudio/mcp.json` found an empty `mcpServers` map. In that
+   `~/.lmstudio/mcp.json` found an empty `mcpServers` map. In that
    configuration use `tools/research/local_source_review.py`: its request-scoped
    `read_file` tool reads repository files and returns numbered lines. Do not
    claim that this bridge uses a configured MCP server.

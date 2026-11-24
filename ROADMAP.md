@@ -1,6 +1,6 @@
-# Retail Armageddon native port â€” implementation order
+# Retail Armageddon native port — implementation order
 
-Current owner priority: ONE native Armageddon port in existing repositories using best/easiest verified portions and native services. Xbox-first investigation, not automatic adoption or a runtime to emulate. Published fork main `d1bfc0e2581bfe8483e299509d58f6ca1f1461f2` implements native 0407 shared raster subsystem with in-place defect remediation (memory safety bounds checks, real offscreen HiddenGl WGL fixture with glIsTexture verification and configurable samplers, gamma bit 0 propagation per 2C0EB0, pop returning popped target per 2B9D50, unconditional type-4 depth 32 normalization per 2C8BD0, resumable destruction cursor, and explicit GPU texture revocation) on runtime `d1bfc0e2581bfe8483e299509d58f6ca1f1461f2`. All nine renderer component clients pass and 47->45 undefined symbol count resolves construct_core_plugin_0407 and destroy_core_plugin_0407. 0407 remains OPEN awaiting connected render-target, first-scene, and whole-engine integration; no advancement to 0408 is claimed. Non1 gamma, new codecs/plugins, write/clone/resampling, full camera/frame/stream/raster, native saves/numerical/HD/oracle/game remain OPEN; online features and NETR.ovl are formally out of scope per approved Owner Decision (DECISION_ONLINE_OUT_OF_SCOPE.json). Console save bytes/layouts/import are not gates. Originals/audio/user data/drivers/settings/preserved checkouts are untouched. Records: fork `research/runs/native-xbox-renderer-0407-implementation-20261122/`, parent `research/runs/native-renderer-0407-implementation-20261122/`. Owner: no action. No run remains active.
+Current owner priority: ONE native Armageddon port using AOT static C++ with typed native memory/ABI for PS2 retail logic and hand-written code restricted to platform boundaries; Xbox investigation is limited strictly to the renderer, viewport, and HD presentation (`DECISION_OWNER_CORRECTIONS_20261124`). Published fork main `d1bfc0e2581bfe8483e299509d58f6ca1f1461f2` implements native 0407 shared raster subsystem with in-place defect remediation (memory safety bounds checks, real offscreen HiddenGl WGL fixture with glIsTexture verification and configurable samplers, gamma bit 0 propagation per 2C0EB0, pop returning popped target per 2B9D50, unconditional type-4 depth 32 normalization per 2C8BD0, resumable destruction cursor, and explicit GPU texture revocation) on runtime `d1bfc0e2581bfe8483e299509d58f6ca1f1461f2`. All nine renderer component clients pass and 47->45 undefined symbol count resolves construct_core_plugin_0407 and destroy_core_plugin_0407. 0407 remains OPEN awaiting connected render-target, first-scene, and whole-engine integration; no advancement to 0408 is claimed. Non1 gamma, new codecs/plugins, write/clone/resampling, full camera/frame/stream/raster, native saves/numerical/HD/oracle/game remain OPEN; online features and NETR.ovl are formally out of scope per approved Owner Decision (DECISION_ONLINE_OUT_OF_SCOPE.json). Console save bytes/layouts/import are not gates. Originals/audio/user data/drivers/settings/preserved checkouts are untouched. Records: fork `research/runs/native-xbox-renderer-0407-implementation-20261122/`, parent `research/runs/native-renderer-0407-implementation-20261122/`. Owner: no action. No run remains active.
 
 ## Owner Decision: Online Features and Network Services Out of Scope
 
@@ -16,18 +16,18 @@ Online and network functionality (including the `NETR.ovl` dynamic overlay, onli
 
 Active 0407 integration boundary: verified raster defect repairs (bounds safety, real offscreen HiddenGl WGL fixture, source semantics, resumable lifecycle, and GPU retirement) are authentic and tested across all nine component clients. 0407 remains OPEN: real GPU render targets, depth buffers, connected first-scene integration, texture consumers, locks/readback, and whole-engine integration stay OPEN. 0403–0407 services stay retained. Records: fork `research/runs/native-xbox-renderer-0407-implementation-20261122/`, parent `research/runs/native-renderer-0407-implementation-20261122/`.
 
-For **all remaining implementation**,start investigation with the prepared **Xbox** Ghidra program,then select verified portions that reduce actual connected native work/dependencies. Xbox first is not automatic adoption or a guarantee that each module is substantially easier. Record concrete savings or their absence;shorter listings/familiar APIs are insufficient. Implement common CPU behavior once in existing native owners,without either console SDK/CRT/device transplant or redundant rewrites. Use PS2 for compatibility,differences or an easier verified portion,and bound comparisons to the actual decision rather than recovering two whole libraries. Reuse existing evidence/tools;no new setup or duplicate implementation is requested.
+For **renderer, viewport, and HD presentation** (`DECISION_OWNER_CORRECTIONS_20261124`), inspect the prepared **Xbox** Ghidra program and select verified portions that reduce connected native work while treating GS packet decoding only as an interim concession. Retail game logic outside platform boundaries comes from transformed AOT static C++ of the pinned PS2 binaries, not per-function hand-porting or wholesale Xbox adoption. Record concrete savings or their absence;shorter listings/familiar APIs are insufficient. Implement common CPU behavior once in existing native owners,without either console SDK/CRT/device transplant or redundant rewrites. Use PS2 for compatibility,differences or an easier verified portion,and bound comparisons to the actual decision rather than recovering two whole libraries. Reuse existing evidence/tools;no new setup or duplicate implementation is requested.
 
 
-## Xbox-First Recovery & HD Resolution Architecture Plan
+## Xbox Renderer/HD Presentation Plan & Multi-Version Integration
 
 The core design can carry forward: it already uses shared native owners, host files, typed profiles, and GPU resources rather than requiring PS2 objects.
 
-I found three integration issues that need explicit handling: Xbox’s four-player records versus the current two-player profile model, existing EE-specific numerical requirements, and the 640×448 logical viewport. That viewport is already separate from the host window size, which helps—but simply changing it to 1280×720 would not complete an HD renderer.
+Audit review identified three integration issues that require explicit handling: Xbox’s four-player records versus the earlier two-player profile baseline, existing EE-specific numerical requirements, and the 640×448 logical viewport. That viewport is already separate from the host window size, which helps—but simply changing it to 1280×720 would not complete an HD renderer.
 
 ### Review verdict
-Xbox-first is compatible with retaining the existing native work. It should change where we recover missing implementations—not restart the port or replace working subsystems.
-However, I cannot honestly certify that everything already implemented will work together yet. The project has tested components, but still lacks a complete linked and verified game. This review found several explicit PS2 assumptions that need reconciliation before adopting Xbox implementations.
+Scoped Xbox renderer/HD investigation (`DECISION_OWNER_CORRECTIONS_20261124`) is compatible with retaining verified native services and AOT static C++ transformation for game logic—it guides presentation architecture without restarting the port or replacing working subsystems.
+Component tests alone do not certify that everything already implemented will work together yet. The project has tested components, but still lacks a complete linked and verified game. This review found several explicit PS2 assumptions that need reconciliation before adopting Xbox implementations.
 No files were changed and no builds or games were run during this review.
 
 ### Why prefer Xbox implementations?
@@ -119,13 +119,13 @@ For each missing portion:
 6. Xbox addresses, vtables, pointers and handles never become native identities. Neither do PS2 equivalents.
 
 ### Resolution: this needs more than changing two constants
-I agree that we should target genuine HD rendering, not permanently render a PS2-sized image and enlarge it.  
+The port targets genuine HD rendering rather than rendering at PS2 resolution and upscaling it.
 There are three separate quantities:
 1. **Logical coordinates**: where game/UI elements are authored.
 2. **Render-target resolution**: how many pixels the GPU actually draws.
 3. **Presentation resolution**: the host window/display dimensions.
 
-Existing code already partly separates them, which is useful. But I found unfinished presentation assumptions:
+Existing code already partly separates them, which helps integration, while leaving unfinished presentation assumptions:
 - `retail_main_timing.cpp:72` publishes a logical viewport of 640×448.
 - `retail_platform.cpp:333` initially creates a 640×224 window.
 - Its loading presentation fits that raw logical ratio, with a comment explicitly saying physical pixel-aspect parity is not established.
@@ -432,17 +432,17 @@ boolean API shares the counter. Scoped pure/discovery/zero-session/symbol checks
 pass at actual capacity 4,800: epoch 0 `[0,2400)` + `[2400,4800)`, epoch 1 `[0,1)`,
 then shared count 2 after boolean queue. All samples are `+0.0f`; no heard-time,
 nonzero sound, movie drain or actual game acceptance follows. Evidence:
-[receipt contract](research/runs/native-audio-device-20261119/SUBMISSION_RECEIPT_CONTRACT.md)
-and fork [receipt run](external/forks/ps2-native-recomp/research/runs/native-audio-submission-20261119/RUN.md).
+`research/runs/native-audio-device-20261119/SUBMISSION_RECEIPT_CONTRACT.md` (parent repo)
+and fork `external/forks/ps2-native-recomp/research/runs/native-audio-submission-20261119/RUN.md` (historical fork record).
 
-Next bind the actual [movie clock producer](research/runs/native-movie-ingress-20261119/MOVIE_CLOCK_PRODUCER_SOURCE.md)
+Next bind the actual `research/runs/native-movie-ingress-20261119/MOVIE_CLOCK_PRODUCER_SOURCE.md` (parent repo)
 without equating original source progress or host-buffer acceptance with sink
 played frames. Original header-bound admission and conditional no-audio
-selection are source-verified in [the admission record](research/runs/native-movie-ingress-20261119/MOVIE_AUDIO_CLOCK_ADMISSION_SOURCE.md).
+selection are source-verified in `research/runs/native-movie-ingress-20261119/MOVIE_AUDIO_CLOCK_ADMISSION_SOURCE.md` (parent repo).
 That counter measures service updates; no native wall/vsync substitution is
 proved. Full config/later-header mutation, native scheduler, pause/reset and
-source/output ownership mapping remain open. The [fixed-overlay proof](research/runs/native-movie-ingress-20261119/DECODER_SELECTOR_OVERLAY_SOURCE.md)
-and [instruction-construction check](research/runs/native-movie-ingress-20261119/DECODER_SELECTOR_CONSTRUCTED_SOURCE.md)
+source/output ownership mapping remain open. The `research/runs/native-movie-ingress-20261119/DECODER_SELECTOR_OVERLAY_SOURCE.md` (parent repo)
+and `research/runs/native-movie-ingress-20261119/DECODER_SELECTOR_CONSTRUCTED_SOURCE.md` (parent repo)
 leave the decoder selector's incoming edge unresolved; neither initial zero nor
 missing bounded references selects a native PCM/speaker mode.
 
@@ -1030,7 +1030,7 @@ Published fork `55e8e56b9d883a6802d188626947803a93271af3`: native allocation own
 
 Historical component plan, superseded by connected-entry priority: Current implementation step: separate native requested/actual allocation counts and retain one request admission across Wave primary/alternate/overflow attempts. Source overlay teardown queries actual allocations, whereas the current native lifecycle count includes both roles. Explicit unknown alternate/overflow/diagnostic bindings must fail before allocation; no ordinary/Permanent default is permitted. Published fork `04c6975e52961ee36673363ef36fa3227bb755a5`: source-bound Wave transaction/role accounting passes3 actual native clients (749 stable pins,715 unchanged prior). Four owner groups, deterministic real host lifetime cuts and8 policy groups cover primary/alternate/overflow/terminal paths, diagnostic rejection/exception/reentry, request-wide retention and sticky status across wrapper recreation. Native ABI/symbol/linkage audits pass; independent saved-results review verifies all three executions and exact binary/tool/source joins. This is component policy execution, not the real retail producer: startup-created ownership, overlay readiness/loading and typed live-object retirement remain OPEN. See research/runs/native-retail-startup-20261120/native-heap/role-accounting/ROOT_PLAN.md.
 
-Local work continues if GitHub becomes unavailable; commits and synchronization outcomes are recorded separately. See [REMOTE_WORK_CONTINUITY.md](REMOTE_WORK_CONTINUITY.md). No owner launch is requested.
+Local work continues if GitHub becomes unavailable; commits and synchronization outcomes are recorded separately. See `research/history/superseded-status-docs-20261124/REMOTE_WORK_CONTINUITY.md` (archived in parent repo). No owner launch is requested.
 
 Historical component plan, superseded by connected-entry priority: Current implementation draft: actual source-ordered native memory-owner identities are connected to generated startup ownership, with failure-before-publication/duplicate checks and explicit missing Wave readiness. Published fork `84e5af891e77a2900d0f951dd6867fc3fa323c16`: integrated native owner-group/startup ownership passes4 actual native clients (835 stable pins,745 unchanged prior,1222 original ELF words rejoined). Actual fault coverage is25 group-create allocations and2 initial-bind allocations; partial publication/retry and3MiB+17 native Wave storage checks pass. Expected negative linking still reports all4 missing production startup bindings. Independent saved-results review verifies all4 executions, exact source/binary/tool/generated joins and expected incomplete-entry refusal; full retail startup/profile reset/fixed/MPEG/middleware/overlay/input/game remain OPEN. This is a subordinate main phase, not complete CRT/platform/main. Newly verified next order is profile-driven memory setup182670, stopwatch186150(3), parsed scale16AA10, file service2DF470(0), then overlay3DDA60; none may be labeled input setup or skipped. The MPEG descriptor is source literal9F, correcting the older derived-budget description; it imposes no native capacity. See research/runs/native-retail-startup-20261120/native-heap/retail-owner-group/ROOT_PLAN.md and SOURCE.md.
 

@@ -1,48 +1,40 @@
 # Active handoff — retail Armageddon native port
 
-**Audited 2026-11-22. Whole-game native acceptance: OPEN; no owner launch.**
+**Audited 2026-11-24. Whole-game native acceptance: OPEN; no owner launch.**
 The initial Nov 18 baseline handoff is preserved at `research/history/native-port-docs-2026-11-18/HANDOFF.md`.
 
 1. **Active Repositories & Worktrees**:
-   - Work in `external/forks/retail-main-22/` for the retail runtime source (HEAD `d1bfc0e2`).
-   - Parent repository is `C:\Users\nahsh\mk port\Armageddon-backup\armageddon-reimplementation` (HEAD `effbbbf4`).
-   - The canonical oracle (`milestone_work_verified_playable_20261110/`), duplicate backup (`external/forks/ps2-native-recomp-backup-20261110/`), user saves, states, cards, and original assets are strictly protected; noncompliant commits and dirty files are discarded.
-   - Isolated private Ghidra analysis sessions (`a92b59f4`) are established for Xbox (`default.xbe`) and PS2 (`SLUS_214.10`) binaries.
+   - Active retail runtime & AOT fork: `external/forks/retail-main-22/` (tracked on `origin/main`; Phase 2 will consolidate this into `external/forks/ps2-native-recomp/`).
+   - Canonical parent integration repository: `armageddon-reimplementation` (`origin/main`).
+   - Canonical oracle (`../../milestone_work_verified_playable_20261110/`, `ps2run.exe` SHA-256 `b9eef7da...`, 3,256 files) and descendant Kombat Practice (`../../milestone_build_kombat_practice/`, `8b763dcc...`) share direct hook lineage (`cd33a7f..67612aa`). User saves, states, cards, and original assets remain protected; noncompliant commits and dirty files are discarded locally.
+   - Offline xemu guest-trace capture (`<xemu-install>/xemu.exe` via `-s -S`) is permitted under the dated 2026-11-24 owner exception with muted audio and minimized window while acceptance remains OPEN.
 
 2. **Required Reading & Orientation**:
    - Before editing, read [PORT_STATUS.md](PORT_STATUS.md) for live audited state, [NATIVE_PORT_EXECUTION_CONTRACT.md](NATIVE_PORT_EXECUTION_CONTRACT.md) for non-negotiable rules, [ROADMAP.md](ROADMAP.md) for implementation order, and the specific run/source record cited by the task.
-   - Verify parent and fork HEAD cleanliness. Both parent (`origin/main` `effbbbf4`) and retail fork (`origin/main` `d1bfc0e2`) are clean and in sync.
+   - Verify parent and fork `HEAD` cleanliness and ledger synchronization (`python tools/research/sync_verify.py`).
 
-3. **Port Strategy & Donor Selection**:
-   - The product is **ONE genuine native Armageddon port**, not a PS2 compatibility runtime or an emulated engine.
-   - **Xbox investigation scope**: limited strictly to the renderer, viewport, and HD presentation (`DECISION_OWNER_CORRECTIONS_20261124`). GS packet decoding is an interim concession, not a target.
-   - Cross-check with PS2 for differences, compatibility, or simpler verified logic.
-   - Both versions join **one authoritative native architecture**: shared native Session, task system, memory owners, host loose-file VFS, and host OpenGL GPU services.
+3. **Architecture, AOT Compilation & Donor Scope**:
+   - The product is **ONE genuine native Armageddon port**: AOT static C++ compilation for all PS2 retail logic (`SLUS_214.10`, `MOVIER.ovl`, `GAMER.ovl`, VU0/VU1, and dynamic entry windows), transformed to typed native memory and ABI (zero `g_ram`, zero `c.r`, zero `$gp`, zero guest vtables), with hand-written C++ strictly at platform boundaries.
+   - **Xbox investigation scope**: limited strictly to the renderer, viewport, and HD presentation (`DECISION_OWNER_CORRECTIONS_20261124.json`). GS packet decoding is an interim concession, not a target.
+   - **Online/network exclusion**: `NETR.ovl` (1,834 functions) and `XONLINE` are out of scope per `research/decisions/DECISION_ONLINE_OUT_OF_SCOPE.json`.
    - Native save/reload is required; legacy console save byte import is an optional input adapter, not an acceptance gate.
 
 4. **Zero-Emulation Boundary**:
-   - Absolute zero guest console emulation: zero `g_ram`, `g_spr`, `g_memory`, emulated SPU2/IOP, JIT/interpreter, or console memory header transplants.
+   - Absolute zero guest console emulation on the accepted route: zero `g_ram`, `g_spr`, `g_memory`, renamed/relocated RAM arrays or guest-memory shims, zero `c.r[...]`, emulated SPU2/IOP, JIT/interpreter, or console memory header transplants.
    - Platform operations terminate in native Windows/host services (Win32, OpenGL, SDL2, host filesystem).
 
 5. **Current Runtime State & Active Frontier**:
-   - **Renderer Modules 0402–0407 Implemented & Passing**:
-     - 0402 matrix owner defaults, setter dispatch, exact math.
-     - 0403 base-frame hierarchy, dirty order, physical release (120 allocations).
-     - 0404 read streams, partial/EOF/skip64, checked close without ISO/CDVD.
-     - 0405 base cameras, 64 records, 7 exact SSE depth cases.
-     - 0406 shared CPU images, 512 independent gamma bytes, real decoder search.
-     - 0407 shared rasters: defect-remediated in place (destination capacity/bounds checks in `set_from_image` rejecting 16bpp; real offscreen `HiddenGl` WGL fixture with `glIsTexture` verification; gamma bit 0 propagation per 2C0EB0; `pop_context` returning popped target per 2B9D50; unconditional type-4 depth 32 normalization per 2C8BD0; resumable `destroy_cursor` in destructor; explicit GPU texture revocation).
-   - **All 9 renderer component clients pass**: `rasters`, `images`, `cameras`, `streams`, `frames`, `core`, `matrix`, `registration`, `allocator`.
-   - **Full-Entry Link Diagnostic**: Exactly 45 undefined symbols remaining (neither `construct_core_plugin_0407` nor `destroy_core_plugin_0407` appear).
-   - **Active Stage**: 0407 remains **OPEN** awaiting connected render-target, first-scene, and whole-engine integration; no advancement to 0408 is claimed.
+   - **Renderer & Presentation Component Clients (15/15 Passing)**: `0401`–`040b` (`matrix`, `frames`, `streams`, `cameras`, `images`, `rasters`, `raster_registration`, `textures`, `texture_dictionaries`, `materials`, `geometry`, `world`, `core`, `allocator`, `display_movie_presentation`) plus `72/72` xemu movie-variant oracle match (`test_native_retail_movie_variant_oracle`).
+   - **Full-Entry Link & Headless Gate**: `0` undefined symbols remaining in negative-link check (`test_native_startup_missing_bindings`), with `26` registered unrecovered placeholders in `research/ledger/ported_function_evidence.json`; 60-frame headless entry (`test_native_headless_entry_run`) reaches frame 5 task `0x18e100` movie presentation (`LOGOW.SFD` frame 0, 1 GL draw, 1 present, `0` frame readbacks) and records 369 calls across 13/26 placeholders.
+   - **Active Consolidation & AOT Work**: Complete Phase 1–7 remediation: consolidate active fork path, prove reproducible build-time AOT pipeline (`SLUS_214.10` + overlays + VU), apply memory/ABI transform, decide renderer scope, and replace duplicated retail logic.
 
 6. **Acceptance & Launch Gate**:
    - Do NOT direct the owner to run `launch_game.bat` or any other build until the contract's complete, clean, same-binary acceptance matrix passes.
-   - Whole-game native acceptance remains strictly **OPEN**.
+   - Whole-game native acceptance remains strictly **OPEN** (`238 / 15,670` credited in `research/ledger/functions.csv`, `0` whole-game acceptance).
 
-7. **Delivery Report Requirements & Falsification Checklist**:
-   - Every delivery report must be generated strictly from repository state (counts from ledgers, SHAs from `git rev-parse`, links to fork `ps2-native-recomp` and parent `armageddon-reimplementation`).
-   - Every delivery report MUST conclude with explicit sections for:
+7. **Doc Sync & Delivery Report Requirements**:
+   - Update all relevant current docs in place (`README.md`, `TASK_BOARD.md`, `PORT_STATUS.md`, `ROADMAP.md`, `HANDOFF.md`, `REPO_LAYOUT.md`, `NATIVE_PORT_EXECUTION_CONTRACT.md`); regenerate and sync ledgers after every phase.
+   - Every delivery report must be generated strictly from repository state and MUST conclude with:
      - **Not verified**: Open questions, unverified assumptions, and unreached code.
      - **Contradictions with earlier documents**: Discrepancies identified between earlier claims/documents and current disassembly/source truth.
-     - **Falsification attempts**: Results of actively attempting to falsify the five strongest claims before delivery, including negative and disconfirming findings.
+     - **Falsification attempts**: Results of actively attempting to falsify the strongest claims before delivery, including negative and disconfirming findings.

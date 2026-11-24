@@ -23,7 +23,7 @@ else:
 if PARENT_PRESENT:
     sys.path.insert(0, str(REPO / "tools" / "research"))
 sys.path.insert(0, str(FORK_ROOT / "tools" / "research"))
-from generate_ledgers import validate_ledgers, FORK_COMMIT_SHA
+from generate_ledgers import validate_ledgers, validate_current_docs, validate_progress_aot_tier, compute_aot_metrics, FORK_COMMIT_SHA
 import generate_ledgers
 generate_ledgers.REPO = REPO
 import sync_verify
@@ -482,6 +482,86 @@ def test_planted_failures():
         print("  Corrupted pixel headless presentation caught as expected: returned non-zero with telemetry mismatch.")
     else:
         print("  SKIP: test_native_headless_entry_run.exe not built yet; binary check deferred.")
+
+
+    # Planted Failure 13: file:/// link and broken relative link in current docs fail closed
+    print("Testing planted failure 13: file:/// and broken relative link rejection...")
+    readme_p = REPO / "README.md"
+    orig_readme = readme_p.read_text(encoding="utf-8")
+    try:
+        readme_p.write_text(orig_readme + "\n[local](file:///C:/Users/fake/doc.md)\n", encoding="utf-8", newline="\n")
+        try:
+            validate_current_docs(REPO)
+            assert False, "file:/// link FAILED to raise AssertionError!"
+        except AssertionError as e:
+            assert "file:///" in str(e), f"Unexpected error: {e}"
+            print(f"  file:/// link caught as expected: {e}")
+
+        readme_p.write_text(orig_readme + "\n[broken](nonexistent_phase1_doc_xyz.md)\n", encoding="utf-8", newline="\n")
+        try:
+            validate_current_docs(REPO)
+            assert False, "Broken relative link FAILED to raise AssertionError!"
+        except AssertionError as e:
+            assert "Broken relative markdown link" in str(e), f"Unexpected error: {e}"
+            print(f"  Broken relative link caught as expected: {e}")
+    finally:
+        readme_p.write_text(orig_readme, encoding="utf-8", newline="\n")
+
+    # Planted Failure 14: Old Xbox-first 'everything' wording fails closed
+    print("Testing planted failure 14: old Xbox-first everything wording rejection...")
+    agents_p = REPO / "AGENTS.md"
+    orig_agents = agents_p.read_text(encoding="utf-8")
+    try:
+        agents_p.write_text(orig_agents + "\nOwner priority is Xbox-first investigation for everything still to be implemented.\n", encoding="utf-8", newline="\n")
+        try:
+            validate_current_docs(REPO)
+            assert False, "Old Xbox-first everything wording FAILED to raise AssertionError!"
+        except AssertionError as e:
+            assert "Xbox-first 'everything' wording" in str(e), f"Unexpected error: {e}"
+            print(f"  Old Xbox-first everything wording caught as expected: {e}")
+    finally:
+        agents_p.write_text(orig_agents, encoding="utf-8", newline="\n")
+
+    # Planted Failure 15: Unmeasured / hardcoded AOT tier numerators fail closed
+    print("Testing planted failure 15: hardcoded or unmeasured AOT tier numerators rejection...")
+    inv_p = REPO / "research" / "ledger" / "aot_coverage_inventory.json"
+    orig_inv = inv_p.read_text(encoding="utf-8")
+    try:
+        bad_inv = json.loads(orig_inv)
+        bad_inv["modules"]["MOVIER.ovl"]["static_aot_count"] = 2537
+        inv_p.write_text(json.dumps(bad_inv, indent=2) + "\n", encoding="utf-8", newline="\n")
+        try:
+            compute_aot_metrics(ps2_ledger)
+            assert False, "Unmeasured MOVIER.ovl AOT numerator FAILED to raise AssertionError!"
+        except AssertionError as e:
+            assert "Unmeasured AOT numerator" in str(e), f"Unexpected error: {e}"
+            print(f"  Unmeasured overlay AOT numerator caught as expected: {e}")
+
+        bad_inv2 = json.loads(orig_inv)
+        bad_inv2["modules"]["SLUS_214.10"]["static_aot_count"] = 9999
+        inv_p.write_text(json.dumps(bad_inv2, indent=2) + "\n", encoding="utf-8", newline="\n")
+        try:
+            compute_aot_metrics(ps2_ledger)
+            assert False, "Mismatched SLUS_214.10 AOT numerator FAILED to raise AssertionError!"
+        except AssertionError as e:
+            assert "Hardcoded/mismatched SLUS_214.10 AOT numerator" in str(e), f"Unexpected error: {e}"
+            print(f"  Hardcoded SLUS_214.10 AOT numerator caught as expected: {e}")
+    finally:
+        inv_p.write_text(orig_inv, encoding="utf-8", newline="\n")
+
+    # Planted Failure 15b: Hand-edited Tier 2 AOT numerator inside README.md PROGRESS block fails closed
+    print("Testing planted failure 15b: hand-edited Tier 2 AOT number in README.md rejection...")
+    orig_readme2 = readme_p.read_text(encoding="utf-8")
+    try:
+        readme_p.write_text(orig_readme2.replace("0 / 2,537", "2,537 / 2,537"), encoding="utf-8", newline="\n")
+        try:
+            validate_progress_aot_tier(REPO, ps2_ledger)
+            assert False, "Hand-edited README.md Tier 2 numerator FAILED to raise AssertionError!"
+        except AssertionError as e:
+            assert "Unmeasured/mismatched MOVIER.ovl AOT count" in str(e), f"Unexpected error: {e}"
+            print(f"  Hand-edited README.md Tier 2 numerator caught as expected: {e}")
+    finally:
+        readme_p.write_text(orig_readme2, encoding="utf-8", newline="\n")
 
     print("PASS: All planted-failure cases successfully caught and proven to fail closed.")
 

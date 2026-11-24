@@ -38,8 +38,8 @@ settings or impose inference caps. If no instance is loaded, read source
 directly. Do not ask the owner to launch while any contract row is open.
 
 The parent AGENTS.md section "ELF authority, implementation and verification
-order" is binding here, including its mandatory five-step protocol for every
-ported function: selected original executable/data -> verified instructions/ABI
+order" is binding here, including its mandatory five-step transform-and-verify
+protocol for AOT-transformed retail logic and platform-boundary implementations: selected original executable/data -> verified instructions/ABI
 -> decompiler used only for orientation and caller/consumer cross-checks ->
 typed native C++ -> independently derived behavioral checks. Record input
 identity, exact ranges, instruction widths/extensions, delay-slot effects,
@@ -59,10 +59,14 @@ compile and check directly affected changes without rechecking unchanged
 components unless a failure or material concern requires it. Never replace
 production progress with isolated wrappers, repeated reports or test counts.
 
-## Xbox-first recovery and HD presentation rules
+## Xbox renderer, viewport, and HD presentation rules
 
-Per the architecture plan in parent ROADMAP.md and PORT_STATUS.md:
-Xbox first is the investigation priority,not automatic adoption or a claim
+Per `DECISION_OWNER_CORRECTIONS_20261124` and parent `ROADMAP.md` / `PORT_STATUS.md`:
+Xbox investigation is **limited strictly to the renderer, viewport, and HD presentation**,
+with GS packet decoding as an interim concession only (not a final target). Retail game
+logic outside platform boundaries comes from AOT-generated PS2 retail C++ transformed
+to eliminate `g_ram`, `c.r`, `$gp`, and guest vtables. Within the renderer/HD scope,
+Xbox reference is an investigation priority, not automatic adoption or a claim
 that every module becomes substantially easier. Follow the parent AGENTS.md
 donor-selection rule:choose verified behavior that reduces actual connected
 native work/dependencies,record concrete savings or their absence,and implement
@@ -79,8 +83,11 @@ dependency reduction within its recovered CPU-image scope.
 5. **HD presentation policy**: Use Xbox 720p as the HD reference. Keep logical coordinates (640×448), render target resolution, and presentation resolution distinct. Apply widescreen camera projections instead of 4:3 stretching. Maintain simulation timing strictly independent of render resolution.
 
 After each code/config change, test result, verified finding, decision,
-blocker, or rollback, update every affected active document before beginning
-the next implementation step. Parent `PORT_STATUS.md` owns live state;
+blocker, or rollback, update all relevant **current documents** in place
+(`README.md`, `TASK_BOARD.md`, `PORT_STATUS.md`, `ROADMAP.md`, `HANDOFF.md`,
+`NATIVE_PORT_EXECUTION_CONTRACT.md`) before beginning the next implementation step;
+do not spawn overlapping root status docs or arbitrary run directories.
+Parent & fork `PORT_STATUS.md` own live state;
 `ROADMAP.md` owns task order; the execution contract owns acceptance; dated
 run records own observations. Reconcile all conflicting current claims in
 place and mark superseded material historical. Include doc updates with the

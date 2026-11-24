@@ -79,7 +79,7 @@ Preserve audio identity, envelopes, effects, looping, timing, and video sync
 while replacing chip control and emulated transport. A simpler native mixer
 is not acceptable if it changes the sound.
 
-The pasted proposal's week/month estimates, function counts, and format
+Unverified schedule estimates, guessed function counts, and format
 assumptions are not implementation evidence. Verify each required field and
 call site against the assets/source; do not schedule or replace behavior on
 those estimates.
@@ -101,8 +101,10 @@ requirements. Missing comparison evidence remains open even when a donor is
 simpler. Preserve verified native functionality while eliminating console
 dependencies, rather than maintaining two console runtimes.
 
-Xbox-first recovery is an investigation priority,not automatic adoption or
-a guarantee of substantial implementation savings. Choose the verified
+Xbox investigation (`DECISION_OWNER_CORRECTIONS_20261124`) is limited strictly
+to the renderer, viewport, and HD presentation (with GS packet decoding as an
+interim concession only); it is an investigation priority within that scope, not
+automatic adoption or a guarantee of substantial implementation savings. Choose the verified
 matching portion that reduces actual connected native work and dependencies;
 record concrete avoided work/reused native services or explicitly state that
 no material advantage is established. A shorter listing or familiar API is
@@ -111,8 +113,8 @@ owners,not duplicate console implementations or transplanted SDK/CRT/device
 models. A bounded comparison is enough when it supports the decision;do not
 redo working services or recover both entire libraries to manufacture a
 comparison.0406's CPU-image recovery found no substantial Xbox-specific
-dependency reduction;that scoped finding does not override Xbox-first
-investigation for other unresolved boundaries. All behavior/evidence gates
+dependency reduction;that scoped finding does not alter Xbox investigation
+within the authorized renderer/viewport/HD-presentation boundary. All behavior/evidence gates
 remain unchanged.
 
 Any donor function match with `heuristic` confidence in `research/ledger/ps2_xbox_map.csv`
