@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\llvm-nm.exe",
+    "-C",
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_textures.exe"
+  ],
+  "exit": 0,
+  "deadline_seconds": 30,
+  "seconds": 0.0887327000091318,
+  "executable_sha256": "782b029b55d009059826b9b762926b640daade08bad4c1085bd815c927736b10",
+  "log_sha256": "62f98caa1f20a1bc4e2a25f9091ffda87acb5fb3243583477b6ba780c1a008ce",
+  "source_commit": "d6350cab8fd72ca1f197926a5d36dfcdc80ed66a",
+  "tracked_status": "M PORT_STATUS.md\n M TASK_BOARD.md",
+  "source_manifest_sha256": "6472263c423e067c52f74f35fd7c8a4ed67c0fd1fff3534c9f4eb5abf6bf5dd3",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "3cdeb3a5cbeddece37e0e94ec0bc76cad9419af51838d0b4b99a643185f28439",
+  "runner_sha256": "50f5684298b4d484226d9d7c8ec8fa280047bef16103398d72a0f8e93ced9e17",
+  "process_temp": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\opencode",
+  "phase": "symbols",
+  "game_run": false,
+  "visible_window": false,
+  "audio_endpoint": false,
+  "acceptance": "OPEN"
+}

@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "argv": [
+    "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\retail-main-22\\b\\test_native_retail_renderer_matrix.exe",
+    "."
+  ],
+  "exit": 0,
+  "deadline_seconds": 90,
+  "seconds": 0.08955720000085421,
+  "executable_sha256": "164803555e576ff382c88a1c30bd2859f14e97aaee9eb8f42186f9798a525421",
+  "log_sha256": "e6ca983715efa3c1951163d91ac2bd5a0363f87ee0008dfac1e602ba5c22291c",
+  "source_commit": "d6350cab8fd72ca1f197926a5d36dfcdc80ed66a",
+  "tracked_status": "M PORT_STATUS.md\n M TASK_BOARD.md",
+  "source_manifest_sha256": "6472263c423e067c52f74f35fd7c8a4ed67c0fd1fff3534c9f4eb5abf6bf5dd3",
+  "compiler_sha256": "ee85bef2c733e24a26c22be3df94bd631cf9528a048fce91241c182a936737fe",
+  "cache_sha256": "3cdeb3a5cbeddece37e0e94ec0bc76cad9419af51838d0b4b99a643185f28439",
+  "runner_sha256": "50f5684298b4d484226d9d7c8ec8fa280047bef16103398d72a0f8e93ced9e17",
+  "process_temp": "C:\\Users\\nahsh\\AppData\\Local\\Temp\\opencode",
+  "phase": "client",
+  "game_run": false,
+  "visible_window": false,
+  "audio_endpoint": false,
+  "acceptance": "OPEN"
+}
