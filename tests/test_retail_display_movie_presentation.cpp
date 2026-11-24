@@ -1,6 +1,7 @@
 // Verification target for production offscreen display service presenting
 // authentic retail movie frame (LOGON.SFD) via NativeMovieGlDevice without a visible window.
 #include "mka/retail_display_service.hpp"
+#include "mka/retail_movie_controller.hpp"
 #include "mka/movie_gpu.hpp"
 #include "mka/movie_gl_device.hpp"
 #include <algorithm>
@@ -198,6 +199,36 @@ int main(int argc, char** argv) try {
         MovieColorRole::helper_default, movier_bytes.data() + 0x77dd8, 6144, color_error);
     check(bool(table) && color_error == MovieColorError::none, "Failed to decode movie color table");
 
+    // 5b. Verify Recovered Retail Movie Table (33 entries) and Variant Selection (Xbox 0x0025d5b0 / PS2 0x00181fd0)
+    const auto table_span = retail_movie_descriptor_table();
+    check(table_span.size() == 33, "Retail movie descriptor table must have exactly 33 entries");
+    check(std::string_view(table_span[0].norm_name) == "LOGON.SFD", "Movie 0 normal name must be LOGON.SFD");
+    check(std::string_view(table_span[0].wide_name) == "LOGOW.SFD", "Movie 0 wide name must be LOGOW.SFD");
+    check(std::string_view(table_span[0].pal60_norm_name) == "LOGO6N.SFD", "Movie 0 PAL60 normal name must be LOGO6N.SFD");
+    check(std::string_view(table_span[0].pal60_wide_name) == "LOGO6W.SFD", "Movie 0 PAL60 wide name must be LOGO6W.SFD");
+    check(table_span[8].wide_name == nullptr, "Bonus movie V_SNDOUT.SFD must not have a widescreen variant");
+
+    // Variant selection verification
+    const auto sel_wide = select_retail_movie_variant(0, /*widescreen_active=*/true);
+    check(sel_wide.is_widescreen && std::string_view(sel_wide.filename) == "LOGOW.SFD",
+        "Widescreen mode must select LOGOW.SFD");
+    check(sel_wide.aspect_mode == DisplayAspectMode::widescreen_16_9, "Widescreen selection must set 16:9 aspect");
+
+    const auto sel_norm = select_retail_movie_variant(0, /*widescreen_active=*/false);
+    check(!sel_norm.is_widescreen && std::string_view(sel_norm.filename) == "LOGON.SFD",
+        "Standard mode must select LOGON.SFD");
+    check(sel_norm.aspect_mode == DisplayAspectMode::standard_4_3, "Standard selection must set 4:3 aspect");
+
+    // Fallback verification for bonus movie without wide variant
+    const auto sel_bonus = select_retail_movie_variant(8, /*widescreen_active=*/true);
+    check(!sel_bonus.is_widescreen && std::string_view(sel_bonus.filename) == "V_SNDOUT.SFD",
+        "Bonus movie without wide stream must fall back to 4:3");
+
+    // Out-of-bounds clamp verification (Xbox 0x0025d5b4)
+    const auto sel_clamp = select_retail_movie_variant(99, /*widescreen_active=*/true);
+    check(sel_clamp.movie_id == 0 && std::string_view(sel_clamp.filename) == "LOGOW.SFD",
+        "Out of range movie ID must clamp to 0");
+
     // 6. Load Authentic Retail First Movie Frame (LOGOW.SFD frame 0 for 720p widescreen)
     MovieVideoFrame video{};
     video.width = 640;
@@ -213,58 +244,25 @@ int main(int argc, char** argv) try {
     check(bool(converted) && color_error == MovieColorError::none, "Failed to convert YUV420 to RGBA");
     const auto expected_frame = *converted;
 
-    // 7. GPU Upload
-    auto upload_result = backend->upload(*converted);
-    check(upload_result.error == MovieGpuError::none && upload_result.frame != nullptr, "Movie frame GPU upload failed");
+    // 7. Verify 4:3 pillarbox destination geometry rule without extra draw call
+    const auto dest_rule_4_3 = display->compute_viewport(host_w, host_h, DisplayAspectMode::standard_4_3);
+    check(dest_rule_4_3.x == 160 && dest_rule_4_3.y == 0 && dest_rule_4_3.width == 960 && dest_rule_4_3.height == 720,
+        "Destination rect for 4:3 stream must match pillarboxed 960x720 centered within 1280x720");
 
-    // 8. Present Decoded Frame through Production Display Interface
+    // 8. Present Frame via Recovered Retail Movie Controller Path (PS2 0x00181f90 / Xbox 0x0025d380)
     RECT client{};
     check(GetClientRect(static_cast<HWND>(display->native_display_handle()), &client) != 0, "Failed to get client rect");
     const std::uint32_t client_w = static_cast<std::uint32_t>(client.right);
     const std::uint32_t client_h = static_cast<std::uint32_t>(client.bottom);
 
-    // 16:9 layout for widescreen stream on 1280x720 primary target
-    MovieHostLayout layout{
-        display->destination_identity(),
-        client_w,
-        client_h,
-        MovieAspectMode::explicit_display_aspect,
-        16,
-        9,
-        MovieWindowPolicy::centered_fit
-    };
-    NativeMoviePresentPlan plan{
-        upload_result.frame,
-        {0, 0, 640, 448},
-        MovieFilter::nearest,
-        MovieAlpha::replace_rgba8
-    };
-
-    // Verify 4:3 pillarbox destination geometry rule without extra draw call
-    MovieHostLayout layout_4_3{
-        display->destination_identity(),
-        client_w,
-        client_h,
-        MovieAspectMode::explicit_display_aspect,
-        4,
-        3,
-        MovieWindowPolicy::centered_fit
-    };
-    const auto dest_rect_4_3 = movie_destination(plan, layout_4_3);
-    check(bool(dest_rect_4_3), "Valid 4:3 movie destination rect");
-    check(dest_rect_4_3->x == 160 && dest_rect_4_3->y == 0 && dest_rect_4_3->width == 960 && dest_rect_4_3->height == 720,
-        "Destination rect for 4:3 stream must match pillarboxed 960x720 centered within 1280x720");
-
-    auto submission = backend->present(plan, layout);
-    check(submission.error == MovieGpuError::none, "Movie frame present failed");
-    await_fence(backend, submission.fence);
-    display->record_gl_draw(1);
-    check(display->swap_buffers(failure), "Failed to execute display swap_buffers");
+    auto play_result = play_retail_movie_frame(0, *display, *backend, *table, video, /*widescreen_active=*/true);
+    check(play_result.success, "play_retail_movie_frame must succeed through display service");
+    check(play_result.selection.is_widescreen && std::string_view(play_result.selection.filename) == "LOGOW.SFD",
+        "Movie controller must select LOGOW.SFD for widescreen");
 
     // 9. External Frame Capture Verification (Diagnostic readback under allowlist)
-    const auto dest_rect = movie_destination(plan, layout);
-    check(bool(dest_rect), "Valid movie destination rect");
-    check(dest_rect->x == 0 && dest_rect->y == 0 && dest_rect->width == 1280 && dest_rect->height == 720,
+    const auto dest_rect = play_result.destination_rect;
+    check(dest_rect.x == 0 && dest_rect.y == 0 && dest_rect.width == 1280 && dest_rect.height == 720,
         "Destination rect must match 16:9 full screen 1280x720 edge-to-edge");
 
     std::vector<std::uint8_t> actual_pixels(std::size_t(client_w) * client_h * 4);
@@ -290,10 +288,10 @@ int main(int argc, char** argv) try {
     };
 
     for (const auto& pt : sample_points) {
-        const unsigned rx = pt.x - dest_rect->x;
-        const unsigned ry = pt.y - dest_rect->y;
-        const unsigned sx = (rx * 640) / dest_rect->width;
-        const unsigned sy = (ry * 448) / dest_rect->height;
+        const unsigned rx = pt.x - dest_rect.x;
+        const unsigned ry = pt.y - dest_rect.y;
+        const unsigned sx = (rx * 640) / dest_rect.width;
+        const unsigned sy = (ry * 448) / dest_rect.height;
         const std::size_t actual_idx = (std::size_t(client_h - 1 - pt.y) * client_w + pt.x) * 4;
         const std::size_t expected_idx = (std::size_t(sy) * 640 + sx) * 4;
 
@@ -311,7 +309,6 @@ int main(int argc, char** argv) try {
         actual_pixels[center_actual_idx + 2], actual_pixels[center_actual_idx + 3]);
 
     // 10. Clean shutdown
-    backend->retire(std::move(submission.fence));
     shutdown_complete(backend);
     check(retirement_scope.owner->poll().state == MovieFenceState::complete, "all explicit native sessions retired");
 

@@ -5,6 +5,7 @@
   "changed_source_paths": [
     "cmake/native_game.cmake",
     "runtime/include/mka/retail_display_service.hpp",
+    "runtime/include/mka/retail_movie_controller.hpp",
     "runtime/include/mka/retail_renderer_cameras.hpp",
     "runtime/src/native/retail_display_service.cpp",
     "runtime/src/native/retail_initial_movie_path.cpp",
@@ -14,7 +15,8 @@
     "runtime/src/native/retail_first_scene_continuations.cpp",
     "tests/test_retail_display_movie_presentation.cpp",
     "tests/test_retail_renderer_cameras.cpp",
-    "tests/test_retail_renderer_matrix.cpp"
+    "tests/test_retail_renderer_matrix.cpp",
+    "tools/research/run_check.py"
   ],
   "client_targets": [
     "test_native_retail_renderer_matrix",
@@ -38,7 +40,7 @@
     "fnv1a64": "0x2cb5ec60e4e72325",
     "sha256": "ba848e89025edbb7a00d11be30040c23e036d1e57606c86074e65dd2c70191d7",
     "verification_class": "native-design-check",
-    "notes": "Driver-dependent regression pin captured via diagnostic readback under 16:9 full-screen edge-to-edge layout (0, 0, 1280, 720) without pillarboxing on Xbox offscreen target. Verified against independent CPU reference conversion (max delta <= 2). Also verified 4:3 pillarbox destination geometry rule (160, 0, 960, 720) for standard 4:3 N streams without an extra draw call.",
+    "notes": "Driver-dependent regression pin captured via diagnostic readback under 16:9 full-screen edge-to-edge layout (0, 0, 1280, 720) without pillarboxing on Xbox offscreen target, driven through retail movie controller path (play_retail_movie_frame) starting LOGOW.SFD frame 0. Verified against independent CPU reference conversion (max delta <= 2). Also verified 4:3 pillarbox destination geometry rule (160, 0, 960, 720) for standard 4:3 N streams without an extra draw call.",
     "telemetry": {
       "gl_draw_calls": 1,
       "cpu_composited_pixels": 0,
@@ -48,7 +50,6 @@
     }
   },
   "remaining_undefined_symbols": [
-    "mka::retail::main_binding::render_retail_frame(mka::retail::NativeRetailMainState&, mka::retail::StartupFailure&)",
     "mka::retail::initial_task_required::begin_menu_18d660(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
     "mka::retail::initial_task_required::begin_menu_18d700(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
     "mka::retail::initial_task_required::begin_menu_18d770(mka::retail::NativeRetailMainState&, mka::retail::NativeRetailGameSession&)",
@@ -70,7 +71,7 @@
     "mka::retail::invoke_retail_profile_select_from_2f1630(mka::retail::NativeRetailMainState&, std::__1::basic_string_view<char, std::__1::char_traits<char>>, mka::retail::RetailProfileMenuFailure&)",
     "mka::retail::publish_retail_profile_participant_from_189690(mka::retail::NativeRetailMainState&, std::__1::shared_ptr<mka::retail::NativeRetailInputParticipant> const&, mka::retail::RetailProfileMenuFailure&)"
   ],
-  "remaining_undefined_count": 21,
+  "remaining_undefined_count": 20,
   "game_run": false,
   "visible_window": false,
   "audio_endpoint": false,

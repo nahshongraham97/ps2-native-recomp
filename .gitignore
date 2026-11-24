@@ -73,6 +73,11 @@ __pycache__/
 *.webm
 *.avi
 *.mkv
+*.plane*
+*.s16
+*.sfd
+*.yuv
+/research/runs/native-movie-decode-*/
 
 # Per-lane git worktrees, and the old fork clone until it is removed.
 /wt/

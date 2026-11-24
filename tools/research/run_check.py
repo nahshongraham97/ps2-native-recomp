@@ -17,8 +17,18 @@ else:
     PARENT = ROOT
     BACKUP = ROOT.parent
 
-name = sys.argv[1]
-phase = sys.argv[2]
+if len(sys.argv) == 1:
+    name = "b/run_check_all"
+    phase = "all"
+elif len(sys.argv) == 2 and sys.argv[1] in ("all", "all_clients", "--all"):
+    name = "b/run_check_all"
+    phase = "all"
+elif len(sys.argv) == 2:
+    name = sys.argv[1]
+    phase = "all"
+else:
+    name = sys.argv[1]
+    phase = sys.argv[2]
 
 p_name = Path(name)
 if p_name.is_absolute():
@@ -167,6 +177,67 @@ elif phase == "client":
         raise FileNotFoundError(f"Built executable not found: {exe_path}. Build it first.")
     argv = [str(exe_path), *client_args]
     deadline = 90
+elif phase in ("all", "all_clients"):
+    import shutil
+    start_total = time.monotonic()
+    client_results = []
+    failed = 0
+    all_raw = bytearray()
+    print("START_CHECK all 15 component clients...", flush=True)
+    for exe_name, spec in KNOWN_CLIENTS.items():
+        if "clean_fixtures" in spec:
+            for fix_dir in spec["clean_fixtures"](OUT):
+                if fix_dir.is_dir():
+                    shutil.rmtree(fix_dir)
+        c_args = spec["args"](ROOT, OUT)
+        for arg in c_args:
+            if arg.endswith((".tsv", ".json")):
+                arg_p = ROOT / arg if not Path(arg).is_absolute() else Path(arg)
+                if not arg_p.exists():
+                    raise FileNotFoundError(f"Required fixture file not found: {arg_p}")
+        exe_path = build / f"{exe_name}.exe"
+        if not exe_path.exists():
+            raise FileNotFoundError(f"Built executable not found: {exe_path}. Build it first.")
+        c_argv = [str(exe_path), *c_args]
+        sub = subprocess.run(c_argv, cwd=ROOT, env=env, capture_output=True, text=True)
+        all_raw.extend(sub.stdout.encode("utf-8", errors="replace"))
+        all_raw.extend(sub.stderr.encode("utf-8", errors="replace"))
+        short_name = exe_name.replace("test_native_retail_renderer_", "").replace("test_native_retail_", "")
+        if sub.returncode == 0:
+            print(f"PASS: {short_name:15s} (exit 0)", flush=True)
+            client_results.append(dict(target=exe_name, exit=0, status="PASS"))
+        else:
+            print(f"FAIL: {short_name:15s} (exit {sub.returncode})", flush=True)
+            print("  stdout:", sub.stdout.strip())
+            print("  stderr:", sub.stderr.strip())
+            failed += 1
+            client_results.append(dict(target=exe_name, exit=sub.returncode, status="FAIL"))
+
+    total_time = time.monotonic() - start_total
+    buf = io.BytesIO()
+    with gzip.GzipFile(filename="", mode="wb", fileobj=buf, mtime=0) as gz:
+        gz.write(bytes(all_raw))
+    (OUT / "output.log.gz").write_bytes(buf.getvalue())
+
+    receipt = dict(
+        status="PASS" if failed == 0 else "FAIL",
+        clients_passed=len(KNOWN_CLIENTS) - failed,
+        clients_total=len(KNOWN_CLIENTS),
+        seconds=total_time,
+        client_results=client_results,
+        source_commit=git("rev-parse", "HEAD"),
+        tracked_status=git("status", "--porcelain", "-uno"),
+        phase="all",
+        game_run=False,
+        visible_window=False,
+        audio_endpoint=False,
+        acceptance="OPEN"
+    )
+    (OUT / "RESULT.json").write_text(json.dumps(receipt, indent=2) + "\n", newline="\n")
+    print(f"\nTotal: {len(KNOWN_CLIENTS) - failed}/{len(KNOWN_CLIENTS)} passed (in {round(total_time, 2)}s).", flush=True)
+    if failed != 0:
+        sys.exit(1)
+    sys.exit(0)
 elif phase == "negative":
     argv = [str(cmake), "--build", short.value, "--target", "test_native_startup_missing_bindings", "-j2"]
     deadline = 90
