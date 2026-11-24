@@ -326,7 +326,7 @@ std::unique_ptr<NativeRetailPlatform> NativeRetailPlatform::create(const content
         }
         if(state->keys.mouse_stick!=0){fail(f,RetailPlatformError::settings,"native mouse-stick mapping not implemented");return {};}
         for(const auto [attribute,value]:{std::pair{SDL_GL_CONTEXT_MAJOR_VERSION,3},std::pair{SDL_GL_CONTEXT_MINOR_VERSION,3},
-            std::pair{SDL_GL_CONTEXT_PROFILE_MASK,int(SDL_GL_CONTEXT_PROFILE_CORE)},std::pair{SDL_GL_DOUBLEBUFFER,1}}) {
+            std::pair{SDL_GL_CONTEXT_PROFILE_MASK,int(SDL_GL_CONTEXT_PROFILE_COMPATIBILITY)},std::pair{SDL_GL_DOUBLEBUFFER,1}}) {
             if(SDL_GL_SetAttribute(attribute,value)!=0){fail(f,RetailPlatformError::context,"SDL_GL_SetAttribute",SDL_GetError());return {};}
         }
         state->window=SDL_CreateWindow("Mortal Kombat Armageddon",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,

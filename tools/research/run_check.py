@@ -241,6 +241,16 @@ elif phase in ("all", "all_clients"):
 elif phase == "negative":
     argv = [str(cmake), "--build", short.value, "--target", "test_native_startup_missing_bindings", "-j2"]
     deadline = 90
+elif phase == "headless":
+    build_argv = [str(cmake), "--build", short.value, "--target", "test_native_headless_entry_run", "-j2"]
+    print("START_BUILD headless", " ".join(build_argv), flush=True)
+    b_res = subprocess.run(build_argv, cwd=ROOT, env=env, capture_output=True, text=True)
+    if b_res.returncode != 0:
+        print("FAIL: Headless build failed\n", b_res.stdout, b_res.stderr)
+        sys.exit(1)
+    exe_path = build / "test_native_headless_entry_run.exe"
+    argv = [str(exe_path)]
+    deadline = 90
 elif phase == "symbols":
     argv = [str(bin_dir / "llvm-nm.exe"), "-C", str(build / (sys.argv[3] + ".exe"))]
     deadline = 30
