@@ -1,6 +1,6 @@
 # Retail Armageddon native-port execution contract
 
-This governs the **retail game** in `external/forks/retail-main-22/`.
+This governs the **retail game** in `external/forks/ps2-native-recomp/`.
 It describes acceptance, not current success. No agent may call a build
 accepted or ready for the owner to run until every gate passes on one clean,
 pinned binary. The authored replacement application is outside scope.

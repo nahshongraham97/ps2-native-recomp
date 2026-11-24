@@ -6,9 +6,9 @@ import sys
 import subprocess
 
 _this_file = Path(__file__).resolve()
-if (_this_file.parents[2] / "external" / "forks" / "retail-main-22").exists():
+if (_this_file.parents[2] / "external" / "forks" / "ps2-native-recomp").exists():
     REPO = _this_file.parents[2]
-    FORK_ROOT = REPO / "external" / "forks" / "retail-main-22"
+    FORK_ROOT = REPO / "external" / "forks" / "ps2-native-recomp"
     PARENT_PRESENT = True
 elif len(_this_file.parents) > 4 and (_this_file.parents[4] / "research" / "runs" / "ghidra-function-coverage-20261118").exists():
     FORK_ROOT = _this_file.parents[2]
@@ -562,6 +562,22 @@ def test_planted_failures():
             print(f"  Hand-edited README.md Tier 2 numerator caught as expected: {e}")
     finally:
         readme_p.write_text(orig_readme2, encoding="utf-8", newline="\n")
+
+
+    # Planted Failure 16: Stale retired fork name in current (non-history) docs fails closed
+    print("Testing planted failure 16: retired fork checkout name rejection in current docs...")
+    handoff_p = REPO / "HANDOFF.md"
+    orig_handoff = handoff_p.read_text(encoding="utf-8")
+    try:
+        handoff_p.write_text(orig_handoff + "\nWork in external/forks/" + "retail" + "-main-22/.\n", encoding="utf-8", newline="\n")
+        try:
+            validate_current_docs(REPO)
+            assert False, "Retired fork directory name FAILED to raise AssertionError!"
+        except AssertionError as e:
+            assert "Forbidden retired fork directory reference" in str(e), f"Unexpected error: {e}"
+            print(f"  Retired fork reference caught as expected: {e}")
+    finally:
+        handoff_p.write_text(orig_handoff, encoding="utf-8", newline="\n")
 
     print("PASS: All planted-failure cases successfully caught and proven to fail closed.")
 

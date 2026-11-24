@@ -11,7 +11,7 @@ archived at `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`d387c4b9`](https://github.com/nahshongraham97/ps2-native-recomp/commit/d387c4b942c8b9a33f0820f62bfe622ab2633b18) (pinned active fork)
+**Verified Fork Commit**: [`a546e18b`](https://github.com/nahshongraham97/ps2-native-recomp/commit/a546e18b4136a23952ac3ee4a8a165325bad184e) (pinned active fork)
 
 ### PlayStation 2 Retail Catalog (`SLUS_214.10` + Overlays)
 - **In-Scope Completion**: **1.52%** (238 / 15,670 in-scope retail functions)
@@ -27,7 +27,7 @@ archived at `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 | **Total PS2 Catalog** | *Complete binary disassembly denominator* | **17,510** | — |
 
 ### Tier 2: Build-Time Static AOT Coverage (`research/ledger/aot_coverage_inventory.json`)
-- **Reference Static AOT C++ Coverage**: **83.84%** (13,138 / 15,670 in-scope EE functions in reference `ps2-native-recomp/generated/mkarmageddon/table.cpp`; **0** generated `.cpp` units currently built in active fork `generated/` pending Phase 3 reproducible pipeline)
+- **Reference Static AOT C++ Coverage**: **83.84%** (13,138 / 15,670 in-scope EE functions in reference `ps2-native-recomp-legacy-20261118/generated/mkarmageddon/table.cpp`; **0** generated `.cpp` units currently built in active fork `generated/` pending Phase 3 reproducible pipeline)
 
 | Module / Artifact | Build-Time Static AOT Status | Static AOT / Catalog | Reference % |
 |---|---|---|---|
@@ -91,7 +91,7 @@ archived at `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
 > [!NOTE]
 > **2026-11-24 Phase 0 Preflight, Oracle Restoration & Baseline Gate**:
-> Unpushed noncompliant commits discarded (`44ab7b37`, `e8dc7173`, `6bebd90b`, `07d5827b` in fork; `6752e59e`, `1b4b25b0`, `3972b16f` in parent; plus superseded dirty edits in legacy `external/forks/ps2-native-recomp`). Canonical oracle `../../milestone_work_verified_playable_20261110` (`ps2run.exe` `b9eef7da...`) restored cleanly (`3,250` -> `3,256` files, 0 existing files modified/deleted; duplicate backup `external/forks/ps2-native-recomp-backup-20261110/games/mkarmageddon` verified 100% identical across `3,249` shared files). Git ancestry and binary audit established `../../milestone_build_kombat_practice` (`8b763dcc...`) as a direct descendant of the oracle (`cd33a7f`..`67612aa`, 33 hook commits); clean parity requires `--no-hooks`/`--parity` + hook env vars `=0`, and assist hooks stay out of shipped native builds (`research/decisions/DECISION_OWNER_CORRECTIONS_20261124.json`). Recorded checkout inventory (110 dirs across `external/forks/` & `Armageddon-backup/forks/`) and oracle manifests under git-ignored `external/forks/retail-main-22/build/oracle-telemetry/`. Phase 0 baselines pass (`sync_verify`, `test_check_acceptance` 25/25, CPU-raster ban 1,158 sources, `test_full_existence_validation` 249 entries + 12 planted failures, `test_manifest` 21/21 + 1 skip, `test_native_headless_entry_run`, `test_native_startup_missing_bindings`, `test_native_retail_movie_variant_oracle` 72/72, and all 15 renderer/presentation component clients).
+> Unpushed noncompliant commits discarded (`44ab7b37`, `e8dc7173`, `6bebd90b`, `07d5827b` in fork; `6752e59e`, `1b4b25b0`, `3972b16f` in parent; plus superseded dirty edits in legacy `external/forks/ps2-native-recomp`). Canonical oracle `../../milestone_work_verified_playable_20261110` (`ps2run.exe` `b9eef7da...`) restored cleanly (`3,250` -> `3,256` files, 0 existing files modified/deleted; duplicate backup `external/forks/ps2-native-recomp-backup-20261110/games/mkarmageddon` verified 100% identical across `3,249` shared files). Git ancestry and binary audit established `../../milestone_build_kombat_practice` (`8b763dcc...`) as a direct descendant of the oracle (`cd33a7f`..`67612aa`, 33 hook commits); clean parity requires `--no-hooks`/`--parity` + hook env vars `=0`, and assist hooks stay out of shipped native builds (`research/decisions/DECISION_OWNER_CORRECTIONS_20261124.json`). Recorded checkout inventory (110 dirs across `external/forks/` & `Armageddon-backup/forks/`) and oracle manifests under git-ignored `external/forks/ps2-native-recomp/build/oracle-telemetry/`. Phase 0 baselines pass (`sync_verify`, `test_check_acceptance` 25/25, CPU-raster ban 1,158 sources, `test_full_existence_validation` 249 entries + 12 planted failures, `test_manifest` 21/21 + 1 skip, `test_native_headless_entry_run`, `test_native_startup_missing_bindings`, `test_native_retail_movie_variant_oracle` 72/72, and all 15 renderer/presentation component clients).
 
 Close a row only with the ROADMAP evidence and a same-build run record.
 No owner launch is a task while any row remains open.

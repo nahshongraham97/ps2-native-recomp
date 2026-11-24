@@ -10,7 +10,7 @@ Neither the canonical playable oracle (`../../milestone_work_verified_playable_2
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`d387c4b9`](https://github.com/nahshongraham97/ps2-native-recomp/commit/d387c4b942c8b9a33f0820f62bfe622ab2633b18) (pinned active fork)
+**Verified Fork Commit**: [`a546e18b`](https://github.com/nahshongraham97/ps2-native-recomp/commit/a546e18b4136a23952ac3ee4a8a165325bad184e) (pinned active fork)
 
 ### PlayStation 2 Retail Catalog (`SLUS_214.10` + Overlays)
 - **In-Scope Completion**: **1.52%** (238 / 15,670 in-scope retail functions)
@@ -26,7 +26,7 @@ Neither the canonical playable oracle (`../../milestone_work_verified_playable_2
 | **Total PS2 Catalog** | *Complete binary disassembly denominator* | **17,510** | — |
 
 ### Tier 2: Build-Time Static AOT Coverage (`research/ledger/aot_coverage_inventory.json`)
-- **Reference Static AOT C++ Coverage**: **83.84%** (13,138 / 15,670 in-scope EE functions in reference `ps2-native-recomp/generated/mkarmageddon/table.cpp`; **0** generated `.cpp` units currently built in active fork `generated/` pending Phase 3 reproducible pipeline)
+- **Reference Static AOT C++ Coverage**: **83.84%** (13,138 / 15,670 in-scope EE functions in reference `ps2-native-recomp-legacy-20261118/generated/mkarmageddon/table.cpp`; **0** generated `.cpp` units currently built in active fork `generated/` pending Phase 3 reproducible pipeline)
 
 | Module / Artifact | Build-Time Static AOT Status | Static AOT / Catalog | Reference % |
 |---|---|---|---|

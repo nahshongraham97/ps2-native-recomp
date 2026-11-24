@@ -6,7 +6,7 @@
   "active_fork_status": "Reproducible Phase 3 pipeline not yet materialized in active fork generated/ directory; legacy reference generator table.cpp holds base SLUS_214.10 units.",
   "sources": {
     "reference_table_cpp": {
-      "rel_path": "external/forks/ps2-native-recomp/generated/mkarmageddon/table.cpp",
+      "rel_path": "external/forks/ps2-native-recomp-legacy-20261118/generated/mkarmageddon/table.cpp",
       "sha256": "398610659664a005ba378c8dc2f4866ed6793f2233f966684b184eb0d8a18da5",
       "static_unit_count": 311
     },
@@ -17,7 +17,7 @@
       "GAMER_functions_count": 1
     },
     "vu1_table_cpp": {
-      "rel_path": "external/forks/ps2-native-recomp/generated/mkarmageddon/vu1_table.cpp",
+      "rel_path": "external/forks/ps2-native-recomp-legacy-20261118/generated/mkarmageddon/vu1_table.cpp",
       "sha256": "732e5aa827053d56886edd6cf3b0365c8a92b14885ddeb86732d8067f7cf7c1b",
       "keys": 490
     },

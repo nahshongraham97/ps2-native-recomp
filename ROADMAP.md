@@ -49,7 +49,7 @@ No files were changed and no builds or games were run during this review.
    Importantly, this benefit already exists in our native implementation. NativeFile, NativeContentVolume and NativeRetailPackage already provide host-file access and loose /game/art resources without a runtime MKDA.PAK dependency. We should retain them, not reimplement them merely because we are now consulting Xbox first.
 
 ### What carries forward?
-*(Paths below are relative to `external/forks/retail-main-22/`)*
+*(Paths below are relative to `external/forks/ps2-native-recomp/`)*
 
 | Existing work | Compatibility assessment |
 | :--- | :--- |

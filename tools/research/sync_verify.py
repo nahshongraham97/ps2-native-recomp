@@ -29,7 +29,7 @@ _COMMIT_PIN_RE = re.compile(
 def find_roots(start_path: Path = None):
     p = (start_path or Path(__file__)).resolve()
     for parent in [p, *p.parents]:
-        if parent.name in ("retail-main-22", "ps2-native-recomp"):
+        if parent.name in ("ps2-native-recomp", "ps2-native-recomp"):
             fork_root = parent
             if len(fork_root.parents) >= 3 and (fork_root.parents[2] / "research" / "runs" / "ghidra-function-coverage-20261118").exists():
                 parent_repo = fork_root.parents[2]
@@ -37,11 +37,11 @@ def find_roots(start_path: Path = None):
             return fork_root, None
         if parent.name == "armageddon-reimplementation":
             parent_repo = parent
-            for cand in ("external/forks/retail-main-22", "external/forks/ps2-native-recomp"):
+            for cand in ("external/forks/ps2-native-recomp", "external/forks/ps2-native-recomp"):
                 fork_root = parent_repo / cand
                 if fork_root.exists():
                     return fork_root, parent_repo
-            return parent_repo / "external/forks/retail-main-22", parent_repo
+            return parent_repo / "external/forks/ps2-native-recomp", parent_repo
     raise RuntimeError(f"Could not resolve parent and fork roots from {p}")
 
 def sha(path: Path) -> str:

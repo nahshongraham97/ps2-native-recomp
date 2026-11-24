@@ -28,7 +28,7 @@ else:
     REPO = Path(__file__).resolve().parents[2]
 def resolve_fork_commit_sha() -> str:
     for _p in [Path(__file__).resolve(), *Path(__file__).resolve().parents]:
-        _fork = _p / "external" / "forks" / "retail-main-22"
+        _fork = _p / "external" / "forks" / "ps2-native-recomp"
         if _fork.is_dir():
             try:
                 out = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=_fork, text=True, timeout=5).strip()
@@ -36,7 +36,7 @@ def resolve_fork_commit_sha() -> str:
                     return out
             except Exception:
                 pass
-        if _p.name == "retail-main-22":
+        if _p.name == "ps2-native-recomp":
             try:
                 out = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=_p, text=True, timeout=5).strip()
                 if out:
@@ -826,6 +826,8 @@ def validate_current_docs(repo_root: Path):
                 raise AssertionError(f"Machine-local path or file:/// link forbidden in {rel}:{i}: {line[:120]}")
             if rx_xb_all.search(line):
                 raise AssertionError(f"Forbidden old Xbox-first 'everything' wording in {rel}:{i}: {line[:120]}")
+            if ("retail" + "-main-22") in line:
+                raise AssertionError(f"Forbidden retired fork directory reference in {rel}:{i}: {line[:120]}")
             for target in rx_mdlink.findall(line):
                 if target.startswith(("http://", "https://", "mailto:")):
                     continue
@@ -902,7 +904,7 @@ def compute_aot_metrics(ps2_ledger):
     # Check OVERLAY-MAP-MANIFEST.json if present
     for cand_manifest in [
         REPO / "recomp" / "overlays" / "OVERLAY-MAP-MANIFEST.json",
-        REPO / "external" / "forks" / "retail-main-22" / "recomp" / "overlays" / "OVERLAY-MAP-MANIFEST.json",
+        REPO / "external" / "forks" / "ps2-native-recomp" / "recomp" / "overlays" / "OVERLAY-MAP-MANIFEST.json",
     ]:
         if cand_manifest.exists():
             ovm = json.loads(cand_manifest.read_text(encoding="utf-8"))
@@ -1031,7 +1033,7 @@ def generate_progress_markdown_block(ps2_ledger, xbox_ledger, ps2_map, fork_sha=
         f"| **Total PS2 Catalog** | *Complete binary disassembly denominator* | **{len(ps2_ledger):,}** | — |",
         "",
         "### Tier 2: Build-Time Static AOT Coverage (`research/ledger/aot_coverage_inventory.json`)",
-        f"- **Reference Static AOT C++ Coverage**: **{100.0 * aot['in_scope_aot'] / ps2_in_scope:.2f}%** ({aot['in_scope_aot']:,} / {ps2_in_scope:,} in-scope EE functions in reference `ps2-native-recomp/generated/mkarmageddon/table.cpp`; **{aot['active_fork_static_cpp_count']:,}** generated `.cpp` units currently built in active fork `generated/` pending Phase 3 reproducible pipeline)",
+        f"- **Reference Static AOT C++ Coverage**: **{100.0 * aot['in_scope_aot'] / ps2_in_scope:.2f}%** ({aot['in_scope_aot']:,} / {ps2_in_scope:,} in-scope EE functions in reference `ps2-native-recomp-legacy-20261118/generated/mkarmageddon/table.cpp`; **{aot['active_fork_static_cpp_count']:,}** generated `.cpp` units currently built in active fork `generated/` pending Phase 3 reproducible pipeline)",
         "",
         "| Module / Artifact | Build-Time Static AOT Status | Static AOT / Catalog | Reference % |",
         "|---|---|---|---|",
@@ -1134,7 +1136,7 @@ def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map):
     2. TASK_BOARD.md tier partition (Implemented + Classified + Open Frontier == 15,670 in-scope retail functions).
     3. Method and test assertion uniqueness across all ported rows (zero duplicate pairs).
     4. Method and assertion address verification (accounting for embedded_in parent provenance).
-    5. Source method and test assertion existence verification in retail-main-22.
+    5. Source method and test assertion existence verification in ps2-native-recomp.
     6. Cross-ISA map_evidence signature validation for all 18 mapped rows.
     7. Donor column PS2 self-reference absence verification (zero ps2: strings).
     8. Progress SVG existence and completeness.
@@ -1143,8 +1145,8 @@ def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map):
     """
     print("Validating ledgers, board tiers, and cross-platform correspondence...")
 
-    if (REPO / "external" / "forks" / "retail-main-22").exists():
-        fork_root = REPO / "external" / "forks" / "retail-main-22"
+    if (REPO / "external" / "forks" / "ps2-native-recomp").exists():
+        fork_root = REPO / "external" / "forks" / "ps2-native-recomp"
     else:
         fork_root = REPO
 

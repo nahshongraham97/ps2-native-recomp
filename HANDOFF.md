@@ -4,7 +4,7 @@
 The initial Nov 18 baseline handoff is preserved at `research/history/native-port-docs-2026-11-18/HANDOFF.md`.
 
 1. **Active Repositories & Worktrees**:
-   - Active retail runtime & AOT fork: `external/forks/retail-main-22/` (tracked on `origin/main`; Phase 2 will consolidate this into `external/forks/ps2-native-recomp/`).
+   - Active retail runtime & AOT fork: `external/forks/ps2-native-recomp/` (consolidated in Phase 2; tracks `origin/main`).
    - Canonical parent integration repository: `armageddon-reimplementation` (`origin/main`).
    - Canonical oracle (`../../milestone_work_verified_playable_20261110/`, `ps2run.exe` SHA-256 `b9eef7da...`, 3,256 files) and descendant Kombat Practice (`../../milestone_build_kombat_practice/`, `8b763dcc...`) share direct hook lineage (`cd33a7f..67612aa`). User saves, states, cards, and original assets remain protected; noncompliant commits and dirty files are discarded locally.
    - Offline xemu guest-trace capture (`<xemu-install>/xemu.exe` via `-s -S`) is permitted under the dated 2026-11-24 owner exception with muted audio and minimized window while acceptance remains OPEN.
