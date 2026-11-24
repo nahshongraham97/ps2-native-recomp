@@ -255,6 +255,7 @@ if(WIN32)
         runtime/src/native/retail_renderer_transforms_kernels.cpp
         runtime/src/native/retail_renderer_matrix.cpp
         runtime/src/native/retail_renderer_matrix_kernels.cpp
+        runtime/src/native/retail_display_service.cpp
         runtime/src/native/retail_first_scene_core.cpp runtime/src/native/retail_first_scene_continuations.cpp runtime/src/native/retail_first_scene_allocator.cpp runtime/src/native/retail_camera_world.cpp
         runtime/src/native/retail_sound_metadata.cpp
         runtime/src/native/retail_game_session_startup.cpp runtime/src/native/retail_main_settings_binding.cpp
@@ -635,6 +636,10 @@ add_executable(test_native_retail_frame_work_storage EXCLUDE_FROM_ALL tests/test
 target_link_libraries(test_native_retail_frame_work_storage PRIVATE mka_native_retail_startup)
 add_executable(test_native_retail_online_stub EXCLUDE_FROM_ALL tests/test_retail_online_stub.cpp)
 target_link_libraries(test_native_retail_online_stub PRIVATE mka_native_retail_startup)
+add_executable(test_native_retail_display_movie_presentation EXCLUDE_FROM_ALL tests/test_retail_display_movie_presentation.cpp)
+target_include_directories(test_native_retail_display_movie_presentation PRIVATE runtime/include)
+target_compile_features(test_native_retail_display_movie_presentation PRIVATE cxx_std_20)
+target_link_libraries(test_native_retail_display_movie_presentation PRIVATE mka_native_retail_startup mka_native_media)
 if(WIN32)
     foreach(_client test_native_gl_texture test_native_file_read_job test_native_retail_loaded_system_art test_native_retail_permanent_strings test_native_retail_frame_work_storage)
         add_custom_command(TARGET ${_client} POST_BUILD

@@ -101,6 +101,9 @@ KNOWN_CLIENTS = {
     "test_native_retail_renderer_geometry": {
         "args": lambda root, out: [],
     },
+    "test_native_retail_display_movie_presentation": {
+        "args": lambda root, out: [],
+    },
 }
 
 CLIENT_ALIASES = {
@@ -119,6 +122,8 @@ CLIENT_ALIASES = {
     "world": "test_native_retail_renderer_world",
     "materials": "test_native_retail_renderer_materials",
     "geometry": "test_native_retail_renderer_geometry",
+    "movie_presentation": "test_native_retail_display_movie_presentation",
+    "display_movie": "test_native_retail_display_movie_presentation",
 }
 
 if phase == "build":
