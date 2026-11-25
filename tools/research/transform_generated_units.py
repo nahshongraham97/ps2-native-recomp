@@ -310,7 +310,7 @@ class SymbolicFrame:
     def invalidate_GPR_SSA(self,reg):
         # Reference-only frame transport/aliases do not produce a native value.
         # MTC1 must never reuse an antecedent scalar definition after that write.
-        if getattr(self.lowering,'mtc1_original',None):self.lowering.regs.pop(reg,None)
+        if getattr(self.lowering,'mtc1_original',None) or getattr(self.lowering,'scalar_original',None):self.lowering.regs.pop(reg,None)
 
     def statement(self,node):
         kind=node.get('kind');call=self.call(node)
@@ -473,6 +473,160 @@ def emit_lui_scalar_probe(binding,name):
             '    return value_0;\n}\n')
 
 
+def scalar_word_shape(word):
+    """Bounded nontrapping integer forms; used only to check the actual AST."""
+    opcode,rs,rt,rd,sa,fn=word>>26,word>>21&31,word>>16&31,word>>11&31,word>>6&31,word&63
+    def constant(value,width):return {'op':'constant','type':'u'+str(width),'value':value&((1<<width)-1)}
+    def source(reg,width):return constant(0,width) if reg==0 else {'op':'source_GPR','type':'u'+str(width),'register':reg}
+    def binary(op,width,a,b):return {'op':op+str(width),'type':'u'+str(width),'arguments':[a,b]}
+    if opcode==0:
+        arithmetic={0x21:('add',32),0x23:('subtract',32),0x2d:('add',64),0x2f:('subtract',64),
+                    0x24:('and',64),0x25:('or',64),0x26:('xor',64),0x27:('nor',64)}
+        shifts={0:('shift_left',32,0),2:('shift_right',32,0),3:('arithmetic_shift_right',32,0),
+                0x38:('shift_left',64,0),0x3a:('shift_right',64,0),0x3b:('arithmetic_shift_right',64,0),
+                0x3c:('shift_left',64,32),0x3e:('shift_right',64,32),0x3f:('arithmetic_shift_right',64,32)}
+        if fn in arithmetic:
+            require(sa==0,'scalar_reserved_shift_bits');op,width=arithmetic[fn]
+            expression=binary(op,width,source(rs,width),source(rt,width))
+        elif fn in shifts:
+            require(rs==0,'scalar_reserved_source_bits');op,width,extra=shifts[fn]
+            expression=binary(op,width,source(rt,width),constant(sa+extra,width))
+        else:return None
+        destination=rd
+    elif opcode in (9,0x19,0xc,0xd,0xe):
+        destination=rt;immediate=word&65535; signed=immediate-65536 if immediate&32768 else immediate
+        width=32 if opcode==9 else 64
+        if opcode==9:
+            op='add' if signed>=0 else 'subtract'
+            expression=binary(op,width,source(rs,width),constant(abs(signed),width)) if signed else source(rs,width)
+        elif opcode==0x19:op='add';expression=binary(op,width,source(rs,width),constant(signed,width))
+        else:
+            op={0xc:'and',0xd:'or',0xe:'xor'}[opcode];expression=binary(op,width,source(rs,width),constant(immediate,width))
+    else:return None
+    return {'operation':op,'width_bits':width,'destination':destination,'expression':expression}
+
+
+def scalar_AST_expression(node,cpu,width):
+    """Derive typed operations from the generated expression, before word join."""
+    node=unwrap(node);kind=node.get('kind');mask=(1<<width)-1
+    def ty(n):
+        t=n.get('type',{});return t.get('desugaredQualType',t.get('qualType'))
+    unsigned='unsigned int' if width==32 else 'unsigned long long'
+    signed='int' if width==32 else 'long long'
+    if kind=='IntegerLiteral':return {'op':'constant','type':'u'+str(width),'value':int(node['value'])&mask}
+    if kind=='UnaryOperator' and node.get('opcode')=='-':
+        value=scalar_AST_expression(children(node)[0],cpu,width)
+        require(value['op']=='constant','scalar_nonconstant_unary_minus')
+        return dict(value,value=(-value['value'])&mask)
+    if kind=='CXXStaticCastExpr':
+        require(node.get('castKind') in ('NoOp','IntegralCast') and ty(node) in (unsigned,signed)
+                and len(children(node))==1,'scalar_numeric_or_width_cast')
+        value=scalar_AST_expression(children(node)[0],cpu,width)
+        if ty(node)==signed:return {'op':'signed_bits','type':'i'+str(width),'argument':value}
+        if value.get('op')=='signed_bits':return value['argument']
+        return value
+    if kind=='ArraySubscriptExpr':
+        require(ty(node) in (unsigned,signed),'scalar_GPR_read_width_mismatch')
+        base,index=children(node);base=unwrap(base)
+        require(base.get('kind')=='MemberExpr' and literal(index)==0 and len(children(base))==1,'scalar_GPR_read_lane')
+        bank=base.get('name');require(bank==('w' if width==32 else 'd') or width==64 and bank=='sd','scalar_GPR_read_bank_width')
+        require(ty(node)==(signed if bank=='sd' else unsigned),'scalar_GPR_read_signedness')
+        reg=register_object(children(base)[0],cpu)
+        value={'op':'constant','type':'u'+str(width),'value':0} if reg==0 else {'op':'source_GPR','type':'u'+str(width),'register':reg}
+        return {'op':'signed_bits','type':'i'+str(width),'argument':value} if bank=='sd' else value
+    if kind=='UnaryOperator' and node.get('opcode')=='~':
+        require(ty(node)==unsigned,'scalar_not_width');value=scalar_AST_expression(children(node)[0],cpu,width)
+        require(value.get('op')=='or'+str(width),'scalar_not_requires_NOR_shape')
+        return dict(value,op='nor'+str(width))
+    if kind=='BinaryOperator':
+        require(len(children(node))==2,'scalar_binary_arity');operator=node.get('opcode')
+        require(operator in ('+','-','&','|','^','<<','>>'),'scalar_operator_unproved:'+str(operator))
+        a,b=[scalar_AST_expression(n,cpu,width) for n in children(node)]
+        if operator=='>>' and a.get('op')=='signed_bits':
+            require(ty(node)==signed,'scalar_signed_shift_result_width');op='arithmetic_shift_right';a=a['argument']
+        else:
+            require(ty(node)==unsigned and a.get('op')!='signed_bits' and b.get('op')!='signed_bits','scalar_binary_width_or_signedness')
+            op={'+':'add','-':'subtract','&':'and','|':'or','^':'xor','<<':'shift_left','>>':'shift_right'}[operator]
+        return {'op':op+str(width),'type':'u'+str(width),'arguments':[a,b]}
+    raise Refusal('scalar_expression_AST_unproved:'+str(kind))
+
+
+def bind_scalar_statement(node,cpu,pc,original):
+    raw=original(pc,4);require(len(raw)==4,'scalar_short_original_word');word=int.from_bytes(raw,'little')
+    shape=scalar_word_shape(word);require(shape is not None,'scalar_original_family_unproved')
+    destination,width=shape['destination'],shape['width_bits']
+    require(destination not in (28,29,31),'scalar_unbound_special_register_write')
+    if destination==0:
+        require(node.get('kind')=='CompoundAssignOperator' and node.get('opcode')=='-=' and len(children(node))==2
+                and same_parameter(member(children(node)[0],'budget'),cpu) and literal(children(node)[1])==1,
+                'scalar_zero_destination_has_unproved_effect')
+        expression=None
+    elif width==64:
+        require(node.get('kind')=='BinaryOperator' and node.get('opcode')=='=' and len(children(node))==2,'scalar_assignment_shape')
+        lhs,rhs=children(node)
+        for value in (node,unwrap(lhs)):
+            ty=value.get('type',{});require(ty.get('desugaredQualType',ty.get('qualType'))=='unsigned long long','scalar_assignment_width_mismatch')
+        require(register_part(lhs,cpu)==(destination,64),'scalar_AST_destination_word_mismatch')
+        expression=scalar_AST_expression(rhs,cpu,width)
+    else:
+        require(node.get('kind')=='CallExpr' and len(children(node))==3,'scalar_word_helper_shape')
+        decl=declaration(children(node)[0]);require(decl.get('name')=='set32' and decl.get('type',{}).get('qualType')=='void (Reg128 &, std::uint32_t)','scalar_word_helper_signature')
+        require(register_object(children(node)[1],cpu)==destination,'scalar_AST_destination_word_mismatch')
+        expression=scalar_AST_expression(children(node)[2],cpu,width)
+    require(destination==0 or canonical(expression)==canonical(shape['expression']),'scalar_AST_original_expression_mismatch')
+    return {'schema':'original_AST_scalar_nontrapping_v1','source_pc':f'{pc:08x}','original_word':f'{word:08x}',
+            'operation':shape['operation'],'width_bits':width,'original_destination':destination,'expression':expression,
+            'write_projection':{'low64':'DISCARDED' if destination==0 else 'SIGN_EXTEND32' if width==32 else 'RESULT64',
+                                'bits63_32':'PRESERVED' if destination==0 else 'SIGN_OF_BIT31' if width==32 else 'RESULT',
+                                'bits127_64':'PRESERVED'},'scope':'Actual AST integer operation only; unknown input/native owner/control ABI remains unbound.'}
+
+
+def scalar_delay_witness(control_pc,bindings,original):
+    word=int.from_bytes(original(control_pc,4),'little')
+    require(word>>26==3,'scalar_delay_control_not_supported_JAL_witness')
+    delay_pc=control_pc+4;matches=[b for b in bindings if b['source_pc']==f'{delay_pc:08x}' and b['original_word']==f'{int.from_bytes(original(delay_pc,4),"little"):08x}']
+    require(len(matches)==1,'scalar_missing_original_delay_slot')
+    return {'control_pc':f'{control_pc:08x}','delay_pc':f'{delay_pc:08x}','scope':'Scalar delay presence only; call/frame/native ABI remains refused.'}
+
+
+def emit_scalar_probe(binding,name):
+    """Constructed-test scalar inputs only; not a retail ABI or state wrapper."""
+    require(re.fullmatch(r'scalar_probe_\d+',name) is not None,'scalar_probe_name')
+    width=binding['width_bits'];destination=binding['original_destination']
+    expected={'low64':'DISCARDED' if destination==0 else 'SIGN_EXTEND32' if width==32 else 'RESULT64',
+              'bits63_32':'PRESERVED' if destination==0 else 'SIGN_OF_BIT31' if width==32 else 'RESULT',
+              'bits127_64':'PRESERVED'}
+    require(width in (32,64) and binding.get('write_projection')==expected,'scalar_probe_width_projection_unproved')
+    sources=sorted({node['register'] for node in walk_scalar_expression(binding.get('expression')) if node['op']=='source_GPR'})
+    names={reg:'input_'+str(i) for i,reg in enumerate(sources)}
+    def expression(node):
+        bits=int(node['type'][1:]);require(bits in (32,64),'scalar_probe_expression_width')
+        cast='std::uint'+str(bits)+'_t';op=node['op']
+        if op=='source_GPR':return f'static_cast<{cast}>({names[node["register"]]})'
+        if op=='constant':return f'static_cast<{cast}>({node["value"]}ULL)'
+        require(op.endswith(str(bits)) and len(node.get('arguments',[]))==2,'scalar_probe_expression_shape')
+        a,b=[expression(x) for x in node['arguments']]
+        symbol={'add':'+','subtract':'-','and':'&','or':'|','xor':'^','shift_left':'<<','shift_right':'>>'}.get(op[:-2])
+        if symbol:return f'static_cast<{cast}>(({a}) {symbol} ({b}))'
+        if op.startswith('nor'):return f'static_cast<{cast}>(~(({a}) | ({b})))'
+        require(op.startswith('arithmetic_shift_right') and node['arguments'][1]['op']=='constant','scalar_probe_operation_unproved')
+        amount=node['arguments'][1]['value'];require(0<=amount<bits,'scalar_probe_shift_range')
+        if not amount:return a
+        return f'static_cast<{cast}>((({a}) >> {amount}) | ((({a}) >> {bits-1}) ? (static_cast<{cast}>({(1<<bits)-1}ULL) << {bits-amount}) : 0))'
+    signature=f'std::uint64_t {name}('+','.join('std::uint64_t '+names[reg] for reg in sources)+') noexcept'
+    if destination==0:return signature+' { return 0; }\n',sources
+    body=expression(binding['expression'])
+    if width==32:
+        return signature+' { const std::uint32_t bits = '+body+'; return std::uint64_t(bits) | ((bits & 0x80000000u) ? 0xffffffff00000000ULL : 0ULL); }\n',sources
+    return signature+' { return '+body+'; }\n',sources
+
+
+def walk_scalar_expression(expression):
+    if expression is None:return
+    yield expression
+    for child in expression.get('arguments',[]):yield from walk_scalar_expression(child)
+
+
 def require_mtc1_source_expression(expression):
     require(expression.get('type')=='u32' and
             (expression.get('op')=='truncate32' and type(expression.get('value')) is int and expression['value']>=0
@@ -537,6 +691,8 @@ class Lowering:
         self.data_symbols=BorrowedReferenceSymbols(self,descriptor['_data_symbol_image'],descriptor.get('_data_symbol_claim')) if '_data_symbol_image' in descriptor else None
         self.lui_original=descriptor.get('_lui_original');self.lui_bindings=[]
         self.mtc1_original=descriptor.get('_mtc1_original');self.mtc1_bindings=[];self.fprs={}
+        self.scalar_original=descriptor.get('_scalar_original');self.scalar_bindings=[];self.scalar_candidates=[]
+        require(not descriptor.get('_scalar_inputs'),'scalar_invented_input_contract')
 
     def expression(self, node):
         node = unwrap(node)
@@ -576,7 +732,18 @@ class Lowering:
             return (word if word < 0x80000000 else word - 0x100000000) & 0xffffffffffffffff
         if op == 'bit_move32':return self.evaluate(expression['argument']) & 0xffffffff
         a, b = [self.evaluate(x) for x in expression["arguments"]]
-        return (a + b if op == "add32" else a - b) & 0xffffffff
+        width=int(re.search(r'(32|64)$',op)[0]);mask=(1<<width)-1
+        if op.startswith('add'):value=a+b
+        elif op.startswith('subtract'):value=a-b
+        elif op.startswith('and'):value=a&b
+        elif op.startswith('xor'):value=a^b
+        elif op.startswith('nor'):value=~(a|b)
+        elif op.startswith('or'):value=a|b
+        elif op.startswith('shift_left'):value=a<<b
+        elif op.startswith('shift_right'):value=a>>b
+        elif op.startswith('arithmetic_shift_right'):value=(a-(1<<width) if a&(1<<(width-1)) else a)>>b
+        else:raise Refusal('scalar_IR_operation_unproved:'+op)
+        return value&mask
 
     def helper(self, call):
         require(call.get("kind") == "CallExpr" and children(call), "unbound_indirect_target")
@@ -612,6 +779,28 @@ class Lowering:
         kind = node.get("kind")
         if self.frame and self.frame.statement(node):return
         if self.data_symbols and self.data_symbols.statement(node):return
+        if self.scalar_original and kind in ('BinaryOperator','CallExpr','CompoundAssignOperator'):
+            word=int.from_bytes(self.scalar_original(self.pc,4),'little');shape=scalar_word_shape(word)
+            if shape is not None and (kind!='CompoundAssignOperator' or shape['destination']==0):
+                binding=bind_scalar_statement(node,self.cpu,self.pc,self.scalar_original)
+                self.scalar_candidates.append(copy.deepcopy(binding))
+                def resolve(expression):
+                    if expression.get('op')=='source_GPR':
+                        reg=expression['register'];require(reg in self.regs,'scalar_unbound_GPR_value_ABI:register_'+str(reg))
+                        return {'op':'truncate32' if expression['type']=='u32' else 'value','type':expression['type'],'value':self.regs[reg]}
+                    result=copy.deepcopy(expression)
+                    if 'arguments' in result:result['arguments']=[resolve(x) for x in result['arguments']]
+                    return result
+                if binding['original_destination']:
+                    expression=resolve(binding['expression'])
+                    if binding['width_bits']==32:expression={'op':'sign_extend32','type':'u64','argument':expression}
+                    value={'id':len(self.values),'type':'u64','expression':expression,'constant_value':self.evaluate(expression),
+                           'source_pc':binding['source_pc'],'write_projection':binding['write_projection']}
+                    self.values.append(value);self.regs[binding['original_destination']]=value['id']
+                    if self.frame:self.frame.offsets.pop(binding['original_destination'],None)
+                    self.effects.append({'kind':'define','value':value['id'],'source_pc':binding['source_pc']})
+                else:self.debit+=1
+                self.scalar_bindings.append(binding);return
         if self.mtc1_original and kind=='BinaryOperator' and node.get('opcode')=='=':
             word=int.from_bytes(self.mtc1_original(self.pc,4),'little')
             if word>>26==0x11 and word>>21&31==4:
@@ -741,6 +930,7 @@ class Lowering:
         if self.data_symbols:result['retail_data_symbols']=self.data_symbols.report()
         if self.lui_original:result['lui_bindings']=self.lui_bindings
         if self.mtc1_original:result['mtc1_bindings']=self.mtc1_bindings
+        if self.scalar_original:result['scalar_bindings']=self.scalar_bindings
         return result
 
 
@@ -752,6 +942,7 @@ def emit(functions, relative=False):
               f"struct {owner} {{ {field}{{}}; }};\n")
     source = f'#include "{filename}"\n\nnamespace mka::retail::generated {{\n'
     for desc, ir in functions:
+        require(not ir.get('scalar_bindings'),'native_emission_scalar_function_ABI_unbound')
         require(not ir.get('mtc1_bindings'),'native_emission_unbound_FPR_liveout_or_function_ABI')
         symbols=ir.get('retail_data_symbols')
         if symbols:

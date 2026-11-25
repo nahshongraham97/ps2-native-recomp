@@ -6,7 +6,9 @@ each deliverable's verified component progress and whole-game acceptance state;
 [PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is archived at
 `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
-**Current work follows A1 dependencies.** Phase 5S.7 MTC1 binding and family ranking is the active bounded step. Ownership admission, raw-bit tests, the unchanged 39 probes, two positive controls, capability-family ranking, 101 unproved callee-return contracts and publication status are recorded in the existing parent work-item `research/runs/phase4-aot-completion-20261124/VERIFICATION.json`, section `instruction_phase5S.phase_5S_7_MTC1_binding_and_ranking`. Handwritten camera and GAMER setters remain until their whole-function gates pass; ownership and credit rules are unchanged.
+**Current work follows A1 dependencies.** Phase 5S.8 targets scalar/copy SSA with proved inputs and the complete camera setter. Current results, all remaining camera-equivalence gates, the 39 probes, separate return-contract tests and publication status are recorded in the existing parent work-item `research/runs/phase4-aot-completion-20261124/VERIFICATION.json`, section `instruction_phase5S.phase_5S_8_scalar_copy_inputs_and_camera`. Handwritten setters, protected inputs, ownership rules and credit rules remain unchanged.
+
+**Separate OPEN oracle-closure track:** Antigravity owns `build/r192-aot-closure` and the attempt to remove the oracle's EE Live dependency. Its read-only status and template/dump limits are in N7 of that work item. It does not earn native-port credit or replace the protected R192 oracle.
 
 R192 supplies gameplay and telemetry evidence. The November 10 playable milestone supplies saved-state and hash parity. Kombat Practice is a historical snapshot. The primary oracle designation is **pending owner confirmation**.
 

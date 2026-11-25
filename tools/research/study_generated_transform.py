@@ -229,6 +229,37 @@ def mtc1_outcome_controls():
             'scope':'Synthetic outcome controls only; no extra original probes or native credit.'}
 
 
+def scalar_outcome_summary(results,expected,before):
+    changed={r['address'] for r in results if (r['reason'],r['first_unlowered_pc'])!=(before[r['address']]['reason'],before[r['address']]['first_unlowered_pc'])}
+    bound={r['address'] for r in results if r.get('scalar_bindings')}
+    advanced={r['address'] for r in results if r['address'] in bound and r['first_unlowered_pc']!=before[r['address']]['first_unlowered_pc']}
+    joined={r['address'] for r in results if r.get('scalar_candidates')}
+    unknown={r['address'] for r in results if r['reason'].startswith('scalar_unbound_GPR_value_ABI:')}
+    unexpected=changed-expected
+    invalid={r['address'] for r in results if r['address'] in changed and r['address'] not in advanced and r['address'] not in unknown}
+    return {'status':'PASS_BOUNDED_REPLAY_WITH_UNBOUND_INPUTS' if not (unexpected or invalid) else 'INCOMPLETE_OR_FAILED_SCALAR_REPLAY',
+            'actual_bound_probe_count':len(bound),'bound_probe_addresses':sorted(bound),
+            'actual_advanced_probe_count':len(advanced),'advanced_probe_addresses':sorted(advanced),
+            'changed_diagnostic_addresses':sorted(changed),'original_AST_joined_probe_addresses':sorted(joined),
+            'input_unbound_probe_addresses':sorted(unknown),'unexpected_non_scalar_changes':sorted(unexpected),
+            'invalid_non_advance_changes':sorted(invalid),'new_complete_E2_units':0,'new_credit':0}
+
+
+def scalar_outcome_controls():
+    before={a:{'reason':'old','first_unlowered_pc':'00100000'} for a in ('00000000','00000001')}
+    rows=[{'address':'00000000','reason':'scalar_unbound_GPR_value_ABI:register_4','first_unlowered_pc':'00100000','scalar_candidates':[{}]},
+          {'address':'00000001','reason':'old','first_unlowered_pc':'00100000'}]
+    unknown=scalar_outcome_summary(rows,{'00000000'},before)
+    if unknown['actual_advanced_probe_count'] or unknown['actual_bound_probe_count'] or unknown['status']!='PASS_BOUNDED_REPLAY_WITH_UNBOUND_INPUTS':raise AssertionError('Unknown input falsely counted as advance')
+    rows[0].update(first_unlowered_pc='00100004',scalar_bindings=[{}])
+    advance=scalar_outcome_summary(rows,{'00000000'},before)
+    if advance['actual_advanced_probe_count']!=1:raise AssertionError('Actual scalar advance missing')
+    rows[1]['reason']='unexpected'
+    rejected=scalar_outcome_summary(rows,{'00000000'},before)
+    if rejected['status']!='INCOMPLETE_OR_FAILED_SCALAR_REPLAY':raise AssertionError('Non-scalar change ignored')
+    return {'status':'PASS','unknown_input_retained':unknown,'bound_PC_advance':advance,'unexpected_change_retained':rejected}
+
+
 class LUIFailureTrace(transform.Lowering):
     """Record actual propagated statement failures, without changing lowering."""
     def __init__(self,*args):self.statement_failures=[];super().__init__(*args)
@@ -257,6 +288,7 @@ def actual_failure_annotation(lowering,error,source,original,reason):
     elif reason.startswith('unbound_stack_local'):category='uncertain_native_stack_local_or_callee_effects'
     elif reason=='unbound_memory:GP_field_or_width':category='unbound_GP_owner_or_field_type'
     elif reason=='unbound_memory:non_GP_base':category='non_GP_receiver_binding_or_existing_contract_selection'
+    elif reason.startswith('scalar_unbound_GPR_value_ABI:'):category='source_joined_scalar_operation_with_unbound_GPR_native_input'
     elif reason.startswith('unbound_value:register_'):category='unbound_GPR_livein_in_existing_integer_expression'
     elif kind=='DeclStmt':category='branch_condition_or_return_capture_contract'
     elif kind=='BinaryOperator' and node.get('opcode')=='=':
@@ -646,6 +678,9 @@ def main():
     parser.add_argument('--mtc1-bits',action='store_true',help='Opt-in original/AST joined GPR low32 to FPR raw32 bit-move SSA')
     parser.add_argument('--mtc1-before-study',type=Path,help='Published historical LUI-on actual39 comparison')
     parser.add_argument('--mtc1-current-before-study',type=Path,help='Fresh same-source LUI-on report with MTC1 disabled')
+    parser.add_argument('--scalar-ssa',action='store_true',help='Opt-in original/AST joined nontrapping 32/64 integer SSA; no invented inputs')
+    parser.add_argument('--scalar-before-study',type=Path,help='Published MTC1-on actual39 comparison')
+    parser.add_argument('--scalar-current-before-study',type=Path,help='Fresh same-source MTC1-on/scalar-disabled actual39')
     parser.add_argument("--publish-existing-tables", action="store_true", help="Update only existing parent instruction_phase5S evidence/tables and short PORT_STATUS summary")
     parser.add_argument("--render-existing-study", type=Path, help="Render already measured39-entry evidence with current pinned positive receipts; never rerun or relabel compiler attempts")
     args = parser.parse_args()
@@ -659,6 +694,8 @@ def main():
         raise ValueError('LUI opt-in requires original and fresh LUI-disabled S6 comparison reports')
     if args.mtc1_bits and (not args.lui_constants or not args.mtc1_before_study or not args.mtc1_current_before_study):
         raise ValueError('MTC1 requires original and same-source LUI-on/MTC1-disabled reports')
+    if args.scalar_ssa and (not args.mtc1_bits or not args.scalar_before_study or not args.scalar_current_before_study):
+        raise ValueError('Scalar SSA requires original and same-source MTC1-on/scalar-disabled reports')
     parent = args.parent_root.resolve()
     fork = parent / "external/forks/ps2-native-recomp"
     output = args.output.resolve()
@@ -681,7 +718,7 @@ def main():
         print("RENDERED_EXISTING_MEASURED_STUDY", output, "samples39; no compiler attempts rerun")
         return
     census = json.loads(args.census.read_bytes())
-    frame_plans={};frame_before={};symbol_before={};symbol_controls=None;lui_before={};lui_current={};mtc1_before={};mtc1_current={}
+    frame_plans={};frame_before={};symbol_before={};symbol_controls=None;lui_before={};lui_current={};mtc1_before={};mtc1_current={};scalar_before={};scalar_current={}
     if args.stack_frames:
         if not args.frame_before_study:raise ValueError('Frame study requires the exact original39 before receipt')
         frame_data=json.loads(args.stack_frames.read_bytes())
@@ -711,6 +748,13 @@ def main():
             target.update({row['address']:row for row in before['samples']})
         if len(mtc1_before)!=39 or mtc1_before.keys()!=mtc1_current.keys() or any((mtc1_before[key]['reason'],mtc1_before[key]['first_unlowered_pc'])!=(mtc1_current[key]['reason'],mtc1_current[key]['first_unlowered_pc']) for key in mtc1_before):
             raise ValueError('Fresh MTC1-disabled comparison changed published LUI39 frontiers')
+    if args.scalar_ssa:
+        for path,target in ((args.scalar_before_study,scalar_before),(args.scalar_current_before_study,scalar_current)):
+            before=json.loads(path.read_bytes())
+            if before.get('frame_stage',{}).get('stage')!='MTC1_RAW32_BIT_MOVE_OPT_IN' or before.get('scalar_stage'):raise ValueError('Scalar comparison requires MTC1-on/scalar-off')
+            if path==args.scalar_current_before_study and (before['inputs']['transformer_sha256']!=sha(Path(transform.__file__)) or before['inputs']['study_tool_sha256']!=sha(Path(__file__))):raise ValueError('Scalar disabled comparison must use same frozen sources')
+            target.update({row['address']:row for row in before['samples']})
+        if len(scalar_before)!=39 or scalar_before.keys()!=scalar_current.keys() or any((scalar_before[k]['reason'],scalar_before[k]['first_unlowered_pc'])!=(scalar_current[k]['reason'],scalar_current[k]['first_unlowered_pc']) for k in scalar_before):raise ValueError('Fresh scalar-disabled comparison changed published MTC1 frontiers')
     contract_path = fork / "recomp/overlay_initializer_contract.json"
     contract = json.loads(contract_path.read_bytes())
     generated = fork / "build/generated-aot/phase4-all"
@@ -809,6 +853,12 @@ def main():
             word=int.from_bytes(original(int(row['first_unlowered_pc'],16),4),'little')
             if word>>26==0x11 and word>>21&31==4 and word&0x7ff==0:mtc1_expected.add(address)
         if mtc1_expected!={'001a64a0'}:raise ValueError('Published current MTC1 first-op target set changed')
+    scalar_expected=set()
+    if args.scalar_ssa:
+        for address,row in scalar_before.items():
+            if row.get('first_unlowered_pc') is None:continue
+            shape=transform.scalar_word_shape(int.from_bytes(original(int(row['first_unlowered_pc'],16),4),'little'))
+            if shape is not None and shape['destination'] not in (28,29,31):scalar_expected.add(address)
     selected_owners = {owner(address) for address in samples}
     original_features = {entry: {"instructions": 0, "gp_accesses": [], "indirect_calls": [], "wide_register_memory": [], "pointer_memory": [], "stack_memory_count": 0, "mmi_count": 0, "load_store_kinds": {}}
                          for entry in selected_owners if entry is not None}
@@ -883,6 +933,7 @@ def main():
             if args.borrowed_reference_map:descriptor['_data_symbol_image']=image
             if args.lui_constants:descriptor['_lui_original']=original
             if args.mtc1_bits:descriptor['_mtc1_original']=original
+            if args.scalar_ssa:descriptor['_scalar_original']=original
             begin = time.perf_counter()
             lowering = (LUIFailureTrace if args.lui_constants else transform.Lowering)(definition, descriptor, contract)
             reason = None;fatal_error=None
@@ -912,6 +963,9 @@ def main():
             if args.mtc1_bits:
                 result['mtc1_bindings']=lowering.mtc1_bindings
                 result['before_MTC1_frontier']={key:mtc1_before[sample['address']].get(key) for key in ('reason','first_unlowered_pc','first_failure_category','first_failure_cause')}
+            if args.scalar_ssa:
+                result['scalar_bindings']=lowering.scalar_bindings;result['scalar_candidates']=lowering.scalar_candidates
+                result['before_scalar_frontier']={key:scalar_before[sample['address']].get(key) for key in ('reason','first_unlowered_pc','first_failure_category','first_failure_cause')}
             containing = owner(address)
             result["original_function_context"] = {"entry": f"{containing:08x}" if containing is not None else None,
                                                    "features": original_features.get(containing)}
@@ -1014,7 +1068,7 @@ def main():
             target=next(r for r in results if r['address']=='0018da30')
             if target['first_unlowered_pc']!='0018da34' or target['reason']!='unbound_memory:GP_field_or_width' or len(target['borrowed_reference_IR']['effects'])!=1:
                 raise ValueError('S6 clear or next unbound cookie was not actually measured')
-        if args.lui_constants:
+        if args.lui_constants and not args.scalar_ssa:
             report['frame_stage']['stage']='LUI_CONSTANT_BINDING_OPT_IN'
             joined=[row for row in results if row.get('lui_bindings')]
             report['lui_stage']={'schema':'actual_original_AST_LUI_stage_v1','published_S6_sha256':sha(args.lui_before_study),
@@ -1028,7 +1082,7 @@ def main():
             report['lui_stage']['outcome_retention_controls']=lui_outcome_controls()
             report['lui_stage']['raw_first_failure_categories']=dict(Counter(row['first_failure_category'] for row in results))
             report['lui_stage']['observed_first_semantic_categories']=dict(Counter(row['first_failure_cause']['observed_semantic_category'] for row in results))
-        if args.mtc1_bits:
+        if args.mtc1_bits and not args.scalar_ssa:
             report['frame_stage']['stage']='MTC1_RAW32_BIT_MOVE_OPT_IN'
             report['mtc1_stage']={'schema':'actual_original_AST_MTC1_stage_v1','published_LUI_sha256':sha(args.mtc1_before_study),
                 'same_source_MTC1_disabled_sha256':sha(args.mtc1_current_before_study),'target_original_word':'44820800',
@@ -1040,18 +1094,36 @@ def main():
             report['mtc1_stage']['outcome_retention_controls']=mtc1_outcome_controls()
             report['mtc1_stage']['raw_first_failure_categories']=dict(Counter(row['first_failure_category'] for row in results))
             report['mtc1_stage']['observed_first_semantic_categories']=dict(Counter(row['first_failure_cause']['observed_semantic_category'] for row in results))
+        if args.scalar_ssa:
+            report['frame_stage']['stage']='SCALAR_NONTRAPPING_SSA_OPT_IN'
+            report['scalar_stage']={'schema':'actual_original_AST_scalar_stage_v1','published_MTC1_sha256':sha(args.scalar_before_study),
+                'same_source_scalar_disabled_sha256':sha(args.scalar_current_before_study),'all_selected_addresses':39,
+                'expected_current_first_scalar_addresses':sorted(scalar_expected),'operation_definitions':sum(len(r.get('scalar_bindings',[])) for r in results),
+                'outcomes39':[{key:r.get(key) for key in ('address','before_scalar_frontier','reason','first_unlowered_pc','first_failure_category','first_failure_cause','scalar_bindings','scalar_candidates')} for r in results],
+                'retail_input_bindings':0,'scope':'Original/AST scalar family only; existing proved SSA and architectural zero only. Source-joined copies with unknown native pointer/owner/live-in ABI remain refused; no whole-unit forecast.',
+                'unsupported_families':['trapping ADD/SUB/DADD/DSUB','variable shifts','conditional moves/comparisons','HI/LO/MMI/SIMD','unbound native inputs','control/callee/return ABI','typed pointer/memory/owner operations'],
+                'prior_stage_actual_comparisons':{name:{'path':str(path),'sha256':sha(path)} for name,path in (
+                    ('same_source_S6_off',args.lui_current_before_study),('same_source_LUI_on_MTC1_off',args.mtc1_current_before_study),('same_source_MTC1_on_scalar_off',args.scalar_current_before_study))}}
+            report['scalar_stage'].update(scalar_outcome_summary(results,scalar_expected,scalar_before))
+            report['scalar_stage']['outcome_retention_controls']=scalar_outcome_controls()
+            report['scalar_stage']['raw_first_failure_categories']=dict(Counter(r['first_failure_category'] for r in results))
+            report['scalar_stage']['observed_first_semantic_categories']=dict(Counter(r['first_failure_cause']['observed_semantic_category'] for r in results))
         for result in results:
             exempt=args.borrowed_reference_map and result['address']=='0018da30'
             exempt=exempt or args.lui_constants and result['address'] in lui_expected
+            exempt=exempt or args.scalar_ssa and result['address'] in scalar_expected
             if result['address'] not in frame_plans and not exempt and result['reason']!=frame_before[result['address']]['reason']:
                 if not args.lui_constants:raise ValueError('Non-frame selected probe changed under opt-in frame lowering')
-                report['lui_stage']['status']='INCOMPLETE_OR_FAILED_LUI_BINDING'
-                report['lui_stage'].setdefault('unexpected_non_frame_changes',[]).append(result['address'])
+                stage=report['scalar_stage'] if args.scalar_ssa else report['lui_stage']
+                stage['status']='INCOMPLETE_OR_FAILED_SCALAR_REPLAY' if args.scalar_ssa else 'INCOMPLETE_OR_FAILED_LUI_BINDING'
+                stage.setdefault('unexpected_non_frame_changes',[]).append(result['address'])
         (output/'RESULT.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
-        if args.lui_constants and report['lui_stage']['status']!='PASS_BOUNDED_INSTRUCTION_BINDING':
+        if args.lui_constants and not args.scalar_ssa and report['lui_stage']['status']!='PASS_BOUNDED_INSTRUCTION_BINDING':
             raise ValueError('Incomplete LUI outcome retained in '+str(output/'RESULT.json'))
-        if args.mtc1_bits and report['mtc1_stage']['status']!='PASS_BOUNDED_INSTRUCTION_BINDING':
+        if args.mtc1_bits and not args.scalar_ssa and report['mtc1_stage']['status']!='PASS_BOUNDED_INSTRUCTION_BINDING':
             raise ValueError('Incomplete MTC1 outcome retained in '+str(output/'RESULT.json'))
+        if args.scalar_ssa and report['scalar_stage']['status']!='PASS_BOUNDED_REPLAY_WITH_UNBOUND_INPUTS':
+            raise ValueError('Incomplete scalar outcome retained in '+str(output/'RESULT.json'))
         print('STACK_FRAME_STUDY',output,json.dumps(report['frame_stage']))
         return
     tables = full_tables(report, fork)
