@@ -5,25 +5,26 @@
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`5b4e323b`](https://github.com/nahshongraham97/ps2-native-recomp/commit/5b4e323b9f06c78d933c12afe5031512c3bbf73e) (pinned active fork)
+**Verified Fork Commit**: [`e0c4a030`](https://github.com/nahshongraham97/ps2-native-recomp/commit/e0c4a0308c58b8b902844b21ae3259d757acbcb2) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
-- **Total PS2 Function Catalog**: **17,510** functions (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
+- **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
 - **In-Scope Retail Path**: **15,670** (`2,643` non-exec/library: `sdk-or-library` 2,011 + `pointer-scan-proven` 632; `12,789` open frontier) | **Excluded Online (`out-of-scope-stubbed`)**: **1,840**
 - **Code-Computed Role Partition (`function_classification_inventory.json`)**: `49` `platform-boundary` + `15,450` `retail-logic` + `2,011` `sdk-or-library` = **17,510** (in-scope: `49` + `13,610` + `2,011` = **15,670**)
 
 ### Tier 2 · Build-Time Static AOT Generated (`research/ledger/aot_coverage_inventory.json`)
-- **In-Scope Static AOT C++**: **99.83%** (**15,644 / 15,670** reproduced via `eerecomp` into untracked `build/generated-aot/`, `395` units total; `0` tracked generated `.cpp` files in Git)
+- **In-Scope Static AOT C++**: **99.99%** (**15,669 / 15,670** reproduced via `eerecomp` into untracked `build/generated-aot/`, `395` units total; `0` tracked generated `.cpp` files in Git)
+- **Audited Data Contradictions**: **1** raw catalogue entry/entries (`0x005BF218`) are original descriptor data, not generated functions. Original catalogue rows and denominators stay visible; no failure stub or data address receives AOT credit.
 
 | Module / Artifact | Build-Time Static AOT Status | Static AOT / Catalog | Reference % |
 |---|---|---|---|
-| **Base `SLUS_214.10`** | `311` static `unit_*.cpp` files reproduced from pinned ELF (`reproduce_aot_pipeline.py`; `13,106` in-scope + `6` excluded online) | 13,112 / 13,138 | 99.80% |
+| **Base `SLUS_214.10`** | `311` static `unit_*.cpp` files reproduced from pinned ELF (`reproduce_aot_pipeline.py`; `13,131` in-scope + `6` excluded online) | 13,137 / 13,138 | 99.99% |
 | **`MOVIER.ovl` Overlay** | `34` static `m_MOVIER_unit_*.cpp` files reproduced from `MWo3` overlay | 2,537 / 2,537 | 100.00% |
 | **`GAMER.ovl` Overlay** | `1` static `m_GAMER_unit_0000.cpp` file reproduced from `MWo3` overlay | 1 / 1 | 100.00% |
-| **In-Scope AOT Subtotal** | *Build-time static C++ across `SLUS_214.10` (`13,106`) + `MOVIER.ovl` (`2,537`) + `GAMER.ovl` (`1`)* | **15,644 / 15,670** | **99.83%** |
+| **In-Scope AOT Subtotal** | *Build-time static C++ across `SLUS_214.10` (`13,131`) + `MOVIER.ovl` (`2,537`) + `GAMER.ovl` (`1`)* | **15,669 / 15,670** | **99.99%** |
 | **Excluded `NETR.ovl`** | Out of scope (`DECISION_ONLINE_OUT_OF_SCOPE.json`) | 0 / 1,834 | — |
-| **Dynamic Overlay Windows (`kModules`)** | `4` runtime RAM window snapshots (`49` static `m_007C*` units) | 4 captured windows | — |
-| **VU1 Microprograms (Separate VU Domain)** | `493` candidate static keys from `211` input images; state-code evidence: `CORRECT_V8_REGIONS_AND_DECLARED_ENTRY0_KEYS_VERIFIED_PACKET_EQUIVALENCE_OPEN`. Earlier mapping crossed the IPU section; key agreement did not prove input provenance. `44` retained oracle DLLs; packet equivalence OPEN. | 493 / 493 candidate keys | — |
+| **Dynamic Overlay Windows (`kModules`)** | `4` authenticated runtime RAM window snapshots (`49` measured static `m_007C*` units) | 4 captured windows | — |
+| **VU1 Microprograms (Separate VU Domain)** | `493` static keys from `211` hash-admitted input images; state evidence: `CORRECT_SOURCE_AND_INDEPENDENT_SNAPSHOT_REGISTER_MEMORY_PACKET_COMPARISON_PASS`. Independent snapshot replay: `61` state(s), `41,296` exact ordered packet bytes. This is selected-program replay; historical invocations and untested programs remain unverified. | 493 / 493 recorded-input keys | — |
 
 ### Tier 3 · Memory & ABI Transformed (`Phase 5` Target)
 - **Contract-Transformed Functions**: **0.00%** (**0 / 15,670** — generated AOT units still retain `c.r[...]`, `g_ram`, `$gp`, and guest vtables pending Phase 5)
@@ -41,7 +42,10 @@
 <!-- PROGRESS:END -->
 
 > [!NOTE]
-> **Phase 4 reopened: callable generation and semantic evidence**:
+> **Current Phase 4 verification**: Catalogue seeding and authenticated dynamic-window inputs restore the omitted callable entries. The raw catalogue descriptor-data contradiction remains visible with no code credit. Independent selected-boundary comparisons now pass on every pinned snapshot, including complete VU registers, memory changes and ordered GIF bytes; deliberate packet corruption fails. This exposed and fixed discarded architectural MAC/STATUS updates in the generator. Clean-clone reproduction and publication are next. No historical invocation capture, untested-function or general hardware numeric equivalence is claimed; whole-game acceptance stays OPEN.
+
+> [!NOTE]
+> **Historical correction checkpoint `9e426b76` — superseded by the generated current measurements above**:
 > - Actual generated entry maps and exact switch targets cover **15,644 / 15,670** in-scope catalogue starts: base **13,112 / 13,138**, MOVIER **2,537 / 2,537**, GAMER **1 / 1**. The **26** base omissions have zero dispatch entries even though they lie inside generated unit ranges. The previous range-only numerator is superseded. `aot_inventory.py` measures the maps, switch targets and source hashes; validation rejects stale coverage.
 > - **Saved-state VU correction verified**: The old extraction crossed the variable IPU section. The corrected version-8 parser validates producer ABI, bounds and section structure before restoring data, and its IPU-gap/version/truncation/ambiguity regressions pass. All 61 pinned snapshots now map to 18 real code images and declared entry-zero key `951776F70CC01D5D`; no VU execution is claimed. Generation admits 211 hash-pinned captured inputs, emits 493 static keys, and excludes the preserved mis-extraction by provenance. The independent complete GAMER leaf component passes on all 61 loaded inputs. General function-boundary and ordered VU-packet equivalence remain **OPEN**.
 > - Phase 0 revalidation found the restored oracle launcher still pointing to a retired checkout and referencing original keys. Existing oracle contents remain immutable; a separately pinned additive launcher has passed static inspection and disposable preparation without game execution. The repair checkpoint passes static restoration, original-byte checks and the recorded native baseline. Published Phases 0–3 carry forward; Phase 4 coverage and equivalence must finish before Phase 5.

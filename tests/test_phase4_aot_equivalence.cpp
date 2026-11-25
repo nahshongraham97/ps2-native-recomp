@@ -25,6 +25,13 @@
 #include <type_traits>
 #include <string>
 #include <vector>
+#include "phase4_vu_reference.hpp"
+
+namespace phase4_packet_capture {
+bool active = false;
+bool corrupt_packet = false;
+std::vector<phase4_reference::Packet> packets;
+}
 
 void register_generated_code();
 void register_generated_vu();
@@ -83,7 +90,11 @@ void Ring::post(Type, std::uint32_t, std::uint32_t, const void *, std::uint32_t)
 }  // namespace gs::queue
 
 namespace gif {
-void transfer(int, const std::uint8_t *, std::uint32_t) {}
+void transfer(int path, const std::uint8_t *bytes, std::uint32_t qwords) {
+    if (!phase4_packet_capture::active || !bytes || !qwords || qwords > 1024u)
+        halt("unexpected or invalid GIF packet outside admitted VU snapshot replay");
+    phase4_packet_capture::packets.push_back({path, {bytes, bytes + qwords * 16u}});
+}
 }  // namespace gif
 }  // namespace ps2
 
@@ -613,6 +624,8 @@ void test_oracle_states(const fs::path &states_dir, const fs::path &overlays_dir
 
     int vu0_nonzero_states = 0;
     int vu1_identity_states = 0;
+    int vu1_boundary_replays = 0;
+    std::uint64_t vu1_packet_bytes = 0;
     int gamer_matched = 0;
     int gamer_leaf_references = 0;
     int unit0152_matched = 0;
@@ -708,8 +721,8 @@ void test_oracle_states(const fs::path &states_dir, const fs::path &overlays_dir
         }
         if (any_vu0) ++vu0_nonzero_states;
 
-        // Static inspection of the CORRECT serialized code extent only. Never
-        // run loaded/unknown VU packets against the no-op GIF sink below.
+        // Establish correct source identity before the separately reported
+        // independent, snapshot-seeded execution comparison.
         const auto reach = ps2::vu::reachable(ps2::g_vu1_code, 16383u, 0u);
         check(!reach.empty(), "real source VU1 entry0 has a bounded reachable identity");
         const auto key = ps2::vu::program_key(ps2::g_vu1_code, reach, 0u);
@@ -718,13 +731,74 @@ void test_oracle_states(const fs::path &states_dir, const fs::path &overlays_dir
         if (!declared) { missing_keys.insert(key); ++missing_states; }
         std::printf("ORACLE_VU_SOURCE state=%s frame=%llu vu_tag=%zu regs=%zu top=%u itop=%u "
                     "saved_tpc=%u code0=%zu data0=%zu code1=%zu data1=%zu ipu_tag=%zu ipu_bytes=%zu gs_tag=%zu "
-                    "code1_fnv=%016llX entry0_key=%016llX declared_AOT=%s execution=NOT_ATTEMPTED\n",
+                    "code1_fnv=%016llX entry0_key=%016llX declared_AOT=%s stage=source_identity\n",
                     sp.filename().string().c_str(), static_cast<unsigned long long>(layout.frame),
                     layout.vu_tag, layout.regs, layout.top, layout.itop, ps2::vu::tpc(1), layout.code0, layout.data0,
                     layout.code1, layout.data1, layout.ipu_tag, layout.gs_tag - layout.ipu_tag, layout.gs_tag,
                     static_cast<unsigned long long>(fnv1a64(ps2::g_vu1_code, 16384)),
                     static_cast<unsigned long long>(key), declared ? "yes" : "MISSING");
         ++vu1_identity_states;
+
+        if (declared) {
+            // These saves have TPC0368 (post-program), not captured historical
+            // pre-call boundaries. Preserve every saved register/data input and
+            // explicitly select entry0 for a snapshot-seeded ISA differential.
+            const auto before = ps2::vu::regs(1);
+            const std::array<std::uint8_t, 16384> initial_memory = [&] {
+                std::array<std::uint8_t, 16384> result;
+                std::copy_n(ps2::g_vu1_mem, result.size(), result.begin());
+                return result;
+            }();
+            const auto reference = phase4_reference::execute(
+                std::span<const std::uint8_t, 16384>(ps2::g_vu1_code, 16384), before,
+                initial_memory, layout.top, layout.itop, 0u);
+            phase4_packet_capture::packets.clear();
+            phase4_packet_capture::active = true;
+            ps2::vu::run(1, 0u); // Linked static C++; missing programs abort by name.
+            phase4_packet_capture::active = false;
+            if (phase4_packet_capture::corrupt_packet && !phase4_packet_capture::packets.empty() &&
+                !phase4_packet_capture::packets.front().bytes.empty()) {
+                phase4_packet_capture::packets.front().bytes.front() ^= 1u;
+                phase4_packet_capture::corrupt_packet = false;
+            }
+            const auto& after = ps2::vu::regs(1);
+            auto same_word = [&](std::uint32_t actual_word, std::uint32_t expected_word, const char* field, unsigned index) {
+                if (actual_word != expected_word) {
+                    std::fprintf(stderr, "FAIL VU1 snapshot-seeded boundary state=%s field=%s[%u] actual=%08X expected=%08X\n",
+                                 sp.filename().string().c_str(), field, index, actual_word, expected_word);
+                    std::exit(1);
+                }
+            };
+            for (unsigned reg = 0; reg != 32; ++reg)
+                for (unsigned lane = 0; lane != 4; ++lane)
+                    same_word(after.vf[reg].w[lane], reference.regs.vf[reg].w[lane], "VF", reg * 4 + lane);
+            for (unsigned lane = 0; lane != 4; ++lane)
+                same_word(after.acc.w[lane], reference.regs.acc.w[lane], "ACC", lane);
+            for (unsigned reg = 0; reg != 16; ++reg)
+                same_word(after.vi[reg], reference.regs.vi[reg], "VI", reg);
+#define VU_FIELD(F) same_word(after.F, reference.regs.F, #F, 0)
+            VU_FIELD(q); VU_FIELD(p); VU_FIELD(i); VU_FIELD(r); VU_FIELD(mac);
+            VU_FIELD(status); VU_FIELD(clip); VU_FIELD(cmsar0); VU_FIELD(tpc);
+#undef VU_FIELD
+            check(std::equal(reference.memory.begin(), reference.memory.end(), ps2::g_vu1_mem),
+                  "VU1 exact complete16KiB memory delta against independent reference");
+            const auto& packets = phase4_packet_capture::packets;
+            check(!reference.packets.empty() && packets.size() == reference.packets.size(),
+                  "VU1 nonempty ordered packet count matches independent reference");
+            for (std::size_t packet = 0; packet != packets.size(); ++packet) {
+                check(packets[packet].path == reference.packets[packet].path &&
+                      packets[packet].bytes == reference.packets[packet].bytes,
+                      "VU1 exact ordered GIF path and output packet bytes");
+                vu1_packet_bytes += packets[packet].bytes.size();
+            }
+            check(std::memcmp(&ps2::g_cpu, &saved, sizeof saved) == 0,
+                  "VU1 replay preserves complete loaded EE state");
+            ++vu1_boundary_replays;
+            std::printf("VU1_REFERENCE_REPLAY state=%s entry=0000 saved_tpc=%u packets=%zu bytes=%zu scope=snapshot_seeded_not_historical_invocation\n",
+                        sp.filename().string().c_str(), before.tpc, packets.size(), packets.front().bytes.size());
+            ps2::vu::regs(1) = before;
+            std::copy(initial_memory.begin(), initial_memory.end(), ps2::g_vu1_mem);
+        }
 
         // Verify GAMER/GAMEFD window at 0x007C4880 is active in state RAM and dispatchable
         check(ps2::window_module_in_place(0x007C4980u), "state 0x007C4980 matches GAMER AOT window");
@@ -750,29 +824,35 @@ void test_oracle_states(const fs::path &states_dir, const fs::path &overlays_dir
     }
 
     check(gamer_leaf_references == static_cast<int>(states.size()), "one complete GAMER leaf reference per admitted state");
+    check(vu1_boundary_replays == static_cast<int>(states.size()) && vu1_packet_bytes != 0,
+          "independent full VU1 field/memory/nonempty-packet replay for every admitted state");
     check(loader_rejections_checked, "source layout/malformed/version/IPU-gap regression checks executed");
     for (auto key : missing_keys)
         std::fprintf(stderr, "OPEN missing declared VU1 entry0 AOT key=%016llX; no VU effects executed\n",
                      static_cast<unsigned long long>(key));
     std::printf(
-        "%s: Phase4 loader/synthetic smoke and bounded GAMER leaf reference: oracle_states=%zu "
+        "%s: Phase4 independent selected-boundary and packet comparison: oracle_states=%zu "
         "vu0_nonzero=%d vu1_source_identity_states=%d distinct_entry0_keys=%zu missing_AOT_states=%u "
         "gamer_window_matched=%d gamer_complete_leaf_references=%d unit_0152_matched=%d hash=%016llX "
-        "ee_synthetic_checks=OK overlay_switch=OK VU_execution=NOT_ATTEMPTED; "
-        "VU_output_packets=OPEN general_function_boundary_equivalence=OPEN\n",
+        "vu1_independent_snapshot_replays=%d vu1_packet_bytes=%llu "
+        "ee_synthetic_checks=OK overlay_switch=OK; "
+        "VU_snapshot_packet_comparison=PASS EE_GAMER_boundary_comparison=PASS "
+        "historical_VU_invocation_capture=NOT_ATTEMPTED untested_functions_and_general_hardware_numeric_parity=OPEN\n",
         missing_keys.empty() ? "PASS" : "OPEN", states.size(), vu0_nonzero_states, vu1_identity_states,
         observed_keys.size(), missing_states, gamer_matched, gamer_leaf_references, unit0152_matched,
-        static_cast<unsigned long long>(expected_0152_hash));
+        static_cast<unsigned long long>(expected_0152_hash), vu1_boundary_replays,
+        static_cast<unsigned long long>(vu1_packet_bytes));
     check(missing_keys.empty(), "named real VU1 entry0 AOT keys missing from declared table; no packet execution attempted");
 }
 
 }  // namespace
 
 int main(int argc, char **argv) {
-    if (argc < 3) {
-        std::fprintf(stderr, "Usage: %s <oracle_states_dir> <overlays_dir> [generated_vu1_table.cpp]\n", argc > 0 ? argv[0] : "test_phase4_aot_equivalence");
+    if (argc < 3 || argc > 5 || (argc == 5 && std::string(argv[4]) != "--planted-failure-vu-packet")) {
+        std::fprintf(stderr, "Usage: %s <oracle_states_dir> <overlays_dir> [generated_vu1_table.cpp] [--planted-failure-vu-packet]\n", argc > 0 ? argv[0] : "test_phase4_aot_equivalence");
         return 2;
     }
+    phase4_packet_capture::corrupt_packet = argc == 5;
     register_generated_code();
     register_generated_vu();
 

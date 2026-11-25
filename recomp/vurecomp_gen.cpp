@@ -451,7 +451,6 @@ Lower lower(std::uint32_t w, std::uint32_t pc) {
     return l;
 }
 
-bool upper_sets_flags(std::uint32_t hi) { return upper(hi, true).sets_flags; }
 
 void replace_all(std::string &s, const std::string &from, const std::string &to) {
     for (std::size_t at = s.find(from); at != std::string::npos; at = s.find(from, at + to.size())) s.replace(at, from.size(), to);
@@ -492,7 +491,7 @@ std::string generate(const Program &p, std::string &name, std::string *failure =
     const std::vector<std::uint32_t> pcs = ps2::vu::reachable(p.code.data(), kMask, p.entry);
     std::set<std::uint32_t> in(pcs.begin(), pcs.end());
     std::map<std::uint32_t, Lower> lowers;
-    bool any_status = false, any_flags = false, any_q = false;
+    bool any_q = false;
     for (std::uint32_t pc : pcs) {
         const std::uint32_t lo = word(p.code, pc), hi = word(p.code, pc + 4);
         if (!upper(hi, true).supported) {
@@ -507,8 +506,6 @@ std::string generate(const Program &p, std::string &name, std::string *failure =
                 return {};
             }
         }
-        any_status = any_status || l.reads_status;
-        any_flags = any_flags || l.reads_flags;
         any_q = any_q || l.code.find("fl.end_q(") != std::string::npos;
         lowers[pc] = l;
     }
@@ -517,7 +514,6 @@ std::string generate(const Program &p, std::string &name, std::string *failure =
         if (failure) *failure = "pipeline state analysis failed";
         return {};
     }
-    std::map<std::uint32_t, bool> live_in;
     const auto successors = [&](std::uint32_t pc) {
         std::vector<std::int64_t> s{static_cast<std::int64_t>((pc + 8u) & kMask)};
         const std::uint32_t prev = (pc - 8u) & kMask;
@@ -529,27 +525,6 @@ std::string generate(const Program &p, std::string &name, std::string *failure =
         }
         return s;
     };
-    for (std::uint32_t pc : pcs) live_in[pc] = false;
-    for (bool changed = true; changed;) {
-        changed = false;
-        for (auto it = pcs.rbegin(); it != pcs.rend(); ++it) {
-            const std::uint32_t pc = *it;
-            bool out = false;
-            for (std::int64_t s : successors(pc)) out = out || s < 0 || !in.count(static_cast<std::uint32_t>(s)) || live_in[static_cast<std::uint32_t>(s)];
-            const std::uint32_t hi = word(p.code, pc + 4);
-            bool reader_near = false;
-            for (std::uint32_t k = 1; k <= 3; ++k) {
-                const std::uint32_t q = (pc + 8u * k) & kMask;
-                if (in.count(q) && (lowers[q].reads_flags || lowers[q].branch || lowers[q].jump)) reader_near = true;
-            }
-            const bool kills = upper_sets_flags(hi) && !reader_near;
-            const bool v = lowers[pc].reads_flags || (!kills && out);
-            if (v != live_in[pc]) {
-                live_in[pc] = v;
-                changed = true;
-            }
-        }
-    }
     std::map<std::uint32_t, int> def;
     std::map<std::uint32_t, std::vector<std::uint32_t>> preds;
     std::set<std::uint32_t> targets;
@@ -603,9 +578,10 @@ std::string generate(const Program &p, std::string &name, std::string *failure =
     o += std::format("    goto {};\n", label(p.entry & kMask));
     for (std::uint32_t pc : pcs) {
         const std::uint32_t lo = word(p.code, pc), hi = word(p.code, pc + 4);
-        bool out_live = false;
-        for (std::int64_t s : successors(pc)) out_live = out_live || s < 0 || !in.count(static_cast<std::uint32_t>(s)) || live_in[static_cast<std::uint32_t>(s)];
-        const Upper u = upper(hi, any_status ? true : (any_flags && out_live));
+        // MAC and sticky STATUS are architectural outputs at a program
+        // boundary even when this program contains no internal flag reader.
+        // Local read liveness cannot justify discarding those writes.
+        const Upper u = upper(hi, true);
         const Lower &l = lowers[pc];
         std::string body;
         if (keep_bk.count(pc)) body += std::format("next_bk = r.vi[{}]; ", def[pc]);
@@ -682,7 +658,7 @@ namespace ps2::vurecomp {
 
 // Bump this when the generated code changes in a way the headers do not show (a change in this file): libraries made earlier
 // are then left alone and built again (vu_live.cpp).
-const char *const kGeneratorVersion = "vurecomp 4 strict";
+const char *const kGeneratorVersion = "vurecomp 5 boundary flags";
 
 Result generate_files(std::vector<Input> inputs, const fs::path &out_dir, std::uint64_t live_stamp, std::size_t per_file,
                       bool with_targets, bool require_complete) {

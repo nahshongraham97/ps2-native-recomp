@@ -804,6 +804,55 @@ def test_planted_failures():
         assert readme.read_bytes() == original
         print("  Different valid source pins rejected; original document bytes restored.")
 
+    print("Testing planted failure 22: catalogue data exceptions cannot hide executable functions...")
+    from aot_inventory import verified_nonfunction_catalogue_addresses, verify_entries
+    ledger_rows = __import__("csv").DictReader((REPO / "research/ledger/functions.csv").open(encoding="utf-8"))
+    ledger_rows = list(ledger_rows)
+    inventory_path = REPO / "research/ledger/aot_coverage_inventory.json"
+    original_inventory = inventory_path.read_bytes()
+    inventory = json.loads(original_inventory)
+    proved = verified_nonfunction_catalogue_addresses(REPO, ledger_rows)
+    assert proved and not proved.intersection(int(address, 16) for address in
+        inventory["modules"]["SLUS_214.10"]["callable_catalogue_entries"])
+    for field, value in (("address", "002b68e0"), ("proof_id", "unreviewed-executable-exclusion"),
+                         ("elf_sha256", "0" * 64), ("callback_address", "005bf218")):
+        planted = copy.deepcopy(inventory)
+        planted["nonfunction_catalogue_records"][0][field] = value
+        try:
+            inventory_path.write_text(json.dumps(planted) + "\n", encoding="utf-8", newline="\n")
+            try:
+                verified_nonfunction_catalogue_addresses(REPO, ledger_rows)
+            except AssertionError:
+                pass
+            else:
+                raise AssertionError("Catalogue data proof accepted planted " + field)
+        finally:
+            inventory_path.write_bytes(original_inventory)
+    assert inventory_path.read_bytes() == original_inventory
+    print("  Function masking, unknown proofs, altered original identity and self-callback rejected.")
+
+    print("Testing planted failure 23: a dropped dynamic window must fail despite repinned table hash...")
+    table_path = FORK_ROOT / "build/generated-aot/phase4-all/table.cpp"
+    original_table = table_path.read_bytes()
+    window_name = inventory["dynamic_overlay_windows_kModules"][0]["name"].encode("ascii")
+    pattern = rb'(?m)^    \{"' + re.escape(window_name) + rb'",[^\r\n]*\r?\n'
+    altered_table, replaced = re.subn(pattern, b"", original_table)
+    assert replaced == 1 and altered_table != original_table
+    forged = copy.deepcopy(inventory)
+    forged["entry_measurement"]["table_sha256"] = hashlib.sha256(altered_table).hexdigest()
+    try:
+        table_path.write_bytes(altered_table)
+        try:
+            verify_entries(REPO, forged, ledger_rows)
+        except AssertionError as exc:
+            assert "Unregistered generated module" in str(exc) or "Dynamic window" in str(exc), str(exc)
+        else:
+            raise AssertionError("Repinning a table concealed a dropped dynamic window")
+    finally:
+        table_path.write_bytes(original_table)
+    assert table_path.read_bytes() == original_table
+    print("  Dropped module rejected independently of stored coverage/table hashes; exact bytes restored.")
+
     print("PASS: All planted-failure cases successfully caught and proven to fail closed.")
 
 

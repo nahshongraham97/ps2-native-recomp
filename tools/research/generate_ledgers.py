@@ -19,7 +19,7 @@ from pathlib import Path
 import re
 import struct
 import subprocess
-from aot_inventory import verify_entries
+from aot_inventory import verify_entries, verified_nonfunction_catalogue_addresses, verify_vu_snapshot_measurement
 
 for _p in [Path(__file__).resolve(), *Path(__file__).resolve().parents]:
     if (_p / "research" / "runs" / "ghidra-function-coverage-20261118").exists():
@@ -904,6 +904,7 @@ def validate_progress_aot_tier(repo_root: Path, ps2_ledger):
         f"**{aot['transformed_count']:,} / {ps2_in_scope:,}**",
         f"**{100.0 * ps2_impl / ps2_in_scope:.2f}%** ({ps2_impl:,} / {ps2_in_scope:,}",
         f"**{ph_cnt}** registered unrecovered placeholders",
+        f"**Audited Data Contradictions**: **{len(aot['nonfunction_addresses']):,}**",
         f"`{cls_inv['catalog_3way_partition']['platform-boundary']:,}` `platform-boundary`",
         "no completion percentage",
     ]
@@ -1007,9 +1008,14 @@ def compute_aot_metrics(ps2_ledger):
     # Validate the stored measurement against actual generated entry maps and
     # exact switch targets, including untranslated addresses inside unit ranges.
     verify_entries(REPO, inv, ps2_ledger)
+    nonfunction_addresses = verified_nonfunction_catalogue_addresses(REPO, ps2_ledger)
+    untranslated_code = [(name, address) for name, module in mods.items()
+                         for address in module.get("missing_catalogue_entries", [])
+                         if name != "SLUS_214.10" or int(address, 16) not in nonfunction_addresses]
 
     # Check VU strict corpus consistency if present
     vu = inv.get("vu_microprograms", {})
+    snapshot_verification = verify_vu_snapshot_measurement(REPO, vu)
     vu_json = REPO / "research" / "runs" / "native-bank-service-20261118" / "VU_CORPUS_STRICT.json"
     if vu_json.exists():
         vd = json.loads(vu_json.read_text(encoding="utf-8"))
@@ -1038,11 +1044,15 @@ def compute_aot_metrics(ps2_ledger):
         "netr_total": len(netr_rows),
         "in_scope_aot": in_scope_aot,
         "dyn_windows": inv.get("dynamic_overlay_windows_kModules", []),
+        "dyn_units": sum(window["unit_count"] for window in inv["entry_measurement"]["dynamic_windows"]),
+        "nonfunction_addresses": sorted(nonfunction_addresses),
+        "untranslated_code_starts": untranslated_code,
         "vu1_static_keys": vu.get("vu1_static_table_keys", 0),
         "vu1_strict_keys": vu.get("vu1_strict_corpus_keys", 0),
         "vu1_captures": vu.get("vu1_bin_captures", 0),
         "oracle_vu1_dlls": vu.get("oracle_vu1_live_dll_count", 0),
         "vu_state_evidence": vu.get("oracle_state_mapping_status", "OPEN_NOT_REMEASURED"),
+        "vu_snapshot_verification": snapshot_verification,
     }
 
 def generate_progress_markdown_block(ps2_ledger, xbox_ledger, ps2_map, fork_sha=FORK_COMMIT_SHA):
@@ -1092,12 +1102,13 @@ def generate_progress_markdown_block(ps2_ledger, xbox_ledger, ps2_map, fork_sha=
         f"**Verified Fork Commit**: [`{fork_sha[:8]}`](https://github.com/nahshongraham97/ps2-native-recomp/commit/{fork_sha}) (pinned active fork)",
         "",
         "### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)",
-        f"- **Total PS2 Function Catalog**: **{len(ps2_ledger):,}** functions (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)",
+        f"- **Total PS2 Function Catalog**: **{len(ps2_ledger):,}** raw catalogue entries (`{aot['base_total']:,}` base `SLUS_214.10` + `{aot['gamer_total'] + aot['movier_total'] + aot['netr_total']:,}` dynamic overlays: `{aot['gamer_total']:,}` `GAMER.ovl`, `{aot['movier_total']:,}` `MOVIER.ovl`, `{aot['netr_total']:,}` `NETR.ovl`)",
         f"- **In-Scope Retail Path**: **{ps2_in_scope:,}** (`{ps2_class and len(ps2_class):,}` non-exec/library: `sdk-or-library` {ps2_sdk_cnt:,} + `pointer-scan-proven` {ps2_proven_cnt:,}; `{len(ps2_frontier):,}` open frontier) | **Excluded Online (`out-of-scope-stubbed`)**: **{len(ps2_stubbed):,}**",
         f"- **Code-Computed Role Partition (`function_classification_inventory.json`)**: `{cat_part['platform-boundary']:,}` `platform-boundary` + `{cat_part['retail-logic']:,}` `retail-logic` + `{cat_part['sdk-or-library']:,}` `sdk-or-library` = **{len(ps2_ledger):,}** (in-scope: `{ins_part['platform-boundary']:,}` + `{ins_part['retail-logic']:,}` + `{ins_part['sdk-or-library']:,}` = **{ps2_in_scope:,}**)",
         "",
         "### Tier 2 · Build-Time Static AOT Generated (`research/ledger/aot_coverage_inventory.json`)",
         f"- **In-Scope Static AOT C++**: **{100.0 * aot['in_scope_aot'] / ps2_in_scope:.2f}%** (**{aot['in_scope_aot']:,} / {ps2_in_scope:,}** reproduced via `eerecomp` into untracked `build/generated-aot/`, `{aot['build_generated_units']:,}` units total; `{aot['active_fork_static_cpp_count']:,}` tracked generated `.cpp` files in Git)",
+        f"- **Audited Data Contradictions**: **{len(aot['nonfunction_addresses']):,}** raw catalogue entry/entries ({', '.join(f'`0x{address:08X}`' for address in aot['nonfunction_addresses']) or 'none'}) are original descriptor data, not generated functions. Original catalogue rows and denominators stay visible; no failure stub or data address receives AOT credit.",
         "",
         "| Module / Artifact | Build-Time Static AOT Status | Static AOT / Catalog | Reference % |",
         "|---|---|---|---|",
@@ -1106,8 +1117,8 @@ def generate_progress_markdown_block(ps2_ledger, xbox_ledger, ps2_map, fork_sha=
         f"| **`GAMER.ovl` Overlay** | `{aot['gamer_units']:,}` static `m_GAMER_unit_0000.cpp` file reproduced from `MWo3` overlay | {aot['gamer_aot']:,} / {aot['gamer_total']:,} | {100.0 * aot['gamer_aot'] / aot['gamer_total']:.2f}% |",
         f"| **In-Scope AOT Subtotal** | *Build-time static C++ across `SLUS_214.10` (`{aot['base_in_scope_aot']:,}`) + `MOVIER.ovl` (`{aot['movier_aot']:,}`) + `GAMER.ovl` (`{aot['gamer_aot']:,}`)* | **{aot['in_scope_aot']:,} / {ps2_in_scope:,}** | **{100.0 * aot['in_scope_aot'] / ps2_in_scope:.2f}%** |",
         f"| **Excluded `NETR.ovl`** | Out of scope (`DECISION_ONLINE_OUT_OF_SCOPE.json`) | 0 / {aot['netr_total']:,} | — |",
-        f"| **Dynamic Overlay Windows (`kModules`)** | `{len(aot['dyn_windows']):,}` runtime RAM window snapshots (`49` static `m_007C*` units) | {len(aot['dyn_windows']):,} captured windows | — |",
-        f"| **VU1 Microprograms (Separate VU Domain)** | `{aot['vu1_static_keys']:,}` candidate static keys from `{aot['vu1_captures']:,}` input images; state-code evidence: `{aot['vu_state_evidence']}`. Earlier mapping crossed the IPU section; key agreement did not prove input provenance. `{aot['oracle_vu1_dlls']:,}` retained oracle DLLs; packet equivalence OPEN. | {aot['vu1_static_keys']:,} / {aot['vu1_strict_keys']:,} candidate keys | — |",
+        f"| **Dynamic Overlay Windows (`kModules`)** | `{len(aot['dyn_windows']):,}` authenticated runtime RAM window snapshots (`{aot['dyn_units']:,}` measured static `m_007C*` units) | {len(aot['dyn_windows']):,} captured windows | — |",
+        f"| **VU1 Microprograms (Separate VU Domain)** | `{aot['vu1_static_keys']:,}` static keys from `{aot['vu1_captures']:,}` hash-admitted input images; state evidence: `{aot['vu_state_evidence']}`. Independent snapshot replay: `{aot['vu_snapshot_verification'].get('states', 0):,}` state(s), `{aot['vu_snapshot_verification'].get('packet_bytes', 0):,}` exact ordered packet bytes. This is selected-program replay; historical invocations and untested programs remain unverified. | {aot['vu1_static_keys']:,} / {aot['vu1_strict_keys']:,} recorded-input keys | — |",
         "",
         "### Tier 3 · Memory & ABI Transformed (`Phase 5` Target)",
         f"- **Contract-Transformed Functions**: **{100.0 * aot['transformed_count'] / ps2_in_scope:.2f}%** (**{aot['transformed_count']:,} / {ps2_in_scope:,}** — generated AOT units still retain `c.r[...]`, `g_ram`, `$gp`, and guest vtables pending Phase 5)",
@@ -1566,6 +1577,19 @@ def main():
     update_markdown_progress(REPO / "README.md", progress_md)
     update_markdown_progress(REPO / "TASK_BOARD.md", progress_md)
     update_markdown_progress(REPO / "PORT_STATUS.md", progress_md)
+    board_path = REPO / "TASK_BOARD.md"
+    board_text = board_path.read_text(encoding="utf-8")
+    aot = compute_aot_metrics(ps2_ledger)
+    scope_count = sum(row["status"] != "out-of-scope-stubbed" for row in ps2_ledger)
+    sampled_pass = bool(aot["vu_snapshot_verification"]) and not aot["untranslated_code_starts"]
+    row_state = "Verified recorded corpus and selected comparisons; release OPEN" if sampled_pass else "OPEN: Phase 4 equivalence"
+    row = (f"| 4 | EE/VU0/VU1 linked AOT coverage; remove interpreters/runtime compilers | **{row_state}** | "
+           f"Actual callable entry maps cover {aot['in_scope_aot']:,}/{scope_count:,} raw in-scope catalogue entries. "
+           f"{len(aot['nonfunction_addresses']):,} audited descriptor-data entry/entries remain visible and receive no code credit. "
+           + ("Selected EE boundaries and independent VU register/memory/packet comparisons pass; unobserved execution and whole-game acceptance remain OPEN. |"
+            if sampled_pass else "Independent function-boundary register/memory and VU packet comparisons must pass; Phase 5 remains gated. |"))
+    board_text = re.sub(r"^\| 4 \| EE/VU0/VU1 linked AOT coverage;[^\n]*$", lambda _: row, board_text, flags=re.M)
+    board_path.write_text(board_text, encoding="utf-8", newline="\n")
 
     # Post-update validation on markdown files
     for doc in (REPO / "README.md", REPO / "TASK_BOARD.md", REPO / "PORT_STATUS.md"):
