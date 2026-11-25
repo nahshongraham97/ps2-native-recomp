@@ -5,7 +5,7 @@
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`00ad90bd`](https://github.com/nahshongraham97/ps2-native-recomp/commit/00ad90bdb9b009a25b7d02e30ece1428d0d4152c) (pinned active fork)
+**Verified Fork Commit**: [`fee63031`](https://github.com/nahshongraham97/ps2-native-recomp/commit/fee630316fcde2cd60520f0f51c3a54d348ed717) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
@@ -27,7 +27,7 @@
 | **VU1 Microprograms (Separate VU Domain)** | `493` static keys from `211` hash-admitted input images; state evidence: `CORRECT_SOURCE_AND_INDEPENDENT_SNAPSHOT_REGISTER_MEMORY_PACKET_COMPARISON_PASS`. Independent snapshot replay: `61` state(s), `41,296` exact ordered packet bytes. This is selected-program replay; historical invocations and untested programs remain unverified. | 493 / 493 recorded-input keys | — |
 
 ### Tier 3 · Memory & ABI Transformed (`Phase 5` Target)
-- **Contract-Transformed Functions**: **0.00%** (**0 / 15,670** — generated AOT units still retain `c.r[...]`, `g_ram`, `$gp`, and guest vtables pending Phase 5)
+- **Contract-Transformed Functions**: **0.01%** (**2 / 15,670** — authenticated compiled prototype functions only; production integration is separate. Remaining generated AOT units retain `c.r[...]`, `g_ram`, `$gp`, and guest vtables.)
 
 ### Tier 4 · Credited Native Implementations (`functions.csv` & `ported_function_evidence.json`)
 - **Credited Completion**: **1.52%** (238 / 15,670 in-scope: `227` `ported` + `11` `host-replaced` + `0` `implemented-via-donor`; code partition: `49` `platform-boundary` + `189` `retail-logic`)
@@ -43,6 +43,8 @@
 
 > [!NOTE]
 > **Current Phase 4 verification**: Catalogue seeding and authenticated dynamic-window inputs restore the omitted callable entries. The raw catalogue descriptor-data contradiction remains visible with no code credit. Independent selected-boundary comparisons pass on every pinned snapshot, including complete VU registers, memory changes and ordered GIF bytes; deliberate packet corruption fails. This exposed and fixed discarded architectural MAC/STATUS updates in the generator. A clean clone rebuilt the generators and reproduced every generated source/header byte; a second generation run preserved the inventory bytes. These checks close the recorded-corpus generation and selected-comparison work. Phase 5 starts after this checkpoint is published. No authenticated VU0 microprogram payload/launch stream was found in this corpus; unobserved programs, historical invocations, untested functions, general hardware numeric equivalence and whole-game acceptance remain OPEN.
+
+> **Current Phase 5 verification**: Both actual generated GAMER/MOVIER initializer functions now lower through an offline Clang semantic AST frontend into typed native field ownership and explicit scalar effects. Complete register/RAM differentials pass over all pinned saved inputs and synthetic boundaries; deliberately changing the mode fails. The native library has no runtime dependencies. Structural checks reject renamed memory helpers/arrays, pointer casts, unbound fields/calls, widened or signed arithmetic, hidden storage, inheritance and assembly, including macro-expanded assembly. Measured isolated-call costs and source/binary identities are in the existing work-item record. Struct-contained pointers, general vtables/indirect dispatch and production integration remain OPEN; unsupported cases refuse by name. No guest-memory shim is present. Publish this checkpoint before Phase 6.
 
 > [!NOTE]
 > **Historical correction checkpoint `9e426b76` — superseded by the generated current measurements above**:
@@ -80,7 +82,7 @@
 > - **Playable Recomp Backup vs Generated Code Deep Audit**:
 >   - **Oracle/source lineage correction**: The pinned oracle runner is byte-identical to the protected backup runner. All 33 source diffs in the recorded mixed interval were independently reauthenticated. Actual original-binary instructions additionally establish shared behavioral owner groups and differing registration/admission; this does not prove every historical revision or branch executes. Distinctive tags support shared hook lineage, while Practice has measured binary/source differences and an unconditional interception gate. It must never substitute for the pinned B9 parity runner. The existing owner decision records each source change, flag and per-binary proof limit.
 >   - **Generated Code Classification**: Audited all 311 C++ units in `generated/SLUS-214-10-Mortal-Kombat-Armage` (67.22 MB, 1,413,265 lines). Constructs breakdown: 814,882 lines GPR access (`c.r[...]`, 57.66%); 257,403 lines cycle budget decrement (`c.budget -= N`, 18.21%); 235,199 lines guest memory loads (`ld32`, 16.64%); 129,713 lines guest memory stores (`st32`, 9.18%); 104,265 lines hardcoded 32-bit guest addresses (`0x00xxxxxx`, 7.38%); 91,202 lines FPR access (`c.f[...]`, 6.45%); 61,953 lines unit dispatch calls (`unit_XXXX(c, ...)`, 4.38%); 58,049 lines recursion depth guards (`kMaxDepth`, 4.11%); 3,258 lines 128-bit MMI SIMD (`mmi::padduw`, 0.23%); 1,985 lines COP2/VU0 instructions (0.14%); 113 lines syscall traps (0.01%).
->   - **Lifting Experiment (5 Representative Functions)**: Tested manual lifting in scratch harness (`lift_experiment.cpp`) compiled with `clang++ -std=c++20 -static`:
+>   - **Historical manual-lifting report (not reproduced)**: Earlier notes reported a scratch harness (`lift_experiment.cpp`) compiled with `clang++ -std=c++20 -static`. That file and `transform_prototype_test.cpp` were not found in the recorded repository/workspace searches. The following historical observations do not establish the current generated-unit transform; its actual input, compiler, differential and structural evidence are recorded separately above:
 >     1. Leaf matrix/float math (`0x00104000`): lifts cleanly to typed float pointer arithmetic; requires def-use dataflow analysis to recover parameter list and EE flush-to-zero semantics.
 >     2. Struct mutator with offset math (`0x00102BB4`): lifts cleanly to typed struct member accesses once member offsets are typed.
 >     3. Branching caller (`0x00100320`): lifts to structured C++ `if/else` once delay slot interleaving is untangled.

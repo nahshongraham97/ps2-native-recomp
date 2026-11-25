@@ -19,7 +19,7 @@ from pathlib import Path
 import re
 import struct
 import subprocess
-from aot_inventory import verify_entries, verified_nonfunction_catalogue_addresses, verify_vu_snapshot_measurement
+from aot_inventory import verify_entries, verified_nonfunction_catalogue_addresses, verify_vu_snapshot_measurement, verify_transformed_functions
 
 for _p in [Path(__file__).resolve(), *Path(__file__).resolve().parents]:
     if (_p / "research" / "runs" / "ghidra-function-coverage-20261118").exists():
@@ -1026,11 +1026,11 @@ def compute_aot_metrics(ps2_ledger):
         raise AssertionError("VU static table keys exceed strict corpus keys")
 
     in_scope_aot = computed_base_in_scope_aot + movier_mod.get("static_aot_count", 0) + gamer_mod.get("static_aot_count", 0)
-    tx = inv.get("memory_abi_transform", {})
+    transformed_functions = verify_transformed_functions(REPO, inv, ps2_ledger)
     return {
         "active_fork_static_cpp_count": inv.get("active_fork_tracked_cpp_count", inv.get("active_fork_static_cpp_count", 0)),
         "build_generated_units": inv.get("active_fork_build_generated_units", len(unit_ranges)),
-        "transformed_count": tx.get("transformed_count", 0),
+        "transformed_count": len(transformed_functions),
         "base_aot": computed_base_aot,
         "base_in_scope_aot": computed_base_in_scope_aot,
         "base_total": len(base_rows),
@@ -1121,7 +1121,7 @@ def generate_progress_markdown_block(ps2_ledger, xbox_ledger, ps2_map, fork_sha=
         f"| **VU1 Microprograms (Separate VU Domain)** | `{aot['vu1_static_keys']:,}` static keys from `{aot['vu1_captures']:,}` hash-admitted input images; state evidence: `{aot['vu_state_evidence']}`. Independent snapshot replay: `{aot['vu_snapshot_verification'].get('states', 0):,}` state(s), `{aot['vu_snapshot_verification'].get('packet_bytes', 0):,}` exact ordered packet bytes. This is selected-program replay; historical invocations and untested programs remain unverified. | {aot['vu1_static_keys']:,} / {aot['vu1_strict_keys']:,} recorded-input keys | — |",
         "",
         "### Tier 3 · Memory & ABI Transformed (`Phase 5` Target)",
-        f"- **Contract-Transformed Functions**: **{100.0 * aot['transformed_count'] / ps2_in_scope:.2f}%** (**{aot['transformed_count']:,} / {ps2_in_scope:,}** — generated AOT units still retain `c.r[...]`, `g_ram`, `$gp`, and guest vtables pending Phase 5)",
+        f"- **Contract-Transformed Functions**: **{100.0 * aot['transformed_count'] / ps2_in_scope:.2f}%** (**{aot['transformed_count']:,} / {ps2_in_scope:,}** — authenticated compiled prototype functions only; production integration is separate. Remaining generated AOT units retain `c.r[...]`, `g_ram`, `$gp`, and guest vtables.)",
         "",
         "### Tier 4 · Credited Native Implementations (`functions.csv` & `ported_function_evidence.json`)",
         f"- **Credited Completion**: **{100.0 * len(ps2_impl) / ps2_in_scope:.2f}%** ({len(ps2_impl):,} / {ps2_in_scope:,} in-scope: `{ps2_ported_cnt:,}` `ported` + `{ps2_host_rep_cnt:,}` `host-replaced` + `{ps2_donor_cnt:,}` `implemented-via-donor`; code partition: `{cred_part['platform-boundary']}` `platform-boundary` + `{cred_part['retail-logic']}` `retail-logic`)",

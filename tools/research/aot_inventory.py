@@ -126,6 +126,90 @@ def verify_vu_snapshot_measurement(repo: Path, vu: dict) -> dict:
             "scope": "Independent snapshot-seeded replay; historical invocation and general hardware parity unverified"}
 
 
+def verify_transformed_functions(repo: Path, inventory: dict, rows: list[dict]) -> list[dict]:
+    """Count authenticated generated-unit transformations, never an editable scalar.
+
+    Compiled prototype credit is separate from production integration. The
+    measurement joins its actual generated inputs, native outputs, source,
+    binary and differential results. A hand-entered count cannot supply any
+    missing link in that chain.
+    """
+    transform = inventory.get("memory_abi_transform", {})
+    functions = transform.get("functions", [])
+    if transform.get("transformed_count", 0) != len(functions):
+        raise AssertionError("Unmeasured/mismatched transformed function count")
+    if not functions:
+        return []
+    identities = [(item["module"], item["address"].lower()) for item in functions]
+    catalogue = {(row["module"], row["address"].lower()) for row in rows}
+    if len(identities) != len(set(identities)) or not set(identities) <= catalogue:
+        raise AssertionError("Transformed function identities are duplicated or uncatalogued")
+    root = repo / "external/forks/ps2-native-recomp"
+    if not root.is_dir():
+        root = repo
+    root = root.resolve()
+    measurement = transform.get("measurement", {})
+    def admitted_file(relative: str) -> Path:
+        path = (root / relative).resolve()
+        if not path.is_relative_to(root) or not path.is_file():
+            raise AssertionError("Transform measurement missing or escaped checkout")
+        return path
+    proof_path = admitted_file(measurement["proof_path"])
+    receipt_path = admitted_file(measurement["receipt_path"])
+    if sha(proof_path) != measurement["proof_sha256"] or sha(receipt_path) != measurement["receipt_sha256"]:
+        raise AssertionError("Transform proof/measurement changed")
+    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+    if receipt["status"] != "PASS" or receipt["proof_sha256"] != sha(proof_path):
+        raise AssertionError("Transform execution is not passing for this proof")
+    if receipt["functions"] != functions:
+        raise AssertionError("Transform catalogue credit differs from executed functions")
+    required_sources = {"tools/research/transform_generated_units.py", "recomp/overlay_initializer_contract.json",
+                        "tests/test_phase5_generated_transform.cpp", "tests/test_phase4_aot_equivalence.cpp",
+                        "b/native-overlay-initializers/native_overlay_initializers.cpp",
+                        "b/native-overlay-initializers/native_overlay_initializers.hpp"}
+    if not required_sources <= receipt["source_sha256"].keys():
+        raise AssertionError("Transform source manifest omits required frontend/test/native output")
+    for relative, expected in receipt["source_sha256"].items():
+        if sha(admitted_file(relative)) != expected:
+            raise AssertionError("Measured transform source/output changed: " + relative)
+    if sha(admitted_file(receipt["binary_path"])) != receipt["binary_sha256"]:
+        raise AssertionError("Measured transform binary changed")
+    proof = json.loads(proof_path.read_text(encoding="utf-8"))
+    if proof["tool_sha256"] != receipt["source_sha256"]["tools/research/transform_generated_units.py"] or proof["contract_sha256"] != receipt["source_sha256"]["recomp/overlay_initializer_contract.json"]:
+        raise AssertionError("Transform proof frontend/contract source identity differs")
+    for name, expected in proof["outputs"].items():
+        relative = "b/native-overlay-initializers/" + name
+        if receipt["source_sha256"].get(relative) != expected:
+            raise AssertionError("Transform proof native output differs from compiled source")
+    if proof["native_audit"]["status"] != "PASS" or proof["self_tests"]["status"] != "PASS":
+        raise AssertionError("Transform semantic audit/self-tests are incomplete")
+    generated = {(item["module"], item["source_entry"].lower(), item["native_name"])
+                 for item in proof["functions"]}
+    credited = {(item["module"], item["address"].lower(), item["native_name"]) for item in functions}
+    if generated != credited:
+        raise AssertionError("Native transform proof differs from credited generated entries")
+    checks = {item["name"]: item for item in receipt["checks"]}
+    required = {"build", "differential", "native-audit", "renamed-accessor", "native-object"}
+    if not required <= checks.keys() or any(checks[key]["status"] != "PASS" for key in required):
+        raise AssertionError("Missing transform differential/structural/object checks")
+    if checks["differential"]["exit_code"] or not checks["differential"]["states"]:
+        raise AssertionError("Transform differential did not cover saved states")
+    original_manifest = repo / "launchers/oracle_original_manifest.json"
+    if not original_manifest.is_file():
+        original_manifest = root.parents[2] / "launchers/oracle_original_manifest.json"
+    if not original_manifest.is_file() or sha(original_manifest) != receipt["input_manifest_sha256"]:
+        raise AssertionError("Transform oracle input manifest missing or changed")
+    originals = json.loads(original_manifest.read_text(encoding="utf-8"))
+    states = [name for name in originals if name.startswith("games/mkarmageddon/disc/states/") and name.endswith(".state")]
+    if checks["differential"]["states"] != len(states) or checks["differential"]["generated_typed_comparisons"] != len(states) * len(functions):
+        raise AssertionError("Transform differential count differs from authenticated saved inputs/functions")
+    if checks["renamed-accessor"]["exit_code"] == 0:
+        raise AssertionError("Renamed accessor was not rejected")
+    if checks["native-object"]["archive_sha256"] != sha(admitted_file("b/libmka_transformed_overlay_initializers.a")) or checks["native-object"]["undefined_symbols"]:
+        raise AssertionError("Transformed native archive changed or has runtime dependencies")
+    return functions
+
+
 def classify_vu_inputs(actual: dict, legacy: dict, rejected: dict) -> tuple[dict, dict]:
     """Admit measured legacy bytes, never arbitrary files found in a directory."""
     if set(legacy) & set(rejected):

@@ -588,7 +588,9 @@ def test_planted_failures():
     print("Testing planted failure 17: multi-tier hand-edit, Xbox %, and classification sum rejection...")
     orig_readme_p3 = readme_p.read_text(encoding="utf-8")
     try:
-        readme_p.write_text(orig_readme_p3.replace("**0 / 15,670**", "**500 / 15,670**"), encoding="utf-8", newline="\n")
+        measured_transform_token = f"**{compute_aot_metrics(ps2_ledger)['transformed_count']:,} / 15,670**"
+        assert measured_transform_token in orig_readme_p3
+        readme_p.write_text(orig_readme_p3.replace(measured_transform_token, "**500 / 15,670**"), encoding="utf-8", newline="\n")
         try:
             validate_progress_aot_tier(REPO, ps2_ledger)
             assert False, "Hand-edited Tier 3 transformed count FAILED to raise AssertionError!"
@@ -852,6 +854,68 @@ def test_planted_failures():
         table_path.write_bytes(original_table)
     assert table_path.read_bytes() == original_table
     print("  Dropped module rejected independently of stored coverage/table hashes; exact bytes restored.")
+
+    print("Testing planted failure 24: renamed guest-memory accessors fail the semantic native audit...")
+    tx = inventory.get("memory_abi_transform", {})
+    if not tx.get("functions"):
+        print("  SKIP: no measured Phase 5 prototype exists yet; no native-transform pass claimed.")
+    else:
+        script = FORK_ROOT / "tools/research/transform_generated_units.py"
+        native_dir = FORK_ROOT / "b/native-overlay-initializers"
+        cache = (FORK_ROOT / "b/CMakeCache.txt").read_text(encoding="utf-8")
+        compiler = next(line.split("=", 1)[1] for line in cache.splitlines()
+                        if line.startswith("CMAKE_CXX_COMPILER:"))
+        command = [sys.executable, "-B", str(script), "--compiler", compiler, "--audit-native"]
+        good = subprocess.run(command + [str(native_dir)], capture_output=True, timeout=60)
+        assert good.returncode == 0, (good.stdout + good.stderr).decode(errors="replace")[-2000:]
+        with tempfile.TemporaryDirectory(dir=FORK_ROOT / "build/oracle-telemetry") as scratch:
+            scratch = Path(scratch)
+            (scratch / "native_overlay_initializers.hpp").write_bytes(
+                (native_dir / "native_overlay_initializers.hpp").read_bytes())
+            # Innocuous identifiers deliberately avoid a name blacklist. This
+            # is still integer-addressed flat storage behind a renamed helper.
+            planted_source = '''#include "native_overlay_initializers.hpp"
+namespace mka::retail::generated {
+static unsigned char records[33554432];
+static std::uint32_t find_record(std::uint32_t key) noexcept {
+    return reinterpret_cast<const std::uint32_t*>(records)[key >> 2];
+}
+std::uint64_t initialize_gamer(OverlaySelection& owner) noexcept {
+    owner.selected_mode = find_record(0x64f1a0u); return owner.selected_mode;
+}
+std::uint64_t initialize_movier(OverlaySelection& owner) noexcept {
+    owner.selected_mode = find_record(0x64f1a0u); return owner.selected_mode;
+}
+}
+'''
+            (scratch / "native_overlay_initializers.cpp").write_text(
+                planted_source, encoding="utf-8", newline="\n")
+            bad = subprocess.run(command + [str(scratch)], capture_output=True, timeout=60)
+            assert bad.returncode != 0, "Renamed array/accessor concealed guest memory"
+            refusal = (bad.stdout + bad.stderr).decode(errors="replace")
+            assert "native_" in refusal.lower() or "audit" in refusal.lower(), refusal[-2000:]
+        print("  Actual native output admitted; renamed array/address accessor refused structurally.")
+
+    print("Testing planted failure 25: editable transform counts do not create measured functions...")
+    from aot_inventory import verify_transformed_functions
+    forged_count = copy.deepcopy(inventory)
+    forged_count["memory_abi_transform"]["transformed_count"] += 1
+    try:
+        verify_transformed_functions(REPO, forged_count, ledger_rows)
+    except AssertionError as error:
+        assert "transformed function count" in str(error), str(error)
+    else:
+        raise AssertionError("Hand-entered transform credit was accepted")
+    if tx.get("functions"):
+        forged_proof = copy.deepcopy(inventory)
+        forged_proof["memory_abi_transform"]["measurement"]["proof_sha256"] = "0" * 64
+        try:
+            verify_transformed_functions(REPO, forged_proof, ledger_rows)
+        except AssertionError as error:
+            assert "proof/measurement changed" in str(error), str(error)
+        else:
+            raise AssertionError("Unauthenticated transform proof was accepted")
+    print("  Scalar-only credit and altered proof rejected without changing measured files.")
 
     print("PASS: All planted-failure cases successfully caught and proven to fail closed.")
 

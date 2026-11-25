@@ -4,7 +4,7 @@
 files, and closure evidence are in [ROADMAP.md](ROADMAP.md). This board indexes
 each deliverable's verified component progress and whole-game acceptance state;
 [PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is
-**Resume: retain the published Phases 0-3 work and the Phase 4 recorded-corpus generation/selected-comparison results. After publishing the verified Phase 4 checkpoint, start Phase 5: transform actual generated units for a bounded subsystem into typed native memory/ABI, compare against generated execution, measure cost and reject renamed guest-memory accessors. Then complete Phases 6-7 in order. Unobserved programs and whole-game acceptance remain OPEN.**
+**Resume: published Phases 0-4 carry forward within their recorded scope. Phase 5's bounded actual generated-unit prototype passes differential, cost and structural checks; publish its synchronized checkpoint, then complete Phase 6's measured renderer decision and Phase 7's differential duplicate replacement/asset comparison. General pointer/vtable/dispatch recovery, production integration, unobserved programs and whole-game acceptance remain OPEN.**
 
 archived at `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
@@ -13,7 +13,7 @@ archived at `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`00ad90bd`](https://github.com/nahshongraham97/ps2-native-recomp/commit/00ad90bdb9b009a25b7d02e30ece1428d0d4152c) (pinned active fork)
+**Verified Fork Commit**: [`fee63031`](https://github.com/nahshongraham97/ps2-native-recomp/commit/fee630316fcde2cd60520f0f51c3a54d348ed717) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
@@ -35,7 +35,7 @@ archived at `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 | **VU1 Microprograms (Separate VU Domain)** | `493` static keys from `211` hash-admitted input images; state evidence: `CORRECT_SOURCE_AND_INDEPENDENT_SNAPSHOT_REGISTER_MEMORY_PACKET_COMPARISON_PASS`. Independent snapshot replay: `61` state(s), `41,296` exact ordered packet bytes. This is selected-program replay; historical invocations and untested programs remain unverified. | 493 / 493 recorded-input keys | — |
 
 ### Tier 3 · Memory & ABI Transformed (`Phase 5` Target)
-- **Contract-Transformed Functions**: **0.00%** (**0 / 15,670** — generated AOT units still retain `c.r[...]`, `g_ram`, `$gp`, and guest vtables pending Phase 5)
+- **Contract-Transformed Functions**: **0.01%** (**2 / 15,670** — authenticated compiled prototype functions only; production integration is separate. Remaining generated AOT units retain `c.r[...]`, `g_ram`, `$gp`, and guest vtables.)
 
 ### Tier 4 · Credited Native Implementations (`functions.csv` & `ported_function_evidence.json`)
 - **Credited Completion**: **1.52%** (238 / 15,670 in-scope: `227` `ported` + `11` `host-replaced` + `0` `implemented-via-donor`; code partition: `49` `platform-boundary` + `189` `retail-logic`)
@@ -72,7 +72,7 @@ archived at `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 > Earlier local discard decisions and restoration measurements remain historical. Current Phase 0 repair re-verifies the immutable oracle, corrects the additive launcher and reruns baseline checks. No pushed history is rewritten.
 
 > [!NOTE]
-> **2026-11-24 Phase 3 Pipeline, Multi-Tier Ledger & Classification**:
+> **Historical Phase 3 Pipeline, Multi-Tier Ledger & Classification — callable coverage superseded by the current generated block**:
 > Reproducible fresh-clone build of `eerecomp` & `vurecomp` verified (`311` static `SLUS_214.10` units covering `13,138 / 13,138` base functions; `493` VU1 keys from `211` captures reconciling `490` legacy & `44` oracle DLLs). Compact `progress.svg` (<15 KB) and multi-tier ledger generated across `README.md`, `TASK_BOARD.md`, and `PORT_STATUS.md` with Xbox reference line (zero `%`). All `17,510` functions and `23` native modules classified in `function_classification_inventory.json` and `native_module_classification.json`; legacy/noncompliant checkouts removed after relocating protected assets (`Phase 3` cleanup).
 
 Close a row only with the ROADMAP evidence and a same-build run record.

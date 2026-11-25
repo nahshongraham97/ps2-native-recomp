@@ -10,7 +10,7 @@ Neither the canonical playable oracle (`../../milestone_work_verified_playable_2
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`00ad90bd`](https://github.com/nahshongraham97/ps2-native-recomp/commit/00ad90bdb9b009a25b7d02e30ece1428d0d4152c) (pinned active fork)
+**Verified Fork Commit**: [`fee63031`](https://github.com/nahshongraham97/ps2-native-recomp/commit/fee630316fcde2cd60520f0f51c3a54d348ed717) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
@@ -32,7 +32,7 @@ Neither the canonical playable oracle (`../../milestone_work_verified_playable_2
 | **VU1 Microprograms (Separate VU Domain)** | `493` static keys from `211` hash-admitted input images; state evidence: `CORRECT_SOURCE_AND_INDEPENDENT_SNAPSHOT_REGISTER_MEMORY_PACKET_COMPARISON_PASS`. Independent snapshot replay: `61` state(s), `41,296` exact ordered packet bytes. This is selected-program replay; historical invocations and untested programs remain unverified. | 493 / 493 recorded-input keys | — |
 
 ### Tier 3 · Memory & ABI Transformed (`Phase 5` Target)
-- **Contract-Transformed Functions**: **0.00%** (**0 / 15,670** — generated AOT units still retain `c.r[...]`, `g_ram`, `$gp`, and guest vtables pending Phase 5)
+- **Contract-Transformed Functions**: **0.01%** (**2 / 15,670** — authenticated compiled prototype functions only; production integration is separate. Remaining generated AOT units retain `c.r[...]`, `g_ram`, `$gp`, and guest vtables.)
 
 ### Tier 4 · Credited Native Implementations (`functions.csv` & `ported_function_evidence.json`)
 - **Credited Completion**: **1.52%** (238 / 15,670 in-scope: `227` `ported` + `11` `host-replaced` + `0` `implemented-via-donor`; code partition: `49` `platform-boundary` + `189` `retail-logic`)
@@ -63,7 +63,7 @@ Read in order:
 The protected duplicate oracle game copy is `external/forks/ps2-native-recomp-backup-20261110/`. Preserve it along with all user saves, memory cards, key files, and model settings; noncompliant local commits and dirty files are discarded per `DECISION_OWNER_CORRECTIONS_20261124.json`.
 Historical logs and experiments live in `research/runs/` and `research/history/`; they are evidence for dated builds, never live instructions. The consolidated status archive lives in `research/history/superseded-status-docs-20261124/`. Retail binary assets (`.ELF`, `.xbe`, `.bin`, `.ovl`, audio/video streams) remain local and untracked.
 
-Published Phases 0–3 carry forward. Phase 4 recorded-input generation and independent selected-boundary/packet comparisons pass; the current checkpoint must be published before Phase 5 starts. Historical invocation capture, untested functions and general hardware numeric parity remain unverified. Existing oracle files are immutable; its separately verified additive launcher uses disposable data. No owner launch is requested.
+Published Phases 0–4 carry forward within their recorded evidence scope. The Phase 5 actual generated-unit prototype passes for both overlay initializers, with typed ownership, explicit scalar effects, saved-input differentials and structural guest-accessor rejection. Its measured transform tier is separate from production integration and credited implementations. After publishing this checkpoint, proceed to the measured renderer decision in Phase 6. Historical invocations, untested functions and general hardware numeric parity remain unverified. Existing oracle files are immutable; its separately verified additive launcher uses disposable data. No owner launch is requested.
 
 Generation uses the user's pinned ELF, overlay captures and existing dependency packages. From the integration repository, run `python -B tools/research/reproduce_aot_pipeline.py`, regenerate with `python -B tools/research/generate_ledgers.py`, then synchronize with `python -B tools/research/sync_verify.py --sync-to-fork`. Generated retail C++ remains ignored.
 

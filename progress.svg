@@ -12,7 +12,8 @@
   <text x="772" y="143" fill="#f0f6fc" font-family="Segoe UI, Arial, sans-serif" font-size="12">15,669 / 15,670 (99.99%) · 493 VU1 keys</text>
   <text x="24" y="189" fill="#c9d1d9" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="500">Tier 3 · Memory &amp; ABI Transformed</text>
   <rect x="290" y="176" width="470" height="18" rx="4" fill="#21262d" stroke="#30363d" stroke-width="1"/>
-  <text x="772" y="189" fill="#f0f6fc" font-family="Segoe UI, Arial, sans-serif" font-size="12">0 / 15,670 (0.00%)</text>
+  <rect x="290" y="176" width="0.1" height="18" rx="4" fill="#a371f7"/>
+  <text x="772" y="189" fill="#f0f6fc" font-family="Segoe UI, Arial, sans-serif" font-size="12">2 / 15,670 (0.01%)</text>
   <text x="24" y="235" fill="#c9d1d9" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="500">Tier 4 · Credited Native</text>
   <rect x="290" y="222" width="470" height="18" rx="4" fill="#21262d" stroke="#30363d" stroke-width="1"/>
   <rect x="290" y="222" width="7.1" height="18" rx="4" fill="#2ea043"/>

@@ -5,6 +5,16 @@ It describes acceptance, not current success. No agent may call a build
 accepted or ready for the owner to run until every gate passes on one clean,
 pinned binary. The authored replacement application is outside scope.
 
+The Phase 5 generated-unit prototype must consume actual build-generated C++
+and lower its verified control/data flow to typed owners and a recovered native
+ABI. A hand-written equivalent, a direct ELF-word compiler, matching source
+labels or renamed memory helpers do not establish that transformation. Bind
+fields from original inputs and callers, reject unbound memory/indirect effects
+by name, and audit semantic structure so renaming an accessor or RAM array
+cannot conceal a guest-memory shim. Credit only authenticated generated
+functions with compiled differential evidence; keep prototype and production
+integration status separate.
+
 The product is one genuine native Armageddon port in the existing repositories,
 not preservation of a PS2 runtime because of an upstream/fork name. Recover
 the best/easiest verified retail implementations into ONE native architecture.

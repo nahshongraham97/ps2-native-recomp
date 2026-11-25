@@ -1,0 +1,44 @@
+# Phase 4's pinned generation pipeline supplies the untracked C++ inputs.
+# This dependency performs the actual offline C++ AST -> typed native transform
+# during the build. The emitted library has no dependency on ps2runtime or Cpu.
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+set(_overlay_transform_dir "${CMAKE_CURRENT_BINARY_DIR}/native-overlay-initializers")
+set(_overlay_transform_script "${CMAKE_SOURCE_DIR}/tools/research/transform_generated_units.py")
+set(_overlay_transform_contract "${CMAKE_SOURCE_DIR}/recomp/overlay_initializer_contract.json")
+set(_overlay_generated_dir "${CMAKE_SOURCE_DIR}/build/generated-aot/phase4-all")
+file(GLOB_RECURSE _overlay_ast_headers CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/runtime/include/*.hpp")
+add_custom_command(
+    OUTPUT "${_overlay_transform_dir}/native_overlay_initializers.cpp"
+           "${_overlay_transform_dir}/native_overlay_initializers.hpp"
+           "${_overlay_transform_dir}/transform_proof.json"
+    COMMAND "${CMAKE_COMMAND}" -E make_directory "${_overlay_transform_dir}"
+    COMMAND "${Python3_EXECUTABLE}" -B "${_overlay_transform_script}"
+        --compiler "${CMAKE_CXX_COMPILER}"
+        --generated-dir "${_overlay_generated_dir}"
+        --contract "${_overlay_transform_contract}"
+        --out-dir "${_overlay_transform_dir}" --self-test --replace-generated
+    DEPENDS "${_overlay_transform_script}" "${_overlay_transform_contract}"
+        "${_overlay_generated_dir}/m_GAMER_unit_0000.cpp"
+        "${_overlay_generated_dir}/m_MOVIER_unit_0021.cpp"
+        "${_overlay_generated_dir}/units.hpp" ${_overlay_ast_headers}
+    VERBATIM COMMENT "Transform actual generated overlay initializer C++ to typed native objects")
+add_library(mka_transformed_overlay_initializers STATIC EXCLUDE_FROM_ALL
+    "${_overlay_transform_dir}/native_overlay_initializers.cpp")
+target_include_directories(mka_transformed_overlay_initializers PUBLIC "${_overlay_transform_dir}")
+target_compile_features(mka_transformed_overlay_initializers PUBLIC cxx_std_20)
+if(MSVC)
+    target_compile_options(mka_transformed_overlay_initializers PRIVATE /W4 /WX)
+else()
+    target_compile_options(mka_transformed_overlay_initializers PRIVATE -Wall -Wextra -Werror)
+endif()
+
+# Guest state belongs exclusively to this differential test's reference side.
+# It is not linked into the transformed native library.
+add_executable(test_phase5_generated_transform EXCLUDE_FROM_ALL
+    tests/test_phase5_generated_transform.cpp
+    "${CMAKE_SOURCE_DIR}/build/generated-aot/vu1/vu1_table.cpp"
+    runtime/src/dispatch.cpp runtime/src/observer_hook.cpp
+    runtime/src/native_hook.cpp runtime/src/cop.cpp runtime/src/vu_micro.cpp)
+target_include_directories(test_phase5_generated_transform PRIVATE runtime/include runtime/src)
+target_link_libraries(test_phase5_generated_transform PRIVATE
+    ps2_phase4_aot mka_transformed_overlay_initializers)

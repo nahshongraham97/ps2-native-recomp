@@ -41,4 +41,11 @@ The initial Nov 18 baseline handoff is preserved at `research/history/native-por
 
 Current resume point is TASK_BOARD.md. Coverage must use actual callable entry maps. The old restored oracle launcher is historical because its target is retired; the corrected additive launcher has passed static/disposable-data checks; bounded headless admission is instruction-grounded. Do not alter any existing oracle bytes.
 
+Phase 4 has been published with synchronized ledgers and unchanged oracle
+originals. Phase 5's actual generated GAMER/MOVIER initializer prototype passes
+saved-state differential, cost and structural checks; its source/binary/proof
+chain determines prototype credit. General pointer/vtable/dispatch recovery and
+production integration remain OPEN. An ELF-word decoder alone does not fulfill
+the generated-unit task. Publish the checkpoint before the renderer phase starts.
+
 Saved-state evidence correction: the old backwards-from-GS VU extraction crossed IPU. Version/ABI/bounds/variable-IPU regressions and provenance-based capture admission guard the corrected loader. The bounded GAMER boundary and independent selected VU snapshot replay pass, including full registers/memory and ordered packet bytes. This is not captured historical invocation or equivalence of untested functions/programs. No authenticated VU0 microprogram payload/launch stream was found in the recorded corpus.

@@ -31258,9 +31258,27 @@
     }
   },
   "memory_abi_transform": {
-    "transformed_count": 0,
+    "transformed_count": 2,
     "in_scope_total": 15670,
-    "note": "Generated C++ retains c.r[...], g_ram, $gp, and guest vtables until Phase 5 transform."
+    "note": "Compiled, independently differential-tested actual generated-unit prototype functions. General transformation and production integration remain open.",
+    "functions": [
+      {
+        "module": "GAMER.ovl",
+        "address": "007c4980",
+        "native_name": "initialize_gamer"
+      },
+      {
+        "module": "MOVIER.ovl",
+        "address": "0084a100",
+        "native_name": "initialize_movier"
+      }
+    ],
+    "measurement": {
+      "proof_path": "b/native-overlay-initializers/transform_proof.json",
+      "proof_sha256": "7f5bbcb1605777b318a7acea88d4d29938e3cb31dccc44a236fab37d35106244",
+      "receipt_path": "build/oracle-telemetry/phase5-audit-closed-verification.json",
+      "receipt_sha256": "da25a693e0880f1a51bac4980828eb49bad87098bfb3dd0b334db3703bffe46b"
+    }
   },
   "entry_measurement": {
     "method": "Nonzero generated entry-map element and exact switch target; never unit-range membership",
