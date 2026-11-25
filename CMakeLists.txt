@@ -441,5 +441,5 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/build/generated-aot/phase4-all/table.cpp" AND EXI
         runtime/src/vu_micro.cpp)
     target_include_directories(test_phase4_aot_equivalence PRIVATE runtime/include runtime/src)
     target_link_libraries(test_phase4_aot_equivalence PRIVATE ps2_phase4_aot)
-    include(cmake/generated_transform.cmake)
 endif()
+include(cmake/generated_transform.cmake)

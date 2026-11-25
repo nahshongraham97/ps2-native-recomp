@@ -218,6 +218,13 @@ class Lowering:
         require(node.get("kind") == "BinaryOperator" and node.get("opcode") in ("+", "-")
                 and len(children(node)) == 2, "unbound_memory:address_expression")
         base, offset = children(node)
+        if self.contract.get("schema") == "generated_relative_receiver_contract_v1":
+            require(register_part(base, self.cpu) == (self.contract["receiver"]["index"], 32),
+                    "unbound_memory:relative_receiver_base")
+            displacement = literal(offset) * (1 if node["opcode"] == "+" else -1)
+            fields = [f for f in self.contract["fields"] if f["source_offset"] == displacement]
+            require(len(fields) == 1 and fields[0]["type"] == "i32", "unbound_memory:relative_field_or_width")
+            return fields[0]
         require(register_part(base, self.cpu) == (28, 32), "unbound_memory:non_GP_base")
         displacement = literal(offset)
         address = (int(self.contract["source_gp"], 16) +
@@ -259,7 +266,7 @@ class Lowering:
                 require(len(args) == 2, "malformed_st32")
                 field = self.address(args[0])
                 expression = self.expression(args[1])
-                self.effects.append({"kind": "store_field", "field": field["name"], "type": "u32",
+                self.effects.append({"kind": "store_field", "field": field["name"], "type": field["type"],
                                      "expression": expression,
                                      "source_pc": f"{self.pc + (4 if self.return_local else 0):08x}"})
             else:
@@ -329,12 +336,15 @@ class Lowering:
                 "return": "structured_native_return_after_delay_effect"}
 
 
-def emit(functions):
+def emit(functions, relative=False):
+    owner = "IndexSelection" if relative else "OverlaySelection"
+    field = "std::int32_t index" if relative else "std::uint32_t selected_mode"
+    filename = "native_index_selection.hpp" if relative else "native_overlay_initializers.hpp"
     header = ("#pragma once\n#include <cstdint>\n\nnamespace mka::retail::generated {\n"
-              "struct OverlaySelection { std::uint32_t selected_mode{}; };\n")
-    source = '#include "native_overlay_initializers.hpp"\n\nnamespace mka::retail::generated {\n'
+              f"struct {owner} {{ {field}{{}}; }};\n")
+    source = f'#include "{filename}"\n\nnamespace mka::retail::generated {{\n'
     for desc, ir in functions:
-        signature = "std::uint64_t " + desc["native_name"] + "(OverlaySelection& selection) noexcept"
+        signature = "std::uint64_t " + desc["native_name"] + f"({owner}& selection) noexcept"
         header += signature + ";\n"
         source += signature + " {\n"
         values = ir["values"]
@@ -345,7 +355,8 @@ def emit(functions):
             elif effect["kind"] == "store_field":
                 expression = effect["expression"]
                 require(expression["op"] in ("truncate32", "value"), "unbound_native_store_value")
-                source += (f'    selection.{effect["field"]} = static_cast<std::uint32_t>'
+                width = "std::int32_t" if relative else "std::uint32_t"
+                source += (f'    selection.{effect["field"]} = static_cast<{width}>'
                            f'(value_{expression["value"]});\n')
             elif effect["kind"] == "return_value":
                 source += f'    return value_{effect["value"]};\n'
@@ -355,7 +366,7 @@ def emit(functions):
     return header + "}\n", source + "}\n"
 
 
-def native_audit(compiler, source, repo):
+def native_audit(compiler, source, repo, relative=False):
     """Structural allowlist; no expected output hash or memory-helper names."""
     roots = clang_ast(compiler, source, [source.parent], "", repo)
     # Audit the whole user translation unit, including declarations outside the
@@ -385,7 +396,11 @@ def native_audit(compiler, source, repo):
     require(not any(n.get("kind") in ("FunctionTemplateDecl", "ClassTemplateDecl",
             "ClassTemplateSpecializationDecl") for n in nodes), "native_template_definition")
     records = [n for n in nodes if n.get("kind") == "CXXRecordDecl" and n.get("completeDefinition")]
-    require(len(records) == 1 and records[0].get("name") == "OverlaySelection", "native_unbound_owner_type")
+    owner_type = "IndexSelection" if relative else "OverlaySelection"
+    field_name = "index" if relative else "selected_mode"
+    field_type = "int" if relative else "unsigned int"
+    function_names = {"invalidate_index"} if relative else {"initialize_gamer", "initialize_movier"}
+    require(len(records) == 1 and records[0].get("name") == owner_type, "native_unbound_owner_type")
     record = records[0]
     require(not record.get("bases") and record.get("tagUsed") == "struct"
             and record.get("definitionData", {}).get("isAggregate")
@@ -393,8 +408,8 @@ def native_audit(compiler, source, repo):
             and record.get("definitionData", {}).get("isTriviallyCopyable"),
             "native_nonordinary_owner_or_base")
     fields = [x for x in children(record) if x.get("kind") == "FieldDecl"]
-    require(len(fields) == 1 and fields[0].get("name") == "selected_mode"
-            and fields[0].get("type", {}).get("desugaredQualType") == "unsigned int",
+    require(len(fields) == 1 and fields[0].get("name") == field_name
+            and fields[0].get("type", {}).get("desugaredQualType") == field_type,
             "native_unbound_field_or_width")
     require(not fields[0].get("isMutable", False) and not fields[0].get("mutable", False),
             "native_mutable_field")
@@ -406,8 +421,8 @@ def native_audit(compiler, source, repo):
     field_id = fields[0]["id"]
     definitions = [n for n in nodes if n.get("kind") == "FunctionDecl"
                    and any(x.get("kind") == "CompoundStmt" for x in children(n))]
-    require({x.get("name") for x in definitions} == {"initialize_gamer", "initialize_movier"}
-            and len(definitions) == 2, "native_unbound_function_or_helper")
+    require({x.get("name") for x in definitions} == function_names
+            and len(definitions) == len(function_names), "native_unbound_function_or_helper")
     # Global/static storage, hidden declarations and arbitrary helper bodies are
     # rejected even if the exported functions never mention a banned token.
     body_ids = {id(x) for fn in definitions for x in walk(fn)}
@@ -416,10 +431,10 @@ def native_audit(compiler, source, repo):
             raise Refusal("native_global_or_static_storage")
     for fn in definitions:
         parameters = [x for x in children(fn) if x.get("kind") == "ParmVarDecl"]
-        require(len(parameters) == 1 and parameters[0]["type"]["qualType"] == "OverlaySelection &"
+        require(len(parameters) == 1 and parameters[0]["type"]["qualType"] == owner_type + " &"
                 and fn["type"]["qualType"] in (
-                    "std::uint64_t (OverlaySelection &) noexcept",
-                    "unsigned long long (OverlaySelection &) noexcept")
+                    "std::uint64_t (" + owner_type + " &) noexcept",
+                    "unsigned long long (" + owner_type + " &) noexcept")
                 and not fn.get("variadic", False)
                 and all(x.get("kind") in ("ParmVarDecl", "CompoundStmt") for x in children(fn)),
                 "native_unbound_function_abi_or_attribute")
@@ -436,7 +451,7 @@ def native_audit(compiler, source, repo):
                 return
             if node.get("kind") == "CXXStaticCastExpr":
                 require(node.get("castKind") in ("IntegralCast", "NoOp") and len(children(node)) == 1
-                        and node.get("type", {}).get("desugaredQualType") in ("unsigned int", "unsigned long long"),
+                        and node.get("type", {}).get("desugaredQualType") in (("int", "unsigned int", "unsigned long long") if relative else ("unsigned int", "unsigned long long")),
                         "native_pointer_or_unknown_cast")
                 scalar(children(node)[0]); return
             raise Refusal("native_unbound_scalar_structure:" + str(node.get("kind")))
@@ -467,11 +482,20 @@ def native_audit(compiler, source, repo):
             require(node.get("kind") not in ("CallExpr", "CXXMemberCallExpr", "ArraySubscriptExpr",
                     "CXXReinterpretCastExpr", "CStyleCastExpr", "UnaryOperator", "LambdaExpr"),
                     "native_call_pointer_or_address_structure:" + str(node.get("kind")))
-    return {"status": "PASS", "scope": "closed typed owner/u32 field/u64 scalar effects; no helper calls, pointers or array addressing"}
+    return {"status": "PASS", "scope": "closed typed owner/" + ("i32" if relative else "u32") + " field/u64 scalar effects; no helper calls, pointers or array addressing"}
 
 
 def verify_inputs(repo, generated, contract):
-    require(contract.get("schema") == "generated_overlay_initializer_contract_v1", "unsupported_contract_schema")
+    relative = contract.get("schema") == "generated_relative_receiver_contract_v1"
+    require(relative or contract.get("schema") == "generated_overlay_initializer_contract_v1", "unsupported_contract_schema")
+    if relative:
+        require(len(contract["functions"]) == 1 and contract["functions"][0]["source_entry"] == "0014DE80"
+                and contract["functions"][0]["native_name"] == "invalidate_index", "unbound_relative_function_contract")
+        require(contract["receiver"]["bank"] == "r" and contract["receiver"]["index"] == 4
+                and contract["receiver"]["portion"] == "low32" and contract["receiver"]["owner_type"] == "IndexSelection"
+                and contract["receiver"]["saved_state_source"] == {"gp_offset": -24880, "pointer_width": 32}
+                and contract["fields"] == [{"source_offset": 3240, "owner_type": "IndexSelection", "name": "index", "type": "i32"}],
+                "unbound_relative_receiver_contract")
     require(contract["liveout"] == {"bank": "r", "index": 3, "portion": "low64", "native_type": "u64",
             "scope": "Explicit V1 low64 clobber projection, not V0/C ABI boolean return"}, "unsupported_liveout_contract")
     for name, expected in contract["header_pins"].items():
@@ -494,6 +518,17 @@ def verify_inputs(repo, generated, contract):
         require(matches == [int(row["word"], 16)], "original_caller_word:" + row["address"])
     for fn in contract["functions"]:
         require(digest(generated / fn["generated_unit"]) == fn["source_unit_sha256"], "generated_unit_identity:" + fn["module"])
+        if relative:
+            entry = int(fn["source_entry"], 16)
+            spans = []
+            for i in range(count):
+                kind, offset, base, _, extent, *_ = struct.unpack_from("<8I", elf, phoff + i * phsize)
+                if kind == 1 and base <= entry and entry + 12 <= base + extent:
+                    spans.append(elf[offset + entry-base:offset + entry-base+12])
+            require(len(spans) == 1 and hashlib.sha256(spans[0]).hexdigest() == fn["original_body_sha256"]
+                    and list(struct.unpack("<3I", spans[0])) == [int(w, 16) for w in fn["original_words"]],
+                    "original_relative_body_contract")
+            continue
         module = (repo / fn["module_path"]).resolve()
         require(digest(module) == fn["module_sha256"] and module.stat().st_size == fn["module_size"], "original_module_identity")
         data = module.read_bytes()
@@ -603,8 +638,8 @@ def self_tests(functions, definitions, contract, compiler, out_dir, repo):
     return {"status": "PASS", "cases": passed}
 
 
-def publish_outputs(out_dir, candidate, replace):
-    names = ("native_overlay_initializers.hpp", "native_overlay_initializers.cpp", "transform_proof.json")
+def publish_outputs(out_dir, candidate, replace, names=None):
+    names = names or ("native_overlay_initializers.hpp", "native_overlay_initializers.cpp", "transform_proof.json")
     for name in names:
         path = out_dir / name
         if path.exists() and path.read_bytes() != (candidate / name).read_bytes():
@@ -625,6 +660,61 @@ def publish_outputs(out_dir, candidate, replace):
             publish_new_or_identical(out_dir / name, (candidate / name).read_bytes())
 
 
+def relative_self_tests(functions, definitions, contract, compiler, out_dir, repo):
+    passed = []
+    def refuses(name, callback):
+        try:
+            callback()
+        except Refusal as error:
+            passed.append({"name": name, "result": "EXPECTED_REFUSAL", "reason": str(error)})
+            return
+        raise Refusal("self_test_false_success:" + name)
+    desc, original = contract["functions"][0], definitions[0]
+    def selected_call(definition, helper):
+        pc = int(desc["source_entry"], 16) + (4 if helper == "st32" else 0)
+        body = next(n for n in children(definition) if n.get("kind") == "CompoundStmt")
+        begin = next(i for i, n in enumerate(children(body)) if n.get("kind") == "LabelStmt" and n.get("name") == f"L_{pc:08X}")
+        for i, statement in enumerate(children(body)[begin:]):
+            if i and statement.get("kind") == "LabelStmt":
+                break
+            for node in walk(statement):
+                if node.get("kind") == "CallExpr" and declaration(children(node)[0]).get("name") == helper:
+                    return node
+        raise Refusal("relative_self_test_selected_call_missing:" + helper)
+    changed = copy.deepcopy(original)
+    call = selected_call(changed, "set32")
+    literal_node = [n for n in walk(children(call)[2]) if n.get("kind") == "IntegerLiteral"][-1]
+    literal_node["value"] = "2"
+    ir = Lowering(changed, desc, contract).lower()
+    require(ir["values"][-1]["constant_value"] == 0xfffffffffffffffe, "relative_AST_value_not_derived")
+    passed.append({"name": "actual_AST_negative_constant_mutation", "result": "DERIVED_VALUE_CHANGED"})
+    for name, change in (("wrong_relative_field", "offset"), ("wrong_receiver_register", "base"), ("renamed_store", "helper")):
+        changed = copy.deepcopy(original)
+        call = selected_call(changed, "st32")
+        if change == "offset":
+            node = [n for n in walk(children(call)[1]) if n.get("kind") == "IntegerLiteral"][-1]
+            node["value"] = str(int(node["value"]) + 4)
+        elif change == "base":
+            node = next(n for n in walk(children(call)[1]) if n.get("kind") == "IntegerLiteral" and n.get("value") == "4")
+            node["value"] = "5"
+        else:
+            declaration(children(call)[0])["name"] = "innocuous_accessor"
+        refuses(name, lambda changed=changed: Lowering(changed, desc, contract).lower())
+    _, source = emit(functions, True)
+    plants = {
+        "renamed_flat_memory_disguise": ('static unsigned char store[33554432];\nstatic void innocuous(unsigned v){store[v]=1;}\n', '    innocuous(17);\n'),
+        "pointer_alias_disguise": ('', '    auto q = reinterpret_cast<unsigned*>(&selection); q[0]=1;\n'),
+        "array_field_disguise": ('', '    static unsigned words[16]; words[0]=1;\n'),
+    }
+    for name, (declarations, effect) in plants.items():
+        text = source.replace('namespace mka::retail::generated {\n', 'namespace mka::retail::generated {\n' + declarations, 1)
+        text = text.replace(' noexcept {\n', ' noexcept {\n' + effect, 1)
+        path = out_dir / ('planted_' + name + '.cpp')
+        publish_new_or_identical(path, text)
+        refuses(name, lambda path=path: native_audit(compiler, path, repo, True))
+    return {"status": "PASS", "cases": passed}
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", type=Path, default=Path(__file__).resolve().parents[2])
@@ -635,15 +725,17 @@ def main(argv=None):
     parser.add_argument("--self-test", action="store_true")
     parser.add_argument("--replace-generated", action="store_true")
     parser.add_argument("--audit-native", type=Path)
+    parser.add_argument("--audit-index-native", type=Path)
     args = parser.parse_args(argv)
     repo = args.repo.resolve()
     compiler = (args.compiler or repo.parents[3] / "dependencies/compiler/llvm-mingw-20261006-ucrt-x86_64/bin/clang++.exe").resolve()
     require(compiler.is_file(), "clang_compiler_missing")
-    if args.audit_native:
-        source = args.audit_native.resolve()
+    if args.audit_native or args.audit_index_native:
+        relative = bool(args.audit_index_native)
+        source = (args.audit_index_native or args.audit_native).resolve()
         if source.is_dir():
-            source /= "native_overlay_initializers.cpp"
-        result = native_audit(compiler, source, repo)
+            source /= "native_index_selection.cpp" if relative else "native_overlay_initializers.cpp"
+        result = native_audit(compiler, source, repo, relative)
         print(json.dumps({"schema": "native_overlay_ast_audit_v1", **result, "source_sha256": digest(source)}))
         return 0
     require(args.out_dir is not None, "out_dir_required")
@@ -651,6 +743,7 @@ def main(argv=None):
     contract_path = (args.contract or repo / "recomp/overlay_initializer_contract.json").resolve()
     contract = json.loads(contract_path.read_text())
     verify_inputs(repo, generated, contract)
+    relative = contract["schema"] == "generated_relative_receiver_contract_v1"
     functions, definitions = [], []
     for descriptor in contract["functions"]:
         roots = clang_ast(compiler, generated / descriptor["generated_unit"],
@@ -658,7 +751,7 @@ def main(argv=None):
         definition = function_definition(roots, descriptor["unit_name"])
         definitions.append(definition)
         functions.append((descriptor, Lowering(definition, descriptor, contract).lower()))
-    header, source = emit(functions)
+    header, source = emit(functions, relative)
     out_dir = args.out_dir.resolve()
     require(out_dir != generated and not generated.is_relative_to(out_dir)
             and not out_dir.is_relative_to(generated), "output_overlaps_AOT_inputs")
@@ -669,20 +762,23 @@ def main(argv=None):
     out_dir.mkdir(parents=True, exist_ok=True)
     candidate = out_dir / ("candidate-" + uuid.uuid4().hex)
     candidate.mkdir()
-    publish_new_or_identical(candidate / "native_overlay_initializers.hpp", header)
-    publish_new_or_identical(candidate / "native_overlay_initializers.cpp", source)
-    audit = native_audit(compiler, candidate / "native_overlay_initializers.cpp", repo)
-    tests = self_tests(functions, definitions, contract, compiler, candidate, repo) if args.self_test else {"status": "NOT_REQUESTED"}
+    stem = "native_index_selection" if relative else "native_overlay_initializers"
+    proof_name = "index_transform_proof.json" if relative else "transform_proof.json"
+    publish_new_or_identical(candidate / (stem + ".hpp"), header)
+    publish_new_or_identical(candidate / (stem + ".cpp"), source)
+    audit = native_audit(compiler, candidate / (stem + ".cpp"), repo, relative)
+    tester = relative_self_tests if relative else self_tests
+    tests = tester(functions, definitions, contract, compiler, candidate, repo) if args.self_test else {"status": "NOT_REQUESTED"}
     proof = {
-        "schema": "actual_generated_cpp_overlay_transform_v1", "status": "PASS",
-        "scope": "Two actual generated initializer CFGs to typed native field/SSA; no native-game integration or whole-game acceptance",
+        "schema": "actual_generated_cpp_relative_receiver_transform_v1" if relative else "actual_generated_cpp_overlay_transform_v1", "status": "PASS",
+        "scope": "One generated signed-index leaf to typed receiver field; prototype only, no production caller adoption" if relative else "Two actual generated initializer CFGs to typed native field/SSA; no native-game integration or whole-game acceptance",
         "tool_sha256": digest(__file__), "contract_sha256": digest(contract_path),
         "compiler_sha256": digest(compiler),
         "functions": [{"module": d["module"], "source_entry": d["source_entry"].lower(),
                        "native_name": d["native_name"], "source_unit_sha256": d["source_unit_sha256"],
-                       "original_module_sha256": d["module_sha256"], "selected_entry_case": d["entry_case"],
+                       "original_module_sha256": d.get("module_sha256", contract["original_caller"]["elf_sha256"]), "selected_entry_case": d["entry_case"],
                        "typed_ir": ir} for d, ir in functions],
-        "outputs": {n: digest(candidate / n) for n in ("native_overlay_initializers.hpp", "native_overlay_initializers.cpp")},
+        "outputs": {n: digest(candidate / n) for n in (stem + ".hpp", stem + ".cpp")},
         "AST_admission": {"status": "PASS", "input": "Clang semantic JSON AST of actual pinned generated units",
                           "unknown_memory": "unbound_memory", "unknown_calls": "unbound_call",
                           "struct_pointer_vtable_indirect": "unbound_indirect_target"},
@@ -692,9 +788,9 @@ def main(argv=None):
         "Contradictions with earlier documents": ["Word-decoder typed frontend alone is not generated-C++ AST transformation"],
         "Falsification attempts": tests,
     }
-    publish_new_or_identical(candidate / "transform_proof.json", json.dumps(proof, indent=2) + "\n")
-    publish_outputs(out_dir, candidate, args.replace_generated)
-    print(json.dumps({"schema": proof["schema"], "status": "PASS", "proof_sha256": digest(out_dir / "transform_proof.json"),
+    publish_new_or_identical(candidate / proof_name, json.dumps(proof, indent=2) + "\n")
+    publish_outputs(out_dir, candidate, args.replace_generated, (stem + ".hpp", stem + ".cpp", proof_name))
+    print(json.dumps({"schema": proof["schema"], "status": "PASS", "proof_sha256": digest(out_dir / proof_name),
                       "outputs": proof["outputs"], "functions": [{k: v for k, v in f.items() if k != "typed_ir"} for f in proof["functions"]]}))
     return 0
 

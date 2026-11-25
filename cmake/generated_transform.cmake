@@ -7,6 +7,47 @@ set(_overlay_transform_script "${CMAKE_SOURCE_DIR}/tools/research/transform_gene
 set(_overlay_transform_contract "${CMAKE_SOURCE_DIR}/recomp/overlay_initializer_contract.json")
 set(_overlay_generated_dir "${CMAKE_SOURCE_DIR}/build/generated-aot/phase4-all")
 file(GLOB_RECURSE _overlay_ast_headers CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/runtime/include/*.hpp")
+if(TARGET mka_native_retail_startup)
+    foreach(_overlay_unit m_GAMER_unit_0000.cpp m_MOVIER_unit_0021.cpp units.hpp)
+        if(NOT EXISTS "${_overlay_generated_dir}/${_overlay_unit}")
+            message(FATAL_ERROR "Native retail startup requires authenticated generated overlay input: ${_overlay_generated_dir}/${_overlay_unit}. Run tools/research/reproduce_aot_pipeline.py first.")
+        endif()
+    endforeach()
+endif()
+
+# Separate offline relative-receiver prototype. This adds no production caller
+# or source-layout compatibility struct; the native owner is one signed field.
+set(_index_transform_dir "${CMAKE_CURRENT_BINARY_DIR}/native-index-selection")
+set(_index_transform_contract "${CMAKE_SOURCE_DIR}/recomp/index_selection_contract.json")
+add_custom_command(
+    OUTPUT "${_index_transform_dir}/native_index_selection.cpp"
+           "${_index_transform_dir}/native_index_selection.hpp"
+           "${_index_transform_dir}/index_transform_proof.json"
+    COMMAND "${CMAKE_COMMAND}" -E make_directory "${_index_transform_dir}"
+    COMMAND "${Python3_EXECUTABLE}" -B "${_overlay_transform_script}"
+        --compiler "${CMAKE_CXX_COMPILER}" --generated-dir "${_overlay_generated_dir}"
+        --contract "${_index_transform_contract}" --out-dir "${_index_transform_dir}"
+        --self-test --replace-generated
+    DEPENDS "${_overlay_transform_script}" "${_index_transform_contract}"
+        "${_overlay_generated_dir}/unit_0013.cpp" "${_overlay_generated_dir}/units.hpp" ${_overlay_ast_headers}
+    VERBATIM COMMENT "Transform original generated signed-index leaf to typed native field")
+add_library(mka_transformed_index_selection STATIC EXCLUDE_FROM_ALL "${_index_transform_dir}/native_index_selection.cpp")
+target_include_directories(mka_transformed_index_selection PUBLIC "${_index_transform_dir}")
+target_compile_features(mka_transformed_index_selection PUBLIC cxx_std_20)
+if(MSVC)
+    target_compile_options(mka_transformed_index_selection PRIVATE /W4 /WX)
+else()
+    target_compile_options(mka_transformed_index_selection PRIVATE -Wall -Wextra -Werror)
+endif()
+if(TARGET ps2_phase4_aot)
+    add_executable(test_phase5_index_transform EXCLUDE_FROM_ALL
+        tests/test_phase5_index_transform.cpp
+        "${CMAKE_SOURCE_DIR}/build/generated-aot/vu1/vu1_table.cpp"
+        runtime/src/dispatch.cpp runtime/src/observer_hook.cpp runtime/src/native_hook.cpp
+        runtime/src/cop.cpp runtime/src/vu_micro.cpp)
+    target_include_directories(test_phase5_index_transform PRIVATE runtime/include runtime/src)
+    target_link_libraries(test_phase5_index_transform PRIVATE ps2_phase4_aot mka_transformed_index_selection)
+endif()
 add_custom_command(
     OUTPUT "${_overlay_transform_dir}/native_overlay_initializers.cpp"
            "${_overlay_transform_dir}/native_overlay_initializers.hpp"
@@ -32,8 +73,13 @@ else()
     target_compile_options(mka_transformed_overlay_initializers PRIVATE -Wall -Wextra -Werror)
 endif()
 
+if(TARGET mka_native_retail_startup)
+    target_link_libraries(mka_native_retail_startup PUBLIC mka_transformed_overlay_initializers)
+endif()
+
 # Guest state belongs exclusively to this differential test's reference side.
 # It is not linked into the transformed native library.
+if(TARGET ps2_phase4_aot)
 add_executable(test_phase5_generated_transform EXCLUDE_FROM_ALL
     tests/test_phase5_generated_transform.cpp
     "${CMAKE_SOURCE_DIR}/build/generated-aot/vu1/vu1_table.cpp"
@@ -42,3 +88,4 @@ add_executable(test_phase5_generated_transform EXCLUDE_FROM_ALL
 target_include_directories(test_phase5_generated_transform PRIVATE runtime/include runtime/src)
 target_link_libraries(test_phase5_generated_transform PRIVATE
     ps2_phase4_aot mka_transformed_overlay_initializers)
+endif()

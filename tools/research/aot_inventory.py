@@ -13,6 +13,8 @@ import json
 from pathlib import Path
 import re
 import struct
+import copy
+import tempfile
 
 
 def sha(path: Path) -> str:
@@ -92,11 +94,22 @@ def verify_vu_snapshot_measurement(repo: Path, vu: dict) -> dict:
     raw = root / "build/oracle-telemetry"
     recorded_pairs = {"phase4-fixed-verify.json": "phase4-fixed-compiled-source.json",
                       "phase4-clean-source-verify.json": "phase4-clean-source-compiled-source.json"}
-    receipt = next((raw / name for name in recorded_pairs if (raw / name).is_file()
-                    and sha(raw / name) == evidence["receipt_sha256"]), None)
+    if "receipt_path" in evidence or "source_manifest_path" in evidence:
+        def admitted_vu_evidence(key):
+            path = (root / evidence[key]).resolve()
+            if not path.is_relative_to(raw.resolve()) or not path.is_file():
+                raise AssertionError("VU evidence path missing or escaped telemetry")
+            return path
+        receipt = admitted_vu_evidence("receipt_path")
+        manifest = admitted_vu_evidence("source_manifest_path")
+        if sha(receipt) != evidence["receipt_sha256"]:
+            raise AssertionError("VU snapshot execution receipt changed")
+    else:
+        receipt = next((raw / name for name in recorded_pairs if (raw / name).is_file()
+                        and sha(raw / name) == evidence["receipt_sha256"]), None)
+        manifest = raw / recorded_pairs[receipt.name] if receipt is not None else None
     if receipt is None:
         raise AssertionError("VU snapshot execution receipt missing or changed")
-    manifest = raw / recorded_pairs[receipt.name]
     measured = json.loads(receipt.read_text(encoding="utf-8"))
     if not manifest.is_file() or sha(manifest) != measured["source_manifest_sha256"]:
         raise AssertionError("VU compiled-source manifest missing or changed")
@@ -148,6 +161,13 @@ def verify_transformed_functions(repo: Path, inventory: dict, rows: list[dict]) 
     if not root.is_dir():
         root = repo
     root = root.resolve()
+    additional = transform.get("additional_measurements", [])
+    extra_functions = [item for group in additional for item in group["functions"]]
+    extra_identities = [(item["module"], item["address"].lower()) for item in extra_functions]
+    if len(extra_identities) != len(set(extra_identities)) or not set(extra_identities) <= set(identities):
+        raise AssertionError("Additional transform groups overlap or are not credited functions")
+    all_functions = functions
+    functions = [item for item in functions if (item["module"], item["address"].lower()) not in extra_identities]
     measurement = transform.get("measurement", {})
     def admitted_file(relative: str) -> Path:
         path = (root / relative).resolve()
@@ -207,7 +227,129 @@ def verify_transformed_functions(repo: Path, inventory: dict, rows: list[dict]) 
         raise AssertionError("Renamed accessor was not rejected")
     if checks["native-object"]["archive_sha256"] != sha(admitted_file("b/libmka_transformed_overlay_initializers.a")) or checks["native-object"]["undefined_symbols"]:
         raise AssertionError("Transformed native archive changed or has runtime dependencies")
-    return functions
+    for group in additional:
+        verify_relative_receiver_measurement(root, admitted_file, group, originals, sha(original_manifest))
+    return all_functions
+
+
+def verify_relative_receiver_measurement(root, admitted_file, group, originals, input_manifest_sha256):
+    """Separate signed-index prototype gate; constructed cases never replace E2.
+
+    This intentionally admits only the currently bounded generated leaf. A new
+    ABI requires a new verifier, not an editable count or generic RAM adapter.
+    """
+    expected_functions = [{"module": "SLUS_214.10", "address": "0014de80", "native_name": "invalidate_index"}]
+    if group.get("schema") != "relative_receiver_measurement_v1" or group.get("functions") != expected_functions:
+        raise AssertionError("Unsupported additional transform ABI/function identity")
+    proof_path, receipt_path = (admitted_file(group[key]) for key in ("proof_path", "receipt_path"))
+    if sha(proof_path) != group["proof_sha256"] or sha(receipt_path) != group["receipt_sha256"]:
+        raise AssertionError("Relative transform proof/receipt changed")
+    proof, receipt = (json.loads(path.read_text(encoding="utf-8")) for path in (proof_path, receipt_path))
+    if receipt["status"] != "PASS" or receipt["proof_sha256"] != sha(proof_path) or receipt["functions"] != expected_functions:
+        raise AssertionError("Relative transform has no passing executed proof")
+    sources = receipt["source_sha256"]
+    if receipt["input_manifest_sha256"] != input_manifest_sha256:
+        raise AssertionError("Relative transform original input manifest changed")
+    required = {"tools/research/transform_generated_units.py", "recomp/index_selection_contract.json",
+                "tests/test_phase5_index_transform.cpp", "tests/test_phase4_aot_equivalence.cpp",
+                "b/native-index-selection/native_index_selection.cpp", "b/native-index-selection/native_index_selection.hpp",
+                "build/generated-aot/phase4-all/unit_0013.cpp"}
+    if not required <= sources.keys():
+        raise AssertionError("Relative transform omits frontend/test/native source")
+    for relative, expected in sources.items():
+        if sha(admitted_file(relative)) != expected:
+            raise AssertionError("Relative transform source changed: " + relative)
+    if sha(admitted_file(receipt["binary_path"])) != receipt["binary_sha256"]:
+        raise AssertionError("Relative transform binary changed")
+    if (proof["schema"] != "actual_generated_cpp_relative_receiver_transform_v1" or proof["status"] != "PASS"
+        or proof["tool_sha256"] != sources["tools/research/transform_generated_units.py"]
+        or proof["contract_sha256"] != sources["recomp/index_selection_contract.json"]
+        or proof["native_audit"]["status"] != "PASS" or proof["self_tests"]["status"] != "PASS"):
+        raise AssertionError("Relative transform semantic proof/audit missing")
+    if [(f["module"], f["source_entry"], f["native_name"], f["selected_entry_case"]) for f in proof["functions"]] != [("SLUS_214.10", "0014de80", "invalidate_index", 103)]:
+        raise AssertionError("Relative transform generated entry changed")
+    contract = json.loads(admitted_file("recomp/index_selection_contract.json").read_text(encoding="utf-8"))
+    original = (root / contract["original_caller"]["elf_path"]).resolve()
+    if (sha(original) != contract["original_caller"]["elf_sha256"]
+        or proof["functions"][0]["original_module_sha256"] != sha(original)
+        or proof["functions"][0]["source_unit_sha256"] != sources["build/generated-aot/phase4-all/unit_0013.cpp"]):
+        raise AssertionError("Relative transform generated/original input pin changed")
+    for name, expected in proof["outputs"].items():
+        if sources.get("b/native-index-selection/" + name) != expected:
+            raise AssertionError("Relative compiled output is not the proved output")
+    checks = {item["name"]: item for item in receipt["checks"]}
+    required_checks = {"build", "differential", "native-audit", "native-object", "wrong-value", "wrong-field"}
+    if not required_checks <= checks.keys() or any(checks[key]["status"] != "PASS" for key in required_checks):
+        raise AssertionError("Relative transform checks incomplete")
+    differential = checks["differential"]
+    states = {name.rsplit("/", 1)[-1] for name in originals if name.startswith("games/mkarmageddon/disc/states/") and name.endswith(".state")}
+    admissions = differential["state_admission"]
+    if len(admissions) != len(states) or {item["file"] for item in admissions} != states:
+        raise AssertionError("Relative transform saved-state admission census differs")
+    admitted = [item for item in admissions if item["status"] == "ADMITTED"]
+    if any(item["status"] not in ("ADMITTED", "INAPPLICABLE") for item in admissions):
+        raise AssertionError("Unknown saved-state admission result")
+    for item in admitted:
+        receiver = int(item["receiver"], 16)
+        if item["gp"] != "006540f0" or not receiver or receiver & 3 or receiver > 33554432-0xca8-8:
+            raise AssertionError("Illegal original saved-state receiver")
+    if (not admitted or differential["exit_code"] != 0 or differential["states"] != len(states)
+        or differential["admitted"] != len(admitted) or differential["inapplicable"] != len(states)-len(admitted)
+        or differential["generated_typed_comparisons"] != len(admitted) or differential["synthetic_comparisons"] != 18):
+        raise AssertionError("Constructed-only or incomplete relative E2 cannot earn credit")
+    for name in ("wrong-value", "wrong-field"):
+        if checks[name]["exit_code"] != 1:
+            raise AssertionError("Relative semantic mutation was not rejected")
+    native = checks["native-object"]
+    if native["archive_sha256"] != sha(admitted_file("b/libmka_transformed_index_selection.a")) or native["undefined_symbols"]:
+        raise AssertionError("Relative native archive changed or has runtime dependencies")
+
+
+def relative_measurement_self_tests(repo: Path, candidate_path: Path) -> dict:
+    """Replay real-source refusal controls without changing generated outputs."""
+    root = (repo / "external/forks/ps2-native-recomp").resolve()
+    if not root.is_dir():
+        root = repo.resolve()
+    parent = repo if (repo / "launchers/oracle_original_manifest.json").is_file() else root.parents[2]
+    manifest = parent / "launchers/oracle_original_manifest.json"
+    originals = json.loads(manifest.read_text(encoding="utf-8"))
+    candidate = json.loads(candidate_path.read_text(encoding="utf-8"))
+    differential = next(item for item in candidate["checks"] if item["name"] == "differential")
+    if differential["admitted"] != 0 or differential["inapplicable"] != 61:
+        raise AssertionError("Control requires the measured zero-admission corpus receipt")
+    proof = root / "b/native-index-selection/index_transform_proof.json"
+    outcomes = []
+    with tempfile.TemporaryDirectory(prefix="relative-admission-control-", dir=root / "build/oracle-telemetry") as temporary:
+        planted_path = Path(temporary) / "planted.json"
+        def admitted(relative):
+            path = (root / relative).resolve()
+            if not path.is_relative_to(root) or not path.is_file():
+                raise AssertionError("Control input escaped checkout")
+            return path
+        forged = copy.deepcopy(candidate)
+        forged["status"] = "PASS"
+        check = next(item for item in forged["checks"] if item["name"] == "differential")
+        check.update(status="PASS", exit_code=0)
+        changed = copy.deepcopy(forged)
+        changed["source_sha256"]["b/native-index-selection/native_index_selection.cpp"] = "0" * 64
+        for label, receipt, rejection in (
+            ("forged PASS with zero actual saved-state admissions", forged, "Constructed-only or incomplete relative E2 cannot earn credit"),
+            ("changed generated native output digest", changed, "Relative transform source changed: b/native-index-selection/native_index_selection.cpp"),
+        ):
+            planted_path.write_text(json.dumps(receipt), encoding="utf-8")
+            group = {"schema": "relative_receiver_measurement_v1", "functions": candidate["functions"],
+                     "proof_path": proof.relative_to(root).as_posix(), "proof_sha256": sha(proof),
+                     "receipt_path": planted_path.relative_to(root).as_posix(), "receipt_sha256": sha(planted_path)}
+            try:
+                verify_relative_receiver_measurement(root, admitted, group, originals, sha(manifest))
+            except AssertionError as error:
+                if str(error) != rejection:
+                    raise AssertionError("Control failed at an unintended gate: " + str(error)) from error
+                outcomes.append({"plant": label, "status": "PASS", "rejection": str(error)})
+            else:
+                raise AssertionError("Relative measurement admitted " + label)
+    return {"status": "PASS", "candidate_receipt_sha256": sha(candidate_path),
+            "verifier_sha256": sha(Path(__file__)), "controls": outcomes, "credit_added": 0}
 
 
 def classify_vu_inputs(actual: dict, legacy: dict, rejected: dict) -> tuple[dict, dict]:
@@ -394,7 +536,19 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--relative-self-test", type=Path)
     args = parser.parse_args()
+    if args.relative_self_test:
+        active = (args.repo / "external/forks/ps2-native-recomp").resolve()
+        if not active.is_dir():
+            active = args.repo.resolve()
+        target = args.output.resolve()
+        if target.exists() or not target.is_relative_to(active / "build/oracle-telemetry"):
+            raise AssertionError("Control output must be a new ignored telemetry file")
+        result = relative_measurement_self_tests(args.repo, args.relative_self_test)
+        target.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8", newline="\n")
+        print(json.dumps(result))
+        raise SystemExit(0)
     result = update_inventory(args.repo, args.output)
     print(json.dumps({name: {"callable": len(value["callable_catalogue_entries"]),
                             "missing": len(value["missing_catalogue_entries"])}

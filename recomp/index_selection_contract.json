@@ -1,0 +1,60 @@
+{
+  "schema": "generated_relative_receiver_contract_v1",
+  "scope": "Offline typed field projection for one original generated leaf; no full class or production caller adoption",
+  "functions": [
+    {
+      "module": "SLUS_214.10",
+      "native_name": "invalidate_index",
+      "unit_name": "unit_0013",
+      "entry_case": 103,
+      "source_entry": "0014DE80",
+      "generated_unit": "unit_0013.cpp",
+      "source_unit_sha256": "3f32b251d3a573668b3c09f200443162519f4d051cb2377e9609707e4c1ca46f",
+      "original_body_sha256": "cdaf3df10a9ec53c156972f187257103d06432ff6dd262e69fa087ee23fdadab",
+      "original_words": ["2403FFFF", "03E00008", "AC830CA8"]
+    }
+  ],
+  "source_gp": "006540F0",
+  "receiver": {
+    "bank": "r",
+    "index": 4,
+    "portion": "low32",
+    "owner_type": "IndexSelection",
+    "scope": "Native projection of the original receiver's one signed-index field, not its complete object layout",
+    "saved_state_source": {"gp_offset": -24880, "pointer_width": 32},
+    "admission": "Original GP matches source GP, pointer from GP[-0x6130] is nonzero/aligned and its +0xCA8 field lies inside RAM; otherwise explicitly inapplicable"
+  },
+  "fields": [{"source_offset": 3240, "owner_type": "IndexSelection", "name": "index", "type": "i32"}],
+  "aliasing": "One receiver field and no additional pointer inputs or outputs. The offline adapter compares all RAM bytes, including both neighboring canaries; no whole-object host representation is invented.",
+  "liveout": {"bank": "r", "index": 3, "portion": "low64", "native_type": "u64", "scope": "Explicit V1 low64 clobber projection, not V0/C ABI boolean return"},
+  "return_abi": {"alignment": 4, "source_register": 31, "known_caller_return": "001F8124", "unknown_struct_pointers": "unbound_memory", "unknown_vtable_or_indirect": "unbound_indirect_target"},
+  "original_caller": {
+    "elf_path": "../../../research/inputs/SLUS_214.10",
+    "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+    "words": [
+      {"address": "001F811C", "word": "0C0537A0"},
+      {"address": "001F8120", "word": "8F849ED0"},
+      {"address": "001F8124", "word": "DFBF0000"},
+      {"address": "00207D90", "word": "8E830CA8"},
+      {"address": "00207D94", "word": "2402FFFF"},
+      {"address": "00207D98", "word": "5062000D"},
+      {"address": "00207DA4", "word": "00031040"},
+      {"address": "00207DA8", "word": "00431821"},
+      {"address": "00207DB0", "word": "000318C0"},
+      {"address": "00207DFC", "word": "2BC20165"},
+      {"address": "00207E08", "word": "2BC1017E"}
+    ],
+    "scope": "Original caller loads receiver from GP[-0x6130] in executed JAL delay. Consumer reads +0xCA8, compares signed -1, indexes 24-byte records and performs signed integer bounds tests. No pointer-valued field claim."
+  },
+  "helper_contracts": {
+    "set32": {"type": "void (Reg128 &, std::uint32_t)", "effect": "sign_extend_u32_to_low64_preserve_upper64"},
+    "st32": {"type": "void (std::uint32_t, std::uint32_t)", "effect": "store_u32_bits_to_bound_relative_i32_field"},
+    "stop": {"type": "void (Cpu &, std::uint32_t, const char *)", "effect": "alignment_guard_only"}
+  },
+  "header_pins": {
+    "runtime/include/ps2/cpu.hpp": "98c526abab1051a79e15315c21ccf8b8aa30b1c4b371cd757ae583f8199e4492",
+    "runtime/include/ps2/generated.hpp": "48e79a9fe4513ccb655f6d96a28541f9dac08b399c44b1016b6f723575f63467",
+    "runtime/include/ps2/memory.hpp": "ba03fd3b4b83d3ad692ba52b335e204447172b5a58634206aecfa4777431472b"
+  },
+  "generated_header_pins": {"units.hpp": "7f5246dc42443a79a6a4f9d23a34c8a7dc8c95f57df5cf1f9d6ee2623748e1e4"}
+}
