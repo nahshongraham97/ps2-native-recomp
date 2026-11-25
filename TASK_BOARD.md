@@ -73,7 +73,7 @@ archived at `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
 > [!NOTE]
 > **Historical Phase 3 Pipeline, Multi-Tier Ledger & Classification — callable coverage superseded by the current generated block**:
-> Reproducible fresh-clone build of `eerecomp` & `vurecomp` verified (`311` static `SLUS_214.10` units covering `13,138 / 13,138` base functions; `493` VU1 keys from `211` captures reconciling `490` legacy & `44` oracle DLLs). Compact `progress.svg` (<15 KB) and multi-tier ledger generated across `README.md`, `TASK_BOARD.md`, and `PORT_STATUS.md` with Xbox reference line (zero `%`). All `17,510` functions and `23` native modules classified in `function_classification_inventory.json` and `native_module_classification.json`; legacy/noncompliant checkouts removed after relocating protected assets (`Phase 3` cleanup).
+> Fresh-clone EE/VU generation was verified at that checkpoint. Its former base-function coverage claim used unit ranges and was invalidated; the current generated block measures actual callable entries. The dated VU reconciliation, source inventories and three-way role partition remain historical evidence. That role partition does not establish exact RenderWare library ownership. Current counts and the unresolved Phase 6 census are recorded above.
 
 Close a row only with the ROADMAP evidence and a same-build run record.
 No owner launch is a task while any row remains open.
