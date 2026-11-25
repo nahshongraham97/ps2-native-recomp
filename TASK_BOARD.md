@@ -6,14 +6,16 @@ each deliverable's verified component progress and whole-game acceptance state;
 [PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is archived at
 `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
-**Phase 6 resumes with 15,572 callable entries whose library ownership is unresolved.** The four latest admissions are static source-role checks against retail instructions. Only the camera view-window setter also has an independently inspected Xbox counterpart. All four native ledger rows are open. Continue with the available PS2 caller and body evidence. The [Phase 6 verification record](https://github.com/nahshongraham97/armageddon-reimplementation/blob/main/research/runs/phase4-aot-completion-20261124/VERIFICATION.json) preserves the candidate list, retail version bounds, Xbox provenance and rejected matches. Run `measure_renderer_scope.py --require-exact-renderware` and publish a passing checkpoint before Phase 7.
+**Resume at Step H after the start-of-work checkpoint is published.** Reconcile current documents, publish the bounded ownership census, then run the transform scale-out study. Each Phase 7 replacement requires its own ownership evidence and differential test. The exact RenderWare census remains a strict diagnostic.
+
+R192 supplies gameplay and telemetry evidence. The November 10 playable milestone supplies saved-state and hash parity. Kombat Practice is a historical snapshot. The primary oracle designation is **pending owner confirmation**.
 
 <!-- PROGRESS:START -->
 ## Native Reimplementation Progress & Multi-Tier Ledger
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`405bf00a`](https://github.com/nahshongraham97/ps2-native-recomp/commit/405bf00acce22c861afe98bdf5d61ec41ab6a4e7) (pinned active fork)
+**Verified Fork Commit**: [`d16fe28e`](https://github.com/nahshongraham97/ps2-native-recomp/commit/d16fe28eb0f926c9e3c10c2a30db67b4193405c4) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
