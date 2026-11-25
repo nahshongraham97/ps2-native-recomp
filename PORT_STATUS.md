@@ -5,7 +5,7 @@
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`924b1ae1`](https://github.com/nahshongraham97/ps2-native-recomp/commit/924b1ae1ed1bb6051d2e83d17db38d835ec44dc1) (pinned active fork)
+**Verified Fork Commit**: [`acda180e`](https://github.com/nahshongraham97/ps2-native-recomp/commit/acda180ea7385d5690acd0fcf1b457fc96d6b5cc) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
@@ -42,7 +42,7 @@
 <!-- PROGRESS:END -->
 
 <!-- RENDERER_SCOPE:START -->
-> **Phase 6 renderer scope remains open.** Retail plugin diagnostics and registry calls now identify 77 catalogued engine-family entries. All 77 have exact AOT entries. The generator also emits 23 source-proved entry points outside the catalogue. Of the 15,670 in-scope rows, 15,669 have callable AOT entries and one is authenticated descriptor data. Library ownership still requires evidence for 15,592 callable rows outside the identified families. Phase 7 awaits the exact ownership result. The recommended path retains native GPU services and transforms generated renderer logic.
+> **Phase 6 renderer scope remains open.** Original retail control flow, callback records and the PS2 SDK reference identify 93 catalogued engine-family functions. All 93 have exact callable AOT entries. The same generator emits 25 further verified entry points outside the catalogue. The raw in-scope catalogue contains 15,669 callable entries and one descriptor. Library membership remains unresolved for 15,576 callable rows outside the identified families. Continue with generated renderer logic and the existing native GPU services.
 <!-- RENDERER_SCOPE:END -->
 
 > [!NOTE]

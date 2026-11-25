@@ -11,7 +11,7 @@ The target architecture uses AOT static C++ transformed to typed native memory a
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`924b1ae1`](https://github.com/nahshongraham97/ps2-native-recomp/commit/924b1ae1ed1bb6051d2e83d17db38d835ec44dc1) (pinned active fork)
+**Verified Fork Commit**: [`acda180e`](https://github.com/nahshongraham97/ps2-native-recomp/commit/acda180ea7385d5690acd0fcf1b457fc96d6b5cc) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
@@ -64,7 +64,7 @@ Read in order:
 The protected duplicate oracle game copy is `external/forks/ps2-native-recomp-backup-20261110/`. Preserve it along with all user saves, memory cards, key files, and model settings; noncompliant local commits and dirty files are discarded per `DECISION_OWNER_CORRECTIONS_20261124.json`.
 Historical logs and experiments live in `research/runs/` and `research/history/`; they are evidence for dated builds, never live instructions. The consolidated status archive lives in `research/history/superseded-status-docs-20261124/`. Retail binary assets (`.ELF`, `.xbe`, `.bin`, `.ovl`, audio/video streams) remain local and untracked.
 
-Published Phases 0–5 carry forward within their recorded evidence scope. The Phase 5 actual generated-unit prototype passes for both overlay initializers, with typed ownership, explicit scalar effects, saved-input differentials and structural guest-accessor rejection. Its measured transform tier is separate from production integration and credited implementations. The Phase 6 census covers the named renderer plugins and confirms static AOT generation for every catalogued callable. The exact RenderWare function count remains open. See the current measurement in [PORT_STATUS.md](PORT_STATUS.md). The active gameplay oracle is the R192 build identified at the top of this README.
+Published Phases 0–5 carry forward within their recorded evidence scope. The Phase 5 actual generated-unit prototype passes for both overlay initializers, with typed ownership, explicit scalar effects, saved-input differentials and structural guest-accessor rejection. Its measured transform tier is separate from production integration and credited implementations. Phase 6 identifies renderer plugins, camera and matrix operations, device requests and pipeline callbacks. Every in-scope catalogue function has a callable static AOT entry. The exact RenderWare function count remains open. See the current measurement in [PORT_STATUS.md](PORT_STATUS.md). The active gameplay oracle is the R192 build identified at the top of this README.
 
 Generation uses the user's pinned ELF, overlay captures and existing dependency packages. From the integration repository, run `python -B tools/research/reproduce_aot_pipeline.py`, regenerate with `python -B tools/research/generate_ledgers.py`, then synchronize with `python -B tools/research/sync_verify.py --sync-to-fork`. Generated retail C++ remains ignored.
 

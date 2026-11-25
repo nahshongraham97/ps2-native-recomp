@@ -3,17 +3,17 @@
 **Audited 2026-11-24. Whole-game native acceptance: OPEN.** The full instructions, order,
 files, and closure evidence are in [ROADMAP.md](ROADMAP.md). This board indexes
 each deliverable's verified component progress and whole-game acceptance state;
-[PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is
-**Resume Phase 6 at the original PS2 link or object evidence for the remaining callable entries.** The retail plugin-attachment caller at `00126420`, its six traced renderer families and their core callbacks are measured. The retail symbol table is empty. The reference SDK comparison did not identify the complete library. Join additional object signatures or matching build symbols to the pinned retail image, account for unmatched entries, then run `measure_renderer_scope.py --require-exact-renderware`. Phase 7 begins after the exact census passes and Phase 6 is published.
+[PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is archived at
+`research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
-archived at `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
+**Resume Phase 6 with the remaining library ownership evidence.** The SDK camera sample, Function ID checks and BSim candidate list are pinned in the existing Phase 6 verification record. The retail camera, matrix, device and pipeline roles were checked against the original instructions. Use the saved candidate addresses with their SDK member names to verify further retail operations and callers, or authenticate a matching Midway link map or object set. Run `measure_renderer_scope.py --require-exact-renderware` and publish the passing checkpoint before Phase 7.
 
 <!-- PROGRESS:START -->
 ## Native Reimplementation Progress & Multi-Tier Ledger
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`924b1ae1`](https://github.com/nahshongraham97/ps2-native-recomp/commit/924b1ae1ed1bb6051d2e83d17db38d835ec44dc1) (pinned active fork)
+**Verified Fork Commit**: [`acda180e`](https://github.com/nahshongraham97/ps2-native-recomp/commit/acda180ea7385d5690acd0fcf1b457fc96d6b5cc) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
