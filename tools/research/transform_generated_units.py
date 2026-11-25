@@ -307,6 +307,11 @@ class SymbolicFrame:
         if decl.get('kind')!='FunctionDecl':return None
         return decl.get('name'),children(node)[1:],decl.get('type',{}).get('qualType')
 
+    def invalidate_GPR_SSA(self,reg):
+        # Reference-only frame transport/aliases do not produce a native value.
+        # MTC1 must never reuse an antecedent scalar definition after that write.
+        if getattr(self.lowering,'mtc1_original',None):self.lowering.regs.pop(reg,None)
+
     def statement(self,node):
         kind=node.get('kind');call=self.call(node)
         if call and call[0]=='set32':
@@ -323,6 +328,7 @@ class SymbolicFrame:
                          and str(offset-self.plan['frame_bytes']) in a['offsets']]
                 require(matches,'frame_AST_original_set32_alias_join_mismatch')
                 self.offsets[reg]=offset-self.plan['frame_bytes']
+                self.invalidate_GPR_SSA(reg)
                 effect={'kind':'reference_only_symbolic_frame_alias','source_pc':matches[0]['pc'],'register':reg,'offset':offset}
                 self.operations.append(effect);self.reference_effects.append(effect)
                 return True
@@ -333,6 +339,7 @@ class SymbolicFrame:
             matches=[a for a in self.adjustments if int(a['pc'],16) in self.pcs() and a['delta']==delta]
             require(matches,'frame_AST_original_SP_delta_mismatch')
             self.offsets[29]+=delta
+            self.invalidate_GPR_SSA(29)
             require(str(self.offsets[29]) in matches[0]['offsets_after'],'frame_symbolic_SP_original_join_mismatch')
             self.operations.append({'kind':'symbolic_SP_adjustment','source_pc':matches[0]['pc'],'delta':delta,'offset_from_entry_sp':self.offsets[29]})
             return True
@@ -377,6 +384,7 @@ class SymbolicFrame:
             if offset is None:return False
             reg=register_object(args[1],self.lowering.cpu);access=self.match_access(offset,128,'load',reg)
             require(ty=='void (std::uint32_t, Reg128 &)','frame_load128_helper_signature')
+            self.invalidate_GPR_SSA(reg)
             self.ref_effect(access,'reference_only_frame_transport_load');return True
         if kind=='BinaryOperator' and node.get('opcode')=='=':
             lhs,rhs=children(node)
@@ -389,6 +397,7 @@ class SymbolicFrame:
                 bits={'ld8':8,'ld16':16,'ld32':32,'ld64':64}[name]
                 require(bits==64 and width==64,'unbound_stack_direct_load_width_or_sign_semantics')
                 access=self.match_access(offset,bits,'load',reg)
+                self.invalidate_GPR_SSA(reg)
                 self.ref_effect(access,'reference_only_frame_transport_load');return True
             try:offset=self.address(rhs)
             except Refusal:return False
@@ -397,6 +406,7 @@ class SymbolicFrame:
                          and str(offset-self.plan['frame_bytes']) in a['offsets']]
                 require(matches,'frame_AST_original_alias_join_mismatch')
                 self.offsets[reg]=offset-self.plan['frame_bytes']
+                self.invalidate_GPR_SSA(reg)
                 effect={'kind':'reference_only_symbolic_frame_alias','source_pc':matches[0]['pc'],'register':reg,'offset':offset}
                 self.operations.append(effect);self.reference_effects.append(effect)
                 return True
@@ -463,6 +473,54 @@ def emit_lui_scalar_probe(binding,name):
             '    return value_0;\n}\n')
 
 
+def require_mtc1_source_expression(expression):
+    require(expression.get('type')=='u32' and
+            (expression.get('op')=='truncate32' and type(expression.get('value')) is int and expression['value']>=0
+             or expression.get('op')=='constant' and type(expression.get('value')) is int and 0<=expression['value']<=0xffffffff),
+            'mtc1_source_SSA_not_admitted_raw32')
+
+
+def bind_mtc1_assignment(node,cpu,pc,original,source_expression):
+    """Join MTC1 and its raw unsigned32 AST; never perform numeric conversion."""
+    require(pc%4==0,'mtc1_unaligned_source_pc')
+    raw=original(pc,4);require(len(raw)==4,'mtc1_short_original_word')
+    word=int.from_bytes(raw,'little')
+    require(word>>26==0x11 and word>>21&31==4 and word&0x7ff==0,'mtc1_source_not_MTC1')
+    source,destination=word>>16&31,word>>11&31
+    def raw32(n):
+        ty=n.get('type',{});return ty.get('desugaredQualType',ty.get('qualType'))=='unsigned int'
+    require(node.get('kind')=='BinaryOperator' and node.get('opcode')=='=' and len(children(node))==2,'mtc1_assignment_shape')
+    require(raw32(node),'mtc1_assignment_not_raw32')
+    lhs,rhs=children(node);lhs=unwrap(lhs)
+    require(lhs.get('kind')=='ArraySubscriptExpr' and len(children(lhs))==2 and raw32(lhs),'mtc1_destination_not_raw32')
+    bank,index=children(lhs);bank=unwrap(bank)
+    require(bank.get('kind')=='MemberExpr' and bank.get('name')=='f' and len(children(bank))==1
+            and same_parameter(children(bank)[0],cpu),'mtc1_destination_not_FPR_owner')
+    require(literal(index)==destination,'mtc1_AST_destination_word_mismatch')
+    require(rhs.get('kind')=='ImplicitCastExpr' and rhs.get('castKind')=='LValueToRValue'
+            and len(children(rhs))==1 and raw32(rhs),'mtc1_source_numeric_conversion_or_type')
+    operand=children(rhs)[0]
+    require(raw32(operand),'mtc1_source_not_raw32')
+    require(register_part(operand,cpu)==(source,32),'mtc1_AST_source_word_mismatch')
+    require_mtc1_source_expression(source_expression)
+    return {'schema':'original_AST_MTC1_raw32_v1','source_pc':f'{pc:08x}','original_word':f'{word:08x}',
+            'original_source_GPR':source,'original_destination_FPR':destination,
+            'expression':{'op':'bit_move32','type':'raw32','argument':source_expression},
+            'write_projection':{'destination':'FPR_raw32','source_GPR':'PRESERVED','other_FPRs':'PRESERVED','FCR31':'PRESERVED'},
+            'scope':'Raw bits only; no numeric conversion, arithmetic, memory, owner or complete native ABI binding.'}
+
+
+def emit_mtc1_scalar_probe(binding,name):
+    """Test-only raw-bit scalar projection; no Cpu or runtime state interface."""
+    require(re.fullmatch(r'mtc1_probe_\d+',name) is not None,'mtc1_probe_name')
+    require(binding.get('write_projection')=={'destination':'FPR_raw32','source_GPR':'PRESERVED','other_FPRs':'PRESERVED','FCR31':'PRESERVED'},'mtc1_probe_projection_unproved')
+    expression=binding.get('expression',{})
+    require(expression.get('op')=='bit_move32' and expression.get('type')=='raw32'
+            and expression.get('argument',{}).get('type')=='u32','mtc1_probe_requires_raw_bit_move32')
+    require_mtc1_source_expression(expression['argument'])
+    return f'std::uint32_t {name}(std::uint32_t source_bits) noexcept {{ return source_bits; }}\n'
+
+
 class Lowering:
     """Selected-CFG semantic lowering. No name-to-retail-body templates."""
     def __init__(self, function, descriptor, contract):
@@ -478,6 +536,7 @@ class Lowering:
         self.frame = SymbolicFrame(self,descriptor['_frame_original'],descriptor['_frame_plan']) if '_frame_plan' in descriptor else None
         self.data_symbols=BorrowedReferenceSymbols(self,descriptor['_data_symbol_image'],descriptor.get('_data_symbol_claim')) if '_data_symbol_image' in descriptor else None
         self.lui_original=descriptor.get('_lui_original');self.lui_bindings=[]
+        self.mtc1_original=descriptor.get('_mtc1_original');self.mtc1_bindings=[];self.fprs={}
 
     def expression(self, node):
         node = unwrap(node)
@@ -515,6 +574,7 @@ class Lowering:
         if op == "sign_extend32":
             word = self.evaluate(expression["argument"]) & 0xffffffff
             return (word if word < 0x80000000 else word - 0x100000000) & 0xffffffffffffffff
+        if op == 'bit_move32':return self.evaluate(expression['argument']) & 0xffffffff
         a, b = [self.evaluate(x) for x in expression["arguments"]]
         return (a + b if op == "add32" else a - b) & 0xffffffff
 
@@ -552,6 +612,18 @@ class Lowering:
         kind = node.get("kind")
         if self.frame and self.frame.statement(node):return
         if self.data_symbols and self.data_symbols.statement(node):return
+        if self.mtc1_original and kind=='BinaryOperator' and node.get('opcode')=='=':
+            word=int.from_bytes(self.mtc1_original(self.pc,4),'little')
+            if word>>26==0x11 and word>>21&31==4:
+                source=word>>16&31
+                require(source==0 or source in self.regs,'mtc1_unbound_GPR_value_ABI:register_'+str(source))
+                expression={'op':'constant','type':'u32','value':0} if source==0 else {'op':'truncate32','type':'u32','value':self.regs[source]}
+                binding=bind_mtc1_assignment(node,self.cpu,self.pc,self.mtc1_original,expression)
+                value={'id':len(self.values),'type':'raw32','expression':binding['expression'],
+                       'constant_value':self.evaluate(binding['expression']),'source_pc':binding['source_pc']}
+                self.values.append(value);self.fprs[binding['original_destination_FPR']]=value['id']
+                self.effects.append({'kind':'define_FPR_raw32','value':value['id'],'source_pc':binding['source_pc']})
+                self.mtc1_bindings.append(binding);return
         if self.lui_original and kind=='BinaryOperator' and node.get('opcode')=='=':
             word=int.from_bytes(self.lui_original(self.pc,4),'little')
             if word>>26==0x0f:
@@ -668,6 +740,7 @@ class Lowering:
         if self.frame:result['frame']=self.frame.report()
         if self.data_symbols:result['retail_data_symbols']=self.data_symbols.report()
         if self.lui_original:result['lui_bindings']=self.lui_bindings
+        if self.mtc1_original:result['mtc1_bindings']=self.mtc1_bindings
         return result
 
 
@@ -679,6 +752,7 @@ def emit(functions, relative=False):
               f"struct {owner} {{ {field}{{}}; }};\n")
     source = f'#include "{filename}"\n\nnamespace mka::retail::generated {{\n'
     for desc, ir in functions:
+        require(not ir.get('mtc1_bindings'),'native_emission_unbound_FPR_liveout_or_function_ABI')
         symbols=ir.get('retail_data_symbols')
         if symbols:
             require(not symbols['effects'] and not symbols['native_emission_blockers'],'native_emission_unbound_borrowed_reference_owner_or_pointee')

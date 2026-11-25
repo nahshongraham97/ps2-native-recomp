@@ -6,7 +6,7 @@ each deliverable's verified component progress and whole-game acceptance state;
 [PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is archived at
 `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
-**Current work follows A1 dependencies.** Phase 5S.6 LUI constant binding is the active bounded step. Its ownership check, unchanged 39-probe cohort, positive controls, instruction-extension tests, 101 unproved callee-return contracts, baseline and publication status are recorded in the existing parent work-item `research/runs/phase4-aot-completion-20261124/VERIFICATION.json`, section `instruction_phase5S.phase_5S_6_LUI_constant_binding`. Keep the original camera and GAMER setters until their whole-function ownership/transformation/differential gates pass. Callee-return discharge and further bindings are separate work; R192, protected saves, ownership rules and credit rules remain unchanged.
+**Current work follows A1 dependencies.** Phase 5S.7 MTC1 binding and family ranking is the active bounded step. Ownership admission, raw-bit tests, the unchanged 39 probes, two positive controls, capability-family ranking, 101 unproved callee-return contracts and publication status are recorded in the existing parent work-item `research/runs/phase4-aot-completion-20261124/VERIFICATION.json`, section `instruction_phase5S.phase_5S_7_MTC1_binding_and_ranking`. Handwritten camera and GAMER setters remain until their whole-function gates pass; ownership and credit rules are unchanged.
 
 R192 supplies gameplay and telemetry evidence. The November 10 playable milestone supplies saved-state and hash parity. Kombat Practice is a historical snapshot. The primary oracle designation is **pending owner confirmation**.
 

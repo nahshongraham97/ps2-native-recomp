@@ -204,6 +204,31 @@ def lui_outcome_controls():
             'complete15':complete,'one_failed_binding_retained':retained,'unexpected_non_LUI_change_retained':rejected}
 
 
+def mtc1_outcome_summary(results,expected,before):
+    rows=[dict(row,lui_bindings=row.get('mtc1_bindings',[])) for row in results]
+    return {key.replace('non_LUI','non_MTC1'):value.replace('_LUI_','_MTC1_') if isinstance(value,str) else value
+            for key,value in lui_outcome_summary(rows,expected,before).items()}
+
+
+def mtc1_outcome_controls():
+    before={'001a64a0':{'reason':'old','first_unlowered_pc':'001a64ac'},'ffffffff':{'reason':'old','first_unlowered_pc':None}}
+    rows=[{'address':address,**row,'mtc1_bindings':[]} for address,row in before.items()]
+    rows[0].update(reason='binding_refused')
+    failed=mtc1_outcome_summary(rows,{'001a64a0'},before)
+    if failed['actual_bound_probe_count'] or failed['actual_advanced_probe_count'] or failed['binding_failure_addresses']!=['001a64a0']:
+        raise AssertionError('MTC1 failure at same PC counted as advancement')
+    rows[0].update(mtc1_bindings=[{'proved':True}],first_unlowered_pc='001a64b0')
+    passed=mtc1_outcome_summary(rows,{'001a64a0'},before)
+    if passed['status']!='PASS_BOUNDED_INSTRUCTION_BINDING' or passed['actual_advanced_probe_count']!=1:
+        raise AssertionError('MTC1 advancement accounting failed')
+    rows[1]['reason']='unexpected'
+    unexpected=mtc1_outcome_summary(rows,{'001a64a0'},before)
+    if unexpected['unexpected_non_MTC1_changes']!=['ffffffff'] or unexpected['status']!='INCOMPLETE_OR_FAILED_MTC1_BINDING':
+        raise AssertionError('MTC1 unexpected change not retained')
+    return {'status':'PASS','failed_binding_retained':failed,'one_bound_and_advanced':passed,'unexpected_change_retained':unexpected,
+            'scope':'Synthetic outcome controls only; no extra original probes or native credit.'}
+
+
 class LUIFailureTrace(transform.Lowering):
     """Record actual propagated statement failures, without changing lowering."""
     def __init__(self,*args):self.statement_failures=[];super().__init__(*args)
@@ -618,6 +643,9 @@ def main():
     parser.add_argument('--lui-constants',action='store_true',help='Opt-in original/AST joined signed32 LUI low64 SSA binding')
     parser.add_argument('--lui-before-study',type=Path,help='Published historical S6 actual39 comparison')
     parser.add_argument('--lui-current-before-study',type=Path,help='Fresh same-source S6 report with LUI opt-in disabled')
+    parser.add_argument('--mtc1-bits',action='store_true',help='Opt-in original/AST joined GPR low32 to FPR raw32 bit-move SSA')
+    parser.add_argument('--mtc1-before-study',type=Path,help='Published historical LUI-on actual39 comparison')
+    parser.add_argument('--mtc1-current-before-study',type=Path,help='Fresh same-source LUI-on report with MTC1 disabled')
     parser.add_argument("--publish-existing-tables", action="store_true", help="Update only existing parent instruction_phase5S evidence/tables and short PORT_STATUS summary")
     parser.add_argument("--render-existing-study", type=Path, help="Render already measured39-entry evidence with current pinned positive receipts; never rerun or relabel compiler attempts")
     args = parser.parse_args()
@@ -629,6 +657,8 @@ def main():
         if not args.stack_frames or not args.symbol_before_study:raise ValueError('S6 requires separate frozen S5 evidence and frame plans')
     if args.lui_constants and (not args.borrowed_reference_map or not args.lui_before_study or not args.lui_current_before_study):
         raise ValueError('LUI opt-in requires original and fresh LUI-disabled S6 comparison reports')
+    if args.mtc1_bits and (not args.lui_constants or not args.mtc1_before_study or not args.mtc1_current_before_study):
+        raise ValueError('MTC1 requires original and same-source LUI-on/MTC1-disabled reports')
     parent = args.parent_root.resolve()
     fork = parent / "external/forks/ps2-native-recomp"
     output = args.output.resolve()
@@ -651,7 +681,7 @@ def main():
         print("RENDERED_EXISTING_MEASURED_STUDY", output, "samples39; no compiler attempts rerun")
         return
     census = json.loads(args.census.read_bytes())
-    frame_plans={};frame_before={};symbol_before={};symbol_controls=None;lui_before={};lui_current={}
+    frame_plans={};frame_before={};symbol_before={};symbol_controls=None;lui_before={};lui_current={};mtc1_before={};mtc1_current={}
     if args.stack_frames:
         if not args.frame_before_study:raise ValueError('Frame study requires the exact original39 before receipt')
         frame_data=json.loads(args.stack_frames.read_bytes())
@@ -671,6 +701,16 @@ def main():
         if len(lui_before)!=39 or lui_before.keys()!=lui_current.keys():raise ValueError('LUI comparison changed original39')
         if any((lui_before[key]['reason'],lui_before[key]['first_unlowered_pc'])!=(lui_current[key]['reason'],lui_current[key]['first_unlowered_pc']) for key in lui_before):
             raise ValueError('Fresh LUI-disabled source changed historical S6 frontiers')
+    if args.mtc1_bits:
+        for path,target in ((args.mtc1_before_study,mtc1_before),(args.mtc1_current_before_study,mtc1_current)):
+            before=json.loads(path.read_bytes())
+            if before.get('frame_stage',{}).get('stage')!='LUI_CONSTANT_BINDING_OPT_IN' or before.get('mtc1_stage'):
+                raise ValueError('MTC1 comparison requires LUI-on with MTC1 disabled')
+            if path==args.mtc1_current_before_study and (before['inputs']['transformer_sha256']!=sha(Path(transform.__file__)) or before['inputs']['study_tool_sha256']!=sha(Path(__file__))):
+                raise ValueError('MTC1 disabled comparison must use the same frozen sources')
+            target.update({row['address']:row for row in before['samples']})
+        if len(mtc1_before)!=39 or mtc1_before.keys()!=mtc1_current.keys() or any((mtc1_before[key]['reason'],mtc1_before[key]['first_unlowered_pc'])!=(mtc1_current[key]['reason'],mtc1_current[key]['first_unlowered_pc']) for key in mtc1_before):
+            raise ValueError('Fresh MTC1-disabled comparison changed published LUI39 frontiers')
     contract_path = fork / "recomp/overlay_initializer_contract.json"
     contract = json.loads(contract_path.read_bytes())
     generated = fork / "build/generated-aot/phase4-all"
@@ -762,6 +802,13 @@ def main():
             word=int.from_bytes(original(int(row['first_unlowered_pc'],16),4),'little')
             if word>>26==0x0f and word>>16&31 not in (0,28,29,31):lui_expected.add(address)
         if len(lui_expected)!=15:raise ValueError('Published original-opcode LUI target set is not the expected15')
+    mtc1_expected=set()
+    if args.mtc1_bits:
+        for address,row in mtc1_before.items():
+            if row.get('first_unlowered_pc') is None:continue
+            word=int.from_bytes(original(int(row['first_unlowered_pc'],16),4),'little')
+            if word>>26==0x11 and word>>21&31==4 and word&0x7ff==0:mtc1_expected.add(address)
+        if mtc1_expected!={'001a64a0'}:raise ValueError('Published current MTC1 first-op target set changed')
     selected_owners = {owner(address) for address in samples}
     original_features = {entry: {"instructions": 0, "gp_accesses": [], "indirect_calls": [], "wide_register_memory": [], "pointer_memory": [], "stack_memory_count": 0, "mmi_count": 0, "load_store_kinds": {}}
                          for entry in selected_owners if entry is not None}
@@ -835,6 +882,7 @@ def main():
                 descriptor.update(_frame_plan=frame_plans[sample['address']],_frame_original=original)
             if args.borrowed_reference_map:descriptor['_data_symbol_image']=image
             if args.lui_constants:descriptor['_lui_original']=original
+            if args.mtc1_bits:descriptor['_mtc1_original']=original
             begin = time.perf_counter()
             lowering = (LUIFailureTrace if args.lui_constants else transform.Lowering)(definition, descriptor, contract)
             reason = None;fatal_error=None
@@ -861,6 +909,9 @@ def main():
             if args.lui_constants:
                 result['lui_bindings']=lowering.lui_bindings
                 result['before_LUI_frontier']={key:lui_before[sample['address']].get(key) for key in ('reason','first_unlowered_pc','failure_category')}
+            if args.mtc1_bits:
+                result['mtc1_bindings']=lowering.mtc1_bindings
+                result['before_MTC1_frontier']={key:mtc1_before[sample['address']].get(key) for key in ('reason','first_unlowered_pc','first_failure_category','first_failure_cause')}
             containing = owner(address)
             result["original_function_context"] = {"entry": f"{containing:08x}" if containing is not None else None,
                                                    "features": original_features.get(containing)}
@@ -977,6 +1028,18 @@ def main():
             report['lui_stage']['outcome_retention_controls']=lui_outcome_controls()
             report['lui_stage']['raw_first_failure_categories']=dict(Counter(row['first_failure_category'] for row in results))
             report['lui_stage']['observed_first_semantic_categories']=dict(Counter(row['first_failure_cause']['observed_semantic_category'] for row in results))
+        if args.mtc1_bits:
+            report['frame_stage']['stage']='MTC1_RAW32_BIT_MOVE_OPT_IN'
+            report['mtc1_stage']={'schema':'actual_original_AST_MTC1_stage_v1','published_LUI_sha256':sha(args.mtc1_before_study),
+                'same_source_MTC1_disabled_sha256':sha(args.mtc1_current_before_study),'target_original_word':'44820800',
+                'opt_in':True,'all_selected_addresses':39,'expected_probe_addresses':sorted(mtc1_expected),
+                'original_MTC1_definitions':sum(len(row.get('mtc1_bindings',[])) for row in results),
+                'outcomes39':[{key:row.get(key) for key in ('address','before_MTC1_frontier','reason','first_unlowered_pc','first_failure_category','first_failure_cause','mtc1_bindings')} for row in results],
+                'new_complete_E2_units':0,'new_credit':0,'scope':'Raw GPR-low32 to FPR-raw32 bit-move SSA only. No numeric conversion, memory/owner binding, FPR arithmetic, native adoption or whole-unit forecast.'}
+            report['mtc1_stage'].update(mtc1_outcome_summary(results,mtc1_expected,mtc1_before))
+            report['mtc1_stage']['outcome_retention_controls']=mtc1_outcome_controls()
+            report['mtc1_stage']['raw_first_failure_categories']=dict(Counter(row['first_failure_category'] for row in results))
+            report['mtc1_stage']['observed_first_semantic_categories']=dict(Counter(row['first_failure_cause']['observed_semantic_category'] for row in results))
         for result in results:
             exempt=args.borrowed_reference_map and result['address']=='0018da30'
             exempt=exempt or args.lui_constants and result['address'] in lui_expected
@@ -987,6 +1050,8 @@ def main():
         (output/'RESULT.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
         if args.lui_constants and report['lui_stage']['status']!='PASS_BOUNDED_INSTRUCTION_BINDING':
             raise ValueError('Incomplete LUI outcome retained in '+str(output/'RESULT.json'))
+        if args.mtc1_bits and report['mtc1_stage']['status']!='PASS_BOUNDED_INSTRUCTION_BINDING':
+            raise ValueError('Incomplete MTC1 outcome retained in '+str(output/'RESULT.json'))
         print('STACK_FRAME_STUDY',output,json.dumps(report['frame_stage']))
         return
     tables = full_tables(report, fork)
