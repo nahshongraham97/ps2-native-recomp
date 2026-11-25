@@ -42,7 +42,7 @@
 <!-- PROGRESS:END -->
 
 <!-- RENDERER_SCOPE:START -->
-> **Phase 6 renderer scope remains open.** Original retail instructions and reference sources identify 97 catalogued engine-family functions. All 97 have callable AOT entries, with 25 further verified entries outside the catalogue. Of the 15,670 in-scope rows, 15,572 callable entries still require library attribution and one row is a data descriptor. The PS2 stream finder accepts versions 0x34000 through 0x36003 inclusive. The Xbox source revisions, display modes and camera behavior are documented in the existing Xbox donor record. Continue with generated renderer logic and native GPU services.
+> **Phase 6 renderer scope remains open.** Original retail instructions and reference sources identify 97 catalogued engine-family functions. All 97 have callable AOT entries, with 25 further verified entries outside the catalogue. The four latest admissions contributed zero to the separate credited-native tier. Of the 15,670 in-scope rows, 15,572 callable entries still require library attribution and one row is a data descriptor. The PS2 stream finder accepts versions 0x34000 through 0x36003 inclusive. The Xbox source revisions, display modes and camera behavior are documented in the existing Xbox donor record. Continue with generated renderer logic and native GPU services.
 <!-- RENDERER_SCOPE:END -->
 
 > [!NOTE]

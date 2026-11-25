@@ -6,7 +6,7 @@ each deliverable's verified component progress and whole-game acceptance state;
 [PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is archived at
 `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
-**Phase 6 resumes with 15,572 callable entries whose library ownership is unresolved.** The PS2 chunk reader, chunk finder, plugin registry reader and camera view-window setter are now verified. Trace the remaining candidates against original callers and bodies, or use a matching PS2 link map or object set. The [Phase 6 verification record](https://github.com/nahshongraham97/armageddon-reimplementation/blob/main/research/runs/phase4-aot-completion-20261124/VERIFICATION.json) preserves the candidate list, retail version bounds, Xbox provenance and rejected matches. Run `measure_renderer_scope.py --require-exact-renderware` and publish a passing checkpoint before Phase 7.
+**Phase 6 resumes with 15,572 callable entries whose library ownership is unresolved.** The four latest admissions are static source-role checks against retail instructions. Only the camera view-window setter also has an independently inspected Xbox counterpart. All four native ledger rows are open. Continue with the available PS2 caller and body evidence. The [Phase 6 verification record](https://github.com/nahshongraham97/armageddon-reimplementation/blob/main/research/runs/phase4-aot-completion-20261124/VERIFICATION.json) preserves the candidate list, retail version bounds, Xbox provenance and rejected matches. Run `measure_renderer_scope.py --require-exact-renderware` and publish a passing checkpoint before Phase 7.
 
 <!-- PROGRESS:START -->
 ## Native Reimplementation Progress & Multi-Tier Ledger
