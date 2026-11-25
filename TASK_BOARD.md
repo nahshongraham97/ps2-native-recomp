@@ -6,7 +6,7 @@ each deliverable's verified component progress and whole-game acceptance state;
 [PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is archived at
 `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
-**Resume Phase 6 with the remaining library ownership evidence.** The SDK camera sample, Function ID checks and BSim candidate list are pinned in the existing Phase 6 verification record. The retail camera, matrix, device and pipeline roles were checked against the original instructions. Use the saved candidate addresses with their SDK member names to verify further retail operations and callers, or authenticate a matching Midway link map or object set. Run `measure_renderer_scope.py --require-exact-renderware` and publish the passing checkpoint before Phase 7.
+**Resume Phase 6 with the remaining library ownership evidence.** Retail model clumps carry RenderWare stream version 3.6.0.3 (build FFFF). Review the saved binary-match candidates against original code, or use a matching Midway link map or a symbol-bearing PS2 reference closer to that version. The existing verification record includes the 3.1 camera ELF comparison, its conflicting pipeline name, and the Function ID and BSim results. Run `measure_renderer_scope.py --require-exact-renderware` and publish the passing checkpoint before Phase 7.
 
 <!-- PROGRESS:START -->
 ## Native Reimplementation Progress & Multi-Tier Ledger

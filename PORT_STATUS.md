@@ -42,7 +42,7 @@
 <!-- PROGRESS:END -->
 
 <!-- RENDERER_SCOPE:START -->
-> **Phase 6 renderer scope remains open.** Original retail control flow, callback records and the PS2 SDK reference identify 93 catalogued engine-family functions. All 93 have exact callable AOT entries. The same generator emits 25 further verified entry points outside the catalogue. The raw in-scope catalogue contains 15,669 callable entries and one descriptor. Library membership remains unresolved for 15,576 callable rows outside the identified families. Continue with generated renderer logic and the existing native GPU services.
+> **Phase 6 renderer scope remains open.** Original retail control flow, callback records and the PS2 SDK reference identify 93 catalogued engine-family functions. All 93 have exact callable AOT entries. The same generator emits 25 further verified entry points outside the catalogue. The raw in-scope catalogue contains 15,669 callable entries and one descriptor. Library membership remains unresolved for 15,576 callable rows outside the identified families. Verified retail model clumps carry stream version 3.6.0.3, build FFFF. The comparison with a symbol-bearing 3.1 PS2 sample yielded candidate names for review. Continue with generated renderer logic and the existing native GPU services.
 <!-- RENDERER_SCOPE:END -->
 
 > [!NOTE]
