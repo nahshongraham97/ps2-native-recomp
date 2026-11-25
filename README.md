@@ -10,7 +10,7 @@ Neither the canonical playable oracle (`../../milestone_work_verified_playable_2
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`e9bb5ec1`](https://github.com/nahshongraham97/ps2-native-recomp/commit/e9bb5ec160b9c1bc7c91e8791385d0a20e584be6) (pinned active fork)
+**Verified Fork Commit**: [`5b4e323b`](https://github.com/nahshongraham97/ps2-native-recomp/commit/5b4e323b9f06c78d933c12afe5031512c3bbf73e) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - **Total PS2 Function Catalog**: **17,510** functions (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
