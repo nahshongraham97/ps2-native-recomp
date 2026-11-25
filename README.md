@@ -1,9 +1,9 @@
 # Mortal Kombat: Armageddon retail native port
 
 **Current status (2026-11-24): acceptance OPEN. Do not ask the owner to run the game.**
-This project builds a native Windows port of retail *Mortal Kombat: Armageddon* (Sony PlayStation 2 `SLUS_214.10` and overlays).
-Retail game logic outside platform boundaries comes from ahead-of-time (AOT) static C++ transformed to typed native memory and ABI (zero `g_ram`, zero `c.r`, zero `$gp`, zero guest vtables, zero runtime JIT or interpreter); hand-written C++ is restricted to platform boundaries and verified runtime services. Xbox investigation (`default.xbe`) is limited strictly to renderer, viewport, and HD presentation (`DECISION_OWNER_CORRECTIONS_20261124.json`). Whole-game native acceptance remains **OPEN** (`238 / 15,670` credited functions; headless 60-frame probe hits `13 / 26` registered placeholders; active fork build-time AOT regeneration pending Phase 3).
-Neither the canonical playable oracle (`../../milestone_work_verified_playable_20261110/`, `ps2run.exe` `B9EEF7DA...`) nor its descendant Kombat Practice (`../../milestone_build_kombat_practice/`, `8B763DCC...`) satisfies the zero-emulation shipped-port acceptance contract.
+This project targets a native Windows port of retail *Mortal Kombat: Armageddon* (Sony PlayStation 2 `SLUS_214.10` and overlays).
+The target architecture uses AOT static C++ transformed to typed native memory and ABI for retail game logic, with hand-written platform boundaries and runtime services. Generated intermediate code still needs the memory/ABI transform; the measured tiers below distinguish it from credited native implementations. Xbox investigation (`default.xbe`) is limited to renderer, viewport and HD presentation (`DECISION_OWNER_CORRECTIONS_20261124.json`). Whole-game native acceptance remains **OPEN**.
+Neither the canonical playable oracle (`../../milestone_work_verified_playable_20261110/`, `ps2run.exe` `B9EEF7DA...`) nor related Kombat Practice (`../../milestone_build_kombat_practice/`, `8B763DCC...`) satisfies the zero-emulation shipped-port acceptance contract.
 
 <!-- PROGRESS:START -->
 ## Native Reimplementation Progress & Multi-Tier Ledger
@@ -63,4 +63,8 @@ Read in order:
 The protected duplicate oracle game copy is `external/forks/ps2-native-recomp-backup-20261110/`. Preserve it along with all user saves, memory cards, key files, and model settings; noncompliant local commits and dirty files are discarded per `DECISION_OWNER_CORRECTIONS_20261124.json`.
 Historical logs and experiments live in `research/runs/` and `research/history/`; they are evidence for dated builds, never live instructions. The consolidated status archive lives in `research/history/superseded-status-docs-20261124/`. Retail binary assets (`.ELF`, `.xbe`, `.bin`, `.ovl`, audio/video streams) remain local and untracked.
 
-The corrected instruction set is being revalidated from Phase 0. Static AOT coverage is measured from callable entry maps; function-boundary and VU packet equivalence remain OPEN. Existing oracle files are immutable, and the restored legacy launcher has a retired path; use the separately verified additive launcher only after its static and disposable-data checks pass. No owner launch is requested.
+Published Phases 0–3 carry forward. Phase 4 recorded-input generation and independent selected-boundary/packet comparisons pass; the current checkpoint must be published before Phase 5 starts. Historical invocation capture, untested functions and general hardware numeric parity remain unverified. Existing oracle files are immutable; its separately verified additive launcher uses disposable data. No owner launch is requested.
+
+Generation uses the user's pinned ELF, overlay captures and existing dependency packages. From the integration repository, run `python -B tools/research/reproduce_aot_pipeline.py`, regenerate with `python -B tools/research/generate_ledgers.py`, then synchronize with `python -B tools/research/sync_verify.py --sync-to-fork`. Generated retail C++ remains ignored.
+
+Windows verification clones must preserve LF bytes: use `git -c core.autocrlf=false clone --no-hardlinks`. For a verification checkout inside the integration repository, run that clone's pipeline with explicit `--parent-root` and `--fork-root`. The pipeline builds fresh generators and reads existing SDL2/FFmpeg dependencies; it does not copy a prior generator or generated source tree. The work-item record contains the measured clean-clone result and retained failed attempts.

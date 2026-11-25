@@ -4,7 +4,7 @@
 files, and closure evidence are in [ROADMAP.md](ROADMAP.md). This board indexes
 each deliverable's verified component progress and whole-game acceptance state;
 [PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is
-**Resume: retain the published Phases 0-3 work. Finish Phase 4: generate every real catalogue entry, independently compare function-boundary register/memory effects and VU output packets over the pinned states, and publish measured coverage. Phase 5 remains gated until Phase 4 passes; then complete Phases 5-7 in order.**
+**Resume: retain the published Phases 0-3 work and the Phase 4 recorded-corpus generation/selected-comparison results. After publishing the verified Phase 4 checkpoint, start Phase 5: transform actual generated units for a bounded subsystem into typed native memory/ABI, compare against generated execution, measure cost and reject renamed guest-memory accessors. Then complete Phases 6-7 in order. Unobserved programs and whole-game acceptance remain OPEN.**
 
 archived at `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 

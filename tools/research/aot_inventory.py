@@ -89,10 +89,14 @@ def verify_vu_snapshot_measurement(repo: Path, vu: dict) -> dict:
     root = repo / "external/forks/ps2-native-recomp"
     if not root.is_dir():
         root = repo
-    receipt = root / "build/oracle-telemetry/phase4-fixed-verify.json"
-    manifest = root / "build/oracle-telemetry/phase4-fixed-compiled-source.json"
-    if not receipt.is_file() or sha(receipt) != evidence["receipt_sha256"]:
+    raw = root / "build/oracle-telemetry"
+    recorded_pairs = {"phase4-fixed-verify.json": "phase4-fixed-compiled-source.json",
+                      "phase4-clean-source-verify.json": "phase4-clean-source-compiled-source.json"}
+    receipt = next((raw / name for name in recorded_pairs if (raw / name).is_file()
+                    and sha(raw / name) == evidence["receipt_sha256"]), None)
+    if receipt is None:
         raise AssertionError("VU snapshot execution receipt missing or changed")
+    manifest = raw / recorded_pairs[receipt.name]
     measured = json.loads(receipt.read_text(encoding="utf-8"))
     if not manifest.is_file() or sha(manifest) != measured["source_manifest_sha256"]:
         raise AssertionError("VU compiled-source manifest missing or changed")

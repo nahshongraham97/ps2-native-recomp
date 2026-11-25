@@ -4,7 +4,7 @@
   "definition": "Build-time static AOT C++ generation only; excludes dynamic overlay RAM snapshots (kModules) and live runtime JIT/DLL caches.",
   "active_fork_tracked_cpp_count": 0,
   "active_fork_build_generated_units": 395,
-  "active_fork_status": "Known recorded-input callable generation and independent selected-boundary/packet protocol pass; unobserved execution and native transformation remain separate gates.",
+  "active_fork_status": "Static generation measured by actual callable entries and dynamic windows; independent execution evidence and memory/ABI transformation are recorded separately.",
   "sources": {
     "pinned_elf": {
       "rel_path": "private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/SLUS_214.10",
@@ -31245,7 +31245,7 @@
     ],
     "correct_oracle_vu1_image_count": 18,
     "snapshot_verification": {
-      "receipt_sha256": "82fd539ff16ffb51e6b42a8211fa4e993fe0ad06055eb31adfc3eeddac5faae2",
+      "receipt_sha256": "3e07fe9117cbc6b920e5bc5579938d6829638aa1656195401fbd7048796470a2",
       "scope": "Selected entry-zero program replay on actual saved register/data inputs; not historical invocation capture or whole-game acceptance"
     },
     "vu0_static_scope": {
