@@ -5,7 +5,7 @@
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`c170674d`](https://github.com/nahshongraham97/ps2-native-recomp/commit/c170674d8b55a27413b954ee6b4db020b516915d) (pinned active fork)
+**Verified Fork Commit**: [`9e426b76`](https://github.com/nahshongraham97/ps2-native-recomp/commit/9e426b764b967563513049e7b29a7b7a8156b605) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - **Total PS2 Function Catalog**: **17,510** functions (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
