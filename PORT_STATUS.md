@@ -5,7 +5,7 @@
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`77da9038`](https://github.com/nahshongraham97/ps2-native-recomp/commit/77da9038e0af1c53503a28d1d994c5cb5424af1e) (pinned active fork)
+**Verified Fork Commit**: [`ab655663`](https://github.com/nahshongraham97/ps2-native-recomp/commit/ab655663a4f996956d6666c292fd68e2a94609a0) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
@@ -41,10 +41,14 @@
 - **Reference Catalog**: **22,579** `default.xbe` routines inspected (`21,321` in non-XONLINE candidate set, `0` donor-credited, `18` role-mapped candidates). Limited strictly to renderer, viewport, and HD presentation per `DECISION_OWNER_CORRECTIONS_20261124.json` (not a separate target; GS packet decoding is an interim concession only).
 <!-- PROGRESS:END -->
 
+<!-- RENDERER_SCOPE:START -->
+> **Phase 6 checkpoint — OPEN**: The original-byte census identifies 53 engine-family entries within 15,670 raw in-scope catalogue rows; all 53 have exact callable AOT entries. Another 15 source-proved starts outside the catalogue are callable and receive no denominator credit. 15,617 rows remain ownership-unclassified. Exact RenderWare symbol ownership and total are unknown; the required complete-census gate refuses. The verified recommendation retains native GPU services and transforms generated engine logic; GS/VU packet rendering stays interim. Resume the ownership proof in TASK_BOARD.md. Phase 7 has not started.
+<!-- RENDERER_SCOPE:END -->
+
 > [!NOTE]
 > **Current Phase 4 verification**: Catalogue seeding and authenticated dynamic-window inputs restore the omitted callable entries. The raw catalogue descriptor-data contradiction remains visible with no code credit. Independent selected-boundary comparisons pass on every pinned snapshot, including complete VU registers, memory changes and ordered GIF bytes; deliberate packet corruption fails. This exposed and fixed discarded architectural MAC/STATUS updates in the generator. A clean clone rebuilt the generators and reproduced every generated source/header byte; a second generation run preserved the inventory bytes. These checks close the recorded-corpus generation and selected-comparison work. Phase 5 starts after this checkpoint is published. No authenticated VU0 microprogram payload/launch stream was found in this corpus; unobserved programs, historical invocations, untested functions, general hardware numeric equivalence and whole-game acceptance remain OPEN.
 
-> **Current Phase 5 verification**: Both actual generated GAMER/MOVIER initializer functions now lower through an offline Clang semantic AST frontend into typed native field ownership and explicit scalar effects. Complete register/RAM differentials pass over all pinned saved inputs and synthetic boundaries; deliberately changing the mode fails. The native library has no runtime dependencies. Structural checks reject renamed memory helpers/arrays, pointer casts, unbound fields/calls, widened or signed arithmetic, hidden storage, inheritance and assembly, including macro-expanded assembly. Measured isolated-call costs and source/binary identities are in the existing work-item record. Struct-contained pointers, general vtables/indirect dispatch and production integration remain OPEN; unsupported cases refuse by name. No guest-memory shim is present. Publish this checkpoint before Phase 6.
+> **Current Phase 5 verification**: Both actual generated GAMER/MOVIER initializer functions now lower through an offline Clang semantic AST frontend into typed native field ownership and explicit scalar effects. Complete register/RAM differentials pass over all pinned saved inputs and synthetic boundaries; deliberately changing the mode fails. The native library has no runtime dependencies. Structural checks reject renamed memory helpers/arrays, pointer casts, unbound fields/calls, widened or signed arithmetic, hidden storage, inheritance and assembly, including macro-expanded assembly. Measured isolated-call costs and source/binary identities are in the existing work-item record. Struct-contained pointers, general vtables/indirect dispatch and production integration remain OPEN; unsupported cases refuse by name. No guest-memory shim is present. This checkpoint is published; the Phase 6 census limit is recorded above.
 
 > [!NOTE]
 > **Historical correction checkpoint `9e426b76` — superseded by the generated current measurements above**:

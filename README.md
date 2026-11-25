@@ -10,7 +10,7 @@ Neither the canonical playable oracle (`../../milestone_work_verified_playable_2
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`77da9038`](https://github.com/nahshongraham97/ps2-native-recomp/commit/77da9038e0af1c53503a28d1d994c5cb5424af1e) (pinned active fork)
+**Verified Fork Commit**: [`ab655663`](https://github.com/nahshongraham97/ps2-native-recomp/commit/ab655663a4f996956d6666c292fd68e2a94609a0) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
@@ -63,7 +63,7 @@ Read in order:
 The protected duplicate oracle game copy is `external/forks/ps2-native-recomp-backup-20261110/`. Preserve it along with all user saves, memory cards, key files, and model settings; noncompliant local commits and dirty files are discarded per `DECISION_OWNER_CORRECTIONS_20261124.json`.
 Historical logs and experiments live in `research/runs/` and `research/history/`; they are evidence for dated builds, never live instructions. The consolidated status archive lives in `research/history/superseded-status-docs-20261124/`. Retail binary assets (`.ELF`, `.xbe`, `.bin`, `.ovl`, audio/video streams) remain local and untracked.
 
-Published Phases 0–4 carry forward within their recorded evidence scope. The Phase 5 actual generated-unit prototype passes for both overlay initializers, with typed ownership, explicit scalar effects, saved-input differentials and structural guest-accessor rejection. Its measured transform tier is separate from production integration and credited implementations. After publishing this checkpoint, proceed to the measured renderer decision in Phase 6. Historical invocations, untested functions and general hardware numeric parity remain unverified. Existing oracle files are immutable; its separately verified additive launcher uses disposable data. No owner launch is requested.
+Published Phases 0–5 carry forward within their recorded evidence scope. The Phase 5 actual generated-unit prototype passes for both overlay initializers, with typed ownership, explicit scalar effects, saved-input differentials and structural guest-accessor rejection. Its measured transform tier is separate from production integration and credited implementations. Phase 6 has a verified bounded engine-family census and renderer recommendation; the exact RenderWare total remains unknown because complete original library ownership is not authenticated. The required exact-census gate refuses, so Phase 7 remains gated. Historical invocations, untested functions and general hardware numeric parity remain unverified. Existing oracle files are immutable; its separately verified additive launcher uses disposable data. No owner launch is requested.
 
 Generation uses the user's pinned ELF, overlay captures and existing dependency packages. From the integration repository, run `python -B tools/research/reproduce_aot_pipeline.py`, regenerate with `python -B tools/research/generate_ledgers.py`, then synchronize with `python -B tools/research/sync_verify.py --sync-to-fork`. Generated retail C++ remains ignored.
 

@@ -4,7 +4,7 @@
 files, and closure evidence are in [ROADMAP.md](ROADMAP.md). This board indexes
 each deliverable's verified component progress and whole-game acceptance state;
 [PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is
-**Resume: published Phases 0-4 carry forward within their recorded scope. Phase 5's bounded actual generated-unit prototype passes differential, cost and structural checks; publish its synchronized checkpoint, then complete Phase 6's measured renderer decision and Phase 7's differential duplicate replacement/asset comparison. General pointer/vtable/dispatch recovery, production integration, unobserved programs and whole-game acceptance remain OPEN.**
+**Resume: published Phases 0-5 carry forward within their recorded scope. Phase 6 remains OPEN at the exact RenderWare ownership census. Authenticate library ownership from an original link map/object boundary, a verified signature corpus or per-function original evidence for the deterministic unclassified complement in the saved census. Regenerate the census and pass `measure_renderer_scope.py --require-exact-renderware` before Phase 7. The bounded engine-family/AOT measurement, renderer recommendation and asset-format risks are verified. Publish this partial checkpoint and stop under the phase-order rule; do not start duplicate replacement or Xbox extraction. General transformation, production integration and whole-game acceptance remain OPEN.**
 
 archived at `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
@@ -13,7 +13,7 @@ archived at `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`77da9038`](https://github.com/nahshongraham97/ps2-native-recomp/commit/77da9038e0af1c53503a28d1d994c5cb5424af1e) (pinned active fork)
+**Verified Fork Commit**: [`ab655663`](https://github.com/nahshongraham97/ps2-native-recomp/commit/ab655663a4f996956d6666c292fd68e2a94609a0) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)

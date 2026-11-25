@@ -46,6 +46,9 @@ originals. Phase 5's actual generated GAMER/MOVIER initializer prototype passes
 saved-state differential, cost and structural checks; its source/binary/proof
 chain determines prototype credit. General pointer/vtable/dispatch recovery and
 production integration remain OPEN. An ELF-word decoder alone does not fulfill
-the generated-unit task. Publish the checkpoint before the renderer phase starts.
+the generated-unit task. The checkpoint is published. Phase 6's bounded census
+and renderer decision are verified, while exact RenderWare ownership remains
+OPEN. Publish the partial checkpoint and stop at the TASK_BOARD.md resume line;
+Phase 7 must not start before the exact-census gate passes.
 
 Saved-state evidence correction: the old backwards-from-GS VU extraction crossed IPU. Version/ABI/bounds/variable-IPU regressions and provenance-based capture admission guard the corrected loader. The bounded GAMER boundary and independent selected VU snapshot replay pass, including full registers/memory and ordered packet bytes. This is not captured historical invocation or equivalence of untested functions/programs. No authenticated VU0 microprogram payload/launch stream was found in the recorded corpus.

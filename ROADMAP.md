@@ -6,7 +6,12 @@ The corrected complete instruction set supersedes earlier work prompts. Run phas
 The verified Phase 4 checkpoint is published. Phase 5's bounded GAMER/MOVIER
 overlay initializer prototype passes actual generated C++ AST lowering, typed
 ownership, scalar liveout, saved-state differential, cost and structural checks.
-Publish its synchronized checkpoint before Phase 6's measured renderer decision.
+That synchronized checkpoint is published. Phase 6 has a verified bounded
+engine-family census and renderer decision, but its exact RenderWare ownership
+total remains OPEN. The required exact-census check refuses unknown ownership;
+publish the partial checkpoint and stop. TASK_BOARD.md identifies the original
+ownership evidence and deterministic remaining rows needed to resume. Phase 7
+has not started.
 General pointer/vtable/indirect recovery and production integration remain OPEN.
 
 Current owner priority: ONE native Armageddon port using AOT static C++ with typed native memory/ABI for PS2 retail logic and hand-written code restricted to platform boundaries; Xbox investigation is limited strictly to the renderer, viewport, and HD presentation (`DECISION_OWNER_CORRECTIONS_20261124`). Published fork main `d1bfc0e2581bfe8483e299509d58f6ca1f1461f2` implements native 0407 shared raster subsystem with in-place defect remediation (memory safety bounds checks, real offscreen HiddenGl WGL fixture with glIsTexture verification and configurable samplers, gamma bit 0 propagation per 2C0EB0, pop returning popped target per 2B9D50, unconditional type-4 depth 32 normalization per 2C8BD0, resumable destruction cursor, and explicit GPU texture revocation) on runtime `d1bfc0e2581bfe8483e299509d58f6ca1f1461f2`. All nine renderer component clients pass and 47->45 undefined symbol count resolves construct_core_plugin_0407 and destroy_core_plugin_0407. 0407 remains OPEN awaiting connected render-target, first-scene, and whole-engine integration; no advancement to 0408 is claimed. Non1 gamma, new codecs/plugins, write/clone/resampling, full camera/frame/stream/raster, native saves/numerical/HD/oracle/game remain OPEN; online features and NETR.ovl are formally out of scope per approved Owner Decision (DECISION_ONLINE_OUT_OF_SCOPE.json). Console save bytes/layouts/import are not gates. Originals/audio/user data/drivers/settings/preserved checkouts are untouched. Records: fork `research/runs/native-xbox-renderer-0407-implementation-20261122/`, parent `research/runs/native-renderer-0407-implementation-20261122/`. Owner: no action. No run remains active.
