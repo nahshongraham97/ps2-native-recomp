@@ -17,6 +17,7 @@ SOURCE_FILES = {
     "baframe.c": "47ee0bdf20bbae224bfaa0b1808ee8fa9d805d12d1e09ac382cd5c38f37e7536",
     "bamatrix.c": "6a65d8140fcddf75bf44bf0b3daf973d0c6d55c0ff6b866ec15ccfe8f256c751",
     "bacamera.c": "66282a6f54d42804dbadee9e8c1a6cf032bbe927ec5677f19ed2678fce978fd8",
+    "baresour.c": "340976c2a9d15503737a1897c6b63ba6371170afb60f44890d537b35d0014027",
 }
 # start, exclusive end, error argument setup, reference name, whole retail body
 MATRIX_ROLES = (
@@ -36,6 +37,66 @@ MATRIX_ROLES = (
 CAMERA_ROLE = (0x1a6410, 0x1a649c, 0x1a6468, "RwCameraSetProjection",
                "4d308fe0e012e274fc02ef2d44caa0f7a7577bd0c0e7e6fa67136cef154ef313",
                "Modes 1 and 2 store projection, conditionally update the frame and update depth. An invalid mode reports an error and returns null.")
+
+
+def validate_resource_arena_semantics(original, source):
+    """Original source/dataflow witness for the single precision-audit correction.
+
+    Reference SDK3.1 identifies the resource-arena role; MKA's allocation-hint
+    argument is retained as a version difference. Code-carried global/field
+    references are checked without reading or assuming live BSS contents.
+    """
+    marker = b'RWAPIFUNCTION(RWSTRING("RwResourcesSetArenaSize"))'
+    if source.count(marker) != 1:
+        raise ValueError("Missing unique SDK resource-arena API marker")
+    body = source.split(marker)[1].split(b"\n}", 1)[0]
+    operations = (
+        b"resourcesModule.numInstances == 0", b"rwResourcesOverrideDefaultArenaSize = size",
+        b"res->maxSize = size", b"RwResourcesEmptyArena()", b"_rwResHeapClose(res->memHeap)",
+        b"RwFree(res->memHeap)", b"res->memHeap = RwMalloc(size)",
+        b"_rwResHeapInit(res->memHeap, size)", b"E_RW_NOMEM", b"E_RW_INSUFFICIENTRESOURCES",
+    )
+    if any(operation not in body for operation in operations):
+        raise ValueError("SDK resource-arena source operation changed")
+    words = (
+        (0x1a2034, 0x8f82a3a4, "resource module instance state"),
+        (0x1a2038, 0x14400005, "pre-open versus live arena branch"),
+        (0x1a203c, 0x0080902d, "retain requested size"),
+        (0x1a204c, 0xac72f3e4, "pre-open default-size override"),
+        (0x1a2050, 0x8f83a3a0, "resource globals offset"),
+        (0x1a2054, 0x3c02006a, "engine globals base high"),
+        (0x1a2058, 0x2442f290, "engine globals base low"),
+        (0x1a205c, 0x00438821, "select resource global data"),
+        (0x1a2060, 0x0c06884c, "empty old arena"),
+        (0x1a2064, 0xae320000, "max-size publication"),
+        (0x1a2068, 0x0c068f10, "close old resource heap"),
+        (0x1a206c, 0x8e24000c, "old heap field at offset12"),
+        (0x1a207c, 0x0040f809, "free old heap callback"),
+        (0x1a2080, 0x8e24000c, "pass old heap to free"),
+        (0x1a2084, 0x3c020003, "retail allocation hint high"),
+        (0x1a2088, 0x3445040b, "retail resources-module allocation hint"),
+        (0x1a2094, 0x0040f809, "allocate replacement heap callback"),
+        (0x1a2098, 0x0240202d, "replacement allocation uses requested size"),
+        (0x1a20a0, 0xae22000c, "publish replacement heap at offset12"),
+        (0x1a20b4, 0x34440013, "out-of-memory error"),
+        (0x1a20bc, 0xae200000, "failed allocation clears max size"),
+        (0x1a20d4, 0x0240282d, "heap initialization uses requested size"),
+        (0x1a20d8, 0x0c068ef8, "initialize replacement resource heap"),
+        (0x1a20dc, 0x0040202d, "initialize exact replacement heap"),
+        (0x1a20ec, 0x0040f809, "free replacement heap after init failure"),
+        (0x1a20f8, 0x2404000c, "insufficient-resources error"),
+    )
+    witnesses = []
+    for address, expected, operation in words:
+        raw = original(address, 4)
+        if raw != struct.pack("<I", expected):
+            raise ValueError(f"Resource arena semantic mismatch at {address:08x} ({operation})")
+        witnesses.append({"address": f"{address:08x}", "word_le": raw.hex(), "operation": operation})
+    return {"original_semantic_words": witnesses,
+            "source_operations": [operation.decode("ascii") for operation in operations],
+            "data_layout": {"maxSize_offset": 0, "memHeap_offset": 12,
+                            "global_reference_limit": "Original load/store instructions only; live BSS values are not claimed."},
+            "version_limit": "Pinned SDK3.1 source role; retail uses an additional memory-hint argument. No native/differential equivalence is claimed."}
 
 
 def matched_sdk_roles(original, sdk_root: Path):
@@ -111,8 +172,15 @@ def matched_sdk_roles(original, sdk_root: Path):
          [0x126174, 0x17f0c0, 0x1815d8, 0x21ca50, 0x21d314],
          "Stores both window components and their reciprocals, updates a non-null parent frame "
          "through 001a7510, and returns the camera on both branches."),
+        (0x1a2020, 0x1a2130, "RwResourcesSetArenaSize", "baresour.c",
+         "2ba736d40c4bf1d56d1bef12714117164632ee50c16d3e3783e89e94096413e3",
+         [0x33e338, 0x44e464],
+         "Before resource-module open, overrides the default arena size. Otherwise sets maxSize, empties and closes the old heap, "
+         "frees it, allocates and initializes the replacement heap, and reports distinct allocation/initialization errors."),
     )
     for start, end, api, file, body_hash, sites, operations in connected:
+        semantic_evidence = (validate_resource_arena_semantics(original, sources[file])
+                             if start == 0x1a2020 else {})
         if hashlib.sha256(original(start, end - start)).hexdigest() != body_hash:
             raise ValueError(f"Connected helper body changed at {start:08x}")
         if f'RWSTRING("{api}")'.encode() not in sources[file]:
@@ -123,7 +191,7 @@ def matched_sdk_roles(original, sdk_root: Path):
         results.append((start, end, {"kind": "sdk_role_and_verified_retail_callee", "source_role": api,
                                      "source_file": "rwsdk/src/" + file, "source_normalized_sha256": SOURCE_FILES[file],
                                      "original_body_sha256": body_hash, "operations": operations,
-                                     "caller_sites": [f"{site:08x}" for site in sites]}))
+                                     "caller_sites": [f"{site:08x}" for site in sites], **semantic_evidence}))
 
     # Original device fallback jump table for requests 13..18. The zero-index
     # subsystem-info case passes this literal in the delay slot of its copy call.

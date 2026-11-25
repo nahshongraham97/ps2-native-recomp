@@ -7,11 +7,11 @@
   "corrections": {
     "oracle_and_kombat_practice_relationship": {
       "canonical_oracle_path": "../../milestone_work_verified_playable_20261110",
-      "oracle_exe_sha256": "b9eef7dad3cfa0e1216493cf12301f14aa4b3a8b1456fcdc60d9c39502a0d860",
+      "oracle_exe_sha256": "8ab43bda05e7a621b946883f3195a583f0c2455f0351bf8608282cd3e97b4617",
       "kombat_practice_path": "../../milestone_build_kombat_practice",
       "kombat_practice_exe_sha256": "8b763dcc3e0c47188b535803117fa44cf81d9b7f36d103df3247336b16a321b9",
-      "duplicate_backup_path": "external/forks/ps2-native-recomp-backup-20261110",
-      "relationship_proven_by_git_and_binary": "The B9 runner is byte-identical to the protected backup runner. The measured source interval contains 33 mixed commits. Actual original-binary instructions now establish 14 handler-connected behavioral owner groups in both B9 and Practice. B9 registers the health replacement; Practice registers health plus seven overlay sites and differs in admission. Source lineage and bounded compiled hook presence are established; exact complete source/object build provenance and runtime activation are separate unverified claims.",
+      "duplicate_backup_path": "external/forks/ps2-native-recomp/build/r192-hooks",
+      "relationship_proven_by_git_and_binary": "The B9 runner is byte-identical to the historical November10 lineage archive runner. The measured source interval contains 33 mixed commits. Actual original-binary instructions now establish 14 handler-connected behavioral owner groups in both B9 and Practice. B9 registers the health replacement; Practice registers health plus seven overlay sites and differs in admission. Source lineage and bounded compiled hook presence are established; exact complete source/object build provenance and runtime activation are separate unverified claims.",
       "hook_disabled_parity_config": {
         "launcher_flag": "-Mode Parity in launchers/launch_oracle.ps1",
         "env_vars": {
@@ -23,7 +23,9 @@
         },
         "scope": "Requested source-intended disable configuration for pinned B9 oracle only; runtime suppression is unverified. It cannot undo unconditional legacy runtime changes, and Practice has an unconditional interception gate so it is never substituted."
       },
-      "shipped_game_exclusion": "All combat/practice assist hooks (auto-align, hazard snap, damage scaling, video bypasses, fatality/stance shortcuts) stay out of the shipped native port."
+      "shipped_game_exclusion": "All combat/practice assist hooks (auto-align, hazard snap, damage scaling, video bypasses, fatality/stance shortcuts) stay out of the shipped native port.",
+      "saved_state_parity_exe_sha256": "b9eef7dad3cfa0e1216493cf12301f14aa4b3a8b1456fcdc60d9c39502a0d860",
+      "historical_lineage_archive_path": "external/forks/ps2-native-recomp-backup-20261110"
     },
     "discard_noncompliant_work": {
       "rule": "Commits, dirty files, and prior checkouts violating contract or standing rules are discarded locally (git reset / git rebase); never rewrite pushed history, never force-push, and never run git gc --prune.",
@@ -944,5 +946,77 @@
     "limits": "Static compiled presence and gating only; no whole-handler equivalence or authenticated historical full process environment. Original explicit collector settings are reconstructed; inherited historical settings were not recorded.",
     "historical_settings_audit_sha256": "9f9db49c7def559412c18afc938292c46b379b1901235ac8114f44608073e9d5",
     "shipped_exclusion": "All assist, interception and overlay replacement hooks remain excluded from the accepted native game."
+  },
+  "owner_amendments": {
+    "amendments": {
+      "A1": {
+        "replaces": "0.4",
+        "rule": "A blocked item halts only dependent steps. 5S depends on 6.1, 6.3 and 6.4. Per-function 7.1 depends on that function ownership and transformation. 7.2 through 7.4 are independent and may proceed immediately. Publish a stop record only after independent work is exhausted."
+      },
+      "A2": {
+        "replaces": "R13 verified-game rule",
+        "rule": "Record the vtable address, installing constructor, original factory call chain keyed by game resource tags and proof every method pointer is a text/code address. Class names are optional. Use a proved resource tag or vt_<address>, with name_source. Never invent a class name."
+      },
+      "A3": {
+        "replaces": "6.2",
+        "rule": "Classify every one of the pinned 226 installed-table candidates as confirmed vtable, not a vtable or unresolved. Confirmed records include constructor, factory callers, allocation size and methods. Methods reachable only through game-constructor vtables become verified-game. Other callback tables remain inferred. Completion requires disposition of all candidates; class-name gaps are limits."
+      },
+      "A4": {
+        "adds": "6.13",
+        "rule": "Pin the private Ghidra listing or saved project by SHA-256 in the private-inputs manifest. A clean checkout with those inputs must regenerate ownership rows with an identical hash."
+      },
+      "A5": {
+        "adds": "6.14",
+        "rule": "Stratify at least 30 rows of each inferred category, or all rows when fewer. Check sampled ownership at E1 level and report confirmed versus refuted results. Keep unsampled rows at their existing evidence level."
+      },
+      "A6": {
+        "replaces": "6.12",
+        "rule": "Close Step 6 after 6.1, 6.3 through 6.11, 6.13 and 6.14 are complete, with 6.2 complete or its limits recorded. Proceed to 5S and 7 under the per-function gates."
+      },
+      "A7": {
+        "adds": "6.15",
+        "rule": "Keep primary oracle designation, renderer core/materials/geometry/world routes and Xbox-only content as open owner decisions in TASK_BOARD.md."
+      },
+      "A8": {
+        "adds": "S7",
+        "rule": "Name and independently hash the two files beyond the original 3256 oracle entries, and confirm both are additive launchers."
+      }
+    },
+    "effective_overrides": {
+      "0.4": "A1",
+      "6.2": "A3",
+      "6.12": "A6",
+      "R13 verified-game": "A2"
+    },
+    "layer_sources": {
+      "platform_services": "Existing native Windows services",
+      "game_logic": "PS2 static AOT transformed to typed native memory and ABI",
+      "rendering_and_HD": "Generated PS2 renderer logic transformed to typed native data and GPU services. Xbox remains the measured reference for viewport and HD behavior. Whole-renderer Xbox adoption is undecided and requires the asset comparison and a measured prototype.",
+      "exceptions": "Owner selection from measured capability comparisons; one source of game logic"
+    },
+    "S7": {
+      "original_manifest": "launchers/oracle_original_manifest.json",
+      "additions_manifest": "launchers/oracle_additions.json",
+      "additions": [
+        {
+          "name": "launch_verified_oracle.bat",
+          "size": 497,
+          "sha256": "13459f0179865d77f846336e008457029a606ddc4f5f3746c30cbd5b2f986b32",
+          "role": "additive launcher",
+          "contents": "@echo off\nsetlocal\nrem Add-only oracle entry. Default invocation inspects; it does not start a game.\nset \"REPO_ROOT=%~dp0..\\Armageddon-backup\\armageddon-reimplementation\"\nif not exist \"%REPO_ROOT%\\launchers\\launch_oracle.ps1\" (\n    echo [oracle] Tracked launcher missing. Original oracle files were not changed.\n    exit /b 1\n)\n\"%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -ExecutionPolicy Bypass -File \"%REPO_ROOT%\\launchers\\launch_oracle.ps1\" %*\nexit /b %ERRORLEVEL%\n"
+        },
+        {
+          "name": "launch_oracle_full_hooks.bat",
+          "size": 724,
+          "sha256": "3693721e1732329d97b8df64ea69d218fefd7bccffc4df9345c630eb083e9faa",
+          "role": "additive launcher",
+          "contents": "@echo off\nsetlocal\nrem Add-only oracle launcher with ALL hooks restored (MKA_HealthDeduction + 7 Kombat Practice overlay hooks + --wrap + observers + tracer + profiler + PS2_NATIVE_VERTEX).\nset \"REPO_ROOT=%~dp0..\\Armageddon-backup\\armageddon-reimplementation\"\nif not exist \"%REPO_ROOT%\\launchers\\launch_oracle.ps1\" (\n    echo [oracle] Tracked launcher missing. Original oracle files were not changed.\n    pause\n    exit /b 1\n)\n\"%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -ExecutionPolicy Bypass -File \"%REPO_ROOT%\\launchers\\launch_oracle.ps1\" -Run -Mode FullHooks %*\nset \"RC=%ERRORLEVEL%\"\nif not \"%RC%\"==\"0\" (\n    echo.\n    echo [oracle] Launcher exited with code %RC%.\n    pause\n)\nexit /b %RC%\n"
+        }
+      ],
+      "original_count": 3256,
+      "addition_count": 2,
+      "combined_count": 3258,
+      "status": "PASS"
+    }
   }
 }

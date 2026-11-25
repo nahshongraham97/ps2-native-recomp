@@ -6,7 +6,7 @@ each deliverable's verified component progress and whole-game acceptance state;
 [PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is archived at
 `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
-**Active work follows A1 dependencies.** Step 5S proceeds from the published 6.1, 6.3 and 6.4 evidence. Steps 7.2 through 7.4 proceed independently. The 226-candidate table census, private-input reproduction and stratified precision checks continue under 6.2 and 6.13 through 6.15. Per-function replacement in 7.1 requires that function ownership, transformation and differential proof.
+**Current work follows A1 dependencies.** Step 5S has measured 37 generated-entry attempts and reviewed all 23 native module groups. No new unit passed a recorded-state differential; the transformed tier remains 2. All 226 table candidates have a disposition, and the stratified ownership audit is recorded. The whole-disc asset comparison includes nested resources and separate physical versus logical bank counts. Next, bind stack/SSA live-ins and typed receivers/globals for an authenticated source projection, then rerun its differential. Mixed Session correspondence remains unresolved. Per-function replacement in 7.1 still requires ownership, transformation and differential proof; the measured GAMER connection adds no credit.
 
 R192 supplies gameplay and telemetry evidence. The November 10 playable milestone supplies saved-state and hash parity. Kombat Practice is a historical snapshot. The primary oracle designation is **pending owner confirmation**.
 
@@ -15,11 +15,11 @@ R192 supplies gameplay and telemetry evidence. The November 10 playable mileston
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`93323cd6`](https://github.com/nahshongraham97/ps2-native-recomp/commit/93323cd6f5186f41aae51b97b6e46cdde620d052) (source and evidence checkpoint)
+**Verified Fork Commit**: [`e9b631e5`](https://github.com/nahshongraham97/ps2-native-recomp/commit/e9b631e586d115627648fc8befcf17a9367c7d32) (source and evidence checkpoint)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
-- Bounded ownership of 15,669 callable entries · verified-renderware 4, verified-game 12, verified-other-library 0, inferred-renderware 136, inferred-game 131, inferred-other 0, unresolved 15,386.
-- Ownership evidence by kind (overlapping entries) · E1 4, E2 0, E3 26, E4 13, E5 165, E6 110, E7 1.
+- Bounded ownership of 15,669 callable entries · verified-renderware 5, verified-game 12, verified-other-library 0, inferred-renderware 137, inferred-game 130, inferred-other 0, unresolved 15,385.
+- Ownership evidence by kind (overlapping entries) · E1 5, E2 0, E3 26, E4 13, E5 165, E6 112, E7 1.
 - Native credit retains its published component evidence. This ownership pass awards zero native credit.
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
 - **In-Scope Retail Path**: **15,670** (`2,643` non-exec/library: `sdk-or-library` 2,011 + `pointer-scan-proven` 632; `12,789` open frontier) | **Excluded Online (`out-of-scope-stubbed`)**: **1,840**

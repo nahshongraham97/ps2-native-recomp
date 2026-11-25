@@ -9,6 +9,7 @@ import struct
 
 BASE = "SLUS_214.10"
 SEEDS = {0x19F0B0, 0x19F1E0, 0x1A2BC0, 0x1A64A0}
+SAMPLED_E1_ROLES = {0x1A2020}
 STATUSES = ("verified-renderware", "verified-game", "verified-other-library",
             "inferred-renderware", "inferred-game", "inferred-other", "unresolved")
 KINDS = tuple(f"E{i}" for i in range(1, 8))
@@ -374,7 +375,7 @@ def collect(rows, directory, original, image, segments, candidates, descriptors,
             add(pc, "game", "E4", f"{identifier}@{member['table']};constructor={member['constructor']};factory={member['factory']};name_source={member['name_source']};code={member['method']};renderer-scope.json#bounded_census.installed_tables")
 
     seed_details = {}
-    for pc in sorted(SEEDS):
+    for pc in sorted(SEEDS | SAMPLED_E1_ROLES):
         role = next(r for r in candidates[pc]["reasons"] if r["kind"]=="sdk_role_and_verified_retail_callee")
         end = int(role["end_exclusive"],16)
         if hashlib.sha256(original(pc,end-pc)).hexdigest()!=role["original_body_sha256"]:
@@ -486,7 +487,9 @@ def collect(rows, directory, original, image, segments, candidates, descriptors,
                                             "capability_comparison":digest_object(donor)},
             "evidence_counts":{k:kinds[k] for k in KINDS}, "raw":len(scoped),"callable":len(calls),
             "descriptors":len(descriptors),"exact":exact_verdict(r["ownership_status"] for r in calls),
-            "e1_seeds":seed_details, "stream_anchor_words":anchor_words(original), "direct_jal_edges":len(graph),
+            "e1_seeds":{key: value for key, value in seed_details.items() if int(key, 16) in SEEDS},
+            "e1_admissions":seed_details, "propagation_seed_vas":[f"{pc:08x}" for pc in sorted(SEEDS)],
+            "stream_anchor_words":anchor_words(original), "direct_jal_edges":len(graph),
             "direct_jal_sites":sum(len(sites) for sites in graph.values()),
             "game_string_anchors":{f"{a:08x}":v for a,v in sorted(game_anchors.items())},
             "clusters":boundaries,"adjacent_anchors":adjacent_anchors,
