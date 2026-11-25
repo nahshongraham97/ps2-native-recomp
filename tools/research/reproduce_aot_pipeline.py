@@ -116,6 +116,12 @@ def main():
     if not fork_root.is_relative_to(parent) or not (fork_root / "CMakeLists.txt").is_file():
         raise RuntimeError("Generation checkout must be an explicit repository inside the parent workspace")
     deps = parent.parent / "dependencies"
+    elf_dir = parent / "private-inputs" / "SLUS_214.10.Mortal_Kombat_Armageddon"
+    elf = elf_dir / "SLUS_214.10"
+    inventory_path = parent / "research/ledger/aot_coverage_inventory.json"
+    inventory = json.loads(inventory_path.read_text(encoding="utf-8"))
+    if hashlib.sha256(elf.read_bytes()).hexdigest() != inventory["sources"]["pinned_elf"]["sha256"]:
+        raise RuntimeError("Pinned ELF source hash mismatch")
     cmake_exe = next(deps.rglob("cmake.exe"), None) or Path(shutil.which("cmake"))
     ninja_exe = next(deps.rglob("ninja.exe"), None) or Path(shutil.which("ninja"))
     clang = deps / "compiler" / "llvm-mingw-20261006-ucrt-x86_64" / "bin" / "clang.exe"
@@ -156,21 +162,16 @@ def main():
         "-DCMAKE_BUILD_TYPE=Release",
         f"-DSDL2_DIR={sdl2_dir}",
         f"-DMKA_NATIVE_MEDIA_HEADERS={media_headers}",
+        f"-DMKA_NATIVE_TYPED_ELF={elf}",
     ], env, process_flags, echo=True)
     targets = ["vurecomp"] if args.vu_only else ["eerecomp"] if args.ee_only else ["eerecomp", "vurecomp"]
     checked_process([str(cmake_exe), "--build", str(bdir), "--target", *targets, "--parallel", "4"], env, process_flags, echo=True)
 
-    elf_dir = parent / "private-inputs" / "SLUS_214.10.Mortal_Kombat_Armageddon"
-    elf = elf_dir / "SLUS_214.10"
     entries = fork_root / "recomp" / "mkarmageddon_all_entries.txt"
     ov_in = parent / "private-inputs" / "mkarmageddon-aot-inputs" / "overlays"
     vu_in = parent / "private-inputs" / "mkarmageddon-aot-inputs" / "vu1"
     out_ee = fork_root / "build" / "generated-aot" / "phase4-all"
     out_vu = fork_root / "build" / "generated-aot" / "vu1"
-    inventory_path = parent / "research/ledger/aot_coverage_inventory.json"
-    inventory = json.loads(inventory_path.read_text(encoding="utf-8"))
-    if hashlib.sha256(elf.read_bytes()).hexdigest() != inventory["sources"]["pinned_elf"]["sha256"]:
-        raise RuntimeError("Pinned ELF source hash mismatch")
     if hashlib.sha256(entries.read_bytes()).hexdigest() != inventory["sources"]["entries_seed_list"]["sha256"]:
         raise RuntimeError("Pinned exploration entry manifest changed")
     catalogue_path = parent / "research/ledger/functions.csv"

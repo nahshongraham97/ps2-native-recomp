@@ -10,7 +10,9 @@ target_link_libraries(native_typed_recomp PRIVATE mka_native_typed_compiler)
 add_executable(test_native_typed_codegen EXCLUDE_FROM_ALL tests/test_native_typed_codegen.cpp)
 target_link_libraries(test_native_typed_codegen PRIVATE mka_native_typed_compiler)
 
-set(_typed_elf "${CMAKE_CURRENT_SOURCE_DIR}/../../../research/inputs/SLUS_214.10")
+set(MKA_NATIVE_TYPED_ELF "${CMAKE_CURRENT_SOURCE_DIR}/../../../research/inputs/SLUS_214.10"
+    CACHE FILEPATH "Original ELF authenticated by the offline native typed compiler")
+set(_typed_elf "${MKA_NATIVE_TYPED_ELF}")
 set(_typed_inputs
     recomp/native_typed_ir.hpp recomp/native_typed_ir.cpp
     recomp/native_typed_codegen.hpp recomp/native_typed_codegen.cpp
