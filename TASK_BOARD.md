@@ -15,7 +15,7 @@ R192 supplies gameplay and telemetry evidence. The November 10 playable mileston
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`02109157`](https://github.com/nahshongraham97/ps2-native-recomp/commit/0210915714b020e5b08784db55810d3ee0972d67) (source and evidence checkpoint)
+**Verified Fork Commit**: [`1857f55c`](https://github.com/nahshongraham97/ps2-native-recomp/commit/1857f55c8963b4c50928cf0764b7443710225456) (source and evidence checkpoint)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - Bounded ownership of 15,669 callable entries · verified-renderware 5, verified-game 12, verified-other-library 0, inferred-renderware 137, inferred-game 130, inferred-other 0, unresolved 15,385.
