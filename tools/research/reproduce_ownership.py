@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import ctypes
 import hashlib
 import json
 import os
@@ -46,11 +47,23 @@ def verify_inputs(manifest, roots):
 
 
 def git(root, *arguments):
-    return subprocess.check_output(["git", *arguments], cwd=root, text=True, encoding="utf-8").strip()
+    return subprocess.check_output(["git", "-c", "core.longpaths=true", *arguments], cwd=short_path(root), text=True, encoding="utf-8").strip()
+
+
+def short_path(path):
+    if os.name != "nt":
+        return Path(path)
+    buffer = ctypes.create_unicode_buffer(32768)
+    length = ctypes.windll.kernel32.GetShortPathNameW(str(path), buffer, len(buffer))
+    if not length or length >= len(buffer):
+        raise OSError("Windows could not resolve an existing checkout path")
+    return Path(buffer.value)
 
 
 def command(arguments, cwd, environment):
-    result = subprocess.run([str(value) for value in arguments], cwd=cwd, env=environment,
+    if arguments[0] == "git":
+        arguments = ["git", "-c", "core.longpaths=true", *arguments[1:]]
+    result = subprocess.run([str(value) for value in arguments], cwd=short_path(cwd), env=environment,
                             capture_output=True, timeout=300, creationflags=subprocess.CREATE_NO_WINDOW)
     if result.returncode:
         raise RuntimeError(result.stderr.decode(errors="replace")[-3000:])
@@ -101,7 +114,8 @@ def main():
     for label, original in (("parent", parent), ("fork", fork)):
         destination = roots[label]
         destination.parent.mkdir(parents=True, exist_ok=True)
-        command(["git", "clone", "--shared", "--no-hardlinks", "--no-checkout", original, destination], parent, environment)
+        command(["git", "clone", "--shared", "--no-hardlinks", "--no-checkout", "--config", "core.longpaths=true",
+                 short_path(original), destination.name], destination.parent, environment)
         command(["git", "checkout", "--detach", source_commits[label]], destination, environment)
         if git(destination, "status", "--porcelain", "--untracked-files=no"):
             raise ValueError("Fresh ownership checkout has tracked modifications")

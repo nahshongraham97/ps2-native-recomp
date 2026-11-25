@@ -216,4 +216,3 @@ def self_test(original):
     assert len(split['catalogued_methods'])==6 and len(split['outside_raw_catalogue'])==3
     return {'status':'PASS','positive_original':True,'positive_catalogue_split':[6,3],
             'ownership_not_promoted':True,'planted_rejections':rejected}
-
