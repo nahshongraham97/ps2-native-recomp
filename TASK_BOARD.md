@@ -4,7 +4,7 @@
 files, and closure evidence are in [ROADMAP.md](ROADMAP.md). This board indexes
 each deliverable's verified component progress and whole-game acceptance state;
 [PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is
-**Resume: Phase 0 remains OPEN. The verified correction checkpoint is published. Establish the missing per-hook B9/Practice binary joins and authenticated successful-run hook/telemetry configuration, and complete the required baseline scope. Static launcher inspection and disposable preparation passed; no oracle game run occurred. Do not start Phase 1 before the Phase 0 gate passes. Phase 4 still requires full callable coverage and independent function-boundary/VU packet comparisons; Phase 5 remains gated.**
+**Resume: retain the published Phases 0-3 work. Finish Phase 4: generate every real catalogue entry, independently compare function-boundary register/memory effects and VU output packets over the pinned states, and publish measured coverage. Phase 5 remains gated until Phase 4 passes; then complete Phases 5-7 in order.**
 
 archived at `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
@@ -13,7 +13,7 @@ archived at `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`9e426b76`](https://github.com/nahshongraham97/ps2-native-recomp/commit/9e426b764b967563513049e7b29a7b7a8156b605) (pinned active fork)
+**Verified Fork Commit**: [`e9bb5ec1`](https://github.com/nahshongraham97/ps2-native-recomp/commit/e9bb5ec160b9c1bc7c91e8791385d0a20e584be6) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - **Total PS2 Function Catalog**: **17,510** functions (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)

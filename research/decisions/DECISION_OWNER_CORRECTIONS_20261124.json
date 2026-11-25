@@ -11,7 +11,7 @@
       "kombat_practice_path": "../../milestone_build_kombat_practice",
       "kombat_practice_exe_sha256": "8b763dcc3e0c47188b535803117fa44cf81d9b7f36d103df3247336b16a321b9",
       "duplicate_backup_path": "external/forks/ps2-native-recomp-backup-20261110",
-      "relationship_proven_by_git_and_binary": "The oracle runner is byte-identical to the protected backup runner. The older source repository has a measured 33-commit interval, including combat/practice changes and non-hook changes; distinctive binary tags support shared lineage. Kombat Practice is a distinct executable/source snapshot with measured differences. Complete per-hook source-to-binary instruction joins and runtime activation were not established; earlier blanket inclusion claims are superseded.",
+      "relationship_proven_by_git_and_binary": "The B9 runner is byte-identical to the protected backup runner. The measured source interval contains 33 mixed commits. Actual original-binary instructions now establish 14 handler-connected behavioral owner groups in both B9 and Practice. B9 registers the health replacement; Practice registers health plus seven overlay sites and differs in admission. Source lineage and bounded compiled hook presence are established; exact complete source/object build provenance and runtime activation are separate unverified claims.",
       "hook_disabled_parity_config": {
         "launcher_flag": "-Mode Parity in launchers/launch_oracle.ps1",
         "env_vars": {
@@ -47,7 +47,7 @@
     "historical_settings_file": "launchers/launch_milestone.ps1",
     "historical_settings_sha256": "378c23d6168098781e6037078eb9fd8c248aacdc5f70902ed080ae97024b8fb1",
     "current_guarded_source_sha256": "ccfcfb01558781748aaa29d0d59240285784e340d1f20442df0dfb03ef688e57",
-    "change": "Legacy playable entry delegates before any old work-copy writes; historical minimal hook settings retained. Existing oracle BAT remains immutable. New source launcher uses disposable paths; pending exact additive wrapper and fresh baseline.",
+    "change": "The immutable original BAT is retained. The authorized additive launcher delegates to the tracked disposable launcher. Explicit historical settings and passive telemetry are confined to new copies. B9 instructions authenticate the bounded headless route; positive Frames and bounded process/stream waits are required. No oracle execution is claimed by static restoration.",
     "oracle_headless_execution": "OPEN: exact executable no-audio/no-window route not authenticated; no oracle game launched",
     "tracked_original_manifest": {
       "path": "launchers/oracle_original_manifest.json",
@@ -873,5 +873,76 @@
     "source_identity": "Authenticate measured source manifest and binary hashes; verify later compiled changes separately and identify reused unchanged components.",
     "sync": "Byte-identical ledgers, chart and current progress documents including measured-source commit pins and LF; later documentation checkpoint recorded separately.",
     "phase_gate": "Commit and push the verified phase checkpoint before starting another phase; Phase 0 remains OPEN."
+  },
+  "phase0_binary_instruction_comparison": {
+    "status": "PASS_BOUNDED_STATIC_HOOK_COMPARISON",
+    "raw_handoff_sha256": "128c981ab60dfb2fb9d5d7a605ff23f5f3927c80e94bfe4d69f4a4b41c5859c3",
+    "root_independent_byte_join_sha256": "abd6b83919f20278d00129e7127645cb2b18f323ec5f0b5a5312d14d7695ef49",
+    "features_present_in_both": [
+      "combo",
+      "hazards",
+      "video",
+      "audio",
+      "camera",
+      "stance",
+      "fatality",
+      "projectiles",
+      "defense",
+      "air_combat",
+      "aggressor",
+      "stage_transition",
+      "render_bridge",
+      "roster"
+    ],
+    "registration_sites": {
+      "B9": [
+        "0x197BC0"
+      ],
+      "Practice": [
+        "0x197BC0",
+        "0x84A100",
+        "0x7DC1F8",
+        "0x812750",
+        "0x812760",
+        "0x7C4980",
+        "0x856700",
+        "0x856780"
+      ]
+    },
+    "priority_witnesses": {
+      "76282ae_practice_snap": {
+        "both": "Actual centralpadhandler branch callsset_fighter_position andstagehazardcollision; PE-RIPjoinedpractice-snapdiagnostic plus fullinstructioncontexts retained.",
+        "B9_range": [
+          "0x140018020",
+          "0x14001ab90"
+        ],
+        "Practice_range": [
+          "0x14001dab0",
+          "0x140020650"
+        ]
+      },
+      "10b6aa5_hazard_recovery": {
+        "both": "Actualcentralhealthhandler code referenceshazardownerandsetshealth/repositioningalongconditionalpracticebranch; PE-RIPjoinedhazard-interrupteddiagnostic.",
+        "B9_diagnostic_instruction": "0x14001b4f9",
+        "Practice_diagnostic_instruction": "0x140021215"
+      },
+      "67612aa_real_delegate": {
+        "both": "Actualpadhandlerloadsentry0x135(309)fordelegation;fullsourceanddisassemblyretainL1/button/combobranches.",
+        "B9_entry_load_examples": [
+          "0x1400180e2",
+          "0x1400186cd",
+          "0x1400186e4"
+        ],
+        "Practice_entry_load_examples": [
+          "0x14001db70",
+          "0x14001e162",
+          "0x14001e179"
+        ]
+      }
+    },
+    "headless": "B9 main bool0at140002fbe; onlyflagstores1at140003c7c/140003ce6; guardedopen_windowcall140005d20andrun_windowcall140007805. All3SDLinitialization/device/windowcallsconfinedtoopen_windowinexactbinary. Seecomparisonrecordandxrefs.",
+    "limits": "Static compiled presence and gating only; no whole-handler equivalence or authenticated historical full process environment. Original explicit collector settings are reconstructed; inherited historical settings were not recorded.",
+    "historical_settings_audit_sha256": "9f9db49c7def559412c18afc938292c46b379b1901235ac8114f44608073e9d5",
+    "shipped_exclusion": "All assist, interception and overlay replacement hooks remain excluded from the accepted native game."
   }
 }
