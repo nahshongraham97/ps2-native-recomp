@@ -125,12 +125,14 @@ def main():
     env["PATH"] = str(clangpp.parent) + os.pathsep + env["PATH"]
     process_flags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
     sdl2_dir = fork_root / "third_party" / "sdl2" / "lib" / "cmake" / "SDL2"
-    if not (sdl2_dir / "SDL2Config.cmake").is_file():
+    def has_sdl_config(directory):
+        return any((directory / name).is_file() for name in ("SDL2Config.cmake", "sdl2-config.cmake"))
+    if not has_sdl_config(sdl2_dir):
         # A clean source clone has no ignored dependency bundle. Reuse the
         # user's existing SDK package as a read-only dependency, never a
         # previously built generator or generated retail source tree.
         sdl2_dir = parent / "external/forks/ps2-native-recomp/third_party/sdl2/lib/cmake/SDL2"
-    if not (sdl2_dir / "SDL2Config.cmake").is_file():
+    if not has_sdl_config(sdl2_dir):
         raise RuntimeError("Existing SDL2 dependency package is required for Windows CMake configuration")
     subprocess.run([
         str(cmake_exe), "-S", str(fork_root), "-B", str(bdir), "-G", "Ninja",
