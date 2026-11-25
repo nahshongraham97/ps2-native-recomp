@@ -34,7 +34,9 @@ This document defines the physical directory layout, repository boundaries, Phas
             │   ├── runtime/                     # Native platform runtime services & partial recovered/ported modules (legacy recomp queued for removal)
             │   ├── tests/                       # Headless gates, component tests, and regression tests
             │   ├── research/runs/               # Dated run records and empirical measurements
-            │   └── build/oracle-telemetry/      # Git-ignored destination for oracle parity manifests & telemetry
+            │   └── build/
+            │       ├── r192-hooks/              # ACTIVE PLAYABLE RECOMP BUILD & ORACLE (8ab43bda...; persistent card armageddon.ps2)
+            │       └── oracle-telemetry/        # Git-ignored destination for oracle parity manifests & telemetry
             └── ps2-native-recomp-backup-20261110/    # Protected duplicate of oracle game tree (3,249 shared files SHA-256 identical)
 # (Historical Phase 3 removal log lists 41 checkouts; present relocation archive hashes are recorded, but no before-removal manifest proves completeness.)
             └── ps2-native-recomp-backup-20261110/    # Protected duplicate of oracle game tree (3,249 shared files SHA-256 identical)
@@ -70,9 +72,9 @@ This document defines the physical directory layout, repository boundaries, Phas
    - Role: Active ahead-of-time (AOT) static native C++ recompilation, memory/ABI transform, and native runtime implementation of *Mortal Kombat: Armageddon*.
    - Path Rules (Binding): Inside every repository document, use **strictly repo-relative paths**; never use machine-local user paths or file-scheme links, and never reintroduce the retired pre-consolidation checkout name.
 
-3. **Playable Oracle Reference Dataset**:
-   - Location: `../../milestone_work_verified_playable_20261110` relative to parent repo (`../../milestone_build_kombat_practice` is its hook-enabled descendant).
-   - Policy: `milestone_work_verified_playable_20261110` is the **only separate reference dataset directory** outside the repository tree. It serves solely as an offline behavioral/parity oracle (uses the tracked disposable launcher with `-Mode Parity` and writes telemetry only to git-ignored `external/forks/ps2-native-recomp/build/oracle-telemetry/`). Neither oracle nor Kombat Practice is an accepted zero-emulation shipped port.
+3. **Playable Recomp Build & Behavioral Oracle (`r192-hooks`) vs Preserved Historical Snapshots**:
+   - **Active Playable Recomp Build & Behavioral Oracle**: `external/forks/ps2-native-recomp/build/r192-hooks/out/ps2run.exe` (`8AB43BDA...`, launched via `launchers/launch_r192_hooks.bat` -> `build/r192-hooks/out/launch_r192_hooks.bat`; R192 `67612aa` lineage + `mka_unit_wrappers.cpp` + all 7 overlay hooks + `0x00197BC0`). Verified in the 2026-11-25 68,426-frame session (`research/runs/r192-hooks-playable-run-20261125/RUN.md`, `60.0 FPS` median; Konquest and Motor Kombat work cleanly). Its slot-1 memory card `build/r192-hooks/game/disc/armageddon.ps2` (`8,650,752` bytes, SHA-256 `f38dc412...`) is **persistent** (holds saved progress + Konquest checkpoint) and must never be overwritten or replaced with a disposable card.
+   - **Preserved Historical Datasets**: `../../milestone_work_verified_playable_20261110` (`B9EEF7DA...`) and `../../milestone_build_kombat_practice` (`8B763DCC...`) remain preserved on disk (`milestone_work_verified_playable_20261110` is verified immutable for `-Mode Parity` state telemetry written to `build/oracle-telemetry/`). Neither historical snapshots nor `r192-hooks` satisfy the separate zero-emulation shipped-port acceptance contract.
 
 ---
 

@@ -1,16 +1,17 @@
 # Mortal Kombat: Armageddon retail native port
 
-**Current status (2026-11-24): acceptance OPEN. Do not ask the owner to run the game.**
+**Current status (2026-11-25): Active playable recomp build & behavioral oracle verified (`r192-hooks`, `8AB43BDA...`); zero-emulation native-port acceptance remains OPEN.**
 This project targets a native Windows port of retail *Mortal Kombat: Armageddon* (Sony PlayStation 2 `SLUS_214.10` and overlays).
-The target architecture uses AOT static C++ transformed to typed native memory and ABI for retail game logic, with hand-written platform boundaries and runtime services. Generated intermediate code still needs the memory/ABI transform; the measured tiers below distinguish it from credited native implementations. Xbox investigation (`default.xbe`) is limited to renderer, viewport and HD presentation (`DECISION_OWNER_CORRECTIONS_20261124.json`). Whole-game native acceptance remains **OPEN**.
-Neither the canonical playable oracle (`../../milestone_work_verified_playable_20261110/`, `ps2run.exe` `B9EEF7DA...`) nor related Kombat Practice (`../../milestone_build_kombat_practice/`, `8B763DCC...`) satisfies the zero-emulation shipped-port acceptance contract.
+The target architecture uses AOT static C++ transformed to typed native memory and ABI for retail game logic, with hand-written platform boundaries and runtime services. Generated intermediate code still needs the memory/ABI transform; the measured tiers below distinguish it from credited native implementations. Xbox investigation (`default.xbe`) is limited to renderer, viewport and HD presentation (`DECISION_OWNER_CORRECTIONS_20261124.json`). Whole-game zero-emulation native acceptance remains **OPEN**.
+
+**Playable Recomp Build & Active Behavioral Oracle:** `external/forks/ps2-native-recomp/build/r192-hooks/out/ps2run.exe` (`8AB43BDA05E7A621B946883F3195A583F0C2455F0351BF8608282CD3E97B4617`, launched via [`launchers/launch_r192_hooks.bat`](launchers/launch_r192_hooks.bat) or the colocated `build/r192-hooks/out/launch_r192_hooks.bat`) IS the working playable recomp build and the project's behavioral oracle. In the verified 2026-11-25 owner session (`68,426` frames at `60.0 FPS` median on D3D12, see [the 2026-11-25 run record](research/runs/r192-hooks-playable-run-20261125/RUN.md)), **Konquest** and **Motor Kombat** worked cleanly alongside VS/Practice combat with all 8 replacement hooks, `--wrap` wrappers, observers, profiler, and `PS2_NATIVE_VERTEX` active. Its slot-1 memory card (`external/forks/ps2-native-recomp/build/r192-hooks/game/disc/armageddon.ps2`, SHA-256 `f38dc412...`) is **persistent** (holds substantial saved data and a Konquest checkpoint) and must never be overwritten or replaced with a disposable card. Historical snapshots (`../../milestone_work_verified_playable_20261110/`, `B9EEF7DA...` and `../../milestone_build_kombat_practice/`, `8B763DCC...`) remain preserved read-only on disk for comparison telemetry, and neither they nor `r192-hooks` satisfy the separate zero-emulation shipped-port acceptance contract.
 
 <!-- PROGRESS:START -->
 ## Native Reimplementation Progress & Multi-Tier Ledger
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`7110c359`](https://github.com/nahshongraham97/ps2-native-recomp/commit/7110c3598eee6184782c66172ecf9d2617d3d8a8) (pinned active fork)
+**Verified Fork Commit**: [`9f2cff1f`](https://github.com/nahshongraham97/ps2-native-recomp/commit/9f2cff1f50a8c56e5d5e04dcf48cb56312781eed) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)

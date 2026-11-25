@@ -262,16 +262,8 @@ allocations and verified native handles own these resources.
 1. Record `git rev-parse HEAD`, `git status --short`, compiler, build flags,
    executable SHA-256, asset hashes, and card/key-file hashes in a new
    `research/runs/<candidate-id>/provenance.json`.
-2. Use the owner's verified playable safety copy at
-   `external/forks/ps2-native-recomp-backup-20261110/`: executable SHA-256
-   `B9EEF7DAD3CFA0E1216493CF12301F14AA4B3A8B1456FCDC60D9C39502A0D860`,
-   61 `.state` files and 72 `.inputs` files. The separate, older R192 binary
-   named in the old ledger is missing; it does not invalidate this oracle.
-   Preserve the safety copy and make matched comparisons from isolated
-   writable data. Identify the `c34b3fb` Run 3 card record separately;
-   neither it nor the Kombat Practice package proves native acceptance.
-3. Make disposable copies of card/save data for every comparison. Never
-   write to the original card or the safety checkout.
+2. Use the active **playable recomp build and behavioral oracle** at `external/forks/ps2-native-recomp/build/r192-hooks/out/ps2run.exe` (SHA-256 `8AB43BDA05E7A621B946883F3195A583F0C2455F0351BF8608282CD3E97B4617`, launched via `launchers/launch_r192_hooks.bat`; 2026-11-25 68,426-frame run summarized in `research/runs/r192-hooks-playable-run-20261125/RUN.md`, verifying **Konquest** and **Motor Kombat** at `60.0 FPS` median on D3D12) alongside its **persistent** slot-1 memory card `external/forks/ps2-native-recomp/build/r192-hooks/game/disc/armageddon.ps2` (`f38dc412...`, holds Konquest checkpoint + user saves; never overwrite). Also preserve the historical `2026-11-10` safety copy (`../../milestone_work_verified_playable_20261110/`, `B9EEF7DAD3CFA0E1216493CF12301F14AA4B3A8B1456FCDC60D9C39502A0D860`, 61 `.state` files and 72 `.inputs` files) and protected backup `external/forks/ps2-native-recomp-backup-20261110/` immutable for disposable state/parity tests.
+3. Keep disposable copies of card/save data for automated comparisons so they never touch the persistent `build/r192-hooks/game/disc/armageddon.ps2` card or the preserved safety checkout.
 4. Record absent baseline behavior as `unverified`, not `pass`. Use retail
    footage, asset bytes, traces, and decompilation where the old build lacks
    an observable behavior.

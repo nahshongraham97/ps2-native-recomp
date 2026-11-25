@@ -8,8 +8,7 @@ old fork guidance is preserved at
 `research/history/native-port-docs-2026-11-18/AGENTS.md` as history only.
 
 Work in this active fork, not `../ps2-native-recomp-backup-20261110/` or
-Kombat Practice (`milestone_build_kombat_practice/`, which shares direct hook
-lineage with the playable oracle `B9EEF7DA...`). Discard noncompliant commits,
+historical snapshots (`../../milestone_work_verified_playable_20261110/` `B9EEF7DA...`, `../../milestone_build_kombat_practice/` `8B763DCC...`). The restored R192-lineage build at `build/r192-hooks/out/ps2run.exe` (`8AB43BDA...`, launched via `build/r192-hooks/out/launch_r192_hooks.bat`) IS the active verified playable recomp build and behavioral oracle (`research/runs/r192-hooks-playable-run-20261125/RUN.md` in parent; Konquest and Motor Kombat verified); its persistent slot-1 memory card `build/r192-hooks/game/disc/armageddon.ps2` (`f38dc412...`, Konquest checkpoint + user saves) must NEVER be overwritten or reset. Discard noncompliant commits,
 dirty files, and prior checkouts locally without rewriting pushed history.
 Preserve protected backup files, user cards, saves, states, keys, and local model/settings.
 

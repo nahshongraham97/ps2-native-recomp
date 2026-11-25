@@ -5,7 +5,7 @@
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`7110c359`](https://github.com/nahshongraham97/ps2-native-recomp/commit/7110c3598eee6184782c66172ecf9d2617d3d8a8) (pinned active fork)
+**Verified Fork Commit**: [`9f2cff1f`](https://github.com/nahshongraham97/ps2-native-recomp/commit/9f2cff1f50a8c56e5d5e04dcf48cb56312781eed) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
@@ -232,7 +232,8 @@ acceptance. Game acceptance remains **OPEN**.
 | 300-frame scripted run | `external/forks/ps2-native-recomp/research/runs/acceptance-gate-20261118/RUN.md` | Census observation only; no full-game, physical-input, card-profile, or exact-sound acceptance |
 | 3,000-frame scripted run | `external/forks/ps2-native-recomp/research/runs/kombat-match-3000-20261118/RUN.md` | Combat automation observation, not controller/keyboard or all-mode proof |
 | Historical playable claim | The old ledger names R192 `7c998b2`, SHA-256 `888271b2c246a9d19415f7e274e0dfa068a08573afa832b43aa1db56d485ef50`; neither named backed-up executable was present at this audit | Its recorded screenshots are historical evidence; do not treat the missing binary as an available oracle |
-| User-designated verified playable oracle | Pinned B9 runner, original 3,256-file manifest unchanged, plus exactly 1 authorized launcher addition. Protected backup has 4,429 fully hashed files; all 3,249 shared game files match. | Use the tracked disposable launcher with `-Mode Parity` for the requested hook-disabled configuration; runtime suppression and full gameplay parity remain OPEN. Practice is a related, distinct executable and is not an automatic substitute. |
+| **Active Playable Recomp Build & Behavioral Oracle (`r192-hooks`)** | `external/forks/ps2-native-recomp/build/r192-hooks/out/ps2run.exe` (`8AB43BDA05E7A621B946883F3195A583F0C2455F0351BF8608282CD3E97B4617`, launched via `launchers/launch_r192_hooks.bat` / `out/launch_r192_hooks.bat`); D3D12 + guest audio + R192 `67612aa` lineage + `mka_unit_wrappers.cpp` + all 7 overlay hooks + `0x00197BC0`. Persistent slot-1 card `game/disc/armageddon.ps2` (`8,650,752` bytes, SHA-256 `f38dc412...`) holds saved progress + Konquest checkpoint | **Active Behavioral Oracle & Playable Recomp Build** (`research/runs/r192-hooks-playable-run-20261125/RUN.md`): owner-verified 68,426-frame run (`60.0 FPS` median, `57.1` mean, **Konquest** and **Motor Kombat** working cleanly, 5 card save flushes, `ee-live` cached `2,212 -> 3,022` windows); AOT/live-JIT/GS/IOP recomp build, so zero-emulation native-port acceptance remains OPEN |
+| Historical designated oracle snapshot (`2026-11-10`) | Preserved B9 runner (`../../milestone_work_verified_playable_20261110/`, `B9EEF7DA...`), original 3,256-file manifest unchanged, plus authorized launcher additions. Protected backup has 4,429 fully hashed files; all 3,249 shared game files match. | Preserved historical snapshot for disposable `-Mode Parity` state telemetry. Superseded as the active gameplay oracle by the restored R192-lineage `r192-hooks` build (`8AB43BDA...`); Practice (`8B763DCC...`) is a `native-gl` snapshot (4–27 FPS, `x5.00` stretched audio) and is not a substitute. |
 | Historical card oracle | Fork `c34b3fb`, 2026-11-15 17:57 Run 3; `research/runs/aot-layout-crash-20261115/RUN.md` in fork | Changed-card `-1`, then success, `/BASLUS-21410` file operations, free clusters 8,000â†’7,831; not current card proof |
 
 The initial 2026-11-18 local-model query returned no loaded instance. Preserve
