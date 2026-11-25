@@ -9,6 +9,7 @@ import hashlib
 import re
 import os
 import csv
+import sys
 from aot_inventory import stage_vu_inputs, update_inventory, verified_nonfunction_catalogue_addresses
 
 
@@ -79,6 +80,15 @@ def verify_generated_overlay_windows(measured: list[dict], expected: list[dict])
             raise RuntimeError(f"Generated dynamic window has no callable units: {row['name']}")
 
 
+def checked_process(argv, env, process_flags, echo=False):
+    result = subprocess.run(argv, capture_output=True, text=True, env=env, creationflags=process_flags)
+    if echo or result.returncode:
+        print(result.stdout, end="", flush=True)
+        print(result.stderr, end="", file=sys.stderr, flush=True)
+    result.check_returncode()
+    return result
+
+
 def resolve_roots():
     p = Path(__file__).resolve()
     for anc in [p, *p.parents]:
@@ -134,16 +144,21 @@ def main():
         sdl2_dir = parent / "external/forks/ps2-native-recomp/third_party/sdl2/lib/cmake/SDL2"
     if not has_sdl_config(sdl2_dir):
         raise RuntimeError("Existing SDL2 dependency package is required for Windows CMake configuration")
-    subprocess.run([
+    media_headers = deps / "native-media/ffmpeg-7.1.4"
+    if not all((media_headers / relative).is_file() for relative in
+               ("libavcodec/avcodec.h", "libavformat/avformat.h", "libavutil/avutil.h")):
+        raise RuntimeError("Existing pinned FFmpeg7.1.4 headers are required for Windows CMake configuration")
+    checked_process([
         str(cmake_exe), "-S", str(fork_root), "-B", str(bdir), "-G", "Ninja",
         f"-DCMAKE_MAKE_PROGRAM={ninja_exe}",
         f"-DCMAKE_C_COMPILER={clang}",
         f"-DCMAKE_CXX_COMPILER={clangpp}",
         "-DCMAKE_BUILD_TYPE=Release",
         f"-DSDL2_DIR={sdl2_dir}",
-    ], check=True, env=env, creationflags=process_flags)
+        f"-DMKA_NATIVE_MEDIA_HEADERS={media_headers}",
+    ], env, process_flags, echo=True)
     targets = ["vurecomp"] if args.vu_only else ["eerecomp"] if args.ee_only else ["eerecomp", "vurecomp"]
-    subprocess.run([str(cmake_exe), "--build", str(bdir), "--target", *targets, "--parallel", "4"], check=True, env=env, creationflags=process_flags)
+    checked_process([str(cmake_exe), "--build", str(bdir), "--target", *targets, "--parallel", "4"], env, process_flags, echo=True)
 
     elf_dir = parent / "private-inputs" / "SLUS_214.10.Mortal_Kombat_Armageddon"
     elf = elf_dir / "SLUS_214.10"
@@ -202,12 +217,12 @@ def main():
                 shutil.rmtree(d)
             d.mkdir(parents=True)
         if not args.vu_only:
-            r1 = subprocess.run(
+            r1 = checked_process(
                 [str(bdir / "eerecomp.exe"), str(elf), "--modules", str(ov_stage), "--overlays", str(ov_stage), "--entries", str(generated_seeds), "--out", str(out_ee)],
-                capture_output=True, text=True, check=True, env=env, creationflags=process_flags,
+                env, process_flags,
             )
         if not args.ee_only:
-            r2 = subprocess.run([str(bdir / "vurecomp.exe"), str(ov_stage / "admitted-vu"), str(out_vu), "--require-complete"], capture_output=True, text=True, check=True, env=env, creationflags=process_flags)
+            r2 = checked_process([str(bdir / "vurecomp.exe"), str(ov_stage / "admitted-vu"), str(out_vu), "--require-complete"], env, process_flags)
     measured = update_inventory(parent, out_ee)
     verify_generated_overlay_windows(measured["dynamic_windows"], dynamic_inputs)
     inventory = json.loads(inventory_path.read_text(encoding="utf-8"))
