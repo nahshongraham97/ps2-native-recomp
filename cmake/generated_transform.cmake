@@ -7,13 +7,6 @@ set(_overlay_transform_script "${CMAKE_SOURCE_DIR}/tools/research/transform_gene
 set(_overlay_transform_contract "${CMAKE_SOURCE_DIR}/recomp/overlay_initializer_contract.json")
 set(_overlay_generated_dir "${CMAKE_SOURCE_DIR}/build/generated-aot/phase4-all")
 file(GLOB_RECURSE _overlay_ast_headers CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/runtime/include/*.hpp")
-if(TARGET mka_native_retail_startup)
-    foreach(_overlay_unit m_GAMER_unit_0000.cpp m_MOVIER_unit_0021.cpp units.hpp)
-        if(NOT EXISTS "${_overlay_generated_dir}/${_overlay_unit}")
-            message(FATAL_ERROR "Native retail startup requires authenticated generated overlay input: ${_overlay_generated_dir}/${_overlay_unit}. Run tools/research/reproduce_aot_pipeline.py first.")
-        endif()
-    endforeach()
-endif()
 
 # Separate offline relative-receiver prototype. This adds no production caller
 # or source-layout compatibility struct; the native owner is one signed field.
@@ -73,9 +66,6 @@ else()
     target_compile_options(mka_transformed_overlay_initializers PRIVATE -Wall -Wextra -Werror)
 endif()
 
-if(TARGET mka_native_retail_startup)
-    target_link_libraries(mka_native_retail_startup PUBLIC mka_transformed_overlay_initializers)
-endif()
 
 # Guest state belongs exclusively to this differential test's reference side.
 # It is not linked into the transformed native library.

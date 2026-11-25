@@ -652,9 +652,9 @@ def build_ps2_ledger_and_map(proven_addrs, indirect_addrs):
                     "donor": "none",
                     "embedded_in": "",
                     "notes": (
-                        "GAMER initializer: generated kernel connected to actual native OverlaySelection owner; "
-                        "measured owner/error/lifetime controls at build/oracle-telemetry/overlay-integration-20261125-02/RESULT.json. "
-                        "R13 ownership and full 7.1 admission remain OPEN; zero new native credit."
+                        "GAMER initializer: two-kernel prototype E2 evidence remains separate from production. "
+                        "Integration is DEFERRED until R13 ownership is admitted; the original native owner and handwritten setter are retained. "
+                        "Current gate receipt: build/oracle-telemetry/gamer-deferred-7-1-20261125-01/RESULT.json; zero new native credit."
                         if addr_hex == "007c4980" else "Retail GAMER overlay"
                     ),
                 })

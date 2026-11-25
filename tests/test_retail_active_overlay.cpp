@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
           "new owner replaces retired identity without replaying initializer");
     state = overlay->observe(f);
     check(state && state->selected_mode == 1 && state->active,
-          "7C4980 generated selection is retained in the actual owner");
+          "selected mode is retained in the actual owner");
 
     if (argc == 3) {
         const auto fixtures = std::filesystem::u8path(argv[2]);
@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
         check(bool(changed_volume), "changed disposable volume opens");
         check(!retail::NativeRetailActiveOverlay::initialize_mode_one(*changed_volume, f) &&
                   f.kind == retail::RetailActiveOverlayError::unsupported_initializer,
-              "changed original word cannot reach generated initializer");
+              "changed original word cannot publish an overlay owner");
         const auto selected_identity = replacement->observe().identity;
         check(overlay->reload_mode_one(*absent_volume, f),
               "already selected mode skips module admission and initializer");

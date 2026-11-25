@@ -116,11 +116,11 @@ bool NativeRetailActiveOverlay::reload_mode_one(
             companion_parent_.reset();
             companion_identity_ = {};
         }
-        if (selection_.selected_mode != 1) {
+        if (selected_mode_ != 1) {
             if (!read_gamer_initializer(volume, failure)) return false;
-            // The authenticated GAMER body writes this owner's selection.
-            // Its initializer-table caller ignores the V1 live-out.
-            (void)generated::initialize_gamer(selection_);
+            // Native body of GAMER initializer 7C4980: li v1,1; jr ra;
+            // sw v1,64F1A0 in the delay slot. 3DDA70 stores the same mode.
+            selected_mode_ = 1;
         }
         auto parent = memory::NativeHeapOwner::create(
             "Wave overlay heap", nullptr, failure.heap);
@@ -181,7 +181,7 @@ NativeRetailActiveOverlay::observe(
     }
     try {
         RetailActiveOverlayObservation result;
-        result.selected_mode = static_cast<int>(selection_.selected_mode);
+        result.selected_mode = selected_mode_;
         if (companion_parent_) {
             const auto state = companion_parent_->observe();
             result.active = state.active && state.identity == companion_identity_;

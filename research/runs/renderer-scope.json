@@ -190319,8 +190319,8 @@
       "protected_unchanged": true
     },
     "baseline_after": {
-      "path": "build/oracle-telemetry/complete-baseline-20261125-124238-2771b6c2/RESULT.json",
-      "sha256": "83599f47842c00d4a55a86b1957e20c275698832854867f08b7d7d78ea97045c",
+      "path": "build/oracle-telemetry/complete-baseline-20261125-130758-8a724007/RESULT.json",
+      "sha256": "af552f1d71b6ecb03c64cb2b011ef3e8795a4a60012b577d3e8693e6f5013cf0",
       "client_targets": 58,
       "client_variants": 62,
       "gates": 13,
@@ -191510,6 +191510,15 @@
       {
         "path": "build/oracle-telemetry/complete-baseline-20261125-122621-0e986c8e/RESULT.json",
         "sha256": "776a327dea8298cac6f0534d4fb742416e42e70f6430dc5aead588154947ed28",
+        "client_targets": 58,
+        "client_variants": 62,
+        "gates": 13,
+        "all_expected_exits": true,
+        "protected_unchanged": true
+      },
+      {
+        "path": "build/oracle-telemetry/complete-baseline-20261125-124238-2771b6c2/RESULT.json",
+        "sha256": "83599f47842c00d4a55a86b1957e20c275698832854867f08b7d7d78ea97045c",
         "client_targets": 58,
         "client_variants": 62,
         "gates": 13,
