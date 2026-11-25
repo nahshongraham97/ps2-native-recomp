@@ -6,7 +6,7 @@ each deliverable's verified component progress and whole-game acceptance state;
 [PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is archived at
 `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
-**Resume Step 6.2 at PS2 factory 0x004BC060.** Recover an original runtime class-name or type-descriptor reference that identifies the object whose constructor installs vtable 0x0064B130, or establish an equivalent named Midway class-to-vtable relation from another retail site. Verify the method slots against original bytes before assigning E4. Then publish the Step 6 closure and start Step 5S.1. The B9 trace and PS2/Xbox comparison are in the [Step 6 evidence](https://github.com/nahshongraham97/ps2-native-recomp/blob/main/research/runs/renderer-scope.json). Each Phase 7 replacement has its own ownership, transform and differential gates.
+**Active work follows A1 dependencies.** Step 5S proceeds from the published 6.1, 6.3 and 6.4 evidence. Steps 7.2 through 7.4 proceed independently. The 226-candidate table census, private-input reproduction and stratified precision checks continue under 6.2 and 6.13 through 6.15. Per-function replacement in 7.1 requires that function ownership, transformation and differential proof.
 
 R192 supplies gameplay and telemetry evidence. The November 10 playable milestone supplies saved-state and hash parity. Kombat Practice is a historical snapshot. The primary oracle designation is **pending owner confirmation**.
 
@@ -15,11 +15,11 @@ R192 supplies gameplay and telemetry evidence. The November 10 playable mileston
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`c3b9b3ce`](https://github.com/nahshongraham97/ps2-native-recomp/commit/c3b9b3ce942bd0df2803818671a2788cd95cfc59) (source and evidence checkpoint)
+**Verified Fork Commit**: [`93323cd6`](https://github.com/nahshongraham97/ps2-native-recomp/commit/93323cd6f5186f41aae51b97b6e46cdde620d052) (source and evidence checkpoint)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
-- Bounded ownership of 15,669 callable entries · verified-renderware 4, verified-game 0, verified-other-library 0, inferred-renderware 136, inferred-game 131, inferred-other 0, unresolved 15,398.
-- Ownership evidence by kind (overlapping entries) · E1 4, E2 0, E3 26, E4 0, E5 165, E6 110, E7 1.
+- Bounded ownership of 15,669 callable entries · verified-renderware 4, verified-game 12, verified-other-library 0, inferred-renderware 136, inferred-game 131, inferred-other 0, unresolved 15,386.
+- Ownership evidence by kind (overlapping entries) · E1 4, E2 0, E3 26, E4 13, E5 165, E6 110, E7 1.
 - Native credit retains its published component evidence. This ownership pass awards zero native credit.
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
 - **In-Scope Retail Path**: **15,670** (`2,643` non-exec/library: `sdk-or-library` 2,011 + `pointer-scan-proven` 632; `12,789` open frontier) | **Excluded Online (`out-of-scope-stubbed`)**: **1,840**
@@ -82,6 +82,12 @@ R192 supplies gameplay and telemetry evidence. The November 10 playable mileston
 
 Close a row only with the ROADMAP evidence and a same-build run record.
 No owner launch is a task while any row remains open.
+
+## Open owner decisions
+
+- Primary oracle designation remains pending owner confirmation. R192 is the protected playable oracle copy and supplies gameplay evidence.
+- Renderer core, materials, geometry and world source routes remain undecided. The existing capability comparison records the evidence.
+- Xbox-only content remains an open owner decision after the asset comparison.
 
 ## Oracle snapshot integrity and scene index
 

@@ -140,6 +140,7 @@ def validate_ledger_rows(rows, measured=None, *, integrated_receipts=None):
             assert f"@{key[1]};sha256=" in refs, f"E1 reference belongs to another entry at {key}"
         elif status == "verified-game":
             assert "E4" in kinds and re.search(r"game/E4:[^@]+@[0-9a-fA-F]{8};", refs), f"Unnamed vtable at {key}"
+            assert all(label in refs for label in ("constructor=", "factory=", "name_source=", "code=")), f"Missing game factory/vtable evidence at {key}"
         elif status != "unresolved":
             assert kinds & {"E3", "E5", "E6", "E7"}, f"Inference without witness at {key}"
         for k in kinds:
@@ -229,7 +230,7 @@ def verified_trace_edges(trace, oracle):
 
 
 def named_member(member, original, admitted_classes=None):
-    """Require original name, descriptor link, vtable header and exact method slot."""
+    """Verify the compiler-descriptor evidence form against original bytes."""
     from audit_ps2_rtti import mangled_name
     required = ("class_name", "encoded_name", "name_va", "descriptor_va", "name_pointer_slot",
                 "header_slot", "vtable_va", "method_slot", "method", "game_owner_evidence_ref", "evidence_ref")
@@ -257,7 +258,7 @@ def named_member(member, original, admitted_classes=None):
 
 
 def game_class_provenance(member, original, owner):
-    """A class-qualified MK7 source-file load in the proposed method establishes origin."""
+    """Verify a class-qualified MK7 source load when this evidence form is used."""
     name = member["class_name"]
     source = member.get("game_source", {})
     path = source.get("path", "")
@@ -295,6 +296,50 @@ def resource_anchor(record, original, owner):
                    "pointer_table_va": f"{slot:08x}", "words_le": code.hex()}
 
 
+def recovery_report(context, image, segments):
+    """Validate a bounded recovery record without requiring a positive discovery."""
+    cli, audit = context["rtti_cli"], context["rtti_load_audit"]
+    identity = hashlib.sha256(image).hexdigest()
+    if cli["elf_sha256"] != identity or audit["file_sha256"] != identity:
+        raise ValueError("RTTI recovery original image changed")
+    commands = {row["name"]: row for row in cli["commands"]}
+    variants = {"raw", "strict", "catalogue", "catalogue-strict"}
+    if not variants <= commands.keys() or any(commands[name]["exit"] != 0 for name in variants):
+        raise ValueError("RTTI recovery command set is incomplete")
+    measured_bytes = sum(size for kind, _, _, _, size, _, _, _ in segments if kind == 1)
+    if audit["file_backed_load_bytes"] != measured_bytes or audit["self_test"]["status"] != "PASS":
+        raise ValueError("RTTI recovery load coverage or controls failed")
+    if len(audit["named_vtable_methods"]) != audit["E4_count"]:
+        raise ValueError("RTTI named-method count differs from recovered entries")
+    return {"result": "BOUNDED_RECOVERY_RECORDED", "image_sha256": identity,
+            "load_bytes": measured_bytes, "tool_variants": sorted(variants),
+            "conventional_named_methods": audit["E4_count"],
+            "unnamed_pointer_runs": len(audit["unnamed_pointer_runs"]),
+            "scope": "Completed supported recovery attempts. Unresolved class identity remains explicit and does not require a positive discovery to close the bounded census."}
+
+
+def installed_table_report(context, directory, original, segments, catalogue):
+    """Recheck A2/A3 from the preserved candidate set and original code bytes."""
+    from installed_vtable_members import classify_candidates
+    stores = context["nis_class_frontier"]["global_abi_audit"]["constructor_like_table_stores"]
+    grouped = defaultdict(list)
+    for store in stores:
+        grouped[store["candidate_vptr_va"]].append(store)
+    candidates = [{"vtable_va": address, "stores": values} for address, values in sorted(grouped.items())]
+    code = set()
+    for row in csv_rows(directory / "instructions.tsv"):
+        pc = int(row["address"], 16)
+        expected = bytes.fromhex(row["bytes"])
+        if original(pc, len(expected)) != expected:
+            raise ValueError(f"Installed-table code listing changed at {pc:08x}")
+        code.add(pc)
+    ranges = [(start, start + size) for kind, _, start, _, size, _, flags, _ in segments
+              if kind == 1 and flags & 1 and size]
+    report = classify_candidates(original, candidates, ranges, code, catalogue)
+    report["joined_code_address_count"] = len(code)
+    return report
+
+
 def collect(rows, directory, original, image, segments, candidates, descriptors, fork, parent):
     scoped = {(r["module"], int(r["address"],16)) for r in rows if r["status"] != "out-of-scope-stubbed"}
     callable_keys = scoped - descriptors
@@ -304,6 +349,13 @@ def collect(rows, directory, original, image, segments, candidates, descriptors,
     graph = direct_calls(directory, original, starts)
     game_anchors = game_string_anchors(image, segments, owner)
     context = json.loads((fork / "research/runs/renderer-scope.json").read_bytes()).get("bounded_inputs", {})
+    recovery = recovery_report(context, image, segments)
+    table_inventory = installed_table_report(context, directory, original, segments, base)
+    from custom_vtable_members import recover_camera_cut
+    custom_class = recover_camera_cut(original, base)
+    class_observations = {int(member["method"], 16): member for member in custom_class["catalogued_methods"]}
+    recovery["custom_named_classes"] = 1
+    recovery["custom_catalogued_methods"] = len(class_observations)
     for item in context.get("game_resource_anchors", []):
         start, witness = resource_anchor(item, original, owner)
         game_anchors.setdefault(start, []).append(witness)
@@ -313,6 +365,13 @@ def collect(rows, directory, original, image, segments, candidates, descriptors,
     def add(pc, family, kind, ref):
         if (BASE,pc) in callable_keys:
             claims[pc][family][kind].add(ref)
+
+    for member in table_inventory["game_members"]:
+        if member["promotion_eligible"]:
+            pc = int(member["method"], 16)
+            verified[pc] = "game"
+            identifier = member["name"] or member["tag"] or "vt_" + member["table"]
+            add(pc, "game", "E4", f"{identifier}@{member['table']};constructor={member['constructor']};factory={member['factory']};name_source={member['name_source']};code={member['method']};renderer-scope.json#bounded_census.installed_tables")
 
     seed_details = {}
     for pc in sorted(SEEDS):
@@ -368,10 +427,9 @@ def collect(rows, directory, original, image, segments, candidates, descriptors,
         pc, witness = named_member(member, original, game_classes)
         if (BASE, pc) not in callable_keys:
             raise ValueError(f"Class method outside catalogue at {pc:08x}")
-        if pc in verified and verified[pc]!="game":
-            raise ValueError(f"Conflicting positive ownership at {pc:08x}")
-        verified[pc]="game"
-        add(pc,"game","E4",witness)
+        # Descriptor membership is class evidence. A2 game promotion comes from
+        # the independently verified factory/constructor table inventory above.
+        class_observations[pc] = member
     traces = context.get("admitted_runtime_traces", [])
     runtime_calls = []
     if traces:
@@ -411,6 +469,10 @@ def collect(rows, directory, original, image, segments, candidates, descriptors,
             for k,notes in sorted(items.items()):
                 kinds.add(k)
                 refs.extend(f"{family}/{k}:{ref}" for ref in sorted(notes))
+        if module == BASE and pc in class_observations:
+            member = class_observations[pc]
+            kinds.add("E4")
+            refs.append(f"unattributed/E4:{member['class_name']}@{member['vtable_va']};slot={member['method_slot']};renderer-scope.json#bounded_census.custom_classes")
         records[key]={"catalogue_kind":"callable","ownership_status":status,"ownership_evidence_kinds":"|".join(sorted(kinds)),
                       "ownership_evidence_ref":" | ".join(refs) or f"catalogue:{key};no admitted ownership witness"}
     calls=[r for r in records.values() if r["catalogue_kind"]=="callable"]
@@ -419,7 +481,7 @@ def collect(rows, directory, original, image, segments, candidates, descriptors,
     def digest_object(value):
         return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
-    return {"rows":records, "status_counts":{k:counts[k] for k in STATUSES},
+    return {"rows":records, "status_counts":{k:counts[k] for k in STATUSES}, "rtti_recovery":recovery, "custom_classes":[custom_class], "installed_tables":table_inventory,
             "input_record_fragment_sha256":{"bounded_inputs":digest_object(context),
                                             "capability_comparison":digest_object(donor)},
             "evidence_counts":{k:kinds[k] for k in KINDS}, "raw":len(scoped),"callable":len(calls),

@@ -59,11 +59,12 @@ production progress with isolated wrappers, repeated reports or test counts.
 
 ## Xbox renderer, viewport, and HD presentation rules
 
-The owner's corrected complete instruction set controls the start checks and Steps H, 6, 5S and 7.
-Do not start the next phase until the prior phase is committed, pushed,
-passing its baseline, ledger-synchronized and oracle-manifest verified.
-If a phase cannot finish, publish verified work, put the exact resume line
-in TASK_BOARD.md and stop. Existing oracle contents are immutable; Phase 0
+The owner's amendments A1-A8 control the work dependencies. Step 5S depends
+on completed 6.1, 6.3 and 6.4; asset steps 7.2-7.4 are independent. Each 7.1
+replacement requires its own ownership, transformation and differential proof.
+Publish completed phase changes with baseline, ledger and oracle verification.
+A blocked item pauses its dependents. Continue independent work before
+publishing a stop record. Existing oracle contents are immutable; Phase 0
 permits only specifically recorded additions. Protect assets, saves, states,
 keys, settings, the duplicate backup and required generator/toolchain files.
 Keep writes within repositories except authorized oracle additions and the

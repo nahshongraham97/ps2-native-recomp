@@ -378,6 +378,8 @@ def measure_scope(parent: Path, fork: Path, *, sdk31_root=None, ledger_rows=None
     if bounded or require_exact:
         from bounded_ownership import collect
         pin(fork / "tools/research/bounded_ownership.py")
+        pin(fork / "tools/research/custom_vtable_members.py")
+        pin(fork / "tools/research/installed_vtable_members.py")
         pin(raw_catalogue.parent / "function-bodies.tsv")
         ownership = collect(rows, raw_catalogue.parent, original, elf, segments, candidates, proved_data, fork, parent)
     exact_refusal = require_exact and not ownership["exact"]

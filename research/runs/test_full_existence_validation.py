@@ -995,7 +995,7 @@ std::uint64_t initialize_movier(OverlaySelection& owner) noexcept {
 
 
 def test_bounded_census_failures(ledger, mappings):
-    from bounded_ownership import anchor_words, census_exit_code, clusters, exact_verdict, game_class_provenance, named_member, resource_anchor, runtime_edge, validate_ledger_rows, verified_trace_edges
+    from bounded_ownership import anchor_words, census_exit_code, clusters, exact_verdict, game_class_provenance, named_member, recovery_report, resource_anchor, runtime_edge, validate_ledger_rows, verified_trace_edges
     from audit_subzero_retail_hierarchy_inputs import elf_segments, va_to_offset
     from generate_ledgers import bounded_progress, validate_bounded_progress, validate_prototype_levels, capability_map_rows, donor_comparison
 
@@ -1090,6 +1090,41 @@ def test_bounded_census_failures(ledger, mappings):
     for changes in ({"jalr_register": 1}, {"jalr_register_value": "001d1dc4"}, {"delay_word_le": "00000000"}):
         rejects(lambda: runtime_edge(dict(indirect, **changes), {}, original, owner), "Unproved runtime caller")
     runtime = json.loads((FORK_ROOT / "research/runs/renderer-scope.json").read_bytes())["bounded_inputs"]
+    import struct
+    table_offset = struct.unpack_from("<I", elf, 28)[0]
+    row_size, row_count = struct.unpack_from("<HH", elf, 42)
+    segments = [struct.unpack_from("<8I", elf, table_offset + i * row_size) for i in range(row_count)]
+    bounded_recovery = recovery_report(runtime, elf, segments)
+    from custom_vtable_members import recover_camera_cut, self_test as test_custom_class
+    class_controls = test_custom_class(original)
+    assert class_controls["status"] == "PASS"
+    base_entries = {int(row["address"], 16) for row in ledger if row["module"] == "SLUS_214.10"}
+    custom = recover_camera_cut(original, base_entries)
+    assert custom["class_membership_verified"] and custom["verified_game_count"] == 0
+    assert len(custom["catalogued_methods"]) == 6 and len(custom["outside_raw_catalogue"]) == 3
+    from installed_vtable_members import self_test as test_installed_tables
+    import csv
+    from collections import defaultdict
+    grouped = defaultdict(list)
+    for store in runtime["nis_class_frontier"]["global_abi_audit"]["constructor_like_table_stores"]:
+        grouped[store["candidate_vptr_va"]].append(store)
+    candidates = [{"vtable_va": address, "stores": values} for address, values in sorted(grouped.items())]
+    listing = REPO / "research/runs/ghidra-function-coverage-20261118/export-20261118-230132-1875-18160/instructions.tsv"
+    with listing.open(encoding="utf-8", newline="") as stream:
+        listed_code = {int(row["address"], 16) for row in csv.DictReader(stream, delimiter="\t")}
+    executable_ranges = [(start, start+size) for kind, _, start, _, size, _, flags, _ in segments if kind == 1 and flags & 1 and size]
+    assert test_installed_tables(original, candidates, executable_ranges, listed_code, base_entries)["status"] == "PASS"
+    assert bounded_recovery["result"] == "BOUNDED_RECOVERY_RECORDED"
+    assert bounded_recovery["conventional_named_methods"] == 0
+    corrupted = copy.deepcopy(runtime)
+    corrupted["rtti_load_audit"]["file_sha256"] = "0" * 64
+    rejects(lambda: recovery_report(corrupted, elf, segments), "original image changed")
+    corrupted = copy.deepcopy(runtime)
+    corrupted["rtti_cli"]["commands"] = [v for v in corrupted["rtti_cli"]["commands"] if v["name"] != "strict"]
+    rejects(lambda: recovery_report(corrupted, elf, segments), "command set is incomplete")
+    corrupted = copy.deepcopy(runtime)
+    corrupted["rtti_load_audit"]["file_backed_load_bytes"] -= 4
+    rejects(lambda: recovery_report(corrupted, elf, segments), "coverage or controls failed")
     trace = runtime["admitted_runtime_traces"][0]
     oracle = (REPO.parents[1] / "milestone_work_verified_playable_20261110/ps2run.exe").read_bytes()
     assert list(verified_trace_edges(trace, oracle)) == trace["runtime_calls"]

@@ -9,13 +9,13 @@ preserved with its original document hash in [the existing history records](rese
 
 ## Required order and publication boundary
 
-Complete the start checks S, housekeeping H, bounded ownership census 6,
-transform scale-out study 5S, then duplicate replacement and asset comparison 7.
-Before the next step, commit and push the current verified work, run the full
-baseline, regenerate and synchronize ledgers, confirm shared-document identity,
-and reverify the immutable oracle manifest and active executable/card hashes.
-If a step cannot finish, publish its verified scope, record the exact missing
-input and resume line in TASK_BOARD.md, and stop. Never rewrite pushed history.
+Follow the amended dependencies recorded in the existing owner decision file.
+Step 5S depends on completed 6.1, 6.3 and 6.4. Steps 7.2 through 7.4 are
+independent. Each 7.1 replacement depends on its own ownership, transformation
+and differential evidence. A blocked item pauses its dependents. Continue all
+independent work before publishing a stop record. Publish completed phase
+changes with synchronized ledgers, baseline checks and protected-input hashes.
+Never rewrite pushed history.
 
 No symbol-bearing build, matching link map, object set, or debug build exists or
 will be supplied. Recover ownership from the available original bytes and
@@ -87,6 +87,9 @@ passing baseline; publish before Step 6.
    still refuses with a planted failure.
 2. Recover RTTI and vtables from the pinned retail ELF using ps2re rtti.
    Verified-game membership requires the Midway class name and vtable address.
+   Report the bounded recovery result, including zero authenticated named
+   classes. Positive discovery and a specific compiler RTTI layout are not
+   prerequisites for completing this census. Unknown ownership stays explicit.
 3. Recover RenderWare anchors from plugin registries, chunk/plugin IDs,
    stream/error constants and the four verified seed functions. Verify the
    chunk finder's inclusive retail version bounds from original instructions.

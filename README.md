@@ -11,11 +11,11 @@ The target architecture uses AOT static C++ transformed to typed native memory a
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`c3b9b3ce`](https://github.com/nahshongraham97/ps2-native-recomp/commit/c3b9b3ce942bd0df2803818671a2788cd95cfc59) (source and evidence checkpoint)
+**Verified Fork Commit**: [`93323cd6`](https://github.com/nahshongraham97/ps2-native-recomp/commit/93323cd6f5186f41aae51b97b6e46cdde620d052) (source and evidence checkpoint)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
-- Bounded ownership of 15,669 callable entries · verified-renderware 4, verified-game 0, verified-other-library 0, inferred-renderware 136, inferred-game 131, inferred-other 0, unresolved 15,398.
-- Ownership evidence by kind (overlapping entries) · E1 4, E2 0, E3 26, E4 0, E5 165, E6 110, E7 1.
+- Bounded ownership of 15,669 callable entries · verified-renderware 4, verified-game 12, verified-other-library 0, inferred-renderware 136, inferred-game 131, inferred-other 0, unresolved 15,386.
+- Ownership evidence by kind (overlapping entries) · E1 4, E2 0, E3 26, E4 13, E5 165, E6 110, E7 1.
 - Native credit retains its published component evidence. This ownership pass awards zero native credit.
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
 - **In-Scope Retail Path**: **15,670** (`2,643` non-exec/library: `sdk-or-library` 2,011 + `pointer-scan-proven` 632; `12,789` open frontier) | **Excluded Online (`out-of-scope-stubbed`)**: **1,840**
