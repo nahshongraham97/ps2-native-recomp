@@ -212,3 +212,28 @@ ledger bytes; the native study's additional ownership admission is not imported.
 Transformed/native credit remains **2/238**. No native implementation, gameplay
 acceptance, physical audio, new visible frames or whole-game completion is
 established by these tools. The protected build remains available to the owner.
+
+### Not verified
+
+EE Live closure, full/held-out replay and image parity, authenticated template
+coverage, writer/type/executable-extent recovery, new hook firing and full native
+acceptance remain OPEN. Resource-flag cause and UI magic identity are unproved.
+The fresh diagnostic is a failure, not a whole-function or gameplay pass.
+
+### Contradictions with earlier documents
+
+The old closure-state duration is one new frame, not90. Current main's version14
+serializer is not R192's version8. RA002E6180 identifies a continuation, not an
+emitter. Exit0 did not establish success. The protected card changed after the
+controlled baseline; only its earlier source-publication hash check was excepted,
+with no agent card write or project-checker change. The failed field+8 derivation
+is preserved and superseded by the original field+394 instruction/register join.
+
+### Falsification attempts
+
+Eight audit, seven prefix-inspection and seven copied-probe refusal controls
+pass. Wrong image/entry/binary, subset/empty convergence, inadequate frame
+duration, wrong ABI/version/GP/pointer/pin, protected output, ambiguous reload,
+nonzero-exit/timeout and miss-file false passes are rejected within their stated
+scopes. The real exit0/missing-code run was also rejected. Earlier native plants
+and the full unchanged baseline are retained as prior evidence, not newly rerun.
