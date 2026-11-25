@@ -164,6 +164,122 @@ def classify_failure(reason, text, authenticated_entry):
     return "unsupported generated operation"
 
 
+def lui_outcome_summary(results, expected, before):
+    """Keep diagnostic changes distinct from bound instructions that advanced."""
+    changed={r['address'] for r in results if (r['reason'],r['first_unlowered_pc'])!=
+             (before[r['address']]['reason'],before[r['address']]['first_unlowered_pc'])}
+    bound={r['address'] for r in results if r.get('lui_bindings')}
+    advanced={r['address'] for r in results if r['address'] in bound and
+              r['first_unlowered_pc']!=before[r['address']]['first_unlowered_pc']}
+    unexpected=changed-expected
+    unexpected_bindings=bound-expected
+    failed=expected-bound
+    not_advanced=expected-advanced
+    return {'status':'PASS_BOUNDED_INSTRUCTION_BINDING' if not (unexpected or unexpected_bindings or failed or not_advanced) else 'INCOMPLETE_OR_FAILED_LUI_BINDING',
+            'actual_bound_probe_count':len(bound),'actual_advanced_probe_count':len(advanced),
+            'bound_probe_addresses':sorted(bound),'advanced_probe_addresses':sorted(advanced),
+            'changed_first_frontier_addresses':sorted(changed),
+            'binding_failure_addresses':sorted(failed),'not_advanced_addresses':sorted(not_advanced),
+            'unexpected_non_LUI_changes':sorted(unexpected),'unexpected_non_LUI_bindings':sorted(unexpected_bindings)}
+
+
+def lui_outcome_controls():
+    import copy
+    expected={f'{i:08x}' for i in range(15)}
+    before={a:{'reason':'old','first_unlowered_pc':'00100000'} for a in expected|{'ffffffff'}}
+    rows=[{'address':a,'reason':'next','first_unlowered_pc':'00100004','lui_bindings':[{'proved':True}]} for a in sorted(expected)]
+    rows.append({'address':'ffffffff',**before['ffffffff']})
+    complete=lui_outcome_summary(rows,expected,before)
+    if complete['status']!='PASS_BOUNDED_INSTRUCTION_BINDING' or complete['actual_advanced_probe_count']!=15:
+        raise AssertionError('Complete LUI metadata control failed')
+    failed=copy.deepcopy(rows);failed[0].update(reason='binding_refused',first_unlowered_pc='00100000',lui_bindings=[])
+    retained=lui_outcome_summary(failed,expected,before)
+    if retained['status']!='INCOMPLETE_OR_FAILED_LUI_BINDING' or retained['actual_bound_probe_count']!=14 or retained['actual_advanced_probe_count']!=14 or retained['binding_failure_addresses']!=['00000000'] or retained['not_advanced_addresses']!=['00000000']:
+        raise AssertionError('Changed diagnostic falsely counted as instruction advance')
+    unexpected=copy.deepcopy(rows);unexpected[-1]['reason']='unexpected'
+    rejected=lui_outcome_summary(unexpected,expected,before)
+    if rejected['status']!='INCOMPLETE_OR_FAILED_LUI_BINDING' or rejected['unexpected_non_LUI_changes']!=['ffffffff']:
+        raise AssertionError('Unexpected non-LUI change was not retained')
+    return {'status':'PASS','scope':'Synthetic outcome accounting only; no additional original probes or native credit.',
+            'complete15':complete,'one_failed_binding_retained':retained,'unexpected_non_LUI_change_retained':rejected}
+
+
+class LUIFailureTrace(transform.Lowering):
+    """Record actual propagated statement failures, without changing lowering."""
+    def __init__(self,*args):self.statement_failures=[];super().__init__(*args)
+    def statement(self,node):
+        try:return super().statement(node)
+        except transform.Refusal as error:
+            self.statement_failures.append((error,node,self.pc));raise
+
+
+def actual_failure_annotation(lowering,error,source,original,reason):
+    trace=[(n,pc) for e,n,pc in lowering.statement_failures if e is error]
+    if not trace:return {'observed_semantic_category':'no_statement_refusal','actual_AST':None}
+    node,pc=trace[0];word=int.from_bytes(original(pc,4),'little')
+    def compact(n):
+        result={k:n[k] for k in ('kind','opcode','castKind','name','value') if k in n}
+        if 'type' in n:result['type']={k:v for k,v in n['type'].items() if k!='typeAliasDeclId'}
+        if 'referencedDecl' in n:result['referencedDecl']={k:n['referencedDecl'][k] for k in ('kind','name') if k in n['referencedDecl']}
+        result['children']=[compact(c) for c in transform.children(n)];return result
+    kind=node.get('kind');category='unclassified_statement_requires_review'
+    calls=[]
+    for n in transform.walk(node):
+        if n.get('kind')=='CallExpr':
+            try:calls.append(transform.declaration(transform.children(n)[0]).get('name'))
+            except transform.Refusal:calls.append('unbound_call_target')
+    if reason=='unbound_stack_FPR_or_mixed_source_type':category='FPR_stack_bits_and_native_frame_proof'
+    elif reason.startswith('unbound_stack_local'):category='uncertain_native_stack_local_or_callee_effects'
+    elif reason=='unbound_memory:GP_field_or_width':category='unbound_GP_owner_or_field_type'
+    elif reason=='unbound_memory:non_GP_base':category='non_GP_receiver_binding_or_existing_contract_selection'
+    elif reason.startswith('unbound_value:register_'):category='unbound_GPR_livein_in_existing_integer_expression'
+    elif kind=='DeclStmt':category='branch_condition_or_return_capture_contract'
+    elif kind=='BinaryOperator' and node.get('opcode')=='=':
+        lhs,rhs=transform.children(node);lhs=transform.unwrap(lhs)
+        if lhs.get('kind')=='MemberExpr' and lhs.get('name')=='pc':category='source_cursor_state_control_contract'
+        elif lhs.get('kind')=='ArraySubscriptExpr':
+            base=transform.unwrap(transform.children(lhs)[0]);bank=base.get('name')
+            if bank=='f':
+                if 'ld32' in calls:category='FPR_typed_memory_load'
+                elif calls:category='FPR_arithmetic_or_state_effect'
+                elif word>>26==0x11 and word>>21&31==4:category='FPR_bit_transfer_from_GPR'
+                else:category='FPR_value_assignment_or_state_effect'
+            elif bank in ('d','sd','w','sw'):
+                category='native_call_RA_delay_return_ABI' if word>>26==3 else 'GPR_value_assignment_or_livein_SSA'
+    elif kind=='CallExpr' and 'ld32' in calls:category='typed_memory_load_expression_value_SSA'
+    elif kind=='IfStmt':category='conditional_control_and_effect_contract'
+    def location(item):
+        while 'expansionLoc' in item:item=item['expansionLoc']
+        return item
+    begin=location(node.get('range',{}).get('begin',{}));end=location(node.get('range',{}).get('end',{}));snippet=None
+    if 'offset' in begin and 'offset' in end:
+        raw=source.encode('utf-8');a,b=begin['offset'],end['offset']+end.get('tokLen',1)
+        snippet={'start_byte':a,'end_byte_exclusive':b,'text':raw[a:b].decode('utf-8')}
+    from stack_frame_analysis import control
+    pcs=[pc]+([pc+4] if control(pc,word) else [])
+    memory=None
+    memory_words=[(p,int.from_bytes(original(p,4),'little')) for p in pcs
+                  if int.from_bytes(original(p,4),'little')>>26 in {0x20,0x21,0x23,0x24,0x25,0x27,0x28,0x29,0x2b,0x31,0x39,0x37,0x3f,0x1e,0x1f}]
+    if memory_words:
+        at,opword=memory_words[-1];base=opword>>21&31;offset=opword&65535;offset-=65536 if offset&32768 else 0
+        memory={'operation_pc':f'{at:08x}','original_base_register':base,'signed_offset':offset,'native_owner':'UNBOUND'}
+        if base==28:
+            memory['source_GP_address']=f'{(int(lowering.contract["source_gp"],16)+offset)&0xffffffff:08x}'
+            if category=='typed_memory_load_expression_value_SSA':category='typed_GP_load_expression_and_owner'
+        elif base in lowering.regs:
+            value=lowering.values[lowering.regs[base]]['constant_value']
+            memory['source_absolute_address']=f'{(value+offset)&0xffffffff:08x}'
+            memory['evidence']='Original memory use of an actual constant SSA base; not an inferred native pointer.'
+            if reason.startswith('unbound_memory') or category=='typed_memory_load_expression_value_SSA':category='unbound_absolute_source_data_symbol'
+        elif lowering.frame and base in lowering.frame.offsets:
+            memory['symbolic_frame_offset']=lowering.frame.offsets[base]+offset
+    label='L_'+f'{pc:08X}'+':'
+    fragment=source.split(label,1)[1].split('\nL_',1)[0] if label in source else None
+    return {'observed_semantic_category':category,'actual_AST':compact(node),'actual_statement':snippet,'original_memory_use':memory,
+            'generated_fragment_at_failure':fragment,'original_bundle_words':[{'pc':f'{p:08x}','word':f'{int.from_bytes(original(p,4),"little"):08x}'} for p in pcs],
+            'scope':'Observed fatal AST/source shape only, kept separate from raw refusal taxonomy; not a native binding or next-barrier prediction.'}
+
+
 def function_table_row(sample):
     """Summarize measured original features without treating refusal as absence."""
     context = sample.get("original_function_context", {})
@@ -499,6 +615,9 @@ def main():
     parser.add_argument("--frame-before-study",type=Path,help="Pinned existing39 compiler-frontier baseline")
     parser.add_argument('--borrowed-reference-map',action='store_true',help='S6 experimental original-validated reference-clear IR; no native owner binding')
     parser.add_argument('--symbol-before-study',type=Path,help='Frozen S5-before-S6 actual39 report')
+    parser.add_argument('--lui-constants',action='store_true',help='Opt-in original/AST joined signed32 LUI low64 SSA binding')
+    parser.add_argument('--lui-before-study',type=Path,help='Published historical S6 actual39 comparison')
+    parser.add_argument('--lui-current-before-study',type=Path,help='Fresh same-source S6 report with LUI opt-in disabled')
     parser.add_argument("--publish-existing-tables", action="store_true", help="Update only existing parent instruction_phase5S evidence/tables and short PORT_STATUS summary")
     parser.add_argument("--render-existing-study", type=Path, help="Render already measured39-entry evidence with current pinned positive receipts; never rerun or relabel compiler attempts")
     args = parser.parse_args()
@@ -508,6 +627,8 @@ def main():
     if args.borrowed_reference_map:
         symbol_source=Path(__file__).with_name('retail_data_symbol_map.py').resolve();immutable_tools[symbol_source]=sha(symbol_source)
         if not args.stack_frames or not args.symbol_before_study:raise ValueError('S6 requires separate frozen S5 evidence and frame plans')
+    if args.lui_constants and (not args.borrowed_reference_map or not args.lui_before_study or not args.lui_current_before_study):
+        raise ValueError('LUI opt-in requires original and fresh LUI-disabled S6 comparison reports')
     parent = args.parent_root.resolve()
     fork = parent / "external/forks/ps2-native-recomp"
     output = args.output.resolve()
@@ -530,7 +651,7 @@ def main():
         print("RENDERED_EXISTING_MEASURED_STUDY", output, "samples39; no compiler attempts rerun")
         return
     census = json.loads(args.census.read_bytes())
-    frame_plans={};frame_before={};symbol_before={};symbol_controls=None
+    frame_plans={};frame_before={};symbol_before={};symbol_controls=None;lui_before={};lui_current={}
     if args.stack_frames:
         if not args.frame_before_study:raise ValueError('Frame study requires the exact original39 before receipt')
         frame_data=json.loads(args.stack_frames.read_bytes())
@@ -542,6 +663,14 @@ def main():
         if symbol_baseline.get('frame_stage',{}).get('stage')!='S5_BEFORE_ANY_S6_GP_BINDING':raise ValueError('S6 baseline is not an actual S5-before-S6 report')
         symbol_before={row['address']:row for row in symbol_baseline['samples']}
         if len(symbol_before)!=39:raise ValueError('S6 changed original39 cohort')
+    if args.lui_constants:
+        for path,target in ((args.lui_before_study,lui_before),(args.lui_current_before_study,lui_current)):
+            before=json.loads(path.read_bytes())
+            if before.get('frame_stage',{}).get('stage')!='S6_EXPERIMENTAL_BORROWED_REFERENCE_CLEAR':raise ValueError('LUI comparison requires S6 with LUI disabled')
+            target.update({row['address']:row for row in before['samples']})
+        if len(lui_before)!=39 or lui_before.keys()!=lui_current.keys():raise ValueError('LUI comparison changed original39')
+        if any((lui_before[key]['reason'],lui_before[key]['first_unlowered_pc'])!=(lui_current[key]['reason'],lui_current[key]['first_unlowered_pc']) for key in lui_before):
+            raise ValueError('Fresh LUI-disabled source changed historical S6 frontiers')
     contract_path = fork / "recomp/overlay_initializer_contract.json"
     contract = json.loads(contract_path.read_bytes())
     generated = fork / "build/generated-aot/phase4-all"
@@ -626,6 +755,13 @@ def main():
         if len(matches) != 1 or len(matches[0]) != size:
             raise ValueError("Original address is not uniquely file backed")
         return matches[0]
+    lui_expected=set()
+    if args.lui_constants:
+        for address,row in lui_before.items():
+            if row.get('first_unlowered_pc') is None:continue
+            word=int.from_bytes(original(int(row['first_unlowered_pc'],16),4),'little')
+            if word>>26==0x0f and word>>16&31 not in (0,28,29,31):lui_expected.add(address)
+        if len(lui_expected)!=15:raise ValueError('Published original-opcode LUI target set is not the expected15')
     selected_owners = {owner(address) for address in samples}
     original_features = {entry: {"instructions": 0, "gp_accesses": [], "indirect_calls": [], "wide_register_memory": [], "pointer_memory": [], "stack_memory_count": 0, "mmi_count": 0, "load_store_kinds": {}}
                          for entry in selected_owners if entry is not None}
@@ -698,13 +834,14 @@ def main():
             if sample['address'] in frame_plans:
                 descriptor.update(_frame_plan=frame_plans[sample['address']],_frame_original=original)
             if args.borrowed_reference_map:descriptor['_data_symbol_image']=image
+            if args.lui_constants:descriptor['_lui_original']=original
             begin = time.perf_counter()
-            lowering = transform.Lowering(definition, descriptor, contract)
-            reason = None
+            lowering = (LUIFailureTrace if args.lui_constants else transform.Lowering)(definition, descriptor, contract)
+            reason = None;fatal_error=None
             try:
                 ir = lowering.lower()
             except transform.Refusal as error:
-                reason = str(error)
+                reason = str(error);fatal_error=error
                 ir = None
             elapsed = time.perf_counter() - begin
             result = dict(sample, source_unit_sha256=expected, entry_authenticated=authenticated,
@@ -721,6 +858,9 @@ def main():
                 result['before_symbol_frontier']={k:symbol_before[sample['address']].get(k) for k in ('reason','first_unlowered_pc','failure_category')}
                 result['borrowed_reference_IR']=lowering.data_symbols.report()
                 if address==0x18da30:symbol_controls=transform.borrowed_reference_self_tests(definition,descriptor,contract)
+            if args.lui_constants:
+                result['lui_bindings']=lowering.lui_bindings
+                result['before_LUI_frontier']={key:lui_before[sample['address']].get(key) for key in ('reason','first_unlowered_pc','failure_category')}
             containing = owner(address)
             result["original_function_context"] = {"entry": f"{containing:08x}" if containing is not None else None,
                                                    "features": original_features.get(containing)}
@@ -735,6 +875,9 @@ def main():
                               typed_ir=ir)
             else:
                 result.update(status="REFUSED", failure_category=classify_failure(reason, segment, authenticated), reason=reason)
+            if args.lui_constants:
+                result['first_failure_category']=result['failure_category']
+                result['first_failure_cause']=actual_failure_annotation(lowering,fatal_error,text,original,reason)
             result["differential"] = {"status": "NOT_RUN_NO_AUTHENTICATED_NATIVE_UNIT",
                                        "passing_new_unit": False}
             results.append(result)
@@ -750,6 +893,9 @@ def main():
                             entry_authenticated=int(sample["address"],16) in catalogue,
                             reason="The mandatory selected original address has no generated entry.",
                             differential={"status": "NOT_RUN_NO_AUTHENTICATED_NATIVE_UNIT", "passing_new_unit": False}))
+        if args.lui_constants:
+            results[-1]['first_failure_category']='generated entry absent'
+            results[-1]['first_failure_cause']={'observed_semantic_category':'missing_generated_entry_or_boundary','actual_AST':None}
     report = {"schema": "mkar.generated-transform-scale-study.v1", "status": "COMPLETED_ATTEMPTS_WITH_RECORDED_LIMITS", "samples": results,
               "controls": controls,
               "cohorts": {"original_primary33": [f"{a:08x}" for a in ORIGINAL_PRIMARY], "supplemental4": [f"{a:08x}" for a in SUPPLEMENTAL], "corrected_source_projection2": [f"{a:08x}" for a in sorted(CORRECTED_PROJECTIONS)], "original_cohort_receipt_sha256": ORIGINAL_COHORT_RECEIPT_SHA256},
@@ -817,11 +963,30 @@ def main():
             target=next(r for r in results if r['address']=='0018da30')
             if target['first_unlowered_pc']!='0018da34' or target['reason']!='unbound_memory:GP_field_or_width' or len(target['borrowed_reference_IR']['effects'])!=1:
                 raise ValueError('S6 clear or next unbound cookie was not actually measured')
+        if args.lui_constants:
+            report['frame_stage']['stage']='LUI_CONSTANT_BINDING_OPT_IN'
+            joined=[row for row in results if row.get('lui_bindings')]
+            report['lui_stage']={'schema':'actual_original_AST_LUI_stage_v1','published_S6_sha256':sha(args.lui_before_study),
+                'same_source_LUI_disabled_sha256':sha(args.lui_current_before_study),'target_original_word':'3c023f80',
+                'opt_in':True,'all_selected_addresses':39,'bound_probe_addresses':[row['address'] for row in joined],
+                'original_LUI_definitions':sum(len(row.get('lui_bindings',[])) for row in results),
+                'expected_probe_addresses':sorted(lui_expected),
+                'outcomes15':[{key:row.get(key) for key in ('address','before_LUI_frontier','reason','first_unlowered_pc','first_failure_category','first_failure_cause','lui_bindings','frame_lowering')} for row in results if row['address'] in lui_expected],
+                'new_complete_E2_units':0,'new_credit':0,'scope':'Original LUI instruction SSA only. Upper64 is preserved; pointer roles, owners, callees and later operations remain unbound.'}
+            report['lui_stage'].update(lui_outcome_summary(results,lui_expected,lui_before))
+            report['lui_stage']['outcome_retention_controls']=lui_outcome_controls()
+            report['lui_stage']['raw_first_failure_categories']=dict(Counter(row['first_failure_category'] for row in results))
+            report['lui_stage']['observed_first_semantic_categories']=dict(Counter(row['first_failure_cause']['observed_semantic_category'] for row in results))
         for result in results:
             exempt=args.borrowed_reference_map and result['address']=='0018da30'
+            exempt=exempt or args.lui_constants and result['address'] in lui_expected
             if result['address'] not in frame_plans and not exempt and result['reason']!=frame_before[result['address']]['reason']:
-                raise ValueError('Non-frame selected probe changed under opt-in frame lowering')
+                if not args.lui_constants:raise ValueError('Non-frame selected probe changed under opt-in frame lowering')
+                report['lui_stage']['status']='INCOMPLETE_OR_FAILED_LUI_BINDING'
+                report['lui_stage'].setdefault('unexpected_non_frame_changes',[]).append(result['address'])
         (output/'RESULT.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
+        if args.lui_constants and report['lui_stage']['status']!='PASS_BOUNDED_INSTRUCTION_BINDING':
+            raise ValueError('Incomplete LUI outcome retained in '+str(output/'RESULT.json'))
         print('STACK_FRAME_STUDY',output,json.dumps(report['frame_stage']))
         return
     tables = full_tables(report, fork)

@@ -414,6 +414,55 @@ class SymbolicFrame:
                 'scope':'Actual AST normalization/frontier only; reference-only frame effects cannot enter native emission'}
 
 
+def bind_lui_assignment(node,cpu,pc,original):
+    """Join one actual LUI/AST write; produce bits, never a pointer or owner."""
+    require(pc%4==0,'lui_unaligned_source_pc')
+    raw=original(pc,4);require(len(raw)==4,'lui_short_original_word')
+    word=int.from_bytes(raw,'little')
+    require(word>>26==0x0f and word>>21&31==0,'lui_source_not_LUI')
+    destination=word>>16&31
+    require(destination not in (0,28,29,31),'lui_forbidden_abi_destination')
+    require(node.get('kind')=='BinaryOperator' and node.get('opcode')=='=' and len(children(node))==2,'lui_assignment_shape')
+    def signed_type(n,expected):
+        ty=n.get('type',{});return ty.get('desugaredQualType',ty.get('qualType'))==expected
+    require(signed_type(node,'long long'),'lui_assignment_width_or_signedness')
+    lhs,rhs=children(node);lhs=unwrap(lhs)
+    require(lhs.get('kind')=='ArraySubscriptExpr' and len(children(lhs))==2,'lui_destination_shape')
+    bank,lane=children(lhs);bank=unwrap(bank)
+    require(bank.get('kind')=='MemberExpr' and bank.get('name')=='sd' and literal(lane)==0
+            and len(children(bank))==1 and signed_type(lhs,'long long'),'lui_destination_not_signed_low64')
+    require(register_object(children(bank)[0],cpu)==destination,'lui_AST_destination_word_mismatch')
+    require(rhs.get('kind')=='ImplicitCastExpr' and rhs.get('castKind')=='IntegralCast'
+            and signed_type(rhs,'long long') and len(children(rhs))==1,'lui_missing_signed64_extension')
+    cast=children(rhs)[0]
+    require(cast.get('kind')=='CXXStaticCastExpr' and cast.get('castKind') in ('NoOp','IntegralCast')
+            and signed_type(cast,'int') and len(children(cast))==1,'lui_missing_explicit_signed32_cast')
+    conversion=children(cast)[0]
+    require(conversion.get('kind')=='ImplicitCastExpr' and conversion.get('castKind')=='IntegralCast'
+            and signed_type(conversion,'int') and len(children(conversion))==1,'lui_signed32_literal_conversion')
+    value=children(conversion)[0]
+    require(value.get('kind')=='IntegerLiteral' and value.get('type',{}).get('qualType')=='unsigned int','lui_literal_type_or_shape')
+    bits=int(value['value']);require(0<=bits<=0xffffffff and bits==((word&0xffff)<<16),'lui_AST_literal_word_mismatch')
+    return {'schema':'original_AST_LUI_low64_v1','source_pc':f'{pc:08x}','original_word':f'{word:08x}',
+            'original_destination':destination,'expression':{'op':'sign_extend32','type':'u64',
+                'argument':{'op':'constant','type':'u32','value':bits}},
+            'write_projection':{'portion':'low64','upper64':'PRESERVED'},
+            'literal_role':'Source bit pattern only; no pointer, float-role or ownership inference'}
+
+
+def emit_lui_scalar_probe(binding,name):
+    """Test-only scalar IR emission; not a complete retail function or owner ABI."""
+    require(re.fullmatch(r'lui_probe_\d+',name) is not None,'lui_probe_name')
+    require(binding.get('write_projection')=={'portion':'low64','upper64':'PRESERVED'},'lui_probe_projection_unproved')
+    expression=binding['expression']
+    require(expression.get('op')=='sign_extend32' and expression.get('type')=='u64','lui_probe_requires_explicit_sign_extend32')
+    value=expression['argument']
+    require(value.get('op')=='constant' and value.get('type')=='u32' and 0<=value['value']<=0xffffffff,'lui_probe_constant_width')
+    return (f'std::uint64_t {name}() noexcept {{\n'
+            f'    const std::uint64_t value_0 = static_cast<std::uint64_t>(static_cast<std::int64_t>(static_cast<std::int32_t>(0x{value["value"]:08x}u)));\n'
+            '    return value_0;\n}\n')
+
+
 class Lowering:
     """Selected-CFG semantic lowering. No name-to-retail-body templates."""
     def __init__(self, function, descriptor, contract):
@@ -428,6 +477,7 @@ class Lowering:
         self.pc, self.debit = int(descriptor["source_entry"], 16), 0
         self.frame = SymbolicFrame(self,descriptor['_frame_original'],descriptor['_frame_plan']) if '_frame_plan' in descriptor else None
         self.data_symbols=BorrowedReferenceSymbols(self,descriptor['_data_symbol_image'],descriptor.get('_data_symbol_claim')) if '_data_symbol_image' in descriptor else None
+        self.lui_original=descriptor.get('_lui_original');self.lui_bindings=[]
 
     def expression(self, node):
         node = unwrap(node)
@@ -502,6 +552,20 @@ class Lowering:
         kind = node.get("kind")
         if self.frame and self.frame.statement(node):return
         if self.data_symbols and self.data_symbols.statement(node):return
+        if self.lui_original and kind=='BinaryOperator' and node.get('opcode')=='=':
+            word=int.from_bytes(self.lui_original(self.pc,4),'little')
+            if word>>26==0x0f:
+                binding=bind_lui_assignment(node,self.cpu,self.pc,self.lui_original)
+                value={'id':len(self.values),'type':'u64','expression':binding['expression'],
+                       'constant_value':self.evaluate(binding['expression']),'source_pc':binding['source_pc'],
+                       'write_projection':binding['write_projection']}
+                self.values.append(value);self.regs[binding['original_destination']]=value['id']
+                if self.frame:
+                    old_alias=self.frame.offsets.pop(binding['original_destination'],None)
+                    binding['overwritten_symbolic_frame_alias']=old_alias is not None
+                    if old_alias is not None:self.frame.operations.append({'kind':'frame_alias_killed_by_LUI','source_pc':binding['source_pc'],'register':binding['original_destination']})
+                self.effects.append({'kind':'define','value':value['id'],'source_pc':binding['source_pc']})
+                self.lui_bindings.append(binding);return
         if kind == "LabelStmt":
             name = node.get("name", "")
             require(name.startswith("L_") and len(name) == 10, "unsupported_control_label")
@@ -603,6 +667,7 @@ class Lowering:
                 "return": "structured_native_return_after_delay_effect"}
         if self.frame:result['frame']=self.frame.report()
         if self.data_symbols:result['retail_data_symbols']=self.data_symbols.report()
+        if self.lui_original:result['lui_bindings']=self.lui_bindings
         return result
 
 
