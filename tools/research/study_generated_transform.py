@@ -221,6 +221,7 @@ def function_table_row(sample):
 
 
 def full_tables(report, fork):
+    if report.get('frame_stage'):raise ValueError('legacy_before_frame_tables_refuse_frame_stage_report')
     rows = {s["address"]: function_table_row(s) for s in report["samples"]}
     primary = [rows[f"{a:08x}"] for a in ORIGINAL_PRIMARY]
     extra = [rows[f"{a:08x}"] for a in list(SUPPLEMENTAL) + sorted(CORRECTED_PROJECTIONS)]
@@ -283,10 +284,115 @@ def full_tables(report, fork):
         or {r["address"] for r in primary} != {f"{a:08x}" for a in ORIGINAL_PRIMARY}
         or {r["address"] for r in primary} & {r["address"] for r in extra}):
         raise ValueError("Full table cohorts, module census or retained successes changed")
-    return {"schema": "generated_transform_full_tables_v1", "table_generator_sha256": sha(Path(__file__)), "primary33": primary, "additional6": extra,
+    aggregate = refusal_aggregate(report)
+    plan = minimal_bindings_plan(report, aggregate)
+    controls = aggregate_self_tests(report)
+    return {"refusal_aggregate_controls": controls, "refusal_aggregate": aggregate, "minimal_bindings_plan": plan, "schema": "generated_transform_full_tables_v1", "table_generator_sha256": sha(Path(__file__)), "primary33": primary, "additional6": extra,
             "existing_success2": successes, "native_module23": module_rows, "denominators": denominators,
             "technique_observed_fractions": observed, "existing_success_receipt": measurement,
             "relative_receiver_extension": {key:extension[key] for key in ("status","constructed_comparisons","saved_states","admitted","inapplicable","benchmark","benchmark_scope","credit_added","production_callers")}}
+
+
+def refusal_aggregate(report):
+    if report.get('frame_stage'):raise ValueError('legacy_before_frame_aggregate_refuse_frame_stage_report')
+    from collections import Counter
+    rows=report['samples']
+    primary=set(report['cohorts']['original_primary33'])
+    extra=set(report['cohorts']['supplemental4'])|set(report['cohorts']['corrected_source_projection2'])
+    if len(rows)!=39 or len(primary)!=33 or len(extra)!=6 or primary&extra or {r['address'] for r in rows}!=primary|extra:
+        raise ValueError('Aggregate requires the exact original33 plus additional6')
+    def addresses(predicate):return sorted(r['address'] for r in rows if predicate(r))
+    selectors={
+        'stack_SSA_and_liveins':lambda r:r['reason']=='unbound_value:register_29',
+        'GP_typed_field_map':lambda r:r['reason']=='unbound_memory:GP_field_or_width',
+        'vtable_target_binding':lambda r:r.get('proved_first_barrier_kind')=='native_vtable_target_binding',
+        'register128_types':lambda r:r['reason'].startswith(('unbound_128','unsupported_128')),
+    }
+    ranking=[]
+    for name,predicate in selectors.items():
+        found=addresses(predicate)
+        ranking.append(dict(fix=name,current_first_barrier_matches=len(found),primary_matches=len(primary&set(found)),additional_matches=len(extra&set(found)),addresses=found,measured_first_barriers_removed=0,whole_verified_units_unlocked=None,
+            qualification='Conditional engineering target count, not an observed removal or a predicted full-unit unlock. No proposed fix was applied to these39 attempts.'))
+    ranking.sort(key=lambda r:-r['current_first_barrier_matches'])
+    for row in ranking:row['priority_rank_by_first_barrier_incidence']=1+sum(x['current_first_barrier_matches']>row['current_first_barrier_matches'] for x in ranking)
+    def features(row):return row.get('original_function_context',{}).get('features')
+    predicates={'non_GP_non_stack_memory':lambda f:bool(f['pointer_memory']), 'GP_operations':lambda f:bool(f['gp_accesses']), 'jalr_sites_not_proved_virtual':lambda f:bool(f['indirect_calls']), 'lq_sq_or_MMI_opcode':lambda f:bool(f['wide_register_memory'] or f['mmi_count'])}
+    sets={k:set(addresses(lambda r,p=p:features(r) is not None and p(features(r)))) for k,p in predicates.items()}
+    stack=set(next(row for row in ranking if row['fix']=='stack_SSA_and_liveins')['addresses'])
+    burden={k:dict(selected_addresses=len(found),primary_selected_addresses=len(primary&found),additional_selected_addresses=len(extra&found),addresses=sorted(found),overlap_with_stack_first_barrier=len(found&stack),stack_overlap_addresses=sorted(found&stack)) for k,found in sets.items()}
+    pairs={a+' AND '+b:dict(count=len(sets[a]&sets[b]),addresses=sorted(sets[a]&sets[b])) for i,a in enumerate(sets) for b in list(sets)[i+1:]}
+    wide_details=[]
+    for row in rows:
+        f=features(row)
+        if f is None: continue
+        sp=[];nonstack=[]
+        for operation in f['wide_register_memory']:
+            word=int.from_bytes(bytes.fromhex(operation['word_le']),'little')
+            (sp if (word>>21&31)==29 else nonstack).append(operation)
+        if sp or nonstack or f['mmi_count']:
+            wide_details.append(dict(address=row['address'],SP_relative_LQ_SQ=sp,nonstack_LQ_SQ=nonstack,MMI_opcode_operations=f['mmi_count']))
+    wide_breakdown=dict(per_probe=wide_details,SP_relative_LQ_SQ_operation_memberships=sum(len(x['SP_relative_LQ_SQ']) for x in wide_details),SP_relative_LQ_SQ_probes=sum(bool(x['SP_relative_LQ_SQ']) for x in wide_details),nonstack_LQ_SQ_operation_memberships=sum(len(x['nonstack_LQ_SQ']) for x in wide_details),nonstack_LQ_SQ_probes=sum(bool(x['nonstack_LQ_SQ']) for x in wide_details),MMI_opcode_operations=sum(x['MMI_opcode_operations'] for x in wide_details),MMI_opcode_probes=sum(bool(x['MMI_opcode_operations']) for x in wide_details),meaning='Observed SP-relative transport, not proof of128-bit arithmetic or native type need. Eliminate only proved callee-save/spill effects after defuse,alias and native-call ABI analysis. Zero nonstack/MMI applies only to35 known-body selections; four unknown bodies and transitive callees remain unknown.')
+    reasons=Counter(r['reason'] for r in rows)
+    others={reason:dict(count=count,addresses=addresses(lambda r,reason=reason:r['reason']==reason)) for reason,count in reasons.items() if reason not in ('unbound_value:register_29','unbound_memory:GP_field_or_width')}
+    unknown=addresses(lambda r:features(r) is None)
+    return dict(schema='generated_transform_refusal_aggregate_v1',denominators=dict(primary_selected_addresses=33,additional_selected_addresses=6,union_selected_addresses=39,known_exported_body_selected_addresses=39-len(unknown),unique_known_exported_original_functions=len({r['original_function_context']['entry'] for r in rows if features(r) is not None}),existing_verified_prototypes_outside_sample=2,population_in_scope=15670),
+        first_refusal_categories=dict(Counter(r['failure_category'] for r in rows)),exact_first_refusal_reasons=dict(reasons),requested_fix_ranking=ranking,other_first_barriers=others,
+        original_feature_burden=burden,wide_operation_breakdown=wide_breakdown,overlapping_source_feature_pairs=pairs,unknown_original_body_addresses=unknown,
+        measured_new_saved_state_verified_units=0,measured_repairs_applied_to_cohort=0,whole_unit_unlock_prediction=None,population_projection=None,
+        counterfactual_prefix_walk=dict(status='NOT_RUN_UNSOUND_WITHOUT_NEW_SYMBOLIC_IR',reason='The current lowerer evaluates register expressions as constants. Supplying a guessed SP, GP value, receiver, vtable or skipping a rejected effect would fabricate semantics. No speculative prefix traversal, native emission or fake bindings were used.'),
+        interpretation=['All39 general-contract attempts refused. The ranking counts which observed FIRST refusal a proposed fix would need to address; it does not measure successful barrier removal.',
+            'All5 selected bodies containing jalr and all22 containing SP-relative lq/sq (128operations,0nonstack and0MMI) are already in the28 stack-first set. Of23 selected bodies with GP operations,20 are in that set. These are overlapping body features, not additional independent unlocks.',
+            'Two continuations share their enclosing function bodies; source burden uses39 selected-address denominators and separately reports unique exported owners. Four selected addresses have no authenticated exported body and remain unknown.',
+            'Vtable and128-bit fixes tie at0 current first refusals. This does not make them unnecessary; the parser/stack barrier prevents a measured later-barrier ranking.',
+            'The separately scoped index projection has18 constructed comparisons and0/61 saved admissions; its first receiver binding is not one of the four requested fixes and earns no new transformed credit.'])
+
+def minimal_bindings_plan(report,aggregate):
+    return dict(schema='minimal_generated_transform_bindings_plan_v1',status='ENGINEERING_PLAN_NO_NEW_BINDINGS_OR_CREDIT',ordered_slices=[
+        dict(order=1,name='Symbolic stack/frame SSA and typed scalar live-ins',target='00100320',first_barrier_opportunities=aggregate['requested_fix_ranking'][0]['current_first_barrier_matches'],
+             original_prerequisites=['Original19-instruction body100320..10036B:16-byte stack frame,sd/ld RA atsp+0,return delay restores sp','a0 low32 is zero-extended by dsll32/dsrl32 before blez; do not infer the external native parameter type without callers','Direct original JAL00122C30 at100334 and10034C; JAL00125370 at100358 with delay-slotA1=V0 require actual callee identity,input/result widths and architectural clobber contracts','Original122C30 forms bit constants40F0000000000000 and41F0000000000000 and calls125920,125430 and125370; no float role or allocator meaning is established by those constants','Original125370 passes addresses of stack locals to1250B8,125148 and124FE0; escaped-frame aggregate extents,aliases,lifetimes and callee effects need explicit proof','BLEZ signedness/operand width must follow original R5900 instruction semantics; no decompiler-based integer or floating type guess'],
+             minimum_bindings=['Symbolic frame slots with proved extents,alias exclusion and saved RA/control-flow handling; never guessed SP constants or flat RAM','Typed caller/callee live-ins, low/upper64 preservation, branch/delay semantics and source cycle-budget observables in test adapter only'],
+             next_barrier_gate='After stack support rerun the unchanged selected entry and record the real next refusal. Do not bypass missing callee/bit-width/control-flow contracts or count a prefix as a transformed unit.',
+             E2_acceptance='Only after the generated AST produces a register/RAM/guest-address-free kernel: fullCPU+fullRAM comparison against original AOT over every applicable pinned state, constructed signed/zero-extension/branch bounds,wrong-callee/width/value and canary mutations; record applicability. Zero legal states means no saved-state credit.'),
+        dict(order=2,name='Parser/scalar-expression prerequisites and smallest typed GP field slice',target='00185EC0 plus requested0018DA30 continuation/enclosing0018D970',
+             original_prerequisites=['185EC0 currently stops at cursor assignment at185EC4,not a GP map. Its original GP store at185EC8 targets0064C40C and writes low32 of-1; subsequent absolute-address/callee effects need their own contract','18DA30 first unbound GP stores are0064E348,0064E34C,0064E340,0064E344. Enclosing18D970 also touches0064E334 and0064E330; fieldownership/type is not established by zero stores','Original18DA3C JAL0016FC70,18DA44 JAL00163A50,and absolute store006602D0 at18DA50 remain obligations.18DA30 is not an independent entry'],
+             minimum_bindings=['Lower actual cursor/register assignment and nested helper CallExpr without changing semantics','Bind each raw32 global field to a named native owner only after its producer/consumer/lifetime evidence establishes word vs reference semantics','For the complete18D970 body also bind original offset84 byte flags and other absolute state fields using their original widths,not a fabricated class'],
+             next_barrier_gate='GP map directly targets one current first-refusal probe (1/39),which is a continuation. Its complete original function remains stack-first; typed mapping alone earns zero whole-function credit.',
+             E2_acceptance='Full original-entry E2 with caller-derived live-ins,fullCPU/RAM and all globals/canaries; plant wrong GP field,wrong width,callee effect and delay-slot ordering. Continuation-only comparisons must not be promoted to a complete function.'),
+        dict(order=3,name='SP-relative128-bit transport and native-call ABI preservation',target='First stack-recovered entries with original lq/sq or MMI;001225D0 is a concrete example',
+             original_prerequisites=['22/39 selected addresses show128 SP-relativeLQ/SQ operations; all22 are stack-first. NonstackLQ/SQ and actualMMI opcode counts are0 in known sampled bodies; unknown bodies/callees stay unknown. This is transport evidence,not22arithmetic-type requirements or measured unlocks','001225D0 original saves s1 viaSQ@1225D8 ands0 viaSQ@1225DC,restores viaLQ@122674/122678; identify preservation vs actual128-bit arithmetic separately'],
+             minimum_bindings=['Prove callee-save/spill purpose through original defuse,aliases and callee ABI. Eliminate proved compiler transport in native code instead of copying original register banks; project justified original frame effects only in E2testadapter','Preserve genuinely semantic live bits through typed value/frame objects; native output may not retain guest register banks or guest memory','Prove MMI operation widths,signedness,lane effects and carries for each reached operation; opcode membership alone is not128-bit semantics'],
+             next_barrier_gate='There is no measured128-bit first refusal in39 attempts. Rerun after the earlier stack/parser fixes and record the first real width barrier; do not predict whole units from body-feature counts.',
+             E2_acceptance='Full128-bit register deltas and RAM,upper/lower lane edge cases,carry/shift/sign extremes,wrong-lane/wrong-width/callee-save mutations; no credit until applicable saved-state comparison passes.'),
+        dict(order=4,name='Receiver and indirect-target binding after earlier barriers',target='001225D0',
+             original_prerequisites=['Original9GP operations include load0064DF54 at1225FC; conditional path loads[v0+0] at12260C then[v0+18] at122610 andJALRv0 at122614','The byte chain alone does not establish a constructor-installed table identity,complete type,concrete native slot or targetset; those remain unresolved unless joined to original constructor/table/factory evidence','Bind other observed fields0064DE88,0064C180,0064DEA4,0064DF4C and0064DE84; define null-state path and lifetime/alias constraints'],
+             minimum_bindings=['Prove concrete installing constructor/table VA,original caller resource chain where ownership is claimed,slot offset18,target code addresses and any receiver adjustment','Bind native callable ABI and receiver field ownership from original evidence; no generic guest-address dispatch or fabricated class owner'],
+             next_barrier_gate='0/39 current first refusals are proved vtable-target binding failures. All5 jalr-bearing selected bodies are stack-first. Concrete targets remain unknown until earlier barriers are passed and original chains verified.',
+             E2_acceptance='Admit only states/constructed objects satisfying the proved table/receiver/slot contract; test null and alternate target admission,receiver adjustment,slot mutation and return/clobber effects against original AOT; no ownership/native credit from identification alone.')],
+        universal_acceptance=['Freeze source/body/caller/field pins before each transform; no hand-written retail replacement or generic guest-memory shim','Generated native kernel must contain no source registers,RAM,GP base,guest addresses or guest-vtable access; native AST/object and renamed/disguised-accessor refusals remain mandatory','Separate actual first-barrier removals,successful generated-body emission,constructed comparisons,saved-state E2 and credited/native production adoption at every stage','Existing two prototype credits remain separate; any production replacement also needs the existing perfunction ownership gate'])
+
+def aggregate_self_tests(report):
+    import copy
+    expected=refusal_aggregate(report)
+    missing=copy.deepcopy(report)
+    missing['samples']=[r for r in missing['samples'] if r['address']!='001a3df0']
+    try:refusal_aggregate(missing)
+    except ValueError:pass
+    else:raise AssertionError('Original primary probe deletion admitted')
+    planted=copy.deepcopy(report)
+    for row in planted['samples']:
+        features=row.get('original_function_context',{}).get('features')
+        if features is not None:features['mmi_count']+=1
+    changed=refusal_aggregate(planted)
+    signature=lambda a:[(x['fix'],x['current_first_barrier_matches']) for x in a['requested_fix_ranking']]
+    if signature(expected)!=signature(changed):raise AssertionError('Source-feature presence became a first-barrier unlock prediction')
+    planted=copy.deepcopy(report)
+    next(r for r in planted['samples'] if r['address']=='0012c440')['reason']='unbound_indirect_target:return_capture'
+    changed=refusal_aggregate(planted)
+    if next(r for r in changed['requested_fix_ranking'] if r['fix']=='vtable_target_binding')['current_first_barrier_matches']:
+        raise AssertionError('Parser return-capture refusal became virtual-dispatch proof')
+    if any(r['measured_first_barriers_removed'] or r['whole_verified_units_unlocked'] is not None for r in expected['requested_fix_ranking']):
+        raise AssertionError('Unimplemented repair earned measured removals or whole-unit unlocks')
+    return dict(status='PASS',scope='Planted metadata controls for aggregate inference only; no original bytes, native kernels or ledger admission modified',controls=['Dropped original primary probe refused','Added source MMI feature does not increase first-barrier opportunities','Indirect-target return/parser refusal is not a proved vtable failure','No proposed repair earns measured removals or whole-unit unlocks'])
 
 
 def markdown_tables(tables):
@@ -338,17 +444,33 @@ def markdown_tables(tables):
     lines += ["", "#### Technique fractions with explicit observed denominators", "", "| Hard class | Original-primary entries with observed evidence | Saved-state-verified transforms among those entries |", "|---|---|---|"]
     for key,value in tables["technique_observed_fractions"].items():
         lines.append(f"| {key} | {value['observed_denominator']}/33 | 0/{value['observed_denominator']}"+(" (no primary overlay input; undefined success fraction)" if value['observed_denominator']==0 else "")+" |")
-    lines += ["", "These are observed-feature subsets, not independent success rates for techniques the compiler never reached. The sole relative-receiver extension passed 18 constructed CPU/RAM comparisons but all 61 original GP-global receivers were null, so its saved-state result remains 0 admitted/61 inapplicable and zero credit. Wrong-value, wrong-field, disguised memory accessor, forged PASS/zero-admission and changed-output controls reject as recorded in the existing verification record.", "<!-- END GENERATED 5S FULL TABLES -->", ""]
+    lines += ["", "These are observed-feature subsets, not independent success rates for techniques the compiler never reached. The sole relative-receiver extension passed 18 constructed CPU/RAM comparisons but all 61 original GP-global receivers were null, so its saved-state result remains 0 admitted/61 inapplicable and zero credit. Wrong-value, wrong-field, disguised memory accessor, forged PASS/zero-admission and changed-output controls reject as recorded in the existing verification record.", ""]
+    aggregate = tables["refusal_aggregate"]
+    lines += ["", "#### Aggregate first barriers and requested-fix ranking", "", "Every general-contract attempt refused: original33 plus6 additional,39 total. The counts below are current first-refusal opportunities only. No proposed fix was applied, no first-barrier removal was measured, and whole-unit unlock remains UNMEASURED. Original source-feature counts overlap and are not unlock predictions.", "", "| Requested fix | Current first-refusal matches /39 | Primary /33 | Additional /6 | Measured removals | Whole-unit unlock |", "|---|---|---|---|---|---|"]
+    for row in aggregate["requested_fix_ranking"]:
+        lines.append(f"| {row['fix']} | {row['current_first_barrier_matches']}/39 | {row['primary_matches']}/33 | {row['additional_matches']}/6 | 0 | UNMEASURED |")
+    lines += ["", "Exact other first barriers: " + "; ".join(reason+"="+str(count) for reason,count in aggregate["exact_first_refusal_reasons"].items() if reason not in ("unbound_value:register_29", "unbound_memory:GP_field_or_width")) + ".", "", "| Original body feature (overlapping selected-address observations) | Present /39 | Also stack-first |", "|---|---|---|"]
+    for key, row in aggregate["original_feature_burden"].items():
+        lines.append(f"| {key} | {row['selected_addresses']}/39 | {row['overlap_with_stack_first_barrier']}/28 |")
+    lines += ["", "All 5 jalr-bearing selections and all 22 SP-relative LQ/SQ-bearing selections are already stack-first; 20 of 23 GP-bearing selections overlap that set. The wide evidence is 128 SP-relative LQ/SQ operations, 0 nonstack LQ/SQ and 0 actual MMI opcodes in known sampled bodies. This is transport evidence,not 22 arithmetic-type requirements. Four addresses lack an authenticated exported body. Two continuation probes share enclosing function evidence, so35 known-body selections correspond to33 distinct exported functions. None of these counts proves a native vtable type, native width semantics, later compiler reachability or whole-unit success.", "", "An analysis-only counterfactual prefix walk was not run: the current lowerer evaluates register expressions as constants. Guessing SP/GP/receiver values or skipping a rejected effect would fabricate semantics. The actual next refusal must be measured after implementing a justified symbolic/typed contract.", "", "#### Minimal next bindings and acceptance plan", ""]
+    for step in tables["minimal_bindings_plan"]["ordered_slices"]:
+        lines += [str(step["order"])+". **"+step["name"]+"** — "+step["target"]+".", "", "   Original prerequisites: "+"; ".join(step["original_prerequisites"])+".", "", "   Minimum bindings: "+"; ".join(step["minimum_bindings"])+".", "", "   Next-barrier gate: "+step["next_barrier_gate"], "", "   E2 acceptance: "+step["E2_acceptance"], ""]
+    lines += ["SP-relative128-bit transport is listed before target binding because it participates in frame/call-ABI analysis, not because 22 arithmetic types or future unit unlocks have been measured. Callee-save/spill elimination still needs defuse and alias proof. Both requested fixes tie at 0 observed first refusals.", "", "<!-- END GENERATED 5S FULL TABLES -->", ""]
     return "\n".join(lines)
 
 
 def publish_existing_tables(parent, output, report, tables, markdown):
+    if report.get('frame_stage'):raise ValueError('legacy_before_frame_publication_refuses_frame_stage_report')
     path=parent/"research/runs/phase4-aot-completion-20261124/VERIFICATION.json"
     record=json.loads(path.read_bytes());section=record["instruction_phase5S"]
     if "prior_37_entry_study" not in section: section["prior_37_entry_study"] = section["study"]
     section["study"] = report
     section["study_receipt"] = {"path": (output/"RESULT.json").relative_to(parent/"external/forks/ps2-native-recomp").as_posix(), "sha256":sha(output/"RESULT.json")}
     section["full_human_readable_tables"] = tables
+    section["full_human_readable_markdown"] = markdown
+    section["refusal_aggregate"] = tables["refusal_aggregate"]
+    section["refusal_aggregate_controls"] = tables["refusal_aggregate_controls"]
+    section["minimal_bindings_plan"] = tables["minimal_bindings_plan"]
     section["measured_coverage"].update(attempted_entries=39, primary_cohort_entries=33, additional_entries=6,
         failure_categories=dict(__import__('collections').Counter(s["failure_category"] for s in report["samples"])),
         sample_accepted_fraction={"numerator":0,"denominator":33}, additional_accepted_fraction={"numerator":0,"denominator":6},population_projection=None)
@@ -357,10 +479,14 @@ def publish_existing_tables(parent, output, report, tables, markdown):
     status=parent/"PORT_STATUS.md";text=status.read_text(encoding="utf-8")
     begin="<!-- BEGIN GENERATED 5S FULL TABLES -->";end="<!-- END GENERATED 5S FULL TABLES -->"
     if begin in text:
-        old=text[text.index(begin):text.index(end)+len(end)];text=text.replace(old,markdown.strip(),1)
-    else: text=text.rstrip()+"\n\n"+markdown
-    text=text.replace("frontend attempted 37 selected entries", "frontend attempted all33 original selections plus6 additional entries (39 unique)")
-    status.write_text(text,encoding="utf-8",newline="\n")
+        old=text[text.index(begin):text.index(end)+len(end)]
+        text=text.replace(old,"",1)
+    summary = ">   - **5S measured boundary**: All 39 selected-address probes refused (the original 33 plus 6 additional). Stack/live-ins account for 28 first refusals and GP fields for 1; vtable and 128-bit bindings account for 0 each at the current first barrier. Later barriers and whole-unit unlock remain unmeasured; the 2 existing verified prototypes are separate. Full tables, aggregate and plan: parent repository work-item record `research/runs/phase4-aot-completion-20261124/VERIFICATION.json`, section `instruction_phase5S`."
+    if "**5S measured boundary**" in text:
+        text="\n".join(summary if "**5S measured boundary**" in line else line for line in text.splitlines())
+    else:
+        text=text.rstrip()+"\n\n"+summary
+    status.write_text(text.rstrip()+"\n",encoding="utf-8",newline="\n")
 
 
 def main():
@@ -369,9 +495,19 @@ def main():
     parser.add_argument("--census", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--compiler", type=Path)
-    parser.add_argument("--publish-existing-tables", action="store_true", help="Update only the existing parent instruction_phase5S record and PORT_STATUS table block")
+    parser.add_argument("--stack-frames",type=Path,help="Original-derived28 frame plans for actual symbolic AST lowering; no guessed SP")
+    parser.add_argument("--frame-before-study",type=Path,help="Pinned existing39 compiler-frontier baseline")
+    parser.add_argument('--borrowed-reference-map',action='store_true',help='S6 experimental original-validated reference-clear IR; no native owner binding')
+    parser.add_argument('--symbol-before-study',type=Path,help='Frozen S5-before-S6 actual39 report')
+    parser.add_argument("--publish-existing-tables", action="store_true", help="Update only existing parent instruction_phase5S evidence/tables and short PORT_STATUS summary")
     parser.add_argument("--render-existing-study", type=Path, help="Render already measured39-entry evidence with current pinned positive receipts; never rerun or relabel compiler attempts")
     args = parser.parse_args()
+    immutable_tools={Path(__file__).resolve():sha(Path(__file__)),Path(transform.__file__).resolve():sha(Path(transform.__file__))}
+    if args.stack_frames:
+        frame_source=Path(__file__).with_name('stack_frame_analysis.py').resolve();immutable_tools[frame_source]=sha(frame_source)
+    if args.borrowed_reference_map:
+        symbol_source=Path(__file__).with_name('retail_data_symbol_map.py').resolve();immutable_tools[symbol_source]=sha(symbol_source)
+        if not args.stack_frames or not args.symbol_before_study:raise ValueError('S6 requires separate frozen S5 evidence and frame plans')
     parent = args.parent_root.resolve()
     fork = parent / "external/forks/ps2-native-recomp"
     output = args.output.resolve()
@@ -380,6 +516,7 @@ def main():
     output.mkdir()
     if args.render_existing_study:
         report = json.loads(args.render_existing_study.read_bytes())
+        if report.get('frame_stage'):raise ValueError('legacy_before_frame_tables_refuse_frame_stage_report')
         if ({int(s["address"],16) for s in report["samples"]} != set(ORIGINAL_PRIMARY) | set(SUPPLEMENTAL) | CORRECTED_PROJECTIONS
             or len(report["samples"]) != 39 or report["inputs"]["transformer_sha256"] != sha(Path(transform.__file__))):
             raise ValueError("Existing study cohort or measured compiler changed; rerun39 attempts")
@@ -388,12 +525,23 @@ def main():
         tables = full_tables(report, fork)
         markdown = markdown_tables(tables)
         (output/"full-tables.json").write_text(json.dumps(tables,indent=2)+"\n",encoding="utf-8",newline="\n")
-        (output/"full-tables.md").write_text(markdown,encoding="utf-8",newline="\n")
         if args.publish_existing_tables:
             publish_existing_tables(parent, output, report, tables, markdown)
         print("RENDERED_EXISTING_MEASURED_STUDY", output, "samples39; no compiler attempts rerun")
         return
     census = json.loads(args.census.read_bytes())
+    frame_plans={};frame_before={};symbol_before={};symbol_controls=None
+    if args.stack_frames:
+        if not args.frame_before_study:raise ValueError('Frame study requires the exact original39 before receipt')
+        frame_data=json.loads(args.stack_frames.read_bytes())
+        frame_plans={row['source_entry']:row for row in frame_data['targets']}
+        before_data=json.loads(args.frame_before_study.read_bytes());frame_before={row['address']:row for row in before_data['samples']}
+        if len(frame_before)!=39 or len(frame_plans)!=28:raise ValueError('Frame study cohort changed')
+    if args.borrowed_reference_map:
+        symbol_baseline=json.loads(args.symbol_before_study.read_bytes())
+        if symbol_baseline.get('frame_stage',{}).get('stage')!='S5_BEFORE_ANY_S6_GP_BINDING':raise ValueError('S6 baseline is not an actual S5-before-S6 report')
+        symbol_before={row['address']:row for row in symbol_baseline['samples']}
+        if len(symbol_before)!=39:raise ValueError('S6 changed original39 cohort')
     contract_path = fork / "recomp/overlay_initializer_contract.json"
     contract = json.loads(contract_path.read_bytes())
     generated = fork / "build/generated-aot/phase4-all"
@@ -547,6 +695,9 @@ def main():
             authenticated = address in catalogue or address in registered
             descriptor = {"source_entry": sample["address"], "entry_case": sample["entry_case"],
                           "unit_name": unit.stem, "module": "SLUS_214.10"}
+            if sample['address'] in frame_plans:
+                descriptor.update(_frame_plan=frame_plans[sample['address']],_frame_original=original)
+            if args.borrowed_reference_map:descriptor['_data_symbol_image']=image
             begin = time.perf_counter()
             lowering = transform.Lowering(definition, descriptor, contract)
             reason = None
@@ -562,6 +713,14 @@ def main():
                           ast_parse_shared_by=len(addresses), lowering_seconds=elapsed,
                           first_unlowered_pc=f"{lowering.pc:08x}", lowered_effects=len(lowering.effects),
                           source_budget_debits_processed=lowering.debit)
+            if args.stack_frames:
+                old=frame_before[sample['address']]
+                result['before_frame_frontier']={k:old.get(k) for k in ('reason','first_unlowered_pc','failure_category')}
+                result['frame_lowering']=lowering.frame.report() if lowering.frame else None
+            if args.borrowed_reference_map:
+                result['before_symbol_frontier']={k:symbol_before[sample['address']].get(k) for k in ('reason','first_unlowered_pc','failure_category')}
+                result['borrowed_reference_IR']=lowering.data_symbols.report()
+                if address==0x18da30:symbol_controls=transform.borrowed_reference_self_tests(definition,descriptor,contract)
             containing = owner(address)
             result["original_function_context"] = {"entry": f"{containing:08x}" if containing is not None else None,
                                                    "features": original_features.get(containing)}
@@ -625,11 +784,49 @@ def main():
                   "Earlier module-prefix sampling did not prove native/original correspondence. The 0409 native Texture Dictionaries, 040a Materials and 040b Geometry labels differ from the original plugin identities; production module names/code are preserved.",
                   "A cursor_assignment parser refusal is not original virtual dispatch. A non_GP_base refusal is not GP access evidence."],
               "Falsification attempts": ["The existing transformer refuses unsupported selected operations before native emission. Separate positive and semantic failure controls are required for this study receipt."]}
+    if any(sha(path)!=expected for path,expected in immutable_tools.items()):
+        raise ValueError('Study source changed during measurement; preserve diagnostic output and rerun frozen sources')
     (output / "RESULT.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8", newline="\n")
+    if args.stack_frames:
+        from collections import Counter
+        report['frame_stage']={'schema':'actual_symbolic_stack_frame_study_v1','stage':'S5_BEFORE_ANY_S6_GP_BINDING',
+            'frame_plan_sha256':sha(args.stack_frames),'before39_sha256':sha(args.frame_before_study),
+            'frame_analyzer_sha256':sha(Path(__file__).with_name('stack_frame_analysis.py')),
+            'target_count':28,'all_selected_addresses':39,
+            'first_compiler_refusals_after':dict(Counter(r['reason'] for r in results)),
+            'symbolic_SP_prefixes_lowered':sum(any(op['kind']=='symbolic_SP_adjustment' for op in (r.get('frame_lowering') or {}).get('normalized_operations',[])) for r in results),
+            'reference_only_frame_effects':sum(len((r.get('frame_lowering') or {}).get('reference_only_effects',[])) for r in results),
+            'whole_saved_state_verified_units':0,'new_credit':0,
+            'scope':'Actual AST lowering past matched symbolic frame operations. Reference-only transport and independent frame/native blockers remain unaccepted; no partial prefix is a full native unit.'}
+        def first_category(row):
+            reason=row['reason']
+            if reason=='unbound_memory:GP_field_or_width':return 'GP'
+            if row.get('proved_first_barrier_kind')=='native_vtable_target_binding':return 'vtable'
+            if reason in ('unbound_stack_local_128_type','unbound_native_128_operation'):return '128bit'
+            return 'other'
+        report['frame_stage']['four_first_barrier_categories']={key:{'count':sum(first_category(r)==key for r in results),
+            'addresses':[r['address'] for r in results if first_category(r)==key],
+            'scope':'Actual current first compiler refusal only; no source-feature or whole-unit unlock inference'} for key in ('GP','vtable','128bit','other')}
+        report['frame_stage']['native_frame_blockers']=dict(Counter(b for r in results for b in (r.get('frame_lowering') or {}).get('native_emission_blockers',[])))
+        if args.borrowed_reference_map:
+            report['frame_stage']['stage']='S6_EXPERIMENTAL_BORROWED_REFERENCE_CLEAR'
+            report['frame_stage']['S5_before_sha256']=sha(args.symbol_before_study)
+            report['frame_stage']['retail_symbol_map_sha256']=sha(Path(__file__).with_name('retail_data_symbol_map.py'))
+            report['frame_stage']['borrowed_reference_controls']=symbol_controls
+            report['frame_stage']['experimental_clear_effects']=sum(len(r.get('borrowed_reference_IR',{}).get('effects',[])) for r in results)
+            target=next(r for r in results if r['address']=='0018da30')
+            if target['first_unlowered_pc']!='0018da34' or target['reason']!='unbound_memory:GP_field_or_width' or len(target['borrowed_reference_IR']['effects'])!=1:
+                raise ValueError('S6 clear or next unbound cookie was not actually measured')
+        for result in results:
+            exempt=args.borrowed_reference_map and result['address']=='0018da30'
+            if result['address'] not in frame_plans and not exempt and result['reason']!=frame_before[result['address']]['reason']:
+                raise ValueError('Non-frame selected probe changed under opt-in frame lowering')
+        (output/'RESULT.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8',newline='\n')
+        print('STACK_FRAME_STUDY',output,json.dumps(report['frame_stage']))
+        return
     tables = full_tables(report, fork)
     markdown = markdown_tables(tables)
     (output / "full-tables.json").write_text(json.dumps(tables, indent=2) + "\n", encoding="utf-8", newline="\n")
-    (output / "full-tables.md").write_text(markdown, encoding="utf-8", newline="\n")
     if args.publish_existing_tables:
         publish_existing_tables(parent, output, report, tables, markdown)
     print("STUDY", output, "samples", len(results))

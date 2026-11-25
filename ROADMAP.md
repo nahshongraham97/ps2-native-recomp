@@ -139,6 +139,8 @@ on pinned saved inputs. Record each failure's exact reason and category:
 pointers, gp, vtables, indirect dispatch, 128-bit registers, overlays or cycle
 budget. Measure technique coverage from the sample; add no time estimates.
 
+**Stack-frame extension (owner S1–S6):** Recover original SP adjustments, RA and scalar/128-bit spills; classify slots and retain escaping or uncertain storage on the reference side. Compare compiled original AOT entry/exit boundaries across the pinned states and reject frame-size, escape-classification and saved-RA mutations. Rerun the unchanged 39-probe cohort before the separate single-GP-field experiment. Partial frame/reference IR must fail native emission while callee, alias, owner or ABI proof remains unbound. Continue with the reached scalar/register operations and actual typed call contracts recorded in PORT_STATUS.md; frame-only checks do not close whole-function E2.
+
 **Closure:** 5S.1–5S.6 report successful units, exact blockers, measured coverage
 and renamed-accessor planted-failure results. Credit only verified transformed
 units; never substitute a guest-memory shim. Publish the synchronized,

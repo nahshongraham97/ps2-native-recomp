@@ -79,3 +79,46 @@ target_include_directories(test_phase5_generated_transform PRIVATE runtime/inclu
 target_link_libraries(test_phase5_generated_transform PRIVATE
     ps2_phase4_aot mka_transformed_overlay_initializers)
 endif()
+
+# S3 reference-only frame boundaries. No product target links these Cpu/RAM
+# copies; the manifest preserves the original28 probes in the existing39 set.
+set(PS2_STACK_REFERENCE_MANIFEST "${CMAKE_SOURCE_DIR}/build/oracle-telemetry/stack-frame-analysis-current/SLICES.json"
+    CACHE FILEPATH "Offline original generated-C++ stack slice manifest for reference tests")
+if(TARGET ps2_phase4_aot AND EXISTS "${PS2_STACK_REFERENCE_MANIFEST}")
+    set(_stack_reference_dir "${CMAKE_CURRENT_BINARY_DIR}/generated-stack-reference")
+    file(READ "${PS2_STACK_REFERENCE_MANIFEST}" _stack_reference_manifest)
+    string(JSON _stack_reference_count LENGTH "${_stack_reference_manifest}" targets)
+    math(EXPR _stack_reference_last "${_stack_reference_count}-1")
+    set(_stack_reference_sources)
+    set(_stack_original_sources)
+    foreach(_stack_i RANGE 0 ${_stack_reference_last})
+        string(JSON _stack_unit GET "${_stack_reference_manifest}" targets ${_stack_i} source_unit)
+        get_filename_component(_stack_stem "${_stack_unit}" NAME_WE)
+        list(APPEND _stack_reference_sources "${_stack_reference_dir}/reference_${_stack_stem}.cpp")
+        list(APPEND _stack_original_sources "${CMAKE_SOURCE_DIR}/${_stack_unit}")
+    endforeach()
+    list(REMOVE_DUPLICATES _stack_reference_sources)
+    list(REMOVE_DUPLICATES _stack_original_sources)
+    add_custom_command(
+        OUTPUT "${_stack_reference_dir}/stack_reference_slices.hpp"
+               "${_stack_reference_dir}/stack_reference_slices.cpp"
+               "${_stack_reference_dir}/stack_reference_proof.json" ${_stack_reference_sources}
+        COMMAND "${Python3_EXECUTABLE}" -B "${CMAKE_SOURCE_DIR}/tools/research/generate_stack_reference_slices.py"
+            --manifest "${PS2_STACK_REFERENCE_MANIFEST}"
+            --generated-dir "${_overlay_generated_dir}"
+            --original-elf "${CMAKE_SOURCE_DIR}/../../../private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/SLUS_214.10"
+            --out-dir "${_stack_reference_dir}" --replace-reference-output
+        DEPENDS "${CMAKE_SOURCE_DIR}/tools/research/generate_stack_reference_slices.py"
+            "${PS2_STACK_REFERENCE_MANIFEST}" ${_stack_original_sources}
+            "${CMAKE_SOURCE_DIR}/../../../private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/SLUS_214.10"
+        VERBATIM COMMENT "Copy authenticated original AOT frame boundaries for test-only replay")
+    add_executable(test_generated_stack_frames EXCLUDE_FROM_ALL
+        tests/test_generated_stack_frames.cpp
+        "${_stack_reference_dir}/stack_reference_slices.cpp" ${_stack_reference_sources}
+        "${CMAKE_SOURCE_DIR}/build/generated-aot/vu1/vu1_table.cpp"
+        runtime/src/dispatch.cpp runtime/src/observer_hook.cpp runtime/src/native_hook.cpp
+        runtime/src/cop.cpp runtime/src/vu_micro.cpp)
+    target_include_directories(test_generated_stack_frames PRIVATE runtime/include runtime/src
+        "${_overlay_generated_dir}" "${_stack_reference_dir}")
+    target_link_libraries(test_generated_stack_frames PRIVATE ps2_phase4_aot)
+endif()

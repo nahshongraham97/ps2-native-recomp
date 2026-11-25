@@ -12,6 +12,7 @@ import copy
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import struct
 import subprocess
@@ -154,6 +155,265 @@ def function_definition(roots, name):
     return found[0]
 
 
+class BorrowedReferenceSymbols:
+    """One original-validated experimental nullable-reference clear, never pointer bits."""
+    def __init__(self,lowering,image,claim=None):
+        import retail_data_symbol_map as symbols
+        try:expected=symbols.validated_symbol_map(image)
+        except symbols.SymbolMapRefusal as error:raise Refusal(str(error)) from error
+        if claim is not None:require(canonical(claim)==canonical(expected),'source_symbol_map_forged_identity_or_owner')
+        self.lowering=lowering;self.symbols=expected;self.effects=[]
+        symbol=expected['0064e348']
+        require(symbol['owner_binding'] is None and symbol['pointee_binding'] is None,'source_symbol_native_binding_not_established')
+        require(symbol['semantic_kind']=='nullable_borrowed_object_reference' and symbol['allowed_projection']=='clear_borrowed_reference',
+                'source_symbol_not_borrowed_reference_clear')
+
+    def statement(self,node):
+        if node.get('kind')!='CallExpr':return False
+        try:name,args=self.lowering.helper(node)
+        except Refusal:return False
+        if name!='st32' or len(args)!=2:return False
+        symbol=self.symbols['0064e348'];pc=self.lowering.pc
+        resets=[w for w in symbol['reset_words'] if int(w['pc'],16)==pc and int(w['word'],16)>>16&31==0
+                and ((int(symbol['gp_base'],16)+((int(w['word'],16)&0xffff)-0x10000))&0xffffffff)==int(symbol['address'],16)]
+        if not resets:return False
+        address=unwrap(args[0]);require(address.get('kind')=='BinaryOperator' and address.get('opcode') in ('+','-'),'source_borrowed_ref_address_expression')
+        base,offset=children(address);require(register_part(base,self.lowering.cpu)==(28,32),'source_borrowed_ref_GP_base')
+        displacement=literal(offset)*(1 if address['opcode']=='+' else -1)
+        require(displacement==symbol['signed_GP_displacement'],'source_borrowed_ref_wrong_field')
+        value=self.lowering.expression(args[1]);require(self.lowering.evaluate(value)==0,'source_borrowed_ref_clear_requires_zero')
+        effect={'kind':'clear_borrowed_reference','source_pc':f'{pc:08x}','source_symbol':symbol['address'],
+                'semantic_kind':symbol['semantic_kind'],'native_value':'nullptr','owner_binding':None,'pointee_binding':None,
+                'scope':'experimental typed IR only; no original pointer bits, handle, native owner or production adoption'}
+        self.effects.append(effect);self.lowering.effects.append(effect)
+        return True
+
+    def report(self):
+        return {'schema':'source_backed_borrowed_reference_IR_v1','validated_symbols':self.symbols,'effects':self.effects,
+                'native_emission_blockers':['borrowed_reference_native_owner_unbound','borrowed_reference_pointee_ABI_unbound'] if self.effects else [],
+                'scope':'Only original SWzero projection. Companion cookie and all other fields remain unbound.'}
+
+
+def borrowed_reference_self_tests(definition,descriptor,contract):
+    """Actual selected AST effect controls; no source file or original byte writes."""
+    require(descriptor['source_entry'].lower()=='0018da30','symbol_controls_require_original_clear_continuation')
+    baseline=Lowering(definition,descriptor,contract)
+    try:baseline.lower()
+    except Refusal as error:require(str(error)=='unbound_memory:GP_field_or_width','symbol_control_next_cookie_not_reached')
+    else:raise AssertionError('Unexpected complete unit from one reference binding')
+    require(len(baseline.data_symbols.effects)==1 and baseline.pc==0x18da34,'symbol_control_clear_or_next_effect_missing')
+    cases=[]
+    for key in ('owner_binding','pointee_binding'):
+        claim=copy.deepcopy(baseline.data_symbols.symbols);claim['0064e348'][key]='invented'
+        try:BorrowedReferenceSymbols(baseline,descriptor['_data_symbol_image'],claim)
+        except Refusal as error:
+            require(str(error)=='source_symbol_map_forged_identity_or_owner','symbol_control_wrong_forgery_gate');cases.append({'plant':key,'rejection':str(error)})
+        else:raise AssertionError('Forged native binding admitted')
+    label=next(n for n in walk(definition) if n.get('kind')=='LabelStmt' and n.get('name')=='L_0018DA30')
+    call=next(n for n in walk(label) if n.get('kind')=='CallExpr' and declaration(children(n)[0]).get('name')=='st32')
+    original=copy.deepcopy(call)
+    for label,mutation,expected in (
+        ('wrong GP field',lambda n:unwrap(children(unwrap(children(n)[1]))[1]).update(value='23972'),'source_borrowed_ref_wrong_field'),
+        ('nonzero reference store',lambda n:unwrap(children(n)[2]).update(value='1'),'source_borrowed_ref_clear_requires_zero'),
+    ):
+        try:
+            call.clear();call.update(copy.deepcopy(original));mutation(call)
+            try:Lowering(definition,descriptor,contract).lower()
+            except Refusal as error:
+                require(str(error)==expected,'symbol_control_wrong_AST_rejection:'+str(error));cases.append({'plant':label,'rejection':str(error)})
+            else:raise AssertionError('Invalid source reference effect admitted')
+        finally:call.clear();call.update(copy.deepcopy(original))
+    ir={'values':baseline.values,'effects':baseline.effects,'retail_data_symbols':baseline.data_symbols.report()}
+    try:emit([(dict(descriptor,native_name='never_emitted'),ir)])
+    except Refusal as error:
+        require(str(error)=='native_emission_unbound_borrowed_reference_owner_or_pointee','symbol_control_native_gate_changed');cases.append({'plant':'native emission with unbound owner/pointee','rejection':str(error)})
+    else:raise AssertionError('Unbound reference projection emitted natively')
+    return {'status':'PASS','cases':cases,'next_unbound_source_pc':'0018da34','new_credit':0}
+
+
+class SymbolicFrame:
+    """Actual generated-AST frame lowering, without guessed SP/register values.
+
+    Reference transport survives as explicit IR until its complete proof closes.
+    The native emitter rejects that IR; advancing a compiler frontier is not an
+    elision, a complete native function or transformed credit.
+    """
+    def __init__(self, lowering, original, plan):
+        import stack_frame_analysis as frames
+        try:self.plan=frames.validate_frame_plan(original,plan)
+        except frames.FrameRefusal as error:raise Refusal(str(error)) from error
+        self.lowering=lowering;self.offsets={29:0};self.operations=[];self.reference_effects=[];self.locals={}
+        self.words={int(x['pc'],16):int(x['word'],16) for x in self.plan['original_words']}
+        self.accesses=self.plan['stack_accesses'];self.adjustments=self.plan['SP_adjustments']
+        self.slots={(s['offset_from_allocated_sp'],s['width_bits']):s for s in self.plan['slots']}
+
+    def pcs(self):
+        import stack_frame_analysis as frames
+        pc=self.lowering.pc
+        return [pc,pc+4] if pc in self.words and frames.control(pc,self.words[pc]) else [pc]
+
+    def address(self,node):
+        node=unwrap(node);aligned=False
+        if node.get('kind')=='BinaryOperator' and node.get('opcode')=='&':
+            left,right=children(node);right=unwrap(right)
+            require(right.get('kind')=='UnaryOperator' and right.get('opcode')=='~' and literal(children(right)[0])==15,
+                    'unbound_stack_alignment_mask')
+            node=unwrap(left);aligned=True
+        displacement=0;base=node
+        if node.get('kind')=='BinaryOperator' and node.get('opcode') in ('+','-'):
+            base,offset=children(node);displacement=literal(offset)*(1 if node['opcode']=='+' else -1)
+        try:reg,width=register_part(base,self.lowering.cpu)
+        except Refusal:return None
+        if reg not in self.offsets:return None
+        require(width in (32,64),'unbound_stack_address_width')
+        offset=self.offsets[reg]+displacement+self.plan['frame_bytes']
+        if aligned:require(offset%16==0 and self.plan['entry_alignment']==16,'unbound_stack_alignment')
+        return offset
+
+    def match_access(self,offset,width,direction,reg):
+        matches=[a for a in self.accesses if int(a['pc'],16) in self.pcs()
+                 and a['offset_from_allocated_sp']==offset and a['width_bits']==width and a['direction']==direction and a['register']==reg and a['register_bank']=='GPR']
+        require(matches,'frame_AST_original_slot_join_mismatch')
+        return matches[0]
+
+    def ref_effect(self,access,kind):
+        effect={'kind':kind,'source_pc':access['pc'],'slot_offset':access['offset_from_allocated_sp'],
+                'width_bits':access['width_bits'],'source_register':access['register'],
+                'value':'symbolic original input/slot identity; never a concrete guest value'}
+        slot=self.slots[(access['offset_from_allocated_sp'],access['width_bits'])]
+        if slot.get('transport_elision_proved'):
+            effect['kind']='elided_proved_frame_transport';effect['reference_RAM_projection_required']=True
+        else:self.reference_effects.append(effect)
+        self.operations.append(effect)
+
+    def expression(self,node):
+        call=self.call(unwrap(node))
+        if not call or call[0] not in ('ld8','ld16','ld32','ld64'):return None
+        name,args,_=call;require(len(args)==1,'frame_local_load_arity')
+        offset=self.address(args[0])
+        if offset is None:return None
+        bits={'ld8':8,'ld16':16,'ld32':32,'ld64':64}[name]
+        matches=[a for a in self.accesses if int(a['pc'],16) in self.pcs() and a['offset_from_allocated_sp']==offset
+                 and a['width_bits']==bits and a['direction']=='load' and a['register_bank']=='GPR']
+        require(matches,'frame_AST_original_local_load_join_mismatch')
+        local=self.locals.get((offset,bits));require(local is not None and 'current_expression' in local,'unbound_stack_local_read_before_native_definition')
+        self.operations.append({'kind':'typed_local_load','source_pc':matches[0]['pc'],'local':local['name']})
+        return local['current_expression']
+
+    def call(self,node):
+        if node.get('kind')!='CallExpr' or not children(node):return None
+        try:decl=declaration(children(node)[0])
+        except Refusal:return None
+        if decl.get('kind')!='FunctionDecl':return None
+        return decl.get('name'),children(node)[1:],decl.get('type',{}).get('qualType')
+
+    def statement(self,node):
+        kind=node.get('kind');call=self.call(node)
+        if call and call[0]=='set32':
+            _,args,ty=call
+            if len(args)!=2:return False
+            try:reg=register_object(args[0],self.lowering.cpu)
+            except Refusal:return False
+            if reg!=29:
+                try:offset=self.address(args[1])
+                except Refusal:return False
+                if offset is None:return False
+                require(ty==self.lowering.contract['helper_contracts']['set32']['type'],'frame_alias_set32_signature')
+                matches=[a for a in self.plan['aliases'] if int(a['pc'],16) in self.pcs() and a['register']==reg
+                         and str(offset-self.plan['frame_bytes']) in a['offsets']]
+                require(matches,'frame_AST_original_set32_alias_join_mismatch')
+                self.offsets[reg]=offset-self.plan['frame_bytes']
+                effect={'kind':'reference_only_symbolic_frame_alias','source_pc':matches[0]['pc'],'register':reg,'offset':offset}
+                self.operations.append(effect);self.reference_effects.append(effect)
+                return True
+            require(ty==self.lowering.contract['helper_contracts']['set32']['type'],'frame_set32_helper_signature')
+            rhs=unwrap(args[1]);require(rhs.get('kind')=='BinaryOperator' and rhs.get('opcode') in ('+','-'),'frame_SP_adjustment_AST')
+            base,amount=children(rhs);require(register_part(base,self.lowering.cpu)==(29,32),'frame_SP_adjustment_base')
+            delta=literal(amount)*(1 if rhs['opcode']=='+' else -1)
+            matches=[a for a in self.adjustments if int(a['pc'],16) in self.pcs() and a['delta']==delta]
+            require(matches,'frame_AST_original_SP_delta_mismatch')
+            self.offsets[29]+=delta
+            require(str(self.offsets[29]) in matches[0]['offsets_after'],'frame_symbolic_SP_original_join_mismatch')
+            self.operations.append({'kind':'symbolic_SP_adjustment','source_pc':matches[0]['pc'],'delta':delta,'offset_from_entry_sp':self.offsets[29]})
+            return True
+        if call and call[0] in ('st8','st16','st32','st64','st128'):
+            name,args,ty=call
+            require(len(args)==2,'frame_store_arity')
+            offset=self.address(args[0])
+            if offset is None:return False
+            width={'st8':8,'st16':16,'st32':32,'st64':64,'st128':128}[name]
+            require(not any(int(a['pc'],16) in self.pcs() and a['offset_from_allocated_sp']==offset and a['register_bank']!='GPR' for a in self.accesses),
+                    'unbound_stack_FPR_or_mixed_source_type')
+            try:
+                if width==128:reg=register_object(args[1],self.lowering.cpu)
+                else:
+                    reg,part_width=register_part(args[1],self.lowering.cpu)
+                    require(part_width==(64 if width==64 else 32),'frame_store_source_register_width_mismatch')
+            except Refusal:
+                require(unwrap(args[1]).get('kind')=='IntegerLiteral' and literal(args[1])==0,'unbound_stack_store_source_expression')
+                reg=0
+            access=self.match_access(offset,width,'store',reg);slot=self.slots[(offset,width)]
+            expected={'st8':'void (std::uint32_t, std::uint8_t)','st16':'void (std::uint32_t, std::uint16_t)',
+                      'st32':'void (std::uint32_t, std::uint32_t)','st64':'void (std::uint32_t, std::uint64_t)',
+                      'st128':'void (std::uint32_t, const Reg128 &)'}[name]
+            require(ty==expected,'frame_store_helper_signature:'+str(ty))
+            if slot['classification'] in ('RA_transport_candidate','callee_save_transport_candidate'):
+                self.ref_effect(access,'reference_only_frame_transport_store');return True
+            require('frame_callee_stack_effects_unproved' not in self.plan['blockers'],'unbound_stack_local_callee_effects')
+            require(not self.plan['blockers'],'unbound_stack_local_frame_or_alias_effects')
+            require(not self.plan['escapes'] and not any('overlap' in b or 'read_before' in b or 'outside_owned' in b for b in self.plan['blockers']),
+                    'unbound_stack_local_escape_or_clobber')
+            require(width in (8,16,32,64),'unbound_stack_local_128_type')
+            expression=self.lowering.expression(args[1])
+            local=self.locals.setdefault((offset,width),{'name':'local_'+str(len(self.locals)),'type':'u'+str(width),'offset':offset,'width_bits':width})
+            local['current_expression']={'op':'constant','type':local['type'],
+                                         'value':self.lowering.evaluate(expression)&((1<<width)-1)}
+            self.lowering.effects.append({'kind':'store_local','local':local['name'],'type':local['type'],'expression':expression,'source_pc':access['pc']})
+            self.operations.append({'kind':'typed_local_store','source_pc':access['pc'],'local':local['name']})
+            return True
+        if call and call[0]=='ld128':
+            _,args,ty=call
+            require(len(args)==2,'frame_load128_arity');offset=self.address(args[0])
+            if offset is None:return False
+            reg=register_object(args[1],self.lowering.cpu);access=self.match_access(offset,128,'load',reg)
+            require(ty=='void (std::uint32_t, Reg128 &)','frame_load128_helper_signature')
+            self.ref_effect(access,'reference_only_frame_transport_load');return True
+        if kind=='BinaryOperator' and node.get('opcode')=='=':
+            lhs,rhs=children(node)
+            try:reg,width=register_part(lhs,self.lowering.cpu)
+            except Refusal:return False
+            rhs=unwrap(rhs);load=self.call(rhs)
+            if load and load[0] in ('ld8','ld16','ld32','ld64'):
+                name,args,_=load;require(len(args)==1,'frame_load_arity');offset=self.address(args[0])
+                if offset is None:return False
+                bits={'ld8':8,'ld16':16,'ld32':32,'ld64':64}[name]
+                require(bits==64 and width==64,'unbound_stack_direct_load_width_or_sign_semantics')
+                access=self.match_access(offset,bits,'load',reg)
+                self.ref_effect(access,'reference_only_frame_transport_load');return True
+            try:offset=self.address(rhs)
+            except Refusal:return False
+            if offset is not None:
+                matches=[a for a in self.plan['aliases'] if int(a['pc'],16) in self.pcs() and a['register']==reg
+                         and str(offset-self.plan['frame_bytes']) in a['offsets']]
+                require(matches,'frame_AST_original_alias_join_mismatch')
+                self.offsets[reg]=offset-self.plan['frame_bytes']
+                effect={'kind':'reference_only_symbolic_frame_alias','source_pc':matches[0]['pc'],'register':reg,'offset':offset}
+                self.operations.append(effect);self.reference_effects.append(effect)
+                return True
+        return False
+
+    def report(self):
+        blockers=list(self.plan['blockers'])
+        if self.reference_effects:blockers.append('native_emission_residual_reference_only_frame_transport')
+        if self.offsets[29]!=0:blockers.append('native_emission_frame_not_yet_restored')
+        return {'schema':'symbolic_generated_frame_IR_v1','frame_bytes':self.plan['frame_bytes'],
+                'original_plan_sha256':hashlib.sha256(canonical(self.plan)).hexdigest(),
+                'normalized_operations':self.operations,'reference_only_effects':self.reference_effects,
+                'typed_locals':list(self.locals.values()),'symbolic_SP_offset':self.offsets[29],
+                'native_emission_blockers':sorted(set(blockers)),
+                'scope':'Actual AST normalization/frontier only; reference-only frame effects cannot enter native emission'}
+
+
 class Lowering:
     """Selected-CFG semantic lowering. No name-to-retail-body templates."""
     def __init__(self, function, descriptor, contract):
@@ -166,9 +426,14 @@ class Lowering:
         self.return_local = None
         self.return_guard = self.cursor_return = self.returned = False
         self.pc, self.debit = int(descriptor["source_entry"], 16), 0
+        self.frame = SymbolicFrame(self,descriptor['_frame_original'],descriptor['_frame_plan']) if '_frame_plan' in descriptor else None
+        self.data_symbols=BorrowedReferenceSymbols(self,descriptor['_data_symbol_image'],descriptor.get('_data_symbol_claim')) if '_data_symbol_image' in descriptor else None
 
     def expression(self, node):
         node = unwrap(node)
+        if self.frame:
+            local=self.frame.expression(node)
+            if local is not None:return local
         kind = node.get("kind")
         if kind == "IntegerLiteral":
             return {"op": "constant", "type": "u32", "value": int(node["value"]) & 0xffffffff}
@@ -235,6 +500,8 @@ class Lowering:
 
     def statement(self, node):
         kind = node.get("kind")
+        if self.frame and self.frame.statement(node):return
+        if self.data_symbols and self.data_symbols.statement(node):return
         if kind == "LabelStmt":
             name = node.get("name", "")
             require(name.startswith("L_") and len(name) == 10, "unsupported_control_label")
@@ -332,8 +599,11 @@ class Lowering:
             if self.returned:
                 break
         require(self.returned, "unclosed_selected_CFG")
-        return {"values": self.values, "effects": self.effects, "host_budget_debit": self.debit,
+        result={"values": self.values, "effects": self.effects, "host_budget_debit": self.debit,
                 "return": "structured_native_return_after_delay_effect"}
+        if self.frame:result['frame']=self.frame.report()
+        if self.data_symbols:result['retail_data_symbols']=self.data_symbols.report()
+        return result
 
 
 def emit(functions, relative=False):
@@ -344,9 +614,21 @@ def emit(functions, relative=False):
               f"struct {owner} {{ {field}{{}}; }};\n")
     source = f'#include "{filename}"\n\nnamespace mka::retail::generated {{\n'
     for desc, ir in functions:
+        symbols=ir.get('retail_data_symbols')
+        if symbols:
+            require(not symbols['effects'] and not symbols['native_emission_blockers'],'native_emission_unbound_borrowed_reference_owner_or_pointee')
+        frame=ir.get('frame')
+        if frame:
+            require(not frame['native_emission_blockers'] and not frame['reference_only_effects'],
+                    'native_emission_residual_reference_only_frame_effects')
         signature = "std::uint64_t " + desc["native_name"] + f"({owner}& selection) noexcept"
         header += signature + ";\n"
         source += signature + " {\n"
+        if frame:
+            for local in frame['typed_locals']:
+                require(local['type'] in ('u8','u16','u32','u64'),'native_unbound_frame_local_type')
+                require(re.fullmatch(r'local_\d+',local['name']) is not None,'native_unbound_frame_local_name')
+                source+=f"    std::uint{local['width_bits']}_t {local['name']}{{}};\n"
         values = ir["values"]
         for effect in ir["effects"]:
             if effect["kind"] == "define":
@@ -360,6 +642,11 @@ def emit(functions, relative=False):
                            f'(value_{expression["value"]});\n')
             elif effect["kind"] == "return_value":
                 source += f'    return value_{effect["value"]};\n'
+            elif effect['kind']=='store_local' and frame:
+                expression=effect['expression'];require(expression['op'] in ('constant','truncate32','value'),'native_unbound_frame_local_value')
+                rhs=str(expression['value'])+'ULL' if expression['op']=='constant' else 'value_'+str(expression['value'])
+                require(any(local['name']==effect['local'] for local in frame['typed_locals']),'native_unbound_frame_local')
+                source+=f"    {effect['local']} = static_cast<std::uint{effect['type'][1:]}_t>({rhs});\n"
             else:
                 raise Refusal("unsupported_IR_effect")
         source += "}\n"

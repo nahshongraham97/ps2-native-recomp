@@ -31245,10 +31245,10 @@
     ],
     "correct_oracle_vu1_image_count": 18,
     "snapshot_verification": {
-      "receipt_sha256": "c85f56850b70e62ca1d562aa4d2ee8b13888e62b9e12afa56854f99f55c60cf7",
+      "receipt_sha256": "3f5ff5fd6453e9f47b005b7e819d2921cf769d2b17a0627ca21b996dd6f267b2",
       "scope": "Selected entry-zero program replay on actual saved register/data inputs; not historical invocation capture or whole-game acceptance",
-      "receipt_path": "build/oracle-telemetry/phase4-frozen-vu-refresh04-verify.json",
-      "source_manifest_path": "build/oracle-telemetry/phase4-frozen-vu-refresh04-compiled-source.json"
+      "receipt_path": "build/oracle-telemetry/phase4-stack-final05-verify.json",
+      "source_manifest_path": "build/oracle-telemetry/phase4-stack-final05-compiled-source.json"
     },
     "vu0_static_scope": {
       "audit_sha256": "c01bd9580391d84a7b7e7ad2f41e0cedfc00cc288c789940cb6c49b1eebddc10",
@@ -31277,9 +31277,9 @@
     ],
     "measurement": {
       "proof_path": "b/native-overlay-initializers/transform_proof.json",
-      "proof_sha256": "6245fe631edfb8905f38f189bad4296d89fe44fdca65cb8e2632ee4fba4eeefc",
-      "receipt_path": "build/oracle-telemetry/phase5-strict-gate-frozen03-verification.json",
-      "receipt_sha256": "481dae2fb8aa375ec1839bd5781e72e28f6637ce7fae1897edf137ebd0affc2e"
+      "proof_sha256": "256023750ecd7adc162f35533ceb991efc9679e17012a26b8f7eb031672b9142",
+      "receipt_path": "build/oracle-telemetry/phase5-stack-final01-verification.json",
+      "receipt_sha256": "55bb85c3d5c98b7f981300fb5d589af8c96cb4c7a070848752d2df9852a9bb5d"
     }
   },
   "entry_measurement": {
