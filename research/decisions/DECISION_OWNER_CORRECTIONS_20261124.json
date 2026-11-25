@@ -868,5 +868,10 @@
       "Parity assist toggles do not undo unconditional8MiBIOPRAM/quick-save changes.",
       "No game/other target executable launched; no protected source/oracle bytes written."
     ]
+  },
+  "publication_enforcement": {
+    "source_identity": "Authenticate measured source manifest and binary hashes; verify later compiled changes separately and identify reused unchanged components.",
+    "sync": "Byte-identical ledgers, chart and current progress documents including measured-source commit pins and LF; later documentation checkpoint recorded separately.",
+    "phase_gate": "Commit and push the verified phase checkpoint before starting another phase; Phase 0 remains OPEN."
   }
 }

@@ -88,13 +88,13 @@ def verify_sync(fork_root: Path, parent_repo: Path) -> dict:
         t_fork = f_fork.read_text(encoding="utf-8")
         t_parent = f_parent.read_text(encoding="utf-8")
         try:
-            n_fork = _normalize_doc(t_fork, fork_root)
-            n_parent = _normalize_doc(t_parent, fork_root)
+            _normalize_doc(t_fork, fork_root)
+            _normalize_doc(t_parent, fork_root)
         except subprocess.CalledProcessError as exc:
             mismatches.append(f"{rel}: INVALID Verified Fork Commit SHA ({exc})")
             continue
-        if n_fork != n_parent:
-            mismatches.append(f"{rel}: MISMATCH between parent and fork (outside valid Verified Fork Commit pin)")
+        if f_fork.read_bytes() != f_parent.read_bytes():
+            mismatches.append(f"{rel}: MISMATCH between parent and fork (including commit pins and line endings)")
     return {"results": results, "mismatches": mismatches}
 
 def sync_from_fork_to_parent(fork_root: Path, parent_repo: Path):

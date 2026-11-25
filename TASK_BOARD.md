@@ -4,7 +4,7 @@
 files, and closure evidence are in [ROADMAP.md](ROADMAP.md). This board indexes
 each deliverable's verified component progress and whole-game acceptance state;
 [PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is
-**Resume: Phase 0 remains OPEN. Publish the verified corrections, then establish the missing per-hook B9/Practice binary joins and authenticated successful-run hook/telemetry configuration, and complete the required baseline scope. Static launcher inspection and disposable preparation passed; no oracle game run occurred. Do not start Phase 1 before the Phase 0 gate passes. Phase 4 still requires full callable coverage and independent function-boundary/VU packet comparisons; Phase 5 remains gated.**
+**Resume: Phase 0 remains OPEN. The verified correction checkpoint is published. Establish the missing per-hook B9/Practice binary joins and authenticated successful-run hook/telemetry configuration, and complete the required baseline scope. Static launcher inspection and disposable preparation passed; no oracle game run occurred. Do not start Phase 1 before the Phase 0 gate passes. Phase 4 still requires full callable coverage and independent function-boundary/VU packet comparisons; Phase 5 remains gated.**
 
 archived at `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 

@@ -314,6 +314,15 @@ hash and entry point. Keep generated coverage, restored-field coverage,
 synthetic behavior and independently compared register/memory/packet behavior
 as separate claims. A missing comparison leaves equivalence OPEN.
 
+At phase publication, authenticate the measured source manifest as well as
+the binary hashes. Any later compiled-source change needs its own affected
+verification; record unchanged components as reused evidence with that scope.
+Regenerate and synchronize the ledgers before publishing. Parent and fork
+ledger files, chart and current progress documents must match byte for byte,
+including measured-source commit pins and LF bytes. Record a later
+documentation checkpoint separately instead of changing only one copy's pin.
+Push the verified phase checkpoint before advancing to another phase.
+
 | Evidence | Reject if |
 | --- | --- |
 | Exact retail call/asset bytes and source or disassembly | Method, bank, ID, format, or callback inferred |

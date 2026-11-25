@@ -781,6 +781,29 @@ def test_planted_failures():
             assert sandbox.resolve().is_relative_to(temp_root) and sandbox.resolve() != temp_root
     print("  Unknown/altered/overlapping captures rejected; frozen receipt checked before output; known mis-extraction excluded.")
 
+    print("Testing planted failure 21: different valid commit pins must fail exact document sync...")
+    if PARENT_PRESENT:
+        readme = REPO / "README.md"
+        original = readme.read_bytes()
+        match = re.search(rb"/commit/([0-9a-f]{40})", original)
+        assert match, "Missing generated fork source pin"
+        pinned = match.group(1).decode("ascii")
+        other = subprocess.check_output(["git", "rev-parse", pinned + "^"],
+                                        cwd=FORK_ROOT, text=True).strip()
+        # Both pins resolve. Only exact equality is acceptable; normalizing
+        # different valid pins would conceal this planted mismatch.
+        altered = original.replace(pinned.encode("ascii"), other.encode("ascii"))
+        altered = altered.replace(pinned[:8].encode("ascii"), other[:8].encode("ascii"))
+        assert altered != original
+        try:
+            readme.write_bytes(altered)
+            result = sync_verify.verify_sync(FORK_ROOT, REPO)
+            assert any("README.md: MISMATCH" in msg for msg in result["mismatches"]), result
+        finally:
+            readme.write_bytes(original)
+        assert readme.read_bytes() == original
+        print("  Different valid source pins rejected; original document bytes restored.")
+
     print("PASS: All planted-failure cases successfully caught and proven to fail closed.")
 
 
