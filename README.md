@@ -11,7 +11,7 @@ The target architecture uses AOT static C++ transformed to typed native memory a
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`acda180e`](https://github.com/nahshongraham97/ps2-native-recomp/commit/acda180ea7385d5690acd0fcf1b457fc96d6b5cc) (pinned active fork)
+**Verified Fork Commit**: [`405bf00a`](https://github.com/nahshongraham97/ps2-native-recomp/commit/405bf00acce22c861afe98bdf5d61ec41ab6a4e7) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)

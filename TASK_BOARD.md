@@ -6,14 +6,14 @@ each deliverable's verified component progress and whole-game acceptance state;
 [PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is archived at
 `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
-**Resume Phase 6 with the remaining library ownership evidence.** Retail model clumps carry RenderWare stream version 3.6.0.3 (build FFFF). Review the saved binary-match candidates against original code, or use a matching Midway link map or a symbol-bearing PS2 reference closer to that version. The [Phase 6 verification record](https://github.com/nahshongraham97/armageddon-reimplementation/blob/main/research/runs/phase4-aot-completion-20261124/VERIFICATION.json) contains the retail headers, the 3.1 camera ELF comparison, the conflicting pipeline name, and the Function ID and BSim results. Run `measure_renderer_scope.py --require-exact-renderware` and publish the passing checkpoint before Phase 7.
+**Phase 6 resumes with 15,572 callable entries whose library ownership is unresolved.** The PS2 chunk reader, chunk finder, plugin registry reader and camera view-window setter are now verified. Trace the remaining candidates against original callers and bodies, or use a matching PS2 link map or object set. The [Phase 6 verification record](https://github.com/nahshongraham97/armageddon-reimplementation/blob/main/research/runs/phase4-aot-completion-20261124/VERIFICATION.json) preserves the candidate list, retail version bounds, Xbox provenance and rejected matches. Run `measure_renderer_scope.py --require-exact-renderware` and publish a passing checkpoint before Phase 7.
 
 <!-- PROGRESS:START -->
 ## Native Reimplementation Progress & Multi-Tier Ledger
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`acda180e`](https://github.com/nahshongraham97/ps2-native-recomp/commit/acda180ea7385d5690acd0fcf1b457fc96d6b5cc) (pinned active fork)
+**Verified Fork Commit**: [`405bf00a`](https://github.com/nahshongraham97/ps2-native-recomp/commit/405bf00acce22c861afe98bdf5d61ec41ab6a4e7) (pinned active fork)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)

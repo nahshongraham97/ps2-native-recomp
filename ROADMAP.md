@@ -9,7 +9,7 @@ ownership, scalar liveout, saved-state differential, cost and structural checks.
 That synchronized checkpoint is published. Phase 6 has a verified bounded
 engine-family census and renderer decision, but its exact RenderWare ownership
 total remains OPEN. The required exact-census check refuses unknown ownership;
-the current checkpoint includes original SDK-role and pipeline-record joins and a separate Function ID and BSim candidate search. TASK_BOARD.md identifies the missing ownership evidence. Phase 7
+the current checkpoint also identifies the PS2 stream-version bounds and camera view-window setter from original instructions. TASK_BOARD.md identifies the missing ownership evidence. Phase 7
 has not started.
 General pointer/vtable/indirect recovery and production integration remain OPEN.
 
