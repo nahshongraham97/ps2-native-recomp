@@ -242688,10 +242688,14 @@
     "Not verified": [
       "StageB native heap owner/lifetime and production callers; whole-game acceptance remains OPEN."
     ],
-    "Falsification attempts": "Six new exact body/return/caller/delay/SDK return-type/typedef plants rejected; full record has commands and result pins."
+    "Falsification attempts": "Six new exact body/return/caller/delay/SDK return-type/typedef plants rejected; full record has commands and result pins.",
+    "clean_reproduction": {
+      "path": "build/oracle-telemetry/leaf-ownership-clean-reproduction-01/RESULT.json",
+      "sha256": "6578342f73b23578236ed6339c228b925865f0263eb89d084bc3228292fee31b"
+    }
   },
   "native_phase6_leaf_slice": {
-    "status": "MEASURED_COMPLETE_BASELINE_PASS_PUBLICATION_PENDING",
+    "status": "DONE_BOUNDED_LEAF_STUDY_AND_FIRST_STAGE_A_SLICE",
     "authority": "Owner Phase5S9 P1-P6; native Phase6 X1-X3; latest P1-prime/P1-double-prime/P2-prime/P3-prime/P4-prime/P5-prime.",
     "starting_repositories": {
       "parent": {
@@ -250298,7 +250302,7 @@
       "correction_and_prevention": "Ownership negative-control loop shadowed the emitter value. Compilation rejected it before any pass record. Renamed control_value; require the admitted-mode189-case run and three ownership plants before publication. Prior failure preserved."
     },
     "P6": {
-      "status": "BASELINE_PASS_PUBLICATION_PENDING",
+      "status": "DONE_BASELINE_LEDGERS_PROTECTION_AND_BOTH_SOURCE_PUSHES",
       "baseline_before": {
         "path": "build/oracle-telemetry/complete-baseline-20261125-170856-ed6f3309/RESULT.json",
         "sha256": "1bb98e84c683f7d5c1e85844be796554dc387f248e1eeba71e0db4d562810526"
@@ -252733,7 +252737,22 @@
           "provenance": null,
           "binary_sha256": "d4e19e9a33268fb0ce575a24ab2d4b85972524f1933df008a6befc14dce19fbd"
         }
-      ]
+      ],
+      "source_commits": {
+        "parent": "6708b17995e2a87868e75aae2244a2bb78373a2b",
+        "fork": "7e14d600595ccd511d58c570f2ab3ebac4c30c97"
+      },
+      "branch": "phase6-abi-leaf-cohort",
+      "clean_ownership_reproduction": {
+        "path": "build/oracle-telemetry/leaf-ownership-clean-reproduction-01/RESULT.json",
+        "sha256": "6578342f73b23578236ed6339c228b925865f0263eb89d084bc3228292fee31b"
+      },
+      "reporting_successors": "Metadata/pin-only successors preserve the measured implementation. Final source join and HEAD check are recorded separately.",
+      "protected_unchanged_scope": "True for the completed baseline and initial source pushes. Afterward the owner confirmed playing R192 and the card changed; source-only closeout records that exception without changing project checkers or expected hashes.",
+      "owner_session_receipt": {
+        "path": "build/oracle-telemetry/leaf-owner-session-01.json",
+        "sha256": "345230d58b3f75a7f759d2539c2b3b481ed9d5db7615f770dbed4e3b1597b8a5"
+      }
     },
     "stop_rule": {
       "general": "STOP:0/30 does not justify another general binding round.",
@@ -252759,13 +252778,15 @@
       "No sample whole-function candidate passed; no claim all untested leaves fail.",
       "Historical EE invocation from61 states or72 sidecars.",
       "Generic memory transformation and nonempty external-effect journal; concrete leaf has none.",
-      "Camera equivalence; unrelated100 machine-return and101 native-ABI contracts remain open."
+      "Camera equivalence; unrelated100 machine-return and101 native-ABI contracts remain open.",
+      "Exact actor responsible for the post-baseline card replacement/write. Owner confirmed active R192/Konquest use; no native-port test used or changed the new card."
     ],
     "Contradictions with earlier documents": [
       "Four serial binding rounds did not establish scaling;0/30 leaf results replace diagnostic advances as the signal.",
       "Phase6 authorizes an intermediate typed guest-memory StageA on sibling branches; final zero-guest acceptance/rules unchanged.",
       "Original17 is frozen baseline; current18 follows one evidenced E1 dependency admission.",
-      "One separate no-store ABI pass is not a general-transformer/random-sample pass."
+      "One separate no-store ABI pass is not a general-transformer/random-sample pass.",
+      "The starting persistent-card hash remains a historical checkpoint, not the current owner-active card. No immutable-card claim extends past the completed baseline."
     ],
     "Falsification attempts": {
       "selector": {
@@ -253022,107 +253043,166 @@
         "status": "DONE",
         "scope": "Bounded study and first StageA function; StageB/game remain open.",
         "evidence": "instruction_phase5S.phase_5S_9_leaf_cohort_and_native_phase6_start",
-        "commit": "PENDING_PUBLICATION"
+        "commit": "6708b17995e2a87868e75aae2244a2bb78373a2b",
+        "implementation_commit": "7e14d600595ccd511d58c570f2ab3ebac4c30c97",
+        "publication_role": "Published source/evidence commits; reporting successors carry completion/source-join metadata."
       },
       {
         "id": "P2",
         "status": "DONE",
         "scope": "Bounded study and first StageA function; StageB/game remain open.",
         "evidence": "instruction_phase5S.phase_5S_9_leaf_cohort_and_native_phase6_start",
-        "commit": "PENDING_PUBLICATION"
+        "commit": "6708b17995e2a87868e75aae2244a2bb78373a2b",
+        "implementation_commit": "7e14d600595ccd511d58c570f2ab3ebac4c30c97",
+        "publication_role": "Published source/evidence commits; reporting successors carry completion/source-join metadata."
       },
       {
         "id": "P3",
         "status": "DONE",
         "scope": "Bounded study and first StageA function; StageB/game remain open.",
         "evidence": "instruction_phase5S.phase_5S_9_leaf_cohort_and_native_phase6_start",
-        "commit": "PENDING_PUBLICATION"
+        "commit": "6708b17995e2a87868e75aae2244a2bb78373a2b",
+        "implementation_commit": "7e14d600595ccd511d58c570f2ab3ebac4c30c97",
+        "publication_role": "Published source/evidence commits; reporting successors carry completion/source-join metadata."
       },
       {
         "id": "P4",
         "status": "DONE",
         "scope": "Bounded study and first StageA function; StageB/game remain open.",
         "evidence": "instruction_phase5S.phase_5S_9_leaf_cohort_and_native_phase6_start",
-        "commit": "PENDING_PUBLICATION"
+        "commit": "6708b17995e2a87868e75aae2244a2bb78373a2b",
+        "implementation_commit": "7e14d600595ccd511d58c570f2ab3ebac4c30c97",
+        "publication_role": "Published source/evidence commits; reporting successors carry completion/source-join metadata."
       },
       {
         "id": "P5",
         "status": "DONE",
         "scope": "Bounded study and first StageA function; StageB/game remain open.",
         "evidence": "instruction_phase5S.phase_5S_9_leaf_cohort_and_native_phase6_start",
-        "commit": "PENDING_PUBLICATION"
+        "commit": "6708b17995e2a87868e75aae2244a2bb78373a2b",
+        "implementation_commit": "7e14d600595ccd511d58c570f2ab3ebac4c30c97",
+        "publication_role": "Published source/evidence commits; reporting successors carry completion/source-join metadata."
       },
       {
         "id": "P6",
-        "status": "NOT STARTED",
+        "status": "DONE",
         "scope": "Bounded study and first StageA function; StageB/game remain open.",
         "evidence": "instruction_phase5S.phase_5S_9_leaf_cohort_and_native_phase6_start",
-        "commit": "PENDING_PUBLICATION"
+        "commit": "6708b17995e2a87868e75aae2244a2bb78373a2b",
+        "implementation_commit": "7e14d600595ccd511d58c570f2ab3ebac4c30c97",
+        "publication_role": "Published source/evidence commits; reporting successors carry completion/source-join metadata."
       },
       {
         "id": "P1'",
         "status": "DONE",
         "scope": "Bounded study and first StageA function; StageB/game remain open.",
         "evidence": "instruction_phase5S.phase_5S_9_leaf_cohort_and_native_phase6_start",
-        "commit": "PENDING_PUBLICATION"
+        "commit": "6708b17995e2a87868e75aae2244a2bb78373a2b",
+        "implementation_commit": "7e14d600595ccd511d58c570f2ab3ebac4c30c97",
+        "publication_role": "Published source/evidence commits; reporting successors carry completion/source-join metadata."
       },
       {
         "id": "P1''",
         "status": "DONE",
         "scope": "Bounded study and first StageA function; StageB/game remain open.",
         "evidence": "instruction_phase5S.phase_5S_9_leaf_cohort_and_native_phase6_start",
-        "commit": "PENDING_PUBLICATION"
+        "commit": "6708b17995e2a87868e75aae2244a2bb78373a2b",
+        "implementation_commit": "7e14d600595ccd511d58c570f2ab3ebac4c30c97",
+        "publication_role": "Published source/evidence commits; reporting successors carry completion/source-join metadata."
       },
       {
         "id": "P2'",
         "status": "DONE",
         "scope": "Bounded study and first StageA function; StageB/game remain open.",
         "evidence": "instruction_phase5S.phase_5S_9_leaf_cohort_and_native_phase6_start",
-        "commit": "PENDING_PUBLICATION"
+        "commit": "6708b17995e2a87868e75aae2244a2bb78373a2b",
+        "implementation_commit": "7e14d600595ccd511d58c570f2ab3ebac4c30c97",
+        "publication_role": "Published source/evidence commits; reporting successors carry completion/source-join metadata."
       },
       {
         "id": "P3'",
         "status": "DONE",
         "scope": "Bounded study and first StageA function; StageB/game remain open.",
         "evidence": "instruction_phase5S.phase_5S_9_leaf_cohort_and_native_phase6_start",
-        "commit": "PENDING_PUBLICATION"
+        "commit": "6708b17995e2a87868e75aae2244a2bb78373a2b",
+        "implementation_commit": "7e14d600595ccd511d58c570f2ab3ebac4c30c97",
+        "publication_role": "Published source/evidence commits; reporting successors carry completion/source-join metadata."
       },
       {
         "id": "P4'",
         "status": "DONE",
         "scope": "Bounded study and first StageA function; StageB/game remain open.",
         "evidence": "instruction_phase5S.phase_5S_9_leaf_cohort_and_native_phase6_start",
-        "commit": "PENDING_PUBLICATION"
+        "commit": "6708b17995e2a87868e75aae2244a2bb78373a2b",
+        "implementation_commit": "7e14d600595ccd511d58c570f2ab3ebac4c30c97",
+        "publication_role": "Published source/evidence commits; reporting successors carry completion/source-join metadata."
       },
       {
         "id": "P5'",
         "status": "DONE",
         "scope": "Bounded study and first StageA function; StageB/game remain open.",
         "evidence": "instruction_phase5S.phase_5S_9_leaf_cohort_and_native_phase6_start",
-        "commit": "PENDING_PUBLICATION"
+        "commit": "6708b17995e2a87868e75aae2244a2bb78373a2b",
+        "implementation_commit": "7e14d600595ccd511d58c570f2ab3ebac4c30c97",
+        "publication_role": "Published source/evidence commits; reporting successors carry completion/source-join metadata."
       },
       {
         "id": "X1",
         "status": "DONE",
         "scope": "Bounded study and first StageA function; StageB/game remain open.",
         "evidence": "instruction_phase5S.phase_5S_9_leaf_cohort_and_native_phase6_start",
-        "commit": "PENDING_PUBLICATION"
+        "commit": "6708b17995e2a87868e75aae2244a2bb78373a2b",
+        "implementation_commit": "7e14d600595ccd511d58c570f2ab3ebac4c30c97",
+        "publication_role": "Published source/evidence commits; reporting successors carry completion/source-join metadata."
       },
       {
         "id": "X2",
         "status": "DONE",
         "scope": "Bounded study and first StageA function; StageB/game remain open.",
         "evidence": "instruction_phase5S.phase_5S_9_leaf_cohort_and_native_phase6_start",
-        "commit": "PENDING_PUBLICATION"
+        "commit": "6708b17995e2a87868e75aae2244a2bb78373a2b",
+        "implementation_commit": "7e14d600595ccd511d58c570f2ab3ebac4c30c97",
+        "publication_role": "Published source/evidence commits; reporting successors carry completion/source-join metadata."
       },
       {
         "id": "X3",
         "status": "DONE",
         "scope": "Bounded study and first StageA function; StageB/game remain open.",
         "evidence": "instruction_phase5S.phase_5S_9_leaf_cohort_and_native_phase6_start",
-        "commit": "PENDING_PUBLICATION"
+        "commit": "6708b17995e2a87868e75aae2244a2bb78373a2b",
+        "implementation_commit": "7e14d600595ccd511d58c570f2ab3ebac4c30c97",
+        "publication_role": "Published source/evidence commits; reporting successors carry completion/source-join metadata."
       }
     ],
-    "next_step": "Keep general binding rounds stopped. Next bounded bottom-up target is001A3BE0: separately admit its reviewed E1 evidence, prove the legal heap extent/alias contract, then attempt one complete StageA typed-memory function and compare all seven ordered32-bit stores. Keep arena callers AOT and camera parked until their dependencies pass. No result for that future function is claimed."
+    "next_step": "Keep general binding rounds stopped. Next bounded bottom-up target is001A3BE0: separately admit its reviewed E1 evidence, prove the legal heap extent/alias contract, then attempt one complete StageA typed-memory function and compare all seven ordered32-bit stores. Keep arena callers AOT and camera parked until their dependencies pass. No result for that future function is claimed.",
+    "publication_roles": {
+      "implementation": "7e14d600595ccd511d58c570f2ab3ebac4c30c97",
+      "parent_evidence": "6708b17995e2a87868e75aae2244a2bb78373a2b",
+      "scope": "Both original source pushes verified against actual remote sibling refs. Main remained at the recorded starting commits. Final metadata/pin successor heads are reported externally to avoid self-referential hashes."
+    },
+    "owner_concurrent_session": {
+      "status": "OWNER_CONFIRMED_CONCURRENT_R192_SESSION",
+      "owner_confirmed_running_game": true,
+      "owner_messages": [
+        "Yes, I am using R192.",
+        "Getting all the needed code for the game to be fully compiled; playing Konquest."
+      ],
+      "observed_at_UTC": "2026-11-25 22:58:23 UTC",
+      "observed_process": {
+        "pid": 14936,
+        "image": "build/r192-hooks/out/ps2run.exe",
+        "creation_UTC": "2026-11-25 22:54:05 UTC",
+        "card_argument": "build/r192-hooks/game/disc/armageddon.ps2"
+      },
+      "baseline_card_sha256": "f38dc412d579669363c23e8aca8113b7dd592c516089b0e25b1b964612e05b3e",
+      "observed_card_sha256": "a42816d6710af396bbd344536ee48bf2d84e329976e18c2c86fd317fea7423b7",
+      "observed_card_size": 8650752,
+      "observed_card_creation_and_write_UTC": "2026-11-25 22:52:39 UTC",
+      "exact_card_writer": "Not independently attributed. Owner confirmed concurrent use; do not infer an agent write.",
+      "agent_card_writes_authorized": false,
+      "agent_actions": "No card write, restore, reset, repin, process stop, or computer use. Preserve the active owner session.",
+      "protection_scope": "The completed baseline and both initial source publication guards passed with the original card hash. Card changed afterward during owner activity. Source-only metadata publication may continue with this explicit exception; no project verification checker or manifest changes.",
+      "game_capture": "No new oracle capture or closure acceptance claimed by the native-port task."
+    }
   }
 }
