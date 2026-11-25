@@ -1,7 +1,7 @@
 """Offline, conservative engine-family census; not a RenderWare symbol classifier.
 
-Only original PS2 registration callbacks and individually authenticated complete
-PS2 helper bodies from the existing core/0401/0402 joins are admitted. No range,
+Original core callbacks, diagnostic-named plugin roots and their registry callbacks,
+and individually authenticated PS2 helper bodies are admitted. No range,
 SDK status, Xbox address, conventional API name, or native filename admits code.
 """
 from __future__ import annotations
@@ -9,13 +9,14 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import io
 import json
 from pathlib import Path
 import re
 import struct
 import subprocess
 
-from aot_inventory import measure_entries
+from aot_inventory import measure_entries, verified_nonfunction_catalogue_addresses
 
 ELF_SHA = "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f"
 RECORDS = (
@@ -27,6 +28,121 @@ RECORDS = (
 
 def digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def signed_immediate(word):
+    immediate = word & 0xffff
+    return immediate - 0x10000 if immediate & 0x8000 else immediate
+
+
+def registry_calls(original, begin, end):
+    """Recover a0..a3 across an authenticated straight-line registration prefix."""
+    registers: list[int | None] = [None] * 32
+    registers[0] = 0
+
+    def signed_word(value: int) -> int:
+        value &= 0xFFFFFFFF
+        return (value if value < 0x80000000 else value - 0x100000000) & 0xFFFFFFFFFFFFFFFF
+
+    registrations = []
+    for address in range(begin, end, 4):
+        word = struct.unpack("<I", original(address, 4))[0]
+        op, rs, rt, imm = word >> 26, (word >> 21) & 31, (word >> 16) & 31, word & 0xFFFF
+        if op == 0 and (word & 63) == 8 and (word != 0x03e00008 or address + 8 != end):
+            raise AssertionError(f"Early indirect exit in registration prefix at {address:08x}")
+        if op == 15:
+            registers[rt] = signed_word(imm << 16)
+        elif op == 9:
+            registers[rt] = (None if registers[rs] is None else signed_word(
+                registers[rs] + signed_immediate(word)))
+        elif op == 0x0d:  # ORI zero-extends its immediate.
+            registers[rt] = None if registers[rs] is None else registers[rs] | imm
+        elif word == 0:  # NOP
+            pass
+        elif op == 0 and (word & 63) in (0x25, 0x2D):
+            rd = (word >> 11) & 31
+            if (word & 63) == 0x2D:
+                # Only the source-proved move-with-zero DADDU subset is needed.
+                # Do not pretend bitwise OR implements unrestricted addition.
+                if rs != 0 and rt != 0:
+                    raise AssertionError(f"DADDU is not a verified move at {address:08x}")
+                registers[rd] = registers[rt if rs == 0 else rs]
+            else:
+                registers[rd] = (None if registers[rs] is None or registers[rt] is None
+                                 else registers[rs] | registers[rt])
+        else:
+            # Exhaust the OTHER instruction forms actually present in this
+            # pinned straight-line span. Any write to a0..a3 must be handled
+            # above; no stale value may silently survive an unknown writer.
+            if op == 0 and (word & 63) == 0x2A:  # SLT rd
+                destination = (word >> 11) & 31
+            elif op in (0x0E, 0x1E, 0x37):  # XORI / LQ / LD rt
+                destination = rt
+            elif op in (3, 0x1F, 0x2B, 0x3F) or (op == 0 and (word & 63) == 8):
+                destination = None  # JAL, SQ, SW, SD, JR: no argument write
+            else:
+                raise AssertionError(f"Unhandled registration instruction at {address:08x}: {word:08x}")
+            if destination in (4, 5, 6, 7):
+                raise AssertionError(f"Unhandled argument writer at {address:08x}")
+            if destination is not None:
+                registers[destination] = None
+        registers[0] = 0  # Architectural zero is never writable.
+        if address > begin:
+            previous = struct.unpack("<I", original(address - 4, 4))[0]
+            if previous >> 26 == 3 and (previous & 0x3FFFFFF) << 2 == 0x1A6A20:
+                if any(registers[index] is None for index in (4, 5, 6, 7)):
+                    raise AssertionError(f"Registration argument not freshly established at {address:08x}")
+                row = {"plugin_id": f"{registers[5]:04x}", "source_extent": registers[4],
+                       "constructor": f"{registers[6]:08x}", "destructor": f"{registers[7]:08x}",
+                       "call_address": f"{address - 4:08x}", "delay_word_le": original(address, 4).hex()}
+                registrations.append(row)
+            if previous >> 26 == 3:
+                # After EVERY call's executed delay slot, discard all tracked
+                # nonzero registers. Later admissions must establish each
+                # argument afresh; no callee-preservation assumption is needed.
+                registers = [0] + [None] * 31
+    return registrations
+
+
+def plugin_attach_calls(original):
+    """Pair the tested JAL result with the diagnostic on its zero-result path."""
+    begin, exit_pc = 0x126420, 0x126700
+
+    def target(word, pc):
+        return ((pc + 4) & 0xf0000000) | ((word & 0x03ffffff) << 2)
+
+    rows = []
+    for pc in range(begin, exit_pc - 24, 4):
+        call, delay, branch, branch_delay, hi, log, lo = struct.unpack("<7I", original(pc, 28))
+        if call >> 26 != 3 or branch >> 16 not in (0x1440, 0x5440):
+            continue
+        # Only these call delay slots occur: NOP or li a0,4 for PDS.
+        if delay not in (0, 0x24040004) or hi >> 16 != 0x3c04 or lo >> 16 != 0x2484:
+            raise AssertionError(f"Unexpected plugin return/diagnostic arguments at {pc:08x}")
+        if log >> 26 != 3 or target(log, pc + 20) != 0x163cb0:
+            raise AssertionError(f"Missing original diagnostic call at {pc:08x}")
+        taken = pc + 12 + 4 * signed_immediate(branch)
+        if branch >> 26 == 5:  # BNE: success skips logging and the failure return.
+            jump, zero = struct.unpack("<2I", original(pc + 28, 8))
+            jump_disp = signed_immediate(jump)
+            if (branch_delay != 0 or taken != pc + 36 or jump >> 16 != 0x1000
+                    or pc + 32 + 4 * jump_disp != exit_pc or zero != 0x0000102d):
+                raise AssertionError(f"Plugin failure return changed at {pc:08x}")
+        else:  # BNEL: its delay slot sets success=1 only on the taken edge.
+            if (branch_delay != 0x24020001 or taken != exit_pc or pc + 32 != exit_pc
+                    or original(pc + 28, 4) != struct.pack("<I", 0x0000102d)):
+                raise AssertionError(f"Plugin final return changed at {pc:08x}")
+        data = ((hi & 0xffff) << 16) + signed_immediate(lo)
+        diagnostic = original(data, 64).split(b"\0", 1)[0]
+        m = re.fullmatch(rb"([A-Za-z0-9_]+) failed\.", diagnostic)
+        if not m:
+            raise AssertionError(f"Unexpected diagnostic at {data:08x}")
+        rows.append({"name": m[1].decode("ascii"), "target": f"{target(call, pc):08x}",
+                     "call_site": f"{pc:08x}", "success_target": f"{taken:08x}",
+                     "diagnostic_address": f"{data:08x}", "diagnostic": diagnostic.decode("ascii")})
+    if len({row["name"] for row in rows}) != len(rows) or len(rows) != 14:
+        raise AssertionError("Original plugin diagnostic chain incomplete or duplicated")
+    return rows
 
 
 def main() -> None:
@@ -94,7 +210,6 @@ def main() -> None:
         destination.setdefault(address, {"module": "SLUS_214.10", "address": f"{address:08x}",
                                        "entry_word_le": original(address, 4).hex(), "reasons": []})["reasons"].append(reason)
 
-    joins = {}
     for record in RECORDS:
         root = fork / "research/runs" / record
         joined = json.loads(pin(root / "SOURCE_JOIN.json"))
@@ -132,72 +247,67 @@ def main() -> None:
             admit(address, {"kind": "individually_source_joined_engine_helper", "record": record,
                             "listing": relative, "end_exclusive": f"{end:08x}",
                             "listed_original_words_checked": listed, "body_sha256": digest(extent)})
-        joins[record] = joined
 
-    # Decode only straight-line argument materialization in the complete original
-    # registration function; include the actual JAL delay slot before publication.
-    registers: list[int | None] = [None] * 32
-    registers[0] = 0
-    def signed_word(value: int) -> int:
-        value &= 0xFFFFFFFF
-        return (value if value < 0x80000000 else value - 0x100000000) & 0xFFFFFFFFFFFFFFFF
+    def admit_callbacks(registrations, owner):
+        for row in registrations:
+            for role in ("constructor", "destructor"):
+                admit(int(row[role], 16), {"kind": "original_registration_callback", "role": role,
+                                          "owner": owner, **row})
 
-    registrations = []
-    for address in range(0x1A66A0, 0x1A6890, 4):
-        word = struct.unpack("<I", original(address, 4))[0]
-        op, rs, rt, imm = word >> 26, (word >> 21) & 31, (word >> 16) & 31, word & 0xFFFF
-        if op == 15:
-            registers[rt] = signed_word(imm << 16)
-        elif op == 9:
-            registers[rt] = (None if registers[rs] is None else signed_word(
-                registers[rs] + (imm if imm < 0x8000 else imm - 0x10000)))
-        elif op == 0 and (word & 63) in (0x25, 0x2D):
-            rd = (word >> 11) & 31
-            if (word & 63) == 0x2D:
-                # Only the source-proved move-with-zero DADDU subset is needed.
-                # Do not pretend bitwise OR implements unrestricted addition.
-                if rs != 0 and rt != 0:
-                    raise AssertionError(f"DADDU is not a verified move at {address:08x}")
-                registers[rd] = registers[rt if rs == 0 else rs]
-            else:
-                registers[rd] = (None if registers[rs] is None or registers[rt] is None
-                                 else registers[rs] | registers[rt])
-        else:
-            # Exhaust the OTHER instruction forms actually present in this
-            # pinned straight-line span. Any write to a0..a3 must be handled
-            # above; no stale value may silently survive an unknown writer.
-            if op == 0 and (word & 63) == 0x2A:  # SLT rd
-                destination = (word >> 11) & 31
-            elif op in (0x0E, 0x1E, 0x37):  # XORI / LQ / LD rt
-                destination = rt
-            elif op in (3, 0x1F, 0x3F) or (op == 0 and (word & 63) == 8):
-                destination = None  # JAL, SQ, SD, JR: no argument write
-            else:
-                raise AssertionError(f"Unhandled registration instruction at {address:08x}: {word:08x}")
-            if destination in (4, 5, 6, 7):
-                raise AssertionError(f"Unhandled argument writer at {address:08x}")
-            if destination is not None:
-                registers[destination] = None
-        registers[0] = 0  # Architectural zero is never writable.
-        if address >= 0x1A66C8:
-            previous = struct.unpack("<I", original(address - 4, 4))[0]
-            if previous >> 26 == 3 and (previous & 0x3FFFFFF) << 2 == 0x1A6A20:
-                if any(registers[index] is None for index in (4, 5, 6, 7)):
-                    raise AssertionError(f"Registration argument not freshly established at {address:08x}")
-                row = {"plugin_id": f"{registers[5]:04x}", "source_extent": registers[4],
-                       "constructor": f"{registers[6]:08x}", "destructor": f"{registers[7]:08x}",
-                       "call_address": f"{address - 4:08x}", "delay_word_le": original(address, 4).hex()}
-                registrations.append(row)
-                for role, register in (("constructor", 6), ("destructor", 7)):
-                    admit(registers[register], {"kind": "original_registration_callback", "role": role, **row})
-            if previous >> 26 == 3:
-                # After EVERY call's executed delay slot, discard all tracked
-                # nonzero registers. Later admissions must establish each
-                # argument afresh; no callee-preservation assumption is needed.
-                registers = [0] + [None] * 31
+    registrations = registry_calls(original, 0x1A66A0, 0x1A6890)
+    admit_callbacks(registrations, "core")
     expected_ids = ["040f", "0401", "040d", "0402", "0403", "0404", "0405", "0406", "0407", "0408", "0409", "0412", "040a", "040b"]
     if [row["plugin_id"] for row in registrations] != expected_ids:
         raise AssertionError("Original registration argument decode changed")
+    # The game also reports names for locally supplied extensions. Retain all
+    # diagnostic joins, but count only these cross-checked engine-family roots.
+    # Each prefix stops immediately after the last selected registry delay slot.
+    # No transitive call graph, adjacent addresses or vendor ownership inferred.
+    families = {
+        "RpPDSAttachPlugin": (0x30e5f4, (0x131,)),
+        "RpWorldPluginAttach": (0x1cdcec, (0x501, 0x502, 0x503, 0x504, 0x505, 0x50a, 0x507, 0x50b)),
+        "RpSkinPluginAttach": (0x21a654, (0x116,)),
+        "RpHAnimPluginAttach": (0x21b664, (0x11e,)),
+        "RpMatFXPluginAttach": (0x1d7014, (0x120,)),
+        "RpSpecularPluginAttach": (0x2dfd94, (0xff,)),
+    }
+    attach_rows = plugin_attach_calls(original)
+    if not families.keys() <= {row["name"] for row in attach_rows}:
+        raise AssertionError("Original named renderer families missing")
+    spans = {0x126420: 0x12670c}
+    for row in attach_rows:
+        name = row["name"]
+        if name not in families:
+            continue
+        start = int(row["target"], 16)
+        end, ids = families[name]
+        if not start < end:
+            raise AssertionError(f"Invalid {name} registration prefix")
+        spans[start] = end
+        calls = registry_calls(original, start, end)
+        if tuple(int(c["plugin_id"], 16) for c in calls) != ids:
+            raise AssertionError(f"Registry identity mismatch for {name}")
+        admit(start, {"kind": "diagnostic_and_core_registry_join", **row})
+        admit_callbacks(calls, name)
+        row["core_registrations"] = calls
+        row["registration_prefix_sha256"] = digest(original(start, end - start))
+        row["registration_prefix_end_exclusive"] = f"{end:08x}"
+    # Every instruction in each admitted prefix and the complete diagnostic caller
+    # must belong to that function in the EE listing and match its PT_LOAD word.
+    listing_path = raw_catalogue.with_name("instructions.tsv")
+    listing = io.BytesIO(pin(listing_path))
+    next(listing)  # TSV header
+    pending = {pc: start for start, end in spans.items() for pc in range(start, end, 4)}
+    listing_words = len(pending)
+    for line in listing:
+        address, data, _, _, owner, _ = line.split(b"\t")
+        pc = int(address, 16)
+        if pc in pending:
+            start = pending.pop(pc)
+            if int(owner, 16) != start or bytes.fromhex(data.decode("ascii")) != original(pc, 4):
+                raise AssertionError(f"EE listing disagrees with plugin evidence at {pc:08x}")
+    if pending:
+        raise AssertionError(f"Missing EE plugin listing word at {min(pending):08x}")
     consulted = []
     for path in sorted((fork / "research/runs").glob("native-xbox-renderer-*/IMPLEMENTATION.md")):
         pin(path)
@@ -210,22 +320,28 @@ def main() -> None:
                          for address in outside_catalogue if address not in base_starts]
     measured = measure_entries(fork / "build/generated-aot/phase4-all", query_rows)
     covered = {int(address, 16) for address in measured["modules"]["SLUS_214.10"]["callable_catalogue_entries"]}
+    all_callable = {(module, int(address, 16)) for module, item in measured["modules"].items()
+                    for address in item["callable_catalogue_entries"]}
+    proved_data = {("SLUS_214.10", pc) for pc in verified_nonfunction_catalogue_addresses(fork, rows)}
+    if scoped - all_callable != proved_data:
+        raise AssertionError("In-scope AOT omissions do not equal the authenticated descriptor data")
     for address, item in candidates.items():
         item["callable_aot"] = address in covered
     for address, item in outside_catalogue.items():
         item["callable_aot"] = address in covered
     missing = [f"{address:08x}" for address in sorted(candidates) if address not in covered]
     missing_outside = [f"{address:08x}" for address in sorted(outside_catalogue) if address not in covered]
+    callable_scope = scoped - proved_data
     unclassified = sorted(
         ({"module": row["module"], "address": f"{int(row['address'], 16):08x}", "symbol": row["symbol"]}
-         for row in rows if (row["module"], int(row["address"], 16)) in scoped
+         for row in rows if (row["module"], int(row["address"], 16)) in callable_scope
          and not (row["module"] == "SLUS_214.10" and int(row["address"], 16) in candidates)),
         key=lambda row: (row["module"], row["address"]))
-    if len(unclassified) + len(candidates) != len(scoped):
+    if len(unclassified) + len(candidates) + len(proved_data) != len(scoped):
         raise AssertionError("Engine-family membership/complement does not partition raw scope")
     exact_refusal = args.require_exact_renderware
     report = {
-        "schema": "renderer_scope_lower_bound_v1", "script_version": 1,
+        "schema": "renderer_scope_lower_bound_v2", "script_version": 2,
         "result": ("FAIL_NAMED_ENGINE_CALLABLES_MISSING" if missing or missing_outside else
                    "REFUSE_EXACT_RENDERWARE_TOTAL_UNKNOWN" if exact_refusal else
                    "PASS_BOUNDED_ENGINE_FAMILY_CENSUS_TOTAL_OPEN"),
@@ -238,7 +354,7 @@ def main() -> None:
         "missing_engine_callables": missing,
         "missing_source_proved_callables_outside_raw_catalogue": missing_outside,
         "additional_source_proved_starts_outside_raw_catalogue": len(outside_catalogue),
-        "remaining_unclassified_for_engine_membership": len(scoped) - len(candidates),
+        "remaining_unclassified_for_engine_membership": len(unclassified),
         "ownership_unclassified_entries": unclassified,
         "exact_renderware_symbol_ownership_count": None,
         "exact_renderware_total": None,
@@ -253,6 +369,12 @@ def main() -> None:
         },
         "not_claimed": ["entire library ownership", "whole-address-range attribution", "native transformation", "semantic equivalence", "game reachability or acceptance"],
         "registration_original_span": {"start": "001a66a0", "end_exclusive": "001a6890", "sha256": digest(original(0x1A66A0, 0x1F0))},
+        "catalogue_aot_partition": {"callable_in_scope": len(scoped & all_callable),
+                                    "proved_data_exceptions": [{"module": m, "address": f"{pc:08x}"} for m, pc in sorted(proved_data)],
+                                    "unexplained_missing_entries": len(scoped - all_callable - proved_data)},
+        "diagnostic_source_join_words": listing_words,
+        "diagnostic_attach_calls": attach_rows,
+        "diagnostic_caller_sha256": digest(original(0x126420, 0x12670c - 0x126420)),
         "registrations": registrations, "entries": [candidates[a] for a in sorted(candidates)],
         "registration_extraction_contract": "Offline pinned straight-line extraction only: word-sign-extending LUI/ADDIU, OR, zero-move-only DADDU; reject unhandled argument writers; discard all nonzero tracked registers after every JAL delay slot and require fresh known a0..a3 before each registration.",
         "source_proved_starts_outside_in_scope_raw_catalogue_not_counted": [outside_catalogue[a] for a in sorted(outside_catalogue)],
