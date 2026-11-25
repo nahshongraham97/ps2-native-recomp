@@ -17,6 +17,8 @@ import struct
 import subprocess
 
 from aot_inventory import measure_entries, verified_nonfunction_catalogue_addresses
+from renderer_pipeline_nodes import recover_pipeline_nodes
+from renderer_sdk_roles import SDK_REVISION, matched_sdk_roles
 
 ELF_SHA = "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f"
 RECORDS = (
@@ -149,6 +151,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--parent-root", type=Path, required=True)
     parser.add_argument("--fork-root", type=Path, default=Path(__file__).resolve().parents[2])
+    parser.add_argument("--sdk31-root", type=Path, help="Local checkout of the pinned RenderWare 3.1 PS2 reference")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--require-exact-renderware", action="store_true",
                         help="Write bounded evidence, then refuse if exact library ownership remains unknown")
@@ -169,6 +172,8 @@ def main() -> None:
 
     pin(Path(__file__).resolve())
     pin(fork / "tools/research/aot_inventory.py")
+    pin(fork / "tools/research/renderer_sdk_roles.py")
+    pin(fork / "tools/research/renderer_pipeline_nodes.py")
     ledger = fork / "research/ledger/functions.csv"
     rows = list(csv.DictReader(pin(ledger).decode("utf-8-sig").splitlines()))
     inventory = json.loads(pin(fork / "research/ledger/aot_coverage_inventory.json"))
@@ -292,6 +297,18 @@ def main() -> None:
         row["core_registrations"] = calls
         row["registration_prefix_sha256"] = digest(original(start, end - start))
         row["registration_prefix_end_exclusive"] = f"{end:08x}"
+    attachment_word_count = sum((end - start) // 4 for start, end in spans.items())
+    sdk = args.sdk31_root or parent.parent / "forks/rwsdk-v3.1-ps2"
+    sdk_roles = matched_sdk_roles(original, sdk)
+    for start, end, evidence in sdk_roles:
+        spans[start] = end
+        admit(start, {**evidence, "end_exclusive": f"{end:08x}"})
+    pipeline = recover_pipeline_nodes(original, sdk / "rwsdk")
+    for evidence in pipeline:
+        start = int(evidence["address"], 16)
+        admit(start, evidence)
+        if start in base_starts:
+            spans[start] = start + evidence["original_witness_span_bytes"]
     # Every instruction in each admitted prefix and the complete diagnostic caller
     # must belong to that function in the EE listing and match its PT_LOAD word.
     listing_path = raw_catalogue.with_name("instructions.tsv")
@@ -306,8 +323,24 @@ def main() -> None:
             start = pending.pop(pc)
             if int(owner, 16) != start or bytes.fromhex(data.decode("ascii")) != original(pc, 4):
                 raise AssertionError(f"EE listing disagrees with plugin evidence at {pc:08x}")
-    if pending:
-        raise AssertionError(f"Missing EE plugin listing word at {min(pending):08x}")
+    # This one SDK role has four Ghidra body ranges. Its file envelope includes
+    # three extra NOPs after unconditional branches and their executed delay
+    # slots. Check the range export and the original branches separately.
+    init = 0x1d4ab0
+    body_table = pin(raw_catalogue.with_name("function-bodies.tsv")).decode("utf-8-sig")
+    ranges = [(int(r["start"], 16), int(r["end"], 16) + 1) for r in
+              csv.DictReader(body_table.splitlines(), delimiter="\t") if int(r["entry"], 16) == init]
+    gaps = {0x1d4bf4: 0x1d4c10, 0x1d4c74: 0x1d4e70, 0x1d4d24: 0x1d4d40}
+    owned = {pc for start, end in ranges for pc in range(start, end, 4)}
+    if (set(range(init, spans[init], 4)) - set(gaps) != owned
+            or pending != {pc: init for pc in gaps}):
+        raise AssertionError("EE instruction coverage does not match the verified body ranges")
+    for pc, target in gaps.items():
+        branch, delay, nop = struct.unpack("<3I", original(pc - 8, 12))
+        if (nop != 0 or branch >> 16 != 0x1000 or pc - 4 + 4 * signed_immediate(branch) != target
+                or delay != (0xa22f00b5 if pc == 0x1d4c74 else 0)):
+            raise AssertionError(f"Unexpected original branch/delay-slot/gap at {pc:08x}")
+    listing_words -= len(gaps)
     consulted = []
     for path in sorted((fork / "research/runs").glob("native-xbox-renderer-*/IMPLEMENTATION.md")):
         pin(path)
@@ -341,7 +374,7 @@ def main() -> None:
         raise AssertionError("Engine-family membership/complement does not partition raw scope")
     exact_refusal = args.require_exact_renderware
     report = {
-        "schema": "renderer_scope_lower_bound_v2", "script_version": 2,
+        "schema": "renderer_scope_lower_bound_v3", "script_version": 3,
         "result": ("FAIL_NAMED_ENGINE_CALLABLES_MISSING" if missing or missing_outside else
                    "REFUSE_EXACT_RENDERWARE_TOTAL_UNKNOWN" if exact_refusal else
                    "PASS_BOUNDED_ENGINE_FAMILY_CENSUS_TOTAL_OPEN"),
@@ -372,7 +405,12 @@ def main() -> None:
         "catalogue_aot_partition": {"callable_in_scope": len(scoped & all_callable),
                                     "proved_data_exceptions": [{"module": m, "address": f"{pc:08x}"} for m, pc in sorted(proved_data)],
                                     "unexplained_missing_entries": len(scoped - all_callable - proved_data)},
-        "diagnostic_source_join_words": listing_words,
+        "diagnostic_source_join_words": attachment_word_count,
+        "all_checked_listing_words": listing_words,
+        "file_envelope_nop_gaps": [f"{pc:08x}" for pc in sorted(gaps)],
+        "sdk_pipeline_functions": [row["address"] for row in pipeline],
+        "sdk_source_roles": {"reference_commit": SDK_REVISION,
+                             "rows": [dict(address=f"{pc:08x}", **row) for pc, _, row in sdk_roles]},
         "diagnostic_attach_calls": attach_rows,
         "diagnostic_caller_sha256": digest(original(0x126420, 0x12670c - 0x126420)),
         "registrations": registrations, "entries": [candidates[a] for a in sorted(candidates)],

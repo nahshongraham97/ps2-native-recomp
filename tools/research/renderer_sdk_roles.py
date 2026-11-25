@@ -1,0 +1,121 @@
+"""Retail matrix and camera functions with cross-version source evidence.
+
+The pinned SDK bodies identify roles by their control flow and operations. The
+retail body and its original diagnostic call are both checked independently of
+the reference build's addresses and the similarity search.
+"""
+import hashlib
+import struct
+from pathlib import Path
+
+
+SDK_REVISION = "1a8f7da4c58f6725cb73fbe71a8803fce9e0c752"
+SOURCE_FILES = {
+    "badevice.c": "3d9e69ef67917f780a1df604a933833e3a3b0a27b1c085c7766eb57324951639",
+    "baframe.c": "47ee0bdf20bbae224bfaa0b1808ee8fa9d805d12d1e09ac382cd5c38f37e7536",
+    "bamatrix.c": "6a65d8140fcddf75bf44bf0b3daf973d0c6d55c0ff6b866ec15ccfe8f256c751",
+    "bacamera.c": "66282a6f54d42804dbadee9e8c1a6cf032bbe927ec5677f19ed2678fce978fd8",
+}
+# start, exclusive end, error argument setup, reference name, whole retail body
+MATRIX_ROLES = (
+    (0x1a04d0, 0x1a06ac, 0x1a0674, "RwMatrixRotateOneMinusCosineSine",
+     "eeb4d6c9bb12e6dac442873917f2e7a0a5c61806255e7174ce32957f2d7d7ac2",
+     "Axis products with sine and one-minus-cosine form a rotation matrix before the combine-mode dispatch."),
+    (0x1a0900, 0x1a0b28, 0x1a0ae0, "RwMatrixScale",
+     "fd77365890d35e0bc042d6ea29c23f54ba351995e298b619115b623ee2ea07d7",
+     "Combine modes scale components versus basis vectors, or construct the replacement diagonal."),
+    (0x1a0b30, 0x1a0cc8, 0x1a0c80, "RwMatrixTranslate",
+     "0e0e50ad931cdc7bd4236bebe580eea14abd77684fd9842df163ca38edd67a45",
+     "Combine modes add translation directly, multiply it by the basis, or set identity and translation."),
+    (0x1a0cd0, 0x1a0de8, 0x1a0db0, "RwMatrixTransform",
+     "62f978b45cf3beeb12c1d6705f9a5152c1ef3e096ce30c02737432652a88ef7e",
+     "Combine modes swap the matrix-product operands or copy the replacement matrix."),
+)
+CAMERA_ROLE = (0x1a6410, 0x1a649c, 0x1a6468, "RwCameraSetProjection",
+               "4d308fe0e012e274fc02ef2d44caa0f7a7577bd0c0e7e6fa67136cef154ef313",
+               "Modes 1 and 2 store projection, conditionally update the frame and update depth. An invalid mode reports an error and returns null.")
+
+
+def matched_sdk_roles(original, sdk_root: Path):
+    sources = {}
+    for name, expected in SOURCE_FILES.items():
+        data = (sdk_root / "rwsdk/src" / name).read_bytes().replace(b"\r\n", b"\n")
+        if hashlib.sha256(data).hexdigest() != expected:
+            raise ValueError(f"Expected SDK {SDK_REVISION} source identity for {name}")
+        sources[name] = data
+
+    results = []
+    for start, end, setup, api, expected_hash, operations in (*MATRIX_ROLES, CAMERA_ROLE):
+        camera = start == CAMERA_ROLE[0]
+        file = "bacamera.c" if camera else "bamatrix.c"
+        message = b"Invalid projection type specified" if camera else b"Invalid combination type"
+        source = sources[file]
+        marker = b'RWAPIFUNCTION(RWSTRING("' + api.encode("ascii") + b'"))'
+        if source.count(marker) != 1:
+            raise ValueError(f"Missing unique SDK API marker for {api}")
+        function = source.split(marker)[1].split(b"\n}", 1)[0]
+        if message not in function:
+            raise ValueError(f"Diagnostic outside reference function {api}")
+        if hashlib.sha256(original(start, end - start)).hexdigest() != expected_hash:
+            raise ValueError(f"Retail role body changed at {start:08x}")
+        words = struct.unpack("<7I", original(setup, 28))
+        lo = words[4 if camera else 2]
+        # The camera completes a1 in the JAL delay slot. The matrices materialize
+        # it before that call. All subsequently call the same error publisher.
+        if words[0] >> 16 != 0x3c05 or lo >> 16 != 0x24a5 or words[3] != 0x0c067d44 or words[6] != 0x0c067d18:
+            raise ValueError(f"Original error call or argument setup changed at {setup:08x}")
+        low = lo & 0xffff
+        address = ((words[0] & 0xffff) << 16) + (low - 0x10000 if low & 0x8000 else low)
+        if original(address, len(message) + 1) != message + b"\0":
+            raise ValueError(f"Original diagnostic changed at {address:08x}")
+        results.append((start, end, {"kind": "sdk_source_role_and_original_diagnostic",
+                                     "source_role": api, "source_file": "rwsdk/src/" + file,
+                                     "source_normalized_sha256": SOURCE_FILES[file],
+                                     "original_body_sha256": expected_hash,
+                                     "diagnostic_address": f"{address:08x}", "operations": operations}))
+    # These roles have an identified caller AND a separately checked operation
+    # in the callee. A JAL target or an above-threshold BSim score alone cannot
+    # establish what a helper does.
+    connected = (
+        (0x1a0440, 0x1a04bc, "RwMatrixMultiply", "bamatrix.c",
+         "01748f4a8196e4758275d1d9aa936178bd2826f70fb496a8338c2e9f4266a38e",
+         [0x1a05f4, 0x1a0638, 0x1a0d30, 0x1a0d74],
+         "Two operand orders in both rotate and transform call the same affine product. The callee combines four vector rows and intersects input flags."),
+        (0x1a7510, 0x1a7578, "RwFrameUpdateObjects", "baframe.c",
+         "624ddc6f40f31d001aa72a3b386aa2ce2754f08918b32646261f254348ac5906",
+         [0x1a644c],
+         "Projection updates its parent frame. The callee links a clean root into the dirty list and sets root and subtree flags."),
+        (0x1a4f00, 0x1a4fb4, "CameraUpdateZShiftScale", "bacamera.c",
+         "9002768dad2f8f67cd5c860eb4e8fbabb83ff089a7693863b1a0c194bf865b18",
+         [0x1a6458],
+         "Projection changes recompute the two depth coefficients from near and far planes using reciprocal depth in perspective mode."),
+    )
+    for start, end, api, file, body_hash, sites, operations in connected:
+        if hashlib.sha256(original(start, end - start)).hexdigest() != body_hash:
+            raise ValueError(f"Connected helper body changed at {start:08x}")
+        if f'RWSTRING("{api}")'.encode() not in sources[file]:
+            raise ValueError(f"Missing SDK helper {api}")
+        for site in sites:
+            if original(site, 4) != struct.pack("<I", 0x0c000000 | (start >> 2)):
+                raise ValueError(f"Unexpected callee at {site:08x}")
+        results.append((start, end, {"kind": "sdk_role_and_verified_retail_callee", "source_role": api,
+                                     "source_file": "rwsdk/src/" + file, "source_normalized_sha256": SOURCE_FILES[file],
+                                     "original_body_sha256": body_hash, "operations": operations,
+                                     "caller_sites": [f"{site:08x}" for site in sites]}))
+
+    # Original device fallback jump table for requests 13..18. The zero-index
+    # subsystem-info case passes this literal in the delay slot of its copy call.
+    start, end = 0x1a68f0, 0x1a6a04
+    body_hash = "1806875d03b532f009ebb5bda0f6f8bb64c5f31134ca0929416b0bf0f19a5f2d"
+    message = b"Only rendering sub system"
+    if (hashlib.sha256(original(start, end - start)).hexdigest() != body_hash
+            or original(0x5a36a0, len(message) + 1) != message + b"\0"
+            or struct.unpack("<6I", original(0x5fce90, 24)) != (
+                0x1a696c, 0x1a6978, 0x1a69a8, 0x1a69b4, 0x1a6964, 0x1a6964)
+            or message not in sources["badevice.c"]):
+        raise ValueError("Device-system fallback body, table or diagnostic changed")
+    results.append((start, end, {"kind": "sdk_device_request_and_retail_switch",
+                                 "source_role": "_rwDeviceSystemRequest", "source_file": "rwsdk/src/badevice.c",
+                                 "source_normalized_sha256": SOURCE_FILES["badevice.c"], "original_body_sha256": body_hash,
+                                 "operations": "The device callback runs first. Six fallback requests select count, name, current and selected subsystem or finalization defaults."}))
+    return results
