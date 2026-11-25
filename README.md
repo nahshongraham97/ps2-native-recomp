@@ -11,7 +11,7 @@ The target architecture uses AOT static C++ transformed to typed native memory a
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`1857f55c`](https://github.com/nahshongraham97/ps2-native-recomp/commit/1857f55c8963b4c50928cf0764b7443710225456) (source and evidence checkpoint)
+**Verified Fork Commit**: [`aec293d0`](https://github.com/nahshongraham97/ps2-native-recomp/commit/aec293d07ce624661f56492fcab031d719973201) (source and evidence checkpoint)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - Bounded ownership of 15,669 callable entries · verified-renderware 5, verified-game 12, verified-other-library 0, inferred-renderware 137, inferred-game 130, inferred-other 0, unresolved 15,385.
