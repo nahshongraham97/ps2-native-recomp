@@ -19,6 +19,7 @@ from pathlib import Path
 import re
 import struct
 import subprocess
+from aot_inventory import verify_entries
 
 for _p in [Path(__file__).resolve(), *Path(__file__).resolve().parents]:
     if (_p / "research" / "runs" / "ghidra-function-coverage-20261118").exists():
@@ -943,14 +944,12 @@ def compute_aot_metrics(ps2_ledger):
     if not unit_ranges:
         raise AssertionError("AOT inventory SLUS_214.10 missing measured unit_ranges")
     base_rows = [r for r in ps2_ledger if r["module"] == "SLUS_214.10"]
-    computed_base_aot = sum(
-        1 for r in base_rows
-        if any(u["start"] <= int(r["address"], 16) < u["start"] + u["size"] for u in unit_ranges)
-    )
+    callable_base = set(base_mod.get("callable_catalogue_entries", []))
+    computed_base_aot = sum(r["address"] in callable_base for r in base_rows)
     computed_base_in_scope_aot = sum(
         1 for r in base_rows
         if r["status"] != "out-of-scope-stubbed"
-        and any(u["start"] <= int(r["address"], 16) < u["start"] + u["size"] for u in unit_ranges)
+        and r["address"] in callable_base
     )
     if base_mod.get("static_aot_count") != computed_base_aot:
         raise AssertionError(
@@ -1000,6 +999,14 @@ def compute_aot_metrics(ps2_ledger):
             raise AssertionError(f"Unmeasured AOT numerator: {name} claims {cnt} static functions with empty static_overlay_sources")
         if cnt < 0 or cnt > mod.get("catalog_total", 0):
             raise AssertionError(f"Out-of-range AOT numerator for {name}: {cnt}")
+        computed = sum(r["address"] in set(mod.get("callable_catalogue_entries", []))
+                       for r in ps2_ledger if r["module"] == name)
+        if cnt != computed:
+            raise AssertionError(f"Hardcoded/mismatched {name} AOT numerator: {cnt} != {computed}")
+
+    # Validate the stored measurement against actual generated entry maps and
+    # exact switch targets, including untranslated addresses inside unit ranges.
+    verify_entries(REPO, inv, ps2_ledger)
 
     # Check VU strict corpus consistency if present
     vu = inv.get("vu_microprograms", {})
@@ -1035,6 +1042,7 @@ def compute_aot_metrics(ps2_ledger):
         "vu1_strict_keys": vu.get("vu1_strict_corpus_keys", 0),
         "vu1_captures": vu.get("vu1_bin_captures", 0),
         "oracle_vu1_dlls": vu.get("oracle_vu1_live_dll_count", 0),
+        "vu_state_evidence": vu.get("oracle_state_mapping_status", "OPEN_NOT_REMEASURED"),
     }
 
 def generate_progress_markdown_block(ps2_ledger, xbox_ledger, ps2_map, fork_sha=FORK_COMMIT_SHA):
@@ -1099,7 +1107,7 @@ def generate_progress_markdown_block(ps2_ledger, xbox_ledger, ps2_map, fork_sha=
         f"| **In-Scope AOT Subtotal** | *Build-time static C++ across `SLUS_214.10` (`{aot['base_in_scope_aot']:,}`) + `MOVIER.ovl` (`{aot['movier_aot']:,}`) + `GAMER.ovl` (`{aot['gamer_aot']:,}`)* | **{aot['in_scope_aot']:,} / {ps2_in_scope:,}** | **{100.0 * aot['in_scope_aot'] / ps2_in_scope:.2f}%** |",
         f"| **Excluded `NETR.ovl`** | Out of scope (`DECISION_ONLINE_OUT_OF_SCOPE.json`) | 0 / {aot['netr_total']:,} | — |",
         f"| **Dynamic Overlay Windows (`kModules`)** | `{len(aot['dyn_windows']):,}` runtime RAM window snapshots (`49` static `m_007C*` units) | {len(aot['dyn_windows']):,} captured windows | — |",
-        f"| **VU1 Microprograms (Separate VU Domain)** | `vurecomp` generates `{aot['vu1_static_keys']:,}` static keys from `{aot['vu1_captures']:,}` `.bin` captures (`61/61` oracle states match `883AC7731B3857A8`; `{aot['oracle_vu1_dlls']:,}` oracle `vu1-live/` DLLs; `0/61` VU0 microprograms) | {aot['vu1_static_keys']:,} / {aot['vu1_strict_keys']:,} keys | — |",
+        f"| **VU1 Microprograms (Separate VU Domain)** | `{aot['vu1_static_keys']:,}` candidate static keys from `{aot['vu1_captures']:,}` input images; state-code evidence: `{aot['vu_state_evidence']}`. Earlier mapping crossed the IPU section; key agreement did not prove input provenance. `{aot['oracle_vu1_dlls']:,}` retained oracle DLLs; packet equivalence OPEN. | {aot['vu1_static_keys']:,} / {aot['vu1_strict_keys']:,} candidate keys | — |",
         "",
         "### Tier 3 · Memory & ABI Transformed (`Phase 5` Target)",
         f"- **Contract-Transformed Functions**: **{100.0 * aot['transformed_count'] / ps2_in_scope:.2f}%** (**{aot['transformed_count']:,} / {ps2_in_scope:,}** — generated AOT units still retain `c.r[...]`, `g_ram`, `$gp`, and guest vtables pending Phase 5)",

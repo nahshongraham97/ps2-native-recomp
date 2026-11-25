@@ -6,7 +6,7 @@ The initial Nov 18 baseline handoff is preserved at `research/history/native-por
 1. **Active Repositories & Worktrees**:
    - Active retail runtime & AOT fork: `external/forks/ps2-native-recomp/` (consolidated in Phase 2; tracks `origin/main`).
    - Canonical parent integration repository: `armageddon-reimplementation` (`origin/main`).
-   - Canonical oracle (`../../milestone_work_verified_playable_20261110/`, `ps2run.exe` SHA-256 `b9eef7da...`, 3,256 files) and descendant Kombat Practice (`../../milestone_build_kombat_practice/`, `8b763dcc...`) share direct hook lineage (`cd33a7f..67612aa`). User saves, states, cards, and original assets remain protected; noncompliant commits and dirty files are discarded locally.
+   - Canonical oracle (`../../milestone_work_verified_playable_20261110/`, `ps2run.exe` SHA-256 `b9eef7da...`, 3,256 files) and related Kombat Practice share source/tag lineage; complete per-hook binary joins are unverified. User saves, states, cards, and original assets remain protected; noncompliant commits and dirty files are discarded locally.
    - Offline xemu guest-trace capture (`<xemu-install>/xemu.exe` via `-s -S`) is permitted under the dated 2026-11-24 owner exception with muted audio and minimized window while acceptance remains OPEN.
 
 2. **Required Reading & Orientation**:
@@ -26,7 +26,7 @@ The initial Nov 18 baseline handoff is preserved at `research/history/native-por
 5. **Current Runtime State & Active Frontier**:
    - **Renderer & Presentation Component Clients (15/15 Passing)**: `0401`–`040b` (`matrix`, `frames`, `streams`, `cameras`, `images`, `rasters`, `raster_registration`, `textures`, `texture_dictionaries`, `materials`, `geometry`, `world`, `core`, `allocator`, `display_movie_presentation`) plus `72/72` xemu movie-variant oracle match (`test_native_retail_movie_variant_oracle`).
    - **Full-Entry Link & Headless Gate**: `0` undefined symbols remaining in negative-link check (`test_native_startup_missing_bindings`), with `26` registered unrecovered placeholders in `research/ledger/ported_function_evidence.json`; 60-frame headless entry (`test_native_headless_entry_run`) reaches frame 5 task `0x18e100` movie presentation (`LOGOW.SFD` frame 0, 1 GL draw, 1 present, `0` frame readbacks) and records 369 calls across 13/26 placeholders.
-   - **Active Consolidation & AOT Work**: Complete Phase 1–7 remediation: consolidate active fork path, prove reproducible build-time AOT pipeline (`SLUS_214.10` + overlays + VU), apply memory/ABI transform, decide renderer scope, and replace duplicated retail logic.
+   - **Active Consolidation & AOT Work**: Revalidate Phase 0 first, then complete Phases 1–7 in order: consolidate active fork path, prove reproducible build-time AOT pipeline (`SLUS_214.10` + overlays + VU), apply memory/ABI transform, decide renderer scope, and replace duplicated retail logic.
 
 6. **Acceptance & Launch Gate**:
    - Do NOT direct the owner to run `launch_game.bat` or any other build until the contract's complete, clean, same-binary acceptance matrix passes.
@@ -38,3 +38,7 @@ The initial Nov 18 baseline handoff is preserved at `research/history/native-por
      - **Not verified**: Open questions, unverified assumptions, and unreached code.
      - **Contradictions with earlier documents**: Discrepancies identified between earlier claims/documents and current disassembly/source truth.
      - **Falsification attempts**: Results of actively attempting to falsify the strongest claims before delivery, including negative and disconfirming findings.
+
+Current resume point is TASK_BOARD.md. Coverage must use actual callable entry maps. The old restored oracle launcher is historical because its target is retired; a corrected additive launcher must pass static/disposable-data checks. Do not alter any existing oracle bytes.
+
+Saved-state evidence correction: the old backwards-from-GS VU extraction crossed IPU. Version/ABI/bounds/variable-IPU regressions and provenance-based capture admission now guard the corrected loader. Static table membership and the bounded GAMER component pass; general function-boundary and VU output-packet equivalence remain OPEN.

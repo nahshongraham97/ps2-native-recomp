@@ -4,6 +4,9 @@ from pathlib import Path
 import copy
 import sys
 import subprocess
+import hashlib
+import ast
+import tempfile
 
 _this_file = Path(__file__).resolve()
 if (_this_file.parents[2] / "external" / "forks" / "ps2-native-recomp").exists():
@@ -529,6 +532,7 @@ def test_planted_failures():
     try:
         bad_inv = json.loads(orig_inv)
         bad_inv["modules"]["MOVIER.ovl"]["static_aot_count"] = 2537
+        bad_inv["modules"]["MOVIER.ovl"]["static_overlay_sources"] = []
         inv_p.write_text(json.dumps(bad_inv, indent=2) + "\n", encoding="utf-8", newline="\n")
         try:
             compute_aot_metrics(ps2_ledger)
@@ -553,12 +557,12 @@ def test_planted_failures():
     print("Testing planted failure 15b: hand-edited Tier 2 AOT number in README.md rejection...")
     orig_readme2 = readme_p.read_text(encoding="utf-8")
     try:
-        readme_p.write_text(orig_readme2.replace("0 / 2,537", "2,537 / 2,537"), encoding="utf-8", newline="\n")
+        readme_p.write_text(orig_readme2.replace("2,537 / 2,537", "0 / 2,537"), encoding="utf-8", newline="\n")
         try:
             validate_progress_aot_tier(REPO, ps2_ledger)
             assert False, "Hand-edited README.md Tier 2 numerator FAILED to raise AssertionError!"
         except AssertionError as e:
-            assert "missing '0 / 2,537'" in str(e), f"Unexpected error: {e}"
+            assert "missing '2,537 / 2,537'" in str(e), f"Unexpected error: {e}"
             print(f"  Hand-edited README.md Tier 2 numerator caught as expected: {e}")
     finally:
         readme_p.write_text(orig_readme2, encoding="utf-8", newline="\n")
@@ -617,6 +621,165 @@ def test_planted_failures():
             print(f"  Mismatched classification partition sum caught as expected: {e}")
     finally:
         cls_p.write_text(orig_cls, encoding="utf-8", newline="\n")
+
+    # A function start inside a unit is not covered when its entry-map slot is
+    # zero. Plant a plausible range-based claim with a matching edited count.
+    print("Testing planted failure 18: range-only static AOT coverage rejection...")
+    original_inventory = inv_p.read_bytes()
+    gamer_source = FORK_ROOT / "build/generated-aot/phase4-all/m_GAMER_unit_0000.cpp"
+    original_source = gamer_source.read_bytes()
+    try:
+        bad = json.loads(original_inventory)
+        text = original_source.decode("utf-8")
+        array = re.search(r"const std::uint16_t m_GAMER_entries_0000\[4096\] = \{(.*?)\};", text, re.S)
+        assert array
+        first = next(m for m in re.finditer(r"\b\d+\b", array[1]) if int(m[0]) != 0)
+        offset = array.start(1) + first.start()
+        changed = (text[:offset] + "0" + text[offset + len(first[0]):]).encode("utf-8")
+        gamer_source.write_bytes(changed)
+        # Authenticate the planted source bytes too: hash checking alone must
+        # not let unchanged unit ranges or stale callable counts pass.
+        bad["entry_measurement"]["source_sha256"][gamer_source.name] = hashlib.sha256(changed).hexdigest()
+        inv_p.write_text(json.dumps(bad, indent=2) + "\n", encoding="utf-8", newline="\n")
+        try:
+            compute_aot_metrics(ps2_ledger)
+        except AssertionError as exc:
+            assert "Static AOT callable entry mismatch" in str(exc), f"Unexpected error: {exc}"
+            print("  Zero dispatch entry rejected despite unit-range membership and a matching edited numerator.")
+        else:
+            raise AssertionError("Range-only static AOT claim was accepted")
+    finally:
+        gamer_source.write_bytes(original_source)
+        inv_p.write_bytes(original_inventory)
+
+    print("Testing planted failure 19: runner failure propagation and resolved output confinement...")
+    runner = ast.parse((FORK_ROOT / "tools/research/run_check.py").read_text(encoding="utf-8"))
+    guards = [node for node in runner.body if isinstance(node, ast.FunctionDef)
+              and node.name in ("checked_output_path", "require_check_success")]
+    assert len(guards) == 2, "Runner must expose its real result/path guards"
+    namespace = {"Path": Path}
+    exec(compile(ast.Module(body=guards, type_ignores=[]), "runner-guards", "exec"), namespace)
+    for result in [(17, False, False), (0, True, False), (0, False, True)]:
+        try:
+            namespace["require_check_success"](*result)
+        except SystemExit as exc:
+            assert exc.code == 1
+        else:
+            raise AssertionError(f"Runner accepted failed/timed-out/skipped check: {result}")
+    namespace["require_check_success"](0, False, False)
+    try:
+        namespace["checked_output_path"](FORK_ROOT / ".." / "_must_not_be_created_", FORK_ROOT)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("Runner accepted a lexical-prefix path escaping through '..'")
+    assert namespace["checked_output_path"](FORK_ROOT / "b", FORK_ROOT) == (FORK_ROOT / "b").resolve()
+    print("  Failed links, timeouts, skipped checks and escaped output paths rejected by the actual runner guards.")
+
+    print("Testing planted failure 20: provenance-bound VU input admission before staging...")
+    # Execute the actual pure admission/staging helpers without importing a
+    # potentially stale fork copy or invoking their CLI/generator entrypoint.
+    inventory_module = ast.parse((REPO / "tools/research/aot_inventory.py").read_text(encoding="utf-8"))
+    helpers = [node for node in inventory_module.body if isinstance(node, ast.FunctionDef)
+               and node.name in ("sha", "classify_vu_inputs", "stage_vu_inputs")]
+    assert len(helpers) == 3
+    vu_namespace = {"Path": Path, "json": json, "hashlib": hashlib, "re": re}
+    exec(compile(ast.Module(body=helpers, type_ignores=[]), "vu-admission-helpers", "exec"), vu_namespace)
+    classify = vu_namespace["classify_vu_inputs"]
+    good_name = "0123456789ABCDEF_0000.bin"
+    rejected_name = "883AC7731B3857A8_0000.bin"
+    unknown_name = "FEDCBA9876543210_0000.bin"
+    # Even identical, decodable/hash-key-plausible bytes do not confer source
+    # provenance. This is a synthetic instruction-shaped fixture, not an
+    # independently executed VU program or a replacement original capture.
+    raw = bytes.fromhex("00000410ff020000")
+    identity = {"bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest()}
+    legacy = {good_name: dict(identity)}
+    rejected = {rejected_name: {**identity, "reason": "known wrong source extent"}}
+    actual = {good_name: dict(identity), rejected_name: dict(identity)}
+    admitted, excluded = classify(actual, legacy, rejected)
+    assert admitted == legacy and excluded == {rejected_name: identity}
+
+    def require_vu_rejection(operation, message):
+        try:
+            operation()
+        except AssertionError as exc:
+            assert message in str(exc), f"Unexpected VU admission failure: {exc}"
+        else:
+            raise AssertionError(f"VU admission accepted planted failure: {message}")
+
+    require_vu_rejection(lambda: classify({**actual, unknown_name: identity}, legacy, rejected),
+                         "Unknown/missing VU capture inputs")
+    for field, value in (("bytes", len(raw) + 1), ("sha256", "0" * 64)):
+        changed = copy.deepcopy(actual)
+        changed[good_name][field] = value
+        require_vu_rejection(lambda: classify(changed, legacy, rejected), "source hash/extent mismatch")
+    require_vu_rejection(lambda: classify(actual, legacy, {**rejected, good_name: identity}),
+                         "both admitted and rejected")
+
+    temp_root = (FORK_ROOT / "b/check-temp").resolve()
+    assert temp_root.is_relative_to(FORK_ROOT.resolve()) and temp_root != FORK_ROOT.resolve()
+    temp_root.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix="vu-admission-", dir=temp_root) as temporary:
+        sandbox = Path(temporary).resolve()
+        assert sandbox.is_relative_to(temp_root) and sandbox != temp_root
+        try:
+            repo = sandbox / "repo"
+            fork = sandbox / "fork"
+            fork.mkdir()
+            ledger = repo / "research/ledger"
+            ledger.mkdir(parents=True)
+            originals = repo / "private-inputs/mkarmageddon-aot-inputs/vu1"
+            originals.mkdir(parents=True)
+            for name in actual:
+                (originals / name).write_bytes(raw)
+            receipt = ledger / "synthetic-legacy.json"
+            receipt.write_text(json.dumps({"captures": {good_name: identity}}), encoding="utf-8")
+            frozen_receipt = receipt.read_bytes()
+            policy = {"sources": {"vu_corpus_strict": {
+                "rel_path": "research/ledger/synthetic-legacy.json",
+                "sha256": hashlib.sha256(frozen_receipt).hexdigest()}},
+                "vu_microprograms": {"rejected_captures": rejected}}
+            (ledger / "aot_coverage_inventory.json").write_text(json.dumps(policy), encoding="utf-8")
+            stage = vu_namespace["stage_vu_inputs"]
+            receipt.write_bytes(frozen_receipt + b" ")
+            target = fork / "bad-receipt"
+            require_vu_rejection(lambda: stage(repo, fork, target), "legacy VU capture receipt changed")
+            assert not target.exists(), "Receipt rejection created staging output"
+            receipt.write_bytes(frozen_receipt)
+            (originals / unknown_name).write_bytes(raw)
+            target = fork / "unknown-input"
+            require_vu_rejection(lambda: stage(repo, fork, target), "Unknown/missing VU capture inputs")
+            assert not target.exists(), "Input rejection created staging output"
+            # Remove only this synthetic unknown fixture; originals are never
+            # referenced by this sandbox and are never altered by the test.
+            (originals / unknown_name).unlink()
+            for label, altered_raw in (("extent", raw + b"\0"),
+                                       ("hash", bytes([raw[0] ^ 1]) + raw[1:])):
+                (originals / good_name).write_bytes(altered_raw)
+                target = fork / ("altered-" + label)
+                require_vu_rejection(lambda: stage(repo, fork, target), "source hash/extent mismatch")
+                assert not target.exists(), "Altered input rejection created staging output"
+                (originals / good_name).write_bytes(raw)
+            overlap_policy = copy.deepcopy(policy)
+            overlap_policy["vu_microprograms"]["rejected_captures"][good_name] = identity
+            (ledger / "aot_coverage_inventory.json").write_text(json.dumps(overlap_policy), encoding="utf-8")
+            target = fork / "overlap"
+            require_vu_rejection(lambda: stage(repo, fork, target), "both admitted and rejected")
+            assert not target.exists(), "Overlapping provenance rejection created staging output"
+            (ledger / "aot_coverage_inventory.json").write_text(json.dumps(policy), encoding="utf-8")
+            target = fork / "admitted"
+            result = stage(repo, fork, target)
+            assert set(path.name for path in target.iterdir()) == {good_name}
+            assert (target / good_name).read_bytes() == raw
+            assert result["excluded"] == {rejected_name: identity}
+            assert result["original_inputs_modified"] is False
+            assert {path.name: path.read_bytes() for path in originals.iterdir()} == {
+                good_name: raw, rejected_name: raw}
+        finally:
+            # TemporaryDirectory recursively removes only this verified child.
+            assert sandbox.resolve().is_relative_to(temp_root) and sandbox.resolve() != temp_root
+    print("  Unknown/altered/overlapping captures rejected; frozen receipt checked before output; known mis-extraction excluded.")
 
     print("PASS: All planted-failure cases successfully caught and proven to fail closed.")
 

@@ -1,6 +1,7 @@
 #include "vurecomp_gen.hpp"
 
 #include "ps2/os.hpp"
+#include "ps2/vu_ops.hpp"
 
 #include <cstdio>
 #include <filesystem>
@@ -10,6 +11,7 @@
 #include <vector>
 #include <regex>
 #include <exception>
+#include <stdexcept>
 
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -36,6 +38,28 @@ int main(int argc, char **argv) {
     }
 #endif
     try {
+    // Offline identity inspection for provenance-pinned capture bytes. This
+    // decodes reachability and hashes instructions; it never executes a program.
+    if (argc > 1 && std::string_view(argv[1]) == "--inspect-program") {
+        if (argc != 4) throw std::runtime_error("usage: vurecomp --inspect-program <code.bin> <entry-hex>");
+        std::size_t consumed = 0;
+        const auto value = std::stoul(argv[3], &consumed, 16);
+        if (consumed != std::string_view(argv[3]).size() || value >= 16384 || (value & 7u))
+            throw std::runtime_error("invalid VU capture entry");
+        const auto path = ps2::os::path(argv[2]);
+        if (fs::file_size(path) != 16384) throw std::runtime_error("VU capture must contain exactly 16384 bytes");
+        std::vector<std::uint8_t> code(16384);
+        std::ifstream input(path, std::ios::binary);
+        input.read(reinterpret_cast<char*>(code.data()), static_cast<std::streamsize>(code.size()));
+        if (!input || input.gcount() != 16384 || input.peek() != std::char_traits<char>::eof())
+            throw std::runtime_error("VU capture changed or could not be read");
+        const auto entry = static_cast<std::uint32_t>(value);
+        const auto pcs = ps2::vu::reachable(code.data(), 16383u, entry);
+        const auto key = ps2::vu::program_key(code.data(), pcs, entry);
+        std::printf("{\"entry\":%u,\"key\":\"%016llX\",\"reachable_instructions\":%zu,\"executed\":false}\n",
+                    entry, static_cast<unsigned long long>(key), pcs.size());
+        return 0;
+    }
     bool require_complete = true;
     for (int i = 3; i < argc; ++i) {
         if (std::string_view(argv[i]) == "--require-complete") require_complete = true;

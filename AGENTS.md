@@ -61,6 +61,26 @@ production progress with isolated wrappers, repeated reports or test counts.
 
 ## Xbox renderer, viewport, and HD presentation rules
 
+The owner's corrected complete instruction set controls phases 0 through 7.
+Do not start the next phase until the prior phase is committed, pushed,
+passing its baseline, ledger-synchronized and oracle-manifest verified.
+If a phase cannot finish, publish verified work, put the exact resume line
+in TASK_BOARD.md and stop. Existing oracle contents are immutable; Phase 0
+permits only specifically recorded additions. Protect assets, saves, states,
+keys, settings, the duplicate backup and required generator/toolchain files.
+Keep writes within repositories except authorized oracle additions and the
+Phase 7 extraction into existing private-inputs. Raw telemetry belongs in an
+existing ignored folder; append to the existing work-item record and cite raw
+logs by hash. Create no new top-level documents/directories or dated notes.
+Do not access the reserved local model.
+
+The parent saved-state evidence gate is mandatory. Version 8 serializes VU,
+then variable-length IPU, then GS; never infer VU code by subtracting from GS.
+Pin producer/version/ABI and exact source regions, validate bounds before
+restoring state, and keep IPU-gap/truncation/version regressions. Program-key
+agreement cannot authenticate a mis-extraction. Synthetic inputs, code
+identity and register/memory/packet equivalence remain distinct evidence.
+
 Per `DECISION_OWNER_CORRECTIONS_20261124` and parent `ROADMAP.md` / `PORT_STATUS.md`:
 Xbox investigation is **limited strictly to the renderer, viewport, and HD presentation**,
 with GS packet decoding as an interim concession only (not a final target). Retail game

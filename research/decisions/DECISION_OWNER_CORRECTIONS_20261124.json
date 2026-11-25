@@ -11,16 +11,17 @@
       "kombat_practice_path": "../../milestone_build_kombat_practice",
       "kombat_practice_exe_sha256": "8b763dcc3e0c47188b535803117fa44cf81d9b7f36d103df3247336b16a321b9",
       "duplicate_backup_path": "external/forks/ps2-native-recomp-backup-20261110",
-      "relationship_proven_by_git_and_binary": "Kombat Practice (8b763dcc) is a direct descendant snapshot of the oracle source repository (ps2-native-recomp-backup-20261110 HEAD 67612aa plus dirty host/mka_unit_wrappers.cpp). All 33 hook commits from cd33a7f through 67612aa (including 76282ae practice dummy auto-align 1.10f, 10b6aa5 hazard collision avoidance, and 67612aa pad delegation / 2+ hit combo detection) are compiled into the oracle executable B9EEF7DA. Prior claims that Kombat Practice is unrelated to the oracle are retracted.",
+      "relationship_proven_by_git_and_binary": "The oracle runner is byte-identical to the protected backup runner. The older source repository has a measured 33-commit interval, including combat/practice changes and non-hook changes; distinctive binary tags support shared lineage. Kombat Practice is a distinct executable/source snapshot with measured differences. Complete per-hook source-to-binary instruction joins and runtime activation were not established; earlier blanket inclusion claims are superseded.",
       "hook_disabled_parity_config": {
-        "launcher_flag": "--no-hooks (or --parity)",
+        "launcher_flag": "-Mode Parity in launchers/launch_oracle.ps1",
         "env_vars": {
           "MKA_INTERCEPT_COMBAT": "0",
           "MKA_TRACE_MODE_INPUT": "0",
           "PS2_OBSERVER_HOOKS": "0",
           "PS2_PROFILE_SUBSYSTEMS": "0",
           "PS2_NATIVE_VERTEX": "0"
-        }
+        },
+        "scope": "Requested source-intended disable configuration for pinned B9 oracle only; runtime suppression is unverified. It cannot undo unconditional legacy runtime changes, and Practice has an unconditional interception gate so it is never substituted."
       },
       "shipped_game_exclusion": "All combat/practice assist hooks (auto-align, hazard snap, damage scaling, video bypasses, fatality/stance shortcuts) stay out of the shipped native port."
     },
@@ -32,5 +33,840 @@
       "scope": "Limited strictly to the renderer, viewport, and HD presentation.",
       "gs_packet_decoding": "Interim concession only, not a final target."
     }
+  },
+  "corrected_complete_instruction_set": {
+    "source_sha256": "7f1be00def714ad1e327a8fa0af3479dee45475b41219ac8e4f84133fe213559",
+    "phase_order": "0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7; each predecessor committed, pushed, baseline-passing, ledger-synced and oracle-manifest-verified",
+    "protected_oracle": "All existing contents immutable; explicitly recorded Phase 0 additions only",
+    "write_scope": "Repositories only, except named Phase 0 oracle additions and Phase 7 extraction into existing private-inputs",
+    "records": "Current documents in place; no new top-level documents/directories or dated notes; append existing work-item records; ignored active-fork telemetry, raw logs referenced by hash",
+    "stopping_rule": "If a phase cannot finish, commit/push verified work, record exact TASK_BOARD resume line and stop"
+  },
+  "phase0_launcher_correction": {
+    "historical_settings_parent_commit": "72fb2203d96f26529a54787ed88cef14401eaed5",
+    "historical_settings_file": "launchers/launch_milestone.ps1",
+    "historical_settings_sha256": "378c23d6168098781e6037078eb9fd8c248aacdc5f70902ed080ae97024b8fb1",
+    "current_guarded_source_sha256": "ccfcfb01558781748aaa29d0d59240285784e340d1f20442df0dfb03ef688e57",
+    "change": "Legacy playable entry delegates before any old work-copy writes; historical minimal hook settings retained. Existing oracle BAT remains immutable. New source launcher uses disposable paths; pending exact additive wrapper and fresh baseline.",
+    "oracle_headless_execution": "OPEN: exact executable no-audio/no-window route not authenticated; no oracle game launched",
+    "tracked_original_manifest": {
+      "path": "launchers/oracle_original_manifest.json",
+      "source_raw_sha256": "4c91f2ce5e9b885b9652c20b80ce6a5e6e52b2f5ec06d6a9165457200c68c90a",
+      "tracked_lf_sha256": "52cd712d696a091d8ab0c389c599afbb183b83c27c9ab59b270e149ec925294a",
+      "conversion": "CRLF to LF only; decoded path/size/hash map identical; source raw snapshot left unchanged"
+    },
+    "exact_oracle_additions": {
+      "launch_verified_oracle.bat": {
+        "size": 497,
+        "sha256": "13459f0179865d77f846336e008457029a606ddc4f5f3746c30cbd5b2f986b32"
+      }
+    },
+    "prepared_without_game_execution": true,
+    "telemetry": "Source-authenticated passive PS2_FRAME_LOG; default input/checkpoint recording rotation and normal logs redirected into disposable tree. Observed historical input record is hash-pinned; no new game telemetry capture claimed."
+  },
+  "phase0_source_hook_audit": {
+    "baseline_exclusive": "35c40df5b6f01321eebc9ab693bc5f8d44512ae3",
+    "head_inclusive": "67612aa1a42ef44618f440d2bc4d724b8bb8918f",
+    "commit_count": 33,
+    "raw_audit_sha256": "dd4a3e0a5f12cc8f30f28cce1c051adcbfc62bef4f22738290abc757a7a565a1",
+    "source_diff_command": [
+      "git",
+      "-c",
+      "core.pager=cat",
+      "-C",
+      "external/forks/ps2-native-recomp-backup-20261110",
+      "show",
+      "--no-ext-diff",
+      "--no-textconv",
+      "--format=",
+      "--unified=0",
+      "<commit>"
+    ],
+    "git_optional_locks": "0",
+    "root_reauthenticated_diffs": true,
+    "commits": [
+      {
+        "sha": "cd33a7fe5223629f1ed4524d3db24ae0cad1ac57",
+        "effect_from_diff": "Introduce combat registration/health-pad handlers; main registration checks MKA_INTERCEPT_COMBAT.",
+        "changed_paths": [
+          "host/main.cpp",
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [
+          "MKA_INTERCEPT_COMBAT"
+        ],
+        "git_diff_sha256": "bec0072c2bc0a5a1267bd6e9a7b1c11c64b7987b932d7ead433bbd4c37f627d7",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "5ffc1689364cf6e97521c5b0bd22d36a6c23b09c",
+        "effect_from_diff": "Add entry diagnostics to pad and health interception.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "472852e7a610c85cfae719151e5083c8822002056cd567d6d6a1603ade0ab383",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "2325e25472b3d0213898f88d8da1e34a886735ce",
+        "effect_from_diff": "Change default host keyboard bindings to arcade-style A/S/Z/X/Q/W/O/P/arrows.",
+        "changed_paths": [
+          "host/keymap.cpp"
+        ],
+        "source_gate_class": "unconditional",
+        "effective_source_flags": [
+          "none: unconditional source change"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "11ad420c9c6168444c5b7e45061b0b8bf455e1972ed445279bc32e4d793856c2",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "8de74cc6ac85ec80130d4546b7c04c23268210bf",
+        "effect_from_diff": "Link direct generated-unit wrappers for scanner/button/health; delegate real calls.",
+        "changed_paths": [
+          "CMakeLists.txt",
+          "host/mka_combat_hooks.hpp",
+          "host/mka_unit_wrappers.cpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [
+          "MKA_INTERCEPT_COMBAT"
+        ],
+        "git_diff_sha256": "7694645a59a06e3dfabc082ef85dcb5c6177f6b72f3f7233c6717102ad7c48cc",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "0c27674319bcf3161211e127296abd8ca32092f9",
+        "effect_from_diff": "Catch hook exceptions, preserve knockout boundary/delegation, and restore scalar-call handling.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "ba34a9b9474025e42a2079df730d591af8c9433a6619534ad759582f09cfead0",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "6a249820a4981bcb98c6ec3bd27b51c1342c7d9b",
+        "effect_from_diff": "Handle full button cluster and apply combo damage scaling.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "c76829d6b3d07749a0d320faf61e57177a42a734afc3e118b20848a73e2f38fa",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "1385ae185cd221e9e2f2940c2f888bf3e43736e2",
+        "effect_from_diff": "Add stage-hazard evaluation and video dispatcher wrapper at00181F90.",
+        "changed_paths": [
+          "CMakeLists.txt",
+          "host/mka_combat_hooks.hpp",
+          "host/mka_unit_wrappers.cpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "1a85e7829a7bfa0da0c0b8d1b0657403d587d882c9462fd663cb1e1c504fa2fb",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "1ad1eedf5f949a20f412a3c68b7daa9593d26e85",
+        "effect_from_diff": "Tap host-decoded PCM into AudioSinkRegistry through gated process_audio.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp",
+          "host/mka_unit_wrappers.cpp",
+          "host/window.cpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "58d732f7a13d2d17acd74285f1ab520f3f9b3a0727d93eadb9783d66c9660b93",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "78309f439aa4b88ac57237bc6f3fad6090e0433f",
+        "effect_from_diff": "Advance camera registry/hit-stop and react to combat hits.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "ec7e60ba5af693f69d51c1ca79b2309385124f6af47a07f6fbad29db229f115a",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "5d623166b3ee31cc41f2566e34db3d27e9c86227",
+        "effect_from_diff": "Dispatch stance/special-move state on L1/button events.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "4b0b486721572b61da9470b42984c514159a9d44de0f468cdfb5c0907e58de61",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "46afb03bdaa1f6fbf1e49cad1135ec051a1f46ea",
+        "effect_from_diff": "Start/advance Kreate-A-Fatality sequencer from knockout/pad paths.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "75768bfd82b8ddee0ffb7a4802481d1e3be613621dd3be8b1dc92cca30b7d84f",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "22560cd667b3c07d16e7dbf8b021cdbfb7ca5192",
+        "effect_from_diff": "Spawn/evaluate projectile state and collisions.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "46f821745214d2f173b94bc8fa2b8452b508ae9c1224ea8f177f7271c643c6b4",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "e4fcc7963079a81428a2d121df3d5f880029fc0f",
+        "effect_from_diff": "Evaluate parry and combo-breaker defense registry.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "79083dbeaa168eb1dd27d4743cf2fa1f749eb8de8c0e95c905e473683bde9005",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "f641aa5eb74e31fff4eded1195857d0b160b276c",
+        "effect_from_diff": "Add aerial launch/juggle state, scaling and camera reactions.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "6e646df97e54f3de057a32b20188f47801aef1bb3de466d022e2b2a92aaffe81",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "d8d301e33d5059b04fd1ed337844a2f35c783834",
+        "effect_from_diff": "Add Aggressor/weapon matrix and stage-transition boundary processing.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "5085ca9241ccf406bb13866338560cfdf28d12b0182ce54730ceec2c610fc182",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "6ae4cd7fcf27fb4dbdda6c29756bfa31004a308e",
+        "effect_from_diff": "Connect RenderBridge camera/viewport/reaction advancement.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "09b66022bc70d6fbae21d41713ed36312d0bde318bf98b2cf5fefc3bca9a4cdb",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "247e9d976adc5210f0ae712cfffe00cac05ad63d",
+        "effect_from_diff": "Restrict pad assists to combat and bypass idle attract/trailer streams.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "e1b53183ee4dbc83521dcfcb47c94eed7f59788b82aefc7f5c70c22f6e646e25",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "537cd08227c36e89e58401c4ce0d3b28bc29ddc3",
+        "effect_from_diff": "Change practice/mode gating, parry/dash-superjump motions, combo threshold and meter telemetry.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "a7dab30a594e106a401d1fbdbfb1a2005f50f658c17b9271669e2d5c02d64a06",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "fd07aecd97f3e8dbb416ff5bd4746ba56a1d64df",
+        "effect_from_diff": "Dispatch Scorpion spear/hellfire and directional special-move/projectile behavior.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "be5cc1303a710c7e1efdee452d8c15818d9cf1dd411ae733082a1debb140a961",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "7ac49e6115751282bea71af8c852a3d95bc9bf3a",
+        "effect_from_diff": "Recognize practice0x42/player pointer validity; also restore default keyboard bindings.",
+        "changed_paths": [
+          "host/keymap.cpp",
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "mixed",
+        "effective_source_flags": [
+          "mixed: MKA-gated handler plus unconditional file changes"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "0cd9382cade4b740fd9e78088204cae73c1408e46414cfacf478bc58c3c223a8",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "2acfea795533be1f0315d0d1a4ab6e436e12d72a",
+        "effect_from_diff": "Add roster coordinator registry to combat header.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "c528ce04780718758961933ff492bb7c82c17777db5857bda8a51e5ea45d3d70",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "4f37dbdb86d50b23635ad5a45f26876c205160c4",
+        "effect_from_diff": "Read roster/actor identities and emit per-hit character telemetry.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "d41d01a815f0ce68120bc8f3a42eb35897a64f91fcb24f32821c67849696b88b",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "71d62ebbd97f38f25206d417241222b07b62714c",
+        "effect_from_diff": "Expand IOP RAM2->8MiB; expand idle/loop video bypass after first title.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp",
+          "runtime/src/iop/iop.hpp"
+        ],
+        "source_gate_class": "mixed",
+        "effective_source_flags": [
+          "mixed: MKA-gated handler plus unconditional file changes"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "e72d1bc753d1c1644d3fb7c0675c18e680886d5cf3948dcfdb1202e8f207ebfb",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "matching old video-bypass literal present; IOP-size code not independently instruction-joined",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "snapshot replaces video-bypass branch; literal differs; no complete instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "e176899ef988777c3d4f93394fdafa497d7abc4b",
+        "effect_from_diff": "Recognize mode4 practice and track dummy health/hit attribution.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "3184a812f3d8491452c6eff71850cfad8c13c1536aa596314156e6f83fe85cf0",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "102b97e93e27fd80b4f07a363bedf5aea71d6bfd",
+        "effect_from_diff": "Read animation IDs/3D positions from motion controllers rather than former offsets.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "50d87b4d13d6ba9e05fba1cf0a403a53cbd525358e41c5d2bbda6436caf8d86a",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "d95b161b85b9cede897703646c665ea087ee7388",
+        "effect_from_diff": "Increase retained quick saves20->128.",
+        "changed_paths": [
+          "runtime/src/quick_keys.inc"
+        ],
+        "source_gate_class": "unconditional",
+        "effective_source_flags": [
+          "none: unconditional source change"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "698dcd1ae7fca387a396e9216bbcf5c260d2e667731d94e655d28e937aee58ee",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "3b4e697e156bb4a757b99a94434ca936f942ea05",
+        "effect_from_diff": "Restore IOP RAM8->2MiB for savestate compatibility.",
+        "changed_paths": [
+          "runtime/src/iop/iop.hpp"
+        ],
+        "source_gate_class": "unconditional",
+        "effective_source_flags": [
+          "none: unconditional source change"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "d407038491c5bf3e6f901f4f2331052e63de70c2c97aa21f2e3f03a91bef0799",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "9a9fa3358146e662c3abb73463199de75f55c52d",
+        "effect_from_diff": "Change IOP RAM2->8MiB again; final backup value is8MiB.",
+        "changed_paths": [
+          "runtime/src/iop/iop.hpp"
+        ],
+        "source_gate_class": "unconditional",
+        "effective_source_flags": [
+          "none: unconditional source change"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "32a2722681b432f2ae07a7c618cd8b37e61e52bf51af2fbf34085eb7d6ed5f86",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "085f7475e4afe1b3bee85ba4eee18c8f832c8926",
+        "effect_from_diff": "Emit Euclidean actor-distance telemetry.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "77ef9d83f2b5eb41b0786738efac4a70d0dc3c76d97763fe8c893234c0161679",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "0b0f6ee71def8a85ade08bf67305946f7992c7dc",
+        "effect_from_diff": "Retry Windows sharing-lock failures while writing quick-state files.",
+        "changed_paths": [
+          "runtime/src/quick_keys.inc"
+        ],
+        "source_gate_class": "unconditional",
+        "effective_source_flags": [
+          "none: unconditional source change"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "a0e9fc84ed36fb0571eaf335a9984a062b83efdfe354beafa0fd508702551ab7",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "76282ae14e9a3fa29271d877ea5f84dd7c2b419c",
+        "effect_from_diff": "On practice attacks, set dummy position to playerX+1.10f strike range.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "9cb319535cc9e5d6dedae4c927bd055dfd1cc24436e7519a019a7191a70d6804",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "matching distinctive feature literal present; not instruction/control-flow or execution proof",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "matching distinctive feature literal present; not instruction/control-flow or execution proof",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "10b6aa5bf3a265e4666f2db0a71ab0da18d8784e",
+        "effect_from_diff": "Avoid hazards during practice snap and recover dummy after hazard interruption.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "b34c62855f0af69bd7ca74a6ef3ee2a80c5008e7342d7293facc8979f2a85e65",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "matching distinctive feature literal present; not instruction/control-flow or execution proof",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "matching distinctive feature literal present; not instruction/control-flow or execution proof",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      },
+      {
+        "sha": "67612aa1a42ef44618f440d2bc4d724b8bb8918f",
+        "effect_from_diff": "Delegate pad events to real unit0018 entry309, accept L1 codes2/10 and detect2+ hit combos.",
+        "changed_paths": [
+          "host/mka_combat_hooks.hpp"
+        ],
+        "source_gate_class": "combat",
+        "effective_source_flags": [
+          "MKA_INTERCEPT_COMBAT via common gate"
+        ],
+        "new_flag_literals_in_added_code": [],
+        "git_diff_sha256": "3d116e5c66a604c1e8dd694a4a5eb84b96d0a187199d4207d66525f90682605f",
+        "per_binary_proof": {
+          "oracle_b9": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          },
+          "practice_8b": {
+            "level": "source_history/build_graph_only; no per-hook binary instruction join",
+            "enabled": "not runtime-observed; branch/mode/site conditions still apply"
+          }
+        }
+      }
+    ],
+    "limits": [
+      "33 is a mixed commit interval, not33 independently proved pure hooks.",
+      "Marker pins EXE/ELF/card/ISO/states, not source Git/tree/objects/dependencies.",
+      "No retained per-hook binary instruction joins or authenticated per-run environment/execution vectors were established.",
+      "Distinctive strings corroborate compiled payload presence only, not reachability/activation.",
+      "Practice snapshot has no.git;8b differs from B9; source-content lineage is supported, exact executable Git ancestry is not fully authenticated.",
+      "Practice is_interception_enabled returns true unconditionally; MKA=0 alone cannot disable its wrappers.",
+      "Parity assist toggles do not undo unconditional8MiBIOPRAM/quick-save changes.",
+      "No game/other target executable launched; no protected source/oracle bytes written."
+    ]
   }
 }

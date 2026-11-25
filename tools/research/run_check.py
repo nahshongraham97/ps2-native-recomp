@@ -38,6 +38,19 @@ elif ("/" in name or "\\" in name) and (ROOT / name).parent.exists():
 else:
     OUT = (Path.cwd() / name).resolve()
 
+def checked_output_path(path, checkout):
+    resolved = Path(path).resolve()
+    if not resolved.is_relative_to(Path(checkout).resolve()):
+        raise ValueError("Check outputs must remain inside the active checkout")
+    return resolved
+
+
+def require_check_success(exit_code, timed_out, is_skip):
+    if timed_out or exit_code != 0 or is_skip:
+        raise SystemExit(1)
+
+
+OUT = checked_output_path(OUT, ROOT)
 OUT.mkdir(parents=True, exist_ok=True)
 
 def sha(p):
@@ -55,12 +68,12 @@ git("diff", "--check", "--", "runtime", "tests", "cmake")
 deps = BACKUP / "dependencies"
 bin_dir = deps / "compiler/llvm-mingw-20261006-ucrt-x86_64/bin"
 cmake = deps / "cmake/cmake-4.4.5-windows-x86_64/bin/cmake.exe"
-build = ROOT / "b"
+build = checked_output_path(ROOT / "b", ROOT)
 
 env = dict(os.environ)
 env["PATH"] = str(bin_dir) + os.pathsep + str(ROOT / "third_party/sdl2/bin") + os.pathsep + env["PATH"]
-temp = Path(os.environ["LOCALAPPDATA"]) / "Temp/opencode"
-assert temp.is_dir()
+temp = checked_output_path(build / "check-temp", ROOT)
+temp.mkdir(exist_ok=True)
 env["TEMP"] = env["TMP"] = str(temp)
 
 short = ctypes.create_unicode_buffer(32768)
@@ -116,6 +129,15 @@ KNOWN_CLIENTS = {
     },
 }
 
+
+def clean_fixture(path):
+    import shutil
+    target = Path(path).resolve()
+    if target == OUT or not target.is_relative_to(OUT) or "fixtures" not in target.name:
+        raise ValueError(f"Fixture cleanup escaped the check output: {target}")
+    if target.is_dir():
+        shutil.rmtree(target)
+
 CLIENT_ALIASES = {
     "allocator": "test_native_retail_renderer_allocator",
     "core": "test_native_retail_renderer_core",
@@ -153,14 +175,14 @@ elif phase == "client":
         for arg in sys.argv[4:]:
             p = Path(arg)
             if p.is_dir() and "fixtures" in p.name:
-                shutil.rmtree(p)
+                clean_fixture(p)
         client_args = sys.argv[4:]
     elif spec:
         import shutil
         if "clean_fixtures" in spec:
             for fix_dir in spec["clean_fixtures"](OUT):
                 if fix_dir.is_dir():
-                    shutil.rmtree(fix_dir)
+                    clean_fixture(fix_dir)
         client_args = spec["args"](ROOT, OUT)
     else:
         client_args = []
@@ -188,7 +210,7 @@ elif phase in ("all", "all_clients"):
         if "clean_fixtures" in spec:
             for fix_dir in spec["clean_fixtures"](OUT):
                 if fix_dir.is_dir():
-                    shutil.rmtree(fix_dir)
+                    clean_fixture(fix_dir)
         c_args = spec["args"](ROOT, OUT)
         for arg in c_args:
             if arg.endswith((".tsv", ".json")):
@@ -199,19 +221,22 @@ elif phase in ("all", "all_clients"):
         if not exe_path.exists():
             raise FileNotFoundError(f"Built executable not found: {exe_path}. Build it first.")
         c_argv = [str(exe_path), *c_args]
-        sub = subprocess.run(c_argv, cwd=ROOT, env=env, capture_output=True, text=True)
+        sub = subprocess.run(c_argv, cwd=ROOT, env=env, capture_output=True, text=True,
+                             creationflags=subprocess.CREATE_NO_WINDOW, timeout=55)
         all_raw.extend(sub.stdout.encode("utf-8", errors="replace"))
         all_raw.extend(sub.stderr.encode("utf-8", errors="replace"))
         short_name = exe_name.replace("test_native_retail_renderer_", "").replace("test_native_retail_", "")
         if sub.returncode == 0:
             print(f"PASS: {short_name:15s} (exit 0)", flush=True)
-            client_results.append(dict(target=exe_name, exit=0, status="PASS"))
+            client_results.append(dict(target=exe_name, exit=0, status="PASS", argv=c_argv,
+                                       executable_sha256=sha(exe_path)))
         else:
             print(f"FAIL: {short_name:15s} (exit {sub.returncode})", flush=True)
             print("  stdout:", sub.stdout.strip())
             print("  stderr:", sub.stderr.strip())
             failed += 1
-            client_results.append(dict(target=exe_name, exit=sub.returncode, status="FAIL"))
+            client_results.append(dict(target=exe_name, exit=sub.returncode, status="FAIL", argv=c_argv,
+                                       executable_sha256=sha(exe_path)))
 
     total_time = time.monotonic() - start_total
     buf = io.BytesIO()
@@ -228,6 +253,10 @@ elif phase in ("all", "all_clients"):
         source_commit=git("rev-parse", "HEAD"),
         tracked_status=git("status", "--porcelain", "-uno"),
         phase="all",
+        source_manifest_sha256=sha(OUT / "SOURCE_FILES.json"),
+        compiler_sha256=sha(bin_dir / "clang++.exe"),
+        cache_sha256=sha(build / "CMakeCache.txt"),
+        runner_sha256=sha(Path(__file__)),
         game_run=False,
         visible_window=False,
         audio_endpoint=False,
@@ -311,5 +340,4 @@ receipt = dict(
 (OUT / "RESULT.json").write_text(json.dumps(receipt, indent=2) + "\n", newline="\n")
 assert pins == {n: sha(ROOT / n) for n in pins}
 print(receipt["status"], phase, "exit", exit_code, "seconds", round(receipt["seconds"], 2), flush=True)
-if timed_out or (exit_code != 0 and phase != "negative"):
-    sys.exit(1)
+require_check_success(exit_code, timed_out, is_skip)

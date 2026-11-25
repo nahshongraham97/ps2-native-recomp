@@ -16,6 +16,7 @@ SYNC_FILES = [
     "research/ledger/native_module_classification.json",
     "progress.svg",
     "tools/research/generate_ledgers.py",
+    "tools/research/aot_inventory.py",
 ]
 
 SYNC_DOCS = [

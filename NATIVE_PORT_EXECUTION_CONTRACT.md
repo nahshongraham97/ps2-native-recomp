@@ -303,6 +303,17 @@ its behavior or substitute another sound/file/frame.
 
 ## Mandatory gate for each change and release candidate
 
+Before admitting saved-state evidence, establish its exact producer/version,
+serialized ABI, section order, variable-length fields and checked extents.
+The version-8 VU/IPU/GS regression is mandatory: an intervening IPU section
+invalidates the old backwards-from-GS extraction. Validate all required bounds
+before restoring any state. A valid program key or successful generated
+execution cannot authenticate bytes taken from the wrong source region.
+Capture provenance must bind original-file hash, exact region, extracted-byte
+hash and entry point. Keep generated coverage, restored-field coverage,
+synthetic behavior and independently compared register/memory/packet behavior
+as separate claims. A missing comparison leaves equivalence OPEN.
+
 | Evidence | Reject if |
 | --- | --- |
 | Exact retail call/asset bytes and source or disassembly | Method, bank, ID, format, or callback inferred |
@@ -323,36 +334,24 @@ the implementation and rerun the gate; do not weaken the checker.
 
 ## Known open evidence at this revision
 
-- `runtime/src/memory.cpp` retains fixed `g_ram`/`g_spr` and PS2 address
-  resolution. That does not meet the owner's native-memory definition.
-- `runtime/src/iop/msl_native.cpp` has inferred bank-handle mapping and a
-  fallback to bank 0. Correct sound identity is unproven.
-- Historical card `GetInfo2` evidence has a directory-backed success path,
-  but the owner observed profile-loading regression in that older route.
-  Native UI discovery and complete save/reload remain OPEN; emulating card
-  status or preserving console save bytes is not a required implementation.
-- The owner reports wrong/random sound effects and dead keyboard/controller
-  input in the newer milestone. The owner's verified playable 2026-11-10
-  backup is present with runner, card, and state data and is the behavioral
-  oracle; the Kombat Practice package
-  is not that checkpoint. These are release blockers, not acceptable deltas.
-- The 2026-11-15 17:57 Run 3 at fork `c34b3fb` records a card-change `-1`
-  followed by successful queries and `/BASLUS-21410` file operations; it is
-  a **card behavior reference**, not proof of current card behavior or full
-  game acceptance. The 2026-11-16 image baseline intentionally had silent
-  game voices and cannot be used as an audio oracle. A suitable exact-sound
-  event-to-output comparison still needs to be captured from the preserved
-  playable oracle and recorded. Current uncommitted
-  fork edits to MCSERV and MSL require their own clean matching run.
-- The 2026-11-18 14:28 run reports 18,226 GS transfers stopped in emulated
-  VRAM. An earlier 300-frame zero counter does not cover that route.
-- The 3,000-frame combat record uses scripted input, not a physical keyboard
-  and controller validation.
-- The delivered milestone binary is stamped `670ca38 dirty`; its cited 14:28
-  log is stamped `3e1770a dirty`. A clean matching build/run is still needed.
+- Generated AOT still retains guest registers, fixed guest memory and ABI.
+  Static generation is distinct from the required native transformation.
+- Callable coverage is measured from nonzero entry maps and exact switch
+  targets. A unit's address range cannot establish translated function coverage.
+- Required-effect placeholders remain registered. A successful diagnostic
+  link or bounded headless probe does not establish their retail behavior.
+- Paired function-boundary register/memory deltas and ordered VU output packet
+  comparisons across the oracle states remain OPEN. Existing synthetic cases
+  and code-identity checks have narrower scope.
+- Continuous movie playback, synchronized sound, real input-to-action,
+  connected scene rendering, complete native saves and whole-game parity
+  remain OPEN. Historical device/census logs do not close these current gates.
+- The oracle and Kombat Practice share measured hook lineage. Their distinct
+  executable hashes and hook configuration must accompany comparisons.
+  Existing oracle files are immutable; only recorded Phase 0 additions are
+  authorized. The old restored launcher has a retired path and is historical.
 
-This list is not exhaustive. Recheck each claim against current source and a
-matching run before removing it.
+This list is not exhaustive. Missing comparison evidence remains OPEN.
 
 ## Enforcement in the repository
 

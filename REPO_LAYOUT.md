@@ -36,7 +36,7 @@ This document defines the physical directory layout, repository boundaries, Phas
             │   ├── research/runs/               # Dated run records and empirical measurements
             │   └── build/oracle-telemetry/      # Git-ignored destination for oracle parity manifests & telemetry
             └── ps2-native-recomp-backup-20261110/    # Protected duplicate of oracle game tree (3,249 shared files SHA-256 identical)
-# (41 noncompliant checkouts including legacy dirty tree removed in Phase 3 after relocating 982 unique files to private-inputs/legacy-mkarmageddon-20261118/)
+# (Historical Phase 3 removal log lists 41 checkouts; present relocation archive hashes are recorded, but no before-removal manifest proves completeness.)
             └── ps2-native-recomp-backup-20261110/    # Protected duplicate of oracle game tree (3,249 shared files SHA-256 identical)
 ```
 
@@ -49,7 +49,7 @@ This document defines the physical directory layout, repository boundaries, Phas
 | **Canonical Playable Oracle** | `../../milestone_work_verified_playable_20261110` | `../../milestone_work_verified_playable_20261110` (unchanged) | **Retain (Protected)**: SOLE separate directory outside repo (`ps2run.exe` `B9EEF7DA...`, 3,256 files restored) |
 | **Kombat Practice Oracle Descendant** | `../../milestone_build_kombat_practice` | `../../milestone_build_kombat_practice` (unchanged) | **Retain (Oracle Lineage)**: Hook-enabled descendant (`8B763DCC...`) sharing `cd33a7f..67612aa` |
 | **Active Native Port Fork** | Pre-consolidation active worktree under `external/forks/` | `external/forks/ps2-native-recomp` | **Active Primary Fork**: Promoted to standalone primary `.git` tracking `origin/main` |
-| **Legacy Fork Checkout** | `external/forks/ps2-native-recomp` (`3f015562`) | Relocated protected inputs -> `private-inputs/legacy-mkarmageddon-20261118/` | **Removed (Phase 3)**: 982 unique files relocated before deletion; AOT reproduced cleanly via `reproduce_aot_pipeline.py` |
+| **Legacy Fork Checkout** | `external/forks/ps2-native-recomp` (`3f015562`) | Relocated protected inputs -> `private-inputs/legacy-mkarmageddon-20261118/` | **Removed (Phase 3)**: present archive contains 982 hashed files; completeness/origin before deletion unproved without a prior manifest |
 | **Protected Duplicate Backup** | `external/forks/ps2-native-recomp-backup-20261110` | `external/forks/ps2-native-recomp-backup-20261110` | **Protected Duplicate**: Retained until owner approves cleanup (`3,249` files SHA-256 identical to oracle) |
 | **Phase Review / Clean Worktrees (`clean-*-22`, `ps2-native-recomp-*`)** | `external/forks/*` (40 sibling MKA worktrees per `checkout_inventory.json`) | Removed in Phase 3 (`phase3_checkout_removal_log.json`) | **Removed (Phase 3)**: Verified 0 protected/dirty files before deletion (`God-Of-War-Native-Port` & `MortalKombat` retained) |
 | **External Tool / Reference Mirrors** | `../../Armageddon-backup/forks/*` (64 external repos per `checkout_inventory.json`) | `../forks/*` (sibling to `armageddon-reimplementation`) | **Read-Only External References**: `ghidra`, `pcsx2`, `PS2Recomp`, `parallel-gs`, etc.; never edit |
@@ -72,7 +72,7 @@ This document defines the physical directory layout, repository boundaries, Phas
 
 3. **Playable Oracle Reference Dataset**:
    - Location: `../../milestone_work_verified_playable_20261110` relative to parent repo (`../../milestone_build_kombat_practice` is its hook-enabled descendant).
-   - Policy: `milestone_work_verified_playable_20261110` is the **only separate reference dataset directory** outside the repository tree. It serves solely as an offline behavioral/parity oracle (supports `--no-hooks` / `--parity` and writes telemetry only to git-ignored `external/forks/ps2-native-recomp/build/oracle-telemetry/`). Neither oracle nor Kombat Practice is an accepted zero-emulation shipped port.
+   - Policy: `milestone_work_verified_playable_20261110` is the **only separate reference dataset directory** outside the repository tree. It serves solely as an offline behavioral/parity oracle (uses the tracked disposable launcher with `-Mode Parity` and writes telemetry only to git-ignored `external/forks/ps2-native-recomp/build/oracle-telemetry/`). Neither oracle nor Kombat Practice is an accepted zero-emulation shipped port.
 
 ---
 
@@ -93,3 +93,5 @@ Following the 2026-11-24 documentation consolidation, overlapping and superseded
 | `REPO_LAYOUT.md` | Directory map, checkout paths, move map, and repository relationship rules | Infrastructure |
 | `AGENTS.md` | Binding operating rules for AI agents, git commit/push rules, single-main policy | Operational |
 | `AGENT_ASSETS.md` / `AGENT_ASSETS_FULL.md` | Local tool, compiler, SDK, and script directory index (parent repo) | Tooling |
+
+Phase 0 launcher correction: preserve the oracle's existing `launch_game.bat` unchanged. The corrected `launch_verified_oracle.bat` addition delegates to tracked `launchers/launch_oracle.ps1`, which uses active-fork ignored telemetry and disposable data. The authorized addition map is tracked separately; reverify the recorded original manifest plus exactly those additions after each phase.

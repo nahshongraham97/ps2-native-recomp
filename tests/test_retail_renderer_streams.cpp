@@ -23,8 +23,8 @@
 #include <winioctl.h>
 #endif
 extern "C" int SDL_InitSubSystem(unsigned){std::abort();}
-namespace {thread_local int fail_after=-1;bool fail_close{},short_read{};unsigned close_calls{};}
-void* operator new(std::size_t n){if(fail_after==0)throw std::bad_alloc();if(fail_after>0)--fail_after;if(auto p=std::malloc(n?n:1))return p;throw std::bad_alloc();}
+namespace {thread_local int fail_after=-1;thread_local bool measure_allocations{};thread_local std::size_t allocation_attempts{};bool fail_close{},short_read{};unsigned close_calls{};}
+void* operator new(std::size_t n){if(measure_allocations)++allocation_attempts;if(fail_after==0)throw std::bad_alloc();if(fail_after>0)--fail_after;if(auto p=std::malloc(n?n:1))return p;throw std::bad_alloc();}
 void operator delete(void* p)noexcept{std::free(p);}void operator delete(void* p,std::size_t)noexcept{std::free(p);}
 extern "C" int __real_fclose(std::FILE*);
 extern "C" std::size_t __real_fread(void*,std::size_t,std::size_t,std::FILE*);
@@ -167,13 +167,24 @@ int main(int argc,char** argv)try{
    check(renderer_required::construct_core_plugin_0404(*c,x.f),"actual constructor retry");renderer_required::destroy_core_plugin_0404(*c);
   }check(done&&module_cuts,"all reached module cuts");
   done=false;
-  for(int cut=0;cut<64;++cut){Fixture x(root);auto m=x.module();RetailRendererStreamFailure f;auto keep=m->open_memory_read(data,f);std::array<std::uint8_t,2> bytes{};
+  // Filesystem path allocations depend on the actual checkout/fixture path.
+  // Measure every allocation in the successful operation, then cut each one;
+  // a fixed 64-attempt ceiling leaves longer native paths incompletely tested.
+  std::size_t stream_allocation_count{};
+  {Fixture x(root);auto m=x.module();RetailRendererStreamFailure f;auto keep=m->open_memory_read(data,f);
+   check(bool(keep),"live stream before allocation measurement");
+   allocation_attempts=0;measure_allocations=true;auto probe=m->open_resource_read("data.bin",f);measure_allocations=false;
+   stream_allocation_count=allocation_attempts;
+   check(probe&&stream_allocation_count&&stream_allocation_count<=std::size_t(std::numeric_limits<int>::max()),"successful allocation measurement fits failure counter");
+   check(m->close(*probe,f)&&m->close(*keep,f),"allocation measurement releases both streams");
+   renderer_required::destroy_core_plugin_0404(*x.core());}
+  for(std::size_t cut=0;cut<=stream_allocation_count;++cut){Fixture x(root);auto m=x.module();RetailRendererStreamFailure f;auto keep=m->open_memory_read(data,f);std::array<std::uint8_t,2> bytes{};
    check(keep&&m->read(*keep,bytes,f)->bytes==2,"existing live cursor before allocation failure");const auto baseline=x.live();
-   fail_after=cut;auto h=m->open_resource_read("data.bin",f);fail_after=-1;
+   fail_after=static_cast<int>(cut);auto h=m->open_resource_read("data.bin",f);fail_after=-1;
    if(h){done=true;check(m->close(*h,f)&&m->close(*keep,f),"actual successful cut endpoint");renderer_required::destroy_core_plugin_0404(*x.core());break;}++record_cuts;
    check(m->live_streams(f)==1&&m->observe(*keep,f)->position==2&&x.live()==baseline,"refused allocation/open preserves existing record/cursor and physical storage");
    auto retry=m->open_resource_read("data.bin",f);check(retry&&m->close(*retry,f)&&m->close(*keep,f),"actual open retry/cleanup");renderer_required::destroy_core_plugin_0404(*x.core());
-  }check(done&&record_cuts,"all reached stream/open allocation cuts");
+  }check(done&&record_cuts==stream_allocation_count,"all reached stream/open allocation cuts");
  }
  {
   Fixture x(root);later=Later::refuse;check(main_binding::initialize_retail_first_scene(x.main,x.sf)==RetailStartupGate::native_failure&&suffix_calls==1,"actual Main/Core constructors execute0404 before explicit0405 refusal");
