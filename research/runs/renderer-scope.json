@@ -1,7 +1,7 @@
 {
   "schema": "renderer_scope_work_item_v1",
   "scope": "Revised bounded ownership, measured cross-platform routes and runtime evidence. Previous engine-family admissions are preserved as historical measurements.",
-  "status": "AMENDED_CENSUS_MEASURED_A4_A5_IN_PROGRESS",
+  "status": "AMENDED_STEP6_CLOSED_WITH_RECORDED_LIMITS",
   "provenance": {
     "source_repository": "armageddon-reimplementation",
     "source_record": "research/runs/phase4-aot-completion-20261124/VERIFICATION.json",
@@ -190319,8 +190319,8 @@
       "protected_unchanged": true
     },
     "baseline_after": {
-      "path": "build/oracle-telemetry/complete-baseline-20261125-122621-0e986c8e/RESULT.json",
-      "sha256": "776a327dea8298cac6f0534d4fb742416e42e70f6430dc5aead588154947ed28",
+      "path": "build/oracle-telemetry/complete-baseline-20261125-124238-2771b6c2/RESULT.json",
+      "sha256": "83599f47842c00d4a55a86b1957e20c275698832854867f08b7d7d78ea97045c",
       "client_targets": 58,
       "client_variants": 62,
       "gates": 13,
@@ -191165,7 +191165,7 @@
       "The mapped-pair count in the progress graphic is generated from the correspondence ledger.",
       "Twelve historical handoff phrases without a colon were removed from the current status document. The document check now rejects both spellings."
     ],
-    "status": "AMENDED_CENSUS_MEASURED_WITH_STRATIFIED_PRECISION_AND_CLEAN_REPLAY",
+    "status": "AMENDED_STEP6_CLOSED_WITH_RECORDED_LIMITS",
     "zero_native_credit_added": true,
     "measured_census": {
       "path": "build/oracle-telemetry/amended-ownership-arena-correction-01.json",
@@ -191505,7 +191505,18 @@
     "fixture_runner_correction": {
       "failed_receipt": "build/oracle-telemetry/complete-baseline-20261125-122137-e87cccc5/RESULT.json",
       "failure": "The added overlay test requires an absent fixture path; the runner precreated it. This runner error was fixed and the complete union rerun. No production source was changed to pass it."
-    }
+    },
+    "amended_baseline_history": [
+      {
+        "path": "build/oracle-telemetry/complete-baseline-20261125-122621-0e986c8e/RESULT.json",
+        "sha256": "776a327dea8298cac6f0534d4fb742416e42e70f6430dc5aead588154947ed28",
+        "client_targets": 58,
+        "client_variants": 62,
+        "gates": 13,
+        "all_expected_exits": true,
+        "protected_unchanged": true
+      }
+    ]
   },
   "private_inputs_manifest": {
     "path": "private-inputs/mkarmageddon-aot-inputs/ownership-manifest.json",
@@ -191515,12 +191526,17 @@
       "sha256": "4611757f817e6c4ace87bb2d1203bca9c5d8523c33e0ae3e086890ab4b5ce148"
     },
     "reproduction": {
-      "status": "PASS_BEFORE_SAMPLED_ARENA_CORRECTION",
-      "receipt": {
-        "path": "build/oracle-telemetry/ownership-clean-20261125-04/RESULT.json",
-        "sha256": "3e3e327c040795709dbc8b3683c5f5bc8a7ffa6ded3a9efa091bacb2039a98ca"
+      "path": "build/oracle-telemetry/ownership-clean-20261125-05/RESULT.json",
+      "sha256": "4dea6f2e76081c82a56afcaea8448a8b12810c754d792c6d8e8b1b239fd35729",
+      "source_commits": {
+        "parent": "7e270282f32fd37aa7d2d25d0a31e8f0230e8b19",
+        "fork": "6227c0e668c3dc0b89c8bd6c9c5cdd17bbb8f21f"
       },
-      "scope": "The final corrected census replay is required at publication; the earlier source reproduced identical ownership rows from 399 pinned private files."
+      "ownership_rows": 15670,
+      "expected_rows_sha256": "9bf675a0e96a830ea0b5b90aa292c7f0d3b6b35b76d74c1ecc7094cc66fbe981",
+      "actual_rows_sha256": "9bf675a0e96a830ea0b5b90aa292c7f0d3b6b35b76d74c1ecc7094cc66fbe981",
+      "private_manifest_sha256": "44fa526d901730a502e852abbd00b6a1730e5065f95275c40df3026396796bcb",
+      "status": "PASS"
     }
   },
   "amendments": {
@@ -191618,9 +191634,9 @@
     "superseded_gate": "Positive named-class recovery was used as a global prerequisite. Amendments A1-A3 and A6 replace it."
   },
   "Not verified": [
-    "222 installed-table candidates remain unresolved. Shared targets outside confirmed game tables remain withheld.",
-    "The audit found 15 inconclusive RenderWare samples and 25 inconclusive game samples; inferred category counts are not established totals.",
-    "The final amended source replay and baseline receipts are refreshed at publication.",
+    "222 installed-table candidates remain unresolved, and shared targets outside confirmed game tables remain withheld.",
+    "The stratified audit leaves15RenderWare and25game samples inconclusive; inferred counts are not established ownership totals.",
+    "The clean replay uses the hash-pinned saved Ghidra instruction listing. Recreating identical Ghidra analysis from a bare ELF was not established.",
     "Whole-game native acceptance remains OPEN."
   ],
   "Contradictions with earlier documents": [
@@ -241176,7 +241192,7 @@
     "6.13": {
       "status": "DONE",
       "record": "private_inputs_manifest",
-      "pending_final_source_refresh": true
+      "clean_ownership_row_hash": "9bf675a0e96a830ea0b5b90aa292c7f0d3b6b35b76d74c1ecc7094cc66fbe981"
     },
     "6.14": {
       "status": "DONE",
