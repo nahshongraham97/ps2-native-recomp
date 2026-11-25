@@ -115,6 +115,7 @@ def main():
         destination = roots[label]
         destination.parent.mkdir(parents=True, exist_ok=True)
         command(["git", "clone", "--shared", "--no-hardlinks", "--no-checkout", "--config", "core.longpaths=true",
+                 "--config", "core.autocrlf=false",
                  short_path(original), destination.name], destination.parent, environment)
         command(["git", "checkout", "--detach", source_commits[label]], destination, environment)
         if git(destination, "status", "--porcelain", "--untracked-files=no"):
