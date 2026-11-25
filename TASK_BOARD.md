@@ -6,7 +6,7 @@ each deliverable's verified component progress and whole-game acceptance state;
 [PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is archived at
 `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
-**Resume at Step 6.1 after the housekeeping checkpoint is published.** Generate bounded ownership status, evidence kinds and evidence references for every in-scope row, then recover RTTI and vtables from the pinned retail ELF. Each Phase 7 replacement requires its own ownership evidence and differential test. The exact RenderWare census remains a strict diagnostic. The active fork's [Phase 6 evidence](https://github.com/nahshongraham97/ps2-native-recomp/blob/main/research/runs/renderer-scope.json) records the bounded census; the owner selects capability routes from the measured PS2/Xbox comparison.
+**Resume Step 6.2 at PS2 factory 0x004BC060.** Recover an original runtime class-name or type-descriptor reference that identifies the object whose constructor installs vtable 0x0064B130, or establish an equivalent named Midway class-to-vtable relation from another retail site. Verify the method slots against original bytes before assigning E4. Then publish the Step 6 closure and start Step 5S.1. The B9 trace and PS2/Xbox comparison are in the [Step 6 evidence](https://github.com/nahshongraham97/ps2-native-recomp/blob/main/research/runs/renderer-scope.json). Each Phase 7 replacement has its own ownership, transform and differential gates.
 
 R192 supplies gameplay and telemetry evidence. The November 10 playable milestone supplies saved-state and hash parity. Kombat Practice is a historical snapshot. The primary oracle designation is **pending owner confirmation**.
 
@@ -15,9 +15,12 @@ R192 supplies gameplay and telemetry evidence. The November 10 playable mileston
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`7ad30131`](https://github.com/nahshongraham97/ps2-native-recomp/commit/7ad30131ed4bc8644cf059dfc85b655072f1ee21) (pinned active fork)
+**Verified Fork Commit**: [`b1c46902`](https://github.com/nahshongraham97/ps2-native-recomp/commit/b1c46902d00ffe725ca92cc6187def9a4414b1b3) (source and evidence checkpoint)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
+- Bounded ownership of 15,669 callable entries · verified-renderware 4, verified-game 0, verified-other-library 0, inferred-renderware 136, inferred-game 131, inferred-other 0, unresolved 15,398.
+- Ownership evidence by kind (overlapping entries) · E1 4, E2 0, E3 26, E4 0, E5 165, E6 110, E7 1.
+- Native credit retains its published component evidence. This ownership pass awards zero native credit.
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
 - **In-Scope Retail Path**: **15,670** (`2,643` non-exec/library: `sdk-or-library` 2,011 + `pointer-scan-proven` 632; `12,789` open frontier) | **Excluded Online (`out-of-scope-stubbed`)**: **1,840**
 - **Code-Computed Role Partition (`function_classification_inventory.json`)**: `49` `platform-boundary` + `15,450` `retail-logic` + `2,011` `sdk-or-library` = **17,510** (in-scope: `49` + `13,610` + `2,011` = **15,670**)
@@ -44,11 +47,11 @@ R192 supplies gameplay and telemetry evidence. The November 10 playable mileston
 - **Open Frontier**: **12,789** (`9,038` `SLUS_214.10`, `1,102` `MOVIER.ovl`, `1` `GAMER.ovl`, `2,648` `no-direct-callers` across 5,400 indirect call sites)
 
 ### Tier 5 · Verified Vectors & Acceptance Placeholders
-- **Verified Differential Vectors**: **72 / 72** bit-exact match on xemu movie-variant oracle (`LOGON`/`LOGOW` selector); **0** dual-platform whole-function vectors awarding donor credit (`ps2_xbox_map.csv`: `17,511` rows = `0` exact, `0` structural, `0` composite, `18` mapped-by-role, `17,493` unmapped)
+- **Verified Differential Vectors**: **72 / 72** bit-exact match on xemu movie-variant oracle (`LOGON`/`LOGOW` selector); **0** dual-platform whole-function vectors awarding donor credit (`ps2_xbox_map.csv`: `17,519` rows = `0` exact, `0` structural, `0` composite, `52` mapped-by-role, `17,467` unmapped)
 - **Acceptance Placeholders**: **26** registered unrecovered placeholders (`0` undefined link symbols; `13` hit across 369 calls in 60-frame headless probe); whole-game acceptance strictly **OPEN**
 
 ### Xbox Reference (`default.xbe` — read-only identification and comparison; no completion percentage)
-- **Reference Catalog**: **22,579** `default.xbe` routines inspected (`21,321` in non-XONLINE candidate set, `0` donor-credited, `18` role-mapped candidates). Read-only library identification and measured Xbox-versus-PS2 capability comparisons are authorized. Algorithm adoption remains limited to renderer, viewport, and HD presentation after the per-capability comparison; the owner decides the route. GS packet decoding is an interim concession only.
+- **Reference Catalog**: **22,579** `default.xbe` routines inspected (`21,321` in non-XONLINE candidate set, `0` donor-credited, `52` role-mapped candidates). Read-only library identification and measured Xbox-versus-PS2 capability comparisons are authorized. Algorithm adoption remains limited to renderer, viewport, and HD presentation after the per-capability comparison; the owner decides the route. GS packet decoding is an interim concession only.
 <!-- PROGRESS:END -->
 
 | Order | Deliverable | State | Verified progress & open frontier |

@@ -11,9 +11,12 @@ The target architecture uses AOT static C++ transformed to typed native memory a
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`7ad30131`](https://github.com/nahshongraham97/ps2-native-recomp/commit/7ad30131ed4bc8644cf059dfc85b655072f1ee21) (pinned active fork)
+**Verified Fork Commit**: [`b1c46902`](https://github.com/nahshongraham97/ps2-native-recomp/commit/b1c46902d00ffe725ca92cc6187def9a4414b1b3) (source and evidence checkpoint)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
+- Bounded ownership of 15,669 callable entries · verified-renderware 4, verified-game 0, verified-other-library 0, inferred-renderware 136, inferred-game 131, inferred-other 0, unresolved 15,398.
+- Ownership evidence by kind (overlapping entries) · E1 4, E2 0, E3 26, E4 0, E5 165, E6 110, E7 1.
+- Native credit retains its published component evidence. This ownership pass awards zero native credit.
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
 - **In-Scope Retail Path**: **15,670** (`2,643` non-exec/library: `sdk-or-library` 2,011 + `pointer-scan-proven` 632; `12,789` open frontier) | **Excluded Online (`out-of-scope-stubbed`)**: **1,840**
 - **Code-Computed Role Partition (`function_classification_inventory.json`)**: `49` `platform-boundary` + `15,450` `retail-logic` + `2,011` `sdk-or-library` = **17,510** (in-scope: `49` + `13,610` + `2,011` = **15,670**)
@@ -40,11 +43,11 @@ The target architecture uses AOT static C++ transformed to typed native memory a
 - **Open Frontier**: **12,789** (`9,038` `SLUS_214.10`, `1,102` `MOVIER.ovl`, `1` `GAMER.ovl`, `2,648` `no-direct-callers` across 5,400 indirect call sites)
 
 ### Tier 5 · Verified Vectors & Acceptance Placeholders
-- **Verified Differential Vectors**: **72 / 72** bit-exact match on xemu movie-variant oracle (`LOGON`/`LOGOW` selector); **0** dual-platform whole-function vectors awarding donor credit (`ps2_xbox_map.csv`: `17,511` rows = `0` exact, `0` structural, `0` composite, `18` mapped-by-role, `17,493` unmapped)
+- **Verified Differential Vectors**: **72 / 72** bit-exact match on xemu movie-variant oracle (`LOGON`/`LOGOW` selector); **0** dual-platform whole-function vectors awarding donor credit (`ps2_xbox_map.csv`: `17,519` rows = `0` exact, `0` structural, `0` composite, `52` mapped-by-role, `17,467` unmapped)
 - **Acceptance Placeholders**: **26** registered unrecovered placeholders (`0` undefined link symbols; `13` hit across 369 calls in 60-frame headless probe); whole-game acceptance strictly **OPEN**
 
 ### Xbox Reference (`default.xbe` — read-only identification and comparison; no completion percentage)
-- **Reference Catalog**: **22,579** `default.xbe` routines inspected (`21,321` in non-XONLINE candidate set, `0` donor-credited, `18` role-mapped candidates). Read-only library identification and measured Xbox-versus-PS2 capability comparisons are authorized. Algorithm adoption remains limited to renderer, viewport, and HD presentation after the per-capability comparison; the owner decides the route. GS packet decoding is an interim concession only.
+- **Reference Catalog**: **22,579** `default.xbe` routines inspected (`21,321` in non-XONLINE candidate set, `0` donor-credited, `52` role-mapped candidates). Read-only library identification and measured Xbox-versus-PS2 capability comparisons are authorized. Algorithm adoption remains limited to renderer, viewport, and HD presentation after the per-capability comparison; the owner decides the route. GS packet decoding is an interim concession only.
 <!-- PROGRESS:END -->
 
 ## Documentation & Entry Points
@@ -65,6 +68,8 @@ The protected duplicate oracle game copy is `external/forks/ps2-native-recomp-ba
 Historical logs and experiments live in `research/runs/` and `research/history/`; they are evidence for dated builds, never live instructions. The consolidated status archive lives in `research/history/superseded-status-docs-20261124/`. Keep retail inputs and generated code outside the current Git index. The integration repository’s checkout audit records the historical index entries, local preservation hashes and verified recovery paths. Use `python -B tools/research/hydrate_retail_inputs.py` in the integration repository to prepare the pinned inputs for a local build.
 
 Published Phases 0–5 carry forward within their recorded evidence scope. The Phase 5 actual generated-unit prototype passes for both overlay initializers, with typed ownership, explicit scalar effects, saved-input differentials and structural guest-accessor rejection. Its measured transform tier is separate from production integration and credited implementations. Phase 6 identifies renderer plugins, camera and matrix operations, device requests and pipeline callbacks. Every in-scope callable entry has a generated AOT body. The separate descriptor row is data. The exact RenderWare function count remains open. The [renderer scope evidence](https://github.com/nahshongraham97/ps2-native-recomp/blob/main/research/runs/renderer-scope.json) records the ownership evidence and its limits. The active gameplay oracle is the R192 build identified at the top of this README.
+
+The Xbox comparison in the correspondence ledger favors PS2 for matrix transforms and Xbox as a reference for viewport and HD presentation. Streams, plugin registration, camera view window, heap and texture work have comparable measured routes. Renderer core, materials, geometry and world still lack enough evidence to choose. The owner decides each route. The generated PS2 renderer and native GPU services remain the recommended implementation path. A higher-resolution GS/VU replay alone does not establish correct asset layouts or scene presentation.
 
 Generation uses the user's pinned ELF, overlay captures and existing dependency packages. From the integration repository, run `python -B tools/research/reproduce_aot_pipeline.py`, regenerate with `python -B tools/research/generate_ledgers.py`, then synchronize with `python -B tools/research/sync_verify.py --sync-to-fork`. Generated retail C++ remains ignored.
 

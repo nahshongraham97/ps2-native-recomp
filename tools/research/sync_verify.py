@@ -17,6 +17,10 @@ SYNC_FILES = [
     "progress.svg",
     "tools/research/generate_ledgers.py",
     "tools/research/aot_inventory.py",
+    "tools/research/compute_cross_isa_evidence.py",
+    "tools/research/measure_xbox_capabilities.py",
+    "research/runs/xbox-donor-20261121/PUBLICATION.json",
+    "research/runs/test_full_existence_validation.py",
 ]
 
 SYNC_DOCS = [

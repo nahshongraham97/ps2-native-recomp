@@ -147,20 +147,20 @@ def plugin_attach_calls(original):
     return rows
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--parent-root", type=Path, required=True)
-    parser.add_argument("--fork-root", type=Path, default=Path(__file__).resolve().parents[2])
-    parser.add_argument("--sdk31-root", type=Path, help="Local checkout of the pinned RenderWare 3.1 PS2 reference")
-    parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--require-exact-renderware", action="store_true",
-                        help="Write bounded evidence, then refuse if exact library ownership remains unknown")
-    args = parser.parse_args()
-    parent, fork = args.parent_root.resolve(), args.fork_root.resolve()
-    output = args.output.resolve()
-    telemetry = (fork / "build/oracle-telemetry").resolve()
-    if not output.is_relative_to(telemetry) or output.exists():
-        raise AssertionError("Output must be a NEW file inside fork build/oracle-telemetry")
+GHIDRA_EXPORT_SHA256 = {
+    "functions.tsv": "3ee745347f4f8076171fec3b6974dd01311bd165a30b5b359926f1a79edaeaa9",
+    "function-bodies.tsv": "4f920c6660dba7ba5fd2ccf42150d7d464f2e1153110751ee81efb08ff9677c3",
+    "direct-call-targets.tsv": "51000c6d42d580af41ac8c133cf19805cd4a1e5233668109d1dc908042462624",
+    "instructions.tsv": "4611757f817e6c4ace87bb2d1203bca9c5d8523c33e0ae3e086890ab4b5ce148",
+}
+
+
+def verify_export_pin(name, observed):
+    if GHIDRA_EXPORT_SHA256[name] != observed:
+        raise ValueError(f"Ghidra export identity changed: {name}")
+
+
+def measure_scope(parent: Path, fork: Path, *, sdk31_root=None, ledger_rows=None, bounded=False, require_exact=False):
     pins: dict[str, dict] = {}
 
     def pin(path: Path) -> bytes:
@@ -168,6 +168,8 @@ def main() -> None:
         key = ("fork/" + path.relative_to(fork).as_posix() if path.is_relative_to(fork)
                else "parent/" + path.relative_to(parent).as_posix())
         pins[key] = {"bytes": len(data), "sha256": digest(data)}
+        if path.name in GHIDRA_EXPORT_SHA256 and path.parent.name == "export-20261118-230132-1875-18160":
+            verify_export_pin(path.name, pins[key]["sha256"])
         return data
 
     pin(Path(__file__).resolve())
@@ -175,7 +177,7 @@ def main() -> None:
     pin(fork / "tools/research/renderer_sdk_roles.py")
     pin(fork / "tools/research/renderer_pipeline_nodes.py")
     ledger = fork / "research/ledger/functions.csv"
-    rows = list(csv.DictReader(pin(ledger).decode("utf-8-sig").splitlines()))
+    rows = ledger_rows if ledger_rows is not None else list(csv.DictReader(pin(ledger).decode("utf-8-sig").splitlines()))
     inventory = json.loads(pin(fork / "research/ledger/aot_coverage_inventory.json"))
     pin(fork / "research/ledger/function_classification_inventory.json")
     pin(fork / "research/ledger/native_module_classification.json")
@@ -298,7 +300,7 @@ def main() -> None:
         row["registration_prefix_sha256"] = digest(original(start, end - start))
         row["registration_prefix_end_exclusive"] = f"{end:08x}"
     attachment_word_count = sum((end - start) // 4 for start, end in spans.items())
-    sdk = args.sdk31_root or parent.parent / "forks/rwsdk-v3.1-ps2"
+    sdk = sdk31_root or parent.parent / "forks/rwsdk-v3.1-ps2"
     sdk_roles = matched_sdk_roles(original, sdk)
     for start, end, evidence in sdk_roles:
         spans[start] = end
@@ -372,13 +374,19 @@ def main() -> None:
         key=lambda row: (row["module"], row["address"]))
     if len(unclassified) + len(candidates) + len(proved_data) != len(scoped):
         raise AssertionError("Engine-family membership/complement does not partition raw scope")
-    exact_refusal = args.require_exact_renderware
+    ownership = None
+    if bounded or require_exact:
+        from bounded_ownership import collect
+        pin(fork / "tools/research/bounded_ownership.py")
+        pin(raw_catalogue.parent / "function-bodies.tsv")
+        ownership = collect(rows, raw_catalogue.parent, original, elf, segments, candidates, proved_data, fork, parent)
+    exact_refusal = require_exact and not ownership["exact"]
     report = {
         "schema": "renderer_scope_lower_bound_v3", "script_version": 3,
         "result": ("FAIL_NAMED_ENGINE_CALLABLES_MISSING" if missing or missing_outside else
                    "REFUSE_EXACT_RENDERWARE_TOTAL_UNKNOWN" if exact_refusal else
                    "PASS_BOUNDED_ENGINE_FAMILY_CENSUS_TOTAL_OPEN"),
-        "require_exact_renderware": args.require_exact_renderware,
+        "require_exact_renderware": require_exact,
         "fork_head": subprocess.check_output(["git", "-C", str(fork), "rev-parse", "HEAD"], text=True).strip(),
         "python_version": __import__("sys").version,
         "raw_in_scope_catalogue_entries": len(scoped),
@@ -392,7 +400,7 @@ def main() -> None:
         "exact_renderware_symbol_ownership_count": None,
         "exact_renderware_total": None,
         "identity_limit": "RenderWare product attribution is an inference from existing cross-version engine/module evidence. Registration-family membership and exact PS2 bodies are proved separately; conventional Rw/Rp names are not recovered symbols.",
-        "unknown_total_reason": "No authenticated complete link map, library object boundary or original-symbol/signature attribution covers the remaining catalogue. Contiguous code proximity, SDK status, and native source filenames cannot close this gap.",
+        "unknown_total_reason": "The callable complement lacks per-function ownership evidence. The retail corpus and bounded evidence determine the reported interval.",
         "original_identity_strings_not_function_boundary_proof": identity_strings,
         "heuristics_not_used_for_admission": {
             "in_scope_sdk_or_library_label_rows": sum(row["status"] == "sdk-or-library" and
@@ -421,12 +429,36 @@ def main() -> None:
                 "all_measured_source_sha256": measured["source_sha256"]},
         "pins": pins,
     }
+    if ownership is not None:
+        report["bounded_ownership"] = ownership
+        if ownership["exact"]:
+            report["exact_renderware_total"] = ownership["status_counts"]["verified-renderware"]
+            report["exact_renderware_symbol_ownership_count"] = report["exact_renderware_total"]
+    return report
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--parent-root", type=Path, required=True)
+    parser.add_argument("--fork-root", type=Path, default=Path(__file__).resolve().parents[2])
+    parser.add_argument("--sdk31-root", type=Path, help="Local checkout of the pinned RenderWare 3.1 PS2 reference")
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--require-exact-renderware", action="store_true",
+                        help="Write bounded evidence, then refuse if exact library ownership remains unknown")
+    parser.add_argument("--bounded", action="store_true", help="Report ownership and evidence for every catalogue row")
+    args = parser.parse_args()
+    parent, fork = args.parent_root.resolve(), args.fork_root.resolve()
+    output = args.output.resolve()
+    telemetry = (fork / "build/oracle-telemetry").resolve()
+    if not output.is_relative_to(telemetry) or output.exists():
+        raise AssertionError("Output must be a NEW file inside fork build/oracle-telemetry")
+    report = measure_scope(parent, fork, sdk31_root=args.sdk31_root, bounded=args.bounded,
+                           require_exact=args.require_exact_renderware)
     output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({key: report[key] for key in ("result", "raw_in_scope_catalogue_entries", "positively_identified_engine_family_entries", "engine_family_actual_callable_aot_entries", "remaining_unclassified_for_engine_membership", "missing_engine_callables")} | {"receipt": str(output), "sha256": digest(output.read_bytes())}))
-    if missing or missing_outside:
-        raise SystemExit(1)
-    if exact_refusal:
-        raise SystemExit(2)
+    from bounded_ownership import census_exit_code
+    raise SystemExit(census_exit_code(report["missing_engine_callables"] or report["missing_source_proved_callables_outside_raw_catalogue"],
+                                      args.require_exact_renderware, report.get("bounded_ownership", {}).get("exact", False)))
 
 
 if __name__ == "__main__":

@@ -13,9 +13,9 @@ if (_this_file.parents[2] / "external" / "forks" / "ps2-native-recomp").exists()
     REPO = _this_file.parents[2]
     FORK_ROOT = REPO / "external" / "forks" / "ps2-native-recomp"
     PARENT_PRESENT = True
-elif len(_this_file.parents) > 4 and (_this_file.parents[4] / "research" / "runs" / "ghidra-function-coverage-20261118").exists():
+elif any((p / "external/forks/ps2-native-recomp").resolve() == _this_file.parents[2] for p in _this_file.parents):
     FORK_ROOT = _this_file.parents[2]
-    REPO = _this_file.parents[4]
+    REPO = next(p for p in _this_file.parents if (p / "external/forks/ps2-native-recomp").resolve() == FORK_ROOT)
     PARENT_PRESENT = True
 else:
     FORK_ROOT = _this_file.parents[2]
@@ -165,9 +165,10 @@ def test_planted_failures():
             break
     try:
         validate_ledgers(ps2_ledger, xbox_ledger, bad_map1)
-        assert False, "Planted failure 1 FAILED to raise AssertionError!"
     except AssertionError as e:
         print(f"  Planted failure 1 caught as expected: {e}")
+    else:
+        raise AssertionError("Planted failure 1 FAILED to raise AssertionError!")
 
     # Planted Failure 1b: Signature itself claiming 'exact' while cfg_topology_match is false
     print("Testing planted failure 1b: signature claiming exact with cfg_topology_match false...")
@@ -178,9 +179,10 @@ def test_planted_failures():
         sig_obj["match_confidence"] = "exact"
         sig_p.write_text(json.dumps(sig_obj), encoding="utf-8", newline="\n")
         validate_ledgers(ps2_ledger, xbox_ledger, bad_map1)
-        assert False, "Planted failure 1b FAILED to raise AssertionError!"
     except AssertionError as e:
         print(f"  Planted failure 1b caught as expected: {e}")
+    else:
+        raise AssertionError("Planted failure 1b FAILED to raise AssertionError!")
     finally:
         sig_p.write_text(orig_sig_text, encoding="utf-8", newline="\n")
 
@@ -193,9 +195,10 @@ def test_planted_failures():
             break
     try:
         validate_ledgers(ps2_ledger, xbox_ledger, bad_map2)
-        assert False, "Planted failure 2 FAILED to raise AssertionError!"
     except AssertionError as e:
         print(f"  Planted failure 2 caught as expected: {e}")
+    else:
+        raise AssertionError("Planted failure 2 FAILED to raise AssertionError!")
 
     # Planted Failure 3: Foreign address in assertion text
     print("Testing planted failure 3: foreign ported address injected into assertion text...")
@@ -206,9 +209,10 @@ def test_planted_failures():
             break
     try:
         validate_ledgers(bad_ps2_ledger, xbox_ledger, ps2_map)
-        assert False, "Planted failure 3 FAILED to raise AssertionError!"
     except AssertionError as e:
         print(f"  Planted failure 3 caught as expected: {e}")
+    else:
+        raise AssertionError("Planted failure 3 FAILED to raise AssertionError!")
 
     # Planted Failure 4: Crediting PS2 function as implemented-via-donor without test vectors
     print("Testing planted failure 4: crediting PS2 function as implemented-via-donor without test vectors...")
@@ -219,11 +223,12 @@ def test_planted_failures():
             break
     try:
         validate_ledgers(bad_ps2_ledger4, xbox_ledger, ps2_map)
-        assert False, "Planted failure 4 FAILED to raise AssertionError!"
     except AssertionError as e:
         assert "Donor credit rejected" in str(e), f"Expected donor credit rejection, got: {e}"
         assert "vector_0012a720.json does not exist" in str(e), f"Expected missing vector file, got: {e}"
         print(f"  Planted failure 4 caught as expected: {e}")
+    else:
+        raise AssertionError("Planted failure 4 FAILED to raise AssertionError!")
 
     # Planted Failure 4b: Crediting Xbox function as implemented-via-donor without test vectors
     print("Testing planted failure 4b: crediting Xbox function as implemented-via-donor without test vectors...")
@@ -234,11 +239,12 @@ def test_planted_failures():
             break
     try:
         validate_ledgers(ps2_ledger, bad_xb_ledger4, ps2_map)
-        assert False, "Planted failure 4b FAILED to raise AssertionError!"
     except AssertionError as e:
         assert "Donor credit rejected" in str(e), f"Expected donor credit rejection, got: {e}"
         assert "vector_0023d4d0.json does not exist" in str(e), f"Expected missing vector file, got: {e}"
         print(f"  Planted failure 4b caught as expected: {e}")
+    else:
+        raise AssertionError("Planted failure 4b FAILED to raise AssertionError!")
 
     # Planted Failure 5: Evaluating an unrelated pair (Camera 00127120 vs Sound Job Enqueue 0037c170) evaluates to unrelated
     # Independent binary measurement evaluation: zero caller overrides (is_candidate and default_confidence omitted)
@@ -273,16 +279,18 @@ def test_planted_failures():
         temp_empty.write_text("", encoding="utf-8")
         try:
             validate_vector_file(temp_empty)
-            assert False, "Empty test vector file FAILED to raise AssertionError!"
         except AssertionError as e:
             print(f"  Empty vector caught as expected: {e}")
+        else:
+            raise AssertionError("Empty test vector file FAILED to raise AssertionError!")
 
         temp_placeholder.write_text("{}", encoding="utf-8")
         try:
             validate_vector_file(temp_placeholder)
-            assert False, "Placeholder dict test vector file FAILED to raise AssertionError!"
         except AssertionError as e:
             print(f"  Placeholder dict caught as expected: {e}")
+        else:
+            raise AssertionError("Placeholder dict test vector file FAILED to raise AssertionError!")
     finally:
         if temp_empty.exists():
             temp_empty.unlink()
@@ -318,27 +326,30 @@ def test_planted_failures():
         temp_bad_vec.write_text(json.dumps(dummy_vec), encoding="utf-8")
         try:
             validate_vector_file(temp_bad_vec, execute_native=False)
-            assert False, "Invalid oracle_trace_hash FAILED to raise AssertionError!"
         except AssertionError as e:
             print(f"  Invalid oracle_trace_hash caught as expected: {e}")
+        else:
+            raise AssertionError("Invalid oracle_trace_hash FAILED to raise AssertionError!")
 
         dummy_vec["oracle_trace_hash"] = "a" * 64
         dummy_vec["oracle_source"] = ""
         temp_bad_vec.write_text(json.dumps(dummy_vec), encoding="utf-8")
         try:
             validate_vector_file(temp_bad_vec, execute_native=False)
-            assert False, "Empty oracle_source FAILED to raise AssertionError!"
         except AssertionError as e:
             print(f"  Empty oracle_source caught as expected: {e}")
+        else:
+            raise AssertionError("Empty oracle_source FAILED to raise AssertionError!")
 
         # Missing trace file test
         dummy_vec["oracle_source"] = "nonexistent_trace_file.bin"
         temp_bad_vec.write_text(json.dumps(dummy_vec), encoding="utf-8")
         try:
             validate_vector_file(temp_bad_vec, execute_native=False)
-            assert False, "Missing trace file FAILED to raise AssertionError!"
         except AssertionError as e:
             print(f"  Missing trace file caught as expected: {e}")
+        else:
+            raise AssertionError("Missing trace file FAILED to raise AssertionError!")
 
         # Stored trace hash mismatch test
         dummy_vec["oracle_source"] = "retail_SLUS_214.10_mips_trace.bin"
@@ -346,9 +357,10 @@ def test_planted_failures():
         temp_bad_vec.write_text(json.dumps(dummy_vec), encoding="utf-8")
         try:
             validate_vector_file(temp_bad_vec, execute_native=False)
-            assert False, "Stored trace hash mismatch FAILED to raise AssertionError!"
         except AssertionError as e:
             print(f"  Stored trace hash mismatch caught as expected: {e}")
+        else:
+            raise AssertionError("Stored trace hash mismatch FAILED to raise AssertionError!")
 
         # Correct hash with native execution mismatch (Python stand-in labeled as infrastructure testing)
         dummy_vec["oracle_trace_hash"] = real_trace_hash
@@ -356,9 +368,10 @@ def test_planted_failures():
         temp_bad_vec.write_text(json.dumps(dummy_vec), encoding="utf-8")
         try:
             validate_vector_file(temp_bad_vec, execute_native=True)
-            assert False, "Native output mismatch FAILED to raise AssertionError!"
         except AssertionError as e:
             print(f"  Native output mismatch caught as expected: {e}")
+        else:
+            raise AssertionError("Native output mismatch FAILED to raise AssertionError!")
 
         # Correct hash with successful native execution (Python stand-in labeled as infrastructure testing)
         register_native_dispatch("SoundCatalog_ValidateIndex", lambda x: 1, implementation_kind="infrastructure_testing_python")
@@ -381,9 +394,10 @@ def test_planted_failures():
         gp_path.write_text(json.dumps(bad_gp), encoding="utf-8", newline="\n")
         try:
             validate_gp_accesses(REPO)
-            assert False, "Corrupted GP access FAILED to raise AssertionError!"
         except AssertionError as e:
             print(f"  Corrupted GP access caught as expected: {e}")
+        else:
+            raise AssertionError("Corrupted GP access FAILED to raise AssertionError!")
     finally:
         gp_path.write_text(orig_gp_text, encoding="utf-8", newline="\n")
 
@@ -406,10 +420,11 @@ def test_planted_failures():
         ev_path.write_text(json.dumps(bad_ev), encoding="utf-8", newline="\n")
         try:
             validate_ledgers(ps2_ledger, xbox_ledger, ps2_map)
-            assert False, "Untagged component FAILED to raise AssertionError!"
         except AssertionError as e:
             assert "materials has invalid or missing verification_class" in str(e), f"Unexpected error: {e}"
             print(f"  Untagged component caught as expected: {e}")
+        else:
+            raise AssertionError("Untagged component FAILED to raise AssertionError!")
 
         # native-design-check claiming credit
         bad_ev2 = json.loads(orig_ev_text)
@@ -418,10 +433,11 @@ def test_planted_failures():
         ev_path.write_text(json.dumps(bad_ev2), encoding="utf-8", newline="\n")
         try:
             validate_ledgers(ps2_ledger, xbox_ledger, ps2_map)
-            assert False, "native-design-check claiming credit FAILED to raise AssertionError!"
         except AssertionError as e:
             assert "native-design-check must not count toward credit" in str(e), f"Unexpected error: {e}"
             print(f"  native-design-check claiming credit caught as expected: {e}")
+        else:
+            raise AssertionError("native-design-check claiming credit FAILED to raise AssertionError!")
     finally:
         ev_path.write_text(orig_ev_text, encoding="utf-8", newline="\n")
 
@@ -435,10 +451,11 @@ def test_planted_failures():
         ev_path.write_text(json.dumps(bad_ev3), encoding="utf-8", newline="\n")
         try:
             validate_ledgers(ps2_ledger, xbox_ledger, ps2_map)
-            assert False, "Acceptance claim with non-empty placeholders FAILED to raise AssertionError!"
         except AssertionError as e:
             assert "Acceptance claimed while placeholder registry is non-empty" in str(e), f"Unexpected error: {e}"
             print(f"  Acceptance claim with non-empty placeholders caught as expected: {e}")
+        else:
+            raise AssertionError("Acceptance claim with non-empty placeholders FAILED to raise AssertionError!")
     finally:
         ev_path.write_text(orig_ev_text, encoding="utf-8", newline="\n")
 
@@ -455,10 +472,11 @@ def test_planted_failures():
         ev_path.write_text(json.dumps(bad_ev_dep), encoding="utf-8", newline="\n")
         try:
             validate_ledgers(ps2_ledger, xbox_ledger, ps2_map)
-            assert False, "Credited function with placeholder dependency FAILED to raise AssertionError!"
         except AssertionError as e:
             assert "is registered as an unrecovered placeholder" in str(e), f"Unexpected error: {e}"
             print(f"  Credited function with placeholder dependency caught as expected: {e}")
+        else:
+            raise AssertionError("Credited function with placeholder dependency FAILED to raise AssertionError!")
     finally:
         ev_path.write_text(orig_ev_text, encoding="utf-8", newline="\n")
 
@@ -495,20 +513,67 @@ def test_planted_failures():
         readme_p.write_text(orig_readme + "\n[local](file:///C:/Users/fake/doc.md)\n", encoding="utf-8", newline="\n")
         try:
             validate_current_docs(REPO)
-            assert False, "file:/// link FAILED to raise AssertionError!"
         except AssertionError as e:
             assert "file:///" in str(e), f"Unexpected error: {e}"
             print(f"  file:/// link caught as expected: {e}")
+        else:
+            raise AssertionError("file:/// link FAILED to raise AssertionError!")
 
         readme_p.write_text(orig_readme + "\n[broken](nonexistent_phase1_doc_xyz.md)\n", encoding="utf-8", newline="\n")
         try:
             validate_current_docs(REPO)
-            assert False, "Broken relative link FAILED to raise AssertionError!"
         except AssertionError as e:
             assert "Broken relative markdown link" in str(e), f"Unexpected error: {e}"
             print(f"  Broken relative link caught as expected: {e}")
+        else:
+            raise AssertionError("Broken relative link FAILED to raise AssertionError!")
     finally:
         readme_p.write_text(orig_readme, encoding="utf-8", newline="\n")
+
+    print("Testing planted failure 13b: fork links cannot escape to other repositories...")
+    scratch = FORK_ROOT / "build/oracle-telemetry"
+    scratch.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix="fork-doc-links-", dir=scratch) as fixture_dir:
+        fixture = Path(fixture_dir)
+        fork = fixture / "fork"
+        fork.mkdir()
+        (fixture / "outside.md").write_text("outside repository\n", encoding="utf-8", newline="\n")
+        (fork / "inside.md").write_text("inside repository\n", encoding="utf-8", newline="\n")
+        readme = fork / "README.md"
+        # Existing targets are deliberate: existence must not admit an escape.
+        bad_links = [
+            ("relative escape", "../outside.md", "Cross-repository relative"),
+            ("encoded relative escape", "%2e%2e/outside.md", "Cross-repository relative"),
+            ("backslash escape", "..\\outside.md", "Cross-repository relative"),
+            ("Windows absolute", "C:/outside.md", "Absolute filesystem"),
+            ("Windows drive-relative", "C:outside.md", "Absolute filesystem"),
+            ("UNC", "\\\\server\\share\\outside.md", "Absolute filesystem"),
+            ("POSIX absolute", "/outside.md", "Absolute filesystem"),
+            ("parent HTTPS", "https://github.com/nahshongraham97/armageddon-reimplementation/blob/main/README.md", "Cross-repository or external"),
+            ("upstream HTTPS", "https://example.org/reference", "Cross-repository or external"),
+            ("same-fork missing file", "https://github.com/nahshongraham97/ps2-native-recomp/blob/main/missing.md", "Missing or escaped same-fork"),
+            ("same-fork encoded escape", "https://github.com/nahshongraham97/ps2-native-recomp/blob/main/%2e%2e/outside.md", "Missing or escaped same-fork"),
+            ("same-fork file as tree", "https://github.com/nahshongraham97/ps2-native-recomp/tree/main/inside.md", "not a directory"),
+            ("same-fork unknown commit", "https://github.com/nahshongraham97/ps2-native-recomp/commit/" + "0" * 40, "Unknown same-fork commit"),
+        ]
+        bad_documents = [(label, f"[planted]({target})", expected) for label, target, expected in bad_links]
+        bad_documents.extend([
+            ("reference definition", "[source]: ../outside.md", "Cross-repository relative"),
+            ("external autolink", "<https://example.org/outside>", "Cross-repository or external"),
+        ])
+        for label, document, expected in bad_documents:
+            readme.write_text(document + "\n", encoding="utf-8", newline="\n")
+            try:
+                validate_current_docs(fork, fork_only=True)
+            except AssertionError as error:
+                assert expected in str(error), f"{label}: unexpected rejection: {error}"
+            else:
+                raise AssertionError(f"{label}: fork-only link check admitted planted failure")
+        for target in ("inside.md", "inside.md#fragment", "#fragment",
+                       "https://github.com/nahshongraham97/ps2-native-recomp/blob/main/inside.md"):
+            readme.write_text(f"[positive]({target})\n", encoding="utf-8", newline="\n")
+            validate_current_docs(fork, fork_only=True)
+        print(f"  Rejected all {len(bad_documents)} cross-repository/absolute/missing-file cases; four in-fork positives passed.")
 
     # Planted Failure 14: Old Xbox-first 'everything' wording fails closed
     print("Testing planted failure 14: old Xbox-first everything wording rejection...")
@@ -518,10 +583,11 @@ def test_planted_failures():
         agents_p.write_text(orig_agents + "\nOwner priority is Xbox-first investigation for everything still to be implemented.\n", encoding="utf-8", newline="\n")
         try:
             validate_current_docs(REPO)
-            assert False, "Old Xbox-first everything wording FAILED to raise AssertionError!"
         except AssertionError as e:
             assert "Xbox-first 'everything' wording" in str(e), f"Unexpected error: {e}"
             print(f"  Old Xbox-first everything wording caught as expected: {e}")
+        else:
+            raise AssertionError("Old Xbox-first everything wording FAILED to raise AssertionError!")
     finally:
         agents_p.write_text(orig_agents, encoding="utf-8", newline="\n")
 
@@ -536,20 +602,22 @@ def test_planted_failures():
         inv_p.write_text(json.dumps(bad_inv, indent=2) + "\n", encoding="utf-8", newline="\n")
         try:
             compute_aot_metrics(ps2_ledger)
-            assert False, "Unmeasured MOVIER.ovl AOT numerator FAILED to raise AssertionError!"
         except AssertionError as e:
             assert "Unmeasured AOT numerator" in str(e), f"Unexpected error: {e}"
             print(f"  Unmeasured overlay AOT numerator caught as expected: {e}")
+        else:
+            raise AssertionError("Unmeasured MOVIER.ovl AOT numerator FAILED to raise AssertionError!")
 
         bad_inv2 = json.loads(orig_inv)
         bad_inv2["modules"]["SLUS_214.10"]["static_aot_count"] = 9999
         inv_p.write_text(json.dumps(bad_inv2, indent=2) + "\n", encoding="utf-8", newline="\n")
         try:
             compute_aot_metrics(ps2_ledger)
-            assert False, "Mismatched SLUS_214.10 AOT numerator FAILED to raise AssertionError!"
         except AssertionError as e:
             assert "Hardcoded/mismatched SLUS_214.10 AOT numerator" in str(e), f"Unexpected error: {e}"
             print(f"  Hardcoded SLUS_214.10 AOT numerator caught as expected: {e}")
+        else:
+            raise AssertionError("Mismatched SLUS_214.10 AOT numerator FAILED to raise AssertionError!")
     finally:
         inv_p.write_text(orig_inv, encoding="utf-8", newline="\n")
 
@@ -560,10 +628,11 @@ def test_planted_failures():
         readme_p.write_text(orig_readme2.replace("2,537 / 2,537", "0 / 2,537"), encoding="utf-8", newline="\n")
         try:
             validate_progress_aot_tier(REPO, ps2_ledger)
-            assert False, "Hand-edited README.md Tier 2 numerator FAILED to raise AssertionError!"
         except AssertionError as e:
             assert "missing '2,537 / 2,537'" in str(e), f"Unexpected error: {e}"
             print(f"  Hand-edited README.md Tier 2 numerator caught as expected: {e}")
+        else:
+            raise AssertionError("Hand-edited README.md Tier 2 numerator FAILED to raise AssertionError!")
     finally:
         readme_p.write_text(orig_readme2, encoding="utf-8", newline="\n")
 
@@ -576,10 +645,11 @@ def test_planted_failures():
         handoff_p.write_text(orig_handoff + "\nWork in external/forks/" + "retail" + "-main-22/.\n", encoding="utf-8", newline="\n")
         try:
             validate_current_docs(REPO)
-            assert False, "Retired fork directory name FAILED to raise AssertionError!"
         except AssertionError as e:
             assert "Forbidden retired fork directory reference" in str(e), f"Unexpected error: {e}"
             print(f"  Retired fork reference caught as expected: {e}")
+        else:
+            raise AssertionError("Retired fork directory name FAILED to raise AssertionError!")
     finally:
         handoff_p.write_text(orig_handoff, encoding="utf-8", newline="\n")
 
@@ -593,19 +663,21 @@ def test_planted_failures():
         readme_p.write_text(orig_readme_p3.replace(measured_transform_token, "**500 / 15,670**"), encoding="utf-8", newline="\n")
         try:
             validate_progress_aot_tier(REPO, ps2_ledger)
-            assert False, "Hand-edited Tier 3 transformed count FAILED to raise AssertionError!"
         except AssertionError as e:
             assert "Unmeasured/mismatched multi-tier token" in str(e), f"Unexpected error: {e}"
             print(f"  Hand-edited Tier 3 count caught as expected: {e}")
+        else:
+            raise AssertionError("Hand-edited Tier 3 transformed count FAILED to raise AssertionError!")
 
         bad_xb = orig_readme_p3.replace("22,579** `default.xbe` routines inspected", "22,579** `default.xbe` routines inspected (0.00%)")
         readme_p.write_text(bad_xb, encoding="utf-8", newline="\n")
         try:
             validate_progress_aot_tier(REPO, ps2_ledger)
-            assert False, "Percentage on Xbox Reference line FAILED to raise AssertionError!"
         except AssertionError as e:
             assert "Forbidden percentage metric in Xbox Reference" in str(e), f"Unexpected error: {e}"
             print(f"  Xbox Reference percentage caught as expected: {e}")
+        else:
+            raise AssertionError("Percentage on Xbox Reference line FAILED to raise AssertionError!")
     finally:
         readme_p.write_text(orig_readme_p3, encoding="utf-8", newline="\n")
 
@@ -617,10 +689,11 @@ def test_planted_failures():
         cls_p.write_text(json.dumps(bad_cls, indent=2) + "\n", encoding="utf-8", newline="\n")
         try:
             validate_classifications(REPO, ps2_ledger)
-            assert False, "Mismatched classification sum FAILED to raise AssertionError!"
         except AssertionError as e:
             assert "Classification catalog sum" in str(e), f"Unexpected error: {e}"
             print(f"  Mismatched classification partition sum caught as expected: {e}")
+        else:
+            raise AssertionError("Mismatched classification sum FAILED to raise AssertionError!")
     finally:
         cls_p.write_text(orig_cls, encoding="utf-8", newline="\n")
 
@@ -917,7 +990,147 @@ std::uint64_t initialize_movier(OverlaySelection& owner) noexcept {
             raise AssertionError("Unauthenticated transform proof was accepted")
     print("  Scalar-only credit and altered proof rejected without changing measured files.")
 
+    test_bounded_census_failures(ps2_ledger, ps2_map)
     print("PASS: All planted-failure cases successfully caught and proven to fail closed.")
+
+
+def test_bounded_census_failures(ledger, mappings):
+    from bounded_ownership import anchor_words, census_exit_code, clusters, exact_verdict, game_class_provenance, named_member, resource_anchor, runtime_edge, validate_ledger_rows, verified_trace_edges
+    from audit_subzero_retail_hierarchy_inputs import elf_segments, va_to_offset
+    from generate_ledgers import bounded_progress, validate_bounded_progress, validate_prototype_levels, capability_map_rows, donor_comparison
+
+    def rejects(operation, message):
+        try:
+            operation()
+        except (AssertionError, ValueError) as error:
+            assert message.lower() in str(error).lower(), str(error)
+        else:
+            raise AssertionError(f"Planted failure escaped: {message}")
+
+    known = ["verified-game", "verified-renderware", "verified-other-library"]
+    from measure_renderer_scope import GHIDRA_EXPORT_SHA256, verify_export_pin
+    for name, expected_digest in GHIDRA_EXPORT_SHA256.items():
+        verify_export_pin(name, expected_digest)
+        rejects(lambda: verify_export_pin(name, "0" * 64), "Ghidra export identity changed")
+    pin = next(line for line in (REPO / "README.md").read_text(encoding="utf-8").splitlines() if line.startswith("**Verified Fork Commit**:"))
+    assert generate_ledgers.pin_refresh_only(["README.md"], "-" + pin + "\n+" + pin)
+    assert not generate_ledgers.pin_refresh_only(["README.md"], "+" + pin + "\n+Other documentation")
+    assert not generate_ledgers.pin_refresh_only(["runtime/app.cpp"], "+" + pin)
+    assert census_exit_code([], True, exact_verdict(known)) == 0
+    for incomplete in ([], [*known, "unresolved"], [*known, "inferred-renderware"]):
+        assert census_exit_code([], True, exact_verdict(incomplete)) == 2
+        assert census_exit_code([], False, exact_verdict(incomplete)) == 0
+    assert census_exit_code(["missing"], True, True) == 1
+    assert not exact_verdict(row["ownership_status"] for row in ledger if row["catalogue_kind"] == "callable")
+    seed = next(row for row in ledger if row["module"] == "SLUS_214.10" and row["address"] == "0019f0b0")
+    validate_ledger_rows([seed])
+    rejects(lambda: validate_prototype_levels([dict(seed, transform_prototype_level="differential")], []), "Prototype differential")
+    unrelated = next(row for row in ledger if row["module"] == "SLUS_214.10" and row["ownership_status"] == "unresolved")
+    keys = ("catalogue_kind", "ownership_status", "ownership_evidence_kinds", "ownership_evidence_ref")
+    values = lambda r: {k: r[k] for k in keys}
+    expected_ownership = {r["module"] + ":" + r["address"]: values(r) for r in (seed, unrelated)}
+    swapped = [dict(seed, **values(unrelated)), dict(unrelated, **values(seed))]
+    assert bounded_progress([seed, unrelated]) == bounded_progress(swapped)
+    rejects(lambda: validate_ledger_rows(swapped, expected_ownership), "differs from original witnesses")
+    rejects(lambda: validate_ledger_rows([dict(seed, verification_level="differential")]), "native level without")
+    rejects(lambda: validate_ledger_rows([dict(seed, verification_level="differential", native_verification_ref="fiction")]), "Unverified integrated receipt")
+    rejects(lambda: validate_ledger_rows([dict(seed, ownership_evidence_kinds="E5")]), "Missing E1")
+    rejects(lambda: validate_ledger_rows([dict(seed, ownership_status="verified-game")]), "Unnamed vtable")
+    rejects(lambda: validate_ledger_rows([seed, seed]), "Duplicate")
+    fixture = bytearray(200)
+    fixture[12:23] = b"9MidwayFoo\0"
+    for slot, value in ((36, 12), (60, 32), (68, 0x101000)):
+        fixture[slot:slot+4] = value.to_bytes(4, "little")
+    member = {"class_name": "MidwayFoo", "encoded_name": "9MidwayFoo", "name_va": "0000000c",
+              "descriptor_va": "00000020", "name_pointer_slot": "00000024", "header_slot": "0000003c",
+              "vtable_va": "00000040", "method_slot": "00000044", "method": "00101000",
+              "game_owner_evidence_ref": "synthetic-only", "evidence_ref": "synthetic-only"}
+    read = lambda slot, n: bytes(fixture[slot:slot+n])
+    source = "mk7/MidwayFoo.cpp"
+    fixture[128:129+len(source)] = source.encode() + b"\0"
+    fixture[160:168] = bytes.fromhex("0000053c8000a524")
+    annotated = dict(member, game_source={"path": source, "site":"000000a0", "string_va":"00000080"})
+    key, citation = game_class_provenance(annotated, read, lambda pc: 0x101000)
+    assert named_member(dict(annotated, game_owner_evidence_ref=citation), read, {key: citation})[0] == 0x101000
+    rejects(lambda: game_class_provenance(annotated, read, lambda pc: 0x101004), "not in the verified original")
+    rejects(lambda: game_class_provenance(member, read, lambda pc: 0x101000), "Missing class-qualified")
+    admitted = {("MidwayFoo", 64): "synthetic-only"}
+    assert named_member(member, read, admitted)[0] == 0x101000
+    rejects(lambda: named_member(member, read), "no independent source witness")
+    for changes in ({"name_va": "00000008"}, {"header_slot": "00000034"}, {"method": "00101004"}):
+        rejects(lambda: named_member(dict(member, **changes), read, admitted), "Unproved original RTTI")
+    assert clusters([0, 512, 1024], {0, 1024}) == [([0, 512, 1024], [0, 1024])]
+    assert clusters([0, 1025], {0, 1025}) == []
+    assert clusters(list(range(6)), {0, 5}) == []
+    elf = (REPO / "research/inputs/SLUS_214.10").read_bytes()
+    loads = elf_segments(elf)
+    def original(address, size):
+        offset = va_to_offset(loads, address, size)
+        return elf[offset:offset + size]
+    words = anchor_words(original)
+    resource = {"reference_pc":"0044e904", "method":"0044e1c0", "pointer_word_va":"005b6e68",
+                "string_va":"00618280", "string":"konquest_common.sec"}
+    assert resource_anchor(resource, original, lambda pc: 0x44E1C0)[0] == 0x44E1C0
+    rejects(lambda: resource_anchor(dict(resource, string="konquest_changed.sec"), original, lambda pc: 0x44E1C0),
+            "Unverified game-specific resource")
+    rejects(lambda: resource_anchor(resource, original, lambda pc: None), "Unverified game-specific resource")
+    pair = (0x19F1E0, 0x19F0B0)
+    site = 0x19F214
+    sample = {"caller": "0019f1e0", "callee": "0019f0b0", "call_site": f"{site:08x}",
+              "return_address": f"{site+8:08x}", "evidence_ref": "synthetic-test-only", "jal_word_le": original(site, 4).hex()}
+    assert runtime_edge(sample, {pair: [site]}, original)[0] == pair[1]
+    for changes in ({"return_address": "0019f218"}, {"caller": "0019f0b0"}, {"jal_word_le": "00000000"}):
+        rejects(lambda: runtime_edge(dict(sample, **changes), {pair: [site]}, original), "Unproved runtime caller")
+    indirect_site = 0x31DA58
+    indirect = dict(sample, caller="0031d7b0", call_kind="jalr", call_site=f"{indirect_site:08x}", return_address="0031da60",
+                    callee="001d1dc0", jalr_register=2, jalr_register_value="001d1dc0",
+                    jal_word_le=original(indirect_site, 4).hex(), delay_word_le=original(indirect_site+4, 4).hex())
+    owner = lambda pc: int(indirect["caller"], 16)
+    assert runtime_edge(indirect, {}, original, owner)[0] == 0x1d1dc0
+    for changes in ({"jalr_register": 1}, {"jalr_register_value": "001d1dc4"}, {"delay_word_le": "00000000"}):
+        rejects(lambda: runtime_edge(dict(indirect, **changes), {}, original, owner), "Unproved runtime caller")
+    runtime = json.loads((FORK_ROOT / "research/runs/renderer-scope.json").read_bytes())["bounded_inputs"]
+    trace = runtime["admitted_runtime_traces"][0]
+    oracle = (REPO.parents[1] / "milestone_work_verified_playable_20261110/ps2run.exe").read_bytes()
+    assert list(verified_trace_edges(trace, oracle)) == trace["runtime_calls"]
+    rejects(lambda: list(verified_trace_edges(trace, b"wrong oracle")), "Wrong saved-state oracle")
+    incorrect = copy.deepcopy(trace)
+    incorrect["runtime_calls"][0]["caller"] = "00100008"
+    rejects(lambda: list(verified_trace_edges(incorrect, oracle)), "differs from dispatch event")
+    incorrect = copy.deepcopy(trace)
+    event = next(e for e in incorrect["selected_dispatch_observations"] if e.get("caller_admitted"))
+    event["preceding_host_call_event"]["host_prefix_hex"] = "00" + event["preceding_host_call_event"]["host_prefix_hex"][2:]
+    rejects(lambda: list(verified_trace_edges(incorrect, oracle)), "Unproved host call/return linkage")
+    for sites in words.values():
+        for address in sites:
+            rejects(lambda: anchor_words(lambda pc, n: bytes(n) if pc == int(address, 16) else original(pc, n)), "Stream anchor")
+
+    expected = capability_map_rows(donor_comparison())
+    from compute_cross_isa_evidence import load_cross_map
+    signature_pairs = load_cross_map()
+    for row in mappings:
+        key = (row["ps2_address"], row["xbox_address"])
+        if key in expected:
+            assert row["capability_comparison"] == expected[key]["capability_comparison"]
+            if row["map_evidence"].endswith("#capability_comparison.mapping_entries"):
+                assert signature_pairs.get(key[0]) != key[1], "Inferred callee leaked into signature verification"
+    with tempfile.TemporaryDirectory(dir=REPO / "external/forks/ps2-native-recomp/build/oracle-telemetry") as temporary:
+        fake = Path(temporary)
+        (fake / "README.md").write_text("Historical line. Owner no action.", encoding="utf-8")
+        rejects(lambda: validate_current_docs(fake), "Retired handoff wording")
+        from bounded_ownership import direct_calls
+        table = fake / "function-bodies.tsv"
+        table.write_text("entry\tstart\tend\n0019f1e0\t0019f214\t0019f217\n", encoding="utf-8")
+        assert direct_calls(fake, original, {pair[1]})[pair] == [site]
+        assert not direct_calls(fake, lambda pc, n: bytes(n), {pair[1]})
+        assert not direct_calls(fake, original, set())
+    lines = bounded_progress(ledger)
+    for name in ("README.md", "TASK_BOARD.md", "PORT_STATUS.md"):
+        current = (REPO / name).read_text(encoding="utf-8")
+        assert all(line in current for line in lines)
+        altered = current.replace(lines[0], "unresolved 0")
+        rejects(lambda: validate_bounded_progress(altered, ledger), "does not match measured ownership")
+    print("  Bounded census rejects strict unknowns, unsupported verification, duplicate rows, unbounded clusters, changed stream words and obsolete handoff wording.")
 
 
 

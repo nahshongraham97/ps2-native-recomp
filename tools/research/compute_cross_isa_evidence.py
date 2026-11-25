@@ -95,12 +95,16 @@ def load_xbox_data():
     return funcs
 
 
-def load_cross_map():
-    map_path = REPO / "research" / "ledger" / "ps2_xbox_map.csv"
+def load_cross_map(map_path=None):
+    map_path = map_path or REPO / "research" / "ledger" / "ps2_xbox_map.csv"
     ps2_to_xb = {}
     if map_path.exists():
         with open(map_path, "r", encoding="utf-8") as f:
             for row in csv.DictReader(f):
+                # The CFG/donor comparison uses its independently checked pair
+                # signatures. Heuristic ownership candidates are not callee proof.
+                if not row.get("map_evidence", "").startswith("research/cross_platform/signatures/"):
+                    continue
                 xb = row.get("xbox_address", "none")
                 if xb != "none":
                     ps2_to_xb[row["ps2_address"]] = xb.replace("0x", "").lower().zfill(8)

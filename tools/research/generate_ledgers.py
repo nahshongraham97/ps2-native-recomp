@@ -3,7 +3,7 @@
 Produces:
 1. research/ledger/xbox_functions.csv (22,579 rows)
    module,address,symbol,status,ps2_address,evidence_class,evidence_path,notes
-2. research/ledger/ps2_xbox_map.csv (17,511 rows)
+2. research/ledger/ps2_xbox_map.csv (catalogue rows and measured correspondence pairs)
    ps2_module,ps2_address,xbox_module,xbox_address,match_confidence,evidence_path,map_evidence
 3. research/ledger/functions.csv (17,510 rows)
    module,address,symbol,status,verification_level,evidence_path,donor,embedded_in,notes
@@ -11,6 +11,7 @@ Produces:
 5. Synchronized progress markdown blocks in README.md and TASK_BOARD.md
 """
 from __future__ import annotations
+import argparse
 import collections
 import csv
 import html
@@ -19,6 +20,7 @@ from pathlib import Path, PureWindowsPath
 import re
 import struct
 import subprocess
+import sys
 from urllib.parse import unquote, urlsplit
 from aot_inventory import verify_entries, verified_nonfunction_catalogue_addresses, verify_vu_snapshot_measurement, verify_transformed_functions
 
@@ -28,19 +30,39 @@ for _p in [Path(__file__).resolve(), *Path(__file__).resolve().parents]:
         break
 else:
     REPO = Path(__file__).resolve().parents[2]
+def pin_refresh_only(files, patch):
+    if not files or not set(files) <= {"README.md", "PORT_STATUS.md", "TASK_BOARD.md"}:
+        return False
+    changed = [line[1:] for line in patch.splitlines() if line.startswith(("+", "-")) and not line.startswith(("+++", "---"))]
+    return bool(changed) and all(re.fullmatch(r"\*\*Verified Fork Commit\*\*: \[\x60[0-9a-f]{8}\x60\]\(https://github\.com/nahshongraham97/ps2-native-recomp/commit/[0-9a-f]{40}\) \([^)]*\)", line) for line in changed)
+
+
+def verified_fork_checkpoint(fork):
+    def git(*args):
+        return subprocess.check_output(["git", *args], cwd=fork, text=True, encoding="utf-8", timeout=10).strip()
+    commit = git("rev-parse", "HEAD")
+    while True:
+        files = git("diff-tree", "--root", "--no-commit-id", "--name-only", "-r", commit).splitlines()
+        if not files or not set(files) <= {"README.md", "PORT_STATUS.md", "TASK_BOARD.md"}:
+            return commit
+        if not pin_refresh_only(files, git("show", "--format=", "--unified=0", commit)):
+            return commit
+        commit = git("rev-parse", commit + "^")
+
+
 def resolve_fork_commit_sha() -> str:
     for _p in [Path(__file__).resolve(), *Path(__file__).resolve().parents]:
         _fork = _p / "external" / "forks" / "ps2-native-recomp"
         if _fork.is_dir():
             try:
-                out = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=_fork, text=True, timeout=5).strip()
+                out = verified_fork_checkpoint(_fork)
                 if out:
                     return out
             except Exception:
                 pass
         if _p.name == "ps2-native-recomp":
             try:
-                out = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=_p, text=True, timeout=5).strip()
+                out = verified_fork_checkpoint(_p)
                 if out:
                     return out
             except Exception:
@@ -404,7 +426,7 @@ def build_xbox_ledger(raw_funcs, scanner_labels):
 
 def build_ps2_ledger_and_map(proven_addrs, indirect_addrs):
     """Builds research/ledger/functions.csv (17,510 rows)
-    and research/ledger/ps2_xbox_map.csv (17,511 rows).
+    and the original cross-platform correspondence rows, before bounded analysis.
     """
     ps2_ledger_rows = []
     map_rows = []
@@ -446,7 +468,7 @@ def build_ps2_ledger_and_map(proven_addrs, indirect_addrs):
     with prev_path.open(encoding="utf-8") as f:
         for r in csv.DictReader(f):
             if r["module"] == "SLUS_214.10":
-                prev_map[r["address"]] = (r["status"], r["verification_level"], r["evidence_path"])
+                prev_map[r["address"]] = (r["status"], r.get("legacy_verification_level", r["verification_level"]), r["evidence_path"])
 
     # 1. Base ELF (13,138 functions)
     with funcs_tsv.open(encoding="utf-8") as f:
@@ -741,6 +763,117 @@ LEGEND = [
 SVG_W, SVG_P = 1000, 2.17
 
 
+OWNERSHIP_FIELDS = ["catalogue_kind", "ownership_status", "ownership_evidence_kinds", "ownership_evidence_ref"]
+DONOR_RECORD = "research/runs/xbox-donor-20261121/PUBLICATION.json"
+MAP_FIELDS = ["ps2_module", "ps2_address", "xbox_module", "xbox_address", "match_confidence", "evidence_path", "map_evidence"]
+FORK_TOOLS = str(REPO / "external/forks/ps2-native-recomp/tools/research")
+if FORK_TOOLS not in sys.path:
+    sys.path.append(FORK_TOOLS)
+PARENT_TOOLS = str(REPO / "tools/research")
+if PARENT_TOOLS not in sys.path:
+    sys.path.append(PARENT_TOOLS)
+
+
+def measure_bounded_rows(rows):
+    fork = REPO / "external/forks/ps2-native-recomp"
+    from measure_renderer_scope import measure_scope
+    result = measure_scope(REPO, fork, ledger_rows=rows, bounded=True)
+    if result["missing_engine_callables"] or result["missing_source_proved_callables_outside_raw_catalogue"]:
+        raise ValueError("Retail AOT is missing a measured callable")
+    return result["bounded_ownership"]["rows"]
+
+
+def apply_bounded_ownership(rows):
+    census = measure_bounded_rows(rows)
+    inventory = json.loads((REPO / "research/ledger/aot_coverage_inventory.json").read_bytes())
+    prototypes = {(r["module"], r["address"]) for r in verify_transformed_functions(REPO, inventory, rows)}
+    for row in rows:
+        key = row["module"] + ":" + row["address"]
+        row["legacy_verification_level"] = row["verification_level"]
+        # Component and prototype receipts have their own tiers. The census does
+        # not establish a new verification level for any integrated implementation.
+        row["verification_level"] = "none"
+        row["transform_prototype_level"] = "differential" if (row["module"], row["address"]) in prototypes else "none"
+        if row["status"] == "out-of-scope-stubbed":
+            row.update(catalogue_kind="excluded", ownership_status="not-applicable", ownership_evidence_kinds="",
+                       ownership_evidence_ref="research/decisions/DECISION_ONLINE_OUT_OF_SCOPE.json")
+        else:
+            row.update(census[key])
+    return census
+
+
+def bounded_progress(rows):
+    if not rows or "ownership_status" not in rows[0]:
+        return []
+    from bounded_ownership import KINDS, STATUSES
+    calls = [row for row in rows if row["catalogue_kind"] == "callable"]
+    statuses = collections.Counter(row["ownership_status"] for row in calls)
+    kinds = collections.Counter(kind for row in calls for kind in row["ownership_evidence_kinds"].split("|") if kind)
+    assert set(statuses) <= set(STATUSES) and set(kinds) <= set(KINDS)
+    return [
+        f"- Bounded ownership of {len(calls):,} callable entries · " + ", ".join(f"{s} {statuses[s]:,}" for s in STATUSES) + ".",
+        "- Ownership evidence by kind (overlapping entries) · " + ", ".join(f"{k} {kinds[k]:,}" for k in KINDS) + ".",
+        "- Native credit retains its published component evidence. This ownership pass awards zero native credit.",
+    ]
+
+
+def donor_comparison():
+    return json.loads((REPO / DONOR_RECORD).read_bytes())["capability_comparison"]
+
+
+def validate_bounded_progress(block, rows):
+    for line in bounded_progress(rows):
+        if line not in block:
+            raise AssertionError("Bounded progress does not match measured ownership ledger")
+
+
+def validate_prototype_levels(rows, prototypes):
+    expected = {(r["module"], r["address"]) for r in prototypes}
+    for r in rows:
+        level = "differential" if (r["module"], r["address"]) in expected else "none"
+        assert r["transform_prototype_level"] == level, "Prototype differential evidence mismatch"
+
+
+def capability_map_rows(comparison):
+    """One measured record per pair; attach each full capability table entry once."""
+    from measure_xbox_capabilities import validate_mapping_entries
+    pairs = comparison["mapping_entries"]
+    validate_mapping_entries(pairs)
+    by_pair = {(p["ps2_address"], p["xbox_address"]): {k: p[k] for k in MAP_FIELDS} for p in pairs}
+    for key, row in by_pair.items():
+        row["capability_comparison"] = []
+    for capability in comparison["capabilities"]:
+        anchor = next(p for p in pairs if capability["capability"] in p["capabilities"])
+        key = (anchor["ps2_address"], anchor["xbox_address"])
+        by_pair[key]["capability_comparison"].append(capability)
+    for row in by_pair.values():
+        row["capability_comparison"] = json.dumps(row["capability_comparison"], sort_keys=True, separators=(",", ":"))
+    return by_pair
+
+
+def merge_capability_map(old_rows, measured):
+    catalogue = {(r["ps2_module"], r["ps2_address"]) for r in old_rows}
+    by_address = collections.defaultdict(list)
+    for key in measured:
+        by_address[key[0]].append(key)
+    result = []
+    remaining = dict(measured)
+    for row in old_rows:
+        address = row["ps2_address"]
+        key = (address, row["xbox_address"])
+        if key in remaining:
+            result.append(dict(row, capability_comparison=remaining.pop(key)["capability_comparison"]))
+        elif row["match_confidence"] == "none" and address in by_address:
+            result.extend(remaining.pop(pair) for pair in by_address[address])
+        else:
+            result.append(row)
+    result.extend(remaining.values())
+    for row in result:
+        member = (row["ps2_module"], row["ps2_address"]) in catalogue
+        row["ps2_catalogue_membership"] = "catalogued" if member else "outside-raw-catalogue"
+    return result
+
+
 def layout_svg(sections):
     items, y = [], 21.0
     def text(t, y): items.append(("t", 4, y, t))
@@ -762,7 +895,11 @@ def layout_svg(sections):
     return items, y
 
 
-def generate_progress_svg(ps2_ledger, xbox_ledger, output_path: Path):
+def generate_progress_svg(ps2_ledger, xbox_ledger, output_path: Path, ps2_map=None):
+    if ps2_map is None:
+        with (REPO / "research/ledger/ps2_xbox_map.csv").open(encoding="utf-8", newline="") as stream:
+            ps2_map = list(csv.DictReader(stream))
+    mapped = sum(row["match_confidence"] == "mapped-by-role" for row in ps2_map)
     """Render a compact multi-tier progress SVG from stored measurements (zero % on Xbox reference)."""
     ps2_in_scope = sum(1 for r in ps2_ledger if r["status"] != "out-of-scope-stubbed")
     ps2_impl = sum(1 for r in ps2_ledger if r["status"] in ("ported", "host-replaced", "implemented-via-donor"))
@@ -815,7 +952,7 @@ def generate_progress_svg(ps2_ledger, xbox_ledger, output_path: Path):
     # Xbox Reference Line (explicitly NO percentage)
     lines.append('  <line x1="24" y1="320" x2="896" y2="320" stroke="#30363d" stroke-width="1"/>')
     lines.append(f'  <text x="24" y="344" fill="#8b949e" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="600">Xbox Reference (read-only identification/comparison; renderer/viewport/HD adoption)</text>')
-    lines.append(f'  <text x="24" y="366" fill="#c9d1d9" font-family="Segoe UI, Arial, sans-serif" font-size="12">{xb_total:,} catalogued routines · {xb_donor} donor-credited · 18 role-mapped candidates (reference source, not a separate target)</text>')
+    lines.append(f'  <text x="24" y="366" fill="#c9d1d9" font-family="Segoe UI, Arial, sans-serif" font-size="12">{xb_total:,} catalogued routines · {xb_donor} donor-credited · {mapped} role-mapped pairs</text>')
     lines.append('</svg>')
     output_path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
@@ -879,6 +1016,8 @@ def validate_current_docs(repo_root: Path, *, fork_only: bool | None = None):
             continue
         lines = p.read_text(encoding="utf-8", errors="replace").splitlines()
         for i, line in enumerate(lines, 1):
+            if re.search(r"\b(owner\s*:?\s*no action|root continues|delegates?|agents continue)\b", line, re.I):
+                raise AssertionError(f"Retired handoff wording in {rel}:{i}")
             if rx_local.search(line):
                 raise AssertionError(f"Machine-local path or file:/// link forbidden in {rel}:{i}: {line[:120]}")
             if rx_xb_all.search(line):
@@ -959,6 +1098,7 @@ def validate_progress_aot_tier(repo_root: Path, ps2_ledger):
         m = re.search(r"<!-- PROGRESS:START -->(.*?)<!-- PROGRESS:END -->", txt, re.DOTALL)
         assert m, f"Missing PROGRESS markers in {rel}"
         blk = m.group(1)
+        validate_bounded_progress(blk, ps2_ledger)
         for tok in expected_tokens:
             assert tok in blk, f"Unmeasured/mismatched multi-tier token in {rel}: missing {tok!r}"
         # Check Xbox Reference subsection contains zero percentage signs
@@ -970,6 +1110,9 @@ def validate_progress_aot_tier(repo_root: Path, ps2_ledger):
     if svg_p.exists():
         assert svg_p.stat().st_size < 100_000, f"progress.svg must be compact (<100KB), got {svg_p.stat().st_size}"
         svg_txt = svg_p.read_text(encoding="utf-8")
+        with (REPO / "research/ledger/ps2_xbox_map.csv").open(encoding="utf-8", newline="") as stream:
+            roles = sum(r["match_confidence"] == "mapped-by-role" for r in csv.DictReader(stream))
+        assert f"{roles} role-mapped pairs" in svg_txt, "progress.svg mapped-pair count mismatch"
         assert f"{aot['in_scope_aot']:,} / {ps2_in_scope:,}" in svg_txt, "progress.svg AOT count mismatch"
         assert f"{ps2_impl:,} / {ps2_in_scope:,}" in svg_txt, "progress.svg credited count mismatch"
 
@@ -1074,6 +1217,7 @@ def compute_aot_metrics(ps2_ledger):
         "active_fork_static_cpp_count": inv.get("active_fork_tracked_cpp_count", inv.get("active_fork_static_cpp_count", 0)),
         "build_generated_units": inv.get("active_fork_build_generated_units", len(unit_ranges)),
         "transformed_count": len(transformed_functions),
+        "transformed_functions": transformed_functions,
         "base_aot": computed_base_aot,
         "base_in_scope_aot": computed_base_in_scope_aot,
         "base_total": len(base_rows),
@@ -1142,9 +1286,10 @@ def generate_progress_markdown_block(ps2_ledger, xbox_ledger, ps2_map, fork_sha=
         "",
         "![Porting Progress](progress.svg)",
         "",
-        f"**Verified Fork Commit**: [`{fork_sha[:8]}`](https://github.com/nahshongraham97/ps2-native-recomp/commit/{fork_sha}) (pinned active fork)",
+        f"**Verified Fork Commit**: [`{fork_sha[:8]}`](https://github.com/nahshongraham97/ps2-native-recomp/commit/{fork_sha}) (source and evidence checkpoint)",
         "",
         "### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)",
+        *bounded_progress(ps2_ledger),
         f"- **Total PS2 Function Catalog**: **{len(ps2_ledger):,}** raw catalogue entries (`{aot['base_total']:,}` base `SLUS_214.10` + `{aot['gamer_total'] + aot['movier_total'] + aot['netr_total']:,}` dynamic overlays: `{aot['gamer_total']:,}` `GAMER.ovl`, `{aot['movier_total']:,}` `MOVIER.ovl`, `{aot['netr_total']:,}` `NETR.ovl`)",
         f"- **In-Scope Retail Path**: **{ps2_in_scope:,}** (`{ps2_class and len(ps2_class):,}` non-exec/library: `sdk-or-library` {ps2_sdk_cnt:,} + `pointer-scan-proven` {ps2_proven_cnt:,}; `{len(ps2_frontier):,}` open frontier) | **Excluded Online (`out-of-scope-stubbed`)**: **{len(ps2_stubbed):,}**",
         f"- **Code-Computed Role Partition (`function_classification_inventory.json`)**: `{cat_part['platform-boundary']:,}` `platform-boundary` + `{cat_part['retail-logic']:,}` `retail-logic` + `{cat_part['sdk-or-library']:,}` `sdk-or-library` = **{len(ps2_ledger):,}** (in-scope: `{ins_part['platform-boundary']:,}` + `{ins_part['retail-logic']:,}` + `{ins_part['sdk-or-library']:,}` = **{ps2_in_scope:,}**)",
@@ -1231,7 +1376,7 @@ def validate_gp_accesses(repo: Path):
     print("  PASS: Verified all 73 GP accesses against retail SLUS_214.10 ELF Program Header 0.")
 
 
-def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map):
+def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map, *, measured_ownership=None):
     """Rigorous acceptance validation of all generated ledgers, maps, and markdown blocks:
     1. Exact row counts and totals.
     2. TASK_BOARD.md tier partition (Implemented + Classified + Open Frontier == 15,670 in-scope retail functions).
@@ -1245,6 +1390,10 @@ def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map):
     10. Component verification class and machine-readable tag enforcement.
     """
     print("Validating ledgers, board tiers, and cross-platform correspondence...")
+    from bounded_ownership import validate_ledger_rows
+    if measured_ownership is None:
+        measured_ownership = measure_bounded_rows(ps2_ledger)
+    validate_ledger_rows(ps2_ledger, measured_ownership)
 
     if (REPO / "external" / "forks" / "ps2-native-recomp").exists():
         fork_root = REPO / "external" / "forks" / "ps2-native-recomp"
@@ -1486,13 +1635,28 @@ def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map):
     assert map_exact == 0, f"Map exact mismatch: {map_exact} != 0"
     assert map_struct == 0, f"Map structural mismatch: {map_struct} != 0"
     assert map_comp == 0, f"Map composite mismatch: {map_comp} != 0"
-    assert map_role == 18, f"Map mapped-by-role mismatch: {map_role} != 18"
-    assert map_none == 17493, f"Map none mismatch: {map_none} != 17493"
-    assert len(ps2_map) == 17511, f"Map total mismatch: {len(ps2_map)} != 17511"
+    measured = capability_map_rows(donor_comparison())
+    legacy = {(a, b): (e, s) for a, b, e, s in MAPPED_BY_ROLE_MAPPINGS}
+    assert len(legacy) == 18
+    base_addresses = {r["address"] for r in ps2_ledger if r["module"] == "SLUS_214.10"}
+    replaced = ({a for a, _ in measured} - {a for a, _ in legacy}) & base_addresses
+    assert map_role == len(legacy.keys() | measured.keys()), "Missing or extra role-mapped pairs"
+    assert map_none == 17493 - len(replaced), "Unmapped baseline changed beyond measured pairs"
+    assert len(ps2_map) == 17511 + len(measured.keys() - legacy.keys()) - len(replaced), "Map total mismatch"
+    observed = {(r["ps2_address"], r["xbox_address"]): r for r in ps2_map if r["match_confidence"] != "none"}
+    assert set(observed) == legacy.keys() | measured.keys(), "Mapping identity changed"
+    for key, (path, sig) in legacy.items():
+        assert (observed[key]["evidence_path"], observed[key]["map_evidence"]) == (path, sig)
+    for key, expected in measured.items():
+        membership = "catalogued" if key[0] in base_addresses else "outside-raw-catalogue"
+        assert observed[key]["ps2_catalogue_membership"] == membership, "Incorrect catalogue membership"
+        assert observed[key]["capability_comparison"] == expected["capability_comparison"], "Capability evidence changed"
+        if key not in legacy:
+            assert all(observed[key][k] == expected[k] for k in MAP_FIELDS), "Capability pair provenance changed"
 
     mapped_count = 0
     for r in ps2_map:
-        if r["match_confidence"] != "none":
+        if (r["ps2_address"], r["xbox_address"]) in legacy:
             mapped_count += 1
             map_ev = r.get("map_evidence", "")
             assert map_ev and map_ev != "none", f"Missing map_evidence for mapped row: {r}"
@@ -1538,7 +1702,8 @@ def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map):
     validate_gp_accesses(REPO)
 
     # 6b. Validate AOT coverage inventory & Phase 1 current document gates
-    compute_aot_metrics(ps2_ledger)
+    metrics = compute_aot_metrics(ps2_ledger)
+    validate_prototype_levels(ps2_ledger, metrics["transformed_functions"])
     validate_classifications(REPO, ps2_ledger)
     validate_current_docs(REPO)
 
@@ -1551,7 +1716,7 @@ def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map):
     print(f"  Negative Link Diagnostic: undefined symbols: 0 | placeholders: {len(placeholders)}")
     print(f"  PS2 Total: {len(ps2_ledger)} | In-Scope: {in_scope_sum} (Ported: {len(ps2_ported)}, Donors: {len(ps2_donor)}, Host-Rep: 11, Class: {len(classified)}, Open: {len(open_frontier)}) | Stubbed: {len(out_of_scope)}")
     print(f"  Xbox Total: {len(xbox_ledger)} | Donors: {len(xb_donor)} | Candidates: {len(xb_candidates)} | Ported: 0 | Host-Rep: 0")
-    print(f"  Cross Map: {len(ps2_map)} (18 mapped: 18 mapped-by-role, 0 exact, 0 structural, 0 composite; 17,493 unmapped)")
+    print(f"  Cross Map: {len(ps2_map)} rows, {map_role} role-mapped, {mapped_count} original pair signatures, {map_none} unmapped")
     print(f"  Verified all 73 GP accesses against retail SLUS_214.10 ELF binary.")
     print(f"  Zero duplicate pairs across 227 PS2 ported and 17 Xbox candidate donor routines.")
     print(f"  Zero foreign address mismatches in method tags.")
@@ -1578,9 +1743,11 @@ def main():
 
     print("Building PS2 ledger and cross-platform map...")
     ps2_ledger, ps2_map = build_ps2_ledger_and_map(proven_addrs, indirect_addrs)
+    measured_ownership = apply_bounded_ownership(ps2_ledger)
+    ps2_map = merge_capability_map(ps2_map, capability_map_rows(donor_comparison()))
 
     # Automated validation of board tiers, row counts, method uniqueness, signatures, and addresses
-    validate_ledgers(ps2_ledger, xbox_ledger, ps2_map)
+    validate_ledgers(ps2_ledger, xbox_ledger, ps2_map, measured_ownership=measured_ownership)
 
     # Write research/ledger/xbox_functions.csv
     xbox_out = REPO / "research" / "ledger" / "xbox_functions.csv"
@@ -1592,14 +1759,14 @@ def main():
     # Write research/ledger/ps2_xbox_map.csv
     map_out = REPO / "research" / "ledger" / "ps2_xbox_map.csv"
     with map_out.open("w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=["ps2_module", "ps2_address", "xbox_module", "xbox_address", "match_confidence", "evidence_path", "map_evidence"], lineterminator="\n")
+        w = csv.DictWriter(f, fieldnames=MAP_FIELDS + ["ps2_catalogue_membership", "capability_comparison"], lineterminator="\n")
         w.writeheader()
         w.writerows(ps2_map)
 
     # Write research/ledger/functions.csv
     ps2_out = REPO / "research" / "ledger" / "functions.csv"
     with ps2_out.open("w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=["module", "address", "symbol", "status", "verification_level", "evidence_path", "donor", "embedded_in", "notes"], lineterminator="\n")
+        w = csv.DictWriter(f, fieldnames=["module", "address", "symbol", "status", "verification_level", "evidence_path", "donor", "embedded_in", "notes", "legacy_verification_level", "transform_prototype_level"] + OWNERSHIP_FIELDS, lineterminator="\n")
         w.writeheader()
         w.writerows(ps2_ledger)
 
@@ -1610,7 +1777,7 @@ def main():
     # Generate progress.svg
     svg_out = REPO / "progress.svg"
     print(f"Generating {svg_out}...")
-    generate_progress_svg(ps2_ledger, xbox_ledger, svg_out)
+    generate_progress_svg(ps2_ledger, xbox_ledger, svg_out, ps2_map)
     assert svg_out.exists() and svg_out.stat().st_size > 1000, "progress.svg failed to generate"
     print(f"Generated {svg_out} ({svg_out.stat().st_size} bytes).")
 
@@ -1640,7 +1807,7 @@ def main():
         assert "<!-- PROGRESS:START -->" in txt and "<!-- PROGRESS:END -->" in txt, f"Missing markers in {doc}"
         assert FORK_COMMIT_SHA in txt, f"Missing fork commit SHA in {doc}"
         assert "https://github.com/nahshongraham97/ps2-native-recomp/commit/" in txt, f"Missing GitHub link in {doc}"
-        assert "17,510" in txt and "22,579" in txt and "17,511" in txt, f"Ledger totals missing in {doc}"
+        assert all(f"{len(table):,}" in txt for table in (ps2_ledger, xbox_ledger, ps2_map)), f"Ledger totals missing in {doc}"
         assert "2,648" in txt and "1,102" in txt and "9,038" in txt, f"Still-needed counts missing in {doc}"
 
     validate_progress_aot_tier(REPO, ps2_ledger)
@@ -1648,4 +1815,7 @@ def main():
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--bounded", action="store_true", help="Regenerate the bounded ownership ledger (default)")
+    parser.parse_args()
     main()
