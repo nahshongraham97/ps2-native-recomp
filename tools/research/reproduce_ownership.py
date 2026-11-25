@@ -133,7 +133,7 @@ def main():
         inputs.append({"zone": item["destination_zone"], "path": item["destination"], "sha256": item["sha256"]})
     result_file = roots["fork"] / "build/oracle-telemetry/clean-census.json"
     result_file.parent.mkdir(parents=True, exist_ok=True)
-    result = command([sys.executable, "-B", roots["fork"] / "tools/research/measure_renderer_scope.py",
+    result = command([sys.executable, "-B", short_path(roots["fork"] / "tools/research/measure_renderer_scope.py"),
                       "--parent-root", roots["parent"], "--fork-root", roots["fork"],
                       "--sdk31-root", args.sdk31_root.resolve(), "--bounded", "--output", result_file],
                      roots["parent"], environment)
