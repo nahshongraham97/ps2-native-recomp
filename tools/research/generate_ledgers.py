@@ -651,7 +651,12 @@ def build_ps2_ledger_and_map(proven_addrs, indirect_addrs):
                     "evidence_path": "recomp/overlays/GAMER-functions.csv",
                     "donor": "none",
                     "embedded_in": "",
-                    "notes": "Retail arcade gameplay overlay",
+                    "notes": (
+                        "GAMER initializer: generated kernel connected to actual native OverlaySelection owner; "
+                        "measured owner/error/lifetime controls at build/oracle-telemetry/overlay-integration-20261125-02/RESULT.json. "
+                        "R13 ownership and full 7.1 admission remain OPEN; zero new native credit."
+                        if addr_hex == "007c4980" else "Retail GAMER overlay"
+                    ),
                 })
                 map_rows.append({
                     "ps2_module": "GAMER.ovl",

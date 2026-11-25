@@ -2,6 +2,7 @@
 
 #include "mka/content_volume.hpp"
 #include "mka/native_heap.hpp"
+#include "native_overlay_initializers.hpp"
 
 #include <memory>
 #include <optional>
@@ -55,7 +56,7 @@ public:
 private:
     NativeRetailActiveOverlay() = default;
     std::thread::id owner_thread_{std::this_thread::get_id()};
-    int selected_mode_{};
+    generated::OverlaySelection selection_{};
     std::shared_ptr<memory::NativeHeapOwner> companion_parent_;
     memory::NativeHeapIdentity companion_identity_{};
 };
