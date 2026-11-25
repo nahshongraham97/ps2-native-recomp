@@ -1,4 +1,4 @@
-"""Retail matrix and camera functions with cross-version source evidence.
+"""Retail renderer and stream functions with cross-version source evidence.
 
 The pinned SDK bodies identify roles by their control flow and operations. The
 retail body and its original diagnostic call are both checked independently of
@@ -11,6 +11,8 @@ from pathlib import Path
 
 SDK_REVISION = "1a8f7da4c58f6725cb73fbe71a8803fce9e0c752"
 SOURCE_FILES = {
+    "babinary.c": "779f7efde3e2bba6a255d7965ab76227aadf60ce164ea52f23a8f271c8b9fc94",
+    "batkbin.c": "0941df5e6a27b29ec86cb5cd1acf9f21eb232d59cd8d86f64771c9ad5549f10f",
     "badevice.c": "3d9e69ef67917f780a1df604a933833e3a3b0a27b1c085c7766eb57324951639",
     "baframe.c": "47ee0bdf20bbae224bfaa0b1808ee8fa9d805d12d1e09ac382cd5c38f37e7536",
     "bamatrix.c": "6a65d8140fcddf75bf44bf0b3daf973d0c6d55c0ff6b866ec15ccfe8f256c751",
@@ -77,6 +79,21 @@ def matched_sdk_roles(original, sdk_root: Path):
     # in the callee. A JAL target or an above-threshold BSim score alone cannot
     # establish what a helper does.
     connected = (
+        (0x19f0b0, 0x19f1dc, "_rwStreamReadChunkHeader", "babinary.c",
+         "cb25996eb63b13497cb309deb97b36ce6dd5463598f29c0eb3d441233b92e0c3",
+         [0x19f214, 0x19f2f8, 0x1a2c48],
+         "Requires a 12-byte read. Decodes the old and packed library IDs and conditionally "
+         "stores type, length, version and build. The retail build output extends the 3.1 reference ABI."),
+        (0x19f1e0, 0x19f328, "RwStreamFindChunk", "babinary.c",
+         "321bf1b926b4a272899bd7ef8b4b00ebc7282183caeb93cc387a6cd8ee639a53",
+         [0x1a2bec],
+         "Reads headers, skips the payload of each nonmatching type, then repeats. A matching type "
+         "requires an unsigned version from 0x34000 through 0x36003 before length and version are returned."),
+        (0x1a2bc0, 0x1a2d84, "_rwPluginRegistryReadDataChunks", "batkbin.c",
+         "2e00688d1e437ea46bf97acb96c1c31f4e96da68d21371bf30dc05d2b45d0429",
+         [0x1a4b34, 0x1a4e70],
+         "Finds the extension chunk (type 3), dispatches nested chunks by registered ID or skips "
+         "their payloads, subtracts each payload plus 12 bytes, then invokes registered always callbacks."),
         (0x1a0440, 0x1a04bc, "RwMatrixMultiply", "bamatrix.c",
          "01748f4a8196e4758275d1d9aa936178bd2826f70fb496a8338c2e9f4266a38e",
          [0x1a05f4, 0x1a0638, 0x1a0d30, 0x1a0d74],
@@ -89,6 +106,11 @@ def matched_sdk_roles(original, sdk_root: Path):
          "9002768dad2f8f67cd5c860eb4e8fbabb83ff089a7693863b1a0c194bf865b18",
          [0x1a6458],
          "Projection changes recompute the two depth coefficients from near and far planes using reciprocal depth in perspective mode."),
+        (0x1a64a0, 0x1a650c, "RwCameraSetViewWindow", "bacamera.c",
+         "c27ee861601bb38263e7ee430287b8ca18c9d65e6807fc158eb6feb73cadb398",
+         [0x126174, 0x17f0c0, 0x1815d8, 0x21ca50, 0x21d314],
+         "Stores both window components and their reciprocals, updates a non-null parent frame "
+         "through 001a7510, and returns the camera on both branches."),
     )
     for start, end, api, file, body_hash, sites, operations in connected:
         if hashlib.sha256(original(start, end - start)).hexdigest() != body_hash:
