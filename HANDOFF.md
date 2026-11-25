@@ -40,7 +40,7 @@ The initial Nov 18 baseline handoff is preserved at `research/history/native-por
      - **Contradictions with earlier documents**: Discrepancies identified between earlier claims/documents and current disassembly/source truth.
      - **Falsification attempts**: Results of actively attempting to falsify the strongest claims before delivery, including negative and disconfirming findings.
 
-Current resume point is TASK_BOARD.md. Coverage must use actual callable entry maps. The old restored oracle launcher is historical because its target is retired; the corrected additive launcher has passed static/disposable-data checks; bounded headless admission is instruction-grounded. Do not alter any existing oracle bytes.
+The Phase 6 resume point is in TASK_BOARD.md. Use the R192 build identified in README.md as the active gameplay oracle. Its persistent slot-1 memory card holds owner progress. The static ownership census reads the pinned retail ELF.
 
 Phase 4 has been published with synchronized ledgers and unchanged oracle
 originals. Phase 5's actual generated GAMER/MOVIER initializer prototype passes

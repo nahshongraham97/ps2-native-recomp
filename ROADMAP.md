@@ -9,8 +9,7 @@ ownership, scalar liveout, saved-state differential, cost and structural checks.
 That synchronized checkpoint is published. Phase 6 has a verified bounded
 engine-family census and renderer decision, but its exact RenderWare ownership
 total remains OPEN. The required exact-census check refuses unknown ownership;
-publish the partial checkpoint and stop. TASK_BOARD.md identifies the original
-ownership evidence and deterministic remaining rows needed to resume. Phase 7
+the current checkpoint joins the retail plugin failure branches to six named renderer families. TASK_BOARD.md identifies the missing ownership evidence. Phase 7
 has not started.
 General pointer/vtable/indirect recovery and production integration remain OPEN.
 
