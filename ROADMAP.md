@@ -7,6 +7,8 @@ owns whole-game acceptance, which remains OPEN. Historical checkpoint prose is
 preserved with its original document hash in [the existing history records](research/history/native-port-docs-2026-11-18/)
 (`ROADMAP.md` in the parent; `ARCHIVE_INDEX.md` in the fork).
 
+**Current oracle priority:** Continue the separately branched R192 AOT-closure work while the owner collects Konquest code. Preserve the active executable/card and use disposable copies. Prove exact source/image/entry/binary identity before full-suite and held-out no-Live comparisons. Native-study branches remain unmerged; general binding rounds stay stopped. Details: [existing R192 run record](research/runs/r192-hooks-playable-run-20261125/RUN.md).
+
 ## Required order and publication boundary
 
 Follow the amended dependencies recorded in the existing owner decision file.

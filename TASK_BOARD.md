@@ -6,9 +6,9 @@ each deliverable's verified component progress and whole-game acceptance state;
 [PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is archived at
 `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
-**Current work follows A1 dependencies.** Phase 5S.8 targets scalar/copy SSA with proved inputs and the complete camera setter. Current results, all remaining camera-equivalence gates, the 39 probes, separate return-contract tests and publication status are recorded in the existing parent work-item `research/runs/phase4-aot-completion-20261124/VERIFICATION.json`, section `instruction_phase5S.phase_5S_8_scalar_copy_inputs_and_camera`. Handwritten setters, protected inputs, ownership rules and credit rules remain unchanged.
+**Current branch work:** r192-aot-closure-proof is an isolated oracle-tooling branch based on main 7244e8da. It does not import or merge the native study on phase6-abi-leaf-cohort. Prioritize exact R192 source/image/entry/binary evidence and preserve owner captures. Ownership and native-credit ledgers stay at this branch baseline; no closure audit earns either kind of credit. See research/runs/r192-hooks-playable-run-20261125/RUN.md.
 
-**Separate OPEN oracle-closure track:** Antigravity owns `build/r192-aot-closure` and the attempt to remove the oracle's EE Live dependency. Its read-only status and template/dump limits are in N7 of that work item. It does not earn native-port credit or replace the protected R192 oracle.
+**OPEN oracle closure:** Codex continues after Antigravity exhausted its quota. Existing build/r192-aot-closure is read-only input. Configured AOT-only stubs do not prove a no-Live runtime pass. A fresh copied-PE probe from save80225 fails before one new frame at008A5140; caller object+4C/extent/writer are the next dependency. The61 historical state logs ran one frame, not90. Exact image identity, emitter-template/55-dump evidence, full-suite and held-out state/image comparisons remain OPEN. Actual R192 uses version-8 saved states; main uses version14. No protected runtime or card writes.
 
 R192 supplies gameplay and telemetry evidence. The November 10 playable milestone supplies saved-state and hash parity. Kombat Practice is a historical snapshot. The primary oracle designation is **pending owner confirmation**.
 
