@@ -246293,7 +246293,315 @@
         "unbound_value:register_4": 1
       },
       "E2": "Not run: no sampled function emitted an admitted whole native candidate. Existing two initializer controls and the selected StageA dependency remain outside this denominator.",
-      "markdown": "| Capability-only function | Bytes | Result | First PC | Refusal |\n|---|---:|---|---|---|\n| MOVIER.ovl:007d2150 | 12 | REFUSED | 007d2154 | unbound_call:st8 |\n| MOVIER.ovl:007e00e8 | 8 | REFUSED | 007e00e8 | unbound_abi_liveout |\n| MOVIER.ovl:007eb190 | 44 | REFUSED | 007eb1ac | unsupported_conditional_control |\n| MOVIER.ovl:007eb630 | 200 | REFUSED | 007eb630 | scalar_unbound_GPR_value_ABI:register_4 |\n| MOVIER.ovl:007eb958 | 8 | REFUSED | 007eb958 | unbound_abi_liveout |\n| MOVIER.ovl:00800540 | 8 | REFUSED | 00800540 | unbound_memory:non_GP_base |\n| MOVIER.ovl:00803118 | 68 | REFUSED | 00803118 | unsupported_value_ast:CallExpr |\n| MOVIER.ovl:00803fe0 | 32 | REFUSED | 00803fe0 | scalar_unbound_GPR_value_ABI:register_5 |\n| MOVIER.ovl:00809e58 | 36 | REFUSED | 00809e58 | scalar_unbound_GPR_value_ABI:register_4 |\n| MOVIER.ovl:0080d1a8 | 16 | REFUSED | 0080d1a8 | unsupported_conditional_control |\n| MOVIER.ovl:0080d4f8 | 76 | REFUSED | 0080d4f8 | scalar_unbound_GPR_value_ABI:register_4 |\n| MOVIER.ovl:00814c30 | 20 | REFUSED | 00814c30 | unbound_indirect_target:cursor_assignment |\n| SLUS_214.10:00167cf0 | 328 | REFUSED | 00167cf0 | unbound_scalar_register_part |\n| SLUS_214.10:0017a440 | 16 | REFUSED | 0017a444 | unsupported_value_ast:CallExpr |\n| SLUS_214.10:00181bc0 | 64 | REFUSED | 00181bc0 | unsupported_value_ast:CallExpr |\n| SLUS_214.10:0019d5d0 | 104 | REFUSED | 0019d5dc | unsupported_value_ast:CallExpr |\n| SLUS_214.10:001c4210 | 32 | REFUSED | 001c4210 | unsupported_value_ast:CallExpr |\n| SLUS_214.10:001d77d0 | 8 | REFUSED | 001d77d0 | unbound_member:pc |\n| SLUS_214.10:00212c20 | 64 | REFUSED | 00212c20 | unsupported_value_ast:CallExpr |\n| SLUS_214.10:00221b50 | 120 | REFUSED | 00221b50 | unsupported_conditional_control |\n| SLUS_214.10:0022c620 | 44 | REFUSED | 0022c628 | unsupported_conditional_control |\n| SLUS_214.10:00241b70 | 8 | REFUSED | 00241b70 | unbound_member:pc |\n| SLUS_214.10:0030e130 | 116 | REFUSED | 0030e130 | unsupported_value_ast:CallExpr |\n| SLUS_214.10:0033d3d0 | 64 | REFUSED | 0033d3d0 | unbound_scalar_register_part |\n| SLUS_214.10:00343980 | 24 | REFUSED | 00343980 | unsupported_value_ast:CallExpr |\n| SLUS_214.10:0036a790 | 20 | REFUSED | 0036a79c | unbound_abi_liveout |\n| SLUS_214.10:003b80e0 | 16 | REFUSED | 003b80e0 | scalar_unbound_GPR_value_ABI:register_4 |\n| SLUS_214.10:003c6ad0 | 52 | REFUSED | 003c6adc | unbound_memory:non_GP_base |\n| SLUS_214.10:0047e7c0 | 20 | REFUSED | 0047e7c0 | unsupported_value_ast:CallExpr |\n| SLUS_214.10:004c4a40 | 40 | REFUSED | 004c4a44 | unbound_value:register_4 |"
+      "markdown": "| Capability-only function | Bytes | Result | First PC | Refusal |\n|---|---:|---|---|---|\n| MOVIER.ovl:007d2150 | 12 | REFUSED | 007d2154 | unbound_call:st8 |\n| MOVIER.ovl:007e00e8 | 8 | REFUSED | 007e00e8 | unbound_abi_liveout |\n| MOVIER.ovl:007eb190 | 44 | REFUSED | 007eb1ac | unsupported_conditional_control |\n| MOVIER.ovl:007eb630 | 200 | REFUSED | 007eb630 | scalar_unbound_GPR_value_ABI:register_4 |\n| MOVIER.ovl:007eb958 | 8 | REFUSED | 007eb958 | unbound_abi_liveout |\n| MOVIER.ovl:00800540 | 8 | REFUSED | 00800540 | unbound_memory:non_GP_base |\n| MOVIER.ovl:00803118 | 68 | REFUSED | 00803118 | unsupported_value_ast:CallExpr |\n| MOVIER.ovl:00803fe0 | 32 | REFUSED | 00803fe0 | scalar_unbound_GPR_value_ABI:register_5 |\n| MOVIER.ovl:00809e58 | 36 | REFUSED | 00809e58 | scalar_unbound_GPR_value_ABI:register_4 |\n| MOVIER.ovl:0080d1a8 | 16 | REFUSED | 0080d1a8 | unsupported_conditional_control |\n| MOVIER.ovl:0080d4f8 | 76 | REFUSED | 0080d4f8 | scalar_unbound_GPR_value_ABI:register_4 |\n| MOVIER.ovl:00814c30 | 20 | REFUSED | 00814c30 | unbound_indirect_target:cursor_assignment |\n| SLUS_214.10:00167cf0 | 328 | REFUSED | 00167cf0 | unbound_scalar_register_part |\n| SLUS_214.10:0017a440 | 16 | REFUSED | 0017a444 | unsupported_value_ast:CallExpr |\n| SLUS_214.10:00181bc0 | 64 | REFUSED | 00181bc0 | unsupported_value_ast:CallExpr |\n| SLUS_214.10:0019d5d0 | 104 | REFUSED | 0019d5dc | unsupported_value_ast:CallExpr |\n| SLUS_214.10:001c4210 | 32 | REFUSED | 001c4210 | unsupported_value_ast:CallExpr |\n| SLUS_214.10:001d77d0 | 8 | REFUSED | 001d77d0 | unbound_member:pc |\n| SLUS_214.10:00212c20 | 64 | REFUSED | 00212c20 | unsupported_value_ast:CallExpr |\n| SLUS_214.10:00221b50 | 120 | REFUSED | 00221b50 | unsupported_conditional_control |\n| SLUS_214.10:0022c620 | 44 | REFUSED | 0022c628 | unsupported_conditional_control |\n| SLUS_214.10:00241b70 | 8 | REFUSED | 00241b70 | unbound_member:pc |\n| SLUS_214.10:0030e130 | 116 | REFUSED | 0030e130 | unsupported_value_ast:CallExpr |\n| SLUS_214.10:0033d3d0 | 64 | REFUSED | 0033d3d0 | unbound_scalar_register_part |\n| SLUS_214.10:00343980 | 24 | REFUSED | 00343980 | unsupported_value_ast:CallExpr |\n| SLUS_214.10:0036a790 | 20 | REFUSED | 0036a79c | unbound_abi_liveout |\n| SLUS_214.10:003b80e0 | 16 | REFUSED | 003b80e0 | scalar_unbound_GPR_value_ABI:register_4 |\n| SLUS_214.10:003c6ad0 | 52 | REFUSED | 003c6adc | unbound_memory:non_GP_base |\n| SLUS_214.10:0047e7c0 | 20 | REFUSED | 0047e7c0 | unsupported_value_ast:CallExpr |\n| SLUS_214.10:004c4a40 | 40 | REFUSED | 004c4a44 | unbound_value:register_4 |",
+      "first_failure_followup": {
+        "status": "DONE_ORIGINAL_WORDS_AND_AST_FRAGMENTS_REJOINED",
+        "receipt": {
+          "path": "build/oracle-telemetry/leaf-refusal-followup-01/RESULT.json",
+          "sha256": "488e1268facb61bcbb74510924cfc870906802a134bbcaa153c6d83bfd7ec68f"
+        },
+        "denominator": 30,
+        "original_words_rejoined": 417,
+        "raw_first_error_counts": {
+          "unbound_call:st8": 1,
+          "unbound_abi_liveout": 3,
+          "unsupported_conditional_control": 4,
+          "scalar_unbound_GPR_value_ABI:register_4": 4,
+          "unbound_memory:non_GP_base": 2,
+          "unsupported_value_ast:CallExpr": 9,
+          "scalar_unbound_GPR_value_ABI:register_5": 1,
+          "unbound_indirect_target:cursor_assignment": 1,
+          "unbound_scalar_register_part": 2,
+          "unbound_member:pc": 2,
+          "unbound_value:register_4": 1
+        },
+        "nonoverlapping_primary_semantic_counts": {
+          "typed_memory": 13,
+          "return_interface_bundle": 5,
+          "branch_control": 6,
+          "incoming_ABI": 6
+        },
+        "per_probe": [
+          {
+            "key": "MOVIER.ovl:007d2150",
+            "raw_first_refusal": "unbound_call:st8",
+            "primary_semantic_cause": "typed_memory",
+            "compiler_cursor_PC": "007d2154",
+            "original_effect_PC": "007d2158",
+            "original_word": "a0820003",
+            "original_file_offset": 55512,
+            "correction": "Original inline effect is in JR delay slot; compiler cursor names JR"
+          },
+          {
+            "key": "MOVIER.ovl:007e00e8",
+            "raw_first_refusal": "unbound_abi_liveout",
+            "primary_semantic_cause": "return_interface_bundle",
+            "compiler_cursor_PC": "007e00e8",
+            "original_effect_PC": "007e00e8",
+            "original_word": "03e00008",
+            "original_file_offset": 112744
+          },
+          {
+            "key": "MOVIER.ovl:007eb190",
+            "raw_first_refusal": "unsupported_conditional_control",
+            "primary_semantic_cause": "branch_control",
+            "compiler_cursor_PC": "007eb1ac",
+            "original_effect_PC": "007eb1ac",
+            "original_word": "0443fffa",
+            "original_file_offset": 157996
+          },
+          {
+            "key": "MOVIER.ovl:007eb630",
+            "raw_first_refusal": "scalar_unbound_GPR_value_ABI:register_4",
+            "primary_semantic_cause": "incoming_ABI",
+            "compiler_cursor_PC": "007eb630",
+            "original_effect_PC": "007eb630",
+            "original_word": "0080502d",
+            "original_file_offset": 159152
+          },
+          {
+            "key": "MOVIER.ovl:007eb958",
+            "raw_first_refusal": "unbound_abi_liveout",
+            "primary_semantic_cause": "return_interface_bundle",
+            "compiler_cursor_PC": "007eb958",
+            "original_effect_PC": "007eb958",
+            "original_word": "03e00008",
+            "original_file_offset": 159960
+          },
+          {
+            "key": "MOVIER.ovl:00800540",
+            "raw_first_refusal": "unbound_memory:non_GP_base",
+            "primary_semantic_cause": "typed_memory",
+            "compiler_cursor_PC": "00800540",
+            "original_effect_PC": "00800544",
+            "original_word": "ac850064",
+            "original_file_offset": 244932,
+            "correction": "Original inline effect is in JR delay slot; compiler cursor names JR"
+          },
+          {
+            "key": "MOVIER.ovl:00803118",
+            "raw_first_refusal": "unsupported_value_ast:CallExpr",
+            "primary_semantic_cause": "typed_memory",
+            "compiler_cursor_PC": "00803118",
+            "original_effect_PC": "00803118",
+            "original_word": "8c830004",
+            "original_file_offset": 256152
+          },
+          {
+            "key": "MOVIER.ovl:00803fe0",
+            "raw_first_refusal": "scalar_unbound_GPR_value_ABI:register_5",
+            "primary_semantic_cause": "incoming_ABI",
+            "compiler_cursor_PC": "00803fe0",
+            "original_effect_PC": "00803fe0",
+            "original_word": "000510c0",
+            "original_file_offset": 259936
+          },
+          {
+            "key": "MOVIER.ovl:00809e58",
+            "raw_first_refusal": "scalar_unbound_GPR_value_ABI:register_4",
+            "primary_semantic_cause": "incoming_ABI",
+            "compiler_cursor_PC": "00809e58",
+            "original_effect_PC": "00809e58",
+            "original_word": "2482000c",
+            "original_file_offset": 284120
+          },
+          {
+            "key": "MOVIER.ovl:0080d1a8",
+            "raw_first_refusal": "unsupported_conditional_control",
+            "primary_semantic_cause": "branch_control",
+            "compiler_cursor_PC": "0080d1a8",
+            "original_effect_PC": "0080d1a8",
+            "original_word": "54800001",
+            "original_file_offset": 297256
+          },
+          {
+            "key": "MOVIER.ovl:0080d4f8",
+            "raw_first_refusal": "scalar_unbound_GPR_value_ABI:register_4",
+            "primary_semantic_cause": "incoming_ABI",
+            "compiler_cursor_PC": "0080d4f8",
+            "original_effect_PC": "0080d4f8",
+            "original_word": "0080382d",
+            "original_file_offset": 298104
+          },
+          {
+            "key": "MOVIER.ovl:00814c30",
+            "raw_first_refusal": "unbound_indirect_target:cursor_assignment",
+            "primary_semantic_cause": "typed_memory",
+            "compiler_cursor_PC": "00814c30",
+            "original_effect_PC": "00814c30",
+            "original_word": "dca20000",
+            "original_file_offset": 328624,
+            "correction": "LD64 value load, not indirect dispatch"
+          },
+          {
+            "key": "SLUS_214.10:00167cf0",
+            "raw_first_refusal": "unbound_scalar_register_part",
+            "primary_semantic_cause": "branch_control",
+            "compiler_cursor_PC": "00167cf0",
+            "original_effect_PC": "00167cf0",
+            "original_word": "1080004f",
+            "original_file_offset": 425456,
+            "correction": "Captured boolean branch condition, not a wide-register operation"
+          },
+          {
+            "key": "SLUS_214.10:0017a440",
+            "raw_first_refusal": "unsupported_value_ast:CallExpr",
+            "primary_semantic_cause": "typed_memory",
+            "compiler_cursor_PC": "0017a444",
+            "original_effect_PC": "0017a444",
+            "original_word": "8c42eaec",
+            "original_file_offset": 501060
+          },
+          {
+            "key": "SLUS_214.10:00181bc0",
+            "raw_first_refusal": "unsupported_value_ast:CallExpr",
+            "primary_semantic_cause": "typed_memory",
+            "compiler_cursor_PC": "00181bc0",
+            "original_effect_PC": "00181bc0",
+            "original_word": "8f839dc4",
+            "original_file_offset": 531648
+          },
+          {
+            "key": "SLUS_214.10:0019d5d0",
+            "raw_first_refusal": "unsupported_value_ast:CallExpr",
+            "primary_semantic_cause": "typed_memory",
+            "compiler_cursor_PC": "0019d5dc",
+            "original_effect_PC": "0019d5dc",
+            "original_word": "8c620004",
+            "original_file_offset": 644828
+          },
+          {
+            "key": "SLUS_214.10:001c4210",
+            "raw_first_refusal": "unsupported_value_ast:CallExpr",
+            "primary_semantic_cause": "typed_memory",
+            "compiler_cursor_PC": "001c4210",
+            "original_effect_PC": "001c4210",
+            "original_word": "8f83a560",
+            "original_file_offset": 803600
+          },
+          {
+            "key": "SLUS_214.10:001d77d0",
+            "raw_first_refusal": "unbound_member:pc",
+            "primary_semantic_cause": "return_interface_bundle",
+            "compiler_cursor_PC": "001d77d0",
+            "original_effect_PC": "001d77d4",
+            "original_word": "0080102d",
+            "original_file_offset": 882900,
+            "correction": "Original inline effect is in JR delay slot; compiler cursor names JR"
+          },
+          {
+            "key": "SLUS_214.10:00212c20",
+            "raw_first_refusal": "unsupported_value_ast:CallExpr",
+            "primary_semantic_cause": "typed_memory",
+            "compiler_cursor_PC": "00212c20",
+            "original_effect_PC": "00212c20",
+            "original_word": "8c840014",
+            "original_file_offset": 1125664
+          },
+          {
+            "key": "SLUS_214.10:00221b50",
+            "raw_first_refusal": "unsupported_conditional_control",
+            "primary_semantic_cause": "branch_control",
+            "compiler_cursor_PC": "00221b50",
+            "original_effect_PC": "00221b50",
+            "original_word": "04830003",
+            "original_file_offset": 1186896
+          },
+          {
+            "key": "SLUS_214.10:0022c620",
+            "raw_first_refusal": "unsupported_conditional_control",
+            "primary_semantic_cause": "branch_control",
+            "compiler_cursor_PC": "0022c628",
+            "original_effect_PC": "0022c628",
+            "original_word": "50820006",
+            "original_file_offset": 1230632
+          },
+          {
+            "key": "SLUS_214.10:00241b70",
+            "raw_first_refusal": "unbound_member:pc",
+            "primary_semantic_cause": "return_interface_bundle",
+            "compiler_cursor_PC": "00241b70",
+            "original_effect_PC": "00241b74",
+            "original_word": "0000102d",
+            "original_file_offset": 1318004,
+            "correction": "Original inline effect is in JR delay slot; compiler cursor names JR"
+          },
+          {
+            "key": "SLUS_214.10:0030e130",
+            "raw_first_refusal": "unsupported_value_ast:CallExpr",
+            "primary_semantic_cause": "typed_memory",
+            "compiler_cursor_PC": "0030e130",
+            "original_effect_PC": "0030e130",
+            "original_word": "8c83001c",
+            "original_file_offset": 2155056
+          },
+          {
+            "key": "SLUS_214.10:0033d3d0",
+            "raw_first_refusal": "unbound_scalar_register_part",
+            "primary_semantic_cause": "branch_control",
+            "compiler_cursor_PC": "0033d3d0",
+            "original_effect_PC": "0033d3d0",
+            "original_word": "14c00003",
+            "original_file_offset": 2348240,
+            "correction": "Captured boolean branch condition, not a wide-register operation"
+          },
+          {
+            "key": "SLUS_214.10:00343980",
+            "raw_first_refusal": "unsupported_value_ast:CallExpr",
+            "primary_semantic_cause": "typed_memory",
+            "compiler_cursor_PC": "00343980",
+            "original_effect_PC": "00343980",
+            "original_word": "8c820004",
+            "original_file_offset": 2374272
+          },
+          {
+            "key": "SLUS_214.10:0036a790",
+            "raw_first_refusal": "unbound_abi_liveout",
+            "primary_semantic_cause": "return_interface_bundle",
+            "compiler_cursor_PC": "0036a79c",
+            "original_effect_PC": "0036a79c",
+            "original_word": "03e00008",
+            "original_file_offset": 2533532
+          },
+          {
+            "key": "SLUS_214.10:003b80e0",
+            "raw_first_refusal": "scalar_unbound_GPR_value_ABI:register_4",
+            "primary_semantic_cause": "incoming_ABI",
+            "compiler_cursor_PC": "003b80e0",
+            "original_effect_PC": "003b80e0",
+            "original_word": "38840002",
+            "original_file_offset": 2851296
+          },
+          {
+            "key": "SLUS_214.10:003c6ad0",
+            "raw_first_refusal": "unbound_memory:non_GP_base",
+            "primary_semantic_cause": "typed_memory",
+            "compiler_cursor_PC": "003c6adc",
+            "original_effect_PC": "003c6adc",
+            "original_word": "ac820014",
+            "original_file_offset": 2911196
+          },
+          {
+            "key": "SLUS_214.10:0047e7c0",
+            "raw_first_refusal": "unsupported_value_ast:CallExpr",
+            "primary_semantic_cause": "typed_memory",
+            "compiler_cursor_PC": "0047e7c0",
+            "original_effect_PC": "0047e7c0",
+            "original_word": "8f82b160",
+            "original_file_offset": 3664064
+          },
+          {
+            "key": "SLUS_214.10:004c4a40",
+            "raw_first_refusal": "unbound_value:register_4",
+            "primary_semantic_cause": "incoming_ABI",
+            "compiler_cursor_PC": "004c4a44",
+            "original_effect_PC": "004c4a44",
+            "original_word": "afa40000",
+            "original_file_offset": 3951428
+          }
+        ],
+        "limits": "First-error grouping only. 13 memory plus6 input barriers are19 first statements, not19 predicted whole-function passes. All30 remain REFUSED; secondary barriers remain."
+      }
     },
     "P3_prime": {
       "status": "DONE",
@@ -249720,7 +250028,21 @@
       },
       "mix_overlap": "Memory-free is disjoint from load/store; load,store,branching overlap. Do not sum tag denominators.",
       "conclusion": "The current general transformer does not scale to this simple-leaf cohort:0/30 lowering completions or whole-function E2. Stop general binding rounds. This does not prove all1952 leaves fail.",
-      "separate_Stage_A": "One deliberately selected two-instruction, no-memory dependency passed189 comparisons. This supports only its narrow constant-return ABI family; not1/31, a random-sample pass, or generic memory-transform evidence."
+      "separate_Stage_A": "One deliberately selected two-instruction, no-memory dependency passed189 comparisons. This supports only its narrow constant-return ABI family; not1/31, a random-sample pass, or generic memory-transform evidence.",
+      "architecture_review": {
+        "status": "REVIEWED_NO_MERGE",
+        "finding": "The present lowerer/emitter is specialized to constant-evaluated initializer shapes. Loads/input arguments require runtime-valued SSA and typed guest-memory effects for StageA; adding an ld32 helper name alone cannot establish general emission. Branch and return-bundle lowering are separate missing capabilities.",
+        "source": "tools/research/transform_generated_units.py",
+        "source_sha256": "f00c0c88a5a242c891b3bc61fb43e15a8d47a90cc1b0e3ba049f9965a165eafb",
+        "source_points": [
+          "expression omits load lowering",
+          "evaluate and SSA bindings consume constant_value",
+          "address accepts only fixed GP/relative field contracts",
+          "ReturnStmt uses initializer register3 liveout and selected store",
+          "emit accepts fixed initializer IR and literal constant values"
+        ],
+        "decision": "Prioritize isolated R192 AOT closure while owner collects Konquest code. Keep general binding rounds stopped. A later bounded StageA typed-memory experiment at001A3BE0 remains a candidate after legal extent/alias proof; no broad handwritten retail rewrite is authorized or inferred."
+      }
     },
     "P5_prime": {
       "status": "DONE",
@@ -252759,19 +253081,40 @@
       "bottom_up": "Only the admitted/whole-compared constant-return StageA slice is supported. Each next family requires measured whole-function evidence; do not extrapolate to camera or the whole catalogue."
     },
     "separate_oracle_closure": {
-      "status": "OPEN_UNCHANGED",
-      "owner": "Antigravity",
-      "last_record": {
-        "path": "build/oracle-telemetry/scalar-copy-closure-status-02.json",
-        "sha256": "7b77dcc52f9b698eb1d3d17374b0f0d07271aebfb739d5f57379fa1c37506582"
-      },
+      "status": "OPEN_PRIORITY_ISOLATED_FORK_BRANCH",
+      "owner": "Codex; Antigravity quota exhausted",
+      "branch": "r192-aot-closure-proof",
+      "worktree": "external/forks/ps2-native-recomp-r192-closure",
+      "base_fork_main": "7244e8da527e8a3a7400aa53bca64b41b5ce63d4",
+      "record": "research/runs/r192-hooks-playable-run-20261125/RUN.md",
       "limits": [
-        "Finite authenticated template count",
-        "Historical55 dump fit",
-        "Held-out session",
-        "Image-match validation"
+        "Exact runtime image/entry/generated-source/binary binding",
+        "Finite authenticated template count and historical55 dump fit",
+        "Full-suite and held-out state/image comparisons",
+        "R192version8 source must not be conflated with currentmainversion14"
       ],
-      "actions": "No closure work, computer use, model/settings access or protected-oracle execution."
+      "actions": "Audits, owner capture preservation and one headless copied-PE diagnostic with disposable state/card; no GUI/audio setup, live-process inspection, protected runtime writes, hook changes or native credit.",
+      "latest_audit": {
+        "path": "sibling ps2-native-recomp-r192-closure/build/oracle-telemetry/r192-closure-audit-07/RESULT.json",
+        "sha256": "eab0e4e35ef59cabc7a1185807b5e1242197e70c09c83d861afa511122af6402",
+        "status": "OPEN",
+        "historical_state_log_new_frames": {
+          "states": 61,
+          "each_delta": 1,
+          "proves_90_new_frames": false
+        }
+      },
+      "fresh_owned_probe": {
+        "path": "sibling ps2-native-recomp-r192-closure/build/oracle-telemetry/r192-owned-aot-probe-01/RESULT.json",
+        "sha256": "adf1afecb481ab9b490e1decd513acd3ee659c2a0ca2035c8da010068bd46e44",
+        "loaded_frame": 80225,
+        "new_frames": 0,
+        "miss": "008A5140",
+        "RA": "002E6180",
+        "runtime_exit": 0,
+        "probe_accepted": false,
+        "input_changes": []
+      }
     },
     "Not verified": [
       "StageB native heap lifetime/production callers/whole-game acceptance.",
@@ -253174,7 +253517,7 @@
         "publication_role": "Published source/evidence commits; reporting successors carry completion/source-join metadata."
       }
     ],
-    "next_step": "Keep general binding rounds stopped. Next bounded bottom-up target is001A3BE0: separately admit its reviewed E1 evidence, prove the legal heap extent/alias contract, then attempt one complete StageA typed-memory function and compare all seven ordered32-bit stores. Keep arena callers AOT and camera parked until their dependencies pass. No result for that future function is claimed.",
+    "next_step": "On isolated r192-aot-closure-proof: prove writer/executable extent/full body behind object+4C for fresh bound miss008A5140; caller002E60E0/RA002E6180 is not an emitter identification. Reproduce actual version8 source candidate on disposable output before full/held-out no-Live and image comparisons. Preserve owner code collection and activeR192/card. Native branches stay unmerged; generic bindings stop. Deferred001A3BE0 still needs extent/alias proof and seven ordered-store comparison.",
     "publication_roles": {
       "implementation": "7e14d600595ccd511d58c570f2ab3ebac4c30c97",
       "parent_evidence": "6708b17995e2a87868e75aae2244a2bb78373a2b",
@@ -253202,7 +253545,9 @@
       "agent_card_writes_authorized": false,
       "agent_actions": "No card write, restore, reset, repin, process stop, or computer use. Preserve the active owner session.",
       "protection_scope": "The completed baseline and both initial source publication guards passed with the original card hash. Card changed afterward during owner activity. Source-only metadata publication may continue with this explicit exception; no project verification checker or manifest changes.",
-      "game_capture": "No new oracle capture or closure acceptance claimed by the native-port task."
-    }
+      "game_capture": "No new oracle capture or closure acceptance claimed by the native-port task.",
+      "protection_exception_exact_scope": "The protected persistent card bytes changed fromf38dc412... toa42816d6... after the completed baseline. Only the ad-hoc source publication helper skipped its obsolete card equality assertion after explicit owner confirmation. It did not change a project checker, expected hash, manifest, card, executable or process. The exact writer remains unattributed."
+    },
+    "review_followup": "Both measured native-study branches remain unmerged; main refs unchanged. Current review adds diagnostics/documentation only and carries forward the completed59target/65variant/16gate baseline; no new game behavior or native credit is claimed."
   }
 }
