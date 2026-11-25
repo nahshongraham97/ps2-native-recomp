@@ -54,13 +54,12 @@ An installed plugin, agent agreement or a passing component test is not proof
 of source semantics or accepted gameplay.
 Advance retail entry -> native initialization -> game loop -> real input ->
 rendering and sound. Defer optional work until the connected full build;
-compile and check directly affected changes without rechecking unchanged
-components unless a failure or material concern requires it. Never replace
+run the full recorded baseline before and after each step and check affected changes directly. Never replace
 production progress with isolated wrappers, repeated reports or test counts.
 
 ## Xbox renderer, viewport, and HD presentation rules
 
-The owner's corrected complete instruction set controls phases 0 through 7.
+The owner's corrected complete instruction set controls the start checks and Steps H, 6, 5S and 7.
 Do not start the next phase until the prior phase is committed, pushed,
 passing its baseline, ledger-synchronized and oracle-manifest verified.
 If a phase cannot finish, publish verified work, put the exact resume line
@@ -80,20 +79,7 @@ restoring state, and keep IPU-gap/truncation/version regressions. Program-key
 agreement cannot authenticate a mis-extraction. Synthetic inputs, code
 identity and register/memory/packet equivalence remain distinct evidence.
 
-Per `DECISION_OWNER_CORRECTIONS_20261124` and parent `ROADMAP.md` / `PORT_STATUS.md`:
-Xbox investigation is **limited strictly to the renderer, viewport, and HD presentation**,
-with GS packet decoding as an interim concession only (not a final target). Retail game
-logic outside platform boundaries comes from AOT-generated PS2 retail C++ transformed
-to eliminate `g_ram`, `c.r`, `$gp`, and guest vtables. Within the renderer/HD scope,
-Xbox reference is an investigation priority, not automatic adoption or a claim
-that every module becomes substantially easier. Follow the parent AGENTS.md
-donor-selection rule:choose verified behavior that reduces actual connected
-native work/dependencies,record concrete savings or their absence,and implement
-shared CPU behavior once using existing services. Shorter listings are not
-savings evidence;do not clone either console SDK/CRT/device or redo working
-native implementations. Bound comparisons to the current decision rather
-than building two versions.0406 establishes no substantial Xbox-specific
-dependency reduction within its recovered CPU-image scope.
+The Xbox image supports read-only library identification and measured PS2/Xbox capability comparisons. The owner decides the route. Xbox-derived algorithms are eligible only for renderer, viewport and HD presentation after comparison. GS packet decoding remains interim. Transform retail logic from pinned PS2 AOT output and retain the verified Windows platform services. The 0406 CPU-image comparison found no substantial Xbox-specific dependency reduction.
 
 1. **Preserve existing native foundation**: Native files, content volume, async reads, heaps, Session, tasks, Main reentry, clocks, typed profiles, input sampling, audio decoders/jobs, textures/fonts, and GPU resources carry forward. Do not replace them with an Xbox runtime or emulated device.
 2. **Reconcile profile and player records**: Transfer state meanings, not console offsets. Native save/load is required; PS2 save-byte compatibility/import is optional. Keep useful native codecs where easiest without constraining the native state model. Establish actual per-mode player requirements rather than console limits.

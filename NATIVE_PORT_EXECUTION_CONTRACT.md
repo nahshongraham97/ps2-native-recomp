@@ -97,35 +97,7 @@ those estimates.
 ## Verified reuse across retail platforms
 
 The native Windows service architecture and verified PS2 work are retained.
-A function or subsystem from another Armageddon version may be adapted when
-its verified behavior matches the target and it closes a current blocker
-more directly. Pin each version's executable/assets separately and establish
-its own addresses, ABI, types, layouts and consumers. Verify equivalent
-inputs/outputs, side effects, lifetime, errors, timing and asset identity,
-then connect the donor to the existing native interfaces. Reuse requires the
-same source, component, behavioral and whole-game gates as any other change.
-No donor hardware emulator, guest address model or unapproved gameplay redesign
-is authorized. Use the appropriate pinned retail evidence for the selected
-implementation; neither version's platform artifacts are universal acceptance
-requirements. Missing comparison evidence remains open even when a donor is
-simpler. Preserve verified native functionality while eliminating console
-dependencies, rather than maintaining two console runtimes.
-
-Xbox investigation (`DECISION_OWNER_CORRECTIONS_20261124`) is limited strictly
-to the renderer, viewport, and HD presentation (with GS packet decoding as an
-interim concession only); it is an investigation priority within that scope, not
-automatic adoption or a guarantee of substantial implementation savings. Choose the verified
-matching portion that reduces actual connected native work and dependencies;
-record concrete avoided work/reused native services or explicitly state that
-no material advantage is established. A shorter listing or familiar API is
-insufficient. Implement shared CPU behavior once through existing native
-owners,not duplicate console implementations or transplanted SDK/CRT/device
-models. A bounded comparison is enough when it supports the decision;do not
-redo working services or recover both entire libraries to manufacture a
-comparison.0406's CPU-image recovery found no substantial Xbox-specific
-dependency reduction;that scoped finding does not alter Xbox investigation
-within the authorized renderer/viewport/HD-presentation boundary. All behavior/evidence gates
-remain unchanged.
+The Xbox image supports read-only library identification and measured PS2/Xbox capability comparisons. The owner decides the route. Xbox-derived algorithms are eligible only for renderer, viewport and HD presentation after comparison. GS packet decoding remains interim. Pin both images and establish each function’s addresses, ABI, inputs, outputs, effects, errors, timing, asset identity and consumers. Record the measured dependencies and native services each route requires. The 0406 CPU-image comparison found no substantial Xbox-specific dependency reduction.
 
 Any donor function match with `heuristic` confidence in `research/ledger/ps2_xbox_map.csv`
 is strictly barred from adoption until promoted to `exact` or `structural`
@@ -203,11 +175,11 @@ surface. A mode with no oracle/complete observation remains open.
 
 ## Required implementation sequence
 
-Current coding priority is the connected route in ROADMAP.md: retail entry, real native initialization, main/frame control, physical input, rendering and sound. Link-only wrappers, empty effects and component tests do not satisfy missing production behavior. Mode changes must preserve original nonlocal main reentry without guest register/stack state. The dated connected-entry record owns implementation evidence; whole-game acceptance requirements below are unchanged.
+Current coding priority is the connected route in ROADMAP.md: retail entry, real native initialization, main/frame control, physical input, rendering and sound. Link-only wrappers, empty effects and component tests do not satisfy missing production behavior. Mode changes must preserve original nonlocal main reentry without guest register/stack state. ROADMAP.md gives the phase order. The dated connected-entry record owns implementation evidence; whole-game acceptance requirements below are unchanged.
 
 1. **Pin provenance and preserve data.** Record parent/fork HEAD and dirty
    state, compiler, binary SHA-256, launch flags, and extracted asset manifest.
-   Preserve the dated backup and save/state files. Identify and hash the active playable recomp build and behavioral oracle (`external/forks/ps2-native-recomp/build/r192-hooks/out/ps2run.exe`, `8AB43BDA...`, persistent slot-1 card `game/disc/armageddon.ps2` holding user saves + Konquest checkpoint) as well as the historical `2026-11-10` oracle (`milestone_work_verified_playable_20261110/`, `B9EEF7DA...`) and Kombat Practice (`8B763DCC...`). Never overwrite persistent memory cards, checkpoints, saves, keys, or
+   Preserve the dated backup and save/state files. Identify and hash the active playable recomp build and behavioral oracle (`external/forks/ps2-native-recomp/build/r192-hooks/out/ps2run.exe`, `8AB43BDA...`, persistent slot-1 card `game/disc/armageddon.ps2` holding user saves + Konquest checkpoint) as well as the saved-state and parity oracle (`milestone_work_verified_playable_20261110/`, `B9EEF7DA...`) and Kombat Practice (`8B763DCC...`). Never overwrite persistent memory cards, checkpoints, saves, keys, or
    local model/settings. A `dirty` binary cannot be accepted or credited with
    another binary's log.
 2. **Enumerate retail behavior offline.** Inventory ELF functions and indirect
@@ -365,7 +337,7 @@ the implementation and rerun the gate; do not weaken the checker.
 - Continuous movie playback, synchronized sound, real input-to-action,
   connected scene rendering, complete native saves and whole-game parity
   remain OPEN. Historical device/census logs do not close these current gates.
-- The oracle and Kombat Practice share measured hook lineage. Their distinct
+- R192 supplies gameplay and telemetry evidence. The November 10 milestone supplies saved-state and hash parity. Kombat Practice is the historical snapshot. The primary oracle designation is pending owner confirmation. The builds share measured hook lineage. Their distinct
   executable hashes and hook configuration must accompany comparisons.
   Existing oracle files are immutable; only recorded Phase 0 additions are
   authorized. The old restored launcher has a retired path and is historical.

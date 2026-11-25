@@ -9,8 +9,8 @@ This document defines the physical directory layout, repository boundaries, Phas
 
 ```text
 <workspace-root>/                                # Parent folder containing repos and separate oracle (../../ from parent repo)
-├── milestone_work_verified_playable_20261110/   # Canonical playable oracle (ONLY separate reference dataset dir; ps2run.exe b9eef7da...)
-│   ├── ps2run.exe, launch_game.bat, SDL2.dll    # Restored oracle runner/launcher (3,256 total files; 3,250 original files untouched)
+├── milestone_work_verified_playable_20261110/   # Saved-state and hash-parity oracle (ps2run.exe b9eef7da...)
+│   ├── ps2run.exe, launch_game.bat, SDL2.dll    # Restored oracle runner/launcher (3,256 original files plus authorized launcher additions)
 │   ├── games/mkarmageddon/disc/states/          # 133 state-related files: 61 .state snapshots + 72 .inputs sidecars
 │   └── games/mkarmageddon/ee-live/, vu1-live/   # Oracle runtime live caches (44 .dlls in vu1-live/, 2,212 .dlls in ee-live/)
 │
@@ -48,12 +48,12 @@ This document defines the physical directory layout, repository boundaries, Phas
 
 | Dataset / Checkout | Previous Location | Consolidated Target / Status | Disposition |
 |---|---|---|---|
-| **Canonical Playable Oracle** | `../../milestone_work_verified_playable_20261110` | `../../milestone_work_verified_playable_20261110` (unchanged) | **Retain (Protected)**: SOLE separate directory outside repo (`ps2run.exe` `B9EEF7DA...`, 3,256 files restored) |
-| **Kombat Practice Oracle Descendant** | `../../milestone_build_kombat_practice` | `../../milestone_build_kombat_practice` (unchanged) | **Retain (Oracle Lineage)**: Hook-enabled descendant (`8B763DCC...`) sharing `cd33a7f..67612aa` |
+| **Saved-state and hash-parity oracle** | `../../milestone_work_verified_playable_20261110` | `../../milestone_work_verified_playable_20261110` (unchanged) | **Retain (Protected)**: Protected parity dataset outside the repository (`ps2run.exe` `B9EEF7DA...`, 3,256 files restored) |
+| **Kombat Practice historical snapshot** | `../../milestone_build_kombat_practice` | `../../milestone_build_kombat_practice` (unchanged) | **Retain (Oracle Lineage)**: Hook-enabled descendant (`8B763DCC...`) sharing `cd33a7f..67612aa` |
 | **Active Native Port Fork** | Pre-consolidation active worktree under `external/forks/` | `external/forks/ps2-native-recomp` | **Active Primary Fork**: Promoted to standalone primary `.git` tracking `origin/main` |
 | **Legacy Fork Checkout** | `external/forks/ps2-native-recomp` (`3f015562`) | Relocated protected inputs -> `private-inputs/legacy-mkarmageddon-20261118/` | **Removed (Phase 3)**: present archive contains 982 hashed files; completeness/origin before deletion unproved without a prior manifest |
 | **Protected Duplicate Backup** | `external/forks/ps2-native-recomp-backup-20261110` | `external/forks/ps2-native-recomp-backup-20261110` | **Protected Duplicate**: Retained until owner approves cleanup (`3,249` files SHA-256 identical to oracle) |
-| **Phase Review / Clean Worktrees (`clean-*-22`, `ps2-native-recomp-*`)** | `external/forks/*` (40 sibling MKA worktrees per `checkout_inventory.json`) | Removed in Phase 3 (`phase3_checkout_removal_log.json`) | **Removed (Phase 3)**: Verified 0 protected/dirty files before deletion (`God-Of-War-Native-Port` & `MortalKombat` retained) |
+| **Phase Review / Clean Worktrees (`clean-*-22`, `ps2-native-recomp-*`)** | `external/forks/*` (40 sibling MKA worktrees per `checkout_inventory.json`) | Removed in Phase 3 (`phase3_checkout_removal_log.json`) | **Removed (Phase 3)**: The Phase 3 removal log and checkout audit record protected holdings and historical gaps |
 | **External Tool / Reference Mirrors** | `../../Armageddon-backup/forks/*` (64 external repos per `checkout_inventory.json`) | `../forks/*` (sibling to `armageddon-reimplementation`) | **Read-Only External References**: `ghidra`, `pcsx2`, `PS2Recomp`, `parallel-gs`, etc.; never edit |
 
 ---
@@ -72,9 +72,9 @@ This document defines the physical directory layout, repository boundaries, Phas
    - Role: Active ahead-of-time (AOT) static native C++ recompilation, memory/ABI transform, and native runtime implementation of *Mortal Kombat: Armageddon*.
    - Path Rules (Binding): Inside every repository document, use **strictly repo-relative paths**; never use machine-local user paths or file-scheme links, and never reintroduce the retired pre-consolidation checkout name.
 
-3. **Playable Recomp Build & Behavioral Oracle (`r192-hooks`) vs Preserved Historical Snapshots**:
+3. **Playable Recomp Build & Behavioral Oracle (`r192-hooks`) and preserved parity data**:
    - **Active Playable Recomp Build & Behavioral Oracle**: `external/forks/ps2-native-recomp/build/r192-hooks/out/ps2run.exe` (`8AB43BDA...`, launched via `launchers/launch_r192_hooks.bat` -> `build/r192-hooks/out/launch_r192_hooks.bat`; R192 `67612aa` lineage + `mka_unit_wrappers.cpp` + all 7 overlay hooks + `0x00197BC0`). Verified in the 2026-11-25 68,426-frame session (`research/runs/r192-hooks-playable-run-20261125/RUN.md`, `60.0 FPS` median; Konquest and Motor Kombat work cleanly). Its slot-1 memory card `build/r192-hooks/game/disc/armageddon.ps2` (`8,650,752` bytes, SHA-256 `f38dc412...`) is **persistent** (holds saved progress + Konquest checkpoint) and must never be overwritten or replaced with a disposable card.
-   - **Preserved Historical Datasets**: `../../milestone_work_verified_playable_20261110` (`B9EEF7DA...`) and `../../milestone_build_kombat_practice` (`8B763DCC...`) remain preserved on disk (`milestone_work_verified_playable_20261110` is verified immutable for `-Mode Parity` state telemetry written to `build/oracle-telemetry/`). Neither historical snapshots nor `r192-hooks` satisfy the separate zero-emulation shipped-port acceptance contract.
+   - **Parity oracle and historical snapshot**: `../../milestone_work_verified_playable_20261110` (`B9EEF7DA...`) and `../../milestone_build_kombat_practice` (`8B763DCC...`) remain preserved on disk (`milestone_work_verified_playable_20261110` is verified immutable for `-Mode Parity` state telemetry written to `build/oracle-telemetry/`). Neither historical snapshots nor `r192-hooks` satisfy the separate zero-emulation shipped-port acceptance contract.
 
 ---
 
@@ -96,4 +96,4 @@ Following the 2026-11-24 documentation consolidation, overlapping and superseded
 | `AGENTS.md` | Binding operating rules for AI agents, git commit/push rules, single-main policy | Operational |
 | `AGENT_ASSETS.md` / `AGENT_ASSETS_FULL.md` | Local tool, compiler, SDK, and script directory index (parent repo) | Tooling |
 
-Phase 0 launcher correction: preserve the oracle's existing `launch_game.bat` unchanged. The corrected `launch_verified_oracle.bat` addition delegates to tracked `launchers/launch_oracle.ps1`, which uses active-fork ignored telemetry and disposable data. The authorized addition map is tracked separately; reverify the recorded original manifest plus exactly those additions after each phase.
+Phase 0 launcher correction: preserve the oracle's existing `launch_game.bat` unchanged. The corrected `launch_verified_oracle.bat` addition invokes the tracked `launchers/launch_oracle.ps1`, which uses active-fork ignored telemetry and disposable data. The authorized addition map is tracked separately; reverify the recorded original manifest plus exactly those additions after each phase.

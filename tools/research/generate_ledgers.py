@@ -15,10 +15,11 @@ import collections
 import csv
 import html
 import json
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 import re
 import struct
 import subprocess
+from urllib.parse import unquote, urlsplit
 from aot_inventory import verify_entries, verified_nonfunction_catalogue_addresses, verify_vu_snapshot_measurement, verify_transformed_functions
 
 for _p in [Path(__file__).resolve(), *Path(__file__).resolve().parents]:
@@ -813,7 +814,7 @@ def generate_progress_svg(ps2_ledger, xbox_ledger, output_path: Path):
 
     # Xbox Reference Line (explicitly NO percentage)
     lines.append('  <line x1="24" y1="320" x2="896" y2="320" stroke="#30363d" stroke-width="1"/>')
-    lines.append(f'  <text x="24" y="344" fill="#8b949e" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="600">Xbox Reference (default.xbe — Renderer / Viewport / HD Presentation Scope Only)</text>')
+    lines.append(f'  <text x="24" y="344" fill="#8b949e" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="600">Xbox Reference (read-only identification/comparison; renderer/viewport/HD adoption)</text>')
     lines.append(f'  <text x="24" y="366" fill="#c9d1d9" font-family="Segoe UI, Arial, sans-serif" font-size="12">{xb_total:,} catalogued routines · {xb_donor} donor-credited · 18 role-mapped candidates (reference source, not a separate target)</text>')
     lines.append('</svg>')
     output_path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
@@ -853,19 +854,24 @@ def validate_classifications(repo_root: Path, ps2_ledger):
         raise AssertionError("Invalid or incomplete native_module_classification.json")
 
 
-def validate_current_docs(repo_root: Path):
-    """Enforce Phase 1 doc hygiene: no file:/// or machine-local user paths, no broken relative links, no old Xbox-everything wording."""
+def validate_current_docs(repo_root: Path, *, fork_only: bool | None = None):
+    """Validate current links and keep fork document destinations in the fork."""
+    repo_root = repo_root.resolve()
+    if fork_only is None:
+        fork_only = repo_root.name == "ps2-native-recomp" or (repo_root / "runtime").is_dir()
+    fork_root = repo_root if fork_only else repo_root / "external/forks/ps2-native-recomp"
+    fork_project = ("nahshongraham97", "ps2-native-recomp")
     doc_names = [
         "README.md", "TASK_BOARD.md", "PORT_STATUS.md", "ROADMAP.md",
         "AGENTS.md", "HANDOFF.md", "MODEL_COORDINATION.md", "REPO_LAYOUT.md",
-        "NATIVE_PORT_EXECUTION_CONTRACT.md",
+        "NATIVE_PORT_EXECUTION_CONTRACT.md", "NATIVE_PORT_ONLY.md",
     ]
     if (repo_root / "launchers" / "README.md").exists():
         doc_names.append("launchers/README.md")
 
     rx_local = re.compile(r"(?:file:///|[A-Za-z]:[/\\]{1,2}Users[/\\]|/home/nahsh)", re.I)
     rx_xb_all = re.compile(r"xbox[- ]first.*(?:everything|all remaining)|start with the prepared xbox program for \*\*all remaining", re.I)
-    rx_mdlink = re.compile(r"\[[^\]]+\]\(([^)#\s]+)(?:#[^)]+)?\)")
+    rx_mdlink = re.compile(r"\[[^\]]+\]\(\s*(?:<([^>]+)>|([^\s)]+))(?:\s+[\"'][^)]*)?\)")
 
     for rel in doc_names:
         p = repo_root / rel
@@ -879,10 +885,47 @@ def validate_current_docs(repo_root: Path):
                 raise AssertionError(f"Forbidden old Xbox-first 'everything' wording in {rel}:{i}: {line[:120]}")
             if ("retail" + "-main-22") in line:
                 raise AssertionError(f"Forbidden retired fork directory reference in {rel}:{i}: {line[:120]}")
-            for target in rx_mdlink.findall(line):
-                if target.startswith(("http://", "https://", "mailto:")):
+            targets = [angle or plain for angle, plain in rx_mdlink.findall(line)]
+            definition = re.match(r"^ {0,3}\[[^\]]+\]:\s*(?:<([^>]+)>|(\S+))", line)
+            if definition:
+                targets.append(definition.group(1) or definition.group(2))
+            targets.extend(re.findall(r"<(https?://[^<>\s]+)>", line, re.I))
+            for raw_target in targets:
+                target = unquote(raw_target)
+                where = f"{rel}:{i}: {target}"
+                if fork_only and (PureWindowsPath(target).drive or target.startswith(("/", "\\"))):
+                    raise AssertionError(f"Absolute filesystem markdown link forbidden in fork document {where}")
+                url = urlsplit(target)
+                if url.scheme or url.netloc:
+                    parts = url.path.strip("/").split("/")
+                    same_fork = (url.scheme == "https" and url.netloc.lower() == "github.com"
+                                 and tuple(part.lower() for part in parts[:2]) == fork_project)
+                    if fork_only and not same_fork:
+                        raise AssertionError(f"Cross-repository or external markdown link forbidden in fork document {where}")
+                    if same_fork:
+                        if len(parts) == 4 and parts[2] == "commit" and re.fullmatch(r"[0-9a-fA-F]{40}", parts[3]):
+                            checked = subprocess.run(["git", "cat-file", "-e", parts[3] + "^{commit}"],
+                                                     cwd=fork_root, capture_output=True, timeout=5)
+                            if checked.returncode:
+                                raise AssertionError(f"Unknown same-fork commit markdown link in {where}")
+                        elif len(parts) >= 5 and parts[2] in ("blob", "tree"):
+                            resolved = (fork_root / "/".join(parts[4:])).resolve()
+                            if not resolved.is_relative_to(fork_root.resolve()) or not resolved.exists():
+                                raise AssertionError(f"Missing or escaped same-fork markdown link in {where}")
+                            if parts[2] == "blob" and not resolved.is_file():
+                                raise AssertionError(f"Same-fork blob markdown link is not a file in {where}")
+                            if parts[2] == "tree" and not resolved.is_dir():
+                                raise AssertionError(f"Same-fork tree markdown link is not a directory in {where}")
+                        else:
+                            raise AssertionError(f"Unsupported same-fork markdown link in {where}")
                     continue
-                resolved = (p.parent / target).resolve()
+                # A fragment-only link stays in this document. Decode paths before
+                # containment checking, including percent-encoded traversal.
+                if not url.path:
+                    continue
+                resolved = (p.parent / url.path.replace("\\", "/")).resolve()
+                if fork_only and not resolved.is_relative_to(repo_root):
+                    raise AssertionError(f"Cross-repository relative markdown link forbidden in fork document {where}")
                 if not resolved.exists():
                     raise AssertionError(f"Broken relative markdown link in {rel}:{i}: {target}")
 
@@ -1131,8 +1174,8 @@ def generate_progress_markdown_block(ps2_ledger, xbox_ledger, ps2_map, fork_sha=
         f"- **Verified Differential Vectors**: **72 / 72** bit-exact match on xemu movie-variant oracle (`LOGON`/`LOGOW` selector); **0** dual-platform whole-function vectors awarding donor credit (`ps2_xbox_map.csv`: `{len(ps2_map):,}` rows = `{map_exact}` exact, `{map_struct}` structural, `{map_comp}` composite, `{map_role}` mapped-by-role, `{map_none:,}` unmapped)",
         f"- **Acceptance Placeholders**: **{ph_cnt}** registered unrecovered placeholders (`0` undefined link symbols; `13` hit across 369 calls in 60-frame headless probe); whole-game acceptance strictly **OPEN**",
         "",
-        "### Xbox Reference (`default.xbe` — Renderer / Viewport / HD Presentation Scope Only; no completion percentage)",
-        f"- **Reference Catalog**: **{len(xbox_ledger):,}** `default.xbe` routines inspected (`{xb_in_scope:,}` in non-XONLINE candidate set, `{xb_donor_cnt}` donor-credited, `{map_role}` role-mapped candidates). Limited strictly to renderer, viewport, and HD presentation per `DECISION_OWNER_CORRECTIONS_20261124.json` (not a separate target; GS packet decoding is an interim concession only).",
+        "### Xbox Reference (`default.xbe` — read-only identification and comparison; no completion percentage)",
+        f"- **Reference Catalog**: **{len(xbox_ledger):,}** `default.xbe` routines inspected (`{xb_in_scope:,}` in non-XONLINE candidate set, `{xb_donor_cnt}` donor-credited, `{map_role}` role-mapped candidates). Read-only library identification and measured Xbox-versus-PS2 capability comparisons are authorized. Algorithm adoption remains limited to renderer, viewport, and HD presentation after the per-capability comparison; the owner decides the route. GS packet decoding is an interim concession only.",
         "<!-- PROGRESS:END -->",
     ]
     return "\n".join(lines)
