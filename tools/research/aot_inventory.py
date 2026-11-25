@@ -286,7 +286,7 @@ def update_inventory(repo: Path, output: Path) -> dict:
             item["static_overlay_sources"] = ["build/generated-aot/phase4-all/" + n
                                                for n in sorted(measured["source_sha256"]) if n.startswith(prefix)]
     inventory["active_fork_build_generated_units"] = measured["total_units"]
-    inventory["active_fork_status"] = "Static generation measured by callable entries; Phase 4 semantic equivalence remains OPEN."
+    inventory["active_fork_status"] = "Static generation measured by actual callable entries and dynamic windows; independent execution evidence and memory/ABI transformation are recorded separately."
     reproduced = inventory["sources"]["reproduced_table_cpp"]
     reproduced["sha256"] = measured["table_sha256"]
     reproduced["static_unit_count"] = measured["total_units"]
