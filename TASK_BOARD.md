@@ -1,12 +1,12 @@
 # Retail native-port task board
 
-**Audited 2026-11-24. Whole-game native acceptance: OPEN.** The full instructions, order,
+**Audited 2026-11-25. Whole-game native acceptance: OPEN.** The full instructions, order,
 files, and closure evidence are in [ROADMAP.md](ROADMAP.md). This board indexes
 each deliverable's verified component progress and whole-game acceptance state;
 [PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is archived at
 `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
-**Resume Phase 6 with the remaining library ownership evidence.** Retail model clumps carry RenderWare stream version 3.6.0.3 (build FFFF). Review the saved binary-match candidates against original code, or use a matching Midway link map or a symbol-bearing PS2 reference closer to that version. The existing verification record includes the 3.1 camera ELF comparison, its conflicting pipeline name, and the Function ID and BSim results. Run `measure_renderer_scope.py --require-exact-renderware` and publish the passing checkpoint before Phase 7.
+**Resume Phase 6 with the remaining library ownership evidence.** Retail model clumps carry RenderWare stream version 3.6.0.3 (build FFFF). Review the saved binary-match candidates against original code, or use a matching Midway link map or a symbol-bearing PS2 reference closer to that version. The [Phase 6 verification record](https://github.com/nahshongraham97/armageddon-reimplementation/blob/main/research/runs/phase4-aot-completion-20261124/VERIFICATION.json) contains the retail headers, the 3.1 camera ELF comparison, the conflicting pipeline name, and the Function ID and BSim results. Run `measure_renderer_scope.py --require-exact-renderware` and publish the passing checkpoint before Phase 7.
 
 <!-- PROGRESS:START -->
 ## Native Reimplementation Progress & Multi-Tier Ledger
