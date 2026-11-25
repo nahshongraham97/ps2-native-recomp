@@ -15,6 +15,22 @@ cannot conceal a guest-memory shim. Credit only authenticated generated
 functions with compiled differential evidence; keep prototype and production
 integration status separate.
 
+The owner's Phase 6 instruction separates two intermediate transformations on
+sibling branches and disposable copies. Stage A replaces the register ABI with
+proved typed C++ parameters and returns; typed guest-memory accessors may remain
+in that intermediate experiment. Stage B replaces those accesses with native
+structures only after layout, aliasing and lifetime proof. Keep the AOT-only
+reference and an explicit per-function comparison switch. Stage A is not final
+native-memory acceptance and does not relax ownership, equivalence or credit
+rules. Capability-cohort results earn no transformed or native credit.
+
+Phase 5S.9 measures a seeded leaf cohort from the full in-scope catalogue
+separately from ownership-admitted functions. Preserve failures and report
+whole-function passes by size and instruction mix. Do not start another binding
+round without a measured whole-function pass in the preceding round or a leaf
+cohort result that supports continuing. Keep the camera as a milestone pending
+that result; diagnostic changes at the same instruction are not passes.
+
 The product is one genuine native Armageddon port in the existing repositories,
 not preservation of a PS2 runtime because of an upstream/fork name. Recover
 the best/easiest verified retail implementations into ONE native architecture.

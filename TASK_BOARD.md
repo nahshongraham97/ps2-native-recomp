@@ -6,7 +6,9 @@ each deliverable's verified component progress and whole-game acceptance state;
 [PORT_STATUS.md](PORT_STATUS.md) is the live status. The previous baseline board is archived at
 `research/history/native-port-docs-2026-11-18/TASK_BOARD.md`.
 
-**Current work follows A1 dependencies.** Phase 5S.8 targets scalar/copy SSA with proved inputs and the complete camera setter. Current results, all remaining camera-equivalence gates, the 39 probes, separate return-contract tests and publication status are recorded in the existing parent work-item `research/runs/phase4-aot-completion-20261124/VERIFICATION.json`, section `instruction_phase5S.phase_5S_8_scalar_copy_inputs_and_camera`. Handwritten setters, protected inputs, ownership rules and credit rules remain unchanged.
+**Current work follows A1 dependencies.** Phase 5S.9 measured zero whole-function passes in the frozen 30-leaf capability sample; stop general binding rounds. The original 17 admitted functions have zero leaves. Separate E1 admission of heap-close 001A3C40 makes the current roster 18 and supports one Stage A ABI function with 189 bounded comparisons; Stage B and production callers remain OPEN. Full 17/30 tables, failures, ownership/ABI evidence and publication status are in [the existing fork record](https://github.com/nahshongraham97/ps2-native-recomp/blob/phase6-abi-leaf-cohort/research/runs/renderer-scope.json), section native_phase6_leaf_slice. Transformed/native credit remains 2/238; protected inputs, handwritten setters and the admission/credit rules are unchanged.
+
+**Exact resume:** Keep the general transformer stopped. At PS2 001A3BE0, admit the separately reviewed E1 evidence, prove heap extent and alias constraints, then attempt one complete Stage A memory function and compare its seven ordered 32-bit stores. Arena callers remain AOT and the camera milestone remains parked. No future pass is assumed.
 
 **Separate OPEN oracle-closure track:** Antigravity owns `build/r192-aot-closure` and the attempt to remove the oracle's EE Live dependency. Its read-only status and template/dump limits are in N7 of that work item. It does not earn native-port credit or replace the protected R192 oracle.
 
@@ -20,8 +22,8 @@ R192 supplies gameplay and telemetry evidence. The November 10 playable mileston
 **Verified Fork Commit**: [`aec293d0`](https://github.com/nahshongraham97/ps2-native-recomp/commit/aec293d07ce624661f56492fcab031d719973201) (source and evidence checkpoint)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
-- Bounded ownership of 15,669 callable entries · verified-renderware 5, verified-game 12, verified-other-library 0, inferred-renderware 137, inferred-game 130, inferred-other 0, unresolved 15,385.
-- Ownership evidence by kind (overlapping entries) · E1 5, E2 0, E3 26, E4 13, E5 165, E6 112, E7 1.
+- Bounded ownership of 15,669 callable entries · verified-renderware 6, verified-game 12, verified-other-library 0, inferred-renderware 141, inferred-game 130, inferred-other 0, unresolved 15,380.
+- Ownership evidence by kind (overlapping entries) · E1 6, E2 0, E3 26, E4 13, E5 165, E6 117, E7 1.
 - Native credit retains its published component evidence. This ownership pass awards zero native credit.
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
 - **In-Scope Retail Path**: **15,670** (`2,643` non-exec/library: `sdk-or-library` 2,011 + `pointer-scan-proven` 632; `12,789` open frontier) | **Excluded Online (`out-of-scope-stubbed`)**: **1,840**

@@ -126,11 +126,29 @@ publication. Phase 7 is governed per function rather than by an exact total.
 
 ## 5S — Transform scale-out study
 
-Sample every recorded lifting blocker: leaf matrix math `0x00104000`, struct
+**Current owner amendment (5S.9 / Phase 6):** Report the admitted-function
+dependency table separately from a seeded, capability-only leaf cohort from
+the full in-scope catalogue. Keep excluded online rows visible in the census.
+Use original complete control flow to reject calls, indirect transfers other
+than ordinary JR RA returns, FPR/COP and 128-bit operations or exceptional
+returns. Measure whole-function passes with existing bindings; report every
+refusal and do not substitute diagnostic advances for equivalence.
+
+Begin bottom-up Stage A only with a proved native ABI, retaining typed guest
+memory access solely as an intermediate experiment on sibling branches and
+disposable copies. Keep an explicit AOT comparison route. Stage B replaces
+memory one proved structure at a time. Unproved or context-restoring callees
+remain on AOT. No additional binding round is justified without a measured
+whole-function pass or a supporting leaf-cohort result. Capability-only results
+do not change the transformed/native tiers or ownership rules. Keep the camera
+milestone parked until measured leaf results justify its full nine-gate batch.
+
+The historical 39-probe study sampled every recorded lifting blocker: leaf matrix math `0x00104000`, struct
 mutation `0x00102BB4`, branching caller `0x00100320`, gp globals `0x0018DA30`,
 and virtual-method transition `0x001225D0`. Include the four
 Step 6 functions, health deduction `0x00197BC0` and one function per major hand-written
-native module. Record exact sampled addresses in the existing study record.
+native module. Its frozen addresses and outcomes remain in the existing study record;
+the current cohort and stop rule above control further work.
 
 Attempt each through the generated-unit route using recovered class layouts
 and a data-segment symbol map. A successful unit has no c.r, g_ram, gp base or
@@ -139,7 +157,7 @@ on pinned saved inputs. Record each failure's exact reason and category:
 pointers, gp, vtables, indirect dispatch, 128-bit registers, overlays or cycle
 budget. Measure technique coverage from the sample; add no time estimates.
 
-**Stack-frame extension (owner S1–S6):** Recover original SP adjustments, RA and scalar/128-bit spills; classify slots and retain escaping or uncertain storage on the reference side. Compare compiled original AOT entry/exit boundaries across the pinned states and reject frame-size, escape-classification and saved-RA mutations. Rerun the unchanged 39-probe cohort before the separate single-GP-field experiment. Partial frame/reference IR must fail native emission while callee, alias, owner or ABI proof remains unbound. Continue with the reached scalar/register operations and actual typed call contracts recorded in PORT_STATUS.md; frame-only checks do not close whole-function E2.
+**Stack-frame extension (owner S1–S6):** Recover original SP adjustments, RA and scalar/128-bit spills; classify slots and retain escaping or uncertain storage on the reference side. Compare compiled original AOT entry/exit boundaries across the pinned states and reject frame-size, escape-classification and saved-RA mutations. Rerun the unchanged 39-probe cohort before the separate single-GP-field experiment. Partial frame/reference IR must fail native emission while callee, alias, owner or ABI proof remains unbound. Retain these completed diagnostic results as history; the current leaf-cohort and StageA stop rule controls further work. Frame-only checks do not close whole-function E2.
 
 **Closure:** 5S.1–5S.6 report successful units, exact blockers, measured coverage
 and renamed-accessor planted-failure results. Credit only verified transformed
