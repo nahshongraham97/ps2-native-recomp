@@ -806,6 +806,29 @@ the pinned candidate-build/source-fork/state/card/compiler inputs, and a fresh
 still executes in the observer; shadow agreement does not retire EE families,
 prove all descriptors, or award native/transform credit.
 
+### Current baseline and next independent VU coverage step
+
+The post-publication native foundation baseline passes59 targets,65 variants
+and16 gates (81 recorded checks including variants), with protected hashes
+unchanged and expected acceptance/strict-census refusals retained.
+build/oracle-telemetry/complete-baseline-20261126-001941-39ab9287/RESULT.json
+in the canonical fork has SHA-256
+0921c98e3119aa258c063ebbd146241e272d2a3f220b8e0a1c4eefee6113bb6f.
+The2 transformed/238 native totals remain unchanged. This baseline covers the
+native foundation; the separately cited R192 candidate/component tests cover
+the closure experiments, not accepted gameplay.
+
+The99 original MPG payloads contain66,036 uploaded instruction pairs.
+The next independent offline step enumerates every aligned uploaded entry
+and checks its entire canonical reachable-word set against original upload
+spans, including entries not named by existing captures/hints. This is a
+conservative code-entry superset, not66,036 proved game functions or launch
+roots. Generated instruction semantics remain those of the pinned v8 compiler.
+Complete original-entry generation/compilation, indirect/code-patch coverage,
+VU0 use, EE family continuations and IOP services remain OPEN.
+Only35.4GB disk was free at this checkpoint: new work must reserve space,
+avoid duplicate input images and never delete backups to make room.
+
 ### Verification and continuing work
 
 The full native baseline was freshly rerun: 59 targets, 65 variants and 16
