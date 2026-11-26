@@ -257967,6 +257967,125 @@
       "supersedes": "Earlier branch restoration/retention policy; never recreate historical refs.",
       "frozen_closure_commit": "31d087fa59274d15e35dba1e6c62fe1c53001563",
       "implementation_and_credit_change": 0
+    },
+    "step_1_to_4_stop_rule_20261126": {
+      "status": "STOP_RULE_TRIGGERED_RECOMMEND_EVIDENCE_GUIDED_NATIVE_SUBSYSTEMS",
+      "step1_both_criteria": {
+        "original30": {
+          "original_61_state_criterion": {
+            "established": 0,
+            "denominator": 30,
+            "rate": 0.0,
+            "historical_comparisons": 0,
+            "mismatches": 0,
+            "reason": "no_saved_state_entry_or_authenticated_call"
+          },
+          "constructed_only_control_prior": {
+            "passed": 29,
+            "denominator": 30,
+            "comparisons": 569,
+            "declined": 127
+          },
+          "constructed_only_control_after_step3": {
+            "passed": 30,
+            "denominator": 30,
+            "comparisons": 593,
+            "declined": 127
+          },
+          "constructed_only_memory": {
+            "passed": 16,
+            "denominator": 30,
+            "comparisons": 329,
+            "declined": 55
+          }
+        },
+        "heldout30": {
+          "original_61_state_criterion": {
+            "established": 0,
+            "denominator": 30,
+            "rate": 0.0,
+            "historical_comparisons": 0,
+            "mismatches": 0,
+            "reason": "no_saved_state_entry_or_authenticated_call"
+          },
+          "constructed_only_control_prior": {
+            "passed": 25,
+            "denominator": 30,
+            "comparisons": 501,
+            "declined": 99
+          },
+          "constructed_only_control_after_step3": {
+            "passed": 27,
+            "denominator": 30,
+            "comparisons": 543,
+            "declined": 105
+          },
+          "constructed_only_memory": {
+            "passed": 16,
+            "denominator": 30,
+            "comparisons": 346,
+            "declined": 38
+          }
+        }
+      },
+      "step2_return_obligations": {
+        "script": "tools/research/discharge_phase6_return_chain.py",
+        "receipt": "build/oracle-telemetry/phase6-return-chain-static-01/RESULT.json",
+        "prior_outstanding": 44,
+        "newly_proved_static_machine_only": 2,
+        "newly_proved_targets": [
+          "00125430",
+          "00125488"
+        ],
+        "remaining_refused_sites": 42,
+        "remaining_unique_targets": 30,
+        "remaining_blocker_breakdown_targets": {
+          "unsupported_instruction_family": 11,
+          "external_store_may_alias_retained_frame": 7,
+          "unproved_indirect_call_exit_or_context": 6,
+          "unproved_store_address_origin": 5,
+          "CFG_gap_tail_or_unproved_external_exit": 1
+        },
+        "context_restoring_excluded": [
+          "001ddf98"
+        ],
+        "native_ABI_admissions": 0,
+        "actual_saved_state_entries_exercised": 0
+      },
+      "step3_refused_functions": {
+        "prior_refused_count": 6,
+        "fix_applied": "tools/research/phase6_leaf_lowering.py (dynamic loop runtime budget guard at cyclic back-edges + memoized bound depth 768)",
+        "receipt_memory": "build/oracle-telemetry/phase6-memory-leaf-07/RESULT.json",
+        "receipt_control": "build/oracle-telemetry/phase6-control-leaf-02/RESULT.json",
+        "resolved_to_constructed_pass": [
+          "original30:SLUS_214.10:0019d5d0",
+          "heldout30:SLUS_214.10:0010fe78",
+          "heldout30:SLUS_214.10:002b7a48"
+        ],
+        "still_refused": [
+          {
+            "key": "heldout30:MOVIER.ovl:007e0918",
+            "prior_failure": "N3_static_analysis_path_bound_128_exceeded",
+            "new_failure": "N3_static_analysis_path_bound_768_exceeded"
+          },
+          {
+            "key": "heldout30:SLUS_214.10:001aa150",
+            "prior_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+            "new_failure": "N3_static_analysis_path_bound_768_exceeded"
+          },
+          {
+            "key": "heldout30:SLUS_214.10:002e8730",
+            "prior_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+            "new_failure": "N3_static_analysis_path_bound_768_exceeded"
+          }
+        ]
+      },
+      "step4_stop_rule": {
+        "triggered": true,
+        "heldout30_original_criterion_rate": 0.0,
+        "recommendation": "Stop general leaf transformation; pivot to evidence-guided native reimplementation per subsystem (state, input, camera, fighters, and generator-written 0x002E6180 stub family) with differential tests against saved states, keeping IOP/SIF/memcard/audio native."
+      },
+      "credit": "2 transformed / 238 native (unchanged)"
     }
   }
 }

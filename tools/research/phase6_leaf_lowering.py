@@ -6,7 +6,10 @@ are NOT recovered production ABI signatures or ownership admissions.
 """
 import copy
 import re
+import sys
 import transform_generated_units as tr
+if sys.getrecursionlimit() < 4096:
+    sys.setrecursionlimit(4096)
 
 Refusal=tr.Refusal
 need=tr.require
@@ -64,6 +67,8 @@ class Leaf:
                 targets=term[1:] if term[0]=='jump' else term[2:] if term[0]=='branch' else ()
                 if origin in targets:self.cyclic.add(origin);break
                 pending.extend(target for target in targets if target not in seen)
+        self.dynamic_loop=False
+        self._bound_memo={}
         self.fuel=self.bound(self.root,{},{},set(),0)
     def expr(self,n):
         n=strip(n);k=n.get('kind');a=tr.children(n);r=reg(n,self.cpu)
@@ -168,9 +173,13 @@ class Leaf:
         ops={'+':lambda:a+b,'-':lambda:a-b,'&':lambda:a&b,'|':lambda:a|b,'^':lambda:a^b,'<<':lambda:a<<b,'>>':lambda:a>>b,'==':lambda:a==b,'!=':lambda:a!=b,'<':lambda:a<b,'<=':lambda:a<=b,'>':lambda:a>b,'>=':lambda:a>=b,'&&':lambda:bool(a and b),'||':lambda:bool(a or b)}
         return self.cast(ops[e[1]](),e[2])
     def bound(self,name,env,locals_,active,depth):
-        need(depth<128,'N3_static_analysis_path_bound_128_exceeded');env=dict(env);locals_=dict(locals_)
+        need(depth<768,'N3_static_analysis_path_bound_768_exceeded');env=dict(env);locals_=dict(locals_)
         key=(name,tuple(sorted(env.items())),tuple(sorted(locals_.items())))
-        need(key not in active,'N3_loop_PHI_fuel_bound_unproved');active=active|{key};cost=0
+        if key in self._bound_memo:return self._bound_memo[key]
+        if key in active:
+            need(name in self.cyclic or self.dynamic_loop,'N3_loop_PHI_fuel_bound_unproved')
+            self.dynamic_loop=True;return 0
+        active=active|{key};cost=0
         for op in self.blocks[name]['ops']:
             if op[0]=='debit':cost+=op[1]
             elif op[0]=='reg':
@@ -180,12 +189,15 @@ class Leaf:
             elif op[0]=='store':self.constant(op[2],env,locals_);self.constant(op[3],env,locals_)
             elif op[0] in ('cursor','return_guard'):self.constant(op[1],env,locals_)
         t=self.blocks[name]['term']
-        if t[0]=='return':return cost
-        if t[0]=='jump':return cost+self.bound(t[1],env,locals_,active,depth+1)
-        value=self.constant(t[1],env,locals_)
-        need(value is not None or name not in self.cyclic,'N3_loop_trip_bound_unproved_from_input_or_memory')
-        targets=t[2:] if value is None else (t[2] if value else t[3],)
-        return cost+max(self.bound(target,env,locals_,active,depth+1) for target in targets)
+        if t[0]=='return':res=cost
+        elif t[0]=='jump':res=cost+self.bound(t[1],env,locals_,active,depth+1)
+        else:
+            value=self.constant(t[1],env,locals_)
+            if value is None and name in self.cyclic:self.dynamic_loop=True
+            targets=t[2:] if value is None else (t[2] if value else t[3],)
+            res=cost+max(self.bound(target,env,locals_,active,depth+1) for target in targets)
+        self._bound_memo[key]=res
+        return res
 
 def emit(leaf,name):
     """Static block-parameter SSA; mutable phi transports only on CFG edges."""
@@ -220,6 +232,7 @@ def emit(leaf,name):
         def edge(target):
             nonlocal text
             incoming={r:fresh(env[r]) for r in regs};incoming_locals={v:fresh(local[v]) for v in locals_};incoming_budget=fresh(budget,'i64')
+            if leaf.dynamic_loop and target in leaf.cyclic:text+='if('+incoming_budget+'<0)throw mka::stage_a::MemoryRefusal("N3 dynamic loop fuel exhausted");\n'
             for r in regs:text+=target+'_r'+str(r)+'='+incoming[r]+';\n'
             for v in locals_:text+=target+'_'+localfield[v]+'='+incoming_locals[v]+';\n'
             text+=target+'_fuel='+incoming_budget+';goto '+target+';\n'
