@@ -9,6 +9,8 @@ preserved with its original document hash in [the existing history records](rese
 
 **Current oracle priority:** Finish complete offline compilation of the retail executable, overlays, generated EE families, VU programs and IOP code before resuming unrelated native ABI work. The current compiled R192 route is an incomplete intermediate build, despite its passing recorded Konquest replay. Logs identify known misses; the whole disc and the original generators define the coverage domain. The owner need not finish a playthrough to supply code. Preserve the original R192 executable/card, native foundation and only the existing main/R192 branches. See the existing R192 run record.
 
+The offline executable inventory includes every original code image, including feature-excluded online images and standalone ELF programs. Apply feature/credit policy after recording source identities and actual entry-map/native-object results. Keep native feature activation and credit ledgers separate. Check source entry maps against the complete catalogue and verify each nonzero entry reaches its actual generated label; a successful generator exit alone does not establish coverage. Preserve missing/refused rows and their diagnostics. See the existing R192 run record for the NETR seed-omission controls.
+
 ## Required order and publication boundary
 
 Follow the amended dependencies recorded in the existing owner decision file.
