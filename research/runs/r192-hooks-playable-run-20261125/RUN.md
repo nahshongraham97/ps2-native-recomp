@@ -1221,6 +1221,58 @@ claimed passed here. Original builds/cards/settings and all 2/238 native credit
 remain unchanged. Prior native-foundation source/baseline is unchanged; these
 new original-export tests are capability evidence, not native acceptance.
 
+### Full producer resource schema and bounded replay deadline
+
+The original compiled classifier/load/store builders now establish the resource
+schema beyond the earlier one-configuration examples: 20 classified tags plus
+one unknown->0 case, 264 exact emitted transfer-word cases and 40 whole original
+builder single-resource descriptors pass. All 1,947 selected listing words join
+the original ELF. Classes1/2 select 128-bit VF transfers; class3 selects FPR32;
+class4 selects GPR32; class5 selects GPR64, including the source's aligned LD/SD
+and unaligned LDL/LDR + SDL/SDR branches. Emitted offsets truncate to16 bits;
+the resulting signed address domain is a required binding proof, not an implicit
+native pointer offset. Four constructed format/word/unaligned/sign plants reject.
+The root independently reran the positive original-compiled schema fixture.
+
+IDs alone do not choose scalar/vector semantics: IDs25/2/3 share the callback
+that branches on SOURCE resource format; IDs26/5/6 share the callback that branches
+on DESTINATION format. Existing semantic examples and the actual preferred
+adapter stay narrowly admitted. Fifteen constructed filter descriptors (counts
+0..4) show valid comparisons are emitted in order, while an unknown first ID or
+nonzero first record+16 stops filter construction even though the whole builder
+returns nonzero code. Those finite examples do not prove a universal filter
+capacity or all caller-valid records. Aliases, valid compositions, final-source
+remap ordering, register allocation, VU/FCR scratch, budgets and continuation
+projection remain explicit gates before general runtime admission.
+
+The combined disposable EE/IOP/static-reference build passes both targeted
+90-frame cases. Its first full-recording attempt hit the runner's600-second
+limit before a clean stop. It remains REFUSED: no complete 1,519-checkpoint pass
+is claimed. That attempt reported no EE/VU misses, replay-difference diagnostics
+or input changes before timeout; those absences do not turn it into a pass.
+A driver-only --timeout-seconds option now retains the600-second default and
+admits1..1800 seconds with explicit validation. This changes the deadline only,
+not required frames, checkpoint counts, miss/exit checks or input ownership.
+Default and1200-second self-test modes pass the earlier plants; zero, negative,
+excessive and shell-like noninteger CLI values refuse before output or game
+launch. The exact same PE/inputs are rerunning with a1200-second limit in a new
+owned directory. The first failure is preserved unchanged.
+
+| Evidence under R192 build/oracle-telemetry | SHA-256 |
+|---|---|
+| emitted-effect-schema-04/RESULT.json | 753b724ed3317f35a70b85eb562a51efe347d043219156349ece075723cc76ff |
+| r192-merged-reference-preferred-90-01/RESULT.json | dc4ab4eaa1a128e477884affe458555060a90b7067d63fbf9c85bc040f924ca1 |
+| r192-merged-reference-iop-90-01/RESULT.json | 74dd3d9d8fc0b19b21aed58bd3846e2293c91bcb5e40ccc2ffc0185113352cb5 |
+| r192-merged-reference-full-replay-01/RESULT.json (REFUSED) | 6d3b6159d4efc8c9f931199185b299e67de2b48ed3393f519384d0bbf530a5dc |
+| r192-replay-timeout-controls-01/RESULT.json | 3b21b82a0af9b1fde974b758e9ec4eb46cc2bde0996743337edc00a2dfcc187e |
+
+The schema tool and diagnostic driver change belong only to the R192 branch.
+No wider semantic backend, production route, native credit or physical FPS claim
+is introduced. Full native-foundation code/baseline remains unchanged. The full
+99-payload VU native batch, complete original producer semantics and IOP export
+lifetime work continue from original sources. Normal launcher/build, original
+R192 executable, original inputs, persistent card, saves and settings are intact.
+
 ### Verification and continuing work
 
 The full native baseline was freshly rerun: 59 targets, 65 variants and 16

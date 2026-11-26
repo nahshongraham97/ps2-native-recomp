@@ -166,8 +166,10 @@ def main():
     parser.add_argument('--expected-binary-sha')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--additional-frames', type=int)
+    parser.add_argument('--timeout-seconds', type=int, default=600)
     parser.add_argument('--self-test-only', action='store_true')
     args = parser.parse_args()
+    require(1 <= args.timeout_seconds <= 1800, 'timeout_must_be_1_to_1800_seconds')
     require(within(args.output, OWNED) and not args.output.exists(), 'fresh_owned_output_required')
     tests = self_test()
     if args.self_test_only:
@@ -246,7 +248,7 @@ def main():
         process = subprocess.Popen(command, cwd=args.candidate.parent, env=environment, stdout=out, stderr=err,
                                    creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
         try:
-            code = process.wait(timeout=600)
+            code = process.wait(timeout=args.timeout_seconds)
         except subprocess.TimeoutExpired:
             timed_out = True
             process.kill()  # Only this driver-owned child; no existing user process is touched.
@@ -268,7 +270,7 @@ def main():
     result = dict(outcome, mode=mode, command=command, cwd=str(args.candidate.parent.resolve()),
                   saved_start_frame=frame, expected_end_frame=expected_end, recording=session,
                   environment_overrides=overrides, removed_inherited_environment=removed,
-                  exit_code=code, timed_out=timed_out, timeout_seconds=600, elapsed_seconds=elapsed,
+                  exit_code=code, timed_out=timed_out, timeout_seconds=args.timeout_seconds, elapsed_seconds=elapsed,
                   input_pins=input_pins, candidate=binary, package_manifest=manifest_pin,
                   package_DLL_pins=package_pins, input_changes=changed, original_producer=producer,
                   prefix_source_pins=source_pins, source_sha256=hash_file(Path(__file__)), self_test=tests,
