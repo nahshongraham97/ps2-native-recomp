@@ -60,7 +60,7 @@ def main():
                 'original_export_6_7_slots_changed')
         require(load['file_size'] == 0x1F50 and load['memory_size'] > 0x1F74, 'original_LC_BSS_context_changed')
         functions = []
-        for label, start, end in [('register6', 0x938, 0xB80), ('release7', 0xB80, 0xC40)]:
+        for label, start, end in [('register6', 0x938, 0xB80), ('release7', 0xB80, 0xC40), ('link8', 0xCAC, 0xD68), ('unlink9', 0xD68, 0xEB4), ('clean_stub', 0x1050, 0x10A0), ('check_caller_stub', 0x10A0, 0x1138)]:
             functions.append({'name': label, 'image_range': [start, end], 'file_range': [load['file_offset'] + start, load['file_offset'] + end],
                 'sha256': fixed.sha(image[start:end]), 'words': [{'image_offset': at, 'file_offset': load['file_offset'] + at,
                     'word': f'{int.from_bytes(image[at:at+4], "little"):08X}'} for at in range(start, end, 4)]})
@@ -137,7 +137,9 @@ def main():
         'limits': ['TEST-only raw metadata projection. No mutable .text or stub identity permission is installed.',
             'Original LOADCORE module boot is not run: zeroed BSS registry and absent IRQ callback table are explicit component preconditions.',
             'Native return and exact ordered projected metadata writes compared with complete original methods; stack/IRQ/cache transport remains original-reference-only.',
-            'Existing-client and pending-client attachment are explicit seeded preconditions, not proof of full Link/UnLinkLibraryEntries or actual module unload.',
+            'Earlier migration cases retain seeded preconditions. Additional complete original8/9 calls prove one validated inline client record, head/interior unlink, missing-provider, pending unlink and re-link; not arbitrary multi-record module unload.',
+            'Original words override pinned SDK C discrepancies: Link scans inline records; cleanStub continues while ordinal word opcode==9, not !=9.',
+            'Observer/allocation exceptions poison the native instance; resumption requires fresh authoritative reconstruction. This is fail-closed, not a rollback or source-defined firmware error.',
             'No game/kernel connector, arbitrary callback, ownership credit or null/malformed pointer execution.']}
     target = args.output / 'RESULT.json'; target.write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({'result': str(target), 'sha256': sha(target), 'status': report['status'], 'cases': [c['measurement'] for c in cases], 'controls': [(c['name'], c['status']) for c in controls]}))

@@ -58,12 +58,15 @@ int main(int argc, char **argv) {
             const auto at = kernel::alloc(256); if (!at) throw std::runtime_error("owned_table_allocation_failed");
             table_addresses[value.get()] = at; metadata_ranges.push_back({at, 256}); tables.push_back(value); return value;
         };
-        auto new_client = [&](const char *name, std::uint16_t version, std::uint16_t flags, model::Table *owner) {
+        auto allocate_client = [&](const char *name, std::uint16_t version, std::uint16_t flags) {
             auto value = std::make_shared<model::Client>(); std::copy_n(name, std::min<std::size_t>(std::strlen(name), 8), value->name.begin());
             value->version = version; value->flags = flags; value->ordinals = {0, 2, 5};
             const auto at = kernel::alloc(256); if (!at) throw std::runtime_error("owned_client_allocation_failed");
             client_addresses[value.get()] = at; metadata_ranges.push_back({at, 256}); clients.push_back(value);
-            registry.seed_client(value, owner); return value;
+            value->targets.resize(value->ordinals.size()); return value;
+        };
+        auto new_client = [&](const char *name, std::uint16_t version, std::uint16_t flags, model::Table *owner) {
+            auto value = allocate_client(name, version, flags); registry.seed_client(value, owner); return value;
         };
         auto projection = [&] {
             std::map<std::uint32_t, std::uint8_t> bytes;
@@ -128,6 +131,26 @@ int main(int argc, char **argv) {
             for (const auto &[at, value] : after)
                 if (*ram_ptr(at) != value) throw std::runtime_error(std::string("original_projected_metadata_mismatch:") + label);
         };
+        auto compare_client = [&](const char *label, bool linking, const std::shared_ptr<model::Client> &client) {
+            for (const auto &[at, value] : projection()) *ram_ptr(at) = value;
+            original_writes.clear(); projected_writes.clear(); observed_returns = 0;
+            const auto expected = linking ? registry.link_client(client) : registry.unlink_client(client);
+            const auto after = projection(); collect_metadata = true;
+            const auto span = 20u + 8u * static_cast<std::uint32_t>(client->ordinals.size()) + 8u;
+            const auto result = kernel::call_guest(base + (linking ? 0xCACu : 0xD68u), ca(client.get()), span);
+            collect_metadata = false; ++checks; cases.emplace_back(label); returns += observed_returns;
+            if (observed_returns != 1 || std::bit_cast<std::int32_t>(result) != expected)
+                throw std::runtime_error(std::string("original_client_return_mismatch:") + label);
+            if (original_writes != projected_writes) {
+                std::fprintf(stderr, "client write mismatch %s original=%zu projected=%zu\n", label, original_writes.size(), projected_writes.size());
+                for (const auto &v : original_writes) std::fprintf(stderr, " O %x %u %x\n", v.address, v.width, v.value);
+                for (const auto &v : projected_writes) std::fprintf(stderr, " N %x %u %x\n", v.address, v.width, v.value);
+                throw std::runtime_error(std::string("original_client_ordered_write_mismatch:") + label);
+            }
+            data_write_comparisons += static_cast<unsigned>(original_writes.size());
+            for (const auto &[at, value] : after)
+                if (*ram_ptr(at) != value) throw std::runtime_error(std::string("original_client_projection_mismatch:") + label);
+        };
         auto first = new_table("libsd", 0x0105), equal = new_table("libsd", 0x0105), lower = new_table("libsd", 0x0104);
         auto foreign = new_table("libsd", 0x0105), malformed = new_table("libsd", 0x0106);
         malformed->marker = model::Marker::malformed;
@@ -148,6 +171,28 @@ int main(int argc, char **argv) {
         compare("release_empty_old_version_after_migration", false, higher);
         auto spare = new_table("other", 0x0101); compare("register_other_name", true, spare); compare("release_head", false, spare);
         auto foreign_version = new_table("libsd", 0x0207); compare("foreign_pointer_different_version_notfound", false, foreign_version);
+        // These client records are linked/unlinked by complete original8/9,
+        // not seeded into an alleged active lifecycle.
+        auto live = allocate_client("libsd", 0x0105, 0);
+        compare_client("original_link_inline_valid_record", true, live);
+        const auto linked_epoch = live->binding_generation;
+        compare_client("original_link_active_record_skipped", true, live);
+        if (live->binding_generation != linked_epoch) throw std::runtime_error("skipped_link_changed_generation");
+        auto second_live = allocate_client("libsd", 0x0105, 0);
+        compare_client("original_link_second_client", true, second_live);
+        compare_client("original_unlink_interior_record", false, live);
+        if (live->binding_generation == linked_epoch) throw std::runtime_error("unlinked_binding_generation_not_retired");
+        compare_client("original_unlink_head_record", false, second_live);
+        compare_client("original_relink_same_record", true, live);
+        compare_client("original_unlink_reloaded_record", false, live);
+        auto missing = allocate_client("absent", 0x0101, 0);
+        compare_client("original_link_missing_provider_error", true, missing);
+        auto pending = new_client("pending", 0x0101, 0, nullptr);
+        compare_client("original_unlink_pending_record", false, pending);
+        registry.retire_client(live);
+        bool stale_refused{};
+        try { registry.link_client(live); } catch (const std::runtime_error &e) { stale_refused = std::string(e.what()) == "client_owner_retired"; }
+        if (!stale_refused) throw std::runtime_error("retired_client_admitted");
         // Undefined/malformed pointer graphs are refused without running the
         // original on fabricated invalid memory or inventing a numeric error.
         bool null_refused{}, graph_refused{};
@@ -156,6 +201,15 @@ int main(int argc, char **argv) {
         try { registry.validate(); } catch (const std::runtime_error &e) { graph_refused = std::string(e.what()) == "unproved_library_graph"; }
         registry.head()->previous = saved; registry.validate();
         if (!null_refused || !graph_refused) throw std::runtime_error("unadmitted_pointer_controls_failed");
+        // Host failure is outside original firmware semantics. It must abort
+        // and poison, never report success or continue a partial projection.
+        model::Registry fault;
+        fault.observe = [](const model::Change &) { throw std::bad_alloc(); };
+        auto failing_table = std::make_shared<model::Table>();
+        bool allocation_refused{}, poisoned_refused{};
+        try { fault.register_table(failing_table); } catch (const std::bad_alloc &) { allocation_refused = true; }
+        try { fault.release_table(failing_table); } catch (const std::runtime_error &e) { poisoned_refused = std::string(e.what()) == "registry_transition_fault_requires_rebuild"; }
+        if (!allocation_refused || !fault.poisoned() || !poisoned_refused) throw std::runtime_error("partial_projection_not_fail_closed");
     } catch (const std::exception &e) { failure = e.what(); ++failure_count; }
     std::ofstream out(argv[3]);
     out << "{\"status\":\"" << (failure.empty() ? "PASS" : "REFUSED") << "\",\"checks\":" << checks
