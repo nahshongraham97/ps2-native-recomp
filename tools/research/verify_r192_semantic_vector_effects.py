@@ -33,6 +33,7 @@ def main():
     source=cpp.read_bytes().decode().replace('\r\n','\n')
     core=family.W/'tools/research/r192_aot_modules/semantic_pipeline.hpp'
     adapter=core.with_name('semantic_no_yield_adapter.hpp');vector=core.with_name('semantic_vector_effects.hpp')
+    scratch=core.with_name('semantic_call_scratch.hpp')
     authored_core=core.read_text()
     source,n=re.subn(r'#include "[^"\n]*semantic_no_yield_adapter\.hpp"','@ADAPTER_INCLUDE@',source)
     family.require(n==1,'timing_include_changed')
@@ -55,7 +56,7 @@ def main():
   if(std::memcmp(&projected,&reference.vu0,sizeof projected)){std::fprintf(stderr,"VECTOR_DIFFERENCE seed=%u count=%u alias=%u mac=%08X/%08X status=%08X/%08X\\n",seed,count,alias,projected.mac,reference.vu0.mac,projected.status,reference.vu0.status);return 1;}
   if(native.pipeline.accepted!=reference.r[2].w[0]''')
     source=source.replace('VU_status_adoption=OPEN','whole_VU_state_projection=PROVED accumulator_unchanged=PROVED runtime_adoption=NONE')
-    inputs=[Path(__file__),core,adapter,vector,receipt,cpp,a.compiler,
+    inputs=[Path(__file__),core,adapter,vector,scratch,receipt,cpp,a.compiler,
             *[Path(r['path']) for r in record['source_pins'] if Path(r['path']).suffix=='.bin'],
             *sorted((a.candidate_build/'src/runtime/include/ps2').glob('*.hpp'))]
     pins=[family.pin(x) for x in dict.fromkeys(inputs)];out.mkdir(parents=True);runs=[]
@@ -70,6 +71,7 @@ def main():
         (directory/core.name).write_text(contents['core'],encoding='utf8',newline='\n')
         (directory/vector.name).write_text(contents['vector'],encoding='utf8',newline='\n')
         (directory/adapter.name).write_bytes(adapter.read_bytes())
+        (directory/scratch.name).write_bytes(scratch.read_bytes())
         generated=directory/'test.cpp';generated.write_text(source.replace('@ADAPTER_INCLUDE@','#include "'+(directory/adapter.name).as_posix()+'"'),encoding='utf8',newline='\n');exe=directory/'test.exe'
         command=[str(a.compiler),'-std=c++20','-mavx2','-ffp-contract=off','-O1','-static-libgcc','-static-libstdc++',
                  '-I'+str((a.candidate_build/'src/runtime/include').resolve()),str(generated),'-o',str(exe)]
@@ -78,7 +80,7 @@ def main():
         run=subprocess.run([str(exe)],capture_output=True);(directory/'test.log').write_bytes(run.stdout+run.stderr)
         runs.append(dict(name=name,compile_command=command,argv=[str(exe)],exit=run.returncode,expected_exit=0 if name=='positive' else 1,
                          stdout=run.stdout.decode(errors='replace'),stderr=run.stderr.decode(errors='replace'),
-                         fixture_pins=[family.pin(directory/core.name),family.pin(directory/vector.name),family.pin(directory/adapter.name),family.pin(generated),family.pin(exe)]))
+                         fixture_pins=[family.pin(directory/core.name),family.pin(directory/vector.name),family.pin(directory/scratch.name),family.pin(directory/adapter.name),family.pin(generated),family.pin(exe)]))
     changes=[r['path'] for r in pins if family.pin(Path(r['path']))['sha256']!=r['sha256']]
     passed=not changes and all(r['exit']==r['expected_exit'] for r in runs)
     result=dict(status='PASS_TYPED_VECTOR_SIDE_OUTPUTS' if passed else 'FAIL',runs=runs,source_pins=pins,input_changes=changes,

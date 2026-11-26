@@ -5,6 +5,7 @@
 // executable-word decoder, translator, code cache or opcode operation stream.
 #include "ps2/fpu.hpp"
 #include "semantic_vector_effects.hpp"
+#include "semantic_call_scratch.hpp"
 #include <array>
 #include <cstddef>
 #include <cstdint>
@@ -42,7 +43,7 @@ struct ScalarEffects {
     Bits raised_flags{};
     bool condition_written{},condition{};
 };
-struct Result {std::uint32_t accepted{};ScalarEffects scalar;VectorEffects vector;bool vector_effects_admitted{};};
+struct Result {std::uint32_t accepted{};ScalarEffects scalar;VectorEffects vector;CallScratch scratch;bool vector_effects_admitted{};};
 
 [[noreturn]] inline void refuse(const char* reason){throw std::runtime_error(reason);}
 inline void extent(std::span<std::byte> data,std::size_t stride,std::uint32_t count,std::size_t width){
@@ -116,7 +117,12 @@ inline Result run(Streams streams,Pipeline pipeline,Writes writes={}){
             v.start=e.remap.start;v.extent=e.remap.extent;
         }
     }
-    if(result.vector_effects_admitted)result.vector.prepared(prepared[1].vector);
+    if(result.vector_effects_admitted){
+        result.vector.prepared(prepared[1].vector);
+        // Original same-input EE SUB yields positive zero without flags for
+        // every bit pattern; this is not an assumed initial FPR value.
+        result.scratch.prepared={prepared[2].scalar,0u,prepared[3].upper,prepared[3].scale,prepared[3].start,prepared[3].extent,pipeline.filter_limit};
+    }
     // The callee's scalar constant*step prelude still executes at count0;
     // all stream accesses are skipped, and an existing condition is retained.
     if(!streams.count)return result;
@@ -139,13 +145,15 @@ inline Result run(Streams streams,Pipeline pipeline,Writes writes={}){
             default:refuse("semantic pipeline: effect admission invariant");
             }
         }
-        if(result.vector_effects_admitted)result.vector.element(tag257,tag256);
+        if(result.vector_effects_admitted){result.vector.element(tag257,tag256);result.scratch.element(retained_middle,tag259,tag258,tag769);}
         if(pipeline.filter_count){result.scalar.condition_written=true;result.scalar.condition=ps2::fp::key(tag769)<=ps2::fp::key(pipeline.filter_limit);if(!result.scalar.condition)continue;}
         // In every admitted configuration17 is last/alone. Original CMP and
         // BC1F skip its arithmetic (and its flags) for rejected elements.
         if(has_remap){const auto&v=prepared[remap_at];Bits value=ps2::fp::ee::sub(scalar_flags,remap_input,v.start);
             value=ps2::fp::max(value,0);value=ps2::fp::min(value,v.extent);
-            remapped=ps2::fp::cvt_w_s(ps2::fp::ee::msub(scalar_flags,ps2::fp::ee::add(scalar_flags,v.upper,0),value,v.scale));}
+            const Bits accumulator=ps2::fp::ee::add(scalar_flags,v.upper,0);
+            remapped=ps2::fp::cvt_w_s(ps2::fp::ee::msub(scalar_flags,accumulator,value,v.scale));
+            if(result.vector_effects_admitted)result.scratch.accepted(remapped,accumulator);}
         auto*out_a=streams.output_a.data()+std::size_t(result.accepted)*streams.stride_a;
         auto*out_b=streams.output_b.data()+std::size_t(result.accepted)*streams.stride_b;
         // Retain the observable transient stores, not merely final bytes.

@@ -72,7 +72,7 @@ def main():
     family.require(any(Path(r['path']).resolve()==builder_source.resolve() and family.pin(builder_source)['sha256']==r['sha256'] for r in builder_record['source_pins']),'original_builder_source_changed')
     body=builder_source.read_bytes().decode().replace('\r\n','\n');body=body[body.index('static std::map<unsigned,unsigned> entries_observed;'):body.index('static void read(')]
     harness=prefix+'\n#include <fstream>\n#include <map>\n#include "'+backend.as_posix()+'"\n'+SLOW+body+TEST.replace('@ROWS@',rows).replace('@PROGRAMS@',programs.as_posix()).replace('@BOUNDARY@',a.boundary.resolve().as_posix())
-    inputs=[Path(__file__),Path(family.__file__),backend,backend.with_name('semantic_vector_effects.hpp'),proof,source,builder_receipt,builder_source,a.compiler,*sorted(a.boundary.glob('*.bin')),
+    inputs=[Path(__file__),Path(family.__file__),backend,backend.with_name('semantic_vector_effects.hpp'),backend.with_name('semantic_call_scratch.hpp'),proof,source,builder_receipt,builder_source,a.compiler,*sorted(a.boundary.glob('*.bin')),
             *(Path(r['program_pin']['path']) for r in record['programs']),
             *sorted((a.candidate_build/'src/runtime/include/ps2').glob('*.hpp'))]
     pins=[family.pin(x) for x in inputs];out.mkdir(parents=True)

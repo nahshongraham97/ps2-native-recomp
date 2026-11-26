@@ -32,6 +32,7 @@ def main():
     core=family.W/'tools/research/r192_aot_modules/semantic_pipeline.hpp'
     adapter=core.with_name('semantic_no_yield_adapter.hpp')
     vector=core.with_name('semantic_vector_effects.hpp')
+    scratch=core.with_name('semantic_call_scratch.hpp')
     prefix=texts[0][:texts[0].index('\nint main(')]
     prefix,n=re.subn(r'#include "[^"\n]*semantic_pipeline\.hpp"','@ADAPTER_INCLUDE@',prefix)
     family.require(n==1,'native_core_include_seam_changed')
@@ -54,7 +55,7 @@ def main():
                    'original_timing_or_strict_guard_changed')
     identity='\nstatic constexpr unsigned reachable_original_words[]={'+','.join(hex(w)+'u' for w in original_words[:48])+'};\n'
     source=prefix+caller+identity+TEST
-    inputs=[Path(__file__),core,adapter,vector,a.compiler,*pinned,*sorted(a.boundary.glob('*.bin')),
+    inputs=[Path(__file__),core,adapter,vector,scratch,a.compiler,*pinned,*sorted(a.boundary.glob('*.bin')),
             *sorted((a.candidate_build/'src/runtime/include/ps2').glob('*.hpp'))]
     # Generated fixture contains immutable paths to the complete original
     # builder programs. Authenticate those source artifacts as dependencies.
@@ -76,6 +77,7 @@ def main():
             family.require(header.count(before)==1,'source_mutation_anchor_changed:'+name);header=header.replace(before,after)
         (directory/adapter.name).write_text(header,encoding='utf8',newline='\n');(directory/core.name).write_bytes(core.read_bytes())
         (directory/vector.name).write_bytes(vector.read_bytes())
+        (directory/scratch.name).write_bytes(scratch.read_bytes())
         cpp=directory/'test.cpp';cpp.write_text(source.replace('@ADAPTER_INCLUDE@','#include "'+(directory/adapter.name).as_posix()+'"'),encoding='utf8',newline='\n');exe=directory/'test.exe'
         command=[str(a.compiler),'-std=c++20','-mavx2','-ffp-contract=off','-O1','-static-libgcc','-static-libstdc++',
                  '-I'+str((a.candidate_build/'src/runtime/include').resolve()),str(cpp),'-o',str(exe)]
@@ -84,7 +86,7 @@ def main():
         run=subprocess.run([str(exe)],capture_output=True);(directory/'test.log').write_bytes(run.stdout+run.stderr)
         runs.append(dict(name=name,compile_command=command,argv=[str(exe)],exit=run.returncode,expected_exit=0 if name=='positive' else 1,
                          stdout=run.stdout.decode(errors='replace'),stderr=run.stderr.decode(errors='replace'),
-                         mutated_anchor=before,source_pins=[family.pin(directory/adapter.name),family.pin(directory/core.name),family.pin(directory/vector.name),family.pin(cpp),family.pin(exe)]))
+                         mutated_anchor=before,source_pins=[family.pin(directory/adapter.name),family.pin(directory/core.name),family.pin(directory/vector.name),family.pin(directory/scratch.name),family.pin(cpp),family.pin(exe)]))
     changed=[r['path'] for r in pins if family.pin(Path(r['path']))['sha256']!=r['sha256']]
     passed=not changed and all(r['exit']==r['expected_exit'] for r in runs)
     result=dict(status='PASS_BOUNDED_NO_YIELD_TIMING_AND_SCALAR_STATUS' if passed else 'FAIL',runs=runs,source_pins=pins,input_changes=changed,

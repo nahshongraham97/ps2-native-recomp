@@ -977,10 +977,71 @@ r192-vu-entry-resume-control-01/RESULT.json
 SHAd440ffb854dd10c0d164d80281f37dd30dd59109ced9c99c912f772504a543c6.
 All move targets are resolved inside the owned output; no originals are cleaned.
 
-The full99-payload native compilation batch is the next action, with two compiler
+The full99-payload native compilation batch is running, with two compiler
 jobs and a12GiB disk reserve. This emits precompiled native DLLs using a sealed
 metadata interface; no runtime compiler or game loader is enabled. Native code
 build, runtime registration and execution equivalence remain distinct gates.
+
+### EE full-Cpu scratch, literal IOP loader names and exhaustive VU audit
+
+The reference scheduler saves volatile fields as well as return values. Typed
+algorithm intermediates now preserve those observable values across native
+continuations. The full-Cpu comparison excludes only dispatcher-owned PC/base;
+callback budget stages are compared separately. All 2,295 boundaries pass,
+including 1,296 constructed whole calls / 2,292 continuation boundaries and
+65,544 original EE same-input subtraction cancellation tests. Five targeted
+scratch mutations are rejected. Prior pipeline, vector, no-yield and caller
+checks were refreshed against the actual authored headers. The root reran the
+positive full-Cpu binary independently. This is source-derived algorithm scratch,
+not a guest register bank in the native core. No runtime adapter is admitted by
+these component checks; actual compiled scheduler effects, shared-VU interleaving,
+thread lifecycle and state-load contexts remain separate gates.
+
+IOP filename and buffer loading now share an exact literal registry for all 70
+original payloads: 70 existing filename pairs plus 70 original IOPMOD header-name
+pairs. The actual frozen loader reads PT_IOPMOD+26, bounded to 56 bytes. Literal
+empty MSL is preserved without a default. The actual-loader/selector test passes
+140 filename/buffer cases and rejects 210 unknown-name, changed-header and
+changed-code plants (350 total). No module entry is executed in that test.
+Thirteen payloads have executable-equivalent variants: 26 path cases select an
+identical relocated code/import body rather than uniquely identifying the raw
+original file. No recovered original-file identity is claimed for those cases.
+All 140 body/descriptor objects are reused unchanged; only the exact registry
+object is newly compiled. Native filename bypasses observed in this fixture: 0.
+Unplayed imports, indirect targets and exception domains remain open.
+
+The exhaustive VU generation auditor was falsified with owned constructed copies
+of the first authenticated 61-entry payload. Positive duplicated bodies pass;
+a conflicting same-key body, unsupported lower emission, missing table entry
+and unrepinned source change all refuse. The four authored enumeration, audit,
+native module compiler and falsification tools belong on the R192 branch only.
+All 99 original payloads have already generated C++; the 99-DLL native batch is
+running with two compiler jobs and a 12 GiB disk reserve. Completion, sealed
+runtime registration and execution equivalence are separate gates. These changes
+are not installed into the normal 882302... route and add no native credit.
+
+| Completed evidence under R192 build/oracle-telemetry | RESULT.json SHA-256 |
+|---|---|
+| emitted-semantic-full-cpu-02 | 42dfbf045c06a9206eb64ac5cb839823f9b72a8754bf1a457630af034da73ffe |
+| emitted-semantic-continuation-scratch-03 | 4215e42e5f078e494948db75e66210e95346860d310f9ce1b727b77194b98040 |
+| emitted-semantic-pipeline-scratch-08 | a57d895f350f56a3603d6d576dea6305ff9e677632969beef8b71fb919c7230a |
+| emitted-semantic-no-yield-scratch-04 | 7e9ac51eaffab6120cc0faa038f5063e25850871269f616b5ea06ec343502d38 |
+| emitted-semantic-vector-scratch-03 | bc7a3ee356b94d31af237fbe27c6044281876fd3ab0f4dd2ba2958769ee117ac |
+| emitted-semantic-caller-scratch-05 | 2d972f565bbfa7fbd1bd24ae93d7ed0cb199cdbaec98ad148119eb5fdaef1994 |
+| emitted-semantic-preempt-observer-scratch-03 | 3715318321c5667bbb91ca70435cb942eed356aeb21644b0f8d89ab2a8e36efb |
+| r192-iop-loader-names-freeze-01 | 47262fe8a6fb9406ff781d03218f8fff1dbe5e434f143774e46b138f6b596b99 |
+| r192-iop-loader-names-domain-02 | e59ab1201dfe99da405255cfa442da426ea94e771bb97fce551e71c46d21ef91 |
+| r192-iop-loader-names-test-01 | 48e78c338811141fa38165ec111e2f8ca8249c24b4105b8a9930e1fb6b18faf3 |
+| r192-vu-entry-audit-falsification-01 | b6852801c1589e32ddfef0f5a810566d18528a6bc551ae25427b10dfa389a424 |
+
+The fresh full native-foundation baseline remains PASS 59 targets / 65 variants /
+16 gates (complete-baseline-20261126-001941-39ab9287, SHA
+0921c98e3119aa258c063ebbd146241e272d2a3f220b8e0a1c4eefee6113bb6f).
+This R192-only batch changes none of that native foundation. Its affected
+component checks above are separate. Ledgers remain 2 transformed / 238 native.
+Original executable/launcher, installed build, original inputs and persistent
+card are untouched. The earlier claim that buffer-loader aliases were still
+open is superseded by these 350 component tests, not by full IOP acceptance.
 
 ### Verification and continuing work
 

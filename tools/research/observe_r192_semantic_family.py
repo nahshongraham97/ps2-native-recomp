@@ -74,7 +74,7 @@ def main():
     objects=[host/name for name in ['main.cpp.obj','mka_unit_wrappers.cpp.obj','r192_aot_modules/loader.cpp.obj','profile_win.cpp.obj','window.cpp.obj','keymap.cpp.obj','stretch.cpp.obj']]
     libraries=[n/'out/libps2game.a',n/'out/libps2runtime.a',n/'src/third_party/sdl2/lib/libSDL2.dll.a',n/'src/third_party/wgpu-native/lib/libwgpu_native.a']
     inputs=[Path(__file__),Path(family.__file__),Path(capture_tool.__file__),proof,fixture,boundary_ram,boundary_cpu,original,n/'src/runtime/src/kernel.hpp',n/'src/runtime/src/system.cpp',n/'out/ps2run.exe',a.state,a.card_copy,a.compiler,*objects,*libraries,
-            *(authored/name for name in ['semantic_pipeline.hpp','semantic_vector_effects.hpp','semantic_no_yield_adapter.hpp']),*sorted((n/'src/runtime/include/ps2').glob('*.hpp'))]
+            *(authored/name for name in ['semantic_pipeline.hpp','semantic_vector_effects.hpp','semantic_call_scratch.hpp','semantic_no_yield_adapter.hpp']),*sorted((n/'src/runtime/include/ps2').glob('*.hpp'))]
     if replayed:inputs += [replayed,*[Path(r['path']) for r in old_record['observation_pins']],Path(old_record['observer_binary']['path'])]
     pins=[family.pin(x) for x in dict.fromkeys(inputs)]
     compile_args=[str(a.compiler),'-std=c++20','-mavx2','-ffp-contract=off','-O2','-DNDEBUG',

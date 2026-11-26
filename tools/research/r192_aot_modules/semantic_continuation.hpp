@@ -48,6 +48,7 @@ class ClipContinuation {
         if(v.constant_product!=next.constant_product)refuse("semantic continuation: invariant constant product changed");
         v.element_observed=true;v.last_resource256=next.last_resource256;v.last_resource257=next.last_resource257;
         v.last_mac=next.last_mac;v.last_flags=next.last_flags;v.raised_sticky|=next.raised_sticky;
+        if(!result_.scratch.merge_element(element.scratch))refuse("semantic continuation: scratch invariant changed");
     }
 public:
     ClipContinuation(const ClipContinuation&)=delete;
