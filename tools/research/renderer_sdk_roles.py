@@ -15,6 +15,7 @@ SOURCE_FILES = {
     "batkbin.c": "0941df5e6a27b29ec86cb5cd1acf9f21eb232d59cd8d86f64771c9ad5549f10f",
     "badevice.c": "3d9e69ef67917f780a1df604a933833e3a3b0a27b1c085c7766eb57324951639",
     "baframe.c": "47ee0bdf20bbae224bfaa0b1808ee8fa9d805d12d1e09ac382cd5c38f37e7536",
+    "batypehf.c": "1359c0747ebf269e47dbc17009bd222634d2f252557f4174ed18acea85493935",
     "bamatrix.c": "6a65d8140fcddf75bf44bf0b3daf973d0c6d55c0ff6b866ec15ccfe8f256c751",
     "bacamera.c": "66282a6f54d42804dbadee9e8c1a6cf032bbe927ec5677f19ed2678fce978fd8",
     "baresour.c": "340976c2a9d15503737a1897c6b63ba6371170afb60f44890d537b35d0014027",
@@ -42,6 +43,186 @@ MATRIX_ROLES = (
 CAMERA_ROLE = (0x1a6410, 0x1a649c, 0x1a6468, "RwCameraSetProjection",
                "4d308fe0e012e274fc02ef2d44caa0f7a7577bd0c0e7e6fa67136cef154ef313",
                "Modes 1 and 2 store projection, conditionally update the frame and update depth. An invalid mode reports an error and returns null.")
+
+CAMERA_FRAME_HEADERS = {
+    "batypehf.h": "009f810477cb58522182ddcdca62b799b1ccfb9333a502b535f7dfba38adaf14",
+    "batype.h": "96b352759d892b828f60de801169b8d4394bb124e3427b536a7d5af62bd653b7",
+    "batypes.h": "d1909c78e4711397fd21ab1a107199089fa0f6f3ea59fc9fdb546a434a8470ce",
+    "baframe.h": "d27babb43789943c4b348f8012958f7820ee52a15fc17982d262bbd96aff6f4e",
+    "bacamera.h": "fb035c55a3bf827c12ab4b5556c1985a766119ab499f9104d3bb2bb6613c1234",
+}
+CAMERA_FRAME_BODIES = {
+    0x1aa0b0: (0x1aa11c, "d1df69db48be32aa568ccabf299bfd146172d7ca4694b4925bc527003e5aee2b"),
+    0x1a7510: (0x1a7578, "624ddc6f40f31d001aa72a3b386aa2ce2754f08918b32646261f254348ac5906"),
+}
+# Complete original instruction sequences, including branch-likely and JR/JAL
+# delay slots. Their positions retain the source reload/alias and store order.
+CAMERA_FRAME_WORDS = {
+    0x1aa0b0: (
+        0x27bdfff0, 0xffbf0000, 0x8c830004, 0x50600008, 0xac850004,
+        0x8c860008, 0x8c83000c, 0xac660000, 0x8c86000c, 0x8c830008,
+        0xac660004, 0xac850004, 0x50a0000c, 0xdfbf0000, 0x8ca60090,
+        0x24a20090, 0x24830008, 0xac860008, 0xac82000c, 0x8ca20090,
+        0x00a0202d, 0xac430004, 0x0c069d44, 0xaca30090, 0xdfbf0000,
+        0x03e00008, 0x27bd0010),
+    0x1a7510: (
+        0x8c8300a0, 0x90660003, 0x30c20003, 0x5440000f, 0x8c8300a0,
+        0x3c05006a, 0x24a5f34c, 0x8ca20000, 0xac620008, 0x8c8200a0,
+        0xac45000c, 0x8c8300a0, 0x8ca20000, 0x24630008, 0xac430004,
+        0x8c8200a0, 0x24420008, 0xaca20000, 0x8c8300a0, 0x34c50003,
+        0x0080102d, 0xa0650003, 0x90830003, 0x3463000c, 0x03e00008,
+        0xa0830003),
+}
+CAMERA_FRAME_CALLER_BODIES = (
+    (0x17ebb0, 0x17ecd4, "6ddcc305541e227971b6974de36533ee35e96cae52a6936293c5c2d70fdd9c2b"),
+    (0x17ee30, 0x17ef44, "c8896a0c2f3c74fd6add7b8f31d4f7b91eb66c15098a47e4a4116f0db6e5c79f"),
+    (0x1a64a0, 0x1a650c, "c27ee861601bb38263e7ee430287b8ca18c9d65e6807fc158eb6feb73cadb398"),
+)
+
+
+def validate_camera_frame_semantics(original, sources, headers, start):
+    """Bounded E1 candidate: original operations AND SDK body/ABI AND callers.
+
+    No ownership seed list, ledger or native implementation is modified here.
+    SDK offsets are not imported into a native layout or a different build.
+    """
+    if start not in CAMERA_FRAME_BODIES:
+        raise ValueError("camera_frame_unknown_role")
+    for name in ("batypehf.c", "baframe.c"):
+        if hashlib.sha256(sources[name]).hexdigest() != SOURCE_FILES[name]:
+            raise ValueError("camera_frame_SDK_source_identity_changed:" + name)
+    for name, pin in CAMERA_FRAME_HEADERS.items():
+        if hashlib.sha256(headers[name]).hexdigest() != pin:
+            raise ValueError("camera_frame_SDK_header_identity_changed:" + name)
+    compact = lambda text: b"".join(text.replace(b"\\\n", b"").split())
+    declarations = compact(headers["batypehf.h"])
+    if (b"externvoid_rwObjectHasFrameSetFrame(void*object,RwFrame*frame);" not in declarations
+            or b"RwObjectobject;RwLLLinklFrame;" not in declarations
+            or b"RwCameraSetFrameMacro(_camera,_frame)" not in compact(headers["bacamera.h"])):
+        raise ValueError("camera_frame_SDK_void_ABI_or_object_relationship_changed")
+    file, api = ("batypehf.c", "_rwObjectHasFrameSetFrame") if start == 0x1aa0b0 else ("baframe.c", "RwFrameUpdateObjects")
+    marker = b'RWSTRING("' + api.encode("ascii") + b'")'
+    if sources[file].count(marker) != 1:
+        raise ValueError("camera_frame_SDK_unique_role_marker_changed")
+    body = compact(sources[file].split(marker, 1)[1].split(b"\n}", 1)[0])
+    operations = (
+        b"if(rwObjectGetParent(ohf))", b"rwLinkListRemoveLLLink(&ohf->lFrame);",
+        b"rwObjectSetParent(object,frame);", b"if(frame)",
+        b"rwLinkListAddLLLink(&frame->objectList,&ohf->lFrame);",
+        b"RwFrameUpdateObjects(frame);", b"RWRETURNVOID();",
+    ) if start == 0x1aa0b0 else (
+        b"oldFlags=rwObjectGetPrivateFlags(frame->root);",
+        b"if(!(oldFlags&(rwFRAMEPRIVATEHIERARCHYSYNCLTM|rwFRAMEPRIVATEHIERARCHYSYNCOBJ)))",
+        b"rwLinkListAddLLLink(&RWSRCGLOBAL(dirtyFrameList),&frame->root->inDirtyListLink);",
+        b"rwObjectSetPrivateFlags(frame->root,oldFlags|",
+        b"rwObjectSetPrivateFlags(frame,rwObjectGetPrivateFlags(frame)|", b"RWRETURN(frame);",
+    )
+    position = 0
+    for operation in operations:
+        found = body.find(operation, position)
+        if found < 0:
+            raise ValueError("camera_frame_SDK_operation_or_order_changed:" + operation.decode())
+        position = found + len(operation)
+    words = []
+    for index, expected in enumerate(CAMERA_FRAME_WORDS[start]):
+        pc = start + 4 * index
+        if original(pc, 4) != struct.pack("<I", expected):
+            raise ValueError(f"camera_frame_original_semantics_changed:{pc:08x}")
+        words.append({"address": f"{pc:08x}", "word_le": struct.pack("<I", expected).hex()})
+    caller_words = (
+        (0x17ebd8, 0x0c069968), (0x17ebe0, 0x0040802d),
+        (0x17ebec, 0x0c069c74), (0x17ebf4, 0x10400004),
+        (0x17ebfc, 0x0040282d), (0x17ec00, 0x0c06a82c), (0x17ec04, 0x0200202d),
+        (0x17ee74, 0x8e700004), (0x17ee84, 0x0c06a82c), (0x17ee88, 0x0000282d),
+        (0x17ee8c, 0x0c069c90), (0x17ee90, 0x0200202d),
+        (0x1a64e4, 0x8c840004), (0x1a64e8, 0x50800004),
+        (0x1a64ec, 0x0200102d), (0x1a64f0, 0x0c069d44), (0x1a64f4, 0x00000000),
+    )
+    for pc, expected in caller_words:
+        if original(pc, 4) != struct.pack("<I", expected):
+            raise ValueError(f"camera_frame_original_caller_semantics_changed:{pc:08x}")
+    for begin, end, pin in CAMERA_FRAME_CALLER_BODIES:
+        if hashlib.sha256(original(begin, end-begin)).hexdigest() != pin:
+            raise ValueError(f"camera_frame_complete_caller_changed:{begin:08x}")
+    end, pin = CAMERA_FRAME_BODIES[start]
+    if hashlib.sha256(original(start, end-start)).hexdigest() != pin:
+        raise ValueError("camera_frame_complete_body_changed")
+    return {"original_semantic_words": words,
+            "SDK_header_normalized_pins": CAMERA_FRAME_HEADERS,
+            "SDK_source_paths": ["rwsdk/src/" + name for name in ("batypehf.c", "baframe.c")],
+            "SDK_source_normalized_pins": {name: SOURCE_FILES[name] for name in ("batypehf.c", "baframe.c")},
+            "source_operations_in_order": [operation.decode() for operation in operations],
+            "complete_original_callers": [{"entry": f"{a:08x}", "end_exclusive": f"{b:08x}", "sha256": pin}
+                                          for a, b, pin in CAMERA_FRAME_CALLER_BODIES],
+            "caller_semantic_words": [{"address": f"{pc:08x}", "word_le": struct.pack("<I", w).hex()}
+                                      for pc, w in caller_words],
+            "return_convention": "VOID; incidental V0 is not an object result" if start == 0x1aa0b0 else "Returns the original frame pointer, not its root",
+            "effect_order": "Unlink old attachment; publish nullable parent; insert at new frame object-list head; publish head in JAL delay; mark new frame. Same-frame reassignment still relinks. Null detachment does not mark old frame." if start == 0x1aa0b0 else "Read root flags; if hierarchy clean, insert root dirty link with all four next/previous writes. Then root flags|3 and selected frame flags|12, last store in JR delay. No synchronization callback runs.",
+            "original_layout_only": {"object_parent": 4, "object_frame_link": [8, 12], "frame_object_list": [144, 148], "frame_root": 160, "private_flags": 3},
+            "limits": "SDK3.1 role/ABI corroboration plus complete retail words and original caller dataflow; no claim of exact SDK version, ownership of callers, production/native binding, generic synchronization or behavioral differential.",
+            "ownership_admissions": 0, "implementation_credit_added": 0}
+
+
+def camera_frame_semantic_controls(original, sources, headers):
+    """Falsify fields, branches, link effects, calls and their original order."""
+    for start in CAMERA_FRAME_BODIES:
+        validate_camera_frame_semantics(original, sources, headers, start)
+    mutations = (
+        ("old_parent_field", 0x1aa0b0, {0x1aa0b8: 0x8c830008}),
+        ("old_parent_branch_likely", 0x1aa0b0, {0x1aa0bc: 0x10600008}),
+        ("null_old_parent_delay_store", 0x1aa0b0, {0x1aa0c0: 0}),
+        ("unlink_next_effect", 0x1aa0b0, {0x1aa0cc: 0xac660004}),
+        ("unlink_previous_effect", 0x1aa0b0, {0x1aa0d8: 0xac660000}),
+        ("unlink_store_order", 0x1aa0b0, {0x1aa0cc: 0xac660004, 0x1aa0d8: 0xac660000}),
+        ("parent_publication_field", 0x1aa0b0, {0x1aa0dc: 0xac850008}),
+        ("null_new_frame_branch", 0x1aa0b0, {0x1aa0e0: 0x54a0000c}),
+        ("new_frame_object_list", 0x1aa0b0, {0x1aa0e8: 0x8ca60094}),
+        ("insert_link_store_order", 0x1aa0b0, {0x1aa0f4: 0xac82000c, 0x1aa0f8: 0xac860008}),
+        ("new_frame_call_argument", 0x1aa0b0, {0x1aa100: 0x0080202d}),
+        ("update_call_target", 0x1aa0b0, {0x1aa108: 0x0c069c3c}),
+        ("JAL_delay_head_publication", 0x1aa0b0, {0x1aa10c: 0}),
+        ("frame_root_field", 0x1a7510, {0x1a7510: 0x8c83009c}),
+        ("unsigned_flag_byte", 0x1a7510, {0x1a7514: 0x80660003}),
+        ("clean_hierarchy_mask", 0x1a7510, {0x1a7518: 0x30c2000c}),
+        ("dirty_root_branch_likely", 0x1a7510, {0x1a751c: 0x1440000f}),
+        ("branch_delay_root_reload", 0x1a7510, {0x1a7520: 0}),
+        ("dirty_list_global", 0x1a7510, {0x1a7528: 0x24a5f350}),
+        ("dirty_next_effect", 0x1a7510, {0x1a7530: 0xac62000c}),
+        ("dirty_previous_effect", 0x1a7510, {0x1a7538: 0xac450008}),
+        ("dirty_head_backlink", 0x1a7510, {0x1a7548: 0xac430000}),
+        ("dirty_list_head_publication", 0x1a7510, {0x1a7554: 0xaca20004}),
+        ("root_dirty_bits", 0x1a7510, {0x1a755c: 0x34c5000c}),
+        ("selected_frame_return", 0x1a7510, {0x1a7560: 0x0060102d}),
+        ("root_then_frame_flag_order", 0x1a7510, {0x1a7564: 0xa0830003, 0x1a7574: 0xa0650003}),
+        ("subtree_dirty_bits", 0x1a7510, {0x1a756c: 0x34630003}),
+        ("JR_delay_selected_frame_store", 0x1a7510, {0x1a7574: 0}),
+        ("producer_camera_argument", 0x1aa0b0, {0x17ec04: 0x0040202d}),
+        ("destructor_null_frame_argument", 0x1aa0b0, {0x17ee88: 0x0200282d}),
+        ("admitted_view_parent_field", 0x1a7510, {0x1a64e4: 0x8c840008}),
+        ("admitted_view_null_branch", 0x1a7510, {0x1a64e8: 0x54800004}),
+    )
+    controls = []
+    for name, start, replacements in mutations:
+        def changed(va, size):
+            data = bytearray(original(va, size))
+            for pc, word in replacements.items():
+                low, high = max(va, pc), min(va+size, pc+4)
+                if low < high:
+                    data[low-va:high-va] = struct.pack("<I", word)[low-pc:high-pc]
+            return bytes(data)
+        try: validate_camera_frame_semantics(changed, sources, headers, start)
+        except ValueError as error: controls.append({"mutation": name, "role": f"{start:08x}", "status": "REJECTED", "reason": str(error)})
+        else: raise AssertionError("Camera/frame evidence mutation admitted: " + name)
+    for name, file, before, after in (
+        ("forged_void_ABI", "batypehf.h", b"extern void _rwObjectHasFrameSetFrame", b"extern int _rwObjectHasFrameSetFrame"),
+        ("forged_frame_dirty_bits", "baframe.h", b"rwFRAMEPRIVATEHIERARCHYSYNCLTM  0x01", b"rwFRAMEPRIVATEHIERARCHYSYNCLTM  0x04"),
+    ):
+        altered = dict(headers); altered[file] = headers[file].replace(before, after)
+        if altered[file] == headers[file]: raise AssertionError("No-op source mutation: " + name)
+        try: validate_camera_frame_semantics(original, sources, altered, 0x1aa0b0)
+        except ValueError as error: controls.append({"mutation": name, "status": "REJECTED", "reason": str(error)})
+        else: raise AssertionError("Camera/frame SDK mutation admitted: " + name)
+    return {"status": "PASS", "controls": controls, "positive_roles": 2}
 
 
 def validate_resource_arena_semantics(original, source):
@@ -181,6 +362,8 @@ def matched_sdk_roles(original, sdk_root: Path):
             raise ValueError(f"Expected SDK {SDK_REVISION} source identity for {name}")
         sources[name] = data
     heap_headers = {name: (sdk_root / name).read_bytes() for name in HEAP_CLOSE_HEADERS}
+    frame_headers = {name: (sdk_root / "rwsdk/src" / name).read_bytes().replace(b"\r\n", b"\n")
+                     for name in CAMERA_FRAME_HEADERS}
 
     results = []
     for start, end, setup, api, expected_hash, operations in (*MATRIX_ROLES, CAMERA_ROLE):
@@ -236,8 +419,12 @@ def matched_sdk_roles(original, sdk_root: Path):
          "Two operand orders in both rotate and transform call the same affine product. The callee combines four vector rows and intersects input flags."),
         (0x1a7510, 0x1a7578, "RwFrameUpdateObjects", "baframe.c",
          "624ddc6f40f31d001aa72a3b386aa2ce2754f08918b32646261f254348ac5906",
-         [0x1a644c],
-         "Projection updates its parent frame. The callee links a clean root into the dirty list and sets root and subtree flags."),
+         [0x1a644c, 0x1a64f0, 0x1aa108],
+         "Projection and admitted view-window setters pass their nullable parent; the generic object-frame setter passes its new frame. The callee links a clean root into the dirty list, sets root flags3 and selected-frame flags12, and returns that frame without synchronizing it."),
+        (0x1aa0b0, 0x1aa11c, "_rwObjectHasFrameSetFrame", "batypehf.c",
+         "d1df69db48be32aa568ccabf299bfd146172d7ca4694b4925bc527003e5aee2b",
+         [0x17ec00, 0x17ee84],
+         "Camera/frame creation passes camera and new frame; teardown passes camera and null before destroying the frame. This VOID routine unlinks any old attachment, publishes the nullable parent, inserts at the new frame object-list head, then marks that frame."),
         (0x1a4f00, 0x1a4fb4, "CameraUpdateZShiftScale", "bacamera.c",
          "9002768dad2f8f67cd5c860eb4e8fbabb83ff089a7693863b1a0c194bf865b18",
          [0x1a6458],
@@ -274,6 +461,13 @@ def matched_sdk_roles(original, sdk_root: Path):
                                      "source_file": "rwsdk/src/" + file, "source_normalized_sha256": SOURCE_FILES[file],
                                      "original_body_sha256": body_hash, "operations": operations,
                                      "caller_sites": [f"{site:08x}" for site in sites], **semantic_evidence}))
+
+    # Preserve the established legacy refusal order before checking the new
+    # complete caller joins. The dedicated mutation runner also invokes this
+    # semantic validator directly, so a body hash cannot mask its checks.
+    for start, end, evidence in results:
+        if start in CAMERA_FRAME_BODIES:
+            evidence.update(validate_camera_frame_semantics(original, sources, frame_headers, start))
 
     # Original device fallback jump table for requests 13..18. The zero-index
     # subsystem-info case passes this literal in the delay slot of its copy call.

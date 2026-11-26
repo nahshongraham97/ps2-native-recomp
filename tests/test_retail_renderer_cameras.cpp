@@ -23,6 +23,7 @@
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
+#include <initializer_list>
 #include <limits>
 #include <new>
 #include <stdexcept>
@@ -73,6 +74,168 @@ struct Fixture {
 NativeRetailRendererCameraHandle create(const std::shared_ptr<NativeRetailRendererCameraModule>& module){
  RetailRendererCameraFailure f;auto h=module->create_base_camera(explicit_fixture_depth(),f);check(bool(h),"actual typed base-camera creation");return *h;
 }
+unsigned association_checks{},association_scenarios{};
+void association_check(bool ok,const char* why){++association_checks;check(ok,why);}
+struct CameraFrameFixture {
+ Fixture native;
+ std::shared_ptr<NativeRetailRendererCore> core;
+ std::shared_ptr<NativeRetailRendererFrames> frames;
+ std::shared_ptr<NativeRetailRendererCameraModule> cameras;
+ explicit CameraFrameFixture(const std::filesystem::path& root):native(root),core(native.core()){
+  auto initialized=core->initialize_core(native.f);
+  association_check(initialized&&*initialized,"association actual CoreInit");
+  association_check(renderer_required::construct_core_plugin_0403(*core,native.f),"association actual0403 first");
+  association_check(renderer_required::construct_core_plugin_0405(*core,native.f),"association actual0405 second");
+  frames=core->frames(native.f);cameras=core->camera_module(native.f);
+  association_check(frames&&cameras,"association uses the persistent Core resources");
+ }
+ NativeRetailRendererFrameHandle new_frame(){RetailRendererFrameFailure f;auto h=frames->create_base_frame(f);
+  association_check(bool(h),"association actual frame allocation");return *h;}
+ NativeRetailRendererCameraHandle new_camera(){return create(cameras);}
+ void retire(){renderer_required::destroy_core_plugin_0405(*core);renderer_required::destroy_core_plugin_0403(*core);}
+};
+NativeRetailRendererFrameObjectHandle object_identity(const std::shared_ptr<NativeRetailRendererCameraModule>& module,
+ const NativeRetailRendererCameraHandle& camera){
+ RetailRendererCameraFailure f;auto identity=module->frame_object_identity(camera,f);
+ association_check(bool(identity)&&!identity->empty(),"actual stable native camera frame-object identity");return *identity;
+}
+void object_order(const std::shared_ptr<NativeRetailRendererFrames>& frames,const NativeRetailRendererFrameHandle& frame,
+ std::initializer_list<NativeRetailRendererFrameObjectHandle> expected){
+ RetailRendererFrameFailure f;auto actual=frames->objects(frame,f);
+ association_check(actual&&actual->size()==expected.size(),"source object-list cardinality");
+ std::size_t index{};for(const auto& identity:expected)
+  association_check((*actual)[index++].same_identity(identity),"source object-list order and native identity");
+}
+void camera_frame_association_cases(const std::filesystem::path& root){
+ {
+  ++association_scenarios;CameraFrameFixture x(root);RetailRendererCameraFailure f;RetailRendererFrameFailure ff;
+  auto first=x.new_frame(),second=x.new_frame();auto a=x.new_camera(),b=x.new_camera(),c=x.new_camera();
+  auto ia=object_identity(x.cameras,a),ib=object_identity(x.cameras,b),ic=object_identity(x.cameras,c);
+  auto initial=x.cameras->frame(a,f);association_check(initial&&initial->empty(),"new real camera has no frame");
+  object_order(x.frames,first,{});object_order(x.frames,second,{});
+  association_check(x.cameras->set_frame(a,{},f),"unchanged-null source association returns native host success");
+  initial=x.cameras->frame(a,f);auto clean_queue=x.frames->dirty_roots(ff);
+  auto clean_first=x.frames->observe(first,ff),clean_second=x.frames->observe(second,ff);
+  association_check(initial&&initial->empty()&&clean_queue&&clean_queue->empty()&&clean_first&&clean_second&&
+   clean_first->private_flags==0&&clean_second->private_flags==0,"unchanged-null association has no list or frame-dirty effects");
+  object_order(x.frames,first,{});object_order(x.frames,second,{});
+  association_check(x.cameras->set_frame(a,first,f)&&x.cameras->set_frame(b,first,f)&&x.cameras->set_frame(c,first,f),"source prepend three real cameras");
+  object_order(x.frames,first,{ic,ib,ia});
+  auto current=x.cameras->frame(b,f);association_check(current&&current->same_identity(first),"actual camera/frame association getter");
+  fail_after=0;const bool rebound=x.cameras->set_frame(b,first,f);fail_after=-1;
+  association_check(rebound,"same-frame source rebind has no hidden allocation and is not a no-op");
+  object_order(x.frames,first,{ib,ic,ia});
+  fail_after=0;auto refused_snapshot=x.frames->objects(first,ff);fail_after=-1;
+  association_check(!refused_snapshot&&ff.kind==RetailRendererFrameError::allocation,"object-list snapshot allocation failure is explicit");
+  object_order(x.frames,first,{ib,ic,ia});
+  association_check(x.cameras->set_frame(c,second,f),"source move between actual frame object lists");
+  object_order(x.frames,first,{ib,ia});object_order(x.frames,second,{ic});
+  auto queue=x.frames->dirty_roots(ff);
+  association_check(queue&&queue->size()==2&&(*queue)[0].same_identity(second)&&(*queue)[1].same_identity(first),"new frame dirtied once after source attachment");
+  association_check(x.cameras->set_frame(b,{},f),"source null frame unlinks without replacement");
+  current=x.cameras->frame(b,f);association_check(current&&current->empty(),"explicit detach exposes actual null association");
+  object_order(x.frames,first,{ia});
+  queue=x.frames->dirty_roots(ff);
+  association_check(queue&&queue->size()==2&&(*queue)[0].same_identity(second)&&(*queue)[1].same_identity(first),"detach preserves existing dirty-root order");
+  association_check(x.cameras->destroy_base_camera(a,f),"camera destruction unlinks the remaining source object");
+  object_order(x.frames,first,{});
+  auto replacement=x.new_camera();auto ir=object_identity(x.cameras,replacement);
+  association_check(!ir.same_identity(ia),"retired object identity cannot alias reused native allocation");
+  association_check(!x.cameras->set_frame(a,first,f)&&f.kind==RetailRendererCameraError::retired_camera,"retired camera cannot relink");
+  association_check(!x.frames->destroy_leaf(second,ff)&&ff.kind==RetailRendererFrameError::attached_objects_required,"frame deletion refuses actual attached camera");
+  object_order(x.frames,second,{ic});
+  renderer_required::destroy_core_plugin_0405(*x.core);
+  object_order(x.frames,first,{});object_order(x.frames,second,{});
+  association_check(!x.cameras->frame(c,f)&&f.kind==RetailRendererCameraError::retired,"module retirement rejects held camera handles");
+  association_check(x.frames->destroy_leaf(first,ff)&&x.frames->destroy_leaf(second,ff),"camera-module close unlinks before frame payload release");
+  renderer_required::destroy_core_plugin_0403(*x.core);
+ }
+ {
+  ++association_scenarios;CameraFrameFixture x(root),foreign(root);RetailRendererCameraFailure f;RetailRendererFrameFailure ff;
+  auto first=x.new_frame(),second=x.new_frame(),dead=x.new_frame(),other=foreign.new_frame();
+  auto a=x.new_camera(),b=x.new_camera(),unattached=x.new_camera(),other_camera=foreign.new_camera();
+  auto ia=object_identity(x.cameras,a),ib=object_identity(x.cameras,b);
+  association_check(x.cameras->set_frame(a,first,f)&&x.cameras->set_frame(b,first,f),"actual source list before failed associations");
+  association_check(!x.cameras->set_frame(unattached,other,f)&&f.kind==RetailRendererCameraError::frame_binding&&f.frame.kind==RetailRendererFrameError::foreign_owner,"initially unattached camera rejects foreign Session before first parent publication");
+  auto never_attached=x.cameras->frame(unattached,f);
+  association_check(never_attached&&never_attached->empty(),"failed first foreign-Session attachment retains null parent");
+  object_order(x.frames,first,{ib,ia});object_order(foreign.frames,other,{});
+  association_check(!x.cameras->set_frame(a,other,f)&&f.kind==RetailRendererCameraError::frame_binding&&f.frame.kind==RetailRendererFrameError::foreign_owner,"foreign Session frame rejected before unlinking current membership");
+  object_order(x.frames,first,{ib,ia});object_order(foreign.frames,other,{});
+  association_check(x.frames->destroy_leaf(dead,ff),"retired frame fixture is physically released");
+  association_check(!x.cameras->set_frame(a,dead,f)&&f.kind==RetailRendererCameraError::frame_binding&&f.frame.kind==RetailRendererFrameError::retired_frame,"retired frame rejected before source link changes");
+  object_order(x.frames,first,{ib,ia});object_order(x.frames,second,{});
+  association_check(!x.cameras->set_frame(other_camera,second,f)&&f.kind==RetailRendererCameraError::foreign_owner,"foreign camera rejected before frame access");
+  association_check(!x.cameras->set_frame({},second,f)&&f.kind==RetailRendererCameraError::invalid_handle,"empty camera rejected before frame access");
+  association_check(x.cameras->set_view_window(a,{2,4},f),"finite window before wrong-thread refusal");
+  bool thread_rejected=false,thread_window_rejected=false;
+  std::thread other_thread([&]{RetailRendererCameraFailure detail;
+   thread_rejected=!x.cameras->set_frame(a,second,detail)&&detail.kind==RetailRendererCameraError::wrong_thread;
+   thread_window_rejected=!x.cameras->set_view_window(a,{9,10},detail)&&detail.kind==RetailRendererCameraError::wrong_thread;
+  });other_thread.join();association_check(thread_rejected,"foreign-thread association is rejected before links");
+  auto unchanged=x.cameras->observe(a,f);
+  association_check(thread_window_rejected&&unchanged&&unchanged->view_window.x==2&&unchanged->view_window.y==4,"wrong-thread setter rejects before source window prefix");
+  object_order(x.frames,first,{ib,ia});object_order(x.frames,second,{});
+  auto current=x.cameras->frame(a,f);association_check(current&&current->same_identity(first),"all failed associations preserve the old parent");
+  x.retire();foreign.retire();
+ }
+ {
+  ++association_scenarios;CameraFrameFixture x(root);RetailRendererCameraFailure f;RetailRendererFrameFailure ff;
+  auto parent=x.new_frame(),child=x.new_frame(),unrelated=x.new_frame(),other_root=x.new_frame();auto camera=x.new_camera();
+  association_check(x.frames->add_child(parent,child,ff)&&x.frames->add_child(parent,unrelated,ff),"actual nested frame hierarchy, unrelated sibling first");
+  association_check(x.frames->mark_dirty(other_root,ff),"independent dirty root before camera attachment");
+  association_check(x.cameras->set_frame(camera,child,f),"camera attaches to descendant with existing native root");
+  const auto identity=object_identity(x.cameras,camera);object_order(x.frames,child,{identity});
+  association_check(x.cameras->set_view_window(camera,{std::bit_cast<float>(0x3fd9999au),2.5f},f),"attached finite nonsquare native window update");
+  auto state=x.cameras->observe(camera,f);auto root_state=x.frames->observe(parent,ff),child_state=x.frames->observe(child,ff);
+  association_check(state&&std::bit_cast<std::uint32_t>(state->view_window.x)==0x3fd9999au&&state->view_window.y==2.5f&&
+   std::bit_cast<std::uint32_t>(state->inverse_window.x)==0x3f169696u&&std::bit_cast<std::uint32_t>(state->inverse_window.y)==0x3ecccccdu,"independent finite source reciprocal bits, not square-only computation");
+  association_check(root_state&&child_state&&(root_state->private_flags&3u)==3u&&(child_state->private_flags&12u)==12u&&child_state->root.same_identity(parent),"attached setter reuses real descendant/root dirty effects");
+  auto queue=x.frames->dirty_roots(ff);
+  association_check(queue&&queue->size()==2&&(*queue)[0].same_identity(other_root)&&(*queue)[1].same_identity(parent),"already-dirty nested root is neither duplicated nor reordered");
+  association_check(!x.cameras->require_render_ready(camera,f)&&f.kind==RetailRendererCameraError::render_services_required,"association and dirtying do not invent synchronized rendering");
+  auto count=x.frames->observe_module(ff);
+  association_check(!x.frames->destroy_root_hierarchy(parent,ff)&&ff.kind==RetailRendererFrameError::attached_objects_required,"whole hierarchy deletion refuses attached descendant before sibling release");
+  auto after=x.frames->observe_module(ff);
+  association_check(count&&after&&count->live_base_frames==after->live_base_frames&&x.frames->observe(unrelated,ff).has_value(),"refused hierarchy deletion leaves all unrelated payloads alive");
+  object_order(x.frames,child,{identity});
+  association_check(x.cameras->set_frame(camera,{},f)&&x.frames->destroy_root_hierarchy(parent,ff),"explicit source detach permits hierarchy release");
+  association_check(x.cameras->destroy_base_camera(camera,f)&&x.frames->destroy_leaf(other_root,ff),"actual nested association cleanup");x.retire();
+ }
+ {
+  ++association_scenarios;CameraFrameFixture x(root);RetailRendererCameraFailure f;RetailRendererFrameFailure ff;
+  auto frame=x.new_frame();auto camera=x.new_camera(),unattached=x.new_camera();
+  association_check(x.cameras->set_frame(camera,frame,f),"actual camera before frame-module retirement");
+  renderer_required::destroy_core_plugin_0403(*x.core);
+  association_check(!x.cameras->frame(camera,f)&&f.kind==RetailRendererCameraError::frame_binding&&f.frame.kind!=RetailRendererFrameError::none,"retired frame association is a named failure, not a detached camera");
+  association_check(!x.cameras->set_view_window(camera,{4,8},f)&&f.kind==RetailRendererCameraError::frame_binding&&f.frame.kind!=RetailRendererFrameError::none,"stale attached setter reports required frame service failure");
+  auto state=x.cameras->observe(camera,f);
+  association_check(state&&state->view_window.x==4&&state->view_window.y==8&&state->inverse_window.x==0.25f&&state->inverse_window.y==0.125f,"stale attached-frame failure retains preceding source window/inverse effects");
+  association_check(renderer_required::construct_core_plugin_0403(*x.core,x.native.f),"same Session can construct a new frame resource generation");
+  auto new_frames=x.core->frames(x.native.f);auto fresh=new_frames->create_base_frame(ff);
+  association_check(bool(fresh),"new frame generation allocates independently");
+  association_check(!x.cameras->set_frame(unattached,frame,f)&&f.kind==RetailRendererCameraError::frame_binding,"old frame generation cannot bind through replacement module");
+  auto current=x.cameras->frame(unattached,f);association_check(current&&current->empty(),"failed old-generation bind leaves new camera unattached");
+  object_order(new_frames,*fresh,{});
+  association_check(x.cameras->destroy_base_camera(camera,f)&&x.cameras->destroy_base_camera(unattached,f),"invalidated membership still allows safe camera ownership cleanup");
+  association_check(new_frames->destroy_leaf(*fresh,ff),"new generation frame cleanup");x.retire();
+ }
+ {
+  ++association_scenarios;std::shared_ptr<NativeRetailRendererCameraModule> cameras;
+  std::shared_ptr<NativeRetailRendererFrames> frames;std::weak_ptr<NativeRetailGameSession> session;
+  NativeRetailRendererCameraHandle camera;NativeRetailRendererFrameHandle frame;later=Later::allow;
+  {Fixture x(root);auto core=x.core();auto initialized=core->initialize_core(x.f);
+   association_check(initialized&&*initialized&&core->construct_registered(x.f),"actual registered Core prefix for associated Session lifetime");
+   cameras=core->camera_module(x.f);frames=core->frames(x.f);session=x.startup.game_session;
+   RetailRendererFrameFailure ff;auto created=frames->create_base_frame(ff);association_check(bool(created),"Session lifetime actual frame");frame=*created;
+   camera=create(cameras);RetailRendererCameraFailure f;association_check(cameras->set_frame(camera,frame,f),"Session lifetime actual association");
+  }
+  RetailRendererCameraFailure f;RetailRendererFrameFailure ff;
+  association_check(session.expired()&&!cameras->frame(camera,f)&&f.kind==RetailRendererCameraError::retired,"camera association cannot retain usable Session storage");
+  association_check(!frames->objects(frame,ff)&&ff.kind==RetailRendererFrameError::retired,"held frame module is retired after actual reverse Core teardown");later=Later::refuse;
+ }
+ std::printf("PASS_NATIVE_CAMERA_FRAME_ASSOCIATION scenarios=%u checks=%u; actual0403/0405 membership/order/rebind/detach,weak identity,Session/thread/retirement refusals,hierarchy deletion guard,nested dirty roots,source window prefix on stale frame; full synchronization/game OPEN\n",association_scenarios,association_checks);
+}
 }
 namespace mka::retail::renderer_required {
 #define OTHER(ID,VALUE) bool construct_core_plugin_##ID(NativeRetailRendererCore& c,RetailRendererCoreFailure& f){return fixture_construct(VALUE,c,f);} \
@@ -103,6 +266,7 @@ int main(int argc,char** argv)try{
  check(argc==3,"existing root and original-derived depth corpus required");
  check(std::fegetround()==FE_TONEAREST,"source binary32 fixture scope requires existing nearest rounding; settings not changed");
  const std::filesystem::path root(argv[1]);
+ camera_frame_association_cases(root);
  {
   Fixture x(root);auto c=x.core();check(!c->camera_module(x.f)&&c->module_0405_count(x.f)==0,"module absent before real constructor");
   auto m=x.module();RetailRendererCameraFailure f;check(m&&c->module_0405_count(x.f)==1&&m->live_base_cameras(f)==0,"actual0405 native publication/count/empty resource");

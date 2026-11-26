@@ -41,9 +41,14 @@ struct NativeRetailRendererFrameRecord {
  NativeRetailRendererFrameRecord* root{this};
  NativeRetailRendererFrameRecord* dirty_previous{};
  NativeRetailRendererFrameRecord* dirty_next{};
+ NativeRetailRendererFrameObjectLink* objects_first{};
+ NativeRetailRendererFrameObjectLink* objects_last{};
  std::weak_ptr<NativeRetailRendererFrameRecord> self;
  std::weak_ptr<NativeRetailRendererFrames> owner;
 };
+NativeRetailRendererFrameObjectLink::~NativeRetailRendererFrameObjectLink(){
+ if(auto owner=owner_.lock())owner->release_object_link(*this);
+}
 NativeRetailRendererFrames::NativeRetailRendererFrames(std::weak_ptr<NativeRetailGameSession> session,
  std::shared_ptr<NativeRetailRendererAllocatorService> allocator)noexcept
  :session_(std::move(session)),allocator_(std::move(allocator)){}
@@ -126,6 +131,82 @@ std::optional<std::vector<NativeRetailRendererFrameHandle>> NativeRetailRenderer
  catch(...){fail(f,RetailRendererFrameError::native_exception,"0403 dirty-root snapshot");}
  return {};
 }
+std::optional<std::vector<NativeRetailRendererFrameObjectHandle>> NativeRetailRendererFrames::objects(
+ const NativeRetailRendererFrameHandle& frame,RetailRendererFrameFailure& f)noexcept{
+ const auto lease=admit(f);if(!lease)return {};const auto node=record(frame,f);if(!node)return {};
+ Busy guard(busy_);
+ try{
+  std::size_t count{};for(auto* object=node->objects_first;object;object=object->next_)++count;
+  std::vector<NativeRetailRendererFrameObjectHandle> result;result.reserve(count);
+  // An allocation hook may retire another owner. Do not retain list iterators
+  // across reserve; admit publication again and then perform no allocations.
+  RetailGameSessionFailure sf;
+  if(!active_.load(std::memory_order_acquire)||!node->alive||!lease->validate_current_thread(sf)){
+   fail(f,RetailRendererFrameError::retired,"0403 object snapshot retired during allocation");return {};
+  }
+  for(auto* object=node->objects_first;object;object=object->next_){
+   if(object->self_.expired()){fail(f,RetailRendererFrameError::invalid_handle,"0403 object membership lost its native owner");return {};}
+   result.push_back(NativeRetailRendererFrameObjectHandle(object->self_));
+  }
+  return result;
+ }catch(const std::bad_alloc&){fail(f,RetailRendererFrameError::allocation,"0403 native object snapshot allocation");}
+ catch(...){fail(f,RetailRendererFrameError::native_exception,"0403 native object snapshot");}
+ return {};
+}
+void NativeRetailRendererFrames::release_object_link(NativeRetailRendererFrameObjectLink& object)noexcept{
+ auto* node=object.node_;if(!node)return;
+ if(object.previous_)object.previous_->next_=object.next_;else node->objects_first=object.next_;
+ if(object.next_)object.next_->previous_=object.previous_;else node->objects_last=object.previous_;
+ object.node_=nullptr;object.previous_=object.next_=nullptr;
+ // 1AA120 does not clear the object's parent. Release and module retirement
+ // preserve that distinction; a retained retired handle must not look detached.
+}
+bool NativeRetailRendererFrames::set_object_frame(NativeRetailRendererFrameObjectLink& object,
+ const NativeRetailRendererFrameHandle& frame,RetailRendererFrameFailure& f)noexcept{
+ const auto lease=admit(f);if(!lease)return false;
+ if(object.session_.lock().get()!=lease.get())
+  return fail(f,RetailRendererFrameError::foreign_owner,"1AA0B0 camera and frame require the same native Session");
+ if(object.self_.expired())return fail(f,RetailRendererFrameError::invalid_handle,"1AA0B0 live native object owner required");
+ std::shared_ptr<NativeRetailRendererFrameRecord> next;
+ if(!frame.empty()){next=record(frame,f);if(!next)return false;}
+ std::shared_ptr<NativeRetailRendererFrames> old_owner;
+ std::shared_ptr<NativeRetailRendererFrameRecord> previous;
+ if(!object.frame_.empty()){
+  old_owner=object.owner_.lock();
+  if(!old_owner||!object.node_)return fail(f,RetailRendererFrameError::retired_frame,"1AA0B0 prior frame owner retired");
+  const auto old_lease=old_owner->admit(f);if(!old_lease)return false;
+  if(old_lease.get()!=lease.get())return fail(f,RetailRendererFrameError::foreign_owner,"1AA0B0 prior frame belongs to another Session");
+  previous=old_owner->record(object.frame_,f);if(!previous)return false;
+  if(previous.get()!=object.node_)return fail(f,RetailRendererFrameError::invalid_handle,"1AA0B0 prior object membership differs from parent");
+ }
+ Busy guard(busy_);std::optional<Busy> old_guard;
+ if(old_owner&&old_owner.get()!=this)old_guard.emplace(old_owner->busy_);
+ if(old_owner)old_owner->release_object_link(object);
+ object.frame_=frame; // Original parent store precedes insertion and dirtying.
+ object.owner_=next?weak_from_this():std::weak_ptr<NativeRetailRendererFrames>{};
+ if(next){
+  object.node_=next.get();object.previous_=nullptr;object.next_=next->objects_first;
+  if(next->objects_first)next->objects_first->previous_=&object;else next->objects_last=&object;
+  next->objects_first=&object; // Original JAL delay publishes the head first.
+  mark_record(next.get());
+ }
+ return true;
+}
+std::optional<NativeRetailRendererFrameHandle> NativeRetailRendererFrames::object_frame(
+ const NativeRetailRendererFrameObjectLink& object,RetailRendererFrameFailure& f)const noexcept{
+ const auto lease=admit(f);if(!lease)return {};
+ if(object.session_.lock().get()!=lease.get()||object.owner_.lock().get()!=this){
+  fail(f,RetailRendererFrameError::foreign_owner,"native object/frame owner mismatch");return {};
+ }
+ const auto node=record(object.frame_,f);if(!node)return {};
+ if(node.get()!=object.node_){fail(f,RetailRendererFrameError::retired_frame,"native object frame membership retired");return {};}
+ return object.frame_;
+}
+bool NativeRetailRendererFrames::update_object_frame(NativeRetailRendererFrameObjectLink& object,
+ RetailRendererFrameFailure& f)noexcept{
+ const auto frame=object_frame(object,f);if(!frame)return false;
+ return mark_dirty(*frame,f);
+}
 void NativeRetailRendererFrames::mark_record(NativeRetailRendererFrameRecord* node)noexcept{
  auto* root=node->root;
  if(!(root->flags&3u)){
@@ -187,6 +268,7 @@ void NativeRetailRendererFrames::release_record(NativeRetailRendererFrameRecord*
 bool NativeRetailRendererFrames::destroy_leaf(const NativeRetailRendererFrameHandle& frame,RetailRendererFrameFailure& f)noexcept{
  const auto lease=admit(f);if(!lease)return false;const auto node=record(frame,f);if(!node)return false;
  if(node->first_child)return fail(f,RetailRendererFrameError::nonleaf_single_delete_required,"0403 single-delete with children requires its remaining native child-root contract");
+ if(node->objects_first)return fail(f,RetailRendererFrameError::attached_objects_required,"0403 detach native objects before frame destruction");
  if(node->parent)detach_record(node.get());
  release_record(node.get());return true;
 }
@@ -195,6 +277,10 @@ bool NativeRetailRendererFrames::destroy_root_hierarchy(const NativeRetailRender
  if(frame.empty())return true; // Original2BF230 NULL input is an actual empty case.
  const auto retained=record(frame,f);if(!retained)return false;auto* node=retained.get();
  if(node->parent)return fail(f,RetailRendererFrameError::attached_hierarchy_required,"0403 attached hierarchy deletion requires verified caller detach");
+ // Preflight the complete hierarchy before any deletion. The retail camera
+ // callers detach objects first; do not invent dangling-parent cleanup.
+ for(const auto& member:records_)if(member->root==node&&member->objects_first)
+  return fail(f,RetailRendererFrameError::attached_objects_required,"0403 detach hierarchy objects before frame destruction");
  for(;;){
   if(node->first_child){node=node->first_child;continue;}
   auto* parent=node->parent;auto* next=node->next_sibling;
@@ -214,7 +300,12 @@ bool NativeRetailRendererFrames::require_fully_synchronized(const NativeRetailRe
 }
 void NativeRetailRendererFrames::retire()noexcept{
  active_.store(false,std::memory_order_release);dirty_first_=dirty_last_=nullptr;
- for(const auto& node:records_)node->alive=false;
+ for(const auto& node:records_){
+  while(node->objects_first){
+   auto* object=node->objects_first;release_object_link(*object);object->owner_.reset();
+  }
+  node->alive=false;
+ }
  records_.clear();
 }
 std::shared_ptr<NativeRetailRendererFrames> NativeRetailRendererCore::frames(RetailRendererCoreFailure& f)const noexcept{

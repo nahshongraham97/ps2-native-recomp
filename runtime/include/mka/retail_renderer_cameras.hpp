@@ -1,6 +1,7 @@
 #pragma once
 #include "mka/retail_renderer_core.hpp"
 #include "mka/retail_renderer_rasters.hpp"
+#include "mka/retail_renderer_frames.hpp"
 #include <atomic>
 #include <memory>
 #include <optional>
@@ -12,11 +13,12 @@ class NativeRetailRendererCameraModule;
 struct NativeRetailRendererBaseCameraRecord;
 enum class RetailRendererCameraError {
  none,owner,wrong_thread,retired,reentrant,invalid_handle,foreign_owner,retired_camera,
- allocator,allocation,native_exception,device_depth_required,unverified_numeric_domain,render_services_required
+ allocator,allocation,native_exception,device_depth_required,unverified_numeric_domain,render_services_required,frame_binding
 };
 struct RetailRendererCameraFailure {
  RetailRendererCameraError kind{RetailRendererCameraError::none};const char* operation{""};
  RetailRendererAllocatorFailure allocator;
+ RetailRendererFrameFailure frame;
 };
 struct RetailRendererCameraDepthInputs {float near_value{},far_value{};};
 struct RetailRendererCameraWindow {float x{},y{};};
@@ -56,7 +58,15 @@ public:
  std::optional<RetailRendererBaseCameraObservation> observe(
      const NativeRetailRendererCameraHandle&,RetailRendererCameraFailure&)const noexcept;
  std::optional<std::size_t> live_base_cameras(RetailRendererCameraFailure&)const noexcept;
- // Source view-window path with no attached frame. It is not frame syncing.
+ // Source1AA0B0 association and attached1A64A0 dirtying. These do not execute
+ // camera/frame synchronization or supply missing renderer/plugin services.
+ // set_frame's bool is native admission status; source1AA0B0 has a void ABI.
+ bool set_frame(const NativeRetailRendererCameraHandle&,const NativeRetailRendererFrameHandle&,
+     RetailRendererCameraFailure&)noexcept;
+ std::optional<NativeRetailRendererFrameHandle> frame(
+     const NativeRetailRendererCameraHandle&,RetailRendererCameraFailure&)const noexcept;
+ std::optional<NativeRetailRendererFrameObjectHandle> frame_object_identity(
+     const NativeRetailRendererCameraHandle&,RetailRendererCameraFailure&)const noexcept;
  bool set_view_window(const NativeRetailRendererCameraHandle&,RetailRendererCameraWindow,RetailRendererCameraFailure&)noexcept;
  bool destroy_base_camera(const NativeRetailRendererCameraHandle&,RetailRendererCameraFailure&)noexcept;
  // A capability refusal, not an implementation of source Begin/EndUpdate.

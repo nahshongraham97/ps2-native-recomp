@@ -35,6 +35,8 @@ Phase 5S.9 measures a seeded leaf cohort from the full in-scope catalogue
 separately from ownership-admitted functions. Preserve failures and report
 whole-function passes by size and instruction mix. The owner's2026-11-26 Phase6 N1–N5 authorizes one bounded memory/ABI/control attempt from that0/30 result; the initial isolated-branch work is now integrated into main under the latest owner direction. Measure the initial memory stage on an independent held-out cohort before enabling later control stages; subsequent stages require a measured held-out whole-function pass. If N1–N3 still yield zero, stop and report whether to abandon the general transformer. Keep the camera as an independent native subsystem check; diagnostic changes at the same instruction are not passes.
 
+The owner-authorized matching-source/native-data pilot is a second source-recovery route alongside AOT transformation. Matching PS2 bytes does not establish native64-bit layouts, ownership, full behavioral equivalence or production integration, and adds no Phase5 transformed credit. The existing admission and native-only acceptance gates apply unchanged.
+
 The product is one genuine native Armageddon port in the existing repositories,
 not preservation of a PS2 runtime because of an upstream/fork name. Recover
 the best/easiest verified retail implementations into ONE native architecture.

@@ -66,9 +66,11 @@ struct NativeRetailRendererBaseCameraRecord {
  unsigned int fbo{0};
  bool fbo_initialized{false};
  bool updating{false};
- NativeRetailRendererBaseCameraRecord(const RetailRendererCameraDepthInputs& depth,float scale,float shift)noexcept
+ NativeRetailRendererFrameObjectLink frame_link;
+ NativeRetailRendererBaseCameraRecord(std::weak_ptr<NativeRetailGameSession> session,
+     const RetailRendererCameraDepthInputs& depth,float scale,float shift)noexcept
   :state{{1,1},{1,1},{0,0},value(0x3d4ccccdu),value(0x41200000u),value(0x40a00000u),
-    scale,shift,1,depth,false}{}
+    scale,shift,1,depth,false},frame_link(std::move(session)){}
  ~NativeRetailRendererBaseCameraRecord() {
 #ifdef _WIN32
   typedef void (APIENTRY *PFNGLDELETEFRAMEBUFFERSPROC)(GLsizei n, const GLuint *framebuffers);
@@ -118,7 +120,7 @@ std::optional<NativeRetailRendererCameraHandle> NativeRetailRendererCameraModule
  if(!default_depth(*depth,scale,shift)){fail(f,RetailRendererCameraError::unverified_numeric_domain,"0405 nonfinite depth domain remains unverified");return {};}
  Busy guard(busy_);
  auto r=heap_object<NativeRetailRendererBaseCameraRecord>(allocator_,f,[&](void* p){
-  return new(p)NativeRetailRendererBaseCameraRecord(*depth,scale,shift);
+  return new(p)NativeRetailRendererBaseCameraRecord(session_,*depth,scale,shift);
  });
  if(!r)return {};
  try{
@@ -129,6 +131,7 @@ std::optional<NativeRetailRendererCameraHandle> NativeRetailRendererCameraModule
   }
   if(!active_.load(std::memory_order_acquire)){fail(f,RetailRendererCameraError::retired,"0405 retired during native allocation");return {};}
   r->owner=weak_from_this();r->self=r;
+  r->frame_link.self_=std::shared_ptr<NativeRetailRendererFrameObjectLink>(r,&r->frame_link);
   const NativeRetailRendererCameraHandle result(r->owner,r->self);records_.push_back(std::move(r));return result;
  }catch(const std::bad_alloc&){fail(f,RetailRendererCameraError::allocation,"0405 native camera ownership growth");}
  catch(...){fail(f,RetailRendererCameraError::native_exception,"0405 camera publication");}
@@ -141,23 +144,69 @@ std::optional<RetailRendererBaseCameraObservation> NativeRetailRendererCameraMod
 std::optional<std::size_t> NativeRetailRendererCameraModule::live_base_cameras(RetailRendererCameraFailure& f)const noexcept{
  const auto lease=admit(f);if(!lease)return {};return records_.size();
 }
+bool NativeRetailRendererCameraModule::set_frame(const NativeRetailRendererCameraHandle& h,
+ const NativeRetailRendererFrameHandle& frame,RetailRendererCameraFailure& f)noexcept{
+ const auto lease=admit(f);if(!lease)return false;const auto r=record(h,f);if(!r)return false;
+ Busy guard(busy_);
+ if(frame.empty()&&r->frame_link.frame_.empty()){
+  r->frame_link.frame_=frame; // 1AA0C0 still stores the nullable parent.
+  return true;
+ }
+ const auto frames=frame.empty()?r->frame_link.owner_.lock():frame.owner_.lock();
+ if(!frames){
+  f.frame={RetailRendererFrameError::retired_frame,"1AA0B0 native frame owner retired"};
+  return fail(f,RetailRendererCameraError::frame_binding,f.frame.operation);
+ }
+ if(!frames->set_object_frame(r->frame_link,frame,f.frame))
+  return fail(f,RetailRendererCameraError::frame_binding,f.frame.operation);
+ return true;
+}
+std::optional<NativeRetailRendererFrameHandle> NativeRetailRendererCameraModule::frame(
+ const NativeRetailRendererCameraHandle& h,RetailRendererCameraFailure& f)const noexcept{
+ const auto lease=admit(f);if(!lease)return {};const auto r=record(h,f);if(!r)return {};
+ if(r->frame_link.frame_.empty())return NativeRetailRendererFrameHandle{};
+ const auto frames=r->frame_link.owner_.lock();
+ if(!frames){
+  f.frame={RetailRendererFrameError::retired_frame,"native camera frame owner retired"};
+  fail(f,RetailRendererCameraError::frame_binding,f.frame.operation);return {};
+ }
+ auto result=frames->object_frame(r->frame_link,f.frame);
+ if(!result)fail(f,RetailRendererCameraError::frame_binding,f.frame.operation);
+ return result;
+}
+std::optional<NativeRetailRendererFrameObjectHandle> NativeRetailRendererCameraModule::frame_object_identity(
+ const NativeRetailRendererCameraHandle& h,RetailRendererCameraFailure& f)const noexcept{
+ const auto lease=admit(f);if(!lease)return {};const auto r=record(h,f);if(!r)return {};
+ return NativeRetailRendererFrameObjectHandle(r->frame_link.self_);
+}
 bool NativeRetailRendererCameraModule::set_view_window(const NativeRetailRendererCameraHandle& h,
  RetailRendererCameraWindow input,RetailRendererCameraFailure& f)noexcept{
  const auto lease=admit(f);if(!lease)return false;const auto r=record(h,f);if(!r)return false;
- // Base records have no attached frame. The original nonnull-frame update
- // is a separate required game producer; it is not silently skipped here.
+ Busy guard(busy_);
+ // The input is a native value copy. Original1A64A0 loads both components
+ // before either store, then writes both reciprocals before its parent call.
  const auto one=value(0x3f800000u);
  std::memcpy(&r->state.view_window.x,&input.x,sizeof(input.x));
- const auto inverse_x=div32(one,input.x);
  std::memcpy(&r->state.view_window.y,&input.y,sizeof(input.y));
- const auto inverse_y=div32(one,input.y);
- r->state.inverse_window={inverse_x,inverse_y};return true;
+ r->state.inverse_window.x=div32(one,r->state.view_window.x);
+ r->state.inverse_window.y=div32(one,r->state.view_window.y);
+ if(!r->frame_link.frame_.empty()){
+  const auto frames=r->frame_link.owner_.lock();
+  if(!frames){
+   f.frame={RetailRendererFrameError::retired_frame,"1A64A0 attached native frame owner retired"};
+   return fail(f,RetailRendererCameraError::frame_binding,f.frame.operation);
+  }
+  if(!frames->update_object_frame(r->frame_link,f.frame))
+   return fail(f,RetailRendererCameraError::frame_binding,f.frame.operation);
+ }
+ return true;
 }
 bool NativeRetailRendererCameraModule::destroy_base_camera(const NativeRetailRendererCameraHandle& h,
  RetailRendererCameraFailure& f)noexcept{
  const auto lease=admit(f);if(!lease)return false;const auto r=record(h,f);if(!r)return false;
- // Initial-empty camera extension registry + unattached base: verified cleanup
- // has no plugin/frame callout; actual typed storage is released, not leaked.
+ // Initial-empty extension registry:1AA120 unlinks before actual release,
+ // without clearing the parent's value or executing a sync callback.
+ if(auto frames=r->frame_link.owner_.lock())frames->release_object_link(r->frame_link);
  r->alive=false;const auto i=std::find_if(records_.begin(),records_.end(),[&](const auto& x){return x.get()==r.get();});
  records_.erase(i);return true;
 }
@@ -271,7 +320,10 @@ bool NativeRetailRendererCameraModule::end_update(const NativeRetailRendererCame
 }
 void NativeRetailRendererCameraModule::retire()noexcept{
  active_.store(false,std::memory_order_release);
- for(const auto& r:records_)r->alive=false;
+ for(const auto& r:records_){
+  if(auto frames=r->frame_link.owner_.lock())frames->release_object_link(r->frame_link);
+  r->alive=false;
+ }
  records_.clear();
 }
 std::shared_ptr<NativeRetailRendererCameraModule> NativeRetailRendererCore::camera_module(RetailRendererCoreFailure& f)const noexcept{

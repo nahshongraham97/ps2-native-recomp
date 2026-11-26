@@ -26,8 +26,10 @@ will be supplied. Recover ownership from the available original bytes and
 record bounded conclusions. Exact RenderWare ownership is a strict diagnostic;
 it does not gate unrelated work or Phase 7. Phase 7 has per-function gates.
 
-The product is one native port. Retail game logic comes from build-time AOT
-static C++ transformed to typed native memory and ABI. Hand-written code is
+The product is one native port. Retail game logic uses the existing build-time AOT transformation route or the
+owner-authorized matching-source/native-data pilot, each with proved typed
+ABI, ownership and differential admission. A PS2 byte match alone admits none
+of those native gates and does not add Phase5 transformed credit. Hand-written code is
 restricted to file, memory, save, input, audio, movie/IPU, GPU and IOP/SIF
 platform boundaries. The accepted route has no guest-memory shim, guest
 registers, interpreter, runtime compiler or fixed guest address space.
