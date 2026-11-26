@@ -27,7 +27,9 @@ def main():
     for name in ['vector-proof','candidate-build','source-fork','state','card-copy','compiler','output']:
         parser.add_argument('--'+name,type=Path,required=True)
     parser.add_argument('--replay-observations',type=Path,help='Pinned observer01 receipt directory; offline comparisons only, never launches.')
+    parser.add_argument('--capture-preempt',action='store_true',help='Also observe before/after the unchanged original preempt callback in the selected low-budget call.')
     a=parser.parse_args();out=a.output.resolve();n=a.candidate_build.resolve()
+    family.require(not(a.capture_preempt and a.replay_observations),'new_preempt_capture_cannot_replay_old_artifacts')
     family.require(out.is_relative_to((family.W/'build/oracle-telemetry').resolve()) and not out.exists(),'fresh_owned_output_required')
     family.require(family.pin(n/'out/ps2run.exe')['sha256']==capture_tool.N_SHA,'N_reference_binary_changed')
     for path in [a.state,a.card_copy]:family.require(path.resolve().is_relative_to((family.W/'build/oracle-telemetry').resolve()),'owned_input_copy_required')
@@ -49,11 +51,20 @@ def main():
     out.mkdir(parents=True);data=out/'observations';data.mkdir();run=out/'run';run.mkdir();replayed=None;old_record=None
     if a.replay_observations:
         replayed=a.replay_observations/'RESULT.json'
-        family.require(family.pin(replayed)['sha256']=='0219eacefa312ccf3c4734c623d7e8c1032b8339b275fa540fd0e64d9bd95cb9','actual_observation_receipt_changed')
+        family.require(family.pin(replayed)['sha256'] in ['0219eacefa312ccf3c4734c623d7e8c1032b8339b275fa540fd0e64d9bd95cb9','f9d02e5e6d399f2a217dfe46c15ed5b6ada1780e4b84bf84aca845f749efdfe1'],'actual_observation_receipt_changed')
         old_record=json.loads(replayed.read_text());data=(a.replay_observations/'observations').resolve()
         for row in [*old_record['observation_pins'],old_record['observer_binary']]:family.require(family.pin(Path(row['path']))['sha256']==row['sha256'],'actual_observation_artifact_changed')
         family.require(set(str(x.resolve()) for x in data.iterdir() if x.is_file())==set(r['path'] for r in old_record['observation_pins']),'observation_inventory_changed')
+    capture_preempt=a.capture_preempt or bool(old_record and old_record.get('preempt_observed'))
     observer=OBSERVER.replace('@WORDS@',','.join(hex(w)+'u' for w in words[:52])).replace('@DATA@',data.as_posix())
+    if capture_preempt:
+        observer=once(observer,'static unsigned selected=0,known=0,unknown=0,high=0,low=0;',
+                      'static unsigned selected=0,known=0,unknown=0,high=0,low=0,active_case=0;static bool active_low=false;static std::uint64_t active_stack=0;static int active_thread=0;')
+        observer=once(observer,'const auto id=++selected;',
+                      'const auto id=++selected;active_case=id;active_low=!enough;active_stack=c.r[29].d[0];active_thread=ps2::kernel::current_thread();')
+        observer=once(observer,'static void after(const ps2::Cpu&c,unsigned id){if(!id)return;',
+                      'static void after(const ps2::Cpu&c,unsigned id){if(!id)return;active_case=0;')
+        observer+=PREEMPT_OBSERVER
     authored=family.W/'tools/research/r192_aot_modules'
     text=once(text,'#include "units.hpp"','#include "units.hpp"\n'+observer)
     text=text[:text.index('L_002E60E0:')]+part+text[text.index('L_002E6188:',text.index('L_002E60E0:')):]
@@ -62,8 +73,8 @@ def main():
     host=n/'out/CMakeFiles/ps2run.dir/host'
     objects=[host/name for name in ['main.cpp.obj','mka_unit_wrappers.cpp.obj','r192_aot_modules/loader.cpp.obj','profile_win.cpp.obj','window.cpp.obj','keymap.cpp.obj','stretch.cpp.obj']]
     libraries=[n/'out/libps2game.a',n/'out/libps2runtime.a',n/'src/third_party/sdl2/lib/libSDL2.dll.a',n/'src/third_party/wgpu-native/lib/libwgpu_native.a']
-    inputs=[Path(__file__),Path(family.__file__),Path(capture_tool.__file__),proof,fixture,boundary_ram,boundary_cpu,original,n/'src/runtime/src/kernel.hpp',n/'out/ps2run.exe',a.state,a.card_copy,a.compiler,*objects,*libraries,
-            *authored.glob('semantic_*.hpp'),*sorted((n/'src/runtime/include/ps2').glob('*.hpp'))]
+    inputs=[Path(__file__),Path(family.__file__),Path(capture_tool.__file__),proof,fixture,boundary_ram,boundary_cpu,original,n/'src/runtime/src/kernel.hpp',n/'src/runtime/src/system.cpp',n/'out/ps2run.exe',a.state,a.card_copy,a.compiler,*objects,*libraries,
+            *(authored/name for name in ['semantic_pipeline.hpp','semantic_vector_effects.hpp','semantic_no_yield_adapter.hpp']),*sorted((n/'src/runtime/include/ps2').glob('*.hpp'))]
     if replayed:inputs += [replayed,*[Path(r['path']) for r in old_record['observation_pins']],Path(old_record['observer_binary']['path'])]
     pins=[family.pin(x) for x in dict.fromkeys(inputs)]
     compile_args=[str(a.compiler),'-std=c++20','-mavx2','-ffp-contract=off','-O2','-DNDEBUG',
@@ -72,6 +83,7 @@ def main():
     link_args=[str(a.compiler),'-mavx2','-ffp-contract=off','-O3','-DNDEBUG','-mwindows','-static-libgcc','-static-libstdc++',
                *['-Wl,--wrap=_ZN3gen9unit_'+u+'ERN3ps23CpuEjj' for u in ['0018','0020','0025']],str(obj),*[str(x) for x in objects],'-o',str(exe),*[str(x) for x in libraries],'-lbcrypt','-lwinmm',
                *['-l'+x for x in ['ws2_32','userenv','ntdll','synchronization','pthread','m','kernel32','user32','gdi32','winspool','shell32','ole32','oleaut32','uuid','comdlg32','advapi32']]]
+    if capture_preempt:link_args.insert(1,'-Wl,--wrap=_ZN3ps27preemptERNS_3CpuE')
     commands=[]
     def command(name,args):
         cp=subprocess.run(args,capture_output=True);(out/(name+'.log')).write_bytes(cp.stdout+cp.stderr)
@@ -90,7 +102,7 @@ def main():
     else:
         actual=subprocess.CompletedProcess([str(replayed)],0)
         commands.append(dict(name='authenticated-prior-actual-observations-no-launch',argv=[str(replayed)],exit=0))
-    cases=sorted(data.glob('case-*-before-Cpu.bin'))
+    cases=sorted(path for path in data.glob('case-*-before-Cpu.bin') if re.fullmatch(r'case-\d+-before-Cpu\.bin',path.name))
     comparison=[]
     if actual.returncode==0:
         for path in cases:
@@ -116,11 +128,21 @@ def main():
     admitted=[r for r in comparison if 'PASS_ACTUAL_ORIGINAL_RETURN_NATIVE_SHADOW' in r['stdout']]
     refused=[r for r in comparison if r['exit']==2 and 'REFUSED_OBSERVED_INSUFFICIENT_BUDGET' in r['stderr']]
     passed=actual.returncode==0 and len(admitted)==2 and len(refused)==1 and len(comparison)==3 and not changes and all(p['exit']==1 and 'OBSERVATION_DIFFERENCE' in p['stderr'] for r in admitted for p in r['plants'])
+    callback=None
+    if capture_preempt:
+        before=(data/'case-3-preempt-before-RAM.bin').read_bytes();after=(data/'case-3-preempt-after-RAM.bin').read_bytes()
+        changes=[dict(address=f'{i:08X}',before=x,after=y) for i,(x,y) in enumerate(zip(before,after)) if x!=y]
+        cbefore=(data/'case-3-preempt-before-Cpu.bin').read_bytes();cafter=(data/'case-3-preempt-after-Cpu.bin').read_bytes()
+        callback=dict(observed_return=(data/'case-3-preempt-result.bin').read_bytes().hex(),RAM_changed_bytes=changes,
+                      CPU_changed_byte_offsets=[i for i,(x,y) in enumerate(zip(cbefore,cafter)) if x!=y],
+                      source='Original preempt invokes run_due_events (sync_iop and due actions), then refill. Original callback executes unchanged.',
+                      limits='Callback write widths/order and the specific inner event writer are not measured; external event implementation is OPEN. No whitelist applied to semantic comparison.')
     result=dict(status='PASS_BOUNDED_ACTUAL_ORIGINAL_OBSERVATION_NATIVE_SHADOW' if passed else 'REFUSED',commands=commands,cases=comparison,
                 admitted_count=len(admitted),insufficient_budget_count=len(refused),source_pins=pins,input_changes=changes,
                 observation_pins=[family.pin(x) for x in sorted(data.iterdir()) if x.is_file()],observer_binary=old_record['observer_binary'] if replayed else family.pin(exe),
                 actual_reference_receipt=family.pin(replayed) if replayed else None,
                 observer_fixture_pins=[family.pin(unit)]+([] if replayed else [family.pin(obj)]),
+                preempt_observed=capture_preempt,original_callback_observation=callback,
                 scope=['Actual original call/return observed at2E6178/2E6180; all execution remains original compiled AOT.',
                        'Native shadow is offline on captured data; exact full RAM, complete VU, literal FCR, budget, defined CPU and return compared.',
                        'Ordered stores are checked against independently compiled original on the same captured entry; not a live write-order trace.',
@@ -162,6 +184,19 @@ static void after(const ps2::Cpu&c,unsigned id){if(!id)return;
 }
 struct Summary {~Summary(){std::fprintf(stderr,"[semantic-observation] summary known=%u unknown=%u selected=%u high=%u low=%u\n",known,unknown,selected,high,low);}};
 static Summary summary;
+}
+'''
+
+PREEMPT_OBSERVER=r'''
+extern "C" bool __real__ZN3ps27preemptERNS_3CpuE(ps2::Cpu&);
+extern "C" bool __wrap__ZN3ps27preemptERNS_3CpuE(ps2::Cpu&c){
+ using namespace mka_observe;
+ const unsigned id=active_case;
+ const bool capture=id&&active_low&&c.r[29].d[0]==active_stack&&ps2::kernel::current_thread()==active_thread&&c.r[31].d[0]==0x2e6180;
+ if(capture){save(id,"preempt-before-Cpu",&c,sizeof c);save(id,"preempt-before-RAM",ps2::g_ram,ps2::kRamSize);}
+ const bool result=__real__ZN3ps27preemptERNS_3CpuE(c);
+ if(capture){save(id,"preempt-after-Cpu",&c,sizeof c);save(id,"preempt-after-RAM",ps2::g_ram,ps2::kRamSize);save(id,"preempt-result",&result,sizeof result);std::fprintf(stderr,"[semantic-observation] original_preempt case=%u result=%d budget_after=%d\n",id,int(result),c.budget);}
+ return result;
 }
 '''
 
