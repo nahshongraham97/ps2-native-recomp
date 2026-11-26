@@ -56,7 +56,7 @@ def main():
     words_array=','.join(f'0x{x:08x}u' for x in __import__('struct').unpack('<61I',raw_program.read_bytes()))
     fixture+=CALLER.replace('@ORIGINAL_CALLER@',fast).replace('@PROGRAM_WORDS@',words_array)
     out.mkdir(parents=True);cpp=out/'caller.cpp';cpp.write_text(fixture,encoding='utf8',newline='\n');exe=out/'caller.exe'
-    inputs=[Path(__file__),Path(audit.__file__),Path(pipeline_test.__file__),backend,a.elf,a.listing,unit,original_unit,reference_receipt,reference_source,raw_program,a.compiler,
+    inputs=[Path(__file__),Path(audit.__file__),Path(pipeline_test.__file__),backend,backend.with_name('semantic_vector_effects.hpp'),a.elf,a.listing,unit,original_unit,reference_receipt,reference_source,raw_program,a.compiler,
             *sorted(a.boundary.glob('*.bin')),*sorted((a.candidate_build/'src/runtime/include/ps2').glob('*.hpp'))]
     pins=[audit.pin(x) for x in inputs]
     command=[str(a.compiler),'-std=c++20','-mavx2','-ffp-contract=off','-O1','-static-libgcc','-static-libstdc++',

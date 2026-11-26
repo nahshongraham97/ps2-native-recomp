@@ -4,6 +4,7 @@
 // This is a native data/effect pipeline: no Cpu, guest PC/register bank,
 // executable-word decoder, translator, code cache or opcode operation stream.
 #include "ps2/fpu.hpp"
+#include "semantic_vector_effects.hpp"
 #include <array>
 #include <cstddef>
 #include <cstdint>
@@ -41,7 +42,7 @@ struct ScalarEffects {
     Bits raised_flags{};
     bool condition_written{},condition{};
 };
-struct Result {std::uint32_t accepted{};ScalarEffects scalar;};
+struct Result {std::uint32_t accepted{};ScalarEffects scalar;VectorEffects vector;bool vector_effects_admitted{};};
 
 [[noreturn]] inline void refuse(const char* reason){throw std::runtime_error(reason);}
 inline void extent(std::span<std::byte> data,std::size_t stride,std::uint32_t count,std::size_t width){
@@ -97,6 +98,10 @@ inline Result run(Streams streams,Pipeline pipeline,Writes writes={}){
     extent(streams.input_a,streams.stride_a,streams.count,48);extent(streams.output_a,streams.stride_a,streams.count,48);
     extent(streams.input_b,streams.stride_b,streams.count,4);extent(streams.output_b,streams.stride_b,streams.count,4);
     Result result{};auto& scalar_flags=result.scalar.raised_flags;
+    // Only this complete family has a vector side-effect contract. Other
+    // accepted configurations retain their existing output-only scope.
+    result.vector_effects_admitted=pipeline.effect_count==4&&pipeline.effects[0].id==1&&pipeline.effects[1].id==5&&
+        pipeline.effects[2].id==6&&pipeline.effects[3].id==17&&pipeline.filter_count==1;
     struct Prepared {Block vector;Bits scalar,upper,scale,start,extent;};
     std::array<Prepared,13> prepared{};
     for(unsigned i=0;i<pipeline.effect_count;++i){const auto&e=pipeline.effects[i];auto&v=prepared[i];
@@ -111,6 +116,7 @@ inline Result run(Streams streams,Pipeline pipeline,Writes writes={}){
             v.start=e.remap.start;v.extent=e.remap.extent;
         }
     }
+    if(result.vector_effects_admitted)result.vector.prepared(prepared[1].vector);
     // The callee's scalar constant*step prelude still executes at count0;
     // all stream accesses are skipped, and an existing condition is retained.
     if(!streams.count)return result;
@@ -133,6 +139,7 @@ inline Result run(Streams streams,Pipeline pipeline,Writes writes={}){
             default:refuse("semantic pipeline: effect admission invariant");
             }
         }
+        if(result.vector_effects_admitted)result.vector.element(tag257,tag256);
         if(pipeline.filter_count){result.scalar.condition_written=true;result.scalar.condition=ps2::fp::key(tag769)<=ps2::fp::key(pipeline.filter_limit);if(!result.scalar.condition)continue;}
         // In every admitted configuration17 is last/alone. Original CMP and
         // BC1F skip its arithmetic (and its flags) for rejected elements.

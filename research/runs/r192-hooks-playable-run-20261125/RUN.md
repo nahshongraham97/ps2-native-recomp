@@ -617,9 +617,10 @@ and constants on every numeric builder replay. The other14 configurations have
 pipeline-output proof only, no new timing contract.
 
 Runtime adoption stays OPEN. Real low budgets occur (1893/count80 fails the
-worst2736 admission); typed continuation/event scheduling is required. Exact
-VU MAC/status and VF2/3/4 results still need side-output projection or proved
-consumer liveness; this family preserves the accumulator. The whole caller
+worst2736 admission); typed continuation/event scheduling is required. At that checkpoint,
+VU MAC/status and VF2/3/4 projection was open; the bounded vector follow-up
+below now proves those effects for the exact captured family. This family
+preserves the accumulator. The whole caller
 comparison is a constructed replay seeded from an observed frame, not an
 observed whole-caller execution. No preferred-family route is installed yet.
 Unknown families must not become a generic VM, JIT or fabricated success.
@@ -746,6 +747,64 @@ pins the original ISO and parser. GHIDRA.json in that folder is
 LOADER-WORD-JOIN.json and NTGUI-ROLE-STRINGS.json keep the bounded joins and
 original string offsets. Ghidra API inspection was read-only, with no GUI use,
 project mutation or new lock removal.
+
+### Typed vector effects and actual EE-call observations
+
+The exact captured family now has typed vector side outputs: constant-product
+prelude, last transformed/loaded values, MAC and status/sticky effects.
+The prelude executes at zero count; rejected elements still update the vector
+results before filtering. The original status mask preserves0xFF0, merges
+raised sticky bits and the final low flags, and clears incoming bits>=12.
+The accumulator and all other defined VU fields remain unchanged. No guest
+CPU, opcode stream or register-bank runtime enters this semantic helper.
+
+The vector check compares the entire Vu0Regs on432 numeric/count/alias/status
+cases and the constructed caller. Four plants reject skipped zero prelude,
+skipped rejected-element effects, false high-status preservation and wrong MAC
+lane sign. The final core reruns all3,976 pipeline comparisons and the prior
+literal-FCR/no-yield checks. Scope is the exact4-effects+one-filter family;
+the other14 descriptor configurations retain their prior output-only boundary.
+
+A privately relinked original observer executed the real frame80225→80315
+(90 new frames) on a disposable card, with zero misses and unchanged original
+dispatch. It counted50 known-family and34 other-family calls, capturing two
+real high-budget calls and one real low-budget call. Offline native shadows
+of both actual high-budget N80/A80 calls match every RAM byte, the entire VU
+state, literal FCR, budget and source-defined CPU fields. Each actual return
+also joins an independent compiled-original replay with560 ordered stores.
+Final budgets are13852 and12761. This is an actual JALR before/after observation,
+not observation of the whole2E60E0 caller entry and not a native runtime replacement.
+
+The actual budget1893/count80 call unwinds to008A5171. It remains explicitly
+REFUSED by the no-yield admission; typed continuation/event handling is now the
+next step. Unknown shapes, code/constant/descriptor changes and lifetime/output
+alias domains remain refused. Seven planted errors per admitted actual call
+(return, budget, VU, code, constant, order and transient write) are rejected.
+The live observer makes no claim to recording each store; ordered writes are
+the separate re-executed-original comparison. No normal runtime was modified.
+
+The observer's final replay reuses all18 immutable actual before/after files
+and the same PE from actual01; it reconstructs the instrumented original unit
+identically. Actual01's label was too broad and is narrowed to JALR boundary;
+replay02's relative/absolute path source guard failed and remains saved.
+Replay03 fixes path normalization and passes offline without another launch.
+All seven authored vector/observer source files are pinned by their final receipts.
+
+| Vector/actual-call evidence under build/oracle-telemetry | RESULT.json SHA-256 |
+|---|---|
+| emitted-semantic-vector-02 | a57fd9d7fe9c7d363bc3f256bca5b9af6b953e0847490da2244a1a08f7603397 |
+| emitted-semantic-no-yield-vector-03 | f411bcba23c1011e6b841a5ead3fe694b79d59607be11441086d58e924dba0f9 |
+| emitted-semantic-pipeline-vector-07 | 98e524bbfbfad3f129278fdf78ef04b2a0e8b48568f542c8a6218ffd9fdd9379 |
+| emitted-semantic-caller-vector-04 | 30f936840ffba3c6f9c3d6fdf1ade82e37eb33133005195c4918a2a982da90db |
+| emitted-semantic-actual-observer-03 | 4af49188cb170fdae3f1e5c2d4ef78d35bd3fddd86bb99d72ae047fdfba515d5 |
+
+Reproduce the final observer comparison with
+tools/research/observe_r192_semantic_family.py, --vector-proof pointing to
+emitted-semantic-vector-02, --replay-observations pointing to actual-observer-01,
+the pinned candidate-build/source-fork/state/card/compiler inputs, and a fresh
+--output. The receipt retains literal argv and dependency hashes. The original
+still executes in the observer; shadow agreement does not retire EE families,
+prove all descriptors, or award native/transform credit.
 
 ### Verification and continuing work
 
