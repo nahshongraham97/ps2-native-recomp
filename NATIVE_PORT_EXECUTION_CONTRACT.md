@@ -1,6 +1,6 @@
 # Retail Armageddon native-port execution contract
 
-**Current compiled R192 route:** The familiar parent launchers/launch_r192_hooks.bat (also called by launch_ps2recomp.bat) selects external/forks/ps2-native-recomp-r192-closure/build/r192-compiled-konquest/out/ps2run.exe, SHA-256 8823021a23e2a3fdd3b2dc4ca0c8eac9e7359beb3e5bce489b965587a0c2479b. It links its own AOT library and sealed compiled modules with no EE/VU live compiler. The latest Konquest recording passes 22,785 new frames / all 1,519 checkpoints; all 14 saved-state probes pass 90 new frames. Code/assets/keys are local to the build; normal play mounts the SAME original R192 persistent card and uses its existing quick-state directory. No replacement card is created. The original 8AB43BDA executable/launcher remain protected comparison evidence. Complete precompilation of all executable families remains OPEN: recorded replays do not establish it; runtime-generated EE variants, VU upload/patch coverage and the IOP interpreter must be closed from original code/data. Physical A/V and final native-port acceptance remain OPEN. See [the existing R192 record, section 6](research/runs/r192-hooks-playable-run-20261125/RUN.md).
+**Current playable R192 route:** The parent launchers/launch_r192_hooks.bat (also called by launch_ps2recomp.bat) delegates to the unchanged original external/forks/ps2-native-recomp/build/r192-hooks/out/launch_r192_hooks.bat and ps2run.exe (SHA-256 8ab43bda05e7a621b946883f3195a583f0c2455f0351bf8608282cd3e97b4617). Its linked base AOT code and all3569 precompiled EE cache DLLs remain available; every cached DLL was verified byte-identical to the preserved compiled package. EE/VU Live remain enabled for misses. The SAME original persistent card and quick-save directory in build/r192-hooks/game/disc are retained, with no card/save/executable/original-launcher modification or new game run. The separate compiled882302... package is preserved but is no longer the default route. AOT closure remains frozen, OPEN and not required for the native port. Native Phase6 now works on phase6-native-memory-abi, not main; admission/credit remain2 transformed/238 native until the existing gates pass. Final native-only acceptance remains OPEN.
 
 This governs the **retail game** in `external/forks/ps2-native-recomp/`.
 It describes acceptance, not current success. No agent may call a build
@@ -28,10 +28,7 @@ rules. Capability-cohort results earn no transformed or native credit.
 
 Phase 5S.9 measures a seeded leaf cohort from the full in-scope catalogue
 separately from ownership-admitted functions. Preserve failures and report
-whole-function passes by size and instruction mix. Do not start another binding
-round without a measured whole-function pass in the preceding round or a leaf
-cohort result that supports continuing. Keep the camera as a milestone pending
-that result; diagnostic changes at the same instruction are not passes.
+whole-function passes by size and instruction mix. The owner's2026-11-26 Phase6 N1–N5 authorizes one bounded memory/ABI/control attempt from that0/30 result on a sibling branch. Measure the initial memory stage on an independent held-out cohort before enabling later control stages; subsequent stages require a measured held-out whole-function pass. If N1–N3 still yield zero, stop and report whether to abandon the general transformer. Keep the camera as an independent native subsystem check; diagnostic changes at the same instruction are not passes.
 
 The product is one genuine native Armageddon port in the existing repositories,
 not preservation of a PS2 runtime because of an upstream/fork name. Recover
