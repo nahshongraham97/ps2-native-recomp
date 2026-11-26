@@ -1107,6 +1107,67 @@ model settings are unchanged. Full VU native compilation and actual integration
 are continuing, not claimed complete by the pilot. Complete offline game closure
 and final native-only acceptance remain OPEN.
 
+### Actual preferred typed EE family with original scheduler
+
+A disposable reference candidate now actually selects the typed algorithm for
+the authenticated emitted family, rather than just replaying its inputs offline.
+The native continuation lives outside the guest register bank. Reference-only
+projection preserves full original Cpu boundaries before the unchanged compiled
+scheduler runs. The adapter checks original code/caller/descriptor identity,
+proved input relationships, shared-VU state and active owner/frame lifetime.
+Reset/start/dormant/delete and machine-state replacement hooks retire typed
+contexts; an orphan loaded resume or changed parked state refuses. The original
+state serializer cannot save a live native continuation in this experiment and
+refuses that operation explicitly. Other known families retain their sealed
+compiled AOT path. No interpreter/JIT route is added by this adapter.
+
+Projection tests pass all 2,295 original full-Cpu boundaries and parked-state
+mutation checks. The adapter passes four whole original body segments, including
+a low-budget stop and two resumes, comparing full Cpu/RAM/ordered effects.
+Nineteen named admission/lifecycle failures and five source mutations are
+rejected. The real scheduler retains arbitrary callback stores; no two-byte
+whitelist or fabricated scheduler implementation is used.
+
+The actual owned 90-frame run (80225 -> 80315) completes 50 typed invocations,
+including nine suspensions and nine resumes, with 18 original preempt calls and
+zero pending contexts at exit. Another 34 family invocations use their existing
+compiled originals. Zero code misses or harness objections are reported. Final
+frame/cycle (80315, 394766299044) equals the separately pinned original observer
+run. That frame/cycle equality is not a frame-image comparison or full-memory
+proof for the entire game run; the four segment comparisons are separate.
+
+Candidate SHA-256 is
+61f51f2263b671e3d2a9ac5dc8f6224a38c34ebe23434f5719609b209cf92640.
+The first package-check argv omitted the required program argument and refused
+before game/state/card execution. Its log remains preserved. The corrected
+package check passes on the same PE, followed by the actual run. The authored
+builder now includes the required pinned ELF argument; no rebuild was used to
+hide a failed game comparison.
+
+| Evidence under R192 build/oracle-telemetry | RESULT.json SHA-256 |
+|---|---|
+| emitted-reference-projection-01 | 7aa6a86e05c0b151d16742deba5fcc62568fc74346c67145eb5ec5c325f84a56 |
+| emitted-reference-adapter-04 | a0e6f68d2b48e43fd07a62d7be6011ca2a7bff9ebc4d6105d2250e9da79bc820 |
+| emitted-reference-preferred-probe-01 | 47acb854ce5fba66c91898d342e863155610d3b3e617060370c2a239a0ee916b |
+| emitted-reference-preferred-probe-01/probe | f569c3d46368140e1d7e996c2f5f6357c9b1a581bf6ebd819b853648a67c341e |
+
+Only this exact producer/configuration is runtime-admitted here. It has no native
+ownership credit, no full-recording/held-out acceptance or headed performance
+measurement, and no native scheduler adoption. The full original emitter table
+(five callbacks / eleven IDs plus filters/composition bounds) is the next source
+domain; 34 observed families are validation inputs, not that domain's definition.
+Normal N882302..., original R192 executable/card, launchers, saves and settings
+remain unchanged; native credit remains 2 transformed / 238 native.
+
+The original-source VU native batch has completed 60 DLLs. Its own authenticated
+Python worker and clang children were stopped to increase only this offline
+build from two to four compiler jobs. The completed receipts/binaries are reused
+under the same source/flags/ABI stamp; the partial next module is preserved under
+an owned interrupted sibling before rebuilding. No game process was stopped.
+WORKER-RESTART.json in the owned batch directory records the exact process
+identities. The 12 GiB reserve remains enforced. Full compilation, runtime
+registration and execution checks still remain separate, open gates.
+
 ### Verification and continuing work
 
 The full native baseline was freshly rerun: 59 targets, 65 variants and 16
