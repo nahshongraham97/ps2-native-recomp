@@ -540,6 +540,106 @@ are preserved in build/oracle-telemetry/r192-vu-correction-publication-01/.
 The clean-input and source-bound generator scripts match their measured receipt
 hashes exactly. Native ownership, 2 transformed and 238 credited totals stay unchanged.
 
+### Original-source VU stop/resume closure in progress
+
+The next compiler worklist includes plain E-bit stop continuations. The frozen
+v8 reference advances PC/NPC before execution, completes the following pair,
+saves TPC=E+16, and VIF MSCNT restarts there. All 173 E-bit pairs in the 99
+original payloads have no combined branch and no preceding physical branch.
+Conservative branch/E contexts refuse rather than assume this formula.
+
+The test-only tests/test_r192_vu_continuations.cpp links the actual pinned v8
+VU implementation. Eight controls cover plain stop/resume, executed delay,
+I-bit immediate, wrapping, branch-on-E, E in a branch delay, JR-on-E, and a
+branch inside the E delay. Wrong one-pair resume, dropped delay effect and
+assumed branch fallthrough are rejected. This proves reference control
+semantics for those cases, not hardware arithmetic or complete VU equivalence.
+Harness attempt 01 failed link; 02 used mismatched unused test declarations and
+is not admitted; including the actual JIT/Live headers exposed the mismatch in
+03. Attempt 04 uses those actual declarations and passes. Failed attempts remain.
+
+The source worklist now recursively follows proved plain-E continuations as
+well as the prior linked returns and constant hints. Every entry still needs
+complete uploaded-byte admission before generation. Current receipt:
+build/oracle-telemetry/r192-elf-vu-continuation-01/RESULT.json,
+SHA-256 b0e1479bd608a693d59e84390ec90ba225efd1cc2f18285ed3b4e7caa4b1483e.
+It emits 1,047 source-bounded instances and a 1,175-key union, 142 more
+source-backed variants than the previous 1,033-key candidate. Compilation
+and connected replay of this newer set are pending. Unknown external roots,
+indirect target dataflow, code compositions/patches, EE families and IOP/native
+services remain OPEN. No launcher, protected input or credit changes.
+
+### Generated EE family: original builder, typed pipeline and no-yield proof
+
+The complete cache audit processes all 3,569 DLL/module records and 589,356
+entry records, not just the heap stub capture. It joins the four exact image/PC
+pairs visible in the owner's screenshot. Its 881 normalized checked-code groups
+are not 881 proved producer families; missing instruction/delay tails remain
+explicit. None of these counts establishes unplayed-path closure.
+
+The original builder 0x002ED4B0 regenerates all 244 bytes of the actual captured
+program (52 code/padding words plus 9 constants) from its descriptor/attributes.
+Fifteen original-built descriptor configurations cover all five effect callbacks
+and eleven admitted effect IDs, with one supported filter. The source guard is
+13 effect records; the filter append has no local capacity proof, so only the
+witnessed zero/one-filter domain is admitted. Unsupported IDs, duplicate17,
+unknown compositions and binding/extent mismatches refuse.
+
+The authored semantic_pipeline.hpp uses native spans, resource-tagged typed
+values and five high-level effects. It contains no CPU, PC, guest register
+bank, instruction decoder, code cache or opcode operation stream. The latest
+whole-pipeline check passes 3,976 complete-RAM/ordered-write/accepted-count
+comparisons: 1,080 original-builder numeric cases, 2,400 alias cases and 15
+zero-count tests among them. Four actual source mutations and six refusal
+controls pass. Constants, transient writes and overlap snapshots retain their
+original order. These are bounded component results, not transformed/native credit.
+
+The separate no_yield adapter admits exactly the captured [1,5,6,17] effects
+plus filter2, with proved resource bindings and adjacent constant block.
+It charges 16+18*N+16*accepted instructions; the checked worst bound16+34*N
+must fit signed budget and be no greater than the incoming budget BEFORE writes.
+Literal scalar control/status preserves existing bits, merges original raised
+flags and replaces only the last executed comparison condition. Original-builder
+DIV flags are excluded from the callee. The connected constructed frame matches
+578 ordered stores, literal FCR and budget13791. The adapter passes 432 complete
+RAM/order/count/FCR/budget comparisons, 432 prewrite insufficient-budget refusals,
+11 arithmetic boundaries, 36 skipped-remap-overflow controls and five source plants.
+The 48 reachable original instructions are authenticated separately from padding
+and constants on every numeric builder replay. The other14 configurations have
+pipeline-output proof only, no new timing contract.
+
+Runtime adoption stays OPEN. Real low budgets occur (1893/count80 fails the
+worst2736 admission); typed continuation/event scheduling is required. Exact
+VU MAC/status and VF2/3/4 results still need side-output projection or proved
+consumer liveness; this family preserves the accumulator. The whole caller
+comparison is a constructed replay seeded from an observed frame, not an
+observed whole-caller execution. No preferred-family route is installed yet.
+Unknown families must not become a generic VM, JIT or fabricated success.
+All16 authored EE source files match at least one final measured source pin.
+
+| EE evidence under build/oracle-telemetry | RESULT.json SHA-256 |
+|---|---|
+| emitted-cache-entire-grouping-03 | 283ed5f9743f6dc3c0e4936bdd92e3a9e946804242829662bc6ffad232cd47bc |
+| emitted-builder-domain-06 | e3f46531c6026be4331a6b7f558a3cafad66ef3d35f0691d4a51c661f40fddf5 |
+| emitted-builder-actual-descriptor-06 | ffa154fa526bd0af42c3404f9454ee45a28a196b9936f82281fc61fa062a603c |
+| emitted-builder-whole-references-02 | a7b1464c1c472611f3b537471473f6831af268cb6fcf1c6c4fb05835e4c29275 |
+| emitted-clip48-actual-boundary-03 | b646c42b31147f1c4a4c0cb5e0ab4db4620a356cd71f24893d725772b3a53e4c |
+| emitted-clip48-actual-resume-pair-02 | 4007829b55d01c0652914350efa78e34c8314cc66f104fe8926aa08e2c87c4fc |
+| emitted-clip48-dispatch-actual-03 | 289ae8a3bb42e494ca9becb322a06cc787838def391d59af44c902d9656798d8 |
+| emitted-semantic-pipeline-06 | 78cffaeac5b755c37ffd52e66f9525c6ec965c1abde96654dc5c7324722fb9f6 |
+| emitted-semantic-caller-03 | 2487f7347bcf2cb2a3b5a1efc359ca321c987ac3c014195a382b0c43932e840d |
+| emitted-semantic-no-yield-02 | e9287944fc2b50f706d70410a58b084df2c78079d05eab79a99febca7eeec571 |
+
+Reproduction uses tools/research/{replay_r192_builder,
+compile_r192_builder_references,verify_r192_semantic_pipeline,
+verify_r192_semantic_caller,verify_r192_semantic_no_yield}.py in that dependency
+order, with fresh owned --output directories. Each receipt pins the actual
+ELF/listing, v8 headers, compiler, boundary captures, fixtures and generated
+original programs, and records its compile/generator/execution command.
+The no-yield verifier intentionally consumes immutable pipeline05/caller02
+fixture sources; pipeline06/caller03 separately verify the final frozen core.
+Original R192, N, cards, saves, launcher and all credit rules are unchanged.
+
 ### Verification and continuing work
 
 The full native baseline was freshly rerun: 59 targets, 65 variants and 16
