@@ -1,5 +1,7 @@
 # Retail Armageddon native port — current status
 
+**Closure branch frozen (owner direction 2026-11-26):** OPEN and not required for the native port. All3569 captured EE DLLs/all1357 historical missing-entry events are represented in the sealed package. The bounded15-pattern parameter sweep passes26424 full-state/write-order comparisons; source census and IOP integration retain explicit gaps. Preserve original r192-hooks as the playable oracle with live translation and resume native subsystem work. Failed candidates are NOT installed; normal882302... and protected inputs remain unchanged. Credit2/238; final native acceptance OPEN. See the existing R192 record.
+
 <!-- PROGRESS:START -->
 ## Native Reimplementation Progress & Multi-Tier Ledger
 

@@ -355,7 +355,7 @@ the implementation and rerun the gate; do not weaken the checker.
 - Continuous movie playback, synchronized sound, real input-to-action,
   connected scene rendering, complete native saves and whole-game parity
   remain OPEN. Historical device/census logs do not close these current gates.
-- R192 supplies gameplay and telemetry evidence. The November 10 milestone supplies saved-state and hash parity. Kombat Practice is the historical snapshot. The primary oracle designation is pending owner confirmation. The builds share measured hook lineage. Their distinct
+- R192 supplies gameplay and telemetry evidence. The November 10 milestone supplies saved-state and hash parity. Kombat Practice is the historical snapshot. Owner direction on 2026-11-26 keeps the original R192 as the playable oracle with live translation; universal oracle closure is not a prerequisite for the native port. The builds share measured hook lineage. Their distinct
   executable hashes and hook configuration must accompany comparisons.
   Existing oracle files are immutable; only recorded Phase 0 additions are
   authorized. The old restored launcher has a retired path and is historical.
