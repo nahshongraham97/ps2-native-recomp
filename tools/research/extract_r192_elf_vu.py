@@ -43,6 +43,32 @@ def target_hints(trace):
             yield {'source_PC':pc,'kind':'IADDIU_constant_hint',
                    'target':((((lo>>10)&0x7800)|(lo&0x7ff))*8)&16383}
 
+def continuation_hints(trace, image):
+    """Prove the plain E-bit stop TPC; refuse branch/delay-slot contexts.
+
+    The frozen reference advances PC/NPC before executing each pair and stops
+    after the pair following E. MSCNT then starts at that saved TPC (E+16).
+    E in a branch delay slot or combined with a branch needs a separate proof.
+    Looking at the previous physical pair is deliberately conservative even
+    when that pair is not in this entry's reachable set.
+    """
+    hints, limits = [], []
+    branches = {0x20,0x21,0x24,0x25,0x28,0x29,0x2c,0x2d,0x2e,0x2f}
+    for word in trace['words']:
+        lo,hi,pc=int(word['lower'],16),int(word['upper'],16),word['pc']
+        if not hi & 0x40000000:
+            continue
+        previous_lo,previous_hi=struct.unpack_from('<II',image,(pc-8)&16383)
+        lower_branch=not hi & 0x80000000 and lo>>25 in branches
+        previous_branch=not previous_hi & 0x80000000 and previous_lo>>25 in branches
+        if lower_branch or previous_branch:
+            limits.append({'source_PC':pc,'kind':'unproved_E_branch_context',
+                           'lower_branch':lower_branch,'previous_physical_branch':previous_branch})
+        else:
+            hints.append({'source_PC':pc,'kind':'proved_plain_E_MSCNT_continuation',
+                          'target':(pc+16)&16383})
+    return hints,limits
+
 EXPLICIT_GENERATOR = r'''
 #include "vurecomp_gen.hpp"
 #include <cstdio>
@@ -126,7 +152,45 @@ def self_test():
     require(hint['target']==0x1a0,'constructed_constant_target_width')
     require(missing_words({'words':[{'pc':hint['target']}]},spans)==[hint['target']], 'zero_filled_target_admitted')
     results.append({'name':'IADDIU_data_constant_into_zero_filled_tail','status':'REJECTED','target':hint['target']})
+    hints,limits=continuation_hints({'words':[{'pc':0,'lower':'8000033C','upper':'400002FF'}]},image)
+    require(len(hints)==1 and hints[0]['target']==16 and not limits,'plain_E_TPC_not_two_pairs')
+    for name,where in [('E_combined_branch',0),('E_in_branch_delay',16376)]:
+        changed=bytearray(image);struct.pack_into('<I',changed,where,0x40000001)
+        trace={'words':[{'pc':0,'lower':f'{struct.unpack_from("<I",changed,0)[0]:08X}','upper':'400002FF'}]}
+        hints,limits=continuation_hints(trace,changed)
+        require(not hints and len(limits)==1,'branch_context_assumed_plain:'+name)
+        results.append({'name':name,'status':'REFUSED_UNPROVED_CONTEXT'})
+    hints,_=continuation_hints({'words':[{'pc':0,'lower':'8000033C','upper':'400002FF'}]},image)
+    try:
+        require(hints[0]['target']==8,'wrong_one_pair_E_resume')
+    except ValueError:
+        results.append({'name':'wrong_one_pair_E_resume','status':'REJECTED','expected_TPC':16,'planted_TPC':8})
+    else:
+        raise ValueError('wrong_E_resume_plant_accepted')
     return results
+
+def verify_reference_continuations(args):
+    test=ROOT/'tests/test_r192_vu_continuations.cpp'
+    binary=args.output/'test_vu_continuations.exe'
+    source=args.source_root/'runtime/src/vu_micro.cpp'
+    command=[str(args.compiler),'-std=c++20','-O1','-static','-mavx2',
+             '-ffunction-sections','-fdata-sections','-Wl,--gc-sections',
+             '-I'+str(args.source_root/'runtime/include'),'-I'+str(args.source_root/'runtime/src'),
+             str(test),str(source),'-o',str(binary)]
+    build=subprocess.run(command,capture_output=True,text=True,timeout=180)
+    (args.output/'reference-build.log').write_text(build.stdout+build.stderr,newline='\n')
+    require(build.returncode==0,'reference_continuation_build_failed')
+    cases=[]
+    for option,expected in [('',0),('--plant-one-pair',1),('--plant-dropped-delay',1),('--plant-branch-fallthrough',1)]:
+        run=subprocess.run([str(binary),*([option] if option else [])],capture_output=True,text=True,timeout=30)
+        name=option.removeprefix('--') or 'positive'
+        (args.output/('reference-'+name+'.log')).write_text(run.stdout+run.stderr,newline='\n')
+        require(run.returncode==expected and ('checks=8 failures=0' in run.stdout if not option else 'FAIL ' in run.stdout),
+                'reference_continuation_result:'+name)
+        cases.append({'option':option,'exit_code':run.returncode,'stdout':run.stdout,'stderr':run.stderr})
+    return {'test_sha256':sha(test),'reference_source_sha256':sha(source),'binary_sha256':sha(binary),
+            'compile_command':command,'cases':cases,
+            'scope':'Frozen v8 reference control semantics, test-only. Not a hardware numeric oracle or full-game equivalence.'}
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
@@ -149,9 +213,10 @@ def main():
     size,count=struct.unpack_from('<HH',data,42)
     segments=[struct.unpack_from('<IIIIIIII',data,phoff+i*size) for i in range(count)]
     args.output.mkdir(parents=True)
+    reference_continuations=verify_reference_continuations(args)
     inputs=args.output/'inputs';inputs.mkdir()
     admitted, rejected=[],[]
-    rejected_hints=[];explicit_count=0
+    rejected_hints=[];unproved_continuations=[];explicit_count=0
     for at in range(0,len(data)-16,16):
         tag,address,first,second=struct.unpack_from('<IIII',data,at)
         if tag & 0xffff0000 not in (0x60000000,0x70000000) or address or first or (second>>24)&127!=0x4a:
@@ -188,6 +253,10 @@ def main():
             programs.append({'entry':entry,'key':trace['key'],'reachable_instructions':len(trace['words']),
                              'reachable_words_sha256':hashlib.sha256(json.dumps(trace['words'],sort_keys=True).encode()).hexdigest()})
             pending.extend(target_hints(trace))
+            resumes,limits=continuation_hints(trace,image)
+            programs[-1]['plain_E_continuations']=resumes
+            unproved_continuations.extend(dict(payload_file_offset=at,entry=entry,**limit) for limit in limits)
+            pending.extend(resumes)
         row['source_bounded_programs']=programs
         explicit_count+=len(programs)
         admitted.append(row)
@@ -242,11 +311,13 @@ def main():
     result={'status':'SOURCE_BOUNDED_MPG_TARGET_GENERATION_PASS','ELF_sha256':ELF_SHA,
             'admitted_payloads':admitted,'rejected_payloads':rejected,'controls':self_test(),
             'explicit_source_bounded_program_instances':explicit_count,'unproved_target_hints':rejected_hints,
+            'unproved_control_continuations':unproved_continuations,
+            'reference_continuation_checks':reference_continuations,
             'explicit_generator_sha256':sha(generator),'explicit_generator_source_sha256':sha(cpp),'compile_command':compile_command,
             'input_pins':original_pins,'new_generated_keys':len(new),'common_exact_bodies':len(old.keys()&new.keys()),
             'additional_keys':added,'merged_keys':len(merged),'script_sha256':sha(Path(__file__)),
             'generated_files':[{'name':p.name,'sha256':sha(p)} for p in sorted(out.glob('*.cpp'))],
-            'scope':'Every emitted original-ELF entry is checked against uploaded source bytes. Conservative target hints recurse to a fixed point, with unuploaded targets reported and never passed to the compiler. Bounded hints are not ownership/call-pointer proof. All external launch roots, dynamic indirect targets, compositions/patches and execution equivalence remain open. Baseline captured-memory keys retain their separate provenance. No ownership/transformed/native credit.'}
+            'scope':'Every emitted original-ELF entry is checked against uploaded source bytes. Conservative target hints and proved plain-E MSCNT continuations recurse to a fixed point, with unuploaded targets reported and never passed to the compiler. E/branch contexts refuse rather than assume fallthrough. Bounded hints are not ownership/call-pointer proof. All external launch roots, dynamic indirect targets, compositions/patches and execution equivalence remain open. Baseline captured-memory keys retain their separate provenance. No ownership/transformed/native credit.'}
     record=args.output/'RESULT.json';record.write_text(json.dumps(result,indent=2)+'\n',newline='\n')
     print(json.dumps({'status':result['status'],'result':str(record),'sha256':sha(record),'payloads':len(admitted),
                       'new_keys':len(added),'merged_keys':len(merged)}))
