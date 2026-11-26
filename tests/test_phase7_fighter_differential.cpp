@@ -83,8 +83,8 @@ int main(int argc, char **argv) {
     }
     if (files.empty()) return 2;
 
-    unsigned tested = 0, branch_early_reject = 0;
-    std::set<std::tuple<std::uint32_t, std::uint32_t, std::uint32_t, std::uint32_t>> input_shapes;
+    unsigned tested = 0, branch_degen = 0, branch_early_reject = 0;
+    std::set<std::tuple<std::uint8_t, std::uint32_t>> behavioral_shapes;
     for (const auto &p : files) {
         Capture cap;
         if (!load_capture(p, cap)) return 2;
@@ -97,10 +97,14 @@ int main(int argc, char **argv) {
         ps2::Cpu cpu = cap.entry_cpu;
         std::uint32_t rad = 0;
         std::memcpy(&rad, &cap.entry_ram[cpu.r[4].w[0] + 32u], 4);
-        input_shapes.insert({cpu.r[4].w[0], cpu.r[5].w[0], cpu.r[6].w[0], rad});
 
-        std::uint32_t ret = mka::phase7::fighter_tri_plane_test_00194370(
+        auto res = mka::phase7::fighter_tri_plane_test_00194370(
             mem, cpu, cpu.r[4].w[0], cpu.r[5].w[0], cpu.r[6].w[0]);
+        if (res.branch == mka::phase7::FighterTriBranch::degenerate_normal) ++branch_degen;
+        else if (res.branch == mka::phase7::FighterTriBranch::early_reject) ++branch_early_reject;
+        behavioral_shapes.insert({static_cast<std::uint8_t>(res.branch), rad});
+
+        std::uint32_t ret = res.ret;
         if (plant == "--planted-return") ret ^= 1u;
         if (plant == "--planted-a2-store") mem.store<std::uint32_t>(cpu.r[6].w[0] + 12u, 1u);
 
@@ -143,7 +147,6 @@ int main(int argc, char **argv) {
                 return 1;
             }
         }
-        ++branch_early_reject;
         ++tested;
     }
 
@@ -151,7 +154,7 @@ int main(int argc, char **argv) {
         std::fprintf(stderr, "FAIL 00194370 zero captures tested\n");
         return 1;
     }
-    std::printf("PASS_PHASE7_FIGHTER_ACTIVE_00194370 captures=%u distinct_input_shapes=%zu branch_early_reject=%u\n",
-                tested, input_shapes.size(), branch_early_reject);
+    std::printf("PASS_PHASE7_FIGHTER_ACTIVE_00194370 captures=%u behavioral_shapes=%zu branch_degenerate=%u branch_early_reject=%u\n",
+                tested, behavioral_shapes.size(), branch_degen, branch_early_reject);
     return 0;
 }

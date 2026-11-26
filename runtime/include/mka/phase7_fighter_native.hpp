@@ -65,12 +65,22 @@ inline std::uint32_t tri_normal_0042eba0(
     return (ps2::fp::key(nx) != ps2::fp::key(0u) || ps2::fp::key(nz) != ps2::fp::key(0u)) ? 1u : 0u;
 }
 
+enum class FighterTriBranch : std::uint8_t {
+    degenerate_normal = 0,
+    early_reject = 1,
+};
+
+struct FighterTriResult {
+    std::uint32_t ret = 0;
+    FighterTriBranch branch = FighterTriBranch::early_reject;
+};
+
 /// Native Stage A implementation of 0x00194370 (unit_0025:6u) over captured
 /// active sphere/capsule-vs-triangle-plane rejection paths:
 /// 1. Stores 0 to a2 + 12.
 /// 2. Calls tri_normal_0042eba0(sp_frame + 80, a1).
 /// 3. Computes signed plane distance and compares against radius; returns 0 on early reject.
-inline std::uint32_t fighter_tri_plane_test_00194370(
+inline FighterTriResult fighter_tri_plane_test_00194370(
     mka::stage_a::GuestMemory &mem,
     ps2::Cpu &c,
     std::uint32_t a0,
@@ -82,7 +92,7 @@ inline std::uint32_t fighter_tri_plane_test_00194370(
     const std::uint32_t ok = tri_normal_0042eba0(mem, c, sp_frame + 80u, a1);
     c.r[29].w[0] = sp_frame + 96u;
     if (ok == 0u) {
-        return 0u;
+        return {0u, FighterTriBranch::degenerate_normal};
     }
 
     const std::uint32_t nz = mem.load<std::uint32_t>(sp_frame + 88u);
@@ -99,7 +109,7 @@ inline std::uint32_t fighter_tri_plane_test_00194370(
     const std::uint32_t d_pos = ps2::fp::ee::madd(c.fcr31, facc, nx, px);
 
     if (ps2::fp::key(d_tri) < ps2::fp::key(ps2::fp::ee::add(c.fcr31, d_pos, rad))) {
-        return 0u;
+        return {0u, FighterTriBranch::early_reject};
     }
     // Further intersection branches not exercised in the 30 captured states; fail closed.
     std::abort();

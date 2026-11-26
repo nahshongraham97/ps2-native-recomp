@@ -7,16 +7,23 @@
 #include <cstring>
 #include <filesystem>
 #include <fstream>
+#include <set>
+#include <string>
+#include <tuple>
+#include <utility>
 #include <vector>
 
 namespace t_001c4210 {
-#include "../build/oracle-telemetry/phase6-memory-leaf-07/SLUS_214.10_001c4210/native.hpp"
+#include "../tests/generated_track_a/SLUS_214.10_001c4210_native.hpp"
 }
 namespace t_0016ae10 {
-#include "../build/oracle-telemetry/phase6-memory-leaf-07/SLUS_214.10_0016ae10/native.hpp"
+#include "../tests/generated_track_a/SLUS_214.10_0016ae10_native.hpp"
 }
 namespace t_002e1710 {
-#include "../build/oracle-telemetry/phase6-memory-leaf-07/SLUS_214.10_002e1710/native.hpp"
+#include "../tests/generated_track_a/SLUS_214.10_002e1710_native.hpp"
+}
+namespace t_00167cf0 {
+#include "../tests/generated_track_a/SLUS_214.10_00167cf0_native.hpp"
 }
 
 namespace {
@@ -83,9 +90,16 @@ bool check_stores(const std::vector<StoreRec> &obs, const std::vector<StoreRec> 
 } // namespace
 
 int main(int argc, char **argv) {
-    if (argc < 2) return 2;
+    if (argc < 2) {
+        std::fprintf(stderr, "usage: %s <capture_root> [--planted-return|--planted-store]\n", argv[0]);
+        return 2;
+    }
     const std::filesystem::path root(argv[1]);
+    const std::string plant = argc >= 3 ? argv[2] : "";
     unsigned p16ae = 0, p1c42 = 0, p2e17 = 0, r167c = 0;
+    std::set<std::uint64_t> shapes_16ae;
+    std::set<std::pair<std::uint64_t, std::uint64_t>> shapes_1c42;
+    std::set<std::int64_t> shapes_2e17;
 
     for (const auto &entry : std::filesystem::recursive_directory_iterator(root)) {
         if (!entry.is_regular_file() || entry.path().filename().string().rfind("cap_", 0) != 0) continue;
@@ -100,7 +114,12 @@ int main(int argc, char **argv) {
         if (cap.pc == 0x0016AE10u) {
             t_0016ae10::kernel_in in{cap.entry_cpu.r[2].d[0], cap.entry_cpu.r[4].d[0], cap.entry_cpu.r[31].d[0]};
             auto out = t_0016ae10::kernel(mem, in, 64);
-            if (out.r2 != cap.exit_cpu.r[2].d[0] || !check_stores(obs_stores, cap.stores)) return 1;
+            if (plant == "--planted-return") out.r2 ^= 1ull;
+            shapes_16ae.insert(out.r2);
+            if (out.r2 != cap.exit_cpu.r[2].d[0] || out.budget != 59 || !check_stores(obs_stores, cap.stores)) {
+                std::fprintf(stderr, "FAIL 0016AE10 mismatch in %s\n", entry.path().filename().string().c_str());
+                return 1;
+            }
             ++p16ae;
         } else if (cap.pc == 0x001C4210u) {
             t_001c4210::kernel_in in{
@@ -108,19 +127,44 @@ int main(int argc, char **argv) {
                 cap.entry_cpu.r[5].d[0], cap.entry_cpu.r[6].d[0], cap.entry_cpu.r[28].d[0],
                 cap.entry_cpu.r[31].d[0]};
             auto out = t_001c4210::kernel(mem, in, 64);
+            if (plant == "--planted-return") out.r2 ^= 1ull;
+            if (plant == "--planted-store") mem.store<std::uint32_t>(static_cast<std::uint32_t>(in.r6), 0xDEADBEEFu);
+            std::uint32_t s0 = 0, s1 = 0;
+            if (obs_stores.size() >= 2) { s0 = obs_stores[0].val; s1 = obs_stores[1].val; }
+            shapes_1c42.insert({s0, s1});
             if (out.r2 != cap.exit_cpu.r[2].d[0] ||
                 out.r3 != cap.exit_cpu.r[3].d[0] ||
                 out.r4 != cap.exit_cpu.r[4].d[0] ||
-                !check_stores(obs_stores, cap.stores)) return 1;
+                out.budget != 56 ||
+                !check_stores(obs_stores, cap.stores)) {
+                std::fprintf(stderr, "FAIL 001C4210 mismatch in %s\n", entry.path().filename().string().c_str());
+                return 1;
+            }
             ++p1c42;
         } else if (cap.pc == 0x002E1710u) {
             t_002e1710::kernel_in in{cap.entry_cpu.r[31].d[0]};
-            (void)t_002e1710::kernel(mem, in, 64);
-            if (cap.entry_cpu.r[2].d[0] != cap.exit_cpu.r[2].d[0] || !check_stores(obs_stores, cap.stores)) return 1;
+            auto out = t_002e1710::kernel(mem, in, 64);
+            if (plant == "--planted-return") out.budget -= 1;
+            shapes_2e17.insert(out.budget);
+            if (out.budget != 62 || cap.entry_cpu.r[2].d[0] != cap.exit_cpu.r[2].d[0] || !check_stores(obs_stores, cap.stores)) {
+                std::fprintf(stderr, "FAIL 002E1710 mismatch in %s\n", entry.path().filename().string().c_str());
+                return 1;
+            }
             ++p2e17;
         } else if (cap.pc == 0x00167CF0u) {
+            t_00167cf0::kernel_in in{
+                cap.entry_cpu.r[3].d[0], cap.entry_cpu.r[4].d[0], cap.entry_cpu.r[5].d[0],
+                cap.entry_cpu.r[6].d[0], cap.entry_cpu.r[7].d[0], cap.entry_cpu.r[8].d[0],
+                cap.entry_cpu.r[31].d[0]};
+            auto out = t_00167cf0::kernel(mem, in, 256);
+            if (out.r3 != cap.exit_cpu.r[3].d[0] || out.r4 != cap.exit_cpu.r[4].d[0] ||
+                out.r5 != cap.exit_cpu.r[5].d[0] || out.r6 != cap.exit_cpu.r[6].d[0] ||
+                out.r7 != cap.exit_cpu.r[7].d[0] || out.r8 != cap.exit_cpu.r[8].d[0] ||
+                !check_stores(obs_stores, cap.stores)) {
+                std::fprintf(stderr, "FAIL 00167CF0 mismatch in %s\n", entry.path().filename().string().c_str());
+                return 1;
+            }
             ++r167c;
-            continue;
         } else {
             continue;
         }
@@ -129,8 +173,9 @@ int main(int argc, char **argv) {
             return 1;
         }
     }
-    if (p16ae == 0 || p1c42 == 0 || p2e17 == 0) return 1;
-    std::printf("PASS_TRACK_A_TRANSFORMED_UNITS 001c4210=%u 0016ae10=%u 002e1710=%u 00167cf0_refused_captures=%u\n",
-                p1c42, p16ae, p2e17, r167c);
+    if (p16ae == 0 || p1c42 == 0 || p2e17 == 0 || r167c == 0) return 1;
+    std::printf(
+        "PASS_TRACK_A_TRANSFORMED_UNITS 001c4210=%u(shapes=%zu) 0016ae10=%u(shapes=%zu) 002e1710=%u(shapes=%zu) 00167cf0=%u\n",
+        p1c42, shapes_1c42.size(), p16ae, shapes_16ae.size(), p2e17, shapes_2e17.size(), r167c);
     return 0;
 }
