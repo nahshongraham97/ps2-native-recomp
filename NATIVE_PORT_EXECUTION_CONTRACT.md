@@ -44,6 +44,8 @@ compatibility is optional. An existing native codec may remain when easiest;
 no new format is required merely for branding. No new repository/upstream PR
 is requested; the owner may later curate generally reusable improvements.
 
+**Compiler matching experiment gate:** The owner-authorized compiler experiment is separate from port/admission work and awards no ownership, transformed or native credit. Keep the fixed nontrivial denominator and tiny controls separate; retain draft/compiler/relocation refusals. Exact matching requires original-identity/range proof, complete untrimmed emitted function bytes and supported original-address relocations, with malformed-object and planted-byte controls. Normalized instruction scores, section/idiom heuristics or a backend version string do not establish equivalence or a unique toolchain. Undefined external addresses/mainGP may be mechanically joined; unproved local/overlay placement remains refused. A matched PS2 body does not prove portableCdefined behavior, native64bit pointers/ABI, data ownership or production integration. All existing native admission and ownership rules remain unchanged.
+
 ## Normal startup requires no flags
 
 The accepted game starts with zero command-line arguments. Native execution,
