@@ -20,6 +20,16 @@ def sha(d):return hashlib.sha256(d).hexdigest()
 def require(ok,reason):
  if not ok:raise ValueError(reason)
 
+def capture_admission(name,digest,size,rejected):
+ # A renamed copy of disproved bytes is still disproved. Preserve originals;
+ # exclude only their admission into fresh compiler inputs.
+ for old_name,row in rejected.items():
+  if digest==row['sha256']:
+   require(size==row['bytes'],'rejected_capture_extent_mismatch')
+   return dict(rejected_name=old_name,reason=row['reason'],sha256=digest,bytes=size)
+  require(name!=old_name,'rejected_capture_name_changed_requires_new_provenance')
+ return None
+
 def run(name,args):
  r=subprocess.run([str(x) for x in args],capture_output=True,text=True)
  (O/(name+'.log')).write_text(r.stdout+r.stderr,encoding='utf-8',newline='\n')
@@ -52,9 +62,23 @@ def main():
  parser=argparse.ArgumentParser(description=__doc__)
  for name in ('baseline','captured','vurecomp','source-root','compiler','stage','output'):
   parser.add_argument('--'+name,type=Path,required=True)
+ parser.add_argument('--input-manifest',type=Path,required=True)
+ parser.add_argument('--expected-input-manifest-sha',required=True)
  parser.add_argument('--reference-result',type=Path)
  parser.add_argument('--expected-reference-sha')
  args=parser.parse_args()
+ source_manifest_raw=args.input_manifest.read_bytes()
+ require(sha(source_manifest_raw)==args.expected_input_manifest_sha.lower(),'input_manifest_pin_mismatch')
+ source_manifest=json.loads(source_manifest_raw)
+ for group,root in [('baseline',args.baseline),('captured',args.captured)]:
+  expected={row['name']:row['sha256'] for row in source_manifest['aliases'] if row['group']==group}
+  actual={path.name:sha(path.read_bytes()) for path in root.glob('*.bin')}
+  require(bool(expected) and actual==expected,'unknown_missing_or_changed_input:'+group)
+ admission_path=Path(__file__).resolve().parents[2]/'research/ledger/aot_coverage_inventory.json'
+ admission_raw=admission_path.read_bytes()
+ rejected=json.loads(admission_raw)['vu_microprograms']['rejected_captures']
+ require(bool(rejected),'missing_rejected_capture_provenance')
+ exclusions=[]
  owned=Path(__file__).resolve().parents[2]/'build'
  require(args.stage.resolve().is_relative_to(owned) and args.output.resolve().is_relative_to(owned),'owned_build_output_required')
  require(not args.stage.exists() and not args.output.exists(),'fresh_stage_and_output_required')
@@ -80,7 +104,12 @@ def main():
    require(re.fullmatch(r'[0-9A-Fa-f]{16}_[0-9A-Fa-f]{4}\.bin',path.name),'unexpected_VU_input_name')
    before=path.stat();data=path.read_bytes();after=path.stat();require(len(data)==16384,'wrong_micro_memory_size')
    require((before.st_size,before.st_mtime_ns)==(after.st_size,after.st_mtime_ns),'source_changed')
-   h=sha(data);contents[h]=data;target=inputs/path.name
+   h=sha(data)
+   exclusion=capture_admission(path.name,h,len(data),rejected)
+   if exclusion:
+    exclusions.append(dict(group=group,source=str(path),**exclusion))
+    continue
+   contents[h]=data;target=inputs/path.name
    with target.open('xb') as stream:require(stream.write(data)==len(data),'short_input_write')
    require(sha(target.read_bytes())==h,'copied_input_hash_mismatch')
    row={'group':group,'source':str(path),'copy':str(target),'name':path.name,'sha256':h,
@@ -137,6 +166,13 @@ def main():
  (out/'vu1_table.cpp').write_text(table,encoding='utf-8',newline='\n')
  reloaded,_,_=functions(out);require(reloaded==merged,'merged_generated_body_changed')
  controls=[]
+ for name,row in rejected.items():
+  require(capture_admission(name,row['sha256'],row['bytes'],rejected) is not None,'known_bad_capture_admitted')
+  require(capture_admission('0000000000000000_0000.bin',row['sha256'],row['bytes'],rejected) is not None,'renamed_bad_capture_admitted')
+  controls.append(dict(name='known_and_renamed_disproved_capture',status='REJECTED',sha256=row['sha256']))
+  try:capture_admission(name,'0'*64,row['bytes'],rejected)
+  except ValueError:controls.append(dict(name='changed_rejected_name_without_provenance',status='REJECTED'))
+  else:raise ValueError('changed_rejected_capture_accepted')
  try:merge(dict(merged),keys[0],merged[keys[0]]+'\n/* planted change */')
  except ValueError as ex:require(str(ex).startswith('conflicting_generated_body:'),'wrong_control_reason');controls.append({'name':'same_key_changed_body','status':'REJECTED','reason':str(ex)})
  else:raise ValueError('changed_body_accepted')
@@ -152,6 +188,8 @@ def main():
   'same_body_common_keys':len(set(batches['baseline']['functions'])&set(batches['captured']['functions'])),
   'new_keys_over_baseline':sorted(set(batches['captured']['functions'])-set(batches['baseline']['functions'])),
   'aliases':aliases,'conflicts':proofs,'controls':controls,'function_origins':origins,
+  'excluded_provenance':exclusions,'admission_manifest':{'path':str(admission_path),'sha256':sha(admission_raw)},
+  'input_manifest':{'path':str(args.input_manifest),'sha256':sha(source_manifest_raw)},
   'generation':{group:batch['generation'] for group,batch in batches.items()},
   'generated_files':[{'path':str(x),'sha256':sha(x.read_bytes()),'size':x.stat().st_size} for x in sorted(out.iterdir())],
   'producer':{'vurecomp':str(tool),'sha256':tool_sha,'reachable_helper':str(helper),'reachable_helper_sha256':helper_sha,
