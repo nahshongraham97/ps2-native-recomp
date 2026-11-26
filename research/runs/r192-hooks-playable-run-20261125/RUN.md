@@ -473,24 +473,72 @@ All entry-zero direct reachable words lie within bytes uploaded by that
 payload. This is not a proof that every upload format, launch root, indirect
 target or runtime patch has been enumerated.
 
-The original generator emits 942 program keys, including 843 derived jump
-targets, with zero skipped inputs. 929 keys have byte-identical generated
-bodies to the existing 987-key R192 corpus; 13 keys are additional. Exact-body
-union produces 1,000 keys. Truncated DMA, excessive MPG count, out-of-range
-destination and wrong command plants are rejected. No captured state is
-used to invent these original payloads. The read-only Ghidra connection
-identified the matching ELF and joined 145 inspected instructions to original
-file bytes; 21 of 99 queried roots have direct recorded references. Unreferenced
-roots remain a provenance/control-flow limit, not invented class or call names.
+**Invalidated VU extension experiment; do not promote.** The original
+generator emitted 942 keys (843 speculative targets); 929 bodies matched the
+987-key cache and 13 appeared additional. A later per-target original-byte
+check showed that 142 generated keys read unuploaded, zero-filled bytes.
+ALL 13 additional keys are in that unsupported set. The compiler treated
+IADDIU constants as possible code targets without proving they were code
+pointers. Those 13 are not recovered original programs; the earlier claim is
+retracted. The 99 structured source payloads remain real.
 
-The additional 13 kernels are compiled and registered in separate candidate
-build/r192-elf-vu-candidate/out/ps2run.exe, SHA-256
-74fc7c9b4bf3d0118c695b9b3cf50c919223f9df26936455713afc007f2ef84f.
-Its additional-registration source is byte-identical to the public tool's
-generated output. Actual startup registers 987 + 13 VU programs and all 3,569
-sealed EE modules. The actual 80225→80315 probe passes 90 new frames with zero
-misses and exit 0. This does not establish execution equivalence of all 13
-new programs. The normal installed 882302... build still has 987 VU keys.
+The separate 74fc7c9b... binary compiled and passed package startup and a
+90-frame probe, but neither check establishes source admission. It was never
+selected by the normal launcher. Its files and successful raw observations
+remain as rejected-experiment evidence. New generation must enumerate targets
+to a fixed point while admitting only complete source-backed code, and report
+unproved target hints separately instead of supplying zero-filled tails.
+
+The same origin audit found old cache input 883AC7731B3857A8_0000.bin,
+SHA-256 551ad4eb1ada7d39c6867f7395b9d9561b3ef2f1718c8fecc185f67232d604d7.
+The existing ledger had already rejected this exact capture because of the
+backwards-from-GS extraction across IPU. The copied historical cache baseline
+had inherited it. The corrected generator enforces the published rejection
+by byte identity, including renamed copies, without deleting or modifying originals. No native credit was ever awarded by this experiment.
+Of 283 unique recorded image/entry pairs, 282 match one original ELF payload
+at every direct-reachable word and identical VU offset; only this rejected
+capture fails that whole-source join.
+
+### Corrected VU source admission and full candidate replay
+
+The source-input manifest is now mandatory and pinned before staging: every
+baseline/captured filename and SHA-256 must match exactly. Unknown, missing or
+changed inputs refuse. The rejected capture is excluded by byte identity even
+when renamed; changing its old filename's bytes requires new provenance.
+Known/renamed rejected bytes and a changed-name control are rejected. No original
+capture is deleted. Clean inputs are 277 baseline plus 217 captured aliases,
+118 unique images, generating an exact 986-key union.
+
+Original-ELF generation now disables the compiler's implicit target expansion.
+An explicit worklist checks the complete direct-reachable words against the
+actual MPG upload spans before any entry reaches the compiler. Linked returns
+and IADDIU constant hints recurse to a fixed point; 157 unuploaded hints refuse.
+The 99 original payloads yield 875 source-bounded instances / 861 unique keys;
+814 keys match the clean baseline exactly and 47 are additional entry variants,
+for 1,033 total keys. These 47 are not claimed as 47 called functions. The
+zero-filled-tail hint plant and four malformed-payload plants are rejected.
+This worklist does not yet establish every E-bit/MSCNT continuation, indirect
+target, upload composition or runtime patch; those remain explicit closure work.
+
+tools/research/build_r192_vu_candidate.py builds fresh local game AND runtime
+archives from the corrected sources. Every shared body must remain identical;
+only the known rejected key may disappear, and only the source-proved additions
+may appear. No existing archive is edited. The separate candidate is
+build/r192-vu-source-admitted-candidate/out/ps2run.exe,
+SHA-256 81ce40dbd80ba7933a0bf73d5d248dc42f61a401d6ee2602264412e5f5e821fb.
+It compiled 2,513 targets in 401.212 seconds. The complete recorded Konquest
+replay passed frames 181224–204009: 22,785 new frames, all 1,519 checkpoints equal,
+exit 0, zero EE/VU misses and zero compiler events (362.358 seconds headless).
+Its stderr SHA-256 is fa60019f362be655c52de85df80f7a0d994eea8801122eee8fd41b2c42667b14.
+The installed normal 882302... route is unchanged. This is a bounded reference
+candidate, not universal precompilation or native-port acceptance.
+
+Source/tool pins and immutable raw results distinguish the invalid experiment
+from this correction. The candidate builder's sole publication style change
+removes an extra blank EOF; its measured copy and Python AST identity certificate
+are preserved in build/oracle-telemetry/r192-vu-correction-publication-01/.
+The clean-input and source-bound generator scripts match their measured receipt
+hashes exactly. Native ownership, 2 transformed and 238 credited totals stay unchanged.
 
 ### Verification and continuing work
 
@@ -512,13 +560,18 @@ no GUI or audio endpoint.
 | Static overlay generation | build/r192-static-overlay-stage-05/RESULT.json | 215e9586c08523e3082822e68736beb745e665fe8aded8e4b805a9feb70efeca |
 | Static candidate compile | build/r192-static-compiled-candidate/RESULT.json | 1cfb0b2dbe662da6d2425b369a20888702f31faa356d30addc31f2cf0b0cea39 |
 | Static full Konquest replay | build/oracle-telemetry/r192-full-static-replay-01/RESULT.json | 3cbd5a3a47f8b6095bedf53ea2ff7c8a0867cc6d886d6dbf4fa29f8caca30889 |
-| Original-ELF VU generation | build/oracle-telemetry/r192-elf-vu-04/RESULT.json | 8c05157c65de120cbb3fe0eecb266b9336638d15bba85422ee27a3a91aa69079 |
-| VU extension compile | build/r192-elf-vu-candidate/RESULT.json | 6e2c270b2be37820bb5c611bb87c210f39ede6c231bd4dfb087a9d41eda10a08 |
-| VU extension 90-frame probe | build/oracle-telemetry/r192-elf-vu-frame90-01/RESULT.json | 0ebfcafc5ef56d2ce038ed0dad385b40b188e3c9faaf73c2edb73347b8dd06c4 |
+| INVALIDATED speculative VU generation | build/oracle-telemetry/r192-elf-vu-04/RESULT.json | 8c05157c65de120cbb3fe0eecb266b9336638d15bba85422ee27a3a91aa69079 |
+| INVALIDATED speculative VU compile | build/r192-elf-vu-candidate/RESULT.json | 6e2c270b2be37820bb5c611bb87c210f39ede6c231bd4dfb087a9d41eda10a08 |
+| INVALIDATED speculative VU probe | build/oracle-telemetry/r192-elf-vu-frame90-01/RESULT.json | 0ebfcafc5ef56d2ce038ed0dad385b40b188e3c9faaf73c2edb73347b8dd06c4 |
+| Clean pinned VU input generation | build/oracle-telemetry/r192-clean-vu-02/RESULT.json | ebeedd67ecc4f6e8fcf97ae54730aef715f8105b6ff8a6099d89ba7eb0db3368 |
+| Source-bounded original VU generation | build/oracle-telemetry/r192-elf-vu-source-bounded-01/RESULT.json | 559a33df4f952bd8d39ebe128ab92c2c83ba76c46604d1243dfaaaf7e300432c |
+| Corrected fresh candidate compile | build/r192-vu-source-admitted-candidate/RESULT.json | 057c413e0b279e8e947a421a01b920efad8131af945e08e24712bbe49305f749 |
+| Corrected full Konquest replay | build/oracle-telemetry/r192-source-admitted-vu-replay-01/RESULT.json | ed48abe5f7c9c49f58dee5a9c20a4924aee7cc923e86409ba427c8e4844e98b9 |
+| Whole original-word join | build/oracle-telemetry/r192-vu-origin-01/WHOLE-SOURCE.json | 69dfea6d6cfb69964370b3b1d5a89f08d81a1dd1f9564c1793e40544182a1b07 |
 | Fresh native baseline | build/oracle-telemetry/complete-baseline-20261125-223027-30e47a1a/RESULT.json | 0958032277e1fb6c538f7494834146b87f1a893481b1fa391b45d9a0c28bcaed |
 | Read-only Ghidra provenance | build/oracle-telemetry/r192-vu-static-payloads-01/GHIDRA.json | 77ddda49d2481d6c55c48e589c14661b434e6f68e8d39620afdf6751d2b721bc |
 
-Final tool replays regenerate every static/VU C++ file identically to the measured build inputs, and the extra registrar matches the compiled candidate byte-for-byte. Receipt build/oracle-telemetry/r192-root-source-final-01.json SHA-256 5ff592028f2c965951f95ef631e03cc543f97fcaeb690083327748b3901c0cbb. The EOF-only style correction preserves the Python AST; no native behavior or credit changes.
+Historical final-tool replay receipt build/oracle-telemetry/r192-root-source-final-01.json (5ff592028f2c965951f95ef631e03cc543f97fcaeb690083327748b3901c0cbb) established reproducible generation for the earlier experiment. It did not prove target provenance; its speculative extension was subsequently invalidated above.
 
 ### Not verified
 
@@ -530,7 +583,10 @@ remains OPEN. The separate static/VU candidates do not prove all emitted EE
 families, VU payload variants or IOP paths, and are not deployed by this study.
 VU0 has no VCALLMS in the inspected generated corpus/listing; VIF0 and dynamic
 emission prevent inferring universal absence from that observation.
-The recomp retains console memory/device models and is not final native-port
+The corrected 1,033-key candidate still contains the reference IOP interpreter
+and VU0 micro interpreter. IPU is compiled host decoding with a device command
+model; it is not uncompiled EE code. These are separate remaining native-service
+obligations. The recomp retains console memory/device models and is not final native-port
 acceptance. Ownership admission and native credit rules are unchanged.
 
 ### Contradictions with earlier documents
@@ -543,6 +599,9 @@ The old 14-versus-61 duration findings remain distinct: the historical 61 closur
 logs each ran one frame, while every new14 probe here ran 90. The original 8ab
 reference remains preserved, but the familiar R192 shortcut selects the compiled
 882302... executable. Archived native-GL scripts are historical diagnostics.
+The 13 speculative VU additions and inherited rejected capture were invalidated
+by original-byte provenance, despite compilation/replay checks. The correction
+requires input pins and per-entry uploaded-byte bounds before code admission.
 
 ### Falsification attempts
 

@@ -10,7 +10,7 @@ each deliverable's verified component progress and whole-game acceptance state;
 
 **Current work follows A1 dependencies.** Phase 5S.9 measured zero whole-function passes in the frozen 30-leaf capability sample; stop general binding rounds. The original 17 admitted functions have zero leaves. Separate E1 admission of heap-close 001A3C40 makes the current roster 18 and supports one Stage A ABI function with 189 bounded comparisons; Stage B and production callers remain OPEN. Full 17/30 tables, failures, ownership/ABI evidence and publication status are in [the existing fork record](https://github.com/nahshongraham97/ps2-native-recomp/blob/8e3e2a8675500620030bfacd5d5920b6cf38c5d6/research/runs/renderer-scope.json), section native_phase6_leaf_slice. Transformed/native credit remains 2/238; protected inputs, handwritten setters and the admission/credit rules are unchanged.
 
-**Exact resume:** Full-game precompilation is the priority. In the R192 sibling worktree, finish and test the corrected MWo3 static overlay generation, the ELF-derived VU extension, caller-bound generated EE families and disc-derived IOP AOT. Work from original code/data, including unplayed paths; captured caches and a successful replay are validation, not exhaustive coverage. Keep the original R192 executable/card and the installed 882302... route unchanged until a replacement is verified. Do not restart general-transform binding rounds or add branches.
+**Exact resume:** Full-game precompilation is the priority. In the R192 sibling worktree, continue original-source VU stop/resume and indirect-target closure, caller-bound generated EE families and disc-derived IOP AOT. The corrected full-source candidate (81ce40db..., 1,033 VU keys) passes the complete 22,785-frame recording; its MWo3 roots, pinned input sets and uploaded-byte target checks are documented in section 7. The 13-key speculative VU experiment is invalidated and must never be promoted. Work from original code/data, including unplayed paths; captured caches and a successful replay are validation, not exhaustive coverage. Keep the original R192 executable/card and the installed 882302... route unchanged until a replacement is verified. Do not restart general-transform binding rounds or add branches.
 
 **R192 observed-cache integration, complete closure OPEN:** own AOT library plus 3,569 sealed precompiled EE modules and 987 offline VU keys; no runtime EE/VU compiler objects or VU1 interpreter fallback. Exact source/build/binary/package/recording evidence is in the existing R192 run record section 6. All future paths, held-out behavior and full native acceptance remain OPEN; this adds zero native credit.
 
@@ -23,7 +23,7 @@ R192 supplies gameplay and telemetry evidence. The November 10 playable mileston
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`834aceb3`](https://github.com/nahshongraham97/ps2-native-recomp/commit/834aceb3698df34128bfada73d0ccf7e0250f3a8) (source and evidence checkpoint)
+**Verified Fork Commit**: [`34f671a8`](https://github.com/nahshongraham97/ps2-native-recomp/commit/34f671a800e72d4a8610bc8b23b0aaebbc54caf4) (source and evidence checkpoint)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - Bounded ownership of 15,669 callable entries · verified-renderware 6, verified-game 12, verified-other-library 0, inferred-renderware 141, inferred-game 130, inferred-other 0, unresolved 15,380.
