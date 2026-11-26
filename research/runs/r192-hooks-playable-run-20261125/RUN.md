@@ -540,7 +540,7 @@ are preserved in build/oracle-telemetry/r192-vu-correction-publication-01/.
 The clean-input and source-bound generator scripts match their measured receipt
 hashes exactly. Native ownership, 2 transformed and 238 credited totals stay unchanged.
 
-### Original-source VU stop/resume closure in progress
+### Original-source VU stop/resume measured subset
 
 The next compiler worklist includes plain E-bit stop continuations. The frozen
 v8 reference advances PC/NPC before execution, completes the following pair,
@@ -564,8 +564,16 @@ complete uploaded-byte admission before generation. Current receipt:
 build/oracle-telemetry/r192-elf-vu-continuation-01/RESULT.json,
 SHA-256 b0e1479bd608a693d59e84390ec90ba225efd1cc2f18285ed3b4e7caa4b1483e.
 It emits 1,047 source-bounded instances and a 1,175-key union, 142 more
-source-backed variants than the previous 1,033-key candidate. Compilation
-and connected replay of this newer set are pending. Unknown external roots,
+source-backed variants than the previous 1,033-key candidate. A fresh candidate
+compiled in531.004 seconds with1,175 keys, SHA-256
+bfced6b44da3faa702e9bc88c0aae1e0a0b9510eb6b20f30ce7cd694fdd3cb31
+(build/r192-vu-continuation-candidate/out/ps2run.exe). Its complete recorded
+replay passes22,785 new frames, all1,519 checkpoints equal, exit0, zero misses
+and compiler events, in322.177 seconds. Build receipt26fe709e599210c3e14ec1c3ea9bbbc72410cc96f63e6cac957a244dc63405e6;
+replay build/oracle-telemetry/r192-vu-continuation-replay-01/RESULT.json
+SHAbda10b8f03d9c2c7671061af5b59b18393e726dd99af3c1abda352ee8e962f0f.
+All shared generated bodies remain exact. This candidate is not the normal
+launcher and still contains the reference IOP/VU0 interpreters. Unknown external roots,
 indirect target dataflow, code compositions/patches, EE families and IOP/native
 services remain OPEN. No launcher, protected input or credit changes.
 
@@ -700,6 +708,44 @@ SHA-256 d8c758d8bb43801adb3ef7904803b4627ce722a8d3a03ab9c86d93464c9ad13d.
 | r192-iop-v8-semantics-03 | f8b8b45bf2ae829afa12b5fe24db4c0744cefdca693a4a2a4ec25b013129e045 |
 | r192-iop-v8-private-dispatch-04 | 9b11dde7b69e126545aba7120c34b6cacc0fbf6019ffe4f614b329c5980287a4 |
 | r192-iop-v8-snapshot-02 (REFUSED) | b40f40c2ef9b654feba59a8041fbb98d830d7cd9f27c9e221121f2c6ef21c326 |
+
+### Whole-disc code-input boundary
+
+tools/research/inventory_r192_code_inputs.py reads the pinned disc.iso read-only,
+including all105 physical files,245 PAK members and200,460 bounded SEC sections.
+There are no unparsed local-container limits in this measured set. Known code
+magics identify43 ELF inputs (41 IRX, SLUS and NTGUI) plus3 MWo3 overlays.
+This is a container census, not a claim that absence of a magic proves absence
+of executable producers or script semantics. The IOPRP ROMDIR descendants have
+the separate70-payload IOP census above; no code/image count earns native credit.
+The early physical-file-only census is historical and is superseded by the
+PAK/SEC-aware replay.
+
+NTGUI.ELF is separately identified as4813336 bytes, SHA-256
+3ba914401c9be9e36921e605f42c5909ac4a3eb8d93ad743286050621c08e5ef.
+Its original strings name network-configuration operations and NETCNF/SMAP
+modules; the main image references its disc path at00633560. This external
+utility is retained in the inventory, not silently counted as compiled SLUS
+gameplay or added to the current15,670 denominator. No online integration or
+owner decision is changed.
+
+Do not treat a historical .mko label or naive concatenation recipe as an EE
+code image. The original2170E0 loader and216C90 linker have102+57 listed words
+joined exactly to the ELF's actual PT_LOAD mapping; the latter's three omitted
+words are original zero/NOPs at216CCC/216D1C/216D34. The records distinguish
+function/variable/name/type/value regions and a command region whose references
+are resolved through the original high-byte table. Complete MKO command/caller
+semantics and their possible generated effects remain open; this inspection
+does not classify every record as machine code or promote any native function.
+This avoids adopting the older unverified container claim as current proof.
+
+Raw census build/oracle-telemetry/r192-disc-code-inputs-02/RESULT.json
+SHA-256 bf0908b9dbeba133bb026e623ea3ef8d2d5fea0e0d11a2a533a692e5e3db2ea9
+pins the original ISO and parser. GHIDRA.json in that folder is
+476e229277cf971ff3c0bad51c936f4bb2bfd56b8799da862eaa8102adb61983;
+LOADER-WORD-JOIN.json and NTGUI-ROLE-STRINGS.json keep the bounded joins and
+original string offsets. Ghidra API inspection was read-only, with no GUI use,
+project mutation or new lock removal.
 
 ### Verification and continuing work
 
