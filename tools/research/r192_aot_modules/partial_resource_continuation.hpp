@@ -56,9 +56,17 @@ process_element:
                     if(budget<INT64_MIN+static_cast<std::int64_t>(worst))
                         refuse("partial resource continuation: budget arithmetic overflow");
                     Streams one=streams_;one.count=1;
-                    for(auto&stream:one.streams){
-                        stream.input=stream.input.subspan(std::size_t(consumed_)*stream.stride);
-                        stream.output=stream.output.subspan(std::size_t(accepted_)*stream.stride);
+                    for(unsigned index=0;index<one.streams.size();++index){
+                        bool referenced=false;
+                        for(unsigned i=0;i<prepared_.descriptor.body.attribute_count;++i)
+                            referenced|=prepared_.descriptor.body.attributes[i].stream==index;
+                        if(!referenced)continue;
+                        auto&stream=one.streams[index];
+                        const auto input=std::size_t(consumed_)*stream.stride,output=std::size_t(accepted_)*stream.stride;
+                        if(input>stream.input.size()||output>stream.output.size())
+                            refuse("partial resource continuation: stream slice bounds");
+                        stream.input=stream.input.subspan(input);
+                        stream.output=stream.output.subspan(output);
                     }
                     auto current=run(one,prepared_,writes);
                     // Initial prelude/return/guard costs from the isolated

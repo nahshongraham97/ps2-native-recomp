@@ -47,8 +47,7 @@ public:
 process_element:
                 {
                     if(budget<INT64_MIN+static_cast<std::int64_t>(timing_.before_filter+timing_.accepted))refuse("resource event continuation: budget arithmetic overflow");
-                    Streams one=streams_;one.count=1;
-                    for(auto&stream:one.streams){stream.input=stream.input.subspan(std::size_t(consumed_)*stream.stride);stream.output=stream.output.subspan(std::size_t(accepted_)*stream.stride);}
+                    Streams one=element_streams(streams_,prepared_.descriptor,consumed_,accepted_);
                     auto current=run(one,prepared_,writes);
                     budget-=static_cast<std::int64_t>(timing_.before_filter+current.accepted*timing_.accepted);
                     accepted_+=current.accepted;++consumed_;merge(current);effects_.accepted=accepted_;

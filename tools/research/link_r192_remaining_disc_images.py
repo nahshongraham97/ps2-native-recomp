@@ -26,6 +26,16 @@ def sha(path):
     return digest.hexdigest()
 
 
+def verify_pins(pins):
+    for path,digest in pins.items():require(sha(Path(path))==digest,'input_changed:'+path)
+
+
+def bind_pin(pins,path,digest):
+    key=str(Path(path).resolve())
+    require(key not in pins or pins[key]==digest,'source_identity_rebound:'+key)
+    pins[key]=digest
+
+
 HOST=r'''
 #include "ps2/generated.hpp"
 #include <cstdio>
@@ -79,6 +89,8 @@ def main():
         p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--expected-proof-sha',required=True)
     p.add_argument('--workers',type=int,default=2)
+    p.add_argument('--reuse-link-proof',type=Path)
+    p.add_argument('--expected-reuse-sha')
     a=p.parse_args();out=a.output.resolve();n=a.runtime_root.resolve()
     require(out.is_relative_to(ROOT/'build/oracle-telemetry') and not out.exists(),'fresh_owned_output_required')
     require(1<=a.workers<=4,'bounded_offline_workers_required')
@@ -98,13 +110,37 @@ def main():
     support=[runtime,n/'src/third_party/sdl2/lib/libSDL2.dll.a',n/'src/third_party/wgpu-native/lib/libwgpu_native.a']
     inputs=[Path(__file__),a.native_proof,a.compiler,*support,*(n/'src/runtime/include/ps2').glob('*.hpp')]
     pins={str(x.resolve()):sha(x) for x in inputs}
+    for rows in proof['generated_files'].values():
+        for pin in rows:pins[str(Path(pin['path']).resolve())]=pin['sha256']
+    for row in proof['native_objects']:
+        for key in ('source','object'):pins[str(Path(row[key]).resolve())]=row[key+'_sha256']
+    cached={}
+    require(bool(a.reuse_link_proof)==bool(a.expected_reuse_sha),'reuse_receipt_and_SHA_pair_required')
+    if a.reuse_link_proof:
+        require(a.reuse_link_proof.resolve().is_relative_to(ROOT/'build/oracle-telemetry') and sha(a.reuse_link_proof)==a.expected_reuse_sha,'reuse_link_proof_changed')
+        old=json.loads(a.reuse_link_proof.read_text());require(old['status']=='PASS_OFFLINE_STATIC_IMAGE_LINK_CLOSURE','successful_previous_link_required')
+        # The authoring tool changed to add these guards. Compiler/ABI/runtime
+        # and every other measured support input must remain identical.
+        for path,digest in old['source_pins'].items():
+            if Path(path).resolve()!=Path(__file__).resolve():require(sha(Path(path))==digest,'reuse_support_input_changed:'+path)
+        for row in old['compiled_objects']:
+            source=Path(row['source']).resolve()
+            if source.parent in folders.values():cached[source]=row
+        pins[str(a.reuse_link_proof.resolve())]=a.expected_reuse_sha
     out.mkdir(parents=True);commands=[];objects=[]
     def space():require(shutil.disk_usage(out).free>(12<<30)+(128<<20),'disk_reserve_required')
     def compile_one(image,source,extra=()):
         space();obj=out/image/(source.stem+'.obj')
+        source_digest=sha(source);expected=pins.get(str(source.resolve()))
+        require(expected is None or expected==source_digest,'source_changed_before_compile:'+str(source))
         argv=[str(a.compiler),'-std=c++20','-O2','-mavx2','-ffp-contract=off','-DNDEBUG','-I'+str(n/'src/runtime/include'),'-I'+str(folders[image]),*extra,'-c',str(source),'-o',str(obj)]
+        prior=cached.get(source.resolve())
+        if prior:
+            require(prior['exit']==0 and prior['argv'][:-2]==argv[:-2] and source_digest==prior['source_sha256'] and sha(Path(prior['object']))==prior['object_sha256'],'reused_compile_input_or_flags_changed')
+            return {**prior,'verified_reuse_proof':str(a.reuse_link_proof),'verified_reuse_proof_sha256':a.expected_reuse_sha}
         cp=subprocess.run(argv,capture_output=True,timeout=240);log=obj.with_suffix('.log');log.write_bytes(cp.stdout+cp.stderr)
-        return {'image':image,'source':str(source),'source_sha256':sha(source),'object':str(obj),'object_sha256':sha(obj) if obj.exists() else None,'argv':argv,'exit':cp.returncode,'log_sha256':sha(log)}
+        require(sha(source)==source_digest,'source_changed_during_compile:'+str(source))
+        return {'image':image,'source':str(source),'source_sha256':source_digest,'object':str(obj),'object_sha256':sha(obj) if obj.exists() else None,'argv':argv,'exit':cp.returncode,'log_sha256':sha(log)}
     jobs=[];expectations={}
     for name,folder in folders.items():
         (out/name).mkdir()
@@ -121,7 +157,7 @@ def main():
         future=[pool.submit(compile_one,*job) for job in jobs]
         for index,f in enumerate(as_completed(future),1):
             row=f.result();objects.append(row)
-            if index%20==0 or row['exit']:print(json.dumps({'compiled':index,'total':len(jobs),'source':Path(row['source']).name,'exit':row['exit']}),flush=True)
+            if index%20==0 or row['exit']:print(json.dumps({'validated_objects':index,'total':len(jobs),'source':Path(row['source']).name,'verified_reuse':'verified_reuse_proof' in row,'exit':row['exit']}),flush=True)
     (out/'COMPILED.json').write_text(json.dumps(objects,indent=2)+'\n',newline='\n')
     require(all(row['exit']==0 for row in objects),'additional_generated_object_compile_refused')
     cases=[]
@@ -145,8 +181,24 @@ def main():
         plant=subprocess.run([str(exe),'--planted-count'],capture_output=True,env=env,timeout=60);(out/name/'count-plant.log').write_bytes(plant.stdout+plant.stderr)
         passed=cp.returncode==0 and exact and plant.returncode==1 and b'compiled_main_entry_denominator_changed' in plant.stderr
         cases.append({'image':name,'status':'PASS' if passed else 'METADATA_REFUSED','binary_sha256':sha(exe),'actual':cp.stdout.decode(errors='replace'),'exit':cp.returncode,'metadata_exact':exact,'count_plant_exit':plant.returncode})
-    require(pins=={p:sha(Path(p)) for p in pins},'input_changed')
-    result={'status':'PASS_OFFLINE_STATIC_IMAGE_LINK_CLOSURE' if all(c['status']=='PASS' for c in cases) else 'OFFLINE_STATIC_IMAGE_LINK_HAS_REFUSALS','source_pins':pins,'compiled_objects':objects,'reused_objects':reused,'link_commands':commands,'cases':cases,'expectations':expectations,'limits':['Metadata registration/reading only, zero guest instructions or boot.','No online activation, game integration, NTGUI execution, differential equivalence or native credit.','NETR uses its own matching full generated main/module graph; no mixing shifted entry IDs with the installed S4 image.','Any unresolved native symbol/link/metadata mismatch remains an explicit refusal.']}
+    # Guard every source and object actually used, not just the small support
+    # set. Reused and newly compiled generated objects are both immutable.
+    for row in objects:
+        bind_pin(pins,row['source'],row['source_sha256'])
+        bind_pin(pins,row['object'],row['object_sha256'])
+    verify_pins(pins)
+    controls=[];directory=out/'final-hash-controls';directory.mkdir()
+    for name in ('source','reused-object','new-object'):
+        good=directory/(name+'-authentic.bin');bad=directory/(name+'-changed.bin');good.write_bytes(b'original');bad.write_bytes(b'changed')
+        digest=sha(good);verify_pins({str(good):digest});refused=False
+        try:verify_pins({str(bad):digest})
+        except ValueError as error:refused=str(error)=='input_changed:'+str(bad)
+        require(refused,'changed_final_input_accepted:'+name);controls.append({'name':name,'status':'REJECTED','expected_sha256':digest,'changed_sha256':sha(bad)})
+    rejected=False
+    try:bind_pin({str(good.resolve()):digest},good,sha(bad))
+    except ValueError as error:rejected=str(error)=='source_identity_rebound:'+str(good.resolve())
+    require(rejected,'source_identity_rebinding_accepted');controls.append({'name':'overwrite_original_source_identity','status':'REJECTED'})
+    result={'status':'PASS_OFFLINE_STATIC_IMAGE_LINK_CLOSURE' if all(c['status']=='PASS' for c in cases) else 'OFFLINE_STATIC_IMAGE_LINK_HAS_REFUSALS','source_pins':pins,'compiled_objects':objects,'reused_objects':reused,'verified_previous_compilations':sum('verified_reuse_proof' in row for row in objects),'final_full_input_controls':controls,'link_commands':commands,'cases':cases,'expectations':expectations,'limits':['Metadata registration/reading only, zero guest instructions or boot.','No online activation, game integration, NTGUI execution, differential equivalence or native credit.','NETR uses its own matching full generated main/module graph; no mixing shifted entry IDs with the installed S4 image.','Any unresolved native symbol/link/metadata mismatch remains an explicit refusal.']}
     target=out/'RESULT.json';target.write_text(json.dumps(result,indent=2)+'\n',newline='\n')
     print(json.dumps({'status':result['status'],'cases':cases,'result_sha256':sha(target)}))
     return 0 if all(c['status']=='PASS' for c in cases) else 2

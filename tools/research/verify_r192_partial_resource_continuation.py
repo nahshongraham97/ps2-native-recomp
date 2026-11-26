@@ -55,8 +55,8 @@ def main():
     exe=out/'partial_continuation.exe'
     auth.need(run([*args,str(source),'-o',str(exe)],'compile').returncode==0,'partial_continuation_compile_failed')
     checks=[]
-    def check(binary,name,expected):
-        cp=run([str(binary)],name);checks.append(dict(name=name,exit=cp.returncode,expected=expected,stdout=cp.stdout.decode(errors='replace'),stderr=cp.stderr.decode(errors='replace')))
+    def check(binary,name,expected,diagnostic=None):
+        cp=run([str(binary)],name);checks.append(dict(name=name,exit=cp.returncode,expected=expected,expected_diagnostic=diagnostic,stdout=cp.stdout.decode(errors='replace'),stderr=cp.stderr.decode(errors='replace')))
     check(exe,'positive',0)
     for name,old,new in [('wrong-guard-equality','if(budget<0&&service.invoke','if(budget<=0&&service.invoke'),
                          ('repeated-prelude','}else goto process_element;','}else{budget-=prepared_.prelude;goto process_element;}'),
@@ -69,8 +69,22 @@ def main():
         cpp=out/(name+'.cpp');cpp.write_text(source.read_text().replace(projection.as_posix(),projected.as_posix()),encoding='utf8',newline='\n')
         binary=out/(name+'.exe');auth.need(run([*args,str(cpp),'-o',str(binary)],'compile-'+name).returncode==0,'partial_plant_compile_failed:'+name)
         check(binary,name,1)
+    # Removing the reference check must be caught by a mismatched omitted
+    # caller word, even though every existing successful vector binds it right.
+    wrong=out/'invent-omitted-caller.hpp';text=projection.read_text()
+    old='else if(entry.f[layout.filters[i].index]!=prepared.filter_limits[i])'
+    auth.need(text.count(old)==1,'omitted_caller_plant_seam_changed')
+    wrong.write_text(text.replace('#include "partial_resource_continuation.hpp"','#include "'+header.as_posix()+'"').replace(old,'else if(false)'),encoding='utf8',newline='\n')
+    cpp=out/'invent-omitted-caller.cpp';cpp.write_text(source.read_text().replace(projection.as_posix(),wrong.as_posix()),encoding='utf8',newline='\n')
+    binary=out/'invent-omitted-caller.exe';auth.need(run([*args,str(cpp),'-o',str(binary)],'compile-invent-omitted-caller').returncode==0,'omitted_caller_plant_compile_failed');check(binary,'invent-omitted-caller',2,'REFUSED invented omitted caller binding accepted')
+    wrong=out/'unused-stream.hpp';text=header.read_text();auth.need(text.count('if(!referenced)continue;')==1,'unused_stream_plant_seam_changed')
+    text=text.replace('#include "partial_resource_pipeline.hpp"','#include "'+header.with_name('partial_resource_pipeline.hpp').as_posix()+'"').replace('#include "resource_pipeline_continuation.hpp"','#include "'+header.with_name('resource_pipeline_continuation.hpp').as_posix()+'"')
+    wrong.write_text(text.replace('if(!referenced)continue;',''),encoding='utf8',newline='\n')
+    projected=out/'unused-stream-projection.hpp';projected.write_text(projection.read_text().replace('#include "partial_resource_continuation.hpp"','#include "'+wrong.as_posix()+'"'),encoding='utf8',newline='\n')
+    cpp=out/'unused-stream.cpp';cpp.write_text(source.read_text().replace(projection.as_posix(),projected.as_posix()),encoding='utf8',newline='\n')
+    binary=out/'unused-stream.exe';auth.need(run([*args,str(cpp),'-o',str(binary)],'compile-unused-stream').returncode==0,'unused_stream_plant_compile_failed');check(binary,'unused-stream',2,'REFUSED partial resource continuation: stream slice bounds')
     changes=[x['path'] for x in pins if auth.pin(Path(x['path']))!=x]
-    passed=not changes and all(c['exit']==c['expected'] for c in checks)
+    passed=not changes and all(c['exit']==c['expected'] and (c['expected_diagnostic'] is None or c['expected_diagnostic'] in c['stderr']) for c in checks)
     result=dict(status='PASS_BOUNDED_PARTIAL_CONTINUATION_FULL_CPU' if passed else 'FAIL',invocation=[sys.executable,*sys.argv],source_pins=pins,input_changes=changes,original_resume_words=resumes,commands=commands,checks=checks,artifacts=[auth.pin(source),auth.pin(exe)],limits=['Five constructed original programs, including four source-positive partial shapes; not actual caller captures.','Every compared suspension/return covers fullRAM, ordered writes and1456Cpu bytes under explicit budget-only guard services.','Projection starts from isolated entry; do not use it to overwrite current global fields after actual interleaving.','Actual stream/code owner lifetime, scheduler side effects, currentCpu patch and runtime adoption remain OPEN. No native credit.'])
     target=out/'RESULT.json';target.write_text(json.dumps(result,indent=2)+'\n',encoding='utf8',newline='\n')
     print(json.dumps(dict(status=result['status'],sha256=auth.pin(target)['sha256'],checks=checks)))
@@ -107,11 +121,22 @@ int main(){try{unsigned sessions=0,boundaries=0,suspensions=0,guards=0,retired=0
    const auto projected=partial::project(initial,0x1c00000,native.prepared(),boundary);
    if(events!=expected_events||std::memcmp(g_ram,original_memory.data(),kRamSize)||std::memcmp(&projected,&c,sizeof c)||reference_calls!=native_calls){unsigned byte=0;while(byte<sizeof c&&reinterpret_cast<const unsigned char*>(&projected)[byte]==reinterpret_cast<const unsigned char*>(&c)[byte])++byte;
     std::fprintf(stderr,"PARTIAL_CONTINUATION_DIFFERENCE %s count=%u alias=%u numeric=%u limit=%X choice=%u eq=%u segment=%u CpuByte=%u PC=%X/%X budget=%lld/%d guards=%u/%u writes=%zu/%zu\n",program.name,count,alias,numeric,prior_limit,choice,equality,segment,byte,projected.pc,c.pc,(long long)native_budget,c.budget,native_calls,reference_calls,events.size(),expected_events.size());return 1;}
+   if(std::string(program.name)=="source_partial_load17"){
+    auto invented=initial;invented.f[program.filter_regs[3]]^=1;bool refused=false;
+    try{partial::project(invented,0x1c00000,native.prepared(),boundary);}catch(const std::runtime_error&e){refused=std::string(e.what()).find("omitted filter caller word mismatch")!=std::string::npos;}
+    if(!refused)throw std::runtime_error("invented omitted caller binding accepted");
+   }
    ++boundaries;if(boundary.phase==mka::emitted::resources::Phase::complete)break;++suspensions;
   }
   guards+=native_calls;bool refused=false;try{native.advance(100,{nullptr,&service});}catch(const std::runtime_error&e){refused=std::string(e.what()).find("retired")!=std::string::npos;}if(!refused)throw std::runtime_error("completed context reused");++retired;++sessions;
  }
- std::printf("PASS partial_continuation_sessions=%u full_RAM_ordered_writes_full1456Cpu_boundaries=%u actual_suspensions=%u guard_calls=%u completed_reuse_refusals=%u actual_scheduler_admission=0\n",sessions,boundaries,suspensions,guards,retired);return 0;
+ // An unused stream may be empty and retain a nonzero original stride. It
+ // has no logical memory accesses and must never be subspanned beyond size0.
+ std::array<std::byte,64>input{},output{};for(unsigned i=0;i<input.size();++i)input[i]=std::byte(i);
+ partial::Descriptor d{};d.body.attribute_count=1;d.body.attributes[0]={0x300,0,0};Streams s{{Stream{input,output,16},Stream{{},{},32}},3};
+ partial::Continuation unused(s,d,{});std::int64_t budget=0;service_choice=0;unsigned segments=0;
+ for(;;){if(++segments>5)throw std::runtime_error("unused stream context did not complete");const auto b=unused.advance(budget,{nullptr,&service});budget=b.budget;if(b.phase==mka::emitted::resources::Phase::complete){if(b.accepted!=3||std::memcmp(input.data(),output.data(),48))throw std::runtime_error("unused stream identity result");break;}}
+ std::printf("PASS partial_continuation_sessions=%u full_RAM_ordered_writes_full1456Cpu_boundaries=%u actual_suspensions=%u guard_calls=%u completed_reuse_refusals=%u unused_empty_nonzero_stride_stream=1 omitted_caller_binding_controls=1 actual_scheduler_admission=0\n",sessions,boundaries,suspensions,guards,retired);return 0;
  }catch(const std::exception&e){std::fprintf(stderr,"REFUSED %s\n",e.what());return 2;}}
 '''
 

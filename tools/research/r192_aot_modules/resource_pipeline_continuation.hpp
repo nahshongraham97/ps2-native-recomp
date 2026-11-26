@@ -12,6 +12,26 @@ struct Boundary {
     Phase phase{};std::uint32_t consumed{},accepted{},remaining_after_pending{};
     std::int64_t budget{};Result effects;
 };
+// Unused stream transport carries no source access obligation. In particular,
+// an empty unused span may have an arbitrary nonzero stride. Never perform
+// pointer arithmetic or subspan on it. Used offsets are checked before slicing.
+inline Streams element_streams(const Streams&streams,const Descriptor&descriptor,std::uint32_t consumed,std::uint32_t accepted){
+    if(descriptor.attribute_count>descriptor.attributes.size())refuse("resource continuation: slice descriptor bounds");
+    Streams one=streams;one.count=1;
+    for(unsigned index=0;index<one.streams.size();++index){
+        bool referenced=false;
+        for(unsigned i=0;i<descriptor.attribute_count;++i)referenced|=descriptor.attributes[i].stream==index;
+        if(!referenced)continue;
+        auto&stream=one.streams[index];
+        if((consumed&&stream.stride>SIZE_MAX/consumed)||(accepted&&stream.stride>SIZE_MAX/accepted))
+            refuse("resource continuation: stream slice arithmetic overflow");
+        const auto input=std::size_t(consumed)*stream.stride,output=std::size_t(accepted)*stream.stride;
+        if(input>stream.input.size()||output>stream.output.size())
+            refuse("resource continuation: stream slice bounds");
+        stream.input=stream.input.subspan(input);stream.output=stream.output.subspan(output);
+    }
+    return one;
+}
 class Continuation {
     Prepared prepared_;Streams streams_;Timing timing_;
     Phase phase_=Phase::initial;std::uint32_t consumed_{},accepted_{},unstarted_{};
@@ -63,11 +83,7 @@ process_element:
                     const auto worst=timing_.before_filter+timing_.accepted;
                     if(budget<INT64_MIN+static_cast<std::int64_t>(worst))
                         refuse("resource continuation: budget arithmetic overflow");
-                    Streams one=streams_;one.count=1;
-                    for(auto&stream:one.streams){
-                        stream.input=stream.input.subspan(std::size_t(consumed_)*stream.stride);
-                        stream.output=stream.output.subspan(std::size_t(accepted_)*stream.stride);
-                    }
+                    Streams one=element_streams(streams_,prepared_.descriptor,consumed_,accepted_);
                     // Pure prepared-prefix observations are idempotent. They
                     // are merged, not re-applied to a machine status register.
                     auto current=run(one,prepared_,writes);

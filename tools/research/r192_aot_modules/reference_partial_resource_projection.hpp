@@ -35,9 +35,20 @@ inline ps2::Cpu project(const ps2::Cpu&entry,std::uint32_t code_base,const Prepa
         scalar(s.upper,prepared.body.upper[i]);scalar(s.scale,prepared.body.scale[i]);scalar(s.start,d.effects[i].remap.start);scalar(s.extent,d.effects[i].remap.extent);
         if(e.remap_written)scalar(s.work,e.remap_word);
     }
-    // Loaded and omitted filter constants have different provenance, but
-    // both final words are explicit native inputs selected during preparation.
-    for(unsigned i=0;i<pd.filter_count;++i)scalar(layout.filters[i],prepared.filter_limits[i]);
+    // An omitted load does not write its FPR. Its explicit native input must
+    // equal that original caller word; mismatches are not projected as writes.
+    std::array<bool,4>filter_loaded{};unsigned load_number=0;
+    for(unsigned n=13;n<layout.node_count;++n){const auto&node=layout.nodes[n];
+        if(node.stream!=2&&!same(node.slot,layout.zero))continue;
+        const bool loaded=load_number++<16;
+        for(unsigned i=0;i<pd.filter_count;++i)
+            if(same(node.slot,layout.filters[i]))filter_loaded[i]=loaded;
+    }
+    for(unsigned i=0;i<pd.filter_count;++i){
+        if(filter_loaded[i])scalar(layout.filters[i],prepared.filter_limits[i]);
+        else if(entry.f[layout.filters[i].index]!=prepared.filter_limits[i])
+            refuse("partial resource projection: omitted filter caller word mismatch");
+    }
     if(e.element_observed){for(unsigned i=0;i<d.attribute_count;++i){const auto&s=layout.resources[i];const auto&v=e.last_resources[i];
         if(s.bank==0)vector(s,v.vector);else if(s.bank==1)scalar(s,v.scalar);
         else if(s.bank==2)out.r[s.index].sd[0]=static_cast<std::int32_t>(v.scalar);

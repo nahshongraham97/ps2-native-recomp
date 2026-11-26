@@ -13,6 +13,7 @@ import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import analyze_r192_builder_domain as auth
 import verify_r192_resource_observations as shadow
+from verify_r192_resource_events import historical_pins
 
 
 def once(text,old,new):
@@ -24,14 +25,26 @@ def main():
     for name in ['observations','shadow-proof','builder-proof','candidate-build','compiler','output']:
         p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--expected-observation-sha',required=True)
+    p.add_argument('--expected-shadow-proof-sha',required=True)
     a=p.parse_args();out=a.output.resolve()
     auth.need(out.is_relative_to((auth.W/'build/oracle-telemetry').resolve()) and not out.exists(),'fresh_owned_output_required')
     proof=a.observations/'RESULT.json';auth.need(auth.pin(proof)['sha256']==a.expected_observation_sha,'actual_guard_observation_changed')
     record=json.loads(proof.read_text());auth.need(record['status']=='PASS_BOUNDED_ORIGINAL_PLAN_OBSERVATIONS' and not record['input_changes'],'actual_guard_observation_not_passed')
-    prior=a.shadow_proof/'RESULT.json';auth.need(auth.pin(prior)['sha256']=='937a4bcfe06ddac027f0caa82fde3554f43e4139164e8d97c5d86d489fb3b81e','actual_no_guard_proof_changed')
+    prior=a.shadow_proof/'RESULT.json';auth.need(auth.pin(prior)['sha256']==a.expected_shadow_proof_sha,'actual_no_guard_proof_changed')
     no_guard=json.loads(prior.read_text());auth.need(no_guard['status']=='PASS_ACTUAL_NO_GUARD_TYPED_SHADOWS','actual_no_guard_shadow_not_passed')
     builder=a.builder_proof/'original_builder.cpp';auth.need(auth.pin(builder)['sha256']=='ad4dd9a564da533f8d7e9532452fc638cbed346049293b6aba765eeab05489c1','original_builder_changed')
-    sources=[Path(__file__),Path(shadow.__file__),Path(auth.__file__),proof,prior,builder,a.compiler]
+    baseline=auth.W/'build/oracle-telemetry/emitted-resource-actual-event-shadow-03/RESULT.json'
+    auth.need(auth.pin(baseline)['sha256']=='545e3f67e0dd9a13bf3501d4cec1a4a3e7728c5a10852c630a29a558788ca496','historical_actual_reference_changed')
+    old=json.loads(baseline.read_text());subject_changes=[];historical=[]
+    for row in old['source_pins']:
+        if Path(row['path']).resolve()==Path(__file__).resolve():
+            preserved=auth.W/'build/oracle-telemetry/emitted-resource-candidate04-original-subjects-01/verify_r192_resource_guard_observations.py'
+            auth.need(row['sha256']=='5497e1577f15254116c6e7138355fd85a740c0cd3e8a750b85033cf43e865e8c' and auth.pin(preserved)['sha256']==row['sha256'],'historical_verifier_snapshot_changed')
+            subject_changes.append(dict(historical=row,current=auth.pin(Path(__file__)),preserved=auth.pin(preserved),role='standalone_verification_subject_not_original'))
+        else:historical.append(row)
+    subject_changes+=historical_pins(historical)
+    subject_changes+=historical_pins(no_guard['source_pins'])
+    sources=[Path(__file__),Path(shadow.__file__),Path(auth.__file__),Path(sys.modules[historical_pins.__module__].__file__),proof,prior,baseline,builder,a.compiler]
     for pin in record['observations']:
         auth.need(auth.pin(Path(pin['path']))==pin,'actual_guard_capture_changed');sources.append(Path(pin['path']))
     cases=[]
@@ -62,7 +75,7 @@ def main():
     for flag in ['', '--planted-private-VU','--planted-service-Cpu','--planted-service-alias','--planted-drop-service-effect','--planted-callback-return','--planted-service-budget','--planted-resume-PC','--planted-retention-gate']:
         cp=run([str(exe)]+([flag] if flag else []),flag.removeprefix('--planted-') or 'positive');checks.append(dict(name=flag or 'positive',exit=cp.returncode,expected_exit=1 if flag else 0,stdout=cp.stdout.decode(errors='replace'),stderr=cp.stderr.decode(errors='replace')))
     changes=[pin['path'] for pin in pins if auth.pin(Path(pin['path']))!=pin];passed=not changes and all(c['exit']==c['expected_exit'] for c in checks)
-    result=dict(schema='r192_actual_original_service_conditional_event_shadow_v1',status='PASS_ACTUAL_SERVICE_CONDITIONAL_EVENT_SHADOWS' if passed else 'FAIL',invocation=[sys.executable,*sys.argv],source_pins=pins,input_changes=changes,commands=commands,checks=checks,cases=cases,artifacts=[auth.pin(source),auth.pin(exe)],
+    result=dict(schema='r192_actual_original_service_conditional_event_shadow_v2',status='PASS_ACTUAL_SERVICE_CONDITIONAL_EVENT_SHADOWS' if passed else 'FAIL',invocation=[sys.executable,*sys.argv],source_pins=pins,native_subject_changes=subject_changes,immutable_original_inputs_checked=True,input_changes=changes,commands=commands,checks=checks,cases=cases,artifacts=[auth.pin(source),auth.pin(exe)],
         limits=['Actual original execution plus offline typed event shadows; no native runtime route installed.',
                 'Original scheduler RAM delta/budget/return are explicit reference-service boundary outputs, not a native scheduler proof or ordered store trace.',
                 'All algorithm output bytes and full1456 current-Cpu boundary effects are independently calculated; no reference post-Cpu values fill algorithm state.',
