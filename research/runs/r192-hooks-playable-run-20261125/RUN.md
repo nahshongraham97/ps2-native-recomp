@@ -1,7 +1,7 @@
 # Restored R192-Lineage Playable Recomp Build & Active Oracle — 2026-11-25 Session
 
 **Date:** 2026-11-25 (`00:07:58` – `00:29:01`)  
-**Status:** **Active Verified Playable Recomp Build & Behavioral Oracle** (owner-verified gameplay: **Konquest** and **Motor Kombat** work as intended alongside VS/Practice combat).  
+**Status:** **Protected original gameplay reference; current compiled R192 integration is in section6** (owner-verified gameplay: **Konquest** and **Motor Kombat** work as intended alongside VS/Practice combat).
 **Important Scope Boundary:** This build is the working AOT recompilation + live EE/VU + D3D12 GS + guest IOP/SPU2 build and serves as the project's **playable behavioral oracle**. The separate zero-emulation shipped native port acceptance contract (`NATIVE_PORT_EXECUTION_CONTRACT.md`) remains **OPEN** (`238 / 15,670` credited functions).
 
 ---
@@ -60,7 +60,7 @@
 
 ---
 
-## 5. Isolated closure branch and owner Konquest capture — 2026-11-25 follow-up
+## 5. Historical audit checkpoint before the compiled integration in section6
 
 The owner authorized a separate fork branch for R192 work. Branch
 **r192-aot-closure-proof**, in sibling worktree
@@ -237,3 +237,192 @@ duration, wrong ABI/version/GP/pointer/pin, protected output, ambiguous reload,
 nonzero-exit/timeout and miss-file false passes are rejected within their stated
 scopes. The real exit0/missing-code run was also rejected. Earlier native plants
 and the full unchanged baseline are retained as prior evidence, not newly rerun.
+
+---
+
+## 6. Compiled R192 integration without EE/VU Live — 2026-11-25
+
+**Current compiled R192 executable:** external/forks/ps2-native-recomp-r192-closure/build/r192-compiled-konquest/out/ps2run.exe,
+SHA-256 **8823021a23e2a3fdd3b2dc4ca0c8eac9e7359beb3e5bce489b965587a0c2479b**.
+The familiar parent launchers/launch_r192_hooks.bat selects this build;
+launch_ps2recomp.bat is an alias of that same entry. The old native-GL scripts
+were moved byte-for-byte from active fork roots to the existing
+research/history/native-port-docs-2026-11-18/launchers/ archive. Protected
+backup/oracle copies were not changed. The original 8AB43BDA... executable and
+its original colocated launcher remain the preserved comparison reference.
+The fork has only main and r192-aot-closure-proof branches locally/on origin;
+parent has main. Reviewed phase6 work was fast-forwarded to main, and unmerged
+historical tips were preserved as published archive tags before branch removal.
+
+### What was actually built
+
+The owner's diagnosis was confirmed in the original R192 CMakeCache:
+PS2_GENERATED was empty and PS2_PREBUILT_GAME_LIB pointed to the protected
+backup's old libps2game.a. Later generated AOT sources had not been linked into
+that R192 executable.
+
+The isolated owned build copies the actual version-8 closure source and
+generated inputs, sets PS2_PREBUILT_GAME_LIB=OFF and PS2_GENERATED to its own
+generated_ee directory, and compiles/links its own game/runtime archives.
+The initial 2,393 generated C++ sources linked successfully (PE 62ec792d...).
+The final source set has **2,455 C++ files**, including the expanded VU set.
+The LLVM-Mingw Clang 23.1.3/Ninja toolchain, Release, -mavx2 and
+-ffp-contract=off match the actual lane configuration. Source/build manifests,
+exact configure/build argv and linker map are retained inside the owned build.
+The source manifest SHA is 1b7ce9032a1a643ebfd83f8ba6abd5f305caed35240e89f923e3c0c6aabc1a6a.
+
+The latest cache harvest preserved **3,569 EE DLL variants**, **48 VU DLLs**,
+217 raw VU inputs, 88 closed recordings, 14 new states and their companions.
+No persistent card was copied or written. The completed 20:31:49 owner log ends
+at 204009; the later 20:50:24 startup fragment is not called a completed session.
+That completed session loaded 3,521 EE windows and added 48 DLLs; startup and
+translation stalls are recorded in SESSION-SUMMARY.json.
+
+The EE libraries are already compiled native code. They are copied into
+out/aot-modules/ee and linked/registered once at startup by an authored native
+Windows loader. No code is translated or compiled on a missing address.
+The runtime does not link ee_live.cpp, vu_live.cpp, live_build.cpp or the EE
+generator. The CMake/linker map authenticates the owned AOT library rather than
+the old backup archive. Missing code returns a named nonzero failure rather
+than invoking a compiler; unknown VU1 programs do not fall back to an interpreter.
+The legacy metadata export names/ABI header are retained for binary compatibility,
+not a runtime compiler implementation.
+
+The package seal is manifest SHA-256
+**20e7a347164805453fe608d7226d3cb87f318dc0c3e285ea4ba8856fc4b4f86d**,
+exact EE stamp A2659FA9BD846661, Cpu 1456 and EeLiveHost 328.
+All 3,569 DLL hashes, exports, stamps, module counts, metadata/entry bounds and
+original sorted quick/normal ranks are verified before any registry mutation.
+Files remain read-locked and libraries resident. All variants remain distinct;
+no near-duplicate merging, zero-filled reconstruction or same-name aggregation.
+Metadata has 589,356 overlapping entry records; this is not a function-census count.
+
+### Hook and VU integration corrections
+
+Regeneration changed numeric entry IDs. Both wrapper conditions AND the
+real-unit calls in the copied hook header are rebound from actual generated
+case-to-PC maps, preserving the intended retail PCs:
+
+| PC | Unit | Old ID | Verified current ID |
+|---|---|---:|---:|
+|00162E70|0018|309|503|
+|001637D0|0018|328|544|
+|00181F90|0020|126|154|
+|00197BC0|0025|204|318|
+
+All eight original replacement hooks and all three linker wrappers remain.
+Actual packaged fresh boot logs show eight registrations, scanner entry544
+firing five logged times, the MOVIER overlay hook, observers and input trace.
+Registration is separate from firing: NETR/offline-excluded hooks and every
+combat/mode-specific path are not claimed to have fired in these tests.
+No new Konquest/arcade assist was invented or implemented.
+
+Offline VU generation used all 278 baseline and 217 captured aliases, preserving
+both conflicting raw images. Both actual compilers produced 986/501 program keys;
+the merged table has **987 keys**, with 500 identical common function bodies and
+one added key BAC8608B3F8BC8AD over that baseline. For 9700A8B92357617A,
+all 605 reachable instructions and the emitted function match; raw image
+differences begin at 12F8 after the reachable region. Both images' additional
+jump targets are retained. The 125 emitted C++ files reproduce byte-for-byte
+through the reusable expansion tool. These are reference-build
+AOT keys, not additions to the native ledger or the separate 493-key native study.
+
+### Executed checks and runtime packaging
+
+- **Owner's latest complete Konquest recording:** 181224 to 204009,
+  **22,785 new frames**, all **1,519 recorded checkpoints equal**,
+  exit 0, no EE/VU miss, runtime compilation or input/binary changes.
+  The raw run and independent strict-driver assessment both pass.
+- **Frozen 14-state cohort:** all 14 completed exactly 90 new frames, exit 0,
+  zero misses/compiler events and unchanged inputs/package/PE. None was omitted.
+  This replaces the old absolute-limit mistake for this cohort; it is coverage,
+  not full-recording parity for those14 cases.
+- **Actual packaged launcher:** fresh boot to 900 frames, exit 0, no misses,
+  from an unrelated working directory with system-only PATH and its LOCAL
+  ISO/ELF. A disposable explicit test-card override was used. No GUI/audio
+  endpoint was opened. This is not a headed visual/audio acceptance run.
+- Real package initialization validates/registers all3,569 modules without guest
+  callbacks. Two positive/eight negative loader cases, seven package controls,
+  eight replay-driver controls and two VU union controls pass in their stated
+  scopes. Failed preliminary metadata/layout/overstrict comparisons remain
+  preserved and are not counted as passes.
+- Original native 59-target/65-variant/16-gate baseline carries forward for
+  unchanged native sources. Parent/fork main ledger/doc synchronization is
+  checked separately; transformed/native credit remains **2/238**.
+
+Code/modules, ISO, ELF, SYSTEM.CNF and the copied original key mapping are
+inside the compiled build. The normal launcher deliberately mounts the
+**existing original R192 persistent card**, never a new/blank card, and uses
+that same card directory for existing F5/F8 states. These are the intentional
+external user-data paths. No original card bytes were read/copied/reset/written
+by staging; only disposable quick-state companion copies were used in tests.
+Original executable, launcher, keys and original ISO bytes remain unchanged.
+Normal settings preserve combat/overlay hooks, observer/input trace, profiler
+and native vertex. EE/VU Live are disabled and no compiler folder is added to
+the runtime PATH.
+
+The first staged launcher had a trailing-backslash quoting issue in quick-dir;
+its pre-validation bytes/receipt are preserved under r192-runtime-stage-01.
+The corrected launcher passed the actual 900-frame boot above. A read-only
+progress sample of the agent-owned headless candidate was used during the long
+replay; no original owner process memory was read or written.
+
+The top-level launch_ps2recomp alias -> familiar R192 shortcut -> packaged launcher also passed verification from an unrelated directory with system-only PATH, before boot/window/audio and with an explicit disposable test-card override. Receipt build/oracle-telemetry/r192-primary-launcher-01/RESULT.json SHA-256 526c7bcdb48b092cb4324547e99b4eed9148ea2e2c6ff45bf80a542eee338607. SOURCE_BUILD_DIGESTS.json in the owned build pins 283 v8 source files, 2457 generated files (2455 C++ plus headers), 46 external native hook headers used at build time, both actual archives and the linker map. Its SHA-256 is cc836b0f24161904f941fd4b26863af621bc26e203b32c1ab79b4286ae0bdfd4. These compile-time headers/toolchain paths are not runtime dependencies.
+
+Evidence paths below are relative to the isolated fork worktree:
+
+| Receipt | Path | SHA-256 |
+|---|---|---|
+| Latest complete Konquest replay | build/oracle-telemetry/r192-latest-konquest-replay-01/RESULT.json | 03f63e39a8e304bac231e5a50dd6aba72b1495261dfef720fd16e96e81d6ebe2 |
+| Strict 1519-checkpoint replay check | build/oracle-telemetry/r192-latest-konquest-replay-01/STRICT_CHECK.json | c7783b563672cde4feca0d5feff9622104ea12d80793199ef3e3c6847bd10bd0 |
+| Fourteen-state frame batch | build/oracle-telemetry/r192-new14-frame90-01/RESULT.json | 6e48a3b883aa4d073e6ec71466f02371b072bebffd86f262139b4a1f1f2dcde0 |
+| Packaged launcher fresh boot | build/oracle-telemetry/r192-packaged-launcher-01/RESULT.json | 5a22317ed34704f7e295b9f571e332171fd9b69e0db4d34c62fd79cb7a8a2263 |
+| Sealed module validation | build/oracle-telemetry/sealed-ee-loader-tests-final-01/RESULT.json | 8402d12702d0031e7f694d485878cea1c06d28c0b90eeecbdccdc233d44753f0 |
+| EE package | build/oracle-telemetry/r192-precompiled-package-01/BUILD_PACKAGE.json | f7b967a98fa96c70c95215cd5c43118109f0584df2037844ea6b32729d6e64fb |
+| Replayed public cache inspector | build/oracle-telemetry/r192-public-cache-metadata-01/RESULT.json | ea96abf0df2386bd8d5f56e1ddffedd9c4a8617838a5859e5e14ef85245ec45d |
+| Replayed public VU expansion | build/oracle-telemetry/r192-public-vu-expansion-01/RESULT.json | 1f2c29ac9ad3cf70351002bffada3d1e40b773df867fa98b58862c3ee7e13d0f |
+
+Authored source identities:
+
+| File | SHA-256 |
+|---|---|
+| tests/test_r192_precompiled_modules.cpp | b3367864cc3837bcfa994805b828c63d5057fcb6281cafa098622b7331ab3b40 |
+| tools/research/inspect_r192_cache_metadata.py | 78327902bbfe0a0726048402ea3f37320207a4ffcd32bc62384384a5be0f21f0 |
+| tools/research/expand_r192_vu_sources.py | 0626efb68938341af4d26541bebeb635613652dbed4d739340705cfe909bf806 |
+| tools/research/package_r192_precompiled.py | abb4d2c7659d3636813ecfd91f76404d3d893fb311ee78f49ac2be0c4b10a75d |
+| tools/research/integrate_r192_aot_candidate.py | 824be86a99e1793f45d35f04090d06dec8857d51a04e4e1e359ce1c57412ae04 |
+| tools/research/replay_r192_aot_sessions.py | 9a3921b0c0036052997b20021de9b18baa9c7427787b39e3cb5146d57ac925ed |
+| tools/research/stage_r192_playable.py | 4be10f2e14054b2ed93a15a094b62f89cea03f06e9431caa6adb1b57298819e6 |
+| tools/research/r192_aot_modules/loader.cpp | f828b628638000a58c0ea12e2f8e4d0e27404d8ee1a691d3648fdecb6d360629 |
+| tools/research/r192_aot_modules/loader.hpp | 26bc6856c4d6431831cf72b87d0cd4bad18ed160ec0ab1f702450d82387c6955 |
+
+### Not verified
+
+No physical headed gameplay, audio-device run or independent held-out session
+was produced by this integration. Unrecorded future code paths, complete mode
+coverage and the old finite-template/55-dump questions remain unproved.
+The normal R192 route no longer has an EE/VU live compiler dependency; that
+source fact and the measured session do not prove all future coverage.
+The recomp retains console memory/device models and is not final native-port
+acceptance. Ownership admission and native credit rules are unchanged.
+
+### Contradictions with earlier documents
+
+The old R192 executable used the old prebuilt backup library despite later AOT
+generation; the current build links its own generated library. Old numeric hook
+IDs no longer selected the intended routines after regeneration; current IDs
+are rebound from actual maps. No replacement memory card is needed or deployed.
+The old 14-versus-61 duration findings remain distinct: the historical 61 closure
+logs each ran one frame, while every new14 probe here ran 90. The original 8ab
+reference remains preserved, but the familiar R192 shortcut selects the compiled
+882302... executable. Archived native-GL scripts are historical diagnostics.
+
+### Falsification attempts
+
+Named refusals cover forged manifest/DLL hashes, wrong exported/source stamps,
+wrong ABI, out-of-DLL metadata, active padded entries, second-DLL failure before
+any registration, malformed package metadata, wrong frame duration, nonzero exit,
+timeout, ambiguous state loads, miss-file-only failures, missing checkpoints and
+inconsistent VU function/table unions. Legitimate unsigned wrapped/aligned unit
+padding is source-proved and tested; it does not admit active out-of-image entries.
+All raw failures remain saved. No general transformer/native credit was inferred.
