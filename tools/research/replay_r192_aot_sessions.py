@@ -87,7 +87,26 @@ def recording(path, state, frame):
     return {'start': frame, 'end': end, 'checkpoints': len(checks), 'card_kind': cards[0], 'footer': lines[-1]}
 
 
-def assess(text, code, timed_out, start, end, mode, miss_text='', changed=None, checkpoint_count=None):
+def parse_vu_manifest(text):
+    require(len(text) <= 1024*1024, 'VU_manifest_size_bound')
+    lines = text.splitlines()
+    require(lines and len(lines[0].split()) == 6, 'VU_manifest_header')
+    schema, stamp, regs, host, modules, unique = lines[0].split()
+    require(schema == 'R192_AOT_VU_V1' and re.fullmatch(r'[0-9A-Fa-f]{1,16}', stamp) and int(stamp,16), 'VU_manifest_schema_stamp')
+    regs, host, modules, unique = map(int, (regs,host,modules,unique))
+    require(0 < regs <= 1048576 and 0 < host <= 1048576 and 0 < modules <= 2048 and 0 < unique <= 4194304, 'VU_manifest_denominators')
+    rows = []
+    for line in lines[1:]:
+        match = re.fullmatch(r'([0-9a-f]{64}) ([0-9a-f]{64}) (\d+) ([a-z0-9_.-]+\.dll)', line)
+        require(match is not None and 4 < len(match[4]) <= 160 and '..' not in match[4] and
+                0 < int(match[3]) <= 2048, 'VU_manifest_row')
+        require(not rows or rows[-1]['name'] < match[4], 'VU_manifest_duplicate_or_unordered_name')
+        rows.append({'sha256':match[1], 'key_sha256':match[2], 'entries':int(match[3]), 'name':match[4]})
+    require(len(rows) == modules and unique <= sum(r['entries'] for r in rows), 'VU_manifest_count_mismatch')
+    return {'source_stamp':stamp,'register_bytes':regs,'host_bytes':host,'DLLs':modules,'programs':unique}, rows
+
+
+def assess(text, code, timed_out, start, end, mode, miss_text='', changed=None, checkpoint_count=None, expected_vu=None):
     objections = []
     if code != 0:
         objections.append('nonzero_exit')
@@ -105,7 +124,7 @@ def assess(text, code, timed_out, start, end, mode, miss_text='', changed=None, 
         objections.append('requested_additional_frames_not_measured')
     bad_patterns = {
         'EE_miss': r'missing code at|untranslated code|\[ee\].*\bmissing\b',
-        'VU_miss': r'VU[01] AOT missing|\[vu[01]?[^\]]*\].*(?:unknown|missing|not compiled)',
+        'VU_miss': r'VU[01] AOT missing|\[vu[01]-aot-miss\]|\[vu[01]?[^\]]*\].*(?:unknown|missing|not compiled)',
         'bad_entry': r'bad[_ -]?entry',
         'runtime_compiler': r'\[(?:ee|vu)-live\b|\bcompiling\b|\btranslating code\b',
         'replay_difference': r'\[replay\].*(?:DIFFERENT|went another way|cannot|not a recording)',
@@ -119,6 +138,12 @@ def assess(text, code, timed_out, start, end, mode, miss_text='', changed=None, 
     package = re.findall(r'^\[sealed-ee-aot\] registered (\d+) modules from (\d+) sealed precompiled DLLs; no runtime compiler\s*$', text, re.M)
     if package != [('3569', '3569')]:
         objections.append('sealed_package_registration_not_proved')
+    vu = re.findall(r'^\[sealed-vu-aot\] registered (\d+) native entries from (\d+) offline DLLs; no runtime compiler\s*$', text, re.M)
+    if expected_vu is not None:
+        if vu != [(str(expected_vu[0]),str(expected_vu[1]))]:
+            objections.append('sealed_VU_registration_not_proved')
+    elif vu:
+        objections.append('untracked_sealed_VU_registration')
     summaries = re.findall(r'^\[replay\] same to the end: frames (\d+) to (\d+), (\d+) checkpoints all equal\s*$', text, re.M)
     if mode == 'replay':
         if summaries != [(str(start), str(end), str(checkpoint_count))] or not checkpoint_count:
@@ -130,7 +155,8 @@ def assess(text, code, timed_out, start, end, mode, miss_text='', changed=None, 
     return {'status': 'PASS' if not objections else 'REFUSED', 'objections': objections,
             'loaded_frames': loads, 'stop_summaries': stops, 'measured_new_frames': actual_new,
             'requested_new_frames': end-start, 'bad_lines': bad_lines,
-            'miss_file_tokens': miss_text.split(), 'replay_summaries': summaries}
+            'miss_file_tokens': miss_text.split(), 'replay_summaries': summaries,
+            'VU_registration_summaries':vu}
 
 
 def self_test():
@@ -155,8 +181,26 @@ def self_test():
     replay = good.replace('frame limit reached', 'the replay is over')+'[replay] same to the end: frames 80225 to 80315, 6 checkpoints all equal\n'
     require(assess(replay, 0, False, start, end, 'replay', checkpoint_count=6)['status'] == 'PASS', 'replay_positive_failed')
     require(assess(replay, 0, False, start, end, 'replay', checkpoint_count=7)['status'] == 'REFUSED', 'dropped_checkpoint_accepted')
+    vu_line='[sealed-vu-aot] registered 65026 native entries from 99 offline DLLs; no runtime compiler\n'
+    require(assess(good+vu_line,0,False,start,end,'frames',expected_vu=(65026,99))['status']=='PASS','VU_registration_positive_failed')
+    extra=[]
+    for name,text,expected in [('missing_VU_registration',good,(65026,99)),
+                               ('wrong_VU_count',good+vu_line.replace('65026','65025'),(65026,99)),
+                               ('duplicate_VU_registration',good+vu_line+vu_line,(65026,99)),
+                               ('untracked_VU_registration',good+vu_line,None),
+                               ('VU_miss_with_clean_stop',good+vu_line+'[vu1-aot-miss] key=1 entry=0000\n',(65026,99))]:
+        require(assess(text,0,False,start,end,'frames',expected_vu=expected)['status']=='REFUSED','VU_plant_accepted:'+name)
+        extra.append({'case':name,'status':'REJECTED'})
+    fixture='R192_AOT_VU_V1 A1 1 32 1 61\n'+'a'*64+' '+'b'*64+' 61 a.dll\n'
+    meta,_=parse_vu_manifest(fixture);require(meta['programs']==61,'VU_manifest_positive_failed')
+    for bad in [fixture.replace('a.dll','../a.dll'),fixture.replace('1 61\n','2 61\n'),fixture.replace(' 61 a.dll',' 0 a.dll'),fixture+fixture.splitlines()[1]+'\n']:
+        try:parse_vu_manifest(bad)
+        except ValueError:pass
+        else:raise ValueError('malformed_VU_manifest_accepted')
     return {'status': 'PASS', 'synthetic_positive_controls': 2, 'earlier_seven_plants': controls,
-            'extra_checkpoint_count_plant': 'REJECTED', 'measured_gameplay_cases': 0}
+            'extra_checkpoint_count_plant': 'REJECTED', 'sealed_VU_registration_controls':extra,
+            'VU_manifest_positive_controls':1,'malformed_VU_manifest_plants_rejected':4,
+            'measured_gameplay_cases': 0}
 
 
 def main():
@@ -211,6 +255,16 @@ def main():
         match = re.fullmatch(r'([0-9a-f]{64}) ([01]) (\d+) ([A-Za-z0-9_.-]+\.dll)', line)
         require(match is not None, 'invalid_sealed_package_row')
         package_pins.append(pin(manifest.parent/match[4], match[1]))
+    vu_directory = args.candidate.parent/'aot-modules/vu'
+    vu_package, vu_pins = None, []
+    if vu_directory.exists():
+        vu_manifest = vu_directory/'manifest.txt'
+        vu_manifest_pin = pin(vu_manifest)
+        vu_package, vu_rows = parse_vu_manifest(vu_manifest.read_text(encoding='ascii'))
+        require({p.name for p in vu_directory.glob('*.dll')} == {r['name'] for r in vu_rows}, 'VU_package_file_set_changed')
+        vu_pins = [vu_manifest_pin]+[pin(vu_directory/r['name'],r['sha256']) for r in vu_rows]
+        vu_package['manifest'] = vu_manifest_pin
+        vu_package['scope'] = 'File identity before/after; the sealed native initializer independently authenticates ABI, exact keys and executable addresses.'
     iso = args.source_fork.parent/'ps2-native-recomp-backup-20261110/games/mkarmageddon/disc.iso'
     elf = source/'game/disc/SLUS_214.10'
     input_pins = [pin(args.state), pin(args.card_copy), pin(elf, ELF_SHA), pin(iso, ISO_SHA)]
@@ -255,7 +309,7 @@ def main():
             code = process.wait()
     elapsed = time.monotonic()-began
     changed = []
-    for before in input_pins+[binary, manifest_pin]+package_pins:
+    for before in input_pins+[binary, manifest_pin]+package_pins+vu_pins:
         path = Path(before['path'])
         try:
             after = pin(path)
@@ -266,13 +320,15 @@ def main():
     text = stdout.read_text(encoding='utf-8', errors='replace')+'\n'+stderr.read_text(encoding='utf-8', errors='replace')
     misses = miss_file.read_text(encoding='utf-8', errors='replace') if miss_file.exists() else ''
     outcome = assess(text, code, timed_out, frame, expected_end, mode, misses, changed,
-                     session['checkpoints'] if session else None)
+                     session['checkpoints'] if session else None,
+                     (vu_package['programs'],vu_package['DLLs']) if vu_package else None)
     result = dict(outcome, mode=mode, command=command, cwd=str(args.candidate.parent.resolve()),
                   saved_start_frame=frame, expected_end_frame=expected_end, recording=session,
                   environment_overrides=overrides, removed_inherited_environment=removed,
                   exit_code=code, timed_out=timed_out, timeout_seconds=args.timeout_seconds, elapsed_seconds=elapsed,
                   input_pins=input_pins, candidate=binary, package_manifest=manifest_pin,
-                  package_DLL_pins=package_pins, input_changes=changed, original_producer=producer,
+                  package_DLL_pins=package_pins, VU_package=vu_package, VU_package_pins=vu_pins,
+                  input_changes=changed, original_producer=producer,
                   prefix_source_pins=source_pins, source_sha256=hash_file(Path(__file__)), self_test=tests,
                   disposable_card={'path': str(disposable.resolve()), 'sha256_after': hash_file(disposable)},
                   log_pins=[pin(stdout), pin(stderr)],

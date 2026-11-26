@@ -7,6 +7,7 @@ from pathlib import Path
 import argparse
 import hashlib
 import json
+import os
 import re
 import shutil
 import struct
@@ -63,14 +64,20 @@ def main():
     probe = Path(modules['module_receipts'][0]['path']).parent / 'probe-positive.log'
     match = re.fullmatch(r'PASS_NATIVE_MODULE programs=\d+ regs=(\d+) host=(\d+) null_controls=3 no_program_execution=1\s*', probe.read_text())
     require(match is not None, 'native_probe_ABI_receipt_changed')
-    require(shutil.disk_usage(ROOT / 'build').free > (12 << 30) + sum(Path(r['source']).stat().st_size for r in rows), 'disk_reserve_exhausted')
+    copy_bytes = sum(Path(r['source']).stat().st_size for r in rows) if args.pilot else 0
+    require(shutil.disk_usage(ROOT / 'build').free > (12 << 30) + copy_bytes + (64 << 20), 'disk_reserve_exhausted')
     out.mkdir(parents=True)
     lines = [f"R192_AOT_VU_V1 {stamp.removeprefix('0x').upper()} {match[1]} {match[2]} {len(rows)} {len(union)}"]
     for row in sorted(rows, key=lambda r: r['name']):
         target = out / row['name']
-        # Independent copies keep mutation tests from changing the build output.
-        with target.open('xb') as stream:
-            stream.write(Path(row['source']).read_bytes())
+        # Pilot fixtures are independent copies. Full packages retain the exact
+        # native outputs through exclusive hardlinks, never opened for writing.
+        # The falsification driver always makes its own independent copies.
+        if args.pilot:
+            with target.open('xb') as stream:
+                stream.write(Path(row['source']).read_bytes())
+        else:
+            os.link(row['source'], target)
         require(sha(target) == row['sha256'], 'sealed_copy_changed')
         lines.append(f"{row['sha256']} {row['key_sha256']} {row['programs']} {row['name']}")
     manifest = out / 'manifest.txt'
@@ -80,6 +87,7 @@ def main():
               'generation': {'path': str(args.generation.resolve()), 'sha256': sha(args.generation)},
               'producer_sha256': sha(Path(__file__)), 'manifest_sha256': sha(manifest),
               'source_ABI_stamp': stamp, 'unique_keys': len(union), 'modules': rows,
+              'publication': 'independent_pilot_copies' if args.pilot else 'exclusive_hardlinks_never_written',
               'scope': 'Offline native code identity/ABI/package only; execution equivalence and whole-game closure remain separate.'}
     receipt = out / 'PACKAGE.json'
     receipt.write_text(json.dumps(result, indent=2) + '\n', newline='\n')
