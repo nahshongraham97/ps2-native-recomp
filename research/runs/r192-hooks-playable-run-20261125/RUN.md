@@ -533,6 +533,16 @@ Its stderr SHA-256 is fa60019f362be655c52de85df80f7a0d994eea8801122eee8fd41b2c42
 The installed normal 882302... route is unchanged. This is a bounded reference
 candidate, not universal precompilation or native-port acceptance.
 
+The corrected input/target admission tools, fresh-candidate builder and VU
+continuation test are also mirrored byte-identically on fork main. This repairs
+the formerly speculative shared helpers there; the experimental EE/IOP runtime
+source remains on the R192 branch. Fresh main-root reference controls, parser
+plants and known/renamed rejected-capture controls pass in
+build/oracle-telemetry/r192-shared-vu-guard-correction-01/RESULT.json,
+SHA-256 fd52b253dacd346cc4c079bbcc77db1979e73d52bb6165aed232d5c08a4f08c3.
+No native runtime/CMake selection or normal build changed. Exact source identity
+reuses the separately measured W full generation/build/replay evidence.
+
 Source/tool pins and immutable raw results distinguish the invalid experiment
 from this correction. The candidate builder's sole publication style change
 removes an extra blank EOF; its measured copy and Python AST identity certificate
