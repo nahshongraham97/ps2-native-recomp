@@ -258333,35 +258333,41 @@
       },
       "production_camera_integration": {
         "file": "runtime/src/native/retail_renderer_cameras.cpp",
-        "wired": "NativeRetailRendererCameraModule::set_view_window -> mka::phase7::camera_set_view_window_stage_b",
-        "run_check_cameras": "PASS 15/15"
+        "status": "REVERTED to prior SSE div32 implementation",
+        "reason": "parent_null=0 in all captures (no-parent branch never captured); EE div vs SSE div32 differs on +0.0f/-0.0f/denormal/FLT_MAX (ee=0x7fffffff/0xffffffff/0x7fffffff/0x00000000 vs sse=0x7f800000/0xff800000/0x7f800000/0x00200000); retail_renderer_cameras.cpp is native renderer module, not retail 0x001a64a0 callsite"
       },
       "input_subsystem_001637d0": {
         "header": "runtime/include/mka/phase7_input_native.hpp",
         "test": "tests/test_phase7_input_differential.cpp",
-        "captures_passed": 10,
-        "states": 6,
-        "planted_errors_rejected": ["--planted-slot-mask", "--planted-store"]
+        "evidence_limit": "IDLE-PATH ONLY (Stage A GuestMemory; idle_captures=10, active_captures=0 across 6 states; callback/match path 0x00162E70 never exercised)",
+        "planted_errors_rejected": ["--planted-store"]
       },
       "fighter_subsystem_00194370": {
         "header": "runtime/include/mka/phase7_fighter_native.hpp",
         "test": "tests/test_phase7_fighter_differential.cpp",
-        "captures_passed": 30,
-        "states": 6,
+        "evidence_limit": "NULL-PATH PROBE ONLY (a0==0 && a1==0 -> returns 3; aborts fail-closed on non-null path; 30 null-path captures across 6 states)",
         "planted_errors_rejected": ["--planted-return"]
       },
       "stub_family_002e6180": {
+        "header": "runtime/include/mka/phase7_stub_native.hpp",
+        "test": "tests/test_phase7_stub_differential.cpp",
         "002e6180_hits_in_6_states": 0,
-        "002e60e0_captures_observed": 14,
-        "status": "OPEN (002e60e0 active 696-store path not yet reimplemented)"
+        "002e60e0_null_probe_only": "NULL-PATH PROBE ONLY (aborts fail-closed on non-null a0!=0; active 696-store path unimplemented and skipped in test_phase7_stub_differential)"
+      },
+      "sidecar_replay_sample": {
+        "tested_sidecars": 8,
+        "findings": "quick_*.state.inputs paired with --load-state --replay --replay-continue hit 18:328 (10 in f108075), 25:6 (560), 29:148 (20), 79:187 (40), but 0 hits on 18:309 (00162E70 active button event) and 0 hits on 79:191 (002E6180)"
       },
       "track_a_phase6_remeasurement": {
         "original30_established": "0/30 (0 raw/unwind matches across 61 saved states)",
         "heldout30_established": "0/30 (0 raw/unwind matches across 61 saved states)",
         "admitted18_hit_in_sweep_61": "001a64a0 (290 calls across 58/58 valid states; passes Stage A and Stage B)",
-        "refused_3_loop_bounds": "007e0918, 001aa150, 002e8730 have memory/callee-dependent loop trip bounds unprovable from instructions alone",
-        "return_obligations_remaining": 42,
-        "decision": "Uphold Stop Rule: prioritize Track B evidence-guided native subsystem reimplementation over general leaf transformation"
+        "refused_3_loop_bound_blockers": {
+          "001aa150": "unit_002A.cpp L_001AA1B0/L_001AA1A0 backward loops bounded by r[7]/r[8] loaded from [a0+20] and guest memory r[3]!=0",
+          "002e8730": "unit_007A.cpp loop terminates on r[8]==0 reloaded from ld32(sp+8) (memory-dependent)",
+          "007e0918": "m_007C4000_658F322A_unit_0007.cpp L_007E0928 backward loop on r[3]!=0 with nested calls 007e05e0 and 007e09b8"
+        },
+        "return_obligations_remaining": 42
       }
     },
     "credit": "2 transformed / 238 native (unchanged)"

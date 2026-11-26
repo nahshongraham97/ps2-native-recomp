@@ -71,12 +71,17 @@ int main(int argc, char **argv) {
     }
     if (files.empty()) return 2;
 
-    unsigned tested = 0;
+    unsigned tested = 0, non_null_skipped = 0;
     for (const auto &p : files) {
         Capture cap;
         if (!load_capture(p, cap)) return 2;
         mka::stage_a::GuestMemory mem(cap.entry_ram, cap.entry_spr);
-        std::uint32_t ret = mka::phase7::particle_stub_entry_002e60e0(mem, cap.entry_cpu.r[4].w[0]);
+        const std::uint32_t a0 = cap.entry_cpu.r[4].w[0];
+        if (a0 != 0u) {
+            ++non_null_skipped;
+            continue;
+        }
+        std::uint32_t ret = mka::phase7::particle_stub_null_probe_002e60e0(mem, a0);
         if (plant == "--planted-return") ret ^= 1u;
         if (ret != cap.exit_cpu.r[2].w[0] || cap.store_count != 0u) {
             std::fprintf(stderr, "FAIL 002E60E0 mismatch in %s: ret=%u vs %u stores=%u\n",
@@ -86,6 +91,6 @@ int main(int argc, char **argv) {
         ++tested;
     }
 
-    std::printf("PASS_PHASE7_STUB_DIFFERENTIAL stub_002e60e0=%u\n", tested);
-    return 0;
+    std::printf("PASS_PHASE7_STUB_NULL_PROBE stub_002e60e0_null=%u active_non_null_unimplemented=%u\n", tested, non_null_skipped);
+    return tested == 0u ? 1 : 0;
 }

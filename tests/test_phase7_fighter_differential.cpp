@@ -76,8 +76,14 @@ int main(int argc, char **argv) {
         Capture cap;
         if (!load_capture(p, cap)) return 2;
         mka::stage_a::GuestMemory mem(cap.entry_ram, cap.entry_spr);
-        std::uint32_t ret = mka::phase7::fighter_state_probe_00194370(
-            mem, cap.entry_cpu.r[4].w[0], cap.entry_cpu.r[5].w[0]);
+        const std::uint32_t a0 = cap.entry_cpu.r[4].w[0];
+        const std::uint32_t a1 = cap.entry_cpu.r[5].w[0];
+        if (a0 != 0u || a1 != 0u) {
+            std::fprintf(stderr, "SKIP non-null path in %s: a0=0x%08x a1=0x%08x\n",
+                         p.filename().string().c_str(), a0, a1);
+            continue;
+        }
+        std::uint32_t ret = mka::phase7::fighter_state_null_probe_00194370(mem, a0, a1);
         if (plant == "--planted-return") ret ^= 1u;
         if (ret != cap.exit_cpu.r[2].w[0]) {
             std::fprintf(stderr, "FAIL 00194370 return mismatch in %s: %u vs %u\n",
@@ -87,6 +93,6 @@ int main(int argc, char **argv) {
         ++tested;
     }
 
-    std::printf("PASS_PHASE7_FIGHTER_DIFFERENTIAL probe_00194370=%u\n", tested);
-    return 0;
+    std::printf("PASS_PHASE7_FIGHTER_NULL_PROBE probe_00194370=%u\n", tested);
+    return tested == 0u ? 1 : 0;
 }
