@@ -1168,6 +1168,59 @@ WORKER-RESTART.json in the owned batch directory records the exact process
 identities. The 12 GiB reserve remains enforced. Full compilation, runtime
 registration and execution checks still remain separate, open gates.
 
+### Original IOP provider/export execution and remaining lifetime gap
+
+The existing frozen loader/dispatcher can route a consumer import to an actual
+compiled original provider export. With original LIBSD and SDRDRV, both filename
+and buffer routes start the real modules through the scheduler: LIBSD returns
+0 after 74 ticks, SDRDRV returns 2 after 87, and both real on_exit callbacks are
+consumed. Twenty-six original libsd import stubs join the exact registered
+version0105 export slots via J/NOP. This is registration/binding evidence for
+26 slots, not 26 executed or differentially verified methods.
+
+One export (libsd#4) is executed. Five original caller/stub instructions establish
+its mode0 argument and target. A separate unchanged kernel::call_guest invocation
+then runs that original export to its real return stub, result0. The context is
+constructed through the original loader/scheduler APIs; it is not a historical
+RPC entry or a contiguous complete SDR caller. Both routes match the original
+N instruction reference in raw return Cpu, restored Cpu, full RAM, ordered writes,
+native service transitions and final IOP serializer. Per-step fingerprints apply
+to startup/caller prefix/service boundaries, not every internal call_guest step.
+All eight plants reject, including a zero result without observing the actual
+return. No synthetic callback or new runtime service was installed by this proof.
+
+The earlier contiguous scheduled attempt hit its explicit 10,000-tick diagnostic
+bound and remains preserved. That limit does not establish an infinite loop or
+missing service. The observed inner original delay loop increments a stack local
+and compares against120; the larger call can repeat it. The later successful
+callback-adapter test is recorded with its different context, rather than being
+substituted for that refused contiguous case.
+
+Lifetime is still open. The frozen reference RegisterLibraryEntries path stores
+a host map, and its ReleaseLibraryEntries (loadcore#7) returns a bare zero.
+Official SDK comparison exposes linked-client, exact table pointer, version and
+header-field behavior absent from that reference implementation. The original
+LOADCORE word join and a source-proved ownership/retirement model are required;
+a map.erase or successful zero would not prove them. Some export metadata lies
+inside .text, so its proved mutable data must be distinguished from instruction
+identity without a broad code-check exemption. This is the next IOP boundary.
+
+| Evidence under R192 build/oracle-telemetry | SHA-256 |
+|---|---|
+| r192-iop-export-route-freeze-01/RESULT.json | c64d034b724b7aae5c7232244a16bbf1e490f5c587c07a0b59c0073c7aea13dc |
+| r192-iop-export-route-05/RESULT.json | 8282370d6f5734cf6fa0c3570dd78d0308a249f5c216bc57429867dff5150eec |
+| emitted-reference-preferred-probe-01/FREEZE_BUILD_LINK.json | 63d9a0bbf6a54e922323ea11dab9af4cccf36df0bf895b5fbf638f082ba913fb |
+
+The preferred EE companion now pins its measured four private sources/objects,
+contract, originalN sources/archives/ABI and runtime witnesses. Build/link argv
+are explicitly reconstructed from the immutable source factory and original CLI,
+not claimed as captured commands. No unchanged object was rebuilt to fill that
+receipt gap. The separate merged EE/IOP/static-AOT candidate passes both targeted
+90-frame cases; its complete recorded replay is currently running and is not
+claimed passed here. Original builds/cards/settings and all 2/238 native credit
+remain unchanged. Prior native-foundation source/baseline is unchanged; these
+new original-export tests are capability evidence, not native acceptance.
+
 ### Verification and continuing work
 
 The full native baseline was freshly rerun: 59 targets, 65 variants and 16
