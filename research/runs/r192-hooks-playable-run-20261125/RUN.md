@@ -1307,8 +1307,8 @@ stores, budgeted PREFs, prelude/callback operations, filter branches/delay slots
 and accepted remap/stores. The earlier16+18N+16A is one configuration. This core
 has native spans/logical resources, no Cpu/PC/register bank or opcode execution.
 It is still bounded: unique tags, two streams, nonnegative nonwrapping signed16
-offsets/alignment, aligned64, one filter, one tag257 remap and proved allocation
-capacity. Full-Cpu mapping, true continuation/scheduler/lifetime and actual wider
+offsets/alignment, aligned64, one filter, one tag257 remap and proved register
+allocation capacity. Per-producer-block capacity remains a separate admission gate. Full-Cpu mapping, true continuation/scheduler/lifetime and actual wider
 runtime admission remain open; the installed narrow adapter is unchanged.
 
 The IOP Register6/Release7 ownership MODEL also passes80 complete original-method
@@ -1336,6 +1336,58 @@ These authored source files stay on the R192 branch; main receives the evidence
 record only. Native foundation/baseline and2/238 credit are unchanged. All original
 executables, inputs, cards, saves, launchers and model settings remain intact.
 Full VU native compilation and unseen-producer/lifetime closure continue.
+
+### NETR seed correction and standalone NTGUI native body compilation
+
+The old catalogue-all-static study generated NETR automatically but left46 of
+1,834 catalogue entries uncovered. Controlled generation now isolates the cause:
+its seed file contained ZERO NETR seeds. Either old or new authenticated generator
+with the new1,834 seeds maps all1,834; the new generator with the old seed file
+still maps1,788 and misses46. This is a seed-policy omission, not evidence of a
+new decoder/reader fix. Native-ledger kind 'excluded' meant feature scope; it did
+not mean non-executable data. The roadmap now explicitly separates offline code
+inventory from feature/credit policy and requires actual entry-map checks.
+
+The first new study accidentally reused that in-scope kind filter. Both generators
+succeeded, but its NETR measurement lookup then failed because the excluded rows
+were absent. That initial source/log/failure snapshot is preserved in generation-01.
+The corrected study includes callable AND excluded rows and leaves the one known
+descriptor row separate. No ledger row, denominator or online policy is changed.
+
+Read-only original-disc extraction authenticates GAMER/MOVIER/NETR and NTGUI by
+file offset, size and SHA. The corrected source study generates NETR with complete
+catalogue entry mapping and standalone NTGUI with59 units and28,858 active PC
+entry slots, including its actual ELF entry001056A8. PC entry slots are NOT a
+function-ownership count. Every nonzero slot is joined to its actual generated
+C++ label. The committed replayable map falsifier admits the authentic map and
+rejects an unmapped entry, wrong extent, wrong target and dropped case label.
+
+Both extra images now have offline native body archives: NETR37 units and
+NTGUI59 units (96 compiled objects total). Every source/object hash is retained;
+archive member lists match exactly. The source/native archive study is separate
+from linking/registering these images into the game, proving dynamic targets or
+executing them. No NTGUI/game/network run occurs in this phase, online feature
+activation remains excluded, and no additional native credit is earned.
+
+| Evidence under R192 build/oracle-telemetry | SHA-256 |
+|---|---|
+| r192-remaining-disc-images-generation-02/RESULT.json | 9d2970cc18c1c601d715634ec70f8677967036e660605be7a582529784f3e403 |
+| r192-remaining-disc-images-native-01/RESULT.json | ab3c904ee1fca1ab9269d2149dd0d225a5faaeee6b407087e9758e8a607ad252 |
+| r192-NETR-generation-factor-controls-01/RESULT.json | a6ca5123651d7d0d56f20bd55ecfd4acafd167b3153bde9bcf61ddef2415ab55 |
+| r192-disc-entry-map-controls-02/RESULT.json | 478a3ec1ddd6db5f38aee0eef09ac5c53843d0143a56954d49241df64949d3d0 |
+
+A separate producer finding narrows the previous resource-core admission wording:
+its proved allocation check covered REGISTER capacity. Original2EDA70 allocates
+seven separate blocks with initial word capacities16/8/20/64/12/24/16; the final
+2000-word assembly buffer is a different allocation. Per-block append/growth and
+length bounds need their own source proof. The measured276 programs/4,968 output
+checks remain valid; their logical count limits do not admit all descriptors at
+runtime. True continuation/projection/lifetime and producer-capacity work continue.
+
+The full original VU native batch is still running. NormalN882302..., original
+R192 executable/launcher, original inputs, persistent card/saves and local model
+settings are unchanged. Native foundation/baseline and2/238 credit are unchanged;
+the new source/object inventory never promotes catalogue or native tiers.
 
 ### Verification and continuing work
 
