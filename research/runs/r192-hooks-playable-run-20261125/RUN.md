@@ -700,7 +700,7 @@ frame181224 but measured zero new frames, stopping at thbase#42,
 IOP PC000A1B98 / RA000AC4A0 in MSL. This exposes an original N silent-success
 placeholder, not an admitted replacement service. The first attempt's SEH
 report obscured the exception text; the next attempt adds the named refusal.
-Service#42 verification/connection is the next independent phase. Other
+The subsequent service#42 phase below connects and tests this service. Other
 imports, indirect destinations, exceptions, scheduler lifecycle and complete
 IOP execution remain OPEN. No normal launcher/N/card/protected input changed;
 all actual tests use a disposable companion card. These reference AOT results
@@ -911,6 +911,76 @@ while generation_requested was false; it is not generation evidence. The
 producer now reports null when generation was not requested. The full generation
 receipt is the actual positive evidence. Disk reserve remains12GiB; original
 inputs and backups are not cleaned to make space.
+
+### Native thbase42 service connection in the disposable IOP build
+
+Original THREADMAN variants and PS2SDK commit
+d4b9943bd4a58dbe69800bf4ec9d81640df5bc5b establish thbase1.2 ordinal42 as
+GetThreadCurrentPriority. The original export relocation, complete body,
+QueryIntrContext import, signed LH TCB+0E and interrupt error-100 are pinned.
+The original MSL consumer calls DelayThread, then42, then passes the returned
+priority to RotateThreadReadyQueue in the actual call delay slot. No-thread
+states refuse rather than invent zero; interrupt error is verified before
+requiring a running-thread value. Four downloaded SDK inputs retain their
+hashes and commit-pinned source URLs in the evidence receipt.
+
+The typed getter comparison passes287 cases, including constructed signed/error
+cases and the14 actual snapshot inputs; only one snapshot supplies a running
+thread(priority50), the other states remain explicit None inputs. Original
+method frame stores are measured separately from native query effects.
+Four compiled source mutations reject signedness, interrupt-zero, no-thread-zero
+and wrong-field changes. The old export scanner stops at null slot3; ordinal42
+was independently bounded/joined, not credited from that truncated summary.
+
+The new disposable PE is
+b124b2c3a23ff14e5f604a620229ad91e22e5dfe5ca66ef7af39502eb7f99c90.
+It retains the strict IOP AOT dispatcher and has no original interpreter object.
+Full same-recording replay passes181224→204009,22,785 new frames, all1,519
+checkpoints equal, exit0, zero misses/compilation/unknown fallback and unchanged
+inputs. All14 affected state probes pass90 frames each(1,260 total).
+The installed N/original R192/card/launcher are unchanged. These reference
+domain results award zero native or transformed credit.
+
+Elapsed headless replay is489.7587seconds versus328.1258 for the earlier
+full-static candidate and362.3583 for the source-admitted VU candidate.
+These are confounded build comparisons(about1.49x/1.35x elapsed), not an isolated
+IOP cost attribution or headed FPS result. Later batching must preserve code
+identity and actual scheduler/service boundaries.
+
+| Service evidence under build/oracle-telemetry | RESULT.json SHA-256 |
+|---|---|
+| r192-iop-thbase42-evidence-02 | 54c6926f7f0678dab9d25002a5cdaf1c1c1d77e8b5ac24419ed9f11d25a7268d |
+| r192-iop-thbase42-full-replay-01 | 68f3787d4cebdc1c778d23cdd92cad622b83c7aa5b91f3eed44c3e51ebc2f221 |
+| r192-iop-thbase42-probes-01 | f54a2252e4758091ae748ed17ac2c25e082e8f0e7a3b5abc6a882112099275f5 |
+| r192-iop-thbase42-freeze-01 | 7cd70744e9a523fda32b963fa4035b23f90e011d966801a558523b871fc3d7db |
+
+The freeze receipt lists all five source files, final component/evidence/run
+receipts and literal build/replay argv. Buffer-loader header-name aliases are
+still open; filename identity alone is insufficient. No arbitrary alias or
+success fallback is added by this phase.
+
+### Native VU module compiler pilot and complete batch
+
+The first61-entry payload now compiles to a native DLL and passes exact exported
+table keys/count, source/ABI stamp, register/host sizes, table-image bounds and
+executable-function-image/page checks. Null/incomplete host bindings refuse.
+Five planted stamp/ABI/count/key/function-bound errors are rejected before
+any game registration. No VU program is executed by this metadata probe.
+
+Final pilot03 receipt is
+build/oracle-telemetry/r192-vu-entry-module-pilot-03/RESULT.json,
+SHA2858404b9a000caee3f0b2dd19aa3c15da93f38dd1298fa22296eeda102b96aa.
+Explicit completed-build resume verifies existing receipts/binaries without
+changing them. A planted interrupted owned output is preserved under a checked
+sibling path before its successful rebuild; receipt
+r192-vu-entry-resume-control-01/RESULT.json
+SHAd440ffb854dd10c0d164d80281f37dd30dd59109ced9c99c912f772504a543c6.
+All move targets are resolved inside the owned output; no originals are cleaned.
+
+The full99-payload native compilation batch is the next action, with two compiler
+jobs and a12GiB disk reserve. This emits precompiled native DLLs using a sealed
+metadata interface; no runtime compiler or game loader is enabled. Native code
+build, runtime registration and execution equivalence remain distinct gates.
 
 ### Verification and continuing work
 
