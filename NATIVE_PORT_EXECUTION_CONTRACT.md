@@ -398,3 +398,5 @@ acceptance this contract. Dated run records preserve measurements. Update
 dependent guides and links together; fix conflicting current statements in
 place. A candidate with conflicting or stale current documentation fails
 handoff/release review, even when its individual test passes.
+
+PS2CAP01 store records contain an address and low32 value, with no recorded width. Compare the ordered captured trace and final byte effects separately; derive wider copy widths from original instructions without claiming transient upper lanes were observed. Counter labels must be joined through the exact measured wrapper symbol/source map; colliding labels stay unassigned and zero observations never prove unreachability.

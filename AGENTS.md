@@ -17,7 +17,7 @@ architecture, ownership admission or credit rules. The 5S.9 full-catalogue leaf
 cohort is capability only and cannot add to either credited tier. Apply the
 measured-pass stop rule in the execution contract before further bindings.
 
-**Current bounded batch:** Follow the latest Phase7 correction/replay/ownership instructions in TASK_BOARD. Derive checkpoint deltas from regenerated ledgers. All72sidecars are in scope, one owned headless oracle at a time; malformed inputs and partial captures remain explicit refusals. Physical gameplay/native acceptance is separate. After final baseline/sync/publication, stop this bounded batch as requested.
+**Current bounded batch:** The latest Phase7 correction/replay/ownership batch is closed with recorded limits and zero ownership/transformed/native delta. All72sidecars were attempted serially; malformed states, divergent replays, partial captures, unbound services and ambiguous counter IDs remain explicit. Do not repeat the invalid raw-ID-to-unit join. Physical gameplay/native acceptance is separate. Stop after final main publication as requested; future native work should connect source-proved subsystem boundaries under the existing gates.
 
 **Branch rule:** Every change is worked on, committed and pushed directly to main in both repositories. The only permitted side branch is the existing frozen r192-aot-closure-proof in the fork. Do not create, restore, switch to or commit on any other branch. The owner explicitly directed removal of the two merged Phase6 branches; their commits remain on main. Do not interpret historical branch records as permission to recreate them.
 

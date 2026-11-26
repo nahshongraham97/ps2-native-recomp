@@ -258467,14 +258467,14 @@
     "scope_after_correction": "Seephase7_owner_correction_batch_20261126 forcurrentcorrectedtests,completiongatesandevidence. TheoldE1promotedstatuswasnotanadmittedledgerrow; body/caller/Xboxcorroborationremainsinferredwithnoproductioncredit."
   },
   "phase7_owner_correction_batch_20261126": {
-    "status": "COMPONENT_FIXES_VERIFIED_FULL72_REPLAY_AND_FINAL_GATES_IN_PROGRESS",
+    "status": "BOUNDED_BATCH_CLOSED_WITH_RECORDED_LIMITS_NATIVE_ACCEPTANCE_OPEN",
     "starting_heads": {
       "fork": "fb814c76aa6223a7d248ca9ac2a36c5ed7aa2e5e",
       "parent": "d3a9f1226d9ee02a7d56500330f84e7e896bfdbd"
     },
     "evidence_manifest": {
       "path": "research/runs/phase7_capture_hashes.json",
-      "sha256": "d0c637121b05e6f856160c75fa91e68dfc4e80311d3e7c4c31a72d104e5aa688"
+      "sha256": "b2fe00631ad85f3e51e0234e02a1a5b3db259c5a7384ccd0ecf5913e8beacf46"
     },
     "replay_script": "tools/research/replay_phase7_sidecars.py",
     "synthetic_pad": "research/runs/phase7_synthetic_pad_s05.inputs",
@@ -258504,7 +258504,9 @@
       "constructed_assertions": 736,
       "device_cases": 120,
       "pilot_compositions": 4,
-      "whole_function_equivalence": false
+      "whole_function_equivalence": false,
+      "matrix_compositions": 16,
+      "per_function_matrix_compositions": 4
     },
     "ledger": {
       "verified_ownership": 18,
@@ -258522,8 +258524,73 @@
       "Old19verified/270inferred totals were stale; currentledgerandunchangedproofderive18/271.",
       "Originalfiveinput+fiveheapcallbackcapturesarepartial,notcompletedcalls.",
       "Prior15runframerangeswereplanned,notestablishedobservedcompletion.",
-      "2E6180 is a knownJALRcontinuation,notanidentifiedgeneratorentry."
+      "2E6180 is a knownJALRcontinuation,notanidentifiedgeneratorentry.",
+      "New auto-wrapper counter labels consumed mangling E; the preliminary197eligible join was wrong and is withdrawn. Exact source-labelled join with collided IDs withheld replaces it.",
+      "268linked wrappers did not mean268counter-covered units:267have countsites,264unique IDs,3collisions;0020has none.",
+      "Captured store trace has address+low32, not an independently measured width/full transient lane trace. Final byte effects and source width evidence are separate."
     ],
-    "native_acceptance": "OPEN"
+    "native_acceptance": "OPEN",
+    "replay": {
+      "attempted": 72,
+      "planned": 72,
+      "unique_start_states": 61,
+      "full_length": 69,
+      "same_to_end": 57,
+      "diverged_full_length": 12,
+      "requested_frames": 194430,
+      "completed_frames": 171029
+    },
+    "executed_intersection": {
+      "observed_catalogue_entries": 3429,
+      "observed_eligible": 492,
+      "observed_eligible_same_to_end": 417,
+      "observed_eligible_and_verified_ownership": 0,
+      "structural_coverage": {
+        "global_eligible": 1952,
+        "base_eligible": 1565,
+        "overlay_eligible": 387,
+        "base_eligible_with_linked_case": 1561,
+        "base_eligible_with_uniquely_recoverable_counter": 1500
+      },
+      "csv": "research/runs/phase7_executed_base_entries.csv"
+    },
+    "input_matrix": {
+      "ordinary_input_captures": 64,
+      "completed_effect_passes": 37,
+      "completed_but_service_unbound": 27,
+      "unexpected_failures": 0,
+      "original_partial_captures": 5
+    },
+    "baseline": {
+      "targets": 59,
+      "variants": 65,
+      "read_only_gates": 13,
+      "mutating_gates": 3,
+      "earlier_controls": 20,
+      "full_rebuild": false,
+      "acceptance": "OPEN"
+    },
+    "remaining_blockers_ranked": {
+      "source_shape_overlapping": {
+        "direct_calls": 11460,
+        "wide128_load_store": 6732,
+        "FPR_or_COP": 3610,
+        "indirect_calls": 2654,
+        "external_direct_tail": 786,
+        "exception_or_trap": 349,
+        "nonreturn_indirect_jump": 194,
+        "potential_integer_overflow_exception": 13
+      },
+      "direct_GP_relative_functions": 5386,
+      "unresolved_structural": {
+        "return_RA_identity_requires_separate_proof": 12424,
+        "body_boundary_escape": 967,
+        "reachable_region_without_ordinary_return_path": 874,
+        "no_reachable_ordinary_return": 797,
+        "MMI_width_or_upper_lane_unproved": 204
+      },
+      "limit": "Static features overlap; these are not compiler first-failure counts or promised capability unlocks. Original30refusal histogram remains13memory/6inputABI/6control/5return-interface, not a whole-function pass rate."
+    },
+    "approach_decision": "End random-leaf/general-transform binding rounds under the existing stop rule. Next port work should connect source-proved native subsystem callees/services bottom-up and admit complete effects/ABI with evidence; keep AOT-derived game logic and unchanged ownership/credit gates. This checkpoint establishes no production replacement, wider Xbox adoption or oracle-closure completion."
   }
 }
