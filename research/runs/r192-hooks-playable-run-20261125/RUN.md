@@ -640,6 +640,67 @@ The no-yield verifier intentionally consumes immutable pipeline05/caller02
 fixture sources; pipeline06/caller03 separately verify the final frozen core.
 Original R192, N, cards, saves, launcher and all credit rules are unchanged.
 
+### Disc-derived IOP compiler/dispatcher source phase
+
+Read-only original-disc enumeration finds41 IRX plus two IOPRP images containing
+32 ELF aliases:73 source aliases /70 distinct original payloads. All70 PIC bodies
+are generated and compiled in both a separately labelled queued-load model and
+a frozen-R192-v8 compatibility model. There is no default module selection.
+The v8 mode preserves its immediate-load and diagnostic SYS/BREAK behavior;
+it is not advertised as hardware-correct R3000 behavior or a native service port.
+The earlier fixed-placement study's29 CFG/branch refusals and the initial v8 PIC
+batch's8 refused delay joins remain recorded; the final PIC compile is a distinct
+measured scope, not a waiver of all control-flow/runtime obligations.
+The final v8 domain reuses93 object compilations whose source/object identities
+were checked, rather than calling them93 newly compiled payloads.
+
+The compatibility scalar test matches20,000 actual N interpreter operations
+over190 source shapes plus48 unaligned-pair steps. Representative SDRDRV
+whole-export tests cover448 calls at six physical placements and KSEG0/KSEG1
+execution aliases80027000/A0027000, with physical relocationbase27000 retained.
+The private actual-loader dispatcher compares five placements,86 source
+instructions and seven known native service calls each, with per-step CPU/RAM,
+ordered writes and original IOP serializer bytes equal. Relocation carry,
+wrong ordinary immediate, forged relocation/site and unknown-service plants
+refuse. A known loader import J/NOP retains two actual instruction steps.
+Unknown callbacks never synthesize V0=0.
+
+The disposable adapter uses the actual v8 Cpu156 ABI with explicit pc136/status144
+assertions and field copies to a separate generated state type, never a layout
+cast across v8/v14. Private-kernel include rewriting names the original IOP
+headers explicitly; an earlier wrong include lookup failed compilation and is
+preserved. Every executed instruction is reauthenticated; native service calls
+invalidate cached module checks. The disposable candidate
+build/r192-iop-v8-candidate-03/out/ps2run.exe,
+SHA-256 880e269645bd9e3b4b5e041d642b313159050eb850916c436fe2ab257bb19b4b,
+links no original IOP interpreter object.
+
+Actual saved-state integration is REFUSED, not passed: snapshot02 loaded
+frame181224 but measured zero new frames, stopping at thbase#42,
+IOP PC000A1B98 / RA000AC4A0 in MSL. This exposes an original N silent-success
+placeholder, not an admitted replacement service. The first attempt's SEH
+report obscured the exception text; the next attempt adds the named refusal.
+Service#42 verification/connection is the next independent phase. Other
+imports, indirect destinations, exceptions, scheduler lifecycle and complete
+IOP execution remain OPEN. No normal launcher/N/card/protected input changed;
+all actual tests use a disposable companion card. These reference AOT results
+award zero native or transformed credit.
+
+All20 frozen authored source paths, exact hashes, raw result identities and
+literal CLI argv arrays are in the existing ignored telemetry record
+build/oracle-telemetry/r192-iop-source-freeze-01/RESULT.json,
+SHA-256 d8c758d8bb43801adb3ef7904803b4627ce722a8d3a03ab9c86d93464c9ad13d.
+
+| IOP evidence under build/oracle-telemetry | RESULT.json SHA-256 |
+|---|---|
+| r192-iop-domain-02 | ef311498267533dd6d2e7ca9175d568255bded60ea97fcef81f89bc4de2c29b6 |
+| r192-iop-pic-domain-01 | 51140ca0422e8a4c93584deb11564598878e767e18416127dd7ece4c62dfa9d8 |
+| r192-iop-pic-v8-domain-02 | 489516027f81bd629222d609ff7fbd4f16ed82365d0954b490e8e48e282e9535 |
+| r192-iop-pic-differential-03 | 11f649563109e03de50b5bc5fdd082f7c2e96f38825cc6bfb4dcb4ae0ee7a170 |
+| r192-iop-v8-semantics-03 | f8b8b45bf2ae829afa12b5fe24db4c0744cefdca693a4a2a4ec25b013129e045 |
+| r192-iop-v8-private-dispatch-04 | 9b11dde7b69e126545aba7120c34b6cacc0fbf6019ffe4f614b329c5980287a4 |
+| r192-iop-v8-snapshot-02 (REFUSED) | b40f40c2ef9b654feba59a8041fbb98d830d7cd9f27c9e221121f2c6ef21c326 |
+
 ### Verification and continuing work
 
 The full native baseline was freshly rerun: 59 targets, 65 variants and 16
