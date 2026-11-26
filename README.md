@@ -1,6 +1,6 @@
 # Mortal Kombat: Armageddon retail native port
 
-**Current compiled R192 route:** The familiar parent launchers/launch_r192_hooks.bat (also called by launch_ps2recomp.bat) selects external/forks/ps2-native-recomp-r192-closure/build/r192-compiled-konquest/out/ps2run.exe, SHA-256 8823021a23e2a3fdd3b2dc4ca0c8eac9e7359beb3e5bce489b965587a0c2479b. It links its own AOT library and sealed compiled modules with no EE/VU live compiler. The latest Konquest recording passes 22,785 new frames / all 1,519 checkpoints; all 14 saved-state probes pass 90 new frames. Code/assets/keys are local to the build; normal play mounts the SAME original R192 persistent card and uses its existing quick-state directory. No replacement card is created. The original 8AB43BDA executable/launcher remain protected comparison evidence. Physical A/V, independent held-out paths and final native-port acceptance remain OPEN. See [the existing R192 record, section 6](research/runs/r192-hooks-playable-run-20261125/RUN.md).
+**Current compiled R192 route:** The familiar parent launchers/launch_r192_hooks.bat (also called by launch_ps2recomp.bat) selects external/forks/ps2-native-recomp-r192-closure/build/r192-compiled-konquest/out/ps2run.exe, SHA-256 8823021a23e2a3fdd3b2dc4ca0c8eac9e7359beb3e5bce489b965587a0c2479b. It links its own AOT library and sealed compiled modules with no EE/VU live compiler. The latest Konquest recording passes 22,785 new frames / all 1,519 checkpoints; all 14 saved-state probes pass 90 new frames. Code/assets/keys are local to the build; normal play mounts the SAME original R192 persistent card and uses its existing quick-state directory. No replacement card is created. The original 8AB43BDA executable/launcher remain protected comparison evidence. Complete precompilation of all executable families remains OPEN: recorded replays do not establish it; runtime-generated EE variants, VU upload/patch coverage and the IOP interpreter must be closed from original code/data. Physical A/V and final native-port acceptance remain OPEN. See [the existing R192 record, section 6](research/runs/r192-hooks-playable-run-20261125/RUN.md).
 
 **Current status (2026-11-25): Active playable recomp build & behavioral oracle verified (`r192-hooks`, `8AB43BDA...`); zero-emulation native-port acceptance remains OPEN.**
 This project targets a native Windows port of retail *Mortal Kombat: Armageddon* (Sony PlayStation 2 `SLUS_214.10` and overlays).
@@ -13,11 +13,11 @@ The target architecture uses AOT static C++ transformed to typed native memory a
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`aec293d0`](https://github.com/nahshongraham97/ps2-native-recomp/commit/aec293d07ce624661f56492fcab031d719973201) (source and evidence checkpoint)
+**Verified Fork Commit**: [`834aceb3`](https://github.com/nahshongraham97/ps2-native-recomp/commit/834aceb3698df34128bfada73d0ccf7e0250f3a8) (source and evidence checkpoint)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
-- Bounded ownership of 15,669 callable entries · verified-renderware 5, verified-game 12, verified-other-library 0, inferred-renderware 137, inferred-game 130, inferred-other 0, unresolved 15,385.
-- Ownership evidence by kind (overlapping entries) · E1 5, E2 0, E3 26, E4 13, E5 165, E6 112, E7 1.
+- Bounded ownership of 15,669 callable entries · verified-renderware 6, verified-game 12, verified-other-library 0, inferred-renderware 141, inferred-game 130, inferred-other 0, unresolved 15,380.
+- Ownership evidence by kind (overlapping entries) · E1 6, E2 0, E3 26, E4 13, E5 165, E6 117, E7 1.
 - Native credit retains its published component evidence. This ownership pass awards zero native credit.
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
 - **In-Scope Retail Path**: **15,670** (`2,643` non-exec/library: `sdk-or-library` 2,011 + `pointer-scan-proven` 632; `12,789` open frontier) | **Excluded Online (`out-of-scope-stubbed`)**: **1,840**

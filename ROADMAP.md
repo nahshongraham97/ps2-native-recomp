@@ -7,7 +7,7 @@ owns whole-game acceptance, which remains OPEN. Historical checkpoint prose is
 preserved with its original document hash in [the existing history records](research/history/native-port-docs-2026-11-18/)
 (`ROADMAP.md` in the parent; `ARCHIVE_INDEX.md` in the fork).
 
-**Current oracle priority:** The compiled R192 route is built and replay-tested without EE/VU Live; preserve the original 8AB43BDA reference and existing card. The normal R192 shortcut now selects the compiled build. Unrecorded/held-out paths and physical A/V remain open; continue native memory/ABI work under its existing per-function gates after publishing this integration. Reviewed native work is in main; keep only main and the R192 branch. Details: [existing R192 run record, section 6](research/runs/r192-hooks-playable-run-20261125/RUN.md).
+**Current oracle priority:** Finish complete offline compilation of the retail executable, overlays, generated EE families, VU programs and IOP code before resuming unrelated native ABI work. The current compiled R192 route is an incomplete intermediate build, despite its passing recorded Konquest replay. Logs identify known misses; the whole disc and the original generators define the coverage domain. The owner need not finish a playthrough to supply code. Preserve the original R192 executable/card, native foundation and only the existing main/R192 branches. See the existing R192 run record.
 
 ## Required order and publication boundary
 
