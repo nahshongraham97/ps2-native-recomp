@@ -258181,7 +258181,7 @@
     "credit": "2 transformed / 238 native (unchanged)"
   },
   "phase7_camera_stage_b_and_census_20261126": {
-    "status": "PHASE7_STAGE_B_CAMERA_PASS_AND_E1_001A7510_PROMOTED_PRODUCTION_UNTOUCHED",
+    "status": "HISTORICAL_CAMERA_COMPONENTS_XBOX_CORROBORATION_NOT_E1_ADMISSION",
     "heads_verified": {
       "parent_prior": "17ca7b4958abcce24e79209c2238c3140b6394f3",
       "fork_prior": "956230613ce965717b6f8f1524a825301dcaa036",
@@ -258233,7 +258233,13 @@
         "xbox_callee": "002bf2c0",
         "xbox_callee_sha256": "643f35910c84b9fb0a25d980ab29af66347efc90c7192134bd3bb705f5b1ba50",
         "dirty_list_head": "008353fc",
-        "shared_offsets_verified": ["+0xa0 root", "+3 private_flags", "+8 dirty_next", "+0xc dirty_prev", "+4 head_prev"]
+        "shared_offsets_verified": [
+          "+0xa0 root",
+          "+3 private_flags",
+          "+8 dirty_next",
+          "+0xc dirty_prev",
+          "+4 head_prev"
+        ]
       },
       "e1_script": "tools/research/verify_phase7_e1_001a7510.py",
       "planted_mutations_rejected": [
@@ -258315,7 +258321,11 @@
       "sweep_61": {
         "total_states": 61,
         "valid_states": 58,
-        "truncated_states": ["s00 f017793", "s01 f020277", "s02 f028432"],
+        "truncated_states": [
+          "s00 f017793",
+          "s01 f020277",
+          "s02 f028432"
+        ],
         "001a64a0_calls": 290,
         "001a64a0_states_hit": "58/58",
         "001a70f0_calls": 32512,
@@ -258325,10 +258335,22 @@
         "remaining_15_unreached": "0/58"
       },
       "multi_state_001a70f0_stage_b": {
-        "states": ["s05", "s15", "s25", "s35", "s45", "s55"],
+        "states": [
+          "s05",
+          "s15",
+          "s25",
+          "s35",
+          "s45",
+          "s55"
+        ],
         "cam_001a64a0": 15,
         "frame_001a7510": 30,
-        "frame_branches": {"clean_root": 12, "dirty_root": 18, "empty_list": 6, "populated_list": 6},
+        "frame_branches": {
+          "clean_root": 12,
+          "dirty_root": 18,
+          "empty_list": 6,
+          "populated_list": 6
+        },
         "dirty_001a70f0": 30
       },
       "production_camera_integration": {
@@ -258341,35 +258363,94 @@
         "header": "runtime/include/mka/phase7_input_native.hpp",
         "test": "tests/test_phase7_input_differential.cpp",
         "evidence_limit": "IDLE-PATH ONLY (Stage A GuestMemory; idle_captures=10, active_captures=0 across 6 states; fails closed if idle_captures==0 or active_captures>0; callback/match path 0x00162E70 never exercised)",
-        "planted_errors_rejected": ["--planted-store"]
+        "planted_errors_rejected": [
+          "--planted-store"
+        ]
       },
       "fighter_subsystem_00194370": {
         "header": "runtime/include/mka/phase7_fighter_native.hpp",
         "test": "tests/test_phase7_fighter_differential.cpp",
         "active_implementation": "fighter_tri_plane_test_00194370 + tri_normal_0042eba0 (VU0 normal + EE FPU distance)",
         "captures_passed": 30,
-        "observed_v0": {"0x0": 30},
-        "observed_stores": {"11": 30},
-        "branch_coverage": {"early_reject_after_a2_store_and_vu0_normal": 30},
-        "planted_errors_rejected": ["--planted-return", "--planted-a2-store"]
+        "observed_v0": {
+          "0x0": 30
+        },
+        "observed_stores": {
+          "11": 30
+        },
+        "branch_coverage": {
+          "early_reject_after_a2_store_and_vu0_normal": 30
+        },
+        "planted_errors_rejected": [
+          "--planted-return",
+          "--planted-a2-store"
+        ]
       },
       "stub_family_002e6180": {
         "header": "runtime/include/mka/phase7_stub_native.hpp",
         "test": "tests/test_phase7_stub_differential.cpp",
         "002e6180_hits_in_6_states": 0,
         "002e60e0_captures": 14,
-        "002e60e0_observed_v0": {"0x0": 1, "0x3": 2, "0xf": 4, "0x7c": 2, "0xb0": 1, "0xbc": 2, "0x763520": 2},
-        "002e60e0_observed_stores": {"17": 5, "262": 1, "266": 2, "696": 3, "758": 1, "784": 1, "801": 1},
-        "002e60e0_branches": {"a0_plus_76_zero_direct": 9, "a0_plus_76_heap_stub": 5},
+        "002e60e0_observed_v0": {
+          "0x0": 1,
+          "0x3": 2,
+          "0xf": 4,
+          "0x7c": 2,
+          "0xb0": 1,
+          "0xbc": 2,
+          "0x763520": 2
+        },
+        "002e60e0_observed_stores": {
+          "17": 5,
+          "262": 1,
+          "266": 2,
+          "696": 3,
+          "758": 1,
+          "784": 1,
+          "801": 1
+        },
+        "002e60e0_branches": {
+          "a0_plus_76_zero_direct": 9,
+          "a0_plus_76_heap_stub": 5
+        },
         "status": "OPEN (test_phase7_stub_differential exits 1 by design: 0 null-path captures, 14 active captures unimplemented)"
       },
       "track_a_phase6_remeasurement": {
         "count_sweep_58_valid_states": {
-          "original30_executed": {"SLUS_214.10:001c4210": {"calls": 12240, "states": 58, "captures_passed": "30/30"}, "SLUS_214.10:00167cf0": {"calls": 6, "states": 3, "captures": 6, "differential": "not_yet_tested"}},
+          "original30_executed": {
+            "SLUS_214.10:001c4210": {
+              "calls": 12240,
+              "states": 58,
+              "captures_passed": "30/30"
+            },
+            "SLUS_214.10:00167cf0": {
+              "calls": 6,
+              "states": 3,
+              "captures": 6,
+              "differential": "not_yet_tested"
+            }
+          },
           "original30_never_executed": 28,
-          "heldout30_executed": {"SLUS_214.10:002e1710": {"calls": 2882, "states": 58, "captures_passed": "30/30"}, "SLUS_214.10:0016ae10": {"calls": 2121, "states": 58, "captures_passed": "30/30"}},
+          "heldout30_executed": {
+            "SLUS_214.10:002e1710": {
+              "calls": 2882,
+              "states": 58,
+              "captures_passed": "30/30"
+            },
+            "SLUS_214.10:0016ae10": {
+              "calls": 2121,
+              "states": 58,
+              "captures_passed": "30/30"
+            }
+          },
           "heldout30_never_executed": 28,
-          "admitted18_executed": {"SLUS_214.10:001a64a0": {"calls": 290, "states": 58, "stage_a_and_b": "PASS"}},
+          "admitted18_executed": {
+            "SLUS_214.10:001a64a0": {
+              "calls": 290,
+              "states": 58,
+              "stage_a_and_b": "PASS"
+            }
+          },
           "admitted18_never_executed": 17
         },
         "test_harness": "tests/test_phase6_track_a_captures.cpp",
@@ -258381,6 +258462,68 @@
         "return_obligations_remaining": 42
       }
     },
-    "credit": "2 transformed / 238 native (unchanged)"
+    "credit": "2 transformed / 238 native (unchanged)",
+    "superseded_status_before_correction": "PHASE7_STAGE_B_CAMERA_PASS_AND_E1_001A7510_PROMOTED_PRODUCTION_UNTOUCHED",
+    "scope_after_correction": "Seephase7_owner_correction_batch_20261126 forcurrentcorrectedtests,completiongatesandevidence. TheoldE1promotedstatuswasnotanadmittedledgerrow; body/caller/Xboxcorroborationremainsinferredwithnoproductioncredit."
+  },
+  "phase7_owner_correction_batch_20261126": {
+    "status": "COMPONENT_FIXES_VERIFIED_FULL72_REPLAY_AND_FINAL_GATES_IN_PROGRESS",
+    "starting_heads": {
+      "fork": "fb814c76aa6223a7d248ca9ac2a36c5ed7aa2e5e",
+      "parent": "d3a9f1226d9ee02a7d56500330f84e7e896bfdbd"
+    },
+    "evidence_manifest": {
+      "path": "research/runs/phase7_capture_hashes.json",
+      "sha256": "d0c637121b05e6f856160c75fa91e68dfc4e80311d3e7c4c31a72d104e5aa688"
+    },
+    "replay_script": "tools/research/replay_phase7_sidecars.py",
+    "synthetic_pad": "research/runs/phase7_synthetic_pad_s05.inputs",
+    "track_a": {
+      "calls_fixed": true,
+      "runtime_header": "runtime/include/mka/phase6_track_a.hpp",
+      "normal_captures": 96,
+      "negative_cases": 15,
+      "stage_b_16ae10": 30,
+      "stage_b_2e1710": 30,
+      "ownership_new": 0
+    },
+    "bulk_ownership": {
+      "candidates": 226,
+      "confirmed": 4,
+      "unresolved": 222,
+      "already_admitted_methods": 12,
+      "targets_admitted": 0,
+      "inference_is_not_verification": true
+    },
+    "track_b_receipt": "tools/research/phase7_track_b_receipt.json",
+    "camera_component": {
+      "tests": {
+        "path": "build/oracle-telemetry/camera-operations-20261126/tests.json",
+        "sha256": "c564d0c81e7540bb0a0f89ded8924689fdc02cc992e527462c91174771935d83"
+      },
+      "constructed_assertions": 736,
+      "device_cases": 120,
+      "pilot_compositions": 4,
+      "whole_function_equivalence": false
+    },
+    "ledger": {
+      "verified_ownership": 18,
+      "transformed": 2,
+      "credited_native": 238,
+      "deltas": [
+        0,
+        0,
+        0
+      ],
+      "why_unchanged": "Both TrackA targets unresolved; input/particle/camera functions lack complete admitted ownership/callback/production proof. Whole effects/ABI or normalized component checks do not bypass credit."
+    },
+    "contradictions": [
+      "Old002e1710StageBclaim had noactualcall; fixednow with meaningfulindependentcontrol/preservation checks.",
+      "Old19verified/270inferred totals were stale; currentledgerandunchangedproofderive18/271.",
+      "Originalfiveinput+fiveheapcallbackcapturesarepartial,notcompletedcalls.",
+      "Prior15runframerangeswereplanned,notestablishedobservedcompletion.",
+      "2E6180 is a knownJALRcontinuation,notanidentifiedgeneratorentry."
+    ],
+    "native_acceptance": "OPEN"
   }
 }

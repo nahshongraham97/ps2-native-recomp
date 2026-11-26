@@ -65,17 +65,25 @@
      )
      if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
          target_sources(ps2run PRIVATE host/profile.cpp)
+@@ -223,3 +271,7 @@
+         target_link_libraries(ps2padtest PRIVATE ps2runtime SDL2::SDL2)
+     endif()
+ endif()
++
++if(TARGET ps2run)
++  target_link_options(ps2run PRIVATE "@${CMAKE_CURRENT_SOURCE_DIR}/phase7_wrap_options.rsp")
++endif()
 --- a/host/mka_unit_wrappers.cpp
 +++ b/host/mka_unit_wrappers.cpp
 @@ -1,4 +1,5 @@
  #include "mka_combat_hooks.hpp"
 +#include "ps2/phase7_capture.hpp"
- 
+
  namespace {
- 
+
 @@ -33,9 +34,341 @@
  extern "C" {
- 
+
  // Real symbols in libps2game.a provided by the linker under --wrap
 +void __real__ZN3gen9unit_000BERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
  void __real__ZN3gen9unit_0018ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
@@ -412,42 +420,486 @@
 +    __real__ZN3gen9unit_0029ERN3ps23CpuEjj(c, entry, depth);
 +    cap.finish(c);
 +}
- 
+
  // Linker Wrapper for gen::unit_0018: Intercepts PAD Scanner (328u) and Input Events (309u)
  void __wrap__ZN3gen9unit_0018ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
 @@ -68,7 +401,10 @@
          }
- 
+
          // Keep the original guest scan on its existing path, exactly once.
 +        ps2::capture::record_unit_entry(0x0018u, entry);
 +        ps2::capture::Scope cap(0x0018u, entry, c);
          __real__ZN3gen9unit_0018ERN3ps23CpuEjj(c, entry, depth);
 +        cap.finish(c);
- 
+
          if (trace) {
              const PadTraceSnapshot after = read_pad_trace_snapshot();
 @@ -104,7 +440,10 @@
          }
      }
- 
+
 +    ps2::capture::record_unit_entry(0x0018u, entry);
 +    ps2::capture::Scope cap(0x0018u, entry, c);
      __real__ZN3gen9unit_0018ERN3ps23CpuEjj(c, entry, depth);
 +    cap.finish(c);
  }
- 
+
  // Linker Wrapper for gen::unit_0020: Intercepts Video Stream Dispatcher (126u)
 @@ -126,7 +465,10 @@
          return;
      }
- 
+
 +    ps2::capture::record_unit_entry(0x0025u, entry);
 +    ps2::capture::Scope cap(0x0025u, entry, c);
      __real__ZN3gen9unit_0025ERN3ps23CpuEjj(c, entry, depth);
 +    cap.finish(c);
  }
- 
+
  // Native Phase 4 SPU2 Audio Processing Tap
+@@ -135,3 +477,443 @@
+ }
+
+ } // extern "C"
++
++// Count every linked base AOT unit; target-specific capture scopes above remain unchanged.
++extern "C" {
++void __real__ZN3gen9unit_0000ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0000ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x000Eu, entry); __real__ZN3gen9unit_0000ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0001ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0001ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x001Eu, entry); __real__ZN3gen9unit_0001ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0002ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0002ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x002Eu, entry); __real__ZN3gen9unit_0002ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0004ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0004ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x004Eu, entry); __real__ZN3gen9unit_0004ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0005ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0005ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x005Eu, entry); __real__ZN3gen9unit_0005ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0006ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0006ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x006Eu, entry); __real__ZN3gen9unit_0006ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0007ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0007ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x007Eu, entry); __real__ZN3gen9unit_0007ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0008ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0008ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x008Eu, entry); __real__ZN3gen9unit_0008ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0009ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0009ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x009Eu, entry); __real__ZN3gen9unit_0009ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_000AERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_000AERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x00AEu, entry); __real__ZN3gen9unit_000AERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_000DERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_000DERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x00DEu, entry); __real__ZN3gen9unit_000DERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_000EERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_000EERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x00EEu, entry); __real__ZN3gen9unit_000EERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_000FERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_000FERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x00FEu, entry); __real__ZN3gen9unit_000FERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0010ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0010ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x010Eu, entry); __real__ZN3gen9unit_0010ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0011ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0011ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x011Eu, entry); __real__ZN3gen9unit_0011ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0013ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0013ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x013Eu, entry); __real__ZN3gen9unit_0013ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0015ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0015ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x015Eu, entry); __real__ZN3gen9unit_0015ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0016ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0016ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x016Eu, entry); __real__ZN3gen9unit_0016ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0017ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0017ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x017Eu, entry); __real__ZN3gen9unit_0017ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_001BERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_001BERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x01BEu, entry); __real__ZN3gen9unit_001BERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_001CERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_001CERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x01CEu, entry); __real__ZN3gen9unit_001CERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_001FERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_001FERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x01FEu, entry); __real__ZN3gen9unit_001FERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0021ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0021ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x021Eu, entry); __real__ZN3gen9unit_0021ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0022ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0022ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x022Eu, entry); __real__ZN3gen9unit_0022ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0023ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0023ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x023Eu, entry); __real__ZN3gen9unit_0023ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0024ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0024ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x024Eu, entry); __real__ZN3gen9unit_0024ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0026ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0026ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x026Eu, entry); __real__ZN3gen9unit_0026ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_002BERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_002BERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x02BEu, entry); __real__ZN3gen9unit_002BERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_002CERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_002CERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x02CEu, entry); __real__ZN3gen9unit_002CERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_002DERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_002DERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x02DEu, entry); __real__ZN3gen9unit_002DERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_002EERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_002EERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x02EEu, entry); __real__ZN3gen9unit_002EERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_002FERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_002FERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x02FEu, entry); __real__ZN3gen9unit_002FERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0030ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0030ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x030Eu, entry); __real__ZN3gen9unit_0030ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0032ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0032ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x032Eu, entry); __real__ZN3gen9unit_0032ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0033ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0033ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x033Eu, entry); __real__ZN3gen9unit_0033ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0034ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0034ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x034Eu, entry); __real__ZN3gen9unit_0034ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0036ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0036ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x036Eu, entry); __real__ZN3gen9unit_0036ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0037ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0037ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x037Eu, entry); __real__ZN3gen9unit_0037ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0038ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0038ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x038Eu, entry); __real__ZN3gen9unit_0038ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0039ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0039ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x039Eu, entry); __real__ZN3gen9unit_0039ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_003AERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_003AERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x03AEu, entry); __real__ZN3gen9unit_003AERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_003BERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_003BERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x03BEu, entry); __real__ZN3gen9unit_003BERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_003CERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_003CERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x03CEu, entry); __real__ZN3gen9unit_003CERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_003DERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_003DERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x03DEu, entry); __real__ZN3gen9unit_003DERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_003EERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_003EERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x03EEu, entry); __real__ZN3gen9unit_003EERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_003FERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_003FERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x03FEu, entry); __real__ZN3gen9unit_003FERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0040ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0040ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x040Eu, entry); __real__ZN3gen9unit_0040ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0041ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0041ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x041Eu, entry); __real__ZN3gen9unit_0041ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0042ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0042ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x042Eu, entry); __real__ZN3gen9unit_0042ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0043ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0043ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x043Eu, entry); __real__ZN3gen9unit_0043ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0045ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0045ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x045Eu, entry); __real__ZN3gen9unit_0045ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0046ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0046ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x046Eu, entry); __real__ZN3gen9unit_0046ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0047ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0047ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x047Eu, entry); __real__ZN3gen9unit_0047ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0049ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0049ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x049Eu, entry); __real__ZN3gen9unit_0049ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_004AERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_004AERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x04AEu, entry); __real__ZN3gen9unit_004AERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_004CERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_004CERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x04CEu, entry); __real__ZN3gen9unit_004CERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_004DERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_004DERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x04DEu, entry); __real__ZN3gen9unit_004DERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_004EERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_004EERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x04EEu, entry); __real__ZN3gen9unit_004EERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_004FERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_004FERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x04FEu, entry); __real__ZN3gen9unit_004FERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0052ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0052ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x052Eu, entry); __real__ZN3gen9unit_0052ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0053ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0053ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x053Eu, entry); __real__ZN3gen9unit_0053ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0054ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0054ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x054Eu, entry); __real__ZN3gen9unit_0054ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0055ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0055ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x055Eu, entry); __real__ZN3gen9unit_0055ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0056ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0056ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x056Eu, entry); __real__ZN3gen9unit_0056ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0057ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0057ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x057Eu, entry); __real__ZN3gen9unit_0057ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0058ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0058ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x058Eu, entry); __real__ZN3gen9unit_0058ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0059ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0059ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x059Eu, entry); __real__ZN3gen9unit_0059ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_005AERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_005AERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x05AEu, entry); __real__ZN3gen9unit_005AERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_005BERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_005BERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x05BEu, entry); __real__ZN3gen9unit_005BERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_005CERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_005CERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x05CEu, entry); __real__ZN3gen9unit_005CERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_005DERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_005DERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x05DEu, entry); __real__ZN3gen9unit_005DERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_005EERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_005EERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x05EEu, entry); __real__ZN3gen9unit_005EERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_005FERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_005FERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x05FEu, entry); __real__ZN3gen9unit_005FERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0060ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0060ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x060Eu, entry); __real__ZN3gen9unit_0060ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0062ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0062ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x062Eu, entry); __real__ZN3gen9unit_0062ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0063ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0063ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x063Eu, entry); __real__ZN3gen9unit_0063ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0064ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0064ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x064Eu, entry); __real__ZN3gen9unit_0064ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0065ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0065ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x065Eu, entry); __real__ZN3gen9unit_0065ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0066ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0066ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x066Eu, entry); __real__ZN3gen9unit_0066ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0068ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0068ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x068Eu, entry); __real__ZN3gen9unit_0068ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0069ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0069ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x069Eu, entry); __real__ZN3gen9unit_0069ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_006AERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_006AERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x06AEu, entry); __real__ZN3gen9unit_006AERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_006BERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_006BERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x06BEu, entry); __real__ZN3gen9unit_006BERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_006CERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_006CERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x06CEu, entry); __real__ZN3gen9unit_006CERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_006EERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_006EERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x06EEu, entry); __real__ZN3gen9unit_006EERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0070ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0070ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x070Eu, entry); __real__ZN3gen9unit_0070ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0071ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0071ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x071Eu, entry); __real__ZN3gen9unit_0071ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0072ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0072ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x072Eu, entry); __real__ZN3gen9unit_0072ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0073ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0073ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x073Eu, entry); __real__ZN3gen9unit_0073ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0074ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0074ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x074Eu, entry); __real__ZN3gen9unit_0074ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0075ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0075ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x075Eu, entry); __real__ZN3gen9unit_0075ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0076ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0076ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x076Eu, entry); __real__ZN3gen9unit_0076ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0077ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0077ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x077Eu, entry); __real__ZN3gen9unit_0077ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_007CERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_007CERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x07CEu, entry); __real__ZN3gen9unit_007CERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_007DERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_007DERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x07DEu, entry); __real__ZN3gen9unit_007DERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_007EERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_007EERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x07EEu, entry); __real__ZN3gen9unit_007EERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_007FERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_007FERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x07FEu, entry); __real__ZN3gen9unit_007FERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0080ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0080ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x080Eu, entry); __real__ZN3gen9unit_0080ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0081ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0081ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x081Eu, entry); __real__ZN3gen9unit_0081ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0082ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0082ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x082Eu, entry); __real__ZN3gen9unit_0082ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0084ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0084ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x084Eu, entry); __real__ZN3gen9unit_0084ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0085ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0085ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x085Eu, entry); __real__ZN3gen9unit_0085ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0086ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0086ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x086Eu, entry); __real__ZN3gen9unit_0086ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0087ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0087ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x087Eu, entry); __real__ZN3gen9unit_0087ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0088ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0088ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x088Eu, entry); __real__ZN3gen9unit_0088ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_008AERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_008AERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x08AEu, entry); __real__ZN3gen9unit_008AERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_008BERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_008BERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x08BEu, entry); __real__ZN3gen9unit_008BERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_008CERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_008CERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x08CEu, entry); __real__ZN3gen9unit_008CERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_008DERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_008DERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x08DEu, entry); __real__ZN3gen9unit_008DERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_008EERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_008EERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x08EEu, entry); __real__ZN3gen9unit_008EERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0091ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0091ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x091Eu, entry); __real__ZN3gen9unit_0091ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0092ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0092ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x092Eu, entry); __real__ZN3gen9unit_0092ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0093ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0093ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x093Eu, entry); __real__ZN3gen9unit_0093ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0094ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0094ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x094Eu, entry); __real__ZN3gen9unit_0094ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0095ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0095ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x095Eu, entry); __real__ZN3gen9unit_0095ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0096ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0096ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x096Eu, entry); __real__ZN3gen9unit_0096ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0097ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0097ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x097Eu, entry); __real__ZN3gen9unit_0097ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0098ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0098ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x098Eu, entry); __real__ZN3gen9unit_0098ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0099ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0099ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x099Eu, entry); __real__ZN3gen9unit_0099ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_009BERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_009BERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x09BEu, entry); __real__ZN3gen9unit_009BERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_009CERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_009CERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x09CEu, entry); __real__ZN3gen9unit_009CERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_009DERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_009DERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x09DEu, entry); __real__ZN3gen9unit_009DERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_009EERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_009EERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x09EEu, entry); __real__ZN3gen9unit_009EERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_009FERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_009FERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x09FEu, entry); __real__ZN3gen9unit_009FERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00A0ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00A0ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0A0Eu, entry); __real__ZN3gen9unit_00A0ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00A1ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00A1ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0A1Eu, entry); __real__ZN3gen9unit_00A1ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00A2ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00A2ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0A2Eu, entry); __real__ZN3gen9unit_00A2ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00A3ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00A3ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0A3Eu, entry); __real__ZN3gen9unit_00A3ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00A5ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00A5ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0A5Eu, entry); __real__ZN3gen9unit_00A5ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00A6ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00A6ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0A6Eu, entry); __real__ZN3gen9unit_00A6ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00A7ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00A7ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0A7Eu, entry); __real__ZN3gen9unit_00A7ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00A8ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00A8ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0A8Eu, entry); __real__ZN3gen9unit_00A8ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00A9ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00A9ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0A9Eu, entry); __real__ZN3gen9unit_00A9ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00AAERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00AAERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0AAEu, entry); __real__ZN3gen9unit_00AAERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00ABERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00ABERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0ABEu, entry); __real__ZN3gen9unit_00ABERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00ACERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00ACERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0ACEu, entry); __real__ZN3gen9unit_00ACERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00ADERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00ADERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0ADEu, entry); __real__ZN3gen9unit_00ADERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00AFERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00AFERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0AFEu, entry); __real__ZN3gen9unit_00AFERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00B0ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00B0ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0B0Eu, entry); __real__ZN3gen9unit_00B0ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00B2ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00B2ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0B2Eu, entry); __real__ZN3gen9unit_00B2ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00B3ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00B3ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0B3Eu, entry); __real__ZN3gen9unit_00B3ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00B4ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00B4ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0B4Eu, entry); __real__ZN3gen9unit_00B4ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00B5ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00B5ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0B5Eu, entry); __real__ZN3gen9unit_00B5ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00B6ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00B6ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0B6Eu, entry); __real__ZN3gen9unit_00B6ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00B7ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00B7ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0B7Eu, entry); __real__ZN3gen9unit_00B7ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00B8ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00B8ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0B8Eu, entry); __real__ZN3gen9unit_00B8ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00B9ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00B9ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0B9Eu, entry); __real__ZN3gen9unit_00B9ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00BAERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00BAERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0BAEu, entry); __real__ZN3gen9unit_00BAERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00BBERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00BBERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0BBEu, entry); __real__ZN3gen9unit_00BBERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00BCERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00BCERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0BCEu, entry); __real__ZN3gen9unit_00BCERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00BDERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00BDERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0BDEu, entry); __real__ZN3gen9unit_00BDERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00BEERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00BEERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0BEEu, entry); __real__ZN3gen9unit_00BEERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00BFERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00BFERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0BFEu, entry); __real__ZN3gen9unit_00BFERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00C0ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00C0ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0C0Eu, entry); __real__ZN3gen9unit_00C0ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00C1ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00C1ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0C1Eu, entry); __real__ZN3gen9unit_00C1ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00C2ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00C2ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0C2Eu, entry); __real__ZN3gen9unit_00C2ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00C3ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00C3ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0C3Eu, entry); __real__ZN3gen9unit_00C3ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00C4ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00C4ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0C4Eu, entry); __real__ZN3gen9unit_00C4ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00C5ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00C5ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0C5Eu, entry); __real__ZN3gen9unit_00C5ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00C6ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00C6ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0C6Eu, entry); __real__ZN3gen9unit_00C6ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00C7ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00C7ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0C7Eu, entry); __real__ZN3gen9unit_00C7ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00C8ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00C8ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0C8Eu, entry); __real__ZN3gen9unit_00C8ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00C9ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00C9ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0C9Eu, entry); __real__ZN3gen9unit_00C9ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00CBERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00CBERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0CBEu, entry); __real__ZN3gen9unit_00CBERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00CCERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00CCERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0CCEu, entry); __real__ZN3gen9unit_00CCERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00CDERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00CDERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0CDEu, entry); __real__ZN3gen9unit_00CDERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00CEERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00CEERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0CEEu, entry); __real__ZN3gen9unit_00CEERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00CFERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00CFERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0CFEu, entry); __real__ZN3gen9unit_00CFERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00D0ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00D0ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0D0Eu, entry); __real__ZN3gen9unit_00D0ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00D1ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00D1ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0D1Eu, entry); __real__ZN3gen9unit_00D1ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00D2ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00D2ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0D2Eu, entry); __real__ZN3gen9unit_00D2ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00D3ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00D3ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0D3Eu, entry); __real__ZN3gen9unit_00D3ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00D4ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00D4ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0D4Eu, entry); __real__ZN3gen9unit_00D4ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00D5ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00D5ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0D5Eu, entry); __real__ZN3gen9unit_00D5ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00D6ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00D6ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0D6Eu, entry); __real__ZN3gen9unit_00D6ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00D7ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00D7ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0D7Eu, entry); __real__ZN3gen9unit_00D7ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00D9ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00D9ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0D9Eu, entry); __real__ZN3gen9unit_00D9ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00DAERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00DAERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0DAEu, entry); __real__ZN3gen9unit_00DAERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00DBERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00DBERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0DBEu, entry); __real__ZN3gen9unit_00DBERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00DCERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00DCERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0DCEu, entry); __real__ZN3gen9unit_00DCERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00DDERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00DDERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0DDEu, entry); __real__ZN3gen9unit_00DDERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00DEERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00DEERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0DEEu, entry); __real__ZN3gen9unit_00DEERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00E0ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00E0ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0E0Eu, entry); __real__ZN3gen9unit_00E0ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00E1ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00E1ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0E1Eu, entry); __real__ZN3gen9unit_00E1ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00E2ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00E2ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0E2Eu, entry); __real__ZN3gen9unit_00E2ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00E3ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00E3ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0E3Eu, entry); __real__ZN3gen9unit_00E3ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00E4ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00E4ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0E4Eu, entry); __real__ZN3gen9unit_00E4ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00E5ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00E5ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0E5Eu, entry); __real__ZN3gen9unit_00E5ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00E6ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00E6ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0E6Eu, entry); __real__ZN3gen9unit_00E6ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00E7ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00E7ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0E7Eu, entry); __real__ZN3gen9unit_00E7ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00E9ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00E9ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0E9Eu, entry); __real__ZN3gen9unit_00E9ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00EAERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00EAERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0EAEu, entry); __real__ZN3gen9unit_00EAERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00ECERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00ECERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0ECEu, entry); __real__ZN3gen9unit_00ECERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00EFERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00EFERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0EFEu, entry); __real__ZN3gen9unit_00EFERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00F0ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00F0ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0F0Eu, entry); __real__ZN3gen9unit_00F0ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00F2ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00F2ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0F2Eu, entry); __real__ZN3gen9unit_00F2ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00F3ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00F3ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0F3Eu, entry); __real__ZN3gen9unit_00F3ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00F4ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00F4ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0F4Eu, entry); __real__ZN3gen9unit_00F4ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00F5ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00F5ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0F5Eu, entry); __real__ZN3gen9unit_00F5ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00F6ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00F6ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0F6Eu, entry); __real__ZN3gen9unit_00F6ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00F7ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00F7ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0F7Eu, entry); __real__ZN3gen9unit_00F7ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00F9ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00F9ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0F9Eu, entry); __real__ZN3gen9unit_00F9ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00FAERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00FAERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0FAEu, entry); __real__ZN3gen9unit_00FAERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00FBERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00FBERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0FBEu, entry); __real__ZN3gen9unit_00FBERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00FCERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00FCERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0FCEu, entry); __real__ZN3gen9unit_00FCERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00FDERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00FDERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0FDEu, entry); __real__ZN3gen9unit_00FDERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00FEERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00FEERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0FEEu, entry); __real__ZN3gen9unit_00FEERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_00FFERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_00FFERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x0FFEu, entry); __real__ZN3gen9unit_00FFERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0100ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0100ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x100Eu, entry); __real__ZN3gen9unit_0100ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0101ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0101ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x101Eu, entry); __real__ZN3gen9unit_0101ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0102ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0102ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x102Eu, entry); __real__ZN3gen9unit_0102ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0104ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0104ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x104Eu, entry); __real__ZN3gen9unit_0104ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0105ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0105ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x105Eu, entry); __real__ZN3gen9unit_0105ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0106ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0106ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x106Eu, entry); __real__ZN3gen9unit_0106ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0107ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0107ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x107Eu, entry); __real__ZN3gen9unit_0107ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_0108ERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_0108ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x108Eu, entry); __real__ZN3gen9unit_0108ERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_010AERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_010AERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x10AEu, entry); __real__ZN3gen9unit_010AERN3ps23CpuEjj(c, entry, depth); }
++void __real__ZN3gen9unit_010BERN3ps23CpuEjj(ps2::Cpu &, std::uint32_t, std::uint32_t);
++void __wrap__ZN3gen9unit_010BERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) { ps2::capture::record_unit_entry(0x10BEu, entry); __real__ZN3gen9unit_010BERN3ps23CpuEjj(c, entry, depth); }
++}
 --- a/runtime/src/memory.cpp
 +++ b/runtime/src/memory.cpp
 @@ -1,6 +1,7 @@
@@ -456,11 +908,11 @@
  #include "ps2/memory.hpp"
 +#include "ps2/phase7_capture.hpp"
  #include "ps2/system.hpp"
- 
+
  #include <cstdio>
 @@ -41,6 +42,10 @@
  }
- 
+
  void watch_hit(std::uint32_t a, std::uint32_t v, const char *via) {
 +    if (ps2::capture::is_active()) {
 +        ps2::capture::record_store(a, v);
@@ -500,7 +952,7 @@
 +} // namespace ps2::capture
 --- /dev/null
 +++ b/runtime/src/phase7_capture.cpp
-@@ -0,0 +1,284 @@
+@@ -0,0 +1,305 @@
 +#include "ps2/phase7_capture.hpp"
 +#include "ps2/memory.hpp"
 +#include "ps2/system.hpp"
@@ -538,6 +990,7 @@
 +std::vector<std::uint8_t> g_entry_cpu, g_entry_ram, g_entry_spr;
 +std::map<std::uint64_t, std::uint64_t> g_counts;
 +std::map<std::uint32_t, std::uint32_t> g_captured_per_pc;
++std::map<std::uint32_t, std::uint64_t> g_partial_per_pc;
 +bool g_atexit_registered = false;
 +
 +// Minimal standalone SHA-256
@@ -659,8 +1112,10 @@
 +
 +void dump_counts_atexit() {
 +    const std::string &dir = capture_dir();
-+    if (dir.empty() || g_counts.empty()) return;
++    if (dir.empty() || (g_counts.empty() && g_partial_per_pc.empty())) return;
 +    std::filesystem::create_directories(dir);
++    std::ofstream meta(std::filesystem::path(dir) / "observed_end.tsv");
++    meta << "frame_end\t" << ps2::frame_count() << "\n";
 +    std::ofstream out(std::filesystem::path(dir) / "unit_entry_counts.tsv");
 +    out << "unit_hex\tentry\tcalls\n";
 +    for (const auto &[k, cnt] : g_counts) {
@@ -668,6 +1123,12 @@
 +        std::uint32_t en = static_cast<std::uint32_t>(k & 0xffffffffu);
 +        out << std::hex << u << "\t" << std::dec << en << "\t" << cnt << "\n";
 +    }
++    std::ofstream scope(std::filesystem::path(dir) / "capture_scope_counts.tsv");
++    scope << "pc_hex\tcompleted\tpartial_return_refused\n";
++    for (const auto &[pc, n] : g_partial_per_pc)
++        scope << std::hex << pc << "\t" << std::dec << g_captured_per_pc[pc] << "\t" << n << "\n";
++    for (const auto &[pc, n] : g_captured_per_pc)
++        if (!g_partial_per_pc.count(pc)) scope << std::hex << pc << "\t" << std::dec << n << "\t0\n";
 +}
 +
 +} // namespace
@@ -743,6 +1204,18 @@
 +    g_depth = 0;
 +    active = false;
 +
++    // An observational admission filter only: do not alter Cpu, budget, RAM,
++    // scratchpad, return target or scheduling to manufacture completion.
++    const char *require_return = std::getenv("PS2_CAPTURE_REQUIRE_RETURN");
++    if (require_return && std::strcmp(require_return, "1") == 0) {
++        ps2::Cpu before{};
++        std::memcpy(&before, g_entry_cpu.data(), sizeof before);
++        const auto saved_ra = before.r[31].w[0];
++        if ((saved_ra & 3u) != 0u || c.pc != saved_ra || c.r[29].d[0] != before.r[29].d[0]) {
++            ++g_partial_per_pc[pc];
++            return;
++        }
++    }
 +    const std::uint32_t idx = g_captured_per_pc[pc]++;
 +    std::filesystem::create_directories(capture_dir());
 +    char fname[64];
@@ -785,3 +1258,224 @@
 +}
 +
 +} // namespace ps2::capture
+--- /dev/null
++++ b/phase7_wrap_options.rsp
+@@ -0,0 +1,218 @@
++-Wl,--wrap=_ZN3gen9unit_0000ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0001ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0002ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0004ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0005ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0006ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0007ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0008ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0009ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_000AERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_000DERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_000EERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_000FERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0010ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0011ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0013ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0015ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0016ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0017ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_001BERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_001CERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_001FERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0021ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0022ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0023ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0024ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0026ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_002BERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_002CERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_002DERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_002EERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_002FERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0030ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0032ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0033ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0034ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0036ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0037ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0038ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0039ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_003AERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_003BERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_003CERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_003DERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_003EERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_003FERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0040ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0041ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0042ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0043ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0045ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0046ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0047ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0049ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_004AERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_004CERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_004DERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_004EERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_004FERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0052ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0053ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0054ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0055ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0056ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0057ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0058ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0059ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_005AERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_005BERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_005CERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_005DERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_005EERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_005FERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0060ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0062ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0063ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0064ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0065ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0066ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0068ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0069ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_006AERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_006BERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_006CERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_006EERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0070ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0071ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0072ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0073ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0074ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0075ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0076ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0077ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_007CERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_007DERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_007EERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_007FERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0080ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0081ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0082ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0084ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0085ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0086ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0087ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0088ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_008AERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_008BERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_008CERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_008DERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_008EERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0091ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0092ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0093ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0094ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0095ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0096ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0097ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0098ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0099ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_009BERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_009CERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_009DERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_009EERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_009FERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00A0ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00A1ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00A2ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00A3ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00A5ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00A6ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00A7ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00A8ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00A9ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00AAERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00ABERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00ACERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00ADERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00AFERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00B0ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00B2ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00B3ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00B4ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00B5ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00B6ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00B7ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00B8ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00B9ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00BAERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00BBERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00BCERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00BDERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00BEERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00BFERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00C0ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00C1ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00C2ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00C3ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00C4ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00C5ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00C6ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00C7ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00C8ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00C9ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00CBERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00CCERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00CDERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00CEERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00CFERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00D0ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00D1ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00D2ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00D3ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00D4ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00D5ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00D6ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00D7ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00D9ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00DAERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00DBERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00DCERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00DDERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00DEERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00E0ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00E1ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00E2ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00E3ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00E4ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00E5ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00E6ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00E7ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00E9ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00EAERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00ECERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00EFERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00F0ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00F2ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00F3ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00F4ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00F5ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00F6ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00F7ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00F9ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00FAERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00FBERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00FCERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00FDERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00FEERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_00FFERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0100ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0101ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0102ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0104ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0105ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0106ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0107ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_0108ERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_010AERN3ps23CpuEjj
++-Wl,--wrap=_ZN3gen9unit_010BERN3ps23CpuEjj

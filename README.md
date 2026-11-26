@@ -1,8 +1,8 @@
 # Mortal Kombat: Armageddon retail native port
 
-**Current playable R192 route:** The parent launchers/launch_r192_hooks.bat (also called by launch_ps2recomp.bat) calls the unchanged original external/forks/ps2-native-recomp/build/r192-hooks/out/launch_r192_hooks.bat and ps2run.exe (SHA-256 8ab43bda05e7a621b946883f3195a583f0c2455f0351bf8608282cd3e97b4617). Its linked base AOT code and all3569 precompiled EE cache DLLs remain available; every cached DLL was verified byte-identical to the preserved compiled package. EE/VU Live remain enabled for misses. The SAME original persistent card and quick-save directory in build/r192-hooks/game/disc are retained, with no card/save/executable/original-launcher modification or new game run. The separate compiled882302... package is preserved but is no longer the default route. AOT closure remains frozen, OPEN and not required for the native port. Native Phase6 continues on main in both existing repositories under the latest owner direction; admission/credit remain2 transformed/238 native until the existing gates pass. Final native-only acceptance remains OPEN.
+**Current playable R192 route:** The parent launchers/launch_r192_hooks.bat (also called by launch_ps2recomp.bat) calls the unchanged original external/forks/ps2-native-recomp/build/r192-hooks/out/launch_r192_hooks.bat and ps2run.exe (SHA-256 8ab43bda05e7a621b946883f3195a583f0c2455f0351bf8608282cd3e97b4617). Its linked base AOT code and all3569 precompiled EE cache DLLs remain available; every cached DLL was verified byte-identical to the preserved compiled package. EE/VU Live remain enabled for misses. The SAME original persistent card and quick-save directory in build/r192-hooks/game/disc are retained, with no protected card/save/executable/original-launcher modification; verification runs use disposable headless copies. The separate compiled882302... package is preserved but is no longer the default route. AOT closure remains frozen, OPEN and not required for the native port. Native Phase6 continues on main in both existing repositories under the latest owner direction; admission/credit remain2 transformed/238 native until the existing gates pass. Final native-only acceptance remains OPEN.
 
-**Current status (2026-11-25): Active playable recomp build & behavioral oracle verified (`r192-hooks`, `8AB43BDA...`); zero-emulation native-port acceptance remains OPEN.**
+**Current status (2026-11-26): Protected R192 remains the playable reference. The current Phase7 correction batch is tested component/capture work; ownership18, transformed2 and credited native238 remain unchanged. Full native-game acceptance is OPEN.**
 This project targets a native Windows port of retail *Mortal Kombat: Armageddon* (Sony PlayStation 2 `SLUS_214.10` and overlays).
 The target architecture uses AOT static C++ transformed to typed native memory and ABI for retail game logic, with hand-written platform boundaries and runtime services. Generated intermediate code still needs the memory/ABI transform; the measured tiers below distinguish it from credited native implementations. The Xbox image supports read-only library identification and measured PS2/Xbox capability comparisons. The owner decides the route. Xbox-derived algorithms are eligible only for renderer, viewport and HD presentation after comparison. GS packet decoding remains interim. Whole-game zero-emulation native acceptance remains **OPEN**.
 
@@ -13,11 +13,11 @@ The target architecture uses AOT static C++ transformed to typed native memory a
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`95623061`](https://github.com/nahshongraham97/ps2-native-recomp/commit/956230613ce965717b6f8f1524a825301dcaa036) (source and evidence checkpoint)
+**Verified Fork Commit**: [`fb814c76`](https://github.com/nahshongraham97/ps2-native-recomp/commit/fb814c76aa6223a7d248ca9ac2a36c5ed7aa2e5e) (source and evidence checkpoint)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
-- Bounded ownership of 15,669 callable entries · verified-renderware 7, verified-game 12, verified-other-library 0, inferred-renderware 140, inferred-game 130, inferred-other 0, unresolved 15,380.
-- Ownership evidence by kind (overlapping entries) · E1 7, E2 0, E3 26, E4 13, E5 165, E6 117, E7 1.
+- Bounded ownership of 15,669 callable entries · verified-renderware 6, verified-game 12, verified-other-library 0, inferred-renderware 141, inferred-game 130, inferred-other 0, unresolved 15,380.
+- Ownership evidence by kind (overlapping entries) · E1 6, E2 0, E3 26, E4 13, E5 165, E6 117, E7 1.
 - Native credit retains its published component evidence. This ownership pass awards zero native credit.
 - **Total PS2 Function Catalog**: **17,510** raw catalogue entries (`13,138` base `SLUS_214.10` + `4,372` dynamic overlays: `1` `GAMER.ovl`, `2,537` `MOVIER.ovl`, `1,834` `NETR.ovl`)
 - **In-Scope Retail Path**: **15,670** (`2,643` non-exec/library: `sdk-or-library` 2,011 + `pointer-scan-proven` 632; `12,789` open frontier) | **Excluded Online (`out-of-scope-stubbed`)**: **1,840**

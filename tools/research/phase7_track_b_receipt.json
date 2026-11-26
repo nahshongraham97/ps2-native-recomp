@@ -1,0 +1,337 @@
+{
+  "stage": "tested native component; no ownership or credit admission",
+  "source_head": "fb814c76aa6223a7d248ca9ac2a36c5ed7aa2e5e",
+  "full_receipt": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04.json",
+  "full_receipt_sha256": "e64b1be83200da1ff1fff22936e49f60fcee28040af40853c0485fb09dc90c0a",
+  "source": [
+    {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\phase7_input_native.hpp",
+      "sha256": "2fffa759f9eabe28dde48477bce0613d01eced8996842bcc2a2452bcc1eab9f8",
+      "size": 6408
+    },
+    {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\runtime\\include\\mka\\phase7_stub_native.hpp",
+      "sha256": "823b374bb026a0a23641e29e84841b193fb084a2300470ce4d4ad994a275546e",
+      "size": 14095
+    },
+    {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_phase7_input_differential.cpp",
+      "sha256": "7939c48484e01ff8402f9136ca36e2f4cb426c6db4cf3d7409f9b9e1acd6d66e",
+      "size": 8631
+    },
+    {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\test_phase7_stub_differential.cpp",
+      "sha256": "d041601ccd15aedb9795698406b94a84a05617619b606baeacd94c3ccd9cfab8",
+      "size": 7727
+    },
+    {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tests\\phase7_track_b_capture.hpp",
+      "sha256": "510f6e9670c183931fa28f4ff3706e9722605e24d19d7e2cbc0b2124404e6b88",
+      "size": 2948
+    },
+    {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\tools\\research\\verify_phase7_track_b.py",
+      "sha256": "ae711f82ac0e5c41d3f4adbfdf1c89871d45ae3c7fec4b1920c8934b0e8a73e9",
+      "size": 10569
+    }
+  ],
+  "binaries": [
+    {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input.exe",
+      "sha256": "881ef1642054c2f17bacd1e4f92d19a7e5961af5929c3febe5d432452b2423e7",
+      "size": 1581056
+    },
+    {
+      "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-stub.exe",
+      "sha256": "c1c51a5c2ba17c4eaaae4b03eedb857932f564f170f083beb00c00df42adf13a",
+      "size": 1591808
+    }
+  ],
+  "elf": {
+    "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\inputs\\SLUS_214.10",
+    "sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+    "size": 5562792
+  },
+  "listing": {
+    "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\research\\runs\\ghidra-function-coverage-20261118\\export-20261118-230132-1875-18160\\instructions.tsv",
+    "sha256": "4611757f817e6c4ace87bb2d1203bca9c5d8523c33e0ae3e086890ab4b5ce148",
+    "size": 64604034
+  },
+  "measurements": {
+    "input_source_derived_cases": 18,
+    "input_original_partial_slices": 5,
+    "input_original_prefix_stores_each": 6,
+    "input_completed_pilot": 1,
+    "input_completed_pilot_ram_stores": 9,
+    "particle_completed_direct_captures": 9,
+    "particle_refused_heap_callback_partial_slices": 5,
+    "particle_chunks": 12,
+    "particle_operation_dispatches_by_kind": {
+      "1": 12,
+      "2": 10,
+      "4": 1,
+      "5": 10,
+      "6": 4,
+      "17": 6,
+      "18": 4,
+      "19": 7
+    },
+    "particle_color_interpolations": 72,
+    "particle_color_clamps": 13,
+    "particle_animation_wraps": 60,
+    "particle_service_and_refusal_cases": 4
+  },
+  "verification_scope": [
+    "PS2CAP01 SHA-256 and checked section/store boundaries for every input.",
+    "Input original five: six-store prefix comparison followed by named 001EF2C0 service refusal; strict whole-function mode rejects these slices.",
+    "Input pilot: restored SP and PC/RA check, exact ordered RAM stores, full 32 MiB RAM excluding the 32-byte dead prologue stack, full scratch storage and FCR31.",
+    "Particle nine: restored SP and PC/RA check, exact ordered RAM stores, full 32 MiB RAM excluding the 496-byte dead prologue stack, full 16 KiB workspace and FCR31. Native memory copies replace MMIO transfers; console device write records are excluded.",
+    "Particle five: no native effects and named dynamic heap callback refusal; strict all-14 mode rejects. The independent native callback service has a synthetic ABI check and is never substituted into capture comparisons.",
+    "Both input and particle planted value/order mistakes exit 1. Strict completion passes for the ordinary-return input pilot and exits 1 for the original partial captures.",
+    "Caller-saved register residue and outward return-value ABI are not proved by these effect comparisons. No full CPU register equivalence is claimed.",
+    "This task launched no oracle, replay or game process and used no GUI or audio endpoint."
+  ],
+  "limits": [
+    "Input context resolver 001EF2C0 and dispatch body 00162C20 remain unadmitted. The original five synthetic captures establish only six-store prefixes. An ordinary-return capture receives a full effects comparison only when it needs neither unbound service.",
+    "Five dynamic callback captures end at callback|1 with only 17 prologue stores. They are partial slices, refused before native effects. Their callback bodies remain unadmitted.",
+    "Direct 002E60E0 supports captured field kinds 1, 2, 4, 5, 6, 17, 18 and 19. Other kinds and the secondary texture service fail by name.",
+    "At captured local caller 002E9D18, the remaining body does not read v0 before other calls or return. An outward return-value ABI is not established. Helper residue in v0 is neither compared nor fabricated.",
+    "No connected native game run or ownership admission is claimed. Ownership remains unresolved and published credit remains 2 transformed / 238 native."
+  ],
+  "historical_claims_preserved": [
+    {
+      "claim": "phase7_stub_native.hpp at fb814c76: a0==0 -> no guest stores,v0==3; abort active emitters",
+      "disposition": "withdrawn: first object+76 load is unconditional; no null a0 guard. 3 was incidental helper residue in some active calls."
+    },
+    {
+      "claim": "stub_family_002e6180, 0 hits in six states; suggested standalone emitter",
+      "disposition": "bounded superseding proof: observed original continuation within2E60E0. No standalone catalogue entry; no universal absence-of-interior-entry inference."
+    },
+    {
+      "claim": "five active synthetic00162E70 captures and fourteen active002E60E0 captures",
+      "disposition": "captures are real but five input and five dynamic-stub files end in preemption/unwind rather than ordinary return; excluded from whole-function pass counts."
+    }
+  ],
+  "source_semantics": [
+    "Input 00162E70 compares full 64-bit action values 12 through 15 to select four 30-entry journals. ADDIU wraps at 32 bits, then SLTI compares the sign-extended result. Delay-slot stores retain the increment before threshold reset. The canonical argument survives the context call. Context storage reloads the live journal cursor after a reentrant service. The five-entry recent history and optional 00162C20 dispatch follow.",
+    "Particle 002E60E0 chunks at 32, copies native workspace qwords and applies native arithmetic to typed retail field-operation descriptors. This switch processes retail data; it does not interpret MIPS instructions or dispatch guest code. Reused ps2/fpu.hpp supplies scalar numerical primitives; the new runtime uses no CPU/register object.",
+    "002E60E0 has 14 exported ranges, 822 listed words and 13 verified zero NOP gap words across its 835-word physical span. The full receipt records each range, gap, word and ELF mapping.",
+    "002E6180 is the JALR return continuation established from original words 0180F809, 01825821, 10000307 and AE620000 and their caller context. Catalogue absence supports only this bounded finding."
+  ],
+  "prior_attempts": {
+    "attempt01": "preserved preliminary source/test receipt",
+    "attempt02": "preserved preliminary receipt; superseded by final immutable-source hash check",
+    "attempt03": "preserved valid pre-pilot component receipt; final04adds completedpilot full-state comparison"
+  },
+  "commands": [
+    {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-O2",
+        "-Iruntime/include",
+        "-Itests",
+        "tests/test_phase7_input_differential.cpp",
+        "-lbcrypt",
+        "-static-libgcc",
+        "-static-libstdc++",
+        "-o",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input.exe"
+      ],
+      "returncode": 0,
+      "expected": 0,
+      "log": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input-compile.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\syn_pad_out"
+      ],
+      "returncode": 0,
+      "expected": 0,
+      "log": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input-normal.log",
+        "sha256": "af78edc43c589f386b8d27884687f7fed7da43980409acdac27e66a042b5af6d",
+        "size": 744
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\syn_pad_out",
+        "--planted-store"
+      ],
+      "returncode": 1,
+      "expected": 1,
+      "log": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input--planted-store.log",
+        "sha256": "4b162ab5527a90a7467ae6dca09ddc4e733192b01b3f4a435af41e3a020ffe88",
+        "size": 217
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\syn_pad_out",
+        "--planted-order"
+      ],
+      "returncode": 1,
+      "expected": 1,
+      "log": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input--planted-order.log",
+        "sha256": "cfaf8e54d025e7e02015474c773784fb3353be8017deba08c6e48c4f7bea4e4e",
+        "size": 221
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\syn_pad_out",
+        "--require-complete"
+      ],
+      "returncode": 1,
+      "expected": 1,
+      "log": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input--require-complete.log",
+        "sha256": "af78edc43c589f386b8d27884687f7fed7da43980409acdac27e66a042b5af6d",
+        "size": 744
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\dependencies\\compiler\\llvm-mingw-20261006-ucrt-x86_64\\bin\\clang++.exe",
+        "-std=c++20",
+        "-O2",
+        "-Iruntime/include",
+        "-Itests",
+        "tests/test_phase7_stub_differential.cpp",
+        "-lbcrypt",
+        "-static-libgcc",
+        "-static-libstdc++",
+        "-o",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-stub.exe"
+      ],
+      "returncode": 0,
+      "expected": 0,
+      "log": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-stub-compile.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-stub.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\captures_stub_2e6180"
+      ],
+      "returncode": 0,
+      "expected": 0,
+      "log": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-stub-normal.log",
+        "sha256": "9bcee01bfb33f020790913b3f73633f5acf5086a98c9e9b7fa7f4991aa26c41b",
+        "size": 690
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-stub.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\captures_stub_2e6180",
+        "--planted-store"
+      ],
+      "returncode": 1,
+      "expected": 1,
+      "log": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-stub--planted-store.log",
+        "sha256": "45122c6efd879b5e9d175be15de208c5db1a978a55b56742359acbdcc3c9406a",
+        "size": 194
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-stub.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\captures_stub_2e6180",
+        "--planted-order"
+      ],
+      "returncode": 1,
+      "expected": 1,
+      "log": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-stub--planted-order.log",
+        "sha256": "5101a6587a9ca5386eb2622deec91c51fd8bbcb44f376dcf53810ce143b80b58",
+        "size": 254
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-stub.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\captures_stub_2e6180",
+        "--require-all"
+      ],
+      "returncode": 1,
+      "expected": 1,
+      "log": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-stub--require-all.log",
+        "sha256": "9bcee01bfb33f020790913b3f73633f5acf5086a98c9e9b7fa7f4991aa26c41b",
+        "size": 690
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\phase7-full-replay-pilot-01\\case_00"
+      ],
+      "returncode": 0,
+      "expected": 0,
+      "log": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input-completed-normal.log",
+        "sha256": "1fedb8dd712e99da4f5e15a3e422792aaa0f59d638e03832c838564b3fcc846a",
+        "size": 219
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\phase7-full-replay-pilot-01\\case_00",
+        "--require-complete"
+      ],
+      "returncode": 0,
+      "expected": 0,
+      "log": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input-completed-required.log",
+        "sha256": "1fedb8dd712e99da4f5e15a3e422792aaa0f59d638e03832c838564b3fcc846a",
+        "size": 219
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\phase7-full-replay-pilot-01\\case_00",
+        "--planted-store"
+      ],
+      "returncode": 1,
+      "expected": 1,
+      "log": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input-completed--planted-store.log",
+        "sha256": "839e2619350a2809f88bb6d9dd7b92701cb697e2283d51aa9b9cb8519f4d6490",
+        "size": 243
+      }
+    },
+    {
+      "argv": [
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input.exe",
+        "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\phase7-full-replay-pilot-01\\case_00",
+        "--planted-order"
+      ],
+      "returncode": 1,
+      "expected": 1,
+      "log": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\track_b_component_attempt04-input-completed--planted-order.log",
+        "sha256": "831ab28e95b67d06a4579330cf8edbb439aff41d37d3005d1f13c24c600dfc93",
+        "size": 247
+      }
+    }
+  ]
+}
