@@ -1,6 +1,6 @@
 # Retail Armageddon native-port execution contract
 
-**Current playable R192 route:** The parent launchers/launch_r192_hooks.bat (also called by launch_ps2recomp.bat) calls the unchanged original external/forks/ps2-native-recomp/build/r192-hooks/out/launch_r192_hooks.bat and ps2run.exe (SHA-256 8ab43bda05e7a621b946883f3195a583f0c2455f0351bf8608282cd3e97b4617). Its linked base AOT code and all3569 precompiled EE cache DLLs remain available; every cached DLL was verified byte-identical to the preserved compiled package. EE/VU Live remain enabled for misses. The SAME original persistent card and quick-save directory in build/r192-hooks/game/disc are retained, with no card/save/executable/original-launcher modification or new game run. The separate compiled882302... package is preserved but is no longer the default route. AOT closure remains frozen, OPEN and not required for the native port. Native Phase6 now works on phase6-native-memory-abi, not main; admission/credit remain2 transformed/238 native until the existing gates pass. Final native-only acceptance remains OPEN.
+**Current playable R192 route:** The parent launchers/launch_r192_hooks.bat (also called by launch_ps2recomp.bat) calls the unchanged original external/forks/ps2-native-recomp/build/r192-hooks/out/launch_r192_hooks.bat and ps2run.exe (SHA-256 8ab43bda05e7a621b946883f3195a583f0c2455f0351bf8608282cd3e97b4617). Its linked base AOT code and all3569 precompiled EE cache DLLs remain available; every cached DLL was verified byte-identical to the preserved compiled package. EE/VU Live remain enabled for misses. The SAME original persistent card and quick-save directory in build/r192-hooks/game/disc are retained, with no card/save/executable/original-launcher modification or new game run. The separate compiled882302... package is preserved but is no longer the default route. AOT closure remains frozen, OPEN and not required for the native port. Native Phase6 continues on main in both existing repositories under the latest owner direction; admission/credit remain2 transformed/238 native until the existing gates pass. Final native-only acceptance remains OPEN.
 
 This governs the **retail game** in `external/forks/ps2-native-recomp/`.
 It describes acceptance, not current success. No agent may call a build
@@ -17,8 +17,9 @@ cannot conceal a guest-memory shim. Credit only authenticated generated
 functions with compiled differential evidence; keep prototype and production
 integration status separate.
 
-The owner's Phase 6 instruction separates two intermediate transformations on
-sibling branches and disposable copies. Stage A replaces the register ABI with
+The owner's Phase 6 instruction separates two intermediate transformations.
+The latest owner direction places this native work on main in both existing
+repositories, with disposable experimental outputs. Stage A replaces the register ABI with
 proved typed C++ parameters and returns; typed guest-memory accessors may remain
 in that intermediate experiment. Stage B replaces those accesses with native
 structures only after layout, aliasing and lifetime proof. Keep the AOT-only
@@ -28,7 +29,7 @@ rules. Capability-cohort results earn no transformed or native credit.
 
 Phase 5S.9 measures a seeded leaf cohort from the full in-scope catalogue
 separately from ownership-admitted functions. Preserve failures and report
-whole-function passes by size and instruction mix. The owner's2026-11-26 Phase6 N1–N5 authorizes one bounded memory/ABI/control attempt from that0/30 result on a sibling branch. Measure the initial memory stage on an independent held-out cohort before enabling later control stages; subsequent stages require a measured held-out whole-function pass. If N1–N3 still yield zero, stop and report whether to abandon the general transformer. Keep the camera as an independent native subsystem check; diagnostic changes at the same instruction are not passes.
+whole-function passes by size and instruction mix. The owner's2026-11-26 Phase6 N1–N5 authorizes one bounded memory/ABI/control attempt from that0/30 result; the initial isolated-branch work is now integrated into main under the latest owner direction. Measure the initial memory stage on an independent held-out cohort before enabling later control stages; subsequent stages require a measured held-out whole-function pass. If N1–N3 still yield zero, stop and report whether to abandon the general transformer. Keep the camera as an independent native subsystem check; diagnostic changes at the same instruction are not passes.
 
 The product is one genuine native Armageddon port in the existing repositories,
 not preservation of a PS2 runtime because of an upstream/fork name. Recover

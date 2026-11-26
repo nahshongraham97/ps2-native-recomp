@@ -1,6 +1,6 @@
 # Agent instructions — active retail recomp fork
 
-**Current playable R192 route:** The parent launchers/launch_r192_hooks.bat (also called by launch_ps2recomp.bat) calls the unchanged original external/forks/ps2-native-recomp/build/r192-hooks/out/launch_r192_hooks.bat and ps2run.exe (SHA-256 8ab43bda05e7a621b946883f3195a583f0c2455f0351bf8608282cd3e97b4617). Its linked base AOT code and all3569 precompiled EE cache DLLs remain available; every cached DLL was verified byte-identical to the preserved compiled package. EE/VU Live remain enabled for misses. The SAME original persistent card and quick-save directory in build/r192-hooks/game/disc are retained, with no card/save/executable/original-launcher modification or new game run. The separate compiled882302... package is preserved but is no longer the default route. AOT closure remains frozen, OPEN and not required for the native port. Native Phase6 now works on phase6-native-memory-abi, not main; admission/credit remain2 transformed/238 native until the existing gates pass. Final native-only acceptance remains OPEN.
+**Current playable R192 route:** The parent launchers/launch_r192_hooks.bat (also called by launch_ps2recomp.bat) calls the unchanged original external/forks/ps2-native-recomp/build/r192-hooks/out/launch_r192_hooks.bat and ps2run.exe (SHA-256 8ab43bda05e7a621b946883f3195a583f0c2455f0351bf8608282cd3e97b4617). Its linked base AOT code and all3569 precompiled EE cache DLLs remain available; every cached DLL was verified byte-identical to the preserved compiled package. EE/VU Live remain enabled for misses. The SAME original persistent card and quick-save directory in build/r192-hooks/game/disc are retained, with no card/save/executable/original-launcher modification or new game run. The separate compiled882302... package is preserved but is no longer the default route. AOT closure remains frozen, OPEN and not required for the native port. Native Phase6 continues on main in both existing repositories under the latest owner direction; admission/credit remain2 transformed/238 native until the existing gates pass. Final native-only acceptance remains OPEN.
 
 [`PORT_STATUS.md`](PORT_STATUS.md) is the sole live status;
 [`ROADMAP.md`](ROADMAP.md) is the implementation order;
@@ -9,8 +9,8 @@ whole-game non-regression rule. Read those before editing this fork. The
 old fork guidance is preserved at
 `research/history/native-port-docs-2026-11-18/AGENTS.md` as history only.
 
-The owner's Phase 6 permits a separate Stage A experiment on sibling branches
-and disposable copies: proved typed parameters/returns with typed guest-memory
+The owner's latest direction keeps native Phase6 work on main in both existing
+repositories. Stage A uses disposable outputs: proved typed parameters/returns with typed guest-memory
 accessors remaining temporarily. Stage B removes that memory model through
 proved native structures. This intermediate permission does not alter accepted
 architecture, ownership admission or credit rules. The 5S.9 full-catalogue leaf

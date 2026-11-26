@@ -256860,12 +256860,23 @@
       "scope": "All12 new sources join measured receipt hashes. Parent/native-worktree docs and14ledger artifacts match; protected original R192 and preserved compiled PE, inventory and main/frozen refs match. All subagent tasks completed. No card/save write, game launch or closure expansion."
     },
     "publication": {
-      "branch": "phase6-native-memory-abi",
+      "branch": "main",
       "receipt": "build/oracle-telemetry/phase6-native-publication-01/SOURCE_PUBLICATION.json",
-      "policy": "Exact measured sources are published on this native branch; main and frozen closure refs remain unchanged. The publication receipt joins tracked blob bytes to the pushed source commit without self-referential commit IDs in this record."
+      "policy": "The exact measured sources were originally published on the native branch and are now integrated into main by fast-forward under the latest owner direction. The original publication receipt is historical; owner_branch_correction_20261126 records main integration. No source rewrite or credit change.",
+      "original_branch": "phase6-native-memory-abi"
     },
     "contradictions_and_failed_attempts": [
       "TASK_BOARD current-work wording now marks the old0/30 stop as historical and the no-Live compiled package as a separate preserved experiment. The selected original R192 route retains Live. Historical numbers and package identities are unchanged."
-    ]
+    ],
+    "owner_branch_correction_20261126": {
+      "direction": "Continue native port work on main in both existing repositories; supersedes the prior separate-branch instruction.",
+      "integrated_commits": {
+        "fork": "07414a7085381a4b1666f2ad09a9260085ea3ae3",
+        "parent": "6f506f7b1008315f34b9b1655a91cc4b18e84e7b"
+      },
+      "method": "Fast-forward main; preserve published commit history and the frozen R192 closure branch. Remove merged temporary refs only after publication and ancestry verification; retain private evidence worktree detached.",
+      "scope": "Source placement and current instructions only. Twelve measured code/test/tool source hashes, existing credit2/238 and all admission gates remain unchanged. No protected runtime/card/save or inventory write.",
+      "receipt": "external/forks/ps2-native-recomp-phase6/build/oracle-telemetry/phase6-main-integration-01/RESULT.json (parent-relative private evidence)"
+    }
   }
 }
