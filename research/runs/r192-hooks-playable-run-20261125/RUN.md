@@ -1273,6 +1273,70 @@ is introduced. Full native-foundation code/baseline remains unchanged. The full
 lifetime work continue from original sources. Normal launcher/build, original
 R192 executable, original inputs, persistent card, saves and settings are intact.
 
+### Complete recorded merged replay and wider typed resource model
+
+The merged disposable candidate a221251e7e2a8806095ba14f88c5d3cffe2ad16c834b51942dceb3d7093dfd53
+links the measured typed EE objects, source-derived static EE/VU archive and
+strict original IOP compiler/loader/service42. Both targeted90-frame cases pass.
+Its second full recording run completes 181224 -> 204009:22,785 frames, all1,519
+checkpoints equal, zero EE/VU misses, no compiler/window/audio or replay-difference
+diagnostics, exit0 and no input changes. Elapsed headless time is650.5017608s
+under the1200s limit. The earlier600s refusal is preserved. Different candidates
+and concurrent compiler load prevent treating elapsed time as headed FPS proof.
+
+The long recording reports ZERO preferred typed-family entries/resumes/completions
+and15,421 unadmitted invocations using existing compiled EE bodies. That counter
+counts invocations, not distinct code families. The earlier80225-state90 test
+is the evidence for50 actual preferred typed calls; the full recording does not
+add typed-call coverage. It does exercise the merged IOP/static-AOT connection.
+No normal executable/launcher is replaced by this test build.
+
+The next isolated native resource pipeline now passes276 whole original-builder-
+generated programs and4,968 comparisons across three numeric/prior-flag domains.
+These compare all RAM, ordered address/width/value/write order, accepted return,
+scalar FCR/accumulator, full VU through OFFLINE source-assigned bindings and exact
+no-yield budget. Cases include all20 tag identities/five classes, all120 ordered
+ID pairs with/without one filter, class2 destinations, reversed scalar bindings,
+all-five-callback compositions,13 updates, reversed attributes and an early17
+followed by changes to its source. The latter proves remap reads the final source
+value. All4,968 insufficient-budget cases refuse BEFORE writes;11 invalid-domain
+controls and six semantic/output/VU/budget plants reject.
+
+The source-derived cost is P+4+N*(B+2)+A*C, with coefficients from original loads,
+stores, budgeted PREFs, prelude/callback operations, filter branches/delay slots
+and accepted remap/stores. The earlier16+18N+16A is one configuration. This core
+has native spans/logical resources, no Cpu/PC/register bank or opcode execution.
+It is still bounded: unique tags, two streams, nonnegative nonwrapping signed16
+offsets/alignment, aligned64, one filter, one tag257 remap and proved allocation
+capacity. Full-Cpu mapping, true continuation/scheduler/lifetime and actual wider
+runtime admission remain open; the installed narrow adapter is unchanged.
+
+The IOP Register6/Release7 ownership MODEL also passes80 complete original-method
+comparisons (20 cases x two LOADCORE variants x actual interpreter/AOT), with288
+ordered metadata writes. All eight compiled semantic mutants reject. Original
+Register6's584 bytes and Release7's192 bytes are pinned; release returns-213 for
+not-found and-215 for in-use, unlinks the exact table and restores canonicalmagic.
+The typed model owns Table/Client lifetimes and callable identities; guest record
+projection is test-only. Existing/pending clients are explicit seeded conditions.
+This does NOT admit Link/UnLink/unload, IRQ atomicity, arbitrary table pointers,
+code-owner ABI, metadata permissions or a runtime install. The next work proves
+exact client/header/stub transitions and prevents executing metadata as code.
+No broad .text exclusion is permitted.
+
+| Evidence under R192 build/oracle-telemetry | SHA-256 |
+|---|---|
+| r192-merged-reference-full-replay-02/RESULT.json | f38ae697298660a97d32179b96a04b1afa9cef47b8b80b1c4aed6aa619d7f7bd |
+| emitted-resource-pipeline-03/RESULT.json | 6a22a60c45bd46e78b00a737f519015809de187055fb2aac00bd8025099769ab |
+| r192-iop-registry-model-02/RESULT.json | 60d6aba576ee01fbab57317372afdecfaaf313c0749901dd584012719fc6818d |
+| r192-iop-registry-model-freeze-01/RESULT.json | 539b9a515055d5612c5ad719afab5f63949d7b6fe72ad1fc5acfcd33a268d51b |
+
+The merged build receipt is build/r192-merged-compiled-reference-01/BUILD.json,
+SHA7324166f0551d1feef7bdb0ad0dcdd82a099ec66a3c380e6aebfe033bb59b7f9.
+These authored source files stay on the R192 branch; main receives the evidence
+record only. Native foundation/baseline and2/238 credit are unchanged. All original
+executables, inputs, cards, saves, launchers and model settings remain intact.
+Full VU native compilation and unseen-producer/lifetime closure continue.
+
 ### Verification and continuing work
 
 The full native baseline was freshly rerun: 59 targets, 65 variants and 16
