@@ -14,6 +14,8 @@ EXPECTED_SHA = "624ddc6f40f31d001aa72a3b386aa2ce2754f08918b32646261f254348ac5906
 START = 0x001A7510
 END = 0x001A7578
 REQUIRED_CALLER = 0x001A644C
+EXPECTED_CALLER_COUNT = 53
+XBOX_XBE_SHA256 = "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393"
 XBOX_CAM_SET_VIEW_WINDOW = 0x002BB870
 XBOX_CAM_CALL_SITE = 0x002BB8AB
 XBOX_FRAME_UPDATE_OBJECTS = 0x002BF2C0
@@ -83,7 +85,7 @@ def verify_xbox_semantic(xbe_reader) -> dict:
     }
 
 
-def verify_e1(original, listing_rows: dict[int, bytes], elf: bytes | None = None, xbe_reader=None) -> dict:
+def verify_e1(original, listing_rows: dict[int, bytes], tsv_callers: list[int] | None = None, xbe_reader=None) -> dict:
     body = original(START, END - START)
     actual_sha = hashlib.sha256(body).hexdigest()
     if actual_sha != EXPECTED_SHA:
@@ -97,9 +99,11 @@ def verify_e1(original, listing_rows: dict[int, bytes], elf: bytes | None = None
     caller_word = struct.unpack("<I", original(REQUIRED_CALLER, 4))[0]
     if caller_word != jal_target:
         raise ValueError(f"missing_required_caller_001a644c:{caller_word:08x}")
-    computed_callers = count_jal_callers(elf, START) if elf is not None else []
-    if elf is not None and REQUIRED_CALLER not in computed_callers:
-        raise ValueError("required_caller_not_in_elf_scan")
+    if tsv_callers is not None:
+        if len(tsv_callers) != EXPECTED_CALLER_COUNT:
+            raise ValueError(f"caller_count_mismatch:{len(tsv_callers)}_vs_{EXPECTED_CALLER_COUNT}")
+        if REQUIRED_CALLER not in tsv_callers:
+            raise ValueError("required_caller_not_in_instructions_tsv_scan")
     xbox_sem = verify_xbox_semantic(xbe_reader) if xbe_reader is not None else None
     return {
         "address": "001a7510",
@@ -107,8 +111,9 @@ def verify_e1(original, listing_rows: dict[int, bytes], elf: bytes | None = None
         "instruction_count": (END - START) // 4,
         "body_sha256": actual_sha,
         "required_caller": f"{REQUIRED_CALLER:08x}",
-        "computed_jal_caller_count": len(computed_callers),
-        "xbox_semantic_e1": xbox_sem,
+        "asserted_instructions_tsv_caller_count": len(tsv_callers) if tsv_callers is not None else None,
+        "corroboration_level": "xbox_corroborated",
+        "xbox_corroboration": xbox_sem,
     }
 
 
@@ -121,17 +126,24 @@ def main() -> int:
     original = reader(elf)
     listing_path = P / "research/runs/ghidra-function-coverage-20261118/export-20261118-230132-1875-18160/instructions.tsv"
     listing_rows = {}
+    jal_bytes_hex = struct.pack("<I", 0x0C000000 | (START >> 2)).hex()
+    tsv_callers: list[int] = []
     with listing_path.open(encoding="utf-8-sig", newline="") as f:
         for row in csv.DictReader(f, delimiter="\t"):
             pc = int(row["address"], 16)
             if START <= pc < END:
                 listing_rows[pc] = bytes.fromhex(row["bytes"])
+            if row["bytes"].lower() == jal_bytes_hex:
+                tsv_callers.append(pc)
 
     xbe_path = P / "private-inputs/xbox-mka-20261121/default.xbe"
     xbe_bytes = xbe_path.read_bytes()
+    actual_xbe_sha = hashlib.sha256(xbe_bytes).hexdigest()
+    if actual_xbe_sha != XBOX_XBE_SHA256:
+        raise ValueError(f"xbox_xbe_sha256_mismatch:{actual_xbe_sha}")
     xbe_reader = lambda va, sz: read_xbe(xbe_bytes, va, sz)
 
-    positive = verify_e1(original, listing_rows, elf=elf, xbe_reader=xbe_reader)
+    positive = verify_e1(original, listing_rows, tsv_callers=tsv_callers, xbe_reader=xbe_reader)
 
     # Planted mutation 1: corrupt body word at 0x001a7510
     def mutated_body(va, size):
@@ -161,7 +173,7 @@ def main() -> int:
         ("planted_xbox_semantic_mutation", original, mutated_xbe),
     ):
         try:
-            verify_e1(fn, listing_rows, elf=elf, xbe_reader=xfn)
+            verify_e1(fn, listing_rows, tsv_callers=tsv_callers, xbe_reader=xfn)
         except ValueError as e:
             mutations.append({"mutation": name, "status": "REJECTED", "reason": str(e)})
         else:

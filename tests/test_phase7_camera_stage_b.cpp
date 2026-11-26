@@ -77,6 +77,10 @@ int main(int argc, char **argv) {
     if (files.empty()) return 2;
 
     unsigned cam_tested = 0, frame_tested = 0, dirty_tested = 0;
+    unsigned frame_clean_root = 0, frame_dirty_root = 0;
+    unsigned frame_empty_list = 0, frame_populated_list = 0;
+    unsigned cam_parent_null = 0, cam_parent_clean_root = 0, cam_parent_dirty_root = 0;
+    unsigned cam_parent_empty_list = 0, cam_parent_populated_list = 0;
     std::set<std::tuple<std::uint32_t, std::uint32_t, bool>> cam_shapes;
     std::set<std::tuple<std::uint8_t, std::uint8_t>> frame_shapes;
 
@@ -145,6 +149,9 @@ int main(int argc, char **argv) {
             const std::uint32_t exit_root_prev = rd32(cap.exit_ram, root_addr + 12u);
             const std::uint32_t exit_head_prev = rd32(cap.exit_ram, head_addr + 4u);
             if ((entry_root_flags & 3u) == 0u) {
+                ++frame_clean_root;
+                if (empty_list) ++frame_empty_list;
+                else ++frame_populated_list;
                 if (actual_root->dirty_next != initial_head || exit_root_next != head_addr) {
                     std::fprintf(stderr, "FAIL StageB 001A7510 dirty_next / root+8 mismatch in %s\n", p.filename().string().c_str());
                     return 1;
@@ -162,6 +169,7 @@ int main(int argc, char **argv) {
                     return 1;
                 }
             } else {
+                ++frame_dirty_root;
                 if (actual_root->dirty_next != nullptr || exit_root_next != rd32(cap.entry_ram, root_addr + 8u) ||
                     actual_root->dirty_prev != nullptr || exit_root_prev != rd32(cap.entry_ram, root_addr + 12u) ||
                     initial_head->dirty_prev != nullptr || exit_head_prev != rd32(cap.entry_ram, head_addr + 4u) ||
@@ -229,6 +237,9 @@ int main(int argc, char **argv) {
                 const std::uint32_t exit_root_prev = rd32(cap.exit_ram, root_addr + 12u);
                 const std::uint32_t exit_head_prev = rd32(cap.exit_ram, head_addr + 4u);
                 if ((entry_parent_root_flags & 3u) == 0u) {
+                    ++cam_parent_clean_root;
+                    if (head_addr == 0x0069F34Cu) ++cam_parent_empty_list;
+                    else ++cam_parent_populated_list;
                     if (p_root->dirty_next != initial_head || exit_root_next != head_addr ||
                         p_root->dirty_prev != &dirty_list.head || exit_root_prev != 0x0069F34Cu ||
                         initial_head->dirty_prev != &p_root->dirty_next || exit_head_prev != root_addr + 8u ||
@@ -237,6 +248,7 @@ int main(int argc, char **argv) {
                         return 1;
                     }
                 } else {
+                    ++cam_parent_dirty_root;
                     if (p_root->dirty_next != nullptr || exit_root_next != rd32(cap.entry_ram, root_addr + 8u) ||
                         p_root->dirty_prev != nullptr || exit_root_prev != rd32(cap.entry_ram, root_addr + 12u) ||
                         initial_head->dirty_prev != nullptr || exit_head_prev != rd32(cap.entry_ram, head_addr + 4u) ||
@@ -245,12 +257,24 @@ int main(int argc, char **argv) {
                         return 1;
                     }
                 }
+            } else {
+                ++cam_parent_null;
             }
             ++cam_tested;
         }
     }
 
-    std::printf("PASS_PHASE7_CAMERA_STAGE_B cam_001a64a0=%u cam_shapes=%zu frame_001a7510=%u frame_shapes=%zu dirty_001a70f0=%u\n",
-                cam_tested, cam_shapes.size(), frame_tested, frame_shapes.size(), dirty_tested);
+    std::printf(
+        "PASS_PHASE7_CAMERA_STAGE_B cam_001a64a0=%u cam_shapes=%zu "
+        "(parent_clean=%u parent_dirty=%u parent_null=%u parent_empty_list=%u parent_populated_list=%u) "
+        "frame_001a7510=%u frame_shapes=%zu "
+        "(clean_root=%u dirty_root=%u empty_list=%u populated_list=%u) "
+        "dirty_001a70f0=%u\n",
+        cam_tested, cam_shapes.size(),
+        cam_parent_clean_root, cam_parent_dirty_root, cam_parent_null,
+        cam_parent_empty_list, cam_parent_populated_list,
+        frame_tested, frame_shapes.size(),
+        frame_clean_root, frame_dirty_root, frame_empty_list, frame_populated_list,
+        dirty_tested);
     return 0;
 }

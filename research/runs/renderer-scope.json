@@ -258221,15 +258221,17 @@
       "standalone_clang": "clang++ -std=c++20 -O2 -static -I runtime/include -I runtime/src tests/test_phase7_camera_stage_b.cpp -o build/test_phase7_camera_stage_b.exe"
     },
     "ownership_001a7510": {
-      "promoted_to": "verified-renderware",
-      "evidence": "E1|E5",
+      "status": "xbox-corroborated (inferred-renderware in functions.csv; not RenderWare SDK-source verified)",
+      "evidence": "E5|Xbox-corroborated",
       "body_sha256": "624ddc6f40f31d001aa72a3b386aa2ce2754f08918b32646261f254348ac5906",
       "required_caller": "001a644c",
-      "computed_jal_callers": 53,
-      "xbox_semantic_e1": {
+      "asserted_instructions_tsv_callers": 53,
+      "xbox_corroboration": {
+        "xbox_xbe_sha256": "78f99fca447fddc5c5116c09d27e6f1c04af8572dace94f559966588c6f5e393",
         "xbox_caller": "002bb870",
         "xbox_call_site": "002bb8ab",
         "xbox_callee": "002bf2c0",
+        "xbox_callee_sha256": "643f35910c84b9fb0a25d980ab29af66347efc90c7192134bd3bb705f5b1ba50",
         "dirty_list_head": "008353fc",
         "shared_offsets_verified": ["+0xa0 root", "+3 private_flags", "+8 dirty_next", "+0xc dirty_prev", "+4 head_prev"]
       },
@@ -258309,6 +258311,59 @@
       "001a6f40",
       "001a6fd0"
     ],
+    "full_61_state_sweep_and_track_b_a": {
+      "sweep_61": {
+        "total_states": 61,
+        "valid_states": 58,
+        "truncated_states": ["s00 f017793", "s01 f020277", "s02 f028432"],
+        "001a64a0_calls": 290,
+        "001a64a0_states_hit": "58/58",
+        "001a70f0_calls": 32512,
+        "001a70f0_states_hit": "58/58",
+        "001a7510_calls": 7099,
+        "001a7510_states_hit": "58/58",
+        "remaining_15_unreached": "0/58"
+      },
+      "multi_state_001a70f0_stage_b": {
+        "states": ["s05", "s15", "s25", "s35", "s45", "s55"],
+        "cam_001a64a0": 15,
+        "frame_001a7510": 30,
+        "frame_branches": {"clean_root": 12, "dirty_root": 18, "empty_list": 6, "populated_list": 6},
+        "dirty_001a70f0": 30
+      },
+      "production_camera_integration": {
+        "file": "runtime/src/native/retail_renderer_cameras.cpp",
+        "wired": "NativeRetailRendererCameraModule::set_view_window -> mka::phase7::camera_set_view_window_stage_b",
+        "run_check_cameras": "PASS 15/15"
+      },
+      "input_subsystem_001637d0": {
+        "header": "runtime/include/mka/phase7_input_native.hpp",
+        "test": "tests/test_phase7_input_differential.cpp",
+        "captures_passed": 10,
+        "states": 6,
+        "planted_errors_rejected": ["--planted-slot-mask", "--planted-store"]
+      },
+      "fighter_subsystem_00194370": {
+        "header": "runtime/include/mka/phase7_fighter_native.hpp",
+        "test": "tests/test_phase7_fighter_differential.cpp",
+        "captures_passed": 30,
+        "states": 6,
+        "planted_errors_rejected": ["--planted-return"]
+      },
+      "stub_family_002e6180": {
+        "002e6180_hits_in_6_states": 0,
+        "002e60e0_captures_observed": 14,
+        "status": "OPEN (002e60e0 active 696-store path not yet reimplemented)"
+      },
+      "track_a_phase6_remeasurement": {
+        "original30_established": "0/30 (0 raw/unwind matches across 61 saved states)",
+        "heldout30_established": "0/30 (0 raw/unwind matches across 61 saved states)",
+        "admitted18_hit_in_sweep_61": "001a64a0 (290 calls across 58/58 valid states; passes Stage A and Stage B)",
+        "refused_3_loop_bounds": "007e0918, 001aa150, 002e8730 have memory/callee-dependent loop trip bounds unprovable from instructions alone",
+        "return_obligations_remaining": 42,
+        "decision": "Uphold Stop Rule: prioritize Track B evidence-guided native subsystem reimplementation over general leaf transformation"
+      }
+    },
     "credit": "2 transformed / 238 native (unchanged)"
   }
 }

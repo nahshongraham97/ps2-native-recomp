@@ -1,4 +1,5 @@
 #include "mka/retail_renderer_cameras.hpp"
+#include "mka/phase7_camera_native.hpp"
 #include "mka/retail_game_session.hpp"
 #ifdef _WIN32
 #ifndef WIN32_LEAN_AND_MEAN
@@ -146,12 +147,18 @@ bool NativeRetailRendererCameraModule::set_view_window(const NativeRetailRendere
  const auto lease=admit(f);if(!lease)return false;const auto r=record(h,f);if(!r)return false;
  // Base records have no attached frame. The original nonnull-frame update
  // is a separate required game producer; it is not silently skipped here.
- const auto one=value(0x3f800000u);
- std::memcpy(&r->state.view_window.x,&input.x,sizeof(input.x));
- const auto inverse_x=div32(one,input.x);
- std::memcpy(&r->state.view_window.y,&input.y,sizeof(input.y));
- const auto inverse_y=div32(one,input.y);
- r->state.inverse_window={inverse_x,inverse_y};return true;
+ mka::phase7::NativeRwCamera stage_b_cam{};
+ mka::phase7::NativeRwV2d stage_b_win{};
+ std::memcpy(&stage_b_win.x_bits,&input.x,sizeof(input.x));
+ std::memcpy(&stage_b_win.y_bits,&input.y,sizeof(input.y));
+ mka::phase7::NativeRwDirtyList unused_dirty_list{};
+ std::uint32_t fcr31=0;
+ mka::phase7::camera_set_view_window_stage_b(stage_b_cam,stage_b_win,unused_dirty_list,fcr31);
+ std::memcpy(&r->state.view_window.x,&stage_b_cam.view_window.x_bits,sizeof(r->state.view_window.x));
+ std::memcpy(&r->state.view_window.y,&stage_b_cam.view_window.y_bits,sizeof(r->state.view_window.y));
+ std::memcpy(&r->state.inverse_window.x,&stage_b_cam.inverse_window.x_bits,sizeof(r->state.inverse_window.x));
+ std::memcpy(&r->state.inverse_window.y,&stage_b_cam.inverse_window.y_bits,sizeof(r->state.inverse_window.y));
+ return true;
 }
 bool NativeRetailRendererCameraModule::destroy_base_camera(const NativeRetailRendererCameraHandle& h,
  RetailRendererCameraFailure& f)noexcept{
