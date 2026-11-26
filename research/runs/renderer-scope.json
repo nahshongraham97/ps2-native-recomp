@@ -258179,5 +258179,78 @@
       "audio"
     ],
     "credit": "2 transformed / 238 native (unchanged)"
+  },
+  "phase7_camera_stage_b_and_census_20261126": {
+    "status": "PHASE7_STAGE_B_CAMERA_PASS_AND_E1_001A7510_PROMOTED_PRODUCTION_UNTOUCHED",
+    "heads_verified": {
+      "parent_prior": "17ca7b4958abcce24e79209c2238c3140b6394f3",
+      "fork_prior": "956230613ce965717b6f8f1524a825301dcaa036",
+      "phase6_commits_reachable_from_main": true
+    },
+    "s0_failure_explanation": "quick_2026-11-08_17-29-12_f017793.state exited 1 with '[state] cannot load: state file is truncated'",
+    "stack_frame_exclusion_justification": "0x001A64A0 prologue allocates [sp-32, sp) via addiu $sp,$sp,-32, saves $ra at sp+16 (sd) and $s0 at sp+0 (sq), restores both at 0x001A64FC/0x001A6500, and deallocates via addiu $sp,$sp,32 at 0x001A6508. Dead callee-save slots only.",
+    "ownership_001a7510": {
+      "promoted_to": "verified-renderware",
+      "evidence": "E1|E5",
+      "body_sha256": "624ddc6f40f31d001aa72a3b386aa2ce2754f08918b32646261f254348ac5906",
+      "required_caller": "001a644c",
+      "total_jal_callers": 53,
+      "e1_script": "tools/research/verify_phase7_e1_001a7510.py",
+      "planted_mutations_rejected": [
+        "planted_body_mutation",
+        "planted_caller_mutation"
+      ]
+    },
+    "analysis_001a70f0": {
+      "role": "RwFrameDirty (4 instructions: 0x001A70F0..0x001A70FF: lw v0,160(a0); lb v0,3(v0); jr ra; andi v0,v0,3)",
+      "ownership_status": "unresolved (in progress; no E1 SDK match pinned yet)",
+      "direct_jal_callers": [
+        "0x001c954c"
+      ]
+    },
+    "stage_b_typed_native": {
+      "header": "runtime/include/mka/phase7_camera_native.hpp",
+      "harness": "tests/test_phase7_camera_differential.cpp -> tests/test_phase7_camera_stage_b.cpp",
+      "captures_cam_001a64a0": 23,
+      "distinct_001a64a0_shapes": [
+        "(0x3fd9999a, 0x3fd9999a, parent!=0)",
+        "(0x40200000, 0x40200000, parent!=0)"
+      ],
+      "captures_frame_001a7510": 23,
+      "distinct_001a7510_shapes": 2,
+      "captures_dirty_001a70f0": 8,
+      "planted_errors_rejected": [
+        "--planted-window",
+        "--planted-reciprocal",
+        "--planted-frame-flags",
+        "--planted-dirty-link",
+        "--planted-dirty-check",
+        "--planted-return"
+      ]
+    },
+    "step6_and_5s": {
+      "bounded_census": "build/oracle-telemetry/phase7-step6-census-01.json",
+      "strict_census_refusal": "build/oracle-telemetry/phase7-step6-strict-01.json (exit=2 REFUSE_EXACT_RENDERWARE_TOTAL_UNKNOWN)",
+      "rtti_self_test": "PASS",
+      "study_5s": "build/oracle-telemetry/phase7-5s-study-01/RESULT.json (eligible=1952, sample=30, attempts=30)"
+    },
+    "owner_request_unreached_camera_functions": [
+      "001a6410",
+      "001a6510",
+      "001a6540",
+      "001a65a0",
+      "001a66a0",
+      "001a68f0",
+      "001a6a10",
+      "001a6a20",
+      "001a6b30",
+      "001a6be0",
+      "001a6c30",
+      "001a6d70",
+      "001a6dd0",
+      "001a6f40",
+      "001a6fd0"
+    ],
+    "credit": "2 transformed / 238 native (unchanged)"
   }
 }

@@ -9,7 +9,7 @@ import struct
 
 BASE = "SLUS_214.10"
 SEEDS = {0x19F0B0, 0x19F1E0, 0x1A2BC0, 0x1A64A0}
-SAMPLED_E1_ROLES = {0x1A2020, 0x1A3C40}
+SAMPLED_E1_ROLES = {0x1A2020, 0x1A3C40, 0x1A7510}
 STATUSES = ("verified-renderware", "verified-game", "verified-other-library",
             "inferred-renderware", "inferred-game", "inferred-other", "unresolved")
 KINDS = tuple(f"E{i}" for i in range(1, 8))

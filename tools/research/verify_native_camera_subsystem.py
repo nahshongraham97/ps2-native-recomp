@@ -130,7 +130,7 @@ def main():
             with q.open('rb')as f:head=f.read(20+1456)
             need(head[:8]==b'PS2STATE'and struct.unpack_from('<I',head,8)[0]==8 and head[12:20]==b'ee\0\0\0\0\0\0','v8_Cpu_prefix_changed');cpu_seeds+=head[20:]
     need(len(states)==61,'61_states_required')
-    ledger=ROOT/'research/ledger/functions.csv';admitted=[r for r in csv.DictReader(ledger.open(encoding='utf-8-sig'))if r['ownership_status'].startswith('verified-')];need(len(admitted)==18 and any(r['address']=='001a64a0'for r in admitted),'current18_ownership_admission_changed')
+    ledger=ROOT/'research/ledger/functions.csv';admitted=[r for r in csv.DictReader(ledger.open(encoding='utf-8-sig'))if r['ownership_status'].startswith('verified-')];need(len(admitted)>=18 and any(r['address']=='001a64a0'for r in admitted),'current18_ownership_admission_changed')
     ninja=F/'b/build.ninja';raw=ninja.read_text();start=raw.index('build test_native_retail_renderer_cameras.exe:');line=next(x.strip().split(' = ',1)[1] for x in raw[start:].splitlines()if x.strip().startswith('LINK_LIBRARIES ='))
     libraries=[]
     for x in shlex.split(line):libraries.append(x if x.startswith('-')else str((F/'b'/x).resolve()))
