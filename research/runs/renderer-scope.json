@@ -257954,6 +257954,19 @@
       "commit_count": 13,
       "policy": "Work remains on main; preserve old branches. No branch deletions, history rewriting or checkout changes.",
       "original_refs_restored_locally_and_on_origin": true
+    },
+    "final_owner_branch_rule_20261126": {
+      "work_and_all_commits": "main in parent and fork",
+      "sole_side_branch": "existing frozen fork r192-aot-closure-proof",
+      "retired_refs": [
+        "phase6-abi-leaf-cohort",
+        "phase6-native-memory-abi"
+      ],
+      "local_and_origin_retired_in_both_repositories": true,
+      "tip_ancestry_verified_on_main_before_removal": true,
+      "supersedes": "Earlier branch restoration/retention policy; never recreate historical refs.",
+      "frozen_closure_commit": "31d087fa59274d15e35dba1e6c62fe1c53001563",
+      "implementation_and_credit_change": 0
     }
   }
 }

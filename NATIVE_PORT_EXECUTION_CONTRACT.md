@@ -27,7 +27,7 @@ reference and an explicit per-function comparison switch. Stage A is not final
 native-memory acceptance and does not relax ownership, equivalence or credit
 rules. Capability-cohort results earn no transformed or native credit.
 
-The original Phase6 gate requires authenticated game-state comparisons plus constructed cases. Constructed-only passes, state-seeded invented calls and a zero-match entry inspection do not discharge it. The2026-11-26 review supersedes the prior N5 interpretation. Continue only the owner-requested existing return/refusal/camera slice without promoting that evidence to original-criterion equivalence. Preserve all existing branches; never treat a merge as authorization to delete them.
+The original Phase6 gate requires authenticated game-state comparisons plus constructed cases. Constructed-only passes, state-seeded invented calls and a zero-match entry inspection do not discharge it. The2026-11-26 review supersedes the prior N5 interpretation. Continue only the owner-requested existing return/refusal/camera slice without promoting that evidence to original-criterion equivalence. All work, commits and pushes go directly to main. The only permitted side branch is the existing frozen r192-aot-closure-proof in the fork; no other branch is to be created, restored, used or committed on. The owner explicitly directed retirement of the merged Phase6 refs.
 
 Phase 5S.9 measures a seeded leaf cohort from the full in-scope catalogue
 separately from ownership-admitted functions. Preserve failures and report
