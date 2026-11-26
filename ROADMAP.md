@@ -7,7 +7,7 @@ owns whole-game acceptance, which remains OPEN. Historical checkpoint prose is
 preserved with its original document hash in [the existing history records](research/history/native-port-docs-2026-11-18/)
 (`ROADMAP.md` in the parent; `ARCHIVE_INDEX.md` in the fork).
 
-**Current oracle priority:** Finish complete offline compilation of the retail executable, overlays, generated EE families, VU programs and IOP code before resuming unrelated native ABI work. The current compiled R192 route is an incomplete intermediate build, despite its passing recorded Konquest replay. Logs identify known misses; the whole disc and the original generators define the coverage domain. The owner need not finish a playthrough to supply code. Preserve the original R192 executable/card, native foundation and only the existing main/R192 branches. See the existing R192 run record.
+**Current owner direction (2026-11-26):** Freeze r192-aot-closure-proof at the published bounded checkpoint, OPEN and not required for the native port. Preserve the original r192-hooks executable/card as the playable oracle with live translation. Resume independent native subsystem work under the existing ownership, source, equivalence and credit rules; generated-code behavior is implemented within its owning subsystem rather than by expanding oracle infrastructure. Seven unresolved flush sites,8855 indirect sites, the exact008A5140 writer transaction and IOP integration remain unproven. No failed candidate is installed and no further playthrough is required for static code discovery. See the existing R192 run record.
 
 The offline executable inventory includes every original code image, including feature-excluded online images and standalone ELF programs. Apply feature/credit policy after recording source identities and actual entry-map/native-object results. Keep native feature activation and credit ledgers separate. Check source entry maps against the complete catalogue and verify each nonzero entry reaches its actual generated label; a successful generator exit alone does not establish coverage. Preserve missing/refused rows and their diagnostics. See the existing R192 run record for the NETR seed-omission controls.
 
@@ -46,8 +46,7 @@ Record parent and active-fork branch, HEAD, dirty state and origin/main
 comparison. Reverify all original saved-oracle files and authorized launcher
 additions, the R192 executable, and its persistent card. Record separate roles:
 R192 for gameplay/telemetry, the November 10 playable milestone for its saved
-states/hash parity, and Kombat Practice as historical. The primary oracle
-designation stays pending owner confirmation in TASK_BOARD.md.
+states/hash parity, and Kombat Practice as historical. Owner direction on 2026-11-26 keeps the original R192 as the playable oracle with live translation; universal oracle closure is not a prerequisite for the native port.
 
 Run component clients, link check, headless gate, ban gate, validation suite,
 ledger sync and check_acceptance.py. Read the seven current operating documents,
