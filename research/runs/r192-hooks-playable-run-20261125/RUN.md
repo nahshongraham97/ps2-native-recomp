@@ -840,6 +840,78 @@ VU0 use, EE family continuations and IOP services remain OPEN.
 Only35.4GB disk was free at this checkpoint: new work must reserve space,
 avoid duplicate input images and never delete backups to make room.
 
+### Typed continuation prefix and actual scheduler attribution
+
+The new semantic_continuation.hpp retains typed consumed/accepted cursors,
+snapshotted constants, vector/scalar side effects and a native resume phase.
+It executes no CPU/register-bank/opcode stream. Original prelude, count guards,
+per-element costs, accepted-write costs and final return are charged in their
+verified order. A suspended true guard resumes the next element directly.
+
+The final component run passes1,296 constructed whole calls /2,292 stop-or-return
+boundaries with fullRAM, ordered writes, fullVU, literalFCR, budget and cursor
+comparisons,1,788 guard events,216 between-stop constant/descriptor mutations,
+and1,304 named reuse/domain/lifetime/scheduler refusals. Five compiled-source
+plants reject incorrect cost, equality, resume charge, consumed cursor and
+sticky flags. This does not yet prove full native Cpu projection at a real
+scheduler call: source-known scalar scratch/volatile values are the next ABI
+binding; original ThreadContext serializes those values.
+
+The first strict actual low-budget comparison FAILED and remains saved.
+A narrow actual pre/post-preempt capture now proves why: the typed56-element
+prefix (392stores, budget-25) matches every pre-preempt RAM byte. The original
+scheduler alone changes00650340(00→30) and00650358(2D→2E), refills budget20000,
+and returns true. Its post-event RAM equals actual call-return RAM exactly;
+Cpu differs only in budget. The later genuine resume enters with33, not20000.
+The prefix/native core does not whitelist the two bytes or implement those
+external writes. Specific inner writers, widths/order and accepted native
+scheduler ownership remain OPEN. A future reference-only adapter must invoke
+the actual compiled scheduler and preserve its effects.
+
+The observed natural resume matches the next independently replayed7-store
+segment. Current constructed callbacks and captured callback outcomes stay
+separate. SharedVU interleaving/lifetime must be validated on resumption or
+refused; one retained pair does not prove all-thread exclusivity. Normal N,
+original R192, cards, saves and native/transform credit are unchanged.
+
+| Continuation evidence under build/oracle-telemetry | RESULT.json SHA-256 |
+|---|---|
+| emitted-semantic-continuation-01 (FAILED) | 74b6422ab343897ceb4fad3c7cf95aaff2d7d1d392fc60c210e17560f3617796 |
+| emitted-semantic-preempt-observer-02 | 6c97ec2c4c4e28bea7a0188ea7f10ec3f4450ee0cb8d2029178331dcf10668d3 |
+| emitted-semantic-continuation-02 | c073a76072641fc7fa2fc363d5f84cf32d6b8357dca31f1e260ef407a0b58836 |
+
+The first preempt-observer replay incorrectly globbed preempt files as call
+captures and refused; final replay uses an exact case-number pattern and
+preserves the original files. Exact reproduction argv and all dependencies
+are retained in the final receipts; no second observation is inferred from
+offline replay.
+
+### All-uploaded-entry VU generation, native compilation pending
+
+The exhaustive original-entry scan classifies all66,036 uploaded pairs:
+65,924 source-bounded entry instances /65,026 unique keys,112 entries refused
+because their direct reachable sets leave uploaded original bytes. Every
+refusal is recorded with its first missing PC and count. This is an entry
+superset, not65,026 identified functions or proved launch roots.
+
+All99 payload batches now generate complete C++ with the pinned original v8
+compiler, implicit target synthesis disabled. The complete generated-body audit
+finds zero differing bodies under the same key, zero unsupported-lower fallback
+sites, and zero changed bodies among1,041 keys shared with the prior candidate.
+The remaining134 prior keys are outside this original-source entry domain;
+their capture/hint provenance is separate and is not promoted by this study.
+Native-object/DLL compilation and integration of the larger set are pending.
+
+Generation build/oracle-telemetry/r192-vu-all-uploaded-generation-01/RESULT.json
+SHA1fd01dd7233560172ca68f97b5b91cbfa87dfd25107387f56c983a66e1c48ec8;
+body audit r192-vu-all-entry-body-audit-01/RESULT.json
+SHA06160cd5e0bf85e9cb3ffa94adc1ee6c30d19dd16845de427e5c219cad2aabf4.
+The initial enumeration-only receipt reported a vacuously true generation flag
+while generation_requested was false; it is not generation evidence. The
+producer now reports null when generation was not requested. The full generation
+receipt is the actual positive evidence. Disk reserve remains12GiB; original
+inputs and backups are not cleaned to make space.
+
 ### Verification and continuing work
 
 The full native baseline was freshly rerun: 59 targets, 65 variants and 16
