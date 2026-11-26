@@ -1043,6 +1043,70 @@ Original executable/launcher, installed build, original inputs and persistent
 card are untouched. The earlier claim that buffer-loader aliases were still
 open is superseded by these 350 component tests, not by full IOP acceptance.
 
+### Sealed VU loader controls and original IOP export frontier
+
+The actual authored VU loader passes eight headless component cases using an
+original precompiled 61-entry pilot DLL. Normal registration is exactly once;
+altered manifest seals, DLL seals, table counts, key-set hashes, unsafe names,
+and a failure in the second DLL all refuse before registration. A second
+initializer call refuses after the first successful registration. Admitted DLLs
+remain locked against writes/deletes for their execution lifetime. All pending
+DLLs are released on validation failure. Registration happens only after every
+package member passes. Generated chained calls select compiled VU1 code through
+the frozen dispatcher (unknown entry halts); the original PC masking is retained.
+This does not remove the separate VU0 micro interpreter. No program or game is
+executed by these loader controls. A pilot package cannot enter the full-game
+connector; the complete 99-payload package is required there.
+
+The package producer's first resource check used a not-yet-created parent path
+and failed before any output creation. It now checks the existing owned build
+volume. The root provenance join also corrected its denominator: 282 accepted
+recorded image/entry instances represent 281 unique keys. All 281 occur in the
+65,026-key original-source domain; none is among the 134 legacy-only derived
+entries. Those 134 entries remain separately recorded, not promoted by this
+join. The inherited rejected 883AC7731B3857A8 capture remains excluded. This
+root join does not prove partial-upload combinations or indirect-target closure.
+
+The literal IOP registry plus source-proved thbase42 service is connected in a
+separate candidate (8e7311fc0a68842afd37859ea6393abd8865ab6948e39632a04bca5ac8960a7c).
+It passes 181224 -> 181314 (90 new frames). A whole original SDRDRV start proof
+also passes filename/buffer loading across physical, KSEG0 and KSEG1 aliases:
+six routes, 86 original instructions and seven known HLE boundaries per route.
+Full CPU/RAM, ordered per-step effects, service transitions and original IOP
+serialization agree with the pinned reference fixture. The two libsd#4 plants
+refuse by name with zero synthetic callbacks. The 90-frame test and six original
+function comparisons are distinct evidence; neither closes unplayed imports.
+
+A whole-source audit of all 70 original IOP payloads finds 499 import requirements
+including version, or 454 distinct library/ordinal pairs, over 35 libraries.
+The actual boot/service registry contains 196 of those pairs; 258 are absent.
+Original export-slot candidates exist for 247 absent pairs, but their actual
+registration, provider start, version, load order and lifetime still need proof.
+Eleven pairs have no bounded candidate in this audit: dmacman 4/5/6/8/9/14/15,
+heaplib 8, intrman 14/28/30. No guessed callback was added. The original rooted
+frontier still has 544 register-destination and 431 exception-boundary obligations.
+Text-aligned JALR/JR shapes are candidate counts, not extra reachable functions.
+The next IOP work proves the original module/export route using already compiled
+provider bodies instead of inventing 247 replacements.
+
+| Evidence under R192 build/oracle-telemetry | File | SHA-256 |
+|---|---|---|
+| r192-vu-sealed-loader-control-01/pilot | PACKAGE.json | 30d240eb9be0c7003c2b971679c6a0d8b3f255b58943a2055d852226fb6152e1 |
+| r192-vu-sealed-loader-control-01/checks-01 | RESULT.json | 0eafc26ebc3a9d9396165f25649176f88e34a4e32031bdef829f0b31c4691d2b |
+| r192-vu-sealed-loader-control-01 | ROOT-KEY-DOMAIN.json | f0c71897670670a7da15c1c320a24771d07f0be280658906f1cf74f9ab4f9d56 |
+| r192-iop-loader-closure-freeze-01 | RESULT.json | 0838b536b86bae2a3b14430ec63016647b10aa6567d05f2ba2a65d7f354ff2fa |
+| r192-iop-closure-audit-02 | RESULT.json | 34b7b05a7d4a24a17f3ddb6605e264d2fd4f6649c91bd99fafe83a576362e5e3 |
+| r192-iop-loader-execution-01 | RESULT.json | 72a480e6b922edcc821f00159fa9faeb9e11ce0f4e6bb20bb51be7e183d03d16 |
+| r192-iop-loader-alias-snapshot-01 | RESULT.json | 9ea6231b32226fb5f7a6bcb2d379346ed2d1b4bdfbd93bc2d442739a37ce64f1 |
+
+Native foundation source and 2/238 credit remain unchanged; the previously pinned
+59-target / 65-variant / 16-gate full baseline still applies to that unchanged
+source. These R192 changes have their affected checks above. The original R192
+executable/launcher, installed 882302... route, original assets, card/saves and
+model settings are unchanged. Full VU native compilation and actual integration
+are continuing, not claimed complete by the pilot. Complete offline game closure
+and final native-only acceptance remain OPEN.
+
 ### Verification and continuing work
 
 The full native baseline was freshly rerun: 59 targets, 65 variants and 16
