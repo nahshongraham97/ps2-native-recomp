@@ -1463,6 +1463,90 @@ All authored code stays on the R192 branch. No model is silently installed into
 the normal game. Native foundation/baseline,2/238 credit, original assets/builds,
 launcher, persistent card/saves and model settings remain unchanged.
 
+### All original-upload VU entry modules connected and replayed
+
+The complete99-payload offline native batch finishes successfully:65,924 native
+entry instances /65,026 unique keys. Every DLL passes source/ABI stamp, exact
+key/count/table bounds and executable-image checks; source bodies remain joined
+to the pinned original upload data. This is the conservative uploaded-pair entry
+superset, not65,026 identified game functions. The112 source-unwritten reachable
+candidate refusals,134 legacy-only derived keys, provenance limits and unproved
+upload/patch contexts remain separate. No original input was changed.
+
+The full package is sealed by manifest SHA-256 and exclusive verified hardlinks,
+never opened for writing. The producer and connector reuse the same immutable
+native files without making multi-gigabyte duplicate copies. Pilot mutation
+fixtures still use independent copies. The native startup locks every DLL,
+authenticates all files/ABI/keys/functions, deduplicates identical source keys and
+registers one65,026-entry table only after validation. Old static VU function
+bodies are absent from the new PE's symbol table; VU Live is not its loader.
+
+Separate candidate25d6ae51cdbb8e88b95118ba5a4bdfbf466b50f0ef7ed7e6d3bd3c417419e761
+combines that VU set with the previously measured static EE, strict compiled
+IOP and exact-family typed EE objects. Actual startup registers65026/99 VU and
+3569/3569 EE. Its complete181224 ->204009 recording passes22,785 frames/all1,519
+checkpoints, exit0, zero code-miss/compiler/window/audio/difference diagnostics
+and no input changes. All14 saved-state cases are FRESH90-frame runs on this
+PE (1,260 additional frames); no old-PE result is reused. The earlier merged
+1175-key result and its600s timeout stay preserved, not overwritten.
+
+The driver now pins the VU manifest/all99 DLLs before and after each run, requires
+the exact single startup registration summary and refuses an untracked/missing/
+duplicate/wrong-count registration. A VU miss tag cannot be hidden behind a clean
+stop. Earlier seven plants/checkpoint plant still reject; five registration/miss
+plants and four malformed-manifest controls reject. Native ABI/table checks are
+the executable initializer's gate, separate from the driver's file/summary proof.
+This build is not installed by the normal launcher. VU0 micro interpretation,
+other upload sources, unseen generated EE domains/partial emission, actual IOP
+lifetime/IRQ and final native memory/services remain open. The test is not a
+physical input/audio/image capture or whole-game/native acceptance.
+
+The separate allocator-derived reference projection now matches all1456 Cpu
+bytes at9,936 boundaries over276 constructed programs/4,416 sessions/5,520
+suspensions. Source-derived resume PC and exact allocator slots replace borrowed
+reference outputs. Eight entry/data/step/stride/count64/budget32 refusals, eleven
+prior lifetime controls and four projection mutants reject. Native int64 budget
+must fit original int32 before projection; memcpy preserves padding. This API
+copies entry state for ISOLATED bodies/budget-only constructed guards. A real
+interleaved adapter must patch only source-defined effects onto CURRENT state:
+ThreadContext does not restore base/VU/cop0/PCR/timestamps/budget. Actual chosen
+transport, shared-VU/private scratch, global scheduler and code-buffer ownership
+need separate proof. No generic runtime replacement is admitted by this test.
+
+The new isolated IOP metadata guard authenticates70 original images/598 static
+records (73 export tables/525 client tables), including relocation-based function
+pointers. Original6/7/8/9 execute on actual LIBSD/SDR records in both reference
+modes. Exact expected mutable words update only through checked native-model
+writes; immutable names/versions/function slots and code remain exact. Canonical
+import schema words stay separate from live SDK J/original-ordinal-ADDIU words.
+PC-as-data, stale owners/records and eight explicit field/pointer/slot/version/
+name/function/code/live-thread plants refuse; seven guard-policy mutants reject.
+Twelve full-Cpu stub comparisons per mode cover physical/KSEG and zero/split
+budgets. Init threads are cancelled for this finite metadata-method fixture;
+this is NOT module boot/unload/RPC/IRQ/restore proof or runtime installation.
+An initial failed guard copied live words over canonical import schema; it is
+preserved. The corrected guard does not weaken existing valid/matches.
+
+| Evidence under R192 build/oracle-telemetry | SHA-256 |
+|---|---|
+| r192-vu-all-entry-native-modules-01/RESULT.json | 1de954e567e21f6f41d5d7aa430d89103ac42c48072d517dad53cc1d575693fd |
+| r192-vu-complete-sealed-package-01/PACKAGE.json | ba3e998745f9f4f8098863b95d63fbef67a4e4c57eb5e0154d630f92cff8dc16 |
+| r192-complete-source-vu-startup-01/RESULT.json | 1f48490008d1d954f2c665ab7a5c70f61e46bad02f0831a5d3c30c99da8bbaef |
+| r192-complete-source-vu-full-replay-01/RESULT.json | 6f0360fd78e579005d7a39d8a313385f1a66cbeac62a82a3d4821e96a4a3ba84 |
+| r192-complete-source-vu-probes-01/RESULT.json | a0a2af44042403da9b87ce02c657212b9407ba17dbf205d42291fea0a88164e6 |
+| r192-replay-sealed-vu-controls-01/RESULT.json | 7a2f129636b001d72bfe8b2e3be42ee2ab7b331c7b6021b0cb9929f7a9628038 |
+| emitted-resource-full-projection-03/RESULT.json | 39cb6e2801d9a17f69d0485a33cf962b8c1b015d00548be8df6314713d4e5219 |
+| r192-iop-static-guard-02/RESULT.json | 81be4629234ab5fc967aee16091833143db1694c9300f4f63effd8610ced90e0 |
+| r192-iop-static-guard-freeze-01/RESULT.json | b0505b1d82fb9fdc5d653c1162fb0c3d4bb7cfbbe330ceb153e24c599f62a6f6 |
+
+The compiled candidate build receipt (build/r192-complete-source-vu-candidate-01/
+BUILD.json) is188612e8f4f17ce49af807db288eb191037ec8efcb5ccbcca3cf3784221afc36.
+Native foundation source and its59-target/65-variant/16-gate baseline are unchanged;
+affected reference/component checks above are separate. Source experiments stay
+on R192; main receives synchronized status/evidence. Native credit remains2/238.
+NormalN882302..., originalR192 executable/launcher, original assets, persistent
+card/saves and local model settings are unchanged. Universal closure stays OPEN.
+
 ### Verification and continuing work
 
 The full native baseline was freshly rerun: 59 targets, 65 variants and 16
