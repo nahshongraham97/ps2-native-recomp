@@ -92,8 +92,9 @@ int main(int argc, char **argv) {
         }
 
         if (hits > 0u) {
-            ++active_seen;
-            continue;
+            std::fprintf(stderr, "FAIL 001637D0 active slot path unimplemented in %s: hits=%u\n",
+                         p.filename().string().c_str(), hits);
+            return 1;
         }
         // Check full 32 MiB RAM equivalence outside dead prologue stack [sp-96, sp)
         const std::uint32_t sp_lo = cap.entry_cpu.r[29].w[0] - 96u;
@@ -108,6 +109,10 @@ int main(int argc, char **argv) {
         ++idle_tested;
     }
 
+    if (idle_tested == 0u) {
+        std::fprintf(stderr, "FAIL 001637D0 zero idle captures tested\n");
+        return 1;
+    }
     std::printf("PASS_PHASE7_INPUT_IDLE_ONLY idle_captures=%u active_captures=%u slot_flag_shapes=%zu\n",
                 idle_tested, active_seen, slot_flag_shapes.size());
     return 0;

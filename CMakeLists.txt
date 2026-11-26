@@ -367,6 +367,8 @@ if(PS2_GENERATED)
     target_include_directories(test_phase7_fighter_differential PRIVATE runtime/include runtime/src)
     add_executable(test_phase7_stub_differential EXCLUDE_FROM_ALL tests/test_phase7_stub_differential.cpp)
     target_include_directories(test_phase7_stub_differential PRIVATE runtime/include runtime/src)
+    add_executable(test_phase6_track_a_captures EXCLUDE_FROM_ALL tests/test_phase6_track_a_captures.cpp)
+    target_include_directories(test_phase6_track_a_captures PRIVATE runtime/include runtime/src)
     # These tests use assert for both checks and calls under test. Keep those
     # expressions active even when the surrounding build is Release.
     foreach(assert_test test_iop_native_module test_iop_native_import_link test_iop_aot_import_load)
