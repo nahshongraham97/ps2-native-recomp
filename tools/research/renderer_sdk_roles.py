@@ -18,6 +18,11 @@ SOURCE_FILES = {
     "bamatrix.c": "6a65d8140fcddf75bf44bf0b3daf973d0c6d55c0ff6b866ec15ccfe8f256c751",
     "bacamera.c": "66282a6f54d42804dbadee9e8c1a6cf032bbe927ec5677f19ed2678fce978fd8",
     "baresour.c": "340976c2a9d15503737a1897c6b63ba6371170afb60f44890d537b35d0014027",
+    "resmem.c": "bacc01b37e6c796117f8112d8cc758233710c58052fbd32adf325889358cbc69",
+}
+HEAP_CLOSE_HEADERS = {
+    "rwsdk/src/resmem.h": "90f4fca3c0284a49c97da3b261e3dbf092196c2cdc956f93dadbe49265e9a45d",
+    "rwsdk/os/sky/ostypes.h": "a83ffefb17e206ba34cb9f44b9d1e8827f581337895d2f9014063c26224d90a8",
 }
 # start, exclusive end, error argument setup, reference name, whole retail body
 MATRIX_ROLES = (
@@ -99,6 +104,75 @@ def validate_resource_arena_semantics(original, source):
             "version_limit": "Pinned SDK3.1 source role; retail uses an additional memory-hint argument. No native/differential equivalence is claimed."}
 
 
+def validate_heap_close_semantics(original, source, headers):
+    """Single E1 evidence addition; no new ownership or implementation rule."""
+    if original(0x1a3c40, 8) != struct.pack("<2I", 0x03e00008, 0x24020001):
+        raise ValueError("heap_close_complete_original_body_changed")
+    if hashlib.sha256(source).hexdigest() != SOURCE_FILES["resmem.c"]:
+        raise ValueError("heap_close_SDK_source_identity_changed")
+    for name, expected in HEAP_CLOSE_HEADERS.items():
+        if hashlib.sha256(headers[name]).hexdigest() != expected:
+            raise ValueError("heap_close_SDK_header_identity_changed:" + name)
+    signature = b"RwBool\n_rwResHeapClose(void *resHeap __RWUNUSED__)"
+    if source.count(signature) != 1:
+        raise ValueError("heap_close_unused_pointer_and_integer_return_signature_missing")
+    block = source.split(signature, 1)[1].split(b"\n}", 1)[0]
+    if block.count(b"RWRETURN(TRUE);") != 1:
+        raise ValueError("heap_close_SDK_true_return_missing")
+    if (b"extern RwBool   _rwResHeapClose(void *resHeap);" not in headers["rwsdk/src/resmem.h"]
+            or b"typedef int RwInt32;" not in headers["rwsdk/os/sky/ostypes.h"]
+            or b"typedef RwInt32 RwBool;" not in headers["rwsdk/os/sky/ostypes.h"]):
+        raise ValueError("heap_close_RwBool_int32_declaration_missing")
+    words = ((0x1a1bb4, 0x0c068f10, "resource-close caller targets this exact leaf"),
+             (0x1a1bb8, 0x8c44000c, "caller passes heap field at offset12 in JAL delay"),
+             (0x1a2068, 0x0c068f10, "admitted arena caller targets this exact leaf"),
+             (0x1a206c, 0x8e24000c, "arena passes old heap field at offset12 in JAL delay"))
+    for pc, expected, _ in words:
+        if original(pc, 4) != struct.pack("<I", expected):
+            raise ValueError("heap_close_original_caller_or_delay_changed")
+    caller_bodies = ((0x1a1b90, 0x1a1c10, "16ce0544d22a55583e705449bcf00d05fa8bdca6e4296b3dfa82c61dedaf2382"),
+                     (0x1a2020, 0x1a2130, "2ba736d40c4bf1d56d1bef12714117164632ee50c16d3e3783e89e94096413e3"))
+    for start, end, expected in caller_bodies:
+        if hashlib.sha256(original(start, end-start)).hexdigest() != expected:
+            raise ValueError("heap_close_complete_original_caller_body_changed")
+    return {"original_semantic_words": [{"address": f"{pc:08x}", "word_le": struct.pack("<I", w).hex(),
+                "operation": operation} for pc, w, operation in words],
+            "complete_original_callers": [{"entry": f"{start:08x}", "end_exclusive": f"{end:08x}", "sha256": expected}
+                for start, end, expected in caller_bodies],
+            "SDK_header_pins": HEAP_CLOSE_HEADERS,
+            "return_convention": "RwBool is RwInt32/int, not C++ bool. Original ADDIU delay writes signed32 value1 to V0 low64; upper64 and every other register remain unchanged.",
+            "version_limit": "SDK3.1 corroborates the role/signature. Retail3.6 behavior is the complete eight-byte JR/ADDIU body, with no memory, logging or external-call effects; SDK MEMORYLOG behavior is not imported.",
+            "implementation_credit_added": 0}
+
+
+def heap_close_semantic_controls(original, source, headers):
+    """Six falsifications of this specific body/source/caller evidence join."""
+    validate_heap_close_semantics(original, source, headers)
+    controls = []
+    for name, site, word in (("wrong_return_value", 0x1a3c44, 0x24020000),
+            ("wrong_return_target", 0x1a3c40, 0x00400008),
+            ("wrong_caller_target", 0x1a2068, 0x0c068f14),
+            ("wrong_delay_heap_field", 0x1a206c, 0x8e240010)):
+        payload = struct.pack("<I", word)
+        def planted(va, size):
+            data = bytearray(original(va, size)); begin, end = max(va, site), min(va+size, site+4)
+            if begin < end: data[begin-va:end-va] = payload[begin-site:end-site]
+            return bytes(data)
+        try: validate_heap_close_semantics(planted, source, headers)
+        except ValueError as error: controls.append({"mutation": name, "status": "REJECTED", "reason": str(error)})
+        else: raise AssertionError("Heap-close evidence mutation admitted: " + name)
+    source_plant = source.replace(b"RwBool\n_rwResHeapClose", b"void\n_rwResHeapClose")
+    header_plant = dict(headers)
+    header_plant["rwsdk/os/sky/ostypes.h"] = headers["rwsdk/os/sky/ostypes.h"].replace(
+        b"typedef RwInt32 RwBool;", b"typedef unsigned char RwBool;")
+    for name, data, declarations in (("forged_SDK_return_type", source_plant, headers),
+                                   ("forged_RwBool_width", source, header_plant)):
+        try: validate_heap_close_semantics(original, data, declarations)
+        except ValueError as error: controls.append({"mutation": name, "status": "REJECTED", "reason": str(error)})
+        else: raise AssertionError("Heap-close source mutation admitted: " + name)
+    return {"status": "PASS", "controls": controls}
+
+
 def matched_sdk_roles(original, sdk_root: Path):
     sources = {}
     for name, expected in SOURCE_FILES.items():
@@ -106,6 +180,7 @@ def matched_sdk_roles(original, sdk_root: Path):
         if hashlib.sha256(data).hexdigest() != expected:
             raise ValueError(f"Expected SDK {SDK_REVISION} source identity for {name}")
         sources[name] = data
+    heap_headers = {name: (sdk_root / name).read_bytes() for name in HEAP_CLOSE_HEADERS}
 
     results = []
     for start, end, setup, api, expected_hash, operations in (*MATRIX_ROLES, CAMERA_ROLE):
@@ -177,10 +252,17 @@ def matched_sdk_roles(original, sdk_root: Path):
          [0x33e338, 0x44e464],
          "Before resource-module open, overrides the default arena size. Otherwise sets maxSize, empties and closes the old heap, "
          "frees it, allocates and initializes the replacement heap, and reports distinct allocation/initialization errors."),
+        (0x1a3c40, 0x1a3c48, "_rwResHeapClose", "resmem.c",
+         "5ce5ad86d452c4d2422bd63e15223d5d6b3dfb77f224a88c1f476e9fb34e359d",
+         [0x1a1bb4, 0x1a2068],
+         "Unused source heap pointer; returns RwBool TRUE in the JR delay. The complete retail body has no stores or calls."),
     )
     for start, end, api, file, body_hash, sites, operations in connected:
         semantic_evidence = (validate_resource_arena_semantics(original, sources[file])
                              if start == 0x1a2020 else {})
+        if start == 0x1a3c40:
+            semantic_evidence = validate_heap_close_semantics(original, sources[file], heap_headers)
+            semantic_evidence["semantic_mutation_controls"] = heap_close_semantic_controls(original, sources[file], heap_headers)
         if hashlib.sha256(original(start, end - start)).hexdigest() != body_hash:
             raise ValueError(f"Connected helper body changed at {start:08x}")
         if f'RWSTRING("{api}")'.encode() not in sources[file]:

@@ -1018,5 +1018,19 @@
       "combined_count": 3258,
       "status": "PASS"
     }
+  },
+  "phase_5S_9_and_native_phase6": {
+    "authority": "Owner Phase5S.9, Phase6 X1-X3, and amended P1-prime/P1-double-prime/P2-prime/P3-prime/P4-prime/P5-prime in this chat, 2026-11-25.",
+    "stages": {
+      "A": "Replace the register ABI with proved typed native parameters and return values. Typed guest-memory accessors may remain only in this intermediate experiment on sibling branches/disposable copies.",
+      "B": "Replace guest memory with native structures only after layout, aliasing and lifetime proof."
+    },
+    "reference": "Keep AOT-only source/binaries unchanged; each experimental native function has an explicit AOT comparison switch. Unproved or context-restoring callees stay on AOT.",
+    "cohorts": "Freeze the original17 ownership-admitted functions and their call/blocker table separately from a seeded full-catalogue capability-only leaf sample. Ordinary JR RA is the documented return exception; excluded online functions remain excluded.",
+    "admission": "Dependency evidence may add individual ownership admissions through the existing E1/E4 rules. It must not promote unsampled or merely adjacent callees. Ownership admission is separate from implementation credit.",
+    "credit": "The capability cohort and this intermediate Stage A experiment add zero credit. Retaining a source-address parameter does not finish Stage B. Existing ownership, whole-function equivalence and native credit rules are unchanged.",
+    "stop_rule": "Do not continue general binding rounds without a measured whole-function pass in the preceding round or supporting leaf-cohort results. A separate constant-return leaf pass is not evidence of generic memory/ABI scalability.",
+    "camera": "Keep the camera milestone parked unless measured units support clearing all nine gates in one batch. Do not invent time or whole-function-unlock estimates.",
+    "protected": "No modifications to r192-hooks, its executable, saves, persistent card, handwritten setters, original assets, model/settings, generator, toolchain or dependencies. No computer use."
   }
 }
