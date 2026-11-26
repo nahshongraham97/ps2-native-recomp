@@ -1,5 +1,7 @@
 # Retail Armageddon native-port execution contract
 
+**Current compiled R192 route:** The familiar parent launchers/launch_r192_hooks.bat (also called by launch_ps2recomp.bat) selects external/forks/ps2-native-recomp-r192-closure/build/r192-compiled-konquest/out/ps2run.exe, SHA-256 8823021a23e2a3fdd3b2dc4ca0c8eac9e7359beb3e5bce489b965587a0c2479b. It links its own AOT library and sealed compiled modules with no EE/VU live compiler. The latest Konquest recording passes 22,785 new frames / all 1,519 checkpoints; all 14 saved-state probes pass 90 new frames. Code/assets/keys are local to the build; normal play mounts the SAME original R192 persistent card and uses its existing quick-state directory. No replacement card is created. The original 8AB43BDA executable/launcher remain protected comparison evidence. Physical A/V, independent held-out paths and final native-port acceptance remain OPEN. See [the existing R192 record, section 6](research/runs/r192-hooks-playable-run-20261125/RUN.md).
+
 This governs the **retail game** in `external/forks/ps2-native-recomp/`.
 It describes acceptance, not current success. No agent may call a build
 accepted or ready for the owner to run until every gate passes on one clean,
@@ -122,7 +124,7 @@ portrait, ignores a controller, skips a movie, changes timing, or breaks a
 mode is a failed change. Reaching a later screen never excuses an earlier
 loss. Restore the last verified behavior or fix the regression before stacking
 another subsystem change. A previous playable build is an oracle for behavior,
-not proof that its architecture satisfies this contract. The authored app does not establish retail behavior. The restored R192-lineage package (`external/forks/ps2-native-recomp/build/r192-hooks/out/ps2run.exe`, `8AB43BDA...`, `research/runs/r192-hooks-playable-run-20261125/RUN.md` with Konquest and Motor Kombat verified and persistent slot-1 memory card `game/disc/armageddon.ps2`) IS the verified playable recomp build and active behavioral oracle; historical `../../milestone_work_verified_playable_20261110/` (`B9EEF7DA...`) and `../../milestone_build_kombat_practice/` (`8B763DCC...`) remain preserved on disk. None of these recomp builds satisfies final zero-emulation native-port acceptance.
+not proof that its architecture satisfies this contract. The authored app does not establish retail behavior. The restored R192-lineage package (`external/forks/ps2-native-recomp/build/r192-hooks/out/ps2run.exe`, `8AB43BDA...`, `research/runs/r192-hooks-playable-run-20261125/RUN.md` with Konquest and Motor Kombat verified and persistent slot-1 memory card `game/disc/armageddon.ps2`) remains the verified original gameplay reference; historical `../../milestone_work_verified_playable_20261110/` (`B9EEF7DA...`) and `../../milestone_build_kombat_practice/` (`8B763DCC...`) remain preserved on disk. None of these recomp builds satisfies final zero-emulation native-port acceptance.
 
 For **every** change, capture the same action on the pinned behavioral oracle
 and the candidate, and compare the request/response trace, visible output,
@@ -179,7 +181,7 @@ Current coding priority is the connected route in ROADMAP.md: retail entry, real
 
 1. **Pin provenance and preserve data.** Record parent/fork HEAD and dirty
    state, compiler, binary SHA-256, launch flags, and extracted asset manifest.
-   Preserve the dated backup and save/state files. Identify and hash the active playable recomp build and behavioral oracle (`external/forks/ps2-native-recomp/build/r192-hooks/out/ps2run.exe`, `8AB43BDA...`, persistent slot-1 card `game/disc/armageddon.ps2` holding user saves + Konquest checkpoint) as well as the saved-state and parity oracle (`milestone_work_verified_playable_20261110/`, `B9EEF7DA...`) and Kombat Practice (`8B763DCC...`). Never overwrite persistent memory cards, checkpoints, saves, keys, or
+   Preserve the dated backup and save/state files. Identify and hash the protected original playable recomp reference (`external/forks/ps2-native-recomp/build/r192-hooks/out/ps2run.exe`, `8AB43BDA...`, persistent slot-1 card `game/disc/armageddon.ps2` holding user saves + Konquest checkpoint) as well as the saved-state and parity oracle (`milestone_work_verified_playable_20261110/`, `B9EEF7DA...`) and Kombat Practice (`8B763DCC...`). Never overwrite persistent memory cards, checkpoints, saves, keys, or
    local model/settings. A `dirty` binary cannot be accepted or credited with
    another binary's log.
 2. **Enumerate retail behavior offline.** Inventory ELF functions and indirect

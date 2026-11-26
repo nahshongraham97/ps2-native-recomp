@@ -1,5 +1,7 @@
 # Agent instructions — active retail recomp fork
 
+**Current compiled R192 route:** The familiar parent launchers/launch_r192_hooks.bat (also called by launch_ps2recomp.bat) selects external/forks/ps2-native-recomp-r192-closure/build/r192-compiled-konquest/out/ps2run.exe, SHA-256 8823021a23e2a3fdd3b2dc4ca0c8eac9e7359beb3e5bce489b965587a0c2479b. It links its own AOT library and sealed compiled modules with no EE/VU live compiler. The latest Konquest recording passes 22,785 new frames / all 1,519 checkpoints; all 14 saved-state probes pass 90 new frames. Code/assets/keys are local to the build; normal play mounts the SAME original R192 persistent card and uses its existing quick-state directory. No replacement card is created. The original 8AB43BDA executable/launcher remain protected comparison evidence. Physical A/V, independent held-out paths and final native-port acceptance remain OPEN. See [the existing R192 record, section 6](research/runs/r192-hooks-playable-run-20261125/RUN.md).
+
 [`PORT_STATUS.md`](PORT_STATUS.md) is the sole live status;
 [`ROADMAP.md`](ROADMAP.md) is the implementation order;
 [`NATIVE_PORT_EXECUTION_CONTRACT.md`](NATIVE_PORT_EXECUTION_CONTRACT.md) is the binding acceptance and
@@ -8,7 +10,7 @@ old fork guidance is preserved at
 `research/history/native-port-docs-2026-11-18/AGENTS.md` as history only.
 
 Work in this active fork, not `../ps2-native-recomp-backup-20261110/` or
-historical snapshots (`../../milestone_work_verified_playable_20261110/` `B9EEF7DA...`, `../../milestone_build_kombat_practice/` `8B763DCC...`). The restored R192-lineage build at `build/r192-hooks/out/ps2run.exe` (`8AB43BDA...`, launched via `build/r192-hooks/out/launch_r192_hooks.bat`) IS the active verified playable recomp build and behavioral oracle (`research/runs/r192-hooks-playable-run-20261125/RUN.md` in parent; Konquest and Motor Kombat verified); its persistent slot-1 memory card `build/r192-hooks/game/disc/armageddon.ps2` (`f38dc412...`, Konquest checkpoint + user saves) must NEVER be overwritten or reset. Discard noncompliant commits,
+historical snapshots (`../../milestone_work_verified_playable_20261110/` `B9EEF7DA...`, `../../milestone_build_kombat_practice/` `8B763DCC...`). The restored R192-lineage build at `build/r192-hooks/out/ps2run.exe` (`8AB43BDA...`, launched via `build/r192-hooks/out/launch_r192_hooks.bat`) remains the protected verified original gameplay reference (`research/runs/r192-hooks-playable-run-20261125/RUN.md` in parent; Konquest and Motor Kombat verified); its persistent slot-1 memory card `build/r192-hooks/game/disc/armageddon.ps2` (`f38dc412...`, Konquest checkpoint + user saves) must NEVER be overwritten or reset. Discard noncompliant commits,
 dirty files, and prior checkouts locally without rewriting pushed history.
 Preserve protected backup files, user cards, saves, states, keys, and local model/settings.
 
