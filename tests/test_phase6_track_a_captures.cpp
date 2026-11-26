@@ -26,6 +26,16 @@ namespace t_00167cf0 {
 #include "../tests/generated_track_a/SLUS_214.10_00167cf0_native.hpp"
 }
 
+namespace stage_b_track_a {
+struct NativeObj16AE10 {
+    std::uint8_t flags_20 = 0; // guest a0 + 20
+};
+inline std::uint64_t fn_0016ae10_stage_b(const NativeObj16AE10 &obj) noexcept {
+    return static_cast<std::uint64_t>((obj.flags_20 >> 5) & 1u);
+}
+inline void fn_002e1710_stage_b() noexcept {}
+} // namespace stage_b_track_a
+
 namespace {
 
 struct StoreRec {
@@ -100,6 +110,7 @@ int main(int argc, char **argv) {
     std::set<std::uint64_t> shapes_16ae;
     std::set<std::pair<std::uint64_t, std::uint64_t>> shapes_1c42;
     std::set<std::int64_t> shapes_2e17;
+    std::set<std::tuple<std::uint64_t, std::uint64_t, std::uint64_t>> shapes_167c;
 
     for (const auto &entry : std::filesystem::recursive_directory_iterator(root)) {
         if (!entry.is_regular_file() || entry.path().filename().string().rfind("cap_", 0) != 0) continue;
@@ -114,9 +125,11 @@ int main(int argc, char **argv) {
         if (cap.pc == 0x0016AE10u) {
             t_0016ae10::kernel_in in{cap.entry_cpu.r[2].d[0], cap.entry_cpu.r[4].d[0], cap.entry_cpu.r[31].d[0]};
             auto out = t_0016ae10::kernel(mem, in, 64);
+            stage_b_track_a::NativeObj16AE10 sb_obj{static_cast<std::uint8_t>(cap.entry_ram[cap.entry_cpu.r[4].w[0] + 20u])};
+            const auto sb_r2 = stage_b_track_a::fn_0016ae10_stage_b(sb_obj);
             if (plant == "--planted-return") out.r2 ^= 1ull;
             shapes_16ae.insert(out.r2);
-            if (out.r2 != cap.exit_cpu.r[2].d[0] || out.budget != 59 || !check_stores(obs_stores, cap.stores)) {
+            if (out.r2 != cap.exit_cpu.r[2].d[0] || sb_r2 != cap.exit_cpu.r[2].d[0] || out.budget != 59 || !check_stores(obs_stores, cap.stores)) {
                 std::fprintf(stderr, "FAIL 0016AE10 mismatch in %s\n", entry.path().filename().string().c_str());
                 return 1;
             }
@@ -157,6 +170,8 @@ int main(int argc, char **argv) {
                 cap.entry_cpu.r[6].d[0], cap.entry_cpu.r[7].d[0], cap.entry_cpu.r[8].d[0],
                 cap.entry_cpu.r[31].d[0]};
             auto out = t_00167cf0::kernel(mem, in, 256);
+            if (plant == "--planted-167cf0") out.r3 ^= 1ull;
+            shapes_167c.insert({out.r3, out.r4, out.r5});
             if (out.r3 != cap.exit_cpu.r[3].d[0] || out.r4 != cap.exit_cpu.r[4].d[0] ||
                 out.r5 != cap.exit_cpu.r[5].d[0] || out.r6 != cap.exit_cpu.r[6].d[0] ||
                 out.r7 != cap.exit_cpu.r[7].d[0] || out.r8 != cap.exit_cpu.r[8].d[0] ||
@@ -175,7 +190,7 @@ int main(int argc, char **argv) {
     }
     if (p16ae == 0 || p1c42 == 0 || p2e17 == 0 || r167c == 0) return 1;
     std::printf(
-        "PASS_TRACK_A_TRANSFORMED_UNITS 001c4210=%u(shapes=%zu) 0016ae10=%u(shapes=%zu) 002e1710=%u(shapes=%zu) 00167cf0=%u\n",
-        p1c42, shapes_1c42.size(), p16ae, shapes_16ae.size(), p2e17, shapes_2e17.size(), r167c);
+        "PASS_TRACK_A_TRANSFORMED_UNITS 001c4210=%u(shapes=%zu) 0016ae10=%u(StageA+StageB,shapes=%zu) 002e1710=%u(StageA+StageB,shapes=%zu) 00167cf0_control_mode=%u(shapes=%zu)\n",
+        p1c42, shapes_1c42.size(), p16ae, shapes_16ae.size(), p2e17, shapes_2e17.size(), r167c, shapes_167c.size());
     return 0;
 }
