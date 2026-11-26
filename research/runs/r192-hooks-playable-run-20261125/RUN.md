@@ -48,8 +48,20 @@
 - **Registered `register_hook` Hooks (`8 / 8`):** `0x00197BC0` (`MKA_HealthDeduction`), `0x0084A100` (`MOVIER_ctor`), `0x007DC1F8` (`movier_007DC1F8`), `0x00812750` (`movier_00812750`), `0x00812760` (`movier_00812760`), `0x007C4980` (`GAMER_ctor`), `0x00856700` (`NETR_ctor`), `0x00856780` (`NETR_alt_ctor`).
 - **Linker `--wrap` Wrappers:** Armed (`[mka-hooks] Combat telemetry armed for guest PC 0x00197BC0 (Linker Wrappers Active)`), along with `PS2_OBSERVER_HOOKS=1`, `PS2_PROFILE_SUBSYSTEMS=1`, and `PS2_NATIVE_VERTEX=1`.
 - **Observed Runtime Hook Log Counts:**
-  - `[mka-overlay]` (`7` intercepts: `4x` `GAMER.OVL` at `0x007C4980`, `3x` `MOVIER.OVL` at `0x0084A100`)
-  - `[mka-mode-trace]` (`1,936`), `[mka-pad]` (`1,402`), `[mka-actor]` (`1,401`), `[mka-camera]` (`1,292`), `[mka-combo]` (`1,238`), `[mka-aggressor]` (`791`), `[mka-special]` (`285`), `[mka-health]` (`274`), `[mka-render]` (`268`), `[mka-telemetry]` (`268`), `[mka-practice-snap]` (`73`), `[mka-air]` (`50`), `[mka-stage]` (`8` Freefall Tier 2 transitions)
+  - `[mka-overlay]`: `7` intercepts (`4x` `GAMER.OVL` at `0x007C4980`, `3x` `MOVIER.OVL` at `0x0084A100`)
+  - `[mka-mode-trace]`: `1,936`
+  - `[mka-pad]`: `1,402`
+  - `[mka-actor]`: `1,401`
+  - `[mka-camera]`: `1,292`
+  - `[mka-combo]`: `1,238`
+  - `[mka-aggressor]`: `791`
+  - `[mka-special]`: `285`
+  - `[mka-health]`: `274`
+  - `[mka-render]`: `268`
+  - `[mka-telemetry]`: `268`
+  - `[mka-practice-snap]`: `73`
+  - `[mka-air]`: `50`
+  - `[mka-stage]`: `8` (`Freefall Tier 2` perimeter transitions)
 
 ---
 
@@ -396,13 +408,128 @@ Authored source identities:
 | tools/research/r192_aot_modules/loader.cpp | f828b628638000a58c0ea12e2f8e4d0e27404d8ee1a691d3648fdecb6d360629 |
 | tools/research/r192_aot_modules/loader.hpp | 26bc6856c4d6431831cf72b87d0cd4bad18ed160ec0ab1f702450d82387c6955 |
 
+## 7. Complete precompilation requirement and original-data coverage
+
+The owner requires every possible executable path to be precompiled. A passing
+recording, a sealed cache, or a fail-fast missing-code handler does not establish
+that result. A completed owner playthrough is not a prerequisite: stored code,
+overlays, original code-generating routines and their input domains define the
+work. Runtime-generated EE families, VU upload/patch/indirect-launch coverage
+and the remaining IOP interpreter are still OPEN. Native memory/ABI acceptance
+and the 2 transformed / 238 native credit totals remain separate and unchanged.
+
+The supplied screenshot shows about 9.1 FPS, repeated synchronous EE Live
+translation pauses of 0.2–0.3 seconds, and 117 reported audio underruns.
+It establishes real compilation stalls in that recording. It does not identify
+the renderer backend or apportion all CPU/GPU cost. Source defaults to GPU
+primary and can fall back to software when initialization fails; no headed
+performance or physical audio claim is made here.
+
+### Static overlay omission corrected in a separate candidate
+
+The copied v8 generator truncated MWo3 images at header +0x0C's text extent.
+That excludes the original constructor roots GAMER 0x007C4980 and MOVIER
+0x0084A100, whose addresses are present in the original +0x18/+0x1C constructor
+tables. The already reviewed main-branch reader retains the complete mapped
+image and seeds those authenticated roots. Only that reader function is
+substituted into a fresh copy of the v8 generator; the installed source is
+unchanged. Module input hashes remain 70714c6f... (GAMER) and 3a34e383... (MOVIER).
+
+tools/research/close_r192_static_overlays.py reproduces the correction, checks
+the actual entry-map ID AND matching switch destination, and compiles the
+reader against both original modules. Two positives pass. Restoring the
+truncation and removing constructor roots are each rejected for both modules
+(four actual negative executions). Earlier failed test-build attempts remain
+in stages 01–03; stage 04 passed; final published-tool replay stage 05 regenerates identical C++.
+
+The separate candidate build/r192-static-compiled-candidate/out/ps2run.exe
+SHA-256 c07082e496fed888a0890a66a811bcb9106e938804541365c2dce5132764e262
+contains all 13,137 callable base catalogue starts, all 2,537 MOVIER starts
+and the GAMER start. The sole missing base row 0x005BF218 remains authenticated
+descriptor data, with zero function credit. There are 2,339 generated EE units,
+including 1,948 captured dynamic windows, plus 125 VU C++ files and table code.
+Its archive is freshly compiled; its reference runtime archive is the unchanged
+owned v8 runtime. This compile-time archive reuse creates no runtime dependency
+on an external build.
+
+The complete recorded Konquest comparison passes: frame 181224 to 204009,
+22,785 new frames, all 1,519 checkpoints equal, exit 0, zero misses and no
+compiler events; 328.126 seconds headless. No normal launcher is switched by
+this study. This verifies the recorded execution, not complete path coverage.
+
+A separate offline-only NETR study generated 1,788 of its 1,834 catalogue
+starts, leaving 46 explicit refusals/missing entries in
+build/r192-catalogue-all-static-01/RESULT.json. It is not integrated and does
+not change the standing online feature/service exclusion or any credit count.
+Do not use that study to assert all catalogue entries or online behavior pass.
+
+### VU programs recovered from original ELF payloads
+
+tools/research/extract_r192_elf_vu.py parses 99 bounded, MPG-only DMA RET/END
+payload streams directly from the pinned retail ELF, at file offsets
+0x0042CC00 through 0x004E27B0. Each payload has its actual PT_LOAD mapping,
+original command/word ranges and complete copied source bytes recorded.
+All entry-zero direct reachable words lie within bytes uploaded by that
+payload. This is not a proof that every upload format, launch root, indirect
+target or runtime patch has been enumerated.
+
+The original generator emits 942 program keys, including 843 derived jump
+targets, with zero skipped inputs. 929 keys have byte-identical generated
+bodies to the existing 987-key R192 corpus; 13 keys are additional. Exact-body
+union produces 1,000 keys. Truncated DMA, excessive MPG count, out-of-range
+destination and wrong command plants are rejected. No captured state is
+used to invent these original payloads. The read-only Ghidra connection
+identified the matching ELF and joined 145 inspected instructions to original
+file bytes; 21 of 99 queried roots have direct recorded references. Unreferenced
+roots remain a provenance/control-flow limit, not invented class or call names.
+
+The additional 13 kernels are compiled and registered in separate candidate
+build/r192-elf-vu-candidate/out/ps2run.exe, SHA-256
+74fc7c9b4bf3d0118c695b9b3cf50c919223f9df26936455713afc007f2ef84f.
+Its additional-registration source is byte-identical to the public tool's
+generated output. Actual startup registers 987 + 13 VU programs and all 3,569
+sealed EE modules. The actual 80225→80315 probe passes 90 new frames with zero
+misses and exit 0. This does not establish execution equivalence of all 13
+new programs. The normal installed 882302... build still has 987 VU keys.
+
+### Verification and continuing work
+
+The full native baseline was freshly rerun: 59 targets, 65 variants and 16
+gates pass, including expected negative exits. All protected hashes checked
+by that runner remain unchanged. Whole-game acceptance and strict ownership
+census retain their expected open/refusal results. Native ledgers remain
+unchanged; these R192 reference-domain counts do not alter native tiers.
+
+The EE family and IOP implementation work continues independently. Completed
+component receipts must retain their actual whole-body scope and limitations;
+one emitted stub family or one IOP export is not complete domain closure.
+No original executable, launcher, asset, persistent card, save, key or local
+model setting is modified. All tests use owned companion-card copies, with
+no GUI or audio endpoint.
+
+| Evidence | Path from its repository | SHA-256 |
+|---|---|---|
+| Static overlay generation | build/r192-static-overlay-stage-05/RESULT.json | 215e9586c08523e3082822e68736beb745e665fe8aded8e4b805a9feb70efeca |
+| Static candidate compile | build/r192-static-compiled-candidate/RESULT.json | 1cfb0b2dbe662da6d2425b369a20888702f31faa356d30addc31f2cf0b0cea39 |
+| Static full Konquest replay | build/oracle-telemetry/r192-full-static-replay-01/RESULT.json | 3cbd5a3a47f8b6095bedf53ea2ff7c8a0867cc6d886d6dbf4fa29f8caca30889 |
+| Original-ELF VU generation | build/oracle-telemetry/r192-elf-vu-04/RESULT.json | 8c05157c65de120cbb3fe0eecb266b9336638d15bba85422ee27a3a91aa69079 |
+| VU extension compile | build/r192-elf-vu-candidate/RESULT.json | 6e2c270b2be37820bb5c611bb87c210f39ede6c231bd4dfb087a9d41eda10a08 |
+| VU extension 90-frame probe | build/oracle-telemetry/r192-elf-vu-frame90-01/RESULT.json | 0ebfcafc5ef56d2ce038ed0dad385b40b188e3c9faaf73c2edb73347b8dd06c4 |
+| Fresh native baseline | build/oracle-telemetry/complete-baseline-20261125-223027-30e47a1a/RESULT.json | 0958032277e1fb6c538f7494834146b87f1a893481b1fa391b45d9a0c28bcaed |
+| Read-only Ghidra provenance | build/oracle-telemetry/r192-vu-static-payloads-01/GHIDRA.json | 77ddda49d2481d6c55c48e589c14661b434e6f68e8d39620afdf6751d2b721bc |
+
+Final tool replays regenerate every static/VU C++ file identically to the measured build inputs, and the extra registrar matches the compiled candidate byte-for-byte. Receipt build/oracle-telemetry/r192-root-source-final-01.json SHA-256 5ff592028f2c965951f95ef631e03cc543f97fcaeb690083327748b3901c0cbb. The EOF-only style correction preserves the Python AST; no native behavior or credit changes.
+
 ### Not verified
 
 No physical headed gameplay, audio-device run or independent held-out session
 was produced by this integration. Unrecorded future code paths, complete mode
 coverage and the old finite-template/55-dump questions remain unproved.
-The normal R192 route no longer has an EE/VU live compiler dependency; that
-source fact and the measured session do not prove all future coverage.
+The installed R192 route has no EE/VU live compiler, but complete precompilation
+remains OPEN. The separate static/VU candidates do not prove all emitted EE
+families, VU payload variants or IOP paths, and are not deployed by this study.
+VU0 has no VCALLMS in the inspected generated corpus/listing; VIF0 and dynamic
+emission prevent inferring universal absence from that observation.
 The recomp retains console memory/device models and is not final native-port
 acceptance. Ownership admission and native credit rules are unchanged.
 

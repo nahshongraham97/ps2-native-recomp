@@ -5,7 +5,7 @@
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`4d6ca212`](https://github.com/nahshongraham97/ps2-native-recomp/commit/4d6ca21204df94009490e31cc78918177b3fa274) (source and evidence checkpoint)
+**Verified Fork Commit**: [`834aceb3`](https://github.com/nahshongraham97/ps2-native-recomp/commit/834aceb3698df34128bfada73d0ccf7e0250f3a8) (source and evidence checkpoint)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - Bounded ownership of 15,669 callable entries · verified-renderware 6, verified-game 12, verified-other-library 0, inferred-renderware 141, inferred-game 130, inferred-other 0, unresolved 15,380.
@@ -44,7 +44,7 @@
 - **Reference Catalog**: **22,579** `default.xbe` routines inspected (`21,321` in non-XONLINE candidate set, `0` donor-credited, `52` role-mapped candidates). Read-only library identification and measured Xbox-versus-PS2 capability comparisons are authorized. Algorithm adoption remains limited to renderer, viewport, and HD presentation after the per-capability comparison; the owner decides the route. GS packet decoding is an interim concession only.
 <!-- PROGRESS:END -->
 
-**Current oracle priority:** The compiled R192 route is built and replay-tested without EE/VU Live; preserve the original 8AB43BDA reference and existing card. The normal R192 shortcut now selects the compiled build. Unrecorded/held-out paths and physical A/V remain open; continue native memory/ABI work under its existing per-function gates after publishing this integration. Reviewed native work is in main; keep only main and the R192 branch. Details: [existing R192 run record, section 6](research/runs/r192-hooks-playable-run-20261125/RUN.md).
+**Current oracle priority:** Finish complete offline compilation of the retail executable, overlays, generated EE families, VU programs and IOP code before resuming unrelated native ABI work. The current compiled R192 route is an incomplete intermediate build, despite its passing recorded Konquest replay. Logs identify known misses; the whole disc and the original generators define the coverage domain. The owner need not finish a playthrough to supply code. Preserve the original R192 executable/card, native foundation and only the existing main/R192 branches. See the existing R192 run record.
 
 <!-- RENDERER_SCOPE:START -->
 > **Phase 6 ownership.** The progress block above counts callable entries under the current evidence rules. Earlier renderer-family counts combined plugin registrations, reference roles and pipeline callbacks. The four E1 stream and camera roles have original body hashes, caller sites and mutation tests. The stream finder accepts versions 0x34000 through 0x36003 inclusive. Native integration and each function’s differential check remain separate gates. The per-capability Xbox comparison records the dependencies and the limits of each route.
