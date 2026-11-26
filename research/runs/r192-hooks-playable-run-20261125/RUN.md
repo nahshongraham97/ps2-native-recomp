@@ -1389,6 +1389,80 @@ R192 executable/launcher, original inputs, persistent card/saves and local model
 settings are unchanged. Native foundation/baseline and2/238 credit are unchanged;
 the new source/object inventory never promotes catalogue or native tiers.
 
+### Wider typed continuation, producer layout and IOP client lifecycle
+
+The wider resource continuation passes276 original-generated programs,4,416
+constructed sessions and9,936 suspend/return boundaries. All5,520 true suspensions
+and guard callbacks match;4,416 completed-context reuse attempts refuse. At EVERY
+boundary it compares all RAM, ordered writes, FCR, scalar accumulator, full VU
+and budget. Eleven overflow/service/reentry/failed-context/zero-count/snapshot
+controls and five semantic plants reject. Guards are constructed budget-refilling
+services here. Full Cpu mapping, actual scheduler/global Cpu, saved-state
+rehydration, code-buffer ownership and wider runtime/lifetime adoption stay open.
+The current exact-family runtime adapter remains unchanged.
+
+The separate source-only producer/allocator audit matches281 original constructions:
+277 intact-block layouts and four positive-return partial emissions. Exact6,425
+original node rows/physical slots/stream references/offsets match the source-derived
+model;1,069 fresh instruction words join the original ELF. Independent banks have
+ascending VF/FPR allocation; GPR32/GPR64 share the original GPR pool. Internal
+retention node tag358 uses bank2 but explicitly performs128-bit transfers. Bank
+number alone does not establish width.
+
+In [constant-load32,multiply36,data40,main28,filter44,accepted48,tail52] order,
+word capacities are[16,8,20,64,12,24,16]. The matching length formulas are
+[V+S+4R+F+Z,V+S,aligned constant data,6+L+Q+effect_ops,3F,1+L+Q+6R,8+R].
+L is attribute count, Q tag259 retention, V/S vector/scalar constants, R remaps,
+F filters and Z the shared scalar zero. Vector data aligns4 then appends3 words;
+scalar/remap/filter data append1/4/1 words. Constructor node count is
+13+L+Q+V+S+Z+5R+F. These are authenticated original-layout observations and a
+bounded reference model, not a runtime opcode decoder or native register bank.
+
+Four source-supported partial cases remain required open domains: multiply9->8,
+data23->20, constant-load17->16 and accepted/store28->24. Every original whole
+builder still returns positive. They are NOT impossible/invalid descriptors.
+The native core does not implement their omitted operations/ambient-register
+behavior. A large source case uses53 main words; no fictitious main64 overflow
+is claimed. Observed append helpers drop rather than grow and capacities stay
+fixed in these cases; complete reachable-instruction no-growth proof is kept
+separate. A failed first layout model used the wrong failed-append offset sentinel;
+its exact old source/failure is preserved, and final04 matches the original
+FFFFFFFF sentinel.
+
+All99 vector fourth fetches in this cohort are classified:45 following appends,
+14 unwritten pool alignment,39 outside copied-data allocation words and one failed-
+append partial case. Ambient words are explicit inputs/unadmitted producer
+bindings. Neither zero nor descriptor+28 is assumed. Stage A may bind a value
+from a proved original read/state once address/owner/bounds/preparation lifetime
+are established; Stage B ownership is a separate requirement.
+
+The native IOP registry lifecycle model now compares29 source cases against two
+LOADCORE variants in interpreter/AOT modes:116 complete method comparisons and
+448 exact ordered metadata writes. Genuine original Link8/UnLink9 cases cover
+inline import records, active skip, second client, interior/head unlink, relink,
+missing provider(-1) and pending unlink. Epoch/stale-client and observer allocation-
+failure poison/rebuild controls pass; eight compiled semantic mutants still reject.
+The original SDK C is supporting evidence: its import-record indirection and
+clean-stub condition differ from verified original instructions, which remain
+the authority. Runtime metadata/stub permissions, IRQ/ModuleOwner restoration
+and installation remain open; the new static guard is not included in this phase.
+
+| Evidence under R192 build/oracle-telemetry | SHA-256 |
+|---|---|
+| emitted-resource-continuation-02/RESULT.json | a4f3166fe1812d298977f68bb5dfc7808476bdcb54a0a98d9122f8ca15c1edc2 |
+| emitted-producer-layout-04/RESULT.json | a4fa1d05c3f8136d17c799cc4b2debc5593ec5691264bd691b1c7696ed6b13c3 |
+| r192-iop-registry-lifecycle-01/RESULT.json | b9deecbcf9b390ff7e305aa719076082d2c04bc3ebbc7f98e5c32cf3162d6785 |
+| r192-iop-registry-lifecycle-freeze-01/RESULT.json | 7ce4277486ddd2495dc89e49a82cc5ed607d135d74a7fa8de1666494ade9023b |
+| r192-merged-reference-probes-01/RESULT.json | 598ea69f236acbc0029c1ac5abf32cc95cd0877b69879c1c4fc2f7778d44d90c |
+
+The merged PE also passes the14-state diagnostic suite:12 fresh90-frame cases
+and two explicitly reused exact-PE/input90-frame results,1,260 measured frames
+across the suite. This adds saved-state coverage, not whole-game/image acceptance.
+The full22,785-frame/all1,519-checkpoint replay remains separately proved.
+All authored code stays on the R192 branch. No model is silently installed into
+the normal game. Native foundation/baseline,2/238 credit, original assets/builds,
+launcher, persistent card/saves and model settings remain unchanged.
+
 ### Verification and continuing work
 
 The full native baseline was freshly rerun: 59 targets, 65 variants and 16
