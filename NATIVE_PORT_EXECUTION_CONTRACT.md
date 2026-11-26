@@ -27,6 +27,8 @@ reference and an explicit per-function comparison switch. Stage A is not final
 native-memory acceptance and does not relax ownership, equivalence or credit
 rules. Capability-cohort results earn no transformed or native credit.
 
+The original Phase6 gate requires authenticated game-state comparisons plus constructed cases. Constructed-only passes, state-seeded invented calls and a zero-match entry inspection do not discharge it. The2026-11-26 review supersedes the prior N5 interpretation. Continue only the owner-requested existing return/refusal/camera slice without promoting that evidence to original-criterion equivalence. Preserve all existing branches; never treat a merge as authorization to delete them.
+
 Phase 5S.9 measures a seeded leaf cohort from the full in-scope catalogue
 separately from ownership-admitted functions. Preserve failures and report
 whole-function passes by size and instruction mix. The owner's2026-11-26 Phase6 N1–N5 authorizes one bounded memory/ABI/control attempt from that0/30 result; the initial isolated-branch work is now integrated into main under the latest owner direction. Measure the initial memory stage on an independent held-out cohort before enabling later control stages; subsequent stages require a measured held-out whole-function pass. If N1–N3 still yield zero, stop and report whether to abandon the general transformer. Keep the camera as an independent native subsystem check; diagnostic changes at the same instruction are not passes.

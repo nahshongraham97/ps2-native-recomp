@@ -17,6 +17,8 @@ architecture, ownership admission or credit rules. The 5S.9 full-catalogue leaf
 cohort is capability only and cannot add to either credited tier. Apply the
 measured-pass stop rule in the execution contract before further bindings.
 
+**Branch retention:** Continue native work on main. Preserve old branches and their commit histories, including merged branches. Integration is not permission to delete refs; do not perform branch deletion or cleanup. The previously removed phase6-abi-leaf-cohort and phase6-native-memory-abi refs are restored at their recorded tips in both repositories; all13 branch-range commits and their complete ancestry are reachable from main.
+
 Work in this active fork, not `../ps2-native-recomp-backup-20261110/` or
 historical snapshots (`../../milestone_work_verified_playable_20261110/` `B9EEF7DA...`, `../../milestone_build_kombat_practice/` `8B763DCC...`). The restored R192-lineage build at `build/r192-hooks/out/ps2run.exe` (`8AB43BDA...`, launched via `build/r192-hooks/out/launch_r192_hooks.bat`) remains the protected verified original gameplay reference (`research/runs/r192-hooks-playable-run-20261125/RUN.md` in parent; Konquest and Motor Kombat verified); its persistent slot-1 memory card `build/r192-hooks/game/disc/armageddon.ps2` (`f38dc412...`, Konquest checkpoint + user saves) must NEVER be overwritten or reset. Discard noncompliant commits,
 dirty files, and prior checkouts locally without rewriting pushed history.
