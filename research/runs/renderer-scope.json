@@ -258087,5 +258087,97 @@
       },
       "credit": "2 transformed / 238 native (unchanged)"
     }
+  },
+  "phase7_oracle_capture_and_camera_20261126": {
+    "status": "PHASE7_Q1_TO_Q4_CAMERA_CAPTURE_AND_DIFFERENTIAL_PASS_PRODUCTION_UNTOUCHED",
+    "followups_noted": {
+      "static_only_return_chain": [
+        "00125430",
+        "00125488"
+      ],
+      "test_phase5_index_transform": "INDEX_STATE_INAPPLICABLE across all 61 saved states (null original receiver)"
+    },
+    "Q1_entry_exit_capture": {
+      "disposable_build": "b/phase7-capture-out/ps2run.exe (built from disposable copy of build/r192-hooks/src; r192-hooks untouched)",
+      "format": "PS2CAP01 (entry/exit Cpu 1456B, RAM 32MiB, SPR 16KiB, ordered store log, SHA-256 trailer)",
+      "verifier": "tools/research/verify_phase7_capture.py",
+      "verified_on_reached_functions": [
+        "0012e4e0",
+        "001a64a0",
+        "001a7510"
+      ],
+      "captures_verified": 9,
+      "planted_corruption_rejected": true
+    },
+    "Q2_camera_reachability": {
+      "states_swept": 12,
+      "frames_per_state": 10,
+      "called_in_sessions": {
+        "001a64a0": {
+          "entry": 148,
+          "ownership": "verified-renderware",
+          "calls": 220,
+          "states_hit": "11/12"
+        },
+        "001a7510": {
+          "entry": 265,
+          "ownership": "inferred-renderware",
+          "calls": 5290,
+          "states_hit": "11/12"
+        },
+        "001a70f0": {
+          "entry": 242,
+          "ownership": "unresolved",
+          "calls": 22190,
+          "states_hit": "11/12"
+        }
+      },
+      "never_reached_in_sweep": [
+        "001a6410",
+        "001a6510",
+        "001a6540",
+        "001a65a0",
+        "001a66a0",
+        "001a68f0",
+        "001a6a10",
+        "001a6a20",
+        "001a6b30",
+        "001a6be0",
+        "001a6c30",
+        "001a6d70",
+        "001a6dd0",
+        "001a6f40",
+        "001a6fd0"
+      ],
+      "note": "s0 (f017793) exited 1 in 6-state capture sweep; s1..s5 exited 0"
+    },
+    "Q3_Q4_native_camera_differential": {
+      "native_header": "runtime/include/mka/phase7_camera_native.hpp",
+      "test_harness": "tests/test_phase7_camera_differential.cpp",
+      "production_cameras_untouched": true,
+      "001a64a0_states_passed": 15,
+      "001a64a0_distinct_shapes": 1,
+      "001a7510_states_passed": 15,
+      "001a7510_distinct_shapes": 2,
+      "planted_errors_rejected": [
+        "--planted-window",
+        "--planted-reciprocal",
+        "--planted-store-order",
+        "--planted-frame-flags",
+        "--planted-return"
+      ]
+    },
+    "Q5_next_subsystems": [
+      "input",
+      "fighter_state",
+      "0x002E6180_stub_family"
+    ],
+    "native_services_retained": [
+      "IOP",
+      "SIF",
+      "memory_card",
+      "audio"
+    ],
+    "credit": "2 transformed / 238 native (unchanged)"
   }
 }
