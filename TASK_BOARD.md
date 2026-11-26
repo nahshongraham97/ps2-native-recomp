@@ -12,6 +12,8 @@ each deliverable's verified component progress and whole-game acceptance state;
 
 R192 supplies gameplay and telemetry evidence. The November 10 playable milestone supplies saved-state and hash parity. Kombat Practice is a historical snapshot. The primary oracle designation is **pending owner confirmation**.
 
+**Branch consolidation:** The fork now has only main and r192-aot-closure-proof, locally and on origin. Reviewed phase6 work was fast-forwarded to main in parent/fork; redundant branches were removed after preserving unmerged tips as published archive tags. Parent has main only. R192 integration now builds its own AOT library instead of the protected backup archive; final replay results belong in the existing R192 run record.
+
 <!-- PROGRESS:START -->
 ## Native Reimplementation Progress & Multi-Tier Ledger
 
