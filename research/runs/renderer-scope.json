@@ -253517,7 +253517,7 @@
         "publication_role": "Published source/evidence commits; reporting successors carry completion/source-join metadata."
       }
     ],
-    "next_step": "On isolated r192-aot-closure-proof: prove writer/executable extent/full body behind object+4C for fresh bound miss008A5140; caller002E60E0/RA002E6180 is not an emitter identification. Reproduce actual version8 source candidate on disposable output before full/held-out no-Live and image comparisons. Preserve owner code collection and activeR192/card. Native branches stay unmerged; generic bindings stop. Deferred001A3BE0 still needs extent/alias proof and seven ordered-store comparison.",
+    "next_step": "Superseded by owner Phase6 N1\u2013N7 on phase6-native-memory-abi. See native_phase6_memory_abi_20261126. Oracle closure is frozen and not a prerequisite.",
     "publication_roles": {
       "implementation": "7e14d600595ccd511d58c570f2ab3ebac4c30c97",
       "parent_evidence": "6708b17995e2a87868e75aae2244a2bb78373a2b",
@@ -253548,6 +253548,3324 @@
       "game_capture": "No new oracle capture or closure acceptance claimed by the native-port task.",
       "protection_exception_exact_scope": "The protected persistent card bytes changed fromf38dc412... toa42816d6... after the completed baseline. Only the ad-hoc source publication helper skipped its obsolete card equality assertion after explicit owner confirmation. It did not change a project checker, expected hash, manifest, card, executable or process. The exact writer remains unattributed."
     },
-    "review_followup": "Both measured native-study branches remain unmerged; main refs unchanged. Current review adds diagnostics/documentation only and carries forward the completed59target/65variant/16gate baseline; no new game behavior or native credit is claimed."
+    "review_followup": "Both measured native-study branches remain unmerged; main refs unchanged. Current review adds diagnostics/documentation only and carries forward the completed59target/65variant/16gate baseline; no new game behavior or native credit is claimed.",
+    "superseded_next_step_20261126": "On isolated r192-aot-closure-proof: prove writer/executable extent/full body behind object+4C for fresh bound miss008A5140; caller002E60E0/RA002E6180 is not an emitter identification. Reproduce actual version8 source candidate on disposable output before full/held-out no-Live and image comparisons. Preserve owner code collection and activeR192/card. Native branches stay unmerged; generic bindings stop. Deferred001A3BE0 still needs extent/alias proof and seven ordered-store comparison."
+  },
+  "native_phase6_memory_abi_20261126": {
+    "status": "BOUNDED_STAGE_A_CAPABILITY_MEASURED_PRODUCTION_OPEN",
+    "authority": "Owner2026-11-26 Phase6 N1\u2013N7; old0/30 cohort and13memory/6ABI/6control/5return-interface starting groups. No ownership/credit rule changes.",
+    "branches": {
+      "parent": "phase6-native-memory-abi",
+      "fork": "phase6-native-memory-abi",
+      "main": "unchanged",
+      "r192-aot-closure-proof": "frozen at31d087fa59274d15e35dba1e6c62fe1c53001563; no writes"
+    },
+    "launcher": {
+      "parent_commit": "8aa14935a",
+      "route": "launchers/launch_r192_hooks.bat calls original external/forks/ps2-native-recomp/build/r192-hooks/out/launch_r192_hooks.bat",
+      "AOT": "Existing linked AOT and all3569 precompiled EE DLLs retained; byte identities match preserved compiled package. No claim every future generated output is precompiled.",
+      "Live": "Original EE/VU Live enabled for misses; no R192 executable/launcher/card/save write or game launch.",
+      "receipt": {
+        "path": "build/oracle-telemetry/phase6-launcher-restore-01/RESULT.json",
+        "sha256": "45a3020756fa47b4f50adeb3a21723b6ef386d2cd8363d5c67b08132916d612e"
+      }
+    },
+    "N1": {
+      "status": "TYPED_MEMORY_AND13_CLASSIFICATIONS_VERIFIED_COMPONENT",
+      "layer": "runtime/include/mka/stage_a_guest_memory.hpp",
+      "widths_bits": [
+        8,
+        16,
+        32,
+        64
+      ],
+      "endianness": "Explicit little endian; signed loads preserve bit pattern, source GPR extension is explicit in SSA.",
+      "RAM_aliases": [
+        "00000000..01ffffff",
+        "20000000..21ffffff",
+        "30000000..31ffffff",
+        "80000000..81ffffff",
+        "a0000000..a1ffffff"
+      ],
+      "scratchpad": "70000000..70003fff; separate caller-supplied storage",
+      "address_authority": {
+        "local_SDK": "dependencies/ps2sdk-source/ee/kernel/include/kernel.h UNCACHED_SEG/UCAB_SEG; pinned in component receipt",
+        "primary_reference": "https://raw.githubusercontent.com/PCSX2/pcsx2/master/pcsx2/Memory.cpp memMapKernelMem and scratchpad profile; consulted2026-11-26, no code copied"
+      },
+      "unsupported": "Natural alignment rejects invalid scalar accesses; explicit bytewise API is separate. Cross-region/device/MMIO/ROM/uninstalled/arbitraryTLB and unproved widths refuse before write.",
+      "constructed_checks": 128,
+      "width_and_order_plants": "Both actual mutated store executions rejected.",
+      "typed_struct_views_added": 0,
+      "width_unknown": 0,
+      "GP_based_refusals": 3,
+      "all13": [
+        {
+          "key": "MOVIER.ovl:007d2150",
+          "old_first_refusal": "unbound_call:st8",
+          "source_pc": "007d2158",
+          "word": "a0820003",
+          "width_bits": 8,
+          "operation": "store",
+          "load_projection": "TRUNCATE_TO_STORE_WIDTH",
+          "base_register": 4,
+          "signed_displacement": 3,
+          "nominal_ELF_REGINFO_GP_source_address": null,
+          "missing_pieces": [
+            "typed_access_lowering_and_effect_order",
+            "semantic_receiver_or_pointee_type_unproved",
+            "JR_delay_effect_order_must_be_retained"
+          ],
+          "layer": "GuestMemory.store<std::uint8_t> plus explicit generated SSA projection",
+          "alignment": 1,
+          "alias_policy": "Shared supplied region storage; preserve source loads/stores and phi-edge parallel assignment order.",
+          "typed_struct_view": "NONE_ADMITTED; explicit guest access retained",
+          "native_signature": "Mechanical capability inputs only; receiver/field semantics require independent ABI evidence."
+        },
+        {
+          "key": "MOVIER.ovl:00800540",
+          "old_first_refusal": "unbound_memory:non_GP_base",
+          "source_pc": "00800544",
+          "word": "ac850064",
+          "width_bits": 32,
+          "operation": "store",
+          "load_projection": "TRUNCATE_TO_STORE_WIDTH",
+          "base_register": 4,
+          "signed_displacement": 100,
+          "nominal_ELF_REGINFO_GP_source_address": null,
+          "missing_pieces": [
+            "typed_access_lowering_and_effect_order",
+            "semantic_receiver_or_pointee_type_unproved",
+            "JR_delay_effect_order_must_be_retained"
+          ],
+          "layer": "GuestMemory.store<std::uint32_t> plus explicit generated SSA projection",
+          "alignment": 4,
+          "alias_policy": "Shared supplied region storage; preserve source loads/stores and phi-edge parallel assignment order.",
+          "typed_struct_view": "NONE_ADMITTED; explicit guest access retained",
+          "native_signature": "Mechanical capability inputs only; receiver/field semantics require independent ABI evidence."
+        },
+        {
+          "key": "MOVIER.ovl:00803118",
+          "old_first_refusal": "unsupported_value_ast:CallExpr",
+          "source_pc": "00803118",
+          "word": "8c830004",
+          "width_bits": 32,
+          "operation": "load",
+          "load_projection": "SIGN_EXTEND32_TO_LOW64",
+          "base_register": 4,
+          "signed_displacement": 4,
+          "nominal_ELF_REGINFO_GP_source_address": null,
+          "missing_pieces": [
+            "typed_access_lowering_and_effect_order",
+            "semantic_receiver_or_pointee_type_unproved"
+          ],
+          "layer": "GuestMemory.load<std::uint32_t> plus explicit generated SSA projection",
+          "alignment": 4,
+          "alias_policy": "Shared supplied region storage; preserve source loads/stores and phi-edge parallel assignment order.",
+          "typed_struct_view": "NONE_ADMITTED; explicit guest access retained",
+          "native_signature": "Mechanical capability inputs only; receiver/field semantics require independent ABI evidence."
+        },
+        {
+          "key": "MOVIER.ovl:00814c30",
+          "old_first_refusal": "unbound_indirect_target:cursor_assignment",
+          "source_pc": "00814c30",
+          "word": "dca20000",
+          "width_bits": 64,
+          "operation": "load",
+          "load_projection": "LOW64_BITS",
+          "base_register": 5,
+          "signed_displacement": 0,
+          "nominal_ELF_REGINFO_GP_source_address": null,
+          "missing_pieces": [
+            "typed_access_lowering_and_effect_order",
+            "semantic_receiver_or_pointee_type_unproved"
+          ],
+          "layer": "GuestMemory.load<std::uint64_t> plus explicit generated SSA projection",
+          "alignment": 8,
+          "alias_policy": "Shared supplied region storage; preserve source loads/stores and phi-edge parallel assignment order.",
+          "typed_struct_view": "NONE_ADMITTED; explicit guest access retained",
+          "native_signature": "Mechanical capability inputs only; receiver/field semantics require independent ABI evidence."
+        },
+        {
+          "key": "SLUS_214.10:0017a440",
+          "old_first_refusal": "unsupported_value_ast:CallExpr",
+          "source_pc": "0017a444",
+          "word": "8c42eaec",
+          "width_bits": 32,
+          "operation": "load",
+          "load_projection": "SIGN_EXTEND32_TO_LOW64",
+          "base_register": 2,
+          "signed_displacement": -5396,
+          "nominal_ELF_REGINFO_GP_source_address": null,
+          "missing_pieces": [
+            "typed_access_lowering_and_effect_order",
+            "semantic_receiver_or_pointee_type_unproved"
+          ],
+          "layer": "GuestMemory.load<std::uint32_t> plus explicit generated SSA projection",
+          "alignment": 4,
+          "alias_policy": "Shared supplied region storage; preserve source loads/stores and phi-edge parallel assignment order.",
+          "typed_struct_view": "NONE_ADMITTED; explicit guest access retained",
+          "native_signature": "Mechanical capability inputs only; receiver/field semantics require independent ABI evidence."
+        },
+        {
+          "key": "SLUS_214.10:00181bc0",
+          "old_first_refusal": "unsupported_value_ast:CallExpr",
+          "source_pc": "00181bc0",
+          "word": "8f839dc4",
+          "width_bits": 32,
+          "operation": "load",
+          "load_projection": "SIGN_EXTEND32_TO_LOW64",
+          "base_register": 28,
+          "signed_displacement": -25148,
+          "nominal_ELF_REGINFO_GP_source_address": "0064deb4",
+          "missing_pieces": [
+            "typed_access_lowering_and_effect_order",
+            "GP_field_meaning_and_native_owner_unproved"
+          ],
+          "layer": "GuestMemory.load<std::uint32_t> plus explicit generated SSA projection",
+          "alignment": 4,
+          "alias_policy": "Shared supplied region storage; preserve source loads/stores and phi-edge parallel assignment order.",
+          "typed_struct_view": "NONE_ADMITTED; explicit guest access retained",
+          "native_signature": "Mechanical capability inputs only; receiver/field semantics require independent ABI evidence."
+        },
+        {
+          "key": "SLUS_214.10:0019d5d0",
+          "old_first_refusal": "unsupported_value_ast:CallExpr",
+          "source_pc": "0019d5dc",
+          "word": "8c620004",
+          "width_bits": 32,
+          "operation": "load",
+          "load_projection": "SIGN_EXTEND32_TO_LOW64",
+          "base_register": 3,
+          "signed_displacement": 4,
+          "nominal_ELF_REGINFO_GP_source_address": null,
+          "missing_pieces": [
+            "typed_access_lowering_and_effect_order",
+            "semantic_receiver_or_pointee_type_unproved"
+          ],
+          "layer": "GuestMemory.load<std::uint32_t> plus explicit generated SSA projection",
+          "alignment": 4,
+          "alias_policy": "Shared supplied region storage; preserve source loads/stores and phi-edge parallel assignment order.",
+          "typed_struct_view": "NONE_ADMITTED; explicit guest access retained",
+          "native_signature": "Mechanical capability inputs only; receiver/field semantics require independent ABI evidence."
+        },
+        {
+          "key": "SLUS_214.10:001c4210",
+          "old_first_refusal": "unsupported_value_ast:CallExpr",
+          "source_pc": "001c4210",
+          "word": "8f83a560",
+          "width_bits": 32,
+          "operation": "load",
+          "load_projection": "SIGN_EXTEND32_TO_LOW64",
+          "base_register": 28,
+          "signed_displacement": -23200,
+          "nominal_ELF_REGINFO_GP_source_address": "0064e650",
+          "missing_pieces": [
+            "typed_access_lowering_and_effect_order",
+            "GP_field_meaning_and_native_owner_unproved"
+          ],
+          "layer": "GuestMemory.load<std::uint32_t> plus explicit generated SSA projection",
+          "alignment": 4,
+          "alias_policy": "Shared supplied region storage; preserve source loads/stores and phi-edge parallel assignment order.",
+          "typed_struct_view": "NONE_ADMITTED; explicit guest access retained",
+          "native_signature": "Mechanical capability inputs only; receiver/field semantics require independent ABI evidence."
+        },
+        {
+          "key": "SLUS_214.10:00212c20",
+          "old_first_refusal": "unsupported_value_ast:CallExpr",
+          "source_pc": "00212c20",
+          "word": "8c840014",
+          "width_bits": 32,
+          "operation": "load",
+          "load_projection": "SIGN_EXTEND32_TO_LOW64",
+          "base_register": 4,
+          "signed_displacement": 20,
+          "nominal_ELF_REGINFO_GP_source_address": null,
+          "missing_pieces": [
+            "typed_access_lowering_and_effect_order",
+            "semantic_receiver_or_pointee_type_unproved"
+          ],
+          "layer": "GuestMemory.load<std::uint32_t> plus explicit generated SSA projection",
+          "alignment": 4,
+          "alias_policy": "Shared supplied region storage; preserve source loads/stores and phi-edge parallel assignment order.",
+          "typed_struct_view": "NONE_ADMITTED; explicit guest access retained",
+          "native_signature": "Mechanical capability inputs only; receiver/field semantics require independent ABI evidence."
+        },
+        {
+          "key": "SLUS_214.10:0030e130",
+          "old_first_refusal": "unsupported_value_ast:CallExpr",
+          "source_pc": "0030e130",
+          "word": "8c83001c",
+          "width_bits": 32,
+          "operation": "load",
+          "load_projection": "SIGN_EXTEND32_TO_LOW64",
+          "base_register": 4,
+          "signed_displacement": 28,
+          "nominal_ELF_REGINFO_GP_source_address": null,
+          "missing_pieces": [
+            "typed_access_lowering_and_effect_order",
+            "semantic_receiver_or_pointee_type_unproved"
+          ],
+          "layer": "GuestMemory.load<std::uint32_t> plus explicit generated SSA projection",
+          "alignment": 4,
+          "alias_policy": "Shared supplied region storage; preserve source loads/stores and phi-edge parallel assignment order.",
+          "typed_struct_view": "NONE_ADMITTED; explicit guest access retained",
+          "native_signature": "Mechanical capability inputs only; receiver/field semantics require independent ABI evidence."
+        },
+        {
+          "key": "SLUS_214.10:00343980",
+          "old_first_refusal": "unsupported_value_ast:CallExpr",
+          "source_pc": "00343980",
+          "word": "8c820004",
+          "width_bits": 32,
+          "operation": "load",
+          "load_projection": "SIGN_EXTEND32_TO_LOW64",
+          "base_register": 4,
+          "signed_displacement": 4,
+          "nominal_ELF_REGINFO_GP_source_address": null,
+          "missing_pieces": [
+            "typed_access_lowering_and_effect_order",
+            "semantic_receiver_or_pointee_type_unproved"
+          ],
+          "layer": "GuestMemory.load<std::uint32_t> plus explicit generated SSA projection",
+          "alignment": 4,
+          "alias_policy": "Shared supplied region storage; preserve source loads/stores and phi-edge parallel assignment order.",
+          "typed_struct_view": "NONE_ADMITTED; explicit guest access retained",
+          "native_signature": "Mechanical capability inputs only; receiver/field semantics require independent ABI evidence."
+        },
+        {
+          "key": "SLUS_214.10:003c6ad0",
+          "old_first_refusal": "unbound_memory:non_GP_base",
+          "source_pc": "003c6adc",
+          "word": "ac820014",
+          "width_bits": 32,
+          "operation": "store",
+          "load_projection": "TRUNCATE_TO_STORE_WIDTH",
+          "base_register": 4,
+          "signed_displacement": 20,
+          "nominal_ELF_REGINFO_GP_source_address": null,
+          "missing_pieces": [
+            "typed_access_lowering_and_effect_order",
+            "semantic_receiver_or_pointee_type_unproved"
+          ],
+          "layer": "GuestMemory.store<std::uint32_t> plus explicit generated SSA projection",
+          "alignment": 4,
+          "alias_policy": "Shared supplied region storage; preserve source loads/stores and phi-edge parallel assignment order.",
+          "typed_struct_view": "NONE_ADMITTED; explicit guest access retained",
+          "native_signature": "Mechanical capability inputs only; receiver/field semantics require independent ABI evidence."
+        },
+        {
+          "key": "SLUS_214.10:0047e7c0",
+          "old_first_refusal": "unsupported_value_ast:CallExpr",
+          "source_pc": "0047e7c0",
+          "word": "8f82b160",
+          "width_bits": 32,
+          "operation": "load",
+          "load_projection": "SIGN_EXTEND32_TO_LOW64",
+          "base_register": 28,
+          "signed_displacement": -20128,
+          "nominal_ELF_REGINFO_GP_source_address": "0064f250",
+          "missing_pieces": [
+            "typed_access_lowering_and_effect_order",
+            "GP_field_meaning_and_native_owner_unproved"
+          ],
+          "layer": "GuestMemory.load<std::uint32_t> plus explicit generated SSA projection",
+          "alignment": 4,
+          "alias_policy": "Shared supplied region storage; preserve source loads/stores and phi-edge parallel assignment order.",
+          "typed_struct_view": "NONE_ADMITTED; explicit guest access retained",
+          "native_signature": "Mechanical capability inputs only; receiver/field semantics require independent ABI evidence."
+        }
+      ],
+      "receipts": [
+        {
+          "path": "build/oracle-telemetry/native-phase6-guest-memory-02/RESULT.json",
+          "sha256": "eac109de84ea29cd8dae3f4a2ad6c6a756ad990ede3223dce82db03aa433c133"
+        },
+        {
+          "path": "build/oracle-telemetry/native-phase6-memory-refusals-02/RESULT.json",
+          "sha256": "e0d2e9333d0b47916c684bf77146ed7c7c31e649a344bafda57522e7d1149294"
+        }
+      ],
+      "REGINFO_GP_witness": {
+        "schema": "retail_single_data_symbol_v1",
+        "address": "0064e348",
+        "semantic_kind": "nullable_borrowed_object_reference",
+        "original_storage_width_bits": 32,
+        "allowed_projection": "clear_borrowed_reference",
+        "owner_binding": null,
+        "pointee_binding": null,
+        "producer_words": [
+          {
+            "pc": "0018d620",
+            "word": "0c05bd9c"
+          },
+          {
+            "pc": "0018d624",
+            "word": "2409001c"
+          },
+          {
+            "pc": "0018d628",
+            "word": "50400009"
+          },
+          {
+            "pc": "0018d630",
+            "word": "50400005"
+          },
+          {
+            "pc": "0018d634",
+            "word": "af80a258"
+          },
+          {
+            "pc": "0018d638",
+            "word": "af82a258"
+          },
+          {
+            "pc": "0018d63c",
+            "word": "8c430004"
+          },
+          {
+            "pc": "0018d640",
+            "word": "10000002"
+          },
+          {
+            "pc": "0018d644",
+            "word": "af83a25c"
+          },
+          {
+            "pc": "0018d648",
+            "word": "af80a25c"
+          }
+        ],
+        "read_words": [
+          {
+            "pc": "0018d320",
+            "word": "8f84a258"
+          },
+          {
+            "pc": "0018d324",
+            "word": "50800005"
+          },
+          {
+            "pc": "0018d328",
+            "word": "0000202d"
+          },
+          {
+            "pc": "0018d32c",
+            "word": "8c830004"
+          },
+          {
+            "pc": "0018d330",
+            "word": "8f82a25c"
+          },
+          {
+            "pc": "0018d334",
+            "word": "54620001"
+          },
+          {
+            "pc": "0018d338",
+            "word": "0000202d"
+          },
+          {
+            "pc": "0018d4c4",
+            "word": "8f85a258"
+          },
+          {
+            "pc": "0018d4c8",
+            "word": "50a00005"
+          },
+          {
+            "pc": "0018d4cc",
+            "word": "0000282d"
+          },
+          {
+            "pc": "0018d4d0",
+            "word": "8ca30004"
+          },
+          {
+            "pc": "0018d4d4",
+            "word": "8f82a25c"
+          },
+          {
+            "pc": "0018d4d8",
+            "word": "54620001"
+          }
+        ],
+        "reset_words": [
+          {
+            "pc": "0018da30",
+            "word": "af80a258"
+          },
+          {
+            "pc": "0018da34",
+            "word": "af80a25c"
+          }
+        ],
+        "gp_base": "006540f0",
+        "signed_GP_displacement": -23976,
+        "unbound_companion_cookie": "0064e34c",
+        "bss_mapping": {
+          "pt_load_index": 0,
+          "file_offset": 256,
+          "virtual_address": "00100000",
+          "file_bytes": 5561984,
+          "memory_bytes": 7096448,
+          "file_backed_end_exclusive": "0064de80",
+          "birth_value": "loader zero; no file-backed symbol bytes",
+          "reference_birth": "null",
+          "cookie_birth": 0
+        },
+        "source_pins": {
+          "original_elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+          "MIPS_REGINFO_file_offset": 5562328,
+          "MIPS_REGINFO_sha256": "cb1fa08a97d8322b63e497475e672e986c1792c7df794f1b1e09eb3b3350a2d1",
+          "map_source_sha256": "16293c76f463a93d26756d165065e9f26b325af12dd0de483b1a7168875ef418"
+        },
+        "established_behavior": [
+          "JAL0016F670 produces reference V0; published by SW V0 at0018D638",
+          "Object word+4 is separately cached in0064E34C by0018D63C/0018D644",
+          "Readers reject null or mismatched object word+4 versus cached cookie",
+          "SWzero at0018DA30 clears a borrowed reference, not object retirement"
+        ],
+        "limits": [
+          "Actual native producer owner and pointee ABI are unbound",
+          "Cookie0064E34C remains unbound; no mapping for other GP fields",
+          "No source32-bit pointer bits may become a native pointer or handle",
+          "Experimental clear IR only; native emission/production adoption refused"
+        ]
+      }
+    },
+    "N2": {
+      "status": "BOUNDED_ABI_SHIM_VERIFIED_GENERAL_SIGNATURES_AND44_CONTRACTS_OPEN",
+      "shim": "runtime/include/mka/stage_a_abi_shim.hpp",
+      "signature": "Admitted001A3C40 int32 heap-close return with unused raw StageA reference; original001A2068/001A1BB4 JAL/LW-delay callers verified. No general signature inferred from one caller.",
+      "constructed_comparisons": 160,
+      "scope": "Native/AOT entry + both real JAL/LW-delay call bundles, full Cpu/high lanes/SP/RA. JAL RA change is preserved, not incorrectly restored.",
+      "structural_refusals": 7,
+      "planted_failures_rejected": 8,
+      "contracts": {
+        "sites": 101,
+        "classes": {
+          "DIRECT_CLOSED_NONLEAF": 45,
+          "DIRECT_OUT_OF_BODY_EXIT": 12,
+          "DIRECT_CLOSED_LEAF": 31,
+          "INDIRECT_TARGET_UNRESOLVED": 12,
+          "DIRECT_CONTEXT_RESTORE_CONTRACT_UNPROVED": 1
+        },
+        "largest_ordinary_class_sites_attempted": 45,
+        "largest_class_unique_targets": 32,
+        "existing_machine_subobligation_reproved_sites": 1,
+        "largest_class_sites_still_refused": 44,
+        "native_typed_ABIs_proved_from101": 0,
+        "native_credit": 0
+      },
+      "contract_limits": "1 existing machine-normal-return subobligation rederived;44/45 largest-class sites remain refused. Context restoration excluded; zero typed native ABIs admitted from101.",
+      "receipts": [
+        {
+          "path": "build/oracle-telemetry/native-phase6-abi-shim-05/RESULT.json",
+          "sha256": "e40e43f38752146a0656f24c11fac674b29264f0c31569b31c1166b4201d399b"
+        },
+        {
+          "path": "build/oracle-telemetry/native-phase6-return-contracts-02/RESULT.json",
+          "sha256": "9e9caf2d7e335b589e0f2ac88d9e5fc48c4a3851fb55c4c4a4d50cd1296b79e7"
+        }
+      ]
+    },
+    "N3": {
+      "status": "BOUNDED_BLOCK_PARAMETER_SSA_VERIFIED_BY_CONSTRUCTED_E2",
+      "producer": "tools/research/phase6_leaf_lowering.py consumes actual pinned Clang AST and source-mapped word bounds, not function-name templates or directELF emission.",
+      "native_interface": "Typed mechanical scalar bitvectors + explicit GuestMemory; no Cpu/register-array/opcode-stream in emitted body. Semantic receiver/production ABI unadmitted.",
+      "control": "Branch condition captured before delay effects; static CFG/parallel block parameters lower to native C++ labels and scalar SSA. Ordinary return and a source-constant loop pass; runtime tripbound loops refuse.",
+      "limits": {
+        "no_yield_budget_floor": "Source-proved full path maximum debit2..68; insufficient allowance refused; native scheduler/continuations not implemented.",
+        "static_path_analysis_limit": 128,
+        "unknown_trip_bounds_refused": 5,
+        "analysis_cap_refused": 1,
+        "final_function_refusals": [
+          {
+            "key": "MOVIER.ovl:007e0918",
+            "cohort": "heldout30",
+            "body_bytes": 64,
+            "instruction_mix": {
+              "tags": [
+                "scalar-load",
+                "scalar-store",
+                "branching"
+              ],
+              "overlap": "Tags overlap; denominators must not be summed.",
+              "scalar_loads": 2,
+              "scalar_stores": 4,
+              "direct_branch_instructions": 1,
+              "instruction_count": 16,
+              "NOPs": 0,
+              "SP_relative_memory": 0,
+              "GP_relative_memory": 0
+            },
+            "old_first_failure": null,
+            "old_semantic_group": "new held-out cohort",
+            "memory_status": "REFUSED",
+            "memory_first_failure": "N3_static_analysis_path_bound_128_exceeded",
+            "control_status": "REFUSED",
+            "control_first_failure": "N3_static_analysis_path_bound_128_exceeded",
+            "constructed_comparisons": 0,
+            "constructed_declined": 0,
+            "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_0007.cpp",
+            "source_unit_sha256": "b7335f2d9b56e3b427870eebaac91f22399c418cf8d5775a783b5cd9f702f2b2",
+            "native_source_sha256": null,
+            "executable_sha256": null,
+            "classification": "capability only; production ABI and ownership admission separate"
+          },
+          {
+            "key": "SLUS_214.10:0010fe78",
+            "cohort": "heldout30",
+            "body_bytes": 172,
+            "instruction_mix": {
+              "tags": [
+                "memory-free",
+                "branching"
+              ],
+              "overlap": "Tags overlap; denominators must not be summed.",
+              "scalar_loads": 0,
+              "scalar_stores": 0,
+              "direct_branch_instructions": 5,
+              "instruction_count": 43,
+              "NOPs": 2,
+              "SP_relative_memory": 0,
+              "GP_relative_memory": 0
+            },
+            "old_first_failure": null,
+            "old_semantic_group": "new held-out cohort",
+            "memory_status": "REFUSED",
+            "memory_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+            "control_status": "REFUSED",
+            "control_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+            "constructed_comparisons": 0,
+            "constructed_declined": 0,
+            "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0003.cpp",
+            "source_unit_sha256": "7fc2690ecfd86c2534c7effad75df0d33edf81057cebe4d21f487be247310575",
+            "native_source_sha256": null,
+            "executable_sha256": null,
+            "classification": "capability only; production ABI and ownership admission separate"
+          },
+          {
+            "key": "SLUS_214.10:0019d5d0",
+            "cohort": "original30",
+            "body_bytes": 104,
+            "instruction_mix": {
+              "tags": [
+                "scalar-load",
+                "branching"
+              ],
+              "overlap": "Tags overlap; denominators must not be summed.",
+              "scalar_loads": 3,
+              "scalar_stores": 0,
+              "direct_branch_instructions": 4,
+              "instruction_count": 26,
+              "NOPs": 2,
+              "SP_relative_memory": 0,
+              "GP_relative_memory": 0
+            },
+            "old_first_failure": "unsupported_value_ast:CallExpr",
+            "old_semantic_group": "typed_memory",
+            "memory_status": "REFUSED",
+            "memory_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+            "control_status": "REFUSED",
+            "control_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+            "constructed_comparisons": 0,
+            "constructed_declined": 0,
+            "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0027.cpp",
+            "source_unit_sha256": "87ae0d31581015858f03415c5319db0c87b15cc47feac58ec532d97ce589a16f",
+            "native_source_sha256": null,
+            "executable_sha256": null,
+            "classification": "capability only; production ABI and ownership admission separate"
+          },
+          {
+            "key": "SLUS_214.10:001aa150",
+            "cohort": "heldout30",
+            "body_bytes": 304,
+            "instruction_mix": {
+              "tags": [
+                "scalar-load",
+                "branching"
+              ],
+              "overlap": "Tags overlap; denominators must not be summed.",
+              "scalar_loads": 11,
+              "scalar_stores": 0,
+              "direct_branch_instructions": 21,
+              "instruction_count": 76,
+              "NOPs": 5,
+              "SP_relative_memory": 0,
+              "GP_relative_memory": 0
+            },
+            "old_first_failure": null,
+            "old_semantic_group": "new held-out cohort",
+            "memory_status": "REFUSED",
+            "memory_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+            "control_status": "REFUSED",
+            "control_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+            "constructed_comparisons": 0,
+            "constructed_declined": 0,
+            "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_002A.cpp",
+            "source_unit_sha256": "e8a65a4158ca0926cc8694d66f52f49f6aeccfcd10f7f041203dc905f73d702f",
+            "native_source_sha256": null,
+            "executable_sha256": null,
+            "classification": "capability only; production ABI and ownership admission separate"
+          },
+          {
+            "key": "SLUS_214.10:002b7a48",
+            "cohort": "heldout30",
+            "body_bytes": 148,
+            "instruction_mix": {
+              "tags": [
+                "scalar-load",
+                "branching"
+              ],
+              "overlap": "Tags overlap; denominators must not be summed.",
+              "scalar_loads": 4,
+              "scalar_stores": 0,
+              "direct_branch_instructions": 8,
+              "instruction_count": 37,
+              "NOPs": 1,
+              "SP_relative_memory": 0,
+              "GP_relative_memory": 0
+            },
+            "old_first_failure": null,
+            "old_semantic_group": "new held-out cohort",
+            "memory_status": "REFUSED",
+            "memory_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+            "control_status": "REFUSED",
+            "control_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+            "constructed_comparisons": 0,
+            "constructed_declined": 0,
+            "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_006D.cpp",
+            "source_unit_sha256": "c7f4b3afccbf24aed33ed1d3f7ce251b63184178bfca397632dd1ee45dd6b9d3",
+            "native_source_sha256": null,
+            "executable_sha256": null,
+            "classification": "capability only; production ABI and ownership admission separate"
+          },
+          {
+            "key": "SLUS_214.10:002e8730",
+            "cohort": "heldout30",
+            "body_bytes": 716,
+            "instruction_mix": {
+              "tags": [
+                "scalar-load",
+                "scalar-store",
+                "branching"
+              ],
+              "overlap": "Tags overlap; denominators must not be summed.",
+              "scalar_loads": 26,
+              "scalar_stores": 38,
+              "direct_branch_instructions": 23,
+              "instruction_count": 179,
+              "NOPs": 11,
+              "SP_relative_memory": 12,
+              "GP_relative_memory": 0
+            },
+            "old_first_failure": null,
+            "old_semantic_group": "new held-out cohort",
+            "memory_status": "REFUSED",
+            "memory_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+            "control_status": "REFUSED",
+            "control_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+            "constructed_comparisons": 0,
+            "constructed_declined": 0,
+            "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_007A.cpp",
+            "source_unit_sha256": "25763da2cfec473bd0f1d4e7a5ef7a952438641134d5f86aac5024eb2d6a2b0b",
+            "native_source_sha256": null,
+            "executable_sha256": null,
+            "classification": "capability only; production ABI and ownership admission separate"
+          }
+        ]
+      },
+      "receipts": [
+        {
+          "path": "build/oracle-telemetry/phase6-memory-leaf-05/RESULT.json",
+          "sha256": "6ba9c1bdcc41f57439453d60d9df3ff63320413115b4021aaffeb51affbbbf60"
+        },
+        {
+          "path": "build/oracle-telemetry/phase6-control-leaf-01/RESULT.json",
+          "sha256": "8718e5f3f94b2f94201db7ea4d61013bb98d25ed58e5ac1be57d54028023d4e3"
+        }
+      ]
+    },
+    "N4": {
+      "status": "DONE_BOUNDED_CAPABILITY_MEASUREMENT",
+      "selection": {
+        "seed": "Phase6:N4:holdout:20261126",
+        "rank": "SHA256(UTF8(seed) + NUL + UTF8(key)), then key",
+        "original_denominator": 30,
+        "heldout_denominator": 30
+      },
+      "original30": {
+        "previous_passes": 0,
+        "previous_denominator": 30,
+        "memory": {
+          "denominator": 30,
+          "statuses": {
+            "PASS_CONSTRUCTED_CAPABILITY": 16,
+            "REFUSED": 14
+          },
+          "constructed_comparisons": 329,
+          "constructed_declined": 55,
+          "semantic_controls": {
+            "width": {
+              "NOT_EXERCISED_NO_OBSERVABLE_EFFECT": 11,
+              "NOT_RUN": 14,
+              "REJECTED": 5
+            },
+            "stale-ssa": {
+              "REJECTED": 13,
+              "NOT_EXERCISED_NO_OBSERVABLE_EFFECT": 3,
+              "NOT_RUN": 14
+            },
+            "delay": {
+              "NOT_EXERCISED_NO_OBSERVABLE_EFFECT": 12,
+              "NOT_RUN": 14,
+              "REJECTED": 4
+            },
+            "invented-input": {
+              "NOT_EXERCISED_NO_OBSERVABLE_EFFECT": 15,
+              "NOT_RUN": 14,
+              "REJECTED": 1
+            },
+            "phi": {
+              "NOT_EXERCISED_MEMORY_MODE": 16,
+              "NOT_RUN": 14
+            }
+          },
+          "pass_by_body_bytes": {
+            "0..32": {
+              "denominator": 15,
+              "passed": 12,
+              "rate": 0.8
+            },
+            "33..64": {
+              "denominator": 8,
+              "passed": 3,
+              "rate": 0.375
+            },
+            "65..128": {
+              "denominator": 5,
+              "passed": 1,
+              "rate": 0.2
+            },
+            "129..256": {
+              "denominator": 1,
+              "passed": 0,
+              "rate": 0.0
+            },
+            "257..512": {
+              "denominator": 1,
+              "passed": 0,
+              "rate": 0.0
+            },
+            "513..1024": {
+              "denominator": 0,
+              "passed": 0,
+              "rate": null
+            },
+            "1025..4096": {
+              "denominator": 0,
+              "passed": 0,
+              "rate": null
+            },
+            "4097..4294967296": {
+              "denominator": 0,
+              "passed": 0,
+              "rate": null
+            }
+          },
+          "pass_by_instruction_mix": {
+            "branching": {
+              "denominator": 13,
+              "passed": 0,
+              "rate": 0.0
+            },
+            "memory-free": {
+              "denominator": 8,
+              "passed": 5,
+              "rate": 0.625
+            },
+            "scalar-load": {
+              "denominator": 16,
+              "passed": 6,
+              "rate": 0.375
+            },
+            "scalar-store": {
+              "denominator": 13,
+              "passed": 9,
+              "rate": 0.6923076923076923
+            }
+          },
+          "instruction_mix_overlap": true,
+          "native_credit": 0
+        },
+        "control": {
+          "denominator": 30,
+          "statuses": {
+            "PASS_CONSTRUCTED_CAPABILITY": 29,
+            "REFUSED": 1
+          },
+          "constructed_comparisons": 569,
+          "constructed_declined": 127,
+          "semantic_controls": {
+            "width": {
+              "NOT_EXERCISED_NO_OBSERVABLE_EFFECT": 14,
+              "REJECTED": 15,
+              "NOT_RUN": 1
+            },
+            "stale-ssa": {
+              "REJECTED": 23,
+              "NOT_EXERCISED_NO_OBSERVABLE_EFFECT": 6,
+              "NOT_RUN": 1
+            },
+            "delay": {
+              "NOT_EXERCISED_NO_OBSERVABLE_EFFECT": 24,
+              "REJECTED": 5,
+              "NOT_RUN": 1
+            },
+            "invented-input": {
+              "NOT_EXERCISED_NO_OBSERVABLE_EFFECT": 24,
+              "REJECTED": 5,
+              "NOT_RUN": 1
+            },
+            "phi": {
+              "REJECTED": 23,
+              "NOT_EXERCISED_NO_OBSERVABLE_EFFECT": 6,
+              "NOT_RUN": 1
+            }
+          },
+          "pass_by_body_bytes": {
+            "0..32": {
+              "denominator": 15,
+              "passed": 15,
+              "rate": 1.0
+            },
+            "33..64": {
+              "denominator": 8,
+              "passed": 8,
+              "rate": 1.0
+            },
+            "65..128": {
+              "denominator": 5,
+              "passed": 4,
+              "rate": 0.8
+            },
+            "129..256": {
+              "denominator": 1,
+              "passed": 1,
+              "rate": 1.0
+            },
+            "257..512": {
+              "denominator": 1,
+              "passed": 1,
+              "rate": 1.0
+            },
+            "513..1024": {
+              "denominator": 0,
+              "passed": 0,
+              "rate": null
+            },
+            "1025..4096": {
+              "denominator": 0,
+              "passed": 0,
+              "rate": null
+            },
+            "4097..4294967296": {
+              "denominator": 0,
+              "passed": 0,
+              "rate": null
+            }
+          },
+          "pass_by_instruction_mix": {
+            "branching": {
+              "denominator": 13,
+              "passed": 12,
+              "rate": 0.9230769230769231
+            },
+            "memory-free": {
+              "denominator": 8,
+              "passed": 8,
+              "rate": 1.0
+            },
+            "scalar-load": {
+              "denominator": 16,
+              "passed": 15,
+              "rate": 0.9375
+            },
+            "scalar-store": {
+              "denominator": 13,
+              "passed": 13,
+              "rate": 1.0
+            }
+          },
+          "instruction_mix_overlap": true,
+          "native_credit": 0
+        }
+      },
+      "heldout30": {
+        "memory": {
+          "denominator": 30,
+          "statuses": {
+            "REFUSED": 14,
+            "PASS_CONSTRUCTED_CAPABILITY": 16
+          },
+          "constructed_comparisons": 346,
+          "constructed_declined": 38,
+          "semantic_controls": {
+            "width": {
+              "NOT_RUN": 14,
+              "NOT_EXERCISED_NO_OBSERVABLE_EFFECT": 13,
+              "REJECTED": 3
+            },
+            "stale-ssa": {
+              "NOT_RUN": 14,
+              "NOT_EXERCISED_NO_OBSERVABLE_EFFECT": 6,
+              "REJECTED": 10
+            },
+            "delay": {
+              "NOT_RUN": 14,
+              "NOT_EXERCISED_NO_OBSERVABLE_EFFECT": 10,
+              "REJECTED": 6
+            },
+            "invented-input": {
+              "NOT_RUN": 14,
+              "NOT_EXERCISED_NO_OBSERVABLE_EFFECT": 14,
+              "REJECTED": 2
+            },
+            "phi": {
+              "NOT_RUN": 14,
+              "NOT_EXERCISED_MEMORY_MODE": 16
+            }
+          },
+          "pass_by_body_bytes": {
+            "0..32": {
+              "denominator": 15,
+              "passed": 14,
+              "rate": 0.9333333333333333
+            },
+            "33..64": {
+              "denominator": 6,
+              "passed": 2,
+              "rate": 0.3333333333333333
+            },
+            "65..128": {
+              "denominator": 3,
+              "passed": 0,
+              "rate": 0.0
+            },
+            "129..256": {
+              "denominator": 4,
+              "passed": 0,
+              "rate": 0.0
+            },
+            "257..512": {
+              "denominator": 1,
+              "passed": 0,
+              "rate": 0.0
+            },
+            "513..1024": {
+              "denominator": 1,
+              "passed": 0,
+              "rate": 0.0
+            },
+            "1025..4096": {
+              "denominator": 0,
+              "passed": 0,
+              "rate": null
+            },
+            "4097..4294967296": {
+              "denominator": 0,
+              "passed": 0,
+              "rate": null
+            }
+          },
+          "pass_by_instruction_mix": {
+            "branching": {
+              "denominator": 14,
+              "passed": 0,
+              "rate": 0.0
+            },
+            "memory-free": {
+              "denominator": 5,
+              "passed": 4,
+              "rate": 0.8
+            },
+            "scalar-load": {
+              "denominator": 21,
+              "passed": 9,
+              "rate": 0.42857142857142855
+            },
+            "scalar-store": {
+              "denominator": 15,
+              "passed": 7,
+              "rate": 0.4666666666666667
+            }
+          },
+          "instruction_mix_overlap": true,
+          "native_credit": 0
+        },
+        "control": {
+          "denominator": 30,
+          "statuses": {
+            "PASS_CONSTRUCTED_CAPABILITY": 25,
+            "REFUSED": 5
+          },
+          "constructed_comparisons": 501,
+          "constructed_declined": 99,
+          "semantic_controls": {
+            "width": {
+              "REJECTED": 6,
+              "NOT_EXERCISED_NO_OBSERVABLE_EFFECT": 19,
+              "NOT_RUN": 5
+            },
+            "stale-ssa": {
+              "REJECTED": 18,
+              "NOT_EXERCISED_NO_OBSERVABLE_EFFECT": 7,
+              "NOT_RUN": 5
+            },
+            "delay": {
+              "NOT_EXERCISED_NO_OBSERVABLE_EFFECT": 19,
+              "NOT_RUN": 5,
+              "REJECTED": 6
+            },
+            "invented-input": {
+              "NOT_EXERCISED_NO_OBSERVABLE_EFFECT": 22,
+              "NOT_RUN": 5,
+              "REJECTED": 3
+            },
+            "phi": {
+              "REJECTED": 17,
+              "NOT_EXERCISED_NO_OBSERVABLE_EFFECT": 8,
+              "NOT_RUN": 5
+            }
+          },
+          "pass_by_body_bytes": {
+            "0..32": {
+              "denominator": 15,
+              "passed": 15,
+              "rate": 1.0
+            },
+            "33..64": {
+              "denominator": 6,
+              "passed": 5,
+              "rate": 0.8333333333333334
+            },
+            "65..128": {
+              "denominator": 3,
+              "passed": 3,
+              "rate": 1.0
+            },
+            "129..256": {
+              "denominator": 4,
+              "passed": 2,
+              "rate": 0.5
+            },
+            "257..512": {
+              "denominator": 1,
+              "passed": 0,
+              "rate": 0.0
+            },
+            "513..1024": {
+              "denominator": 1,
+              "passed": 0,
+              "rate": 0.0
+            },
+            "1025..4096": {
+              "denominator": 0,
+              "passed": 0,
+              "rate": null
+            },
+            "4097..4294967296": {
+              "denominator": 0,
+              "passed": 0,
+              "rate": null
+            }
+          },
+          "pass_by_instruction_mix": {
+            "branching": {
+              "denominator": 14,
+              "passed": 9,
+              "rate": 0.6428571428571429
+            },
+            "memory-free": {
+              "denominator": 5,
+              "passed": 4,
+              "rate": 0.8
+            },
+            "scalar-load": {
+              "denominator": 21,
+              "passed": 17,
+              "rate": 0.8095238095238095
+            },
+            "scalar-store": {
+              "denominator": 15,
+              "passed": 13,
+              "rate": 0.8666666666666667
+            }
+          },
+          "instruction_mix_overlap": true,
+          "native_credit": 0
+        }
+      },
+      "final_comparisons": 1070,
+      "final_mismatches": 0,
+      "final_fixture_declines": {
+        "total": 226,
+        "reference_unmapped_load": 140,
+        "reference_unmapped_store": 40,
+        "native_natural_alignment": 46
+      },
+      "historical_states": {
+        "inspected": 61,
+        "entry_matches_raw_or_unwind_cleared": 0,
+        "executed_historical_functions": 0,
+        "scope": "Authenticated source-pinned EE prefixes/extents only; no full state restoration or forced entry. All execution constructed."
+      },
+      "per_probe": [
+        {
+          "key": "MOVIER.ovl:007c8c90",
+          "cohort": "heldout30",
+          "body_bytes": 128,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "scalar-store",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 4,
+            "scalar_stores": 1,
+            "direct_branch_instructions": 3,
+            "instruction_count": 32,
+            "NOPs": 1,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 16,
+          "constructed_declined": 8,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_0001.cpp",
+          "source_unit_sha256": "68e786c18bf93d4838d250a8173cbd5cc5a2f0200e4a4d5d9767e09e121385be",
+          "native_source_sha256": "a5048ef4e587281c76e9009d9b0da5b47103fc1421a6d364f8ce515bda575558",
+          "executable_sha256": "0f08403f0799116f0f790272784fb6ad82977728fb1130809c5c9c5402b298d4",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:007d2150",
+          "cohort": "original30",
+          "body_bytes": 12,
+          "instruction_mix": {
+            "tags": [
+              "scalar-store"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 1,
+            "direct_branch_instructions": 0,
+            "instruction_count": 3,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unbound_call:st8",
+          "old_semantic_group": "typed_memory",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_0003.cpp",
+          "source_unit_sha256": "91e4b5dfae07226361a6e4ec4f9d3eb78dae945d6427bc05fa908543072cbe81",
+          "native_source_sha256": "09d79a9c6df66f68d55742d92a26cd0a405e351638c7acad61e79a244cefb37e",
+          "executable_sha256": "b99d0324139ad4abb31449768b552504955b00b2669dce9a34c4bec64b914e46",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:007d58f0",
+          "cohort": "heldout30",
+          "body_bytes": 8,
+          "instruction_mix": {
+            "tags": [
+              "memory-free"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 0,
+            "instruction_count": 2,
+            "NOPs": 1,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_0004.cpp",
+          "source_unit_sha256": "6fbb0c8d12b956b98e35ff2fbd61d3026fc357125fbc61ae778aeba1b8db67a6",
+          "native_source_sha256": "8aedfaa3099a029a72c5348cf363e5a65d6c357ba1df8e3c9fbe713dd0294534",
+          "executable_sha256": "ecca20e11825ef9579d0e88915ec26bdc08c653f9e41f974b1f73e39bf93960e",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:007e00e8",
+          "cohort": "original30",
+          "body_bytes": 8,
+          "instruction_mix": {
+            "tags": [
+              "memory-free"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 0,
+            "instruction_count": 2,
+            "NOPs": 1,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unbound_abi_liveout",
+          "old_semantic_group": "return_interface_bundle",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_0007.cpp",
+          "source_unit_sha256": "b7335f2d9b56e3b427870eebaac91f22399c418cf8d5775a783b5cd9f702f2b2",
+          "native_source_sha256": "bae8833238d523b74fc31b46dc6569abc84ea060fad9be495e7a4b898d96bcbe",
+          "executable_sha256": "d4418436c11a2a122f9b8cd9a068599c37f9e11ef6674f99c9f0d1ad76da793f",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:007e0918",
+          "cohort": "heldout30",
+          "body_bytes": 64,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "scalar-store",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 2,
+            "scalar_stores": 4,
+            "direct_branch_instructions": 1,
+            "instruction_count": 16,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_static_analysis_path_bound_128_exceeded",
+          "control_status": "REFUSED",
+          "control_first_failure": "N3_static_analysis_path_bound_128_exceeded",
+          "constructed_comparisons": 0,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_0007.cpp",
+          "source_unit_sha256": "b7335f2d9b56e3b427870eebaac91f22399c418cf8d5775a783b5cd9f702f2b2",
+          "native_source_sha256": null,
+          "executable_sha256": null,
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:007eb190",
+          "cohort": "original30",
+          "body_bytes": 44,
+          "instruction_mix": {
+            "tags": [
+              "memory-free",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 1,
+            "instruction_count": 11,
+            "NOPs": 6,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unsupported_conditional_control",
+          "old_semantic_group": "branch_control",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_0009.cpp",
+          "source_unit_sha256": "730f6abde2dcc001b9590d08da90fb2f1b926f2e6e1c40624604978d46c63ced",
+          "native_source_sha256": "fa8c28d78f3dcddf723ebe0938f1c647cabecc8c2ab94ea1e283bed7ebdb6ee8",
+          "executable_sha256": "ea118878676555e3de516519525a463df27a4a089e6ac9cc2b6dfde0d62a33cd",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:007eb630",
+          "cohort": "original30",
+          "body_bytes": 200,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "scalar-store",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 9,
+            "scalar_stores": 9,
+            "direct_branch_instructions": 4,
+            "instruction_count": 50,
+            "NOPs": 2,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "scalar_unbound_GPR_value_ABI:register_4",
+          "old_semantic_group": "incoming_ABI",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 12,
+          "constructed_declined": 12,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_0009.cpp",
+          "source_unit_sha256": "730f6abde2dcc001b9590d08da90fb2f1b926f2e6e1c40624604978d46c63ced",
+          "native_source_sha256": "385daa2e28af40257f33d2996f23ef5b3b17cd198eab6e67f883e7efcfcf3903",
+          "executable_sha256": "f8eaa568b802a31d53b6c09f50435f38bc9fc7ca8d5f14aee38dc89438d7fcad",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:007eb958",
+          "cohort": "original30",
+          "body_bytes": 8,
+          "instruction_mix": {
+            "tags": [
+              "memory-free"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 0,
+            "instruction_count": 2,
+            "NOPs": 1,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unbound_abi_liveout",
+          "old_semantic_group": "return_interface_bundle",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_0009.cpp",
+          "source_unit_sha256": "730f6abde2dcc001b9590d08da90fb2f1b926f2e6e1c40624604978d46c63ced",
+          "native_source_sha256": "9f7dd2e98d6ef299109ec9994d06af70278835775398c223320d987999af703a",
+          "executable_sha256": "a2e698bed747a7aa9546bf1bc1553b089ebed36fa340346aca21b7472191ddb8",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:007f0fd0",
+          "cohort": "heldout30",
+          "body_bytes": 8,
+          "instruction_mix": {
+            "tags": [
+              "memory-free"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 0,
+            "instruction_count": 2,
+            "NOPs": 1,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_000B.cpp",
+          "source_unit_sha256": "43769e75100729c40d7854d8673045c2ff8ce8c591b3addbaffecc16192d8ee7",
+          "native_source_sha256": "0190624ee92dbdc7d84f296d521bedc88043e2c14c5681fb686f08eb3402cd0b",
+          "executable_sha256": "8fc1ea136086bf26f92d3c5b34222b1b74ed0147594399dd5807ac280b3b4b26",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:007fedc8",
+          "cohort": "heldout30",
+          "body_bytes": 48,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "scalar-store"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 2,
+            "scalar_stores": 3,
+            "direct_branch_instructions": 0,
+            "instruction_count": 12,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_000E.cpp",
+          "source_unit_sha256": "296e4e2e8b29fe1b3a41c3deee7d258e24b17283692a8ebe062785b76a591a74",
+          "native_source_sha256": "2551c8a68f8ab065adec2860fef1813c5c0db8c8b88d07ad2932ed9b2baead89",
+          "executable_sha256": "d8fbaa04143cf44080a67c39d8019cd4b072acc7fbc8d51863e5c8fa7af576d1",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:00800540",
+          "cohort": "original30",
+          "body_bytes": 8,
+          "instruction_mix": {
+            "tags": [
+              "scalar-store"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 1,
+            "direct_branch_instructions": 0,
+            "instruction_count": 2,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unbound_memory:non_GP_base",
+          "old_semantic_group": "typed_memory",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_000F.cpp",
+          "source_unit_sha256": "0ae0dbe3acbe5aed038b94a52d90d7c4a735a568e2f348d079e7e16b8febd421",
+          "native_source_sha256": "ffea03e6ca625ad5869d54bab96caf723aa009e2441431f31c329c8823abe7ca",
+          "executable_sha256": "6c540b23ea28672a9cc86d527452b4f06f39e6b5c3448bd634f7c1c11bbd4520",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:00803118",
+          "cohort": "original30",
+          "body_bytes": 68,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 5,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 5,
+            "instruction_count": 17,
+            "NOPs": 2,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unsupported_value_ast:CallExpr",
+          "old_semantic_group": "typed_memory",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_000F.cpp",
+          "source_unit_sha256": "0ae0dbe3acbe5aed038b94a52d90d7c4a735a568e2f348d079e7e16b8febd421",
+          "native_source_sha256": "69b358761ddb5fa5430fbce2087d6d021036ee96893216108cf926c533b290d3",
+          "executable_sha256": "9bb2ca9599ae89a73e3941b0c660ef57b50c75f2ff673d3824b408ef37751570",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:00803fe0",
+          "cohort": "original30",
+          "body_bytes": 32,
+          "instruction_mix": {
+            "tags": [
+              "scalar-store"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 1,
+            "direct_branch_instructions": 0,
+            "instruction_count": 8,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "scalar_unbound_GPR_value_ABI:register_5",
+          "old_semantic_group": "incoming_ABI",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 14,
+          "constructed_declined": 10,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_000F.cpp",
+          "source_unit_sha256": "0ae0dbe3acbe5aed038b94a52d90d7c4a735a568e2f348d079e7e16b8febd421",
+          "native_source_sha256": "fbc76d24610c0844786a4fbd45fea8eea519f1d7ca10b2a092e5c9ba04dd273c",
+          "executable_sha256": "d61ba3d04b75d6a541482883f7c58a7219dc8730273e79711c6f0a0ca1a5dc12",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:00809e58",
+          "cohort": "original30",
+          "body_bytes": 36,
+          "instruction_mix": {
+            "tags": [
+              "scalar-store"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 6,
+            "direct_branch_instructions": 0,
+            "instruction_count": 9,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "scalar_unbound_GPR_value_ABI:register_4",
+          "old_semantic_group": "incoming_ABI",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_0011.cpp",
+          "source_unit_sha256": "6466c622c4bd51ef06eecc277f5d355b48e51ec1f32ccc18dde4ef5bce1b4747",
+          "native_source_sha256": "0f5fed1a053caa2e245ae8a7650430fb9f7f3ff54f605f465b8e16bc3207e96e",
+          "executable_sha256": "f507fa77081e00c680e3a769e050bcc789f1c8361ecb972ea513ede38a842493",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:0080d1a8",
+          "cohort": "original30",
+          "body_bytes": 16,
+          "instruction_mix": {
+            "tags": [
+              "scalar-store",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 1,
+            "direct_branch_instructions": 1,
+            "instruction_count": 4,
+            "NOPs": 1,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unsupported_conditional_control",
+          "old_semantic_group": "branch_control",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_0012.cpp",
+          "source_unit_sha256": "a4eab1e27bf83a65bb9a13ad21c675c493f9a5873bd93254091164a3723d7ef7",
+          "native_source_sha256": "90c4f2cb32faa6324f8b925c7256eff3548976810e33f0effedb52c26d5d34d6",
+          "executable_sha256": "3ae95a41733e4c24fc4febec0b28739e3e20ebf23b9beb3471d7e69af0346369",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:0080d4f8",
+          "cohort": "original30",
+          "body_bytes": 76,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 3,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 1,
+            "instruction_count": 19,
+            "NOPs": 1,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "scalar_unbound_GPR_value_ABI:register_4",
+          "old_semantic_group": "incoming_ABI",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 12,
+          "constructed_declined": 12,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_0012.cpp",
+          "source_unit_sha256": "a4eab1e27bf83a65bb9a13ad21c675c493f9a5873bd93254091164a3723d7ef7",
+          "native_source_sha256": "f2b6eb86703bded746d5f2ace76ba923c77ed4764b9e4f5452054ac53a6ab00b",
+          "executable_sha256": "1c2ac1404758adf0bc299b00a2dd57b9626941963058a31d3c72ab8ede7600d1",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:008142a8",
+          "cohort": "heldout30",
+          "body_bytes": 28,
+          "instruction_mix": {
+            "tags": [
+              "scalar-store"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 4,
+            "direct_branch_instructions": 0,
+            "instruction_count": 7,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_0014.cpp",
+          "source_unit_sha256": "fb1c0cbb8ca10e7fb877b71fd3e66e3e45d90d63623adb14c461a5410e14cd00",
+          "native_source_sha256": "5a7d72d6c8fcdbc64eb3122d15f8627250d749680969141ee53707cfeb563eda",
+          "executable_sha256": "1d0316b3c62590c7b837110d5f08498d23be66c35bfbb5bd55abc07fef72289a",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:00814c30",
+          "cohort": "original30",
+          "body_bytes": 20,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "scalar-store"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 2,
+            "scalar_stores": 2,
+            "direct_branch_instructions": 0,
+            "instruction_count": 5,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unbound_indirect_target:cursor_assignment",
+          "old_semantic_group": "typed_memory",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_0014.cpp",
+          "source_unit_sha256": "fb1c0cbb8ca10e7fb877b71fd3e66e3e45d90d63623adb14c461a5410e14cd00",
+          "native_source_sha256": "b71e6cc22176dc20801aa0bd1a69c6d1fb5de27cd7521829c3939fb3e329f038",
+          "executable_sha256": "b59a53ad54317df7e6d6f849a509c8fa5b36d2623043d56bdcc5f4ea1823ef80",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:00816050",
+          "cohort": "heldout30",
+          "body_bytes": 20,
+          "instruction_mix": {
+            "tags": [
+              "scalar-store"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 4,
+            "direct_branch_instructions": 0,
+            "instruction_count": 5,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_0014.cpp",
+          "source_unit_sha256": "fb1c0cbb8ca10e7fb877b71fd3e66e3e45d90d63623adb14c461a5410e14cd00",
+          "native_source_sha256": "241d67a3de6d69796e5e49cdae407acf26028feb8eac99b941e248d7b05d81e6",
+          "executable_sha256": "7133535d5bd73bd8a97d196e310bd52d5ee430ad3435f922a6573048e29f1f04",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "MOVIER.ovl:00818d90",
+          "cohort": "heldout30",
+          "body_bytes": 16,
+          "instruction_mix": {
+            "tags": [
+              "scalar-store"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 3,
+            "direct_branch_instructions": 0,
+            "instruction_count": 4,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\m_MOVIER_unit_0015.cpp",
+          "source_unit_sha256": "d736ad4777492aaa53f5ab5943dbe07752571cc0cee212239f3fa0a2e7cac07e",
+          "native_source_sha256": "f095b4ebe64a69a6c24c21677b3b921702252576362ff9c52ff7970fb34eea0c",
+          "executable_sha256": "415a45f3820a2e38cf68169de21d42d241d644ee2090f6d9266a3a90570ccb1a",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:0010fe78",
+          "cohort": "heldout30",
+          "body_bytes": 172,
+          "instruction_mix": {
+            "tags": [
+              "memory-free",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 5,
+            "instruction_count": 43,
+            "NOPs": 2,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+          "control_status": "REFUSED",
+          "control_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+          "constructed_comparisons": 0,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0003.cpp",
+          "source_unit_sha256": "7fc2690ecfd86c2534c7effad75df0d33edf81057cebe4d21f487be247310575",
+          "native_source_sha256": null,
+          "executable_sha256": null,
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:00131980",
+          "cohort": "heldout30",
+          "body_bytes": 12,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 2,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 0,
+            "instruction_count": 3,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 1
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 13,
+          "constructed_declined": 11,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_000C.cpp",
+          "source_unit_sha256": "2c6c6c2a3d686b08d36bcdaa5e61c4c400c0bc19f34a8b0615c9bfb71fc265bf",
+          "native_source_sha256": "af4e2742cdddc5581a8e1ec1f2e22842273c616d58d8eedacfb207e483941646",
+          "executable_sha256": "d576211775d396baabeef7e033e50d1c12d40a3e919b4af75d9ee80b49838757",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:00148a50",
+          "cohort": "heldout30",
+          "body_bytes": 24,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 1,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 0,
+            "instruction_count": 6,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 22,
+          "constructed_declined": 2,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0012.cpp",
+          "source_unit_sha256": "42f7a9af2d145e7d365aaa093b0b81b5db7195c5d1c397edf7677279275ebf9e",
+          "native_source_sha256": "d2857b4bbc87390d72a124a4e5ff9412c4435772bde8dece7c86f331a73ad872",
+          "executable_sha256": "f64f5a6eb96d6660cf0ef8070d77a3864e768e4ec78d2baaa463da70348e58b1",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:00152ae0",
+          "cohort": "heldout30",
+          "body_bytes": 188,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "scalar-store",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 14,
+            "scalar_stores": 3,
+            "direct_branch_instructions": 9,
+            "instruction_count": 47,
+            "NOPs": 2,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 8
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 13,
+          "constructed_declined": 11,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0014.cpp",
+          "source_unit_sha256": "0fb2eb07b148869ae0d8b3e70258ffe738707135866fd4ee0a0526c20526ae8f",
+          "native_source_sha256": "27e907b625202113752cd4b9f5fa6de2d6edd963b41075c38209640d72376e80",
+          "executable_sha256": "9c9b61bbf62fb0dcac4b2d3e6e98a760a2b24cfaf32214b0acf145b898afdd02",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:00167cf0",
+          "cohort": "original30",
+          "body_bytes": 328,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "scalar-store",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 15,
+            "scalar_stores": 4,
+            "direct_branch_instructions": 19,
+            "instruction_count": 82,
+            "NOPs": 13,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unbound_scalar_register_part",
+          "old_semantic_group": "branch_control",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 19,
+          "constructed_declined": 5,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0019.cpp",
+          "source_unit_sha256": "df2ecfe52a5116ba33ec050ef4a62a1ff5aa0a5a886d354d9594aea3facc6343",
+          "native_source_sha256": "51954a6ac6ea9ba17cafdfef0d4b9f07ef46f8eab342aa95f501655ed085dc3f",
+          "executable_sha256": "9663491fd56e385c14c89ef8a356fb6fd4faa06e56860ab5c71312199ec52e50",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:0016ae10",
+          "cohort": "heldout30",
+          "body_bytes": 20,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 1,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 0,
+            "instruction_count": 5,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_001A.cpp",
+          "source_unit_sha256": "1907f77ac12e124525e7a6bcca38b1ebc09fa3f3ae5efd21931d0d3947a0ac3a",
+          "native_source_sha256": "0c69b7f4a60a1591face7c6d7942234db69a275847e90db693d3b4e8d72d0769",
+          "executable_sha256": "8521e2675452a896ab30b1764ba80f68ad8a5162586e993f69329828acfae4bf",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:00175ac0",
+          "cohort": "heldout30",
+          "body_bytes": 16,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "scalar-store"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 1,
+            "scalar_stores": 1,
+            "direct_branch_instructions": 0,
+            "instruction_count": 4,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 18,
+          "constructed_declined": 6,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_001D.cpp",
+          "source_unit_sha256": "b1913e1ecd6715d0e0e5529a9c582278df3a473cfb5fabc80a57c2aaaeb8ee34",
+          "native_source_sha256": "3122c5a120c19332ef4a72d6c5d7dcfadc4b47b688de2d26f9c35b29e016f09b",
+          "executable_sha256": "67ba8f3397deca32b6fac85e0728c1ea903c5ab38ecd7b7258e461004ad22585",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:0017a440",
+          "cohort": "original30",
+          "body_bytes": 16,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 2,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 0,
+            "instruction_count": 4,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unsupported_value_ast:CallExpr",
+          "old_semantic_group": "typed_memory",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 18,
+          "constructed_declined": 6,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_001E.cpp",
+          "source_unit_sha256": "294310d6747598a64c1dff7eb0de663aab360a5029e23f2ff438e24e141e91eb",
+          "native_source_sha256": "21e28247b2d893d007d551e994a92d1017c74292ecd838670661689fe2072294",
+          "executable_sha256": "6c4aa5c5f364960dfaafd7f7d404d4ade0fde7351e70eb4fd63c87d8a70cdaa4",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:00181bc0",
+          "cohort": "original30",
+          "body_bytes": 64,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "scalar-store",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 6,
+            "scalar_stores": 4,
+            "direct_branch_instructions": 2,
+            "instruction_count": 16,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 10
+          },
+          "old_first_failure": "unsupported_value_ast:CallExpr",
+          "old_semantic_group": "typed_memory",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 18,
+          "constructed_declined": 6,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0020.cpp",
+          "source_unit_sha256": "70d0afc8588b35d0d057f1e5c1803962d771560dbb8e00bd39769f57e639b787",
+          "native_source_sha256": "7286a7da851ff961457dad9a31d038c1bf2b1a8476e5a5bc07da866c686e11a3",
+          "executable_sha256": "dd2530a582c7dae221a6a5287b3c535b05b60c23747224d61698d3194808924b",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:0019d5d0",
+          "cohort": "original30",
+          "body_bytes": 104,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 3,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 4,
+            "instruction_count": 26,
+            "NOPs": 2,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unsupported_value_ast:CallExpr",
+          "old_semantic_group": "typed_memory",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+          "control_status": "REFUSED",
+          "control_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+          "constructed_comparisons": 0,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0027.cpp",
+          "source_unit_sha256": "87ae0d31581015858f03415c5319db0c87b15cc47feac58ec532d97ce589a16f",
+          "native_source_sha256": null,
+          "executable_sha256": null,
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:001aa150",
+          "cohort": "heldout30",
+          "body_bytes": 304,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 11,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 21,
+            "instruction_count": 76,
+            "NOPs": 5,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+          "control_status": "REFUSED",
+          "control_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+          "constructed_comparisons": 0,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_002A.cpp",
+          "source_unit_sha256": "e8a65a4158ca0926cc8694d66f52f49f6aeccfcd10f7f041203dc905f73d702f",
+          "native_source_sha256": null,
+          "executable_sha256": null,
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:001c4210",
+          "cohort": "original30",
+          "body_bytes": 32,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "scalar-store"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 3,
+            "scalar_stores": 2,
+            "direct_branch_instructions": 0,
+            "instruction_count": 8,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 1
+          },
+          "old_first_failure": "unsupported_value_ast:CallExpr",
+          "old_semantic_group": "typed_memory",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 13,
+          "constructed_declined": 11,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0031.cpp",
+          "source_unit_sha256": "4072661df6fccf00e083658b654ab4b45121ff5b3ddb3f195d2bd27c3df6f2f3",
+          "native_source_sha256": "d145bb61c661f15968a1ec88ae0f4e699a46c4af6112d4ba901c861025bebdfc",
+          "executable_sha256": "8fbb81895631504a4dcc5437794d4e4aae45bfdb7694ec50d25e4ff1b4cb83e0",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:001d77d0",
+          "cohort": "original30",
+          "body_bytes": 8,
+          "instruction_mix": {
+            "tags": [
+              "memory-free"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 0,
+            "instruction_count": 2,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unbound_member:pc",
+          "old_semantic_group": "return_interface_bundle",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0035.cpp",
+          "source_unit_sha256": "85b4f1cfe71728a362ff9977d1805ee0b6f7b424638c866ee810944e466dbb09",
+          "native_source_sha256": "90eabcf2fe46ca4d58d5c5471d14910f6fa401861e61c055fbfec7f2c07f9730",
+          "executable_sha256": "6c89299de4689c7ff0a3943d4cc16c4e8f4f0e83676893cbadab64d55bd39cd6",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:00212c20",
+          "cohort": "original30",
+          "body_bytes": 64,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 3,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 3,
+            "instruction_count": 16,
+            "NOPs": 2,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 1
+          },
+          "old_first_failure": "unsupported_value_ast:CallExpr",
+          "old_semantic_group": "typed_memory",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 14,
+          "constructed_declined": 10,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0044.cpp",
+          "source_unit_sha256": "1071669d598fcc30fc195961df9e69375a6ec470efe0aaa56842aa4e461266a2",
+          "native_source_sha256": "f557d710537344436d78b50aae1628c07c750f65f8d07aae0ea9d8677129d34b",
+          "executable_sha256": "cc6cc26d8e9eeac898d0c3c829f48769db5589dae01d315609a3f23c14b0af6d",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:00221b50",
+          "cohort": "original30",
+          "body_bytes": 120,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 2,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 9,
+            "instruction_count": 30,
+            "NOPs": 4,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unsupported_conditional_control",
+          "old_semantic_group": "branch_control",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 21,
+          "constructed_declined": 3,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0048.cpp",
+          "source_unit_sha256": "17e4292b16b889383d01aac68ba50561c000cc9e87a71a5597c1fab5da60d2f2",
+          "native_source_sha256": "1ee2b220f1be8c20be705fd72f4ec97e181084b3843ba76a9eb004079bb4fd02",
+          "executable_sha256": "bdb8b823dc26b5ec11f2903010c236bb76bef1fee656ca62cd21a9dbc2f7aa4d",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:0022c620",
+          "cohort": "original30",
+          "body_bytes": 44,
+          "instruction_mix": {
+            "tags": [
+              "memory-free",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 2,
+            "instruction_count": 11,
+            "NOPs": 1,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unsupported_conditional_control",
+          "old_semantic_group": "branch_control",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_004B.cpp",
+          "source_unit_sha256": "7d525ad6777885679f266e8cab2ca82da88f02757ba29929401c97315dd05c9d",
+          "native_source_sha256": "edcf0ef8eba46437707e3b81d398ac89528410cdc00604738544a60974226f64",
+          "executable_sha256": "302b1c5621bb4111b3cfc19a4f6e04691aaac072a794298a0ca6b0a2ee86db19",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:00241b70",
+          "cohort": "original30",
+          "body_bytes": 8,
+          "instruction_mix": {
+            "tags": [
+              "memory-free"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 0,
+            "instruction_count": 2,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unbound_member:pc",
+          "old_semantic_group": "return_interface_bundle",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0050.cpp",
+          "source_unit_sha256": "92a42b2f1085564f418537006b4ba90962cd1cbfc3868d5a858213d189daacb4",
+          "native_source_sha256": "d761210f1bc40df4b6a26303add8403e407c6403e39e5c6eaff1f659365595f0",
+          "executable_sha256": "b11f56db6c0132518c913d0424f6f27dc9e02b72a1f11dab9a84dc971444d36e",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:00245c20",
+          "cohort": "heldout30",
+          "body_bytes": 80,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "scalar-store",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 2,
+            "scalar_stores": 2,
+            "direct_branch_instructions": 3,
+            "instruction_count": 20,
+            "NOPs": 2,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0051.cpp",
+          "source_unit_sha256": "e2ece37f9a6a2f9af9c0f6713173a4ebb60561794e6ee741330554a7008f08a5",
+          "native_source_sha256": "ead813f8476c0a8a23fc6235ca80c6aaadc8c4acb09c803661bb2abc3dd55392",
+          "executable_sha256": "736c353c30e344b3ef0a43eb2a93ee5e67308d48cc8f9bda6afd7c93a560dfef",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:002841e0",
+          "cohort": "heldout30",
+          "body_bytes": 12,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 1,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 0,
+            "instruction_count": 3,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0061.cpp",
+          "source_unit_sha256": "8d4e5612f432f0635be0c1ec387fa3819e11f8b480784c505e3cb989770687b1",
+          "native_source_sha256": "754c4710dcbd9a7c386d6464ffb959a270b5955f32b37bd3fdc1b9829ccc559f",
+          "executable_sha256": "f8096fe46f83bebad1adf63cf1b802e25a2211d42d44695a8af6ba95454e9926",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:0029c0f8",
+          "cohort": "heldout30",
+          "body_bytes": 12,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "scalar-store"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 1,
+            "scalar_stores": 1,
+            "direct_branch_instructions": 0,
+            "instruction_count": 3,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0067.cpp",
+          "source_unit_sha256": "c0e3aec060fa565fb62943314212a1cb78fe9ea14382dc6ba5c009bf531f0eb2",
+          "native_source_sha256": "8a1cf82ca8ea88bed50257737176ecabe7bb91329af42a39c4fb4faee865deea",
+          "executable_sha256": "361c0f30ca5be1976f7644ecf6e4543e08bf06499d5521e21c95e26b74341852",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:002b7a48",
+          "cohort": "heldout30",
+          "body_bytes": 148,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 4,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 8,
+            "instruction_count": 37,
+            "NOPs": 1,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+          "control_status": "REFUSED",
+          "control_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+          "constructed_comparisons": 0,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_006D.cpp",
+          "source_unit_sha256": "c7f4b3afccbf24aed33ed1d3f7ce251b63184178bfca397632dd1ee45dd6b9d3",
+          "native_source_sha256": null,
+          "executable_sha256": null,
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:002bfaf0",
+          "cohort": "heldout30",
+          "body_bytes": 24,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 2,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 1,
+            "instruction_count": 6,
+            "NOPs": 1,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 18,
+          "constructed_declined": 6,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_006F.cpp",
+          "source_unit_sha256": "5b0e366624970084fda9dd8329a77ed828222ecabdd8ac7dd2ac9d1341c4f115",
+          "native_source_sha256": "c063a0db83c1fd67ae4922f160dde341752b8df0c231fe9b97b297a24dec9433",
+          "executable_sha256": "e38374aaa9cb110cdcd0e531e7b937794dfa896577fc291dde58f076de44245d",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:002e1710",
+          "cohort": "heldout30",
+          "body_bytes": 8,
+          "instruction_mix": {
+            "tags": [
+              "memory-free"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 0,
+            "instruction_count": 2,
+            "NOPs": 1,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0078.cpp",
+          "source_unit_sha256": "cc350a1b1e057dc599c081afa792061b6bef6fbac2b96047ab49a28c5b0848d5",
+          "native_source_sha256": "25385c3d9625e4da425a1ea4cc788623deb2313905d6f64ca5a403a290d95c5e",
+          "executable_sha256": "1977e127c75b7e28d9ee32f1d4943bb26e1528d51a0b515c79514d2fc78d3952",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:002e8730",
+          "cohort": "heldout30",
+          "body_bytes": 716,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "scalar-store",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 26,
+            "scalar_stores": 38,
+            "direct_branch_instructions": 23,
+            "instruction_count": 179,
+            "NOPs": 11,
+            "SP_relative_memory": 12,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+          "control_status": "REFUSED",
+          "control_first_failure": "N3_loop_trip_bound_unproved_from_input_or_memory",
+          "constructed_comparisons": 0,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_007A.cpp",
+          "source_unit_sha256": "25763da2cfec473bd0f1d4e7a5ef7a952438641134d5f86aac5024eb2d6a2b0b",
+          "native_source_sha256": null,
+          "executable_sha256": null,
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:002ec570",
+          "cohort": "heldout30",
+          "body_bytes": 40,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 1,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 2,
+            "instruction_count": 10,
+            "NOPs": 1,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 1
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 22,
+          "constructed_declined": 2,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_007B.cpp",
+          "source_unit_sha256": "d986e2eb54822d54304499fb669e018137b57c021fd8a2580e2207b93b794f5a",
+          "native_source_sha256": "ce423d797c8f83da4e54633558983209e153e41b0e94fbbcdadb7f63623e77b1",
+          "executable_sha256": "d9cb42c9cd3f67e2faab9690a77a1f5333b4b43008f8c8911da348ad8a1d812f",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:0030e130",
+          "cohort": "original30",
+          "body_bytes": 116,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "scalar-store"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 14,
+            "scalar_stores": 10,
+            "direct_branch_instructions": 0,
+            "instruction_count": 29,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unsupported_value_ast:CallExpr",
+          "old_semantic_group": "typed_memory",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 18,
+          "constructed_declined": 6,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0083.cpp",
+          "source_unit_sha256": "637b7fc4ad7b16726beaae58103a79ff85ee01c6099f27907c1d4d262e305316",
+          "native_source_sha256": "672f2e59169f2dceece7917e02f10a2f2481cbd555a87c8086aad118396bf337",
+          "executable_sha256": "9a00db1c4ab7a6b93c0a93123b334574b05b80d54e3c275aa19046010a75e399",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:00325800",
+          "cohort": "heldout30",
+          "body_bytes": 236,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "scalar-store",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 12,
+            "scalar_stores": 11,
+            "direct_branch_instructions": 7,
+            "instruction_count": 59,
+            "NOPs": 0,
+            "SP_relative_memory": 5,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 13,
+          "constructed_declined": 11,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0089.cpp",
+          "source_unit_sha256": "7de5c1fc5348e65868e59ed4adfb074287636c275603e8a1001360c3a7ed168f",
+          "native_source_sha256": "2a3b90b64357a97d4ff06b40c68ff7d1ad9afb997099849ae9ec9bfbe5004c0e",
+          "executable_sha256": "2439864fbf1734aa8c716ee2f8ee080944f44a56bdbc6ab811e66bb44ba107f8",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:0033d3d0",
+          "cohort": "original30",
+          "body_bytes": 64,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 1,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 5,
+            "instruction_count": 16,
+            "NOPs": 3,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unbound_scalar_register_part",
+          "old_semantic_group": "branch_control",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 6,
+          "constructed_declined": 18,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_008F.cpp",
+          "source_unit_sha256": "c239e1b6e21502b638b9fff041a9a2f0f2fb0036453e898c0e79b05467968797",
+          "native_source_sha256": "8becc064328a90996e980565278fd41bb2d5dc6e97f82343602bdae53ddb8fca",
+          "executable_sha256": "d2664cec13ad1ad86e3ef0a42bf2b05942d225371ef72f6cb421edfb51af0087",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:00343980",
+          "cohort": "original30",
+          "body_bytes": 24,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 2,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 1,
+            "instruction_count": 6,
+            "NOPs": 1,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unsupported_value_ast:CallExpr",
+          "old_semantic_group": "typed_memory",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 18,
+          "constructed_declined": 6,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0090.cpp",
+          "source_unit_sha256": "40ab2ca95c944709629bfcc9dcf28a8148664a87fdc37939706163c6f6a78367",
+          "native_source_sha256": "ef95bbc725b15441216fca7ec22749994af8cf993acd6a242439f7889c1d56d1",
+          "executable_sha256": "36945dec43dc33e2020098cdb8e9bee585c494e7fdea58f165f9077fef52ebb8",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:0036a790",
+          "cohort": "original30",
+          "body_bytes": 20,
+          "instruction_mix": {
+            "tags": [
+              "memory-free"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 0,
+            "instruction_count": 5,
+            "NOPs": 1,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unbound_abi_liveout",
+          "old_semantic_group": "return_interface_bundle",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_009A.cpp",
+          "source_unit_sha256": "d18b284dbb605a8a2785a53c40ff26b29c30ae04fcf3dcc47a6bd04cb23b3730",
+          "native_source_sha256": "95887d53f4f8499631b8aa305599bbcca364c08ad95c44f98d977d85968f3839",
+          "executable_sha256": "d9ca8d4189784a8417c5cf6c571fff07b607025d0270669d8c1c346b658721a1",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:003904a0",
+          "cohort": "heldout30",
+          "body_bytes": 8,
+          "instruction_mix": {
+            "tags": [
+              "memory-free"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 0,
+            "instruction_count": 2,
+            "NOPs": 1,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_00A4.cpp",
+          "source_unit_sha256": "b7af8d94b1baccffde49cebd14398f65d3630889b1fbaa81cbbc21aebd32fd58",
+          "native_source_sha256": "c4f775a6b91ef64db9a35fef33c32b9a234e781e7cc23bf63860deecd2413df3",
+          "executable_sha256": "25f551d1609b59732ee90e5210b0480afc3f0ca6851122b8c7a5bc35353e7539",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:003b80e0",
+          "cohort": "original30",
+          "body_bytes": 16,
+          "instruction_mix": {
+            "tags": [
+              "memory-free"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 0,
+            "instruction_count": 4,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "scalar_unbound_GPR_value_ABI:register_4",
+          "old_semantic_group": "incoming_ABI",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_00AE.cpp",
+          "source_unit_sha256": "70071a3c749b7368fe2af09c0596cecea7d52370bfa251fded1f9f6c33cc8847",
+          "native_source_sha256": "465fd8addd89260d43d8e404fd4f3c53a00fc641dfe6dad0f194c7181e213246",
+          "executable_sha256": "3d5568cd561d4f86392a8c0e625a6fc4c4c981cd5a3f24c97b080be6e947b481",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:003c6ad0",
+          "cohort": "original30",
+          "body_bytes": 52,
+          "instruction_mix": {
+            "tags": [
+              "scalar-store"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 6,
+            "direct_branch_instructions": 0,
+            "instruction_count": 13,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unbound_memory:non_GP_base",
+          "old_semantic_group": "typed_memory",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_00B1.cpp",
+          "source_unit_sha256": "2c0ffb7311ba9f55f8c18e4aac93e083d2fd5a034fc96885b64757314c10bb7d",
+          "native_source_sha256": "71ba62e5184d0fd0e7fde287b3d90ffea7e96a3b047baa64a2383bd4c9f99db8",
+          "executable_sha256": "b864902ebe796bf3fcf7fad36e32f09e08b5262ac741af9a76637bac9e9ef206",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:0042b690",
+          "cohort": "heldout30",
+          "body_bytes": 100,
+          "instruction_mix": {
+            "tags": [
+              "scalar-store",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 0,
+            "scalar_stores": 14,
+            "direct_branch_instructions": 7,
+            "instruction_count": 25,
+            "NOPs": 3,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 24,
+          "constructed_declined": 0,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_00CA.cpp",
+          "source_unit_sha256": "6b2129d7dcd6f3b35643d1b31811752d6889eba5173e03f8febf60e44fd06d3c",
+          "native_source_sha256": "47d83b3c734579a3e417992165b3db4a9f5f725e4df8eff5bd9e0a3ed823e4c3",
+          "executable_sha256": "92d8d1bf91a7cf3764abba205f71f305ff37efa261f2c6be5bd041c316173068",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:00461190",
+          "cohort": "heldout30",
+          "body_bytes": 36,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 2,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 2,
+            "instruction_count": 9,
+            "NOPs": 1,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 1
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 13,
+          "constructed_declined": 11,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_00D8.cpp",
+          "source_unit_sha256": "0f87f58d052ff837fa807ae76f9d5be6c91c7f3013e1621750a2e322c1769697",
+          "native_source_sha256": "fb919ff960183fda7a8d8b85718352beaa1eb122dedb9900cf6871796cf60768",
+          "executable_sha256": "ebb2636fd0d561773f134d896e532e987ed9ed1aa84799b9cf583745286a7f89",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:0047e7c0",
+          "cohort": "original30",
+          "body_bytes": 20,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 2,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 0,
+            "instruction_count": 5,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 1
+          },
+          "old_first_failure": "unsupported_value_ast:CallExpr",
+          "old_semantic_group": "typed_memory",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 15,
+          "constructed_declined": 9,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_00DF.cpp",
+          "source_unit_sha256": "0185f43bd91e1cb2f7a2187e4a80fc2dbfd44bde226769bd30caf7bbe3b56b2f",
+          "native_source_sha256": "ebbf9135ffb0c41b7a1b15cf48b4e2852b2f885a8df7de7f8b9e8d1f3520d36e",
+          "executable_sha256": "bec1745477161f7afd4799c8ee4f03f49c281528d6c627ca61dae40a3cd31b47",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:004a3180",
+          "cohort": "heldout30",
+          "body_bytes": 24,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 2,
+            "scalar_stores": 0,
+            "direct_branch_instructions": 0,
+            "instruction_count": 6,
+            "NOPs": 0,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 18,
+          "constructed_declined": 6,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_00E8.cpp",
+          "source_unit_sha256": "015ec736975fa59da6841bac2270eb9f261034631e14524f2fb7c84725b96671",
+          "native_source_sha256": "bbff805f9e464ce582521027ee302af1f12d6014dab036531138469738d6bf03",
+          "executable_sha256": "3db8b18e49c173fbed6096b5ad6c39ec1c20c4474619e695cdd17701662a169a",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:004ade10",
+          "cohort": "heldout30",
+          "body_bytes": 48,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "scalar-store"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 4,
+            "scalar_stores": 2,
+            "direct_branch_instructions": 0,
+            "instruction_count": 12,
+            "NOPs": 1,
+            "SP_relative_memory": 4,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 11,
+          "constructed_declined": 13,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_00EB.cpp",
+          "source_unit_sha256": "883b0ea046762fe19895fca6f9bc58f4248715580435a7682a09ebdc1de3c575",
+          "native_source_sha256": "3d5221fbbcf97bf65592669456d9b6830776e5fb0466f3446d9643a54fad3b38",
+          "executable_sha256": "3af2f22d99884eb4d32d3122e3cedbc19fb02c08958683d8a76f8076bb178d72",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:004c4a40",
+          "cohort": "original30",
+          "body_bytes": 40,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "scalar-store"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 2,
+            "scalar_stores": 2,
+            "direct_branch_instructions": 0,
+            "instruction_count": 10,
+            "NOPs": 1,
+            "SP_relative_memory": 3,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": "unbound_value:register_4",
+          "old_semantic_group": "incoming_ABI",
+          "memory_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "memory_first_failure": "full_Cpu_RAM_SPR_ordered_writes_equal",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 11,
+          "constructed_declined": 13,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_00F1.cpp",
+          "source_unit_sha256": "1ade714f5164f8f8ead622f34927461a1af12d9aa24c75447a931fd565765dc9",
+          "native_source_sha256": "932454621a663e6fbb90420f033c88e6cd9f51e0479a21362a98b604783cc3a2",
+          "executable_sha256": "f7fb47893e4f7f27e0c038abdce3027b6ea12a45f4d8591cdd75a7d89bea8160",
+          "classification": "capability only; production ABI and ownership admission separate"
+        },
+        {
+          "key": "SLUS_214.10:00524780",
+          "cohort": "heldout30",
+          "body_bytes": 48,
+          "instruction_mix": {
+            "tags": [
+              "scalar-load",
+              "scalar-store",
+              "branching"
+            ],
+            "overlap": "Tags overlap; denominators must not be summed.",
+            "scalar_loads": 1,
+            "scalar_stores": 2,
+            "direct_branch_instructions": 1,
+            "instruction_count": 12,
+            "NOPs": 1,
+            "SP_relative_memory": 0,
+            "GP_relative_memory": 0
+          },
+          "old_first_failure": null,
+          "old_semantic_group": "new held-out cohort",
+          "memory_status": "REFUSED",
+          "memory_first_failure": "N3_control_mode_disabled_branch_terminator",
+          "control_status": "PASS_CONSTRUCTED_CAPABILITY",
+          "control_first_failure": null,
+          "constructed_comparisons": 12,
+          "constructed_declined": 12,
+          "source_unit": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\generated-aot\\phase4-all\\unit_0109.cpp",
+          "source_unit_sha256": "e761666f64e156e9f2677aca48806863d701927e9e995f125f85b0928306cc42",
+          "native_source_sha256": "63e28a2ca341146fa5156f3e90781f894eaee1f8494156b449134a92b8791d12",
+          "executable_sha256": "523cc5fdb70a1b234a7013e23581b5c0e6361998e13a6191ff33c1d07517697e",
+          "classification": "capability only; production ABI and ownership admission separate"
+        }
+      ],
+      "pass_definition": "At least one full-function valid constructed comparison and no mismatch among admitted inputs; individual declined inputs are retained. This is bounded capability, not all-domain equivalence or production ABI admission.",
+      "semantic_plants": {
+        "width": [
+          "MOVIER.ovl:007c8c90",
+          "MOVIER.ovl:007eb190",
+          "MOVIER.ovl:007eb630",
+          "MOVIER.ovl:00803118",
+          "MOVIER.ovl:00803fe0",
+          "MOVIER.ovl:00809e58",
+          "MOVIER.ovl:0080d4f8",
+          "MOVIER.ovl:008142a8",
+          "MOVIER.ovl:00814c30",
+          "SLUS_214.10:00148a50",
+          "SLUS_214.10:00167cf0",
+          "SLUS_214.10:00181bc0",
+          "SLUS_214.10:001d77d0",
+          "SLUS_214.10:00212c20",
+          "SLUS_214.10:00221b50",
+          "SLUS_214.10:00245c20",
+          "SLUS_214.10:002841e0",
+          "SLUS_214.10:0033d3d0",
+          "SLUS_214.10:0036a790",
+          "SLUS_214.10:003b80e0",
+          "SLUS_214.10:00524780"
+        ],
+        "stale-ssa": [
+          "MOVIER.ovl:007c8c90",
+          "MOVIER.ovl:007d2150",
+          "MOVIER.ovl:007eb190",
+          "MOVIER.ovl:007eb630",
+          "MOVIER.ovl:007fedc8",
+          "MOVIER.ovl:00803118",
+          "MOVIER.ovl:00803fe0",
+          "MOVIER.ovl:00809e58",
+          "MOVIER.ovl:0080d4f8",
+          "MOVIER.ovl:008142a8",
+          "MOVIER.ovl:00814c30",
+          "SLUS_214.10:00131980",
+          "SLUS_214.10:00148a50",
+          "SLUS_214.10:00152ae0",
+          "SLUS_214.10:00167cf0",
+          "SLUS_214.10:0016ae10",
+          "SLUS_214.10:00175ac0",
+          "SLUS_214.10:0017a440",
+          "SLUS_214.10:00181bc0",
+          "SLUS_214.10:001c4210",
+          "SLUS_214.10:001d77d0",
+          "SLUS_214.10:00212c20",
+          "SLUS_214.10:0022c620",
+          "SLUS_214.10:00241b70",
+          "SLUS_214.10:00245c20",
+          "SLUS_214.10:002841e0",
+          "SLUS_214.10:0029c0f8",
+          "SLUS_214.10:002bfaf0",
+          "SLUS_214.10:002ec570",
+          "SLUS_214.10:0030e130",
+          "SLUS_214.10:00325800",
+          "SLUS_214.10:00343980",
+          "SLUS_214.10:0036a790",
+          "SLUS_214.10:003b80e0",
+          "SLUS_214.10:003c6ad0",
+          "SLUS_214.10:00461190",
+          "SLUS_214.10:0047e7c0",
+          "SLUS_214.10:004a3180",
+          "SLUS_214.10:004ade10",
+          "SLUS_214.10:004c4a40",
+          "SLUS_214.10:00524780"
+        ],
+        "delay": [
+          "MOVIER.ovl:007fedc8",
+          "SLUS_214.10:00131980",
+          "SLUS_214.10:00148a50",
+          "SLUS_214.10:0016ae10",
+          "SLUS_214.10:0017a440",
+          "SLUS_214.10:001d77d0",
+          "SLUS_214.10:00241b70",
+          "SLUS_214.10:002841e0",
+          "SLUS_214.10:003b80e0",
+          "SLUS_214.10:0047e7c0",
+          "SLUS_214.10:004a3180"
+        ],
+        "invented-input": [
+          "MOVIER.ovl:00800540",
+          "MOVIER.ovl:0080d1a8",
+          "MOVIER.ovl:00816050",
+          "MOVIER.ovl:00818d90",
+          "SLUS_214.10:00152ae0",
+          "SLUS_214.10:00167cf0",
+          "SLUS_214.10:00221b50",
+          "SLUS_214.10:0033d3d0"
+        ],
+        "phi": [
+          "MOVIER.ovl:007c8c90",
+          "MOVIER.ovl:007d2150",
+          "MOVIER.ovl:007eb190",
+          "MOVIER.ovl:007eb630",
+          "MOVIER.ovl:007fedc8",
+          "MOVIER.ovl:00803118",
+          "MOVIER.ovl:00803fe0",
+          "MOVIER.ovl:00809e58",
+          "MOVIER.ovl:0080d4f8",
+          "MOVIER.ovl:008142a8",
+          "MOVIER.ovl:00814c30",
+          "SLUS_214.10:00131980",
+          "SLUS_214.10:00148a50",
+          "SLUS_214.10:00152ae0",
+          "SLUS_214.10:00167cf0",
+          "SLUS_214.10:0016ae10",
+          "SLUS_214.10:00175ac0",
+          "SLUS_214.10:0017a440",
+          "SLUS_214.10:00181bc0",
+          "SLUS_214.10:001c4210",
+          "SLUS_214.10:00212c20",
+          "SLUS_214.10:00221b50",
+          "SLUS_214.10:0022c620",
+          "SLUS_214.10:00245c20",
+          "SLUS_214.10:0029c0f8",
+          "SLUS_214.10:002bfaf0",
+          "SLUS_214.10:002ec570",
+          "SLUS_214.10:0030e130",
+          "SLUS_214.10:00325800",
+          "SLUS_214.10:0033d3d0",
+          "SLUS_214.10:00343980",
+          "SLUS_214.10:0036a790",
+          "SLUS_214.10:003b80e0",
+          "SLUS_214.10:003c6ad0",
+          "SLUS_214.10:00461190",
+          "SLUS_214.10:0047e7c0",
+          "SLUS_214.10:004a3180",
+          "SLUS_214.10:004ade10",
+          "SLUS_214.10:004c4a40",
+          "SLUS_214.10:00524780"
+        ]
+      },
+      "receipt": {
+        "path": "build/oracle-telemetry/phase6-control-leaf-01/RESULT.json",
+        "sha256": "8718e5f3f94b2f94201db7ea4d61013bb98d25ed58e5ac1be57d54028023d4e3"
+      },
+      "selection_exposure": "Membership was independently seeded before testing and never replaced. Generic parser/analysis-refusal robustness fixes were diagnosed during pilot attempts, including a heldout unknown-loop refusal. Final frozen-source metrics are exploratory validation, not a pristine untouched blind benchmark."
+    },
+    "N5": {
+      "status": "HELD_OUT_MEASURED_GATE_MET_FOR_THIS_BOUNDED_ATTEMPT",
+      "memory_gate": "16/30heldout permitted control measurement on same frozen source.",
+      "control_result": "25/30heldout supports continuing bounded StageA ordinary leaf work; do not infer catalogue-wide coverage or recovered native memory/ABI.",
+      "conclusion": "The zero-pass stop condition did not recur after the memory-model/runtime-value-SSA change. Abandonment of all general transformation is not supported by this small bounded sample. Large/unknown loops, calls, actual semantic ABIs and StageB remain open.",
+      "credit": "2 transformed/238 native, unchanged; all cohort results capability only."
+    },
+    "N6": {
+      "status": "EXISTING_NATIVE_CAMERA_DIFFERENTIAL_EXPANSION_ONLY_INTEGRATION_OPEN",
+      "measurements": {
+        "exact_powers_of_two_constructed": 41,
+        "snapshot_seeded_constructed": 61,
+        "historical_entry_matches": 0,
+        "other_finite_matches": 128,
+        "other_finite_differences": 0,
+        "edge_matches": 1,
+        "edge_differences": 11,
+        "separate_frame_queue_steps": 5,
+        "retired_camera_refusal": 1,
+        "plants_rejected": 3
+      },
+      "implementation_delta": 0,
+      "field_comparison_matches": 230,
+      "edge_matches": 1,
+      "edge_differences": 11,
+      "limits": "61 snapshot-seeded inputs are constructed, zero historical entries. Existing SSE edge behavior differs from EE saturation/status. Camera\u2192frame producer/list attachment remains unbound; separate frame helper does not close it. No new native generator-written subsystem implementation/admission in this phase; oracle closure stays frozen.",
+      "receipt": {
+        "path": "build/oracle-telemetry/native-camera-subsystem-04/RESULT.json",
+        "sha256": "8b7dfa361ab916ac5bd5a6e209533f0242985f004e4e97ddfd4ad8af2a1db5a8"
+      }
+    },
+    "N7": {
+      "status": "NATIVE_BOUNDARIES_PRESERVED_AND_BOUNDED_CONTROLS_PASS_WHOLE_GAME_OPEN",
+      "measurements": {
+        "native_save_store": "PASS owned TEMP only",
+        "native_audio": "PASS pure validation only; no COM/endpoint",
+        "IOP_SIF": "Source-only bounded service/compatibility inventory; no synthetic dispatch success"
+      },
+      "limits": "NativeSaveStore tested only in owned TEMP, audio only pure validation without COM/endpoint. Legacy IOP/SIF compatibility is explicitly not accepted native service ownership; no synthetic stub success promoted.",
+      "receipt": {
+        "path": "build/oracle-telemetry/native-service-boundaries-01/RESULT.json",
+        "sha256": "f5223195bace123b1db3962ae0b163d485331340651fc22b345cefc69a84ecd5"
+      }
+    },
+    "baseline": {
+      "status": "PASS_NATIVE_BASELINE_59_TARGETS_65_VARIANTS_13_RERUN_GATES_3_INHERITED",
+      "targets": 59,
+      "variants_passed": 65,
+      "read_only_gates_fresh": 13,
+      "mutating_gates_inherited": [
+        "ledger",
+        "sync",
+        "validation-planted"
+      ],
+      "scope": "Hash-verified existing59 binaries with958 unchanged compiled-source joins, not fresh rebuild. New Phase6 sources tested separately. Protected/shared-source mutating tests were not rerun; first attempted protected write blocked before mutation.",
+      "supplementary_compiled_controls": 20,
+      "fresh_GP_map_control": "PASS positive and changedREGINFO-image refusal",
+      "receipt": {
+        "path": "build/oracle-telemetry/native-baseline-closeout-20261126-110247-404ff077/CLOSEOUT_FINAL.json",
+        "sha256": "99cf3494709f3de0b922188c664a18e81ead8fa71f7140f611fc1afa9225a222"
+      }
+    },
+    "Not verified": [
+      "No production integration or new ownership/credit.",
+      "Mechanical bitvector signatures are not evidence of this-receiver/stack/FPR/native-owner ABI.",
+      "44largest-class call obligations and1context-restoring exclusion remain; no ordinary assumption for unprovedcallee.",
+      "Five runtime/memory-tripbound loops, one analysis-cap function, invalid input domains, scheduler/continuation and StageB fields remain unbound.",
+      "No selected historical function entries exercised, physical input/audio/gameplay or native full-game acceptance.",
+      "N6 produced differential evidence of existing camera/frame methods, not a new subsystem implementation;11edge differences and actual camera-frame attachment remain open."
+    ],
+    "Contradictions with earlier documents": [
+      "The parent launcher formerly selected compiled882302... with Live disabled; it now calls original8AB43BDA... with cached AOT+Live. Original cards/saves unchanged.",
+      "Earlier oracle-closure-first/two-branch-only instructions are superseded by this explicit native branch request.",
+      "Old0/30 result remains valid for its original constant-shaped transformer; new bounded mechanical StageA results do not retroactively change old measurements.",
+      "Saved-state-seeded camera cases and raw-prefix inspection are not historical whole-function execution.",
+      "Full baseline scope is65fresh client executions+13fresh gates+3inherited mutators, not16freshgates or a rebuild."
+    ],
+    "Falsification attempts": [
+      "Width/order memory mutations rejected; ABI width/stale/highlane/return/frame/delay/reorder/invented-input plants rejected.",
+      "N4 width/stale/delay/invented-input/actual phi-transport mutants rejected; aggregate coverage records which functions exercised each plant.",
+      "Camera value/stale-lifetime/frame tests reject their stated plants;11numeric edge mismatches preserved.",
+      "Initial const-qualified AST and array-decay parser refusals corrected generically; unknown-loop recursion corrected to named cycle/trip-proof refusal rather than increasing Python recursion limits.",
+      "Original failed lowerer versions reconstructed byte-identically to recorded SHAs and archived in failed raw folders; no historical receipt rewritten.",
+      "Unreachable reference tail declaration, fixture cwd/import/DLL/NUL harness failures preserved; no source semantics or gates weakened.",
+      "Old validation mutator blocked before its first protected metadata write; not counted as a new pass."
+    ],
+    "final_read_only_review": {
+      "path": "build/oracle-telemetry/phase6-final-source-review.json",
+      "sha256": "4f2764ad68d468a1104acb17211be335b83162d480cbd143b9b216687d52ba5c",
+      "scope": "All12 new sources join measured receipt hashes. Parent/native-worktree docs and14ledger artifacts match; protected original R192 and preserved compiled PE, inventory and main/frozen refs match. All subagent tasks completed. No card/save write, game launch or closure expansion."
+    },
+    "publication": {
+      "branch": "phase6-native-memory-abi",
+      "receipt": "build/oracle-telemetry/phase6-native-publication-01/SOURCE_PUBLICATION.json",
+      "policy": "Exact measured sources are published on this native branch; main and frozen closure refs remain unchanged. The publication receipt joins tracked blob bytes to the pushed source commit without self-referential commit IDs in this record."
+    },
+    "contradictions_and_failed_attempts": [
+      "TASK_BOARD current-work wording now marks the old0/30 stop as historical and the no-Live compiled package as a separate preserved experiment. The selected original R192 route retains Live. Historical numbers and package identities are unchanged."
+    ]
   }
 }
