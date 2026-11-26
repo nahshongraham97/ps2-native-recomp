@@ -1,0 +1,323 @@
+{
+  "captures_q1": [
+    {
+      "path": "captures_q1/cap_0012e4e0_0000.bin",
+      "bytes": 67145952,
+      "sha256": "d66dbc637ec391d3761c37e97ca2d65204f8879678087e45095aa463ce2455c9"
+    },
+    {
+      "path": "captures_q1/cap_0012e4e0_0001.bin",
+      "bytes": 67145616,
+      "sha256": "90a79e2f9c080717ab987cfffb6f13d1f171a9a40aacac63c83043d5f62be50a"
+    },
+    {
+      "path": "captures_q1/cap_0012e4e0_0002.bin",
+      "bytes": 67145952,
+      "sha256": "b4e9fedca966f02c3562d778922f7aeb15df5df1635a135402bd58b2cb2fd78f"
+    },
+    {
+      "path": "captures_q1/cap_001a64a0_0000.bin",
+      "bytes": 67144680,
+      "sha256": "3578de049a70e2f4ad691ff33a87c163fa2f75c684da191619c021610f318951"
+    },
+    {
+      "path": "captures_q1/cap_001a64a0_0001.bin",
+      "bytes": 67144680,
+      "sha256": "941a4fc29e64b6c2ef57b390f82ad62dd80e02e40cdfbb071a5df43cf2a8b691"
+    },
+    {
+      "path": "captures_q1/cap_001a64a0_0002.bin",
+      "bytes": 67144680,
+      "sha256": "ac10652746fa1394fef30e9b0bac883274d704e3e0ad82a84170689fb78cd4a6"
+    },
+    {
+      "path": "captures_q1/cap_001a7510_0000.bin",
+      "bytes": 67144664,
+      "sha256": "8c9ec82edfa01292959202e71def5073b0ffe46c7ff005ad4dac7d25d5617592"
+    },
+    {
+      "path": "captures_q1/cap_001a7510_0001.bin",
+      "bytes": 67144632,
+      "sha256": "934caaeb0447dfdcb4177c0aa5bc9a3722d74c7078b09f743c968762fd2f5126"
+    },
+    {
+      "path": "captures_q1/cap_001a7510_0002.bin",
+      "bytes": 67144632,
+      "sha256": "ac02382c57c27983590abf5fc7ef7ee4c75e4e9acb57ff22feab53156f0eaefc"
+    }
+  ],
+  "captures_cam": [
+    {
+      "path": "captures_cam/s1/cap_001a64a0_0000.bin",
+      "bytes": 67144680,
+      "sha256": "845aaea91663c06f83a3d1cf85c3acdea7487f0a284a35d1b3ee2d8532b09e12"
+    },
+    {
+      "path": "captures_cam/s1/cap_001a64a0_0001.bin",
+      "bytes": 67144680,
+      "sha256": "0a04cbea318e5943cf8fb4410a41c25cc454061aeb38c96cc4273a7f5d02ebf2"
+    },
+    {
+      "path": "captures_cam/s1/cap_001a64a0_0002.bin",
+      "bytes": 67144680,
+      "sha256": "a624d6bb0bbb9e01ff675a16c2f9d0526ecd882320d17e3d82843bb8d698b500"
+    },
+    {
+      "path": "captures_cam/s1/cap_001a7510_0000.bin",
+      "bytes": 67144664,
+      "sha256": "d0e45e14c93415af8f88f979ac429f86a127305866d242ad984eb71d4f3a010d"
+    },
+    {
+      "path": "captures_cam/s1/cap_001a7510_0001.bin",
+      "bytes": 67144632,
+      "sha256": "6e27ce2ae3cf0253950579800d0db7e0384573f167110b3e106c8b42a610d9c6"
+    },
+    {
+      "path": "captures_cam/s1/cap_001a7510_0002.bin",
+      "bytes": 67144632,
+      "sha256": "73303635ae9e3f4dcb7561c28a30c4f5600b4ecf0aae8362fdd043ad4aa90f25"
+    },
+    {
+      "path": "captures_cam/s2/cap_001a64a0_0000.bin",
+      "bytes": 67144680,
+      "sha256": "44ddf7e856002702c25b1a16bdfcd83bb2f1201f0094c1b1fde4d91ab54ae00f"
+    },
+    {
+      "path": "captures_cam/s2/cap_001a64a0_0001.bin",
+      "bytes": 67144680,
+      "sha256": "3f0def69a6d4edc5a9941345993576fdc98e3588045c4fd98993dcc97010583e"
+    },
+    {
+      "path": "captures_cam/s2/cap_001a64a0_0002.bin",
+      "bytes": 67144680,
+      "sha256": "1d386b1f3bf44742ca61d0d509a03c39f6cf7c51eacd3451cc1a4a364c3762ab"
+    },
+    {
+      "path": "captures_cam/s2/cap_001a7510_0000.bin",
+      "bytes": 67144664,
+      "sha256": "4a2dcf197a2a5371e538defb28caed86846db629cf222b13240d4c813c720fb4"
+    },
+    {
+      "path": "captures_cam/s2/cap_001a7510_0001.bin",
+      "bytes": 67144632,
+      "sha256": "61f6150dc11015a5a12de817071d737236a6fc38c282a360b4566a822248f306"
+    },
+    {
+      "path": "captures_cam/s2/cap_001a7510_0002.bin",
+      "bytes": 67144632,
+      "sha256": "6e2f62702d0f421efaea7674d9cb859dcb7dfb3868f7fff20e095181a5d9b96e"
+    },
+    {
+      "path": "captures_cam/s3/cap_001a64a0_0000.bin",
+      "bytes": 67144680,
+      "sha256": "3df3eef3466126f4fcbebe466b3860c180a2febed305b89a977fb43c63bbb171"
+    },
+    {
+      "path": "captures_cam/s3/cap_001a64a0_0001.bin",
+      "bytes": 67144680,
+      "sha256": "d9d609f753440b40526b1edb1e6d2abf982fb1f62e79984732b37dce4e558ccc"
+    },
+    {
+      "path": "captures_cam/s3/cap_001a64a0_0002.bin",
+      "bytes": 67144680,
+      "sha256": "59d98e4514a4ea27a21aaa712dbe949cedc6216220649ac08e57e5a3d7e6312e"
+    },
+    {
+      "path": "captures_cam/s3/cap_001a7510_0000.bin",
+      "bytes": 67144664,
+      "sha256": "bbb0e975bd0544a199cc43c1e71628e46a6b5801447e1048b7b8aa1c710eb94c"
+    },
+    {
+      "path": "captures_cam/s3/cap_001a7510_0001.bin",
+      "bytes": 67144632,
+      "sha256": "b79d145f04b9ddd18dedc0bc989b1725516f328a752c70ddc55d4e1859291a11"
+    },
+    {
+      "path": "captures_cam/s3/cap_001a7510_0002.bin",
+      "bytes": 67144632,
+      "sha256": "6808bf932d6b7af525b257e93f001735bac49623e0d54a36a7db500a1991a62d"
+    },
+    {
+      "path": "captures_cam/s4/cap_001a64a0_0000.bin",
+      "bytes": 67144680,
+      "sha256": "5f97a3e4776cee1763d918a04bda69c321699d4581a1c6d98356549a78e67632"
+    },
+    {
+      "path": "captures_cam/s4/cap_001a64a0_0001.bin",
+      "bytes": 67144680,
+      "sha256": "e6420acde6282ecb775409ee1c0070a132e36471e59cf9d66f0ebdfa2ae1c502"
+    },
+    {
+      "path": "captures_cam/s4/cap_001a64a0_0002.bin",
+      "bytes": 67144680,
+      "sha256": "f7746775a5c546af687fee0f360b89b139a262e76a15407c7af259947df32e08"
+    },
+    {
+      "path": "captures_cam/s4/cap_001a7510_0000.bin",
+      "bytes": 67144664,
+      "sha256": "5505ffb0d1bfc7abdfbae048b43952c77ac65ac6b44471ba9e6eea2cf4b3c33f"
+    },
+    {
+      "path": "captures_cam/s4/cap_001a7510_0001.bin",
+      "bytes": 67144632,
+      "sha256": "8f65d6a62d3f7c1ec26ea8fc2390a5e46b22658fa1f7c3a1117a2444b419af9a"
+    },
+    {
+      "path": "captures_cam/s4/cap_001a7510_0002.bin",
+      "bytes": 67144632,
+      "sha256": "8ac9707cd1b395ae72c2e060e5d7b3b83aab29f5c8762222583cefbf8893cdee"
+    },
+    {
+      "path": "captures_cam/s5/cap_001a64a0_0000.bin",
+      "bytes": 67144680,
+      "sha256": "f6d34d036a4e950f100a2a95a61acf640c63da4867f7858c73323003008da78e"
+    },
+    {
+      "path": "captures_cam/s5/cap_001a64a0_0001.bin",
+      "bytes": 67144680,
+      "sha256": "48f72cc12a63d88803693cc23ac390bece4a3909ecc75c48e0f9ff974baca06c"
+    },
+    {
+      "path": "captures_cam/s5/cap_001a64a0_0002.bin",
+      "bytes": 67144680,
+      "sha256": "a7fcb4f10f2b73c08ad687b82fc0bf2b3474425e49e7bdd2533a8e5215af127b"
+    },
+    {
+      "path": "captures_cam/s5/cap_001a7510_0000.bin",
+      "bytes": 67144664,
+      "sha256": "c4c28c7a1fa5c305f3830d674d649d142d72bf8a8f259c7601dd6f68c0976212"
+    },
+    {
+      "path": "captures_cam/s5/cap_001a7510_0001.bin",
+      "bytes": 67144632,
+      "sha256": "3055ee5e7978843e59fc223a002a94e6939d5922b6bae63fc849cb7986c9e785"
+    },
+    {
+      "path": "captures_cam/s5/cap_001a7510_0002.bin",
+      "bytes": 67144632,
+      "sha256": "f72b83f759436aa5ccb03531fa498857d34dccdc99f957c6d3d813abf418e637"
+    }
+  ],
+  "captures_cam_s60": [
+    {
+      "path": "captures_cam_s60/cap_001a64a0_0000.bin",
+      "bytes": 67144680,
+      "sha256": "a829a1d75523aac300f0c71bc4ecbcb7a1ac8b04531fca0d44822c546df549b0"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a64a0_0001.bin",
+      "bytes": 67144680,
+      "sha256": "71cf9fe7db61476eca2d8c95c5b612b31ac8009984d9ac18547eeb0e32f45f3e"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a64a0_0002.bin",
+      "bytes": 67144680,
+      "sha256": "ca514c7e5f9b54aad5574d7a35ca0cba467c3fb6e42252f5ce9780f4c17cf139"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a64a0_0003.bin",
+      "bytes": 67144680,
+      "sha256": "ddfca6116da1f6258a62edfa1c7f6da429d0d5cda3c41f5cf0f5b760dd69c46b"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a64a0_0004.bin",
+      "bytes": 67144680,
+      "sha256": "e3c40ccbbd16b210f553e0ebc9151cf0a123fd8d6ed5735eecccc36cd9880b49"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a64a0_0005.bin",
+      "bytes": 67144680,
+      "sha256": "3af2a21823839e6c9dbe16e863a5a31cd2ff9209b506b75f8331860fc70cfd7e"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a64a0_0006.bin",
+      "bytes": 67144680,
+      "sha256": "97bb6deded8a4b0279a0b7903dca5072c5836c107851da2320bf61d6d7f46609"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a64a0_0007.bin",
+      "bytes": 67144680,
+      "sha256": "2dc71614a3d3b30a614ce1ccd9a4c01e79df336de24b93e0eb8bb52bb7945ec8"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a70f0_0000.bin",
+      "bytes": 67144616,
+      "sha256": "fa22262be73eb1eb437535abdf8a1e9438928c6e077527d3aec6acb3517c0f81"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a70f0_0001.bin",
+      "bytes": 67144616,
+      "sha256": "4786093ff5da66cfe8f63d37f63567dce93539ed9d7d6478900efa3c1d4ba218"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a70f0_0002.bin",
+      "bytes": 67144616,
+      "sha256": "1ce4f5af105e1575a1c3170936d1bf253f6784bc591905ded1ba301b753466e2"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a70f0_0003.bin",
+      "bytes": 67144616,
+      "sha256": "24de02fccd5ef519b9728ce4b3b0abb00c8c302fb4e7aad13326473b03ef38c5"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a70f0_0004.bin",
+      "bytes": 67144616,
+      "sha256": "cd647e09bea57f36feeab4e3af3c56717a61549c9f0985b9f6d63253c296017e"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a70f0_0005.bin",
+      "bytes": 67144616,
+      "sha256": "3ec900f4f1cde7fc165cafb671cd1ecb17fe50159273a893390f7669f7663154"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a70f0_0006.bin",
+      "bytes": 67144616,
+      "sha256": "1671b8a15093eaaa7cc7d3ff1e7c941dd70d478e681b553df4c8543804b5d9ba"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a70f0_0007.bin",
+      "bytes": 67144616,
+      "sha256": "45f5b7a7e4d2381a2c33601e5109f16030632f622c6ee098f7dee325739922bd"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a7510_0000.bin",
+      "bytes": 67144664,
+      "sha256": "07d45b25d0969868285996d1721c971c856de51c34dfb251e73d5743d27c70d0"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a7510_0001.bin",
+      "bytes": 67144632,
+      "sha256": "94ae3148d45e2d13473b898fee38b3a27f05ed8531630b0bdf84a7ba4239871d"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a7510_0002.bin",
+      "bytes": 67144632,
+      "sha256": "1e743e2d3e520f3974db65310bfb847629fe2d09c766ecd9451eec4210baf7ac"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a7510_0003.bin",
+      "bytes": 67144632,
+      "sha256": "556d8d7197828ec75fdea25a5ea2d112f30ec4bfb5c8f93f93a38019e91a769d"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a7510_0004.bin",
+      "bytes": 67144664,
+      "sha256": "a5231c10146113772540bad05ddef2f177604e238eefbee57152f9a8146694fd"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a7510_0005.bin",
+      "bytes": 67144632,
+      "sha256": "ac1932e91b65dff58cf20aedf4498bf6a23ec8e7b2e18865c96b94856ccd0f7e"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a7510_0006.bin",
+      "bytes": 67144632,
+      "sha256": "224d11b4d77e7ac4b8944a2d9eca662f64aa89c77edffba1ab819622e526902c"
+    },
+    {
+      "path": "captures_cam_s60/cap_001a7510_0007.bin",
+      "bytes": 67144632,
+      "sha256": "08399cd1fc7a091c17f4504e57f853c7b32911e10664a10143eeaf25321d01e0"
+    }
+  ]
+}

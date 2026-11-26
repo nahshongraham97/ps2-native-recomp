@@ -62,7 +62,7 @@ std::uint8_t rd8(const std::vector<std::byte> &ram, std::uint32_t addr) {
 
 int main(int argc, char **argv) {
     if (argc < 2) {
-        std::fprintf(stderr, "usage: %s <capture_root> [--planted-window|--planted-reciprocal|--planted-frame-flags|--planted-dirty-link|--planted-dirty-check|--planted-return]\n", argv[0]);
+        std::fprintf(stderr, "usage: %s <capture_root> [--planted-window|--planted-reciprocal|--planted-frame-flags|--planted-dirty-link|--planted-dirty-next|--planted-dirty-prev|--planted-head-prev|--planted-dirty-check|--planted-return]\n", argv[0]);
         return 2;
     }
     const std::filesystem::path root(argv[1]);
@@ -104,6 +104,7 @@ int main(int argc, char **argv) {
             const std::uint32_t f_addr = cap.entry_cpu.r[4].w[0];
             const std::uint32_t root_addr = rd32(cap.entry_ram, f_addr + 160u);
             const std::uint32_t head_addr = rd32(cap.entry_ram, 0x0069F34Cu);
+            const bool empty_list = (head_addr == 0x0069F34Cu);
 
             mka::phase7::NativeRwFrame root_obj{};
             root_obj.private_flags = rd8(cap.entry_ram, root_addr + 3u);
@@ -111,16 +112,23 @@ int main(int argc, char **argv) {
             frame_obj.private_flags = rd8(cap.entry_ram, f_addr + 3u);
             frame_obj.root = (root_addr == f_addr) ? &frame_obj : &root_obj;
             mka::phase7::NativeRwFrame *const actual_root = frame_obj.root;
+            const std::uint8_t entry_root_flags = actual_root->private_flags;
 
+            mka::phase7::NativeRwFrame sentinel_obj{};
             mka::phase7::NativeRwFrame old_head_obj{};
+            mka::phase7::NativeRwFrame *const initial_head = empty_list ? &sentinel_obj : &old_head_obj;
             mka::phase7::NativeRwDirtyList dirty_list{};
-            dirty_list.head = (head_addr == 0x0069F34Cu) ? nullptr : &old_head_obj;
+            dirty_list.head = initial_head;
+            dirty_list.sentinel = &sentinel_obj;
 
-            frame_shapes.insert({static_cast<std::uint8_t>(actual_root->private_flags & 3u), frame_obj.private_flags});
+            frame_shapes.insert({static_cast<std::uint8_t>(entry_root_flags & 3u), frame_obj.private_flags});
 
             auto *ret = mka::phase7::frame_update_objects_stage_b(frame_obj, dirty_list);
             if (plant == "--planted-frame-flags") frame_obj.private_flags = 0u;
             if (plant == "--planted-dirty-link") dirty_list.head = nullptr;
+            if (plant == "--planted-dirty-next") actual_root->dirty_next = &frame_obj + 1;
+            if (plant == "--planted-dirty-prev") actual_root->dirty_prev = nullptr;
+            if (plant == "--planted-head-prev") initial_head->dirty_prev = nullptr;
             if (plant == "--planted-return") ret = nullptr;
 
             if (ret != &frame_obj || cap.exit_cpu.r[2].w[0] != f_addr) {
@@ -133,14 +141,34 @@ int main(int argc, char **argv) {
                 return 1;
             }
             const std::uint32_t exit_head = rd32(cap.exit_ram, 0x0069F34Cu);
-            if ((actual_root->dirty_next == nullptr && dirty_list.head == actual_root && exit_head != root_addr + 8u) ||
-                (dirty_list.head == actual_root && exit_head != root_addr + 8u)) {
-                std::fprintf(stderr, "FAIL StageB 001A7510 dirty head mismatch in %s\n", p.filename().string().c_str());
-                return 1;
-            }
-            if (dirty_list.head == nullptr && exit_head == root_addr + 8u) {
-                std::fprintf(stderr, "FAIL StageB 001A7510 dirty link missing in %s\n", p.filename().string().c_str());
-                return 1;
+            const std::uint32_t exit_root_next = rd32(cap.exit_ram, root_addr + 8u);
+            const std::uint32_t exit_root_prev = rd32(cap.exit_ram, root_addr + 12u);
+            const std::uint32_t exit_head_prev = rd32(cap.exit_ram, head_addr + 4u);
+            if ((entry_root_flags & 3u) == 0u) {
+                if (actual_root->dirty_next != initial_head || exit_root_next != head_addr) {
+                    std::fprintf(stderr, "FAIL StageB 001A7510 dirty_next / root+8 mismatch in %s\n", p.filename().string().c_str());
+                    return 1;
+                }
+                if (actual_root->dirty_prev != &dirty_list.head || exit_root_prev != 0x0069F34Cu) {
+                    std::fprintf(stderr, "FAIL StageB 001A7510 dirty_prev / root+12 mismatch in %s\n", p.filename().string().c_str());
+                    return 1;
+                }
+                if (initial_head->dirty_prev != &actual_root->dirty_next || exit_head_prev != root_addr + 8u) {
+                    std::fprintf(stderr, "FAIL StageB 001A7510 head+4 dirty_prev mismatch in %s\n", p.filename().string().c_str());
+                    return 1;
+                }
+                if (dirty_list.head != actual_root || exit_head != root_addr + 8u) {
+                    std::fprintf(stderr, "FAIL StageB 001A7510 dirty head mismatch in %s\n", p.filename().string().c_str());
+                    return 1;
+                }
+            } else {
+                if (actual_root->dirty_next != nullptr || exit_root_next != rd32(cap.entry_ram, root_addr + 8u) ||
+                    actual_root->dirty_prev != nullptr || exit_root_prev != rd32(cap.entry_ram, root_addr + 12u) ||
+                    initial_head->dirty_prev != nullptr || exit_head_prev != rd32(cap.entry_ram, head_addr + 4u) ||
+                    dirty_list.head != initial_head || exit_head != head_addr) {
+                    std::fprintf(stderr, "FAIL StageB 001A7510 dirty list mutated when already dirty in %s\n", p.filename().string().c_str());
+                    return 1;
+                }
             }
             ++frame_tested;
         } else if (cap.pc == 0x001A64A0u) {
@@ -151,16 +179,22 @@ int main(int argc, char **argv) {
             mka::phase7::NativeRwV2d win{rd32(cap.entry_ram, win_addr), rd32(cap.entry_ram, win_addr + 4u)};
             cam_shapes.insert({win.x_bits, win.y_bits, parent_addr != 0u});
 
-            mka::phase7::NativeRwFrame parent_obj{}, parent_root_obj{}, old_head_obj{};
+            mka::phase7::NativeRwFrame parent_obj{}, parent_root_obj{}, sentinel_obj{}, old_head_obj{};
             mka::phase7::NativeRwDirtyList dirty_list{};
             std::uint32_t root_addr = 0;
+            std::uint32_t head_addr = 0;
+            std::uint8_t entry_parent_root_flags = 0;
+            mka::phase7::NativeRwFrame *initial_head = nullptr;
             if (parent_addr != 0u) {
                 root_addr = rd32(cap.entry_ram, parent_addr + 160u);
                 parent_root_obj.private_flags = rd8(cap.entry_ram, root_addr + 3u);
                 parent_obj.private_flags = rd8(cap.entry_ram, parent_addr + 3u);
                 parent_obj.root = (root_addr == parent_addr) ? &parent_obj : &parent_root_obj;
-                const std::uint32_t head_addr = rd32(cap.entry_ram, 0x0069F34Cu);
-                dirty_list.head = (head_addr == 0x0069F34Cu) ? nullptr : &old_head_obj;
+                entry_parent_root_flags = parent_obj.root->private_flags;
+                head_addr = rd32(cap.entry_ram, 0x0069F34Cu);
+                initial_head = (head_addr == 0x0069F34Cu) ? &sentinel_obj : &old_head_obj;
+                dirty_list.head = initial_head;
+                dirty_list.sentinel = &sentinel_obj;
             }
 
             mka::phase7::NativeRwCamera cam{};
@@ -183,11 +217,34 @@ int main(int argc, char **argv) {
                 std::fprintf(stderr, "FAIL StageB 001A64A0 window/inverse mismatch in %s\n", p.filename().string().c_str());
                 return 1;
             }
-            if (parent_addr != 0u &&
-                (parent_obj.private_flags != rd8(cap.exit_ram, parent_addr + 3u) ||
-                 parent_obj.root->private_flags != rd8(cap.exit_ram, root_addr + 3u))) {
-                std::fprintf(stderr, "FAIL StageB 001A64A0 parent flags mismatch in %s\n", p.filename().string().c_str());
-                return 1;
+            if (parent_addr != 0u) {
+                auto *const p_root = parent_obj.root;
+                if (parent_obj.private_flags != rd8(cap.exit_ram, parent_addr + 3u) ||
+                    p_root->private_flags != rd8(cap.exit_ram, root_addr + 3u)) {
+                    std::fprintf(stderr, "FAIL StageB 001A64A0 parent flags mismatch in %s\n", p.filename().string().c_str());
+                    return 1;
+                }
+                const std::uint32_t exit_head = rd32(cap.exit_ram, 0x0069F34Cu);
+                const std::uint32_t exit_root_next = rd32(cap.exit_ram, root_addr + 8u);
+                const std::uint32_t exit_root_prev = rd32(cap.exit_ram, root_addr + 12u);
+                const std::uint32_t exit_head_prev = rd32(cap.exit_ram, head_addr + 4u);
+                if ((entry_parent_root_flags & 3u) == 0u) {
+                    if (p_root->dirty_next != initial_head || exit_root_next != head_addr ||
+                        p_root->dirty_prev != &dirty_list.head || exit_root_prev != 0x0069F34Cu ||
+                        initial_head->dirty_prev != &p_root->dirty_next || exit_head_prev != root_addr + 8u ||
+                        dirty_list.head != p_root || exit_head != root_addr + 8u) {
+                        std::fprintf(stderr, "FAIL StageB 001A64A0 parent dirty list mismatch in %s\n", p.filename().string().c_str());
+                        return 1;
+                    }
+                } else {
+                    if (p_root->dirty_next != nullptr || exit_root_next != rd32(cap.entry_ram, root_addr + 8u) ||
+                        p_root->dirty_prev != nullptr || exit_root_prev != rd32(cap.entry_ram, root_addr + 12u) ||
+                        initial_head->dirty_prev != nullptr || exit_head_prev != rd32(cap.entry_ram, head_addr + 4u) ||
+                        dirty_list.head != initial_head || exit_head != head_addr) {
+                        std::fprintf(stderr, "FAIL StageB 001A64A0 parent dirty list mutated when dirty in %s\n", p.filename().string().c_str());
+                        return 1;
+                    }
+                }
             }
             ++cam_tested;
         }

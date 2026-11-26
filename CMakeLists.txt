@@ -357,6 +357,10 @@ if(PS2_GENERATED)
         target_include_directories(test_gl_lazy_readback PRIVATE runtime/include runtime/src)
         target_link_libraries(test_gl_lazy_readback PRIVATE ps2runtime)
     endif()
+    add_executable(test_phase7_camera_differential EXCLUDE_FROM_ALL tests/test_phase7_camera_differential.cpp)
+    target_include_directories(test_phase7_camera_differential PRIVATE runtime/include runtime/src)
+    add_executable(test_phase7_camera_stage_b EXCLUDE_FROM_ALL tests/test_phase7_camera_stage_b.cpp)
+    target_include_directories(test_phase7_camera_stage_b PRIVATE runtime/include runtime/src)
     # These tests use assert for both checks and calls under test. Keep those
     # expressions active even when the surrounding build is Release.
     foreach(assert_test test_iop_native_module test_iop_native_import_link test_iop_aot_import_load)

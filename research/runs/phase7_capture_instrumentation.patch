@@ -1,0 +1,393 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -45,6 +45,7 @@
+     set(PS2_API PUBLIC)
+     add_library(ps2runtime STATIC
+         runtime/src/memory.cpp
++        runtime/src/phase7_capture.cpp
+         runtime/src/dispatch.cpp
+         runtime/src/observer_hook.cpp
+         runtime/src/native_hook.cpp
+@@ -174,9 +175,11 @@
+     add_executable(ps2run host/main.cpp host/mka_unit_wrappers.cpp)
+     target_link_libraries(ps2run PRIVATE ps2game ps2runtime)
+     target_link_options(ps2run PRIVATE
++        "-Wl,--wrap=_ZN3gen9unit_000BERN3ps23CpuEjj"
+         "-Wl,--wrap=_ZN3gen9unit_0018ERN3ps23CpuEjj"
+         "-Wl,--wrap=_ZN3gen9unit_0020ERN3ps23CpuEjj"
+         "-Wl,--wrap=_ZN3gen9unit_0025ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0029ERN3ps23CpuEjj"
+     )
+     if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
+         target_sources(ps2run PRIVATE host/profile.cpp)
+--- a/host/mka_unit_wrappers.cpp
++++ b/host/mka_unit_wrappers.cpp
+@@ -1,4 +1,5 @@
+ #include "mka_combat_hooks.hpp"
++#include "ps2/phase7_capture.hpp"
+ 
+ namespace {
+ 
+@@ -33,9 +34,25 @@
+ extern "C" {
+ 
+ // Real symbols in libps2game.a provided by the linker under --wrap
++void __real__ZN3gen9unit_000BERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
+ void __real__ZN3gen9unit_0018ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
+ void __real__ZN3gen9unit_0020ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
+ void __real__ZN3gen9unit_0025ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __real__ZN3gen9unit_0029ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++
++void __wrap__ZN3gen9unit_000BERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x000Bu, entry);
++    ps2::capture::Scope cap(0x000Bu, entry, c);
++    __real__ZN3gen9unit_000BERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++
++void __wrap__ZN3gen9unit_0029ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0029u, entry);
++    ps2::capture::Scope cap(0x0029u, entry, c);
++    __real__ZN3gen9unit_0029ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
+ 
+ // Linker Wrapper for gen::unit_0018: Intercepts PAD Scanner (328u) and Input Events (309u)
+ void __wrap__ZN3gen9unit_0018ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
+--- a/runtime/src/memory.cpp
++++ b/runtime/src/memory.cpp
+@@ -1,6 +1,7 @@
+ #include "hw.hpp"
+ #include "vu_micro.hpp"
+ #include "ps2/memory.hpp"
++#include "ps2/phase7_capture.hpp"
+ #include "ps2/system.hpp"
+ 
+ #include <cstdio>
+@@ -41,6 +42,10 @@
+ }
+ 
+ void watch_hit(std::uint32_t a, std::uint32_t v, const char *via) {
++    if (ps2::capture::is_active()) {
++        ps2::capture::record_store(a, v);
++        return;
++    }
+     const std::uint8_t *at = (a < kRamSize) ? g_ram + a : ((a >> 14) == (kScratchpadBase >> 14) ? g_spr + (a & (kScratchpadSize - 1)) : nullptr);
+     std::uint32_t was = 0;
+     if (at) std::memcpy(&was, at, 4);
+--- /dev/null
++++ b/runtime/include/ps2/phase7_capture.hpp
+@@ -0,0 +1,26 @@
++#pragma once
++
++#include "ps2/cpu.hpp"
++#include <cstdint>
++
++namespace ps2::capture {
++
++bool is_active();
++void record_store(std::uint32_t addr, std::uint32_t val);
++void record_unit_entry(std::uint32_t unit_id, std::uint32_t entry);
++bool should_capture(std::uint32_t unit_id, std::uint32_t entry, std::uint32_t &out_pc);
++
++struct Scope {
++    bool active = false;
++    std::uint32_t pc = 0;
++    std::uint32_t entry = 0;
++    bool prev_watch_on = false;
++    std::uint32_t prev_watch_base = 0;
++    std::uint32_t prev_watch_end = 0;
++
++    Scope(std::uint32_t unit_id, std::uint32_t entry, const ps2::Cpu &c);
++    ~Scope();
++    void finish(const ps2::Cpu &c);
++};
++
++} // namespace ps2::capture
+--- /dev/null
++++ b/runtime/src/phase7_capture.cpp
+@@ -0,0 +1,284 @@
++#include "ps2/phase7_capture.hpp"
++#include "ps2/memory.hpp"
++#include "ps2/system.hpp"
++
++#include <array>
++#include <cstdio>
++#include <cstdlib>
++#include <cstring>
++#include <filesystem>
++#include <fstream>
++#include <map>
++#include <mutex>
++#include <string>
++#include <vector>
++
++namespace ps2::capture {
++
++namespace {
++
++struct StoreRec {
++    std::uint32_t addr;
++    std::uint32_t val;
++};
++
++struct TargetSpec {
++    std::uint32_t unit_id;
++    std::uint32_t entry;
++    std::uint32_t pc;
++};
++
++std::mutex g_mu;
++bool g_active = false;
++int g_depth = 0;
++std::vector<StoreRec> g_stores;
++std::vector<std::uint8_t> g_entry_cpu, g_entry_ram, g_entry_spr;
++std::map<std::uint64_t, std::uint64_t> g_counts;
++std::map<std::uint32_t, std::uint32_t> g_captured_per_pc;
++bool g_atexit_registered = false;
++
++// Minimal standalone SHA-256
++struct Sha256 {
++    std::uint32_t state[8] = {
++        0x6a09e667u, 0xbb67ae85u, 0x3c6ef372u, 0xa54ff53au,
++        0x510e527fu, 0x9b05688cu, 0x1f83d9abu, 0x5be0cd19u
++    };
++    std::uint64_t bitlen = 0;
++    std::uint8_t data[64]{};
++    std::size_t datalen = 0;
++
++    static inline std::uint32_t rotr(std::uint32_t x, int n) { return (x >> n) | (x << (32 - n)); }
++
++    void transform() {
++        static constexpr std::uint32_t k[64] = {
++            0x428a2f98u,0x71374491u,0xb5c0fbcfu,0xe9b5dba5u,0x3956c25bu,0x59f111f1u,0x923f82a4u,0xab1c5ed5u,
++            0xd807aa98u,0x12835b01u,0x243185beu,0x550c7dc3u,0x72be5d74u,0x80deb1feu,0x9bdc06a7u,0xc19bf174u,
++            0xe49b69c1u,0xefbe4786u,0x0fc19dc6u,0x240ca1ccu,0x2de92c6fu,0x4a7484aau,0x5cb0a9dcu,0x76f988dau,
++            0x983e5152u,0xa831c66du,0xb00327c8u,0xbf597fc7u,0xc6e00bf3u,0xd5a79147u,0x06ca6351u,0x14292967u,
++            0x27b70a85u,0x2e1b2138u,0x4d2c6dfcu,0x53380d13u,0x650a7354u,0x766a0abbu,0x81c2c92eu,0x92722c85u,
++            0xa2bfe8a1u,0xa81a664bu,0xc24b8b70u,0xc76c51a3u,0xd192e819u,0xd6990624u,0xf40e3585u,0x106aa070u,
++            0x19a4c116u,0x1e376c08u,0x2748774cu,0x34b0bcb5u,0x391c0cb3u,0x4ed8aa4au,0x5b9cca4fu,0x682e6ff3u,
++            0x748f82eeu,0x78a5636fu,0x84c87814u,0x8cc70208u,0x90befffau,0xa4506cebu,0xbef9a3f7u,0xc67178f2u
++        };
++        std::uint32_t m[64];
++        for (int i = 0, j = 0; i < 16; ++i, j += 4)
++            m[i] = (std::uint32_t(data[j]) << 24) | (std::uint32_t(data[j+1]) << 16) | (std::uint32_t(data[j+2]) << 8) | data[j+3];
++        for (int i = 16; i < 64; ++i) {
++            std::uint32_t s0 = rotr(m[i-15],7) ^ rotr(m[i-15],18) ^ (m[i-15] >> 3);
++            std::uint32_t s1 = rotr(m[i-2],17) ^ rotr(m[i-2],19) ^ (m[i-2] >> 10);
++            m[i] = m[i-16] + s0 + m[i-7] + s1;
++        }
++        std::uint32_t a=state[0],b=state[1],c=state[2],d=state[3],e=state[4],f=state[5],g=state[6],h=state[7];
++        for (int i = 0; i < 64; ++i) {
++            std::uint32_t S1 = rotr(e,6) ^ rotr(e,11) ^ rotr(e,25);
++            std::uint32_t ch = (e & f) ^ ((~e) & g);
++            std::uint32_t temp1 = h + S1 + ch + k[i] + m[i];
++            std::uint32_t S0 = rotr(a,2) ^ rotr(a,13) ^ rotr(a,22);
++            std::uint32_t maj = (a & b) ^ (a & c) ^ (b & c);
++            std::uint32_t temp2 = S0 + maj;
++            h=g; g=f; f=e; e=d+temp1; d=c; c=b; b=a; a=temp1+temp2;
++        }
++        state[0]+=a; state[1]+=b; state[2]+=c; state[3]+=d;
++        state[4]+=e; state[5]+=f; state[6]+=g; state[7]+=h;
++    }
++
++    void update(const void *buf, std::size_t len) {
++        const auto *p = static_cast<const std::uint8_t *>(buf);
++        for (std::size_t i = 0; i < len; ++i) {
++            data[datalen++] = p[i];
++            if (datalen == 64) { transform(); bitlen += 512; datalen = 0; }
++        }
++    }
++
++    std::array<std::uint8_t, 32> finish() {
++        std::size_t i = datalen;
++        if (datalen < 56) { data[i++] = 0x80; while (i < 56) data[i++] = 0; }
++        else { data[i++] = 0x80; while (i < 64) data[i++] = 0; transform(); std::memset(data, 0, 56); }
++        bitlen += datalen * 8;
++        for (int j = 0; j < 8; ++j) data[63 - j] = static_cast<std::uint8_t>((bitlen >> (j * 8)) & 0xff);
++        transform();
++        std::array<std::uint8_t, 32> out{};
++        for (int j = 0; j < 8; ++j) {
++            out[j*4]   = static_cast<std::uint8_t>((state[j] >> 24) & 0xff);
++            out[j*4+1] = static_cast<std::uint8_t>((state[j] >> 16) & 0xff);
++            out[j*4+2] = static_cast<std::uint8_t>((state[j] >> 8) & 0xff);
++            out[j*4+3] = static_cast<std::uint8_t>(state[j] & 0xff);
++        }
++        return out;
++    }
++};
++
++const std::string &capture_dir() {
++    static const std::string dir = [] {
++        const char *e = std::getenv("PS2_CAPTURE_DIR");
++        return e ? std::string(e) : std::string();
++    }();
++    return dir;
++}
++
++bool count_enabled() {
++    static const bool on = [] {
++        const char *e = std::getenv("PS2_CAPTURE_COUNT");
++        return e && e[0] != '\0' && std::strcmp(e, "0") != 0;
++    }();
++    return on;
++}
++
++std::uint32_t max_captures() {
++    static const std::uint32_t m = [] {
++        const char *e = std::getenv("PS2_CAPTURE_MAX");
++        return e ? static_cast<std::uint32_t>(std::strtoul(e, nullptr, 10)) : 8u;
++    }();
++    return m;
++}
++
++const std::vector<TargetSpec> &targets() {
++    static const std::vector<TargetSpec> list = [] {
++        std::vector<TargetSpec> v;
++        const char *e = std::getenv("PS2_CAPTURE_TARGETS");
++        if (!e) return v;
++        std::string s(e);
++        std::size_t pos = 0;
++        while (pos < s.size()) {
++            auto comma = s.find(',', pos);
++            if (comma == std::string::npos) comma = s.size();
++            std::string item = s.substr(pos, comma - pos);
++            unsigned u = 0, en = 0, pc = 0;
++            if (std::sscanf(item.c_str(), "%x:%u:%x", &u, &en, &pc) == 3) {
++                v.push_back({u, en, pc});
++            }
++            pos = comma + 1;
++        }
++        return v;
++    }();
++    return list;
++}
++
++void dump_counts_atexit() {
++    const std::string &dir = capture_dir();
++    if (dir.empty() || g_counts.empty()) return;
++    std::filesystem::create_directories(dir);
++    std::ofstream out(std::filesystem::path(dir) / "unit_entry_counts.tsv");
++    out << "unit_hex\tentry\tcalls\n";
++    for (const auto &[k, cnt] : g_counts) {
++        std::uint32_t u = static_cast<std::uint32_t>(k >> 32);
++        std::uint32_t en = static_cast<std::uint32_t>(k & 0xffffffffu);
++        out << std::hex << u << "\t" << std::dec << en << "\t" << cnt << "\n";
++    }
++}
++
++} // namespace
++
++bool is_active() { return g_active; }
++
++void record_store(std::uint32_t addr, std::uint32_t val) {
++    if (g_active) g_stores.push_back({addr, val});
++}
++
++void record_unit_entry(std::uint32_t unit_id, std::uint32_t entry) {
++    if (!count_enabled()) return;
++    std::lock_guard<std::mutex> lock(g_mu);
++    if (!g_atexit_registered) {
++        std::atexit(dump_counts_atexit);
++        g_atexit_registered = true;
++    }
++    const std::uint64_t key = (static_cast<std::uint64_t>(unit_id) << 32) | entry;
++    g_counts[key]++;
++}
++
++bool should_capture(std::uint32_t unit_id, std::uint32_t entry, std::uint32_t &out_pc) {
++    if (capture_dir().empty()) return false;
++    for (const auto &t : targets()) {
++        if (t.unit_id == unit_id && t.entry == entry) {
++            out_pc = t.pc;
++            return g_captured_per_pc[t.pc] < max_captures();
++        }
++    }
++    return false;
++}
++
++Scope::Scope(std::uint32_t unit_id, std::uint32_t en, const ps2::Cpu &c) {
++    std::uint32_t target_pc = 0;
++    if (!should_capture(unit_id, en, target_pc)) return;
++    std::lock_guard<std::mutex> lock(g_mu);
++    if (g_depth > 0) return; // avoid nested capture interference
++    active = true;
++    pc = target_pc;
++    entry = en;
++    g_depth = 1;
++    g_entry_cpu.resize(sizeof(ps2::Cpu));
++    std::memcpy(g_entry_cpu.data(), &c, sizeof(ps2::Cpu));
++    g_entry_ram.assign(ps2::g_ram, ps2::g_ram + ps2::kRamSize);
++    g_entry_spr.assign(ps2::g_spr, ps2::g_spr + ps2::kScratchpadSize);
++    g_stores.clear();
++    prev_watch_on = ps2::g_watch_on;
++    prev_watch_base = ps2::g_watch_base;
++    prev_watch_end = ps2::g_watch_end;
++    ps2::g_watch_on = true;
++    ps2::g_watch_base = 0u;
++    ps2::g_watch_end = 0xFFFFFFFFu;
++    g_active = true;
++}
++
++Scope::~Scope() {
++    if (active) {
++        g_active = false;
++        ps2::g_watch_on = prev_watch_on;
++        ps2::g_watch_base = prev_watch_base;
++        ps2::g_watch_end = prev_watch_end;
++        g_depth = 0;
++    }
++}
++
++void Scope::finish(const ps2::Cpu &c) {
++    if (!active) return;
++    std::lock_guard<std::mutex> lock(g_mu);
++    g_active = false;
++    ps2::g_watch_on = prev_watch_on;
++    ps2::g_watch_base = prev_watch_base;
++    ps2::g_watch_end = prev_watch_end;
++    g_depth = 0;
++    active = false;
++
++    const std::uint32_t idx = g_captured_per_pc[pc]++;
++    std::filesystem::create_directories(capture_dir());
++    char fname[64];
++    std::snprintf(fname, sizeof fname, "cap_%08x_%04u.bin", pc, idx);
++    auto path = std::filesystem::path(capture_dir()) / fname;
++
++    std::ofstream out(path, std::ios::binary);
++    Sha256 sha;
++    auto write_hash = [&](const void *p, std::size_t n) {
++        out.write(static_cast<const char *>(p), static_cast<std::streamsize>(n));
++        sha.update(p, n);
++    };
++
++    const char magic[8] = {'P','S','2','C','A','P','0','1'};
++    const std::uint64_t fr = ps2::frame_count();
++    const std::uint32_t cpu_sz = static_cast<std::uint32_t>(sizeof(ps2::Cpu));
++    const std::uint32_t ram_sz = ps2::kRamSize;
++    const std::uint32_t spr_sz = ps2::kScratchpadSize;
++    const std::uint32_t scount = static_cast<std::uint32_t>(g_stores.size());
++
++    write_hash(magic, 8);
++    write_hash(&pc, 4);
++    write_hash(&entry, 4);
++    write_hash(&fr, 8);
++    write_hash(&cpu_sz, 4);
++    write_hash(&ram_sz, 4);
++    write_hash(&spr_sz, 4);
++    write_hash(g_entry_cpu.data(), cpu_sz);
++    write_hash(g_entry_ram.data(), ram_sz);
++    write_hash(g_entry_spr.data(), spr_sz);
++    write_hash(&c, cpu_sz);
++    write_hash(ps2::g_ram, ram_sz);
++    write_hash(ps2::g_spr, spr_sz);
++    write_hash(&scount, 4);
++    if (scount > 0) write_hash(g_stores.data(), scount * sizeof(StoreRec));
++
++    auto digest = sha.finish();
++    out.write(reinterpret_cast<const char *>(digest.data()), 32);
++    out.close();
++}
++
++} // namespace ps2::capture
