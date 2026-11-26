@@ -8,7 +8,7 @@
          runtime/src/dispatch.cpp
          runtime/src/observer_hook.cpp
          runtime/src/native_hook.cpp
-@@ -174,9 +175,11 @@
+@@ -174,9 +175,56 @@
      add_executable(ps2run host/main.cpp host/mka_unit_wrappers.cpp)
      target_link_libraries(ps2run PRIVATE ps2game ps2runtime)
      target_link_options(ps2run PRIVATE
@@ -17,6 +17,51 @@
          "-Wl,--wrap=_ZN3gen9unit_0020ERN3ps23CpuEjj"
          "-Wl,--wrap=_ZN3gen9unit_0025ERN3ps23CpuEjj"
 +        "-Wl,--wrap=_ZN3gen9unit_0029ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0079ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0003ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_000CERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0012ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0014ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0019ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_001AERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_001DERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_001EERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0027ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0028ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_002AERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0031ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0035ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0044ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0048ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_004BERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0050ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0051ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0061ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0067ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_006DERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_006FERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0078ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_007AERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_007BERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0083ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0089ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_008FERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0090ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_009AERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_00A4ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_00AEERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_00B1ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_00CAERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_00D8ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_00DFERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_00E8ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_00EBERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_00EDERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_00EEERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_00F1ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_00F8ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0103ERN3ps23CpuEjj"
++        "-Wl,--wrap=_ZN3gen9unit_0109ERN3ps23CpuEjj"
      )
      if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
          target_sources(ps2run PRIVATE host/profile.cpp)
@@ -28,7 +73,7 @@
  
  namespace {
  
-@@ -33,9 +34,25 @@
+@@ -33,9 +34,341 @@
  extern "C" {
  
  // Real symbols in libps2game.a provided by the linker under --wrap
@@ -37,6 +82,322 @@
  void __real__ZN3gen9unit_0020ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
  void __real__ZN3gen9unit_0025ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
 +void __real__ZN3gen9unit_0029ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __real__ZN3gen9unit_0079ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __real__ZN3gen9unit_0003ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0003ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0003u, entry);
++    ps2::capture::Scope cap(0x0003u, entry, c);
++    __real__ZN3gen9unit_0003ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_000CERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_000CERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x000Cu, entry);
++    ps2::capture::Scope cap(0x000Cu, entry, c);
++    __real__ZN3gen9unit_000CERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0012ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0012ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0012u, entry);
++    ps2::capture::Scope cap(0x0012u, entry, c);
++    __real__ZN3gen9unit_0012ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0014ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0014ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0014u, entry);
++    ps2::capture::Scope cap(0x0014u, entry, c);
++    __real__ZN3gen9unit_0014ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0019ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0019ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0019u, entry);
++    ps2::capture::Scope cap(0x0019u, entry, c);
++    __real__ZN3gen9unit_0019ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_001AERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_001AERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x001Au, entry);
++    ps2::capture::Scope cap(0x001Au, entry, c);
++    __real__ZN3gen9unit_001AERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_001DERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_001DERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x001Du, entry);
++    ps2::capture::Scope cap(0x001Du, entry, c);
++    __real__ZN3gen9unit_001DERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_001EERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_001EERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x001Eu, entry);
++    ps2::capture::Scope cap(0x001Eu, entry, c);
++    __real__ZN3gen9unit_001EERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0027ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0027ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0027u, entry);
++    ps2::capture::Scope cap(0x0027u, entry, c);
++    __real__ZN3gen9unit_0027ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0028ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0028ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0028u, entry);
++    ps2::capture::Scope cap(0x0028u, entry, c);
++    __real__ZN3gen9unit_0028ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_002AERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_002AERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x002Au, entry);
++    ps2::capture::Scope cap(0x002Au, entry, c);
++    __real__ZN3gen9unit_002AERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0031ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0031ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0031u, entry);
++    ps2::capture::Scope cap(0x0031u, entry, c);
++    __real__ZN3gen9unit_0031ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0035ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0035ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0035u, entry);
++    ps2::capture::Scope cap(0x0035u, entry, c);
++    __real__ZN3gen9unit_0035ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0044ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0044ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0044u, entry);
++    ps2::capture::Scope cap(0x0044u, entry, c);
++    __real__ZN3gen9unit_0044ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0048ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0048ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0048u, entry);
++    ps2::capture::Scope cap(0x0048u, entry, c);
++    __real__ZN3gen9unit_0048ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_004BERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_004BERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x004Bu, entry);
++    ps2::capture::Scope cap(0x004Bu, entry, c);
++    __real__ZN3gen9unit_004BERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0050ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0050ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0050u, entry);
++    ps2::capture::Scope cap(0x0050u, entry, c);
++    __real__ZN3gen9unit_0050ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0051ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0051ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0051u, entry);
++    ps2::capture::Scope cap(0x0051u, entry, c);
++    __real__ZN3gen9unit_0051ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0061ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0061ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0061u, entry);
++    ps2::capture::Scope cap(0x0061u, entry, c);
++    __real__ZN3gen9unit_0061ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0067ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0067ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0067u, entry);
++    ps2::capture::Scope cap(0x0067u, entry, c);
++    __real__ZN3gen9unit_0067ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_006DERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_006DERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x006Du, entry);
++    ps2::capture::Scope cap(0x006Du, entry, c);
++    __real__ZN3gen9unit_006DERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_006FERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_006FERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x006Fu, entry);
++    ps2::capture::Scope cap(0x006Fu, entry, c);
++    __real__ZN3gen9unit_006FERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0078ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0078ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0078u, entry);
++    ps2::capture::Scope cap(0x0078u, entry, c);
++    __real__ZN3gen9unit_0078ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_007AERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_007AERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x007Au, entry);
++    ps2::capture::Scope cap(0x007Au, entry, c);
++    __real__ZN3gen9unit_007AERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_007BERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_007BERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x007Bu, entry);
++    ps2::capture::Scope cap(0x007Bu, entry, c);
++    __real__ZN3gen9unit_007BERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0083ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0083ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0083u, entry);
++    ps2::capture::Scope cap(0x0083u, entry, c);
++    __real__ZN3gen9unit_0083ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0089ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0089ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0089u, entry);
++    ps2::capture::Scope cap(0x0089u, entry, c);
++    __real__ZN3gen9unit_0089ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_008FERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_008FERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x008Fu, entry);
++    ps2::capture::Scope cap(0x008Fu, entry, c);
++    __real__ZN3gen9unit_008FERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0090ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0090ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0090u, entry);
++    ps2::capture::Scope cap(0x0090u, entry, c);
++    __real__ZN3gen9unit_0090ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_009AERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_009AERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x009Au, entry);
++    ps2::capture::Scope cap(0x009Au, entry, c);
++    __real__ZN3gen9unit_009AERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_00A4ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_00A4ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x00A4u, entry);
++    ps2::capture::Scope cap(0x00A4u, entry, c);
++    __real__ZN3gen9unit_00A4ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_00AEERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_00AEERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x00AEu, entry);
++    ps2::capture::Scope cap(0x00AEu, entry, c);
++    __real__ZN3gen9unit_00AEERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_00B1ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_00B1ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x00B1u, entry);
++    ps2::capture::Scope cap(0x00B1u, entry, c);
++    __real__ZN3gen9unit_00B1ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_00CAERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_00CAERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x00CAu, entry);
++    ps2::capture::Scope cap(0x00CAu, entry, c);
++    __real__ZN3gen9unit_00CAERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_00D8ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_00D8ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x00D8u, entry);
++    ps2::capture::Scope cap(0x00D8u, entry, c);
++    __real__ZN3gen9unit_00D8ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_00DFERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_00DFERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x00DFu, entry);
++    ps2::capture::Scope cap(0x00DFu, entry, c);
++    __real__ZN3gen9unit_00DFERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_00E8ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_00E8ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x00E8u, entry);
++    ps2::capture::Scope cap(0x00E8u, entry, c);
++    __real__ZN3gen9unit_00E8ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_00EBERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_00EBERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x00EBu, entry);
++    ps2::capture::Scope cap(0x00EBu, entry, c);
++    __real__ZN3gen9unit_00EBERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_00EDERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_00EDERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x00EDu, entry);
++    ps2::capture::Scope cap(0x00EDu, entry, c);
++    __real__ZN3gen9unit_00EDERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_00EEERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_00EEERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x00EEu, entry);
++    ps2::capture::Scope cap(0x00EEu, entry, c);
++    __real__ZN3gen9unit_00EEERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_00F1ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_00F1ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x00F1u, entry);
++    ps2::capture::Scope cap(0x00F1u, entry, c);
++    __real__ZN3gen9unit_00F1ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_00F8ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_00F8ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x00F8u, entry);
++    ps2::capture::Scope cap(0x00F8u, entry, c);
++    __real__ZN3gen9unit_00F8ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0103ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0103ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0103u, entry);
++    ps2::capture::Scope cap(0x0103u, entry, c);
++    __real__ZN3gen9unit_0103ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++void __real__ZN3gen9unit_0109ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth);
++void __wrap__ZN3gen9unit_0109ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0109u, entry);
++    ps2::capture::Scope cap(0x0109u, entry, c);
++    __real__ZN3gen9unit_0109ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
++
++void __wrap__ZN3gen9unit_0079ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
++    ps2::capture::record_unit_entry(0x0079u, entry);
++    ps2::capture::Scope cap(0x0079u, entry, c);
++    __real__ZN3gen9unit_0079ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
++}
 +
 +void __wrap__ZN3gen9unit_000BERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
 +    ps2::capture::record_unit_entry(0x000Bu, entry);
@@ -54,6 +415,39 @@
  
  // Linker Wrapper for gen::unit_0018: Intercepts PAD Scanner (328u) and Input Events (309u)
  void __wrap__ZN3gen9unit_0018ERN3ps23CpuEjj(ps2::Cpu &c, std::uint32_t entry, std::uint32_t depth) {
+@@ -68,7 +401,10 @@
+         }
+ 
+         // Keep the original guest scan on its existing path, exactly once.
++        ps2::capture::record_unit_entry(0x0018u, entry);
++        ps2::capture::Scope cap(0x0018u, entry, c);
+         __real__ZN3gen9unit_0018ERN3ps23CpuEjj(c, entry, depth);
++        cap.finish(c);
+ 
+         if (trace) {
+             const PadTraceSnapshot after = read_pad_trace_snapshot();
+@@ -104,7 +440,10 @@
+         }
+     }
+ 
++    ps2::capture::record_unit_entry(0x0018u, entry);
++    ps2::capture::Scope cap(0x0018u, entry, c);
+     __real__ZN3gen9unit_0018ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
+ }
+ 
+ // Linker Wrapper for gen::unit_0020: Intercepts Video Stream Dispatcher (126u)
+@@ -126,7 +465,10 @@
+         return;
+     }
+ 
++    ps2::capture::record_unit_entry(0x0025u, entry);
++    ps2::capture::Scope cap(0x0025u, entry, c);
+     __real__ZN3gen9unit_0025ERN3ps23CpuEjj(c, entry, depth);
++    cap.finish(c);
+ }
+ 
+ // Native Phase 4 SPU2 Audio Processing Tap
 --- a/runtime/src/memory.cpp
 +++ b/runtime/src/memory.cpp
 @@ -1,6 +1,7 @@

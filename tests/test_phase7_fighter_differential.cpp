@@ -7,7 +7,9 @@
 #include <cstring>
 #include <filesystem>
 #include <fstream>
+#include <set>
 #include <string>
+#include <tuple>
 #include <vector>
 
 namespace {
@@ -81,7 +83,8 @@ int main(int argc, char **argv) {
     }
     if (files.empty()) return 2;
 
-    unsigned tested = 0;
+    unsigned tested = 0, branch_early_reject = 0;
+    std::set<std::tuple<std::uint32_t, std::uint32_t, std::uint32_t, std::uint32_t>> input_shapes;
     for (const auto &p : files) {
         Capture cap;
         if (!load_capture(p, cap)) return 2;
@@ -92,6 +95,10 @@ int main(int argc, char **argv) {
                  static_cast<std::vector<StoreRec> *>(ctx)->push_back({acc.address, static_cast<std::uint32_t>(acc.value)});
              }});
         ps2::Cpu cpu = cap.entry_cpu;
+        std::uint32_t rad = 0;
+        std::memcpy(&rad, &cap.entry_ram[cpu.r[4].w[0] + 32u], 4);
+        input_shapes.insert({cpu.r[4].w[0], cpu.r[5].w[0], cpu.r[6].w[0], rad});
+
         std::uint32_t ret = mka::phase7::fighter_tri_plane_test_00194370(
             mem, cpu, cpu.r[4].w[0], cpu.r[5].w[0], cpu.r[6].w[0]);
         if (plant == "--planted-return") ret ^= 1u;
@@ -102,14 +109,33 @@ int main(int argc, char **argv) {
                          p.filename().string().c_str(), ret, cap.exit_cpu.r[2].w[0]);
             return 1;
         }
-        // First non-prologue store in original is a2 + 12 = 0
-        if (obs_stores.empty() || obs_stores[0].addr != cpu.r[6].w[0] + 12u || obs_stores[0].val != 0u) {
-            std::fprintf(stderr, "FAIL 00194370 a2+12 store mismatch in %s\n", p.filename().string().c_str());
-            return 1;
-        }
-        // Compare full 32 MiB RAM outside dead stack [sp-128, sp)
+        // Compare native stores in order against captured stores (excluding prologue callee-saves in [sp-128, sp))
         const std::uint32_t sp_lo = cap.entry_cpu.r[29].w[0] - 128u;
         const std::uint32_t sp_hi = cap.entry_cpu.r[29].w[0];
+        std::vector<StoreRec> cap_non_stack, obs_non_stack;
+        for (const auto &s : cap.stores) {
+            if (s.addr >= sp_lo && s.addr < sp_hi) continue;
+            cap_non_stack.push_back(s);
+        }
+        for (const auto &s : obs_stores) {
+            if (s.addr >= sp_lo && s.addr < sp_hi) continue;
+            obs_non_stack.push_back(s);
+        }
+        if (obs_non_stack.size() != cap_non_stack.size()) {
+            std::fprintf(stderr, "FAIL 00194370 non-stack store count mismatch in %s: %zu vs %zu\n",
+                         p.filename().string().c_str(), obs_non_stack.size(), cap_non_stack.size());
+            return 1;
+        }
+        for (std::size_t i = 0; i < obs_non_stack.size(); ++i) {
+            if (obs_non_stack[i].addr != cap_non_stack[i].addr || obs_non_stack[i].val != cap_non_stack[i].val) {
+                std::fprintf(stderr, "FAIL 00194370 store[%zu] mismatch in %s: (0x%08x=0x%08x) vs (0x%08x=0x%08x)\n",
+                             i, p.filename().string().c_str(),
+                             obs_non_stack[i].addr, obs_non_stack[i].val,
+                             cap_non_stack[i].addr, cap_non_stack[i].val);
+                return 1;
+            }
+        }
+        // Compare full 32 MiB RAM outside dead stack [sp-128, sp)
         for (std::uint32_t a = 0; a < ps2::kRamSize; ++a) {
             if (a >= sp_lo && a < sp_hi) continue;
             if (cap.entry_ram[a] != cap.exit_ram[a]) {
@@ -117,6 +143,7 @@ int main(int argc, char **argv) {
                 return 1;
             }
         }
+        ++branch_early_reject;
         ++tested;
     }
 
@@ -124,6 +151,7 @@ int main(int argc, char **argv) {
         std::fprintf(stderr, "FAIL 00194370 zero captures tested\n");
         return 1;
     }
-    std::printf("PASS_PHASE7_FIGHTER_ACTIVE_00194370 captures=%u branch_early_reject=30\n", tested);
+    std::printf("PASS_PHASE7_FIGHTER_ACTIVE_00194370 captures=%u distinct_input_shapes=%zu branch_early_reject=%u\n",
+                tested, input_shapes.size(), branch_early_reject);
     return 0;
 }
