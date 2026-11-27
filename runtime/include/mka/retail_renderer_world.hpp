@@ -5,12 +5,14 @@
 #include "mka/retail_renderer_materials.hpp"
 #include "mka/retail_renderer_textures.hpp"
 #include "mka/retail_renderer_rasters.hpp"
+#include "mka/content_volume.hpp"
 #include <array>
 #include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <optional>
 #include <span>
+#include <string_view>
 #include <vector>
 
 namespace mka::retail {
@@ -198,6 +200,23 @@ struct RetailWorldRenderStats {
     std::size_t submitted_triangles{};
     std::size_t bound_textures{};
 };
+
+struct RetailSceneStreamLoadResult {
+    std::size_t bytes_read{};
+    bool txd_ingested{false};
+    bool world_ingested{false};
+};
+
+std::optional<RetailSceneStreamLoadResult> load_retail_scene_streams_from_volume(
+    const mka::content::NativeContentVolume& volume,
+    std::string_view txd_resource_key,
+    std::string_view world_resource_key,
+    std::uint64_t base_sector_id,
+    NativeRetailRendererRasters& rasters,
+    NativeRetailRendererTextures& textures,
+    NativeRetailRendererMaterials& materials,
+    NativeRetailWorld& world,
+    RetailRendererWorldFailure& failure) noexcept;
 
 bool ingest_rw_tex_dictionary_stream(
     std::span<const std::byte> stream_bytes,

@@ -892,6 +892,127 @@ void camera_gpu_target_cases(const std::filesystem::path& root,const std::option
             "BSP release_gpu_resources deleted GL texture handle");
   world_ptr->clear_bsp_sectors();
 
+  // PS2 PAL4 + PAL8 (CSM1 CLUT unswizzle + GS alpha 0x80->0xFF) + fail-closed archive selector.
+  {
+   RetailRendererWorldFailure arch_f;
+   gpu_check(!load_retail_scene_streams_from_volume(
+    x.native.startup.content,"missing_scene.txd","",2000u,*x.rasters,*tex_mod,*mat_mod,*world_ptr,arch_f),
+    "archive stream selector rejects missing TXD resource fail-closed");
+
+   // Malformed truncated PAL4 TXD must fail closed with zero leaks.
+   std::vector<std::byte> bad_pal4(88u+10u,std::byte{0});
+   std::memcpy(bad_pal4.data()+8,"bad_pal4",8);
+   std::uint32_t p4_fmt=0x4500u;std::memcpy(bad_pal4.data()+72,&p4_fmt,4);
+   std::uint16_t p4_w=4,p4_h=4;std::memcpy(bad_pal4.data()+80,&p4_w,2);std::memcpy(bad_pal4.data()+82,&p4_h,2);
+   bad_pal4[84]=std::byte{4};
+   auto bad_pal4_txd=wrap_chunk(0x0016u,[&]{
+    auto b=bad_txd_hdr;auto tn=wrap_chunk(0x0015u,wrap_chunk(0x0001u,bad_pal4));
+    b.insert(b.end(),tn.begin(),tn.end());return b;
+   }());
+   const auto before_pal_cnt=tex_mod->active_count();
+   gpu_check(!ingest_rw_tex_dictionary_stream(bad_pal4_txd,*x.rasters,*tex_mod,rtf)&&
+             tex_mod->active_count()==before_pal_cnt,
+             "truncated PAL4 palette/pixel TXD rejected fail-closed");
+
+   // Valid PAL4 ("pal4_cyan": 2x2, pal[3]=cyan GS alpha 0x80->0xFF, packed 0x03 so low nibble=3)
+   // + Valid PAL8 ("pal8_magenta": 2x2, CSM1 raw[18]=magenta GS alpha 0x80->0xFF for logical idx 10).
+   std::vector<std::byte> p4_tn(88u+64u+2u,std::byte{0});
+   std::uint32_t fa_nearest=0x00003301u;std::memcpy(p4_tn.data()+4,&fa_nearest,4);
+   std::memcpy(p4_tn.data()+8,"pal4_cyan",9);
+   std::memcpy(p4_tn.data()+72,&p4_fmt,4);
+   std::uint16_t tw=2,th=2;std::memcpy(p4_tn.data()+80,&tw,2);std::memcpy(p4_tn.data()+82,&th,2);
+   p4_tn[84]=std::byte{4};
+   p4_tn[88u+3u*4u+0u]=std::byte{0};p4_tn[88u+3u*4u+1u]=std::byte{240};
+   p4_tn[88u+3u*4u+2u]=std::byte{255};p4_tn[88u+3u*4u+3u]=std::byte{0x80};
+   p4_tn[88u+64u+0u]=std::byte{0x03};p4_tn[88u+64u+1u]=std::byte{0x03};
+
+   std::vector<std::byte> p8_tn(88u+1024u+4u,std::byte{0});
+   std::memcpy(p8_tn.data()+4,&fa_nearest,4);
+   std::memcpy(p8_tn.data()+8,"pal8_magenta",12);
+   std::uint32_t p8_fmt=0x2500u;std::memcpy(p8_tn.data()+72,&p8_fmt,4);
+   std::memcpy(p8_tn.data()+80,&tw,2);std::memcpy(p8_tn.data()+82,&th,2);
+   p8_tn[84]=std::byte{8};
+   // Logical index 10 (0x0A) maps to raw CSM1 slot 18 (0x12) via 10 ^ 0x18 = 18.
+   p8_tn[88u+18u*4u+0u]=std::byte{255};p8_tn[88u+18u*4u+1u]=std::byte{0};
+   p8_tn[88u+18u*4u+2u]=std::byte{220};p8_tn[88u+18u*4u+3u]=std::byte{0x80};
+   for(std::size_t i=0;i<4;++i)p8_tn[88u+1024u+i]=std::byte{10};
+
+   std::vector<std::byte> txd2_st;push_u16(txd2_st,2u);push_u16(txd2_st,0u);
+   auto txd2_body=wrap_chunk(0x0001u,txd2_st);
+   auto c_p4=wrap_chunk(0x0015u,wrap_chunk(0x0001u,p4_tn));
+   auto c_p8=wrap_chunk(0x0015u,wrap_chunk(0x0001u,p8_tn));
+   txd2_body.insert(txd2_body.end(),c_p4.begin(),c_p4.end());
+   txd2_body.insert(txd2_body.end(),c_p8.begin(),c_p8.end());
+   auto pal_txd=wrap_chunk(0x0016u,txd2_body);
+
+   gpu_check(ingest_rw_tex_dictionary_stream(pal_txd,*x.rasters,*tex_mod,rtf),
+             "ingest PAL4 + PAL8 CSM1 TXD dictionary");
+   auto h_p4=tex_mod->find_texture("pal4_cyan",rtf);
+   auto h_p8=tex_mod->find_texture("pal8_magenta",rtf);
+   gpu_check(h_p4&&!h_p4->empty()&&h_p8&&!h_p8->empty(),"PAL4 and PAL8 named textures registered");
+   auto r_p4=tex_mod->raster(*h_p4,rtf);auto r_p8=tex_mod->raster(*h_p8,rtf);
+   gpu_check(r_p4&&r_p8,"PAL4 and PAL8 rasters accessible");
+   {
+    auto px4=x.rasters->lock_pixels(*r_p4,rrf);
+    gpu_check(px4&&px4->size()>=16&&std::to_integer<unsigned>((*px4)[0])==0u&&
+              std::to_integer<unsigned>((*px4)[1])==240u&&
+              std::to_integer<unsigned>((*px4)[2])==255u&&
+              std::to_integer<unsigned>((*px4)[3])==255u,
+              "PAL4 pixel 0 decoded low nibble with GS alpha 0x80->0xFF");
+    (void)x.rasters->unlock_pixels(*r_p4,rrf);
+    auto px8=x.rasters->lock_pixels(*r_p8,rrf);
+    gpu_check(px8&&px8->size()>=16&&std::to_integer<unsigned>((*px8)[0])==255u&&
+              std::to_integer<unsigned>((*px8)[1])==0u&&
+              std::to_integer<unsigned>((*px8)[2])==220u&&
+              std::to_integer<unsigned>((*px8)[3])==255u,
+              "PAL8 pixel 0 decoded CSM1 CLUT unswizzle + GS alpha 0x80->0xFF");
+    (void)x.rasters->unlock_pixels(*r_p8,rrf);
+   }
+
+   // Render PAL8 magenta onto RpWorld BSP sector on GPU.
+   std::vector<std::byte> m_str;
+   for(char ch:std::string_view("pal8_magenta"))m_str.push_back(static_cast<std::byte>(ch));
+   m_str.push_back(std::byte{0});
+   auto m_tp=wrap_chunk(0x0001u,tex_st_p);
+   auto m_nc=wrap_chunk(0x0002u,m_str);
+   m_tp.insert(m_tp.end(),m_nc.begin(),m_nc.end());
+   auto m_rwt=wrap_chunk(0x0006u,m_tp);
+   auto m_mp=wrap_chunk(0x0001u,mat_st_p);
+   m_mp.insert(m_mp.end(),m_rwt.begin(),m_rwt.end());
+   auto m_rwm=wrap_chunk(0x0007u,m_mp);
+   auto m_mlp=wrap_chunk(0x0001u,ml_st_p);
+   m_mlp.insert(m_mlp.end(),m_rwm.begin(),m_rwm.end());
+   auto m_matlist=wrap_chunk(0x0008u,m_mlp);
+
+   std::vector<std::byte> m_world_body=wrap_chunk(0x0001u,ws_p);
+   m_world_body.insert(m_world_body.end(),m_matlist.begin(),m_matlist.end());
+   m_world_body.insert(m_world_body.end(),root_plane.begin(),root_plane.end());
+   auto m_world=wrap_chunk(0x000Bu,m_world_body);
+
+   gpu_check(ingest_rw_world_bsp_stream(m_world,2000u,*mat_mod,*tex_mod,*world_ptr,rwf),
+             "ingest RpWorld BSP referencing PAL8 texture");
+   auto m_stats=render_world_scene_frame(*x.cameras,*frames,init->primary.camera,init->primary.world_link,
+    world_ptr,{0.05f,0.05f,0.1f,1.0f},3u,true,pf,mat_mod.get(),tex_mod.get(),x.rasters.get());
+   gpu_check(m_stats.has_value()&&m_stats->visible_sectors==1&&m_stats->culled_sectors==1&&m_stats->bound_textures>=1,
+             "PAL8 BSP sector rendered with culling and texture bind");
+   gpu_check(x.cameras->begin_update(init->primary.camera,f),"rebind FBO for PAL8 readback");
+   glReadPixels(0,0,64,48,GL_RGBA,GL_UNSIGNED_BYTE,rgba.data());
+   glReadPixels(0,0,64,48,GL_DEPTH_COMPONENT,GL_FLOAT,depths.data());
+   a->record_diagnostic_readback(2);
+   gpu_check(x.cameras->end_update(init->primary.camera,f),"end PAL8 readback pass");
+   unsigned magenta_pixels=0;
+   for(unsigned y=6;y<42;++y)for(unsigned xx=8;xx<56;++xx){
+    const std::size_t idx=(y*64+xx);
+    const unsigned r=rgba[idx*4+0],g=rgba[idx*4+1],b=rgba[idx*4+2];
+    if(r>200&&g<50&&b>170&&depths[idx]<0.99f)++magenta_pixels;
+   }
+   gpu_check(magenta_pixels>60,"PAL8 CSM1-unswizzled BSP sector rendered measurable magenta pixels");
+   const GLuint m_tex_id=static_cast<GLuint>(world_ptr->gpu_texture_cache()[0].gl_texture_id);
+   world_ptr->release_gpu_resources();
+   gpu_check(glIsTexture(m_tex_id)==GL_FALSE,"PAL8 release_gpu_resources deleted GL texture handle");
+   world_ptr->clear_bsp_sectors();
+  }
+
   gpu_check(detach_camera_from_world_1cf350(init->primary.world_link,world_ptr,wf),"final 1CF350 detach");
   world_ptr->clear_scene_objects();
   gpu_check(frames->destroy_leaf(*out_frame,ff)&&frames->destroy_leaf(*in_frame,ff),"destroy world scene object frames");

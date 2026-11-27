@@ -1305,12 +1305,94 @@ bool ingest_rw_tex_dictionary_stream(
     !nb.read_bytes(&depth,1)||!nb.read_bytes(&mips,1)||!nb.read_bytes(&rtype,1)||!nb.read_bytes(&comp,1)){
    rollback();failure.kind=RetailRendererTextureError::invalid_handle;failure.operation="TXD texture header fields truncated";return false;
   }
-  if(width==0||height==0||width>4096||height>4096||depth!=32){
-   rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD texture dimensions/depth invalid";return false;
+  if(width==0||height==0||width>4096||height>4096){
+   rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD texture dimensions invalid";return false;
   }
-  const std::size_t pixel_bytes=static_cast<std::size_t>(width)*static_cast<std::size_t>(height)*4u;
-  if(nb.remaining()<pixel_bytes){
-   rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD texture pixel payload truncated";return false;
+  const bool is_pal4=(depth==4)||((fmt&0x4000u)!=0&&depth!=8&&depth!=32);
+  const bool is_pal8=(depth==8)||((fmt&0x2000u)!=0&&depth!=4&&depth!=32);
+  const bool is_rgba32=(depth==32)&&!is_pal4&&!is_pal8;
+  if(!is_pal4&&!is_pal8&&!is_rgba32){
+   rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD texture depth/format unsupported";return false;
+  }
+
+  const std::size_t total_pixels=static_cast<std::size_t>(width)*static_cast<std::size_t>(height);
+  const std::size_t rgba_bytes=total_pixels*4u;
+  std::vector<std::byte> decoded_rgba;
+  if(is_rgba32){
+   if(nb.remaining()<rgba_bytes){
+    rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD texture pixel payload truncated";return false;
+   }
+  }else if(is_pal4){
+   if((total_pixels%2u)!=0){
+    rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD PAL4 pixel count must be even";return false;
+   }
+   const std::size_t pal_bytes=16u*4u;
+   const std::size_t idx_bytes=total_pixels/2u;
+   if(nb.remaining()<pal_bytes+idx_bytes){
+    rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD PAL4 palette/pixel payload truncated";return false;
+   }
+   std::array<std::uint8_t,64> pal{};
+   if(!nb.read_bytes(pal.data(),pal_bytes)){
+    rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD PAL4 palette read failed";return false;
+   }
+   std::vector<std::uint8_t> indices(idx_bytes);
+   if(!nb.read_bytes(indices.data(),idx_bytes)){
+    rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD PAL4 index read failed";return false;
+   }
+   auto expand_gs_alpha=[](std::uint8_t a)noexcept->std::uint8_t{
+    return (a>=0x80u)?0xFFu:static_cast<std::uint8_t>((static_cast<std::uint32_t>(a)*255u+64u)/128u);
+   };
+   try{decoded_rgba.resize(rgba_bytes);}catch(...){
+    rollback();failure.kind=RetailRendererTextureError::allocation;failure.operation="TXD PAL4 decode allocation";return false;
+   }
+   for(std::size_t i=0;i<idx_bytes;++i){
+    const std::uint8_t packed=indices[i];
+    const std::size_t p0=static_cast<std::size_t>(packed&0x0Fu)*4u;
+    const std::size_t p1=static_cast<std::size_t>((packed>>4u)&0x0Fu)*4u;
+    const std::size_t out0=(i*2u)*4u;
+    const std::size_t out1=(i*2u+1u)*4u;
+    decoded_rgba[out0+0]=static_cast<std::byte>(pal[p0+0]);
+    decoded_rgba[out0+1]=static_cast<std::byte>(pal[p0+1]);
+    decoded_rgba[out0+2]=static_cast<std::byte>(pal[p0+2]);
+    decoded_rgba[out0+3]=static_cast<std::byte>(expand_gs_alpha(pal[p0+3]));
+    decoded_rgba[out1+0]=static_cast<std::byte>(pal[p1+0]);
+    decoded_rgba[out1+1]=static_cast<std::byte>(pal[p1+1]);
+    decoded_rgba[out1+2]=static_cast<std::byte>(pal[p1+2]);
+    decoded_rgba[out1+3]=static_cast<std::byte>(expand_gs_alpha(pal[p1+3]));
+   }
+  }else if(is_pal8){
+   const std::size_t pal_bytes=256u*4u;
+   const std::size_t idx_bytes=total_pixels;
+   if(nb.remaining()<pal_bytes+idx_bytes){
+    rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD PAL8 palette/pixel payload truncated";return false;
+   }
+   std::array<std::uint8_t,1024> raw_pal{};
+   if(!nb.read_bytes(raw_pal.data(),pal_bytes)){
+    rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD PAL8 palette read failed";return false;
+   }
+   std::vector<std::uint8_t> indices(idx_bytes);
+   if(!nb.read_bytes(indices.data(),idx_bytes)){
+    rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD PAL8 index read failed";return false;
+   }
+   auto csm1_unswizzle=[](std::size_t idx)noexcept->std::size_t{
+    const std::size_t bank=idx&0x18u;
+    if(bank==0x08u||bank==0x10u)return idx^0x18u;
+    return idx;
+   };
+   auto expand_gs_alpha=[](std::uint8_t a)noexcept->std::uint8_t{
+    return (a>=0x80u)?0xFFu:static_cast<std::uint8_t>((static_cast<std::uint32_t>(a)*255u+64u)/128u);
+   };
+   try{decoded_rgba.resize(rgba_bytes);}catch(...){
+    rollback();failure.kind=RetailRendererTextureError::allocation;failure.operation="TXD PAL8 decode allocation";return false;
+   }
+   for(std::size_t i=0;i<total_pixels;++i){
+    const std::size_t src_idx=csm1_unswizzle(static_cast<std::size_t>(indices[i]))*4u;
+    const std::size_t out_off=i*4u;
+    decoded_rgba[out_off+0]=static_cast<std::byte>(raw_pal[src_idx+0]);
+    decoded_rgba[out_off+1]=static_cast<std::byte>(raw_pal[src_idx+1]);
+    decoded_rgba[out_off+2]=static_cast<std::byte>(raw_pal[src_idx+2]);
+    decoded_rgba[out_off+3]=static_cast<std::byte>(expand_gs_alpha(raw_pal[src_idx+3]));
+   }
   }
 
   RetailRendererRasterFailure rf;
@@ -1320,12 +1402,16 @@ bool ingest_rw_tex_dictionary_stream(
   }
   created_rasters.push_back(*rh);
   auto locked=rasters.lock_pixels(*rh,rf);
-  if(!locked||locked->size()<pixel_bytes){
+  if(!locked||locked->size()<rgba_bytes){
    rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD raster pixel lock failed";return false;
   }
-  if(!nb.read_bytes(locked->data(),pixel_bytes)){
-   (void)rasters.unlock_pixels(*rh,rf);
-   rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD pixel copy failed";return false;
+  if(is_rgba32){
+   if(!nb.read_bytes(locked->data(),rgba_bytes)){
+    (void)rasters.unlock_pixels(*rh,rf);
+    rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD pixel copy failed";return false;
+   }
+  }else{
+   std::memcpy(locked->data(),decoded_rgba.data(),rgba_bytes);
   }
   (void)rasters.unlock_pixels(*rh,rf);
 
@@ -1424,6 +1510,70 @@ bool ingest_rw_world_bsp_stream(
  }
  world.set_bsp_root(root_idx);
  return true;
+}
+
+std::optional<RetailSceneStreamLoadResult> load_retail_scene_streams_from_volume(
+ const mka::content::NativeContentVolume& volume,
+ std::string_view txd_resource_key,
+ std::string_view world_resource_key,
+ std::uint64_t base_sector_id,
+ NativeRetailRendererRasters& rasters,
+ NativeRetailRendererTextures& textures,
+ NativeRetailRendererMaterials& materials,
+ NativeRetailWorld& world,
+ RetailRendererWorldFailure& failure) noexcept {
+ failure={};
+ auto read_stream_bytes=[&](std::string_view key,std::vector<std::byte>& out)noexcept->bool{
+  mka::content::ContentVolumeFailure cf;
+  auto file_opt=volume.open_resource(key,cf);
+  if(!file_opt){
+   failure.kind=RetailRendererWorldError::invalid_handle;
+   failure.operation="failed to open retail scene stream resource";
+   return false;
+  }
+  const auto len_opt=file_opt->length(cf);
+  if(!len_opt||*len_opt<12||*len_opt>(64ull*1024ull*1024ull)){
+   failure.kind=RetailRendererWorldError::invalid_handle;
+   failure.operation="retail scene stream length invalid or out of bounds";
+   return false;
+  }
+  try{
+   out.resize(static_cast<std::size_t>(*len_opt));
+  }catch(...){
+   failure.kind=RetailRendererWorldError::allocation;
+   failure.operation="retail scene stream buffer allocation failed";
+   return false;
+  }
+  const auto rd=file_opt->read(out.data(),out.size(),cf);
+  if(cf.kind!=mka::content::ContentVolumeError::none||rd.bytes!=out.size()){
+   failure.kind=RetailRendererWorldError::invalid_handle;
+   failure.operation="retail scene stream read truncated";
+   return false;
+  }
+  return true;
+ };
+
+ RetailSceneStreamLoadResult result;
+ if(!txd_resource_key.empty()){
+  std::vector<std::byte> txd_bytes;
+  if(!read_stream_bytes(txd_resource_key,txd_bytes))return {};
+  RetailRendererTextureFailure tf;
+  if(!ingest_rw_tex_dictionary_stream(txd_bytes,rasters,textures,tf)){
+   failure.kind=RetailRendererWorldError::invalid_handle;
+   failure.operation=tf.operation;
+   return {};
+  }
+  result.bytes_read+=txd_bytes.size();
+  result.txd_ingested=true;
+ }
+ if(!world_resource_key.empty()){
+  std::vector<std::byte> world_bytes;
+  if(!read_stream_bytes(world_resource_key,world_bytes))return {};
+  if(!ingest_rw_world_bsp_stream(world_bytes,base_sector_id,materials,textures,world,failure))return {};
+  result.bytes_read+=world_bytes.size();
+  result.world_ingested=true;
+ }
+ return result;
 }
 
 bool ingest_rw_geometry_stream(
