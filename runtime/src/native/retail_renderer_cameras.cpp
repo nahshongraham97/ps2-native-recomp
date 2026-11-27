@@ -1232,6 +1232,67 @@ void resolve_material_and_bind_texture(
  (void)material;(void)world;(void)materials;(void)textures;(void)rasters;(void)bound_textures;
 #endif
 }
+static std::size_t ps2_swizzle_offset_ct32(std::uint32_t x,std::uint32_t y,std::uint32_t width)noexcept{
+ static constexpr int kBlock32[4][8]={
+  {0,1,4,5,16,17,20,21},{2,3,6,7,18,19,22,23},
+  {8,9,12,13,24,25,28,29},{10,11,14,15,26,27,30,31}
+ };
+ static constexpr int kColumn32[2][8]={
+  {0,1,4,5,8,9,12,13},{2,3,6,7,10,11,14,15}
+ };
+ const std::size_t pages_x=(static_cast<std::size_t>(width)+63u)/64u;
+ const std::size_t page=(static_cast<std::size_t>(y/32u)*pages_x)+static_cast<std::size_t>(x/64u);
+ const std::uint32_t py=y&31u,px=x&63u;
+ const std::size_t col=(py&7u)/2u;
+ const std::size_t inner=static_cast<std::size_t>(kBlock32[py/8u][px/8u])*256u+col*64u+static_cast<std::size_t>(kColumn32[py&1u][px&7u])*4u;
+ return page*8192u+inner;
+}
+
+static std::size_t ps2_swizzle_offset_t8(std::uint32_t x,std::uint32_t y,std::uint32_t width)noexcept{
+ static constexpr int kBlock32[4][8]={
+  {0,1,4,5,16,17,20,21},{2,3,6,7,18,19,22,23},
+  {8,9,12,13,24,25,28,29},{10,11,14,15,26,27,30,31}
+ };
+ static constexpr int kColumnWord[2][2][8]={
+  {{0,1,4,5,8,9,12,13},{2,3,6,7,10,11,14,15}},
+  {{8,9,12,13,0,1,4,5},{10,11,14,15,2,3,6,7}}
+ };
+ const std::size_t pages_x=(static_cast<std::size_t>(width)+127u)/128u;
+ const std::size_t page=(static_cast<std::size_t>(y/64u)*pages_x)+static_cast<std::size_t>(x/128u);
+ const std::uint32_t py=y&63u,px=x&127u;
+ const int block=kBlock32[(py/16u)&3u][(px/16u)&7u];
+ const std::uint32_t wx=px%16u,wy=py%16u;
+ const std::uint32_t col=wy/4u,wy4=wy%4u;
+ const std::uint32_t table=(((wy4&2u)>>1u)^((py/4u)&1u));
+ const std::uint32_t byte_in_word=((wx&8u)>>2u)+((wy4&2u)>>1u);
+ const std::size_t inner=static_cast<std::size_t>(block)*256u+static_cast<std::size_t>(col)*64u+
+  static_cast<std::size_t>(kColumnWord[table][wy4&1u][wx&7u])*4u+static_cast<std::size_t>(byte_in_word);
+ return page*8192u+inner;
+}
+
+static std::size_t ps2_swizzle_nibble_t4(std::uint32_t x,std::uint32_t y,std::uint32_t width)noexcept{
+ static constexpr int kBlock16[8][4]={
+  {0,2,8,10},{1,3,9,11},{4,6,12,14},{5,7,13,15},
+  {16,18,24,26},{17,19,25,27},{20,22,28,30},{21,23,29,31}
+ };
+ static constexpr int kColumnWord[2][2][8]={
+  {{0,1,4,5,8,9,12,13},{2,3,6,7,10,11,14,15}},
+  {{8,9,12,13,0,1,4,5},{10,11,14,15,2,3,6,7}}
+ };
+ const std::size_t pages_x=(static_cast<std::size_t>(width)+127u)/128u;
+ const std::size_t page=(static_cast<std::size_t>(y/128u)*pages_x)+static_cast<std::size_t>(x/128u);
+ const std::uint32_t py=y&127u,px=x&127u;
+ const int block=kBlock16[(py/16u)&7u][(px/32u)&3u];
+ const std::uint32_t wx=px%32u,wy=py%16u;
+ const std::uint32_t col=wy/4u,wy4=wy%4u;
+ const std::uint32_t shift=(wx&0x18u)+((wy4&2u)<<1u);
+ const std::uint32_t nibble=shift/4u;
+ const std::uint32_t table=(((wy4&2u)>>1u)^(col&1u));
+ const std::size_t inner=(static_cast<std::size_t>(col)*64u+static_cast<std::size_t>(block)*256u+
+  static_cast<std::size_t>(kColumnWord[table][wy4&1u][wx&7u])*4u)*2u+static_cast<std::size_t>(nibble);
+ return page*16384u+inner;
+}
+
 } // namespace
 
 bool ingest_rw_tex_dictionary_stream(
@@ -1317,9 +1378,37 @@ bool ingest_rw_tex_dictionary_stream(
 
   const std::size_t total_pixels=static_cast<std::size_t>(width)*static_cast<std::size_t>(height);
   const std::size_t rgba_bytes=total_pixels*4u;
+  const bool is_swizzled=((fmt&0x00020000u)!=0u)||((comp&0x01u)!=0u);
   std::vector<std::byte> decoded_rgba;
   if(is_rgba32){
-   if(nb.remaining()<rgba_bytes){
+   if(is_swizzled){
+    const std::size_t pages_x=(static_cast<std::size_t>(width)+63u)/64u;
+    const std::size_t pages_y=(static_cast<std::size_t>(height)+31u)/32u;
+    const std::size_t swizzled_bytes=pages_x*pages_y*8192u;
+    if(nb.remaining()<swizzled_bytes){
+     rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD swizzled PSMCT32 payload truncated";return false;
+    }
+    std::vector<std::uint8_t> raw_swizzled(swizzled_bytes);
+    if(!nb.read_bytes(raw_swizzled.data(),swizzled_bytes)){
+     rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD swizzled PSMCT32 read failed";return false;
+    }
+    try{decoded_rgba.resize(rgba_bytes);}catch(...){
+     rollback();failure.kind=RetailRendererTextureError::allocation;failure.operation="TXD swizzled PSMCT32 decode allocation";return false;
+    }
+    for(std::uint32_t y=0;y<height;++y){
+     for(std::uint32_t x=0;x<width;++x){
+      const std::size_t src_off=ps2_swizzle_offset_ct32(x,y,width);
+      if(src_off+3u>=raw_swizzled.size()){
+       rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD swizzled PSMCT32 offset out of bounds";return false;
+      }
+      const std::size_t out_off=(static_cast<std::size_t>(y)*width+x)*4u;
+      decoded_rgba[out_off+0]=static_cast<std::byte>(raw_swizzled[src_off+0]);
+      decoded_rgba[out_off+1]=static_cast<std::byte>(raw_swizzled[src_off+1]);
+      decoded_rgba[out_off+2]=static_cast<std::byte>(raw_swizzled[src_off+2]);
+      decoded_rgba[out_off+3]=static_cast<std::byte>(raw_swizzled[src_off+3]);
+     }
+    }
+   }else if(nb.remaining()<rgba_bytes){
     rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD texture pixel payload truncated";return false;
    }
   }else if(is_pal4){
@@ -1328,7 +1417,10 @@ bool ingest_rw_tex_dictionary_stream(
    }
    const std::size_t pal_bytes=16u*4u;
    const std::size_t idx_bytes=total_pixels/2u;
-   if(nb.remaining()<pal_bytes+idx_bytes){
+   const std::size_t pages_x=(static_cast<std::size_t>(width)+127u)/128u;
+   const std::size_t pages_y=(static_cast<std::size_t>(height)+127u)/128u;
+   const std::size_t payload_bytes=is_swizzled?(pages_x*pages_y*8192u):idx_bytes;
+   if(nb.remaining()<pal_bytes+payload_bytes){
     rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD PAL4 palette/pixel payload truncated";return false;
    }
    std::array<std::uint8_t,64> pal{};
@@ -1336,8 +1428,29 @@ bool ingest_rw_tex_dictionary_stream(
     rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD PAL4 palette read failed";return false;
    }
    std::vector<std::uint8_t> indices(idx_bytes);
-   if(!nb.read_bytes(indices.data(),idx_bytes)){
-    rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD PAL4 index read failed";return false;
+   if(is_swizzled){
+    std::vector<std::uint8_t> raw_swizzled(payload_bytes);
+    if(!nb.read_bytes(raw_swizzled.data(),payload_bytes)){
+     rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD swizzled PAL4 index read failed";return false;
+    }
+    for(std::uint32_t y=0;y<height;++y){
+     for(std::uint32_t x=0;x<width;++x){
+      const std::size_t nib=ps2_swizzle_nibble_t4(x,y,width);
+      const std::size_t src_byte=nib/2u;
+      if(src_byte>=raw_swizzled.size()){
+       rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD swizzled PAL4 offset out of bounds";return false;
+      }
+      const std::uint8_t b=raw_swizzled[src_byte];
+      const std::uint8_t val=(nib&1u)?static_cast<std::uint8_t>(b>>4u):static_cast<std::uint8_t>(b&0x0Fu);
+      const std::size_t lin=static_cast<std::size_t>(y)*width+x;
+      if((lin&1u)==0u)indices[lin/2u]=val;
+      else indices[lin/2u]|=static_cast<std::uint8_t>(val<<4u);
+     }
+    }
+   }else{
+    if(!nb.read_bytes(indices.data(),idx_bytes)){
+     rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD PAL4 index read failed";return false;
+    }
    }
    auto expand_gs_alpha=[](std::uint8_t a)noexcept->std::uint8_t{
     return (a>=0x80u)?0xFFu:static_cast<std::uint8_t>((static_cast<std::uint32_t>(a)*255u+64u)/128u);
@@ -1363,7 +1476,10 @@ bool ingest_rw_tex_dictionary_stream(
   }else if(is_pal8){
    const std::size_t pal_bytes=256u*4u;
    const std::size_t idx_bytes=total_pixels;
-   if(nb.remaining()<pal_bytes+idx_bytes){
+   const std::size_t pages_x=(static_cast<std::size_t>(width)+127u)/128u;
+   const std::size_t pages_y=(static_cast<std::size_t>(height)+63u)/64u;
+   const std::size_t payload_bytes=is_swizzled?(pages_x*pages_y*8192u):idx_bytes;
+   if(nb.remaining()<pal_bytes+payload_bytes){
     rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD PAL8 palette/pixel payload truncated";return false;
    }
    std::array<std::uint8_t,1024> raw_pal{};
@@ -1371,8 +1487,24 @@ bool ingest_rw_tex_dictionary_stream(
     rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD PAL8 palette read failed";return false;
    }
    std::vector<std::uint8_t> indices(idx_bytes);
-   if(!nb.read_bytes(indices.data(),idx_bytes)){
-    rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD PAL8 index read failed";return false;
+   if(is_swizzled){
+    std::vector<std::uint8_t> raw_swizzled(payload_bytes);
+    if(!nb.read_bytes(raw_swizzled.data(),payload_bytes)){
+     rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD swizzled PAL8 index read failed";return false;
+    }
+    for(std::uint32_t y=0;y<height;++y){
+     for(std::uint32_t x=0;x<width;++x){
+      const std::size_t src_off=ps2_swizzle_offset_t8(x,y,width);
+      if(src_off>=raw_swizzled.size()){
+       rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD swizzled PAL8 offset out of bounds";return false;
+      }
+      indices[static_cast<std::size_t>(y)*width+x]=raw_swizzled[src_off];
+     }
+    }
+   }else{
+    if(!nb.read_bytes(indices.data(),idx_bytes)){
+     rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD PAL8 index read failed";return false;
+    }
    }
    auto csm1_unswizzle=[](std::size_t idx)noexcept->std::size_t{
     const std::size_t bank=idx&0x18u;
@@ -1405,7 +1537,7 @@ bool ingest_rw_tex_dictionary_stream(
   if(!locked||locked->size()<rgba_bytes){
    rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD raster pixel lock failed";return false;
   }
-  if(is_rgba32){
+  if(is_rgba32&&!is_swizzled){
    if(!nb.read_bytes(locked->data(),rgba_bytes)){
     (void)rasters.unlock_pixels(*rh,rf);
     rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD pixel copy failed";return false;

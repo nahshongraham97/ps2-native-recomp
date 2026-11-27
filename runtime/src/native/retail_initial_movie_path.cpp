@@ -8,6 +8,8 @@
 #include "mka/retail_profile_menu.hpp"
 #include "mka/retail_profile_transition_child.hpp"
 #include "mka/retail_display_service.hpp"
+#include "mka/retail_scene_owners.hpp"
+#include "native_retail_startup.hpp"
 #include "mka/movie_gpu.hpp"
 #include "mka/movie_gl_device.hpp"
 #include <filesystem>
@@ -571,12 +573,43 @@ namespace main_binding {
 // [unrecovered-placeholder] Frame rendering dispatch (recovered from PS2 0x00126940 and Xbox main loop 0x0019c950).
 // Note: While the display service and offscreen presentation contract are authentic, whole 3D scene
 // geometry submission remains an unrecovered placeholder awaiting connected Clump and 3D draw paths.
-bool render_retail_frame(NativeRetailMainState& main, StartupFailure&) {
+bool render_retail_frame(NativeRetailMainState& main, StartupFailure& f) {
     record_placeholder_hit(2, "render_retail_frame", main.iteration);
     if (!main.lifetime) {
         return false;
     }
-    // Verified: Mode history tracks active mode; rendering enablement gates frame presentation.
+    if (main.scene && main.scene->scene_loaded && main.scene->world &&
+        main.scene->cameras && main.scene->frames && main.scene->camera_init) {
+        bool gl_active = main.scene->display && main.scene->display->is_context_current();
+#ifdef _WIN32
+        if (!gl_active) {
+            gl_active = (wglGetCurrentContext() != nullptr);
+        }
+#endif
+        if (!gl_active) {
+            // Asset-loaded headless fallback: skip GPU submission cleanly when no GL context is active.
+            return true;
+        }
+        RetailCameraProducerFailure pf;
+        auto stats = render_world_scene_frame(
+            *main.scene->cameras,
+            *main.scene->frames,
+            main.scene->camera_init->primary.camera,
+            main.scene->camera_init->primary.world_link,
+            main.scene->world,
+            main.scene->config.clear_color,
+            main.scene->config.clear_flags,
+            main.scene->config.call_show_raster,
+            pf,
+            main.scene->materials.get(),
+            main.scene->textures.get(),
+            main.scene->rasters.get());
+        if (!stats) {
+            f = {StartupError::memory_owners, pf.operation};
+            return false;
+        }
+        ++main.scene->frames_rendered;
+    }
     return true;
 }
 

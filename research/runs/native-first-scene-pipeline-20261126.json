@@ -1,0 +1,98 @@
+{
+  "slice": "first_scene_asset_load_ps2_unswizzle_and_render_dispatch",
+  "retail_matching": {
+    "elf": "research/inputs/SLUS_214.10",
+    "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+    "compilers": [
+      "3.0.1b198-051011 (-O3, -O4)",
+      "3.0.1b205-051227 (-O3, -O4)",
+      "3.0.1b210-060308 (-O3, -O4)"
+    ],
+    "private_work_dir": "/opt/mkar-decomp/first-scene-match",
+    "exact_matches": {
+      "00225D40": {
+        "bytes": 12,
+        "sha256": "91770e920d744d1aa06d1099012ea918c2471e6a8a49655d8f8384fcd7c63542",
+        "diff_words": 0
+      },
+      "001AD1B0": {
+        "bytes": 8,
+        "sha256": "d88502c877bfe1e498e0766a59b8a3457b6f74c106d876d28f19184e7194cc1a",
+        "diff_words": 0
+      },
+      "00225D90": {
+        "bytes": 8,
+        "sha256": "5ce5ad86d452c4d2422bd63e15223d5d6b3dfb77f224a88c1f476e9fb34e359d",
+        "diff_words": 0
+      },
+      "00225DA0": {
+        "bytes": 12,
+        "sha256": "7a6a4ea8b3e473358aa6971c0a898957cf9747b50f79f924a4f041c99bbae9b9",
+        "diff_words": 0
+      },
+      "00181870": {
+        "bytes": 40,
+        "sha256": "dd9b0191eac3786cdcd968d3b333c5f422c5678c046e137917988976a60d0698",
+        "diff_words": 0
+      }
+    },
+    "disassembly_verified": {
+      "00225D50": {
+        "bytes": 52,
+        "sha256": "5c9f8d8c74747066d08a485f13718c76fe5c37c68065eae16f8385c33e53331e"
+      },
+      "00126940": {
+        "role": "render_retail_frame (RwCameraClear/BeginUpdate/EndUpdate/ShowRaster)"
+      }
+    },
+    "intentional_native_safety_divergences": [
+      "continue_first_scene_at_225d40 and ingest_rw_tex_dictionary_stream enforce fail-closed stream/TOC/pixel-swizzle bounds checks and clean rollback on malformed assets.",
+      "In asset-less headless mode (no scene TXD/BSP/DFF in NativeContentVolume), continue_first_scene_at_225d40 leaves has_world=false and returns ready so the 60-frame headless gate completes cleanly.",
+      "In asset-loaded headless mode without an active GL context, render_retail_frame skips GPU submission cleanly without GL errors.",
+      "continue_scene_reset_at_125d60 explicitly detaches cameras, clears published world state, and releases NativeRetailWorld GPU resources to prevent GL texture leaks."
+    ]
+  },
+  "strict_native_contract": "PASS",
+  "runtime_file_sha256": {
+    "runtime/include/mka/retail_scene_owners.hpp": "750383c133765f5e0b0fb4650dbee5a9694908dfd907fe9780631f9ba29a078b",
+    "runtime/src/native/retail_first_scene_continuations.cpp": "43aff9b815ce84b0f1d9262f07dcb9fd195b700dea98f169d4daab31a627cb78",
+    "runtime/src/native/retail_initial_movie_path.cpp": "d766e4db093282345378b446cabe092a0cadf4f02dc023b52724b06d9574ac4d",
+    "runtime/src/native/retail_renderer_cameras.cpp": "b2a8a74b3a2c7ad62f41ae307cb4499030b5e1e56f5dbf00dd5de045e2ee31d8"
+  },
+  "clean_test_exit_codes": {
+    "test_native_retail_first_scene_pipeline": 0,
+    "test_native_retail_renderer_cameras": 0
+  },
+  "falsification": [
+    {
+      "defect": "skip_first_scene_stream_load",
+      "target": "runtime/src/native/retail_first_scene_continuations.cpp",
+      "exit_code": 3221226505,
+      "rejected": true
+    },
+    {
+      "defect": "leak_world_gl_resources_on_teardown",
+      "target": "runtime/src/native/retail_first_scene_continuations.cpp",
+      "exit_code": 3221226505,
+      "rejected": true
+    },
+    {
+      "defect": "skip_render_world_scene_dispatch",
+      "target": "runtime/src/native/retail_initial_movie_path.cpp",
+      "exit_code": 3221226505,
+      "rejected": true
+    },
+    {
+      "defect": "bypass_txd_swizzle_bounds_check",
+      "target": "runtime/src/native/retail_renderer_cameras.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "corrupt_ps2_pixel_unswizzle",
+      "target": "runtime/src/native/retail_renderer_cameras.cpp",
+      "exit_code": 1,
+      "rejected": true
+    }
+  ]
+}

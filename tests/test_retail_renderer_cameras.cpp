@@ -1013,6 +1013,101 @@ void camera_gpu_target_cases(const std::filesystem::path& root,const std::option
    world_ptr->clear_bsp_sectors();
   }
 
+  // PS2 pixel unswizzle (PSMCT32, PSMT8, PSMT4) + fail-closed truncated swizzled TXD check.
+  {
+   auto make_swizzled_txd=[&](std::string_view tname,std::uint16_t w,std::uint16_t h,
+    std::uint8_t depth,std::uint32_t fmt_flags,const std::vector<std::byte>& pal,
+    const std::vector<std::byte>& pix){
+    std::vector<std::byte> ns;
+    ns.resize(88,std::byte{0});
+    auto put32=[&](std::size_t o,std::uint32_t v){
+     ns[o+0]=std::byte(v&0xFFu);ns[o+1]=std::byte((v>>8)&0xFFu);
+     ns[o+2]=std::byte((v>>16)&0xFFu);ns[o+3]=std::byte((v>>24)&0xFFu);
+    };
+    auto put16=[&](std::size_t o,std::uint16_t v){
+     ns[o+0]=std::byte(v&0xFFu);ns[o+1]=std::byte((v>>8)&0xFFu);
+    };
+    put32(0,0x00325350u);put32(4,0x00001102u);
+    for(std::size_t i=0;i<tname.size()&&i<31;++i)ns[8+i]=static_cast<std::byte>(tname[i]);
+    put32(72,fmt_flags);put32(76,1u);put16(80,w);put16(82,h);
+    ns[84]=std::byte(depth);ns[85]=std::byte{1};ns[86]=std::byte{4};ns[87]=std::byte{1};
+    ns.insert(ns.end(),pal.begin(),pal.end());
+    ns.insert(ns.end(),pix.begin(),pix.end());
+    auto tn=wrap_chunk(0x0015u,wrap_chunk(0x0001u,ns));
+    std::vector<std::byte> tb=wrap_chunk(0x0001u,{std::byte{1},std::byte{0},std::byte{0},std::byte{0}});
+    tb.insert(tb.end(),tn.begin(),tn.end());
+    return wrap_chunk(0x0016u,tb);
+   };
+   // Truncated swizzled PSMCT32 must fail closed.
+   auto bad_swiz=make_swizzled_txd("bad_swiz32",64,32,32,0x00020500u,{},std::vector<std::byte>(128,std::byte{0}));
+   RetailRendererTextureFailure stf;
+   gpu_check(!ingest_rw_tex_dictionary_stream(bad_swiz,*x.rasters,*tex_mod,stf)&&
+             !tex_mod->find_texture("bad_swiz32",stf).has_value(),
+             "truncated swizzled PSMCT32 TXD rejected fail-closed");
+
+   // Valid swizzled PSMCT32 (64x32 = 8192 bytes): put (11, 22, 33, 255) at swizzled offset for (x=5, y=3).
+   // For (x=5, y=3) in 64x32: block32[0][0]=0, col=1 (64), kColumn32[1][5]=11 (*4=44) -> off=108.
+   std::vector<std::byte> pix32(8192,std::byte{0});
+   pix32[108+0]=std::byte{11};pix32[108+1]=std::byte{22};pix32[108+2]=std::byte{33};pix32[108+3]=std::byte{255};
+   auto ok_swiz32=make_swizzled_txd("ok_swiz32",64,32,32,0x00020500u,{},pix32);
+   gpu_check(ingest_rw_tex_dictionary_stream(ok_swiz32,*x.rasters,*tex_mod,stf),
+             "swizzled PSMCT32 TXD ingested");
+   auto h32=tex_mod->find_texture("ok_swiz32",stf);
+   gpu_check(h32.has_value(),"swizzled PSMCT32 texture lookup succeeded");
+   auto r32=tex_mod->raster(*h32,stf);
+   gpu_check(r32.has_value(),"swizzled PSMCT32 raster accessible");
+   RetailRendererRasterFailure srf;
+   auto px32=x.rasters->lock_pixels(*r32,srf);
+   const std::size_t off32=(3u*64u+5u)*4u;
+   gpu_check(px32&&static_cast<unsigned char>((*px32)[off32+0])==11&&
+             static_cast<unsigned char>((*px32)[off32+1])==22&&
+             static_cast<unsigned char>((*px32)[off32+2])==33&&
+             static_cast<unsigned char>((*px32)[off32+3])==255,
+             "swizzled PSMCT32 unswizzled (5,3) to exact RGBA");
+   if(px32)(void)x.rasters->unlock_pixels(*r32,srf);
+
+   // Valid swizzled PSMT8 (128x64 = 8192 bytes) with CSM1 CLUT index 9 (swizzled in CLUT at 9^0x18=17) -> (44, 55, 66, 0x80->0xFF).
+   std::vector<std::byte> pal8(1024,std::byte{0});
+   pal8[17*4+0]=std::byte{44};pal8[17*4+1]=std::byte{55};pal8[17*4+2]=std::byte{66};pal8[17*4+3]=std::byte{0x80};
+   // At (x=0, y=0) in PSMT8: swizzle offset is 0.
+   std::vector<std::byte> pix8(8192,std::byte{0});
+   pix8[0]=std::byte{9};
+   auto ok_swiz8=make_swizzled_txd("ok_swiz8",128,64,8,0x00022000u,pal8,pix8);
+   gpu_check(ingest_rw_tex_dictionary_stream(ok_swiz8,*x.rasters,*tex_mod,stf),
+             "swizzled PSMT8 TXD ingested");
+   auto h8=tex_mod->find_texture("ok_swiz8",stf);
+   gpu_check(h8.has_value(),"swizzled PSMT8 texture lookup succeeded");
+   auto r8=tex_mod->raster(*h8,stf);
+   gpu_check(r8.has_value(),"swizzled PSMT8 raster accessible");
+   auto px8=x.rasters->lock_pixels(*r8,srf);
+   gpu_check(px8&&static_cast<unsigned char>((*px8)[0])==44&&
+             static_cast<unsigned char>((*px8)[1])==55&&
+             static_cast<unsigned char>((*px8)[2])==66&&
+             static_cast<unsigned char>((*px8)[3])==255,
+             "swizzled PSMT8 unswizzled + CSM1 decoded (0,0) to exact RGBA");
+   if(px8)(void)x.rasters->unlock_pixels(*r8,srf);
+
+   // Valid swizzled PSMT4 (128x128 = 8192 bytes): at (x=0, y=0), nibble is 0 (low nibble of byte 0).
+   std::vector<std::byte> pal4(64,std::byte{0});
+   pal4[7*4+0]=std::byte{77};pal4[7*4+1]=std::byte{88};pal4[7*4+2]=std::byte{99};pal4[7*4+3]=std::byte{0x80};
+   std::vector<std::byte> pix4(8192,std::byte{0});
+   pix4[0]=std::byte{7};
+   auto ok_swiz4=make_swizzled_txd("ok_swiz4",128,128,4,0x00024000u,pal4,pix4);
+   gpu_check(ingest_rw_tex_dictionary_stream(ok_swiz4,*x.rasters,*tex_mod,stf),
+             "swizzled PSMT4 TXD ingested");
+   auto h4=tex_mod->find_texture("ok_swiz4",stf);
+   gpu_check(h4.has_value(),"swizzled PSMT4 texture lookup succeeded");
+   auto r4=tex_mod->raster(*h4,stf);
+   gpu_check(r4.has_value(),"swizzled PSMT4 raster accessible");
+   auto px4=x.rasters->lock_pixels(*r4,srf);
+   gpu_check(px4&&static_cast<unsigned char>((*px4)[0])==77&&
+             static_cast<unsigned char>((*px4)[1])==88&&
+             static_cast<unsigned char>((*px4)[2])==99&&
+             static_cast<unsigned char>((*px4)[3])==255,
+             "swizzled PSMT4 unswizzled (0,0) to exact RGBA");
+   if(px4)(void)x.rasters->unlock_pixels(*r4,srf);
+  }
+
   // Hierarchical RpSkin bone transforms, dynamic RpLight shading, and two-pass back-to-front alpha rendering.
   {
    RetailRendererWorldFailure sl_f;
