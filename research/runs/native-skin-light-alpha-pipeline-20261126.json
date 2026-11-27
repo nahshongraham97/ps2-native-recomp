@@ -1,0 +1,78 @@
+{
+  "slice": "rpskin_rplight_two_pass_alpha_pipeline",
+  "retail_matching": {
+    "elf": "research/inputs/SLUS_214.10",
+    "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+    "compilers": [
+      "3.0.1b198-051011 (-O3, -O4)",
+      "3.0.1b205-051227 (-O3, -O4)",
+      "3.0.1b210-060308 (-O3, -O4)"
+    ],
+    "private_work_dir": "/opt/mkar-decomp/skin-light-match",
+    "exact_matches": {
+      "001CF850": {
+        "bytes": 16,
+        "sha256": "d378556654ffd442bcecfadc35a9affd22179e0280c8e6133bcaef35180b735a",
+        "diff_words": 0
+      },
+      "001CF920": {
+        "bytes": 52,
+        "sha256": "6a825f2a9dc7df31fa597824ee3a88894bb529064bdf66e07719daaf5d6f3823",
+        "diff_words": 0
+      }
+    },
+    "disassembly_verified": {
+      "001CF860": {
+        "bytes": 64,
+        "sha256": "9542b3ac5af3c066066dd4df4549991b70f698d1ca565f67ddf204bc2acaca8a"
+      },
+      "001CF8A0": {
+        "bytes": 64,
+        "sha256": "f58776bdbde801d9ac2d451be17db9b9d91317d2fb1bf174bcbb6266768d08cf"
+      }
+    },
+    "intentional_native_safety_divergences": [
+      "NativeRetailWorld::add_scene_object and add_light enforce bone-index/weight bounds checks, finite vertex/matrix/light validation, and non-zero directional light direction checks.",
+      "render_world_scene_frame splits opaque (depth-write on, blend off) and back-to-front sorted translucent (SRC_ALPHA, ONE_MINUS_SRC_ALPHA, depth-write off) passes while saving and restoring GL_BLEND, GL_BLEND_SRC, GL_BLEND_DST, and GL_DEPTH_WRITEMASK."
+    ]
+  },
+  "strict_native_contract": "PASS",
+  "runtime_file_sha256": {
+    "runtime/include/mka/retail_renderer_world.hpp": "af9051a923c693ef03e3118dc9ed104637a57e7f31ed9d36c8737384922f0d58",
+    "runtime/src/native/retail_renderer_world.cpp": "e37f7ef619f82404cb60f80fbbc79e6d36c926e99e0e2a290a545445e2320018",
+    "runtime/src/native/retail_renderer_cameras.cpp": "e4f9351ebe66e19ae957836c402430f85a1f9bf451b98760f770d2966083deba"
+  },
+  "clean_test_exit_code": 0,
+  "falsification": [
+    {
+      "defect": "skip_bone_skinning",
+      "target": "runtime/src/native/retail_renderer_cameras.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "disable_dynamic_lighting",
+      "target": "runtime/src/native/retail_renderer_cameras.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "invert_alpha_sort",
+      "target": "runtime/src/native/retail_renderer_cameras.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "disable_alpha_blend",
+      "target": "runtime/src/native/retail_renderer_cameras.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "skip_blend_depth_restore",
+      "target": "runtime/src/native/retail_renderer_cameras.cpp",
+      "exit_code": 1,
+      "rejected": true
+    }
+  ]
+}

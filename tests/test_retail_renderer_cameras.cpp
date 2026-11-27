@@ -1013,6 +1013,121 @@ void camera_gpu_target_cases(const std::filesystem::path& root,const std::option
    world_ptr->clear_bsp_sectors();
   }
 
+  // Hierarchical RpSkin bone transforms, dynamic RpLight shading, and two-pass back-to-front alpha rendering.
+  {
+   RetailRendererWorldFailure sl_f;
+   auto obj_frame=frames->create_base_frame(ff);
+   auto bone_root=frames->create_base_frame(ff);
+   auto bone_child=frames->create_base_frame(ff);
+   gpu_check(obj_frame&&bone_root&&bone_child&&frames->add_child(*bone_root,*bone_child,ff),"create skinning frames");
+   // Camera is at z=-4 looking toward +Z (near=0.5, far=50). Bone moves vertex from z=-4 (clipped) to z=-2 (z_cam=+2).
+   RetailRendererMatrixValue bone_mod{{{1,0,0},{0,1,0},{0,0,1},{0,0,2.0f}},0x20000u};
+   gpu_check(frames->set_modelling(*bone_child,bone_mod,ff),"set bone child translation");
+
+   // Fail-closed out-of-range bone index & non-finite light checks.
+   RetailWorldSceneObject bad_skin;
+   bad_skin.id=3001;bad_skin.frame=*obj_frame;bad_skin.bone_frames={*bone_child};
+   bad_skin.triangles={
+    {{-1,-1,-4},0,0,{1,1,1,1},{0,0,1},{5,0,0,0},{1,0,0,0}},
+    {{ 1,-1,-4},0,0,{1,1,1,1},{0,0,1},{0,0,0,0},{1,0,0,0}},
+    {{ 0, 1,-4},0,0,{1,1,1,1},{0,0,1},{0,0,0,0},{1,0,0,0}}
+   };
+   gpu_check(!world_ptr->add_scene_object(std::move(bad_skin),sl_f),"out-of-range skin bone index rejected fail-closed");
+
+   RetailWorldLight bad_light;
+   bad_light.id=1;bad_light.type=RetailWorldLightType::directional;
+   bad_light.color={std::numeric_limits<float>::infinity(),1,1};
+   gpu_check(!world_ptr->add_light(bad_light,sl_f),"non-finite light color rejected fail-closed");
+
+   // Add ambient (0.2, 0.2, 0.2) + directional (0.8, 0.4, 0.0) along (0,0,-1) -> white lit vertex becomes (1.0, 0.6, 0.2).
+   RetailWorldLight amb{1,RetailWorldLightType::ambient,{0.2f,0.2f,0.2f},{0,0,-1},true};
+   RetailWorldLight dir{2,RetailWorldLightType::directional,{0.8f,0.4f,0.0f},{0,0,-1},true};
+   gpu_check(world_ptr->add_light(amb,sl_f)&&world_ptr->add_light(dir,sl_f),"add ambient + directional lights");
+
+   RetailWorldSceneObject skin_obj;
+   skin_obj.id=3002;skin_obj.frame=*obj_frame;skin_obj.local_center={0,0,-2.0f};skin_obj.bounding_radius=2.5f;
+   skin_obj.bone_frames={*bone_child};
+   skin_obj.triangles={
+    {{-1.2f,-1.2f,-4.0f},0,0,{1,1,1,1},{0,0,1},{0,0,0,0},{1,0,0,0}},
+    {{ 1.2f,-1.2f,-4.0f},0,0,{1,1,1,1},{0,0,1},{0,0,0,0},{1,0,0,0}},
+    {{ 0.0f, 1.2f,-4.0f},0,0,{1,1,1,1},{0,0,1},{0,0,0,0},{1,0,0,0}}
+   };
+   gpu_check(world_ptr->add_scene_object(std::move(skin_obj),sl_f),"add skinned opaque object");
+   auto sl_stats=render_world_scene_frame(*x.cameras,*frames,init->primary.camera,init->primary.world_link,
+    world_ptr,{0.05f,0.05f,0.1f,1.0f},3u,true,pf);
+   gpu_check(sl_stats.has_value()&&sl_stats->opaque_objects==1&&sl_stats->submitted_triangles==1,
+             "skinned lit opaque object rendered");
+   gpu_check(x.cameras->begin_update(init->primary.camera,f),"rebind FBO for skinned/lit readback");
+   glReadPixels(0,0,64,48,GL_RGBA,GL_UNSIGNED_BYTE,rgba.data());
+   glReadPixels(0,0,64,48,GL_DEPTH_COMPONENT,GL_FLOAT,depths.data());
+   a->record_diagnostic_readback(2);
+   gpu_check(x.cameras->end_update(init->primary.camera,f),"end skinned/lit readback");
+   unsigned orange_lit=0;
+   for(unsigned y=6;y<42;++y)for(unsigned xx=8;xx<56;++xx){
+    const std::size_t idx=(y*64+xx);
+    const unsigned r=rgba[idx*4+0],g=rgba[idx*4+1],b=rgba[idx*4+2];
+    if(r>200&&g>120&&g<185&&b<80&&depths[idx]<0.99f)++orange_lit;
+   }
+   gpu_check(orange_lit>60,"skinned + dynamically lit triangle produced warm-orange shaded pixels");
+
+   // Two-pass alpha test: far green (z=+1, alpha=0.5) + near red (z=0, alpha=0.5) over dark blue clear.
+   world_ptr->clear_scene_objects();
+   world_ptr->clear_lights();
+   auto far_f=frames->create_base_frame(ff);
+   auto near_f=frames->create_base_frame(ff);
+   gpu_check(far_f&&near_f,"create alpha pass frames");
+   RetailRendererMatrixValue far_mod{{{1,0,0},{0,1,0},{0,0,1},{0,0,1.0f}},0x20000u};
+   RetailRendererMatrixValue near_mod{{{1,0,0},{0,1,0},{0,0,1},{0,0,0.0f}},0x20000u};
+   gpu_check(frames->set_modelling(*far_f,far_mod,ff)&&frames->set_modelling(*near_f,near_mod,ff),"set alpha frame depths");
+
+   RetailWorldSceneObject far_green;
+   far_green.id=4001;far_green.frame=*far_f;far_green.local_center={0,0,0};far_green.bounding_radius=3.0f;
+   far_green.alpha_blended=true;
+   far_green.triangles={
+    {{-2.5f,-2.5f,0},0,0,{0.0f,1.0f,0.0f,0.5f}},
+    {{ 2.5f,-2.5f,0},0,0,{0.0f,1.0f,0.0f,0.5f}},
+    {{ 0.0f, 2.5f,0},0,0,{0.0f,1.0f,0.0f,0.5f}}
+   };
+   RetailWorldSceneObject near_red;
+   near_red.id=4002;near_red.frame=*near_f;near_red.local_center={0,0,0};near_red.bounding_radius=3.0f;
+   near_red.alpha_blended=true;
+   near_red.triangles={
+    {{-2.5f,-2.5f,0},0,0,{1.0f,0.0f,0.0f,0.5f}},
+    {{ 2.5f,-2.5f,0},0,0,{1.0f,0.0f,0.0f,0.5f}},
+    {{ 0.0f, 2.5f,0},0,0,{1.0f,0.0f,0.0f,0.5f}}
+   };
+   // Insert near_red FIRST so back-to-front sorting is required to draw far_green first!
+   gpu_check(world_ptr->add_scene_object(std::move(near_red),sl_f)&&
+             world_ptr->add_scene_object(std::move(far_green),sl_f),"add alpha objects");
+
+   glDisable(GL_BLEND);
+   glDepthMask(GL_TRUE);
+   auto a_stats=render_world_scene_frame(*x.cameras,*frames,init->primary.camera,init->primary.world_link,
+    world_ptr,{0.0f,0.0f,0.0f,1.0f},3u,true,pf);
+   gpu_check(a_stats.has_value()&&a_stats->alpha_objects==2&&a_stats->opaque_objects==0,"two-pass alpha stats valid");
+   GLboolean after_dmask=GL_FALSE;
+   glGetBooleanv(GL_DEPTH_WRITEMASK,&after_dmask);
+   gpu_check(!glIsEnabled(GL_BLEND)&&after_dmask==GL_TRUE,"render_world_scene_frame restored GL_BLEND and GL_DEPTH_WRITEMASK");
+
+   gpu_check(x.cameras->begin_update(init->primary.camera,f),"rebind FBO for alpha readback");
+   glReadPixels(0,0,64,48,GL_RGBA,GL_UNSIGNED_BYTE,rgba.data());
+   a->record_diagnostic_readback(1);
+   gpu_check(x.cameras->end_update(init->primary.camera,f),"end alpha readback");
+   unsigned blended_ok=0;
+   for(unsigned y=18;y<30;++y)for(unsigned xx=24;xx<40;++xx){
+    const std::size_t idx=(y*64+xx);
+    const unsigned r=rgba[idx*4+0],g=rgba[idx*4+1];
+    // Back-to-front: red (0.5) over green (0.5 over 0) -> R~128, G~64.
+    if(r>=100&&g>=40&&r>g+30)++blended_ok;
+   }
+   gpu_check(blended_ok>20,"back-to-front alpha pass blended near red over far green");
+
+   world_ptr->clear_scene_objects();
+   gpu_check(frames->destroy_leaf(*near_f,ff)&&frames->destroy_leaf(*far_f,ff)&&
+             frames->destroy_root_hierarchy(*bone_root,ff)&&frames->destroy_leaf(*obj_frame,ff),
+             "cleanup skinning and alpha frames");
+  }
+
   gpu_check(detach_camera_from_world_1cf350(init->primary.world_link,world_ptr,wf),"final 1CF350 detach");
   world_ptr->clear_scene_objects();
   gpu_check(frames->destroy_leaf(*out_frame,ff)&&frames->destroy_leaf(*in_frame,ff),"destroy world scene object frames");

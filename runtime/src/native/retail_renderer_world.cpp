@@ -87,6 +87,34 @@ bool NativeRetailWorld::add_scene_object(RetailWorldSceneObject obj, RetailRende
             return false;
         }
     }
+    if (!obj.bone_frames.empty() && !obj.inv_bind_matrices.empty() &&
+        obj.bone_frames.size() != obj.inv_bind_matrices.size()) {
+        f.kind = RetailRendererWorldError::invalid_handle;
+        f.operation = "0412 skin bone_frames and inv_bind_matrices size mismatch";
+        return false;
+    }
+    const std::size_t bone_count = !obj.bone_frames.empty() ? obj.bone_frames.size() : obj.bone_matrices.size();
+    for (const auto& v : obj.triangles) {
+        if (!std::isfinite(v.position.x) || !std::isfinite(v.position.y) || !std::isfinite(v.position.z) ||
+            !std::isfinite(v.normal.x) || !std::isfinite(v.normal.y) || !std::isfinite(v.normal.z) ||
+            !std::isfinite(v.u) || !std::isfinite(v.v)) {
+            f.kind = RetailRendererWorldError::invalid_handle;
+            f.operation = "0412 non-finite scene vertex attribute";
+            return false;
+        }
+        for (int k = 0; k < 4; ++k) {
+            if (!std::isfinite(v.bone_weights[k]) || v.bone_weights[k] < 0.0f) {
+                f.kind = RetailRendererWorldError::invalid_handle;
+                f.operation = "0412 invalid negative or non-finite bone weight";
+                return false;
+            }
+            if (v.bone_weights[k] > 0.0f && (bone_count == 0 || v.bone_indices[k] >= bone_count)) {
+                f.kind = RetailRendererWorldError::invalid_handle;
+                f.operation = "0412 skin bone index out of range";
+                return false;
+            }
+        }
+    }
     try {
         scene_objects_.push_back(std::move(obj));
         return true;
@@ -148,6 +176,62 @@ std::optional<std::int32_t> NativeRetailWorld::add_bsp_sector(
 void NativeRetailWorld::clear_bsp_sectors() noexcept {
     bsp_sectors_.clear();
     bsp_root_sector_ = -1;
+}
+
+bool NativeRetailWorld::add_light(RetailWorldLight light, RetailRendererWorldFailure& f) noexcept {
+    f = {};
+    if (light.id == 0 ||
+        !std::isfinite(light.color[0]) || !std::isfinite(light.color[1]) || !std::isfinite(light.color[2]) ||
+        light.color[0] < 0.0f || light.color[1] < 0.0f || light.color[2] < 0.0f) {
+        f.kind = RetailRendererWorldError::invalid_handle;
+        f.operation = "0412 valid light id and finite non-negative color required";
+        return false;
+    }
+    if (light.type == RetailWorldLightType::directional) {
+        const float len2 = light.direction.x * light.direction.x +
+                           light.direction.y * light.direction.y +
+                           light.direction.z * light.direction.z;
+        if (!std::isfinite(len2) || len2 <= 1e-12f) {
+            f.kind = RetailRendererWorldError::invalid_handle;
+            f.operation = "0412 directional light requires finite non-zero direction";
+            return false;
+        }
+    }
+    for (const auto& existing : lights_) {
+        if (existing.id == light.id) {
+            f.kind = RetailRendererWorldError::reentrant;
+            f.operation = "0412 duplicate light id";
+            return false;
+        }
+    }
+    try {
+        lights_.push_back(light);
+        return true;
+    } catch (const std::bad_alloc&) {
+        f.kind = RetailRendererWorldError::allocation;
+        f.operation = "0412 light allocation";
+    } catch (...) {
+        f.kind = RetailRendererWorldError::native_exception;
+        f.operation = "0412 light insertion";
+    }
+    return false;
+}
+
+bool NativeRetailWorld::remove_light(std::uint64_t id, RetailRendererWorldFailure& f) noexcept {
+    f = {};
+    const auto it = std::find_if(lights_.begin(), lights_.end(),
+        [id](const RetailWorldLight& l) { return l.id == id; });
+    if (it == lights_.end()) {
+        f.kind = RetailRendererWorldError::invalid_handle;
+        f.operation = "0412 light id not found";
+        return false;
+    }
+    lights_.erase(it);
+    return true;
+}
+
+void NativeRetailWorld::clear_lights() noexcept {
+    lights_.clear();
 }
 
 struct NativeRetailWorldRecord final {

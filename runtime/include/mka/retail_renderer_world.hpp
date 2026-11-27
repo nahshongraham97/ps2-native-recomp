@@ -77,6 +77,9 @@ struct RetailWorldTriangleVertex {
     float u{0.0f};
     float v{0.0f};
     std::array<float, 4> color{1.0f, 1.0f, 1.0f, 1.0f};
+    RetailRendererPoint3 normal{0.0f, 0.0f, 1.0f};
+    std::array<std::uint16_t, 4> bone_indices{0, 0, 0, 0};
+    std::array<float, 4> bone_weights{0.0f, 0.0f, 0.0f, 0.0f};
 };
 
 struct RetailWorldSceneObject {
@@ -86,7 +89,24 @@ struct RetailWorldSceneObject {
     float bounding_radius{1.0f};
     std::vector<RetailWorldTriangleVertex> triangles;
     NativeRetailMaterialHandle material;
+    std::vector<NativeRetailRendererFrameHandle> bone_frames;
+    std::vector<RetailRendererMatrixValue> inv_bind_matrices;
+    std::vector<RetailRendererMatrixValue> bone_matrices;
+    bool alpha_blended{false};
     bool visible{true};
+};
+
+enum class RetailWorldLightType : std::uint32_t {
+    ambient = 1,
+    directional = 2
+};
+
+struct RetailWorldLight {
+    std::uint64_t id{0};
+    RetailWorldLightType type{RetailWorldLightType::ambient};
+    std::array<float, 3> color{1.0f, 1.0f, 1.0f};
+    RetailRendererPoint3 direction{0.0f, 0.0f, -1.0f};
+    bool enabled{true};
 };
 
 struct RetailWorldGpuTextureEntry {
@@ -122,6 +142,10 @@ public:
     std::int32_t bsp_root_sector() const noexcept { return bsp_root_sector_; }
     void clear_bsp_sectors() noexcept;
     const std::vector<RetailWorldBspSector>& bsp_sectors() const noexcept { return bsp_sectors_; }
+    bool add_light(RetailWorldLight light, RetailRendererWorldFailure& f) noexcept;
+    bool remove_light(std::uint64_t id, RetailRendererWorldFailure& f) noexcept;
+    void clear_lights() noexcept;
+    const std::vector<RetailWorldLight>& lights() const noexcept { return lights_; }
     std::vector<RetailWorldGpuTextureEntry>& gpu_texture_cache() noexcept { return gpu_textures_; }
     const std::vector<RetailWorldGpuTextureEntry>& gpu_texture_cache() const noexcept { return gpu_textures_; }
     void release_gpu_resources() noexcept;
@@ -132,6 +156,7 @@ private:
     std::vector<RetailWorldSceneObject> scene_objects_;
     std::vector<RetailWorldBspSector> bsp_sectors_;
     std::int32_t bsp_root_sector_{-1};
+    std::vector<RetailWorldLight> lights_;
     std::vector<RetailWorldGpuTextureEntry> gpu_textures_;
 };
 
@@ -194,6 +219,8 @@ struct RetailWorldRenderStats {
     std::size_t total_objects{};
     std::size_t visible_objects{};
     std::size_t culled_objects{};
+    std::size_t opaque_objects{};
+    std::size_t alpha_objects{};
     std::size_t total_sectors{};
     std::size_t visible_sectors{};
     std::size_t culled_sectors{};

@@ -1722,6 +1722,12 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
 #ifdef _WIN32
  const GLboolean prior_depth=glIsEnabled(GL_DEPTH_TEST);
  const GLboolean prior_tex2d=glIsEnabled(GL_TEXTURE_2D);
+ const GLboolean prior_blend=glIsEnabled(GL_BLEND);
+ GLboolean prior_depth_mask=GL_TRUE;
+ glGetBooleanv(GL_DEPTH_WRITEMASK,&prior_depth_mask);
+ GLint prior_blend_src=GL_ONE,prior_blend_dst=GL_ZERO;
+ glGetIntegerv(GL_BLEND_SRC,&prior_blend_src);
+ glGetIntegerv(GL_BLEND_DST,&prior_blend_dst);
  GLint prior_tex_binding=0,prior_tex_env=GL_MODULATE;
  glGetIntegerv(GL_TEXTURE_BINDING_2D,&prior_tex_binding);
  glGetTexEnviv(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,&prior_tex_env);
@@ -1732,6 +1738,8 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
  glGetIntegerv(GL_MATRIX_MODE,&prior_matrix_mode);
  glEnable(GL_DEPTH_TEST);
  glDepthFunc(GL_LESS);
+ glDisable(GL_BLEND);
+ glDepthMask(GL_TRUE);
  glMatrixMode(GL_PROJECTION);
  glPushMatrix();
  glLoadMatrixf(cam_obs->projection_matrix.elements.data());
@@ -1739,47 +1747,115 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
  glPushMatrix();
 #endif
 
- for(const auto& obj:world->scene_objects()){
-  if(!obj.visible)continue;
-  ++stats.total_objects;
-  const auto f_obs=frames.observe(obj.frame,failure.frame);
-  if(!f_obs){
-   failure.operation=failure.frame.operation;
+ auto restore_gl_state=[&]()noexcept{
 #ifdef _WIN32
-   glBindTexture(GL_TEXTURE_2D,static_cast<GLuint>(prior_tex_binding));
-   if(!prior_tex2d)glDisable(GL_TEXTURE_2D);else glEnable(GL_TEXTURE_2D);
-   glMatrixMode(GL_MODELVIEW);glPopMatrix();
-   glMatrixMode(GL_PROJECTION);glPopMatrix();
-   glMatrixMode(static_cast<GLenum>(prior_matrix_mode));
-   glDepthFunc(static_cast<GLenum>(prior_depth_func));
-   if(!prior_depth)glDisable(GL_DEPTH_TEST);
+  glDepthMask(prior_depth_mask);
+  glBlendFunc(static_cast<GLenum>(prior_blend_src),static_cast<GLenum>(prior_blend_dst));
+  if(prior_blend)glEnable(GL_BLEND);else glDisable(GL_BLEND);
+  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,prior_tex_env);
+  glBindTexture(GL_TEXTURE_2D,static_cast<GLuint>(prior_tex_binding));
+  if(!prior_tex2d)glDisable(GL_TEXTURE_2D);else glEnable(GL_TEXTURE_2D);
+  glMatrixMode(GL_MODELVIEW);glPopMatrix();
+  glMatrixMode(GL_PROJECTION);glPopMatrix();
+  glMatrixMode(static_cast<GLenum>(prior_matrix_mode));
+  glDepthFunc(static_cast<GLenum>(prior_depth_func));
+  if(!prior_depth)glDisable(GL_DEPTH_TEST);
 #endif
-   cleanup_end();
-   return {};
+ };
+
+ const auto& world_lights=world->lights();
+ const bool has_lights=!world_lights.empty();
+ std::array<float,3> ambient_rgb{0.0f,0.0f,0.0f};
+ if(has_lights){
+  for(const auto& l:world_lights){
+   if(l.enabled&&l.type==RetailWorldLightType::ambient){
+    ambient_rgb[0]+=l.color[0];
+    ambient_rgb[1]+=l.color[1];
+    ambient_rgb[2]+=l.color[2];
+   }
   }
-  const auto& m=f_obs->world.affine;
-  const auto transform_pt=[&m](const RetailRendererPoint3& p)noexcept->RetailRendererPoint3{
-   return {
-    p.x*m.right.x+p.y*m.up.x+p.z*m.at.x+m.translation.x,
-    p.x*m.right.y+p.y*m.up.y+p.z*m.at.y+m.translation.y,
-    p.x*m.right.z+p.y*m.up.z+p.z*m.at.z+m.translation.z
-   };
+ }
+
+ auto mul_affine_local=[](const RetailRendererAffine& a,const RetailRendererAffine& b)noexcept->RetailRendererAffine{
+  const auto dot=[](const RetailRendererPoint3& v,float bx,float ux,float ax)noexcept{
+   return v.x*bx+v.y*ux+v.z*ax;
   };
-  const auto world_center=transform_pt(obj.local_center);
-  const auto len3=[](const RetailRendererPoint3& v)noexcept{
-   return std::sqrt(v.x*v.x+v.y*v.y+v.z*v.z);
+  RetailRendererAffine out;
+  out.right={dot(a.right,b.right.x,b.up.x,b.at.x),dot(a.right,b.right.y,b.up.y,b.at.y),dot(a.right,b.right.z,b.up.z,b.at.z)};
+  out.up={dot(a.up,b.right.x,b.up.x,b.at.x),dot(a.up,b.right.y,b.up.y,b.at.y),dot(a.up,b.right.z,b.up.z,b.at.z)};
+  out.at={dot(a.at,b.right.x,b.up.x,b.at.x),dot(a.at,b.right.y,b.up.y,b.at.y),dot(a.at,b.right.z,b.up.z,b.at.z)};
+  out.translation={
+   dot(a.translation,b.right.x,b.up.x,b.at.x)+b.translation.x,
+   dot(a.translation,b.right.y,b.up.y,b.at.y)+b.translation.y,
+   dot(a.translation,b.right.z,b.up.z,b.at.z)+b.translation.z
   };
-  const float max_scale=std::max({len3(m.right),len3(m.up),len3(m.at)});
-  const float world_radius=obj.bounding_radius*max_scale;
-  if(!sphere_in_frustum(cam_obs->frustum_planes,world_center,world_radius)){
-   ++stats.culled_objects;
-   continue;
+  return out;
+ };
+
+ auto xform_pt=[](const RetailRendererAffine& m,const RetailRendererPoint3& p)noexcept->RetailRendererPoint3{
+  return {
+   p.x*m.right.x+p.y*m.up.x+p.z*m.at.x+m.translation.x,
+   p.x*m.right.y+p.y*m.up.y+p.z*m.at.y+m.translation.y,
+   p.x*m.right.z+p.y*m.up.z+p.z*m.at.z+m.translation.z
+  };
+ };
+ auto xform_dir=[](const RetailRendererAffine& m,const RetailRendererPoint3& n)noexcept->RetailRendererPoint3{
+  return {
+   n.x*m.right.x+n.y*m.up.x+n.z*m.at.x,
+   n.x*m.right.y+n.y*m.up.y+n.z*m.at.y,
+   n.x*m.right.z+n.y*m.up.z+n.z*m.at.z
+  };
+ };
+
+ auto shade_color=[&](const std::array<float,4>& base_rgba,const RetailRendererPoint3& world_n)noexcept->std::array<float,4>{
+  if(!has_lights)return base_rgba;
+  const float nlen=std::sqrt(world_n.x*world_n.x+world_n.y*world_n.y+world_n.z*world_n.z);
+  const RetailRendererPoint3 N=(nlen>1e-6f)?RetailRendererPoint3{world_n.x/nlen,world_n.y/nlen,world_n.z/nlen}:RetailRendererPoint3{0,0,1};
+  std::array<float,3> light_rgb=ambient_rgb;
+  for(const auto& l:world_lights){
+   if(!l.enabled||l.type!=RetailWorldLightType::directional)continue;
+   const float dlen=std::sqrt(l.direction.x*l.direction.x+l.direction.y*l.direction.y+l.direction.z*l.direction.z);
+   if(dlen<=1e-6f)continue;
+   const float ndotl=std::max(0.0f,-(N.x*(l.direction.x/dlen)+N.y*(l.direction.y/dlen)+N.z*(l.direction.z/dlen)));
+   light_rgb[0]+=ndotl*l.color[0];
+   light_rgb[1]+=ndotl*l.color[1];
+   light_rgb[2]+=ndotl*l.color[2];
   }
-  ++stats.visible_objects;
+  return {
+   std::min(1.0f,base_rgba[0]*light_rgb[0]),
+   std::min(1.0f,base_rgba[1]*light_rgb[1]),
+   std::min(1.0f,base_rgba[2]*light_rgb[2]),
+   base_rgba[3]
+  };
+ };
+
+ struct AlphaEntry {
+  std::size_t obj_index{};
+  float cam_z{};
+  RetailRendererAffine model_world;
+ };
+ std::vector<AlphaEntry> alpha_queue;
+
+ auto submit_object=[&](const RetailWorldSceneObject& obj,const RetailRendererAffine& m)noexcept->bool{
+  std::vector<RetailRendererAffine> palette;
+  if(!obj.bone_frames.empty()){
+   palette.reserve(obj.bone_frames.size());
+   for(std::size_t bi=0;bi<obj.bone_frames.size();++bi){
+    const auto bf=frames.observe(obj.bone_frames[bi],failure.frame);
+    if(!bf){failure.operation=failure.frame.operation;return false;}
+    if(bi<obj.inv_bind_matrices.size()){
+     palette.push_back(mul_affine_local(obj.inv_bind_matrices[bi].affine,bf->world.affine));
+    }else{
+     palette.push_back(bf->world.affine);
+    }
+   }
+  }else if(!obj.bone_matrices.empty()){
+   palette.reserve(obj.bone_matrices.size());
+   for(const auto& bm:obj.bone_matrices)palette.push_back(bm.affine);
+  }
 
   std::array<float,4> mat_color{1.0f,1.0f,1.0f,1.0f};
   resolve_material_and_bind_texture(obj.material,*world,materials,textures,rasters,mat_color,stats.bound_textures);
-
 #ifdef _WIN32
   const std::array<float,16> model_col_major={
    m.right.x,m.right.y,m.right.z,0.0f,
@@ -1791,13 +1867,80 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
   glMultMatrixf(model_col_major.data());
   glBegin(GL_TRIANGLES);
   for(const auto& v:obj.triangles){
+   RetailRendererPoint3 pos=v.position;
+   RetailRendererPoint3 nrm=v.normal;
+   const float wsum=v.bone_weights[0]+v.bone_weights[1]+v.bone_weights[2]+v.bone_weights[3];
+   if(wsum>0.0f&&!palette.empty()){
+    RetailRendererPoint3 sp{0,0,0},sn{0,0,0};
+    for(int k=0;k<4;++k){
+     const float w=v.bone_weights[k]/wsum;
+     if(w<=0.0f||v.bone_indices[k]>=palette.size())continue;
+     const auto& bm=palette[v.bone_indices[k]];
+     const auto tp=xform_pt(bm,v.position);
+     const auto tn=xform_dir(bm,v.normal);
+     sp.x+=w*tp.x;sp.y+=w*tp.y;sp.z+=w*tp.z;
+     sn.x+=w*tn.x;sn.y+=w*tn.y;sn.z+=w*tn.z;
+    }
+    pos=sp;nrm=sn;
+   }
+   const auto world_n=xform_dir(m,nrm);
+   const std::array<float,4> base_c{
+    v.color[0]*mat_color[0],v.color[1]*mat_color[1],v.color[2]*mat_color[2],v.color[3]*mat_color[3]
+   };
+   const auto shaded=shade_color(base_c,world_n);
    glTexCoord2f(v.u,v.v);
-   glColor4f(v.color[0]*mat_color[0],v.color[1]*mat_color[1],v.color[2]*mat_color[2],v.color[3]*mat_color[3]);
-   glVertex3f(v.position.x,v.position.y,v.position.z);
+   glColor4f(shaded[0],shaded[1],shaded[2],shaded[3]);
+   glVertex3f(pos.x,pos.y,pos.z);
   }
   glEnd();
 #endif
   stats.submitted_triangles+=obj.triangles.size()/3;
+  return true;
+ };
+
+ const auto& objs=world->scene_objects();
+ for(std::size_t oi=0;oi<objs.size();++oi){
+  const auto& obj=objs[oi];
+  if(!obj.visible)continue;
+  ++stats.total_objects;
+  const auto f_obs=frames.observe(obj.frame,failure.frame);
+  if(!f_obs){
+   failure.operation=failure.frame.operation;
+   restore_gl_state();
+   cleanup_end();
+   return {};
+  }
+  const auto& m=f_obs->world.affine;
+  const auto world_center=xform_pt(m,obj.local_center);
+  const auto len3=[](const RetailRendererPoint3& v)noexcept{
+   return std::sqrt(v.x*v.x+v.y*v.y+v.z*v.z);
+  };
+  const float max_scale=std::max({len3(m.right),len3(m.up),len3(m.at)});
+  const float world_radius=obj.bounding_radius*max_scale;
+  if(!sphere_in_frustum(cam_obs->frustum_planes,world_center,world_radius)){
+   ++stats.culled_objects;
+   continue;
+  }
+  ++stats.visible_objects;
+
+  bool is_alpha=obj.alpha_blended;
+  if(!is_alpha&&!obj.material.empty()&&materials!=nullptr){
+   RetailRendererMaterialFailure mf;
+   if(const auto mo=materials->observe(obj.material,mf);mo&&mo->color.a<255u)is_alpha=true;
+  }
+  if(is_alpha){
+   ++stats.alpha_objects;
+   const auto& vm=cam_obs->view_matrix.elements;
+   const float cam_z=vm[2]*world_center.x+vm[6]*world_center.y+vm[10]*world_center.z+vm[14];
+   try{alpha_queue.push_back({oi,cam_z,m});}catch(...){}
+   continue;
+  }
+  ++stats.opaque_objects;
+  if(!submit_object(obj,m)){
+   restore_gl_state();
+   cleanup_end();
+   return {};
+  }
  }
 
  if(world->bsp_root_sector()>=0&&
@@ -1828,8 +1971,12 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
    glLoadMatrixf(cam_obs->view_matrix.elements.data());
    glBegin(GL_TRIANGLES);
    for(const auto& v:s.triangles){
+    const std::array<float,4> base_c{
+     v.color[0]*sec_color[0],v.color[1]*sec_color[1],v.color[2]*sec_color[2],v.color[3]*sec_color[3]
+    };
+    const auto shaded=shade_color(base_c,v.normal);
     glTexCoord2f(v.u,v.v);
-    glColor4f(v.color[0]*sec_color[0],v.color[1]*sec_color[1],v.color[2]*sec_color[2],v.color[3]*sec_color[3]);
+    glColor4f(shaded[0],shaded[1],shaded[2],shaded[3]);
     glVertex3f(v.position.x,v.position.y,v.position.z);
    }
    glEnd();
@@ -1840,18 +1987,26 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
   traverse(traverse,world->bsp_root_sector());
  }
 
+ // Pass 2: Back-to-front sorted translucent/alpha-blended pass.
+ if(!alpha_queue.empty()){
+  std::sort(alpha_queue.begin(),alpha_queue.end(),[](const AlphaEntry& a,const AlphaEntry& b)noexcept{
+   return a.cam_z>b.cam_z;
+  });
 #ifdef _WIN32
- glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,prior_tex_env);
- glBindTexture(GL_TEXTURE_2D,static_cast<GLuint>(prior_tex_binding));
- if(!prior_tex2d)glDisable(GL_TEXTURE_2D);else glEnable(GL_TEXTURE_2D);
- glMatrixMode(GL_MODELVIEW);
- glPopMatrix();
- glMatrixMode(GL_PROJECTION);
- glPopMatrix();
- glMatrixMode(static_cast<GLenum>(prior_matrix_mode));
- glDepthFunc(static_cast<GLenum>(prior_depth_func));
- if(!prior_depth)glDisable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+  glDepthMask(GL_FALSE);
 #endif
+  for(const auto& ae:alpha_queue){
+   if(!submit_object(objs[ae.obj_index],ae.model_world)){
+    restore_gl_state();
+    cleanup_end();
+    return {};
+   }
+  }
+ }
+
+ restore_gl_state();
 
  if(!cameras.end_update(camera,failure.camera)){
   failure.operation=failure.camera.operation;
