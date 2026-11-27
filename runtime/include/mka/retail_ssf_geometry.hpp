@@ -45,6 +45,13 @@ struct RetailSsfGeometryVertex {
     RetailRendererPoint3 position{}, normal{};
     std::array<float, 2> uv{};
     std::array<std::uint8_t, 4> stored_color{};
+    std::array<std::uint16_t, 4> bone_indices{};
+    std::array<float, 4> bone_weights{};
+};
+struct RetailSsfSkinData {
+    std::uint32_t bone_count{}, used_bone_count{}, max_weights_per_vertex{};
+    std::vector<std::uint8_t> used_bones;
+    std::vector<RetailRendererAffine> inv_bind_matrices;
 };
 struct RetailSsfGeometryTriangle {
     std::array<std::size_t, 3> vertices{};
@@ -76,6 +83,9 @@ struct RetailSsfGeometryData {
     bool has_colors{}, has_uv{}, has_normals{};
     bool is_native_ps2_vif{};
     std::size_t adc_strip_breaks{};
+    std::optional<RetailSsfSkinData> skin;
+    std::optional<std::array<std::uint32_t, 2>> right_to_render;
+    std::vector<std::uint32_t> atomic_userdata_words;
 };
 // CPU decoding of explicitly selected authentic non-native RW geometry inside
 // a complete SSF clump. No RW wrapper manufacture, GPU work, animation producer,

@@ -4,6 +4,7 @@
 #include <cmath>
 #include <limits>
 #include <new>
+#include <numeric>
 #include <stdexcept>
 
 namespace mka::retail {
@@ -92,11 +93,21 @@ struct Reader {
         need(ext.size()==1&&ext[0].id==0x895303,RetailSsfGeometryError::unsupported_plugin,"SSF material unknown extension",parts[index].at);
         const auto ext_size=ext[0].end-ext[0].begin;
         need(ext_size>=28,RetailSsfGeometryError::chunk,"SSF material version-5 extension extent",ext[0].at);
-        for(unsigned i=0;i<7;++i)result.plugin_words[i]=word(ext[0].begin+i*4);
-        if(result.plugin_words[0]==5u) {
+        const auto w0=word(ext[0].begin);
+        const auto ver=w0&0xffffu,mflags=w0>>16;
+        need(ver==5u&&(mflags&~0xe000u)==0u,RetailSsfGeometryError::unsupported_plugin,"SSF material unsupported extension version or flags",ext[0].begin);
+        if(mflags&0x4000u) {
+            need(ext_size>=32,RetailSsfGeometryError::chunk,"SSF material version-5 0x4000 count extent",ext[0].at);
+            const auto cnt=word(ext[0].begin+12);
+            const std::size_t expected=32u+std::size_t(cnt)*4u+((mflags&0x8000u)?16u:0u);
+            need(cnt<=4096u&&ext_size==expected,RetailSsfGeometryError::chunk,"SSF material version-5 0x4000 array extent",ext[0].at);
+            for(unsigned i=0;i<7;++i)result.plugin_words[i]=word(ext[0].begin+i*4);
+        } else if(mflags==0u) {
             need(ext_size==28,RetailSsfGeometryError::chunk,"SSF material version-5 plain extension extent",ext[0].at);
-        } else if(result.plugin_words[0]==0x80000005u) {
+            for(unsigned i=0;i<7;++i)result.plugin_words[i]=word(ext[0].begin+i*4);
+        } else if(mflags==0x8000u) {
             need(ext_size==44,RetailSsfGeometryError::chunk,"SSF material version-5 extended vec4 extent",ext[0].at);
+            for(unsigned i=0;i<7;++i)result.plugin_words[i]=word(ext[0].begin+i*4);
             for(unsigned i=0;i<4;++i)result.material_ext_vec4[i]=scalar(ext[0].begin+28+i*4);
             result.has_material_ext_vec4=true;
         } else {
@@ -164,12 +175,35 @@ std::optional<RetailSsfGeometryData> decode_retail_ssf_geometry(std::span<const 
             const auto frame=r.word(ac[0].begin),geometry=r.word(ac[0].begin+4);
             r.need(frame<frame_count&&geometry<geometry_count&&!r.word(ac[0].begin+12),RetailSsfGeometryError::topology,"SSF atomic frame or geometry index",ac[0].at);
             r.need(ac[1].id==3,RetailSsfGeometryError::chunk,"SSF atomic extension",ac[1].at);
-            const auto ae=r.children(ac[1].begin,ac[1].end);r.need(ae.size()==1,RetailSsfGeometryError::unsupported_plugin,"SSF atomic unknown extension",ac[1].at);
-            r.shape(ae[0],0x895302,16,"SSF atomic version-3 extension extent");
-            r.need(r.word(ae[0].begin)==3,RetailSsfGeometryError::unsupported_plugin,"SSF atomic unsupported extension version",ae[0].begin);
+            const auto ae=r.children(ac[1].begin,ac[1].end);
+            bool has_895302=false;
+            for(const auto& e:ae) {
+                if(e.id==0x895302u) {
+                    r.shape(e,0x895302,16,"SSF atomic version-3 extension extent");
+                    r.need(r.word(e.begin)==3,RetailSsfGeometryError::unsupported_plugin,"SSF atomic unsupported extension version",e.begin);
+                    has_895302=true;
+                    if(i==selection.atomic_index) {
+                        for(unsigned j=0;j<4;++j)result.atomic_plugin_words[j]=r.word(e.begin+j*4);
+                    }
+                } else if(e.id==0x1fu) {
+                    r.shape(e,0x1f,8,"SSF atomic rwID_RIGHTTORENDER extent");
+                    if(i==selection.atomic_index) {
+                        result.right_to_render=std::array<std::uint32_t,2>{r.word(e.begin),r.word(e.begin+4)};
+                    }
+                } else if(e.id==0x120u) {
+                    const auto sz=e.end-e.begin;
+                    r.need(sz>=4&&(sz%4)==0,RetailSsfGeometryError::unsupported_plugin,"SSF atomic 0x120 extension extent",e.at);
+                    if(i==selection.atomic_index) {
+                        result.atomic_userdata_words.reserve(sz/4);
+                        for(std::size_t k=0;k<sz/4;++k)result.atomic_userdata_words.push_back(r.word(e.begin+k*4));
+                    }
+                } else {
+                    r.reject(RetailSsfGeometryError::unsupported_plugin,"SSF atomic unknown extension",e.at);
+                }
+            }
+            r.need(has_895302,RetailSsfGeometryError::unsupported_plugin,"SSF atomic missing 0x895302 extension",ac[1].at);
             if(i==selection.atomic_index) {
                 result.frame_index=frame;result.geometry_index=geometry;result.atomic_flags=r.word(ac[0].begin+8);
-                for(unsigned j=0;j<4;++j)result.atomic_plugin_words[j]=r.word(ae[0].begin+j*4);
             }
         }
         const auto& geometry=geometry_chunks[result.geometry_index+1];
@@ -221,7 +255,6 @@ std::optional<RetailSsfGeometryData> decode_retail_ssf_geometry(std::span<const 
             const auto ex_end=ssf_geometry_detail::bounded_chunk_end(ep,ex_len,geometry.end);
             r.need(bool(ex_end)&&ex_id==3,RetailSsfGeometryError::unsupported_plugin,"SSF native extension bounds",ep);
             const auto ext=r.children(ep+12,*ex_end);
-            for(const auto& e:ext)if(e.id==0x116u)r.reject(RetailSsfGeometryError::skinned_native_pipe_unsupported,"SSF native geometry RpSkin extension unsupported",e.at);
             r.need(ext.size()==1&&ext[0].id==0x50e,RetailSsfGeometryError::unsupported_plugin,"SSF native geometry requires rwID_BINMESHPLG",ep);
             const auto& bm=ext[0];
             r.need(bm.end-bm.begin>=12,RetailSsfGeometryError::topology,"SSF native binmesh header",bm.at);
@@ -236,6 +269,7 @@ std::optional<RetailSsfGeometryData> decode_retail_ssf_geometry(std::span<const 
             }
 
             auto np=*ex_end;
+            const bool is_skinned_pipe=result.right_to_render&&(*result.right_to_render)[0]==0x116u;
             for(std::size_t mi=0;mi<meshes;++mi) {
                 r.need(geometry.end-np>=8,RetailSsfGeometryError::vif_bounds,"SSF native mesh packet header",np);
                 const auto pkt_size=r.word(np),align_flag=r.word(np+4);
@@ -253,11 +287,79 @@ std::optional<RetailSsfGeometryData> decode_retail_ssf_geometry(std::span<const 
                     RetailSsfGeometryVertex v{};
                     bool adc{false};
                     bool has_pos{false};
+                    std::uint16_t slot0{0},slot1{0};
+                    bool has_slot0{false},has_slot1{false},adc0{false},adc1{false};
+                    std::uint16_t bone_raw[3]{0,0,0};
+                    bool has_w0{false},has_w1{false};
                 };
                 std::vector<BatchVertex> batch;
-                std::uint32_t cl=1;
+                std::uint32_t cl=1,stmask=0;
                 auto flush_batch=[&]() {
                     if(batch.empty())return;
+                    if(is_skinned_pipe) {
+                        std::uint16_t min_s=0xffffu,max_s=0;
+                        for(const auto& bv:batch) {
+                            r.need(bv.has_pos&&bv.has_slot0,RetailSsfGeometryError::geometry,"SSF skinned VIF batch vertex missing position or slot",dp);
+                            if(bv.bone_raw[2]>0) {
+                                const_cast<BatchVertex&>(bv).v.bone_weights[2]=std::max(0.0f,1.0f-bv.v.bone_weights[0]-bv.v.bone_weights[1]);
+                            }
+                            const float wsum=bv.v.bone_weights[0]+bv.v.bone_weights[1]+bv.v.bone_weights[2];
+                            r.need(std::isfinite(wsum)&&wsum>0.0f&&wsum<=1.05f,RetailSsfGeometryError::geometry,"SSF skinned VIF vertex weight sum invalid",dp);
+                            min_s=std::min(min_s,bv.slot0);max_s=std::max(max_s,bv.slot0);
+                            if(bv.has_slot1){min_s=std::min(min_s,bv.slot1);max_s=std::max(max_s,bv.slot1);}
+                        }
+                        std::uint32_t stride=0;
+                        for(const auto& bv:batch) {
+                            stride=std::gcd(stride,std::uint32_t(bv.slot0-min_s));
+                            if(bv.has_slot1)stride=std::gcd(stride,std::uint32_t(bv.slot1-min_s));
+                        }
+                        if(stride==0)stride=1;
+                        const std::size_t num_slots=std::size_t(max_s-min_s)/stride+1;
+                        r.need(num_slots<=4096u,RetailSsfGeometryError::vif_bounds,"SSF skinned VIF strip slot extent",dp);
+                        struct StripSlot{RetailSsfGeometryVertex v{};bool adc{false};bool filled{false};};
+                        std::vector<StripSlot> strip(num_slots);
+                        for(const auto& bv:batch) {
+                            const std::size_t i0=std::size_t(bv.slot0-min_s)/stride;
+                            strip[i0]={bv.v,bv.adc0,true};
+                            if(bv.has_slot1&&(bv.slot1!=bv.slot0||bv.adc1!=bv.adc0)) {
+                                const std::size_t i1=std::size_t(bv.slot1-min_s)/stride;
+                                strip[i1]={bv.v,bv.adc1,true};
+                            }
+                        }
+                        const std::size_t base_v=result.vertices.size();
+                        result.vertices.reserve(base_v+num_slots);
+                        std::vector<std::int64_t> slot_to_vert(num_slots,-1);
+                        for(std::size_t si=0;si<num_slots;++si)if(strip[si].filled) {
+                            slot_to_vert[si]=std::int64_t(result.vertices.size());
+                            result.vertices.push_back(strip[si].v);
+                        }
+                        std::size_t strip_len=0;
+                        bool prev_adc=false;
+                        for(std::size_t vi=0;vi<num_slots;++vi) {
+                            if(!strip[vi].filled) {
+                                strip_len=0;
+                                prev_adc=false;
+                                continue;
+                            }
+                            if(strip[vi].adc){
+                                ++result.adc_strip_breaks;
+                                strip_len=prev_adc?2u:1u;
+                                prev_adc=true;
+                            } else {
+                                ++strip_len;
+                                prev_adc=false;
+                                if(strip_len>=3) {
+                                    const std::size_t i0=std::size_t(slot_to_vert[vi-2]);
+                                    const std::size_t i1=std::size_t(slot_to_vert[vi-1]);
+                                    const std::size_t i2=std::size_t(slot_to_vert[vi]);
+                                    const bool odd=(strip_len&1u)==0u;
+                                    result.triangles.push_back({{odd?i1:i0,odd?i0:i1,i2},mesh_materials[mi]});
+                                }
+                            }
+                        }
+                        batch.clear();
+                        return;
+                    }
                     const std::size_t base_v=result.vertices.size();
                     result.vertices.reserve(base_v+batch.size());
                     for(const auto& bv:batch){
@@ -305,6 +407,7 @@ std::optional<RetailSsfGeometryData> decode_retail_ssf_geometry(std::span<const 
                             vp+=4;
                         } else if(cmd==0x20u) {
                             r.need(vend-vp>=8,RetailSsfGeometryError::vif_bounds,"SSF native VIF STMASK truncated",vp);
+                            stmask=r.word(vp+4);
                             vp+=8;
                         } else if(cmd==0x30u||cmd==0x31u) {
                             r.need(vend-vp>=20,RetailSsfGeometryError::vif_bounds,"SSF native VIF STROW/STCOL truncated",vp);
@@ -326,17 +429,42 @@ std::optional<RetailSsfGeometryData> decode_retail_ssf_geometry(std::span<const 
                                 // Bounding sphere per batch
                             } else if(vnvl==0x6du&&usn==1&&addr==0x002u&&cl==1u) {
                                 // V4_16 VU1 strip-kick descriptor table preceding vertex batch
+                            } else if(vnvl==0x6eu&&usn==1&&addr==0x000u&&cl==1u&&is_skinned_pipe) {
+                                r.need(num==2&&dbytes>=8,RetailSsfGeometryError::vif_bounds,"SSF skinned VIF batch header extent",vp);
+                                const std::size_t bcount=
+                                    std::to_integer<std::size_t>(bytes[dp_off+0])+
+                                    std::to_integer<std::size_t>(bytes[dp_off+1])+
+                                    std::to_integer<std::size_t>(bytes[dp_off+2])+
+                                    std::to_integer<std::size_t>(bytes[dp_off+4])+
+                                    std::to_integer<std::size_t>(bytes[dp_off+5])+
+                                    std::to_integer<std::size_t>(bytes[dp_off+6]);
+                                r.need(bcount>0,RetailSsfGeometryError::vif_bounds,"SSF skinned VIF batch vertex count zero",vp);
+                                batch.assign(bcount,BatchVertex{});
                             } else if(vnvl==0x6eu&&usn==1&&addr==0x001u&&cl==1u) {
                                 const std::size_t bcount=std::to_integer<std::size_t>(bytes[dp_off]);
                                 r.need(bcount>0,RetailSsfGeometryError::vif_bounds,"SSF native VIF batch vertex count zero",vp);
                                 batch.assign(bcount,BatchVertex{});
-                            } else if(vnvl==0x68u&&usn==0&&(addr==0x011u||addr==0x002u||addr==0x000u)) {
+                            } else if(vnvl==0x68u&&usn==0&&(addr==0x011u||addr==0x002u||addr==0x000u||(is_skinned_pipe&&(addr==0x00fu||addr==0x016u)))) {
                                 r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF native VIF position count mismatch",vp);
-                                for(std::size_t vi=0;vi<num;++vi) {
-                                    batch[vi].v.position={r.scalar(dp_off+vi*12),r.scalar(dp_off+vi*12+4),r.scalar(dp_off+vi*12+8)};
-                                    batch[vi].has_pos=true;
+                                if(is_skinned_pipe&&(addr==0x00fu||addr==0x016u)) {
+                                    for(std::size_t vi=0;vi<num;++vi) {
+                                        const auto xw=r.word(dp_off+vi*12+0),yw=r.word(dp_off+vi*12+4),zw=r.word(dp_off+vi*12+8);
+                                        const float px=std::bit_cast<float>(xw&0xfffffc00u),py=std::bit_cast<float>(yw&0xfffffc00u),pz=std::bit_cast<float>(zw&0xfffffc00u);
+                                        r.need(std::isfinite(px)&&std::isfinite(py)&&std::isfinite(pz),RetailSsfGeometryError::geometry,"SSF skinned VIF position non-finite",vp);
+                                        batch[vi].v.position={px,py,pz};
+                                        batch[vi].bone_raw[0]=static_cast<std::uint16_t>((xw&0x3ffu)>>2);
+                                        batch[vi].bone_raw[1]=static_cast<std::uint16_t>((yw&0x3ffu)>>2);
+                                        batch[vi].bone_raw[2]=static_cast<std::uint16_t>((zw&0x3ffu)>>2);
+                                        for(unsigned k=0;k<3;++k)if(batch[vi].bone_raw[k]>0)batch[vi].v.bone_indices[k]=batch[vi].bone_raw[k]-1u;
+                                        batch[vi].has_pos=true;
+                                    }
+                                } else {
+                                    for(std::size_t vi=0;vi<num;++vi) {
+                                        batch[vi].v.position={r.scalar(dp_off+vi*12),r.scalar(dp_off+vi*12+4),r.scalar(dp_off+vi*12+8)};
+                                        batch[vi].has_pos=true;
+                                    }
                                 }
-                            } else if(vnvl==0x6au&&usn==0&&(addr==0x012u||addr==0x003u||addr==0x002u)) {
+                            } else if(vnvl==0x6au&&usn==0&&(addr==0x012u||addr==0x003u||addr==0x002u||(is_skinned_pipe&&(addr==0x010u||addr==0x017u)))) {
                                 r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF native VIF normal count mismatch",vp);
                                 for(std::size_t vi=0;vi<num;++vi) {
                                     const auto sx=static_cast<std::int8_t>(std::to_integer<std::uint8_t>(bytes[dp_off+vi*3+0]));
@@ -349,6 +477,13 @@ std::optional<RetailSsfGeometryData> decode_retail_ssf_geometry(std::span<const 
                                 for(std::size_t vi=0;vi<num;++vi) {
                                     batch[vi].v.uv={r.scalar(dp_off+vi*8),r.scalar(dp_off+vi*8+4)};
                                 }
+                            } else if(vnvl==0x65u&&usn==0&&is_skinned_pipe&&(addr==0x011u||addr==0x018u||addr==0x004u)) {
+                                r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF skinned VIF UV16 count mismatch",vp);
+                                for(std::size_t vi=0;vi<num;++vi) {
+                                    const auto su=static_cast<std::int16_t>(r.half(dp_off+vi*4+0));
+                                    const auto sv=static_cast<std::int16_t>(r.half(dp_off+vi*4+2));
+                                    batch[vi].v.uv={float(su)/4096.0f,float(sv)/4096.0f};
+                                }
                             } else if(vnvl==0x66u&&usn==1&&(addr==0x013u||addr==0x004u)) {
                                 r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF native VIF UV16 count mismatch",vp);
                             } else if(vnvl==0x6eu&&((usn==1&&(addr==0x014u||addr==0x002u||addr==0x005u))||((cl==3u||cl==4u)&&addr==0x001u))) {
@@ -358,6 +493,33 @@ std::optional<RetailSsfGeometryData> decode_retail_ssf_geometry(std::span<const 
                                 }
                             } else if(vnvl==0x6cu&&usn==0&&addr==0x004u&&(cl==3u||cl==4u)) {
                                 r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF native VIF cl3/4 vec4 count mismatch",vp);
+                            } else if(vnvl==0x61u&&is_skinned_pipe&&(addr==0x00fu||addr==0x010u||addr==0x011u||addr==0x016u||addr==0x017u||addr==0x018u)) {
+                                r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF skinned VIF 0x61 count mismatch",vp);
+                                if(stmask==0x3f3f3f3fu&&(addr==0x00fu||addr==0x016u)) {
+                                    for(std::size_t vi=0;vi<num;++vi) {
+                                        const float w0=float(static_cast<std::int16_t>(r.half(dp_off+vi*2)))/4096.0f;
+                                        r.need(w0>=0.0f&&w0<=1.01f,RetailSsfGeometryError::geometry,"SSF skinned VIF w0 out of range",vp);
+                                        batch[vi].v.bone_weights[0]=w0;batch[vi].has_w0=true;
+                                    }
+                                } else if(stmask==0x3f3f3f3fu&&(addr==0x010u||addr==0x017u)) {
+                                    for(std::size_t vi=0;vi<num;++vi) {
+                                        const float w1=float(static_cast<std::int16_t>(r.half(dp_off+vi*2)))/4096.0f;
+                                        r.need(w1>=0.0f&&w1<=1.01f,RetailSsfGeometryError::geometry,"SSF skinned VIF w1 out of range",vp);
+                                        batch[vi].v.bone_weights[1]=w1;batch[vi].has_w1=true;
+                                    }
+                                } else if(stmask==0xcfcfcfcfu&&(addr==0x011u||addr==0x018u)) {
+                                    for(std::size_t vi=0;vi<num;++vi) {
+                                        const auto val=r.half(dp_off+vi*2);
+                                        batch[vi].slot0=val&0x7fffu;batch[vi].adc0=(val&0x8000u)!=0;batch[vi].has_slot0=true;
+                                    }
+                                } else if(stmask==0x3f3f3f3fu&&(addr==0x011u||addr==0x018u)) {
+                                    for(std::size_t vi=0;vi<num;++vi) {
+                                        const auto val=r.half(dp_off+vi*2);
+                                        batch[vi].slot1=val&0x7fffu;batch[vi].adc1=(val&0x8000u)!=0;batch[vi].has_slot1=true;
+                                    }
+                                } else {
+                                    r.reject(RetailSsfGeometryError::unsupported_unpack_format,"SSF skinned VIF unsupported STMASK/addr",vp);
+                                }
                             } else if(vnvl==0x61u&&(addr==0x011u||addr==0x012u||addr==0x002u||addr==0x003u||addr==0x000u)) {
                                 r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF native VIF ADC count mismatch",vp);
                                 if(addr==0x011u||addr==0x002u||addr==0x000u) {
@@ -376,7 +538,53 @@ std::optional<RetailSsfGeometryData> decode_retail_ssf_geometry(std::span<const 
                     else dp=vend;
                 }
             }
-            r.need(np==geometry.end,RetailSsfGeometryError::skinned_native_pipe_unsupported,"SSF native geometry trailing skinning/custom pipe unsupported",np);
+            if(np<geometry.end) {
+                r.need(is_skinned_pipe&&geometry.end-np>=20,RetailSsfGeometryError::skinned_native_pipe_unsupported,"SSF native geometry trailing skinning/custom pipe unsupported",np);
+                r.need(r.word(np)==1u&&r.word(np+8)==0x1803ffffu,RetailSsfGeometryError::skinned_native_pipe_unsupported,"SSF native RpSkin trailing struct header invalid",np);
+                auto sp=np+12;
+                const auto platform_id=r.word(sp);
+                r.need(platform_id==4u,RetailSsfGeometryError::skinned_native_pipe_unsupported,"SSF native RpSkin unsupported platform ID",sp);
+                const auto packed=r.word(sp+4);
+                const std::uint32_t bone_count=packed&0xffu;
+                const std::uint32_t used_bone_count=(packed>>8)&0xffu;
+                const std::uint32_t max_weights=(packed>>16)&0xffu;
+                r.need(bone_count>=1u&&max_weights>=1u&&max_weights<=4u,RetailSsfGeometryError::skinned_native_pipe_unsupported,"SSF native RpSkin bone/weight counts invalid",sp+4);
+                sp+=8;
+                const std::size_t needed=std::size_t(used_bone_count)+std::size_t(bone_count)*64u+16u;
+                r.need(needed<=geometry.end-sp,RetailSsfGeometryError::range,"SSF native RpSkin trailing extent out of bounds",sp);
+                RetailSsfSkinData skin_data;
+                skin_data.bone_count=bone_count;skin_data.used_bone_count=used_bone_count;skin_data.max_weights_per_vertex=max_weights;
+                skin_data.used_bones.resize(used_bone_count);
+                for(std::size_t bi=0;bi<used_bone_count;++bi) {
+                    const auto ub=std::to_integer<std::uint8_t>(bytes[sp+bi]);
+                    r.need(ub<bone_count,RetailSsfGeometryError::topology,"SSF native RpSkin used_bone index out of range",sp+bi);
+                    skin_data.used_bones[bi]=ub;
+                }
+                sp+=used_bone_count;
+                skin_data.inv_bind_matrices.resize(bone_count);
+                for(std::size_t bi=0;bi<bone_count;++bi) {
+                    skin_data.inv_bind_matrices[bi]={
+                        {r.scalar(sp+0),r.scalar(sp+4),r.scalar(sp+8)},
+                        {r.scalar(sp+16),r.scalar(sp+20),r.scalar(sp+24)},
+                        {r.scalar(sp+32),r.scalar(sp+36),r.scalar(sp+40)},
+                        {r.scalar(sp+48),r.scalar(sp+52),r.scalar(sp+56)}
+                    };
+                    sp+=64;
+                }
+                const auto num_meshes=r.word(sp+4),num_rle=r.word(sp+8);
+                sp+=16;
+                r.need(num_meshes==0&&num_rle==0&&sp==geometry.end,RetailSsfGeometryError::skinned_native_pipe_unsupported,"SSF native RpSkin split-data or trailing bytes unsupported",sp);
+                for(const auto& v:result.vertices) {
+                    for(unsigned k=0;k<4;++k) {
+                        if(v.bone_weights[k]>0.0f) {
+                            r.need(v.bone_indices[k]<bone_count,RetailSsfGeometryError::topology,"SSF native RpSkin vertex bone index out of range",geometry.at);
+                        }
+                    }
+                }
+                result.skin=std::move(skin_data);
+            } else {
+                r.need(!is_skinned_pipe,RetailSsfGeometryError::skinned_native_pipe_unsupported,"SSF skinned native geometry missing RpSkin trailing data",np);
+            }
             r.need(!result.triangles.empty(),RetailSsfGeometryError::topology,"SSF native geometry produced zero triangles",geometry.at);
             return result;
         }

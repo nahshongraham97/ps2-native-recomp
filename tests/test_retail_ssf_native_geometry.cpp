@@ -419,7 +419,7 @@ void run_mkda_pak_census(const std::filesystem::path& root) {
     check(bool(archive), "open NativeRetailArchive");
 
     std::size_t total_clumps = 0, native_clumps = 0, non_native_clumps = 0;
-    std::size_t decoded_ok = 0, refused_skinned = 0, refused_unpack = 0, refused_vif = 0, refused_other = 0;
+    std::size_t decoded_ok = 0, decoded_skinned_ok = 0, refused_skinned = 0, refused_unpack = 0, refused_vif = 0, refused_other = 0;
 
     for (std::size_t mi = 0; mi < archive->member_count(); ++mi) {
         RetailSsfBundleFailure bf;
@@ -443,6 +443,9 @@ void run_mkda_pak_census(const std::filesystem::path& root) {
                     if (dec->is_native_ps2_vif) {
                         ++native_clumps;
                         ++decoded_ok;
+                        if (dec->skin.has_value()) {
+                            ++decoded_skinned_ok;
+                        }
                     } else {
                         ++non_native_clumps;
                     }
@@ -464,11 +467,11 @@ void run_mkda_pak_census(const std::filesystem::path& root) {
         }
     }
     std::printf("SSF_NATIVE_CENSUS total_clumps=%zu non_native_clumps=%zu native_clumps=%zu "
-                "decoded_ok=%zu refused_skinned=%zu refused_unpack=%zu refused_vif=%zu refused_other=%zu\n",
+                "decoded_ok=%zu decoded_skinned_ok=%zu refused_skinned=%zu refused_unpack=%zu refused_vif=%zu refused_other=%zu\n",
                 total_clumps, non_native_clumps, native_clumps,
-                decoded_ok, refused_skinned, refused_unpack, refused_vif, refused_other);
+                decoded_ok, decoded_skinned_ok, refused_skinned, refused_unpack, refused_vif, refused_other);
     check(total_clumps == 3774, "census reached all 3774 bounded clumps");
-    check(decoded_ok >= 150, "census decoded >= 150 native-marked clumps cleanly");
+    check(decoded_ok >= 2000 && decoded_skinned_ok >= 1800, "census decoded >= 2000 native clumps and >= 1800 skinned clumps");
 }
 
 } // namespace
@@ -720,6 +723,161 @@ int main(int argc, char** argv) try {
         }
         auto re_after = main_binding::retail_render_enabled(*x.main_state, sf);
         check(re_after && !*re_after, "retail_render_enabled false after multi-atomic 125D60 reset");
+    }
+
+    // 4. Authentic skinned character GPU path (ashrah.ssf member 3, sec 0, rec 1) in rest vs posed bone frame + rollback
+    {
+        Fixture x(original);
+        auto& core = *x.renderer;
+        check(core.construct_registered(x.f), "construct core plugins for Ashrah rollback check");
+        auto frames = core.frames(x.f);
+        auto materials = core.materials(x.f);
+        auto textures = core.textures(x.f);
+        auto rasters = core.rasters(x.f);
+        auto worlds = core.world_module(x.f);
+        RetailRendererWorldFailure wf;
+        auto wh = worlds->create_world(wf);
+        auto world = wh ? worlds->resolve_world(*wh, wf) : nullptr;
+        check(bool(world), "create world for Ashrah rollback check");
+        RetailSceneResources res(rasters, textures, materials, frames, world);
+
+        RetailSsfSceneSelection sel_rb;
+        sel_rb.archive_resource_key = "mkda.pak";
+        sel_rb.member.index = 3;
+        sel_rb.section_index = 0;
+        sel_rb.clump_resource.index = 1;
+        sel_rb.atomic_index = 0;
+        sel_rb.morph_index = 0;
+        sel_rb.texture_resource_indices = {3, 4, 5, 6};
+        sel_rb.render_policy = RetailSsfSceneRenderPolicy::diagnostic_native_vif_unlit_raw_rgba8;
+
+        RetailSceneArchiveFailure saf;
+        fail_after = 20;
+        auto oom = load_retail_ssf_scene_from_archive(
+            x.startup.content, sel_rb, 1, *rasters, *textures, *materials, *frames, *world, {}, saf, res);
+        fail_after = -1;
+        check(!oom && res.empty() && world->scene_objects().empty(),
+              "allocation failure rolled back Ashrah RpSkin scene with empty ownership journal");
+    }
+    {
+        Fixture x(original);
+        x.main_state->scene = std::make_shared<NativeRetailSceneOwners>();
+        x.main_state->scene->config.viewport_width = 64;
+        x.main_state->scene->config.viewport_height = 48;
+        x.main_state->scene->config.near_clip = 0.01f;
+        x.main_state->scene->config.far_clip = 2000.0f;
+        x.main_state->scene->config.display = display;
+        x.main_state->scene->config.call_show_raster = false;
+
+        RetailSsfSceneSelection sel;
+        sel.archive_resource_key = "mkda.pak";
+        sel.member.index = 3; // ashrah.ssf
+        sel.section_index = 0;
+        sel.clump_resource.index = 1;
+        sel.atomic_index = 0;
+        sel.morph_index = 0;
+        sel.texture_resource_indices = {3, 4, 5, 6};
+        sel.render_policy = RetailSsfSceneRenderPolicy::diagnostic_native_vif_unlit_raw_rgba8;
+        x.main_state->scene->config.ssf_scene = sel;
+
+        StartupFailure sf;
+        auto gate = scene_bootstrap_required::continue_first_scene_at_225d40(*x.main_state, x.renderer, sf);
+        if (gate != RetailStartupGate::ready) {
+            std::fprintf(stderr, "Ashrah skinned 225D40 failed: %s\n", sf.operation ? sf.operation : "(null)");
+        }
+        check(gate == RetailStartupGate::ready && x.main_state->scene->scene_loaded &&
+              x.main_state->scene->ssf_data.has_value() &&
+              x.main_state->scene->ssf_data->geometry.skin.has_value(),
+              "225D40 loaded authentic Ashrah RpSkin character clump");
+
+        const auto& g = x.main_state->scene->ssf_data->geometry;
+        check(g.skin->bone_count >= 1 && !g.vertices.empty() && !g.triangles.empty(),
+              "Ashrah RpSkin has bones, vertices, and triangles");
+
+        // Position camera facing Ashrah's bound_center
+        RetailRendererFrameFailure ff;
+        const float dist = std::max(1.5f, g.bound_radius * 2.0f);
+        RetailRendererMatrixValue cam_mod{
+            {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {g.bound_center.x, g.bound_center.y, g.bound_center.z - dist}},
+            0x20000u};
+        check(x.main_state->scene->frames->set_modelling(x.main_state->scene->camera_init->primary.frame, cam_mod, ff),
+              "position camera facing Ashrah");
+
+        // Frame 1: Bind/rest pose
+        auto re = main_binding::retail_render_enabled(*x.main_state, sf);
+        check(re && *re && main_binding::render_retail_frame(*x.main_state, sf),
+              "render_retail_frame rendered Ashrah in bind/rest pose");
+
+        RetailRendererCameraFailure rcf;
+        check(x.main_state->scene->cameras->begin_update(x.main_state->scene->camera_init->primary.camera, rcf),
+              "rebind Ashrah FBO for rest readback");
+        std::vector<std::uint8_t> rgba_rest(64 * 48 * 4);
+        std::vector<float> depth_rest(64 * 48);
+        glReadPixels(0, 0, 64, 48, GL_RGBA, GL_UNSIGNED_BYTE, rgba_rest.data());
+        glReadPixels(0, 0, 64, 48, GL_DEPTH_COMPONENT, GL_FLOAT, depth_rest.data());
+        display->record_diagnostic_readback(4);
+        check(x.main_state->scene->cameras->end_update(x.main_state->scene->camera_init->primary.camera, rcf),
+              "end Ashrah rest readback");
+
+        std::size_t rest_drawn = 0;
+        for (std::size_t i = 0; i < 64 * 48; ++i) {
+            if (depth_rest[i] < 0.9999f && (rgba_rest[i * 4 + 0] != 13 || rgba_rest[i * 4 + 1] != 20 || rgba_rest[i * 4 + 2] != 36)) {
+                ++rest_drawn;
+            }
+        }
+
+        // Frame 2: Non-identity bone pose (translate bone 1 / root spine in X/Y so skinned vertices deform!)
+        const auto& objs = x.main_state->scene->world->scene_objects();
+        check(!objs.empty() && objs[0].bone_frames.size() == g.skin->bone_count &&
+              objs[0].inv_bind_matrices.size() == g.skin->bone_count,
+              "Ashrah scene objects have matching bone_frames and inv_bind_matrices");
+        RetailRendererMatrixValue pose_mod{
+            {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0.45f, 0.25f, 0.0f}},
+            0u};
+        check(x.main_state->scene->frames->set_modelling(objs[0].bone_frames[1], pose_mod, ff),
+              "apply non-identity pose to Ashrah bone 1");
+        check(main_binding::render_retail_frame(*x.main_state, sf),
+              "render_retail_frame rendered Ashrah in non-identity pose");
+
+        check(x.main_state->scene->cameras->begin_update(x.main_state->scene->camera_init->primary.camera, rcf),
+              "rebind Ashrah FBO for posed readback");
+        std::vector<std::uint8_t> rgba_posed(64 * 48 * 4);
+        std::vector<float> depth_posed(64 * 48);
+        glReadPixels(0, 0, 64, 48, GL_RGBA, GL_UNSIGNED_BYTE, rgba_posed.data());
+        glReadPixels(0, 0, 64, 48, GL_DEPTH_COMPONENT, GL_FLOAT, depth_posed.data());
+        display->record_diagnostic_readback(5);
+        check(x.main_state->scene->cameras->end_update(x.main_state->scene->camera_init->primary.camera, rcf),
+              "end Ashrah posed readback");
+
+        std::size_t posed_drawn = 0, diff_pixels = 0;
+        for (std::size_t i = 0; i < 64 * 48; ++i) {
+            if (depth_posed[i] < 0.9999f && (rgba_posed[i * 4 + 0] != 13 || rgba_posed[i * 4 + 1] != 20 || rgba_posed[i * 4 + 2] != 36)) {
+                ++posed_drawn;
+            }
+            if (std::abs(depth_rest[i] - depth_posed[i]) > 1e-4f ||
+                rgba_rest[i * 4 + 0] != rgba_posed[i * 4 + 0] ||
+                rgba_rest[i * 4 + 1] != rgba_posed[i * 4 + 1] ||
+                rgba_rest[i * 4 + 2] != rgba_posed[i * 4 + 2]) {
+                ++diff_pixels;
+            }
+        }
+        std::printf("ASHRAH_SKIN_GPU rest_drawn=%zu posed_drawn=%zu diff_pixels=%zu bones=%u\n",
+                    rest_drawn, posed_drawn, diff_pixels, g.skin->bone_count);
+        check(rest_drawn >= 50 && posed_drawn >= 50 && diff_pixels >= 20,
+              "Ashrah RpSkin rendered rest and posed frames with measurable pixel displacement");
+
+        const auto& cache = x.main_state->scene->world->gpu_texture_cache();
+        std::vector<GLuint> tex_ids;
+        for (const auto& entry : cache) tex_ids.push_back(static_cast<GLuint>(entry.gl_texture_id));
+
+        check(scene_bootstrap_required::continue_scene_reset_at_125d60(*x.main_state, sf),
+              "125D60 reset succeeded for Ashrah RpSkin");
+        check((!x.main_state->scene || (!x.main_state->scene->scene_loaded && !x.main_state->scene->world)) &&
+              glGetError() == GL_NO_ERROR,
+              "125D60 tore down Ashrah RpSkin scene with zero errors");
+        for (GLuint tid : tex_ids) {
+            check(glIsTexture(tid) == GL_FALSE, "125D60 deleted every Ashrah GL texture");
+        }
     }
     (void)display->release_context(df);
 #endif

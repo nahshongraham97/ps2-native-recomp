@@ -203,6 +203,41 @@ def build_and_run_falsification(env: dict[str, str]) -> tuple[list[dict], dict[s
             "// planted defect: drop extra_geometries",
             True,
         ),
+        (
+            "corrupt_rpskin_bone_index_unpack",
+            ROOT / "runtime" / "src" / "native" / "retail_ssf_geometry.cpp",
+            "for(unsigned k=0;k<3;++k)if(batch[vi].bone_raw[k]>0)batch[vi].v.bone_indices[k]=batch[vi].bone_raw[k]-1u;",
+            "// planted defect: skip bone index extraction",
+            True,
+        ),
+        (
+            "corrupt_rpskin_weight_dequant",
+            ROOT / "runtime" / "src" / "native" / "retail_ssf_geometry.cpp",
+            "const float w0=float(static_cast<std::int16_t>(r.half(dp_off+vi*2)))/4096.0f;",
+            "const float w0=0.0f; // planted defect: zero w0",
+            True,
+        ),
+        (
+            "skip_rpskin_inv_bind_matrices",
+            ROOT / "runtime" / "src" / "native" / "retail_scene_archive.cpp",
+            "object.inv_bind_matrices.push_back({sk.inv_bind_matrices[bi],0u});",
+            "// planted defect: drop inv_bind_matrices",
+            True,
+        ),
+        (
+            "drop_rpskin_bone_frames",
+            ROOT / "runtime" / "src" / "native" / "retail_scene_archive.cpp",
+            "object.bone_frames.push_back(all_frames[fi]);",
+            "// planted defect: drop bone_frames",
+            True,
+        ),
+        (
+            "reject_0x1f_right_to_render_extension",
+            ROOT / "runtime" / "src" / "native" / "retail_ssf_geometry.cpp",
+            "} else if(e.id==0x1fu) {",
+            "} else if(false) { // planted defect: reject 0x1f",
+            True,
+        ),
     ]
 
     results = []
@@ -325,10 +360,11 @@ def main() -> int:
     census = parse_census(clean_proc.stdout)
     gpu_pixels = parse_gpu_pixels(clean_proc.stdout, "ARMORY_GPU_PIXELS ")
     multi_gpu_pixels = parse_gpu_pixels(clean_proc.stdout, "ARMORY_MULTI_GPU_PIXELS ")
+    ashrah_skin_gpu = parse_gpu_pixels(clean_proc.stdout, "ASHRAH_SKIN_GPU ")
     falsification, receipts = build_and_run_falsification(env)
 
     report = {
-        "slice": "ps2_rpgeometrynative_vif_dma_unpacking_and_armory_gpu",
+        "slice": "ps2_rpgeometrynative_rpskin_0x0116_0x120_and_character_gpu",
         "retail_matching": {
             "elf": "research/inputs/SLUS_214.10",
             "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
@@ -339,19 +375,24 @@ def main() -> int:
             ],
             "private_work_dir": "/opt/mkar-decomp/native-geom-match",
             "material_atomic_work_dir": "/opt/mkar-decomp/mat-ext-match",
+            "rpskin_work_dir": "/opt/mkar-decomp/rpskin-match",
             "exact_matches": {
                 "001CF000": {"bytes": 8, "sha256": "008d26890102af179c703d77fae42cb7b3f424a11b8db552383dd8e5313f4061", "diff_words": 0},
                 "001CF010": {"bytes": 8, "sha256": "008d26890102af179c703d77fae42cb7b3f424a11b8db552383dd8e5313f4061", "diff_words": 0},
+                "0021AD30": {"bytes": 8, "sha256": "151d11ef59d410e5b1971cd6b00ea66786ba5c372f5825a0026f16bbd66b6c46", "diff_words": 0},
             },
             "disassembly_verified": {
                 "001CEFB0": {"bytes": 52, "sha256": "75b224beb294918afa9bd1c084da97992107e672506281483e7af7ce955e3210"},
                 "001CEFF0": {"bytes": 12, "sha256": "3f969139118634c7fd9b3ea32bbb84ff9ad18117b16c4176d90369cd1d97b98a"},
                 "001D1810": {"bytes": 176, "sha256": "9e8dece63b3afc1cf9c490d94a789f0de562949d2c166f1d2cc448562bf5fd27"},
                 "001D18C0": {"bytes": 688, "sha256": "18de13bbb1676bd1a1bbe9239cff5e61ea680df0441b18f5e7876e44cafc69d7"},
+                "001D7000": {"bytes": 232, "sha256": "43fc3e1d7769d861176c700e5f69e999d3017707984ecec61a450379f24dc1e4"},
                 "00213630": {"bytes": 152, "sha256": "2aa335b66de3404f0160c954460caf0e91917517293887b08ff8541b91b67066"},
                 "002136D0": {"bytes": 680, "sha256": "8c0745b82d7215607b142d0576f3b72903627ada22921e122dce44b5e417574a"},
                 "00213D60": {"bytes": 152, "sha256": "e98f240352b35b627656064f3dfa3dee828a0c12fc02d1bcf5e88c6784b65516"},
                 "00213E00": {"bytes": 200, "sha256": "c4b3b60f4a1e3618553f8a8747789dd97ae6b50920607ca64fca0a8226233396"},
+                "00219DB0": {"bytes": 24, "sha256": "5615139ecdf96675b940e8d52a5a4e6b1945ccf7ea5e214ecb1a5d270946de52"},
+                "0021ADA0": {"bytes": 544, "sha256": "ed39a6a8f3f9dee860187b822ad1f65cd822bbca1366da10c8b03c92071c5f20"},
             },
             "intentional_native_safety_divergences": [
                 "64-bit-safe std::size_t bounds/cursor arithmetic (bounded_chunk_end, checked QWC and UNPACK payload lengths) prevents 32-bit length/offset wrap.",
@@ -387,9 +428,18 @@ def main() -> int:
             "texture_records": [32, 41, 49],
             **multi_gpu_pixels,
         },
+        "ashrah_skin_gpu_test": {
+            "exit_code": clean_proc.returncode,
+            "policy": "diagnostic_native_vif_unlit_raw_rgba8",
+            "member": 3,
+            "section": 0,
+            "clump": 1,
+            "texture_records": [3, 4, 5, 6],
+            **ashrah_skin_gpu,
+        },
         "falsification": falsification,
     }
-    out_path = ROOT / "research" / "runs" / "native-ssf-native-geometry-v2-20261127.json"
+    out_path = ROOT / "research" / "runs" / "native-ssf-skinned-rpskin-20261127.json"
     out_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"PASS: strict native contract + census + Armory GPU + {len(falsification)}/{len(falsification)} planted defects rejected")
     return 0
