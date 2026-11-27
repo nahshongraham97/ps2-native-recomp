@@ -789,5 +789,978 @@
       ],
       "scope": "Four additional final blank lines only; retained measured source bytes rather than repinning compiled-source evidence. No trailing-content-space, merge marker or runtime failure. Not reported as a passing style check; no checker/configuration modified."
     }
+  },
+  "ssf_sec_followup_20261126": {
+    "status": "BOUNDED_COMPONENT_CHECKPOINT_VERIFIED_RETAIL_POLICY_NATIVE_GEOMETRY_AND_GAMEPLAY_OPEN",
+    "start_heads": {
+      "parent": "ecb2b6bf33fd73e102e10e6ca44709d4f8fe1d18",
+      "fork": "ea3b7eda6b81a0e12725ad36757e52532ee2af3a"
+    },
+    "source_helper_word_join": {
+      "path": "b/native-ssf-bundle-01/CORE_HELPER_WORDS.json",
+      "sha256": "c53f3591ec442c2aa7d4158a6459354f06d9e832eae2bb09a99da529ea4e9ac9",
+      "bytes": 19414
+    },
+    "parser_source_evidence": {
+      "path": "b/native-ssf-bundle-01/format-source/PARSER_EVIDENCE_JOIN.json",
+      "sha256": "e450a5baf918c1fee94aa713dabe8d374a37da10002bdaad3d3c3b99ab602cc5",
+      "bytes": 6579
+    },
+    "parser_measurement": {
+      "path": "b/native-ssf-bundle-01/parser-cpu-02/RESULT.json",
+      "sha256": "8af86ba61a0b57d18055693f391d47353d6529b481e0ca2aac0e81cd3fe3b86e",
+      "bytes": 131663
+    },
+    "observed_census": {
+      "path": "b/native-ssf-bundle-01/format-source/OBSERVED_CENSUS.json",
+      "sha256": "1e6d604507b85b5968781b675376351d8dc18001aa5aa71d788b3cfe4d858dec",
+      "bytes": 17155062
+    },
+    "texture_cpu_measurement": {
+      "path": "b/native-ssf-bundle-01/texture-cpu-03/RESULT.json",
+      "bytes": 2691,
+      "sha256": "506cc3da7005ea53e4ae6b3b4a0c99bdd189b676c4cc1175db0411cc83d41f8a"
+    },
+    "matching_cells": {
+      "path": "b/native-ssf-bundle-01/MATCHING_02.json",
+      "sha256": "82f905df3f0688a3d780ac227bbfaad04bc27808dfc76c52b3ac399e42ca23bb",
+      "bytes": 58414
+    },
+    "source_checker_controls": {
+      "path": "b/native-ssf-bundle-01/source-checker-controls-01/RESULT.json",
+      "sha256": "f79e8e61eb80affc94fb823a0440503f37020989ff6917e5076519aa7923211b",
+      "bytes": 823
+    },
+    "material_plugin_limit": {
+      "path": "b/native-ssf-bundle-01/format-source/MATERIAL_PLUGIN_LIMITS.json",
+      "sha256": "6ae47818fa3767b85900f49c74287692e5c9b70a8a5214a0c2c869b222e717e0",
+      "bytes": 35426
+    },
+    "observed_counts": {
+      "outer_members_parsed": 245,
+      "outer_sections": 4038,
+      "type1_sections": 2012,
+      "plain_inner_SEC4": 1992,
+      "unproved_type1_payloads_refused": 20,
+      "bounded_clumps": 3774,
+      "clump_members": 229,
+      "refused_clump_candidates": 5,
+      "geometry_headers": 14500,
+      "native_marker": 14442,
+      "non_native_marker": 58
+    },
+    "scope": [
+      "The census classifies metadata. It does not implement14500meshes or prove native geometry conversion.",
+      "Original triangle direct-memory layout and morph pre/post alignment differ from standardRW portable stream assumptions.",
+      "Authenticated SkyTempleBanner atomic0/morph0 and its ST_Banner texture are selected explicitly for a diagnostic GPU component, not a recovered game-mode/animation producer.",
+      "Native retail material/effect/color policy stays unbound by default. Diagnostic unlit/rawRGBA8 is explicit and cannot become an automatic gameplay fallback.",
+      "No manufactured TXD wrapper, signature search, original memory address map, guest vtable or interpreter.",
+      "Plain innerSEC headers parse using existing NativeArtSectionData. Unsupported type/flags/format/resource requests produce named errors; no compression scheme is guessed."
+    ],
+    "intentional_native_safety_divergences": [
+      "Checked64-bit file offsets/counts/lengths/alignment arithmetic; metadata/payload alias or overlap rejects before publication.",
+      "Views retain native owners; resource word08 lengths bounded independently from next-offset padding.",
+      "Original unchecked absent-name/range/callee behavior becomes named refusal, not a read through a zero address.",
+      "Unknown codecs, material/atomic plugins and native geometry profile refuse; selected outputs are explicit typed owners.",
+      "Source-native raster/geometry STRUCT lengths cannot be used as standard genericRW child boundaries; fixed source reads and serialized alignment are used within the bounded SEC resource extent.",
+      "Mode2PAL8 texture decode requires original onelevel metadata, PSMT8 pixel format and CSM1/CT32 palette metadata. Contradictory mip/palette profiles refuse; no general unknowncodec support is implied."
+    ],
+    "counts": {
+      "verified_ownership": 20,
+      "transformed": 2,
+      "native": 236
+    },
+    "deltas": {
+      "ownership": 0,
+      "transformed": 0,
+      "native": 0
+    },
+    "gameplay_acceptance": "OPEN",
+    "preserved_attempts": [
+      {
+        "path": "b/native-ssf-bundle-01/matching-attempt01.json",
+        "reason": "SystemPython lackedelftools; failed before comparison, installed existingtoolchainvenv retry02 completed all6cells."
+      },
+      {
+        "path": "b/native-ssf-bundle-01/parser-cpu-01",
+        "reason": "Initialdirectlink omitted existingnative_file.cpp dependency; retry02built6actualTUs andpassed."
+      },
+      {
+        "path": "b/native-ssf-bundle-01/review-01/ATTEMPT01.json",
+        "reason": "InitialgenericRWnativegeometrywalk did not follow the game fixed-header convention; no nativegeometrypass claimed."
+      },
+      {
+        "path": "b/native-ssf-bundle-01/2297f0-gap-diagnostic.json",
+        "reason": "An ad hoc rawwordprint assumed a filebias and is invalid. Corrected retainedsourceproof always maps actualPT_LOAD. No productioncode or test expectation used the invalid print."
+      }
+    ],
+    "contradictions_with_prior_assumptions": [
+      "SSF/SEC decoding existed partially as NativeArtSectionData; this batch reuses it rather than inventing a second inner format.",
+      "14442of14500observedgeometryheaders carry native flags; the generic float-array ingestor does not decode these.",
+      "Original22BD90 uses native-memory triangles and16-byte pre/post-array alignment. Blind standardRW ingestion misreads authentic data.",
+      "A version5 material plugin with zeros is not automatically neutral; its source constructor has a nonzero5.0 field. Retail policy remains open.",
+      "A bounded clump/header census is not realscene or fullfunction differential verification."
+    ],
+    "texture_cpu_initial_measurement": {
+      "path": "b/native-ssf-bundle-01/texture-cpu-01/RESULT.json",
+      "sha256": "137cbd6b21969e51e2c1327fe7836a644e48c29578ac8fb1930b0f876d27a7b6",
+      "bytes": 1865
+    },
+    "texture_checks": 48,
+    "source_profile_guard": "Single-mip requirement fields7==0 follows229420 levelcount=(word>>2)+1; unprovedmips refuse beforelinearfilterselection. InitialCPU01bytes retained undercompiled-source.",
+    "texture_cpu_single_mip_measurement": {
+      "path": "b/native-ssf-bundle-01/texture-cpu-02/RESULT.json",
+      "sha256": "39eaeb09c264ff21610fe7447454b96603bbea2a66d010c8dc8a8288005dc90b",
+      "bytes": 2522
+    },
+    "alignment_matching_control": {
+      "path": "b/native-ssf-bundle-01/MATCHING_03.json",
+      "bytes": 7858,
+      "sha256": "bbc5afc1a7dde257611a177c9bd027ac5c03d8dc750dbe5a8655c27715418613"
+    },
+    "baseline_before": {
+      "path": "b/native-ssf-bundle-01/BASELINE_BEFORE_REUSE.json",
+      "bytes": 1234,
+      "sha256": "eef4d383b6a56e7e600d3d02cfce8d39ba04d99bf7e669993aa45bc4e881521f"
+    },
+    "pre_connection_gpu_component": {
+      "build": {
+        "path": "b/native-ssf-bundle-01/focused-build-05/BUILD.json",
+        "bytes": 112414,
+        "sha256": "a41f05ce417192f06346d473a969a01136d6ea65f971e726f28d736de62af087"
+      },
+      "runs": {
+        "path": "b/native-ssf-bundle-01/focused-runs-05/RESULT.json",
+        "bytes": 5108,
+        "sha256": "7e4c642e2eb3e6dbeb8c210757b2639dff314fc2d33b6100342691a473e2c4b9"
+      },
+      "checks": 1176,
+      "non_background_depth_pixels": 152,
+      "readback_texels": 4096,
+      "late_allocation_failure_prefixes": 978,
+      "scope": "Actual PAK/SSF/source-selected banner data with explicit diagnostic unlit/rawRGBA8 policy. This measurement preceded the later first-scene selector wiring; a fresh connected-route build/run is still required."
+    },
+    "matching_control_scope": "22C5D0 serialized128-byte alignment matches20bytes in all6lateMW O3/O4cells; tinycontrol only, not compiler identification or native admission. Both108/288bytecore drafts still mismatch.",
+    "review_findings_pending_reverification": [
+      {
+        "kind": "cross_session_frame_owner_admission",
+        "status": "FIXED_AND_FOCUSED_REGRESSION_PASS",
+        "receipt_path": "b/native-ssf-bundle-01/foreign-frame-before-fix-01/RESULT.json",
+        "receipt_sha256": "1eae837e7fb513275f4d3f795c0e6d652b3517534e4f7783dbaacf46f4bba86a",
+        "observation": "Actual newloader accepted SessionB frames into SessionA World and published1object/3frames. The reproducer explicitly cleaned resources before failing its regression assertion. Addframeowneradmissionbeforedecode/publication.",
+        "post_fix_receipt": {
+          "path": "b/native-ssf-bundle-01/focused-runs-09/RESULT.json",
+          "bytes": 5108,
+          "sha256": "9e60b5b9a248f491fe167919d30c820f873e60743c248f5b3953c2bc91f3c1a3"
+        }
+      },
+      {
+        "kind": "chunk_cursor_u32_intermediate",
+        "status": "FIXED_AND_FOCUSED_REGRESSION_PASS",
+        "observation": "Reader.children used begin+=12+u32_count, permitting a32bit intermediate wrap for sufficiently large direct input spans. Use a checkedsize_t end; observed small retail examples were not affected.",
+        "post_fix_receipt": {
+          "path": "b/native-ssf-bundle-01/focused-runs-09/RESULT.json",
+          "bytes": 5108,
+          "sha256": "9e60b5b9a248f491fe167919d30c820f873e60743c248f5b3953c2bc91f3c1a3"
+        }
+      }
+    ],
+    "falsification_intermediate": {
+      "attempt01": "Harness failed parsing an actualClang.d continuation beforefirstlink/run; threefixturecompiles,0links,0nativeclients. Dependency helper restoredbyte/ASTidentically to previouslyauditedversion and checked againstall3actual.d files.",
+      "attempt02": "All16executed:13expected outcomes and3failed verification cases, preserved. One removedrangeguard survived because downstreamname refusal maskedthestage; oneSSI dispatchplant hitanearliercorrect assertion; one missingunlockplant caused noleak because actualRasterdestroy permits lockedCPUstorage destruction. Tests/plantdesign are being corrected without reclassifying oldfailures."
+    },
+    "focused_final": {
+      "build": {
+        "path": "b/native-ssf-bundle-01/focused-build-09/BUILD.json",
+        "bytes": 112415,
+        "sha256": "b04ab07e3acfbf2f658d09f7904b70bb42459fc48238b70cc3af89f3815a35bb"
+      },
+      "runs": {
+        "path": "b/native-ssf-bundle-01/focused-runs-09/RESULT.json",
+        "bytes": 5108,
+        "sha256": "9e60b5b9a248f491fe167919d30c820f873e60743c248f5b3953c2bc91f3c1a3"
+      },
+      "scene_checks": 1202,
+      "bundle_checks": 339,
+      "texture_checks": 48,
+      "allocation_prefix_cuts": 978,
+      "textured_depth_pixels": 152,
+      "actual_gpu_texels_compared": 4096,
+      "scope": "Actual content+nativeCore/Session/Main225D40 load/Mainrender/125D60 reset, with explicit selectedatomic0/morph0 diagnosticunlit/rawRGBA8 policy; no retailproducer/effect/color/LOD/animation admission."
+    },
+    "independent_source_review": {
+      "path": "b/native-ssf-bundle-01/source-review-01/REVIEW.json",
+      "bytes": 7546,
+      "sha256": "26ee22ef0ff91f788b837fa86e8e96af659542cefe9c03153bf43db013b4372b"
+    },
+    "source_union": {
+      "unique_original_functions": 28,
+      "parser_proof_functions": 19,
+      "root_proof_functions": 11,
+      "overlap": 2,
+      "constructor_extra_range_words": 46,
+      "limits": "Counts are source-inspection coverage only; no new ownership or implementation credit."
+    },
+    "falsification": {
+      "receipt": {
+        "path": "b/native-ssf-bundle-01/falsification-04/RESULT.json",
+        "bytes": 8729113,
+        "sha256": "64e173bd8fe114f4247b5b0d78e6578467b25ea0bf8abf852f7743e160a72ff0"
+      },
+      "authored_driver": {
+        "path": "tools/research/verify_native_ssf_pipeline.py",
+        "bytes": 24984,
+        "sha256": "82b43ed9ea2b76ce7f3627d208dcb652ae30d502ed6ec7a5020b4000111684e8"
+      },
+      "independent_current_join": {
+        "path": "b/native-ssf-bundle-01/FALSIFIER_FINAL_ROOT_JOIN.json",
+        "bytes": 224,
+        "sha256": "a744feb1c5a94569ccd3b2ab8aef11d2ae4f7e6421fe12a49543a17b26fd820b"
+      },
+      "cases": [
+        {
+          "name": "scene_positive",
+          "expected_exit": 0,
+          "required_assertion": "PASS real SSF scene",
+          "required_ready_marker": "SSF_GPU_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\scene_positive\\scene_positive.exe",
+            "sha256": "a3861ce878f6c0a38560ef8c7d33b4aad08b92396c70196e94191f2f53355c24",
+            "bytes": 4209152
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 0
+        },
+        {
+          "name": "texture_positive",
+          "expected_exit": 0,
+          "required_assertion": "PASS native SSF texture",
+          "required_ready_marker": "SSF_TEXTURE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\texture_positive\\texture_positive.exe",
+            "sha256": "98c254592a39c2260b92bc39ce33b0052f976fdc72c28001aa93a4f8f4c9c73a",
+            "bytes": 1478656
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 0
+        },
+        {
+          "name": "mode_resource_positive",
+          "expected_exit": 0,
+          "required_assertion": "PASS native archive mode GPU",
+          "required_ready_marker": "ARCHIVE_MODE_GL",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\mode_resource_positive\\mode_resource_positive.exe",
+            "sha256": "0762fb2f4259ecc9a878889623f666c34dbcd9141afd6e8e20b2e0926e227d19",
+            "bytes": 4212224
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 0
+        },
+        {
+          "name": "morph_alignment_omitted",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: actual selected SSF CPU decode",
+          "required_ready_marker": "SSF_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\morph_alignment_omitted\\morph_alignment_omitted.exe",
+            "sha256": "e403b7ea686f88c3b3210e2afedea6548e483c2b4db2e2c6b1699df384d7e224",
+            "bytes": 4209152
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "triangle_layout_corrupted",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: actual selected SSF CPU decode",
+          "required_ready_marker": "SSF_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\triangle_layout_corrupted\\triangle_layout_corrupted.exe",
+            "sha256": "ef6a72351cedbdaaa5c214336cf13cc45aa1a4bed6626e2c87ca426676a9eed1",
+            "bytes": 4209152
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "source_vertex_dropped",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: actual aligned first morph vertex words",
+          "required_ready_marker": "SSF_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\source_vertex_dropped\\source_vertex_dropped.exe",
+            "sha256": "449c576bab718b66f09a33106161f1ca684c6ce721c7e4e5fb2950f913b9a15a",
+            "bytes": 4209152
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "palette_permutation_corrupted",
+          "expected_exit": 1,
+          "required_assertion": "SSF_TEXTURE_ASSERTION: all4096 original palette-derived RGBA texels",
+          "required_ready_marker": "SSF_TEXTURE_INPUT_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\palette_permutation_corrupted\\palette_permutation_corrupted.exe",
+            "sha256": "8bb5ffc2cd5e366073d8f45834a7b909a2abb8462d5a34fa6be7489dc6cba2fb",
+            "bytes": 1478656
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "unproved_mip_profile_admitted",
+          "expected_exit": 1,
+          "required_assertion": "SSF_TEXTURE_ASSERTION: malformed/unsupported native texture field",
+          "required_ready_marker": "SSF_TEXTURE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\unproved_mip_profile_admitted\\unproved_mip_profile_admitted.exe",
+            "sha256": "76950d7eb28e5d2c0e82fad7666b1d50775a4cb52e9c212d40cc4b08768d3aaa",
+            "bytes": 1478656
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "retail_policy_guard_omitted",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: unbound retail render policy refuses before native resource publication",
+          "required_ready_marker": "SSF_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\retail_policy_guard_omitted\\retail_policy_guard_omitted.exe",
+            "sha256": "c549a2c95bd3582e7c9c20f87fa45ed3f3057500770fb593fedf514900e3ad3f",
+            "bytes": 4209664
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "texture_range_guard_omitted",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: texture outside clump wrapper range refused",
+          "required_ready_marker": "SSF_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\texture_range_guard_omitted\\texture_range_guard_omitted.exe",
+            "sha256": "7a4f11e3ed651eab9626bd6d7ca15dcd7cc3309001900a5ec75be3dd0b7cfa4e",
+            "bytes": 4209152
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "real_geometry_draw_omitted",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: SSF_GPU_PIXELS: actual mesh depth and unlit texture pixels visible",
+          "required_ready_marker": "SSF_GPU_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\real_geometry_draw_omitted\\real_geometry_draw_omitted.exe",
+            "sha256": "bc4e03601ee003b8421b28b2d720f5e6657322577f53c1cfb00d4ee3a33d587e",
+            "bytes": 4207104
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "explicit_unlit_policy_omitted",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: SSF_GPU_PIXELS: actual mesh depth and unlit texture pixels visible",
+          "required_ready_marker": "SSF_GPU_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\explicit_unlit_policy_omitted\\explicit_unlit_policy_omitted.exe",
+            "sha256": "b03a0d84ca4d0a864e9af706f240ab7210ad503d990045e225e62ed0fc0e49be",
+            "bytes": 4209152
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "real_gpu_texture_delete_omitted",
+          "expected_exit": 1,
+          "required_assertion": "mode transition releases previous native texture names before new draw",
+          "required_ready_marker": "ARCHIVE_MODE_GL",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\real_gpu_texture_delete_omitted\\real_gpu_texture_delete_omitted.exe",
+            "sha256": "3edf6a6b5b99cac5db9a54a2e9d3f8748084ddf8dc3bd71b3231c33a16fe8a98",
+            "bytes": 4212224
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "foreign_frame_owner_guard_omitted",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: SSF foreign Frames owner refused before publication",
+          "required_ready_marker": "SSF_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\foreign_frame_owner_guard_omitted\\foreign_frame_owner_guard_omitted.exe",
+            "sha256": "f9d73f1863bb44a2706edc5cacec23bed3e66fe3a676b0a0ddef0f0daa4f0394",
+            "bytes": 4209152
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "journal_rollback_defect_after_locked_extent",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: SSF allocation prefix restores actual owner journals and module counts",
+          "required_ready_marker": "SSF_EXTENT_LOCK_REACHED",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\journal_rollback_defect_after_locked_extent\\journal_rollback_defect_after_locked_extent.exe",
+            "sha256": "e006b2f41ebd64c9a9e428535bfe84d25359b55d647548115465084c6bd02b36",
+            "bytes": 4208640
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "ssf_continuation_skipped",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: connected default retail render policy remains unbound without partial publication",
+          "required_ready_marker": "SSF_GPU_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\ssf_continuation_skipped\\ssf_continuation_skipped.exe",
+            "sha256": "4837edac7d12996c298eb75c26edee256fe08f0c3392984b26db2e02773ca01d",
+            "bytes": 4186624
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "locked_extent_clean_fault",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: actual SSF decoded data reaches native owners",
+          "required_ready_marker": "SSF_FAILURE_CLEAN",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\locked_extent_clean_fault\\locked_extent_clean_fault.exe",
+            "sha256": "67554a39d3cc4e53612167f6475bb1647d7f2ec0381dbfc22849d66de0e5089c",
+            "bytes": 4208640
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        }
+      ],
+      "positive_controls": 3,
+      "assertion_rejected_plants": 13,
+      "clean_fault_controls": 1,
+      "actual_compile_steps": 17,
+      "actual_link_steps": 17,
+      "source_dependency_input_pins": 2054,
+      "focused_source_pins_joined": 951,
+      "source_changes": [],
+      "protected_unchanged": true,
+      "scope": "Every compile/link succeeds; exact expected0/1assertions andCPU/GPUreadinessmarkers required. Crashes, loadererrors, wrongassertions andsurvivingplants fail. Partial/historical01/02results retained separately."
+    },
+    "full_baseline": {
+      "receipt": {
+        "path": "b/phase7-capture-run/native-ssf-bundle-01/baseline-01/BASELINE_AND_MEASUREMENTS.json",
+        "bytes": 5928,
+        "sha256": "6fc8e5a949bdfca1d024e57c1f2db807504442741cec983dc2c5a21e6f2f72ab"
+      },
+      "native_baseline": {
+        "targets": 59,
+        "variants": 65,
+        "passed": 65,
+        "positive": 58,
+        "expected_refusals": 7,
+        "receipt": {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-ssf-bundle-01\\baseline-01\\RESULT.json",
+          "bytes": 111329,
+          "sha256": "6f99b946de76846e56afb52d71fc14f007d72b7ef3d5cb58324969c60d1bfdc0"
+        }
+      },
+      "current_clients": {
+        "total": 23,
+        "passed": 23,
+        "legacy59_overlap": 15,
+        "additional_unique": 8,
+        "receipt": {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-ssf-bundle-01\\run-check-current-01\\RESULT.json",
+          "bytes": 12297,
+          "sha256": "f4583e356793e3a5a0644cdce86f4c6e57acf1ff8acd49bc522d04e5c9e6f935"
+        }
+      },
+      "earlier_controls": {
+        "count": 20,
+        "positive": 4,
+        "negative": 16,
+        "compiled_pin_records": 34,
+        "fresh_builds": 0,
+        "receipt": {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-ssf-bundle-01\\baseline-01\\earlier-controls\\RESULT.json",
+          "bytes": 32990,
+          "sha256": "f9f60cd3868f400367a8f9a792c6fd93b67f2f1cba9270fc084682905ee22bce"
+        }
+      },
+      "headless": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-ssf-bundle-01\\headless-01\\RESULT.json",
+        "bytes": 1913,
+        "sha256": "f167b41f9654cb63aba2606e97a39a2a44ced4481fd6fac8416a911ec5a6a9d1"
+      },
+      "negative": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-ssf-bundle-01\\negative-01\\RESULT.json",
+        "bytes": 2044,
+        "sha256": "dcd34f22db300a410af6b57bbb45bcf838455becf3399f3864940cb7cd3014d9"
+      },
+      "prototype": {
+        "receipt": {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-ssf-bundle-01\\proof-measurements\\native-ssf-bundle-prototype-01-verification.json",
+          "bytes": 88349,
+          "sha256": "c3ca66f528b98c1ddfd03d3481f69c46a5a6752bf921fe281742279b82f2d3a7"
+        },
+        "functions": [
+          {
+            "module": "GAMER.ovl",
+            "address": "007c4980",
+            "native_name": "initialize_gamer"
+          },
+          {
+            "module": "MOVIER.ovl",
+            "address": "0084a100",
+            "native_name": "initialize_movier"
+          }
+        ],
+        "measured_counts": {
+          "states": 61,
+          "generated_typed_comparisons": 122,
+          "synthetic_comparisons": 8,
+          "full_RAM_bytes": 33554432
+        },
+        "source_files": 700
+      },
+      "vu": {
+        "receipt": {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-ssf-bundle-01\\proof-measurements\\native-ssf-bundle-vu-01-verify.json",
+          "bytes": 4157,
+          "sha256": "1cf1eb99a465db436e5f59e0c058f30854ebad0d456b924f71d0ad551dd19d23"
+        },
+        "source_manifest": {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-ssf-bundle-01\\proof-measurements\\native-ssf-bundle-vu-01-compiled-source.json",
+          "bytes": 160269,
+          "sha256": "11ca3122d42eb3af96a0c0031a45d878bb6ed342018f6704bcdb02633a208b94"
+        },
+        "source_files": 1396
+      },
+      "actual_build_scope": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-ssf-bundle-01\\baseline-01\\BUILD_SCOPE.json",
+        "bytes": 35308,
+        "sha256": "f7eeda6546afa7db1de31d0d08340da3f6a775688cbcde3672b40fddb6a33f96"
+      },
+      "post_source_protected_join": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-ssf-bundle-01\\baseline-01\\POST_FOLLOWUP_SOURCE_JOIN.json",
+        "bytes": 124511,
+        "sha256": "d575156922eed1d92e7a9960d8a6225d7a4a5e9d15ac6150d0645ad3c0279068"
+      },
+      "snapshot_inputs_before": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-ssf-bundle-01\\baseline-01\\SNAPSHOT_INPUT_JOIN.json",
+        "bytes": 38101,
+        "sha256": "4546f50d6854d072532cfcd8f615b7578ac64a4d7170ef2d0b5d97ecbc01dd7b"
+      },
+      "snapshot_inputs_after": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-ssf-bundle-01\\baseline-01\\SNAPSHOT_INPUT_JOIN_AFTER.json",
+        "bytes": 38122,
+        "sha256": "be1864f077b1397bee6932b7fb8e66b98733671d687ea746897af0cee7235f7f"
+      },
+      "protected_files": 4730,
+      "frozen_ref_unchanged": true,
+      "source_paths": 1083,
+      "source_changes": [],
+      "generated_changes": [],
+      "public_pins_unchanged": true,
+      "limits": [
+        "Component/prototype evidence only; no oracle/game execution or gameplay acceptance.",
+        "23currentclients overlap15of59legacytargets;8additionalunique, do not sumdenominators.",
+        "Earlier20fresh executionsof exact-sourceinheritedbinaries;0freshbuilds.",
+        "Two prototypes/VU refreshedcurrentheaders+sourceidentities; no ownership/nativecredit."
+      ],
+      "oracle_runs": 0,
+      "owned_processes_remaining": 0,
+      "affinity_mask": 15,
+      "max_build_jobs": 4,
+      "free_bytes": 113408163840
+    },
+    "diagnostic_alpha_scope": "The enum defines an unlit/rawRGBA8 native preview, not a retail blend policy. SelectedSky materialalpha255 renders opaque; other accepted materialalpha values follow the existing host alpha queue. The source opaque-preview comment describes the selected case/explicitobjectflag, not uniformopacity for allpossiblepreviewinputs. Retailblend/color/effect/LODpolicy remains unbound; noequivalence claimed.",
+    "canonical_gates": {
+      "receipt": {
+        "path": "b/native-ssf-bundle-01/canonical-02/RESULT.json",
+        "bytes": 1354,
+        "sha256": "e0f118343d1ae39124a8c63ad8538fd69f21021963a75f8f0968a37f11ab65d6"
+      },
+      "count": 3,
+      "passed": 3,
+      "fresh_vu_legal_path_aliases": {
+        "path": "b/native-ssf-bundle-01/canonical-01/VU_PATH_ADMISSION.json",
+        "bytes": 989,
+        "sha256": "6ae4d0dd7844784b3074cee8a0dc2ba9973fcfd1485f2ec267ebe61e40f22313"
+      },
+      "scope": "InitialVU-pathadmission refused out-of-telemetry location. Byte-identical aliases preserve genuinefreshreceipts/manifests andhashes; no gate/producer logicchanged. Finalboundedgeneration,syncand26groupvalidationall0."
+    },
+    "post_baseline_falsifier_join": {
+      "status": "PASS_ALL2054_CURRENT_PINS_AND17_ACTUAL_VARIANTS",
+      "receipt": {
+        "path": "b/native-ssf-bundle-01/FALSIFIER_FINAL_ROOT_JOIN.json",
+        "bytes": 224,
+        "sha256": "a744feb1c5a94569ccd3b2ab8aef11d2ae4f7e6421fe12a49543a17b26fd820b"
+      },
+      "scope": "Unchangeddriver04replayedall17casesafterthebaselinelegitimatelyrebuilt1controlreference. Previous03retainedvalidhistoricalPASS; no silentrepin."
+    },
+    "falsification_before_baseline_control_rebuild": {
+      "receipt": {
+        "path": "b/native-ssf-bundle-01/falsification-04/RESULT.json",
+        "bytes": 8729113,
+        "sha256": "64e173bd8fe114f4247b5b0d78e6578467b25ea0bf8abf852f7743e160a72ff0"
+      },
+      "authored_driver": {
+        "path": "tools/research/verify_native_ssf_pipeline.py",
+        "bytes": 24984,
+        "sha256": "82b43ed9ea2b76ce7f3627d208dcb652ae30d502ed6ec7a5020b4000111684e8"
+      },
+      "independent_current_join": {
+        "path": "b/native-ssf-bundle-01/FALSIFIER_FINAL_ROOT_JOIN.json",
+        "bytes": 224,
+        "sha256": "a744feb1c5a94569ccd3b2ab8aef11d2ae4f7e6421fe12a49543a17b26fd820b"
+      },
+      "cases": [
+        {
+          "name": "scene_positive",
+          "expected_exit": 0,
+          "required_assertion": "PASS real SSF scene",
+          "required_ready_marker": "SSF_GPU_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\scene_positive\\scene_positive.exe",
+            "sha256": "a3861ce878f6c0a38560ef8c7d33b4aad08b92396c70196e94191f2f53355c24",
+            "bytes": 4209152
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 0
+        },
+        {
+          "name": "texture_positive",
+          "expected_exit": 0,
+          "required_assertion": "PASS native SSF texture",
+          "required_ready_marker": "SSF_TEXTURE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\texture_positive\\texture_positive.exe",
+            "sha256": "98c254592a39c2260b92bc39ce33b0052f976fdc72c28001aa93a4f8f4c9c73a",
+            "bytes": 1478656
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 0
+        },
+        {
+          "name": "mode_resource_positive",
+          "expected_exit": 0,
+          "required_assertion": "PASS native archive mode GPU",
+          "required_ready_marker": "ARCHIVE_MODE_GL",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\mode_resource_positive\\mode_resource_positive.exe",
+            "sha256": "0762fb2f4259ecc9a878889623f666c34dbcd9141afd6e8e20b2e0926e227d19",
+            "bytes": 4212224
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 0
+        },
+        {
+          "name": "morph_alignment_omitted",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: actual selected SSF CPU decode",
+          "required_ready_marker": "SSF_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\morph_alignment_omitted\\morph_alignment_omitted.exe",
+            "sha256": "e403b7ea686f88c3b3210e2afedea6548e483c2b4db2e2c6b1699df384d7e224",
+            "bytes": 4209152
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "triangle_layout_corrupted",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: actual selected SSF CPU decode",
+          "required_ready_marker": "SSF_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\triangle_layout_corrupted\\triangle_layout_corrupted.exe",
+            "sha256": "ef6a72351cedbdaaa5c214336cf13cc45aa1a4bed6626e2c87ca426676a9eed1",
+            "bytes": 4209152
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "source_vertex_dropped",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: actual aligned first morph vertex words",
+          "required_ready_marker": "SSF_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\source_vertex_dropped\\source_vertex_dropped.exe",
+            "sha256": "449c576bab718b66f09a33106161f1ca684c6ce721c7e4e5fb2950f913b9a15a",
+            "bytes": 4209152
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "palette_permutation_corrupted",
+          "expected_exit": 1,
+          "required_assertion": "SSF_TEXTURE_ASSERTION: all4096 original palette-derived RGBA texels",
+          "required_ready_marker": "SSF_TEXTURE_INPUT_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\palette_permutation_corrupted\\palette_permutation_corrupted.exe",
+            "sha256": "8bb5ffc2cd5e366073d8f45834a7b909a2abb8462d5a34fa6be7489dc6cba2fb",
+            "bytes": 1478656
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "unproved_mip_profile_admitted",
+          "expected_exit": 1,
+          "required_assertion": "SSF_TEXTURE_ASSERTION: malformed/unsupported native texture field",
+          "required_ready_marker": "SSF_TEXTURE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\unproved_mip_profile_admitted\\unproved_mip_profile_admitted.exe",
+            "sha256": "76950d7eb28e5d2c0e82fad7666b1d50775a4cb52e9c212d40cc4b08768d3aaa",
+            "bytes": 1478656
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "retail_policy_guard_omitted",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: unbound retail render policy refuses before native resource publication",
+          "required_ready_marker": "SSF_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\retail_policy_guard_omitted\\retail_policy_guard_omitted.exe",
+            "sha256": "c549a2c95bd3582e7c9c20f87fa45ed3f3057500770fb593fedf514900e3ad3f",
+            "bytes": 4209664
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "texture_range_guard_omitted",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: texture outside clump wrapper range refused",
+          "required_ready_marker": "SSF_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\texture_range_guard_omitted\\texture_range_guard_omitted.exe",
+            "sha256": "7a4f11e3ed651eab9626bd6d7ca15dcd7cc3309001900a5ec75be3dd0b7cfa4e",
+            "bytes": 4209152
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "real_geometry_draw_omitted",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: SSF_GPU_PIXELS: actual mesh depth and unlit texture pixels visible",
+          "required_ready_marker": "SSF_GPU_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\real_geometry_draw_omitted\\real_geometry_draw_omitted.exe",
+            "sha256": "bc4e03601ee003b8421b28b2d720f5e6657322577f53c1cfb00d4ee3a33d587e",
+            "bytes": 4207104
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "explicit_unlit_policy_omitted",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: SSF_GPU_PIXELS: actual mesh depth and unlit texture pixels visible",
+          "required_ready_marker": "SSF_GPU_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\explicit_unlit_policy_omitted\\explicit_unlit_policy_omitted.exe",
+            "sha256": "b03a0d84ca4d0a864e9af706f240ab7210ad503d990045e225e62ed0fc0e49be",
+            "bytes": 4209152
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "real_gpu_texture_delete_omitted",
+          "expected_exit": 1,
+          "required_assertion": "mode transition releases previous native texture names before new draw",
+          "required_ready_marker": "ARCHIVE_MODE_GL",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\real_gpu_texture_delete_omitted\\real_gpu_texture_delete_omitted.exe",
+            "sha256": "3edf6a6b5b99cac5db9a54a2e9d3f8748084ddf8dc3bd71b3231c33a16fe8a98",
+            "bytes": 4212224
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "foreign_frame_owner_guard_omitted",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: SSF foreign Frames owner refused before publication",
+          "required_ready_marker": "SSF_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\foreign_frame_owner_guard_omitted\\foreign_frame_owner_guard_omitted.exe",
+            "sha256": "f9d73f1863bb44a2706edc5cacec23bed3e66fe3a676b0a0ddef0f0daa4f0394",
+            "bytes": 4209152
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "journal_rollback_defect_after_locked_extent",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: SSF allocation prefix restores actual owner journals and module counts",
+          "required_ready_marker": "SSF_EXTENT_LOCK_REACHED",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\journal_rollback_defect_after_locked_extent\\journal_rollback_defect_after_locked_extent.exe",
+            "sha256": "e006b2f41ebd64c9a9e428535bfe84d25359b55d647548115465084c6bd02b36",
+            "bytes": 4208640
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "ssf_continuation_skipped",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: connected default retail render policy remains unbound without partial publication",
+          "required_ready_marker": "SSF_GPU_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\ssf_continuation_skipped\\ssf_continuation_skipped.exe",
+            "sha256": "4837edac7d12996c298eb75c26edee256fe08f0c3392984b26db2e02773ca01d",
+            "bytes": 4186624
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        },
+        {
+          "name": "locked_extent_clean_fault",
+          "expected_exit": 1,
+          "required_assertion": "SSF_ASSERTION: actual SSF decoded data reaches native owners",
+          "required_ready_marker": "SSF_FAILURE_CLEAN",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-ssf-bundle-01\\falsification-04\\locked_extent_clean_fault\\locked_extent_clean_fault.exe",
+            "sha256": "67554a39d3cc4e53612167f6475bb1647d7f2ec0381dbfc22849d66de0e5089c",
+            "bytes": 4208640
+          },
+          "compiled_artifacts_unchanged": true,
+          "actual_exit": 1
+        }
+      ],
+      "positive_controls": 3,
+      "assertion_rejected_plants": 13,
+      "clean_fault_controls": 1,
+      "actual_compile_steps": 17,
+      "actual_link_steps": 17,
+      "source_dependency_input_pins": 2054,
+      "focused_source_pins_joined": 951,
+      "source_changes": [],
+      "protected_unchanged": true,
+      "scope": "Every compile/link succeeds; exact expected0/1assertions andCPU/GPUreadinessmarkers required. Crashes, loadererrors, wrongassertions andsurvivingplants fail. Partial/historical01/02results retained separately."
+    },
+    "publication_gates": {
+      "status": "PASS_ALL16_DISTINCT_PROJECT_GATES",
+      "canonical_count": 3,
+      "canonical_receipt": {
+        "path": "b/native-ssf-bundle-01/canonical-02/RESULT.json",
+        "bytes": 1354,
+        "sha256": "e0f118343d1ae39124a8c63ad8538fd69f21021963a75f8f0968a37f11ab65d6"
+      },
+      "read_only_count": 13,
+      "actual_read_only_executions": 16,
+      "read_only_receipt": {
+        "path": "b/phase7-capture-run/native-ssf-bundle-01/baseline-01/readonly-gates/GATES_FINAL.json",
+        "bytes": 4392,
+        "sha256": "ed6946e1289612341e835df8abbb671a81170445277676185dd4a15840f76d32"
+      },
+      "outcomes": [
+        {
+          "name": "acceptance-checker",
+          "exit": 0,
+          "expected": 0,
+          "status": "PASS"
+        },
+        {
+          "name": "acceptance-manifest",
+          "exit": 0,
+          "expected": 0,
+          "status": "PASS"
+        },
+        {
+          "name": "cpu-raster-ban",
+          "exit": 0,
+          "expected": 0,
+          "status": "PASS"
+        },
+        {
+          "name": "oracle-verifier-planted",
+          "exit": 0,
+          "expected": 0,
+          "status": "PASS"
+        },
+        {
+          "name": "old-oracle-launcher-rejection",
+          "exit": 1,
+          "expected": 1,
+          "status": "PASS"
+        },
+        {
+          "name": "oracle-integrity-after-prepare",
+          "exit": 0,
+          "expected": 0,
+          "status": "PASS"
+        },
+        {
+          "name": "acceptance-open",
+          "exit": 1,
+          "expected": 1,
+          "status": "PASS"
+        },
+        {
+          "name": "markdown-links",
+          "exit": 0,
+          "expected": 0,
+          "status": "PASS"
+        },
+        {
+          "name": "sync-confirm",
+          "exit": 0,
+          "expected": 0,
+          "status": "PASS"
+        },
+        {
+          "name": "strict-renderware",
+          "exit": 2,
+          "expected": 2,
+          "status": "PASS"
+        },
+        {
+          "name": "static-exit-suite",
+          "exit": 0,
+          "expected": 0,
+          "status": "PASS"
+        },
+        {
+          "name": "stack-static-controls",
+          "exit": 0,
+          "expected": 0,
+          "status": "PASS"
+        },
+        {
+          "name": "frontier-capability-audit",
+          "exit": 0,
+          "expected": 0,
+          "status": "PASS"
+        }
+      ],
+      "source_report_protected_frozen_unchanged": true,
+      "protected_files": 4730,
+      "scope": "Original13read-onlyexecutions had10passes and3output-rootguardrefusals. Onlythose3were retriedwithAST-provedoutput-path-onlylegaltelemetryrelocation. Everyexpectedexit/assertion preserved. OPEN1/UNKNOWN2/oldlauncher1 remain requiredrefusals, not native-game acceptance."
+    },
+    "remaining_gaps": [
+      "20outertype1payloads lackadmittedplainSEC4/decompressionformat; unknownschemesarenamedrefusals.",
+      "5type4clumpcandidatesremainunpartitioned/refused, not declaredcorrupt retailassets.",
+      "14442of14500observedgeometryheaderscarrynativeflags; nativePS2mesh decoding remains unsupported.",
+      "OnlyexplicitselectedSkyTempleatomic0/morph0/non-native-streamgeometryandonePAL8single-mip/CSM1CT32textureprofileisGPUverified. Headercensusisnotallassetconversion.",
+      "Retailmaterial/effect/color/blend/LOD, morph/animation andactualmode/asset/HUD producers remainunbound; defaultretailpolicy refuses.",
+      "Complete reset/task/context-transfereffects andwhole-game/native-onlyacceptance remainOPEN."
+    ],
+    "closeout_scope": "Stoppedaftermain-onlypublicationofthisboundedSSFslicewithcomponentverification. No originaloracle/game, physicalaudio/inputoracceptanceframecapture; no ownership/native/transformedcredit added."
   }
 }

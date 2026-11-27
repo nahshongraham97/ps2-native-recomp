@@ -141,6 +141,16 @@ KNOWN_CLIENTS = {
         "clean_fixtures": lambda out: [out/"fixtures_archive_mode"],
     },
     "test_native_retail_hud_submission": {"args": lambda root,out: ["."]},
+    "test_native_retail_ssf_bundle": {
+        "args": lambda root,out: [str(PARENT/"private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon")],
+    },
+    "test_native_retail_ssf_texture": {
+        "args": lambda root,out: [str(PARENT/"private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon/mkda.pak")],
+    },
+    "test_native_retail_ssf_scene": {
+        "args": lambda root,out: [str(PARENT/"private-inputs/SLUS_214.10.Mortal_Kombat_Armageddon"),str(out/"fixtures_ssf_scene")],
+        "clean_fixtures": lambda out: [out/"fixtures_ssf_scene"],
+    },
 }
 
 
@@ -170,6 +180,9 @@ CLIENT_ALIASES = {
     "geometry": "test_native_retail_renderer_geometry",
     "movie_presentation": "test_native_retail_display_movie_presentation",
     "display_movie": "test_native_retail_display_movie_presentation",
+    "ssf_bundle": "test_native_retail_ssf_bundle",
+    "ssf_texture": "test_native_retail_ssf_texture",
+    "ssf_scene": "test_native_retail_ssf_scene",
 }
 
 if phase == "build":

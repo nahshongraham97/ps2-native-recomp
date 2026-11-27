@@ -442,17 +442,32 @@ target_link_libraries(mka_native_retail_archive PUBLIC mka_native_content_volume
 add_executable(test_native_retail_archive EXCLUDE_FROM_ALL tests/test_retail_archive.cpp)
 target_link_libraries(test_native_retail_archive PRIVATE mka_native_retail_archive)
 
+# Bounded real SSF/SEC resource decoding; no guest device or manufactured RW roots.
+add_library(mka_native_retail_ssf STATIC EXCLUDE_FROM_ALL
+    runtime/src/native/retail_ssf_bundle.cpp
+    runtime/src/native/retail_ssf_geometry.cpp
+    runtime/src/native/retail_ssf_texture.cpp)
+target_include_directories(mka_native_retail_ssf PUBLIC runtime/include)
+target_compile_features(mka_native_retail_ssf PUBLIC cxx_std_20)
+target_link_libraries(mka_native_retail_ssf PUBLIC mka_native_retail_archive mka_native_art_section_data)
+add_executable(test_native_retail_ssf_bundle EXCLUDE_FROM_ALL tests/test_retail_ssf_bundle.cpp)
+target_link_libraries(test_native_retail_ssf_bundle PRIVATE mka_native_retail_ssf)
+add_executable(test_native_retail_ssf_texture EXCLUDE_FROM_ALL tests/test_retail_ssf_texture.cpp)
+target_link_libraries(test_native_retail_ssf_texture PRIVATE mka_native_retail_ssf)
+
 if(TARGET mka_native_retail_startup)
     target_sources(mka_native_retail_startup PRIVATE
         runtime/src/native/retail_scene_archive.cpp
         runtime/src/native/retail_mode_scene.cpp)
-    target_link_libraries(mka_native_retail_startup PUBLIC mka_native_retail_archive)
+    target_link_libraries(mka_native_retail_startup PUBLIC mka_native_retail_archive mka_native_retail_ssf)
     add_executable(test_native_retail_scene_archive EXCLUDE_FROM_ALL tests/test_retail_scene_archive.cpp)
     target_link_libraries(test_native_retail_scene_archive PRIVATE mka_native_retail_startup opengl32 gdi32 user32)
     add_executable(test_native_retail_archive_mode EXCLUDE_FROM_ALL tests/test_retail_archive_mode.cpp)
     target_link_libraries(test_native_retail_archive_mode PRIVATE mka_native_retail_startup opengl32 gdi32 user32)
     add_executable(test_native_retail_hud_submission EXCLUDE_FROM_ALL tests/test_retail_hud_submission.cpp)
     target_link_libraries(test_native_retail_hud_submission PRIVATE mka_native_retail_startup opengl32 gdi32 user32)
+    add_executable(test_native_retail_ssf_scene EXCLUDE_FROM_ALL tests/test_retail_ssf_scene.cpp)
+    target_link_libraries(test_native_retail_ssf_scene PRIVATE mka_native_retail_startup opengl32 gdi32 user32)
 endif()
 if(WIN32)
     set(SDL2_NO_MWINDOWS ON)

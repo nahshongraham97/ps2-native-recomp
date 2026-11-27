@@ -157,11 +157,12 @@ bool NativeRetailWorld::release_gpu_resources(RetailRendererWorldFailure& f) noe
 void NativeRetailWorld::release_gpu_resources() noexcept { RetailRendererWorldFailure f;(void)release_gpu_resources(f); }
 
 bool NativeRetailWorld::admit_render_modules(NativeRetailRendererMaterials* materials,
-    NativeRetailRendererTextures* textures,NativeRetailRendererRasters* rasters,RetailRendererWorldFailure& f) const noexcept {
+    NativeRetailRendererTextures* textures,NativeRetailRendererRasters* rasters,RetailRendererWorldFailure& f,
+    NativeRetailRendererFrames* frames) const noexcept {
     if(!access_world(f))return false;
     auto core=core_.lock();RetailRendererCoreFailure cf;
     if(!core||(materials&&core->materials(cf).get()!=materials)||(textures&&core->textures(cf).get()!=textures)||
-       (rasters&&core->rasters(cf).get()!=rasters)){
+       (rasters&&core->rasters(cf).get()!=rasters)||(frames&&core->frames(cf).get()!=frames)){
         f.kind=RetailRendererWorldError::foreign_owner;f.operation="0412 draw modules must belong to world's actual live Core";return false;
     }
     return true;

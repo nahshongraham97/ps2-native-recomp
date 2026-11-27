@@ -102,6 +102,8 @@ struct RetailWorldSceneObject {
     std::vector<RetailRendererMatrixValue> bone_matrices;
     bool alpha_blended{false};
     bool visible{true};
+    // Explicit native asset-preview policy; never inferred from retail flags.
+    bool diagnostic_unlit_raw_rgba8{false};
 };
 
 enum class RetailWorldLightType : std::uint32_t {
@@ -182,7 +184,7 @@ public:
         std::shared_ptr<video::NativeMovieGpuRetirementOwner>, RetailRendererWorldFailure&) noexcept;
     std::shared_ptr<NativeProductionDisplayService> gpu_display(RetailRendererWorldFailure&) const noexcept;
     bool admit_render_modules(NativeRetailRendererMaterials*, NativeRetailRendererTextures*,
-        NativeRetailRendererRasters*, RetailRendererWorldFailure&) const noexcept;
+        NativeRetailRendererRasters*, RetailRendererWorldFailure&, NativeRetailRendererFrames* = nullptr) const noexcept;
     std::optional<std::uint32_t> resolve_gpu_texture(const NativeRetailTextureHandle&,
         NativeRetailRendererTextures&, NativeRetailRendererRasters&, RetailRendererWorldFailure&) noexcept;
     // Successful close retires the binding/task. Rendering again requires an explicit bind.

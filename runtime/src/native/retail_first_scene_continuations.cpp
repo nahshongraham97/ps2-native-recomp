@@ -136,9 +136,13 @@ RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState& main,
     scene->frames_rendered = 0;
 
     const auto& selected_archive=scene->config.archive_streams;
-    const bool has_txd = selected_archive ? bool(selected_archive->txd) : resource_exists(main.startup.content, scene->config.txd_resource_key);
-    const bool has_world_stream = selected_archive ? bool(selected_archive->world) : resource_exists(main.startup.content, scene->config.world_resource_key);
-    const bool has_geom = selected_archive ? bool(selected_archive->geometry) : resource_exists(main.startup.content, scene->config.geometry_resource_key);
+    const auto& selected_ssf=scene->config.ssf_scene;
+    if(selected_archive&&selected_ssf){
+        f={StartupError::content,"225D40: ambiguous direct archive and SSF scene sources"};return RetailStartupGate::native_failure;
+    }
+    const bool has_txd = selected_ssf ? false : selected_archive ? bool(selected_archive->txd) : resource_exists(main.startup.content, scene->config.txd_resource_key);
+    const bool has_world_stream = selected_ssf ? false : selected_archive ? bool(selected_archive->world) : resource_exists(main.startup.content, scene->config.world_resource_key);
+    const bool has_geom = bool(selected_ssf) || (selected_archive ? bool(selected_archive->geometry) : resource_exists(main.startup.content, scene->config.geometry_resource_key));
     if(selected_archive && !has_txd && !has_world_stream && !has_geom) {
         f={StartupError::content,"archive scene requires explicit stream selections"};return RetailStartupGate::native_failure;
     }
@@ -177,7 +181,15 @@ RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState& main,
             f={StartupError::memory_owners,wf.operation};return RetailStartupGate::native_failure;
         }
     }
-    if(selected_archive) {
+    if(selected_ssf) {
+        RetailSceneArchiveFailure af;
+        auto loaded=load_retail_ssf_scene_from_archive(main.startup.content,*selected_ssf,
+            scene->config.base_object_id,*raster_mod,*tex_mod,*mat_mod,*frame_mod,
+            *world,{},af,*scene->stream_resources);
+        if(!loaded){f={StartupError::content,af.operation};return RetailStartupGate::native_failure;}
+        scene->ssf_data=std::move(*loaded);
+        scene->geometry_ingested=true;
+    } else if(selected_archive) {
         RetailSceneArchiveFailure af;
         auto loaded=load_retail_scene_streams_from_archive(main.startup.content,*selected_archive,
             scene->config.base_sector_id,scene->config.base_object_id,*raster_mod,*tex_mod,*mat_mod,*frame_mod,
@@ -189,7 +201,7 @@ RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState& main,
 
     const std::string_view txd_key = has_txd ? std::string_view(scene->config.txd_resource_key) : std::string_view{};
     const std::string_view world_key = has_world_stream ? std::string_view(scene->config.world_resource_key) : std::string_view{};
-    if (!selected_archive && (!txd_key.empty() || !world_key.empty())) {
+    if (!selected_archive && !selected_ssf && (!txd_key.empty() || !world_key.empty())) {
         auto loaded = load_retail_scene_streams_from_volume(
             main.startup.content,
             txd_key,
@@ -208,7 +220,7 @@ RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState& main,
         scene->stream_result = *loaded;
     }
 
-    if (!selected_archive && has_geom) {
+    if (!selected_archive && !selected_ssf && has_geom) {
         content::ContentVolumeFailure cvf;
         auto geom_file = main.startup.content.open_resource(scene->config.geometry_resource_key, cvf);
         const auto geom_len = geom_file ? geom_file->length(cvf) : std::optional<std::uint64_t>{};

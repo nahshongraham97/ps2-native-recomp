@@ -2205,7 +2205,7 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
    const std::array<float,4> base_c{
     v.color[0]*mat_color[0],v.color[1]*mat_color[1],v.color[2]*mat_color[2],v.color[3]*mat_color[3]
    };
-   const auto shaded=shade_color(base_c,world_n);
+   const auto shaded=obj.diagnostic_unlit_raw_rgba8?base_c:shade_color(base_c,world_n);
    glTexCoord2f(v.u,v.v);
    glColor4f(shaded[0],shaded[1],shaded[2],shaded[3]);
    glVertex3f(pos.x,pos.y,pos.z);

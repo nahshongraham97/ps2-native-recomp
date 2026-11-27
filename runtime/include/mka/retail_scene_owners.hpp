@@ -32,6 +32,7 @@ struct RetailFirstSceneConfig {
     std::shared_ptr<video::NativeMovieGpuRetirementOwner> gpu_retirement;
     // Explicit source selection; never a fallback search or guessed SEC layout.
     std::optional<RetailArchiveSceneStreams> archive_streams;
+    std::optional<RetailSsfSceneSelection> ssf_scene;
     std::optional<RetailHudSubmission> hud;
     bool diagnostic_headless_without_display{false};
 };
@@ -52,6 +53,9 @@ struct NativeRetailSceneOwners {
     std::unique_ptr<RetailSceneResources> stream_resources;
     std::optional<RetailCameraInit180ED0Result> camera_init;
     RetailSceneStreamLoadResult stream_result{};
+    // Retain source morph/material/texture metadata with the live scene. These
+    // selected serialized resource extents are separate from loose-stream I/O.
+    std::optional<RetailDecodedSsfScene> ssf_data;
     std::uint64_t frames_rendered{0};
     bool scene_loaded{false};
     bool gl_context_active{false};
