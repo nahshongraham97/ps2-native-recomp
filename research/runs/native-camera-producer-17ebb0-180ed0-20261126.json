@@ -1,0 +1,45 @@
+{
+  "slice": "17EBB0_180ED0_native_camera_producer",
+  "strict_native_contract": "PASS",
+  "runtime_file_sha256": {
+    "runtime/include/mka/retail_renderer_frames.hpp": "3efe172566e60f3a13542930c7a7d0eb3c7b784d7f589ffa92553769947faeb6",
+    "runtime/src/native/retail_renderer_frames.cpp": "ce3ba0e17675944cea5a6a1246de3aad954ed472e60aa541523b75000290cc10",
+    "runtime/include/mka/retail_renderer_cameras.hpp": "e3f2cd854ee414f910f78119fa263e3d7e554900c8ffd120670adfd104852823",
+    "runtime/src/native/retail_renderer_cameras.cpp": "7bc32de0db0b6aacd5c11876d92930c1fd7fa91c18c4933e2fd05a92f969b213",
+    "runtime/include/mka/retail_camera_world.hpp": "84318c2f3d020280f41adb2f39d6743d27af03bdb6c654bd2376122e6f284706",
+    "runtime/src/native/retail_camera_world.cpp": "4ef4111760e69935196f54a6b52ab87b0744708f59db506caa10813385edc28e"
+  },
+  "clean_test_exit_code": 0,
+  "falsification": [
+    {
+      "defect": "dirty_sync_skip",
+      "target": "runtime/src/native/retail_renderer_frames.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "view_matrix_wrong_sign",
+      "target": "runtime/src/native/retail_renderer_cameras.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "frustum_plane_flip",
+      "target": "runtime/src/native/retail_renderer_cameras.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "callback_reverse_order",
+      "target": "runtime/src/native/retail_renderer_cameras.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "rollback_leak",
+      "target": "runtime/src/native/retail_renderer_cameras.cpp",
+      "exit_code": 1,
+      "rejected": true
+    }
+  ]
+}

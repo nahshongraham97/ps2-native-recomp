@@ -1,4 +1,5 @@
 #include "mka/retail_renderer_cameras.hpp"
+#include "mka/retail_camera_world.hpp"
 #include "mka/retail_game_session.hpp"
 #include <algorithm>
 #include <bit>
@@ -35,6 +36,91 @@ bool default_depth(const RetailRendererCameraDepthInputs& input,float& scale,flo
  shift=mul32(difference,value(0x3f000000u));
  return std::isfinite(delta)&&std::isfinite(margin)&&std::isfinite(hi)&&std::isfinite(lo)&&
   std::isfinite(scale)&&std::isfinite(shift);
+}
+bool compute_view_matrix(const RetailRendererAffine& world,RetailRendererCameraMatrix4x4& out)noexcept{
+ const float r00=world.right.x,r01=world.right.y,r02=world.right.z;
+ const float r10=world.up.x,r11=world.up.y,r12=world.up.z;
+ const float r20=world.at.x,r21=world.at.y,r22=world.at.z;
+ const float c00=r11*r22-r12*r21;
+ const float c01=-(r10*r22-r12*r20);
+ const float c02=r10*r21-r11*r20;
+ const float det=r00*c00+r01*c01+r02*c02;
+ if(!std::isfinite(det)||std::fabs(det)<1e-12f)return false;
+ const float inv_det=1.0f/det;
+ // R^{-1} = adj(R) / det = cofactor(R)^T / det.
+ const float i00=c00*inv_det;
+ const float i01=-(r01*r22-r02*r21)*inv_det;
+ const float i02=(r01*r12-r02*r11)*inv_det;
+ const float i10=c01*inv_det;
+ const float i11=(r00*r22-r02*r20)*inv_det;
+ const float i12=-(r00*r12-r02*r10)*inv_det;
+ const float i20=c02*inv_det;
+ const float i21=-(r00*r21-r01*r20)*inv_det;
+ const float i22=(r00*r11-r01*r10)*inv_det;
+ const float tx=world.translation.x,ty=world.translation.y,tz=world.translation.z;
+ // Column-major: view * P_world = (P_world - T) * R^{-1}
+ out.elements={
+  i00,i01,i02,0.0f,
+  i10,i11,i12,0.0f,
+  i20,i21,i22,0.0f,
+  -(tx*i00+ty*i10+tz*i20),
+  -(tx*i01+ty*i11+tz*i21),
+  -(tx*i02+ty*i12+tz*i22),
+  1.0f
+ };
+ for(float v:out.elements)if(!std::isfinite(v))return false;
+ return true;
+}
+bool compute_projection_and_frustum(const RetailRendererBaseCameraObservation& state,
+ const RetailRendererCameraMatrix4x4& view,
+ RetailRendererCameraMatrix4x4& proj,
+ std::array<RetailRendererCameraPlane,6>& planes)noexcept{
+ const float near_c=state.near_clip,far_c=state.far_clip;
+ const float span=far_c-near_c;
+ if(!std::isfinite(near_c)||!std::isfinite(far_c)||near_c<=0.0f||span<=0.0f)return false;
+ if(!std::isfinite(state.inverse_window.x)||!std::isfinite(state.inverse_window.y))return false;
+ if(state.projection_type==1u){
+  proj.elements={
+   state.inverse_window.x,0.0f,0.0f,0.0f,
+   0.0f,state.inverse_window.y,0.0f,0.0f,
+   0.0f,0.0f,(far_c+near_c)/span,1.0f,
+   0.0f,0.0f,-(2.0f*far_c*near_c)/span,0.0f
+  };
+ }else if(state.projection_type==2u){
+  proj.elements={
+   state.inverse_window.x,0.0f,0.0f,0.0f,
+   0.0f,state.inverse_window.y,0.0f,0.0f,
+   0.0f,0.0f,2.0f/span,0.0f,
+   0.0f,0.0f,-(far_c+near_c)/span,1.0f
+  };
+ }else{
+  return false;
+ }
+ std::array<float,16> vp{};
+ for(int c=0;c<4;++c){
+  for(int r=0;r<4;++r){
+   float sum=0.0f;
+   for(int k=0;k<4;++k)sum+=proj.elements[k*4+r]*view.elements[c*4+k];
+   vp[c*4+r]=sum;
+  }
+ }
+ auto normalize_plane=[](float a,float b,float c,float d,RetailRendererCameraPlane& out)noexcept{
+  const float len=std::sqrt(a*a+b*b+c*c);
+  if(!std::isfinite(len)||len<=1e-12f)return false;
+  const float inv=1.0f/len;
+  out={a*inv,b*inv,c*inv,d*inv};
+  return std::isfinite(out.a)&&std::isfinite(out.b)&&std::isfinite(out.c)&&std::isfinite(out.d);
+ };
+ const auto row=[&](int r){
+  return std::array<float,4>{vp[0*4+r],vp[1*4+r],vp[2*4+r],vp[3*4+r]};
+ };
+ const auto r0=row(0),r1=row(1),r2=row(2),r3=row(3);
+ return normalize_plane(r3[0]+r0[0],r3[1]+r0[1],r3[2]+r0[2],r3[3]+r0[3],planes[0])&&
+  normalize_plane(r3[0]-r0[0],r3[1]-r0[1],r3[2]-r0[2],r3[3]-r0[3],planes[1])&&
+  normalize_plane(r3[0]+r1[0],r3[1]+r1[1],r3[2]+r1[2],r3[3]+r1[3],planes[2])&&
+  normalize_plane(r3[0]-r1[0],r3[1]-r1[1],r3[2]-r1[2],r3[3]-r1[3],planes[3])&&
+  normalize_plane(r3[0]+r2[0],r3[1]+r2[1],r3[2]+r2[2],r3[3]+r2[3],planes[4])&&
+  normalize_plane(r3[0]-r2[0],r3[1]-r2[1],r3[2]-r2[2],r3[3]-r2[3],planes[5]);
 }
 template<class T,class Create>std::shared_ptr<T> heap_object(
  const std::shared_ptr<NativeRetailRendererAllocatorService>& allocator,RetailRendererCameraFailure& f,Create create)noexcept{
@@ -173,6 +259,7 @@ bool NativeRetailRendererCameraModule::set_view_window(const NativeRetailRendere
  std::memcpy(&r->state.view_window.y,&input.y,sizeof(input.y));
  r->state.inverse_window.x=div32(one,r->state.view_window.x);
  r->state.inverse_window.y=div32(one,r->state.view_window.y);
+ r->state.synchronized_view_available=false;
  if(!r->frame_link.frame_.empty()){
   const auto frames=r->frame_link.owner_.lock();
   if(!frames){
@@ -181,6 +268,135 @@ bool NativeRetailRendererCameraModule::set_view_window(const NativeRetailRendere
   }
   if(!frames->update_object_frame(r->frame_link,f.frame))
    return fail(f,RetailRendererCameraError::frame_binding,f.frame.operation);
+ }
+ return true;
+}
+bool NativeRetailRendererCameraModule::set_near_clip(const NativeRetailRendererCameraHandle& h,
+ float near_clip,RetailRendererCameraFailure& f)noexcept{
+ const auto lease=admit(f);if(!lease)return false;const auto r=record(h,f);if(!r)return false;
+ if(!std::isfinite(near_clip)||near_clip<=0.0f||near_clip>=r->state.far_clip)
+  return fail(f,RetailRendererCameraError::unverified_numeric_domain,"1A6270 near clip must be finite, positive, and less than far clip");
+ Busy guard(busy_);
+ r->state.near_clip=near_clip;
+ r->state.synchronized_view_available=false;
+ if(!r->frame_link.frame_.empty()){
+  const auto frames=r->frame_link.owner_.lock();
+  if(!frames){
+   f.frame={RetailRendererFrameError::retired_frame,"1A6270 attached native frame owner retired"};
+   return fail(f,RetailRendererCameraError::frame_binding,f.frame.operation);
+  }
+  if(!frames->update_object_frame(r->frame_link,f.frame))
+   return fail(f,RetailRendererCameraError::frame_binding,f.frame.operation);
+ }
+ return true;
+}
+bool NativeRetailRendererCameraModule::set_far_clip(const NativeRetailRendererCameraHandle& h,
+ float far_clip,RetailRendererCameraFailure& f)noexcept{
+ const auto lease=admit(f);if(!lease)return false;const auto r=record(h,f);if(!r)return false;
+ if(!std::isfinite(far_clip)||far_clip<=r->state.near_clip)
+  return fail(f,RetailRendererCameraError::unverified_numeric_domain,"1A62B0 far clip must be finite and greater than near clip");
+ Busy guard(busy_);
+ r->state.far_clip=far_clip;
+ r->state.synchronized_view_available=false;
+ if(!r->frame_link.frame_.empty()){
+  const auto frames=r->frame_link.owner_.lock();
+  if(!frames){
+   f.frame={RetailRendererFrameError::retired_frame,"1A62B0 attached native frame owner retired"};
+   return fail(f,RetailRendererCameraError::frame_binding,f.frame.operation);
+  }
+  if(!frames->update_object_frame(r->frame_link,f.frame))
+   return fail(f,RetailRendererCameraError::frame_binding,f.frame.operation);
+ }
+ return true;
+}
+bool NativeRetailRendererCameraModule::set_projection(const NativeRetailRendererCameraHandle& h,
+ std::uint32_t projection_type,RetailRendererCameraFailure& f)noexcept{
+ const auto lease=admit(f);if(!lease)return false;const auto r=record(h,f);if(!r)return false;
+ if(projection_type!=1u&&projection_type!=2u)
+  return fail(f,RetailRendererCameraError::unverified_numeric_domain,"1A6410 projection type must be perspective (1) or parallel (2)");
+ Busy guard(busy_);
+ r->state.projection_type=projection_type;
+ r->state.synchronized_view_available=false;
+ if(!r->frame_link.frame_.empty()){
+  const auto frames=r->frame_link.owner_.lock();
+  if(!frames){
+   f.frame={RetailRendererFrameError::retired_frame,"1A6410 attached native frame owner retired"};
+   return fail(f,RetailRendererCameraError::frame_binding,f.frame.operation);
+  }
+  if(!frames->update_object_frame(r->frame_link,f.frame))
+   return fail(f,RetailRendererCameraError::frame_binding,f.frame.operation);
+ }
+ return true;
+}
+bool NativeRetailRendererCameraModule::set_fov(const NativeRetailRendererCameraHandle& h,
+ float fov_degrees,float aspect_ratio,RetailRendererCameraFailure& f)noexcept{
+ if(!std::isfinite(fov_degrees)||fov_degrees<=0.0f||fov_degrees>=180.0f||
+   !std::isfinite(aspect_ratio)||aspect_ratio<=0.0f){
+  const auto lease=admit(f);if(!lease)return false;
+  return fail(f,RetailRendererCameraError::unverified_numeric_domain,"17EF50 FOV must be in (0, 180) and aspect ratio positive");
+ }
+ constexpr float kPi=3.14159265358979323846f;
+ const float w=std::tan(fov_degrees*(kPi/360.0f));
+ const float h_win=div32(w,aspect_ratio);
+ return set_view_window(h,{w,h_win},f);
+}
+std::optional<std::uint64_t> NativeRetailRendererCameraModule::register_sync_callback(
+ RetailRendererCameraSyncCallback cb,void* user_data,RetailRendererCameraFailure& f)noexcept{
+ const auto lease=admit(f);if(!lease)return {};
+ if(!cb){fail(f,RetailRendererCameraError::render_services_required,"camera sync callback cannot be null");return {};}
+ Busy guard(busy_);
+ try{
+  const std::uint64_t token=next_callback_token_++;
+  sync_callbacks_.push_back({token,cb,user_data});
+  return token;
+ }catch(const std::bad_alloc&){fail(f,RetailRendererCameraError::allocation,"camera sync callback registration allocation");}
+ catch(...){fail(f,RetailRendererCameraError::native_exception,"camera sync callback registration");}
+ return {};
+}
+bool NativeRetailRendererCameraModule::unregister_sync_callback(std::uint64_t token,RetailRendererCameraFailure& f)noexcept{
+ const auto lease=admit(f);if(!lease)return false;
+ Busy guard(busy_);
+ const auto it=std::find_if(sync_callbacks_.begin(),sync_callbacks_.end(),
+  [token](const SyncCallbackEntry& e){return e.token==token;});
+ if(it==sync_callbacks_.end())
+  return fail(f,RetailRendererCameraError::invalid_handle,"camera sync callback token not registered");
+ sync_callbacks_.erase(it);
+ return true;
+}
+bool NativeRetailRendererCameraModule::synchronize(const NativeRetailRendererCameraHandle& h,
+ NativeRetailRendererFrames& frames,RetailRendererCameraFailure& f)noexcept{
+ const auto lease=admit(f);if(!lease)return false;const auto r=record(h,f);if(!r)return false;
+ if(r->frame_link.frame_.empty()||r->frame_link.owner_.lock().get()!=&frames)
+  return fail(f,RetailRendererCameraError::frame_binding,"camera synchronize requires bound frame from the same Frames module");
+ if(!frames.synchronize_dirty(f.frame))
+  return fail(f,RetailRendererCameraError::frame_binding,f.frame.operation);
+ const auto frame_obs=frames.observe(r->frame_link.frame_,f.frame);
+ if(!frame_obs)return fail(f,RetailRendererCameraError::frame_binding,f.frame.operation);
+ RetailRendererCameraMatrix4x4 view_mat;
+ if(!compute_view_matrix(frame_obs->world.affine,view_mat))
+  return fail(f,RetailRendererCameraError::unverified_numeric_domain,"singular or non-finite frame world matrix");
+ RetailRendererCameraMatrix4x4 proj_mat;
+ std::array<RetailRendererCameraPlane,6> planes{};
+ if(!compute_projection_and_frustum(r->state,view_mat,proj_mat,planes))
+  return fail(f,RetailRendererCameraError::unverified_numeric_domain,"invalid projection or frustum parameters");
+ std::vector<SyncCallbackEntry> callbacks_snapshot;
+ try{
+  callbacks_snapshot=sync_callbacks_;
+ }catch(...){
+  return fail(f,RetailRendererCameraError::allocation,"camera sync callback snapshot allocation");
+ }
+ {
+  Busy guard(busy_);
+  r->state.view_matrix=view_mat;
+  r->state.projection_matrix=proj_mat;
+  r->state.frustum_planes=planes;
+  r->state.synchronized_view_available=true;
+ }
+ for(const auto& entry:callbacks_snapshot){
+  if(!entry.callback(h,r->state,entry.user_data)){
+   r->state.synchronized_view_available=false;
+   return fail(f,RetailRendererCameraError::render_services_required,"camera sync callback rejected synchronization");
+  }
  }
  return true;
 }
@@ -330,6 +546,7 @@ void NativeRetailRendererCameraModule::retire()noexcept{
   if(auto frames=r->frame_link.owner_.lock())frames->release_object_link(r->frame_link);
   r->alive=false;
  }
+ sync_callbacks_.clear();
  records_.clear();
 }
 std::shared_ptr<NativeRetailRendererCameraModule> NativeRetailRendererCore::camera_module(RetailRendererCoreFailure& f)const noexcept{
@@ -356,5 +573,161 @@ bool construct_core_plugin_0405(NativeRetailRendererCore& core,RetailRendererCor
 void destroy_core_plugin_0405(NativeRetailRendererCore& core)noexcept{
  if(core.camera_module_){core.camera_module_->retire();core.camera_module_.reset();core.module_0405_count_.fetch_sub(1,std::memory_order_relaxed);}
 }
+}
+
+void destroy_camera_producer_17ebb0(
+ NativeRetailRendererCameraModule& cameras,
+ NativeRetailRendererFrames& frames,
+ NativeRetailRendererRasters& rasters,
+ RetailCameraProducer17EBB0Result& produced) noexcept {
+ RetailRendererCameraFailure cf;
+ RetailRendererFrameFailure ff;
+ RetailRendererRasterFailure rf;
+ if(!produced.camera.empty()){
+  cameras.destroy_base_camera(produced.camera,cf);
+  produced.camera={};
+ }
+ if(!produced.frame.empty()){
+  frames.destroy_leaf(produced.frame,ff);
+  produced.frame={};
+ }
+ if(!produced.color_raster.empty()){
+  rasters.destroy_raster(produced.color_raster,rf);
+  produced.color_raster={};
+ }
+ if(!produced.depth_raster.empty()){
+  rasters.destroy_raster(produced.depth_raster,rf);
+  produced.depth_raster={};
+ }
+ produced.world_link.reset();
+}
+
+std::optional<RetailCameraProducer17EBB0Result> create_camera_producer_17ebb0(
+ const std::shared_ptr<NativeRetailGameSession>& session,
+ NativeRetailRendererCameraModule& cameras,
+ NativeRetailRendererFrames& frames,
+ NativeRetailRendererRasters& rasters,
+ const RetailCameraProducer17EBB0Config& config,
+ RetailCameraProducerFailure& failure) noexcept {
+ failure={};
+ RetailGameSessionFailure sf;
+ if(!session||!session->validate_current_thread(sf)){
+  failure.world={RetailCameraWorldError::session,"17EBB0 camera/world Session thread/lifetime"};
+  failure.operation=failure.world.operation;
+  return {};
+ }
+ if(config.width<=0||config.height<=0){
+  failure.operation="17EBB0 positive camera extent required";
+  failure.raster.kind=RetailRendererRasterError::extent;
+  failure.raster.operation=failure.operation;
+  return {};
+ }
+ RetailCameraProducer17EBB0Result out;
+ auto rollback=[&]()noexcept{
+  destroy_camera_producer_17ebb0(cameras,frames,rasters,out);
+ };
+ auto cam=cameras.create_base_camera(config.depth_inputs,failure.camera);
+ if(!cam){failure.operation=failure.camera.operation;return {};}
+ out.camera=*cam;
+
+ auto frm=frames.create_base_frame(failure.frame);
+ if(!frm){failure.operation=failure.frame.operation;rollback();return {};}
+ out.frame=*frm;
+
+ if(!cameras.set_frame(out.camera,out.frame,failure.camera)){
+  failure.operation=failure.camera.operation;rollback();return {};
+ }
+
+ if(config.has_depth){
+  auto zb=rasters.create_raster({config.width,config.height,0,1u,config.depth_flags|1u,0u},failure.raster);
+  if(!zb){failure.operation=failure.raster.operation;rollback();return {};}
+  out.depth_raster=*zb;
+  if(config.display&&!rasters.bind_display_target(out.depth_raster,config.display,failure.raster)){
+   failure.operation=failure.raster.operation;rollback();return {};
+  }
+  if(!cameras.set_z_buffer_raster(out.camera,out.depth_raster,failure.camera)){
+   failure.operation=failure.camera.operation;rollback();return {};
+  }
+ }
+
+ if(config.has_color){
+  auto fb=rasters.create_raster({config.width,config.height,0,2u,config.color_flags|2u,0u},failure.raster);
+  if(!fb){failure.operation=failure.raster.operation;rollback();return {};}
+  out.color_raster=*fb;
+  if(config.display&&!rasters.bind_display_target(out.color_raster,config.display,failure.raster)){
+   failure.operation=failure.raster.operation;rollback();return {};
+  }
+  if(!cameras.set_frame_buffer_raster(out.camera,out.color_raster,failure.camera)){
+   failure.operation=failure.camera.operation;rollback();return {};
+  }
+ }
+
+ if(config.target_policy&&!cameras.set_render_target_policy(out.camera,*config.target_policy,failure.camera)){
+  failure.operation=failure.camera.operation;rollback();return {};
+ }
+
+ out.world_link=NativeRetailCameraWorldLink::create_initial(session,failure.world);
+ if(!out.world_link){failure.operation=failure.world.operation;rollback();return {};}
+ return out;
+}
+
+std::optional<RetailCameraInit180ED0Result> initialize_cameras_180ed0(
+ const std::shared_ptr<NativeRetailGameSession>& session,
+ NativeRetailRendererCameraModule& cameras,
+ NativeRetailRendererFrames& frames,
+ NativeRetailRendererRasters& rasters,
+ NativeRetailRenderCameras& world_cameras,
+ const RetailCameraInit180ED0Config& config,
+ RetailCameraProducerFailure& failure) noexcept {
+ failure={};
+ if(config.width<=0||config.height<=0){
+  failure.operation="180ED0 positive video mode extent required";
+  failure.raster.kind=RetailRendererRasterError::extent;
+  failure.raster.operation=failure.operation;
+  return {};
+ }
+ const float aspect=static_cast<float>(config.width)/static_cast<float>(config.height);
+ auto configure_camera=[&](const NativeRetailRendererCameraHandle& cam)noexcept->bool{
+  if(!cameras.set_near_clip(cam,config.near_clip,failure.camera)){failure.operation=failure.camera.operation;return false;}
+  if(!cameras.set_far_clip(cam,config.far_clip,failure.camera)){failure.operation=failure.camera.operation;return false;}
+  if(!cameras.set_fov(cam,config.fov_degrees,aspect,failure.camera)){failure.operation=failure.camera.operation;return false;}
+  if(!cameras.set_projection(cam,1u,failure.camera)){failure.operation=failure.camera.operation;return false;}
+  return true;
+ };
+
+ RetailCameraProducer17EBB0Config primary_cfg{
+  config.width,config.height,config.primary_has_color,config.primary_has_depth,
+  0u,0u,config.depth_inputs,config.display,config.target_policy
+ };
+ auto primary=create_camera_producer_17ebb0(session,cameras,frames,rasters,primary_cfg,failure);
+ if(!primary)return {};
+
+ RetailCameraInit180ED0Result out{std::move(*primary),std::nullopt};
+ auto rollback=[&]()noexcept{
+  if(out.scene)destroy_camera_producer_17ebb0(cameras,frames,rasters,*out.scene);
+  destroy_camera_producer_17ebb0(cameras,frames,rasters,out.primary);
+ };
+
+ if(!configure_camera(out.primary.camera)){rollback();return {};}
+ if(!world_cameras.publish_camera_link_after_180ed0(0u,out.primary.world_link,failure.world)){
+  failure.operation=failure.world.operation;rollback();return {};
+ }
+
+ if(config.create_scene_camera){
+  RetailCameraProducer17EBB0Config scene_cfg{
+   config.width,config.height,config.scene_has_color,config.scene_has_depth,
+   0x20u,0u,config.depth_inputs,config.display,config.target_policy
+  };
+  auto scene=create_camera_producer_17ebb0(session,cameras,frames,rasters,scene_cfg,failure);
+  if(!scene){rollback();return {};}
+  out.scene=std::move(*scene);
+  if(!configure_camera(out.scene->camera)){rollback();return {};}
+  const auto obs=world_cameras.observe(failure.world);
+  if(!obs){failure.operation=failure.world.operation;rollback();return {};}
+  if(obs->count>1&&!world_cameras.publish_camera_link_after_180ed0(1u,out.scene->world_link,failure.world)){
+   failure.operation=failure.world.operation;rollback();return {};
+  }
+ }
+ return out;
 }
 }

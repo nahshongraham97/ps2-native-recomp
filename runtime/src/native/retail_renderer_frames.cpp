@@ -14,6 +14,24 @@ RetailRendererMatrixValue identity_matrix()noexcept{
  const auto one=std::bit_cast<float>(std::uint32_t{0x3f800000});
  return {{{one,0,0},{0,one,0},{0,0,one},{0,0,0}},0x20003u};
 }
+RetailRendererMatrixValue multiply_row_affine(const RetailRendererMatrixValue& local,const RetailRendererMatrixValue& parent)noexcept{
+ const auto& a=local.affine;
+ const auto& b=parent.affine;
+ const auto dot=[](const RetailRendererPoint3& v,float bx,float ux,float ax)noexcept{
+  return v.x*bx+v.y*ux+v.z*ax;
+ };
+ RetailRendererAffine out;
+ out.right={dot(a.right,b.right.x,b.up.x,b.at.x),dot(a.right,b.right.y,b.up.y,b.at.y),dot(a.right,b.right.z,b.up.z,b.at.z)};
+ out.up={dot(a.up,b.right.x,b.up.x,b.at.x),dot(a.up,b.right.y,b.up.y,b.at.y),dot(a.up,b.right.z,b.up.z,b.at.z)};
+ out.at={dot(a.at,b.right.x,b.up.x,b.at.x),dot(a.at,b.right.y,b.up.y,b.at.y),dot(a.at,b.right.z,b.up.z,b.at.z)};
+ out.translation={
+  dot(a.translation,b.right.x,b.up.x,b.at.x)+b.translation.x,
+  dot(a.translation,b.right.y,b.up.y,b.at.y)+b.translation.y,
+  dot(a.translation,b.right.z,b.up.z,b.at.z)+b.translation.z
+ };
+ const std::uint32_t props=(local.properties&parent.properties)&0x20003u;
+ return {out,props};
+}
 template<class T,class Create>std::shared_ptr<T> heap_object(
  const std::shared_ptr<NativeRetailRendererAllocatorService>& allocator,
  RetailRendererFrameFailure& f,Create create)noexcept{
@@ -226,6 +244,35 @@ void NativeRetailRendererFrames::unlink_dirty(NativeRetailRendererFrameRecord* n
 bool NativeRetailRendererFrames::mark_dirty(const NativeRetailRendererFrameHandle& frame,RetailRendererFrameFailure& f)noexcept{
  const auto lease=admit(f);if(!lease)return false;const auto node=record(frame,f);if(!node)return false;
  mark_record(node.get());return true;
+}
+bool NativeRetailRendererFrames::set_modelling(const NativeRetailRendererFrameHandle& frame,
+ const RetailRendererMatrixValue& matrix,RetailRendererFrameFailure& f)noexcept{
+ const auto lease=admit(f);if(!lease)return false;const auto node=record(frame,f);if(!node)return false;
+ Busy guard(busy_);
+ node->modelling=matrix;
+ mark_record(node.get());
+ return true;
+}
+bool NativeRetailRendererFrames::synchronize_dirty(RetailRendererFrameFailure& f)noexcept{
+ const auto lease=admit(f);if(!lease)return false;
+ Busy guard(busy_);
+ auto sync_node=[](auto& self,NativeRetailRendererFrameRecord* node,bool parent_dirty)noexcept->void{
+  const bool dirty=parent_dirty||((node->flags&0x0fu)!=0);
+  if(dirty){
+   node->world=node->parent?multiply_row_affine(node->modelling,node->parent->world):node->modelling;
+   node->flags=static_cast<std::uint8_t>(node->flags&0xf0u);
+  }
+  for(auto* child=node->first_child;child;child=child->next_sibling){
+   self(self,child,dirty);
+  }
+ };
+ while(dirty_first_){
+  auto* root=dirty_first_;
+  unlink_dirty(root);
+  sync_node(sync_node,root,false);
+  root->flags=static_cast<std::uint8_t>(root->flags&0xf0u);
+ }
+ return true;
 }
 void NativeRetailRendererFrames::rewrite_roots(NativeRetailRendererFrameRecord* first,NativeRetailRendererFrameRecord* root)noexcept{
  auto* node=first;

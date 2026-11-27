@@ -1,4 +1,5 @@
 #pragma once
+#include "mka/retail_renderer_cameras.hpp"
 #include <cstddef>
 #include <cstdint>
 #include <memory>
@@ -74,4 +75,81 @@ private:
  std::int32_t count_{};
  bool admitted_{},suspended_{};
 };
+
+struct RetailCameraProducerFailure {
+ const char* operation{""};
+ RetailCameraWorldFailure world;
+ RetailRendererCameraFailure camera;
+ RetailRendererFrameFailure frame;
+ RetailRendererRasterFailure raster;
+};
+
+struct RetailCameraProducer17EBB0Config {
+ std::int32_t width{};
+ std::int32_t height{};
+ bool has_color{false};
+ bool has_depth{false};
+ std::uint32_t color_flags{0};
+ std::uint32_t depth_flags{0};
+ RetailRendererCameraDepthInputs depth_inputs{};
+ std::shared_ptr<NativeProductionDisplayService> display;
+ std::optional<RetailRendererCameraTargetPolicy> target_policy;
+};
+
+struct RetailCameraProducer17EBB0Result {
+ NativeRetailRendererCameraHandle camera;
+ NativeRetailRendererFrameHandle frame;
+ NativeRetailRasterHandle color_raster;
+ NativeRetailRasterHandle depth_raster;
+ std::shared_ptr<NativeRetailCameraWorldLink> world_link;
+};
+
+struct RetailCameraInit180ED0Config {
+ std::int32_t width{};
+ std::int32_t height{};
+ float fov_degrees{60.0f};
+ float near_clip{0.25f};
+ float far_clip{125.0f};
+ bool create_scene_camera{false};
+ bool primary_has_color{false};
+ bool primary_has_depth{false};
+ bool scene_has_color{true};
+ bool scene_has_depth{true};
+ RetailRendererCameraDepthInputs depth_inputs{};
+ std::shared_ptr<NativeProductionDisplayService> display;
+ std::optional<RetailRendererCameraTargetPolicy> target_policy;
+};
+
+struct RetailCameraInit180ED0Result {
+ RetailCameraProducer17EBB0Result primary;
+ std::optional<RetailCameraProducer17EBB0Result> scene;
+};
+
+// Native 0x0017EBB0 camera producer: allocates camera, frame, requested
+// depth/color rasters, display/target bindings, and world link with full
+// rollback if any sub-object creation or binding fails.
+std::optional<RetailCameraProducer17EBB0Result> create_camera_producer_17ebb0(
+ const std::shared_ptr<NativeRetailGameSession>& session,
+ NativeRetailRendererCameraModule& cameras,
+ NativeRetailRendererFrames& frames,
+ NativeRetailRendererRasters& rasters,
+ const RetailCameraProducer17EBB0Config& config,
+ RetailCameraProducerFailure& failure) noexcept;
+
+void destroy_camera_producer_17ebb0(
+ NativeRetailRendererCameraModule& cameras,
+ NativeRetailRendererFrames& frames,
+ NativeRetailRendererRasters& rasters,
+ RetailCameraProducer17EBB0Result& produced) noexcept;
+
+// Native 0x00180ED0 camera initializer: builds primary (and optional scene)
+// camera via 17EBB0, applies near/far/FOV/projection, and publishes links.
+std::optional<RetailCameraInit180ED0Result> initialize_cameras_180ed0(
+ const std::shared_ptr<NativeRetailGameSession>& session,
+ NativeRetailRendererCameraModule& cameras,
+ NativeRetailRendererFrames& frames,
+ NativeRetailRendererRasters& rasters,
+ NativeRetailRenderCameras& world_cameras,
+ const RetailCameraInit180ED0Config& config,
+ RetailCameraProducerFailure& failure) noexcept;
 }

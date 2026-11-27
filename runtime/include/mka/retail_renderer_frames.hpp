@@ -101,6 +101,8 @@ public:
  std::optional<std::vector<NativeRetailRendererFrameObjectHandle>> objects(
      const NativeRetailRendererFrameHandle&,RetailRendererFrameFailure&)noexcept;
  bool mark_dirty(const NativeRetailRendererFrameHandle&,RetailRendererFrameFailure&)noexcept;
+ bool set_modelling(const NativeRetailRendererFrameHandle&,const RetailRendererMatrixValue&,RetailRendererFrameFailure&)noexcept;
+ bool synchronize_dirty(RetailRendererFrameFailure&)noexcept;
  bool add_child(const NativeRetailRendererFrameHandle& parent,const NativeRetailRendererFrameHandle& child,
      RetailRendererFrameFailure&)noexcept;
  bool detach(const NativeRetailRendererFrameHandle&,RetailRendererFrameFailure&)noexcept;

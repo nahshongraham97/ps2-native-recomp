@@ -3,7 +3,9 @@
 #include "mka/retail_renderer_rasters.hpp"
 #include "mka/retail_renderer_frames.hpp"
 #include "mka/retail_display_service.hpp"
+#include <array>
 #include <atomic>
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <thread>
@@ -30,6 +32,14 @@ struct RetailRendererCameraTargetPolicy {
  DisplayViewportRect physical_viewport;
  std::optional<float> clear_depth; // Explicit native projection policy, never inferred from source Z=0.
 };
+struct RetailRendererCameraMatrix4x4 {
+ std::array<float,16> elements{}; // Column-major 4x4 matrix.
+ bool operator==(const RetailRendererCameraMatrix4x4&)const=default;
+};
+struct RetailRendererCameraPlane {
+ float a{},b{},c{},d{};
+ bool operator==(const RetailRendererCameraPlane&)const=default;
+};
 class NativeRetailRendererCameraHandle final {
 public:
  NativeRetailRendererCameraHandle()noexcept=default;
@@ -53,7 +63,14 @@ struct RetailRendererBaseCameraObservation {
  std::uint32_t projection_type{};
  RetailRendererCameraDepthInputs explicit_device_depth;
  bool synchronized_view_available{};
+ RetailRendererCameraMatrix4x4 view_matrix;
+ RetailRendererCameraMatrix4x4 projection_matrix;
+ std::array<RetailRendererCameraPlane,6> frustum_planes{};
 };
+using RetailRendererCameraSyncCallback=bool(*)(
+    const NativeRetailRendererCameraHandle&,
+    const RetailRendererBaseCameraObservation&,
+    void* user_data)noexcept;
 class NativeRetailRendererCameraModule final:public std::enable_shared_from_this<NativeRetailRendererCameraModule> {
 public:
  ~NativeRetailRendererCameraModule();
@@ -76,6 +93,14 @@ public:
  std::optional<NativeRetailRendererFrameObjectHandle> frame_object_identity(
      const NativeRetailRendererCameraHandle&,RetailRendererCameraFailure&)const noexcept;
  bool set_view_window(const NativeRetailRendererCameraHandle&,RetailRendererCameraWindow,RetailRendererCameraFailure&)noexcept;
+ bool set_near_clip(const NativeRetailRendererCameraHandle&,float near_clip,RetailRendererCameraFailure&)noexcept;
+ bool set_far_clip(const NativeRetailRendererCameraHandle&,float far_clip,RetailRendererCameraFailure&)noexcept;
+ bool set_projection(const NativeRetailRendererCameraHandle&,std::uint32_t projection_type,RetailRendererCameraFailure&)noexcept;
+ bool set_fov(const NativeRetailRendererCameraHandle&,float fov_degrees,float aspect_ratio,RetailRendererCameraFailure&)noexcept;
+ std::optional<std::uint64_t> register_sync_callback(
+     RetailRendererCameraSyncCallback,void* user_data,RetailRendererCameraFailure&)noexcept;
+ bool unregister_sync_callback(std::uint64_t token,RetailRendererCameraFailure&)noexcept;
+ bool synchronize(const NativeRetailRendererCameraHandle&,NativeRetailRendererFrames&,RetailRendererCameraFailure&)noexcept;
  bool destroy_base_camera(const NativeRetailRendererCameraHandle&,RetailRendererCameraFailure&)noexcept;
  // A capability refusal, not an implementation of source Begin/EndUpdate.
  bool require_render_ready(const NativeRetailRendererCameraHandle&,RetailRendererCameraFailure&)const noexcept;
@@ -111,7 +136,14 @@ private:
  void retire()noexcept;
  std::weak_ptr<NativeRetailGameSession> session_;
  std::shared_ptr<NativeRetailRendererAllocatorService> allocator_;
+ struct SyncCallbackEntry {
+  std::uint64_t token{};
+  RetailRendererCameraSyncCallback callback{};
+  void* user_data{};
+ };
  std::vector<std::shared_ptr<NativeRetailRendererBaseCameraRecord>> records_;
+ std::vector<SyncCallbackEntry> sync_callbacks_;
+ std::uint64_t next_callback_token_{1};
  std::atomic<bool> active_{true};
  bool busy_{};
  const std::thread::id thread_{std::this_thread::get_id()};

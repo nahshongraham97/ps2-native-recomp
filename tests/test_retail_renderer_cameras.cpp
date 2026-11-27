@@ -1,4 +1,5 @@
 #include "mka/retail_renderer_cameras.hpp"
+#include "mka/retail_camera_world.hpp"
 #include "mka/retail_renderer_frames.hpp"
 #include "mka/retail_renderer_streams.hpp"
 #include "mka/retail_renderer_transforms.hpp"
@@ -478,6 +479,80 @@ void camera_gpu_target_cases(const std::filesystem::path& root,const std::option
   gpu_check(glGetError()==GL_NO_ERROR,"positive target case ends without GPU errors");
  }
  {
+  ++gpu_scenarios;CameraGpuFixture x(root);auto a=native_display();DisplayServiceFailure df;
+  gpu_check(a->acquire_context(df),"acquire hidden GL context for 180ED0 scene render");
+  gpu_check(renderer_required::construct_core_plugin_0403(*x.core,x.native.f),"GPU actual0403 constructor");
+  auto frames=x.core->frames(x.native.f);
+  gpu_check(bool(frames),"GPU real persistent frame owner");
+  RetailGameSessionFailure gsf;
+  auto* world_cams=x.native.startup.game_session->render_cameras(gsf);
+  gpu_check(world_cams!=nullptr,"session render_cameras available");
+  RetailCameraWorldFailure wf;
+  gpu_check(world_cams->store_initial_count_from_127260(wf),"admit 127260 camera count");
+  RetailCameraInit180ED0Config cfg;
+  cfg.width=640;cfg.height=448;cfg.fov_degrees=60.0f;cfg.near_clip=0.5f;cfg.far_clip=50.0f;
+  cfg.create_scene_camera=false;cfg.primary_has_color=true;cfg.primary_has_depth=true;
+  cfg.depth_inputs={0.0f,1.0f};cfg.display=a;
+  cfg.target_policy=RetailRendererCameraTargetPolicy{{8,6,48,36},1.0f};
+  RetailCameraProducerFailure pf;
+  auto init=initialize_cameras_180ed0(x.native.startup.game_session,*x.cameras,*frames,*x.rasters,
+   *world_cams,cfg,pf);
+  gpu_check(init.has_value(),"180ED0 camera initialization succeeded for GPU scene render");
+  RetailRendererFrameFailure ff;
+  RetailRendererMatrixValue cam_modelling{{{1,0,0},{0,1,0},{0,0,1},{0,0,-4.0f}},0x20000u};
+  gpu_check(frames->set_modelling(init->primary.frame,cam_modelling,ff),"set 180ED0 camera frame translation");
+  RetailRendererCameraFailure f;
+  gpu_check(x.cameras->synchronize(init->primary.camera,*frames,f),"synchronize 180ED0 camera view and frustum");
+  const auto obs=x.cameras->observe(init->primary.camera,f);
+  gpu_check(obs&&obs->synchronized_view_available,"synchronized view and frustum available");
+  for(const auto& plane:obs->frustum_planes){
+   const float dist=plane.d; // origin (0,0,0) is at z_cam=+4 inside [0.5, 50]
+   gpu_check(dist>0.0f,"origin lies inside all 6 synchronized frustum planes");
+  }
+  gpu_check(x.cameras->begin_update(init->primary.camera,f)&&
+            x.cameras->clear(init->primary.camera,0.1f,0.1f,0.2f,1.0f,3u,f),
+            "begin_update and clear succeeded on 180ED0 camera");
+  const GLboolean prior_depth=glIsEnabled(GL_DEPTH_TEST);
+  GLint prior_matrix_mode=GL_MODELVIEW;
+  glGetIntegerv(GL_MATRIX_MODE,&prior_matrix_mode);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadMatrixf(obs->projection_matrix.elements.data());
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadMatrixf(obs->view_matrix.elements.data());
+  glBegin(GL_TRIANGLES);
+  glColor3f(1.0f,0.2f,0.1f);glVertex3f(-2.0f,-2.0f,0.0f);
+  glColor3f(0.1f,1.0f,0.2f);glVertex3f(2.0f,-2.0f,0.0f);
+  glColor3f(0.2f,0.3f,1.0f);glVertex3f(0.0f,2.0f,0.0f);
+  glEnd();
+  glPopMatrix();
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glMatrixMode(static_cast<GLenum>(prior_matrix_mode));
+  if(!prior_depth)glDisable(GL_DEPTH_TEST);
+  gpu_check(x.cameras->end_update(init->primary.camera,f),"end_update succeeded after 3D scene draw");
+
+  std::vector<unsigned char> rgba(64*48*4);std::vector<float> depths(64*48);
+  gpu_check(x.cameras->begin_update(init->primary.camera,f),"rebind 180ED0 FBO for diagnostic readback");
+  glReadPixels(0,0,64,48,GL_RGBA,GL_UNSIGNED_BYTE,rgba.data());
+  glReadPixels(0,0,64,48,GL_DEPTH_COMPONENT,GL_FLOAT,depths.data());
+  a->record_diagnostic_readback(2);
+  gpu_check(x.cameras->end_update(init->primary.camera,f),"end diagnostic readback pass");
+  unsigned lit_pixels=0;
+  for(unsigned y=6;y<42;++y)for(unsigned xx=8;xx<56;++xx){
+   const std::size_t idx=(y*64+xx);
+   const unsigned r=rgba[idx*4+0],g=rgba[idx*4+1];
+   if((r>100||g>100)&&depths[idx]<0.99f)++lit_pixels;
+  }
+  gpu_check(lit_pixels>100,"3D triangle rendered through 180ED0 synchronized view/projection produced measurable color & depth output");
+  destroy_camera_producer_17ebb0(*x.cameras,*frames,*x.rasters,init->primary);
+  renderer_required::destroy_core_plugin_0403(*x.core);
+  gpu_check(glGetError()==GL_NO_ERROR,"180ED0 GPU scene render case ends without GL errors");
+ }
+ {
   ++gpu_scenarios;CameraGpuFixture x(root);auto a=native_display();RetailRendererCameraFailure f;RetailRendererRasterFailure rf;
   const auto color=x.backed(2,a),depth=x.backed(1,a);const auto h=x.camera(color,depth);
   bool wrong_thread=false;std::thread thread([&]{RetailRendererCameraFailure q;
@@ -746,6 +821,83 @@ int main(int argc,char** argv)try{
 #else
  check(argc==3,"native GPU diagnostics require Windows display service");
 #endif
+ {
+  // 17EBB0 / 180ED0 producer, frame dirty-queue sync, callback ordering, and partial-failure rollback.
+  Fixture x(root);
+  auto c=x.core();
+  auto initialized=c->initialize_core(x.f);check(initialized&&*initialized,"producer core init");
+  check(renderer_required::construct_core_plugin_0403(*c,x.f)&&
+        renderer_required::construct_core_plugin_0405(*c,x.f)&&
+        renderer_required::construct_core_plugin_0407(*c,x.f),"producer plugins init");
+  auto m=c->camera_module(x.f);
+  auto frames=c->frames(x.f);
+  auto rasters=c->rasters(x.f);
+  RetailGameSessionFailure gsf;
+  auto* world_cams=x.startup.game_session->render_cameras(gsf);
+  check(world_cams!=nullptr,"session render_cameras available");
+  RetailRendererCameraFailure cf;RetailRendererFrameFailure ff;RetailRendererRasterFailure rf;
+  // 1. Frame hierarchy dirty-queue sync + view/frustum computation.
+  auto parent_f=frames->create_base_frame(ff);auto child_f=frames->create_base_frame(ff);
+  check(parent_f&&child_f&&frames->add_child(*parent_f,*child_f,ff),"create parent/child frames");
+  RetailRendererMatrixValue p_mod{{{1,0,0},{0,1,0},{0,0,1},{0,0,-5.0f}},0x20000u};
+  RetailRendererMatrixValue c_mod{{{1,0,0},{0,1,0},{0,0,1},{0,0,2.0f}},0x20000u};
+  check(frames->set_modelling(*parent_f,p_mod,ff)&&frames->set_modelling(*child_f,c_mod,ff),"set parent/child modelling");
+  check(!frames->require_fully_synchronized(*child_f,ff)&&ff.kind==RetailRendererFrameError::synchronization_required,"dirty frame refuses require_fully_synchronized");
+  auto cam=create(m);
+  check(m->set_frame(cam,*child_f,cf),"bind child frame to camera");
+  struct SyncLog { std::vector<int> order; bool reject_second{false}; } log;
+  auto cb1=[](const NativeRetailRendererCameraHandle&,const RetailRendererBaseCameraObservation& obs,void* u)noexcept->bool{
+   auto* l=static_cast<SyncLog*>(u);l->order.push_back(1);return obs.synchronized_view_available;
+  };
+  auto cb2=[](const NativeRetailRendererCameraHandle&,const RetailRendererBaseCameraObservation&,void* u)noexcept->bool{
+   auto* l=static_cast<SyncLog*>(u);l->order.push_back(2);return !l->reject_second;
+  };
+  auto t1=m->register_sync_callback(cb1,&log,cf);auto t2=m->register_sync_callback(cb2,&log,cf);
+  check(t1&&t2,"register two sync callbacks");
+  check(m->synchronize(cam,*frames,cf),"synchronize camera and frame hierarchy");
+  check(log.order==std::vector<int>{1,2},"sync callbacks invoked in deterministic registration order");
+  check(frames->require_fully_synchronized(*child_f,ff),"frame hierarchy clean after synchronize");
+  auto child_obs=frames->observe(*child_f,ff);
+  check(child_obs&&std::fabs(child_obs->world.affine.translation.z-(-3.0f))<1e-5f,"child world translation accumulated (-5 + 2 = -3)");
+  auto cam_obs=m->observe(cam,cf);
+  check(cam_obs&&cam_obs->synchronized_view_available&&std::fabs(cam_obs->view_matrix.elements[14]-3.0f)<1e-5f,"view matrix translation inverted to +3");
+  log.reject_second=true;log.order.clear();
+  check(!m->synchronize(cam,*frames,cf)&&cf.kind==RetailRendererCameraError::render_services_required,"callback refusal fails synchronize");
+  cam_obs=m->observe(cam,cf);
+  check(cam_obs&&!cam_obs->synchronized_view_available,"refused callback clears synchronized_view_available");
+  check(m->unregister_sync_callback(*t2,cf)&&m->unregister_sync_callback(*t1,cf),"unregister sync callbacks");
+  check(m->destroy_base_camera(cam,cf)&&frames->destroy_root_hierarchy(*parent_f,ff),"cleanup frame/camera hierarchy");
+
+  // 2. Partial-failure rollback for 17EBB0 and 180ED0 (must leave 0 leaked cameras/frames/rasters).
+  RetailCameraProducerFailure pf;
+  RetailCameraProducer17EBB0Config bad_cfg;bad_cfg.width=0;bad_cfg.height=48;bad_cfg.depth_inputs={0.0f,1.0f};
+  check(!create_camera_producer_17ebb0(x.startup.game_session,*m,*frames,*rasters,bad_cfg,pf),"17EBB0 rejects zero extent");
+  check(m->live_base_cameras(cf)==0&&frames->observe_module(ff)->live_base_frames==0&&rasters->live_rasters(rf)==0,"17EBB0 zero-extent failure leaks nothing");
+
+  RetailCameraInit180ED0Config init_cfg;
+  init_cfg.width=640;init_cfg.height=448;init_cfg.depth_inputs={0.0f,1.0f};
+  // Deliberately omit store_initial_count_from_127260 so publish_camera_link_after_180ed0 fails mid-way.
+  check(!initialize_cameras_180ed0(x.startup.game_session,*m,*frames,*rasters,*world_cams,init_cfg,pf),
+   "180ED0 fails cleanly when 127260 count producer is absent");
+  check(m->live_base_cameras(cf)==0&&frames->observe_module(ff)->live_base_frames==0&&rasters->live_rasters(rf)==0,
+   "180ED0 partial-failure rollback leaves zero leaked cameras, frames, or rasters");
+
+  RetailCameraWorldFailure wf;
+  check(world_cams->store_initial_count_from_127260(wf)&&
+        world_cams->store_count_from_127110(2,wf),"admit 2 camera slots");
+  init_cfg.create_scene_camera=true;init_cfg.scene_has_color=true;init_cfg.scene_has_depth=true;
+  auto init_ok=initialize_cameras_180ed0(x.startup.game_session,*m,*frames,*rasters,*world_cams,init_cfg,pf);
+  check(init_ok.has_value()&&init_ok->scene.has_value(),"180ED0 initializes primary + scene cameras");
+  auto p_obs=m->observe(init_ok->primary.camera,cf);auto s_obs=m->observe(init_ok->scene->camera,cf);
+  check(p_obs&&std::fabs(p_obs->near_clip-0.25f)<1e-6f&&std::fabs(p_obs->far_clip-125.0f)<1e-5f&&p_obs->projection_type==1u,"180ED0 primary clip/projection defaults");
+  check(s_obs&&std::fabs(s_obs->near_clip-0.25f)<1e-6f&&std::fabs(s_obs->far_clip-125.0f)<1e-5f&&s_obs->projection_type==1u,"180ED0 scene clip/projection defaults");
+  destroy_camera_producer_17ebb0(*m,*frames,*rasters,*init_ok->scene);
+  destroy_camera_producer_17ebb0(*m,*frames,*rasters,init_ok->primary);
+  check(m->live_base_cameras(cf)==0&&frames->observe_module(ff)->live_base_frames==0&&rasters->live_rasters(rf)==0,"180ED0 cleanup leaves zero leaks");
+  renderer_required::destroy_core_plugin_0407(*c);
+  renderer_required::destroy_core_plugin_0405(*c);
+  renderer_required::destroy_core_plugin_0403(*c);
+ }
  std::printf("PASS_NATIVE0405_CAMERA_RESOURCE_BASE; actual Core/Main prefix,64 real records,source defaults/window/7 exact SSE cases,physical release,allocation cuts module=%u camera=%u,thread/foreign/lifetime/Main transfer/task lookup; depth provider/plugins/frame/sync/scene/game OPEN; hidden native display GPU checks separate,no audio\n",module_cuts,camera_cuts);
  return 0;
 }catch(const std::exception& e){fail_after=-1;std::fprintf(stderr,"FAIL native0405 camera: %s\n",e.what());return 1;}
