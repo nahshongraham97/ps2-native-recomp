@@ -20,7 +20,9 @@ constexpr std::optional<std::size_t> bounded_chunk_end(std::size_t begin,
 }
 enum class RetailSsfGeometryError {
     none, range, chunk, version, selection, frame, geometry, material,
-    native_geometry_required, unsupported_plugin, topology, allocation, native_exception
+    native_geometry_required, unsupported_plugin, topology, allocation, native_exception,
+    dma_chain, vif_bounds, unsupported_vif_opcode, unsupported_unpack_format,
+    skinned_native_pipe_unsupported
 };
 struct RetailSsfGeometryFailure {
     RetailSsfGeometryError kind{RetailSsfGeometryError::none};
@@ -68,6 +70,8 @@ struct RetailSsfGeometryData {
     RetailRendererPoint3 bound_center{};
     float bound_radius{};
     bool has_colors{}, has_uv{}, has_normals{};
+    bool is_native_ps2_vif{};
+    std::size_t adc_strip_breaks{};
 };
 // CPU decoding of explicitly selected authentic non-native RW geometry inside
 // a complete SSF clump. No RW wrapper manufacture, GPU work, animation producer,

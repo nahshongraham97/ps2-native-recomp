@@ -160,7 +160,203 @@ std::optional<RetailSsfGeometryData> decode_retail_ssf_geometry(std::span<const 
         // geometries may have stream-consumer lengths that are not nesting bounds.
         r.need(geometry.end-geometry.begin>=28&&r.word(geometry.begin)==1,RetailSsfGeometryError::geometry,"SSF selected geometry fixed header",geometry.at);
         result.geometry_flags=r.word(geometry.begin+12);
-        r.need(!(result.geometry_flags&0x01000000u),RetailSsfGeometryError::native_geometry_required,"SSF native PS2 geometry needs its proved attribute decoder",geometry.begin+12);
+        if(result.geometry_flags&0x01000000u) {
+            result.is_native_ps2_vif=true;
+            const auto p0=geometry.begin+12;
+            const auto flags=r.word(p0),triangle_count=r.word(p0+4),vertex_count=r.word(p0+8),morph_count=r.word(p0+12);
+            r.need(morph_count>=1&&selection.morph_index==0,RetailSsfGeometryError::selection,"SSF native geometry morph selection",p0);
+            r.need(vertex_count&&triangle_count,RetailSsfGeometryError::geometry,"SSF native geometry vertex and triangle counts",p0);
+            r.need(morph_count<=(geometry.end-(p0+16))/24,RetailSsfGeometryError::range,"SSF native geometry morph extent",p0+16);
+            auto mp=p0+16;
+            for(std::size_t i=0;i<morph_count;++i) {
+                const RetailRendererPoint3 center{r.scalar(mp),r.scalar(mp+4),r.scalar(mp+8)};
+                const auto radius=r.scalar(mp+12);
+                const auto has_v=r.word(mp+16),has_n=r.word(mp+20);
+                r.need(radius>=0&&has_v==0&&has_n==0,RetailSsfGeometryError::geometry,"SSF native geometry morph must have zero non-native arrays",mp);
+                if(i==0){result.bound_center=center;result.bound_radius=radius;}
+                mp+=24;
+            }
+            result.morph_count=morph_count;
+            result.has_colors=(flags&8)!=0;
+            result.has_uv=((flags&4)!=0)||(((flags>>16)&0xffu)>0);
+            result.has_normals=(flags&0x10)!=0;
+
+            r.need(geometry.end-mp>=12,RetailSsfGeometryError::material,"SSF native geometry missing material list",mp);
+            const auto ml_id=r.word(mp),ml_len=r.word(mp+4),ml_ver=r.word(mp+8);
+            r.need(ml_ver==0x1803ffffu,RetailSsfGeometryError::version,"SSF native material list version",mp+8);
+            const auto ml_end=ssf_geometry_detail::bounded_chunk_end(mp,ml_len,geometry.end);
+            r.need(bool(ml_end)&&ml_id==8,RetailSsfGeometryError::material,"SSF native material list bounds",mp);
+            const auto ml=r.children(mp+12,*ml_end);
+            r.need(!ml.empty()&&ml[0].id==1,RetailSsfGeometryError::material,"SSF native material list struct",mp);
+            const auto material_count=r.word(ml[0].begin);
+            r.need(material_count&&ml[0].end-ml[0].begin==4+std::uint64_t(material_count)*4&&ml.size()==std::size_t(material_count)+1,
+                RetailSsfGeometryError::material,"SSF native material list count",ml[0].at);
+            for(std::size_t i=0;i<material_count;++i) {
+                r.need(r.word(ml[0].begin+4+i*4)==0xffffffffu,RetailSsfGeometryError::material,"SSF native aliased material unsupported",ml[0].begin+4+i*4);
+                result.materials.push_back(r.material(ml[i+1]));
+            }
+
+            auto ep=*ml_end;
+            r.need(geometry.end-ep>=12,RetailSsfGeometryError::unsupported_plugin,"SSF native geometry missing extension",ep);
+            const auto ex_id=r.word(ep),ex_len=r.word(ep+4),ex_ver=r.word(ep+8);
+            r.need(ex_ver==0x1803ffffu,RetailSsfGeometryError::version,"SSF native extension version",ep+8);
+            const auto ex_end=ssf_geometry_detail::bounded_chunk_end(ep,ex_len,geometry.end);
+            r.need(bool(ex_end)&&ex_id==3,RetailSsfGeometryError::unsupported_plugin,"SSF native extension bounds",ep);
+            const auto ext=r.children(ep+12,*ex_end);
+            r.need(ext.size()==1&&ext[0].id==0x50e,RetailSsfGeometryError::unsupported_plugin,"SSF native geometry requires rwID_BINMESHPLG",ep);
+            const auto& bm=ext[0];
+            r.need(bm.end-bm.begin>=12,RetailSsfGeometryError::topology,"SSF native binmesh header",bm.at);
+            const auto strip=r.word(bm.begin),meshes=r.word(bm.begin+4);
+            r.need(strip<=1&&meshes>=1&&meshes<=material_count&&bm.end-bm.begin==12+std::size_t(meshes)*8,
+                RetailSsfGeometryError::topology,"SSF native binmesh header counts",bm.at);
+            std::vector<std::size_t> mesh_materials(meshes);
+            for(std::size_t mi=0;mi<meshes;++mi) {
+                const auto mat_idx=r.word(bm.begin+12+mi*8+4);
+                r.need(mat_idx<material_count,RetailSsfGeometryError::topology,"SSF native binmesh material index",bm.begin+12+mi*8+4);
+                mesh_materials[mi]=mat_idx;
+            }
+
+            auto np=*ex_end;
+            for(std::size_t mi=0;mi<meshes;++mi) {
+                r.need(geometry.end-np>=8,RetailSsfGeometryError::vif_bounds,"SSF native mesh packet header",np);
+                const auto pkt_size=r.word(np),align_flag=r.word(np+4);
+                (void)align_flag;
+                np+=8;
+                r.need(pkt_size>=16&&std::size_t(pkt_size)<=geometry.end-np,RetailSsfGeometryError::vif_bounds,"SSF native mesh packet extent",np-8);
+                const std::size_t pkt_begin=np,pkt_end=np+std::size_t(pkt_size);
+                np=pkt_end;
+
+                static constexpr char kPad128[]="PAD128";
+                std::size_t dp=pkt_begin;
+                while(dp<pkt_end&&bytes[dp]==static_cast<std::byte>(kPad128[(dp-pkt_begin)%6]))++dp;
+
+                struct BatchVertex {
+                    RetailSsfGeometryVertex v{};
+                    bool adc{false};
+                    bool has_pos{false};
+                };
+                std::vector<BatchVertex> batch;
+                std::uint32_t cl=1;
+                auto flush_batch=[&]() {
+                    if(batch.empty())return;
+                    const std::size_t base_v=result.vertices.size();
+                    result.vertices.reserve(base_v+batch.size());
+                    for(const auto& bv:batch){
+                        r.need(bv.has_pos,RetailSsfGeometryError::geometry,"SSF native VIF batch vertex missing position",dp);
+                        result.vertices.push_back(bv.v);
+                    }
+                    std::size_t strip_len=0;
+                    bool prev_adc=false;
+                    for(std::size_t vi=0;vi<batch.size();++vi) {
+                        if(batch[vi].adc){
+                            ++result.adc_strip_breaks;
+                            strip_len=prev_adc?2u:1u;
+                            prev_adc=true;
+                        } else {
+                            ++strip_len;
+                            prev_adc=false;
+                            if(strip_len>=3) {
+                                const std::size_t i0=base_v+vi-2,i1=base_v+vi-1,i2=base_v+vi;
+                                const bool odd=(strip_len&1u)==0u;
+                                result.triangles.push_back({{odd?i1:i0,odd?i0:i1,i2},mesh_materials[mi]});
+                            }
+                        }
+                    }
+                    batch.clear();
+                };
+
+                bool dma_done=false;
+                while(!dma_done) {
+                    r.need(pkt_end-dp>=16,RetailSsfGeometryError::dma_chain,"SSF native DMA tag truncated",dp);
+                    const auto tag=r.word(dp);
+                    const auto qwc=std::size_t(tag&0xffffu);
+                    const auto dma_id=(tag>>28)&0x7u;
+                    r.need(dma_id==0||dma_id==1||dma_id==6,RetailSsfGeometryError::dma_chain,"SSF native unsupported DMA tag ID",dp);
+                    r.need(qwc<=(pkt_end-(dp+16))/16,RetailSsfGeometryError::dma_chain,"SSF native DMA QWC out of bounds",dp);
+                    const std::size_t vend=dp+16+qwc*16;
+                    std::size_t vp=dp+8;
+                    while(vp<vend) {
+                        r.need(vend-vp>=4,RetailSsfGeometryError::vif_bounds,"SSF native VIF command truncated",vp);
+                        const auto vw=r.word(vp);
+                        const auto cmd=(vw>>24)&0x7fu;
+                        if(cmd==0x00u||cmd==0x04u||cmd==0x05u||cmd==0x10u||cmd==0x11u||cmd==0x13u) {
+                            vp+=4;
+                        } else if(cmd==0x01u) {
+                            cl=vw&0xffu;
+                            vp+=4;
+                        } else if(cmd==0x20u) {
+                            r.need(vend-vp>=8,RetailSsfGeometryError::vif_bounds,"SSF native VIF STMASK truncated",vp);
+                            vp+=8;
+                        } else if(cmd==0x30u||cmd==0x31u) {
+                            r.need(vend-vp>=20,RetailSsfGeometryError::vif_bounds,"SSF native VIF STROW/STCOL truncated",vp);
+                            vp+=20;
+                        } else if(cmd==0x14u||cmd==0x15u||cmd==0x17u) {
+                            flush_batch();
+                            vp+=4;
+                        } else if(cmd>=0x60u) {
+                            const std::uint32_t vn=(cmd>>2)&3u,vl=cmd&3u;
+                            std::size_t num=(vw>>16)&0xffu;
+                            if(num==0)num=256;
+                            const std::uint32_t addr=vw&0x3ffu,usn=(vw>>14)&1u;
+                            const std::uint32_t vnvl=cmd&0x6fu;
+                            const std::size_t bits=std::size_t(32u>>vl)*std::size_t(vn+1u);
+                            const std::size_t dbytes=((bits*num+31u)/32u)*4u;
+                            r.need(dbytes<=vend-(vp+4),RetailSsfGeometryError::vif_bounds,"SSF native VIF UNPACK payload out of bounds",vp);
+                            const std::size_t dp_off=vp+4;
+                            if(vnvl==0x6cu&&usn==0&&addr==0x000u) {
+                                // Bounding sphere per batch
+                            } else if(vnvl==0x6eu&&usn==1&&addr==0x001u&&cl==1u) {
+                                const std::size_t bcount=std::to_integer<std::size_t>(bytes[dp_off]);
+                                r.need(bcount>0,RetailSsfGeometryError::vif_bounds,"SSF native VIF batch vertex count zero",vp);
+                                batch.assign(bcount,BatchVertex{});
+                            } else if(vnvl==0x68u&&usn==0&&(addr==0x011u||addr==0x002u)) {
+                                r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF native VIF position count mismatch",vp);
+                                for(std::size_t vi=0;vi<num;++vi) {
+                                    batch[vi].v.position={r.scalar(dp_off+vi*12),r.scalar(dp_off+vi*12+4),r.scalar(dp_off+vi*12+8)};
+                                    batch[vi].has_pos=true;
+                                }
+                            } else if(vnvl==0x6au&&usn==0&&(addr==0x012u||addr==0x003u)) {
+                                r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF native VIF normal count mismatch",vp);
+                                for(std::size_t vi=0;vi<num;++vi) {
+                                    const auto sx=static_cast<std::int8_t>(std::to_integer<std::uint8_t>(bytes[dp_off+vi*3+0]));
+                                    const auto sy=static_cast<std::int8_t>(std::to_integer<std::uint8_t>(bytes[dp_off+vi*3+1]));
+                                    const auto sz=static_cast<std::int8_t>(std::to_integer<std::uint8_t>(bytes[dp_off+vi*3+2]));
+                                    batch[vi].v.normal={float(sx)/127.0f,float(sy)/127.0f,float(sz)/127.0f};
+                                }
+                            } else if(vnvl==0x64u&&usn==0&&(addr==0x013u||addr==0x004u)) {
+                                r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF native VIF UV count mismatch",vp);
+                                for(std::size_t vi=0;vi<num;++vi) {
+                                    batch[vi].v.uv={r.scalar(dp_off+vi*8),r.scalar(dp_off+vi*8+4)};
+                                }
+                            } else if(vnvl==0x66u&&usn==1&&(addr==0x013u||addr==0x004u)) {
+                                r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF native VIF UV16 count mismatch",vp);
+                            } else if(vnvl==0x6eu&&usn==1&&addr==0x014u) {
+                                r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF native VIF color count mismatch",vp);
+                                for(std::size_t vi=0;vi<num;++vi) {
+                                    for(unsigned c=0;c<4;++c)batch[vi].v.stored_color[c]=std::to_integer<std::uint8_t>(bytes[dp_off+vi*4+c]);
+                                }
+                            } else if(vnvl==0x61u&&(addr==0x011u||addr==0x012u||addr==0x002u||addr==0x003u)) {
+                                r.need(num==batch.size(),RetailSsfGeometryError::vif_bounds,"SSF native VIF ADC count mismatch",vp);
+                                if(addr==0x011u||addr==0x002u) {
+                                    for(std::size_t vi=0;vi<num;++vi)batch[vi].adc=(r.half(dp_off+vi*2)&0x8000u)!=0;
+                                }
+                            } else {
+                                r.reject(RetailSsfGeometryError::unsupported_unpack_format,"SSF native VIF UNPACK format or VU1 address unsupported",vp);
+                            }
+                            vp+=4+dbytes;
+                        } else {
+                            r.reject(RetailSsfGeometryError::unsupported_vif_opcode,"SSF native VIF unsupported opcode",vp);
+                        }
+                    }
+                    flush_batch();
+                    if(dma_id==0||dma_id==6)dma_done=true;
+                    else dp=vend;
+                }
+            }
+            r.need(np==geometry.end,RetailSsfGeometryError::skinned_native_pipe_unsupported,"SSF native geometry trailing skinning/custom pipe unsupported",np);
+            r.need(!result.triangles.empty(),RetailSsfGeometryError::topology,"SSF native geometry produced zero triangles",geometry.at);
+            return result;
+        }
         const auto gc=r.children(geometry.begin,geometry.end);
         r.need(gc.size()==3&&gc[0].id==1&&gc[1].id==8&&gc[2].id==3,RetailSsfGeometryError::geometry,"SSF non-native geometry child partition",geometry.at);
         auto p=gc[0].begin;const auto flags=r.word(p),triangle_count=r.word(p+4),vertex_count=r.word(p+8),morph_count=r.word(p+12);p+=16;

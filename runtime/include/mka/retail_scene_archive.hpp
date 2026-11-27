@@ -47,7 +47,11 @@ std::optional<RetailArchiveSceneLoadResult> load_retail_scene_streams_from_archi
     const NativeRetailRendererFrameHandle& parent_frame, RetailSceneArchiveFailure&,
     RetailSceneResources&) noexcept;
 
-enum class RetailSsfSceneRenderPolicy { unbound_retail, diagnostic_unlit_raw_rgba8 };
+enum class RetailSsfSceneRenderPolicy {
+    unbound_retail,
+    diagnostic_unlit_raw_rgba8,
+    diagnostic_native_vif_unlit_raw_rgba8
+};
 struct RetailSsfSceneSelection {
     std::string archive_resource_key;
     RetailArchiveMemberSelector member;

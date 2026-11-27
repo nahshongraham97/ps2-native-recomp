@@ -242,7 +242,8 @@ std::optional<RetailDecodedSsfScene> load_retail_ssf_scene_from_archive(
     NativeRetailRendererFrames& frames, NativeRetailWorld& world, const NativeRetailRendererFrameHandle& parent_frame,
     RetailSceneArchiveFailure& failure, RetailSceneResources& resources) noexcept {
     failure={};
-    if(config.render_policy!=RetailSsfSceneRenderPolicy::diagnostic_unlit_raw_rgba8) {
+    if(config.render_policy!=RetailSsfSceneRenderPolicy::diagnostic_unlit_raw_rgba8 &&
+       config.render_policy!=RetailSsfSceneRenderPolicy::diagnostic_native_vif_unlit_raw_rgba8) {
         failure.kind=RetailSceneArchiveError::render_policy;failure.operation="SSF retail rendering policy remains unbound; explicit diagnostic policy required";return {};
     }
     if(!resources.empty()||!resources.matches(&rasters,&textures,&materials,&frames,&world)||!base_object_id) {
@@ -257,13 +258,23 @@ std::optional<RetailDecodedSsfScene> load_retail_ssf_scene_from_archive(
         }
         auto decoded=decode_retail_ssf_scene_from_archive(volume,config,failure);if(!decoded)return {};
         const auto& data=decoded->geometry;
-        if(data.atomic_flags!=5||data.atomic_plugin_words[2]||data.atomic_plugin_words[3]||
-            data.materials.size()>std::numeric_limits<std::uint64_t>::max()-base_object_id) {
-            failure.kind=RetailSceneArchiveError::render_policy;failure.operation="SSF diagnostic atomic policy or object ID extent unsupported";return {};
-        }
-        constexpr std::array<std::uint32_t,7> plain_material{5,0,0,0xffffffffu,0,0,0};
-        for(const auto& m:data.materials)if(m.plugin_words!=plain_material||!m.mask_name.empty()||m.flags) {
-            failure.kind=RetailSceneArchiveError::render_policy;failure.operation="SSF diagnostic preview supports only plain version-5 material metadata and no mask";return {};
+        if(config.render_policy==RetailSsfSceneRenderPolicy::diagnostic_unlit_raw_rgba8) {
+            if(data.atomic_flags!=5||data.atomic_plugin_words[2]||data.atomic_plugin_words[3]||
+                data.materials.size()>std::numeric_limits<std::uint64_t>::max()-base_object_id) {
+                failure.kind=RetailSceneArchiveError::render_policy;failure.operation="SSF diagnostic atomic policy or object ID extent unsupported";return {};
+            }
+            constexpr std::array<std::uint32_t,7> plain_material{5,0,0,0xffffffffu,0,0,0};
+            for(const auto& m:data.materials)if(m.plugin_words!=plain_material||!m.mask_name.empty()||m.flags) {
+                failure.kind=RetailSceneArchiveError::render_policy;failure.operation="SSF diagnostic preview supports only plain version-5 material metadata and no mask";return {};
+            }
+        } else {
+            if(!data.is_native_ps2_vif||data.atomic_flags!=5||
+                data.materials.size()>std::numeric_limits<std::uint64_t>::max()-base_object_id) {
+                failure.kind=RetailSceneArchiveError::render_policy;failure.operation="SSF native VIF diagnostic atomic policy or object ID extent unsupported";return {};
+            }
+            for(const auto& m:data.materials)if(m.plugin_words[0]!=5||!m.mask_name.empty()||m.flags) {
+                failure.kind=RetailSceneArchiveError::render_policy;failure.operation="SSF native VIF diagnostic preview supports only version-5 material metadata and no mask";return {};
+            }
         }
         for(const auto& t:decoded->textures)if(t.sampler_metadata!=0x1102||!t.width||!t.height||
             t.width>std::uint32_t(std::numeric_limits<std::int32_t>::max())||t.height>std::uint32_t(std::numeric_limits<std::int32_t>::max())||
