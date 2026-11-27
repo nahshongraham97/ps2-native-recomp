@@ -1,5 +1,36 @@
 {
   "slice": "17EBB0_180ED0_native_camera_producer",
+  "retail_matching": {
+    "elf": "research/inputs/SLUS_214.10",
+    "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+    "0017EBB0": {
+      "range": "0017ebb0..0017ecd4",
+      "bytes": 292,
+      "retail_sha256": "6ddcc305541e227971b6974de36533ee35e96cae52a6936293c5c2d70fdd9c2b",
+      "compilers": [
+        "3.0.1b198-051011 (-O3, -O4)",
+        "3.0.1b205-051227 (-O3, -O4)",
+        "3.0.1b210-060308 (-O3, -O4)"
+      ],
+      "exact_byte_match": true,
+      "diff_words": 0,
+      "private_work_dir": "/opt/mkar-decomp/camera-17ebb0-180ed0"
+    },
+    "00180ED0": {
+      "ranges": ["00180ed0..001812a4", "001812a8..00181304"],
+      "bytes_total": 1072,
+      "retail_sha256": [
+        "d3ada7fa1fbfafc37a45c28b6f5f2666ea8a7476acdcccc799ae9c375c1c11f8",
+        "c490471f98d1cb93026fd88398bd37f73c4ef0eb96945fc23167939dd917475b"
+      ],
+      "disassembly_verified": true
+    },
+    "intentional_native_safety_divergence": {
+      "retail_behavior": "0017EBB0 returns nullptr on late sub-object validation failure without destroying earlier RwCamera/RwFrame/RwRaster allocations, and 00180ED0 continues on func_13F490 failure without rolling back prior slots.",
+      "native_behavior": "create_camera_producer_17ebb0 and initialize_cameras_180ed0 perform full RAII/explicit rollback via destroy_camera_producer_17ebb0 on any partial failure so no host camera, frame, or raster handles leak.",
+      "verified_against_retail_bytes": true
+    }
+  },
   "strict_native_contract": "PASS",
   "runtime_file_sha256": {
     "runtime/include/mka/retail_renderer_frames.hpp": "3efe172566e60f3a13542930c7a7d0eb3c7b784d7f589ffa92553769947faeb6",
