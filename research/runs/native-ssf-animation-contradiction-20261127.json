@@ -1,0 +1,57 @@
+{
+  "schema": "mkar.native-ssf-animation-anchor-correction.v1",
+  "start_fork": "919ea2d0edece4d3a51d8067d1145e7428eee1c3",
+  "elf": "SLUS_214.10",
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "pak_sha256": "ff51cdff04e6487460ef3c3a1db309a68ced43e4c4bfd084fa965cb41c8c227a",
+  "a1_amendment": "Blocked item halts only dependent keyframe work; independent asset, rendering and documentation work may continue.",
+  "a8_provenance": "DECISION_OWNER_CORRECTIONS_20261124.json and AGENTS.md matching-source pilot paragraph control this record.",
+  "contradictions": [
+    {
+      "claim": "0x1b44xx-0x1b47xx is the compressed keyframe expander",
+      "finding": "The complete range belongs to FUN_001b34c0, whose inputs include width, height, pixel/texture format, and its scratch allocator output is 1 KB in the pinned ASHRAH torso run.",
+      "disassembly_evidence": "1b34c0 uses format 21310000/dd308000/99308000 and texture-like field dispatch; 1b4710/1b4740 is a LWU/LW branch inside that decompression loop.",
+      "consequence": "It is not admitted as keyframe-expander evidence."
+    },
+    {
+      "claim": "Ashrah ASHRAH_000-003 are MKA keyframe clips",
+      "finding": "The seven ASHRAH type-3 resources contain no MKA magic.",
+      "receipt": "ASHRAH_000-003 payloads start with the SSF custom name/header and nested 0x1803ffff RW chunks.",
+      "consequence": "Applying the resident MKA v0B/v31 parser/sampler would be a false format join."
+    }
+  ],
+  "actual_resident_mka_evidence": [
+    "FUN_0015E960 materializes MKA v0B/v31 track directories.",
+    "FUN_0015A310 is the resident typed-track sampler.",
+    "FUN_00159940 advances the cursor.",
+    "FUN_0015E050 is the clip endpoint/setup helper.",
+    "This evidence is not joined to Ashrah without a proven outer SSF-to-MKA acquisition or magic/version/offset proof."
+  ],
+  "ashrah_census": {
+    "before": "7 type-3 / 0 decoded_ok / 4 refused_compression / 3 refused_other",
+    "current": "7 type-3 / 0 decoded_ok / 4 refused_compression / 3 refused_other"
+  },
+  "full_pak_census": {
+    "members": 245,
+    "type3": 11381,
+    "decoded_ok": 0,
+    "refused_compression": 10234,
+    "refused_other": 1147
+  },
+  "matching_work": {
+    "status": "NOT_STARTED_AS_ANIMATION_MATCH",
+    "reason": "The proposed anchors do not identify an animation function."
+  },
+  "gpu": {
+    "authentic_t0_t1": "OPEN",
+    "manual_pose_result": "Armory 903, Ashrah rest/posed 768/791, difference 997",
+    "policy": "diagnostic_native_vif_unlit_raw_rgba8"
+  },
+  "ledger": {
+    "verified_owners": 20,
+    "transformed": 2,
+    "native": 236,
+    "delta": "0/0/0"
+  },
+  "decision": "STOP: do not fabricate compressed-keyframe decoding, matching, or t0/t1 animation evidence."
+}
