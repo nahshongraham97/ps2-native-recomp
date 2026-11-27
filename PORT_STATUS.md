@@ -7,7 +7,7 @@
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`aa27776a`](https://github.com/nahshongraham97/ps2-native-recomp/commit/aa27776a886b78e99c371e3962702270996e0f15) (source and evidence checkpoint)
+**Verified Fork Commit**: [`0fe02f88`](https://github.com/nahshongraham97/ps2-native-recomp/commit/0fe02f880126da9d9f60b7803cddba7acbed6164) (source and evidence checkpoint)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - Bounded ownership of 15,669 callable entries · verified-renderware 8, verified-game 12, verified-other-library 0, inferred-renderware 140, inferred-game 130, inferred-other 0, unresolved 15,379.
