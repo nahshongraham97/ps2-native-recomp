@@ -39,6 +39,7 @@ class NativeRetailSoundRuntime;
 struct NativeRetailSoundStatus;
 struct NativeRetailProfileOwners;
 struct NativeRetailSceneOwners;
+class NativeRetailModeSceneRoutes;
 class NativeRetailPermanentStrings;
 class NativeRetailFrameWorkStorage;
 
@@ -125,6 +126,7 @@ struct NativeRetailMainState {
     bool static_key_initialization_active{};
     std::shared_ptr<NativeRetailProfileOwners> profile;
     std::shared_ptr<NativeRetailSceneOwners> scene;
+    std::shared_ptr<NativeRetailModeSceneRoutes> mode_scene_routes;
     // The startup platform owns the only controller sample store. Its lifetime
     // spans this entire main state and all role adapters.
     input::ControllerInput& controller_samples;

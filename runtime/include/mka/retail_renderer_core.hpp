@@ -113,6 +113,12 @@ private:
 };
 class NativeRetailRendererCore final {
 public:
+ bool same_session(const std::shared_ptr<NativeRetailGameSession>& session) const noexcept {
+  return session && session_.lock()==session;
+ }
+ bool native_plugins_constructed() const noexcept {
+  return initialized_ && !entries_.empty() && constructed_.size()==entries_.size() && !after_effect_unknown_;
+ }
  ~NativeRetailRendererCore();
  NativeRetailRendererCore(const NativeRetailRendererCore&)=delete;
  NativeRetailRendererCore& operator=(const NativeRetailRendererCore&)=delete;

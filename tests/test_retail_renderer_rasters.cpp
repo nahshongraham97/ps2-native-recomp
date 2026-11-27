@@ -59,13 +59,13 @@ NativeRetailRasterHandle captured_raster;
 unsigned suffix_calls{};
 
 bool fixture_construct(unsigned id, NativeRetailRendererCore& c, RetailRendererCoreFailure&) {
- if (id == 0x408 && later != Later::allow) {
+ if (id == 0x409 && later != Later::allow) {
   RetailRendererCoreFailure cf;
   captured_rasters = c.rasters(cf);
-  check(bool(captured_rasters), "actual 0407 before later 0408 fixture");
+  check(bool(captured_rasters), "actual 0407 before later 0409 fixture");
   RetailRendererRasterFailure rf;
   auto h = captured_rasters->create_raster({4, 4, 32, 4, 4, 0x0500}, rf);
-  check(bool(h), "actual raster before later 0408 fixture");
+  check(bool(h), "actual raster before later 0409 fixture");
   captured_raster = *h;
   if (later == Later::transfer) {
    reenter_native_retail_main(*transfer_main, 91);
@@ -197,11 +197,10 @@ namespace mka::retail::renderer_required {
  void destroy_core_plugin_##ID(NativeRetailRendererCore&) noexcept { \
   if (later != Later::allow) std::abort(); \
  }
-OTHER(0408, 0x408)
 OTHER(0409, 0x409)
-OTHER(0412, 0x412)
-OTHER(040a, 0x40a)
 OTHER(040b, 0x40b)
+// Actual0408/0412/040A services are now linked dependencies. The
+// refusal/transfer fixture remains at0409; all original assertions remain.
 #undef OTHER
 
 void transform_point_exact(RetailRendererPoint3&, const RetailRendererPoint3&, const RetailRendererAffine&) { std::abort(); }
@@ -220,8 +219,8 @@ RetailStartupGate continue_first_scene_at_225d40(
  StartupFailure& f) {
  ++suffix_calls;
  RetailRendererCoreFailure cf;
- check(!c->construct_registered(cf), "explicit later 0408 refusal after actual 0407");
- f = {StartupError::memory_owners, "test-only 0408/full renderer suffix refusal"};
+ check(!c->construct_registered(cf), "explicit later 0409 refusal after actual 0407");
+ f = {StartupError::memory_owners, "test-only 0409/full renderer suffix refusal"};
  return RetailStartupGate::native_failure;
 }
 bool continue_scene_reset_at_125d60(NativeRetailMainState&, StartupFailure&) { std::abort(); }
@@ -901,12 +900,12 @@ int main() {
    check(wrong_thread_caught, "wrong thread rejected by name");
   }
 
-  // 11. Core Plugin Unwind (later 0408 refusal & transfer)
+  // 11. Core Plugin Unwind (later 0409 refusal & transfer)
   {
    Fixture fix(root);
    later = Later::refuse;
    check(main_binding::initialize_retail_first_scene(fix.main, fix.sf) == RetailStartupGate::native_failure && suffix_calls == 1,
-         "actual Main/Core prefix 0403..0407 then explicit 0408 refusal");
+         "actual Main/Core prefix 0403..0408 then explicit 0409 refusal");
    RetailRendererRasterFailure rf;
    check(captured_rasters && !captured_rasters->observe(captured_raster, rf) &&
          rf.kind == RetailRendererRasterError::retired,

@@ -9,6 +9,7 @@
 #include "mka/retail_profile_transition_child.hpp"
 #include "mka/retail_display_service.hpp"
 #include "mka/retail_scene_owners.hpp"
+#include "mka/retail_mode_scene.hpp"
 #include "native_retail_startup.hpp"
 #include "mka/movie_gpu.hpp"
 #include "mka/movie_gl_device.hpp"
@@ -538,18 +539,19 @@ std::shared_ptr<NativeRetailInitialChild> begin_prompt_18dc10(
     return std::make_shared<NativeRetailPrompt18dc10Child>(main, session);
 }
 
-// Recovered mode transition procedure (PS2 0x001225d0 and Xbox 0x0019ca30):
-// 1. Invokes previous mode exit callback [eax + 0x18] if active task context exists.
-// 2. Pushes transition mode into main.mode_history.
-// 3. Creates new mode task via task registry.
-// What remains unrecovered: concrete game mode task loop execution bodies.
+// Partial native presentation binding at1225D0. Its source first clears the
+// interaction history and pushes1; the requested mode is a DIFFERENT field.
+// Full1861B0 reset, previous virtual exit, task creation and context transfer
+// remain required effects; this scene registration does not admit those bodies.
 void transition_1225d0(NativeRetailMainState& main, std::uint32_t mode,
-    [[maybe_unused]] RetailInitialTransitionBody next_body) {
+    RetailInitialTransitionBody next_body) {
     record_placeholder_hit(12, "transition_1225d0", main.iteration);
     if (main.mode_history) {
         RetailModeFailure mf;
-        (void)main.mode_history->push(mode, mf);
+        main.mode_history->clear();
+        (void)main.mode_history->push(1, mf);
     }
+    if(main.mode_scene_routes)(void)main.mode_scene_routes->request(mode,next_body);
 }
 
 } // namespace initial_task_required
@@ -580,15 +582,12 @@ bool render_retail_frame(NativeRetailMainState& main, StartupFailure& f) {
     }
     if (main.scene && main.scene->scene_loaded && main.scene->world &&
         main.scene->cameras && main.scene->frames && main.scene->camera_init) {
-        bool gl_active = main.scene->display && main.scene->display->is_context_current();
-#ifdef _WIN32
-        if (!gl_active) {
-            gl_active = (wglGetCurrentContext() != nullptr);
+        if(main.mode_scene_routes&&main.mode_scene_routes->render_pending()){
+            f={StartupError::content,"mode scene transition must finish before frame submission"};return false;
         }
-#endif
-        if (!gl_active) {
-            // Asset-loaded headless fallback: skip GPU submission cleanly when no GL context is active.
-            return true;
+        if (!main.scene->display || !main.scene->display->is_context_current()) {
+            if(!main.scene->display&&main.scene->config.diagnostic_headless_without_display)return true;
+            f={StartupError::memory_owners,"scene frame requires its own live native display context"};return false;
         }
         RetailCameraProducerFailure pf;
         auto stats = render_world_scene_frame(
@@ -646,11 +645,12 @@ std::optional<bool> retail_mode_dispatch_enabled(const NativeRetailMainState& ma
 
 // [unrecovered-placeholder] Recovered from PS2 0x0027b1d0 and Xbox 0x0007be10:
 // Dispatches enabled mode task from mode dispatch table. Unrecovered remainder: live gameplay mode transitions.
-bool dispatch_retail_enabled_mode(NativeRetailMainState& main, StartupFailure&) {
+bool dispatch_retail_enabled_mode(NativeRetailMainState& main, StartupFailure& f) {
     record_placeholder_hit(17, "dispatch_retail_enabled_mode", main.iteration);
     if (!main.lifetime) {
         return false;
     }
+    if(main.mode_scene_routes)return main.mode_scene_routes->dispatch(main,f);
     return true;
 }
 

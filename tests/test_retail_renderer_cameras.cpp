@@ -297,14 +297,23 @@ struct CameraGpuFixture {
  std::shared_ptr<NativeRetailRendererCore> core;
  std::shared_ptr<NativeRetailRendererCameraModule> cameras;
  std::shared_ptr<NativeRetailRendererRasters> rasters;
+ std::shared_ptr<mka::video::NativeMovieGpuRetirementOwner> world_retirement;
  explicit CameraGpuFixture(const std::filesystem::path& root):native(root),core(native.core()){
   auto initialized=core->initialize_core(native.f);gpu_check(initialized&&*initialized,"GPU actual CoreInit");
   gpu_check(renderer_required::construct_core_plugin_0405(*core,native.f),"GPU actual0405 constructor");
   gpu_check(renderer_required::construct_core_plugin_0407(*core,native.f),"GPU actual0407 constructor");
   cameras=core->camera_module(native.f);rasters=core->rasters(native.f);
   gpu_check(cameras&&rasters,"GPU real persistent camera/raster owners");
+  mka::video::MovieGpuError error;world_retirement=mka::video::NativeMovieGpuRetirementOwner::create(error);
+  gpu_check(world_retirement&&error==mka::video::MovieGpuError::none,"actual host world GPU retirement owner");
  }
- ~CameraGpuFixture(){renderer_required::destroy_core_plugin_0405(*core);renderer_required::destroy_core_plugin_0407(*core);}
+ ~CameraGpuFixture(){
+  RetailRendererCoreFailure f;if(auto world=core->world_module(f))world->retire();
+  if(world_retirement&&!world_retirement->empty()&&world_retirement->poll().state!=mka::video::MovieFenceState::complete){
+   std::fputs("FAIL camera fixture: original-context GPU retirement unfinished\n",stderr);std::abort();
+  }
+  renderer_required::destroy_core_plugin_0405(*core);renderer_required::destroy_core_plugin_0407(*core);
+ }
  NativeRetailRasterHandle raster(std::uint32_t flags,std::int32_t w=640,std::int32_t h=448){
   RetailRendererRasterFailure f;auto r=rasters->create_raster({w,h,0,0,flags,0},f);
   gpu_check(bool(r),"GPU actual logical raster creation");return *r;
@@ -593,6 +602,7 @@ void camera_gpu_target_cases(const std::filesystem::path& root,const std::option
   glGetIntegerv(GL_MATRIX_MODE,&saved_matrix_mode);
   glGetIntegerv(GL_MODELVIEW_STACK_DEPTH,&saved_mv_depth);
 
+  gpu_check(world_ptr->bind_gpu_resources(a,x.world_retirement,rwf),"explicit real GPU world display/retirement binding setup");
   auto stats=render_world_scene_frame(*x.cameras,*frames,init->primary.camera,init->primary.world_link,
    world_ptr,{0.05f,0.05f,0.1f,1.0f},3u,true,pf);
   gpu_check(stats.has_value()&&stats->total_objects==2&&stats->visible_objects==1&&
@@ -621,6 +631,7 @@ void camera_gpu_target_cases(const std::filesystem::path& root,const std::option
   gpu_check(green_pixels>80&&red_pixels==0,"world scene rendered visible green object and culled red object");
 
   gpu_check(detach_camera_from_world_1cf350(init->primary.world_link,world_ptr,wf),"1CF350 detach camera from world");
+  gpu_check(world_ptr->bind_gpu_resources(a,x.world_retirement,rwf),"explicit real GPU world display/retirement binding setup");
   gpu_check(!render_world_scene_frame(*x.cameras,*frames,init->primary.camera,init->primary.world_link,
    world_ptr,{0.05f,0.05f,0.1f,1.0f},3u,false,pf),"detached camera refused by render_world_scene_frame");
 
@@ -736,6 +747,7 @@ void camera_gpu_target_cases(const std::filesystem::path& root,const std::option
   glDisable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D,0);
   glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
+  gpu_check(world_ptr->bind_gpu_resources(a,x.world_retirement,rwf),"explicit real GPU world display/retirement binding setup");
   auto tex_stats=render_world_scene_frame(*x.cameras,*frames,init->primary.camera,init->primary.world_link,
    world_ptr,{0.05f,0.05f,0.1f,1.0f},3u,true,pf,mat_mod.get(),tex_mod.get(),x.rasters.get());
   gpu_check(tex_stats.has_value()&&tex_stats->visible_objects==2&&tex_stats->culled_objects==1&&
@@ -868,6 +880,7 @@ void camera_gpu_target_cases(const std::filesystem::path& root,const std::option
   world_ptr->clear_scene_objects();
   gpu_check(ingest_rw_world_bsp_stream(valid_world,1000u,*mat_mod,*tex_mod,*world_ptr,rwf),
             "ingest valid RpWorld BSP stream");
+  gpu_check(world_ptr->bind_gpu_resources(a,x.world_retirement,rwf),"explicit real GPU world display/retirement binding setup");
   auto bsp_stats=render_world_scene_frame(*x.cameras,*frames,init->primary.camera,init->primary.world_link,
    world_ptr,{0.05f,0.05f,0.1f,1.0f},3u,true,pf,mat_mod.get(),tex_mod.get(),x.rasters.get());
   gpu_check(bsp_stats.has_value()&&bsp_stats->total_sectors==2&&bsp_stats->visible_sectors==1&&
@@ -991,6 +1004,7 @@ void camera_gpu_target_cases(const std::filesystem::path& root,const std::option
 
    gpu_check(ingest_rw_world_bsp_stream(m_world,2000u,*mat_mod,*tex_mod,*world_ptr,rwf),
              "ingest RpWorld BSP referencing PAL8 texture");
+  gpu_check(world_ptr->bind_gpu_resources(a,x.world_retirement,rwf),"explicit real GPU world display/retirement binding setup");
    auto m_stats=render_world_scene_frame(*x.cameras,*frames,init->primary.camera,init->primary.world_link,
     world_ptr,{0.05f,0.05f,0.1f,1.0f},3u,true,pf,mat_mod.get(),tex_mod.get(),x.rasters.get());
    gpu_check(m_stats.has_value()&&m_stats->visible_sectors==1&&m_stats->culled_sectors==1&&m_stats->bound_textures>=1,
@@ -1148,6 +1162,7 @@ void camera_gpu_target_cases(const std::filesystem::path& root,const std::option
     {{ 0.0f, 1.2f,-4.0f},0,0,{1,1,1,1},{0,0,1},{0,0,0,0},{1,0,0,0}}
    };
    gpu_check(world_ptr->add_scene_object(std::move(skin_obj),sl_f),"add skinned opaque object");
+  gpu_check(world_ptr->bind_gpu_resources(a,x.world_retirement,rwf),"explicit real GPU world display/retirement binding setup");
    auto sl_stats=render_world_scene_frame(*x.cameras,*frames,init->primary.camera,init->primary.world_link,
     world_ptr,{0.05f,0.05f,0.1f,1.0f},3u,true,pf);
    gpu_check(sl_stats.has_value()&&sl_stats->opaque_objects==1&&sl_stats->submitted_triangles==1,
@@ -1197,6 +1212,7 @@ void camera_gpu_target_cases(const std::filesystem::path& root,const std::option
 
    glDisable(GL_BLEND);
    glDepthMask(GL_TRUE);
+  gpu_check(world_ptr->bind_gpu_resources(a,x.world_retirement,rwf),"explicit real GPU world display/retirement binding setup");
    auto a_stats=render_world_scene_frame(*x.cameras,*frames,init->primary.camera,init->primary.world_link,
     world_ptr,{0.0f,0.0f,0.0f,1.0f},3u,true,pf);
    gpu_check(a_stats.has_value()&&a_stats->alpha_objects==2&&a_stats->opaque_objects==0,"two-pass alpha stats valid");

@@ -31245,10 +31245,10 @@
     ],
     "correct_oracle_vu1_image_count": 18,
     "snapshot_verification": {
-      "receipt_sha256": "d2c35b9d047275d6f96dafc9f9ecc6e90b2f1979ce8034172f258b2510c00656",
+      "receipt_sha256": "b7f654c71b0d25cc0d7193f383ee3ffb9b27c3d4eedef5677ca5501f3247d72e",
       "scope": "Selected entry-zero program replay on actual saved register/data inputs; not historical invocation capture or whole-game acceptance",
-      "receipt_path": "build/oracle-telemetry/native-camera-display-vu-01-verify.json",
-      "source_manifest_path": "build/oracle-telemetry/native-camera-display-vu-01-compiled-source.json"
+      "receipt_path": "build/oracle-telemetry/native-archive-mode-vu-01-verify.json",
+      "source_manifest_path": "build/oracle-telemetry/native-archive-mode-vu-01-compiled-source.json"
     },
     "vu0_static_scope": {
       "audit_sha256": "c01bd9580391d84a7b7e7ad2f41e0cedfc00cc288c789940cb6c49b1eebddc10",
@@ -31278,8 +31278,8 @@
     "measurement": {
       "proof_path": "b/native-overlay-initializers/transform_proof.json",
       "proof_sha256": "5f4e886a5940cd36d7de5f1c7c22ff3b9bf68403f6696e356a2d9c3bc7c18511",
-      "receipt_path": "build/oracle-telemetry/native-camera-display-prototype-01-verification.json",
-      "receipt_sha256": "9f161de158b1e07de96069d1aa0312535e579983a22301e6f97c8fa5662237d5"
+      "receipt_path": "build/oracle-telemetry/native-archive-mode-prototype-01-verification.json",
+      "receipt_sha256": "12e05d927072cd837a1be35370b575d3a8e5a42992e495c69f180a97709eb910"
     }
   },
   "entry_measurement": {

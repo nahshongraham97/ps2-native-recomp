@@ -55,7 +55,7 @@ asset discovery, window creation, graphics, sound, physical input, saves,
 timing and required service registration are inherent behavior. They must not
 depend on native-enabling flags, environment variables, experimental sampling
 overrides, a disc image, a wrapper injecting settings, or a fallback backend.
-Loose assets use their existing filenames in the native content folders. The accepted route must not require or fall back to MKDA.PAK. Offline extraction may prepare byte-identical files from a preserved original archive; the archive is an input to that tool, never the runtime asset provider.
+Loose assets keep their existing native filenames. The owner's later archive/mode instruction authorizes explicit native host-file PAK decoding and bounded named/indexed extraction through NativeContentVolume. This supersedes the former loose-only/MKDA.PAK-provider prohibition for this path. NativeContentVolume remains a direct filesystem service; archive offsets are serialized data, never CDVD sectors or guest addresses. Missing loose files must not trigger an automatic archive/provider fallback. An explicitly selected archive must validate its actual format and every TOC/name/payload extent; unproved WAD/MKA or nested SEC layouts refuse by name.
 
 Missing content, dependencies or native implementations produce named errors.
 They never select an old build or emulated service.

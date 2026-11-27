@@ -31,9 +31,9 @@ enum class Later{refuse,transfer,allow};Later later{Later::refuse};
 NativeRetailMainState* transfer_main{};std::shared_ptr<NativeRetailRendererImages> captured;NativeRetailImageHandle captured_image;
 unsigned module_cuts{},image_cuts{},pixel_cuts{},path_cuts{},format_cuts{},suffix_calls{};
 // Actual camera target validation now pulls production0407; the historical
-// test-only later0407 refusal/transfer boundary moves to0408, preserving prefix lifetime checks.
+// test-only later0407 refusal/transfer boundary moves to0409, preserving prefix lifetime checks.
 bool fixture_construct(unsigned id,NativeRetailRendererCore& c,RetailRendererCoreFailure&){
- if(id==0x408&&later!=Later::allow){
+ if(id==0x409&&later!=Later::allow){
   RetailRendererCoreFailure cf;captured=c.images(cf);check(bool(captured),"actual0406 before later fixture");
   RetailRendererImageFailure f;auto h=captured->create_image({3,2,32},f);check(h&&captured->allocate_pixels(*h,f),"actual image before later fixture");captured_image=*h;
   if(later==Later::transfer)reenter_native_retail_main(*transfer_main,83);return false;
@@ -75,7 +75,9 @@ std::shared_ptr<RetailRendererImageExtension> extension(unsigned id,std::vector<
 namespace mka::retail::renderer_required{
 #define OTHER(ID,V) bool construct_core_plugin_##ID(NativeRetailRendererCore& c,RetailRendererCoreFailure& f){return fixture_construct(V,c,f);} \
  void destroy_core_plugin_##ID(NativeRetailRendererCore&)noexcept{if(later!=Later::allow)std::abort();}
-OTHER(0408,0x408) OTHER(0409,0x409) OTHER(0412,0x412) OTHER(040a,0x40a) OTHER(040b,0x40b)
+OTHER(0409,0x409) OTHER(040b,0x40b)
+// Actual0408/0412/040A services are now linked dependencies. The
+// refusal/transfer fixture remains at0409; all original assertions remain.
 #undef OTHER
 void transform_point_exact(RetailRendererPoint3&,const RetailRendererPoint3&,const RetailRendererAffine&){std::abort();}
 void transform_points_exact(std::span<RetailRendererPoint3>,std::span<const RetailRendererPoint3>,const RetailRendererAffine&){std::abort();}
@@ -87,8 +89,8 @@ bool invert_nonidentity_matrix_1a07a0(RetailRendererMatrixValue&,const RetailRen
 }
 namespace mka::retail::scene_bootstrap_required{
 RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState&,std::shared_ptr<NativeRetailRendererCore> c,StartupFailure& f){
- ++suffix_calls;RetailRendererCoreFailure cf;check(!c->construct_registered(cf),"explicit later0408 refusal after actual0406/0407");
- f={StartupError::memory_owners,"test-only0408/full renderer suffix refusal"};return RetailStartupGate::native_failure;
+ ++suffix_calls;RetailRendererCoreFailure cf;check(!c->construct_registered(cf),"explicit later0409 refusal after actual0406/0407");
+ f={StartupError::memory_owners,"test-only0409/full renderer suffix refusal"};return RetailStartupGate::native_failure;
 }
 bool continue_scene_reset_at_125d60(NativeRetailMainState&,StartupFailure&){std::abort();}
 }
@@ -249,7 +251,7 @@ int main(int argc,char** argv)try{
   check(reached,"all reached allocation cuts completed before deadline");
  }
  {
-  Fixture x(root);later=Later::refuse;check(main_binding::initialize_retail_first_scene(x.main,x.sf)==RetailStartupGate::native_failure&&suffix_calls==1,"actual Main/Core prefix0403/4/5/6/7 then explicit0408 refusal");
+  Fixture x(root);later=Later::refuse;check(main_binding::initialize_retail_first_scene(x.main,x.sf)==RetailStartupGate::native_failure&&suffix_calls==1,"actual Main/Core prefix0403..0408 then explicit0409 refusal");
   RetailRendererImageFailure f;check(captured&&!captured->observe(captured_image,f)&&f.kind==RetailRendererImageError::retired,"later failure retires actual0406 payloads");captured.reset();
  }
  {

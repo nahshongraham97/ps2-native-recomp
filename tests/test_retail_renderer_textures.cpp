@@ -91,9 +91,9 @@ namespace mka::retail::renderer_required {
         fixture_destroy(HEX); \
     }
 OTHER(0409, 0x409)
-OTHER(0412, 0x412)
-OTHER(040a, 0x40a)
 OTHER(040b, 0x40b)
+// Actual0412/040A containers are linked dependencies; keep remaining
+// fixture suffix boundaries and every resource/lifetime assertion.
 #undef OTHER
 
 void transform_point_exact(RetailRendererPoint3&, const RetailRendererPoint3&, const RetailRendererAffine&) { std::abort(); }

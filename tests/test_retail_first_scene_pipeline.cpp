@@ -259,6 +259,8 @@ int main() {
     write_bytes(live_root / "scene" / "first.bsp", build_first_scene_bsp());
     {
         PipelineHarness h(live_root);
+        h.main_state->scene=std::make_shared<NativeRetailSceneOwners>();
+        h.main_state->scene->config.diagnostic_headless_without_display=true;
         StartupFailure sf;
         auto gate = scene_bootstrap_required::continue_first_scene_at_225d40(*h.main_state, h.core, sf);
         if (gate != RetailStartupGate::ready) {

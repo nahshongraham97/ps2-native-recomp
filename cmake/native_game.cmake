@@ -434,6 +434,26 @@ endif()
 # or endpoint is opened by these build targets or their file-only test.
 add_library(mka_native_retail_loading STATIC EXCLUDE_FROM_ALL runtime/src/native/retail_loading_picture.cpp)
 target_link_libraries(mka_native_retail_loading PUBLIC mka_native_content_volume)
+
+# Native host-file archive decoding; no disc device or guest address map.
+add_library(mka_native_retail_archive STATIC EXCLUDE_FROM_ALL runtime/src/native/retail_archive.cpp)
+target_include_directories(mka_native_retail_archive PUBLIC runtime/include)
+target_link_libraries(mka_native_retail_archive PUBLIC mka_native_content_volume)
+add_executable(test_native_retail_archive EXCLUDE_FROM_ALL tests/test_retail_archive.cpp)
+target_link_libraries(test_native_retail_archive PRIVATE mka_native_retail_archive)
+
+if(TARGET mka_native_retail_startup)
+    target_sources(mka_native_retail_startup PRIVATE
+        runtime/src/native/retail_scene_archive.cpp
+        runtime/src/native/retail_mode_scene.cpp)
+    target_link_libraries(mka_native_retail_startup PUBLIC mka_native_retail_archive)
+    add_executable(test_native_retail_scene_archive EXCLUDE_FROM_ALL tests/test_retail_scene_archive.cpp)
+    target_link_libraries(test_native_retail_scene_archive PRIVATE mka_native_retail_startup opengl32 gdi32 user32)
+    add_executable(test_native_retail_archive_mode EXCLUDE_FROM_ALL tests/test_retail_archive_mode.cpp)
+    target_link_libraries(test_native_retail_archive_mode PRIVATE mka_native_retail_startup opengl32 gdi32 user32)
+    add_executable(test_native_retail_hud_submission EXCLUDE_FROM_ALL tests/test_retail_hud_submission.cpp)
+    target_link_libraries(test_native_retail_hud_submission PRIVATE mka_native_retail_startup opengl32 gdi32 user32)
+endif()
 if(WIN32)
     set(SDL2_NO_MWINDOWS ON)
     find_package(SDL2 CONFIG REQUIRED HINTS "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sdl2/lib/cmake/SDL2")

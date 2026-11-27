@@ -7,6 +7,8 @@
 #include "mka/retail_movie_controller.hpp"
 #include "mka/retail_display_service.hpp"
 #include "native_retail_startup.hpp"
+#include "retail_main_control.hpp"
+#include <new>
 #ifdef _WIN32
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -17,6 +19,13 @@
 namespace mka::retail {
 
 NativeRetailSceneOwners::~NativeRetailSceneOwners() noexcept {
+    if (world) world->release_gpu_resources();
+    if (stream_resources) {
+        RetailRendererWorldFailure owned_failure;
+        (void)stream_resources->cleanup(owned_failure);
+    }
+    stream_resources.reset();
+    if (gpu_retirement) (void)gpu_retirement->poll();
     if (camera_init && cameras && frames && rasters) {
         if (world && camera_init->primary.world_link) {
             RetailCameraWorldFailure wf;
@@ -59,14 +68,7 @@ namespace mka::retail::scene_bootstrap_required {
 namespace {
 
 bool has_active_gl_context(const std::shared_ptr<NativeProductionDisplayService>& display) noexcept {
-    if (display && display->is_context_current()) {
-        return true;
-    }
-#ifdef _WIN32
-    return wglGetCurrentContext() != nullptr;
-#else
-    return false;
-#endif
+    return display && display->is_context_current();
 }
 
 bool resource_exists(const content::NativeContentVolume& volume, std::string_view key) noexcept {
@@ -81,20 +83,20 @@ bool resource_exists(const content::NativeContentVolume& volume, std::string_vie
 } // namespace
 
 RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState& main,
-    std::shared_ptr<NativeRetailRendererCore> core, StartupFailure& f) {
+    std::shared_ptr<NativeRetailRendererCore> core, StartupFailure& f) try {
     record_placeholder_hit(0, "continue_first_scene_at_225d40", main.iteration);
     f = {};
     if (!main.lifetime || !main.lifetime->active_on_owner_thread() || !main.startup.game_session) {
         f = {StartupError::game_session, "225D40: Main lifetime/thread/Session required"};
         return RetailStartupGate::native_failure;
     }
-    if (!core) {
-        f = {StartupError::memory_owners, "225D40: null renderer core"};
+    if (!core || !core->same_session(main.startup.game_session)) {
+        f = {StartupError::memory_owners, "225D40: renderer Core must belong to Main Session"};
         return RetailStartupGate::native_failure;
     }
 
     RetailRendererCoreFailure cf;
-    if (!core->construct_registered(cf)) {
+    if (!core->native_plugins_constructed() && !core->construct_registered(cf)) {
         f.kind = StartupError::memory_owners;
         f.operation = cf.operation;
         return RetailStartupGate::native_failure;
@@ -111,7 +113,13 @@ RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState& main,
         return RetailStartupGate::native_failure;
     }
 
-    auto scene = main.scene ? main.scene : std::make_shared<NativeRetailSceneOwners>();
+    if(main.scene && main.scene->scene_loaded) {
+        f={StartupError::already_initialized,"225D40: reset existing scene before loading another"};
+        return RetailStartupGate::native_failure;
+    }
+    // Prepare separately; a failed load cannot publish a half-built Scene.
+    auto scene = std::make_shared<NativeRetailSceneOwners>();
+    if(main.scene) scene->config=main.scene->config;
     scene->core = core;
     scene->world_module = world_mod;
     scene->frames = frame_mod;
@@ -120,15 +128,20 @@ RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState& main,
     scene->textures = tex_mod;
     scene->materials = mat_mod;
     scene->display = scene->config.display;
+    scene->gpu_retirement = scene->config.gpu_retirement;
     scene->gl_context_active = has_active_gl_context(scene->display);
     scene->scene_loaded = false;
     scene->geometry_ingested = false;
     scene->stream_result = {};
     scene->frames_rendered = 0;
 
-    const bool has_txd = resource_exists(main.startup.content, scene->config.txd_resource_key);
-    const bool has_world_stream = resource_exists(main.startup.content, scene->config.world_resource_key);
-    const bool has_geom = resource_exists(main.startup.content, scene->config.geometry_resource_key);
+    const auto& selected_archive=scene->config.archive_streams;
+    const bool has_txd = selected_archive ? bool(selected_archive->txd) : resource_exists(main.startup.content, scene->config.txd_resource_key);
+    const bool has_world_stream = selected_archive ? bool(selected_archive->world) : resource_exists(main.startup.content, scene->config.world_resource_key);
+    const bool has_geom = selected_archive ? bool(selected_archive->geometry) : resource_exists(main.startup.content, scene->config.geometry_resource_key);
+    if(selected_archive && !has_txd && !has_world_stream && !has_geom) {
+        f={StartupError::content,"archive scene requires explicit stream selections"};return RetailStartupGate::native_failure;
+    }
 
     // Asset-less headless mode: fail closed on scene assets without failing startup
     // so the 60-frame headless entry gate completes cleanly.
@@ -151,10 +164,32 @@ RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState& main,
     }
     scene->world_handle = *world_handle;
     scene->world = world;
+    scene->stream_resources=std::make_unique<RetailSceneResources>(raster_mod,tex_mod,mat_mod,frame_mod,world);
+    if(scene->display) {
+        if(!scene->gpu_retirement) {
+            video::MovieGpuError error;
+            scene->gpu_retirement=video::NativeMovieGpuRetirementOwner::create(error);
+            if(!scene->gpu_retirement) {
+                f={StartupError::allocation,"225D40: native GPU retirement owner allocation"};return RetailStartupGate::native_failure;
+            }
+        }
+        if(!world->bind_gpu_resources(scene->display,scene->gpu_retirement,wf)) {
+            f={StartupError::memory_owners,wf.operation};return RetailStartupGate::native_failure;
+        }
+    }
+    if(selected_archive) {
+        RetailSceneArchiveFailure af;
+        auto loaded=load_retail_scene_streams_from_archive(main.startup.content,*selected_archive,
+            scene->config.base_sector_id,scene->config.base_object_id,*raster_mod,*tex_mod,*mat_mod,*frame_mod,
+            *world,{},af,*scene->stream_resources);
+        if(!loaded) {f={StartupError::content,af.operation};return RetailStartupGate::native_failure;}
+        scene->stream_result={loaded->bytes_read,loaded->txd_ingested,loaded->world_ingested};
+        scene->geometry_ingested=loaded->geometry_ingested;
+    }
 
     const std::string_view txd_key = has_txd ? std::string_view(scene->config.txd_resource_key) : std::string_view{};
     const std::string_view world_key = has_world_stream ? std::string_view(scene->config.world_resource_key) : std::string_view{};
-    if (!txd_key.empty() || !world_key.empty()) {
+    if (!selected_archive && (!txd_key.empty() || !world_key.empty())) {
         auto loaded = load_retail_scene_streams_from_volume(
             main.startup.content,
             txd_key,
@@ -164,7 +199,7 @@ RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState& main,
             *tex_mod,
             *mat_mod,
             *world,
-            wf);
+            wf,scene->stream_resources.get());
         if (!loaded) {
             scene.reset();
             f = {StartupError::content, wf.operation};
@@ -173,7 +208,7 @@ RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState& main,
         scene->stream_result = *loaded;
     }
 
-    if (has_geom) {
+    if (!selected_archive && has_geom) {
         content::ContentVolumeFailure cvf;
         auto geom_file = main.startup.content.open_resource(scene->config.geometry_resource_key, cvf);
         const auto geom_len = geom_file ? geom_file->length(cvf) : std::optional<std::uint64_t>{};
@@ -197,7 +232,7 @@ RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState& main,
                 *tex_mod,
                 *world,
                 NativeRetailRendererFrameHandle{},
-                wf)) {
+                wf,scene->stream_resources.get())) {
             scene.reset();
             f = {StartupError::content, wf.operation};
             return RetailStartupGate::native_failure;
@@ -205,6 +240,9 @@ RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState& main,
         scene->geometry_ingested = true;
     }
 
+    if(scene->config.hud && !world->set_hud_submission(*scene->config.hud,wf)) {
+        f={StartupError::content,wf.operation};return RetailStartupGate::native_failure;
+    }
     RetailGameSessionFailure gf;
     auto* world_cams = main.startup.game_session->render_cameras(gf);
     if (!world_cams) {
@@ -268,6 +306,12 @@ RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState& main,
     scene->scene_loaded = true;
     main.scene = std::move(scene);
     return RetailStartupGate::ready;
+} catch(const detail::NativeMainReentry&) {
+    throw;
+} catch(const std::bad_alloc&) {
+    f={StartupError::allocation,"225D40: scene allocation failed before publication"};return RetailStartupGate::native_failure;
+} catch(...) {
+    f={StartupError::native_exception,"225D40: native scene load exception"};return RetailStartupGate::native_failure;
 }
 
 // NOTE / AUDIT: continue_scene_reset_at_125d60 detaches cameras via 181A30 and releases
@@ -278,6 +322,22 @@ bool continue_scene_reset_at_125d60(NativeRetailMainState& main, StartupFailure&
     if (!main.lifetime || !main.lifetime->active_on_owner_thread() || !main.startup.game_session) {
         f = {StartupError::game_session, "125D60 placeholder: Main lifetime/thread/Session required"};
         return false;
+    }
+    // Explicit close refuses a wrong context without dropping the old scene.
+    if(main.scene && main.scene->world) {
+        RetailRendererWorldFailure wf;
+        if(!main.scene->world->release_gpu_resources(wf)) {
+            f={StartupError::memory_owners,wf.operation};return false;
+        }
+        if(main.scene->gpu_retirement) {
+            const auto retired=main.scene->gpu_retirement->poll();
+            if(retired.state!=video::MovieFenceState::complete || !main.scene->gpu_retirement->empty()) {
+                f={StartupError::memory_owners,"scene GPU retirement must complete before mode teardown"};return false;
+            }
+        }
+        if(main.scene->stream_resources && !main.scene->stream_resources->cleanup(wf)) {
+            f={StartupError::memory_owners,wf.operation};return false;
+        }
     }
     RetailGameSessionFailure gf;
     RetailCameraWorldFailure cf;

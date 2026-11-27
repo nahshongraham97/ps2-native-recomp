@@ -1,4 +1,5 @@
 #include "mka/retail_main.hpp"
+#include "mka/retail_mode_scene.hpp"
 #include "native_retail_startup.hpp"
 
 namespace mka::retail::main_binding {
@@ -60,6 +61,7 @@ std::optional<bool> retail_render_enabled(
     const NativeRetailMainState& main, StartupFailure& failure) {
     const auto session = require_frame_session(main, failure);
     if (!session) return {};
+    if(main.mode_scene_routes&&main.mode_scene_routes->render_pending())return false;
     auto* cameras = session->render_cameras(failure.game);
     if (!cameras) {
         failure.kind = StartupError::game_session;

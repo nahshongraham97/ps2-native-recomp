@@ -94,5 +94,700 @@
       "exit_code": 1,
       "rejected": true
     }
-  ]
+  ],
+  "archive_mode_hud_followup_20261126": {
+    "status": "BOUNDED_COMPONENT_CHECKPOINT_VERIFIED_RETAIL_INTEGRATION_OPEN",
+    "original_source": {
+      "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+      "archive_source_receipt": {
+        "path": "b/phase7-capture-run/native-archive-toc-01/source-01/RESULT.json",
+        "bytes": 35161,
+        "sha256": "86ca0ca8600e4b18479ffb1997cab4e37d7cfc35c0523cf802aafa9ac18915a4"
+      },
+      "archive_format_limits": {
+        "path": "b/phase7-capture-run/native-archive-toc-01/source-01/FORMAT_SCOPE_APPENDUM.json",
+        "bytes": 55711,
+        "sha256": "c19849700dbfa93e928f973dc32e43e06d08aa7e7c490edb9696024818499c60"
+      },
+      "mode_ghidra": {
+        "path": "b/native-archive-mode-01/MODE_GHIDRA.json",
+        "bytes": 50489,
+        "sha256": "4382b8fd5f312c305438ef903048d12ad78016e45e0a4faaab9b323bdd2dd15d"
+      },
+      "mode_original_join": {
+        "path": "b/native-archive-mode-01/MODE_ORIGINALS.json",
+        "bytes": 2937,
+        "sha256": "65d29149a747a959e9af0d0844b6b7f234cc42e354163ac219ffefca9d63add2"
+      },
+      "dispatch_table_sha256": "3dcc2790c1044afdbbd6e9fe04519cced0a4a6fb7b87c617ad5f867a4db3b3f5",
+      "matched_bodies": [
+        {
+          "address": "001225d0",
+          "bytes": 180,
+          "sha256": "f25532d6d2fad7210ebba262760b4622dd9887935ee670680424eca9b758c21b",
+          "matched_cells": 6
+        },
+        {
+          "address": "00219100",
+          "bytes": 8,
+          "sha256": "40abbd07f55cd406a62594859ce2780c8757044f8b82960f352cda7168cd26eb",
+          "matched_cells": 6,
+          "tiny_control": true
+        },
+        {
+          "address": "00219280",
+          "bytes": 12,
+          "sha256": "a9ee5c244ae256d1184812d040a1eea77ae3cd156f7c0f1807e78e43f178846c",
+          "matched_cells": 6,
+          "tiny_control": true
+        }
+      ],
+      "unmatched_complete_bodies": [
+        {
+          "address": "0027b1d0",
+          "bytes": 212,
+          "sha256": "9bbdbb1b5c7cf2cf9bfbe1f760fd20570d4ac34916ec2cf305a192fc84a6c5b5",
+          "scope": "53 original instructions joined; remains mismatch in all attempted cells"
+        },
+        {
+          "address": "00219160",
+          "bytes": 152,
+          "sha256": "e11697d1fb4f02018868d13a26e26757583159ebc1f2ae47f00db527044c063d",
+          "scope": "38 original instructions joined; typed draft remains mismatch"
+        },
+        {
+          "address": "002193e0",
+          "bytes": 572,
+          "sha256": "f9decd765393022d67a2337ee243927e0d57cab1111f79ed1f6146fc4ae7c406",
+          "scope": "142 listing words plus1 omitted zeroNOP, full source/hash verified; not byte-matched in this batch"
+        }
+      ],
+      "matching_work_dir": "/opt/mkar-decomp/native-archive-mode-01",
+      "compiler_builds": [
+        "3.0.1b198-051011",
+        "3.0.1b205-051227",
+        "3.0.1b210-060308"
+      ],
+      "flags": [
+        "-O3 -sdatathreshold8",
+        "-O4 -sdatathreshold8"
+      ],
+      "limits": [
+        "Original compiler is not uniquely identified; allthree builds tie on admitted exact bodies.",
+        "Tiny archive controls are not a general matching-scaling result.",
+        "Matching/static identification does not prove native64-bit memory/ABI, ownership, callees or gameplay."
+      ]
+    },
+    "container": {
+      "original_pak_sha256": "ff51cdff04e6487460ef3c3a1db309a68ced43e4c4bfd084fa965cb41c8c227a",
+      "members": 245,
+      "extensions": {
+        "ssf": 245
+      },
+      "wire_header_bytes": 20,
+      "wire_record_bytes": 12,
+      "original_member_comparisons": 245,
+      "parser_checks": 3113,
+      "malformed_cases": 29,
+      "scope": "Actual container/member-byte comparisons; no invented nested SEC names or retail RW payloads."
+    },
+    "implementation": [
+      "Explicit retained native file/volume PAK owner; validated names/indexes/ranges and immutable published TOC.",
+      "Read/extract all selected complete RW roots before renderer mutation; scoped typed resource journal releases whole success/error prefixes.",
+      "Native presentation plans keep transition mode/child/dispatch stage separate; no guessed retail mode-to-archive map.",
+      "Only owning display can draw/delete; preallocated host retirement task retains failed/wrong-context cleanup.",
+      "Typed caller-supplied solid/texturedHUD quads draw after3D with orthographic/depthoff/writeoff/alpha policy and touched-state restoration.",
+      "Existing native Main transfer propagates through bootstrap/mode route, never an ordinary allocation error."
+    ],
+    "focused": {
+      "archive_run": {
+        "path": "b/native-archive-mode-01/archive-component-run-02/RESULT.json",
+        "bytes": 2724,
+        "sha256": "fbe5d553eaa21d513aa2280eb0d746338dd1c89c6be6b3d23d8642b0a3270bdd"
+      },
+      "bridge_HUD_legacy_runs": {
+        "path": "b/native-archive-mode-01/focused-runs-01/RESULT.json",
+        "bytes": 5120,
+        "sha256": "e183ae26373dffcd56d7e17794603a764babb7aafa50025efb5445c3784a8846"
+      },
+      "final_build": {
+        "path": "b/native-archive-mode-01/focused-build-04/BUILD.json",
+        "bytes": 112308,
+        "sha256": "2ea96cca73de6fd9a61e69d6d29569f5f050e719fba6678e0004c45ea1439884"
+      },
+      "mode_GPU": {
+        "path": "b/native-archive-mode-01/focused-build-04/MODE.json",
+        "bytes": 876,
+        "sha256": "bec1d9f580f29c59463db6d7f914b7b79e21033981b787f3e69e828da0d71686"
+      },
+      "bridge_checks": 426,
+      "bridge_allocation_prefix_failures": 120,
+      "HUD_checks": 61,
+      "mode_checks": 74,
+      "two_mode_frame_samples": [
+        {
+          "mode": 7,
+          "textured_pixels": 572,
+          "HUD_samples": 25
+        },
+        {
+          "mode": 4,
+          "textured_pixels": 572,
+          "HUD_samples": 25
+        }
+      ],
+      "scope": "Constructed native GPU/component cases. Diagnostic in-process readbacks are not acceptance frames; no physical audio or gameplay run.",
+      "final_build_after_legacy_fixture_corrections": {
+        "path": "b/native-archive-mode-01/focused-build-05/BUILD.json",
+        "bytes": 112454,
+        "sha256": "38e13ffd57193efc72e27880188cb666bfc40929ce287de1e14b1e3da057cf9d"
+      }
+    },
+    "intentional_native_safety_divergences": [
+      "Offset/count/name/payload overflow, truncation, overlap, malformedkey and ambiguousalias cases refuse before publication; serialized32-bit offsets become checked host64-bit values.",
+      "PAK naming allows unreferenced alignment padding; referenced name intervals must be complete and nonoverlapping. These guards exceed originalunchecked reads.",
+      "No suffix-based format guess, basename search, provider fallback or signature scan inside SEC.",
+      "Selected RW roots are completely bounded/prevalidated and resource handles are journaled for zero-leak error/teardown.",
+      "Source1225D0 has full1861B0 reset/previous exit/task creation/context transfer; only native presentation routing is connected here, not a claim to those unimplemented effects.",
+      "Source27B1D0 has51 separate dispatch stages; configured presentation plans are not its recovered game handlers.",
+      "Cross-display mode plans refuse by name; no implicit context switching. Wrong-context render/teardown retains ownership.",
+      "Asset-less60frame headless component remains separate from mode readiness; loaded/no-display diagnostic needs explicit test config (defaultfalse)."
+    ],
+    "preserved_failures": [
+      {
+        "stage": "original_PAK_parser_first_run",
+        "receipt": {
+          "path": "b/native-archive-mode-01/archive-component-run-01/RESULT.json",
+          "bytes": 939,
+          "sha256": "1d99b6d1f8c8760ddc3eea0c7e8a7919e6d60548f0ebb4e37b2f083a1bd878bd"
+        },
+        "reason": "Invalid previous-byte-must-beNUL assumption rejected original alignment padding; source disproved it. Exact prior sources preserved; corrected referenced-range check passes245."
+      },
+      {
+        "stage": "focused_build01",
+        "receipt": {
+          "path": "b/native-archive-mode-01/focused-build-01/BUILD.json",
+          "bytes": 112398,
+          "sha256": "4b9b6da648835eb11da982f1af8fc69bc83bc4d7596f919e420922942daf0b30"
+        },
+        "reason": "Missing StartupFailure forward declaration in new mode header; no test execution. Fixed declaration, fresh later build passes."
+      },
+      {
+        "stage": "focused_mode_first_run",
+        "receipt": {
+          "path": "b/native-archive-mode-01/focused-runs-01/RESULT.json",
+          "bytes": 5120,
+          "sha256": "e183ae26373dffcd56d7e17794603a764babb7aafa50025efb5445c3784a8846"
+        },
+        "reason": "Test incorrectly required engine-default texture count0; corrected to measured initial module baseline before any scene allocation, without removing cleanup criterion."
+      },
+      {
+        "stage": "falsification_attempt01",
+        "receipt": {
+          "path": "b/native-archive-mode-01/falsification-01/RESULT.json",
+          "bytes": 1184628,
+          "sha256": "e603d138af01a289c4ddfb32309818693536a5ea8374b013596ed8b397b6ff24"
+        },
+        "reason": "Readiness logger expected auto reject but fixture uses const auto reject. Two compiles, no link/runtime; exact source adapter corrected."
+      },
+      {
+        "stage": "falsification_attempt02",
+        "receipt": {
+          "path": "b/native-archive-mode-01/falsification-02/RESULT.json",
+          "bytes": 2576067,
+          "sha256": "cae7971e83c90dbf29ffa50de6dcf6e438c153dfe513f380fb756a3275abb2e0"
+        },
+        "reason": "Mode-dispatch plant rejected at new earlier native Main-transfer assertion, not the old later scene-loaded assertion; verifier correctly refused that mismatch."
+      },
+      {
+        "stage": "falsification_attempt03",
+        "receipt": {
+          "path": "b/native-archive-mode-01/falsification-03/RESULT.json",
+          "bytes": 2576133,
+          "sha256": "0cc7f37c64617a2f495c9094fabbbab7a536977e23fc1325f64e2608201b634b"
+        },
+        "reason": "Behavioral10/10PASS retained; independent review requested explicit focused-build source joins, fixture/object pins and complete actual dependency coverage for reusable proof."
+      },
+      {
+        "stage": "falsification_attempt04",
+        "receipt": {
+          "path": "b/native-archive-mode-01/falsification-04/RESULT.json",
+          "bytes": 6391683,
+          "sha256": "10233ea61c3a52ec93d394c547b9495d2558fd967f81c8511596389fb93643e1"
+        },
+        "reason": "Hardened 10/10 pass retained. Four legacy fixture-only corrections subsequently changed source identities; final attempt05 recompiles all10 cases against final focused source pins."
+      },
+      {
+        "stage": "baseline_duplicate_fixture_correction01",
+        "receipt": {
+          "path": "b/native-archive-mode-01/fixture-frontier-correction-01/RESULT.json",
+          "bytes": 1105,
+          "sha256": "e8ae5f258309cf127977ba8279c333b2e6c477a41b1542af933b7952aef996d6"
+        },
+        "reason": "Full baseline exposed legacy test-owned 0408/040A/0412 factories duplicating actual newly linked owners. Only test setup/frontier changed; no existing assertions removed. Images/rasters now refuse at real0409 frontier; textures/dictionaries retain their remaining unbound boundaries. All four pass final baseline."
+      },
+      {
+        "stage": "baseline_duplicate_fixture_correction02",
+        "receipt": {
+          "path": "b/native-archive-mode-01/fixture-frontier-correction-02/RESULT.json",
+          "bytes": 1358,
+          "sha256": "63fbf1de1a892092bc54e5a7ba3a86c2dce6b49de95d0c37a0bbedb91d13e565"
+        },
+        "reason": "Full baseline exposed legacy test-owned 0408/040A/0412 factories duplicating actual newly linked owners. Only test setup/frontier changed; no existing assertions removed. Images/rasters now refuse at real0409 frontier; textures/dictionaries retain their remaining unbound boundaries. All four pass final baseline."
+      }
+    ],
+    "remaining_gaps": [
+      "Real245SSF nested payload selection/conversion; no actual retail TXD/BSP/DFF insidePAK established.",
+      "WAD/MKA format is unproved; bounded extracted-tree/ELF observations are not full-disc absence proof.",
+      "Actual retail gameplay mode/HUD producers and all51 game dispatch handlers.",
+      "Complete1861B0/reset/task/context-transfer behavior and whole-game native acceptance.",
+      "Fixture labels mode7/mode4 and stage23/stage30 have no assigned retail gameplay meaning; actual producer mappings remain unproved."
+    ],
+    "counts": {
+      "verified_ownership": 20,
+      "transformed": 2,
+      "native": 236
+    },
+    "deltas": {
+      "ownership": 0,
+      "transformed": 0,
+      "native": 0
+    },
+    "gameplay_acceptance": "OPEN",
+    "falsification": {
+      "receipt": {
+        "path": "b/native-archive-mode-01/falsification-05/RESULT.json",
+        "bytes": 6391682,
+        "sha256": "e740ef4781ec5400704d14cdcecf1a83a57225e85f73cca54a1949b410c09ebb"
+      },
+      "authored_verifier": {
+        "path": "tools/research/verify_native_archive_mode_pipeline.py",
+        "bytes": 21778,
+        "sha256": "0cb2db98b77326715e43a20df5d4a030c5bc46a47ff8f4e7ac9b36c969337b02"
+      },
+      "independent_current_join": {
+        "path": "b/native-archive-mode-01/FALSIFICATION_FINAL_ROOT_JOIN.json",
+        "bytes": 193,
+        "sha256": "1c26a6e784873486947bbe3cb3c566733d68488dc8ef6b44974c6713b773f7c7"
+      },
+      "case_count": 10,
+      "positive_controls": 3,
+      "rejected_source_plants": 7,
+      "actual_compile_steps": 10,
+      "actual_link_steps": 10,
+      "source_dependency_pins": 2075,
+      "focused_build_source_pins_joined": 963,
+      "source_changes": [],
+      "protected_unchanged": true,
+      "cases": [
+        {
+          "name": "hud_positive",
+          "expected_exit": 0,
+          "required_assertion": "PASS_NATIVE_HUD_SUBMISSION",
+          "required_ready_marker": "HUD_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-archive-mode-01\\falsification-05\\hud_positive\\hud_positive.exe",
+            "sha256": "5eca6e797658264e9f7f2fe2897cd4761a7399de32a39b6fdcc182dcd7808da6",
+            "bytes": 4033536
+          },
+          "compiled_artifacts_unchanged": true,
+          "exit_code": 0
+        },
+        {
+          "name": "mode_positive",
+          "expected_exit": 0,
+          "required_assertion": "PASS native archive mode GPU",
+          "required_ready_marker": "ARCHIVE_MODE_GL",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-archive-mode-01\\falsification-05\\mode_positive\\mode_positive.exe",
+            "sha256": "f4e74313eb4604dc27bc0eff31959dce9bc177bf80b3c59bfd3d53ce7992db65",
+            "bytes": 4094464
+          },
+          "compiled_artifacts_unchanged": true,
+          "exit_code": 0
+        },
+        {
+          "name": "archive_positive",
+          "expected_exit": 0,
+          "required_assertion": "PASS retail archive",
+          "required_ready_marker": "ARCHIVE_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-archive-mode-01\\falsification-05\\archive_positive\\archive_positive.exe",
+            "sha256": "fdca1660e0290a4bccd1990ac1892c1c5ccd0ab6a1cba46db3ae0660bc05db1d",
+            "bytes": 1714688
+          },
+          "compiled_artifacts_unchanged": true,
+          "exit_code": 0
+        },
+        {
+          "name": "hud_depth",
+          "expected_exit": 1,
+          "required_assertion": "HUD_ASSERTION: HUD_DEPTH_AND_ALPHA_PIXELS: red half-alpha overlay survives prefilled zero depth",
+          "required_ready_marker": "HUD_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-archive-mode-01\\falsification-05\\hud_depth\\hud_depth.exe",
+            "sha256": "64b0874939476444c47631fad03ec3bb9c28e4e044ce4986c0e30217eedd68ab",
+            "bytes": 4033536
+          },
+          "compiled_artifacts_unchanged": true,
+          "exit_code": 1
+        },
+        {
+          "name": "hud_blend",
+          "expected_exit": 1,
+          "required_assertion": "HUD_ASSERTION: HUD_DEPTH_AND_ALPHA_PIXELS: red half-alpha overlay survives prefilled zero depth",
+          "required_ready_marker": "HUD_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-archive-mode-01\\falsification-05\\hud_blend\\hud_blend.exe",
+            "sha256": "eef82dcd4e984973e1e519de7e846fda1de9ad85416148c931406da278eb6ccd",
+            "bytes": 4033536
+          },
+          "compiled_artifacts_unchanged": true,
+          "exit_code": 1
+        },
+        {
+          "name": "hud_omitted",
+          "expected_exit": 1,
+          "required_assertion": "HUD_ASSERTION: HUD_DEPTH_AND_ALPHA_PIXELS: red half-alpha overlay survives prefilled zero depth",
+          "required_ready_marker": "HUD_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-archive-mode-01\\falsification-05\\hud_omitted\\hud_omitted.exe",
+            "sha256": "a0e936a6680cfd52807d8398d8c06b7d725a68ee70876a1a352a18b4fc197fa1",
+            "bytes": 4033024
+          },
+          "compiled_artifacts_unchanged": true,
+          "exit_code": 1
+        },
+        {
+          "name": "program_restore",
+          "expected_exit": 1,
+          "required_assertion": "HUD_ASSERTION: HUD restores host program",
+          "required_ready_marker": "HUD_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-archive-mode-01\\falsification-05\\program_restore\\program_restore.exe",
+            "sha256": "70173b8833598988c025c324ab594fa85bc9ff793c382ffdf2396bcc76e8b286",
+            "bytes": 4033536
+          },
+          "compiled_artifacts_unchanged": true,
+          "exit_code": 1
+        },
+        {
+          "name": "wrong_context_delete",
+          "expected_exit": 1,
+          "required_assertion": "HUD_ASSERTION: wrong-context release retains actual GPU names",
+          "required_ready_marker": "HUD_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-archive-mode-01\\falsification-05\\wrong_context_delete\\wrong_context_delete.exe",
+            "sha256": "60c15a2b43d7f88a5bb520ed59ae3ad97954efa437afb2d38720ecc0f13f6f1e",
+            "bytes": 4033536
+          },
+          "compiled_artifacts_unchanged": true,
+          "exit_code": 1
+        },
+        {
+          "name": "mode_dispatch_omitted",
+          "expected_exit": 1,
+          "required_assertion": "native Main transfer propagates through scene bootstrap and mode dispatcher",
+          "required_ready_marker": "ARCHIVE_MODE_GL",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-archive-mode-01\\falsification-05\\mode_dispatch_omitted\\mode_dispatch_omitted.exe",
+            "sha256": "b14b9f482ee9ff5dd2d0a0535f8783bd9339c7dcb9ef322528ea05bbe3ba26d1",
+            "bytes": 4094464
+          },
+          "compiled_artifacts_unchanged": true,
+          "exit_code": 1
+        },
+        {
+          "name": "archive_payload_overlap",
+          "expected_exit": 1,
+          "required_assertion": "exact-payload-alias",
+          "required_ready_marker": "ARCHIVE_NATIVE_READY",
+          "binary": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\native-archive-mode-01\\falsification-05\\archive_payload_overlap\\archive_payload_overlap.exe",
+            "sha256": "42df9f1e111aa815ad5bb9af7e26bf7c992eafdb4cebd25a9911ac54d34a6b93",
+            "bytes": 1714176
+          },
+          "compiled_artifacts_unchanged": true,
+          "exit_code": 1
+        }
+      ],
+      "scope": "Every plant compiles/links successfully, reaches its named readiness marker and exits1 at its exact assertion. Loader/crash/other-error outcomes fail the verifier."
+    },
+    "matching_driver": {
+      "path": "tools/research/match_native_archive_mode.py",
+      "bytes": 4340,
+      "sha256": "4f0b510dc29d11812ddc2cc0a801573432d61b129a04bdd85008ef2538ded9b9"
+    },
+    "full_baseline": {
+      "receipt": {
+        "path": "b/phase7-capture-run/native-archive-mode-01/baseline-retry-03/BASELINE_AND_MEASUREMENTS.json",
+        "bytes": 6770,
+        "sha256": "ab7fdcc8c0bd38d84d43a7185db928b563ed68574e6048f05bb7dd12a9c141ff"
+      },
+      "native_baseline": {
+        "targets": 59,
+        "variants": 65,
+        "passed": 65,
+        "expected_positive": 58,
+        "expected_refusals": 7,
+        "receipt": {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-archive-mode-01\\baseline-retry-03\\RESULT.json",
+          "bytes": 112399,
+          "sha256": "a652ce80d7284d6fd93425e5d4ce9b3d82fa09753d06f6add49b588c99fe713a"
+        }
+      },
+      "run_check": {
+        "clients_total": 20,
+        "clients_passed": 20,
+        "legacy59_overlap": 15,
+        "additional_unique": 5,
+        "receipt": {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-archive-mode-01\\run-check-20-01\\RESULT.json",
+          "bytes": 10932,
+          "sha256": "8fd6fefdf25ea80698716c7119c735137e458c4850ca21bd42309945b6b91985"
+        }
+      },
+      "earlier_controls": {
+        "count": 20,
+        "positive": 4,
+        "negative": 16,
+        "fresh_builds": 0,
+        "compiled_pin_records": 34,
+        "receipt": {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-archive-mode-01\\baseline-01\\earlier-controls\\RESULT.json",
+          "bytes": 33116,
+          "sha256": "e44bbded2f3c1e0863ccfe62c4e80c14e9e9054030ff0f537accae16206c7835"
+        }
+      },
+      "headless": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-archive-mode-01\\headless-01\\RESULT.json",
+        "bytes": 2337,
+        "sha256": "ea2fef3b2dc750fae7f9c29c5eb38f7972857d572f1826c751a778feb7acf122"
+      },
+      "negative": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-archive-mode-01\\negative-01\\RESULT.json",
+        "bytes": 2469,
+        "sha256": "eae2316066cb453425c89f6ebc9fb9e7320737c2decde36ee94af59f76fb5980"
+      },
+      "prototype": {
+        "receipt": {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-archive-mode-prototype-01-verification.json",
+          "bytes": 88006,
+          "sha256": "12e05d927072cd837a1be35370b575d3a8e5a42992e495c69f180a97709eb910"
+        },
+        "functions": [
+          {
+            "module": "GAMER.ovl",
+            "address": "007c4980",
+            "native_name": "initialize_gamer"
+          },
+          {
+            "module": "MOVIER.ovl",
+            "address": "0084a100",
+            "native_name": "initialize_movier"
+          }
+        ],
+        "measured_counts": {
+          "states": 61,
+          "generated_typed_comparisons": 122,
+          "synthetic_comparisons": 8,
+          "full_RAM_bytes": 33554432
+        },
+        "source_files": 697
+      },
+      "vu": {
+        "receipt": {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-archive-mode-vu-01-verify.json",
+          "bytes": 4158,
+          "sha256": "b7f654c71b0d25cc0d7193f383ee3ffb9b27c3d4eedef5677ca5501f3247d72e"
+        },
+        "source_manifest": {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-archive-mode-vu-01-compiled-source.json",
+          "bytes": 159921,
+          "sha256": "f3e09b1b6123b414197ddf2cdba030efd2b94ef7cdd9891cc6541456be0ed469"
+        },
+        "source_files": 1393
+      },
+      "actual_build_scope": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-archive-mode-01\\baseline-retry-03\\BUILD_SCOPE.json",
+        "bytes": 45693,
+        "sha256": "49d017ebffa8dc890eaf8a385eabbc11219641541221f091858e4ec1fa1a1468"
+      },
+      "post_source_protected_join": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-archive-mode-01\\baseline-retry-03\\POST_FOLLOWUP_SOURCE_JOIN.json",
+        "bytes": 1551978,
+        "sha256": "3f0b7ba172d17ef32787f6a86453f6801f07cd7a633776b1882a1cc51a39559b"
+      },
+      "snapshot_inputs_before": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-archive-mode-01\\baseline-01\\SNAPSHOT_INPUT_JOIN.json",
+        "bytes": 38948,
+        "sha256": "a3c2448d882da3d285b5c57e3db34f28e43b0b883d66c3fed24551ec96d505e9"
+      },
+      "snapshot_inputs_after": {
+        "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-archive-mode-01\\baseline-retry-03\\SNAPSHOT_INPUT_JOIN_AFTER.json",
+        "bytes": 38201,
+        "sha256": "d1fdec4ebb927acb25d049965fdcc639c775fcb6ecbd7d2f84ed3a18386785f5"
+      },
+      "protected_files": 4730,
+      "protected_unchanged": true,
+      "frozen_ref_unchanged": true,
+      "source_changes": [],
+      "generated_changes": [],
+      "source_paths": 1072,
+      "failed_attempts_preserved": [
+        {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-archive-mode-01\\baseline-01\\RESULT.json",
+          "bytes": 4848,
+          "sha256": "1bc45331355c475e1b601d959fd8a9aec4c10540dd0790dc2c72f0bdbe9f4a07"
+        },
+        {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-archive-mode-01\\baseline-retry-02\\RESULT.json",
+          "bytes": 4865,
+          "sha256": "5dfad8f820d876fb09d7ba59dee94cfec6f587c4e3af21f4fe23395347f03745"
+        }
+      ],
+      "source_fixture_corrections_root_owned": [
+        "fixture-frontier-correction-01",
+        "fixture-frontier-correction-02"
+      ],
+      "limits": [
+        "Component/prototype checks only; no oracle/game execution or gameplay acceptance.",
+        "run_check20 overlaps15original clients and adds5unique; do not add denominators as unique targets.",
+        "Earlier20controls are fresh executions of exact-source inherited binaries, not fresh builds.",
+        "Two prototypes and VU measurement refreshed against current source/header identities; no ownership/native/transformed credit added."
+      ],
+      "oracle_runs": 0,
+      "owned_processes_remaining": 0,
+      "affinity_mask": 15,
+      "max_build_jobs": 4,
+      "free_bytes": 113556516864
+    },
+    "canonical_gates": {
+      "receipt": {
+        "path": "b/native-archive-mode-01/canonical-01/RESULT.json",
+        "bytes": 1122,
+        "sha256": "6c567349870429c7f4075bfd1a65b2fb19b81eac6da460c8f1dc557bbd578617"
+      },
+      "count": 3,
+      "passed": 3,
+      "commands": [
+        "generate_ledgers.py --bounded",
+        "sync_verify.py --sync-to-fork",
+        "test_full_existence_validation.py"
+      ]
+    },
+    "publication_gates": {
+      "status": "PASS_ALL16_DISTINCT_GATES",
+      "read_only_receipt": {
+        "path": "build/oracle-telemetry/native-archive-mode-gates-01/RESULT.json",
+        "bytes": 2917,
+        "sha256": "0d1b51f7ef32a059aeac383c77627433a993806a44cc468592bdd52cc5d90ac6"
+      },
+      "read_only_count": 13,
+      "read_only_passed": 13,
+      "canonical_count": 3,
+      "canonical_passed": 3,
+      "source_report_paths_unchanged": 1644,
+      "protected_files_unchanged": 4730,
+      "frozen_ref_unchanged": true,
+      "outcomes": [
+        {
+          "name": "acceptance-checker",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "status": "PASS"
+        },
+        {
+          "name": "acceptance-manifest",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "status": "PASS"
+        },
+        {
+          "name": "cpu-raster-ban",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "status": "PASS"
+        },
+        {
+          "name": "oracle-verifier-planted",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "status": "PASS"
+        },
+        {
+          "name": "old-oracle-launcher-rejection",
+          "expected_exit": 1,
+          "actual_exit": 1,
+          "status": "PASS"
+        },
+        {
+          "name": "oracle-integrity-after-prepare",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "status": "PASS"
+        },
+        {
+          "name": "acceptance-open",
+          "expected_exit": 1,
+          "actual_exit": 1,
+          "status": "PASS"
+        },
+        {
+          "name": "markdown-links",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "status": "PASS"
+        },
+        {
+          "name": "sync-confirm",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "status": "PASS"
+        },
+        {
+          "name": "strict-renderware",
+          "expected_exit": 2,
+          "actual_exit": 2,
+          "status": "PASS"
+        },
+        {
+          "name": "static-exit-suite",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "status": "PASS"
+        },
+        {
+          "name": "stack-static-controls",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "status": "PASS"
+        },
+        {
+          "name": "frontier-capability-audit",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "status": "PASS"
+        }
+      ],
+      "scope": "Fresh13read-only gate executions plus adjacent3canonical gates. Expected acceptanceOPEN1, strictcensusUNKNOWN2 and oldlauncher1 are required refusals, never gameplay acceptance.20earlier controls are separate fresh executions on inherited exact-source binaries; no object/executable rebuild claimed for the13gates."
+    },
+    "final_scope": {
+      "compiled_source_changed_after_final_measurements": false,
+      "post_gate_edits": "Result metadata, live handoff and generated progress pins only.",
+      "next_slice": "PS2 SSF/SEC payload discovery and unpacking from proved original source; actual mode-to-asset and retail HUD producers remain open.",
+      "stopped": "Requested component checkpoint, after main-only publication; no oracle closure or gameplay run."
+    },
+    "publication_style_check": {
+      "command": "git diff --cached --check",
+      "exit_code": 2,
+      "findings": [
+        "runtime/include/mka/retail_mode_scene.hpp:43: new blank line at EOF.",
+        "runtime/src/native/retail_mode_scene.cpp:116: new blank line at EOF.",
+        "tests/test_retail_archive_mode.cpp:259: new blank line at EOF.",
+        "tools/research/match_native_archive_mode.py:60: new blank line at EOF."
+      ],
+      "scope": "Four additional final blank lines only; retained measured source bytes rather than repinning compiled-source evidence. No trailing-content-space, merge marker or runtime failure. Not reported as a passing style check; no checker/configuration modified."
+    }
+  }
 }

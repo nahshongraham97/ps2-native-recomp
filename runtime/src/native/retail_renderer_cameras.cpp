@@ -1,6 +1,7 @@
 #include "mka/retail_renderer_cameras.hpp"
 #include "mka/retail_camera_world.hpp"
 #include "mka/retail_renderer_world.hpp"
+#include "mka/retail_scene_resources.hpp"
 #include "mka/retail_game_session.hpp"
 #ifdef _WIN32
 #ifndef WIN32_LEAN_AND_MEAN
@@ -810,6 +811,14 @@ bool detach_camera_from_world_1cf350(
 }
 
 namespace {
+template<class T> void reserve_scene_journal(std::vector<T>& out,std::size_t extra){
+ if(extra>out.max_size()-out.size())throw std::bad_alloc();
+ out.reserve(out.size()+extra);
+}
+template<class F> struct SceneIngestRollback {
+ F& action;bool committed{false};
+ ~SceneIngestRollback(){if(!committed)action();}
+};
 struct RwStreamCursor {
  std::span<const std::byte> data;
  std::size_t pos{0};
@@ -894,7 +903,7 @@ bool parse_rw_geometry(
  const NativeRetailRendererFrameHandle& parent_frame,
  std::vector<NativeRetailMaterialHandle>& created_mats,
  std::vector<NativeRetailRendererFrameHandle>& created_frames,
- std::vector<std::uint64_t>& created_objs) noexcept {
+ std::vector<std::uint64_t>& created_objs) {
  std::uint32_t st_type=0,st_len=0,st_lib=0;
  if(!cur.read_chunk(st_type,st_len,st_lib)||st_type!=0x0001u||st_len<16)return false;
  RwStreamCursor st{cur.data.subspan(cur.pos,st_len),0};
@@ -963,6 +972,7 @@ bool parse_rw_geometry(
     RwStreamCursor mc{sub.data.subspan(sub.pos,mcl),0};
     if(!sub.skip(mcl))return false;
     if(mct==0x0007u){
+     reserve_scene_journal(created_mats,1);reserve_scene_journal(mat_list,1);
      NativeRetailMaterialHandle mh;
      if(!parse_rw_material(mc,materials,textures,mh))return false;
      created_mats.push_back(mh);
@@ -973,6 +983,7 @@ bool parse_rw_geometry(
  }
 
  RetailRendererFrameFailure ff;
+ reserve_scene_journal(created_frames,1);
  auto frm=frames.create_base_frame(ff);
  if(!frm)return false;
  created_frames.push_back(*frm);
@@ -995,6 +1006,7 @@ bool parse_rw_geometry(
   }
  }
   RetailRendererWorldFailure wf;
+ reserve_scene_journal(created_objs,1);
  if(!world.add_scene_object(std::move(obj),wf))return false;
  created_objs.push_back(obj_id);
  return true;
@@ -1005,7 +1017,7 @@ bool parse_rw_matlist(
  NativeRetailRendererMaterials& materials,
  NativeRetailRendererTextures& textures,
  std::vector<NativeRetailMaterialHandle>& created_mats,
- std::vector<NativeRetailMaterialHandle>& mat_list) noexcept {
+ std::vector<NativeRetailMaterialHandle>& mat_list) {
  std::uint32_t mt=0,ml=0,mlib=0;
  if(!sub.read_chunk(mt,ml,mlib)||mt!=0x0001u||ml<4)return false;
  RwStreamCursor mst{sub.data.subspan(sub.pos,ml),0};
@@ -1022,6 +1034,7 @@ bool parse_rw_matlist(
   RwStreamCursor mc{sub.data.subspan(sub.pos,mcl),0};
   if(!sub.skip(mcl))return false;
   if(mct==0x0007u){
+   reserve_scene_journal(created_mats,1);reserve_scene_journal(mat_list,1);
    NativeRetailMaterialHandle mh;
    if(!parse_rw_material(mc,materials,textures,mh))return false;
    created_mats.push_back(mh);
@@ -1038,7 +1051,7 @@ bool parse_rw_bsp_node(
  const std::vector<NativeRetailMaterialHandle>& mat_list,
  std::uint32_t world_flags,
  NativeRetailWorld& world,
- std::int32_t& out_index) noexcept {
+ std::int32_t& out_index) {
  if(node_type==0x0009u){
   std::uint32_t st=0,sl=0,slib=0;
   if(!cur.read_chunk(st,sl,slib)||st!=0x0001u||sl<44)return false;
@@ -1169,68 +1182,164 @@ bool parse_rw_bsp_node(
  return false;
 }
 
-void resolve_material_and_bind_texture(
- const NativeRetailMaterialHandle& material,
- NativeRetailWorld& world,
- NativeRetailRendererMaterials* materials,
- NativeRetailRendererTextures* textures,
- NativeRetailRendererRasters* rasters,
- std::array<float,4>& out_mat_color,
- std::size_t& bound_textures) noexcept {
- out_mat_color={1.0f,1.0f,1.0f,1.0f};
 #ifdef _WIN32
- GLuint gl_tex=0;
- if(!material.empty()&&materials!=nullptr){
-  RetailRendererMaterialFailure mf;
-  if(const auto mo=materials->observe(material,mf)){
-   out_mat_color={mo->color.r/255.0f,mo->color.g/255.0f,mo->color.b/255.0f,mo->color.a/255.0f};
-  }
-  if(textures!=nullptr&&rasters!=nullptr){
-   if(const auto th=materials->get_texture(material,mf);th&&!th->empty()){
-    for(const auto& entry:world.gpu_texture_cache()){
-     if(entry.texture.same_identity(*th)){gl_tex=static_cast<GLuint>(entry.gl_texture_id);break;}
-    }
-    if(gl_tex==0){
-     RetailRendererTextureFailure tf;
-     RetailRendererRasterFailure rf;
-     const auto rh=textures->raster(*th,tf);
-     const auto tobs=textures->observe(*th,tf);
-     if(rh&&!rh->empty()){
-      const auto robs=rasters->observe(*rh,rf);
-      auto pixels=rasters->lock_pixels(*rh,rf);
-      if(robs&&pixels&&robs->description.width>0&&robs->description.height>0&&
-        pixels->size()>=static_cast<std::size_t>(robs->description.width)*static_cast<std::size_t>(robs->description.height)*4u){
-       glGenTextures(1,&gl_tex);
-       if(gl_tex!=0){
-        glBindTexture(GL_TEXTURE_2D,gl_tex);
-        const GLint filter_gl=(tobs&&tobs->filter==RetailRendererTextureFilter::nearest)?GL_NEAREST:GL_LINEAR;
-        const GLint wrap_u=(tobs&&tobs->address_u==RetailRendererTextureAddress::clamp)?0x812F:GL_REPEAT;
-        const GLint wrap_v=(tobs&&tobs->address_v==RetailRendererTextureAddress::clamp)?0x812F:GL_REPEAT;
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,filter_gl);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,filter_gl);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,wrap_u);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,wrap_v);
-        glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,robs->description.width,robs->description.height,0,
-         GL_RGBA,GL_UNSIGNED_BYTE,pixels->data());
-        try{world.gpu_texture_cache().push_back({*th,static_cast<std::uint32_t>(gl_tex)});}catch(...){}
-       }
-      }
-      (void)rasters->unlock_pixels(*rh,rf);
-     }
-    }
-   }
-  }
+// Native compatibility draw boundary. No source GPU packet/state layout is represented.
+struct SceneGlState {
+ template<class T>static T proc(const char* name)noexcept{
+  const auto p=wglGetProcAddress(name);const auto n=reinterpret_cast<std::uintptr_t>(p);
+  return p&&n>3&&n!=std::numeric_limits<std::uintptr_t>::max()?reinterpret_cast<T>(p):nullptr;
  }
- if(gl_tex!=0){
-  glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D,gl_tex);
-  ++bound_textures;
- }else{
-  glDisable(GL_TEXTURE_2D);
+ void(APIENTRY* use)(GLuint){};void(APIENTRY* pipeline)(GLuint){};void(APIENTRY* vao)(GLuint){};
+ void(APIENTRY* active)(GLenum){};void(APIENTRY* sampler)(GLuint,GLuint){};void(APIENTRY* buffer)(GLenum,GLuint){};
+ void(APIENTRY* blend_func)(GLuint,GLenum,GLenum,GLenum,GLenum){};
+ void(APIENTRY* blend_equation)(GLuint,GLenum,GLenum){};
+ void(APIENTRY* enable_i)(GLenum,GLuint){};void(APIENTRY* disable_i)(GLenum,GLuint){};
+ GLboolean(APIENTRY* enabled_i)(GLenum,GLuint){};
+ void(APIENTRY* integer_i)(GLenum,GLuint,GLint*){};void(APIENTRY* boolean_i)(GLenum,GLuint,GLboolean*){};
+ void(APIENTRY* float_i)(GLenum,GLuint,GLfloat*){};void(APIENTRY* double_i)(GLenum,GLuint,GLdouble*){};
+ void(APIENTRY* color_mask)(GLuint,GLboolean,GLboolean,GLboolean,GLboolean){};
+ void(APIENTRY* scissor)(GLuint,GLint,GLint,GLsizei,GLsizei){};void(APIENTRY* depth_range)(GLuint,GLdouble,GLdouble){};
+ void(APIENTRY* clip_control)(GLenum,GLenum){};GLint clip_origin{},clip_depth{};
+ GLint program{},program_pipeline{},vertex_array{},active_unit{},sampler0{},unpack_buffer{},matrix_mode{},tex_binding{},tex_env{},depth_func{},shade_model{};
+ GLint unpack[4]{},blend[6]{},scissor_box[4]{},polygon_mode[2]{};
+ GLboolean blend_enabled{},scissor_enabled{},mask[4]{},depth_mask{};
+ GLfloat projection[16]{},modelview[16]{},texture_matrix[16]{},current_color[4]{},texcoord[4]{};
+ GLdouble depth_interval[2]{};
+ struct Enable {GLenum name;GLboolean enabled;};
+ std::vector<Enable> enables;
+ static constexpr GLenum targets[]{GL_TEXTURE_1D,GL_TEXTURE_2D,0x806f /*3D*/,0x8513 /*cube*/,0x84f5 /*rectangle*/};
+ struct Unit {GLboolean enabled[5]{};};std::vector<Unit> units;
+ GLboolean texgen[4]{};
+ bool captured{},applied{};
+ const char* error{"native scene GL state unavailable"};
+ bool capture(){
+  if(glGetError()!=GL_NO_ERROR){error="incoming GPU error before scene state snapshot";return false;}
+#define LOAD(M,N) M=proc<decltype(M)>(N);if(!M){error="required standard compatibility GL state API unavailable";return false;}
+  LOAD(use,"glUseProgram");LOAD(pipeline,"glBindProgramPipeline");LOAD(vao,"glBindVertexArray");
+  LOAD(active,"glActiveTexture");LOAD(sampler,"glBindSampler");LOAD(buffer,"glBindBuffer");
+  LOAD(blend_func,"glBlendFuncSeparatei");LOAD(blend_equation,"glBlendEquationSeparatei");
+  LOAD(enable_i,"glEnablei");LOAD(disable_i,"glDisablei");LOAD(enabled_i,"glIsEnabledi");
+  LOAD(integer_i,"glGetIntegeri_v");LOAD(boolean_i,"glGetBooleani_v");LOAD(float_i,"glGetFloati_v");
+  LOAD(double_i,"glGetDoublei_v");LOAD(color_mask,"glColorMaski");LOAD(scissor,"glScissorIndexed");LOAD(depth_range,"glDepthRangeIndexed");
+#undef LOAD
+  GLint profile{},unit_count{},clips{};GLboolean feedback{};
+  glGetIntegerv(0x9126 /*CONTEXT_PROFILE_MASK*/,&profile);glGetBooleanv(0x8e24 /*TRANSFORM_FEEDBACK_ACTIVE*/,&feedback);
+  glGetIntegerv(0x84e2 /*MAX_TEXTURE_UNITS*/,&unit_count);glGetIntegerv(GL_MAX_CLIP_PLANES,&clips);
+  if(glGetError()!=GL_NO_ERROR||!(profile&2)||feedback||unit_count<=0||clips<0){error="native scene requires compatibility context outside active transform feedback";return false;}
+  const GLenum fixed[]{GL_DEPTH_TEST,GL_CULL_FACE,GL_STENCIL_TEST,GL_LIGHTING,GL_FOG,GL_ALPHA_TEST,GL_COLOR_LOGIC_OP,
+   GL_COLOR_MATERIAL,GL_DITHER,GL_POLYGON_SMOOTH,GL_POLYGON_STIPPLE,GL_POLYGON_OFFSET_FILL,GL_POLYGON_OFFSET_LINE,GL_POLYGON_OFFSET_POINT,
+   0x809d /*multisample*/,0x809e /*sample alpha coverage*/,0x809f /*alpha to one*/,0x80a0 /*sample coverage*/,
+   0x8e51 /*sample mask*/,0x8c89 /*discard*/,0x8db9 /*sRGB*/,0x864f /*depth clamp*/,0x8458 /*color sum*/};
+  enables.reserve(std::size(fixed)+static_cast<std::size_t>(clips));units.resize(static_cast<std::size_t>(unit_count));
+  for(auto cap:fixed)enables.push_back({cap,glIsEnabled(cap)});
+  for(GLint i=0;i<clips;++i)enables.push_back({static_cast<GLenum>(GL_CLIP_PLANE0+i),glIsEnabled(GL_CLIP_PLANE0+i)});
+  const auto extensions=reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+  if(extensions&&std::strstr(extensions,"GL_ARB_vertex_program"))enables.push_back({0x8620,glIsEnabled(0x8620)});
+  if(extensions&&std::strstr(extensions,"GL_ARB_fragment_program"))enables.push_back({0x8804,glIsEnabled(0x8804)});
+  clip_control=proc<decltype(clip_control)>("glClipControl");
+  if(clip_control){glGetIntegerv(0x935c,&clip_origin);glGetIntegerv(0x935d,&clip_depth);}
+  if(extensions&&std::strstr(extensions,"GL_ARB_imaging")){
+   GLfloat matrix[16]{};glGetFloatv(0x80b1 /*COLOR_MATRIX*/,matrix);
+   for(unsigned i=0;i<16;++i)if(matrix[i]!=(i%5==0?1.0f:0.0f)){error="host imaging color matrix is unsupported by native scene upload";return false;}
+   for(unsigned i=0;i<8;++i){GLfloat v{};glGetFloatv(0x80b4+i,&v);if(v!=(i<4?1.0f:0.0f)){error="host imaging post-matrix transfer is unsupported";return false;}}
+   const GLenum imaging[]{0x80d0,0x80d1,0x80d2,0x8010,0x8011,0x8012,0x8024,0x802e};
+   for(auto cap:imaging)if(glIsEnabled(cap)){error="active host imaging/filter state is unsupported by native scene upload";return false;}
+  }
+  // Pixel transfer would reinterpret CPU RGBA storage. This narrow uploader refuses it.
+  const GLenum transfer[]{GL_RED_SCALE,GL_GREEN_SCALE,GL_BLUE_SCALE,GL_ALPHA_SCALE,GL_RED_BIAS,GL_GREEN_BIAS,GL_BLUE_BIAS,GL_ALPHA_BIAS};
+  for(unsigned i=0;i<8;++i){GLfloat v{};glGetFloatv(transfer[i],&v);if(v!=(i<4?1.0f:0.0f)){error="nonidentity host pixel transfer is unsupported by native scene upload";return false;}}
+  GLboolean map_color{};glGetBooleanv(GL_MAP_COLOR,&map_color);if(map_color){error="host pixel color lookup is unsupported by native scene upload";return false;}
+  glGetIntegerv(0x8b8d,&program);glGetIntegerv(0x825a,&program_pipeline);glGetIntegerv(0x85b5,&vertex_array);
+  glGetIntegerv(0x84e0,&active_unit);glGetIntegerv(GL_MATRIX_MODE,&matrix_mode);integer_i(0x8919,0,&sampler0);
+  glGetIntegerv(0x88ef,&unpack_buffer);
+  glGetIntegerv(GL_UNPACK_ALIGNMENT,&unpack[0]);glGetIntegerv(GL_UNPACK_ROW_LENGTH,&unpack[1]);
+  glGetIntegerv(GL_UNPACK_SKIP_ROWS,&unpack[2]);glGetIntegerv(GL_UNPACK_SKIP_PIXELS,&unpack[3]);
+  glGetIntegerv(GL_DEPTH_FUNC,&depth_func);glGetBooleanv(GL_DEPTH_WRITEMASK,&depth_mask);
+  glGetIntegerv(GL_POLYGON_MODE,polygon_mode);glGetIntegerv(GL_SHADE_MODEL,&shade_model);
+  glGetFloatv(GL_PROJECTION_MATRIX,projection);glGetFloatv(GL_MODELVIEW_MATRIX,modelview);glGetFloatv(GL_CURRENT_COLOR,current_color);
+  boolean_i(GL_COLOR_WRITEMASK,0,mask);blend_enabled=enabled_i(GL_BLEND,0);scissor_enabled=enabled_i(GL_SCISSOR_TEST,0);
+  integer_i(GL_SCISSOR_BOX,0,scissor_box);double_i(GL_DEPTH_RANGE,0,depth_interval);
+  const GLenum params[]{0x80c9 /*SRC_RGB*/,0x80c8 /*DST_RGB*/,0x80cb /*SRC_ALPHA*/,0x80ca /*DST_ALPHA*/,0x8009 /*EQ_RGB*/,0x883d /*EQ_ALPHA*/};
+  for(unsigned i=0;i<6;++i)integer_i(params[i],0,&blend[i]);
+  for(GLint i=0;i<unit_count;++i){active(0x84c0+i);for(unsigned k=0;k<5;++k)units[i].enabled[k]=glIsEnabled(targets[k]);}
+  active(0x84c0);glGetIntegerv(GL_TEXTURE_BINDING_2D,&tex_binding);glGetTexEnviv(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,&tex_env);
+  glGetFloatv(GL_TEXTURE_MATRIX,texture_matrix);glGetFloatv(GL_CURRENT_TEXTURE_COORDS,texcoord);
+  for(unsigned i=0;i<4;++i)texgen[i]=glIsEnabled(GL_TEXTURE_GEN_S+i);
+  active(active_unit);
+  if(glGetError()!=GL_NO_ERROR){error="native scene state query refused before drawing";return false;}
+  captured=true;return true;
  }
-#else
- (void)material;(void)world;(void)materials;(void)textures;(void)rasters;(void)bound_textures;
+ bool apply(){
+  applied=true;use(0);pipeline(0);vao(0);sampler(0,0);buffer(0x88ec /*PIXEL_UNPACK_BUFFER*/,0);
+  if(clip_control)clip_control(0x8ca1 /*LOWER_LEFT*/,0x935e /*NEGATIVE_ONE_TO_ONE*/);
+  glPixelStorei(GL_UNPACK_ALIGNMENT,4);glPixelStorei(GL_UNPACK_ROW_LENGTH,0);glPixelStorei(GL_UNPACK_SKIP_ROWS,0);glPixelStorei(GL_UNPACK_SKIP_PIXELS,0);
+  for(const auto& e:enables)glDisable(e.name);
+  for(std::size_t i=0;i<units.size();++i){active(0x84c0+static_cast<GLenum>(i));for(auto target:targets)glDisable(target);}
+  active(0x84c0);for(unsigned i=0;i<4;++i)glDisable(GL_TEXTURE_GEN_S+i);
+  glMatrixMode(GL_TEXTURE);glLoadIdentity();glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+  glShadeModel(GL_SMOOTH);glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);depth_range(0,0,1);
+  color_mask(0,GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);disable_i(GL_BLEND,0);blend_equation(0,0x8006 /*ADD*/,0x8006);
+  glDepthFunc(GL_LESS);glDepthMask(GL_TRUE);glEnable(GL_DEPTH_TEST);
+  GLfloat viewport[4]{};float_i(GL_VIEWPORT,0,viewport);
+  enable_i(GL_SCISSOR_TEST,0);scissor(0,static_cast<GLint>(viewport[0]),static_cast<GLint>(viewport[1]),
+   static_cast<GLsizei>(viewport[2]),static_cast<GLsizei>(viewport[3]));
+  if(glGetError()!=GL_NO_ERROR){error="native scene state setup failed";return false;}return true;
+ }
+ void alpha(bool enabled)noexcept{
+  if(enabled){enable_i(GL_BLEND,0);blend_func(0,GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);}
+  else disable_i(GL_BLEND,0);
+ }
+ bool restore()noexcept{
+  if(!applied)return true;
+  // Current-color restoration occurs while COLOR_MATERIAL remains disabled.
+  active(0x84c0);glColor4fv(current_color);glTexCoord4fv(texcoord);glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,tex_env);
+  glBindTexture(GL_TEXTURE_2D,static_cast<GLuint>(tex_binding));glMatrixMode(GL_TEXTURE);glLoadMatrixf(texture_matrix);
+  for(unsigned i=0;i<4;++i){if(texgen[i])glEnable(GL_TEXTURE_GEN_S+i);else glDisable(GL_TEXTURE_GEN_S+i);}
+  for(std::size_t i=0;i<units.size();++i){active(0x84c0+static_cast<GLenum>(i));for(unsigned k=0;k<5;++k){
+   if(units[i].enabled[k])glEnable(targets[k]);else glDisable(targets[k]);}}
+  glMatrixMode(GL_PROJECTION);glLoadMatrixf(projection);glMatrixMode(GL_MODELVIEW);glLoadMatrixf(modelview);glMatrixMode(matrix_mode);
+  glDepthMask(depth_mask);glDepthFunc(depth_func);depth_range(0,depth_interval[0],depth_interval[1]);glShadeModel(shade_model);
+  glPolygonMode(GL_FRONT,polygon_mode[0]);glPolygonMode(GL_BACK,polygon_mode[1]);
+  blend_func(0,blend[0],blend[1],blend[2],blend[3]);blend_equation(0,blend[4],blend[5]);
+  if(blend_enabled)enable_i(GL_BLEND,0);else disable_i(GL_BLEND,0);
+  color_mask(0,mask[0],mask[1],mask[2],mask[3]);scissor(0,scissor_box[0],scissor_box[1],scissor_box[2],scissor_box[3]);
+  if(scissor_enabled)enable_i(GL_SCISSOR_TEST,0);else disable_i(GL_SCISSOR_TEST,0);
+  for(const auto& e:enables){if(e.enabled)glEnable(e.name);else glDisable(e.name);}
+  sampler(0,sampler0);buffer(0x88ec,unpack_buffer);glPixelStorei(GL_UNPACK_ALIGNMENT,unpack[0]);
+  glPixelStorei(GL_UNPACK_ROW_LENGTH,unpack[1]);glPixelStorei(GL_UNPACK_SKIP_ROWS,unpack[2]);glPixelStorei(GL_UNPACK_SKIP_PIXELS,unpack[3]);
+  active(active_unit);vao(vertex_array);pipeline(program_pipeline);use(program);
+  if(clip_control)clip_control(clip_origin,clip_depth);
+  const bool ok=glGetError()==GL_NO_ERROR;applied=false;if(!ok)error="native scene state restoration failed";return ok;
+ }
+ ~SceneGlState(){(void)restore();}
+};
 #endif
+
+bool resolve_material_and_bind_texture(
+ const NativeRetailMaterialHandle& material,NativeRetailWorld& world,
+ NativeRetailRendererMaterials* materials,NativeRetailRendererTextures* textures,NativeRetailRendererRasters* rasters,
+ std::array<float,4>& out_mat_color,std::size_t& bound_textures,RetailCameraProducerFailure& failure) noexcept {
+ out_mat_color={1,1,1,1};
+#ifdef _WIN32
+ GLuint id{};
+ if(!material.empty()){
+  RetailRendererMaterialFailure mf;
+  if(!materials){failure.operation="scene material owner is required";return false;}
+  auto observed=materials->observe(material,mf);auto texture=materials->get_texture(material,mf);
+  if(!observed||!texture){failure.operation=mf.operation;return false;}
+  out_mat_color={observed->color.r/255.0f,observed->color.g/255.0f,observed->color.b/255.0f,observed->color.a/255.0f};
+  if(!texture->empty()){
+   if(!textures||!rasters){failure.operation="scene texture/raster owners are required";return false;}
+   RetailRendererWorldFailure wf;auto resolved=world.resolve_gpu_texture(*texture,*textures,*rasters,wf);
+   if(!resolved){failure.operation=wf.operation;return false;}id=*resolved;
+  }
+ }
+ if(id){glEnable(GL_TEXTURE_2D);glBindTexture(GL_TEXTURE_2D,id);++bound_textures;}else glDisable(GL_TEXTURE_2D);
+ if(glGetError()!=GL_NO_ERROR){failure.operation="native scene material binding failed";return false;}
+#else
+ (void)material;(void)world;(void)materials;(void)textures;(void)rasters;(void)bound_textures;(void)failure;
+#endif
+ return true;
 }
 static std::size_t ps2_swizzle_offset_ct32(std::uint32_t x,std::uint32_t y,std::uint32_t width)noexcept{
  static constexpr int kBlock32[4][8]={
@@ -1299,8 +1408,11 @@ bool ingest_rw_tex_dictionary_stream(
  std::span<const std::byte> stream_bytes,
  NativeRetailRendererRasters& rasters,
  NativeRetailRendererTextures& textures,
- RetailRendererTextureFailure& failure) noexcept {
+ RetailRendererTextureFailure& failure,RetailSceneResources* ownership) noexcept try {
  failure={};
+ if(ownership&&!ownership->matches(&rasters,&textures,nullptr,nullptr,nullptr)){
+  failure.kind=RetailRendererTextureError::foreign_owner;failure.operation="TXD collector owner or thread mismatch";return false;
+ }
  if(stream_bytes.size()<12){
   failure.kind=RetailRendererTextureError::invalid_handle;
   failure.operation="TXD stream requires 12-byte chunk header";
@@ -1331,12 +1443,17 @@ bool ingest_rw_tex_dictionary_stream(
 
  std::vector<NativeRetailTextureHandle> created_textures;
  std::vector<NativeRetailRasterHandle> created_rasters;
+ std::optional<NativeRetailRasterHandle> pixel_lock;
  auto rollback=[&]()noexcept{
-  RetailRendererTextureFailure tf;
-  for(const auto& th:created_textures)(void)textures.destroy_texture(th,tf);
   RetailRendererRasterFailure rf;
-  for(const auto& rh:created_rasters)(void)rasters.destroy_raster(rh,rf);
+  if(pixel_lock){(void)rasters.unlock_pixels(*pixel_lock,rf);pixel_lock.reset();}
+  RetailRendererTextureFailure tf;
+  for(auto i=created_textures.rbegin();i!=created_textures.rend();++i)(void)textures.destroy_texture(*i,tf);
+  for(auto i=created_rasters.rbegin();i!=created_rasters.rend();++i)(void)rasters.destroy_raster(*i,rf);
+  created_textures.clear();created_rasters.clear();
  };
+ SceneIngestRollback guard{rollback};
+ created_textures.reserve(count);created_rasters.reserve(count);
 
  std::uint16_t parsed=0;
  while(body.remaining()>=12&&parsed<count){
@@ -1534,18 +1651,21 @@ bool ingest_rw_tex_dictionary_stream(
   }
   created_rasters.push_back(*rh);
   auto locked=rasters.lock_pixels(*rh,rf);
+  if(locked)pixel_lock=*rh;
   if(!locked||locked->size()<rgba_bytes){
    rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD raster pixel lock failed";return false;
   }
   if(is_rgba32&&!is_swizzled){
    if(!nb.read_bytes(locked->data(),rgba_bytes)){
     (void)rasters.unlock_pixels(*rh,rf);
+    pixel_lock.reset();
     rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD pixel copy failed";return false;
    }
   }else{
    std::memcpy(locked->data(),decoded_rgba.data(),rgba_bytes);
   }
   (void)rasters.unlock_pixels(*rh,rf);
+  pixel_lock.reset();
 
   const auto filter=static_cast<RetailRendererTextureFilter>(filter_addr&0xFFu);
   const auto addr_u=static_cast<RetailRendererTextureAddress>((filter_addr>>8u)&0x0Fu);
@@ -1566,7 +1686,18 @@ bool ingest_rw_tex_dictionary_stream(
  if(parsed!=count){
   rollback();failure.kind=RetailRendererTextureError::invalid_handle;failure.operation="TXD stream ended before declared texture count";return false;
  }
+ if(ownership){
+  reserve_scene_journal(ownership->textures,created_textures.size());
+  reserve_scene_journal(ownership->rasters,created_rasters.size());
+  ownership->textures.insert(ownership->textures.end(),created_textures.begin(),created_textures.end());
+  ownership->rasters.insert(ownership->rasters.end(),created_rasters.begin(),created_rasters.end());
+ }
+ guard.committed=true;
  return true;
+}catch(const std::bad_alloc&){
+ failure.kind=RetailRendererTextureError::allocation;failure.operation="TXD native parser allocation";return false;
+}catch(...){
+ failure.kind=RetailRendererTextureError::native_exception;failure.operation="TXD native parser exception";return false;
 }
 
 bool ingest_rw_world_bsp_stream(
@@ -1575,8 +1706,11 @@ bool ingest_rw_world_bsp_stream(
  NativeRetailRendererMaterials& materials,
  NativeRetailRendererTextures& textures,
  NativeRetailWorld& world,
- RetailRendererWorldFailure& failure) noexcept {
+ RetailRendererWorldFailure& failure,RetailSceneResources* ownership) noexcept try {
  failure={};
+ if(ownership&&(!ownership->matches(nullptr,&textures,&materials,nullptr,&world)||ownership->owns_bsp||!world.bsp_sectors().empty())){
+  failure.kind=RetailRendererWorldError::owner;failure.operation="BSP collector requires matching owners and an empty BSP world";return false;
+ }
  if(base_sector_id==0||stream_bytes.size()<12){
   failure.kind=RetailRendererWorldError::invalid_handle;
   failure.operation="RW world stream requires non-zero base_sector_id and 12-byte chunk header";
@@ -1615,8 +1749,10 @@ bool ingest_rw_world_bsp_stream(
  auto rollback=[&]()noexcept{
   world.clear_bsp_sectors();
   RetailRendererMaterialFailure mf;
-  for(const auto& mh:created_mats)(void)materials.destroy_material(mh,mf);
+  for(auto i=created_mats.rbegin();i!=created_mats.rend();++i)(void)materials.destroy_material(*i,mf);
+  created_mats.clear();
  };
+ SceneIngestRollback guard{rollback};
 
  std::int32_t root_idx=-1;
  std::uint64_t next_id=base_sector_id;
@@ -1641,7 +1777,17 @@ bool ingest_rw_world_bsp_stream(
   rollback();failure.kind=RetailRendererWorldError::invalid_handle;failure.operation="RW world contained no BSP sectors";return false;
  }
  world.set_bsp_root(root_idx);
+ if(ownership){
+  reserve_scene_journal(ownership->materials,created_mats.size());
+  ownership->materials.insert(ownership->materials.end(),created_mats.begin(),created_mats.end());
+  ownership->owns_bsp=true;
+ }
+ guard.committed=true;
  return true;
+}catch(const std::bad_alloc&){
+ failure.kind=RetailRendererWorldError::allocation;failure.operation="BSP native parser allocation";return false;
+}catch(...){
+ failure.kind=RetailRendererWorldError::native_exception;failure.operation="BSP native parser exception";return false;
 }
 
 std::optional<RetailSceneStreamLoadResult> load_retail_scene_streams_from_volume(
@@ -1653,8 +1799,13 @@ std::optional<RetailSceneStreamLoadResult> load_retail_scene_streams_from_volume
  NativeRetailRendererTextures& textures,
  NativeRetailRendererMaterials& materials,
  NativeRetailWorld& world,
- RetailRendererWorldFailure& failure) noexcept {
+ RetailRendererWorldFailure& failure,RetailSceneResources* ownership) noexcept try {
  failure={};
+ if(ownership&&(!ownership->empty()||!ownership->matches(&rasters,&textures,&materials,nullptr,&world))){
+  failure.kind=RetailRendererWorldError::owner;failure.operation="loose scene loader requires fresh matching resource collector";return {};
+ }
+ auto rollback=[&]()noexcept{if(ownership){RetailRendererWorldFailure ignored;(void)ownership->cleanup(ignored);}};
+ SceneIngestRollback guard{rollback};
  auto read_stream_bytes=[&](std::string_view key,std::vector<std::byte>& out)noexcept->bool{
   mka::content::ContentVolumeFailure cf;
   auto file_opt=volume.open_resource(key,cf);
@@ -1664,7 +1815,7 @@ std::optional<RetailSceneStreamLoadResult> load_retail_scene_streams_from_volume
    return false;
   }
   const auto len_opt=file_opt->length(cf);
-  if(!len_opt||*len_opt<12||*len_opt>(64ull*1024ull*1024ull)){
+  if(!len_opt||*len_opt<12||*len_opt>out.max_size()){
    failure.kind=RetailRendererWorldError::invalid_handle;
    failure.operation="retail scene stream length invalid or out of bounds";
    return false;
@@ -1685,12 +1836,13 @@ std::optional<RetailSceneStreamLoadResult> load_retail_scene_streams_from_volume
   return true;
  };
 
+ std::vector<std::byte> txd_bytes,world_bytes;
+ if(!txd_resource_key.empty()&&!read_stream_bytes(txd_resource_key,txd_bytes))return {};
+ if(!world_resource_key.empty()&&!read_stream_bytes(world_resource_key,world_bytes))return {};
  RetailSceneStreamLoadResult result;
  if(!txd_resource_key.empty()){
-  std::vector<std::byte> txd_bytes;
-  if(!read_stream_bytes(txd_resource_key,txd_bytes))return {};
   RetailRendererTextureFailure tf;
-  if(!ingest_rw_tex_dictionary_stream(txd_bytes,rasters,textures,tf)){
+  if(!ingest_rw_tex_dictionary_stream(txd_bytes,rasters,textures,tf,ownership)){
    failure.kind=RetailRendererWorldError::invalid_handle;
    failure.operation=tf.operation;
    return {};
@@ -1699,13 +1851,19 @@ std::optional<RetailSceneStreamLoadResult> load_retail_scene_streams_from_volume
   result.txd_ingested=true;
  }
  if(!world_resource_key.empty()){
-  std::vector<std::byte> world_bytes;
-  if(!read_stream_bytes(world_resource_key,world_bytes))return {};
-  if(!ingest_rw_world_bsp_stream(world_bytes,base_sector_id,materials,textures,world,failure))return {};
+  if(!ingest_rw_world_bsp_stream(world_bytes,base_sector_id,materials,textures,world,failure,ownership))return {};
+  if(world_bytes.size()>std::numeric_limits<std::size_t>::max()-result.bytes_read){
+   failure.kind=RetailRendererWorldError::allocation;failure.operation="loose scene aggregate bytes overflow";return {};
+  }
   result.bytes_read+=world_bytes.size();
   result.world_ingested=true;
  }
+ guard.committed=true;
  return result;
+}catch(const std::bad_alloc&){
+ failure.kind=RetailRendererWorldError::allocation;failure.operation="loose scene native allocation";return {};
+}catch(...){
+ failure.kind=RetailRendererWorldError::native_exception;failure.operation="loose scene native exception";return {};
 }
 
 bool ingest_rw_geometry_stream(
@@ -1716,8 +1874,11 @@ bool ingest_rw_geometry_stream(
  NativeRetailRendererTextures& textures,
  NativeRetailWorld& world,
  const NativeRetailRendererFrameHandle& parent_frame,
- RetailRendererWorldFailure& failure) noexcept {
+ RetailRendererWorldFailure& failure,RetailSceneResources* ownership) noexcept try {
  failure={};
+ if(ownership&&!ownership->matches(nullptr,&textures,&materials,&frames,&world)){
+  failure.kind=RetailRendererWorldError::owner;failure.operation="geometry collector owner or thread mismatch";return false;
+ }
  if(base_object_id==0||stream_bytes.size()<12){
   failure.kind=RetailRendererWorldError::invalid_handle;
   failure.operation="RW stream requires non-zero base_object_id and valid 12-byte chunk header";
@@ -1728,14 +1889,27 @@ bool ingest_rw_geometry_stream(
  std::vector<std::uint64_t> created_objs;
  auto rollback=[&]()noexcept{
   RetailRendererWorldFailure wf;
-  for(auto id:created_objs)(void)world.remove_scene_object(id,wf);
+  for(auto i=created_objs.rbegin();i!=created_objs.rend();++i)(void)world.remove_scene_object(*i,wf);
   RetailRendererFrameFailure ff;
   for(auto it=created_frames.rbegin();it!=created_frames.rend();++it){
    if(!parent_frame.empty())(void)frames.detach(*it,ff);
    (void)frames.destroy_leaf(*it,ff);
   }
   RetailRendererMaterialFailure mf;
-  for(const auto& mh:created_mats)(void)materials.destroy_material(mh,mf);
+  for(auto i=created_mats.rbegin();i!=created_mats.rend();++i)(void)materials.destroy_material(*i,mf);
+  created_objs.clear();created_frames.clear();created_mats.clear();
+ };
+ SceneIngestRollback guard{rollback};
+ auto commit=[&](){
+  if(ownership){
+   reserve_scene_journal(ownership->materials,created_mats.size());
+   reserve_scene_journal(ownership->frames,created_frames.size());
+   reserve_scene_journal(ownership->scene_objects,created_objs.size());
+   ownership->materials.insert(ownership->materials.end(),created_mats.begin(),created_mats.end());
+   ownership->frames.insert(ownership->frames.end(),created_frames.begin(),created_frames.end());
+   ownership->scene_objects.insert(ownership->scene_objects.end(),created_objs.begin(),created_objs.end());
+  }
+  guard.committed=true;
  };
 
  RwStreamCursor cur{stream_bytes,0};
@@ -1754,7 +1928,7 @@ bool ingest_rw_geometry_stream(
    failure.operation="RW geometry chunk validation/ingestion failed";
    return false;
   }
-  return true;
+  commit();return true;
  }
  if(type==0x0010u){
   bool parsed_any=false;
@@ -1789,11 +1963,15 @@ bool ingest_rw_geometry_stream(
   if(!parsed_any){
    rollback();failure.kind=RetailRendererWorldError::invalid_handle;failure.operation="RW clump contained no geometry chunks";return false;
   }
-  return true;
+  commit();return true;
  }
  failure.kind=RetailRendererWorldError::invalid_handle;
  failure.operation="unsupported top-level RW chunk type";
  return false;
+}catch(const std::bad_alloc&){
+ failure.kind=RetailRendererWorldError::allocation;failure.operation="geometry native parser allocation";return false;
+}catch(...){
+ failure.kind=RetailRendererWorldError::native_exception;failure.operation="geometry native parser exception";return false;
 }
 
 std::optional<RetailWorldRenderStats> render_world_scene_frame(
@@ -1808,7 +1986,7 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
  RetailCameraProducerFailure& failure,
  NativeRetailRendererMaterials* materials,
  NativeRetailRendererTextures* textures,
- NativeRetailRendererRasters* rasters) noexcept {
+ NativeRetailRendererRasters* rasters) noexcept try {
  failure={};
  if(!world_link||!world){
   failure.world={RetailCameraWorldError::missing_record,"world render requires live camera world-link and world"};
@@ -1823,15 +2001,63 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
   return {};
  }
 
- if(!cameras.begin_update(camera,failure.camera)){
-  failure.operation=failure.camera.operation;
-  return {};
+ failure.camera.kind=RetailRendererCameraError::native_target;
+ RetailRendererWorldFailure wf;
+ auto display=world->gpu_display(wf);
+ if(!display||!world->admit_render_modules(materials,textures,rasters,wf)){failure.operation=wf.operation;return {};}
+#ifndef _WIN32
+ failure.operation="native scene GPU submission requires supported host display";return {};
+#else
+ // Retain typed capabilities and validate them before clear/draw side effects.
+ std::vector<GLuint> hud_textures;
+ if(const auto& batch=world->hud_submission()){
+  hud_textures.reserve(batch->quads.size());
+  for(const auto& q:batch->quads){
+   GLuint id{};
+   if(q.texture){graphics::NativeTextureFailure tf;auto handle=q.texture->gl_object(tf);
+    if(!handle||!*handle||!glIsTexture(*handle)){failure.operation=tf.operation&&*tf.operation?tf.operation:"HUD native texture capability is stale";return {};}
+    id=*handle;
+   }
+   hud_textures.push_back(id);
+  }
  }
+ // Validate the selected typed BSP as a tree without recursive host-stack growth.
+ const auto& sectors=world->bsp_sectors();const auto root_index=world->bsp_root_sector();
+ std::vector<std::size_t> leaves(sectors.size());std::vector<unsigned char> visited(sectors.size());
+ std::vector<std::pair<std::int32_t,bool>> validation;
+ if(root_index>=0){
+  if(static_cast<std::size_t>(root_index)>=sectors.size()){failure.operation="native BSP root index is invalid";return {};}
+  validation.reserve(sectors.size());validation.push_back({root_index,false});
+  while(!validation.empty()){
+   const auto [index,finish]=validation.back();validation.pop_back();const auto n=static_cast<std::size_t>(index);
+   if(index<0||n>=sectors.size()){failure.operation="native BSP child index is invalid";return {};}
+   const auto& node=sectors[n];
+   if(finish){leaves[n]=node.is_leaf?1:leaves[node.left_child]+leaves[node.right_child];visited[n]=2;continue;}
+   if(visited[n]){failure.operation="native BSP contains a cycle or shared child";return {};}
+   visited[n]=1;validation.push_back({index,true});
+   if(!node.is_leaf){validation.push_back({node.right_child,false});validation.push_back({node.left_child,false});}
+  }
+ }else if(root_index!=-1){failure.operation="native BSP root must be absent or valid";return {};}
+ struct Pass {
+  NativeRetailRendererCameraModule& cameras;const NativeRetailRendererCameraHandle& camera;bool active{};
+  ~Pass(){if(active){RetailRendererCameraFailure f;(void)cameras.end_update(camera,f);}}
+ } pass{cameras,camera};
+ SceneGlState gl;
+ if(!gl.capture()){failure.operation=gl.error;return {};}
+ if(!cameras.begin_update(camera,failure.camera)){
+  RetailRendererCameraFailure probe;pass.active=cameras.is_updating(camera,probe);
+  failure.operation=failure.camera.operation;return {};
+ }
+ pass.active=true;
  auto cleanup_end=[&]()noexcept{
   RetailRendererCameraFailure end_f;
-  (void)cameras.end_update(camera,end_f);
+  if(cameras.end_update(camera,end_f))pass.active=false;
+  else{failure.camera=end_f;failure.operation="native scene cleanup failed; actual camera pass remains owned";}
  };
-
+ auto restore_gl_state=[&]()noexcept{
+  if(!gl.restore()){failure.operation=gl.error;return false;}return true;
+ };
+ if(!gl.apply()){failure.operation=gl.error;restore_gl_state();cleanup_end();return {};}
  if(!cameras.clear(camera,clear_color[0],clear_color[1],clear_color[2],clear_color[3],clear_flags,failure.camera)){
   failure.operation=failure.camera.operation;
   cleanup_end();
@@ -1851,49 +2077,9 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
  }
 
  RetailWorldRenderStats stats;
-#ifdef _WIN32
- const GLboolean prior_depth=glIsEnabled(GL_DEPTH_TEST);
- const GLboolean prior_tex2d=glIsEnabled(GL_TEXTURE_2D);
- const GLboolean prior_blend=glIsEnabled(GL_BLEND);
- GLboolean prior_depth_mask=GL_TRUE;
- glGetBooleanv(GL_DEPTH_WRITEMASK,&prior_depth_mask);
- GLint prior_blend_src=GL_ONE,prior_blend_dst=GL_ZERO;
- glGetIntegerv(GL_BLEND_SRC,&prior_blend_src);
- glGetIntegerv(GL_BLEND_DST,&prior_blend_dst);
- GLint prior_tex_binding=0,prior_tex_env=GL_MODULATE;
- glGetIntegerv(GL_TEXTURE_BINDING_2D,&prior_tex_binding);
- glGetTexEnviv(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,&prior_tex_env);
- glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
- GLint prior_depth_func=GL_LESS;
- glGetIntegerv(GL_DEPTH_FUNC,&prior_depth_func);
- GLint prior_matrix_mode=GL_MODELVIEW;
- glGetIntegerv(GL_MATRIX_MODE,&prior_matrix_mode);
- glEnable(GL_DEPTH_TEST);
- glDepthFunc(GL_LESS);
- glDisable(GL_BLEND);
- glDepthMask(GL_TRUE);
- glMatrixMode(GL_PROJECTION);
- glPushMatrix();
- glLoadMatrixf(cam_obs->projection_matrix.elements.data());
+ failure.camera.kind=RetailRendererCameraError::native_target;
+ glMatrixMode(GL_PROJECTION);glLoadMatrixf(cam_obs->projection_matrix.elements.data());
  glMatrixMode(GL_MODELVIEW);
- glPushMatrix();
-#endif
-
- auto restore_gl_state=[&]()noexcept{
-#ifdef _WIN32
-  glDepthMask(prior_depth_mask);
-  glBlendFunc(static_cast<GLenum>(prior_blend_src),static_cast<GLenum>(prior_blend_dst));
-  if(prior_blend)glEnable(GL_BLEND);else glDisable(GL_BLEND);
-  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,prior_tex_env);
-  glBindTexture(GL_TEXTURE_2D,static_cast<GLuint>(prior_tex_binding));
-  if(!prior_tex2d)glDisable(GL_TEXTURE_2D);else glEnable(GL_TEXTURE_2D);
-  glMatrixMode(GL_MODELVIEW);glPopMatrix();
-  glMatrixMode(GL_PROJECTION);glPopMatrix();
-  glMatrixMode(static_cast<GLenum>(prior_matrix_mode));
-  glDepthFunc(static_cast<GLenum>(prior_depth_func));
-  if(!prior_depth)glDisable(GL_DEPTH_TEST);
-#endif
- };
 
  const auto& world_lights=world->lights();
  const bool has_lights=!world_lights.empty();
@@ -1968,7 +2154,7 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
  };
  std::vector<AlphaEntry> alpha_queue;
 
- auto submit_object=[&](const RetailWorldSceneObject& obj,const RetailRendererAffine& m)noexcept->bool{
+ auto submit_object=[&](const RetailWorldSceneObject& obj,const RetailRendererAffine& m)->bool{
   std::vector<RetailRendererAffine> palette;
   if(!obj.bone_frames.empty()){
    palette.reserve(obj.bone_frames.size());
@@ -1987,7 +2173,7 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
   }
 
   std::array<float,4> mat_color{1.0f,1.0f,1.0f,1.0f};
-  resolve_material_and_bind_texture(obj.material,*world,materials,textures,rasters,mat_color,stats.bound_textures);
+  if(!resolve_material_and_bind_texture(obj.material,*world,materials,textures,rasters,mat_color,stats.bound_textures,failure))return false;
 #ifdef _WIN32
   const std::array<float,16> model_col_major={
    m.right.x,m.right.y,m.right.z,0.0f,
@@ -2026,6 +2212,8 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
   }
   glEnd();
 #endif
+  if(glGetError()!=GL_NO_ERROR){failure.operation="native scene triangle submission failed";return false;}
+  display->record_gl_draw();
   stats.submitted_triangles+=obj.triangles.size()/3;
   return true;
  };
@@ -2064,7 +2252,7 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
    ++stats.alpha_objects;
    const auto& vm=cam_obs->view_matrix.elements;
    const float cam_z=vm[2]*world_center.x+vm[6]*world_center.y+vm[10]*world_center.z+vm[14];
-   try{alpha_queue.push_back({oi,cam_z,m});}catch(...){}
+   alpha_queue.push_back({oi,cam_z,m});
    continue;
   }
   ++stats.opaque_objects;
@@ -2075,48 +2263,29 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
   }
  }
 
- if(world->bsp_root_sector()>=0&&
-   static_cast<std::size_t>(world->bsp_root_sector())<world->bsp_sectors().size()){
-  const auto& sectors=world->bsp_sectors();
-  auto count_leaves=[&](auto& self,std::int32_t idx)noexcept->std::size_t{
-   if(idx<0||static_cast<std::size_t>(idx)>=sectors.size())return 0;
-   const auto& s=sectors[static_cast<std::size_t>(idx)];
-   if(s.is_leaf)return 1;
-   return self(self,s.left_child)+self(self,s.right_child);
-  };
-  auto traverse=[&](auto& self,std::int32_t idx)noexcept->void{
-   if(idx<0||static_cast<std::size_t>(idx)>=sectors.size())return;
-   const auto& s=sectors[static_cast<std::size_t>(idx)];
-   if(!sphere_in_frustum(cam_obs->frustum_planes,s.bsphere_center,s.bsphere_radius)){
-    stats.culled_sectors+=count_leaves(count_leaves,idx);
-    return;
+ if(root_index>=0){
+  std::vector<std::int32_t> pending;pending.reserve(sectors.size());pending.push_back(root_index);
+  stats.total_sectors=leaves[static_cast<std::size_t>(root_index)];
+  while(!pending.empty()){
+   const auto index=pending.back();pending.pop_back();const auto& sector=sectors[static_cast<std::size_t>(index)];
+   if(!sphere_in_frustum(cam_obs->frustum_planes,sector.bsphere_center,sector.bsphere_radius)){
+    stats.culled_sectors+=leaves[static_cast<std::size_t>(index)];continue;
    }
-   if(!s.is_leaf){
-    self(self,s.left_child);
-    self(self,s.right_child);
-    return;
+   if(!sector.is_leaf){pending.push_back(sector.right_child);pending.push_back(sector.left_child);continue;}
+   ++stats.visible_sectors;std::array<float,4> color{1,1,1,1};
+   if(!resolve_material_and_bind_texture(sector.material,*world,materials,textures,rasters,color,stats.bound_textures,failure)){
+    restore_gl_state();cleanup_end();return {};
    }
-   ++stats.visible_sectors;
-   std::array<float,4> sec_color{1.0f,1.0f,1.0f,1.0f};
-   resolve_material_and_bind_texture(s.material,*world,materials,textures,rasters,sec_color,stats.bound_textures);
-#ifdef _WIN32
-   glLoadMatrixf(cam_obs->view_matrix.elements.data());
-   glBegin(GL_TRIANGLES);
-   for(const auto& v:s.triangles){
-    const std::array<float,4> base_c{
-     v.color[0]*sec_color[0],v.color[1]*sec_color[1],v.color[2]*sec_color[2],v.color[3]*sec_color[3]
-    };
-    const auto shaded=shade_color(base_c,v.normal);
-    glTexCoord2f(v.u,v.v);
-    glColor4f(shaded[0],shaded[1],shaded[2],shaded[3]);
+   glLoadMatrixf(cam_obs->view_matrix.elements.data());glBegin(GL_TRIANGLES);
+   for(const auto& v:sector.triangles){
+    const std::array<float,4> base{v.color[0]*color[0],v.color[1]*color[1],v.color[2]*color[2],v.color[3]*color[3]};
+    const auto shaded=shade_color(base,v.normal);glTexCoord2f(v.u,v.v);glColor4fv(shaded.data());
     glVertex3f(v.position.x,v.position.y,v.position.z);
    }
    glEnd();
-#endif
-   stats.submitted_triangles+=s.triangles.size()/3;
-  };
-  stats.total_sectors=count_leaves(count_leaves,world->bsp_root_sector());
-  traverse(traverse,world->bsp_root_sector());
+   if(glGetError()!=GL_NO_ERROR){failure.operation="native BSP triangle submission failed";restore_gl_state();cleanup_end();return {};}
+   display->record_gl_draw();stats.submitted_triangles+=sector.triangles.size()/3;
+  }
  }
 
  // Pass 2: Back-to-front sorted translucent/alpha-blended pass.
@@ -2125,8 +2294,7 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
    return a.cam_z>b.cam_z;
   });
 #ifdef _WIN32
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+  gl.alpha(true);
   glDepthMask(GL_FALSE);
 #endif
   for(const auto& ae:alpha_queue){
@@ -2138,16 +2306,35 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
   }
  }
 
- restore_gl_state();
-
- if(!cameras.end_update(camera,failure.camera)){
-  failure.operation=failure.camera.operation;
-  return {};
+ // Explicit native overlay: logical top-left coordinates and caller-supplied quads.
+ if(const auto& batch=world->hud_submission()){
+  glDisable(GL_DEPTH_TEST);glDepthMask(GL_FALSE);gl.alpha(true);
+  glMatrixMode(GL_PROJECTION);glLoadIdentity();glOrtho(0,batch->logical_width,batch->logical_height,0,-1,1);
+  glMatrixMode(GL_MODELVIEW);glLoadIdentity();
+  for(std::size_t i=0;i<batch->quads.size();++i){
+   const auto& q=batch->quads[i];if(q.rect.width==0||q.rect.height==0)continue;
+   if(hud_textures[i]){glEnable(GL_TEXTURE_2D);glBindTexture(GL_TEXTURE_2D,hud_textures[i]);}else glDisable(GL_TEXTURE_2D);
+   const auto x=q.rect.x,y=q.rect.y,x1=x+q.rect.width,y1=y+q.rect.height;
+   glColor4fv(q.color.data());glBegin(GL_TRIANGLES);
+   glTexCoord2f(q.uv.u0,q.uv.v0);glVertex2f(x,y);
+   glTexCoord2f(q.uv.u1,q.uv.v0);glVertex2f(x1,y);
+   glTexCoord2f(q.uv.u1,q.uv.v1);glVertex2f(x1,y1);
+   glTexCoord2f(q.uv.u0,q.uv.v0);glVertex2f(x,y);
+   glTexCoord2f(q.uv.u1,q.uv.v1);glVertex2f(x1,y1);
+   glTexCoord2f(q.uv.u0,q.uv.v1);glVertex2f(x,y1);glEnd();
+   if(glGetError()!=GL_NO_ERROR){failure.operation="native HUD quad submission failed";restore_gl_state();cleanup_end();return {};}
+   ++stats.submitted_hud_quads;display->record_gl_draw();
+  }
  }
+ if(!restore_gl_state()){cleanup_end();return {};}
+ if(!cameras.end_update(camera,failure.camera)){failure.operation=failure.camera.operation;return {};}
+ pass.active=false;
  if(call_show_raster&&!cameras.show_raster(camera,failure.camera)){
   failure.operation=failure.camera.operation;
   return {};
  }
  return stats;
-}
+#endif
+}catch(const std::bad_alloc&){failure.camera.kind=RetailRendererCameraError::allocation;failure.operation="native scene submission allocation failed; owned pass cleanup attempted";return {};}
+catch(...){failure.camera.kind=RetailRendererCameraError::native_exception;failure.operation="native scene submission failed; owned pass cleanup attempted";return {};}
 }

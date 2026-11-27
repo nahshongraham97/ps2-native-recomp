@@ -127,6 +127,20 @@ KNOWN_CLIENTS = {
     "test_native_retail_display_movie_presentation": {
         "args": lambda root, out: [],
     },
+    "test_native_retail_first_scene_pipeline": {"args": lambda root,out: []},
+    "test_native_retail_archive": {
+        "args": lambda root,out: [str(out/"fixtures_archive")],
+        "clean_fixtures": lambda out: [out/"fixtures_archive"],
+    },
+    "test_native_retail_scene_archive": {
+        "args": lambda root,out: [str(out/"fixtures_scene_archive")],
+        "clean_fixtures": lambda out: [out/"fixtures_scene_archive"],
+    },
+    "test_native_retail_archive_mode": {
+        "args": lambda root,out: [str(out/"fixtures_archive_mode")],
+        "clean_fixtures": lambda out: [out/"fixtures_archive_mode"],
+    },
+    "test_native_retail_hud_submission": {"args": lambda root,out: ["."]},
 }
 
 
@@ -205,7 +219,15 @@ elif phase in ("all", "all_clients"):
     client_results = []
     failed = 0
     all_raw = bytearray()
-    print("START_CHECK all 15 component clients...", flush=True)
+    build_argv=[str(cmake),"--build",short.value,"--target",*KNOWN_CLIENTS,"-j4"]
+    build_start=time.monotonic()
+    with (OUT/"build.log").open("wb") as build_log:
+        build_run=subprocess.run(build_argv,cwd=ROOT,env=env,stdout=build_log,stderr=subprocess.STDOUT)
+    build_receipt=dict(argv=build_argv,exit=build_run.returncode,seconds=time.monotonic()-build_start,
+                       log_sha256=sha(OUT/"build.log"))
+    (OUT/"BUILD.json").write_text(json.dumps(build_receipt,indent=2)+"\n",newline="\n")
+    require_check_success(build_run.returncode,False,False)
+    print(f"START_CHECK all {len(KNOWN_CLIENTS)} component clients...", flush=True)
     for exe_name, spec in KNOWN_CLIENTS.items():
         if "clean_fixtures" in spec:
             for fix_dir in spec["clean_fixtures"](OUT):
@@ -238,6 +260,8 @@ elif phase in ("all", "all_clients"):
             client_results.append(dict(target=exe_name, exit=sub.returncode, status="FAIL", argv=c_argv,
                                        executable_sha256=sha(exe_path)))
 
+    changes=[n for n,value in pins.items() if sha(ROOT/n)!=value]
+    if changes: raise RuntimeError("Source changed during component build/run: "+repr(changes))
     total_time = time.monotonic() - start_total
     buf = io.BytesIO()
     with gzip.GzipFile(filename="", mode="wb", fileobj=buf, mtime=0) as gz:
