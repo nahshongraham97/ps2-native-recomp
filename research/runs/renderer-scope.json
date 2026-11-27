@@ -341964,5 +341964,825 @@
       "physical_audio_runs": 0,
       "whole_game_native_acceptance": "OPEN"
     }
+  },
+  "native_camera_display_target_20261126": {
+    "status": "PASS_NATIVE_GPU_COMPONENTS_BASELINE_FALSIFICATIONS_AND_PROJECT_GATES",
+    "dependency": "Actual17EBB0 flags1 depth/flags2 display raster path needs native backing and successful real GPU commands; neither source parent=self nor copied test handles proves it.",
+    "source": {
+      "producer": {
+        "path": "b/phase7-capture-run/native-camera-frame-01/producer-source-01/RESULT.json",
+        "sha256": "9f15b3f4dbd2a5760ed113009744b8c44124b5a7c29d3c0e5345918ebcaff517"
+      },
+      "clear": {
+        "path": "b/phase7-capture-run/native-camera-frame-01/producer-source-01/CLEAR_DEPTH.json",
+        "sha256": "793bb9290e84320abd221eb784f593820c61efc4abc3626fc6716e5343dea1d5"
+      },
+      "producer_erratum": {
+        "path": "b/phase7-capture-run/native-camera-frame-01/producer-source-01/ERRATA.json",
+        "sha256": "c317fa166343fb702b67436490f88bdf60bd2eec03c7be71d919996d172d76c6"
+      },
+      "raster_parent_proof": {
+        "path": "b/phase7-capture-run/native-camera-frame-01/producer-services-01/source-parent-proof.json",
+        "sha256": "2acede285a79d6e1bc8a71c00ed5e3c75601bf00b445673ae8aae05e60779c77"
+      },
+      "xbox": {
+        "path": "b/phase7-capture-run/native-camera-frame-01/display-xbox-source-01/RESULT.json",
+        "sha256": "3f4db969fce0a1a7adaae8033b94c94110cfb86dcacef3cfefa2b031c6adde09"
+      }
+    },
+    "source_limits": [
+      "17EBB0 late failures preserve prior allocations; no invented transactional rollback.",
+      "Source clear delegates camera/color/flags; GS Z0 does not determine a native projection/compare or clear-depth policy.",
+      "Source raster.parent is actual object/root identity, not pixels or GPU memory.",
+      "Xbox create2B9E50 replay covers48 original instructions in private read-only saved project; second2C95D0 export failed discovery despite Javaexit0. No source layout/backend is adopted."
+    ],
+    "implementation": "Actual camera Session/raster role/backing validation; explicit lower-left physical viewport and native clear-depth policy; existing offscreen native window color/depth storage; real indexed GL state snapshot/restoration, no emulated device or source GPU command dispatcher. Weak real camera draw-owner identity blocks concurrent/abandoned pass stealing.",
+    "review_corrections": [
+      "Use indexed0 color masks, viewport/scissor/enable state; restore fractional viewport exactly.",
+      "Disable/restore RASTERIZER_DISCARD and FRAMEBUFFER_SRGB around explicit normalized-storage clear.",
+      "Snapshot/restore complete default framebuffer draw-buffer vector before rebinding prior draw FBO; leave read FBO unchanged.",
+      "Retain native draw owner before first bind and track partial snapshot; failed rollback retains recoverable ownership and cannot clear until begin succeeds."
+    ],
+    "verification": "Four native GPU scenarios,7 actual-runtime plants,3 constructed real-context fault cases,59targets/65variants,20 earlier controls and16 distinct project gates behave as expected. All tasks finished; no game/oracle/physical-audio run or whole-function native admission.",
+    "deltas": {
+      "ownership": 0,
+      "transformed": 0,
+      "native": -2
+    },
+    "counts": {
+      "ownership": 20,
+      "transformed": 2,
+      "native": 236
+    },
+    "native_acceptance": "OPEN",
+    "component": {
+      "path": "b/phase7-capture-run/native-camera-frame-01/display-components-01/RESULT.json",
+      "sha256": "231c54ee2f719d280c16693fd60f4935b7f75f025bc39c62d610a2d6c341a0e1"
+    },
+    "component_measurements": {
+      "gpu_scenarios": 4,
+      "canonical_gpu_assertions": 182,
+      "diagnostic_assertions": 4,
+      "association_assertions": 144,
+      "inside_pixels": 143,
+      "outside_pixels": 2929,
+      "rgba_max_byte_delta": 0,
+      "depth_max_delta": 0,
+      "physical_extent": "64x48",
+      "logical_extent": "640x448",
+      "queried_depth_bits": 24,
+      "queried_alpha_bits": 8,
+      "queried_draw_buffers": 8,
+      "queried_viewports": 16,
+      "two_default_draw_buffer_map": "admitted"
+    },
+    "preserved_failures": [
+      {
+        "stage": "full_baseline_link_attempt01",
+        "failure": "Image testfixture0407 collidedwithactualRaster0407 nowrequiredbyproductionCameraTU. Correctedtestfrontier0407->0408/removesduplicatefixture, assertionsretained. FailedBUILDkept; fullretry59/65PASS.",
+        "receipt": "b/phase7-capture-run/native-camera-frame-01/display-baseline-01/RESULT.json"
+      },
+      {
+        "stage": "GPU_verifier_attempt01",
+        "failure": "Eight nestedcamera-case executables failedloader0xC0000135 becauseSDL2.dll wasinoutputrootbutnotcasefolder/PATH; no case main execution. Standalonefaultcases separatelypassed. Driver/outputs preserved; ownedoutputroot addedtochildPATH."
+      },
+      {
+        "stage": "GPU_verifier_attempt02",
+        "failure": "Positivecanonicaltwo-arg GPUtest passes182checks; wrapper wronglyrequired186fromdiagnosticfour-arg run. Fourextraassertionsvalidateartifactwrites, notadditionalGPUbehavior. Source/result preserved; canonicalexpectedcount correctedto182 forfreshverifier."
+      },
+      {
+        "stage": "canonical_runner_precheck",
+        "receipt": {
+          "path": "b/phase7-capture-run/native-camera-frame-01/display-canonical-01/RESULT.json",
+          "bytes": 530,
+          "sha256": "6cde0cf4730170ff62c58b9905dc808982cb93b3a5f31b90c81613987c7ae78e"
+        },
+        "failure": "Wrong relative driver invocation, then untyped ctypes HANDLE affinity precheck stopped before any gate. Original driver retained; fresh02 declares pointer-size HANDLE and allthreegates pass."
+      }
+    ],
+    "legacy_binding_corrections": {
+      "status": "TWO_FALSE_NATIVE_BINDINGS_AND_ONE_CROSS_MAP_WITHDRAWN",
+      "identity_receipt": {
+        "path": "b/phase7-capture-run/native-camera-frame-01/ledger-identity-01/RESULT.json",
+        "sha256": "2d94cf2361b0b5984ed6d07d74c44108c5c2e29dc8695800b1394b982454c178"
+      },
+      "PS2_002b9c70": {
+        "body_sha256": "01829913febfb1f12cb388b5b34a9affbbdb3b168b19369ba3b8198b24d8f1f7",
+        "bytes": 148,
+        "words": 37,
+        "calls": [
+          "0029ff70",
+          "0029ff70",
+          "0029bc00"
+        ],
+        "caller": "002c7298@002c7384",
+        "finding": "Self links and object field initialization/calls contradict stateless raster reject binding; exact class remains unresolved."
+      },
+      "PS2_00225690": {
+        "body_sha256": "cc382b17619728643a6030a82071431efcf0a5c5e4c5f6c25e93e90827295455",
+        "bytes": 1548,
+        "words": 387,
+        "callers": [
+          "00127260@0012733c",
+          "00220460@00220734"
+        ],
+        "finding": "Mode-dependent packed/global configuration; no admitted native raster-upload replacement."
+      },
+      "Xbox_002c0020": {
+        "body_sha256": "1716be68fc957efc78c6b208f7a354b543ebdec326e293438530dcdefdc27178",
+        "bytes": 560,
+        "instructions": 153,
+        "calls": "Fourteen002C2990 registry calls plus002C9870. Correct role counterpart001A66A0 remains in the existing capability map.",
+        "finding": "Core plugin registration, not upload. Wrong PS200225690 pair/candidate removed; signature file retained as rejected history."
+      },
+      "credit_before": 238,
+      "credit_after": 236,
+      "ported_before": 227,
+      "ported_after": 226,
+      "host_replaced_before": 11,
+      "host_replaced_after": 10,
+      "ownership_before_after": 20,
+      "transformed_before_after": 2,
+      "rules": "Existing identity/ownership/equivalence gates unchanged; contradicted credits withdrawn, not reassigned. No native implementation deleted.",
+      "failed_anchor_repair": "Exact comment anchor first realigned567->698 after test insertions, but complete body/caller review proved that positional repair cannot validate a false binding. Active alias is now removed."
+    },
+    "falsification": {
+      "receipt": {
+        "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/RESULT.json",
+        "bytes": 386163,
+        "sha256": "b77ed9d0a37e37268f7e3af955eeb845946a4d050912ff419e430f519fe076d5"
+      },
+      "authored_driver": {
+        "path": "tools/research/verify_native_display_target.py",
+        "bytes": 20246,
+        "sha256": "990cd96975549b5b2459376bfdca758ee27d47839f1cefc0653d76ac60d741fd"
+      },
+      "pins": 372,
+      "input_changes": [],
+      "sequential_compilers": true,
+      "affinity_mask": "0xf0",
+      "cases": [
+        {
+          "id": "positive",
+          "kind": "actual_runtime_source_positive",
+          "build_exits": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "run_exit": 0,
+          "expected_run_exit": 0,
+          "binary": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/positive/positive.exe",
+            "bytes": 3614208,
+            "sha256": "ed6966eb0b837945742cfb974cdf5f9a64ef967fabd1093f003b80f762018ed2"
+          },
+          "log": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/positive/run.log",
+            "bytes": 1068,
+            "sha256": "3f5df088ffc299b451de638485953a6281dcf8a3da11969739db336ecdd16adf"
+          }
+        },
+        {
+          "id": "missing_clear",
+          "kind": "actual_runtime_source_plant",
+          "build_exits": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "run_exit": 1,
+          "expected_run_exit": 1,
+          "binary": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/missing_clear/missing_clear.exe",
+            "bytes": 3614208,
+            "sha256": "ff6bd10f24c8268a3162b3c8301987a62a96ad18a4903c2d22470c83443576f7"
+          },
+          "log": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/missing_clear/run.log",
+            "bytes": 575,
+            "sha256": "8bbf8f2a1dcc064d3b46cdbd46fcb18e66e17e2f54a734ecd382b68a6aea998d"
+          }
+        },
+        {
+          "id": "forced_depth_one",
+          "kind": "actual_runtime_source_plant",
+          "build_exits": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "run_exit": 1,
+          "expected_run_exit": 1,
+          "binary": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/forced_depth_one/forced_depth_one.exe",
+            "bytes": 3614208,
+            "sha256": "cbd6e30405bc95b2f52c2f6c9d6a53e629ba315f68c39eb06dd77149b0b04a1f"
+          },
+          "log": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/forced_depth_one/run.log",
+            "bytes": 572,
+            "sha256": "d1289735325b6bfb729b22fa09e1d7e43a2e18ff2db66994f6f01e74eba920a8"
+          }
+        },
+        {
+          "id": "global_color_mask",
+          "kind": "actual_runtime_source_plant",
+          "build_exits": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "run_exit": 1,
+          "expected_run_exit": 1,
+          "binary": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/global_color_mask/global_color_mask.exe",
+            "bytes": 3614208,
+            "sha256": "3e5840ed38d7731ced392cc73772a2b137fd28767e2aa44158415b2bbc3784e3"
+          },
+          "log": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/global_color_mask/run.log",
+            "bytes": 557,
+            "sha256": "481cd829019566ee92b193f8880f57b8af84f2e9365d1a2df7061535d4d40ecd"
+          }
+        },
+        {
+          "id": "enabled_discard",
+          "kind": "actual_runtime_source_plant",
+          "build_exits": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "run_exit": 1,
+          "expected_run_exit": 1,
+          "binary": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/enabled_discard/enabled_discard.exe",
+            "bytes": 3614208,
+            "sha256": "c5866c7e5e3a0e6b8b891098dbcb68ca77c9bfd99d5419f56cbe70ac8d2de9e0"
+          },
+          "log": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/enabled_discard/run.log",
+            "bytes": 575,
+            "sha256": "8bbf8f2a1dcc064d3b46cdbd46fcb18e66e17e2f54a734ecd382b68a6aea998d"
+          }
+        },
+        {
+          "id": "global_viewport",
+          "kind": "actual_runtime_source_plant",
+          "build_exits": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "run_exit": 1,
+          "expected_run_exit": 1,
+          "binary": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/global_viewport/global_viewport.exe",
+            "bytes": 3614208,
+            "sha256": "9a0fedb0448cdd997d34d5becd3792554f29c6927a56ad958a6208a1965d4b48"
+          },
+          "log": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/global_viewport/run.log",
+            "bytes": 565,
+            "sha256": "5fcba6ac5724d99ecc10b50a3426153cf75a81439d96e39a1f49a939464e7c52"
+          }
+        },
+        {
+          "id": "missing_viewport_restore",
+          "kind": "actual_runtime_source_plant",
+          "build_exits": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "run_exit": 1,
+          "expected_run_exit": 1,
+          "binary": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/missing_viewport_restore/missing_viewport_restore.exe",
+            "bytes": 3614208,
+            "sha256": "f634f1985d61a5b52ff0144794cb9c4231f8e0ab1d97728ae2227ba066b81af9"
+          },
+          "log": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/missing_viewport_restore/run.log",
+            "bytes": 555,
+            "sha256": "8308165d02546e166f3dc56219d072b0146b70da6864ad24d34f9768362531d1"
+          }
+        },
+        {
+          "id": "foreign_session_raster",
+          "kind": "actual_runtime_source_plant",
+          "build_exits": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "run_exit": 1,
+          "expected_run_exit": 1,
+          "binary": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/foreign_session_raster/foreign_session_raster.exe",
+            "bytes": 3614208,
+            "sha256": "cc23504494f7418672725c5fb324bfa69244d7c35ccfb7195a5971819be3163d"
+          },
+          "log": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/foreign_session_raster/run.log",
+            "bytes": 564,
+            "sha256": "a000ddf44a6d1410128560ad4f4d00100ab49bb5ff647edb69d0ebea74e344cf"
+          }
+        },
+        {
+          "id": "pre_bind_refusal",
+          "kind": "constructed_real_GL_fault_positive",
+          "build_exits": [
+            0,
+            0,
+            0
+          ],
+          "run_exit": 0,
+          "expected_run_exit": 0,
+          "binary": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/pre_bind_refusal/pre_bind_refusal.exe",
+            "bytes": 561152,
+            "sha256": "932caf5835cdd88430e03247ea4a82190de97e8b894b7f128b62ef79c0301911"
+          },
+          "log": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/pre_bind_refusal/run.log",
+            "bytes": 384,
+            "sha256": "d57c6d4eabc724d94751171f4f2a316be15fe02babc42288c9fb5f479e1498f6"
+          }
+        },
+        {
+          "id": "partial_ownership",
+          "kind": "constructed_real_GL_fault_positive",
+          "build_exits": [
+            0,
+            0,
+            0
+          ],
+          "run_exit": 0,
+          "expected_run_exit": 0,
+          "binary": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/partial_ownership/partial_ownership.exe",
+            "bytes": 561664,
+            "sha256": "25c11208fb9e02524e5a4d92c22cab41bba9887cf154b8c080f990105d5a1fcd"
+          },
+          "log": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/partial_ownership/run.log",
+            "bytes": 383,
+            "sha256": "95923639bcba56efca00c85f9ec378f442894d7ce64a24c68a0de1fc4913892d"
+          }
+        },
+        {
+          "id": "missing_early_ownership",
+          "kind": "constructed_fault_source_plant",
+          "build_exits": [
+            0,
+            0,
+            0
+          ],
+          "run_exit": 1,
+          "expected_run_exit": 1,
+          "binary": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/missing_early_ownership/missing_early_ownership.exe",
+            "bytes": 561664,
+            "sha256": "0445e9a184ad866d4b71e1aac6965e4f3dc975023113962d9ec0e7e1d13948ae"
+          },
+          "log": {
+            "path": "b/phase7-capture-run/native-camera-frame-01/display-verification-03/missing_early_ownership/run.log",
+            "bytes": 358,
+            "sha256": "093f785f6e03a4470bd55b69e674381fe004a0633e4c06be7091d1c512985440"
+          }
+        }
+      ],
+      "queried_driver": [
+        "NATIVE_DISPLAY_FAULT_DRIVER vendor=ATI Technologies Inc. renderer=AMD Radeon RX 6800 XT version=4.6.0 Compatibility Profile Context 26.11.2.261112 pixel_format=14 flags=0x00008025 generic_format=0 generic_accelerated=0 depth_bits=24 alpha_bits=8 hardware_acceleration_not_inferred=1",
+        "NATIVE_DISPLAY_FAULT_DRIVER vendor=ATI Technologies Inc. renderer=AMD Radeon RX 6800 XT version=4.6.0 Compatibility Profile Context 26.11.2.261112 pixel_format=14 flags=0x00008025 generic_format=0 generic_accelerated=0 depth_bits=24 alpha_bits=8 hardware_acceleration_not_inferred=1",
+        "NATIVE_DISPLAY_FAULT_DRIVER vendor=ATI Technologies Inc. renderer=AMD Radeon RX 6800 XT version=4.6.0 Compatibility Profile Context 26.11.2.261112 pixel_format=14 flags=0x00008025 generic_format=0 generic_accelerated=0 depth_bits=24 alpha_bits=8 hardware_acceleration_not_inferred=1"
+      ],
+      "limits": [
+        "Real native owner/GPU component behavior and actual-source falsifications only; no game/oracle invocation or full scene claim.",
+        "Constructed snapshot/restore failures are injected branch conditions in private actual-service copies; they do not claim observed driver failures.",
+        "Two camera arguments are the existing content root and depth corpus; explicit GPU diagnostic readbacks are test observations, not production frame readbacks."
+      ],
+      "compile_steps_separate_from_baseline": 38,
+      "links": 11,
+      "final_source_and_binary_log_join": "PASS: all9 final frozen sources plus all11 binary/run-log hashes rejoined before publication; no runtime/test change."
+    },
+    "baseline": {
+      "receipt": {
+        "path": "b/phase7-capture-run/native-camera-frame-01/display-baseline-01/BASELINE_AND_MEASUREMENTS.json",
+        "bytes": 7845,
+        "sha256": "d2fee1eb16d953cf802f93b7044b48db93cc4050162a5c11451c62d143ea4a12"
+      },
+      "native": {
+        "targets": 59,
+        "variants": 65,
+        "passed": 65,
+        "expected_negative_variants": 7,
+        "receipt": {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-camera-frame-01\\display-baseline-01\\retry-02\\RESULT.json",
+          "sha256": "33504ef5eb8f641ead8cc3477be605ebc7eff557a405d009b332bcb75f59ed70",
+          "bytes": 114503
+        },
+        "expected_refusals": [
+          {
+            "name": "test_phase4_aot_equivalence-planted-packet",
+            "expected_exit": 1,
+            "actual_exit": 1
+          },
+          {
+            "name": "test_phase5_generated_transform-planted-mode",
+            "expected_exit": 1,
+            "actual_exit": 1
+          },
+          {
+            "name": "test_phase5_index_transform-corpus-inapplicable",
+            "expected_exit": 1,
+            "actual_exit": 1
+          },
+          {
+            "name": "test_phase5_index_transform-planted-value",
+            "expected_exit": 1,
+            "actual_exit": 1
+          },
+          {
+            "name": "test_phase5_index_transform-planted-field",
+            "expected_exit": 1,
+            "actual_exit": 1
+          },
+          {
+            "name": "test_generated_stack_frames-planted-frame-size",
+            "expected_exit": 1,
+            "actual_exit": 1
+          },
+          {
+            "name": "test_generated_stack_frames-planted-ra-clobber",
+            "expected_exit": 1,
+            "actual_exit": 1
+          }
+        ]
+      },
+      "earlier_controls": {
+        "count": 20,
+        "positive": 4,
+        "negative": 16,
+        "fresh_executions": true,
+        "fresh_builds": 0,
+        "compiled_pin_records": 34,
+        "receipt": {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-camera-frame-01\\display-baseline-01\\earlier-controls\\RESULT.json",
+          "sha256": "6c187590472369c6382d53f70ccfa4131500eb3994615c20ef243faf00e73cab",
+          "bytes": 33616
+        }
+      },
+      "build_scope": {
+        "initial_component_TUs_separate": 9,
+        "all59_attempts_fresh_TUs": 12,
+        "relinked_targets": 42,
+        "inherited_byte_identical_targets": 17,
+        "receipt": {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-camera-frame-01\\display-baseline-01\\BUILD_SCOPE.json",
+          "sha256": "fed24266efffb632345b1a8b5b6c573cb3da791803b45745853fa6804911fef2",
+          "bytes": 33800
+        }
+      },
+      "prototype": {
+        "source_pins": 684,
+        "states": 61,
+        "typed": 122,
+        "synthetic": 8,
+        "full_RAM_bytes": 33554432,
+        "receipt": {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-prototype-01-verification.json",
+          "sha256": "9f161de158b1e07de96069d1aa0312535e579983a22301e6f97c8fa5662237d5",
+          "bytes": 86473
+        }
+      },
+      "VU": {
+        "source_pins": 1380,
+        "snapshot_replays": 61,
+        "GAMER_leaf_references": 61,
+        "ordered_packet_bytes": 41296,
+        "packet_plant_exit": 1,
+        "receipt": {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-vu-01-verify.json",
+          "sha256": "d2c35b9d047275d6f96dafc9f9ecc6e90b2f1979ce8034172f258b2510c00656",
+          "bytes": 4158
+        },
+        "manifest": {
+          "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-vu-01-compiled-source.json",
+          "sha256": "1bb3bfc868f3fe721587bb642b1ec51a800302b41bd7dfc25426b38c260d381b",
+          "bytes": 158403
+        }
+      },
+      "protected_files": 4730,
+      "protected_unchanged": true
+    },
+    "diagnostic_frames": {
+      "width": 64,
+      "height": 48,
+      "logical_width": 640,
+      "logical_height": 448,
+      "inside_pixels": 143,
+      "outside_pixels": 2929,
+      "rgba_max_byte_delta": 0,
+      "depth_max_delta": 0,
+      "color": {
+        "path": "b/phase7-capture-run/native-camera-frame-01/display-components-01/diagnostic/camera-target.rgba8.bin",
+        "bytes": 12288,
+        "sha256": "ff1c6f28312a2429911de3864f3721083c4604711eb9a71d5e7794c0f09d3074"
+      },
+      "depth": {
+        "path": "b/phase7-capture-run/native-camera-frame-01/display-components-01/diagnostic/camera-target.depth32f.bin",
+        "bytes": 12288,
+        "sha256": "2aa07b9089cf8be4f7d748679d9ab6ddc77af67262e2187237050dfc0cc19593"
+      },
+      "scope": "Diagnostic native GPU clear/readback on constructed viewport/policy; no game geometry or original-game frame equivalence."
+    },
+    "full_game_frames": 0,
+    "audio_endpoint_runs": 0,
+    "oracle_runs": 0,
+    "canonical_gates": {
+      "receipt": {
+        "path": "b/phase7-capture-run/native-camera-frame-01/display-canonical-02/RESULT.json",
+        "bytes": 3989,
+        "sha256": "b8f439023929e1e33a5e1bd0439bcc48c0cdc86a3ffbcdbe4ed18202ab3fa7c7"
+      },
+      "gates": [
+        {
+          "id": "generate",
+          "exit_code": 0,
+          "seconds": 13.843509900034405,
+          "log": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-camera-frame-01\\display-canonical-02\\generate.log",
+            "bytes": 1982,
+            "sha256": "5f8049d3d623dae319ead28afc4b1639a42fa85dd24699bdcbbf48e269baabfe"
+          }
+        },
+        {
+          "id": "sync",
+          "exit_code": 0,
+          "seconds": 0.32470850000390783,
+          "log": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-camera-frame-01\\display-canonical-02\\sync.log",
+            "bytes": 140,
+            "sha256": "f782dadbcd967971816dc99102b5c286bd4c72f3914a2db85380a724177ba806"
+          }
+        },
+        {
+          "id": "validation",
+          "exit_code": 0,
+          "seconds": 52.126765199995134,
+          "log": {
+            "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\b\\phase7-capture-run\\native-camera-frame-01\\display-canonical-02\\validation.log",
+            "bytes": 10004,
+            "sha256": "e2cc223c630dd35c7adee3b672de9d61ae09da64a47284450d2efd968fd48259"
+          }
+        }
+      ],
+      "validation": "Existing25 planted-failure groups plus bounded-census controls retained; newgroup26 rejects restoring either false native alias and restoring the false upload pair.",
+      "source_identity_regression_plants": 3,
+      "protected_hashes_unchanged": true,
+      "free_bytes": 116791152640
+    },
+    "readonly_gates": {
+      "receipt": {
+        "path": "build/oracle-telemetry/native-camera-display-gates-01/PUBLICATION_AGGREGATE.json",
+        "bytes": 23983,
+        "sha256": "bfeb31d5727534bb06c4c3e2dda017aaf341f0be995c38259bac1378e2db0314"
+      },
+      "raw_preserved_receipt": {
+        "path": "build/oracle-telemetry/native-camera-display-gates-01/RESULT.json",
+        "bytes": 2968,
+        "sha256": "1d26fecc431eba55371f70432cac00e37ca8922f9d6b08ca280836e79d24c928"
+      },
+      "count": 13,
+      "passed": 13,
+      "failures": 0,
+      "cases": [
+        {
+          "name": "acceptance-checker",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "logs": {
+            "stdout": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\acceptance-checker.stdout.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "stderr": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\acceptance-checker.stderr.log",
+              "sha256": "dd72bad50498903434830f4ea67e974bc51ad0af7f9e7cb40db2b6deaf02adcf"
+            }
+          }
+        },
+        {
+          "name": "acceptance-manifest",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "logs": {
+            "stdout": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\acceptance-manifest.stdout.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "stderr": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\acceptance-manifest.stderr.log",
+              "sha256": "d34a01b2d46cb0750df0e23ecce2699eb7ce53e459a2bdf20b71af9df9708a6b"
+            }
+          }
+        },
+        {
+          "name": "cpu-raster-ban",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "logs": {
+            "stdout": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\cpu-raster-ban.stdout.log",
+              "sha256": "2b10f2cee499ccd4a178e50027d908a05d4392136226d5082b8519ab37882e71"
+            },
+            "stderr": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\cpu-raster-ban.stderr.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "name": "oracle-verifier-planted",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "logs": {
+            "stdout": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\oracle-verifier-planted.stdout.log",
+              "sha256": "43bb13ac2736d200b4f7ce3071259224f355cb941559bd676469c55896ec22b7"
+            },
+            "stderr": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\oracle-verifier-planted.stderr.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "name": "old-oracle-launcher-rejection",
+          "expected_exit": 1,
+          "actual_exit": 1,
+          "logs": {
+            "stdout": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\old-oracle-launcher-rejection.stdout.log",
+              "sha256": "7f9c986565e65b0aeccc1d9fad0e8c229f2e4df8ad0b6887dd5fcc292b349e76"
+            },
+            "stderr": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\old-oracle-launcher-rejection.stderr.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "name": "oracle-integrity-after-prepare",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "logs": {
+            "stdout": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\oracle-integrity-after-prepare.stdout.log",
+              "sha256": "48d8d90a5907897c125c747700796ab4f964ad48fe6f7bdbdb51c38445053188"
+            },
+            "stderr": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\oracle-integrity-after-prepare.stderr.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "name": "acceptance-open",
+          "expected_exit": 1,
+          "actual_exit": 1,
+          "logs": {
+            "stdout": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\acceptance-open.stdout.log",
+              "sha256": "e5c7ecbb7df9f75cf4d6cf629f36512daafc42a77bd1fab84bd6f66fec7bf457"
+            },
+            "stderr": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\acceptance-open.stderr.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "name": "markdown-links",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "logs": {
+            "stdout": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\markdown-links.stdout.log",
+              "sha256": "05836de1d1c23a67597e5f6d169a59d7ebf7c1663519a371b511eaa851d3570c"
+            },
+            "stderr": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\markdown-links.stderr.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "name": "sync-confirm",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "logs": {
+            "stdout": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\sync-confirm.stdout.log",
+              "sha256": "e2cb753bc946db93a6507615255f089e6ad077d36bf8c111072b4b6578bcba89"
+            },
+            "stderr": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\sync-confirm.stderr.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "name": "strict-renderware",
+          "expected_exit": 2,
+          "actual_exit": 2,
+          "logs": {
+            "stdout": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\strict-renderware.stdout.log",
+              "sha256": "6cccb60844550e4ab3558967f506cc94fdd7479be936e845bdc5ca9b52484e88"
+            },
+            "stderr": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\strict-renderware.stderr.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "name": "static-exit-suite",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "logs": {
+            "stdout": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\static-exit-suite.stdout.log",
+              "sha256": "3a3867edeaea4bf70f3260b60d9ad506cb03c73203d6ac8e3675db7fd124e1e6"
+            },
+            "stderr": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\static-exit-suite.stderr.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "name": "stack-static-controls",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "logs": {
+            "stdout": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\stack-static-controls.stdout.log",
+              "sha256": "d78b5e8196d05ccf589975d1f080e640d146a0e07d4275b63ff249d6699ff0d7"
+            },
+            "stderr": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\stack-static-controls.stderr.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        },
+        {
+          "name": "frontier-capability-audit",
+          "expected_exit": 0,
+          "actual_exit": 0,
+          "logs": {
+            "stdout": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\frontier-capability-audit.stdout.log",
+              "sha256": "8a85b24a5f7fdd3e9ecdb9a3c33f14c651880dae37c5358903fa0e709cc3b646"
+            },
+            "stderr": {
+              "path": "C:\\Users\\nahsh\\mk port\\Armageddon-backup\\armageddon-reimplementation\\external\\forks\\ps2-native-recomp\\build\\oracle-telemetry\\native-camera-display-gates-01\\frontier-capability-audit.stderr.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          }
+        }
+      ],
+      "snapshot_limit": "Raw receipt remains FAIL_PRESERVED solely for the explicitly authorized renderer-scope report append during snapshot. No unknown source/tool/protected delta. Aggregate separates13passing gate executions from that report-only guard refusal.",
+      "protected_files": 4730,
+      "compiled_sources": 9,
+      "authored_verifier_unchanged": true,
+      "owned_processes_remaining": 0
+    },
+    "postgate_comment_erratum": {
+      "path": "b/phase7-capture-run/native-camera-frame-01/GENERATOR_COMMENT_ERRATUM.json",
+      "bytes": 805,
+      "sha256": "922f6c2fc5e424523cf0e624016d3a4674de42fbbdd1243e2cd757b464c15e42"
+    },
+    "review": "Independent bounded final review confirms236=226ported+10host,correct1A66A0role retained, original25controls unchanged, new3restorationplants reject; no ownership/equivalence/credit gate relaxed and no native source deleted."
   }
 }

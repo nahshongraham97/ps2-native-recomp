@@ -1169,8 +1169,41 @@ def test_bounded_census_failures(ledger, mappings):
 
 
 
+def test_withdrawn_source_identity_bindings():
+    """A moving test/comment anchor cannot establish an original function role."""
+    import csv
+    print("Testing planted failure 26: contradicted native aliases and upload cross-map stay withdrawn...")
+    with (REPO / "research/ledger/functions.csv").open(newline="", encoding="utf8") as stream:
+        rows = list(csv.DictReader(stream))
+    with (REPO / "research/ledger/ps2_xbox_map.csv").open(newline="", encoding="utf8") as stream:
+        mappings = list(csv.DictReader(stream))
+    check = generate_ledgers.validate_source_identity_bindings
+    check(rows, mappings)
+    for address, bad_status in (("00225690", "host-replaced"), ("002b9c70", "ported")):
+        changed = copy.deepcopy(rows)
+        row = next(row for row in changed if row["module"] == "SLUS_214.10" and row["address"] == address)
+        row["status"] = bad_status
+        try:
+            check(changed, mappings)
+        except AssertionError as error:
+            assert str(error) == "Contradicted legacy raster binding cannot regain native credit"
+        else:
+            raise AssertionError("Restored false native credit was admitted: " + address)
+    changed = copy.deepcopy(mappings)
+    row = next(row for row in changed if row["ps2_module"] == "SLUS_214.10" and row["ps2_address"] == "00225690")
+    row.update(xbox_module="default.xbe", xbox_address="002c0020", match_confidence="mapped-by-role")
+    try:
+        check(rows, changed)
+    except AssertionError as error:
+        assert str(error) == "Contradicted upload cross-map restored"
+    else:
+        raise AssertionError("Restored false upload cross-map was admitted")
+    print("  Both restored credits and the false upload mapping rejected; original rows, signatures and native services retained.")
+
+
 if __name__ == "__main__":
     test_parent_fork_sync()
     test_sha_resolution()
     test_production_existence()
+    test_withdrawn_source_identity_bindings()
     test_planted_failures()

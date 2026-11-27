@@ -12357,7 +12357,7 @@ default.xbe,002bfe30,FUN_002bfe30,open,none,none,not-started,research/ledger/xbo
 default.xbe,002bfeb0,FUN_002bfeb0,open,none,none,not-started,research/ledger/xbox_raw_functions.csv,
 default.xbe,002bff80,FUN_002bff80,open,none,none,not-started,research/ledger/xbox_raw_functions.csv,
 default.xbe,002bffe0,FUN_002bffe0,open,none,none,not-started,research/ledger/xbox_raw_functions.csv,
-default.xbe,002c0020,FUN_002c0020,open,00225690,component-tested,blocked-on-dual-platform-vectors,"runtime/src/native/retail_renderer_rasters.cpp:806 [set_from_image] (tests/test_retail_renderer_rasters.cpp:710 ""set_from_image with real GPU attached"")",RenderWare raster host OpenGL upload donor candidate; pending dual-platform test vectors before donor credit (matching PS2 rule)
+default.xbe,002c0020,FUN_002c0020,open,001a66a0,source-verified,role-only,research/runs/xbox-donor-20261121/PUBLICATION.json,Core plugin registration; invalid raster-upload candidate and PS2 00225690 pairing withdrawn. Role identity is not native adoption.
 default.xbe,002c0250,FUN_002c0250,open,none,none,not-started,research/ledger/xbox_raw_functions.csv,
 default.xbe,002c0310,FUN_002c0310,open,none,none,not-started,research/ledger/xbox_raw_functions.csv,
 default.xbe,002c03c0,FUN_002c03c0,open,none,component-tested,investigating,research/ledger/xbox_raw_functions.csv,Under active binary investigation for renderer plugin contracts

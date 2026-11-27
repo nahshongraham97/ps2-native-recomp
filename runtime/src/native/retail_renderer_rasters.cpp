@@ -1,5 +1,6 @@
 #include "mka/retail_renderer_rasters.hpp"
 #include "mka/retail_game_session.hpp"
+#include "mka/retail_display_service.hpp"
 #include "retail_main_control.hpp"
 #include <algorithm>
 #include <cstring>
@@ -81,6 +82,10 @@ struct NativeRetailRasterRecord {
 
  std::weak_ptr<NativeRetailRasterRecord> parent;
  std::shared_ptr<NativeRetailRasterRecord> root_alias;
+ // Native display descriptors borrow host storage; raster destruction never owns it.
+ std::weak_ptr<NativeProductionDisplayService> display;
+ std::uint64_t display_destination{0};
+ bool display_assigned{false};
 
  std::vector<std::byte> pixel_data;
  std::vector<std::byte> palette_data;
@@ -276,6 +281,8 @@ std::optional<NativeRetailRasterHandle> NativeRetailRendererRasters::create_rast
  std::shared_ptr<NativeRetailRasterRecord> rec;
  try {
   rec = std::make_shared<NativeRetailRasterRecord>();
+  // 001A8880: raster.parent = raster, before the platform create callback.
+  rec->parent = rec;
   rec->description = desc;
   rec->format = desc.format;
   rec->flags = desc.flags;
@@ -506,6 +513,81 @@ std::optional<RetailRendererRasterObservation> NativeRetailRendererRasters::obse
  return obs;
 }
 
+std::optional<NativeRetailRasterHandle> NativeRetailRendererRasters::parent(
+ const NativeRetailRasterHandle& handle,
+ RetailRendererRasterFailure& f) const noexcept {
+ if (!admit(f)) return {};
+ auto rec = record(handle, f);
+ if (!rec) return {};
+ if (rec->is_sentinel) return NativeRetailRasterHandle{};
+ auto parent_rec = rec->parent.lock();
+ if (!parent_rec || !parent_rec->alive) {
+  reject(f, RetailRendererRasterError::retired_raster, "0407 retired raster parent");
+  return {};
+ }
+ return NativeRetailRasterHandle(handle.owner_, parent_rec);
+}
+
+bool NativeRetailRendererRasters::bind_display_target(
+ const NativeRetailRasterHandle& handle,
+ std::shared_ptr<NativeProductionDisplayService> display,
+ RetailRendererRasterFailure& f) noexcept {
+ if (!admit(f)) return false;
+ auto rec = record(handle, f);
+ if (!rec) return false;
+ if (rec->is_sentinel || rec->is_subview || rec->parent.lock() != rec || rec->destroying ||
+     (rec->description.type != 1 && rec->description.type != 2) ||
+     (rec->flags & 7) != rec->description.type) {
+  return reject(f, RetailRendererRasterError::display_binding, "0407 display requires base flag1/flag2 raster");
+ }
+ if (rec->display_assigned) {
+  auto bound = rec->display.lock();
+  if (!bound || bound->destination_identity() != rec->display_destination) {
+   return reject(f, RetailRendererRasterError::stale_display, "0407 stale display binding");
+  }
+  if (!display || rec->display.owner_before(display) || display.owner_before(rec->display) || bound.get() != display.get()) {
+   return reject(f, RetailRendererRasterError::already_backed, "0407 display already bound to another target");
+  }
+ }
+ if (!display || !display->is_context_current() || !display->destination_identity() ||
+     !display->target_width() || !display->target_height()) {
+  return reject(f, RetailRendererRasterError::display_binding, "0407 display requires current nonzero host target");
+ }
+ rec->display = display;
+ rec->display_destination = display->destination_identity();
+ rec->display_assigned = true;
+ return true;
+}
+
+std::shared_ptr<NativeProductionDisplayService> NativeRetailRendererRasters::display_target(
+ const NativeRetailRasterHandle& handle,
+ RetailRendererRasterFailure& f) const noexcept {
+ if (!admit(f)) return {};
+ auto rec = record(handle, f);
+ if (!rec) return {};
+ if (rec->is_sentinel || rec->is_subview || rec->parent.lock() != rec || rec->destroying ||
+     (rec->description.type != 1 && rec->description.type != 2) ||
+     (rec->flags & 7) != rec->description.type) {
+  reject(f, RetailRendererRasterError::display_binding, "0407 display requires base flag1/flag2 raster");
+  return {};
+ }
+ if (!rec->display_assigned) {
+  reject(f, RetailRendererRasterError::missing_backing, "0407 display target never bound");
+  return {};
+ }
+ auto display = rec->display.lock();
+ if (!display || display->destination_identity() != rec->display_destination) {
+  reject(f, RetailRendererRasterError::stale_display, "0407 stale display binding");
+  return {};
+ }
+ if (!display->is_context_current() || !display->destination_identity() ||
+     !display->target_width() || !display->target_height()) {
+  reject(f, RetailRendererRasterError::display_binding, "0407 display requires current nonzero host target");
+  return {};
+ }
+ return display;
+}
+
 std::optional<std::size_t> NativeRetailRendererRasters::live_rasters(
  RetailRendererRasterFailure& f) const noexcept {
  if (!admit(f)) return {};
@@ -646,7 +728,7 @@ std::optional<NativeRetailRasterHandle> NativeRetailRendererRasters::create_subv
   subview_rec->offset_y = new_offset_y;
   subview_rec->is_subview = true;
   subview_rec->alive = true;
-  subview_rec->parent = parent_rec;
+  subview_rec->parent = subview_rec;
  } catch (const std::bad_alloc&) {
   reject(f, RetailRendererRasterError::allocation, "0407 subview allocation");
   return {};
@@ -679,6 +761,8 @@ std::optional<NativeRetailRasterHandle> NativeRetailRendererRasters::create_subv
 
  // Only on success aliases the parent's ROOT; backend copies stride/depth/type/format
  auto root = parent_rec->root_alias ? parent_rec->root_alias : parent_rec;
+ // 001A87C4/001A87CC: publish the parent's root identity only after success.
+ subview_rec->parent = parent_rec->parent;
  subview_rec->root_alias = root;
  subview_rec->stride = root->stride;
  subview_rec->format = root->format;

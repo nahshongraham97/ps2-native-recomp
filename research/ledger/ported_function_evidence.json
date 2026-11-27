@@ -2,7 +2,22 @@
   "_meta": {
     "xbox_investigation_source": "Xbox default.xbe serves as an authoritative secondary binary investigation source for recovering algorithm contracts and data structures; donor credit requires verified dual-platform vectors.",
     "donor_credit_requires_dual_platform_vectors": true,
-    "legend_zero_percent_note": "0% donor credit means no donor credit has been awarded pending verified dual-platform vectors, not that work has stalled."
+    "legend_zero_percent_note": "0% donor credit means no donor credit has been awarded pending verified dual-platform vectors, not that work has stalled.",
+    "withdrawn_native_bindings_20261126": {
+      "source_record": "research/runs/renderer-scope.json#native_camera_display_target_20261126.legacy_binding_corrections",
+      "private_identity_receipt_sha256": "2d94cf2361b0b5984ed6d07d74c44108c5c2e29dc8695800b1394b982454c178",
+      "002b9c70": {
+        "previous": "runtime/src/native/retail_renderer_rasters.cpp:408 [reject] (tests/test_retail_renderer_rasters.cpp:698 \"// Verify that texture conversion without attached\")",
+        "reason": "Original PS2 body initializes object links/fields and calls helpers; native reject helper cannot implement those effects."
+      },
+      "00225690": {
+        "previous": "Hardcoded host-replaced raster-upload binding and Xbox002C0020 counterpart",
+        "reason": "PS2 mode-dependent packed/global configuration is not verified as raster upload; Xbox counterpart is renderer plugin registration."
+      },
+      "credit_removed": 2,
+      "new_credit_awarded": 0,
+      "history": "Old bindings, signatures, components and published counts remain in Git and work-item history. Native GPU code is preserved."
+    }
   },
   "components": {
     "allocator": {
@@ -240,7 +255,6 @@
   "00295d60": "runtime/src/native/retail_post_overlay.cpp:15 [initialize_retail_post_overlay_state] (tests/test_retail_startup_initialization.cpp:44 \"real source mode owner\")",
   "00295dd0": "runtime/src/native/retail_post_overlay.cpp:15 [initialize_retail_post_overlay_state] (tests/test_retail_startup_initialization.cpp:35 \"production182670 profile initialization\")",
   "00295e10": "runtime/src/native/retail_post_overlay.cpp:15 [initialize_retail_post_overlay_state] (tests/test_retail_startup_initialization.cpp:37 \"production3DDA60 native GAMER initialization\")",
-  "002b9c70": "runtime/src/native/retail_renderer_rasters.cpp:408 [reject] (tests/test_retail_renderer_rasters.cpp:567 \"// Verify that texture conversion without attached\")",
   "002df470": "runtime/src/native/retail_file_paths.cpp:54 [resolve] (tests/test_allocation_profile.cpp:56 \"unsigned default selection preserves selector provenance\")",
   "002e06e0": "runtime/src/native/retail_main.cpp:152 [m] (tests/test_retail_startup_initialization.cpp:52 \"real registry, roles and typed game values\")",
   "002e8f80": "runtime/src/native/retail_frame_work_storage.cpp:169 [commit] (tests/test_retail_frame_work_storage.cpp:59 \"auto committed=storage.commit(*request,17,f);\")",

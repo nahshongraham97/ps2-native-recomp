@@ -2,6 +2,7 @@
 #include "mka/retail_renderer_core.hpp"
 #include "mka/retail_renderer_rasters.hpp"
 #include "mka/retail_renderer_frames.hpp"
+#include "mka/retail_display_service.hpp"
 #include <atomic>
 #include <memory>
 #include <optional>
@@ -13,15 +14,22 @@ class NativeRetailRendererCameraModule;
 struct NativeRetailRendererBaseCameraRecord;
 enum class RetailRendererCameraError {
  none,owner,wrong_thread,retired,reentrant,invalid_handle,foreign_owner,retired_camera,
- allocator,allocation,native_exception,device_depth_required,unverified_numeric_domain,render_services_required,frame_binding
+ allocator,allocation,native_exception,device_depth_required,unverified_numeric_domain,render_services_required,frame_binding,
+ raster_binding,native_target
 };
 struct RetailRendererCameraFailure {
  RetailRendererCameraError kind{RetailRendererCameraError::none};const char* operation{""};
  RetailRendererAllocatorFailure allocator;
  RetailRendererFrameFailure frame;
+ RetailRendererRasterFailure raster;
+ DisplayServiceFailure display;
 };
 struct RetailRendererCameraDepthInputs {float near_value{},far_value{};};
 struct RetailRendererCameraWindow {float x{},y{};};
+struct RetailRendererCameraTargetPolicy {
+ DisplayViewportRect physical_viewport;
+ std::optional<float> clear_depth; // Explicit native projection policy, never inferred from source Z=0.
+};
 class NativeRetailRendererCameraHandle final {
 public:
  NativeRetailRendererCameraHandle()noexcept=default;
@@ -72,13 +80,18 @@ public:
  // A capability refusal, not an implementation of source Begin/EndUpdate.
  bool require_render_ready(const NativeRetailRendererCameraHandle&,RetailRendererCameraFailure&)const noexcept;
 
- // Native OpenGL FBO scaffolding: raster-to-camera attachment (recovered camera framebuffer/zbuffer pairing)
+ // Typed raster fields; empty handles detach. Nonempty inputs must be live,
+ // of the appropriate role and belong to the camera's actual Session.
  bool set_frame_buffer_raster(const NativeRetailRendererCameraHandle&, const NativeRetailRasterHandle&, RetailRendererCameraFailure&) noexcept;
  std::optional<NativeRetailRasterHandle> frame_buffer_raster(const NativeRetailRendererCameraHandle&, RetailRendererCameraFailure&) const noexcept;
  bool set_z_buffer_raster(const NativeRetailRendererCameraHandle&, const NativeRetailRasterHandle&, RetailRendererCameraFailure&) noexcept;
  std::optional<NativeRetailRasterHandle> z_buffer_raster(const NativeRetailRendererCameraHandle&, RetailRendererCameraFailure&) const noexcept;
 
- // Native OpenGL FBO lifecycle: bind, clear, unbind (native scaffolding; no recovered retail draw call)
+ bool set_render_target_policy(const NativeRetailRendererCameraHandle&,
+     RetailRendererCameraTargetPolicy,RetailRendererCameraFailure&)noexcept;
+ // Native default-display draw boundary. Requires real same-display raster
+ // backing and explicit physical viewport/depth policy. It does not implement
+ // the still-unbound retail view/frustum synchronization or scene draw.
  bool begin_update(const NativeRetailRendererCameraHandle&, RetailRendererCameraFailure&) noexcept;
  bool end_update(const NativeRetailRendererCameraHandle&, RetailRendererCameraFailure&) noexcept;
  bool clear(const NativeRetailRendererCameraHandle&, float r, float g, float b, float a, std::uint32_t clear_flags, RetailRendererCameraFailure&) noexcept;
@@ -93,6 +106,8 @@ private:
  std::shared_ptr<NativeRetailGameSession> admit(RetailRendererCameraFailure&)const noexcept;
  std::shared_ptr<NativeRetailRendererBaseCameraRecord> record(
      const NativeRetailRendererCameraHandle&,RetailRendererCameraFailure&)const noexcept;
+ std::shared_ptr<NativeRetailRendererRasters> raster_owner(const NativeRetailRasterHandle&,
+     const std::shared_ptr<NativeRetailGameSession>&,bool depth,RetailRendererCameraFailure&)const noexcept;
  void retire()noexcept;
  std::weak_ptr<NativeRetailGameSession> session_;
  std::shared_ptr<NativeRetailRendererAllocatorService> allocator_;

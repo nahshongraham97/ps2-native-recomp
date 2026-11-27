@@ -1,12 +1,5 @@
 #include "mka/retail_renderer_cameras.hpp"
 #include "mka/retail_game_session.hpp"
-#ifdef _WIN32
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-#include <GL/gl.h>
-#endif
 #include <algorithm>
 #include <bit>
 #include <cmath>
@@ -56,31 +49,21 @@ template<class T,class Create>std::shared_ptr<T> heap_object(
  return {};
 }
 }
-struct NativeRetailRendererBaseCameraRecord {
+struct NativeRetailRendererBaseCameraRecord : NativeDisplayDrawOwner {
  RetailRendererBaseCameraObservation state;
  bool alive{true};
  std::weak_ptr<NativeRetailRendererCameraModule> owner;
  std::weak_ptr<NativeRetailRendererBaseCameraRecord> self;
  NativeRetailRasterHandle frame_buffer;
  NativeRetailRasterHandle z_buffer;
- unsigned int fbo{0};
- bool fbo_initialized{false};
  bool updating{false};
+ std::optional<RetailRendererCameraTargetPolicy> target_policy;
+ std::shared_ptr<NativeProductionDisplayService> active_display;
  NativeRetailRendererFrameObjectLink frame_link;
  NativeRetailRendererBaseCameraRecord(std::weak_ptr<NativeRetailGameSession> session,
      const RetailRendererCameraDepthInputs& depth,float scale,float shift)noexcept
   :state{{1,1},{1,1},{0,0},value(0x3d4ccccdu),value(0x41200000u),value(0x40a00000u),
     scale,shift,1,depth,false},frame_link(std::move(session)){}
- ~NativeRetailRendererBaseCameraRecord() {
-#ifdef _WIN32
-  typedef void (APIENTRY *PFNGLDELETEFRAMEBUFFERSPROC)(GLsizei n, const GLuint *framebuffers);
-  static auto p_glDeleteFramebuffers = reinterpret_cast<PFNGLDELETEFRAMEBUFFERSPROC>(wglGetProcAddress("glDeleteFramebuffers"));
-  if (fbo != 0 && p_glDeleteFramebuffers && wglGetCurrentContext()) {
-   p_glDeleteFramebuffers(1, &fbo);
-   fbo = 0;
-  }
-#endif
- }
 };
 NativeRetailRendererCameraModule::NativeRetailRendererCameraModule(
  std::weak_ptr<NativeRetailGameSession> session,std::shared_ptr<NativeRetailRendererAllocatorService> allocator)noexcept
@@ -204,6 +187,11 @@ bool NativeRetailRendererCameraModule::set_view_window(const NativeRetailRendere
 bool NativeRetailRendererCameraModule::destroy_base_camera(const NativeRetailRendererCameraHandle& h,
  RetailRendererCameraFailure& f)noexcept{
  const auto lease=admit(f);if(!lease)return false;const auto r=record(h,f);if(!r)return false;
+ if(r->updating){
+  if(!r->active_display||!r->active_display->end_render_target(*r,f.display))
+   return fail(f,RetailRendererCameraError::native_target,"end actual native draw target before camera release");
+  r->updating=false;r->active_display.reset();
+ }
  // Initial-empty extension registry:1AA120 unlinks before actual release,
  // without clearing the parent's value or executing a sync callback.
  if(auto frames=r->frame_link.owner_.lock())frames->release_object_link(r->frame_link);
@@ -217,110 +205,128 @@ bool NativeRetailRendererCameraModule::require_render_ready(const NativeRetailRe
   "0405 real camera plugins/frame/raster/view/frustum synchronization and device begin/end required");
 }
 
-bool NativeRetailRendererCameraModule::set_frame_buffer_raster(const NativeRetailRendererCameraHandle& h,
- const NativeRetailRasterHandle& raster, RetailRendererCameraFailure& f) noexcept {
- const auto lease = admit(f); if (!lease) return false;
- const auto r = record(h, f); if (!r) return false;
- if (r->updating) { fail(f, RetailRendererCameraError::reentrant, "0405 cannot change frame buffer while camera is updating"); return false; }
- r->frame_buffer = raster;
- return true;
+std::shared_ptr<NativeRetailRendererRasters> NativeRetailRendererCameraModule::raster_owner(
+ const NativeRetailRasterHandle& raster,const std::shared_ptr<NativeRetailGameSession>& session,
+ bool depth,RetailRendererCameraFailure& f)const noexcept{
+ const auto owner=raster.owner_.lock();
+ if(!owner||owner->session_.lock()!=session){
+  fail(f,RetailRendererCameraError::raster_binding,"live raster owner from the camera Session required");return {};
+ }
+ auto observed=owner->observe(raster,f.raster);
+ if(!observed){fail(f,RetailRendererCameraError::raster_binding,f.raster.operation);return {};}
+ const auto kind=observed->description.type;
+ if((depth&&kind!=1)||(!depth&&kind!=2&&kind!=5)){
+  fail(f,RetailRendererCameraError::raster_binding,"raster role does not match camera color/depth field");return {};
+ }
+ return owner;
 }
-
+bool NativeRetailRendererCameraModule::set_frame_buffer_raster(const NativeRetailRendererCameraHandle& h,
+ const NativeRetailRasterHandle& raster,RetailRendererCameraFailure& f)noexcept{
+ const auto lease=admit(f);if(!lease)return false;const auto r=record(h,f);if(!r)return false;
+ if(r->updating)return fail(f,RetailRendererCameraError::reentrant,"cannot change an active native color target");
+ if(!raster.empty()&&!raster_owner(raster,lease,false,f))return false;
+ r->frame_buffer=raster;return true;
+}
 std::optional<NativeRetailRasterHandle> NativeRetailRendererCameraModule::frame_buffer_raster(
- const NativeRetailRendererCameraHandle& h, RetailRendererCameraFailure& f) const noexcept {
- const auto lease = admit(f); if (!lease) return {};
- const auto r = record(h, f); if (!r) return {};
+ const NativeRetailRendererCameraHandle& h,RetailRendererCameraFailure& f)const noexcept{
+ const auto lease=admit(f);if(!lease)return {};const auto r=record(h,f);if(!r)return {};
+ if(!r->frame_buffer.empty()&&!raster_owner(r->frame_buffer,lease,false,f))return {};
  return r->frame_buffer;
 }
-
 bool NativeRetailRendererCameraModule::set_z_buffer_raster(const NativeRetailRendererCameraHandle& h,
- const NativeRetailRasterHandle& raster, RetailRendererCameraFailure& f) noexcept {
- const auto lease = admit(f); if (!lease) return false;
- const auto r = record(h, f); if (!r) return false;
- if (r->updating) { fail(f, RetailRendererCameraError::reentrant, "0405 cannot change z buffer while camera is updating"); return false; }
- r->z_buffer = raster;
- return true;
+ const NativeRetailRasterHandle& raster,RetailRendererCameraFailure& f)noexcept{
+ const auto lease=admit(f);if(!lease)return false;const auto r=record(h,f);if(!r)return false;
+ if(r->updating)return fail(f,RetailRendererCameraError::reentrant,"cannot change an active native depth target");
+ if(!raster.empty()&&!raster_owner(raster,lease,true,f))return false;
+ r->z_buffer=raster;return true;
 }
-
 std::optional<NativeRetailRasterHandle> NativeRetailRendererCameraModule::z_buffer_raster(
- const NativeRetailRendererCameraHandle& h, RetailRendererCameraFailure& f) const noexcept {
- const auto lease = admit(f); if (!lease) return {};
- const auto r = record(h, f); if (!r) return {};
+ const NativeRetailRendererCameraHandle& h,RetailRendererCameraFailure& f)const noexcept{
+ const auto lease=admit(f);if(!lease)return {};const auto r=record(h,f);if(!r)return {};
+ if(!r->z_buffer.empty()&&!raster_owner(r->z_buffer,lease,true,f))return {};
  return r->z_buffer;
 }
-
+bool NativeRetailRendererCameraModule::set_render_target_policy(const NativeRetailRendererCameraHandle& h,
+ RetailRendererCameraTargetPolicy policy,RetailRendererCameraFailure& f)noexcept{
+ const auto lease=admit(f);if(!lease)return false;const auto r=record(h,f);if(!r)return false;
+ if(r->updating)return fail(f,RetailRendererCameraError::reentrant,"cannot change active native target policy");
+ if(!policy.physical_viewport.width||!policy.physical_viewport.height||
+   (policy.clear_depth&&(!std::isfinite(*policy.clear_depth)||*policy.clear_depth<0||*policy.clear_depth>1)))
+  return fail(f,RetailRendererCameraError::native_target,"explicit physical viewport and normalized native clear-depth policy required");
+ r->target_policy=policy;return true;
+}
 bool NativeRetailRendererCameraModule::is_updating(const NativeRetailRendererCameraHandle& h,
- RetailRendererCameraFailure& f) const noexcept {
- const auto lease = admit(f); if (!lease) return false;
- const auto r = record(h, f); if (!r) return false;
- return r->updating;
+ RetailRendererCameraFailure& f)const noexcept{
+ const auto lease=admit(f);if(!lease)return false;const auto r=record(h,f);if(!r)return false;return r->updating;
 }
-
 bool NativeRetailRendererCameraModule::begin_update(const NativeRetailRendererCameraHandle& h,
- RetailRendererCameraFailure& f) noexcept {
- const auto lease = admit(f); if (!lease) return false;
- const auto r = record(h, f); if (!r) return false;
- if (r->updating) { fail(f, RetailRendererCameraError::reentrant, "0405 camera already in begin_update lifecycle"); return false; }
- if (r->frame_buffer.empty()) { fail(f, RetailRendererCameraError::render_services_required, "0405 frame buffer raster attachment required for begin_update"); return false; }
-
-#ifdef _WIN32
- typedef void (APIENTRY *PFNGLGENFRAMEBUFFERSPROC)(GLsizei n, GLuint *framebuffers);
- typedef void (APIENTRY *PFNGLBINDFRAMEBUFFERPROC)(GLenum target, GLuint framebuffer);
- static auto p_glGenFramebuffers = reinterpret_cast<PFNGLGENFRAMEBUFFERSPROC>(wglGetProcAddress("glGenFramebuffers"));
- static auto p_glBindFramebuffer = reinterpret_cast<PFNGLBINDFRAMEBUFFERPROC>(wglGetProcAddress("glBindFramebuffer"));
- if (p_glGenFramebuffers && p_glBindFramebuffer && wglGetCurrentContext()) {
-  if (!r->fbo_initialized) {
-   p_glGenFramebuffers(1, &r->fbo);
-   r->fbo_initialized = true;
-  }
-  if (r->fbo != 0) {
-   p_glBindFramebuffer(0x8D40 /* GL_FRAMEBUFFER */, r->fbo);
-  }
+ RetailRendererCameraFailure& f)noexcept{
+ const auto lease=admit(f);if(!lease)return false;const auto r=record(h,f);if(!r)return false;
+ if(r->updating)return fail(f,RetailRendererCameraError::reentrant,"native camera draw target already active");
+ if(r->frame_buffer.empty()||!r->target_policy)
+  return fail(f,RetailRendererCameraError::render_services_required,"real display raster and explicit native target policy required");
+ const auto colors=raster_owner(r->frame_buffer,lease,false,f);if(!colors)return false;
+ const auto color=colors->observe(r->frame_buffer,f.raster);if(!color)return fail(f,RetailRendererCameraError::raster_binding,f.raster.operation);
+ if(color->description.width<=0||color->description.height<=0)
+  return fail(f,RetailRendererCameraError::raster_binding,"positive logical display raster extent required before GPU begin");
+ if(color->description.type!=2)
+  return fail(f,RetailRendererCameraError::render_services_required,"camera-texture target requires its native render-to-texture service");
+ auto display=colors->display_target(r->frame_buffer,f.raster);
+ if(!display)return fail(f,RetailRendererCameraError::raster_binding,f.raster.operation);
+ if(!r->z_buffer.empty()){
+  const auto depths=raster_owner(r->z_buffer,lease,true,f);if(!depths)return false;
+  const auto depth=depths->observe(r->z_buffer,f.raster);if(!depth)return fail(f,RetailRendererCameraError::raster_binding,f.raster.operation);
+  const auto backing=depths->display_target(r->z_buffer,f.raster);
+  if(!backing)return fail(f,RetailRendererCameraError::raster_binding,f.raster.operation);
+  if(backing!=display||depth->description.width!=color->description.width||depth->description.height!=color->description.height)
+   return fail(f,RetailRendererCameraError::raster_binding,"camera color/depth require the same native display and logical extent");
  }
-#endif
- r->updating = true;
+ Busy guard(busy_);
+ const bool begun=display->begin_render_target(r,r->target_policy->physical_viewport,!r->z_buffer.empty(),f.display);
+ if(display->owns_render_target(*r)){r->active_display=display;r->updating=true;}
+ if(!begun)return fail(f,RetailRendererCameraError::native_target,f.display.message);
+ RetailGameSessionFailure sf;
+ if(!r->alive||!active_.load(std::memory_order_acquire)||!lease->validate_current_thread(sf)){
+  DisplayServiceFailure cleanup;
+  if(display->end_render_target(*r,cleanup)){r->updating=false;r->active_display.reset();}
+  return fail(f,RetailRendererCameraError::retired,"camera/Session revoked during native target begin");
+ }
+ if(!r->updating)return fail(f,RetailRendererCameraError::native_target,"native display did not retain the actual camera draw owner");
  return true;
 }
-
 bool NativeRetailRendererCameraModule::clear(const NativeRetailRendererCameraHandle& h,
- float red, float green, float blue, float alpha, std::uint32_t clear_flags, RetailRendererCameraFailure& f) noexcept {
- const auto lease = admit(f); if (!lease) return false;
- const auto r = record(h, f); if (!r) return false;
- if (!r->updating) { fail(f, RetailRendererCameraError::render_services_required, "0405 clear requires active camera begin_update lifecycle"); return false; }
-
-#ifdef _WIN32
- if (wglGetCurrentContext()) {
-  glClearColor(red, green, blue, alpha);
-  GLbitfield mask = 0;
-  if (clear_flags & 0x01) mask |= GL_COLOR_BUFFER_BIT;
-  if (clear_flags & 0x02) mask |= GL_DEPTH_BUFFER_BIT;
-  if (mask != 0) glClear(mask);
- }
-#else
- (void)red; (void)green; (void)blue; (void)alpha; (void)clear_flags;
-#endif
+ float red,float green,float blue,float alpha,std::uint32_t flags,RetailRendererCameraFailure& f)noexcept{
+ const auto lease=admit(f);if(!lease)return false;const auto r=record(h,f);if(!r)return false;
+ if(!r->updating||!r->active_display)return fail(f,RetailRendererCameraError::render_services_required,"native clear requires active owned target");
+ if(flags&~3u)return fail(f,RetailRendererCameraError::render_services_required,"stencil/unknown native clear mode remains unbound");
+ if(!raster_owner(r->frame_buffer,lease,false,f))return false;
+ if(!r->z_buffer.empty()&&!raster_owner(r->z_buffer,lease,true,f))return false;
+ if((flags&2u)&&(r->z_buffer.empty()||!r->target_policy||!r->target_policy->clear_depth))
+  return fail(f,RetailRendererCameraError::native_target,"depth clear requires its raster and explicit native projection policy");
+ const auto color=(flags&1u)?std::optional<std::array<float,4>>{{red,green,blue,alpha}}:std::nullopt;
+ const auto depth=(flags&2u)?r->target_policy->clear_depth:std::nullopt;
+ Busy guard(busy_);
+ if(!r->active_display->clear_render_target(*r,color,depth,f.display))
+  return fail(f,RetailRendererCameraError::native_target,f.display.message);
  return true;
 }
-
 bool NativeRetailRendererCameraModule::end_update(const NativeRetailRendererCameraHandle& h,
- RetailRendererCameraFailure& f) noexcept {
- const auto lease = admit(f); if (!lease) return false;
- const auto r = record(h, f); if (!r) return false;
- if (!r->updating) { fail(f, RetailRendererCameraError::render_services_required, "0405 end_update called without active begin_update"); return false; }
-
-#ifdef _WIN32
- typedef void (APIENTRY *PFNGLBINDFRAMEBUFFERPROC)(GLenum target, GLuint framebuffer);
- static auto p_glBindFramebuffer = reinterpret_cast<PFNGLBINDFRAMEBUFFERPROC>(wglGetProcAddress("glBindFramebuffer"));
- if (p_glBindFramebuffer && wglGetCurrentContext()) {
-  p_glBindFramebuffer(0x8D40 /* GL_FRAMEBUFFER */, 0);
- }
-#endif
- r->updating = false;
- return true;
+ RetailRendererCameraFailure& f)noexcept{
+ const auto lease=admit(f);if(!lease)return false;const auto r=record(h,f);if(!r)return false;
+ if(!r->updating||!r->active_display)return fail(f,RetailRendererCameraError::render_services_required,"native end requires active owned target");
+ Busy guard(busy_);
+ if(!r->active_display->end_render_target(*r,f.display))return fail(f,RetailRendererCameraError::native_target,f.display.message);
+ r->updating=false;r->active_display.reset();return true;
 }
 void NativeRetailRendererCameraModule::retire()noexcept{
  active_.store(false,std::memory_order_release);
  for(const auto& r:records_){
+  if(r->updating&&r->active_display){
+   DisplayServiceFailure cleanup;
+   if(r->active_display->end_render_target(*r,cleanup)){r->updating=false;r->active_display.reset();}
+   // If the host context is unavailable, the display retains the snapshot;
+   // after the camera expires its real host owner explicitly restores it.
+  }
   if(auto frames=r->frame_link.owner_.lock())frames->release_object_link(r->frame_link);
   r->alive=false;
  }

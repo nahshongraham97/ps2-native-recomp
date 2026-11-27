@@ -15,6 +15,7 @@ namespace mka::retail {
 
 class NativeRetailRendererRasters;
 struct NativeRetailRasterRecord;
+class NativeProductionDisplayService;
 
 enum class RetailRendererRasterError {
  none,
@@ -40,7 +41,9 @@ enum class RetailRendererRasterError {
  callback_required,
  callback_result,
  after_effect_unknown,
- native_exception
+ native_exception,
+ display_binding,
+ stale_display
 };
 
 struct RetailRendererRasterFailure {
@@ -129,6 +132,12 @@ public:
  std::optional<NativeRetailRasterHandle> create_raster(RetailRendererRasterDescription, RetailRendererRasterFailure&);
  bool destroy_raster(const NativeRetailRasterHandle&, RetailRendererRasterFailure&);
  std::optional<RetailRendererRasterObservation> observe(const NativeRetailRasterHandle&, RetailRendererRasterFailure&) const noexcept;
+ // Source raster.parent identity: roots name themselves; subviews name the root.
+ // The host context sentinel has an empty parent. Storage/GPU readiness is separate.
+ std::optional<NativeRetailRasterHandle> parent(const NativeRetailRasterHandle&, RetailRendererRasterFailure&) const noexcept;
+ // Explicit host display capability, independent of source parent and texture storage.
+ bool bind_display_target(const NativeRetailRasterHandle&, std::shared_ptr<NativeProductionDisplayService>, RetailRendererRasterFailure&) noexcept;
+ std::shared_ptr<NativeProductionDisplayService> display_target(const NativeRetailRasterHandle&, RetailRendererRasterFailure&) const noexcept;
  std::optional<std::size_t> live_rasters(RetailRendererRasterFailure&) const noexcept;
 
  // Context target stack
@@ -166,6 +175,7 @@ public:
  NativeRetailRasterHandle default_sentinel() const noexcept;
 
 private:
+ friend class NativeRetailRendererCameraModule;
  friend bool renderer_required::construct_core_plugin_0407(NativeRetailRendererCore&, RetailRendererCoreFailure&);
  friend void renderer_required::destroy_core_plugin_0407(NativeRetailRendererCore&) noexcept;
 

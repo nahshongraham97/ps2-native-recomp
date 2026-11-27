@@ -116,7 +116,7 @@ COMPOSITE_MAPPINGS = []
 # Structural matches (0 pairs: treated as unavailable until non-vacuous multi-block CFGs and callee alignments exist)
 STRUCTURAL_MAPPINGS = []
 
-# Mapped-by-role candidates (all 18 candidate pairs: subsystem role correspondence pending dual-platform vectors)
+# Mapped-by-role candidates (17 retained pairs; false raster-upload pair withdrawn: subsystem role correspondence pending dual-platform vectors)
 MAPPED_BY_ROLE_MAPPINGS = [
     ("00127120", "0019c680", "research/runs/native-xbox-scene-frame-20261122/WORK.md", "research/cross_platform/signatures/signature_00127120_0019c680.json"),
     ("00127370", "002330c0", "research/runs/native-xbox-scene-frame-20261122/source-first-scene-01.join.json", "research/cross_platform/signatures/signature_00127370_002330c0.json"),
@@ -132,7 +132,6 @@ MAPPED_BY_ROLE_MAPPINGS = [
     ("0012c1d0", "0023daf0", "research/runs/xbox-donor-20261121/sound-original-byte-join.json", "research/cross_platform/signatures/signature_0012c1d0_0023daf0.json"),
     ("0012c300", "0023dc70", "research/runs/xbox-donor-20261121/sound-original-byte-join.json", "research/cross_platform/signatures/signature_0012c300_0023dc70.json"),
     ("0012ca80", "0023c770", "research/runs/xbox-donor-20261121/sound-original-byte-join.json", "research/cross_platform/signatures/signature_0012ca80_0023c770.json"),
-    ("00225690", "002c0020", "research/runs/xbox-donor-20261121/sound-original-byte-join.json", "research/cross_platform/signatures/signature_00225690_002c0020.json"),
     ("002ba610", "002ba610", "research/runs/native-xbox-scene-frame-20261122/source-raster-consumers-11.join.json", "research/cross_platform/signatures/signature_002ba610_002ba610.json"),
     ("003152a0", "0037c170", "research/runs/xbox-donor-20261121/sound-original-byte-join.json", "research/cross_platform/signatures/signature_003152a0_0037c170.json"),
     ("00317960", "0037c2a0", "research/runs/xbox-donor-20261121/sound-original-byte-join.json", "research/cross_platform/signatures/signature_00317960_0037c2a0.json"),
@@ -214,7 +213,7 @@ def build_xbox_ledger(raw_funcs, scanner_labels):
     """
     rows = []
 
-    # 16 verified ported Xbox donor functions (plus 002c0020 which is host-replaced)
+    # 16 retained service candidates; dual-platform native adoption is unproved.
     xbox_donor_evidence = {
         "0019c680": (
             "runtime/src/native/retail_initial_game_tasks.cpp:141 [run_camera] (tests/test_retail_initial_game_tasks.cpp:67 \"127120 no-actor BSS branch writes identity camera \")",
@@ -282,10 +281,9 @@ def build_xbox_ledger(raw_funcs, scanner_labels):
         ),
     }
 
-    # 002c0020 is RenderWare raster host GL upload, agreeing with PS2 00225690
-    host_replaced_donor_map = {
-        "002c0020": ("runtime/src/native/retail_renderer_rasters.cpp:806 [set_from_image] (tests/test_retail_renderer_rasters.cpp:710 \"set_from_image with real GPU attached\")", "00225690"),
-    }
+    # Xbox002C0020 is core plugin registration, not a raster upload.
+    # Its invalid upload candidate is preserved only in the correction history.
+
 
     # Under active binary investigation for renderer plugin contracts
     investigating_addrs = frozenset([
@@ -328,19 +326,18 @@ def build_xbox_ledger(raw_funcs, scanner_labels):
                 "notes": "Xbox donor candidate identified; pending dual-platform test vectors before donor credit (matching PS2 rule)",
             })
 
-        # 2. Candidate donor functions in default.xbe (002c0020 host GL upload):
-        elif addr in host_replaced_donor_map:
-            ev, ps2 = host_replaced_donor_map[addr]
+        # 2. Correctly identified core registration role; no upload/adoption credit.
+        elif addr == "002c0020":
             rows.append({
                 "module": "default.xbe",
                 "address": addr,
                 "symbol": sym or name,
                 "status": "open",
-                "ps2_address": ps2,
-                "evidence_class": "component-tested",
-                "evidence_state": "blocked-on-dual-platform-vectors",
-                "evidence_path": ev,
-                "notes": "RenderWare raster host OpenGL upload donor candidate; pending dual-platform test vectors before donor credit (matching PS2 rule)",
+                "ps2_address": "001a66a0",
+                "evidence_class": "source-verified",
+                "evidence_state": "role-only",
+                "evidence_path": "research/runs/xbox-donor-20261121/PUBLICATION.json",
+                "notes": "Core plugin registration; invalid raster-upload candidate and PS2 00225690 pairing withdrawn. Role identity is not native adoption.",
             })
 
         # 3. Out of scope stubbed (XONLINE)
@@ -493,7 +490,15 @@ def build_ps2_ledger_and_map(proven_addrs, indirect_addrs):
             ev = ""
             notes = "Xbox donor candidate identified (structural match); pending dual-platform test vectors before donor credit"
 
-        # 3. Ported (227 verified functions - 6 sound functions reclassified to implemented-via-donor)
+        # Original instruction/caller proof contradicts these legacy native aliases.
+        # Keep actual native GPU services, but never credit unrelated PS2 entries.
+        elif addr in ("00225690", "002b9c70"):
+            status = "open"
+            v_level = "none"
+            ev = "research/runs/renderer-scope.json#native_camera_display_target_20261126.legacy_binding_corrections"
+            notes = "Legacy raster binding withdrawn after complete original-body/caller review; actual role/native implementation remains open"
+
+        # 3. Retained ported functions; existing admission/credit rules unchanged.
         elif prev_status == "ported" and addr not in ("00126720", "00127100"):
             status = "ported"
             v_level = "component-tested"
@@ -501,13 +506,7 @@ def build_ps2_ledger_and_map(proven_addrs, indirect_addrs):
             ev = ported_evidence_map.get(addr, prev_ev)
             notes = "Native reimplementation verified by unit test assertion"
 
-        # 4. Host-replaced (00225690 raster upload + 10 IOP native replacements)
-        elif addr == "00225690":
-            status = "host-replaced"
-            v_level = "component-tested"
-            ev = "runtime/src/native/retail_renderer_rasters.cpp:806 [set_from_image] (tests/test_retail_renderer_rasters.cpp:710 \"set_from_image with real GPU attached\")"
-            notes = "RenderWare raster host OpenGL texture upload"
-
+        # 4. Ten retained native IOP service replacements.
         elif prev_status == "host-replaced" and "iop_native.h" in prev_ev:
             status = "host-replaced"
             v_level = "component-tested"
@@ -1381,6 +1380,24 @@ def validate_gp_accesses(repo: Path):
     print("  PASS: Verified all 73 GP accesses against retail SLUS_214.10 ELF Program Header 0.")
 
 
+def validate_source_identity_bindings(ps2_ledger, ps2_map):
+    """Keep rejected legacy aliases open pending proper source/admission evidence.
+
+    This withdraws two false bindings, not the actual native raster/GPU service.
+    A future implementation needs its own source identity and admission checks.
+    """
+    rejected = {("SLUS_214.10", "00225690"), ("SLUS_214.10", "002b9c70")}
+    seen = set()
+    for row in ps2_ledger:
+        key = (row["module"], row["address"])
+        if key in rejected:
+            seen.add(key)
+            assert row["status"] == "open", "Contradicted legacy raster binding cannot regain native credit"
+    assert seen == rejected, "Rejected source identities must remain visible in the catalogue"
+    assert not any(row["ps2_address"] == "00225690" and row["xbox_address"] == "002c0020"
+                   for row in ps2_map), "Contradicted upload cross-map restored"
+
+
 def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map, *, measured_ownership=None):
     """Rigorous acceptance validation of all generated ledgers, maps, and markdown blocks:
     1. Exact row counts and totals.
@@ -1388,13 +1405,14 @@ def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map, *, measured_ownership=Non
     3. Method and test assertion uniqueness across all ported rows (zero duplicate pairs).
     4. Method and assertion address verification (accounting for embedded_in parent provenance).
     5. Source method and test assertion existence verification in ps2-native-recomp.
-    6. Cross-ISA map_evidence signature validation for all 18 mapped rows.
+    6. Cross-ISA map_evidence signature validation for all 17 retained legacy mapped rows.
     7. Donor column PS2 self-reference absence verification (zero ps2: strings).
     8. Progress SVG existence and completeness.
     9. README.md and TASK_BOARD.md progress synchronization and fork commit verification.
     10. Component verification class and machine-readable tag enforcement.
     """
     print("Validating ledgers, board tiers, and cross-platform correspondence...")
+    validate_source_identity_bindings(ps2_ledger, ps2_map)
     from bounded_ownership import validate_ledger_rows
     if measured_ownership is None:
         measured_ownership = measure_bounded_rows(ps2_ledger)
@@ -1528,7 +1546,7 @@ def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map, *, measured_ownership=Non
     # 4. Uniqueness, address verification, and file existence check for PS2 ported rows
     pair_pattern = re.compile(r'^(.*?):(\d+)\s*\[(.*?)\]\s*\((.*?):(\d+)\s*"([^"]+)"\)$')
     ps2_ported = [r for r in ps2_ledger if r["status"] == "ported"]
-    assert len(ps2_ported) == 227, f"PS2 ported count mismatch: {len(ps2_ported)} != 227"
+    assert len(ps2_ported) == 226, f"PS2 ported count mismatch: {len(ps2_ported)} != 226 after withdrawing the false raster alias"
 
     all_ported_addrs = {r["address"].lower(): r["address"] for r in ps2_ported}
 
@@ -1589,8 +1607,9 @@ def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map, *, measured_ownership=Non
     assert sum(1 for r in xbox_ledger if r["status"] == "host-replaced") == 0, "Xbox host-replaced count must be 0"
 
     # 4. Uniqueness, address verification, and file existence check for Xbox donor candidate rows
-    xb_candidates = [r for r in xbox_ledger if r.get("ps2_address") != "none" and r["status"] == "open"]
-    assert len(xb_candidates) == 17, f"Xbox candidate donor count mismatch: {len(xb_candidates)} != 17"
+    xb_candidates = [r for r in xbox_ledger if r.get("ps2_address") != "none" and r["status"] == "open"
+                     and r["evidence_state"] == "blocked-on-dual-platform-vectors"]
+    assert len(xb_candidates) == 16, f"Xbox candidate donor count mismatch: {len(xb_candidates)} != 16 after withdrawing the false upload candidate"
 
     xb_pairs = {}
     xb_addr_mismatches = []
@@ -1642,11 +1661,11 @@ def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map, *, measured_ownership=Non
     assert map_comp == 0, f"Map composite mismatch: {map_comp} != 0"
     measured = capability_map_rows(donor_comparison())
     legacy = {(a, b): (e, s) for a, b, e, s in MAPPED_BY_ROLE_MAPPINGS}
-    assert len(legacy) == 18
+    assert len(legacy) == 17
     base_addresses = {r["address"] for r in ps2_ledger if r["module"] == "SLUS_214.10"}
     replaced = ({a for a, _ in measured} - {a for a, _ in legacy}) & base_addresses
     assert map_role == len(legacy.keys() | measured.keys()), "Missing or extra role-mapped pairs"
-    assert map_none == 17493 - len(replaced), "Unmapped baseline changed beyond measured pairs"
+    assert map_none == 17494 - len(replaced), "Unmapped baseline changed beyond measured pairs"
     assert len(ps2_map) == 17511 + len(measured.keys() - legacy.keys()) - len(replaced), "Map total mismatch"
     observed = {(r["ps2_address"], r["xbox_address"]): r for r in ps2_map if r["match_confidence"] != "none"}
     assert set(observed) == legacy.keys() | measured.keys(), "Mapping identity changed"
@@ -1701,7 +1720,7 @@ def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map, *, measured_ownership=Non
                 f"Mapped row {r['ps2_address']} <-> {r['xbox_address']} label '{r['match_confidence']}' "
                 f"contradicts computed fields (expected '{expected_label}')"
             )
-    assert mapped_count == 18, f"Mapped row count mismatch: {mapped_count} != 18"
+    assert mapped_count == 17, f"Mapped row count mismatch: {mapped_count} != 17"
 
     # 6. Global pointer accesses data validation (rescan SLUS_214.10 from ELF header)
     validate_gp_accesses(REPO)
@@ -1719,11 +1738,11 @@ def validate_ledgers(ps2_ledger, xbox_ledger, ps2_map, *, measured_ownership=Non
     print(f"PASS: All validations successful:")
     print(f"  Placeholder Registry: {len(placeholders)} registered unrecovered placeholders (Acceptance strictly OPEN)")
     print(f"  Negative Link Diagnostic: undefined symbols: 0 | placeholders: {len(placeholders)}")
-    print(f"  PS2 Total: {len(ps2_ledger)} | In-Scope: {in_scope_sum} (Ported: {len(ps2_ported)}, Donors: {len(ps2_donor)}, Host-Rep: 11, Class: {len(classified)}, Open: {len(open_frontier)}) | Stubbed: {len(out_of_scope)}")
+    print(f"  PS2 Total: {len(ps2_ledger)} | In-Scope: {in_scope_sum} (Ported: {len(ps2_ported)}, Donors: {len(ps2_donor)}, Host-Rep: {sum(r["status"] == "host-replaced" for r in ps2_ledger)}, Class: {len(classified)}, Open: {len(open_frontier)}) | Stubbed: {len(out_of_scope)}")
     print(f"  Xbox Total: {len(xbox_ledger)} | Donors: {len(xb_donor)} | Candidates: {len(xb_candidates)} | Ported: 0 | Host-Rep: 0")
     print(f"  Cross Map: {len(ps2_map)} rows, {map_role} role-mapped, {mapped_count} original pair signatures, {map_none} unmapped")
     print(f"  Verified all 73 GP accesses against retail SLUS_214.10 ELF binary.")
-    print(f"  Zero duplicate pairs across 227 PS2 ported and 17 Xbox candidate donor routines.")
+    print(f"  Zero duplicate pairs across {len(ps2_ported)} PS2 ported and {len(xb_candidates)} Xbox candidate donor routines.")
     print(f"  Zero foreign address mismatches in method tags.")
     print(f"  Zero foreign address mismatches in assertion text.")
     print(f"  Zero self-referential ps2: entries in donor column.")
@@ -1813,7 +1832,7 @@ def main():
         assert FORK_COMMIT_SHA in txt, f"Missing fork commit SHA in {doc}"
         assert "https://github.com/nahshongraham97/ps2-native-recomp/commit/" in txt, f"Missing GitHub link in {doc}"
         assert all(f"{len(table):,}" in txt for table in (ps2_ledger, xbox_ledger, ps2_map)), f"Ledger totals missing in {doc}"
-        assert "2,648" in txt and "1,102" in txt and "9,038" in txt, f"Still-needed counts missing in {doc}"
+        assert "2,648" in txt and "1,102" in txt and "9,040" in txt, f"Still-needed counts missing in {doc}"
 
     validate_progress_aot_tier(REPO, ps2_ledger)
     print("PASS: Markdown synchronization verified in README.md, TASK_BOARD.md, and PORT_STATUS.md.")

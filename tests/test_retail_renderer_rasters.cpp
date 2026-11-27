@@ -1,4 +1,5 @@
 #include "mka/retail_renderer_rasters.hpp"
+#include "mka/retail_display_service.hpp"
 #include "mka/retail_renderer_images.hpp"
 #include "mka/retail_renderer_transforms.hpp"
 #include "mka/retail_renderer_matrix.hpp"
@@ -245,6 +246,8 @@ int main() {
    check(obs->flags == 0x80, "sentinel flags 0x80");
    check(obs->is_sentinel, "sentinel is marked sentinel");
    check(!obs->has_gpu_backing, "sentinel has no GPU readiness");
+   auto sentinel_parent = rasters->parent(sentinel, rf);
+   check(sentinel_parent && sentinel_parent->empty(), "host context sentinel has no raster parent");
 
    // Context stack initial target is default sentinel
    auto cur = rasters->current_target(rf);
@@ -385,6 +388,127 @@ int main() {
    check(rasters->context_depth(rf) == 1, "stack still has sentinel");
   }
 
+  // Source 001A8880 parent identity is independent of CPU/GPU storage readiness.
+  {
+   Fixture fix(root);
+   auto rasters = fix.module();
+   RetailRendererRasterFailure rf;
+   int create_callbacks = 0;
+   RetailRendererRasterBackendCallbacks cb;
+   cb.create = [&](NativeRetailRendererRasters& m, NativeRetailRasterHandle h,
+                   std::uint32_t, RetailRendererRasterFailure& f) {
+    auto p = m.parent(h, f);
+    check(p && p->same_identity(h), "self parent published before platform create callback");
+    ++create_callbacks;
+    return true;
+   };
+   rasters->set_backend_callbacks(cb);
+   auto color = rasters->create_raster({640, 448, 0, 0, 2, 0}, rf);
+   auto depth = rasters->create_raster({640, 448, 0, 0, 1, 0}, rf);
+   check(color && depth && create_callbacks == 2, "source flag2/flag1 logical raster creation");
+   for (const auto h : {*color, *depth}) {
+    auto p = rasters->parent(h, rf);
+    auto obs = rasters->observe(h, rf);
+    check(p && p->same_identity(h), "ordinary raster parent is its own typed identity");
+    check(obs && obs->pixel_bytes == 0 && !obs->has_gpu_backing,
+          "self parent does not assert pixel or display backing");
+   }
+   Fixture foreign(root);
+   auto foreign_rasters = foreign.module();
+   check(!foreign_rasters->parent(*color, rf) && rf.kind == RetailRendererRasterError::foreign_owner,
+         "parent rejects foreign Session/module raster");
+   check(!rasters->parent({}, rf) && rf.kind == RetailRendererRasterError::invalid_handle,
+         "parent rejects empty raster");
+   check(!rasters->parent(NativeRetailRasterHandle::test_handle(), rf) &&
+         rf.kind == RetailRendererRasterError::foreign_owner, "parent rejects unowned test identity");
+   bool wrong_thread = false;
+   std::thread other([&] {
+    RetailRendererRasterFailure f;
+    wrong_thread = !rasters->parent(*color, f) && f.kind == RetailRendererRasterError::wrong_thread;
+   });
+   other.join();
+   check(wrong_thread, "parent rejects wrong thread");
+   check(rasters->destroy_raster(*color, rf), "destroy self-parented logical raster");
+   check(!rasters->parent(*color, rf) && rf.kind == RetailRendererRasterError::retired_raster,
+         "parent rejects destroyed raster identity");
+   renderer_required::destroy_core_plugin_0407(*fix.core());
+   check(!rasters->parent(*depth, rf) && rf.kind == RetailRendererRasterError::retired,
+         "parent rejects retired raster module");
+  }
+
+  // Explicit native display capability; these descriptors borrow, rather than own, host storage.
+#ifdef _WIN32
+  {
+   Fixture fix(root);
+   auto rasters = fix.module();
+   RetailRendererRasterFailure rf;
+   DisplayServiceFailure df;
+   auto a = NativeOffscreenDisplayService::create(32, 24, df);
+   auto b = NativeOffscreenDisplayService::create(32, 24, df);
+   check(a && b, "two actual native hidden display services");
+   auto color = rasters->create_raster({640, 448, 0, 0, 2, 0}, rf);
+   auto depth = rasters->create_raster({640, 448, 0, 0, 1, 0}, rf);
+   auto spare = rasters->create_raster({640, 448, 0, 0, 2, 0}, rf);
+   auto texture = rasters->create_raster({4, 4, 32, 0, 5, 0}, rf);
+   check(color && depth && spare && texture, "actual logical display and texture descriptors");
+   check(!rasters->display_target(*color, rf) && rf.kind == RetailRendererRasterError::missing_backing,
+         "never-bound display fails by name");
+   check(!rasters->bind_display_target(*color, {}, rf) && rf.kind == RetailRendererRasterError::display_binding,
+         "null display does not publish a backing");
+   check(!rasters->bind_display_target(*color, a, rf) && rf.kind == RetailRendererRasterError::display_binding,
+         "display binding requires current context");
+   check(a->acquire_context(df), "acquire first native display");
+   check(rasters->bind_display_target(*color, a, rf) && rasters->bind_display_target(*depth, a, rf),
+         "color and depth descriptors explicitly borrow same host target");
+   check(rasters->bind_display_target(*color, a, rf), "same live binding is idempotent");
+   check(rasters->display_target(*color, rf) == a && rasters->display_target(*depth, rf) == a,
+         "backing getter returns actual native service");
+   check(!rasters->bind_display_target(*texture, a, rf) && rf.kind == RetailRendererRasterError::display_binding,
+         "type5 texture is outside display-target admission");
+   auto sub = rasters->create_subview(*color, 0, 0, 16, 16, rf);
+   check(sub && !rasters->bind_display_target(*sub, a, rf) && rf.kind == RetailRendererRasterError::display_binding,
+         "display binding rejects subview alias");
+   Fixture foreign(root);
+   auto foreign_rasters = foreign.module();
+   check(!foreign_rasters->bind_display_target(*color, a, rf) && rf.kind == RetailRendererRasterError::foreign_owner,
+         "foreign Session cannot bind another module raster");
+   auto foreign_color = foreign_rasters->create_raster({640, 448, 0, 0, 2, 0}, rf);
+   check(foreign_color && foreign_rasters->bind_display_target(*foreign_color, a, rf),
+         "host display may be explicitly shared across Sessions");
+   bool wrong_thread = false;
+   std::thread other([&] {
+    RetailRendererRasterFailure f;
+    wrong_thread = !rasters->bind_display_target(*color, a, f) && f.kind == RetailRendererRasterError::wrong_thread;
+   });
+   other.join();
+   check(wrong_thread, "display binding rejects wrong thread before publication");
+   check(b->acquire_context(df), "acquire second native display");
+   check(!rasters->bind_display_target(*color, b, rf) && rf.kind == RetailRendererRasterError::already_backed,
+         "live display binding cannot switch services");
+   check(!rasters->display_target(*color, rf) && rf.kind == RetailRendererRasterError::display_binding,
+         "bound non-current context is not ready");
+   check(rasters->bind_display_target(*spare, b, rf), "bind second service to separate descriptor");
+   std::weak_ptr<NativeProductionDisplayService> expired = b;
+   b.reset();
+   check(expired.expired(), "raster descriptor does not retain display lifetime");
+   check(!rasters->display_target(*spare, rf) && rf.kind == RetailRendererRasterError::stale_display,
+         "expired assigned backing differs from never-bound");
+   check(a->acquire_context(df), "restore first native display");
+   check(!rasters->bind_display_target(*spare, a, rf) && rf.kind == RetailRendererRasterError::stale_display,
+         "expired generation cannot be silently rebound");
+   check(rasters->display_target(*color, rf) == a, "refused rebind retained original backing");
+   check(rasters->destroy_raster(*color, rf) && a->is_context_current(),
+         "raster destruction leaves borrowed host display live");
+   check(!rasters->display_target(*color, rf) && rf.kind == RetailRendererRasterError::retired_raster,
+         "destroyed descriptor cannot retrieve display");
+   check(rasters->display_target(*depth, rf) == a, "other display alias remains usable");
+   renderer_required::destroy_core_plugin_0407(*fix.core());
+   check(!rasters->display_target(*depth, rf) && rf.kind == RetailRendererRasterError::retired,
+         "retired module cannot retrieve backing");
+   check(a->release_context(df), "release actual display context");
+  }
+#endif
+
   // 4. Subview & 16-bit Offset Wrapping (2B9DF0 / 2C9810)
   {
    Fixture fix(root);
@@ -422,6 +546,8 @@ int main() {
    auto sub1 = rasters->create_subview(*parent, 0xFFFF, 0x7FFF, 32, 32, rf);
    check(sub1.has_value(), "sub1 created");
    auto obs_sub1 = rasters->observe(*sub1, rf);
+   auto parent_sub1 = rasters->parent(*sub1, rf);
+   check(parent_sub1 && parent_sub1->same_identity(*parent), "subview parent names root raster");
    check(obs_sub1->offset_x == 0xFFFF && obs_sub1->offset_y == 0x7FFF, "sub1 offsets");
 
    // Now create subview 2 from sub1 with rect (1, 1)
@@ -429,6 +555,8 @@ int main() {
    auto sub2 = rasters->create_subview(*sub1, 1, 1, 16, 16, rf);
    check(sub2.has_value(), "sub2 created");
    auto obs_sub2 = rasters->observe(*sub2, rf);
+   auto parent_sub2 = rasters->parent(*sub2, rf);
+   check(parent_sub2 && parent_sub2->same_identity(*parent), "nested subview parent names root, not immediate view");
    check(obs_sub2->offset_x == 0x0000 && obs_sub2->offset_y == 0x8000, "wrapping 16-bit offset: (0x0000, 0x8000)");
    check(obs_sub2->is_subview, "sub2 is marked subview");
    check(obs_sub2->flags == 0x80, "sub2 has flag 0x80");
@@ -446,6 +574,9 @@ int main() {
    check(rasters->destroy_raster(*sub2, rf), "destroy sub2");
    auto parent_obs = rasters->observe(*parent, rf);
    check(parent_obs.has_value() && parent_obs->pixel_bytes > 0, "parent root storage still valid");
+   check(rasters->destroy_raster(*parent, rf), "destroy root while child view identity remains");
+   check(!rasters->parent(*sub1, rf) && rf.kind == RetailRendererRasterError::retired_raster,
+         "live subview cannot publish a destroyed root identity");
   }
 
   // 5. Raster Extensions (2B9E50 / 2B9C70)

@@ -11,12 +11,17 @@
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include <windows.h>
 #undef near
 #undef far
 #include <GL/gl.h>
 #endif
 #include <bit>
+#include <array>
+#include <algorithm>
 #include <cfenv>
 #include <cmath>
 #include <cstdio>
@@ -29,6 +34,7 @@
 #include <stdexcept>
 #include <thread>
 #include <type_traits>
+#include <vector>
 extern "C" int SDL_InitSubSystem(unsigned){std::abort();}
 namespace {thread_local int fail_after=-1;}
 void* operator new(std::size_t n){if(fail_after==0)throw std::bad_alloc();if(fail_after>0)--fail_after;if(auto p=std::malloc(n?n:1))return p;throw std::bad_alloc();}
@@ -41,7 +47,9 @@ NativeRetailMainState* transfer_main{};unsigned suffix_calls{},module_cuts{},cam
 std::shared_ptr<NativeRetailRendererCameraModule> captured;NativeRetailRendererCameraHandle captured_camera;
 RetailRendererCameraDepthInputs explicit_fixture_depth(){return {0,1};}
 bool fixture_construct(unsigned id,NativeRetailRendererCore& core,RetailRendererCoreFailure&){
- if(id==0x406&&later!=Later::allow){
+ // Actual0406/0407 now link with the raster owner. The historical test-only
+ // later0406 boundary moves to0408; actual camera-prefix lifetime checks remain.
+ if(id==0x408&&later!=Later::allow){
   RetailRendererCoreFailure cf;captured=core.camera_module(cf);check(bool(captured),"later fixture sees actual0405 owner");
   RetailRendererCameraFailure f;auto h=captured->create_base_camera(explicit_fixture_depth(),f);
   check(bool(h),"real base-camera allocation before later fixture");captured_camera=*h;
@@ -237,10 +245,359 @@ void camera_frame_association_cases(const std::filesystem::path& root){
  std::printf("PASS_NATIVE_CAMERA_FRAME_ASSOCIATION scenarios=%u checks=%u; actual0403/0405 membership/order/rebind/detach,weak identity,Session/thread/retirement refusals,hierarchy deletion guard,nested dirty roots,source window prefix on stale frame; full synchronization/game OPEN\n",association_scenarios,association_checks);
 }
 }
+#ifdef _WIN32
+namespace {
+unsigned gpu_checks{},gpu_scenarios{};
+void gpu_check(bool ok,const char* why){++gpu_checks;check(ok,why);}
+constexpr GLenum draw_framebuffer=0x8ca9,read_framebuffer=0x8ca8;
+constexpr GLenum draw_binding=0x8ca6,read_binding=0x8caa,color_attachment=0x8ce0;
+constexpr GLenum renderbuffer=0x8d41,framebuffer_complete=0x8cd5;
+template<class T>T gpu_proc(const char* name){
+ const auto raw=wglGetProcAddress(name);const auto v=reinterpret_cast<std::uintptr_t>(raw);
+ gpu_check(raw&&v>3&&v!=std::numeric_limits<std::uintptr_t>::max(),name);return reinterpret_cast<T>(raw);
+}
+struct RealFramebuffers {
+ using Gen=void(APIENTRY*)(GLsizei,GLuint*);
+ using Bind=void(APIENTRY*)(GLenum,GLuint);
+ using Storage=void(APIENTRY*)(GLenum,GLenum,GLsizei,GLsizei);
+ using Attach=void(APIENTRY*)(GLenum,GLenum,GLenum,GLuint);
+ using Status=GLenum(APIENTRY*)(GLenum);
+ using Delete=void(APIENTRY*)(GLsizei,const GLuint*);
+ std::shared_ptr<NativeOffscreenDisplayService> display;
+ Gen gen_fbo{gpu_proc<Gen>("glGenFramebuffers")},gen_rbo{gpu_proc<Gen>("glGenRenderbuffers")};
+ Bind bind_fbo{gpu_proc<Bind>("glBindFramebuffer")},bind_rbo{gpu_proc<Bind>("glBindRenderbuffer")};
+ Storage storage{gpu_proc<Storage>("glRenderbufferStorage")};
+ Attach attach{gpu_proc<Attach>("glFramebufferRenderbuffer")};
+ Status status{gpu_proc<Status>("glCheckFramebufferStatus")};
+ Delete delete_fbo{gpu_proc<Delete>("glDeleteFramebuffers")},delete_rbo{gpu_proc<Delete>("glDeleteRenderbuffers")};
+ GLuint fbo[2]{},rbo[2]{};
+ explicit RealFramebuffers(std::shared_ptr<NativeOffscreenDisplayService> d):display(std::move(d)){
+  gen_fbo(2,fbo);gen_rbo(2,rbo);
+  for(unsigned i=0;i<2;++i){
+   bind_fbo(draw_framebuffer,fbo[i]);bind_rbo(renderbuffer,rbo[i]);
+   storage(renderbuffer,0x8058 /*RGBA8*/,8,8);attach(draw_framebuffer,color_attachment,renderbuffer,rbo[i]);
+   glDrawBuffer(color_attachment);
+   gpu_check(fbo[i]&&rbo[i]&&status(draw_framebuffer)==framebuffer_complete,"actual complete nonzero framebuffer");
+  }
+  bind_fbo(read_framebuffer,fbo[1]);glReadBuffer(color_attachment);
+  bind_fbo(draw_framebuffer,fbo[0]);
+  gpu_check(glGetError()==GL_NO_ERROR,"actual framebuffer allocation has no GPU error");
+ }
+ ~RealFramebuffers(){
+  DisplayServiceFailure f;if(display&&display->acquire_context(f)){
+   bind_fbo(draw_framebuffer,0);bind_fbo(read_framebuffer,0);
+   delete_fbo(2,fbo);delete_rbo(2,rbo);
+  }
+ }
+};
+struct CameraGpuFixture {
+ Fixture native;
+ std::shared_ptr<NativeRetailRendererCore> core;
+ std::shared_ptr<NativeRetailRendererCameraModule> cameras;
+ std::shared_ptr<NativeRetailRendererRasters> rasters;
+ explicit CameraGpuFixture(const std::filesystem::path& root):native(root),core(native.core()){
+  auto initialized=core->initialize_core(native.f);gpu_check(initialized&&*initialized,"GPU actual CoreInit");
+  gpu_check(renderer_required::construct_core_plugin_0405(*core,native.f),"GPU actual0405 constructor");
+  gpu_check(renderer_required::construct_core_plugin_0407(*core,native.f),"GPU actual0407 constructor");
+  cameras=core->camera_module(native.f);rasters=core->rasters(native.f);
+  gpu_check(cameras&&rasters,"GPU real persistent camera/raster owners");
+ }
+ ~CameraGpuFixture(){renderer_required::destroy_core_plugin_0405(*core);renderer_required::destroy_core_plugin_0407(*core);}
+ NativeRetailRasterHandle raster(std::uint32_t flags,std::int32_t w=640,std::int32_t h=448){
+  RetailRendererRasterFailure f;auto r=rasters->create_raster({w,h,0,0,flags,0},f);
+  gpu_check(bool(r),"GPU actual logical raster creation");return *r;
+ }
+ NativeRetailRasterHandle backed(std::uint32_t flags,const std::shared_ptr<NativeOffscreenDisplayService>& d,
+                                 std::int32_t w=640,std::int32_t h=448){
+  auto r=raster(flags,w,h);RetailRendererRasterFailure f;
+  gpu_check(rasters->bind_display_target(r,d,f),"GPU explicit actual display binding");return r;
+ }
+ NativeRetailRendererCameraHandle camera(NativeRetailRasterHandle color,NativeRetailRasterHandle depth={},
+  RetailRendererCameraTargetPolicy policy={{5,7,13,11},0.375f}){
+  auto h=create(cameras);RetailRendererCameraFailure f;
+  gpu_check(cameras->set_frame_buffer_raster(h,color,f)&&cameras->set_z_buffer_raster(h,depth,f)&&
+            cameras->set_render_target_policy(h,policy,f),"GPU actual camera target/policy publication");return h;
+ }
+};
+std::shared_ptr<NativeOffscreenDisplayService> native_display(){
+ DisplayServiceFailure f;auto d=NativeOffscreenDisplayService::create(64,48,f,640,448);
+ gpu_check(d&&d->acquire_context(f),"actual hidden native display/context");return d;
+}
+void gpu_binding(GLenum name,GLint expected,const char* why){GLint actual{};glGetIntegerv(name,&actual);gpu_check(actual==expected,why);}
+void gpu_viewport(std::array<GLint,4> expected,const char* why){
+ std::array<GLint,4> actual{};glGetIntegerv(GL_VIEWPORT,actual.data());gpu_check(actual==expected,why);
+}
+void save_gpu_bytes(const std::optional<std::filesystem::path>& output,const char* filename,
+                    const void* bytes,std::size_t count){
+ if(!output)return;
+ const auto target=*output/filename;gpu_check(!std::filesystem::exists(target),"diagnostic output preserves existing bytes");
+ std::ofstream stream(target,std::ios::binary);stream.write(static_cast<const char*>(bytes),static_cast<std::streamsize>(count));
+ gpu_check(bool(stream),"explicit diagnostic GPU bytes written");
+}
+void camera_gpu_target_cases(const std::filesystem::path& root,const std::optional<std::filesystem::path>& output){
+ {
+  ++gpu_scenarios;CameraGpuFixture x(root);auto a=native_display();
+  RetailRendererCameraFailure f;DisplayServiceFailure df;
+  GLint depth_bits{},alpha_bits{};glGetIntegerv(GL_DEPTH_BITS,&depth_bits);glGetIntegerv(GL_ALPHA_BITS,&alpha_bits);
+  gpu_check(depth_bits>0&&alpha_bits>=8,"actual default framebuffer depth and alpha availability queried");
+  std::printf("NATIVE_CAMERA_GPU_CAPABILITY depth_bits=%d alpha_bits=%d physical=64x48 logical=640x448\n",depth_bits,alpha_bits);
+  const auto color=x.backed(2,a),depth=x.backed(1,a);const auto h=x.camera(color,depth),second=x.camera(color,depth);
+  gpu_check(a->logical_width()==640&&a->logical_height()==448&&a->target_width()==64&&a->target_height()==48,
+            "logical raster extent is separate from explicit physical host target");
+  auto bind=gpu_proc<RealFramebuffers::Bind>("glBindFramebuffer");
+  bind(draw_framebuffer,0);glDrawBuffer(GL_BACK);bind(read_framebuffer,0);glReadBuffer(GL_BACK);
+  glDisable(GL_SCISSOR_TEST);glDisable(GL_DITHER);glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);glDepthMask(GL_TRUE);
+  glClearColor(17.0f/255,34.0f/255,68.0f/255,1);glClearDepth(0.8125);glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+  gpu_check(glGetError()==GL_NO_ERROR,"real backbuffer background and depth initialized");
+  glDrawBuffer(GL_FRONT); // Distinct default-object state must survive the backbuffer pass.
+  RealFramebuffers prior(a);
+  using Maski=void(APIENTRY*)(GLuint,GLboolean,GLboolean,GLboolean,GLboolean);
+  using Booleani=void(APIENTRY*)(GLenum,GLuint,GLboolean*);
+  using Integeri=void(APIENTRY*)(GLenum,GLuint,GLint*);
+  using Floati=void(APIENTRY*)(GLenum,GLuint,GLfloat*);
+  using Enablei=void(APIENTRY*)(GLenum,GLuint);
+  using IsEnabledi=GLboolean(APIENTRY*)(GLenum,GLuint);
+  using Scissori=void(APIENTRY*)(GLuint,GLint,GLint,GLsizei,GLsizei);
+  using Viewporti=void(APIENTRY*)(GLuint,GLfloat,GLfloat,GLfloat,GLfloat);
+  const auto maski=gpu_proc<Maski>("glColorMaski");const auto booleani=gpu_proc<Booleani>("glGetBooleani_v");
+  const auto integeri=gpu_proc<Integeri>("glGetIntegeri_v");const auto floati=gpu_proc<Floati>("glGetFloati_v");
+  const auto disablei=gpu_proc<Enablei>("glDisablei");const auto enabledi=gpu_proc<IsEnabledi>("glIsEnabledi");
+  const auto scissori=gpu_proc<Scissori>("glScissorIndexed");const auto viewporti=gpu_proc<Viewporti>("glViewportIndexedf");
+  GLint draw_buffers{},viewports{};glGetIntegerv(0x8824 /*MAX_DRAW_BUFFERS*/,&draw_buffers);
+  glGetIntegerv(0x825b /*MAX_VIEWPORTS*/,&viewports);
+  gpu_check(draw_buffers>=1&&viewports>=1&&glGetError()==GL_NO_ERROR,"actual indexed GPU state limits queried");
+  std::printf("NATIVE_CAMERA_GPU_INDEXED_STATE draw_buffers=%d viewports=%d\n",draw_buffers,viewports);
+  prior.bind_fbo(draw_framebuffer,0);
+  if(draw_buffers>1){
+   using DrawBuffers=void(APIENTRY*)(GLsizei,const GLenum*);
+   const auto draw_buffers_fn=gpu_proc<DrawBuffers>("glDrawBuffers");
+   const GLenum mapping[]{GL_BACK_LEFT,GL_FRONT_LEFT};draw_buffers_fn(2,mapping);
+   const auto optional_error=glGetError();
+   std::printf("NATIVE_CAMERA_GPU_DEFAULT_TWO_BUFFER_MAP admitted=%u gl_error=%u\n",optional_error==GL_NO_ERROR,unsigned(optional_error));
+   if(optional_error!=GL_NO_ERROR)glDrawBuffer(GL_FRONT);
+  }
+  std::vector<GLint> default_mapping(static_cast<std::size_t>(draw_buffers));
+  for(GLint i=0;i<draw_buffers;++i)glGetIntegerv(0x8825 /*DRAW_BUFFER0*/+i,&default_mapping[i]);
+  prior.bind_fbo(draw_framebuffer,prior.fbo[0]);
+  gpu_check(glGetError()==GL_NO_ERROR,"default draw-buffer mapping independently captured");
+  viewporti(0,2.25f,3.5f,19.75f,17.25f);glScissor(1,2,3,4);glEnable(GL_SCISSOR_TEST);glEnable(GL_DITHER);
+  glColorMask(GL_FALSE,GL_TRUE,GL_FALSE,GL_TRUE);glDepthMask(GL_FALSE);
+  if(draw_buffers>1)maski(1,GL_TRUE,GL_FALSE,GL_TRUE,GL_FALSE);
+  if(viewports>1){scissori(1,9,10,3,4);disablei(GL_SCISSOR_TEST,1);viewporti(1,23,24,25,26);}
+  glEnable(0x8c89 /*RASTERIZER_DISCARD*/);glEnable(0x8db9 /*FRAMEBUFFER_SRGB*/);
+  glClearColor(0.125f,0.25f,0.5f,0.75f);glClearDepth(0.625);
+  gpu_check(x.cameras->begin_update(h,f)&&x.cameras->is_updating(h,f),"real camera begins owned default-display pass");
+  gpu_binding(draw_binding,0,"begin binds actual default draw framebuffer");
+  gpu_binding(read_binding,static_cast<GLint>(prior.fbo[1]),"begin leaves independent read framebuffer unchanged");
+  gpu_viewport({5,7,13,11},"begin installs explicit lower-left physical viewport");
+  gpu_check(!x.cameras->begin_update(second,f)&&f.kind==RetailRendererCameraError::native_target&&
+            f.display.error==DisplayServiceError::resource_busy&&!x.cameras->is_updating(second,f),
+            "second actual camera cannot steal active host target");
+  gpu_check(!a->restore_abandoned_render_target(df)&&df.error==DisplayServiceError::resource_busy,
+            "host recovery cannot steal live camera ownership");
+  gpu_check(!x.cameras->begin_update(h,f)&&f.kind==RetailRendererCameraError::reentrant,"same-camera nested begin refused");
+  gpu_check(!x.cameras->set_render_target_policy(h,{{0,0,8,8},0.5f},f)&&f.kind==RetailRendererCameraError::reentrant,
+            "active target policy cannot change");
+  gpu_check(!x.cameras->set_frame_buffer_raster(h,color,f)&&f.kind==RetailRendererCameraError::reentrant,
+            "active color target cannot change");
+  gpu_check(!x.cameras->set_z_buffer_raster(h,depth,f)&&f.kind==RetailRendererCameraError::reentrant,
+            "active depth target cannot change");
+  gpu_check(!x.cameras->clear(h,0,0,0,1,4,f)&&f.kind==RetailRendererCameraError::render_services_required,
+            "unsupported stencil clear fails by name");
+  gpu_check(!x.cameras->clear(h,std::numeric_limits<float>::quiet_NaN(),0,0,1,1,f)&&
+            f.kind==RetailRendererCameraError::native_target&&f.display.error==DisplayServiceError::invalid_clear,
+            "nonfinite clear color refused before command submission");
+  glEnable(0xffffffffu);
+  gpu_check(!x.cameras->clear(h,0,0,0,1,1,f)&&f.kind==RetailRendererCameraError::native_target&&
+            f.display.error==DisplayServiceError::native_operation_failed,"incoming actual GL error refuses clear");
+  gpu_check(x.cameras->clear(h,0.2f,0.4f,0.6f,0.8f,3,f),"real scissored GPU color/depth clear");
+  std::array<GLfloat,4> clear_color{};GLdouble clear_depth{};GLboolean mask[4]{},depth_mask{};GLint scissor[4]{};
+  glGetFloatv(GL_COLOR_CLEAR_VALUE,clear_color.data());glGetDoublev(GL_DEPTH_CLEAR_VALUE,&clear_depth);
+  glGetBooleanv(GL_COLOR_WRITEMASK,mask);glGetBooleanv(GL_DEPTH_WRITEMASK,&depth_mask);glGetIntegerv(GL_SCISSOR_BOX,scissor);
+  gpu_check(clear_color==std::array<GLfloat,4>{0.125f,0.25f,0.5f,0.75f}&&clear_depth==0.625,
+            "GPU clear restores host clear color/depth values");
+  gpu_check(mask[0]==GL_FALSE&&mask[1]==GL_TRUE&&mask[2]==GL_FALSE&&mask[3]==GL_TRUE&&depth_mask==GL_FALSE,
+            "GPU clear restores host color and depth write masks");
+  gpu_check(glIsEnabled(GL_SCISSOR_TEST)&&glIsEnabled(GL_DITHER)&&scissor[0]==1&&scissor[1]==2&&scissor[2]==3&&scissor[3]==4,
+            "GPU clear restores host scissor and dither");
+  gpu_check(glIsEnabled(0x8c89)&&glIsEnabled(0x8db9),"GPU clear restores rasterizer discard and framebuffer sRGB enable");
+  if(draw_buffers>1){
+   GLboolean mask1[4]{};booleani(GL_COLOR_WRITEMASK,1,mask1);
+   gpu_check(mask1[0]==GL_TRUE&&mask1[1]==GL_FALSE&&mask1[2]==GL_TRUE&&mask1[3]==GL_FALSE,
+             "GPU clear preserves distinct indexed color mask1");
+  }
+  if(viewports>1){
+   std::array<GLint,4> scissor1{};std::array<GLfloat,4> viewport1{};
+   integeri(GL_SCISSOR_BOX,1,scissor1.data());floati(GL_VIEWPORT,1,viewport1.data());
+   gpu_check(!enabledi(GL_SCISSOR_TEST,1)&&scissor1==std::array<GLint,4>{9,10,3,4}&&
+             viewport1==std::array<GLfloat,4>{23,24,25,26},"GPU begin/clear preserves indexed scissor1 and viewport1");
+  }
+  gpu_binding(read_binding,static_cast<GLint>(prior.fbo[1]),"GPU clear leaves read framebuffer unchanged");
+  gpu_check(x.cameras->end_update(h,f)&&!x.cameras->is_updating(h,f),"real camera ends owned GPU pass");
+  gpu_binding(draw_binding,static_cast<GLint>(prior.fbo[0]),"end restores actual nonzero prior draw framebuffer");
+  gpu_binding(read_binding,static_cast<GLint>(prior.fbo[1]),"end preserves independent actual read framebuffer");
+  prior.bind_fbo(draw_framebuffer,0);
+  bool mapping_restored=true;for(GLint i=0;i<draw_buffers;++i){GLint actual{};glGetIntegerv(0x8825+i,&actual);mapping_restored&=actual==default_mapping[i];}
+  gpu_check(mapping_restored,"end restores full admitted default-object draw-buffer mapping");
+  prior.bind_fbo(draw_framebuffer,prior.fbo[0]);gpu_binding(GL_DRAW_BUFFER,color_attachment,"prior nonzero framebuffer draw-buffer state retained");
+  std::array<GLfloat,4> restored_viewport{};floati(GL_VIEWPORT,0,restored_viewport.data());
+  gpu_check(restored_viewport==std::array<GLfloat,4>{2.25f,3.5f,19.75f,17.25f},"end restores fractional host viewport0 exactly");
+  if(viewports>1){
+   std::array<GLfloat,4> viewport1{};floati(GL_VIEWPORT,1,viewport1.data());
+   gpu_check(viewport1==std::array<GLfloat,4>{23,24,25,26},"end leaves independent indexed viewport1 unchanged");
+  }
+  prior.bind_fbo(read_framebuffer,0);glReadBuffer(GL_BACK);
+  std::vector<unsigned char> rgba(64*48*4);std::vector<float> depths(64*48);
+  glReadPixels(0,0,64,48,GL_RGBA,GL_UNSIGNED_BYTE,rgba.data());glReadPixels(0,0,64,48,GL_DEPTH_COMPONENT,GL_FLOAT,depths.data());
+  a->record_diagnostic_readback(2);gpu_check(glGetError()==GL_NO_ERROR,"real GPU color and depth readback succeeded");
+  unsigned inside{},outside{};bool color_matches=true,depth_matches=true;
+  for(unsigned y=0;y<48;++y)for(unsigned xx=0;xx<64;++xx){
+   const bool in=xx>=5&&xx<18&&y>=7&&y<18;in?++inside:++outside;
+   const std::array<int,4> expected=in?std::array<int,4>{51,102,153,204}:std::array<int,4>{17,34,68,255};
+   for(unsigned k=0;k<4;++k)color_matches&=std::abs(int(rgba[(y*64+xx)*4+k])-expected[k])<=1;
+   depth_matches&=std::abs(depths[y*64+xx]-(in?0.375f:0.8125f))<=2.0e-6f;
+  }
+  gpu_check(inside==143&&outside==2929&&color_matches,"actual RGBA bytes within1 inside viewport; outside pixels retained");
+  gpu_check(depth_matches,"explicit0.375 GPU depth inside viewport; outside depth retained");
+  save_gpu_bytes(output,"camera-target.rgba8.bin",rgba.data(),rgba.size());
+  save_gpu_bytes(output,"camera-target.depth32f.bin",depths.data(),depths.size()*sizeof(float));
+  prior.bind_fbo(read_framebuffer,prior.fbo[1]);
+  const auto telemetry=a->telemetry();gpu_check(telemetry.diagnostic_readbacks==2&&telemetry.frame_readbacks==0&&
+    telemetry.cpu_composited_pixels==0&&telemetry.fallback_pixels==0,"GPU-only clear, explicit diagnostic readbacks; no CPU/fallback pixels");
+  glEnable(0xffffffffu);
+  gpu_check(!x.cameras->begin_update(h,f)&&f.kind==RetailRendererCameraError::native_target&&
+            f.display.error==DisplayServiceError::native_operation_failed&&!x.cameras->is_updating(h,f),
+            "incoming actual GL error refuses begin before ownership publication");
+  gpu_binding(draw_binding,static_cast<GLint>(prior.fbo[0]),"failed begin preserves prior framebuffer");
+  floati(GL_VIEWPORT,0,restored_viewport.data());
+  gpu_check(restored_viewport==std::array<GLfloat,4>{2.25f,3.5f,19.75f,17.25f},"failed begin preserves fractional prior viewport");
+  prior.bind_fbo(draw_framebuffer,0);glDrawBuffer(GL_BACK);prior.bind_fbo(draw_framebuffer,prior.fbo[0]);
+  gpu_check(x.cameras->begin_update(second,f)&&x.cameras->end_update(second,f),"second camera works after first owner ends");
+  prior.bind_fbo(draw_framebuffer,0);gpu_binding(GL_DRAW_BUFFER,GL_BACK,"ordinary aggregate GL_BACK draw-buffer state restored");
+  prior.bind_fbo(draw_framebuffer,prior.fbo[0]);
+  gpu_check(glGetError()==GL_NO_ERROR,"positive target case ends without GPU errors");
+ }
+ {
+  ++gpu_scenarios;CameraGpuFixture x(root);auto a=native_display();RetailRendererCameraFailure f;RetailRendererRasterFailure rf;
+  const auto color=x.backed(2,a),depth=x.backed(1,a);const auto h=x.camera(color,depth);
+  bool wrong_thread=false;std::thread thread([&]{RetailRendererCameraFailure q;
+   wrong_thread=!x.cameras->begin_update(h,q)&&q.kind==RetailRendererCameraError::wrong_thread;});thread.join();
+  gpu_check(wrong_thread,"camera target refuses foreign thread before any GPU operation");
+  const auto live_texture=x.raster(5),unbacked=x.raster(2),stale=x.raster(2);
+  gpu_check(!x.cameras->set_frame_buffer_raster(h,depth,f)&&f.kind==RetailRendererCameraError::raster_binding,
+            "live depth raster rejected from color role");
+  gpu_check(!x.cameras->set_z_buffer_raster(h,color,f)&&f.kind==RetailRendererCameraError::raster_binding,
+            "live color raster rejected from depth role");
+  CameraGpuFixture foreign(root);const auto foreign_color=foreign.raster(2),foreign_depth=foreign.raster(1);
+  gpu_check(!x.cameras->set_frame_buffer_raster(h,foreign_color,f)&&f.kind==RetailRendererCameraError::raster_binding&&
+            !x.cameras->set_z_buffer_raster(h,foreign_depth,f)&&f.kind==RetailRendererCameraError::raster_binding,
+            "both raster fields reject actual foreign Session owners");
+  auto observed_color=x.cameras->frame_buffer_raster(h,f);auto observed_depth=x.cameras->z_buffer_raster(h,f);
+  gpu_check(observed_color&&observed_color->same_identity(color)&&observed_depth&&observed_depth->same_identity(depth),
+            "refused role/Session setters preserve prior raster identities");
+  const auto zero_color=x.backed(2,a,0,448),zero_depth=x.backed(1,a,640,0);
+  glViewport(2,3,9,10);
+  gpu_check(x.cameras->set_frame_buffer_raster(h,zero_color,f)&&!x.cameras->begin_update(h,f)&&
+            f.kind==RetailRendererCameraError::raster_binding&&!x.cameras->is_updating(h,f),
+            "zero logical color extent refused before GPU ownership");
+  gpu_check(x.cameras->set_frame_buffer_raster(h,color,f)&&x.cameras->set_z_buffer_raster(h,zero_depth,f)&&
+            !x.cameras->begin_update(h,f)&&f.kind==RetailRendererCameraError::raster_binding&&!x.cameras->is_updating(h,f),
+            "zero logical depth extent refused before GPU ownership");
+  gpu_binding(draw_binding,0,"zero-extent refusals leave default framebuffer unchanged");
+  gpu_viewport({2,3,9,10},"zero-extent refusals leave host viewport unchanged");
+  gpu_check(x.cameras->set_z_buffer_raster(h,depth,f),"restore positive logical depth extent");
+  gpu_check(x.cameras->set_frame_buffer_raster(h,live_texture,f)&&!x.cameras->begin_update(h,f)&&
+            f.kind==RetailRendererCameraError::render_services_required,"live type5 target requires separate render-to-texture service");
+  gpu_check(x.cameras->set_frame_buffer_raster(h,unbacked,f)&&!x.cameras->begin_update(h,f)&&
+            f.kind==RetailRendererCameraError::raster_binding&&f.raster.kind==RetailRendererRasterError::missing_backing,
+            "unbacked live color cannot begin successful no-op");
+  gpu_check(x.rasters->destroy_raster(stale,rf)&&!x.cameras->set_frame_buffer_raster(h,stale,f)&&
+            f.kind==RetailRendererCameraError::raster_binding&&f.raster.kind==RetailRendererRasterError::retired_raster,
+            "stale raster rejected before color publication");
+  gpu_check(x.cameras->set_frame_buffer_raster(h,color,f),"restore admitted color");
+  const auto mismatch=x.backed(1,a,320,224);
+  gpu_check(x.cameras->set_z_buffer_raster(h,mismatch,f)&&!x.cameras->begin_update(h,f)&&
+            f.kind==RetailRendererCameraError::raster_binding,"different logical color/depth extents refused");
+  auto b=native_display();const auto other_depth=x.backed(1,b);DisplayServiceFailure df;
+  gpu_check(a->acquire_context(df)&&x.cameras->set_z_buffer_raster(h,other_depth,f)&&!x.cameras->begin_update(h,f)&&
+            f.kind==RetailRendererCameraError::raster_binding,"different actual display backing refused");
+  gpu_check(x.cameras->set_z_buffer_raster(h,depth,f)&&x.cameras->set_render_target_policy(h,{{0,0,65,48},0.375f},f)&&
+            !x.cameras->begin_update(h,f)&&f.kind==RetailRendererCameraError::native_target&&
+            f.display.error==DisplayServiceError::invalid_dimensions,"out-of-physical-target viewport refused");
+  gpu_check(!x.cameras->set_render_target_policy(h,{{0,0,0,8},0.375f},f)&&f.kind==RetailRendererCameraError::native_target&&
+            !x.cameras->set_render_target_policy(h,{{0,0,8,8},1.25f},f)&&f.kind==RetailRendererCameraError::native_target,
+            "zero viewport and out-of-domain depth policy refused");
+  gpu_check(x.cameras->set_render_target_policy(h,{{5,7,13,11},std::nullopt},f)&&x.cameras->begin_update(h,f),
+            "optional depth policy does not invent a clear-depth value");
+  gpu_check(!x.cameras->clear(h,0,0,0,1,2,f)&&f.kind==RetailRendererCameraError::native_target,
+            "requested depth clear needs explicit normalized depth policy");
+  gpu_check(x.cameras->clear(h,0.25f,0.5f,0.75f,1,1,f)&&x.cameras->end_update(h,f),"color-only clear needs no inferred depth convention");
+  const auto color_only=x.camera(color);
+  gpu_check(x.cameras->begin_update(color_only,f)&&x.cameras->clear(color_only,0.1f,0.2f,0.3f,1,1,f),
+            "actual color-only target permits native color clear without depth raster");
+  gpu_check(!x.cameras->clear(color_only,0,0,0,1,2,f)&&f.kind==RetailRendererCameraError::native_target&&
+            x.cameras->end_update(color_only,f),"color-only target refuses invented depth attachment");
+  gpu_check(x.cameras->set_render_target_policy(h,{{5,7,13,11},0.375f},f)&&x.cameras->begin_update(h,f),"begin wrong-context cleanup scenario");
+  gpu_check(b->acquire_context(df)&&!x.cameras->clear(h,0,0,0,1,1,f)&&f.kind==RetailRendererCameraError::native_target,
+            "active clear refuses actual wrong GL context");
+  gpu_check(!x.cameras->end_update(h,f)&&f.kind==RetailRendererCameraError::native_target&&x.cameras->is_updating(h,f),
+            "wrong-context end retains unfinished ownership");
+  gpu_check(a->acquire_context(df)&&x.cameras->end_update(h,f),"same actual context performs explicit cleanup");
+  b.reset();
+  gpu_check(x.cameras->set_z_buffer_raster(h,other_depth,f)&&!x.cameras->begin_update(h,f)&&
+            f.kind==RetailRendererCameraError::raster_binding&&f.raster.kind==RetailRendererRasterError::stale_display,
+            "expired actual display capability cannot be reused by camera begin");
+  gpu_check(x.cameras->set_z_buffer_raster(h,depth,f),"restore live depth capability after stale display refusal");
+  gpu_check(x.cameras->begin_update(h,f)&&x.rasters->destroy_raster(depth,rf),"retire logical depth while pass is active");
+  gpu_check(!x.cameras->clear(h,0,0,0,1,3,f)&&f.kind==RetailRendererCameraError::raster_binding,
+            "stale active raster refuses subsequent clear");
+  gpu_check(x.cameras->end_update(h,f)&&!x.cameras->is_updating(h,f),"end cleans host pass despite stale logical raster");
+  gpu_check(!x.cameras->begin_update(h,f)&&f.kind==RetailRendererCameraError::raster_binding,
+            "later begin cannot reuse retired depth raster");
+ }
+ {
+  ++gpu_scenarios;CameraGpuFixture x(root);auto a=native_display();RetailRendererCameraFailure f;DisplayServiceFailure df;
+  const auto color=x.backed(2,a),depth=x.backed(1,a);const auto h=x.camera(color,depth),other=x.camera(color,depth);
+  glViewport(3,4,21,19);
+  gpu_check(x.cameras->begin_update(h,f)&&x.cameras->destroy_base_camera(h,f),"current-context camera destruction ends actual pass");
+  gpu_viewport({3,4,21,19},"camera destroy restores previous host viewport");
+  gpu_check(x.cameras->begin_update(other,f),"another actual camera follows released owner");
+  auto b=native_display();
+  gpu_check(!x.cameras->destroy_base_camera(other,f)&&f.kind==RetailRendererCameraError::native_target&&
+            x.cameras->observe(other,f).has_value(),"wrong-context camera destruction refuses before record release");
+  gpu_check(a->acquire_context(df)&&x.cameras->destroy_base_camera(other,f),"restore actual context before camera release");
+  const auto retiring=x.camera(color,depth);
+  gpu_check(x.cameras->begin_update(retiring,f),"current-context module-retirement pass begins");
+  renderer_required::destroy_core_plugin_0405(*x.core);
+  gpu_viewport({3,4,21,19},"current-context module retirement restores previous viewport");
+  gpu_check(!x.cameras->observe(retiring,f)&&f.kind==RetailRendererCameraError::retired,"retired module invalidates camera record");
+  gpu_check(renderer_required::construct_core_plugin_0405(*x.core,x.native.f),"construct successor real camera module");
+  x.cameras=x.core->camera_module(x.native.f);const auto successor=x.camera(color,depth);
+  gpu_check(x.cameras->begin_update(successor,f)&&x.cameras->end_update(successor,f),"retired current-context owner left no stolen pass");
+ }
+ {
+  ++gpu_scenarios;CameraGpuFixture x(root);auto a=native_display();RetailRendererCameraFailure f;DisplayServiceFailure df;
+  const auto color=x.backed(2,a),depth=x.backed(1,a);const auto h=x.camera(color,depth);
+  glViewport(4,5,22,20);gpu_check(x.cameras->begin_update(h,f),"abandonment scenario owns actual native target");
+  auto b=native_display();renderer_required::destroy_core_plugin_0405(*x.core);
+  gpu_check(!x.cameras->observe(h,f)&&f.kind==RetailRendererCameraError::retired,"wrong-context module retirement expires camera owner");
+  gpu_check(renderer_required::construct_core_plugin_0405(*x.core,x.native.f),"abandonment successor actual0405 module");
+  x.cameras=x.core->camera_module(x.native.f);const auto successor=x.camera(color,depth);
+  gpu_check(a->acquire_context(df),"host reacquires abandoned target context");
+  gpu_check(!x.cameras->begin_update(successor,f)&&f.kind==RetailRendererCameraError::native_target&&
+            f.display.error==DisplayServiceError::resource_busy,"successor cannot steal abandoned pass");
+  gpu_check(a->restore_abandoned_render_target(df),"explicit host recovery restores expired-owner pass");
+  gpu_viewport({4,5,22,20},"abandoned owner recovery restores previous viewport");
+  gpu_check(x.cameras->begin_update(successor,f)&&x.cameras->end_update(successor,f),"successor begins only after explicit host recovery");
+ }
+ std::printf("PASS_NATIVE_CAMERA_GPU_TARGET scenarios=%u checks=%u; actual0405/0407/native hidden displays,physical viewport,scissored RGBA/depth readback,state restoration,exclusive camera ownership,Session/type/lifetime/error refusal; no scene/frustum or whole-game claim\n",gpu_scenarios,gpu_checks);
+}
+}
+#endif
 namespace mka::retail::renderer_required {
 #define OTHER(ID,VALUE) bool construct_core_plugin_##ID(NativeRetailRendererCore& c,RetailRendererCoreFailure& f){return fixture_construct(VALUE,c,f);} \
  void destroy_core_plugin_##ID(NativeRetailRendererCore&)noexcept{fixture_destroy(VALUE);}
-OTHER(0406,0x406) OTHER(0407,0x407) OTHER(0408,0x408) OTHER(0409,0x409)
+OTHER(0408,0x408) OTHER(0409,0x409)
 OTHER(0412,0x412) OTHER(040a,0x40a) OTHER(040b,0x40b)
 #undef OTHER
 // Actual0403/0404/0405/registration are linked. Unimplemented renderer math
@@ -255,15 +612,15 @@ bool invert_nonidentity_matrix_1a07a0(RetailRendererMatrixValue&,const RetailRen
 }
 namespace mka::retail::scene_bootstrap_required {
 RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState&,std::shared_ptr<NativeRetailRendererCore> c,StartupFailure& f){
- ++suffix_calls;RetailRendererCoreFailure cf;check(!c->construct_registered(cf),"explicit later0406 refusal after actual0403/0404/0405");
- f={StartupError::memory_owners,"test-only0406/full renderer suffix refusal"};return RetailStartupGate::native_failure;
+ ++suffix_calls;RetailRendererCoreFailure cf;check(!c->construct_registered(cf),"explicit later0408 refusal after actual0403..0407");
+ f={StartupError::memory_owners,"test-only0408/full renderer suffix refusal"};return RetailStartupGate::native_failure;
 }
 bool continue_scene_reset_at_125d60(NativeRetailMainState&,StartupFailure&){std::abort();}
 }
 static_assert(!std::is_default_constructible_v<NativeRetailRendererCameraModule>);
 static_assert(!std::is_copy_constructible_v<NativeRetailRendererCameraModule>);
 int main(int argc,char** argv)try{
- check(argc==3,"existing root and original-derived depth corpus required");
+ check(argc==3||argc==4,"root/depth corpus and optional explicit ignored GPU diagnostic directory required");
  check(std::fegetround()==FE_TONEAREST,"source binary32 fixture scope requires existing nearest rounding; settings not changed");
  const std::filesystem::path root(argv[1]);
  camera_frame_association_cases(root);
@@ -359,37 +716,36 @@ int main(int argc,char** argv)try{
   check(!m->clear(h, 0.0f, 0.0f, 0.0f, 1.0f, 0x01, f) && f.kind == RetailRendererCameraError::render_services_required,
    "clear without active begin_update rejected");
 
-  // Attach rasters (framebuffer & zbuffer)
+  // Unowned fixture identities cannot supply production raster capabilities.
   auto color_raster = NativeRetailRasterHandle::test_handle();
   auto depth_raster = NativeRetailRasterHandle::test_handle();
-  check(m->set_frame_buffer_raster(h, color_raster, f), "set frame buffer raster");
-  check(m->set_z_buffer_raster(h, depth_raster, f), "set z buffer raster");
-  check(m->frame_buffer_raster(h, f)->same_identity(color_raster), "frame buffer raster identity verified");
-  check(m->z_buffer_raster(h, f)->same_identity(depth_raster), "z buffer raster identity verified");
-
-  // Native OpenGL FBO lifecycle scaffolding (zero CPU rasterization; test-only diagnostic draw)
-  unsigned gl_draw_calls = 0;
-  check(m->begin_update(h, f), "begin_update succeeds with attached frame buffer raster");
-  check(m->is_updating(h, f), "camera is updating");
-  check(m->clear(h, 0.1f, 0.2f, 0.3f, 1.0f, 0x03, f), "camera clear succeeds while updating");
-
-  // Test-only diagnostic draw: verifies GL context pipeline invocation without production module pollution
-#ifdef _WIN32
-  if (wglGetCurrentContext()) {
-   glDrawArrays(GL_TRIANGLES, 0, 3);
-   ++gl_draw_calls;
-  }
-#endif
-  std::printf("  [diagnostic-telemetry] GL draw calls = %u, CPU composited pixels = 0, frame readbacks = 0, diagnostic readbacks = 0, fallback pixels = 0\n", gl_draw_calls);
-
-  check(!m->begin_update(h, f) && f.kind == RetailRendererCameraError::reentrant, "reentrant begin_update fails");
-  check(!m->set_frame_buffer_raster(h, color_raster, f) && f.kind == RetailRendererCameraError::reentrant, "cannot rebind frame buffer while updating");
-  check(m->end_update(h, f), "end_update succeeds");
-  check(!m->is_updating(h, f), "camera is no longer updating");
-  check(!m->end_update(h, f) && f.kind == RetailRendererCameraError::render_services_required, "second end_update fails");
+  check(!m->set_frame_buffer_raster(h,color_raster,f)&&f.kind==RetailRendererCameraError::raster_binding,
+        "unowned test color raster rejected");
+  check(!m->set_z_buffer_raster(h,depth_raster,f)&&f.kind==RetailRendererCameraError::raster_binding,
+        "unowned test depth raster rejected");
+  check(m->frame_buffer_raster(h,f)->empty()&&m->z_buffer_raster(h,f)->empty(),"refused fixture rasters publish no fields");
+  check(!m->begin_update(h,f)&&f.kind==RetailRendererCameraError::render_services_required&&!m->is_updating(h,f),
+        "unbound target cannot begin successful no-op");
 
   check(m->destroy_base_camera(h, f), "cleanup test camera");
  }
- std::printf("PASS_NATIVE0405_CAMERA_RESOURCE_BASE; actual Core/Main prefix,64 real records,source defaults/window/7 exact SSE cases,physical release,allocation cuts module=%u camera=%u,thread/foreign/lifetime/Main transfer/task lookup; depth provider/plugins/frame/raster/sync/render/GPU/game OPEN; no window/audio\n",module_cuts,camera_cuts);
+#ifdef _WIN32
+ std::optional<std::filesystem::path> diagnostic;
+ if(argc==4){
+  const auto repository=std::filesystem::canonical(std::filesystem::path(__FILE__)).parent_path().parent_path();
+  const auto requested=std::filesystem::weakly_canonical(std::filesystem::absolute(argv[3]));
+  bool ignored=false;
+  for(const auto& allowed:{repository/"b"/"phase7-capture-run",repository/"build"/"oracle-telemetry"}){
+   const auto relative=requested.lexically_relative(allowed);
+   if(!relative.empty()&&!relative.is_absolute()&&*relative.begin()!=".."&&relative!=".")ignored=true;
+  }
+  check(ignored,"GPU diagnostic output must be explicit child of existing ignored capture/telemetry root");
+  std::filesystem::create_directories(requested);diagnostic=requested;
+ }
+ camera_gpu_target_cases(root,diagnostic);
+#else
+ check(argc==3,"native GPU diagnostics require Windows display service");
+#endif
+ std::printf("PASS_NATIVE0405_CAMERA_RESOURCE_BASE; actual Core/Main prefix,64 real records,source defaults/window/7 exact SSE cases,physical release,allocation cuts module=%u camera=%u,thread/foreign/lifetime/Main transfer/task lookup; depth provider/plugins/frame/sync/scene/game OPEN; hidden native display GPU checks separate,no audio\n",module_cuts,camera_cuts);
  return 0;
 }catch(const std::exception& e){fail_after=-1;std::fprintf(stderr,"FAIL native0405 camera: %s\n",e.what());return 1;}

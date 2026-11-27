@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -21,7 +22,11 @@ enum class DisplayServiceError : std::uint32_t {
     swap_failed,
     vsync_unsupported_offscreen,
     resource_busy,
-    stale_device
+    stale_device,
+    unsupported_target,
+    invalid_clear,
+    native_operation_failed,
+    target_owner
 };
 
 struct DisplayServiceFailure {
@@ -42,6 +47,15 @@ struct DisplayTelemetry {
     std::uint32_t frame_readbacks = 0;
     std::uint32_t diagnostic_readbacks = 0;
     std::uint32_t fallback_pixels = 0;
+};
+
+// Identity of the actual host draw owner, never a guest pointer or numeric token.
+// A camera record supplies this identity; the display borrows it weakly.
+class NativeDisplayDrawOwner {
+public:
+    virtual ~NativeDisplayDrawOwner() = default;
+protected:
+    NativeDisplayDrawOwner() = default;
 };
 
 // Abstract interface for the production host display service.
@@ -65,6 +79,20 @@ public:
     virtual bool is_context_current() const noexcept = 0;
     virtual void* native_display_handle() const noexcept = 0;
     virtual std::uint64_t destination_identity() const noexcept = 0;
+
+    // Native default-window color/depth storage. Viewport coordinates are
+    // physical pixels with a lower-left origin; no game-coordinate conversion
+    // or depth convention is inferred here. No draw/read framebuffer aliasing.
+    virtual bool begin_render_target(const std::shared_ptr<const NativeDisplayDrawOwner>&,
+        DisplayViewportRect, bool require_depth, DisplayServiceFailure&) noexcept = 0;
+    virtual bool clear_render_target(const NativeDisplayDrawOwner&,
+        const std::optional<std::array<float,4>>& color, std::optional<float> depth,
+        DisplayServiceFailure&) noexcept = 0;
+    virtual bool end_render_target(const NativeDisplayDrawOwner&, DisplayServiceFailure&) noexcept = 0;
+    virtual bool owns_render_target(const NativeDisplayDrawOwner&) const noexcept = 0;
+    // Host recovery only after the real draw owner has expired. Ordinary begin
+    // never steals an active/abandoned pass or guesses that cleanup completed.
+    virtual bool restore_abandoned_render_target(DisplayServiceFailure&) noexcept = 0;
 
     // Logical Dimensions & Viewport & Aspect Ratio Management
     virtual std::uint32_t logical_width() const noexcept = 0;
@@ -106,6 +134,13 @@ public:
     bool is_context_current() const noexcept override;
     void* native_display_handle() const noexcept override;
     std::uint64_t destination_identity() const noexcept override;
+    bool begin_render_target(const std::shared_ptr<const NativeDisplayDrawOwner>&,
+        DisplayViewportRect, bool require_depth, DisplayServiceFailure&) noexcept override;
+    bool clear_render_target(const NativeDisplayDrawOwner&,
+        const std::optional<std::array<float,4>>&, std::optional<float>, DisplayServiceFailure&) noexcept override;
+    bool end_render_target(const NativeDisplayDrawOwner&, DisplayServiceFailure&) noexcept override;
+    bool owns_render_target(const NativeDisplayDrawOwner&) const noexcept override;
+    bool restore_abandoned_render_target(DisplayServiceFailure&) noexcept override;
 
     std::uint32_t logical_width() const noexcept override;
     std::uint32_t logical_height() const noexcept override;

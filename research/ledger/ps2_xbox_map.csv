@@ -4020,7 +4020,7 @@ SLUS_214.10,00224a80,none,none,none,research/runs/ghidra-function-coverage-20261
 SLUS_214.10,00224d20,none,none,none,research/runs/ghidra-function-coverage-20261118/export-20261118-230132-1875-18160/functions.tsv,none,catalogued,
 SLUS_214.10,00225000,none,none,none,research/runs/ghidra-function-coverage-20261118/export-20261118-230132-1875-18160/functions.tsv,none,catalogued,
 SLUS_214.10,00225100,none,none,none,research/runs/ghidra-function-coverage-20261118/export-20261118-230132-1875-18160/functions.tsv,none,catalogued,
-SLUS_214.10,00225690,default.xbe,002c0020,mapped-by-role,research/runs/xbox-donor-20261121/sound-original-byte-join.json,research/cross_platform/signatures/signature_00225690_002c0020.json,catalogued,
+SLUS_214.10,00225690,none,none,none,research/runs/ghidra-function-coverage-20261118/export-20261118-230132-1875-18160/functions.tsv,none,catalogued,
 SLUS_214.10,00225ca0,none,none,none,research/runs/ghidra-function-coverage-20261118/export-20261118-230132-1875-18160/functions.tsv,none,catalogued,
 SLUS_214.10,00225d40,none,none,none,research/runs/ghidra-function-coverage-20261118/export-20261118-230132-1875-18160/functions.tsv,none,catalogued,
 SLUS_214.10,00225d90,none,none,none,research/runs/ghidra-function-coverage-20261118/export-20261118-230132-1875-18160/functions.tsv,none,catalogued,

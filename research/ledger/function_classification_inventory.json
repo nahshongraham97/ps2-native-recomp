@@ -3,7 +3,7 @@
   "measured_date": "2026-11-24",
   "total_catalog": 17510,
   "in_scope_total": 15670,
-  "credited_total": 238,
+  "credited_total": 236,
   "platform_boundary_source_files": [
     "font_atlas.cpp",
     "iop_native.h",
@@ -27,28 +27,33 @@
     "retail_sound_status_main.cpp"
   ],
   "catalog_3way_partition": {
-    "platform-boundary": 49,
-    "retail-logic": 15450,
+    "platform-boundary": 47,
+    "retail-logic": 15452,
     "sdk-or-library": 2011
   },
   "in_scope_3way_partition": {
-    "platform-boundary": 49,
-    "retail-logic": 13610,
+    "platform-boundary": 47,
+    "retail-logic": 13612,
     "sdk-or-library": 2011
   },
   "credited_breakdown": {
-    "platform-boundary": 49,
+    "platform-boundary": 47,
     "retail-logic": 189,
     "sdk-or-library": 0
   },
   "role_by_status_matrix": {
-    "platform-boundary:host-replaced": 11,
-    "platform-boundary:ported": 38,
+    "platform-boundary:host-replaced": 10,
+    "platform-boundary:ported": 37,
     "retail-logic:no-direct-callers": 2648,
-    "retail-logic:open": 10141,
+    "retail-logic:open": 10143,
     "retail-logic:out-of-scope-stubbed": 1840,
     "retail-logic:pointer-scan-proven": 632,
     "retail-logic:ported": 189,
     "sdk-or-library:sdk-or-library": 2011
+  },
+  "source_identity_correction": {
+    "record": "research/runs/renderer-scope.json#native_camera_display_target_20261126.legacy_binding_corrections",
+    "receipt_sha256": "2d94cf2361b0b5984ed6d07d74c44108c5c2e29dc8695800b1394b982454c178",
+    "rule": "An implementation file being a platform boundary does not make unrelated original PS2 entries platform calls. These entries return to unresolved retail logic; ownership is not newly admitted."
   }
 }
