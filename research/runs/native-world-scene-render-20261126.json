@@ -1,0 +1,79 @@
+{
+  "slice": "world_to_camera_scene_render",
+  "retail_matching": {
+    "elf": "research/inputs/SLUS_214.10",
+    "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+    "compilers": [
+      "3.0.1b198-051011 (-O3, -O4)",
+      "3.0.1b205-051227 (-O3, -O4)",
+      "3.0.1b210-060308 (-O3, -O4)"
+    ],
+    "private_work_dir": "/opt/mkar-decomp/scene-render-match",
+    "exact_matches": {
+      "001CF300": {
+        "bytes": 72,
+        "sha256": "025212b5356a59767b98a19e793aa4ecaa08715602b8749d5a58783be23bed6c",
+        "diff_words": 0
+      },
+      "001CF350": {
+        "bytes": 40,
+        "sha256": "9f45faa31e99be76d6dbcaa60a0ee186fe286609ab81a467e5d4854658f45650",
+        "diff_words": 0
+      },
+      "001CF380": {
+        "bytes": 16,
+        "sha256": "c5f091eb3d88b412eecf93f787a1b03e7fa37c6e06be344e158faf61ba3daa8e",
+        "diff_words": 0
+      },
+      "0017EE30": {
+        "bytes": 276,
+        "sha256": "c8896a0c2f3c74fd6add7b8f31d4f7b91eb66c15098a47e4a4116f0db6e5c79f",
+        "diff_words": 0
+      }
+    },
+    "intentional_native_safety_divergences": [
+      "render_world_scene_frame enforces fail-closed world attachment verification via world_from_1cf380, cleans up end_update on any mid-frame failure, and saves/restores GL_DEPTH_TEST, GL_DEPTH_FUNC, GL_MATRIX_MODE, GL_PROJECTION, and GL_MODELVIEW around scene submission.",
+      "NativeRetailWorld::add_scene_object rejects invalid/empty triangles, non-finite/negative bounding radii, and duplicate object ids rather than accepting raw unvalidated pointers."
+    ]
+  },
+  "strict_native_contract": "PASS",
+  "runtime_file_sha256": {
+    "runtime/include/mka/retail_renderer_world.hpp": "c0503843dba73b77547b0690bde21c679695b753eb6023877fd609256eb8a1c2",
+    "runtime/src/native/retail_renderer_world.cpp": "7f20a062dc53f071bf6dafb33192b03ee09f44e98b293dc1c1f943c763e099fc",
+    "runtime/include/mka/retail_renderer_cameras.hpp": "281e1d73bdab8ca3ec139cb5f79a17217fa6547fd3b596fa52260eb161757903",
+    "runtime/src/native/retail_renderer_cameras.cpp": "ae1b3157140225c941caa545b6b5ecdfa6b7e24e3a4ac00aa930f4cbf44fdc12"
+  },
+  "clean_test_exit_code": 0,
+  "falsification": [
+    {
+      "defect": "skip_begin_update",
+      "target": "runtime/src/native/retail_renderer_cameras.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "disable_frustum_culling",
+      "target": "runtime/src/native/retail_renderer_cameras.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "corrupt_world_to_cam",
+      "target": "runtime/src/native/retail_renderer_cameras.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "leak_on_detach",
+      "target": "runtime/src/native/retail_camera_world.cpp",
+      "exit_code": 1,
+      "rejected": true
+    },
+    {
+      "defect": "skip_state_restore",
+      "target": "runtime/src/native/retail_renderer_cameras.cpp",
+      "exit_code": 1,
+      "rejected": true
+    }
+  ]
+}

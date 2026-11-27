@@ -1,6 +1,19 @@
 #include "mka/retail_renderer_cameras.hpp"
 #include "mka/retail_camera_world.hpp"
+#include "mka/retail_renderer_world.hpp"
 #include "mka/retail_game_session.hpp"
+#ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#undef near
+#undef far
+#include <GL/gl.h>
+#endif
 #include <algorithm>
 #include <bit>
 #include <cmath>
@@ -534,6 +547,18 @@ bool NativeRetailRendererCameraModule::end_update(const NativeRetailRendererCame
  if(!r->active_display->end_render_target(*r,f.display))return fail(f,RetailRendererCameraError::native_target,f.display.message);
  r->updating=false;r->active_display.reset();return true;
 }
+bool NativeRetailRendererCameraModule::show_raster(const NativeRetailRendererCameraHandle& h,
+ RetailRendererCameraFailure& f)noexcept{
+ const auto lease=admit(f);if(!lease)return false;const auto r=record(h,f);if(!r)return false;
+ if(r->updating)return fail(f,RetailRendererCameraError::reentrant,"cannot show raster while camera update is active");
+ if(r->frame_buffer.empty())return fail(f,RetailRendererCameraError::raster_binding,"show_raster requires live frame buffer raster");
+ const auto colors=raster_owner(r->frame_buffer,lease,false,f);if(!colors)return false;
+ auto display=colors->display_target(r->frame_buffer,f.raster);
+ if(!display)return fail(f,RetailRendererCameraError::raster_binding,f.raster.operation);
+ Busy guard(busy_);
+ if(!display->swap_buffers(f.display))return fail(f,RetailRendererCameraError::native_target,f.display.message);
+ return true;
+}
 void NativeRetailRendererCameraModule::retire()noexcept{
  active_.store(false,std::memory_order_release);
  for(const auto& r:records_){
@@ -729,5 +754,200 @@ std::optional<RetailCameraInit180ED0Result> initialize_cameras_180ed0(
   }
  }
  return out;
+}
+
+bool sphere_in_frustum(
+ const std::array<RetailRendererCameraPlane,6>& planes,
+ const RetailRendererPoint3& center,
+ float radius) noexcept {
+ if(!std::isfinite(center.x)||!std::isfinite(center.y)||!std::isfinite(center.z)||!std::isfinite(radius)||radius<0.0f)
+  return false;
+ for(const auto& p:planes){
+  const float dist=p.a*center.x+p.b*center.y+p.c*center.z+p.d;
+  if(dist<-radius)return false;
+ }
+ return true;
+}
+
+bool attach_camera_to_world_1cf300(
+ NativeRetailRendererCameraModule& cameras,
+ NativeRetailRendererFrames& frames,
+ const NativeRetailRendererCameraHandle& camera,
+ const std::shared_ptr<NativeRetailCameraWorldLink>& world_link,
+ std::shared_ptr<NativeRetailRenderWorld> world,
+ RetailCameraProducerFailure& failure) noexcept {
+ failure={};
+ if(!world_link){
+  failure.world={RetailCameraWorldError::missing_record,"1CF300 camera world-link required"};
+  failure.operation=failure.world.operation;
+  return false;
+ }
+ const auto cam_frame=cameras.frame(camera,failure.camera);
+ if(!cam_frame){failure.operation=failure.camera.operation;return false;}
+ if(!cam_frame->empty()){
+  if(!frames.mark_dirty(*cam_frame,failure.frame)){
+   failure.operation=failure.frame.operation;
+   return false;
+  }
+ }
+ if(!world_link->attach_after_frame_update_from_1cf300(std::move(world),failure.world)){
+  failure.operation=failure.world.operation;
+  return false;
+ }
+ return true;
+}
+
+bool detach_camera_from_world_1cf350(
+ const std::shared_ptr<NativeRetailCameraWorldLink>& world_link,
+ const std::shared_ptr<NativeRetailRenderWorld>& world,
+ RetailCameraWorldFailure& failure) noexcept {
+ failure={};
+ if(!world_link){
+  failure={RetailCameraWorldError::missing_record,"1CF350 camera world-link required"};
+  return false;
+ }
+ return world_link->remove_from_1cf350(world,failure).has_value();
+}
+
+std::optional<RetailWorldRenderStats> render_world_scene_frame(
+ NativeRetailRendererCameraModule& cameras,
+ NativeRetailRendererFrames& frames,
+ const NativeRetailRendererCameraHandle& camera,
+ const std::shared_ptr<NativeRetailCameraWorldLink>& world_link,
+ const std::shared_ptr<NativeRetailWorld>& world,
+ const std::array<float,4>& clear_color,
+ std::uint32_t clear_flags,
+ bool call_show_raster,
+ RetailCameraProducerFailure& failure) noexcept {
+ failure={};
+ if(!world_link||!world){
+  failure.world={RetailCameraWorldError::missing_record,"world render requires live camera world-link and world"};
+  failure.operation=failure.world.operation;
+  return {};
+ }
+ const auto bound_world=world_link->world_from_1cf380(failure.world);
+ if(!bound_world){failure.operation=failure.world.operation;return {};}
+ if(bound_world->get()!=world.get()){
+  failure.world={RetailCameraWorldError::missing_record,"camera is not attached to target NativeRetailWorld"};
+  failure.operation=failure.world.operation;
+  return {};
+ }
+
+ if(!cameras.begin_update(camera,failure.camera)){
+  failure.operation=failure.camera.operation;
+  return {};
+ }
+ auto cleanup_end=[&]()noexcept{
+  RetailRendererCameraFailure end_f;
+  (void)cameras.end_update(camera,end_f);
+ };
+
+ if(!cameras.clear(camera,clear_color[0],clear_color[1],clear_color[2],clear_color[3],clear_flags,failure.camera)){
+  failure.operation=failure.camera.operation;
+  cleanup_end();
+  return {};
+ }
+ if(!cameras.synchronize(camera,frames,failure.camera)){
+  failure.operation=failure.camera.operation;
+  cleanup_end();
+  return {};
+ }
+ const auto cam_obs=cameras.observe(camera,failure.camera);
+ if(!cam_obs||!cam_obs->synchronized_view_available){
+  failure.camera.kind=RetailRendererCameraError::render_services_required;
+  failure.operation="camera view/frustum synchronization unavailable";
+  cleanup_end();
+  return {};
+ }
+
+ RetailWorldRenderStats stats;
+#ifdef _WIN32
+ const GLboolean prior_depth=glIsEnabled(GL_DEPTH_TEST);
+ GLint prior_depth_func=GL_LESS;
+ glGetIntegerv(GL_DEPTH_FUNC,&prior_depth_func);
+ GLint prior_matrix_mode=GL_MODELVIEW;
+ glGetIntegerv(GL_MATRIX_MODE,&prior_matrix_mode);
+ glEnable(GL_DEPTH_TEST);
+ glDepthFunc(GL_LESS);
+ glMatrixMode(GL_PROJECTION);
+ glPushMatrix();
+ glLoadMatrixf(cam_obs->projection_matrix.elements.data());
+ glMatrixMode(GL_MODELVIEW);
+ glPushMatrix();
+#endif
+
+ for(const auto& obj:world->scene_objects()){
+  if(!obj.visible)continue;
+  ++stats.total_objects;
+  const auto f_obs=frames.observe(obj.frame,failure.frame);
+  if(!f_obs){
+   failure.operation=failure.frame.operation;
+#ifdef _WIN32
+   glMatrixMode(GL_MODELVIEW);glPopMatrix();
+   glMatrixMode(GL_PROJECTION);glPopMatrix();
+   glMatrixMode(static_cast<GLenum>(prior_matrix_mode));
+   glDepthFunc(static_cast<GLenum>(prior_depth_func));
+   if(!prior_depth)glDisable(GL_DEPTH_TEST);
+#endif
+   cleanup_end();
+   return {};
+  }
+  const auto& m=f_obs->world.affine;
+  const auto transform_pt=[&m](const RetailRendererPoint3& p)noexcept->RetailRendererPoint3{
+   return {
+    p.x*m.right.x+p.y*m.up.x+p.z*m.at.x+m.translation.x,
+    p.x*m.right.y+p.y*m.up.y+p.z*m.at.y+m.translation.y,
+    p.x*m.right.z+p.y*m.up.z+p.z*m.at.z+m.translation.z
+   };
+  };
+  const auto world_center=transform_pt(obj.local_center);
+  const auto len3=[](const RetailRendererPoint3& v)noexcept{
+   return std::sqrt(v.x*v.x+v.y*v.y+v.z*v.z);
+  };
+  const float max_scale=std::max({len3(m.right),len3(m.up),len3(m.at)});
+  const float world_radius=obj.bounding_radius*max_scale;
+  if(!sphere_in_frustum(cam_obs->frustum_planes,world_center,world_radius)){
+   ++stats.culled_objects;
+   continue;
+  }
+  ++stats.visible_objects;
+#ifdef _WIN32
+  const std::array<float,16> model_col_major={
+   m.right.x,m.right.y,m.right.z,0.0f,
+   m.up.x,m.up.y,m.up.z,0.0f,
+   m.at.x,m.at.y,m.at.z,0.0f,
+   m.translation.x,m.translation.y,m.translation.z,1.0f
+  };
+  glLoadMatrixf(cam_obs->view_matrix.elements.data());
+  glMultMatrixf(model_col_major.data());
+  glBegin(GL_TRIANGLES);
+  for(const auto& v:obj.triangles){
+   glColor4f(v.color[0],v.color[1],v.color[2],v.color[3]);
+   glVertex3f(v.position.x,v.position.y,v.position.z);
+  }
+  glEnd();
+#endif
+  stats.submitted_triangles+=obj.triangles.size()/3;
+ }
+
+#ifdef _WIN32
+ glMatrixMode(GL_MODELVIEW);
+ glPopMatrix();
+ glMatrixMode(GL_PROJECTION);
+ glPopMatrix();
+ glMatrixMode(static_cast<GLenum>(prior_matrix_mode));
+ glDepthFunc(static_cast<GLenum>(prior_depth_func));
+ if(!prior_depth)glDisable(GL_DEPTH_TEST);
+#endif
+
+ if(!cameras.end_update(camera,failure.camera)){
+  failure.operation=failure.camera.operation;
+  return {};
+ }
+ if(call_show_raster&&!cameras.show_raster(camera,failure.camera)){
+  failure.operation=failure.camera.operation;
+  return {};
+ }
+ return stats;
 }
 }

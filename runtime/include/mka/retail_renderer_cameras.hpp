@@ -120,6 +120,7 @@ public:
  bool begin_update(const NativeRetailRendererCameraHandle&, RetailRendererCameraFailure&) noexcept;
  bool end_update(const NativeRetailRendererCameraHandle&, RetailRendererCameraFailure&) noexcept;
  bool clear(const NativeRetailRendererCameraHandle&, float r, float g, float b, float a, std::uint32_t clear_flags, RetailRendererCameraFailure&) noexcept;
+ bool show_raster(const NativeRetailRendererCameraHandle&, RetailRendererCameraFailure&) noexcept;
  bool is_updating(const NativeRetailRendererCameraHandle&, RetailRendererCameraFailure&) const noexcept;
 private:
  friend bool renderer_required::construct_core_plugin_0405(NativeRetailRendererCore&,RetailRendererCoreFailure&);

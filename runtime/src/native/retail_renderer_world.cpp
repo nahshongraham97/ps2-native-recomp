@@ -2,6 +2,7 @@
 #include "mka/retail_game_session.hpp"
 #include "retail_main_control.hpp"
 #include <algorithm>
+#include <cmath>
 #include <cstring>
 #include <new>
 
@@ -44,6 +45,51 @@ NativeRetailWorld::NativeRetailWorld(
     : NativeRetailRenderWorld(session) {}
 
 NativeRetailWorld::~NativeRetailWorld() = default;
+
+bool NativeRetailWorld::add_scene_object(RetailWorldSceneObject obj, RetailRendererWorldFailure& f) noexcept {
+    f = {};
+    if (obj.id == 0 || obj.frame.empty() || obj.triangles.empty() || (obj.triangles.size() % 3) != 0 ||
+        !std::isfinite(obj.bounding_radius) || obj.bounding_radius < 0.0f) {
+        f.kind = RetailRendererWorldError::invalid_handle;
+        f.operation = "0412 valid scene object id, frame, non-empty triangles, and finite radius required";
+        return false;
+    }
+    for (const auto& existing : scene_objects_) {
+        if (existing.id == obj.id) {
+            f.kind = RetailRendererWorldError::reentrant;
+            f.operation = "0412 duplicate scene object id";
+            return false;
+        }
+    }
+    try {
+        scene_objects_.push_back(std::move(obj));
+        return true;
+    } catch (const std::bad_alloc&) {
+        f.kind = RetailRendererWorldError::allocation;
+        f.operation = "0412 scene object allocation";
+    } catch (...) {
+        f.kind = RetailRendererWorldError::native_exception;
+        f.operation = "0412 scene object insertion";
+    }
+    return false;
+}
+
+bool NativeRetailWorld::remove_scene_object(std::uint64_t id, RetailRendererWorldFailure& f) noexcept {
+    f = {};
+    const auto it = std::find_if(scene_objects_.begin(), scene_objects_.end(),
+        [id](const RetailWorldSceneObject& o) { return o.id == id; });
+    if (it == scene_objects_.end()) {
+        f.kind = RetailRendererWorldError::invalid_handle;
+        f.operation = "0412 scene object id not found";
+        return false;
+    }
+    scene_objects_.erase(it);
+    return true;
+}
+
+void NativeRetailWorld::clear_scene_objects() noexcept {
+    scene_objects_.clear();
+}
 
 struct NativeRetailWorldRecord final {
     std::shared_ptr<NativeRetailWorld> world;

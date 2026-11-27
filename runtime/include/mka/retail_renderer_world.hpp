@@ -1,6 +1,8 @@
 #pragma once
 #include "mka/retail_renderer_core.hpp"
 #include "mka/retail_camera_world.hpp"
+#include "mka/retail_renderer_frames.hpp"
+#include <array>
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -63,13 +65,33 @@ private:
 // - Real typed container ownership, thread affinity, and rollback
 // Note: downstream bounding box, sector hierarchy, flags, names, and observation queries
 // are not part of the 4-byte plugin registration contract and remain unrecovered.
+struct RetailWorldTriangleVertex {
+    RetailRendererPoint3 position;
+    std::array<float, 4> color{1.0f, 1.0f, 1.0f, 1.0f};
+};
+
+struct RetailWorldSceneObject {
+    std::uint64_t id{0};
+    NativeRetailRendererFrameHandle frame;
+    RetailRendererPoint3 local_center{};
+    float bounding_radius{1.0f};
+    std::vector<RetailWorldTriangleVertex> triangles;
+    bool visible{true};
+};
+
 class NativeRetailWorld final : public NativeRetailRenderWorld {
 public:
     ~NativeRetailWorld() override;
 
+    bool add_scene_object(RetailWorldSceneObject obj, RetailRendererWorldFailure& f) noexcept;
+    bool remove_scene_object(std::uint64_t id, RetailRendererWorldFailure& f) noexcept;
+    void clear_scene_objects() noexcept;
+    const std::vector<RetailWorldSceneObject>& scene_objects() const noexcept { return scene_objects_; }
+
 private:
     friend class NativeRetailRendererWorldModule;
     explicit NativeRetailWorld(const std::shared_ptr<NativeRetailGameSession>& session) noexcept;
+    std::vector<RetailWorldSceneObject> scene_objects_;
 };
 
 class NativeRetailRendererWorldModule final
@@ -126,5 +148,41 @@ namespace renderer_required {
 bool construct_core_plugin_0412(NativeRetailRendererCore&, RetailRendererCoreFailure&);
 void destroy_core_plugin_0412(NativeRetailRendererCore&) noexcept;
 }
+
+struct RetailWorldRenderStats {
+    std::size_t total_objects{};
+    std::size_t visible_objects{};
+    std::size_t culled_objects{};
+    std::size_t submitted_triangles{};
+};
+
+bool sphere_in_frustum(
+    const std::array<RetailRendererCameraPlane, 6>& planes,
+    const RetailRendererPoint3& center,
+    float radius) noexcept;
+
+bool attach_camera_to_world_1cf300(
+    NativeRetailRendererCameraModule& cameras,
+    NativeRetailRendererFrames& frames,
+    const NativeRetailRendererCameraHandle& camera,
+    const std::shared_ptr<NativeRetailCameraWorldLink>& world_link,
+    std::shared_ptr<NativeRetailRenderWorld> world,
+    RetailCameraProducerFailure& failure) noexcept;
+
+bool detach_camera_from_world_1cf350(
+    const std::shared_ptr<NativeRetailCameraWorldLink>& world_link,
+    const std::shared_ptr<NativeRetailRenderWorld>& world,
+    RetailCameraWorldFailure& failure) noexcept;
+
+std::optional<RetailWorldRenderStats> render_world_scene_frame(
+    NativeRetailRendererCameraModule& cameras,
+    NativeRetailRendererFrames& frames,
+    const NativeRetailRendererCameraHandle& camera,
+    const std::shared_ptr<NativeRetailCameraWorldLink>& world_link,
+    const std::shared_ptr<NativeRetailWorld>& world,
+    const std::array<float, 4>& clear_color,
+    std::uint32_t clear_flags,
+    bool call_show_raster,
+    RetailCameraProducerFailure& failure) noexcept;
 
 } // namespace mka::retail

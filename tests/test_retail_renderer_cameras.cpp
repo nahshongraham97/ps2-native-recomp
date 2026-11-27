@@ -1,5 +1,6 @@
 #include "mka/retail_renderer_cameras.hpp"
 #include "mka/retail_camera_world.hpp"
+#include "mka/retail_renderer_world.hpp"
 #include "mka/retail_renderer_frames.hpp"
 #include "mka/retail_renderer_streams.hpp"
 #include "mka/retail_renderer_transforms.hpp"
@@ -548,6 +549,85 @@ void camera_gpu_target_cases(const std::filesystem::path& root,const std::option
    if((r>100||g>100)&&depths[idx]<0.99f)++lit_pixels;
   }
   gpu_check(lit_pixels>100,"3D triangle rendered through 180ED0 synchronized view/projection produced measurable color & depth output");
+
+  // World-to-camera scene render pipeline with frustum culling and GL state restoration.
+  gpu_check(renderer_required::construct_core_plugin_0412(*x.core,x.native.f),"GPU actual0412 constructor");
+  auto world_mod=x.core->world_module(x.native.f);
+  RetailRendererWorldFailure rwf;
+  auto world_h=world_mod?world_mod->create_world(rwf):std::optional<NativeRetailWorldHandle>{};
+  auto world_ptr=world_h?world_mod->resolve_world(*world_h,rwf):std::shared_ptr<NativeRetailWorld>{};
+  gpu_check(bool(world_ptr),"create native RetailWorld for scene render");
+  gpu_check(attach_camera_to_world_1cf300(*x.cameras,*frames,init->primary.camera,init->primary.world_link,world_ptr,pf),
+            "1CF300 attach camera to NativeRetailWorld");
+
+  auto in_frame=frames->create_base_frame(ff);
+  auto out_frame=frames->create_base_frame(ff);
+  gpu_check(in_frame&&out_frame,"create object frames for world scene render");
+  RetailRendererMatrixValue in_mod{{{1,0,0},{0,1,0},{0,0,1},{0,0,0}},0x20003u};
+  RetailRendererMatrixValue out_mod{{{1,0,0},{0,1,0},{0,0,1},{100.0f,0,0}},0x20000u};
+  gpu_check(frames->set_modelling(*in_frame,in_mod,ff)&&frames->set_modelling(*out_frame,out_mod,ff),
+            "set object modelling matrices (1 inside frustum, 1 culled)");
+
+  RetailWorldSceneObject obj_in;
+  obj_in.id=1;obj_in.frame=*in_frame;obj_in.local_center={0,0,0};obj_in.bounding_radius=2.5f;
+  obj_in.triangles={
+   {{-1.5f,-1.5f,0.0f},{0.1f,1.0f,0.2f,1.0f}},
+   {{ 1.5f,-1.5f,0.0f},{0.1f,1.0f,0.2f,1.0f}},
+   {{ 0.0f, 1.5f,0.0f},{0.1f,1.0f,0.2f,1.0f}}
+  };
+  RetailWorldSceneObject obj_out;
+  obj_out.id=2;obj_out.frame=*out_frame;obj_out.local_center={0,0,0};obj_out.bounding_radius=2.0f;
+  obj_out.triangles={
+   {{-1.5f,-1.5f,0.0f},{1.0f,0.05f,0.05f,1.0f}},
+   {{ 1.5f,-1.5f,0.0f},{1.0f,0.05f,0.05f,1.0f}},
+   {{ 0.0f, 1.5f,0.0f},{1.0f,0.05f,0.05f,1.0f}}
+  };
+  gpu_check(world_ptr->add_scene_object(std::move(obj_in),rwf)&&
+            world_ptr->add_scene_object(std::move(obj_out),rwf),
+            "add visible and culled objects to NativeRetailWorld");
+
+  glMatrixMode(GL_PROJECTION);
+  const GLboolean saved_depth=glIsEnabled(GL_DEPTH_TEST);
+  GLint saved_depth_func=GL_LESS,saved_matrix_mode=GL_MODELVIEW,saved_mv_depth=0;
+  glGetIntegerv(GL_DEPTH_FUNC,&saved_depth_func);
+  glGetIntegerv(GL_MATRIX_MODE,&saved_matrix_mode);
+  glGetIntegerv(GL_MODELVIEW_STACK_DEPTH,&saved_mv_depth);
+
+  auto stats=render_world_scene_frame(*x.cameras,*frames,init->primary.camera,init->primary.world_link,
+   world_ptr,{0.05f,0.05f,0.1f,1.0f},3u,true,pf);
+  gpu_check(stats.has_value()&&stats->total_objects==2&&stats->visible_objects==1&&
+            stats->culled_objects==1&&stats->submitted_triangles==1,
+            "world scene render culled outside object and submitted inside object");
+  GLint after_depth_func=0,after_matrix_mode=0,after_mv_depth=0;
+  glGetIntegerv(GL_DEPTH_FUNC,&after_depth_func);
+  glGetIntegerv(GL_MATRIX_MODE,&after_matrix_mode);
+  glGetIntegerv(GL_MODELVIEW_STACK_DEPTH,&after_mv_depth);
+  gpu_check(glIsEnabled(GL_DEPTH_TEST)==saved_depth&&after_depth_func==saved_depth_func&&
+            after_matrix_mode==saved_matrix_mode&&after_mv_depth==saved_mv_depth,
+            "render_world_scene_frame restored host GL state");
+
+  gpu_check(x.cameras->begin_update(init->primary.camera,f),"rebind FBO for world scene readback");
+  glReadPixels(0,0,64,48,GL_RGBA,GL_UNSIGNED_BYTE,rgba.data());
+  glReadPixels(0,0,64,48,GL_DEPTH_COMPONENT,GL_FLOAT,depths.data());
+  a->record_diagnostic_readback(2);
+  gpu_check(x.cameras->end_update(init->primary.camera,f),"end world scene readback pass");
+  unsigned green_pixels=0,red_pixels=0;
+  for(unsigned y=6;y<42;++y)for(unsigned xx=8;xx<56;++xx){
+   const std::size_t idx=(y*64+xx);
+   const unsigned r=rgba[idx*4+0],g=rgba[idx*4+1];
+   if(g>150&&r<80&&depths[idx]<0.99f)++green_pixels;
+   if(r>150&&g<80)++red_pixels;
+  }
+  gpu_check(green_pixels>80&&red_pixels==0,"world scene rendered visible green object and culled red object");
+
+  gpu_check(detach_camera_from_world_1cf350(init->primary.world_link,world_ptr,wf),"1CF350 detach camera from world");
+  gpu_check(!render_world_scene_frame(*x.cameras,*frames,init->primary.camera,init->primary.world_link,
+   world_ptr,{0.05f,0.05f,0.1f,1.0f},3u,false,pf),"detached camera refused by render_world_scene_frame");
+  world_ptr->clear_scene_objects();
+  gpu_check(frames->destroy_leaf(*out_frame,ff)&&frames->destroy_leaf(*in_frame,ff),"destroy world scene object frames");
+  gpu_check(world_mod->destroy_world(*world_h,rwf),"destroy NativeRetailWorld");
+  renderer_required::destroy_core_plugin_0412(*x.core);
+
   destroy_camera_producer_17ebb0(*x.cameras,*frames,*x.rasters,init->primary);
   renderer_required::destroy_core_plugin_0403(*x.core);
   gpu_check(glGetError()==GL_NO_ERROR,"180ED0 GPU scene render case ends without GL errors");
@@ -673,7 +753,7 @@ namespace mka::retail::renderer_required {
 #define OTHER(ID,VALUE) bool construct_core_plugin_##ID(NativeRetailRendererCore& c,RetailRendererCoreFailure& f){return fixture_construct(VALUE,c,f);} \
  void destroy_core_plugin_##ID(NativeRetailRendererCore&)noexcept{fixture_destroy(VALUE);}
 OTHER(0408,0x408) OTHER(0409,0x409)
-OTHER(0412,0x412) OTHER(040a,0x40a) OTHER(040b,0x40b)
+OTHER(040a,0x40a) OTHER(040b,0x40b)
 #undef OTHER
 // Actual0403/0404/0405/registration are linked. Unimplemented renderer math
 // must never execute in a base-camera ownership/default-value check.
