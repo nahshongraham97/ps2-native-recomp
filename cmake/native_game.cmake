@@ -446,7 +446,8 @@ target_link_libraries(test_native_retail_archive PRIVATE mka_native_retail_archi
 add_library(mka_native_retail_ssf STATIC EXCLUDE_FROM_ALL
     runtime/src/native/retail_ssf_bundle.cpp
     runtime/src/native/retail_ssf_geometry.cpp
-    runtime/src/native/retail_ssf_texture.cpp)
+    runtime/src/native/retail_ssf_texture.cpp
+    runtime/src/native/retail_ssf_animation.cpp)
 target_include_directories(mka_native_retail_ssf PUBLIC runtime/include)
 target_compile_features(mka_native_retail_ssf PUBLIC cxx_std_20)
 target_link_libraries(mka_native_retail_ssf PUBLIC mka_native_retail_archive mka_native_art_section_data)
@@ -470,6 +471,8 @@ if(TARGET mka_native_retail_startup)
     target_link_libraries(test_native_retail_ssf_scene PRIVATE mka_native_retail_startup opengl32 gdi32 user32)
     add_executable(test_native_retail_ssf_native_geometry EXCLUDE_FROM_ALL tests/test_retail_ssf_native_geometry.cpp)
     target_link_libraries(test_native_retail_ssf_native_geometry PRIVATE mka_native_retail_startup opengl32 gdi32 user32)
+    add_executable(test_native_retail_ssf_animation EXCLUDE_FROM_ALL tests/test_retail_ssf_animation.cpp)
+    target_link_libraries(test_native_retail_ssf_animation PRIVATE mka_native_retail_startup opengl32 gdi32 user32)
 endif()
 if(WIN32)
     set(SDL2_NO_MWINDOWS ON)
