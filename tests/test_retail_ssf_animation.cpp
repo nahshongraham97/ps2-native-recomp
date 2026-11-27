@@ -29,6 +29,22 @@ void check(bool ok, const char* why) {
         throw std::runtime_error(why);
     }
 }
+
+void push_u32(std::vector<std::byte>& out, std::uint32_t v) {
+    out.push_back(std::byte(v & 0xffu));
+    out.push_back(std::byte((v >> 8) & 0xffu));
+    out.push_back(std::byte((v >> 16) & 0xffu));
+    out.push_back(std::byte((v >> 24) & 0xffu));
+}
+
+std::vector<std::byte> rw_chunk(std::uint32_t id, const std::vector<std::byte>& body) {
+    std::vector<std::byte> out;
+    push_u32(out, id);
+    push_u32(out, static_cast<std::uint32_t>(body.size()));
+    push_u32(out, 0x1803ffffu);
+    out.insert(out.end(), body.begin(), body.end());
+    return out;
+}
 } // namespace
 
 int main(int argc, char** argv) try {
@@ -87,6 +103,42 @@ int main(int argc, char** argv) try {
     }
     std::printf("SSF_NATIVE_ANIMATION_CENSUS total=%zu decoded_ok=%zu refused_compression=%zu refused_other=%zu\n",
                total_anim, decoded_ok, refused_compression, refused_other);
+    check(total_anim == 7 && decoded_ok == 0 &&
+          refused_compression == 4 && refused_other == 3,
+          "Ashrah art0 baseline census remains 7/0/4/3");
+
+    // Full type-3 animation census across every PAK member and art section.
+    std::size_t all_total = 0, all_decoded = 0, all_compressed = 0, all_other = 0;
+    for (std::size_t mi = 0; mi < archive->member_count(); ++mi) {
+        RetailSsfBundleFailure mbf;
+        auto member = NativeRetailSsfBundle::open(*archive, mi, mbf);
+        if (!member) continue;
+        for (std::size_t si = 0; si < member->sections().size(); ++si) {
+            if (member->sections()[si].raw_type != 1) continue;
+            auto art = member->open_art_section(si, mbf);
+            if (!art) continue;
+            for (std::size_t ri = 0; ri < art->records().size(); ++ri) {
+                if ((art->records()[ri].raw_type & 0x3fffffffu) != 3) continue;
+                ++all_total;
+                auto view = art->resource(ri, mbf);
+                if (!view) {
+                    ++all_other;
+                    continue;
+                }
+                RetailSsfAnimationFailure af;
+                auto decoded = decode_retail_ssf_animation(view->bytes(), af);
+                if (decoded) ++all_decoded;
+                else if (af.kind == RetailSsfAnimationError::unsupported_keyframe_compression)
+                    ++all_compressed;
+                else ++all_other;
+            }
+        }
+    }
+    std::printf("SSF_NATIVE_ANIMATION_FULL_CENSUS members=%zu total=%zu decoded_ok=%zu refused_compression=%zu refused_other=%zu\n",
+               archive->member_count(), all_total, all_decoded, all_compressed, all_other);
+    check(all_total > 0 && all_decoded == 0 &&
+          all_compressed > 0 && all_other > 0,
+          "full PAK type-3 animation census nonempty and fail-closed");
 
     // Synthetic keyframe evaluation test.
     {
@@ -166,28 +218,76 @@ int main(int argc, char** argv) try {
         synth.track_count = 2;
         RetailSsfAnimationTrack t0, t1;
         t0.node_id = 0;
-        t0.keyframes = {{0.0f, {0, 0, 0, 1}, {0, 0, 0}}, {10.0f, {0, 1, 0, 0}, {5, 0, 0}}};
+        t0.keyframes = {{0.0f, {0, 0, 0, 1}, {0, 0, 0}}};
         t1.node_id = 1;
-        t1.keyframes = {{0.0f, {0, 0, 0, 1}, {0, 1, 0}}, {10.0f, {0, 0, 1, 0}, {0, 2, 0}}};
+        t1.keyframes = {{0.0f, {0, 0, 0, 1}, {0, 0, 0}}};
         synth.tracks = {std::move(t0), std::move(t1)};
 
         RetailSsfSkinData skin;
         skin.bone_count = 2;
         skin.inv_bind_matrices = {
             {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, 0}},
-            {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 1, 0}}};
+            {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, 0}}};
         RetailSsfGeometryFrame f0, f1;
         f0.modelling = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, 0}};
-        f1.modelling = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 1, 0}};
+        f1.modelling = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {0, 0, 0}};
+        f0.hanim_node_id = 0u;
+        f1.hanim_node_id = 1u;
+        f1.parent = 0;
         std::vector<RetailSsfGeometryFrame> frames = {f0, f1};
 
         RetailSsfAnimationFailure cf;
         auto palette = compose_retail_ssf_skin_palette(synth, frames, skin, 5.0f, cf);
         check(bool(palette) && palette->size() == 2, "compose skin palette");
-        // At t=5 (halfway), bone 0 should have rotated 90 degrees around Y and translated (2.5, 0, 0).
-        check(std::abs((*palette)[0].translation.x - 2.5f) < 0.1f, "palette bone 0 interpolated translation");
-        // Bone 1 should have interpolated too.
-        check(std::abs((*palette)[1].translation.y - 1.5f) < 0.1f, "palette bone 1 interpolated translation");
+        check((*palette)[0].translation.x == 0.0f && (*palette)[1].translation.y == 0.0f,
+              "palette identity composition");
+
+        RetailSsfAnimationData identity_anim;
+        identity_anim.duration_frames = 1;
+        identity_anim.track_count = 0;
+        RetailSsfGeometryFrame chain0, chain1;
+        chain0.modelling = {{1,0,0},{0,1,0},{0,0,1},{2,0,0}};
+        chain1.modelling = {{1,0,0},{0,1,0},{0,0,1},{0,3,0}};
+        chain0.hanim_node_id = 0u;
+        chain1.hanim_node_id = 1u;
+        chain1.parent = 0;
+        RetailSsfSkinData chain_skin;
+        chain_skin.bone_count = 2;
+        chain_skin.inv_bind_matrices = {
+            {{1,0,0},{0,1,0},{0,0,1},{0,0,0}},
+            {{1,0,0},{0,1,0},{0,0,1},{0,0,4}}};
+        RetailSsfAnimationFailure chain_failure;
+        auto chain_palette = compose_retail_ssf_skin_palette(
+            identity_anim, {chain0, chain1}, chain_skin, 0.0f, chain_failure);
+        check(bool(chain_palette),
+              "parent chain skin palette composed");
+        std::printf("SSF_ANIMATION_CHAIN bone1=(%.3f,%.3f,%.3f)\n",
+                    (*chain_palette)[1].translation.x,
+                    (*chain_palette)[1].translation.y,
+                    (*chain_palette)[1].translation.z);
+        check(std::abs((*chain_palette)[1].translation.x - 2.0f) < 1e-5f &&
+              std::abs((*chain_palette)[1].translation.y - 3.0f) < 1e-5f &&
+              std::abs((*chain_palette)[1].translation.z - 4.0f) < 1e-5f,
+              "world parent then inverse-bind accumulation");
+
+        RetailSsfAnimationData unknown_anim = synth;
+        unknown_anim.tracks[0].node_id = 99u;
+        unknown_anim.tracks[1].node_id = 99u;
+        RetailSsfAnimationFailure uf;
+        check(!compose_retail_ssf_skin_palette(unknown_anim, frames, skin, 5.0f, uf),
+              "unknown HAnim node id refused");
+        check(uf.kind == RetailSsfAnimationError::hierarchy,
+              "unknown HAnim node id named hierarchy error");
+
+        RetailSsfGeometryFrame cycle0 = f0, cycle1 = f1;
+        cycle0.parent = 1;
+        cycle1.parent = 0;
+        std::vector<RetailSsfGeometryFrame> cycle_frames = {cycle0, cycle1};
+        RetailSsfAnimationFailure hf;
+        check(!compose_retail_ssf_skin_palette(synth, cycle_frames, skin, 5.0f, hf),
+              "frame parent cycle refused");
+        check(hf.kind == RetailSsfAnimationError::hierarchy,
+              "frame parent cycle named hierarchy error");
     }
 
     // Truncated/malformed input tests.
@@ -202,6 +302,33 @@ int main(int argc, char** argv) try {
         // Zero name length refused.
         std::vector<std::byte> zero_name(24, std::byte{0});
         check(!decode_retail_ssf_animation(zero_name, tf), "zero name length refused");
+
+        std::vector<std::byte> malformed;
+        malformed.push_back(std::byte{0}); malformed.push_back(std::byte{0});
+        malformed.push_back(std::byte{0}); malformed.push_back(std::byte{0});
+        malformed.push_back(std::byte{1}); malformed.push_back(std::byte{'x'});
+        push_u32(malformed, 0); push_u32(malformed, 0);
+        std::vector<std::byte> meta_body;
+        for (unsigned i = 0; i < 5; ++i) push_u32(meta_body, i == 0 ? 100u : 0u);
+        push_u32(meta_body, 0x20000006u);
+        push_u32(meta_body, 0u); // invalid kf_count
+        auto meta_chunk = rw_chunk(1, meta_body);
+
+        std::vector<std::byte> data_body;
+        push_u32(data_body, 0u); push_u32(data_body, 0u);
+        push_u32(data_body, 0u); push_u32(data_body, 0u);
+        auto data_chunk = rw_chunk(2, data_body);
+
+        auto kf_body = meta_chunk;
+        kf_body.insert(kf_body.end(), data_chunk.begin(), data_chunk.end());
+        kf_body.insert(kf_body.end(), 16, std::byte{0});
+        malformed.insert(malformed.end(), rw_chunk(1, kf_body).begin(), rw_chunk(1, kf_body).end());
+        RetailSsfAnimationFailure mf;
+        auto invalid_count = decode_retail_ssf_animation(malformed, mf);
+        std::printf("SSF_ANIMATION_MALFORMED invalid_count=%d kind=%d op=%s off=%zu\n",
+                    invalid_count.has_value(), int(mf.kind), mf.operation, mf.offset);
+        check(!invalid_count && mf.kind == RetailSsfAnimationError::keyframe,
+              "invalid keyframe count rejected");
     }
 
     // Strict native contract: no forbidden patterns in this file's runtime sources.

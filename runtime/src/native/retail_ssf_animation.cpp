@@ -1,7 +1,9 @@
 #include "mka/retail_ssf_animation.hpp"
+#include "mka/retail_renderer_matrix.hpp"
 #include <algorithm>
 #include <bit>
 #include <cmath>
+#include <functional>
 #include <limits>
 #include <new>
 #include <stdexcept>
@@ -190,65 +192,37 @@ std::optional<RetailSsfAnimationData> decode_retail_ssf_animation(
         r.need(dsz >= 16, RetailSsfAnimationError::range,
                "SSF animation keyframe data extent", data_chunk->at);
 
-        // The retail keyframe blob uses the Midway custom compressed format.
-        // The observed data does NOT match simple u32_node + u32_count +
-        // f32_quat[4] + f32_trans[3] per keyframe. Attempt the simple format
-        // on the first track header; if it does not fit, refuse the entire
-        // keyframe blob by name. This is a fail-closed named error, not a
-        // partial decode or silent skip.
-        //
-        // Simple format check: the first 8 bytes of the data blob would be
-        // a track header (u32 node_id, u32 kf_count). In the observed retail
-        // data, these words contain compressed/interleaved bitfields that
-        // don't represent valid simple-format headers.
-        std::size_t cursor = dp; // dp already points to chunk data (begin+12)
-        bool simple_format = true;
-        // Probe the first track header.
-        if (cursor + 8 <= data_chunk->end) {
-            const auto probe_node = r.word(cursor);
-            const auto probe_count = r.word(cursor + 4);
-            // In the simple format, node_id would be a small bone index
-            // (0..255) and kf_count would be a reasonable number (1..256).
-            // The retail compressed data produces values that don't fit.
-            if (probe_node > 255 || probe_count == 0 || probe_count > 256) {
-                simple_format = false;
-            } else {
-                // Additional check: try to read the first keyframe's time
-                // scalar. If it's not a reasonable finite float, the data
-                // is not in the simple format.
-                const auto kf_probe_off = cursor + 8;
-                if (kf_probe_off + 4 <= data_chunk->end) {
-                    const auto raw_time = r.word(kf_probe_off);
-                    const auto kf_time = std::bit_cast<float>(raw_time);
-                    if (!std::isfinite(kf_time) || kf_time < 0.0f || kf_time > 10000.0f) {
-                        simple_format = false;
-                    }
-                }
-            }
-        } else {
-            simple_format = false;
-        }
-
-        if (!simple_format) {
-            // The retail blob uses a compressed interleaved format.
-            // The chunk structure and metadata are valid, but the keyframe
-            // compression requires the matching-source evaluator from the
-            // pinned binary. Refuse by name.
+        // Dispatch compression from the retail metadata fields, not by probing
+        // arbitrary words in the keyframe blob. 0x22504 is a general Midway
+        // format stamp and is deliberately not a compression selector.
+        std::size_t cursor = dp;
+        if (inner_flags == 0x21310000u ||
+            inner_flags == 0xdd308000u ||
+            inner_flags == 0x99308000u) {
             failure = {RetailSsfAnimationError::unsupported_keyframe_compression,
-                       "SSF animation retail keyframe compression not yet decoded", dp};
+                       "SSF animation Midway keyframe compression byte-exact decoder not admitted", dp};
             return {};
         }
 
-        // Decode the simple format if it fits.
+        // The only uncompressed layout supported by this native reader is the
+        // explicit zero-format layout. Unknown flags remain fail-closed.
+        r.need(inner_flags == 0u, RetailSsfAnimationError::unsupported_keyframe_compression,
+               "SSF animation unknown keyframe compression dispatch", m2 + 12);
+
+        // Decode the explicit simple layout.
         result.tracks.reserve(std::min<std::size_t>(inner_track_count, 64));
         for (std::uint32_t ti = 0; ti < inner_track_count && cursor + 8 <= data_chunk->end; ++ti) {
             RetailSsfAnimationTrack track;
             track.node_id = r.word(cursor);
             const auto kf_count = r.word(cursor + 4);
-            if (kf_count == 0 || kf_count > 256) break;
+            r.need(kf_count > 0 && kf_count <= 256,
+                   RetailSsfAnimationError::keyframe,
+                   "SSF animation invalid keyframe count", cursor + 4);
             cursor += 8;
             const auto kf_bytes = std::size_t(kf_count) * 32;
-            if (cursor + kf_bytes > data_chunk->end) break;
+            r.need(cursor <= data_chunk->end && kf_bytes <= data_chunk->end - cursor,
+                   RetailSsfAnimationError::range,
+                   "SSF animation keyframe track crosses chunk", cursor);
             track.keyframes.reserve(kf_count);
             for (std::uint32_t ki = 0; ki < kf_count; ++ki) {
                 RetailSsfKeyframe kf;
@@ -352,17 +326,80 @@ std::optional<std::vector<RetailRendererAffine>> compose_retail_ssf_skin_palette
     if (!samples) return {};
     try {
         const auto bone_count = skin.inv_bind_matrices.size();
-        std::vector<RetailRendererAffine> palette(bone_count);
-        for (std::size_t bi = 0; bi < bone_count && bi < frames.size(); ++bi) {
-            palette[bi] = frames[bi].modelling;
-        }
-        for (std::size_t bi = frames.size(); bi < bone_count; ++bi) {
-            palette[bi] = identity_affine();
-        }
+        std::vector<RetailRendererAffine> local_world(frames.size(), identity_affine());
+        std::vector<RetailRendererAffine> world(frames.size(), identity_affine());
+
+        for (std::size_t fi = 0; fi < frames.size(); ++fi)
+            local_world[fi] = frames[fi].modelling;
+
         for (const auto& sample : *samples) {
-            if (sample.node_id < bone_count) {
-                palette[sample.node_id] =
-                    quaternion_to_affine(sample.rotation, sample.translation);
+            bool mapped = false;
+            for (std::size_t fi = 0; fi < frames.size(); ++fi) {
+                if (frames[fi].hanim_node_id && *frames[fi].hanim_node_id == sample.node_id) {
+                    local_world[fi] =
+                        quaternion_to_affine(sample.rotation, sample.translation);
+                    mapped = true;
+                    break;
+                }
+            }
+            if (!mapped) {
+                failure = {RetailSsfAnimationError::hierarchy,
+                           "SSF animation unknown HAnim node id", sample.node_id};
+                return {};
+            }
+        }
+
+        std::vector<std::uint8_t> complete(frames.size(), 0);
+        std::vector<std::uint8_t> visiting(frames.size(), 0);
+        std::function<bool(std::size_t)> compute_world =
+            [&](std::size_t fi) {
+                if (complete[fi]) return true;
+                if (visiting[fi]) {
+                    failure = {RetailSsfAnimationError::hierarchy,
+                               "SSF animation frame hierarchy cycle", fi};
+                    return false;
+                }
+                visiting[fi] = 1;
+                if (frames[fi].parent >= 0) {
+                    const auto pi = static_cast<std::size_t>(frames[fi].parent);
+                    if (pi >= frames.size()) {
+                        failure = {RetailSsfAnimationError::hierarchy,
+                                   "SSF animation frame parent out of range", fi};
+                        return false;
+                    }
+                    if (!compute_world(pi)) return false;
+                    RetailRendererMatrixFailure matrix_failure;
+                    RetailRendererAffine combined;
+                    if (!renderer_required::multiply_affines_19f680(
+                            combined, world[pi], local_world[fi], matrix_failure)) {
+                        failure = {RetailSsfAnimationError::hierarchy,
+                                   "SSF animation hierarchy affine multiplication failed", fi};
+                        return false;
+                    }
+                    world[fi] = combined;
+                } else {
+                    world[fi] = local_world[fi];
+                }
+                visiting[fi] = 0;
+                complete[fi] = 1;
+                return true;
+            };
+        for (std::size_t fi = 0; fi < frames.size(); ++fi)
+            if (!compute_world(fi)) return {};
+
+        std::vector<RetailRendererAffine> palette(bone_count);
+        for (std::size_t bi = 0; bi < bone_count; ++bi) {
+            const std::size_t fi = bi < frames.size() ? bi : frames.size();
+            if (fi < frames.size()) {
+                RetailRendererMatrixFailure matrix_failure;
+                if (!renderer_required::multiply_affines_19f680(
+                        palette[bi], skin.inv_bind_matrices[bi], world[fi], matrix_failure)) {
+                    failure = {RetailSsfAnimationError::hierarchy,
+                               "SSF animation inverse-bind palette multiplication failed", bi};
+                    return {};
+                }
+            } else {
+                palette[bi] = identity_affine();
             }
         }
         return palette;

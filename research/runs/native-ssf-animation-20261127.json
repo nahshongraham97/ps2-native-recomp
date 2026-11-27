@@ -1,0 +1,64 @@
+{
+  "schema": "mkar.native-ssf-animation-checkpoint.v1",
+  "fork_head_before": "8e5949ac54091dcf96c6e60cf14680943092e16c",
+  "elf": "SLUS_214.10",
+  "elf_sha256": "a2d205b4be9d7bb08fa32de56d2b30652fbdf29d7f104adde181f8ad222cff7f",
+  "source_addresses": {
+    "compressed_keyframe_dispatch": "001b44xx-001b47xx",
+    "lwU_jump": "001b4710 -> 001b4740",
+    "rphanim_attach": "001b664"
+  },
+  "disassembly_recovery": {
+    "status": "PARTIAL",
+    "lwU_op_27": "patched in existing private MIPS scratch harness",
+    "retail_torso_head_stump_armleg_runs": "v0=1 for variants 21310000, dd308000, 99308000",
+    "exact_expanded_keyframe_format": "OPEN",
+    "codewarrior_source_match": "OPEN",
+    "hardened_falsification_verifier": "OPEN"
+  },
+  "ashrah_art0_before": "7 type-3 / 0 decoded_ok / 4 refused_compression / 3 refused_other",
+  "ashrah_art0_current": "7 type-3 / 0 decoded_ok / 4 refused_compression / 3 refused_other",
+  "full_pak_census": {
+    "members": 245,
+    "type3": 11381,
+    "decoded_ok": 0,
+    "refused_compression": 10234,
+    "refused_other": 1147
+  },
+  "implemented_gaps": {
+    "explicit_format_dispatch": "PASS",
+    "track_bounds_fail_closed": "PASS",
+    "rphanim_parent_accumulation": "PASS",
+    "unknown_hanim_node_refusal": "PASS",
+    "hierarchy_cycle_refusal": "PASS"
+  },
+  "gpu": {
+    "policy": "diagnostic_native_vif_unlit_raw_rgba8",
+    "armory_drawn": 903,
+    "ashrah_rest_drawn": 768,
+    "ashrah_posed_drawn": 791,
+    "ashrah_diff_pixels": 997,
+    "authentic_keyframe_t0_t1": "OPEN",
+    "posed_frame_is_manual": true
+  },
+  "gates": {
+    "run_check_all": "23/23",
+    "run_check_headless": "23/23",
+    "run_check_negative": "23/23",
+    "combined_gpu": "PASS",
+    "sync_verify": "PASS"
+  },
+  "ledger": {
+    "verified_owners": 20,
+    "transformed": 2,
+    "native": 236
+  },
+  "remaining_gaps": [
+    "exact Midway compressed keyframe expansion/evaluator",
+    "ASHRAH_DAM name_len=0 proof",
+    "CodeWarrior 1b34c0/1b44xx-1b47xx source matching",
+    "authentic Ashrah default ASHRAH_000 t0/t1 GPU displacement",
+    "8+ hardened animation falsification defects",
+    "whole-game native acceptance"
+  ]
+}

@@ -7,7 +7,7 @@
 
 ![Porting Progress](progress.svg)
 
-**Verified Fork Commit**: [`74525f2f`](https://github.com/nahshongraham97/ps2-native-recomp/commit/74525f2fd157f21f9c2a96215922d357d23a24fa) (source and evidence checkpoint)
+**Verified Fork Commit**: [`8e5949ac`](https://github.com/nahshongraham97/ps2-native-recomp/commit/8e5949ac54091dcf96c6e60cf14680943092e16c) (SSF animation parser/gap checkpoint)
 
 ### Tier 1 · Catalogued & Classified (`research/ledger/functions.csv`)
 - Bounded ownership of 15,669 callable entries · verified-renderware 8, verified-game 12, verified-other-library 0, inferred-renderware 140, inferred-game 130, inferred-other 0, unresolved 15,379.
@@ -45,6 +45,8 @@
 ### Xbox Reference (`default.xbe` — read-only identification and comparison; no completion percentage)
 - **Reference Catalog**: **22,579** `default.xbe` routines inspected (`21,321` in non-XONLINE candidate set, `0` donor-credited, `51` role-mapped candidates). Read-only library identification and measured Xbox-versus-PS2 capability comparisons are authorized. Algorithm adoption remains limited to renderer, viewport, and HD presentation after the per-capability comparison; the owner decides the route. GS packet decoding is an interim concession only.
 <!-- PROGRESS:END -->
+
+**Superseding SSF animation checkpoint (2026-11-27):** Explicit format dispatch, track-bound rejection, RpHAnim parent-chain accumulation, unknown-node/cycle rejection, and the 245-member PAK census are implemented; Ashrah art0 remains `7 / 0 / 4 / 3`, while the full PAK sweep is `11381 type-3 / 0 decoded / 10234 refused_compression / 1147 refused_other`. The exact retail Midway keyframe expansion/evaluator, CodeWarrior source matching, ASHRAH_DAM name_len=0 proof, authentic t0/t1 clip GPU displacement, and 8+ hardened animation falsifications remain OPEN. The combined Armory/Ashrah hidden-GPU run passes manually posed diagnostic skin frames (Armory 903 pixels; Ashrah rest/posed 768/791; 997 differences), not an authentic keyframe clip. No ledger/credit change; ownership 20 / transformed 2 / native 236 remains.
 
 **SSF/SEC component checkpoint (2026-11-26):** All 245 outer members parse; 1,992 inner SEC sections open and 20 are explicitly unsupported. The parser bounds 3,774 clumps and refuses five other candidates. An authentic Sky Temple banner and texture load through Main `225D40`, render 152 visible depth-written pixels, and reset through `125D60` with CPU/GPU owners restored. Bundle/texture/scene checks: 339/48/1,202; allocation cuts: 978; source-defect plants: 13 rejected. The full baseline, separate 23 clients, 20 earlier controls and all 16 distinct project gates pass. Rendering requires the explicit diagnostic unlit/raw-RGBA8 policy; retail material, colour, LOD and animation equivalence remain open. Ownership 20 / transformed 2 / native 236, with no new credit. Protected R192, cards, saves and the frozen branch are unchanged.
 
