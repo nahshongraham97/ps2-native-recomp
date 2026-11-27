@@ -117,6 +117,39 @@ void NativeRetailWorld::clear_scene_objects() noexcept {
     scene_objects_.clear();
 }
 
+std::optional<std::int32_t> NativeRetailWorld::add_bsp_sector(
+    RetailWorldBspSector sector,
+    RetailRendererWorldFailure& f) noexcept {
+    f = {};
+    if (sector.id == 0 || !std::isfinite(sector.bsphere_radius) || sector.bsphere_radius < 0.0f) {
+        f.kind = RetailRendererWorldError::invalid_handle;
+        f.operation = "0412 valid BSP sector id and finite bounding radius required";
+        return {};
+    }
+    if (sector.is_leaf && (sector.triangles.size() % 3) != 0) {
+        f.kind = RetailRendererWorldError::invalid_handle;
+        f.operation = "0412 BSP leaf sector triangles must be a multiple of 3";
+        return {};
+    }
+    try {
+        const auto idx = static_cast<std::int32_t>(bsp_sectors_.size());
+        bsp_sectors_.push_back(std::move(sector));
+        return idx;
+    } catch (const std::bad_alloc&) {
+        f.kind = RetailRendererWorldError::allocation;
+        f.operation = "0412 BSP sector allocation";
+    } catch (...) {
+        f.kind = RetailRendererWorldError::native_exception;
+        f.operation = "0412 BSP sector insertion";
+    }
+    return {};
+}
+
+void NativeRetailWorld::clear_bsp_sectors() noexcept {
+    bsp_sectors_.clear();
+    bsp_root_sector_ = -1;
+}
+
 struct NativeRetailWorldRecord final {
     std::shared_ptr<NativeRetailWorld> world;
     bool destroying{false};

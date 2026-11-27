@@ -32,7 +32,7 @@ RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState& main,
         f.operation = cf.operation;
         return RetailStartupGate::native_failure;
     }
-    if (!core->world_module(cf)) {
+    if (!core->world_module(cf) || !core->textures(cf) || !core->materials(cf)) {
         f.kind = StartupError::memory_owners;
         f.operation = cf.operation;
         return RetailStartupGate::native_failure;

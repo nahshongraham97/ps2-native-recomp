@@ -766,6 +766,132 @@ void camera_gpu_target_cases(const std::filesystem::path& root,const std::option
   gpu_check(glIsTexture(cached_tex)==GL_FALSE&&world_ptr->gpu_texture_cache().empty(),
             "release_gpu_resources deleted GL texture handle with zero leaks");
 
+  // TXD (0x0016/0x0015) + RpWorld BSP (0x000B/0x000A/0x0009) ingestion and sector-level culling.
+  std::vector<std::byte> bad_txd;
+  push_u32(bad_txd,0x0016u);push_u32(bad_txd,8u);push_u32(bad_txd,0x1803FFFFu);
+  std::vector<std::byte> bad_txd_st;push_u16(bad_txd_st,1u);push_u16(bad_txd_st,0u);
+  auto bad_txd_hdr=wrap_chunk(0x0001u,bad_txd_st);
+  // Claim 100x100 pixels in a 90-byte struct to trigger bounds check failure.
+  std::vector<std::byte> bad_tn(90u,std::byte{0});
+  std::uint16_t bw=100,bh=100;
+  std::memcpy(bad_tn.data()+80,&bw,2);std::memcpy(bad_tn.data()+82,&bh,2);
+  bad_tn[84]=std::byte{32};
+  auto bad_tn_chunk=wrap_chunk(0x0015u,wrap_chunk(0x0001u,bad_tn));
+  std::vector<std::byte> bad_txd_body;
+  bad_txd_body.insert(bad_txd_body.end(),bad_txd_hdr.begin(),bad_txd_hdr.end());
+  bad_txd_body.insert(bad_txd_body.end(),bad_tn_chunk.begin(),bad_tn_chunk.end());
+  auto full_bad_txd=wrap_chunk(0x0016u,bad_txd_body);
+  const auto tex_count_before=tex_mod->active_count();
+  gpu_check(!ingest_rw_tex_dictionary_stream(full_bad_txd,*x.rasters,*tex_mod,rtf)&&
+            tex_mod->active_count()==tex_count_before,
+            "malformed TXD rejected fail-closed with zero leaked textures");
+
+  // Valid TXD with 2x2 gold texture "bsp_gold".
+  std::vector<std::byte> tn_p(88u+16u,std::byte{0});
+  std::uint32_t filter_addr=0x00003301u; // nearest + clamp/clamp
+  std::memcpy(tn_p.data()+4,&filter_addr,4);
+  std::memcpy(tn_p.data()+8,"bsp_gold",8);
+  std::uint16_t gw=2,gh=2;
+  std::memcpy(tn_p.data()+80,&gw,2);std::memcpy(tn_p.data()+82,&gh,2);
+  tn_p[84]=std::byte{32};
+  for(std::size_t i=0;i<4;++i){
+   tn_p[88+i*4+0]=std::byte{255};
+   tn_p[88+i*4+1]=std::byte{220};
+   tn_p[88+i*4+2]=std::byte{0};
+   tn_p[88+i*4+3]=std::byte{255};
+  }
+  auto txd_body=bad_txd_hdr;
+  auto tn_chunk=wrap_chunk(0x0015u,wrap_chunk(0x0001u,tn_p));
+  txd_body.insert(txd_body.end(),tn_chunk.begin(),tn_chunk.end());
+  auto valid_txd=wrap_chunk(0x0016u,txd_body);
+  gpu_check(ingest_rw_tex_dictionary_stream(valid_txd,*x.rasters,*tex_mod,rtf),
+            "ingest valid TXD texture dictionary");
+  auto gold_found=tex_mod->find_texture("bsp_gold",rtf);
+  gpu_check(gold_found&&!gold_found->empty(),"TXD registered named texture bsp_gold");
+
+  // Malformed RpWorld BSP stream rejected fail-closed.
+  std::vector<std::byte> bad_world_st(52u,std::byte{0});
+  auto bad_world=wrap_chunk(0x000Bu,wrap_chunk(0x0001u,bad_world_st));
+  gpu_check(!ingest_rw_world_bsp_stream(bad_world,1000u,*mat_mod,*tex_mod,*world_ptr,rwf)&&
+            world_ptr->bsp_sectors().empty(),"empty/malformed RpWorld BSP rejected fail-closed");
+
+  // Valid RpWorld BSP: 1 PlaneSect root -> 2 AtomicSect leaves (1 visible gold, 1 culled at x=120).
+  std::vector<std::byte> bsp_tex_str;
+  for(char ch:std::string_view("bsp_gold"))bsp_tex_str.push_back(static_cast<std::byte>(ch));
+  bsp_tex_str.push_back(std::byte{0});
+  auto bsp_tex_p=wrap_chunk(0x0001u,tex_st_p);
+  auto bsp_tex_nc=wrap_chunk(0x0002u,bsp_tex_str);
+  bsp_tex_p.insert(bsp_tex_p.end(),bsp_tex_nc.begin(),bsp_tex_nc.end());
+  auto bsp_rw_tex=wrap_chunk(0x0006u,bsp_tex_p);
+  auto bsp_mat_p=wrap_chunk(0x0001u,mat_st_p);
+  bsp_mat_p.insert(bsp_mat_p.end(),bsp_rw_tex.begin(),bsp_rw_tex.end());
+  auto bsp_rw_mat=wrap_chunk(0x0007u,bsp_mat_p);
+  auto bsp_ml_p=wrap_chunk(0x0001u,ml_st_p);
+  bsp_ml_p.insert(bsp_ml_p.end(),bsp_rw_mat.begin(),bsp_rw_mat.end());
+  auto bsp_matlist=wrap_chunk(0x0008u,bsp_ml_p);
+
+  auto make_atomic_sect=[&](float ox,float oz){
+   std::vector<std::byte> as;
+   push_u32(as,0u);push_u32(as,1u);push_u32(as,3u);
+   push_f32(as,ox-1.5f);push_f32(as,-1.5f);push_f32(as,oz-0.5f);
+   push_f32(as,ox+1.5f);push_f32(as, 1.5f);push_f32(as,oz+0.5f);
+   push_u32(as,0u);push_u32(as,0u);
+   push_f32(as,ox-1.2f);push_f32(as,-1.2f);push_f32(as,oz);
+   push_f32(as,ox+1.2f);push_f32(as,-1.2f);push_f32(as,oz);
+   push_f32(as,ox+0.0f);push_f32(as, 1.2f);push_f32(as,oz);
+   push_f32(as,0.0f);push_f32(as,0.0f);
+   push_f32(as,1.0f);push_f32(as,0.0f);
+   push_f32(as,0.5f);push_f32(as,1.0f);
+   push_u16(as,0u);push_u16(as,0u);push_u16(as,1u);push_u16(as,2u);
+   return wrap_chunk(0x0009u,wrap_chunk(0x0001u,as));
+  };
+  std::vector<std::byte> ps;
+  push_u32(ps,0u);push_f32(ps,50.0f);push_u32(ps,1u);push_u32(ps,1u);push_f32(ps,0.0f);push_f32(ps,120.0f);
+  auto plane_body=wrap_chunk(0x0001u,ps);
+  auto left_sec=make_atomic_sect(0.0f,-0.25f);
+  auto right_sec=make_atomic_sect(120.0f,-0.25f);
+  plane_body.insert(plane_body.end(),left_sec.begin(),left_sec.end());
+  plane_body.insert(plane_body.end(),right_sec.begin(),right_sec.end());
+  auto root_plane=wrap_chunk(0x000Au,plane_body);
+
+  std::vector<std::byte> ws_p;
+  push_u32(ws_p,1u);
+  push_f32(ws_p,-2.0f);push_f32(ws_p,-2.0f);push_f32(ws_p,-1.0f);
+  push_f32(ws_p,125.0f);push_f32(ws_p,2.0f);push_f32(ws_p,1.0f);
+  push_u32(ws_p,2u);push_u32(ws_p,6u);push_u32(ws_p,1u);push_u32(ws_p,2u);
+  push_u32(ws_p,0u);push_u32(ws_p,0x04u);
+  auto world_body=wrap_chunk(0x0001u,ws_p);
+  world_body.insert(world_body.end(),bsp_matlist.begin(),bsp_matlist.end());
+  world_body.insert(world_body.end(),root_plane.begin(),root_plane.end());
+  auto valid_world=wrap_chunk(0x000Bu,world_body);
+
+  world_ptr->clear_scene_objects();
+  gpu_check(ingest_rw_world_bsp_stream(valid_world,1000u,*mat_mod,*tex_mod,*world_ptr,rwf),
+            "ingest valid RpWorld BSP stream");
+  auto bsp_stats=render_world_scene_frame(*x.cameras,*frames,init->primary.camera,init->primary.world_link,
+   world_ptr,{0.05f,0.05f,0.1f,1.0f},3u,true,pf,mat_mod.get(),tex_mod.get(),x.rasters.get());
+  gpu_check(bsp_stats.has_value()&&bsp_stats->total_sectors==2&&bsp_stats->visible_sectors==1&&
+            bsp_stats->culled_sectors==1&&bsp_stats->submitted_triangles==1&&bsp_stats->bound_textures>=1,
+            "BSP world render culled outside sector and rendered visible gold-textured sector");
+  gpu_check(x.cameras->begin_update(init->primary.camera,f),"rebind FBO for BSP readback");
+  glReadPixels(0,0,64,48,GL_RGBA,GL_UNSIGNED_BYTE,rgba.data());
+  glReadPixels(0,0,64,48,GL_DEPTH_COMPONENT,GL_FLOAT,depths.data());
+  a->record_diagnostic_readback(2);
+  gpu_check(x.cameras->end_update(init->primary.camera,f),"end BSP readback pass");
+  unsigned gold_pixels=0;
+  for(unsigned y=6;y<42;++y)for(unsigned xx=8;xx<56;++xx){
+   const std::size_t idx=(y*64+xx);
+   const unsigned r=rgba[idx*4+0],g=rgba[idx*4+1],b=rgba[idx*4+2];
+   if(r>200&&g>170&&b<50&&depths[idx]<0.99f)++gold_pixels;
+  }
+  gpu_check(gold_pixels>60,"BSP visible sector rendered measurable gold-textured pixels");
+  gpu_check(!world_ptr->gpu_texture_cache().empty(),"BSP cached uploaded GL texture handle");
+  const GLuint bsp_tex=static_cast<GLuint>(world_ptr->gpu_texture_cache()[0].gl_texture_id);
+  world_ptr->release_gpu_resources();
+  gpu_check(glIsTexture(bsp_tex)==GL_FALSE&&world_ptr->gpu_texture_cache().empty(),
+            "BSP release_gpu_resources deleted GL texture handle");
+  world_ptr->clear_bsp_sectors();
+
   gpu_check(detach_camera_from_world_1cf350(init->primary.world_link,world_ptr,wf),"final 1CF350 detach");
   world_ptr->clear_scene_objects();
   gpu_check(frames->destroy_leaf(*out_frame,ff)&&frames->destroy_leaf(*in_frame,ff),"destroy world scene object frames");

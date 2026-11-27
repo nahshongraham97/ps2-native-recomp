@@ -994,12 +994,437 @@ bool parse_rw_geometry(
    obj.triangles.push_back({positions[idx],uvs[idx][0],uvs[idx][1],vcols[idx]});
   }
  }
- RetailRendererWorldFailure wf;
+  RetailRendererWorldFailure wf;
  if(!world.add_scene_object(std::move(obj),wf))return false;
  created_objs.push_back(obj_id);
  return true;
 }
+
+bool parse_rw_matlist(
+ RwStreamCursor sub,
+ NativeRetailRendererMaterials& materials,
+ NativeRetailRendererTextures& textures,
+ std::vector<NativeRetailMaterialHandle>& created_mats,
+ std::vector<NativeRetailMaterialHandle>& mat_list) noexcept {
+ std::uint32_t mt=0,ml=0,mlib=0;
+ if(!sub.read_chunk(mt,ml,mlib)||mt!=0x0001u||ml<4)return false;
+ RwStreamCursor mst{sub.data.subspan(sub.pos,ml),0};
+ if(!sub.skip(ml))return false;
+ std::int32_t mcount=0;
+ if(!mst.read_i32(mcount)||mcount<0||mcount>256)return false;
+ for(std::int32_t i=0;i<mcount;++i){
+  std::int32_t idx=0;
+  if(!mst.read_i32(idx))return false;
+ }
+ while(sub.remaining()>=12&&static_cast<std::int32_t>(mat_list.size())<mcount){
+  std::uint32_t mct=0,mcl=0,mclib=0;
+  if(!sub.read_chunk(mct,mcl,mclib))return false;
+  RwStreamCursor mc{sub.data.subspan(sub.pos,mcl),0};
+  if(!sub.skip(mcl))return false;
+  if(mct==0x0007u){
+   NativeRetailMaterialHandle mh;
+   if(!parse_rw_material(mc,materials,textures,mh))return false;
+   created_mats.push_back(mh);
+   mat_list.push_back(mh);
+  }
+ }
+ return static_cast<std::int32_t>(mat_list.size())==mcount;
+}
+
+bool parse_rw_bsp_node(
+ RwStreamCursor cur,
+ std::uint32_t node_type,
+ std::uint64_t& next_sector_id,
+ const std::vector<NativeRetailMaterialHandle>& mat_list,
+ std::uint32_t world_flags,
+ NativeRetailWorld& world,
+ std::int32_t& out_index) noexcept {
+ if(node_type==0x0009u){
+  std::uint32_t st=0,sl=0,slib=0;
+  if(!cur.read_chunk(st,sl,slib)||st!=0x0001u||sl<44)return false;
+  RwStreamCursor s{cur.data.subspan(cur.pos,sl),0};
+  if(!cur.skip(sl))return false;
+  std::int32_t mat_base=0,num_tris=0,num_verts=0;
+  float bmin[3]{},bmax[3]{};
+  std::uint32_t coll_present=0,unused=0;
+  if(!s.read_i32(mat_base)||!s.read_i32(num_tris)||!s.read_i32(num_verts))return false;
+  if(num_tris<0||num_verts<0||num_tris>65536||num_verts>65536||mat_base<0)return false;
+  for(int i=0;i<3;++i)if(!s.read_f32(bmin[i]))return false;
+  for(int i=0;i<3;++i)if(!s.read_f32(bmax[i]))return false;
+  if(bmin[0]>bmax[0]||bmin[1]>bmax[1]||bmin[2]>bmax[2])return false;
+  if(!s.read_u32(coll_present)||!s.read_u32(unused))return false;
+
+  std::vector<RetailRendererPoint3> positions(static_cast<std::size_t>(num_verts));
+  for(std::int32_t i=0;i<num_verts;++i){
+   auto& p=positions[static_cast<std::size_t>(i)];
+   if(!s.read_f32(p.x)||!s.read_f32(p.y)||!s.read_f32(p.z))return false;
+  }
+  if(world_flags&0x20u){
+   if(!s.skip(static_cast<std::size_t>(num_verts)*3u))return false;
+  }
+  std::vector<std::array<float,4>> vcols(static_cast<std::size_t>(num_verts),{1.0f,1.0f,1.0f,1.0f});
+  if(world_flags&0x08u){
+   for(std::int32_t i=0;i<num_verts;++i){
+    std::uint8_t c[4]{};
+    if(!s.read_bytes(c,4))return false;
+    vcols[static_cast<std::size_t>(i)]={c[0]/255.0f,c[1]/255.0f,c[2]/255.0f,c[3]/255.0f};
+   }
+  }
+  std::vector<std::array<float,2>> uvs(static_cast<std::size_t>(num_verts),{0.0f,0.0f});
+  if((world_flags&0x04u)||(world_flags&0x80u)){
+   for(std::int32_t i=0;i<num_verts;++i){
+    float u=0.0f,v=0.0f;
+    if(!s.read_f32(u)||!s.read_f32(v))return false;
+    uvs[static_cast<std::size_t>(i)]={u,v};
+   }
+  }
+  RetailWorldBspSector leaf;
+  leaf.id=next_sector_id++;
+  leaf.is_leaf=true;
+  leaf.bbox_min={bmin[0],bmin[1],bmin[2]};
+  leaf.bbox_max={bmax[0],bmax[1],bmax[2]};
+  leaf.bsphere_center={(bmin[0]+bmax[0])*0.5f,(bmin[1]+bmax[1])*0.5f,(bmin[2]+bmax[2])*0.5f};
+  const float dx=bmax[0]-bmin[0],dy=bmax[1]-bmin[1],dz=bmax[2]-bmin[2];
+  leaf.bsphere_radius=0.5f*std::sqrt(dx*dx+dy*dy+dz*dz);
+  leaf.triangles.reserve(static_cast<std::size_t>(num_tris)*3u);
+  for(std::int32_t i=0;i<num_tris;++i){
+   std::uint16_t mat_id=0,v0=0,v1=0,v2=0;
+   if(!s.read_u16(mat_id)||!s.read_u16(v0)||!s.read_u16(v1)||!s.read_u16(v2))return false;
+   if(v0>=num_verts||v1>=num_verts||v2>=num_verts)return false;
+   if(!mat_list.empty()){
+    const std::size_t abs_mat=static_cast<std::size_t>(mat_base)+static_cast<std::size_t>(mat_id);
+    if(abs_mat>=mat_list.size())return false;
+    if(leaf.material.empty())leaf.material=mat_list[abs_mat];
+   }
+   for(std::uint16_t vi:{v0,v1,v2}){
+    const std::size_t idx=static_cast<std::size_t>(vi);
+    leaf.triangles.push_back({positions[idx],uvs[idx][0],uvs[idx][1],vcols[idx]});
+   }
+  }
+  RetailRendererWorldFailure wf;
+  auto idx_opt=world.add_bsp_sector(std::move(leaf),wf);
+  if(!idx_opt)return false;
+  out_index=*idx_opt;
+  return true;
+ }
+ if(node_type==0x000Au){
+  std::uint32_t st=0,sl=0,slib=0;
+  if(!cur.read_chunk(st,sl,slib)||st!=0x0001u||sl<24)return false;
+  RwStreamCursor s{cur.data.subspan(cur.pos,sl),0};
+  if(!cur.skip(sl))return false;
+  std::uint32_t split_type=0,left_is_atomic=0,right_is_atomic=0;
+  float split_val=0.0f,left_val=0.0f,right_val=0.0f;
+  if(!s.read_u32(split_type)||!s.read_f32(split_val)||!s.read_u32(left_is_atomic)||
+    !s.read_u32(right_is_atomic)||!s.read_f32(left_val)||!s.read_f32(right_val))return false;
+
+  std::uint32_t lt=0,ll=0,llib=0;
+  if(!cur.read_chunk(lt,ll,llib)||(lt!=0x0009u&&lt!=0x000Au))return false;
+  RwStreamCursor lcur{cur.data.subspan(cur.pos,ll),0};
+  if(!cur.skip(ll))return false;
+  std::int32_t left_idx=-1;
+  if(!parse_rw_bsp_node(lcur,lt,next_sector_id,mat_list,world_flags,world,left_idx))return false;
+
+  std::uint32_t rt=0,rl=0,rlib=0;
+  if(!cur.read_chunk(rt,rl,rlib)||(rt!=0x0009u&&rt!=0x000Au))return false;
+  RwStreamCursor rcur{cur.data.subspan(cur.pos,rl),0};
+  if(!cur.skip(rl))return false;
+  std::int32_t right_idx=-1;
+  if(!parse_rw_bsp_node(rcur,rt,next_sector_id,mat_list,world_flags,world,right_idx))return false;
+
+  const auto& secs=world.bsp_sectors();
+  const auto& lc=secs[static_cast<std::size_t>(left_idx)];
+  const auto& rc=secs[static_cast<std::size_t>(right_idx)];
+  RetailWorldBspSector plane;
+  plane.id=next_sector_id++;
+  plane.is_leaf=false;
+  plane.split_type=split_type;
+  plane.split_value=split_val;
+  plane.left_child=left_idx;
+  plane.right_child=right_idx;
+  plane.bbox_min={
+   std::min(lc.bbox_min.x,rc.bbox_min.x),
+   std::min(lc.bbox_min.y,rc.bbox_min.y),
+   std::min(lc.bbox_min.z,rc.bbox_min.z)
+  };
+  plane.bbox_max={
+   std::max(lc.bbox_max.x,rc.bbox_max.x),
+   std::max(lc.bbox_max.y,rc.bbox_max.y),
+   std::max(lc.bbox_max.z,rc.bbox_max.z)
+  };
+  plane.bsphere_center={
+   (plane.bbox_min.x+plane.bbox_max.x)*0.5f,
+   (plane.bbox_min.y+plane.bbox_max.y)*0.5f,
+   (plane.bbox_min.z+plane.bbox_max.z)*0.5f
+  };
+  const float dx=plane.bbox_max.x-plane.bbox_min.x;
+  const float dy=plane.bbox_max.y-plane.bbox_min.y;
+  const float dz=plane.bbox_max.z-plane.bbox_min.z;
+  plane.bsphere_radius=0.5f*std::sqrt(dx*dx+dy*dy+dz*dz);
+  RetailRendererWorldFailure wf;
+  auto idx_opt=world.add_bsp_sector(std::move(plane),wf);
+  if(!idx_opt)return false;
+  out_index=*idx_opt;
+  return true;
+ }
+ return false;
+}
+
+void resolve_material_and_bind_texture(
+ const NativeRetailMaterialHandle& material,
+ NativeRetailWorld& world,
+ NativeRetailRendererMaterials* materials,
+ NativeRetailRendererTextures* textures,
+ NativeRetailRendererRasters* rasters,
+ std::array<float,4>& out_mat_color,
+ std::size_t& bound_textures) noexcept {
+ out_mat_color={1.0f,1.0f,1.0f,1.0f};
+#ifdef _WIN32
+ GLuint gl_tex=0;
+ if(!material.empty()&&materials!=nullptr){
+  RetailRendererMaterialFailure mf;
+  if(const auto mo=materials->observe(material,mf)){
+   out_mat_color={mo->color.r/255.0f,mo->color.g/255.0f,mo->color.b/255.0f,mo->color.a/255.0f};
+  }
+  if(textures!=nullptr&&rasters!=nullptr){
+   if(const auto th=materials->get_texture(material,mf);th&&!th->empty()){
+    for(const auto& entry:world.gpu_texture_cache()){
+     if(entry.texture.same_identity(*th)){gl_tex=static_cast<GLuint>(entry.gl_texture_id);break;}
+    }
+    if(gl_tex==0){
+     RetailRendererTextureFailure tf;
+     RetailRendererRasterFailure rf;
+     const auto rh=textures->raster(*th,tf);
+     const auto tobs=textures->observe(*th,tf);
+     if(rh&&!rh->empty()){
+      const auto robs=rasters->observe(*rh,rf);
+      auto pixels=rasters->lock_pixels(*rh,rf);
+      if(robs&&pixels&&robs->description.width>0&&robs->description.height>0&&
+        pixels->size()>=static_cast<std::size_t>(robs->description.width)*static_cast<std::size_t>(robs->description.height)*4u){
+       glGenTextures(1,&gl_tex);
+       if(gl_tex!=0){
+        glBindTexture(GL_TEXTURE_2D,gl_tex);
+        const GLint filter_gl=(tobs&&tobs->filter==RetailRendererTextureFilter::nearest)?GL_NEAREST:GL_LINEAR;
+        const GLint wrap_u=(tobs&&tobs->address_u==RetailRendererTextureAddress::clamp)?0x812F:GL_REPEAT;
+        const GLint wrap_v=(tobs&&tobs->address_v==RetailRendererTextureAddress::clamp)?0x812F:GL_REPEAT;
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,filter_gl);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,filter_gl);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,wrap_u);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,wrap_v);
+        glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,robs->description.width,robs->description.height,0,
+         GL_RGBA,GL_UNSIGNED_BYTE,pixels->data());
+        try{world.gpu_texture_cache().push_back({*th,static_cast<std::uint32_t>(gl_tex)});}catch(...){}
+       }
+      }
+      (void)rasters->unlock_pixels(*rh,rf);
+     }
+    }
+   }
+  }
+ }
+ if(gl_tex!=0){
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D,gl_tex);
+  ++bound_textures;
+ }else{
+  glDisable(GL_TEXTURE_2D);
+ }
+#else
+ (void)material;(void)world;(void)materials;(void)textures;(void)rasters;(void)bound_textures;
+#endif
+}
 } // namespace
+
+bool ingest_rw_tex_dictionary_stream(
+ std::span<const std::byte> stream_bytes,
+ NativeRetailRendererRasters& rasters,
+ NativeRetailRendererTextures& textures,
+ RetailRendererTextureFailure& failure) noexcept {
+ failure={};
+ if(stream_bytes.size()<12){
+  failure.kind=RetailRendererTextureError::invalid_handle;
+  failure.operation="TXD stream requires 12-byte chunk header";
+  return false;
+ }
+ RwStreamCursor cur{stream_bytes,0};
+ std::uint32_t type=0,len=0,lib=0;
+ if(!cur.read_chunk(type,len,lib)||type!=0x0016u){
+  failure.kind=RetailRendererTextureError::invalid_handle;
+  failure.operation="TXD stream requires rwID_TEXDICTIONARY (0x0016) root chunk";
+  return false;
+ }
+ RwStreamCursor body{cur.data.subspan(cur.pos,len),0};
+ std::uint32_t st=0,sl=0,slib=0;
+ if(!body.read_chunk(st,sl,slib)||st!=0x0001u||sl<4){
+  failure.kind=RetailRendererTextureError::invalid_handle;
+  failure.operation="TXD stream header struct missing or truncated";
+  return false;
+ }
+ RwStreamCursor s{body.data.subspan(body.pos,sl),0};
+ if(!body.skip(sl))return false;
+ std::uint16_t count=0,device_id=0;
+ if(!s.read_u16(count)||!s.read_u16(device_id)||count>1024){
+  failure.kind=RetailRendererTextureError::invalid_handle;
+  failure.operation="TXD texture count invalid";
+  return false;
+ }
+
+ std::vector<NativeRetailTextureHandle> created_textures;
+ std::vector<NativeRetailRasterHandle> created_rasters;
+ auto rollback=[&]()noexcept{
+  RetailRendererTextureFailure tf;
+  for(const auto& th:created_textures)(void)textures.destroy_texture(th,tf);
+  RetailRendererRasterFailure rf;
+  for(const auto& rh:created_rasters)(void)rasters.destroy_raster(rh,rf);
+ };
+
+ std::uint16_t parsed=0;
+ while(body.remaining()>=12&&parsed<count){
+  std::uint32_t ct=0,cl=0,clib=0;
+  if(!body.read_chunk(ct,cl,clib)){
+   rollback();failure.kind=RetailRendererTextureError::invalid_handle;failure.operation="TXD child chunk truncated";return false;
+  }
+  RwStreamCursor cbody{body.data.subspan(body.pos,cl),0};
+  if(!body.skip(cl))return false;
+  if(ct!=0x0015u)continue;
+
+  std::uint32_t nt=0,nl=0,nlib=0;
+  if(!cbody.read_chunk(nt,nl,nlib)||nt!=0x0001u||nl<88){
+   rollback();failure.kind=RetailRendererTextureError::invalid_handle;failure.operation="TXD rwID_TEXTURENATIVE struct truncated";return false;
+  }
+  RwStreamCursor nb{cbody.data.subspan(cbody.pos,nl),0};
+  if(!cbody.skip(nl))return false;
+
+  std::uint32_t platform=0,filter_addr=0,fmt=0,has_alpha=0;
+  char name_buf[33]{},mask_buf[33]{};
+  std::uint16_t width=0,height=0;
+  std::uint8_t depth=0,mips=0,rtype=0,comp=0;
+  if(!nb.read_u32(platform)||!nb.read_u32(filter_addr)||
+    !nb.read_bytes(name_buf,32)||!nb.read_bytes(mask_buf,32)||
+    !nb.read_u32(fmt)||!nb.read_u32(has_alpha)||
+    !nb.read_u16(width)||!nb.read_u16(height)||
+    !nb.read_bytes(&depth,1)||!nb.read_bytes(&mips,1)||!nb.read_bytes(&rtype,1)||!nb.read_bytes(&comp,1)){
+   rollback();failure.kind=RetailRendererTextureError::invalid_handle;failure.operation="TXD texture header fields truncated";return false;
+  }
+  if(width==0||height==0||width>4096||height>4096||depth!=32){
+   rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD texture dimensions/depth invalid";return false;
+  }
+  const std::size_t pixel_bytes=static_cast<std::size_t>(width)*static_cast<std::size_t>(height)*4u;
+  if(nb.remaining()<pixel_bytes){
+   rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD texture pixel payload truncated";return false;
+  }
+
+  RetailRendererRasterFailure rf;
+  auto rh=rasters.create_raster({static_cast<std::int32_t>(width),static_cast<std::int32_t>(height),32,4u,0x0500u,0x0500u},rf);
+  if(!rh){
+   rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation=rf.operation;return false;
+  }
+  created_rasters.push_back(*rh);
+  auto locked=rasters.lock_pixels(*rh,rf);
+  if(!locked||locked->size()<pixel_bytes){
+   rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD raster pixel lock failed";return false;
+  }
+  if(!nb.read_bytes(locked->data(),pixel_bytes)){
+   (void)rasters.unlock_pixels(*rh,rf);
+   rollback();failure.kind=RetailRendererTextureError::invalid_raster;failure.operation="TXD pixel copy failed";return false;
+  }
+  (void)rasters.unlock_pixels(*rh,rf);
+
+  const auto filter=static_cast<RetailRendererTextureFilter>(filter_addr&0xFFu);
+  const auto addr_u=static_cast<RetailRendererTextureAddress>((filter_addr>>8u)&0x0Fu);
+  const auto addr_v=static_cast<RetailRendererTextureAddress>((filter_addr>>12u)&0x0Fu);
+  RetailRendererTextureDescription tdesc{
+   std::string(name_buf),std::string(mask_buf),
+   filter==RetailRendererTextureFilter::none?RetailRendererTextureFilter::linear:filter,
+   addr_u==static_cast<RetailRendererTextureAddress>(0)?RetailRendererTextureAddress::wrap:addr_u,
+   addr_v==static_cast<RetailRendererTextureAddress>(0)?RetailRendererTextureAddress::wrap:addr_v
+  };
+  auto th=textures.create_texture(std::move(tdesc),*rh,failure);
+  if(!th){
+   rollback();return false;
+  }
+  created_textures.push_back(*th);
+  ++parsed;
+ }
+ if(parsed!=count){
+  rollback();failure.kind=RetailRendererTextureError::invalid_handle;failure.operation="TXD stream ended before declared texture count";return false;
+ }
+ return true;
+}
+
+bool ingest_rw_world_bsp_stream(
+ std::span<const std::byte> stream_bytes,
+ std::uint64_t base_sector_id,
+ NativeRetailRendererMaterials& materials,
+ NativeRetailRendererTextures& textures,
+ NativeRetailWorld& world,
+ RetailRendererWorldFailure& failure) noexcept {
+ failure={};
+ if(base_sector_id==0||stream_bytes.size()<12){
+  failure.kind=RetailRendererWorldError::invalid_handle;
+  failure.operation="RW world stream requires non-zero base_sector_id and 12-byte chunk header";
+  return false;
+ }
+ RwStreamCursor cur{stream_bytes,0};
+ std::uint32_t type=0,len=0,lib=0;
+ if(!cur.read_chunk(type,len,lib)||type!=0x000Bu){
+  failure.kind=RetailRendererWorldError::invalid_handle;
+  failure.operation="RW world stream requires rwID_WORLD (0x000B) root chunk";
+  return false;
+ }
+ RwStreamCursor body{cur.data.subspan(cur.pos,len),0};
+ std::uint32_t st=0,sl=0,slib=0;
+ if(!body.read_chunk(st,sl,slib)||st!=0x0001u||sl<52){
+  failure.kind=RetailRendererWorldError::invalid_handle;
+  failure.operation="RW world struct missing or truncated";
+  return false;
+ }
+ RwStreamCursor ws{body.data.subspan(body.pos,sl),0};
+ if(!body.skip(sl))return false;
+ std::uint32_t root_is_world=0,num_tris=0,num_verts=0,num_planes=0,num_atomics=0,col_size=0,world_flags=0;
+ float wmin[3]{},wmax[3]{};
+ if(!ws.read_u32(root_is_world))return false;
+ for(int i=0;i<3;++i)if(!ws.read_f32(wmin[i])){failure.kind=RetailRendererWorldError::invalid_handle;failure.operation="RW world bbox min invalid";return false;}
+ for(int i=0;i<3;++i)if(!ws.read_f32(wmax[i])){failure.kind=RetailRendererWorldError::invalid_handle;failure.operation="RW world bbox max invalid";return false;}
+ if(!ws.read_u32(num_tris)||!ws.read_u32(num_verts)||!ws.read_u32(num_planes)||
+   !ws.read_u32(num_atomics)||!ws.read_u32(col_size)||!ws.read_u32(world_flags)){
+  failure.kind=RetailRendererWorldError::invalid_handle;
+  failure.operation="RW world counts truncated";
+  return false;
+ }
+
+ std::vector<NativeRetailMaterialHandle> created_mats;
+ std::vector<NativeRetailMaterialHandle> mat_list;
+ auto rollback=[&]()noexcept{
+  world.clear_bsp_sectors();
+  RetailRendererMaterialFailure mf;
+  for(const auto& mh:created_mats)(void)materials.destroy_material(mh,mf);
+ };
+
+ std::int32_t root_idx=-1;
+ std::uint64_t next_id=base_sector_id;
+ while(body.remaining()>=12){
+  std::uint32_t ct=0,cl=0,clib=0;
+  if(!body.read_chunk(ct,cl,clib)){
+   rollback();failure.kind=RetailRendererWorldError::invalid_handle;failure.operation="RW world child chunk truncated";return false;
+  }
+  RwStreamCursor cbody{body.data.subspan(body.pos,cl),0};
+  if(!body.skip(cl))return false;
+  if(ct==0x0008u){
+   if(!parse_rw_matlist(cbody,materials,textures,created_mats,mat_list)){
+    rollback();failure.kind=RetailRendererWorldError::invalid_handle;failure.operation="RW world matlist ingestion failed";return false;
+   }
+  }else if(ct==0x0009u||ct==0x000Au){
+   if(!parse_rw_bsp_node(cbody,ct,next_id,mat_list,world_flags,world,root_idx)){
+    rollback();failure.kind=RetailRendererWorldError::invalid_handle;failure.operation="RW world BSP sector ingestion failed";return false;
+   }
+  }
+ }
+ if(root_idx<0){
+  rollback();failure.kind=RetailRendererWorldError::invalid_handle;failure.operation="RW world contained no BSP sectors";return false;
+ }
+ world.set_bsp_root(root_idx);
+ return true;
+}
 
 bool ingest_rw_geometry_stream(
  std::span<const std::byte> stream_bytes,
@@ -1203,59 +1628,9 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
   ++stats.visible_objects;
 
   std::array<float,4> mat_color{1.0f,1.0f,1.0f,1.0f};
-  GLuint gl_tex=0;
-  if(!obj.material.empty()&&materials!=nullptr){
-   RetailRendererMaterialFailure mf;
-   if(const auto mo=materials->observe(obj.material,mf)){
-    mat_color={mo->color.r/255.0f,mo->color.g/255.0f,mo->color.b/255.0f,mo->color.a/255.0f};
-   }
-   if(textures!=nullptr&&rasters!=nullptr){
-    if(const auto th=materials->get_texture(obj.material,mf);th&&!th->empty()){
-     for(const auto& entry:world->gpu_texture_cache()){
-      if(entry.texture.same_identity(*th)){gl_tex=static_cast<GLuint>(entry.gl_texture_id);break;}
-     }
-#ifdef _WIN32
-     if(gl_tex==0){
-      RetailRendererTextureFailure tf;
-      RetailRendererRasterFailure rf;
-      const auto rh=textures->raster(*th,tf);
-      const auto tobs=textures->observe(*th,tf);
-      if(rh&&!rh->empty()){
-       const auto robs=rasters->observe(*rh,rf);
-       auto pixels=rasters->lock_pixels(*rh,rf);
-       if(robs&&pixels&&robs->description.width>0&&robs->description.height>0&&
-         pixels->size()>=static_cast<std::size_t>(robs->description.width)*static_cast<std::size_t>(robs->description.height)*4u){
-        glGenTextures(1,&gl_tex);
-        if(gl_tex!=0){
-         glBindTexture(GL_TEXTURE_2D,gl_tex);
-         const GLint filter_gl=(tobs&&tobs->filter==RetailRendererTextureFilter::nearest)?GL_NEAREST:GL_LINEAR;
-         const GLint wrap_u=(tobs&&tobs->address_u==RetailRendererTextureAddress::clamp)?0x812F:GL_REPEAT;
-         const GLint wrap_v=(tobs&&tobs->address_v==RetailRendererTextureAddress::clamp)?0x812F:GL_REPEAT;
-         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,filter_gl);
-         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,filter_gl);
-         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,wrap_u);
-         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,wrap_v);
-         glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,robs->description.width,robs->description.height,0,
-          GL_RGBA,GL_UNSIGNED_BYTE,pixels->data());
-         try{world->gpu_texture_cache().push_back({*th,static_cast<std::uint32_t>(gl_tex)});}catch(...){}
-        }
-       }
-       (void)rasters->unlock_pixels(*rh,rf);
-      }
-     }
-#endif
-    }
-   }
-  }
+  resolve_material_and_bind_texture(obj.material,*world,materials,textures,rasters,mat_color,stats.bound_textures);
 
 #ifdef _WIN32
-  if(gl_tex!=0){
-   glEnable(GL_TEXTURE_2D);
-   glBindTexture(GL_TEXTURE_2D,gl_tex);
-   ++stats.bound_textures;
-  }else{
-   glDisable(GL_TEXTURE_2D);
-  }
   const std::array<float,16> model_col_major={
    m.right.x,m.right.y,m.right.z,0.0f,
    m.up.x,m.up.y,m.up.z,0.0f,
@@ -1273,6 +1648,46 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
   glEnd();
 #endif
   stats.submitted_triangles+=obj.triangles.size()/3;
+ }
+
+ if(world->bsp_root_sector()>=0&&
+   static_cast<std::size_t>(world->bsp_root_sector())<world->bsp_sectors().size()){
+  const auto& sectors=world->bsp_sectors();
+  auto count_leaves=[&](auto& self,std::int32_t idx)noexcept->std::size_t{
+   if(idx<0||static_cast<std::size_t>(idx)>=sectors.size())return 0;
+   const auto& s=sectors[static_cast<std::size_t>(idx)];
+   if(s.is_leaf)return 1;
+   return self(self,s.left_child)+self(self,s.right_child);
+  };
+  auto traverse=[&](auto& self,std::int32_t idx)noexcept->void{
+   if(idx<0||static_cast<std::size_t>(idx)>=sectors.size())return;
+   const auto& s=sectors[static_cast<std::size_t>(idx)];
+   if(!sphere_in_frustum(cam_obs->frustum_planes,s.bsphere_center,s.bsphere_radius)){
+    stats.culled_sectors+=count_leaves(count_leaves,idx);
+    return;
+   }
+   if(!s.is_leaf){
+    self(self,s.left_child);
+    self(self,s.right_child);
+    return;
+   }
+   ++stats.visible_sectors;
+   std::array<float,4> sec_color{1.0f,1.0f,1.0f,1.0f};
+   resolve_material_and_bind_texture(s.material,*world,materials,textures,rasters,sec_color,stats.bound_textures);
+#ifdef _WIN32
+   glLoadMatrixf(cam_obs->view_matrix.elements.data());
+   glBegin(GL_TRIANGLES);
+   for(const auto& v:s.triangles){
+    glTexCoord2f(v.u,v.v);
+    glColor4f(v.color[0]*sec_color[0],v.color[1]*sec_color[1],v.color[2]*sec_color[2],v.color[3]*sec_color[3]);
+    glVertex3f(v.position.x,v.position.y,v.position.z);
+   }
+   glEnd();
+#endif
+   stats.submitted_triangles+=s.triangles.size()/3;
+  };
+  stats.total_sectors=count_leaves(count_leaves,world->bsp_root_sector());
+  traverse(traverse,world->bsp_root_sector());
  }
 
 #ifdef _WIN32

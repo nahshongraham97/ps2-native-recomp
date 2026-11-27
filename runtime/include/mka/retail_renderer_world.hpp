@@ -92,6 +92,21 @@ struct RetailWorldGpuTextureEntry {
     std::uint32_t gl_texture_id{0};
 };
 
+struct RetailWorldBspSector {
+    std::uint64_t id{0};
+    bool is_leaf{true};
+    std::uint32_t split_type{0};
+    float split_value{0.0f};
+    std::int32_t left_child{-1};
+    std::int32_t right_child{-1};
+    RetailRendererPoint3 bbox_min{};
+    RetailRendererPoint3 bbox_max{};
+    RetailRendererPoint3 bsphere_center{};
+    float bsphere_radius{0.0f};
+    std::vector<RetailWorldTriangleVertex> triangles;
+    NativeRetailMaterialHandle material;
+};
+
 class NativeRetailWorld final : public NativeRetailRenderWorld {
 public:
     ~NativeRetailWorld() override;
@@ -100,6 +115,11 @@ public:
     bool remove_scene_object(std::uint64_t id, RetailRendererWorldFailure& f) noexcept;
     void clear_scene_objects() noexcept;
     const std::vector<RetailWorldSceneObject>& scene_objects() const noexcept { return scene_objects_; }
+    std::optional<std::int32_t> add_bsp_sector(RetailWorldBspSector sector, RetailRendererWorldFailure& f) noexcept;
+    void set_bsp_root(std::int32_t root_index) noexcept { bsp_root_sector_ = root_index; }
+    std::int32_t bsp_root_sector() const noexcept { return bsp_root_sector_; }
+    void clear_bsp_sectors() noexcept;
+    const std::vector<RetailWorldBspSector>& bsp_sectors() const noexcept { return bsp_sectors_; }
     std::vector<RetailWorldGpuTextureEntry>& gpu_texture_cache() noexcept { return gpu_textures_; }
     const std::vector<RetailWorldGpuTextureEntry>& gpu_texture_cache() const noexcept { return gpu_textures_; }
     void release_gpu_resources() noexcept;
@@ -108,6 +128,8 @@ private:
     friend class NativeRetailRendererWorldModule;
     explicit NativeRetailWorld(const std::shared_ptr<NativeRetailGameSession>& session) noexcept;
     std::vector<RetailWorldSceneObject> scene_objects_;
+    std::vector<RetailWorldBspSector> bsp_sectors_;
+    std::int32_t bsp_root_sector_{-1};
     std::vector<RetailWorldGpuTextureEntry> gpu_textures_;
 };
 
@@ -170,9 +192,26 @@ struct RetailWorldRenderStats {
     std::size_t total_objects{};
     std::size_t visible_objects{};
     std::size_t culled_objects{};
+    std::size_t total_sectors{};
+    std::size_t visible_sectors{};
+    std::size_t culled_sectors{};
     std::size_t submitted_triangles{};
     std::size_t bound_textures{};
 };
+
+bool ingest_rw_tex_dictionary_stream(
+    std::span<const std::byte> stream_bytes,
+    NativeRetailRendererRasters& rasters,
+    NativeRetailRendererTextures& textures,
+    RetailRendererTextureFailure& failure) noexcept;
+
+bool ingest_rw_world_bsp_stream(
+    std::span<const std::byte> stream_bytes,
+    std::uint64_t base_sector_id,
+    NativeRetailRendererMaterials& materials,
+    NativeRetailRendererTextures& textures,
+    NativeRetailWorld& world,
+    RetailRendererWorldFailure& failure) noexcept;
 
 bool ingest_rw_geometry_stream(
     std::span<const std::byte> stream_bytes,
