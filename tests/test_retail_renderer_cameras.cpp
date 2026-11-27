@@ -51,7 +51,7 @@ RetailRendererCameraDepthInputs explicit_fixture_depth(){return {0,1};}
 bool fixture_construct(unsigned id,NativeRetailRendererCore& core,RetailRendererCoreFailure&){
  // Actual0406/0407 now link with the raster owner. The historical test-only
  // later0406 boundary moves to0408; actual camera-prefix lifetime checks remain.
- if(id==0x408&&later!=Later::allow){
+ if(id==0x409&&later!=Later::allow){
   RetailRendererCoreFailure cf;captured=core.camera_module(cf);check(bool(captured),"later fixture sees actual0405 owner");
   RetailRendererCameraFailure f;auto h=captured->create_base_camera(explicit_fixture_depth(),f);
   check(bool(h),"real base-camera allocation before later fixture");captured_camera=*h;
@@ -571,16 +571,16 @@ void camera_gpu_target_cases(const std::filesystem::path& root,const std::option
   RetailWorldSceneObject obj_in;
   obj_in.id=1;obj_in.frame=*in_frame;obj_in.local_center={0,0,0};obj_in.bounding_radius=2.5f;
   obj_in.triangles={
-   {{-1.5f,-1.5f,0.0f},{0.1f,1.0f,0.2f,1.0f}},
-   {{ 1.5f,-1.5f,0.0f},{0.1f,1.0f,0.2f,1.0f}},
-   {{ 0.0f, 1.5f,0.0f},{0.1f,1.0f,0.2f,1.0f}}
+   {{-1.5f,-1.5f,0.0f},0.0f,0.0f,{0.1f,1.0f,0.2f,1.0f}},
+   {{ 1.5f,-1.5f,0.0f},0.0f,0.0f,{0.1f,1.0f,0.2f,1.0f}},
+   {{ 0.0f, 1.5f,0.0f},0.0f,0.0f,{0.1f,1.0f,0.2f,1.0f}}
   };
   RetailWorldSceneObject obj_out;
   obj_out.id=2;obj_out.frame=*out_frame;obj_out.local_center={0,0,0};obj_out.bounding_radius=2.0f;
   obj_out.triangles={
-   {{-1.5f,-1.5f,0.0f},{1.0f,0.05f,0.05f,1.0f}},
-   {{ 1.5f,-1.5f,0.0f},{1.0f,0.05f,0.05f,1.0f}},
-   {{ 0.0f, 1.5f,0.0f},{1.0f,0.05f,0.05f,1.0f}}
+   {{-1.5f,-1.5f,0.0f},0.0f,0.0f,{1.0f,0.05f,0.05f,1.0f}},
+   {{ 1.5f,-1.5f,0.0f},0.0f,0.0f,{1.0f,0.05f,0.05f,1.0f}},
+   {{ 0.0f, 1.5f,0.0f},0.0f,0.0f,{1.0f,0.05f,0.05f,1.0f}}
   };
   gpu_check(world_ptr->add_scene_object(std::move(obj_in),rwf)&&
             world_ptr->add_scene_object(std::move(obj_out),rwf),
@@ -623,9 +623,155 @@ void camera_gpu_target_cases(const std::filesystem::path& root,const std::option
   gpu_check(detach_camera_from_world_1cf350(init->primary.world_link,world_ptr,wf),"1CF350 detach camera from world");
   gpu_check(!render_world_scene_frame(*x.cameras,*frames,init->primary.camera,init->primary.world_link,
    world_ptr,{0.05f,0.05f,0.1f,1.0f},3u,false,pf),"detached camera refused by render_world_scene_frame");
+
+  // Retail RenderWare geometry stream ingestion + 0408/040a material & texture binding + GL cleanup.
+  gpu_check(renderer_required::construct_core_plugin_0408(*x.core,x.native.f)&&
+            renderer_required::construct_core_plugin_040a(*x.core,x.native.f),"GPU actual 0408/040a constructors");
+  auto tex_mod=x.core->textures(x.native.f);
+  auto mat_mod=x.core->materials(x.native.f);
+  gpu_check(tex_mod&&mat_mod,"0408 texture and 040a material modules available");
+
+  RetailRendererRasterFailure rrf;
+  auto tex_raster=x.rasters->create_raster({2,2,32,4,0x0500,0x0500},rrf);
+  gpu_check(bool(tex_raster),"create 2x2 RGBA8 texture raster");
+  {
+   auto px=x.rasters->lock_pixels(*tex_raster,rrf);
+   gpu_check(px&&px->size()>=16,"lock 2x2 texture pixels");
+   for(std::size_t i=0;i<4;++i){
+    (*px)[i*4+0]=std::byte{0};
+    (*px)[i*4+1]=std::byte{24};
+    (*px)[i*4+2]=std::byte{255};
+    (*px)[i*4+3]=std::byte{255};
+   }
+   gpu_check(x.rasters->unlock_pixels(*tex_raster,rrf),"unlock 2x2 texture pixels");
+  }
+  RetailRendererTextureFailure rtf;
+  auto tex_h=tex_mod->create_texture(
+   {"test_blue","",RetailRendererTextureFilter::nearest,RetailRendererTextureAddress::clamp,RetailRendererTextureAddress::clamp},
+   *tex_raster,rtf);
+  gpu_check(bool(tex_h),"create 0408 native texture bound to raster");
+
+  // Build fail-closed test streams + valid RW Clump -> GeometryList -> Geometry -> MatList -> Material -> Texture.
+  auto push_u16=[](std::vector<std::byte>& buf,std::uint16_t v){
+   const auto* p=reinterpret_cast<const std::byte*>(&v);buf.insert(buf.end(),p,p+2);
+  };
+  auto push_u32=[](std::vector<std::byte>& buf,std::uint32_t v){
+   const auto* p=reinterpret_cast<const std::byte*>(&v);buf.insert(buf.end(),p,p+4);
+  };
+  auto push_f32=[](std::vector<std::byte>& buf,float v){
+   const auto* p=reinterpret_cast<const std::byte*>(&v);buf.insert(buf.end(),p,p+4);
+  };
+  auto wrap_chunk=[&](std::uint32_t type,const std::vector<std::byte>& payload){
+   std::vector<std::byte> out;
+   push_u32(out,type);push_u32(out,static_cast<std::uint32_t>(payload.size()));push_u32(out,0x1803FFFFu);
+   out.insert(out.end(),payload.begin(),payload.end());
+   return out;
+  };
+
+  // Truncated stream must fail closed.
+  std::vector<std::byte> bad_stream;
+  push_u32(bad_stream,0x000Fu);push_u32(bad_stream,9999u);push_u32(bad_stream,0x1803FFFFu);
+  gpu_check(!ingest_rw_geometry_stream(bad_stream,500u,*frames,*mat_mod,*tex_mod,*world_ptr,{},rwf),
+            "truncated RW stream rejected fail-closed");
+
+  // Out-of-bounds vertex index stream must fail closed.
+  std::vector<std::byte> oob_st;
+  push_u32(oob_st,0x00u);push_u32(oob_st,1u);push_u32(oob_st,3u);push_u32(oob_st,1u);
+  push_u16(oob_st,1u);push_u16(oob_st,99u);push_u16(oob_st,0u);push_u16(oob_st,2u);
+  push_f32(oob_st,0.0f);push_f32(oob_st,0.0f);push_f32(oob_st,0.0f);push_f32(oob_st,1.0f);
+  push_u32(oob_st,1u);push_u32(oob_st,0u);
+  for(int i=0;i<9;++i)push_f32(oob_st,0.0f);
+  auto oob_geom=wrap_chunk(0x000Fu,wrap_chunk(0x0001u,oob_st));
+  gpu_check(!ingest_rw_geometry_stream(oob_geom,501u,*frames,*mat_mod,*tex_mod,*world_ptr,{},rwf),
+            "out-of-bounds RW vertex index rejected fail-closed");
+
+  // Build valid RW Geometry (1 blue-textured triangle in front of camera at z=-0.5).
+  std::vector<std::byte> tex_str;
+  for(char ch:std::string_view("test_blue"))tex_str.push_back(static_cast<std::byte>(ch));
+  tex_str.push_back(std::byte{0});
+  std::vector<std::byte> tex_st_p;push_u32(tex_st_p,0x00000102u);
+  auto tex_payload=wrap_chunk(0x0001u,tex_st_p);
+  auto tex_name_chunk=wrap_chunk(0x0002u,tex_str);
+  tex_payload.insert(tex_payload.end(),tex_name_chunk.begin(),tex_name_chunk.end());
+  auto rw_tex=wrap_chunk(0x0006u,tex_payload);
+
+  std::vector<std::byte> mat_st_p;
+  push_u32(mat_st_p,0u);
+  mat_st_p.push_back(std::byte{255});mat_st_p.push_back(std::byte{255});
+  mat_st_p.push_back(std::byte{255});mat_st_p.push_back(std::byte{255});
+  push_u32(mat_st_p,0u);push_u32(mat_st_p,1u);
+  push_f32(mat_st_p,1.0f);push_f32(mat_st_p,1.0f);push_f32(mat_st_p,1.0f);
+  auto mat_payload=wrap_chunk(0x0001u,mat_st_p);
+  mat_payload.insert(mat_payload.end(),rw_tex.begin(),rw_tex.end());
+  auto rw_mat=wrap_chunk(0x0007u,mat_payload);
+
+  std::vector<std::byte> ml_st_p;push_u32(ml_st_p,1u);push_u32(ml_st_p,0xFFFFFFFFu);
+  auto ml_payload=wrap_chunk(0x0001u,ml_st_p);
+  ml_payload.insert(ml_payload.end(),rw_mat.begin(),rw_mat.end());
+  auto rw_matlist=wrap_chunk(0x0008u,ml_payload);
+
+  std::vector<std::byte> geom_st_p;
+  push_u32(geom_st_p,0x04u);push_u32(geom_st_p,1u);push_u32(geom_st_p,3u);push_u32(geom_st_p,1u);
+  push_f32(geom_st_p,0.0f);push_f32(geom_st_p,0.0f);
+  push_f32(geom_st_p,1.0f);push_f32(geom_st_p,0.0f);
+  push_f32(geom_st_p,0.5f);push_f32(geom_st_p,1.0f);
+  push_u16(geom_st_p,1u);push_u16(geom_st_p,0u);push_u16(geom_st_p,0u);push_u16(geom_st_p,2u);
+  push_f32(geom_st_p,0.0f);push_f32(geom_st_p,0.0f);push_f32(geom_st_p,-0.5f);push_f32(geom_st_p,2.0f);
+  push_u32(geom_st_p,1u);push_u32(geom_st_p,0u);
+  push_f32(geom_st_p,-1.2f);push_f32(geom_st_p,-1.2f);push_f32(geom_st_p,-0.5f);
+  push_f32(geom_st_p, 1.2f);push_f32(geom_st_p,-1.2f);push_f32(geom_st_p,-0.5f);
+  push_f32(geom_st_p, 0.0f);push_f32(geom_st_p, 1.2f);push_f32(geom_st_p,-0.5f);
+  auto geom_payload=wrap_chunk(0x0001u,geom_st_p);
+  geom_payload.insert(geom_payload.end(),rw_matlist.begin(),rw_matlist.end());
+  auto rw_geom=wrap_chunk(0x000Fu,geom_payload);
+  std::vector<std::byte> gl_st_p;push_u32(gl_st_p,1u);
+  auto gl_payload=wrap_chunk(0x0001u,gl_st_p);
+  gl_payload.insert(gl_payload.end(),rw_geom.begin(),rw_geom.end());
+  auto rw_clump=wrap_chunk(0x0010u,wrap_chunk(0x001Au,gl_payload));
+
+  gpu_check(ingest_rw_geometry_stream(rw_clump,100u,*frames,*mat_mod,*tex_mod,*world_ptr,{},rwf),
+            "ingest valid RW clump geometry with material/texture");
+  gpu_check(attach_camera_to_world_1cf300(*x.cameras,*frames,init->primary.camera,init->primary.world_link,world_ptr,pf),
+            "reattach camera to world for textured render");
+  glDisable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D,0);
+  glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
+  auto tex_stats=render_world_scene_frame(*x.cameras,*frames,init->primary.camera,init->primary.world_link,
+   world_ptr,{0.05f,0.05f,0.1f,1.0f},3u,true,pf,mat_mod.get(),tex_mod.get(),x.rasters.get());
+  gpu_check(tex_stats.has_value()&&tex_stats->visible_objects==2&&tex_stats->culled_objects==1&&
+            tex_stats->bound_textures>=1,"textured world scene rendered visible + ingested objects and bound texture");
+  GLint after_tex_binding=-1,after_tex_env=0;
+  glGetIntegerv(GL_TEXTURE_BINDING_2D,&after_tex_binding);
+  glGetTexEnviv(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,&after_tex_env);
+  gpu_check(!glIsEnabled(GL_TEXTURE_2D)&&after_tex_binding==0&&after_tex_env==GL_REPLACE,
+            "render_world_scene_frame restored GL_TEXTURE_2D, binding, and GL_TEXTURE_ENV_MODE");
+
+  gpu_check(x.cameras->begin_update(init->primary.camera,f),"rebind FBO for textured readback");
+  glReadPixels(0,0,64,48,GL_RGBA,GL_UNSIGNED_BYTE,rgba.data());
+  glReadPixels(0,0,64,48,GL_DEPTH_COMPONENT,GL_FLOAT,depths.data());
+  a->record_diagnostic_readback(2);
+  gpu_check(x.cameras->end_update(init->primary.camera,f),"end textured readback pass");
+  unsigned blue_pixels=0;
+  for(unsigned y=6;y<42;++y)for(unsigned xx=8;xx<56;++xx){
+   const std::size_t idx=(y*64+xx);
+   const unsigned r=rgba[idx*4+0],g=rgba[idx*4+1],b=rgba[idx*4+2];
+   if(b>200&&r<40&&g<60&&depths[idx]<0.99f)++blue_pixels;
+  }
+  gpu_check(blue_pixels>60,"ingested RW textured triangle produced measurable blue/depth pixels");
+
+  gpu_check(!world_ptr->gpu_texture_cache().empty(),"world cached uploaded GL texture handle");
+  const GLuint cached_tex=static_cast<GLuint>(world_ptr->gpu_texture_cache()[0].gl_texture_id);
+  gpu_check(glIsTexture(cached_tex)==GL_TRUE,"cached GL texture handle is live before teardown");
+  world_ptr->release_gpu_resources();
+  gpu_check(glIsTexture(cached_tex)==GL_FALSE&&world_ptr->gpu_texture_cache().empty(),
+            "release_gpu_resources deleted GL texture handle with zero leaks");
+
+  gpu_check(detach_camera_from_world_1cf350(init->primary.world_link,world_ptr,wf),"final 1CF350 detach");
   world_ptr->clear_scene_objects();
   gpu_check(frames->destroy_leaf(*out_frame,ff)&&frames->destroy_leaf(*in_frame,ff),"destroy world scene object frames");
   gpu_check(world_mod->destroy_world(*world_h,rwf),"destroy NativeRetailWorld");
+  renderer_required::destroy_core_plugin_040a(*x.core);
+  renderer_required::destroy_core_plugin_0408(*x.core);
   renderer_required::destroy_core_plugin_0412(*x.core);
 
   destroy_camera_producer_17ebb0(*x.cameras,*frames,*x.rasters,init->primary);
@@ -752,8 +898,8 @@ void camera_gpu_target_cases(const std::filesystem::path& root,const std::option
 namespace mka::retail::renderer_required {
 #define OTHER(ID,VALUE) bool construct_core_plugin_##ID(NativeRetailRendererCore& c,RetailRendererCoreFailure& f){return fixture_construct(VALUE,c,f);} \
  void destroy_core_plugin_##ID(NativeRetailRendererCore&)noexcept{fixture_destroy(VALUE);}
-OTHER(0408,0x408) OTHER(0409,0x409)
-OTHER(040a,0x40a) OTHER(040b,0x40b)
+OTHER(0409,0x409)
+OTHER(040b,0x40b)
 #undef OTHER
 // Actual0403/0404/0405/registration are linked. Unimplemented renderer math
 // must never execute in a base-camera ownership/default-value check.

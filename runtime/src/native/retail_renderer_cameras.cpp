@@ -809,6 +809,286 @@ bool detach_camera_from_world_1cf350(
  return world_link->remove_from_1cf350(world,failure).has_value();
 }
 
+namespace {
+struct RwStreamCursor {
+ std::span<const std::byte> data;
+ std::size_t pos{0};
+ std::size_t remaining() const noexcept { return pos<=data.size()?data.size()-pos:0; }
+ bool can_read(std::size_t n) const noexcept { return n<=remaining(); }
+ bool read_bytes(void* dst,std::size_t n) noexcept {
+  if(!can_read(n))return false;
+  if(n>0)std::memcpy(dst,data.data()+pos,n);
+  pos+=n;
+  return true;
+ }
+ bool skip(std::size_t n) noexcept {
+  if(!can_read(n))return false;
+  pos+=n;
+  return true;
+ }
+ bool read_u16(std::uint16_t& out) noexcept { return read_bytes(&out,sizeof(out)); }
+ bool read_u32(std::uint32_t& out) noexcept { return read_bytes(&out,sizeof(out)); }
+ bool read_i32(std::int32_t& out) noexcept { return read_bytes(&out,sizeof(out)); }
+ bool read_f32(float& out) noexcept {
+  if(!read_bytes(&out,sizeof(out)))return false;
+  return std::isfinite(out);
+ }
+ bool read_chunk(std::uint32_t& type,std::uint32_t& length,std::uint32_t& lib_id) noexcept {
+  if(!read_u32(type)||!read_u32(length)||!read_u32(lib_id))return false;
+  return length<=remaining();
+ }
+};
+
+bool parse_rw_material(
+ RwStreamCursor cur,
+ NativeRetailRendererMaterials& materials,
+ NativeRetailRendererTextures& textures,
+ NativeRetailMaterialHandle& out_mat) noexcept {
+ std::uint32_t st_type=0,st_len=0,st_lib=0;
+ if(!cur.read_chunk(st_type,st_len,st_lib)||st_type!=0x0001u||st_len<28)return false;
+ RwStreamCursor st{cur.data.subspan(cur.pos,st_len),0};
+ if(!cur.skip(st_len))return false;
+ std::uint32_t flags=0,unused=0,textured=0;
+ std::uint8_t rgba[4]{255,255,255,255};
+ float ambient=1.0f,specular=1.0f,diffuse=1.0f;
+ if(!st.read_u32(flags)||!st.read_bytes(rgba,4)||!st.read_u32(unused)||!st.read_u32(textured))return false;
+ if(!st.read_f32(ambient)||!st.read_f32(specular)||!st.read_f32(diffuse))return false;
+
+ NativeRetailTextureHandle tex_handle;
+ if(textured!=0&&cur.remaining()>=12){
+  std::uint32_t t_type=0,t_len=0,t_lib=0;
+  if(!cur.read_chunk(t_type,t_len,t_lib))return false;
+  if(t_type==0x0006u){
+   RwStreamCursor tc{cur.data.subspan(cur.pos,t_len),0};
+   if(!cur.skip(t_len))return false;
+   std::uint32_t sub_type=0,sub_len=0,sub_lib=0;
+   if(!tc.read_chunk(sub_type,sub_len,sub_lib)||sub_type!=0x0001u||!tc.skip(sub_len))return false;
+   if(tc.read_chunk(sub_type,sub_len,sub_lib)&&sub_type==0x0002u&&sub_len>0&&sub_len<=256){
+    char name_buf[257]{};
+    if(!tc.read_bytes(name_buf,sub_len))return false;
+    name_buf[sub_len]='\0';
+    RetailRendererTextureFailure tf;
+    auto found=textures.find_texture(name_buf,tf);
+    if(found&&!found->empty())tex_handle=*found;
+   }
+  }
+ }
+ RetailRendererMaterialDescription desc;
+ desc.color={rgba[0],rgba[1],rgba[2],rgba[3]};
+ desc.surface={ambient,specular,diffuse};
+ desc.texture=tex_handle;
+ RetailRendererMaterialFailure mf;
+ auto mat=materials.create_material(std::move(desc),mf);
+ if(!mat)return false;
+ out_mat=*mat;
+ return true;
+}
+
+bool parse_rw_geometry(
+ RwStreamCursor cur,
+ std::uint64_t obj_id,
+ NativeRetailRendererFrames& frames,
+ NativeRetailRendererMaterials& materials,
+ NativeRetailRendererTextures& textures,
+ NativeRetailWorld& world,
+ const NativeRetailRendererFrameHandle& parent_frame,
+ std::vector<NativeRetailMaterialHandle>& created_mats,
+ std::vector<NativeRetailRendererFrameHandle>& created_frames,
+ std::vector<std::uint64_t>& created_objs) noexcept {
+ std::uint32_t st_type=0,st_len=0,st_lib=0;
+ if(!cur.read_chunk(st_type,st_len,st_lib)||st_type!=0x0001u||st_len<16)return false;
+ RwStreamCursor st{cur.data.subspan(cur.pos,st_len),0};
+ if(!cur.skip(st_len))return false;
+
+ std::uint32_t flags=0;
+ std::int32_t num_tris=0,num_verts=0,num_morphs=0;
+ if(!st.read_u32(flags)||!st.read_i32(num_tris)||!st.read_i32(num_verts)||!st.read_i32(num_morphs))return false;
+ if(num_tris<=0||num_verts<=0||num_morphs<1||num_tris>65536||num_verts>65536)return false;
+
+ std::vector<std::array<float,4>> vcols(static_cast<std::size_t>(num_verts),{1.0f,1.0f,1.0f,1.0f});
+ if(flags&0x08u){
+  for(std::int32_t i=0;i<num_verts;++i){
+   std::uint8_t c[4]{};
+   if(!st.read_bytes(c,4))return false;
+   vcols[static_cast<std::size_t>(i)]={c[0]/255.0f,c[1]/255.0f,c[2]/255.0f,c[3]/255.0f};
+  }
+ }
+ std::vector<std::array<float,2>> uvs(static_cast<std::size_t>(num_verts),{0.0f,0.0f});
+ if((flags&0x04u)||(flags&0x80u)){
+  for(std::int32_t i=0;i<num_verts;++i){
+   float u=0.0f,v=0.0f;
+   if(!st.read_f32(u)||!st.read_f32(v))return false;
+   uvs[static_cast<std::size_t>(i)]={u,v};
+  }
+ }
+
+ struct RawTri { std::uint16_t v0,v1,mat,v2; };
+ std::vector<RawTri> tris(static_cast<std::size_t>(num_tris));
+ for(std::int32_t i=0;i<num_tris;++i){
+  auto& t=tris[static_cast<std::size_t>(i)];
+  if(!st.read_u16(t.v1)||!st.read_u16(t.v0)||!st.read_u16(t.mat)||!st.read_u16(t.v2))return false;
+  if(t.v0>=num_verts||t.v1>=num_verts||t.v2>=num_verts)return false;
+ }
+
+ float cx=0.0f,cy=0.0f,cz=0.0f,radius=0.0f;
+ std::uint32_t has_verts=0,has_norms=0;
+ if(!st.read_f32(cx)||!st.read_f32(cy)||!st.read_f32(cz)||!st.read_f32(radius)||radius<0.0f)return false;
+ if(!st.read_u32(has_verts)||!st.read_u32(has_norms)||has_verts==0)return false;
+ std::vector<RetailRendererPoint3> positions(static_cast<std::size_t>(num_verts));
+ for(std::int32_t i=0;i<num_verts;++i){
+  auto& p=positions[static_cast<std::size_t>(i)];
+  if(!st.read_f32(p.x)||!st.read_f32(p.y)||!st.read_f32(p.z))return false;
+ }
+
+ std::vector<NativeRetailMaterialHandle> mat_list;
+ while(cur.remaining()>=12){
+  std::uint32_t ctype=0,clen=0,clib=0;
+  if(!cur.read_chunk(ctype,clen,clib))return false;
+  RwStreamCursor sub{cur.data.subspan(cur.pos,clen),0};
+  if(!cur.skip(clen))return false;
+  if(ctype==0x0008u){
+   std::uint32_t mt=0,ml=0,mlib=0;
+   if(!sub.read_chunk(mt,ml,mlib)||mt!=0x0001u||ml<4)return false;
+   RwStreamCursor mst{sub.data.subspan(sub.pos,ml),0};
+   if(!sub.skip(ml))return false;
+   std::int32_t mcount=0;
+   if(!mst.read_i32(mcount)||mcount<0||mcount>256)return false;
+   for(std::int32_t i=0;i<mcount;++i){
+    std::int32_t idx=0;
+    if(!mst.read_i32(idx))return false;
+   }
+   while(sub.remaining()>=12&&static_cast<std::int32_t>(mat_list.size())<mcount){
+    std::uint32_t mct=0,mcl=0,mclib=0;
+    if(!sub.read_chunk(mct,mcl,mclib))return false;
+    RwStreamCursor mc{sub.data.subspan(sub.pos,mcl),0};
+    if(!sub.skip(mcl))return false;
+    if(mct==0x0007u){
+     NativeRetailMaterialHandle mh;
+     if(!parse_rw_material(mc,materials,textures,mh))return false;
+     created_mats.push_back(mh);
+     mat_list.push_back(mh);
+    }
+   }
+  }
+ }
+
+ RetailRendererFrameFailure ff;
+ auto frm=frames.create_base_frame(ff);
+ if(!frm)return false;
+ created_frames.push_back(*frm);
+ if(!parent_frame.empty()&&!frames.add_child(parent_frame,*frm,ff))return false;
+
+ RetailWorldSceneObject obj;
+ obj.id=obj_id;
+ obj.frame=*frm;
+ obj.local_center={cx,cy,cz};
+ obj.bounding_radius=radius;
+ obj.triangles.reserve(static_cast<std::size_t>(num_tris)*3);
+ for(const auto& t:tris){
+  if(!mat_list.empty()){
+   if(t.mat>=mat_list.size())return false;
+   if(obj.material.empty())obj.material=mat_list[t.mat];
+  }
+  for(std::uint16_t vi:{t.v0,t.v1,t.v2}){
+   const std::size_t idx=static_cast<std::size_t>(vi);
+   obj.triangles.push_back({positions[idx],uvs[idx][0],uvs[idx][1],vcols[idx]});
+  }
+ }
+ RetailRendererWorldFailure wf;
+ if(!world.add_scene_object(std::move(obj),wf))return false;
+ created_objs.push_back(obj_id);
+ return true;
+}
+} // namespace
+
+bool ingest_rw_geometry_stream(
+ std::span<const std::byte> stream_bytes,
+ std::uint64_t base_object_id,
+ NativeRetailRendererFrames& frames,
+ NativeRetailRendererMaterials& materials,
+ NativeRetailRendererTextures& textures,
+ NativeRetailWorld& world,
+ const NativeRetailRendererFrameHandle& parent_frame,
+ RetailRendererWorldFailure& failure) noexcept {
+ failure={};
+ if(base_object_id==0||stream_bytes.size()<12){
+  failure.kind=RetailRendererWorldError::invalid_handle;
+  failure.operation="RW stream requires non-zero base_object_id and valid 12-byte chunk header";
+  return false;
+ }
+ std::vector<NativeRetailMaterialHandle> created_mats;
+ std::vector<NativeRetailRendererFrameHandle> created_frames;
+ std::vector<std::uint64_t> created_objs;
+ auto rollback=[&]()noexcept{
+  RetailRendererWorldFailure wf;
+  for(auto id:created_objs)(void)world.remove_scene_object(id,wf);
+  RetailRendererFrameFailure ff;
+  for(auto it=created_frames.rbegin();it!=created_frames.rend();++it){
+   if(!parent_frame.empty())(void)frames.detach(*it,ff);
+   (void)frames.destroy_leaf(*it,ff);
+  }
+  RetailRendererMaterialFailure mf;
+  for(const auto& mh:created_mats)(void)materials.destroy_material(mh,mf);
+ };
+
+ RwStreamCursor cur{stream_bytes,0};
+ std::uint32_t type=0,len=0,lib=0;
+ if(!cur.read_chunk(type,len,lib)){
+  failure.kind=RetailRendererWorldError::invalid_handle;
+  failure.operation="RW stream truncated chunk header or length out of bounds";
+  return false;
+ }
+ RwStreamCursor body{cur.data.subspan(cur.pos,len),0};
+ std::uint64_t next_id=base_object_id;
+ if(type==0x000Fu){
+  if(!parse_rw_geometry(body,next_id++,frames,materials,textures,world,parent_frame,created_mats,created_frames,created_objs)){
+   rollback();
+   failure.kind=RetailRendererWorldError::invalid_handle;
+   failure.operation="RW geometry chunk validation/ingestion failed";
+   return false;
+  }
+  return true;
+ }
+ if(type==0x0010u){
+  bool parsed_any=false;
+  while(body.remaining()>=12){
+   std::uint32_t ct=0,cl=0,clib=0;
+   if(!body.read_chunk(ct,cl,clib)){
+    rollback();failure.kind=RetailRendererWorldError::invalid_handle;failure.operation="RW clump child chunk truncated";return false;
+   }
+   RwStreamCursor cbody{body.data.subspan(body.pos,cl),0};
+   if(!body.skip(cl))return false;
+   if(ct==0x001Au){
+    std::uint32_t gt=0,gl=0,glib=0;
+    if(!cbody.read_chunk(gt,gl,glib)||gt!=0x0001u||!cbody.skip(gl)){
+     rollback();failure.kind=RetailRendererWorldError::invalid_handle;failure.operation="RW geometry list header invalid";return false;
+    }
+    while(cbody.remaining()>=12){
+     std::uint32_t gct=0,gcl=0,gclib=0;
+     if(!cbody.read_chunk(gct,gcl,gclib)){
+      rollback();failure.kind=RetailRendererWorldError::invalid_handle;failure.operation="RW geometry list entry truncated";return false;
+     }
+     RwStreamCursor gbody{cbody.data.subspan(cbody.pos,gcl),0};
+     if(!cbody.skip(gcl))return false;
+     if(gct==0x000Fu){
+      if(!parse_rw_geometry(gbody,next_id++,frames,materials,textures,world,parent_frame,created_mats,created_frames,created_objs)){
+       rollback();failure.kind=RetailRendererWorldError::invalid_handle;failure.operation="RW clump geometry ingestion failed";return false;
+      }
+      parsed_any=true;
+     }
+    }
+   }
+  }
+  if(!parsed_any){
+   rollback();failure.kind=RetailRendererWorldError::invalid_handle;failure.operation="RW clump contained no geometry chunks";return false;
+  }
+  return true;
+ }
+ failure.kind=RetailRendererWorldError::invalid_handle;
+ failure.operation="unsupported top-level RW chunk type";
+ return false;
+}
+
 std::optional<RetailWorldRenderStats> render_world_scene_frame(
  NativeRetailRendererCameraModule& cameras,
  NativeRetailRendererFrames& frames,
@@ -818,7 +1098,10 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
  const std::array<float,4>& clear_color,
  std::uint32_t clear_flags,
  bool call_show_raster,
- RetailCameraProducerFailure& failure) noexcept {
+ RetailCameraProducerFailure& failure,
+ NativeRetailRendererMaterials* materials,
+ NativeRetailRendererTextures* textures,
+ NativeRetailRendererRasters* rasters) noexcept {
  failure={};
  if(!world_link||!world){
   failure.world={RetailCameraWorldError::missing_record,"world render requires live camera world-link and world"};
@@ -863,6 +1146,11 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
  RetailWorldRenderStats stats;
 #ifdef _WIN32
  const GLboolean prior_depth=glIsEnabled(GL_DEPTH_TEST);
+ const GLboolean prior_tex2d=glIsEnabled(GL_TEXTURE_2D);
+ GLint prior_tex_binding=0,prior_tex_env=GL_MODULATE;
+ glGetIntegerv(GL_TEXTURE_BINDING_2D,&prior_tex_binding);
+ glGetTexEnviv(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,&prior_tex_env);
+ glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
  GLint prior_depth_func=GL_LESS;
  glGetIntegerv(GL_DEPTH_FUNC,&prior_depth_func);
  GLint prior_matrix_mode=GL_MODELVIEW;
@@ -883,6 +1171,8 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
   if(!f_obs){
    failure.operation=failure.frame.operation;
 #ifdef _WIN32
+   glBindTexture(GL_TEXTURE_2D,static_cast<GLuint>(prior_tex_binding));
+   if(!prior_tex2d)glDisable(GL_TEXTURE_2D);else glEnable(GL_TEXTURE_2D);
    glMatrixMode(GL_MODELVIEW);glPopMatrix();
    glMatrixMode(GL_PROJECTION);glPopMatrix();
    glMatrixMode(static_cast<GLenum>(prior_matrix_mode));
@@ -911,7 +1201,61 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
    continue;
   }
   ++stats.visible_objects;
+
+  std::array<float,4> mat_color{1.0f,1.0f,1.0f,1.0f};
+  GLuint gl_tex=0;
+  if(!obj.material.empty()&&materials!=nullptr){
+   RetailRendererMaterialFailure mf;
+   if(const auto mo=materials->observe(obj.material,mf)){
+    mat_color={mo->color.r/255.0f,mo->color.g/255.0f,mo->color.b/255.0f,mo->color.a/255.0f};
+   }
+   if(textures!=nullptr&&rasters!=nullptr){
+    if(const auto th=materials->get_texture(obj.material,mf);th&&!th->empty()){
+     for(const auto& entry:world->gpu_texture_cache()){
+      if(entry.texture.same_identity(*th)){gl_tex=static_cast<GLuint>(entry.gl_texture_id);break;}
+     }
 #ifdef _WIN32
+     if(gl_tex==0){
+      RetailRendererTextureFailure tf;
+      RetailRendererRasterFailure rf;
+      const auto rh=textures->raster(*th,tf);
+      const auto tobs=textures->observe(*th,tf);
+      if(rh&&!rh->empty()){
+       const auto robs=rasters->observe(*rh,rf);
+       auto pixels=rasters->lock_pixels(*rh,rf);
+       if(robs&&pixels&&robs->description.width>0&&robs->description.height>0&&
+         pixels->size()>=static_cast<std::size_t>(robs->description.width)*static_cast<std::size_t>(robs->description.height)*4u){
+        glGenTextures(1,&gl_tex);
+        if(gl_tex!=0){
+         glBindTexture(GL_TEXTURE_2D,gl_tex);
+         const GLint filter_gl=(tobs&&tobs->filter==RetailRendererTextureFilter::nearest)?GL_NEAREST:GL_LINEAR;
+         const GLint wrap_u=(tobs&&tobs->address_u==RetailRendererTextureAddress::clamp)?0x812F:GL_REPEAT;
+         const GLint wrap_v=(tobs&&tobs->address_v==RetailRendererTextureAddress::clamp)?0x812F:GL_REPEAT;
+         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,filter_gl);
+         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,filter_gl);
+         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,wrap_u);
+         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,wrap_v);
+         glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,robs->description.width,robs->description.height,0,
+          GL_RGBA,GL_UNSIGNED_BYTE,pixels->data());
+         try{world->gpu_texture_cache().push_back({*th,static_cast<std::uint32_t>(gl_tex)});}catch(...){}
+        }
+       }
+       (void)rasters->unlock_pixels(*rh,rf);
+      }
+     }
+#endif
+    }
+   }
+  }
+
+#ifdef _WIN32
+  if(gl_tex!=0){
+   glEnable(GL_TEXTURE_2D);
+   glBindTexture(GL_TEXTURE_2D,gl_tex);
+   ++stats.bound_textures;
+  }else{
+   glDisable(GL_TEXTURE_2D);
+  }
   const std::array<float,16> model_col_major={
    m.right.x,m.right.y,m.right.z,0.0f,
    m.up.x,m.up.y,m.up.z,0.0f,
@@ -922,7 +1266,8 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
   glMultMatrixf(model_col_major.data());
   glBegin(GL_TRIANGLES);
   for(const auto& v:obj.triangles){
-   glColor4f(v.color[0],v.color[1],v.color[2],v.color[3]);
+   glTexCoord2f(v.u,v.v);
+   glColor4f(v.color[0]*mat_color[0],v.color[1]*mat_color[1],v.color[2]*mat_color[2],v.color[3]*mat_color[3]);
    glVertex3f(v.position.x,v.position.y,v.position.z);
   }
   glEnd();
@@ -931,6 +1276,9 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
  }
 
 #ifdef _WIN32
+ glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,prior_tex_env);
+ glBindTexture(GL_TEXTURE_2D,static_cast<GLuint>(prior_tex_binding));
+ if(!prior_tex2d)glDisable(GL_TEXTURE_2D);else glEnable(GL_TEXTURE_2D);
  glMatrixMode(GL_MODELVIEW);
  glPopMatrix();
  glMatrixMode(GL_PROJECTION);

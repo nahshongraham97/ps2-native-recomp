@@ -1,6 +1,16 @@
 #include "mka/retail_renderer_world.hpp"
 #include "mka/retail_game_session.hpp"
 #include "retail_main_control.hpp"
+#ifdef _WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#include <GL/gl.h>
+#endif
 #include <algorithm>
 #include <cmath>
 #include <cstring>
@@ -44,7 +54,23 @@ NativeRetailWorld::NativeRetailWorld(
     const std::shared_ptr<NativeRetailGameSession>& session) noexcept
     : NativeRetailRenderWorld(session) {}
 
-NativeRetailWorld::~NativeRetailWorld() = default;
+NativeRetailWorld::~NativeRetailWorld() {
+    release_gpu_resources();
+}
+
+void NativeRetailWorld::release_gpu_resources() noexcept {
+#ifdef _WIN32
+    if (!gpu_textures_.empty() && wglGetCurrentContext() != nullptr) {
+        for (const auto& entry : gpu_textures_) {
+            if (entry.gl_texture_id != 0) {
+                const GLuint tex = static_cast<GLuint>(entry.gl_texture_id);
+                glDeleteTextures(1, &tex);
+            }
+        }
+    }
+#endif
+    gpu_textures_.clear();
+}
 
 bool NativeRetailWorld::add_scene_object(RetailWorldSceneObject obj, RetailRendererWorldFailure& f) noexcept {
     f = {};

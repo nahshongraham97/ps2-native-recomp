@@ -32,6 +32,11 @@ RetailStartupGate continue_first_scene_at_225d40(NativeRetailMainState& main,
         f.operation = cf.operation;
         return RetailStartupGate::native_failure;
     }
+    if (!core->world_module(cf)) {
+        f.kind = StartupError::memory_owners;
+        f.operation = cf.operation;
+        return RetailStartupGate::native_failure;
+    }
 
     // PS2 retail 0x00225d40 sets callback 0x00225d50 into -23540($gp).
     // Real retail startup then proceeds to 0x001a6c30 (EngineOpen) and 0x001a6b30 (EngineStart).

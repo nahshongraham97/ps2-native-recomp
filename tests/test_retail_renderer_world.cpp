@@ -88,7 +88,6 @@ namespace mka::retail::renderer_required {
     void destroy_core_plugin_##ID(NativeRetailRendererCore&) noexcept { \
         fixture_destroy(HEX); \
     }
-OTHER(040a, 0x40a)
 OTHER(040b, 0x40b)
 #undef OTHER
 

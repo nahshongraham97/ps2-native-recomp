@@ -2,10 +2,15 @@
 #include "mka/retail_renderer_core.hpp"
 #include "mka/retail_camera_world.hpp"
 #include "mka/retail_renderer_frames.hpp"
+#include "mka/retail_renderer_materials.hpp"
+#include "mka/retail_renderer_textures.hpp"
+#include "mka/retail_renderer_rasters.hpp"
 #include <array>
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <optional>
+#include <span>
 #include <vector>
 
 namespace mka::retail {
@@ -67,6 +72,8 @@ private:
 // are not part of the 4-byte plugin registration contract and remain unrecovered.
 struct RetailWorldTriangleVertex {
     RetailRendererPoint3 position;
+    float u{0.0f};
+    float v{0.0f};
     std::array<float, 4> color{1.0f, 1.0f, 1.0f, 1.0f};
 };
 
@@ -76,7 +83,13 @@ struct RetailWorldSceneObject {
     RetailRendererPoint3 local_center{};
     float bounding_radius{1.0f};
     std::vector<RetailWorldTriangleVertex> triangles;
+    NativeRetailMaterialHandle material;
     bool visible{true};
+};
+
+struct RetailWorldGpuTextureEntry {
+    NativeRetailTextureHandle texture;
+    std::uint32_t gl_texture_id{0};
 };
 
 class NativeRetailWorld final : public NativeRetailRenderWorld {
@@ -87,11 +100,15 @@ public:
     bool remove_scene_object(std::uint64_t id, RetailRendererWorldFailure& f) noexcept;
     void clear_scene_objects() noexcept;
     const std::vector<RetailWorldSceneObject>& scene_objects() const noexcept { return scene_objects_; }
+    std::vector<RetailWorldGpuTextureEntry>& gpu_texture_cache() noexcept { return gpu_textures_; }
+    const std::vector<RetailWorldGpuTextureEntry>& gpu_texture_cache() const noexcept { return gpu_textures_; }
+    void release_gpu_resources() noexcept;
 
 private:
     friend class NativeRetailRendererWorldModule;
     explicit NativeRetailWorld(const std::shared_ptr<NativeRetailGameSession>& session) noexcept;
     std::vector<RetailWorldSceneObject> scene_objects_;
+    std::vector<RetailWorldGpuTextureEntry> gpu_textures_;
 };
 
 class NativeRetailRendererWorldModule final
@@ -154,7 +171,18 @@ struct RetailWorldRenderStats {
     std::size_t visible_objects{};
     std::size_t culled_objects{};
     std::size_t submitted_triangles{};
+    std::size_t bound_textures{};
 };
+
+bool ingest_rw_geometry_stream(
+    std::span<const std::byte> stream_bytes,
+    std::uint64_t base_object_id,
+    NativeRetailRendererFrames& frames,
+    NativeRetailRendererMaterials& materials,
+    NativeRetailRendererTextures& textures,
+    NativeRetailWorld& world,
+    const NativeRetailRendererFrameHandle& parent_frame,
+    RetailRendererWorldFailure& failure) noexcept;
 
 bool sphere_in_frustum(
     const std::array<RetailRendererCameraPlane, 6>& planes,
@@ -183,6 +211,9 @@ std::optional<RetailWorldRenderStats> render_world_scene_frame(
     const std::array<float, 4>& clear_color,
     std::uint32_t clear_flags,
     bool call_show_raster,
-    RetailCameraProducerFailure& failure) noexcept;
+    RetailCameraProducerFailure& failure,
+    NativeRetailRendererMaterials* materials = nullptr,
+    NativeRetailRendererTextures* textures = nullptr,
+    NativeRetailRendererRasters* rasters = nullptr) noexcept;
 
 } // namespace mka::retail
